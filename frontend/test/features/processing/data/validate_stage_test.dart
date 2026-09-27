@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/processing/data/processing_repository_impl.dart';
 import 'package:tapture/features/processing/domain/processing_job.dart';
 import 'package:tapture/features/settings/settings.dart';
@@ -110,9 +112,14 @@ void main() {
       await seeded.fixture.db.select(seeded.fixture.db.fieldEvidence).get(),
       isEmpty,
     );
+    // The field here is keyed `status`, like the record's own status audit
+    // marker; the field's row is the created one.
     final AuditLogData audit =
         (await seeded.fixture.db.select(seeded.fixture.db.auditLog).get())
-            .lastWhere((AuditLogData row) => row.fieldKey == 'status');
+            .lastWhere(
+              (AuditLogData row) =>
+                  row.fieldKey == 'status' && row.action == AuditAction.created,
+            );
     expect(jsonDecode(audit.reason!), <String, Object?>{
       'source': 'default',
       'method': 'template-default',
@@ -121,7 +128,10 @@ void main() {
       'promptVersion': '',
     });
     // A required field its default fills counts as filled.
-    expect((await seeded.fixture.storedRecord()).status, 'EXTRACTED');
+    expect(
+      (await seeded.fixture.storedRecord()).status,
+      RecordStatus.extracted.stored,
+    );
   });
 
   test('extracted, verified and hand-entered values keep their field from '
@@ -205,9 +215,19 @@ void main() {
     });
 
     final RecordRow stored = await seeded.fixture.storedRecord();
-    expect(stored.status, 'EXTRACTED');
+    expect(stored.status, RecordStatus.extracted.stored);
     expect(stored.rev, revBefore + 1);
     expect(stored.updatedByDevice, 'device-a');
+
+    final AuditLogData moved =
+        (await seeded.fixture.db.select(seeded.fixture.db.auditLog).get())
+            .singleWhere((AuditLogData row) => row.fieldKey == 'status');
+    expect(moved.entityType, 'records');
+    expect(moved.entityId, seeded.fixture.record.id);
+    expect(moved.previousValue, RecordStatus.captured.stored);
+    expect(moved.newValue, RecordStatus.extracted.stored);
+    expect(jsonDecode(moved.reason!), <String, Object?>{'stage': 'validate'});
+    expect(moved.device, 'device-a');
   });
 
   test('a low-confidence value sends the record to review', () async {
@@ -219,7 +239,10 @@ void main() {
     });
 
     expect((await fields(seeded.fixture)).single.confidenceBand, isNot('high'));
-    expect((await seeded.fixture.storedRecord()).status, 'NEEDS_REVIEW');
+    expect(
+      (await seeded.fixture.storedRecord()).status,
+      RecordStatus.needsReview.stored,
+    );
   });
 
   test('a required field left empty sends the record to review', () async {
@@ -236,7 +259,10 @@ void main() {
       (await fields(seeded.fixture)).map((RecordField f) => f.fieldKey),
       <String>['serial'],
     );
-    expect((await seeded.fixture.storedRecord()).status, 'NEEDS_REVIEW');
+    expect(
+      (await seeded.fixture.storedRecord()).status,
+      RecordStatus.needsReview.stored,
+    );
   });
 
   test(

@@ -3,6 +3,7 @@ import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
+import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -155,6 +156,120 @@ Future<Result<RecordField>> writeRecordFieldFinal(
     operator: operator,
     allowRaw: false,
   );
+}
+
+/// Writes an operator's correction of value [id] as its refined value,
+/// inside the caller's transaction, and returns whether anything changed.
+///
+/// The correction supersedes an approved value: `value_final` is cleared so
+/// the field displays [value]; the raw value stays as captured. The value
+/// becomes [source] and verified by [operator] at the clock's time. One
+/// audit row is appended (entity `records`, action updated, the value's own
+/// field key, [reason]) whose previous value is what the field displayed
+/// before the edit (final, else refined, else raw, the first that is not
+/// empty; null when nothing showed) and whose new value is [value]. The
+/// history therefore reads what the operator saw, not the column written.
+///
+/// A value that already displays [value] is left alone and false returned.
+/// A value removed earlier (tombstoned, as a merge can leave one) displayed
+/// nothing: its tombstone is lifted and the correction written with no
+/// previous value. Bumps `rev`, `updated_at` and `updated_by_device`; never
+/// touches the value flags. Throws a [StorageFailure] when the value is not
+/// on this device, so the caller's transaction rolls back.
+Future<bool> writeRecordFieldEdit(
+  GeneratedDatabase db, {
+  required String id,
+  required String value,
+  String source = recordFieldEditSource,
+  Clock? clock,
+  String? deviceId,
+  String? operator,
+  String? reason,
+}) {
+  final AppDatabase database = db as AppDatabase;
+  final DateTime now = (clock ?? const SystemClock()).nowUtc();
+  final String device = deviceId ?? '';
+  return database.transaction(() async {
+    final QueryRow? row = await database
+        .customSelect(
+          'SELECT f.record_id AS record_id, f.field_key AS field_key, '
+          'f.value_raw AS raw, f.value_refined AS refined, '
+          'f.value_final AS approved, EXISTS (SELECT 1 FROM tombstones t '
+          "WHERE t.entity_type = 'record_fields' AND t.entity_id = f.id) "
+          'AS gone FROM record_fields f WHERE f.id = ?',
+          variables: <Variable<Object>>[Variable<String>(id)],
+        )
+        .getSingleOrNull();
+    if (row == null) {
+      throw const StorageFailure(
+        message: 'That value is no longer on this device.',
+        recoveryAction: 'Refresh the record and try again.',
+      );
+    }
+    final bool gone = row.read<int>('gone') != 0;
+    final String shown = gone
+        ? ''
+        : _shownValue(
+            approved: row.read<String?>('approved'),
+            refined: row.read<String?>('refined'),
+            raw: row.read<String?>('raw'),
+          );
+    if (shown == value) {
+      return false;
+    }
+    if (gone) {
+      await removeTombstone(
+        database,
+        entityType: database.recordFields.actualTableName,
+        entityId: id,
+      );
+    }
+    await database.customUpdate(
+      'UPDATE record_fields SET value_refined = ?, value_final = NULL, '
+      'source = ?, verified = 1, verified_by = ?, verified_at = ?, '
+      'updated_at = ?, updated_by_device = ?, rev = rev + 1 WHERE id = ?',
+      variables: <Variable<Object>>[
+        Variable<String>(value),
+        Variable<String>(source),
+        Variable<String>(operator),
+        Variable<DateTime>(now),
+        Variable<DateTime>(now),
+        Variable<String>(device),
+        Variable<String>(id),
+      ],
+      updates: <TableInfo<dynamic, dynamic>>{database.recordFields},
+      updateKind: UpdateKind.update,
+    );
+    await appendAudit(
+      database,
+      entityType: 'records',
+      entityId: row.read<String>('record_id'),
+      action: AuditAction.updated,
+      fieldKey: row.read<String>('field_key'),
+      previousValue: shown.isEmpty ? null : shown,
+      newValue: value,
+      reason: reason,
+      clock: clock,
+      device: device,
+      operator: operator,
+    );
+    return true;
+  });
+}
+
+/// The source [writeRecordFieldEdit] stamps on an operator's correction.
+/// Processing treats it as hand-entered and never overwrites it.
+const String recordFieldEditSource = 'manual';
+
+/// What a value displays: [approved], else [refined], else [raw], taking the
+/// first that is not empty; empty when none holds text.
+String _shownValue({String? approved, String? refined, String? raw}) {
+  for (final String? stage in <String?>[approved, refined, raw]) {
+    if (stage != null && stage.isNotEmpty) {
+      return stage;
+    }
+  }
+  return '';
 }
 
 Future<Result<RecordField>> _writeRecordField(

@@ -7,8 +7,10 @@ import 'package:tapture/core/bundle/bundle.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/base_dao.dart';
+import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/exports.dart';
 import 'package:tapture/core/db/tables/photos.dart';
+import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/export/xlsx_book.dart';
@@ -21,12 +23,17 @@ import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/exports/domain/export_file_name.dart';
 import 'package:tapture/features/exports/domain/export_repository.dart';
 
 /// Device [ExportRepository]. An export is a new project package under the
 /// project's `exports/` folder, the workbook inside it; the row is inserted
 /// only after that file exists.
+///
+/// The same transaction writes the export's membership into each included
+/// record's history: one audit row on entity `records`, field key `export`,
+/// new value `v<version>` and the formats as the reason (task 014 D10).
 final class ExportRepositoryImpl implements ExportRepository {
   /// Creates the repository over the local database and storage root.
   ExportRepositoryImpl({
@@ -144,14 +151,14 @@ final class ExportRepositoryImpl implements ExportRepository {
     }
     final List<QueryRow> records = await _db
         .customSelect(
-          'SELECT r.status AS status, '
+          'SELECT r.id AS id, r.status AS status, '
           '(SELECT COUNT(*) FROM photos p WHERE p.record_id = r.id) '
           'AS photo_count '
           'FROM records r WHERE r.project_id = ? AND r.status != ? '
           'ORDER BY r.created_at, r.id',
           variables: <Variable<Object>>[
             Variable<String>(projectId),
-            const Variable<String>('deleted'),
+            Variable<String>(RecordStatus.deleted.stored),
           ],
           readsFrom: <TableInfo<dynamic, dynamic>>{_db.records, _db.photos},
         )
@@ -218,24 +225,40 @@ final class ExportRepositoryImpl implements ExportRepository {
       await _discard(relative);
       return const FailureResult<ExportedPackage>(CancelledFailure());
     }
-    final Result<sqlite.ExportRow> row = await completeExport(
-      _db,
-      produce: () async => sqlite.ExportsCompanion(
-        id: Value<String>(id),
-        projectId: Value<String>(projectId),
-        formats: Value<String>(jsonEncode(<String>['bundle', 'xlsx'])),
-        filters: Value<String>(
-          jsonEncode(<String, String>{'project': projectId}),
+    final List<String> formats = <String>['bundle', 'xlsx'];
+    final Result<sqlite.ExportRow> row = await runInTransaction(_db, () async {
+      final Result<sqlite.ExportRow> completed = await completeExport(
+        _db,
+        produce: () async => sqlite.ExportsCompanion(
+          id: Value<String>(id),
+          projectId: Value<String>(projectId),
+          formats: Value<String>(jsonEncode(formats)),
+          filters: Value<String>(
+            jsonEncode(<String, String>{'project': projectId}),
+          ),
+          recordCount: Value<int>(records.length),
+          filePath: Value<String>(relative),
+          fileHash: Value<String>(package.sha256),
+          createdBy: Value<String>(_deviceId),
         ),
-        recordCount: Value<int>(records.length),
-        filePath: Value<String>(relative),
-        fileHash: Value<String>(package.sha256),
-        createdBy: Value<String>(_deviceId),
-      ),
-      clock: _clock,
-      deviceId: _deviceId,
-      ids: _ids,
-    );
+        clock: _clock,
+        deviceId: _deviceId,
+        ids: _ids,
+      );
+      final sqlite.ExportRow stored = switch (completed) {
+        Success<sqlite.ExportRow>(:final sqlite.ExportRow value) => value,
+        FailureResult<sqlite.ExportRow>(:final Failure failure) =>
+          throw Failure.from(failure),
+      };
+      await _recordMembership(
+        <String>[
+          for (final QueryRow record in records) record.read<String>('id'),
+        ],
+        version: stored.version,
+        formats: formats,
+      );
+      return stored;
+    });
     switch (row) {
       case FailureResult<sqlite.ExportRow>(:final Failure failure):
         await _discard(relative);
@@ -261,20 +284,23 @@ final class ExportRepositoryImpl implements ExportRepository {
     const String written = 'r.project_id = ? AND r.status != ?';
     List<Variable<Object>> scope() => <Variable<Object>>[
       Variable<String>(projectId),
-      const Variable<String>('deleted'),
+      Variable<String>(RecordStatus.deleted.stored),
     ];
+    final String unprocessed = List<String>.filled(
+      _unprocessedStatuses.length,
+      '?',
+    ).join(', ');
     return _db
         .customSelect(
           'SELECT '
           '(SELECT name FROM projects WHERE id = ?) AS project_name, '
           '(SELECT COUNT(*) FROM records r WHERE $written) AS records, '
           '(SELECT COUNT(*) FROM records r WHERE $written AND r.status IN '
-          "('draft', 'captured', 'CAPTURED', 'queued', 'processing')) "
-          'AS unprocessed, '
+          '($unprocessed)) AS unprocessed, '
           '(SELECT COUNT(*) FROM records r WHERE $written '
-          "AND r.status = 'needsReview') AS needs_review, "
+          'AND r.status = ?) AS needs_review, '
           '(SELECT COUNT(*) FROM records r WHERE $written '
-          "AND r.status = 'approved') AS approved, "
+          'AND r.status = ?) AS approved, '
           '(SELECT COUNT(*) FROM photos p JOIN records r ON r.id = p.record_id '
           'WHERE $written AND $activePhotoCondition) AS photos, '
           '(SELECT COUNT(DISTINCT o.attachment_id) FROM attachment_owners o '
@@ -286,7 +312,15 @@ final class ExportRepositoryImpl implements ExportRepository {
           '(SELECT MAX(r.captured_at) FROM records r WHERE $written) AS last',
           variables: <Variable<Object>>[
             Variable<String>(projectId),
-            for (int block = 0; block < 8; block++) ...scope(),
+            ...scope(),
+            ...scope(),
+            for (final RecordStatus status in _unprocessedStatuses)
+              Variable<String>(status.stored),
+            ...scope(),
+            Variable<String>(RecordStatus.needsReview.stored),
+            ...scope(),
+            Variable<String>(RecordStatus.approved.stored),
+            for (int block = 0; block < 4; block++) ...scope(),
           ],
           readsFrom: <TableInfo<dynamic, dynamic>>{
             _db.projects,
@@ -327,6 +361,30 @@ final class ExportRepositoryImpl implements ExportRepository {
             lastCapturedAt: row.read<DateTime?>('last'),
           );
         });
+  }
+
+  /// Appends the export to the history of each record in [recordIds],
+  /// inside the caller's transaction: the membership the list and the
+  /// history read.
+  Future<void> _recordMembership(
+    List<String> recordIds, {
+    required int version,
+    required List<String> formats,
+  }) async {
+    final String reason = formats.join(',');
+    for (final String recordId in recordIds) {
+      await appendAudit(
+        _db,
+        entityType: _db.records.actualTableName,
+        entityId: recordId,
+        action: AuditAction.updated,
+        fieldKey: _exportAuditKey,
+        newValue: 'v$version',
+        reason: reason,
+        clock: _clock,
+        device: _deviceId,
+      );
+    }
   }
 
   Future<void> _discard(String relativePath) async {
@@ -390,6 +448,19 @@ Future<Uint8List> _encodeWorkbook(List<Object?> job) {
   );
   return Future<Uint8List>.value(XlsxEncoder.encode(book));
 }
+
+/// Audit `field_key` of a record's export membership, on entity `records`.
+const String _exportAuditKey = 'export';
+
+/// Statuses the summary counts as not yet processed: waiting to be, being,
+/// or failed and waiting to be again.
+const List<RecordStatus> _unprocessedStatuses = <RecordStatus>[
+  RecordStatus.draft,
+  RecordStatus.captured,
+  RecordStatus.queued,
+  RecordStatus.processing,
+  RecordStatus.failed,
+];
 
 const StorageFailure _missing = StorageFailure(
   message: 'That row is no longer on this device.',

@@ -2,9 +2,15 @@ import 'package:drift/drift.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/attachments.dart';
+import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 import 'record_bundle.dart';
+
+/// SQL condition on a `captions` row: true while it is not tombstoned.
+const String _liveCaption =
+    "NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'captions' "
+    'AND t.entity_id = captions.id)';
 
 /// Reads a [RecordBundle] for one record.
 final class RecordBundleLoader {
@@ -14,6 +20,10 @@ final class RecordBundleLoader {
   final AppDatabase _db;
 
   /// Loads the record [recordId] with its project, template and evidence.
+  ///
+  /// Evidence is what the record shows now: photos by `activePhotoCondition`
+  /// (not tombstoned, not replaced by a live edited copy) in tray order, and
+  /// the untombstoned captions of the record and of those photos.
   ///
   /// Throws a [StorageFailure] when the record is gone and a
   /// [ValidationFailure] when its project or template is missing.
@@ -54,6 +64,13 @@ final class RecordBundleLoader {
     final List<String> attachmentIds = <String>[
       for (final AttachmentOwner owner in audioOwners) owner.attachmentId,
     ];
+    // Only the photos the record shows now: a removed photo, or an original
+    // replaced by its edited copy, is never read again, so re-processing
+    // cannot link fresh evidence to it (task 014 step 5).
+    final $PhotosTable live = _db.alias(_db.photos, 'p');
+    final Expression<bool> shown =
+        live.recordId.equals(record.id) &
+        const CustomExpression<bool>(activePhotoCondition);
     return RecordBundle(
       record: record,
       project: project,
@@ -76,10 +93,8 @@ final class RecordBundleLoader {
               ))
               .get(),
       photos:
-          await (_db.select(_db.photos)
-                ..where(
-                  ($PhotosTable table) => table.recordId.equals(record.id),
-                )
+          await (_db.select(live)
+                ..where(($PhotosTable _) => shown)
                 ..orderBy(<OrderClauseGenerator<$PhotosTable>>[
                   ($PhotosTable table) => OrderingTerm.asc(table.sortOrder),
                 ]))
@@ -87,12 +102,13 @@ final class RecordBundleLoader {
       captions:
           await (_db.select(_db.captions)..where(
                 ($CaptionsTable table) =>
-                    (table.ownerId.equals(record.id)) |
-                    table.ownerId.isInQuery(
-                      _db.selectOnly(_db.photos)
-                        ..addColumns(<Expression<Object>>[_db.photos.id])
-                        ..where(_db.photos.recordId.equals(record.id)),
-                    ),
+                    const CustomExpression<bool>(_liveCaption) &
+                    (table.ownerId.equals(record.id) |
+                        table.ownerId.isInQuery(
+                          _db.selectOnly(live)
+                            ..addColumns(<Expression<Object>>[live.id])
+                            ..where(shown),
+                        )),
               ))
               .get(),
       audio: attachmentIds.isEmpty

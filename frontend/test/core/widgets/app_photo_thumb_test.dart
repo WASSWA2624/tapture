@@ -70,6 +70,47 @@ void main() {
     );
   });
 
+  testWidgets('a semantic label replaces the type and keeps the states', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      Column(
+        children: <Widget>[
+          AppPhotoThumb(
+            key: const ValueKey<String>('named'),
+            photo: const PhotoAsset(
+              sha256: 'abc',
+              photoType: PhotoType.serial,
+              hasCaption: true,
+            ),
+            size: edge,
+            selected: true,
+            semanticLabel: 'Photo 1 of 2',
+          ),
+          AppPhotoThumb(
+            key: const ValueKey<String>('named-missing'),
+            photo: const PhotoAsset(
+              sha256: 'dead',
+              thumbPath: '/definitely/not/a/cached/thumb.jpg',
+            ),
+            size: edge,
+            semanticLabel: 'Photo 2 of 2',
+          ),
+        ],
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey<String>('named')),
+      hasSemanticLabel('Photo 1 of 2, captioned, selected'),
+    );
+    expect(
+      find.byKey(const ValueKey<String>('named-missing')),
+      hasSemanticLabel('Missing photo, Photo 2 of 2'),
+    );
+  });
+
   testWidgets('a missing file shows a placeholder and does not throw', (
     WidgetTester tester,
   ) async {

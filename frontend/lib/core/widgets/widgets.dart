@@ -41,6 +41,7 @@ export 'forms/app_form.dart';
 export 'forms/focus_actions.dart';
 export 'forms/keep_focused_visible.dart';
 export 'gallery/widget_gallery_screen.dart';
+export 'record_thumb.dart';
 export 'responsive/breakpoints.dart';
 export 'responsive/content_constraint.dart';
 export 'responsive/form_factor.dart';

@@ -11,6 +11,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/record_thumb.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
@@ -24,7 +25,6 @@ import 'project_list_criteria_controller.dart';
 import 'project_list_filter.dart';
 import 'project_open_externally_action.dart';
 import 'project_rename_action.dart';
-import 'record_thumb.dart';
 
 /// The project rows the landing screen and the expanded list pane share
 /// (FE-CONS-02).
@@ -195,7 +195,8 @@ Widget _leading(Project project, int number) {
   if (cover != null) {
     return RecordThumb(
       key: ValueKey<String>('project-photo-${project.id}'),
-      photo: (sha256: cover.sha256, storagePath: cover.path, quarterTurns: 0),
+      sha256: cover.sha256,
+      storagePath: cover.path,
     );
   }
   return FittedBox(

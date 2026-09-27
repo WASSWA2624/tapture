@@ -1,5 +1,6 @@
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/processing/processing.dart';
 
 import 'capture_session.dart';
@@ -7,10 +8,10 @@ import 'capture_session.dart';
 part 'save_and_analyse_result.dart';
 
 /// Save path that persists then enqueues analysis. A failed enqueue leaves
-/// a complete CAPTURED record with a retryable job (task 012).
+/// a complete captured record with a retryable job (task 012).
 abstract final class SaveAndAnalyse {
   /// Status written before enqueue.
-  static const String capturedStatus = 'CAPTURED';
+  static const RecordStatus capturedStatus = RecordStatus.captured;
 
   /// Builds a processing job for [session] after the record is durable.
   static ProcessingJob jobFor({

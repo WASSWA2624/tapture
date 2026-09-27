@@ -8,6 +8,7 @@ import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart' hide Project;
 import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/attachments.dart';
+import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/db/tables/templates.dart';
@@ -105,6 +106,53 @@ void main() {
     },
   );
 
+  test('every exported record carries the export in its history', () async {
+    final _Harness harness = await _Harness.open();
+    addTearDown(harness.close);
+    await harness.record('captured', id: 'r1');
+    await harness.record('approved', id: 'r2');
+    await harness.record('deleted', id: 'r3');
+
+    _ok(
+      await harness.repo.exportProject(
+        'project-1',
+        cancel: CancellationToken(),
+      ),
+    );
+    _ok(
+      await harness.repo.exportProject(
+        'project-1',
+        cancel: CancellationToken(),
+      ),
+    );
+
+    final List<AuditLogData> rows = await harness.db
+        .select(harness.db.auditLog)
+        .get();
+    final List<AuditLogData> exports = <AuditLogData>[
+      for (final AuditLogData row in rows)
+        if (row.fieldKey == 'export') row,
+    ];
+    expect(exports, hasLength(4));
+    for (final AuditLogData row in exports) {
+      expect(row.entityType, 'records');
+      expect(row.action, AuditAction.updated);
+      expect(row.reason, 'bundle,xlsx');
+      expect(row.device, 'device-test');
+    }
+    expect(
+      <String>[for (final AuditLogData row in exports) row.entityId]..sort(),
+      <String>['r1', 'r1', 'r2', 'r2'],
+    );
+    expect(
+      <String?>[
+        for (final AuditLogData row in exports)
+          if (row.entityId == 'r1') row.newValue,
+      ],
+      <String>['v1', 'v2'],
+    );
+  });
+
   test('a display name keeps letters and digits and stamps the local time', () {
     expect(
       ExportFileName.build(
@@ -137,6 +185,7 @@ void main() {
     expect(written, isA<FailureResult<ExportedPackage>>());
     expect(await harness.db.select(harness.db.exports).get(), isEmpty);
     expect(await harness.db.select(harness.db.records).get(), hasLength(1));
+    expect(await harness.db.select(harness.db.auditLog).get(), isEmpty);
     expect(harness.exportDir.existsSync(), isFalse);
   });
 
@@ -238,6 +287,27 @@ void main() {
     expect(summary.lastCapturedAt?.toUtc(), DateTime.utc(2026, 9, 25, 16));
   });
 
+  test('the summary reads every spelling of a status as one status', () async {
+    final _Harness harness = await _Harness.open();
+    addTearDown(harness.close);
+    await harness.record('NEEDS_REVIEW', id: 'r1');
+    await harness.record('needs_review', id: 'r2');
+    await harness.record('EXTRACTED', id: 'r3');
+    await harness.record('failed', id: 'r4');
+    await harness.record('CAPTURED', id: 'r5');
+    await harness.record('APPROVED', id: 'r6');
+    await harness.record('DELETED', id: 'r7');
+
+    final ExportSummary summary = await harness.repo
+        .watchSummary('project-1')
+        .first;
+
+    expect(summary.records, 6);
+    expect(summary.needsReview, 2);
+    expect(summary.unprocessed, 2);
+    expect(summary.approved, 1);
+  });
+
   test('cancellation deletes a finished file and writes no row', () async {
     final CancellationToken cancel = CancellationToken();
     final _Harness harness = await _Harness.open(
@@ -257,6 +327,7 @@ void main() {
       isA<CancelledFailure>(),
     );
     expect(await harness.db.select(harness.db.exports).get(), isEmpty);
+    expect(await harness.db.select(harness.db.auditLog).get(), isEmpty);
     expect(
       harness.exportDir.existsSync()
           ? harness.exportDir.listSync()

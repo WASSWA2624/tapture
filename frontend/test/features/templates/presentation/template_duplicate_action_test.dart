@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/features/records/domain/record_repository.dart';
+import 'package:tapture/features/records/domain/record_entry.dart';
 import 'package:tapture/features/templates/presentation/template_duplicate_action.dart';
 import 'package:tapture/features/templates/templates.dart';
 
@@ -46,7 +46,7 @@ void main() {
           ),
         ),
       );
-      final RecordDetail record = _ok(
+      final RecordEntry record = _ok(
         await records.save(aRecord(templateId: original.id)),
       );
 

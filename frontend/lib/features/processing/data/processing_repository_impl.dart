@@ -172,6 +172,11 @@ final class ProcessingRepositoryImpl implements ProcessingRepository {
   }
 
   @override
+  Future<Result<String>> requeue(String recordId) {
+    return _writes.requeue(recordId);
+  }
+
+  @override
   Future<Result<ProcessingJob?>> claim(
     Duration lease, {
     String? projectId,

@@ -5,6 +5,9 @@ import 'package:tapture/app/theme/typography.dart';
 
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/record_status.dart';
+
+export 'record_status.dart';
 
 part 'status_style.dart';
 
@@ -75,38 +78,4 @@ class AppStatusPill extends StatelessWidget {
       ),
     );
   }
-}
-
-/// One record-lifecycle status. The set is closed; export is not a status
-/// (task 162). Mapped only through [StatusStyle] and [AppStatusPill].
-enum RecordStatus {
-  /// Saved locally, not yet captured in the field.
-  draft,
-
-  /// Evidence is on the record; processing has not started.
-  captured,
-
-  /// Waiting for on-device or online processing.
-  queued,
-
-  /// A processing job is running.
-  processing,
-
-  /// Extraction finished; review may still be required.
-  extracted,
-
-  /// A person must look at this record.
-  needsReview,
-
-  /// A person has accepted the record.
-  approved,
-
-  /// Processing or validation failed.
-  failed,
-
-  /// Kept for history, hidden from the working list.
-  archived,
-
-  /// Marked gone; purge is a later job.
-  deleted,
 }

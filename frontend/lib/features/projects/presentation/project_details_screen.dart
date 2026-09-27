@@ -14,11 +14,11 @@ import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/record_thumb.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
 import 'current_project.dart';
-import 'record_thumb.dart';
 
 /// The project's details to read, with Edit details as the way to change
 /// them (FBK0000156). Create, update and delete each have their own flow;
@@ -86,11 +86,8 @@ class _ProjectDetails extends StatelessWidget {
             alignment: AlignmentDirectional.centerStart,
             child: RecordThumb(
               key: const ValueKey<String>('project-details-photo'),
-              photo: (
-                sha256: cover.sha256,
-                storagePath: cover.path,
-                quarterTurns: 0,
-              ),
+              sha256: cover.sha256,
+              storagePath: cover.path,
               size: edge,
             ),
           ),

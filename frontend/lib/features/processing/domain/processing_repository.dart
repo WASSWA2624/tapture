@@ -36,6 +36,18 @@ abstract interface class ProcessingRepository {
   /// Queues [recordId] once and returns the persisted job id.
   Future<Result<String>> enqueue(String recordId);
 
+  /// Queues [recordId] to be processed again from the first stage and
+  /// returns its job id.
+  ///
+  /// The record's existing job is reset (stage cleared, queued, attempts 0,
+  /// lease, error and timestamps cleared), or a job is created when it has
+  /// none. A record in draft, captured, extracted, needs review, approved or
+  /// failed moves to queued, with an audited status change; one already
+  /// queued keeps its status. A record that is processing, archived or
+  /// deleted, or whose job a runner holds now, fails with a
+  /// `ValidationFailure` and nothing is written.
+  Future<Result<String>> requeue(String recordId);
+
   /// Claims the oldest ready job in [projectId] and [groupLabels] (empty
   /// for every group), releasing expired leases first. Returns null while
   /// the running jobs already hold the settings-store concurrency cap.

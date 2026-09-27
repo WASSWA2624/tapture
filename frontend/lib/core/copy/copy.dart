@@ -4049,4 +4049,149 @@ abstract final class Copy {
   /// The duplicate pair view's field line. [label] and [value] are data.
   static String duplicateField(String label, String value) =>
       '$label: ${value.isEmpty ? conflictEmpty : value}';
+
+  // Records: list, filters and sort (014).
+
+  // Records: detail and history (014).
+
+  // Records: editing, photos and template change (014).
+
+  /// Title of the page that edits a saved record's values.
+  static const String recordValuesEditTitle = 'Edit values';
+
+  /// Title of the one-value sheet when the caller does not name the field.
+  static const String recordValueEditTitle = 'Edit value';
+
+  /// Above the values of an approved record: what saving a change does.
+  static const String recordEditApprovedNotice =
+      'This record is approved. Saving a change sends it back to review.';
+
+  /// Marks a value its record's template no longer has. It is kept, and it
+  /// cannot be edited or removed.
+  static const String recordValueRetired = 'Retired';
+
+  /// Heading over the values a record keeps after its template dropped them.
+  static const String recordRetiredValuesTitle = 'Retired values';
+
+  /// Why retired values cannot be edited.
+  static const String recordRetiredValuesMessage =
+      "This record's template no longer has these fields. Their values are "
+      "kept as they were and can't be edited.";
+
+  /// Marks a value whose source photos were all removed. The value is kept.
+  static const String recordValueEvidenceRemoved = 'Evidence removed';
+
+  /// Shown when a record's template is no longer on this device.
+  static const String recordTemplateMissingNotice =
+      "This record's template is no longer on this device. Its values are "
+      'kept; change its template to edit them.';
+
+  /// The edit page of a record that sits in the recycle bin.
+  static const String recordEditDeletedHeadline =
+      'This record is in the recycle bin';
+
+  /// What to do before editing a record in the recycle bin.
+  static const String recordEditDeletedMessage =
+      'Restore it from the recycle bin, then change its values.';
+
+  /// The one-value sheet for a field the record's template no longer has.
+  static const String recordFieldMissingHeadline =
+      'This field is not on the record';
+
+  /// What to do when the one-value sheet has no field to show.
+  static const String recordFieldMissingMessage =
+      "The record's template no longer has this field. Go back to the record.";
+
+  /// Why a saved value cannot be emptied: the captured original always
+  /// stays, so an empty edit would show it again (FE-SEC-08).
+  static const String recordValueCannotEmpty =
+      'A saved value cannot be emptied. Type the corrected value instead.';
+
+  /// Snack once [n] values are saved. [backToReview] adds that the record,
+  /// which was approved, is waiting for review again.
+  static String recordValuesSaved(int n, {bool backToReview = false}) {
+    final String saved = Intl.plural(
+      n,
+      one: '1 value saved',
+      other: '$n values saved',
+    );
+    return backToReview ? '$saved. The record is back in review.' : '$saved.';
+  }
+
+  // Records: delete, recycle bin and bulk actions (014).
+
+  /// Names the delete control for [n] records, for its tooltip and screen
+  /// readers.
+  static String recordsDeleteLabel(int n) {
+    return Intl.plural(n, one: 'Delete record', other: 'Delete $n records');
+  }
+
+  /// Title of the confirm before [n] records move to the recycle bin.
+  static String recordsDeleteTitle(int n) {
+    return Intl.plural(n, one: 'Delete 1 record?', other: 'Delete $n records?');
+  }
+
+  /// Body of that confirm: where the [records] go, and for how many [days]
+  /// they can still be restored whole.
+  static String recordsDeleteMessage({
+    required int records,
+    required int days,
+  }) {
+    final String window = settingsRetentionDays(days);
+    return Intl.plural(
+      records,
+      one:
+          'It moves to the recycle bin, where you can restore it for '
+          '$window. Its photos stay on this device until then.',
+      other:
+          'They move to the recycle bin, where you can restore them for '
+          '$window. Their photos stay on this device until then.',
+    );
+  }
+
+  /// Confirms the move to the recycle bin.
+  static const String recordsDeleteConfirm = 'Delete';
+
+  /// Snack once [n] records are in the recycle bin. Undo sits beside it.
+  static String recordsDeleted(int n) {
+    return Intl.plural(n, one: '1 record deleted', other: '$n records deleted');
+  }
+
+  /// Snack or line when [n] records could not be deleted.
+  static String recordsNotDeleted(int n) {
+    return Intl.plural(
+      n,
+      one: '1 record could not be deleted',
+      other: '$n records could not be deleted',
+    );
+  }
+
+  /// Snack when some records were deleted and some were not. Undo brings
+  /// back the [deleted] ones.
+  static String recordsDeletedPartly({
+    required int deleted,
+    required int failed,
+  }) {
+    return '${recordsDeleted(deleted)}. ${recordsNotDeleted(failed)}.';
+  }
+
+  /// Snack once [n] records are back from the recycle bin.
+  static String recordsRestored(int n) {
+    return Intl.plural(
+      n,
+      one: '1 record restored',
+      other: '$n records restored',
+    );
+  }
+
+  /// Snack or line when [n] records could not be restored.
+  static String recordsNotRestored(int n) {
+    return Intl.plural(
+      n,
+      one: '1 record could not be restored',
+      other: '$n records could not be restored',
+    );
+  }
+
+  // Records: data and purge (014).
 }

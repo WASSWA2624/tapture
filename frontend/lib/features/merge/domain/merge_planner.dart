@@ -1,3 +1,5 @@
+import 'package:tapture/core/widgets/record_status.dart';
+
 import 'conflict_kind.dart';
 import 'field_conflict.dart';
 import 'merge_plan.dart';
@@ -399,8 +401,10 @@ final class _Planner {
       }
       final Map<String, Object?>? here = mine[id];
       if (here != null) {
-        final String mineStatus = '${here['status'] ?? ''}';
-        final String theirStatus = '${record['status'] ?? ''}';
+        // Compared in the stored spelling, so a peer on an older build
+        // that still writes NEEDS_REVIEW raises no conflict (task 014 D2).
+        final String mineStatus = _statusOf(here['status']);
+        final String theirStatus = _statusOf(record['status']);
         if (mineStatus != theirStatus &&
             !_tombstoned(local, 'records', id) &&
             !_tombstoned(incoming, 'records', id)) {
@@ -812,6 +816,13 @@ String _captionText(Map<String, Object?> row) {
 }
 
 bool _flag(Object? value) => value == true || value == 1;
+
+/// A record status in its stored spelling (`NEEDS_REVIEW` reads
+/// `needsReview`); a spelling that names no status is kept as it is.
+String _statusOf(Object? value) {
+  final String raw = '${value ?? ''}';
+  return RecordStatus.fromStored(raw)?.stored ?? raw;
+}
 
 /// Stored instants arrive as whole seconds; anything else sorts first.
 int _at(Object? value) => value is int ? value : 0;

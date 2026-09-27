@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/field_evidence.dart';
+import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/normalise/choices.dart';
 import 'package:tapture/core/normalise/dates.dart';
@@ -26,6 +27,11 @@ import 'stage_support.dart';
 
 /// The validate stage: applies guarded proposals as unapproved values with
 /// evidence and an audited provenance stamp, then sets the record status.
+///
+/// The status goes through `writeRecordStatus`, so the move is audited.
+/// Processing is an exempt caller: the record lifecycle is not consulted,
+/// because validation decides between extracted and needs review from the
+/// values themselves, whatever the record held before (task 014 D3).
 ///
 /// Verified and hand-entered values are skipped, and the skip is recorded on
 /// the job beside every rejection.
@@ -133,16 +139,20 @@ final class ValidateStage {
           );
         }
       }
-      await (_db.update(_db.records)
-            ..where(($RecordsTable table) => table.id.equals(bundle.record.id)))
-          .write(
-            RecordsCompanion(
-              status: Value<String>(plan.status),
-              updatedAt: Value<DateTime>(_clock.nowUtc()),
-              updatedByDevice: Value<String>(_deviceId),
-              rev: Value<int>(bundle.record.rev + 1),
-            ),
-          );
+      final RecordRow? current =
+          await (_db.select(_db.records)..where(
+                ($RecordsTable table) => table.id.equals(bundle.record.id),
+              ))
+              .getSingleOrNull();
+      await writeRecordStatus(
+        _db,
+        recordId: bundle.record.id,
+        status: plan.status,
+        previousStatus: current?.status ?? bundle.record.status,
+        clock: _clock,
+        deviceId: _deviceId,
+        reason: _statusReason,
+      );
       await (_db.update(
         _db.processing,
       )..where(($ProcessingTable table) => table.id.equals(job.id))).write(
@@ -195,6 +205,10 @@ final class ValidateStage {
   }
   return (raw: raw, normalised: null);
 }
+
+/// Audit reason of the status move validation writes: the stage that made
+/// it, as JSON like the other processing audit reasons.
+const String _statusReason = '{"stage":"validate"}';
 
 FieldEvidenceSource _evidenceSource(String source) {
   return switch (source) {

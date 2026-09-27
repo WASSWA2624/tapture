@@ -10,6 +10,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
 import 'package:tapture/features/feedback/domain/feedback_category.dart';
 import 'package:tapture/features/feedback/domain/feedback_context.dart';
@@ -17,7 +18,8 @@ import 'package:tapture/features/feedback/domain/feedback_device_type.dart';
 import 'package:tapture/features/feedback/domain/feedback_entry.dart';
 import 'package:tapture/features/feedback/domain/feedback_submitter.dart';
 import 'package:tapture/features/projects/domain/project_repository.dart';
-import 'package:tapture/features/records/domain/record_repository.dart';
+import 'package:tapture/features/records/domain/domain.dart'
+    show RecordDraft, RecordEntry, RecordFlag, RecordPhoto, RecordValue;
 import 'package:tapture/features/templates/domain/template_repository.dart';
 
 /// A valid [Project] for one-line test setup.
@@ -25,6 +27,9 @@ typedef ProjectFactory = Project;
 
 /// A valid [RecordDraft] for one-line test setup.
 typedef RecordFactory = RecordDraft;
+
+/// A valid [RecordEntry] for one-line test setup.
+typedef RecordEntryFactory = RecordEntry;
 
 /// A valid [TemplateDef] for one-line test setup.
 typedef TemplateFactory = TemplateDef;
@@ -53,17 +58,75 @@ ProjectFactory aProject({
   );
 }
 
-/// A record draft filed under [projectId] with optional [fields].
+/// A record draft filed under [projectId] with optional [fields] and the
+/// [context] snapshot in force.
 RecordFactory aRecord({
   String? projectId,
   String? templateId,
   Map<String, String>? fields,
+  Map<String, String>? context,
 }) {
   return (
-    id: null,
     projectId: projectId ?? 'project-1',
     templateId: templateId ?? 'template-1',
     fields: fields ?? const <String, String>{'serial': 'A-1'},
+    context: context ?? const <String, String>{},
+  );
+}
+
+/// A whole record as the records repository reads it. [fields] become raw
+/// values from [source]; [photos] live photos are filed on it.
+RecordEntryFactory aRecordEntry({
+  String? id,
+  String? projectId,
+  String? templateId,
+  RecordStatus? status,
+  int? number,
+  String? name,
+  String? identifier,
+  Map<String, String>? fields,
+  String? source,
+  int? photos,
+  String? caption,
+  Map<String, String>? context,
+  Set<RecordFlag>? flags,
+  DateTime? capturedAt,
+  String? capturedBy,
+}) {
+  final String recordId = id ?? 'record-1';
+  final DateTime at = capturedAt ?? DateTime.utc(2026, 9, 17, 8);
+  return RecordEntry(
+    id: recordId,
+    projectId: projectId ?? 'project-1',
+    templateId: templateId ?? 'template-1',
+    status: status ?? RecordStatus.captured,
+    capturedAt: at,
+    capturedBy: capturedBy ?? 'device-test',
+    updatedAt: at,
+    number: number,
+    name: name ?? '',
+    identifier: identifier ?? '',
+    values: <RecordValue>[
+      for (final MapEntry<String, String> field
+          in (fields ?? const <String, String>{'serial': 'A-1'}).entries)
+        RecordValue(
+          fieldKey: field.key,
+          raw: field.value,
+          source: source ?? 'TYPED',
+        ),
+    ],
+    photos: <RecordPhoto>[
+      for (int index = 0; index < (photos ?? 0); index++)
+        RecordPhoto(
+          id: '$recordId-photo-$index',
+          sha256: '$recordId-sha-$index',
+          storagePath: 'photos/$recordId/img-$index.jpg',
+          sortOrder: index,
+        ),
+    ],
+    caption: caption ?? '',
+    context: context ?? const <String, String>{},
+    flags: flags ?? const <RecordFlag>{},
   );
 }
 

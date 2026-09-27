@@ -97,6 +97,9 @@ abstract final class AppIcons {
   /// Returns an archived item to the active list.
   static const IconData unarchive = Icons.unarchive_outlined;
 
+  /// Brings a deleted record back from the recycle bin, whole.
+  static const IconData restore = Icons.restore_from_trash_outlined;
+
   /// Makes a copy.
   static const IconData duplicate = Icons.content_copy_outlined;
 
@@ -127,6 +130,9 @@ abstract final class AppIcons {
   /// Narrows a list.
   static const IconData filter = Icons.filter_list;
 
+  /// Orders a list by a chosen key, in either direction.
+  static const IconData sort = Icons.sort;
+
   /// Pins an item to the top, and a pinned value.
   static const IconData pin = Icons.push_pin_outlined;
 
@@ -135,6 +141,9 @@ abstract final class AppIcons {
 
   /// A confirmed choice.
   static const IconData check = Icons.check;
+
+  /// Ticks every row of a list at once.
+  static const IconData selectAll = Icons.select_all;
 
   /// Shows a hidden value.
   static const IconData show = Icons.visibility_outlined;
@@ -211,6 +220,9 @@ abstract final class AppIcons {
 
   /// Approved and verified.
   static const IconData verified = Icons.verified;
+
+  /// Merged in from another device's package.
+  static const IconData merge = Icons.merge;
 
   // Capture.
 

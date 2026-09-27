@@ -62,6 +62,11 @@ final class _EmptyProcessingRepository implements ProcessingRepository {
   }
 
   @override
+  Future<Result<String>> requeue(String recordId) async {
+    return const FailureResult<String>(_missingJob);
+  }
+
+  @override
   Future<Result<ProcessingJob?>> claim(
     Duration lease, {
     String? projectId,

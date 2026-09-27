@@ -475,6 +475,220 @@ void main() {
       expect(await _flagAudit(db), isEmpty);
     });
   });
+
+  group('operator edits', () {
+    final DateTime t1 = t0.add(const Duration(minutes: 5));
+
+    test(
+      'an edit writes the refined value, supersedes the approved one and audits what showed',
+      () async {
+        await seedField(
+          db,
+          'f1',
+          recordId: recordId,
+          fieldKey: 'colour',
+          raw: 'Red',
+          refined: 'Crimson',
+          approved: 'Scarlet',
+        );
+
+        expect(
+          await writeRecordFieldEdit(
+            db,
+            id: 'f1',
+            value: 'Maroon',
+            clock: FixedClock(t1),
+            deviceId: 'device-b',
+            operator: 'Ada',
+            reason: 'Checked on site',
+          ),
+          isTrue,
+        );
+
+        final RecordField stored = await _field(db, 'f1');
+        expect(stored.valueRaw, 'Red');
+        expect(stored.valueRefined, 'Maroon');
+        expect(stored.valueFinal, isNull);
+        expect(stored.source, recordFieldEditSource);
+        expect(stored.verified, isTrue);
+        expect(stored.verifiedBy, 'Ada');
+        expect(stored.verifiedAt?.toUtc(), t1);
+        expect(stored.rev, 2);
+        expect(stored.updatedAt.toUtc(), t1);
+        expect(stored.updatedByDevice, 'device-b');
+
+        final AuditLogData audit = (await _allAudit(db)).single;
+        expect(audit.entityType, 'records');
+        expect(audit.entityId, recordId);
+        expect(audit.action, AuditAction.updated);
+        expect(audit.fieldKey, 'colour');
+        expect(audit.previousValue, 'Scarlet');
+        expect(audit.newValue, 'Maroon');
+        expect(audit.reason, 'Checked on site');
+        expect(audit.operator, 'Ada');
+        expect(audit.device, 'device-b');
+        expect(audit.at.toUtc(), t1);
+      },
+    );
+
+    test(
+      'the previous value is what showed: refined over raw, raw alone, or nothing',
+      () async {
+        await seedField(
+          db,
+          'refined',
+          recordId: recordId,
+          fieldKey: 'a',
+          raw: 'Red',
+          refined: 'Crimson',
+        );
+        await seedField(db, 'raw', recordId: recordId, fieldKey: 'b', raw: 'X');
+        await seedField(
+          db,
+          'blank-final',
+          recordId: recordId,
+          fieldKey: 'c',
+          raw: 'Y',
+          approved: '',
+        );
+        await seedField(db, 'empty', recordId: recordId, fieldKey: 'd');
+
+        for (final String id in <String>[
+          'refined',
+          'raw',
+          'blank-final',
+          'empty',
+        ]) {
+          expect(await writeRecordFieldEdit(db, id: id, value: 'New'), isTrue);
+        }
+
+        expect(
+          (await _allAudit(db)).map((AuditLogData row) => row.previousValue),
+          <String?>['Crimson', 'X', 'Y', null],
+        );
+      },
+    );
+
+    test('an edit to what already shows writes nothing', () async {
+      await seedField(
+        db,
+        'f1',
+        recordId: recordId,
+        fieldKey: 'colour',
+        raw: 'Red',
+        refined: 'Crimson',
+      );
+
+      expect(
+        await writeRecordFieldEdit(db, id: 'f1', value: 'Crimson'),
+        isFalse,
+      );
+
+      final RecordField stored = await _field(db, 'f1');
+      expect(stored.rev, 1);
+      expect(stored.source, 'ocr');
+      expect(stored.verified, isFalse);
+      expect(await _allAudit(db), isEmpty);
+    });
+
+    test(
+      'a removed value comes back with the edit and no previous value',
+      () async {
+        await seedField(
+          db,
+          'f1',
+          recordId: recordId,
+          fieldKey: 'colour',
+          raw: 'Red',
+        );
+        await writeTombstone(
+          db,
+          entityType: 'record_fields',
+          entityId: 'f1',
+          reason: 'Removed on another device.',
+        );
+
+        expect(await writeRecordFieldEdit(db, id: 'f1', value: ''), isFalse);
+        expect(await _tombstoned(db, 'f1'), isTrue);
+
+        expect(await writeRecordFieldEdit(db, id: 'f1', value: 'Red'), isTrue);
+        expect(await _tombstoned(db, 'f1'), isFalse);
+        expect((await _field(db, 'f1')).valueRefined, 'Red');
+        final AuditLogData audit = (await _allAudit(db)).single;
+        expect(audit.previousValue, isNull);
+        expect(audit.newValue, 'Red');
+      },
+    );
+
+    test('an edit leaves the value flags alone', () async {
+      await seedField(
+        db,
+        'f1',
+        recordId: recordId,
+        fieldKey: 'colour',
+        raw: 'Red',
+      );
+      await setRecordFieldRetired(db, id: 'f1', clock: FixedClock(t0));
+      await setRecordFieldEvidenceRemoved(db, id: 'f1', clock: FixedClock(t0));
+
+      expect(await writeRecordFieldEdit(db, id: 'f1', value: 'Blue'), isTrue);
+
+      final RecordField stored = await _field(db, 'f1');
+      expect(stored.retiredAt?.toUtc(), t0);
+      expect(stored.evidenceRemovedAt?.toUtc(), t0);
+    });
+
+    test('an edit of a value not on this device fails', () async {
+      await expectLater(
+        writeRecordFieldEdit(db, id: 'missing', value: 'x'),
+        throwsA(isA<StorageFailure>()),
+      );
+      expect(await _allAudit(db), isEmpty);
+    });
+
+    test('an edit rolls back with the transaction that wrote it', () async {
+      await seedField(
+        db,
+        'f1',
+        recordId: recordId,
+        fieldKey: 'colour',
+        raw: 'Red',
+      );
+
+      final Result<void> result = await runInTransaction(db, () async {
+        await writeRecordFieldEdit(db, id: 'f1', value: 'Blue');
+        throw const StorageFailure(message: 'fail');
+      });
+
+      expect(result, isA<FailureResult<void>>());
+      final RecordField stored = await _field(db, 'f1');
+      expect(stored.valueRefined, isNull);
+      expect(stored.rev, 1);
+      expect(await _allAudit(db), isEmpty);
+    });
+  });
+}
+
+/// Every audit row, in write order.
+Future<List<AuditLogData>> _allAudit(AppDatabase db) async {
+  final List<QueryRow> rows = await db
+      .customSelect('SELECT * FROM audit_log ORDER BY rowid')
+      .get();
+  return <AuditLogData>[
+    for (final QueryRow row in rows) db.auditLog.map(row.data),
+  ];
+}
+
+/// Whether value [id] carries a tombstone.
+Future<bool> _tombstoned(AppDatabase db, String id) async {
+  final QueryRow? row = await db
+      .customSelect(
+        "SELECT 1 FROM tombstones WHERE entity_type = 'record_fields' "
+        'AND entity_id = ?',
+        variables: <Variable<Object>>[Variable<String>(id)],
+      )
+      .getSingleOrNull();
+  return row != null;
 }
 
 Future<RecordField> _field(AppDatabase db, String id) {

@@ -1125,8 +1125,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     }
   }
 
-  /// Writes the edit to its record and returns to the record's page. A
-  /// failure keeps every change and offers Retry.
+  /// Writes the edit to its record and returns to the record's page with a
+  /// [CaptureEditOutcome]. A failure keeps every change and offers Retry.
   Future<void> _saveEdits() async {
     final _CaptureUiController ui = ref.read(
       _captureUiProvider(_sessionKey()).notifier,
@@ -1134,6 +1134,13 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     if (ref.read(_captureUiProvider(_sessionKey())).saving || !mounted) {
       return;
     }
+    // Photos not yet filed on the record are the ones this save adds.
+    final CaptureSession editing = ref.read(
+      captureControllerProvider(_sessionKey()),
+    );
+    final int added = editing.photos
+        .where((PhotoDraft photo) => photo.recordId != editing.recordId)
+        .length;
     ui.setSaving(true);
     final Result<void> saved;
     try {
@@ -1157,7 +1164,11 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         );
       case Success<void>():
         showAppSnack(context, Copy.recordEditSaved, tone: SnackTone.success);
-        unawaited(Navigator.of(context).maybePop());
+        unawaited(
+          Navigator.of(
+            context,
+          ).maybePop<CaptureEditOutcome>((photosAdded: added)),
+        );
     }
   }
 
@@ -1377,3 +1388,9 @@ bool _sameContext(Map<String, String> left, Map<String, String> right) {
   }
   return true;
 }
+
+/// What a saved edit of a record did, handed back as the edit page's pop
+/// result: how many photos it filed on the record, so the page that opened
+/// the edit can offer to process the record again (task 014 step 5).
+/// Leaving without saving pops with no result.
+typedef CaptureEditOutcome = ({int photosAdded});

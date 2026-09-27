@@ -85,6 +85,50 @@ void main() {
     expect(_ok(await harness.sessions.loadSession(_key)), isNull);
   });
 
+  testWidgets('Save changes hands back how many photos the edit filed, and '
+      'leaving without saving hands back nothing', (WidgetTester tester) async {
+    final _Harness harness = await _open(tester);
+    final CaptureController controller = ProviderScope.containerOf(
+      tester.element(find.byType(CaptureScreen)),
+    ).read(captureControllerProvider(_key).notifier);
+    await controller.addPhoto(
+      const PhotoDraft(
+        id: 'f3',
+        projectId: 'p1',
+        relativePath: 'photos/f3.jpg',
+        sha256: 'f3-sha',
+        sortOrder: 2,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(Copy.recordEditSave));
+    await tester.pumpAndSettle();
+
+    expect(await harness.edited, const (photosAdded: 1));
+    expect(
+      harness.records.updates.single.photos.map((PhotoDraft p) => p.id),
+      <String>['f1', 'f2', 'f3'],
+    );
+
+    final Future<Object?> again = harness.router.push<Object?>(
+      RoutePaths.projectRecordEdit('p1', 'r1'),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(Copy.recordEditSave));
+    await tester.pumpAndSettle();
+    expect(await again, isA<CaptureEditOutcome>());
+    expect(await again, const (photosAdded: 0));
+
+    final Future<Object?> left = harness.router.push<Object?>(
+      RoutePaths.projectRecordEdit('p1', 'r1'),
+    );
+    await tester.pumpAndSettle();
+    harness.router.pop();
+    await tester.pumpAndSettle();
+    expect(await left, isNull);
+  });
+
   testWidgets('an unsaved new capture of the project survives an edit', (
     WidgetTester tester,
   ) async {
@@ -203,6 +247,7 @@ typedef _Harness = ({
   _Records records,
   CapturePersistence sessions,
   CaptureSession Function(WidgetTester tester) session,
+  Future<Object?> edited,
 });
 
 Future<_Harness> _open(
@@ -258,7 +303,9 @@ Future<_Harness> _open(
     ),
   );
   await tester.pump();
-  unawaited(router.push(RoutePaths.projectRecordEdit('p1', 'r1')));
+  final Future<Object?> edited = router.push<Object?>(
+    RoutePaths.projectRecordEdit('p1', 'r1'),
+  );
   await tester.pumpAndSettle();
   return (
     router: router,
@@ -267,6 +314,7 @@ Future<_Harness> _open(
     session: (WidgetTester tester) => ProviderScope.containerOf(
       tester.element(find.byType(CaptureScreen)),
     ).read(captureControllerProvider(_key)),
+    edited: edited,
   );
 }
 

@@ -7,6 +7,7 @@ import 'package:drift/drift.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/attachments.dart';
+import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/captions.dart';
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/record_fields.dart';
@@ -17,6 +18,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 
 import '../domain/audio_draft.dart';
 import '../domain/capture_record_persistence.dart';
@@ -44,7 +46,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
   final String _deviceId;
   final IdService _ids;
 
-  /// Persists one complete CAPTURED record or rolls every row back.
+  /// Persists one complete captured record or rolls every row back.
   @override
   Future<Result<String>> persist(CaptureSession session) {
     return createRecord(session);
@@ -72,7 +74,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
             id: Value<String>(recordId),
             projectId: Value<String>(session.projectId),
             templateId: Value<String>(session.templateId),
-            status: const Value<String>('CAPTURED'),
+            status: Value<String>(RecordStatus.captured.stored),
             processingMode: const Value<String>('manual'),
             contextJson: Value<String>(jsonEncode(session.contextSnapshot)),
             identityHash: Value<String>(
@@ -86,6 +88,18 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
           deviceId: _deviceId,
           ids: _ids,
         ),
+      );
+      // The record's own first history entry, before its per-field rows
+      // (task 014 D10: action created, no field key).
+      await appendAudit(
+        _db,
+        entityType: _db.records.actualTableName,
+        entityId: recordId,
+        action: AuditAction.created,
+        newValue: RecordStatus.captured.stored,
+        reason: _captureAuditReason,
+        clock: _clock,
+        device: _deviceId,
       );
 
       for (final PhotoDraft photo in session.photos) {
@@ -251,6 +265,14 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
     }
   }
 
+  /// Writes what [edited] changed on its saved record in one transaction.
+  ///
+  /// Beyond the files, captions and audio: every photo that joins or leaves
+  /// the record gets a history row (`photo`, `added` or `removed`, the photo
+  /// id as reason); a value whose photo evidence left with a removed photo
+  /// is flagged as evidence removed and kept; and an approved record that
+  /// changed goes back to needsReview (task 014 step 5). Template, context
+  /// and field values stay.
   @override
   Future<Result<void>> update(CaptureSession edited) {
     final String? recordId = edited.recordId;
@@ -273,19 +295,28 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
       final Set<String> kept = <String>{
         for (final PhotoDraft photo in edited.photos) photo.id,
       };
+      final List<String> removed = <String>[
+        for (final PhotoDraft photo in stored.photos)
+          if (!kept.contains(photo.id)) photo.id,
+      ];
+      final List<String> added = <String>[
+        for (final PhotoDraft photo in edited.photos)
+          if (!before.containsKey(photo.id)) photo.id,
+      ];
+      // Whether the edit wrote anything at all; an approved record that
+      // changed goes back to review below.
+      bool changed = removed.isNotEmpty || added.isNotEmpty;
 
       // Removed photos are tombstoned; their files stay for the purge job.
-      for (final PhotoDraft photo in stored.photos) {
-        if (!kept.contains(photo.id)) {
-          await writeTombstone(
-            _db,
-            entityType: _db.photos.actualTableName,
-            entityId: photo.id,
-            reason: 'Removed while editing the record.',
-            clock: _clock,
-            deviceId: _deviceId,
-          );
-        }
+      for (final String photoId in removed) {
+        await writeTombstone(
+          _db,
+          entityType: _db.photos.actualTableName,
+          entityId: photoId,
+          reason: 'Removed while editing the record.',
+          clock: _clock,
+          deviceId: _deviceId,
+        );
       }
 
       // A changed caption is refined beside its raw text; a new one is
@@ -307,6 +338,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         if (next == previous) {
           continue;
         }
+        changed = true;
         final sqlite.Caption? row = await _latestCaption(
           owner.type,
           owner.ownerId,
@@ -385,6 +417,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         } else if (old.sortOrder != photo.sortOrder ||
             old.rotationDegrees != photo.rotationDegrees ||
             old.photoType != photo.photoType) {
+          changed = true;
           _expect(
             await upsertPhoto(
               _db,
@@ -402,6 +435,24 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         }
       }
 
+      // The record's history names every photo that left or joined it
+      // (task 014 D10). Evidence is checked only once the added photos are
+      // filed, so an edited copy filed here keeps its original's values
+      // live; a value whose photo evidence is all gone is flagged, never
+      // deleted (D9).
+      for (final String photoId in removed) {
+        await _appendPhotoAudit(recordId, photoId, _photoRemoved);
+        await flagEvidenceRemovedForPhoto(
+          _db,
+          photoId: photoId,
+          clock: _clock,
+          deviceId: _deviceId,
+        );
+      }
+      for (final String photoId in added) {
+        await _appendPhotoAudit(recordId, photoId, _photoAdded);
+      }
+
       // New audio is linked to the record and to its photos.
       final Set<String> heard = <String>{
         for (final AudioDraft clip in stored.audio) clip.id,
@@ -411,6 +462,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         if (heard.contains(clip.id)) {
           continue;
         }
+        changed = true;
         await _fileAudio(clip, recordId: recordId, index: audioIndex, now: now);
         audioIndex++;
       }
@@ -424,7 +476,56 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
           ids: _ids,
         ),
       );
+
+      if (changed) {
+        await _reviewAgainIfApproved(recordId);
+      }
     });
+  }
+
+  /// Appends the record-level history row for photo [photoId] having
+  /// [change]d (`added` or `removed`), with the photo id as its reason.
+  Future<void> _appendPhotoAudit(
+    String recordId,
+    String photoId,
+    String change,
+  ) {
+    return appendAudit(
+      _db,
+      entityType: _db.records.actualTableName,
+      entityId: recordId,
+      action: AuditAction.updated,
+      fieldKey: _photoAuditKey,
+      newValue: change,
+      reason: photoId,
+      clock: _clock,
+      device: _deviceId,
+    );
+  }
+
+  /// Sends an approved record back to review after its evidence changed,
+  /// inside the edit's transaction. This is `RecordLifecycle.afterEdit`
+  /// (features/records/domain/record_lifecycle.dart): approved goes to
+  /// needsReview and every other status stays. It is inlined because
+  /// capture must not import the records feature; if that rule changes,
+  /// both move together.
+  Future<void> _reviewAgainIfApproved(String recordId) async {
+    final sqlite.RecordRow? record = await (_db.select(
+      _db.records,
+    )..where((row) => row.id.equals(recordId))).getSingleOrNull();
+    if (record == null ||
+        RecordStatus.fromStored(record.status) != RecordStatus.approved) {
+      return;
+    }
+    await writeRecordStatus(
+      _db,
+      recordId: recordId,
+      status: RecordStatus.needsReview.stored,
+      previousStatus: record.status,
+      clock: _clock,
+      deviceId: _deviceId,
+      reason: _editStatusReason,
+    );
   }
 
   /// The edit session for [recordId] as stored now, or null when the record
@@ -433,7 +534,8 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
     final sqlite.RecordRow? record = await (_db.select(
       _db.records,
     )..where((row) => row.id.equals(recordId))).getSingleOrNull();
-    if (record == null || _gone.contains(record.status.toLowerCase())) {
+    if (record == null ||
+        _gone.contains(RecordStatus.fromStored(record.status))) {
       return null;
     }
     final List<sqlite.Photo> rows =
@@ -668,7 +770,27 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
 }
 
 /// Statuses of a record that is no longer shown or edited.
-const Set<String> _gone = <String>{'archived', 'deleted'};
+const Set<RecordStatus> _gone = <RecordStatus>{
+  RecordStatus.archived,
+  RecordStatus.deleted,
+};
+
+/// Audit reason of the record-level `created` row a capture writes.
+const String _captureAuditReason = 'capture';
+
+/// Audit field key of a photo joining or leaving a saved record (task 014
+/// D10); the new value is [_photoAdded] or [_photoRemoved] and the reason
+/// is the photo id.
+const String _photoAuditKey = 'photo';
+
+/// New value of the history row for a photo filed on a saved record.
+const String _photoAdded = 'added';
+
+/// New value of the history row for a photo removed from a saved record.
+const String _photoRemoved = 'removed';
+
+/// Audit reason of the status move an edit of an approved record makes.
+const String _editStatusReason = 'Photos, captions or audio edited.';
 
 const StorageFailure _recordGone = StorageFailure(
   message: 'That record is no longer on this device.',

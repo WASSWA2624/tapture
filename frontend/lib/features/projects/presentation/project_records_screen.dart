@@ -6,6 +6,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
@@ -75,16 +76,32 @@ final _projectRecordsProvider =
           .watchRecords(query.projectId, statuses: query.statuses);
     }, retry: (int _, Object _) => null);
 
+/// The stored statuses the route [filter] lists. Each list is one instance,
+/// so the provider family keyed on it keeps its entry across rebuilds.
 List<String> _statusesFor(String filter) {
-  return switch (filter) {
-    'needsReview' => const <String>['needsReview'],
-    'approved' => const <String>['approved'],
-    _ => const <String>[
-      'draft',
-      'captured',
-      'CAPTURED',
-      'queued',
-      'processing',
-    ],
+  return switch (RecordStatus.fromStored(filter)) {
+    RecordStatus.needsReview => _reviewStatuses,
+    RecordStatus.approved => _approvedStatuses,
+    _ => _processStatuses,
   };
 }
+
+final List<String> _reviewStatuses = List<String>.unmodifiable(<String>[
+  RecordStatus.needsReview.stored,
+]);
+
+final List<String> _approvedStatuses = List<String>.unmodifiable(<String>[
+  RecordStatus.approved.stored,
+]);
+
+/// Records still to be processed: waiting, running or failed.
+final List<String> _processStatuses = List<String>.unmodifiable(<String>[
+  for (final RecordStatus status in const <RecordStatus>[
+    RecordStatus.draft,
+    RecordStatus.captured,
+    RecordStatus.queued,
+    RecordStatus.processing,
+    RecordStatus.failed,
+  ])
+    status.stored,
+]);

@@ -878,6 +878,70 @@ void main() {
     },
   );
 
+  test(
+    'archiving a record stores the canonical status and audits the move',
+    () async {
+      _ok(await repo.create(aProject()));
+      _ok(
+        await upsertRecord(
+          db,
+          row: _recordRow(id: 'record-1', hash: 'hash-archive'),
+          clock: clock,
+          deviceId: 'device-test',
+          ids: UuidV7Service.sequence(clock),
+        ),
+      );
+      final int rev = (await db.select(db.records).getSingle()).rev;
+
+      _ok(await repo.archiveRecord('record-1'));
+
+      final RecordRow stored = await db.select(db.records).getSingle();
+      expect(stored.status, 'archived');
+      expect(stored.rev, rev + 1);
+      final AuditLogData moved = (await db.select(db.auditLog).get())
+          .singleWhere((AuditLogData row) => row.fieldKey == 'status');
+      expect(moved.entityId, 'record-1');
+      expect(moved.previousValue, 'captured');
+      expect(moved.newValue, 'archived');
+      expect(await repo.archiveRecord('missing'), isA<FailureResult<void>>());
+    },
+  );
+
+  test(
+    'a processed record is listed whatever spelling it was stored in',
+    () async {
+      _ok(await repo.create(aProject()));
+      final IdService ids = UuidV7Service.sequence(clock);
+      for (final (String id, String status) in <(String, String)>[
+        ('r1', 'NEEDS_REVIEW'),
+        ('r2', 'EXTRACTED'),
+        ('r3', 'CAPTURED'),
+      ]) {
+        _ok(
+          await upsertRecord(
+            db,
+            row: _recordRow(id: id, hash: 'hash-$id', status: status),
+            clock: clock,
+            deviceId: 'device-test',
+            ids: ids,
+          ),
+        );
+      }
+
+      final List<ProjectRecordRow> rows = await repo
+          .watchRecords(
+            'project-1',
+            statuses: const <String>['needsReview', 'extracted', 'captured'],
+          )
+          .first;
+
+      expect(
+        <String>[for (final ProjectRecordRow row in rows) row.status]..sort(),
+        <String>['captured', 'extracted', 'needsReview'],
+      );
+    },
+  );
+
   test('presentation under projects imports no core/db', () {
     final Directory presentation = Directory(
       'lib/features/projects/presentation',

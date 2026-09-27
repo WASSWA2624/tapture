@@ -25,15 +25,9 @@ final class ProjectRecordFilter extends Notifier<Set<RecordStatus>> {
 
   /// The lifecycle status a stored [raw] status names, whatever its case or
   /// separators (`CAPTURED`, `needs_review`), or null for one outside the
-  /// set.
+  /// set. The one decoder is [RecordStatus.fromStored].
   static RecordStatus? statusOf(String raw) {
-    final String folded = _fold(raw);
-    for (final RecordStatus status in RecordStatus.values) {
-      if (_fold(status.name) == folded) {
-        return status;
-      }
-    }
-    return null;
+    return RecordStatus.fromStored(raw.trim());
   }
 
   /// Whether [row] is listed under [statuses].
@@ -41,8 +35,6 @@ final class ProjectRecordFilter extends Notifier<Set<RecordStatus>> {
     return statuses.isEmpty || statuses.contains(statusOf(row.status));
   }
 }
-
-String _fold(String value) => value.replaceAll('_', '').trim().toLowerCase();
 
 /// The chosen record statuses (FE-STATE-02).
 final NotifierProvider<ProjectRecordFilter, Set<RecordStatus>>

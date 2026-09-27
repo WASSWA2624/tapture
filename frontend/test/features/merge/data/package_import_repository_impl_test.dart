@@ -73,13 +73,50 @@ void main() {
     expect(imported.records, 2);
     for (final String table in BundleFormat.insertOrder) {
       final List<Map<String, Object?>> expected = _sorted(bundle.rowsOf(table));
+      // The import adds its own history rows beside the travelled ones.
+      final String here = table == 'audit_log'
+          ? "SELECT * FROM audit_log WHERE field_key IS NOT 'merge'"
+          : 'SELECT * FROM $table';
       final List<Map<String, Object?>> actual = _sorted(<Map<String, Object?>>[
-        for (final QueryRow row
-            in await target.customSelect('SELECT * FROM $table').get())
+        for (final QueryRow row in await target.customSelect(here).get())
           row.data,
       ]);
       expect(actual, expected, reason: table);
     }
+    final List<QueryRow> merged = await target
+        .customSelect(
+          'SELECT entity_type, entity_id, action, new_value, reason, device '
+          "FROM audit_log WHERE field_key = 'merge' ORDER BY entity_id",
+        )
+        .get();
+    expect(
+      <Object?>[for (final QueryRow row in merged) row.data['entity_id']],
+      <Object?>[
+        for (final Map<String, Object?> row in _sorted(
+          bundle.rowsOf('records'),
+        ))
+          row['id'],
+      ],
+    );
+    for (final QueryRow row in merged) {
+      expect(row.data['entity_type'], 'records');
+      expect(row.data['action'], 'created');
+      expect(row.data['new_value'], 'inserted');
+      expect(row.data['reason'], 'site.zip');
+      expect(row.data['device'], 'device-b');
+    }
+    // The search index was rebuilt inside the import's transaction.
+    expect(
+      (await target
+              .customSelect('SELECT record_id FROM record_search_docs')
+              .get())
+          .length,
+      2,
+    );
+    expect(
+      await target.customSelect('SELECT 1 FROM record_search_pending').get(),
+      isEmpty,
+    );
     for (final MapEntry<String, Uint8List> file in source.files.entries) {
       expect(
         targetFile(source.folderName, file.key).readAsBytesSync(),
@@ -214,6 +251,33 @@ void main() {
         photo,
       );
 
+      final List<QueryRow> history = await target
+          .customSelect(
+            'SELECT entity_id, action, new_value, reason, operator '
+            "FROM audit_log WHERE field_key = 'merge' AND operator = 'Ben' "
+            'ORDER BY entity_id',
+          )
+          .get();
+      final String settledRecord =
+          (await target
+                      .customSelect(
+                        "SELECT record_id FROM record_fields WHERE id = 'value-0'",
+                      )
+                      .getSingle())
+                  .data['record_id']!
+              as String;
+      expect(
+        <String, Object?>{
+          for (final QueryRow row in history)
+            row.data['entity_id']! as String: row.data['new_value'],
+        },
+        <String, Object?>{'record-new': 'inserted', settledRecord: 'updated'},
+      );
+      for (final QueryRow row in history) {
+        expect(row.data['reason'], 'site.zip');
+        expect(row.data['operator'], 'Ben');
+      }
+
       final MergePlan again = await _plan(repository(), bundle, source);
       expect(again.isEmpty, isTrue);
     });
@@ -247,7 +311,15 @@ void main() {
           chooser: 'Ben',
         ),
       );
-      expect(await _count(target, 'audit_log'), auditBefore + 1);
+      // One entry for the settled conflict, one for the changed record.
+      expect(await _count(target, 'audit_log'), auditBefore + 2);
+      final QueryRow membership = await target
+          .customSelect(
+            'SELECT entity_id, new_value FROM audit_log '
+            "WHERE field_key = 'merge' AND new_value = 'updated'",
+          )
+          .getSingle();
+      expect(membership.data['entity_id'], conflict.recordId);
       final QueryRow value = await target
           .customSelect(
             "SELECT value_raw, value_final, verified FROM record_fields "

@@ -6,10 +6,12 @@ import 'package:tapture/core/bundle/bundle.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
+import 'package:tapture/core/db/record_schema.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/duplicates.dart';
 import 'package:tapture/core/db/tables/merge.dart';
 import 'package:tapture/core/db/tables/projects.dart';
+import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -36,6 +38,13 @@ import 'package_files.dart';
 /// other file uses; then every row is written in one transaction. When
 /// anything fails the transaction rolls back and the copied files are
 /// removed, so the device is exactly as it was (FE-STATE-07).
+///
+/// The search index is rebuilt once per touched record before that
+/// transaction commits, not once per inserted row
+/// ([RecordSchema.deferIndexing]). Every record the package inserts or
+/// changes gets one history row: entity `records`, field key `merge`, new
+/// value `inserted` (action created) or `updated`, and the package name as
+/// the reason (task 014 D10).
 final class PackageImportRepositoryImpl implements PackageImportRepository {
   /// Opens against [_db] and [_files], stamping writes from [_clock],
   /// [_deviceId] and [_ids]. [_guard] checks headroom before a copy, and
@@ -327,31 +336,41 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
         onProgress?.call((index + 1) / files.length);
       }
       final int records = bundle.rowsOf('records').length;
-      final Result<void> stored = await runInTransaction(_db, () async {
-        for (final String table in BundleFormat.insertOrder) {
-          if (BundleFormat.referenceTables.contains(table)) {
-            continue;
+      final Result<void> stored = await runInTransaction(
+        _db,
+        () => RecordSchema.deferIndexing(_db, () async {
+          for (final String table in BundleFormat.insertOrder) {
+            if (BundleFormat.referenceTables.contains(table)) {
+              continue;
+            }
+            final List<Map<String, Object?>> rows = table == 'projects'
+                ? <Map<String, Object?>>[project]
+                : bundle.rowsOf(table);
+            final Set<String> columns = await _columns(table);
+            for (final Map<String, Object?> row in rows) {
+              await _insert(table, row, columns);
+            }
           }
-          final List<Map<String, Object?>> rows = table == 'projects'
-              ? <Map<String, Object?>>[project]
-              : bundle.rowsOf(table);
-          final Set<String> columns = await _columns(table);
-          for (final Map<String, Object?> row in rows) {
-            await _insert(table, row, columns);
-          }
-        }
-        await _insertReference(bundle.tables);
-        await _session(
-          bundle,
-          status: 'imported',
-          counts: <String, Object?>{
-            'project_id': projectId,
-            'records': records,
-            'photos': bundle.rowsOf('photos').length,
-            'files': files.length,
-          },
-        );
-      });
+          await _insertReference(bundle.tables);
+          await _session(
+            bundle,
+            status: 'imported',
+            counts: <String, Object?>{
+              'project_id': projectId,
+              'records': records,
+              'photos': bundle.rowsOf('photos').length,
+              'files': files.length,
+            },
+          );
+          await _auditMerged(
+            bundle,
+            inserted: <String>[
+              for (final Map<String, Object?> row in bundle.rowsOf('records'))
+                row['id']! as String,
+            ],
+          );
+        }),
+      );
       if (stored case FailureResult<void>(
         failure: final Failure writeFailure,
       )) {
@@ -426,66 +445,85 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
         onProgress?.call((index + 1) / plan.files.length);
       }
       final String sessionId = _ids.newId();
-      final Result<void> stored = await runInTransaction(_db, () async {
-        for (final String table in BundleFormat.insertOrder) {
-          final List<Map<String, Object?>> rows =
-              plan.inserts[table] ?? const <Map<String, Object?>>[];
-          if (rows.isEmpty) {
-            continue;
+      final Result<void> stored = await runInTransaction(
+        _db,
+        () => RecordSchema.deferIndexing(_db, () async {
+          for (final String table in BundleFormat.insertOrder) {
+            final List<Map<String, Object?>> rows =
+                plan.inserts[table] ?? const <Map<String, Object?>>[];
+            if (rows.isEmpty) {
+              continue;
+            }
+            final Set<String> columns = await _columns(table);
+            for (final Map<String, Object?> row in rows) {
+              final Object? path = row['relative_path'];
+              await _insert(
+                table,
+                path is String && moved.containsKey(path)
+                    ? <String, Object?>{...row, 'relative_path': moved[path]}
+                    : row,
+                columns,
+              );
+            }
           }
-          final Set<String> columns = await _columns(table);
-          for (final Map<String, Object?> row in rows) {
-            final Object? path = row['relative_path'];
-            await _insert(
-              table,
-              path is String && moved.containsKey(path)
-                  ? <String, Object?>{...row, 'relative_path': moved[path]}
-                  : row,
-              columns,
+          for (final settled in plan.settled) {
+            await _writeValue(
+              rowId: settled.rowId,
+              previous: settled.previous,
+              value: settled.value,
+              verified: settled.verified,
+              reason: 'merge: ${settled.rule.name}',
+              operator: chooser,
             );
           }
-        }
-        for (final settled in plan.settled) {
-          await _writeValue(
-            rowId: settled.rowId,
-            previous: settled.previous,
-            value: settled.value,
-            verified: settled.verified,
-            reason: 'merge: ${settled.rule.name}',
+          await _session(
+            bundle,
+            id: sessionId,
+            status: 'applied',
+            counts: <String, Object?>{
+              'project_id': projectId,
+              'records': plan.counts.newRecords,
+              'updated_records': plan.counts.updatedRecords,
+              'photos': plan.counts.newPhotos,
+              'photos_here': plan.counts.photosHere,
+              'deletions': plan.counts.deletions,
+              'conflicts': plan.conflicts.length,
+              'kept': plan.counts.kept,
+              'elsewhere': plan.counts.elsewhere,
+              'duplicates': duplicates.length,
+              'skipped': skipped.length,
+            },
+          );
+          for (final FieldConflict conflict in plan.conflicts) {
+            await _settle(
+              conflict,
+              choices[conflict.id]!,
+              sessionId: sessionId,
+              incoming: bundle.tables,
+              chooser: chooser,
+            );
+          }
+          for (final PossibleDuplicate pair in duplicates) {
+            await _pair(pair, projectId, skipped: skipped, chooser: chooser);
+          }
+          await _auditMerged(
+            bundle,
+            inserted: <String>[
+              for (final Map<String, Object?> row
+                  in plan.inserts['records'] ?? const <Map<String, Object?>>[])
+                row['id']! as String,
+            ],
+            updated: <String>[
+              ...plan.updatedRecords,
+              for (final FieldConflict conflict in plan.conflicts)
+                if (choices[conflict.id] == ConflictChoice.theirs &&
+                    conflict.recordId.isNotEmpty)
+                  conflict.recordId,
+            ],
             operator: chooser,
           );
-        }
-        await _session(
-          bundle,
-          id: sessionId,
-          status: 'applied',
-          counts: <String, Object?>{
-            'project_id': projectId,
-            'records': plan.counts.newRecords,
-            'updated_records': plan.counts.updatedRecords,
-            'photos': plan.counts.newPhotos,
-            'photos_here': plan.counts.photosHere,
-            'deletions': plan.counts.deletions,
-            'conflicts': plan.conflicts.length,
-            'kept': plan.counts.kept,
-            'elsewhere': plan.counts.elsewhere,
-            'duplicates': duplicates.length,
-            'skipped': skipped.length,
-          },
-        );
-        for (final FieldConflict conflict in plan.conflicts) {
-          await _settle(
-            conflict,
-            choices[conflict.id]!,
-            sessionId: sessionId,
-            incoming: bundle.tables,
-            chooser: chooser,
-          );
-        }
-        for (final PossibleDuplicate pair in duplicates) {
-          await _pair(pair, projectId, skipped: skipped, chooser: chooser);
-        }
-      });
+        }),
+      );
       if (stored case FailureResult<void>(
         failure: final Failure writeFailure,
       )) {
@@ -580,11 +618,19 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
           );
         }
       case ConflictKind.status:
+        // Merge is an exempt caller of the record lifecycle: the person
+        // chose the incoming status, which is stored in its canonical
+        // spelling and audited once, below.
         if (theirs) {
           await _update(
             'UPDATE records SET status = ?, updated_at = ?, '
             'updated_by_device = ?, rev = rev + 1 WHERE id = ?',
-            <Object?>[conflict.theirs, _now, _deviceId, entityId],
+            <Object?>[
+              canonicalRecordStatus(conflict.theirs),
+              _now,
+              _deviceId,
+              entityId,
+            ],
           );
         }
       case ConflictKind.deletedThere:
@@ -626,6 +672,42 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
       device: _deviceId,
       operator: chooser,
     );
+  }
+
+  /// Appends one history row to each record the package [inserted] (action
+  /// created) or [updated], inside the caller's transaction; a record in
+  /// both is only inserted.
+  Future<void> _auditMerged(
+    InspectedBundle bundle, {
+    required List<String> inserted,
+    List<String> updated = const <String>[],
+    String? operator,
+  }) async {
+    final Set<String> added = inserted.toSet();
+    final Set<String> changed = <String>{
+      for (final String id in updated)
+        if (!added.contains(id)) id,
+    };
+    for (final (Set<String> ids, AuditAction action, String outcome)
+        in <(Set<String>, AuditAction, String)>[
+          (added, AuditAction.created, _mergeInserted),
+          (changed, AuditAction.updated, _mergeUpdated),
+        ]) {
+      for (final String recordId in ids) {
+        await appendAudit(
+          _db,
+          entityType: 'records',
+          entityId: recordId,
+          action: action,
+          fieldKey: _mergeAuditKey,
+          newValue: outcome,
+          reason: bundle.name,
+          clock: _clock,
+          device: _deviceId,
+          operator: operator,
+        );
+      }
+    }
   }
 
   /// Writes a field's final value, leaving the captured one as it was
@@ -980,6 +1062,15 @@ Object? _movedCover(Object? settings, String from, String to) {
     return settings;
   }
 }
+
+/// Audit `field_key` of a record a package inserted or changed.
+const String _mergeAuditKey = 'merge';
+
+/// New value of the merge audit row of a record the package inserted.
+const String _mergeInserted = 'inserted';
+
+/// New value of the merge audit row of a record the package changed.
+const String _mergeUpdated = 'updated';
 
 /// A path beside [path] no other file uses: `<folder>/_merged/<n>-<name>`.
 String _freePath(String path) {

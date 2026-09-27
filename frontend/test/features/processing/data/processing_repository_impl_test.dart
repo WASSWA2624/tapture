@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/processing/data/processing_repository_impl.dart';
 import 'package:tapture/features/processing/domain/processing_repository.dart';
 import 'package:tapture/features/settings/settings.dart';
@@ -126,6 +128,47 @@ void main() {
     expect(snapshot.failed, 1);
     expect(snapshot.unprocessed, 0);
     expect(snapshot.groups, isEmpty);
+  });
+
+  test('requeue queues a record through the repository', () async {
+    await db.close();
+    db = await seededDatabase(records: 1);
+    final ProcessingRepositoryImpl store = repo(FixedClock(t0));
+    final RecordRow record = await db.select(db.records).getSingle();
+
+    final String id = _ok(await store.requeue(record.id));
+
+    expect(_ok(await store.byId(id))?.status, JobStatus.queued);
+    expect(
+      (await db.select(db.records).getSingle()).status,
+      RecordStatus.queued.stored,
+    );
+    expect(_ok(await store.requeue(record.id)), id);
+  });
+
+  test('the fake requeues, refuses and fails as the database does', () async {
+    final FakeProcessingRepository fake = FakeProcessingRepository();
+    addTearDown(fake.dispose);
+    fake.recordStatuses
+      ..['approved'] = RecordStatus.approved
+      ..['deleted'] = RecordStatus.deleted;
+    fake.requeueFailures['broken'] = const StorageFailure();
+
+    final String id = _ok(await fake.requeue('approved'));
+
+    expect(fake.recordStatuses['approved'], RecordStatus.queued);
+    expect(_ok(await fake.byId(id))?.status, JobStatus.queued);
+    expect(_ok(await fake.requeue('approved')), id);
+    expect(
+      (await fake.requeue('deleted') as FailureResult<String>).failure,
+      isA<ValidationFailure>(),
+    );
+    expect(fake.recordStatuses['deleted'], RecordStatus.deleted);
+    expect(
+      (await fake.requeue('broken') as FailureResult<String>).failure,
+      isA<StorageFailure>(),
+    );
+    expect(fake.requeued, <String>['approved', 'approved']);
   });
 
   test('the fake the later tests use round-trips a job', () async {

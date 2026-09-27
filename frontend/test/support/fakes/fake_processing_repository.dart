@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/processing/domain/job_retry.dart';
 import 'package:tapture/features/processing/domain/processing_repository.dart';
 
@@ -115,6 +116,57 @@ final class FakeProcessingRepository implements ProcessingRepository {
       ProcessingJob(id: '', recordId: recordId),
     );
     return saved.map((ProcessingJob job) => job.id);
+  }
+
+  /// Record statuses [requeue] checks and moves, by record id. A record not
+  /// seeded here is treated as one that may be queued, and gets no status.
+  final Map<String, RecordStatus> recordStatuses = <String, RecordStatus>{};
+
+  /// What [requeue] returns for a record id instead of queueing it, so a
+  /// bulk test can make one record of a selection fail.
+  final Map<String, Failure> requeueFailures = <String, Failure>{};
+
+  /// Record ids [requeue] queued, in call order.
+  final List<String> requeued = <String>[];
+
+  @override
+  Future<Result<String>> requeue(String recordId) async {
+    if (recordId.isEmpty) {
+      return const FailureResult<String>(_noRecord);
+    }
+    final Failure? refused = requeueFailures[recordId];
+    if (refused != null) {
+      return FailureResult<String>(refused);
+    }
+    final RecordStatus? status = recordStatuses[recordId];
+    if (status != null &&
+        status != RecordStatus.queued &&
+        !_requeueFrom.contains(status)) {
+      return const FailureResult<String>(_notRequeueable);
+    }
+    final DateTime now = DateTime.now().toUtc();
+    ProcessingJob? existing;
+    for (final ProcessingJob job in _rows.values) {
+      if (job.recordId == recordId) {
+        existing = job;
+        break;
+      }
+    }
+    final DateTime? lease = existing?.leaseExpiresAt;
+    if (existing != null &&
+        existing.status == JobStatus.running &&
+        lease != null &&
+        lease.isAfter(now)) {
+      return const FailureResult<String>(_runningNow);
+    }
+    final String id = existing?.id ?? 'job-${_next++}';
+    _rows[id] = ProcessingJob(id: id, recordId: recordId, queuedAt: now);
+    if (status != null) {
+      recordStatuses[recordId] = RecordStatus.queued;
+    }
+    requeued.add(recordId);
+    _emit();
+    return Success<String>(id);
   }
 
   @override
@@ -343,6 +395,32 @@ const StorageFailure _missingJob = StorageFailure(
   message: 'That job is no longer on this device.',
   recoveryAction: 'Refresh the queue and try again.',
 );
+
+const ValidationFailure _noRecord = ValidationFailure(
+  message: 'A job needs a record.',
+  recoveryAction: 'Open a record and queue it again.',
+);
+
+const ValidationFailure _notRequeueable = ValidationFailure(
+  message: 'This record cannot be processed again.',
+  recoveryAction: 'Restore the record first, then process it again.',
+);
+
+const ValidationFailure _runningNow = ValidationFailure(
+  message: 'This record is being processed now.',
+  recoveryAction: 'Wait for the run to finish, then process it again.',
+);
+
+/// Statuses the real repository lets [FakeProcessingRepository.requeue]
+/// move to queued (task 014 D4).
+const Set<RecordStatus> _requeueFrom = <RecordStatus>{
+  RecordStatus.draft,
+  RecordStatus.captured,
+  RecordStatus.extracted,
+  RecordStatus.needsReview,
+  RecordStatus.approved,
+  RecordStatus.failed,
+};
 
 const StorageFailure _needsReason = StorageFailure(
   message: 'A delete needs a reason.',

@@ -9,11 +9,13 @@ import 'provenance.dart';
 /// default, if it has one. A review-required value, or a required field
 /// that is still empty, sets the record to needs review.
 final class ProposalApplication {
-  /// Status written when a person must look.
-  static const String needsReviewStatus = 'NEEDS_REVIEW';
+  /// Status written when a person must look: the stored spelling of
+  /// `RecordStatus.needsReview` (task 014 D2).
+  static const String needsReviewStatus = 'needsReview';
 
-  /// Status written when every applied value is above review.
-  static const String extractedStatus = 'EXTRACTED';
+  /// Status written when every applied value is above review: the stored
+  /// spelling of `RecordStatus.extracted`.
+  static const String extractedStatus = 'extracted';
 
   /// Provenance source of a value filled from the template's default.
   static const String defaultSource = 'default';

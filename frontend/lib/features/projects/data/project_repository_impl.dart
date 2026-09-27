@@ -6,6 +6,7 @@ import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/projects.dart' as projects_db;
 import 'package:tapture/core/db/tables/record_fields.dart';
+import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/db/tables/reference.dart';
 import 'package:tapture/core/db/tables/template_fields.dart';
 import 'package:tapture/core/db/tables/template_rows.dart';
@@ -21,6 +22,7 @@ import 'package:tapture/core/files/project_tree_stub.dart'
     as project_tree;
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 
 import '../domain/project_repository.dart';
 import 'project_mapper.dart';
@@ -404,8 +406,12 @@ final class ProjectRepositoryImpl implements ProjectRepository {
           "WHERE o.owner_type = 'record' AND o.owner_id = r.id "
           "AND a.kind = 'audio') AS audio "
           'FROM records r JOIN projects pr ON pr.id = r.project_id '
-          "WHERE r.id = ? AND r.status NOT IN ('archived', 'deleted')",
-          variables: <Variable<Object>>[Variable<String>(recordId)],
+          'WHERE r.id = ? AND r.status NOT IN (?, ?)',
+          variables: <Variable<Object>>[
+            Variable<String>(recordId),
+            Variable<String>(RecordStatus.archived.stored),
+            Variable<String>(RecordStatus.deleted.stored),
+          ],
           readsFrom: <TableInfo<dynamic, dynamic>>{
             _db.records,
             _db.projects,
@@ -501,17 +507,19 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     if (row == null) {
       return const FailureResult<void>(_missing);
     }
-    await (_db.update(
-      _db.records,
-    )..where((sqlite.$RecordsTable tbl) => tbl.id.equals(recordId))).write(
-      sqlite.RecordsCompanion(
-        status: const Value<String>('archived'),
-        updatedAt: Value<DateTime>(_clock.nowUtc()),
-        updatedByDevice: Value<String>(_deviceId),
-        rev: Value<int>(row.rev + 1),
+    // The one status writer: the move is stamped and audited.
+    return runInTransaction(
+      _db,
+      () => writeRecordStatus(
+        _db,
+        recordId: recordId,
+        status: RecordStatus.archived.stored,
+        previousStatus: row.status,
+        clock: _clock,
+        deviceId: _deviceId,
+        reason: _archiveReason,
       ),
     );
-    return const Success<void>(null);
   }
 
   @override
@@ -1231,11 +1239,19 @@ DateTime _later(DateTime project, DateTime? records) {
   return records;
 }
 
-const List<String> _closedRecordStatuses = <String>[
-  'approved',
-  'archived',
-  'deleted',
+/// Statuses a project's unprocessed count leaves out: work that is done or
+/// set aside.
+final List<String> _closedRecordStatuses = <String>[
+  for (final RecordStatus status in const <RecordStatus>[
+    RecordStatus.approved,
+    RecordStatus.archived,
+    RecordStatus.deleted,
+  ])
+    status.stored,
 ];
+
+/// Audit reason of a record archived from the record page.
+const String _archiveReason = 'archive';
 
 const String _deleteReason = 'Project deleted';
 

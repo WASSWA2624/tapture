@@ -11,12 +11,12 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
+import 'package:tapture/core/widgets/record_thumb.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 import 'project_record_filter.dart';
-import 'record_thumb.dart';
 
 /// Captured rows for [projectId], filtered by [capturedItemsQueryProvider].
 /// The project home pins the search field above its scrolling body.
@@ -95,7 +95,13 @@ class CapturedItemTile extends ConsumerWidget {
     final RecordPhotoRef? thumb = row.thumb;
     return AppListTile(
       title: projectRecordTitle(row, position: position),
-      leading: thumb == null ? null : RecordThumb(photo: thumb),
+      leading: thumb == null
+          ? null
+          : RecordThumb(
+              sha256: thumb.sha256,
+              storagePath: thumb.storagePath,
+              quarterTurns: thumb.quarterTurns,
+            ),
       onTap: () =>
           unawaited(context.push(RoutePaths.projectRecord(projectId, row.id))),
       trailing: Row(
@@ -144,17 +150,11 @@ final class CapturedItemsQuery extends Notifier<String> {
 
 /// Record statuses the project home lists: every live record, not the
 /// archived or deleted ones. Template record counts use the same set.
-const List<String> capturedItemStatuses = <String>[
-  'draft',
-  'captured',
-  'CAPTURED',
-  'queued',
-  'processing',
-  'needsReview',
-  'approved',
-  'failed',
-  'extracted',
-];
+final List<String> capturedItemStatuses = List<String>.unmodifiable(<String>[
+  for (final RecordStatus status in RecordStatus.values)
+    if (status != RecordStatus.archived && status != RecordStatus.deleted)
+      status.stored,
+]);
 
 /// The live records a project's home lists, before its search and filters.
 final capturedItemsProvider =

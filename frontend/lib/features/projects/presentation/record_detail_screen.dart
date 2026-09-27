@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/record_thumb.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/templates/templates.dart';
 
@@ -24,7 +25,6 @@ import '../projects.dart' show projectRepositoryProvider;
 import 'captured_items.dart';
 import 'record_edit_sheet.dart';
 import 'record_field_sheet.dart';
-import 'record_thumb.dart';
 
 /// One record: its photos, caption, field values, audio and capture time,
 /// with delete in the menu (FBK0000137), and Edit, which opens its photos
@@ -129,7 +129,9 @@ class _RecordBody extends ConsumerWidget {
             children: <Widget>[
               for (final RecordPhotoCaption photo in detail.photos)
                 RecordThumb(
-                  photo: photo.photo,
+                  sha256: photo.photo.sha256,
+                  storagePath: photo.photo.storagePath,
+                  quarterTurns: photo.photo.quarterTurns,
                   size: Space.x12 * 2,
                   hasCaption: photo.caption.isNotEmpty,
                 ),

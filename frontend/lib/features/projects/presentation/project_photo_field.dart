@@ -14,9 +14,9 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/photo_source_sheet.dart';
+import 'package:tapture/core/widgets/record_thumb.dart';
 
 import '../domain/project_repository.dart';
-import 'record_thumb.dart';
 
 /// The optional project photo on the create and edit screens: a preview,
 /// Add or Change, and Remove (FBK0000154). Not built on the web, which
@@ -72,11 +72,8 @@ class ProjectPhotoField extends ConsumerWidget {
         : saved != null
         ? RecordThumb(
             key: const ValueKey<String>('project-photo-stored'),
-            photo: (
-              sha256: saved.sha256,
-              storagePath: saved.path,
-              quarterTurns: 0,
-            ),
+            sha256: saved.sha256,
+            storagePath: saved.path,
             size: edge,
           )
         : null;

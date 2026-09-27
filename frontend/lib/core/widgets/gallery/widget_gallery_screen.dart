@@ -19,6 +19,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -59,6 +60,7 @@ import 'package:tapture/core/widgets/fields/field_editor.dart';
 import 'package:tapture/core/widgets/fields/field_value.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
+import 'package:tapture/core/widgets/record_thumb.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
@@ -960,6 +962,36 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         ],
       ),
       const SizedBox(height: Space.x4),
+      // A stored photo draws from the thumbnail cache. The gallery stores
+      // none, so each one shows Missing photo.
+      ProviderScope(
+        overrides: <Override>[
+          photoThumbnailsProvider.overrideWithValue(_galleryThumbnails),
+        ],
+        child: Wrap(
+          spacing: Space.x3,
+          runSpacing: Space.x3,
+          children: <Widget>[
+            RecordThumb(
+              sha256: 'abc',
+              storagePath: 'projects/boiler/photos/front.jpg',
+              size: edge,
+              onTap: _noop,
+              onLongPress: _noop,
+            ),
+            RecordThumb(
+              sha256: 'serial',
+              storagePath: 'projects/boiler/photos/serial.jpg',
+              size: edge,
+              hasCaption: true,
+              selected: true,
+              onTap: _noop,
+              onLongPress: _noop,
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: Space.x4),
       AppInkPicker(
         ink: _ink,
         size: _inkSize,
@@ -1095,6 +1127,12 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
 }
 
 void _ignoreFieldValue(FieldValue _) {}
+
+/// Serves no stored photo, so the gallery's [RecordThumb]s show the missing
+/// state on every platform without reading the storage root.
+final PhotoThumbnails _galleryThumbnails = PhotoThumbnails.fake(
+  const <String, String>{},
+);
 
 const FieldEditorBindings _galleryBindings = (
   kindOf: _galleryKind,

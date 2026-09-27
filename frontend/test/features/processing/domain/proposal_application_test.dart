@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/processing/domain/confidence.dart';
 import 'package:tapture/features/processing/domain/evidence_linking.dart';
 import 'package:tapture/features/processing/domain/proposal_application.dart';
@@ -71,7 +72,7 @@ void main() {
     expect(plan.status, ProposalApplication.extractedStatus);
   });
 
-  test('a review-required value forces NEEDS_REVIEW', () {
+  test('a review-required value forces needs review', () {
     final ApplicationPlan plan = ProposalApplication.apply(
       proposals: <ProposedValue>[proposed('serial', 'SN1', 0.2)],
       existing: const <ExistingValue>[],
@@ -84,7 +85,7 @@ void main() {
     expect(plan.status, ProposalApplication.needsReviewStatus);
   });
 
-  test('a required field still empty forces NEEDS_REVIEW', () {
+  test('a required field still empty forces needs review', () {
     final ApplicationPlan plan = ProposalApplication.apply(
       proposals: <ProposedValue>[
         proposed('make', 'Grundfos', 0.99),
@@ -214,7 +215,7 @@ void main() {
     });
 
     test(
-      'a required field filled by its default leaves the record EXTRACTED',
+      'a required field filled by its default leaves the record extracted',
       () {
         final ApplicationPlan plan = withDefaults(
           requiredKeys: const <String>['status'],
@@ -222,8 +223,16 @@ void main() {
 
         expect(plan.needsReview, isFalse);
         expect(plan.status, ProposalApplication.extractedStatus);
-        expect(plan.status, 'EXTRACTED');
+        expect(plan.status, RecordStatus.extracted.stored);
       },
     );
+  });
+
+  test('both statuses are written in their canonical stored spelling', () {
+    expect(
+      ProposalApplication.needsReviewStatus,
+      RecordStatus.needsReview.stored,
+    );
+    expect(ProposalApplication.extractedStatus, RecordStatus.extracted.stored);
   });
 }

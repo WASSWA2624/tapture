@@ -42,8 +42,43 @@ void main() {
       AppIcons.filter,
       AppIcons.pin,
       AppIcons.remove,
+      AppIcons.sort,
+      AppIcons.restore,
+      AppIcons.undo,
+      AppIcons.selectAll,
     ];
     expect(distinct.toSet(), hasLength(distinct.length));
+  });
+
+  test('record list and bin actions use the glyphs people already know', () {
+    expect(AppIcons.sort, Icons.sort);
+    expect(AppIcons.restore, Icons.restore_from_trash_outlined);
+    expect(AppIcons.selectAll, Icons.select_all);
+    expect(AppIcons.merge, Icons.merge);
+  });
+
+  test('restore, undo and history are told apart', () {
+    final List<IconData> distinct = <IconData>[
+      AppIcons.restore,
+      AppIcons.undo,
+      AppIcons.history,
+      AppIcons.unarchive,
+    ];
+    expect(distinct.toSet(), hasLength(distinct.length));
+  });
+
+  test('a merge event never borrows an import or a processing glyph', () {
+    final List<IconData> distinct = <IconData>[
+      AppIcons.merge,
+      AppIcons.import,
+      AppIcons.processing,
+      AppIcons.migrate,
+    ];
+    expect(distinct.toSet(), hasLength(distinct.length));
+  });
+
+  test('select all is not the single tick of a confirmed choice', () {
+    expect(AppIcons.selectAll, isNot(AppIcons.check));
   });
 
   testWidgets('share draws each platform own share glyph', (

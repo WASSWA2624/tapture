@@ -13,6 +13,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -53,6 +54,7 @@ import 'package:tapture/core/widgets/fields/field_value.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/forms/keep_focused_visible.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
+import 'package:tapture/core/widgets/record_thumb.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
@@ -372,6 +374,22 @@ Widget _sample(String name, TextEditingController field) {
     case 'keep_focused_visible':
       return KeepFocusedVisible(
         child: AppTextField(label: 'Name', controller: field),
+      );
+    case 'record_thumb':
+      return ProviderScope(
+        overrides: <Override>[
+          photoThumbnailsProvider.overrideWithValue(
+            PhotoThumbnails.fake(const <String, String>{}),
+          ),
+        ],
+        child: RecordThumb(
+          sha256: 'abc',
+          storagePath: 'projects/boiler/photos/front.jpg',
+          size: AppConstants.images.thumbnailEdge.toDouble(),
+          hasCaption: true,
+          selected: true,
+          onTap: _noop,
+        ),
       );
     case 'responsive_pair':
       return const ResponsivePair(

@@ -5,6 +5,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/processing.dart' as jobs;
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/projects/projects.dart'
     show ProjectSettings, appProjectSettingsDefaults;
 import 'package:tapture/features/settings/settings.dart';
@@ -178,13 +179,14 @@ final class ProcessingQueueQueries {
     final String projectFilter = projectId == null ? '' : 'AND project_id = ? ';
     final QueryRow row = await _db
         .customSelect(
-          "SELECT COUNT(*) AS c FROM records "
-          "WHERE status IN ('CAPTURED', 'captured') "
+          'SELECT COUNT(*) AS c FROM records '
+          'WHERE status = ? '
           '$projectFilter'
-          "AND NOT EXISTS ("
-          "SELECT 1 FROM processing_jobs "
-          "WHERE processing_jobs.record_id = records.id)",
+          'AND NOT EXISTS ('
+          'SELECT 1 FROM processing_jobs '
+          'WHERE processing_jobs.record_id = records.id)',
           variables: <Variable<Object>>[
+            Variable<String>(RecordStatus.captured.stored),
             if (projectId != null) Variable<String>(projectId),
           ],
           readsFrom: <ResultSetImplementation<Object?, Object?>>{
@@ -198,10 +200,14 @@ final class ProcessingQueueQueries {
 
   Future<List<QueueGroup>> _groups({String? projectId}) async {
     final String projectFilter = projectId == null ? '' : 'AND project_id = ? ';
+    final String waiting = List<String>.filled(
+      _waitingStatuses.length,
+      '?',
+    ).join(', ');
     final List<QueryRow> rows = await _db
         .customSelect(
-          "SELECT context_json AS label, COUNT(*) AS n FROM records r "
-          "WHERE status IN ('CAPTURED', 'captured', 'queued') "
+          'SELECT context_json AS label, COUNT(*) AS n FROM records r '
+          'WHERE status IN ($waiting) '
           '$projectFilter'
           "AND (NOT EXISTS (SELECT 1 FROM processing_jobs pj "
           "WHERE pj.record_id = r.id) OR EXISTS ("
@@ -209,6 +215,8 @@ final class ProcessingQueueQueries {
           "AND pj.status IN ('queued', 'running'))) "
           "GROUP BY context_json",
           variables: <Variable<Object>>[
+            for (final RecordStatus status in _waitingStatuses)
+              Variable<String>(status.stored),
             if (projectId != null) Variable<String>(projectId),
           ],
           readsFrom: <ResultSetImplementation<Object?, Object?>>{_db.records},
@@ -266,3 +274,11 @@ int _imageCount(String summary) {
   }
   return 0;
 }
+
+/// Record statuses whose records wait on the queue: captured without a job,
+/// or queued or processing with one still to run.
+const List<RecordStatus> _waitingStatuses = <RecordStatus>[
+  RecordStatus.captured,
+  RecordStatus.queued,
+  RecordStatus.processing,
+];

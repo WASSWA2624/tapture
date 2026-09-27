@@ -94,17 +94,8 @@ final projectHomeTemplatesProvider =
       return ref.watch(templateRepositoryProvider).watchByProject(projectId);
     }, retry: (int _, Object _) => null);
 
-const List<String> _homeRecordStatuses = <String>[
-  'draft',
-  'captured',
-  'CAPTURED',
-  'queued',
-  'processing',
-  'needsReview',
-  'approved',
-];
-
-/// How many records the open project already holds. Derived (FE-STATE-06).
+/// How many records the open project already holds: the live ones its home
+/// lists. Derived (FE-STATE-06).
 final StreamProvider<int> projectHomeRecordCountProvider = StreamProvider<int>((
   Ref ref,
 ) {
@@ -114,7 +105,7 @@ final StreamProvider<int> projectHomeRecordCountProvider = StreamProvider<int>((
   }
   return ref
       .watch(projectRepositoryProvider)
-      .watchRecords(id, statuses: _homeRecordStatuses)
+      .watchRecords(id, statuses: capturedItemStatuses)
       .map((List<ProjectRecordRow> rows) => rows.length);
 }, retry: (int _, Object _) => null);
 

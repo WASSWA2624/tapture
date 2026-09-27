@@ -131,6 +131,18 @@ abstract final class AppRoutes {
   /// One record, opened directly from a deep link.
   static String record(String id) => RoutePaths.record(id);
 
+  /// The page that edits the values of record [id]. Task 014 owns the
+  /// screen.
+  static String recordValuesEdit(String id) => RoutePaths.recordValuesEdit(id);
+
+  /// The history of record [id]. Task 014 owns the screen.
+  static String recordHistory(String id) => RoutePaths.recordHistory(id);
+
+  /// Deleted records across projects, restorable until the purge. Nested
+  /// under [more] so Settings stays in the branch stack. Task 014 owns the
+  /// screen.
+  static const String recycleBin = RoutePaths.recycleBin;
+
   /// The records list.
   static const String records = RoutePaths.records;
 
@@ -261,6 +273,16 @@ abstract final class AppRoutes {
   /// The capture page that edits one saved record on [projectId].
   static String projectRecordEdit(String projectId, String recordId) =>
       RoutePaths.projectRecordEdit(projectId, recordId);
+
+  /// The page that edits the values of record [recordId] on [projectId].
+  /// Task 014 owns the screen.
+  static String projectRecordValuesEdit(String projectId, String recordId) =>
+      RoutePaths.projectRecordValuesEdit(projectId, recordId);
+
+  /// The history of record [recordId] on [projectId]. Task 014 owns the
+  /// screen.
+  static String projectRecordHistory(String projectId, String recordId) =>
+      RoutePaths.projectRecordHistory(projectId, recordId);
 
   /// Unprocessed queue for [projectId].
   static String projectQueue(String projectId) =>

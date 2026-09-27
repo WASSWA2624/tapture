@@ -154,6 +154,37 @@ void main() {
       expect(conflict.theirs, 'approved');
     });
 
+    test('a legacy spelling of the same status from a peer is no conflict', () {
+      final MergePlan result = plan(
+        <String, List<Map<String, Object?>>>{
+          'records': <Map<String, Object?>>[
+            record('r1', status: 'NEEDS_REVIEW'),
+          ],
+        },
+        <String, List<Map<String, Object?>>>{
+          'records': <Map<String, Object?>>[
+            record('r1', status: 'needsReview'),
+          ],
+        },
+      );
+      expect(result.conflicts, isEmpty);
+      expect(result.isEmpty, isTrue);
+    });
+
+    test('a differing status is raised in its stored spelling', () {
+      final MergePlan result = plan(
+        <String, List<Map<String, Object?>>>{
+          'records': <Map<String, Object?>>[record('r1', status: 'APPROVED')],
+        },
+        <String, List<Map<String, Object?>>>{
+          'records': <Map<String, Object?>>[record('r1', status: 'CAPTURED')],
+        },
+      );
+      final FieldConflict conflict = result.conflicts.single;
+      expect(conflict.mine, 'captured');
+      expect(conflict.theirs, 'approved');
+    });
+
     test('rows held in another project here are skipped and counted', () {
       final MergePlan result = plan(
         <String, List<Map<String, Object?>>>{

@@ -3,6 +3,8 @@ import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/record_status.dart';
+import 'package:tapture/features/records/domain/record_entry.dart';
 
 import 'factories.dart';
 
@@ -13,9 +15,28 @@ void main() {
     expect(aRecord(fields: const <String, String>{'serial': 'B-2'}).fields, {
       'serial': 'B-2',
     });
+    expect(
+      aRecord(context: const <String, String>{'site': 'North'}).context,
+      <String, String>{'site': 'North'},
+    );
+    expect(aRecord().context, isEmpty);
     expect(aPhoto(projectId: 'p-9').projectId, 'p-9');
     expect(aFeedbackEntry(message: 'Slow').message, 'Slow');
     expect(aFeedbackPng, isNotEmpty);
+  });
+
+  test('a whole record entry is one line, values and photos included', () {
+    final RecordEntry entry = aRecordEntry(
+      status: RecordStatus.approved,
+      fields: const <String, String>{'model': 'Hoist'},
+      photos: 2,
+      context: const <String, String>{'site': 'North'},
+    );
+    expect(entry.status, RecordStatus.approved);
+    expect(entry.valueOf('model')?.display, 'Hoist');
+    expect(entry.photos, hasLength(2));
+    expect(entry.contextLabel, 'North');
+    expect(aRecordEntry().valueOf('serial')?.raw, 'A-1');
   });
 
   test('seededDatabase yields a graph the record DAO can read', () async {

@@ -1,13 +1,14 @@
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 
 import 'capture_session.dart';
 
-/// Raw save: persists as CAPTURED and runs nothing — no network, no AI
+/// Raw save: persists as captured and runs nothing — no network, no AI
 /// (FE-SEC-03, FE-SEC-04).
 abstract final class SaveRaw {
   /// Status written; no processing is started.
-  static const String capturedStatus = 'CAPTURED';
+  static const RecordStatus capturedStatus = RecordStatus.captured;
 
   /// Persists [session] via [persist]. Provably silent — no outbound calls.
   static Future<Result<String>> run({

@@ -31,6 +31,7 @@ class AppPhotoThumb extends StatelessWidget {
     this.quarterTurns = 0,
     this.onSelectedChanged,
     this.onRemove,
+    this.semanticLabel,
   });
 
   /// Photo to render. Only [PhotoAsset.thumbPath] is decoded.
@@ -66,6 +67,10 @@ class AppPhotoThumb extends StatelessWidget {
   /// target. Null draws no control.
   final VoidCallback? onRemove;
 
+  /// What a screen reader calls the photo, in place of its type or "Photo".
+  /// The missing, captioned, selected and status parts are still read.
+  final String? semanticLabel;
+
   bool get _interactive => onTap != null || onLongPress != null;
 
   bool get _missing {
@@ -91,7 +96,7 @@ class AppPhotoThumb extends StatelessWidget {
 
   String get _label {
     final String base = Copy.photoThumbLabel(
-      type: photo.photoType?.label ?? Copy.photo,
+      type: semanticLabel ?? photo.photoType?.label ?? Copy.photo,
       missing: _missing,
       captioned: photo.hasCaption,
       selected: selected,

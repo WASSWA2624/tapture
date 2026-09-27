@@ -17,6 +17,9 @@ abstract final class RoutePaths {
   static const String queue = '$more/queue';
   static const String exports = '$more/exports';
 
+  /// Deleted records across projects, restorable until the purge (task 014).
+  static const String recycleBin = '$more/recycle-bin';
+
   /// Settings destinations.
   static const String settingsOperator = '$more/operator';
   static const String settingsCapture = '$more/capture';
@@ -127,12 +130,27 @@ abstract final class RoutePaths {
   /// Capture page that edits one saved record's photos and captions.
   static String projectRecordEdit(String projectId, String recordId) =>
       '${projectRecord(projectId, recordId)}/edit';
+
+  /// The page that edits one record's values inside its project (task 014).
+  static String projectRecordValuesEdit(String projectId, String recordId) =>
+      '${projectRecord(projectId, recordId)}/values';
+
+  /// One record's history inside its project (task 014).
+  static String projectRecordHistory(String projectId, String recordId) =>
+      '${projectRecord(projectId, recordId)}/history';
   static String projectQueue(String projectId) => '${project(projectId)}/queue';
   static String projectExports(String projectId) =>
       '${project(projectId)}/exports';
 
   /// One record.
   static String record(String id) => '$records/${Uri.encodeComponent(id)}';
+
+  /// The page that edits one record's values, from the Records destination
+  /// (task 014).
+  static String recordValuesEdit(String id) => '${record(id)}/values';
+
+  /// One record's history, from the Records destination (task 014).
+  static String recordHistory(String id) => '${record(id)}/history';
 
   /// Dataset paths within a project.
   static String projectDatasets(String projectId) =>
