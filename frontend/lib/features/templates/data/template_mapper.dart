@@ -195,6 +195,7 @@ abstract final class TemplateMapper {
       FieldType.gpsLocation => 'gps_location',
       FieldType.signature => 'signature',
       FieldType.computed => 'computed',
+      FieldType.consent => 'consent',
     };
   }
 
@@ -225,6 +226,7 @@ abstract final class TemplateMapper {
       'GPS location' => FieldType.gpsLocation,
       'signature' => FieldType.signature,
       'computed' => FieldType.computed,
+      'consent' => FieldType.consent,
       _ => throw const StorageFailure(
         message: 'That field type is not recognised.',
         recoveryAction: 'Pick a type from the list and save again.',

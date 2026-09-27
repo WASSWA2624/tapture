@@ -9,7 +9,7 @@ import 'package:tapture/features/templates/domain/field_type_registry.dart';
 void main() {
   test('every §12.1 type is registered with all four behaviours', () {
     expect(FieldTypeRegistry.types, FieldType.values);
-    expect(FieldType.values, hasLength(19));
+    expect(FieldType.values, hasLength(20));
     expect(FieldType.values, <FieldType>[
       FieldType.text,
       FieldType.longText,
@@ -30,6 +30,7 @@ void main() {
       FieldType.gpsLocation,
       FieldType.signature,
       FieldType.computed,
+      FieldType.consent,
     ]);
 
     for (final FieldType type in FieldType.values) {
@@ -123,6 +124,11 @@ void main() {
         FieldEditorKind.computedReadOnly,
         StorageForm.computed,
         false,
+      ),
+      FieldType.consent: (
+        FieldEditorKind.appSwitchTile,
+        StorageForm.text,
+        true,
       ),
     };
 

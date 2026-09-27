@@ -2,6 +2,7 @@
 library;
 
 export 'conflict_detection.dart';
+export 'consent_field.dart';
 export 'duplicate_candidate.dart';
 export 'duplicate_detection.dart';
 export 'duplicate_ledger.dart';

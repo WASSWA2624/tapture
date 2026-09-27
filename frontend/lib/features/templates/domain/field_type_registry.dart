@@ -99,6 +99,12 @@ abstract final class FieldTypeRegistry {
         normaliser: _normaliseComputed,
         storageForm: StorageForm.computed,
       ),
+      FieldType.consent => (
+        editor: FieldEditorKind.appSwitchTile,
+        validator: _validateText,
+        normaliser: _normaliseText,
+        storageForm: StorageForm.text,
+      ),
     };
   }
 
@@ -722,7 +728,8 @@ bool _holdsText(FieldType type) {
   return type == FieldType.text ||
       type == FieldType.longText ||
       type == FieldType.barcode ||
-      type == FieldType.signature;
+      type == FieldType.signature ||
+      type == FieldType.consent;
 }
 
 bool _holdsDecimal(FieldType type) {

@@ -2,3 +2,4 @@
 library;
 
 export 'secure_storage.dart';
+export 'untrusted_text.dart';

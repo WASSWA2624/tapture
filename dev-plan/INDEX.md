@@ -136,7 +136,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *The controls that decide what leaves the device and what is visible in it.*
 
-- [ ] [022 — Privacy and security: what leaves this device, and what never does](22-privacy-and-security/022-privacy-and-security.md)
+- [x] [022 — Privacy and security: what leaves this device, and what never does](22-privacy-and-security/022-privacy-and-security.md)
 
 ## 23 — Hardening
 

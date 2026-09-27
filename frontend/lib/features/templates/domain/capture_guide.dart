@@ -90,4 +90,5 @@ const Set<FieldType> _notSaid = <FieldType>{
   FieldType.signature,
   FieldType.gpsLocation,
   FieldType.computed,
+  FieldType.consent,
 };

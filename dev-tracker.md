@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**55 of 69 tasks complete (80%)** · last updated 2026-09-28
+**56 of 69 tasks complete (81%)** · last updated 2026-09-28
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -33,7 +33,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 19 — Bundles and merge | 1 | 1 | `██████████████` 100% |
 | 20 — Data import | 1 | 1 | `██████████████` 100% |
 | 21 — Cloud upload | 1 | 1 | `██████████████` 100% |
-| 22 — Privacy and security | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 22 — Privacy and security | 1 | 1 | `██████████████` 100% |
 | 23 — Hardening | 34 | 45 | `███████████░░░` 76% |
 | 24 — The minimal backend | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 25 — Testing and release | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
@@ -391,9 +391,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 22 — Privacy and security
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [022 — Privacy and security: what leaves this device, and what never does](dev-plan/22-privacy-and-security/022-privacy-and-security.md)
+- [x] [022 — Privacy and security: what leaves this device, and what never does](dev-plan/22-privacy-and-security/022-privacy-and-security.md)
 
 ### 23 — Hardening
 

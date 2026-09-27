@@ -1,5 +1,6 @@
 import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/security/untrusted_text.dart';
 
 /// One extraction call for a record, shaped as the specification example.
 ///
@@ -15,8 +16,9 @@ final class ExtractionRequest {
     required this.caption,
     required this.ocrText,
     required this.images,
-    this.transcripts = const <String>[],
+    this.transcripts = const <UntrustedText>[],
     this.rules = defaultRules,
+    this.basis = '',
   });
 
   /// Rules quoted as data on every request.
@@ -39,16 +41,19 @@ final class ExtractionRequest {
   final List<String> predefinedRows;
 
   /// Record caption, quoted as data.
-  final String caption;
+  final UntrustedText caption;
 
   /// On-device text, quoted as data.
-  final String ocrText;
+  final UntrustedText ocrText;
 
   /// Compressed image references, in capture order.
   final List<String> images;
 
   /// Raw provider transcripts, stored and quoted as evidence.
-  final List<String> transcripts;
+  final List<UntrustedText> transcripts;
+
+  /// Why the values look the way they do. Set when images stay on device.
+  final String basis;
 
   /// Explicit rules, quoted as data.
   final List<String> rules;
@@ -62,11 +67,15 @@ final class ExtractionRequest {
       ],
       'context': context,
       'predefined_rows': predefinedRows,
-      'caption': caption,
-      'ocr_text': ocrText,
+      'caption': caption.asDataBlock('caption'),
+      'ocr_text': ocrText.asDataBlock('ocr'),
       'images': images,
-      'transcripts': transcripts,
+      'transcripts': <String>[
+        for (final UntrustedText text in transcripts)
+          text.asDataBlock('transcript'),
+      ],
       'rules': rules,
+      if (basis.isNotEmpty) 'basis': basis,
     };
   }
 
@@ -77,9 +86,14 @@ final class ExtractionRequest {
       fieldLabels: <String>[
         for (final ExtractionField field in fields) field.key,
       ],
-      ocrText: ocrText,
-      transcripts: transcripts,
-      captions: caption.isEmpty ? const <String>[] : <String>[caption],
+      ocrText: ocrText.asDataBlock('ocr'),
+      transcripts: <String>[
+        for (final UntrustedText text in transcripts)
+          text.asDataBlock('transcript'),
+      ],
+      captions: caption.raw.isEmpty
+          ? const <String>[]
+          : <String>[caption.asDataBlock('caption')],
       imagePaths: images,
       context: context,
       fieldSchema: <Map<String, Object?>>[

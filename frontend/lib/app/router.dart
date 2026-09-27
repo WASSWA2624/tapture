@@ -61,6 +61,7 @@ import 'package:tapture/features/settings/presentation/ai_provider_settings_scre
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
+import 'package:tapture/features/settings/presentation/egress_summary_screen.dart';
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
@@ -836,6 +837,12 @@ List<RouteBase> get _routes {
                   path: 'security',
                   builder: (BuildContext _, GoRouterState _) {
                     return const AppLockScreen.manage();
+                  },
+                ),
+                GoRoute(
+                  path: 'privacy',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const EgressSummaryScreen();
                   },
                 ),
                 GoRoute(

@@ -3,13 +3,15 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Tapture uses the camera when you take a photo to attach to feedback.</string>
+	<string>Tapture uses the camera when you take a photo.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Tapture opens your photos when you choose one to attach to feedback.</string>
+	<string>Tapture opens photos and files you choose to import.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Tapture listens when you tap the microphone in a text field.</string>
+	<string>Tapture listens when you tap the microphone.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Tapture turns what you say into text when you tap the microphone.</string>
+	<string>Tapture listens when you tap the microphone.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Tapture saves a location only when you turn location on for a project.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

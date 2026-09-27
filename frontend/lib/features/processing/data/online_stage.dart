@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/security/untrusted_text.dart';
+import 'package:tapture/features/projects/presentation/image_egress_switch.dart';
 import 'package:tapture/features/projects/projects.dart'
     show ProjectSettingsResolved;
 import 'package:tapture/features/settings/settings.dart';
@@ -81,9 +84,10 @@ final class OnlineStage {
       return;
     }
     final String ocrText = await _onDevice.text(bundle);
-    final List<String> images = projectSettings.doNotSendImages
-        ? const <String>[]
-        : await _paths.compressed(bundle);
+    final List<String> images = ImageEgressSwitch.paths(
+      holdImages: projectSettings.doNotSendImages,
+      images: await _paths.compressed(bundle),
+    );
     final List<ExtractionField> fields = <ExtractionField>[
       for (final TemplateField field in bundle.fields)
         StageSupport.extractionField(field),
@@ -122,10 +126,13 @@ final class OnlineStage {
         fields: fields,
         context: context,
         predefinedRows: rows,
-        caption: caption,
-        ocrText: ocrText,
+        caption: UntrustedText(caption),
+        ocrText: UntrustedText(ocrText),
         images: batch,
-        transcripts: transcripts,
+        transcripts: <UntrustedText>[
+          for (final String text in transcripts) UntrustedText(text),
+        ],
+        basis: projectSettings.doNotSendImages ? Copy.egressTextOnly : '',
       );
       await _requestOnce(
         job: job,
@@ -302,9 +309,12 @@ List<String> _fallbackEvidence(String? value, ExtractionRequest request) {
     return const <String>[];
   }
   final String needle = value.trim().toLowerCase();
-  for (final String text in <String>[request.ocrText, request.caption]) {
-    if (text.toLowerCase().contains(needle)) {
-      return <String>[text];
+  for (final UntrustedText text in <UntrustedText>[
+    request.ocrText,
+    request.caption,
+  ]) {
+    if (text.raw.toLowerCase().contains(needle)) {
+      return <String>[text.raw];
     }
   }
   return const <String>[];

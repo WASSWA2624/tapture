@@ -3,6 +3,7 @@ library;
 
 export 'csv_writer.dart';
 export 'export_dictionary.dart';
+export 'face_blur.dart';
 export 'export_manifest.dart';
 export 'export_record.dart';
 export 'export_request.dart';

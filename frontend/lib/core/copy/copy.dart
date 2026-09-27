@@ -6154,4 +6154,83 @@ abstract final class Copy {
 
   /// History filter label.
   static const String uploadFilter = 'Destination';
+
+  /// Privacy screen title.
+  static const String privacyScreenTitle = 'What leaves this device';
+
+  /// Empty privacy headline.
+  static const String privacyEmptyHeadline = 'Nothing is set up to send';
+
+  /// Empty privacy explanation.
+  static const String privacyEmptyMessage =
+      'Providers and upload destinations appear here when they are added.';
+
+  /// What an extraction call sends.
+  static const String egressSendsText = 'Text only';
+
+  /// What an image call sends.
+  static const String egressSendsImage = 'An image';
+
+  /// What speech sends.
+  static const String egressSendsAudio = 'Audio';
+
+  /// What a cloud upload sends.
+  static const String egressSendsFile = 'A file';
+
+  /// Basis written when images stay on the device.
+  static const String egressTextOnly =
+      'Text only, on-device OCR';
+
+  /// Location section title.
+  static const String gpsPrivacyTitle = 'Location';
+
+  /// GPS stays off until this is on.
+  static const String gpsPrivacyCapture = 'Save location with captures';
+
+  /// Drops coordinates from exports.
+  static const String gpsPrivacyExclude = 'Leave coordinates out of exports';
+
+  /// Removes coordinates already stored.
+  static const String gpsPrivacyRemove = 'Remove saved coordinates';
+
+  /// How many records lost their coordinates.
+  static String gpsPrivacyRemoved(int count) =>
+      '$count records no longer have coordinates.';
+
+  /// Project switch: no online calls.
+  static const String aiDisableTitle = 'Manual only';
+
+  /// Explains the manual switch.
+  static const String aiDisableMessage =
+      'No screen in this project offers an online action.';
+
+  /// Project switch: hold images back.
+  static const String imageEgressTitle = 'Keep images on this device';
+
+  /// Explains image hold-back.
+  static const String imageEgressMessage =
+      'Extraction uses on-device text only.';
+
+  /// Camera permission sentence.
+  static const String permissionCamera =
+      'Tapture uses the camera when you take a photo.';
+
+  /// Microphone permission sentence.
+  static const String permissionMicrophone =
+      'Tapture listens when you tap the microphone.';
+
+  /// Location permission sentence.
+  static const String permissionLocation =
+      'Tapture saves a location only when you turn location on for a project.';
+
+  /// Storage permission sentence.
+  static const String permissionStorage =
+      'Tapture opens photos and files you choose to import.';
+
+  /// Settings row for privacy.
+  static const String privacyTitle = 'Privacy';
+
+  /// Settings row explanation.
+  static const String privacySubtitle =
+      'What can leave this device, and what never does.';
 }

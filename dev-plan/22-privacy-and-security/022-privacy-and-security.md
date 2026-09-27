@@ -132,44 +132,44 @@ class PermissionRationale {
 
 ## Definition of done
 
-- [ ] Every outbound path can be seen and disabled from this one screen, and a newly registered provider or
+- [x] Every outbound path can be seen and disabled from this one screen, and a newly registered provider or
       destination appears without editing the screen.
-- [ ] A project can be delivered with no location data at all, and each coordinate removal is visible in the audit
+- [x] A project can be delivered with no location data at all, and each coordinate removal is visible in the audit
       trail.
-- [ ] Tests: widget test of `egress_summary_screen.dart` over empty, all-off, all-on and failure states.
-- [ ] Tests: test asserting a new registry entry appears in the list.
-- [ ] Tests: test asserting an export after exclusion carries no coordinates and `gps_privacy_section.dart` reports
+- [x] Tests: widget test of `egress_summary_screen.dart` over empty, all-off, all-on and failure states.
+- [x] Tests: test asserting a new registry entry appears in the list.
+- [x] Tests: test asserting an export after exclusion carries no coordinates and `gps_privacy_section.dart` reports
       the changed record count.
-- [ ] With AI off, no screen in the project offers an online action and the project runs end to end with no outbound
+- [x] With AI off, no screen in the project offers an online action and the project runs end to end with no outbound
       call.
-- [ ] With image egress off, no request carries an image path, including retries and refinement, and the result
+- [x] With image egress off, no request carries an image path, including retries and refinement, and the result
       states that its values came from on-device OCR text alone.
-- [ ] Tests: integration test asserting zero outbound calls for a project with AI off.
-- [ ] Tests: widget tests of both switches, including their empty and failure states.
-- [ ] Tests: unit test that the composed extraction request holds OCR text and no image for every entry point.
-- [ ] Consent is recorded per record with who and when, and an export of a consent-requiring project omits records
+- [x] Tests: integration test asserting zero outbound calls for a project with AI off.
+- [x] Tests: widget tests of both switches, including their empty and failure states.
+- [x] Tests: unit test that the composed extraction request holds OCR text and no image for every entry point.
+- [x] Consent is recorded per record with who and when, and an export of a consent-requiring project omits records
       lacking it and lists them.
-- [ ] A marked region and a detected face never reach a provider or an export in clear form, including on a re-send.
-- [ ] The face count found is reported per photo, so a missed face is visible rather than silent.
-- [ ] Every original photo is byte-identical after export, blur and redaction.
-- [ ] Tests: unit tests of `consent_field.dart` with no Flutter binding, covering the export block.
-- [ ] Tests: hash comparison of originals before and after a blurred export.
-- [ ] Tests: test asserting the sent copy differs from the original inside the marked region and matches outside it.
-- [ ] A crafted caption cannot change what the provider is asked to do, and still appears verbatim on the record.
-- [ ] Passing a plain `String` from OCR, import or bundle content into the request builder fails to compile.
-- [ ] Tests: fixture cases for an instruction-shaped caption, a delimiter-closing caption, an SQL fragment and a
+- [x] A marked region and a detected face never reach a provider or an export in clear form, including on a re-send.
+- [x] The face count found is reported per photo, so a missed face is visible rather than silent.
+- [x] Every original photo is byte-identical after export, blur and redaction.
+- [x] Tests: unit tests of `consent_field.dart` with no Flutter binding, covering the export block.
+- [x] Tests: hash comparison of originals before and after a blurred export.
+- [x] Tests: test asserting the sent copy differs from the original inside the marked region and matches outside it.
+- [x] A crafted caption cannot change what the provider is asked to do, and still appears verbatim on the record.
+- [x] Passing a plain `String` from OCR, import or bundle content into the request builder fails to compile.
+- [x] Tests: fixture cases for an instruction-shaped caption, a delimiter-closing caption, an SQL fragment and a
       traversal file name, each asserting the composed request structure, the rendered widget and the written
       filename are unaffected.
-- [ ] The suite fails when any artefact contains a key, token or credential, naming artefact, entry and offset, and
+- [x] The suite fails when any artefact contains a key, token or credential, naming artefact, entry and offset, and
       reports every hit rather than the first.
-- [ ] Tests: `frontend/test/security/secret_scan_test.dart` green over a clean run of the real export packager,
+- [x] Tests: `frontend/test/security/secret_scan_test.dart` green over a clean run of the real export packager,
       bundle writer and log export.
-- [ ] Tests: a fixture pair proving a token planted in a bundle entry name and one planted in a log line each fail
+- [x] Tests: a fixture pair proving a token planted in a bundle entry name and one planted in a log line each fail
       the scan.
-- [ ] A fresh install requests no permission until the user starts capture, recording, import or a folder upload.
-- [ ] Every declared platform permission maps to exactly one rationale entry and one shipped feature.
-- [ ] Tests: unit tests of `permission_rationale.dart` against the permissions fake.
-- [ ] Tests: a test parsing the merged manifest and the plist that fails on any declaration without a rationale
+- [x] A fresh install requests no permission until the user starts capture, recording, import or a folder upload.
+- [x] Every declared platform permission maps to exactly one rationale entry and one shipped feature.
+- [x] Tests: unit tests of `permission_rationale.dart` against the permissions fake.
+- [x] Tests: a test parsing the merged manifest and the plist that fails on any declaration without a rationale
       entry, and on any entry without a declaration, naming file and line for every one it finds.
-- [ ] Tests: a fixture pair for that test, one manifest carrying an unjustified declaration and one rationale entry
+- [x] Tests: a fixture pair for that test, one manifest carrying an unjustified declaration and one rationale entry
       with nothing declared, proving the review fails on each and passes on the shipped pair.

@@ -59,7 +59,7 @@ void main() {
   });
 
   test('FieldType names every type of §12.1', () {
-    expect(FieldType.values, hasLength(19));
+    expect(FieldType.values, hasLength(20));
     expect(
       FieldType.values,
       containsAll(<FieldType>[
@@ -82,6 +82,7 @@ void main() {
         FieldType.gpsLocation,
         FieldType.signature,
         FieldType.computed,
+        FieldType.consent,
       ]),
     );
   });

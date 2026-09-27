@@ -214,7 +214,7 @@ enum Requiredness {
   optional,
 }
 
-/// The nineteen field types of §12.1.
+/// Field types. §12.1 names the first nineteen; consent is the privacy type.
 enum FieldType {
   /// Single line.
   text,
@@ -272,6 +272,9 @@ enum FieldType {
 
   /// Read-only expression over other fields.
   computed,
+
+  /// Who confirmed a record may leave the device, and when.
+  consent,
 }
 
 /// Who may write the field (§12.2 `input_mode`).

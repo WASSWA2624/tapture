@@ -495,6 +495,7 @@ FieldType? _typeOf(String raw) {
     'gps_location' => FieldType.gpsLocation,
     'signature' => FieldType.signature,
     'computed' => FieldType.computed,
+    'consent' => FieldType.consent,
     _ => null,
   };
 }

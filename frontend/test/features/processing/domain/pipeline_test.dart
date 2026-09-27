@@ -8,6 +8,7 @@ import 'package:tapture/core/network/connectivity_service.dart';
 import 'package:tapture/core/normalise/choices.dart';
 import 'package:tapture/core/normalise/dates.dart';
 import 'package:tapture/core/normalise/units.dart';
+import 'package:tapture/core/security/untrusted_text.dart';
 import 'package:tapture/features/processing/domain/auto_process.dart';
 import 'package:tapture/features/processing/domain/background_ocr.dart';
 import 'package:tapture/features/processing/domain/caption_refinement.dart';
@@ -158,21 +159,21 @@ void main() {
         'facility': 'Kasubi HC IV',
       },
       predefinedRows: <String>['Autoclave'],
-      caption: '13 litre autoclave',
-      ocrText: 'SN458923',
+      caption: UntrustedText('13 litre autoclave'),
+      ocrText: UntrustedText('SN458923'),
       images: <String>['<image 1>'],
     );
     final Map<String, Object?> json = request.toJson();
     expect(json['template'], 'Medical Equipment');
     expect(json['rules'], ExtractionRequest.defaultRules);
-    expect(json['ocr_text'], 'SN458923');
+    expect(json['ocr_text'], contains('SN458923'));
     expect(json['images'], <String>['<image 1>']);
     expect(
       (json['fields']! as List<Object?>).first,
       containsPair('key', 'equipment_name'),
     );
     expect(request.toService().imagePaths, <String>['<image 1>']);
-    expect(request.toService().ocrText, 'SN458923');
+    expect(request.toService().ocrText, contains('SN458923'));
     expect(request.toService().predefinedRows, <String>['Autoclave']);
     expect(request.toService().rules, ExtractionRequest.defaultRules);
     expect(
