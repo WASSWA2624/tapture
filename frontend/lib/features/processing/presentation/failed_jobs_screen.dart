@@ -10,7 +10,6 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 
 import '../processing.dart';
-import 'processing_controller.dart';
 import 'queue_providers.dart';
 
 /// Failed jobs, each with the reason the classifier stored, and one retry.

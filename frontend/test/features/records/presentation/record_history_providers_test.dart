@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_riverpod/misc.dart' show Override, ProviderListenable;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -30,6 +30,16 @@ void main() {
         ),
       ],
     );
+  }
+
+  /// Keeps [provider] alive the way the open history page does.
+  ProviderSubscription<Object?> watch(ProviderListenable<Object?> provider) {
+    final ProviderSubscription<Object?> watching = container.listen<Object?>(
+      provider,
+      (Object? _, Object? _) {},
+    );
+    addTearDown(watching.close);
+    return watching;
   }
 
   setUp(() {
@@ -96,6 +106,7 @@ void main() {
 
     test('a record with no history reads as an empty list', () async {
       final String id = records.seedEntry(aRecordEntry(id: 'record-1'));
+      watch(recordHistoryProvider(id));
 
       expect(await container.read(recordHistoryProvider(id).future), isEmpty);
     });
@@ -105,15 +116,7 @@ void main() {
         message: 'The history could not be read.',
       );
       records.readFailure = failure;
-      final ProviderSubscription<AsyncValue<List<RecordHistoryEvent>>>
-      watching = container.listen<AsyncValue<List<RecordHistoryEvent>>>(
-        recordHistoryProvider('record-1'),
-        (
-          AsyncValue<List<RecordHistoryEvent>>? _,
-          AsyncValue<List<RecordHistoryEvent>> _,
-        ) {},
-      );
-      addTearDown(watching.close);
+      watch(recordHistoryProvider('record-1'));
 
       await expectLater(
         container.read(recordHistoryProvider('record-1').future),
@@ -127,13 +130,8 @@ void main() {
 
     test('the history is dropped once no page reads it', () async {
       final String id = records.seedEntry(aRecordEntry(id: 'record-1'));
-      final ProviderSubscription<AsyncValue<List<RecordHistoryEvent>>>
-      watching = container.listen<AsyncValue<List<RecordHistoryEvent>>>(
+      final ProviderSubscription<Object?> watching = watch(
         recordHistoryProvider(id),
-        (
-          AsyncValue<List<RecordHistoryEvent>>? _,
-          AsyncValue<List<RecordHistoryEvent>> _,
-        ) {},
       );
       await container.read(recordHistoryProvider(id).future);
       expect(container.exists(recordHistoryProvider(id)), isTrue);
@@ -147,6 +145,7 @@ void main() {
   group('recordHistoryTemplateProvider', () {
     test('reads a template on this device', () async {
       await templates.save(aTemplate(id: 't1', name: 'Boiler'));
+      watch(recordHistoryTemplateProvider('t1'));
 
       final TemplateDef? found = await container.read(
         recordHistoryTemplateProvider('t1').future,
@@ -155,6 +154,8 @@ void main() {
     });
 
     test('a template not on this device reads as null', () async {
+      watch(recordHistoryTemplateProvider('gone'));
+
       expect(
         await container.read(recordHistoryTemplateProvider('gone').future),
         isNull,
@@ -165,10 +166,15 @@ void main() {
         'to keys instead of hiding the history', () async {
       container.dispose();
       container = open(templateStore: _FailingTemplates());
+      watch(recordHistoryTemplateProvider('t1'));
 
       expect(
         await container.read(recordHistoryTemplateProvider('t1').future),
         isNull,
+      );
+      expect(
+        container.read(recordHistoryTemplateProvider('t1')).hasError,
+        isFalse,
       );
     });
   });

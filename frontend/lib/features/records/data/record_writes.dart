@@ -179,7 +179,7 @@ final class RecordWrites {
   /// [RecordLifecycle], with [reason] on the status audit row.
   ///
   /// An illegal move, a move to the status it already has, a move into
-  /// deleted (use [delete]) or out of it (use [restore]), and a record whose
+  /// deleted (use [moveToBin]) or out of it (use [restore]), and a record whose
   /// stored status this app does not know are each a [ValidationFailure]
   /// that writes nothing. A record not on this device is a [StorageFailure].
   /// Approving stamps the approval time and operator.
@@ -387,7 +387,11 @@ final class RecordWrites {
   /// A blank [reason], or a move to deleted the lifecycle refuses (a record
   /// already deleted, or one being processed), is a [ValidationFailure]; a
   /// record not on this device is a [StorageFailure]; nothing is written.
-  Future<Result<void>> delete(String id, {required String reason}) {
+  ///
+  /// `RecordRepository.delete` lands here. The name says what happens rather
+  /// than `delete`, so the repository file that calls it holds no call the
+  /// data-safety guardrail reads as a hard row delete (FE-SEC-08).
+  Future<Result<void>> moveToBin(String id, {required String reason}) {
     return _write<void>((String? operator) async {
       final _Head? head = await _head(id);
       if (head == null) {

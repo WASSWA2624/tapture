@@ -4089,9 +4089,7 @@ abstract final class Copy {
   /// A records search or filter that matched nothing, naming the [query].
   static String recordsNoMatch(String query) {
     final String shown = query.trim();
-    return shown.isEmpty
-        ? 'No records match.'
-        : 'No records match "$shown".';
+    return shown.isEmpty ? 'No records match.' : 'No records match "$shown".';
   }
 
   /// Empties a records search that matched nothing.
@@ -4701,6 +4699,352 @@ abstract final class Copy {
       other: '$n records could not be restored',
     );
   }
+
+  // Recycle bin (014 step 7).
+
+  /// Title of the recycle bin page.
+  static const String recycleBinTitle = 'Recycle bin';
+
+  /// The line above the recycle bin list: how long a deleted record stays
+  /// restorable, [days] being the operator's window.
+  static String recycleBinKeptFor(int days) {
+    return 'Deleted records stay here for ${settingsRetentionDays(days)}, '
+        'then they are removed for good.';
+  }
+
+  /// Headline of an empty recycle bin.
+  static const String recycleBinEmptyHeadline = 'Nothing in the recycle bin';
+
+  /// What an empty recycle bin is for, and the way a record gets back out:
+  /// a deleted record waits here for [days].
+  static String recycleBinEmptyMessage(int days) {
+    return 'A record you delete waits here for '
+        '${settingsRetentionDays(days)}. Restore it from here to put it back '
+        'in its list.';
+  }
+
+  /// A recycle bin row's second line: the record's [number] when the row's
+  /// title is its name, its [projectName], and when it was deleted
+  /// ([deletedAt]). [projectName] is the operator's own text (FE-L10N-07).
+  static String recycleBinRowSubtitle({
+    required String projectName,
+    required DateTime deletedAt,
+    int? number,
+  }) {
+    final String when = DateFormat.yMMMd().add_jm().format(deletedAt.toLocal());
+    return <String>[
+      if (number != null) '#$number',
+      if (projectName.trim().isNotEmpty) projectName.trim(),
+      'Deleted $when',
+    ].join(' · ');
+  }
+
+  /// How long a record in the recycle bin has before the purge removes it
+  /// for good: [days] whole days, 0 once its window has run out.
+  static String recycleBinDaysLeft(int days) {
+    return Intl.plural(
+      days,
+      zero: 'Deletes today',
+      one: 'Deletes in 1 day',
+      other: 'Deletes in $days days',
+    );
+  }
+
+  /// Tooltip of a recycle bin row's restore control.
+  static const String recycleBinRestore = 'Restore';
+
+  /// Screen-reader name of the restore control on the row of record
+  /// [name], which is the record's own text (FE-L10N-07).
+  static String recycleBinRestoreLabel(String name) => 'Restore $name';
+
+  /// A restore asked for while the same record is being restored.
+  static const String recycleBinRestoring =
+      'This record is already being restored.';
+
+  /// What to do while a record is being restored.
+  static const String recycleBinRestoringAction =
+      'Wait a moment, then look for it in its list.';
+
+  /// The action that removes everything in the recycle bin now.
+  static const String recycleBinEmpty = 'Empty recycle bin';
+
+  /// Title of the strong confirm before [n] records are removed for good.
+  static String recycleBinEmptyTitle(int n) {
+    return Intl.plural(
+      n,
+      one: 'Remove 1 record for good?',
+      other: 'Remove $n records for good?',
+    );
+  }
+
+  /// Body of that confirm: what goes, that it cannot be undone, and what
+  /// stays.
+  static String recycleBinEmptyWarning(int n) {
+    return Intl.plural(
+      n,
+      one:
+          'The record in the recycle bin and its photos are removed from '
+          'this device now. This cannot be undone. A record a merge still '
+          'needs stays until it has been shared.',
+      other:
+          'All $n records in the recycle bin and their photos are removed '
+          'from this device now. This cannot be undone. Records a merge '
+          'still needs stay until they have been shared.',
+    );
+  }
+
+  /// Label of the field the operator types [n] into to confirm.
+  static String recycleBinEmptyTypeCount(int n) => 'Type $n to confirm';
+
+  /// Confirms emptying the recycle bin.
+  static const String recycleBinEmptyConfirm = 'Remove for good';
+
+  /// Why Empty recycle bin cannot be pressed on this device.
+  static const String recycleBinEmptyUnavailable =
+      'Emptying is not available on this device. Each record is removed '
+      'for good once its days run out.';
+
+  /// What to do when emptying is not available.
+  static const String recycleBinEmptyUnavailableAction =
+      'Restore what you need before its days run out.';
+
+  /// An empty-now asked for while the recycle bin is being emptied.
+  static const String recycleBinEmptying =
+      'The recycle bin is already being emptied.';
+
+  /// What to do while the recycle bin is being emptied.
+  static const String recycleBinEmptyingAction = 'Wait for it to finish.';
+
+  /// Snack after emptying the recycle bin: how many records were [purged],
+  /// how many were [kept] because a merge still needs them, and how many
+  /// [failed] and stay for the next try.
+  static String recycleBinEmptied({
+    required int purged,
+    required int kept,
+    required int failed,
+  }) {
+    return <String>[
+      Intl.plural(
+        purged,
+        zero: 'No records removed',
+        one: '1 record removed for good',
+        other: '$purged records removed for good',
+      ),
+      if (kept > 0)
+        Intl.plural(
+          kept,
+          one: '1 kept because a merge still needs it',
+          other: '$kept kept because a merge still needs them',
+        ),
+      if (failed > 0)
+        Intl.plural(
+          failed,
+          one: '1 could not be removed',
+          other: '$failed could not be removed',
+        ),
+    ].join('. ');
+  }
+
+  // Bulk actions over a selection (014 step 8).
+
+  /// The bulk action bar's count of ticked records.
+  static String recordsSelectedCount(int n) {
+    return Intl.plural(n, one: '1 selected', other: '$n selected');
+  }
+
+  /// Unticks every record and leaves selection mode.
+  static const String recordsClearSelection = 'Clear selection';
+
+  /// Ticks every record the list has shown.
+  static const String recordsSelectAllShown = 'Select all shown';
+
+  /// Names the bulk approve control for [n] records.
+  static String recordsApproveLabel(int n) {
+    return Intl.plural(n, one: 'Approve record', other: 'Approve $n records');
+  }
+
+  /// Names the bulk archive control for [n] records.
+  static String recordsArchiveLabel(int n) {
+    return Intl.plural(n, one: 'Archive record', other: 'Archive $n records');
+  }
+
+  /// Names the bulk process-again control for [n] records.
+  static String recordsReprocessLabel(int n) {
+    return Intl.plural(
+      n,
+      one: 'Process record again',
+      other: 'Process $n records again',
+    );
+  }
+
+  /// Names the bulk export control for [n] records.
+  static String recordsExportLabel(int n) {
+    return Intl.plural(n, one: 'Export record', other: 'Export $n records');
+  }
+
+  /// Title of the confirm before [n] records are archived.
+  static String recordsArchiveTitle(int n) {
+    return Intl.plural(
+      n,
+      one: 'Archive 1 record?',
+      other: 'Archive $n records?',
+    );
+  }
+
+  /// Body of that confirm: where the [n] records go and how to find them.
+  static String recordsArchiveMessage(int n) {
+    return Intl.plural(
+      n,
+      one:
+          'It leaves the records list and default exports, and keeps its '
+          'values and photos. Filter by Archived to find it again.',
+      other:
+          'They leave the records list and default exports, and keep their '
+          'values and photos. Filter by Archived to find them again.',
+    );
+  }
+
+  /// Confirms archiving.
+  static const String recordsArchiveConfirm = 'Archive';
+
+  /// Title of the confirm before [n] records are processed again.
+  static String recordsReprocessTitle(int n) {
+    return Intl.plural(
+      n,
+      one: 'Process 1 record again?',
+      other: 'Process $n records again?',
+    );
+  }
+
+  /// Body of that confirm: what processing again does to the [n] records.
+  static String recordsReprocessMessage(int n) {
+    return Intl.plural(
+      n,
+      one:
+          'It goes back to the processing queue and is read again from the '
+          'first step, with the other records waiting in this project. '
+          'Values it already has are kept. If it was approved, it needs '
+          'review again.',
+      other:
+          'They go back to the processing queue and are read again from the '
+          'first step, with the other records waiting in this project. '
+          'Values they already have are kept. Approved ones need review '
+          'again.',
+    );
+  }
+
+  /// Confirms processing again.
+  static const String recordsReprocessConfirm = 'Process again';
+
+  /// Title of the confirm before exporting with [n] records selected.
+  static String recordsExportTitle(int n) {
+    return Intl.plural(
+      n,
+      one: 'Export the project with this record?',
+      other: 'Export the project with these $n records?',
+    );
+  }
+
+  /// Body of that confirm: an export is the whole project's package.
+  static String recordsExportMessage(int n) {
+    return Intl.plural(
+      n,
+      one:
+          'An export is one package of the whole project: every record in '
+          'it, this one included, with their photos. You choose where it '
+          'goes once it is written.',
+      other:
+          'An export is one package of the whole project: every record in '
+          'it, the $n selected included, with their photos. You choose '
+          'where it goes once it is written.',
+    );
+  }
+
+  /// Opens the project's export page.
+  static const String recordsExportConfirm = 'Open export';
+
+  /// Snack once [n] records are approved.
+  static String recordsApproved(int n) {
+    return Intl.plural(
+      n,
+      one: '1 record approved',
+      other: '$n records approved',
+    );
+  }
+
+  /// Snack or line when [n] records could not be approved.
+  static String recordsNotApproved(int n) {
+    return Intl.plural(
+      n,
+      one: '1 record could not be approved',
+      other: '$n records could not be approved',
+    );
+  }
+
+  /// Snack once [n] records are archived.
+  static String recordsArchived(int n) {
+    return Intl.plural(
+      n,
+      one: '1 record archived',
+      other: '$n records archived',
+    );
+  }
+
+  /// Snack or line when [n] records could not be archived.
+  static String recordsNotArchived(int n) {
+    return Intl.plural(
+      n,
+      one: '1 record could not be archived',
+      other: '$n records could not be archived',
+    );
+  }
+
+  /// Snack once [n] records are back in the processing queue.
+  static String recordsRequeued(int n) {
+    return Intl.plural(
+      n,
+      one: '1 record queued to process again',
+      other: '$n records queued to process again',
+    );
+  }
+
+  /// Snack or line when [n] records could not be queued again.
+  static String recordsNotRequeued(int n) {
+    return Intl.plural(
+      n,
+      one: '1 record could not be queued',
+      other: '$n records could not be queued',
+    );
+  }
+
+  /// Added to that snack while offline: the [n] queued records wait.
+  static String recordsRequeuedOffline(int n) {
+    return Intl.plural(
+      n,
+      one:
+          'It waits in the processing queue; process it from there once '
+          'you are online.',
+      other:
+          'They wait in the processing queue; process them from there once '
+          'you are online.',
+    );
+  }
+
+  /// A bulk action's summary when some records changed and some did not:
+  /// [done] and [notDone] are the two counted sentences.
+  static String recordsBulkOutcome({
+    required String done,
+    required String notDone,
+  }) {
+    return '$done. $notDone.';
+  }
+
+  /// A bulk action asked for while another is still running.
+  static const String recordsBulkBusy = 'Another bulk action is running.';
+
+  /// What to do while a bulk action is running.
+  static const String recordsBulkBusyAction =
+      'Wait for it to finish, then try again.';
 
   // Records: data and purge (014).
 }

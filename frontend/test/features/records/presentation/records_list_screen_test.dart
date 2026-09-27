@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
@@ -101,7 +103,8 @@ void main() {
 
       await tester.scrollUntilVisible(
         find.text('Record 440'),
-        600,
+        300,
+        maxScrolls: 200,
         scrollable: find.descendant(
           of: find.byKey(const ValueKey<String>('records-list')),
           matching: find.byType(Scrollable),
@@ -110,14 +113,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Record 440'), findsOneWidget);
-      expect(
-        records.pageReads,
-        contains((offset: pageSize, limit: pageSize)),
-      );
+      expect(records.pageReads, contains((offset: pageSize, limit: pageSize)));
 
       await tester.scrollUntilVisible(
         find.text('Record 250'),
-        1200,
+        300,
+        maxScrolls: 200,
         scrollable: find.descendant(
           of: find.byKey(const ValueKey<String>('records-list')),
           matching: find.byType(Scrollable),
@@ -177,7 +178,7 @@ void main() {
       expect(find.text(_unreadable.message), findsWidgets);
 
       records.failedOffsets.clear();
-      await tester.tap(find.text(_unreadable.message).first);
+      await tester.tap(find.text(_unreadable.message).hitTestable().first);
       await tester.pumpAndSettle();
 
       expect(find.text(_unreadable.message), findsNothing);
@@ -210,10 +211,7 @@ void main() {
       await tester.tap(find.text(Copy.recordsEmptyAction));
       await tester.pumpAndSettle();
 
-      expect(
-        router.state.uri.path,
-        RoutePaths.projectCapture('project-1'),
-      );
+      expect(router.state.uri.path, RoutePaths.projectCapture('project-1'));
     });
 
     testWidgets('with no project open the page offers to open one', (
@@ -286,9 +284,9 @@ void main() {
     ) async {
       fake.seedMany(3);
       await pumpRecordsList(tester, records: records);
-      controllerOf(tester).applyFilter(
-        RecordFilter.forStatus(RecordStatus.approved),
-      );
+      controllerOf(
+        tester,
+      ).applyFilter(RecordFilter.forStatus(RecordStatus.approved));
       await tester.pumpAndSettle();
 
       expect(find.text(Copy.searchFilterNoMatchMessage), findsOneWidget);
@@ -344,7 +342,10 @@ void main() {
       expect(row.subtitle, '#7 · SN-1 · North');
       expect(row.status?.status, RecordStatus.needsReview);
       expect(
-        find.descendant(of: rowOf('boiler'), matching: find.byType(RecordThumb)),
+        find.descendant(
+          of: rowOf('boiler'),
+          matching: find.byType(RecordThumb),
+        ),
         findsOneWidget,
       );
     });
@@ -443,10 +444,7 @@ void main() {
       await tester.tap(find.text('Record 2'));
       await tester.pumpAndSettle();
 
-      expect(
-        router.state.uri.path,
-        RoutePaths.projectRecords('project-1'),
-      );
+      expect(router.state.uri.path, RoutePaths.projectRecords('project-1'));
       expect(container.read(recordSelectionProvider('project-1')), <String>{
         'project-1-record-3',
         'project-1-record-2',
@@ -508,14 +506,13 @@ void main() {
         find.byKey(const ValueKey<String>('records-chip-status-needsReview')),
         findsOneWidget,
       );
-      expect(
-        find.text(Copy.recordsChipTemplate('Boilers')),
-        findsOneWidget,
-      );
+      expect(find.text(Copy.recordsChipTemplate('Boilers')), findsOneWidget);
 
       await tester.tap(
         find.descendant(
-          of: find.byKey(const ValueKey<String>('records-chip-status-needsReview')),
+          of: find.byKey(
+            const ValueKey<String>('records-chip-status-needsReview'),
+          ),
           matching: find.bySemanticsLabel(
             Copy.dismissChip(Copy.statusNeedsReview),
           ),
@@ -712,32 +709,35 @@ void main() {
       expect(jsonEncode(stored), isNot(contains('Record')));
     });
 
-    test('a broken or foreign stored value reads as no filter, newest first', () {
-      for (final String stored in <String>[
-        'not json',
-        '[]',
-        '{"project-1": "flat"}',
-        '{"project-1": {"filter": 3, "sort": {"key": "colour"}}}',
-      ]) {
-        final ProviderContainer container = ProviderContainer(
-          overrides: <Override>[
-            projectSettingsStoreOverride(
-              SettingsStore.fake(
-                stored: <String, Object?>{
-                  SettingKeys.recordListCriteria.name: stored,
-                },
+    test(
+      'a broken or foreign stored value reads as no filter, newest first',
+      () {
+        for (final String stored in <String>[
+          'not json',
+          '[]',
+          '{"project-1": "flat"}',
+          '{"project-1": {"filter": 3, "sort": {"key": "colour"}}}',
+        ]) {
+          final ProviderContainer container = ProviderContainer(
+            overrides: <Override>[
+              projectSettingsStoreOverride(
+                SettingsStore.fake(
+                  stored: <String, Object?>{
+                    SettingKeys.recordListCriteria.name: stored,
+                  },
+                ),
               ),
-            ),
-          ],
-        );
-        addTearDown(container.dispose);
-        final RecordsListCriteria criteria = container.read(
-          recordsListControllerProvider('project-1'),
-        );
-        expect(criteria.filter, RecordFilter.none, reason: stored);
-        expect(criteria.sort, RecordSort.newestFirst, reason: stored);
-      }
-    });
+            ],
+          );
+          addTearDown(container.dispose);
+          final RecordsListCriteria criteria = container.read(
+            recordsListControllerProvider('project-1'),
+          );
+          expect(criteria.filter, RecordFilter.none, reason: stored);
+          expect(criteria.sort, RecordSort.newestFirst, reason: stored);
+        }
+      },
+    );
 
     test('going back to no filter, newest first, forgets the project', () {
       final SettingsStore settings = SettingsStore.fake();
@@ -755,7 +755,10 @@ void main() {
       );
 
       controller.applySort(RecordSort.newestFirst.reversed());
-      expect(settings.read(SettingKeys.recordListCriteria), contains('project-1'));
+      expect(
+        settings.read(SettingKeys.recordListCriteria),
+        contains('project-1'),
+      );
 
       controller.applySort(RecordSort.newestFirst);
       expect(settings.read(SettingKeys.recordListCriteria), '{}');
@@ -800,7 +803,10 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.byKey(const ValueKey<String>('records-search')), findsOne);
         expect(find.byKey(const ValueKey<String>('records-sort')), findsOne);
-        expect(find.byKey(const ValueKey<String>('records-clear-filters')), findsOne);
+        expect(
+          find.byKey(const ValueKey<String>('records-clear-filters')),
+          findsOne,
+        );
         expect(find.byType(AppStatusPill), findsWidgets);
         expect(find.text('Record 30'), findsOneWidget);
       });
@@ -810,23 +816,16 @@ void main() {
         'open record', (WidgetTester tester) async {
       setSurface(tester, const Size(280, 800), scale: 2);
       fake.seedMany(4);
-      await pumpRecordsList(tester, records: records);
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: listContainer(tester),
-          child: MaterialApp(
-            home: Scaffold(
-              body: RecordsListView(
-                projectId: 'project-1',
-                pane: true,
-                currentRecordId: 'project-1-record-3',
-                onOpen: (String _) {},
-              ),
-            ),
-          ),
+      await pumpRecordsView(
+        tester,
+        records: records,
+        child: RecordsListView(
+          projectId: 'project-1',
+          pane: true,
+          currentRecordId: 'project-1-record-3',
+          onOpen: (String _) {},
         ),
       );
-      await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
       expect(
@@ -837,7 +836,10 @@ void main() {
         tester.widget<AppListTile>(rowOf('project-1-record-4')).current,
         isFalse,
       );
-      expect(tester.widget<AppListTile>(rowOf('project-1-record-4')).dense, isTrue);
+      expect(
+        tester.widget<AppListTile>(rowOf('project-1-record-4')).dense,
+        isTrue,
+      );
       expect(
         find.byKey(const ValueKey<String>('record-edit-project-1-record-4')),
         findsNothing,
@@ -848,23 +850,16 @@ void main() {
       WidgetTester tester,
     ) async {
       fake.seedMany(2);
-      await pumpRecordsList(tester, records: records);
       final List<String> opened = <String>[];
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: listContainer(tester),
-          child: MaterialApp(
-            home: Scaffold(
-              body: RecordsListView(
-                projectId: 'project-1',
-                pane: true,
-                onOpen: opened.add,
-              ),
-            ),
-          ),
+      await pumpRecordsView(
+        tester,
+        records: records,
+        child: RecordsListView(
+          projectId: 'project-1',
+          pane: true,
+          onOpen: opened.add,
         ),
       );
-      await tester.pumpAndSettle();
 
       await tester.tap(find.text('Record 1'));
       await tester.pump();
@@ -879,9 +874,9 @@ void main() {
     final SemanticsHandle semantics = tester.ensureSemantics();
     fake.seedMany(5);
     await pumpRecordsList(tester, records: records);
-    controllerOf(tester).applyFilter(
-      RecordFilter.forStatus(RecordStatus.captured),
-    );
+    controllerOf(
+      tester,
+    ).applyFilter(RecordFilter.forStatus(RecordStatus.captured));
     await tester.pumpAndSettle();
 
     await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
@@ -906,72 +901,122 @@ void main() {
     semantics.dispose();
   });
 
-  testWidgets(
-    'ten thousand records scroll top to bottom within the frame budget, '
-    'holding no more than a few pages (FE-PERF-01, FE-TEST-09)',
-    (WidgetTester tester) async {
-      setSurface(tester, const Size(393, 886));
-      fake.seedMany(10000);
-      await pumpRecordsList(tester, records: records);
-      final Finder list = find.byKey(const ValueKey<String>('records-list'));
-      final ScrollPosition position = tester
-          .state<ScrollableState>(
-            find.descendant(of: list, matching: find.byType(Scrollable)),
-          )
-          .position;
-      expect(position.maxScrollExtent, greaterThan(0));
+  testWidgets('ten thousand records scroll from top to bottom within the frame '
+      'budget, building only the rows on screen and holding a few pages at '
+      'most (FE-PERF-01, FE-TEST-09)', (WidgetTester tester) async {
+    setSurface(tester, const Size(393, 886));
+    fake.seedMany(10000);
+    await pumpRecordsList(tester, records: records);
+    final Finder list = find.byKey(const ValueKey<String>('records-list'));
+    final ScrollPosition position = tester
+        .state<ScrollableState>(
+          find.descendant(of: list, matching: find.byType(Scrollable)),
+        )
+        .position;
+    final double end = position.maxScrollExtent;
+    final double row = tester.getSize(rowOf('project-1-record-10000')).height;
+    // The most rows a virtualised frame can build: the viewport and the
+    // cache on either side of it, whatever the list's length.
+    final int rowsOnScreen =
+        ((position.viewportDimension +
+                    2 * RenderAbstractViewport.defaultCacheExtent) /
+                row)
+            .ceil() +
+        1;
+    expect(end, greaterThan(9999 * row - position.viewportDimension));
 
-      // Warm up: the first frames of a row compile its code.
-      for (int step = 0; step < 3; step++) {
-        await tester.drag(list, const Offset(0, -800));
-        await tester.pump();
-        await tester.pump();
+    // Warm up: a row's first frames compile its code.
+    for (final double at in <double>[0.5, 0.25, 0]) {
+      position.jumpTo(at * end);
+      await tester.pump();
+      await tester.pump();
+    }
+    await tester.pumpAndSettle();
+    records.mostLivePages = records.livePages;
+
+    final List<int> dragFrames = <int>[];
+    final List<int> allFrames = <int>[];
+    int mostRowsBuilt = 0;
+    int rowsBuilt = 0;
+    final Stopwatch watch = Stopwatch();
+    Future<int> frame() async {
+      rowsBuilt = 0;
+      watch
+        ..reset()
+        ..start();
+      await tester.pump();
+      watch.stop();
+      allFrames.add(watch.elapsedMicroseconds);
+      if (rowsBuilt > mostRowsBuilt) {
+        mostRowsBuilt = rowsBuilt;
       }
-      position.jumpTo(0);
-      await tester.pumpAndSettle();
-      records.mostLivePages = records.livePages;
+      return watch.elapsedMicroseconds;
+    }
 
-      final List<int> frames = <int>[];
-      final Stopwatch watch = Stopwatch();
-      int steps = 0;
-      while (position.pixels < position.maxScrollExtent && steps < 1000) {
-        steps++;
-        await tester.drag(list, const Offset(0, -2400));
-        for (int frame = 0; frame < 2; frame++) {
-          watch
-            ..reset()
-            ..start();
-          await tester.pump();
-          watch.stop();
-          frames.add(watch.elapsedMicroseconds);
+    debugOnRebuildDirtyWidget = (Element element, bool _) {
+      if (element.widget is AppListTile) {
+        rowsBuilt++;
+      }
+    };
+    try {
+      // Twenty stations from the top to the bottom. At each the list
+      // jumps there, as a scrollbar drag does, then a finger drags it on
+      // a frame at a time.
+      for (int station = 0; station < 20; station++) {
+        position.jumpTo(end * station / 20);
+        await frame();
+        await frame();
+        final TestGesture finger = await tester.startGesture(
+          tester.getCenter(list),
+        );
+        await finger.moveBy(const Offset(0, -kTouchSlop - 1));
+        await frame();
+        for (int step = 0; step < 12; step++) {
+          await finger.moveBy(Offset(0, -row * 3));
+          dragFrames.add(await frame());
         }
+        await finger.up();
+        await frame();
       }
-      await tester.pumpAndSettle();
+      position.jumpTo(end);
+      await frame();
+      await frame();
+    } finally {
+      debugOnRebuildDirtyWidget = null;
+    }
+    await tester.pumpAndSettle();
 
-      expect(position.pixels, position.maxScrollExtent);
-      expect(find.text('Record 1'), findsOneWidget);
-      frames.sort();
-      final int p90 = frames[(frames.length * 0.9).floor() - 1];
-      final int worst = frames.last;
-      // ignore: avoid_print
-      print(
-        'records scroll: ${frames.length} frames over $steps drags, '
-        'p50 ${frames[frames.length ~/ 2]} us, p90 $p90 us, worst $worst us, '
-        'most pages held ${records.mostLivePages}',
-      );
-      expect(p90, lessThanOrEqualTo(AppConstants.scrolling.frame.inMicroseconds));
-      expect(
-        worst,
-        lessThanOrEqualTo(AppConstants.scrolling.worstFrame.inMicroseconds),
-      );
-      expect(
-        records.mostLivePages,
-        lessThanOrEqualTo(AppConstants.scrolling.livePages),
-      );
-      for (final ({int offset, int limit}) read in records.pageReads) {
-        expect(read.limit, pageSize);
-      }
-    },
-    timeout: const Timeout(Duration(minutes: 3)),
-  );
+    expect(position.pixels, end);
+    expect(find.text('Record 1'), findsOneWidget);
+    dragFrames.sort();
+    allFrames.sort();
+    final int p50 = dragFrames[dragFrames.length ~/ 2];
+    final int p90 = dragFrames[(dragFrames.length * 0.9).ceil() - 1];
+    final int worst = allFrames.last;
+    final String measured =
+        '${dragFrames.length} drag frames: p50 $p50 us, p90 $p90 us; '
+        'worst of ${allFrames.length} frames $worst us; at most '
+        '$mostRowsBuilt rows built in a frame (bound $rowsOnScreen) and '
+        '${records.mostLivePages} pages held';
+    debugPrint('records scroll measurement: $measured');
+    expect(
+      p90,
+      lessThanOrEqualTo(AppConstants.scrolling.frame.inMicroseconds),
+      reason: measured,
+    );
+    expect(
+      worst,
+      lessThanOrEqualTo(AppConstants.scrolling.worstFrame.inMicroseconds),
+      reason: measured,
+    );
+    expect(mostRowsBuilt, lessThanOrEqualTo(rowsOnScreen), reason: measured);
+    expect(
+      records.mostLivePages,
+      lessThanOrEqualTo(AppConstants.scrolling.livePages),
+      reason: measured,
+    );
+    for (final ({int offset, int limit}) read in records.pageReads) {
+      expect(read.limit, pageSize);
+    }
+  }, timeout: const Timeout(Duration(minutes: 3)));
 }

@@ -271,3 +271,34 @@ void setSurface(WidgetTester tester, Size size, {double scale = 1}) {
   addTearDown(tester.view.resetDevicePixelRatio);
   addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
 }
+
+/// Makes [store] the settings store the list remembers criteria in.
+Override projectSettingsStoreOverride(SettingsStore store) {
+  return projectSettingsStoreProvider.overrideWith((Ref _) => store);
+}
+
+/// Pumps [child], such as the list in its pane form, alone over [records].
+Future<void> pumpRecordsView(
+  WidgetTester tester, {
+  required RecordRepository records,
+  required Widget child,
+}) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      retry: (int _, Object _) => null,
+      overrides: <Override>[
+        recordRepositoryProvider.overrideWith((Ref _) => records),
+        projectSettingsStoreOverride(SettingsStore.fake()),
+        photoThumbnailsProvider.overrideWith(
+          (Ref _) => PhotoThumbnails.fake(const <String, String>{}),
+        ),
+        recordClockProvider.overrideWith((Ref _) => FixedClock(harnessNow)),
+      ],
+      child: MaterialApp(
+        theme: buildTheme(brightness: Brightness.light),
+        home: Scaffold(body: child),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}

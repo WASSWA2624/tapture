@@ -104,27 +104,36 @@ final class RecordsListView extends ConsumerWidget {
             child: _ActiveFilters(projectId: projectId, filter: filter),
           ),
         Expanded(
-          child: AsyncValueView<int>(
-            value: count,
-            onRetry: () => ref.invalidate(
-              recordsCountProvider((projectId: projectId, filter: filter)),
-            ),
-            isEmpty: (int total) => total == 0,
-            empty: () => _EmptyList(
-              projectId: projectId,
-              filter: filter,
-              controller: controller,
-            ),
-            loadingCount: _loadingRows,
-            data: (int total) => _RecordRows(
-              key: ValueKey<RecordsListCriteria>(criteria),
-              projectId: projectId,
-              criteria: criteria,
-              total: total,
-              pane: pane,
-              currentRecordId: currentRecordId,
-              onOpen: onOpen,
-            ),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final Widget body = AsyncValueView<int>(
+                value: count,
+                onRetry: () => ref.invalidate(
+                  recordsCountProvider((projectId: projectId, filter: filter)),
+                ),
+                isEmpty: (int total) => total == 0,
+                empty: () => _EmptyList(
+                  projectId: projectId,
+                  filter: filter,
+                  controller: controller,
+                ),
+                loadingCount: _rowsThatFit(constraints.maxHeight),
+                data: (int total) => _RecordRows(
+                  key: ValueKey<RecordsListCriteria>(criteria),
+                  projectId: projectId,
+                  criteria: criteria,
+                  total: total,
+                  pane: pane,
+                  currentRecordId: currentRecordId,
+                  onOpen: onOpen,
+                ),
+              );
+              // The failure panel scrolls, so it is whole on a short window
+              // and at 200 percent text (FE-RESP-06).
+              return count.hasError && !count.hasValue
+                  ? SingleChildScrollView(child: body)
+                  : body;
+            },
           ),
         ),
       ],
@@ -132,8 +141,14 @@ final class RecordsListView extends ConsumerWidget {
   }
 }
 
-/// Skeleton rows while the count loads, about one screen's worth.
-const int _loadingRows = 6;
+/// How many skeleton rows fill [height] while the count loads, so the
+/// placeholder is one screen's worth and never overflows a short window.
+int _rowsThatFit(double height) {
+  if (!height.isFinite) {
+    return 1;
+  }
+  return (height / (Sizes.minTapTarget + Space.x6)).floor().clamp(0, 12);
+}
 
 /// The virtualised rows. Every row has the prototype's height, so the list
 /// jumps to any of thousands of rows without building the ones between.

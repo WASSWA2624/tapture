@@ -7,8 +7,10 @@ library;
 //
 // Exports stay in one alphabetical run (directives_ordering), so each wave
 // adds its lines in place and says what it added in its block below.
-export 'data/record_repository_impl.dart' show recordRepositoryProvider;
+export 'data/record_repository_impl.dart'
+    show RecordRepositoryImpl, recordRepositoryProvider;
 export 'domain/domain.dart';
+export 'presentation/record_bulk_actions.dart';
 export 'presentation/record_delete_action.dart';
 export 'presentation/record_delete_controller.dart';
 export 'presentation/record_edit_screen.dart';
@@ -20,6 +22,7 @@ export 'presentation/record_selection.dart';
 export 'presentation/record_template_change.dart';
 export 'presentation/records_list_screen.dart';
 export 'presentation/records_list_view.dart';
+export 'presentation/recycle_bin_screen.dart';
 
 // Wave B (task 014 data and screens): append one block per agent below,
 // exporting only what main, the router or another feature needs.
@@ -43,6 +46,17 @@ export 'presentation/records_list_view.dart';
 // Wave B, history (014 step 6): record_history_screen.dart, the chronology
 // page the router builds for `AppRoutes.recordHistory` and
 // `AppRoutes.projectRecordHistory`.
+
+// Wave B, the Drift record store (014 steps 1, 3 and 7): RecordRepositoryImpl
+// joins recordRepositoryProvider's `show` list, so main can override the
+// provider with `RecordRepositoryImpl(db:, clock:, deviceId:, ids:)` through
+// this barrel. Its read and write halves stay inside data/.
+
+// Wave B, recycle bin and bulk actions (014 steps 7 and 8):
+// recycle_bin_screen.dart, the page the router builds for
+// `AppRoutes.recycleBin`, and record_bulk_actions.dart, the selection's
+// action bar the records list places under its rows
+// (`RecordBulkActions(projectId:, selectable:, onExport:)`).
 
 // Wave C (task 014 integration): the Drift implementation main composes, and
 // the screens the router and nav shell build.

@@ -6,6 +6,8 @@ library;
 //
 // Exports stay in one alphabetical run (directives_ordering), so each agent
 // adds its lines in place and says what it added in its block below.
+export 'record_bulk_actions.dart';
+export 'record_bulk_controller.dart';
 export 'record_delete_action.dart';
 export 'record_delete_controller.dart';
 export 'record_edit_controller.dart';
@@ -27,6 +29,8 @@ export 'records_list_screen.dart';
 export 'records_list_view.dart';
 export 'records_page_providers.dart';
 export 'records_sort_menu.dart';
+export 'recycle_bin_controller.dart';
+export 'recycle_bin_screen.dart';
 
 // Wave B (task 014 screens): each presentation agent appends its exports
 // below, one block per agent.
@@ -49,3 +53,9 @@ export 'records_sort_menu.dart';
 // Wave B, history (014 step 6): record_history_screen.dart (the chronology
 // page) and record_history_providers.dart (the history stream and the
 // templates it names field labels from).
+
+// Wave B, recycle bin and bulk actions (014 steps 7 and 8):
+// recycle_bin_screen.dart and its controller (restore in one press, and
+// empty now behind a typed confirm), and record_bulk_actions.dart and its
+// controller (approve, archive, delete, export and process again over a
+// selection, record by record, with a succeeded and failed summary).

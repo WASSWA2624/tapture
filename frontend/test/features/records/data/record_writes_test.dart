@@ -361,7 +361,7 @@ void main() {
           isA<ValidationFailure>(),
         );
         expect(
-          failureOf(await writes.delete(id, reason: 'Duplicate')),
+          failureOf(await writes.moveToBin(id, reason: 'Duplicate')),
           isA<ValidationFailure>(),
         );
         expect(await statusOf(db, id), 'shelved');
@@ -1004,7 +1004,7 @@ void main() {
         );
         await seedPhoto(db, 'ph1', recordId: id, projectId: 'project-1');
 
-        okOf(await writes.delete(id, reason: 'Duplicate'));
+        okOf(await writes.moveToBin(id, reason: 'Duplicate'));
 
         final Map<String, Object?> row = await _row(db, 'records', id);
         expect(row['status'], 'deleted');
@@ -1042,7 +1042,7 @@ void main() {
           status: 'approved',
           fields: const <String, String>{'model': 'Autoclave'},
         );
-        okOf(await writes.delete(id, reason: 'Duplicate'));
+        okOf(await writes.moveToBin(id, reason: 'Duplicate'));
 
         okOf(await writes.restore(id));
 
@@ -1063,10 +1063,10 @@ void main() {
       'restore reads the latest delete when a record went round twice',
       () async {
         final String id = await record('r1', status: 'approved');
-        okOf(await writes.delete(id, reason: 'Duplicate'));
+        okOf(await writes.moveToBin(id, reason: 'Duplicate'));
         okOf(await writes.restore(id));
         okOf(await writes.transition(id, RecordStatus.needsReview));
-        okOf(await writes.delete(id, reason: 'Wrong site'));
+        okOf(await writes.moveToBin(id, reason: 'Wrong site'));
 
         okOf(await writes.restore(id));
 
@@ -1111,15 +1111,15 @@ void main() {
         final String binned = await record('binned', status: 'deleted');
 
         expect(
-          failureOf(await writes.delete(id, reason: '  ')),
+          failureOf(await writes.moveToBin(id, reason: '  ')),
           isA<ValidationFailure>(),
         );
         expect(
-          failureOf(await writes.delete(binned, reason: 'Again')),
+          failureOf(await writes.moveToBin(binned, reason: 'Again')),
           isA<ValidationFailure>(),
         );
         expect(
-          failureOf(await writes.delete('missing', reason: 'Gone')),
+          failureOf(await writes.moveToBin('missing', reason: 'Gone')),
           isA<StorageFailure>(),
         );
         expect(await statusOf(db, id), 'captured');
@@ -1149,7 +1149,7 @@ void main() {
       await _failWhen(db, 'tombstones', "NEW.entity_type = 'records'");
 
       expect(
-        failureOf(await writes.delete(id, reason: 'Duplicate')),
+        failureOf(await writes.moveToBin(id, reason: 'Duplicate')),
         isA<StorageFailure>(),
       );
 

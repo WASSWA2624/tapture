@@ -39,8 +39,9 @@ abstract interface class EvidencePurge {
   /// files are counted.
   factory EvidencePurge.store(BlobStore files) = _StoreEvidencePurge;
 
-  /// Removes each of [photos]' stored file, unless [PurgePhoto.keepFile]
-  /// says another row still holds it, and every cached copy made from it:
+  /// Removes the stored file of each of [photos], unless
+  /// [PurgePhoto.keepFile] says another row still holds it, and every cached
+  /// copy made from it:
   /// thumbnails and upload copies keyed by its content hash (unless
   /// [PurgePhoto.keepCache] says another photo shares that hash), and the
   /// thumbnails and capture copy keyed by its id.
@@ -110,8 +111,9 @@ abstract interface class EvidencePurge {
   static const String partSuffix = '.part';
 }
 
-/// The process-wide [EvidencePurge], over the process storage root. Only the
-/// retention purge reads it.
+/// The process-wide [EvidencePurge], over the process storage root, for a
+/// purge built inside the provider scope. `main` builds the launch purge
+/// over the same root before the scope exists.
 final Provider<EvidencePurge> evidencePurgeProvider = Provider<EvidencePurge>((
   Ref ref,
 ) {

@@ -2,3 +2,4 @@
 library;
 
 export 'record_purge_store.dart';
+export 'record_repository_impl.dart';
