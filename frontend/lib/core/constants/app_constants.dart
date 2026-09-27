@@ -513,6 +513,20 @@ abstract final class AppConstants {
       Duration(seconds: 30),
     ],
   );
+
+  /// Chunk size, retry cap and backoff for a confirmed cloud upload (task 021).
+  static const ({
+    int partBytes,
+    int maxAttempts,
+    int backoffBaseMs,
+    int backoffCapMs,
+  })
+  cloudUpload = (
+    partBytes: 8 * 1024 * 1024,
+    maxAttempts: 5,
+    backoffBaseMs: 200,
+    backoffCapMs: 5000,
+  );
 }
 
 /// One mebibyte, the unit storage and import ceilings are stated in.

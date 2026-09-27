@@ -6055,4 +6055,103 @@ abstract final class Copy {
 
   /// Keeps the choice on this row only.
   static const String importApplyToThis = 'Only this row';
+
+  /// Settings row for cloud destinations.
+  static const String cloudDestinationsTitle = 'Upload destinations';
+
+  /// Settings row explanation.
+  static const String cloudDestinationsSubtitle =
+      'Where a finished file can be sent, when you confirm it.';
+
+  /// Destinations page title.
+  static const String destinationTitle = 'Upload destinations';
+
+  /// Empty destinations headline.
+  static const String destinationEmptyHeadline = 'No destinations yet';
+
+  /// Empty destinations explanation.
+  static const String destinationEmptyMessage =
+      'Add a bucket, a folder or a drive you sign in to. Nothing is sent until you confirm it.';
+
+  /// Starts adding a destination.
+  static const String destinationAdd = 'Add a destination';
+
+  /// Saves a destination after its test succeeds.
+  static const String destinationSave = 'Save';
+
+  /// Runs the probe upload.
+  static const String destinationTest = 'Test connection';
+
+  /// Removes a destination.
+  static const String destinationRemove = 'Remove';
+
+  /// Removal confirm title.
+  static const String destinationRemoveTitle = 'Remove this destination?';
+
+  /// Removal confirm explanation.
+  static const String destinationRemoveMessage =
+      'The destination and its saved sign-in are both deleted.';
+
+  /// Shown when the probe upload fails, so save stays disabled.
+  static const String destinationCheckFailed =
+      'The connection test did not succeed, so this destination was not saved.';
+
+  /// Label field.
+  static const String destinationLabel = 'Name';
+
+  /// Folder field.
+  static const String destinationFolder = 'Folder';
+
+  /// Obscured credential field.
+  static const String destinationSecret = 'Sign-in';
+
+  /// S3 kind label.
+  static const String destinationKindS3 = 'S3 bucket';
+
+  /// Google Drive kind label.
+  static const String destinationKindDrive = 'Google Drive';
+
+  /// OneDrive kind label.
+  static const String destinationKindOneDrive = 'OneDrive';
+
+  /// Dropbox kind label.
+  static const String destinationKindDropbox = 'Dropbox';
+
+  /// WebDAV kind label.
+  static const String destinationKindWebDav = 'WebDAV';
+
+  /// Device folder kind label.
+  static const String destinationKindLocal = 'Folder on this device';
+
+  /// Confirm sheet title.
+  static const String uploadConfirmTitle = 'Send this file?';
+
+  /// Confirm button.
+  static const String uploadConfirm = 'Send';
+
+  /// Names the file, its size, the destination and the folder.
+  static String uploadConfirmMessage({
+    required String name,
+    required String size,
+    required String destination,
+    required String folder,
+  }) {
+    return '$name ($size) will be sent to $destination, in $folder.';
+  }
+
+  /// History page title.
+  static const String uploadHistoryTitle = 'Uploads';
+
+  /// Empty history headline.
+  static const String uploadHistoryEmptyHeadline = 'No uploads yet';
+
+  /// Empty history explanation.
+  static const String uploadHistoryEmptyMessage =
+      'A file appears here after you confirm sending it.';
+
+  /// Retries one failed or interrupted upload.
+  static const String uploadRetry = 'Retry';
+
+  /// History filter label.
+  static const String uploadFilter = 'Destination';
 }

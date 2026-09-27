@@ -486,6 +486,16 @@ void main() {
       await _expectVersion14Schema(db);
     },
   );
+
+  test('version 22 adds destinations and can run twice', () async {
+    expect(kDestructiveSteps.contains(22), isFalse);
+    final AppDatabase db = AppDatabase.memory();
+    addTearDown(db.close);
+    await migrateToV22(Migrator(db), db);
+    await migrateToV22(Migrator(db), db);
+    expect((await _columnSets(db)).containsKey('destinations'), isTrue);
+    expect((await _columnSets(db))['destinations'], contains('credential_ref'));
+  });
 }
 
 void _seedVersion1(File file) {

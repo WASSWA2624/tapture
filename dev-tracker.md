@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**54 of 69 tasks complete (78%)** · last updated 2026-09-28
+**55 of 69 tasks complete (80%)** · last updated 2026-09-28
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -32,7 +32,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 18 — Export | 1 | 1 | `██████████████` 100% |
 | 19 — Bundles and merge | 1 | 1 | `██████████████` 100% |
 | 20 — Data import | 1 | 1 | `██████████████` 100% |
-| 21 — Cloud upload | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 21 — Cloud upload | 1 | 1 | `██████████████` 100% |
 | 22 — Privacy and security | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 23 — Hardening | 34 | 45 | `███████████░░░` 76% |
 | 24 — The minimal backend | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
@@ -385,9 +385,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 21 — Cloud upload
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [021 — Cloud upload: a destination the user chooses, never a sync channel](dev-plan/21-cloud-upload/021-cloud-upload.md)
+- [x] [021 — Cloud upload: a destination the user chooses, never a sync channel](dev-plan/21-cloud-upload/021-cloud-upload.md)
 
 ### 22 — Privacy and security
 

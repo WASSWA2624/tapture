@@ -145,47 +145,47 @@ class UploadRunner {
 
 ## Definition of done
 
-- [ ] A destination round-trips through the repository with no credential value anywhere in the database or logs.
-- [ ] A `DestinationKind` with no registered backend fails at resolution with a named failure, not a null.
-- [ ] Tests: `frontend/test/core/cloud/cloud_destination_test.dart` asserts the persisted row holds only
+- [x] A destination round-trips through the repository with no credential value anywhere in the database or logs.
+- [x] A `DestinationKind` with no registered backend fails at resolution with a named failure, not a null.
+- [x] Tests: `frontend/test/core/cloud/cloud_destination_test.dart` asserts the persisted row holds only
       `credentialRef`, that the registry resolves every kind, and that `remove` clears row and secret together.
-- [ ] A destination can be added, renamed, tested and removed without leaving the screen, and a configuration that
+- [x] A destination can be added, renamed, tested and removed without leaving the screen, and a configuration that
       fails its check cannot be saved.
-- [ ] After removal, secure storage holds no entry for that destination and re-adding the same label starts with no
+- [x] After removal, secure storage holds no entry for that destination and re-adding the same label starts with no
       credential; a half-completed removal says which half remains instead of reporting success.
-- [ ] Tests: widget test of `destination_list_screen.dart` over empty, populated, loading and failed-check states.
-- [ ] Tests: test asserting secure storage no longer holds the entry after `destination_remove_action.dart` runs.
-- [ ] A test upload of a small file proves each configuration before any real upload is offered.
-- [ ] The folder destination completes with the device fully offline, and works on removable storage.
-- [ ] A cancelled or failed send leaves no partial object at the destination and no partial file in the folder.
-- [ ] Tests: unit tests of `s3_destination.dart`, `webdav_destination.dart` and `local_destination.dart` against fakes,
+- [x] Tests: widget test of `destination_list_screen.dart` over empty, populated, loading and failed-check states.
+- [x] Tests: test asserting secure storage no longer holds the entry after `destination_remove_action.dart` runs.
+- [x] A test upload of a small file proves each configuration before any real upload is offered.
+- [x] The folder destination completes with the device fully offline, and works on removable storage.
+- [x] A cancelled or failed send leaves no partial object at the destination and no partial file in the folder.
+- [x] Tests: unit tests of `s3_destination.dart`, `webdav_destination.dart` and `local_destination.dart` against fakes,
       covering signature and auth headers, multipart resume from an offset, retryable versus fatal failures, and
       cancellation.
-- [ ] The app never reads the user's other Drive, OneDrive or Dropbox content; only the folder it was given and the
+- [x] The app never reads the user's other Drive, OneDrive or Dropbox content; only the folder it was given and the
       files it created there.
-- [ ] An expired token refreshes silently without the user re-picking the folder; a revoked token asks for
+- [x] An expired token refreshes silently without the user re-picking the folder; a revoked token asks for
       re-authorisation without losing the destination.
-- [ ] Tests: unit tests of `google_drive_destination.dart`, `onedrive_destination.dart` and `dropbox_destination.dart`
+- [x] Tests: unit tests of `google_drive_destination.dart`, `onedrive_destination.dart` and `dropbox_destination.dart`
       against fakes.
-- [ ] Tests: a test asserting the requested scope string for each provider.
-- [ ] Tests: a refresh-then-retry and a refresh-failure test on `oauth_destination_client.dart`.
-- [ ] No bytes leave the device without the confirmation sheet being confirmed, including retries of a failed upload.
-- [ ] No setting anywhere suppresses the sheet, and a second upload of the same file asks again.
-- [ ] Tests: widget test asserting cancel performs no request and reads no credential.
-- [ ] Tests: test asserting a repeat upload of the same file to the same destination prompts a second time.
-- [ ] A failed, cancelled or interrupted upload leaves the local file and database untouched and can be retried.
-- [ ] Resume continues from the acknowledged offset, verified against a backend fake that accepts the first chunk then
+- [x] Tests: a test asserting the requested scope string for each provider.
+- [x] Tests: a refresh-then-retry and a refresh-failure test on `oauth_destination_client.dart`.
+- [x] No bytes leave the device without the confirmation sheet being confirmed, including retries of a failed upload.
+- [x] No setting anywhere suppresses the sheet, and a second upload of the same file asks again.
+- [x] Tests: widget test asserting cancel performs no request and reads no credential.
+- [x] Tests: test asserting a repeat upload of the same file to the same destination prompts a second time.
+- [x] A failed, cancelled or interrupted upload leaves the local file and database untouched and can be retried.
+- [x] Resume continues from the acknowledged offset, verified against a backend fake that accepts the first chunk then
       fails.
-- [ ] Progress and cancel work on a file larger than available memory.
-- [ ] An attempt row exists from the moment the transfer starts, so a process killed mid-transfer leaves an interrupted
+- [x] Progress and cancel work on a file larger than available memory.
+- [x] An attempt row exists from the moment the transfer starts, so a process killed mid-transfer leaves an interrupted
       row rather than no row.
-- [ ] A history row names destination, file, byte size, start, end, outcome and failure reason, and a retry writes a
+- [x] A history row names destination, file, byte size, start, end, outcome and failure reason, and a retry writes a
       new attempt row rather than overwriting the old one.
-- [ ] History lists attempts newest first, filters by destination, and offers retry on failed and interrupted rows
+- [x] History lists attempts newest first, filters by destination, and offers retry on failed and interrupted rows
       only.
-- [ ] Tests: unit tests of `upload_runner.dart` with no Flutter binding, covering backoff, resume-from-offset,
+- [x] Tests: unit tests of `upload_runner.dart` with no Flutter binding, covering backoff, resume-from-offset,
       cancellation and the interrupted-row case.
-- [ ] Tests: widget test of `upload_history_screen.dart` over empty, populated and failed states.
+- [x] Tests: widget test of `upload_history_screen.dart` over empty, populated and failed states.
 
 ## Out of scope
 

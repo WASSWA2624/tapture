@@ -154,6 +154,12 @@ const List<_Section> _defaultSections = <_Section>[
     group: Copy.settingsGroupStorageSecurity,
   ),
   (
+    title: Copy.cloudDestinationsTitle,
+    subtitle: Copy.cloudDestinationsSubtitle,
+    route: RoutePaths.settingsDestinations,
+    group: Copy.settingsGroupStorageSecurity,
+  ),
+  (
     title: Copy.settingsSecurityTitle,
     subtitle: Copy.settingsSecuritySubtitle,
     route: RoutePaths.settingsSecurity,

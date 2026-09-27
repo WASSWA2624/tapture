@@ -1523,6 +1523,632 @@ class AuditLogCompanion extends UpdateCompanion<AuditLogData> {
   }
 }
 
+class $DestinationsTable extends Destinations
+    with TableInfo<$DestinationsTable, DestinationRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DestinationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _labelMeta = const VerificationMeta('label');
+  @override
+  late final GeneratedColumn<String> label = GeneratedColumn<String>(
+    'label',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _folderMeta = const VerificationMeta('folder');
+  @override
+  late final GeneratedColumn<String> folder = GeneratedColumn<String>(
+    'folder',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _credentialRefMeta = const VerificationMeta(
+    'credentialRef',
+  );
+  @override
+  late final GeneratedColumn<String> credentialRef = GeneratedColumn<String>(
+    'credential_ref',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastCheckMeta = const VerificationMeta(
+    'lastCheck',
+  );
+  @override
+  late final GeneratedColumn<String> lastCheck = GeneratedColumn<String>(
+    'last_check',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    kind,
+    label,
+    folder,
+    credentialRef,
+    lastCheck,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'destinations';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DestinationRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('label')) {
+      context.handle(
+        _labelMeta,
+        label.isAcceptableOrUnknown(data['label']!, _labelMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_labelMeta);
+    }
+    if (data.containsKey('folder')) {
+      context.handle(
+        _folderMeta,
+        folder.isAcceptableOrUnknown(data['folder']!, _folderMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_folderMeta);
+    }
+    if (data.containsKey('credential_ref')) {
+      context.handle(
+        _credentialRefMeta,
+        credentialRef.isAcceptableOrUnknown(
+          data['credential_ref']!,
+          _credentialRefMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_credentialRefMeta);
+    }
+    if (data.containsKey('last_check')) {
+      context.handle(
+        _lastCheckMeta,
+        lastCheck.isAcceptableOrUnknown(data['last_check']!, _lastCheckMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DestinationRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DestinationRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      label: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}label'],
+      )!,
+      folder: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}folder'],
+      )!,
+      credentialRef: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}credential_ref'],
+      )!,
+      lastCheck: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_check'],
+      ),
+    );
+  }
+
+  @override
+  $DestinationsTable createAlias(String alias) {
+    return $DestinationsTable(attachedDatabase, alias);
+  }
+}
+
+class DestinationRow extends DataClass implements Insertable<DestinationRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// [DestinationKind.name].
+  final String kind;
+
+  /// Name the operator gave this destination.
+  final String label;
+
+  /// Remote folder, bucket prefix, or device-relative path.
+  final String folder;
+
+  /// Handle of the credential in secure storage.
+  final String credentialRef;
+
+  /// Plain-language outcome of the last connection check, when one has run.
+  final String? lastCheck;
+  const DestinationRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.kind,
+    required this.label,
+    required this.folder,
+    required this.credentialRef,
+    this.lastCheck,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['kind'] = Variable<String>(kind);
+    map['label'] = Variable<String>(label);
+    map['folder'] = Variable<String>(folder);
+    map['credential_ref'] = Variable<String>(credentialRef);
+    if (!nullToAbsent || lastCheck != null) {
+      map['last_check'] = Variable<String>(lastCheck);
+    }
+    return map;
+  }
+
+  DestinationsCompanion toCompanion(bool nullToAbsent) {
+    return DestinationsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      kind: Value(kind),
+      label: Value(label),
+      folder: Value(folder),
+      credentialRef: Value(credentialRef),
+      lastCheck: lastCheck == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastCheck),
+    );
+  }
+
+  factory DestinationRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DestinationRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      kind: serializer.fromJson<String>(json['kind']),
+      label: serializer.fromJson<String>(json['label']),
+      folder: serializer.fromJson<String>(json['folder']),
+      credentialRef: serializer.fromJson<String>(json['credentialRef']),
+      lastCheck: serializer.fromJson<String?>(json['lastCheck']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'kind': serializer.toJson<String>(kind),
+      'label': serializer.toJson<String>(label),
+      'folder': serializer.toJson<String>(folder),
+      'credentialRef': serializer.toJson<String>(credentialRef),
+      'lastCheck': serializer.toJson<String?>(lastCheck),
+    };
+  }
+
+  DestinationRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? kind,
+    String? label,
+    String? folder,
+    String? credentialRef,
+    Value<String?> lastCheck = const Value.absent(),
+  }) => DestinationRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    kind: kind ?? this.kind,
+    label: label ?? this.label,
+    folder: folder ?? this.folder,
+    credentialRef: credentialRef ?? this.credentialRef,
+    lastCheck: lastCheck.present ? lastCheck.value : this.lastCheck,
+  );
+  DestinationRow copyWithCompanion(DestinationsCompanion data) {
+    return DestinationRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      label: data.label.present ? data.label.value : this.label,
+      folder: data.folder.present ? data.folder.value : this.folder,
+      credentialRef: data.credentialRef.present
+          ? data.credentialRef.value
+          : this.credentialRef,
+      lastCheck: data.lastCheck.present ? data.lastCheck.value : this.lastCheck,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DestinationRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('kind: $kind, ')
+          ..write('label: $label, ')
+          ..write('folder: $folder, ')
+          ..write('credentialRef: $credentialRef, ')
+          ..write('lastCheck: $lastCheck')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    kind,
+    label,
+    folder,
+    credentialRef,
+    lastCheck,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DestinationRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.kind == this.kind &&
+          other.label == this.label &&
+          other.folder == this.folder &&
+          other.credentialRef == this.credentialRef &&
+          other.lastCheck == this.lastCheck);
+}
+
+class DestinationsCompanion extends UpdateCompanion<DestinationRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> kind;
+  final Value<String> label;
+  final Value<String> folder;
+  final Value<String> credentialRef;
+  final Value<String?> lastCheck;
+  final Value<int> rowid;
+  const DestinationsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.label = const Value.absent(),
+    this.folder = const Value.absent(),
+    this.credentialRef = const Value.absent(),
+    this.lastCheck = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DestinationsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String kind,
+    required String label,
+    required String folder,
+    required String credentialRef,
+    this.lastCheck = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       kind = Value(kind),
+       label = Value(label),
+       folder = Value(folder),
+       credentialRef = Value(credentialRef);
+  static Insertable<DestinationRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? kind,
+    Expression<String>? label,
+    Expression<String>? folder,
+    Expression<String>? credentialRef,
+    Expression<String>? lastCheck,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (kind != null) 'kind': kind,
+      if (label != null) 'label': label,
+      if (folder != null) 'folder': folder,
+      if (credentialRef != null) 'credential_ref': credentialRef,
+      if (lastCheck != null) 'last_check': lastCheck,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DestinationsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? kind,
+    Value<String>? label,
+    Value<String>? folder,
+    Value<String>? credentialRef,
+    Value<String?>? lastCheck,
+    Value<int>? rowid,
+  }) {
+    return DestinationsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      kind: kind ?? this.kind,
+      label: label ?? this.label,
+      folder: folder ?? this.folder,
+      credentialRef: credentialRef ?? this.credentialRef,
+      lastCheck: lastCheck ?? this.lastCheck,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (label.present) {
+      map['label'] = Variable<String>(label.value);
+    }
+    if (folder.present) {
+      map['folder'] = Variable<String>(folder.value);
+    }
+    if (credentialRef.present) {
+      map['credential_ref'] = Variable<String>(credentialRef.value);
+    }
+    if (lastCheck.present) {
+      map['last_check'] = Variable<String>(lastCheck.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DestinationsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('kind: $kind, ')
+          ..write('label: $label, ')
+          ..write('folder: $folder, ')
+          ..write('credentialRef: $credentialRef, ')
+          ..write('lastCheck: $lastCheck, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $DeviceProfileTable extends DeviceProfile
     with TableInfo<$DeviceProfileTable, DeviceProfileRow> {
   @override
@@ -25177,6 +25803,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $TombstonesTable tombstones = $TombstonesTable(this);
   late final $AuditLogTable auditLog = $AuditLogTable(this);
+  late final $DestinationsTable destinations = $DestinationsTable(this);
   late final $DeviceProfileTable deviceProfile = $DeviceProfileTable(this);
   late final $ProjectsTable projects = $ProjectsTable(this);
   late final $ContextTable context = $ContextTable(this);
@@ -25309,6 +25936,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     tombstones,
     auditLog,
+    destinations,
     deviceProfile,
     projects,
     context,

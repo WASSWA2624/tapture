@@ -22,6 +22,8 @@ import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/capture.dart';
+import 'package:tapture/features/cloud/presentation/destination_list_screen.dart';
+import 'package:tapture/features/cloud/presentation/upload_history_screen.dart';
 import 'package:tapture/features/context/presentation/context_hierarchy_screen.dart';
 import 'package:tapture/features/context/presentation/context_preset_list.dart';
 import 'package:tapture/features/exports/presentation/export_screen.dart';
@@ -816,6 +818,18 @@ List<RouteBase> get _routes {
                   path: 'storage',
                   builder: (BuildContext _, GoRouterState _) {
                     return const StorageSettingsScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'destinations',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const DestinationListScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'uploads',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const UploadHistoryScreen();
                   },
                 ),
                 GoRoute(

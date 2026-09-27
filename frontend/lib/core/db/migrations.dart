@@ -38,6 +38,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   19: migrateToV19,
   20: migrateToV20,
   21: migrateToV21,
+  22: migrateToV22,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -414,6 +415,21 @@ Future<void> migrateToV21(Migrator migrator, AppDatabase db) async {
     }
   }
   await RecordSchema.ensure(db);
+}
+
+/// Schema version 22: cloud destinations (task 021).
+///
+/// Adds the destinations table. Existing rows are left as they are.
+Future<void> migrateToV22(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> tables = await db
+      .customSelect(
+        "SELECT name FROM sqlite_master WHERE type = 'table' "
+        "AND name = 'destinations'",
+      )
+      .get();
+  if (tables.isEmpty) {
+    await migrator.createTable(db.destinations);
+  }
 }
 
 /// Expression index that serves pinned-first, then newest (FE-PERF-03).

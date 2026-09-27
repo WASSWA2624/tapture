@@ -130,7 +130,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *A destination for files the user chooses to send. Never automatic, never a sync channel.*
 
-- [ ] [021 — Cloud upload: a destination the user chooses, never a sync channel](21-cloud-upload/021-cloud-upload.md)
+- [x] [021 — Cloud upload: a destination the user chooses, never a sync channel](21-cloud-upload/021-cloud-upload.md)
 
 ## 22 — Privacy and security
 
