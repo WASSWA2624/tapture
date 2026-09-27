@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**50 of 69 tasks complete (72%)** · last updated 2026-09-27
+**51 of 69 tasks complete (74%)** · last updated 2026-09-27
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -28,7 +28,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 14 — Records | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 15 — Data quality | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 16 — Review | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
-| 17 — Meetings | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 17 — Meetings | 1 | 1 | `██████████████` 100% |
 | 18 — Export | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 19 — Bundles and merge | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 20 — Data import | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
@@ -361,9 +361,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 17 — Meetings
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [017 — Meetings: minutes, attendance and actions](dev-plan/17-meetings/017-meetings.md)
+- [x] [017 — Meetings: minutes, attendance and actions](dev-plan/17-meetings/017-meetings.md)
 
 ### 18 — Export
 

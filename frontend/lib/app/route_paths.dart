@@ -139,6 +139,14 @@ abstract final class RoutePaths {
   static String projectBatchReview(String projectId) =>
       '${project(projectId)}/review';
 
+  /// Starts a meeting on [projectId] (task 017).
+  static String projectMeetingCreate(String projectId) =>
+      '${project(projectId)}/meetings/new';
+
+  /// Reviews one meeting on [projectId] (task 017).
+  static String projectMeetingReview(String projectId, String meetingId) =>
+      '${project(projectId)}/meetings/${Uri.encodeComponent(meetingId)}/review';
+
   /// Review of one record inside its project (task 016).
   static String projectRecordReview(String projectId, String recordId) =>
       '${projectRecord(projectId, recordId)}/review';

@@ -43,6 +43,7 @@ import 'features/context/data/context_repository_impl.dart';
 import 'features/exports/data/export_repository_impl.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
+import 'features/meetings/data/meeting_repository_impl.dart';
 import 'features/merge/merge.dart';
 import 'features/processing/data/notifications.dart';
 import 'features/processing/data/processing_repository_impl.dart';
@@ -309,6 +310,14 @@ Future<void> _run() async {
       }),
       contextRepositoryProvider.overrideWith((Ref _) {
         return ContextRepositoryImpl(
+          db: db,
+          clock: clock,
+          deviceId: id,
+          ids: ids,
+        );
+      }),
+      meetingRepositoryProvider.overrideWith((Ref _) {
+        return MeetingRepositoryImpl(
           db: db,
           clock: clock,
           deviceId: id,

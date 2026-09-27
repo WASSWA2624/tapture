@@ -23,6 +23,9 @@ import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/capture.dart';
 import 'package:tapture/features/context/presentation/context_hierarchy_screen.dart';
 import 'package:tapture/features/context/presentation/context_preset_list.dart';
+import 'package:tapture/features/meetings/domain/meeting.dart';
+import 'package:tapture/features/meetings/presentation/meeting_create_screen.dart';
+import 'package:tapture/features/meetings/presentation/meeting_review_screen.dart';
 import 'package:tapture/features/merge/merge.dart';
 import 'package:tapture/features/processing/presentation/queue_screen.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
@@ -577,6 +580,26 @@ List<RouteBase> get _routes {
                       builder: (BuildContext _, GoRouterState state) {
                         return BatchReviewRoute(
                           projectId: state.pathParameters['projectId']!,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'meetings/new',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState state) {
+                        return MeetingCreateScreen(
+                          projectId: state.pathParameters['projectId']!,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'meetings/:meetingId/review',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState state) {
+                        final Object? extra = state.extra;
+                        return MeetingReviewScreen(
+                          meeting: extra is Meeting ? extra : null,
+                          requireActionDetails: true,
                         );
                       },
                     ),

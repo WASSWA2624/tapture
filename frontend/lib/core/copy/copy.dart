@@ -5546,4 +5546,252 @@ abstract final class Copy {
 
   /// Audit line when review approves a record.
   static const String reviewApprovedReason = 'Approved in review.';
+
+  /// Meeting create page title.
+  static const String meetingTitle = 'Meeting';
+
+  /// Starts a meeting from the prefilled header.
+  static const String meetingStart = 'Start meeting';
+
+  /// Empty meeting headline.
+  static const String meetingEmptyHeadline = 'No meeting yet';
+
+  /// Empty meeting explanation.
+  static const String meetingEmptyMessage =
+      'Date, time, location and secretary fill in from this project.';
+
+  /// Header date label.
+  static const String meetingDate = 'Date';
+
+  /// Header start-time label.
+  static const String meetingStartTime = 'Start time';
+
+  /// Header location label.
+  static const String meetingLocation = 'Location';
+
+  /// Header secretary label.
+  static const String meetingSecretary = 'Secretary';
+
+  /// Title written when a meeting starts, from the clock's date.
+  static String meetingStartedTitle(DateTime when) {
+    final String month = when.month.toString().padLeft(2, '0');
+    final String day = when.day.toString().padLeft(2, '0');
+    return 'Meeting ${when.year}-$month-$day';
+  }
+
+  /// Attachments section.
+  static const String meetingAttachments = 'Attachments';
+
+  /// Adds an attachment.
+  static const String meetingAddAttachment = 'Add attachment';
+
+  /// Empty attachments headline.
+  static const String meetingAttachmentsEmpty = 'No attachments';
+
+  /// Empty attachments explanation.
+  static const String meetingAttachmentsEmptyMessage =
+      'Agendas, reports, handouts and whiteboard photos land here.';
+
+  /// Opens an attachment.
+  static const String meetingOpenAttachment = 'Open';
+
+  /// Agenda section.
+  static const String meetingAgenda = 'Agenda';
+
+  /// Adds an agenda entry.
+  static const String meetingAddAgenda = 'Add agenda item';
+
+  /// Agenda title field.
+  static const String meetingAgendaTitle = 'Agenda item';
+
+  /// Discussion notes under an agenda entry.
+  static const String meetingDiscussion = 'Discussion';
+
+  /// Moves an entry later.
+  static const String meetingMoveDown = 'Move down';
+
+  /// Removes an entry after confirm.
+  static const String meetingRemove = 'Remove';
+
+  /// Confirm title for a removal.
+  static const String meetingRemoveTitle = 'Remove this?';
+
+  /// Confirm body for a removal.
+  static const String meetingRemoveMessage = 'This leaves the meeting.';
+
+  /// Confirm button for a removal.
+  static const String meetingRemoveConfirm = 'Remove';
+
+  /// Empty agenda headline.
+  static const String meetingAgendaEmpty = 'No agenda yet';
+
+  /// Empty agenda explanation.
+  static const String meetingAgendaEmptyMessage =
+      'Add the items you will discuss, in the order you want them.';
+
+  /// Attendees section.
+  static const String meetingAttendees = 'Attendees';
+
+  /// Adds an attendee.
+  static const String meetingAddAttendee = 'Add attendee';
+
+  /// Attendee name field.
+  static const String meetingAttendeeName = 'Name';
+
+  /// Attendee title field.
+  static const String meetingAttendeeRole = 'Title';
+
+  /// Attendee organisation field.
+  static const String meetingOrganisation = 'Organisation';
+
+  /// Attendee contact field.
+  static const String meetingContact = 'Contact';
+
+  /// Marks the person present.
+  static const String meetingPresent = 'Present';
+
+  /// Marks an apology.
+  static const String meetingApology = 'Apology';
+
+  /// How many people are present. Apologies are not included.
+  static String meetingAttendanceCount(int count) {
+    return Intl.plural(count, one: '1 present', other: '$count present');
+  }
+
+  /// Accepts a staff suggestion.
+  static const String meetingAcceptStaff = 'Link staff';
+
+  /// Empty attendees headline.
+  static const String meetingAttendeesEmpty = 'No attendees yet';
+
+  /// Empty attendees explanation.
+  static const String meetingAttendeesEmptyMessage =
+      'Add who is present, and record apologies separately.';
+
+  /// Attendance sheet section.
+  static const String meetingAttendanceSheet = 'Attendance sheet';
+
+  /// Photographs the signed sheet.
+  static const String meetingPhotographSheet = 'Photograph the sheet';
+
+  /// Accepts the edited rows onto the attendee list.
+  static const String meetingAcceptRows = 'Add these attendees';
+
+  /// A poor read still keeps the photo.
+  static const String meetingSheetKept =
+      'The photo stays attached. Type the names if the reading is wrong.';
+
+  /// Empty attendance headline.
+  static const String meetingSheetEmpty = 'No attendance sheet';
+
+  /// Empty attendance explanation.
+  static const String meetingSheetEmptyMessage =
+      'Photograph the signed sheet, then check each name before adding it.';
+
+  /// Signature column.
+  static const String meetingSignature = 'Signature';
+
+  /// Recording section.
+  static const String meetingRecording = 'Recording';
+
+  /// Starts recording.
+  static const String meetingRecord = 'Record';
+
+  /// Stops recording.
+  static const String meetingStop = 'Stop';
+
+  /// Elapsed recording time.
+  static String meetingElapsed(String clock) => 'Elapsed $clock';
+
+  /// Free space while recording.
+  static String meetingRemaining(String label) => '$label free';
+
+  /// A recording interrupted before stop.
+  static const String meetingInterrupted = 'Recording interrupted';
+
+  /// Empty recording headline.
+  static const String meetingRecordingEmpty = 'No recording';
+
+  /// Empty recording explanation.
+  static const String meetingRecordingEmptyMessage =
+      'A recording stays on the meeting, including one that was interrupted.';
+
+  /// Decisions section.
+  static const String meetingDecisions = 'Decisions';
+
+  /// Adds a decision.
+  static const String meetingAddDecision = 'Add decision';
+
+  /// Decision text field.
+  static const String meetingDecisionText = 'Decision';
+
+  /// Where a refined decision came from.
+  static const String meetingSource = 'From the notes';
+
+  /// Empty decisions headline.
+  static const String meetingDecisionsEmpty = 'No decisions yet';
+
+  /// Empty decisions explanation.
+  static const String meetingDecisionsEmptyMessage =
+      'Decisions from the minutes or typed here are listed together.';
+
+  /// Actions section.
+  static const String meetingActions = 'Actions';
+
+  /// Adds an action.
+  static const String meetingAddAction = 'Add action';
+
+  /// Action text field.
+  static const String meetingActionText = 'Action';
+
+  /// Owner field.
+  static const String meetingOwner = 'Owner';
+
+  /// Due date field.
+  static const String meetingDue = 'Due date';
+
+  /// Picks an owner from the attendees.
+  static const String meetingOwnerAttendee = 'Owner from attendees';
+
+  /// Picks an owner from the staff dataset.
+  static const String meetingOwnerStaff = 'Owner from staff';
+
+  /// Action status.
+  static const String meetingStatus = 'Status';
+
+  /// Empty actions headline.
+  static const String meetingActionsEmpty = 'No actions yet';
+
+  /// Empty actions explanation.
+  static const String meetingActionsEmptyMessage =
+      'Actions keep an owner, a due date and a status.';
+
+  /// Raw notes beside the minutes.
+  static const String meetingNotes = 'Raw notes';
+
+  /// Refined minutes beside the notes.
+  static const String meetingMinutes = 'Refined minutes';
+
+  /// Verbatim transcript, never edited here.
+  static const String meetingTranscript = 'Transcript';
+
+  /// Blocks approval and names the action.
+  static String meetingActionBlocked(String action) =>
+      '$action needs an owner and a due date before it can be approved.';
+
+  /// Approves the meeting.
+  static const String meetingApprove = 'Approve meeting';
+
+  /// Review page title.
+  static const String meetingReviewTitle = 'Review meeting';
+
+  /// Empty review headline.
+  static const String meetingReviewEmpty = 'No meeting to review';
+
+  /// Empty review explanation.
+  static const String meetingReviewEmptyMessage =
+      'Open a meeting to see attendance, decisions and actions.';
+
+  /// Audit line when a meeting is approved.
+  static const String meetingApprovedReason = 'Approved in review.';
 }

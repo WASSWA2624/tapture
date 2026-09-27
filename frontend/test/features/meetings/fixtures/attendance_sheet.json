@@ -1,0 +1,12 @@
+{
+  "cells": [
+    {"text": "Name", "confidence": 0.99, "x": 0, "y": 0},
+    {"text": "Title", "confidence": 0.98, "x": 80, "y": 0},
+    {"text": "Organisation", "confidence": 0.97, "x": 160, "y": 0},
+    {"text": "Signature", "confidence": 0.96, "x": 240, "y": 0},
+    {"text": "Ada Lovelace", "confidence": 0.91, "x": 0, "y": 40},
+    {"text": "Chair", "confidence": 0.8, "x": 80, "y": 40},
+    {"text": "Analytical", "confidence": 0.77, "x": 160, "y": 40},
+    {"text": "yes", "confidence": 0.7, "x": 240, "y": 42}
+  ]
+}

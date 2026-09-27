@@ -106,7 +106,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *A meeting is a record with structure: minutes, attendance and actions.*
 
-- [ ] [017 — Meetings: minutes, attendance and actions](17-meetings/017-meetings.md)
+- [x] [017 — Meetings: minutes, attendance and actions](17-meetings/017-meetings.md)
 
 ## 18 — Export
 

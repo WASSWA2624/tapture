@@ -347,6 +347,13 @@ abstract final class AppConstants {
   /// Streaming reads for hashing and other heavy file jobs (FE-PERF-07).
   static const ({int chunkBytes}) hashing = (chunkBytes: 64 * 1024);
 
+  /// Attendance-sheet row grouping and how a long recording is split
+  /// before transcription (task 017).
+  static const ({int rowBand, int transcriptChunkBytes}) meetings = (
+    rowBand: 8,
+    transcriptChunkBytes: 64 * 1024,
+  );
+
   /// Spreadsheet import: how many leading rows to score as a header, how
   /// many data rows to sample for type inference, the largest repeating
   /// set treated as a choice, and the shortest identifier.

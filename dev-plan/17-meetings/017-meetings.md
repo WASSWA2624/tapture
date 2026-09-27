@@ -115,41 +115,41 @@ class Meeting {
 
 ## Definition of done
 
-- [ ] A meeting can be started in one tap, with a correct header and no typing.
-- [ ] Attachments of every supported kind appear in one list on the meeting and open from it.
-- [ ] Each agenda item becomes a discussion section, in the order the user set.
-- [ ] An apology is recorded as an apology and never counted as attendance, in the record and on export.
-- [ ] Every extracted attendance row is editable before it joins the attendee list, and none is added silently.
-- [ ] No attendee is linked to a staff row without a person accepting the suggestion.
-- [ ] A sheet that reads badly still leaves its photo attached and the attendee list editable by hand.
-- [ ] An interrupted recording is still attached to the meeting and playable.
-- [ ] The raw transcript is never replaced, neither by refining the minutes nor by a later transcription run.
-- [ ] A fabricated attendee, decision or action is rejected by the guard, and the rejection names the item.
-- [ ] Raw notes and refined minutes are shown side by side and both are editable.
-- [ ] Actions are exportable as their own register, with owner, due date and status.
-- [ ] A refined decision or action can be edited or deleted without altering the raw material it came from.
-- [ ] A meeting cannot be exported while its actions have no owners, when the template requires them.
-- [ ] Approving a meeting writes the same lifecycle and audit trail as any other record.
-- [ ] Tests: round-trip mapper test of `meeting.dart` covering every attribute.
-- [ ] Tests: widget test of `meeting_create_screen.dart` including its empty and failure states.
-- [ ] Tests: widget test of `meeting_attachments.dart` including its empty and failure states.
-- [ ] Tests: widget test of `agenda_editor.dart` covering add, reorder and remove, plus its empty and failure states.
-- [ ] Tests: widget test of `attendee_editor.dart` covering a present attendee and an apology, plus its empty and
+- [x] A meeting can be started in one tap, with a correct header and no typing.
+- [x] Attachments of every supported kind appear in one list on the meeting and open from it.
+- [x] Each agenda item becomes a discussion section, in the order the user set.
+- [x] An apology is recorded as an apology and never counted as attendance, in the record and on export.
+- [x] Every extracted attendance row is editable before it joins the attendee list, and none is added silently.
+- [x] No attendee is linked to a staff row without a person accepting the suggestion.
+- [x] A sheet that reads badly still leaves its photo attached and the attendee list editable by hand.
+- [x] An interrupted recording is still attached to the meeting and playable.
+- [x] The raw transcript is never replaced, neither by refining the minutes nor by a later transcription run.
+- [x] A fabricated attendee, decision or action is rejected by the guard, and the rejection names the item.
+- [x] Raw notes and refined minutes are shown side by side and both are editable.
+- [x] Actions are exportable as their own register, with owner, due date and status.
+- [x] A refined decision or action can be edited or deleted without altering the raw material it came from.
+- [x] A meeting cannot be exported while its actions have no owners, when the template requires them.
+- [x] Approving a meeting writes the same lifecycle and audit trail as any other record.
+- [x] Tests: round-trip mapper test of `meeting.dart` covering every attribute.
+- [x] Tests: widget test of `meeting_create_screen.dart` including its empty and failure states.
+- [x] Tests: widget test of `meeting_attachments.dart` including its empty and failure states.
+- [x] Tests: widget test of `agenda_editor.dart` covering add, reorder and remove, plus its empty and failure states.
+- [x] Tests: widget test of `attendee_editor.dart` covering a present attendee and an apology, plus its empty and
       failure states.
-- [ ] Tests: widget test of `attendance_capture.dart` including its empty and failure states.
-- [ ] Tests: test of `attendance_ocr.dart` against a fixture attendance sheet asserting the columns and the per-row
+- [x] Tests: widget test of `attendance_capture.dart` including its empty and failure states.
+- [x] Tests: test of `attendance_ocr.dart` against a fixture attendance sheet asserting the columns and the per-row
       confidence.
-- [ ] Tests: unit tests of `attendee_matching.dart` over above- and below-threshold scores, with no Flutter binding.
-- [ ] Tests: widget test of `meeting_audio_section.dart` covering recording, interruption, and its empty and failure
+- [x] Tests: unit tests of `attendee_matching.dart` over above- and below-threshold scores, with no Flutter binding.
+- [x] Tests: widget test of `meeting_audio_section.dart` covering recording, interruption, and its empty and failure
       states.
-- [ ] Tests: unit tests of `meeting_transcription.dart` over chunking, a failed chunk and a repeat run, with no Flutter
+- [x] Tests: unit tests of `meeting_transcription.dart` over chunking, a failed chunk and a repeat run, with no Flutter
       binding.
-- [ ] Tests: unit tests of `minutes_refinement.dart` asserting a fabricated action is rejected, a supported one
+- [x] Tests: unit tests of `minutes_refinement.dart` asserting a fabricated action is rejected, a supported one
       survives, and the raw material is unchanged by refinement, with no Flutter binding.
-- [ ] Tests: widget test of `decisions_editor.dart` covering add, edit and remove, plus its empty and failure states.
-- [ ] Tests: widget test of `actions_editor.dart` covering add, edit, remove, an owner taken from each source, and its
+- [x] Tests: widget test of `decisions_editor.dart` covering add, edit and remove, plus its empty and failure states.
+- [x] Tests: widget test of `actions_editor.dart` covering add, edit, remove, an owner taken from each source, and its
       empty and failure states.
-- [ ] Tests: widget test of `meeting_review_screen.dart` covering a complete meeting, an ownerless action blocking
+- [x] Tests: widget test of `meeting_review_screen.dart` covering a complete meeting, an ownerless action blocking
       approval, and its empty and failure states.
 
 ## Out of scope
