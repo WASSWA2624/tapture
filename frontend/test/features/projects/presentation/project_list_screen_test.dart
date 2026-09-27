@@ -61,11 +61,24 @@ void main() {
     expect(find.text(Copy.projectsEmptyMessage), findsOneWidget);
     expect(find.text(Copy.projectsCreate), findsOneWidget);
     expect(find.byType(AppPrimaryAction), findsOneWidget);
-    expect(find.text(Copy.projectsImport), findsNothing);
+    expect(find.text(Copy.projectsImport), findsOneWidget);
 
     await tester.tap(find.byType(AppPrimaryAction));
     await tester.pumpAndSettle();
     expect(find.text('create'), findsOneWidget);
+  });
+
+  testWidgets('an empty list import control opens the import flow', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repo = FakeProjectRepository();
+    addTearDown(repo.dispose);
+    await _pump(tester, repo: repo);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(Copy.projectsImport));
+    await tester.pumpAndSettle();
+    expect(find.text('import'), findsOneWidget);
   });
 
   testWidgets('a populated list renders counts and last-worked time', (
@@ -412,6 +425,12 @@ Future<void> _pump(
           return const ProjectListScreen();
         },
         routes: <RouteBase>[
+          GoRoute(
+            path: 'import',
+            builder: (BuildContext _, GoRouterState _) {
+              return const Text('import');
+            },
+          ),
           GoRoute(
             path: 'new',
             builder: (BuildContext _, GoRouterState _) {

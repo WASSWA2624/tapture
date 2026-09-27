@@ -124,7 +124,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *Continue an inventory someone else started, as records or as a register to verify against.*
 
-- [ ] [020 — Data import: continue an inventory someone else started](20-data-import/020-data-import.md)
+- [x] [020 — Data import: continue an inventory someone else started](20-data-import/020-data-import.md)
 
 ## 21 — Cloud upload
 

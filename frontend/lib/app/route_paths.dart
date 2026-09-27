@@ -35,6 +35,9 @@ abstract final class RoutePaths {
   /// One project and its capture/context/template descendants.
   static String project(String id) => '$projects/${Uri.encodeComponent(id)}';
   static const String projectCreate = '$projects/new';
+
+  /// The import entry on the projects list (task 020).
+  static const String projectImport = '$projects/import';
   static const String projectFilters = '$projects/filters';
   static String projectCapture(String projectId) =>
       '${project(projectId)}/capture';

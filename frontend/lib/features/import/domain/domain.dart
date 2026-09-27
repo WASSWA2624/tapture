@@ -1,2 +1,5 @@
-/// The import feature's domain layer: models, repository interfaces and pure logic.
+/// The import feature's domain layer.
 library;
+
+export 'import_duplicates.dart';
+export 'record_import.dart';

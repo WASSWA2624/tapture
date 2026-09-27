@@ -25,6 +25,7 @@ import 'package:tapture/features/capture/capture.dart';
 import 'package:tapture/features/context/presentation/context_hierarchy_screen.dart';
 import 'package:tapture/features/context/presentation/context_preset_list.dart';
 import 'package:tapture/features/exports/presentation/export_screen.dart';
+import 'package:tapture/features/import/presentation/import_screen.dart';
 import 'package:tapture/features/meetings/domain/meeting.dart';
 import 'package:tapture/features/meetings/presentation/meeting_create_screen.dart';
 import 'package:tapture/features/meetings/presentation/meeting_review_screen.dart';
@@ -500,6 +501,12 @@ List<RouteBase> get _routes {
                 return const ProjectListScreen();
               },
               routes: <RouteBase>[
+                GoRoute(
+                  path: 'import',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const ImportScreen();
+                  },
+                ),
                 GoRoute(
                   path: 'new',
                   builder: (BuildContext _, GoRouterState state) {

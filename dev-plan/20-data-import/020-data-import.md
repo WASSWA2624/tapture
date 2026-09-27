@@ -107,36 +107,36 @@ class RecordImport {
 
 ## Definition of done
 
-- [ ] A user never has to know which importer to pick; each supported kind reaches its flow from this one screen.
-- [ ] A kind is detected from the validated file rather than from its extension, and an unsupported or corrupt file is
+- [x] A user never has to know which importer to pick; each supported kind reaches its flow from this one screen.
+- [x] A kind is detected from the validated file rather than from its extension, and an unsupported or corrupt file is
       refused here with a reason, before any flow starts.
-- [ ] The purpose question is asked for spreadsheets and for nothing else.
-- [ ] After a register import, the verification flow works immediately with those rows.
-- [ ] Tests: widget tests of `import_screen.dart` over each detected kind, an unsupported file and the four states.
-- [ ] Tests: widget test of `import_purpose_step.dart` asserting both destinations.
-- [ ] The same mapping interface serves both template creation and record import, with no duplicated reader or
+- [x] The purpose question is asked for spreadsheets and for nothing else.
+- [x] After a register import, the verification flow works immediately with those rows.
+- [x] Tests: widget tests of `import_screen.dart` over each detected kind, an unsupported file and the four states.
+- [x] Tests: widget test of `import_purpose_step.dart` asserting both destinations.
+- [x] The same mapping interface serves both template creation and record import, with no duplicated reader or
       inference.
-- [ ] Mappings are preselected by header name and every one stays the operator's to confirm or change.
-- [ ] The flow cannot continue while an identity field is unmapped, and names the field that is missing.
-- [ ] The first rows are shown as they would be interpreted, before the import runs.
-- [ ] Tests: widget test of `record_mapping_screen.dart` covering preselected mappings, a blocked continue with an
+- [x] Mappings are preselected by header name and every one stays the operator's to confirm or change.
+- [x] The flow cannot continue while an identity field is unmapped, and names the field that is missing.
+- [x] The first rows are shown as they would be interpreted, before the import runs.
+- [x] Tests: widget test of `record_mapping_screen.dart` covering preselected mappings, a blocked continue with an
       unmapped identity field, and the four states.
-- [ ] Ten thousand rows import without freezing the interface, with visible progress.
-- [ ] Invalid rows are collected with their row number and reason, and the valid rows still import.
-- [ ] Records created here carry source `IMPORTED_TABLE` and land in one transaction.
-- [ ] No import silently overwrites an existing record; every match is settled by a choice, which can be applied to
+- [x] Ten thousand rows import without freezing the interface, with visible progress.
+- [x] Invalid rows are collected with their row number and reason, and the valid rows still import.
+- [x] Records created here carry source `IMPORTED_TABLE` and land in one transaction.
+- [x] No import silently overwrites an existing record; every match is settled by a choice, which can be applied to
       all.
-- [ ] This phase holds no second detector and no second `DuplicateChoice`: similarity comes from 110 · Data quality and
+- [x] This phase holds no second detector and no second `DuplicateChoice`: similarity comes from 110 · Data quality and
       only the import outcome is declared here.
-- [ ] Tests: unit tests of `record_import.dart` over a fixture containing invalid rows, with no Flutter binding.
-- [ ] Tests: unit tests of `import_duplicates.dart` over each `ImportDuplicateChoice` plus apply-to-all, with no
+- [x] Tests: unit tests of `record_import.dart` over a fixture containing invalid rows, with no Flutter binding.
+- [x] Tests: unit tests of `import_duplicates.dart` over each `ImportDuplicateChoice` plus apply-to-all, with no
       Flutter binding.
-- [ ] Every skipped or failed row is explained with its row number and reason, and the set is exportable as a list.
-- [ ] Retrying failures creates no duplicate of an already imported row.
-- [ ] Tests: widget test of `import_summary_screen.dart` over a mixed-outcome result, an all-successful result and the
+- [x] Every skipped or failed row is explained with its row number and reason, and the set is exportable as a list.
+- [x] Retrying failures creates no duplicate of an already imported row.
+- [x] Tests: widget test of `import_summary_screen.dart` over a mixed-outcome result, an all-successful result and the
       four states, asserting retry re-runs only failures.
-- [ ] The empty Projects list offers import again, reading `Copy.projectsImport`, and the control it offers works.
-- [ ] Tests: widget test of `project_list_screen.dart` asserting the import control is shown and reaches this flow.
+- [x] The empty Projects list offers import again, reading `Copy.projectsImport`, and the control it offers works.
+- [x] Tests: widget test of `project_list_screen.dart` asserting the import control is shown and reaches this flow.
 
 ## Out of scope
 

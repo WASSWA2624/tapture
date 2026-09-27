@@ -5943,4 +5943,116 @@ abstract final class Copy {
 
   /// Undo is still available.
   static String mergeUndoUntil(String when) => 'Undo until $when';
+
+  /// Import page title.
+  static const String importTitle = 'Import';
+
+  /// Empty import headline.
+  static const String importEmptyHeadline = 'No file yet';
+
+  /// Empty import explanation.
+  static const String importEmptyMessage =
+      'Choose a bundle, a spreadsheet, a dataset or a template.';
+
+  /// Where a bundle goes.
+  static const String importBundleLine =
+      'A bundle opens the merge flow, after it is checked.';
+
+  /// Where a dataset goes.
+  static const String importDatasetLine =
+      'A reference dataset opens the dataset importer.';
+
+  /// Where a template goes.
+  static const String importTemplateLine =
+      'A template workbook opens template mapping.';
+
+  /// Where a row spreadsheet goes.
+  static const String importSheetLine =
+      'A spreadsheet asks whether its rows are records or a register.';
+
+  /// Opens the merge flow.
+  static const String importOpenBundle = 'Open merge';
+
+  /// Opens the dataset importer.
+  static const String importOpenDataset = 'Open dataset';
+
+  /// Opens template mapping.
+  static const String importOpenTemplate = 'Open template';
+
+  /// Opens the purpose question.
+  static const String importOpenSheet = 'Continue';
+
+  /// A kind this screen does not import.
+  static const String importRefused = 'This file cannot be imported';
+
+  /// Purpose page title.
+  static const String importPurposeTitle = 'What is this sheet?';
+
+  /// Rows become records.
+  static const String importPurposeRecords = 'Records to hold';
+
+  /// Rows feed verification.
+  static const String importPurposeRegister = 'Register to verify against';
+
+  /// Mapping page title.
+  static const String importMappingTitle = 'Match columns';
+
+  /// A header with no field yet.
+  static const String importUnmapped = 'Not matched';
+
+  /// Continues the import.
+  static const String importContinue = 'Continue';
+
+  /// Names the identity field that is still unmapped.
+  static String importIdentityMissing(String field) =>
+      '$field is an identity field and still needs a column.';
+
+  /// Summary page title.
+  static const String importSummaryTitle = 'Import summary';
+
+  /// How many rows were created.
+  static String importCreated(int count) => '$count created';
+
+  /// How many rows updated a record.
+  static String importUpdated(int count) => '$count updated';
+
+  /// How many rows were skipped.
+  static String importSkipped(int count) => '$count skipped';
+
+  /// How many rows failed.
+  static String importFailed(int count) => '$count failed';
+
+  /// One row and why it was not written.
+  static String importRowReason(int row, String reason) => 'Row $row: $reason';
+
+  /// Re-runs only the failed rows.
+  static const String importRetry = 'Retry failures';
+
+  /// Writes the skipped and failed rows.
+  static const String importExportProblems = 'Export rows to fix';
+
+  /// Match sheet title.
+  static const String importMatchTitle = 'This row matches a record';
+
+  /// Leave the existing record unchanged.
+  static const String importKeepExisting = 'Keep existing';
+
+  /// Replace the existing record with the row.
+  static const String importReplace = 'Replace';
+
+  /// Fill only empty fields from the row.
+  static const String importMerge = 'Merge';
+
+  /// Asks whether the choice applies to later matches.
+  static const String importApplyToAllTitle = 'Apply to the rest?';
+
+  /// Explains apply-to-all.
+  static const String importApplyToAllMessage =
+      'Use this choice for every later match in this import.';
+
+  /// Confirms apply-to-all.
+  static const String importApplyToAllConfirm = 'Apply to the rest';
+
+  /// Keeps the choice on this row only.
+  static const String importApplyToThis = 'Only this row';
 }

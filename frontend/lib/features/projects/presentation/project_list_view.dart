@@ -117,8 +117,14 @@ Widget _empty(BuildContext context, {required bool searching}) {
     message: searching
         ? Copy.projectsNoMatchMessage
         : Copy.projectsEmptyMessage,
-    actionLabel: expanded ? Copy.projectsCreate : null,
-    onAction: expanded ? () => context.go(_createLocation) : null,
+    actionLabel: searching
+        ? null
+        : expanded
+        ? Copy.projectsCreate
+        : Copy.projectsImport,
+    onAction: searching
+        ? null
+        : () => context.go(expanded ? _createLocation : _importLocation),
   );
 }
 
@@ -186,6 +192,7 @@ String _projectHome(String id) => RoutePaths.project(id);
 /// Must match [AppRoutes.projects], [AppRoutes.projectCreate] and
 /// [AppRoutes.fromQuery].
 const String _createLocation = RoutePaths.projectCreate;
+const String _importLocation = RoutePaths.projectImport;
 const String _fromQuery = RoutePaths.fromQuery;
 
 /// A project's photo in the number circle when it has one (FBK0000154),

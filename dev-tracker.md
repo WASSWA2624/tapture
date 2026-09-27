@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**53 of 69 tasks complete (77%)** · last updated 2026-09-28
+**54 of 69 tasks complete (78%)** · last updated 2026-09-28
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -31,7 +31,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 17 — Meetings | 1 | 1 | `██████████████` 100% |
 | 18 — Export | 1 | 1 | `██████████████` 100% |
 | 19 — Bundles and merge | 1 | 1 | `██████████████` 100% |
-| 20 — Data import | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 20 — Data import | 1 | 1 | `██████████████` 100% |
 | 21 — Cloud upload | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 22 — Privacy and security | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
 | 23 — Hardening | 34 | 45 | `███████████░░░` 76% |
@@ -379,9 +379,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 20 — Data import
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [020 — Data import: continue an inventory someone else started](dev-plan/20-data-import/020-data-import.md)
+- [x] [020 — Data import: continue an inventory someone else started](dev-plan/20-data-import/020-data-import.md)
 
 ### 21 — Cloud upload
 
