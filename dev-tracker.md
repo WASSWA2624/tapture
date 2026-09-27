@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**49 of 69 tasks complete (71%)** · last updated 2026-09-27
+**50 of 69 tasks complete (72%)** · last updated 2026-09-27
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -355,9 +355,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 16 — Review
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [016 — Review: turning proposals into approved data](dev-plan/16-review/016-review.md)
+- [x] [016 — Review: turning proposals into approved data](dev-plan/16-review/016-review.md)
 
 ### 17 — Meetings
 

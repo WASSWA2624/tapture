@@ -135,6 +135,14 @@ abstract final class RoutePaths {
   static String projectQuality(String projectId) =>
       '${project(projectId)}/quality';
 
+  /// The batch review queue for [projectId] (task 016).
+  static String projectBatchReview(String projectId) =>
+      '${project(projectId)}/review';
+
+  /// Review of one record inside its project (task 016).
+  static String projectRecordReview(String projectId, String recordId) =>
+      '${projectRecord(projectId, recordId)}/review';
+
   /// One record's page inside its project.
   static String projectRecord(String projectId, String recordId) =>
       '${projectRecords(projectId)}/${Uri.encodeComponent(recordId)}';

@@ -5423,4 +5423,124 @@ abstract final class Copy {
   /// Explanation when nothing blocks export.
   static const String qualityCleanMessage =
       'Nothing here still blocks a clean export.';
+
+  /// Review screen title.
+  static const String reviewTitle = 'Review';
+
+  /// Fields that need a person before approval.
+  static const String reviewNeedsAttention = 'Needs attention';
+
+  /// Confident fields, collapsed until opened.
+  static const String reviewConfident = 'Confident';
+
+  /// Approves this record and opens the next one.
+  static const String reviewApproveNext = 'Approve and next';
+
+  /// Empty review headline.
+  static const String reviewEmptyHeadline = 'Nothing to review';
+
+  /// Empty review explanation.
+  static const String reviewEmptyMessage =
+      'Records that need a person appear here.';
+
+  /// Shows the captured value.
+  static const String reviewUseRaw = 'Use captured';
+
+  /// Shows the refined value.
+  static const String reviewUseRefined = 'Use refined';
+
+  /// Neither side has a value.
+  static const String reviewNoSidesHeadline = 'No values yet';
+
+  /// Why the raw or refined toggle has nothing to choose.
+  static const String reviewNoSidesMessage =
+      'This field has neither a captured nor a refined value.';
+
+  /// A value the extractor did not invent.
+  static const String reviewNotDetected = 'Not detected';
+
+  /// Types the missing value.
+  static const String reviewTypeIt = 'Type it';
+
+  /// Photographs the label for the missing value.
+  static const String reviewPhotograph = 'Photograph the label';
+
+  /// No missing value to act on.
+  static const String reviewNotDetectedEmpty = 'Nothing is missing';
+
+  /// Opens the evidence for a value.
+  static const String reviewShowEvidence = 'Show evidence';
+
+  /// Opens the full photo.
+  static const String reviewOpenPhoto = 'Open photo';
+
+  /// Evidence with no photo and no passage.
+  static const String reviewEvidenceEmpty = 'No evidence linked';
+
+  /// Verifies the current value without changing it.
+  static const String reviewVerify = 'Verify';
+
+  /// Verifies every confident field.
+  static const String reviewVerifyConfident = 'Verify confident fields';
+
+  /// Who verified a value, and when.
+  static String reviewVerifiedBy(String name) => 'Verified by $name';
+
+  /// Nothing to verify.
+  static const String reviewVerifyEmpty = 'Nothing to verify';
+
+  /// Batch position, [index] of [total], both 1-based for [index].
+  static String reviewPosition(int index, int total) => '$index of $total';
+
+  /// Skips this record and keeps what was typed.
+  static const String reviewSkip = 'Skip';
+
+  /// Returns to the previous record.
+  static const String reviewBack = 'Back';
+
+  /// The batch queue is finished.
+  static const String reviewQueueDone = 'Review is finished';
+
+  /// What to do when the queue is finished.
+  static const String reviewQueueDoneMessage =
+      'Every record in this set has been seen.';
+
+  /// The batch queue has no records.
+  static const String reviewQueueEmpty = 'No records in this review';
+
+  /// Runs processing again.
+  static const String reviewReanalyse = 'Re-analyse';
+
+  /// A proposed value offered beside the current one.
+  static const String reviewProposal = 'Proposed';
+
+  /// Marks a proposal the person accepts.
+  static const String reviewAccept = 'Accept';
+
+  /// Writes the accepted proposals.
+  static const String reviewApplyAccepted = 'Apply accepted';
+
+  /// Declines every proposal.
+  static const String reviewDeclineAll = 'Decline all';
+
+  /// A verified or typed value that re-analysis must not overwrite.
+  static const String reviewOfferedNotApplied = 'Offered, not applied';
+
+  /// No new proposals.
+  static const String reviewReanalyseEmpty = 'No new proposals';
+
+  /// This record is still in an unresolved duplicate pair.
+  static const String reviewBlockedDuplicate =
+      'This record is part of an unresolved duplicate.';
+
+  /// Where to clear a block.
+  static const String reviewBlockedAction =
+      'Fix the named field, then approve again.';
+
+  /// Empty confidence indicator headline.
+  static const String reviewNoConfidence = 'No confidence';
+
+  /// Empty confidence indicator explanation.
+  static const String reviewNoConfidenceMessage =
+      'This value has no confidence band yet.';
 }

@@ -100,7 +100,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *Where a person turns proposals into data. Fast for the common case, thorough when needed.*
 
-- [ ] [016 — Review: turning proposals into approved data](16-review/016-review.md)
+- [x] [016 — Review: turning proposals into approved data](16-review/016-review.md)
 
 ## 17 — Meetings
 

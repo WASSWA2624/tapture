@@ -104,41 +104,41 @@ Future<ApprovalOutcome> approveAndNext(String recordId, RecordFilter filter);
 
 ## Definition of done
 
-- [ ] Contract above is implemented exactly, with nothing else made public.
-- [ ] A confident record is approvable in one tap, without scrolling past collapsed fields.
-- [ ] Every flagged field appears above the confident group, and the confident group starts collapsed.
-- [ ] Choosing raw or refined changes only which value is final; neither version is destroyed and the choice
+- [x] Contract above is implemented exactly, with nothing else made public.
+- [x] A confident record is approvable in one tap, without scrolling past collapsed fields.
+- [x] Every flagged field appears above the confident group, and the confident group starts collapsed.
+- [x] Choosing raw or refined changes only which value is final; neither version is destroyed and the choice
       reverses.
-- [ ] A later field in the same project starts on the remembered side.
-- [ ] A not-detected field offers typing and photographing in place, and never displays an invented value.
-- [ ] Every value carrying an evidence link is checkable in two taps from the review screen.
-- [ ] A value whose evidence is a whole photo shows that photo, not an empty highlight.
-- [ ] Verifying is distinct from editing: a value can be verified without being changed.
-- [ ] A verified value survives reprocessing untouched, and a later proposal for it is offered, never applied.
-- [ ] Approval is blocked by a validation error, an unresolved duplicate or an unresolved conflict, and the block
+- [x] A later field in the same project starts on the remembered side.
+- [x] A not-detected field offers typing and photographing in place, and never displays an invented value.
+- [x] Every value carrying an evidence link is checkable in two taps from the review screen.
+- [x] A value whose evidence is a whole photo shows that photo, not an empty highlight.
+- [x] Verifying is distinct from editing: a value can be verified without being changed.
+- [x] A verified value survives reprocessing untouched, and a later proposal for it is offered, never applied.
+- [x] Approval is blocked by a validation error, an unresolved duplicate or an unresolved conflict, and the block
       names the field and the reason.
-- [ ] Approving moves straight to the next unreviewed record without returning to a list; forty records can be
+- [x] Approving moves straight to the next unreviewed record without returning to a list; forty records can be
       cleared in one pass.
-- [ ] Skipping a record and going back to it preserve the edits made on it.
-- [ ] A verified or manually typed field is offered as a proposal by re-analysis, never applied silently.
-- [ ] Accepting some proposals and declining others leaves exactly the accepted ones written.
-- [ ] Tests: widget test of `review_screen.dart` at compact, medium and expanded widths, including its empty and
+- [x] Skipping a record and going back to it preserve the edits made on it.
+- [x] A verified or manually typed field is offered as a proposal by re-analysis, never applied silently.
+- [x] Accepting some proposals and declining others leaves exactly the accepted ones written.
+- [x] Tests: widget test of `review_screen.dart` at compact, medium and expanded widths, including its empty and
       failure states.
-- [ ] Tests: unit test of `field_ordering.dart` over each flag and their combinations, with no Flutter binding.
-- [ ] Tests: widget test of `raw_refined_toggle.dart` over both selections and the remembered default, including its
+- [x] Tests: unit test of `field_ordering.dart` over each flag and their combinations, with no Flutter binding.
+- [x] Tests: widget test of `raw_refined_toggle.dart` over both selections and the remembered default, including its
       empty and failure states.
-- [ ] Tests: widget test of `confidence_indicator.dart` over all three bands, asserting icon and number are both
+- [x] Tests: widget test of `confidence_indicator.dart` over all three bands, asserting icon and number are both
       present, including its empty and failure states.
-- [ ] Tests: widget test of `not_detected_row.dart` over both affordances, including its empty and failure states.
-- [ ] Tests: widget test of `evidence_viewer.dart` covering a bounded region, the whole-photo fallback, a transcript
+- [x] Tests: widget test of `not_detected_row.dart` over both affordances, including its empty and failure states.
+- [x] Tests: widget test of `evidence_viewer.dart` covering a bounded region, the whole-photo fallback, a transcript
       passage, and its empty and failure states.
-- [ ] Tests: widget test of `verify_action.dart` covering single and bulk verification, the recorded verifier, and
+- [x] Tests: widget test of `verify_action.dart` covering single and bulk verification, the recorded verifier, and
       its empty and failure states.
-- [ ] Tests: unit tests of `approve_record.dart` over each block condition and the clean path, with no Flutter
+- [x] Tests: unit tests of `approve_record.dart` over each block condition and the clean path, with no Flutter
       binding.
-- [ ] Tests: widget test of `batch_review_screen.dart` covering skip, back, the end of the queue, and its empty and
+- [x] Tests: widget test of `batch_review_screen.dart` covering skip, back, the end of the queue, and its empty and
       failure states.
-- [ ] Tests: widget test of `reanalyse_action.dart` covering the diff, partial acceptance, a full decline, and its
+- [x] Tests: widget test of `reanalyse_action.dart` covering the diff, partial acceptance, a full decline, and its
       empty and failure states, including one asserting a verified field is offered rather than applied.
 
 ## Out of scope

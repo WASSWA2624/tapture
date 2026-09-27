@@ -2,6 +2,7 @@
 library;
 
 export 'data/processing_repository_impl.dart' show ProcessingRepositoryImpl;
+export 'domain/confidence.dart';
 export 'domain/processing_repository.dart';
 export 'presentation/egress_preview_dialog.dart' show showEgressPreview;
 export 'presentation/processing_controller.dart'

@@ -261,6 +261,13 @@ abstract final class SettingKeys {
     false,
   );
 
+  /// Which side a review row shows first: `raw` or `refined` (task 016).
+  /// The latest choice in a project becomes the next field's starting side.
+  static const SettingKey<String> reviewValueSide = SettingKey<String>(
+    'review.valueSide',
+    'refined',
+  );
+
   /// Wire names of every declared key, so a raw string cannot sneak in.
   static List<String> get names => <String>[
     gpsEnabled.name,
@@ -304,5 +311,6 @@ abstract final class SettingKeys {
     voiceLanguage.name,
     themeMode.name,
     verificationMode.name,
+    reviewValueSide.name,
   ];
 }
