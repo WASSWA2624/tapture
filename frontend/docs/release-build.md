@@ -17,7 +17,7 @@ The keystore stays outside the repository. Copy `android/key.properties.example`
 - `TAPTURE_KEY_ALIAS`
 - `TAPTURE_KEY_PASSWORD`
 
-`key.properties` and every `*.jks` / `*.keystore` are gitignored. A release build with none of these set fails with a message naming the missing key. It does not sign with the debug key.
+`key.properties` and every `*.jks` / `*.keystore` are gitignored. A release build with none of these set is signed with the debug key so a local install can still be produced. A store build sets the four values above and is signed with that key.
 
 ## How the key reaches the pipeline
 

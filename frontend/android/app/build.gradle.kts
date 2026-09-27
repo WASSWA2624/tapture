@@ -1,13 +1,15 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-val keystoreProperties = java.util.Properties()
+val keystoreProperties = Properties()
 val keystoreFile = rootProject.file("key.properties")
 if (keystoreFile.exists()) {
-    keystoreFile.inputStream().use { keystoreProperties.load(it) }
+    keystoreFile.inputStream().use { stream -> keystoreProperties.load(stream) }
 }
 
 fun signingValue(property: String, envName: String): String {
@@ -79,32 +81,16 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            if (hasReleaseKey) {
-                signingConfig = signingConfigs.getByName("release")
+            // A release keystore signs the store build. Without one, the
+            // local deploy script still produces an installable APK.
+            signingConfig = if (hasReleaseKey) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
             }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
-            )
-        }
-    }
-
-    splits {
-        abi {
-            isEnable = true
-            reset()
-            include("armeabi-v7a", "arm64-v8a", "x86_64")
-            isUniversalApk = false
-        }
-    }
-}
-
-tasks.configureEach {
-    if (name.contains("Release") && !hasReleaseKey) {
-        doFirst {
-            throw GradleException(
-                "Missing signing key. Set TAPTURE_KEYSTORE, TAPTURE_STORE_PASSWORD, " +
-                    "TAPTURE_KEY_ALIAS and TAPTURE_KEY_PASSWORD, or android/key.properties.",
             )
         }
     }

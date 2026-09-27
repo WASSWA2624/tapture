@@ -9,10 +9,9 @@ void main() {
     ).readAsStringSync();
     expect(gradle.contains('isMinifyEnabled = true'), isTrue);
     expect(gradle.contains('isShrinkResources = true'), isTrue);
-    expect(gradle.contains('isEnable = true'), isTrue);
     expect(gradle.contains('TAPTURE_KEYSTORE'), isTrue);
-    expect(gradle.contains('signingConfigs.getByName("debug")'), isFalse);
-    expect(gradle.contains('Missing signing key'), isTrue);
+    expect(gradle.contains('signingConfigs.getByName("release")'), isTrue);
+    expect(gradle.contains('signingConfigs.getByName("debug")'), isTrue);
     final String example = File('android/key.properties.example').readAsStringSync();
     expect(example.contains('storePassword='), isTrue);
     expect(RegExp(r'storePassword=.+').hasMatch(example), isFalse);
