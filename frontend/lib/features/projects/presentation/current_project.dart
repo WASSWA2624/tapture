@@ -160,20 +160,22 @@ final Provider<int> projectNavCountProvider = Provider<int>((Ref ref) {
 ///
 /// Pages that name a project in their route read this rather than the
 /// open project, so an archived project stays reachable (FE-STATE-06).
-final projectByIdProvider = StreamProvider.autoDispose
-    .family<Project?, String>((Ref ref, String projectId) {
-      return ref
-          .watch(projectRepositoryProvider)
-          .watchAll(includeArchived: true)
-          .map((List<Project> rows) {
-            for (final Project row in rows) {
-              if (row.id == projectId) {
-                return row;
-              }
+final projectByIdProvider = StreamProvider.autoDispose.family<Project?, String>(
+  (Ref ref, String projectId) {
+    return ref
+        .watch(projectRepositoryProvider)
+        .watchAll(includeArchived: true)
+        .map((List<Project> rows) {
+          for (final Project row in rows) {
+            if (row.id == projectId) {
+              return row;
             }
-            return null;
-          });
-    }, retry: (int _, Object _) => null);
+          }
+          return null;
+        });
+  },
+  retry: (int _, Object _) => null,
+);
 
 /// The open [Project], or null when none is open or the list has not
 /// resolved it yet. Derived from [currentProjectProvider] and

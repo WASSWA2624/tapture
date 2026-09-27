@@ -1,0 +1,42 @@
+import 'dart:typed_data';
+
+import 'package:tapture/core/errors/result.dart';
+
+import 'bundle_manifest.dart';
+
+/// A project package that passed every check: its manifest, its tables by
+/// SQL table name, and its entries to read one at a time. Nothing has been
+/// written; every value is still data, never instructions (FE-SEC-05).
+final class InspectedBundle {
+  /// Creates an inspected package over [readEntry] and [close].
+  const InspectedBundle({
+    required this.manifest,
+    required this.tables,
+    required this.name,
+    required this._readEntry,
+    required this._close,
+  });
+
+  /// The package's manifest.
+  final BundleManifest manifest;
+
+  /// Rows by SQL table name, each keyed by column name.
+  final Map<String, List<Map<String, Object?>>> tables;
+
+  /// The file name the operator chose.
+  final String name;
+
+  final Future<Result<Uint8List>> Function(String path) _readEntry;
+  final Future<void> Function() _close;
+
+  /// The bytes of the entry at [path], already checksum-verified.
+  Future<Result<Uint8List>> readEntry(String path) => _readEntry(path);
+
+  /// Releases the package file. Safe to call more than once.
+  Future<void> close() => _close();
+
+  /// The rows of [table], or none.
+  List<Map<String, Object?>> rowsOf(String table) {
+    return tables[table] ?? const <Map<String, Object?>>[];
+  }
+}

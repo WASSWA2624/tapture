@@ -41,7 +41,7 @@ void main() {
     await _pump(tester, repo: repo);
     await tester.pump();
 
-    expect(find.text(Copy.projectEditTitle), findsOneWidget);
+    expect(find.text(Copy.projectEditFormTitle), findsOneWidget);
     expect(
       tester.widget<TextField>(find.byType(TextField).first).controller?.text,
       'Alpha',
@@ -130,10 +130,11 @@ void main() {
 
     expect(find.text(Copy.projectSaved), findsOneWidget);
     expect(repo.stored.single.name, 'Beta');
-    await tester.tap(find.byTooltip('Back'));
+    // A save returns to the page that opened the form, asking nothing.
     await tester.pumpAndSettle();
     expect(find.text(Copy.discardChangesTitle), findsNothing);
     expect(find.text('open'), findsOneWidget);
+    expect(find.text(Copy.projectEditFormTitle), findsNothing);
   });
 
   testWidgets('saving a project as archived keeps the form open', (
@@ -297,15 +298,17 @@ Future<void> _pump(
     home: push
         ? Builder(
             builder: (BuildContext context) {
-              return TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext _) => screen,
-                    ),
-                  );
-                },
-                child: const Text('open'),
+              return Scaffold(
+                body: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext _) => screen,
+                      ),
+                    );
+                  },
+                  child: const Text('open'),
+                ),
               );
             },
           )

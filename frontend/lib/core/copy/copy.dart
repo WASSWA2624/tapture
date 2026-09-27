@@ -670,8 +670,23 @@ abstract final class Copy {
   /// Optional organisation field on the create form.
   static const String projectOrganisation = 'Organisation';
 
-  /// Title of the project details form.
+  /// Title of the read-only project page, and the menu item that opens it.
   static const String projectEditTitle = 'Project details';
+
+  /// Title of the form that changes a project's details.
+  static const String projectEditFormTitle = 'Edit project';
+
+  /// Primary action on the project details page.
+  static const String projectEditDetails = 'Edit details';
+
+  /// A project detail nobody has filled in.
+  static const String projectValueNotSet = 'Not set';
+
+  /// When the project was created, on its details page.
+  static const String projectCreatedAt = 'Created';
+
+  /// When the project last changed, on its details page.
+  static const String projectUpdatedAt = 'Last changed';
 
   /// Heading over the template whose fields the context levels come from.
   static const String contextLevelSource = 'Suggest levels from';
@@ -3654,4 +3669,27 @@ abstract final class Copy {
   /// A package that could not be written.
   static const String packageWriteFailed =
       'The project package could not be written.';
+
+  /// Why a package was refused; [check] is the failed check's name.
+  static String packageRejected(String check) {
+    return switch (check) {
+      'tooLarge' => 'This package is larger than this device can open.',
+      'notAPackage' => 'This file is not a Tapture project package.',
+      'unsafePath' =>
+        'This package holds a file that would land outside its project.',
+      'missingEntry' => 'This package is missing a file it lists.',
+      'unreadable' => 'Part of this package could not be read.',
+      'unknownFormatVersion' =>
+        'This package was made by a newer version of Tapture.',
+      'checksumMismatch' =>
+        'This package was changed after it was made: a file does not match '
+            'its checksum.',
+      _ => 'This package could not be opened.',
+    };
+  }
+
+  /// What to do about a refused package.
+  static const String packageRejectedRecovery =
+      'Nothing was imported. Export the project again on the other device, '
+      'or update Tapture for a newer package.';
 }

@@ -36,6 +36,10 @@ abstract final class RoutePaths {
   static String projectCapture(String projectId) =>
       '${project(projectId)}/capture';
   static String projectEdit(String projectId) => '${project(projectId)}/edit';
+
+  /// The project's read-only details page (task 076, D8).
+  static String projectDetails(String projectId) =>
+      '${project(projectId)}/details';
   static String projectSettings(String projectId) =>
       '${project(projectId)}/settings';
   static String projectContext(String projectId) =>

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -62,23 +63,23 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
     if (project == null) {
       return AppPage(
         key: const ValueKey<String>('route-project-edit'),
-        title: Copy.projectEditTitle,
+        title: Copy.projectEditFormTitle,
         body: value.isLoading
             ? const AppSkeleton()
             : AppEmptyState(
-          icon: AppIcons.project,
-          headline: Copy.projectEditEmptyHeadline,
-          message: Copy.projectEditEmptyMessage,
-          actionLabel: Copy.navProjects,
-          onAction: () => context.go(_projectsRoot),
-        ),
+                icon: AppIcons.project,
+                headline: Copy.projectEditEmptyHeadline,
+                message: Copy.projectEditEmptyMessage,
+                actionLabel: Copy.navProjects,
+                onAction: () => context.go(_projectsRoot),
+              ),
       );
     }
     _bind(project);
     final _ProjectEditView view = ref.watch(_projectEditProvider);
     return AppPage(
       key: const ValueKey<String>('route-project-edit'),
-      title: Copy.projectEditTitle,
+      title: Copy.projectEditFormTitle,
       scrollable: false,
       overflow: <AppOverflowAction>[
         AppOverflowAction(
@@ -167,6 +168,21 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
               );
           if (saved && context.mounted) {
             showAppSnack(context, Copy.projectSaved, tone: SnackTone.success);
+            // After the form has forgotten its edits, so leaving asks
+            // nothing: back to the details page (D8).
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!context.mounted) {
+                return;
+              }
+              final NavigatorState navigator = Navigator.of(context);
+              if (navigator.canPop()) {
+                navigator.pop();
+              } else {
+                GoRouter.maybeOf(
+                  context,
+                )?.go(RoutePaths.projectDetails(project.id));
+              }
+            });
           }
           return saved;
         },

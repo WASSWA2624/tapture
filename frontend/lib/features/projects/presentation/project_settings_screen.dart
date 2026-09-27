@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -55,7 +58,7 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
           headline: Copy.projectSettingsEmptyHeadline,
           message: Copy.projectSettingsEmptyMessage,
           actionLabel: Copy.navProjects,
-          onAction: () => context.go(_projectsRoot),
+          onAction: () => context.go(RoutePaths.projects),
         ),
       );
     }
@@ -70,8 +73,9 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
       overflow: <AppOverflowAction>[
         AppOverflowAction(
           label: Copy.projectEditTitle,
-          icon: AppIcons.edit,
-          onTap: () => context.go(_edit(project.id)),
+          icon: AppIcons.info,
+          onTap: () =>
+              unawaited(context.push(RoutePaths.projectDetails(project.id))),
         ),
       ],
       body: AppForm(
@@ -428,11 +432,3 @@ String _strategyLabel(String strategy) {
 String _band(double value) => value.toString();
 
 String _bandOrEmpty(double? value) => value == null ? '' : _band(value);
-
-/// Must match [AppRoutes.projectEdit].
-String _edit(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_editSegment';
-}
-
-const String _projectsRoot = '/projects';
-const String _editSegment = 'edit';

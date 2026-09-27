@@ -25,6 +25,7 @@ import 'package:tapture/features/context/presentation/context_preset_list.dart';
 import 'package:tapture/features/processing/presentation/queue_screen.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
 import 'package:tapture/features/projects/presentation/project_create_screen.dart';
+import 'package:tapture/features/projects/presentation/project_details_screen.dart';
 import 'package:tapture/features/projects/presentation/project_edit_screen.dart';
 import 'package:tapture/features/projects/presentation/project_export_screen.dart';
 import 'package:tapture/features/projects/presentation/project_filters_screen.dart';
@@ -117,6 +118,10 @@ abstract final class AppRoutes {
   /// Details form for [projectId].
   static String projectEdit(String projectId) =>
       RoutePaths.projectEdit(projectId);
+
+  /// Read-only details page for [projectId].
+  static String projectDetails(String projectId) =>
+      RoutePaths.projectDetails(projectId);
 
   /// Per-project settings for [projectId].
   static String projectSettings(String projectId) =>
@@ -482,6 +487,15 @@ List<RouteBase> get _routes {
                     return const ProjectHomeScreen();
                   },
                   routes: <RouteBase>[
+                    GoRoute(
+                      path: 'details',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState state) {
+                        return ProjectDetailsScreen(
+                          projectId: state.pathParameters['projectId']!,
+                        );
+                      },
+                    ),
                     GoRoute(
                       path: 'edit',
                       metadata: _projectScoped,

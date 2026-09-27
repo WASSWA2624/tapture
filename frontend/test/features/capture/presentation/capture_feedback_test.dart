@@ -209,6 +209,80 @@ void main() {
     });
   }
 
+  for (final ({String name, Size size, double scale}) layout
+      in <({String name, Size size, double scale})>[
+        (name: 'compact portrait', size: const Size(360, 780), scale: 1),
+        (name: 'compact landscape', size: const Size(780, 360), scale: 1),
+        (name: 'medium portrait', size: const Size(800, 1000), scale: 1),
+        (name: 'expanded landscape', size: const Size(1280, 800), scale: 1),
+        (name: 'compact at 200 percent', size: const Size(360, 780), scale: 2),
+        (name: 'expanded at 200 percent', size: const Size(1280, 800), scale: 2),
+      ]) {
+    testWidgets('in ${layout.name} the saves share one level row', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = layout.size;
+      tester.platformDispatcher.textScaleFactorTestValue = layout.scale;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(_scope(const CaptureScreen(projectId: 'p1')));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      final Rect raw = tester.getRect(
+        find.widgetWithText(AppButton, Copy.captureSaveRaw),
+      );
+      final Rect process = tester.getRect(find.byType(AppPrimaryAction));
+      expect(raw.top, process.top);
+      expect(raw.height, process.height);
+      expect(raw.width, closeTo(process.width, 0.5));
+      // Save and process sits at the end, after Save raw.
+      expect(raw.right, lessThan(process.left));
+      for (final String label in <String>[
+        Copy.captureSaveRaw,
+        Copy.captureSaveAndAnalyse,
+      ]) {
+        final Rect text = tester.getRect(find.text(label));
+        final Rect button = label == Copy.captureSaveRaw ? raw : process;
+        expect(text.left, greaterThanOrEqualTo(button.left), reason: label);
+        expect(text.right, lessThanOrEqualTo(button.right), reason: label);
+        expect(text.bottom, lessThanOrEqualTo(button.bottom), reason: label);
+      }
+    });
+  }
+
+  testWidgets('offline the reason sits under the level row', (
+    WidgetTester tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 780);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      _scope(
+        const CaptureScreen(projectId: 'p1'),
+        extras: <Override>[offlineNowProvider.overrideWith((Ref _) => true)],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final Rect raw = tester.getRect(
+      find.widgetWithText(AppButton, Copy.captureSaveRaw),
+    );
+    final Rect process = tester.getRect(find.byType(AppPrimaryAction));
+    final Rect reason = tester.getRect(
+      find.byKey(const ValueKey<String>('capture-saves-offline')),
+    );
+    expect(raw.height, process.height);
+    expect(reason.top, greaterThanOrEqualTo(process.bottom));
+    expect(
+      tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
+      isNull,
+    );
+  });
+
   testWidgets('typing faster than the session saves keeps every character', (
     WidgetTester tester,
   ) async {

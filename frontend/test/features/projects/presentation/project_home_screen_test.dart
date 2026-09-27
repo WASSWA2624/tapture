@@ -195,7 +195,7 @@ void main() {
     );
     await expectOpens(
       label: Copy.projectEditTitle,
-      path: AppRoutes.projectEdit('project-1'),
+      path: AppRoutes.projectDetails('project-1'),
     );
     await expectOpens(
       label: Copy.projectSettingsTitle,
@@ -796,6 +796,12 @@ Future<GoRouter> _pump(
                 path: 'edit',
                 builder: (BuildContext _, GoRouterState _) {
                   return const Text('edit');
+                },
+              ),
+              GoRoute(
+                path: 'details',
+                builder: (BuildContext _, GoRouterState _) {
+                  return const Text('details');
                 },
               ),
               GoRoute(

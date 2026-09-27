@@ -309,32 +309,49 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               busy: uiState.saving,
               onPressed: ready ? () => unawaited(_saveEdits()) : null,
             )
-          // Stacked on compact with Save raw above; side by side from
-          // medium up, the primary twice as wide and at the end
-          // (FBK0000004, FE-SIMP-01).
-          : ResponsivePair(
-              key: const ValueKey<String>('capture-saves'),
-              endFlex: 2,
-              gap: Space.x2,
-              start: AppButton(
-                label: Copy.captureSaveRaw,
-                variant: AppButtonVariant.secondary,
-                expand: true,
-                busy: uiState.saving,
-                onPressed: ready
-                    ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
-                    : null,
-              ),
-              end: AppPrimaryAction(
-                label: Copy.captureSaveAndAnalyse,
-                busy: uiState.saving,
+          // One level row at every width, the two the same width; the
+          // primary is marked by its fill and its place at the end
+          // (FBK0000004, FBK0000158, FE-SIMP-01).
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                ResponsivePair(
+                  key: const ValueKey<String>('capture-saves'),
+                  stacksOnCompact: false,
+                  matchesHeights: true,
+                  gap: Space.x2,
+                  start: AppButton(
+                    label: Copy.captureSaveRaw,
+                    variant: AppButtonVariant.secondary,
+                    expand: true,
+                    busy: uiState.saving,
+                    onPressed: ready
+                        ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
+                        : null,
+                  ),
+                  end: AppPrimaryAction(
+                    label: Copy.captureSaveAndAnalyse,
+                    busy: uiState.saving,
+                    onPressed: ready && !offline
+                        ? (widget.onSaveAndAnalyse ??
+                              () => unawaited(_save(true)))
+                        : null,
+                  ),
+                ),
                 // Processing waits for a network; Save raw keeps capture
-                // unblocked meanwhile (D3).
-                caption: offline ? Copy.captureProcessNeedsNetwork : null,
-                onPressed: ready && !offline
-                    ? (widget.onSaveAndAnalyse ?? () => unawaited(_save(true)))
-                    : null,
-              ),
+                // unblocked meanwhile (D3). Under the row, so both buttons
+                // stay one height.
+                if (offline) ...<Widget>[
+                  const SizedBox(height: Space.x1),
+                  Text(
+                    Copy.captureProcessNeedsNetwork,
+                    key: const ValueKey<String>('capture-saves-offline'),
+                    style: AppText.caption,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ],
             ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

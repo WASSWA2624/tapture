@@ -279,7 +279,8 @@ final currentProjectDetailsProvider = Provider<Project?>(...);
 - [x] Opening another row from the list makes it the current project, and capture follows it.
 - [x] Tapping Projects on a project home shows the list, at compact, medium and expanded widths.
 - [x] Tests: each home menu item reaches its route; Archive and Delete land on the list; the menu meets the label and
-      48 dp matchers; Create shows with zero, one and many projects; Project details opens `/projects/<id>/edit`; tapping
+      48 dp matchers; Create shows with zero, one and many projects; Project details opens the read-only
+      `/projects/<id>/details`, whose Edit details opens `/projects/<id>/edit` (task 076, D8); tapping
       Projects while on a project home shows the list at 400, 800 and 1200 dp.
 
 #### Hide the unbuilt project import button

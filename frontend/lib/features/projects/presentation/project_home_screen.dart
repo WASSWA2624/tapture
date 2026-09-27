@@ -232,8 +232,9 @@ List<AppOverflowAction> _projectHomeMenu(
     ),
     AppOverflowAction(
       label: Copy.projectEditTitle,
-      icon: AppIcons.edit,
-      onTap: () => context.go(_edit(project.id)),
+      icon: AppIcons.info,
+      onTap: () =>
+          unawaited(context.push(RoutePaths.projectDetails(project.id))),
     ),
     AppOverflowAction(
       label: Copy.projectSettingsTitle,
@@ -296,11 +297,6 @@ String _context(String id) {
 /// Must match [AppRoutes.projectTemplates].
 String _templates(String id) {
   return RoutePaths.projectTemplates(id);
-}
-
-/// Must match [AppRoutes.projectEdit].
-String _edit(String id) {
-  return RoutePaths.projectEdit(id);
 }
 
 /// Must match [AppRoutes.projectSettings].

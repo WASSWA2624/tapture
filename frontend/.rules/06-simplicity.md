@@ -6,8 +6,8 @@ The product's central claim is that a field worker can use it. These rules are h
 *Built into tasks 031, 033, 072-076; audited by 236 and 239.*
 
 ## FE-SIMP-01 — One primary action per screen
-It is the largest control, it sits in the lower third, and it is reachable with one thumb. If a screen has two equally
-important actions, the screen has not been designed yet.
+No other control is larger, it sits in the lower third, and it is reachable with one thumb. If a screen has two
+equally important actions, the screen has not been designed yet.
 
 ## FE-SIMP-02 — Four navigation destinations
 Projects, Capture, Records, Settings. A fifth destination requires deleting one.
