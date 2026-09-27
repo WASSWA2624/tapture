@@ -4,4 +4,4 @@ The suites, the pipeline and the gate that makes a build shippable. A release is
 
 Task 025 (1). One prompt for the whole phase; old numbers are in [RETIRED.md](../RETIRED.md).
 
-- [ ] [025 — Testing and release: the suites, the pipeline and the gate over both artefacts](025-testing-and-release.md)
+- [x] [025 — Testing and release: the suites, the pipeline and the gate over both artefacts](025-testing-and-release.md)

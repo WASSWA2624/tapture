@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**57 of 69 tasks complete (83%)** · last updated 2026-09-28
+**58 of 69 tasks complete (84%)** · last updated 2026-09-28
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -36,7 +36,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 22 — Privacy and security | 1 | 1 | `██████████████` 100% |
 | 23 — Hardening | 34 | 45 | `███████████░░░` 76% |
 | 24 — The minimal backend | 1 | 1 | `██████████████` 100% |
-| 25 — Testing and release | 0 | 1 | `░░░░░░░░░░░░░░` 0% |
+| 25 — Testing and release | 1 | 1 | `██████████████` 100% |
 | **Total** | **47** | **69** | `██████████████████████████░░░░░░░░░░░░` 68% |
 
 ## Completed
@@ -455,4 +455,4 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 *0 of 1 complete.*
 
-- [ ] [025 — Testing and release: the suites, the pipeline and the gate over both artefacts](dev-plan/25-testing-and-release/025-testing-and-release.md)
+- [x] [025 — Testing and release: the suites, the pipeline and the gate over both artefacts](dev-plan/25-testing-and-release/025-testing-and-release.md)

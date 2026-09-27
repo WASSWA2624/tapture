@@ -4,6 +4,27 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val keystoreProperties = java.util.Properties()
+val keystoreFile = rootProject.file("key.properties")
+if (keystoreFile.exists()) {
+    keystoreFile.inputStream().use { keystoreProperties.load(it) }
+}
+
+fun signingValue(property: String, envName: String): String {
+    val fromEnv = System.getenv(envName)
+    if (!fromEnv.isNullOrBlank()) return fromEnv
+    return keystoreProperties.getProperty(property) ?: ""
+}
+
+val releaseStore = signingValue("storeFile", "TAPTURE_KEYSTORE")
+val releaseStorePassword = signingValue("storePassword", "TAPTURE_STORE_PASSWORD")
+val releaseAlias = signingValue("keyAlias", "TAPTURE_KEY_ALIAS")
+val releaseKeyPassword = signingValue("keyPassword", "TAPTURE_KEY_PASSWORD")
+val hasReleaseKey = releaseStore.isNotBlank() &&
+    releaseStorePassword.isNotBlank() &&
+    releaseAlias.isNotBlank() &&
+    releaseKeyPassword.isNotBlank()
+
 android {
     namespace = "com.tapture.app"
     compileSdk = flutter.compileSdkVersion
@@ -43,14 +64,47 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            if (hasReleaseKey) {
+                storeFile = file(releaseStore)
+                storePassword = releaseStorePassword
+                keyAlias = releaseAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // Debug keys keep `flutter run --release` working until dev-plan task 278
-            // introduces the real signing configuration.
-            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            if (hasReleaseKey) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
+            )
+        }
+    }
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86_64")
+            isUniversalApk = false
+        }
+    }
+}
+
+tasks.configureEach {
+    if (name.contains("Release") && !hasReleaseKey) {
+        doFirst {
+            throw GradleException(
+                "Missing signing key. Set TAPTURE_KEYSTORE, TAPTURE_STORE_PASSWORD, " +
+                    "TAPTURE_KEY_ALIAS and TAPTURE_KEY_PASSWORD, or android/key.properties.",
             )
         }
     }

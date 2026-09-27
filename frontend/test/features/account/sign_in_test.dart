@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/backend/backend_api_client.dart';
 import 'package:tapture/core/backend/backend_config.dart';
 import 'package:tapture/core/backend/grant_cache.dart';
@@ -10,19 +9,19 @@ import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/account/presentation/backend_settings_screen.dart';
 import 'package:tapture/features/account/presentation/sign_in_screen.dart';
 
+import '../../support/pump_app.dart';
+
 void main() {
   testWidgets('sign-in submits the address and password once', (WidgetTester tester) async {
     String? email;
     String? password;
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: buildTheme(brightness: Brightness.light),
-        home: SignInScreen(
-          onSubmit: (String nextEmail, String nextPassword) async {
-            email = nextEmail;
-            password = nextPassword;
-          },
-        ),
+    await pumpApp(
+      tester,
+      SignInScreen(
+        onSubmit: (String nextEmail, String nextPassword) async {
+          email = nextEmail;
+          password = nextPassword;
+        },
       ),
     );
     await tester.enterText(find.byType(TextField).at(0), 'a@acme.test');
@@ -93,16 +92,14 @@ void main() {
   });
 
   testWidgets('an unreachable server is one quiet line', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: buildTheme(brightness: Brightness.light),
-        home: const BackendSettingsScreen(
-          config: BackendConfig(
-            baseUrl: 'https://org.example',
-            accountEmail: 'a@acme.test',
-            state: EnrolmentState.enrolled,
-            reachable: false,
-          ),
+    await pumpApp(
+      tester,
+      const BackendSettingsScreen(
+        config: BackendConfig(
+          baseUrl: 'https://org.example',
+          accountEmail: 'a@acme.test',
+          state: EnrolmentState.enrolled,
+          reachable: false,
         ),
       ),
     );

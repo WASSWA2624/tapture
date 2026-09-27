@@ -219,58 +219,58 @@ Future<int> main(List<String> args);
 
 ## Definition of done
 
-- [ ] A unit test needs no boilerplate beyond its assertions, a widget test starts from one `pumpApp` call, and an
+- [x] A unit test needs no boilerplate beyond its assertions, a widget test starts from one `pumpApp` call, and an
       integration test starts from one `bootTestApp` call.
-- [ ] An integration test that opens a real socket or calls a real provider fails with a named harness error.
-- [ ] The fixed clock makes goldens in light, dark and outdoor reproducible across runs (FE-TEST-02).
-- [ ] Tests: `frontend/test/support/harness_smoke_test.dart` proves each layer boots and that the socket guard bites;
+- [x] An integration test that opens a real socket or calls a real provider fails with a named harness error.
+- [x] The fixed clock makes goldens in light, dark and outdoor reproducible across runs (FE-TEST-02).
+- [x] Tests: `frontend/test/support/harness_smoke_test.dart` proves each layer boots and that the socket guard bites;
       one domain suite, one widget suite and one integration suite are moved onto the harnesses and stay green.
-- [ ] A break anywhere between capture and export fails one of the two spine runs loudly, naming the step, and neither
+- [x] A break anywhere between capture and export fails one of the two spine runs loudly, naming the step, and neither
       run depends on screen state the app cannot rebuild from the database.
-- [ ] The offline run records zero outbound calls during capture and forty durable records before any processing.
-- [ ] Deferred and immediate processing of the same input yield the same export.
-- [ ] Tests: `capture_to_export_test.dart` and `offline_deferred_test.dart` run green offline against the harness
+- [x] The offline run records zero outbound calls during capture and forty durable records before any processing.
+- [x] Deferred and immediate processing of the same input yield the same export.
+- [x] Tests: `capture_to_export_test.dart` and `offline_deferred_test.dart` run green offline against the harness
       fakes, in the pipeline's integration job.
-- [ ] An override never leaks beyond its own record, and a cascade never overwrites an override.
-- [ ] Each of the three caption scopes lands on exactly its target set, and a later single edit is independent.
-- [ ] Tests: `context_test.dart` and `caption_scope_test.dart` run green offline against fakes, end to end.
-- [ ] A confirmed capture that differs from the register produces a variance entry, not a silent overwrite.
-- [ ] An overridden duplicate leaves both records and a reason behind, readable in history after a restart.
-- [ ] Tests: `verification_test.dart` and `duplicate_test.dart` run green offline against fakes, end to end.
-- [ ] Re-importing a bundle changes nothing, and undo returns the target database to its exact pre-merge state.
-- [ ] All five export formats are produced with zero outbound calls and each matches the record count it claims.
-- [ ] A corrupt or traversal-bearing bundle is rejected with a plain-language reason and no partial write.
-- [ ] Tests: `merge_test.dart` and `export_formats_test.dart` run green offline against fakes, end to end.
-- [ ] Attendance derived from a photo is editable and reaches the record only through approval.
-- [ ] The exported minutes PDF matches the approved minutes and attendance, and is produced offline.
-- [ ] Tests: `meeting_test.dart` runs green offline against fakes, end to end, including the discarded-proposal path.
-- [ ] A red pipeline blocks merging, and a red backend pipeline on the same commit makes `ci.yml` red.
-- [ ] The integration suite runs nightly and before every release, on an emulator, offline.
-- [ ] A golden failure leaves a downloadable image behind.
-- [ ] Tests: one run per workflow against a branch with a single deliberately broken step, proving each gate fails and
+- [x] An override never leaks beyond its own record, and a cascade never overwrites an override.
+- [x] Each of the three caption scopes lands on exactly its target set, and a later single edit is independent.
+- [x] Tests: `context_test.dart` and `caption_scope_test.dart` run green offline against fakes, end to end.
+- [x] A confirmed capture that differs from the register produces a variance entry, not a silent overwrite.
+- [x] An overridden duplicate leaves both records and a reason behind, readable in history after a restart.
+- [x] Tests: `verification_test.dart` and `duplicate_test.dart` run green offline against fakes, end to end.
+- [x] Re-importing a bundle changes nothing, and undo returns the target database to its exact pre-merge state.
+- [x] All five export formats are produced with zero outbound calls and each matches the record count it claims.
+- [x] A corrupt or traversal-bearing bundle is rejected with a plain-language reason and no partial write.
+- [x] Tests: `merge_test.dart` and `export_formats_test.dart` run green offline against fakes, end to end.
+- [x] Attendance derived from a photo is editable and reaches the record only through approval.
+- [x] The exported minutes PDF matches the approved minutes and attendance, and is produced offline.
+- [x] Tests: `meeting_test.dart` runs green offline against fakes, end to end, including the discarded-proposal path.
+- [x] A red pipeline blocks merging, and a red backend pipeline on the same commit makes `ci.yml` red.
+- [x] The integration suite runs nightly and before every release, on an emulator, offline.
+- [x] A golden failure leaves a downloadable image behind.
+- [x] Tests: one run per workflow against a branch with a single deliberately broken step, proving each gate fails and
       names the step.
-- [ ] A release build is produced from one documented command, signed, shrunk and split by ABI.
-- [ ] A missing signing key fails the build with a clear message rather than falling back to a debug key.
-- [ ] Tests: `frontend/test/tool/release_build_config_test.dart` parses `build.gradle` and asserts shrinking, splits
+- [x] A release build is produced from one documented command, signed, shrunk and split by ABI.
+- [x] A missing signing key fails the build with a clear message rather than falling back to a debug key.
+- [x] Tests: `frontend/test/tool/release_build_config_test.dart` parses `build.gradle` and asserts shrinking, splits
       and an environment-sourced signing config, and asserts no keystore, password or key alias is committed anywhere.
-- [ ] A build cannot be produced while any gate fails, in either the app or the backend.
-- [ ] A backend whose contract tests fail blocks the app release, and the record says why.
-- [ ] The release record written beside the artefact names every gate as passed, failed or waived, with the reason for
+- [x] A build cannot be produced while any gate fails, in either the app or the backend.
+- [x] A backend whose contract tests fail blocks the app release, and the record says why.
+- [x] The release record written beside the artefact names every gate as passed, failed or waived, with the reason for
       each waiver.
-- [ ] The sign-in, proxy and offline gate failing blocks the release even when every other gate passes.
-- [ ] Tests: `frontend/test/tool/release_gate_test.dart` covers the pass, fail and waiver paths, including a failing
+- [x] The sign-in, proxy and offline gate failing blocks the release even when every other gate passes.
+- [x] Tests: `frontend/test/tool/release_gate_test.dart` covers the pass, fail and waiver paths, including a failing
       backend gate and a skipped gate treated as a failure.
-- [ ] Running the backlog tool after a release produces a backlog ordered by phase, with every waiver from the release
+- [x] Running the backlog tool after a release produces a backlog ordered by phase, with every waiver from the release
       record present and attributed.
-- [ ] An item with no stated deferral reason is reported as a defect in the report itself, not omitted.
-- [ ] Tests: `frontend/test/tool/backlog_report_test.dart` runs over a fixture plan and asserts grouping, ordering and
+- [x] An item with no stated deferral reason is reported as a defect in the report itself, not omitted.
+- [x] Tests: `frontend/test/tool/backlog_report_test.dart` runs over a fixture plan and asserts grouping, ordering and
       the inclusion of a waived gate and a friction entry.
-- [ ] The sign-in run passes with the backend reachable exactly once, at sign-in.
-- [ ] No assertion in that run depends on a provider key existing on the device.
-- [ ] After both cache lifetimes expire offline, capture, review, edit and export still work, and only relay, the
+- [x] The sign-in run passes with the backend reachable exactly once, at sign-in.
+- [x] No assertion in that run depends on a provider key existing on the device.
+- [x] After both cache lifetimes expire offline, capture, review, edit and export still work, and only relay, the
       proxy and a role change are refused.
-- [ ] A failure anywhere in the offline stretch fails the release gate, not just that test.
-- [ ] Tests: `signin_proxy_offline_test.dart` itself, running in the pipeline's integration job.
+- [x] A failure anywhere in the offline stretch fails the release gate, not just that test.
+- [x] Tests: `signin_proxy_offline_test.dart` itself, running in the pipeline's integration job.
 
 ## Out of scope
 

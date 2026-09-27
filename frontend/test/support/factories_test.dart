@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/records.dart';
-import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/records/domain/record_entry.dart';
 
 import 'factories.dart';
+import 'matchers.dart';
 
 void main() {
   test('a valid project, template, record and photo is one line each', () {
@@ -54,7 +53,7 @@ void main() {
       hasLength(1),
     );
 
-    final List<sqlite.RecordRow> page = _ok(
+    final List<sqlite.RecordRow> page = valueOf(
       await listRecordsByProjectAndStatus(
         db,
         projectId: all.first.projectId,
@@ -70,11 +69,3 @@ void main() {
   });
 }
 
-T _ok<T>(Result<T> result) {
-  return switch (result) {
-    Success<T>(:final T value) => value,
-    FailureResult<T>(:final Failure failure) => throw TestFailure(
-      failure.message,
-    ),
-  };
-}

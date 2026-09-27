@@ -207,4 +207,4 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *The suites, the pipeline and the gate that makes a build shippable. A release is two artefacts now, the app and the backend it requires, and neither ships alone.*
 
-- [ ] [025 — Testing and release: the suites, the pipeline and the gate over both artefacts](25-testing-and-release/025-testing-and-release.md)
+- [x] [025 — Testing and release: the suites, the pipeline and the gate over both artefacts](25-testing-and-release/025-testing-and-release.md)
