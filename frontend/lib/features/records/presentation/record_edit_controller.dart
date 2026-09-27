@@ -2,7 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/widgets/fields/field_editor.dart';
+import 'package:tapture/core/validation/validation_issue.dart';
+import 'package:tapture/features/quality/quality.dart' show RecordRules;
 import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/record_repository.dart';
@@ -88,7 +89,10 @@ final class RecordEditController extends Notifier<RecordEditState> {
   }
 
   List<String> _problemsIn(List<RecordFieldChange> changes) {
-    final FieldEditorBindings bindings = ref.read(fieldEditorBindingsProvider);
+    final Map<String, Object?> siblings = <String, Object?>{
+      for (final RecordFieldChange change in changes)
+        change.entry.fieldKey: change.text,
+    };
     final List<String> problems = <String>[];
     for (final RecordFieldChange change in changes) {
       final RecordEditEntry entry = change.entry;
@@ -96,15 +100,15 @@ final class RecordEditController extends Notifier<RecordEditState> {
         problems.add(Copy.fieldError(entry.label, Copy.recordValueCannotEmpty));
         continue;
       }
-      final FieldDef field = entry.field;
-      final Result<void> check = bindings.validate(
-        type: field.type.name,
-        value: editorValueOf(field.type, change.text),
-        options: field.options,
-        validation: field.validation,
+      final List<ValidationIssue> issues = RecordRules.validateField(
+        entry.field,
+        change.text,
+        siblings,
       );
-      if (check case FailureResult<void>(:final Failure failure)) {
-        problems.add(Copy.fieldError(entry.label, failure.message));
+      for (final ValidationIssue issue in issues) {
+        if (issue.blocks) {
+          problems.add(issue.message);
+        }
       }
     }
     return problems;

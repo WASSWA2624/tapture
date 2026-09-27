@@ -19,6 +19,7 @@ import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/features/context/domain/context_state.dart';
 import 'package:tapture/features/context/presentation/context_providers.dart';
 import 'package:tapture/features/projects/presentation/current_project.dart';
+import 'package:tapture/features/quality/presentation/verification_session.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
 import '../router.dart';
@@ -98,6 +99,14 @@ class StatusLine extends ConsumerWidget {
                   if (root && destination != null) ...<Widget>[
                     ExcludeSemantics(
                       child: Icon(destination.icon, size: Space.x6),
+                    ),
+                    const SizedBox(width: Space.x2),
+                  ],
+                  if (ref.watch(verificationSessionProvider)) ...<Widget>[
+                    Text(
+                      Copy.verificationStatus,
+                      key: const ValueKey<String>('verification-status'),
+                      style: AppText.caption.copyWith(color: ink),
                     ),
                     const SizedBox(width: Space.x2),
                   ],

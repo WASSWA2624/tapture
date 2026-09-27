@@ -253,6 +253,14 @@ abstract final class SettingKeys {
     'system',
   );
 
+  /// Verification mode for the open project: capture confirms a register
+  /// instead of creating a blank record (task 015). Off until a person
+  /// turns it on.
+  static const SettingKey<bool> verificationMode = SettingKey<bool>(
+    'quality.verificationMode',
+    false,
+  );
+
   /// Wire names of every declared key, so a raw string cannot sneak in.
   static List<String> get names => <String>[
     gpsEnabled.name,
@@ -295,5 +303,6 @@ abstract final class SettingKeys {
     appLanguage.name,
     voiceLanguage.name,
     themeMode.name,
+    verificationMode.name,
   ];
 }

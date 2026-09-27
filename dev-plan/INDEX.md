@@ -94,7 +94,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 
 *The checks that make the output trustworthy, each with a human in the loop.*
 
-- [ ] [015 — Data quality: validation, duplicates, conflicts and variance](15-data-quality/015-data-quality.md)
+- [x] [015 — Data quality: validation, duplicates, conflicts and variance](15-data-quality/015-data-quality.md)
 
 ## 16 — Review
 

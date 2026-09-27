@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**48 of 69 tasks complete (70%)** · last updated 2026-09-27
+**49 of 69 tasks complete (71%)** · last updated 2026-09-27
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -349,9 +349,9 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 
 ### 15 — Data quality
 
-*0 of 1 complete.*
+*1 of 1 complete.*
 
-- [ ] [015 — Data quality: validation, duplicates, conflicts and variance](dev-plan/15-data-quality/015-data-quality.md)
+- [x] [015 — Data quality: validation, duplicates, conflicts and variance](dev-plan/15-data-quality/015-data-quality.md)
 
 ### 16 — Review
 

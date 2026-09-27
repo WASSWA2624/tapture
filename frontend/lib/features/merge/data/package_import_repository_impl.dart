@@ -27,7 +27,8 @@ import 'package:tapture/features/merge/domain/field_conflict.dart';
 import 'package:tapture/features/merge/domain/merge_plan.dart';
 import 'package:tapture/features/merge/domain/package_import_repository.dart';
 import 'package:tapture/features/merge/domain/package_presence.dart';
-import 'package:tapture/features/quality/quality.dart';
+import 'package:tapture/features/quality/quality.dart'
+    hide ConflictChoice, FieldConflict;
 
 import 'package_files.dart';
 

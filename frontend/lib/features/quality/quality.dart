@@ -1,6 +1,30 @@
-/// The quality feature: finding and resolving what is wrong in the data.
+/// The quality feature: validation, duplicates, conflicts and variance.
 library;
 
+export 'domain/conflict_detection.dart';
+export 'domain/duplicate_candidate.dart';
+export 'domain/duplicate_detection.dart';
+export 'domain/duplicate_ledger.dart';
+export 'domain/duplicate_link.dart';
+export 'domain/duplicate_override.dart';
 export 'domain/duplicate_signal.dart';
 export 'domain/duplicate_signals.dart';
+export 'domain/duplicate_subject.dart';
+export 'domain/field_conflict.dart';
+export 'domain/field_variance.dart';
+export 'domain/identity_hash.dart';
+export 'domain/missing_items.dart';
 export 'domain/possible_duplicate.dart';
+export 'domain/record_rules.dart';
+export 'domain/value_candidate.dart';
+export 'domain/variance_computation.dart';
+export 'domain/verification_prefill.dart';
+export 'presentation/conflict_resolution_row.dart';
+export 'presentation/duplicate_compare_screen.dart';
+export 'presentation/duplicate_merge_sheet.dart';
+export 'presentation/duplicate_prompt.dart';
+export 'presentation/duplicates_screen.dart';
+export 'presentation/quality_summary_screen.dart';
+export 'presentation/variance_screen.dart';
+export 'presentation/verification_mode_toggle.dart';
+export 'presentation/verification_session.dart';

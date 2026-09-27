@@ -1,5 +1,6 @@
 import 'package:tapture/core/bundle/inspected_bundle.dart';
-import 'package:tapture/features/quality/quality.dart';
+import 'package:tapture/features/quality/quality.dart'
+    hide ConflictChoice, FieldConflict;
 
 import '../domain/compatibility_report.dart';
 import '../domain/conflict_choice.dart';

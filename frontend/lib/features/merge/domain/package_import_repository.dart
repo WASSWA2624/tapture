@@ -1,6 +1,7 @@
 import 'package:tapture/core/bundle/inspected_bundle.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/features/quality/quality.dart';
+import 'package:tapture/features/quality/quality.dart'
+    hide ConflictChoice, FieldConflict;
 
 import 'conflict_choice.dart';
 import 'merge_plan.dart';

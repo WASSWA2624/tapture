@@ -8,6 +8,10 @@ void main() {
       DuplicateSignal.identity,
       DuplicateSignal.photo,
       DuplicateSignal.caption,
+      DuplicateSignal.samePhoto,
+      DuplicateSignal.nearPhoto,
+      DuplicateSignal.predefinedRow,
+      DuplicateSignal.nameContextTime,
     ]);
     expect(<String>{
       for (final DuplicateSignal signal in DuplicateSignal.values)

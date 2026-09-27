@@ -10,7 +10,8 @@ import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
-import 'package:tapture/features/quality/quality.dart';
+import 'package:tapture/features/quality/quality.dart'
+    hide ConflictChoice, FieldConflict;
 
 import 'merge_controller.dart';
 import 'merge_labels.dart';

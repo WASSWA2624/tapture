@@ -3971,6 +3971,10 @@ abstract final class Copy {
     return switch (signal) {
       'identity' => 'Same identity fields',
       'photo' => 'Same photo',
+      'samePhoto' => 'Identical photo',
+      'nearPhoto' => 'Nearly the same photo',
+      'predefinedRow' => 'Same checklist row',
+      'nameContextTime' => 'Same name, place and time',
       _ => 'Same place, close in time, similar caption',
     };
   }
@@ -5208,4 +5212,215 @@ abstract final class Copy {
       'Wait for it to finish, then try again.';
 
   // Records: data and purge (014).
+
+  /// How many validation issues a form is showing.
+  static String validationIssueCount(int errors, int warnings) {
+    if (errors > 0 && warnings > 0) {
+      return '${validationErrorCount(errors)}, ${validationWarningCount(warnings)}';
+    }
+    if (errors > 0) {
+      return validationErrorCount(errors);
+    }
+    return validationWarningCount(warnings);
+  }
+
+  /// Error count for a validation summary.
+  static String validationErrorCount(int n) {
+    return Intl.plural(n, one: '1 error', other: '$n errors');
+  }
+
+  /// Warning count for a validation summary.
+  static String validationWarningCount(int n) {
+    return Intl.plural(n, one: '1 warning', other: '$n warnings');
+  }
+
+  /// Jumps the summary to the first field that has an error.
+  static const String validationGoToFirstError = 'Go to the first error';
+
+  /// Word beside an error, so the state is not colour alone.
+  static const String validationErrorLabel = 'Error';
+
+  /// Word beside a warning, so the state is not colour alone.
+  static const String validationWarningLabel = 'Warning';
+
+  /// A required field that is empty.
+  static String validationRequired(String label) => '$label is required.';
+
+  /// A value that is the wrong kind for its field.
+  static String validationType(String label) =>
+      '$label is not a valid value for this field.';
+
+  /// A value shorter than the field allows.
+  static String validationTooShort(String label) => '$label is too short.';
+
+  /// A value longer than the field allows.
+  static String validationTooLong(String label) => '$label is too long.';
+
+  /// A value outside the field's numeric range.
+  static String validationRange(String label) =>
+      '$label is outside the allowed range.';
+
+  /// A value that does not match the field's pattern.
+  static String validationPattern(String label) =>
+      '$label does not match the expected pattern.';
+
+  /// A choice that is not one of the field's options.
+  static String validationOption(String label) =>
+      '$label is not one of the allowed choices.';
+
+  /// A measurement the field's unit cannot hold.
+  static String validationUnit(String label) =>
+      '$label is not in a unit this field can store.';
+
+  /// An identity field left empty.
+  static String validationIdentity(String label) =>
+      '$label identifies the record and is required.';
+
+  /// Evidence the template demands is missing.
+  static const String validationEvidence =
+      'This record needs its evidence before it can be approved.';
+
+  /// A computed expression that does not parse.
+  static const String validationExpression =
+      'That expression could not be read.';
+
+  /// What to do when an expression does not parse.
+  static const String validationExpressionAction =
+      'Use fields on this template, comparisons and arithmetic only.';
+
+  /// An expression names a field the template does not have.
+  static String validationUnknownField(String name) =>
+      'Required when names "$name", which this template does not have.';
+
+  /// Duplicate prompt title.
+  static const String duplicatePromptTitle = 'This may be a duplicate';
+
+  /// Writes the new values onto the existing record.
+  static const String duplicateOverride = 'Update the existing record';
+
+  /// Keeps both records and links them.
+  static const String duplicateLinkBoth = 'Keep both and link them';
+
+  /// Drops the new record.
+  static const String duplicateDiscard = 'Discard the new record';
+
+  /// Opens the field-by-field merge.
+  static const String duplicateMerge = 'Merge field by field';
+
+  /// Headline when two records do not differ.
+  static const String duplicateNoDifferenceHeadline = 'Nothing differs';
+
+  /// Why the duplicate prompt has nothing to compare.
+  static const String duplicateNoDifferenceMessage =
+      'These records hold the same values.';
+
+  /// Duplicate compare title.
+  static const String duplicateCompareTitle = 'Compare records';
+
+  /// Merge sheet title.
+  static const String duplicateMergeTitle = 'Merge fields';
+
+  /// Keeps this record's value for one field.
+  static const String duplicateKeepMine = 'Keep mine';
+
+  /// Takes the other record's value for one field.
+  static const String duplicateTakeTheirs = 'Take theirs';
+
+  /// Keeps both values for one field as a note.
+  static const String duplicateKeepBothNote = 'Keep both as a note';
+
+  /// Duplicates review title.
+  static const String duplicatesTitle = 'Duplicates';
+
+  /// Empty duplicates list headline.
+  static const String duplicatesEmptyHeadline = 'No duplicate pairs';
+
+  /// Empty duplicates list explanation.
+  static const String duplicatesEmptyMessage =
+      'Pairs appear here when two records look like the same thing.';
+
+  /// Clears every remaining pair in one group.
+  static const String duplicatesResolveGroup = 'Resolve this group';
+
+  /// Bulk confirm title naming [choice] and how many records [n].
+  static String duplicatesBulkTitle(int n, String choice) =>
+      '$choice for $n records?';
+
+  /// Bulk confirm body naming how many records [n] change.
+  static String duplicatesBulkMessage(int n) =>
+      'This changes $n records. The other groups stay as they are.';
+
+  /// Types a value that matches none of the candidates.
+  static const String conflictTypeOwn = 'Type a different value';
+
+  /// The reason a person gives for the value they chose.
+  static const String conflictReason = 'Why this value';
+
+  /// Empty conflict row headline.
+  static const String conflictEmptyHeadline = 'No candidates';
+
+  /// Empty conflict row explanation.
+  static const String conflictEmptyMessage =
+      'Nothing was proposed for this field.';
+
+  /// Unresolved conflict blocks approval and names the field.
+  static String conflictBlocksApproval(String label) =>
+      '$label still has a conflict. Resolve it before approving.';
+
+  /// Verification mode switch title.
+  static const String verificationModeTitle = 'Verification mode';
+
+  /// Shown while verification mode is on.
+  static const String verificationModeOn =
+      'Capture confirms the register instead of starting a blank record.';
+
+  /// Shown while verification mode is off.
+  static const String verificationModeOff = 'Capture starts a new record.';
+
+  /// Status line mark while verification mode is on.
+  static const String verificationStatus = 'Verifying';
+
+  /// A value that came from the register.
+  static const String verificationFromRegister = 'From the register';
+
+  /// Variance screen title.
+  static const String varianceTitle = 'Variances';
+
+  /// Empty variance list headline.
+  static const String varianceEmptyHeadline = 'No variances';
+
+  /// Empty variance list explanation.
+  static const String varianceEmptyMessage =
+      'Differences between the register and what was found appear here.';
+
+  /// A normalised match.
+  static const String varianceMatch = 'Match';
+
+  /// A genuine difference.
+  static const String varianceChanged = 'Changed';
+
+  /// A register value with nothing found.
+  static const String varianceMissing = 'Missing';
+
+  /// Quality summary title.
+  static const String qualitySummaryTitle = 'Data quality';
+
+  /// Records that fail validation.
+  static const String qualityInvalid = 'Invalid records';
+
+  /// Unresolved duplicate pairs.
+  static const String qualityDuplicates = 'Duplicate pairs';
+
+  /// Unresolved source conflicts.
+  static const String qualityConflicts = 'Unresolved conflicts';
+
+  /// Records still waiting for review.
+  static const String qualityUnreviewed = 'Unreviewed records';
+
+  /// Headline when nothing blocks export.
+  static const String qualityCleanHeadline = 'Ready to export';
+
+  /// Explanation when nothing blocks export.
+  static const String qualityCleanMessage =
+      'Nothing here still blocks a clean export.';
 }

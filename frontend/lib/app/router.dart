@@ -34,6 +34,9 @@ import 'package:tapture/features/projects/presentation/project_filters_screen.da
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/presentation/project_settings_screen.dart';
+import 'package:tapture/features/quality/presentation/duplicates_screen.dart';
+import 'package:tapture/features/quality/presentation/quality_summary_screen.dart';
+import 'package:tapture/features/quality/presentation/variance_screen.dart';
 import 'package:tapture/features/records/presentation/record_detail_screen.dart';
 import 'package:tapture/features/records/presentation/record_edit_screen.dart';
 import 'package:tapture/features/records/presentation/record_history_screen.dart';
@@ -549,6 +552,36 @@ List<RouteBase> get _routes {
                         );
                       },
                       routes: _recordRoutes(inProject: true),
+                    ),
+                    GoRoute(
+                      path: 'duplicates',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const DuplicatesScreen(
+                          pairs: <DuplicatePairRow>[],
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: 'variance',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const VarianceScreen(rows: <VarianceRow>[]);
+                      },
+                    ),
+                    GoRoute(
+                      path: 'quality',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const QualitySummaryScreen(
+                          counts: (
+                            invalid: 0,
+                            duplicates: 0,
+                            conflicts: 0,
+                            unreviewed: 0,
+                          ),
+                        );
+                      },
                     ),
                     GoRoute(
                       path: 'queue',

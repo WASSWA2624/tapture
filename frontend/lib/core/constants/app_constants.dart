@@ -452,6 +452,23 @@ abstract final class AppConstants {
     duplicateCaptionSimilarity: 0.9,
   );
 
+  /// How strongly each duplicate signal ranks a pair (task 015). A higher
+  /// score is a closer match. Detection only proposes; a person decides.
+  static const ({
+    double identity,
+    double samePhoto,
+    double nearPhoto,
+    double predefinedRow,
+    double nameContext,
+  })
+  quality = (
+    identity: 1,
+    samePhoto: 0.95,
+    nearPhoto: 0.8,
+    predefinedRow: 0.7,
+    nameContext: 0.6,
+  );
+
   /// Project files in a browser, which has no file system: the IndexedDB
   /// store `FileWriter` and `FileReader` keep them in, keyed by their path
   /// under the storage root.

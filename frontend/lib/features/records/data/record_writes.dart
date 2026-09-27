@@ -14,6 +14,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
+import 'package:tapture/features/quality/quality.dart' show identityHash;
 
 import '../domain/record_lifecycle.dart';
 import '../domain/record_repository.dart';
@@ -265,6 +266,7 @@ final class RecordWrites {
           }
         }
         if (changed) {
+          await _refreshIdentityHash(head);
           if (!await _sendBackToReview(head, operator, editedReason)) {
             await _touch(id);
           }
@@ -697,6 +699,49 @@ final class RecordWrites {
       return _otherProject;
     }
     return null;
+  }
+
+  /// Recomputes the stored identity hash from the record's identity values.
+  Future<void> _refreshIdentityHash(_Head head) async {
+    final List<QueryRow> templates = await _db
+        .customSelect(
+          'SELECT identity_fields FROM templates WHERE id = ?',
+          variables: <Variable<Object>>[Variable<String>(head.templateId)],
+        )
+        .get();
+    if (templates.isEmpty) {
+      return;
+    }
+    final Object? decoded = jsonDecode(
+      templates.first.read<String>('identity_fields'),
+    );
+    final List<String> keys = decoded is List
+        ? <String>[for (final Object? key in decoded) ?key?.toString()]
+        : const <String>[];
+    if (keys.isEmpty) {
+      return;
+    }
+    final List<QueryRow> values = await _db
+        .customSelect(
+          'SELECT field_key, '
+          'COALESCE(value_final, value_refined, value_raw) AS value '
+          'FROM record_fields WHERE record_id = ?',
+          variables: <Variable<Object>>[Variable<String>(head.id)],
+        )
+        .get();
+    final Map<String, Object?> fields = <String, Object?>{
+      for (final QueryRow row in values)
+        row.read<String>('field_key'): row.read<String>('value'),
+    };
+    await _db.customUpdate(
+      'UPDATE records SET identity_hash = ? WHERE id = ?',
+      variables: <Variable<Object>>[
+        Variable<String>(identityHash(fields, keys)),
+        Variable<String>(head.id),
+      ],
+      updates: <TableInfo<dynamic, dynamic>>{_db.records},
+      updateKind: UpdateKind.update,
+    );
   }
 
   /// The re-map of [head]'s live values onto template [templateId], with the

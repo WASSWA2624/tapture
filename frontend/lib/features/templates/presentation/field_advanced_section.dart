@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/validation/field_expression.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
@@ -62,17 +63,7 @@ class FieldAdvancedSection extends StatelessWidget {
   final ValueChanged<bool> onHidden;
   final ValueChanged<String> onRequiredWhenChanged;
 
-  /// Reserved words a `required_when` expression may use.
-  static const Set<String> reserved = <String>{
-    'true',
-    'false',
-    'and',
-    'or',
-    'not',
-    'null',
-  };
-
-  /// Refuses an expression that names a field this template does not have.
+  /// Refuses an expression that does not parse against this template's fields.
   static Result<void> validateRequiredWhen(
     String? expression,
     Iterable<String> knownKeys,
@@ -81,21 +72,15 @@ class FieldAdvancedSection extends StatelessWidget {
     if (trimmed.isEmpty) {
       return const Success<void>(null);
     }
-    final Set<String> keys = knownKeys.toSet();
-    for (final RegExpMatch match in _name.allMatches(trimmed)) {
-      final String name = match.group(0)!;
-      if (reserved.contains(name) || keys.contains(name)) {
-        continue;
-      }
-      return FailureResult<void>(
-        ValidationFailure(
-          message:
-              'Required when names "$name", which this template does not have.',
-          recoveryAction: 'Pick a field on this template, or clear the rule.',
-        ),
-      );
-    }
-    return const Success<void>(null);
+    final Result<FieldExpression> parsed = FieldExpression.parse(
+      trimmed,
+      knownKeys.toList(),
+    );
+    return switch (parsed) {
+      Success<FieldExpression>() => const Success<void>(null),
+      FailureResult<FieldExpression>(:final Failure failure) =>
+        FailureResult<void>(failure),
+    };
   }
 
   /// Plain-language reading of [expression], or empty when it is blank.
@@ -208,7 +193,5 @@ class FieldAdvancedSection extends StatelessWidget {
     );
   }
 }
-
-final RegExp _name = RegExp(r'\b[a-z][a-z0-9_]*\b');
 
 const String _none = 'none';

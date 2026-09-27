@@ -222,67 +222,67 @@ class MissingItems {
 
 ## Definition of done
 
-- [ ] Capture, review, import and export all validate through this engine; no feature holds a second copy of a check.
-- [ ] An error blocks a save, an approval and an export; a warning blocks none of the three and leaves the form
+- [x] Capture, review, import and export all validate through this engine; no feature holds a second copy of a check.
+- [x] An error blocks a save, an approval and an export; a warning blocks none of the three and leaves the form
       submittable.
-- [ ] `required_when` and Computed fields are evaluated through this one evaluator, and a malformed or unsatisfiable
+- [x] `required_when` and Computed fields are evaluated through this one evaluator, and a malformed or unsatisfiable
       expression yields `null` plus a typed failure rather than an exception.
-- [ ] A record cannot be approved with an empty identity field, or an empty `required_when`-triggered field, when the
+- [x] A record cannot be approved with an empty identity field, or an empty `required_when`-triggered field, when the
       template demands one.
-- [ ] Tests: `frontend/test/core/validation/` — table-driven unit tests per rule type over valid and invalid values,
+- [x] Tests: `frontend/test/core/validation/` — table-driven unit tests per rule type over valid and invalid values,
       expression tests covering parsing, evaluation, missing operands and type mismatches, and record-validator tests
       against the template fake, with no Flutter binding.
-- [ ] Every screen reports problems the same way; no feature builds its own error text style (FE-CONS-11).
-- [ ] The summary names how many issues there are and links to the first field with an error.
-- [ ] A change in the issue list is announced to a screen reader (FE-A11Y-07).
-- [ ] Tests: golden tests of `validation_display.dart` in light, dark and outdoor themes, plus a widget test of each
+- [x] Every screen reports problems the same way; no feature builds its own error text style (FE-CONS-11).
+- [x] The summary names how many issues there are and links to the first field with an error.
+- [x] A change in the issue list is announced to a screen reader (FE-A11Y-07).
+- [x] Tests: golden tests of `validation_display.dart` in light, dark and outdoor themes, plus a widget test of each
       state it renders — none, warnings only, errors only, and mixed.
-- [ ] Two records with the same serial collide whatever their spacing, casing or punctuation.
-- [ ] Editing an identity value recomputes the stored hash.
-- [ ] Detection never delays a save, an import or a merge.
-- [ ] A candidate list is a proposal: nothing in the detection path writes to a record.
-- [ ] Tests: unit tests of `identity_hash.dart` over spacing, case and punctuation variants, and of
+- [x] Two records with the same serial collide whatever their spacing, casing or punctuation.
+- [x] Editing an identity value recomputes the stored hash.
+- [x] Detection never delays a save, an import or a merge.
+- [x] A candidate list is a proposal: nothing in the detection path writes to a record.
+- [x] Tests: unit tests of `identity_hash.dart` over spacing, case and punctuation variants, and of
       `duplicate_detection.dart` per signal and over the ranking order, with no Flutter binding.
-- [ ] The prompt never appears without the differing values, and any of the four choices can be made without opening
+- [x] The prompt never appears without the differing values, and any of the four choices can be made without opening
       either record separately.
-- [ ] Dismissing the prompt leaves both records and the pair unresolved.
-- [ ] Overriding is impossible without passing through the comparison; afterwards history holds the replaced values and
+- [x] Dismissing the prompt leaves both records and the pair unresolved.
+- [x] Overriding is impossible without passing through the comparison; afterwards history holds the replaced values and
       the audit trail names the override.
-- [ ] Merging can keep photos from the discarded side on the survivor; keeping both leaves each record showing a badge
+- [x] Merging can keep photos from the discarded side on the survivor; keeping both leaves each record showing a badge
       and a link to its counterpart.
-- [ ] Tests: widget tests of `duplicate_prompt.dart`, `duplicate_compare_screen.dart` and `duplicate_merge_sheet.dart`
+- [x] Tests: widget tests of `duplicate_prompt.dart`, `duplicate_compare_screen.dart` and `duplicate_merge_sheet.dart`
       including empty and failure states; unit tests of `duplicate_override.dart` asserting history holds the replaced
       values and an audit row is written, and of `duplicate_link.dart`, both with no Flutter binding.
-- [ ] A hundred pairs can be cleared without opening each record.
-- [ ] A bulk choice applies only to the group it was confirmed for, and the confirmation states how many records
+- [x] A hundred pairs can be cleared without opening each record.
+- [x] A bulk choice applies only to the group it was confirmed for, and the confirmation states how many records
       change.
-- [ ] A pair cleared in bulk leaves the same history, audit entries and links as one cleared at save time.
-- [ ] Tests: widget test of `duplicates_screen.dart` covering an empty list, a group resolved pair by pair, a group
+- [x] A pair cleared in bulk leaves the same history, audit entries and links as one cleared at save time.
+- [x] Tests: widget test of `duplicates_screen.dart` covering an empty list, a group resolved pair by pair, a group
       resolved in bulk, and its failure state.
-- [ ] A formatting difference alone never raises a conflict; a genuine difference always does.
-- [ ] A record cannot be approved while a conflict is unresolved, and the block names the field.
-- [ ] Resolving records which candidate won, or that the value was typed, together with the reason.
-- [ ] Tests: unit tests of `conflict_detection.dart` over the specification example and over normalisation-only
+- [x] A formatting difference alone never raises a conflict; a genuine difference always does.
+- [x] A record cannot be approved while a conflict is unresolved, and the block names the field.
+- [x] Resolving records which candidate won, or that the value was typed, together with the reason.
+- [x] Tests: unit tests of `conflict_detection.dart` over the specification example and over normalisation-only
       differences, with no Flutter binding; widget test of `conflict_resolution_row.dart` covering each candidate
       source, a typed value, and its empty and failure states.
-- [ ] Verification mode is visible in the status line so no one forgets it is on.
-- [ ] A prefilled field shows that it came from the register, and editing it leaves the register value intact.
-- [ ] A not-found identifier creates a record flagged not-in-register, and the lookup never blocks capture.
-- [ ] Tests: widget test of `verification_mode_toggle.dart` on, off and in its failure state; unit tests of
+- [x] Verification mode is visible in the status line so no one forgets it is on.
+- [x] A prefilled field shows that it came from the register, and editing it leaves the register value intact.
+- [x] A not-found identifier creates a record flagged not-in-register, and the lookup never blocks capture.
+- [x] Tests: widget test of `verification_mode_toggle.dart` on, off and in its failure state; unit tests of
       `verification_prefill.dart` covering a matched row, an unmatched identifier and the preserved register values,
       with no Flutter binding.
-- [ ] The variance table matches the specification example, field for field.
-- [ ] Editing an approved record's value rewrites its variance rows and nothing else.
-- [ ] Missing items are exportable as their own set.
-- [ ] Tests: unit tests of `variance_computation.dart` over changed, matching and empty values, and of
+- [x] The variance table matches the specification example, field for field.
+- [x] Editing an approved record's value rewrites its variance rows and nothing else.
+- [x] Missing items are exportable as their own set.
+- [x] Tests: unit tests of `variance_computation.dart` over changed, matching and empty values, and of
       `missing_items.dart` over a part-captured register and a part-captured checklist, both with no Flutter binding.
-- [ ] A project's changed, matching and missing items are readable without opening a record.
-- [ ] Tests: widget test of `variance_screen.dart` covering each filter, the grouped list, a record-scoped view, and
+- [x] A project's changed, matching and missing items are readable without opening a record.
+- [x] Tests: widget test of `variance_screen.dart` covering each filter, the grouped list, a record-scoped view, and
       its empty and failure states.
-- [ ] Clearing every count on the quality summary leaves the project export-ready, with no further check hidden
+- [x] Clearing every count on the quality summary leaves the project export-ready, with no further check hidden
       elsewhere.
-- [ ] Each count is tappable and lands on the screen that resolves it.
-- [ ] Tests: widget test of `quality_summary_screen.dart` covering a clean project, each non-zero count and where it
+- [x] Each count is tappable and lands on the screen that resolves it.
+- [x] Tests: widget test of `quality_summary_screen.dart` covering a clean project, each non-zero count and where it
       navigates, and its failure state.
 
 ## Out of scope

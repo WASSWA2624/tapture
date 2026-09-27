@@ -10,6 +10,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/validation/validation_issue.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
@@ -30,6 +31,7 @@ import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
+import 'package:tapture/features/quality/quality.dart' show RecordRules;
 import 'package:tapture/features/templates/templates.dart'
     show FieldDef, TemplateDef;
 
@@ -481,6 +483,31 @@ class _Header extends ConsumerWidget {
   }
 
   Future<void> _approve(BuildContext context, WidgetRef ref) async {
+    final TemplateDef? template = ref
+        .read(recordEditTemplateProvider(entry.templateId))
+        .asData
+        ?.value;
+    if (template != null) {
+      final List<ValidationIssue> issues = RecordRules.validateRecord(
+        template: template,
+        values: <String, Object?>{
+          for (final RecordValue value in entry.values)
+            value.fieldKey: value.display,
+        },
+        hasEvidence: entry.photos.isNotEmpty,
+        conflicts: <String>[
+          for (final RecordValue value in entry.values)
+            if (value.evidenceRemoved) value.fieldKey,
+        ],
+      );
+      final ValidationIssue? block = issues
+          .where((ValidationIssue issue) => issue.blocks)
+          .firstOrNull;
+      if (block != null && context.mounted) {
+        showAppSnack(context, block.message, tone: SnackTone.error);
+        return;
+      }
+    }
     final Result<void> approved = await ref
         .read(recordDetailControllerProvider(entry.id).notifier)
         .approve(entry.status);

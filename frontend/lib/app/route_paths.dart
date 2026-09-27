@@ -123,6 +123,18 @@ abstract final class RoutePaths {
   static String projectRecords(String projectId) =>
       '${project(projectId)}/records';
 
+  /// Unresolved duplicate pairs for [projectId] (task 015).
+  static String projectDuplicates(String projectId) =>
+      '${project(projectId)}/duplicates';
+
+  /// Variances for [projectId] (task 015).
+  static String projectVariance(String projectId) =>
+      '${project(projectId)}/variance';
+
+  /// What still blocks a clean export of [projectId] (task 015).
+  static String projectQuality(String projectId) =>
+      '${project(projectId)}/quality';
+
   /// One record's page inside its project.
   static String projectRecord(String projectId, String recordId) =>
       '${projectRecords(projectId)}/${Uri.encodeComponent(recordId)}';
