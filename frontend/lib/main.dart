@@ -22,6 +22,7 @@ import 'core/device/platform_facts.dart';
 import 'core/errors/failure.dart';
 import 'core/errors/result.dart';
 import 'core/files/download_service.dart';
+import 'core/files/evidence_purge.dart';
 import 'core/files/file_reader.dart';
 import 'core/files/file_writer.dart';
 import 'core/files/photo_picker.dart';
@@ -56,6 +57,9 @@ import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
 import 'features/projects/presentation/project_open_externally_action.dart'
     show projectOpenableFileLookupProvider;
+import 'features/records/data/record_purge_store.dart';
+import 'features/records/records.dart'
+    show PurgeJob, PurgeReport, recordPurgeJobProvider;
 import 'features/reference/data/reference_repository_impl.dart';
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
@@ -313,6 +317,20 @@ Future<void> _run() async {
       }),
       appDatabaseProvider.overrideWith((Ref _) => db),
     ]);
+    // The retention purge (task 014 step 7) runs once per launch, after the
+    // first frame so startup never waits on it, over the window set now.
+    final PurgeJob purgeJob = PurgeJob(
+      store: RecordPurgeStore(
+        db: db,
+        files: EvidencePurge(storageRoot: storageRoot),
+      ),
+      clock: clock,
+      retentionDays: offlineStore.read(SettingKeys.retentionDays),
+    );
+    overrides.add(recordPurgeJobProvider.overrideWithValue(purgeJob));
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      unawaited(_purgeExpiredRecords(purgeJob));
+    });
   }
   runApp(
     ProviderScope(
@@ -356,6 +374,26 @@ Future<SettingsStore> _openOfflineStore(AppDatabase? db) async {
     );
   } on Object {
     return SettingsStore.fake();
+  }
+}
+
+/// Runs the retention purge once and logs what it did, as counts only.
+Future<void> _purgeExpiredRecords(PurgeJob job) async {
+  final Logger logger = Logger.current;
+  try {
+    final Result<PurgeReport> outcome = await job.run();
+    switch (outcome) {
+      case Success<PurgeReport>(value: final PurgeReport report):
+        logger.info('purge', report.summary);
+      case FailureResult<PurgeReport>(:final Failure failure):
+        logger.warn(
+          'purge',
+          'the retention purge could not run',
+          error: failure,
+        );
+    }
+  } on Object catch (error) {
+    logger.warn('purge', 'the retention purge stopped', error: error);
   }
 }
 

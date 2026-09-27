@@ -61,6 +61,18 @@ abstract final class AppConstants {
   /// Bounds for virtualised lists and trays.
   static const ({int pageSize}) lists = (pageSize: listPageSize);
 
+  /// Scrolling a long list smoothly (FE-PERF-01, task 014): with 10,000 rows
+  /// held, nine frames in ten build within [frame], one 60 Hz frame; no
+  /// frame takes longer than [worstFrame]; and no more than [livePages]
+  /// pages of [lists] rows are read at once. The scroll measurement asserts
+  /// all three (FE-TEST-09).
+  static const ({Duration frame, Duration worstFrame, int livePages})
+  scrolling = (
+    frame: Duration(microseconds: 16667),
+    worstFrame: Duration(milliseconds: 50),
+    livePages: 3,
+  );
+
   /// Capture, thumbnail and upload image sizes.
   static const ({
     int longEdge,

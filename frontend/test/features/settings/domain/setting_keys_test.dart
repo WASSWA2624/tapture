@@ -50,6 +50,7 @@ void main() {
       AppConstants.processing.detectionGap,
     );
     expect(SettingKeys.aiProviderSelection.defaultValue, '{}');
+    expect(SettingKeys.recordListCriteria.defaultValue, '{}');
     expect(SettingKeys.appLanguage.defaultValue, AppConstants.defaultLanguage);
   });
 

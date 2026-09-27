@@ -4052,7 +4052,381 @@ abstract final class Copy {
 
   // Records: list, filters and sort (014).
 
+  /// Prompt on a records list's search field: what it looks through.
+  static const String recordsSearchHint = 'Search records';
+
+  /// A record's list title when nothing names it yet: its [number], or no
+  /// number at all before one is allocated.
+  static String recordsUntitled(int? number) {
+    return number == null ? 'Untitled record' : 'Record $number';
+  }
+
+  /// A record row's second line: its [number], [identifier] and [context],
+  /// whichever are known, in one line. [identifier] and [context] are
+  /// template content (FE-L10N-07).
+  static String recordsRowSubtitle({
+    int? number,
+    String identifier = '',
+    String context = '',
+  }) {
+    return <String>[
+      if (number != null) '#$number',
+      if (identifier.trim().isNotEmpty) identifier.trim(),
+      if (context.trim().isNotEmpty) context.trim(),
+    ].join(' · ');
+  }
+
+  /// A project with no records yet.
+  static const String recordsEmptyHeadline = 'No records yet';
+
+  /// Where a project's records come from.
+  static const String recordsEmptyMessage =
+      'Records you capture in this project appear here.';
+
+  /// The next action on an empty records list.
+  static const String recordsEmptyAction = 'Capture a record';
+
+  /// A records search or filter that matched nothing, naming the [query].
+  static String recordsNoMatch(String query) {
+    final String shown = query.trim();
+    return shown.isEmpty
+        ? 'No records match.'
+        : 'No records match "$shown".';
+  }
+
+  /// Empties a records search that matched nothing.
+  static const String recordsClearSearch = 'Clear search';
+
+  /// Empties a records search and turns its filters off, together.
+  static const String recordsClearAll = 'Clear search and filters';
+
+  /// The records list with no project open.
+  static const String recordsNoProjectHeadline = 'No project open';
+
+  /// Why the records list is empty without a project.
+  static const String recordsNoProjectMessage =
+      'Records belong to a project. Open one to see its records.';
+
+  /// The next action when no project is open.
+  static const String recordsOpenProject = 'Open a project';
+
+  /// Title of a records list's filter sheet.
+  static const String recordsFiltersTitle = 'Record filters';
+
+  /// The status facet of the records filters.
+  static const String recordsFilterStatus = 'Status';
+
+  /// The template facet of the records filters.
+  static const String recordsFilterTemplate = 'Template';
+
+  /// The earliest capture date the records filters keep.
+  static const String recordsFilterFrom = 'Captured from';
+
+  /// The latest capture date the records filters keep.
+  static const String recordsFilterTo = 'Captured until';
+
+  /// The operator facet of the records filters.
+  static const String recordsFilterOperator = 'Captured by';
+
+  /// The condition facet of the records filters.
+  static const String recordsFilterCondition = 'Condition';
+
+  /// The quality-flag facet of the records filters.
+  static const String recordsFilterFlags = 'Quality';
+
+  /// Quality flag: the record has at least one photo.
+  static const String recordsFlagHasPhotos = 'Has photos';
+
+  /// Quality flag: the record may duplicate another.
+  static const String recordsFlagHasDuplicate = 'Possible duplicate';
+
+  /// Quality flag: a merge left a conflict on the record.
+  static const String recordsFlagHasConflict = 'Merge conflict';
+
+  /// Quality flag: a value changed after the record was approved.
+  static const String recordsFlagHasVariance = 'Changed since approval';
+
+  /// Quality flag: a value lost every photo it was read from.
+  static const String recordsFlagEvidenceRemoved = 'Evidence removed';
+
+  /// Quality flag: the record arrived in a package from another device.
+  static const String recordsFlagMerged = 'From another device';
+
+  /// The filter sheet of a project with no records.
+  static const String recordsFiltersEmptyHeadline = 'Nothing to filter yet';
+
+  /// What fills the filter sheet.
+  static const String recordsFiltersEmptyMessage =
+      'Capture records in this project, then narrow them down here.';
+
+  /// A template whose name is not on this device.
+  static const String recordsTemplateUnnamed = 'Unnamed template';
+
+  /// Active-filter chip for a template. [name] is template content.
+  static String recordsChipTemplate(String name) => 'Template: $name';
+
+  /// Active-filter chip for who captured the records. [name] is data the
+  /// operator entered.
+  static String recordsChipOperator(String name) => 'Captured by $name';
+
+  /// Active-filter chip for a condition code. [code] is template content.
+  static String recordsChipCondition(String code) => 'Condition: $code';
+
+  /// Active-filter chip for one context value: the [level] it sits at and
+  /// the [value]. Both are template content.
+  static String recordsChipContext(String level, String value) =>
+      '$level: $value';
+
+  /// Active-filter chip for the capture date range, in [locale]'s format.
+  static String recordsChipDates({
+    DateTime? from,
+    DateTime? to,
+    required String locale,
+  }) {
+    final DateFormat format = DateFormat.yMMMd(locale);
+    if (from != null && to != null) {
+      return '${format.format(from)} – ${format.format(to)}';
+    }
+    if (from != null) {
+      return 'From ${format.format(from)}';
+    }
+    return to == null ? '' : 'Until ${format.format(to)}';
+  }
+
+  /// Title of the records sort choice.
+  static const String recordsSortTitle = 'Sort records';
+
+  /// The sort control, naming the [current] order.
+  static String recordsSortLabel(String current) => 'Sort: $current';
+
+  /// Highest record number first, the newest capture on top.
+  static const String recordsSortNumberDescending = 'Number, highest first';
+
+  /// Lowest record number first.
+  static const String recordsSortNumberAscending = 'Number, lowest first';
+
+  /// Latest capture first.
+  static const String recordsSortCapturedDescending = 'Captured, newest first';
+
+  /// Earliest capture first.
+  static const String recordsSortCapturedAscending = 'Captured, oldest first';
+
+  /// Names in alphabetical order.
+  static const String recordsSortNameAscending = 'Name, A to Z';
+
+  /// Names in reverse alphabetical order.
+  static const String recordsSortNameDescending = 'Name, Z to A';
+
   // Records: detail and history (014).
+
+  // The history page (014 step 6). Field labels, template names, values,
+  // package names, providers, models, operators and devices it shows are
+  // data and pass through these strings unchanged (FE-L10N-07).
+
+  /// Title of a record's history page.
+  static const String recordHistoryTitle = 'History';
+
+  /// Under the history title: which record the history is of, by its
+  /// [number] and [name] (data). Blank when the record has neither.
+  static String recordHistorySubject({int? number, String name = ''}) {
+    return <String>[
+      if (number != null) projectRecordPosition(number),
+      if (name.isNotEmpty) name,
+    ].join(' · ');
+  }
+
+  /// A record whose history has no lines yet.
+  static const String recordHistoryEmptyHeadline = 'No history yet';
+
+  /// What an empty history will hold, and the next step.
+  static const String recordHistoryEmptyMessage =
+      'Captures, processing runs, edits, approvals, merges and exports of '
+      'this record appear here. Go back to the record to change it.';
+
+  /// Leaves an empty history for its record.
+  static const String recordHistoryBackToRecord = 'Back to the record';
+
+  /// Heading over one day of a record's history; [day] is local time.
+  static String recordHistoryDay(DateTime day) {
+    return DateFormat.yMMMEd().format(day);
+  }
+
+  /// When a history line was written, by whom and on which device, under
+  /// the line. [at] is local time; [operator] and [device] are data and
+  /// either may be blank.
+  static String recordHistoryByline({
+    required DateTime at,
+    String operator = '',
+    String device = '',
+  }) {
+    final String who = operator.isEmpty
+        ? (device.isEmpty ? '' : 'On $device')
+        : (device.isEmpty ? operator : '$operator on $device');
+    final String time = DateFormat.jm().format(at);
+    return who.isEmpty ? time : '$time · $who';
+  }
+
+  /// A record captured on a device.
+  static const String recordHistoryCaptured = 'Captured';
+
+  /// A record made by hand, which starts as a draft.
+  static const String recordHistoryCreatedByHand = 'Created by hand';
+
+  /// Value [label] written or corrected from [previous] to [next]; all
+  /// three are data. A first value shows alone, and a value taken away
+  /// says so.
+  static String recordHistoryValue(
+    String label, {
+    String previous = '',
+    String next = '',
+  }) {
+    if (previous.isEmpty && next.isEmpty) {
+      return '$label changed';
+    }
+    if (previous.isEmpty) {
+      return '$label: $next';
+    }
+    if (next.isEmpty) {
+      return '$label cleared';
+    }
+    return '$label: $previous → $next';
+  }
+
+  /// The caption of a record or of one of its photos, as the label of
+  /// [recordHistoryValue].
+  static const String recordHistoryCaption = 'Caption';
+
+  /// A status move from [previous] to [next], both status names. Only the
+  /// new status shows when the old one is not known.
+  static String recordHistoryStatus({
+    String previous = '',
+    required String next,
+  }) {
+    return previous.isEmpty ? 'Status: $next' : '$previous → $next';
+  }
+
+  /// A photo added to the record after capture, or during it.
+  static const String recordHistoryPhotoAdded = 'Photo added';
+
+  /// A photo taken off the record. Its file stays until the purge.
+  static const String recordHistoryPhotoRemoved = 'Photo removed';
+
+  /// The record moved from template [previous] to [next] (names, data).
+  /// Either name is blank when that template is not on this device.
+  static String recordHistoryTemplate({
+    String previous = '',
+    String next = '',
+  }) {
+    if (next.isEmpty) {
+      return 'Template changed';
+    }
+    return previous.isEmpty ? 'Template: $next' : 'Template: $previous → $next';
+  }
+
+  /// Stands in for the name of a template that is not on this device.
+  static const String recordHistoryTemplateGone =
+      'A template not on this device';
+
+  /// A processing run that finished, with the [provider] and [model] it
+  /// used (data) when they are known.
+  static String recordHistoryProcessed({
+    String provider = '',
+    String model = '',
+  }) {
+    final String by = provider.isEmpty ? '' : ' by $provider';
+    final String using = model.isEmpty ? '' : ' ($model)';
+    return 'Processed$by$using';
+  }
+
+  /// A processing run that stopped for good after [attempts] tries; zero
+  /// when the count is not known.
+  static String recordHistoryProcessingFailed(int attempts) {
+    if (attempts <= 0) {
+      return 'Processing failed';
+    }
+    return Intl.plural(
+      attempts,
+      one: 'Processing failed after 1 attempt',
+      other: 'Processing failed after $attempts attempts',
+    );
+  }
+
+  /// A record that arrived in [package], a package file name (data).
+  static String recordHistoryImported(String package) {
+    return package.isEmpty
+        ? 'Imported from a package'
+        : 'Imported from $package';
+  }
+
+  /// A record changed by merging [package], a package file name (data).
+  static String recordHistoryMerged(String package) {
+    return package.isEmpty ? 'Merged from a package' : 'Merged from $package';
+  }
+
+  /// A record included in export [version], stored as `v<number>`.
+  static String recordHistoryExported(String version) {
+    return version.isEmpty ? 'Exported' : 'Exported in export $version';
+  }
+
+  /// Value [label] (data) lost every photo it was read from. The value is
+  /// kept.
+  static String recordHistoryEvidenceRemoved(String label) {
+    return '$label: evidence removed';
+  }
+
+  /// Value [label] (data) has a photo it was read from again.
+  static String recordHistoryEvidenceRestored(String label) {
+    return '$label: evidence restored';
+  }
+
+  /// Value [label] (data) kept as retired by a template change.
+  static String recordHistoryRetired(String label) => '$label retired';
+
+  /// Retired value [label] (data) that a template change mapped again.
+  static String recordHistoryMappedAgain(String label) {
+    return '$label mapped again';
+  }
+
+  /// The record matched to a row of its template's checklist.
+  static const String recordHistoryRowMatched = 'Matched to a checklist row';
+
+  /// A photo file of the record was found missing from this device.
+  static const String recordHistoryFileMissing = 'A photo file is missing';
+
+  /// Any other change the audit table holds for the record.
+  static const String recordHistoryOther = 'Record changed';
+
+  /// Title of the sheet that shows one history line whole.
+  static const String recordHistoryLineTitle = 'Change';
+
+  /// Label of the value or status a change replaced.
+  static const String recordHistoryBefore = 'Before';
+
+  /// Label of the value or status a change wrote.
+  static const String recordHistoryAfter = 'After';
+
+  /// Label of when a change was written.
+  static const String recordHistoryWhen = 'When';
+
+  /// Label of who wrote a change.
+  static const String recordHistoryOperator = 'Operator';
+
+  /// Label of the device a change was written on.
+  static const String recordHistoryDevice = 'Device';
+
+  /// Label of why a change was made.
+  static const String recordHistoryReason = 'Reason';
+
+  /// Stands in for an operator or device the audit row does not hold.
+  static const String recordHistoryNotRecorded = 'Not recorded';
+
+  /// Stands in for a value that was empty before or after a change.
+  static const String recordHistoryEmptyValue = 'Empty';
+
+  /// When a change was written, in full; [at] is local time.
+  static String recordHistoryAt(DateTime at) {
+    return DateFormat.yMMMd().add_jms().format(at);
+  }
 
   // Records: editing, photos and template change (014).
 
@@ -4117,6 +4491,141 @@ abstract final class Copy {
     );
     return backToReview ? '$saved. The record is back in review.' : '$saved.';
   }
+
+  // Photos added to a saved record, and moving it to another template.
+
+  /// Title of the offer to process a record again after photos were added.
+  static const String recordPhotosProcessTitle = 'Process this record again?';
+
+  /// Body of that offer: what processing the [n] added photos does, and
+  /// that values already on the record stay.
+  static String recordPhotosProcessMessage(int n) {
+    return Intl.plural(
+      n,
+      one:
+          'You added 1 photo. Processing again reads it and fills fields '
+          'that are still empty. Values already on the record stay as they '
+          'are.',
+      other:
+          'You added $n photos. Processing again reads them and fills '
+          'fields that are still empty. Values already on the record stay '
+          'as they are.',
+    );
+  }
+
+  /// Confirms processing the record again.
+  static const String recordPhotosProcessConfirm = 'Process again';
+
+  /// Snack once the record is back in the processing queue.
+  static const String recordPhotosProcessQueued =
+      'Record queued for processing.';
+
+  /// Title of the sheet that moves a record to another template.
+  static const String recordTemplateChangeTitle = 'Change template';
+
+  /// Names the template the record is on now. [name] is data.
+  static String recordTemplateChangeCurrent(String name) => 'Now on $name';
+
+  /// Heading over the templates the record can move to.
+  static const String recordTemplateChangeChoose = 'Move to';
+
+  /// Shown before a template is chosen.
+  static const String recordTemplateChangeHint =
+      'Choose a template to see what happens to each value before anything '
+      'changes.';
+
+  /// Heading over the values whose field the chosen template also has.
+  static String recordTemplateChangeMapped(int n) {
+    return Intl.plural(
+      n,
+      one: '1 value carried over',
+      other: '$n values carried over',
+    );
+  }
+
+  /// Heading over the values the chosen template has no field for.
+  static String recordTemplateChangeRetired(int n) {
+    return Intl.plural(
+      n,
+      one: '1 value kept as retired',
+      other: '$n values kept as retired',
+    );
+  }
+
+  /// Heading over the chosen template's fields the record has no value for.
+  static String recordTemplateChangeAdded(int n) {
+    return Intl.plural(
+      n,
+      one: '1 field starts empty',
+      other: '$n fields start empty',
+    );
+  }
+
+  /// Heading over retired values whose field the chosen template has again.
+  static String recordTemplateChangeRestored(int n) {
+    return Intl.plural(
+      n,
+      one: '1 retired value comes back',
+      other: '$n retired values come back',
+    );
+  }
+
+  /// Why retiring a value loses nothing.
+  static const String recordTemplateChangeRetiredNotice =
+      'Retired values stay on the record and are never deleted. They come '
+      'back if the record moves to a template with their field.';
+
+  /// When the move changes no value at all.
+  static const String recordTemplateChangeNoValues =
+      'No value changes: the record has no values for this template to take '
+      'over, and the template has no fields.';
+
+  /// Above the preview of an approved record: what applying does.
+  static const String recordTemplateChangeApprovedNotice =
+      'This record is approved. Changing its template sends it back to '
+      'review.';
+
+  /// Applies the move.
+  static const String recordTemplateChangeApply = 'Change template';
+
+  /// Snack once the record is on its new template. [backToReview] adds that
+  /// the record, which was approved, is waiting for review again.
+  static String recordTemplateChanged({bool backToReview = false}) {
+    return backToReview
+        ? 'Template changed. The record is back in review.'
+        : 'Template changed.';
+  }
+
+  /// No other template to move the record to.
+  static const String recordTemplateChangeEmptyHeadline = 'No other template';
+
+  /// What to do when the project has no other template.
+  static const String recordTemplateChangeEmptyMessage =
+      'This project has only the template this record uses. Add another '
+      'template to the project, then move the record to it.';
+
+  /// Opens the project's templates from the empty state.
+  static const String recordTemplateChangeEmptyAction = 'Open templates';
+
+  /// The record to move is no longer on this device.
+  static const String recordTemplateChangeGoneHeadline =
+      'This record is no longer on this device';
+
+  /// What to do when the record to move is gone.
+  static const String recordTemplateChangeGoneMessage =
+      'Close this sheet and pick another record.';
+
+  /// What to do when Change template is pressed before a template is chosen.
+  static const String recordTemplateChangeChooseAction =
+      'Choose a template under Move to, then apply.';
+
+  /// A second press while the record is already moving.
+  static const String recordTemplateChangeApplying =
+      'This record is already moving to that template.';
+
+  /// What to do while the record is already moving.
+  static const String recordTemplateChangeApplyingAction =
+      'Wait a moment, then check the record.';
 
   // Records: delete, recycle bin and bulk actions (014).
 

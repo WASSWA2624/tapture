@@ -85,7 +85,7 @@ class RecordEditScreen extends ConsumerWidget {
       if (entries.isNotEmpty || retired.isNotEmpty) {
         return _RecordValuesForm(
           record: entry,
-          templateMissing: loaded == null,
+          template: loaded,
           entries: entries,
           retired: retired,
         );
@@ -137,13 +137,15 @@ class RecordEditScreen extends ConsumerWidget {
 class _RecordValuesForm extends ConsumerWidget {
   const _RecordValuesForm({
     required this.record,
-    required this.templateMissing,
+    required this.template,
     required this.entries,
     required this.retired,
   });
 
   final RecordEntry record;
-  final bool templateMissing;
+
+  /// Null when the record's template is no longer on this device.
+  final TemplateDef? template;
   final List<RecordEditEntry> entries;
   final List<RecordValue> retired;
 
@@ -163,7 +165,7 @@ class _RecordValuesForm extends ConsumerWidget {
       submitLabel: Copy.save,
       onSubmit: () => _save(context, ref),
       fields: <Widget>[
-        if (templateMissing)
+        if (template == null)
           const AppBanner(
             key: ValueKey<String>('record-edit-template-missing'),
             message: Copy.recordTemplateMissingNotice,
@@ -191,9 +193,14 @@ class _RecordValuesForm extends ConsumerWidget {
           RecordFieldInput(
             entry: entry,
             text: draft[entry.fieldKey] ?? entry.initial,
-            onChanged: (String text) => ref
-                .read(recordFieldDraftProvider(record.id).notifier)
-                .set(entry.fieldKey, text),
+            onChanged: (String text) {
+              ref
+                  .read(recordFieldDraftProvider(record.id).notifier)
+                  .set(entry.fieldKey, text);
+              ref
+                  .read(recordEditControllerProvider(record.id).notifier)
+                  .clearProblems();
+            },
           ),
         if (retired.isNotEmpty) ...<Widget>[
           const AppSectionHeader(title: Copy.recordRetiredValuesTitle),
@@ -202,7 +209,7 @@ class _RecordValuesForm extends ConsumerWidget {
             style: AppText.caption.copyWith(color: context.colors.onSurface),
           ),
           for (final RecordValue value in retired)
-            recordRetiredValueTile(value),
+            recordRetiredValueTile(value, template: template),
         ],
       ],
     );

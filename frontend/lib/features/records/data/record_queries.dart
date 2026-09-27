@@ -185,7 +185,6 @@ final class RecordQueries {
               Variable<String>(id),
               Variable<String>(id),
               Variable<String>(id),
-              Variable<String>(id),
             ],
             readsFrom: <ResultSetImplementation<dynamic, dynamic>>{
               _db.auditLog,
@@ -216,10 +215,7 @@ final class RecordQueries {
               Variable<String>(RecordStatus.deleted.stored),
               const Variable<String>(projectDeletedReason),
             ],
-            readsFrom: <ResultSetImplementation<dynamic, dynamic>>{
-              ..._listTables,
-              _db.projects,
-            },
+            readsFrom: _listTables,
           )
           .watch()
           .map(
@@ -653,7 +649,7 @@ final String _photosSql =
     'ORDER BY $_photoOrder';
 
 /// A record's audit rows and its photos' and captions' rows, oldest first.
-/// Binds the record id four times. `has_field` and `known_template` let
+/// Binds the record id three times. `has_field` and `known_template` let
 /// the mapper tell a value keyed like a marker from the marker itself.
 const String _historySql =
     'SELECT a.id AS id, a.entity_type AS entity_type, '
@@ -672,7 +668,6 @@ const String _historySql =
     'AND a.entity_id IN (SELECT ? UNION ALL '
     'SELECT hp.id FROM photos hp WHERE hp.record_id = ?) '
     "AND (a.entity_type <> '$_recordsEntity' OR a.entity_id = ?) "
-    "AND (a.entity_type <> 'photos' OR a.entity_id <> ?) "
     'ORDER BY a.at, a.id';
 
 /// The recycle bin: deleted records with their tombstone and project name.
@@ -685,8 +680,8 @@ final String _binSql =
     '$_summaryJoins '
     "WHERE bt.entity_type = '$_recordsEntity' AND r.status = ? "
     'AND bt.reason <> ? '
-    'AND NOT EXISTS (SELECT 1 FROM tombstones pt WHERE '
-    "pt.entity_type = 'projects' AND pt.entity_id = r.project_id) "
+    'AND NOT EXISTS (SELECT 1 FROM tombstones gone WHERE '
+    "gone.entity_type = 'projects' AND gone.entity_id = r.project_id) "
     'ORDER BY bt.deleted_at DESC, r.id';
 
 /// The list row [RecordMapper.summary] reads, on `r` joined by

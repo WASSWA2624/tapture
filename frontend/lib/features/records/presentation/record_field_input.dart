@@ -78,13 +78,21 @@ class RecordFieldInput extends StatelessWidget {
   }
 }
 
-/// A retired [value] as a read-only row: its field key, what it holds and
+/// A retired [value] as a read-only row: its field's label ([template]'s
+/// when it still declares the key, else the key itself), what it holds and
 /// a Retired pill, with no tap, so it can be read but never edited or
 /// deleted.
-AppListTile recordRetiredValueTile(RecordValue value) {
+AppListTile recordRetiredValueTile(RecordValue value, {TemplateDef? template}) {
+  String title = value.fieldKey;
+  for (final FieldDef field in template?.fields ?? const <FieldDef>[]) {
+    if (field.fieldKey == value.fieldKey && field.label.isNotEmpty) {
+      title = field.label;
+      break;
+    }
+  }
   return AppListTile(
     key: ValueKey<String>('record-retired-${value.fieldKey}'),
-    title: value.fieldKey,
+    title: title,
     subtitle: value.hasValue ? value.display : Copy.recordFieldEmpty,
     dense: true,
     status: const AppStatusPill.badge(

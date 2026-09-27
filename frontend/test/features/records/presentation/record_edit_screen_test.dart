@@ -494,8 +494,10 @@ void main() {
       );
     });
 
-    testWidgets('a value its type refuses is not saved, and the form names '
-        'the field', (WidgetTester tester) async {
+    testWidgets('a value its type refuses is not saved, the form names the '
+        'field, and the line goes once it is corrected', (
+      WidgetTester tester,
+    ) async {
       final _Harness harness = await _pump(tester, record: _record());
 
       final Finder serial = _field('Serial');
@@ -505,16 +507,23 @@ void main() {
       await _saveAndSettle(tester);
 
       expect(find.byType(RecordEditScreen), findsOneWidget);
-      expect(
-        find.text(
-          Copy.fieldError(
-            'Serial',
-            'That value is longer than this field allows.',
-          ),
+      final Finder problem = find.text(
+        Copy.fieldError(
+          'Serial',
+          'That value is longer than this field allows.',
         ),
-        findsOneWidget,
       );
+      expect(problem, findsOneWidget);
+      expect(find.text(Copy.fixFields(1)), findsOneWidget);
       expect(harness.records.writes, isEmpty);
+
+      await tester.enterText(_field('Serial'), 'S-42');
+      await tester.pump();
+
+      expect(problem, findsNothing);
+      await _saveAndSettle(tester);
+      expect(find.byType(RecordEditScreen), findsNothing);
+      expect(harness.records.entryOf('r1')!.valueOf('serial')!.display, 'S-42');
     });
 
     testWidgets('a saved value is never emptied', (WidgetTester tester) async {
@@ -569,6 +578,24 @@ void main() {
         );
       }
       expect(find.text(Copy.recordValueRetired), findsNWidgets(3));
+      // A retired value the template declares keeps its label; the others
+      // are named by their key.
+      expect(
+        tester
+            .widget<AppListTile>(
+              find.byKey(const ValueKey<String>('record-retired-notes')),
+            )
+            .title,
+        'Notes',
+      );
+      expect(
+        tester
+            .widget<AppListTile>(
+              find.byKey(const ValueKey<String>('record-retired-old_code')),
+            )
+            .title,
+        'old_code',
+      );
 
       final Finder legacy = find.byKey(
         const ValueKey<String>('record-retired-legacy_note'),
@@ -773,8 +800,8 @@ void main() {
         findsWidgets,
       );
       expect(
-        find.bySemanticsLabel(Copy.recordEditApprovedNotice),
-        findsOneWidget,
+        find.byKey(const ValueKey<String>('record-edit-approved')),
+        hasSemanticLabel(Copy.recordEditApprovedNotice),
       );
       handle.dispose();
     });

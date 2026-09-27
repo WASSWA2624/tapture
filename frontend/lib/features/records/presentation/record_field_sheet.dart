@@ -127,7 +127,7 @@ class RecordFieldSheet extends ConsumerWidget {
       record: record,
     )) {
       if (value.fieldKey == fieldKey) {
-        return _RetiredValue(value: value);
+        return _RetiredValue(value: value, template: template);
       }
     }
     return const AppEmptyState(
@@ -170,9 +170,14 @@ class _FieldForm extends ConsumerWidget {
         RecordFieldInput(
           entry: entry,
           text: text,
-          onChanged: (String next) => ref
-              .read(recordFieldDraftProvider(record.id).notifier)
-              .set(entry.fieldKey, next),
+          onChanged: (String next) {
+            ref
+                .read(recordFieldDraftProvider(record.id).notifier)
+                .set(entry.fieldKey, next);
+            ref
+                .read(recordEditControllerProvider(record.id).notifier)
+                .clearProblems();
+          },
         ),
         for (final String problem in state.problems) ...<Widget>[
           const SizedBox(height: Space.x2),
@@ -240,9 +245,12 @@ class _FieldForm extends ConsumerWidget {
 
 /// A retired value, read-only: why it cannot be edited, then the value.
 class _RetiredValue extends StatelessWidget {
-  const _RetiredValue({required this.value});
+  const _RetiredValue({required this.value, required this.template});
 
   final RecordValue value;
+
+  /// Null when the record's template is no longer on this device.
+  final TemplateDef? template;
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +263,7 @@ class _RetiredValue extends StatelessWidget {
           style: AppText.caption.copyWith(color: context.colors.onSurface),
         ),
         const SizedBox(height: Space.x2),
-        recordRetiredValueTile(value),
+        recordRetiredValueTile(value, template: template),
       ],
     );
   }

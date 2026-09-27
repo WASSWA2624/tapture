@@ -77,12 +77,14 @@ final class RecordEditController extends Notifier<RecordEditState> {
     return written;
   }
 
-  /// Hides the last failure and problems, once the person has read them.
-  void dismiss() {
-    if (state.saving) {
+  /// Forgets the refused-field lines once the person edits again, so the
+  /// form never lists a field that may now be right. A store failure stays
+  /// until the next Save, beside what was typed (FE-SIMP-09).
+  void clearProblems() {
+    if (state.saving || state.problems.isEmpty) {
       return;
     }
-    state = _idle;
+    state = (saving: false, failure: state.failure, problems: const <String>[]);
   }
 
   List<String> _problemsIn(List<RecordFieldChange> changes) {

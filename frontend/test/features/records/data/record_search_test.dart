@@ -1,3 +1,8 @@
+// The ten thousand record seed can take tens of seconds on a loaded
+// machine; every test and setUpAll here gets three minutes.
+@Timeout(Duration(minutes: 3))
+library;
+
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart';
@@ -673,13 +678,13 @@ void main() {
           final List<RecordSummary> rows = await queries
               .watchPage(
                 'p1',
-                filter: RecordFilter(
+                filter: const RecordFilter(
                   context: <String, Set<String>>{
                     'site': <String>{'North', 'East'},
                   },
-                  operators: const <String>{'device-a'},
-                  conditions: const <String>{'good'},
-                  flags: const <RecordFlag>{RecordFlag.hasPhotos},
+                  operators: <String>{'device-a'},
+                  conditions: <String>{'good'},
+                  flags: <RecordFlag>{RecordFlag.hasPhotos},
                 ),
                 sort: const RecordSort(key: RecordSortKey.capturedAt),
                 offset: 0,
@@ -693,7 +698,7 @@ void main() {
       },
       timeout: const Timeout(Duration(minutes: 3)),
     );
-  }, timeout: const Timeout(Duration(minutes: 3)));
+  });
 }
 
 /// Ten thousand records `r00001`… in project p1: status mostly captured

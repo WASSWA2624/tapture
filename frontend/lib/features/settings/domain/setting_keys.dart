@@ -120,6 +120,16 @@ abstract final class SettingKeys {
     '',
   );
 
+  /// The records list's last filter and sort per project (task 014, D11), as
+  /// a JSON object keyed by project id:
+  /// `{"<projectId>": {"filter": {…}, "sort": {"key": "number", …}}}`.
+  /// Search text is never stored. A project missing from the map lists with
+  /// no filter, newest first.
+  static const SettingKey<String> recordListCriteria = SettingKey<String>(
+    'records.listCriteria',
+    '{}',
+  );
+
   /// Default for new exports. The key itself is never stored here.
   static const SettingKey<bool> encryptExports = SettingKey<bool>(
     'security.encryptExports',
@@ -264,6 +274,7 @@ abstract final class SettingKeys {
     openProjectId.name,
     storageRootPath.name,
     lastLocation.name,
+    recordListCriteria.name,
     encryptExports.name,
     appLockEnabled.name,
     aiDoNotSendImages.name,
