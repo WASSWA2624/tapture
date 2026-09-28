@@ -83,6 +83,8 @@ Then pass the complete user workflows on Android, desktop and web against the ca
       artifacts; multiple outputs preserve successful results when another fails.
 - [ ] The default-project, zero-upload/no-prompt workflow passes; a saved workspace retains its exact selection,
       and source snapshots are materialized at run creation without copying all records on screen open.
+- [ ] Captured projects remain optional: removing all project sources permits files-only and archive-only runs;
+      saving/reopening preserves removal and readiness never demands a captured project.
 - [ ] Offline/restart/limits/unsafe-input failures preserve local work and expose recovery; source coverage and
       unresolved requirements remain visible through review/export.
 - [ ] Android, desktop and web capability results are recorded, including codec/storage/platform limitations and

@@ -158,7 +158,7 @@ Everything is stored on the device. Network access is used only for the online A
 - Prefill of known records from imported reference data.
 - Peer-to-peer collaboration by exchanging project bundles, with merge and conflict resolution.
 - Meeting capture, including attendance photos and refined minutes.
-- Project-scoped Documentation: multiple source documents, media and archives; reusable output definitions; an optional prompt file and/or rich text instructions; AI drafting, review and local document rendering (Part XII).
+- Project-scoped Documentation: optional captured-project inputs selected by default, uploaded documents/media/project archives as additional or alternative inputs, reusable output definitions, optional prompt file and/or rich text instructions, AI drafting, review and local document rendering (Part XII).
 - Manual, user-initiated upload of exports to a cloud storage account.
 - A required minimal backend providing accounts, authentication, one organisation-wide identity, roles and permissions, AI functionality and custody of the AI provider keys (Part XI).
 - Full offline operation between contacts with that backend: capture, review, editing, validation and export never wait for it (§70.4).
@@ -320,9 +320,9 @@ Device B: Import bundle -> merge preview -> resolve conflicts -> merged project
 ```text
 Open project > Documentation > New document
       |
-Review captured projects (current project selected by default); add other projects if needed
+Keep or remove the default current-project source; optionally add other projects
       |
-Optionally add files, media or project archives as supplementary inputs
+Choose files, media or project archives as additional or alternative inputs
       |
 Choose output(s); optionally attach formats or requirements
       |
@@ -3078,7 +3078,7 @@ Before public release, confirm the name is clear on the Google Play Store and wi
 | Upload to Google Drive, AWS and similar with user credentials                     | §54.2                                                 |
 | Prefilled templates: supplier or manufacturer lists matched by ID                 | §16.2, §16.3                                          |
 | Multiple document/media/archive inputs, distinct from output resources             | §76–§77                                               |
-| Inputs from one or more captured projects and uploaded project archives             | §77.4, §80, §82                                       |
+| Optional captured projects selected by default; multiple projects, uploaded files or project archives in any combination | §76–§77.4, §80, §82               |
 | Report requirements and Excel headers defining one or more deliverables            | §78                                                   |
 | Optional .md/.docx/.txt prompt file and rich text instructions                      | §79                                                   |
 | Create documents using AI, evidence-linked review and local file generation        | §80–§81                                               |
@@ -3395,9 +3395,10 @@ contains no record, value, caption, photo or audio clip.
 ## 76. Purpose & Simple Workflow
 
 **Documentation** turns captured project content into one or more useful documents. **The app's captured projects
-are the default inputs**: a new workspace starts with the current project selected and can include one or more
-other projects. No upload is required. Uploaded documents, media and **project archives** are optional additional
-sources; users can also explicitly choose an upload-only workspace. Typical supplementary files are terms of
+are the default inputs, never required inputs**: a new workspace starts with the current project selected for
+convenience and can include one or more other projects. The selection can be removed. Uploaded documents, media
+and **project archives** can be the only inputs or can supplement project data. Neither a captured project nor an
+upload is individually mandatory; at least one readable source of any supported kind is needed. Typical files are terms of
 reference, company profiles, meeting notes, recordings, photographs, previous reports and spreadsheets. The
 destination workspace belongs to one project; its selected source projects can be different. Output
 resources describe the required result: a reporting format, a requirements document or a workbook containing the
@@ -3420,9 +3421,9 @@ or implying that an old result is approved for the new task.
 ### 76.1 The shortest useful path
 
 1. Open **Documentation** from the project's home or **More** and choose **New document**.
-2. Review the **current project**, already selected under Input resources with its approved-record count. Keep it
-   for the shortest path, or choose **Add projects** to include more. **Add files** and **Add project archive** are
-   optional supplementary actions. No file picker opens automatically.
+2. Review the **current project**, preselected under Input resources with its approved-record count and a visible
+   **Remove** control. Keep it, add other projects, or remove it and use **Add files** / **Add project archive**
+   instead. Project data and uploads can be used independently or together. No file picker opens automatically.
 3. Keep the default **Report · DOCX** output or choose another supported format. Attach a format/requirements file
    if one exists; **Add output** creates another deliverable using the same source selection.
 4. Optionally type instructions in the rich text field, attach a prompt file, or use both.
@@ -3529,11 +3530,14 @@ Do not truncate to fit. Show the affected resources or ranges and let the user s
 choose another available capability or explicitly exclude material. On mobile, long work can pause when the OS
 suspends the app; durable checkpoints make resumption safe (§80.4).
 
-### 77.4 Captured projects by default; project archives as additional sources
+### 77.4 Optional captured projects by default; archives as additional or alternative sources
 
 A new workspace preselects the **current project**, with **All approved records** as the visible default scope.
 Show its name, record/meeting counts and evidence size; preselection never starts AI or silently sends content.
 The user can create a document from this source alone, with no uploads, no custom prompt and no format file.
+**Default is a convenience, not a requirement:** removing every captured-project selection is valid. Uploaded
+files or an uploaded project archive can supply all the evidence, with no captured record or source project
+required. The workspace's owning project is an organisational container, not a mandatory evidence source.
 **Add projects** opens a searchable multi-select picker for additional captured projects. Each source group can
 be filtered by templates, context/location, dates or individual records; attachment inclusion and non-approved
 records are explicit choices. A saved workspace retains its saved selections rather than silently switching to
@@ -3543,6 +3547,8 @@ If the current project has no usable records, keep the workspace editable and of
 selection of unapproved captures, or uploaded resources. Do not force a capture template or dummy record. Users
 may remove the default project and use uploaded sources only. Opening Documentation with no current project uses
 the existing project picker for the workspace owner, then preselects that project's captured content.
+An empty default project is labelled empty: it does not count as a readable source and does not block generation
+when other readable inputs have been supplied.
 
 Capture sources include selected field values, raw/refined/final distinctions, units, template/field definitions
 needed to interpret them, context, timestamps, operators, review status, meeting structures and their selected
@@ -3930,7 +3936,7 @@ Documentation                         [New document]
 
 September report                       [history / ...]
   Input resources                       [Add sources]
-    Current captured project   42 approved records
+    Current captured project   42 approved records  [Remove]
     [Add projects]  [Add files]  [Add project archive]
     TOR.pdf                 Ready
     Meeting audio.m4a       Needs transcription
@@ -3989,6 +3995,9 @@ report/register workflow or be falsely presented as available.
 - Opening Documentation from a captured project preselects its approved records; one report can be generated
   without uploading any file, writing a prompt or attaching a format. Additional projects are selectable, and a
   saved workspace never silently changes its source scope.
+- Removing all preselected captured projects still permits generation from uploaded files alone or an uploaded
+  project archive alone. Validation requires a readable source, never specifically an app project, and never
+  silently restores a removed default selection.
 - One run combines two captured projects, an uploaded Tapture archive and loose files; source labels, field keys,
   record revisions and evidence remain traceable, duplicate inclusions do not double-count, and original projects
   are neither merged nor modified. Required source/destination privacy restrictions apply before AI/export.

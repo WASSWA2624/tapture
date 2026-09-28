@@ -32,8 +32,8 @@ do not add a dead Documentation or export placeholder to this change.
 
 - [x] Compact More opens a square menu with four working icon-labelled secondary destinations.
 - [x] Each menu choice navigates to its existing destination and secondary screens select the fourth branch.
-- [x] Dismissal preserves the active primary branch, project and search state; a width change safely closes the
-      popup and keeps the existing desktop Settings rail.
+- [x] Dismissal preserves the active primary branch, project and search state; an open popup remains usable across
+      a width change, and the existing desktop Settings rail is retained.
 - [x] Focused widget/golden tests cover all four routes, icon/copy consistency, shared overflow behaviour, narrow
       phone layout at 200 percent text and light/dark/outdoor themes: 21 passed.
 - [ ] The standard Flutter gate completes successfully, including analysis and `dart run tool/verify.dart --fast`.
@@ -44,5 +44,15 @@ Implemented and focused tests passed on 2026-09-28; targeted analysis of the six
 no issues. The broader navigation/copy run reported 67 passes and one failure in the expanded project-pane no-match
 test: its assertion expects **Create a project**, while the current empty pane supplies no create action. The
 project-pane implementation was not changed by this task, but a separate baseline run has not established the
-failure's age. Full verification is still unconfirmed; this task and its index entry remain open until the required
-gate is satisfied.
+failure's age.
+
+The full fast gate was attempted and is not green: plan and template checks passed; formatting, full analysis,
+dependency allowlist, structure, strict test presence and guardrails reported failures. The pre-unit diagnostics
+did not name this task's edited source paths: full analysis reported 14 issues elsewhere, formatting identified
+40 other files, the allowlist lacked `integration_test`, and structure rejected existing `core/assets` and
+`core/backend`. Guardrails reported 372 passes and 20 failures. The long unit/widget stage was stopped after about
+10 minutes 50 seconds, at 3,163 passes and 9 failures, so that suite is incomplete. Its failures included the pane
+assertion and processing tests. No unrelated files were changed to silence these results.
+
+This task and its index entry remain open until the standard gate is satisfied; the 21 passing focused tests and
+clean targeted analysis verify the menu change without claiming that the whole repository passes.

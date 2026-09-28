@@ -53,7 +53,8 @@ used in more than one role.
    Inputs defaults to **Projects**, with the current project's approved captured records selected on a new
    workspace and visible counts/filter scope. The picker can add further projects, then optional **Files** and
    **Project archive** sources, with context/date/template/status filters and an evidence preview. No upload is
-   required. Upload-only work explicitly deselects project sources. If the project has no eligible records, offer
+   required, and captured projects are not required either: make the preselected project removable in one action.
+   Upload-only work explicitly deselects project sources. If the project has no eligible records, offer
    another project, supplementary sources or explicit unapproved inclusion without forcing capture/template setup.
    Display origin project/archive beside identically named records; show destination ownership separately.
    Reopening a saved workspace retains the exact chosen scope. Resolve lightweight native selections and freeze
@@ -82,6 +83,9 @@ used in more than one role.
 - XLSX record-capture templates and Documentation output definitions are distinct concepts; reuse parsing/writing
   primitives without mutating the project's capture schema.
 - Opening Documentation, importing files or saving a draft never sends an AI request.
+- Readiness requires at least one readable source of any supported kind, never specifically a captured project.
+  Removing a default is durable; reopening or generating must not reinsert that project selection.
+  An empty default project is visibly empty and cannot block a valid uploaded-source workflow.
 
 ## Definition of done
 
@@ -92,6 +96,8 @@ used in more than one role.
 - [ ] A new workspace defaults to current-project approved records and can generate with zero uploaded files and
       no prompt. Empty eligible scope, adding projects, explicit unapproved inclusion and upload-only deselection
       have clear paths; reopening a saved workspace neither changes its sources nor copies new project records.
+- [ ] Clearing all captured-project selections permits files-only and project-archive-only generation; the removed
+      default stays removed after restart, and no source-project/record/template requirement blocks either path.
 - [ ] DOCX section/placeholder and XLSX header-mapping fixtures produce reviewable output definitions; sample values
       are excluded from factual inputs unless explicitly selected in both roles.
 - [ ] Prompt file alone, typed instructions alone, both, neither and failed prompt parsing behave as documented.

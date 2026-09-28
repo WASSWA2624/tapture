@@ -1,9 +1,10 @@
 # 26 — Documentation
 
 Turn captured project data into reviewed documents through one local workspace: Inputs, Outputs and an optional
-Prompt. New workspaces default to the current project's approved records with visible scope/counts; files and
-project archives are optional supplementary sources, and upload-only work remains possible by explicitly
-deselecting project sources. Specification [Part XII, §§76–84](../../app-write-up.md) owns the product behaviour.
+Prompt. New workspaces preselect the current project's approved records with visible scope/counts, purely for
+convenience. **Captured projects are never required inputs.** Users can clear the project selection and use only
+uploaded files or project archives, or combine any of these sources. Specification
+[Part XII, §§76–84](../../app-write-up.md) owns the product behaviour.
 
 Tasks 080–086 (7). All Documentation implementation remains planned; writing this plan does not complete a task.
 
@@ -43,8 +44,9 @@ dedicated dependency/capability task required by FE-FLOW-06; subsequent tasks im
 
 ## Delivery boundaries
 
-- The first useful slice accepts and retains files, extracts supported content and preserves a resumable local
-  workspace. Unsupported files stay visible with an explanation; attaching a file is not evidence that AI read it.
+- The first useful slice offers optional captured-project sources by default, accepts uploaded sources, extracts
+  supported content and preserves a resumable local workspace. Unsupported files stay visible with an explanation;
+  attaching a file is not evidence that AI read it.
 - The first complete release creates editable DOCX and XLSX plus PDF, Markdown and CSV adapters where applicable,
   using confirmed output definitions and evidence-linked content. No arbitrary Office or PDF layout is promised.
 - ZIP is the initial expandable archive. Other archives are retained, labelled unsupported and may be manually
