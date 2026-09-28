@@ -41,7 +41,7 @@ final class FakeAiService implements AiService {
 
   @override
   Future<Result<ReadTextResult>> readText(ReadTextRequest request) {
-    return _ok(ReadTextResult(text: 'read'));
+    return _ok(const ReadTextResult(text: 'read'));
   }
 
   @override
@@ -67,7 +67,7 @@ final class FakeAiService implements AiService {
     _calls += 1;
     if (fail) {
       return FailureResult<T>(
-        ProviderFailure(
+        const ProviderFailure(
           message: 'Analysis can wait.',
           recoveryAction: 'Continue capturing. Analysis can wait.',
           kind: ProviderFailureKind.unavailable,

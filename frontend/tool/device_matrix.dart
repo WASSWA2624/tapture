@@ -79,7 +79,9 @@ Map<String, Map<String, int>> _limits(String yaml) {
       if (id != null) limits[id] = Map<String, int>.of(current);
       current.clear();
       id = line.substring('- id:'.length).trim();
-    } else if (id != null && line.endsWith('Ms:') == false && line.contains('Ms:')) {
+    } else if (id != null &&
+        line.endsWith('Ms:') == false &&
+        line.contains('Ms:')) {
       final int colon = line.indexOf(':');
       final String key = line.substring(0, colon).replaceAll('Ms', '');
       current[key] = int.parse(line.substring(colon + 1).trim());
@@ -94,7 +96,8 @@ Future<int> main(List<String> args) async {
   final String yaml = File('tool/devices.yaml').readAsStringSync();
   final Set<String> attached = <String>{
     for (final String arg in args)
-      if (arg.startsWith('--devices=')) ...arg.substring('--devices='.length).split(','),
+      if (arg.startsWith('--devices='))
+        ...arg.substring('--devices='.length).split(','),
   };
   final List<DeviceRegression> regressions = compareDevices(
     yaml: yaml,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/features/settings/domain/friction_log.dart';
 
 /// One-tap report. Hidden unless a trial is on, so it never appears in the field.
@@ -36,7 +37,7 @@ class FrictionLogButton extends StatelessWidget {
       return const SizedBox.shrink();
     }
     return AppIconButton(
-      icon: Icons.flag_outlined,
+      icon: AppIcons.friction,
       semanticLabel: Copy.frictionLogAction,
       tooltip: Copy.frictionLogAction,
       onPressed: () {

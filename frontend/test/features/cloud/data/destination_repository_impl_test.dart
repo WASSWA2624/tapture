@@ -139,6 +139,50 @@ void main() {
     expect((await secrets.read('ref-2') as Success<String?>).value, isNull);
     expect(backing.values.join(), isNot(contains(secret)));
   });
+
+  test('a removed destination is tombstoned and drops off the list', () async {
+    final AppDatabase database = AppDatabase.memory();
+    addTearDown(database.close);
+    final DestinationRepositoryImpl repository = DestinationRepositoryImpl(
+      database: database,
+      secrets: DestinationSecrets(
+        SecureStorage.fake(backing: <SecretKey, String>{}),
+      ),
+      clock: FixedClock(DateTime.utc(2026, 9, 28)),
+      deviceId: 'device',
+      ids: UuidV7Service.sequence(FixedClock(DateTime.utc(2026, 9, 28))),
+    );
+    expect(
+      await repository.save((
+        id: 'dest-1',
+        kind: DestinationKind.webdav,
+        label: 'Dav',
+        folder: 'inbox',
+        credentialRef: 'ref-1',
+        lastCheck: null,
+      )),
+      isA<Success<void>>(),
+    );
+    expect(await repository.watchAll().first, hasLength(1));
+
+    expect(await repository.remove('dest-1'), isA<Success<void>>());
+
+    expect(await repository.watchAll().first, isEmpty);
+    final List<Tombstone> tombstones = await database
+        .select(database.tombstones)
+        .get();
+    expect(tombstones, hasLength(1));
+    expect(tombstones.single.entityType, database.destinations.actualTableName);
+    expect(tombstones.single.entityId, 'dest-1');
+    expect(tombstones.single.deletedByDevice, 'device');
+    expect(await database.select(database.destinations).get(), hasLength(1));
+    final Result<void> again = await repository.remove('dest-1');
+    expect(again, isA<FailureResult<void>>());
+    expect(
+      (again as FailureResult<void>).failure.message,
+      'That destination is no longer listed.',
+    );
+  });
 }
 
 DestinationRepositoryImpl _repository() {
@@ -161,7 +205,7 @@ final class _FailingSecrets implements DestinationSecrets {
   final DestinationSecrets _inner;
 
   @override
-  Future<Result<void>> delete(String ref) async {
+  Future<Result<void>> forget(String ref) async {
     return const FailureResult<void>(
       StorageFailure(
         message: 'The secret could not be removed from this device.',

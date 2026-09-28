@@ -33,15 +33,17 @@ The work those files carried is unchanged; only the packaging and numbering chan
 | 220–223 | [020 — Data import](20-data-import/020-data-import.md) |
 | 224–229 | [021 — Cloud upload](21-cloud-upload/021-cloud-upload.md) |
 | 230–235 | [022 — Privacy and security](22-privacy-and-security/022-privacy-and-security.md) |
-| 236–244 | [023 — Hardening](23-hardening/023-hardening.md) |
-| 245–270 | [024 — The minimal backend](24-backend/024-minimal-backend.md) |
+| 236–244 | [023 — Hardening](27-hardening/023-hardening.md) |
+| 245–270 | [024 — The minimal backend](23-backend/024-minimal-backend.md) |
 | 271–281 | [025 — Testing and release](25-testing-and-release/025-testing-and-release.md) |
-| 282–284, 287–313, 316, 322, 332 | leftover hardening extras, now 026–060 |
-| 285–286 | [029](23-hardening/029-enable-app-database-on-web.md), [030](23-hardening/030-fix-storage-settings-on-web.md) |
+| 282–284, 287–313, 316, 322, 332 | [Product refinements](24-product-refinements/), now 026–060 |
+| 285–286 | [029](24-product-refinements/029-enable-app-database-on-web.md), [030](24-product-refinements/030-fix-storage-settings-on-web.md) |
 
 ## Retired numbers
 
-This is the table the checker reads. A number listed here may hold a hole in the numbering, and no task file may carry it. The table is empty because 001–060 are live and contiguous.
+This is the table the checker reads. A number listed here may hold a hole in the numbering, and no task file may
+carry it. The table is empty because the current task IDs are contiguous; [INDEX.md](INDEX.md) lists their execution
+positions separately from those stable IDs.
 
 | Numbers | Retired because |
 | :--- | :--- |

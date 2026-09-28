@@ -1,5 +1,7 @@
 # 008 — Projects: the container that owns everything else
 
+**Implementation step:** 08.01
+
 **Phase** 08 · Projects  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

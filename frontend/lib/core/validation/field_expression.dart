@@ -26,16 +26,12 @@ sealed class FieldExpression {
       }
       return Success<FieldExpression>(expression);
     } on _ParseFailure catch (error) {
-      final String? name = error.name;
-      if (name != null) {
-        return FailureResult<FieldExpression>(
-          ValidationFailure(
-            message: Copy.validationUnknownField(name),
-            recoveryAction: Copy.validationExpressionAction,
-          ),
-        );
-      }
-      return const FailureResult<FieldExpression>(_unreadable);
+      return FailureResult<FieldExpression>(
+        ValidationFailure(
+          message: error.message,
+          recoveryAction: Copy.validationExpressionAction,
+        ),
+      );
     }
   }
 
@@ -58,10 +54,21 @@ const ValidationFailure _unreadable = ValidationFailure(
   recoveryAction: Copy.validationExpressionAction,
 );
 
+/// Stops the parser; [FieldExpression.parse] turns it into the
+/// [ValidationFailure] whose [message] it carries.
 final class _ParseFailure implements Exception {
   const _ParseFailure({this.name});
 
+  /// The name that is not a field, when that is what stopped the parse.
   final String? name;
+
+  /// What the operator is told.
+  String get message {
+    final String? unknown = name;
+    return unknown == null
+        ? Copy.validationExpression
+        : Copy.validationUnknownField(unknown);
+  }
 }
 
 final class _Parser {

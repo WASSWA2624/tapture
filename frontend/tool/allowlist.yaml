@@ -103,6 +103,10 @@ packages:
     version: sdk
     purpose: The widget and unit test harness every guardrail suite runs on.
     task: "001"
+  integration_test:
+    version: sdk
+    purpose: The on-device harness the end-to-end journeys and the release gate run on. Ships with the Flutter SDK. Replaces nothing; the journeys had no runner before it.
+    task: "025"
   flutter_lints:
     version: ^6.0.0
     purpose: The shared lint set analysis_options.yaml layers its rules onto.

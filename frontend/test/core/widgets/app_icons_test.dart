@@ -81,6 +81,10 @@ void main() {
     expect(AppIcons.selectAll, isNot(AppIcons.check));
   });
 
+  test('friction raised in a trial is the flag people already know', () {
+    expect(AppIcons.friction, Icons.flag_outlined);
+  });
+
   testWidgets('share draws each platform own share glyph', (
     WidgetTester tester,
   ) async {

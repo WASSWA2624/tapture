@@ -68,4 +68,3 @@ void main() {
     expect(await db.select(db.templates).get(), hasLength(1));
   });
 }
-

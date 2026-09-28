@@ -32,7 +32,10 @@ void main() {
     addTearDown(app.dispose);
     expect(app.outboundCallCount, 0);
     expect(app.backend.signIn(), isTrue);
-    expect(() => app.socket.block('ai.example'), throwsA(isA<HarnessSocketError>()));
+    expect(
+      () => app.socket.block('ai.example'),
+      throwsA(isA<HarnessSocketError>()),
+    );
     expect(app.outboundCallCount, 1);
   });
 }

@@ -95,26 +95,29 @@ void main() {
     expect(id, 'device-kept');
   });
 
-  test('a legacy temp file is copied into the profile and not replaced', () async {
-    final Directory directory = Directory.systemTemp.createTempSync(
-      'tapture-legacy-',
-    );
-    addTearDown(() => directory.deleteSync(recursive: true));
-    final String path = '${directory.path}/device.id';
-    File(path).writeAsStringSync('legacy-device');
-    String? stored;
-    final String id = await deviceId(
-      clock: clock,
-      ids: UuidV7Service.sequence(clock),
-      filePath: path,
-      readStored: () async => stored,
-      writeStored: (String minted) async {
-        stored = minted;
-      },
-    );
-    expect(id, 'legacy-device');
-    expect(stored, 'legacy-device');
-  });
+  test(
+    'a legacy temp file is copied into the profile and not replaced',
+    () async {
+      final Directory directory = Directory.systemTemp.createTempSync(
+        'tapture-legacy-',
+      );
+      addTearDown(() => directory.deleteSync(recursive: true));
+      final String path = '${directory.path}/device.id';
+      File(path).writeAsStringSync('legacy-device');
+      String? stored;
+      final String id = await deviceId(
+        clock: clock,
+        ids: UuidV7Service.sequence(clock),
+        filePath: path,
+        readStored: () async => stored,
+        writeStored: (String minted) async {
+          stored = minted;
+        },
+      );
+      expect(id, 'legacy-device');
+      expect(stored, 'legacy-device');
+    },
+  );
 
   test('a fresh install writes the new id into the profile', () async {
     final Directory directory = Directory.systemTemp.createTempSync(

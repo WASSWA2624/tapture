@@ -19,8 +19,8 @@ abstract interface class DestinationSecrets {
   /// The payload for [ref], or null when it was never saved.
   Future<Result<String?>> read(String ref);
 
-  /// Removes [ref] from access and refresh storage.
-  Future<Result<void>> delete(String ref);
+  /// Forgets the sign-in for [ref]: access and refresh material both go.
+  Future<Result<void>> forget(String ref);
 
   /// Writes the refresh token for [ref].
   Future<Result<void>> putRefresh(String ref, String token);
@@ -45,7 +45,7 @@ final class _SecureDestinationSecrets implements DestinationSecrets {
   }
 
   @override
-  Future<Result<void>> delete(String ref) async {
+  Future<Result<void>> forget(String ref) async {
     final Result<void> access = await _remove(SecretKey.cloudAccess, ref);
     if (access is FailureResult<void>) {
       return access;

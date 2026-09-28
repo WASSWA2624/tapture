@@ -75,9 +75,7 @@ final class RedactionEditor extends StatelessWidget {
           ),
         ]);
       },
-      child: const SizedBox.expand(
-        key: ValueKey<String>('redaction-photo'),
-      ),
+      child: const SizedBox.expand(key: ValueKey<String>('redaction-photo')),
     );
   }
 }

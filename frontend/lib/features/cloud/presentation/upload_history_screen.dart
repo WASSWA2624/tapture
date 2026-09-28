@@ -13,8 +13,11 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
-import '../data/cloud_backends.dart';
-import '../data/destination_repository_impl.dart';
+import '../cloud.dart'
+    show
+        DestinationRepositoryImpl,
+        destinationRepositoryProvider,
+        openCloudBackends;
 import '../domain/upload_runner.dart';
 import 'upload_confirm_sheet.dart';
 

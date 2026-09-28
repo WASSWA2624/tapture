@@ -1,6 +1,8 @@
 # 082 — Import, inspect and extract document resources safely
 
-**Phase** 26 · Documentation  |  **Depends on** [081](081-documentation-workspaces.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+**Implementation step:** 26.03
+
+**Phase** 26 · Documentation  |  **Depends on** [076](../24-product-refinements/076-resolve-project-capture-package-feedback.md), [081](081-documentation-workspaces.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
 

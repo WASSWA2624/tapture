@@ -12,36 +12,39 @@ import 'package:tapture/features/capture/domain/photo_repository.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 
 void main() {
-  test('a late template write keeps photos from a resume that finished first', () async {
-    final _Gate gate = _Gate();
-    final ProviderContainer container = ProviderContainer(
-      overrides: <Override>[
-        capturePersistenceProvider.overrideWith((Ref ref) => gate),
-      ],
-    );
-    addTearDown(container.dispose);
-    final CaptureController controller = container.read(
-      captureControllerProvider('project-1').notifier,
-    );
-    final Future<Result<void>> template = controller.setTemplate('meters');
-    await gate.started.future;
-    const PhotoDraft photo = PhotoDraft(
-      id: 'photo-1',
-      projectId: 'project-1',
-      relativePath: 'a.jpg',
-      sha256: 'abc',
-    );
-    final CaptureSession resumed = controller.state.copyWith(
-      photos: const <PhotoDraft>[photo],
-      templateId: '',
-    );
-    await controller.replaceSession(resumed);
-    gate.release();
-    await template;
-    expect(controller.state.photos, hasLength(1));
-    expect(controller.state.photos.single.id, 'photo-1');
-    expect(controller.state.templateId, 'meters');
-  });
+  test(
+    'a late template write keeps photos from a resume that finished first',
+    () async {
+      final _Gate gate = _Gate();
+      final ProviderContainer container = ProviderContainer(
+        overrides: <Override>[
+          capturePersistenceProvider.overrideWith((Ref ref) => gate),
+        ],
+      );
+      addTearDown(container.dispose);
+      final CaptureController controller = container.read(
+        captureControllerProvider('project-1').notifier,
+      );
+      final Future<Result<void>> template = controller.setTemplate('meters');
+      await gate.started.future;
+      const PhotoDraft photo = PhotoDraft(
+        id: 'photo-1',
+        projectId: 'project-1',
+        relativePath: 'a.jpg',
+        sha256: 'abc',
+      );
+      final CaptureSession resumed = controller.state.copyWith(
+        photos: const <PhotoDraft>[photo],
+        templateId: '',
+      );
+      await controller.replaceSession(resumed);
+      gate.release();
+      await template;
+      expect(controller.state.photos, hasLength(1));
+      expect(controller.state.photos.single.id, 'photo-1');
+      expect(controller.state.templateId, 'meters');
+    },
+  );
 }
 
 final class _Gate implements CapturePersistence {

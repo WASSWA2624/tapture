@@ -8,10 +8,10 @@ import 'package:tapture/core/export/csv_writer.dart';
 import 'package:tapture/core/export/export_manifest.dart';
 import 'package:tapture/core/export/export_record.dart';
 import 'package:tapture/core/export/export_request.dart';
-import 'package:tapture/core/export/value_formatter.dart';
 import 'package:tapture/core/export/json_writer.dart';
 import 'package:tapture/core/export/pdf/pdf_engine.dart';
 import 'package:tapture/core/export/pdf/record_report.dart';
+import 'package:tapture/core/export/value_formatter.dart';
 import 'package:tapture/core/export/xlsx_writer.dart';
 import 'package:tapture/core/export/zip_package.dart';
 import 'package:tapture/features/records/domain/record_entry.dart';
@@ -40,12 +40,7 @@ void main() {
         to: null,
         filter: null,
       ),
-      columns: (
-        raw: true,
-        refined: true,
-        confidence: false,
-        evidence: false,
-      ),
+      columns: (raw: true, refined: true, confidence: false, evidence: false),
       extras: (
         dictionary: false,
         photoIndex: false,
@@ -94,10 +89,8 @@ void main() {
 }
 
 int _dataRows(String csv) {
-  return csv
-      .split('\n')
-      .where((String line) => line.trim().isNotEmpty)
-      .length - 1;
+  return csv.split('\n').where((String line) => line.trim().isNotEmpty).length -
+      1;
 }
 
 Future<Uint8List> _xlsx(ExportRequest request) async {

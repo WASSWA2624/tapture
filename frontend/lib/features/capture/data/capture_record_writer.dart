@@ -255,7 +255,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
     try {
       final CaptureSession? session = await _read(recordId);
       if (session == null) {
-        return const FailureResult<CaptureSession>(_recordGone);
+        return const FailureResult<CaptureSession>(_recordGoneFailure);
       }
       return Success<CaptureSession>(session);
     } on Failure catch (failure) {
@@ -286,7 +286,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
     return runInTransaction(_db, () async {
       final CaptureSession? stored = await _read(recordId);
       if (stored == null) {
-        throw _recordGone;
+        throw _recordGoneFailure;
       }
       final DateTime now = _clock.nowUtc();
       final Map<String, PhotoDraft> before = <String, PhotoDraft>{
@@ -792,7 +792,7 @@ const String _photoRemoved = 'removed';
 /// Audit reason of the status move an edit of an approved record makes.
 const String _editStatusReason = 'Photos, captions or audio edited.';
 
-const StorageFailure _recordGone = StorageFailure(
+const StorageFailure _recordGoneFailure = StorageFailure(
   message: 'That record is no longer on this device.',
   recoveryAction: 'Go back to the project and pick another record.',
 );

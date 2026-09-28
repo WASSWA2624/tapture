@@ -3,11 +3,7 @@ import 'dart:io';
 /// One row of the release record.
 final class GateRow {
   /// Creates a row.
-  const GateRow({
-    required this.name,
-    required this.status,
-    this.detail = '',
-  });
+  const GateRow({required this.name, required this.status, this.detail = ''});
 
   /// Gate name.
   final String name;
@@ -60,7 +56,9 @@ int writeReleaseRecord({
     buffer.writeln('| ${row.name} | ${row.status} | ${row.detail} |');
     if (row.status == 'failed') failed = true;
   }
-  File('${out.path}/release-record-$tag.md').writeAsStringSync(buffer.toString());
+  File(
+    '${out.path}/release-record-$tag.md',
+  ).writeAsStringSync(buffer.toString());
   return failed ? 1 : 0;
 }
 

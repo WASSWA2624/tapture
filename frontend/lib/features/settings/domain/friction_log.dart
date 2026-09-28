@@ -2,23 +2,29 @@ import 'package:tapture/core/errors/result.dart';
 
 /// One problem a field tester flagged. It never leaves the device on its own.
 final class FrictionLog {
-  final List<({
-    String screen,
-    DateTime at,
-    String operatorName,
-    String? projectId,
-    String action,
-    String? note,
-    String? screenshotPath,
-  })> _entries = <({
-    String screen,
-    DateTime at,
-    String operatorName,
-    String? projectId,
-    String action,
-    String? note,
-    String? screenshotPath,
-  })>[];
+  final List<
+    ({
+      String screen,
+      DateTime at,
+      String operatorName,
+      String? projectId,
+      String action,
+      String? note,
+      String? screenshotPath,
+    })
+  >
+  _entries =
+      <
+        ({
+          String screen,
+          DateTime at,
+          String operatorName,
+          String? projectId,
+          String action,
+          String? note,
+          String? screenshotPath,
+        })
+      >[];
 
   /// Records [screen] and the last [action]. [note] and a screenshot are optional.
   Future<Result<void>> logFriction({

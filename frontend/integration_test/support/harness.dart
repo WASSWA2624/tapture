@@ -11,7 +11,6 @@ import 'package:tapture/features/context/data/context_repository_impl.dart';
 import 'package:tapture/features/meetings/data/meeting_repository_impl.dart';
 import 'package:tapture/features/records/data/record_repository_impl.dart';
 import 'package:tapture/features/records/domain/record_entry.dart';
-import 'package:tapture/features/records/domain/record_repository.dart';
 import 'package:tapture/features/records/domain/record_value.dart';
 
 import '../../test/features/records/data/record_read_seeds.dart';
@@ -161,12 +160,7 @@ final class TestApp {
         to: null,
         filter: null,
       ),
-      columns: (
-        raw: true,
-        refined: true,
-        confidence: false,
-        evidence: false,
-      ),
+      columns: (raw: true, refined: true, confidence: false, evidence: false),
       extras: (
         dictionary: false,
         photoIndex: false,

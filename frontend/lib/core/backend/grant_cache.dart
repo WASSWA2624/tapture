@@ -1,3 +1,5 @@
+import 'package:tapture/core/constants/app_constants.dart';
+
 /// A grant saved in secure storage. The clock is injected.
 final class GrantCache {
   /// Creates a cache over [secrets]. [database], [logs] and [exports] are
@@ -11,7 +13,7 @@ final class GrantCache {
   }) : _now = now ?? DateTime.now;
 
   /// How long a grant authorises relay and analysis without a refresh.
-  static const Duration lifetime = Duration(days: 30);
+  static const Duration lifetime = AppConstants.backend.grantLifetime;
 
   static const String _secret = 'tapture.backend.session';
 
@@ -30,7 +32,10 @@ final class GrantCache {
   final DateTime Function() _now;
 
   /// Reads the cached grant. Missing storage is [AuthorityState.neverSignedIn].
-  AuthorityState read({DateTime? at, Duration freshFor = const Duration(hours: 1)}) {
+  AuthorityState read({
+    DateTime? at,
+    Duration freshFor = AppConstants.backend.grantFreshFor,
+  }) {
     final String? raw = secrets[_secret];
     if (raw == null || raw.isEmpty) return AuthorityState.neverSignedIn;
     final DateTime now = at ?? _now();

@@ -1,6 +1,14 @@
 # 011 — Context: hierarchy, bar and inheritance
 
+**Implementation step:** 11.01
+
 **Phase** 11 · Context  |  **Depends on** [003](../03-design-system/003-design-system.md), [004](../04-data-layer/004-local-database.md), [005](../05-file-storage/005-file-storage.md), [006](../06-app-shell/006-application-shell.md), [007](../07-account-and-settings/007-account-and-settings.md), [009](../09-templates/009-templates.md), [010](../10-reference-data/010-reference-data.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+
+**Implementation started:** Yes
+
+## Status reconciliation — 2026-09-28
+
+Historical completion was recorded on 2026-09-22 in the old tracker and index. The context repository, capture integration and tests exist, but all 26 acceptance items below remain unchecked. Report Partially complete until the checklist is reconciled and verified; do not erase implementation evidence or bulk-tick criteria from an old summary.
 
 ## Implement
 

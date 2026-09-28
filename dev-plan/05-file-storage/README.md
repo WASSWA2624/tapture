@@ -2,9 +2,19 @@
 
 The organised folder tree and every service that writes into it.
 
-Task 005 (1). One prompt for the completed phase; the atomics it absorbed are listed in [RETIRED.md](../RETIRED.md).
+<!-- dev-plan:generated:start -->
 
-- [x] [005 — File storage: the organised folder tree and every service that writes into it](005-file-storage.md)
+## Implementation progress
+
+**Step 05 — Complete**
+
+1 total · 1 Complete · 0 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+
+| Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
+| --- | --- | --- | --- | ---: | --- |
+| 05.01 | 005 | [File storage: the organised folder tree and every service that writes into it](005-file-storage.md) | **Complete** | 49/49 | 01.01 (001); Dependencies complete |
+
+<!-- dev-plan:generated:end -->
 
 ## As built
 

@@ -1,5 +1,7 @@
 # 020 — Data import: continue an inventory someone else started
 
+**Implementation step:** 20.01
+
 **Phase** 20 · Data import  |  **Depends on** [003](../03-design-system/003-design-system.md), [004](../04-data-layer/004-local-database.md), [005](../05-file-storage/005-file-storage.md), [009](../09-templates/009-templates.md), [014](../14-records/014-records.md), [015](../15-data-quality/015-data-quality.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

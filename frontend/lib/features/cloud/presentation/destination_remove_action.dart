@@ -5,8 +5,8 @@ import '../domain/destination_repository.dart';
 
 /// Removes a destination only after the person confirms.
 ///
-/// The repository deletes the row and the secret together. Cancelling
-/// leaves both in place.
+/// The repository tombstones the row and forgets the secret together.
+/// Cancelling leaves both in place.
 final class DestinationRemoveAction {
   /// Deletes [id] when [confirmed] is true.
   static Future<Result<void>> apply({

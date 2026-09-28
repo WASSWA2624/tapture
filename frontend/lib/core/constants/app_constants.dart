@@ -58,6 +58,10 @@ abstract final class AppConstants {
   /// One second, for durations a setting stores as a count of seconds.
   static const Duration second = Duration(seconds: 1);
 
+  /// One millisecond, for delays a setting stores as a count of
+  /// milliseconds, such as an upload retry backoff.
+  static const Duration millisecond = Duration(milliseconds: 1);
+
   /// Bounds for virtualised lists and trays.
   static const ({int pageSize}) lists = (pageSize: listPageSize);
 
@@ -528,6 +532,21 @@ abstract final class AppConstants {
     maxAttempts: 5,
     backoffBaseMs: 200,
     backoffCapMs: 5000,
+  );
+
+  /// The organisation backend (§30.2): how long a proxied analysis call may
+  /// take before the request is queued for later, how long a grant
+  /// authorises relay and analysis without a refresh, and how recently a
+  /// grant must have been refreshed to count as fresh.
+  static const ({
+    Duration proxyTimeout,
+    Duration grantLifetime,
+    Duration grantFreshFor,
+  })
+  backend = (
+    proxyTimeout: Duration(seconds: 8),
+    grantLifetime: Duration(days: 30),
+    grantFreshFor: Duration(hours: 1),
   );
 }
 

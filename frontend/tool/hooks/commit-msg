@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Requires a commit subject to name the task it belongs to.
-# Installed by frontend/tool/install_hooks.dart (dev-plan 01-orchestration/009).
+# Installed by frontend/tool/install_hooks.dart (dev-plan task 001).
 #
 # frontend/.rules/13-workflow.md FE-FLOW-01: one task, one branch, one pull
 # request, and commit subjects start with the task number. A commit nobody can

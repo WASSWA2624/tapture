@@ -51,7 +51,9 @@ List<BacklogItem> collectBacklog({
       if (line.startsWith('# ')) phase = line.substring(2).trim();
       if (!line.startsWith('- [ ]')) continue;
       final String title = line.replaceFirst('- [ ]', '').trim();
-      final String following = index + 1 < lines.length ? lines[index + 1].trim() : '';
+      final String following = index + 1 < lines.length
+          ? lines[index + 1].trim()
+          : '';
       final bool stated = following.startsWith('because:');
       items.add(
         BacklogItem(

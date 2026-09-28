@@ -117,14 +117,18 @@ Widget _empty(BuildContext context, {required bool searching}) {
     message: searching
         ? Copy.projectsNoMatchMessage
         : Copy.projectsEmptyMessage,
-    actionLabel: searching
-        ? null
-        : expanded
+    // Compact keeps its Create footer during a search, so only the expanded
+    // pane's no-match state names it again (FE-SIMP-11).
+    actionLabel: expanded
         ? Copy.projectsCreate
-        : Copy.projectsImport,
-    onAction: searching
+        : searching
         ? null
-        : () => context.go(expanded ? _createLocation : _importLocation),
+        : Copy.projectsImport,
+    onAction: expanded
+        ? () => context.go(_createLocation)
+        : searching
+        ? null
+        : () => context.go(_importLocation),
   );
 }
 

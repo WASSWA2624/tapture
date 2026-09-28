@@ -1,6 +1,8 @@
 # 083 — Build the Inputs, Outputs and Prompt workspace
 
-**Phase** 26 · Documentation  |  **Depends on** [079](../06-app-shell/079-mobile-more-menu.md), [082](082-documentation-ingestion.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+**Implementation step:** 26.04
+
+**Phase** 26 · Documentation  |  **Depends on** [079](../24-product-refinements/079-mobile-more-menu.md), [082](082-documentation-ingestion.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
 

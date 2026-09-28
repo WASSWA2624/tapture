@@ -12,7 +12,9 @@ import 'package:tapture/features/account/presentation/sign_in_screen.dart';
 import '../../support/pump_app.dart';
 
 void main() {
-  testWidgets('sign-in submits the address and password once', (WidgetTester tester) async {
+  testWidgets('sign-in submits the address and password once', (
+    WidgetTester tester,
+  ) async {
     String? email;
     String? password;
     await pumpApp(
@@ -32,39 +34,43 @@ void main() {
     expect(password, 'correct-horse');
   });
 
-  test('silent refresh stays local when the server cannot be reached', () async {
-    var calls = 0;
-    final BackendApiClient client = BackendApiClient(
-      send: ({
-        required String method,
-        required String path,
-        Map<String, Object?>? body,
-        String? token,
-      }) async {
-        calls += 1;
-        return (
-          status: 200,
-          body: <String, Object?>{
-            'accessToken': 'next-access',
-            'refreshToken': 'next-refresh',
-          },
-        );
-      },
-    );
-    final TokenPair offline = await client.refresh(
-      refreshToken: 'cached-refresh',
-      reachable: false,
-      cachedAccess: 'cached-access',
-    );
-    expect(calls, 0);
-    expect(offline.accessToken, 'cached-access');
-    final TokenPair online = await client.refresh(
-      refreshToken: 'cached-refresh',
-      reachable: true,
-    );
-    expect(calls, 1);
-    expect(online.accessToken, 'next-access');
-  });
+  test(
+    'silent refresh stays local when the server cannot be reached',
+    () async {
+      var calls = 0;
+      final BackendApiClient client = BackendApiClient(
+        send:
+            ({
+              required String method,
+              required String path,
+              Map<String, Object?>? body,
+              String? token,
+            }) async {
+              calls += 1;
+              return (
+                status: 200,
+                body: <String, Object?>{
+                  'accessToken': 'next-access',
+                  'refreshToken': 'next-refresh',
+                },
+              );
+            },
+      );
+      final TokenPair offline = await client.refresh(
+        refreshToken: 'cached-refresh',
+        reachable: false,
+        cachedAccess: 'cached-access',
+      );
+      expect(calls, 0);
+      expect(offline.accessToken, 'cached-access');
+      final TokenPair online = await client.refresh(
+        refreshToken: 'cached-refresh',
+        reachable: true,
+      );
+      expect(calls, 1);
+      expect(online.accessToken, 'next-access');
+    },
+  );
 
   test('a session is written only to secure storage', () {
     final Map<String, String> secrets = <String, String>{};
@@ -91,7 +97,9 @@ void main() {
     expect(secrets.values.single.contains('access-token'), isTrue);
   });
 
-  testWidgets('an unreachable server is one quiet line', (WidgetTester tester) async {
+  testWidgets('an unreachable server is one quiet line', (
+    WidgetTester tester,
+  ) async {
     await pumpApp(
       tester,
       const BackendSettingsScreen(

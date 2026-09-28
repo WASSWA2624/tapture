@@ -1,5 +1,7 @@
 # 002 — Foundation services
 
+**Implementation step:** 02.01
+
 **Phase** 02 · Foundation services  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

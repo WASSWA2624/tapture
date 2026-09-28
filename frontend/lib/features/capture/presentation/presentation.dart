@@ -30,6 +30,6 @@ export 'photo_type_screen.dart';
 export 'photo_type_sheet.dart';
 export 'photo_viewer_screen.dart';
 export 'rapid_mode_screen.dart';
-export 'redaction_editor.dart';
 export 'record_caption_field.dart';
+export 'redaction_editor.dart';
 export 'voice_input_button.dart';

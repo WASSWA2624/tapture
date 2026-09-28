@@ -7,7 +7,10 @@ void main() {
   test('enrolment moves only along the sign-in path', () {
     final BackendConfig enrolling = start.apply(EnrolmentEvent.start);
     expect(enrolling.state, EnrolmentState.enrolling);
-    expect(enrolling.apply(EnrolmentEvent.fail).state, EnrolmentState.notEnrolled);
+    expect(
+      enrolling.apply(EnrolmentEvent.fail).state,
+      EnrolmentState.notEnrolled,
+    );
     final BackendConfig enrolled = enrolling.apply(EnrolmentEvent.succeed);
     expect(enrolled.state, EnrolmentState.enrolled);
     expect(enrolled.needsSignIn, isFalse);
@@ -15,7 +18,10 @@ void main() {
     expect(revoked.state, EnrolmentState.revoked);
     expect(revoked.needsSignIn, isTrue);
     expect(revoked.apply(EnrolmentEvent.start).state, EnrolmentState.enrolling);
-    expect(start.apply(EnrolmentEvent.succeed).state, EnrolmentState.notEnrolled);
+    expect(
+      start.apply(EnrolmentEvent.succeed).state,
+      EnrolmentState.notEnrolled,
+    );
   });
 
   test('records keep their operator name and gain the account id', () {

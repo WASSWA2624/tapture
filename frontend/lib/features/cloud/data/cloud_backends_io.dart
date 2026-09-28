@@ -42,6 +42,7 @@ Future<Map<DestinationKind, CloudDestination>> openCloudBackends(
   Future<String?> readSecret(String ref) {
     return _text(secrets.read(ref));
   }
+
   return <DestinationKind, CloudDestination>{
     DestinationKind.s3: S3Destination(
       transport: sendCloud,

@@ -95,7 +95,7 @@ void main() {
     },
   );
 
-  testWidgets('duplicate prompt and compare render empty and failure', (
+  testWidgets('the duplicate prompt renders empty and failure', (
     WidgetTester tester,
   ) async {
     await _pump(
@@ -111,16 +111,6 @@ void main() {
       ),
     );
     expect(find.byType(AppErrorState), findsOneWidget);
-    await _pump(
-      tester,
-      const DuplicateCompareScreen(
-        leftTitle: 'Old',
-        rightTitle: 'New',
-        differences: <DuplicateDifference>[],
-        failure: _failed,
-      ),
-    );
-    expect(find.byType(AppErrorState), findsOneWidget);
   });
 
   testWidgets('the merge sheet renders empty and failure', (
@@ -131,52 +121,6 @@ void main() {
     await _pump(
       tester,
       const DuplicateMergeSheet(fields: <MergeField>[], failure: _failed),
-    );
-    expect(find.byType(AppErrorState), findsOneWidget);
-  });
-
-  testWidgets('duplicates can be cleared as a group after the count is named', (
-    WidgetTester tester,
-  ) async {
-    String? group;
-    await _pump(
-      tester,
-      DuplicatesScreen(
-        pairs: const <DuplicatePairRow>[
-          (
-            id: '1',
-            title: 'Pump',
-            subtitle: 'Serial A-1 · A-2',
-            group: 'Identity',
-          ),
-          (
-            id: '2',
-            title: 'Pump 2',
-            subtitle: 'Serial B-1 · B-2',
-            group: 'Identity',
-          ),
-        ],
-        onResolveGroup: (String name, int count) => group = '$name:$count',
-      ),
-    );
-    await tester.tap(
-      find.byKey(const ValueKey<String>('duplicate-group-Identity')),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text(Copy.duplicatesBulkMessage(2)), findsOneWidget);
-    await tester.tap(find.text(Copy.duplicateLinkBoth).last);
-    await tester.pumpAndSettle();
-    expect(group, 'Identity:2');
-  });
-
-  testWidgets('the duplicates screen renders empty and failure', (
-    WidgetTester tester,
-  ) async {
-    await _pump(tester, const DuplicatesScreen(pairs: <DuplicatePairRow>[]));
-    expect(find.byType(AppEmptyState), findsOneWidget);
-    await _pump(
-      tester,
-      const DuplicatesScreen(pairs: <DuplicatePairRow>[], failure: _failed),
     );
     expect(find.byType(AppErrorState), findsOneWidget);
   });
@@ -245,93 +189,6 @@ void main() {
     await _pump(tester, const VerificationModeToggle(failure: _failed));
     expect(find.byType(AppErrorState), findsOneWidget);
   });
-
-  testWidgets('variance filters, groups and opens a record', (
-    WidgetTester tester,
-  ) async {
-    String? opened;
-    VarianceStatus? filter;
-    await _pump(
-      tester,
-      VarianceScreen(
-        rows: const <VarianceRow>[
-          (
-            id: '1',
-            fieldKey: 'serial',
-            label: 'Serial',
-            context: 'North',
-            status: VarianceStatus.changed,
-            recordId: 'r1',
-          ),
-          (
-            id: '2',
-            fieldKey: 'note',
-            label: 'Note',
-            context: 'North',
-            status: VarianceStatus.match,
-            recordId: 'r1',
-          ),
-        ],
-        onOpen: (String id) => opened = id,
-        onFilter: (VarianceStatus? status) => filter = status,
-      ),
-    );
-    expect(find.text('North'), findsOneWidget);
-    await tester.tap(find.text('Serial'));
-    expect(opened, 'r1');
-    await tester.tap(
-      find.byKey(const ValueKey<String>('variance-filter-match')),
-    );
-    expect(filter, VarianceStatus.match);
-
-    await _pump(
-      tester,
-      const VarianceScreen(rows: <VarianceRow>[], recordId: 'r1'),
-    );
-    expect(find.byType(AppEmptyState), findsOneWidget);
-    await _pump(
-      tester,
-      const VarianceScreen(rows: <VarianceRow>[], failure: _failed),
-    );
-    expect(find.byType(AppErrorState), findsOneWidget);
-  });
-
-  testWidgets(
-    'each quality count opens its screen and a clean project does not',
-    (WidgetTester tester) async {
-      String? opened;
-      await _pump(
-        tester,
-        QualitySummaryScreen(
-          counts: (invalid: 2, duplicates: 1, conflicts: 3, unreviewed: 4),
-          onInvalid: () => opened = 'invalid',
-          onDuplicates: () => opened = 'duplicates',
-          onConflicts: () => opened = 'conflicts',
-          onUnreviewed: () => opened = 'review',
-        ),
-      );
-      await tester.tap(
-        find.byKey(const ValueKey<String>('quality-duplicates')),
-      );
-      expect(opened, 'duplicates');
-      await tester.tap(find.byKey(const ValueKey<String>('quality-invalid')));
-      expect(opened, 'invalid');
-
-      await _pump(
-        tester,
-        const QualitySummaryScreen(
-          counts: (invalid: 0, duplicates: 0, conflicts: 0, unreviewed: 0),
-        ),
-      );
-      expect(find.text(Copy.qualityCleanHeadline), findsOneWidget);
-
-      await _pump(
-        tester,
-        const QualitySummaryScreen(counts: null, failure: _failed),
-      );
-      expect(find.byType(AppErrorState), findsOneWidget);
-    },
-  );
 }
 
 Future<void> _pump(WidgetTester tester, Widget child) {

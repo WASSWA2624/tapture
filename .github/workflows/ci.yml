@@ -14,6 +14,8 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: Check development tracker is committed and current
+        run: dart run tool/sync_dev_tracker.dart --check
       - run: dart run tool/verify.dart
       - if: failure()
         uses: actions/upload-artifact@v4

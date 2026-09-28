@@ -12,6 +12,21 @@ final class FakeReferenceRepository implements ReferenceRepository {
   final StreamController<void> _changes = StreamController<void>.broadcast();
   int _next = 0;
 
+  /// Every page the browser asked for, oldest first.
+  final List<({int offset, int limit, String query})> pageReads =
+      <({int offset, int limit, String query})>[];
+
+  /// Every [saveRow] call, with the previous values the caller passed.
+  final List<({ReferenceRow row, Map<String, String>? previousValues})>
+  savedRows = <({ReferenceRow row, Map<String, String>? previousValues})>[];
+
+  /// When set, [pageRows] answers with this failure instead of a page.
+  Failure? pageRowsFailure;
+
+  /// When set, a valid [saveRow] answers with this failure instead of
+  /// storing the row.
+  Failure? saveRowFailure;
+
   /// Releases the watch stream. Tests call this from `tearDown`.
   void dispose() {
     _changes.close();
@@ -117,6 +132,11 @@ final class FakeReferenceRepository implements ReferenceRepository {
     required int limit,
     String query = '',
   }) async {
+    pageReads.add((offset: offset, limit: limit, query: query));
+    final Failure? refused = pageRowsFailure;
+    if (refused != null) {
+      return FailureResult<List<ReferenceRow>>(refused);
+    }
     final String needle = query.trim().toLowerCase();
     final List<ReferenceRow> rows = <ReferenceRow>[
       for (final ReferenceRow row in _rows.values)
@@ -146,6 +166,7 @@ final class FakeReferenceRepository implements ReferenceRepository {
     ReferenceRow row, {
     Map<String, String>? previousValues,
   }) async {
+    savedRows.add((row: row, previousValues: previousValues));
     if (row.datasetId.isEmpty || row.key.trim().isEmpty) {
       return const FailureResult<ReferenceRow>(
         ValidationFailure(
@@ -153,6 +174,10 @@ final class FakeReferenceRepository implements ReferenceRepository {
           recoveryAction: 'Fill those fields and save again.',
         ),
       );
+    }
+    final Failure? refused = saveRowFailure;
+    if (refused != null) {
+      return FailureResult<ReferenceRow>(refused);
     }
     final String id = row.id.isEmpty ? 'row-${_next++}' : row.id;
     final ReferenceRow stored = row.copyWith(id: id);

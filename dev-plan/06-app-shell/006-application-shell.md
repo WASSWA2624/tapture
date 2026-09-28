@@ -1,5 +1,7 @@
 # 006 — Application shell: navigation, the status line and the frame every feature plugs into
 
+**Implementation step:** 06.01
+
 **Phase** 06 · Application shell  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

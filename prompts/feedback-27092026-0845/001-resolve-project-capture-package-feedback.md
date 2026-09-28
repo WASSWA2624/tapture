@@ -177,7 +177,7 @@ ceiling in D6 and the surfaces each item names.
    decision that Save and process is twice as wide (W8 of task 070).
 
    ```bash
-   cd frontend && dart run tool/new_task.dart 23-hardening resolve-project-capture-package-feedback "Resolve project, capture and template feedback, and add project packages"
+   cd frontend && dart run tool/new_task.dart 24-product-refinements resolve-project-capture-package-feedback "Resolve project, capture and template feedback, and add project packages"
    ```
 
 2. Note the overlap in the owning phase tasks, without ticking anything there. In
@@ -191,11 +191,11 @@ ceiling in D6 and the surfaces each item names.
 3. Add the plan tasks for work this prompt leaves out (FE-FLOW-04).
 
    ```bash
-   cd frontend && dart run tool/new_task.dart 23-hardening suggest-shipped-templates-with-ai "Suggest shipped templates with AI"
+   cd frontend && dart run tool/new_task.dart 24-product-refinements suggest-shipped-templates-with-ai "Suggest shipped templates with AI"
    ```
 
    ```bash
-   cd frontend && dart run tool/new_task.dart 23-hardening keep-device-id-in-storage-root "Keep the device id in the storage root"
+   cd frontend && dart run tool/new_task.dart 24-product-refinements keep-device-id-in-storage-root "Keep the device id in the storage root"
    ```
 
    The first task names D12's reasons. It depends on task 024 for a provider behind the backend proxy. The second

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'sync_dev_tracker.dart' show readTracker;
+
 /// The skeleton every generated task is rendered from, relative to
 /// `frontend/`, which is where the tools run from.
 const String _templatePath = 'tool/task_template.md';
@@ -26,19 +28,6 @@ final RegExp _slug = RegExp(r'^[a-z0-9]+(-[a-z0-9]+)*$');
 /// The heading a phase folder's README opens with: `# 01 — Phase title`.
 final RegExp _phaseHeading = RegExp(r'^#\s+(\d+)\s+—\s+(.+)$');
 
-/// A checklist entry in a README or in the index.
-final RegExp _checklistEntry = RegExp(r'^- \[[ xX]\] \[(\d+)\s');
-
-/// The line a phase README summarises itself with: `Tasks 001–022 (22).`
-///
-/// The dash is an en dash, as the plan writes it.
-final RegExp _readmeCount = RegExp(r'^Tasks (\d+)–(\d+) \((\d+)\)\.(.*)$');
-
-/// The line the index summarises itself with.
-final RegExp _indexCount = RegExp(
-  r'^(\d+) implementation prompts across (\d+) phases\.(.*)$',
-);
-
 /// One reason the tool will not generate, and the file and line behind it.
 typedef _Problem = ({String file, int line, String message});
 
@@ -50,10 +39,7 @@ typedef _Plan = ({
   Directory phase,
   Directory root,
   File task,
-  File readme,
-  File index,
   String phaseLine,
-  int phaseNumber,
 });
 
 /// Creates the next task file in a phase, and lists it in the phase README and
@@ -84,7 +70,15 @@ Future<int> main(List<String> args) async {
     return exitCode;
   }
 
-  _write(plan);
+  try {
+    _write(plan);
+  } on FormatException catch (error) {
+    stderr.writeln('new task: ${error.message}');
+    return exitCode = 1;
+  } on FileSystemException catch (error) {
+    stderr.writeln('new task: ${error.message}: ${error.path}');
+    return exitCode = 1;
+  }
   stdout.writeln(
     'new task: ${_padded(plan.number)} in ${_basename(plan.phase.uri)}, '
     'listed in the phase README and the index',
@@ -215,17 +209,15 @@ Future<int> main(List<String> args) async {
       phase: phase,
       root: root,
       task: task,
-      readme: readme,
-      index: index,
       phaseLine: '${_padded2(heading.number)} · ${heading.title}',
-      phaseNumber: heading.number,
     ),
     problems,
   );
 }
 
-/// Writes the task file, then lists it in the phase README and the index.
+/// Validates the existing plan, then generates every summary from one model.
 void _write(_Plan plan) {
+  readTracker(plan.root.parent);
   plan.task.writeAsStringSync(
     File(_templatePath)
         .readAsStringSync()
@@ -233,77 +225,12 @@ void _write(_Plan plan) {
         .replaceAll('{{title}}', plan.title)
         .replaceAll('{{phase}}', plan.phaseLine),
   );
-  _listInReadme(plan);
-  _listInIndex(plan);
-}
-
-/// Appends the entry to the phase README's checklist, then brings the line
-/// that summarises the checklist back into agreement with it.
-void _listInReadme(_Plan plan) {
-  final List<String> lines = plan.readme.readAsLinesSync();
-  final String entry =
-      '- [ ] [${_padded(plan.number)} — ${plan.title}]'
-      '(${_padded(plan.number)}-${plan.slug}.md)';
-  final int last = _lastEntry(lines, 0, lines.length);
-  lines.insert(last + 1, entry);
-  _refreshReadmeCount(lines);
-  plan.readme.writeAsStringSync('${lines.join('\n')}\n');
-}
-
-/// Appends the entry to the index, inside the section for this phase, then
-/// brings the index's own total back into agreement with it.
-void _listInIndex(_Plan plan) {
-  final List<String> lines = plan.index.readAsLinesSync();
-  final String entry =
-      '- [ ] [${_padded(plan.number)} — ${plan.title}]'
-      '(${_basename(plan.phase.uri)}/${_padded(plan.number)}-${plan.slug}.md)';
-  final int start = _indexSection(lines, plan.phaseNumber);
-  final int end = start == -1 ? lines.length : _nextSection(lines, start);
-  final int last = start == -1
-      ? _lastEntry(lines, 0, lines.length)
-      : _lastEntry(lines, start, end);
-  lines.insert(last + 1, entry);
-  _refreshIndexCount(lines);
-  plan.index.writeAsStringSync('${lines.join('\n')}\n');
-}
-
-/// Rewrites `Tasks 001–022 (22).` from the entries that follow it, so the
-/// summary never contradicts the checklist underneath it.
-///
-/// Left alone when the line is not in that shape: a README somebody has
-/// rewritten is theirs, not this tool's to reformat.
-void _refreshReadmeCount(List<String> lines) {
-  final List<int> numbers = _entryNumbers(lines);
-  if (numbers.isEmpty) {
-    return;
-  }
-  for (int index = 0; index < lines.length; index++) {
-    final Match? match = _readmeCount.firstMatch(lines[index]);
-    if (match == null) {
-      continue;
-    }
-    final int lowest = numbers.reduce((int a, int b) => a < b ? a : b);
-    final int highest = numbers.reduce((int a, int b) => a > b ? a : b);
-    lines[index] =
-        'Tasks ${_padded(lowest)}–${_padded(highest)} '
-        '(${numbers.length}).${match.group(4)}';
-    return;
-  }
-}
-
-/// Rewrites the index's `N implementation prompts across M phases.` from the
-/// entries below it, for the same reason.
-void _refreshIndexCount(List<String> lines) {
-  final int entries = _entryNumbers(lines).length;
-  for (int index = 0; index < lines.length; index++) {
-    final Match? match = _indexCount.firstMatch(lines[index]);
-    if (match == null) {
-      continue;
-    }
-    lines[index] =
-        '$entries implementation prompts across ${match.group(2)} '
-        'phases.${match.group(3)}';
-    return;
+  try {
+    final snapshot = readTracker(plan.root.parent);
+    snapshot.write();
+  } on FormatException {
+    plan.task.deleteSync();
+    rethrow;
   }
 }
 
@@ -370,47 +297,6 @@ File? _existingSlug(Directory phase, String slug) {
     }
   }
   return null;
-}
-
-/// The line the index section for [phase] starts on, or -1 when it has none.
-int _indexSection(List<String> lines, int phase) {
-  final RegExp heading = RegExp('^##\\s+0*$phase\\s+—\\s');
-  for (int index = 0; index < lines.length; index++) {
-    if (heading.hasMatch(lines[index])) {
-      return index;
-    }
-  }
-  return -1;
-}
-
-/// The line the next `##` section starts on, or the end of the file.
-int _nextSection(List<String> lines, int start) {
-  for (int index = start + 1; index < lines.length; index++) {
-    if (lines[index].startsWith('## ')) {
-      return index;
-    }
-  }
-  return lines.length;
-}
-
-/// The index of the last checklist entry between [start] and [end], or the
-/// line before [end] when there is none to append after.
-int _lastEntry(List<String> lines, int start, int end) {
-  for (int index = end - 1; index >= start; index--) {
-    if (_checklistEntry.hasMatch(lines[index])) {
-      return index;
-    }
-  }
-  return end - 1;
-}
-
-/// Every task number listed in a checklist.
-List<int> _entryNumbers(List<String> lines) {
-  return <int>[
-    for (final String line in lines)
-      if (_checklistEntry.firstMatch(line) case final Match match)
-        int.parse(match.group(1)!),
-  ];
 }
 
 /// A task number as the plan writes it: at least three digits.

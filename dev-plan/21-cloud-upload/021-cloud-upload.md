@@ -1,5 +1,7 @@
 # 021 — Cloud upload: a destination the user chooses, never a sync channel
 
+**Implementation step:** 21.01
+
 **Phase** 21 · Cloud upload  |  **Depends on** [001](../01-orchestration/001-project-setup.md), [002](../02-foundation/002-foundation-services.md), [003](../03-design-system/003-design-system.md), [004](../04-data-layer/004-local-database.md), [005](../05-file-storage/005-file-storage.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

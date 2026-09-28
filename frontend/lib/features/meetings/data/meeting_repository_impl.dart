@@ -100,7 +100,9 @@ final class MeetingRepositoryImpl implements MeetingRepository {
         final Result<MeetingAttendee> written = await upsertMeetingAttendee(
           _database,
           row: AttendeesCompanion(
-            id: Value<String>(person.id.isEmpty ? _idService.newId() : person.id),
+            id: Value<String>(
+              person.id.isEmpty ? _idService.newId() : person.id,
+            ),
             meetingId: Value<String>(id),
             name: Value<String>(person.name),
             title: Value<String>(person.title),
@@ -127,7 +129,9 @@ final class MeetingRepositoryImpl implements MeetingRepository {
         final Result<MeetingAction> written = await upsertMeetingAction(
           _database,
           row: MeetingActionsCompanion(
-            id: Value<String>(action.id.isEmpty ? _idService.newId() : action.id),
+            id: Value<String>(
+              action.id.isEmpty ? _idService.newId() : action.id,
+            ),
             meetingId: Value<String>(id),
             action: Value<String>(action.text),
             ownerName: Value<String>(action.ownerName),

@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/ai/ai_service.dart';
-import 'package:tapture/core/export/export_record.dart';
 import 'package:tapture/core/backend/grant_cache.dart';
 import 'package:tapture/core/backend/offline_authority.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/export/export_record.dart';
 import 'package:tapture/features/records/domain/record_entry.dart';
 
 import 'support/harness.dart';

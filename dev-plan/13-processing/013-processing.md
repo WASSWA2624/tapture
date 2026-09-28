@@ -1,5 +1,7 @@
 # 013 — Processing: on-device first, online only when it earns its place
 
+**Implementation step:** 13.01
+
 **Phase** 13 · Processing  |  **Depends on** [002](../02-foundation/002-foundation-services.md), [004](../04-data-layer/004-local-database.md), [007](../07-account-and-settings/007-account-and-settings.md), [009](../09-templates/009-templates.md), [010](../10-reference-data/010-reference-data.md), [012](../12-capture/012-capture.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

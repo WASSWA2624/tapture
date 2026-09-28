@@ -1,5 +1,7 @@
 # 007 — Account and settings: local identity, the app lock and the switches later features read
 
+**Implementation step:** 07.01
+
 **Phase** 07 · Account and settings  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

@@ -16,8 +16,8 @@ import 'core/audio/audio_recorder_plugin.dart';
 import 'core/audio/audio_recorder_service.dart';
 import 'core/background/power_source.dart';
 import 'core/db/app_database.dart';
-import 'core/db/tables/device_profile.dart';
 import 'core/db/database_provider.dart';
+import 'core/db/tables/device_profile.dart';
 import 'core/device/device_identity.dart';
 import 'core/device/platform_facts.dart';
 import 'core/errors/failure.dart';
@@ -124,7 +124,7 @@ Future<void> _run() async {
       ids: ids,
       readStored: () async {
         final List<DeviceProfileRow> rows = await database!
-            .select(database!.deviceProfile)
+            .select(database.deviceProfile)
             .get();
         if (rows.isEmpty) return null;
         return rows.first.deviceId;

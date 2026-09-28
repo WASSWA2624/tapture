@@ -6,6 +6,7 @@ import 'package:tapture/core/cloud/cloud_destination.dart';
 import 'package:tapture/core/cloud/destination_secrets.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/database_provider.dart';
+import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
@@ -20,6 +21,9 @@ import '../domain/destination_repository.dart';
 /// An attempt row is inserted when the transfer starts, with outcome
 /// `interrupted`, and updated when it ends. The credential value is never
 /// written on either table.
+///
+/// A destination the person removes is tombstoned, so the list no longer
+/// shows it and merge never brings it back; the row itself stays (FE-SEC-08).
 final class DestinationRepositoryImpl implements DestinationRepository {
   /// Creates the store.
   DestinationRepositoryImpl({
@@ -47,19 +51,31 @@ final class DestinationRepositoryImpl implements DestinationRepository {
 
   static const String _uploadProject = 'cloud-upload';
   static const String _uploadFormats = '["cloud-upload"]';
+  static const String _removeReason = 'Removed by the operator.';
 
   @override
   Stream<List<Destination>> watchAll() {
-    return (database.select(database.destinations)
-          ..orderBy(<OrderClauseGenerator<$DestinationsTable>>[
-            ($DestinationsTable table) => OrderingTerm.asc(table.label),
-          ]))
-        .watch()
-        .map(
-          (List<DestinationRow> rows) => <Destination>[
-            for (final DestinationRow row in rows) _destination(row),
-          ],
-        );
+    final $DestinationsTable destinations = database.destinations;
+    final $TombstonesTable tombstones = database.tombstones;
+    final JoinedSelectStatement<HasResultSet, dynamic> query = database
+        .select(destinations)
+        .join(<Join<HasResultSet, Object?>>[
+          leftOuterJoin(
+            tombstones,
+            tombstones.entityType.equals(destinations.actualTableName) &
+                tombstones.entityId.equalsExp(destinations.id),
+            useColumns: false,
+          ),
+        ]);
+    query
+      ..where(tombstones.entityId.isNull())
+      ..orderBy(<OrderingTerm>[OrderingTerm.asc(destinations.label)]);
+    return query.watch().map(
+      (List<TypedResult> rows) => <Destination>[
+        for (final TypedResult row in rows)
+          _destination(row.readTable(destinations)),
+      ],
+    );
   }
 
   @override
@@ -119,10 +135,7 @@ final class DestinationRepositoryImpl implements DestinationRepository {
 
   @override
   Future<Result<void>> remove(String id) async {
-    final DestinationRow? row =
-        await (database.select(database.destinations)
-              ..where(($DestinationsTable table) => table.id.equals(id)))
-            .getSingleOrNull();
+    final DestinationRow? row = await _listed(id);
     if (row == null) {
       return const FailureResult<void>(
         ValidationFailure(
@@ -131,7 +144,7 @@ final class DestinationRepositoryImpl implements DestinationRepository {
         ),
       );
     }
-    final Result<void> secret = await secrets.delete(row.credentialRef);
+    final Result<void> secret = await secrets.forget(row.credentialRef);
     if (secret is FailureResult<void>) {
       return const FailureResult<void>(
         StorageFailure(
@@ -142,9 +155,14 @@ final class DestinationRepositoryImpl implements DestinationRepository {
       );
     }
     try {
-      await (database.delete(
-        database.destinations,
-      )..where(($DestinationsTable table) => table.id.equals(id))).go();
+      await writeTombstone(
+        database,
+        entityType: database.destinations.actualTableName,
+        entityId: id,
+        reason: _removeReason,
+        clock: clock,
+        deviceId: deviceId,
+      );
     } on Object {
       return const FailureResult<void>(
         StorageFailure(
@@ -265,6 +283,27 @@ final class DestinationRepositoryImpl implements DestinationRepository {
   /// History callbacks for [UploadRunner].
   UploadHistory get history =>
       (begin: beginAttempt, finish: finishAttempt, read: readAttempt);
+
+  /// The row [id] while the list still shows it: saved and not tombstoned.
+  Future<DestinationRow?> _listed(String id) async {
+    final DestinationRow? row =
+        await (database.select(database.destinations)
+              ..where(($DestinationsTable table) => table.id.equals(id)))
+            .getSingleOrNull();
+    if (row == null) {
+      return null;
+    }
+    final Tombstone? removed =
+        await (database.select(database.tombstones)..where(
+              ($TombstonesTable table) =>
+                  table.entityType.equals(
+                    database.destinations.actualTableName,
+                  ) &
+                  table.entityId.equals(id),
+            ))
+            .getSingleOrNull();
+    return removed == null ? row : null;
+  }
 
   Destination _destination(DestinationRow row) {
     return (

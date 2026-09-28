@@ -3,10 +3,10 @@ library;
 
 export 'csv_writer.dart';
 export 'export_dictionary.dart';
-export 'face_blur.dart';
 export 'export_manifest.dart';
 export 'export_record.dart';
 export 'export_request.dart';
+export 'face_blur.dart';
 export 'json_writer.dart';
 export 'pdf/inspection_report.dart';
 export 'pdf/minutes_report.dart';

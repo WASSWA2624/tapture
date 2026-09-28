@@ -4,11 +4,11 @@ import 'package:tapture/core/db/tables/meetings.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/features/meetings/data/meeting_repository_impl.dart';
 import 'package:tapture/features/meetings/domain/action_entry.dart';
 import 'package:tapture/features/meetings/domain/attendee.dart';
 import 'package:tapture/features/meetings/domain/meeting.dart';
 import 'package:tapture/features/meetings/domain/meeting_repository.dart';
-import 'package:tapture/features/meetings/data/meeting_repository_impl.dart';
 
 void main() {
   late AppDatabase db;

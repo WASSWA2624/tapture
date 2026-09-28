@@ -282,7 +282,7 @@ final class ExportRepositoryImpl implements ExportRepository {
   Stream<ExportSummary> watchSummary(String projectId) {
     // The same records exportProject writes: every status but deleted.
     const String written = 'r.project_id = ? AND r.status != ?';
-    List<Variable<Object>> scope() => <Variable<Object>>[
+    final List<Variable<Object>> scope = <Variable<Object>>[
       Variable<String>(projectId),
       Variable<String>(RecordStatus.deleted.stored),
     ];
@@ -312,15 +312,15 @@ final class ExportRepositoryImpl implements ExportRepository {
           '(SELECT MAX(r.captured_at) FROM records r WHERE $written) AS last',
           variables: <Variable<Object>>[
             Variable<String>(projectId),
-            ...scope(),
-            ...scope(),
+            ...scope,
+            ...scope,
             for (final RecordStatus status in _unprocessedStatuses)
               Variable<String>(status.stored),
-            ...scope(),
+            ...scope,
             Variable<String>(RecordStatus.needsReview.stored),
-            ...scope(),
+            ...scope,
             Variable<String>(RecordStatus.approved.stored),
-            for (int block = 0; block < 4; block++) ...scope(),
+            for (int block = 0; block < 4; block++) ...scope,
           ],
           readsFrom: <TableInfo<dynamic, dynamic>>{
             _db.projects,

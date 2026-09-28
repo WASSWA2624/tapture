@@ -1,5 +1,7 @@
 # 019 — Bundles and merge: a project leaves whole and rejoins safely
 
+**Implementation step:** 19.01
+
 **Phase** 19 · Bundles and merge  |  **Depends on** [001](../01-orchestration/001-project-setup.md), [002](../02-foundation/002-foundation-services.md), [004](../04-data-layer/004-local-database.md), [005](../05-file-storage/005-file-storage.md), [008](../08-projects/008-projects.md), [018](../18-export/018-export.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
@@ -25,7 +27,7 @@ in bulk with the evidence beside either side; and an apply step that snapshots f
 transaction, records the merge with its counts and resolutions, keeps undo available until the snapshot is purged, and
 scans across the merge boundary afterwards for the same asset captured twice.
 
-Task [076](../23-hardening/076-resolve-project-capture-package-feedback.md) ships part of this phase ahead of it, and
+Task [076](../24-product-refinements/076-resolve-project-capture-package-feedback.md) ships part of this phase ahead of it, and
 this task builds on those parts rather than replacing them: the package format, writer and reader
 (`core/bundle/`), import as a new project, the template compatibility check, a content-based merge with its preview
 and one-at-a-time conflicts, and duplicate decisions taken before a merge is written. This task still owns the

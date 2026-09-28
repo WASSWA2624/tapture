@@ -1,4 +1,5 @@
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -147,8 +148,8 @@ Duration cloudBackoff(int attempt, {required int baseMs, required int capMs}) {
   for (var step = 0; step < attempt; step++) {
     delay *= 2;
     if (delay >= capMs) {
-      return Duration(milliseconds: capMs);
+      return AppConstants.millisecond * capMs;
     }
   }
-  return Duration(milliseconds: delay);
+  return AppConstants.millisecond * delay;
 }

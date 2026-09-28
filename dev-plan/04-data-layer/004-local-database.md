@@ -1,5 +1,7 @@
 # 004 — Local database: every table, with merge columns from the first migration
 
+**Implementation step:** 04.01
+
 **Phase** 04 · Local database  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

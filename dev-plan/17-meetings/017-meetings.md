@@ -1,5 +1,7 @@
 # 017 — Meetings: minutes, attendance and actions
 
+**Implementation step:** 17.01
+
 **Phase** 17 · Meetings  |  **Depends on** [003](../03-design-system/003-design-system.md), [004](../04-data-layer/004-local-database.md), [009](../09-templates/009-templates.md), [010](../10-reference-data/010-reference-data.md), [012](../12-capture/012-capture.md), [013](../13-processing/013-processing.md), [016](../16-review/016-review.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

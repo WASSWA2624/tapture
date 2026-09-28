@@ -1,17 +1,14 @@
 import 'dart:async';
 
 import 'package:tapture/core/ai/ai_service.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 /// [AiService] that calls the organisation proxy. A fresh install holds no key.
 final class ProxyAiService implements AiService {
   /// Creates a proxy. An empty [baseUrl] cannot call.
-  const ProxyAiService({
-    required this.baseUrl,
-    required this.send,
-    this.log,
-  });
+  const ProxyAiService({required this.baseUrl, required this.send, this.log});
 
   /// A proxy with no server configured. Calls queue; they do not discard input.
   ProxyAiService.unconfigured()
@@ -54,9 +51,8 @@ final class ProxyAiService implements AiService {
     return _call(
       path: '/api/v1/ai/extract',
       json: <String, Object?>{'fields': request.fieldLabels.length},
-      ok: (String text) => ExtractFieldsResult(fields: <String, String?>{
-        'text': text,
-      }),
+      ok: (String text) =>
+          ExtractFieldsResult(fields: <String, String?>{'text': text}),
     );
   }
 
@@ -88,7 +84,7 @@ final class ProxyAiService implements AiService {
       final ({int status, String body}) response = await send(
         path: path,
         json: json,
-      ).timeout(const Duration(seconds: 8));
+      ).timeout(AppConstants.backend.proxyTimeout);
       log?.call('proxy $path ${response.status}');
       if (response.status == 200) {
         return Success<T>(ok(_redact(response.body)));
@@ -123,7 +119,8 @@ final class ProxyAiService implements AiService {
 }
 
 /// One proxy HTTP call. Nothing here is written to disk.
-typedef ProxySend = Future<({int status, String body})> Function({
-  required String path,
-  required Map<String, Object?> json,
-});
+typedef ProxySend =
+    Future<({int status, String body})> Function({
+      required String path,
+      required Map<String, Object?> json,
+    });

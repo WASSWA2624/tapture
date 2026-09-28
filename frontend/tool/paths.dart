@@ -24,8 +24,10 @@ const List<String> topLevelAreas = <String>['app', 'core', 'features'];
 /// and gaining one is a decision, not a side effect of writing a file.
 const List<String> coreDirectories = <String>[
   'ai',
+  'assets',
   'audio',
   'background',
+  'backend',
   'barcode',
   'bundle',
   'camera',

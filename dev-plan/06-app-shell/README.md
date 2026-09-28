@@ -1,12 +1,20 @@
 # 06 — Application shell
 
-Navigation, routing and the always-visible status line.
+Navigation, routing and the always-visible status line. The later [mobile More menu](../24-product-refinements/079-mobile-more-menu.md) follows the field-feedback navigation changes in step 24.
 
-Tasks 006–079 (2). The original shell and its mobile More follow-up; the atomics absorbed by task 006 are listed
-in [RETIRED.md](../RETIRED.md).
+<!-- dev-plan:generated:start -->
 
-- [x] [006 — Application shell: navigation, the status line and the frame every feature plugs into](006-application-shell.md)
-- [ ] [079 — Show a mobile More menu in the bottom navigation](079-mobile-more-menu.md)
+## Implementation progress
+
+**Step 06 — Complete**
+
+1 total · 1 Complete · 0 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+
+| Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
+| --- | --- | --- | --- | ---: | --- |
+| 06.01 | 006 | [Application shell: navigation, the status line and the frame every feature plugs into](006-application-shell.md) | **Complete** | 70/70 | 01.01 (001); Dependencies complete |
+
+<!-- dev-plan:generated:end -->
 
 ## As built
 

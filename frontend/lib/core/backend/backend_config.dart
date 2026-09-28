@@ -37,12 +37,14 @@ final class BackendConfig {
     final EnrolmentState next = switch ((state, event)) {
       (EnrolmentState.notEnrolled, EnrolmentEvent.start) =>
         EnrolmentState.enrolling,
-      (EnrolmentState.revoked, EnrolmentEvent.start) => EnrolmentState.enrolling,
+      (EnrolmentState.revoked, EnrolmentEvent.start) =>
+        EnrolmentState.enrolling,
       (EnrolmentState.enrolling, EnrolmentEvent.succeed) =>
         EnrolmentState.enrolled,
       (EnrolmentState.enrolling, EnrolmentEvent.fail) =>
         EnrolmentState.notEnrolled,
-      (EnrolmentState.enrolled, EnrolmentEvent.revoke) => EnrolmentState.revoked,
+      (EnrolmentState.enrolled, EnrolmentEvent.revoke) =>
+        EnrolmentState.revoked,
       _ => state,
     };
     return BackendConfig(

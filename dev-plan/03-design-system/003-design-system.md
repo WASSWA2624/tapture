@@ -1,5 +1,7 @@
 # 003 — Design system: tokens, themes and the whole widget vocabulary
 
+**Implementation step:** 03.01
+
 **Phase** 03 · Design system  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

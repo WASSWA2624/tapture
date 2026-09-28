@@ -3,6 +3,7 @@ library;
 
 export 'data/app_project_settings_defaults.dart';
 export 'data/project_repository_impl.dart' show projectRepositoryProvider;
+export 'domain/image_egress.dart';
 export 'domain/project.dart';
 export 'domain/project_openable_file_lookup.dart';
 export 'domain/project_repository.dart' show ProjectListRow;

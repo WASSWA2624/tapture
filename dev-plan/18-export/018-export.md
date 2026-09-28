@@ -1,12 +1,14 @@
 # 018 — Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device
 
+**Implementation step:** 18.01
+
 **Phase** 18 · Export  |  **Depends on** [001](../01-orchestration/001-project-setup.md), [002](../02-foundation/002-foundation-services.md), [004](../04-data-layer/004-local-database.md), [005](../05-file-storage/005-file-storage.md), [009](../09-templates/009-templates.md), [013](../13-processing/013-processing.md), [014](../14-records/014-records.md), [015](../15-data-quality/015-data-quality.md), [016](../16-review/016-review.md), [017](../17-meetings/017-meetings.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
 
 Feedback FBK0000072 (prompt `prompts/feedback-23092026-2222/001-resolve-projects-capture-template-feedback.md`, decision D4(a)) adds project-menu Export on top of this contract: the selected project is the export scope, output stays local, and sharing happens only after an explicit action. Task 019 is not in this decision.
 
-Task [076](../23-hardening/076-resolve-project-capture-package-feedback.md), decision D13(a), makes that project-menu
+Task [076](../24-product-refinements/076-resolve-project-capture-package-feedback.md), decision D13(a), makes that project-menu
 Export write the project package of task 019's format (`core/bundle/`), with the workbook inside as `records.xlsx`,
 so one ZIP both reads outside the app and imports into another Tapture app.
 

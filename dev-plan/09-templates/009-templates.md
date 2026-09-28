@@ -1,5 +1,7 @@
 # 009 — Templates: record shapes with atomic columns, and requiredness the user owns
 
+**Implementation step:** 09.01
+
 **Phase** 09 · Templates  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

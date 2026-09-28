@@ -1,6 +1,8 @@
 # 086 — Carry Documentation in project packages and pass release acceptance
 
-**Phase** 26 · Documentation  |  **Depends on** [019](../19-bundles-and-merge/019-bundles-and-merge.md), [025](../25-testing-and-release/025-testing-and-release.md), [085](085-documentation-review.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+**Implementation step:** 26.07
+
+**Phase** 26 · Documentation  |  **Depends on** [019](../19-bundles-and-merge/019-bundles-and-merge.md), [025](../25-testing-and-release/025-testing-and-release.md), [076](../24-product-refinements/076-resolve-project-capture-package-feedback.md), [085](085-documentation-review.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
 

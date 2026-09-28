@@ -47,11 +47,7 @@ class RelaySettingsScreen extends StatelessWidget {
           Text('${Copy.relayQueued} $queued'),
           Text('${Copy.relaySent} $sent'),
           Text('${Copy.relayPurged} $purged'),
-          if (canSend)
-            AppButton(
-              label: Copy.relaySend,
-              onPressed: onSend,
-            ),
+          if (canSend) AppButton(label: Copy.relaySend, onPressed: onSend),
         ],
       ),
     );

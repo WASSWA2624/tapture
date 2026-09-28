@@ -24,6 +24,21 @@ const String _phase = '01-orchestration';
 
 void main() {
   group('generating a task', () {
+    test(
+      'automatically refreshes the repository development tracker',
+      () async {
+        final Directory plan = _plan();
+        final _Run run = await _generate(plan, 'new-step', 'New step');
+        expect(run.exitCode, 0);
+        final String tracker = File(
+          '${plan.parent.path}/dev-tracker.md',
+        ).readAsStringSync();
+        expect(tracker, contains('**Files:** 3 total'));
+        expect(tracker, contains('[003](dev-plan/$_phase/003-new-step.md)'));
+        expect(tracker, contains('3 Pending'));
+        expect(tracker, contains('**Completed files: 0%**'));
+      },
+    );
     test('writes the next free number into the phase folder', () async {
       final Directory plan = _plan();
 
@@ -84,7 +99,7 @@ void main() {
 
       expect(
         lines,
-        contains('- [ ] [003 — Shared YAML reader](003-shared-yaml-reader.md)'),
+        contains(contains('[Shared YAML reader](003-shared-yaml-reader.md)')),
       );
     });
 
@@ -95,9 +110,11 @@ void main() {
       final List<String> lines = File(
         '${plan.path}/INDEX.md',
       ).readAsLinesSync();
-      final int entry = lines.indexOf(
-        '- [ ] [003 — Shared YAML reader]'
-        '($_phase/003-shared-yaml-reader.md)',
+      final int entry = lines.indexWhere(
+        (String line) => line.contains(
+          '[Shared YAML reader]'
+          '($_phase/003-shared-yaml-reader.md)',
+        ),
       );
 
       expect(
@@ -122,7 +139,9 @@ void main() {
 
       expect(
         lines,
-        contains('Tasks 001–003 (3). Each file is a standalone prompt.'),
+        contains(
+          contains('3 total · 0 Complete · 0 Partially complete · 3 Pending'),
+        ),
       );
     });
 
@@ -137,8 +156,9 @@ void main() {
       expect(
         lines,
         contains(
-          '3 implementation prompts across 2 phases. Work top to '
-          'bottom.',
+          contains(
+            '**Sub-steps:** 3 total · 0 Complete · 0 Partially complete · 3 Pending.',
+          ),
         ),
       );
     });
@@ -161,6 +181,29 @@ void main() {
   });
 
   group('refusing to generate', () {
+    test(
+      'an invalid existing plan does not leave a new task or rewritten index',
+      () async {
+        final Directory plan = _plan();
+        final File source = File('${plan.path}/$_phase/001-first-task.md');
+        source.writeAsStringSync(
+          source.readAsStringSync().replaceFirst(
+            '- [ ] Done.',
+            '- [z] Invalid.',
+          ),
+        );
+        final String indexBefore = File(
+          '${plan.path}/INDEX.md',
+        ).readAsStringSync();
+        final _Run run = await _generate(plan, 'new-step', 'New step');
+        expect(run.exitCode, 1);
+        expect(
+          File('${plan.path}/$_phase/003-new-step.md').existsSync(),
+          isFalse,
+        );
+        expect(File('${plan.path}/INDEX.md').readAsStringSync(), indexBefore);
+      },
+    );
     test('the same slug twice fails rather than overwriting', () async {
       final Directory plan = _plan();
 
@@ -338,14 +381,12 @@ Directory _plan() {
   File('${plan.path}/$_phase/README.md').writeAsStringSync(
     '# 01 — Project setup and guardrails\n\n'
     'The guardrails.\n\n'
-    'Tasks 001–002 (2). Each file is a standalone prompt.\n\n'
-    '- [ ] [001 — First task](001-first-task.md)\n'
-    '- [ ] [002 — Second task](002-second-task.md)\n',
+    '<!-- dev-plan:generated:start -->\n<!-- dev-plan:generated:end -->\n',
   );
   File('${plan.path}/02-foundation/README.md').writeAsStringSync(
     '# 02 — Foundation services\n\n'
     'The services.\n\n'
-    'Tasks 003–003 (0). Each file is a standalone prompt.\n',
+    '<!-- dev-plan:generated:start -->\n<!-- dev-plan:generated:end -->\n',
   );
   File('${plan.path}/INDEX.md').writeAsStringSync(
     '# Tapture — task index\n\n'

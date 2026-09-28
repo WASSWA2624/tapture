@@ -252,30 +252,28 @@ final class CaptureController extends Notifier<CaptureSession> {
 
   /// Applies caption writes from [CaptionApply].
   Future<Result<void>> applyCaptions(List<CaptionWrite> writes) {
-    return _store(
-      (CaptureSession current) {
-        final Map<String, String> captions = Map<String, String>.of(
-          current.captions,
-        );
-        final Map<String, PhotoDraft> photos = <String, PhotoDraft>{
-          for (final PhotoDraft photo in current.photos) photo.id: photo,
-        };
-        for (final CaptionWrite write in writes) {
-          captions[write.photoId] = write.text;
-          final PhotoDraft? photo = photos[write.photoId];
-          if (photo != null) {
-            photos[write.photoId] = photo.copyWith(
-              hasCaption: write.text.isNotEmpty,
-            );
-          }
+    return _store((CaptureSession current) {
+      final Map<String, String> captions = Map<String, String>.of(
+        current.captions,
+      );
+      final Map<String, PhotoDraft> photos = <String, PhotoDraft>{
+        for (final PhotoDraft photo in current.photos) photo.id: photo,
+      };
+      for (final CaptionWrite write in writes) {
+        captions[write.photoId] = write.text;
+        final PhotoDraft? photo = photos[write.photoId];
+        if (photo != null) {
+          photos[write.photoId] = photo.copyWith(
+            hasCaption: write.text.isNotEmpty,
+          );
         }
-        return current.copyWith(
-          captions: captions,
-          photos: photos.values.toList(growable: false),
-          isDirty: true,
-        );
-      },
-    );
+      }
+      return current.copyWith(
+        captions: captions,
+        photos: photos.values.toList(growable: false),
+        isDirty: true,
+      );
+    });
   }
 
   /// Sets an inline field value.
@@ -372,20 +370,16 @@ final class CaptureController extends Notifier<CaptureSession> {
   /// Sets the template for this session.
   Future<Result<void>> setTemplate(String templateId) {
     return _store(
-      (CaptureSession current) => current.copyWith(
-        templateId: templateId,
-        isDirty: true,
-      ),
+      (CaptureSession current) =>
+          current.copyWith(templateId: templateId, isDirty: true),
     );
   }
 
   /// Sets the context snapshot.
   Future<Result<void>> setContext(Map<String, String> snapshot) {
     return _store(
-      (CaptureSession current) => current.copyWith(
-        contextSnapshot: snapshot,
-        isDirty: true,
-      ),
+      (CaptureSession current) =>
+          current.copyWith(contextSnapshot: snapshot, isDirty: true),
     );
   }
 

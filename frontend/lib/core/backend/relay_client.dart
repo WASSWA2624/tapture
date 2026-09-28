@@ -71,9 +71,10 @@ final class RelayClient {
 }
 
 /// One relay HTTP call.
-typedef RelaySend = Future<({int status, Object? body})> Function({
-  required String method,
-  required String path,
-  Object? body,
-  String? idempotencyKey,
-});
+typedef RelaySend =
+    Future<({int status, Object? body})> Function({
+      required String method,
+      required String path,
+      Object? body,
+      String? idempotencyKey,
+    });

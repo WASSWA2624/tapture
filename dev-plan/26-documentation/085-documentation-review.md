@@ -1,5 +1,7 @@
 # 085 — Render, review and approve versioned documents
 
+**Implementation step:** 26.06
+
 **Phase** 26 · Documentation  |  **Depends on** [084](084-documentation-generation.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

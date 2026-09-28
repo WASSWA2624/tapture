@@ -72,26 +72,29 @@ void main() {
       expect(run.exitCode, 1);
     });
 
-    test('a dependency on a higher-numbered task is reported', () async {
-      final Directory plan = _plan(<_Fixture>[
-        _task(1, 'alpha'),
-        _task(2, 'beta', dependsOn: <int>[3]),
-        _task(3, 'gamma'),
-      ]);
+    test(
+      'a dependency on a later implementation position is reported',
+      () async {
+        final Directory plan = _plan(<_Fixture>[
+          _task(1, 'alpha'),
+          _task(2, 'beta', dependsOn: <int>[3]),
+          _task(3, 'gamma'),
+        ]);
 
-      final _Run run = await _check(<String>[plan.path]);
+        final _Run run = await _check(<String>[plan.path]);
 
-      expect(
-        run.violations,
-        contains(
+        expect(
+          run.violations,
           contains(
-            'depends on task 003, which is not lower than 002; the plan is '
-            'worked in order',
+            contains(
+              'depends on task 003, which does not appear earlier than 002 in '
+              'folder/sub-step order; the plan is worked in order',
+            ),
           ),
-        ),
-      );
-      expect(run.exitCode, 1);
-    });
+        );
+        expect(run.exitCode, 1);
+      },
+    );
 
     test('a dependency on itself is reported', () async {
       final Directory plan = _plan(<_Fixture>[
@@ -103,7 +106,11 @@ void main() {
 
       expect(
         run.violations,
-        contains(contains('depends on task 002, which is not lower than 002')),
+        contains(
+          contains(
+            'depends on task 002, which does not appear earlier than 002',
+          ),
+        ),
       );
     });
 
@@ -322,7 +329,9 @@ void main() {
         containsAll(<Matcher>[
           contains('the heading says task 009 and the filename says 002'),
           contains('has no task 003'),
-          contains('depends on task 005, which is not lower than 004'),
+          contains(
+            'depends on task 005, which does not appear earlier than 004',
+          ),
         ]),
       );
       expect(run.exitCode, 1);

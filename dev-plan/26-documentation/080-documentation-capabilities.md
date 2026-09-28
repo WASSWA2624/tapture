@@ -1,5 +1,7 @@
 # 080 — Establish document adapters and approved dependencies
 
+**Implementation step:** 26.01
+
 **Phase** 26 · Documentation  |  **Depends on** [005](../05-file-storage/005-file-storage.md), [018](../18-export/018-export.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

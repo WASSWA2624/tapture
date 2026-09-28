@@ -1,102 +1,167 @@
 openapi: 3.0.3
 info:
   title: Tapture backend
-  version: "1"
+  version: '1'
 paths:
   /health:
     get:
-      responses: { "200": { description: Process is up. } }
+      responses: { '200': { description: Process is up. } }
   /ready:
     get:
-      responses: { "200": { description: Ready. }, "500": { description: Not ready. } }
+      responses:
+        { '200': { description: Ready. }, '500': { description: Not ready. } }
   /version:
     get:
-      responses: { "200": { description: Build and API version. } }
+      responses: { '200': { description: Build and API version. } }
   /metrics:
     get:
-      responses: { "200": { description: Counters. No project content. } }
+      responses: { '200': { description: Counters. No project content. } }
   /api/v1/auth/register:
     post:
-      responses: { "201": { description: Created. }, "403": { description: Registration is closed. }, "409": { description: Duplicate address. } }
+      responses:
+        {
+          '201': { description: Created. },
+          '403': { description: Registration is closed. },
+          '409': { description: Duplicate address. },
+        }
   /api/v1/auth/change-password:
     post:
-      responses: { "204": { description: Changed. }, "401": { description: Wrong password. } }
+      responses:
+        {
+          '204': { description: Changed. },
+          '401': { description: Wrong password. },
+        }
   /api/v1/auth/reset:
     post:
-      responses: { "200": { description: Accepted. The body does not reveal whether the address exists. } }
+      responses:
+        {
+          '200':
+            {
+              description: Accepted. The body does not reveal whether the address exists.,
+            },
+        }
   /api/v1/auth/login:
     post:
-      responses: { "200": { description: Token pair. }, "401": { description: Invalid credentials. }, "429": { description: Locked or limited. } }
+      responses:
+        {
+          '200': { description: Token pair. },
+          '401': { description: Invalid credentials. },
+          '429': { description: Locked or limited. },
+        }
   /api/v1/auth/refresh:
     post:
-      responses: { "200": { description: Rotated pair. }, "401": { description: Reuse or revoked. } }
+      responses:
+        {
+          '200': { description: Rotated pair. },
+          '401': { description: Reuse or revoked. },
+        }
   /api/v1/auth/logout:
     post:
-      responses: { "204": { description: Signed out. Repeating it succeeds. } }
+      responses: { '204': { description: Signed out. Repeating it succeeds. } }
   /api/v1/auth/me:
     get:
-      responses: { "200": { description: Identity, organisation, role and grants. } }
+      responses:
+        { '200': { description: Identity, organisation, role and grants. } }
   /api/v1/devices:
     get:
-      responses: { "200": { description: Devices for the signed-in user. } }
+      responses: { '200': { description: Devices for the signed-in user. } }
     post:
-      responses: { "201": { description: Enrolled device. } }
+      responses: { '201': { description: Enrolled device. } }
   /api/v1/devices/{id}:
     delete:
-      responses: { "204": { description: Revoked. }, "404": { description: Not found. } }
+      responses:
+        { '204': { description: Revoked. }, '404': { description: Not found. } }
   /api/v1/org/users:
     get:
-      responses: { "200": { description: Page of users. }, "404": { description: Not visible. } }
+      responses:
+        {
+          '200': { description: Page of users. },
+          '404': { description: Not visible. },
+        }
     post:
-      responses: { "201": { description: Invited. }, "404": { description: Not visible. } }
+      responses:
+        {
+          '201': { description: Invited. },
+          '404': { description: Not visible. },
+        }
   /api/v1/org/users/{id}:
     patch:
-      responses: { "204": { description: Role or status changed. }, "400": { description: Password refused. } }
+      responses:
+        {
+          '204': { description: Role or status changed. },
+          '400': { description: Password refused. },
+        }
   /api/v1/projects:
     get:
-      responses: { "200": { description: Visible projects. } }
+      responses: { '200': { description: Visible projects. } }
     post:
-      responses: { "201": { description: Registered. } }
+      responses: { '201': { description: Registered. } }
   /api/v1/projects/{id}:
     patch:
-      responses: { "200": { description: Name or relay settings. }, "400": { description: Identifier cannot change. }, "404": { description: Not visible. } }
+      responses:
+        {
+          '200': { description: Name or relay settings. },
+          '400': { description: Identifier cannot change. },
+          '404': { description: Not visible. },
+        }
   /api/v1/projects/{id}/members:
     get:
-      responses: { "200": { description: Members. }, "404": { description: Not visible. } }
+      responses:
+        {
+          '200': { description: Members. },
+          '404': { description: Not visible. },
+        }
     post:
-      responses: { "201": { description: Added. } }
+      responses: { '201': { description: Added. } }
   /api/v1/projects/{id}/members/{userId}:
     delete:
-      responses: { "204": { description: Removed. }, "404": { description: Not visible. } }
+      responses:
+        {
+          '204': { description: Removed. },
+          '404': { description: Not visible. },
+        }
   /api/v1/projects/{id}/relay/packages:
     get:
-      responses: { "200": { description: Waiting packages. } }
+      responses: { '200': { description: Waiting packages. } }
     post:
-      responses: { "201": { description: Stored opaque package. }, "413": { description: Too large. }, "429": { description: Ceiling. } }
+      responses:
+        {
+          '201': { description: Stored opaque package. },
+          '413': { description: Too large. },
+          '429': { description: Ceiling. },
+        }
   /api/v1/projects/{id}/relay/packages/{packageId}:
     get:
-      responses: { "200": { description: Opaque bytes. }, "404": { description: Not visible. } }
+      responses:
+        {
+          '200': { description: Opaque bytes. },
+          '404': { description: Not visible. },
+        }
   /api/v1/relay/ack:
     post:
-      responses: { "200": { description: Acknowledged. Replay returns the first result. } }
+      responses:
+        {
+          '200':
+            { description: Acknowledged. Replay returns the first result. },
+        }
   /api/v1/projects/{id}/relay/state:
     get:
-      responses: { "200": { description: Version vector. } }
+      responses: { '200': { description: Version vector. } }
   /api/v1/ai/extract:
     post:
-      responses: { "200": { description: Pass-through. } }
+      responses: { '200': { description: Pass-through. } }
   /api/v1/ai/ocr:
     post:
-      responses: { "200": { description: Pass-through. } }
+      responses: { '200': { description: Pass-through. } }
   /api/v1/ai/transcribe:
     post:
-      responses: { "200": { description: Pass-through. } }
+      responses: { '200': { description: Pass-through. } }
   /api/v1/ai/refine:
     post:
-      responses: { "200": { description: Pass-through. } }
+      responses: { '200': { description: Pass-through. } }
   /api/v1/ai/usage:
     get:
-      responses: { "200": { description: Usage rows without payload content. } }
+      responses: { '200': { description: Usage rows without payload content. } }
 components:
   schemas:
     Error:

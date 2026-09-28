@@ -25,17 +25,6 @@ final class ImageEgressSwitch extends StatelessWidget {
   /// Flips the switch for this project only.
   final ValueChanged<bool>? onChanged;
 
-  /// Image paths a request may carry. Empty when images are held back.
-  static List<String> paths({
-    required bool holdImages,
-    required List<String> images,
-  }) {
-    if (holdImages) {
-      return const <String>[];
-    }
-    return images;
-  }
-
   @override
   Widget build(BuildContext context) {
     final Failure? failed = failure;

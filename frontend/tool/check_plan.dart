@@ -274,12 +274,16 @@ Iterable<_Violation> _definitionOfDoneViolations(List<_Task> tasks) sync* {
 }
 
 /// Reports a dependency link that names no file on disk, and one that points
-/// at a task numbered the same or higher.
+/// at a task in the same or a later implementation position.
 ///
 /// A plan is worked top to bottom, so a task may only rest on one already
 /// finished. A forward link is a cycle waiting to be discovered.
 Iterable<_Violation> _dependencyViolations(List<_Task> tasks) sync* {
   final Set<int> known = <int>{for (final _Task task in tasks) task.number};
+  final Map<int, int> position = <int, int>{
+    for (int index = 0; index < tasks.length; index++)
+      tasks[index].number: index,
+  };
   for (final _Task task in tasks) {
     final int line = _lineMatching(task.lines, RegExp(r'\*\*Depends on\*\*'));
     if (line == 0) {
@@ -290,13 +294,15 @@ Iterable<_Violation> _dependencyViolations(List<_Task> tasks) sync* {
     )) {
       final int target = int.parse(match.group(1)!);
       final String link = match.group(2)!;
-      if (target >= task.number) {
+      if (position.containsKey(target) &&
+          position[target]! >= position[task.number]!) {
         yield (
           file: task.path,
           line: line,
           message:
-              'depends on task ${_padded(target)}, which is not lower than '
-              '${_padded(task.number)}; the plan is worked in order',
+              'depends on task ${_padded(target)}, which does not appear '
+              'earlier than ${_padded(task.number)} in folder/sub-step order; '
+              'the plan is worked in order',
         );
       }
       if (!File.fromUri(task.file.uri.resolve(link)).existsSync()) {

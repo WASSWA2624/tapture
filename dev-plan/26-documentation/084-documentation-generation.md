@@ -1,6 +1,8 @@
 # 084 — Generate grounded document drafts through resumable jobs
 
-**Phase** 26 · Documentation  |  **Depends on** [024](../24-backend/024-minimal-backend.md), [083](083-documentation-editor.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+**Implementation step:** 26.05
+
+**Phase** 26 · Documentation  |  **Depends on** [024](../23-backend/024-minimal-backend.md), [083](083-documentation-editor.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
 

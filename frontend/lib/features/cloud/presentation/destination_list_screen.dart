@@ -16,8 +16,11 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 
-import '../data/cloud_backends.dart';
-import '../data/destination_repository_impl.dart';
+import '../cloud.dart'
+    show
+        DestinationRepositoryImpl,
+        destinationRepositoryProvider,
+        openCloudBackends;
 import 'destination_remove_action.dart';
 
 /// Lists configured destinations and refuses to save one whose test failed.

@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// a run that is going to fail usually fails before it has spent a minute
 /// running tests.
 const List<String> _gateOrder = <String>[
+  'dev tracker refresh',
   'format',
   'analyzer',
   'dependency allowlist',
@@ -32,6 +33,7 @@ const List<String> _gateOrder = <String>[
 /// keeps the suite from re-entering itself: verify runs `flutter test`, and
 /// this file is one of the tests it would run.
 const List<String> _checkers = <String>[
+  'tool/sync_dev_tracker.dart',
   'tool/check_dependencies.dart',
   'tool/check_structure.dart',
   'tool/check_plan.dart',
@@ -75,7 +77,7 @@ void main() {
     });
 
     test('counts what passed, failed and was skipped', () {
-      expect(run.summary, 'verify (--fast): 7 passed, 0 failed, 4 skipped');
+      expect(run.summary, 'verify (--fast): 8 passed, 0 failed, 4 skipped');
     });
 
     test('skips the suites that are not there yet', () {
@@ -106,7 +108,7 @@ void main() {
     });
 
     test('the count follows the gate that failed', () {
-      expect(run.summary, 'verify (--fast): 6 passed, 1 failed, 4 skipped');
+      expect(run.summary, 'verify (--fast): 7 passed, 1 failed, 4 skipped');
     });
 
     test('shows the failing gate its own output', () {
@@ -141,7 +143,7 @@ void main() {
     });
 
     test('every failure is counted, not only the first', () {
-      expect(run.summary, 'verify (--fast): 5 passed, 2 failed, 4 skipped');
+      expect(run.summary, 'verify (--fast): 6 passed, 2 failed, 4 skipped');
       expect(run.errors, contains('--- dependency allowlist ---'));
       expect(run.errors, contains('--- structure ---'));
       expect(run.errors, isNot(contains('--- plan ---')));

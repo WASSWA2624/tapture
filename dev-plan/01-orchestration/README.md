@@ -2,13 +2,27 @@
 
 The repository, and the executable guardrails that enforce every architectural rule. Policies here are code — lints, checkers and tests — not prose.
 
-Task 001 (1). One prompt for the completed phase; the atomics it absorbed are listed in [RETIRED.md](../RETIRED.md).
+<!-- dev-plan:generated:start -->
 
-- [x] [001 — Project setup and guardrails](001-project-setup.md)
+## Implementation progress
+
+**Step 01 — Partially complete**
+
+4 total · 2 Complete · 2 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+
+| Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
+| --- | --- | --- | --- | ---: | --- |
+| 01.01 | 001 | [Project setup and guardrails](001-project-setup.md) | **Complete** | 72/72 | None; Dependencies complete |
+| 01.02 | 087 | [Arrange implementation flow and automatically synchronize progress](087-chronological-plan-and-tracker.md) | **Partially complete** | 8/9 | 01.01 (001); Ready |
+| 01.03 | 088 | [Keep the product specification complete and concise](088-concise-product-specification.md) | **Complete** | 5/5 | 01.01 (001); Dependencies complete |
+| 01.04 | 089 | [Show a concise visual development tracker](089-compact-progress-dashboard.md) | **Partially complete** | 4/5 | 01.01 (001); Ready |
+
+<!-- dev-plan:generated:end -->
 
 ## As built
 
-The numbers this phase used to list (001–018) now live in task 001. Reproduce this phase by implementing 001 against `frontend/`. The tree that must exist at the end:
+The numbers this phase used to list (001–018) now live in task 001. Implement 001 for the original guardrails, then
+087 for chronological planning and automatic progress updates. The tree that must exist at the end:
 
 | Piece | Where it lives |
 | :--- | :--- |
@@ -17,8 +31,9 @@ The numbers this phase used to list (001–018) now live in task 001. Reproduce 
 | Analyzer | `frontend/analysis_options.yaml` — `strict-casts` / `-inference` / `-raw-types`, enabled rules promoted to error; `public_member_api_docs` on `lib/core/` |
 | Folders | `frontend/lib/app/`, shared `core/` subsystems, 17 features × 3 layers, each with a barrel. Canonical list: `frontend/tool/paths.dart` |
 | Allowlist | `frontend/tool/allowlist.yaml` + `check_dependencies.dart` |
-| Plan checker | `frontend/tool/check_plan.dart` — every `NNN-slug.md` file, required sections, lower-numbered deps, and holes only where `dev-plan/RETIRED.md` retires the number |
+| Plan checker | `frontend/tool/check_plan.dart` — every `NNN-slug.md` file, required sections, dependencies at earlier implementation positions, and holes only where `dev-plan/RETIRED.md` retires the number |
 | Task scaffolder | `frontend/tool/new_task.dart` + `tool/task_template.md` |
+| Progress tracker | `frontend/tool/sync_dev_tracker.dart` and `check_staged_dev_tracker.dart` — acceptance-derived summaries, deterministic drift checks and consistent staged progress |
 | Verify | `frontend/tool/verify.dart` — format, analyzer, dependencies, structure, plan, **test presence (`--strict`)**, guardrail tests, unit/widget tests; goldens and integration run unless `--fast` |
 | Hooks | `frontend/tool/hooks/pre-commit`, `commit-msg`, `install_hooks.dart` |
 | Architecture suites | `frontend/test/architecture/` — import graph, tokens, responsive, state, errors, network, data safety, naming |

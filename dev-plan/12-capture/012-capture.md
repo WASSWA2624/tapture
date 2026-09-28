@@ -1,6 +1,14 @@
 # 012 — Capture: evidence in, saved before anything else
 
+**Implementation step:** 12.01
+
 **Phase** 12 · Capture  |  **Depends on** [002](../02-foundation/002-foundation-services.md), [004](../04-data-layer/004-local-database.md), [005](../05-file-storage/005-file-storage.md), [009](../09-templates/009-templates.md), [010](../10-reference-data/010-reference-data.md), [011](../11-context/011-context.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+
+**Implementation started:** Yes
+
+## Status reconciliation — 2026-09-28
+
+Historical completion was recorded on 2026-09-22 in the old tracker and index. Capture controllers, evidence persistence, screens and tests exist, but all 66 acceptance items below remain unchecked. Report Partially complete until acceptance is reconciled and verified. This status does not mean capture is unimplemented.
 
 ## Implement
 

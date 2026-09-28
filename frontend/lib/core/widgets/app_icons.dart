@@ -345,6 +345,9 @@ abstract final class AppIcons {
   /// Feedback about the app.
   static const IconData feedback = Icons.feedback_outlined;
 
+  /// Flags friction met during a trial, for the local friction log.
+  static const IconData friction = Icons.flag_outlined;
+
   // Photo types.
 
   /// Front view.

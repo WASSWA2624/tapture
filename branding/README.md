@@ -80,4 +80,4 @@ skipped until those folders exist.
 
 These are the masters. The app ships copies produced by `apply.py`. Nothing in `frontend/` should re-draw the mark
 or re-declare a colour; it takes them from here. Typed asset constants land in task
-[242 — App icon, splash and store branding](../dev-plan/23-hardening/242-branding-assets.md).
+[023 — Hardening](../dev-plan/27-hardening/023-hardening.md), which includes the consolidated branding work.

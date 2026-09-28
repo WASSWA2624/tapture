@@ -26,6 +26,47 @@ repeated inside one.
   secret and no commented-out code.
 - Make public only what the Contract names.
 
+## Progress updates are part of implementation
+
+Use the numbered folder and generated substep order in [INDEX.md](INDEX.md). Stable task IDs remain the identity
+used by code, commits and historical notes; an execution position such as `24.03` states when to implement it.
+Finish declared prerequisites before starting dependent work. Task 025 is the baseline release infrastructure;
+task 086 adds the Documentation release acceptance after that module exists. Task 023 in the final hardening
+folder verifies the integrated product after both; release approval requires this final pass.
+
+The task's **Definition of done** is the source of progress. Check only verified requirements. If implementation
+has begun but no requirement is fully verified, add `**Implementation started:** Yes` and a short evidence or
+remaining-work note. Never copy a completion claim from an old summary onto unchecked acceptance criteria.
+
+| Task state | Rule |
+| --- | --- |
+| Complete | Every acceptance checkbox is checked, including required verification |
+| Partially complete | Some boxes are checked, or implementation is explicitly marked as started |
+| Pending | No boxes are checked and implementation has not started |
+
+A folder is Complete when all its files are Complete, Pending when every file is Pending, and Partially complete
+otherwise. Counts report acceptance coverage, not estimated effort. Blocked prerequisites are shown separately
+from these three completion states. Historical completion is preserved as evidence, not fresh validation.
+
+Keep the root tracker brief: visual completion bars, folder rows and open file IDs. Bars count fully completed
+task files equally, never estimated partial effort. Detailed acceptance counts and dependencies belong in the
+index and folder READMEs; the tracker links to them and flags prerequisite reviews.
+
+After **every implementation or progress change**, automatically refresh the generated plan views as part of
+the same work, before reporting completion:
+
+```text
+cd frontend
+dart run tool/sync_dev_tracker.dart
+dart run tool/sync_dev_tracker.dart --check
+```
+
+This updates `dev-tracker.md`, the ordered index, folder summaries and task step numbers. `new_task.dart`, the
+frontend verification command and the installed pre-commit hook invoke the same synchronizer. CI checks drift
+before a verification command can repair it. The hook never stages files: review and include generated changes
+with the implementation. Backend-only and plan-only work follow the same progress rule. Do not hand-edit
+generated sections, silently drop older decisions, auto-check acceptance, or mark failed verification complete.
+
 ## The gate, before a task closes
 
 | Work | Gate |

@@ -5,7 +5,9 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/features/account/presentation/relay_settings_screen.dart';
 
 void main() {
-  testWidgets('relay stays off until a manager enables it', (WidgetTester tester) async {
+  testWidgets('relay stays off until a manager enables it', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildTheme(brightness: Brightness.light),
@@ -25,7 +27,9 @@ void main() {
     expect(find.text('${Copy.relayPurged} 0'), findsOneWidget);
   });
 
-  testWidgets('a never-relay project offers no send', (WidgetTester tester) async {
+  testWidgets('a never-relay project offers no send', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildTheme(brightness: Brightness.light),

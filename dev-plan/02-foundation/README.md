@@ -2,9 +2,19 @@
 
 The empty app that boots, logs, fails safely, and the small services every later feature injects.
 
-Task 002 (1). One prompt for the completed phase; the atomics it absorbed are listed in [RETIRED.md](../RETIRED.md).
+<!-- dev-plan:generated:start -->
 
-- [x] [002 — Foundation services](002-foundation-services.md)
+## Implementation progress
+
+**Step 02 — Complete**
+
+1 total · 1 Complete · 0 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+
+| Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
+| --- | --- | --- | --- | ---: | --- |
+| 02.01 | 002 | [Foundation services](002-foundation-services.md) | **Complete** | 46/46 | 01.01 (001); Dependencies complete |
+
+<!-- dev-plan:generated:end -->
 
 ## As built
 

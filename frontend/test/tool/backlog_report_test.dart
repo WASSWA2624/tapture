@@ -15,7 +15,9 @@ void main() {
       '# 02 — Later\n\n- [x] Done\n- [ ] Second task\nbecause: after the first\n',
     );
     final File friction = File('${plan.path}/friction.md')
-      ..writeAsStringSync('- 2026-09-01 | Capture | slow save | after indexing\n');
+      ..writeAsStringSync(
+        '- 2026-09-01 | Capture | slow save | after indexing\n',
+      );
     final File record = File('${plan.path}/release.md')
       ..writeAsStringSync('| secret-scan | waived | scanner host was down |\n');
     final List<BacklogItem> items = collectBacklog(

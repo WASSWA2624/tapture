@@ -26,10 +26,7 @@ void main() {
   });
 
   testWidgets('empty and failure', (WidgetTester tester) async {
-    await pumpMeeting(
-      tester,
-      MeetingAttachments(onAdd: () {}),
-    );
+    await pumpMeeting(tester, MeetingAttachments(onAdd: () {}));
     expect(find.byType(AppEmptyState), findsOneWidget);
     expect(find.text(Copy.meetingAddAttachment), findsOneWidget);
     await pumpMeeting(tester, const MeetingAttachments(failure: meetingFailed));

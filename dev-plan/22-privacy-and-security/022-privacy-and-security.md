@@ -1,5 +1,7 @@
 # 022 — Privacy and security: what leaves this device, and what never does
 
+**Implementation step:** 22.01
+
 **Phase** 22 · Privacy and security  |  **Depends on** [002](../02-foundation/002-foundation-services.md), [005](../05-file-storage/005-file-storage.md), [008](../08-projects/008-projects.md), [009](../09-templates/009-templates.md), [012](../12-capture/012-capture.md), [013](../13-processing/013-processing.md), [018](../18-export/018-export.md), [019](../19-bundles-and-merge/019-bundles-and-merge.md), [021](../21-cloud-upload/021-cloud-upload.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

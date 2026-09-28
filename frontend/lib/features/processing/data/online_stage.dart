@@ -8,9 +8,8 @@ import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/security/untrusted_text.dart';
-import 'package:tapture/features/projects/presentation/image_egress_switch.dart';
 import 'package:tapture/features/projects/projects.dart'
-    show ProjectSettingsResolved;
+    show ImageEgress, ProjectSettingsResolved;
 import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/extraction_request.dart';
@@ -84,7 +83,7 @@ final class OnlineStage {
       return;
     }
     final String ocrText = await _onDevice.text(bundle);
-    final List<String> images = ImageEgressSwitch.paths(
+    final List<String> images = ImageEgress.paths(
       holdImages: projectSettings.doNotSendImages,
       images: await _paths.compressed(bundle),
     );

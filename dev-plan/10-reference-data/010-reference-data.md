@@ -1,6 +1,14 @@
 # 010 — Reference data: datasets, lookups and prefill
 
+**Implementation step:** 10.01
+
 **Phase** 10 · Reference data  |  **Depends on** [003](../03-design-system/003-design-system.md), [004](../04-data-layer/004-local-database.md), [005](../05-file-storage/005-file-storage.md), [009](../09-templates/009-templates.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+
+**Implementation started:** Yes
+
+## Status reconciliation — 2026-09-28
+
+Historical completion was recorded on 2026-09-22 in the old tracker and index. The reference feature and its repository/model tests exist, but this file still has 29 unchecked acceptance items. Work has started; the current status is Partially complete until those items are reconciled and verified. The historical claim is preserved in history/dev-tracker-2026-09-28.md; it is not treated as a fresh verification run.
 
 ## Implement
 

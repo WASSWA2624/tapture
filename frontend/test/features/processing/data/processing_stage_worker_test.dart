@@ -17,6 +17,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/compressed_copy.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/security/untrusted_text.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/data/capture_record_writer.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
@@ -371,7 +372,7 @@ void main() {
       expect(service.transcribeCalls, 1);
       expect(service.extractCalls, 1);
       expect(service.lastExtraction?.transcripts, <String>[
-        'spoken serial SN-1',
+        const UntrustedText('spoken serial SN-1').asDataBlock('transcript'),
       ]);
       expect(await original.readAsBytes(), originalBytes);
       final List<ProcessingResult> evidence = await db

@@ -1,5 +1,7 @@
 # 001 — Project setup and guardrails
 
+**Implementation step:** 01.01
+
 **Phase** 01 · Project setup and guardrails  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
@@ -9,7 +11,7 @@ Tapture identity with no demo code left behind; ignore and editor configuration 
 of git from the first commit; the analyzer runs as the first reviewer with every warning promoted to an error; the
 ninety-nine directories under `frontend/lib/` each own a barrel and are named once in `frontend/tool/paths.dart`; and a
 pinned allowlist decides which packages may exist at all. The plan checks itself — `check_plan.dart` validates
-numbering, slugs, required sections, tickable checklists and backward dependency links, and `new_task.dart` opens the
+numbering, slugs, required sections, tickable checklists and dependencies at earlier implementation positions, and `new_task.dart` opens the
 next file from a template. One command, `verify.dart`, runs every gate in order and prints one table with one exit
 code, and the pre-commit and commit-msg hooks make that gate hard to skip. Eight architecture suites and nine checkers
 under `frontend/tool/` hold the architecture itself: layering over a parsed import graph, file naming and one public
@@ -165,7 +167,8 @@ Future<void> expectNoA11yIssues(WidgetTester t);
 6. Make the plan check itself. `check_plan.dart` parses every task file and asserts the filename number matches the
    heading number, that numbers are unique and contiguous, that slugs are unique, that Implement, Files and Definition
    of done are all present, that the Definition of done holds something to tick, and that every dependency link
-   resolves to a file on disk and points at a lower number. A hole in the numbering passes only where
+   resolves to a file on disk and points to an earlier folder/substep position. Stable task IDs do not determine
+   execution order (task 087). A hole in the numbering passes only where
    `dev-plan/RETIRED.md` retires it, and a retired number is one no file may carry again. Twenty-three tests behind it.
 7. Make opening a task cheap. `new_task.dart` scans the plan for the highest number, renders `tool/task_template.md`
    into the given phase folder as the next file, populates the heading, the phase line and the empty sections, refuses
@@ -321,7 +324,7 @@ Future<void> expectNoA11yIssues(WidgetTester t);
 ### The plan's own tooling
 
 - [x] Renumbering a file by hand and forgetting its heading fails the check.
-- [x] A dependency pointing at a higher-numbered task fails the check.
+- [x] A dependency pointing to a later folder/substep position fails the check; stable IDs may be higher or lower.
 - [x] A dependency link that names no file on disk fails the check.
 - [x] A number used twice, and a slug used twice, each fail the check.
 - [x] A task file missing Implement, Files or Definition of done fails the check, as does a Definition of done with no

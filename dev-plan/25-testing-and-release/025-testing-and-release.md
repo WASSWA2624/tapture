@@ -1,8 +1,19 @@
 # 025 — Testing and release: the suites, the pipeline and the gate over both artefacts
 
-**Phase** 25 · Testing and release  |  **Depends on** [004](../04-data-layer/004-local-database.md), [012](../12-capture/012-capture.md), [015](../15-data-quality/015-data-quality.md), [017](../17-meetings/017-meetings.md), [018](../18-export/018-export.md), [019](../19-bundles-and-merge/019-bundles-and-merge.md), [022](../22-privacy-and-security/022-privacy-and-security.md), [023](../23-hardening/023-hardening.md), [024](../24-backend/024-minimal-backend.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+**Implementation step:** 25.01
+
+**Phase** 25 · Testing and release  |  **Depends on** [004](../04-data-layer/004-local-database.md), [012](../12-capture/012-capture.md), [015](../15-data-quality/015-data-quality.md), [017](../17-meetings/017-meetings.md), [018](../18-export/018-export.md), [019](../19-bundles-and-merge/019-bundles-and-merge.md), [022](../22-privacy-and-security/022-privacy-and-security.md), [024](../23-backend/024-minimal-backend.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
+
+## Status reconciliation — 2026-09-28
+
+Reopened release and app/proxy end-to-end criteria contradicted by the current source. frontend/tool/release_gate.dart creates skipped outcomes instead of executing its gates; ci.yml builds directly rather than through that gate. signin_proxy_offline_test.dart exercises separate fake components and ends with an explicit sign-in, so it does not establish the configured app proxy or silent-refresh acceptance. Existing harnesses, workflows and recorded unit-level checks remain checked; integrated release acceptance is Partially complete.
 
 ## Implement
+
+Build and validate the baseline test and release infrastructure before Documentation. Final production shipping
+waits for [task 023](../27-hardening/023-hardening.md), which runs after all feature work including Documentation;
+its final pass must rerun these gates over the completed app and backend. This task does not require that later
+hardening pass to exist before the gate infrastructure can be implemented.
 
 Everything that decides whether a build may leave the building. Three layers of shared test scaffolding — hand-written
 fakes, domain matchers and fixture factories for unit tests, a widget pump helper that installs theme, providers,
@@ -253,11 +264,11 @@ Future<int> main(List<String> args);
 - [x] A missing signing key fails the build with a clear message rather than falling back to a debug key.
 - [x] Tests: `frontend/test/tool/release_build_config_test.dart` parses `build.gradle` and asserts shrinking, splits
       and an environment-sourced signing config, and asserts no keystore, password or key alias is committed anywhere.
-- [x] A build cannot be produced while any gate fails, in either the app or the backend.
-- [x] A backend whose contract tests fail blocks the app release, and the record says why.
+- [ ] A build cannot be produced while any gate fails, in either the app or the backend.
+- [ ] A backend whose contract tests fail blocks the app release, and the record says why.
 - [x] The release record written beside the artefact names every gate as passed, failed or waived, with the reason for
       each waiver.
-- [x] The sign-in, proxy and offline gate failing blocks the release even when every other gate passes.
+- [ ] The sign-in, proxy and offline gate failing blocks the release even when every other gate passes.
 - [x] Tests: `frontend/test/tool/release_gate_test.dart` covers the pass, fail and waiver paths, including a failing
       backend gate and a skipped gate treated as a failure.
 - [x] Running the backlog tool after a release produces a backlog ordered by phase, with every waiver from the release
@@ -265,11 +276,11 @@ Future<int> main(List<String> args);
 - [x] An item with no stated deferral reason is reported as a defect in the report itself, not omitted.
 - [x] Tests: `frontend/test/tool/backlog_report_test.dart` runs over a fixture plan and asserts grouping, ordering and
       the inclusion of a waived gate and a friction entry.
-- [x] The sign-in run passes with the backend reachable exactly once, at sign-in.
+- [ ] The sign-in run passes with the backend reachable exactly once, at sign-in.
 - [x] No assertion in that run depends on a provider key existing on the device.
 - [x] After both cache lifetimes expire offline, capture, review, edit and export still work, and only relay, the
       proxy and a role change are refused.
-- [x] A failure anywhere in the offline stretch fails the release gate, not just that test.
+- [ ] A failure anywhere in the offline stretch fails the release gate, not just that test.
 - [x] Tests: `signin_proxy_offline_test.dart` itself, running in the pipeline's integration job.
 
 ## Out of scope

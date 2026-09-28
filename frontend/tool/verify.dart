@@ -101,6 +101,10 @@ Future<int> main(List<String> args) async {
 /// before it has spent a minute running tests.
 List<_Gate> _gates({required bool fast}) {
   return <_Gate>[
+    _command('dev tracker refresh', 'dart', <String>[
+      'run',
+      'tool/sync_dev_tracker.dart',
+    ]),
     _command('format', 'dart', <String>[
       'format',
       '--output=none',

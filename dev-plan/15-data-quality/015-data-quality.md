@@ -1,5 +1,7 @@
 # 015 — Data quality: validation, duplicates, conflicts and variance
 
+**Implementation step:** 15.01
+
 **Phase** 15 · Data quality  |  **Depends on** [002](../02-foundation/002-foundation-services.md), [004](../04-data-layer/004-local-database.md), [009](../09-templates/009-templates.md), [010](../10-reference-data/010-reference-data.md), [012](../12-capture/012-capture.md), [013](../13-processing/013-processing.md), [014](../14-records/014-records.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

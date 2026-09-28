@@ -27,19 +27,19 @@ with that, the rule is wrong.
 
 ## The files
 
-| File | Covers |
-|---|---|
-| [01-structure.md](01-structure.md) | Module layout, layering, where logic lives |
-| [02-coding-standards.md](02-coding-standards.md) | TypeScript style, naming, errors, async |
-| [03-api-design.md](03-api-design.md) | REST conventions, versioning, errors, pagination |
+| File                                                   | Covers                                               |
+| ------------------------------------------------------ | ---------------------------------------------------- |
+| [01-structure.md](01-structure.md)                     | Module layout, layering, where logic lives           |
+| [02-coding-standards.md](02-coding-standards.md)       | TypeScript style, naming, errors, async              |
+| [03-api-design.md](03-api-design.md)                   | REST conventions, versioning, errors, pagination     |
 | [04-data-and-migrations.md](04-data-and-migrations.md) | Postgres, migrations, identifiers, retention columns |
-| [05-security.md](05-security.md) | Authentication, tokens, secrets, input validation |
+| [05-security.md](05-security.md)                       | Authentication, tokens, secrets, input validation    |
 | [06-relay-and-retention.md](06-relay-and-retention.md) | The rules that keep the relay from becoming a backup |
-| [07-ai-proxy.md](07-ai-proxy.md) | Key custody, payload handling, quotas |
-| [08-observability.md](08-observability.md) | Logging discipline, metrics, audit |
-| [09-testing.md](09-testing.md) | What is tested and how |
-| [10-deployment.md](10-deployment.md) | Configuration, migrations, health, sizing |
-| [11-workflow.md](11-workflow.md) | Branches, commits, review, dependencies |
+| [07-ai-proxy.md](07-ai-proxy.md)                       | Key custody, payload handling, quotas                |
+| [08-observability.md](08-observability.md)             | Logging discipline, metrics, audit                   |
+| [09-testing.md](09-testing.md)                         | What is tested and how                               |
+| [10-deployment.md](10-deployment.md)                   | Configuration, migrations, health, sizing            |
+| [11-workflow.md](11-workflow.md)                       | Branches, commits, review, dependencies              |
 
 ## The four that outrank everything else
 

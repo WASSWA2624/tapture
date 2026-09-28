@@ -16,7 +16,8 @@ import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
-import 'package:tapture/features/quality/presentation/verification_mode_toggle.dart';
+import 'package:tapture/features/quality/quality.dart'
+    show VerificationModeToggle;
 import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/project_repository.dart';

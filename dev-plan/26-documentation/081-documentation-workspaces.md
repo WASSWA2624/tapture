@@ -1,5 +1,7 @@
 # 081 — Persist Documentation workspaces and resources locally
 
+**Implementation step:** 26.02
+
 **Phase** 26 · Documentation  |  **Depends on** [004](../04-data-layer/004-local-database.md), [080](080-documentation-capabilities.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement

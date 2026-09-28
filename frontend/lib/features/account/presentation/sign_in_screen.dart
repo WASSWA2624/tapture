@@ -49,9 +49,8 @@ class _SignInScreenState extends State<SignInScreen> {
           AppButton(
             label: Copy.signInAction,
             expand: true,
-            onPressed: () => unawaited(
-              widget.onSubmit(_email.text, _password.text),
-            ),
+            onPressed: () =>
+                unawaited(widget.onSubmit(_email.text, _password.text)),
           ),
         ],
       ),

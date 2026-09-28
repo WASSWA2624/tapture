@@ -107,7 +107,7 @@ final class RecordEditController extends Notifier<RecordEditState> {
       );
       for (final ValidationIssue issue in issues) {
         if (issue.blocks) {
-          problems.add(issue.message);
+          problems.add(Copy.fieldError(entry.label, issue.message));
         }
       }
     }

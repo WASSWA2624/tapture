@@ -7,18 +7,21 @@ import '../test/support/matchers.dart';
 import 'support/harness.dart';
 
 void main() {
-  test('capture through approval exports the approved values from the database', () async {
-    final TestApp app = await bootTestApp();
-    addTearDown(app.dispose);
-    final RecordEntry captured = await app.capture(
-      fields: const <String, String>{'serial': 'M-1'},
-    );
-    final RecordEntry approved = await app.approve(captured.id);
-    expect(approved.status, RecordStatus.approved);
-    final RecordEntry? rebuilt = valueOf(await app.records.byId(approved.id));
-    expect(rebuilt?.valueOf('serial')?.display, 'M-1');
-    final String csv = app.csvFor(<ExportRecord>[app.rowOf(approved)]);
-    expect(csv.contains('M-1'), isTrue);
-    expect(app.outboundCallCount, 0);
-  });
+  test(
+    'capture through approval exports the approved values from the database',
+    () async {
+      final TestApp app = await bootTestApp();
+      addTearDown(app.dispose);
+      final RecordEntry captured = await app.capture(
+        fields: const <String, String>{'serial': 'M-1'},
+      );
+      final RecordEntry approved = await app.approve(captured.id);
+      expect(approved.status, RecordStatus.approved);
+      final RecordEntry? rebuilt = valueOf(await app.records.byId(approved.id));
+      expect(rebuilt?.valueOf('serial')?.display, 'M-1');
+      final String csv = app.csvFor(<ExportRecord>[app.rowOf(approved)]);
+      expect(csv.contains('M-1'), isTrue);
+      expect(app.outboundCallCount, 0);
+    },
+  );
 }

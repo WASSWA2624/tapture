@@ -14,9 +14,9 @@ void main() {
       source.setPixel(1, 1, img.ColorRgb8(200, 10, 10));
       final Uint8List original = img.encodePng(source);
       final Digest before = sha256.convert(original);
-    final FaceBlurCopy copy = await FaceBlur.apply(original, const <FaceRect>[
-      (x: 0, y: 0, width: 2, height: 2),
-    ]);
+      final FaceBlurCopy copy = await FaceBlur.apply(original, const <FaceRect>[
+        (x: 0, y: 0, width: 2, height: 2),
+      ]);
       expect(sha256.convert(original), before);
       expect(copy.faceCount, 1);
       expect(copy.bytes, isNot(equals(original)));
