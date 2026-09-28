@@ -22,11 +22,12 @@ describe('migrations', () => {
         '002_projects.sql',
         '003_relay.sql',
         '004_audit.sql',
+        '005_runtime_persistence.sql',
       ],
     );
     const store = new Store();
     const ran = await migrate(store, files);
-    assert.equal(ran.length, 4);
+    assert.equal(ran.length, 5);
     const again = await migrate(store, files);
     assert.equal(again.length, 0);
     const changed = files.map((file, index) =>

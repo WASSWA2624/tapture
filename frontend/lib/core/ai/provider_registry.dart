@@ -115,7 +115,8 @@ final class ProviderRegistry {
   }) {
     final String id =
         providerId ?? _selection[projectId]?[operation] ?? backendId;
-    return (_entries[id] ?? _entries[backendId]!).service;
+    final AiService service = (_entries[id] ?? _entries[backendId]!).service;
+    return service is ProxyAiService ? service.forProject(projectId) : service;
   }
 
   /// Returns a valid provider/model choice, falling back to the backend
@@ -125,6 +126,7 @@ final class ProviderRegistry {
     required String providerId,
     required String modelId,
     required AiOperation operation,
+    String? projectId,
   }) {
     ProviderDescriptor provider = _catalog.firstWhere(
       (ProviderDescriptor value) => value.id == providerId,
@@ -135,7 +137,7 @@ final class ProviderRegistry {
     bool fellBack =
         provider.id != providerId ||
         !provider.operations.contains(operation) ||
-        !provider.available;
+        !provider.service.isAvailable;
     if (fellBack) {
       provider = _catalog.firstWhere(
         (ProviderDescriptor value) => value.id == backendId,
@@ -152,6 +154,21 @@ final class ProviderRegistry {
       orElse: () => models.first,
     );
     fellBack = fellBack || model.id != modelId;
+    if (projectId != null && provider.service is ProxyAiService) {
+      provider = ProviderDescriptor(
+        id: provider.id,
+        label: provider.label,
+        operations: provider.operations,
+        keyCustody: provider.keyCustody,
+        deviceKeyAllowed: provider.deviceKeyAllowed,
+        available: provider.service.isAvailable,
+        service: (provider.service as ProxyAiService).forProject(
+          projectId,
+          model: model.id,
+        ),
+        models: provider.models,
+      );
+    }
     return (provider: provider, model: model, fellBack: fellBack);
   }
 

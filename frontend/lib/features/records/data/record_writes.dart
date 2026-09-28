@@ -118,6 +118,9 @@ final class RecordWrites {
       }
       return RecordSchema.deferIndexing(_db, () async {
         final String id = _ids.newId();
+        final sqlite.Template template = await (_db.select(
+          _db.templates,
+        )..where((row) => row.id.equals(draft.templateId))).getSingle();
         _expect(
           await upsertRecord(
             _db,
@@ -125,6 +128,7 @@ final class RecordWrites {
               id: Value<String>(id),
               projectId: Value<String>(draft.projectId),
               templateId: Value<String>(draft.templateId),
+              templateVersion: Value<int>(template.version),
               status: Value<String>(RecordStatus.draft.stored),
               processingMode: const Value<String>(manualSource),
               contextJson: Value<String>(jsonEncode(draft.context)),
@@ -329,8 +333,10 @@ final class RecordWrites {
       await RecordSchema.deferIndexing(_db, () async {
         await _db.customUpdate(
           'UPDATE records SET template_id = ?, template_row_id = NULL, '
+          'template_version = (SELECT version FROM templates WHERE id = ?), '
           'updated_at = ?, updated_by_device = ?, rev = rev + 1 WHERE id = ?',
           variables: <Variable<Object>>[
+            Variable<String>(templateId),
             Variable<String>(templateId),
             Variable<DateTime>(_clock.nowUtc()),
             Variable<String>(_deviceId),

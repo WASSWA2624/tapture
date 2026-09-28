@@ -8,6 +8,51 @@ import '../fakes/fake_template_repository.dart';
 
 void main() {
   test(
+    'captured versions retain choice codes, units, validation and visibility across edits',
+    () {
+      const FieldDef original = FieldDef(
+        fieldKey: 'condition',
+        label: 'Condition',
+        type: FieldType.choice,
+        options: <Object>['good', 'bad'],
+        unit: 'kg',
+        helpText: 'Read the label',
+        requiredWhen: 'present == true',
+        hidden: true,
+        validation: <String, Object?>{'min': 2},
+        lookup: <String, Object?>{'datasetId': 'suppliers'},
+      );
+      final TemplateDef first = aTemplate(
+        version: 1,
+        fields: const <FieldDef>[original],
+      );
+      final TemplateDef second = TemplateVersioning.remember(
+        from: first,
+        to: first.copyWith(
+          version: 2,
+          fields: <FieldDef>[
+            original.copyWith(
+              options: <Object>['other'],
+              unit: 'g',
+              hidden: false,
+            ),
+          ],
+        ),
+      );
+      final TemplateDef third = TemplateVersioning.remember(
+        from: second,
+        to: second.copyWith(version: 3, name: 'Renamed'),
+      );
+      expect(TemplateVersioning.shapeFor(third, 1)!.fields.single, original);
+      expect(
+        TemplateVersioning.shapeFor(third, 2)!.fields.single.options,
+        <Object>['other'],
+      );
+      expect(TemplateVersioning.isStructural(first, second), isTrue);
+    },
+  );
+
+  test(
     'a record keeps its captured version and the diff matches the bump',
     () async {
       final FakeTemplateRepository templates = FakeTemplateRepository();

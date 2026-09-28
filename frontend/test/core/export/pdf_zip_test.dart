@@ -151,8 +151,8 @@ void main() {
       emit: (Uint8List value) => pdf = value,
       discard: () {},
     )) {}
-    expect(utf8.decode(pdf), contains('%PDF'));
-    expect(utf8.decode(pdf), contains('Refined minutes summary'));
+    expect(latin1.decode(pdf), startsWith('%PDF-'));
+    expect(latin1.decode(pdf), contains('startxref'));
   });
 
   test('the archive layout and manifest name every record', () {

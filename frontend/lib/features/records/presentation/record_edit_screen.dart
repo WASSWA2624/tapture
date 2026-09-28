@@ -52,7 +52,12 @@ class RecordEditScreen extends ConsumerWidget {
     final RecordEntry? entry = record.value;
     final AsyncValue<TemplateDef?> template = entry == null
         ? const AsyncLoading<TemplateDef?>()
-        : ref.watch(recordEditTemplateProvider(entry.templateId));
+        : ref.watch(
+            recordCapturedTemplateProvider((
+              id: entry.templateId,
+              version: entry.templateVersion,
+            )),
+          );
     return AppPage(
       key: const ValueKey<String>('route-record-values'),
       title: Copy.recordValuesEditTitle,

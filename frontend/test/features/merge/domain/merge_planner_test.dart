@@ -110,6 +110,64 @@ void main() {
       expect(result.insertedRecords, <String>['r1']);
     });
 
+    test('a record moved onto another template takes that template\'s '
+        'current version', () {
+      final MergePlan result = plan(
+        <String, List<Map<String, Object?>>>{
+          'records': <Map<String, Object?>>[
+            <String, Object?>{
+              ...record('r1', project: 'p9', template: 't9'),
+              'template_version': 2,
+            },
+            record('r2', project: 'p9', template: 't9'),
+          ],
+        },
+        <String, List<Map<String, Object?>>>{
+          'templates': <Map<String, Object?>>[
+            <String, Object?>{'id': 't1', 'name': 'Pump', 'version': 5},
+          ],
+        },
+        source: 'p9',
+        mapping: const <String, String>{'t9': 't1'},
+      );
+      final Map<String, Map<String, Object?>> inserted =
+          <String, Map<String, Object?>>{
+            for (final Map<String, Object?> row in result.inserts['records']!)
+              row['id']! as String: row,
+          };
+      expect(inserted['r1']!['template_id'], 't1');
+      expect(inserted['r1']!['template_version'], 5);
+      expect(inserted['r2']!['template_version'], 5);
+    });
+
+    test('a record on the same template keeps its version, and one without '
+        'a version takes its template\'s', () {
+      final MergePlan result = plan(
+        <String, List<Map<String, Object?>>>{
+          'templates': <Map<String, Object?>>[
+            <String, Object?>{'id': 't2', 'name': 'New', 'version': 4},
+          ],
+          'records': <Map<String, Object?>>[
+            <String, Object?>{...record('r1'), 'template_version': 3},
+            record('r2', template: 't2'),
+          ],
+        },
+        <String, List<Map<String, Object?>>>{
+          'templates': <Map<String, Object?>>[
+            <String, Object?>{'id': 't1', 'name': 'Pump', 'version': 6},
+          ],
+        },
+      );
+      final Map<String, Map<String, Object?>> inserted =
+          <String, Map<String, Object?>>{
+            for (final Map<String, Object?> row in result.inserts['records']!)
+              row['id']! as String: row,
+          };
+      expect(inserted['r1']!['template_version'], 3);
+      expect(inserted['r2']!['template_id'], 't2');
+      expect(inserted['r2']!['template_version'], 4);
+    });
+
     test('identical content gives an empty plan', () {
       final Tables tables = <String, List<Map<String, Object?>>>{
         'records': <Map<String, Object?>>[record('r1')],
@@ -493,6 +551,49 @@ void main() {
         },
       );
       expect(result.inserts['reference_rows']!.single['key_value'], 'K2');
+      expect(result.counts.kept, 1);
+    });
+
+    test('a repeated reference key keeps every row on both sides', () {
+      Map<String, Object?> row(String id, String dataset, String values) =>
+          <String, Object?>{
+            'id': id,
+            'dataset_id': dataset,
+            'key_value': 'K1',
+            'values': values,
+          };
+      final MergePlan result = plan(
+        <String, List<Map<String, Object?>>>{
+          'reference_datasets': <Map<String, Object?>>[
+            <String, Object?>{'id': 'ds', 'name': 'Staff'},
+            <String, Object?>{'id': 'ds-new', 'name': 'Sites'},
+          ],
+          'reference_rows': <Map<String, Object?>>[
+            row('rr1', 'ds', '{"name":"B"}'),
+            row('rr2', 'ds', '{"name":"C"}'),
+            row('rr3', 'ds-new', '{"site":"North"}'),
+            row('rr4', 'ds-new', '{"site":"South"}'),
+          ],
+        },
+        <String, List<Map<String, Object?>>>{
+          'reference_datasets': <Map<String, Object?>>[
+            <String, Object?>{'id': 'ds', 'name': 'Staff'},
+          ],
+          'reference_rows': <Map<String, Object?>>[
+            row('rr-a', 'ds', '{"name":"A"}'),
+            row('rr-b', 'ds', '{"name":"B"}'),
+          ],
+        },
+      );
+      expect(
+        <Object?>[
+          for (final Map<String, Object?> inserted
+              in result.inserts['reference_rows']!)
+            inserted['id'],
+        ],
+        <String>['rr3', 'rr4'],
+      );
+      // rr1 matches a row held here; only rr2 differs from every one.
       expect(result.counts.kept, 1);
     });
   });

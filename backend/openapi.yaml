@@ -2,6 +2,7 @@ openapi: 3.0.3
 info:
   title: Tapture backend
   version: '1'
+  description: Browsers may call the API cross-origin only from the exact origins in CORS_ORIGINS. Those origins receive Access-Control-Allow-Origin and Vary Origin, and preflights answer 204 allowing GET, POST, PATCH and DELETE with the Authorization, Content-Type, X-Api-Version and Idempotency-Key headers. Other preflights answer 403. Credentials are never allowed. An empty CORS_ORIGINS sends no CORS headers.
 paths:
   /health:
     get:
@@ -42,6 +43,19 @@ paths:
         }
   /api/v1/auth/login:
     post:
+      description: Signs into this organisation and enrols a device. organisationId is optional when the deployment hosts exactly one organisation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, deviceId]
+              properties:
+                email: { type: string }
+                password: { type: string, format: password }
+                deviceId: { type: string }
+                organisationId: { type: string }
       responses:
         {
           '200': { description: Token pair. },
@@ -60,6 +74,7 @@ paths:
       responses: { '204': { description: Signed out. Repeating it succeeds. } }
   /api/v1/auth/me:
     get:
+      description: Returns cached identity, memberships, grant expiry and aiAvailable indicating configured provider custody; never a provider credential.
       responses:
         { '200': { description: Identity, organisation, role and grants. } }
   /api/v1/devices:
@@ -149,16 +164,53 @@ paths:
       responses: { '200': { description: Version vector. } }
   /api/v1/ai/extract:
     post:
-      responses: { '200': { description: Pass-through. } }
+      description: >-
+        `{projectId, model, payload}` where payload is the provider envelope
+        object (instructions, data, media[{mimeType, base64}],
+        responseMimeType); a base64 string of that JSON is also accepted. The
+        body may carry inline media up to AI_BODY_LIMIT_BYTES. Every other JSON
+        route keeps BODY_LIMIT_BYTES.
+      responses:
+        {
+          '200': { description: Pass-through. },
+          '413': { description: Body exceeds AI_BODY_LIMIT_BYTES. },
+        }
   /api/v1/ai/ocr:
     post:
-      responses: { '200': { description: Pass-through. } }
+      description: >-
+        `{projectId, model, payload}` where payload is the provider envelope
+        object (instructions, data, media[{mimeType, base64}],
+        responseMimeType); a base64 string of that JSON is also accepted. The
+        body may carry inline media up to AI_BODY_LIMIT_BYTES.
+      responses:
+        {
+          '200': { description: Pass-through. },
+          '413': { description: Body exceeds AI_BODY_LIMIT_BYTES. },
+        }
   /api/v1/ai/transcribe:
     post:
-      responses: { '200': { description: Pass-through. } }
+      description: >-
+        `{projectId, model, payload}` where payload is the provider envelope
+        object (instructions, data, media[{mimeType, base64}],
+        responseMimeType); a base64 string of that JSON is also accepted. The
+        body may carry inline media up to AI_BODY_LIMIT_BYTES.
+      responses:
+        {
+          '200': { description: Pass-through. },
+          '413': { description: Body exceeds AI_BODY_LIMIT_BYTES. },
+        }
   /api/v1/ai/refine:
     post:
-      responses: { '200': { description: Pass-through. } }
+      description: >-
+        `{projectId, model, payload}` where payload is the provider envelope
+        object (instructions, data, media[{mimeType, base64}],
+        responseMimeType); a base64 string of that JSON is also accepted. The
+        body may carry inline media up to AI_BODY_LIMIT_BYTES.
+      responses:
+        {
+          '200': { description: Pass-through. },
+          '413': { description: Body exceeds AI_BODY_LIMIT_BYTES. },
+        }
   /api/v1/ai/usage:
     get:
       responses: { '200': { description: Usage rows without payload content. } }

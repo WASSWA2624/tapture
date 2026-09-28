@@ -6,13 +6,15 @@ The empty app that boots, logs, fails safely, and the small services every later
 
 ## Implementation progress
 
-**Step 02 — Complete**
+**Step 02 — Partially complete**
 
-1 total · 1 Complete · 0 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+3 total · 1 Complete · 2 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
 | 02.01 | 002 | [Foundation services](002-foundation-services.md) | **Complete** | 46/46 | 01.01 (001); Dependencies complete |
+| 02.02 | 091 | [Enable device location through the shared service](091-enable-device-location.md) | **Partially complete** | 1/11 | 01.01 (001), 02.01 (002); Ready |
+| 02.03 | 092 | [Enable live camera and barcode adapters](092-enable-live-camera.md) | **Partially complete** | 2/14 | 01.01 (001), 02.01 (002); Ready |
 
 <!-- dev-plan:generated:end -->
 

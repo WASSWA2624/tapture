@@ -165,7 +165,13 @@ DatasetImportDraft _toDraft({
       recoveryAction: 'Add a header row and try again.',
     );
   }
-  final String keyGuess = columns.first;
+  final List<String> dataColumns = columns
+      .where((String column) => column != 'addedOnDevice')
+      .toList();
+  if (dataColumns.isEmpty) {
+    throw const ValidationFailure(message: 'That file has no data columns.');
+  }
+  final String keyGuess = dataColumns.first;
   final List<ReferenceRow> mapped = <ReferenceRow>[
     for (int i = 0; i < rows.length; i++)
       ReferenceRow(
@@ -173,15 +179,18 @@ DatasetImportDraft _toDraft({
         datasetId: '',
         key: rows[i][keyGuess] ?? '',
         values: <String, String>{
-          for (final String column in columns) column: rows[i][column] ?? '',
+          for (final String column in dataColumns)
+            column: rows[i][column] ?? '',
         },
+        addedOnDevice: rows[i]['addedOnDevice'] == 'true',
       ),
   ];
   final Map<String, int> duplicateCounts = <String, int>{
-    for (final String column in columns) column: _duplicateCount(rows, column),
+    for (final String column in dataColumns)
+      column: _duplicateCount(rows, column),
   };
   final Map<String, List<String>> samples = <String, List<String>>{
-    for (final String column in columns)
+    for (final String column in dataColumns)
       column: <String>[
         for (final Map<String, String> row in rows.take(3)) row[column] ?? '',
       ],
@@ -194,7 +203,7 @@ DatasetImportDraft _toDraft({
           ? fileName.replaceAll(RegExp(r'\.[^.]+$'), '')
           : name,
       keyColumn: keyGuess,
-      columns: columns,
+      columns: dataColumns,
       source: source,
       importedAt: importedAt ?? DateTime.now().toUtc(),
       rowCount: mapped.length,
@@ -243,10 +252,10 @@ String _decodeBom(Uint8List bytes) {
       recoveryAction: 'Choose a CSV with a header and rows.',
     );
   }
-  final List<String> columns = <String>[
-    for (int i = 0; i < grid.first.length; i++)
-      _uniqueHeader(grid.first[i].trim(), i, grid.first),
-  ];
+  final List<String> columns = <String>[];
+  for (int i = 0; i < grid.first.length; i++) {
+    columns.add(_uniqueHeader(grid.first[i].trim(), i, columns));
+  }
   final List<Map<String, String>> rows = <Map<String, String>>[];
   for (int r = 1; r < grid.length; r++) {
     final List<String> line = grid[r];
@@ -322,6 +331,12 @@ List<List<String>> _readGrid(String text) {
   if (cell.isNotEmpty || current.isNotEmpty) {
     current.add(cell.toString());
     rows.add(current);
+  }
+  if (inQuotes) {
+    throw const ValidationFailure(
+      message: 'A quoted CSV value is unfinished.',
+      recoveryAction: 'Close the quoted value and import the file again.',
+    );
   }
   return rows;
 }

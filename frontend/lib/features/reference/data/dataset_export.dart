@@ -1,15 +1,66 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/download_service.dart';
+import 'package:tapture/core/files/file_reader.dart';
+import 'package:tapture/core/files/file_writer.dart';
+import 'package:tapture/core/files/path_sanitizer.dart';
+import 'package:tapture/core/files/storage_root.dart';
 
-import '../domain/reference_dataset.dart';
-import '../domain/reference_row.dart';
+import '../domain/reference_repository.dart';
 
 /// Writes a dataset back out as CSV or JSON, streaming to the target file.
 abstract final class DatasetExport {
+  /// Streams pages into an atomic export, then hands it to the platform.
+  /// The browser only buffers the final download, as its download API requires.
+  static Future<Result<String?>> download({
+    required ReferenceDataset dataset,
+    required ReferenceRepository repository,
+    required DownloadService downloads,
+    required StorageRoot storageRoot,
+    required String projectFolder,
+    required String exportId,
+    required bool json,
+    CancellationToken? cancel,
+  }) async {
+    final String extension = json ? 'json' : 'csv';
+    final String name;
+    try {
+      name = '${PathSanitizer.sanitiseSegment(dataset.name)}.$extension';
+    } on Failure catch (nameFailure) {
+      return FailureResult<String?>(nameFailure);
+    }
+    final String path = 'projects/$projectFolder/exports/$exportId-$name';
+    final Result<WrittenFile> written = await FileWriter(
+      storageRoot: storageRoot,
+    ).write(_streamRows(dataset, repository, json, cancel), path);
+    if (written is FailureResult<WrittenFile>) {
+      return FailureResult<String?>(written.failure);
+    }
+    final String mime = json ? 'application/json' : 'text/csv';
+    if (!kIsWeb) {
+      return downloads.saveStored(
+        relativePath: path,
+        fileName: name,
+        mimeType: mime,
+        subfolder: projectFolder,
+      );
+    }
+    final Result<Uint8List> bytes = await FileReader(
+      storageRoot: storageRoot,
+    ).read(path);
+    return bytes.fold(
+      FailureResult<String?>.new,
+      (Uint8List value) =>
+          downloads.save(fileName: name, bytes: value, mimeType: mime),
+    );
+  }
+
   /// Writes [rows] as CSV. Columns follow [dataset.columns] with the key first.
   static Future<Result<void>> writeCsv({
     required String path,
@@ -65,6 +116,74 @@ abstract final class DatasetExport {
   }) {
     return const JsonEncoder.withIndent('  ').convert(_rowMaps(dataset, rows));
   }
+}
+
+Stream<List<int>> _streamRows(
+  ReferenceDataset dataset,
+  ReferenceRepository repository,
+  bool json,
+  CancellationToken? cancel,
+) async* {
+  final List<String> columns = <String>[
+    ..._orderedColumns(dataset),
+    'addedOnDevice',
+  ];
+  yield utf8.encode(json ? '[' : '${columns.map(_escape).join(',')}\n');
+  int offset = 0;
+  bool first = true;
+  while (true) {
+    if (cancel?.isCancelled ?? false) {
+      throw const CancelledFailure();
+    }
+    final Result<List<ReferenceRow>> loaded = await repository.pageRows(
+      datasetId: dataset.id,
+      offset: offset,
+      limit: AppConstants.lists.pageSize,
+    );
+    final List<ReferenceRow> rows = switch (loaded) {
+      Success<List<ReferenceRow>>(:final List<ReferenceRow> value) => value,
+      FailureResult<List<ReferenceRow>>(failure: final Failure pageFailure) =>
+        throw pageFailure,
+    };
+    if (rows.isEmpty) {
+      break;
+    }
+    final Result<List<int>> chunk = await runIsolate(_encodeRows, (
+      rows: _rowMaps(dataset, rows),
+      columns: columns,
+      json: json,
+      first: first,
+    ), cancel: cancel);
+    yield switch (chunk) {
+      Success<List<int>>(:final List<int> value) => value,
+      FailureResult<List<int>>(failure: final Failure encodeFailure) =>
+        throw encodeFailure,
+    };
+    first = false;
+    offset += rows.length;
+  }
+  if (json) {
+    yield utf8.encode(']');
+  }
+}
+
+List<int> _encodeRows(
+  ({
+    List<Map<String, Object?>> rows,
+    List<String> columns,
+    bool json,
+    bool first,
+  })
+  input,
+) {
+  if (input.json) {
+    return utf8.encode(
+      '${input.first ? '' : ','}${input.rows.map(jsonEncode).join(',')}',
+    );
+  }
+  return utf8.encode(
+    '${input.rows.map((Map<String, Object?> row) => input.columns.map((String column) => _escape('${row[column] ?? ''}')).join(',')).join('\n')}\n',
+  );
 }
 
 Future<Result<void>> _write({

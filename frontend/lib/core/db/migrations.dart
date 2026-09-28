@@ -39,6 +39,8 @@ kUpgradeSteps = <int, _UpgradeStep>{
   20: migrateToV20,
   21: migrateToV21,
   22: migrateToV22,
+  23: migrateToV23,
+  24: migrateToV24,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -430,6 +432,35 @@ Future<void> migrateToV22(Migrator migrator, AppDatabase db) async {
   if (tables.isEmpty) {
     await migrator.createTable(db.destinations);
   }
+}
+
+/// Schema version 23: confirmed duplicate reference keys remain separate rows.
+Future<void> migrateToV23(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> columns = await db
+      .customSelect('PRAGMA table_info("reference_rows")')
+      .get();
+  if (columns.isEmpty) return;
+  await db.customStatement('DROP INDEX IF EXISTS reference_rows_by_key');
+  await migrator.createIndex(db.referenceRowsByKey);
+}
+
+/// Schema version 24: freeze the template shape records previously displayed.
+/// Legacy records used the current template; preserve that display at upgrade.
+Future<void> migrateToV24(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> columns = await db
+      .customSelect('PRAGMA table_info("records")')
+      .get();
+  if (columns.isEmpty ||
+      columns.any(
+        (QueryRow row) => row.read<String>('name') == 'template_version',
+      )) {
+    return;
+  }
+  await migrator.addColumn(db.records, db.records.templateVersion);
+  await db.customStatement(
+    'UPDATE records SET template_version = COALESCE('
+    '(SELECT version FROM templates WHERE templates.id = records.template_id), 1)',
+  );
 }
 
 /// Expression index that serves pinned-first, then newest (FE-PERF-03).

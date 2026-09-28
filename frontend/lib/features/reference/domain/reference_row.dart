@@ -46,7 +46,7 @@ final class ReferenceRow {
     id,
     datasetId,
     key,
-    Object.hashAll(
+    Object.hashAllUnordered(
       values.entries.map(
         (MapEntry<String, String> e) => Object.hash(e.key, e.value),
       ),

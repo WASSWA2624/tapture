@@ -1,3 +1,5 @@
+import 'package:tapture/core/location/location_service.dart';
+
 import 'audio_draft.dart';
 import 'capture_session_key.dart';
 import 'photo_draft.dart';
@@ -20,6 +22,9 @@ final class CaptureSession {
     this.values = const <String, Object?>{},
     this.isDirty = false,
     this.editing = false,
+    this.location,
+    this.valueSources = const <String, String>{},
+    this.lookupRows = const <String, String>{},
   });
 
   /// Fresh session id.
@@ -57,6 +62,15 @@ final class CaptureSession {
   /// capturing a new one (FBK0000148).
   final bool editing;
 
+  /// Last fix completed during this session, including its reported accuracy.
+  final GeoFix? location;
+
+  /// Explicit provenance for values filled from a scan or a reference row.
+  final Map<String, String> valueSources;
+
+  /// Dataset row id for each field that remains linked to a lookup.
+  final Map<String, String> lookupRows;
+
   /// Where the session is stored: its project for a new capture, and
   /// [CaptureSessionKey.edit] for an edit (D6).
   String get storageKey {
@@ -87,6 +101,15 @@ final class CaptureSession {
       'values': values,
       'isDirty': isDirty,
       'editing': editing,
+      'valueSources': valueSources,
+      'lookupRows': lookupRows,
+      if (location case final GeoFix fix)
+        'location': <String, Object?>{
+          'latitude': fix.latitude,
+          'longitude': fix.longitude,
+          'accuracyMetres': fix.accuracyMetres,
+          'capturedAt': fix.capturedAt.toIso8601String(),
+        },
     };
   }
 
@@ -147,6 +170,13 @@ final class CaptureSession {
       values: values,
       isDirty: json['isDirty'] as bool? ?? false,
       editing: json['editing'] as bool? ?? false,
+      location: _location(json['location']),
+      valueSources: Map<String, String>.from(
+        json['valueSources'] as Map? ?? <String, String>{},
+      ),
+      lookupRows: Map<String, String>.from(
+        json['lookupRows'] as Map? ?? <String, String>{},
+      ),
     );
   }
 
@@ -164,6 +194,9 @@ final class CaptureSession {
     Map<String, Object?>? values,
     bool? isDirty,
     bool? editing,
+    GeoFix? location,
+    Map<String, String>? valueSources,
+    Map<String, String>? lookupRows,
   }) {
     return CaptureSession(
       id: id ?? this.id,
@@ -177,6 +210,29 @@ final class CaptureSession {
       values: values ?? this.values,
       isDirty: isDirty ?? this.isDirty,
       editing: editing ?? this.editing,
+      location: location ?? this.location,
+      valueSources: valueSources ?? this.valueSources,
+      lookupRows: lookupRows ?? this.lookupRows,
+    );
+  }
+
+  static GeoFix? _location(Object? raw) {
+    if (raw is! Map<String, Object?>) return null;
+    final Object? latitude = raw['latitude'];
+    final Object? longitude = raw['longitude'];
+    final Object? accuracy = raw['accuracyMetres'];
+    final DateTime? capturedAt = DateTime.tryParse('${raw['capturedAt']}');
+    if (latitude is! num ||
+        longitude is! num ||
+        accuracy is! num ||
+        capturedAt == null) {
+      return null;
+    }
+    return GeoFix(
+      latitude: latitude.toDouble(),
+      longitude: longitude.toDouble(),
+      accuracyMetres: accuracy.toDouble(),
+      capturedAt: capturedAt,
     );
   }
 }

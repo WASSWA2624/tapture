@@ -10,8 +10,8 @@ export function registerHealth(app: Express, deps: Deps): void {
   app.get(
     '/ready',
     asyncRoute(async (_req, res) => {
-      const pool = deps.pool.status();
-      if (!pool.connected || pool.draining || !deps.config.ready) {
+      const connected = await deps.pool.probe();
+      if (!connected || deps.pool.status().draining || !deps.config.ready) {
         throw internalError();
       }
       res.json({ status: 'ready' });

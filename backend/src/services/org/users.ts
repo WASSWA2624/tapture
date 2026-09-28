@@ -1,11 +1,10 @@
 import { can, type Principal, type Role } from '../../domain/permissions.js';
 import { forbidden, notFound } from '../../domain/errors.js';
 import { withTransaction } from '../../repositories/base.js';
-import type { Store } from '../../repositories/store.js';
+import type { Repository as Store } from '../../repositories/repository.js';
 import type { AppConfig } from '../../config/schema.js';
 import { createInvitedUser } from '../auth/account.js';
 import type { User } from '../../types/index.js';
-
 function visible(user: User): Omit<User, 'passwordHash'> {
   return {
     id: user.id,
@@ -15,15 +14,16 @@ function visible(user: User): Omit<User, 'passwordHash'> {
     status: user.status,
   };
 }
-
-export function listUsers(
+export async function listUsers(
   store: Store,
   principal: Principal,
-  query?: { cursor?: string; limit?: number },
+  query?: {
+    cursor?: string;
+    limit?: number;
+  },
 ) {
   if (!can(principal, 'manageUsers')) throw notFound();
-  const rows = store
-    .users()
+  const rows = (await store.users())
     .filter((row) => row.organisationId === principal.organisationId)
     .map(visible);
   const limit = query?.limit ?? 50;
@@ -36,44 +36,46 @@ export function listUsers(
   const hasMore = start + users.length < rows.length;
   return { users, nextCursor: hasMore ? (last?.id ?? null) : null };
 }
-
 export async function inviteUser(
   store: Store,
   config: AppConfig,
   principal: Principal,
-  input: { email: string; role: Role },
+  input: {
+    email: string;
+    role: Role;
+  },
 ) {
   if (!can(principal, 'manageUsers')) throw notFound();
-  return createInvitedUser(store, config, {
+  return await createInvitedUser(store, config, {
     organisationId: principal.organisationId,
     email: input.email,
     role: input.role,
     actorId: principal.userId,
   });
 }
-
 export async function patchUser(
   store: Store,
   principal: Principal,
   userId: string,
-  patch: { role?: Role; status?: User['status'] },
+  patch: {
+    role?: Role;
+    status?: User['status'];
+  },
 ): Promise<void> {
   if (!can(principal, 'manageUsers')) throw notFound();
-  const user = store
-    .users()
-    .find(
-      (row) =>
-        row.id === userId && row.organisationId === principal.organisationId,
-    );
+  const user = (await store.users()).find(
+    (row) =>
+      row.id === userId && row.organisationId === principal.organisationId,
+  );
   if (user === undefined) throw notFound();
   if (patch.role === undefined && patch.status === undefined) throw forbidden();
   await withTransaction(store, async (tx) => {
-    tx.saveUser({
+    await tx.saveUser({
       ...user,
       role: patch.role ?? user.role,
       status: patch.status ?? user.status,
     });
-    tx.recordAudit({
+    await tx.recordAudit({
       actorId: principal.userId,
       action: 'change_role',
       target: userId,

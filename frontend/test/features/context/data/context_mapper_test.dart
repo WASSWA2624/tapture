@@ -138,45 +138,48 @@ void main() {
       expect(state.levels.single.datasetId, isNull);
     });
 
-    test('definitions inserted into a database read back as the same levels', () async {
-      final sqlite.AppDatabase db = sqlite.AppDatabase.memory();
-      addTearDown(db.close);
-      const List<ContextLevel> levels = <ContextLevel>[
-        ContextLevel(fieldKey: 'district', order: 0, label: 'District'),
-        ContextLevel(
-          fieldKey: 'facility',
-          order: 1,
-          label: 'Facility',
-          datasetId: 'ds-1',
-        ),
-        ContextLevel(fieldKey: 'dept', order: 2, label: 'Department'),
-      ];
-      for (final ContextLevel level in levels.reversed) {
-        await db
-            .into(db.context)
-            .insert(
-              ContextMapper.definitionToRow(
-                projectId: projectId,
-                level: level,
-              ).copyWith(
-                createdAt: Value<DateTime>(at),
-                updatedAt: Value<DateTime>(at),
-                updatedByDevice: const Value<String>('device-a'),
-              ),
-            );
-      }
-      final List<sqlite.ContextData> rows =
-          await (db.select(db.context)..where(
-                (sqlite.$ContextTable tbl) => tbl.projectId.equals(projectId),
-              ))
-              .get();
-      final ContextState state = ContextMapper.fromRows(
-        definitions: rows,
-        states: const <sqlite.ContextStateRow>[],
-        pinned: const <String, String>{},
-      );
-      expect(state.levels, levels);
-    });
+    test(
+      'definitions inserted into a database read back as the same levels',
+      () async {
+        final sqlite.AppDatabase db = sqlite.AppDatabase.memory();
+        addTearDown(db.close);
+        const List<ContextLevel> levels = <ContextLevel>[
+          ContextLevel(fieldKey: 'district', order: 0, label: 'District'),
+          ContextLevel(
+            fieldKey: 'facility',
+            order: 1,
+            label: 'Facility',
+            datasetId: 'ds-1',
+          ),
+          ContextLevel(fieldKey: 'dept', order: 2, label: 'Department'),
+        ];
+        for (final ContextLevel level in levels.reversed) {
+          await db
+              .into(db.context)
+              .insert(
+                ContextMapper.definitionToRow(
+                  projectId: projectId,
+                  level: level,
+                ).copyWith(
+                  createdAt: Value<DateTime>(at),
+                  updatedAt: Value<DateTime>(at),
+                  updatedByDevice: const Value<String>('device-a'),
+                ),
+              );
+        }
+        final List<sqlite.ContextData> rows =
+            await (db.select(db.context)..where(
+                  (sqlite.$ContextTable tbl) => tbl.projectId.equals(projectId),
+                ))
+                .get();
+        final ContextState state = ContextMapper.fromRows(
+          definitions: rows,
+          states: const <sqlite.ContextStateRow>[],
+          pinned: const <String, String>{},
+        );
+        expect(state.levels, levels);
+      },
+    );
   });
 
   group('ContextState', () {

@@ -14,6 +14,7 @@ import 'package:tapture/features/exports/domain/export_repository.dart';
 import 'package:tapture/features/processing/data/processing_stage_worker.dart';
 import 'package:tapture/features/processing/domain/processing_job.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/templates/data/template_repository_impl.dart';
 
 import '../../../support/processing_fixture.dart';
 
@@ -62,6 +63,12 @@ void main() {
         clock: fixture.clock,
         deviceId: 'device-a',
         ids: fixture.ids,
+        templates: TemplateRepositoryImpl(
+          db: fixture.db,
+          clock: fixture.clock,
+          deviceId: 'device-a',
+          ids: fixture.ids,
+        ),
       ).exportProject(fixture.project.id, cancel: CancellationToken()),
     );
 

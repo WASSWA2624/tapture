@@ -10,7 +10,7 @@ describe('audit', () => {
     const store = new Store();
     await assert.rejects(() =>
       withTransaction(store, async (tx) => {
-        recordAudit(tx, {
+        await recordAudit(tx, {
           actorId: 'user-1',
           action: 'change_role',
           target: 'user-2',
@@ -20,15 +20,15 @@ describe('audit', () => {
         throw new AppError('conflict', 409, 'Stopped.');
       }),
     );
-    assert.equal(listAudit(store).length, 0);
-    recordAudit(store, {
+    assert.equal((await listAudit(store)).length, 0);
+    await recordAudit(store, {
       actorId: 'user-1',
       action: 'change_role',
       target: 'user-2',
       before: { role: 'reviewer' },
       after: { role: 'project_manager' },
     });
-    assert.equal(listAudit(store)[0]?.action, 'change_role');
+    assert.equal((await listAudit(store))[0]?.action, 'change_role');
     assert.equal(typeof store.audit().find, 'function');
     assert.equal('updateAudit' in store, false);
   });

@@ -19,8 +19,10 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
+import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/audio_draft.dart';
+import '../domain/auto_fields.dart';
 import '../domain/capture_record_persistence.dart';
 import '../domain/capture_session.dart';
 import '../domain/photo_draft.dart';
@@ -36,15 +38,21 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
     required Clock clock,
     required String deviceId,
     required IdService ids,
+    String Function()? operatorName,
+    bool Function()? autoFillDates,
   }) : _db = db,
        _clock = clock,
        _deviceId = deviceId,
-       _ids = ids;
+       _ids = ids,
+       _operatorName = operatorName,
+       _autoFillDates = autoFillDates;
 
   final sqlite.AppDatabase _db;
   final Clock _clock;
   final String _deviceId;
   final IdService _ids;
+  final String Function()? _operatorName;
+  final bool Function()? _autoFillDates;
 
   /// Persists one complete captured record or rolls every row back.
   @override
@@ -67,6 +75,9 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         return recordId;
       }
       final DateTime now = _clock.nowUtc();
+      final sqlite.Template? template = await (_db.select(
+        _db.templates,
+      )..where((row) => row.id.equals(session.templateId))).getSingleOrNull();
       _expect(
         await upsertRecord(
           _db,
@@ -74,6 +85,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
             id: Value<String>(recordId),
             projectId: Value<String>(session.projectId),
             templateId: Value<String>(session.templateId),
+            templateVersion: Value<int>(template?.version ?? 1),
             status: Value<String>(RecordStatus.captured.stored),
             processingMode: const Value<String>('manual'),
             contextJson: Value<String>(jsonEncode(session.contextSnapshot)),
@@ -83,6 +95,8 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
             source: const Value<String>('capture'),
             capturedAt: Value<DateTime>(now),
             capturedBy: Value<String>(_deviceId),
+            gpsLat: Value<double?>(session.location?.latitude),
+            gpsLon: Value<double?>(session.location?.longitude),
           ),
           clock: _clock,
           deviceId: _deviceId,
@@ -220,14 +234,35 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         );
       }
 
+      final List<sqlite.TemplateField> templateFields = await (_db.select(
+        _db.templateFields,
+      )..where((row) => row.templateId.equals(session.templateId))).get();
+      final sqlite.RecordRow stored = await (_db.select(
+        _db.records,
+      )..where((row) => row.id.equals(recordId))).getSingle();
+      final Map<String, Object?> automatic = AutoFields.forTemplate(
+        fields: templateFields.map(TemplateMapper.fieldFromRow),
+        nowUtc: now,
+        operatorName: _operatorName?.call() ?? _deviceId,
+        deviceId: _deviceId,
+        sequence: stored.recordNumber,
+        context: session.contextSnapshot,
+        location: session.location,
+        autoFillDates: _autoFillDates?.call() ?? true,
+      );
       final Map<String, ({Object? value, String source})> fields =
           <String, ({Object? value, String source})>{
+            for (final MapEntry<String, Object?> entry in automatic.entries)
+              entry.key: (value: entry.value, source: 'AUTO'),
             for (final MapEntry<String, String> entry
                 in session.contextSnapshot.entries)
               entry.key: (value: entry.value, source: 'CONTEXT'),
             for (final MapEntry<String, Object?> entry
                 in session.values.entries)
-              entry.key: (value: entry.value, source: 'TYPED'),
+              entry.key: (
+                value: entry.value,
+                source: session.valueSources[entry.key] ?? 'TYPED',
+              ),
           };
       for (final MapEntry<String, ({Object? value, String source})> entry
           in fields.entries) {
@@ -239,6 +274,11 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
               fieldKey: Value<String>(entry.key),
               valueRaw: Value<String?>(_raw(entry.value.value)),
               source: Value<String>(entry.value.source),
+              method: session.lookupRows.containsKey(entry.key)
+                  ? Value<String>(
+                      'reference-row:${session.lookupRows[entry.key]}',
+                    )
+                  : const Value<String?>.absent(),
             ),
             clock: _clock,
             deviceId: _deviceId,

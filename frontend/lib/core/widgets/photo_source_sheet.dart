@@ -19,6 +19,7 @@ Future<Result<List<Uint8List>>?> showPhotoSourceSheet(
   required PhotoPicker picker,
   required int limit,
   required int longEdge,
+  Future<Result<List<Uint8List>>> Function()? takePhoto,
 }) async {
   final _Source? source = await showAppSheet<_Source>(
     context,
@@ -52,7 +53,8 @@ Future<Result<List<Uint8List>>?> showPhotoSourceSheet(
   );
   return switch (source) {
     null => null,
-    _Source.camera => picker.take(longEdge: longEdge),
+    _Source.camera =>
+      takePhoto != null ? takePhoto() : picker.take(longEdge: longEdge),
     _Source.library => picker.choose(limit: limit, longEdge: longEdge),
   };
 }

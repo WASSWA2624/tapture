@@ -152,8 +152,9 @@ abstract interface class DownloadService {
 }
 
 /// Whether [relativePath] names a file in a project's exports folder,
-/// `projects/<folder>/exports/<file>`: the only stored files a
-/// [DownloadService] hands out.
+/// `projects/<folder>/exports/<file>` or a deliverable under
+/// `projects/<folder>/exports/<date>/<id>/<file>`: the only stored files a
+/// [DownloadService] hands out. A folder path is never a file.
 bool isStoredExport(String relativePath) {
   final String safe;
   try {
@@ -162,10 +163,10 @@ bool isStoredExport(String relativePath) {
     return false;
   }
   final List<String> parts = safe.split('/');
-  return parts.length == 4 &&
+  return parts.length >= 4 &&
       parts[0] == 'projects' &&
       parts[2] == 'exports' &&
-      parts[3].isNotEmpty;
+      parts.every((String part) => part.isNotEmpty);
 }
 
 /// Where a file is handed to the operator. Tests keep the fake.

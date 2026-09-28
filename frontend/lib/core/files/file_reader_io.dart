@@ -19,6 +19,23 @@ final class _FileReader implements FileReader {
   final StorageRoot _storageRoot;
 
   @override
+  Future<Result<int?>> length(String relativePath) async {
+    try {
+      final String relative = safeRelativePath(relativePath);
+      final Result<Directory> root = await _storageRoot.resolve();
+      if (root case FailureResult<Directory>(:final Failure failure)) {
+        return FailureResult<int?>(failure);
+      }
+      final File file = File(
+        '${(root as Success<Directory>).value.path}/$relative',
+      );
+      return Success<int?>(await file.exists() ? await file.length() : null);
+    } on Object {
+      return FailureResult<int?>(FileReader.unreadable(relativePath));
+    }
+  }
+
+  @override
   Future<Result<Uint8List>> read(String relativePath) async {
     try {
       final String relative = safeRelativePath(relativePath);

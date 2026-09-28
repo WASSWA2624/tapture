@@ -8,9 +8,9 @@ Completion comes only from each task’s **Definition of done**: **Complete** = 
 
 Update the task checklist after implementation and verification; mark started work explicitly when no acceptance criterion is met yet. Run `dart run tool/sync_dev_tracker.dart` from `frontend/` to refresh this tracker, the index, phase summaries and implementation positions. Verification and the installed pre-commit hook refresh them automatically; CI rejects stale generated files. Never tick a criterion simply to make the tracker green.
 
-**Steps:** 27 total · 18 Complete · 8 Partially complete · 1 Pending.
+**Steps:** 27 total · 15 Complete · 11 Partially complete · 1 Pending.
 Historical implementation claims and audit limitations are preserved in [status history](01-orchestration/history/README.md).
-**Sub-steps:** 89 total · 70 Complete · 10 Partially complete · 9 Pending.
+**Sub-steps:** 92 total · 68 Complete · 16 Partially complete · 8 Pending.
 
 **Next actionable sub-step:** [01.02 · 087 — Arrange implementation flow and automatically synchronize progress](01-orchestration/087-chronological-plan-and-tracker.md) (Partially complete; dependencies complete).
 
@@ -19,14 +19,14 @@ Historical implementation claims and audit limitations are preserved in [status 
 | Step | Folder | Status | Complete | Partially complete | Pending | Sub-steps |
 | --- | --- | --- | ---: | ---: | ---: | ---: |
 | 01 | [Project setup and guardrails](01-orchestration/README.md) | **Partially complete** | 2 | 2 | 0 | 4 |
-| 02 | [Foundation services](02-foundation/README.md) | **Complete** | 1 | 0 | 0 | 1 |
+| 02 | [Foundation services](02-foundation/README.md) | **Partially complete** | 1 | 2 | 0 | 3 |
 | 03 | [Design system](03-design-system/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 04 | [Local database](04-data-layer/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 05 | [File storage](05-file-storage/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 06 | [Application shell](06-app-shell/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 07 | [Account and settings](07-account-and-settings/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 08 | [Projects](08-projects/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 09 | [Templates](09-templates/README.md) | **Complete** | 1 | 0 | 0 | 1 |
+| 09 | [Templates](09-templates/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 10 | [Reference data](10-reference-data/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 11 | [Context](11-context/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 12 | [Capture](12-capture/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
@@ -35,13 +35,13 @@ Historical implementation claims and audit limitations are preserved in [status 
 | 15 | [Data quality](15-data-quality/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 16 | [Review](16-review/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 17 | [Meetings](17-meetings/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 18 | [Export](18-export/README.md) | **Complete** | 1 | 0 | 0 | 1 |
+| 18 | [Export](18-export/README.md) | **Partially complete** | 0 | 2 | 0 | 2 |
 | 19 | [Bundles and merge](19-bundles-and-merge/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 20 | [Data import](20-data-import/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 21 | [Cloud upload](21-cloud-upload/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 22 | [Privacy and security](22-privacy-and-security/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 23 | [The minimal backend](23-backend/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
-| 24 | [Product refinements](24-product-refinements/README.md) | **Partially complete** | 50 | 2 | 2 | 54 |
+| 24 | [Product refinements](24-product-refinements/README.md) | **Partially complete** | 50 | 3 | 1 | 54 |
 | 25 | [Testing and release](25-testing-and-release/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 26 | [Documentation](26-documentation/README.md) | **Pending** | 0 | 0 | 7 | 7 |
 | 27 | [Hardening](27-hardening/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
@@ -59,11 +59,13 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 ## 02 — Foundation services
 
-**Complete** · `02-foundation/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `02-foundation/` · 3 total · 1 Complete · 2 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
 | 02.01 | 002 | [Foundation services](02-foundation/002-foundation-services.md) | **Complete** | 46/46 | 01.01 (001); Dependencies complete |
+| 02.02 | 091 | [Enable device location through the shared service](02-foundation/091-enable-device-location.md) | **Partially complete** | 1/11 | 01.01 (001), 02.01 (002); Ready |
+| 02.03 | 092 | [Enable live camera and barcode adapters](02-foundation/092-enable-live-camera.md) | **Partially complete** | 2/14 | 01.01 (001), 02.01 (002); Ready |
 
 ## 03 — Design system
 
@@ -115,11 +117,11 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 ## 09 — Templates
 
-**Complete** · `09-templates/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `09-templates/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 09.01 | 009 | [Templates: record shapes with atomic columns, and requiredness the user owns](09-templates/009-templates.md) | **Complete** | 71/71 | 01.01 (001); Dependencies complete |
+| 09.01 | 009 | [Templates: record shapes with atomic columns, and requiredness the user owns](09-templates/009-templates.md) | **Partially complete** | 68/71 | 01.01 (001); Ready |
 
 ## 10 — Reference data
 
@@ -127,7 +129,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 10.01 | 010 | [Reference data: datasets, lookups and prefill](10-reference-data/010-reference-data.md) | **Partially complete** | 0/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009); Ready |
+| 10.01 | 010 | [Reference data: datasets, lookups and prefill](10-reference-data/010-reference-data.md) | **Partially complete** | 0/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009); Waiting for: 009 |
 
 ## 11 — Context
 
@@ -135,7 +137,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 11.01 | 011 | [Context: hierarchy, bar and inheritance](11-context/011-context.md) | **Partially complete** | 0/26 | 03.01 (003), 04.01 (004), 05.01 (005), 06.01 (006), 07.01 (007), 09.01 (009), 10.01 (010); Waiting for: 010 |
+| 11.01 | 011 | [Context: hierarchy, bar and inheritance](11-context/011-context.md) | **Partially complete** | 0/26 | 03.01 (003), 04.01 (004), 05.01 (005), 06.01 (006), 07.01 (007), 09.01 (009), 10.01 (010); Waiting for: 009, 010 |
 
 ## 12 — Capture
 
@@ -143,7 +145,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 12.01 | 012 | [Capture: evidence in, saved before anything else](12-capture/012-capture.md) | **Partially complete** | 0/66 | 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 10.01 (010), 11.01 (011); Waiting for: 010, 011 |
+| 12.01 | 012 | [Capture: evidence in, saved before anything else](12-capture/012-capture.md) | **Partially complete** | 0/66 | 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 10.01 (010), 11.01 (011); Waiting for: 009, 010, 011 |
 
 ## 13 — Processing
 
@@ -151,7 +153,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 13.01 | 013 | [Processing: on-device first, online only when it earns its place](13-processing/013-processing.md) | **Complete** | 71/71 | 02.01 (002), 04.01 (004), 07.01 (007), 09.01 (009), 10.01 (010), 12.01 (012); Prerequisite review: 010, 012 |
+| 13.01 | 013 | [Processing: on-device first, online only when it earns its place](13-processing/013-processing.md) | **Complete** | 71/71 | 02.01 (002), 04.01 (004), 07.01 (007), 09.01 (009), 10.01 (010), 12.01 (012); Prerequisite review: 009, 010, 012 |
 
 ## 14 — Records
 
@@ -159,7 +161,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 14.01 | 014 | [Records: find, read and change what was captured](14-records/014-records.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 12.01 (012); Prerequisite review: 012 |
+| 14.01 | 014 | [Records: find, read and change what was captured](14-records/014-records.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 12.01 (012); Prerequisite review: 009, 012 |
 
 ## 15 — Data quality
 
@@ -167,7 +169,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 15.01 | 015 | [Data quality: validation, duplicates, conflicts and variance](15-data-quality/015-data-quality.md) | **Complete** | 40/40 | 02.01 (002), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 14.01 (014); Prerequisite review: 010, 012 |
+| 15.01 | 015 | [Data quality: validation, duplicates, conflicts and variance](15-data-quality/015-data-quality.md) | **Complete** | 40/40 | 02.01 (002), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 14.01 (014); Prerequisite review: 009, 010, 012 |
 
 ## 16 — Review
 
@@ -175,7 +177,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 16.01 | 016 | [Review: turning proposals into approved data](16-review/016-review.md) | **Complete** | 25/25 | 03.01 (003), 09.01 (009), 12.01 (012), 13.01 (013), 14.01 (014), 15.01 (015); Prerequisite review: 012 |
+| 16.01 | 016 | [Review: turning proposals into approved data](16-review/016-review.md) | **Complete** | 25/25 | 03.01 (003), 09.01 (009), 12.01 (012), 13.01 (013), 14.01 (014), 15.01 (015); Prerequisite review: 009, 012 |
 
 ## 17 — Meetings
 
@@ -183,15 +185,16 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 17.01 | 017 | [Meetings: minutes, attendance and actions](17-meetings/017-meetings.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 16.01 (016); Prerequisite review: 010, 012 |
+| 17.01 | 017 | [Meetings: minutes, attendance and actions](17-meetings/017-meetings.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 16.01 (016); Prerequisite review: 009, 010, 012 |
 
 ## 18 — Export
 
-**Complete** · `18-export/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `18-export/` · 2 total · 0 Complete · 2 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 18.01 | 018 | [Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](18-export/018-export.md) | **Complete** | 57/57 | 01.01 (001), 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 13.01 (013), 14.01 (014), 15.01 (015), 16.01 (016), 17.01 (017); Dependencies complete |
+| 18.01 | 018 | [Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](18-export/018-export.md) | **Partially complete** | 51/57 | 01.01 (001), 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 13.01 (013), 14.01 (014), 15.01 (015), 16.01 (016), 17.01 (017); Waiting for: 009 |
+| 18.02 | 090 | [Use the standard PDF renderer for deliverable reports](18-export/090-use-standard-pdf-renderer.md) | **Partially complete** | 0/4 | 01.01 (001), 03.01 (003), 18.01 (018); Waiting for: 018 |
 
 ## 19 — Bundles and merge
 
@@ -199,7 +202,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 19.01 | 019 | [Bundles and merge: a project leaves whole and rejoins safely](19-bundles-and-merge/019-bundles-and-merge.md) | **Complete** | 45/45 | 01.01 (001), 02.01 (002), 04.01 (004), 05.01 (005), 08.01 (008), 18.01 (018); Dependencies complete |
+| 19.01 | 019 | [Bundles and merge: a project leaves whole and rejoins safely](19-bundles-and-merge/019-bundles-and-merge.md) | **Complete** | 45/45 | 01.01 (001), 02.01 (002), 04.01 (004), 05.01 (005), 08.01 (008), 18.01 (018); Prerequisite review: 018 |
 
 ## 20 — Data import
 
@@ -207,7 +210,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 20.01 | 020 | [Data import: continue an inventory someone else started](20-data-import/020-data-import.md) | **Complete** | 23/23 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 14.01 (014), 15.01 (015); Dependencies complete |
+| 20.01 | 020 | [Data import: continue an inventory someone else started](20-data-import/020-data-import.md) | **Complete** | 23/23 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 14.01 (014), 15.01 (015); Prerequisite review: 009 |
 
 ## 21 — Cloud upload
 
@@ -223,7 +226,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 22.01 | 022 | [Privacy and security: what leaves this device, and what never does](22-privacy-and-security/022-privacy-and-security.md) | **Complete** | 28/28 | 02.01 (002), 05.01 (005), 08.01 (008), 09.01 (009), 12.01 (012), 13.01 (013), 18.01 (018), 19.01 (019), 21.01 (021); Prerequisite review: 012 |
+| 22.01 | 022 | [Privacy and security: what leaves this device, and what never does](22-privacy-and-security/022-privacy-and-security.md) | **Complete** | 28/28 | 02.01 (002), 05.01 (005), 08.01 (008), 09.01 (009), 12.01 (012), 13.01 (013), 18.01 (018), 19.01 (019), 21.01 (021); Prerequisite review: 009, 012, 018 |
 
 ## 23 — The minimal backend
 
@@ -231,11 +234,11 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 23.01 | 024 | [The minimal backend, and the app that runs on it](23-backend/024-minimal-backend.md) | **Partially complete** | 89/95 | 02.01 (002), 03.01 (003), 07.01 (007), 13.01 (013), 19.01 (019); Ready |
+| 23.01 | 024 | [The minimal backend, and the app that runs on it](23-backend/024-minimal-backend.md) | **Partially complete** | 88/95 | 02.01 (002), 03.01 (003), 07.01 (007), 13.01 (013), 19.01 (019); Ready |
 
 ## 24 — Product refinements
 
-**Partially complete** · `24-product-refinements/` · 54 total · 50 Complete · 2 Partially complete · 2 Pending.
+**Partially complete** · `24-product-refinements/` · 54 total · 50 Complete · 3 Partially complete · 1 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
@@ -284,7 +287,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 | 24.43 | 068 | [Resolve project, record, capture and export feedback](24-product-refinements/068-resolve-project-record-capture-export-feedback.md) | **Complete** | 14/14 | None; Dependencies complete |
 | 24.44 | 069 | [Resolve record, capture markup and project photo feedback](24-product-refinements/069-resolve-record-capture-markup-feedback.md) | **Complete** | 12/12 | None; Dependencies complete |
 | 24.45 | 070 | [Resolve web capture, caption and template feedback](24-product-refinements/070-resolve-web-capture-caption-template-feedback.md) | **Complete** | 14/14 | None; Dependencies complete |
-| 24.46 | 071 | [Enable processing, export and list thumbnails on web](24-product-refinements/071-enable-processing-export-on-web.md) | **Pending** | 0/5 | 24.45 (070); Ready |
+| 24.46 | 071 | [Enable processing, export and list thumbnails on web](24-product-refinements/071-enable-processing-export-on-web.md) | **Partially complete** | 0/5 | 24.45 (070); Ready |
 | 24.47 | 072 | [List processed records on the project home](24-product-refinements/072-list-processed-records-on-project-home.md) | **Complete** | 3/3 | 24.45 (070); Dependencies complete |
 | 24.48 | 073 | [Keep resumed capture photos](24-product-refinements/073-keep-resumed-capture-photos.md) | **Complete** | 3/3 | 24.45 (070); Dependencies complete |
 | 24.49 | 074 | [Ship the full template catalogue](24-product-refinements/074-ship-full-template-catalogue.md) | **Complete** | 6/6 | None; Dependencies complete |
@@ -300,7 +303,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 25.01 | 025 | [Testing and release: the suites, the pipeline and the gate over both artefacts](25-testing-and-release/025-testing-and-release.md) | **Partially complete** | 36/41 | 04.01 (004), 12.01 (012), 15.01 (015), 17.01 (017), 18.01 (018), 19.01 (019), 22.01 (022), 23.01 (024); Waiting for: 012, 024 |
+| 25.01 | 025 | [Testing and release: the suites, the pipeline and the gate over both artefacts](25-testing-and-release/025-testing-and-release.md) | **Partially complete** | 36/41 | 04.01 (004), 12.01 (012), 15.01 (015), 17.01 (017), 18.01 (018), 19.01 (019), 22.01 (022), 23.01 (024); Waiting for: 012, 018, 024 |
 
 ## 26 — Documentation
 
@@ -308,7 +311,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 26.01 | 080 | [Establish document adapters and approved dependencies](26-documentation/080-documentation-capabilities.md) | **Pending** | 0/6 | 05.01 (005), 18.01 (018); Ready |
+| 26.01 | 080 | [Establish document adapters and approved dependencies](26-documentation/080-documentation-capabilities.md) | **Pending** | 0/6 | 05.01 (005), 18.01 (018); Waiting for: 018 |
 | 26.02 | 081 | [Persist Documentation workspaces and resources locally](26-documentation/081-documentation-workspaces.md) | **Pending** | 0/7 | 04.01 (004), 26.01 (080); Waiting for: 080 |
 | 26.03 | 082 | [Import, inspect and extract document resources safely](26-documentation/082-documentation-ingestion.md) | **Pending** | 0/8 | 24.51 (076), 26.02 (081); Waiting for: 081 |
 | 26.04 | 083 | [Build the Inputs, Outputs and Prompt workspace](26-documentation/083-documentation-editor.md) | **Pending** | 0/10 | 24.54 (079), 26.03 (082); Waiting for: 079, 082 |

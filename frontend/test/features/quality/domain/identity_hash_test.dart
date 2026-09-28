@@ -41,14 +41,14 @@ void main() {
   });
 
   test('the hash is stable across calls', () {
-    final String first = identityHash(const <String, Object?>{
-      'serial': 'ABB-1234',
-      'tag': 'T-9',
-    }, const <String>['serial', 'tag']);
-    final String second = identityHash(const <String, Object?>{
-      'serial': 'ABB-1234',
-      'tag': 'T-9',
-    }, const <String>['serial', 'tag']);
+    final String first = identityHash(
+      const <String, Object?>{'serial': 'ABB-1234', 'tag': 'T-9'},
+      const <String>['serial', 'tag'],
+    );
+    final String second = identityHash(
+      const <String, Object?>{'serial': 'ABB-1234', 'tag': 'T-9'},
+      const <String>['serial', 'tag'],
+    );
     expect(first, second);
     expect(first, matches(RegExp(r'^[0-9a-f]{64}$')));
   });
@@ -66,20 +66,20 @@ void main() {
 
   test('a missing identity value hashes as an empty one', () {
     expect(
-      identityHash(const <String, Object?>{'serial': 'ABB-1234'}, const <String>[
-        'serial',
-        'tag',
-      ]),
+      identityHash(
+        const <String, Object?>{'serial': 'ABB-1234'},
+        const <String>['serial', 'tag'],
+      ),
       identityHash(
         const <String, Object?>{'serial': 'ABB-1234', 'tag': ''},
         const <String>['serial', 'tag'],
       ),
     );
     expect(
-      identityHash(const <String, Object?>{'serial': 'ABB-1234'}, const <String>[
-        'serial',
-        'tag',
-      ]),
+      identityHash(
+        const <String, Object?>{'serial': 'ABB-1234'},
+        const <String>['serial', 'tag'],
+      ),
       identityHash(
         const <String, Object?>{'serial': 'ABB-1234', 'tag': null},
         const <String>['serial', 'tag'],
@@ -123,9 +123,7 @@ void main() {
         const <String, Object?>{'serial': 'ABB', 'tag': '1234'},
         const <String>['serial', 'tag'],
       ),
-      isNot(
-        identityHash(const <String, Object?>{'serial': 'ABB1234'}, keys),
-      ),
+      isNot(identityHash(const <String, Object?>{'serial': 'ABB1234'}, keys)),
     );
   });
 }

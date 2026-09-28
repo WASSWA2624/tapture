@@ -5,6 +5,9 @@
 /// each area is a const record a caller reaches through one name
 /// (`AppConstants.lists.pageSize`) rather than a flat namespace.
 abstract final class AppConstants {
+  /// Bounded catalogue shortlist for explicit text-only AI suggestions.
+  static const int aiTemplateCandidateLimit = 8;
+
   /// Page length for every paged query (FE-PERF-03).
   static const int listPageSize = 50;
 
@@ -153,6 +156,7 @@ abstract final class AppConstants {
     String cloudRefresh,
     String databaseEncryption,
     String backendSession,
+    String relayKeys,
   })
   secrets = (
     pinSalt: 'tapture.pin.salt',
@@ -164,6 +168,7 @@ abstract final class AppConstants {
     cloudRefresh: 'tapture.cloud.refresh',
     databaseEncryption: 'tapture.db.encryption',
     backendSession: 'tapture.backend.session',
+    relayKeys: 'tapture.relay.keys',
   );
 
   /// Ring buffer and observer limits for the logger (task 022).
@@ -367,6 +372,26 @@ abstract final class AppConstants {
   static const ({String multiSeparator, double pdfBody}) exportValues = (
     multiSeparator: '; ',
     pdfBody: 11,
+  );
+
+  /// Shared PDF geometry; reports never define private layout values.
+  static const ({
+    double margin,
+    double title,
+    double heading,
+    double gap,
+    double photoGap,
+    double photoHeight,
+    int maxPages,
+  })
+  pdfLayout = (
+    margin: 36,
+    title: 24,
+    heading: 16,
+    gap: 12,
+    photoGap: 4,
+    photoHeight: 400,
+    maxPages: 10000,
   );
 
   /// Spreadsheet import: how many leading rows to score as a header, how

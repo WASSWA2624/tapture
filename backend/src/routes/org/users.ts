@@ -6,18 +6,15 @@ import { asyncRoute } from '../../http.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { inviteUser, listUsers, patchUser } from '../../services/org/users.js';
 import type { User } from '../../types/index.js';
-
 const roles: readonly Role[] = [
   'administrator',
   'project_manager',
   'reviewer',
   'field_operator',
 ];
-
 function isRole(value: unknown): value is Role {
   return typeof value === 'string' && roles.includes(value as Role);
 }
-
 export function registerOrgUsers(app: Express, deps: Deps): void {
   const auth = authenticate(deps);
   app.get(
@@ -29,7 +26,7 @@ export function registerOrgUsers(app: Express, deps: Deps): void {
       const cursor = req.query['cursor'];
       const limit = req.query['limit'];
       res.json(
-        listUsers(deps.store, principal, {
+        await listUsers(deps.store, principal, {
           ...(typeof cursor === 'string' ? { cursor } : {}),
           ...(typeof limit === 'string' ? { limit: Number(limit) } : {}),
         }),
@@ -42,7 +39,10 @@ export function registerOrgUsers(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      const body = req.body as { email?: unknown; role?: unknown };
+      const body = req.body as {
+        email?: unknown;
+        role?: unknown;
+      };
       if (typeof body.email !== 'string' || !isRole(body.role)) {
         throw invalidRequest('Missing email or role.');
       }
@@ -71,7 +71,10 @@ export function registerOrgUsers(app: Express, deps: Deps): void {
       };
       if (body.password !== undefined)
         throw invalidRequest('A password cannot be set here.');
-      const patch: { role?: Role; status?: User['status'] } = {};
+      const patch: {
+        role?: Role;
+        status?: User['status'];
+      } = {};
       if (body.role !== undefined) {
         if (!isRole(body.role)) throw invalidRequest('Unknown role.');
         patch.role = body.role;

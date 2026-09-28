@@ -15,8 +15,14 @@ void main() {
   });
 
   test('a pair is stored once whichever way round it is given', () {
-    expect(DuplicateLink.pair('rec-1', 'rec-2'), DuplicateLink.pair('rec-2', 'rec-1'));
-    expect(DuplicateLink.pair('rec-1', 'rec-2'), (left: 'rec-1', right: 'rec-2'));
+    expect(
+      DuplicateLink.pair('rec-1', 'rec-2'),
+      DuplicateLink.pair('rec-2', 'rec-1'),
+    );
+    expect(DuplicateLink.pair('rec-1', 'rec-2'), (
+      left: 'rec-1',
+      right: 'rec-2',
+    ));
   });
 
   test('a pair of one record with itself is that record on both sides', () {

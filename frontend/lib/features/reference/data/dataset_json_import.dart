@@ -59,6 +59,13 @@ abstract final class DatasetJsonImport {
           importedAt: importedAt,
         ),
       );
+    } on FormatException {
+      return const FailureResult<DatasetImportDraft>(
+        ValidationFailure(
+          message: 'That JSON is not valid.',
+          recoveryAction: 'Fix the JSON array and import it again.',
+        ),
+      );
     } on Failure catch (failure) {
       return FailureResult<DatasetImportDraft>(failure);
     }
@@ -159,7 +166,13 @@ DatasetImportDraft _toDraft({
       recoveryAction: 'Add keys to the objects and try again.',
     );
   }
-  final String keyGuess = columns.first;
+  final List<String> dataColumns = columns
+      .where((String column) => column != 'addedOnDevice')
+      .toList();
+  if (dataColumns.isEmpty) {
+    throw const ValidationFailure(message: 'That file has no data columns.');
+  }
+  final String keyGuess = dataColumns.first;
   final List<ReferenceRow> mapped = <ReferenceRow>[
     for (final Map<String, String> row in rows)
       ReferenceRow(
@@ -167,15 +180,16 @@ DatasetImportDraft _toDraft({
         datasetId: '',
         key: row[keyGuess] ?? '',
         values: <String, String>{
-          for (final String column in columns) column: row[column] ?? '',
+          for (final String column in dataColumns) column: row[column] ?? '',
         },
+        addedOnDevice: row['addedOnDevice'] == 'true',
       ),
   ];
   final Map<String, int> duplicateCounts = <String, int>{
-    for (final String column in columns) column: _dups(rows, column),
+    for (final String column in dataColumns) column: _dups(rows, column),
   };
   final Map<String, List<String>> samples = <String, List<String>>{
-    for (final String column in columns)
+    for (final String column in dataColumns)
       column: <String>[
         for (final Map<String, String> row in rows.take(3)) row[column] ?? '',
       ],
@@ -188,7 +202,7 @@ DatasetImportDraft _toDraft({
           ? fileName.replaceAll(RegExp(r'\.[^.]+$'), '')
           : name,
       keyColumn: keyGuess,
-      columns: columns,
+      columns: dataColumns,
       source: source,
       importedAt: importedAt ?? DateTime.now().toUtc(),
       rowCount: mapped.length,
@@ -219,7 +233,7 @@ int _dups(List<Map<String, String>> rows, String column) {
 ({List<String> columns, List<Map<String, String>> rows}) _parseJson(
   String text,
 ) {
-  final Object decoded = jsonDecode(text) as Object;
+  final Object? decoded = jsonDecode(text);
   if (decoded is! List) {
     throw const ValidationFailure(
       message: 'JSON datasets must be an array of objects.',
@@ -231,7 +245,10 @@ int _dups(List<Map<String, String>> rows, String column) {
   final List<Map<String, String>> rows = <Map<String, String>>[];
   for (final Object? item in decoded) {
     if (item is! Map) {
-      continue;
+      throw const ValidationFailure(
+        message: 'Every JSON row must be an object.',
+        recoveryAction: 'Remove non-object rows and import the file again.',
+      );
     }
     for (final Object? key in item.keys) {
       if (key is String && seen.add(key)) {

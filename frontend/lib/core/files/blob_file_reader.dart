@@ -16,6 +16,24 @@ final class BlobFileReader implements FileReader {
   final BlobStore _store;
 
   @override
+  Future<Result<int?>> length(String relativePath) async {
+    try {
+      final Result<Uint8List?> stored = await _store.read(
+        safeRelativePath(relativePath),
+      );
+      return switch (stored) {
+        Success<Uint8List?>(:final Uint8List? value) => Success<int?>(
+          value?.length,
+        ),
+        FailureResult<Uint8List?>(:final Failure failure) =>
+          FailureResult<int?>(failure),
+      };
+    } on Object {
+      return FailureResult<int?>(FileReader.unreadable(relativePath));
+    }
+  }
+
+  @override
   Future<Result<Uint8List>> read(String relativePath) async {
     final String relative;
     try {

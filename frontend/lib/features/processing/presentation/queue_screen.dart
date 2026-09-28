@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -82,6 +83,7 @@ class _QueueScreenState extends ConsumerState<QueueScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              if (kIsWeb) const Text(Copy.ocrBrowserUnavailable),
               Wrap(
                 spacing: Space.x2,
                 runSpacing: Space.x2,

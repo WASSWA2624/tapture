@@ -59,17 +59,20 @@ void main() {
     expect(await recents(), isEmpty);
   });
 
-  test('recents stop at AppConstants.context.recentCap, dropping the oldest', () async {
-    final int cap = AppConstants.context.recentCap;
-    for (int i = 0; i <= cap; i++) {
-      await remember('Facility $i');
-    }
-    final List<String> kept = await recents();
-    expect(kept, hasLength(cap));
-    expect(kept.first, 'Facility $cap');
-    expect(kept, isNot(contains('Facility 0')));
-    expect(kept.last, 'Facility 1');
-  });
+  test(
+    'recents stop at AppConstants.context.recentCap, dropping the oldest',
+    () async {
+      final int cap = AppConstants.context.recentCap;
+      for (int i = 0; i <= cap; i++) {
+        await remember('Facility $i');
+      }
+      final List<String> kept = await recents();
+      expect(kept, hasLength(cap));
+      expect(kept.first, 'Facility $cap');
+      expect(kept, isNot(contains('Facility 0')));
+      expect(kept.last, 'Facility 1');
+    },
+  );
 
   test('recents are kept per project and per field', () async {
     await remember('Kasubi HC IV');
@@ -94,42 +97,51 @@ void main() {
     expect(await recents(), <String>['Kasubi HC IV']);
   });
 
-  test('recents survive a repository restart over the same persistence', () async {
-    final AppDatabase db = AppDatabase.memory();
-    addTearDown(db.close);
-    final DateTime t0 = DateTime.utc(2026, 9, 22, 8);
-    final IdService ids = UuidV7Service.sequence(FixedClock(t0));
-    ContextRepositoryImpl open() {
-      return ContextRepositoryImpl(
-        db: db,
-        clock: FixedClock(t0),
-        deviceId: 'device-a',
-        ids: ids,
-        persistence: persistence,
-      );
-    }
+  test(
+    'recents survive a repository restart over the same persistence',
+    () async {
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      final DateTime t0 = DateTime.utc(2026, 9, 22, 8);
+      final IdService ids = UuidV7Service.sequence(FixedClock(t0));
+      ContextRepositoryImpl open() {
+        return ContextRepositoryImpl(
+          db: db,
+          clock: FixedClock(t0),
+          deviceId: 'device-a',
+          ids: ids,
+          persistence: persistence,
+        );
+      }
 
-    final ContextRepositoryImpl first = open();
-    valueOf(
-      await first.saveHierarchy(projectId, const <ContextLevel>[
-        ContextLevel(fieldKey: 'facility', order: 0, label: 'Facility'),
-      ]),
-    );
-    valueOf(
-      await first.setLevelValue(
-        projectId: projectId,
-        fieldKey: 'facility',
-        value: 'Kasubi HC IV',
-      ),
-    );
-
-    final ContextRepositoryImpl reopened = open();
-    expect(
+      final ContextRepositoryImpl first = open();
       valueOf(
-        await reopened.recentValues(projectId: projectId, fieldKey: 'facility'),
-      ),
-      <String>['Kasubi HC IV'],
-    );
-    expect(valueOf(await reopened.load(projectId)).values['facility'], 'Kasubi HC IV');
-  });
+        await first.saveHierarchy(projectId, const <ContextLevel>[
+          ContextLevel(fieldKey: 'facility', order: 0, label: 'Facility'),
+        ]),
+      );
+      valueOf(
+        await first.setLevelValue(
+          projectId: projectId,
+          fieldKey: 'facility',
+          value: 'Kasubi HC IV',
+        ),
+      );
+
+      final ContextRepositoryImpl reopened = open();
+      expect(
+        valueOf(
+          await reopened.recentValues(
+            projectId: projectId,
+            fieldKey: 'facility',
+          ),
+        ),
+        <String>['Kasubi HC IV'],
+      );
+      expect(
+        valueOf(await reopened.load(projectId)).values['facility'],
+        'Kasubi HC IV',
+      );
+    },
+  );
 }

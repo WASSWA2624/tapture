@@ -23,9 +23,7 @@ void main() {
       languageTag: 'sw',
     );
 
-    final TranscriptStore restored = TranscriptStore.fromJson(
-      unrated.toJson(),
-    );
+    final TranscriptStore restored = TranscriptStore.fromJson(unrated.toJson());
 
     expect(restored.confidence, isNull);
     expect(restored.toJson()['confidence'], isNull);
@@ -33,7 +31,11 @@ void main() {
 
   test('a whole-number confidence in JSON is read as a fraction', () {
     final TranscriptStore restored = TranscriptStore.fromJson(
-      const <String, Object?>{'text': 'x', 'languageTag': 'en', 'confidence': 1},
+      const <String, Object?>{
+        'text': 'x',
+        'languageTag': 'en',
+        'confidence': 1,
+      },
     );
 
     expect(restored.confidence, 1.0);

@@ -154,6 +154,204 @@ void main() {
       'Bolt',
     );
   });
+
+  test(
+    'accepted duplicate keys keep separate rows and stable IDs on reimport',
+    () async {
+      final ReferenceDataset draft = ReferenceDataset(
+        id: '',
+        name: 'Suppliers',
+        keyColumn: 'code',
+        columns: const <String>['code', 'name'],
+        source: DatasetSource.csv,
+        importedAt: t0,
+        rowCount: 2,
+        projectId: 'p',
+        sourceFile: 'suppliers.csv',
+        duplicatesAllowed: true,
+      );
+      final List<ReferenceRow> rows = <ReferenceRow>[
+        for (final String name in <String>['North', 'South'])
+          ReferenceRow(
+            id: '',
+            datasetId: '',
+            key: 'ACME',
+            values: <String, String>{'code': 'ACME', 'name': name},
+          ),
+      ];
+      final ReferenceDataset saved = _ok(
+        await repo.importDataset(dataset: draft, rows: rows),
+      );
+      final List<ReferenceRow> before = _ok(await repo.allRows(saved.id));
+      expect(before, hasLength(2));
+      expect(
+        _ok(await repo.lookupByKey(datasetId: saved.id, keyValue: 'ACME')),
+        isNull,
+      );
+      await repo.importDataset(dataset: draft, rows: rows);
+      final List<ReferenceRow> after = _ok(await repo.allRows(saved.id));
+      expect(
+        after.map((ReferenceRow row) => row.id),
+        before.map((ReferenceRow row) => row.id),
+      );
+      expect(
+        after.map((ReferenceRow row) => row.values['name']).toSet(),
+        <String>{'North', 'South'},
+      );
+    },
+  );
+
+  test(
+    'ten thousand rows search and page in SQLite within the lookup budget',
+    () async {
+      final ReferenceDataset saved = _ok(
+        await repo.importDataset(
+          dataset: ReferenceDataset(
+            id: '',
+            name: 'Assets',
+            keyColumn: 'code',
+            columns: const <String>['code', 'description'],
+            source: DatasetSource.csv,
+            importedAt: t0,
+            rowCount: 10000,
+            projectId: 'p',
+            sourceFile: 'assets.csv',
+          ),
+          rows: <ReferenceRow>[
+            for (int i = 0; i < 10000; i++)
+              ReferenceRow(
+                id: '',
+                datasetId: '',
+                key: i.toString().padLeft(5, '0'),
+                values: <String, String>{'description': 'Asset number $i'},
+              ),
+          ],
+        ),
+      );
+      final Stopwatch timer = Stopwatch()..start();
+      final List<ReferenceRow> found = _ok(
+        await repo.pageRows(
+          datasetId: saved.id,
+          offset: 0,
+          limit: 50,
+          query: 'Asset number 9999',
+        ),
+      );
+      timer.stop();
+      expect(found.single.key, '09999');
+      expect(timer.elapsedMilliseconds, lessThan(300));
+      expect(
+        _ok(await repo.pageRows(datasetId: saved.id, offset: 9990, limit: 50)),
+        hasLength(10),
+      );
+      expect(
+        _ok(await repo.pageRows(datasetId: saved.id, offset: 0, limit: 0)),
+        isEmpty,
+      );
+    },
+  );
+
+  test('search folds non-ASCII case and pages across scan chunks', () async {
+    final ReferenceDataset saved = _ok(
+      await repo.importDataset(
+        dataset: ReferenceDataset(
+          id: '',
+          name: 'Sites',
+          keyColumn: 'code',
+          columns: const <String>['code', 'site'],
+          source: DatasetSource.csv,
+          importedAt: t0,
+          rowCount: 120,
+          projectId: 'p',
+          sourceFile: 'sites.csv',
+        ),
+        rows: <ReferenceRow>[
+          for (int i = 0; i < 120; i++)
+            ReferenceRow(
+              id: '',
+              datasetId: '',
+              key: 'S${i.toString().padLeft(3, '0')}',
+              values: <String, String>{
+                'code': 'S${i.toString().padLeft(3, '0')}',
+                'site': i.isEven ? 'ÉCOLE $i' : 'Depot $i',
+              },
+            ),
+        ],
+      ),
+    );
+
+    final List<ReferenceRow> first = _ok(
+      await repo.pageRows(
+        datasetId: saved.id,
+        offset: 0,
+        limit: 50,
+        query: 'école',
+      ),
+    );
+    final List<ReferenceRow> second = _ok(
+      await repo.pageRows(
+        datasetId: saved.id,
+        offset: 50,
+        limit: 50,
+        query: 'École',
+      ),
+    );
+
+    final List<String> evenKeys = <String>[
+      for (int i = 100; i < 120; i += 2) 'S$i',
+    ];
+    expect(first, hasLength(50));
+    expect(first.first.key, 'S000');
+    expect(first.last.key, 'S098');
+    expect(second.map((ReferenceRow row) => row.key), evenKeys);
+  });
+
+  test('search never matches the added-on-device marker', () async {
+    final ReferenceDataset saved = _ok(
+      await repo.importDataset(
+        dataset: ReferenceDataset(
+          id: '',
+          name: 'Parts',
+          keyColumn: 'serial',
+          columns: const <String>['serial', 'name'],
+          source: DatasetSource.device,
+          importedAt: t0,
+          rowCount: 1,
+          projectId: 'p',
+          sourceFile: 'device:parts',
+        ),
+        rows: const <ReferenceRow>[
+          ReferenceRow(
+            id: '',
+            datasetId: '',
+            key: 'Z1',
+            values: <String, String>{'serial': 'Z1', 'name': 'Zed'},
+            addedOnDevice: true,
+          ),
+        ],
+      ),
+    );
+
+    final List<ReferenceRow> byMarker = _ok(
+      await repo.pageRows(
+        datasetId: saved.id,
+        offset: 0,
+        limit: 10,
+        query: 'true',
+      ),
+    );
+    final List<ReferenceRow> byName = _ok(
+      await repo.pageRows(
+        datasetId: saved.id,
+        offset: 0,
+        limit: 10,
+        query: 'ZED',
+      ),
+    );
+
+    expect(byMarker, isEmpty);
+    expect(byName.single.addedOnDevice, isTrue);
+  });
 }
 
 T _ok<T>(Result<T> result) {

@@ -8171,6 +8171,18 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _templateVersionMeta = const VerificationMeta(
+    'templateVersion',
+  );
+  @override
+  late final GeneratedColumn<int> templateVersion = GeneratedColumn<int>(
+    'template_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant<int>(1),
+  );
   static const VerificationMeta _templateRowIdMeta = const VerificationMeta(
     'templateRowId',
   );
@@ -8337,6 +8349,7 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     rev,
     projectId,
     templateId,
+    templateVersion,
     templateRowId,
     rowMatchStrategy,
     rowMatchScore,
@@ -8416,6 +8429,15 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
       );
     } else if (isInserting) {
       context.missing(_templateIdMeta);
+    }
+    if (data.containsKey('template_version')) {
+      context.handle(
+        _templateVersionMeta,
+        templateVersion.isAcceptableOrUnknown(
+          data['template_version']!,
+          _templateVersionMeta,
+        ),
+      );
     }
     if (data.containsKey('template_row_id')) {
       context.handle(
@@ -8579,6 +8601,10 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
         DriftSqlType.string,
         data['${effectivePrefix}template_id'],
       )!,
+      templateVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}template_version'],
+      )!,
       templateRowId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}template_row_id'],
@@ -8670,6 +8696,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
   /// Template used at capture.
   final String templateId;
 
+  /// Template shape kept by this record until an explicit migration.
+  final int templateVersion;
+
   /// Predefined checklist row, when the capture was against one.
   final String? templateRowId;
 
@@ -8727,6 +8756,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     required this.rev,
     required this.projectId,
     required this.templateId,
+    required this.templateVersion,
     this.templateRowId,
     this.rowMatchStrategy,
     this.rowMatchScore,
@@ -8753,6 +8783,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     map['rev'] = Variable<int>(rev);
     map['project_id'] = Variable<String>(projectId);
     map['template_id'] = Variable<String>(templateId);
+    map['template_version'] = Variable<int>(templateVersion);
     if (!nullToAbsent || templateRowId != null) {
       map['template_row_id'] = Variable<String>(templateRowId);
     }
@@ -8796,6 +8827,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       rev: Value(rev),
       projectId: Value(projectId),
       templateId: Value(templateId),
+      templateVersion: Value(templateVersion),
       templateRowId: templateRowId == null && nullToAbsent
           ? const Value.absent()
           : Value(templateRowId),
@@ -8843,6 +8875,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       rev: serializer.fromJson<int>(json['rev']),
       projectId: serializer.fromJson<String>(json['projectId']),
       templateId: serializer.fromJson<String>(json['templateId']),
+      templateVersion: serializer.fromJson<int>(json['templateVersion']),
       templateRowId: serializer.fromJson<String?>(json['templateRowId']),
       rowMatchStrategy: serializer.fromJson<String?>(json['rowMatchStrategy']),
       rowMatchScore: serializer.fromJson<double?>(json['rowMatchScore']),
@@ -8871,6 +8904,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       'rev': serializer.toJson<int>(rev),
       'projectId': serializer.toJson<String>(projectId),
       'templateId': serializer.toJson<String>(templateId),
+      'templateVersion': serializer.toJson<int>(templateVersion),
       'templateRowId': serializer.toJson<String?>(templateRowId),
       'rowMatchStrategy': serializer.toJson<String?>(rowMatchStrategy),
       'rowMatchScore': serializer.toJson<double?>(rowMatchScore),
@@ -8897,6 +8931,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     int? rev,
     String? projectId,
     String? templateId,
+    int? templateVersion,
     Value<String?> templateRowId = const Value.absent(),
     Value<String?> rowMatchStrategy = const Value.absent(),
     Value<double?> rowMatchScore = const Value.absent(),
@@ -8920,6 +8955,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     rev: rev ?? this.rev,
     projectId: projectId ?? this.projectId,
     templateId: templateId ?? this.templateId,
+    templateVersion: templateVersion ?? this.templateVersion,
     templateRowId: templateRowId.present
         ? templateRowId.value
         : this.templateRowId,
@@ -8955,6 +8991,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       templateId: data.templateId.present
           ? data.templateId.value
           : this.templateId,
+      templateVersion: data.templateVersion.present
+          ? data.templateVersion.value
+          : this.templateVersion,
       templateRowId: data.templateRowId.present
           ? data.templateRowId.value
           : this.templateRowId,
@@ -9005,6 +9044,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
           ..write('rev: $rev, ')
           ..write('projectId: $projectId, ')
           ..write('templateId: $templateId, ')
+          ..write('templateVersion: $templateVersion, ')
           ..write('templateRowId: $templateRowId, ')
           ..write('rowMatchStrategy: $rowMatchStrategy, ')
           ..write('rowMatchScore: $rowMatchScore, ')
@@ -9033,6 +9073,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     rev,
     projectId,
     templateId,
+    templateVersion,
     templateRowId,
     rowMatchStrategy,
     rowMatchScore,
@@ -9060,6 +9101,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
           other.rev == this.rev &&
           other.projectId == this.projectId &&
           other.templateId == this.templateId &&
+          other.templateVersion == this.templateVersion &&
           other.templateRowId == this.templateRowId &&
           other.rowMatchStrategy == this.rowMatchStrategy &&
           other.rowMatchScore == this.rowMatchScore &&
@@ -9085,6 +9127,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
   final Value<int> rev;
   final Value<String> projectId;
   final Value<String> templateId;
+  final Value<int> templateVersion;
   final Value<String?> templateRowId;
   final Value<String?> rowMatchStrategy;
   final Value<double?> rowMatchScore;
@@ -9109,6 +9152,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     this.rev = const Value.absent(),
     this.projectId = const Value.absent(),
     this.templateId = const Value.absent(),
+    this.templateVersion = const Value.absent(),
     this.templateRowId = const Value.absent(),
     this.rowMatchStrategy = const Value.absent(),
     this.rowMatchScore = const Value.absent(),
@@ -9134,6 +9178,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     this.rev = const Value.absent(),
     required String projectId,
     required String templateId,
+    this.templateVersion = const Value.absent(),
     this.templateRowId = const Value.absent(),
     this.rowMatchStrategy = const Value.absent(),
     this.rowMatchScore = const Value.absent(),
@@ -9170,6 +9215,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     Expression<int>? rev,
     Expression<String>? projectId,
     Expression<String>? templateId,
+    Expression<int>? templateVersion,
     Expression<String>? templateRowId,
     Expression<String>? rowMatchStrategy,
     Expression<double>? rowMatchScore,
@@ -9195,6 +9241,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
       if (rev != null) 'rev': rev,
       if (projectId != null) 'project_id': projectId,
       if (templateId != null) 'template_id': templateId,
+      if (templateVersion != null) 'template_version': templateVersion,
       if (templateRowId != null) 'template_row_id': templateRowId,
       if (rowMatchStrategy != null) 'row_match_strategy': rowMatchStrategy,
       if (rowMatchScore != null) 'row_match_score': rowMatchScore,
@@ -9222,6 +9269,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     Value<int>? rev,
     Value<String>? projectId,
     Value<String>? templateId,
+    Value<int>? templateVersion,
     Value<String?>? templateRowId,
     Value<String?>? rowMatchStrategy,
     Value<double?>? rowMatchScore,
@@ -9247,6 +9295,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
       rev: rev ?? this.rev,
       projectId: projectId ?? this.projectId,
       templateId: templateId ?? this.templateId,
+      templateVersion: templateVersion ?? this.templateVersion,
       templateRowId: templateRowId ?? this.templateRowId,
       rowMatchStrategy: rowMatchStrategy ?? this.rowMatchStrategy,
       rowMatchScore: rowMatchScore ?? this.rowMatchScore,
@@ -9289,6 +9338,9 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     }
     if (templateId.present) {
       map['template_id'] = Variable<String>(templateId.value);
+    }
+    if (templateVersion.present) {
+      map['template_version'] = Variable<int>(templateVersion.value);
     }
     if (templateRowId.present) {
       map['template_row_id'] = Variable<String>(templateRowId.value);
@@ -9351,6 +9403,7 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
           ..write('rev: $rev, ')
           ..write('projectId: $projectId, ')
           ..write('templateId: $templateId, ')
+          ..write('templateVersion: $templateVersion, ')
           ..write('templateRowId: $templateRowId, ')
           ..write('rowMatchStrategy: $rowMatchStrategy, ')
           ..write('rowMatchScore: $rowMatchScore, ')
@@ -25883,7 +25936,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final Index referenceRowsByKey = Index(
     'reference_rows_by_key',
-    'CREATE UNIQUE INDEX reference_rows_by_key ON reference_rows (dataset_id, key_value)',
+    'CREATE INDEX reference_rows_by_key ON reference_rows (dataset_id, key_value)',
   );
   late final Index referenceRowsByNormalised = Index(
     'reference_rows_by_normalised',

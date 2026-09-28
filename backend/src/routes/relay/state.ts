@@ -4,7 +4,6 @@ import type { Deps } from '../../deps.js';
 import { asyncRoute } from '../../http.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { relayState } from '../../services/relay/packages.js';
-
 export function registerRelayState(app: Express, deps: Deps): void {
   app.get(
     '/api/v1/projects/:id/relay/state',
@@ -14,7 +13,7 @@ export function registerRelayState(app: Express, deps: Deps): void {
       const id = req.params['id'];
       if (principal === undefined || id === undefined)
         throw invalidRequest('Missing project.');
-      res.json(relayState(deps.store, principal, id));
+      res.json(await relayState(deps.store, principal, id));
     }),
   );
 }

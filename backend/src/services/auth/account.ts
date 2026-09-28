@@ -1,5 +1,6 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import type { AppConfig } from '../../config/schema.js';
+import { normaliseEmail, sameEmail } from '../../domain/email.js';
 import {
   conflict,
   forbidden,
@@ -8,10 +9,9 @@ import {
 } from '../../domain/errors.js';
 import type { Role } from '../../domain/permissions.js';
 import { withTransaction } from '../../repositories/base.js';
-import type { Store } from '../../repositories/store.js';
+import type { Repository as Store } from '../../repositories/repository.js';
 import { hashPassword, verifyPassword } from './password.js';
 import { revokeUser } from './tokens.js';
-
 export async function registerAccount(
   store: Store,
   config: AppConfig,
@@ -21,29 +21,33 @@ export async function registerAccount(
     organisationId: string;
     invitationToken?: string;
   },
-): Promise<{ userId: string }> {
-  const org = store.orgs().find((row) => row.id === input.organisationId);
+): Promise<{
+  userId: string;
+}> {
+  const org = (await store.orgs()).find(
+    (row) => row.id === input.organisationId,
+  );
   if (org === undefined) throw forbidden();
   if (input.invitationToken !== undefined) {
     const hash = createHash('sha256')
       .update(input.invitationToken)
       .digest('hex');
-    const invite = store
-      .invites()
-      .find((row) => row.tokenHash === hash && !row.used);
-    const user = store.users().find((row) => row.id === invite?.userId);
+    const invite = (await store.invites()).find(
+      (row) => row.tokenHash === hash && !row.used,
+    );
+    const user = (await store.users()).find((row) => row.id === invite?.userId);
     if (
       invite === undefined ||
       user === undefined ||
-      user.email !== input.email
+      !sameEmail(user.email, input.email)
     ) {
       throw forbidden();
     }
     const passwordHash = await hashPassword(input.password, config);
     await withTransaction(store, async (tx) => {
-      tx.saveUser({ ...user, passwordHash, status: 'active' });
-      invite.used = true;
-      tx.recordAudit({
+      await tx.saveUser({ ...user, passwordHash, status: 'active' });
+      await tx.saveInvite({ ...invite, used: true });
+      await tx.recordAudit({
         actorId: user.id,
         action: 'accept_invite',
         target: user.id,
@@ -54,22 +58,23 @@ export async function registerAccount(
     return { userId: user.id };
   }
   if (!org.selfRegister) throw forbidden();
-  const taken = store
-    .users()
-    .some((row) => row.organisationId === org.id && row.email === input.email);
+  const email = normaliseEmail(input.email);
+  const taken = (await store.users()).some(
+    (row) => row.organisationId === org.id && sameEmail(row.email, email),
+  );
   if (taken) throw conflict('An account with that address already exists.');
   const userId = randomUUID();
   const passwordHash = await hashPassword(input.password, config);
   await withTransaction(store, async (tx) => {
-    tx.addUser({
+    await tx.addUser({
       id: userId,
       organisationId: org.id,
-      email: input.email,
+      email,
       passwordHash,
       role: 'field_operator',
       status: 'active',
     });
-    tx.recordAudit({
+    await tx.recordAudit({
       actorId: userId,
       action: 'register',
       target: userId,
@@ -79,19 +84,25 @@ export async function registerAccount(
   });
   return { userId };
 }
-
 export async function createInvitedUser(
   store: Store,
   config: AppConfig,
-  input: { organisationId: string; email: string; role: Role; actorId: string },
-): Promise<{ userId: string; invitationToken: string }> {
-  const taken = store
-    .users()
-    .some(
-      (row) =>
-        row.organisationId === input.organisationId &&
-        row.email === input.email,
-    );
+  input: {
+    organisationId: string;
+    email: string;
+    role: Role;
+    actorId: string;
+  },
+): Promise<{
+  userId: string;
+  invitationToken: string;
+}> {
+  const email = normaliseEmail(input.email);
+  const taken = (await store.users()).some(
+    (row) =>
+      row.organisationId === input.organisationId &&
+      sameEmail(row.email, email),
+  );
   if (taken) throw conflict('An account with that address already exists.');
   const userId = randomUUID();
   const invitationToken = randomBytes(24).toString('base64url');
@@ -100,21 +111,21 @@ export async function createInvitedUser(
     config,
   );
   await withTransaction(store, async (tx) => {
-    tx.addUser({
+    await tx.addUser({
       id: userId,
       organisationId: input.organisationId,
-      email: input.email,
+      email,
       passwordHash,
       role: input.role,
       status: 'invited',
     });
-    tx.addInvite({
+    await tx.addInvite({
       tokenHash: createHash('sha256').update(invitationToken).digest('hex'),
       userId,
       used: false,
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     });
-    tx.recordAudit({
+    await tx.recordAudit({
       actorId: input.actorId,
       action: 'invite_user',
       target: userId,
@@ -124,13 +135,16 @@ export async function createInvitedUser(
   });
   return { userId, invitationToken };
 }
-
 export async function changePassword(
   store: Store,
   config: AppConfig,
-  input: { userId: string; currentPassword: string; nextPassword: string },
+  input: {
+    userId: string;
+    currentPassword: string;
+    nextPassword: string;
+  },
 ): Promise<void> {
-  const user = store.users().find((row) => row.id === input.userId);
+  const user = (await store.users()).find((row) => row.id === input.userId);
   if (user === undefined) throw invalidCredentials();
   const ok = await verifyPassword(
     input.currentPassword,
@@ -143,9 +157,9 @@ export async function changePassword(
   }
   const passwordHash = await hashPassword(input.nextPassword, config);
   await withTransaction(store, async (tx) => {
-    tx.saveUser({ ...user, passwordHash });
-    revokeUser(tx, user.id);
-    tx.recordAudit({
+    await tx.saveUser({ ...user, passwordHash });
+    await revokeUser(tx, user.id);
+    await tx.recordAudit({
       actorId: user.id,
       action: 'change_password',
       target: user.id,
@@ -154,35 +168,37 @@ export async function changePassword(
     });
   });
 }
-
 export async function requestReset(
   store: Store,
-  input: { email: string; organisationId: string },
+  input: {
+    email: string;
+    organisationId: string;
+  },
 ): Promise<void> {
-  const user = store
-    .users()
-    .find(
-      (row) =>
-        row.organisationId === input.organisationId &&
-        row.email === input.email,
-    );
+  const user = (await store.users()).find(
+    (row) =>
+      row.organisationId === input.organisationId &&
+      sameEmail(row.email, input.email),
+  );
   if (user === undefined) return;
   const token = randomBytes(24).toString('base64url');
-  store.addInvite({
+  await store.addInvite({
     tokenHash: createHash('sha256').update(token).digest('hex'),
     userId: user.id,
     used: false,
     expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
   });
 }
-
 export async function completeReset(
   store: Store,
   config: AppConfig,
-  input: { token: string; password: string },
+  input: {
+    token: string;
+    password: string;
+  },
 ): Promise<void> {
   const hash = createHash('sha256').update(input.token).digest('hex');
-  const invite = store.invites().find((row) => row.tokenHash === hash);
+  const invite = (await store.invites()).find((row) => row.tokenHash === hash);
   if (
     invite === undefined ||
     invite.used ||
@@ -192,14 +208,14 @@ export async function completeReset(
   }
   if (input.password.length < 12)
     throw invalidRequest('Use at least 12 characters.');
-  const user = store.users().find((row) => row.id === invite.userId);
+  const user = (await store.users()).find((row) => row.id === invite.userId);
   if (user === undefined) throw invalidRequest('That reset link is not valid.');
   const passwordHash = await hashPassword(input.password, config);
   await withTransaction(store, async (tx) => {
-    tx.saveUser({ ...user, passwordHash, status: 'active' });
-    invite.used = true;
-    revokeUser(tx, user.id);
-    tx.recordAudit({
+    await tx.saveUser({ ...user, passwordHash, status: 'active' });
+    await tx.saveInvite({ ...invite, used: true });
+    await revokeUser(tx, user.id);
+    await tx.recordAudit({
       actorId: user.id,
       action: 'reset_password',
       target: user.id,

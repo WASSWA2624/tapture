@@ -12,6 +12,9 @@ import '../domain/reference_row.dart';
 /// Presentation never sees a database type; only
 /// [ReferenceRepositoryImpl] and this mapper import both layers.
 abstract final class ReferenceMapper {
+  /// Stored cell that marks a row added on this device; never a visible value.
+  static const String addedOnDeviceKey = _addedKey;
+
   /// Reads a stored dataset header.
   static ReferenceDataset datasetFromRow(sqlite.ReferenceDatasetRow row) {
     final ({DatasetSource source, bool duplicatesAllowed, String path}) packed =

@@ -25,6 +25,8 @@ final packageImportControllerProvider =
 /// Picks, checks and imports project packages. Nothing is written before
 /// the person confirms (FE-STATE-07).
 class PackageImportController extends Notifier<PackageImportView> {
+  /// Transport receipt callback, invoked only after a durable import or merge.
+  Future<void> Function()? onApplied;
   PickedDocument? _picked;
   CancellationToken? _checking;
 
@@ -124,6 +126,7 @@ class PackageImportController extends Notifier<PackageImportView> {
       onProgress: _progress,
     );
     if (imported case Success<ImportedProject>()) {
+      await applied();
       await finish();
     } else {
       state = (phase: PackageImportPhase.ready, bundle: bundle, progress: 0);
@@ -147,11 +150,20 @@ class PackageImportController extends Notifier<PackageImportView> {
 
   /// Closes the package and deletes the picker's copy of it.
   Future<void> finish() async {
+    onApplied = null;
     final InspectedBundle? bundle = _open;
     _open = null;
     _checking = null;
     state = _idle;
     await _release(bundle);
+  }
+
+  /// Confirms committed writes to the transport; preview and cancellation do not.
+  Future<void> applied() async {
+    final callback = onApplied;
+    if (callback == null) return;
+    await callback();
+    onApplied = null;
   }
 
   void _progress(double progress) {

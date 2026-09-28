@@ -3,28 +3,24 @@ import { can, type Principal } from '../domain/permissions.js';
 import { invalidRequest, notFound } from '../domain/errors.js';
 import { clampRetention } from '../domain/retention.js';
 import { withTransaction } from '../repositories/base.js';
-import type { Store } from '../repositories/store.js';
+import type { Repository as Store } from '../repositories/repository.js';
 import type { Membership, Project } from '../types/index.js';
-
-function memberOf(
+async function memberOf(
   store: Store,
   principal: Principal,
   projectId: string,
-): Membership | undefined {
-  return store
-    .members()
-    .find(
-      (row) => row.projectId === projectId && row.userId === principal.userId,
-    );
+): Promise<Membership | undefined> {
+  return (await store.members()).find(
+    (row) => row.projectId === projectId && row.userId === principal.userId,
+  );
 }
-
-export function visibleProject(
+export async function visibleProject(
   store: Store,
   principal: Principal,
   projectId: string,
-): Project {
-  const project = store.projects().find((row) => row.id === projectId);
-  const member = memberOf(store, principal, projectId);
+): Promise<Project> {
+  const project = (await store.projects()).find((row) => row.id === projectId);
+  const member = await memberOf(store, principal, projectId);
   if (
     project === undefined ||
     project.organisationId !== principal.organisationId ||
@@ -34,25 +30,37 @@ export function visibleProject(
   }
   return project;
 }
-
-export function listProjects(store: Store, principal: Principal): Project[] {
-  return store.projects().filter((project) => {
-    try {
-      visibleProject(store, principal, project.id);
-      return true;
-    } catch {
-      return false;
-    }
-  });
+export async function listProjects(
+  store: Store,
+  principal: Principal,
+): Promise<Project[]> {
+  const memberships = await store.members();
+  const visibleIds = new Set(
+    memberships
+      .filter((row) => row.userId === principal.userId)
+      .map((row) => row.projectId),
+  );
+  return (await store.projects()).filter(
+    (project) =>
+      project.organisationId === principal.organisationId &&
+      (can(principal, 'adminAction') || visibleIds.has(project.id)),
+  );
 }
-
 export async function createProject(
   store: Store,
   principal: Principal,
-  input: { id: string; name: string },
+  input: {
+    id: string;
+    name: string;
+  },
 ): Promise<Project> {
   if (!can(principal, 'manageProject')) throw notFound();
-  const org = store.orgs().find((row) => row.id === principal.organisationId);
+  const existing = (await store.projects()).find((row) => row.id === input.id);
+  if (existing !== undefined)
+    return visibleProject(store, principal, existing.id);
+  const org = (await store.orgs()).find(
+    (row) => row.id === principal.organisationId,
+  );
   if (org === undefined) throw notFound();
   const project: Project = {
     id: input.id,
@@ -63,13 +71,13 @@ export async function createProject(
     retentionDays: org.retentionDays,
   };
   await withTransaction(store, async (tx) => {
-    tx.addProject(project);
-    tx.addMember({
+    await tx.addProject(project);
+    await tx.addMember({
       projectId: project.id,
       userId: principal.userId,
       contextScope: principal.contextScope,
     });
-    tx.recordAudit({
+    await tx.recordAudit({
       actorId: principal.userId,
       action: 'create_project',
       target: project.id,
@@ -79,7 +87,6 @@ export async function createProject(
   });
   return project;
 }
-
 export async function patchProject(
   store: Store,
   config: AppConfig,
@@ -93,8 +100,10 @@ export async function patchProject(
   },
 ): Promise<Project> {
   if (!can(principal, 'manageProject')) throw notFound();
-  const current = visibleProject(store, principal, projectId);
-  const org = store.orgs().find((row) => row.id === principal.organisationId);
+  const current = await visibleProject(store, principal, projectId);
+  const org = (await store.orgs()).find(
+    (row) => row.id === principal.organisationId,
+  );
   if (org === undefined) throw notFound();
   let retentionDays = current.retentionDays;
   if (patch.retentionDays !== undefined) {
@@ -115,8 +124,8 @@ export async function patchProject(
     retentionDays,
   };
   await withTransaction(store, async (tx) => {
-    tx.saveProject(next);
-    tx.recordAudit({
+    await tx.saveProject(next);
+    await tx.recordAudit({
       actorId: principal.userId,
       action: 'patch_project',
       target: projectId,
@@ -126,39 +135,38 @@ export async function patchProject(
   });
   return next;
 }
-
-export function listMembers(
+export async function listMembers(
   store: Store,
   principal: Principal,
   projectId: string,
 ) {
-  visibleProject(store, principal, projectId);
-  return store.members().filter((row) => row.projectId === projectId);
+  await visibleProject(store, principal, projectId);
+  return (await store.members()).filter((row) => row.projectId === projectId);
 }
-
 export async function addMember(
   store: Store,
   principal: Principal,
   projectId: string,
-  input: { userId: string; contextScope: string | null },
+  input: {
+    userId: string;
+    contextScope: string | null;
+  },
 ): Promise<void> {
   if (!can(principal, 'manageMembers')) throw notFound();
-  visibleProject(store, principal, projectId);
-  const user = store
-    .users()
-    .find(
-      (row) =>
-        row.id === input.userId &&
-        row.organisationId === principal.organisationId,
-    );
+  await visibleProject(store, principal, projectId);
+  const user = (await store.users()).find(
+    (row) =>
+      row.id === input.userId &&
+      row.organisationId === principal.organisationId,
+  );
   if (user === undefined) throw notFound();
   await withTransaction(store, async (tx) => {
-    tx.addMember({
+    await tx.addMember({
       projectId,
       userId: input.userId,
       contextScope: input.contextScope,
     });
-    tx.recordAudit({
+    await tx.recordAudit({
       actorId: principal.userId,
       action: 'add_member',
       target: `${projectId}:${input.userId}`,
@@ -167,7 +175,6 @@ export async function addMember(
     });
   });
 }
-
 export async function removeMember(
   store: Store,
   principal: Principal,
@@ -175,10 +182,10 @@ export async function removeMember(
   userId: string,
 ): Promise<void> {
   if (!can(principal, 'manageMembers')) throw notFound();
-  visibleProject(store, principal, projectId);
+  await visibleProject(store, principal, projectId);
   await withTransaction(store, async (tx) => {
-    tx.removeMember(projectId, userId);
-    tx.recordAudit({
+    await tx.removeMember(projectId, userId);
+    await tx.recordAudit({
       actorId: principal.userId,
       action: 'remove_member',
       target: `${projectId}:${userId}`,

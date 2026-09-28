@@ -4,7 +4,6 @@ import type { Deps } from '../../deps.js';
 import { asyncRoute } from '../../http.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { listPackages, readPackage } from '../../services/relay/packages.js';
-
 export function registerRelayFetch(app: Express, deps: Deps): void {
   const auth = authenticate(deps);
   app.get(
@@ -18,7 +17,7 @@ export function registerRelayFetch(app: Express, deps: Deps): void {
       const cursor = req.query['cursor'];
       const limit = req.query['limit'];
       res.json(
-        listPackages(deps.store, principal, id, {
+        await listPackages(deps.store, principal, id, {
           ...(typeof cursor === 'string' ? { cursor } : {}),
           ...(typeof limit === 'string' ? { limit: Number(limit) } : {}),
         }),
@@ -39,7 +38,7 @@ export function registerRelayFetch(app: Express, deps: Deps): void {
       ) {
         throw invalidRequest('Missing package.');
       }
-      const found = readPackage(deps.store, principal, id, packageId);
+      const found = await readPackage(deps.store, principal, id, packageId);
       res.setHeader('content-type', 'application/octet-stream');
       res.send(found.bytes);
     }),

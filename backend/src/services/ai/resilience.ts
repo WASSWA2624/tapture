@@ -1,5 +1,5 @@
 import type { AppConfig } from '../../config/schema.js';
-import { internalError, rateLimited } from '../../domain/errors.js';
+import { AppError, internalError, rateLimited } from '../../domain/errors.js';
 import type { AiProvider, AiRequest, AiResult } from './provider.js';
 
 interface Breaker {
@@ -13,6 +13,15 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
+}
+
+/// A client fault or missing configuration. A retry cannot change the answer,
+/// and it says nothing about the provider's health, so it never trips the
+/// breaker and reaches the caller unchanged.
+function isFinal(error: unknown): boolean {
+  if (!(error instanceof AppError)) return false;
+  if (error.code === 'unavailable') return true;
+  return error.status < 500 && error.status !== 429;
 }
 
 /// Timeout, bounded retry, and a circuit breaker around one provider call.
@@ -37,6 +46,7 @@ export async function callProvider(
       if (result.text.length === 0) throw new Error('malformed');
       return result;
     } catch (error) {
+      if (isFinal(error)) throw error;
       last = error;
       breaker.failures += 1;
       if (breaker.failures >= config.aiBreakerThreshold) {

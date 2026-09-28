@@ -5,6 +5,10 @@ final class BackendConfig {
     required this.baseUrl,
     this.organisationId,
     this.accountEmail,
+    this.accountId,
+    this.role,
+    this.aiAvailable = false,
+    this.grants = const <String, String?>{},
     this.state = EnrolmentState.notEnrolled,
     this.grantValidUntil,
     this.reachable = true,
@@ -18,6 +22,18 @@ final class BackendConfig {
 
   /// Signed-in address, for the settings screen.
   final String? accountEmail;
+
+  /// Cached account identity; never replaces the captured operator name.
+  final String? accountId;
+
+  /// Server role, interpreted by the account feature's one role gate.
+  final String? role;
+
+  /// Whether the organisation reported a configured AI provider at refresh.
+  final bool aiAvailable;
+
+  /// Project membership and optional context scope from the cached grant.
+  final Map<String, String?> grants;
 
   /// Current enrolment state.
   final EnrolmentState state;
@@ -51,6 +67,10 @@ final class BackendConfig {
       baseUrl: baseUrl,
       organisationId: organisationId,
       accountEmail: accountEmail,
+      accountId: accountId,
+      role: role,
+      aiAvailable: aiAvailable,
+      grants: grants,
       state: next,
       grantValidUntil: grantValidUntil,
       reachable: reachable,

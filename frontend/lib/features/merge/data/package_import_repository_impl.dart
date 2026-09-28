@@ -344,9 +344,14 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
             if (BundleFormat.referenceTables.contains(table)) {
               continue;
             }
-            final List<Map<String, Object?>> rows = table == 'projects'
-                ? <Map<String, Object?>>[project]
-                : bundle.rowsOf(table);
+            final List<Map<String, Object?>> rows = switch (table) {
+              'projects' => <Map<String, Object?>>[project],
+              'records' => _onTemplateVersions(
+                bundle.rowsOf(table),
+                bundle.rowsOf('templates'),
+              ),
+              _ => bundle.rowsOf(table),
+            };
             final Set<String> columns = await _columns(table);
             for (final Map<String, Object?> row in rows) {
               await _insert(table, row, columns);
@@ -840,39 +845,69 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
 
   /// Reference datasets and rows, by the merge's rule: a dataset or a row
   /// key absent here is added; one present keeps this device's values.
+  ///
+  /// Keys are compared with the rows this device held before the import, so
+  /// a key the package repeats (an ambiguous key column the operator
+  /// accepted) arrives as every one of its rows, and a key this device
+  /// already repeats matches without failing. A row id already here is
+  /// never inserted twice.
   Future<void> _insertReference(
     Map<String, List<Map<String, Object?>>> tables,
   ) async {
+    final List<Map<String, Object?>> incomingDatasets =
+        tables['reference_datasets'] ?? const <Map<String, Object?>>[];
+    final List<Map<String, Object?>> incomingRows =
+        tables['reference_rows'] ?? const <Map<String, Object?>>[];
     final Set<String> datasets = await _existing('reference_datasets', <String>[
-      for (final Map<String, Object?> row
-          in tables['reference_datasets'] ?? const <Map<String, Object?>>[])
+      for (final Map<String, Object?> row in incomingDatasets)
         row['id']! as String,
     ]);
     final Set<String> datasetColumns = await _columns('reference_datasets');
-    for (final Map<String, Object?> row
-        in tables['reference_datasets'] ?? const <Map<String, Object?>>[]) {
+    for (final Map<String, Object?> row in incomingDatasets) {
       if (!datasets.contains(row['id'])) {
         await _insert('reference_datasets', row, datasetColumns);
       }
     }
+    final Set<String> rowIds = await _existing('reference_rows', <String>[
+      for (final Map<String, Object?> row in incomingRows) row['id']! as String,
+    ]);
+    final Set<String> keys = await _referenceKeys(<String>[
+      for (final Map<String, Object?> row in incomingRows)
+        row['dataset_id']! as String,
+    ]);
     final Set<String> rowColumns = await _columns('reference_rows');
-    for (final Map<String, Object?> row
-        in tables['reference_rows'] ?? const <Map<String, Object?>>[]) {
-      final QueryRow? here = await _db
+    for (final Map<String, Object?> row in incomingRows) {
+      final String id = row['id']! as String;
+      if (rowIds.contains(id) ||
+          keys.contains(_referenceKey(row['dataset_id'], row['key_value']))) {
+        continue;
+      }
+      await _insert('reference_rows', row, rowColumns);
+      rowIds.add(id);
+    }
+  }
+
+  /// Every `dataset/key` this device holds in [datasetIds], as
+  /// [_referenceKey] spells it.
+  Future<Set<String>> _referenceKeys(List<String> datasetIds) async {
+    final Set<String> keys = <String>{};
+    for (final List<String> chunk in _chunks(datasetIds.toSet().toList())) {
+      final List<QueryRow> rows = await _db
           .customSelect(
-            'SELECT 1 FROM reference_rows WHERE id = ? OR '
-            '(dataset_id = ? AND key_value = ?)',
+            'SELECT dataset_id, key_value FROM reference_rows '
+            'WHERE dataset_id IN '
+            '(${List<String>.filled(chunk.length, '?').join(', ')})',
             variables: <Variable<Object>>[
-              Variable<String>(row['id']! as String),
-              Variable<String>(row['dataset_id']! as String),
-              Variable<String>(row['key_value']! as String),
+              for (final String id in chunk) Variable<String>(id),
             ],
           )
-          .getSingleOrNull();
-      if (here == null) {
-        await _insert('reference_rows', row, rowColumns);
-      }
+          .get();
+      keys.addAll(<String>[
+        for (final QueryRow row in rows)
+          _referenceKey(row.data['dataset_id'], row.data['key_value']),
+      ]);
     }
+    return keys;
   }
 
   /// Inserts [row] as it travelled, keeping only the columns [columns] this
@@ -1103,6 +1138,36 @@ Variable<Object> _variable(Object? value) {
     _ => Variable<String>(jsonEncode(value)),
   };
 }
+
+/// [records] each on a template version: a package from a build before
+/// records kept one places each record on its template's version in
+/// [templates], as the upgrade that added the column did on a device.
+List<Map<String, Object?>> _onTemplateVersions(
+  List<Map<String, Object?>> records,
+  List<Map<String, Object?>> templates,
+) {
+  final Map<Object?, Object?> versions = <Object?, Object?>{
+    for (final Map<String, Object?> template in templates)
+      template['id']: template['version'],
+  };
+  return <Map<String, Object?>>[
+    for (final Map<String, Object?> record in records)
+      if (record['template_version'] is int)
+        record
+      else
+        <String, Object?>{
+          ...record,
+          'template_version': switch (versions[record['template_id']]) {
+            final int version => version,
+            _ => 1,
+          },
+        },
+  ];
+}
+
+/// One reference row's `dataset/key` identity, as a merge compares keys.
+String _referenceKey(Object? datasetId, Object? keyValue) =>
+    '$datasetId/$keyValue';
 
 Iterable<List<String>> _chunks(List<String> ids) sync* {
   const int size = 500;

@@ -5,21 +5,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/concurrency/isolate_runner.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/download_service.dart';
+import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 import '../domain/reference_dataset.dart';
 import '../domain/reference_row.dart';
-import '../reference.dart' show referenceRepositoryProvider;
+import '../reference.dart' show DatasetExport, referenceRepositoryProvider;
 
 /// Virtualised, paged, searchable browser for one dataset.
 class DatasetBrowserScreen extends ConsumerStatefulWidget {
@@ -53,6 +61,15 @@ class _DatasetBrowserScreenState extends ConsumerState<DatasetBrowserScreen> {
   Failure? _error;
   String _query = '';
   Set<String> _visible = <String>{};
+  int _generation = 0;
+  bool _exporting = false;
+  final CancellationToken _cancel = CancellationToken();
+
+  @override
+  void dispose() {
+    _cancel.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -95,13 +112,26 @@ class _DatasetBrowserScreenState extends ConsumerState<DatasetBrowserScreen> {
               },
             ),
           ),
-          if (_narrow(context) && header.asData?.value != null)
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: () => _pickColumns(header.asData!.value!),
-                child: const Text(Copy.datasetsColumns),
-              ),
+          if (header.asData?.value case final ReferenceDataset dataset)
+            Wrap(
+              spacing: Space.x2,
+              children: <Widget>[
+                if (_narrow(context))
+                  TextButton(
+                    onPressed: () => _pickColumns(header.asData!.value!),
+                    child: const Text(Copy.datasetsColumns),
+                  ),
+                for (final bool json in <bool>[false, true])
+                  AppButton(
+                    label:
+                        '${Copy.datasetsExport} ${Copy.datasetSourceLabel(json ? 'json' : 'csv')}',
+                    variant: AppButtonVariant.secondary,
+                    busy: _exporting,
+                    onPressed: _exporting
+                        ? null
+                        : () => unawaited(_export(dataset, json)),
+                  ),
+              ],
             ),
           Expanded(
             child: _loading
@@ -148,6 +178,66 @@ class _DatasetBrowserScreenState extends ConsumerState<DatasetBrowserScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _export(ReferenceDataset dataset, bool json) async {
+    setState(() => _exporting = true);
+    final String? projectId =
+        widget.projectId ??
+        dataset.projectId ??
+        ref.read(currentProjectProvider);
+    if (projectId == null) {
+      setState(() => _exporting = false);
+      return;
+    }
+    try {
+      final Project? selected = await ref.read(
+        projectByIdProvider(projectId).future,
+      );
+      if (!mounted) {
+        return;
+      }
+      if (selected == null) {
+        throw const StorageFailure(
+          message: 'Open a project before exporting this dataset.',
+          recoveryAction: 'Open the project and try again.',
+        );
+      }
+      final Result<String?> saved = await DatasetExport.download(
+        dataset: dataset,
+        repository: ref.read(referenceRepositoryProvider),
+        downloads: ref.read(downloadServiceProvider),
+        storageRoot: ref.read(storageRootProvider),
+        projectFolder: selected.folderName,
+        exportId: UuidV7Service(const SystemClock()).newId(),
+        json: json,
+        cancel: _cancel,
+      );
+      if (!mounted) {
+        return;
+      }
+      saved.fold(
+        (Failure failure) =>
+            showAppSnack(context, failure.message, tone: SnackTone.error),
+        (String? _) => showAppSnack(
+          context,
+          Copy.projectExportSaved(dataset.name),
+          tone: SnackTone.success,
+        ),
+      );
+    } on Object catch (error) {
+      if (mounted) {
+        showAppSnack(
+          context,
+          Failure.from(error).message,
+          tone: SnackTone.error,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _exporting = false);
+      }
+    }
   }
 
   List<String> _columnsFor(ReferenceDataset? dataset) {
@@ -219,11 +309,13 @@ class _DatasetBrowserScreenState extends ConsumerState<DatasetBrowserScreen> {
   }
 
   Future<void> _reload() async {
+    _generation++;
     setState(() {
       _loading = true;
       _error = null;
       _rows.clear();
       _hasMore = true;
+      _loadingMore = false;
     });
     await _loadMore(null, reset: true);
   }
@@ -233,15 +325,16 @@ class _DatasetBrowserScreenState extends ConsumerState<DatasetBrowserScreen> {
       return;
     }
     setState(() => _loadingMore = true);
+    final int generation = _generation;
     final Result<List<ReferenceRow>> page = await ref
         .read(referenceRepositoryProvider)
         .pageRows(
           datasetId: widget.datasetId,
           offset: reset ? 0 : _rows.length,
-          limit: 50,
+          limit: AppConstants.lists.pageSize,
           query: _query,
         );
-    if (!mounted) {
+    if (!mounted || generation != _generation) {
       return;
     }
     switch (page) {
@@ -260,7 +353,7 @@ class _DatasetBrowserScreenState extends ConsumerState<DatasetBrowserScreen> {
           } else {
             _rows.addAll(value);
           }
-          _hasMore = value.length >= 50;
+          _hasMore = value.length >= AppConstants.lists.pageSize;
           _loading = false;
           _loadingMore = false;
         });

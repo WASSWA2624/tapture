@@ -8,6 +8,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/normalise/search_text.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
@@ -32,6 +33,7 @@ import '../domain/template_def.dart';
 import '../templates.dart' show shippedTemplateLoaderProvider;
 import 'shipped_library_expanded.dart';
 import 'shipped_library_filter.dart';
+import 'shipped_suggestions_controller.dart';
 import 'template_list_screen.dart';
 
 /// Picker for the shipped library: areas and collapsible, counted
@@ -214,6 +216,28 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
       ))
         if (ShippedLibraryFilter.matches(byKey[key]!, filter)) byKey[key]!,
     ];
+    final suggestion = ref.watch(shippedSuggestionsProvider);
+    final bool hasSuggestion =
+        suggestion.query == _query && suggestion.keys.isNotEmpty;
+    if (hasSuggestion) {
+      final Map<String, int> order = <String, int>{
+        for (int index = 0; index < suggestion.keys.length; index++)
+          suggestion.keys[index]: index,
+      };
+      final Map<String, int> original = <String, int>{
+        for (int index = 0; index < shown.length; index++)
+          shown[index].templateKey: index,
+      };
+      shown.sort(
+        (ShippedTemplateEntry a, ShippedTemplateEntry b) =>
+            (order[a.templateKey] ??
+                    suggestion.keys.length + original[a.templateKey]!)
+                .compareTo(
+                  order[b.templateKey] ??
+                      suggestion.keys.length + original[b.templateKey]!,
+                ),
+      );
+    }
     final int active = ShippedLibraryFilter.activeCount(filter);
     final List<_Row> items = searching || active > 0
         ? <_Row>[
@@ -236,6 +260,41 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
             resultCount: !searching && active == 0 ? null : shown.length,
           ),
         ),
+        if (searching &&
+            shown.isNotEmpty &&
+            ref.watch(shippedSuggestionServiceProvider) != null)
+          Padding(
+            padding: EdgeInsets.fromLTRB(gutter, Space.x0, gutter, Space.x2),
+            child: AppButton(
+              label: Copy.shippedSuggestWithAi,
+              variant: AppButtonVariant.secondary,
+              busy: suggestion.busy,
+              onPressed: () => unawaited(
+                ref
+                    .read(shippedSuggestionsProvider.notifier)
+                    .suggest(_query, shown),
+              ),
+            ),
+          ),
+        if (hasSuggestion)
+          AppListTile(
+            title: Copy.shippedAiSuggestion,
+            subtitle: Copy.shippedAiSuggestionHelp,
+            trailing: AppIconButton(
+              icon: AppIcons.close,
+              semanticLabel: Copy.close,
+              tooltip: Copy.close,
+              onPressed: () =>
+                  ref.read(shippedSuggestionsProvider.notifier).clear(),
+            ),
+            dense: true,
+          ),
+        if (suggestion.query == _query && suggestion.failure != null)
+          AppListTile(
+            title: suggestion.failure!.message,
+            subtitle: suggestion.failure!.recoveryAction,
+            dense: true,
+          ),
         Expanded(
           child: shown.isEmpty
               ? AppEmptyState(

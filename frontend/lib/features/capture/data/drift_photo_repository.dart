@@ -180,6 +180,9 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
         deviceId: _deviceId,
         ids: _ids,
       );
+      if (saved is Success<sqlite.Photo>) {
+        await removeTombstone(_db, entityType: 'photos', entityId: ready.id);
+      }
       return saved.map((sqlite.Photo row) => _draft(row, ready));
     } on Object catch (error) {
       return FailureResult<PhotoDraft>(storageFailureFrom(error));

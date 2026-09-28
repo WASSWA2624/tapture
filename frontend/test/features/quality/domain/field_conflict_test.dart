@@ -5,13 +5,13 @@ import 'package:tapture/features/quality/quality.dart';
 void main() {
   const ValueCandidate ocr = ValueCandidate(ValueSource.ocr, 'A-1', 0.9, 'p1');
   const ValueCandidate caption = ValueCandidate(
-    ValueSource.caption,
+    ValueSource.stt,
     'A-2',
     0.4,
     'c1',
   );
   const ValueCandidate reference = ValueCandidate(
-    ValueSource.reference,
+    ValueSource.lookup,
     'A-1',
     1,
     null,
@@ -24,11 +24,10 @@ void main() {
       },
     ).single;
     expect(conflict.candidates, <ValueCandidate>[ocr, caption, reference]);
-    expect(conflict.candidates.map((ValueCandidate c) => c.source), <ValueSource>[
-      ValueSource.ocr,
-      ValueSource.caption,
-      ValueSource.reference,
-    ]);
+    expect(
+      conflict.candidates.map((ValueCandidate c) => c.source),
+      <ValueSource>[ValueSource.ocr, ValueSource.stt, ValueSource.lookup],
+    );
     expect(
       conflict.candidates.map((ValueCandidate c) => c.confidence),
       <double>[0.9, 0.4, 1],

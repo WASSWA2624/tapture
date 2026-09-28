@@ -11,7 +11,6 @@ import {
   patchProject,
   removeMember,
 } from '../services/projects.js';
-
 export function registerProjects(app: Express, deps: Deps): void {
   const auth = authenticate(deps);
   app.get(
@@ -20,7 +19,7 @@ export function registerProjects(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      res.json(listProjects(deps.store, principal));
+      res.json(await listProjects(deps.store, principal));
     }),
   );
   app.post(
@@ -29,7 +28,10 @@ export function registerProjects(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      const body = req.body as { id?: unknown; name?: unknown };
+      const body = req.body as {
+        id?: unknown;
+        name?: unknown;
+      };
       if (typeof body.id !== 'string' || typeof body.name !== 'string') {
         throw invalidRequest('Missing project id or name.');
       }
@@ -88,7 +90,7 @@ export function registerProjects(app: Express, deps: Deps): void {
       const id = req.params['id'];
       if (principal === undefined || id === undefined)
         throw invalidRequest('Missing project.');
-      res.json(listMembers(deps.store, principal, id));
+      res.json(await listMembers(deps.store, principal, id));
     }),
   );
   app.post(
@@ -99,7 +101,10 @@ export function registerProjects(app: Express, deps: Deps): void {
       const id = req.params['id'];
       if (principal === undefined || id === undefined)
         throw invalidRequest('Missing project.');
-      const body = req.body as { userId?: unknown; contextScope?: unknown };
+      const body = req.body as {
+        userId?: unknown;
+        contextScope?: unknown;
+      };
       if (typeof body.userId !== 'string')
         throw invalidRequest('Missing user.');
       await addMember(deps.store, principal, id, {

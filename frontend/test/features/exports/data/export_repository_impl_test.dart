@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:archive/archive.dart' show Archive, ArchiveFile, ZipDecoder;
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/bundle/bundle.dart';
@@ -27,6 +29,7 @@ import 'package:tapture/features/exports/domain/export_file_name.dart';
 import 'package:tapture/features/exports/domain/export_repository.dart';
 import 'package:tapture/features/projects/data/project_repository_impl.dart';
 import 'package:tapture/features/projects/domain/project.dart';
+import 'package:tapture/features/templates/data/template_repository_impl.dart';
 
 import '../../../support/factories.dart';
 
@@ -103,6 +106,59 @@ void main() {
       expect(workbook.take(2), <int>[0x50, 0x4B]);
       final int estimate = _ok(await harness.repo.estimatePackage('project-1'));
       expect(estimate, greaterThan(0));
+    },
+  );
+
+  test(
+    'records whose captured template no longer resolves stay in the package',
+    () async {
+      final _Harness harness = await _Harness.open();
+      addTearDown(harness.close);
+      await harness.record('captured', id: 'r1');
+      await harness.record('captured', id: 'r2', templateId: 'template-2');
+      // template-1 moves past r1's version without remembering the old shape.
+      await (harness.db.update(harness.db.templates)
+            ..where(($TemplatesTable table) => table.id.equals('template-1')))
+          .write(const TemplatesCompanion(version: Value<int>(3)));
+      final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 24, 8));
+      _ok(
+        await TemplateRepositoryImpl(
+          db: harness.db,
+          clock: clock,
+          deviceId: 'device-test',
+          ids: UuidV7Service.sequence(clock),
+        ).delete('template-2', reason: 'Replaced'),
+      );
+
+      final ExportedPackage written = _ok(
+        await harness.repo.exportProject(
+          'project-1',
+          cancel: CancellationToken(),
+        ),
+      );
+
+      final List<ExportRow> stored = await harness.db
+          .select(harness.db.exports)
+          .get();
+      expect(stored.single.recordCount, 2);
+      final StoredBundle package = written.package as StoredBundle;
+      final File file = File('${harness.root.path}/${package.relativePath}');
+      final InspectedBundle bundle = _ok(
+        await BundleReader.inspect(
+          PickedFile(file, written.fileName, file.lengthSync()),
+        ),
+      );
+      addTearDown(bundle.close);
+      final Archive workbook = ZipDecoder().decodeBytes(
+        _ok(await bundle.readEntry(BundleFormat.workbook)),
+      );
+      final String sheets = <String>[
+        for (final ArchiveFile part in workbook.files)
+          if (part.name.endsWith('.xml'))
+            utf8.decode(part.content as List<int>),
+      ].join();
+      expect(sheets, contains('template-1'));
+      expect(sheets, contains('Removed template'));
     },
   );
 
@@ -389,6 +445,12 @@ final class _Harness {
         deviceId: 'device-test',
         ids: UuidV7Service.sequence(clock),
         writer: writer?.call(storage),
+        templates: TemplateRepositoryImpl(
+          db: db,
+          clock: clock,
+          deviceId: 'device-test',
+          ids: UuidV7Service.sequence(clock),
+        ),
         bundles: bundles == null ? real : bundles(real),
       ),
     );
@@ -405,6 +467,28 @@ final class _Harness {
     String templateId = 'template-1',
     DateTime? at,
   }) async {
+    if ((await db.select(db.templates).get()).every(
+      (Template value) => value.id != templateId,
+    )) {
+      _ok(
+        await upsertTemplate(
+          db,
+          row: TemplatesCompanion(
+            id: Value<String>(templateId),
+            projectId: const Value<String?>('project-1'),
+            name: Value<String>(templateId),
+            kind: const Value<String>('record'),
+            source: const Value<String>('built'),
+            version: const Value<int>(1),
+            identityFields: const Value<String>('[]'),
+            detection: const Value<String>('{}'),
+          ),
+          clock: FixedClock(DateTime.utc(2026, 9, 24, 8)),
+          deviceId: 'device-test',
+          ids: UuidV7Service.sequence(FixedClock(DateTime.utc(2026, 9, 24, 8))),
+        ),
+      );
+    }
     _ok(
       await upsertRecord(
         db,

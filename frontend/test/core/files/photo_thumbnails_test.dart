@@ -2,15 +2,72 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/blob_file_reader.dart';
+import 'package:tapture/core/files/blob_file_writer.dart';
+import 'package:tapture/core/files/blob_store.dart';
 import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/files/thumbnail_cache.dart';
 
 void main() {
+  test(
+    'browser thumbnails persist at their requested size and survive a new reader',
+    () async {
+      final Map<String, Uint8List> backing = <String, Uint8List>{};
+      final BlobStore store = BlobStore.memory(backing: backing);
+      final BlobFileWriter writer = BlobFileWriter(store);
+      final BlobFileReader files = BlobFileReader(store);
+      final StorageRoot inaccessible = StorageRoot.fake(
+        documentsDirectory: Directory('unused-browser-root'),
+        writable: false,
+      );
+      const String source = 'projects/site/photos/wide.jpg';
+      final Uint8List original = Uint8List.fromList(
+        img.encodeJpg(img.Image(width: 800, height: 400)),
+      );
+      await writer.write(Stream<List<int>>.value(original), source);
+      final PhotoThumbnails first = PhotoThumbnails(
+        storageRoot: inaccessible,
+        files: files,
+        writer: writer,
+      );
+      final Result<Uint8List> thumb = await first.bytesFor(
+        sha256: 'wide',
+        storagePath: source,
+        edge: 96,
+      );
+      final img.Image image = img.decodeImage(
+        (thumb as Success<Uint8List>).value,
+      )!;
+      expect((image.width, image.height), (96, 48));
+      expect(backing[source], original);
+      expect(backing['.cache/thumbs/wide_96'], thumb.value);
+      // Reopening the service must use the persisted thumbnail, even if reading
+      // the original is no longer possible.
+      await store.remove(source);
+      final PhotoThumbnails again = PhotoThumbnails(
+        storageRoot: inaccessible,
+        files: files,
+        writer: writer,
+      );
+      final Result<Uint8List> repeated = await again.bytesFor(
+        sha256: 'wide',
+        storagePath: source,
+        edge: 96,
+      );
+      expect((repeated as Success<Uint8List>).value, thumb.value);
+      expect(
+        await again.bytesFor(sha256: 'wide', storagePath: source, edge: 48),
+        isA<FailureResult<Uint8List>>(),
+      );
+    },
+  );
+
   late Directory documents;
   late StorageRoot storage;
   late PhotoThumbnails thumbnails;

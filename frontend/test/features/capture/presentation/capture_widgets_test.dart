@@ -17,6 +17,7 @@ import 'package:tapture/core/permissions/permissions_service.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/fields/field_editor.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/audio_recorder.dart';
@@ -63,7 +64,12 @@ AppIconButton _icon(WidgetTester tester, String tooltip) {
 
 Widget wrap(Widget child, {List<Override> overrides = const <Override>[]}) {
   return ProviderScope(
-    overrides: overrides,
+    overrides: <Override>[
+      fieldEditorBindingsProvider.overrideWithValue(
+        templateFieldEditorBindings,
+      ),
+      ...overrides,
+    ],
     child: MaterialApp(home: Scaffold(body: child)),
   );
 }

@@ -2,8 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationUsageDescription</key>
+	<string>Tapture adds your location to captures when you enable GPS.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Tapture uses the camera when you take a photo to attach to feedback.</string>
+	<string>Tapture uses the camera when you scan a barcode or take a photo to attach to feedback.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Tapture opens your photos when you choose one to attach to feedback.</string>
 	<key>NSMicrophoneUsageDescription</key>

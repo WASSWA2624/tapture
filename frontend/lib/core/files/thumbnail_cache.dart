@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:image/image.dart' as img;
-import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
+import 'package:tapture/core/files/image_resize.dart';
 import 'package:tapture/core/files/storage_root.dart';
 
 /// Cached square-or-fit thumbnails keyed `<sha256>_<edge>` under `.cache/thumbs/`.
@@ -16,6 +16,8 @@ abstract interface class ThumbnailCache {
   /// so a suite can count original decodes.
   factory ThumbnailCache({
     required StorageRoot storageRoot,
+    FileReader? files,
+    FileWriter? writer,
     Future<List<int>> Function(
       String sourcePath, {
       required int longEdge,
@@ -26,6 +28,8 @@ abstract interface class ThumbnailCache {
   }) {
     return _ThumbnailCache(
       storageRoot: storageRoot,
+      files: files,
+      writer: writer,
       decode: decode,
       maxConcurrent: maxConcurrent ?? AppConstants.images.concurrentDecodes,
     );
@@ -38,19 +42,30 @@ abstract interface class ThumbnailCache {
     String sourcePath, {
     required int edge,
   });
+
+  /// Encoded thumbnail read and written through the platform store, for browsers.
+  Future<Result<Uint8List>> thumbnailBytes(
+    String sha256,
+    String storagePath, {
+    required int edge,
+  });
 }
 
 final class _ThumbnailCache implements ThumbnailCache {
   _ThumbnailCache({
     required StorageRoot storageRoot,
+    FileReader? files,
+    FileWriter? writer,
     required this._decode,
     required int maxConcurrent,
-  }) : _writer = FileWriter(storageRoot: storageRoot),
+  }) : _writer = writer ?? FileWriter(storageRoot: storageRoot),
+       _files = files ?? FileReader(storageRoot: storageRoot),
        _storageRoot = storageRoot,
        _gate = _DecodeGate(maxConcurrent);
 
   final StorageRoot _storageRoot;
   final FileWriter _writer;
+  final FileReader _files;
   final _DecodeGate _gate;
   final Future<List<int>> Function(
     String sourcePath, {
@@ -60,6 +75,50 @@ final class _ThumbnailCache implements ThumbnailCache {
   _decode;
   final Map<String, Future<Result<File>>> _inflight =
       <String, Future<Result<File>>>{};
+  final Map<String, Future<Result<Uint8List>>> _pendingBytes =
+      <String, Future<Result<Uint8List>>>{};
+
+  @override
+  Future<Result<Uint8List>> thumbnailBytes(
+    String sha256,
+    String storagePath, {
+    required int edge,
+  }) async {
+    try {
+      _assertCacheKey(sha256, edge);
+      final String relative = '$_cache/$_thumbs/${sha256}_$edge';
+      final Future<Result<Uint8List>>? pending = _pendingBytes[relative];
+      if (pending != null) return pending;
+      final Future<Result<Uint8List>> work = _gate.run(() async {
+        final Result<Uint8List> cached = await _files.read(relative);
+        if (cached is Success<Uint8List>) return cached;
+        final Result<Uint8List> original = await _files.read(storagePath);
+        if (original is FailureResult<Uint8List>) return original;
+        final Result<Uint8List> resized = await ImageResize.fit(
+          (original as Success<Uint8List>).value,
+          longEdge: edge,
+          quality: AppConstants.images.thumbnailQuality,
+        );
+        if (resized is FailureResult<Uint8List>) return resized;
+        final Uint8List bytes = (resized as Success<Uint8List>).value;
+        final Result<WrittenFile> written = await _writer.write(
+          Stream<List<int>>.value(bytes),
+          relative,
+        );
+        return written.map((WrittenFile _) => bytes);
+      });
+      _pendingBytes[relative] = work;
+      try {
+        return await work;
+      } finally {
+        _pendingBytes.remove(relative);
+      }
+    } on Failure catch (failure) {
+      return FailureResult<Uint8List>(failure);
+    } on Object {
+      return FailureResult<Uint8List>(FileReader.unreadable(storagePath));
+    }
+  }
 
   @override
   Future<Result<File>> thumbnail(
@@ -158,9 +217,10 @@ final class _ThumbnailCache implements ThumbnailCache {
     if (decode != null) {
       return decode(sourcePath, longEdge: longEdge, quality: quality);
     }
-    final Result<Uint8List> resized = await runIsolate(
-      _resizeToLongEdge,
-      <Object>[sourcePath, longEdge, quality],
+    final Result<Uint8List> resized = await ImageResize.fit(
+      await File(sourcePath).readAsBytes(),
+      longEdge: longEdge,
+      quality: quality,
     );
     switch (resized) {
       case FailureResult<Uint8List>():
@@ -212,44 +272,6 @@ final class _DecodeGate {
       }
     }
   }
-}
-
-/// Fits the photo at `job[0]` so its long edge is at most `job[1]`, as a JPEG
-/// at quality `job[2]`. Pure Dart, because dart:ui cannot decode in a
-/// spawned isolate.
-Future<Uint8List> _resizeToLongEdge(List<Object> job) async {
-  final String path = job[0] as String;
-  final int longEdge = job[1] as int;
-  final int quality = job[2] as int;
-  if (quality < 1) {
-    throw StateError('quality');
-  }
-  IsolateRunner.reportProgress(0);
-  final Uint8List bytes = await File(path).readAsBytes();
-  IsolateRunner.reportProgress(0.3);
-  final img.Image? decoded = img.decodeImage(bytes);
-  if (decoded == null) {
-    throw StateError('decode');
-  }
-  img.Image output = img.bakeOrientation(decoded);
-  final int longest = output.width > output.height
-      ? output.width
-      : output.height;
-  if (longest > longEdge) {
-    final double scale = longEdge / longest;
-    output = img.copyResize(
-      output,
-      width: (output.width * scale).round().clamp(1, output.width),
-      height: (output.height * scale).round().clamp(1, output.height),
-      interpolation: img.Interpolation.linear,
-    );
-  }
-  IsolateRunner.reportProgress(0.8);
-  final Uint8List encoded = Uint8List.fromList(
-    img.encodeJpg(output, quality: quality),
-  );
-  IsolateRunner.reportProgress(1);
-  return encoded;
 }
 
 const String _cache = '.cache';

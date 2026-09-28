@@ -26,24 +26,27 @@ void main() {
     pinned: <String, String>{'surveyor': 'Sam'},
   );
 
-  test('an override keeps the raw value and writes the correction beside it', () {
-    final _Plan planned = ContextOverride.plan(
-      fieldKey: 'dept',
-      rawValue: 'Theatre',
-      newValue: 'Laboratory',
-    );
-    expect(planned.fieldKey, 'dept');
-    expect(planned.rawValue, 'Theatre');
-    expect(planned.refinedValue, 'Laboratory');
-    expect(planned.overridden, isTrue);
-    expect(
-      ContextOverride.isOverridden(
-        rawValue: planned.rawValue,
-        refinedValue: planned.refinedValue,
-      ),
-      isTrue,
-    );
-  });
+  test(
+    'an override keeps the raw value and writes the correction beside it',
+    () {
+      final _Plan planned = ContextOverride.plan(
+        fieldKey: 'dept',
+        rawValue: 'Theatre',
+        newValue: 'Laboratory',
+      );
+      expect(planned.fieldKey, 'dept');
+      expect(planned.rawValue, 'Theatre');
+      expect(planned.refinedValue, 'Laboratory');
+      expect(planned.overridden, isTrue);
+      expect(
+        ContextOverride.isOverridden(
+          rawValue: planned.rawValue,
+          refinedValue: planned.refinedValue,
+        ),
+        isTrue,
+      );
+    },
+  );
 
   test('entering the prefilled value again is not an override', () {
     final _Plan planned = ContextOverride.plan(
@@ -53,7 +56,10 @@ void main() {
     );
     expect(planned.overridden, isFalse);
     expect(
-      ContextOverride.isOverridden(rawValue: 'Theatre', refinedValue: 'Theatre'),
+      ContextOverride.isOverridden(
+        rawValue: 'Theatre',
+        refinedValue: 'Theatre',
+      ),
       isFalse,
     );
   });

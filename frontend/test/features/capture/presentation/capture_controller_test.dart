@@ -66,6 +66,89 @@ void main() {
   });
 
   test(
+    'undo restores the photo in its original position with its caption',
+    () async {
+      final CaptureController controller = container.read(
+        captureControllerProvider('p1').notifier,
+      );
+      for (int index = 0; index < 3; index++) {
+        await controller.addPhoto(
+          PhotoDraft(
+            id: 'photo-$index',
+            projectId: 'p1',
+            relativePath: 'photos/$index.jpg',
+            sha256: 'hash-$index',
+            sortOrder: index,
+            photoType: 'nameplate',
+          ),
+        );
+      }
+      await controller.setCaption('photo-1', 'The original label');
+      final Result<PhotoDraft?> removed = await controller.removePhoto(
+        'photo-1',
+      );
+      expect(
+        controller.state.photos.map((PhotoDraft photo) => photo.id),
+        <String>['photo-0', 'photo-2'],
+      );
+      expect(
+        await controller.undoRemove((removed as Success<PhotoDraft?>).value!),
+        isA<Success<void>>(),
+      );
+      expect(
+        controller.state.photos.map((PhotoDraft photo) => photo.id),
+        <String>['photo-0', 'photo-1', 'photo-2'],
+      );
+      expect(controller.state.captions['photo-1'], 'The original label');
+      expect(controller.state.photos[1].photoType, 'nameplate');
+    },
+  );
+
+  test('incomplete reorder cannot drop photos', () async {
+    final CaptureController controller = container.read(
+      captureControllerProvider('p1').notifier,
+    );
+    await controller.addPhoto(
+      const PhotoDraft(
+        id: 'photo',
+        projectId: 'p1',
+        relativePath: 'photos/photo.jpg',
+        sha256: 'hash',
+      ),
+    );
+    expect(
+      await controller.reorderPhotos(const <String>[]),
+      isA<FailureResult<void>>(),
+    );
+    expect(controller.state.photos.single.id, 'photo');
+  });
+
+  test('discard failure retains the interrupted recovery session', () async {
+    final CaptureController controller = container.read(
+      captureControllerProvider('p1').notifier,
+    );
+    final CaptureSession interrupted = controller.state.copyWith(
+      photos: const <PhotoDraft>[
+        PhotoDraft(
+          id: 'missing-row',
+          projectId: 'p1',
+          relativePath: 'photos/photo.jpg',
+          sha256: 'hash',
+        ),
+      ],
+      captions: const <String, String>{'': 'Preserved draft'},
+    );
+    await controller.replaceSession(interrupted);
+    expect(await controller.discardSession(), isA<FailureResult<void>>());
+    expect(controller.state, same(interrupted));
+    final CaptureSession? recovery =
+        (await container.read(capturePersistenceProvider).loadSession('p1')
+                as Success<CaptureSession?>)
+            .value;
+    expect(recovery?.recordCaption, 'Preserved draft');
+  });
+
+  test(
     'enqueue retry reuses the committed record without another raw write',
     () async {
       final CaptureController controller = container.read(

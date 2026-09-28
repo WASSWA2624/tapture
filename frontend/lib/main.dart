@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
@@ -9,12 +11,20 @@ import 'app/app.dart';
 import 'app/provider_observer.dart' hide ProviderObserver;
 import 'app/theme/settings_text_store.dart';
 import 'app/widgets/status_line.dart';
+import 'core/ai/ai_media_reader.dart';
 import 'core/ai/ocr_service.dart';
 import 'core/ai/provider_registry.dart';
+import 'core/ai/proxy_ai_service.dart';
 import 'core/ai/stt_service.dart';
 import 'core/audio/audio_recorder_plugin.dart';
 import 'core/audio/audio_recorder_service.dart';
+import 'core/backend/backend_session.dart';
+import 'core/backend/relay_queue.dart';
 import 'core/background/power_source.dart';
+import 'core/barcode/barcode_scanner_service.dart';
+import 'core/bundle/bundle_output.dart';
+import 'core/camera/camera_service.dart';
+import 'core/concurrency/cancellation_token.dart';
 import 'core/db/app_database.dart';
 import 'core/db/database_provider.dart';
 import 'core/db/tables/device_profile.dart';
@@ -22,6 +32,7 @@ import 'core/device/device_identity.dart';
 import 'core/device/platform_facts.dart';
 import 'core/errors/failure.dart';
 import 'core/errors/result.dart';
+import 'core/files/blob_store.dart';
 import 'core/files/download_service.dart';
 import 'core/files/evidence_purge.dart';
 import 'core/files/file_reader.dart';
@@ -33,15 +44,19 @@ import 'core/files/storage_guard.dart';
 import 'core/files/storage_root.dart';
 import 'core/ids/uuid_service.dart';
 import 'core/lifecycle/lifecycle.dart';
+import 'core/location/location_service.dart';
 import 'core/logging/logger.dart';
 import 'core/network/connectivity_service.dart';
 import 'core/network/offline_now.dart';
 import 'core/security/secure_storage.dart';
 import 'core/time/clock.dart';
 import 'core/widgets/fields/field_editor.dart';
+import 'features/account/account.dart';
 import 'features/capture/capture.dart';
 import 'features/context/data/context_repository_impl.dart';
+import 'features/exports/data/deliverable_repository_impl.dart';
 import 'features/exports/data/export_repository_impl.dart';
+import 'features/exports/domain/export_repository.dart';
 import 'features/feedback/feedback.dart';
 import 'features/feedback/presentation/feedback_providers.dart';
 import 'features/meetings/data/meeting_repository_impl.dart';
@@ -61,7 +76,11 @@ import 'features/projects/presentation/project_open_externally_action.dart'
     show projectOpenableFileLookupProvider;
 import 'features/records/data/record_purge_store.dart';
 import 'features/records/records.dart'
-    show PurgeJob, PurgeReport, recordPurgeJobProvider;
+    show
+        PurgeJob,
+        PurgeReport,
+        recordPurgeJobProvider,
+        recordRepositoryProvider;
 import 'features/reference/data/reference_repository_impl.dart';
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
@@ -146,7 +165,76 @@ Future<void> _run() async {
       ids: ids,
       storageRoot: storageRoot,
     );
-    final ProviderRegistry providerRegistry = ProviderRegistry.keyless();
+    final BackendSession backendSession = BackendSession(
+      storage: SecureStorage(),
+      clock: clock,
+      deviceId: id,
+      initialUrl: const String.fromEnvironment('BACKEND_URL'),
+      offline: () => offlineStore.read(SettingKeys.offlineByChoice),
+      linkAccount: (String accountId) => linkDeviceAccount(
+        db,
+        deviceId: id,
+        accountId: accountId,
+        clock: clock,
+      ),
+    );
+    await backendSession.restore();
+    final ProviderRegistry providerRegistry = ProviderRegistry.keyless(
+      proxy: ProxyAiService(
+        baseUrl: backendSession.config.baseUrl,
+        available: () =>
+            backendSession.canUseBackend && backendSession.config.aiAvailable,
+        projectAllowed: (String projectId) {
+          // The server authorises and bills every proxied call per project
+          // and knows no empty id. Unbound, the proxy is unavailable rather
+          // than a call the server refuses and the device reads as a
+          // rejected key.
+          if (projectId.isEmpty) {
+            return false;
+          }
+          final RoleGate? role = roleGateFor(backendSession.config);
+          if (role == null || !role.allows(RoleCapability.aiProxy)) {
+            return false;
+          }
+          return role.allows(RoleCapability.manageProject) ||
+              roleGateFor(backendSession.config, projectId: projectId) != null;
+        },
+        readBytes: AiMediaReader(
+          files: FileReader(storageRoot: storageRoot),
+          storageRoot: storageRoot,
+        ).read,
+        send:
+            ({required String path, required Map<String, Object?> json}) async {
+              var response = await backendSession.send(
+                method: 'POST',
+                path: path,
+                body: json,
+              );
+              final Object? projectId = json['projectId'];
+              if (response.status == 404 &&
+                  projectId is String &&
+                  projectId.isNotEmpty &&
+                  roleGateFor(
+                        backendSession.config,
+                      )?.allows(RoleCapability.manageProject) ==
+                      true) {
+                final registered = await backendSession.send(
+                  method: 'POST',
+                  path: '/api/v1/projects',
+                  body: <String, Object?>{'id': projectId, 'name': projectId},
+                );
+                if (registered.status == 201) {
+                  response = await backendSession.send(
+                    method: 'POST',
+                    path: path,
+                    body: json,
+                  );
+                }
+              }
+              return (status: response.status, body: jsonEncode(response.body));
+            },
+      ),
+    );
     final ProcessingStageWorker processingWorker = ProcessingStageWorker(
       db: db,
       clock: clock,
@@ -158,8 +246,60 @@ Future<void> _run() async {
       settings: offlineStore,
     );
     overrides.addAll(<Override>[
+      backendSessionProvider.overrideWith((Ref ref) {
+        ref.onDispose(() => unawaited(backendSession.dispose()));
+        return backendSession;
+      }),
       feedbackClockProvider.overrideWith((Ref _) => clock),
-      providerRegistryProvider.overrideWith((Ref _) => providerRegistry),
+      providerRegistryProvider.overrideWith((Ref ref) {
+        ref.watch(backendConfigProvider);
+        // Bound to the open project, so Settings tests the proxy in the scope
+        // the server authorises; with none open it reports unavailable.
+        return ProviderRegistry.keyless(
+          proxy: providerRegistry.resolve(
+            projectId: ref.watch(currentProjectProvider) ?? '',
+            operation: AiOperation.extractFields,
+          ),
+        );
+      }),
+      relayQueueProvider.overrideWith((Ref _) {
+        return RelayQueue(
+          store: BlobStore.platform('relay'),
+          secrets: SecureStorage(),
+          ids: ids,
+          send: RelayQueue.overBytes(backendSession.sendBytes),
+          deviceId: id,
+        );
+      }),
+      relayPackageProvider.overrideWith((Ref ref) {
+        final ExportRepository? exports = ref.watch(exportRepositoryProvider);
+        if (exports == null) {
+          return null;
+        }
+        final FileReader files = FileReader(storageRoot: storageRoot);
+        // The relay sends the same project package a person would export.
+        Future<Result<Uint8List>> packageBytes(String projectId) async {
+          final Result<ExportedPackage> written = await exports.exportProject(
+            projectId,
+            cancel: CancellationToken(),
+          );
+          final BundleOutput output;
+          switch (written) {
+            case FailureResult<ExportedPackage>(:final Failure failure):
+              return FailureResult<Uint8List>(failure);
+            case Success<ExportedPackage>(:final ExportedPackage value):
+              output = value.package;
+          }
+          switch (output) {
+            case InMemoryBundle(:final Uint8List bytes):
+              return Success<Uint8List>(bytes);
+            case StoredBundle(:final String relativePath):
+              return files.read(relativePath);
+          }
+        }
+
+        return packageBytes;
+      }),
       feedbackDeviceIdProvider.overrideWith((Ref _) => id),
       feedbackPlatformFactsProvider.overrideWith((Ref _) => facts),
       feedbackDeviceProvider.overrideWith((Ref _) => device),
@@ -190,15 +330,47 @@ Future<void> _run() async {
           writer: kIsWeb ? null : evidenceWriter,
         );
       }),
-      exportRepositoryProvider.overrideWith((Ref _) {
+      exportRepositoryProvider.overrideWith((Ref ref) {
         return ExportRepositoryImpl(
           db: db,
           storageRoot: storageRoot,
           clock: clock,
           deviceId: id,
           ids: ids,
+          templates: ref.watch(templateRepositoryProvider),
         );
       }),
+      deliverableRepositoryProvider.overrideWith((Ref ref) {
+        return DeliverableRepositoryImpl(
+          db: db,
+          storageRoot: storageRoot,
+          records: ref.watch(recordRepositoryProvider),
+          templates: ref.watch(templateRepositoryProvider),
+          clock: clock,
+          ids: ids,
+          deviceId: id,
+          font: () async {
+            final ByteData data = await rootBundle.load(
+              'assets/fonts/NotoSans-Regular.ttf',
+            );
+            return data.buffer.asUint8List(
+              data.offsetInBytes,
+              data.lengthInBytes,
+            );
+          },
+        );
+      }),
+      locationServiceProvider.overrideWith(
+        (Ref ref) => LocationService(
+          gpsEnabled: () =>
+              ref.read(currentProjectDetailsProvider)?.settings.gpsEnabled ??
+              offlineStore.read(SettingKeys.gpsEnabled),
+        ),
+      ),
+      cameraServiceProvider.overrideWith((Ref _) => CameraService()),
+      barcodeScannerServiceProvider.overrideWith(
+        (Ref _) => BarcodeScannerService(),
+      ),
       packageImportRepositoryProvider.overrideWith((Ref ref) {
         return PackageImportRepositoryImpl(
           db: db,
@@ -221,12 +393,14 @@ Future<void> _run() async {
           ids: ids,
         );
       }),
-      captureRecordWriterProvider.overrideWith((Ref _) {
+      captureRecordWriterProvider.overrideWith((Ref ref) {
         return CaptureRecordWriter(
           db: db,
           clock: clock,
           deviceId: id,
           ids: ids,
+          operatorName: () => ref.read(currentOperatorProvider)?.name ?? '',
+          autoFillDates: () => offlineStore.read(SettingKeys.autoFillDates),
         );
       }),
       audioRecorderServiceProvider.overrideWith((Ref _) {
@@ -353,6 +527,7 @@ Future<void> _run() async {
     overrides.add(recordPurgeJobProvider.overrideWithValue(purgeJob));
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       unawaited(_purgeExpiredRecords(purgeJob));
+      unawaited(backendSession.refresh());
     });
   }
   runApp(

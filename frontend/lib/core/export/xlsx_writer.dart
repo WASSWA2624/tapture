@@ -5,6 +5,7 @@ import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'export_record.dart';
 import 'export_request.dart';
 import 'photo_index_sheet.dart';
+import 'tabular_columns.dart';
 import 'value_formatter.dart';
 import 'xlsx_book.dart';
 import 'xlsx_cell.dart';
@@ -12,7 +13,6 @@ import 'xlsx_column.dart';
 import 'xlsx_encoder.dart';
 import 'xlsx_multi_sheet.dart';
 import 'xlsx_photo_refs.dart';
-import 'xlsx_refined_columns.dart';
 import 'xlsx_sheet.dart';
 
 /// Writes a workbook from an [ExportRequest] (task 018).
@@ -45,7 +45,7 @@ final class XlsxWriter {
   }
 
   /// The workbook [write] encodes.
-  static XlsxBook build(ExportRequest request) {
+  static XlsxBook build(ExportRequest request, {DateTime? createdUtc}) {
     const ExportValueFormatter formatter = ExportValueFormatter(<String>{});
     final Set<({String id, String name})> templates =
         <({String id, String name})>{
@@ -68,7 +68,10 @@ final class XlsxWriter {
         _sheet(request, formatter, sheetOf[group.key] ?? 'Sheet', group.value),
       PhotoIndexSheet.build(request.records),
     ];
-    return XlsxBook(sheets: sheets, createdUtc: DateTime.utc(2026, 9, 28));
+    return XlsxBook(
+      sheets: sheets,
+      createdUtc: createdUtc ?? DateTime.utc(1970),
+    );
   }
 
   static XlsxSheet _sheet(
@@ -77,16 +80,10 @@ final class XlsxWriter {
     String name,
     List<ExportRecord> records,
   ) {
-    final Set<String> keys = <String>{
-      for (final ExportRecord record in records)
-        for (final ExportValue value in record.values) value.key,
-    };
+    final List<ExportColumn> columns = TabularColumns.plan(request, records);
     final List<String> headers = <String>[
       'Number',
-      ...XlsxRefinedColumns.headers(
-        keys.toList(),
-        refined: request.columns.refined,
-      ),
+      for (final ExportColumn column in columns) column.header,
       'Photo',
       if (request.markedIncomplete) 'Incomplete',
     ];
@@ -104,14 +101,14 @@ final class XlsxWriter {
         for (final ExportRecord record in records)
           <XlsxCell>[
             XlsxCell.text(record.number),
-            for (final String key in keys)
-              ..._pair(request, formatter, record, key),
+            for (final ExportColumn column in columns)
+              _cell(formatter, record, column),
             XlsxCell.text(
               record.photos.isEmpty
                   ? ''
                   : XlsxPhotoRefs.cell(
                       mode: mode,
-                      fileName: record.photos.first.originalName,
+                      fileName: record.photos.first.storedPath.split('/').last,
                       relativePath: record.photos.first.storedPath,
                     ),
             ),
@@ -121,31 +118,26 @@ final class XlsxWriter {
     );
   }
 
-  static List<XlsxCell> _pair(
-    ExportRequest request,
+  static XlsxCell _cell(
     ExportValueFormatter formatter,
     ExportRecord record,
-    String key,
+    ExportColumn column,
   ) {
-    ExportValue? value;
-    for (final ExportValue candidate in record.values) {
-      if (candidate.key == key) {
-        value = candidate;
-      }
-    }
-    final String raw = formatter.format(
-      value?.raw,
-      value?.type ?? 'text',
-      ExportFormat.xlsx,
+    final Object? value = formatter.typed(
+      TabularColumns.value(record, column),
+      TabularColumns.type(record, column),
     );
-    if (!request.columns.refined) {
-      return <XlsxCell>[XlsxCell.text(raw)];
-    }
-    final String refined = formatter.format(
-      value?.refined,
-      value?.type ?? 'text',
-      ExportFormat.xlsx,
-    );
-    return <XlsxCell>[XlsxCell.text(raw), XlsxCell.text(refined)];
+    return switch (value) {
+      num value => XlsxCell.number(value),
+      DateTime value => XlsxCell.dateTime(value),
+      null => XlsxCell.empty,
+      _ => XlsxCell.text(
+        formatter.format(
+          value,
+          TabularColumns.type(record, column),
+          ExportFormat.xlsx,
+        ),
+      ),
+    };
   }
 }

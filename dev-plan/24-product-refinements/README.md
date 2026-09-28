@@ -11,7 +11,7 @@ whole-app hardening pass follows every feature in [step 27](../27-hardening/READ
 
 **Step 24 — Partially complete**
 
-54 total · 50 Complete · 2 Partially complete · 2 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+54 total · 50 Complete · 3 Partially complete · 1 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
@@ -60,7 +60,7 @@ whole-app hardening pass follows every feature in [step 27](../27-hardening/READ
 | 24.43 | 068 | [Resolve project, record, capture and export feedback](068-resolve-project-record-capture-export-feedback.md) | **Complete** | 14/14 | None; Dependencies complete |
 | 24.44 | 069 | [Resolve record, capture markup and project photo feedback](069-resolve-record-capture-markup-feedback.md) | **Complete** | 12/12 | None; Dependencies complete |
 | 24.45 | 070 | [Resolve web capture, caption and template feedback](070-resolve-web-capture-caption-template-feedback.md) | **Complete** | 14/14 | None; Dependencies complete |
-| 24.46 | 071 | [Enable processing, export and list thumbnails on web](071-enable-processing-export-on-web.md) | **Pending** | 0/5 | 24.45 (070); Ready |
+| 24.46 | 071 | [Enable processing, export and list thumbnails on web](071-enable-processing-export-on-web.md) | **Partially complete** | 0/5 | 24.45 (070); Ready |
 | 24.47 | 072 | [List processed records on the project home](072-list-processed-records-on-project-home.md) | **Complete** | 3/3 | 24.45 (070); Dependencies complete |
 | 24.48 | 073 | [Keep resumed capture photos](073-keep-resumed-capture-photos.md) | **Complete** | 3/3 | 24.45 (070); Dependencies complete |
 | 24.49 | 074 | [Ship the full template catalogue](074-ship-full-template-catalogue.md) | **Complete** | 6/6 | None; Dependencies complete |

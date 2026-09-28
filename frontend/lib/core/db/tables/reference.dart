@@ -136,14 +136,37 @@ Future<Result<ReferenceDatasetRow>> importReferenceDataset(
     };
     final DateTime now = clock.nowUtc();
     final $ReferenceRowsTable table = database.referenceRows;
+    final List<ReferenceLookupRow> storedRows = existing == null
+        ? const <ReferenceLookupRow>[]
+        : await (database.select(table)
+                ..where(
+                  ($ReferenceRowsTable row) => row.datasetId.equals(datasetId),
+                )
+                ..orderBy(<OrderClauseGenerator<$ReferenceRowsTable>>[
+                  ($ReferenceRowsTable row) => OrderingTerm(expression: row.id),
+                ]))
+              .get();
+    final Map<String, List<ReferenceLookupRow>> byKey =
+        <String, List<ReferenceLookupRow>>{};
+    for (final ReferenceLookupRow row in storedRows) {
+      byKey.putIfAbsent(row.keyValue, () => <ReferenceLookupRow>[]).add(row);
+    }
+    final Map<String, int> occurrences = <String, int>{};
     await database.batch((Batch batch) {
       for (final ({String keyValue, Map<String, String> values}) row
           in incoming) {
         final String folded = _foldReferenceKey(row.keyValue);
         final String json = jsonEncode(row.values);
+        final int occurrence = occurrences[row.keyValue] ?? 0;
+        occurrences[row.keyValue] = occurrence + 1;
+        final List<ReferenceLookupRow> candidates =
+            byKey[row.keyValue] ?? const <ReferenceLookupRow>[];
+        final ReferenceLookupRow? previous = occurrence < candidates.length
+            ? candidates[occurrence]
+            : null;
         final ReferenceRowsCompanion companion = ReferenceRowsCompanion(
-          id: Value<String>(ids.newId()),
-          createdAt: Value<DateTime>(now),
+          id: Value<String>(previous?.id ?? ids.newId()),
+          createdAt: Value<DateTime>(previous?.createdAt ?? now),
           updatedAt: Value<DateTime>(now),
           updatedByDevice: Value<String>(deviceId),
           datasetId: Value<String>(datasetId),
@@ -151,7 +174,7 @@ Future<Result<ReferenceDatasetRow>> importReferenceDataset(
           keyNormalised: Value<String>(folded),
           values: Value<String>(json),
         );
-        if (existing == null) {
+        if (previous == null) {
           batch.insert(table, companion);
         } else {
           batch.insert(
@@ -165,7 +188,7 @@ Future<Result<ReferenceDatasetRow>> importReferenceDataset(
                 updatedByDevice: Variable<String>(deviceId),
                 rev: old.rev + const Constant<int>(1),
               ),
-              target: <Column<Object>>[table.datasetId, table.keyValue],
+              target: <Column<Object>>[table.id],
             ),
           );
         }
@@ -235,14 +258,15 @@ Future<Result<ReferenceLookupRow?>> lookupReferenceRowByKey(
 }) async {
   try {
     final AppDatabase database = db as AppDatabase;
-    final ReferenceLookupRow? row =
+    final List<ReferenceLookupRow> rows =
         await (database.select(database.referenceRows)..where(
               ($ReferenceRowsTable tbl) =>
                   tbl.datasetId.equals(datasetId) &
                   tbl.keyValue.equals(keyValue),
             ))
-            .getSingleOrNull();
-    return Success<ReferenceLookupRow?>(row);
+            .get();
+    // Ambiguity must reach the multi-match picker, never select a row silently.
+    return Success<ReferenceLookupRow?>(rows.length == 1 ? rows.single : null);
   } on Failure catch (failure) {
     return FailureResult<ReferenceLookupRow?>(failure);
   } on Object catch (error) {

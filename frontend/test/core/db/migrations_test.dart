@@ -496,6 +496,92 @@ void main() {
     expect((await _columnSets(db)).containsKey('destinations'), isTrue);
     expect((await _columnSets(db))['destinations'], contains('credential_ref'));
   });
+
+  test(
+    'version 23 lets a confirmed reference key repeat, keeps the rows and can run twice',
+    () async {
+      expect(kDestructiveSteps.contains(23), isFalse);
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      await db.customSelect('SELECT 1').get();
+      // A version 22 device held the key index as unique.
+      await db.customStatement('DROP INDEX reference_rows_by_key');
+      await db.customStatement(
+        'CREATE UNIQUE INDEX reference_rows_by_key '
+        'ON reference_rows (dataset_id, key_value)',
+      );
+      await _insertReferenceRow(db, 'row-1');
+      await expectLater(_insertReferenceRow(db, 'row-2'), throwsA(anything));
+
+      await migrateToV23(Migrator(db), db);
+      await migrateToV23(Migrator(db), db);
+
+      expect(await _count(db, 'reference_rows'), 1);
+      await _insertReferenceRow(db, 'row-2');
+      expect(await _count(db, 'reference_rows'), 2);
+      final List<QueryRow> indexes = await db
+          .customSelect("PRAGMA index_list('reference_rows')")
+          .get();
+      final QueryRow byKey = indexes.singleWhere(
+        (QueryRow row) => row.read<String>('name') == 'reference_rows_by_key',
+      );
+      expect(byKey.read<int>('unique'), 0);
+    },
+  );
+
+  test(
+    'version 24 keeps each record on its template current version and can run twice',
+    () async {
+      expect(kDestructiveSteps.contains(24), isFalse);
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      await db.customSelect('SELECT 1').get();
+      await db.customStatement(
+        'ALTER TABLE records DROP COLUMN template_version',
+      );
+      expect(
+        (await _columnSets(db))['records']!.contains('template_version'),
+        isFalse,
+      );
+      await seedRow(db, 'templates', <String, Object?>{
+        'id': 't1',
+        'name': 'Pump',
+        'kind': 'equipment',
+        'source': 'built',
+        'version': 3,
+      });
+      await seedRecord(db, 'r1');
+      await seedRecord(db, 'r2', templateId: 't-gone');
+
+      await migrateToV24(Migrator(db), db);
+      await migrateToV24(Migrator(db), db);
+
+      expect(await _count(db, 'records'), 2);
+      expect(await _templateVersionOf(db, 'r1'), 3);
+      expect(await _templateVersionOf(db, 'r2'), 1);
+    },
+  );
+}
+
+/// Inserts reference row [id] of dataset `ds-1` under the key `K1`.
+Future<void> _insertReferenceRow(AppDatabase db, String id) {
+  return db.customStatement(
+    'INSERT INTO reference_rows '
+    '(id, created_at, updated_at, updated_by_device, rev, dataset_id, '
+    'key_value, key_normalised, "values") '
+    "VALUES (?, 1, 1, 'device-1', 1, 'ds-1', 'K1', 'k1', '{}')",
+    <Object?>[id],
+  );
+}
+
+Future<int> _templateVersionOf(AppDatabase db, String recordId) async {
+  final QueryRow row = await db
+      .customSelect(
+        'SELECT template_version FROM records WHERE id = ?',
+        variables: <Variable<Object>>[Variable<String>(recordId)],
+      )
+      .getSingle();
+  return row.read<int>('template_version');
 }
 
 void _seedVersion1(File file) {

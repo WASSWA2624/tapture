@@ -5,9 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/concurrency/isolate_runner.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/document_picker.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
@@ -15,6 +18,7 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/features/projects/projects.dart';
 
 import '../reference.dart';
 
@@ -38,6 +42,15 @@ class _DatasetKeyScreenState extends ConsumerState<DatasetKeyScreen> {
   bool _allowDuplicates = false;
   bool _saving = false;
   Failure? _saveFailure;
+  DatasetImportDraft? _picked;
+  bool _reading = false;
+  final CancellationToken _cancel = CancellationToken();
+
+  @override
+  void dispose() {
+    _cancel.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -59,15 +72,27 @@ class _DatasetKeyScreenState extends ConsumerState<DatasetKeyScreen> {
         ),
       );
     }
-    final DatasetImportDraft? draft = widget.draft;
+    if (_reading) {
+      return AppPage(
+        title: Copy.datasetsImport,
+        showAppBar: false,
+        body: AsyncValueView<void>(
+          value: const AsyncValue<void>.loading(),
+          data: (_) => const SizedBox.shrink(),
+        ),
+      );
+    }
+    final DatasetImportDraft? draft = widget.draft ?? _picked;
     if (draft == null) {
-      return const AppPage(
+      return AppPage(
         title: Copy.datasetsKeyTitle,
         showAppBar: false,
         body: AppEmptyState(
           icon: AppIcons.dataset,
           headline: Copy.datasetsEmptyHeadline,
           message: Copy.datasetsEmptyMessage,
+          actionLabel: Copy.datasetsImport,
+          onAction: () => unawaited(_pick()),
         ),
       );
     }
@@ -120,6 +145,46 @@ class _DatasetKeyScreenState extends ConsumerState<DatasetKeyScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _pick() async {
+    setState(() {
+      _reading = true;
+      _saveFailure = null;
+    });
+    final Result<PickedDocument> picked = await ref
+        .read(documentPickerProvider)
+        .pick(
+          extensions: const <String>['csv', 'xlsx', 'json'],
+          mimeType: '',
+          maxBytes: AppConstants.imports.spreadsheetMaxBytes,
+        );
+    if (!mounted) {
+      return;
+    }
+    final Result<DatasetImportDraft> parsed = await picked.fold(
+      FailureResult<DatasetImportDraft>.new,
+      (PickedDocument document) => DatasetImport.read(
+        document,
+        projectId: ref.read(currentProjectProvider),
+        cancel: _cancel,
+      ),
+    );
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _reading = false;
+      switch (parsed) {
+        case FailureResult<DatasetImportDraft>(:final Failure failure):
+          if (failure is! CancelledFailure) {
+            _saveFailure = failure;
+          }
+        case Success<DatasetImportDraft>(:final DatasetImportDraft value):
+          _picked = value;
+          _keyColumn = value.dataset.keyColumn;
+      }
+    });
   }
 
   Future<void> _save(

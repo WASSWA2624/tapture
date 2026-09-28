@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/db/app_database.dart';
@@ -85,10 +84,10 @@ final class EgressSummary {
       bytes += utf8.encode(rule).length;
     }
     bytes += await _audioBytes(job, bundle);
-    for (final String path in images) {
-      final File file = File(path);
-      if (await file.exists()) {
-        bytes += await file.length();
+    if (!settings.doNotSendImages) {
+      for (final Photo photo in bundle.photos) {
+        final String relative = await _paths.compressedRelative(bundle, photo);
+        bytes += StageSupport.unwrap(await _paths.read(relative)).length;
       }
     }
     return (imageCount: images.length, payloadBytes: bytes);

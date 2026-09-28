@@ -21,7 +21,7 @@ Documentation destination when the workspace exists. Each task ships its own tes
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 26.01 | 080 | [Establish document adapters and approved dependencies](080-documentation-capabilities.md) | **Pending** | 0/6 | 05.01 (005), 18.01 (018); Ready |
+| 26.01 | 080 | [Establish document adapters and approved dependencies](080-documentation-capabilities.md) | **Pending** | 0/6 | 05.01 (005), 18.01 (018); Waiting for: 018 |
 | 26.02 | 081 | [Persist Documentation workspaces and resources locally](081-documentation-workspaces.md) | **Pending** | 0/7 | 04.01 (004), 26.01 (080); Waiting for: 080 |
 | 26.03 | 082 | [Import, inspect and extract document resources safely](082-documentation-ingestion.md) | **Pending** | 0/8 | 24.51 (076), 26.02 (081); Waiting for: 081 |
 | 26.04 | 083 | [Build the Inputs, Outputs and Prompt workspace](083-documentation-editor.md) | **Pending** | 0/10 | 24.54 (079), 26.03 (082); Waiting for: 079, 082 |

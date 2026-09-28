@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:image/image.dart' as img;
+import 'package:crypto/crypto.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
+import 'package:tapture/core/files/image_resize.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/hash/hashing_service.dart';
 
@@ -16,6 +18,8 @@ abstract interface class CompressedCopy {
   /// [StorageRoot.fake] and [decode] so a suite never needs dart:ui.
   factory CompressedCopy({
     required StorageRoot storageRoot,
+    FileReader? files,
+    FileWriter? writer,
     Future<List<int>> Function(
       String sourcePath, {
       required int longEdge,
@@ -23,7 +27,12 @@ abstract interface class CompressedCopy {
     })?
     decode,
   }) {
-    return _CompressedCopy(storageRoot: storageRoot, decode: decode);
+    return _CompressedCopy(
+      storageRoot: storageRoot,
+      decode: decode,
+      files: files,
+      writer: writer,
+    );
   }
 
   /// A long-edge-capped copy of [sourcePath]. [longEdge] and [quality]
@@ -33,21 +42,85 @@ abstract interface class CompressedCopy {
     int? longEdge,
     int? quality,
   });
+
+  /// Reduces a photo read through the platform store, preserving native cache keys.
+  Future<Result<WrittenFile>> reduceStored(
+    String storagePath, {
+    CancellationToken? cancel,
+  });
 }
 
 final class _CompressedCopy implements CompressedCopy {
-  _CompressedCopy({required StorageRoot storageRoot, required this._decode})
-    : _storageRoot = storageRoot,
-      _writer = FileWriter(storageRoot: storageRoot);
+  _CompressedCopy({
+    required StorageRoot storageRoot,
+    required this._decode,
+    FileReader? files,
+    FileWriter? writer,
+  }) : _storageRoot = storageRoot,
+       _writer = writer ?? FileWriter(storageRoot: storageRoot),
+       _files = files ?? FileReader(storageRoot: storageRoot);
 
   final StorageRoot _storageRoot;
   final FileWriter _writer;
+  final FileReader _files;
   final Future<List<int>> Function(
     String sourcePath, {
     required int longEdge,
     required int quality,
   })?
   _decode;
+
+  @override
+  Future<Result<WrittenFile>> reduceStored(
+    String storagePath, {
+    CancellationToken? cancel,
+  }) async {
+    final Result<Uint8List> read = await _files.read(storagePath);
+    if (read case FailureResult<Uint8List>(:final failure)) {
+      return FailureResult<WrittenFile>(failure);
+    }
+    final Uint8List original = (read as Success<Uint8List>).value;
+    final Result<String> hash = await runIsolate(
+      _hashBytes,
+      original,
+      cancel: cancel,
+    );
+    if (hash case FailureResult<String>(:final failure)) {
+      return FailureResult<WrittenFile>(failure);
+    }
+    final String relative =
+        '$_cache/$_upload/${(hash as Success<String>).value}_${AppConstants.images.longEdge}';
+    final Result<Uint8List> cached = await _files.read(relative);
+    if (cached case Success<Uint8List>(:final value)) {
+      final Result<String> digest = await runIsolate(
+        _hashBytes,
+        value,
+        cancel: cancel,
+      );
+      return digest.map(
+        (String hash) => WrittenFile(
+          relativePath: relative,
+          sha256: hash,
+          byteLength: value.length,
+        ),
+      );
+    }
+    final Result<Uint8List> resized = await ImageResize.fit(
+      original,
+      longEdge: AppConstants.images.longEdge,
+      quality: AppConstants.images.quality,
+      cancel: cancel,
+    );
+    return switch (resized) {
+      FailureResult<Uint8List>(:final failure) => FailureResult<WrittenFile>(
+        failure,
+      ),
+      Success<Uint8List>(:final value) => _writer.write(
+        Stream<List<int>>.value(value),
+        relative,
+      ),
+    };
+  }
 
   @override
   Future<Result<WrittenFile>> reduce(
@@ -146,11 +219,11 @@ final class _CompressedCopy implements CompressedCopy {
     if (decode != null) {
       return decode(sourcePath, longEdge: longEdge, quality: quality);
     }
-    final Result<Uint8List> resized = await runIsolate(_resizeUpload, <Object>[
-      sourcePath,
-      longEdge,
-      quality,
-    ]);
+    final Result<Uint8List> resized = await ImageResize.fit(
+      await File(sourcePath).readAsBytes(),
+      longEdge: longEdge,
+      quality: quality,
+    );
     switch (resized) {
       case FailureResult<Uint8List>():
         return const <int>[];
@@ -167,40 +240,7 @@ StorageFailure _missing(String path) {
   );
 }
 
-Future<Uint8List> _resizeUpload(List<Object> job) async {
-  final String path = job[0] as String;
-  final int longEdge = job[1] as int;
-  final int quality = job[2] as int;
-  if (quality < 1) {
-    throw StateError('quality');
-  }
-  IsolateRunner.reportProgress(0);
-  final Uint8List bytes = await File(path).readAsBytes();
-  IsolateRunner.reportProgress(0.3);
-  final img.Image? decoded = img.decodeImage(bytes);
-  if (decoded == null) {
-    throw StateError('decode');
-  }
-  img.Image output = img.bakeOrientation(decoded);
-  final int longest = output.width > output.height
-      ? output.width
-      : output.height;
-  if (longest > longEdge) {
-    final double scale = longEdge / longest;
-    output = img.copyResize(
-      output,
-      width: (output.width * scale).round().clamp(1, output.width),
-      height: (output.height * scale).round().clamp(1, output.height),
-      interpolation: img.Interpolation.linear,
-    );
-  }
-  IsolateRunner.reportProgress(0.8);
-  final Uint8List encoded = Uint8List.fromList(
-    img.encodeJpg(output, quality: quality),
-  );
-  IsolateRunner.reportProgress(1);
-  return encoded;
-}
+String _hashBytes(Uint8List bytes) => sha256.convert(bytes).toString();
 
 const String _cache = '.cache';
 const String _upload = 'upload';

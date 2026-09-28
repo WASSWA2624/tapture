@@ -104,3 +104,29 @@ Future<DeviceProfileIdentity> writeDeviceProfile(
   );
   return readDeviceProfile(tx, deviceId: deviceId, clock: clock);
 }
+
+/// Attaches enrolment identity without rewriting the original operator or records.
+Future<void> linkDeviceAccount(
+  AppDatabase db, {
+  required String deviceId,
+  required String accountId,
+  Clock? clock,
+}) async {
+  final Clock source = clock ?? const SystemClock();
+  final DeviceProfileRow existing = await ensureDeviceProfile(
+    db,
+    deviceId: deviceId,
+    clock: source,
+  );
+  if (existing.accountId == accountId) return;
+  await (db.update(
+    db.deviceProfile,
+  )..where(($DeviceProfileTable row) => row.id.equals(_rowId))).write(
+    DeviceProfileCompanion(
+      accountId: Value<String?>(accountId),
+      updatedAt: Value<DateTime>(source.nowUtc()),
+      updatedByDevice: Value<String>(deviceId),
+      rev: Value<int>(existing.rev + 1),
+    ),
+  );
+}

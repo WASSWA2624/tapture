@@ -132,38 +132,26 @@ void main() {
         });
       });
 
-      test('setting a level without the cascade keeps the levels below', () async {
-        await fillRoom();
-        final ContextState next = valueOf(
-          await repo.setLevelValue(
-            projectId: 'p1',
-            fieldKey: 'district',
-            value: 'Wakiso',
-            clearBelow: false,
-          ),
-        );
-        expect(next.values['district'], 'Wakiso');
-        expect(next.values['facility'], 'Kasubi HC IV');
-        expect(next.values['dept'], 'Theatre');
-      });
-
-      test('saving pins replaces the pins and leaves level values alone', () async {
-        await fillRoom();
-        valueOf(
-          await repo.savePinned('p1', const <String, String>{'surveyor': 'Sam'}),
-        );
-        final ContextState next = valueOf(
-          await repo.savePinned('p1', const <String, String>{
-            'survey_date': '2026-09-22',
-          }),
-        );
-        expect(next.pinned, <String, String>{'survey_date': '2026-09-22'});
-        expect(next.values['dept'], 'Theatre');
-      });
+      test(
+        'setting a level without the cascade keeps the levels below',
+        () async {
+          await fillRoom();
+          final ContextState next = valueOf(
+            await repo.setLevelValue(
+              projectId: 'p1',
+              fieldKey: 'district',
+              value: 'Wakiso',
+              clearBelow: false,
+            ),
+          );
+          expect(next.values['district'], 'Wakiso');
+          expect(next.values['facility'], 'Kasubi HC IV');
+          expect(next.values['dept'], 'Theatre');
+        },
+      );
 
       test(
-        'applying a preset sets its values, clears the levels it omits and '
-        'replaces the pins in one write',
+        'saving pins replaces the pins and leaves level values alone',
         () async {
           await fillRoom();
           valueOf(
@@ -171,64 +159,84 @@ void main() {
               'surveyor': 'Sam',
             }),
           );
-          final ContextPreset preset = valueOf(
-            await repo.savePreset(
-              projectId: 'p1',
-              name: 'Ward B',
-              values: const <String, String>{
-                'district': 'Kampala',
-                'facility': 'Mulago',
-              },
-              pinned: const <String, String>{'surveyor': 'Ada'},
-            ),
+          final ContextState next = valueOf(
+            await repo.savePinned('p1', const <String, String>{
+              'survey_date': '2026-09-22',
+            }),
           );
-          final ContextState applied = valueOf(
-            await repo.applyPreset('p1', preset),
-          );
-          expect(applied.values, <String, String>{
-            'district': 'Kampala',
-            'facility': 'Mulago',
-          });
-          expect(applied.pinned, <String, String>{'surveyor': 'Ada'});
-          expect(valueOf(await repo.load('p1')), equals(applied));
+          expect(next.pinned, <String, String>{'survey_date': '2026-09-22'});
+          expect(next.values['dept'], 'Theatre');
         },
       );
 
-      test('a preset name in use fails validation until overwrite is confirmed', () async {
-        valueOf(await repo.saveHierarchy('p1', hierarchy));
+      test('applying a preset sets its values, clears the levels it omits and '
+          'replaces the pins in one write', () async {
+        await fillRoom();
         valueOf(
+          await repo.savePinned('p1', const <String, String>{
+            'surveyor': 'Sam',
+          }),
+        );
+        final ContextPreset preset = valueOf(
           await repo.savePreset(
             projectId: 'p1',
-            name: 'Room A',
-            values: const <String, String>{'district': 'Kampala'},
-            pinned: const <String, String>{},
+            name: 'Ward B',
+            values: const <String, String>{
+              'district': 'Kampala',
+              'facility': 'Mulago',
+            },
+            pinned: const <String, String>{'surveyor': 'Ada'},
           ),
         );
-        expect(
-          await repo.savePreset(
-            projectId: 'p1',
-            name: 'Room A',
-            values: const <String, String>{'district': 'Wakiso'},
-            pinned: const <String, String>{},
-          ),
-          isFailure<ContextPreset, ValidationFailure>(),
+        final ContextState applied = valueOf(
+          await repo.applyPreset('p1', preset),
         );
-        final List<ContextPreset> kept = await repo.watchPresets('p1').first;
-        expect(kept.single.values, <String, String>{'district': 'Kampala'});
-
-        final ContextPreset replaced = valueOf(
-          await repo.savePreset(
-            projectId: 'p1',
-            name: 'Room A',
-            values: const <String, String>{'district': 'Wakiso'},
-            pinned: const <String, String>{},
-            overwrite: true,
-          ),
-        );
-        expect(replaced.id, kept.single.id);
-        final List<ContextPreset> after = await repo.watchPresets('p1').first;
-        expect(after.single.values, <String, String>{'district': 'Wakiso'});
+        expect(applied.values, <String, String>{
+          'district': 'Kampala',
+          'facility': 'Mulago',
+        });
+        expect(applied.pinned, <String, String>{'surveyor': 'Ada'});
+        expect(valueOf(await repo.load('p1')), equals(applied));
       });
+
+      test(
+        'a preset name in use fails validation until overwrite is confirmed',
+        () async {
+          valueOf(await repo.saveHierarchy('p1', hierarchy));
+          valueOf(
+            await repo.savePreset(
+              projectId: 'p1',
+              name: 'Room A',
+              values: const <String, String>{'district': 'Kampala'},
+              pinned: const <String, String>{},
+            ),
+          );
+          expect(
+            await repo.savePreset(
+              projectId: 'p1',
+              name: 'Room A',
+              values: const <String, String>{'district': 'Wakiso'},
+              pinned: const <String, String>{},
+            ),
+            isFailure<ContextPreset, ValidationFailure>(),
+          );
+          final List<ContextPreset> kept = await repo.watchPresets('p1').first;
+          expect(kept.single.values, <String, String>{'district': 'Kampala'});
+
+          final ContextPreset replaced = valueOf(
+            await repo.savePreset(
+              projectId: 'p1',
+              name: 'Room A',
+              values: const <String, String>{'district': 'Wakiso'},
+              pinned: const <String, String>{},
+              overwrite: true,
+            ),
+          );
+          expect(replaced.id, kept.single.id);
+          final List<ContextPreset> after = await repo.watchPresets('p1').first;
+          expect(after.single.values, <String, String>{'district': 'Wakiso'});
+        },
+      );
 
       test('deleting a preset removes it from the preset stream', () async {
         valueOf(await repo.saveHierarchy('p1', hierarchy));

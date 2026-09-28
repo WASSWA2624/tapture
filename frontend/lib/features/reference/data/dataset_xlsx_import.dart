@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -10,6 +12,32 @@ import 'dataset_csv_import.dart';
 
 /// Parses a spreadsheet via [WorkbookReader] into a draft [ReferenceDataset].
 abstract final class DatasetXlsxImport {
+  /// Uses the same workbook parser for browser-selected spreadsheet bytes.
+  static Future<Result<DatasetImportDraft>> parseBytes(
+    Uint8List bytes, {
+    required String sourceName,
+    String? projectId,
+    void Function(double)? onProgress,
+    CancellationToken? cancel,
+  }) async {
+    final Result<WorkbookSnapshot> opened = await WorkbookReader.openBytes(
+      bytes,
+      sourceName: sourceName,
+      onProgress: onProgress,
+      cancel: cancel,
+    );
+    return switch (opened) {
+      FailureResult<WorkbookSnapshot>(:final Failure failure) =>
+        FailureResult<DatasetImportDraft>(failure),
+      Success<WorkbookSnapshot>(:final WorkbookSnapshot value) => _fromSnapshot(
+        value,
+        path: sourceName,
+        projectId: projectId,
+        sheetIndex: 0,
+      ),
+    };
+  }
+
   /// Opens [path] with the shared workbook reader (FE-CONS-01, FE-STR-09).
   static Future<Result<DatasetImportDraft>> parse(
     String path, {
@@ -68,10 +96,10 @@ Result<DatasetImportDraft> _fromSnapshot(
       ),
     );
   }
-  final List<String> columns = <String>[
-    for (int i = 0; i < header.labels.length; i++)
-      _unique(header.labels[i].trim(), i, header.labels),
-  ];
+  final List<String> columns = <String>[];
+  for (int i = 0; i < header.labels.length; i++) {
+    columns.add(_unique(header.labels[i].trim(), i, columns));
+  }
   final int dataStart = header.rowNumber; // 1-based
   final List<Map<String, String>> rows = <Map<String, String>>[];
   for (int r = dataStart; r < sheet.rows.length; r++) {

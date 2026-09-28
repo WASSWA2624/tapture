@@ -109,6 +109,23 @@ final class ExportRequest {
   }
 
   /// The same request with [markedIncomplete] set.
+  ExportRequest copyWith({
+    List<ExportRecord>? records,
+    List<ExportFile>? files,
+  }) {
+    return ExportRequest(
+      projectId: projectId,
+      formats: formats,
+      scope: scope,
+      columns: columns,
+      extras: extras,
+      markedIncomplete: markedIncomplete,
+      records: records ?? this.records,
+      files: files ?? this.files,
+    );
+  }
+
+  /// The same request with [markedIncomplete] set.
   ExportRequest markIncomplete() {
     return ExportRequest(
       projectId: projectId,

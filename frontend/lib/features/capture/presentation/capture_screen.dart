@@ -8,12 +8,17 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/markup_ink.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/audio/audio_recorder_service.dart';
+import 'package:tapture/core/barcode/barcode_scanner_service.dart';
+import 'package:tapture/core/camera/camera_preview_surface.dart';
+import 'package:tapture/core/camera/camera_service.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
+import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/network/offline_now.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -37,6 +42,7 @@ import 'package:tapture/features/capture/domain/photo_repository.dart';
 import 'package:tapture/features/capture/domain/photo_rotate.dart';
 import 'package:tapture/features/capture/domain/save_and_analyse.dart';
 import 'package:tapture/features/capture/presentation/audio_recorder.dart';
+import 'package:tapture/features/capture/presentation/barcode_scanner_screen.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
 import 'package:tapture/features/capture/presentation/capture_guide_state.dart';
@@ -44,7 +50,9 @@ import 'package:tapture/features/capture/presentation/capture_recovery_prompt.da
 import 'package:tapture/features/capture/presentation/capture_target_fields.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
+import 'package:tapture/features/capture/presentation/live_camera_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
+import 'package:tapture/features/capture/presentation/photo_delete_action.dart';
 import 'package:tapture/features/capture/presentation/photo_doodle_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
 import 'package:tapture/features/capture/presentation/photo_type_screen.dart';
@@ -53,6 +61,7 @@ import 'package:tapture/features/capture/presentation/record_caption_field.dart'
 import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/processing/processing.dart';
 import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/reference/reference.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 export 'capture_target_fields.dart' show captureProjectTemplatesProvider;
@@ -157,11 +166,13 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   final Set<String> _selected = <String>{};
   final Map<String, Uint8List> _bytes = <String, Uint8List>{};
   final Map<String, String> _thumbs = <String, String>{};
+  final Map<String, Uint8List> _thumbnailBytes = <String, Uint8List>{};
   final Set<String> _missing = <String>{};
   String? _derivationNotice;
   bool _restored = false;
   bool _onStage = true;
   String? _chosen;
+  String? _locationSession;
   final IdService _ids = UuidV7Service(const SystemClock());
 
   /// What the open photo preview shows, set again after each new version so
@@ -244,6 +255,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final CaptureSession session = ref.watch(
       captureControllerProvider(_sessionKey()),
     );
+    if (!_editing && session.id != _locationSession) {
+      _locationSession = session.id;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(_captureLocation(session.id, _sessionKey()));
+      });
+    }
     // An edit is ready once its record has loaded; its template and context
     // are the record's own and stay as they are.
     final bool ready = _editing
@@ -301,9 +318,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       photoFields: <String>[],
       captionFields: <String>[],
     );
+    List<FieldDef> fields = widget.fields;
     for (final TemplateDef template in templates) {
       if (template.id == templateId) {
         guide = CaptureGuide.of(template);
+        if (fields.isEmpty) {
+          fields = template.fields
+              .where((FieldDef field) => !field.hidden)
+              .toList();
+        }
       }
     }
     final CaptureGuideView guideView = ref.watch(captureGuideStateProvider);
@@ -389,8 +412,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             captions: session.captions,
             selectedIds: _selected,
             thumbPaths: _thumbs,
-            // A browser has no thumbnail files; its tray draws the bytes.
-            thumbBytes: kIsWeb ? _bytes : const <String, Uint8List>{},
+            thumbBytes: kIsWeb ? _thumbnailBytes : const <String, Uint8List>{},
             missingIds: _missing,
             onAdd: !ready || needsChoice ? null : (widget.onAddPhoto ?? _add),
             onLongPress: (PhotoDraft photo) {
@@ -403,9 +425,36 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             onTap: (PhotoDraft photo) => _openViewer(session, photo),
             onRemove: (PhotoDraft photo) {
               unawaited(
-                ref
-                    .read(captureControllerProvider(_sessionKey()).notifier)
-                    .removePhoto(photo.id),
+                PhotoDeleteAction.run(
+                  context: context,
+                  photo: photo,
+                  delete: (String id) async {
+                    final Result<PhotoDraft?> removed = await controller
+                        .removePhoto(id);
+                    return removed.fold((Failure failure) {
+                      if (context.mounted) {
+                        showAppSnack(
+                          context,
+                          failure.message,
+                          tone: SnackTone.error,
+                        );
+                      }
+                      return null;
+                    }, (PhotoDraft? value) => value);
+                  },
+                  undo: (PhotoDraft removed) async {
+                    final Result<void> restored = await controller.undoRemove(
+                      removed,
+                    );
+                    if (restored is FailureResult<void> && context.mounted) {
+                      showAppSnack(
+                        context,
+                        restored.failure.message,
+                        tone: SnackTone.error,
+                      );
+                    }
+                  },
+                ),
               );
             },
           ),
@@ -484,11 +533,18 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           if (!_editing) ...<Widget>[
             _blockGap,
             InlineFieldsSection(
-              fields: widget.fields,
-              values: session.values,
+              key: ValueKey<String>('inline-${session.id}-$templateId'),
+              fields: fields,
+              values: <String, Object?>{
+                ...session.contextSnapshot,
+                ...session.values,
+              },
               onChanged: (String key, Object? value) {
                 unawaited(controller.setValue(key, value));
               },
+              onLookup: (FieldDef field) => unawaited(_lookup(field)),
+              onScan: (FieldDef field) => unawaited(_scan(field)),
+              linkedFields: session.lookupRows.keys.toSet(),
             ),
           ],
         ],
@@ -498,17 +554,125 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
 
   Future<void> _add() async {
     final PhotoPicker picker = ref.read(photoPickerProvider);
+    final CameraService camera = ref.read(cameraServiceProvider);
     if (!mounted) {
       return;
     }
     final Result<List<Uint8List>>? picked = await showPhotoSourceSheet(
       context,
       picker: picker,
+      takePhoto: camera is CameraPreviewSurface
+          ? () async {
+              await Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) => LiveCameraScreen(
+                    camera: camera,
+                    onCaptured: (Uint8List bytes) =>
+                        _storePhoto(bytes, derivedFrom: null),
+                  ),
+                ),
+              );
+              return const Success<List<Uint8List>>(<Uint8List>[]);
+            }
+          : null,
       limit: GalleryPicker.defaultLimit,
       longEdge: GalleryPicker.defaultLongEdge,
     );
     if (picked != null) {
       await _imported(picked);
+    }
+  }
+
+  Future<void> _scan(FieldDef field) async {
+    final String? code = await Navigator.of(context).push<String>(
+      MaterialPageRoute<String>(
+        builder: (BuildContext context) => BarcodeScannerScreen(
+          scanner: ref.read(barcodeScannerServiceProvider),
+          onConfirmed: (String code) => Navigator.of(context).pop(code),
+        ),
+      ),
+    );
+    if (!mounted || code == null) return;
+    await ref
+        .read(captureControllerProvider(_sessionKey()).notifier)
+        .setValue(field.fieldKey, code, source: 'BARCODE');
+    if (mounted && field.lookup.isNotEmpty) await _lookup(field);
+  }
+
+  Future<void> _lookup(FieldDef field) async {
+    final LookupBinding? binding = LookupBinding.fromMap(field.lookup);
+    if (binding == null) return;
+    final CaptureController controller = ref.read(
+      captureControllerProvider(_sessionKey()).notifier,
+    );
+    final CaptureSession session = ref.read(
+      captureControllerProvider(_sessionKey()),
+    );
+    final String query =
+        '${session.values[field.fieldKey] ?? session.contextSnapshot[field.fieldKey] ?? ''}';
+    final ReferenceRepository repository = ref.read(
+      referenceRepositoryProvider,
+    );
+    final Result<ReferenceDataset?> loaded = await repository.byId(
+      binding.datasetId,
+    );
+    if (!mounted) return;
+    final ReferenceDataset? dataset = loaded is Success<ReferenceDataset?>
+        ? loaded.value
+        : null;
+    if (dataset == null) {
+      showAppSnack(
+        context,
+        Copy.datasetsBrowserEmptyMessage,
+        tone: SnackTone.warning,
+      );
+      return;
+    }
+    final Result<LookupSearchResult> found = await LookupSearch.find(
+      repository: repository,
+      binding: binding,
+      dataset: dataset,
+      query: query,
+    );
+    if (!mounted) return;
+    if (found is FailureResult<LookupSearchResult>) {
+      showAppSnack(context, found.failure.message, tone: SnackTone.error);
+      return;
+    }
+    final LookupSearchResult result =
+        (found as Success<LookupSearchResult>).value;
+    ReferenceRow? selected;
+    if (result.matches.isEmpty) {
+      if (binding.onNoMatch == NoMatchBehaviour.promptAddRow) {
+        selected = await showDatasetAddRowSheet(
+          context: context,
+          datasetId: dataset.id,
+          keyColumn: dataset.keyColumn,
+          binding: binding,
+        );
+      } else if (binding.onNoMatch == NoMatchBehaviour.warn) {
+        showAppSnack(
+          context,
+          Copy.datasetsBrowserEmptyMessage,
+          tone: SnackTone.warning,
+        );
+      }
+    } else if (result.matches.length == 1 && !result.suggested) {
+      selected = result.matches.single;
+    } else {
+      selected = await showLookupPickerSheet(
+        context: context,
+        matches: result.matches,
+        distinguishColumns: dataset.columns,
+      );
+    }
+    if (!mounted || selected == null) return;
+    final Result<void> saved = await controller.applyLookup(<String, String>{
+      for (final MapEntry<String, String> entry in binding.fillMapping.entries)
+        entry.value: selected.values[entry.key] ?? '',
+    }, selected.id);
+    if (mounted && saved is FailureResult<void>) {
+      showAppSnack(context, saved.failure.message, tone: SnackTone.error);
     }
   }
 
@@ -530,10 +694,21 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     required String? derivedFrom,
   }) async {
     final String id = _ids.newId();
+    final CaptureSession session = ref.read(
+      captureControllerProvider(_sessionKey()),
+    );
+    // After the last position in use, so a photo added after a removal
+    // never shares a place with one still in the tray.
+    int sortOrder = 0;
+    for (final PhotoDraft photo in session.photos) {
+      if (photo.sortOrder >= sortOrder) {
+        sortOrder = photo.sortOrder + 1;
+      }
+    }
     final PhotoDraft draft = PhotoDraft(
       id: id,
       projectId: _projectId(),
-      captureSessionId: ref.read(captureControllerProvider(_sessionKey())).id,
+      captureSessionId: session.id,
       originalFilename: '$id.jpg',
       storedFilename: '$id.jpg',
       relativePath: 'photos/$id.jpg',
@@ -542,6 +717,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       mimeType: 'image/jpeg',
       capturedAt: const SystemClock().nowUtc(),
       derivedFrom: derivedFrom,
+      sortOrder: sortOrder,
+      gpsLat: session.location?.latitude,
+      gpsLon: session.location?.longitude,
     );
     final Result<void> saved = await ref
         .read(captureControllerProvider(_sessionKey()).notifier)
@@ -556,6 +734,16 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         setState(() => _bytes[id] = bytes);
         unawaited(_refreshThumbs(<PhotoDraft>[draft]));
     }
+  }
+
+  Future<void> _captureLocation(String sessionId, String sessionKey) async {
+    final Result<GeoFix?> result = await ref
+        .read(locationServiceProvider)
+        .currentFix();
+    if (!mounted || result is! Success<GeoFix?> || result.value == null) return;
+    await ref
+        .read(captureControllerProvider(sessionKey).notifier)
+        .setLocation(result.value!, sessionId: sessionId);
   }
 
   /// Adds the typed caption after each target photo's own caption (D6),
@@ -823,6 +1011,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         setState(() {
           _bytes.remove(photoId);
           _thumbs.remove(photoId);
+          _thumbnailBytes.remove(photoId);
           _missing.remove(photoId);
         });
         _showNewestInViewer();
@@ -905,15 +1094,22 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final Set<String> missing = Set<String>.of(_missing);
     for (final PhotoDraft photo in photos) {
       if (kIsWeb) {
-        // A browser cannot write thumbnail files; its tray draws the bytes
-        // read back from the store they were written to (FBK0000005).
-        if (!_bytes.containsKey(photo.id)) {
-          final Result<Uint8List> read = await repository.readBytes(photo);
-          if (read is Success<Uint8List>) {
-            _bytes[photo.id] = read.value;
-          }
+        final Project? owner = await ref.read(
+          projectByIdProvider(photo.projectId).future,
+        );
+        if (owner == null) {
+          missing.add(photo.id);
+          continue;
         }
-        if (_bytes.containsKey(photo.id)) {
+        final Result<Uint8List> thumbnail = await ref
+            .read(photoThumbnailsProvider)
+            .bytesFor(
+              sha256: photo.sha256,
+              storagePath: 'projects/${owner.folderName}/${photo.relativePath}',
+              edge: AppConstants.images.thumbnailEdge,
+            );
+        if (thumbnail is Success<Uint8List>) {
+          _thumbnailBytes[photo.id] = thumbnail.value;
           missing.remove(photo.id);
         } else {
           missing.add(photo.id);
@@ -1048,9 +1244,19 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             }());
           },
           onDiscard: () async {
-            await ref
+            final Result<void> discarded = await ref
                 .read(captureControllerProvider(_sessionKey()).notifier)
-                .discardSession();
+                .discardSession(interrupted: session);
+            if (discarded is FailureResult<void>) {
+              if (mounted) {
+                showAppSnack(
+                  context,
+                  discarded.failure.message,
+                  tone: SnackTone.error,
+                );
+              }
+              return;
+            }
             if (dialogContext.mounted) {
               Navigator.of(dialogContext).pop();
             }
@@ -1253,6 +1459,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
           return;
         }
         _bytes.clear();
+        _thumbnailBytes.clear();
+        _thumbs.clear();
+        _missing.clear();
         _selected.clear();
         showAppSnack(context, Copy.captureSaved, tone: SnackTone.success);
     }

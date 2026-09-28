@@ -5,7 +5,7 @@ import { visibleProject } from '../../src/services/projects.js';
 import { AppError } from '../../src/domain/errors.js';
 
 describe('membership', () => {
-  it('keeps a context scope and hides another organisation', () => {
+  it('keeps a context scope and hides another organisation', async () => {
     const store = new Store();
     store.addOrg({
       id: 'org-1',
@@ -48,7 +48,7 @@ describe('membership', () => {
       userId: 'user-1',
       contextScope: 'north',
     });
-    const seen = visibleProject(
+    const seen = await visibleProject(
       store,
       {
         userId: 'user-1',
@@ -65,7 +65,7 @@ describe('membership', () => {
         ?.contextScope,
       'north',
     );
-    assert.throws(
+    await assert.rejects(
       () =>
         visibleProject(
           store,

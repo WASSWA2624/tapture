@@ -78,6 +78,9 @@ class _DatasetAddRowSheetState extends ConsumerState<DatasetAddRowSheet> {
     super.initState();
     _key = TextEditingController();
     for (final String column in widget.binding.fillMapping.keys) {
+      if (column == widget.keyColumn) {
+        continue;
+      }
       _fields[column] = TextEditingController();
     }
   }

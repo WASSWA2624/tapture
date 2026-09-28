@@ -163,6 +163,7 @@ abstract final class RecordMapper {
       id: record.read<String>('id'),
       projectId: record.read<String>('project_id'),
       templateId: record.read<String>('template_id'),
+      templateVersion: record.readNullable<int>('template_version') ?? 1,
       templateRowId: record.read<String?>('template_row_id'),
       number: record.read<int?>('record_number'),
       name: record.read<String?>('name') ?? '',

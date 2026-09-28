@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -62,18 +65,23 @@ class RecordThumb extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<String?> path = ref.watch(
+    final AsyncValue<PhotoAsset?> path = ref.watch(
       _thumbPathProvider((sha256: sha256, storagePath: storagePath)),
     );
-    final String thumbPath = switch (path) {
-      AsyncData<String?>(:final String? value) => value ?? _missingThumb,
-      AsyncError<String?>() => _missingThumb,
-      _ => '',
+    final PhotoAsset asset = switch (path) {
+      AsyncData<PhotoAsset?>(:final PhotoAsset? value) =>
+        value ?? PhotoAsset(sha256: sha256, thumbPath: _missingThumb),
+      AsyncError<PhotoAsset?>() => PhotoAsset(
+        sha256: sha256,
+        thumbPath: _missingThumb,
+      ),
+      _ => PhotoAsset(sha256: sha256),
     };
     return AppPhotoThumb(
       photo: PhotoAsset(
         sha256: sha256,
-        thumbPath: thumbPath,
+        thumbPath: asset.thumbPath,
+        thumbBytes: asset.thumbBytes,
         hasCaption: hasCaption,
       ),
       quarterTurns: quarterTurns,
@@ -92,7 +100,23 @@ typedef _ThumbSource = ({String sha256, String storagePath});
 
 /// Cached thumbnail path for a stored photo, or null when it cannot be made.
 final _thumbPathProvider = FutureProvider.autoDispose
-    .family<String?, _ThumbSource>((Ref ref, _ThumbSource photo) async {
+    .family<PhotoAsset?, _ThumbSource>((Ref ref, _ThumbSource photo) async {
+      if (kIsWeb) {
+        final Result<Uint8List> bytes = await ref
+            .watch(photoThumbnailsProvider)
+            .bytesFor(
+              sha256: photo.sha256,
+              storagePath: photo.storagePath,
+              edge: AppConstants.images.thumbnailEdge,
+            );
+        return switch (bytes) {
+          Success<Uint8List>(:final value) => PhotoAsset(
+            sha256: photo.sha256,
+            thumbBytes: value,
+          ),
+          FailureResult<Uint8List>() => null,
+        };
+      }
       final Result<String> path = await ref
           .watch(photoThumbnailsProvider)
           .pathFor(
@@ -101,7 +125,10 @@ final _thumbPathProvider = FutureProvider.autoDispose
             edge: AppConstants.images.thumbnailEdge,
           );
       return switch (path) {
-        Success<String>(:final String value) => value,
+        Success<String>(:final String value) => PhotoAsset(
+          sha256: photo.sha256,
+          thumbPath: value,
+        ),
         FailureResult<String>() => null,
       };
     }, retry: (int _, Object _) => null);

@@ -34,27 +34,24 @@ Map<String, Object?> _build({
 
 void main() {
   group('with a frozen clock', () {
-    test(
-      'a record captured with no typing carries a complete timestamp, '
-      'operator and device',
-      () {
-        final Map<String, Object?> values = _build();
-        final DateTime local = _frozen.toLocal();
+    test('a record captured with no typing carries a complete timestamp, '
+        'operator and device', () {
+      final Map<String, Object?> values = _build();
+      final DateTime local = _frozen.toLocal();
 
-        expect(values['capturedAt'], '2026-09-28T12:00:00.000Z');
-        expect(
-          values['date'],
-          '${local.year}-${_two(local.month)}-${_two(local.day)}',
-        );
-        expect(
-          values['time'],
-          '${_two(local.hour)}:${_two(local.minute)}:${_two(local.second)}',
-        );
-        expect(values['operator'], 'ada');
-        expect(values['device'], 'device-7');
-        expect(values.keys, unorderedEquals(_keys));
-      },
-    );
+      expect(values['capturedAt'], '2026-09-28T12:00:00.000Z');
+      expect(
+        values['date'],
+        '${local.year}-${_two(local.month)}-${_two(local.day)}',
+      );
+      expect(
+        values['time'],
+        '${_two(local.hour)}:${_two(local.minute)}:${_two(local.second)}',
+      );
+      expect(values['operator'], 'ada');
+      expect(values['device'], 'device-7');
+      expect(values.keys, unorderedEquals(_keys));
+    });
 
     test('captured-at is written in UTC whatever the device zone', () {
       expect(_build()['capturedAt'], endsWith('Z'));
@@ -105,19 +102,16 @@ void main() {
         for (final String key in _keys)
           if (!enabled.contains(key)) key,
       ];
-      test(
-        'with ${disabled.isEmpty ? 'nothing' : disabled.join(', ')} off it '
-        'writes ${enabled.isEmpty ? 'nothing' : enabled.join(', ')}',
-        () {
-          final Map<String, Object?> values = _build(
-            autoFill: <String, bool>{
-              for (final String key in _keys) key: enabled.contains(key),
-            },
-          );
+      test('with ${disabled.isEmpty ? 'nothing' : disabled.join(', ')} off it '
+          'writes ${enabled.isEmpty ? 'nothing' : enabled.join(', ')}', () {
+        final Map<String, Object?> values = _build(
+          autoFill: <String, bool>{
+            for (final String key in _keys) key: enabled.contains(key),
+          },
+        );
 
-          expect(values.keys, unorderedEquals(enabled));
-        },
-      );
+        expect(values.keys, unorderedEquals(enabled));
+      });
     }
 
     test('a key the template does not mention is filled', () {

@@ -23,6 +23,7 @@ import 'bundle_zip_stub.dart'
     if (dart.library.io) 'bundle_zip_io.dart'
     if (dart.library.js_interop) 'bundle_zip_web.dart'
     as platform;
+import 'bundle_zip_web.dart' as browser;
 import 'template_key.dart';
 
 /// Writes a project package: every table and file another Tapture app
@@ -142,22 +143,21 @@ final class _BundleWriter implements BundleWriter {
       bundleId: bundleId,
       projectId: projectId,
     );
-    return platform.zipBundle(
-      BundleZipJob(
-        storageRoot: _storageRoot,
-        files: _files,
-        folderName: ready.tables.folderName,
-        targetPath:
-            'projects/${ready.tables.folderName}/exports/$bundleId.'
-            '${BundleFormat.extension}',
-        entries: ready.entries,
-        projectFiles: ready.tables.filePaths,
-        manifest: manifest,
-        ceiling: ceiling,
-        cancel: cancel,
-        onProgress: onProgress,
-      ),
+    final BundleZipJob job = BundleZipJob(
+      storageRoot: _storageRoot,
+      files: _files,
+      folderName: ready.tables.folderName,
+      targetPath:
+          'projects/${ready.tables.folderName}/exports/$bundleId.'
+          '${BundleFormat.extension}',
+      entries: ready.entries,
+      projectFiles: ready.tables.filePaths,
+      manifest: manifest,
+      ceiling: ceiling,
+      cancel: cancel,
+      onProgress: onProgress,
     );
+    return _inBrowser ? browser.zipBundle(job) : platform.zipBundle(job);
   }
 
   Future<BundleTables> _read(String projectId) async {

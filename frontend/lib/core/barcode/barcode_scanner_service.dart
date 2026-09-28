@@ -1,16 +1,31 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_scanner/mobile_scanner.dart' as platform;
+import 'package:tapture/core/camera/camera_preview_surface.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 part 'barcode_hit.dart';
+part 'device_barcode_scanner.dart';
 
 /// Decodes barcodes from a camera stream. Features never call a scanner
 /// plugin (FE-STR-11).
 abstract interface class BarcodeScannerService {
+  /// Creates the maintained platform scanner; unsupported devices allow typing.
+  factory BarcodeScannerService() {
+    return kIsWeb ||
+            defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS ||
+            defaultTargetPlatform == TargetPlatform.macOS
+        ? _DeviceBarcodeScanner()
+        : const BarcodeScannerService.unavailable();
+  }
+
   /// Unavailable stand-in until [main] overrides.
   const factory BarcodeScannerService.unavailable() =
       _UnavailableBarcodeScanner;

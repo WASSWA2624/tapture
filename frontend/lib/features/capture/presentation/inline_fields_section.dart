@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/fields/field_editor.dart';
+import 'package:tapture/core/widgets/fields/field_value.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 /// Inline template fields: identity + required visible; rest behind More.
@@ -10,6 +13,9 @@ final class InlineFieldsSection extends StatefulWidget {
     required this.values,
     required this.onChanged,
     this.validationErrors = const <String, String>{},
+    this.onLookup,
+    this.onScan,
+    this.linkedFields = const <String>{},
     super.key,
   });
 
@@ -25,34 +31,21 @@ final class InlineFieldsSection extends StatefulWidget {
   /// Field key → validation message.
   final Map<String, String> validationErrors;
 
+  /// Looks up the current value without discarding typed text.
+  final ValueChanged<FieldDef>? onLookup;
+
+  /// Opens the reusable barcode scanner for identifier fields.
+  final ValueChanged<FieldDef>? onScan;
+
+  /// Fields with retained reference-row provenance.
+  final Set<String> linkedFields;
+
   @override
   State<InlineFieldsSection> createState() => _InlineFieldsSectionState();
 }
 
 class _InlineFieldsSectionState extends State<InlineFieldsSection> {
   bool _moreOpen = false;
-  final Map<String, TextEditingController> _controllers =
-      <String, TextEditingController>{};
-
-  @override
-  void dispose() {
-    for (final TextEditingController c in _controllers.values) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  TextEditingController _controllerFor(FieldDef field) {
-    final String text = widget.values[field.fieldKey]?.toString() ?? '';
-    final TextEditingController existing = _controllers.putIfAbsent(
-      field.fieldKey,
-      () => TextEditingController(text: text),
-    );
-    if (existing.text != text && !existing.selection.isValid) {
-      existing.text = text;
-    }
-    return existing;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,15 +81,50 @@ class _InlineFieldsSectionState extends State<InlineFieldsSection> {
   }
 
   Widget _field(FieldDef field) {
-    final String? error = widget.validationErrors[field.fieldKey];
     final FieldEditorKind kind = FieldTypeRegistry.of(field.type).editor;
     return Padding(
       key: ValueKey<String>('field-${field.fieldKey}-$kind'),
-      padding: const EdgeInsets.only(bottom: 8),
-      child: TextFormField(
-        controller: _controllerFor(field),
-        decoration: InputDecoration(labelText: field.label, errorText: error),
-        onChanged: (String value) => widget.onChanged(field.fieldKey, value),
+      padding: const EdgeInsets.only(bottom: Space.x2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          FieldEditor(
+            field: fieldEditorField(field),
+            value: FieldValue(
+              fieldKey: field.fieldKey,
+              value: widget.values[field.fieldKey] ?? field.defaultValue,
+            ),
+            onChanged: (FieldValue value) =>
+                widget.onChanged(field.fieldKey, value.value),
+          ),
+          if (field.lookup.isNotEmpty ||
+              field.type == FieldType.barcode ||
+              widget.linkedFields.contains(field.fieldKey))
+            Wrap(
+              children: <Widget>[
+                if (field.lookup.isNotEmpty && widget.onLookup != null)
+                  TextButton(
+                    onPressed: () => widget.onLookup!(field),
+                    child: const Text(Copy.search),
+                  ),
+                if (field.type == FieldType.barcode && widget.onScan != null)
+                  TextButton(
+                    onPressed: () => widget.onScan!(field),
+                    child: const Text(Copy.barcodeRescan),
+                  ),
+                if (widget.linkedFields.contains(field.fieldKey))
+                  TextButton(
+                    onPressed: () => widget.onChanged(
+                      field.fieldKey,
+                      widget.values[field.fieldKey],
+                    ),
+                    child: const Text(Copy.recordSourceLookup),
+                  ),
+              ],
+            ),
+          if (widget.validationErrors[field.fieldKey] case final String message)
+            Text(message),
+        ],
       ),
     );
   }

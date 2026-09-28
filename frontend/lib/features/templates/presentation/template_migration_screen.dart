@@ -19,6 +19,7 @@ import 'package:tapture/features/templates/presentation/template_locations.dart'
 
 import '../domain/template_def.dart';
 import '../domain/template_versioning.dart';
+import '../templates.dart' show templateMigrationRepositoryProvider;
 import 'template_list_screen.dart' show templateListProvider;
 
 /// Shows added, removed and retyped fields before any record moves (§18).
@@ -34,9 +35,11 @@ class TemplateMigrationScreen extends ConsumerWidget {
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
-    final List<CapturedTemplateRecord> records = ref.watch(
-      templateCapturedRecordsProvider,
+    final AsyncValue<List<CapturedTemplateRecord>> captured = ref.watch(
+      templateCapturedRecordsProvider(templateId),
     );
+    final List<CapturedTemplateRecord> records =
+        captured.asData?.value ?? const <CapturedTemplateRecord>[];
     final _MigrationView view = ref.watch(_migrationProvider(templateId));
     final TemplateDef? template = value.asData?.value;
     final TemplateVersioning preview = template == null
@@ -55,20 +58,30 @@ class TemplateMigrationScreen extends ConsumerWidget {
           ? null
           : AppPrimaryAction(
               label: Copy.templateMigrationAction,
-              onPressed: () => _commit(context, ref, template!),
+              busy: view.busy,
+              onPressed: () => _commit(context, ref, template!, records),
             ),
       body: AsyncValueView<TemplateDef?>(
         value: value,
-        isEmpty: (TemplateDef? row) =>
-            row == null ||
-            TemplateVersioning.preview(current: row, records: records).isEmpty,
+        isEmpty: (TemplateDef? row) => row == null,
         empty: () => const AppEmptyState(
           icon: AppIcons.migrate,
           headline: Copy.templateMigrationEmptyHeadline,
           message: Copy.templateMigrationEmptyMessage,
         ),
         onRetry: () => ref.invalidate(templateListProvider),
-        data: (TemplateDef? _) => _list(view, preview),
+        data: (TemplateDef? _) => AsyncValueView<List<CapturedTemplateRecord>>(
+          value: captured,
+          onRetry: () =>
+              ref.invalidate(templateCapturedRecordsProvider(templateId)),
+          isEmpty: (_) => preview.isEmpty,
+          empty: () => const AppEmptyState(
+            icon: AppIcons.migrate,
+            headline: Copy.templateMigrationEmptyHeadline,
+            message: Copy.templateMigrationEmptyMessage,
+          ),
+          data: (_) => _list(view, preview),
+        ),
       ),
     );
   }
@@ -126,6 +139,7 @@ class TemplateMigrationScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     TemplateDef template,
+    List<CapturedTemplateRecord> reviewed,
   ) async {
     final bool confirmed = await showAppConfirm(
       context,
@@ -138,7 +152,7 @@ class TemplateMigrationScreen extends ConsumerWidget {
     }
     final bool saved = await ref
         .read(_migrationProvider(templateId).notifier)
-        .commit(template);
+        .commit(template, reviewed);
     if (saved && context.mounted) {
       GoRouter.maybeOf(
         context,
@@ -147,26 +161,14 @@ class TemplateMigrationScreen extends ConsumerWidget {
   }
 }
 
-/// Captured records the migration screen can move. Defaults to none until
-/// the records feature watches captures; tests override this list.
-final Provider<List<CapturedTemplateRecord>> templateCapturedRecordsProvider =
-    Provider<List<CapturedTemplateRecord>>((Ref _) {
-      return const <CapturedTemplateRecord>[];
-    });
+/// Only this template's durable captured records enter the preview.
+final templateCapturedRecordsProvider = StreamProvider.autoDispose
+    .family<List<CapturedTemplateRecord>, String>(
+      (Ref ref, String templateId) =>
+          ref.watch(templateMigrationRepositoryProvider).watch(templateId),
+    );
 
-/// Writes every migrated record in one call. Defaults to a no-op until
-/// records persist a captured version; tests override this to fail or store.
-final Provider<Future<Result<void>> Function(List<CapturedTemplateRecord> next)>
-templateMigrationPersistProvider =
-    Provider<Future<Result<void>> Function(List<CapturedTemplateRecord> next)>((
-      Ref _,
-    ) {
-      return (List<CapturedTemplateRecord> _) async {
-        return const Success<void>(null);
-      };
-    });
-
-typedef _MigrationView = ({String? saveError});
+typedef _MigrationView = ({String? saveError, bool busy});
 
 final class _Migration extends Notifier<_MigrationView> {
   _Migration(this.templateId);
@@ -175,22 +177,29 @@ final class _Migration extends Notifier<_MigrationView> {
 
   @override
   _MigrationView build() {
-    return (saveError: null);
+    return (saveError: null, busy: false);
   }
 
-  Future<bool> commit(TemplateDef template) async {
-    final Result<List<CapturedTemplateRecord>> result =
-        await TemplateVersioning.apply(
-          current: template,
-          records: ref.read(templateCapturedRecordsProvider),
-          persist: ref.read(templateMigrationPersistProvider),
-        );
+  Future<bool> commit(
+    TemplateDef template,
+    List<CapturedTemplateRecord> reviewed,
+  ) async {
+    if (state.busy) {
+      return false;
+    }
+    state = (saveError: null, busy: true);
+    final Result<void> result = await ref
+        .read(templateMigrationRepositoryProvider)
+        .migrate(template: template, reviewed: reviewed);
+    if (!ref.mounted) {
+      return false;
+    }
     switch (result) {
-      case Success<List<CapturedTemplateRecord>>():
-        state = (saveError: null);
+      case Success<void>():
+        state = (saveError: null, busy: false);
         return true;
-      case FailureResult<List<CapturedTemplateRecord>>(:final Failure failure):
-        state = (saveError: failure.message);
+      case FailureResult<void>(:final Failure failure):
+        state = (saveError: failure.message, busy: false);
         return false;
     }
   }

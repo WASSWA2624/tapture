@@ -1,5 +1,5 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/features/reference/domain/lookup_prefill.dart';
-import 'package:test/test.dart';
 
 const PrefillField _blank = (
   value: '',
@@ -71,10 +71,10 @@ void main() {
       rowValues: _acme,
       rowId: 'row-1',
     );
-    expect(filled.keys, unorderedEquals(<String>[
-      'supplier_name',
-      'supplier_phone',
-    ]));
+    expect(
+      filled.keys,
+      unorderedEquals(<String>['supplier_name', 'supplier_phone']),
+    );
     expect(filled['supplier_name']!.linked, isTrue);
   });
 

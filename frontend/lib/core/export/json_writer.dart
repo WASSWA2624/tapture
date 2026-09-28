@@ -35,6 +35,9 @@ final class JsonWriter {
       'status': record.status,
       'contextPath': record.contextPath,
       'operator': record.operatorName,
+      'photos': record.toJson()['photos'],
+      'definitions': record.definitions,
+      'provenance': record.provenance,
       'values': <Map<String, Object?>>[
         for (final ExportValue value in record.values)
           <String, Object?>{

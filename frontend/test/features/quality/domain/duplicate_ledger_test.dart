@@ -62,13 +62,16 @@ void main() {
     ]);
   });
 
-  test('a replaced value reaches history beside the value that replaced it', () {
-    final FakeDuplicateLedger ledger = FakeDuplicateLedger();
-    ledger.replaceValue(fieldKey: 'serial', previous: 'A-1', next: 'A-2');
-    expect(ledger.replacements.single, (
-      fieldKey: 'serial',
-      previous: 'A-1',
-      next: 'A-2',
-    ));
-  });
+  test(
+    'a replaced value reaches history beside the value that replaced it',
+    () {
+      final FakeDuplicateLedger ledger = FakeDuplicateLedger();
+      ledger.replaceValue(fieldKey: 'serial', previous: 'A-1', next: 'A-2');
+      expect(ledger.replacements.single, (
+        fieldKey: 'serial',
+        previous: 'A-1',
+        next: 'A-2',
+      ));
+    },
+  );
 }

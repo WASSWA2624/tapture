@@ -160,21 +160,27 @@ void main() {
     expect(ContextCascade.named(affected), <String>['Department (Theatre)']);
   });
 
-  test('the confirmation falls back to the field key when a label is empty', () {
-    const ContextState unlabeled = ContextState(
-      levels: <ContextLevel>[
-        ContextLevel(fieldKey: 'district', order: 0),
-        ContextLevel(fieldKey: 'facility', order: 1),
-      ],
-      values: <String, String>{'district': 'Kampala', 'facility': 'Kasubi'},
-    );
-    expect(
-      ContextCascade.named(
-        ContextCascade.affected(state: unlabeled, changedFieldKey: 'district'),
-      ),
-      <String>['facility (Kasubi)'],
-    );
-  });
+  test(
+    'the confirmation falls back to the field key when a label is empty',
+    () {
+      const ContextState unlabeled = ContextState(
+        levels: <ContextLevel>[
+          ContextLevel(fieldKey: 'district', order: 0),
+          ContextLevel(fieldKey: 'facility', order: 1),
+        ],
+        values: <String, String>{'district': 'Kampala', 'facility': 'Kasubi'},
+      );
+      expect(
+        ContextCascade.named(
+          ContextCascade.affected(
+            state: unlabeled,
+            changedFieldKey: 'district',
+          ),
+        ),
+        <String>['facility (Kasubi)'],
+      );
+    },
+  );
 
   test('applying a change never mutates the state it was given', () {
     final Map<String, String> values = <String, String>{

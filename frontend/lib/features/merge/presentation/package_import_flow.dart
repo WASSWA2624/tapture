@@ -42,11 +42,20 @@ Future<void> startPackageImport(
   BuildContext context,
   WidgetRef ref, {
   String? intoProjectId,
+  PickedDocument? supplied,
+  Future<void> Function()? onApplied,
 }) async {
   final PackageImportController flow = ref.read(
     packageImportControllerProvider.notifier,
   );
-  final Result<PickedDocument> picked = await flow.pick();
+  final Result<PickedDocument> picked;
+  if (supplied == null) {
+    picked = await flow.pick();
+  } else {
+    await flow.finish();
+    picked = Success<PickedDocument>(supplied);
+  }
+  flow.onApplied = onApplied;
   if (!context.mounted) {
     return;
   }

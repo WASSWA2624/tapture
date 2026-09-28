@@ -12,6 +12,6 @@ Continue an inventory someone else started, as records or as a register to verif
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 20.01 | 020 | [Data import: continue an inventory someone else started](020-data-import.md) | **Complete** | 23/23 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 14.01 (014), 15.01 (015); Dependencies complete |
+| 20.01 | 020 | [Data import: continue an inventory someone else started](020-data-import.md) | **Complete** | 23/23 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 14.01 (014), 15.01 (015); Prerequisite review: 009 |
 
 <!-- dev-plan:generated:end -->

@@ -100,6 +100,16 @@ void main() {
       ),
       'photos/front.jpg',
     );
+    // A deliverable's workbook sits in outputs/, beside the photos folder.
+    expect(
+      XlsxPhotoRefs.cell(
+        mode: 'relative',
+        fileName: 'front.jpg',
+        relativePath: 'photos/front.jpg',
+      ),
+      '../photos/front.jpg',
+    );
+    expect(XlsxPhotoRefs.outputsFolder, 'outputs');
     expect(
       XlsxPhotoRefs.rowHeight('embed'),
       greaterThan(XlsxPhotoRefs.rowHeight('filename')),

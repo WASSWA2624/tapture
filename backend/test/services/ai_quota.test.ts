@@ -5,7 +5,7 @@ import { Store } from '../../src/repositories/store.js';
 import { assertQuota } from '../../src/services/ai/quota.js';
 
 describe('ai quota', () => {
-  it('refuses before the call once the ceiling is reached', () => {
+  it('refuses before the call once the ceiling is reached', async () => {
     const store = new Store();
     const principal = {
       userId: 'user-1',
@@ -26,7 +26,7 @@ describe('ai quota', () => {
         at: new Date().toISOString(),
       });
     }
-    assert.throws(
+    await assert.rejects(
       () => assertQuota(store, principal, 'project-1'),
       (error: unknown) =>
         error instanceof AppError && error.code === 'quota_exceeded',

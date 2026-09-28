@@ -7,10 +7,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/text_store.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
@@ -83,6 +85,50 @@ void main() {
     expect(find.text('record page'), findsOneWidget);
     expect(find.text(Copy.recordEditSaved), findsOneWidget);
     expect(_ok(await harness.sessions.loadSession(_key)), isNull);
+  });
+
+  testWidgets('removing a photo asks first, and Cancel keeps it', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _open(tester);
+    await _tapRemove(tester, 'f1');
+
+    expect(find.text(Copy.captureDeletePhotoMessage), findsOneWidget);
+    await tester.tap(find.widgetWithText(AppButton, Copy.cancel));
+    await tester.pumpAndSettle();
+
+    expect(_thumb('f1'), findsOneWidget);
+    expect(harness.session(tester).photos.map((PhotoDraft p) => p.id), <String>[
+      'f1',
+      'f2',
+    ]);
+  });
+
+  testWidgets('Undo puts a removed photo back in its place with its caption', (
+    WidgetTester tester,
+  ) async {
+    final _Harness harness = await _open(tester);
+    await _tapRemove(tester, 'f1');
+    await tester.tap(_confirmDelete);
+    await tester.pumpAndSettle();
+    expect(_thumb('f1'), findsNothing);
+    expect(find.text(Copy.capturePhotoDeleted), findsOneWidget);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(SnackBar),
+        matching: find.text(Copy.captureUndoDelete),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(_thumb('f1'), findsOneWidget);
+    expect(harness.session(tester).photos.map((PhotoDraft p) => p.id), <String>[
+      'f1',
+      'f2',
+    ]);
+    expect(harness.session(tester).captions['f1'], 'Valve');
+    expect(harness.records.updates, isEmpty);
   });
 
   testWidgets('Save changes hands back how many photos the edit filed', (
@@ -239,7 +285,7 @@ String _captionText(WidgetTester tester) {
 
 Finder _thumb(String id) => find.byKey(ValueKey<String>('photo-thumb-$id'));
 
-Future<void> _remove(WidgetTester tester, String id) async {
+Future<void> _tapRemove(WidgetTester tester, String id) async {
   await tester.tap(
     find.descendant(
       of: _thumb(id),
@@ -248,6 +294,22 @@ Future<void> _remove(WidgetTester tester, String id) async {
       ),
     ),
   );
+  await tester.pumpAndSettle();
+}
+
+final Finder _confirmDelete = find.widgetWithText(
+  AppButton,
+  Copy.captureDeletePhotoTitle,
+);
+
+/// Removes photo [id] as the operator does: the corner control, then the
+/// confirm. The undo offer is left to lapse, so it no longer sits over the
+/// page's footer.
+Future<void> _remove(WidgetTester tester, String id) async {
+  await _tapRemove(tester, id);
+  await tester.tap(_confirmDelete);
+  await tester.pumpAndSettle();
+  await tester.pump(AppConstants.feedback.snack);
   await tester.pumpAndSettle();
 }
 

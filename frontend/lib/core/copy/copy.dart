@@ -8,6 +8,11 @@ import 'package:tapture/app/theme/markup_ink.dart';
 /// Template field labels, option lists and template names are user data and
 /// never pass through here (FE-L10N-07).
 abstract final class Copy {
+  /// Local image recognition has no browser implementation.
+  static const String ocrBrowserUnavailable =
+      'On-device photo reading is unavailable in this browser. '
+      'Review fields manually or enable online analysis.';
+
   /// Stated absence when a value was not found.
   static String get notDetected => 'Not detected';
 
@@ -6238,6 +6243,62 @@ abstract final class Copy {
 
   /// Settings row for the organisation server.
   static const String backendSettingsTitle = 'Organisation';
+
+  /// Relay empty state when no project is open.
+  static const String relayChooseProject =
+      'Open a project to exchange changes with its other devices.';
+
+  /// Relay switch title.
+  static const String relayEnable = 'Enable relay';
+
+  /// Relay switch explanation.
+  static const String relayEnableHelp =
+      'Encrypted packages pass through the organisation server temporarily.';
+
+  /// Relay shared-key field label.
+  static const String relaySharedKey = 'Shared project key';
+
+  /// Relay shared-key guidance.
+  static const String relayKeyHelp =
+      'Use the same key of at least 16 characters on each device. Exchange it separately; it never goes to the server.';
+
+  /// Relay action that queues the whole project as one package.
+  static const String relayQueueProject = 'Queue project package';
+
+  /// Relay action that sends queued and fetches incoming packages.
+  static const String relaySync = 'Sync relay';
+
+  /// Relay row that previews a received package before merge.
+  static const String relayReceivedPackage = 'Preview received changes';
+
+  /// Optional catalogue ranking, always presented as a person's choice.
+  static const String shippedSuggestWithAi = 'Suggest with AI';
+
+  /// Badge on a template the AI ranking suggested.
+  static const String shippedAiSuggestion = 'AI suggestion';
+
+  /// Explanation under the AI ranking.
+  static const String shippedAiSuggestionHelp =
+      'Suggested order only. Preview and choose the templates you want.';
+
+  /// Deployment-specific address is needed only for self-hosted installations.
+  static const String backendServerAddress = 'Server address';
+
+  /// Guidance under the server address and organisation fields.
+  static const String backendConfigurationHelp =
+      'Use the HTTPS address supplied by your administrator. Leave Organisation empty when this server hosts one organisation.';
+
+  /// Session state when this device has no backend session.
+  static const String backendNotSignedIn = 'Not signed in';
+
+  /// Session state when this device holds a backend session.
+  static const String backendSignedIn = 'Signed in on this device';
+
+  /// Label for the cached access grant's expiry.
+  static const String backendGrantUntil = 'Cached access until';
+
+  /// Action that ends the backend session on this device.
+  static const String signOutAction = 'Sign out';
 
   /// Settings row explanation for the server address and grant.
   static const String backendSettingsSubtitle =

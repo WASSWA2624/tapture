@@ -37,9 +37,8 @@ void main() {
         (await target.db.select(target.db.records).get()).length,
         before + 1,
       );
-      final Map<String, String> restored = const MergeUndo().undo(
-        snapshot: snapshot,
-        purged: false,
+      final Map<String, String> restored = valueOf(
+        const MergeUndo().undo(snapshot: snapshot, purged: false),
       );
       expect(restored, snapshot);
       expect(valueOf(await target.records.byId(imported.id)), isNotNull);

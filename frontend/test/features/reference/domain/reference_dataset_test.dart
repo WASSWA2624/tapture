@@ -1,5 +1,5 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/features/reference/domain/reference_dataset.dart';
-import 'package:test/test.dart';
 
 import '../reference_fixtures.dart';
 

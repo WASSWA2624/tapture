@@ -146,3 +146,28 @@ final recordEditTemplateProvider = FutureProvider.autoDispose
         FailureResult<TemplateDef?>(:final Failure failure) => throw failure,
       };
     }, retry: (int _, Object _) => null);
+
+/// Resolves the saved shape, so later template edits cannot silently retype a record.
+final recordCapturedTemplateProvider = Provider.autoDispose
+    .family<AsyncValue<TemplateDef?>, ({String id, int version})>(
+      (
+        Ref ref,
+        ({String id, int version}) captured,
+      ) => ref.watch(recordEditTemplateProvider(captured.id)).whenData((
+        TemplateDef? template,
+      ) {
+        if (template == null) return null;
+        final TemplateDef? shape = TemplateVersioning.shapeFor(
+          template,
+          captured.version,
+        );
+        if (shape == null) {
+          throw const StorageFailure(
+            message: 'The captured template version is unavailable.',
+            recoveryAction:
+                'Restore the original project package before editing these values.',
+          );
+        }
+        return shape;
+      }),
+    );

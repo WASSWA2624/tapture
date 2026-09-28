@@ -15,6 +15,7 @@ export 'presentation/current_project.dart'
         currentProjectDetailsProvider,
         currentProjectProvider,
         openProjectIdProvider,
+        projectByIdProvider,
         projectListProvider,
         projectNavCountProvider,
         projectSettingsStoreProvider;

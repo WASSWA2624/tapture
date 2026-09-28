@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:tapture/core/ai/ocr_result.dart';
 import 'package:tapture/core/ai/ocr_service.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/hash/perceptual_hash.dart';
 
 import 'ocr_cache.dart';
@@ -28,9 +28,15 @@ final class OnDeviceStage {
 
   /// Reads every photo in [bundle] the cache does not already hold.
   Future<void> run(RecordBundle bundle, CancellationToken cancel) async {
+    // Browser OCR is unavailable; retain captions and fields for the remaining
+    // stages instead of failing a record before online or manual review.
+    if (_paths.isBrowser) return;
     for (final Photo photo in bundle.photos) {
+      if (cancel.isCancelled) throw const CancelledFailure();
       final String path = await _paths.prepared(bundle, photo);
-      final Uint8List bytes = await File(path).readAsBytes();
+      final String relative =
+          '${await _paths.compressedRelative(bundle, photo, cancel: cancel)}.ocr.jpg';
+      final Uint8List bytes = StageSupport.unwrap(await _paths.read(relative));
       final String perceptual = StageSupport.unwrap(
         await PerceptualHash.ofBytesOffThread(bytes),
       );
@@ -43,7 +49,7 @@ final class OnDeviceStage {
       if (cached != null) {
         continue;
       }
-      final OcrResult result = await _ocr.recognise(path);
+      final OcrResult result = await _ocr.recognise(path, cancel: cancel);
       StageSupport.unwrap(
         await _cache.put(
           contentHash: photo.sha256,

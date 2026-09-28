@@ -45,8 +45,8 @@ describe('tokens', () => {
     assert.ok(
       store.security().some((event) => event.action === 'refresh_reuse'),
     );
-    revoke(store, rotated.refreshToken, config);
-    revoke(store, rotated.refreshToken, config);
+    await revoke(store, rotated.refreshToken, config);
+    await revoke(store, rotated.refreshToken, config);
     assert.equal(store.refresh().filter((row) => row.revoked).length > 0, true);
     const families = new Set(store.refresh().map((row) => row.deviceId));
     assert.equal(families.size, 1);

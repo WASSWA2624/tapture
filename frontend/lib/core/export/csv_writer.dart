@@ -1,7 +1,8 @@
 import 'export_record.dart';
 import 'export_request.dart';
+import 'tabular_columns.dart';
 import 'value_formatter.dart';
-import 'xlsx_refined_columns.dart';
+import 'xlsx_multi_sheet.dart';
 
 /// One CSV file per template, UTF-8 with a byte-order mark (task 018).
 final class CsvWriter {
@@ -15,12 +16,21 @@ final class CsvWriter {
         <String, List<ExportRecord>>{};
     for (final ExportRecord record in request.records) {
       grouped
-          .putIfAbsent(record.templateName, () => <ExportRecord>[])
+          .putIfAbsent(record.templateId, () => <ExportRecord>[])
           .add(record);
     }
+    final Map<String, String> names = <String, String>{
+      for (final SheetPlan plan
+          in XlsxMultiSheet.plan(<({String id, String name})>[
+            for (final MapEntry<String, List<ExportRecord>> group
+                in grouped.entries)
+              (id: group.key, name: group.value.first.templateName),
+          ]))
+        plan.templateId: plan.sheetName,
+    };
     return <String, String>{
       for (final MapEntry<String, List<ExportRecord>> group in grouped.entries)
-        '${group.key}.csv': _file(request, formatter, group.value),
+        '${names[group.key]}.csv': _file(request, formatter, group.value),
     };
   }
 
@@ -29,41 +39,24 @@ final class CsvWriter {
     ExportValueFormatter formatter,
     List<ExportRecord> records,
   ) {
-    final Set<String> keys = <String>{
-      for (final ExportRecord record in records)
-        for (final ExportValue value in record.values) value.key,
-    };
+    final List<ExportColumn> columns = TabularColumns.plan(request, records);
     final List<String> headers = <String>[
       'Number',
-      ...XlsxRefinedColumns.headers(
-        keys.toList(),
-        refined: request.columns.refined,
-      ),
+      for (final ExportColumn column in columns) column.header,
       if (request.markedIncomplete) 'Incomplete',
     ];
     final StringBuffer buffer = StringBuffer('\uFEFF');
     buffer.writeln(_row(headers, request.extras.delimiter));
     for (final ExportRecord record in records) {
       final List<String> cells = <String>[record.number];
-      for (final String key in keys) {
-        ExportValue? value;
-        for (final ExportValue candidate in record.values) {
-          if (candidate.key == key) {
-            value = candidate;
-          }
-        }
+      for (final ExportColumn column in columns) {
         cells.add(
-          formatter.format(value?.raw, value?.type ?? 'text', ExportFormat.csv),
+          formatter.format(
+            TabularColumns.value(record, column),
+            TabularColumns.type(record, column),
+            ExportFormat.csv,
+          ),
         );
-        if (request.columns.refined) {
-          cells.add(
-            formatter.format(
-              value?.refined,
-              value?.type ?? 'text',
-              ExportFormat.csv,
-            ),
-          );
-        }
       }
       if (request.markedIncomplete) {
         cells.add(incompleteStamp);
@@ -79,7 +72,10 @@ final class CsvWriter {
 
   static String _quote(String cell, String delimiter) {
     final bool needs =
-        cell.contains(delimiter) || cell.contains('"') || cell.contains('\n');
+        cell.contains(delimiter) ||
+        cell.contains('"') ||
+        cell.contains('\n') ||
+        cell.contains('\r');
     if (!needs) {
       return cell;
     }

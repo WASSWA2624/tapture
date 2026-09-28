@@ -39,7 +39,8 @@ void main() {
     );
     expect(
       rows.map(
-        (FieldVariance row) => (row.fieldKey, row.recorded, row.found, row.status),
+        (FieldVariance row) =>
+            (row.fieldKey, row.recorded, row.found, row.status),
       ),
       <(String, Object?, Object?, VarianceStatus)>[
         ('location', 'Laboratory', 'Theatre', VarianceStatus.changed),
@@ -99,23 +100,26 @@ void main() {
     }
   });
 
-  test('one row per field key, in that order, even when neither side has it', () {
-    final List<FieldVariance> rows = VarianceComputation.compare(
-      recorded: const <String, Object?>{'b': 'x'},
-      found: const <String, Object?>{'a': 'y'},
-      fieldKeys: const <String>['c', 'b', 'a'],
-    );
-    expect(rows.map((FieldVariance row) => row.fieldKey), <String>[
-      'c',
-      'b',
-      'a',
-    ]);
-    expect(rows.map((FieldVariance row) => row.status), <VarianceStatus>[
-      VarianceStatus.match,
-      VarianceStatus.missing,
-      VarianceStatus.changed,
-    ]);
-  });
+  test(
+    'one row per field key, in that order, even when neither side has it',
+    () {
+      final List<FieldVariance> rows = VarianceComputation.compare(
+        recorded: const <String, Object?>{'b': 'x'},
+        found: const <String, Object?>{'a': 'y'},
+        fieldKeys: const <String>['c', 'b', 'a'],
+      );
+      expect(rows.map((FieldVariance row) => row.fieldKey), <String>[
+        'c',
+        'b',
+        'a',
+      ]);
+      expect(rows.map((FieldVariance row) => row.status), <VarianceStatus>[
+        VarianceStatus.match,
+        VarianceStatus.missing,
+        VarianceStatus.changed,
+      ]);
+    },
+  );
 
   test('a field not in the key list produces no row', () {
     final List<FieldVariance> rows = VarianceComputation.compare(

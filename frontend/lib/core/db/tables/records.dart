@@ -29,6 +29,10 @@ class Records extends Table with MergeColumns {
   /// Template used at capture.
   TextColumn get templateId => text()();
 
+  /// Template shape kept by this record until an explicit migration.
+  IntColumn get templateVersion =>
+      integer().withDefault(const Constant<int>(1))();
+
   /// Predefined checklist row, when the capture was against one.
   TextColumn get templateRowId => text().nullable()();
 

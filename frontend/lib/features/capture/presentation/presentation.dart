@@ -16,6 +16,8 @@ export 'document_mode.dart';
 export 'document_picker.dart';
 export 'gallery_picker.dart';
 export 'inline_fields_section.dart';
+export 'live_camera_controller.dart';
+export 'live_camera_screen.dart';
 export 'mic_permission_gate.dart';
 export 'photo_crop_screen.dart';
 export 'photo_delete_action.dart';

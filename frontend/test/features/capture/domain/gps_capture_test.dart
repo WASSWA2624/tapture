@@ -78,9 +78,7 @@ void main() {
         timeout: const Duration(milliseconds: 500),
       );
 
-      expect(location.timeouts, <Duration>[
-        const Duration(milliseconds: 500),
-      ]);
+      expect(location.timeouts, <Duration>[const Duration(milliseconds: 500)]);
     });
 
     test('an absent fix saves without coordinates', () async {

@@ -32,7 +32,7 @@ describe('admin', () => {
     assert.match(body, /a@acme.test/);
   });
 
-  it('destroys only after the name is confirmed twice and reports the deletion', () => {
+  it('destroys only after the name is confirmed twice and reports the deletion', async () => {
     const store = new Store();
     store.addOrg({
       id: 'org-1',
@@ -40,8 +40,10 @@ describe('admin', () => {
       selfRegister: false,
       retentionDays: 30,
     });
-    assert.throws(() => destroyOrganisation(store, 'Acme', 'Acme', 'nope'));
-    const report = destroyOrganisation(store, 'Acme', 'Acme', 'Acme');
+    await assert.rejects(() =>
+      destroyOrganisation(store, 'Acme', 'Acme', 'nope'),
+    );
+    const report = await destroyOrganisation(store, 'Acme', 'Acme', 'Acme');
     assert.ok(report.deleted.includes('users'));
     assert.equal(store.orgs().length, 0);
   });

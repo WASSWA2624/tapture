@@ -1,15 +1,15 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/db/app_database.dart';
-import 'package:tapture/core/files/project_folders.dart';
+import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/processing_job.dart';
 import 'online_budget.dart';
+import 'photo_paths.dart';
 import 'record_bundle.dart';
 import 'response_store.dart';
 import 'stage_settings.dart';
@@ -24,9 +24,11 @@ final class OnlineTranscripts {
     required this._responses,
     required this._settings,
     required this._budget,
-  }) : _folders = ProjectFolders(storageRoot: storageRoot);
+    PhotoPaths? paths,
+    FileReader? files,
+  }) : _paths = paths ?? PhotoPaths(storageRoot: storageRoot, files: files);
 
-  final ProjectFolders _folders;
+  final PhotoPaths _paths;
   final ResponseStore _responses;
   final StageSettings _settings;
   final OnlineBudget _budget;
@@ -43,9 +45,6 @@ final class OnlineTranscripts {
     }
     final List<ProcessingResult> existing = StageSupport.unwrap(
       await _responses.forJob(job.id),
-    );
-    final Directory directory = StageSupport.unwrap(
-      await _folders.resolve(bundle.project),
     );
     final List<String> transcripts = <String>[];
     for (final Attachment audio in bundle.audio) {
@@ -68,10 +67,13 @@ final class OnlineTranscripts {
         continue;
       }
       await _budget.require(job.id, bundle);
+      final String relative =
+          'projects/${bundle.project.folderName}/${audio.relativePath}';
+      StageSupport.unwrap(await _paths.read(relative));
       final TranscribeResult transcribed = StageSupport.unwrap(
         await service.transcribe(
           TranscribeRequest(
-            clipPath: '${directory.path}/${audio.relativePath}',
+            clipPath: await _paths.servicePath(relative),
             languageCode: _settings.read(SettingKeys.voiceLanguage),
           ),
         ),

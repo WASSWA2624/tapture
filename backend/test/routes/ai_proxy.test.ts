@@ -42,4 +42,42 @@ describe('ai proxy', () => {
     assert.equal(report.status, 200);
     assert.equal(JSON.stringify(report.body).includes('caption'), false);
   });
+
+  it('accepts the envelope as a JSON object and rejects a missing one', async () => {
+    const deps = makeDeps();
+    const account = await seedUser(deps, { role: 'field_operator' });
+    deps.store.addProject({
+      id: 'project-1',
+      organisationId: 'org-1',
+      name: 'Field',
+      relayEnabled: false,
+      neverRelay: false,
+      retentionDays: 30,
+    });
+    deps.store.addMember({
+      projectId: 'project-1',
+      userId: 'user-1',
+      contextScope: null,
+    });
+    const app = appFor(deps);
+    const tokens = await signIn(app, account);
+    const envelope = {
+      instructions: 'Read the caption.',
+      media: [{ mimeType: 'image/jpeg', base64: 'AAEC' }],
+    };
+    const accepted = await request(app)
+      .post('/api/v1/ai/ocr')
+      .set('authorization', `Bearer ${tokens.accessToken}`)
+      .send({ projectId: 'project-1', model: 'fake', payload: envelope });
+    assert.equal(accepted.status, 200);
+    assert.equal(
+      accepted.body.text,
+      `ok:${Buffer.byteLength(JSON.stringify(envelope))}`,
+    );
+    const missing = await request(app)
+      .post('/api/v1/ai/ocr')
+      .set('authorization', `Bearer ${tokens.accessToken}`)
+      .send({ projectId: 'project-1', model: 'fake', payload: [1, 2] });
+    assert.equal(missing.status, 400);
+  });
 });

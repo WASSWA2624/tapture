@@ -1,24 +1,24 @@
 import type { AppConfig } from '../../config/schema.js';
+import { normaliseEmail, sameEmail } from '../../domain/email.js';
 import { invalidCredentials, rateLimited } from '../../domain/errors.js';
-import type { Store } from '../../repositories/store.js';
+import type { Repository as Store } from '../../repositories/repository.js';
 import type { TokenPair } from '../../types/index.js';
 import { verifyPassword } from './password.js';
 import { issueTokens } from './tokens.js';
-
 async function noteFailure(
   store: Store,
   config: AppConfig,
   key: string,
   actor: string,
 ): Promise<void> {
-  const current = store.lockout(key);
+  const current = await store.lockout(key);
   const failures = current.failures + 1;
   const until =
     failures >= config.lockoutFailures
       ? new Date(Date.now() + config.lockoutWindowMs).toISOString()
       : null;
-  store.setLockout(key, failures, until);
-  store.recordSecurity({
+  await store.setLockout(key, failures, until);
+  await store.recordSecurity({
     actorId: actor,
     action: 'auth_failure',
     target: key,
@@ -26,7 +26,6 @@ async function noteFailure(
     after: { failures, address: key, at: new Date().toISOString() },
   });
 }
-
 /// Signs in. An unknown address and a wrong password return the same error.
 export async function login(
   store: Store,
@@ -38,21 +37,20 @@ export async function login(
     organisationId: string;
   },
 ): Promise<TokenPair> {
-  const addressKey = `addr:${input.organisationId}:${input.email}`;
-  const addressLock = store.lockout(addressKey);
+  const email = normaliseEmail(input.email);
+  const addressKey = `addr:${input.organisationId}:${email}`;
+  const addressLock = await store.lockout(addressKey);
   if (
     addressLock.until !== null &&
     Date.parse(addressLock.until) > Date.now()
   ) {
     throw rateLimited();
   }
-  const user = store
-    .users()
-    .find(
-      (row) =>
-        row.organisationId === input.organisationId &&
-        row.email === input.email,
-    );
+  const user = (await store.users()).find(
+    (row) =>
+      row.organisationId === input.organisationId &&
+      sameEmail(row.email, email),
+  );
   const hash = user?.passwordHash ?? '';
   const ok = await verifyPassword(input.password, hash, config);
   if (user === undefined || user.status !== 'active' || !ok) {
@@ -62,16 +60,16 @@ export async function login(
     }
     throw invalidCredentials();
   }
-  const accountLock = store.lockout(`acct:${user.id}`);
+  const accountLock = await store.lockout(`acct:${user.id}`);
   if (
     accountLock.until !== null &&
     Date.parse(accountLock.until) > Date.now()
   ) {
     throw rateLimited();
   }
-  store.setLockout(addressKey, 0, null);
-  store.setLockout(`acct:${user.id}`, 0, null);
-  let device = store.devices().find((row) => row.id === input.deviceId);
+  await store.setLockout(addressKey, 0, null);
+  await store.setLockout(`acct:${user.id}`, 0, null);
+  let device = (await store.devices()).find((row) => row.id === input.deviceId);
   if (device === undefined) {
     device = {
       id: input.deviceId,
@@ -80,13 +78,13 @@ export async function login(
       lastSeenAt: new Date().toISOString(),
       revoked: false,
     };
-    store.addDevice(device);
+    await store.addDevice(device);
   } else if (device.userId !== user.id || device.revoked) {
     throw invalidCredentials();
   } else {
-    store.saveDevice({ ...device, lastSeenAt: new Date().toISOString() });
+    await store.saveDevice({ ...device, lastSeenAt: new Date().toISOString() });
   }
-  return issueTokens(
+  return await issueTokens(
     store,
     {
       userId: user.id,

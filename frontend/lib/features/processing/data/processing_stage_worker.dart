@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:tapture/core/ai/ocr_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_reader.dart';
+import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
@@ -51,13 +54,21 @@ final class ProcessingStageWorker {
     required OcrService ocr,
     required ProviderRegistry providers,
     required SettingsStore settings,
+    FileReader? files,
+    FileWriter? writer,
+    bool isBrowser = kIsWeb,
   }) {
     final StageSettings stageSettings = StageSettings(
       settings: settings,
       providers: providers,
     );
     final RecordBundleLoader loader = RecordBundleLoader(db: db);
-    final PhotoPaths paths = PhotoPaths(storageRoot: storageRoot);
+    final PhotoPaths paths = PhotoPaths(
+      storageRoot: storageRoot,
+      files: files,
+      writer: writer,
+      isBrowser: isBrowser,
+    );
     final OcrCache cache = OcrCache(
       db: db,
       clock: clock,
@@ -98,7 +109,11 @@ final class ProcessingStageWorker {
     );
     return ProcessingStageWorker._(
       loader: loader,
-      prepare: PrepareStage(storageRoot: storageRoot, paths: paths),
+      prepare: PrepareStage(
+        storageRoot: storageRoot,
+        paths: paths,
+        writer: writer,
+      ),
       onDevice: onDevice,
       detect: DetectStage(
         db: db,
@@ -121,6 +136,7 @@ final class ProcessingStageWorker {
         completion: completion,
         transcripts: OnlineTranscripts(
           storageRoot: storageRoot,
+          paths: paths,
           responses: responses,
           settings: stageSettings,
           budget: budget,

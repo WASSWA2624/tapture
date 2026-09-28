@@ -8,7 +8,8 @@ export type ErrorCode =
   | 'payload_too_large'
   | 'rate_limited'
   | 'quota_exceeded'
-  | 'internal';
+  | 'internal'
+  | 'unavailable';
 
 /// One failure the API is allowed to return. The message is safe to show.
 export class AppError extends Error {
@@ -71,3 +72,7 @@ export const quotaExceeded = (): AppError =>
 
 export const internalError = (): AppError =>
   new AppError('internal', 500, 'Something went wrong.');
+
+/// A dependency this deployment has not configured; retrying cannot help.
+export const unavailable = (): AppError =>
+  new AppError('unavailable', 503, 'This service is not available.');

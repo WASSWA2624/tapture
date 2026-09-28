@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/ai/auxiliary_ai_usage.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/processing.dart' as jobs;
@@ -127,7 +128,14 @@ final class ProcessingQueueQueries {
     for (final QueryRow row in rows) {
       images += _imageCount(row.read<String>('request_summary'));
     }
-    return (requests: rows.length, images: images);
+    return (
+      requests:
+          rows.length +
+          AuxiliaryAiUsage(
+            _settings.read(SettingKeys.aiAuxiliaryUsage),
+          ).count(day, projectId: projectId),
+      images: images,
+    );
   }
 
   /// The queue screen's label for a record's stored context: district,

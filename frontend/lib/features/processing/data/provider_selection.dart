@@ -33,6 +33,7 @@ final class ProviderSelection {
       providerId: choice?.provider ?? _settings.read(SettingKeys.aiProvider),
       modelId: choice?.model ?? _settings.read(SettingKeys.aiModel),
       operation: operation,
+      projectId: project.id,
     );
   }
 }

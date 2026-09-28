@@ -126,6 +126,12 @@ final class TemplateChoiceWriter {
 
   /// Moves [recordId] onto [templateId] and audits how it was decided.
   /// Does nothing when the record already uses it.
+  ///
+  /// The record takes the target template's current version, since its
+  /// shape is now the target's, and lets go of a checklist row it held (the
+  /// row belonged to the old template), as a manual template change does.
+  /// A target template that is not on this device is a [StorageFailure] and
+  /// nothing is written.
   Future<void> setTemplate(
     String recordId,
     String templateId, {
@@ -139,16 +145,38 @@ final class TemplateChoiceWriter {
       if (record == null || record.templateId == templateId) {
         return;
       }
+      final Template? target =
+          await (_db.select(_db.templates)
+                ..where(($TemplatesTable table) => table.id.equals(templateId)))
+              .getSingleOrNull();
+      if (target == null) {
+        throw const StorageFailure(
+          message: 'That template is no longer on this device.',
+          recoveryAction: 'Refresh the queue and try again.',
+        );
+      }
+      final String? heldRow = record.templateRowId;
       await (_db.update(
         _db.records,
       )..where(($RecordsTable table) => table.id.equals(recordId))).write(
         RecordsCompanion(
           templateId: Value<String>(templateId),
+          templateVersion: Value<int>(target.version),
+          templateRowId: heldRow == null
+              ? const Value<String?>.absent()
+              : const Value<String?>(null),
+          rowMatchStrategy: heldRow == null
+              ? const Value<String?>.absent()
+              : const Value<String?>(null),
+          rowMatchScore: heldRow == null
+              ? const Value<double?>.absent()
+              : const Value<double?>(null),
           updatedAt: Value<DateTime>(_clock.nowUtc()),
           updatedByDevice: Value<String>(_deviceId),
           rev: Value<int>(record.rev + 1),
         ),
       );
+      final String method = jsonEncode(<String, String>{'method': reason});
       await appendAudit(
         _db,
         entityType: 'records',
@@ -157,10 +185,23 @@ final class TemplateChoiceWriter {
         fieldKey: 'templateId',
         previousValue: record.templateId,
         newValue: templateId,
-        reason: jsonEncode(<String, String>{'method': reason}),
+        reason: method,
         clock: _clock,
         device: _deviceId,
       );
+      if (heldRow != null) {
+        await appendAudit(
+          _db,
+          entityType: 'records',
+          entityId: recordId,
+          action: AuditAction.updated,
+          fieldKey: 'templateRowId',
+          previousValue: heldRow,
+          reason: method,
+          clock: _clock,
+          device: _deviceId,
+        );
+      }
     });
   }
 }

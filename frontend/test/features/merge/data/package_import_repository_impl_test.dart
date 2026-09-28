@@ -204,6 +204,78 @@ void main() {
     expect(targetFile(folder, 'cover/cover-1.jpg').existsSync(), isTrue);
   });
 
+  test('records from a package without template versions take their '
+      'template\'s version', () async {
+    await source.db.customStatement('UPDATE templates SET version = 3');
+    final InspectedBundle bundle = await _package(source);
+    for (final Map<String, Object?> row in bundle.rowsOf('records')) {
+      row.remove('template_version');
+    }
+
+    _ok(await repository().importAsNew(bundle));
+
+    final List<QueryRow> records = await target
+        .customSelect('SELECT template_version FROM records')
+        .get();
+    expect(records, hasLength(bundle.rowsOf('records').length));
+    expect(<Object?>[
+      for (final QueryRow row in records) row.data['template_version'],
+    ], everyElement(3));
+  });
+
+  test('a package whose reference key repeats brings every row', () async {
+    await insertRow(source.db, 'reference_rows', <String, Object?>{
+      'id': 'row-ds-global-2',
+      'dataset_id': 'ds-global',
+      'key_value': 'K1',
+      'key_normalised': 'k1',
+      'values': '{"site":"B"}',
+    });
+    final InspectedBundle bundle = await _package(source);
+
+    _ok(await repository().importAsNew(bundle));
+
+    expect(await _referenceRowIds(target, 'ds-global'), <String>[
+      'row-ds-global',
+      'row-ds-global-2',
+    ]);
+  });
+
+  test('a reference key this device already repeats keeps its rows and '
+      'only new keys are added', () async {
+    await insertRow(source.db, 'reference_rows', <String, Object?>{
+      'id': 'row-k2',
+      'dataset_id': 'ds-global',
+      'key_value': 'K2',
+      'key_normalised': 'k2',
+      'values': '{}',
+    });
+    await insertRow(target, 'reference_datasets', <String, Object?>{
+      'id': 'ds-global',
+      'name': 'ds-global',
+      'key_column': 'code',
+      'columns': '[]',
+    });
+    for (final String id in <String>['row-here-1', 'row-here-2']) {
+      await insertRow(target, 'reference_rows', <String, Object?>{
+        'id': id,
+        'dataset_id': 'ds-global',
+        'key_value': 'K1',
+        'key_normalised': 'k1',
+        'values': '{"here":"$id"}',
+      });
+    }
+    final InspectedBundle bundle = await _package(source);
+
+    _ok(await repository().importAsNew(bundle));
+
+    expect(await _referenceRowIds(target, 'ds-global'), <String>[
+      'row-here-1',
+      'row-here-2',
+      'row-k2',
+    ]);
+  });
+
   group('merging', () {
     setUp(() async {
       _ok(await repository().importAsNew(await _package(source)));
@@ -583,6 +655,19 @@ Future<void> _addRecordWithPhoto(BundleFixture fixture, Uint8List photo) async {
   File('${fixture.root.path}/projects/${fixture.folderName}/photos/new.jpg')
     ..createSync(recursive: true)
     ..writeAsBytesSync(photo);
+}
+
+Future<List<String>> _referenceRowIds(
+  sqlite.AppDatabase db,
+  String datasetId,
+) async {
+  final List<QueryRow> rows = await db
+      .customSelect(
+        'SELECT id FROM reference_rows WHERE dataset_id = ? ORDER BY id',
+        variables: <Variable<Object>>[Variable<String>(datasetId)],
+      )
+      .get();
+  return <String>[for (final QueryRow row in rows) row.data['id']! as String];
 }
 
 Future<int> _count(sqlite.AppDatabase db, String table) async {

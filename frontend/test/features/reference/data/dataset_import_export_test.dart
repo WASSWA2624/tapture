@@ -67,16 +67,53 @@ void main() {
       DatasetCsvImport.parseText(csv, sourceFile: 'round.csv'),
     );
     expect(fromCsv.dataset.columns.first, 'code');
-    expect(fromCsv.dataset.columns, containsAll(<String>['name', 'phone']));
+    expect(fromCsv.dataset.columns, dataset.columns);
     expect(fromCsv.rows, hasLength(2));
+    expect(fromCsv.rows.last.addedOnDevice, isTrue);
+    expect(fromCsv.rows.first.addedOnDevice, isFalse);
 
     final String json = DatasetExport.jsonText(dataset: dataset, rows: rows);
     final DatasetImportDraft fromJson = _ok(
       DatasetJsonImport.parseText(json, sourceFile: 'round.json'),
     );
     expect(fromJson.dataset.columns.first, 'code');
+    expect(fromJson.dataset.columns, dataset.columns);
+    expect(fromJson.rows.last.addedOnDevice, isTrue);
     expect(fromJson.rows.map((ReferenceRow r) => r.key), <String>['A', 'B']);
   });
+
+  test('repeated and colliding CSV headers never lose a column', () {
+    final DatasetImportDraft draft = _ok(
+      DatasetCsvImport.parseText(
+        'code,name,name,name,name_2\nA,One,Two,Three,Four',
+        sourceFile: 'columns.csv',
+      ),
+    );
+    expect(draft.dataset.columns.toSet(), hasLength(5));
+    expect(
+      draft.rows.single.values.values,
+      containsAll(<String>['A', 'One', 'Two', 'Three', 'Four']),
+    );
+  });
+
+  test(
+    'malformed tables return a failure instead of throwing or dropping rows',
+    () {
+      expect(
+        DatasetCsvImport.parseText(
+          'code,name\nA,"unfinished',
+          sourceFile: 'bad.csv',
+        ),
+        isA<FailureResult<DatasetImportDraft>>(),
+      );
+      for (final String text in <String>['[', 'null', '[{"code":"A"},42]']) {
+        expect(
+          DatasetJsonImport.parseText(text, sourceFile: 'bad.json'),
+          isA<FailureResult<DatasetImportDraft>>(),
+        );
+      }
+    },
+  );
 }
 
 T _ok<T>(Result<T> result) {

@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_reader.dart';
+import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/files/thumbnail_cache.dart';
 
@@ -15,10 +18,18 @@ abstract interface class PhotoThumbnails {
   factory PhotoThumbnails({
     required StorageRoot storageRoot,
     ThumbnailCache? cache,
+    FileReader? files,
+    FileWriter? writer,
   }) {
     return _PhotoThumbnails(
       storageRoot: storageRoot,
-      cache: cache ?? ThumbnailCache(storageRoot: storageRoot),
+      cache:
+          cache ??
+          ThumbnailCache(
+            storageRoot: storageRoot,
+            files: files,
+            writer: writer,
+          ),
     );
   }
 
@@ -29,6 +40,13 @@ abstract interface class PhotoThumbnails {
   /// The cached thumbnail at [edge] for the photo whose file is
   /// [storagePath], relative to the storage root. Generates it on a miss.
   Future<Result<String>> pathFor({
+    required String sha256,
+    required String storagePath,
+    required int edge,
+  });
+
+  /// A browser-safe cached thumbnail, encoded at [edge] rather than full size.
+  Future<Result<Uint8List>> bytesFor({
     required String sha256,
     required String storagePath,
     required int edge,
@@ -52,6 +70,13 @@ final class _PhotoThumbnails implements PhotoThumbnails {
 
   final StorageRoot _storageRoot;
   final ThumbnailCache _cache;
+
+  @override
+  Future<Result<Uint8List>> bytesFor({
+    required String sha256,
+    required String storagePath,
+    required int edge,
+  }) => _cache.thumbnailBytes(sha256, storagePath, edge: edge);
 
   @override
   Future<Result<String>> pathFor({
@@ -82,6 +107,13 @@ final class _FakePhotoThumbnails implements PhotoThumbnails {
   _FakePhotoThumbnails(this._paths);
 
   final Map<String, String> _paths;
+
+  @override
+  Future<Result<Uint8List>> bytesFor({
+    required String sha256,
+    required String storagePath,
+    required int edge,
+  }) async => const FailureResult<Uint8List>(_unreadable);
 
   @override
   Future<Result<String>> pathFor({

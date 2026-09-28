@@ -111,24 +111,21 @@ void main() {
     expect(match.label, scanned.trim());
   });
 
-  test(
-    'resolving against ten thousand matches stays inside the 300 ms lookup '
-    'budget',
-    () {
-      final List<String> records = <String>[
-        for (var i = 0; i < 10000; i++) 'record-$i',
-      ];
-      final Stopwatch clock = Stopwatch()..start();
+  test('resolving against ten thousand matches stays inside the 300 ms lookup '
+      'budget', () {
+    final List<String> records = <String>[
+      for (var i = 0; i < 10000; i++) 'record-$i',
+    ];
+    final Stopwatch clock = Stopwatch()..start();
 
-      final IdentifierMatch match = IdentifierLookup.resolve(
-        identifier: 'A-1',
-        recordIds: records,
-      );
-      clock.stop();
+    final IdentifierMatch match = IdentifierLookup.resolve(
+      identifier: 'A-1',
+      recordIds: records,
+    );
+    clock.stop();
 
-      expect(match.kind, IdentifierOutcomeKind.duplicates);
-      expect(match.recordIds, hasLength(10000));
-      expect(clock.elapsed, lessThan(_lookupBudget));
-    },
-  );
+    expect(match.kind, IdentifierOutcomeKind.duplicates);
+    expect(match.recordIds, hasLength(10000));
+    expect(clock.elapsed, lessThan(_lookupBudget));
+  });
 }

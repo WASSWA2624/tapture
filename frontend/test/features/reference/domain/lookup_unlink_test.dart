@@ -1,6 +1,6 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/features/reference/domain/lookup_prefill.dart';
 import 'package:tapture/features/reference/domain/lookup_unlink.dart';
-import 'package:test/test.dart';
 
 Map<String, PrefillField> _prefilled() {
   return LookupPrefill.apply(
@@ -34,24 +34,27 @@ void main() {
     expect(after['supplier_name']!.source, PrefillSource.lookup);
   });
 
-  test('the edited field alone becomes a verified manual value with no row', () {
-    final Map<String, PrefillField> after = LookupUnlink.editField(
-      current: _prefilled(),
-      fieldKey: 'supplier_phone',
-      newValue: '0711 111111',
-    );
-    expect(after['supplier_phone'], (
-      value: '0711 111111',
-      verified: true,
-      source: PrefillSource.manual,
-      rowId: null,
-      linked: false,
-    ));
-    expect(
-      after.values.where((PrefillField field) => field.linked),
-      hasLength(2),
-    );
-  });
+  test(
+    'the edited field alone becomes a verified manual value with no row',
+    () {
+      final Map<String, PrefillField> after = LookupUnlink.editField(
+        current: _prefilled(),
+        fieldKey: 'supplier_phone',
+        newValue: '0711 111111',
+      );
+      expect(after['supplier_phone'], (
+        value: '0711 111111',
+        verified: true,
+        source: PrefillSource.manual,
+        rowId: null,
+        linked: false,
+      ));
+      expect(
+        after.values.where((PrefillField field) => field.linked),
+        hasLength(2),
+      );
+    },
+  );
 
   test('editing a field the record does not have adds an unverified manual '
       'value', () {

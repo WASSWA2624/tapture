@@ -13,6 +13,9 @@ final class ExportRecord {
     this.values = const <ExportValue>[],
     this.photos = const <ExportPhoto>[],
     this.approved = false,
+    this.definitions = const <Map<String, Object?>>[],
+    this.provenance = const <String, Object?>{},
+    this.photoSources = const <String, String>{},
   });
 
   /// Rebuilds a record written by [toJson].
@@ -27,6 +30,16 @@ final class ExportRecord {
       operatorName: json['operatorName'] as String? ?? '',
       templateVersion: json['templateVersion'] as String? ?? '',
       approved: json['approved'] == true,
+      definitions: <Map<String, Object?>>[
+        for (final Object? row in _list(json['definitions']))
+          if (row is Map) Map<String, Object?>.from(row),
+      ],
+      provenance: json['provenance'] is Map
+          ? Map<String, Object?>.from(json['provenance']! as Map)
+          : const <String, Object?>{},
+      photoSources: json['photoSources'] is Map
+          ? Map<String, String>.from(json['photoSources']! as Map)
+          : const <String, String>{},
       values: <ExportValue>[
         for (final Object? row in _list(json['values']))
           if (row is Map) _value(Map<String, Object?>.from(row)),
@@ -71,6 +84,15 @@ final class ExportRecord {
   /// Whether the record is approved.
   final bool approved;
 
+  /// Captured field definitions used by the accompanying dictionary.
+  final List<Map<String, Object?>> definitions;
+
+  /// Extraction and review provenance by field key.
+  final Map<String, Object?> provenance;
+
+  /// Original storage paths keyed by photo id, retained for request replay.
+  final Map<String, String> photoSources;
+
   /// JSON for the request.
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -83,6 +105,9 @@ final class ExportRecord {
       'operatorName': operatorName,
       'templateVersion': templateVersion,
       'approved': approved,
+      'definitions': definitions,
+      'provenance': provenance,
+      'photoSources': photoSources,
       'values': <Map<String, Object?>>[
         for (final ExportValue value in values)
           <String, Object?>{

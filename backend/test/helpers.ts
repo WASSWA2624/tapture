@@ -42,7 +42,7 @@ export function makeDeps(
   overrides: NodeJS.ProcessEnv = {},
   mode: FakeMode = 'ok',
   provider?: AiProvider,
-): Deps {
+): Omit<Deps, 'store'> & { store: Store } {
   resetRateLimits();
   resetBreakers();
   const config = testConfig(overrides);
@@ -61,7 +61,7 @@ export function appFor(deps: Deps): Express {
 }
 
 export async function seedUser(
-  deps: Deps,
+  deps: Omit<Deps, 'store'> & { store: Store },
   input?: { role?: Role; email?: string; selfRegister?: boolean; id?: string },
 ): Promise<{
   email: string;

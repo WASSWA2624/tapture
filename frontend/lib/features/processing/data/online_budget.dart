@@ -1,8 +1,10 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/ai/auxiliary_ai_usage.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/cost_guard.dart';
 import 'job_writes.dart';
@@ -70,6 +72,9 @@ final class OnlineBudget {
           },
         )
         .getSingle();
-    return row.read<int>('c');
+    return row.read<int>('c') +
+        AuxiliaryAiUsage(
+          _settings.read(SettingKeys.aiAuxiliaryUsage),
+        ).count(now, projectId: projectId);
   }
 }

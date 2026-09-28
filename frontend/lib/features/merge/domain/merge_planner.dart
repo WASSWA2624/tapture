@@ -340,15 +340,25 @@ final class _Planner {
   /// A dataset new here arrives with its rows. In a dataset both sides
   /// hold, a new key is added and a differing row keeps this device's
   /// values, counted as kept.
+  ///
+  /// Keys may repeat once an operator accepts an ambiguous key column, so
+  /// every row this device holds under a key is kept, and an incoming row
+  /// is only counted as kept when none of them carries its values. Keys are
+  /// matched against this device's rows alone, so a key the package repeats
+  /// arrives as every one of its rows.
   void _reference() {
     final Map<String, Map<String, Object?>> mine = _mineById(
       'reference_datasets',
     );
-    final Map<String, Map<String, Object?>> rows =
-        <String, Map<String, Object?>>{
-          for (final Map<String, Object?> row in _mine('reference_rows'))
-            '${row['dataset_id']}/${row['key_value']}': row,
-        };
+    final Map<String, Set<Object?>> rows = <String, Set<Object?>>{};
+    for (final Map<String, Object?> row in _mine('reference_rows')) {
+      rows
+          .putIfAbsent(
+            '${row['dataset_id']}/${row['key_value']}',
+            () => <Object?>{},
+          )
+          .add(row['values']);
+    }
     final Set<String> rowIds = _mineById('reference_rows').keys.toSet();
     final Set<String> merged = <String>{};
     for (final Map<String, Object?> dataset in _theirs('reference_datasets')) {
@@ -371,17 +381,19 @@ final class _Planner {
     }
     for (final Map<String, Object?> row in _theirs('reference_rows')) {
       final String id = row['id']! as String;
-      if (!merged.contains(row['dataset_id']) || rowIds.contains(id)) {
+      if (!merged.contains(row['dataset_id']) ||
+          rowIds.contains(id) ||
+          _wasInserted('reference_rows', id)) {
         continue;
       }
       if (_isElsewhere('reference_rows', id)) {
         _elsewhere += 1;
         continue;
       }
-      final Map<String, Object?>? here =
+      final Set<Object?>? here =
           rows['${row['dataset_id']}/${row['key_value']}'];
       if (here != null) {
-        if (here['values'] != row['values']) {
+        if (!here.contains(row['values'])) {
           _kept += 1;
         }
         continue;
@@ -391,8 +403,19 @@ final class _Planner {
   }
 
   /// Returns every record the project holds after the merge.
+  ///
+  /// A record moved onto another template takes that template's current
+  /// version, the field set the compatibility check matched it against, as
+  /// does one from a package that carries no version.
   Set<String> _records() {
     final Map<String, Map<String, Object?>> mine = _mineById('records');
+    final Map<String, int> versions = <String, int>{
+      for (final Map<String, Object?> template in <Map<String, Object?>>[
+        ..._mine('templates'),
+        ...?_inserts['templates'],
+      ])
+        template['id']! as String: _version(template['version']),
+    };
     final Set<String> all = <String>{...mine.keys};
     for (final Map<String, Object?> record in _theirs('records')) {
       final String id = record['id']! as String;
@@ -437,6 +460,9 @@ final class _Planner {
         ...record,
         'project_id': target,
         'template_id': template,
+        if (template != record['template_id'] ||
+            record['template_version'] is! int)
+          'template_version': versions[template] ?? 1,
       });
       all.add(id);
     }
@@ -816,6 +842,9 @@ String _captionText(Map<String, Object?> row) {
 }
 
 bool _flag(Object? value) => value == true || value == 1;
+
+/// A stored template version; anything else reads as the first.
+int _version(Object? value) => value is int && value > 0 ? value : 1;
 
 /// A record status in its stored spelling (`NEEDS_REVIEW` reads
 /// `needsReview`); a spelling that names no status is kept as it is.

@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 
@@ -18,8 +18,11 @@ import 'stage_support.dart';
 /// copy as a new file.
 final class PrepareStage {
   /// Creates the stage writing under [storageRoot].
-  PrepareStage({required StorageRoot storageRoot, required this._paths})
-    : _writer = FileWriter(storageRoot: storageRoot);
+  PrepareStage({
+    required StorageRoot storageRoot,
+    required this._paths,
+    FileWriter? writer,
+  }) : _writer = writer ?? FileWriter(storageRoot: storageRoot);
 
   final FileWriter _writer;
   final PhotoPaths _paths;
@@ -27,17 +30,19 @@ final class PrepareStage {
   /// Prepares every photo in [bundle] that has no prepared copy yet.
   Future<void> run(RecordBundle bundle, CancellationToken cancel) async {
     for (final Photo photo in bundle.photos) {
-      final String written = await _paths.compressedRelative(bundle, photo);
+      if (cancel.isCancelled) throw const CancelledFailure();
+      final String written = await _paths.compressedRelative(
+        bundle,
+        photo,
+        cancel: cancel,
+      );
       final String destination = '$written.ocr.jpg';
-      final Directory root = await _paths.root();
-      if (await File('${root.path}/$destination').exists()) {
+      if (await _paths.read(destination) is Success<Uint8List>) {
         continue;
       }
-      final Uint8List reduced = await File(
-        '${root.path}/$written',
-      ).readAsBytes();
+      final Uint8List reduced = StageSupport.unwrap(await _paths.read(written));
       final Uint8List prepared = StageSupport.unwrap(
-        await ImagePreprocess.prepareOffThread(reduced),
+        await ImagePreprocess.prepareOffThread(reduced, cancel: cancel),
       );
       if (prepared.isEmpty) {
         throw const ValidationFailure(

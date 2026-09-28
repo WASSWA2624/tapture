@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -482,6 +483,15 @@ final class _RecordingThumbnails implements PhotoThumbnails {
   final bool throws;
 
   final List<_ThumbCall> calls = <_ThumbCall>[];
+
+  @override
+  Future<Result<Uint8List>> bytesFor({
+    required String sha256,
+    required String storagePath,
+    required int edge,
+  }) async {
+    throw UnimplementedError('record thumbs read paths on this platform');
+  }
 
   @override
   Future<Result<String>> pathFor({

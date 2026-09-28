@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { conflict } from '../domain/errors.js';
 import type { Role } from '../domain/permissions.js';
+import type { Repository } from './repository.js';
 import type {
   AuditEvent,
   Device,
@@ -73,7 +75,7 @@ function clone(snapshot: Snapshot): Snapshot {
   return structuredClone(snapshot);
 }
 
-/// In-memory store used by tests and by a process with no database.
+/// In-memory repository for deterministic tests. Production uses Postgres.
 export class Store {
   private data: Snapshot = {
     orgs: [],
@@ -95,20 +97,27 @@ export class Store {
     schema: [],
   };
 
-  private depth = 0;
+  private readonly transactionContext = new AsyncLocalStorage<boolean>();
+  private pending: Promise<void> = Promise.resolve();
 
-  async withTransaction<T>(work: (store: Store) => Promise<T>): Promise<T> {
-    if (this.depth > 0) return work(this);
-    const snap = clone(this.data);
-    this.depth += 1;
+  async withTransaction<T>(
+    work: (store: Repository) => Promise<T>,
+  ): Promise<T> {
+    if (this.transactionContext.getStore()) return work(this);
+    const previous = this.pending;
+    let release: () => void = () => undefined;
+    this.pending = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await previous;
+    const snapshot = clone(this.data);
     try {
-      const result = await work(this);
-      this.depth -= 1;
-      return result;
+      return await this.transactionContext.run(true, () => work(this));
     } catch (error) {
-      this.data = snap;
-      this.depth -= 1;
+      this.data = snapshot;
       throw error;
+    } finally {
+      release();
     }
   }
 
@@ -271,6 +280,12 @@ export class Store {
     this.data.invites.push(invite);
   }
 
+  saveInvite(invite: Invite): void {
+    this.data.invites = this.data.invites.map((row) =>
+      row.tokenHash === invite.tokenHash ? invite : row,
+    );
+  }
+
   refresh(): RefreshFamily[] {
     return this.data.refresh;
   }
@@ -321,6 +336,13 @@ export class Store {
 
   recordMigration(name: string, checksum: string): void {
     this.data.schema.push({ name, checksum });
+  }
+
+  expiredPackages(now: Date, limit: number): RelayPackage[] {
+    return this.data.packages
+      .filter((row) => Date.parse(row.expiresAt) <= now.getTime())
+      .sort((a, b) => a.expiresAt.localeCompare(b.expiresAt))
+      .slice(0, limit);
   }
 
   destroyOrganisation(organisationId: string): string[] {

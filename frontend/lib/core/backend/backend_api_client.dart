@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:tapture/core/errors/failure.dart';
+
 /// Authentication calls. The only HTTP the enrolment flow uses.
 final class BackendApiClient {
   /// Creates a client. [send] performs the request.
@@ -22,7 +24,7 @@ final class BackendApiClient {
         'email': email,
         'password': password,
         'deviceId': deviceId,
-        'organisationId': organisationId,
+        if (organisationId.isNotEmpty) 'organisationId': organisationId,
       },
     );
     return _pair(response);
@@ -49,12 +51,18 @@ final class BackendApiClient {
 
   TokenPair _pair(({int status, Map<String, Object?> body}) response) {
     if (response.status != 200) {
-      throw StateError('Sign-in was not accepted.');
+      throw const PermissionFailure(
+        message: 'Sign-in was not accepted.',
+        recoveryAction: 'Check the account details and try again.',
+      );
     }
     final Object? access = response.body['accessToken'];
     final Object? refresh = response.body['refreshToken'];
     if (access is! String || refresh is! String) {
-      throw StateError('Sign-in was not accepted.');
+      throw const PermissionFailure(
+        message: 'Sign-in was not accepted.',
+        recoveryAction: 'Check the account details and try again.',
+      );
     }
     return (accessToken: access, refreshToken: refresh);
   }

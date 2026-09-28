@@ -11,6 +11,22 @@
 # is for, and the task that introduced it. `sdk` is the version of a package
 # that ships with the Flutter SDK rather than from pub.dev.
 packages:
+  camera:
+    version: 0.12.1
+    purpose: Flutter-maintained live camera preview, shutter, focus, zoom and flash behind core/camera. BSD-3-Clause. Replaces the placeholder camera preview and simulated controls.
+    task: "092"
+  mobile_scanner:
+    version: 7.4.2
+    purpose: Barcode and QR capture on Android, iOS, macOS and web behind core/barcode. BSD-3-Clause. Replaces the unavailable decoder with bundled native ML Kit and platform scanning.
+    task: "092"
+  geolocator:
+    version: 14.0.2
+    purpose: Time-boxed device location with accuracy on Android, iOS, macOS, Windows and web behind core/location. MIT, Baseflow. Replaces the unavailable location stub without custom platform channels.
+    task: "091"
+  pdf:
+    version: 3.11.3
+    purpose: Standard pure-Dart PDF layout, pagination, fonts and image embedding. Apache-2.0. Replaces the hand-written single-line PDF byte stub; reuses the approved archive and image versions.
+    task: "090"
   flutter:
     version: sdk
     purpose: The Flutter framework the application is built on.

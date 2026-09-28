@@ -21,6 +21,7 @@ final class RecordEntry {
     required this.capturedBy,
     required this.updatedAt,
     this.templateRowId,
+    this.templateVersion = 1,
     this.number,
     this.name = '',
     this.identifier = '',
@@ -45,6 +46,9 @@ final class RecordEntry {
 
   /// Template the record is filled against.
   final String templateId;
+
+  /// Template shape in force when this record was captured or migrated.
+  final int templateVersion;
 
   /// Predefined checklist row the record was captured against, when any.
   final String? templateRowId;
@@ -163,6 +167,7 @@ final class RecordEntry {
     String? id,
     String? projectId,
     String? templateId,
+    int? templateVersion,
     String? templateRowId,
     int? number,
     String? name,
@@ -191,6 +196,7 @@ final class RecordEntry {
       id: id ?? this.id,
       projectId: projectId ?? this.projectId,
       templateId: templateId ?? this.templateId,
+      templateVersion: templateVersion ?? this.templateVersion,
       templateRowId: clearTemplateRowId
           ? null
           : (templateRowId ?? this.templateRowId),
@@ -220,6 +226,7 @@ final class RecordEntry {
     id,
     projectId,
     templateId,
+    templateVersion,
     templateRowId,
     number,
     name,
@@ -251,6 +258,7 @@ final class RecordEntry {
             other.id == id &&
             other.projectId == projectId &&
             other.templateId == templateId &&
+            other.templateVersion == templateVersion &&
             other.templateRowId == templateRowId &&
             other.number == number &&
             other.name == name &&

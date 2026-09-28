@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/camera/camera_preview_surface.dart';
 import 'package:tapture/core/camera/camera_service.dart';
 import 'package:tapture/core/copy/copy.dart';
 
@@ -21,32 +24,45 @@ final class CameraView extends StatefulWidget {
 
 class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
   CameraPreviewState _state = CameraPreviewState.starting;
+  StreamSubscription<CameraPreviewState>? _subscription;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    widget.camera.previewState.listen((CameraPreviewState next) {
+    _subscription = widget.camera.previewState.listen((
+      CameraPreviewState next,
+    ) {
       if (mounted) {
         setState(() => _state = next);
       }
     });
-    widget.camera.start();
+    unawaited(widget.camera.start());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    widget.camera.stop();
+    unawaited(_subscription?.cancel());
+    unawaited(widget.camera.stop());
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      widget.camera.pause();
-    } else if (state == AppLifecycleState.resumed) {
-      widget.camera.resume();
+    switch (state) {
+      case AppLifecycleState.inactive:
+        // The first-run permission prompt makes the app inactive while the
+        // camera is still opening; only a running preview is released.
+        if (_state == CameraPreviewState.running) {
+          unawaited(widget.camera.pause());
+        }
+      case AppLifecycleState.hidden || AppLifecycleState.paused:
+        unawaited(widget.camera.pause());
+      case AppLifecycleState.resumed:
+        unawaited(widget.camera.resume());
+      case AppLifecycleState.detached:
+        break;
     }
   }
 
@@ -62,21 +78,25 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            ColoredBox(
-              color: switch (_state) {
-                CameraPreviewState.starting => AppColors.dark.surfaceVariant,
-                CameraPreviewState.running => AppColors.dark.background,
-                CameraPreviewState.failed => AppColors.dark.danger,
-              },
-              child: Center(
-                child: Text(
-                  _state.name,
-                  style: AppText.caption.copyWith(
-                    color: AppColors.dark.onSurface,
+            if (_state == CameraPreviewState.running &&
+                widget.camera is CameraPreviewSurface)
+              (widget.camera as CameraPreviewSurface).buildPreview()
+            else
+              ColoredBox(
+                color: switch (_state) {
+                  CameraPreviewState.starting => AppColors.dark.surfaceVariant,
+                  CameraPreviewState.running => AppColors.dark.background,
+                  CameraPreviewState.failed => AppColors.dark.danger,
+                },
+                child: Center(
+                  child: Text(
+                    _state.name,
+                    style: AppText.caption.copyWith(
+                      color: AppColors.dark.onSurface,
+                    ),
                   ),
                 ),
               ),
-            ),
             if (widget.gridOverlay || widget.camera.gridEnabled)
               const CustomPaint(painter: _GridPainter()),
           ],

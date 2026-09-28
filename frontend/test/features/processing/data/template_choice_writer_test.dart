@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/templates.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/processing/data/template_choice_writer.dart';
 import 'package:tapture/features/processing/domain/template_choice_needed.dart';
@@ -100,6 +101,86 @@ void main() {
       ProjectSettings.decode((await project(fixture)).settings).templatePins,
       isNull,
     );
+  });
+
+  test('a move takes the target version and drops the row', () async {
+    final ProcessingFixture fixture = await ProcessingFixture.open();
+    final Template motor = await fixture.addTemplate('Motor');
+    final TemplateRow row = await fixture.addRow('Pump room');
+    await (fixture.db.update(fixture.db.templates)
+          ..where(($TemplatesTable table) => table.id.equals(motor.id)))
+        .write(const TemplatesCompanion(version: Value<int>(4)));
+    await (fixture.db.update(fixture.db.records)
+          ..where(($RecordsTable table) => table.id.equals(fixture.record.id)))
+        .write(
+          RecordsCompanion(
+            templateVersion: const Value<int>(3),
+            templateRowId: Value<String?>(row.id),
+            rowMatchStrategy: const Value<String?>('exact'),
+            rowMatchScore: const Value<double?>(1),
+          ),
+        );
+
+    await writerFor(
+      fixture,
+    ).setTemplate(fixture.record.id, motor.id, reason: 'pinned');
+
+    final RecordRow stored = await fixture.storedRecord();
+    expect(stored.templateId, motor.id);
+    expect(stored.templateVersion, 4);
+    expect(stored.templateRowId, isNull);
+    expect(stored.rowMatchStrategy, isNull);
+    expect(stored.rowMatchScore, isNull);
+    final List<AuditLogData> audit = await fixture.db
+        .select(fixture.db.auditLog)
+        .get();
+    final AuditLogData rowAudit = audit.singleWhere(
+      (AuditLogData entry) => entry.fieldKey == 'templateRowId',
+    );
+    expect(rowAudit.previousValue, row.id);
+    expect(rowAudit.newValue, isNull);
+    expect(
+      audit.where((AuditLogData entry) => entry.fieldKey == 'templateId'),
+      hasLength(1),
+    );
+  });
+
+  test('a chosen template sets its current version', () async {
+    final ProcessingFixture fixture = await ProcessingFixture.open();
+    final Template motor = await fixture.addTemplate('Motor');
+    await (fixture.db.update(fixture.db.templates)
+          ..where(($TemplatesTable table) => table.id.equals(motor.id)))
+        .write(const TemplatesCompanion(version: Value<int>(2)));
+    await (fixture.db.update(fixture.db.records)
+          ..where(($RecordsTable table) => table.id.equals(fixture.record.id)))
+        .write(const RecordsCompanion(templateVersion: Value<int>(7)));
+
+    final Result<void> applied = await writerFor(
+      fixture,
+    ).apply(question(fixture), (templateId: motor.id, pin: false));
+
+    expect(applied, isA<Success<void>>());
+    final RecordRow stored = await fixture.storedRecord();
+    expect(stored.templateId, motor.id);
+    expect(stored.templateVersion, 2);
+    expect(stored.templateRowId, isNull);
+  });
+
+  test('a move onto a template not on this device writes nothing', () async {
+    final ProcessingFixture fixture = await ProcessingFixture.open();
+    final RecordRow before = await fixture.storedRecord();
+
+    await expectLater(
+      writerFor(
+        fixture,
+      ).setTemplate(fixture.record.id, 'missing-template', reason: 'score'),
+      throwsA(isA<StorageFailure>()),
+    );
+
+    final RecordRow after = await fixture.storedRecord();
+    expect(after.templateId, before.templateId);
+    expect(after.templateVersion, before.templateVersion);
+    expect(after.rev, before.rev);
   });
 
   test('a template from another project is refused', () async {

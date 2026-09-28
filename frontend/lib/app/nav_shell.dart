@@ -65,75 +65,76 @@ class _Chrome extends ConsumerWidget {
     );
     return ShellHeaderScope(
       ownsHeader: ownsHeader,
-      child: Scaffold(
-        backgroundColor: context.colors.background,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            SafeArea(
-              bottom: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  const StatusLine(),
-                  // On Capture every level shows, set or not, so a first
-                  // value can be set in place (FBK0000160, D10).
-                  ContextBar(
-                    showsEmptyLevels:
-                        shellDestinations[shell.currentIndex].path ==
-                        RoutePaths.captureRoot,
-                  ),
-                  const ContextMaintenance(),
-                  const OfflineBanner(),
-                ],
+      child: ContextMaintenance(
+        child: Scaffold(
+          backgroundColor: context.colors.background,
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    const StatusLine(),
+                    // On Capture every level shows, set or not, so a first
+                    // value can be set in place (FBK0000160, D10).
+                    ContextBar(
+                      showsEmptyLevels:
+                          shellDestinations[shell.currentIndex].path ==
+                          RoutePaths.captureRoot,
+                    ),
+                    const OfflineBanner(),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              // The header above already cleared the status bar. Pages below
-              // must not see that inset again, or every page frame pads the
-              // top twice (FE-RESP-08). The Builder reads the Scaffold body's
-              // data, which no longer carries the keyboard inset; this
-              // widget's own context would put it back, and every page would
-              // shrink by the keyboard a second time.
-              child: Builder(
-                builder: (BuildContext body) => MediaQuery.removePadding(
-                  context: body,
-                  removeTop: true,
-                  child: SafeArea(
-                    top: false,
-                    child: Row(
-                      children: <Widget>[
-                        if (rail)
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              border: showPane
-                                  ? null
-                                  : BorderDirectional(end: hairline),
+              Expanded(
+                // The header above already cleared the status bar. Pages below
+                // must not see that inset again, or every page frame pads the
+                // top twice (FE-RESP-08). The Builder reads the Scaffold body's
+                // data, which no longer carries the keyboard inset; this
+                // widget's own context would put it back, and every page would
+                // shrink by the keyboard a second time.
+                child: Builder(
+                  builder: (BuildContext body) => MediaQuery.removePadding(
+                    context: body,
+                    removeTop: true,
+                    child: SafeArea(
+                      top: false,
+                      child: Row(
+                        children: <Widget>[
+                          if (rail)
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                border: showPane
+                                    ? null
+                                    : BorderDirectional(end: hairline),
+                              ),
+                              child: _Rail(
+                                shell: shell,
+                                inverted: _darkDesktopRail(context),
+                              ),
                             ),
-                            child: _Rail(
-                              shell: shell,
-                              inverted: _darkDesktopRail(context),
+                          if (showPane)
+                            SizedBox(
+                              width: Sizes.listPane,
+                              child: _Pane(index: shell.currentIndex),
                             ),
+                          Expanded(
+                            key: const ValueKey<String>('nav-body-slot'),
+                            child: shell,
                           ),
-                        if (showPane)
-                          SizedBox(
-                            width: Sizes.listPane,
-                            child: _Pane(index: shell.currentIndex),
-                          ),
-                        Expanded(
-                          key: const ValueKey<String>('nav-body-slot'),
-                          child: shell,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+          bottomNavigationBar: rail ? null : _Bar(shell: shell),
         ),
-        bottomNavigationBar: rail ? null : _Bar(shell: shell),
       ),
     );
   }

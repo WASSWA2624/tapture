@@ -190,6 +190,12 @@ abstract final class SettingKeys {
     AppConstants.processing.dailyRequestCap,
   );
 
+  /// UTC-day request counts outside record jobs; no prompt or result content.
+  static const SettingKey<String> aiAuxiliaryUsage = SettingKey<String>(
+    'ai.auxiliaryUsage',
+    '{}',
+  );
+
   /// On-device reading while charging and idle. Off until switched on.
   static const SettingKey<bool> aiOpportunisticOcr = SettingKey<bool>(
     'ai.opportunisticOcr',
@@ -300,6 +306,7 @@ abstract final class SettingKeys {
     confidenceMedium.name,
     aiConcurrency.name,
     aiDailyRequestCap.name,
+    aiAuxiliaryUsage.name,
     aiOpportunisticOcr.name,
     aiRowMatchThreshold.name,
     aiDetectionConfident.name,

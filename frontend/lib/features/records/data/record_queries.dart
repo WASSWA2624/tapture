@@ -591,6 +591,7 @@ const String _recordsEntity = 'records';
 final String _entrySql =
     'SELECT r.id AS id, r.project_id AS project_id, '
     'r.template_id AS template_id, r.template_row_id AS template_row_id, '
+    'r.template_version AS template_version, '
     'r.record_number AS record_number, r.status AS status, '
     'r.processing_mode AS processing_mode, r.source AS source, '
     'r.context_json AS context_json, r.captured_at AS captured_at, '

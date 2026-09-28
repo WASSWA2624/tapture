@@ -1,15 +1,18 @@
 import 'dart:async';
-import 'dart:typed_data';
 
+import 'package:camera/camera.dart' as platform;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/camera/camera_preview_surface.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 
-part 'camera_preview_state.dart';
 part 'camera_flash_mode.dart';
+part 'camera_preview_state.dart';
+part 'device_camera_service.dart';
 
 /// Camera preview and shutter. Features never call a camera plugin
 /// (FE-STR-11). Real builds may shutter through [PhotoPicker.take] with a
@@ -17,7 +20,29 @@ part 'camera_flash_mode.dart';
 abstract interface class CameraService {
   /// Platform-backed service that shutters via [picker].
   factory CameraService({PhotoPicker? picker}) {
+    if (picker == null &&
+        (kIsWeb ||
+            defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS)) {
+      return _DeviceCameraService(
+        listCameras: platform.availableCameras,
+        open: _highResolutionController,
+      );
+    }
     return _PhotoPickerCameraService(picker ?? PhotoPicker());
+  }
+
+  /// Live plugin preview. [cameras] lists the devices and [open] makes the
+  /// controller for one; tests replace both to drive start and stop races.
+  @visibleForTesting
+  factory CameraService.device({
+    Future<List<platform.CameraDescription>> Function()? cameras,
+    platform.CameraController Function(platform.CameraDescription)? open,
+  }) {
+    return _DeviceCameraService(
+      listCameras: cameras ?? platform.availableCameras,
+      open: open ?? _highResolutionController,
+    );
   }
 
   /// Stand-in that never opens a camera. Suites use this by default

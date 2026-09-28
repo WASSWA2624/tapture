@@ -5,10 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/reference/data/dataset_csv_import.dart'
     show DatasetImportDraft;
-import 'package:tapture/features/reference/domain/reference_dataset.dart';
-import 'package:tapture/features/reference/domain/reference_row.dart';
+import 'package:tapture/features/reference/domain/domain.dart';
 
 /// When every fixture dataset was imported.
 final DateTime fixtureImportedAt = DateTime.utc(2026, 9, 22, 8);
@@ -99,20 +100,12 @@ DatasetImportDraft aDraft({
         aReferenceRow(
           datasetId: '',
           key: 'A',
-          values: <String, String>{
-            'code': 'A',
-            'name': 'One',
-            'phone': '1',
-          },
+          values: <String, String>{'code': 'A', 'name': 'One', 'phone': '1'},
         ),
         aReferenceRow(
           datasetId: '',
           key: 'B',
-          values: <String, String>{
-            'code': 'B',
-            'name': 'Two',
-            'phone': '2',
-          },
+          values: <String, String>{'code': 'B', 'name': 'Two', 'phone': '2'},
         ),
       ];
   final ReferenceDataset header =
@@ -133,6 +126,45 @@ DatasetImportDraft aDraft({
             ],
         },
   );
+}
+
+/// The failure [BrokenPagesRepository] returns for every page.
+const StorageFailure brokenPageFailure = StorageFailure(
+  message: 'Reference rows could not be read.',
+  recoveryAction: 'Try again.',
+);
+
+/// A repository whose key lookups miss and whose row pages all fail with
+/// [brokenPageFailure]. Any other call is a test mistake and throws.
+final class BrokenPagesRepository implements ReferenceRepository {
+  @override
+  Future<Result<ReferenceRow?>> lookupByKey({
+    required String datasetId,
+    required String keyValue,
+  }) async {
+    return const Success<ReferenceRow?>(null);
+  }
+
+  @override
+  Future<Result<List<ReferenceRow>>> lookupByNormalised({
+    required String datasetId,
+    required String query,
+  }) async {
+    return const Success<List<ReferenceRow>>(<ReferenceRow>[]);
+  }
+
+  @override
+  Future<Result<List<ReferenceRow>>> pageRows({
+    required String datasetId,
+    required int offset,
+    required int limit,
+    String query = '',
+  }) async {
+    return const FailureResult<List<ReferenceRow>>(brokenPageFailure);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// Sizes the test surface to a phone in portrait.

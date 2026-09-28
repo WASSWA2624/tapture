@@ -3,6 +3,7 @@ import 'package:tapture/core/errors/result.dart';
 
 import 'field_def.dart';
 import 'template_def.dart';
+import 'template_json.dart';
 
 /// Consecutive template diffs, stored snapshots, and record migration (§18).
 ///
@@ -74,14 +75,12 @@ final class TemplateVersioning {
     for (int index = 0; index < from.fields.length; index++) {
       final FieldDef before = from.fields[index];
       final FieldDef after = to.fields[index];
-      if (before.fieldKey != after.fieldKey ||
-          before.label != after.label ||
-          before.hidden != after.hidden ||
-          before.requiredness != after.requiredness) {
+      if (before != after) {
         return true;
       }
     }
-    return false;
+    return from.identityFieldKeys.join('\u0000') !=
+        to.identityFieldKeys.join('\u0000');
   }
 
   /// Stores [from] on [to] so records captured under it can still resolve it.
@@ -89,9 +88,8 @@ final class TemplateVersioning {
     required TemplateDef from,
     required TemplateDef to,
   }) {
-    if (!isStructural(from, to)) {
-      return to;
-    }
+    // Every persisted edit receives a version, including a name-only edit.
+    // Remember each predecessor so a captured version always resolves.
     final Map<int, TemplateDef> history = _historyOf(from);
     history.putIfAbsent(from.version, () => from);
     return to.copyWith(detection: _writeHistory(to.detection, history));
@@ -261,20 +259,7 @@ Map<String, Object?> _writeHistory(
   final Map<String, Object?> next = Map<String, Object?>.of(detection);
   next[_versionsKey] = <String, Object?>{
     for (final MapEntry<int, TemplateDef> entry in history.entries)
-      '${entry.key}': <String, Object?>{
-        'fields': <Object>[
-          for (final FieldDef field in entry.value.fields)
-            <String, Object?>{
-              'fieldKey': field.fieldKey,
-              'label': field.label,
-              'type': field.type.name,
-              'requiredness': field.requiredness.name,
-              'hidden': field.hidden,
-              if (field.outputColumn != null)
-                'outputColumn': field.outputColumn,
-            },
-        ],
-      },
+      '${entry.key}': <String, Object?>{...TemplateJson.encode(entry.value)},
   };
   return next;
 }
@@ -284,6 +269,21 @@ TemplateDef _shapeFrom(
   int version,
   Map<Object?, Object?> raw,
 ) {
+  if (raw.containsKey('schema_version')) {
+    final Result<TemplateDef> decoded = TemplateJson.decode(
+      raw,
+      projectId: current.projectId ?? '',
+    );
+    if (decoded case Success<TemplateDef>(:final TemplateDef value)) {
+      return value.copyWith(
+        id: current.id,
+        version: version,
+        projectId: current.projectId,
+        source: current.source,
+      );
+    }
+  }
+  // Read the compact snapshots written before task 009's durable migration.
   final Object? fields = raw['fields'];
   return current.copyWith(
     version: version,

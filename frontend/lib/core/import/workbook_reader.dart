@@ -17,6 +17,26 @@ import 'type_inference.dart';
 /// Opens an XLSX or CSV off the UI thread and reports sheets, header and
 /// per-column type suggestions.
 abstract final class WorkbookReader {
+  /// Parses a browser-selected workbook after checking its size and archive.
+  static Future<Result<WorkbookSnapshot>> openBytes(
+    Uint8List bytes, {
+    required String sourceName,
+    void Function(double)? onProgress,
+    CancellationToken? cancel,
+  }) async {
+    final Result<Object> parsed = await runIsolate(
+      _readWorkbookBytes,
+      (bytes: bytes, name: sourceName),
+      onProgress: onProgress,
+      cancel: cancel,
+    );
+    return switch (parsed) {
+      FailureResult<Object>(:final Failure failure) =>
+        FailureResult<WorkbookSnapshot>(failure),
+      Success<Object>(:final Object value) => _snapshotOf(_asStringMap(value)),
+    };
+  }
+
   /// Validates [path], then parses it on a worker isolate (FE-PERF-02).
   static Future<Result<WorkbookSnapshot>> open(
     String path, {
@@ -44,6 +64,43 @@ abstract final class WorkbookReader {
         FailureResult<WorkbookSnapshot>(failure),
       Success<Object>(:final Object value) => _snapshotOf(_asStringMap(value)),
     };
+  }
+}
+
+Object _readWorkbookBytes(({Uint8List bytes, String name}) input) {
+  final Uint8List bytes = input.bytes;
+  if (bytes.isEmpty ||
+      bytes.length > AppConstants.imports.spreadsheetMaxBytes) {
+    return const <String, Object?>{'status': _corruptStatus};
+  }
+  try {
+    if (input.name.toLowerCase().endsWith('.csv')) {
+      return <String, Object?>{
+        'status': _okStatus,
+        'sheets': <Map<String, Object?>>[_csvSheet(input.name, bytes)],
+      };
+    }
+    if (!input.name.toLowerCase().endsWith('.xlsx')) {
+      return const <String, Object?>{'status': _corruptStatus};
+    }
+    if (_isOle(bytes)) {
+      return const <String, Object?>{'status': _passwordStatus};
+    }
+    final ArchiveProblem? problem = checkZipDirectory(
+      length: bytes.length,
+      read: (int offset, int count) => Uint8List.sublistView(
+        bytes,
+        offset,
+        (offset + count).clamp(0, bytes.length),
+      ),
+      maxUncompressed: AppConstants.imports.archiveUncompressedMaxBytes,
+    );
+    if (problem != null) {
+      return const <String, Object?>{'status': _corruptStatus};
+    }
+    return _xlsx(bytes);
+  } on Object {
+    return const <String, Object?>{'status': _corruptStatus};
   }
 }
 

@@ -129,11 +129,18 @@ void main() {
       ),
     );
     expect(candidate, isNotNull);
-    expect(candidate!.signals, DuplicateSignal.values.toSet().difference(
-      <DuplicateSignal>{DuplicateSignal.photo, DuplicateSignal.caption},
-    ));
+    expect(
+      candidate!.signals,
+      DuplicateSignal.values.toSet().difference(<DuplicateSignal>{
+        DuplicateSignal.photo,
+        DuplicateSignal.caption,
+      }),
+    );
     expect(candidate.score, inInclusiveRange(0, 1));
-    expect(candidate.score, greaterThanOrEqualTo(AppConstants.quality.identity));
+    expect(
+      candidate.score,
+      greaterThanOrEqualTo(AppConstants.quality.identity),
+    );
   });
 
   test('more signals score higher than a subset of them', () {

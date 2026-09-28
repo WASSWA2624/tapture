@@ -27,12 +27,15 @@ void main() {
     expect(ranked.single.signals, <DuplicateSignal>{DuplicateSignal.identity});
   });
 
-  test('a subject with a different hash and default fields matches nothing', () {
-    final List<DuplicateCandidate> ranked = rankAgainst(
-      const DuplicateSubject(recordId: 'r', identityHash: 'hash-b'),
-    );
-    expect(ranked, isEmpty);
-  });
+  test(
+    'a subject with a different hash and default fields matches nothing',
+    () {
+      final List<DuplicateCandidate> ranked = rankAgainst(
+        const DuplicateSubject(recordId: 'r', identityHash: 'hash-b'),
+      );
+      expect(ranked, isEmpty);
+    },
+  );
 
   test('a subject with no capture time never fires the name signal', () {
     final List<DuplicateCandidate> ranked = rankAgainst(

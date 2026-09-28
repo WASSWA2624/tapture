@@ -1,13 +1,11 @@
-import type { Store } from '../repositories/store.js';
+import type { Repository as Store } from '../repositories/repository.js';
 import type { AuditEvent } from '../types/index.js';
-
-export function recordAudit(
+export async function recordAudit(
   store: Store,
   event: Omit<AuditEvent, 'id' | 'at'>,
-): void {
-  store.recordAudit(event);
+): Promise<void> {
+  await store.recordAudit(event);
 }
-
-export function listAudit(store: Store): AuditEvent[] {
-  return store.audit();
+export async function listAudit(store: Store): Promise<AuditEvent[]> {
+  return await store.audit();
 }

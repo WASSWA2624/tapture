@@ -13,7 +13,7 @@ final class GrantCache {
   }) : _now = now ?? DateTime.now;
 
   /// How long a grant authorises relay and analysis without a refresh.
-  static const Duration lifetime = AppConstants.backend.grantLifetime;
+  static final Duration lifetime = AppConstants.backend.grantLifetime;
 
   static const String _secret = 'tapture.backend.session';
 
@@ -32,10 +32,7 @@ final class GrantCache {
   final DateTime Function() _now;
 
   /// Reads the cached grant. Missing storage is [AuthorityState.neverSignedIn].
-  AuthorityState read({
-    DateTime? at,
-    Duration freshFor = AppConstants.backend.grantFreshFor,
-  }) {
+  AuthorityState read({DateTime? at, Duration? freshFor}) {
     final String? raw = secrets[_secret];
     if (raw == null || raw.isEmpty) return AuthorityState.neverSignedIn;
     final DateTime now = at ?? _now();
@@ -43,7 +40,9 @@ final class GrantCache {
     final DateTime? refreshed = _refreshed(raw);
     if (until == null) return AuthorityState.cachedExpired;
     if (!now.isBefore(until)) return AuthorityState.cachedExpired;
-    if (refreshed != null && now.difference(refreshed) <= freshFor) {
+    if (refreshed != null &&
+        now.difference(refreshed) <=
+            (freshFor ?? AppConstants.backend.grantFreshFor)) {
       return AuthorityState.fresh;
     }
     return AuthorityState.cachedValid;

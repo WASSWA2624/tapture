@@ -271,6 +271,10 @@ final class _Tracked implements CapturePersistence {
   @override
   Future<Result<void>> deletePhoto(String photoId, {required String reason}) {
     deleted.add(photoId);
+    // A photo saved through this fake never reached the database.
+    if (savedPhotos.any((PhotoDraft photo) => photo.id == photoId)) {
+      return Future<Result<void>>.value(const Success<void>(null));
+    }
     return _inner.deletePhoto(photoId, reason: reason);
   }
 

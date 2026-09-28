@@ -567,14 +567,18 @@ void main() {
   });
 
   group('stored exports', () {
-    test('only a file in a project exports folder counts', () {
+    test('only a file under a project exports folder counts', () {
       expect(isStoredExport('projects/site__ab12/exports/pack.zip'), isTrue);
       expect(isStoredExport('projects/site__ab12/photos/a.jpg'), isFalse);
       expect(isStoredExport('projects/site__ab12/exports/'), isFalse);
       expect(isStoredExport('projects/../exports/pack.zip'), isFalse);
       expect(isStoredExport('/etc/exports/pack.zip'), isFalse);
       expect(
-        isStoredExport('projects/site__ab12/exports/old/pack.zip'),
+        isStoredExport('projects/site__ab12/exports/2026-09-28/d1/pack.zip'),
+        isTrue,
+      );
+      expect(
+        isStoredExport('projects/site__ab12/exports/2026-09-28/d1/'),
         isFalse,
       );
     });

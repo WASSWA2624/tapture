@@ -42,7 +42,8 @@ import '../domain/record_value.dart';
 import 'record_delete_action.dart';
 import 'record_delete_controller.dart';
 import 'record_detail_controller.dart';
-import 'record_edit_controller.dart' show recordEditTemplateProvider;
+import 'record_edit_controller.dart'
+    show recordEditTemplateProvider, recordCapturedTemplateProvider;
 import 'record_field_input.dart';
 import 'record_field_sheet.dart';
 import 'record_history_providers.dart' show recordHistoryProvider;
@@ -355,7 +356,10 @@ class _RecordBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<TemplateDef?> template = ref.watch(
-      recordEditTemplateProvider(entry.templateId),
+      recordCapturedTemplateProvider((
+        id: entry.templateId,
+        version: entry.templateVersion,
+      )),
     );
     final RecordDetailState state = ref.watch(
       recordDetailControllerProvider(entry.id),
@@ -484,7 +488,12 @@ class _Header extends ConsumerWidget {
 
   Future<void> _approve(BuildContext context, WidgetRef ref) async {
     final TemplateDef? template = ref
-        .read(recordEditTemplateProvider(entry.templateId))
+        .read(
+          recordCapturedTemplateProvider((
+            id: entry.templateId,
+            version: entry.templateVersion,
+          )),
+        )
         .asData
         ?.value;
     if (template != null) {

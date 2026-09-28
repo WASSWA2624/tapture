@@ -94,7 +94,11 @@ void main() {
         'dept',
       );
       final ContextState shuffled = three.copyWith(
-        levels: <ContextLevel>[three.levels[2], three.levels[0], three.levels[1]],
+        levels: <ContextLevel>[
+          three.levels[2],
+          three.levels[0],
+          three.levels[1],
+        ],
       );
       expect(ContextAutoClear.clearLowest(shuffled).fieldKey, 'dept');
     });
@@ -113,9 +117,7 @@ void main() {
 
     test('touches nothing but the cleared level', () {
       final ContextState restored = ContextAutoClear.restore(
-        state: three.copyWith(
-          values: <String, String>{'district': 'Kampala'},
-        ),
+        state: three.copyWith(values: <String, String>{'district': 'Kampala'}),
         fieldKey: 'dept',
         value: 'Theatre',
       );
@@ -130,7 +132,9 @@ void main() {
   group('nothing to clear', () {
     test('a hierarchy with no levels has no lowest level', () {
       expect(
-        ContextAutoClear.lowestFieldKey(const <({String fieldKey, int order})>[]),
+        ContextAutoClear.lowestFieldKey(
+          const <({String fieldKey, int order})>[],
+        ),
         isNull,
       );
       final _Cleared cleared = ContextAutoClear.clearLowest(

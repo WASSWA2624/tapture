@@ -3,7 +3,12 @@ import 'package:tapture/core/widgets/fields/field_value.dart';
 import 'package:tapture/features/quality/quality.dart';
 
 void main() {
-  const ValueCandidate ocr = ValueCandidate(ValueSource.ocr, 'ABB-1234', 0.9, 'p1');
+  const ValueCandidate ocr = ValueCandidate(
+    ValueSource.ocr,
+    'ABB-1234',
+    0.9,
+    'p1',
+  );
   const ValueCandidate barcodeSame = ValueCandidate(
     ValueSource.barcode,
     'abb 1234',
@@ -50,7 +55,7 @@ void main() {
       ConflictDetection.find(<String, List<ValueCandidate>>{
         'note': <ValueCandidate>[
           const ValueCandidate(ValueSource.ocr, null, 0.5, 'p1'),
-          const ValueCandidate(ValueSource.caption, '', 0.5, 'c1'),
+          const ValueCandidate(ValueSource.stt, '', 0.5, 'c1'),
         ],
       }),
       isEmpty,
@@ -101,11 +106,11 @@ void main() {
       <String, List<ValueCandidate>>{
         'name': <ValueCandidate>[
           const ValueCandidate(ValueSource.ocr, 'Pump', 0.9, 'p1'),
-          const ValueCandidate(ValueSource.caption, 'Valve', 0.7, 'c1'),
+          const ValueCandidate(ValueSource.stt, 'Valve', 0.7, 'c1'),
         ],
         'serial': <ValueCandidate>[ocr, barcodeSame],
         'site': <ValueCandidate>[
-          const ValueCandidate(ValueSource.reference, 'North', 1, null),
+          const ValueCandidate(ValueSource.lookup, 'North', 1, null),
           const ValueCandidate(ValueSource.ocr, 'South', 0.6, 'p3'),
         ],
       },

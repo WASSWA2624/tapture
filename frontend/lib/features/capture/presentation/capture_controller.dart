@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
@@ -183,7 +184,9 @@ final class CaptureController extends Notifier<CaptureSession> {
         photos: state.photos
             .where((PhotoDraft p) => p.id != photoId)
             .toList(growable: false),
-        captions: Map<String, String>.of(state.captions)..remove(photoId),
+        // Keep the caption in recovery state so Undo restores the complete
+        // evidence. Saving only files captions for photos still in the tray.
+        captions: state.captions,
         isDirty: true,
       );
       final Result<void> session = await _persistence.saveSession(next);
@@ -194,11 +197,42 @@ final class CaptureController extends Notifier<CaptureSession> {
     });
   }
 
-  /// Restores a previously removed photo at its sort position.
-  Future<Result<void>> undoRemove(PhotoDraft photo) => addPhoto(photo);
+  /// Restores a previously removed photo at its sort position. A photo filed
+  /// on the record being edited was never deleted, so only the session
+  /// takes it back.
+  Future<Result<void>> undoRemove(PhotoDraft photo) async {
+    final Result<PhotoDraft> saved = _filed(photo)
+        ? Success<PhotoDraft>(photo)
+        : await _persistence.savePhoto(photo);
+    return saved.fold(FailureResult<void>.new, (PhotoDraft stored) {
+      return _store((CaptureSession current) {
+        final List<PhotoDraft> photos =
+            <PhotoDraft>[
+              ...current.photos.where((PhotoDraft row) => row.id != stored.id),
+              stored,
+            ]..sort(
+              (PhotoDraft a, PhotoDraft b) =>
+                  a.sortOrder.compareTo(b.sortOrder),
+            );
+        return current.copyWith(photos: photos, isDirty: true);
+      });
+    });
+  }
 
   /// Reorders photos to [orderedIds] and persists immediately.
   Future<Result<void>> reorderPhotos(List<String> orderedIds) async {
+    if (orderedIds.length != state.photos.length ||
+        orderedIds.toSet().length != state.photos.length ||
+        !orderedIds.toSet().containsAll(
+          state.photos.map((PhotoDraft p) => p.id),
+        )) {
+      return const FailureResult<void>(
+        ValidationFailure(
+          message: 'The photo order is incomplete.',
+          recoveryAction: 'Keep every photo in the tray and try again.',
+        ),
+      );
+    }
     final Map<String, PhotoDraft> byId = <String, PhotoDraft>{
       for (final PhotoDraft photo in state.photos) photo.id: photo,
     };
@@ -276,13 +310,66 @@ final class CaptureController extends Notifier<CaptureSession> {
     });
   }
 
+  /// Keeps [fix] on session [sessionId]; a fix that arrives after the next
+  /// session has begun is dropped.
+  Future<Result<void>> setLocation(GeoFix fix, {required String sessionId}) {
+    return _store(
+      (CaptureSession current) =>
+          current.id == sessionId ? current.copyWith(location: fix) : current,
+    );
+  }
+
   /// Sets an inline field value.
-  Future<Result<void>> setValue(String fieldKey, Object? value) {
+  Future<Result<void>> setValue(
+    String fieldKey,
+    Object? value, {
+    String source = 'TYPED',
+  }) {
     return _store((CaptureSession current) {
       final Map<String, Object?> values = Map<String, Object?>.of(
         current.values,
-      )..[fieldKey] = value;
-      return current.copyWith(values: values, isDirty: true);
+      )..[fieldKey] = value is DateTime ? value.toIso8601String() : value;
+      return current.copyWith(
+        values: values,
+        isDirty: true,
+        valueSources: <String, String>{
+          ...current.valueSources,
+          fieldKey: source,
+        },
+        lookupRows: Map<String, String>.of(current.lookupRows)
+          ..remove(fieldKey),
+      );
+    });
+  }
+
+  /// Fills only unverified values and remembers each field's own source row.
+  Future<Result<void>> applyLookup(Map<String, String> mapped, String rowId) {
+    return _store((CaptureSession current) {
+      final Map<String, Object?> values = Map<String, Object?>.of(
+        current.values,
+      );
+      final Map<String, String> sources = Map<String, String>.of(
+        current.valueSources,
+      );
+      final Map<String, String> links = Map<String, String>.of(
+        current.lookupRows,
+      );
+      for (final MapEntry<String, String> entry in mapped.entries) {
+        if (values[entry.key] != null &&
+            '${values[entry.key]}'.isNotEmpty &&
+            sources[entry.key] != 'LOOKUP') {
+          continue;
+        }
+        values[entry.key] = entry.value;
+        sources[entry.key] = 'LOOKUP';
+        links[entry.key] = rowId;
+      }
+      return current.copyWith(
+        values: values,
+        valueSources: sources,
+        lookupRows: links,
+        isDirty: true,
+      );
     });
   }
 
@@ -490,14 +577,20 @@ final class CaptureController extends Notifier<CaptureSession> {
 
   /// Discards the interrupted session after confirm. An edit drops only the
   /// photos added during it; the record's own photos stay.
-  Future<Result<void>> discardSession() async {
-    for (final PhotoDraft photo in state.photos) {
+  Future<Result<void>> discardSession({CaptureSession? interrupted}) async {
+    final CaptureSession target = interrupted ?? state;
+    for (final PhotoDraft photo in target.photos) {
       if (_filed(photo)) {
         continue;
       }
-      await _persistence.deletePhoto(photo.id, reason: 'session-discard');
+      final Result<void> deleted = await _persistence.deletePhoto(
+        photo.id,
+        reason: 'session-discard',
+      );
+      if (deleted is FailureResult<void>) return deleted;
     }
-    await _persistence.clearSession(key);
+    final Result<void> cleared = await _persistence.clearSession(key);
+    if (cleared is FailureResult<void>) return cleared;
     if (state.editing) {
       state = _empty();
       return const Success<void>(null);

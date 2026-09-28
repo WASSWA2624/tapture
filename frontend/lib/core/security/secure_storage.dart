@@ -92,6 +92,9 @@ enum SecretKey {
 
   /// Enrolment session: tokens, organisation id and grant expiry.
   backendSession,
+
+  /// Shared relay encryption keys, indexed by project identifier.
+  relayKeys,
 }
 
 final class _SecureStorage implements SecureStorage {
@@ -224,5 +227,7 @@ String _name(SecretKey key) {
       return AppConstants.secrets.databaseEncryption;
     case SecretKey.backendSession:
       return AppConstants.secrets.backendSession;
+    case SecretKey.relayKeys:
+      return AppConstants.secrets.relayKeys;
   }
 }

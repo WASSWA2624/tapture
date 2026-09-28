@@ -22,9 +22,9 @@ import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
-import 'package:tapture/features/account/presentation/backend_settings_screen.dart';
-import 'package:tapture/features/account/presentation/relay_settings_screen.dart';
-import 'package:tapture/features/account/presentation/sign_in_screen.dart';
+import 'package:tapture/features/account/presentation/account_route.dart';
+import 'package:tapture/features/account/presentation/account_session.dart';
+import 'package:tapture/features/account/presentation/relay_route.dart';
 import 'package:tapture/features/capture/capture.dart';
 import 'package:tapture/features/cloud/presentation/destination_list_screen.dart';
 import 'package:tapture/features/cloud/presentation/upload_history_screen.dart';
@@ -406,6 +406,15 @@ abstract final class AppRoutes {
 
   /// Open-source licences under About.
   static const String settingsLicences = RoutePaths.settingsLicences;
+
+  /// Backend account and session under Settings.
+  static const String settingsAccount = RoutePaths.settingsAccount;
+
+  /// Backend sign-in under Settings.
+  static const String settingsSignIn = RoutePaths.settingsSignIn;
+
+  /// Encrypted relay controls under Settings.
+  static const String settingsRelay = RoutePaths.settingsRelay;
 }
 
 /// The process-wide router. Kept alive: the shell watches it on every frame
@@ -423,8 +432,13 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
     refresh.value++;
   });
   final SettingsStore store = ref.read(projectSettingsStoreProvider);
+  final BackendConfig? backend = ref.read(backendSessionProvider)?.config;
   final GoRouter router = GoRouter(
-    initialLocation: _initialLocation(store),
+    initialLocation: _initialLocation(
+      store,
+      signInFirst:
+          backend != null && backend.baseUrl.isNotEmpty && backend.needsSignIn,
+    ),
     refreshListenable: refresh,
     redirect: (BuildContext _, GoRouterState state) {
       final String? legacy = _legacyLocation(state);
@@ -451,9 +465,17 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
   return router;
 });
 
-String _initialLocation(SettingsStore store) {
+/// Where a launch opens. A configured install with no page to resume opens
+/// sign-in when it is not signed in: first run is gated, and only first run
+/// (task 024 step 23). After that a launch resumes the last page.
+String _initialLocation(SettingsStore store, {required bool signInFirst}) {
   final String stored = store.read(SettingKeys.lastLocation);
-  if (stored.isEmpty || stored == AppRoutes.lock) {
+  if (stored.isEmpty && signInFirst) {
+    return AppRoutes.settingsSignIn;
+  }
+  if (stored.isEmpty ||
+      stored == AppRoutes.lock ||
+      stored == AppRoutes.settingsSignIn) {
     return AppRoutes.projects;
   }
   if (!_isInternalLocation(stored)) {
@@ -469,7 +491,8 @@ void _persistLastLocation(SettingsStore store, GoRouter router) {
   } on StateError {
     return;
   }
-  if (uri.path == AppRoutes.lock) {
+  // The lock and the sign-in gate are never where work resumes.
+  if (uri.path == AppRoutes.lock || uri.path == AppRoutes.settingsSignIn) {
     return;
   }
   final String location = uri.toString();
@@ -852,27 +875,19 @@ List<RouteBase> get _routes {
                 GoRoute(
                   path: 'account',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const BackendSettingsScreen(
-                      config: BackendConfig(baseUrl: ''),
-                    );
+                    return const AccountRoute();
                   },
                 ),
                 GoRoute(
                   path: 'sign-in',
                   builder: (BuildContext _, GoRouterState _) {
-                    return SignInScreen(onSubmit: (_, _) async {});
+                    return const AccountRoute(signIn: true);
                   },
                 ),
                 GoRoute(
                   path: 'relay',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const RelaySettingsScreen(
-                      enabled: false,
-                      neverRelay: false,
-                      queued: 0,
-                      sent: 0,
-                      purged: 0,
-                    );
+                    return const RelayRoute();
                   },
                 ),
                 GoRoute(

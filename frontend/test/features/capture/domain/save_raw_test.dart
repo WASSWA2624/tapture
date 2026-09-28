@@ -36,21 +36,24 @@ final class _Outbound {
 }
 
 void main() {
-  test('a raw save persists the session once and makes no other call', () async {
-    final _Outbound outbound = _Outbound();
-    final CaptureSession session = _empty.copyWith(
-      captions: const <String, String>{'': 'note'},
-    );
+  test(
+    'a raw save persists the session once and makes no other call',
+    () async {
+      final _Outbound outbound = _Outbound();
+      final CaptureSession session = _empty.copyWith(
+        captions: const <String, String>{'': 'note'},
+      );
 
-    final Result<String> result = await SaveRaw.run(
-      session: session,
-      persist: outbound.persist,
-    );
+      final Result<String> result = await SaveRaw.run(
+        session: session,
+        persist: outbound.persist,
+      );
 
-    expect(valueOf(result), 'rec');
-    expect(outbound.persists, 1);
-    expect(identical(outbound.persisted, session), isTrue);
-  });
+      expect(valueOf(result), 'rec');
+      expect(outbound.persists, 1);
+      expect(identical(outbound.persisted, session), isTrue);
+    },
+  );
 
   test('a raw save writes the captured status and starts nothing', () {
     expect(SaveRaw.capturedStatus, RecordStatus.captured);

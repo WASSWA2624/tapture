@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,11 +12,12 @@ import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/export/xlsx_book.dart';
-import 'package:tapture/core/export/xlsx_cell.dart';
-import 'package:tapture/core/export/xlsx_column.dart';
+import 'package:tapture/core/export/export_record.dart';
+import 'package:tapture/core/export/export_request.dart';
+import 'package:tapture/core/export/value_formatter.dart';
 import 'package:tapture/core/export/xlsx_encoder.dart';
-import 'package:tapture/core/export/xlsx_sheet.dart';
+import 'package:tapture/core/export/xlsx_writer.dart';
+import 'package:tapture/core/files/evidence_purge.dart';
 import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
@@ -26,6 +26,11 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/exports/domain/export_file_name.dart';
 import 'package:tapture/features/exports/domain/export_repository.dart';
+import 'package:tapture/features/records/records.dart';
+import 'package:tapture/features/templates/templates.dart';
+
+import '../domain/deliverable_repository.dart';
+import 'export_record_loader.dart';
 
 /// Device [ExportRepository]. An export is a new project package under the
 /// project's `exports/` folder, the workbook inside it; the row is inserted
@@ -42,20 +47,32 @@ final class ExportRepositoryImpl implements ExportRepository {
     required Clock clock,
     required String deviceId,
     required IdService ids,
+    required TemplateRepository templates,
     FileWriter? writer,
+    FileReader? files,
+    EvidencePurge? cleanup,
     BundleWriter? bundles,
   }) : _db = db,
-       _storageRoot = storageRoot,
        _clock = clock,
        _deviceId = deviceId,
        _ids = ids,
        _writer = writer ?? FileWriter(storageRoot: storageRoot),
+       _loader = ExportRecordLoader(
+         records: RecordRepositoryImpl(
+           db: db,
+           clock: clock,
+           deviceId: deviceId,
+           ids: ids,
+         ),
+         templates: templates,
+       ),
+       _cleanup = cleanup ?? EvidencePurge(storageRoot: storageRoot),
        _bundles =
            bundles ??
            BundleWriter(
              db: db,
              storageRoot: storageRoot,
-             files: FileReader(storageRoot: storageRoot),
+             files: files ?? FileReader(storageRoot: storageRoot),
              clock: clock,
              ids: ids,
              deviceId: deviceId,
@@ -63,13 +80,14 @@ final class ExportRepositoryImpl implements ExportRepository {
        _dao = _ExportDao(db, clock: clock, deviceId: deviceId, ids: ids);
 
   final sqlite.AppDatabase _db;
-  final StorageRoot _storageRoot;
   final Clock _clock;
   final String _deviceId;
   final IdService _ids;
   final FileWriter _writer;
+  final EvidencePurge _cleanup;
   final BundleWriter _bundles;
   final _ExportDao _dao;
+  final ExportRecordLoader _loader;
 
   @override
   Stream<List<ExportEntry>> watchByProject(String projectId) {
@@ -149,20 +167,35 @@ final class ExportRepositoryImpl implements ExportRepository {
         StorageFailure(message: 'The photo project was not found.'),
       );
     }
-    final List<QueryRow> records = await _db
-        .customSelect(
-          'SELECT r.id AS id, r.status AS status, '
-          '(SELECT COUNT(*) FROM photos p WHERE p.record_id = r.id) '
-          'AS photo_count '
-          'FROM records r WHERE r.project_id = ? AND r.status != ? '
-          'ORDER BY r.created_at, r.id',
-          variables: <Variable<Object>>[
-            Variable<String>(projectId),
-            Variable<String>(RecordStatus.deleted.stored),
-          ],
-          readsFrom: <TableInfo<dynamic, dynamic>>{_db.records, _db.photos},
-        )
-        .get();
+    final Result<PreparedDeliverable> loaded = await _loader.load(
+      ExportRequest(
+        projectId: projectId,
+        formats: const <ExportFormat>{ExportFormat.xlsx},
+        scope: (
+          kind: ExportScopeKind.all,
+          context: null,
+          from: null,
+          to: null,
+          filter: null,
+        ),
+        columns: (raw: true, refined: true, confidence: true, evidence: true),
+        extras: (
+          dictionary: true,
+          photoIndex: true,
+          photoMode: 'path',
+          delimiter: ',',
+        ),
+      ),
+      cancel: cancel,
+    );
+    if (loaded case FailureResult<PreparedDeliverable>(
+      :final Failure failure,
+    )) {
+      return FailureResult<ExportedPackage>(failure);
+    }
+    final ExportRequest request =
+        (loaded as Success<PreparedDeliverable>).value.request;
+    final List<ExportRecord> records = request.records;
     if (records.isEmpty) {
       return const FailureResult<ExportedPackage>(
         ValidationFailure(
@@ -172,17 +205,13 @@ final class ExportRepositoryImpl implements ExportRepository {
       );
     }
     final Result<Uint8List> encoded =
-        await runIsolate<List<Object?>, Uint8List>(_encodeWorkbook, <Object?>[
-          project.name,
-          _clock.nowUtc().toIso8601String(),
-          <List<Object?>>[
-            for (final QueryRow row in records)
-              <Object?>[
-                row.read<String>('status'),
-                row.read<int>('photo_count'),
-              ],
-          ],
-        ], cancel: cancel);
+        await runIsolate<
+          ({ExportRequest request, DateTime created}),
+          Uint8List
+        >(_encodeWorkbook, (
+          request: request,
+          created: _clock.nowUtc(),
+        ), cancel: cancel);
     if (encoded is FailureResult<Uint8List>) {
       return FailureResult<ExportedPackage>(encoded.failure);
     }
@@ -251,9 +280,7 @@ final class ExportRepositoryImpl implements ExportRepository {
           throw Failure.from(failure),
       };
       await _recordMembership(
-        <String>[
-          for (final QueryRow record in records) record.read<String>('id'),
-        ],
+        <String>[for (final ExportRecord record in records) record.id],
         version: stored.version,
         formats: formats,
       );
@@ -339,7 +366,7 @@ final class ExportRepositoryImpl implements ExportRepository {
                 'SELECT t.name AS name, COUNT(*) AS records FROM records r '
                 'JOIN templates t ON t.id = r.template_id WHERE $written '
                 'GROUP BY r.template_id ORDER BY records DESC, t.name',
-                variables: scope(),
+                variables: scope,
               )
               .get();
           return (
@@ -388,11 +415,7 @@ final class ExportRepositoryImpl implements ExportRepository {
   }
 
   Future<void> _discard(String relativePath) async {
-    final Result<Directory> root = await _storageRoot.resolve();
-    if (root is! Success<Directory>) {
-      return;
-    }
-    await discardUnpublishedFile(File('${root.value.path}/$relativePath'));
+    await _cleanup.removeFiles(<String>[relativePath]);
   }
 
   ExportEntry _entry(sqlite.ExportRow row) {
@@ -418,35 +441,13 @@ final class _ExportDao extends BaseDao<Exports, sqlite.ExportRow> {
   }) : super(table: db.exports);
 }
 
-Future<Uint8List> _encodeWorkbook(List<Object?> job) {
-  final String name = job[0]! as String;
-  final DateTime created = DateTime.parse(job[1]! as String);
-  final List<Object?> source = job[2]! as List<Object?>;
+Future<Uint8List> _encodeWorkbook(
+  ({ExportRequest request, DateTime created}) job,
+) {
   IsolateRunner.reportProgress(1);
-  final XlsxBook book = XlsxBook(
-    createdUtc: created,
-    subject: name,
-    sheets: <XlsxSheet>[
-      XlsxSheet(
-        name: 'Records',
-        freezeHeader: true,
-        columns: const <XlsxColumn>[
-          XlsxColumn('Record', width: 12),
-          XlsxColumn('Status', width: 18),
-          XlsxColumn('Photos', width: 12),
-        ],
-        rows: <List<XlsxCell>>[
-          for (int index = 0; index < source.length; index++)
-            <XlsxCell>[
-              XlsxCell.number(index + 1),
-              XlsxCell.text((source[index]! as List<Object?>)[0]! as String),
-              XlsxCell.number((source[index]! as List<Object?>)[1]! as int),
-            ],
-        ],
-      ),
-    ],
+  return Future<Uint8List>.value(
+    XlsxEncoder.encode(XlsxWriter.build(job.request, createdUtc: job.created)),
   );
-  return Future<Uint8List>.value(XlsxEncoder.encode(book));
 }
 
 /// Audit `field_key` of a record's export membership, on entity `records`.

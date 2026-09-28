@@ -1,7 +1,7 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/normalise/fuzzy_matcher.dart';
 import 'package:tapture/features/reference/domain/lookup_matcher.dart';
 import 'package:tapture/features/reference/domain/reference_row.dart';
-import 'package:test/test.dart';
 
 import '../reference_fixtures.dart';
 

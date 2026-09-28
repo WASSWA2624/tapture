@@ -108,41 +108,38 @@ void main() {
     expect(ids.minted, 0);
   });
 
-  test(
-    'ten rapid shots produce ten files and ten drafts with distinct hashes '
-    'in shutter order',
-    () async {
-      final FakeFileWriter writer = FakeFileWriter();
-      final FakeIdService ids = FakeIdService();
+  test('ten rapid shots produce ten files and ten drafts with distinct hashes '
+      'in shutter order', () async {
+    final FakeFileWriter writer = FakeFileWriter();
+    final FakeIdService ids = FakeIdService();
 
-      final List<PhotoDraft> drafts = <PhotoDraft>[];
-      for (var shot = 1; shot <= 10; shot++) {
-        drafts.add(
-          valueOf(
-            await _shoot(
-              writer,
-              ids,
-              bytes: _frame(shot),
-              relativePath: 'photos/img-$shot.jpg',
-              sortOrder: shot - 1,
-            ),
+    final List<PhotoDraft> drafts = <PhotoDraft>[];
+    for (var shot = 1; shot <= 10; shot++) {
+      drafts.add(
+        valueOf(
+          await _shoot(
+            writer,
+            ids,
+            bytes: _frame(shot),
+            relativePath: 'photos/img-$shot.jpg',
+            sortOrder: shot - 1,
           ),
-        );
-      }
+        ),
+      );
+    }
 
-      expect(writer.files, hasLength(10));
-      expect(writer.writes, <String>[
-        for (var shot = 1; shot <= 10; shot++) 'photos/img-$shot.jpg',
-      ]);
-      expect(drafts.map((PhotoDraft d) => d.sha256).toSet(), hasLength(10));
-      expect(drafts.map((PhotoDraft d) => d.id), <String>[
-        for (var shot = 1; shot <= 10; shot++) 'id-$shot',
-      ]);
-      expect(drafts.map((PhotoDraft d) => d.sortOrder), <int>[
-        for (var shot = 0; shot < 10; shot++) shot,
-      ]);
-    },
-  );
+    expect(writer.files, hasLength(10));
+    expect(writer.writes, <String>[
+      for (var shot = 1; shot <= 10; shot++) 'photos/img-$shot.jpg',
+    ]);
+    expect(drafts.map((PhotoDraft d) => d.sha256).toSet(), hasLength(10));
+    expect(drafts.map((PhotoDraft d) => d.id), <String>[
+      for (var shot = 1; shot <= 10; shot++) 'id-$shot',
+    ]);
+    expect(drafts.map((PhotoDraft d) => d.sortOrder), <int>[
+      for (var shot = 0; shot < 10; shot++) shot,
+    ]);
+  });
 
   test('a one-megabyte frame is written and hashed inside the 400 ms shutter '
       'budget', () async {

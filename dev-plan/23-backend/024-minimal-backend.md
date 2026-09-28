@@ -703,7 +703,7 @@ abstract class OfflineAuthority {
 - [ ] Relayed packages merge through exactly the same preview and conflict path as a hand-carried bundle.
 - [x] Relay is off until a project manager turns it on, and a never-relay project offers no way to send.
 - [ ] What has been queued, sent and purged is always visible for a project.
-- [x] Tests: an integration test relaying between two local databases through a fake server, including a replayed
+- [ ] Tests: an integration test relaying between two local databases through a fake server, including a replayed
       push, plus widget tests for each relay control and the queue view.
 - [ ] A fresh install performs AI extraction with no key ever entered on the device.
 - [x] Choosing the proxy or a device key changes no code in any feature that uses AI.

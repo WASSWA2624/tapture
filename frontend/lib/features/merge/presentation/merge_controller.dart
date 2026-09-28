@@ -223,6 +223,8 @@ final class MergeController extends AsyncNotifier<MergeView?> {
           state.value!.copyWith(applying: false, progress: 0),
         );
       }
+    } else {
+      await flow.applied();
     }
     return merged;
   }

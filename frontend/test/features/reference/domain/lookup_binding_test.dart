@@ -1,5 +1,5 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/features/reference/domain/lookup_binding.dart';
-import 'package:test/test.dart';
 
 /// The supplier lookup of §16.2 in the contract's shape: `fillMapping`
 /// runs dataset column → template field, the inverse of the example's

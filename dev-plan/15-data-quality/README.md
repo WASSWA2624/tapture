@@ -12,6 +12,6 @@ The checks that make the output trustworthy, each with a human in the loop.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 15.01 | 015 | [Data quality: validation, duplicates, conflicts and variance](015-data-quality.md) | **Complete** | 40/40 | 02.01 (002), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 14.01 (014); Prerequisite review: 010, 012 |
+| 15.01 | 015 | [Data quality: validation, duplicates, conflicts and variance](015-data-quality.md) | **Complete** | 40/40 | 02.01 (002), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 14.01 (014); Prerequisite review: 009, 010, 012 |
 
 <!-- dev-plan:generated:end -->

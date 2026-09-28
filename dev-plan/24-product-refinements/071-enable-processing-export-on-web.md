@@ -6,6 +6,11 @@
 
 ## Implement
 
+**Implementation started:** Yes
+
+Processing and shared thumbnails are being moved onto the platform file services. Task 076 already supplies the
+browser bundle/download path; regression coverage will verify that path with browser-backed photos.
+
 Task 070 keeps capture's photo files in the browser: on web, `FileWriter` writes into the IndexedDB store
 `AppConstants.projectFiles.storeName` through `BlobFileWriter`, and `FileReader` reads them back. The capture tray
 draws its thumbnails from those bytes. Every other surface that opens a project file still reads through

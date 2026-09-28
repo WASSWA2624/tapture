@@ -26,7 +26,10 @@ import 'context_providers.dart';
 /// No location read and no permission request happen while it is off.
 class ContextMaintenance extends ConsumerStatefulWidget {
   /// Creates the host. It paints nothing.
-  const ContextMaintenance({super.key});
+  const ContextMaintenance({super.key, this.child = const SizedBox.shrink()});
+
+  /// Application content whose pointer and keyboard activity resets idle time.
+  final Widget child;
 
   @override
   ConsumerState<ContextMaintenance> createState() => _ContextMaintenanceState();
@@ -69,7 +72,24 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
         unawaited(ref.read(contextRepositoryProvider).load(next));
       }
     });
-    return const SizedBox.shrink();
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) => _activity(),
+      onPointerSignal: (_) => _activity(),
+      child: Focus(
+        canRequestFocus: false,
+        onKeyEvent: (_, _) {
+          _activity();
+          return KeyEventResult.ignored;
+        },
+        child: widget.child,
+      ),
+    );
+  }
+
+  void _activity() {
+    _lastActivity = ref.read(contextClockProvider).nowUtc();
+    _fired = false;
   }
 
   void _syncTimer() {
@@ -83,6 +103,7 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
     if (!on) {
       _timer?.cancel();
       _timer = null;
+      _origin = null;
       return;
     }
     _timer ??= Timer.periodic(AppConstants.context.checkEvery, (_) {
@@ -105,12 +126,17 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
     if (state == null) {
       return;
     }
-    _noteActivity(state);
-    await _autoClear(projectId, state);
-    if (!mounted) {
-      return;
+    _busy = true;
+    try {
+      _noteActivity(state);
+      await _autoClear(projectId, state);
+      if (!mounted) {
+        return;
+      }
+      await _movement();
+    } finally {
+      _busy = false;
     }
-    await _movement();
   }
 
   void _noteActivity(ContextState state) {
@@ -156,7 +182,6 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
       _fired = true;
       return;
     }
-    _fired = true;
     final Result<ContextState> written = await ref
         .read(contextRepositoryProvider)
         .setLevelValue(
@@ -168,6 +193,7 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
     if (!mounted || written is FailureResult<ContextState>) {
       return;
     }
+    _fired = true;
     final String label = _label(state, fieldKey);
     showAppSnack(
       context,
@@ -193,7 +219,9 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
   Future<void> _movement() async {
     final SettingsStore store = ref.read(projectSettingsStoreProvider);
     final bool enabled = store.read(SettingKeys.contextMovementPromptEnabled);
-    final bool gps = store.read(SettingKeys.gpsEnabled);
+    final bool gps =
+        ref.read(currentProjectDetailsProvider)?.settings.gpsEnabled ??
+        store.read(SettingKeys.gpsEnabled);
     if (!enabled || !gps) {
       return;
     }
@@ -218,8 +246,8 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
       longitude: here.longitude,
     );
     final ({double latitude, double longitude})? origin = _origin;
-    _origin = current;
     if (origin == null) {
+      _origin = current;
       return;
     }
     final double metres = ContextMovementPrompt.metresBetween(origin, current);
@@ -233,6 +261,7 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
     if (!ask || !mounted) {
       return;
     }
+    _origin = current;
     _busy = true;
     await showAppConfirm(
       context,

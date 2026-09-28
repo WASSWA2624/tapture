@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/features/capture/domain/record_number.dart';
 
@@ -46,29 +44,23 @@ void main() {
     expect(RecordNumber.allocateRange(5, 0), isEmpty);
   });
 
-  test(
-    'twenty rapid captures get twenty consecutive numbers with no gap or '
-    'duplicate',
-    () {
-      final List<int> numbers = RecordNumber.allocateRange(0, 20);
+  test('twenty rapid captures get twenty consecutive numbers with no gap or '
+      'duplicate', () {
+    final List<int> numbers = RecordNumber.allocateRange(0, 20);
 
-      expect(numbers, <int>[for (var n = 1; n <= 20; n++) n]);
-      expect(numbers.toSet(), hasLength(20));
-    },
-  );
+    expect(numbers, <int>[for (var n = 1; n <= 20; n++) n]);
+    expect(numbers.toSet(), hasLength(20));
+  });
 
-  test(
-    'twenty parallel inserts allocating inside one transaction each never '
-    'collide',
-    () async {
-      final _SerialisedAllocator allocator = _SerialisedAllocator();
+  test('twenty parallel inserts allocating inside one transaction each never '
+      'collide', () async {
+    final _SerialisedAllocator allocator = _SerialisedAllocator();
 
-      final List<int> numbers = await Future.wait(<Future<int>>[
-        for (var i = 0; i < 20; i++) allocator.allocate(),
-      ]);
+    final List<int> numbers = await Future.wait(<Future<int>>[
+      for (var i = 0; i < 20; i++) allocator.allocate(),
+    ]);
 
-      expect(numbers.toSet(), hasLength(20));
-      expect(numbers..sort(), <int>[for (var n = 1; n <= 20; n++) n]);
-    },
-  );
+    expect(numbers.toSet(), hasLength(20));
+    expect(numbers..sort(), <int>[for (var n = 1; n <= 20; n++) n]);
+  });
 }

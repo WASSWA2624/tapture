@@ -4,7 +4,6 @@ import type { Deps } from '../deps.js';
 import { asyncRoute } from '../http.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { listDevices, revokeDevice } from '../services/auth/devices.js';
-
 export function registerDevices(app: Express, deps: Deps): void {
   const auth = authenticate(deps);
   app.post(
@@ -13,9 +12,9 @@ export function registerDevices(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      const existing = deps.store
-        .devices()
-        .find((row) => row.id === principal.deviceId);
+      const existing = (await deps.store.devices()).find(
+        (row) => row.id === principal.deviceId,
+      );
       res
         .status(201)
         .location(`/api/v1/devices/${principal.deviceId}`)
@@ -28,7 +27,7 @@ export function registerDevices(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      res.json(listDevices(deps.store, principal));
+      res.json(await listDevices(deps.store, principal));
     }),
   );
   app.delete(

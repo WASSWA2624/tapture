@@ -59,10 +59,7 @@ void main() {
     });
 
     test('a different dataset breaks equality', () {
-      expect(
-        facility.copyWith(clearDatasetId: true),
-        isNot(equals(facility)),
-      );
+      expect(facility.copyWith(clearDatasetId: true), isNot(equals(facility)));
     });
 
     test('a different label breaks equality', () {

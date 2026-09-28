@@ -47,25 +47,22 @@ void main() {
     expect(next.contextSnapshot, <String, String>{'site': 'A', 'floor': '2'});
   });
 
-  test(
-    'the next session drops evidence, captions, values, audio, dirt and '
-    'the record id, so capturing the next item re-selects nothing',
-    () {
-      final CaptureSession next = CaptureReset.next(
-        previous: _saved(),
-        ids: FakeIdService(),
-      );
+  test('the next session drops evidence, captions, values, audio, dirt and '
+      'the record id, so capturing the next item re-selects nothing', () {
+    final CaptureSession next = CaptureReset.next(
+      previous: _saved(),
+      ids: FakeIdService(),
+    );
 
-      expect(next.photos, isEmpty);
-      expect(next.audio, isEmpty);
-      expect(next.captions, isEmpty);
-      expect(next.values, isEmpty);
-      expect(next.recordId, isNull);
-      expect(next.isDirty, isFalse);
-      expect(next.editing, isFalse);
-      expect(next.hasEvidence, isFalse);
-    },
-  );
+    expect(next.photos, isEmpty);
+    expect(next.audio, isEmpty);
+    expect(next.captions, isEmpty);
+    expect(next.values, isEmpty);
+    expect(next.recordId, isNull);
+    expect(next.isDirty, isFalse);
+    expect(next.editing, isFalse);
+    expect(next.hasEvidence, isFalse);
+  });
 
   test('the next session takes a fresh id from the id service', () {
     final FakeIdService ids = FakeIdService(prefix: 'session');

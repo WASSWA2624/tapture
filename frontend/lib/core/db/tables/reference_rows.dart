@@ -1,13 +1,10 @@
 part of 'reference.dart';
 
-/// One row in a [Reference] dataset. Unique on [datasetId] plus [keyValue].
+/// One row in a [Reference] dataset. Keys are indexed but may repeat after
+/// the operator explicitly accepts an ambiguous key column.
 ///
 /// [keyNormalised] is written at insert so lookup never folds at query time.
-@TableIndex(
-  name: 'reference_rows_by_key',
-  columns: {#datasetId, #keyValue},
-  unique: true,
-)
+@TableIndex(name: 'reference_rows_by_key', columns: {#datasetId, #keyValue})
 @TableIndex(
   name: 'reference_rows_by_normalised',
   columns: {#datasetId, #keyNormalised},

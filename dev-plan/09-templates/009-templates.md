@@ -2,6 +2,14 @@
 
 **Implementation step:** 09.01
 
+**Implementation started:** Yes
+
+## Review evidence — 2026-09-28
+
+The migration screen still used an empty records provider and a successful no-op persistence callback. Records
+also had no captured template-version column, so the earlier versioning acceptance was supported only by isolated
+domain tests. Reopened below while durable migration and version-aware record reading are implemented and verified.
+
 **Phase** 09 · Templates  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
@@ -467,9 +475,9 @@ class FieldEditor extends ConsumerWidget {
 - [x] Duplicate detection has an explicit, visible configuration rather than an implied one.
 - [x] Two fields cannot claim the same output column.
 - [x] A template imported from a workbook keeps its column letters and never has one invented for it.
-- [x] Old records still render and export correctly after a template edit, and keep their captured version.
-- [x] No record is migrated without the user first seeing the added, removed and retyped fields and the counts.
-- [x] A migration that fails part-way leaves every record on its old version.
+- [ ] Old records still render and export correctly after a template edit, and keep their captured version.
+- [ ] No record is migrated without the user first seeing the added, removed and retyped fields and the counts.
+- [ ] A migration that fails part-way leaves every record on its old version.
 - [x] An exported template imports elsewhere with identical behaviour, rows and aliases included.
 - [x] An unknown schema version imports nothing and says why in plain language.
 - [x] Tests: widget tests of `identity_fields_screen.dart` and `output_mapping_screen.dart` covering empty, failure and

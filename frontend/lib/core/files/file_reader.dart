@@ -32,6 +32,10 @@ abstract interface class FileReader {
   /// storage root and a refused read are each a [StorageFailure].
   Future<Result<Uint8List>> read(String relativePath);
 
+  /// File size, or null when absent. Native implementations stat the file
+  /// without loading an archive merely to display export history.
+  Future<Result<int?>> length(String relativePath);
+
   /// The failure every reader returns when [path] cannot be read.
   static StorageFailure unreadable(String path) {
     return StorageFailure(

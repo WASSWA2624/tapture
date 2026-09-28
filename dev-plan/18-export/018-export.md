@@ -6,6 +6,14 @@
 
 ## Implement
 
+**Implementation started:** Yes
+
+September 2026 audit: the deliverable route was a no-op, project packages carried only a three-column summary
+workbook, and PdfEngine emitted an unpaginated text stub. Affected acceptance is reopened while existing
+writers are connected to durable records and the standard PDF renderer of task
+[090](090-use-standard-pdf-renderer.md). Dependency links point only to earlier sub-steps, so 090 lists this task as
+its prerequisite; the reopened PDF-family items below wait on 090 in turn.
+
 Feedback FBK0000072 (prompt `prompts/feedback-23092026-2222/001-resolve-projects-capture-template-feedback.md`, decision D4(a)) adds project-menu Export on top of this contract: the selected project is the export scope, output stays local, and sharing happens only after an explicit action. Task 019 is not in this decision.
 
 Task [076](../24-product-refinements/076-resolve-project-capture-package-feedback.md), decision D13(a), makes that project-menu
@@ -377,11 +385,14 @@ class ExportVersioning {
 
 ### The PDF family
 
+The reopened cover and body golden and the record-report item below close only once task
+[090](090-use-standard-pdf-renderer.md) is verified.
+
 - [x] Every report can be built from cover, header, footer and photo block without adding layout of its own.
 - [x] A cancelled render leaves no partial file.
-- [x] Tests: golden test of a rendered cover and body page through `pdf_engine.dart`, plus a unit test that
+- [ ] Tests: golden test of a rendered cover and body page through `pdf_engine.dart`, plus a unit test that
       cancellation deletes the target file.
-- [x] A record's fields, photos with captions, context path and operator all appear, in both photo layouts.
+- [ ] A record's fields, photos with captions, context path and operator all appear, in both photo layouts.
 - [x] An inspection row that was never captured appears as **Not found** rather than being omitted, and is counted on
       the cover.
 - [x] Tests: golden tests of a rendered record page and inspection page, plus unit tests asserting inspection row
@@ -408,15 +419,15 @@ class ExportVersioning {
 
 ### The screen and history
 
-- [x] A default export needs one tap after opening the screen.
-- [x] Each stage reports progress, and the interface stays responsive throughout.
+- [ ] A default export needs one tap after opening the screen.
+- [ ] Each stage reports progress, and the interface stays responsive throughout.
 - [x] A cancelled export leaves no partial output file or archive on disk.
 - [x] Tests: widget tests of `export_screen.dart` and `export_progress.dart` covering the four states, the one-tap
       default and a cancellation asserting no file remains.
 - [x] A user can explain, months later, exactly what a given file contained and who produced it.
-- [x] Every completed export writes its history row, and every record it included carries its `exportedAt` stamp.
+- [ ] Every completed export writes its history row, and every record it included carries its `exportedAt` stamp.
 - [x] A new export never destroys a previous one, and folder names are stable and dated.
-- [x] Sharing from history reaches the system share sheet without rebuilding the file, and a recorded path since
+- [ ] Sharing from history reaches the system share sheet without rebuilding the file, and a recorded path since
       deleted shows plainly with an offer to re-run the request.
 - [x] Tests: widget tests of `export_history_screen.dart` and `export_share_action.dart` covering the four states and
       a missing file, plus unit tests of `export_versioning.dart` over repeated allocations on the same day, with no

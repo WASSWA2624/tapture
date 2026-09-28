@@ -11,6 +11,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/templates/domain/template_migration_repository.dart';
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
 import 'package:tapture/features/templates/presentation/template_migration_screen.dart';
 import 'package:tapture/features/templates/templates.dart';
@@ -207,9 +208,9 @@ Future<void> _pump(
         projectSettingsStoreProvider.overrideWith((Ref _) => store),
         if (templates != null)
           templateRepositoryProvider.overrideWith((Ref _) => templates),
-        templateCapturedRecordsProvider.overrideWithValue(records),
-        if (persist != null)
-          templateMigrationPersistProvider.overrideWithValue(persist),
+        templateMigrationRepositoryProvider.overrideWithValue(
+          _MigrationRepository(records, persist),
+        ),
         ...overrides,
       ],
       child: MaterialApp(
@@ -218,6 +219,25 @@ Future<void> _pump(
       ),
     ),
   );
+}
+
+final class _MigrationRepository implements TemplateMigrationRepository {
+  const _MigrationRepository(this.records, this.persist);
+  final List<CapturedTemplateRecord> records;
+  final Future<Result<void>> Function(List<CapturedTemplateRecord>)? persist;
+  @override
+  Stream<List<CapturedTemplateRecord>> watch(String templateId) =>
+      Stream.value(records);
+  @override
+  Future<Result<void>> migrate({
+    required TemplateDef template,
+    required List<CapturedTemplateRecord> reviewed,
+  }) async {
+    return persist?.call(
+          TemplateVersioning.migrate(current: template, records: reviewed),
+        ) ??
+        const Success<void>(null);
+  }
 }
 
 T _ok<T>(Result<T> result) {
