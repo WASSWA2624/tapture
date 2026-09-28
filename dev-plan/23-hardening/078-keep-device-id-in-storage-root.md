@@ -23,6 +23,6 @@ survives a reload there too.
 
 ## Definition of done
 
-- [ ] The device id survives clearing the OS temp folder and, on web, a page reload.
-- [ ] An id already in the temp file is kept, not replaced, on the first launch after the change.
-- [ ] Tests: identity resolution from the profile, from the legacy file, and a fresh install.
+- [x] The device id survives clearing the OS temp folder and, on web, a page reload.
+- [x] An id already in the temp file is kept, not replaced, on the first launch after the change.
+- [x] Tests: identity resolution from the profile, from the legacy file, and a fresh install.

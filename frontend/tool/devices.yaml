@@ -1,0 +1,19 @@
+devices:
+  - id: low
+    name: Low-end phone
+    coldStartMs: 2500
+    shutterMs: 400
+    exportMs: 8000
+    mergeMs: 12000
+  - id: mid
+    name: Mid-range phone
+    coldStartMs: 1500
+    shutterMs: 250
+    exportMs: 5000
+    mergeMs: 8000
+  - id: tablet
+    name: Tablet
+    coldStartMs: 1500
+    shutterMs: 250
+    exportMs: 5000
+    mergeMs: 8000

@@ -334,6 +334,10 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       return Stream<List<ProjectRecordRow>>.value(const <ProjectRecordRow>[]);
     }
     final String marks = List<String>.filled(statuses.length, '?').join(', ');
+    final List<Variable<Object>> statusVars = <Variable<Object>>[
+      for (final String status in statuses)
+        Variable<String>(status.replaceAll('_', '').toLowerCase()),
+    ];
     const String first =
         'FROM photos p WHERE p.record_id = r.id AND $activePhotoCondition '
         'ORDER BY p.sort_order, p.captured_at DESC, p.id LIMIT 1';
@@ -353,11 +357,11 @@ final class ProjectRepositoryImpl implements ProjectRepository {
           'FROM record_fields f WHERE f.record_id = r.id) AS field_blob '
           'FROM records r JOIN projects pr ON pr.id = r.project_id '
           'WHERE r.project_id = ? '
-          'AND r.status IN ($marks) '
+          "AND replace(lower(r.status), '_', '') IN ($marks) "
           'ORDER BY r.created_at, r.id',
           variables: <Variable<Object>>[
             Variable<String>(projectId),
-            for (final String status in statuses) Variable<String>(status),
+            ...statusVars,
           ],
           readsFrom: <TableInfo<dynamic, dynamic>>{
             _db.records,
@@ -374,7 +378,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
               (
                 id: row.read<String>('id'),
                 templateId: row.read<String>('template_id'),
-                status: row.read<String>('status'),
+                status: canonicalRecordStatus(row.read<String>('status')),
                 photoCount: row.read<int>('photo_count'),
                 thumb: _photoRef(
                   sha256: row.read<String?>('thumb_sha'),
@@ -481,11 +485,12 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     return _db
         .customSelect(
           'SELECT template_id, COUNT(*) AS records FROM records '
-          'WHERE project_id = ? AND status IN ($marks) '
+          "WHERE project_id = ? AND replace(lower(status), '_', '') IN ($marks) "
           'GROUP BY template_id',
           variables: <Variable<Object>>[
             Variable<String>(projectId),
-            for (final String status in statuses) Variable<String>(status),
+            for (final String status in statuses)
+              Variable<String>(status.replaceAll('_', '').toLowerCase()),
           ],
           readsFrom: <TableInfo<dynamic, dynamic>>{_db.records},
         )

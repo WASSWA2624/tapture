@@ -382,8 +382,8 @@ class _StorageSettings extends AsyncNotifier<_StorageView> {
       case Success<Directory>(:final Directory value):
         final Result<VolumeStats> volume = await (await _guard()).volume();
         switch (volume) {
-          case FailureResult<VolumeStats>(:final Failure failure):
-            throw failure;
+          case FailureResult<VolumeStats>():
+            return _usageOnly(retentionDays);
           case Success<VolumeStats>(value: final VolumeStats stats):
             return (
               projects: const <_ProjectUse>[],

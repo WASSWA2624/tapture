@@ -140,31 +140,25 @@ final class CaptureController extends Notifier<CaptureSession> {
       state.editing ? photo.copyWith(clearRecordId: true) : photo,
       bytes: bytes,
     );
-    return saved.fold(FailureResult<void>.new, (PhotoDraft stored) async {
-      final CaptureSession next = state.copyWith(
-        photos: <PhotoDraft>[...state.photos, stored],
-        isDirty: true,
+    return saved.fold(FailureResult<void>.new, (PhotoDraft stored) {
+      return _store(
+        (CaptureSession current) => current.copyWith(
+          photos: <PhotoDraft>[...current.photos, stored],
+          isDirty: true,
+        ),
       );
-      final Result<void> session = await _persistence.saveSession(next);
-      return session.fold(FailureResult<void>.new, (_) {
-        state = next;
-        return const Success<void>(null);
-      });
     });
   }
 
   /// Adds an already-flushed audio clip and persists recovery state before it
   /// appears in the capture session.
-  Future<Result<void>> addAudio(AudioDraft clip) async {
-    final CaptureSession next = state.copyWith(
-      audio: <AudioDraft>[...state.audio, clip],
-      isDirty: true,
+  Future<Result<void>> addAudio(AudioDraft clip) {
+    return _store(
+      (CaptureSession current) => current.copyWith(
+        audio: <AudioDraft>[...current.audio, clip],
+        isDirty: true,
+      ),
     );
-    final Result<void> saved = await _persistence.saveSession(next);
-    return saved.fold(FailureResult<void>.new, (_) {
-      state = next;
-      return const Success<void>(null);
-    });
   }
 
   /// Removes [photoId] after tombstone; leaves emitted state unchanged on
@@ -233,67 +227,64 @@ final class CaptureController extends Notifier<CaptureSession> {
   }
 
   /// Sets caption for [photoId] (`null` / empty id = record caption).
-  Future<Result<void>> setCaption(String? photoId, String text) async {
-    final String key = photoId ?? '';
-    final Map<String, String> captions = Map<String, String>.of(state.captions)
-      ..[key] = text;
-    List<PhotoDraft> photos = state.photos;
-    if (photoId != null && photoId.isNotEmpty) {
-      photos = <PhotoDraft>[
-        for (final PhotoDraft photo in state.photos)
-          photo.id == photoId
-              ? photo.copyWith(hasCaption: text.isNotEmpty)
-              : photo,
-      ];
-    }
-    final CaptureSession next = state.copyWith(
-      captions: captions,
-      photos: photos,
-      isDirty: true,
-    );
-    final Result<void> session = await _persistence.saveSession(next);
-    return session.fold(FailureResult<void>.new, (_) {
-      state = next;
-      return const Success<void>(null);
+  Future<Result<void>> setCaption(String? photoId, String text) {
+    return _store((CaptureSession current) {
+      final String key = photoId ?? '';
+      final Map<String, String> captions = Map<String, String>.of(
+        current.captions,
+      )..[key] = text;
+      List<PhotoDraft> photos = current.photos;
+      if (photoId != null && photoId.isNotEmpty) {
+        photos = <PhotoDraft>[
+          for (final PhotoDraft photo in current.photos)
+            photo.id == photoId
+                ? photo.copyWith(hasCaption: text.isNotEmpty)
+                : photo,
+        ];
+      }
+      return current.copyWith(
+        captions: captions,
+        photos: photos,
+        isDirty: true,
+      );
     });
   }
 
   /// Applies caption writes from [CaptionApply].
-  Future<Result<void>> applyCaptions(List<CaptionWrite> writes) async {
-    final Map<String, String> captions = Map<String, String>.of(state.captions);
-    final Map<String, PhotoDraft> photos = <String, PhotoDraft>{
-      for (final PhotoDraft photo in state.photos) photo.id: photo,
-    };
-    for (final CaptionWrite write in writes) {
-      captions[write.photoId] = write.text;
-      final PhotoDraft? photo = photos[write.photoId];
-      if (photo != null) {
-        photos[write.photoId] = photo.copyWith(
-          hasCaption: write.text.isNotEmpty,
+  Future<Result<void>> applyCaptions(List<CaptionWrite> writes) {
+    return _store(
+      (CaptureSession current) {
+        final Map<String, String> captions = Map<String, String>.of(
+          current.captions,
         );
-      }
-    }
-    final CaptureSession next = state.copyWith(
-      captions: captions,
-      photos: photos.values.toList(growable: false),
-      isDirty: true,
+        final Map<String, PhotoDraft> photos = <String, PhotoDraft>{
+          for (final PhotoDraft photo in current.photos) photo.id: photo,
+        };
+        for (final CaptionWrite write in writes) {
+          captions[write.photoId] = write.text;
+          final PhotoDraft? photo = photos[write.photoId];
+          if (photo != null) {
+            photos[write.photoId] = photo.copyWith(
+              hasCaption: write.text.isNotEmpty,
+            );
+          }
+        }
+        return current.copyWith(
+          captions: captions,
+          photos: photos.values.toList(growable: false),
+          isDirty: true,
+        );
+      },
     );
-    final Result<void> session = await _persistence.saveSession(next);
-    return session.fold(FailureResult<void>.new, (_) {
-      state = next;
-      return const Success<void>(null);
-    });
   }
 
   /// Sets an inline field value.
-  Future<Result<void>> setValue(String fieldKey, Object? value) async {
-    final Map<String, Object?> values = Map<String, Object?>.of(state.values)
-      ..[fieldKey] = value;
-    final CaptureSession next = state.copyWith(values: values, isDirty: true);
-    final Result<void> session = await _persistence.saveSession(next);
-    return session.fold(FailureResult<void>.new, (_) {
-      state = next;
-      return const Success<void>(null);
+  Future<Result<void>> setValue(String fieldKey, Object? value) {
+    return _store((CaptureSession current) {
+      final Map<String, Object?> values = Map<String, Object?>.of(
+        current.values,
+      )..[fieldKey] = value;
+      return current.copyWith(values: values, isDirty: true);
     });
   }
 
@@ -379,29 +370,50 @@ final class CaptureController extends Notifier<CaptureSession> {
   }
 
   /// Sets the template for this session.
-  Future<Result<void>> setTemplate(String templateId) async {
-    final CaptureSession next = state.copyWith(
-      templateId: templateId,
-      isDirty: true,
+  Future<Result<void>> setTemplate(String templateId) {
+    return _store(
+      (CaptureSession current) => current.copyWith(
+        templateId: templateId,
+        isDirty: true,
+      ),
     );
-    final Result<void> session = await _persistence.saveSession(next);
-    return session.fold(FailureResult<void>.new, (_) {
-      state = next;
-      return const Success<void>(null);
-    });
   }
 
   /// Sets the context snapshot.
-  Future<Result<void>> setContext(Map<String, String> snapshot) async {
-    final CaptureSession next = state.copyWith(
-      contextSnapshot: snapshot,
-      isDirty: true,
+  Future<Result<void>> setContext(Map<String, String> snapshot) {
+    return _store(
+      (CaptureSession current) => current.copyWith(
+        contextSnapshot: snapshot,
+        isDirty: true,
+      ),
     );
-    final Result<void> session = await _persistence.saveSession(next);
-    return session.fold(FailureResult<void>.new, (_) {
-      state = next;
-      return const Success<void>(null);
-    });
+  }
+
+  /// Writes [build] onto the session that exists when the save finishes.
+  ///
+  /// A resume or another edit that lands first is kept; this change is
+  /// applied on top of it instead of restoring a stale copy.
+  Future<Result<void>> _store(
+    CaptureSession Function(CaptureSession current) build,
+  ) async {
+    for (var attempt = 0; attempt < 8; attempt++) {
+      final CaptureSession base = state;
+      final CaptureSession next = build(base);
+      final Result<void> saved = await _persistence.saveSession(next);
+      if (saved is FailureResult<void>) {
+        return saved;
+      }
+      if (identical(state, base)) {
+        state = next;
+        return const Success<void>(null);
+      }
+    }
+    return const FailureResult<void>(
+      StorageFailure(
+        message: 'That change could not be saved.',
+        recoveryAction: 'Try again. Nothing already captured was lost.',
+      ),
+    );
   }
 
   /// Raw save path.

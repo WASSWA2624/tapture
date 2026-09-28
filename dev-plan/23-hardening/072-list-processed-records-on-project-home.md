@@ -24,8 +24,8 @@ already folds case and separators when naming a stored status.
 
 ## Definition of done
 
-- [ ] A record that processing marks `NEEDS_REVIEW` or `EXTRACTED` stays on its project home, in its template's
+- [x] A record that processing marks `NEEDS_REVIEW` or `EXTRACTED` stays on its project home, in its template's
       record count, and under its status in the records filter.
-- [ ] Records captured before the change are listed without a migration step the operator has to run.
-- [ ] Tests: repository watch queries over records in every status, and a project home widget test with a
+- [x] Records captured before the change are listed without a migration step the operator has to run.
+- [x] Tests: repository watch queries over records in every status, and a project home widget test with a
       processed record.

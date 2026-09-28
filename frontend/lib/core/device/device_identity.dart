@@ -51,7 +51,13 @@ Future<String> deviceId({
   required IdService ids,
   Map<String, String>? memory,
   String? filePath,
+  Future<String?> Function()? readStored,
+  Future<void> Function(String id)? writeStored,
 }) async {
+  final String? stored = await readStored?.call();
+  if (stored != null && stored.isNotEmpty) {
+    return stored;
+  }
   if (memory != null) {
     final String? existing = memory['id'];
     if (existing != null && existing.isNotEmpty) {
@@ -66,10 +72,12 @@ Future<String> deviceId({
   if (path.isNotEmpty) {
     final String? existing = io.readDeviceIdFile(path);
     if (existing != null) {
+      await writeStored?.call(existing);
       return existing;
     }
     final String id = ids.newId();
     io.writeDeviceIdFile(path, id, clock.nowUtc());
+    await writeStored?.call(id);
     return id;
   }
   if (_processId != null) {

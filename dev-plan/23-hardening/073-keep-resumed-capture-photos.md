@@ -23,8 +23,8 @@ can undo another; a resumed session keeps its photos, captions and audio.
 
 ## Definition of done
 
-- [ ] Resume tapped while the template and context writes are still in flight keeps every resumed photo, caption
+- [x] Resume tapped while the template and context writes are still in flight keeps every resumed photo, caption
       and audio clip, in the tray and in the stored session.
-- [ ] Concurrent caption, value, template and context changes each land, whatever order their writes finish in.
-- [ ] Tests: controller tests with a session store whose writes finish out of order, and a capture screen test that
+- [x] Concurrent caption, value, template and context changes each land, whatever order their writes finish in.
+- [x] Tests: controller tests with a session store whose writes finish out of order, and a capture screen test that
       resumes during slow writes.

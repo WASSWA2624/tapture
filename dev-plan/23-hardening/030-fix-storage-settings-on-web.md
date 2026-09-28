@@ -21,6 +21,6 @@ touch originals.
 
 ## Definition of done
 
-- [ ] On web, Storage is not `AppErrorState`; retention can be cycled.
+- [x] On web, Storage is not `AppErrorState`; retention can be cycled.
 - [x] Native empty, failure and cache-original tests still pass.
 - [x] Tests: a failed `StorageRoot` still shows usage chrome (retention), not the generic provider error.

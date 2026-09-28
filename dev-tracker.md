@@ -1,6 +1,6 @@
 # Tapture — development tracker
 
-**58 of 69 tasks complete (84%)** · last updated 2026-09-28
+**61 of 69 tasks complete (88%)** · last updated 2026-09-28
 
 `██████████████████████████░░░░░░░░░░░░`
 
@@ -34,7 +34,7 @@ are in [RETIRED.md](dev-plan/RETIRED.md).
 | 20 — Data import | 1 | 1 | `██████████████` 100% |
 | 21 — Cloud upload | 1 | 1 | `██████████████` 100% |
 | 22 — Privacy and security | 1 | 1 | `██████████████` 100% |
-| 23 — Hardening | 34 | 45 | `███████████░░░` 76% |
+| 23 — Hardening | 40 | 54 | `██████████░░░░` 74% |
 | 24 — The minimal backend | 1 | 1 | `██████████████` 100% |
 | 25 — Testing and release | 1 | 1 | `██████████████` 100% |
 | **Total** | **47** | **69** | `██████████████████████████░░░░░░░░░░░░` 68% |
@@ -403,8 +403,8 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [x] [026 — In-app feedback: floating button, capture, download and delete](dev-plan/23-hardening/026-in-app-feedback.md)
 - [x] [027 — Feedback screens: compact layout, dictation and reopen safety](dev-plan/23-hardening/027-feedback-dictation-and-layout.md)
 - [x] [028 — Feedback archive: ship the prompts generator](dev-plan/23-hardening/028-feedback-prompts-generator.md)
-- [ ] [029 — Enable AppDatabase on web](dev-plan/23-hardening/029-enable-app-database-on-web.md)
-- [ ] [030 — Fix storage settings on web](dev-plan/23-hardening/030-fix-storage-settings-on-web.md)
+- [x] [029 — Enable AppDatabase on web](dev-plan/23-hardening/029-enable-app-database-on-web.md)
+- [x] [030 — Fix storage settings on web](dev-plan/23-hardening/030-fix-storage-settings-on-web.md)
 - [x] [031 — Dock feedback panel beside app](dev-plan/23-hardening/031-dock-feedback-panel-beside-app.md)
 - [x] [032 — Rename More nav to Settings](dev-plan/23-hardening/032-rename-more-nav-to-settings.md)
 - [x] [033 — Fix feedback search remount](dev-plan/23-hardening/033-fix-feedback-search-remount.md)
@@ -439,7 +439,10 @@ Things a finished task surfaced that are not yet resolved. Each needs a numbered
 - [ ] [062 — Resolve feedback archive 23092026-1635](dev-plan/23-hardening/062-resolve-feedback-23092026.md)
 - [ ] [063 — Resolve projects, capture and template feedback](dev-plan/23-hardening/063-resolve-feedback-23092026-2222.md)
 - [ ] [064 — Resolve projects and capture feedback](dev-plan/23-hardening/064-resolve-feedback-24092026.md)
-- [ ] [065 — Place the audio record control in the caption field](dev-plan/23-hardening/065-place-audio-record-in-caption.md)
+- [x] [065 — Place the audio record control in the caption field](dev-plan/23-hardening/065-place-audio-record-in-caption.md)
+- [x] [072 — List processed records on the project home](dev-plan/23-hardening/072-list-processed-records-on-project-home.md)
+- [x] [073 — Keep resumed capture photos](dev-plan/23-hardening/073-keep-resumed-capture-photos.md)
+- [x] [078 — Keep the device id in the storage root](dev-plan/23-hardening/078-keep-device-id-in-storage-root.md)
 - [ ] [066 — Resolve project, capture and export feedback](dev-plan/23-hardening/066-resolve-project-capture-feedback.md)
 - [ ] [067 — Resolve project, template and capture feedback](dev-plan/23-hardening/067-resolve-project-template-capture-feedback.md)
 - [ ] [068 — Resolve project, record, capture and export feedback](dev-plan/23-hardening/068-resolve-project-record-capture-export-feedback.md)

@@ -84,6 +84,57 @@ void main() {
     },
   );
 
+  test('an id in the profile is kept when the temp file is gone', () async {
+    final IdService ids = UuidV7Service.sequence(clock);
+    final String id = await deviceId(
+      clock: clock,
+      ids: ids,
+      filePath: '',
+      readStored: () async => 'device-kept',
+    );
+    expect(id, 'device-kept');
+  });
+
+  test('a legacy temp file is copied into the profile and not replaced', () async {
+    final Directory directory = Directory.systemTemp.createTempSync(
+      'tapture-legacy-',
+    );
+    addTearDown(() => directory.deleteSync(recursive: true));
+    final String path = '${directory.path}/device.id';
+    File(path).writeAsStringSync('legacy-device');
+    String? stored;
+    final String id = await deviceId(
+      clock: clock,
+      ids: UuidV7Service.sequence(clock),
+      filePath: path,
+      readStored: () async => stored,
+      writeStored: (String minted) async {
+        stored = minted;
+      },
+    );
+    expect(id, 'legacy-device');
+    expect(stored, 'legacy-device');
+  });
+
+  test('a fresh install writes the new id into the profile', () async {
+    final Directory directory = Directory.systemTemp.createTempSync(
+      'tapture-fresh-',
+    );
+    addTearDown(() => directory.deleteSync(recursive: true));
+    String? stored;
+    final String id = await deviceId(
+      clock: clock,
+      ids: UuidV7Service.sequence(clock),
+      filePath: '${directory.path}/device.id',
+      readStored: () async => stored,
+      writeStored: (String minted) async {
+        stored = minted;
+      },
+    );
+    expect(stored, id);
+    expect(id, isNotEmpty);
+  });
+
   test('the platform descriptor fills the three audit fields', () async {
     final DeviceDescriptor descriptor = await deviceDescriptor();
 

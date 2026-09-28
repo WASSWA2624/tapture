@@ -24,7 +24,7 @@ and Capture settings load and persist across a reload instead of throwing `Unsup
 
 ## Definition of done
 
-- [ ] On web, Operator and Capture settings load and save; a reload restores them.
+- [x] On web, Operator and Capture settings load and save; a reload restores them.
 - [x] Operator's error state offers Try again.
 - [x] Native open/memory tests still pass.
 - [x] Tests: retry on Operator failure; the web opener is wired and `web/sqlite3.wasm` plus `web/drift_worker.js` are present.

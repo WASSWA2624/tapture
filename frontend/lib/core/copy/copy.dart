@@ -6291,4 +6291,7 @@ abstract final class Copy {
 
   /// Count of packages the server has purged.
   static const String relayPurged = 'Purged';
+
+  /// Trial control that records a problem on this screen.
+  static const String frictionLogAction = 'Something went wrong here';
 }

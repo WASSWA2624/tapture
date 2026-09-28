@@ -16,6 +16,7 @@ import 'core/audio/audio_recorder_plugin.dart';
 import 'core/audio/audio_recorder_service.dart';
 import 'core/background/power_source.dart';
 import 'core/db/app_database.dart';
+import 'core/db/tables/device_profile.dart';
 import 'core/db/database_provider.dart';
 import 'core/device/device_identity.dart';
 import 'core/device/platform_facts.dart';
@@ -118,7 +119,20 @@ Future<void> _run() async {
   ];
   if (!_runningUnderTest) {
     final UuidV7Service ids = UuidV7Service(clock);
-    final String id = await deviceId(clock: clock, ids: ids);
+    final String id = await deviceId(
+      clock: clock,
+      ids: ids,
+      readStored: () async {
+        final List<DeviceProfileRow> rows = await database!
+            .select(database!.deviceProfile)
+            .get();
+        if (rows.isEmpty) return null;
+        return rows.first.deviceId;
+      },
+      writeStored: (String minted) async {
+        await ensureDeviceProfile(database!, deviceId: minted, clock: clock);
+      },
+    );
     final PlatformFacts facts = await platformFacts(clock: clock);
     final DeviceDescriptor device = await deviceDescriptor();
     final AppDatabase db = database!;
