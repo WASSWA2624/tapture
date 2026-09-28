@@ -1,9 +1,10 @@
 # Tapture — task index
 
-78 implementation prompts across 25 phases. Work top to bottom.
+86 implementation prompts across 26 phases. Work top to bottom.
 
 Every task inherits [STANDARD.md](STANDARD.md); read it once before the first task. Phases 01 to 25 are one
-task each except phase 23, which still holds the leftover field-feedback extras. Old numbers are listed in
+task each except phase 06's navigation follow-up and phase 23's field-feedback extras. Phase 26 adds Documentation.
+Old numbers are listed in
 [RETIRED.md](RETIRED.md).
 
 ## 01 — Project setup and guardrails
@@ -41,6 +42,7 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 *Navigation, routing and the always-visible status line.*
 
 - [x] [006 — Application shell: navigation, the status line and the frame every feature plugs into](06-app-shell/006-application-shell.md)
+- [ ] [079 — Show a mobile More menu in the bottom navigation](06-app-shell/079-mobile-more-menu.md)
 
 ## 07 — Account and settings
 
@@ -208,3 +210,15 @@ task each except phase 23, which still holds the leftover field-feedback extras.
 *The suites, the pipeline and the gate that makes a build shippable. A release is two artefacts now, the app and the backend it requires, and neither ships alone.*
 
 - [x] [025 — Testing and release: the suites, the pipeline and the gate over both artefacts](25-testing-and-release/025-testing-and-release.md)
+
+## 26 — Documentation
+
+*Captured projects are the default sources; files and project archives are optional additions. Output formats and optional instructions lead to evidence-backed AI drafts, deterministic document generation and human approval. See the [phase plan](26-documentation/README.md) for current gaps and delivery boundaries.*
+
+- [ ] [080 — Establish document adapters and approved dependencies](26-documentation/080-documentation-capabilities.md)
+- [ ] [081 — Persist Documentation workspaces and resources locally](26-documentation/081-documentation-workspaces.md)
+- [ ] [082 — Import, inspect and extract document resources safely](26-documentation/082-documentation-ingestion.md)
+- [ ] [083 — Build the Inputs, Outputs and Prompt workspace](26-documentation/083-documentation-editor.md)
+- [ ] [084 — Generate grounded document drafts through resumable jobs](26-documentation/084-documentation-generation.md)
+- [ ] [085 — Render, review and approve versioned documents](26-documentation/085-documentation-review.md)
+- [ ] [086 — Carry Documentation in project packages and pass release acceptance](26-documentation/086-documentation-release.md)

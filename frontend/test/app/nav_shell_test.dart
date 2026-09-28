@@ -337,14 +337,17 @@ void main() {
         await tester.pumpAndSettle();
         expect(router.state.uri.path, AppRoutes.projectRecords('p1'));
         expect(_navIcon(tester, 0).icon, Icons.folder);
-        expect(_navIcon(tester, 3).icon, Icons.settings_outlined);
+        expect(
+          _navIcon(tester, 3).icon,
+          width < 600 ? Icons.more_vert : Icons.settings_outlined,
+        );
         await tester.pumpWidget(const SizedBox.shrink());
       }
     },
   );
 
   testWidgets(
-    'Templates from Settings stay on Settings and tapping Settings returns',
+    'Templates select More and Settings remains reachable at every width',
     (WidgetTester tester) async {
       for (final double width in <double>[400, 800, 1200]) {
         final GoRouter router = await _pump(tester, width: width);
@@ -358,11 +361,20 @@ void main() {
           find.byKey(const ValueKey<String>('route-templates')),
           findsOneWidget,
         );
-        expect(_navIcon(tester, 3).icon, Icons.settings);
+        expect(
+          _navIcon(tester, 3).icon,
+          width < 600 ? Icons.more_vert : Icons.settings,
+        );
         expect(_navIcon(tester, 0).icon, Icons.folder_outlined);
 
         await tester.tap(_shellLabel(tester, Copy.navMore));
         await tester.pumpAndSettle();
+        if (width < 600) {
+          await tester.tap(
+            find.byKey(const ValueKey<String>('nav-more-/more')),
+          );
+          await tester.pumpAndSettle();
+        }
         expect(router.state.uri.path, AppRoutes.more);
         expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
         await tester.pumpWidget(const SizedBox.shrink());
@@ -1072,7 +1084,7 @@ T _ok<T>(Result<T> result) {
 Finder _shellLabel(WidgetTester tester, String label) {
   final Finder inBar = find.descendant(
     of: find.byKey(const ValueKey<String>('nav-bar')),
-    matching: find.text(label),
+    matching: find.text(label == Copy.navMore ? Copy.navMoreMenu : label),
   );
   if (inBar.evaluate().isNotEmpty) {
     return inBar;

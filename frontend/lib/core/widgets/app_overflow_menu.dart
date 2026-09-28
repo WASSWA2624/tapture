@@ -72,11 +72,13 @@ class AppOverflowMenu extends StatelessWidget {
 /// in global coordinates), for a control that is not the title-bar three-dot
 /// icon — a floating action, for example. Runs the chosen row's
 /// [AppOverflowAction.onTap] once the menu has closed.
+/// [borderRadius] adapts the menu to its host while retaining shared styling.
 Future<void> showAppOverflowActions(
   BuildContext context, {
   required Rect anchor,
   required List<AppOverflowAction> items,
   bool useRootNavigator = true,
+  BorderRadiusGeometry? borderRadius,
 }) async {
   final AppColors colors = context.colors;
   final RenderBox overlay =
@@ -90,7 +92,7 @@ Future<void> showAppOverflowActions(
     elevation: 0,
     shadowColor: _noShadow,
     surfaceTintColor: colors.surface,
-    shape: _menuShape(colors),
+    shape: _menuShape(colors, borderRadius: borderRadius),
     items: _menuItems(items),
   );
   if (chosen != null) {
@@ -101,9 +103,9 @@ Future<void> showAppOverflowActions(
 /// Depth through tone and outline, not shadow (FE-THEME-06).
 const Color _noShadow = Color(0x00000000);
 
-ShapeBorder _menuShape(AppColors colors) {
+ShapeBorder _menuShape(AppColors colors, {BorderRadiusGeometry? borderRadius}) {
   return RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(Radii.md),
+    borderRadius: borderRadius ?? BorderRadius.circular(Radii.md),
     side: BorderSide(color: colors.outline, width: Space.x0 / 2),
   );
 }

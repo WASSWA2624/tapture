@@ -1,14 +1,17 @@
 # Tapture — development plan
 
-60 implementation prompts, in build order, from an empty repository to a shippable app and the minimal backend it
-requires.
+86 implementation prompts across 26 phases, from the app and its minimal backend through field feedback and the
+planned Documentation module.
 
 Every task inherits [STANDARD.md](STANDARD.md). Read that once, then open the lowest unticked file in
 [INDEX.md](INDEX.md). A task repeats only what is specific to it; the rules live in `frontend/.rules/` and
 `backend/.rules/`.
 
-Phases 01 to 25 are one task each except phase 23, which still holds leftover field-feedback extras. Old numbers
-are listed in [RETIRED.md](RETIRED.md) and are never reused.
+Phases 01 to 25 are one task each except phase 06's mobile navigation follow-up and phase 23's field-feedback
+extras. Phase 26 adds seven sequential Documentation tasks. Old numbers are listed in [RETIRED.md](RETIRED.md)
+and are never reused. Completed checkboxes describe their recorded task scope; they do not prove later module
+integration or erase currently open dependencies. Phase 26's [readiness assessment](26-documentation/README.md)
+identifies the production AI and document-format gaps that its tasks must close.
 
 ```text
 tapture/
@@ -53,7 +56,7 @@ lands as a series of pull requests, one per step group, rather than one enormous
 | 03 | [Design system](03-design-system/) | 003 | Tokens, themes and the whole widget vocabulary, before any screen |
 | 04 | [Local database](04-data-layer/) | 004 | Every table, with merge columns from the first migration |
 | 05 | [File storage](05-file-storage/) | 005 | The organised folder tree and every service that writes into it |
-| 06 | [Application shell](06-app-shell/) | 006 | Navigation, routing and the always-visible status line |
+| 06 | [Application shell](06-app-shell/) | 006, 079 | Navigation, routing, status line and the mobile More menu |
 | 07 | [Account and settings](07-account-and-settings/) | 007 | Local identity that later becomes an account, app lock, and the switches later features read |
 | 08 | [Projects](08-projects/) | 008 | The container that owns everything else |
 | 09 | [Templates](09-templates/) | 009 | Record shapes with atomic columns, and requiredness the user owns |
@@ -70,9 +73,10 @@ lands as a series of pull requests, one per step group, rather than one enormous
 | 20 | [Data import](20-data-import/) | 020 | Continue an inventory someone else started |
 | 21 | [Cloud upload](21-cloud-upload/) | 021 | A destination for files, never a sync channel |
 | 22 | [Privacy and security](22-privacy-and-security/) | 022 | What leaves the device, and what never does |
-| 23 | [Hardening](23-hardening/) | 023, 026–060 | Fast, legible, reachable, unbreakable in the field |
+| 23 | [Hardening](23-hardening/) | 023, 026–078 | Fast, legible, reachable, unbreakable in the field |
 | 24 | [The minimal backend](24-backend/) | 024 | **Required** — accounts, auth, roles, AI functionality and key custody, plus the optional relay |
 | 25 | [Testing and release](25-testing-and-release/) | 025 | The suites, the pipeline and the gate over both artefacts |
+| 26 | [Documentation](26-documentation/) | 080–086 | Selected resources and output definitions to reviewed, versioned documents |
 
 The backend is required to exist (§70) and is built after the app because almost all of it depends on the app existing
 first. The app-side steps of task 024 turn the local operator profile into an account and server-held key custody. The
@@ -92,3 +96,17 @@ both artefacts.
 
 **025** — shippable. One gate over both artefacts, including the run that proves a required backend is never a
 required connection.
+
+**079** — compact More opens the shared secondary menu without losing navigation or drafts.
+
+**080** — measured format/platform capabilities and approved adapters establish truthful input/render support.
+
+**083** — a durable local workspace accepts input resources, output definitions and optional rich text/file
+instructions, including projects with no capture records.
+
+**084** — real provider integration generates evidence-linked structured drafts through durable local runs;
+offline work resumes only on the user's explicit action.
+
+**086** — Documentation is release-ready: five output formats, source review and approval, immutable versions,
+project package round trips and platform/retention acceptance. These new milestones remain planned until their
+task checklists pass; the earlier release milestone does not mark them complete.

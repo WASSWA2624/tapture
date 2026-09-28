@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +12,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/app/widgets/offline_banner.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -136,10 +139,19 @@ class _Chrome extends ConsumerWidget {
   }
 }
 
-class _Bar extends StatelessWidget {
+class _Bar extends StatefulWidget {
   const _Bar({required this.shell});
 
   final StatefulNavigationShell shell;
+
+  @override
+  State<_Bar> createState() => _BarState();
+}
+
+class _BarState extends State<_Bar> {
+  final GlobalKey _moreKey = GlobalKey();
+
+  StatefulNavigationShell get shell => widget.shell;
 
   @override
   Widget build(BuildContext context) {
@@ -155,23 +167,63 @@ class _Bar extends StatelessWidget {
         child: NavigationBar(
           selectedIndex: shell.currentIndex,
           onDestinationSelected: (int index) {
-            shell.goBranch(index, initialLocation: true);
+            if (shellDestinations[index].path == RoutePaths.more) {
+              // The popup owns its dismissal; selecting More must not reset
+              // the current branch or discard the page under the menu.
+              unawaited(_showMore());
+            } else {
+              shell.goBranch(index, initialLocation: true);
+            }
           },
           destinations: <NavigationDestination>[
             for (int index = 0; index < shellDestinations.length; index++)
               NavigationDestination(
-                icon: _NavIcon(index: index, selected: false, inverted: false),
+                key: shellDestinations[index].path == RoutePaths.more
+                    ? _moreKey
+                    : null,
+                icon: _NavIcon(
+                  index: index,
+                  selected: false,
+                  inverted: false,
+                  compact: true,
+                ),
                 selectedIcon: _NavIcon(
                   index: index,
                   selected: true,
                   inverted: false,
+                  compact: true,
                 ),
-                label: shellDestinations[index].label,
-                tooltip: shellDestinations[index].label,
+                label:
+                    shellDestinations[index].compactLabel ??
+                    shellDestinations[index].label,
+                tooltip:
+                    shellDestinations[index].compactLabel ??
+                    shellDestinations[index].label,
               ),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showMore() async {
+    final GoRouter router = GoRouter.of(context);
+    final RenderBox anchor =
+        _moreKey.currentContext!.findRenderObject()! as RenderBox;
+    await showAppOverflowActions(
+      context,
+      anchor: anchor.localToGlobal(Offset.zero) & anchor.size,
+      borderRadius: BorderRadius.zero,
+      items: <AppOverflowAction>[
+        for (final ShellDestination destination in moreDestinations)
+          AppOverflowAction(
+            key: ValueKey<String>('nav-more-${destination.path}'),
+            label: destination.label,
+            icon: destination.icon,
+            // The root popup can outlive the compact bar during rotation.
+            onTap: () => router.go(destination.path),
+          ),
+      ],
     );
   }
 }
@@ -354,18 +406,20 @@ class _NavIcon extends StatelessWidget {
     required this.index,
     required this.selected,
     required this.inverted,
+    this.compact = false,
   });
 
   final int index;
   final bool selected;
   final bool inverted;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final ShellDestination destination = shellDestinations[index];
-    final IconData icon = selected
-        ? destination.selectedIcon
-        : destination.icon;
+    final IconData icon =
+        (compact ? destination.compactIcon : null) ??
+        (selected ? destination.selectedIcon : destination.icon);
     final AppColors colors = context.colors;
     final Color accent = inverted ? AppColors.dark.primary : colors.primary;
     return Icon(

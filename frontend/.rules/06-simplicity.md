@@ -10,7 +10,10 @@ No other control is larger, it sits in the lower third, and it is reachable with
 equally important actions, the screen has not been designed yet.
 
 ## FE-SIMP-02 — Four navigation destinations
-Projects, Capture, Records, Settings. A fifth destination requires deleting one.
+Projects, Capture, Records, More. A fifth destination requires deleting one. On compact screens, the three-dot
+More control opens an icon-labelled menu of secondary destinations, including Settings; opening or dismissing the
+menu preserves the current route. The rail retains direct access to the existing More/Settings root. Secondary
+destinations share the fourth branch, so an added module never adds a fifth bottom-bar control (task 079).
 
 ## FE-SIMP-03 — Three taps to a record
 Capture, shutter, save. Anything that adds a tap to that path needs a written justification.

@@ -12,6 +12,8 @@ final class ShellDestination {
     required this.label,
     required this.icon,
     required this.selectedIcon,
+    this.compactLabel,
+    this.compactIcon,
     this.dominant = false,
     this.hasList = false,
   });
@@ -27,6 +29,12 @@ final class ShellDestination {
 
   /// Selected navigation glyph.
   final IconData selectedIcon;
+
+  /// Optional label when a compact control opens a menu instead of a page.
+  final String? compactLabel;
+
+  /// Optional compact-menu glyph, shared by selected and unselected states.
+  final IconData? compactIcon;
 
   /// Whether the compact camera action is visually dominant.
   final bool dominant;
@@ -63,6 +71,36 @@ const List<ShellDestination> shellDestinations = <ShellDestination>[
     icon: AppIcons.settings,
     selectedIcon: AppIcons.settingsSelected,
     label: Copy.navMore,
+    compactLabel: Copy.navMoreMenu,
+    compactIcon: AppIcons.more,
+  ),
+];
+
+/// Working secondary destinations offered by the compact More menu.
+const List<ShellDestination> moreDestinations = <ShellDestination>[
+  ShellDestination(
+    path: RoutePaths.templates,
+    label: Copy.navTemplates,
+    icon: AppIcons.template,
+    selectedIcon: AppIcons.template,
+  ),
+  ShellDestination(
+    path: RoutePaths.queue,
+    label: Copy.navQueue,
+    icon: AppIcons.queued,
+    selectedIcon: AppIcons.queued,
+  ),
+  ShellDestination(
+    path: RoutePaths.recycleBin,
+    label: Copy.recycleBinTitle,
+    icon: AppIcons.restore,
+    selectedIcon: AppIcons.restore,
+  ),
+  ShellDestination(
+    path: RoutePaths.more,
+    label: Copy.settingsTitle,
+    icon: AppIcons.settings,
+    selectedIcon: AppIcons.settingsSelected,
   ),
 ];
 

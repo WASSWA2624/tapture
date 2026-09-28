@@ -1,7 +1,7 @@
 # Tapture — Product & Technical Specification
 
-**Document status:** Revision 2 — supersedes all earlier drafts.
-**Architecture:** Local-first, with a required minimal backend. The device is always the store of record for project content. A small server, run by the organisation that owns the data, is required in every deployment, and its remit is deliberately narrow: **users, authentication, roles, AI functionality and provider keys** (Part XI). It never holds project data, and it never stands between a field worker and a record.
+**Document status:** Revision 3 — adds the Documentation module and mobile More menu; supersedes all earlier drafts. Part XII specifies planned functionality; implementation progress is tracked in [the development plan](dev-plan/INDEX.md).
+**Architecture:** Local-first, with a required minimal backend. The device is always the store of record for project content. A small server, run by the organisation that owns the data, is required in every deployment, and its remit is deliberately narrow: **users, authentication, roles, AI functionality and provider keys** (Part XI). It never durably stores readable project content: selected content may pass through an explicitly requested AI call, and the optional relay holds transient ciphertext. It never stands between a field worker and a record.
 
 ---
 
@@ -105,6 +105,18 @@
 74. Deployment and API Surface
 75. Backend Security and Retention
 
+**Part XII — Documentation**
+
+76. Purpose & Simple Workflow
+77. Resources, Supported Formats & Archives
+78. Output Definitions & Format Fidelity
+79. Optional Prompt & Evidence Rules
+80. Generation Pipeline, Queue & Offline Behaviour
+81. Review, Approval & Versions
+82. Data Model, Storage & Portability
+83. Screens & Navigation
+84. Delivery & Acceptance Criteria
+
 **Appendices**
 A. Worked Example
 B. Core Product Principle
@@ -119,7 +131,7 @@ B. Core Product Principle
 
 ## 1. Overview
 
-**Tapture** is a Flutter application for collecting structured data about physical things — equipment, buildings, vehicles, stock, land, plants, animals, people, documents, meetings, events, etc — using photographs, voice and typed input.
+**Tapture** is a Flutter application for collecting structured data about physical things — equipment, buildings, vehicles, stock, land, plants, animals, people, documents, meetings, events, etc — using photographs, voice and typed input. Its project-scoped **Documentation** module also turns existing documents, media and selected project evidence into reviewed reports and other deliverables, following the user's output requirements (Part XII).
 
 The application:
 
@@ -127,7 +139,8 @@ The application:
 2. Extracts structured information from that evidence using OCR, vision AI and real-time speech-to-text.
 3. Maps the extracted information into user-defined templates (spreadsheet-shaped or built in-app).
 4. Requires a human to review and approve the result.
-5. Exports the verified data as XLSX, CSV, JSON, DOCX, PDF or a portable ZIP bundle.
+5. Exports the verified data as XLSX, CSV, JSON, PDF or a portable ZIP bundle.
+6. Creates document drafts from selected input resources, output formats and optional instructions; a person reviews them before final export as DOCX, PDF, XLSX, CSV or Markdown (§78, §81).
 
 Everything is stored on the device. Network access is used only for the online AI services the user chooses to enable, and for cloud uploads the user explicitly triggers.
 
@@ -145,6 +158,7 @@ Everything is stored on the device. Network access is used only for the online A
 - Prefill of known records from imported reference data.
 - Peer-to-peer collaboration by exchanging project bundles, with merge and conflict resolution.
 - Meeting capture, including attendance photos and refined minutes.
+- Project-scoped Documentation: multiple source documents, media and archives; reusable output definitions; an optional prompt file and/or rich text instructions; AI drafting, review and local document rendering (Part XII).
 - Manual, user-initiated upload of exports to a cloud storage account.
 - A required minimal backend providing accounts, authentication, one organisation-wide identity, roles and permissions, AI functionality and custody of the AI provider keys (Part XI).
 - Full offline operation between contacts with that backend: capture, review, editing, validation and export never wait for it (§70.4).
@@ -155,7 +169,7 @@ Everything is stored on the device. Network access is used only for the online A
 ### 2.2 Out of scope
 
 - **No server-side backup.** Backup is the user's ZIP export, kept wherever the user chooses (§54). The backend holds accounts, roles and keys; it never becomes a durable copy of a project (§70.2, §72.4).
-- **No project content on the server by default.** Records, values, photos, documents and audio stay on the device unless a project manager enables the optional relay, which carries them only as transient ciphertext (§72.4, §72.6).
+- **No durable readable project content on the server.** Records, values, documents, media, prompts and generated files stay on the device. Explicit AI actions send selected content through the proxy for the life of the request (§73); the optional relay carries only transient ciphertext (§72.4, §72.6).
 - No automatic upload of project data. Relay is per project, off by default and explicitly configured (§72.5).
 - No backend dependency during field work. The backend is required in order to hold accounts, roles and keys — not in order to complete a record. A device that has signed in once keeps capturing, reviewing, editing and exporting with the server unreachable for weeks (§70.4).
 - No multi-tenant hosted service. The backend is run by the organisation that owns the data, one instance per organisation.
@@ -178,7 +192,8 @@ outside the server's remit and stays local (§70.3).**
 | Roles & permissions | Mirrors granted roles as affordances, falling back to the last cached grant when offline.            | Grants roles, and enforces them for everything it mediates (§71.3).                                     |
 | AI functionality    | Chooses what to send and when, runs on-device OCR and STT, queues work while offline (§29, §30). | Proxies every provider call, applies per-project quotas and budgets, accounts for usage (§73, §36). |
 | AI provider keys    | Holds none by default; a device-held key is an exception an administrator must permit (§30.2).     | Sole custodian. Keys are entered, rotated and revoked here, and no endpoint ever returns one (§73.1).   |
-| Project content     | Owns it: records, values, photos, documents, audio, templates, reference data, exports.              | **Never stores it (§70.2).**                                                                            |
+| Project content     | Owns it: records, values, photos, documents, audio, templates, reference data, exports.              | **No durable readable content (§70.2); transient AI requests and optional encrypted relay only.** |
+| Documentation       | Imports resources, extracts text, owns prompts and output definitions, schedules AI work, renders and approves files (§76–§84). | Proxies bounded AI generation requests; no document workspace, parsing service or durable content (§73). |
 | Merge & conflicts   | Runs merge, preview, conflict resolution and undo (Part VII).                                        | Nothing. It may carry a package; it never arbitrates one (§72.1).                                       |
 | Multi-device work   | Bundle export, transfer, import and merge by hand — always available (Part VII).                  | Optional relay of those same packages, per project and off by default (§72).                            |
 | Backup              | Manual ZIP export, optionally uploaded to the user's own cloud account (§54).                      | **None, by design (§70.3).**                                                                            |
@@ -219,6 +234,11 @@ outside the server's remit and stays local (§70.3).**
 | **Organisation**      | The body that owns the data and runs the backend. One backend instance serves exactly one organisation.        |
 | **Account**           | A person's organisation-wide identity: credentials, role grants and enrolled devices (§71).                    |
 | **Device ID**         | A stable random identifier generated at first launch, used for merge.                                          |
+| **Documentation workspace** | A named set of source selections, output definitions, instructions and generated versions within one project; no capture template is required. |
+| **Input resource** | A file, an immutable selection from one or more captured projects, or selected content from an uploaded project archive, used as factual evidence for a document. |
+| **Output resource** | A supplied format, example layout or requirements document that describes an output's structure; it is not factual evidence by default. |
+| **Output definition** | The confirmed sections, columns, required content, file types and supported layout rules for one deliverable (§78). Separate from a record template (§11). |
+| **Generation run** | One immutable snapshot of inputs, output definitions and instructions, with linked processing jobs and proposed document versions. |
 
 
 
@@ -295,6 +315,26 @@ Device B: Import bundle -> merge preview -> resolve conflicts -> merged project
 
 
 
+### 5.5 Documentation
+
+```text
+Open project > Documentation > New document
+      |
+Review captured projects (current project selected by default); add other projects if needed
+      |
+Optionally add files, media or project archives as supplementary inputs
+      |
+Choose output(s); optionally attach formats or requirements
+      |
+Optionally type rich text instructions and/or attach a prompt file
+      |
+CREATE DOCUMENTS -> check readable sources, requirements and AI sending summary
+      |
+AI drafts from evidence -> render locally -> review sources, gaps and layout
+      |
+Approve -> export/share final files (or save and resume at any point)
+```
+
 ## 6. Representative Use Cases
 
 
@@ -308,6 +348,10 @@ Device B: Import bundle -> merge preview -> resolve conflicts -> merged project
 | Document digitisation                        | PDF/scan input, OCR, field extraction.                                     |
 | Compliance and safety inspection             | Predefined checklist rows, compliance and risk fields.                     |
 | Meeting records                              | Meeting mode: minutes, attendance, actions (§28).                          |
+| Reporting against terms of reference         | TOR, field notes and photographs supply evidence; a reporting format defines sections and requirements (§76–§84). |
+| Company profile or proposal                   | Existing profiles, service descriptions and approved project evidence supply content; a requested structure guides the draft. |
+| Reports and registers from meeting material  | Minutes, audio and attendance documents produce a narrative report and an action workbook from the same inputs. |
+| Consolidated reporting across captured projects | Selected data from several projects and uploaded project archives produces a combined report/register with original project attribution (§77.4). |
 | Biodiversity / agricultural surveys          | Free-form templates: species, counts, condition, location.                 |
 | Household or beneficiary registration        | Person templates, consent flag, privacy controls (§60).                    |
 | Dataset creation for downstream analytics    | Stable field keys, data dictionary export, JSON/CSV output (§49).          |
@@ -334,6 +378,7 @@ All project data — database, photos, documents, audio, exports — lives in de
 | Cloud OCR (when on-device OCR is insufficient)                            | Selected images                                                                 | Same                                                 | Yes                            |
 | Cloud speech-to-text (when on-device STT is unavailable for the language) | Audio clip                                                                      | User records voice                                   | Yes                            |
 | Text refinement (captions, minutes)                                       | Raw text                                                                        | User taps Refine, or automatic refinement is enabled | Yes                            |
+| Documentation AI                                                         | Selected source text/chunks, permitted media derivatives, output requirements and effective prompt (§80.2) | User taps Create documents, or explicitly resumes that run | Yes; local preparation, review and rendering work offline |
 | Manual cloud upload                                                       | The export file the user selected                                               | User taps Upload (§54)                               | Yes                            |
 | App/model metadata (versions, pricing lists)                              | None personal                                                                   | Manual check for updates                             | Yes                            |
 
@@ -346,22 +391,22 @@ All project data — database, photos, documents, audio, exports — lives in de
 - Offline mode (a single settings switch) blocks every outbound call; capture, editing and export continue to work.
 - Each project can disable AI entirely, making it a pure manual-entry project.
 - A per-project **Do not send images** switch forces on-device OCR only.
-- The user is shown, before the first online call of a session, what will be sent (count of images and approximate size).
+- The user is shown, before the first online call of a session, what will be sent (resource types, counts and approximate size). Documentation also shows each run's scope, exclusions and cost estimate before its first send (§80.2).
 
 
 
 ### 7.3 Backend traffic
 
 The required backend (Part XI) adds exactly the following, and nothing else. Everything in §7.1 still applies. None
-of it carries project content except the relay rows, which appear only for a project that has explicitly enabled
-relay.
+of the authentication or directory traffic carries project content. The AI proxy carries the selected content
+authorised under §7.1 for the life of each request; relay carries ciphertext only for projects that enabled it.
 
 
 | Operation                  | Data sent                                                                                          | Trigger                                                   | Optional?                                     |
 | -------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------- |
 | Sign-in and token refresh  | Credentials, organisation and device identifiers — no project data                              | First launch on a device, then on token expiry            | No — this is what the backend is for       |
 | Directory and role refresh | Organisation users, project membership, role grants — no project data                           | Periodically and at sign-in                               | No — this is what the backend is for       |
-| AI proxy                   | The same payload as a direct provider call (§31), addressed to the organisation's server        | User taps Analyse, or runs the processing queue           | Yes — a project may disable AI entirely    |
+| AI proxy                   | The selected extraction or documentation payload (§31, §80), addressed to the organisation's server | User taps Analyse, Create documents, or explicitly runs/resumes queued work | Yes — a project may disable AI entirely |
 | Change relay push          | An encrypted change package: records, values and files changed since the last acknowledged version | Explicit action, or the schedule the project sets (§72.5) | Yes — relay is per project, off by default |
 | Change relay pull          | Acknowledgements and other devices' encrypted packages                                             | Same                                                      | Yes                                           |
 
@@ -400,6 +445,7 @@ Files are written to a single app-visible root folder so that the user can also 
 │       │   │       └── Laboratory/
 │       │   └── _unfiled/                     # captured before a context was set
 │       ├── documents/
+│       ├── documentation/                    # original resources, extraction snapshots and run manifests (§82)
 │       ├── audio/                            # voice notes and meeting recordings
 │       ├── meetings/
 │       ├── reference/                        # imported lookup tables
@@ -455,6 +501,14 @@ meeting_attendees
 meeting_actions
 processing_jobs       the deferred AI queue
 processing_results    raw provider responses, kept for audit
+documentation_workspaces  document preparation and saved instructions (§82)
+documentation_resources   immutable file versions and extraction provenance
+documentation_selections  workspace role assignments and selected project evidence
+documentation_source_snapshots  selected captured-project/archive content with origin and policy (§77.4)
+documentation_outputs     versioned output definitions and associated format resources
+documentation_runs        immutable generation selection snapshots
+documentation_jobs        run/output-owned durable stages; share the queue runner primitives (§80)
+documentation_versions    draft/approved content, evidence links and rendered artifacts
 field_evidence        links a value to the photo/document/transcript that produced it
 duplicates            detected duplicate pairs and their resolution
 merge_sessions        bundle imports
@@ -592,6 +646,10 @@ Because projects merge between devices — and because the backend never arbitra
 ## 11. Template System
 
 A template defines one record shape. A project may contain several templates (equipment, building, meeting, and so on).
+
+Documentation output definitions (§78) define whole deliverables rather than capture forms. Importing an XLSX
+as an output format does not create capture fields or change existing records. The two workflows reuse parsing
+and column-mapping components, but retain separate identities and versions.
 
 ### 11.1 Four ways to obtain a template
 
@@ -1537,6 +1595,7 @@ abstract class AiService {
   Future<ExtractionResult> extractFields(ExtractionRequest request);
   Future<String>           refineText(String raw, RefineStyle style);
   Future<String>           transcribe(AudioRef clip, String languageCode);
+  Future<DocumentDraft>    composeDocument(DocumentGenerationRequest request);
 }
 ```
 
@@ -1572,6 +1631,9 @@ Implementations: on-device (ML Kit OCR, platform STT), and one implementation pe
 | Reference lookup and prefill           | Works                                                                                 |
 | Template detection                     | Works (heuristics)                                                                    |
 | Vision extraction and text refinement  | Queued for later (§26)                                                                |
+| Documentation preparation              | Import, supported local extraction, output mapping and prompt editing work (§77–§79) |
+| Documentation AI drafting              | Waits for connectivity and explicit run/resume; existing drafts remain editable (§80) |
+| Documentation rendering                | Existing draft/approved content renders locally to supported formats (§78); no fresh AI call |
 | Review, edit, approve                  | Works                                                                                 |
 | Export XLSX / CSV / JSON / PDF / ZIP   | Works                                                                                 |
 | Cloud upload                           | Unavailable, queued as a pending user action                                          |
@@ -1643,6 +1705,10 @@ Apply to the record as proposals (never as approved values)
 ```
 
 Raw provider responses are stored in `processing_results` for audit and for reprocessing without re-uploading.
+
+Documentation uses a separate, versioned document schema (§80.3): sections or table cells, stable output keys,
+evidence references, unresolved requirements and conflicts. It does not coerce narrative documents into record
+fields. Responses remain local proposals; neither schema validation nor successful rendering grants approval.
 
 ## 32. Raw vs Refined Storage
 
@@ -1775,6 +1841,9 @@ Field projects run to thousands of photographs, so processing is deliberately ec
 - **Batch window**: the queue processes N records at a time with retry and backoff, so a weak connection degrades gracefully.
 - **Budget guard**: an optional per-project cap on records processed per day, with a running count of requests made.
 - **Manual only** mode: nothing is ever sent unless the user taps Process.
+
+Documentation reuses this queue's runner primitives for run-owned typed jobs (§80), exact content hashes, per-run budgets and
+bounded chunks. Perceptual similarity alone must never deduplicate document evidence or discard a changed page.
 
 ---
 
@@ -2038,12 +2107,15 @@ medical-equipment-inventory__deviceA__2026-09-08T1030.zip
 ├── records.json            records, field values (raw + refined + final), provenance
 ├── captions.json           record and photo captions, raw + refined
 ├── meetings.json           meetings, attendees, actions
+├── documentation.json      workspace/resource metadata, definitions, runs and versions (§82.3)
 ├── variances.json          verification differences
 ├── audit.json              audit log entries
 ├── tombstones.json         deletions
 ├── sync_state.json         version vectors per entity
 ├── photos/                 original files, in the project's folder structure
 ├── documents/
+├── documentation/          resource originals and retained extraction/run snapshots
+├── generated/              included document artifacts, linked by hash in documentation.json
 ├── audio/
 └── checksums.txt           SHA-256 of every file in the bundle
 ```
@@ -2072,6 +2144,10 @@ medical-equipment-inventory__deviceA__2026-09-08T1030.zip
   "checksum": "sha256:…"
 }
 ```
+
+This is the base manifest example. Bundles carrying Documentation require a new format version and an explicit
+capability marker; old clients must reject unsupported required sections before any write, not silently omit them
+(§82.3). A full bundle includes drafts as project data; it does not treat them as approved deliverables.
 
 
 
@@ -2180,6 +2256,7 @@ Other entity types:
 | Audit log, processing results | Append-only union, deduplicated by id.                                                                                                        |
 | Context presets               | Union by name.                                                                                                                                |
 | Record numbers                | Re-labelled on collision; the UUID is unchanged, so no reference breaks.                                                                      |
+| Documentation                 | Union immutable runs, resource versions and output versions by UUID/hash; concurrent workspace or definition edits require choosing or keeping both (§82.3). |
 
 
 Duplicate detection (§40) runs after the structural merge, catching records that are *the same thing* while having different ids because two people captured the same item independently.
@@ -2240,7 +2317,9 @@ Conflict 3 of 7        Record 124 - Autoclave (SN458923)
 
 ## 49. Export Formats
 
-All five formats are first-class and available offline.
+The five record-export formats below are available offline. Documentation adds DOCX and Markdown and reuses
+XLSX, CSV, PDF and ZIP (§78). Rendering saved content is offline; generating new AI content requires the selected
+online service (§80). The Documentation output selector and record-export dialog remain distinct.
 
 
 | Format   | Contents                                                                                                                                           | Typical use                                |
@@ -2398,6 +2477,8 @@ Reports carry a cover page (project, date, operator, filters applied) and page n
 - Exports are versioned per project (`v1`, `v2`, …) and stored in dated folders. **Previous exports are never overwritten or deleted by the app.**
 - Records included in an export get an `exported_at` stamp; the export history shows exactly which record versions a given file contains, so a file can always be explained after the fact.
 - An export can be re-shared or re-uploaded later from the history list without regenerating it.
+- Documentation artifacts additionally link to the exact document version, output definition, generation run and
+  approval (§81–§82). Re-exporting saved content does not call AI or replace a previous file.
 
 
 
@@ -2451,10 +2532,10 @@ Tapping **Upload to cloud** shows the configured destinations, the file size, an
 
 ## 55. Navigation & Screens
 
-Four destinations. No dashboard the user must pass through, and no login screen after the first sign-in on a device (§70.4).
+Four controls on compact/mobile screens. No dashboard the user must pass through, and no login screen after the first sign-in on a device (§70.4).
 
 ```text
-[ Projects ]      [ CAPTURE ]      [ Records ]      [ More ]
+[ Projects ]      [ CAPTURE ]      [ Records ]      [ ... More ]
 ```
 
 
@@ -2463,7 +2544,7 @@ Four destinations. No dashboard the user must pass through, and no login screen 
 | **Projects** | List of projects with counts and last-worked timestamps. Create, open, import, export, archive. |
 | **Capture**  | The capture screen for the current project (§19). The centre button is visually dominant.       |
 | **Records**  | Searchable, filterable list; opens a record for review or editing.                              |
-| **More**     | Templates, reference data, processing queue, duplicates, merge, exports, settings, help.        |
+| **More**     | Three-dot button opens an anchored, scrollable menu of secondary destinations with icons and labels. Documentation is included when the module ships (§83). |
 
 
 Route map:
@@ -2483,6 +2564,10 @@ Route map:
 /p/:projectId/merge
 /settings
 ```
+
+The route map above is conceptual. Implementation uses existing `RoutePaths` (currently `/projects/:projectId/...`
+and secondary destinations under `/more`); adding Documentation must follow those conventions rather than create
+duplicate aliases. Its concrete routes and mobile menu behaviour are specified in §83.
 
 
 
@@ -2521,7 +2606,7 @@ Filters: context, template, status, date, operator, condition, has photos, has d
 Concrete, testable rules that keep the interface extremely simple.
 
 1. **One primary action per screen**, rendered as the largest control.
-2. **Four navigation destinations**, never more.
+2. **Four mobile bottom controls**, never more: Projects, Capture, Records and the More menu. New modules go in More.
 3. **A record can be created in three taps**: Capture → shutter → Save.
 4. **No mandatory setup beyond signing in.** A new user can capture within 30 seconds of the first sign-in, using a shipped template, with General observation (UNI-001) as the universal fallback.
 5. **One sign-in per device, then never again in the field.** The account is required (Part XI), but the session and the role grant are cached, so nobody meets a login screen with a vehicle waiting (§70.4). No onboarding tour, no dashboard.
@@ -2533,6 +2618,8 @@ Concrete, testable rules that keep the interface extremely simple.
 11. **Touch targets at least 48 dp**, primary actions reachable with one thumb.
 12. **Undo** for destructive actions, and a recycle bin for deletions.
 13. **The status of the app is always visible in one line**: context, template, online/offline, unprocessed count.
+14. **Reusable, square components.** Assemble the existing design-system controls. New menus, resource rows and
+    document panels use zero corner radius wherever the platform permits it; icons always have readable labels.
 
 
 
@@ -2657,6 +2744,11 @@ Techniques: paged queries and indexes on project, status, context, identity hash
 - Imported files (spreadsheets, bundles, images) are validated by extension, MIME sniffing, size and structure before being read; a malformed archive is rejected without being unpacked.
 - Bundle checksums are verified before merge.
 - Text arriving from OCR, transcripts, imported files or bundles is treated strictly as data. It is never executed, never used to build queries by concatenation, and never allowed to alter the app's instructions to an AI provider.
+- A file deliberately attached in the **Prompt** field is the narrow exception for task instructions: its extracted
+  text is visible and editable before use (§79). It cannot override privacy, evidence or approval rules. Text found
+  in input files, templates, archive members or links never promotes itself into a prompt.
+- Documentation file inspection, bounded archive expansion, passive document parsing and safe output rendering
+  follow §77 and §80; attachments cannot execute macros, formulas, scripts or network requests.
 
 ---
 
@@ -2721,6 +2813,7 @@ lib/
 │   ├── records/
 │   ├── duplicates/
 │   ├── meetings/
+│   ├── documentation/     resources, output definitions, prompts, runs and document review
 │   ├── exports/
 │   ├── cloud/
 │   ├── merge/
@@ -2757,6 +2850,9 @@ mergeProvider                preview, conflicts, apply, undo
 exportProvider
 connectivityProvider         online / offline / metered
 aiConfigProvider             providers, keys, per-project switches
+documentationProvider(projectId)  local workspaces and history
+documentWorkspaceProvider(id)     resource selections, definitions and saved rich text prompt
+documentRunProvider(runId)        typed jobs, coverage, progress and proposed versions
 ```
 
 The context provider is persisted, so a restart resumes exactly where the operator was.
@@ -2787,6 +2883,11 @@ flutter_local_notifications                  processing and export notifications
 ```
 
 Library choice for XLSX must be validated early against a real client template; see §50.1 rule 7.
+
+Documentation adds adapters for PDF text extraction, DOCX reading/writing, media decoding and a shared rich text
+editor (§77–§80). Select implementations through fixture-based platform, licence, memory and fidelity checks in
+development tasks 080–085; the packages listed above do not imply those capabilities already exist. Reuse the
+current file, queue, AI, export, security and bundle interfaces instead of building parallel subsystems.
 
 ## 65. Testing Strategy
 
@@ -2820,6 +2921,9 @@ Critical test cases:
 16 AI failure                     raw record intact, retry available
 17 Offline export                 XLSX, CSV, JSON, PDF and ZIP all generated with no network
 18 Storage full                   graceful warning, no corrupted record
+19 Documentation multi-output     source pack + requirements -> grounded report + matching workbook (§84)
+20 Documentation interruption     offline, restart, cancel and retry preserve sources and draft versions
+21 Mobile More menu               three dots, icons, dismissal, route state, keyboard and large-text access
 ```
 
 
@@ -2891,6 +2995,14 @@ Desktop build for consolidation and reporting
 ```
 
 
+
+### Phase 5 — Documentation
+
+Deliver the first complete document workflow described in §84, using the numbered tasks in
+[phase 26 of the development plan](dev-plan/26-documentation/README.md). First validate real document and media
+fixtures, then ship import → output definition → prompt → AI draft → human review → local export → bundle round trip.
+Additional codecs, archive formats and complex Office layout preservation expand the same adapters afterwards.
+The mobile More menu is a separate shell change (task 079), usable before the module is released.
 
 ## 67. Definition of Done — MVP
 
@@ -2965,6 +3077,14 @@ Before public release, confirm the name is clear on the Google Play Store and wi
 | Export and import: CSV, PDF, JSON, ZIP, XLSX                                      | §49                                                   |
 | Upload to Google Drive, AWS and similar with user credentials                     | §54.2                                                 |
 | Prefilled templates: supplier or manufacturer lists matched by ID                 | §16.2, §16.3                                          |
+| Multiple document/media/archive inputs, distinct from output resources             | §76–§77                                               |
+| Inputs from one or more captured projects and uploaded project archives             | §77.4, §80, §82                                       |
+| Report requirements and Excel headers defining one or more deliverables            | §78                                                   |
+| Optional .md/.docx/.txt prompt file and rich text instructions                      | §79                                                   |
+| Create documents using AI, evidence-linked review and local file generation        | §80–§81                                               |
+| Portable document resources, versions and reusable definitions                     | §82                                                   |
+| Mobile three-dot More button with an icon menu                                     | §55–§56, §83                                          |
+| Documentation implementation sequence and release acceptance                       | §84; dev-plan/26-documentation                         |
 
 
 ---
@@ -3018,9 +3138,11 @@ is complete.
 - Become the store of record. The device holds the authoritative project; the server holds transit, not truth.
 - Keep a durable copy of a project. Relay packages are transient and purged (§72.4).
 - Serve as backup, in any disguise. Backup remains the user's manual ZIP export (§54).
-- Receive project content at all, unless a project manager has explicitly enabled relay for that project (§72.5).
+- Receive project content except selected payloads for explicitly requested AI calls (§7.1, §73), or encrypted
+  packages where a project manager enabled relay (§72.5).
 - Be required for capture, review, editing, validation, export, bundle exchange or merge. It is required to exist; it is never required to be reachable (§70.4).
-- Read project content. Relay packages are encrypted on the device (§72.6).
+- Decrypt or interpret relay content. Relay packages are encrypted on the device (§72.6). The AI proxy necessarily
+  handles selected readable payloads for the life of a request, without persisting or logging their contents.
 - Train on user data, or retain provider payloads beyond the request (§73.4).
 - Weaken any device-side rule: raw evidence preserved, no invention, human approval before data is final.
 
@@ -3083,6 +3205,12 @@ enrolment and prior entries are annotated, never rewritten.
 
 The server enforces roles for everything it mediates: project membership, relay access, key use, directory changes
 and administrative actions. The application mirrors them as affordances, hiding what a role cannot do.
+
+Documentation follows these roles: field operators may prepare their own workspaces and request permitted AI
+drafts; project managers configure shared output definitions; reviewers and project managers approve final
+document versions. Own-work export may include explicitly marked drafts, never grant final approval. Administrative
+access to provider keys alone does not grant document approval. Server proxy checks include project membership,
+the generation permission and the project budget (§80); local review uses cached grants under §70.4.
 
 **Stated plainly:** because every device holds a complete local copy, device-side role display is guidance, not a
 security boundary. The enforceable boundary is the server — the relay and the key proxy. An organisation that needs a
@@ -3178,13 +3306,16 @@ returns the result. No key is ever transmitted to, or stored on, a device.
 
 ### 73.3 Behaviour
 
-The request and response are exactly those specified in §31; the backend adds no interpretation and no extra
-processing. If the backend is unreachable, calls queue as in §70.4. A device may still use its own key where the
+Requests and responses use the record schema (§31) or the typed Documentation schema (§80.3). The backend
+validates the envelope, capability, permission and budget, calls the provider and returns structured proposals;
+document parsing, chunk selection, orchestration, review and file rendering stay on the device. It exposes no
+persistent document workspace or provider file store. If the backend is unreachable, calls queue as in §70.4. A device may still use its own key where the
 organisation permits it, which keeps a single field worker productive in an emergency.
 
 ### 73.4 Retention
 
-The backend must not store images, audio or extracted text beyond the life of the request. It logs metadata only:
+The backend must not store images, audio, source documents, prompts, output requirements, generated content or
+extracted text beyond the life of the request. It logs metadata only:
 project, user, model, size, duration, outcome and cost. This is the same discipline §75.3 applies to the rest of
 the server.
 
@@ -3208,6 +3339,9 @@ must be able to export and to destroy the entire server state.
 Deliberately small; anything not on this list belongs on the device. The relay block is optional and may be absent
 from a deployment that does not use it; everything else is the required minimum.
 
+Paths below omit the current `/api/v1` prefix for readability. New operations, including `/ai/compose`, use that
+same versioned prefix and client/backend capability checks; they are not a second unversioned API.
+
 ```text
 POST /auth/register           POST /auth/login            POST /auth/refresh
 POST /auth/logout             POST /auth/reset            POST /auth/change-password
@@ -3225,6 +3359,7 @@ GET  /projects/:id/relay/state           version vectors and queue state
 
 POST /ai/extract              POST /ai/ocr                POST /ai/transcribe
 POST /ai/refine               GET  /ai/usage
+POST /ai/compose              bounded Documentation draft request (§80.3)
 
 GET  /health                  GET  /version
 ```
@@ -3254,6 +3389,636 @@ contains no record, value, caption, photo or audio clip.
 ---
 
 
+
+# Part XII — Documentation
+
+## 76. Purpose & Simple Workflow
+
+**Documentation** turns captured project content into one or more useful documents. **The app's captured projects
+are the default inputs**: a new workspace starts with the current project selected and can include one or more
+other projects. No upload is required. Uploaded documents, media and **project archives** are optional additional
+sources; users can also explicitly choose an upload-only workspace. Typical supplementary files are terms of
+reference, company profiles, meeting notes, recordings, photographs, previous reports and spreadsheets. The
+destination workspace belongs to one project; its selected source projects can be different. Output
+resources describe the required result: a reporting format, a requirements document or a workbook containing the
+required headers. Optional instructions explain the task, audience, language or emphasis.
+
+The distinction is visible throughout the interface:
+
+| Area | Answers | Example |
+| --- | --- | --- |
+| **Input resources** | What information should be used? | Current captured project by default; optionally Project B, TOR, field photos or a project archive |
+| **Output documents** | What should be produced, and in what structure? | A DOCX report following a supplied format, plus an XLSX action register |
+| **Instructions (optional)** | How should the material be used? | “Prepare the September report for the project board; keep the summary to one page.” |
+
+One project can have many named **documentation workspaces**, for example “September progress report” and
+“Company profile”. A workspace is an autosaved preparation screen and its version history, not another project
+or a capture record. It works even when the project has no records or record templates. Resources and output
+definitions may be reused within the project; duplicating a workspace copies its setup without duplicating bytes
+or implying that an old result is approved for the new task.
+
+### 76.1 The shortest useful path
+
+1. Open **Documentation** from the project's home or **More** and choose **New document**.
+2. Review the **current project**, already selected under Input resources with its approved-record count. Keep it
+   for the shortest path, or choose **Add projects** to include more. **Add files** and **Add project archive** are
+   optional supplementary actions. No file picker opens automatically.
+3. Keep the default **Report · DOCX** output or choose another supported format. Attach a format/requirements file
+   if one exists; **Add output** creates another deliverable using the same source selection.
+4. Optionally type instructions in the rich text field, attach a prompt file, or use both.
+5. Read the inline preparation/sending summary and tap **Create documents**. If the setup is ready and the sending
+   scope has been authorised, the run starts immediately; otherwise show the single blocking issue to resolve.
+6. Review the resulting drafts, their sources and any gaps, then **Approve** and **Export**.
+
+The title can be generated locally from the first file and date and edited later. There is no required wizard,
+prompt engineering, capture-form configuration or model selection. Parsing status appears beside resources;
+advanced controls stay collapsed. Saving a draft is always allowed, including while offline or incomplete.
+
+### 76.2 Worked documentation example
+
+An operator starts with the current captured project already selected. They optionally add
+`terms-of-reference.pdf`, `company-profile.docx`, a ZIP of site photos and meeting audio as additional
+**inputs**. Under **Output documents**, they create “Progress report” (DOCX and PDF) with `report-format.docx`
+and `report-requirements.pdf`, and “Action register” (XLSX) with `actions-headers.xlsx`. They attach `instructions.md`
+and type a short audience note. These are two deliverables, with three rendered files.
+
+The app identifies the required report sections and workbook columns, then produces an evidence-linked draft
+for each deliverable. A missing action due date stays blank and appears in the review issues. Example names in
+the output workbook are not copied as facts. The operator resolves the missing date or changes its requiredness,
+reviews the layout, approves each completed version and exports the files together in a ZIP. Originals and
+earlier drafts remain available locally. For a consolidated report, the same workspace can also include approved
+records from two captured projects and a colleague's uploaded project archive. A source-project label distinguishes
+each contribution, and the generated report can group or compare them without merging the underlying projects.
+
+## 77. Resources, Supported Formats & Archives
+
+### 77.1 Import and resource roles
+
+Captured-project selection is the primary input control (§77.4). Optional **Add files** supports multiple
+selection; desktop/web also supports drag and drop where available. “Upload” in
+this workflow means copying into the local project store, not uploading to a server. A resource row shows its
+name, type, size, role and reading status, with preview, replace, remove and retry in its overflow menu.
+
+- Input, output-format and prompt roles belong to explicit associations, not to extensions or AI guesses. A file
+  may serve more than one role only when the user adds those associations intentionally.
+- Store the exact original bytes, detected MIME type, original filename, SHA-256 and import attribution before
+  confirming success. Reuse existing project attachment storage and deduplication; renaming is presentation only.
+- Replacing a resource creates a new immutable resource version. Removing a selection does not delete bytes used
+  by another workspace, a generation snapshot or an approved document (§82.2).
+- Captured-project sources are explicit selections from one or more projects, defaulting to approved record
+  versions. The user can select all approved records or narrow the scope. Including unapproved records requires
+  an explicit choice and flags their derived content for review (§77.4). Nothing reads unselected projects.
+- Resource status is separate from run status: **Reading**, **Ready**, **Needs attention**, **Stored only** or
+  **Excluded**. “Stored only” means the original is retained but cannot be read by the available adapters.
+- Unreadable, encrypted, malformed or unsupported selected content is never silently omitted. The user can provide
+  an accessible copy/transcript, retry with an available reader, or explicitly exclude it. The run records the reason.
+
+### 77.2 Capability matrix
+
+The app distinguishes **store**, **preview**, **extract** and **generate**. Accepting an attachment does not imply
+that every platform or provider can read it. The supported baseline below is a delivery target, verified by
+fixtures, not a claim that the current app already implements every reader.
+
+| Resource | Reading behaviour | Boundary shown to the user |
+| --- | --- | --- |
+| PDF | Extract text/tables by page; render scanned pages for OCR; retain page references | Password-protected files need an accessible copy; complex tables and poor scans may need correction |
+| DOCX | Read paragraphs, headings, lists and tables; retain paragraph/table identifiers | Track changes, text boxes, embedded objects and complex layouts require explicit coverage reporting |
+| MD / TXT | Decode supported text encodings; preserve headings and line references | Treat HTML/scripts and links as passive text; do not fetch linked material |
+| XLSX / CSV | Select sheets, headers and relevant ranges; preserve sheet/cell or row references | Read stored values and formulas as data; do not run macros, external links or imported formulas |
+| Images | Preview supported images; OCR/vision on permitted derivatives with image/region references | Baseline JPEG, PNG and WebP; additional formats require an installed, tested decoder |
+| Audio | Timestamped transcription with language selection where needed | Baseline WAV, MP3 and M4A where decoding/transcription is supported; show unsupported codecs explicitly |
+| Video | Audio transcription plus timestamped selected frames, with a visible sampling/coverage summary | Baseline a tested MP4 codec profile; not every MP4 codec is readable and sampled frames do not cover every moment |
+| ZIP | Inspect entries, select files and safely expand supported members locally (§77.3) | An archive packages resources; it does not itself supply extracted evidence |
+| Tapture project archive | Validate the bundle, preview captured content and snapshot selected records/meetings and their evidence as sources (§77.4) | A source archive is not imported/merged into live projects; supported bundle versions and selected dependencies must be readable |
+| Other documents, media and archives | Retain bounded, valid attachments as **Stored only** | Legacy DOC/XLS, RAR/7z/TAR and additional codecs become readable through later adapters, or after user conversion |
+
+The resource system accepts all media categories and is extensible by adapter, rather than promising analysis of
+every codec. Unknown bounded files may be retained as passive attachments; files that fail safety/structure checks
+are rejected with a reason. No executable content is launched. Preview uses sandboxed renderers or an explicit
+user action to open a trusted local file, never automatic OS execution.
+
+Local reading is preferred. Online OCR, transcription or vision uses the same sending controls as drafting and
+requires an explicit action (§80.2). The **Do not send images** setting covers image attachments, PDF page renders
+and video frames. Disabled AI leaves local resources, editing and previously generated outputs usable.
+
+### 77.3 Archive and large-file handling
+
+ZIP extraction is separate from project-bundle import. Even if a ZIP contains a Tapture manifest, adding it as a
+resource never merges or changes project records. The original archive is retained; each selected member has an
+independent hash and parent-archive/member-path lineage. Members inherit the role of the picker used to add them.
+A file named `prompt.md` inside an input archive remains an input, not a prompt.
+
+Proposed initial import limits, configurable downward and raised only after platform testing:
+
+| Limit | Initial value |
+| --- | --- |
+| Original size per file, including archive | 250 MB |
+| Selected files per import batch | 100 |
+| Enumerated ZIP entries / selected expansion count | 1,000 / 100 |
+| Actual total uncompressed bytes per archive | 500 MB |
+| Compression ratio per entry and aggregate | 100:1 maximum |
+| Automatic nested-archive expansion | None; nested archives are retained, not recursively unpacked |
+
+Check limits while streaming actual bytes, not just archive headers. Reject absolute/parent paths, symlinks,
+device paths, duplicate normalised paths, unsupported encryption and path collisions before extraction; never
+overwrite project files. Enforce parsing memory/time budgets, available disk space and atomic writes. A failed
+member leaves other valid selections intact and clearly listed. A rejected archive creates no partial resource set.
+
+Generation has separate page, duration, frame, token and cost limits negotiated with the selected adapter/provider.
+Do not truncate to fit. Show the affected resources or ranges and let the user split the work, narrow selection,
+choose another available capability or explicitly exclude material. On mobile, long work can pause when the OS
+suspends the app; durable checkpoints make resumption safe (§80.4).
+
+### 77.4 Captured projects by default; project archives as additional sources
+
+A new workspace preselects the **current project**, with **All approved records** as the visible default scope.
+Show its name, record/meeting counts and evidence size; preselection never starts AI or silently sends content.
+The user can create a document from this source alone, with no uploads, no custom prompt and no format file.
+**Add projects** opens a searchable multi-select picker for additional captured projects. Each source group can
+be filtered by templates, context/location, dates or individual records; attachment inclusion and non-approved
+records are explicit choices. A saved workspace retains its saved selections rather than silently switching to
+whichever project was last opened elsewhere.
+
+If the current project has no usable records, keep the workspace editable and offer another project, an explicit
+selection of unapproved captures, or uploaded resources. Do not force a capture template or dummy record. Users
+may remove the default project and use uploaded sources only. Opening Documentation with no current project uses
+the existing project picker for the workspace owner, then preselects that project's captured content.
+
+Capture sources include selected field values, raw/refined/final distinctions, units, template/field definitions
+needed to interpret them, context, timestamps, operators, review status, meeting structures and their selected
+photos, captions, documents, audio and transcripts. Include only the dependencies required by that scope. An audit
+history or entire reference dataset is not sent merely because it exists in the source project. Approved values
+are preferred for synthesis; raw evidence remains available for checking, and unresolved differences remain visible.
+
+**Add project archive** accepts a supported Tapture project ZIP from another device or an exported/archived
+project. Use the shared bundle reader to validate its manifest/version, paths, hashes, relationships and expansion
+limits in isolated staging, then show the same source-scope preview as a local project. Interpret records,
+templates, context, meeting data and evidence as typed project content, not unexplained raw JSON. This action
+does **not** create a live project, overwrite records, run a merge or start imported queued jobs. Restoring or
+importing a project remains the separate workflow (§46).
+
+If **Add files** detects a project archive, offer **Use captured project content** or **Choose contained files**;
+never infer permission to merge. An unsupported/corrupt recognised project archive cannot be reported as a readable
+project source. Generic ZIPs without a supported project manifest can supply selected files but cannot claim that
+captured records or their relationships were reconstructed. Supported password-protected project bundles use the
+existing bundle decryption path, keeping the supplied password only in memory; otherwise request an accessible
+copy. Generic archive expansion still rejects unsupported encryption (§77.3).
+
+The source picker saves scope selections without copying entire projects on screen open. **Create documents**
+materialises an immutable, durable **source snapshot** for the run inside the destination project's shared store:
+selected structured values, required schema metadata and selected evidence bytes, deduplicated by hash. Freeze
+record revisions consistently, and retry preparation if referenced data changes during the snapshot. Keep origin
+organisation/project UUID and name, record/meeting UUID and revision, field/template keys and versions, evidence
+hashes, source archive hash where applicable, and capture/review attribution. A live source ID or file path alone
+is insufficient: editing, moving, deleting or losing access to a source project must not orphan an existing run.
+Refreshing a source for a new run is explicit and shows what changed.
+
+The UI groups sources by project/archive and shows their scope. A run can combine **Project A + Project B +
+archive C + loose files**. Namespace identities by origin organisation/project and snapshot; identical displayed
+record numbers or field labels are not the same record. Repeated inclusion of the same origin record revision
+through a project and its archive is deduplicated for aggregation, preserving both selection origins. Different
+revisions of one record, or possible duplicates across projects, are flagged before counts/totals are final.
+Preserve units and stable field keys; confirm ambiguous mappings rather than adding unlike measures or treating
+matching labels as proof of matching meaning. Merely attaching projects never merges their data stores.
+
+Apply permissions and privacy to every selected native source as well as the destination, using cached grants
+offline under §70.4. Effective AI, image and redaction/export restrictions use the most restrictive applicable
+settings: enabling destination AI cannot bypass a source's prohibition. Retain source-policy snapshots and check
+locally known tighter restrictions again before sending. The proxy checks source membership for referenced projects
+in its organisation. External archives remain usable as explicitly uploaded inputs under destination permissions
+and sending consent; their origin project need not exist on this backend. Preserve declared restrictive policies,
+and apply known restrictions when an archive is recognised as a copy of a local project. Archive metadata never
+grants membership, loosens policy or approves the new document. Costs belong to the destination run; facts remain
+attributed to their origin projects.
+
+Restrictions learned later govern new use, not silent deletion of historical evidence. The existing trusted-device
+limitation (§71.3) still applies: an offline copy cannot be remotely revoked. Display **Source snapshot from [date]**
+when reviewing a run so it is never confused with the current live project.
+
+## 78. Output Definitions & Format Fidelity
+
+### 78.1 One reusable definition per deliverable
+
+Each output definition contains a name, one or more compatible render formats, optional format/requirements
+resources, a confirmed structure and a revision. A narrative report can produce DOCX, PDF and MD from the same
+content. A table/register produces XLSX or CSV. A different structure, such as an action workbook alongside a
+report, is a second output definition; changing the filename extension is never a format conversion.
+
+The app derives a proposed definition from output resources and presents a short **Output structure** preview:
+
+- Narrative: ordered sections, required headings, tables, word/length guidance, supported styles, headers/footers
+  and explicitly selected branding assets.
+- Tabular: selected sheets, header row, exact header text/order, stable internal column keys, data types, required
+  columns, allowed values and a selected empty data region. Several sheets are supported in XLSX; CSV produces
+  one file per chosen sheet, packaged when necessary.
+- Requirements: a checkable list linked to sections/columns, with source references and hard requirements versus
+  advisory guidance. Missing or ambiguous requirements appear as questions/issues, not invented interpretations.
+
+Without an attached format, use a clean built-in report or table structure and show it before generation. A prompt
+is optional, but every run must have a valid output definition and at least one readable input. AI may help
+interpret complex requirements after the user allows the online call; local structural extraction comes first.
+The user must accept a derived/changed definition before composition. Unchanged saved definitions need no repeat
+confirmation. Output-specific instructions live under Advanced; the common prompt applies to every output.
+
+Output resources supply structure and rules. Example facts, existing sample rows, signatures and approval stamps
+are excluded from generated content unless separately selected as evidence. Even then they do not become current
+approvals. The user explicitly selects static text or branding to retain. Imports never alter the original file.
+
+### 78.2 Rendering contract
+
+| Format | Required first-release behaviour | Fidelity boundary |
+| --- | --- | --- |
+| DOCX | Editable headings, paragraphs, lists, tables, images/captions, page breaks, margins and supported header/footer styles | Preserve supported structure/styles; no promise of exact pagination, complex fields or arbitrary Office-object round trips |
+| PDF | Paginated report from the same reviewed content, with tables, images and readable typography | A supplied PDF guides layout/requirements; it is not automatically an editable form or a pixel-perfect template |
+| XLSX | Required sheets, literal header labels/order, typed cells, supported widths/styles, populated selected data region | No silent loss of formulas, charts, pivots or macros; identify unsupported workbook features before generating |
+| CSV | UTF-8 tabular values and confirmed headers; one file per selected sheet | No styles, embedded images or merged cells; identifiers retain leading zeros |
+| MD | Headings, paragraphs, lists, tables and relative links to explicitly included assets | No DOCX/PDF page layout; linked assets travel with the export package |
+
+Fidelity modes are explicit: **Use supported template formatting** or **Create a clean document with this
+structure**. If a reader/writer cannot preserve an element, show the loss and require a choice before proceeding;
+do not silently claim to have filled the original template. Store that choice in the run. DOCX and PDF renders
+may paginate differently; each receives its own preview. Filling arbitrary PDF forms and generating new audio,
+video, images or slide decks are later capabilities, not implied by accepting those inputs.
+
+Spreadsheet output writes generated values as literal cells and neutralises formula-triggering text in CSV.
+Formulas already present in a selected XLSX template may only be preserved through a tested passive round trip;
+they are not executed by Tapture. If required recalculation is unavailable, show it and prevent claiming those
+results are validated. AI-generated calculations use an allowlisted local calculation path with evidence for
+operands, never executable model code. No imported external links or macros are activated.
+
+Definitions can be named, duplicated and reused within a project. Editing creates a revision; old runs retain
+the old definition. Cross-project reuse is explicit copy/import with a dependency preview, so private source
+resources never follow a shared output format accidentally.
+
+## 79. Optional Prompt & Evidence Rules
+
+### 79.1 Instructions without a mandatory prompt
+
+The rich text field supports paragraphs, headings, bold/italic, ordered/bulleted lists and safe links. It stores
+a versioned, sanitised document representation and a deterministic text/Markdown projection for AI; formatting
+is preserved when the workspace is reopened. Pasted HTML cannot run scripts or fetch remote assets.
+
+**Attach prompt file** accepts one `.md`, `.docx` or `.txt` file per workspace, replaceable at any time. Extracted
+instructions are shown next to the editor with the filename and read status. Preserve the original file and its
+extracted text separately from any user edits. A prompt file plus typed instructions is supported: show the
+effective combined prompt, with typed instructions taking precedence for ordinary task preferences. Unresolved
+contradictions about required structure or factual content appear as issues before composition.
+
+If neither is supplied, use a visible default instruction: “Create the selected outputs from the selected input
+resources, follow the confirmed output requirements, and identify missing information without inventing facts.”
+Language defaults to the project language. No prompt is a normal successful path, not a validation error.
+
+### 79.2 Instruction and evidence boundaries
+
+1. Product privacy settings, evidence rules, safe rendering and human approval are always enforced.
+2. The user-confirmed output definition governs structure and required content. To depart from it, edit the
+   definition explicitly; a hidden instruction in a file cannot change it.
+3. Effective user instructions govern audience, style, emphasis and the requested synthesis within that definition.
+4. Input documents and media are evidence. Output resources are structural references. Neither can issue commands,
+   request other files, change a role, enable a network tool or promote itself into a prompt.
+
+Attaching a file in the Prompt field intentionally adopts its visible text as task instructions, subject to these
+boundaries. This exception does not apply to ordinary attachments or archive members. No resource link is fetched
+automatically. The explicitly selected projects, archive snapshots and files form the run's source allowlist;
+the model cannot search unselected projects or the web.
+
+### 79.3 Grounded synthesis
+
+- Every generated factual statement, table value or calculation links to an input resource version and a locator:
+  PDF page, DOCX paragraph/table, text lines, workbook sheet/cell, image region or media timestamp. Selected native
+  records link to the exact origin project, source snapshot and record/field revision, including when supplied by
+  a project archive.
+- Missing facts remain blank/“Not provided”; requirements are shown as unmet. Required gaps block final approval
+  until supported content is added or the requirement is explicitly changed and audited. No invented names,
+  signatures, decisions, dates, figures, references or approval claims.
+- Conflicting sources remain visible for a reviewer to resolve. Filename order, recency and model confidence do
+  not silently choose the truth. A user may identify an authoritative source and record the reason.
+- Requested recommendations, proposals or conclusions may be drafted, clearly labelled as such and linked to
+  their supporting observations. They must not be presented as recorded events or verified facts.
+- Summaries can combine many sources, but their evidence retains the original references, not just a model's
+  intermediate summary. A syntactically valid citation is not proof of factual support; review remains mandatory.
+- Manual corrections record the editor and reason. New factual material supplied by the reviewer is stored as an
+  explicit user assertion/evidence note; it never masquerades as text extracted from a source file.
+
+## 80. Generation Pipeline, Queue & Offline Behaviour
+
+### 80.1 Pipeline and reuse
+
+```text
+Save workspace and original resources locally
+   -> inspect/read selected files; OCR/transcribe permitted sources as needed
+   -> confirm output structures and show source coverage
+   -> snapshot resources, prompt, definitions and selected record revisions
+   -> bounded extraction/synthesis calls through the existing AI proxy
+   -> validate structured content, citations, required sections/columns and conflicts
+   -> render each output locally
+   -> save draft versions + previews + issues -> human review
+```
+
+Reuse file storage, picker/validation adapters, hashing, database transactions, AI policy, queue runner, usage
+accounting, export history and share/upload services. Extend interfaces through typed contracts. Documentation
+gets run/output-owned durable job rows using shared queue runner primitives; keep the existing record-owned
+processing rows intact. Do not create dummy records or a second retry/budget/network-policy implementation.
+Feature screens use repositories/providers and shared widgets, not direct filesystem, HTTP or database calls.
+
+The device owns resource extraction, chunk planning, intermediate summaries and final assembly. Start with ordered
+chunks and local indexing; no hosted document workspace, vector database or agent with file/network tools is needed.
+Each relevant selected chunk is covered or visibly excluded. Hierarchical synthesis carries source locators through
+every stage, and a coverage report lists read, sampled, excluded and failed portions. Large documents cannot be
+declared fully analysed after only their first pages were sent.
+
+### 80.2 Sending scope and budget
+
+Before online work, show selected resources/ranges, text and media sizes, permitted modalities, output count,
+provider/model and estimated cost when known. Unknown pricing is labelled unknown, never zero. Per-project AI
+disable/offline settings, **Do not send images**, metered-network settings, roles and quotas all apply. Send the
+minimum approved content: extracted text and required derivatives where possible, never a whole archive or
+unrelated project content. Prompt-file and output-format content are part of this disclosure.
+
+The authorised run scope and budget are saved. Retrying unchanged work within them does not require repeated
+approval, but changing sources, modalities, provider or a spending cap does. Bounded repair/retry calls count toward
+the same budget. Exceeding it pauses the run. Uploading final documents remains a separate user action (§54).
+
+### 80.3 Typed AI contract
+
+Add a versioned `composeDocument` operation behind the existing AI abstraction and `POST /ai/compose`. This
+contract describes logical fields; exact Dart/TypeScript schemas are implemented and contract-tested together:
+
+```text
+Request
+  schema_version, project_id, run_id, output_id, request_id
+  source_groups[] { snapshot_id, origin_project_id, source_kind, policy_scope }
+  provider/model capability selection, stage, budget/size bounds
+  effective_instructions, confirmed_output_definition
+  sources[] { resource_version_id, chunk_id, locator, text/permitted_media }
+
+Response
+  schema_version, output_id, finish_reason, usage
+  sections[] / tables[] with stable section/column/row keys and typed content
+  evidence[] linking each claim/cell to supplied resource/chunk/locator ids
+  missing_requirements[], source_conflicts[], coverage[], warnings[]
+```
+
+The backend checks membership, permission, request limits and budget, adapts the payload to the provider and
+returns proposals. It does not host files, extract archives, render outputs, approve content or persist requests.
+Capability discovery prevents unsupported model/modalities from being sent. Provider transport must meet the
+organisation's retention policy without requiring persistent provider file uploads; reject an incompatible adapter.
+Do not assert that the organisation's proxy can control a provider's retention beyond its configured contract.
+
+The device validates schema, output identity, allowed keys/types, cited resource IDs/locators and required structure;
+rejects executable content; and records coverage, unsupported claims and unresolved issues. Missing citations for
+evidence-required claims cannot pass approval. A maximum of one bounded schema-repair call is allowed per response;
+continued failure keeps diagnostics locally and marks that stage failed. Never turn malformed output into an
+approved document. Rendering consumes validated document models, never generated scripts or arbitrary binary files.
+
+### 80.4 Durable jobs and partial success
+
+The workspace remains editable; each **run** has an immutable selection snapshot and mutable execution state. Run states are **Queued**,
+**Running**, **Paused**, **Needs review**, **Partially complete**, **Failed** and **Cancelled**. Stage state and
+document approval are separate. A run completes its generation work when drafts are available, not when they are
+approved. Each output records its own result so one failed workbook does not discard a successful report.
+
+- Persist stage/checkpoint, local lease, attempt number, request identity, hashes, progress, usage and errors.
+  After restart an interrupted stage is paused/retryable; it is not left indefinitely “Running”.
+- Run background work within platform capabilities and avoid blocking capture. Do not promise execution while a
+  mobile OS has suspended the app. Offline creation saves/queues locally and reports **Waiting for connection**;
+  connectivity alone never starts Documentation AI. The user resumes the run explicitly.
+- Cache successful preparation and synthesis by exact source/extraction hashes, output revision, effective prompt,
+  model and pipeline version. Avoid repeated charges when a usable response has already been saved locally.
+- Network timeout after provider acceptance can have an unknown billing outcome. Do not promise exactly-once AI
+  charging: surface uncertainty, retain request identifiers and require explicit retry for an ambiguous request.
+  Content-based reuse and metadata-only idempotency checks must not create a durable backend response cache.
+- Cancellation stops dispatching further stages; an in-flight provider call may still incur cost. Preserve completed
+  stages and artifacts. Reject late results for cancelled/superseded attempts so they cannot overwrite newer work.
+- Retry a failed output or local renderer independently. Renderer retries and alternate-format exports use saved
+  content without fresh AI. Regeneration creates a new version; editing sources does not mutate the in-flight run.
+
+## 81. Review, Approval & Versions
+
+Document versions have **Draft**, **Needs review**, **Approved** or **Archived** status, separate from record
+status (§42). Generation always produces a draft for review. The review screen offers the document, its evidence
+and its issues; compact screens switch between them, while wide screens can show source and result side by side.
+
+Reviewers can edit section text and table cells, resolve conflicts, inspect cited source locations, fix mappings
+and regenerate selected outputs. No full desktop word processor is required: the shared rich text/table controls
+edit the structured model; a rendered preview checks pagination and layout. In the first release, edits made to
+an exported file in Word/Excel are not silently reimported as an approved version.
+
+Approval requires readable renders for all selected formats of that deliverable, resolved required-content gaps,
+resolved source conflicts, valid evidence links and acknowledgement of advisory coverage/fidelity warnings. A
+reviewer or project manager approves the exact content/definition/selected-format hashes. Approval is an audit
+entry with account, device and timestamp, not an invented signature placed in the report.
+
+Editing approved content, changing its definition or regenerating creates a new draft version. The old approved
+version stays immutable and exportable. Changed input versions mark dependent work **Sources changed**; they do
+not rewrite history or automatically revoke a historical approval. The UI makes the latest approved and latest
+draft versions unambiguous.
+
+**Export final** includes approved versions only. An explicit **Export draft** is available for collaboration,
+clearly marked in filenames and document metadata and, where supported, a visible DRAFT label. It never changes
+approval status. A partially successful run may export its approved outputs with the omitted ones listed.
+
+Every output retains source mappings locally. When the requested layout has no room for citations, do not insert
+unrequested columns or prose: offer an optional references appendix/evidence sheet or a separate manifest. Exported
+provenance is scoped to selected outputs; source originals are included only when explicitly selected. Multiple
+outputs/assets may be downloaded/shared individually or packaged in a ZIP through the existing export flow.
+
+## 82. Data Model, Storage & Portability
+
+### 82.1 Logical entities
+
+Names below express ownership and required information; migrations should reuse existing attachment, audit,
+processing-result and export tables rather than introduce duplicate byte stores. All local entities use §10
+identifiers, attribution, revision tracking and tombstones as appropriate.
+
+| Entity | Required information |
+| --- | --- |
+| `documentation_workspaces` | Project, title, owner, saved rich text and text projection, prompt selection, current definition references, timestamps/revision |
+| `documentation_resources` | Immutable resource version; attachment/hash, MIME/size/original name, parent archive/member lineage, extraction revision, reader capability/status and retained locator data |
+| `documentation_selections` | Workspace, resource or native-record version, explicit role (`INPUT`, `OUTPUT_FORMAT`, `PROMPT`), associated output where applicable, selected ranges/order, exclusions and reasons |
+| `documentation_source_snapshots` | Run, selected native-project/archive scope, origin organisation/project, immutable records/schema/evidence dependencies, source policies, archive hash and snapshot timestamps (§77.4) |
+| `documentation_outputs` | Stable deliverable identity plus immutable definition revisions: name, format set, structures, requirements, format-resource references and fidelity choices |
+| `documentation_runs` | Immutable selection/prompt/definition snapshot, model/pipeline versions, stage results, coverage, budget/usage and linked queue jobs |
+| `documentation_jobs` | Run/output owner, typed stage, checkpoint, attempt/request identity, progress/error and local execution lease; uses shared scheduling/retry primitives |
+| `documentation_versions` | Output/run/parent-version identity, original AI draft and current edited content revision, evidence/issues, review state, approval binding and artifact hashes/paths |
+
+Large originals and retained extraction/content payloads stay in the file store; SQLite owns their descriptors,
+associations and hashes. Native filesystem paths are project-relative. Web uses the existing durable storage
+adapter (IndexedDB), not temporary browser object URLs as permanent references. A job lease is device execution
+state and is never a portable entity.
+
+Cross-project sources are self-contained snapshots, not foreign keys requiring the original project to remain
+installed. Their original identities and per-source restrictions accompany the selected content. Resource bytes
+can be shared by hash while distinct source/project provenance associations remain separate.
+
+### 82.2 Storage and retention
+
+```text
+projects/<project>/documentation/
+  resources/<resource-id>/<version>/...     preserved originals via shared attachment store
+  extracted/<hash>/<reader-version>/...    source text/tables/transcripts referenced by runs
+  runs/<run-id>/...                        immutable manifests and structured content snapshots
+projects/<project>/exports/<dated-version>/...  generated files and optional evidence manifest
+.cache/...                                disposable thumbnails, page previews, temporary conversions
+```
+
+These are logical areas resolved through the shared file-store abstraction, not mandatory duplicate physical
+copies. Referenced originals, extraction snapshots, draft models and approved artifacts are not disposable cache.
+**Clear cache** can remove previews and recomputable unreferenced intermediates without losing evidence or history.
+
+Import and render write to staging, hash/validate, then commit links atomically; crashes leave recoverable drafts
+and cleanable unreferenced staging files. Resource removal is soft deletion; purge requires no remaining live
+selection, historical run or approved-version reference under the existing retention policy. Preserve every
+generated export per §53. No automatic background cleanup may remove the only copy of document evidence.
+
+### 82.3 Bundles, merge and reuse
+
+Full project bundles include Documentation resources, selection roles, output definitions, effective prompts,
+retained extraction/locator snapshots, document versions, approvals and output artifacts. Extend the manifest with
+section versions, counts, SHA-256 checksums and required capabilities. Data-only bundles explicitly identify omitted
+bytes and missing previews; they must not appear to contain complete reproducible sources.
+
+Include the selected cross-project and archive-source snapshot dependencies, without silently including whole
+source projects or recreating them as live projects on import. A restored workspace must explain and render its
+historical outputs even when none of its original source projects is present on the receiving device.
+
+New clients accept older bundles with no Documentation section as empty. Older clients reject a bundle requiring
+unsupported Documentation capabilities before mutation. Import validates every relative path, hash and relationship,
+including a run's evidence and approval references; the usual merge preview and undo apply (§47–§48).
+
+Immutable resource/run/version identities are unioned; a reused ID with different immutable content is corruption
+or a conflict, not “last writer wins”. Concurrent mutable workspace selections or output-definition pointers raise
+a human conflict or **Keep both**. Do not splice two rich text documents or transfer an approval to different content.
+Rewriting IDs during copy-as-new requires remapping all references and creates drafts with historical attribution,
+not new approvals. Bundle import never dispatches AI: imported queued/running work becomes paused on the receiving
+device, with no copied lease, credentials or implicit charge authority.
+
+Saving a reusable output definition includes only its chosen format assets. Copying a workspace offers an explicit
+resource dependency list. Source-selection and prompt references cannot leak into another project through an
+apparently harmless template export. The optional relay carries this same versioned bundle data as ciphertext;
+it gains no document-specific durable storage responsibility.
+
+## 83. Screens & Navigation
+
+### 83.1 Mobile More menu
+
+Compact navigation keeps **Projects**, **Capture**, **Records** and **More**. More uses a horizontal three-dot icon
+and a visible “More” label; tapping it opens an anchored menu above the bottom bar instead of immediately opening
+Settings. Every entry has a familiar icon and text. The menu scrolls within the safe area and uses square corners,
+the shared menu/list styling, at least 48 dp targets and screen-reader labels.
+
+The immediate shell change exposes working destinations: **Templates** (template/library icon), **Unprocessed**
+(queue icon), **Recycle bin** (restore icon) and **Settings** (cog). Add **Documentation** (document icon) when its
+working feature route ships. Add other existing secondary tools only when they have usable screens; no inert
+placeholder menu options. Labels and icons come from shared destination metadata, not separate mobile copies.
+
+Opening or dismissing More does not navigate, reset a branch or lose work. Outside tap, Back and Escape dismiss
+it. Choosing an entry closes it and routes to that destination; More is selected while a secondary branch is open,
+and otherwise the current primary control remains selected. Existing draft-saving/navigation protections remain
+in force. Reopening the menu does not add duplicate routes. Resizing closes/repositions its popup safely.
+
+Medium/expanded layouts retain their existing navigation rail; this compact change does not rename or rearrange
+desktop controls. When Documentation ships, expose it through the existing secondary destination hub and a
+project-home action as well, using the same route metadata. Adding a module does not add another mobile bottom tab.
+
+### 83.2 Documentation screens
+
+```text
+Documentation                         [New document]
+  September report       Needs review      2 outputs
+  Company profile        Approved          v3
+
+September report                       [history / ...]
+  Input resources                       [Add sources]
+    Current captured project   42 approved records
+    [Add projects]  [Add files]  [Add project archive]
+    TOR.pdf                 Ready
+    Meeting audio.m4a       Needs transcription
+  Output documents                      [Add output]
+    Progress report · DOCX, PDF    Report format.docx
+    Action register · XLSX        Headers.xlsx
+  Instructions (optional)              [Attach prompt file]
+    [shared rich text field]
+  [Create documents]
+```
+
+The workspace list is project-scoped and searchable by title/status; selected sources may span several projects.
+Empty state explains that captured project data is the default input and offers
+**New document**. If opened without a current project, use the existing project picker with a return destination;
+do not silently create or switch projects. Lists show resource counts, progress and the latest approved/draft
+versions; advanced extraction diagnostics belong in details, not on the main form.
+
+Proposed concrete routes follow the existing `RoutePaths` convention:
+
+```text
+/more/documentation                         current-project entry/picker
+/projects/:projectId/documentation          workspace list
+/projects/:projectId/documentation/:workspaceId
+/projects/:projectId/documentation/:workspaceId/runs/:runId
+/projects/:projectId/documentation/:workspaceId/versions/:versionId
+```
+
+Register canonical paths in one place and preserve return navigation. Tablet/desktop uses available width for
+source/result panes; mobile uses the same components stacked or in a source/review switch. Text at 200%, keyboard
+focus, back navigation, offline status and interruption recovery are acceptance requirements. Reuse shared file
+rows, output cards, progress/error states and the rich text field; avoid a second visual system or rounded panels.
+
+## 84. Delivery & Acceptance Criteria
+
+### 84.1 Delivery order
+
+The implementation plan is [phase 26 — Documentation](dev-plan/26-documentation/README.md), tasks 080–086.
+Task 079 delivers the compact More menu independently. The phases deliberately keep a usable vertical slice:
+
+1. Validate adapters, platform capabilities, security constraints and real client fixtures; publish a measured
+   format/fidelity matrix. Update architectural guardrails for the new feature and explicitly adopted prompts.
+2. Deliver durable multi-file resources, role associations, safe ZIP handling and source inspection/extraction.
+3. Deliver output definitions, reusable format mapping and autosaved optional rich text/file instructions.
+4. Connect typed jobs and a real provider through the proxy; enforce source scope, cost limits, evidence and
+   offline/restart behaviour. A fake provider is a test aid, not a release implementation.
+5. Render, review, version and export DOCX/PDF/XLSX/CSV/MD; integrate bundles/merge and validate the complete workflow.
+
+The first release includes text and scanned PDFs, DOCX, MD/TXT, XLSX/CSV, supported images, the declared baseline
+audio/video profiles, ZIP resource packs and all five output renderers. Support is advertised only after the
+corresponding fixtures pass on the advertised platform. Additional codecs, archives, exact Office round trips,
+fillable PDF forms and external-editor round trips are later extensions; they must not hold up a working standard
+report/register workflow or be falsely presented as available.
+
+### 84.2 Release gate
+
+- Opening Documentation from a captured project preselects its approved records; one report can be generated
+  without uploading any file, writing a prompt or attaching a format. Additional projects are selectable, and a
+  saved workspace never silently changes its source scope.
+- One run combines two captured projects, an uploaded Tapture archive and loose files; source labels, field keys,
+  record revisions and evidence remain traceable, duplicate inclusions do not double-count, and original projects
+  are neither merged nor modified. Required source/destination privacy restrictions apply before AI/export.
+- Editing/deleting an original source project cannot break a completed run or its full bundle round trip; an
+  unsupported archive, missing dependency or conflicting source revision produces a visible issue, not lost data.
+- A project with no capture records can create a report from multiple input documents and an optional format;
+  no-prompt, typed-only, prompt-file-only and combined instructions all succeed.
+- The worked example (§76.2) produces an editable DOCX, readable paginated PDF and XLSX with the exact confirmed
+  headers/order. Tables and captions do not overflow; all selected formats have inspected fixture renders.
+- A supported recording and video contribute timestamped evidence with explicit sampling coverage. Unsupported,
+  unreadable and over-limit files show actionable status; none silently disappears from the scope.
+- A source pack with injected instructions, sample facts in output formats, conflicting figures and missing dates
+  cannot change project policy or become an invented factual report. Review links to the original source locations.
+- ZIP traversal, symlinks, nested bombs, spoofed MIME types and expansion-limit violations cannot escape staging,
+  corrupt an existing project or exhaust unbounded resources. A project bundle added as evidence is not merged.
+- Offline preparation, cached draft editing, approval and rendering work; fresh online AI waits for an explicit
+  resume. Network loss, app restart, cancellation, ambiguous timeout and storage exhaustion preserve originals
+  and completed outputs. Retrying a renderer makes zero provider calls.
+- Real client/backend/provider contract tests pass, with project membership, quota and capability enforcement.
+  Logs, server persistence and temporary-file inspection show no retained source text, prompts or document content.
+- Edits/regeneration create new draft versions; earlier approvals and files stay bound to their original content.
+  Required gaps block final approval; explicit draft export is visibly a draft.
+- Bundle export/import/merge/undo preserves roles, hashes, evidence, history and approvals; old bundle compatibility
+  and unsupported-new-version rejection are tested. Import cannot start AI or spend money.
+- Mobile More opens an accessible three-dot icon menu; selecting a real destination works without losing a draft,
+  and dismissing it leaves navigation unchanged. The document workflow remains usable at 200% text scaling.
+- Existing capture, record processing, meeting, export and bundle flows pass regression checks. Do not mark a
+  Documentation task complete merely because its plan exists or a mock provider returns a plausible document.
+
+---
 
 # Appendix A — Worked Example
 
@@ -3327,6 +4092,11 @@ The operator taps **Upload to cloud**, confirms the destination, and the ZIP goe
 
 # Appendix B — Core Product Principle
 
-> **The template defines what information is required. Photographs, documents, captions and voice provide the evidence. On-device and online AI turn that evidence into proposed values, never into invented ones. Raw input is kept forever beside the refined version. A person verifies the result. Only verified data is exported. Everything lives on the device unless the user sends it somewhere — and the organisation's minimal backend governs who may do the work, and with which keys, without ever becoming the place the data lives.**
+> **The template defines what information is required. Photographs, documents, captions and voice provide the evidence. On-device and online AI turn that evidence into proposed values, never into invented ones. Raw input is kept beside the refined version. A person verifies the result. Final deliverables use approved content; explicit draft exports are labelled, and project bundles preserve the full work history. Everything lives on the device unless the user sends it somewhere — and the organisation's minimal backend governs who may do the work, and with which keys, without ever becoming the place the data lives.**
 
-This principle is what keeps the application flexible enough to inventory anything, auditable enough to be trusted, and safe enough to work offline in the field.
+For Documentation, **input resources supply the evidence, output definitions supply the required structure, and
+optional user instructions guide synthesis**. AI drafts; a person reviews and approves an exact version. The device
+keeps the originals, source links and generated files, and renders saved content without needing another AI call.
+
+This principle is what keeps the application flexible enough to inventory anything and prepare documents from
+evidence, auditable enough to be trusted, and usable offline in the field.

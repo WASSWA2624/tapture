@@ -2,9 +2,11 @@
 
 Navigation, routing and the always-visible status line.
 
-Task 006 (1). One prompt for the completed phase; the atomics it absorbed are listed in [RETIRED.md](../RETIRED.md).
+Tasks 006–079 (2). The original shell and its mobile More follow-up; the atomics absorbed by task 006 are listed
+in [RETIRED.md](../RETIRED.md).
 
 - [x] [006 — Application shell: navigation, the status line and the frame every feature plugs into](006-application-shell.md)
+- [ ] [079 — Show a mobile More menu in the bottom navigation](079-mobile-more-menu.md)
 
 ## As built
 

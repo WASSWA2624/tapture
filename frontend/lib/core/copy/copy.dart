@@ -1020,6 +1020,9 @@ abstract final class Copy {
   /// Shell destination: settings and the rest.
   static const String navMore = 'Settings';
 
+  /// Compact navigation control opening secondary destinations.
+  static const String navMoreMenu = 'More';
+
   /// Pinned-template destination the status line opens.
   static const String navTemplates = 'Templates';
 
@@ -6178,8 +6181,7 @@ abstract final class Copy {
   static const String egressSendsFile = 'A file';
 
   /// Basis written when images stay on the device.
-  static const String egressTextOnly =
-      'Text only, on-device OCR';
+  static const String egressTextOnly = 'Text only, on-device OCR';
 
   /// Location section title.
   static const String gpsPrivacyTitle = 'Location';
@@ -6275,7 +6277,8 @@ abstract final class Copy {
   static const String relayTitle = 'Change relay';
 
   /// Relay is waiting for a project manager.
-  static const String relayOff = 'Relay is off until a project manager enables it.';
+  static const String relayOff =
+      'Relay is off until a project manager enables it.';
 
   /// A never-relay project has no send action.
   static const String relayNever = 'This project never uses the relay.';
