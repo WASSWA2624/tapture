@@ -13,8 +13,8 @@ The empty app that boots, logs, fails safely, and the small services every later
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
 | 02.01 | 002 | [Foundation services](002-foundation-services.md) | **Complete** | 46/46 | 01.01 (001); Dependencies complete |
-| 02.02 | 091 | [Enable device location through the shared service](091-enable-device-location.md) | **Partially complete** | 1/11 | 01.01 (001), 02.01 (002); Ready |
-| 02.03 | 092 | [Enable live camera and barcode adapters](092-enable-live-camera.md) | **Partially complete** | 2/14 | 01.01 (001), 02.01 (002); Ready |
+| 02.02 | 091 | [Enable device location through the shared service](091-enable-device-location.md) | **Partially complete** | 9/11 | 01.01 (001), 02.01 (002); Ready |
+| 02.03 | 092 | [Enable live camera and barcode adapters](092-enable-live-camera.md) | **Partially complete** | 10/14 | 01.01 (001), 02.01 (002); Ready |
 
 <!-- dev-plan:generated:end -->
 

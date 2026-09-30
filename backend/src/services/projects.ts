@@ -129,8 +129,18 @@ export async function patchProject(
       actorId: principal.userId,
       action: 'patch_project',
       target: projectId,
-      before: { name: current.name, relayEnabled: current.relayEnabled },
-      after: { name: next.name, relayEnabled: next.relayEnabled },
+      before: {
+        name: current.name,
+        relayEnabled: current.relayEnabled,
+        neverRelay: current.neverRelay,
+        retentionDays: current.retentionDays,
+      },
+      after: {
+        name: next.name,
+        relayEnabled: next.relayEnabled,
+        neverRelay: next.neverRelay,
+        retentionDays: next.retentionDays,
+      },
     });
   });
   return next;

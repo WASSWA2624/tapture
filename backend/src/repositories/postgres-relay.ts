@@ -4,6 +4,28 @@ import type { Sql } from './sql.js';
 
 export function relayRepository(sql: Sql) {
   return {
+    relayQuotaUsage: async (
+      organisationId: string,
+      projectId: string,
+    ): Promise<{ projectBytes: number; organisationBytes: number }> => {
+      const rows = await sql.rows<{
+        projectBytes: number;
+        organisationBytes: number;
+      }>(
+        'SELECT coalesce(sum(r.byte_size) FILTER (WHERE r.project_id=$2),0)::float8 AS "projectBytes",coalesce(sum(r.byte_size),0)::float8 AS "organisationBytes" FROM relay_packages r JOIN projects p ON p.id=r.project_id WHERE p.organisation_id=$1',
+        [organisationId, projectId],
+      );
+      const row = rows[0];
+      if (row === undefined)
+        throw new Error('Missing relay storage aggregate.');
+      return row;
+    },
+    storageUsage: async (): Promise<Record<string, number>> => {
+      const rows = await sql.rows<{ projectId: string; bytes: number }>(
+        'SELECT project_id AS "projectId",sum(byte_size)::float8 AS bytes FROM relay_packages GROUP BY project_id',
+      );
+      return Object.fromEntries(rows.map((row) => [row.projectId, row.bytes]));
+    },
     expiredPackages: (now: Date, limit: number) =>
       sql.rows<RelayPackage>(
         'SELECT id,project_id AS "projectId",author_device_id AS "authorDeviceId",byte_size AS "byteSize",created_at AS "createdAt",expires_at AS "expiresAt",storage_ref AS "storageRef" FROM relay_packages WHERE expires_at <= $1 ORDER BY expires_at,id LIMIT $2',
@@ -46,7 +68,7 @@ export function relayRepository(sql: Sql) {
       ),
     addAck: (row: Ack) =>
       sql.write(
-        'INSERT INTO relay_acknowledgements(package_id,device_id) VALUES($1,$2) ON CONFLICT DO NOTHING',
+        'INSERT INTO relay_acknowledgements(package_id,device_id,expires_at) SELECT $1,$2,expires_at FROM relay_packages WHERE id=$1 ON CONFLICT DO NOTHING',
         [row.packageId, row.deviceId],
       ),
     vectors: () =>
@@ -67,10 +89,14 @@ export function relayRepository(sql: Sql) {
           [key],
         )
       )[0],
-    saveIdempotency: (key: string, result: IdempotentResult) =>
+    saveIdempotency: (
+      key: string,
+      result: IdempotentResult,
+      expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+    ) =>
       sql.write(
-        "INSERT INTO idempotency_keys(key,status,body,expires_at) VALUES($1,$2,$3,now()+interval '90 days') ON CONFLICT(key) DO NOTHING",
-        [key, result.status, JSON.stringify(result.body)],
+        'INSERT INTO idempotency_keys(key,status,body,expires_at) VALUES($1,$2,$3,$4) ON CONFLICT(key) DO UPDATE SET status=EXCLUDED.status,body=EXCLUDED.body,created_at=now(),expires_at=EXCLUDED.expires_at WHERE idempotency_keys.expires_at <= now()',
+        [key, result.status, JSON.stringify(result.body), expiresAt],
       ),
   };
 }

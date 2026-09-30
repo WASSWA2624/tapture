@@ -154,4 +154,42 @@ describe('ai resilience', () => {
     );
     assert.equal(calls, 1);
   });
+
+  it('aborts a timed-out provider request and does not leave the call running', async () => {
+    resetBreakers();
+    let aborted = 0;
+    const wait = async (
+      input: import('../../src/services/ai/provider.js').AiRequest,
+    ): Promise<AiResult> =>
+      new Promise((_resolve, reject) => {
+        assert.ok(input.signal);
+        input.signal.addEventListener(
+          'abort',
+          () => {
+            aborted += 1;
+            reject(new Error('aborted'));
+          },
+          { once: true },
+        );
+      });
+    const provider = {
+      extract: wait,
+      ocr: wait,
+      transcribe: wait,
+      refine: wait,
+    };
+    await assert.rejects(() =>
+      callProvider(
+        provider,
+        'extract',
+        {
+          projectId: 'project-1',
+          model: 'timed',
+          payload: Buffer.from('hi'),
+        },
+        testConfig({ AI_TIMEOUT_MS: '10', AI_RETRY_LIMIT: '0' }),
+      ),
+    );
+    assert.equal(aborted, 1);
+  });
 });

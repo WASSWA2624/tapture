@@ -1,8 +1,31 @@
 import { requestContext } from '../middleware/request_context.js';
 
 const secretKey =
-  /password|token|secret|authorization|cookie|api[_-]?key|credential/i;
-const secretValue = /sk-[A-Za-z0-9]|AKIA[A-Z0-9]{8}|Bearer\s+\S+/;
+  /password|token|secret|authorization|cookie|api[_-]?key|credential|caption|transcript|field.?value|file.?name|payload|prompt|instructions|body|image|audio|photo/i;
+const secretValue =
+  /sk-[A-Za-z0-9]|AKIA[A-Z0-9]{8}|AIza[0-9A-Za-z_-]{35}|Bearer\s+\S+/;
+
+const metadataFields = new Set([
+  'route',
+  'userId',
+  'deviceId',
+  'projectId',
+  'model',
+  'byteSize',
+  'durationMs',
+  'outcome',
+  'cost',
+  'status',
+  'code',
+  'name',
+  'limit',
+  'port',
+  'deleted',
+  'bytesReclaimed',
+  'oldestAgeSeconds',
+  'failures',
+  'transientDeleted',
+]);
 
 export function redact(value: unknown): unknown {
   if (typeof value === 'string') {
@@ -35,8 +58,34 @@ export function createLogger(
     event: string,
     fields: Record<string, unknown> = {},
   ): void => {
-    const requestId = requestContext.getStore()?.requestId ?? null;
-    write(JSON.stringify(redact({ level, event, requestId, ...fields })));
+    const context = requestContext.getStore();
+    const metadata = Object.fromEntries(
+      Object.entries(fields).map(([key, value]) => [
+        key,
+        metadataFields.has(key) &&
+        (value === null ||
+          ['string', 'number', 'boolean'].includes(typeof value))
+          ? value
+          : '[redacted]',
+      ]),
+    );
+    // Context is authoritative; a caller cannot overwrite the request identity,
+    // event or timestamp through an incidental field spread.
+    write(
+      JSON.stringify(
+        redact({
+          ...metadata,
+          level,
+          event,
+          at: new Date().toISOString(),
+          requestId: context?.requestId ?? null,
+          route: context?.route ?? metadata['route'] ?? null,
+          userId: context?.principal?.userId ?? metadata['userId'] ?? null,
+          deviceId:
+            context?.principal?.deviceId ?? metadata['deviceId'] ?? null,
+        }),
+      ),
+    );
   };
   return {
     info: (event, fields) => emit('info', event, fields),

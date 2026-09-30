@@ -11,7 +11,7 @@ whole-app hardening pass follows every feature in [step 27](../27-hardening/READ
 
 **Step 24 — Partially complete**
 
-54 total · 50 Complete · 3 Partially complete · 1 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+55 total · 51 Complete · 4 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
@@ -52,7 +52,7 @@ whole-app hardening pass follows every feature in [step 27](../27-hardening/READ
 | 24.35 | 060 | [Borderless overflow menus](060-borderless-overflow-menus.md) | **Complete** | 5/5 | None; Dependencies complete |
 | 24.36 | 061 | [Resolve shell, settings and capture feedback](061-resolve-shell-capture-feedback.md) | **Complete** | 1/1 | None; Dependencies complete |
 | 24.37 | 062 | [Resolve feedback archive 23092026-1635](062-resolve-feedback-23092026.md) | **Complete** | 8/8 | 11.01 (011), 12.01 (012), 13.01 (013), 24.36 (061); Prerequisite review: 011, 012 |
-| 24.38 | 063 | [Resolve projects, capture and template feedback](063-resolve-feedback-23092026-2222.md) | **Partially complete** | 0/11 | 12.01 (012), 24.37 (062); Waiting for: 012 |
+| 24.38 | 063 | [Resolve projects, capture and template feedback](063-resolve-feedback-23092026-2222.md) | **Partially complete** | 9/11 | 12.01 (012), 24.37 (062); Waiting for: 012 |
 | 24.39 | 064 | [Resolve projects and capture feedback](064-resolve-feedback-24092026.md) | **Complete** | 11/11 | 12.01 (012), 24.38 (063); Prerequisite review: 012, 063 |
 | 24.40 | 065 | [Place the audio record control in the caption field](065-place-audio-record-in-caption.md) | **Complete** | 5/5 | None; Dependencies complete |
 | 24.41 | 066 | [Resolve project, capture and export feedback](066-resolve-project-capture-feedback.md) | **Complete** | 7/7 | None; Dependencies complete |
@@ -66,8 +66,9 @@ whole-app hardening pass follows every feature in [step 27](../27-hardening/READ
 | 24.49 | 074 | [Ship the full template catalogue](074-ship-full-template-catalogue.md) | **Complete** | 6/6 | None; Dependencies complete |
 | 24.50 | 075 | [Replace the starter templates with the catalogue](075-replace-starter-templates-with-catalogue.md) | **Complete** | 5/5 | 24.49 (074); Dependencies complete |
 | 24.51 | 076 | [Resolve project, capture and template feedback, and add project packages](076-resolve-project-capture-package-feedback.md) | **Complete** | 26/26 | None; Dependencies complete |
-| 24.52 | 077 | [Suggest shipped templates with AI](077-suggest-shipped-templates-with-ai.md) | **Pending** | 0/4 | 23.01 (024), 24.51 (076); Waiting for: 024 |
+| 24.52 | 077 | [Suggest shipped templates with AI](077-suggest-shipped-templates-with-ai.md) | **Complete** | 4/4 | 23.01 (024), 24.51 (076); Prerequisite review: 024 |
 | 24.53 | 078 | [Keep the device id in the storage root](078-keep-device-id-in-storage-root.md) | **Complete** | 3/3 | 24.51 (076); Dependencies complete |
 | 24.54 | 079 | [Show a mobile More menu in the bottom navigation](079-mobile-more-menu.md) | **Partially complete** | 4/5 | 06.01 (006), 24.07 (032), 24.35 (060); Ready |
+| 24.55 | 093 | [Audit implementation and efficiency against the full plan](093-audit-codebase-against-plan.md) | **Partially complete** | 2/7 | None; Ready |
 
 <!-- dev-plan:generated:end -->

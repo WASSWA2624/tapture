@@ -13,7 +13,12 @@ export function schedulePurge(deps: Deps): () => Promise<void> {
       deps.config.purgeBatchSize,
     )
       .then((report) => {
-        deps.log.info('relay_purge', { ...report });
+        if (report.failures > 0)
+          deps.log.error('relay_purge_failed', {
+            ...report,
+            outcome: 'failed',
+          });
+        else deps.log.info('relay_purge', { ...report });
       })
       .catch(() => {
         deps.log.error('relay_purge_failed', { outcome: 'failed' });

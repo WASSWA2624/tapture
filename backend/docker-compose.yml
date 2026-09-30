@@ -3,15 +3,28 @@ services:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: tapture
-      POSTGRES_PASSWORD: tapture
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?Set DATABASE_PASSWORD}
       POSTGRES_DB: tapture
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'tapture', '-d', 'tapture']
+      interval: 5s
+      timeout: 5s
+      retries: 10
   backend:
     build: .
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     ports:
       - '8080:8080'
     environment:
-      DATABASE_URL: postgres://tapture:tapture@database:5432/tapture
-      TOKEN_SECRET: replace-before-use
+      DATABASE_URL: ${DATABASE_URL:?Set a least-privilege runtime DATABASE_URL}
+      TOKEN_SECRET: ${TOKEN_SECRET:?Set TOKEN_SECRET}
       RETENTION_DAYS: '30'
+      AI_PROVIDER_KEY: ${AI_PROVIDER_KEY:-}
+      AI_PROVIDER_MODEL: ${AI_PROVIDER_MODEL:-default}
+      AI_REQUEST_COST_CEILING: ${AI_REQUEST_COST_CEILING:-0}
+volumes:
+  database:

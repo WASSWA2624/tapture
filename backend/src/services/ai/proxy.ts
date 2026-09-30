@@ -1,11 +1,12 @@
 import type { AppConfig } from '../../config/schema.js';
 import { can, type Principal } from '../../domain/permissions.js';
-import { notFound } from '../../domain/errors.js';
+import { invalidRequest, notFound } from '../../domain/errors.js';
 import type { Repository as Store } from '../../repositories/repository.js';
 import { visibleProject } from '../projects.js';
 import { assertQuota } from './quota.js';
 import { callProvider } from './resilience.js';
 import type { AiProvider } from './provider.js';
+import type { Metrics } from '../metrics/metrics.js';
 export async function proxyAi(
   store: Store,
   config: AppConfig,
@@ -17,38 +18,52 @@ export async function proxyAi(
     model: string;
     payload: Buffer;
   },
+  metrics?: Metrics,
 ): Promise<{
   text: string;
   model: string;
 }> {
   if (!can(principal, 'aiProxy')) throw notFound();
-  await visibleProject(store, principal, input.projectId);
-  await assertQuota(store, principal, input.projectId);
+  if (input.model !== 'default' && input.model !== config.aiProviderModel)
+    throw invalidRequest(
+      'This analysis model is not enabled by your organisation.',
+    );
   const started = Date.now();
-  try {
-    const result = await callProvider(provider, method, input, config);
-    await store.addUsage({
-      projectId: input.projectId,
-      userId: principal.userId,
-      model: result.model,
-      byteSize: input.payload.length,
-      durationMs: Date.now() - started,
-      outcome: 'ok',
-      cost: input.payload.length / 1000,
-      at: new Date().toISOString(),
-    });
-    return { text: result.text, model: result.model };
-  } catch (error) {
-    await store.addUsage({
+  const reservation = await store.withTransaction(async (tx) => {
+    await visibleProject(tx, principal, input.projectId);
+    const cost = await assertQuota(tx, config, principal, input.projectId);
+    const id = await tx.addUsage({
       projectId: input.projectId,
       userId: principal.userId,
       model: input.model,
       byteSize: input.payload.length,
-      durationMs: Date.now() - started,
-      outcome: 'failed',
-      cost: 0,
+      durationMs: 0,
+      outcome: 'reserved',
+      cost,
       at: new Date().toISOString(),
     });
+    return { id, cost };
+  });
+  if (metrics !== undefined) {
+    metrics.aiRequests += 1;
+    metrics.aiCost += reservation.cost;
+  }
+  try {
+    const result = await callProvider(provider, method, input, config);
+    await store.finishUsage(
+      reservation.id,
+      'ok',
+      Date.now() - started,
+      result.model,
+    );
+    return { text: result.text, model: result.model };
+  } catch (error) {
+    await store.finishUsage(
+      reservation.id,
+      'failed',
+      Date.now() - started,
+      input.model,
+    );
     throw error;
   }
 }

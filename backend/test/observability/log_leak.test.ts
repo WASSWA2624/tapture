@@ -11,7 +11,11 @@ describe('log redaction', () => {
       token: 'header',
       note: 'prefix sk-abcdefghijklmnop suffix',
       accessKey: 'AKIAIOSFODNN7EXAMPLE',
-      caption: 'a safe caption',
+      caption: 'private caption',
+      transcript: 'private transcript',
+      filename: 'private evidence.jpg',
+      payload: { instructions: 'private instruction' },
+      unexpected: 'private unknown field',
     });
     const line = lines.join('\n');
     assert.equal(lines.length, 1);
@@ -19,6 +23,38 @@ describe('log redaction', () => {
     assert.equal(line.includes('sk-abcdefghijklmnop'), false);
     assert.equal(line.includes('AKIAIOSFODNN7EXAMPLE'), false);
     assert.match(line, /\[redacted\]/);
-    assert.match(line, /a safe caption/);
+    for (const value of [
+      'private caption',
+      'private transcript',
+      'private evidence.jpg',
+      'private instruction',
+      'private unknown field',
+    ])
+      assert.equal(line.includes(value), false);
+    const row = JSON.parse(lines[0] ?? '{}') as {
+      at: string;
+      level: string;
+      requestId: unknown;
+    };
+    assert.ok(Number.isFinite(Date.parse(row.at)));
+    assert.equal(row.level, 'info');
+  });
+
+  it('does not let supplied fields replace authoritative log context', () => {
+    const lines: string[] = [];
+    createLogger((line) => lines.push(line)).warn('declared_event', {
+      level: 'fabricated',
+      event: 'fabricated',
+      requestId: 'fabricated',
+      at: 'fabricated',
+      outcome: 'failed',
+      byteSize: 123,
+    });
+    const row = JSON.parse(lines[0] ?? '{}') as Record<string, unknown>;
+    assert.equal(row['event'], 'declared_event');
+    assert.equal(row['level'], 'warn');
+    assert.equal(row['requestId'], null);
+    assert.equal(row['outcome'], 'failed');
+    assert.equal(row['byteSize'], 123);
   });
 });

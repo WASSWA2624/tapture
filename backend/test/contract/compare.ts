@@ -3,19 +3,27 @@ export interface Mismatch {
   field: string;
 }
 
+export interface HttpOperation {
+  path: string;
+  method: string;
+}
+
 /// Reports every path or field the running surface does not document.
 export function compareContract(
-  documented: string[],
-  actual: Array<{ path: string; field?: string }>,
+  documented: HttpOperation[],
+  actual: HttpOperation[],
 ): Mismatch[] {
-  const known = new Set(documented);
+  const key = (operation: HttpOperation): string =>
+    `${operation.method.toUpperCase()} ${operation.path}`;
+  const known = new Set(documented.map(key));
+  const implemented = new Set(actual.map(key));
   const mismatches: Mismatch[] = [];
   for (const route of actual) {
-    if (!known.has(route.path)) {
-      mismatches.push({ path: route.path, field: route.field ?? 'path' });
-    } else if (route.field !== undefined && route.field !== 'path') {
-      mismatches.push({ path: route.path, field: route.field });
-    }
+    if (!known.has(key(route)))
+      mismatches.push({ path: route.path, field: route.method });
   }
+  for (const route of documented)
+    if (!implemented.has(key(route)))
+      mismatches.push({ path: route.path, field: `missing ${route.method}` });
   return mismatches;
 }

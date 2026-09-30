@@ -1,5 +1,9 @@
 name: backend
 on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend.yml"
   push:
     paths:
       - "backend/**"
@@ -36,3 +40,4 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/tapture
           TOKEN_SECRET: ci-token-secret
           RETENTION_DAYS: "30"
+          RUN_DOCKER_SMOKE: "true"

@@ -28,6 +28,8 @@ and context maintenance (task 011) consume the service through its provider and 
 Work so far: the geolocator adapter, the `main.dart` binding, the macOS keys and a unit test over a fake platform are
 written. No acceptance item below has been verified yet.
 
+Verification 2026-09-30: all 13 fake-platform tests passed, covering GPS off, disabled services, denied/restricted/permanent denial, GPS disabled during pending permission/fix, UTC metadata and unsupported/insecure platforms. The entire operation now has one time box, including permission/service waits, and late results are discarded. Capture's slow-fix save regression also passed. Real browser and sandboxed macOS checks remain open; declarations alone do not verify those platforms.
+
 ## Files
 
 - `frontend/pubspec.yaml` and `frontend/pubspec.lock` (changed — `geolocator` 14.0.2)
@@ -47,21 +49,21 @@ written. No acceptance item below has been verified yet.
 
 - [x] `geolocator` is pinned to 14.0.2 with its licence and purpose recorded against 091 in `allowlist.yaml`, only
       `core/location/` imports it, and the dependency check passes.
-- [ ] With GPS off for the project, `currentFix` returns no fix without calling the platform or asking for
+- [x] With GPS off for the project, `currentFix` returns no fix without calling the platform or asking for
       permission (FE-SEC-07, §60.3).
-- [ ] With the device's location services disabled, `currentFix` returns no fix and shows no permission prompt.
-- [ ] Permission is requested only while it is undecided; a refusal, a permanent denial or a restricted device
+- [x] With the device's location services disabled, `currentFix` returns no fix and shows no permission prompt.
+- [x] Permission is requested only while it is undecided; a refusal, a permanent denial or a restricted device
       returns no fix, and a permanent denial is never prompted again.
-- [ ] Switching GPS off while the permission prompt or the fix is pending discards the result.
-- [ ] A fix slower than `AppConstants.locationTimeout` ends at the time box with no fix, and capture and context
+- [x] Switching GPS off while the permission prompt or the fix is pending discards the result.
+- [x] A fix slower than `AppConstants.locationTimeout` ends at the time box with no fix, and capture and context
       maintenance neither wait longer nor report an error because of location.
-- [ ] A fix carries latitude, longitude, accuracy in metres and a UTC timestamp (§21).
+- [x] A fix carries latitude, longitude, accuracy in metres and a UTC timestamp (§21).
 - [ ] On web the browser asks for location only after GPS is on and a fix is requested; a refusal, an insecure
       origin or a browser without geolocation leaves the record without coordinates.
-- [ ] A platform with no geolocator implementation leaves the record without coordinates and shows no error.
+- [x] A platform with no geolocator implementation leaves the record without coordinates and shows no error.
 - [ ] Both macOS entitlements files carry `com.apple.security.personal-information.location`, `Info.plist` carries
       `NSLocationUsageDescription`, and a sandboxed macOS build returns a fix once the user allows it. The iOS
       `NSLocationWhenInUseUsageDescription` and the Android `ACCESS_FINE_LOCATION` declarations remain in place.
-- [ ] Tests: `frontend/test/core/location/location_service_test.dart` over a fake `GeolocatorPlatform` covering GPS
+- [x] Tests: `frontend/test/core/location/location_service_test.dart` over a fake `GeolocatorPlatform` covering GPS
       off (no platform call), services disabled, denied, denied forever, GPS switched off during the prompt, a
       timeout, an unsupported platform, and a fix that keeps coordinates, accuracy, UTC time and the time limit.

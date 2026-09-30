@@ -17,12 +17,10 @@ export function authenticate(deps: Deps) {
     }
     try {
       const principal = readAccess(token, deps.config);
-      const device = (await deps.store.devices()).find(
-        (row) => row.id === principal.deviceId,
-      );
-      const user = (await deps.store.users()).find(
-        (row) => row.id === principal.userId,
-      );
+      const [device, user] = await Promise.all([
+        deps.store.deviceById(principal.deviceId),
+        deps.store.userById(principal.userId),
+      ]);
       if (
         device === undefined ||
         device.revoked ||
@@ -36,7 +34,12 @@ export function authenticate(deps: Deps) {
       }
       principal.role = user.role;
       const current = requestContext.getStore();
-      if (current !== undefined) current.principal = principal;
+      if (current !== undefined) {
+        current.principal = principal;
+        // Express owns this matched route; never log the user-supplied URL.
+        const route = req.route as { path?: unknown } | undefined;
+        if (typeof route?.path === 'string') current.route = route.path;
+      }
       req.principal = principal;
       next();
     } catch (error) {

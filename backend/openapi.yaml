@@ -2,228 +2,1613 @@ openapi: 3.0.3
 info:
   title: Tapture backend
   version: '1'
-  description: Browsers may call the API cross-origin only from the exact origins in CORS_ORIGINS. Those origins receive Access-Control-Allow-Origin and Vary Origin, and preflights answer 204 allowing GET, POST, PATCH and DELETE with the Authorization, Content-Type, X-Api-Version and Idempotency-Key headers. Other preflights answer 403. Credentials are never allowed. An empty CORS_ORIGINS sends no CORS headers.
+  description:
+    Browsers may call the API cross-origin only from the exact origins in CORS_ORIGINS. Those origins
+    receive Access-Control-Allow-Origin and Vary Origin, and preflights answer 204 allowing GET, POST, PATCH
+    and DELETE with the Authorization, Content-Type, X-Api-Version and Idempotency-Key headers. Other
+    preflights answer 403. Credentials are never allowed. An empty CORS_ORIGINS sends no CORS headers.
 paths:
   /health:
     get:
-      responses: { '200': { description: Process is up. } }
+      responses:
+        '200':
+          description: Process is up.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - ok
+                required:
+                  - status
+                additionalProperties: false
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters: []
   /ready:
     get:
       responses:
-        { '200': { description: Ready. }, '500': { description: Not ready. } }
+        '200':
+          description: Ready.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - ready
+                required:
+                  - status
+                additionalProperties: false
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters: []
   /version:
     get:
-      responses: { '200': { description: Build and API version. } }
+      responses:
+        '200':
+          description: Build and API version.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  apiVersion: &a1
+                    type: string
+                    minLength: 1
+                  build: *a1
+                required:
+                  - apiVersion
+                  - build
+                additionalProperties: false
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters: []
   /metrics:
     get:
-      responses: { '200': { description: Counters. No project content. } }
+      responses:
+        '200':
+          description: Counters. No project content.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metrics'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters: []
   /api/v1/auth/register:
     post:
+      description:
+        Processes registration without revealing whether an address exists. Existing and new addresses
+        receive the same accepted response and no account identifier.
       responses:
-        {
-          '201': { description: Created. },
-          '403': { description: Registration is closed. },
-          '409': { description: Duplicate address. },
-        }
-  /api/v1/auth/change-password:
-    post:
-      responses:
-        {
-          '204': { description: Changed. },
-          '401': { description: Wrong password. },
-        }
-  /api/v1/auth/reset:
-    post:
-      responses:
-        {
-          '200':
-            {
-              description: Accepted. The body does not reveal whether the address exists.,
-            },
-        }
-  /api/v1/auth/login:
-    post:
-      description: Signs into this organisation and enrols a device. organisationId is optional when the deployment hosts exactly one organisation.
+        '200':
+          description: Accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accepted'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [email, password, deviceId]
               properties:
-                email: { type: string }
-                password: { type: string, format: password }
-                deviceId: { type: string }
-                organisationId: { type: string }
+                email: *a1
+                password:
+                  type: string
+                  minLength: 12
+                organisationId: *a1
+                invitationToken: *a1
+              required:
+                - email
+                - password
+                - organisationId
+              additionalProperties: false
+      parameters: []
+  /api/v1/auth/change-password:
+    post:
       responses:
-        {
-          '200': { description: Token pair. },
-          '401': { description: Invalid credentials. },
-          '429': { description: Locked or limited. },
-        }
+        '204':
+          description: Changed.
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentPassword: *a1
+                nextPassword:
+                  type: string
+                  minLength: 12
+              required:
+                - currentPassword
+                - nextPassword
+              additionalProperties: false
+      parameters: []
+  /api/v1/auth/reset:
+    post:
+      responses:
+        '200':
+          description: Accepted. The body does not reveal whether the address exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accepted'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    email: *a1
+                    organisationId: *a1
+                  required:
+                    - email
+                    - organisationId
+                  additionalProperties: false
+                - type: object
+                  properties:
+                    token: *a1
+                    password:
+                      type: string
+                      minLength: 12
+                  required:
+                    - token
+                    - password
+                  additionalProperties: false
+      parameters: []
+  /api/v1/auth/login:
+    post:
+      description:
+        Signs into this organisation and enrols a device. organisationId is optional when the deployment
+        hosts exactly one organisation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: *a1
+                password: *a1
+                deviceId: *a1
+                organisationId: *a1
+              required:
+                - email
+                - password
+                - deviceId
+              additionalProperties: false
+      responses:
+        '200':
+          description: Token pair.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters: []
   /api/v1/auth/refresh:
     post:
       responses:
-        {
-          '200': { description: Rotated pair. },
-          '401': { description: Reuse or revoked. },
-        }
+        '200':
+          description: Rotated pair.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken: *a1
+              required:
+                - refreshToken
+              additionalProperties: false
+      parameters: []
   /api/v1/auth/logout:
     post:
-      responses: { '204': { description: Signed out. Repeating it succeeds. } }
+      responses:
+        '204':
+          description: Signed out. Repeating it succeeds.
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken: *a1
+              required:
+                - refreshToken
+              additionalProperties: false
+      parameters: []
   /api/v1/auth/me:
     get:
-      description: Returns cached identity, memberships, grant expiry and aiAvailable indicating configured provider custody; never a provider credential.
+      description:
+        Returns cached identity, memberships, grant expiry and aiAvailable indicating configured provider
+        custody; never a provider credential.
       responses:
-        { '200': { description: Identity, organisation, role and grants. } }
+        '200':
+          description: Identity
+          organisation: null
+          role and grants.: null
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Identity'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters: []
   /api/v1/devices:
     get:
-      responses: { '200': { description: Devices for the signed-in user. } }
+      responses:
+        '200':
+          description: Devices for the signed-in user.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters: []
     post:
-      responses: { '201': { description: Enrolled device. } }
+      responses:
+        '201':
+          description: Enrolled device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters: []
   /api/v1/devices/{id}:
     delete:
       responses:
-        { '204': { description: Revoked. }, '404': { description: Not found. } }
+        '204':
+          description: Revoked.
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
   /api/v1/org/users:
     get:
       responses:
-        {
-          '200': { description: Page of users. },
-          '404': { description: Not visible. },
-        }
+        '200':
+          description: Page of users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPage'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters:
+        - name: cursor
+          in: query
+          schema: *a1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
     post:
       responses:
-        {
-          '201': { description: Invited. },
-          '404': { description: Not visible. },
-        }
+        '201':
+          description: Invited.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: *a1
+                role: &a2
+                  type: string
+                  enum:
+                    - administrator
+                    - project_manager
+                    - reviewer
+                    - field_operator
+              required:
+                - email
+                - role
+              additionalProperties: false
+      parameters: []
   /api/v1/org/users/{id}:
     patch:
       responses:
-        {
-          '204': { description: Role or status changed. },
-          '400': { description: Password refused. },
-        }
+        '204':
+          description: Role or status changed.
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role: *a2
+                status: &a5
+                  type: string
+                  enum:
+                    - active
+                    - disabled
+                    - invited
+              required: []
+              additionalProperties: false
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
   /api/v1/projects:
     get:
-      responses: { '200': { description: Visible projects. } }
+      responses:
+        '200':
+          description: Visible projects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters: []
     post:
-      responses: { '201': { description: Registered. } }
+      responses:
+        '201':
+          description: Registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: *a1
+                name: *a1
+              required:
+                - id
+                - name
+              additionalProperties: false
+      parameters: []
   /api/v1/projects/{id}:
     patch:
       responses:
-        {
-          '200': { description: Name or relay settings. },
-          '400': { description: Identifier cannot change. },
-          '404': { description: Not visible. },
-        }
+        '200':
+          description: Name or relay settings.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: *a1
+                relayEnabled: &a3
+                  type: boolean
+                neverRelay: *a3
+                retentionDays: &a7
+                  type: integer
+                  minimum: 1
+                  maximum: 90
+              required: []
+              additionalProperties: false
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
   /api/v1/projects/{id}/members:
     get:
       responses:
-        {
-          '200': { description: Members. },
-          '404': { description: Not visible. },
-        }
+        '200':
+          description: Members.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Membership'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
     post:
-      responses: { '201': { description: Added. } }
+      responses:
+        '201':
+          description: Added.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId: *a1
+                required:
+                  - userId
+                additionalProperties: false
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId: *a1
+                contextScope: &a6
+                  type: string
+                  nullable: true
+              required:
+                - userId
+              additionalProperties: false
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
   /api/v1/projects/{id}/members/{userId}:
     delete:
       responses:
-        {
-          '204': { description: Removed. },
-          '404': { description: Not visible. },
-        }
+        '204':
+          description: Removed.
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
+        - name: userId
+          in: path
+          required: true
+          schema: *a1
   /api/v1/projects/{id}/relay/packages:
     get:
-      responses: { '200': { description: Waiting packages. } }
+      responses:
+        '200':
+          description: Waiting packages.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackagePage'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
+        - name: cursor
+          in: query
+          schema: *a1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
     post:
       responses:
-        {
-          '201': { description: Stored opaque package. },
-          '413': { description: Too large. },
-          '429': { description: Ceiling. },
-        }
+        '201':
+          description: Stored opaque package.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Package'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
   /api/v1/projects/{id}/relay/packages/{packageId}:
     get:
       responses:
-        {
-          '200': { description: Opaque bytes. },
-          '404': { description: Not visible. },
-        }
+        '200':
+          description: Opaque bytes.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
+        - name: packageId
+          in: path
+          required: true
+          schema: *a1
   /api/v1/relay/ack:
     post:
       responses:
-        {
-          '200':
-            { description: Acknowledged. Replay returns the first result. },
-        }
+        '200':
+          description: Acknowledged. Replay returns the first result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acknowledged:
+                    type: array
+                    items: *a1
+                required:
+                  - acknowledged
+                additionalProperties: false
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                packageIds:
+                  type: array
+                  items: *a1
+              required:
+                - packageIds
+              additionalProperties: false
+      parameters: []
   /api/v1/projects/{id}/relay/state:
     get:
-      responses: { '200': { description: Version vector. } }
+      responses:
+        '200':
+          description: Version vector.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: &a4
+                  type: integer
+                  minimum: 0
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: *a1
   /api/v1/ai/extract:
     post:
-      description: >-
-        `{projectId, model, payload}` where payload is the provider envelope
-        object (instructions, data, media[{mimeType, base64}],
-        responseMimeType); a base64 string of that JSON is also accepted. The
-        body may carry inline media up to AI_BODY_LIMIT_BYTES. Every other JSON
-        route keeps BODY_LIMIT_BYTES.
+      description:
+        '`{projectId, model, payload}` where payload is the provider envelope object (instructions, data,
+        media[{mimeType, base64}], responseMimeType); a base64 string of that JSON is also accepted. The body
+        may carry inline media up to AI_BODY_LIMIT_BYTES. Every other JSON route keeps BODY_LIMIT_BYTES. The
+        server enforces shared project/organisation request and budget limits, including UTC daily limits,
+        with a durable reservation before dispatch. A missing AI_REQUEST_COST_CEILING returns unavailable;
+        reported cost is the conservative charge, not a provider invoice.'
       responses:
-        {
-          '200': { description: Pass-through. },
-          '413': { description: Body exceeds AI_BODY_LIMIT_BYTES. },
-        }
+        '200':
+          description: Pass-through.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiResult'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiRequest'
+      parameters: []
   /api/v1/ai/ocr:
     post:
-      description: >-
-        `{projectId, model, payload}` where payload is the provider envelope
-        object (instructions, data, media[{mimeType, base64}],
-        responseMimeType); a base64 string of that JSON is also accepted. The
-        body may carry inline media up to AI_BODY_LIMIT_BYTES.
+      description:
+        '`{projectId, model, payload}` where payload is the provider envelope object (instructions, data,
+        media[{mimeType, base64}], responseMimeType); a base64 string of that JSON is also accepted. The body
+        may carry inline media up to AI_BODY_LIMIT_BYTES. The server enforces shared project/organisation
+        request and budget limits, including UTC daily limits, with a durable reservation before dispatch. A
+        missing AI_REQUEST_COST_CEILING returns unavailable; reported cost is the conservative charge, not a
+        provider invoice.'
       responses:
-        {
-          '200': { description: Pass-through. },
-          '413': { description: Body exceeds AI_BODY_LIMIT_BYTES. },
-        }
+        '200':
+          description: Pass-through.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiResult'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiRequest'
+      parameters: []
   /api/v1/ai/transcribe:
     post:
-      description: >-
-        `{projectId, model, payload}` where payload is the provider envelope
-        object (instructions, data, media[{mimeType, base64}],
-        responseMimeType); a base64 string of that JSON is also accepted. The
-        body may carry inline media up to AI_BODY_LIMIT_BYTES.
+      description:
+        '`{projectId, model, payload}` where payload is the provider envelope object (instructions, data,
+        media[{mimeType, base64}], responseMimeType); a base64 string of that JSON is also accepted. The body
+        may carry inline media up to AI_BODY_LIMIT_BYTES. The server enforces shared project/organisation
+        request and budget limits, including UTC daily limits, with a durable reservation before dispatch. A
+        missing AI_REQUEST_COST_CEILING returns unavailable; reported cost is the conservative charge, not a
+        provider invoice.'
       responses:
-        {
-          '200': { description: Pass-through. },
-          '413': { description: Body exceeds AI_BODY_LIMIT_BYTES. },
-        }
+        '200':
+          description: Pass-through.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiResult'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiRequest'
+      parameters: []
   /api/v1/ai/refine:
     post:
-      description: >-
-        `{projectId, model, payload}` where payload is the provider envelope
-        object (instructions, data, media[{mimeType, base64}],
-        responseMimeType); a base64 string of that JSON is also accepted. The
-        body may carry inline media up to AI_BODY_LIMIT_BYTES.
+      description:
+        '`{projectId, model, payload}` where payload is the provider envelope object (instructions, data,
+        media[{mimeType, base64}], responseMimeType); a base64 string of that JSON is also accepted. The body
+        may carry inline media up to AI_BODY_LIMIT_BYTES. The server enforces shared project/organisation
+        request and budget limits, including UTC daily limits, with a durable reservation before dispatch. A
+        missing AI_REQUEST_COST_CEILING returns unavailable; reported cost is the conservative charge, not a
+        provider invoice.'
       responses:
-        {
-          '200': { description: Pass-through. },
-          '413': { description: Body exceeds AI_BODY_LIMIT_BYTES. },
-        }
+        '200':
+          description: Pass-through.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiResult'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AiRequest'
+      parameters: []
   /api/v1/ai/usage:
     get:
-      responses: { '200': { description: Usage rows without payload content. } }
+      responses:
+        '200':
+          description: Usage rows without payload content.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usage'
+        '400':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '413':
+          $ref: '#/components/responses/Error'
+        '429':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+        '503':
+          $ref: '#/components/responses/Error'
+      parameters:
+        - name: project
+          in: query
+          required: true
+          schema: *a1
+        - name: from
+          in: query
+          required: true
+          schema: *a1
+        - name: to
+          in: query
+          required: true
+          schema: *a1
 components:
   schemas:
     Error:
       type: object
-      required: [error]
       properties:
         error:
           type: object
-          required: [code, message]
           properties:
-            code: { type: string }
-            message: { type: string }
-            details: { type: object }
+            code:
+              type: string
+              enum:
+                - invalid_request
+                - unauthorized
+                - invalid_credentials
+                - forbidden
+                - not_found
+                - conflict
+                - payload_too_large
+                - rate_limited
+                - quota_exceeded
+                - internal
+                - unavailable
+            message: *a1
+            details:
+              type: object
+              additionalProperties: true
+          required:
+            - code
+            - message
+          additionalProperties: false
+      required:
+        - error
+      additionalProperties: false
+    Accepted:
+      type: object
+      properties:
+        accepted:
+          type: boolean
+          enum:
+            - true
+      required:
+        - accepted
+      additionalProperties: false
+    TokenPair:
+      type: object
+      properties:
+        accessToken: *a1
+        refreshToken: *a1
+        expiresIn: *a4
+      required:
+        - accessToken
+        - refreshToken
+        - expiresIn
+      additionalProperties: false
+    User:
+      type: object
+      properties:
+        id: *a1
+        organisationId: *a1
+        email: *a1
+        role: *a2
+        status: *a5
+      required:
+        - id
+        - organisationId
+        - email
+        - role
+        - status
+      additionalProperties: false
+    UserPage:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        nextCursor: *a6
+      required:
+        - users
+        - nextCursor
+      additionalProperties: false
+    Invitation:
+      type: object
+      properties:
+        userId: *a1
+        invitationToken: *a1
+      required:
+        - userId
+        - invitationToken
+      additionalProperties: false
+    Device:
+      type: object
+      properties:
+        id: *a1
+        userId: *a1
+        enrolledAt: *a1
+        lastSeenAt: *a1
+        revoked: *a3
+      required:
+        - id
+        - userId
+        - enrolledAt
+        - lastSeenAt
+        - revoked
+      additionalProperties: false
+    Project:
+      type: object
+      properties:
+        id: *a1
+        organisationId: *a1
+        name: *a1
+        relayEnabled: *a3
+        neverRelay: *a3
+        retentionDays: *a7
+      required:
+        - id
+        - organisationId
+        - name
+        - relayEnabled
+        - neverRelay
+        - retentionDays
+      additionalProperties: false
+    Membership:
+      type: object
+      properties:
+        projectId: *a1
+        userId: *a1
+        contextScope: *a6
+      required:
+        - projectId
+        - userId
+        - contextScope
+      additionalProperties: false
+    Package:
+      type: object
+      properties:
+        id: *a1
+        projectId: *a1
+        authorDeviceId: *a1
+        byteSize: *a4
+        createdAt: *a1
+        expiresAt: *a1
+        storageRef: *a1
+      required:
+        - id
+        - projectId
+        - authorDeviceId
+        - byteSize
+        - createdAt
+        - expiresAt
+        - storageRef
+      additionalProperties: false
+    PackagePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Package'
+        nextCursor: *a6
+      required:
+        - items
+        - nextCursor
+      additionalProperties: false
+    AiEnvelope:
+      type: object
+      properties:
+        instructions:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+        media:
+          type: array
+          items:
+            type: object
+            properties:
+              mimeType: *a1
+              base64:
+                type: string
+            required:
+              - mimeType
+              - base64
+            additionalProperties: false
+        responseMimeType:
+          type: string
+          enum:
+            - text/plain
+            - application/json
+      required:
+        - instructions
+        - data
+        - media
+        - responseMimeType
+      additionalProperties: false
+    AiRequest:
+      type: object
+      properties:
+        projectId: *a1
+        model: *a1
+        payload:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/AiEnvelope'
+      required:
+        - projectId
+        - model
+        - payload
+      additionalProperties: false
+    AiResult:
+      type: object
+      properties:
+        text: *a1
+        model: *a1
+      required:
+        - text
+        - model
+      additionalProperties: false
+    Usage:
+      type: object
+      properties:
+        projectId: *a1
+        userId: *a1
+        model: *a1
+        byteSize: *a4
+        durationMs: *a4
+        outcome:
+          type: string
+          enum:
+            - reserved
+            - ok
+            - failed
+        cost:
+          type: number
+          minimum: 0
+        at: *a1
+      required:
+        - projectId
+        - userId
+        - model
+        - byteSize
+        - durationMs
+        - outcome
+        - cost
+        - at
+      additionalProperties: false
+    Identity:
+      type: object
+      properties:
+        userId: *a1
+        organisationId: *a1
+        role: *a2
+        aiAvailable: *a3
+        grants:
+          type: array
+          items:
+            type: object
+            properties:
+              projectId: *a1
+              contextScope: *a6
+            required:
+              - projectId
+              - contextScope
+            additionalProperties: false
+        grantValidUntil: *a1
+      required:
+        - userId
+        - organisationId
+        - role
+        - aiAvailable
+        - grants
+        - grantValidUntil
+      additionalProperties: false
+    Metrics:
+      type: object
+      properties:
+        requests:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              count: *a4
+              errors: *a4
+              latencyMs:
+                type: number
+                minimum: 0
+            required:
+              - count
+              - errors
+              - latencyMs
+            additionalProperties: false
+        packagesStored: *a4
+        packagesAcked: *a4
+        packagesPurged: *a4
+        storageBytes:
+          type: object
+          additionalProperties: *a4
+        aiRequests: *a4
+        aiCost:
+          type: number
+          minimum: 0
+        authFailures: *a4
+      required:
+        - requests
+        - packagesStored
+        - packagesAcked
+        - packagesPurged
+        - storageBytes
+        - aiRequests
+        - aiCost
+        - authFailures
+      additionalProperties: false
+  responses:
+    Error:
+      description: Typed safe error envelope.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

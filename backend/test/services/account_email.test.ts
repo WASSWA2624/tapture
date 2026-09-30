@@ -7,6 +7,7 @@ import {
   createInvitedUser,
   registerAccount,
   requestReset,
+  issuePasswordReset,
 } from '../../src/services/auth/account.js';
 import { bootstrapOrganisation } from '../../src/services/auth/bootstrap.js';
 import { login } from '../../src/services/auth/login.js';
@@ -113,15 +114,11 @@ describe('account email', () => {
       password: 'field-secret-value',
       organisationId: 'org-1',
     });
-    await assert.rejects(
-      () =>
-        registerAccount(deps.store, deps.config, {
-          email: 'field@acme.test ',
-          password: 'another-secret-value',
-          organisationId: 'org-1',
-        }),
-      isConflict,
-    );
+    await registerAccount(deps.store, deps.config, {
+      email: 'field@acme.test ',
+      password: 'another-secret-value',
+      organisationId: 'org-1',
+    });
     const emails = deps.store.users().map((user) => user.email);
     assert.deepEqual(emails.sort(), ['field@acme.test', 'invited@acme.test']);
     const invites = deps.store.invites().length;
@@ -129,6 +126,16 @@ describe('account email', () => {
       email: 'FIELD@ACME.TEST',
       organisationId: 'org-1',
     });
+    assert.equal(deps.store.invites().length, invites);
+    const requested = deps.store.audit().at(-1);
+    assert.equal(requested?.action, 'password_reset_requested');
+    assert.equal(requested?.after?.['email'], 'field@acme.test');
+    const token = await issuePasswordReset(deps.store, {
+      email: 'FIELD@ACME.TEST',
+      organisationId: 'org-1',
+      actorId: 'operator',
+    });
+    assert.ok(token);
     assert.equal(deps.store.invites().length, invites + 1);
     assert.equal(deps.store.invites().at(-1)?.userId, registered.userId);
   });

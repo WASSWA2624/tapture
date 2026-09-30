@@ -12,6 +12,6 @@ The heart of the app: evidence in, with as little typing as possible, always sav
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 12.01 | 012 | [Capture: evidence in, saved before anything else](012-capture.md) | **Partially complete** | 0/66 | 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 10.01 (010), 11.01 (011); Waiting for: 009, 010, 011 |
+| 12.01 | 012 | [Capture: evidence in, saved before anything else](012-capture.md) | **Partially complete** | 53/66 | 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 10.01 (010), 11.01 (011); Waiting for: 011 |
 
 <!-- dev-plan:generated:end -->

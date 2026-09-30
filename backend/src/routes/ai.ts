@@ -1,7 +1,7 @@
 import express, { type Express } from 'express';
 import { invalidRequest } from '../domain/errors.js';
 import type { Deps } from '../deps.js';
-import { asyncRoute } from '../http.js';
+import { asyncRoute, objectBody } from '../http.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { proxyAi, usageReport } from '../services/ai/proxy.js';
 
@@ -14,6 +14,10 @@ function payload(body: unknown): {
   model: string;
   payload: Buffer;
 } {
+  objectBody(body, ['projectId', 'model', 'payload']);
+  if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+    throw invalidRequest('Missing project or model.');
+  }
   const record = body as {
     projectId?: unknown;
     model?: unknown;
@@ -21,7 +25,9 @@ function payload(body: unknown): {
   };
   if (
     typeof record.projectId !== 'string' ||
-    typeof record.model !== 'string'
+    record.projectId.length === 0 ||
+    typeof record.model !== 'string' ||
+    record.model.length === 0
   ) {
     throw invalidRequest('Missing project or model.');
   }
@@ -62,9 +68,8 @@ export function registerAi(app: Express, deps: Deps): void {
           principal,
           method,
           input,
+          deps.metrics,
         );
-        deps.metrics.aiRequests += 1;
-        deps.metrics.aiCost += input.payload.length / 1000;
         res.json(result);
       }),
     );
@@ -85,6 +90,12 @@ export function registerAi(app: Express, deps: Deps): void {
       ) {
         throw invalidRequest('Missing usage window.');
       }
+      if (
+        !Number.isFinite(Date.parse(from)) ||
+        !Number.isFinite(Date.parse(to)) ||
+        Date.parse(from) > Date.parse(to)
+      )
+        throw invalidRequest('Invalid usage window.');
       res.json(
         await usageReport(deps.store, principal, {
           projectId: project,

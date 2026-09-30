@@ -1,7 +1,7 @@
 import type { Express } from 'express';
 import { invalidRequest } from '../domain/errors.js';
 import type { Deps } from '../deps.js';
-import { asyncRoute } from '../http.js';
+import { asyncRoute, objectBody } from '../http.js';
 import { authenticate } from '../middleware/authenticate.js';
 import {
   addMember,
@@ -28,11 +28,13 @@ export function registerProjects(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      const body = req.body as {
-        id?: unknown;
-        name?: unknown;
-      };
-      if (typeof body.id !== 'string' || typeof body.name !== 'string') {
+      const body = objectBody(req.body, ['id', 'name']);
+      if (
+        typeof body.id !== 'string' ||
+        body.id.length === 0 ||
+        typeof body.name !== 'string' ||
+        body.name.length === 0
+      ) {
         throw invalidRequest('Missing project id or name.');
       }
       const project = await createProject(deps.store, principal, {
@@ -50,15 +52,26 @@ export function registerProjects(app: Express, deps: Deps): void {
       if (principal === undefined) throw invalidRequest('Missing session.');
       const id = req.params['id'];
       if (id === undefined) throw invalidRequest('Missing project.');
-      const body = req.body as {
-        name?: unknown;
-        relayEnabled?: unknown;
-        neverRelay?: unknown;
-        retentionDays?: unknown;
-        id?: unknown;
-      };
+      const body = objectBody(req.body, [
+        'name',
+        'relayEnabled',
+        'neverRelay',
+        'retentionDays',
+      ]);
       if (body.id !== undefined)
         throw invalidRequest('The project id cannot change.');
+      if (
+        (body.name !== undefined &&
+          (typeof body.name !== 'string' || body.name.length === 0)) ||
+        (body.relayEnabled !== undefined &&
+          typeof body.relayEnabled !== 'boolean') ||
+        (body.neverRelay !== undefined &&
+          typeof body.neverRelay !== 'boolean') ||
+        (body.retentionDays !== undefined &&
+          (typeof body.retentionDays !== 'number' ||
+            !Number.isSafeInteger(body.retentionDays)))
+      )
+        throw invalidRequest('Invalid project settings.');
       const patch: {
         name?: string;
         relayEnabled?: boolean;
@@ -101,12 +114,15 @@ export function registerProjects(app: Express, deps: Deps): void {
       const id = req.params['id'];
       if (principal === undefined || id === undefined)
         throw invalidRequest('Missing project.');
-      const body = req.body as {
-        userId?: unknown;
-        contextScope?: unknown;
-      };
+      const body = objectBody(req.body, ['userId', 'contextScope']);
       if (typeof body.userId !== 'string')
         throw invalidRequest('Missing user.');
+      if (
+        body.contextScope !== undefined &&
+        body.contextScope !== null &&
+        typeof body.contextScope !== 'string'
+      )
+        throw invalidRequest('Invalid context scope.');
       await addMember(deps.store, principal, id, {
         userId: body.userId,
         contextScope:

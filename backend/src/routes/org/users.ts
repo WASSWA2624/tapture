@@ -2,7 +2,7 @@ import type { Express } from 'express';
 import { invalidRequest } from '../../domain/errors.js';
 import type { Role } from '../../domain/permissions.js';
 import type { Deps } from '../../deps.js';
-import { asyncRoute } from '../../http.js';
+import { asyncRoute, objectBody, pageQuery } from '../../http.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { inviteUser, listUsers, patchUser } from '../../services/org/users.js';
 import type { User } from '../../types/index.js';
@@ -23,14 +23,7 @@ export function registerOrgUsers(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      const cursor = req.query['cursor'];
-      const limit = req.query['limit'];
-      res.json(
-        await listUsers(deps.store, principal, {
-          ...(typeof cursor === 'string' ? { cursor } : {}),
-          ...(typeof limit === 'string' ? { limit: Number(limit) } : {}),
-        }),
-      );
+      res.json(await listUsers(deps.store, principal, pageQuery(req.query)));
     }),
   );
   app.post(
@@ -39,10 +32,7 @@ export function registerOrgUsers(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      const body = req.body as {
-        email?: unknown;
-        role?: unknown;
-      };
+      const body = objectBody(req.body, ['email', 'role']);
       if (typeof body.email !== 'string' || !isRole(body.role)) {
         throw invalidRequest('Missing email or role.');
       }
@@ -64,11 +54,7 @@ export function registerOrgUsers(app: Express, deps: Deps): void {
       if (principal === undefined) throw invalidRequest('Missing session.');
       const id = req.params['id'];
       if (id === undefined) throw invalidRequest('Missing user.');
-      const body = req.body as {
-        role?: unknown;
-        status?: unknown;
-        password?: unknown;
-      };
+      const body = objectBody(req.body, ['role', 'status']);
       if (body.password !== undefined)
         throw invalidRequest('A password cannot be set here.');
       const patch: {

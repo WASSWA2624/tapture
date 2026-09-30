@@ -10,6 +10,14 @@
 
 Historical completion was recorded on 2026-09-22 in the old tracker and index. Capture controllers, evidence persistence, screens and tests exist, but all 66 acceptance items below remain unchecked. Report Partially complete until acceptance is reconciled and verified. This status does not mean capture is unimplemented.
 
+## Verification — 2026-09-30
+
+Reviewed capture domain/data/presentation and its device-service boundaries. Controller/capture-screen regression passed 43 tests. Audio adapter, durable session recovery and capture-feedback suites passed 48 tests, followed by a widget test proving a failed session write prevents microphone access. Audio ownership is persisted before recording; Resume and Save recover a streamed playable WAV derivative with sample-derived duration, hash and record/photo attachment owners, retaining interrupted `.recording` bytes unchanged. Full-disk recovery preserves pending metadata and retries idempotently. The unified attachments table stores audio kind/duration (task 055), replacing the older documents-table wording.
+
+Five existing native database/file integration cases passed: ten rapid shots with distinct hashes/order, forty offline raw saves with zero outbound calls, a four-item rapid run, record-local context override and context-derived file paths. Domain/widget suites cover automatic values and 20 parallel record numbers, camera/scanner seams, photo corrections, captions, reset and recovery. Later capture flows in tasks 063/073/076 supersede the original sheet/picker/discard presentation choices.
+
+Partially complete: real-device process kills, preview/orientation and shutter timing, worn-label scanning, offline platform speech, a 30-minute killed recording and sustained scrolling/timing remain unverified. PDF rasterization is currently a production placeholder and its real import/render criteria stay open until the renderer and wiring are verified. The 300ms identifier test currently measures domain resolution over 10,000 supplied ids, not a realistically seeded database query.
+
 ## Implement
 
 The whole capture surface, and the rule underneath it that evidence is durable before the interface confirms anything:
@@ -335,98 +343,98 @@ class SttResult {
 ### Session and screen
 
 - [ ] Killing the app mid-session loses at most the last keystroke.
-- [ ] A session serialises, restores and resumes with its photos, captions and values intact.
-- [ ] Tests: unit tests of every mutation and of the JSON round trip; controller test asserting a photo added is on disk and in the database before the next frame, and that a failed write leaves the emitted state unchanged.
-- [ ] Nothing on the capture screen is mandatory except one piece of evidence.
-- [ ] A fully manual project can be captured entirely on the capture screen without opening review.
-- [ ] Tests: widget test of `capture_screen.dart` at compact, medium and expanded widths at 200 percent text scale; widget test of `inline_fields_section.dart` covering no fields, required-only, "More fields" expanded, and a field whose value fails validation.
+- [x] A session serialises, restores and resumes with its photos, captions and values intact.
+- [x] Tests: unit tests of every mutation and of the JSON round trip; controller test asserting a photo added is on disk and in the database before the next frame, and that a failed write leaves the emitted state unchanged.
+- [x] Nothing on the capture screen is mandatory except one piece of evidence.
+- [x] A fully manual project can be captured entirely on the capture screen without opening review.
+- [x] Tests: widget test of `capture_screen.dart` at compact, medium and expanded widths at 200 percent text scale; widget test of `inline_fields_section.dart` covering no fields, required-only, "More fields" expanded, and a field whose value fails validation.
 
 ### Camera
 
-- [ ] A user who denies the camera can still add evidence and save a record.
+- [x] A user who denies the camera can still add evidence and save a record.
 - [ ] Returning from background restores the preview without a black frame, in both orientations.
-- [ ] Tests: widget test of `camera_permission_gate.dart` covering granted, denied and permanently denied; widget test of `camera_view.dart` covering starting, running, failed and a pause-resume cycle, against a fake camera service.
+- [x] Tests: widget test of `camera_permission_gate.dart` covering granted, denied and permanently denied; widget test of `camera_view.dart` covering starting, running, failed and a pause-resume cycle, against a fake camera service.
 - [ ] Shutter to ready is under 400 milliseconds on a mid-range device.
-- [ ] A quality warning never prevents saving and never discards the photo.
+- [x] A quality warning never prevents saving and never discards the photo.
 - [ ] Tests: integration test that ten rapid shots produce ten files and ten rows with distinct hashes and correct order; unit tests of `image_quality.dart` over dark, blurry, overexposed, small-text and clean fixtures; a measurement test for the shutter budget.
-- [ ] Controls are usable with gloves and remain readable in the outdoor theme.
-- [ ] The original photo is retained unchanged alongside the perspective-corrected copy.
-- [ ] Flash, zoom and grid choices survive leaving and re-entering capture.
-- [ ] Tests: widget test of `camera_controls.dart` asserting flash cycling, focus, zoom clamping, grid persistence and the accessibility matchers against a fake camera service; widget test of `document_mode.dart` covering boundary detected, not detected and correction failed.
+- [x] Controls are usable with gloves and remain readable in the outdoor theme.
+- [x] The original photo is retained unchanged alongside the perspective-corrected copy.
+- [x] Flash, zoom and grid choices survive leaving and re-entering capture.
+- [x] Tests: widget test of `camera_controls.dart` asserting flash cycling, focus, zoom clamping, grid persistence and the accessibility matchers against a fake camera service; widget test of `document_mode.dart` covering boundary detected, not detected and correction failed.
 
 ### Import
 
-- [ ] Deleting the photo from the device gallery afterwards does not affect the record.
-- [ ] A rejected file names the reason and leaves the session unchanged.
+- [x] Deleting the photo from the device gallery afterwards does not affect the record.
+- [x] A rejected file names the reason and leaves the session unchanged.
 - [ ] A twenty-page document does not stall the interface.
 - [ ] Tests: widget tests of `gallery_picker.dart` and `document_picker.dart` covering multi-select, an oversized file, a wrong extension and a mismatched magic-byte file; unit test of `pdf_pages.dart` against a multi-page fixture asserting lazy rendering and an unmodified source.
 
 ### Tray and viewer
 
 - [ ] Thirty photos scroll smoothly and the add button stays reachable throughout.
-- [ ] The persisted order is the order export and reports use.
-- [ ] A photo type feeds file naming and evidence tracking as soon as it is set.
-- [ ] Tests: widget tests of `photo_tray.dart` (badges, ordering, empty state), `photo_reorder.dart` (order persisted across a rebuild), `photo_type_sheet.dart` (last-used default, every type reachable) and `photo_multi_select.dart` (count, select-all, clear, selection across scroll and rotation).
-- [ ] The original file's hash is unchanged after rotating and cropping.
-- [ ] Reverting always restores the full frame at its original orientation.
-- [ ] Tests: widget tests of `photo_viewer_screen.dart` (single photo, swipe across several, missing file) and `photo_crop_screen.dart` (crop then revert); unit tests of `photo_rotate.dart` asserting metadata-only rotation with no Flutter binding.
-- [ ] Undo restores a deleted photo at its original position with its caption and type.
-- [ ] Retaking never changes a photo's position in the tray.
-- [ ] Moving photos never leaves a dangling evidence link or an orphaned file.
-- [ ] Tests: widget tests of delete-then-undo, retake preserving position and metadata, and a multi-select move across records; transaction test asserting a mid-move failure rolls back files and rows together.
+- [x] The persisted order is the order export and reports use.
+- [x] A photo type feeds file naming and evidence tracking as soon as it is set.
+- [x] Tests: widget tests of `photo_tray.dart` (badges, ordering, empty state), `photo_reorder.dart` (order persisted across a rebuild), `photo_type_sheet.dart` (last-used default, every type reachable) and `photo_multi_select.dart` (count, select-all, clear, selection across scroll and rotation).
+- [x] The original file's hash is unchanged after rotating and cropping.
+- [x] Reverting always restores the full frame at its original orientation.
+- [x] Tests: widget tests of `photo_viewer_screen.dart` (single photo, swipe across several, missing file) and `photo_crop_screen.dart` (crop then revert); unit tests of `photo_rotate.dart` asserting metadata-only rotation with no Flutter binding.
+- [x] Undo restores a deleted photo at its original position with its caption and type.
+- [x] Retaking never changes a photo's position in the tray.
+- [x] Moving photos never leaves a dangling evidence link or an orphaned file.
+- [x] Tests: widget tests of delete-then-undo, retake preserving position and metadata, and a multi-select move across records; transaction test asserting a mid-move failure rolls back files and rows together.
 
 ### Captions
 
-- [ ] Caption text survives backgrounding with no explicit save.
-- [ ] A photo caption can be edited without touching the record caption or any other photo's caption.
-- [ ] Tests: widget tests of `record_caption_field.dart` (typing, backgrounding, write failure) and `photo_caption_sheet.dart` (empty, existing caption, write failure).
-- [ ] A caption can never be applied without the number of affected photos on screen.
-- [ ] Applying to seven photos writes seven independent caption rows, each editable alone afterwards.
-- [ ] Tests: widget test of the default scope in both entry paths and of the displayed counts; unit tests of `caption_apply.dart` asserting append, replace, the recoverable previous value, and independence of each written row.
+- [x] Caption text survives backgrounding with no explicit save.
+- [x] A photo caption can be edited without touching the record caption or any other photo's caption.
+- [x] Tests: widget tests of `record_caption_field.dart` (typing, backgrounding, write failure) and `photo_caption_sheet.dart` (empty, existing caption, write failure).
+- [x] A caption can never be applied without the number of affected photos on screen.
+- [x] Applying to seven photos writes seven independent caption rows, each editable alone afterwards.
+- [x] Tests: widget test of the default scope in both entry paths and of the displayed counts; unit tests of `caption_apply.dart` asserting append, replace, the recoverable previous value, and independence of each written row.
 
 ### Voice and audio
 
 - [ ] Dictation works with the network off wherever the platform supports the language.
-- [ ] Refusing the microphone leaves typing fully available and blocks nothing else.
-- [ ] Later refinement writes a separate column and leaves the raw transcript row unchanged.
-- [ ] Tests: unit tests of `stt_service.dart` with a fake recogniser covering partial, final, cancel, unsupported language and offline-unavailable; widget tests of `mic_permission_gate.dart` and `voice_input_button.dart` including the denied and listening states; unit test that refining does not alter the raw transcript row.
+- [x] Refusing the microphone leaves typing fully available and blocks nothing else.
+- [x] Later refinement writes a separate column and leaves the raw transcript row unchanged.
+- [x] Tests: unit tests of `stt_service.dart` with a fake recogniser covering partial, final, cancel, unsupported language and offline-unavailable; widget tests of `mic_permission_gate.dart` and `voice_input_button.dart` including the denied and listening states; unit test that refining does not alter the raw transcript row.
 - [ ] A thirty-minute recording survives an app kill, with everything captured up to the kill playable.
 - [ ] Tests: widget test of `audio_recorder.dart` covering idle, recording, paused, permission denied and disk full; test asserting a killed recording leaves a playable file and a documents row.
 
 ### Identifiers
 
 - [ ] A worn label still scans within a couple of seconds.
-- [ ] Fifty items can be counted without leaving the screen, with the last scan undoable.
-- [ ] Tests: widget tests of `barcode_scanner_screen.dart` (no code, decoded, unreadable code, camera failure) and `barcode_continuous_mode.dart` (debounce of a repeated code, running count, undo of the last scan) against a fake scanner.
-- [ ] All three identifier outcomes are reachable in one tap each.
+- [x] Fifty items can be counted without leaving the screen, with the last scan undoable.
+- [x] Tests: widget tests of `barcode_scanner_screen.dart` (no code, decoded, unreadable code, camera failure) and `barcode_continuous_mode.dart` (debounce of a repeated code, running count, undo of the last scan) against a fake scanner.
+- [x] All three identifier outcomes are reachable in one tap each.
 - [ ] Tests: unit tests for a record match, a reference-dataset match, no match, and a duplicate identifier present on two records; a measurement test for the 300ms lookup budget.
 
 ### Automatic values
 
-- [ ] A record captured with no typing still carries a complete timestamp, operator and device.
-- [ ] Twenty rapid captures produce twenty consecutive record numbers with no gap or duplicate.
-- [ ] With GPS off, no location permission is requested anywhere and no location call is made.
-- [ ] Tests: unit test with a frozen clock asserting every automatic value and every `autoFill` combination; concurrency test allocating numbers from parallel inserts; test that the disabled GPS path makes no location call and that a slow fix does not delay the save.
+- [x] A record captured with no typing still carries a complete timestamp, operator and device.
+- [x] Twenty rapid captures produce twenty consecutive record numbers with no gap or duplicate.
+- [x] With GPS off, no location permission is requested anywhere and no location call is made.
+- [x] Tests: unit test with a frozen clock asserting every automatic value and every `autoFill` combination; concurrency test allocating numbers from parallel inserts; test that the disabled GPS path makes no location call and that a slow fix does not delay the save.
 
 ### Saving
 
-- [ ] Losing connectivity between save and enqueue never loses the record.
-- [ ] Forty records can be captured offline in sequence with no processing triggered.
-- [ ] Tests: unit test that a failed enqueue leaves a complete `CAPTURED` record with a retryable job; integration test of the raw path asserting zero outbound calls across forty records.
+- [x] Losing connectivity between save and enqueue never loses the record.
+- [x] Forty records can be captured offline in sequence with no processing triggered.
+- [x] Tests: unit test that a failed enqueue leaves a complete `CAPTURED` record with a retryable job; integration test of the raw path asserting zero outbound calls across forty records.
 
 ### Resilience
 
-- [ ] Capturing the next item requires re-selecting nothing.
-- [ ] Tests: unit test that context, pinned template and camera settings survive a save and reset, that the new session shares no state with the old one, and that the saved record is untouched.
-- [ ] A crash during capture never silently discards photos.
-- [ ] Tests: widget test of an interrupted session asserting the photo count on the prompt, that resume restores photos, captions and values, and that discard leaves the files recoverable.
+- [x] Capturing the next item requires re-selecting nothing.
+- [x] Tests: unit test that context, pinned template and camera settings survive a save and reset, that the new session shares no state with the old one, and that the saved record is untouched.
+- [x] A crash during capture never silently discards photos.
+- [x] Tests: widget test of an interrupted session asserting the photo count on the prompt, that resume restores photos, captions and values, and that discard leaves the files recoverable.
 - [ ] Four items with photos can be captured in under a minute.
-- [ ] Tests: integration test of a four-item run asserting four records, the correct photo count on each, zero processing jobs, and that reopening the last item edits that item only.
-- [ ] A full device shows an actionable message with an export shortcut and loses no photo already taken.
-- [ ] Tests: widget test of `capture_storage_guard.dart` at healthy, warning and full levels against a fake storage guard, asserting the warning is dismissible, capture continues after it, and the stop state offers export while completing an in-flight write.
-- [ ] A single-template project never shows the template picker.
-- [ ] A pinned template is still in force after a save and after a restart.
-- [ ] Tests: widget test of `template_picker_sheet.dart` with one, several and no templates, asserting last-used ordering, that a session pin survives a reset, and that a context-level pin applies when that level is re-entered.
+- [x] Tests: integration test of a four-item run asserting four records, the correct photo count on each, zero processing jobs, and that reopening the last item edits that item only.
+- [x] A full device shows an actionable message with an export shortcut and loses no photo already taken.
+- [x] Tests: widget test of `capture_storage_guard.dart` at healthy, warning and full levels against a fake storage guard, asserting the warning is dismissible, capture continues after it, and the stop state offers export while completing an in-flight write.
+- [x] A single-template project never shows the template picker.
+- [x] A pinned template is still in force after a save and after a restart.
+- [x] Tests: widget test of `template_picker_sheet.dart` with one, several and no templates, asserting last-used ordering, that a session pin survives a reset, and that a context-level pin applies when that level is re-entered.
 
 ## Out of scope
 

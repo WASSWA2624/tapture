@@ -3,9 +3,13 @@ import { createHash } from 'node:crypto';
 import { describe, it } from 'node:test';
 import request from 'supertest';
 import { appFor, makeDeps, seedUser, signIn } from '../helpers.js';
+import {
+  createInvitedUser,
+  issuePasswordReset,
+} from '../../src/services/auth/account.js';
 
 describe('accounts', () => {
-  it('registers when enabled and rejects a duplicate', async () => {
+  it('registers when enabled without revealing or replacing a duplicate account', async () => {
     const deps = makeDeps();
     deps.store.addOrg({
       id: 'org-1',
@@ -24,8 +28,12 @@ describe('accounts', () => {
       password: 'correct-horse',
       organisationId: 'org-1',
     });
-    assert.equal(created.status, 201);
-    assert.equal(duplicate.status, 409);
+    assert.equal(created.status, 200);
+    assert.equal(duplicate.status, 200);
+    assert.deepEqual(created.body, { accepted: true });
+    assert.deepEqual(duplicate.body, created.body);
+    assert.equal(duplicate.headers['location'], undefined);
+    assert.equal(deps.store.users().length, 1);
   });
 
   it('does not reveal an address when registration is disabled or on reset', async () => {
@@ -73,6 +81,7 @@ describe('accounts', () => {
       tokenHash: createHash('sha256').update(expired).digest('hex'),
       userId: 'user-1',
       used: false,
+      purpose: 'password_reset',
       expiresAt: new Date(Date.now() - 1000).toISOString(),
     });
     const expiredResponse = await request(app).post('/api/v1/auth/reset').send({
@@ -85,6 +94,7 @@ describe('accounts', () => {
       tokenHash: createHash('sha256').update(replay).digest('hex'),
       userId: 'user-1',
       used: false,
+      purpose: 'password_reset',
       expiresAt: new Date(Date.now() + 60_000).toISOString(),
     });
     const first = await request(app).post('/api/v1/auth/reset').send({
@@ -101,5 +111,140 @@ describe('accounts', () => {
       .post('/api/v1/auth/refresh')
       .send({ refreshToken: tokens.refreshToken });
     assert.equal(refreshed.status, 401);
+  });
+
+  it('rejects expired, cross-organisation and reset tokens on invitation acceptance', async () => {
+    for (const condition of [
+      'expired',
+      'malformed-expiry',
+      'other-organisation',
+      'reset',
+    ] as const) {
+      const deps = makeDeps();
+      await seedUser(deps);
+      deps.store.addOrg({
+        id: 'org-2',
+        name: 'Other',
+        selfRegister: false,
+        retentionDays: 30,
+      });
+      const invited = await createInvitedUser(deps.store, deps.config, {
+        organisationId: 'org-1',
+        email: 'invite@example.test',
+        role: 'field_operator',
+        actorId: 'user-1',
+      });
+      const invitation = deps.store.invites()[0];
+      assert.ok(invitation);
+      if (condition === 'expired')
+        deps.store.saveInvite({
+          ...invitation,
+          expiresAt: '2000-01-01T00:00:00Z',
+        });
+      if (condition === 'malformed-expiry')
+        deps.store.saveInvite({ ...invitation, expiresAt: 'invalid' });
+      if (condition === 'reset')
+        deps.store.saveInvite({ ...invitation, purpose: 'password_reset' });
+      const response = await request(appFor(deps))
+        .post('/api/v1/auth/register')
+        .send({
+          email: 'invite@example.test',
+          password: 'invitation-password',
+          organisationId:
+            condition === 'other-organisation' ? 'org-2' : 'org-1',
+          invitationToken: invited.invitationToken,
+        });
+      assert.equal(response.status, 403, condition);
+      assert.equal(
+        deps.store.users().find((user) => user.id === invited.userId)?.status,
+        'invited',
+      );
+      assert.equal(deps.store.invites()[0]?.used, false);
+    }
+  });
+
+  it('consumes an invitation only once across simultaneous acceptance requests', async () => {
+    const deps = makeDeps();
+    await seedUser(deps);
+    const invited = await createInvitedUser(deps.store, deps.config, {
+      organisationId: 'org-1',
+      email: 'invite@example.test',
+      role: 'field_operator',
+      actorId: 'user-1',
+    });
+    const app = appFor(deps);
+    const replies = await Promise.all(
+      ['first-invitation-password', 'second-invitation-password'].map(
+        (password) =>
+          request(app).post('/api/v1/auth/register').send({
+            email: 'invite@example.test',
+            password,
+            organisationId: 'org-1',
+            invitationToken: invited.invitationToken,
+          }),
+      ),
+    );
+    assert.deepEqual(replies.map((reply) => reply.status).sort(), [200, 403]);
+    assert.equal(
+      deps.store.audit().filter((event) => event.action === 'accept_invite')
+        .length,
+      1,
+    );
+  });
+
+  it('never accepts an invitation as a password-reset capability', async () => {
+    const deps = makeDeps();
+    await seedUser(deps);
+    const token = 'invitation-only-capability';
+    deps.store.addInvite({
+      tokenHash: createHash('sha256').update(token).digest('hex'),
+      userId: 'user-1',
+      used: false,
+      purpose: 'invitation',
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+    });
+    const response = await request(appFor(deps))
+      .post('/api/v1/auth/reset')
+      .send({ token, password: 'replacement-password' });
+    assert.equal(response.status, 400);
+    assert.equal(deps.store.invites()[0]?.used, false);
+  });
+
+  it('completes an operator-issued reset and refuses token replay', async () => {
+    const deps = makeDeps();
+    const account = await seedUser(deps);
+    const app = appFor(deps);
+    const prior = await signIn(app, account);
+    const token = await issuePasswordReset(deps.store, {
+      email: account.email,
+      organisationId: account.organisationId,
+      actorId: 'operator@example.test',
+    });
+    assert.equal(JSON.stringify(deps.store.audit()).includes(token), false);
+    assert.equal(
+      (
+        await request(app)
+          .post('/api/v1/auth/reset')
+          .send({ token, password: 'replacement-password' })
+      ).status,
+      200,
+    );
+    assert.equal(
+      (
+        await request(app)
+          .post('/api/v1/auth/reset')
+          .send({ token, password: 'replacement-password' })
+      ).status,
+      400,
+    );
+    assert.equal(
+      (
+        await request(app)
+          .post('/api/v1/auth/refresh')
+          .send({ refreshToken: prior.refreshToken })
+      ).status,
+      401,
+    );
+    await signIn(app, { ...account, password: 'replacement-password' });
   });
 });

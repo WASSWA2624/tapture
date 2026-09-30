@@ -24,6 +24,8 @@ export async function registerAccount(
 ): Promise<{
   userId: string;
 }> {
+  if (input.password.length < 12)
+    throw invalidRequest('Use at least 12 characters.');
   const org = (await store.orgs()).find(
     (row) => row.id === input.organisationId,
   );
@@ -32,19 +34,21 @@ export async function registerAccount(
     const hash = createHash('sha256')
       .update(input.invitationToken)
       .digest('hex');
-    const invite = (await store.invites()).find(
-      (row) => row.tokenHash === hash && !row.used,
-    );
-    const user = (await store.users()).find((row) => row.id === invite?.userId);
-    if (
-      invite === undefined ||
-      user === undefined ||
-      !sameEmail(user.email, input.email)
-    ) {
-      throw forbidden();
-    }
     const passwordHash = await hashPassword(input.password, config);
-    await withTransaction(store, async (tx) => {
+    return withTransaction(store, async (tx) => {
+      const invite = (await tx.invites()).find((row) => row.tokenHash === hash);
+      const user = (await tx.users()).find((row) => row.id === invite?.userId);
+      if (
+        invite === undefined ||
+        invite.used ||
+        invite.purpose !== 'invitation' ||
+        !(Date.parse(invite.expiresAt) > Date.now()) ||
+        user === undefined ||
+        user.status !== 'invited' ||
+        user.organisationId !== org.id ||
+        !sameEmail(user.email, input.email)
+      )
+        throw forbidden();
       await tx.saveUser({ ...user, passwordHash, status: 'active' });
       await tx.saveInvite({ ...invite, used: true });
       await tx.recordAudit({
@@ -54,18 +58,22 @@ export async function registerAccount(
         before: null,
         after: { status: 'active' },
       });
+      return { userId: user.id };
     });
-    return { userId: user.id };
   }
   if (!org.selfRegister) throw forbidden();
   const email = normaliseEmail(input.email);
-  const taken = (await store.users()).some(
-    (row) => row.organisationId === org.id && sameEmail(row.email, email),
-  );
-  if (taken) throw conflict('An account with that address already exists.');
   const userId = randomUUID();
+  // Hash on both the new-address and duplicate paths, so registration is not
+  // an address oracle through its response or password work timing.
   const passwordHash = await hashPassword(input.password, config);
   await withTransaction(store, async (tx) => {
+    if (
+      (await tx.users()).some(
+        (row) => row.organisationId === org.id && sameEmail(row.email, email),
+      )
+    )
+      return;
     await tx.addUser({
       id: userId,
       organisationId: org.id,
@@ -124,6 +132,7 @@ export async function createInvitedUser(
       userId,
       used: false,
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      purpose: 'invitation',
     });
     await tx.recordAudit({
       actorId: input.actorId,
@@ -157,7 +166,14 @@ export async function changePassword(
   }
   const passwordHash = await hashPassword(input.nextPassword, config);
   await withTransaction(store, async (tx) => {
-    await tx.saveUser({ ...user, passwordHash });
+    const current = await tx.userById(user.id);
+    if (
+      current === undefined ||
+      current.status !== 'active' ||
+      current.passwordHash !== user.passwordHash
+    )
+      throw invalidCredentials();
+    await tx.saveUser({ ...current, passwordHash });
     await revokeUser(tx, user.id);
     await tx.recordAudit({
       actorId: user.id,
@@ -175,19 +191,47 @@ export async function requestReset(
     organisationId: string;
   },
 ): Promise<void> {
+  const email = normaliseEmail(input.email);
+  // Operators fulfil the request through the private CLI. A public response
+  // never contains a reset credential or reveals whether the account exists.
+  await store.recordAudit({
+    actorId: 'anonymous',
+    action: 'password_reset_requested',
+    target: input.organisationId,
+    before: null,
+    after: { email, outcome: 'requested' },
+  });
+}
+
+export async function issuePasswordReset(
+  store: Store,
+  input: { email: string; organisationId: string; actorId: string },
+): Promise<string> {
   const user = (await store.users()).find(
     (row) =>
       row.organisationId === input.organisationId &&
       sameEmail(row.email, input.email),
   );
-  if (user === undefined) return;
+  if (user === undefined || user.status !== 'active')
+    throw invalidRequest('An active account is required.');
   const token = randomBytes(24).toString('base64url');
-  await store.addInvite({
-    tokenHash: createHash('sha256').update(token).digest('hex'),
-    userId: user.id,
-    used: false,
-    expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+  await store.withTransaction(async (tx) => {
+    await tx.addInvite({
+      tokenHash: createHash('sha256').update(token).digest('hex'),
+      userId: user.id,
+      used: false,
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      purpose: 'password_reset',
+    });
+    await tx.recordAudit({
+      actorId: input.actorId,
+      action: 'issue_password_reset',
+      target: user.id,
+      before: null,
+      after: { outcome: 'issued' },
+    });
   });
+  return token;
 }
 export async function completeReset(
   store: Store,
@@ -198,21 +242,22 @@ export async function completeReset(
   },
 ): Promise<void> {
   const hash = createHash('sha256').update(input.token).digest('hex');
-  const invite = (await store.invites()).find((row) => row.tokenHash === hash);
-  if (
-    invite === undefined ||
-    invite.used ||
-    Date.parse(invite.expiresAt) <= Date.now()
-  ) {
-    throw invalidRequest('That reset link is not valid.');
-  }
   if (input.password.length < 12)
     throw invalidRequest('Use at least 12 characters.');
-  const user = (await store.users()).find((row) => row.id === invite.userId);
-  if (user === undefined) throw invalidRequest('That reset link is not valid.');
   const passwordHash = await hashPassword(input.password, config);
   await withTransaction(store, async (tx) => {
-    await tx.saveUser({ ...user, passwordHash, status: 'active' });
+    const invite = (await tx.invites()).find((row) => row.tokenHash === hash);
+    if (
+      invite === undefined ||
+      invite.used ||
+      invite.purpose !== 'password_reset' ||
+      !(Date.parse(invite.expiresAt) > Date.now())
+    )
+      throw invalidRequest('That reset link is not valid.');
+    const user = (await tx.users()).find((row) => row.id === invite.userId);
+    if (user === undefined || user.status !== 'active')
+      throw invalidRequest('That reset link is not valid.');
+    await tx.saveUser({ ...user, passwordHash });
     await tx.saveInvite({ ...invite, used: true });
     await revokeUser(tx, user.id);
     await tx.recordAudit({

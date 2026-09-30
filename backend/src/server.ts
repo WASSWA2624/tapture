@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url';
 import express, { type Express } from 'express';
 import type { Deps } from './deps.js';
 import { createPool } from './db/pool.js';
-import { invalidRequest } from './domain/errors.js';
+import { invalidRequest, notFound } from './domain/errors.js';
 import { cors } from './middleware/cors.js';
 import { errorHandler } from './middleware/error_handler.js';
 import { rateLimit } from './middleware/rate_limit.js';
@@ -15,6 +15,8 @@ import { aiRoutePrefix } from './routes/ai.js';
 import { registerRoutes } from './routes/index.js';
 import { httpProvider } from './services/ai/http_provider.js';
 import { emptyMetrics, noteRequest } from './services/metrics/metrics.js';
+import { warmPasswordVerification } from './services/auth/password.js';
+import { auditConfiguration } from './services/configuration.js';
 
 /// Builds the process. Middleware order is fixed: CORS precedes body parsing,
 /// authentication and rate limiting so every answer carries its headers.
@@ -22,6 +24,23 @@ export function createApp(deps: Deps): Express {
   const app = express();
   app.disable('x-powered-by');
   app.use(requestContextMiddleware);
+  app.use((req, res, next) => {
+    const started = Date.now();
+    res.on('finish', () => {
+      noteRequest(
+        deps.metrics,
+        // One bounded label per registered route, not one per project/device
+        // identifier or arbitrary URL an unauthenticated caller can invent.
+        typeof (req.route as { path?: unknown } | undefined)?.path === 'string'
+          ? (req.route as { path: string }).path
+          : 'unmatched',
+        Date.now() - started,
+        res.statusCode >= 400,
+      );
+      if (res.statusCode === 401) deps.metrics.authFailures += 1;
+    });
+    next();
+  });
   app.use(securityHeaders);
   app.use(cors(deps.config));
   const raw = express.raw({
@@ -54,20 +73,8 @@ export function createApp(deps: Deps): Express {
     next();
   });
   app.use(rateLimit(deps, 'general'));
-  app.use((req, res, next) => {
-    const started = Date.now();
-    res.on('finish', () => {
-      noteRequest(
-        deps.metrics,
-        req.path,
-        Date.now() - started,
-        res.statusCode >= 400,
-      );
-      if (res.statusCode === 401) deps.metrics.authFailures += 1;
-    });
-    next();
-  });
   registerRoutes(app, deps);
+  app.use((_req, _res, next) => next(notFound()));
   app.use(errorHandler);
   return app;
 }
@@ -82,7 +89,10 @@ export async function shutdown(
   await deps.pool.drain();
 }
 
-export function listen(deps: Deps): Promise<ReturnType<Express['listen']>> {
+export async function listen(
+  deps: Deps,
+): Promise<ReturnType<Express['listen']>> {
+  await warmPasswordVerification(deps.config);
   const app = createApp(deps);
   return new Promise((resolve) => {
     const server = app.listen(deps.config.port, () => resolve(server));
@@ -106,7 +116,7 @@ async function main(): Promise<void> {
   const store = createPostgresRepository(pool);
   if (
     !(await store.schemaHistory()).some(
-      (row) => row.name === '005_runtime_persistence.sql',
+      (row) => row.name === '009_transient_retention.sql',
     )
   ) {
     await pool.drain();
@@ -122,6 +132,8 @@ async function main(): Promise<void> {
     metrics: emptyMetrics(),
     log,
   };
+  await auditConfiguration(store, config);
+  deps.metrics.storageBytes = await store.storageUsage();
   const server = await listen(deps);
   const stopPurge = schedulePurge(deps);
   let stopping = false;

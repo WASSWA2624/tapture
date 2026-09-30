@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+test
+scripts
+.git
+.env
+.env.*
+*.log
+*.pem
+*.key
+exports

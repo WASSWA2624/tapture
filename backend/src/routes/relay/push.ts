@@ -26,10 +26,8 @@ export function registerRelayPush(app: Express, deps: Deps): void {
         id,
         bytes,
         key,
+        deps.metrics,
       );
-      deps.metrics.packagesStored += 1;
-      deps.metrics.storageBytes[id] =
-        (deps.metrics.storageBytes[id] ?? 0) + row.byteSize;
       res
         .status(201)
         .location(`/api/v1/projects/${id}/relay/packages/${row.id}`)

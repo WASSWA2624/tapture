@@ -14,4 +14,17 @@ describe('metrics', () => {
     const body = JSON.stringify(response.body);
     assert.equal(/caption|photo|template/i.test(body), false);
   });
+
+  it('uses a bounded unmatched label for arbitrary requested paths', async () => {
+    const deps = makeDeps();
+    const app = appFor(deps);
+    await request(app).get('/private-evidence-1');
+    await request(app).get('/private-evidence-2');
+    assert.equal(deps.metrics.requests['unmatched']?.count, 2);
+    assert.equal(Object.keys(deps.metrics.requests).length, 1);
+    assert.equal(
+      JSON.stringify(deps.metrics).includes('private-evidence'),
+      false,
+    );
+  });
 });

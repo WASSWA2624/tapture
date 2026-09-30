@@ -23,6 +23,16 @@ export interface AppConfig {
   aiTimeoutMs: number;
   aiRetryLimit: number;
   aiBreakerThreshold: number;
+  aiProjectRequestLimit: number;
+  aiOrganisationRequestLimit: number;
+  aiProjectDailyRequestLimit: number;
+  aiOrganisationDailyRequestLimit: number;
+  aiProjectBudget: number;
+  aiOrganisationBudget: number;
+  aiProjectDailyBudget: number;
+  aiOrganisationDailyBudget: number;
+  /// Operator-supplied conservative cost bound for one provider attempt.
+  aiRequestCostCeiling: number;
   aiProviderUrl: string;
   aiProviderKey: string;
   aiProviderModel: string;
@@ -46,11 +56,40 @@ function required(env: NodeJS.ProcessEnv, name: string): string {
   return value;
 }
 
-function integer(value: string | undefined, fallback: number): number {
+function integer(
+  value: string | undefined,
+  fallback: number,
+  minimum = 1,
+  maximum = 2_147_483_647,
+): number {
   if (value === undefined || value.length === 0) return fallback;
   const parsed = Number(value);
-  if (!Number.isInteger(parsed)) {
+  if (!Number.isSafeInteger(parsed)) {
     throw new Error(`Configuration value is not a whole number: ${value}`);
+  }
+  if (parsed < minimum || parsed > maximum)
+    throw new Error(
+      `Configuration value must be from ${minimum} to ${maximum}: ${value}`,
+    );
+  return parsed;
+}
+
+function quotaNumber(
+  env: NodeJS.ProcessEnv,
+  name: string,
+  fallback: number,
+  whole = false,
+): number {
+  const value = env[name];
+  const parsed = value === undefined || value === '' ? fallback : Number(value);
+  if (
+    !Number.isFinite(parsed) ||
+    parsed < 0 ||
+    (whole && !Number.isSafeInteger(parsed))
+  ) {
+    throw new Error(
+      `${name} must be a non-negative ${whole ? 'whole number' : 'number'}.`,
+    );
   }
   return parsed;
 }
@@ -94,6 +133,12 @@ export function parseConfig(env: NodeJS.ProcessEnv): AppConfig {
     throw new Error('AI_PROVIDER_URL must be an HTTPS endpoint.');
   }
   const aiProviderKey = env['AI_PROVIDER_KEY'] ?? '';
+  const aiRetryLimit = integer(env['AI_RETRY_LIMIT'], 2, 0);
+  if (aiRetryLimit < 0 || aiRetryLimit > 5)
+    throw new Error('AI_RETRY_LIMIT must be from 0 to 5.');
+  const aiTimeoutMs = integer(env['AI_TIMEOUT_MS'], 8000);
+  if (aiTimeoutMs < 1 || aiTimeoutMs > 120_000)
+    throw new Error('AI_TIMEOUT_MS must be from 1 to 120000.');
   if (aiProviderKey.length > 0 && !env['AI_PROVIDER_MODEL']) {
     throw new Error(
       'AI_PROVIDER_MODEL is required when AI_PROVIDER_KEY is configured.',
@@ -113,7 +158,7 @@ export function parseConfig(env: NodeJS.ProcessEnv): AppConfig {
     throw new Error('AI_BODY_LIMIT_BYTES must be at least BODY_LIMIT_BYTES.');
   }
   return {
-    port: integer(env['PORT'], 8080),
+    port: integer(env['PORT'], 8080, 0, 65535),
     databaseUrl: required(env, 'DATABASE_URL'),
     tokenSecret: required(env, 'TOKEN_SECRET'),
     accessTtlSeconds: integer(env['ACCESS_TTL_SECONDS'], 900),
@@ -133,9 +178,42 @@ export function parseConfig(env: NodeJS.ProcessEnv): AppConfig {
     argonMemoryKib: integer(env['ARGON_MEMORY_KIB'], 19456),
     argonIterations: integer(env['ARGON_ITERATIONS'], 2),
     argonParallelism: integer(env['ARGON_PARALLELISM'], 1),
-    aiTimeoutMs: integer(env['AI_TIMEOUT_MS'], 8000),
-    aiRetryLimit: integer(env['AI_RETRY_LIMIT'], 2),
+    aiTimeoutMs,
+    aiRetryLimit,
     aiBreakerThreshold: integer(env['AI_BREAKER_THRESHOLD'], 3),
+    aiProjectRequestLimit: quotaNumber(
+      env,
+      'AI_PROJECT_REQUEST_LIMIT',
+      10_000,
+      true,
+    ),
+    aiOrganisationRequestLimit: quotaNumber(
+      env,
+      'AI_ORGANISATION_REQUEST_LIMIT',
+      100_000,
+      true,
+    ),
+    aiProjectDailyRequestLimit: quotaNumber(
+      env,
+      'AI_PROJECT_DAILY_REQUEST_LIMIT',
+      100,
+      true,
+    ),
+    aiOrganisationDailyRequestLimit: quotaNumber(
+      env,
+      'AI_ORGANISATION_DAILY_REQUEST_LIMIT',
+      1_000,
+      true,
+    ),
+    aiProjectBudget: quotaNumber(env, 'AI_PROJECT_BUDGET', 100),
+    aiOrganisationBudget: quotaNumber(env, 'AI_ORGANISATION_BUDGET', 1_000),
+    aiProjectDailyBudget: quotaNumber(env, 'AI_PROJECT_DAILY_BUDGET', 10),
+    aiOrganisationDailyBudget: quotaNumber(
+      env,
+      'AI_ORGANISATION_DAILY_BUDGET',
+      100,
+    ),
+    aiRequestCostCeiling: quotaNumber(env, 'AI_REQUEST_COST_CEILING', 0),
     aiProviderUrl,
     aiProviderKey,
     aiProviderModel: env['AI_PROVIDER_MODEL'] ?? 'default',

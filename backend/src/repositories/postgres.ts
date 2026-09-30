@@ -4,7 +4,14 @@ import { identityRepository } from './postgres-identity.js';
 import { projectRepository } from './postgres-projects.js';
 import { eventRepository } from './postgres-events.js';
 import { relayRepository } from './postgres-relay.js';
+import { settingsRepository } from './postgres-settings.js';
 import { Sql } from './sql.js';
+import {
+  applyRetention,
+  destroyDeployment,
+  exportMetadata,
+  purgeTransient,
+} from './postgres-maintenance.js';
 
 /// Every write reaches Postgres before its service confirms it to a device.
 export function createPostgresRepository(pool: AppPool): Repository {
@@ -18,6 +25,10 @@ function repository(connection: SqlConnection, pool?: AppPool): Repository {
     ...projectRepository(sql),
     ...eventRepository(sql),
     ...relayRepository(sql),
+    ...settingsRepository(sql),
+    applyRetention: (days) => applyRetention(sql, days),
+    purgeTransient: (now, limit) => purgeTransient(sql, now, limit),
+    exportMetadata: () => exportMetadata(sql),
     withTransaction: async <T>(work: (store: Repository) => Promise<T>) => {
       if (pool === undefined) return work(result);
       return pool.transaction(async (tx) => {
@@ -33,46 +44,7 @@ function repository(connection: SqlConnection, pool?: AppPool): Repository {
           tx.destroyOrganisation(organisationId),
         );
       }
-      const values = [organisationId];
-      await sql.write(
-        'DELETE FROM relay_packages WHERE project_id IN(SELECT id FROM projects WHERE organisation_id=$1)',
-        values,
-      );
-      await sql.write(
-        'DELETE FROM relay_vectors WHERE project_id IN(SELECT id FROM projects WHERE organisation_id=$1)',
-        values,
-      );
-      await sql.write(
-        'DELETE FROM project_members WHERE project_id IN(SELECT id FROM projects WHERE organisation_id=$1)',
-        values,
-      );
-      await sql.write(
-        'DELETE FROM ai_usage WHERE project_id IN(SELECT id FROM projects WHERE organisation_id=$1)',
-        values,
-      );
-      await sql.write('DELETE FROM projects WHERE organisation_id=$1', values);
-      await sql.write(
-        'DELETE FROM invitations WHERE user_id IN(SELECT id FROM users WHERE organisation_id=$1)',
-        values,
-      );
-      await sql.write(
-        'DELETE FROM refresh_families WHERE user_id IN(SELECT id FROM users WHERE organisation_id=$1)',
-        values,
-      );
-      await sql.write(
-        'DELETE FROM devices WHERE user_id IN(SELECT id FROM users WHERE organisation_id=$1)',
-        values,
-      );
-      await sql.write('DELETE FROM users WHERE organisation_id=$1', values);
-      await sql.write('DELETE FROM organisations WHERE id=$1', values);
-      return [
-        'organisation',
-        'users',
-        'devices',
-        'projects',
-        'memberships',
-        'package-metadata',
-      ];
+      return destroyDeployment(sql, organisationId);
     },
   };
   return result;

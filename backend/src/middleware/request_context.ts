@@ -5,6 +5,7 @@ import type { Principal } from '../domain/permissions.js';
 
 export interface RequestContext {
   requestId: string;
+  route?: string;
   principal?: Principal;
 }
 
@@ -20,7 +21,9 @@ export function requestContextMiddleware(
 ): void {
   const header = req.header('x-request-id');
   const requestId =
-    header !== undefined && header.length > 0 ? header : randomUUID();
+    header !== undefined && /^[A-Za-z0-9_-]{1,128}$/.test(header)
+      ? header
+      : randomUUID();
   res.setHeader('x-request-id', requestId);
-  requestContext.run({ requestId }, () => next());
+  requestContext.run({ requestId, route: 'unmatched' }, () => next());
 }

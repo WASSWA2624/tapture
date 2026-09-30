@@ -2,6 +2,7 @@ export interface AiRequest {
   projectId: string;
   model: string;
   payload: Buffer;
+  signal?: AbortSignal;
 }
 
 export interface AiResult {

@@ -33,14 +33,36 @@ export function issueAccess(principal: Principal, config: AppConfig): string {
   return sign(body, config.tokenSecret);
 }
 export function readAccess(token: string, config: AppConfig): Principal {
-  const json = Buffer.from(
-    readSigned(token, config.tokenSecret),
-    'base64url',
-  ).toString('utf8');
-  const parsed = JSON.parse(json) as Principal & {
-    exp: number;
-  };
-  if (parsed.exp < Date.now()) throw unauthorized();
+  let body: unknown;
+  try {
+    body = JSON.parse(
+      Buffer.from(readSigned(token, config.tokenSecret), 'base64url').toString(
+        'utf8',
+      ),
+    ) as unknown;
+  } catch {
+    throw unauthorized();
+  }
+  if (body === null || typeof body !== 'object' || Array.isArray(body))
+    throw unauthorized();
+  const parsed = body as Record<string, unknown>;
+  if (
+    typeof parsed.exp !== 'number' ||
+    !Number.isSafeInteger(parsed.exp) ||
+    parsed.exp <= Date.now() ||
+    typeof parsed.userId !== 'string' ||
+    parsed.userId.length === 0 ||
+    typeof parsed.organisationId !== 'string' ||
+    parsed.organisationId.length === 0 ||
+    typeof parsed.deviceId !== 'string' ||
+    parsed.deviceId.length === 0 ||
+    (parsed.contextScope !== null && typeof parsed.contextScope !== 'string') ||
+    (parsed.role !== 'administrator' &&
+      parsed.role !== 'project_manager' &&
+      parsed.role !== 'reviewer' &&
+      parsed.role !== 'field_operator')
+  )
+    throw unauthorized();
   return {
     userId: parsed.userId,
     organisationId: parsed.organisationId,
@@ -56,10 +78,12 @@ export async function issueTokens(
   store: Store,
   principal: Principal,
   config: AppConfig,
+  familyId = randomBytes(16).toString('hex'),
 ): Promise<TokenPair> {
   const refreshToken = randomBytes(32).toString('base64url');
   await store.addRefresh({
     id: randomBytes(16).toString('hex'),
+    familyId,
     userId: principal.userId,
     deviceId: principal.deviceId,
     tokenHash: hashToken(refreshToken, config.tokenSecret),
@@ -93,16 +117,16 @@ async function rotateLocked(
   config: AppConfig,
 ): Promise<TokenPair | undefined> {
   const hash = hashToken(refreshToken, config.tokenSecret);
-  const row = (await store.refresh()).find((item) => item.tokenHash === hash);
+  const row = await store.refreshByHash(hash);
   if (
     row === undefined ||
     row.revoked ||
-    Date.parse(row.expiresAt) <= Date.now()
+    !(Date.parse(row.expiresAt) > Date.now())
   )
     return undefined;
   if (row.rotated) {
-    for (const family of await store.refresh()) {
-      if (family.userId === row.userId && family.deviceId === row.deviceId) {
+    for (const family of await store.refreshForFamily(row.familyId)) {
+      if (family.familyId === row.familyId) {
         await store.saveRefresh({ ...family, revoked: true });
       }
     }
@@ -116,11 +140,9 @@ async function rotateLocked(
     // Commit the revocations before the caller raises the refusal.
     return undefined;
   }
-  const device = (await store.devices()).find(
-    (item) => item.id === row.deviceId,
-  );
+  const device = await store.deviceById(row.deviceId);
   if (device === undefined || device.revoked) throw invalidCredentials();
-  const user = (await store.users()).find((item) => item.id === row.userId);
+  const user = await store.userById(row.userId);
   if (user === undefined || user.status !== 'active')
     throw invalidCredentials();
   await store.saveRefresh({ ...row, rotated: true });
@@ -134,6 +156,7 @@ async function rotateLocked(
       contextScope: null,
     },
     config,
+    row.familyId,
   );
 }
 export async function revoke(
@@ -141,17 +164,19 @@ export async function revoke(
   refreshToken: string,
   config: AppConfig,
 ): Promise<void> {
-  const hash = hashToken(refreshToken, config.tokenSecret);
-  const row = (await store.refresh()).find((item) => item.tokenHash === hash);
-  if (row === undefined) return;
-  for (const family of await store.refresh()) {
-    if (family.userId === row.userId && family.deviceId === row.deviceId) {
-      await store.saveRefresh({ ...family, revoked: true });
+  await store.withTransaction(async (tx) => {
+    const hash = hashToken(refreshToken, config.tokenSecret);
+    const row = await tx.refreshByHash(hash);
+    if (row === undefined) return;
+    for (const family of await tx.refreshForFamily(row.familyId)) {
+      if (family.familyId === row.familyId) {
+        await tx.saveRefresh({ ...family, revoked: true });
+      }
     }
-  }
+  });
 }
 export async function revokeUser(store: Store, userId: string): Promise<void> {
-  for (const family of await store.refresh()) {
+  for (const family of await store.refreshForUser(userId)) {
     if (family.userId === userId)
       await store.saveRefresh({ ...family, revoked: true });
   }

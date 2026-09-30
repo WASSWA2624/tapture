@@ -10,6 +10,10 @@
 
 Historical completion was recorded on 2026-09-22 in the old tracker and index. The reference feature and its repository/model tests exist, but this file still has 29 unchecked acceptance items. Work has started; the current status is Partially complete until those items are reconciled and verified. The historical claim is preserved in history/dev-tracker-2026-09-28.md; it is not treated as a fresh verification run.
 
+## Verification — 2026-09-30
+
+Reviewed the repository boundary, indexed exact-key path, duplicate decisions, import/export streaming and lookup provenance. The reference domain/data/widget suites passed in the focused capture/reference audit, with the exact-key duplicate regression subsequently passing all nine lookup-search tests. The dataset-browser suite passed all nine tests in isolation, including its 10,000-row search and scroll measurements; the earlier concurrently loaded run exceeded the debug scroll budget, so no threshold was widened. Mapper, parser, persistence, key selection, binding, prefill/unlink and CSV/JSON round-trip cases are verified by these suites.
+
 ## Implement
 
 Imported tables and everything the app does with them: immutable `ReferenceDataset` and `ReferenceRow` models with
@@ -62,6 +66,9 @@ class ReferenceDataset {
   final DatasetSource source;      // csv | xlsx | json | device
   final DateTime importedAt;
   final int rowCount;
+  final bool duplicatesAllowed;    // a non-unique key confirmed at import (step 3)
+  final String? projectId;         // owning project; null for a global dataset (step 6)
+  final String sourceFile;         // source path or name, matched on re-import (step 4)
 }
 
 class ReferenceRow {
@@ -144,42 +151,42 @@ class LookupBinding {
 
 ## Definition of done
 
-- [ ] Presentation never sees a Drift row: datasets and rows are reachable only through the repository interface.
-- [ ] Contract above is implemented exactly, with nothing else made public.
-- [ ] All three readers produce the same `ReferenceDataset` and `ReferenceRow` shape, with columns in import order.
-- [ ] A ten-thousand-row file imports without freezing the interface.
-- [ ] A dataset with a non-unique key cannot be saved silently.
-- [ ] Ten thousand rows scroll smoothly, with a measurement behind the claim (FE-TEST-09).
-- [ ] Search over a ten-thousand-row dataset returns without a visible pause.
-- [ ] Fixing a supplier's phone number does not silently rewrite history.
-- [ ] The new row is immediately available to the lookup that failed, without leaving capture.
-- [ ] The configuration matches the specification example exactly, dataset and fill mapping included.
-- [ ] A mapping naming an unknown field or filling one field twice is refused at configuration time.
-- [ ] A near miss offers a suggestion rather than filling silently, and several matches always ask.
-- [ ] Prefilled fields show the link affordance, remain editable, and a verified value is left alone.
-- [ ] Editing the phone number does not detach the supplier name.
-- [ ] An exported dataset re-imports as the same dataset, rows added on the device included.
-- [ ] Tests: round-trip mapper test over a dataset and its rows, plus repository tests for
+- [x] Presentation never sees a Drift row: datasets and rows are reachable only through the repository interface.
+- [x] Contract above is implemented exactly, with nothing else made public.
+- [x] All three readers produce the same `ReferenceDataset` and `ReferenceRow` shape, with columns in import order.
+- [x] A ten-thousand-row file imports without freezing the interface.
+- [x] A dataset with a non-unique key cannot be saved silently.
+- [x] Ten thousand rows scroll smoothly, with a measurement behind the claim (FE-TEST-09).
+- [x] Search over a ten-thousand-row dataset returns without a visible pause.
+- [x] Fixing a supplier's phone number does not silently rewrite history.
+- [x] The new row is immediately available to the lookup that failed, without leaving capture.
+- [x] The configuration matches the specification example exactly, dataset and fill mapping included.
+- [x] A mapping naming an unknown field or filling one field twice is refused at configuration time.
+- [x] A near miss offers a suggestion rather than filling silently, and several matches always ask.
+- [x] Prefilled fields show the link affordance, remain editable, and a verified value is left alone.
+- [x] Editing the phone number does not detach the supplier name.
+- [x] An exported dataset re-imports as the same dataset, rows added on the device included.
+- [x] Tests: round-trip mapper test over a dataset and its rows, plus repository tests for
       `reference_repository_impl.dart` against an in-memory database, and the fake later tasks use.
-- [ ] Tests: parser tests over awkward CSV fixtures — semicolon delimiter, quoted commas, byte-order mark, blank
+- [x] Tests: parser tests over awkward CSV fixtures — semicolon delimiter, quoted commas, byte-order mark, blank
       rows.
-- [ ] Tests: repository tests for the spreadsheet and JSON importers against an in-memory database, plus the fake
+- [x] Tests: repository tests for the spreadsheet and JSON importers against an in-memory database, plus the fake
       later tests use.
-- [ ] Tests: widget test of `dataset_key_screen.dart` covering empty and failure states and the non-unique-key path.
-- [ ] Tests: widget tests of `dataset_list_screen.dart` and `dataset_browser_screen.dart` covering empty and failure
+- [x] Tests: widget test of `dataset_key_screen.dart` covering empty and failure states and the non-unique-key path.
+- [x] Tests: widget tests of `dataset_list_screen.dart` and `dataset_browser_screen.dart` covering empty and failure
       states, plus a scroll and search measurement over a ten-thousand-row fixture.
-- [ ] Tests: widget tests of `dataset_row_edit_screen.dart` and `dataset_add_row_sheet.dart` covering empty and
+- [x] Tests: widget tests of `dataset_row_edit_screen.dart` and `dataset_add_row_sheet.dart` covering empty and
       failure states.
-- [ ] Tests: a test that an already-prefilled record keeps its captured value after its source row changes.
-- [ ] Tests: widget test of `lookup_binding_screen.dart` covering empty and failure states, plus a unit test
+- [x] Tests: a test that an already-prefilled record keeps its captured value after its source row changes.
+- [x] Tests: widget test of `lookup_binding_screen.dart` covering empty and failure states, plus a unit test
       rejecting an unknown fill target and a duplicate target.
-- [ ] Tests: unit tests of `lookup_matcher.dart` for key, case and whitespace variants.
-- [ ] Tests: unit tests of the fuzzy scorer over a table of real-world name variants with expected scores.
-- [ ] Tests: unit tests that prefill skips a verified field and that `lookup_unlink.dart` detaches one field only,
+- [x] Tests: unit tests of `lookup_matcher.dart` for key, case and whitespace variants.
+- [x] Tests: unit tests of the fuzzy scorer over a table of real-world name variants with expected scores.
+- [x] Tests: unit tests that prefill skips a verified field and that `lookup_unlink.dart` detaches one field only,
       both with no Flutter binding.
-- [ ] Tests: widget test of `lookup_picker_sheet.dart` covering empty and failure states.
-- [ ] Tests: repository tests for `dataset_export.dart` against an in-memory database, plus the fake later tests use.
-- [ ] Tests: a round-trip test that export then import through `dataset_csv_import.dart` and
+- [x] Tests: widget test of `lookup_picker_sheet.dart` covering empty and failure states.
+- [x] Tests: repository tests for `dataset_export.dart` against an in-memory database, plus the fake later tests use.
+- [x] Tests: a round-trip test that export then import through `dataset_csv_import.dart` and
       `dataset_json_import.dart` yields the same rows and column order.
 
 ## Out of scope

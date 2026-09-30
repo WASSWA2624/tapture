@@ -37,6 +37,8 @@ Work so far: the adapters, the preview seam, `LiveCameraScreen` and the provider
 written. No acceptance item below has been verified yet. The 2026-09-28 review found the macOS camera entitlement
 missing and a start/stop race when the first permission prompt pauses the app; both are open items below.
 
+Verification 2026-09-30: camera/barcode platform fakes and live-camera controller/widget suites passed in the focused audit, covering start/stop generations, permission/no-camera failures, bounded fallback controls, durability before re-enabling the shutter, scanner/haptic/confirm/rescan and release behavior. Ten rapid shots also passed against the real file writer and database. The lifecycle race has a generation guard and regression coverage. Real first-run permission/lifecycle behavior and browser/macOS platform execution remain open; existing declarations and fake passes do not certify hardware.
+
 ## Files
 
 Dependencies:
@@ -83,32 +85,32 @@ Tests:
       `allowlist.yaml`, only `core/camera/` and `core/barcode/` import them, and the dependency check passes.
 - [ ] On Android, iOS and web, Take photo opens `LiveCameraScreen` on the live back-camera preview; macOS, Windows
       and Linux keep the photo-picker path.
-- [ ] Every shot is written through the capture session before the shutter is enabled again, the screen stays open
+- [x] Every shot is written through the capture session before the shutter is enabled again, the screen stays open
       for the next shot, and a failed shot or write shows the error snack without closing the screen (§22.1).
 - [x] `LiveCameraScreen` holds no widget state; its saving and grid state live in `live_camera_controller.dart`.
-- [ ] A refused or restricted camera permission ends in the failed state with the no-camera message and a
+- [x] A refused or restricted camera permission ends in the failed state with the no-camera message and a
       `PermissionFailure`; a device with no camera does the same with a `ProviderFailure`. Gallery import, file
       import and typed identifiers stay available.
 - [ ] The first-run permission prompt, backgrounding and resuming, and closing the screen while the camera is still
       starting all end in a running preview or an explicit failed state, never stuck on starting, and the camera is
       released when the screen closes.
-- [ ] Flash, tap-to-focus and zoom keep the last supported setting on hardware that lacks them, and zoom stays
+- [x] Flash, tap-to-focus and zoom keep the last supported setting on hardware that lacks them, and zoom stays
       within the device's reported bounds.
-- [ ] The barcode screen shows the live scanner preview; the first decoded code shows once with haptic feedback,
+- [x] The barcode screen shows the live scanner preview; the first decoded code shows once with haptic feedback,
       confirm returns it to the field as a `BARCODE` value, rescan clears it, and the torch appears only where
       supported (§25).
-- [ ] A refused scanner permission, an unsupported platform or a scanner error shows the unavailable message, and
+- [x] A refused scanner permission, an unsupported platform or a scanner error shows the unavailable message, and
       the identifier can still be typed.
 - [ ] On web, preview and scanning run after the browser grants camera access, and work offline with every script
       served from the app's own origin (§7.1); a refusal, an insecure origin or a browser without a camera shows the
       failed or unavailable state and gallery upload still works.
 - [ ] Both macOS entitlements files carry `com.apple.security.device.camera`, `NSCameraUsageDescription` names photo
       capture and barcode scanning, and a sandboxed macOS build opens the live scanner.
-- [ ] Tests: `frontend/test/core/camera/device_camera_service_test.dart` over a fake camera platform covering lens
+- [x] Tests: `frontend/test/core/camera/device_camera_service_test.dart` over a fake camera platform covering lens
       choice, start and stop generations (stop during start, restart after stop, the permission-prompt pause),
       permission and no-camera failures, and flash and zoom fallbacks.
-- [ ] Tests: `frontend/test/core/barcode/device_barcode_scanner_test.dart` covering permission mapping, empty values
+- [x] Tests: `frontend/test/core/barcode/device_barcode_scanner_test.dart` covering permission mapping, empty values
       ignored, torch support and stop releasing the controller.
-- [ ] Tests: widget test `frontend/test/features/capture/presentation/live_camera_screen_test.dart` covering the
+- [x] Tests: widget test `frontend/test/features/capture/presentation/live_camera_screen_test.dart` covering the
       preview states, a shot written before the next is enabled, a failed shot and a failed write; unit test
       `live_camera_controller_test.dart`; camera view and scanner screen cases in `capture_widgets_test.dart`.

@@ -1,27 +1,43 @@
 import type { NextFunction, Request, Response } from 'express';
-import { AppError, internalError, payloadTooLarge } from '../domain/errors.js';
+import {
+  AppError,
+  internalError,
+  invalidRequest,
+  payloadTooLarge,
+} from '../domain/errors.js';
 import { log } from '../observability/logger.js';
+import { requestContext } from './request_context.js';
 
 export function errorHandler(
   error: unknown,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction,
 ): void {
+  const route = req.route as { path?: unknown } | undefined;
+  const context = requestContext.getStore();
+  if (context !== undefined && typeof route?.path === 'string')
+    context.route = route.path;
   const tooLarge =
     error instanceof Error &&
     'type' in error &&
     (error as { type?: string }).type === 'entity.too.large';
-  if (!(error instanceof AppError) && !tooLarge) {
+  const malformedJson =
+    error instanceof Error &&
+    'type' in error &&
+    (error as { type?: string }).type === 'entity.parse.failed';
+  if (!(error instanceof AppError) && !tooLarge && !malformedJson) {
     log.error('unhandled', {
       name: error instanceof Error ? error.name : 'unknown',
     });
   }
   const appError = tooLarge
     ? payloadTooLarge()
-    : error instanceof AppError
-      ? error
-      : internalError();
+    : malformedJson
+      ? invalidRequest('Invalid JSON body.')
+      : error instanceof AppError
+        ? error
+        : internalError();
   const body: {
     error: { code: string; message: string; details?: Record<string, unknown> };
   } = {

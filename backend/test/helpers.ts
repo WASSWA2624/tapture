@@ -33,6 +33,8 @@ export function testConfig(overrides: NodeJS.ProcessEnv = {}): AppConfig {
     AI_TIMEOUT_MS: '300',
     AI_RETRY_LIMIT: '1',
     AI_BREAKER_THRESHOLD: '3',
+    AI_REQUEST_COST_CEILING: '0.01',
+    AI_PROVIDER_MODEL: 'fake',
     PORT: '0',
     ...overrides,
   });

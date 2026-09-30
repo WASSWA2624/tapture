@@ -20,7 +20,8 @@ describe('authenticate', () => {
     assert.equal(missing.status, 401);
     assert.equal(malformed.status, 401);
 
-    const expiredDeps = makeDeps({ ACCESS_TTL_SECONDS: '-5' });
+    const expiredDeps = makeDeps();
+    expiredDeps.config = { ...expiredDeps.config, accessTtlSeconds: -5 };
     const expiredAccount = await seedUser(expiredDeps);
     const expiredApp = appFor(expiredDeps);
     const expiredTokens = await signIn(expiredApp, expiredAccount);

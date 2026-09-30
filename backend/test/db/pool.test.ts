@@ -43,14 +43,19 @@ describe('pool', () => {
     assert.equal(pool.status().draining, true);
   });
 
-  it('drains a postgres pool when DATABASE_URL is set', async () => {
-    const url = process.env['DATABASE_URL'] ?? '';
-    if (!url.startsWith('postgres')) return;
-    const pool = createPool(testConfig({ DATABASE_URL: url }));
-    await pool.query('SELECT 1 AS ok');
-    await pool.drain();
-    assert.equal(pool.status().draining, true);
-  });
+  it(
+    'drains a postgres pool when DATABASE_URL is set',
+    {
+      skip: !process.env['DATABASE_URL']?.startsWith('postgres'),
+    },
+    async () => {
+      const url = process.env['DATABASE_URL'] ?? '';
+      const pool = createPool(testConfig({ DATABASE_URL: url }));
+      await pool.query('SELECT 1 AS ok');
+      await pool.drain();
+      assert.equal(pool.status().draining, true);
+    },
+  );
 
   it('commits and returns a healthy client without a lingering listener', async () => {
     const client = new FakeClient();

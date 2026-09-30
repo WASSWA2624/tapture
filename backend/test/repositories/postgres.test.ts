@@ -14,6 +14,8 @@ import { createLogger } from '../../src/observability/logger.js';
 import { readAccess, rotate } from '../../src/services/auth/tokens.js';
 import { acknowledge, uploadPackage } from '../../src/services/relay/relay.js';
 import { testConfig } from '../helpers.js';
+import { auditConfiguration } from '../../src/services/configuration.js';
+import { runPurge } from '../../src/jobs/purge.js';
 
 const databaseUrl = process.env['DATABASE_URL'];
 
@@ -157,10 +159,45 @@ it(
       assert.ok(
         (await store.security()).some((row) => row.action === 'refresh_reuse'),
       );
+      await assert.rejects(
+        () => pool.query("UPDATE audit_events SET action='tampered'"),
+        /append-only/,
+      );
+      await assert.rejects(
+        () => pool.query('DELETE FROM security_events'),
+        /append-only/,
+      );
+      await auditConfiguration(store, config);
+      const metadata = await store.exportMetadata();
+      assert.ok(Array.isArray(metadata['accounts']));
+      const serialized = JSON.stringify(metadata);
+      assert.equal(serialized.includes('password_hash'), false);
+      assert.equal(serialized.includes('token_hash'), false);
+      assert.equal(serialized.includes('ciphertext'), false);
+      await store.saveIdempotency(
+        'expired-key',
+        { status: 201, body: {} },
+        new Date(Date.now() - 1).toISOString(),
+      );
+      await store.setLockout(
+        'expired-lockout',
+        1,
+        null,
+        new Date(Date.now() - 1).toISOString(),
+      );
+      assert.equal((await runPurge(store, new Date())).transientDeleted, 2);
+      assert.equal(await store.idempotency('expired-key'), undefined);
+      await store.saveIdempotency('expired-key', { status: 202, body: {} });
+      assert.equal((await store.idempotency('expired-key'))?.status, 202);
       const changed = files.map((file, index) =>
         index === 0 ? { ...file, checksum: 'different' } : file,
       );
       await assert.rejects(() => migrate(store, changed, pool), /checksum/);
+      const deleted = await store.destroyOrganisation(identity.organisationId);
+      assert.ok(deleted.includes('relay-ciphertext'));
+      for (const [key, rows] of Object.entries(await store.exportMetadata()))
+        if (key !== 'schema') assert.deepEqual(rows, [], key);
+      assert.equal((await store.schemaHistory()).length, files.length);
       await pool.drain();
       assert.equal((await request(app).get('/ready')).status, 500);
     } finally {

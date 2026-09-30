@@ -1,7 +1,7 @@
 import type { Express } from 'express';
 import { invalidRequest } from '../../domain/errors.js';
 import type { Deps } from '../../deps.js';
-import { asyncRoute, field, optionalField } from '../../http.js';
+import { asyncRoute, field, objectBody, optionalField } from '../../http.js';
 import { authenticate } from '../../middleware/authenticate.js';
 import { rateLimit } from '../../middleware/rate_limit.js';
 import {
@@ -15,6 +15,7 @@ export function registerPassword(app: Express, deps: Deps): void {
     '/api/v1/auth/change-password',
     authenticate(deps),
     asyncRoute(async (req, res) => {
+      objectBody(req.body, ['currentPassword', 'nextPassword']);
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
       await changePassword(deps.store, deps.config, {
@@ -29,8 +30,10 @@ export function registerPassword(app: Express, deps: Deps): void {
     '/api/v1/auth/reset',
     rateLimit(deps, 'auth'),
     asyncRoute(async (req, res) => {
+      objectBody(req.body, ['token', 'password', 'email', 'organisationId']);
       const token = optionalField(req.body, 'token');
       if (token !== undefined) {
+        objectBody(req.body, ['token', 'password']);
         await completeReset(deps.store, deps.config, {
           token,
           password: field(req.body, 'password'),
@@ -38,6 +41,7 @@ export function registerPassword(app: Express, deps: Deps): void {
         res.json({ accepted: true });
         return;
       }
+      objectBody(req.body, ['email', 'organisationId']);
       await requestReset(deps.store, {
         email: field(req.body, 'email'),
         organisationId: field(req.body, 'organisationId'),

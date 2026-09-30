@@ -85,7 +85,13 @@ export function httpProvider(
           contents: [{ role: 'user', parts }],
           generationConfig: { responseMimeType: envelope['responseMimeType'] },
         }),
-        signal: AbortSignal.timeout(config.aiTimeoutMs),
+        signal:
+          input.signal === undefined
+            ? AbortSignal.timeout(config.aiTimeoutMs)
+            : AbortSignal.any([
+                input.signal,
+                AbortSignal.timeout(config.aiTimeoutMs),
+              ]),
       },
     );
     if (!response.ok) throw refusal(response.status, configuredModel);

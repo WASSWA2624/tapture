@@ -8,7 +8,7 @@ import { AppError } from '../../src/domain/errors.js';
 describe('tokens', () => {
   it('rotates once, kills the family on reuse, and allows a second logout', async () => {
     const store = new Store();
-    const config = testConfig({ ACCESS_TTL_SECONDS: '-5' });
+    const config = testConfig();
     store.addDevice({
       id: 'device-1',
       userId: 'user-1',

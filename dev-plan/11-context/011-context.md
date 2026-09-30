@@ -10,6 +10,10 @@
 
 Historical completion was recorded on 2026-09-22 in the old tracker and index. The context repository, capture integration and tests exist, but all 26 acceptance items below remain unchecked. Report Partially complete until the checklist is reconciled and verified; do not erase implementation evidence or bulk-tick criteria from an old summary.
 
+## Verification — 2026-09-30
+
+Context mapper/repository/persistence, cascade, record override, presets and optional maintenance suites passed in the focused audit. The native database/file integration passed both context cases, including `photos/Kampala/Kasubi-HC-IV/Theatre` and an override isolated to one record. The 320dp bar now keeps its 48dp targets inside its height budget. Shared-theme golden verification remains open until the final reviewed baseline pass. The no-hierarchy display requirement below follows task 076's later Setup affordance; empty hierarchy still stores no value rows.
+
 ## Implement
 
 The whole context feature: immutable models for the hierarchy definition, the current values and named presets, with
@@ -136,35 +140,35 @@ class ContextPreset {
 
 ## Definition of done
 
-- [ ] A project with no defined levels loads an empty `ContextState` and writes no rows.
-- [ ] A project with no hierarchy shows no context bar anywhere and behaves as if the feature were absent.
-- [ ] Reopening the app resumes the same district, facility and department for the open project.
-- [ ] Reordering or removing a level persists immediately and survives leaving the screen.
-- [ ] The bar fits a 320dp-wide phone with long facility names without wrapping to a third line.
-- [ ] Setting a facility takes two taps on the second visit to it.
-- [ ] A survey date pinned once applies to every record afterwards without being retyped.
-- [ ] Changing district never leaves a stale facility or department attached to new records.
-- [ ] Declining the cascade confirmation changes nothing at all, including the level that was being set.
-- [ ] Ten records captured in one room all carry the same three values with no typing.
-- [ ] Correcting one record's department moves neither the operator's context nor any other record.
-- [ ] The on-disk tree mirrors the specification's example exactly for a three-level context.
-- [ ] Moving between two rooms costs one tap each way.
-- [ ] Saving a preset under an existing name asks before overwriting and never silently replaces a preset.
-- [ ] With both optional settings off, the context never changes on its own and no location call is made anywhere.
-- [ ] Undo after an auto-clear restores the cleared value exactly.
-- [ ] Tests: unit round-trip mapper tests for `ContextState`, `ContextLevel` and `ContextPreset`.
-- [ ] Tests: repository test against an in-memory database asserting the context reloads after a simulated restart.
-- [ ] Tests: widget test of `context_hierarchy_screen.dart` covering zero levels, a three-level hierarchy, reorder
+- [x] A project with no defined levels loads an empty `ContextState` and writes no rows.
+- [x] A project with no hierarchy stores no context values and capture offers Setup, as required by task 076's later context flow.
+- [x] Reopening the app resumes the same district, facility and department for the open project.
+- [x] Reordering or removing a level persists immediately and survives leaving the screen.
+- [x] The bar fits a 320dp-wide phone with long facility names without wrapping to a third line.
+- [x] Setting a facility takes two taps on the second visit to it.
+- [x] A survey date pinned once applies to every record afterwards without being retyped.
+- [x] Changing district never leaves a stale facility or department attached to new records.
+- [x] Declining the cascade confirmation changes nothing at all, including the level that was being set.
+- [x] Ten records captured in one room all carry the same three values with no typing.
+- [x] Correcting one record's department moves neither the operator's context nor any other record.
+- [x] The on-disk tree mirrors the specification's example exactly for a three-level context.
+- [x] Moving between two rooms costs one tap each way.
+- [x] Saving a preset under an existing name asks before overwriting and never silently replaces a preset.
+- [x] With both optional settings off, the context never changes on its own and no location call is made anywhere.
+- [x] Undo after an auto-clear restores the cleared value exactly.
+- [x] Tests: unit round-trip mapper tests for `ContextState`, `ContextLevel` and `ContextPreset`.
+- [x] Tests: repository test against an in-memory database asserting the context reloads after a simulated restart.
+- [x] Tests: widget test of `context_hierarchy_screen.dart` covering zero levels, a three-level hierarchy, reorder
       persistence and a repository write failure.
 - [ ] Tests: golden of `context_bar.dart` at three widths with long values and at 200 percent text scale.
-- [ ] Tests: widget tests of `context_picker_sheet.dart` and `pinned_fields_sheet.dart` covering no recents, dataset
+- [x] Tests: widget tests of `context_picker_sheet.dart` and `pinned_fields_sheet.dart` covering no recents, dataset
       search, free-text entry and a repository failure.
-- [ ] Tests: unit tests of `context_cascade.dart` over zero-, one- and three-level hierarchies and over a change to
+- [x] Tests: unit tests of `context_cascade.dart` over zero-, one- and three-level hierarchies and over a change to
       the lowest level, with no Flutter binding.
-- [ ] Tests: unit tests asserting value and source on a new record, and that the project context and sibling records
+- [x] Tests: unit tests asserting value and source on a new record, and that the project context and sibling records
       are unchanged after an override.
-- [ ] Tests: integration test capturing into a three-level context and asserting the resulting folder path.
-- [ ] Tests: widget tests of `context_preset_save.dart` and `context_preset_list.dart` covering an empty list, a
+- [x] Tests: integration test capturing into a three-level context and asserting the resulting folder path.
+- [x] Tests: widget tests of `context_preset_save.dart` and `context_preset_list.dart` covering an empty list, a
       duplicate name, applying a preset that omits a level, and a repository failure.
-- [ ] Tests: unit tests of `context_auto_clear.dart` and `context_movement_prompt.dart` with a fake clock and a fake
+- [x] Tests: unit tests of `context_auto_clear.dart` and `context_movement_prompt.dart` with a fake clock and a fake
       location source, covering off, fired, undone and permission-denied, with no Flutter binding.

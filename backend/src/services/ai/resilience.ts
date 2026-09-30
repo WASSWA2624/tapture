@@ -9,6 +9,37 @@ interface Breaker {
 
 const breakers = new Map<string, Breaker>();
 
+async function timedCall(
+  provider: AiProvider,
+  method: keyof AiProvider,
+  request: AiRequest,
+  timeoutMs: number,
+): Promise<AiResult> {
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      provider[method]({
+        ...request,
+        signal:
+          request.signal === undefined
+            ? controller.signal
+            : AbortSignal.any([request.signal, controller.signal]),
+      }),
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => {
+          controller.abort();
+          reject(new Error('timeout'));
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    // Successful calls release their deadline immediately. A busy proxy must
+    // not keep one timer per completed request until the timeout elapses.
+    clearTimeout(timer);
+  }
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -36,12 +67,12 @@ export async function callProvider(
   let last: unknown;
   for (let attempt = 0; attempt <= config.aiRetryLimit; attempt += 1) {
     try {
-      const result = await Promise.race([
-        provider[method](request),
-        sleep(config.aiTimeoutMs).then(() => {
-          throw new Error('timeout');
-        }),
-      ]);
+      const result = await timedCall(
+        provider,
+        method,
+        request,
+        config.aiTimeoutMs,
+      );
       breakers.set(request.model, { failures: 0, openUntil: 0 });
       if (result.text.length === 0) throw new Error('malformed');
       return result;

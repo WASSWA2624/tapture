@@ -3,6 +3,8 @@ import { describe, it } from 'node:test';
 import {
   hashPassword,
   verifyPassword,
+  passwordNeedsRehash,
+  warmPasswordVerification,
 } from '../../src/services/auth/password.js';
 import { testConfig } from '../helpers.js';
 
@@ -17,5 +19,10 @@ describe('passwords', () => {
     assert.equal(await verifyPassword('correct-horse', hash, other), true);
     const changed = await hashPassword('correct-horse', other);
     assert.notEqual(hash, changed);
+    assert.equal(passwordNeedsRehash(hash, config), false);
+    assert.equal(passwordNeedsRehash(hash, other), true);
+    assert.equal(passwordNeedsRehash(changed, other), false);
+    await warmPasswordVerification(config);
+    assert.equal(await verifyPassword('correct-horse', '', config), false);
   });
 });

@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createPool } from '../db/pool.js';
 import { createPostgresRepository } from '../repositories/postgres.js';
 import { bootstrapOrganisation } from '../services/auth/bootstrap.js';
+import { issuePasswordReset } from '../services/auth/account.js';
 import type { Repository as Store } from '../repositories/repository.js';
 /// Writes accounts and metadata. Project content is never part of the file.
 export async function exportAccounts(
@@ -11,30 +12,16 @@ export async function exportAccounts(
   outDir: string,
 ): Promise<void> {
   await mkdir(outDir, { recursive: true });
-  const body = {
-    accounts: (await store.users()).map((user) => ({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-      organisationId: user.organisationId,
-    })),
-    devices: await store.devices(),
-    memberships: await store.members(),
-    roles: (await store.users()).map((user) => ({
-      userId: user.id,
-      role: user.role,
-    })),
-    audit: await store.audit(),
-    packageMetadata: await store.packages(),
-  };
+  const body = await store.withTransaction(async (tx) => tx.exportMetadata());
   await writeFile(
     path.join(outDir, 'export.json'),
     JSON.stringify(body, null, 2),
+    { mode: 0o600, flag: 'wx' },
   );
   await writeFile(
     path.join(outDir, 'README.txt'),
-    'Projects are not included. This export holds accounts, devices, memberships, roles, audit and package metadata only.\n',
+    'Projects are not included. This export holds all account, project registration, relay, audit, security, usage and operational metadata. Ciphertext, password hashes, bearer-token hashes, provider keys and signing-key fingerprints are excluded. The schema history is retained after destroy; all organisation state is removed.\n',
+    { mode: 0o600, flag: 'wx' },
   );
 }
 /// Deletes one organisation after the name is confirmed twice.
@@ -66,12 +53,36 @@ async function main(): Promise<void> {
   const store = createPostgresRepository(pool);
   try {
     const command = process.argv[2];
+    if (command === 'reset-password') {
+      const email = arg('--email');
+      const out = arg('--out');
+      const actorId = arg('--actor');
+      if (!email || !out || !actorId)
+        throw new Error('Reset requires --email, --out and --actor.');
+      const orgs = await store.orgs();
+      const org = orgs[0];
+      if (orgs.length !== 1 || org === undefined)
+        throw new Error('Reset requires a single organisation deployment.');
+      const token = await issuePasswordReset(store, {
+        email,
+        organisationId: org.id,
+        actorId,
+      });
+      await writeFile(out, `${token}\n`, { mode: 0o600, flag: 'wx' });
+      process.stdout.write(
+        'Reset credential written to the operator-selected private file; valid for one hour.\n',
+      );
+      return;
+    }
     if (command === 'migrate') {
       const { migrate, readMigrations } = await import('../db/migrate.js');
       const files = await readMigrations(
         path.join(
           path.dirname(fileURLToPath(import.meta.url)),
-          '../../migrations',
+          // TypeScript lives in src/cli; emitted JavaScript in dist/src/cli.
+          import.meta.url.endsWith('.ts')
+            ? '../../migrations'
+            : '../../../migrations',
         ),
       );
       const ran = await migrate(store, files, pool);
@@ -118,7 +129,7 @@ async function main(): Promise<void> {
       return;
     }
     throw new Error(
-      'Use migrate, bootstrap, export --out <dir> or destroy --confirm <org> --again <org>.',
+      'Use migrate, bootstrap, reset-password --email <address> --actor <operator> --out <private-file>, export --out <dir> or destroy --confirm <org> --again <org>.',
     );
   } finally {
     await pool.drain();

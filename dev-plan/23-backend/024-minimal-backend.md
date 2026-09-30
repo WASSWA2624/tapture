@@ -2,11 +2,23 @@
 
 **Implementation step:** 23.01
 
+**Implementation started:** Yes
+
 **Phase** 23 · The minimal backend  |  **Depends on** [002](../02-foundation/002-foundation-services.md), [003](../03-design-system/003-design-system.md), [007](../07-account-and-settings/007-account-and-settings.md), [013](../13-processing/013-processing.md), [019](../19-bundles-and-merge/019-bundles-and-merge.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Status reconciliation — 2026-09-28
 
 Reopened the app-integration criteria contradicted by the current source. frontend/lib/main.dart constructs ProviderRegistry.keyless(); app/router.dart supplies an empty BackendConfig, a no-op sign-in handler and constant relay counters. Server/client components and their recorded checked criteria remain, but production enrolment, cached identity/role affordances, relay UI wiring and default proxy extraction are not established. This task is Partially complete; task 084 also identifies the proxy integration gap. This audit updates the plan, not the implementation.
+
+## Backend implementation audit — 2026-09-30
+
+Implemented server gaps found during the full-codebase review: generic registration/reset-request responses; purpose-, organisation-, state- and expiry-checked one-use invitation/reset consumption; operator-issued private reset capabilities; isolated refresh chains; startup-warmed Argon verification and successful parameter rehash; transactional account/enrollment rereads; closed HTTP request objects and safe malformed-JSON errors; bounded route metric labels and logs; project/organisation daily and lifetime quota reservations; cancellation of provider calls; configured-model cost bounds; safe deployment key/policy audit; retention changes applied to existing transit state; complete credential-free metadata export and confirmed whole-deployment destruction; and bounded cleanup of expired account/replay/lockout metadata. Relay counters move only after unique committed operations, and storage/usage checks aggregate in PostgreSQL rather than copying full history.
+
+Migration 009 adds acknowledgement expiry inherited from its package. This is lifecycle metadata required by this task's transient-row acceptance, not project content; acknowledgement removal still cascades from its parent package. Version vectors remain durable project/device counters as BE-RELAY-06 specifies. Export excludes ciphertext and credential hashes/digests; destroy removes all organisation state while preserving only migration history. Normal runtime credentials cannot truncate append-only events; the confirmed owner administration command removes the entire single-organisation deployment atomically.
+
+The HTTP contract suite exercises all 33 documented operations, request/response schemas, authentication and malformed-input envelopes, and a real method/payload drift fixture. New regression cases cover quotas across actors/projects/days and concurrent reservation, failed-call charging, provider abort, cross-organisation/expired invitation refusal, reset separation and replay, refresh-family isolation, account-disable races, retention rollback, exact relay counters, bounded cleanup and complete metadata export/destruction. Production TypeScript build succeeds. Local PostgreSQL, container/image and protected-branch acceptance remain open: their tests explicitly skip without the required infrastructure, and a green unit/fake gate does not certify deployment. The pipeline runs the database and Docker gates when that infrastructure is available. A live provider extraction still needs an organisation-operated model/key and reviewed cost bound.
+
+Additional implementation files: `backend/.dockerignore`, `.prettierignore`, `tsconfig.build.json`; migrations 006–009; repository usage/settings/maintenance modules; `services/configuration.ts`; OpenAPI schema/HTTP error fixtures; authentication and runtime hardening regressions. The pinned development-only `yaml` 2.9.1 dependency has the ISC licence and enables structured contract checks. Generated tracker summaries must be regenerated after this checklist update.
 
 ## Implement
 
@@ -583,19 +595,19 @@ abstract class OfflineAuthority {
 
 - [x] Shutdown drains the pool without dropping an in-flight transaction.
 - [x] Migrations apply in order, record themselves, and never run implicitly at boot.
-- [x] Upgrading from the last released schema preserves every row.
-- [x] Tests: integration tests against an ephemeral database migrated from scratch for pool behaviour and drain
+- [ ] Upgrading from the last released schema preserves every row.
+- [ ] Tests: integration tests against an ephemeral database migrated from scratch for pool behaviour and drain
       (BE-TEST-03), and a migration test from the previous release schema with seeded data (BE-TEST-09).
 - [x] A project row carries the client-generated identifier and there exists no column able to hold project content.
 - [x] Email is unique per organisation and the device identifier is globally unique, enforced by constraint.
-- [x] Tests: repository integration tests for user and device creation and lookup, and for membership with and without
+- [ ] Tests: repository integration tests for user and device creation and lookup, and for membership with and without
       a context scope, including the cross-organisation isolation case.
 - [x] Every transient row carries created and expiry columns, and the purge query needs no exception for any of them.
 - [x] No column on a package, acknowledgement or vector row can hold project content.
-- [x] Tests: integration tests for package insert, acknowledgement and the expiry query, and a test proving an audit
+- [ ] Tests: integration tests for package insert, acknowledgement and the expiry query, and a test proving an audit
       row cannot be updated or deleted.
 - [x] A failure mid-transaction leaves no partial rows and surfaces a typed error, not a driver message.
-- [x] Tests: an integration test with a deliberate mid-transaction failure across two tables, and a test asserting a
+- [ ] Tests: an integration test with a deliberate mid-transaction failure across two tables, and a test asserting a
       unique violation maps to the expected error code.
 
 ### Authentication and roles
@@ -680,8 +692,8 @@ abstract class OfflineAuthority {
 - [x] An operator can leave the product entirely, taking everything the server holds, in one command.
 - [x] Destroy cannot run without an explicit organisation name and a second confirmation.
 - [x] The runbook states plainly that server backups contain accounts and metadata, never projects.
-- [x] A red pipeline blocks merging.
-- [x] Tests: command tests over a seeded database for export and destroy; a smoke test that builds the image and
+- [ ] A red pipeline blocks merging.
+- [ ] Tests: command tests over a seeded database for export and destroy; a smoke test that builds the image and
       passes its health check; a pipeline run proving the gate fails when any single stage fails.
 
 ### The app side

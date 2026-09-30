@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { AuditEvent } from '../types/index.js';
-import type { UsageRow } from './store.js';
+import type { QuotaUsage, UsageRow } from './usage.js';
 import type { Sql } from './sql.js';
 
 export function eventRepository(sql: Sql) {
@@ -17,7 +17,9 @@ export function eventRepository(sql: Sql) {
         event.action,
         event.target,
         event.before,
-        event.after,
+        table === 'audit_events'
+          ? { outcome: 'applied', ...event.after }
+          : event.after,
       ],
     );
   return {
@@ -37,11 +39,12 @@ export function eventRepository(sql: Sql) {
       sql.rows<UsageRow>(
         'SELECT project_id AS "projectId",user_id AS "userId",model,byte_size AS "byteSize",duration_ms AS "durationMs",outcome,cost,at FROM ai_usage ORDER BY at,id',
       ),
-    addUsage: (row: UsageRow) =>
-      sql.write(
+    addUsage: async (row: UsageRow) => {
+      const id = randomUUID();
+      await sql.write(
         'INSERT INTO ai_usage(id,project_id,user_id,model,byte_size,duration_ms,outcome,cost,at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',
         [
-          randomUUID(),
+          id,
           row.projectId,
           row.userId,
           row.model,
@@ -51,7 +54,48 @@ export function eventRepository(sql: Sql) {
           row.cost,
           row.at,
         ],
+      );
+      return id;
+    },
+    finishUsage: (
+      id: string,
+      outcome: string,
+      durationMs: number,
+      model: string,
+    ) =>
+      sql.write(
+        'UPDATE ai_usage SET outcome=$2,duration_ms=$3,model=$4 WHERE id=$1',
+        [id, outcome, durationMs, model],
       ),
+    quotaUsage: async (
+      organisationId: string,
+      projectId: string,
+      dayFrom: string,
+      dayTo: string,
+    ): Promise<QuotaUsage> => {
+      // Aggregate in Postgres rather than copying the complete usage history
+      // into every request. Pending reservations count against every limit.
+      const rows = await sql.rows<{
+        project: QuotaUsage['project'];
+        organisation: QuotaUsage['organisation'];
+      }>(
+        `SELECT json_build_object(
+          'requests',count(*) FILTER (WHERE u.project_id=$2),
+          'dailyRequests',count(*) FILTER (WHERE u.project_id=$2 AND u.at >= $3 AND u.at < $4),
+          'cost',coalesce(sum(u.cost) FILTER (WHERE u.project_id=$2),0),
+          'dailyCost',coalesce(sum(u.cost) FILTER (WHERE u.project_id=$2 AND u.at >= $3 AND u.at < $4),0)
+        ) AS project,json_build_object(
+          'requests',count(*),
+          'dailyRequests',count(*) FILTER (WHERE u.at >= $3 AND u.at < $4),
+          'cost',coalesce(sum(u.cost),0),
+          'dailyCost',coalesce(sum(u.cost) FILTER (WHERE u.at >= $3 AND u.at < $4),0)
+        ) AS organisation FROM ai_usage u JOIN projects p ON p.id=u.project_id WHERE p.organisation_id=$1`,
+        [organisationId, projectId, dayFrom, dayTo],
+      );
+      const row = rows[0];
+      if (row === undefined) throw new Error('Missing usage aggregate.');
+      return row;
+    },
     schemaHistory: () =>
       sql.rows<{ name: string; checksum: string }>(
         'SELECT name,checksum FROM schema_migrations ORDER BY name',

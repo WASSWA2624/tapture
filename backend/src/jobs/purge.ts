@@ -6,6 +6,7 @@ export interface PurgeReport {
   bytesReclaimed: number;
   oldestAgeSeconds: number;
   failures: number;
+  transientDeleted: number;
 }
 /// Deletes packages whose expiry is before [now]. The report names no payload.
 export async function runPurge(
@@ -18,6 +19,7 @@ export async function runPurge(
   let bytesReclaimed = 0;
   let oldestAgeSeconds = 0;
   let failures = 0;
+  let transientDeleted = 0;
   while (true) {
     let batchCount = 0;
     try {
@@ -36,25 +38,41 @@ export async function runPurge(
             Math.floor((now.getTime() - Date.parse(row.createdAt)) / 1000),
           );
         }
-        if (due.length > 0)
-          await tx.recordAudit({
-            actorId: 'system',
-            action: 'purge',
-            target: 'relay',
-            before: null,
-            after: { deleted: due.length, bytesReclaimed: bytes },
-          });
-        return { bytes, oldest };
+        const transient = await tx.purgeTransient(now, batchSize);
+        return { bytes, oldest, transient };
       });
       deleted += batchCount;
       bytesReclaimed += batch.bytes;
       oldestAgeSeconds = Math.max(oldestAgeSeconds, batch.oldest);
+      transientDeleted += batch.transient;
+      batchCount = Math.max(batchCount, batch.transient);
     } catch {
       failures += Math.max(batchCount, 1);
       break;
     }
     if (batchCount < batchSize) break;
   }
-  if (metrics !== undefined) metrics.packagesPurged += deleted;
-  return { deleted, bytesReclaimed, oldestAgeSeconds, failures };
+  const report = {
+    deleted,
+    bytesReclaimed,
+    oldestAgeSeconds,
+    failures,
+    transientDeleted,
+  };
+  try {
+    await store.recordAudit({
+      actorId: 'system',
+      action: 'purge',
+      target: 'relay',
+      before: null,
+      after: { ...report, outcome: failures > 0 ? 'failed' : 'completed' },
+    });
+    if (metrics !== undefined) {
+      metrics.packagesPurged += deleted;
+      metrics.storageBytes = await store.storageUsage();
+    }
+  } catch {
+    report.failures += 1;
+  }
+  return report;
 }

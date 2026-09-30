@@ -24,7 +24,9 @@ export function registerMe(app: Express, deps: Deps): void {
         userId: user.id,
         organisationId: user.organisationId,
         role: user.role,
-        aiAvailable: deps.config.aiProviderKey.length > 0,
+        aiAvailable:
+          deps.config.aiProviderKey.length > 0 &&
+          deps.config.aiRequestCostCeiling > 0,
         grants,
         grantValidUntil: new Date(
           Date.now() + deps.config.refreshTtlSeconds * 1000,

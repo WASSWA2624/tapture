@@ -63,12 +63,10 @@ export const payloadTooLarge = (): AppError =>
 export const rateLimited = (): AppError =>
   new AppError('rate_limited', 429, 'Too many attempts. Wait and try again.');
 
-export const quotaExceeded = (): AppError =>
-  new AppError(
-    'quota_exceeded',
-    429,
-    'The project storage ceiling is reached.',
-  );
+export const quotaExceeded = (
+  message = 'The project storage ceiling is reached.',
+  details?: Record<string, unknown>,
+): AppError => new AppError('quota_exceeded', 429, message, details);
 
 export const internalError = (): AppError =>
   new AppError('internal', 500, 'Something went wrong.');
