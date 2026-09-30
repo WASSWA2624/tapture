@@ -1,7 +1,7 @@
 # Repository instructions
 
 - Write efficient, professional, standard code and prefer reuse.
-- Reuse uniform UI components and avoid corner radii unless unavoidable.
+- Reuse uniform UI components and use the minimal corner radius (`Radii`, never zero).
 - Follow `dev-plan/STANDARD.md` and the relevant frontend/backend rules.
 - Keep `app-write-up.md` complete and concise: preserve distinct requirements, contracts and stable section
   references; consolidate repetition and use cross-references. Record implementation status in the tracker.

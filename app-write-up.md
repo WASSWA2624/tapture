@@ -2146,7 +2146,7 @@ Testable interface rules:
 11. **Touch targets ≥ 48 dp**; primary actions within one-thumb reach.
 12. **Undo destructive actions**; keep deletions in a recycle bin.
 13. **One visible status line:** context, template, online/offline, unprocessed count.
-14. **Reusable, square components:** use existing design-system controls and zero corner radius where permitted. Menus, resource rows and document panels share controls; icons have readable labels.
+14. **Reusable components:** use existing design-system controls and the minimal corner radius (`Radii`, never zero). Menus, resource rows and document panels share controls; icons have readable labels.
 
 ## 57. Settings
 

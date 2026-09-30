@@ -26,13 +26,13 @@ do not add a dead Documentation or export placeholder to this change.
 
 - Reuse the shared overflow menu and destination metadata. Compact label/icon changes must not rename the desktop
   Settings control. Exactly four mobile controls; no fifth tab.
-- Square corners, shared spacing/theme tokens, 48 dp targets, icons plus text, safe-area scrolling and accessible
+- Minimal corner radius from `Radii` (never zero), shared spacing/theme tokens, 48 dp targets, icons plus text, safe-area scrolling and accessible
   labels. Preserve selected branch, current project, draft input and search across dismissal and resizing.
 - Selecting an entry closes the menu and uses the canonical route; reopening adds no duplicate route.
 
 ## Definition of done
 
-- [x] Compact More opens a square menu with four working icon-labelled secondary destinations.
+- [x] Compact More opens a menu with the minimal corner radius and four working icon-labelled secondary destinations.
 - [x] Each menu choice navigates to its existing destination and secondary screens select the fourth branch.
 - [x] Dismissal preserves the active primary branch, project and search state; an open popup remains usable across
       a width change, and the existing desktop Settings rail is retained.
