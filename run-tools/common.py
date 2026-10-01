@@ -105,22 +105,14 @@ def gradle_env() -> dict[str, str]:
         info(f"AF_UNIX socket dir -> {scratch}")
         option = f"-Djdk.net.unixdomain.tmpdir={scratch}"
 
-        # Gradle's launcher consumes GRADLE_OPTS without Java's noisy
-        # "Picked up JAVA_TOOL_OPTIONS" banner. Remove only our option from
-        # JAVA_TOOL_OPTIONS in case an earlier shell configuration put it there;
-        # unrelated caller-provided JVM options remain untouched.
-        java_tool_options = env.get("JAVA_TOOL_OPTIONS", "")
-        java_tool_options = re.sub(
-            rf"(?<!\S){re.escape(option)}(?!\S)", "", java_tool_options
-        ).strip()
-        if java_tool_options:
-            env["JAVA_TOOL_OPTIONS"] = java_tool_options
-        else:
-            env.pop("JAVA_TOOL_OPTIONS", None)
-
-        gradle_options = env.get("GRADLE_OPTS", "")
-        if option not in gradle_options:
-            env["GRADLE_OPTS"] = f"{gradle_options} {option}".strip()
+        # GRADLE_OPTS configures the launcher; it does not reach the JVM that
+        # Gradle starts for its daemon. Both need the socket-directory option.
+        # JAVA_TOOL_OPTIONS is inherited by every child JVM, including the
+        # daemon, while unrelated caller options remain untouched.
+        for name in ("JAVA_TOOL_OPTIONS", "GRADLE_OPTS"):
+            existing = env.get(name, "").strip()
+            if not re.search(rf"(?<!\S){re.escape(option)}(?!\S)", existing):
+                env[name] = f"{existing} {option}".strip()
     return env
 
 
