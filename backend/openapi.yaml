@@ -447,9 +447,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Device'
+                $ref: '#/components/schemas/DevicePage'
         '400':
           $ref: '#/components/responses/Error'
         '401':
@@ -468,7 +466,9 @@ paths:
           $ref: '#/components/responses/Error'
         '503':
           $ref: '#/components/responses/Error'
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
     post:
       responses:
         '201':
@@ -660,9 +660,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Project'
+                $ref: '#/components/schemas/ProjectPage'
         '400':
           $ref: '#/components/responses/Error'
         '401':
@@ -681,7 +679,9 @@ paths:
           $ref: '#/components/responses/Error'
         '503':
           $ref: '#/components/responses/Error'
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
     post:
       responses:
         '201':
@@ -779,9 +779,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Membership'
+                $ref: '#/components/schemas/MembershipPage'
         '400':
           $ref: '#/components/responses/Error'
         '401':
@@ -805,6 +803,8 @@ paths:
           in: path
           required: true
           schema: *a1
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
     post:
       responses:
         '201':
@@ -1259,9 +1259,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Usage'
+                $ref: '#/components/schemas/UsagePage'
         '400':
           $ref: '#/components/responses/Error'
         '401':
@@ -1285,6 +1283,8 @@ paths:
           in: query
           required: true
           schema: *a1
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
         - name: from
           in: query
           required: true
@@ -1294,6 +1294,24 @@ paths:
           required: true
           schema: *a1
 components:
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+      description: Resume after the previous page's nextCursor. The cursor remains valid when its row is removed.
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 50
   schemas:
     Error:
       type: object
@@ -1372,6 +1390,54 @@ components:
         nextCursor: *a6
       required:
         - users
+        - nextCursor
+      additionalProperties: false
+    DevicePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Device'
+        nextCursor: *a6
+      required:
+        - items
+        - nextCursor
+      additionalProperties: false
+    UsagePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Usage'
+        nextCursor: *a6
+      required:
+        - items
+        - nextCursor
+      additionalProperties: false
+    ProjectPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        nextCursor: *a6
+      required:
+        - items
+        - nextCursor
+      additionalProperties: false
+    MembershipPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Membership'
+        nextCursor: *a6
+      required:
+        - items
         - nextCursor
       additionalProperties: false
     Invitation:
@@ -1514,6 +1580,7 @@ components:
     Usage:
       type: object
       properties:
+        id: *a1
         projectId: *a1
         userId: *a1
         model: *a1
@@ -1530,6 +1597,7 @@ components:
           minimum: 0
         at: *a1
       required:
+        - id
         - projectId
         - userId
         - model

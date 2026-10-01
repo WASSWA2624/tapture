@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { AuditEvent } from '../types/index.js';
 import type { QuotaUsage, UsageRow } from './usage.js';
 import type { Sql } from './sql.js';
+import type { UsageQuery } from './queries.js';
 
 export function eventRepository(sql: Sql) {
   const addEvent = (
@@ -38,6 +39,18 @@ export function eventRepository(sql: Sql) {
     usage: () =>
       sql.rows<UsageRow>(
         'SELECT project_id AS "projectId",user_id AS "userId",model,byte_size AS "byteSize",duration_ms AS "durationMs",outcome,cost,at FROM ai_usage ORDER BY at,id',
+      ),
+    usagePage: (query: UsageQuery) =>
+      sql.rows<UsageRow & { id: string }>(
+        'SELECT id,project_id AS "projectId",user_id AS "userId",model,byte_size AS "byteSize",duration_ms AS "durationMs",outcome,cost,at FROM ai_usage WHERE project_id=$1 AND user_id=$2 AND at >= $3 AND at <= $4 AND ($5::text IS NULL OR id>$5) ORDER BY id LIMIT $6',
+        [
+          query.projectId,
+          query.userId,
+          query.from,
+          query.to,
+          query.cursor ?? null,
+          query.limit ?? null,
+        ],
       ),
     addUsage: async (row: UsageRow) => {
       const id = randomUUID();

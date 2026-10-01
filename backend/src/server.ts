@@ -116,7 +116,7 @@ async function main(): Promise<void> {
   const store = createPostgresRepository(pool);
   if (
     !(await store.schemaHistory()).some(
-      (row) => row.name === '009_transient_retention.sql',
+      (row) => row.name === '010_scoped_pagination.sql',
     )
   ) {
     await pool.drain();

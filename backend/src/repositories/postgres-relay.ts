@@ -1,6 +1,7 @@
 import type { RelayPackage } from '../types/index.js';
 import type { Ack, IdempotentResult } from './store.js';
 import type { Sql } from './sql.js';
+import type { AckQuery, PackageQuery } from './queries.js';
 
 export function relayRepository(sql: Sql) {
   return {
@@ -31,9 +32,18 @@ export function relayRepository(sql: Sql) {
         'SELECT id,project_id AS "projectId",author_device_id AS "authorDeviceId",byte_size AS "byteSize",created_at AS "createdAt",expires_at AS "expiresAt",storage_ref AS "storageRef" FROM relay_packages WHERE expires_at <= $1 ORDER BY expires_at,id LIMIT $2',
         [now.toISOString(), limit],
       ),
-    packages: () =>
+    packages: (query?: PackageQuery) =>
       sql.rows<RelayPackage>(
-        'SELECT id,project_id AS "projectId",author_device_id AS "authorDeviceId",byte_size AS "byteSize",created_at AS "createdAt",expires_at AS "expiresAt",storage_ref AS "storageRef" FROM relay_packages ORDER BY created_at,id',
+        'SELECT r.id,r.project_id AS "projectId",r.author_device_id AS "authorDeviceId",r.byte_size AS "byteSize",r.created_at AS "createdAt",r.expires_at AS "expiresAt",r.storage_ref AS "storageRef" FROM relay_packages r WHERE ($1::text IS NULL OR r.id=$1) AND ($2::text IS NULL OR r.project_id=$2) AND ($3::text IS NULL OR NOT EXISTS (SELECT 1 FROM relay_acknowledgements a WHERE a.package_id=r.id AND a.device_id=$3)) AND ($4::timestamptz IS NULL OR r.expires_at>$4) AND ($5::timestamptz IS NULL OR (r.created_at,r.id)>($5,$6::text)) ORDER BY r.created_at,r.id LIMIT $7',
+        [
+          query?.id ?? null,
+          query?.projectId ?? null,
+          query?.unacknowledgedDeviceId ?? null,
+          query?.activeAfter ?? null,
+          query?.after?.createdAt ?? null,
+          query?.after?.id ?? null,
+          query?.limit ?? null,
+        ],
       ),
     addPackage: async (row: RelayPackage, bytes: Buffer) => {
       await sql.write(
@@ -62,18 +72,20 @@ export function relayRepository(sql: Sql) {
           [ref],
         )
       )[0]?.bytes,
-    acks: () =>
+    acks: (query?: AckQuery) =>
       sql.rows<Ack>(
-        'SELECT package_id AS "packageId",device_id AS "deviceId" FROM relay_acknowledgements ORDER BY package_id,device_id',
+        'SELECT package_id AS "packageId",device_id AS "deviceId" FROM relay_acknowledgements WHERE ($1::text IS NULL OR package_id=$1) AND ($2::text IS NULL OR device_id=$2) ORDER BY package_id,device_id',
+        [query?.packageId ?? null, query?.deviceId ?? null],
       ),
     addAck: (row: Ack) =>
       sql.write(
         'INSERT INTO relay_acknowledgements(package_id,device_id,expires_at) SELECT $1,$2,expires_at FROM relay_packages WHERE id=$1 ON CONFLICT DO NOTHING',
         [row.packageId, row.deviceId],
       ),
-    vectors: () =>
+    vectors: (projectId?: string) =>
       sql.rows<{ projectId: string; deviceId: string; counter: number }>(
-        'SELECT project_id AS "projectId",device_id AS "deviceId",counter FROM relay_vectors ORDER BY project_id,device_id',
+        'SELECT project_id AS "projectId",device_id AS "deviceId",counter FROM relay_vectors WHERE ($1::text IS NULL OR project_id=$1) ORDER BY project_id,device_id',
+        [projectId ?? null],
       ),
     bumpVector: async (projectId: string, deviceId: string) => {
       const rows = await sql.rows<{ counter: number }>(

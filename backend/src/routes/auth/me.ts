@@ -10,16 +10,14 @@ export function registerMe(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      const user = (await deps.store.users()).find(
-        (row) => row.id === principal.userId,
-      );
+      const user = await deps.store.userById(principal.userId);
       if (user === undefined) throw invalidRequest('Missing session.');
-      const grants = (await deps.store.members())
-        .filter((row) => row.userId === user.id)
-        .map((row) => ({
+      const grants = (await deps.store.members({ userId: user.id })).map(
+        (row) => ({
           projectId: row.projectId,
           contextScope: row.contextScope,
-        }));
+        }),
+      );
       res.json({
         userId: user.id,
         organisationId: user.organisationId,

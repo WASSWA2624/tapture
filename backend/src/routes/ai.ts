@@ -1,7 +1,7 @@
 import express, { type Express } from 'express';
 import { invalidRequest } from '../domain/errors.js';
 import type { Deps } from '../deps.js';
-import { asyncRoute, objectBody } from '../http.js';
+import { asyncRoute, objectBody, pageQuery } from '../http.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { proxyAi, usageReport } from '../services/ai/proxy.js';
 
@@ -99,8 +99,9 @@ export function registerAi(app: Express, deps: Deps): void {
       res.json(
         await usageReport(deps.store, principal, {
           projectId: project,
-          from,
-          to,
+          from: new Date(from).toISOString(),
+          to: new Date(to).toISOString(),
+          ...pageQuery(req.query),
         }),
       );
     }),

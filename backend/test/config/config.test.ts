@@ -75,6 +75,7 @@ describe('config', () => {
       'REFRESH_TTL_SECONDS',
       'RATE_LIMIT_AUTH',
       'RATE_LIMIT_GENERAL',
+      'RATE_LIMIT_BUCKET_LIMIT',
       'BODY_LIMIT_BYTES',
       'PACKAGE_MAX_BYTES',
       'STORAGE_CEILING_BYTES',
@@ -98,5 +99,9 @@ describe('config', () => {
         );
     }
     assert.throws(() => parseConfig({ ...valid, PORT: '65536' }), /65535/);
+    assert.throws(
+      () => parseConfig({ ...valid, RATE_LIMIT_BUCKET_LIMIT: '1000001' }),
+      /1000000/,
+    );
   });
 });

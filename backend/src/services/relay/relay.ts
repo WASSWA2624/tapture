@@ -17,6 +17,7 @@ import type { Project, RelayPackage } from '../../types/index.js';
 import { withinCeiling } from './quota.js';
 import { visibleProject } from '../projects.js';
 import type { Metrics } from '../metrics/metrics.js';
+import { page, packageCursor, readPackageCursor } from '../pagination.js';
 async function relayProject(
   store: Store,
   principal: Principal,
@@ -194,28 +195,17 @@ export async function listPackages(
     before: null,
     after: null,
   });
-  const acknowledged = new Set(
-    (await store.acks())
-      .filter((row) => row.deviceId === principal.deviceId)
-      .map((row) => row.packageId),
-  );
-  const all = (await store.packages())
-    .filter(
-      (row) =>
-        row.projectId === projectId &&
-        !acknowledged.has(row.id) &&
-        Date.parse(row.expiresAt) > Date.now(),
-    )
-    .map(meta);
   const limit = query?.limit ?? 50;
-  const start =
-    query?.cursor === undefined
-      ? 0
-      : all.findIndex((row) => row.id === query.cursor) + 1;
-  const items = all.slice(start, start + limit);
-  const last = items.at(-1);
-  const hasMore = start + items.length < all.length;
-  return { items, nextCursor: hasMore ? (last?.id ?? null) : null };
+  const rows = await store.packages({
+    projectId,
+    unacknowledgedDeviceId: principal.deviceId,
+    activeAfter: new Date().toISOString(),
+    ...(query?.cursor !== undefined
+      ? { after: readPackageCursor(query.cursor) }
+      : {}),
+    limit: limit + 1,
+  });
+  return page(rows.map(meta), limit, packageCursor);
 }
 export async function readPackage(
   store: Store,
@@ -228,9 +218,7 @@ export async function readPackage(
 }> {
   if (!can(principal, 'relay')) throw notFound();
   await requireProject(store, principal, projectId);
-  const row = (await store.packages()).find(
-    (item) => item.id === packageId && item.projectId === projectId,
-  );
+  const row = (await store.packages({ id: packageId, projectId, limit: 1 }))[0];
   if (row === undefined || Date.parse(row.expiresAt) <= Date.now())
     throw notFound();
   await store.recordAudit({
@@ -266,14 +254,14 @@ export async function acknowledge(
       if (prior !== undefined) return prior.body as { acknowledged: string[] };
       const acknowledged: string[] = [];
       for (const packageId of packageIds) {
-        const row = (await tx.packages()).find((item) => item.id === packageId);
+        const row = (await tx.packages({ id: packageId, limit: 1 }))[0];
         if (row === undefined) {
           acknowledged.push(packageId);
           continue;
         }
         await requireRelay(row.projectId);
         if (
-          (await tx.acks()).some(
+          (await tx.acks({ packageId, deviceId: principal.deviceId })).some(
             (ack) =>
               ack.packageId === packageId &&
               ack.deviceId === principal.deviceId,
@@ -285,18 +273,12 @@ export async function acknowledge(
         await tx.addAck({ packageId, deviceId: principal.deviceId });
         newlyAcknowledged += 1;
         await tx.bumpVector(row.projectId, principal.deviceId);
-        const members = (await tx.members()).filter(
-          (item) => item.projectId === row.projectId,
-        );
-        const devices = (await tx.devices()).filter(
-          (device) =>
-            !device.revoked &&
-            members.some((member) => member.userId === device.userId),
-        );
+        const devices = await tx.devices({
+          projectId: row.projectId,
+          activeOnly: true,
+        });
         const acked = new Set(
-          (await tx.acks())
-            .filter((ack) => ack.packageId === packageId)
-            .map((ack) => ack.deviceId),
+          (await tx.acks({ packageId })).map((ack) => ack.deviceId),
         );
         if (devices.every((device) => acked.has(device.id))) {
           await tx.removePackage(packageId);
@@ -337,7 +319,7 @@ export async function relayState(
   if (!can(principal, 'relay')) throw notFound();
   await requireProject(store, principal, projectId);
   const vector: VersionVector = {};
-  for (const row of await store.vectors()) {
+  for (const row of await store.vectors(projectId)) {
     if (row.projectId === projectId) vector[row.deviceId] = row.counter;
   }
   return mergeVectors(vector, {});

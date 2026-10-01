@@ -5,6 +5,17 @@ import type { Role } from '../domain/permissions.js';
 import type { Repository } from './repository.js';
 import { emptyUsageTotals, type QuotaUsage, type UsageRow } from './usage.js';
 import type { RuntimeSetting } from './settings.js';
+import {
+  compareText,
+  identifierPage,
+  type AckQuery,
+  type DeviceQuery,
+  type MembershipQuery,
+  type PackageQuery,
+  type ProjectQuery,
+  type UserQuery,
+  type UsageQuery,
+} from './queries.js';
 export type { UsageRow } from './usage.js';
 import type {
   AuditEvent,
@@ -154,8 +165,17 @@ export class Store {
     }));
   }
 
-  users(): User[] {
-    return this.data.users;
+  users(query?: UserQuery): User[] {
+    if (query === undefined) return this.data.users;
+    return identifierPage(
+      this.data.users.filter(
+        (row) =>
+          query.organisationId === undefined ||
+          row.organisationId === query.organisationId,
+      ),
+      query,
+      (row) => row.id,
+    );
   }
 
   userById(id: string): User | undefined {
@@ -185,8 +205,23 @@ export class Store {
     );
   }
 
-  devices(): Device[] {
-    return this.data.devices;
+  devices(query?: DeviceQuery): Device[] {
+    if (query === undefined) return this.data.devices;
+    const members = new Set(
+      this.data.members
+        .filter((row) => row.projectId === query.projectId)
+        .map((row) => row.userId),
+    );
+    return identifierPage(
+      this.data.devices.filter(
+        (row) =>
+          (query.userId === undefined || row.userId === query.userId) &&
+          (query.projectId === undefined || members.has(row.userId)) &&
+          (!query.activeOnly || !row.revoked),
+      ),
+      query,
+      (row) => row.id,
+    );
   }
 
   deviceById(id: string): Device | undefined {
@@ -206,8 +241,24 @@ export class Store {
     );
   }
 
-  projects(): Project[] {
-    return this.data.projects;
+  projects(query?: ProjectQuery): Project[] {
+    if (query === undefined) return this.data.projects;
+    const memberIds = new Set(
+      this.data.members
+        .filter((row) => row.userId === query.memberUserId)
+        .map((row) => row.projectId),
+    );
+    return identifierPage(
+      this.data.projects.filter(
+        (row) =>
+          (query.id === undefined || row.id === query.id) &&
+          (query.organisationId === undefined ||
+            row.organisationId === query.organisationId) &&
+          (query.memberUserId === undefined || memberIds.has(row.id)),
+      ),
+      query,
+      (row) => row.id,
+    );
   }
 
   addProject(project: Project): void {
@@ -220,8 +271,18 @@ export class Store {
     );
   }
 
-  members(): Membership[] {
-    return this.data.members;
+  members(query?: MembershipQuery): Membership[] {
+    if (query === undefined) return this.data.members;
+    return identifierPage(
+      this.data.members.filter(
+        (row) =>
+          (query.projectId === undefined ||
+            row.projectId === query.projectId) &&
+          (query.userId === undefined || row.userId === query.userId),
+      ),
+      query,
+      (row) => row.userId,
+    );
   }
 
   addMember(member: Membership): void {
@@ -239,8 +300,34 @@ export class Store {
     );
   }
 
-  packages(): RelayPackage[] {
-    return this.data.packages;
+  packages(query?: PackageQuery): RelayPackage[] {
+    if (query === undefined) return this.data.packages;
+    const acknowledged = new Set(
+      this.data.acks
+        .filter((row) => row.deviceId === query.unacknowledgedDeviceId)
+        .map((row) => row.packageId),
+    );
+    return this.data.packages
+      .filter(
+        (row) =>
+          (query.id === undefined || row.id === query.id) &&
+          (query.projectId === undefined ||
+            row.projectId === query.projectId) &&
+          (query.unacknowledgedDeviceId === undefined ||
+            !acknowledged.has(row.id)) &&
+          (query.activeAfter === undefined ||
+            row.expiresAt > query.activeAfter) &&
+          (query.after === undefined ||
+            row.createdAt > query.after.createdAt ||
+            (row.createdAt === query.after.createdAt &&
+              row.id > query.after.id)),
+      )
+      .sort(
+        (left, right) =>
+          compareText(left.createdAt, right.createdAt) ||
+          compareText(left.id, right.id),
+      )
+      .slice(0, query.limit);
   }
 
   addPackage(row: RelayPackage, bytes: Buffer): void {
@@ -263,8 +350,13 @@ export class Store {
     return this.data.blobs.find((row) => row.ref === ref)?.bytes;
   }
 
-  acks(): Ack[] {
-    return this.data.acks;
+  acks(query?: AckQuery): Ack[] {
+    if (query === undefined) return this.data.acks;
+    return this.data.acks.filter(
+      (row) =>
+        (query.packageId === undefined || row.packageId === query.packageId) &&
+        (query.deviceId === undefined || row.deviceId === query.deviceId),
+    );
   }
 
   addAck(ack: Ack): void {
@@ -274,8 +366,10 @@ export class Store {
     if (!taken) this.data.acks.push(ack);
   }
 
-  vectors(): Snapshot['vectors'] {
-    return this.data.vectors;
+  vectors(projectId?: string): Snapshot['vectors'] {
+    return projectId === undefined
+      ? this.data.vectors
+      : this.data.vectors.filter((row) => row.projectId === projectId);
   }
 
   bumpVector(projectId: string, deviceId: string): number {
@@ -319,6 +413,10 @@ export class Store {
     return this.data.invites;
   }
 
+  inviteByHash(hash: string): Invite | undefined {
+    return this.data.invites.find((row) => row.tokenHash === hash);
+  }
+
   addInvite(invite: Invite): void {
     this.data.invites.push(invite);
   }
@@ -357,6 +455,20 @@ export class Store {
 
   usage(): UsageRow[] {
     return this.data.usage.map(({ id: _id, ...row }) => row);
+  }
+
+  usagePage(query: UsageQuery): Array<UsageRow & { id: string }> {
+    return identifierPage(
+      this.data.usage.filter(
+        (row) =>
+          row.projectId === query.projectId &&
+          row.userId === query.userId &&
+          row.at >= query.from &&
+          row.at <= query.to,
+      ),
+      query,
+      (row) => row.id,
+    );
   }
 
   addUsage(row: UsageRow): string {

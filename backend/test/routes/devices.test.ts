@@ -16,7 +16,8 @@ describe('devices', () => {
       .get('/api/v1/devices')
       .set('authorization', `Bearer ${tokens.accessToken}`);
     assert.equal(enrolled.status, 201);
-    assert.equal(listed.body.length, 1);
+    assert.equal(listed.body.items.length, 1);
+    assert.equal(listed.body.nextCursor, null);
     const removed = await request(app)
       .delete(`/api/v1/devices/${account.deviceId}`)
       .set('authorization', `Bearer ${tokens.accessToken}`);

@@ -2,6 +2,7 @@ import type { Organisation, User, Device } from '../types/index.js';
 import type { RefreshFamily, Invite } from './store.js';
 import type { Role } from '../domain/permissions.js';
 import type { Sql } from './sql.js';
+import type { DeviceQuery, UserQuery } from './queries.js';
 
 export function identityRepository(sql: Sql) {
   return {
@@ -52,9 +53,14 @@ export function identityRepository(sql: Sql) {
         'INSERT INTO organisations (id,name,self_register,retention_days) VALUES ($1,$2,$3,$4)',
         [row.id, row.name, row.selfRegister, row.retentionDays],
       ),
-    users: () =>
+    users: (query?: UserQuery) =>
       sql.rows<User>(
-        'SELECT id,organisation_id AS "organisationId",email,password_hash AS "passwordHash",role,status FROM users ORDER BY id',
+        'SELECT id,organisation_id AS "organisationId",email,password_hash AS "passwordHash",role,status FROM users WHERE ($1::text IS NULL OR organisation_id=$1) AND ($2::text IS NULL OR id>$2) ORDER BY id LIMIT $3',
+        [
+          query?.organisationId ?? null,
+          query?.cursor ?? null,
+          query?.limit ?? null,
+        ],
       ),
     addUser: (row: User) =>
       sql.write(
@@ -73,9 +79,16 @@ export function identityRepository(sql: Sql) {
         'UPDATE users SET email=$2,password_hash=$3,role=$4,status=$5 WHERE id=$1',
         [row.id, row.email, row.passwordHash, row.role, row.status],
       ),
-    devices: () =>
+    devices: (query?: DeviceQuery) =>
       sql.rows<Device>(
-        'SELECT id,user_id AS "userId",enrolled_at AS "enrolledAt",last_seen_at AS "lastSeenAt",revoked FROM devices ORDER BY id',
+        'SELECT d.id,d.user_id AS "userId",d.enrolled_at AS "enrolledAt",d.last_seen_at AS "lastSeenAt",d.revoked FROM devices d WHERE ($1::text IS NULL OR d.user_id=$1) AND ($2::text IS NULL OR EXISTS (SELECT 1 FROM project_members m WHERE m.project_id=$2 AND m.user_id=d.user_id)) AND (NOT $3::boolean OR NOT d.revoked) AND ($4::text IS NULL OR d.id>$4) ORDER BY d.id LIMIT $5',
+        [
+          query?.userId ?? null,
+          query?.projectId ?? null,
+          query?.activeOnly ?? false,
+          query?.cursor ?? null,
+          query?.limit ?? null,
+        ],
       ),
     addDevice: (row: Device) =>
       sql.write(
@@ -115,6 +128,13 @@ export function identityRepository(sql: Sql) {
       sql.rows<Invite>(
         'SELECT token_hash AS "tokenHash",user_id AS "userId",used,expires_at AS "expiresAt",purpose FROM invitations ORDER BY token_hash',
       ),
+    inviteByHash: async (hash: string) =>
+      (
+        await sql.rows<Invite>(
+          'SELECT token_hash AS "tokenHash",user_id AS "userId",used,expires_at AS "expiresAt",purpose FROM invitations WHERE token_hash=$1',
+          [hash],
+        )
+      )[0],
     addInvite: (row: Invite) =>
       sql.write(
         'INSERT INTO invitations(token_hash,user_id,used,expires_at,purpose) VALUES ($1,$2,$3,$4,$5)',

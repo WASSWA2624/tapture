@@ -7,6 +7,7 @@ import { assertQuota } from './quota.js';
 import { callProvider } from './resilience.js';
 import type { AiProvider } from './provider.js';
 import type { Metrics } from '../metrics/metrics.js';
+import { page } from '../pagination.js';
 export async function proxyAi(
   store: Store,
   config: AppConfig,
@@ -74,15 +75,19 @@ export async function usageReport(
     projectId: string;
     from: string;
     to: string;
+    cursor?: string;
+    limit?: number;
   },
 ) {
   await visibleProject(store, principal, query.projectId);
-  return (await store.usage()).filter((row) => {
-    return (
-      row.projectId === query.projectId &&
-      row.at >= query.from &&
-      row.at <= query.to &&
-      row.userId === principal.userId
-    );
-  });
+  const limit = query.limit ?? 50;
+  return page(
+    await store.usagePage({
+      ...query,
+      userId: principal.userId,
+      limit: limit + 1,
+    }),
+    limit,
+    (row) => row.id,
+  );
 }

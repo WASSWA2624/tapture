@@ -9,6 +9,8 @@ export interface AppConfig {
   retentionDays: number;
   rateLimitAuth: number;
   rateLimitGeneral: number;
+  /// Maximum distinct active addresses retained by each limiter group.
+  rateLimitBucketLimit: number;
   bodyLimitBytes: number;
   /// JSON body limit for `/api/v1/ai/*`, whose requests carry inline media.
   aiBodyLimitBytes: number;
@@ -166,6 +168,12 @@ export function parseConfig(env: NodeJS.ProcessEnv): AppConfig {
     retentionDays,
     rateLimitAuth: integer(env['RATE_LIMIT_AUTH'], 10),
     rateLimitGeneral: integer(env['RATE_LIMIT_GENERAL'], 120),
+    rateLimitBucketLimit: integer(
+      env['RATE_LIMIT_BUCKET_LIMIT'],
+      10_000,
+      1,
+      1_000_000,
+    ),
     bodyLimitBytes,
     aiBodyLimitBytes,
     corsOrigins: origins(env['CORS_ORIGINS']),

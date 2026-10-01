@@ -5,6 +5,7 @@ import type { Repository as Store } from '../../repositories/repository.js';
 import type { AppConfig } from '../../config/schema.js';
 import { createInvitedUser } from '../auth/account.js';
 import type { User } from '../../types/index.js';
+import { page } from '../pagination.js';
 function visible(user: User): Omit<User, 'passwordHash'> {
   return {
     id: user.id,
@@ -23,18 +24,19 @@ export async function listUsers(
   },
 ) {
   if (!can(principal, 'manageUsers')) throw notFound();
-  const rows = (await store.users())
-    .filter((row) => row.organisationId === principal.organisationId)
-    .map(visible);
   const limit = query?.limit ?? 50;
-  const start =
-    query?.cursor === undefined
-      ? 0
-      : rows.findIndex((row) => row.id === query.cursor) + 1;
-  const users = rows.slice(start, start + limit);
-  const last = users.at(-1);
-  const hasMore = start + users.length < rows.length;
-  return { users, nextCursor: hasMore ? (last?.id ?? null) : null };
+  const result = page(
+    (
+      await store.users({
+        ...query,
+        organisationId: principal.organisationId,
+        limit: limit + 1,
+      })
+    ).map(visible),
+    limit,
+    (row) => row.id,
+  );
+  return { users: result.items, nextCursor: result.nextCursor };
 }
 export async function inviteUser(
   store: Store,
@@ -63,11 +65,9 @@ export async function patchUser(
   },
 ): Promise<void> {
   if (!can(principal, 'manageUsers')) throw notFound();
-  const user = (await store.users()).find(
-    (row) =>
-      row.id === userId && row.organisationId === principal.organisationId,
-  );
-  if (user === undefined) throw notFound();
+  const user = await store.userById(userId);
+  if (user === undefined || user.organisationId !== principal.organisationId)
+    throw notFound();
   if (patch.role === undefined && patch.status === undefined) throw forbidden();
   await withTransaction(store, async (tx) => {
     await tx.saveUser({

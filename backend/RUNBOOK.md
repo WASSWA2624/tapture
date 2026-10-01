@@ -22,42 +22,43 @@ Grant runtime `SELECT, INSERT` on `audit_events, security_events`, the required 
 
 All numeric resource/session/time limits are positive safe integers no greater than 2,147,483,647; `PORT` permits zero for an ephemeral test listener and otherwise is at most 65,535. Quota counts/budgets have the separate non-negative rules below.
 
-| Variable                             | Default                 | Meaning                                                          |
-| ------------------------------------ | ----------------------- | ---------------------------------------------------------------- |
-| `DATABASE_URL`                       | Required                | PostgreSQL runtime connection; owner URL only for administration |
-| `TOKEN_SECRET`                       | Required                | High-entropy signing secret supplied by the operator             |
-| `PORT`                               | 8080                    | Internal listener port                                           |
-| `ACCESS_TTL_SECONDS`                 | 900                     | Access token lifetime                                            |
-| `REFRESH_TTL_SECONDS`                | 2592000                 | Refresh token lifetime                                           |
-| `RETENTION_DAYS`                     | 30                      | Organisation maximum, from 1 through 90 days                     |
-| `RATE_LIMIT_AUTH`                    | 10                      | Authentication requests per client per minute                    |
-| `RATE_LIMIT_GENERAL`                 | 120                     | General requests per client per minute                           |
-| `BODY_LIMIT_BYTES`                   | 1000000                 | General JSON request limit                                       |
-| `AI_BODY_LIMIT_BYTES`                | 27000000                | AI JSON limit, at least the general limit                        |
-| `CORS_ORIGINS`                       | Empty                   | Comma-separated exact browser origins                            |
-| `PACKAGE_MAX_BYTES`                  | 20000000                | Maximum relay ciphertext per package                             |
-| `STORAGE_CEILING_BYTES`              | 50000000                | Retained ciphertext limit per project                            |
-| `ORGANISATION_STORAGE_CEILING_BYTES` | 500000000               | Retained ciphertext limit per organisation                       |
-| `ARGON_MEMORY_KIB`                   | 19456                   | Argon2id memory                                                  |
-| `ARGON_ITERATIONS`                   | 2                       | Argon2id passes                                                  |
-| `ARGON_PARALLELISM`                  | 1                       | Argon2id lanes                                                   |
-| `LOCKOUT_FAILURES`                   | 5                       | Failures before account/address lockout                          |
-| `LOCKOUT_WINDOW_MS`                  | 60000                   | Lockout duration                                                 |
-| `AI_TIMEOUT_MS`                      | 8000                    | Provider attempt timeout, at most 120000 ms                      |
-| `AI_RETRY_LIMIT`                     | 2                       | Extra attempts, from 0 through 5                                 |
-| `AI_BREAKER_THRESHOLD`               | 3                       | Transient failures before opening the breaker                    |
-| `AI_PROVIDER_URL`                    | Gemini v1beta HTTPS URL | Trusted compatible provider endpoint                             |
-| `AI_PROVIDER_KEY`                    | Empty                   | Server-held provider credential; empty disables AI               |
-| `AI_PROVIDER_MODEL`                  | default                 | Required when a provider key is configured                       |
-| `API_VERSION`                        | 1                       | HTTP API version                                                 |
-| `BUILD_VERSION`                      | dev                     | Version reported by the running build                            |
-| `POOL_MAX`                           | 10                      | Maximum database connections                                     |
-| `DATABASE_CONNECT_TIMEOUT_MS`        | 5000                    | Connection establishment timeout                                 |
-| `DATABASE_STATEMENT_TIMEOUT_MS`      | 15000                   | Database statement timeout                                       |
-| `PURGE_INTERVAL_MS`                  | 60000                   | Serial scheduled cleanup interval                                |
-| `PURGE_BATCH_SIZE`                   | 100                     | Maximum rows of each cleanup category in a transaction           |
-| `READY`                              | true                    | Operator readiness override                                      |
-| `DATABASE_PASSWORD`                  | Required by compose     | Database owner password; not the runtime application credential  |
+| Variable                             | Default                 | Meaning                                                                                                         |
+| ------------------------------------ | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                       | Required                | PostgreSQL runtime connection; owner URL only for administration                                                |
+| `TOKEN_SECRET`                       | Required                | High-entropy signing secret supplied by the operator                                                            |
+| `PORT`                               | 8080                    | Internal listener port                                                                                          |
+| `ACCESS_TTL_SECONDS`                 | 900                     | Access token lifetime                                                                                           |
+| `REFRESH_TTL_SECONDS`                | 2592000                 | Refresh token lifetime                                                                                          |
+| `RETENTION_DAYS`                     | 30                      | Organisation maximum, from 1 through 90 days                                                                    |
+| `RATE_LIMIT_AUTH`                    | 10                      | Authentication requests per client per minute                                                                   |
+| `RATE_LIMIT_GENERAL`                 | 120                     | General requests per client per minute                                                                          |
+| `RATE_LIMIT_BUCKET_LIMIT`            | 10000                   | Maximum active addresses per limiter group (1–1000000); additional addresses receive 429 until a bucket expires |
+| `BODY_LIMIT_BYTES`                   | 1000000                 | General JSON request limit                                                                                      |
+| `AI_BODY_LIMIT_BYTES`                | 27000000                | AI JSON limit, at least the general limit                                                                       |
+| `CORS_ORIGINS`                       | Empty                   | Comma-separated exact browser origins                                                                           |
+| `PACKAGE_MAX_BYTES`                  | 20000000                | Maximum relay ciphertext per package                                                                            |
+| `STORAGE_CEILING_BYTES`              | 50000000                | Retained ciphertext limit per project                                                                           |
+| `ORGANISATION_STORAGE_CEILING_BYTES` | 500000000               | Retained ciphertext limit per organisation                                                                      |
+| `ARGON_MEMORY_KIB`                   | 19456                   | Argon2id memory                                                                                                 |
+| `ARGON_ITERATIONS`                   | 2                       | Argon2id passes                                                                                                 |
+| `ARGON_PARALLELISM`                  | 1                       | Argon2id lanes                                                                                                  |
+| `LOCKOUT_FAILURES`                   | 5                       | Failures before account/address lockout                                                                         |
+| `LOCKOUT_WINDOW_MS`                  | 60000                   | Lockout duration                                                                                                |
+| `AI_TIMEOUT_MS`                      | 8000                    | Provider attempt timeout, at most 120000 ms                                                                     |
+| `AI_RETRY_LIMIT`                     | 2                       | Extra attempts, from 0 through 5                                                                                |
+| `AI_BREAKER_THRESHOLD`               | 3                       | Transient failures before opening the breaker                                                                   |
+| `AI_PROVIDER_URL`                    | Gemini v1beta HTTPS URL | Trusted compatible provider endpoint                                                                            |
+| `AI_PROVIDER_KEY`                    | Empty                   | Server-held provider credential; empty disables AI                                                              |
+| `AI_PROVIDER_MODEL`                  | default                 | Required when a provider key is configured                                                                      |
+| `API_VERSION`                        | 1                       | HTTP API version                                                                                                |
+| `BUILD_VERSION`                      | dev                     | Version reported by the running build                                                                           |
+| `POOL_MAX`                           | 10                      | Maximum database connections                                                                                    |
+| `DATABASE_CONNECT_TIMEOUT_MS`        | 5000                    | Connection establishment timeout                                                                                |
+| `DATABASE_STATEMENT_TIMEOUT_MS`      | 15000                   | Database statement timeout                                                                                      |
+| `PURGE_INTERVAL_MS`                  | 60000                   | Serial scheduled cleanup interval                                                                               |
+| `PURGE_BATCH_SIZE`                   | 100                     | Maximum rows of each cleanup category in a transaction                                                          |
+| `READY`                              | true                    | Operator readiness override                                                                                     |
+| `DATABASE_PASSWORD`                  | Required by compose     | Database owner password; not the runtime application credential                                                 |
 
 ## Upgrade
 
@@ -65,7 +66,11 @@ Apply the next numbered migration forward only. A changed checksum or an out-of-
 
 Migration `006_account_token_purpose.sql` distinguishes invitations from password resets. Earlier tokens default to invitations: existing invitation links remain valid only for invited accounts; older reset links must be reissued. Acceptance rechecks purpose, expiry, account state and organisation inside the same transaction that consumes the token. Registration sends the same `200 { accepted: true }` response for new and existing addresses, without an account identifier or Location header.
 
-`007_refresh_family_scope.sql` isolates new sign-ins into distinct refresh chains. Legacy rows keep their previous user/device scope until they expire. `008_runtime_settings.sql` stores non-usable digests and safe deployment metadata to detect key/policy changes. `009_transient_retention.sql` makes lockout and acknowledgement expiry explicit. Apply through 009 before starting the current server. Startup warms Argon verification once; unknown and wrong-password logins each perform one verification, and a successful login upgrades old hash parameters.
+`007_refresh_family_scope.sql` isolates new sign-ins into distinct refresh chains. Legacy rows keep their previous user/device scope until they expire. `008_runtime_settings.sql` stores non-usable digests and safe deployment metadata to detect key/policy changes. `009_transient_retention.sql` makes lockout and acknowledgement expiry explicit. `010_scoped_pagination.sql` adds composite indexes for bounded account, project, device, relay and usage pages, replacing superseded single-column indexes without changing data. Apply through 010 before starting the current server. Startup warms Argon verification once; unknown and wrong-password logins each perform one verification, and a successful login upgrades old hash parameters.
+
+## API list pages
+
+Project, membership, device, relay-package and AI-usage lists return `items` and `nextCursor`; organisation users retain `users` and `nextCursor`. Every list accepts `limit` (default 50, maximum 100) and `cursor`. Continue with the returned cursor until it is null. Identifier keysets survive deletion; relay cursors also include the creation time so purging or acknowledging the previous package cannot restart the list. Clients should treat cursors as opaque. `/auth/me` returns the complete grants snapshot the device needs for offline authority.
 
 ## Password reset
 

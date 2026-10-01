@@ -29,11 +29,12 @@ describe('migrations', () => {
         '007_refresh_family_scope.sql',
         '008_runtime_settings.sql',
         '009_transient_retention.sql',
+        '010_scoped_pagination.sql',
       ],
     );
     const store = new Store();
     const ran = await migrate(store, files);
-    assert.equal(ran.length, 9);
+    assert.equal(ran.length, 10);
     const again = await migrate(store, files);
     assert.equal(again.length, 0);
     const changed = files.map((file, index) =>

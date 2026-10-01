@@ -20,6 +20,12 @@ The HTTP contract suite exercises all 33 documented operations, request/response
 
 Additional implementation files: `backend/.dockerignore`, `.prettierignore`, `tsconfig.build.json`; migrations 006–009; repository usage/settings/maintenance modules; `services/configuration.ts`; OpenAPI schema/HTTP error fixtures; authentication and runtime hardening regressions. The pinned development-only `yaml` 2.9.1 dependency has the ISC licence and enables structured contract checks. Generated tracker summaries must be regenerated after this checklist update.
 
+## Backend implementation audit — 2026-10-01
+
+Replaced unbounded project, membership, device and AI-usage responses with bounded cursor pages and updated OpenAPI and the runbook. Organisation-user and relay-package pages now filter and limit in PostgreSQL; actor, membership, package, acknowledgement, vector and invitation lookups no longer copy unrelated tables into each request. Identifier keysets survive deleted cursor rows; relay cursors include the creation time and identifier so an acknowledgement or purge cannot restart a page. Migration 010 adds the composite indexes these reads use and removes the replaced single-column indexes. Apply through 010 before starting this server.
+
+Rate-limit state is isolated per application, prunes expired addresses and is bounded by the validated `RATE_LIMIT_BUCKET_LIMIT` setting. At capacity, new addresses receive the existing audited 429 response rather than evicting active limits. Regression coverage includes all limited authentication endpoints, limiter capacity/expiry/isolation, parameterised query scopes, 105-row pagination across every list, scope exclusions and deletion between relay/member pages. `npm run verify` passes all stages: 136 tests passed and four PostgreSQL/Docker tests skipped; the dependency audit reports no vulnerabilities. `npm run build` passes. The unchecked database, image and protected-pipeline acceptance remains open because this host supplies no PostgreSQL or Docker runtime. These results verify implementation and fake/contract behavior, not deployment acceptance or live provider extraction.
+
 ## Implement
 
 The required minimal backend of specification Part XI, and the client work that makes the app run on it. A Node and

@@ -1,7 +1,7 @@
 import type { Express } from 'express';
 import { invalidRequest } from '../domain/errors.js';
 import type { Deps } from '../deps.js';
-import { asyncRoute, objectBody } from '../http.js';
+import { asyncRoute, objectBody, pageQuery } from '../http.js';
 import { authenticate } from '../middleware/authenticate.js';
 import {
   addMember,
@@ -19,7 +19,7 @@ export function registerProjects(app: Express, deps: Deps): void {
     asyncRoute(async (req, res) => {
       const principal = req.principal;
       if (principal === undefined) throw invalidRequest('Missing session.');
-      res.json(await listProjects(deps.store, principal));
+      res.json(await listProjects(deps.store, principal, pageQuery(req.query)));
     }),
   );
   app.post(
@@ -103,7 +103,9 @@ export function registerProjects(app: Express, deps: Deps): void {
       const id = req.params['id'];
       if (principal === undefined || id === undefined)
         throw invalidRequest('Missing project.');
-      res.json(await listMembers(deps.store, principal, id));
+      res.json(
+        await listMembers(deps.store, principal, id, pageQuery(req.query)),
+      );
     }),
   );
   app.post(

@@ -36,8 +36,9 @@ export async function registerAccount(
       .digest('hex');
     const passwordHash = await hashPassword(input.password, config);
     return withTransaction(store, async (tx) => {
-      const invite = (await tx.invites()).find((row) => row.tokenHash === hash);
-      const user = (await tx.users()).find((row) => row.id === invite?.userId);
+      const invite = await tx.inviteByHash(hash);
+      const user =
+        invite === undefined ? undefined : await tx.userById(invite.userId);
       if (
         invite === undefined ||
         invite.used ||
@@ -68,12 +69,7 @@ export async function registerAccount(
   // an address oracle through its response or password work timing.
   const passwordHash = await hashPassword(input.password, config);
   await withTransaction(store, async (tx) => {
-    if (
-      (await tx.users()).some(
-        (row) => row.organisationId === org.id && sameEmail(row.email, email),
-      )
-    )
-      return;
+    if ((await tx.userByEmail(org.id, email)) !== undefined) return;
     await tx.addUser({
       id: userId,
       organisationId: org.id,
@@ -106,11 +102,8 @@ export async function createInvitedUser(
   invitationToken: string;
 }> {
   const email = normaliseEmail(input.email);
-  const taken = (await store.users()).some(
-    (row) =>
-      row.organisationId === input.organisationId &&
-      sameEmail(row.email, email),
-  );
+  const taken =
+    (await store.userByEmail(input.organisationId, email)) !== undefined;
   if (taken) throw conflict('An account with that address already exists.');
   const userId = randomUUID();
   const invitationToken = randomBytes(24).toString('base64url');
@@ -153,7 +146,7 @@ export async function changePassword(
     nextPassword: string;
   },
 ): Promise<void> {
-  const user = (await store.users()).find((row) => row.id === input.userId);
+  const user = await store.userById(input.userId);
   if (user === undefined) throw invalidCredentials();
   const ok = await verifyPassword(
     input.currentPassword,
@@ -207,11 +200,7 @@ export async function issuePasswordReset(
   store: Store,
   input: { email: string; organisationId: string; actorId: string },
 ): Promise<string> {
-  const user = (await store.users()).find(
-    (row) =>
-      row.organisationId === input.organisationId &&
-      sameEmail(row.email, input.email),
-  );
+  const user = await store.userByEmail(input.organisationId, input.email);
   if (user === undefined || user.status !== 'active')
     throw invalidRequest('An active account is required.');
   const token = randomBytes(24).toString('base64url');
@@ -246,7 +235,7 @@ export async function completeReset(
     throw invalidRequest('Use at least 12 characters.');
   const passwordHash = await hashPassword(input.password, config);
   await withTransaction(store, async (tx) => {
-    const invite = (await tx.invites()).find((row) => row.tokenHash === hash);
+    const invite = await tx.inviteByHash(hash);
     if (
       invite === undefined ||
       invite.used ||
@@ -254,7 +243,7 @@ export async function completeReset(
       !(Date.parse(invite.expiresAt) > Date.now())
     )
       throw invalidRequest('That reset link is not valid.');
-    const user = (await tx.users()).find((row) => row.id === invite.userId);
+    const user = await tx.userById(invite.userId);
     if (user === undefined || user.status !== 'active')
       throw invalidRequest('That reset link is not valid.');
     await tx.saveUser({ ...user, passwordHash });

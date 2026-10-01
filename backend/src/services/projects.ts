@@ -5,21 +5,23 @@ import { clampRetention } from '../domain/retention.js';
 import { withTransaction } from '../repositories/base.js';
 import type { Repository as Store } from '../repositories/repository.js';
 import type { Membership, Project } from '../types/index.js';
+import type { PageQuery } from '../repositories/queries.js';
+import { page, type Page } from './pagination.js';
 async function memberOf(
   store: Store,
   principal: Principal,
   projectId: string,
 ): Promise<Membership | undefined> {
-  return (await store.members()).find(
-    (row) => row.projectId === projectId && row.userId === principal.userId,
-  );
+  return (
+    await store.members({ projectId, userId: principal.userId, limit: 1 })
+  )[0];
 }
 export async function visibleProject(
   store: Store,
   principal: Principal,
   projectId: string,
 ): Promise<Project> {
-  const project = (await store.projects()).find((row) => row.id === projectId);
+  const project = (await store.projects({ id: projectId, limit: 1 }))[0];
   const member = await memberOf(store, principal, projectId);
   if (
     project === undefined ||
@@ -33,18 +35,18 @@ export async function visibleProject(
 export async function listProjects(
   store: Store,
   principal: Principal,
-): Promise<Project[]> {
-  const memberships = await store.members();
-  const visibleIds = new Set(
-    memberships
-      .filter((row) => row.userId === principal.userId)
-      .map((row) => row.projectId),
-  );
-  return (await store.projects()).filter(
-    (project) =>
-      project.organisationId === principal.organisationId &&
-      (can(principal, 'adminAction') || visibleIds.has(project.id)),
-  );
+  query: PageQuery = {},
+): Promise<Page<Project>> {
+  const limit = query.limit ?? 50;
+  const rows = await store.projects({
+    ...query,
+    organisationId: principal.organisationId,
+    ...(!can(principal, 'adminAction')
+      ? { memberUserId: principal.userId }
+      : {}),
+    limit: limit + 1,
+  });
+  return page(rows, limit, (row) => row.id);
 }
 export async function createProject(
   store: Store,
@@ -55,7 +57,7 @@ export async function createProject(
   },
 ): Promise<Project> {
   if (!can(principal, 'manageProject')) throw notFound();
-  const existing = (await store.projects()).find((row) => row.id === input.id);
+  const existing = (await store.projects({ id: input.id, limit: 1 }))[0];
   if (existing !== undefined)
     return visibleProject(store, principal, existing.id);
   const org = (await store.orgs()).find(
@@ -149,9 +151,15 @@ export async function listMembers(
   store: Store,
   principal: Principal,
   projectId: string,
-) {
+  query: PageQuery = {},
+): Promise<Page<Membership>> {
   await visibleProject(store, principal, projectId);
-  return (await store.members()).filter((row) => row.projectId === projectId);
+  const limit = query.limit ?? 50;
+  return page(
+    await store.members({ ...query, projectId, limit: limit + 1 }),
+    limit,
+    (row) => row.userId,
+  );
 }
 export async function addMember(
   store: Store,
@@ -164,12 +172,9 @@ export async function addMember(
 ): Promise<void> {
   if (!can(principal, 'manageMembers')) throw notFound();
   await visibleProject(store, principal, projectId);
-  const user = (await store.users()).find(
-    (row) =>
-      row.id === input.userId &&
-      row.organisationId === principal.organisationId,
-  );
-  if (user === undefined) throw notFound();
+  const user = await store.userById(input.userId);
+  if (user === undefined || user.organisationId !== principal.organisationId)
+    throw notFound();
   await withTransaction(store, async (tx) => {
     await tx.addMember({
       projectId,
