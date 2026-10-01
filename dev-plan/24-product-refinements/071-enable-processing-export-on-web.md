@@ -11,6 +11,12 @@
 Processing and shared thumbnails are being moved onto the platform file services. Task 076 already supplies the
 browser bundle/download path; regression coverage will verify that path with browser-backed photos.
 
+2026-10-01 audit: host regressions exercise `BlobStore.memory` with every processing stage and the production
+package writer, preserving originals and stored exports. `integration_test/browser_product_test.dart` adds an
+actual-browser wasm SQLite/IndexedDB run for the controller, exported photo contents, platform download call and
+shared bounded thumbnail rendering. Its execution and the final platform regressions remain pending; the mere
+existence of a browser-safe test is not acceptance evidence.
+
 Task 070 keeps capture's photo files in the browser: on web, `FileWriter` writes into the IndexedDB store
 `AppConstants.projectFiles.storeName` through `BlobFileWriter`, and `FileReader` reads them back. The capture tray
 draws its thumbnails from those bytes. Every other surface that opens a project file still reads through

@@ -8,11 +8,29 @@
 
 **Implementation started:** Yes
 
-September 2026 audit: the deliverable route was a no-op, project packages carried only a three-column summary
-workbook, and PdfEngine emitted an unpaginated text stub. Affected acceptance is reopened while existing
-writers are connected to durable records and the standard PDF renderer of task
-[090](090-use-standard-pdf-renderer.md). Dependency links point only to earlier sub-steps, so 090 lists this task as
-its prerequisite; the reopened PDF-family items below wait on 090 in turn.
+September 2026 audit replaced the no-op deliverable route with the complete scope/options, gate, staged progress,
+cancellation and history workflow, connected the full project workbook and reports to durable captured-version
+records, and verified the standard renderer of [090](090-use-standard-pdf-renderer.md). Native CSV/JSON and their
+request/manifest snapshots stream one record at a time. A measured 10,000-record run wrote 279,027,818 bytes of JSON
+plus 280,588,191 / 281,416,065-byte snapshots with 39,272,448 bytes additional process RSS. A native 2,000-photo
+package wrote 496,853,885 bytes with 28,262,400 bytes additional RSS. Cooperative cancellation closes worker file
+handles before cleanup and an immediate retry. Privacy and consent are resolved again before export/replay and
+sharing, as [022](../22-privacy-and-security/022-privacy-and-security.md) describes. Native share-sheet/device-frame
+verification remains open; the XLSX library still materializes its workbook in an isolated worker.
+
+The 2026-10-01 screen audit gives empty export history a reachable Capture action when the selected scope has no
+records, or Records for review when it has work. This keeps the export choices available while naming a useful
+next step. The new real-router empty-state fixture is awaiting the coordinated frontend gate.
+
+That fixture also exposed a production route mismatch: the helper and Output files action use
+`/projects/:id/exports/deliverable`, while the screen had been registered at the sibling `/projects/:id/deliverable`.
+The workflow now lives under the canonical exports route; the old sibling redirects while retaining query and
+fragment. Actual-router tests cover both addresses and the project export action, with widget verification pending
+the coordinated gate.
+
+The same audit found that a zero-record project package summary had no next action. Its empty panel now opens
+Capture for that project, with an actual-router navigation regression and inclusion in the primary responsive and
+accessibility matrix. This correction is awaiting the same widget gate.
 
 Feedback FBK0000072 (prompt `prompts/feedback-23092026-2222/001-resolve-projects-capture-template-feedback.md`, decision D4(a)) adds project-menu Export on top of this contract: the selected project is the export scope, output stays local, and sharing happens only after an explicit action. Task 019 is not in this decision.
 
@@ -358,7 +376,7 @@ class ExportVersioning {
 
 ### The XLSX family
 
-- [x] A five-thousand-record export finishes in under thirty seconds with visible progress and no dropped frames.
+- [ ] A five-thousand-record export finishes in under thirty seconds with visible progress and no dropped frames.
 - [x] A multi-template project produces one validly named sheet per template, with no name collisions.
 - [x] Raw and refined values appear side by side and neither is lost.
 - [x] Tests: unit tests of `xlsx_writer.dart` reopening the output through a spreadsheet reader and asserting cell
@@ -385,14 +403,14 @@ class ExportVersioning {
 
 ### The PDF family
 
-The reopened cover and body golden and the record-report item below close only once task
-[090](090-use-standard-pdf-renderer.md) is verified.
+Task [090](090-use-standard-pdf-renderer.md) is verified by real PDF structure/image/cancellation tests and independent
+parser/raster review. Report goldens compare text extracted from rendered PDF pages; they are not pixel baselines.
 
 - [x] Every report can be built from cover, header, footer and photo block without adding layout of its own.
 - [x] A cancelled render leaves no partial file.
-- [ ] Tests: golden test of a rendered cover and body page through `pdf_engine.dart`, plus a unit test that
+- [x] Tests: golden test of a rendered cover and body page through `pdf_engine.dart`, plus a unit test that
       cancellation deletes the target file.
-- [ ] A record's fields, photos with captions, context path and operator all appear, in both photo layouts.
+- [x] A record's fields, photos with captions, context path and operator all appear, in both photo layouts.
 - [x] An inspection row that was never captured appears as **Not found** rather than being omitted, and is counted on
       the cover.
 - [x] Tests: golden tests of a rendered record page and inspection page, plus unit tests asserting inspection row
@@ -419,13 +437,13 @@ The reopened cover and body golden and the record-report item below close only o
 
 ### The screen and history
 
-- [ ] A default export needs one tap after opening the screen.
-- [ ] Each stage reports progress, and the interface stays responsive throughout.
+- [x] A default export needs one tap after opening the screen.
+- [x] Each stage reports progress, and the interface stays responsive throughout.
 - [x] A cancelled export leaves no partial output file or archive on disk.
 - [x] Tests: widget tests of `export_screen.dart` and `export_progress.dart` covering the four states, the one-tap
       default and a cancellation asserting no file remains.
 - [x] A user can explain, months later, exactly what a given file contained and who produced it.
-- [ ] Every completed export writes its history row, and every record it included carries its `exportedAt` stamp.
+- [x] Every completed export writes its history row, and every record it included carries its `exportedAt` stamp.
 - [x] A new export never destroys a previous one, and folder names are stable and dated.
 - [ ] Sharing from history reaches the system share sheet without rebuilding the file, and a recorded path since
       deleted shows plainly with an offer to re-run the request.

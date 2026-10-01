@@ -8,9 +8,9 @@ Completion comes only from each task’s **Definition of done**: **Complete** = 
 
 Update the task checklist after implementation and verification; mark started work explicitly when no acceptance criterion is met yet. Run `dart run tool/sync_dev_tracker.dart` from `frontend/` to refresh this tracker, the index, phase summaries and implementation positions. Verification and the installed pre-commit hook refresh them automatically; CI rejects stale generated files. Never tick a criterion simply to make the tracker green.
 
-**Steps:** 27 total · 17 Complete · 9 Partially complete · 1 Pending.
+**Steps:** 27 total · 9 Complete · 17 Partially complete · 1 Pending.
 Historical implementation claims and audit limitations are preserved in [status history](01-orchestration/history/README.md).
-**Sub-steps:** 93 total · 71 Complete · 15 Partially complete · 7 Pending.
+**Sub-steps:** 98 total · 65 Complete · 26 Partially complete · 7 Pending.
 
 **Next actionable sub-step:** [01.02 · 087 — Arrange implementation flow and automatically synchronize progress](01-orchestration/087-chronological-plan-and-tracker.md) (Partially complete; dependencies complete).
 
@@ -21,30 +21,30 @@ Historical implementation claims and audit limitations are preserved in [status 
 | 01 | [Project setup and guardrails](01-orchestration/README.md) | **Partially complete** | 2 | 2 | 0 | 4 |
 | 02 | [Foundation services](02-foundation/README.md) | **Partially complete** | 1 | 2 | 0 | 3 |
 | 03 | [Design system](03-design-system/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 04 | [Local database](04-data-layer/README.md) | **Complete** | 1 | 0 | 0 | 1 |
+| 04 | [Local database](04-data-layer/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 05 | [File storage](05-file-storage/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 06 | [Application shell](06-app-shell/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 07 | [Account and settings](07-account-and-settings/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 08 | [Projects](08-projects/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 09 | [Templates](09-templates/README.md) | **Complete** | 1 | 0 | 0 | 1 |
+| 07 | [Account and settings](07-account-and-settings/README.md) | **Partially complete** | 1 | 1 | 0 | 2 |
+| 08 | [Projects](08-projects/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
+| 09 | [Templates](09-templates/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 10 | [Reference data](10-reference-data/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 11 | [Context](11-context/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
+| 11 | [Context](11-context/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 12 | [Capture](12-capture/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
-| 13 | [Processing](13-processing/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 14 | [Records](14-records/README.md) | **Complete** | 1 | 0 | 0 | 1 |
+| 13 | [Processing](13-processing/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
+| 14 | [Records](14-records/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 15 | [Data quality](15-data-quality/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 16 | [Review](16-review/README.md) | **Complete** | 1 | 0 | 0 | 1 |
 | 17 | [Meetings](17-meetings/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 18 | [Export](18-export/README.md) | **Partially complete** | 0 | 2 | 0 | 2 |
-| 19 | [Bundles and merge](19-bundles-and-merge/README.md) | **Complete** | 1 | 0 | 0 | 1 |
+| 18 | [Export](18-export/README.md) | **Partially complete** | 1 | 1 | 0 | 2 |
+| 19 | [Bundles and merge](19-bundles-and-merge/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 20 | [Data import](20-data-import/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 21 | [Cloud upload](21-cloud-upload/README.md) | **Complete** | 1 | 0 | 0 | 1 |
-| 22 | [Privacy and security](22-privacy-and-security/README.md) | **Complete** | 1 | 0 | 0 | 1 |
+| 21 | [Cloud upload](21-cloud-upload/README.md) | **Partially complete** | 0 | 3 | 0 | 3 |
+| 22 | [Privacy and security](22-privacy-and-security/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 23 | [The minimal backend](23-backend/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
-| 24 | [Product refinements](24-product-refinements/README.md) | **Partially complete** | 51 | 4 | 0 | 55 |
+| 24 | [Product refinements](24-product-refinements/README.md) | **Partially complete** | 51 | 5 | 0 | 56 |
 | 25 | [Testing and release](25-testing-and-release/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
 | 26 | [Documentation](26-documentation/README.md) | **Pending** | 0 | 0 | 7 | 7 |
-| 27 | [Hardening](27-hardening/README.md) | **Partially complete** | 0 | 1 | 0 | 1 |
+| 27 | [Hardening](27-hardening/README.md) | **Partially complete** | 0 | 2 | 0 | 2 |
 
 ## 01 — Project setup and guardrails
 
@@ -77,11 +77,11 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 ## 04 — Local database
 
-**Complete** · `04-data-layer/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `04-data-layer/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 04.01 | 004 | [Local database: every table, with merge columns from the first migration](04-data-layer/004-local-database.md) | **Complete** | 62/62 | 01.01 (001); Dependencies complete |
+| 04.01 | 004 | [Local database: every table, with merge columns from the first migration](04-data-layer/004-local-database.md) | **Partially complete** | 60/62 | 01.01 (001); Ready |
 
 ## 05 — File storage
 
@@ -101,27 +101,28 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 ## 07 — Account and settings
 
-**Complete** · `07-account-and-settings/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `07-account-and-settings/` · 2 total · 1 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
 | 07.01 | 007 | [Account and settings: local identity, the app lock and the switches later features read](07-account-and-settings/007-account-and-settings.md) | **Complete** | 38/38 | 01.01 (001); Dependencies complete |
+| 07.02 | 097 | [Use maintained native biometric authentication for the app lock](07-account-and-settings/097-native-biometric-unlock.md) | **Partially complete** | 1/6 | 01.01 (001), 02.01 (002); Ready |
 
 ## 08 — Projects
 
-**Complete** · `08-projects/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `08-projects/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 08.01 | 008 | [Projects: the container that owns everything else](08-projects/008-projects.md) | **Complete** | 68/68 | 01.01 (001); Dependencies complete |
+| 08.01 | 008 | [Projects: the container that owns everything else](08-projects/008-projects.md) | **Partially complete** | 67/68 | 01.01 (001); Ready |
 
 ## 09 — Templates
 
-**Complete** · `09-templates/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `09-templates/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 09.01 | 009 | [Templates: record shapes with atomic columns, and requiredness the user owns](09-templates/009-templates.md) | **Complete** | 71/71 | 01.01 (001); Dependencies complete |
+| 09.01 | 009 | [Templates: record shapes with atomic columns, and requiredness the user owns](09-templates/009-templates.md) | **Partially complete** | 69/71 | 01.01 (001); Ready |
 
 ## 10 — Reference data
 
@@ -129,15 +130,15 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 10.01 | 010 | [Reference data: datasets, lookups and prefill](10-reference-data/010-reference-data.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009); Dependencies complete |
+| 10.01 | 010 | [Reference data: datasets, lookups and prefill](10-reference-data/010-reference-data.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009); Prerequisite review: 004, 009 |
 
 ## 11 — Context
 
-**Partially complete** · `11-context/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
+**Complete** · `11-context/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 11.01 | 011 | [Context: hierarchy, bar and inheritance](11-context/011-context.md) | **Partially complete** | 25/26 | 03.01 (003), 04.01 (004), 05.01 (005), 06.01 (006), 07.01 (007), 09.01 (009), 10.01 (010); Ready |
+| 11.01 | 011 | [Context: hierarchy, bar and inheritance](11-context/011-context.md) | **Complete** | 26/26 | 03.01 (003), 04.01 (004), 05.01 (005), 06.01 (006), 07.01 (007), 09.01 (009), 10.01 (010); Prerequisite review: 004, 009 |
 
 ## 12 — Capture
 
@@ -145,23 +146,23 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 12.01 | 012 | [Capture: evidence in, saved before anything else](12-capture/012-capture.md) | **Partially complete** | 53/66 | 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 10.01 (010), 11.01 (011); Waiting for: 011 |
+| 12.01 | 012 | [Capture: evidence in, saved before anything else](12-capture/012-capture.md) | **Partially complete** | 54/66 | 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 10.01 (010), 11.01 (011); Waiting for: 004, 009 |
 
 ## 13 — Processing
 
-**Complete** · `13-processing/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `13-processing/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 13.01 | 013 | [Processing: on-device first, online only when it earns its place](13-processing/013-processing.md) | **Complete** | 71/71 | 02.01 (002), 04.01 (004), 07.01 (007), 09.01 (009), 10.01 (010), 12.01 (012); Prerequisite review: 012 |
+| 13.01 | 013 | [Processing: on-device first, online only when it earns its place](13-processing/013-processing.md) | **Partially complete** | 69/71 | 02.01 (002), 04.01 (004), 07.01 (007), 09.01 (009), 10.01 (010), 12.01 (012); Waiting for: 004, 009, 012 |
 
 ## 14 — Records
 
-**Complete** · `14-records/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `14-records/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 14.01 | 014 | [Records: find, read and change what was captured](14-records/014-records.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 12.01 (012); Prerequisite review: 012 |
+| 14.01 | 014 | [Records: find, read and change what was captured](14-records/014-records.md) | **Partially complete** | 27/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 12.01 (012); Waiting for: 004, 009, 012 |
 
 ## 15 — Data quality
 
@@ -169,7 +170,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 15.01 | 015 | [Data quality: validation, duplicates, conflicts and variance](15-data-quality/015-data-quality.md) | **Complete** | 40/40 | 02.01 (002), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 14.01 (014); Prerequisite review: 012 |
+| 15.01 | 015 | [Data quality: validation, duplicates, conflicts and variance](15-data-quality/015-data-quality.md) | **Complete** | 40/40 | 02.01 (002), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 14.01 (014); Prerequisite review: 004, 009, 012, 013, 014 |
 
 ## 16 — Review
 
@@ -177,7 +178,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 16.01 | 016 | [Review: turning proposals into approved data](16-review/016-review.md) | **Complete** | 25/25 | 03.01 (003), 09.01 (009), 12.01 (012), 13.01 (013), 14.01 (014), 15.01 (015); Prerequisite review: 012 |
+| 16.01 | 016 | [Review: turning proposals into approved data](16-review/016-review.md) | **Complete** | 25/25 | 03.01 (003), 09.01 (009), 12.01 (012), 13.01 (013), 14.01 (014), 15.01 (015); Prerequisite review: 009, 012, 013, 014 |
 
 ## 17 — Meetings
 
@@ -185,24 +186,24 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 17.01 | 017 | [Meetings: minutes, attendance and actions](17-meetings/017-meetings.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 16.01 (016); Prerequisite review: 012 |
+| 17.01 | 017 | [Meetings: minutes, attendance and actions](17-meetings/017-meetings.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 09.01 (009), 10.01 (010), 12.01 (012), 13.01 (013), 16.01 (016); Prerequisite review: 004, 009, 012, 013 |
 
 ## 18 — Export
 
-**Partially complete** · `18-export/` · 2 total · 0 Complete · 2 Partially complete · 0 Pending.
+**Partially complete** · `18-export/` · 2 total · 1 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 18.01 | 018 | [Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](18-export/018-export.md) | **Partially complete** | 51/57 | 01.01 (001), 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 13.01 (013), 14.01 (014), 15.01 (015), 16.01 (016), 17.01 (017); Ready |
-| 18.02 | 090 | [Use the standard PDF renderer for deliverable reports](18-export/090-use-standard-pdf-renderer.md) | **Partially complete** | 0/4 | 01.01 (001), 03.01 (003), 18.01 (018); Waiting for: 018 |
+| 18.01 | 018 | [Export: XLSX, CSV, JSON, PDF and ZIP, all produced on device](18-export/018-export.md) | **Partially complete** | 55/57 | 01.01 (001), 02.01 (002), 04.01 (004), 05.01 (005), 09.01 (009), 13.01 (013), 14.01 (014), 15.01 (015), 16.01 (016), 17.01 (017); Waiting for: 004, 009, 013, 014 |
+| 18.02 | 090 | [Use the standard PDF renderer for deliverable reports](18-export/090-use-standard-pdf-renderer.md) | **Complete** | 4/4 | 01.01 (001), 03.01 (003), 18.01 (018); Prerequisite review: 018 |
 
 ## 19 — Bundles and merge
 
-**Complete** · `19-bundles-and-merge/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `19-bundles-and-merge/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 19.01 | 019 | [Bundles and merge: a project leaves whole and rejoins safely](19-bundles-and-merge/019-bundles-and-merge.md) | **Complete** | 45/45 | 01.01 (001), 02.01 (002), 04.01 (004), 05.01 (005), 08.01 (008), 18.01 (018); Prerequisite review: 018 |
+| 19.01 | 019 | [Bundles and merge: a project leaves whole and rejoins safely](19-bundles-and-merge/019-bundles-and-merge.md) | **Partially complete** | 32/45 | 01.01 (001), 02.01 (002), 04.01 (004), 05.01 (005), 08.01 (008), 18.01 (018); Waiting for: 004, 008, 018 |
 
 ## 20 — Data import
 
@@ -210,23 +211,25 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 20.01 | 020 | [Data import: continue an inventory someone else started](20-data-import/020-data-import.md) | **Complete** | 23/23 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 14.01 (014), 15.01 (015); Dependencies complete |
+| 20.01 | 020 | [Data import: continue an inventory someone else started](20-data-import/020-data-import.md) | **Complete** | 23/23 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009), 14.01 (014), 15.01 (015); Prerequisite review: 004, 009, 014 |
 
 ## 21 — Cloud upload
 
-**Complete** · `21-cloud-upload/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `21-cloud-upload/` · 3 total · 0 Complete · 3 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 21.01 | 021 | [Cloud upload: a destination the user chooses, never a sync channel](21-cloud-upload/021-cloud-upload.md) | **Complete** | 28/28 | 01.01 (001), 02.01 (002), 03.01 (003), 04.01 (004), 05.01 (005); Dependencies complete |
+| 21.01 | 021 | [Cloud upload: a destination the user chooses, never a sync channel](21-cloud-upload/021-cloud-upload.md) | **Partially complete** | 25/28 | 01.01 (001), 02.01 (002), 03.01 (003), 04.01 (004), 05.01 (005); Waiting for: 004 |
+| 21.02 | 094 | [Connect native Google Drive identity securely](21-cloud-upload/094-connect-native-google-drive.md) | **Partially complete** | 1/7 | 02.01 (002), 04.01 (004), 05.01 (005); Waiting for: 004 |
+| 21.03 | 098 | [Connect configured desktop cloud accounts through external-browser PKCE](21-cloud-upload/098-desktop-oauth-sign-in.md) | **Partially complete** | 4/5 | 01.01 (001), 02.01 (002), 04.01 (004), 05.01 (005); Waiting for: 004 |
 
 ## 22 — Privacy and security
 
-**Complete** · `22-privacy-and-security/` · 1 total · 1 Complete · 0 Partially complete · 0 Pending.
+**Partially complete** · `22-privacy-and-security/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 22.01 | 022 | [Privacy and security: what leaves this device, and what never does](22-privacy-and-security/022-privacy-and-security.md) | **Complete** | 28/28 | 02.01 (002), 05.01 (005), 08.01 (008), 09.01 (009), 12.01 (012), 13.01 (013), 18.01 (018), 19.01 (019), 21.01 (021); Prerequisite review: 012, 018 |
+| 22.01 | 022 | [Privacy and security: what leaves this device, and what never does](22-privacy-and-security/022-privacy-and-security.md) | **Partially complete** | 25/28 | 02.01 (002), 05.01 (005), 08.01 (008), 09.01 (009), 12.01 (012), 13.01 (013), 18.01 (018), 19.01 (019), 21.01 (021); Waiting for: 008, 009, 012, 013, 018, 019, 021 |
 
 ## 23 — The minimal backend
 
@@ -234,18 +237,18 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 23.01 | 024 | [The minimal backend, and the app that runs on it](23-backend/024-minimal-backend.md) | **Partially complete** | 81/95 | 02.01 (002), 03.01 (003), 07.01 (007), 13.01 (013), 19.01 (019); Ready |
+| 23.01 | 024 | [The minimal backend, and the app that runs on it](23-backend/024-minimal-backend.md) | **Partially complete** | 81/95 | 02.01 (002), 03.01 (003), 07.01 (007), 13.01 (013), 19.01 (019); Waiting for: 013, 019 |
 
 ## 24 — Product refinements
 
-**Partially complete** · `24-product-refinements/` · 55 total · 51 Complete · 4 Partially complete · 0 Pending.
+**Partially complete** · `24-product-refinements/` · 56 total · 51 Complete · 5 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
 | 24.01 | 026 | [In-app feedback: floating button, capture, download and delete](24-product-refinements/026-in-app-feedback.md) | **Complete** | 6/6 | None; Dependencies complete |
 | 24.02 | 027 | [Feedback screens: compact layout, dictation and reopen safety](24-product-refinements/027-feedback-dictation-and-layout.md) | **Complete** | 10/10 | 12.01 (012), 24.01 (026); Prerequisite review: 012 |
 | 24.03 | 028 | [Feedback archive: ship the prompts generator](24-product-refinements/028-feedback-prompts-generator.md) | **Complete** | 3/3 | 24.01 (026), 24.02 (027); Dependencies complete |
-| 24.04 | 029 | [Enable AppDatabase on web](24-product-refinements/029-enable-app-database-on-web.md) | **Complete** | 4/4 | 04.01 (004), 07.01 (007); Dependencies complete |
+| 24.04 | 029 | [Enable AppDatabase on web](24-product-refinements/029-enable-app-database-on-web.md) | **Complete** | 4/4 | 04.01 (004), 07.01 (007); Prerequisite review: 004 |
 | 24.05 | 030 | [Fix storage settings on web](24-product-refinements/030-fix-storage-settings-on-web.md) | **Complete** | 3/3 | 07.01 (007), 24.04 (029); Dependencies complete |
 | 24.06 | 031 | [Dock feedback panel beside app](24-product-refinements/031-dock-feedback-panel-beside-app.md) | **Complete** | 3/3 | 24.02 (027); Dependencies complete |
 | 24.07 | 032 | [Rename More nav to Settings](24-product-refinements/032-rename-more-nav-to-settings.md) | **Complete** | 3/3 | 06.01 (006); Dependencies complete |
@@ -278,7 +281,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 | 24.34 | 059 | [Show a single feedback image as a thumbnail](24-product-refinements/059-show-single-feedback-image-as-thumbnail.md) | **Complete** | 4/4 | 24.01 (026), 24.02 (027); Dependencies complete |
 | 24.35 | 060 | [Borderless overflow menus](24-product-refinements/060-borderless-overflow-menus.md) | **Complete** | 5/5 | None; Dependencies complete |
 | 24.36 | 061 | [Resolve shell, settings and capture feedback](24-product-refinements/061-resolve-shell-capture-feedback.md) | **Complete** | 1/1 | None; Dependencies complete |
-| 24.37 | 062 | [Resolve feedback archive 23092026-1635](24-product-refinements/062-resolve-feedback-23092026.md) | **Complete** | 8/8 | 11.01 (011), 12.01 (012), 13.01 (013), 24.36 (061); Prerequisite review: 011, 012 |
+| 24.37 | 062 | [Resolve feedback archive 23092026-1635](24-product-refinements/062-resolve-feedback-23092026.md) | **Complete** | 8/8 | 11.01 (011), 12.01 (012), 13.01 (013), 24.36 (061); Prerequisite review: 012, 013 |
 | 24.38 | 063 | [Resolve projects, capture and template feedback](24-product-refinements/063-resolve-feedback-23092026-2222.md) | **Partially complete** | 9/11 | 12.01 (012), 24.37 (062); Waiting for: 012 |
 | 24.39 | 064 | [Resolve projects and capture feedback](24-product-refinements/064-resolve-feedback-24092026.md) | **Complete** | 11/11 | 12.01 (012), 24.38 (063); Prerequisite review: 012, 063 |
 | 24.40 | 065 | [Place the audio record control in the caption field](24-product-refinements/065-place-audio-record-in-caption.md) | **Complete** | 5/5 | None; Dependencies complete |
@@ -297,6 +300,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 | 24.53 | 078 | [Keep the device id in the storage root](24-product-refinements/078-keep-device-id-in-storage-root.md) | **Complete** | 3/3 | 24.51 (076); Dependencies complete |
 | 24.54 | 079 | [Show a mobile More menu in the bottom navigation](24-product-refinements/079-mobile-more-menu.md) | **Partially complete** | 4/5 | 06.01 (006), 24.07 (032), 24.35 (060); Ready |
 | 24.55 | 093 | [Audit implementation and efficiency against the full plan](24-product-refinements/093-audit-codebase-against-plan.md) | **Partially complete** | 2/7 | None; Ready |
+| 24.56 | 095 | [Generate platform branding reproducibly from vector sources](24-product-refinements/095-generate-platform-branding.md) | **Partially complete** | 5/6 | 02.01 (002), 03.01 (003), 24.29 (054); Ready |
 
 ## 25 — Testing and release
 
@@ -304,7 +308,7 @@ Historical implementation claims and audit limitations are preserved in [status 
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 25.01 | 025 | [Testing and release: the suites, the pipeline and the gate over both artefacts](25-testing-and-release/025-testing-and-release.md) | **Partially complete** | 36/41 | 04.01 (004), 12.01 (012), 15.01 (015), 17.01 (017), 18.01 (018), 19.01 (019), 22.01 (022), 23.01 (024); Waiting for: 012, 018, 024 |
+| 25.01 | 025 | [Testing and release: the suites, the pipeline and the gate over both artefacts](25-testing-and-release/025-testing-and-release.md) | **Partially complete** | 36/41 | 04.01 (004), 12.01 (012), 15.01 (015), 17.01 (017), 18.01 (018), 19.01 (019), 22.01 (022), 23.01 (024); Waiting for: 004, 012, 018, 019, 022, 024 |
 
 ## 26 — Documentation
 
@@ -313,17 +317,18 @@ Historical implementation claims and audit limitations are preserved in [status 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
 | 26.01 | 080 | [Establish document adapters and approved dependencies](26-documentation/080-documentation-capabilities.md) | **Pending** | 0/6 | 05.01 (005), 18.01 (018); Waiting for: 018 |
-| 26.02 | 081 | [Persist Documentation workspaces and resources locally](26-documentation/081-documentation-workspaces.md) | **Pending** | 0/7 | 04.01 (004), 26.01 (080); Waiting for: 080 |
+| 26.02 | 081 | [Persist Documentation workspaces and resources locally](26-documentation/081-documentation-workspaces.md) | **Pending** | 0/7 | 04.01 (004), 26.01 (080); Waiting for: 004, 080 |
 | 26.03 | 082 | [Import, inspect and extract document resources safely](26-documentation/082-documentation-ingestion.md) | **Pending** | 0/8 | 24.51 (076), 26.02 (081); Waiting for: 081 |
 | 26.04 | 083 | [Build the Inputs, Outputs and Prompt workspace](26-documentation/083-documentation-editor.md) | **Pending** | 0/10 | 24.54 (079), 26.03 (082); Waiting for: 079, 082 |
 | 26.05 | 084 | [Generate grounded document drafts through resumable jobs](26-documentation/084-documentation-generation.md) | **Pending** | 0/9 | 23.01 (024), 26.04 (083); Waiting for: 024, 083 |
 | 26.06 | 085 | [Render, review and approve versioned documents](26-documentation/085-documentation-review.md) | **Pending** | 0/8 | 26.05 (084); Waiting for: 084 |
-| 26.07 | 086 | [Carry Documentation in project packages and pass release acceptance](26-documentation/086-documentation-release.md) | **Pending** | 0/12 | 19.01 (019), 25.01 (025), 24.51 (076), 26.06 (085); Waiting for: 025, 085 |
+| 26.07 | 086 | [Carry Documentation in project packages and pass release acceptance](26-documentation/086-documentation-release.md) | **Pending** | 0/12 | 19.01 (019), 25.01 (025), 24.51 (076), 26.06 (085); Waiting for: 019, 025, 085 |
 
 ## 27 — Hardening
 
-**Partially complete** · `27-hardening/` · 1 total · 0 Complete · 1 Partially complete · 0 Pending.
+**Partially complete** · `27-hardening/` · 2 total · 0 Complete · 2 Partially complete · 0 Pending.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 27.01 | 023 | [Hardening: fast, legible, reachable and unbreakable in the field](27-hardening/023-hardening.md) | **Partially complete** | 0/38 | 01.01 (001), 02.01 (002), 03.01 (003), 06.01 (006), 12.01 (012), 13.01 (013), 14.01 (014), 25.01 (025), 26.07 (086); Waiting for: 012, 025, 086 |
+| 27.01 | 023 | [Hardening: fast, legible, reachable and unbreakable in the field](27-hardening/023-hardening.md) | **Partially complete** | 6/38 | 01.01 (001), 02.01 (002), 03.01 (003), 06.01 (006), 12.01 (012), 13.01 (013), 14.01 (014), 25.01 (025), 26.07 (086); Waiting for: 012, 013, 014, 025, 086 |
+| 27.02 | 096 | [Scoped generated localization catalogue and pseudo-locale verification](27-hardening/096-localization-catalogue.md) | **Partially complete** | 0/9 | 03.01 (003), 06.01 (006), 24.10 (035); Ready |

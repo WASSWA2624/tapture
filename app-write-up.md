@@ -965,6 +965,8 @@ Export variance as a sheet/report; registered records never found export as **Mi
 
 - Every edit, including requiredness (§13.2), creates a version. Existing records keep their capture version and
   are never retrospectively incomplete.
+- Recovery keeps the selected capture version and its defaults and identity fields. Legacy drafts without a
+  recorded version use `0` (unknown); neither saving nor template remapping invents a current shape.
 - Migrate records only on request, after previewing added/removed/retyped fields.
 - Removed fields are hidden; retain values in the database and JSON, marked `retired`.
 - Merge templates like other entities (§47); resolve conflicts by choosing a version or keeping both.
@@ -1086,6 +1088,7 @@ Rules:
 
 - Multiple photos per record, in any order.
 - Sources: camera, gallery, file picker, PDF pages, scanned documents.
+- Gallery JPEG, PNG and WebP originals retain their bytes; stored format and dimensions agree with the source.
 - The camera stays open for rapid multi-shot; each shot is written to disk immediately.
 - Camera controls: flash, tap-to-focus, pinch zoom, grid, document mode with edge detection, barcode overlay.
 - Quality warnings are advisory, never blocking (§39.3).
@@ -2248,6 +2251,8 @@ Page queries; index project, status, context, identity hash and timestamps. Gene
 
 - For projects collecting personal data, offer per-record consent flags, export face blurring, and marked-region redaction before image analysis. Photos may contain people, documents and identifiers.
 - GPS is off by default, enabled per project.
+- Coordinate exclusion and removal follow the original field shapes, including retained raw values, frozen context
+  and history after an explicit template migration (§18). New ordinary values keep their current meaning.
 - Store the operator's name and account ID locally for attribution and include them in shared bundles; no other user identifiers. The backend holds the account (§71), never its attributed records.
 
 ### 60.4 Input safety

@@ -11,14 +11,14 @@ whole-app hardening pass follows every feature in [step 27](../27-hardening/READ
 
 **Step 24 — Partially complete**
 
-55 total · 51 Complete · 4 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+56 total · 51 Complete · 5 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
 | 24.01 | 026 | [In-app feedback: floating button, capture, download and delete](026-in-app-feedback.md) | **Complete** | 6/6 | None; Dependencies complete |
 | 24.02 | 027 | [Feedback screens: compact layout, dictation and reopen safety](027-feedback-dictation-and-layout.md) | **Complete** | 10/10 | 12.01 (012), 24.01 (026); Prerequisite review: 012 |
 | 24.03 | 028 | [Feedback archive: ship the prompts generator](028-feedback-prompts-generator.md) | **Complete** | 3/3 | 24.01 (026), 24.02 (027); Dependencies complete |
-| 24.04 | 029 | [Enable AppDatabase on web](029-enable-app-database-on-web.md) | **Complete** | 4/4 | 04.01 (004), 07.01 (007); Dependencies complete |
+| 24.04 | 029 | [Enable AppDatabase on web](029-enable-app-database-on-web.md) | **Complete** | 4/4 | 04.01 (004), 07.01 (007); Prerequisite review: 004 |
 | 24.05 | 030 | [Fix storage settings on web](030-fix-storage-settings-on-web.md) | **Complete** | 3/3 | 07.01 (007), 24.04 (029); Dependencies complete |
 | 24.06 | 031 | [Dock feedback panel beside app](031-dock-feedback-panel-beside-app.md) | **Complete** | 3/3 | 24.02 (027); Dependencies complete |
 | 24.07 | 032 | [Rename More nav to Settings](032-rename-more-nav-to-settings.md) | **Complete** | 3/3 | 06.01 (006); Dependencies complete |
@@ -51,7 +51,7 @@ whole-app hardening pass follows every feature in [step 27](../27-hardening/READ
 | 24.34 | 059 | [Show a single feedback image as a thumbnail](059-show-single-feedback-image-as-thumbnail.md) | **Complete** | 4/4 | 24.01 (026), 24.02 (027); Dependencies complete |
 | 24.35 | 060 | [Borderless overflow menus](060-borderless-overflow-menus.md) | **Complete** | 5/5 | None; Dependencies complete |
 | 24.36 | 061 | [Resolve shell, settings and capture feedback](061-resolve-shell-capture-feedback.md) | **Complete** | 1/1 | None; Dependencies complete |
-| 24.37 | 062 | [Resolve feedback archive 23092026-1635](062-resolve-feedback-23092026.md) | **Complete** | 8/8 | 11.01 (011), 12.01 (012), 13.01 (013), 24.36 (061); Prerequisite review: 011, 012 |
+| 24.37 | 062 | [Resolve feedback archive 23092026-1635](062-resolve-feedback-23092026.md) | **Complete** | 8/8 | 11.01 (011), 12.01 (012), 13.01 (013), 24.36 (061); Prerequisite review: 012, 013 |
 | 24.38 | 063 | [Resolve projects, capture and template feedback](063-resolve-feedback-23092026-2222.md) | **Partially complete** | 9/11 | 12.01 (012), 24.37 (062); Waiting for: 012 |
 | 24.39 | 064 | [Resolve projects and capture feedback](064-resolve-feedback-24092026.md) | **Complete** | 11/11 | 12.01 (012), 24.38 (063); Prerequisite review: 012, 063 |
 | 24.40 | 065 | [Place the audio record control in the caption field](065-place-audio-record-in-caption.md) | **Complete** | 5/5 | None; Dependencies complete |
@@ -70,5 +70,6 @@ whole-app hardening pass follows every feature in [step 27](../27-hardening/READ
 | 24.53 | 078 | [Keep the device id in the storage root](078-keep-device-id-in-storage-root.md) | **Complete** | 3/3 | 24.51 (076); Dependencies complete |
 | 24.54 | 079 | [Show a mobile More menu in the bottom navigation](079-mobile-more-menu.md) | **Partially complete** | 4/5 | 06.01 (006), 24.07 (032), 24.35 (060); Ready |
 | 24.55 | 093 | [Audit implementation and efficiency against the full plan](093-audit-codebase-against-plan.md) | **Partially complete** | 2/7 | None; Ready |
+| 24.56 | 095 | [Generate platform branding reproducibly from vector sources](095-generate-platform-branding.md) | **Partially complete** | 5/6 | 02.01 (002), 03.01 (003), 24.29 (054); Ready |
 
 <!-- dev-plan:generated:end -->

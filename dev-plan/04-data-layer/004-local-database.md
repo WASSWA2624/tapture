@@ -4,11 +4,24 @@
 
 **Phase** 04 · Local database  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
+**Implementation started:** Yes
+
 ## Implement
+
+The 2026-10-01 encryption audit replaces new bespoke cipher writes with the shared authenticated AES format while
+retaining authenticated, read-only legacy decoding. Eight encryption cases pass, including an independent legacy
+SQLite fixture, upgrade without row loss and rejection of a wrong key when a crash leaves plaintext beside the
+encrypted snapshot. Isolated SQLite lock failures are unwrapped into the existing recoverable busy/locked message;
+the offline host failure suite verifies retry against an actual database lock.
+
+Schema 27 adds causal-vector maintenance, 28 durable retry generations, 29 indexed pending undo recovery, 30 stable
+failure-page ordering, and 31 nullable semantic failure metadata alongside unchanged English audit text. The new
+steps preserve older rows and tolerate partial historical fixture schemas. Head-preservation acceptance is reopened
+until the current migration matrix and database regressions pass.
 
 `AppDatabase` opens a lazy write-ahead-logging connection in the application support directory with foreign keys on,
 closes cleanly, survives a hot restart, and carries `kSchemaVersion` with a numbered `MigrationStrategy` that reaches
-head 12 through twelve named upgrade steps. `MergeColumns` gives every table its id, timestamps, device and revision
+the current head through named upgrade steps. `MergeColumns` gives every table its id, timestamps, device and revision
 in the migration that creates it; `BaseDao` supplies watched lists, typed reads, paging, `Result` returns and a soft
 delete that always writes a tombstone; `runInTransaction` joins an open write instead of nesting one. On that sit the
 bookkeeping tables no feature owns — tombstones, the append-only audit log and the single device-profile row — then
@@ -353,7 +366,7 @@ abstract interface class DatabaseEncryption {
 ### The database and its shared columns
 
 - [x] The database opens, closes and reopens across a hot restart with no lock left behind.
-- [x] Upgrading from any released version to head preserves every row; a destructive step refuses to run without the
+- [ ] Upgrading from any released version to head preserves every row; a destructive step refuses to run without the
       export acknowledgement.
 - [x] Adding a schema change without adding a migration step and its test fails the suite.
 - [x] No table declares `id`, `createdAt`, `updatedAt`, `updatedByDevice` or `rev` by hand.
@@ -361,7 +374,7 @@ abstract interface class DatabaseEncryption {
       visible as an unchanged `rev`.
 - [x] A failure part-way through a multi-table write leaves no partial rows, whether the call opened the transaction
       or joined one.
-- [x] Tests: `frontend/test/core/db/app_database_test.dart` opens an in-memory database and asserts a clean close;
+- [ ] Tests: `frontend/test/core/db/app_database_test.dart` opens an in-memory database and asserts a clean close;
       `migrations_test.dart` walks a seeded version 1 file to head and compares row counts and column sets.
 - [x] Tests: `frontend/test/core/db/columns_test.dart` asserts the rev-and-timestamp bump on repeated writes;
       `base_dao_test.dart` covers watch, get, upsert, paging and failure mapping against an in-memory database;

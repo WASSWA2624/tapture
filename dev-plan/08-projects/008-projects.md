@@ -6,6 +6,22 @@
 
 ## Implement
 
+**Implementation started:** Yes
+
+2026-10-01 efficiency review makes the shared landing/pane project rows lazy in their existing bounded viewport.
+Only visible/cache rows construct menus and covers; row ordering, numbering, current selection and actions retain
+their repository identity. A 2,000-project populated scrolling/pin regression is written and awaits the coordinated
+gate. This bounds widget construction, while the current repository still returns the complete project catalogue;
+it does not establish a physical cold-launch timing result.
+
+2026-09-30 audit verified the repository, persisted current project, toolbar/filter, route/count and action contracts
+with the project feature suite. Task 063 supersedes the earlier no-filter toolbar note with the shared compact
+filter sheet. The landing timing fixture uses a fake store; a cold launch on the reference device remains unmeasured.
+
+2026-10-01 user steering moves the project-list overflow commands from the expanded pane's search area into the
+far right of the shared Projects title bar at every size. Import and Show archived are retained; six compact,
+medium and expanded positioning/interaction cases at normal and doubled text scale await focused verification.
+
 The whole of `features/projects/`: the immutable `Project` with its status, dates and validated settings type, the
 mapper that folds organisation and the dates onto the row's `client`, `startedAt` and `completedAt` columns and keeps
 the description inside the settings JSON, the repository implementation behind the interface the data layer declares,
@@ -224,7 +240,7 @@ final currentProjectDetailsProvider = Provider<Project?>(...);
 
 - [x] Presentation compiles with no `core/db` import anywhere under `features/projects/presentation/`.
 - [x] Unknown or missing settings JSON loads as defaults instead of throwing.
-- [x] Opening the app lands on the project list with counts rendered in under two seconds on the reference device.
+- [ ] Opening the app lands on the project list with counts rendered in under two seconds on the reference device.
 - [x] Reopening the app returns to the last opened project without asking; a deleted last project clears cleanly.
 - [x] Loading, empty, populated and failure all render through `AsyncValueView` on the list.
 - [x] A project exists and is ready for capture after one screen.

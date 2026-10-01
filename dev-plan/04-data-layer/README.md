@@ -6,13 +6,13 @@ Every table the app will ever need, with merge columns from the first migration.
 
 ## Implementation progress
 
-**Step 04 — Complete**
+**Step 04 — Partially complete**
 
-1 total · 1 Complete · 0 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+1 total · 0 Complete · 1 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 04.01 | 004 | [Local database: every table, with merge columns from the first migration](004-local-database.md) | **Complete** | 62/62 | 01.01 (001); Dependencies complete |
+| 04.01 | 004 | [Local database: every table, with merge columns from the first migration](004-local-database.md) | **Partially complete** | 60/62 | 01.01 (001); Ready |
 
 <!-- dev-plan:generated:end -->
 

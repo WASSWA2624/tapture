@@ -4,7 +4,103 @@
 
 **Phase** 19 · Bundles and merge  |  **Depends on** [001](../01-orchestration/001-project-setup.md), [002](../02-foundation/002-foundation-services.md), [004](../04-data-layer/004-local-database.md), [005](../05-file-storage/005-file-storage.md), [008](../08-projects/008-projects.md), [018](../18-export/018-export.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
+## Production reconciliation — 2026-10-01
+
+The original template/reference acceptance relied on isolated pure helpers. The production planner kept differing
+reference attributes silently and did not offer template choices; those two criteria are reopened until the real
+writer → reader → planner → SQLite apply regressions pass. The planner now raises structural conflicts, the UI
+offers choose one or keep both, distinct historical shapes use the existing template version store, and a separate
+copy retains same-version forks without rewriting captured metadata. Reference choices retain matched local row
+identities and append per-conflict audit. The focused structural verification is pending. Merge history, undo,
+causal vectors and lineage have production implementations and regressions; final verification remains pending.
+
 ## Implement
+
+**Implementation started:** Yes
+
+2026-09-30 audit: the native package memory test writes and independently reopens 2,000 valid JPEG files
+(496,086,000 source bytes). Its 496,853,885-byte package completed in 30,261 ms with 28,262,400 bytes additional
+process RSS, below the 96 MiB regression budget. The measured interval excludes fixture setup and includes native
+table serialization, hashing and ZIP publication. The desktop result does not establish mobile frame timing.
+
+2026-10-01 production audit: merge sessions persist source, timestamp, bundle id and category counts, but
+`MergeHistoryScreen` has no registered route or production caller, and `MergeRepository` has no production
+implementation. `PackageImportRepositoryImpl._session` stores an empty `undoSnapshotPath`; the current
+`MergeApply` and `MergeUndo` tests exercise copied string maps rather than durable database rows or evidence files.
+The history, undo and combined apply/undo acceptance below are reopened until the real route, persisted history,
+snapshot publication, recovery and restore paths are implemented and verified. The existing merge transaction and
+failed-copy cleanup remain separate evidence; they do not establish post-commit undo.
+
+The same audit found that `ConflictScreen` exposes Type a value and Decide later, but its handlers pass only an
+enum (`conflict_screen.dart:248,256`), and `MergeController.choose` stores no typed payload
+(`merge_controller.dart:88`). `_settle` resolves every choice before branching only on `theirs`
+(`package_import_repository_impl.dart:557,590`), so typed and deferred choices currently act as Keep mine rather
+than validating a typed value or leaving the conflict unresolved. The production post-commit call is
+`qualityRepository.scanProject(projectId)` (`merge_controller.dart:233`), which scans the project rather than
+only incoming versus pre-existing records; the isolated `PostMergeScan` unit fixture does not verify that boundary
+in the production path. The corresponding behaviour and four-choice widget coverage are reopened below.
+
+The production package path now reuses `BundleScopeSection` for full project, date, context, approved-only and
+data-only selection, and estimates the selected package before writing. Passwords remain ephemeral in the export
+request and import prompt. Native and browser writers/readers use the shared authenticated AES-256-CTR/HMAC-SHA256
+cipher with independent purpose-derived keys and salted PBKDF2; authentication completes before any plaintext
+output is published. Actual writer/reader regressions cover correct and wrong passwords, encrypted native/browser
+interop and tampering. A production export with approved-only selection, no photos and a password independently
+reopens with the selected row and leaves the original database unchanged. Every writer scans generated names,
+tables and attachment contents using the canonical secret-pattern asset, including bounded recursive compressed
+archive inspection. Secret columns and nested JSON settings are stripped before serialization. Production secret
+refusal, compressed attachment, source-integrity and bounded-output cases pass; the real email-size acceptance
+remains open because it depends on the chosen project and transport limit.
+
+The bounded reader now verifies and extracts native stored/DEFLATE media with a 64 KiB output buffer and a
+32 KiB dictionary, without retaining inflated `ArchiveFile.content` arrays. An inspected package leases one
+streamed entry at a time; completion, cancellation and owner disposal release its generated plaintext. Inspection
+and extraction use cancellable workers with parent-owned temporary directories. Both writers and readers cap
+combined manifest/table/reference JSON at 32 MiB, with a separate 1 MiB manifest ceiling before decoding; oversized
+metadata asks the exporter to choose a smaller scope. Native media keeps the 4,000,000,000-byte package contract.
+New memory, compressed-entry, cancellation, declared-size and real 5,000-record metadata regressions are pending
+the final source-stable verification run.
+
+New password writes use `TAPBND03`, a random 16-byte salt and a stored PBKDF2-HMAC-SHA256 factor of 600,000,
+following the [OWASP work-factor guidance](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
+Readers refuse v3 factors outside 600,000–1,200,000 before derivation, and retain read-only `TAPBND02` compatibility
+with its fixed 1,000-round legacy factor. Native byte encryption/decryption and KDF work run on the standard
+cancellable worker; browser derivation uses asynchronous
+[WebCrypto PBKDF2](https://www.w3.org/TR/webcrypto/#pbkdf2) and HMAC. Its compatible AES counter advances in
+aligned 64 KiB chunks with an event-loop yield and cancellation check between chunks. Readers authenticate before
+allocating a ciphertext snapshot and authenticate that snapshot again before decrypting, preventing a caller's
+buffer mutation during an asynchronous browser operation from publishing unauthenticated plaintext.
+Independent Node crypto fixtures, legacy/modern file
+interop, modified salt/factor, wrong-password and cancellation regressions are prepared; their final verification
+and the browser WebCrypto run remain pending.
+
+Native KDF work keeps the approved `crypto` HMAC implementation for the RFC 8018 single 256-bit block and checks
+cancellation every 1,024 rounds. A 600,000-round native benchmark derived the same 32-byte frozen Node key in
+3,186 ms; the SHA-256 compression block is 64 bytes, not a second derived-key block. Maintained PointyCastle,
+cryptography and hashlib trials offered no measured gain and were removed. The byte/file format, strong factor,
+browser WebCrypto path and purpose separation are unchanged. Independent Node fixtures cover empty, binary-salt,
+long-password, Unicode and NUL dimensions. Independent multi-derivation unit cases are split under the original
+30-second per-case deadline, retaining every functional check and the exact product/cancellation budgets.
+
+The final combined native run exposed ZIP cancellation skipping worker `finally` cleanup on Windows and a
+2,000-record manifest exceeding its 1 MiB cap after causal vectors were added. File workers now use an empty
+parent-owned cancellation lease, removed on cancellation without allocating new disk data, and close their
+handles before returning. Manifests now use compact JSON within the same cap. The memory and combined round-trip
+criteria below are reopened pending the repaired regression run; neither the budget nor the timing gates changed.
+
+The repaired focused native run passed all 58 encryption/protection/ZIP/reader/lock/history cases. Independent
+Node legacy/modern fixtures, 600,000-round 32-byte derivation, tampered salt/factor, invalid-factor refusal and
+cancellation pass under the unchanged per-case deadline. Writer and reader cancellation now prove worker exit,
+actual Windows source-handle release and owned scratch removal. The real 128 MiB compressed-entry fixture added
+25,411,584 bytes process RSS, below its unchanged 80 MiB ceiling; all 5,000 stored records fit the metadata budget.
+The larger writer memory run, broader final-tree suite and actual browser WebCrypto integration remain pending.
+
+`BundleManifest` and `BundleTables` now carry entity version vectors and project lineage. Export gathers scoped
+components; inspection validates table/entity/counter identity; import merges component maxima while suppressing
+local-write triggers, and conflict decisions/undo become new local edits without lowering observed clocks.
+`MergePlanner` classifies equal, dominating and concurrent received clocks before applying content decisions.
+Focused vector/planner regressions passed during implementation; the acceptance remains open until the final
+production package round-trip and structural conflict suite pass together against the final tree.
 
 Everything a project needs to leave one device whole and come back changed without losing a fact, with no server
 anywhere in the path. A declared bundle layout with a versioned manifest, a lineage record naming the devices the
@@ -277,12 +373,12 @@ class MergeUndo {
 ### Writing a bundle
 
 - [x] The written layout matches the specification file for file, manifest field for field.
-- [x] Every entry carries a checksum, and the manifest carries the version vectors and the lineage.
-- [x] A bundle containing two thousand photos writes without memory exceeding its baseline budget.
-- [x] Tests: schema test of a written manifest, a round-trip test writing then re-reading a seeded project, and a
+- [ ] Every entry carries a checksum, and the manifest carries the version vectors and the lineage.
+- [ ] A bundle containing two thousand photos writes without memory exceeding its baseline budget.
+- [ ] Tests: schema test of a written manifest, a round-trip test writing then re-reading a seeded project, and a
       measured memory assertion for the two-thousand-photo case.
-- [x] A data-only bundle of a large project is small enough to send by email, and its size is stated before writing.
-- [x] Receiving a bundle by any transport lands in the same import screen.
+- [ ] A data-only bundle of a large project is small enough to send by email, and its size is stated before writing.
+- [ ] Receiving a bundle by any transport lands in the same import screen.
 - [x] Tests: widget tests of `bundle_scope_section.dart` covering each of the five scopes and the four states, and of
       `bundle_share_actions.dart` asserting share and incoming-file handling both route through the wrapper.
 - [x] A wrong password fails cleanly, leaving no extracted file behind.
@@ -316,8 +412,8 @@ class MergeUndo {
 - [x] Tests: unit tests of `merge_entities.dart` over all four decisions and dependency ordering, `merge_fields.dart`
       over the three field cases, and `merge_rules.dart` per rule plus the fall-through, with no Flutter binding.
 - [x] The same photo imported twice occupies one file, with both sides' captions preserved.
-- [x] Records keep the template version they were captured under, whichever template resolution is chosen.
-- [x] A reference key whose attributes differ appears as a conflict, never as a silent overwrite.
+- [ ] Records keep the template version they were captured under, whichever template resolution is chosen.
+- [ ] A reference key whose attributes differ appears as a conflict, never as a silent overwrite.
 - [x] Tests: unit tests of `merge_photos.dart` asserting a single stored file and merged captions,
       `merge_templates.dart` over same version, choose one and keep both, and `merge_reference.dart` over new,
       identical and differing rows, with no Flutter binding.
@@ -333,24 +429,24 @@ class MergeUndo {
 - [x] Cancelling leaves the project and its files entirely unchanged.
 - [x] Tests: widget test of `merge_preview_screen.dart` over a plan with every category populated, an empty plan and a
       load failure, plus an assertion that cancelling writes nothing.
-- [x] All four choices resolve a conflict, and typing a value is validated like any other edit.
+- [ ] All four choices resolve a conflict, and typing a value is validated like any other edit.
 - [x] A record with an unresolved conflict cannot be approved.
 - [x] A bulk action appears in the audit log as one entry per conflict it settled, not as a single line.
-- [x] Tests: widget tests of `conflict_screen.dart` over each of the four choices and the four states, and of
+- [ ] Tests: widget tests of `conflict_screen.dart` over each of the four choices and the four states, and of
       `conflict_bulk_actions.dart` asserting per-conflict audit entries.
 
 ### Applying and undoing
 
 - [x] A failure part-way through leaves the project exactly as it was, files included.
-- [x] History lists every past merge with its source device, bundle id, timestamp, counts per category and
+- [ ] History lists every past merge with its source device, bundle id, timestamp, counts per category and
       resolutions, and states the undo deadline.
-- [x] Undo restores rows and files exactly, including deleted ones, and disappears once its snapshot is purged.
-- [x] Tests: unit tests of `merge_apply.dart` simulating a mid-merge failure and of `merge_undo.dart` comparing
+- [ ] Undo restores rows and files exactly, including deleted ones, and disappears once its snapshot is purged.
+- [ ] Tests: unit tests of `merge_apply.dart` simulating a mid-merge failure and of `merge_undo.dart` comparing
       project state before the merge with state after undo, plus a widget test of `merge_history_screen.dart`
       covering the four states.
 - [x] The scan runs automatically after every merge and lists candidate pairs with their scores for review.
 - [x] Pairs survive a restart, and a merge whose scan finds nothing shows that plainly.
-- [x] The scan never blocks the merge, and compares only across the merge boundary.
+- [ ] The scan never blocks the merge, and compares only across the merge boundary.
 - [x] Tests: unit tests of `post_merge_scan.dart` over a fixture where the same asset was captured on both devices,
       asserting cross-boundary-only comparison, with no Flutter binding.
 

@@ -6,6 +6,31 @@
 
 ## Implement
 
+**Implementation started:** Yes
+
+2026-10-01 efficiency review separates live queue counts/groups from the failed-job list. Failure queries return
+at most 50 rows with a `(queued_at, id)` keyset cursor, filtering job/record tombstones before the limit. The queue
+keeps one live page and drops the old provider when Next/Previous changes its cursor; every row retains its record
+link and independent retry. Source and database/widget regressions are complete but await the coordinated gate;
+schema 30 supplies the partial failure index. This does not certify physical-device timing or battery use.
+
+Persisted failure/cap semantics now travel beside the unchanged English audit text in schema 31's optional
+`last_error_message` JSON. Legacy or malformed optional metadata leaves the literal audit text readable. Job
+classification, durable writes, bounded pages and progress retain keys/arguments until the widget resolves its
+own locale; complete/retry/requeue clear both error columns. Real database roundtrip/retry and locale-switch
+regressions are written and await the same gate.
+
+2026-09-30 audit verified queue grouping, cap/cancellation, failure/retry, proposal provenance and offline policy
+contracts. Online processing now checks attributable current consent and protects marked/blurred photo copies on
+first send, repair and resend; cache identities prevent reuse of clear OCR after a privacy change. Deterministic
+desktop OCR fixtures and fake charging/resume gates do not establish real rating-plate recognition or mobile
+battery use; those device acceptance items remain open.
+
+2026-10-01 automatic processing now invalidates budget checks after connectivity, resume or disposal changes and
+rechecks the current automatic/Wi-Fi settings before starting. Six controlled asynchronous regressions cover stale
+settings, lost connectivity, disposal, resume/background and out-of-order budget results; execution is pending the
+combined verification gate. Physical OCR and battery acceptance remain open.
+
 The whole path from a captured record to proposed data, on the device first and online only when local work leaves a
 required field unfilled. One job per record — stage, attempt count, outcome and failure reason — persists through a
 repository behind a queue that leases a job to exactly one runner and hands it back after a crash, and a runner walks
@@ -281,7 +306,7 @@ abstract interface class OcrService {
 ### Reading the image on the device
 
 - [x] Originals are byte-identical after preprocessing.
-- [x] A rating-plate photo yields readable text, blocks and bounding boxes offline.
+- [ ] A rating-plate photo yields readable text, blocks and bounding boxes offline.
 - [x] Reprocessing a record reuses stored OCR text and performs no recognition and no upload.
 - [x] A resized or recompressed copy of a photo matches; an unrelated photo does not.
 - [x] A record can be identified with no online call at all.
@@ -363,7 +388,7 @@ abstract interface class OcrService {
 - [x] A user can process one facility at a time.
 - [x] Interrupting a batch keeps everything already processed, and a failed job never damages the raw record.
 - [x] With both unattended settings off, nothing processes without a tap.
-- [x] Opportunistic OCR stops on resume, uses no network, and leaves battery use negligible.
+- [ ] Opportunistic OCR stops on resume, uses no network, and leaves battery use negligible.
 - [x] A refused notification permission never stops or delays processing.
 - [x] Tests: widget tests of grouping and counts in `queue_screen.dart`.
 - [x] Tests: widget tests of progress, cancellation and the end-of-run summary in `process_actions.dart`.

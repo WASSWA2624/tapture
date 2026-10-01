@@ -14,6 +14,6 @@ runs after all feature work in step 27.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 23.01 | 024 | [The minimal backend, and the app that runs on it](024-minimal-backend.md) | **Partially complete** | 81/95 | 02.01 (002), 03.01 (003), 07.01 (007), 13.01 (013), 19.01 (019); Ready |
+| 23.01 | 024 | [The minimal backend, and the app that runs on it](024-minimal-backend.md) | **Partially complete** | 81/95 | 02.01 (002), 03.01 (003), 07.01 (007), 13.01 (013), 19.01 (019); Waiting for: 013, 019 |
 
 <!-- dev-plan:generated:end -->

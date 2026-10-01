@@ -13,10 +13,11 @@ Earlier steps establish baseline verification and module acceptance; neither rep
 
 **Step 27 — Partially complete**
 
-1 total · 0 Complete · 1 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
+2 total · 0 Complete · 2 Partially complete · 0 Pending. Status is generated from each task’s Definition of done; follow sub-step order below.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 27.01 | 023 | [Hardening: fast, legible, reachable and unbreakable in the field](023-hardening.md) | **Partially complete** | 0/38 | 01.01 (001), 02.01 (002), 03.01 (003), 06.01 (006), 12.01 (012), 13.01 (013), 14.01 (014), 25.01 (025), 26.07 (086); Waiting for: 012, 025, 086 |
+| 27.01 | 023 | [Hardening: fast, legible, reachable and unbreakable in the field](023-hardening.md) | **Partially complete** | 6/38 | 01.01 (001), 02.01 (002), 03.01 (003), 06.01 (006), 12.01 (012), 13.01 (013), 14.01 (014), 25.01 (025), 26.07 (086); Waiting for: 012, 013, 014, 025, 086 |
+| 27.02 | 096 | [Scoped generated localization catalogue and pseudo-locale verification](096-localization-catalogue.md) | **Partially complete** | 0/9 | 03.01 (003), 06.01 (006), 24.10 (035); Ready |
 
 <!-- dev-plan:generated:end -->

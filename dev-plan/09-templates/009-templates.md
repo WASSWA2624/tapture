@@ -4,6 +4,15 @@
 
 **Implementation started:** Yes
 
+## Review evidence — 2026-10-01
+
+Field deletion still read an empty count provider and only changed the template definition. Its isolated export
+helper did not prove durable retirement or post-migration export. Reopened the affected acceptance below. The
+source repair aggregates live value counts on demand, retires removed keys in bounded transaction batches with
+per-record audit and causal counters, and caches historic definitions so retired raw/refined/final values survive
+exports after explicit migration. Hidden retired fields remain excluded. Current database/UI regressions and the
+standard gates must pass before these items are checked again.
+
 ## Review evidence — 2026-09-28
 
 The migration screen still used an empty records provider and a successful no-op persistence callback. Records
@@ -246,7 +255,10 @@ class FieldEditor extends ConsumerWidget {
    move-up/move-down affordance beside the drag. Drag order is capture order and export order and writes list order
    only — stored values and `outputColumn` stay put. Delete warns through the shared dialog service with the count of
    records holding a value for the field, then marks those values retired rather than deleting them, and they export as
-   retired. Value counts come through `fieldValueCountsProvider`, which defaults to none until capture has a watch.
+   retired. Query `TemplateMigrationRepository.fieldValueCounts` immediately before confirmation: storage aggregates
+   nonempty raw, refined or approved values for live records in this template. Failed reads stop the action. The
+   repository save retires removed keys in bounded transaction batches, preserving captured versions, evidence,
+   causal counters and per-record history; hidden or requiredness edits never retire values.
    Requiredness reuses the status pill with `Copy.fieldRequired`, Recommended and Optional as its labels.
    `/templates/:id/fields/new` and `/templates/:id/fields/:fieldKey` open the add sheet.
 8. Land the add-and-edit flow. The three questions of §12.3 — **Label**, **Type**, **Required?** — default every other
@@ -298,6 +310,9 @@ class FieldEditor extends ConsumerWidget {
     `TemplateRepository.save` stays the one bump. The migration screen lists fields added, removed and retyped with the
     count of records each affects and requires explicit confirmation before any record moves; the move is one durable
     transaction, so a failure part-way leaves every record on its old version.
+    Captured version `0` means a legacy capture's original shape is unknown: retain its stored evidence, mark schema
+    validation unresolved, and preserve zero through template remapping or package forks until an explicit migration.
+    Never infer automatic values or identity fields from the current template for that unknown capture.
 13. Land the JSON representation. `TemplateJson` stamps `schema_version` 1 and carries every §12.2 attribute, identity
     keys, predefined rows and row aliases. Decode validates shape, types and field-key uniqueness before touching the
     database, rejects an unknown schema version with a plain message rather than a partial import, and always inserts
@@ -440,7 +455,7 @@ class FieldEditor extends ConsumerWidget {
       first.
 - [x] The field list is the only place fields are managed.
 - [x] Reordering never changes stored values or output column mapping.
-- [x] Deleting a field never loses captured data: retired values survive and export as retired.
+- [ ] Deleting a field never loses captured data: retired values survive and export as retired.
 - [x] A field is added in under ten seconds and lands OPTIONAL unless the user says otherwise; a two-fact label is
       questioned once and the user can still insist.
 - [x] `required_when` naming an unknown field is refused at edit time, not at capture time.
@@ -459,7 +474,7 @@ class FieldEditor extends ConsumerWidget {
       states; a test that duplication copies fields, rows and aliases and copies no records.
 - [x] Tests: repository tests for `shipped_template_loader.dart` against an in-memory database, plus the fake later
       tests use; widget test of `shipped_picker_screen.dart` covering its empty and failure states.
-- [x] Tests: widget test of `field_list_screen.dart` covering empty and failure states and a reorder; a test that
+- [ ] Tests: widget test of `field_list_screen.dart` covering empty and failure states and a reorder; a test that
       retired values survive a delete and export as retired.
 - [x] Tests: unit tests over key generation and collision handling, `required_when` expression validation, the
       hide/unhide value round trip, and option rename leaving stored codes untouched; widget tests of

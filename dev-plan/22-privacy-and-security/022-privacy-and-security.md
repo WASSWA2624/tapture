@@ -6,6 +6,27 @@
 
 ## Implement
 
+**Implementation started:** Yes
+
+2026-09-30 audit connected production privacy controls, consent capture/correction/withdrawal, normalized bitmap
+marks and native ML Kit face detection to processing and export. A shared audited photo service prepares metadata-free
+copies and fails closed on unsupported detection, malformed marks, invalid images or a changed policy. Actual bitmap,
+SQLite, JSON, XLSX and ZIP regressions verify protected pixels, consent omissions, original integrity, coordinate/EXIF
+exclusion and refusal of obsolete share/cloud-resume artifacts. Operator withdrawal remains authoritative over
+immutable raw consent. GPS field classification includes arbitrary `autoFill.gps` fields and normalized coordinate
+keys. Coordinate removal also clears raw/refined/final GPS field values, frozen context, prior coordinate history
+and saved capture recovery JSON in one bounded transaction, then sanitizes live drafts after commit. Removal and
+export share immutable historical template classification by each record's captured version: renamed/retyped GPS
+in old captures is private while newer ordinary text survives. An explicitly unknown legacy captured version `0`
+retains the conservative union of historical GPS policies, including after package template remapping or a fork.
+Real migration audits preserve the prior captured schema for retained raw values, frozen context and recovery
+drafts; exports and removal include that lineage without classifying unrelated newer ordinary captures as GPS.
+Migration lineage also participates in saved artifact invalidation. The final combined privacy/merge run passed
+89 tests, covering real SQLite migration, bounded audit pagination, live/recovered drafts, rollback, idempotent
+counts, JSON/ZIP policy and artifact invalidation. Permission/face detector
+behavior on a fresh native install and the merged platform manifest have not been verified on this host; those
+acceptance items remain open.
+
 Everything that governs what leaves this device. One settings screen naming every outbound path — AI extraction, OCR,
 speech, refinement and cloud upload — each row stating what it sends, where it goes and whether it is on, with the
 switch in the row, and the list built from the provider registry and the destination repository rather than a
@@ -151,7 +172,7 @@ class PermissionRationale {
 - [x] Tests: unit test that the composed extraction request holds OCR text and no image for every entry point.
 - [x] Consent is recorded per record with who and when, and an export of a consent-requiring project omits records
       lacking it and lists them.
-- [x] A marked region and a detected face never reach a provider or an export in clear form, including on a re-send.
+- [ ] A marked region and a detected face never reach a provider or an export in clear form, including on a re-send.
 - [x] The face count found is reported per photo, so a missed face is visible rather than silent.
 - [x] Every original photo is byte-identical after export, blur and redaction.
 - [x] Tests: unit tests of `consent_field.dart` with no Flutter binding, covering the export block.
@@ -168,10 +189,10 @@ class PermissionRationale {
       bundle writer and log export.
 - [x] Tests: a fixture pair proving a token planted in a bundle entry name and one planted in a log line each fail
       the scan.
-- [x] A fresh install requests no permission until the user starts capture, recording, import or a folder upload.
+- [ ] A fresh install requests no permission until the user starts capture, recording, import or a folder upload.
 - [x] Every declared platform permission maps to exactly one rationale entry and one shipped feature.
 - [x] Tests: unit tests of `permission_rationale.dart` against the permissions fake.
-- [x] Tests: a test parsing the merged manifest and the plist that fails on any declaration without a rationale
+- [ ] Tests: a test parsing the merged manifest and the plist that fails on any declaration without a rationale
       entry, and on any entry without a declaration, naming file and line for every one it finds.
 - [x] Tests: a fixture pair for that test, one manifest carrying an unjustified declaration and one rationale entry
       with nothing declared, proving the review fails on each and passes on the shipped pair.

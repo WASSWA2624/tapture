@@ -22,12 +22,12 @@ Documentation destination when the workspace exists. Each task ships its own tes
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
 | 26.01 | 080 | [Establish document adapters and approved dependencies](080-documentation-capabilities.md) | **Pending** | 0/6 | 05.01 (005), 18.01 (018); Waiting for: 018 |
-| 26.02 | 081 | [Persist Documentation workspaces and resources locally](081-documentation-workspaces.md) | **Pending** | 0/7 | 04.01 (004), 26.01 (080); Waiting for: 080 |
+| 26.02 | 081 | [Persist Documentation workspaces and resources locally](081-documentation-workspaces.md) | **Pending** | 0/7 | 04.01 (004), 26.01 (080); Waiting for: 004, 080 |
 | 26.03 | 082 | [Import, inspect and extract document resources safely](082-documentation-ingestion.md) | **Pending** | 0/8 | 24.51 (076), 26.02 (081); Waiting for: 081 |
 | 26.04 | 083 | [Build the Inputs, Outputs and Prompt workspace](083-documentation-editor.md) | **Pending** | 0/10 | 24.54 (079), 26.03 (082); Waiting for: 079, 082 |
 | 26.05 | 084 | [Generate grounded document drafts through resumable jobs](084-documentation-generation.md) | **Pending** | 0/9 | 23.01 (024), 26.04 (083); Waiting for: 024, 083 |
 | 26.06 | 085 | [Render, review and approve versioned documents](085-documentation-review.md) | **Pending** | 0/8 | 26.05 (084); Waiting for: 084 |
-| 26.07 | 086 | [Carry Documentation in project packages and pass release acceptance](086-documentation-release.md) | **Pending** | 0/12 | 19.01 (019), 25.01 (025), 24.51 (076), 26.06 (085); Waiting for: 025, 085 |
+| 26.07 | 086 | [Carry Documentation in project packages and pass release acceptance](086-documentation-release.md) | **Pending** | 0/12 | 19.01 (019), 25.01 (025), 24.51 (076), 26.06 (085); Waiting for: 019, 025, 085 |
 
 <!-- dev-plan:generated:end -->
 

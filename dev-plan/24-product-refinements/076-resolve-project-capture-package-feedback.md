@@ -23,7 +23,9 @@ Decisions D1–D17 use the defaults in that prompt, (a) in every case:
   is larger".
 - D5: an in-house document picker mirroring `FolderPicker`; no new dependency.
 - D6: native packages stream to disk under `AppConstants.bundles.nativeMaxBytes` (4,000,000,000 bytes) and are
-  delivered by a streamed copy; web builds in memory under 200 MiB.
+  delivered by a streamed copy; web builds in memory under 200 MiB. Combined manifest/table/reference JSON is
+  bounded to 32 MiB, with the manifest bounded to 1 MiB before encoding or decoding. A package beyond this metadata
+  budget asks the exporter to choose a smaller scope; native media entries remain streamed under the native cap.
 - D7: the package carries every project-owned table and file, and leaves out capture drafts, the processing queue,
   caches, export history, device settings, the operator profile and secure storage.
 - D8: a read-only project page at `/projects/<id>/details`; the form is "Edit project" and returns there.

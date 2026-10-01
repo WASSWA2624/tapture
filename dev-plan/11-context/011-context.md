@@ -12,7 +12,7 @@ Historical completion was recorded on 2026-09-22 in the old tracker and index. T
 
 ## Verification — 2026-09-30
 
-Context mapper/repository/persistence, cascade, record override, presets and optional maintenance suites passed in the focused audit. The native database/file integration passed both context cases, including `photos/Kampala/Kasubi-HC-IV/Theatre` and an override isolated to one record. The 320dp bar now keeps its 48dp targets inside its height budget. Shared-theme golden verification remains open until the final reviewed baseline pass. The no-hierarchy display requirement below follows task 076's later Setup affordance; empty hierarchy still stores no value rows.
+Context mapper/repository/persistence, cascade, record override, presets and optional maintenance suites passed in the focused audit. The native database/file integration passed both context cases, including `photos/Kampala/Kasubi-HC-IV/Theatre` and an override isolated to one record. The 320dp bar now keeps its 48dp targets inside its height budget. The reviewed baseline comparison passed all 267 golden cases, including the long-value context bar at three widths and 200 percent text scale. The no-hierarchy display requirement below follows task 076's later Setup affordance; empty hierarchy still stores no value rows.
 
 ## Implement
 
@@ -160,7 +160,7 @@ class ContextPreset {
 - [x] Tests: repository test against an in-memory database asserting the context reloads after a simulated restart.
 - [x] Tests: widget test of `context_hierarchy_screen.dart` covering zero levels, a three-level hierarchy, reorder
       persistence and a repository write failure.
-- [ ] Tests: golden of `context_bar.dart` at three widths with long values and at 200 percent text scale.
+- [x] Tests: golden of `context_bar.dart` at three widths with long values and at 200 percent text scale.
 - [x] Tests: widget tests of `context_picker_sheet.dart` and `pinned_fields_sheet.dart` covering no recents, dataset
       search, free-text entry and a repository failure.
 - [x] Tests: unit tests of `context_cascade.dart` over zero-, one- and three-level hierarchies and over a change to

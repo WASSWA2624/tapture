@@ -4,6 +4,17 @@
 
 **Phase** 02 · Foundation services  |  **Depends on** [001](../01-orchestration/001-project-setup.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
+**Implementation started:** Yes
+
+## Efficiency verification — 2026-10-01
+
+The redacting logger now retains its bounded buffer in an O(1) queue, coalesces burst persistence and awaits async
+rotation/write operations. `Logger.flush()` completes pending writes during lifecycle flushing; persistence failures
+retain the diagnostic buffer. Twenty logging and thumbnail-service cases pass, including burst bounds, explicit
+flush and a blocked output path. A 1,000-entry desktop comparison measured 45,430,771 microseconds in the old
+synchronous caller versus 32,331 microseconds in the new caller and 27,132 microseconds for its final file flush.
+This is desktop fixture evidence; field-device startup/frame budgets require their own measurements.
+
 ## Implement
 
 Everything the rest of the app injects, each piece with a hand-written fake beside it. One guarded entry point installs
@@ -93,7 +104,7 @@ sealed class Result<T> {
 class ErrorBoundary extends StatefulWidget { final Widget child; final VoidCallback? onRetry; }
 
 // Logging and diagnostics
-abstract interface class Logger { void trace/info/warn/error(String tag, String message, {Object? error}); }
+abstract interface class Logger { void trace/info/warn/error(String tag, String message, {Object? error}); Future<void> flush(); }
 enum LogLevel { trace, info, warn, error }
 Future<Result<File>> exportLog({required Directory into});
 class AppProviderObserver extends ProviderObserver

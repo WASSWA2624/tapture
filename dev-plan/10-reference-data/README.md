@@ -12,6 +12,6 @@ Imported tables that prefill records and remove repeat typing.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 10.01 | 010 | [Reference data: datasets, lookups and prefill](010-reference-data.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009); Dependencies complete |
+| 10.01 | 010 | [Reference data: datasets, lookups and prefill](010-reference-data.md) | **Complete** | 29/29 | 03.01 (003), 04.01 (004), 05.01 (005), 09.01 (009); Prerequisite review: 004, 009 |
 
 <!-- dev-plan:generated:end -->

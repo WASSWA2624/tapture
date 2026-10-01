@@ -15,6 +15,6 @@ the completed product. Completing this step alone does not authorize shipping.
 
 | Sub-step | Task ID | File / implementation | Status | Done | Dependencies / readiness |
 | --- | --- | --- | --- | ---: | --- |
-| 25.01 | 025 | [Testing and release: the suites, the pipeline and the gate over both artefacts](025-testing-and-release.md) | **Partially complete** | 36/41 | 04.01 (004), 12.01 (012), 15.01 (015), 17.01 (017), 18.01 (018), 19.01 (019), 22.01 (022), 23.01 (024); Waiting for: 012, 018, 024 |
+| 25.01 | 025 | [Testing and release: the suites, the pipeline and the gate over both artefacts](025-testing-and-release.md) | **Partially complete** | 36/41 | 04.01 (004), 12.01 (012), 15.01 (015), 17.01 (017), 18.01 (018), 19.01 (019), 22.01 (022), 23.01 (024); Waiting for: 004, 012, 018, 019, 022, 024 |
 
 <!-- dev-plan:generated:end -->

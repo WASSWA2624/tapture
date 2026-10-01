@@ -14,9 +14,11 @@ This release supports the existing archive 3.6.1 and image 4.3.0 dependencies. I
 behind PdfEngine, with shared typography, page headers/footers, wrapping, pagination and embedded photo blocks.
 No network font fetches occur during export; all rendering stays local.
 
-This task builds on 018's PdfEngine contract and reports. Task 018's reopened PDF-family acceptance — the cover and
-body golden and the record report in both photo layouts — closes only once this renderer's Definition of done is
-verified.
+This task builds on 018's PdfEngine contract and reports. Verification on 2026-09-30 passed the pinned dependency
+allowlist and the real PDF structure, wrapping, page-footer, image and cancellation regressions. An independent
+`pypdf` / PyMuPDF audit parsed the generated 13-page fixture, found its actual photo image, rendered without warnings,
+and visually checked its cover, body and photo pages (1, 2 and 13). The existing text goldens compare text extracted
+from rendered PDF page streams; the independent raster review also checks the resulting visual layout.
 
 ## Files
 
@@ -27,7 +29,7 @@ verified.
 
 ## Definition of done
 
-- [ ] Dependency is pinned, licence recorded, and the allowlist check passes.
-- [ ] PdfEngine emits valid PDFs with wrapped text, multiple pages, page numbers and actual images.
-- [ ] Cancellation emits no completed artefact and originals remain unchanged.
-- [ ] Tests: real PDF structure and multipage/image regression tests; independent parser/render verification of a generated fixture.
+- [x] Dependency is pinned, licence recorded, and the allowlist check passes.
+- [x] PdfEngine emits valid PDFs with wrapped text, multiple pages, page numbers and actual images.
+- [x] Cancellation emits no completed artefact and originals remain unchanged.
+- [x] Tests: real PDF structure and multipage/image regression tests; independent parser/render verification of a generated fixture.

@@ -36,6 +36,7 @@ Verification 2026-09-30: all 13 fake-platform tests passed, covering GPS off, di
 - `frontend/tool/allowlist.yaml` (changed)
 - `frontend/lib/core/location/location_service.dart` (changed — the platform adapter replaces the stub)
 - `frontend/lib/core/location/geo_fix.dart` (existing `GeoFix` value)
+- `frontend/lib/core/location/location_reader.dart` (pure capture port; platform adapter implements it)
 - `frontend/lib/core/location/location.dart` (existing barrel)
 - `frontend/lib/main.dart` (changed — binds the service to the project and device GPS settings)
 - `frontend/macos/Runner/DebugProfile.entitlements` and `frontend/macos/Runner/Release.entitlements` (changed —

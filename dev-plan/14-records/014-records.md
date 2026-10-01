@@ -2,9 +2,29 @@
 
 **Implementation step:** 14.01
 
+**Implementation started:** Yes
+
 **Phase** 14 · Records  |  **Depends on** [003](../03-design-system/003-design-system.md), [004](../04-data-layer/004-local-database.md), [005](../05-file-storage/005-file-storage.md), [009](../09-templates/009-templates.md), [012](../12-capture/012-capture.md)  |  **Standard** [STANDARD.md](../STANDARD.md)
 
 ## Implement
+
+The 2026-10-01 production bootstrap audit found `recordRepositoryProvider` still bound to its empty test
+implementation despite opening the app database. Records detail/edit/history and deliverable loading therefore
+could not read real saved records. Bootstrap now supplies `RecordRepositoryImpl` over the shared database and
+operator identity; the actual root-provider/native-owned-database regression remains pending verification.
+The affected user-facing criteria are reopened below; isolated repository and screen fixtures do not prove
+production wiring.
+
+The 2026-10-01 efficiency review found that the shared capture/edit photo inspector loaded every original at once,
+although the read-only saved-record viewer already has lazy auto-disposed page providers. The inspector now caches
+the visible page and its two neighbors, reads one original at a time and discards obsolete version/removed-page
+results. The capture caller no longer retains originals fetched solely for inspection or thumbnail recovery.
+Five focused page-change, replacement, failure and disposal regressions await the coordinated frontend gate;
+this does not certify physical-device photo memory or the hardening return-to-baseline budget.
+
+The 2026-10-01 screen audit adds a reachable Records action to an empty recycle bin and missing-record history,
+and a canonical record destination when empty history is opened directly. New real-router navigation regressions
+are awaiting the coordinated frontend gate; existing empty-render assertions alone do not prove those actions.
 
 Everything a person does with a record once capture is over. A record read in one call with its values, photos, status
 flags and context snapshot, behind a repository interface, over the one canonical status set and the transitions the
@@ -104,7 +124,7 @@ enum RecordStatus {
 
 ## Definition of done
 
-- [x] Manual records go DRAFT to NEEDS_REVIEW to APPROVED without touching processing states.
+- [ ] Manual records go DRAFT to NEEDS_REVIEW to APPROVED without touching processing states.
 - [x] An illegal transition fails validation instead of being applied.
 - [x] Tests: unit tests over the full transition table; repository tests against an in-memory database covering the
       round-trip mapper, plus the fake later tests use.
@@ -118,7 +138,7 @@ enum RecordStatus {
 - [x] Editing, adding or deleting a record updates its search entry in the same transaction.
 - [x] Tests: performance test with a seeded database asserting the search budget.
 - [x] Tests: repository tests over index maintenance on insert, edit and delete.
-- [x] Every value shows its source without extra taps.
+- [ ] Every value shows its source without extra taps.
 - [x] Tests: widget test of `record_detail_screen.dart`, including its empty and failure states.
 - [x] Nothing about a record is permanently frozen.
 - [x] Values are never silently deleted when their evidence is removed, and unmapped values are retained as retired.

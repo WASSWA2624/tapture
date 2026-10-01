@@ -10,7 +10,85 @@
 
 Implementation exists in core/background/background_policy.dart, core/assets/branding_assets.dart, the device-matrix tooling and settings friction logging, with corresponding tests. The responsive/accessibility suites, localisation, memory profiling and failure-path work required here are not all present. The unchecked acceptance items remain open; this is partially implemented work, not an untouched task.
 
+## Audit verification — 2026-09-30
+
+The shared accessibility matcher now propagates layout errors at maximum text scale, checks both orientations and restores the caller's metrics. A deliberately overflowing fixed-height fixture proves the failure is detected. The empty-state matcher inspects the actual rendered screen and requires an enabled, reachable action; positive and negative fixtures pass. These focused checks do not satisfy the entire screen, semantics and traversal matrix.
+
+Native streaming fixtures bounded additional process RSS to about 27 MiB for 2,000 real JPEGs (496 MB ZIP) and 37.5 MiB for three approximately 280 MB text outputs from 10,000 records. Cooperative cancellation closes file handles before cleanup, and retry publishes atomically without changing prior artifacts. These desktop measurements do not prove field-device frame times or memory returning to baseline. Localisation, the complete failure-injection matrix and physical-device acceptance remain open, so the conditional request to delete this folder is not satisfied.
+
+## Screen audit checkpoint — 2026-10-01
+
+The router-derived AST inventory follows rendered production views and currently discovers 34 collection-capable
+routes. The real-router harness supplies empty repository sources, retaining only a collection's owner, and checks
+the shared empty panel and its enabled, reachable next action. Direct-link history, recycle bin, template field
+settings, licence and export-history actions were corrected; canonical-route navigation regressions accompany them.
+Explicit empty predicates also identify summary/workbook collections without requiring a `List<T>` wrapper; a
+new predicate fixture proves this discovery and distinguishes nullable detail owners and embedded form sections.
+The project package's previously actionless empty summary now opens Capture for its owner. The nine collection
+entry screens now have compact/medium/expanded, portrait/landscape, normal/200-percent and
+light/dark/outdoor sweeps, with deliberate missing-coverage, unlabelled-control and fixed-height/clipped-label
+fixtures. Focused widget verification of this checkpoint is pending; no acceptance item is newly checked.
+
+The first matrix run exposed Ahem-only glyph widths and duplicate/unpainted paragraph observations. Layout cases
+now load the SDK's real Roboto faces, while the probe checks each painted paragraph once; independent fixtures
+still require a visible clipped label and fixed-height overflow to fail. A genuinely short landscape body also
+exposed empty-panel overflow. The shared panel now scrolls to its action within a bounded viewport and retains
+natural height inside page scrolling; short-viewport, nested-page and intrinsic-dialog regressions await the gate.
+
+The proportional-font rerun exposed genuine loading, short-body and narrow-pane defects. Block skeletons now
+scroll inside their bounds. Shared coordinated list viewports let context/offline and collection-control headers
+scroll while keeping record rows lazy and bounded. Search labels, project-pane row text and screen titles wrap;
+standalone titles retain the requested text scale and reserve their measured height. Focused interaction and
+lazy-build regressions accompany these corrections; the rerun remains pending and whole-product criteria stay open.
+
+The next focused matrix exposed nested-controller attachment recursion and a two-button footer consuming a short
+viewport. Each list coordinator now isolates its outer controller; tall footers scroll within half the available
+body height. Template search shares the collapsing list header. The empty matcher scrolls oversized real headers
+before requiring the actual panel and enabled next action. Nested-pane teardown, bounded lazy construction and
+short-footer interaction regressions await the gate. Projects' list menu now occupies the far right of its shared
+title bar at every size, with six size/text-scale positioning and retained-action cases pending verification.
+
+These collection entry cases do not certify all populated detail screens, gallery states, traversal order, hinged
+capture, pseudo-localisation or physical device budgets. The whole-product criteria below remain open.
+
+### Verified software checkpoint — 2026-10-01
+
+All 648 size/orientation/text-scale/theme cases for the nine collection entry screens pass. The broader batch
+passed 782 cases; its only two failures were new menu assertions also matching a body button. The six corrected
+popup-scoped position/action cases subsequently pass at 393, 800 and 1200 pixels with normal and 200-percent text.
+The Projects overflow now resides at the far right of the shared title bar. Nested list coordinators have independent
+controllers, oversized footers scroll within their own bounds, and the route's actual empty action remains reachable.
+
+Contrast uses resolved foreground/background paints, including rich-text runs and opacity, following WCAG 1.4.3.
+Independent weak-contrast, hidden/disabled and unknown-background fixtures prevent a silent pass. The shared toolbar
+scope corrects Material 3 icon-button ink on the compact primary bar. The 47 screenshot suites pass (259 cases)
+after visual review and intentional updates for wrapping titles, project panes and the two shared catalogue additions.
+These synthetic images verify geometry; the proportional-font matrix verifies the collection layouts separately.
+
+Native feedback journal fixtures verify originating screen/project/last action, optional screenshot persistence after
+repository reopening, and every attachment in a manually generated workbook/archive. Trial controls are absent with
+the flag off. Whole-device capture/traversal, complete localisation, memory/fault coverage and physical budgets remain open.
+
 ## Implement
+
+The 2026-10-01 metric-producer audit found that `tool/device_matrix.dart` consumed `TAPTURE_METRIC` but no
+integration target produced the four measured durations. `integration_test/device_metrics_test.dart` now provides
+an explicit `TAPTURE_DEVICE_METRICS=true` profile target: the same production bootstrap/provider graph over owned
+temporary native SQLite, file, log, relay and feedback stores and separate real Keystore/Keychain namespaces;
+app bootstrap through a usable Projects frame; actual native camera `takePicture` through durable photo/session
+commit; actual ExportRepository workbook/package writing for 1,000 raw records and one real camera photo; and actual
+reader, planning isolate and atomic merge into a separate seeded receiver database. The cold-start scope excludes
+OS process launch, the instrumentation binding and sandbox allocation and is printed with the evidence, rather
+than certifying full process startup. Camera permission must already have been granted through the product's real
+rationale; missing permission or a real camera fails a named setup requirement. The production incoming receiver
+stays enabled by default and is disabled only by this isolated entry so the fixture cannot consume a user package.
+
+The same target seeds 2,000 valid, uniquely hashed JPEG files after those duration measurements and calls the actual
+RecordDetailScreen grid/native-thumbnail FrameTiming producer, retaining display refresh budget, frame identities
+and profile/device metadata separately from duration budgets. Generated fixture photos do not stand in for camera
+shutter work. The device runner now defaults to this opt-in target, rejects emulators/desktop for physical metrics,
+and preserves each measurement's scope/workload. Software source and namespace/bootstrap regressions await the
+coordinated gate. No physical device class has been measured; all related physical acceptance remains open.
 
 Run this final whole-product pass after the baseline release tooling and Documentation acceptance are implemented.
 Include Documentation and the product refinements in every applicable screen, accessibility, failure-path and
@@ -50,7 +128,7 @@ behind it that the tester exports by hand.
 ### Copy and localisation
 
 - `frontend/lib/core/copy/copy.dart` (changed)
-- `frontend/lib/l10n/` (new)
+- `frontend/lib/core/copy/l10n/` (new; complies with the three-area architecture)
 
 ### Performance and background work
 
@@ -217,7 +295,7 @@ Future<Result<void>> logFriction({required String screen, String? note, bool wit
       any supported width, orientation or theme.
 - [ ] Traversal order matches visual order, every control carries a label and a 48dp target, and measured contrast
       passes in light, dark and outdoor.
-- [ ] A deliberately unlabelled icon button and a deliberately fixed-height row each fail the suite.
+- [x] A deliberately unlabelled icon button and a deliberately fixed-height row each fail the suite.
 - [ ] Rotating or folding during capture keeps the draft record, the queued photos, any active recording and the
       scroll position.
 - [ ] Tests: `frontend/test/responsive/` widget tests capturing each screen at three widths in both orientations,
@@ -239,9 +317,9 @@ Future<Result<void>> logFriction({required String screen, String? note, bool wit
 
 ### Empty states
 
-- [ ] A new collection screen without an empty state fails the suite.
+- [x] A new collection screen without an empty state fails the suite.
 - [ ] Every empty state names its next action, and none renders a bare message.
-- [ ] Tests: `empty_state_coverage_test.dart` itself, one case per collection screen, plus a fixture screen proving
+- [x] Tests: `empty_state_coverage_test.dart` itself, one case per collection screen, plus a fixture screen proving
       the matcher fails when the empty state is missing.
 
 ### Performance and background work
@@ -286,9 +364,9 @@ Future<Result<void>> logFriction({required String screen, String? note, bool wit
 
 - [ ] A tester flags a problem in one tap and stays exactly where they were, with a draft record untouched.
 - [ ] The log stays local until the tester exports it, and the export contains every entry and every screenshot.
-- [ ] Tests: test that an entry captures screen, project and last action.
-- [ ] Tests: test that export contains every entry and every screenshot.
-- [ ] Tests: test that the action is absent with the trial flag off.
+- [x] Tests: test that an entry captures screen, project and last action.
+- [x] Tests: test that export contains every entry and every screenshot.
+- [x] Tests: test that the action is absent with the trial flag off.
 
 ## Out of scope
 

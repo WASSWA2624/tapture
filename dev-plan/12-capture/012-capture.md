@@ -8,7 +8,7 @@
 
 ## Status reconciliation — 2026-09-28
 
-Historical completion was recorded on 2026-09-22 in the old tracker and index. Capture controllers, evidence persistence, screens and tests exist, but all 66 acceptance items below remain unchecked. Report Partially complete until acceptance is reconciled and verified. This status does not mean capture is unimplemented.
+Historical completion was recorded on 2026-09-22 in the old tracker and index. The acceptance checklist below now records verified implementation; physical-device and performance criteria remain open. Report Partially complete while those required checks are unfinished.
 
 ## Verification — 2026-09-30
 
@@ -16,7 +16,13 @@ Reviewed capture domain/data/presentation and its device-service boundaries. Con
 
 Five existing native database/file integration cases passed: ten rapid shots with distinct hashes/order, forty offline raw saves with zero outbound calls, a four-item rapid run, record-local context override and context-derived file paths. Domain/widget suites cover automatic values and 20 parallel record numbers, camera/scanner seams, photo corrections, captions, reset and recovery. Later capture flows in tasks 063/073/076 supersede the original sheet/picker/discard presentation choices.
 
-Partially complete: real-device process kills, preview/orientation and shutter timing, worn-label scanning, offline platform speech, a 30-minute killed recording and sustained scrolling/timing remain unverified. PDF rasterization is currently a production placeholder and its real import/render criteria stay open until the renderer and wiring are verified. The 300ms identifier test currently measures domain resolution over 10,000 supplied ids, not a realistically seeded database query.
+PDF capture now validates and copies the original, records its hash, filename and real page count, persists the document before emitting session state, and links it transactionally when saving or editing the record. PDFium rendered real multi-page fixtures without changing their bytes; native database/file tests cover a twenty-page document, concurrent duplicate import, attachment ordering, rollback, recovery and retry. The production viewer caches only requested pages at bounded resolution and adds page photos through the existing durable photo intake. Document-picker widget tests reject size, extension and magic-byte mismatches and preserve the original filename. The pinned MIT-licensed `pdfrx` 1.3.5 renderer is on the dependency allowlist.
+
+Document capture also accepts CSV, JSON and XLSX through the existing file-validation gate. Additional off-isolate checks reject binary text, malformed JSON and ZIP files lacking XLSX package structure without expanding archive contents. Original filename, generated safe extension, MIME type, hash and nullable page count survive durable recovery, raw save and later record editing; only PDF attachments open the page renderer. Reimport repairs missing bytes and restores a tombstone with revision/audit changes in one metadata transaction, while failed restore leaves the tombstone and metadata intact. Page addition propagates the durable photo write's typed failure. Real PDFium lifecycle regressions verify that page-count import closes its native document, obsolete source release preserves a newer viewer, and queued release waits for rendering; a viewer-disposal regression checks source release.
+
+The final combined capture run passed 158 tests with real PDFium enabled. Gallery and document pickers cover multi-select, size, extension and magic-byte refusals; gallery size and header checks happen before a full file read. Native and web gallery selection retain originals. JPEG, PNG and WebP header inspection runs off-isolate without allocating decoded frames; stored extension, MIME type and dimensions agree with the untouched bytes. A held durable write survives screen disposal with its database row, original hash and recovery entry intact. Captured template versions survive recovery and later edits; historical defaults and identity keys resolve from stored shapes, while legacy drafts stay at unknown version zero and never invent current defaults.
+
+Partially complete: real-device process kills, preview/orientation and shutter timing, worn-label scanning, offline platform speech, a 30-minute killed recording and sustained scrolling/timing remain unverified. The twenty-page viewer has a lazy-rendering regression, but physical-device interface timing remains open. Capture document formats are PDF, CSV, JSON and XLSX; arbitrary binary attachments are refused. The 300ms identifier test measures domain resolution over 10,000 supplied ids, not a realistically seeded database query.
 
 ## Implement
 
@@ -55,6 +61,13 @@ storage guard inside capture; and the template picker with session and context-l
 - `frontend/lib/features/capture/presentation/gallery_picker.dart` (new)
 - `frontend/lib/features/capture/presentation/document_picker.dart` (new)
 - `frontend/lib/core/import/pdf_pages.dart` (new)
+- `frontend/lib/features/capture/domain/document_draft.dart` (new)
+- `frontend/lib/features/capture/domain/capture_document_format.dart` (new)
+- `frontend/lib/features/capture/domain/capture_document_repository.dart` (new)
+- `frontend/lib/features/capture/data/capture_document_repository_impl.dart` (new)
+- `frontend/lib/features/capture/data/capture_record_documents.dart` (new)
+- `frontend/lib/features/capture/presentation/capture_document_viewer.dart` (new)
+- `frontend/lib/features/capture/presentation/capture_document_viewer_controller.dart` (new)
 
 ### Tray and viewer
 
@@ -367,7 +380,7 @@ class SttResult {
 - [x] Deleting the photo from the device gallery afterwards does not affect the record.
 - [x] A rejected file names the reason and leaves the session unchanged.
 - [ ] A twenty-page document does not stall the interface.
-- [ ] Tests: widget tests of `gallery_picker.dart` and `document_picker.dart` covering multi-select, an oversized file, a wrong extension and a mismatched magic-byte file; unit test of `pdf_pages.dart` against a multi-page fixture asserting lazy rendering and an unmodified source.
+- [x] Tests: widget tests of `gallery_picker.dart` and `document_picker.dart` covering multi-select, an oversized file, a wrong extension and a mismatched magic-byte file; unit test of `pdf_pages.dart` against a multi-page fixture asserting lazy rendering and an unmodified source.
 
 ### Tray and viewer
 

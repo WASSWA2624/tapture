@@ -6,13 +6,56 @@
 
 ## Implement
 
+**Implementation started:** Yes
+
+2026-09-30 audit verified destination/history/confirmation and retry guards. Each app export
+is checked against current consent, image protection and coordinate policy before initial upload and every automatic
+resume/retry; legacy or obsolete app artifacts are refused. Direct guard tests use durable SQLite export rows and
+real saved files.
+
+2026-10-01 audit reopened the former resume claim: consumer providers previously buffered the remaining archive,
+created a fresh remote session at a saved offset, and Dropbox never opened or committed a real upload session.
+The implementations now use bounded provider chunks, server offset probes and source fingerprints, with session
+IDs and signed URLs stored only in secure storage. Worker checkpoint writes await parent persistence; sign-in
+generation leases reject late writes after destination removal or replacement. Secure map mutations are serialized,
+abandoned session entries are bounded and expire, and history offsets are ordered and coalesced. Native HTTP has
+active cancellation, an idle deadline and bounded response bodies. WebDAV streams into a unique staging resource
+and publishes with MOVE, preserving an existing target on cancellation; endpoints without safe publication support
+fail their connection check. S3 validates part ETags and embedded completion errors, matches a secure source/session
+checkpoint, and uses AWS percent encoding. Direct OAuth refresh preserves existing refresh tokens and sessions.
+
+Verified software checks include all 25 consumer/session protocol cases, bounded native HTTP streaming,
+secure-store leases, ordered history, Windows source-handle preservation and provider cancellation cases.
+The worker acknowledgement suite passes all three cases, including refusal and bounded storage timeout; its success
+case exposed and fixed a covariant `Future.timeout` result-type defect. A real loopback regression uses two rebuilt
+native isolates and the production OAuth factory: after the first chunk is acknowledged and the next fails, the
+second worker restores its secure session, probes the server offset and sends only the remaining chunk, then clears
+the session. Two real SQLite regressions verify durable upload permissions, offline controller refusal before
+credentials and revocation of a running operation. All three loopback/SQLite tests pass.
+
+Content uploads now require the destination's explicit privacy switch and recheck it before each worker HTTP
+request; committed switch or connectivity changes cancel active transport. Explicit connection probes and sign-in
+remain subject to offline mode and do not enable content uploads. Local folder copies remain available offline.
+Connectivity replays the current state to every later listener. Android browser callbacks and iOS
+`ASWebAuthenticationSession` now implement the explicit PKCE hand-off for supported consumer providers with exact
+callback validation and cancellation. Google mobile identity uses the maintained SDK in
+[094](094-connect-native-google-drive.md), since its supported native flow differs from the shared callback.
+Persisted Android SAF tree grants and iOS bookmarks now feed native bounded folder writers, with private temporary
+files, collision refusal, coordinated publication, cancellation cleanup and a write/rename/delete probe. Android
+production debug Kotlin compilation passed. The configured desktop external-browser/loopback receiver is now
+implemented in [098](098-desktop-oauth-sign-in.md), with its real local HTTP regression run pending.
+Browser consumer upload remains an unsupported software path: its registry, transport and identity receiver are
+absent, independently of provider registration. Registered real provider consent, iOS/desktop builds, revoked
+removable-media grants and a transfer exceeding available memory still need verification.
+
 Somewhere for a finished file to go, chosen and started by a person every time. One `CloudDestination` interface with a
 registry that resolves a backend by kind, the persisted destination row carrying kind, label, folder and a credential
 reference, and the repository that watches, saves and removes those rows, with the credential value itself living only
 in secure storage. Six backends behind that one interface: an S3-compatible bucket with user-supplied keys and
 multipart upload, a WebDAV or generic HTTPS endpoint with basic or bearer authentication, a folder on the device or an
 SD card held as a persisted picker grant, and Google Drive, OneDrive and Dropbox each signed in with the user's own
-account over one shared authorisation-code-with-PKCE flow rather than three. One screen listing every configured
+account over one shared authorisation-code-with-PKCE flow where supported, with the native Google SDK adapter of
+[094](094-connect-native-google-drive.md). One screen listing every configured
 destination with add, edit, connection test and removal, where removing takes the row and its secret together and a
 configuration cannot be saved until its test upload succeeds. The confirmation sheet that stands between a file and the
 network, naming the file, its size, the destination and the remote folder, with confirm and cancel as its only answers.
@@ -109,6 +152,9 @@ class UploadRunner {
    under the destination's entry; on a 401, refresh once and retry, and if refresh fails, surface a re-authorisation
    prompt and leave the destination configured. Upload through each provider's resumable endpoint, reporting progress
    and accepting a starting offset so the runner can continue an interrupted transfer.
+   For Android/iOS Google identity use the maintained native adapter of [094](094-connect-native-google-drive.md):
+   it supplies the same narrow Drive access token while the SDK owns renewal, rather than fabricating a refresh token
+   or registering an unsupported shared custom callback.
 5. Put the confirmation sheet in place before any send path exists to bypass it. Show the file name, the byte size
    through the shared formatter, the destination label and the full remote folder path. Offer confirm and cancel
    only — no "remember this", no "always allow", no per-destination blanket consent. Cancel returns before any
@@ -151,14 +197,14 @@ class UploadRunner {
 - [x] A `DestinationKind` with no registered backend fails at resolution with a named failure, not a null.
 - [x] Tests: `frontend/test/core/cloud/cloud_destination_test.dart` asserts the persisted row holds only
       `credentialRef`, that the registry resolves every kind, and that `remove` clears row and secret together.
-- [x] A destination can be added, renamed, tested and removed without leaving the screen, and a configuration that
+- [ ] A destination can be added, renamed, tested and removed without leaving the screen, and a configuration that
       fails its check cannot be saved.
 - [x] After removal, secure storage holds no entry for that destination and re-adding the same label starts with no
       credential; a half-completed removal says which half remains instead of reporting success.
 - [x] Tests: widget test of `destination_list_screen.dart` over empty, populated, loading and failed-check states.
 - [x] Tests: test asserting secure storage no longer holds the entry after `destination_remove_action.dart` runs.
 - [x] A test upload of a small file proves each configuration before any real upload is offered.
-- [x] The folder destination completes with the device fully offline, and works on removable storage.
+- [ ] The folder destination completes with the device fully offline, and works on removable storage.
 - [x] A cancelled or failed send leaves no partial object at the destination and no partial file in the folder.
 - [x] Tests: unit tests of `s3_destination.dart`, `webdav_destination.dart` and `local_destination.dart` against fakes,
       covering signature and auth headers, multipart resume from an offset, retryable versus fatal failures, and
@@ -178,7 +224,7 @@ class UploadRunner {
 - [x] A failed, cancelled or interrupted upload leaves the local file and database untouched and can be retried.
 - [x] Resume continues from the acknowledged offset, verified against a backend fake that accepts the first chunk then
       fails.
-- [x] Progress and cancel work on a file larger than available memory.
+- [ ] Progress and cancel work on a file larger than available memory.
 - [x] An attempt row exists from the moment the transfer starts, so a process killed mid-transfer leaves an interrupted
       row rather than no row.
 - [x] A history row names destination, file, byte size, start, end, outcome and failure reason, and a retry writes a
