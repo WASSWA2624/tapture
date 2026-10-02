@@ -16,6 +16,7 @@ final class ShellDestination {
     this.compactIcon,
     this.dominant = false,
     this.hasList = false,
+    this.localizedLabel,
   });
 
   /// Root path.
@@ -23,6 +24,9 @@ final class ShellDestination {
 
   /// Visible and semantic label.
   final String label;
+
+  /// Explicit label identity for destinations sharing the same route.
+  final LocalizedMessage? localizedLabel;
 
   /// Unselected navigation and header glyph.
   final IconData icon;
@@ -41,10 +45,28 @@ final class ShellDestination {
 
   /// Whether expanded layouts provide a list pane.
   final bool hasList;
+
+  /// Resolves navigation copy while preserving unknown custom labels.
+  String labelFor(LocalizedCopy copy) => localizedLabel == null
+      ? switch (path) {
+          RoutePaths.projects => copy.navProjects,
+          RoutePaths.captureRoot => copy.navCapture,
+          RoutePaths.records => copy.navRecords,
+          RoutePaths.more => copy.navMore,
+          RoutePaths.templates => copy.navTemplates,
+          RoutePaths.queue => copy.navQueue,
+          RoutePaths.recycleBin => copy.recycleBinTitle,
+          _ => label,
+        }
+      : copy.resolve(localizedLabel!);
+
+  /// The short menu label in the app's current locale.
+  String? compactLabelFor(LocalizedCopy copy) =>
+      path == RoutePaths.more ? copy.navMoreMenu : compactLabel;
 }
 
 /// The one ordered source for the four application destinations.
-const List<ShellDestination> shellDestinations = <ShellDestination>[
+final List<ShellDestination> shellDestinations = <ShellDestination>[
   ShellDestination(
     path: RoutePaths.projects,
     icon: AppIcons.project,
@@ -72,12 +94,14 @@ const List<ShellDestination> shellDestinations = <ShellDestination>[
     selectedIcon: AppIcons.settingsSelected,
     label: Copy.navMore,
     compactLabel: Copy.navMoreMenu,
-    compactIcon: AppIcons.more,
+    compactIcon: AppIcons.moreHorizontal,
   ),
 ];
 
-/// Working secondary destinations offered by the compact More menu.
-const List<ShellDestination> moreDestinations = <ShellDestination>[
+/// Working secondary destinations offered by the compact More menu. The
+/// settings root lists the same rows from medium width up, where the rail's
+/// Settings replaces that menu.
+final List<ShellDestination> moreDestinations = <ShellDestination>[
   ShellDestination(
     path: RoutePaths.templates,
     label: Copy.navTemplates,
@@ -93,12 +117,13 @@ const List<ShellDestination> moreDestinations = <ShellDestination>[
   ShellDestination(
     path: RoutePaths.recycleBin,
     label: Copy.recycleBinTitle,
-    icon: AppIcons.restore,
-    selectedIcon: AppIcons.restore,
+    icon: AppIcons.recycleBin,
+    selectedIcon: AppIcons.recycleBin,
   ),
   ShellDestination(
     path: RoutePaths.more,
     label: Copy.settingsTitle,
+    localizedLabel: Copy.messages.settingsTitle,
     icon: AppIcons.settings,
     selectedIcon: AppIcons.settingsSelected,
   ),

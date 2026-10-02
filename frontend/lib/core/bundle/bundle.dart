@@ -10,6 +10,7 @@ export 'bundle_reader.dart';
 export 'bundle_redaction.dart';
 export 'bundle_rejection.dart';
 export 'bundle_tables.dart';
+export 'bundle_vectors.dart';
 export 'bundle_writer.dart';
 export 'inspected_bundle.dart';
 export 'template_key.dart';

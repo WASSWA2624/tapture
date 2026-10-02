@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/security/secure_storage.dart';
 
 import 'app_database_stub.dart'
     if (dart.library.io) 'app_database_io.dart'
@@ -37,7 +38,7 @@ part 'app_database.g.dart';
 
 /// Current schema version. Later table tasks bump this and append a named
 /// upgrade step; they never edit earlier steps.
-const int kSchemaVersion = 24;
+const int kSchemaVersion = 31;
 
 /// The local SQLite database. Opens on a WAL connection under the application
 /// support directory, or in memory for tests.
@@ -89,12 +90,19 @@ class AppDatabase extends _$AppDatabase {
 
   /// On-disk database in [directoryPath], or the application support
   /// directory when omitted. When [encryptionKey] is set, the same factory
-  /// opens the encrypted file produced by DatabaseEncryption.
-  factory AppDatabase.open({String? directoryPath, String? encryptionKey}) {
+  /// opens the encrypted file produced by DatabaseEncryption. The app passes
+  /// [keyStore] instead, and the key is read from secure storage when the
+  /// file first opens, so launch never waits on it (databaseKeyAtLaunch).
+  factory AppDatabase.open({
+    String? directoryPath,
+    String? encryptionKey,
+    SecureStorage? keyStore,
+  }) {
     return AppDatabase(
       sqlite.openFileExecutor(
         directoryPath: directoryPath,
         encryptionKey: encryptionKey,
+        keyStore: keyStore,
       ),
     );
   }

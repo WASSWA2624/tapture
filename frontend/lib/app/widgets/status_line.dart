@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/shell_destination.dart';
 import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
@@ -14,27 +15,32 @@ import 'package:tapture/core/network/network.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_toolbar_scope.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
-import 'package:tapture/features/context/domain/context_state.dart';
-import 'package:tapture/features/context/presentation/context_providers.dart';
-import 'package:tapture/features/projects/presentation/current_project.dart';
+import 'package:tapture/core/widgets/trial_report_action.dart';
+import 'package:tapture/features/processing/presentation/queue_providers.dart';
 import 'package:tapture/features/quality/presentation/verification_session.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
 import '../router.dart';
 
-/// Permanent one-line strip.
+/// Permanent one-line strip: the one visible status line (§56.13).
 ///
 /// Every route shows the screen name. A branch root has no back control.
-/// Nested routes add back, then that page's actions (FE-CONS-10).
-/// Counts are derived, never cached (FE-STATE-06).
+/// Nested routes add back, then that page's actions (FE-CONS-10). While
+/// the app is offline a network control says whether that is the
+/// operator's choice or a lost radio, and while records wait for
+/// processing a counted control opens them. Context sits in the context
+/// bar below this line. Counts are derived, never cached (FE-STATE-06).
 class StatusLine extends ConsumerWidget {
   /// Creates the status line.
   const StatusLine({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool compact = context.sizeClass == SizeClass.compact;
     final bool inverted =
         compact && Theme.of(context).brightness != Brightness.dark;
@@ -46,7 +52,11 @@ class StatusLine extends ConsumerWidget {
     final Uri uri = GoRouterState.of(context).uri;
     final bool root = ShellTitle.isRoot(uri);
     final ShellDestination? destination = shellDestinationFor(uri);
-    final String fallback = ShellTitle.screen(ref, uri);
+    final String fallback = ShellTitle.screen(
+      ref,
+      uri,
+      localizedCopy: localCopy,
+    );
     final ({
       String title,
       List<Widget> actions,
@@ -56,8 +66,11 @@ class StatusLine extends ConsumerWidget {
     final String title = !root && chrome != null && chrome.title.isNotEmpty
         ? chrome.title
         : fallback;
-    final List<AppOverflowAction> overflow =
-        chrome?.overflow ?? const <AppOverflowAction>[];
+    final AppOverflowAction? trial = trialReportAction(context);
+    final List<AppOverflowAction> overflow = <AppOverflowAction>[
+      ...?chrome?.overflow,
+      ?trial,
+    ];
     final List<Widget> actions = chrome?.actions ?? const <Widget>[];
     return Material(
       color: bar,
@@ -78,8 +91,8 @@ class StatusLine extends ConsumerWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: Space.x3),
-            child: IconTheme(
-              data: IconThemeData(color: ink),
+            child: AppToolbarScope(
+              ink: ink,
               child: Row(
                 children: <Widget>[
                   if (!root)
@@ -103,21 +116,28 @@ class StatusLine extends ConsumerWidget {
                     const SizedBox(width: Space.x2),
                   ],
                   if (ref.watch(verificationSessionProvider)) ...<Widget>[
-                    Text(
-                      Copy.verificationStatus,
-                      key: const ValueKey<String>('verification-status'),
-                      style: AppText.caption.copyWith(color: ink),
+                    // Shrinks before the title does, so 200 percent text
+                    // never pushes the row past the screen (FE-A11Y-03).
+                    Flexible(
+                      child: Text(
+                        localCopy.verificationStatus,
+                        key: const ValueKey<String>('verification-status'),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppText.caption.copyWith(color: ink),
+                      ),
                     ),
                     const SizedBox(width: Space.x2),
                   ],
                   Expanded(
+                    flex: 2,
                     child: Text(
                       title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: AppText.bodyStrong.copyWith(color: ink),
                     ),
                   ),
+                  const _NetworkStatus(),
+                  const _UnprocessedStatus(),
                   ...actions,
                   if (actions.isNotEmpty && overflow.isNotEmpty)
                     const SizedBox(width: Space.x2),
@@ -168,30 +188,68 @@ final StreamProvider<NetworkState> networkStateProvider =
       return ref.watch(connectivityServiceProvider).watch();
     });
 
-/// Project name on the line. Derived from [currentProjectDetailsProvider].
-final Provider<String> statusProjectLabelProvider = Provider<String>((Ref ref) {
-  final String? id = ref.watch(openProjectIdProvider);
-  if (id == null) {
-    return Copy.statusNoProject;
+/// Records still waiting for processing, across projects. Derived from the
+/// queue's watch query, never cached. Not autoDispose: the shell reads it
+/// every frame (FE-STATE-09).
+final Provider<int> unprocessedCountProvider = Provider<int>((Ref ref) {
+  return ref.watch(queueSnapshotProvider).value?.unprocessed ?? 0;
+});
+
+/// Offline, told apart by cause. Hidden while a network path exists.
+class _NetworkStatus extends ConsumerWidget {
+  const _NetworkStatus();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final NetworkState? network = ref.watch(networkStateProvider).value;
+    if (network != NetworkState.offline) {
+      return const SizedBox.shrink();
+    }
+    final bool byChoice = ref.watch(offlineByChoiceProvider);
+    final String label = byChoice
+        ? localCopy.networkOfflineByChoice
+        : localCopy.networkOffline;
+    return AppIconButton(
+      key: const ValueKey<String>('status-network'),
+      icon: byChoice ? AppIcons.offlineByChoice : AppIcons.offline,
+      semanticLabel: label,
+      tooltip: label,
+      outlined: false,
+      // The switch that ends offline-by-choice lives on the settings root.
+      onPressed: () => context.go(RoutePaths.more),
+    );
   }
-  return ref.watch(currentProjectDetailsProvider)?.name ?? id;
-});
+}
 
-/// Pinned context label from the open project's [ContextState].
-final Provider<String> statusContextProvider = Provider<String>((Ref ref) {
-  final AsyncValue<ContextState> value = ref.watch(openProjectContextProvider);
-  return contextStatusLabel(value.asData?.value ?? const ContextState());
-});
+/// How many records wait for processing. Hidden at zero.
+class _UnprocessedStatus extends ConsumerWidget {
+  const _UnprocessedStatus();
 
-/// Pinned template. Task 141 replaces this stub.
-final Provider<String> statusTemplateLabelProvider = Provider<String>((Ref _) {
-  return Copy.statusNoTemplate;
-});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
 
-/// Unprocessed records. A later watch query feeds this; until then the
-/// count is zero. Not autoDispose: the shell reads it every frame
-/// (FE-STATE-09).
-final Provider<int> unprocessedCountProvider = Provider<int>((Ref _) => 0);
+    final int count = ref.watch(unprocessedCountProvider);
+    if (count <= 0) {
+      return const SizedBox.shrink();
+    }
+    final String label = localCopy.unprocessedCount(count);
+    return Badge(
+      key: const ValueKey<String>('status-unprocessed'),
+      label: ExcludeSemantics(child: Text(localCopy.badgeCount(count))),
+      alignment: AlignmentDirectional.topEnd,
+      child: AppIconButton(
+        icon: AppIcons.queued,
+        semanticLabel: label,
+        tooltip: label,
+        outlined: false,
+        onPressed: () => context.go(RoutePaths.queue),
+      ),
+    );
+  }
+}
 
 /// A fake already-online radio so suites that are not about connectivity
 /// never open the plugin (FE-TEST-03, FE-STR-11).

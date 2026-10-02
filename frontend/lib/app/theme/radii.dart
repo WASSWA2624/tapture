@@ -1,16 +1,21 @@
 part of 'dimensions.dart';
 
 /// Corner radii, identical in every mode (FE-THEME-03).
+///
+/// Surfaces use the smallest non-zero corner, [Space.x0], so controls stay
+/// almost square without sharp zero-radius corners (§56.14). [sm], [md] and [lg]
+/// share it. Only [pill] is fully round, for decorative marks such as a
+/// sheet's drag handle and a skeleton avatar.
 abstract final class Radii {
-  /// Fields and dense wells.
-  static const double sm = 8;
+  /// Fields, chips, cards, menus, sheets and buttons.
+  static const double sm = Space.x0;
 
-  /// Cards and grouped rows.
-  static const double md = 12;
+  /// Same corner as [sm].
+  static const double md = Space.x0;
 
-  /// Dialogs, sheets and filled buttons.
-  static const double lg = 24;
+  /// Same corner as [sm].
+  static const double lg = Space.x0;
 
-  /// Pills and fully round ends.
+  /// Fully round ends, for decorative marks only.
   static const double pill = 999;
 }

@@ -1,3 +1,4 @@
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -44,9 +45,10 @@ abstract interface class AiService {
 final class _UnavailableAiService implements AiService {
   const _UnavailableAiService();
 
-  static const ProviderFailure _unavailable = ProviderFailure(
-    message: 'AI is not available.',
-    recoveryAction: 'Continue capturing. Analysis can wait.',
+  static final ProviderFailure _unavailable = ProviderFailure(
+    localizedMessage: DomainCopy.messages.failureAIIsNotAvailable,
+    localizedRecovery:
+        DomainCopy.messages.failureContinueCapturingAnalysisCanWait,
   );
 
   @override
@@ -55,7 +57,7 @@ final class _UnavailableAiService implements AiService {
   @override
   Future<Result<ReadTextResult>> readText(ReadTextRequest request) {
     return Future<Result<ReadTextResult>>.value(
-      const FailureResult<ReadTextResult>(_unavailable),
+      FailureResult<ReadTextResult>(_unavailable),
     );
   }
 
@@ -64,21 +66,21 @@ final class _UnavailableAiService implements AiService {
     ExtractFieldsRequest request,
   ) {
     return Future<Result<ExtractFieldsResult>>.value(
-      const FailureResult<ExtractFieldsResult>(_unavailable),
+      FailureResult<ExtractFieldsResult>(_unavailable),
     );
   }
 
   @override
   Future<Result<RefineTextResult>> refineText(RefineTextRequest request) {
     return Future<Result<RefineTextResult>>.value(
-      const FailureResult<RefineTextResult>(_unavailable),
+      FailureResult<RefineTextResult>(_unavailable),
     );
   }
 
   @override
   Future<Result<TranscribeResult>> transcribe(TranscribeRequest request) {
     return Future<Result<TranscribeResult>>.value(
-      const FailureResult<TranscribeResult>(_unavailable),
+      FailureResult<TranscribeResult>(_unavailable),
     );
   }
 }

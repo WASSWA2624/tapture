@@ -11,6 +11,7 @@ import 'package:tapture/core/files/file_writer.dart';
 import 'audio_recording.dart';
 
 export 'audio_recording.dart';
+export 'audio_recovery_service.dart';
 
 part 'audio_recorder_state.dart';
 
@@ -62,8 +63,8 @@ final Provider<AudioRecorderService> audioRecorderServiceProvider =
 final class _UnavailableAudioRecorder implements AudioRecorderService {
   const _UnavailableAudioRecorder();
 
-  static const ProviderFailure _fail = ProviderFailure(
-    message: Copy.audioRecorderUnavailable,
+  static final ProviderFailure _fail = ProviderFailure(
+    localizedMessage: Copy.messages.audioRecorderUnavailable,
   );
 
   @override
@@ -76,7 +77,7 @@ final class _UnavailableAudioRecorder implements AudioRecorderService {
 
   @override
   Future<Result<void>> start(String relativePath) async {
-    return const FailureResult<void>(_fail);
+    return FailureResult<void>(_fail);
   }
 
   @override
@@ -87,7 +88,7 @@ final class _UnavailableAudioRecorder implements AudioRecorderService {
 
   @override
   Future<Result<Duration>> stop() async {
-    return const FailureResult<Duration>(_fail);
+    return FailureResult<Duration>(_fail);
   }
 }
 

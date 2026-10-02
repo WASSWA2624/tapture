@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/core/copy/copy.dart';
 
 import 'color_tokens.dart';
 import 'dimensions.dart';
@@ -22,7 +23,7 @@ class SurfaceLevels extends StatelessWidget {
             padding: const EdgeInsets.all(Space.x4),
             decoration: Elevation.surface(context, level: level),
             child: Text(
-              'Level $level',
+              Copy.of(context).surfacePreviewLevel(level),
               style: AppText.body.copyWith(color: color),
             ),
           ),

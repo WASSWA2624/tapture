@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/core/copy/copy.dart';
 
 import 'color_tokens.dart';
 import 'dimensions.dart';
@@ -29,7 +30,7 @@ class TypeRamp extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: Space.x4),
             child: Text(
-              'The $name role — Tap it. It\'s data.',
+              Copy.of(context).typeRampSample(name),
               style: style.copyWith(color: color),
             ),
           ),

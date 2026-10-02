@@ -1,5 +1,6 @@
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -98,8 +99,11 @@ Result<CloudDestination> resolveDestination(
   if (found == null) {
     return FailureResult<CloudDestination>(
       ValidationFailure(
-        message: 'No upload destination is registered for ${kind.name}.',
-        recoveryAction: 'Choose another destination.',
+        localizedMessage: DomainCopy.messages
+            .failureNoUploadDestinationIsRegisteredForValue(
+              (kind.name).toString(),
+            ),
+        localizedRecovery: DomainCopy.messages.failureChooseAnotherDestination,
       ),
     );
   }
@@ -110,37 +114,50 @@ Result<CloudDestination> resolveDestination(
 /// Unreachable and 5xx are [NetworkFailure], which the runner may retry.
 Failure cloudStatusFailure(int status) {
   if (status == 401 || status == 403) {
-    return const PermissionFailure(
-      message: 'The destination refused the sign-in.',
-      recoveryAction: 'Check the key or sign in again.',
+    return PermissionFailure(
+      localizedMessage:
+          DomainCopy.messages.failureTheDestinationRefusedTheSignIn,
+      localizedRecovery: DomainCopy.messages.failureCheckTheKeyOrSignInAgain,
     );
   }
   if (status == 404) {
-    return const ValidationFailure(
-      message: 'That bucket or folder was not found.',
-      recoveryAction: 'Check the name and try the connection again.',
+    return ValidationFailure(
+      localizedMessage:
+          DomainCopy.messages.failureThatBucketOrFolderWasNotFound,
+      localizedRecovery:
+          DomainCopy.messages.failureCheckTheNameAndTryTheConnection,
     );
   }
   if (status == 429 || status >= 500) {
-    return const NetworkFailure(
-      message: 'The destination did not finish the upload.',
-      recoveryAction: 'Try again.',
+    return NetworkFailure(
+      localizedMessage:
+          DomainCopy.messages.failureTheDestinationDidNotFinishTheUpload,
+      localizedRecovery: DomainCopy.messages.failureTryAgain,
     );
   }
   if (status >= 300 && status < 400) {
-    return const ValidationFailure(
-      message: 'The server redirected the upload to another host.',
-      recoveryAction: 'Check the address and try again.',
+    return ValidationFailure(
+      localizedMessage:
+          DomainCopy.messages.failureTheServerRedirectedTheUploadToAnother,
+      localizedRecovery: DomainCopy.messages.failureCheckTheAddressAndTryAgain,
     );
   }
-  return const ValidationFailure(
-    message: 'The destination rejected the upload.',
-    recoveryAction: 'Check the settings and try again.',
+  return ValidationFailure(
+    localizedMessage:
+        DomainCopy.messages.failureTheDestinationRejectedTheUpload,
+    localizedRecovery: DomainCopy.messages.failureCheckTheSettingsAndTryAgain,
   );
 }
 
 /// Whether [failure] is worth retrying. Permission and validation are not.
 bool cloudRetryable(Failure failure) => failure is NetworkFailure;
+
+/// A slice of the file came back shorter than asked: it was moved, removed
+/// or changed while it was being sent. Nothing short is ever uploaded.
+final StorageFailure cloudReadFailure = StorageFailure(
+  localizedMessage: DomainCopy.messages.failureTheFileCouldNotBeReadWhile,
+  localizedRecovery: DomainCopy.messages.failureCheckThatTheFileIsStillOn,
+);
 
 /// How long to wait before retry number [attempt], starting at zero.
 Duration cloudBackoff(int attempt, {required int baseMs, required int capMs}) {

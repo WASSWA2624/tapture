@@ -2,10 +2,14 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
+import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'cloud_destination.dart';
+import 'cloud_oauth_redirect.dart';
+import 'cloud_request_scope.dart';
 
 /// Authorisation-code with PKCE, shared by Drive, OneDrive and Dropbox.
 ///
@@ -23,8 +27,32 @@ final class OauthDestinationClient {
     required this.writeRefresh,
     required this.scheme,
     required this.clientId,
+    this._redirect,
+    this.refreshAccess,
+    this.uploadFingerprint,
+    this._readUploadSession,
+    this._writeUploadSession,
+    this._writeRefreshedAccess,
+    this._writeRefreshedRefresh,
     Random? random,
   }) : randomBytes = random ?? Random.secure();
+
+  final Uri? _redirect;
+
+  /// Source identity, computed on the upload worker.
+  final String? uploadFingerprint;
+  final Future<String?> Function()? _readUploadSession;
+  final Future<void> Function(String? json)? _writeUploadSession;
+  final Future<void> Function(String ref, String token)? _writeRefreshedAccess;
+  final Future<void> Function(String ref, String token)? _writeRefreshedRefresh;
+
+  /// Reads the provider checkpoint from secure storage.
+  Future<String?> readUploadSession() async => _readUploadSession?.call();
+
+  /// Saves a checkpoint; completion acknowledges durable secure persistence.
+  Future<void> writeUploadSession(String? json) async {
+    await _writeUploadSession?.call(json);
+  }
 
   /// Transport for the token endpoint and authorised calls.
   final CloudSend send;
@@ -47,11 +75,15 @@ final class OauthDestinationClient {
   /// OAuth client id supplied by the caller.
   final String clientId;
 
+  /// Native SDK renewal, when the provider does not expose refresh tokens.
+  final Future<Result<String>> Function(String ref, String invalidToken)?
+  refreshAccess;
+
   /// Random source for the PKCE verifier.
   final Random randomBytes;
 
   /// The redirect this client will send. Built from the platform [scheme].
-  Uri get redirectUri => Uri.parse('$scheme://oauth');
+  Uri get redirectUri => _redirect ?? Uri.parse('$scheme://oauth');
 
   /// Starts the code flow. The verifier must be kept until [exchange].
   ({Uri url, String verifier}) start(OauthProvider provider, String state) {
@@ -65,6 +97,7 @@ final class OauthDestinationClient {
         .replaceAll('=', '');
     final Uri url = provider.authorize.replace(
       queryParameters: <String, String>{
+        ...provider.authorizationParameters,
         'response_type': 'code',
         'client_id': clientId,
         'redirect_uri': redirectUri.toString(),
@@ -83,15 +116,24 @@ final class OauthDestinationClient {
     required String credentialRef,
     required String code,
     required String verifier,
+    Uri? redirect,
   }) async {
-    final CloudReply reply = await _token(provider, <String, String>{
-      'grant_type': 'authorization_code',
-      'code': code,
-      'code_verifier': verifier,
-      'redirect_uri': redirectUri.toString(),
-      'client_id': clientId,
+    return Result.captureAsync<void>(() async {
+      final Uri actual = redirect ?? redirectUri;
+      if (!CloudOauthRedirect.matches(redirectUri, actual)) {
+        throw _reauth;
+      }
+      _checkCancelled();
+      final CloudReply reply = await _token(provider, <String, String>{
+        'grant_type': 'authorization_code',
+        'code': code,
+        'code_verifier': verifier,
+        'redirect_uri': actual.toString(),
+        'client_id': clientId,
+      });
+      _checkCancelled();
+      (await _store(credentialRef, reply)).getOrThrow();
     });
-    return _store(credentialRef, reply);
   }
 
   /// Sends [call] with the stored access token. On 401, refreshes once.
@@ -99,48 +141,75 @@ final class OauthDestinationClient {
     required OauthProvider provider,
     required String credentialRef,
     required CloudCall call,
+    CancellationToken? cancel,
   }) async {
-    final String? access = await readAccess(credentialRef);
-    if (access == null || access.isEmpty) {
-      return const FailureResult<CloudReply>(_reauth);
-    }
-    final CloudReply first = await send(_withBearer(call, access));
-    if (first.status != 401) {
-      return Success<CloudReply>(first);
-    }
-    final Result<String> refreshed = await _refresh(provider, credentialRef);
-    if (refreshed is FailureResult<String>) {
-      return FailureResult<CloudReply>(refreshed.failure);
-    }
-    final CloudReply second = await send(
-      _withBearer(call, (refreshed as Success<String>).value),
+    return CloudRequestScope(
+      cancel: cancel ?? CloudRequestScope.current.cancel,
+    ).run(
+      () => Result.captureAsync<CloudReply>(() async {
+        final String? access = await readAccess(credentialRef);
+        if (access == null || access.isEmpty) {
+          throw _reauth;
+        }
+        final CloudReply first = await send(_withBearer(call, access));
+        if (first.status != 401) {
+          return first;
+        }
+        final Result<String> refreshed = await _refresh(
+          provider,
+          credentialRef,
+          access,
+        );
+        if (refreshed is FailureResult<String>) {
+          throw refreshed.failure;
+        }
+        final CloudReply second = await send(
+          _withBearer(call, (refreshed as Success<String>).value),
+        );
+        if (second.status == 401 || second.status == 403) {
+          throw _reauth;
+        }
+        return second;
+      }),
     );
-    if (second.status == 401 || second.status == 403) {
-      return const FailureResult<CloudReply>(_reauth);
-    }
-    return Success<CloudReply>(second);
   }
+
+  /// Sends to a signed upload URL without disclosing the OAuth bearer.
+  Future<Result<CloudReply>> sendPublic({
+    required CloudCall call,
+    CancellationToken? cancel,
+  }) => CloudRequestScope(
+    cancel: cancel ?? CloudRequestScope.current.cancel,
+  ).run(() => Result.captureAsync<CloudReply>(() => send(call)));
 
   Future<Result<String>> _refresh(
     OauthProvider provider,
     String credentialRef,
+    String invalidToken,
   ) async {
+    if (refreshAccess != null) {
+      return refreshAccess!(credentialRef, invalidToken);
+    }
     final String? refresh = await readRefresh(credentialRef);
     if (refresh == null || refresh.isEmpty) {
-      return const FailureResult<String>(_reauth);
+      return FailureResult<String>(_reauth);
     }
     final CloudReply reply = await _token(provider, <String, String>{
       'grant_type': 'refresh_token',
       'refresh_token': refresh,
       'client_id': clientId,
     });
-    final Result<void> stored = await _store(credentialRef, reply);
+    final Result<void> stored = await _store(
+      credentialRef,
+      reply,
+      refreshing: true,
+    );
     if (stored is FailureResult<void>) {
       return FailureResult<String>(stored.failure);
     }
     final String? access = await readAccess(credentialRef);
     if (access == null || access.isEmpty) {
-      return const FailureResult<String>(_reauth);
+      return FailureResult<String>(_reauth);
     }
     return Success<String>(access);
   }
@@ -159,27 +228,45 @@ final class OauthDestinationClient {
     ));
   }
 
-  Future<Result<void>> _store(String credentialRef, CloudReply reply) async {
+  Future<Result<void>> _store(
+    String credentialRef,
+    CloudReply reply, {
+    bool refreshing = false,
+  }) async {
     if (reply.status < 200 || reply.status >= 300) {
-      return const FailureResult<void>(_reauth);
+      return FailureResult<void>(_reauth);
     }
     try {
       final Object? decoded = jsonDecode(utf8.decode(reply.body));
       if (decoded is! Map) {
-        return const FailureResult<void>(_reauth);
+        return FailureResult<void>(_reauth);
       }
       final String access = '${decoded['access_token'] ?? ''}';
       if (access.isEmpty) {
-        return const FailureResult<void>(_reauth);
+        return FailureResult<void>(_reauth);
       }
-      await writeAccess(credentialRef, access);
+      _checkCancelled();
+      await (refreshing ? _writeRefreshedAccess ?? writeAccess : writeAccess)(
+        credentialRef,
+        access,
+      );
+      _checkCancelled();
       final String refresh = '${decoded['refresh_token'] ?? ''}';
       if (refresh.isNotEmpty) {
-        await writeRefresh(credentialRef, refresh);
+        await (refreshing
+            ? _writeRefreshedRefresh ?? writeRefresh
+            : writeRefresh)(credentialRef, refresh);
       }
+      _checkCancelled();
       return const Success<void>(null);
     } on FormatException {
-      return const FailureResult<void>(_reauth);
+      return FailureResult<void>(_reauth);
+    }
+  }
+
+  void _checkCancelled() {
+    if (CloudRequestScope.current.cancel?.isCancelled ?? false) {
+      throw const CancelledFailure();
     }
   }
 
@@ -197,10 +284,15 @@ final class OauthDestinationClient {
 }
 
 /// Endpoints and the one scope a provider asks for.
-typedef OauthProvider = ({String name, Uri authorize, Uri token, String scope});
+typedef OauthProvider = ({
+  String name,
+  Uri authorize,
+  Uri token,
+  String scope,
+  Map<String, String> authorizationParameters,
+});
 
-const PermissionFailure _reauth = PermissionFailure(
-  message: 'Sign in to this destination again.',
-  recoveryAction:
-      'The destination is still saved. Sign in, then try the upload.',
+final PermissionFailure _reauth = PermissionFailure(
+  localizedMessage: Copy.messages.failureSignInToThisDestinationAgain,
+  localizedRecovery: Copy.messages.failureTheDestinationIsStillSavedSignIn,
 );

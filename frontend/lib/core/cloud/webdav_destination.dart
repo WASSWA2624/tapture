@@ -1,21 +1,34 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'cloud_destination.dart';
+import 'cloud_probe_name.dart';
+import 'cloud_request_scope.dart';
+import 'cloud_stream_call.dart';
 
-/// A WebDAV or generic HTTPS folder. A redirect to another host fails
-/// instead of being followed. Basic or bearer credentials are sent on each call.
+/// Streams into a unique WebDAV staging object, then publishes with MOVE.
+/// Only that staging object is deleted on failure or cancellation.
 final class WebdavDestination implements CloudDestination {
-  /// Creates the backend. [readSecret] is called on every check and send.
-  WebdavDestination({required this.transport, required this.readSecret});
+  /// Creates the backend with separate bounded and streaming transports.
+  WebdavDestination({
+    required this.transport,
+    required this.streamTransport,
+    required this.readSecret,
+  });
 
-  /// Transport that carries the WebDAV calls.
+  /// Small control requests.
   final CloudSend transport;
 
-  /// Reads the endpoint credential on every call.
+  /// Streaming PUT requests.
+  final CloudStreamSend streamTransport;
+
+  /// Reads the endpoint credential for each operation.
   final SecretRead readSecret;
 
   @override
@@ -23,38 +36,23 @@ final class WebdavDestination implements CloudDestination {
 
   @override
   Future<Result<void>> check(Destination destination) async {
-    final Result<_WebDavConfig> config = await _config(destination);
-    if (config is FailureResult<_WebDavConfig>) {
-      return FailureResult<void>(config.failure);
+    final String name = CloudProbeName.create();
+    final Result<Uri> sent = await send(destination, (
+      length: 2,
+      read: (int _, int _) async => utf8.encode('ok'),
+    ), remoteName: name);
+    if (sent is FailureResult<Uri>) {
+      return FailureResult<void>(sent.failure);
     }
-    final _WebDavConfig ready = (config as Success<_WebDavConfig>).value;
-    final Result<CloudReply> put = await _put(
-      ready,
-      destination,
-      '.tapture-check',
-      utf8.encode('ok'),
-    );
-    if (put is FailureResult<CloudReply>) {
-      return FailureResult<void>(put.failure);
-    }
-    final CloudReply created = (put as Success<CloudReply>).value;
-    if (created.status < 200 || created.status >= 300) {
-      return FailureResult<void>(cloudStatusFailure(created.status));
-    }
-    final Result<CloudReply> removed = await _call(
-      ready,
-      method: 'DELETE',
-      url: _fileUrl(ready, destination, '.tapture-check'),
-      body: const <int>[],
-    );
-    if (removed is FailureResult<CloudReply>) {
-      return FailureResult<void>(removed.failure);
-    }
-    final CloudReply deleted = (removed as Success<CloudReply>).value;
-    if (deleted.status >= 300 && deleted.status != 404) {
-      return FailureResult<void>(cloudStatusFailure(deleted.status));
-    }
-    return const Success<void>(null);
+    return Result.captureAsync<void>(() async {
+      final _WebDavConfig ready = (await _config(destination)).getOrThrow();
+      final CloudReply reply = await _call(
+        ready,
+        'DELETE',
+        (sent as Success<Uri>).value,
+      );
+      _accepted(reply);
+    });
   }
 
   @override
@@ -65,182 +63,193 @@ final class WebdavDestination implements CloudDestination {
     int offset = 0,
     void Function(int sent, int total)? onProgress,
     CancellationToken? cancel,
-  }) async {
-    if (cancel?.isCancelled ?? false) {
-      return const FailureResult<Uri>(CancelledFailure());
-    }
-    final Result<_WebDavConfig> config = await _config(destination);
-    if (config is FailureResult<_WebDavConfig>) {
-      return FailureResult<Uri>(config.failure);
-    }
-    final _WebDavConfig ready = (config as Success<_WebDavConfig>).value;
-    final int start = offset.clamp(0, file.length);
-    final List<int> body = start >= file.length
-        ? const <int>[]
-        : await file.read(start, file.length - start);
-    if (cancel?.isCancelled ?? false) {
-      return const FailureResult<Uri>(CancelledFailure());
-    }
-    final Result<CloudReply> put = await _put(
-      ready,
-      destination,
-      remoteName,
-      body,
-    );
-    if (put is FailureResult<CloudReply>) {
-      return FailureResult<Uri>(put.failure);
-    }
-    final CloudReply reply = (put as Success<CloudReply>).value;
-    if (reply.status < 200 || reply.status >= 300) {
-      return FailureResult<Uri>(cloudStatusFailure(reply.status));
-    }
-    onProgress?.call(file.length, file.length);
-    return Success<Uri>(_fileUrl(ready, destination, remoteName));
-  }
-
-  Future<Result<CloudReply>> _put(
-    _WebDavConfig ready,
-    Destination destination,
-    String name,
-    List<int> body,
-  ) async {
-    final Uri url = _fileUrl(ready, destination, name);
-    final Result<CloudReply> first = await _call(
-      ready,
-      method: 'PUT',
-      url: url,
-      body: body,
-    );
-    if (first is FailureResult<CloudReply>) {
-      return first;
-    }
-    final CloudReply reply = (first as Success<CloudReply>).value;
-    if (reply.status != 404 && reply.status != 409) {
-      return Success<CloudReply>(reply);
-    }
-    final Result<CloudReply> made = await _call(
-      ready,
-      method: 'MKCOL',
-      url: _folderUrl(ready, destination),
-      body: const <int>[],
-    );
-    if (made is FailureResult<CloudReply>) {
-      return made;
-    }
-    return _call(ready, method: 'PUT', url: url, body: body);
-  }
-
-  Future<Result<CloudReply>> _call(
-    _WebDavConfig ready, {
-    required String method,
-    required Uri url,
-    required List<int> body,
-  }) async {
-    try {
-      final CloudReply reply = await transport((
-        method: method,
-        url: url,
-        headers: <String, String>{'authorization': ready.authorization},
-        body: body,
-      ));
-      final Map<String, String> headers = <String, String>{
-        for (final MapEntry<String, String> entry in reply.headers.entries)
-          entry.key.toLowerCase(): entry.value,
-      };
-      if (reply.status >= 300 && reply.status < 400) {
-        final String? location = headers['location'];
-        if (location != null && location.isNotEmpty) {
-          final Uri next = Uri.parse(location);
-          if (next.host.isNotEmpty && next.host != url.host) {
-            return const FailureResult<CloudReply>(
-              ValidationFailure(
-                message: 'The server redirected the upload to another host.',
-                recoveryAction: 'Check the address and try again.',
-              ),
-            );
-          }
-        }
-      }
-      return Success<CloudReply>((
-        status: reply.status,
-        headers: headers,
-        body: reply.body,
-      ));
-    } on Object {
-      return const FailureResult<CloudReply>(
-        NetworkFailure(
-          message: 'The destination could not be reached.',
-          recoveryAction: 'Try again when you are online.',
-        ),
+  }) => Result.captureAsync<Uri>(() async {
+    _notCancelled(cancel);
+    if (remoteName.isEmpty ||
+        remoteName == '.' ||
+        remoteName == '..' ||
+        remoteName.contains('/') ||
+        remoteName.contains('\\')) {
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureTheUploadFilenameIsNotUsable,
+        localizedRecovery:
+            Copy.messages.failureChooseAFilenameWithoutFolderSeparators,
       );
     }
+    final _WebDavConfig ready = (await _config(destination)).getOrThrow();
+    final Uri target = _fileUrl(ready, destination, remoteName);
+    final Uri staged = _fileUrl(
+      ready,
+      destination,
+      '.tapture-upload-${_nonce()}.part',
+    );
+    var published = false;
+    try {
+      // PUT replaces a resource. Offset is deliberately ignored: a WebDAV
+      // retry sends the full stream into a new, private staging resource.
+      final CancellationToken? active =
+          cancel ?? CloudRequestScope.current.cancel;
+      Future<CloudReply> put() => CloudRequestScope(cancel: active).run(
+        () => streamTransport((
+          method: 'PUT',
+          url: staged,
+          headers: <String, String>{
+            'authorization': ready.authorization,
+            'if-none-match': '*',
+            'content-type': 'application/octet-stream',
+          },
+          contentLength: file.length,
+          openBody: () => _bytes(file, active),
+        )),
+      );
+      CloudReply reply = await put();
+      if (reply.status == 404 || reply.status == 409) {
+        _notCancelled(cancel);
+        final CloudReply made = await CloudRequestScope(
+          cancel: active,
+        ).run(() => _call(ready, 'MKCOL', _folderUrl(ready, destination)));
+        if (made.status != 405) {
+          _accepted(made);
+        }
+        reply = await put();
+      }
+      _accepted(reply);
+      _notCancelled(cancel);
+      final CloudReply moved = await CloudRequestScope(cancel: active).run(
+        () => _call(
+          ready,
+          'MOVE',
+          staged,
+          headers: <String, String>{
+            'destination': target.toString(),
+            'overwrite': 'T',
+          },
+        ),
+      );
+      _accepted(moved);
+      published = true;
+      // Progress represents server-published bytes, not bytes merely read.
+      onProgress?.call(file.length, file.length);
+      return target;
+    } finally {
+      if (!published) {
+        try {
+          await const CloudRequestScope().run(
+            () => _call(ready, 'DELETE', staged),
+          );
+        } on Object {
+          // Cleanup cannot mask the original failure and never deletes target.
+        }
+      }
+    }
+  });
+
+  Stream<List<int>> _bytes(CloudBytes file, CancellationToken? cancel) async* {
+    for (var position = 0; position < file.length;) {
+      _notCancelled(cancel);
+      final int length = min(
+        AppConstants.cloudUpload.streamBytes,
+        file.length - position,
+      );
+      final List<int> bytes = await file.read(position, length);
+      if (bytes.length != length) {
+        throw cloudReadFailure;
+      }
+      _notCancelled(cancel);
+      yield bytes;
+      position += length;
+    }
+  }
+
+  Future<CloudReply> _call(
+    _WebDavConfig ready,
+    String method,
+    Uri url, {
+    Map<String, String> headers = const <String, String>{},
+  }) => transport((
+    method: method,
+    url: url,
+    headers: <String, String>{'authorization': ready.authorization, ...headers},
+    body: const <int>[],
+  ));
+
+  void _accepted(CloudReply reply) {
+    if (reply.status < 200 || reply.status >= 300) {
+      throw cloudStatusFailure(reply.status);
+    }
+  }
+
+  void _notCancelled(CancellationToken? cancel) {
+    if (cancel?.isCancelled ?? false) {
+      throw const CancelledFailure();
+    }
+  }
+
+  String _nonce() {
+    final Random random = Random.secure();
+    return List<String>.generate(
+      24,
+      (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0'),
+    ).join();
   }
 
   Future<Result<_WebDavConfig>> _config(Destination destination) async {
     final String? raw = await readSecret(destination.credentialRef);
     if (raw == null || raw.isEmpty) {
-      return const FailureResult<_WebDavConfig>(
+      return FailureResult<_WebDavConfig>(
         PermissionFailure(
-          message: 'This destination has no saved sign-in.',
-          recoveryAction: 'Enter the address and sign-in, then test it.',
+          localizedMessage:
+              Copy.messages.failureThisDestinationHasNoSavedSignIn,
+          localizedRecovery: Copy.messages.failureEnterTheAddressAndSignInThen,
         ),
       );
     }
     try {
       final Object? decoded = jsonDecode(raw);
       if (decoded is! Map) {
-        return const FailureResult<_WebDavConfig>(
-          ValidationFailure(
-            message: 'The saved sign-in is not usable.',
-            recoveryAction: 'Enter the address and sign-in again.',
-          ),
-        );
+        return FailureResult<_WebDavConfig>(_invalid);
       }
-      final String base = '${decoded['baseUrl'] ?? ''}';
+      final Uri? base = Uri.tryParse('${decoded['baseUrl'] ?? ''}');
+      if (base == null ||
+          base.scheme != 'https' ||
+          base.host.isEmpty ||
+          base.userInfo.isNotEmpty ||
+          base.hasQuery ||
+          base.hasFragment) {
+        return FailureResult<_WebDavConfig>(_invalid);
+      }
       final String bearer = '${decoded['bearer'] ?? ''}';
       final String username = '${decoded['username'] ?? ''}';
       final String password = '${decoded['password'] ?? ''}';
-      if (base.isEmpty || Uri.tryParse(base)?.host.isEmpty != false) {
-        return const FailureResult<_WebDavConfig>(
-          ValidationFailure(
-            message: 'The address is not usable.',
-            recoveryAction: 'Enter a full https address.',
-          ),
-        );
-      }
-      final String authorization = bearer.isNotEmpty
-          ? 'Bearer $bearer'
-          : 'Basic ${base64Encode(utf8.encode('$username:$password'))}';
       if (bearer.isEmpty && username.isEmpty) {
-        return const FailureResult<_WebDavConfig>(
-          ValidationFailure(
-            message: 'The sign-in is incomplete.',
-            recoveryAction: 'Enter a token or a name and password.',
-          ),
-        );
+        return FailureResult<_WebDavConfig>(_invalid);
       }
       return Success<_WebDavConfig>((
-        base: Uri.parse(base),
-        authorization: authorization,
+        base: base,
+        authorization: bearer.isNotEmpty
+            ? 'Bearer $bearer'
+            : 'Basic ${base64Encode(utf8.encode('$username:$password'))}',
       ));
     } on FormatException {
-      return const FailureResult<_WebDavConfig>(
-        ValidationFailure(
-          message: 'The saved sign-in is not usable.',
-          recoveryAction: 'Enter the address and sign-in again.',
-        ),
-      );
+      return FailureResult<_WebDavConfig>(_invalid);
     }
   }
 
   Uri _folderUrl(_WebDavConfig ready, Destination destination) {
     final String folder = destination.folder.replaceAll(RegExp(r'^/+|/+$'), '');
-    return ready.base.resolve(folder.isEmpty ? '' : '$folder/');
+    if (folder.split('/').any((part) => part == '..' || part == '.') ||
+        folder.contains('\\')) {
+      throw _invalid;
+    }
+    return ready.base.resolveUri(Uri(path: folder.isEmpty ? '' : '$folder/'));
   }
 
-  Uri _fileUrl(_WebDavConfig ready, Destination destination, String name) {
-    return _folderUrl(ready, destination).resolve(name);
-  }
+  Uri _fileUrl(_WebDavConfig ready, Destination destination, String name) =>
+      _folderUrl(ready, destination).resolveUri(Uri(path: name));
 }
 
 typedef _WebDavConfig = ({Uri base, String authorization});
+final ValidationFailure _invalid = ValidationFailure(
+  localizedMessage: Copy.messages.failureTheDestinationAddressOrSignInIs,
+  localizedRecovery: Copy.messages.failureEnterAFullHTTPSAddressAndSign,
+);

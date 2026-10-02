@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 
 import 'bundle_format.dart';
+import 'bundle_json.dart';
+import 'bundle_vectors.dart';
 
 /// Every row a project package carries, per SQL table, each row keyed by
 /// column name with the value as the database stores it (task 076, D7).
@@ -14,13 +17,63 @@ import 'bundle_format.dart';
 /// meetings, attendees and actions, variances, finished processing jobs and
 /// their results, duplicate pairs, audit rows and tombstones. It leaves out
 /// capture drafts, the processing queue, the OCR cache, export history,
-/// merge bookkeeping, version vectors and the device profile.
+/// merge bookkeeping and the device profile. Causal clocks travel in the
+/// manifest rather than in a table entry.
 final class BundleTables {
   /// Creates tables from [rows].
-  const BundleTables(this.rows);
+  const BundleTables(
+    this.rows, {
+    this.vectorRows = const <Map<String, Object?>>[],
+  });
 
   /// Rows by SQL table name. A table with no rows maps to an empty list.
   final Map<String, List<Map<String, Object?>>> rows;
+
+  /// Stored clocks, filtered to the selected entities by [versionVectors].
+  final List<Map<String, Object?>> vectorRows;
+
+  /// Rows with entity clocks for planning, never for table serialization.
+  Map<String, List<Map<String, Object?>>> get mergeRows =>
+      <String, List<Map<String, Object?>>>{
+        ...rows,
+        'version_vectors': BundleVectors.rows(versionVectors),
+      };
+
+  /// Clocks only for rows in this snapshot, including scoped exports.
+  BundleVersionVectors get versionVectors {
+    final BundleVersionVectors vectors =
+        <String, Map<String, Map<String, int>>>{};
+    for (final table in rows.entries) {
+      if (!BundleFormat.insertOrder.contains(table.key)) continue;
+      final Map<String, Map<String, int>> entities =
+          <String, Map<String, int>>{};
+      for (final Map<String, Object?> row in table.value) {
+        final String id = row['id']! as String;
+        final Object? device = row['updated_by_device'];
+        final Object? rev = row['rev'];
+        entities[id] = <String, int>{
+          if (device is String && device.isNotEmpty && rev is int && rev > 0)
+            device: rev,
+        };
+      }
+      vectors[table.key] = entities;
+    }
+    final Set<String> stored = <String>{};
+    for (final Map<String, Object?> row in vectorRows) {
+      final Map<String, int>? counters =
+          vectors[row['entity_type']]?[row['entity_id']];
+      if (counters == null) continue;
+      final String device = row['device_id']! as String;
+      final int rev = row['seen_rev']! as int;
+      // A stored clock is authoritative; row.rev is only the migration
+      // fallback for an entity with no historical vector on this device.
+      if (stored.add('${row['entity_type']}/${row['entity_id']}')) {
+        counters.clear();
+      }
+      counters[device] = rev;
+    }
+    return vectors;
+  }
 
   /// Reads the rows of project [projectId] from [db], or null when there is
   /// no such project. Tombstoned rows travel with their tombstones.
@@ -82,7 +135,30 @@ final class BundleTables {
       'ORDER BY dataset_id, id',
       ids,
     );
-    return BundleTables(rows);
+    final List<String> owned = <String>{
+      for (final List<Map<String, Object?>> table in rows.values)
+        for (final Map<String, Object?> row in table) row['id']! as String,
+    }.toList();
+    final List<Map<String, Object?>> vectors = <Map<String, Object?>>[];
+    for (int offset = 0; offset < owned.length; offset += 500) {
+      final List<String> chunk = owned.sublist(
+        offset,
+        offset + 500 < owned.length ? offset + 500 : owned.length,
+      );
+      final List<QueryRow> selected = await db
+          .customSelect(
+            'SELECT * FROM version_vectors WHERE entity_id IN '
+            '(${List<String>.filled(chunk.length, '?').join(', ')})',
+            variables: <Variable<Object>>[
+              for (final String id in chunk) Variable<String>(id),
+            ],
+          )
+          .get();
+      vectors.addAll(
+        selected.map((QueryRow row) => Map<String, Object?>.of(row.data)),
+      );
+    }
+    return BundleTables(rows, vectorRows: vectors);
   }
 
   /// The project's folder name under `projects/`.
@@ -136,26 +212,34 @@ final class BundleTables {
   /// [BundleFormat.tableEntries], then one per reference dataset under
   /// [BundleFormat.referenceFolder].
   Map<String, List<int>> encode() {
-    return <String, List<int>>{
-      for (final MapEntry<String, List<String>> entry
-          in BundleFormat.tableEntries.entries)
-        entry.key: utf8.encode(
-          jsonEncode(<String, Object?>{
-            for (final String table in entry.value)
-              table: rows[table] ?? const <Map<String, Object?>>[],
-          }),
-        ),
-      for (final Map<String, Object?> dataset in rows['reference_datasets']!)
-        '${BundleFormat.referenceFolder}${dataset['id']}.json': utf8.encode(
-          jsonEncode(<String, Object?>{
-            'reference_datasets': <Map<String, Object?>>[dataset],
-            'reference_rows': <Map<String, Object?>>[
-              for (final Map<String, Object?> row in rows['reference_rows']!)
-                if (row['dataset_id'] == dataset['id']) row,
-            ],
-          }),
-        ),
-    };
+    final Map<String, List<int>> encoded = <String, List<int>>{};
+    int remaining = AppConstants.bundles.metadataMaxBytes;
+    void add(String path, Object value) {
+      final List<int> bytes = BundleJson.encode(value, maximum: remaining);
+      remaining -= bytes.length;
+      encoded[path] = bytes;
+    }
+
+    for (final MapEntry<String, List<String>> entry
+        in BundleFormat.tableEntries.entries) {
+      add(entry.key, <String, Object?>{
+        for (final String table in entry.value)
+          table: rows[table] ?? const <Map<String, Object?>>[],
+      });
+    }
+    for (final Map<String, Object?> dataset in rows['reference_datasets']!) {
+      add(
+        '${BundleFormat.referenceFolder}${dataset['id']}.json',
+        <String, Object?>{
+          'reference_datasets': <Map<String, Object?>>[dataset],
+          'reference_rows': <Map<String, Object?>>[
+            for (final Map<String, Object?> row in rows['reference_rows']!)
+              if (row['dataset_id'] == dataset['id']) row,
+          ],
+        },
+      );
+    }
+    return encoded;
   }
 
   /// Rows per table, for the manifest.

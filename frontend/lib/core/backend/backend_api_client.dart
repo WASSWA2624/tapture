@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 /// Authentication calls. The only HTTP the enrolment flow uses.
@@ -10,7 +11,9 @@ final class BackendApiClient {
   /// Transport. Tests substitute a fake.
   final BackendSend send;
 
-  /// Signs in. The body is the token pair.
+  /// Signs in. The body is the token pair. The server refusing the
+  /// credentials is a [PermissionFailure]; a server that cannot answer is a
+  /// [NetworkFailure].
   Future<TokenPair> login({
     required String email,
     required String password,
@@ -27,41 +30,48 @@ final class BackendApiClient {
         if (organisationId.isNotEmpty) 'organisationId': organisationId,
       },
     );
+    if (response.status >= 400 && response.status < 500) {
+      throw notAccepted;
+    }
     return _pair(response);
   }
 
-  /// Rotates a refresh token when the server can be reached.
-  ///
-  /// Offline, the cached access token is returned and nothing is sent.
-  Future<TokenPair> refresh({
-    required String refreshToken,
-    required bool reachable,
-    String? cachedAccess,
-  }) async {
-    if (!reachable) {
-      return (accessToken: cachedAccess ?? '', refreshToken: refreshToken);
-    }
+  /// Rotates a refresh token. A 401 or 403 means the organisation ended
+  /// this device's sign-in ([revoked]); any other refusal is the server
+  /// being unavailable, which changes nothing on the device.
+  Future<TokenPair> refresh({required String refreshToken}) async {
     final ({int status, Map<String, Object?> body}) response = await send(
       method: 'POST',
       path: '/api/v1/auth/refresh',
       body: <String, Object?>{'refreshToken': refreshToken},
     );
+    if (response.status == 401 || response.status == 403) {
+      throw revoked;
+    }
     return _pair(response);
   }
 
+  /// The server refused the email, password or organisation.
+  static final PermissionFailure notAccepted = PermissionFailure(
+    localizedMessage: Copy.messages.failureSignInWasNotAccepted,
+    localizedRecovery:
+        Copy.messages.failureCheckYourEmailPasswordAndOrganisation,
+  );
+
+  /// The organisation ended this device's sign-in.
+  static final PermissionFailure revoked = PermissionFailure(
+    localizedMessage: Copy.messages.failureTheOrganisationEndedThisDeviceSSign,
+    localizedRecovery: Copy.messages.failureSignInAgainWhenTheServerIs,
+  );
+
   TokenPair _pair(({int status, Map<String, Object?> body}) response) {
-    if (response.status != 200) {
-      throw const PermissionFailure(
-        message: 'Sign-in was not accepted.',
-        recoveryAction: 'Check the account details and try again.',
-      );
-    }
     final Object? access = response.body['accessToken'];
     final Object? refresh = response.body['refreshToken'];
-    if (access is! String || refresh is! String) {
-      throw const PermissionFailure(
-        message: 'Sign-in was not accepted.',
-        recoveryAction: 'Check the account details and try again.',
+    if (response.status != 200 || access is! String || refresh is! String) {
+      throw NetworkFailure(
+        localizedMessage: Copy.messages.failureTheServerCouldNotCompleteSignIn,
+        localizedRecovery:
+            Copy.messages.failureTryAgainWhenTheServerIsReachable,
       );
     }
     return (accessToken: access, refreshToken: refresh);

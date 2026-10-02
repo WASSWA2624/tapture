@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 import 'backend_transport_stub.dart'
@@ -74,9 +75,11 @@ final class BackendTransport {
     } on Failure {
       rethrow;
     } on Object {
-      throw const NetworkFailure(
-        message: 'The organisation server could not be reached.',
-        recoveryAction: 'Continue working offline and try again later.',
+      throw NetworkFailure(
+        localizedMessage:
+            Copy.messages.failureTheOrganisationServerCouldNotBeReached,
+        localizedRecovery:
+            Copy.messages.failureContinueWorkingOfflineAndTryAgainLater,
       );
     }
   }
@@ -89,9 +92,11 @@ final class BackendTransport {
         base.userInfo.isNotEmpty ||
         base.hasQuery ||
         base.hasFragment) {
-      throw const ValidationFailure(
-        message: 'Enter the organisation’s HTTPS server address.',
-        recoveryAction: 'Check the address with your administrator.',
+      throw ValidationFailure(
+        localizedMessage:
+            Copy.messages.failureEnterTheOrganisationSHTTPSServerAddress,
+        localizedRecovery:
+            Copy.messages.failureCheckTheAddressWithYourAdministrator,
       );
     }
     return base;

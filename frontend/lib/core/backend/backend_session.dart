@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/security/secure_storage.dart';
@@ -12,6 +14,11 @@ import 'backend_config.dart';
 import 'backend_transport.dart';
 
 /// Durable enrolment and rotating tokens, held only in platform secure storage.
+///
+/// The enrolment state moves only through [BackendConfig.apply]: sign-in
+/// starts, then succeeds or fails; a refresh the server refuses with 401 or
+/// 403 revokes. Nothing here waits on the network to answer what the device
+/// may do: [config] and [authority] read the saved session and the clock.
 final class BackendSession {
   /// Creates the session. A fake transport and secure store make tests isolated.
   BackendSession({
@@ -37,6 +44,9 @@ final class BackendSession {
   TokenPair? _tokens;
   Future<bool>? _refreshing;
 
+  /// When the server last confirmed the grant during this run.
+  DateTime? _confirmedAt;
+
   /// Stable local device identifier; no provider key exists in this object.
   final String deviceId;
 
@@ -48,6 +58,28 @@ final class BackendSession {
 
   /// Emits only after a durable local change or reachability change.
   Stream<BackendConfig> get changes => _changes.stream;
+
+  /// How far the cached grant reaches now, from the saved session and the
+  /// clock alone.
+  AuthorityState get authority {
+    if (_tokens == null) {
+      // A revoked device keeps its identity; it has signed in before.
+      return _config.state == EnrolmentState.revoked
+          ? AuthorityState.cachedExpired
+          : AuthorityState.neverSignedIn;
+    }
+    final DateTime now = _clock.nowUtc();
+    final DateTime? until = _config.grantValidUntil;
+    if (until == null || !until.isAfter(now)) {
+      return AuthorityState.cachedExpired;
+    }
+    final DateTime? confirmed = _confirmedAt;
+    if (confirmed != null &&
+        now.difference(confirmed) <= AppConstants.backend.grantFreshFor) {
+      return AuthorityState.fresh;
+    }
+    return AuthorityState.cachedValid;
+  }
 
   /// Sends ciphertext with the same token rotation and offline policy as JSON.
   Future<({int status, Uint8List body})> sendBytes({
@@ -81,10 +113,13 @@ final class BackendSession {
   }
 
   /// Whether an online call is permitted by the cached grant and offline switch.
-  bool get canUseBackend =>
-      !_offline() &&
-      _tokens != null &&
-      _config.grantValidUntil?.isAfter(_clock.nowUtc()) == true;
+  bool get canUseBackend {
+    if (_offline()) {
+      return false;
+    }
+    final AuthorityState now = authority;
+    return now == AuthorityState.fresh || now == AuthorityState.cachedValid;
+  }
 
   /// Restores the sign-in before the app starts. No network is touched.
   Future<Result<void>> restore() async {
@@ -125,18 +160,22 @@ final class BackendSession {
         grantValidUntil: DateTime.tryParse(
           value['grantValidUntil'] as String? ?? '',
         ),
-        state: _tokens == null
-            ? EnrolmentState.notEnrolled
-            : EnrolmentState.enrolled,
+        state: _tokens != null
+            ? EnrolmentState.enrolled
+            : value['state'] == EnrolmentState.revoked.name
+            ? EnrolmentState.revoked
+            : EnrolmentState.notEnrolled,
       );
-      if (_config.accountId case final String id) await linkAccount?.call(id);
+      if (_config.accountId case final String id when _tokens != null) {
+        await linkAccount?.call(id);
+      }
       return const Success<void>(null);
     } on Object {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message: 'The saved sign-in could not be read.',
-          recoveryAction:
-              'Check the account settings. Your local work is unchanged.',
+          localizedMessage: Copy.messages.failureTheSavedSignInCouldNotBe,
+          localizedRecovery:
+              Copy.messages.failureCheckTheAccountSettingsYourLocalWork,
         ),
       );
     }
@@ -151,20 +190,24 @@ final class BackendSession {
         uri.userInfo.isNotEmpty ||
         uri.hasQuery ||
         uri.hasFragment) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         ValidationFailure(
-          message: 'Enter the organisation’s HTTPS server address.',
-          recoveryAction: 'Check the address with your administrator.',
+          localizedMessage:
+              Copy.messages.failureEnterTheOrganisationSHTTPSServerAddress,
+          localizedRecovery:
+              Copy.messages.failureCheckTheAddressWithYourAdministrator,
         ),
       );
     }
     if (_tokens != null &&
         (uri.toString() != _config.baseUrl ||
             organisationId.trim() != _config.organisationId)) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         ValidationFailure(
-          message: 'Sign out before changing organisation.',
-          recoveryAction: 'Keep the current account or sign out first.',
+          localizedMessage:
+              Copy.messages.failureSignOutBeforeChangingOrganisation,
+          localizedRecovery:
+              Copy.messages.failureKeepTheCurrentAccountOrSignOut,
         ),
       );
     }
@@ -178,9 +221,11 @@ final class BackendSession {
     );
   }
 
-  /// Signs in once, caches identity and roles durably, then reconciles attribution.
+  /// Signs in once, caches identity and roles durably, then reconciles
+  /// attribution. The state moves enrolling, then enrolled or back.
   Future<Result<void>> signIn(String email, String password) async {
     if (_offline()) return const FailureResult<void>(NetworkFailure());
+    _publish(_config.apply(EnrolmentEvent.start));
     try {
       final TokenPair tokens = await BackendApiClient(send: _send).login(
         email: email.trim(),
@@ -189,18 +234,21 @@ final class BackendSession {
         organisationId: _config.organisationId ?? '',
       );
       final BackendConfig identity = await _identity(tokens, email.trim());
-      final Result<void> saved = await _save(identity, tokens);
-      if (saved is FailureResult<void>) return saved;
+      final Result<void> saved = await _save(
+        identity.apply(EnrolmentEvent.succeed),
+        tokens,
+      );
+      if (saved is FailureResult<void>) {
+        _publish(_config.apply(EnrolmentEvent.fail));
+        return saved;
+      }
+      _confirmedAt = _clock.nowUtc();
       if (identity.accountId case final String id) await linkAccount?.call(id);
       return const Success<void>(null);
     } on Object catch (error) {
+      _publish(_config.apply(EnrolmentEvent.fail));
       return FailureResult<void>(
-        error is Failure
-            ? error
-            : const PermissionFailure(
-                message: 'Sign-in was not accepted.',
-                recoveryAction: 'Check your email, password and organisation.',
-              ),
+        error is Failure ? error : BackendApiClient.notAccepted,
       );
     }
   }
@@ -235,7 +283,8 @@ final class BackendSession {
     }
   }
 
-  /// Refreshes silently. Network failure preserves all local authority and input.
+  /// Refreshes silently. Network failure preserves all local authority and
+  /// input; the server refusing the refresh token revokes the device.
   Future<bool> refresh() async {
     if (_tokens == null || _offline()) return false;
     final Future<bool>? running = _refreshing;
@@ -250,10 +299,19 @@ final class BackendSession {
   }
 
   Future<bool> _refresh() async {
+    final TokenPair tokens;
     try {
-      final TokenPair tokens = await BackendApiClient(
+      tokens = await BackendApiClient(
         send: _send,
-      ).refresh(refreshToken: _tokens!.refreshToken, reachable: true);
+      ).refresh(refreshToken: _tokens!.refreshToken);
+    } on PermissionFailure {
+      await _save(_config.apply(EnrolmentEvent.revoke), null);
+      return false;
+    } on Object {
+      _reachability(false);
+      return false;
+    }
+    try {
       // Rotation consumes the previous token. Persist its successor before any
       // subsequent network call so a dropped /me response cannot lose it.
       if (await _save(_config, tokens) is FailureResult<void>) return false;
@@ -261,7 +319,13 @@ final class BackendSession {
         tokens,
         _config.accountEmail ?? '',
       );
-      return await _save(identity, tokens) is Success<void>;
+      final bool saved =
+          await _save(identity.apply(EnrolmentEvent.succeed), tokens)
+              is Success<void>;
+      if (saved) {
+        _confirmedAt = _clock.nowUtc();
+      }
+      return saved;
     } on Object {
       _reachability(false);
       return false;
@@ -281,6 +345,7 @@ final class BackendSession {
         /* Local sign-out remains available offline. */
       }
     }
+    _confirmedAt = null;
     return _save(
       BackendConfig(
         baseUrl: _config.baseUrl,
@@ -290,6 +355,7 @@ final class BackendSession {
     );
   }
 
+  /// The identity `/auth/me` returns, still [EnrolmentState.enrolling].
   Future<BackendConfig> _identity(TokenPair tokens, String email) async {
     final response = await _send(
       method: 'GET',
@@ -328,7 +394,7 @@ final class BackendSession {
       aiAvailable: body['aiAvailable'] == true,
       grants: Map<String, String?>.unmodifiable(grants),
       grantValidUntil: DateTime.parse(until),
-      state: EnrolmentState.enrolled,
+      state: EnrolmentState.enrolling,
     );
   }
 
@@ -344,33 +410,42 @@ final class BackendSession {
         'aiAvailable': next.aiAvailable,
         'grants': next.grants,
         'grantValidUntil': next.grantValidUntil?.toIso8601String(),
+        'state': next.state.name,
         'accessToken': tokens?.accessToken,
         'refreshToken': tokens?.refreshToken,
       }),
     );
     if (result is Success<void>) {
-      _config = next;
       _tokens = tokens;
-      _changes.add(next);
+      _publish(next);
     }
     return result;
   }
 
+  /// Makes [next] current and tells observers. Nothing is persisted here.
+  void _publish(BackendConfig next) {
+    _config = next;
+    if (!_changes.isClosed) {
+      _changes.add(next);
+    }
+  }
+
   void _reachability(bool reachable) {
     if (_config.reachable == reachable) return;
-    _config = BackendConfig(
-      baseUrl: _config.baseUrl,
-      organisationId: _config.organisationId,
-      accountEmail: _config.accountEmail,
-      accountId: _config.accountId,
-      role: _config.role,
-      aiAvailable: _config.aiAvailable,
-      grants: _config.grants,
-      state: _config.state,
-      grantValidUntil: _config.grantValidUntil,
-      reachable: reachable,
+    _publish(
+      BackendConfig(
+        baseUrl: _config.baseUrl,
+        organisationId: _config.organisationId,
+        accountEmail: _config.accountEmail,
+        accountId: _config.accountId,
+        role: _config.role,
+        aiAvailable: _config.aiAvailable,
+        grants: _config.grants,
+        state: _config.state,
+        grantValidUntil: _config.grantValidUntil,
+        reachable: reachable,
+      ),
     );
-    _changes.add(_config);
   }
 
   /// Closes the observer stream when its provider scope is disposed.

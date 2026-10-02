@@ -36,12 +36,10 @@ Future<Result<R>> executeIsolate<M, R>(
           onProgress?.call(1);
           return Success<R>(value);
         }
-        final Result<R> raced = await Future.any<Result<R>>(<Future<Result<R>>>[
+        final Result<R> raced = await cancel.race<Result<R>>(
           work.then(Success<R>.new),
-          cancel.whenCancelled.then((_) {
-            return FailureResult<R>(const CancelledFailure());
-          }),
-        ]);
+          onCancel: () => FailureResult<R>(const CancelledFailure()),
+        );
         if (raced is Success<R>) {
           onProgress?.call(1);
         }

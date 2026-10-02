@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:ui' show Rect;
 
@@ -8,6 +7,7 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:image/image.dart' as img;
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -42,16 +42,17 @@ final class _OnDeviceOcr implements OcrService {
     }
     final File file = File(imagePath);
     if (!await file.exists()) {
-      throw const ValidationFailure(
-        message: 'That photo is not on this device.',
-        recoveryAction: 'Capture the photo again, then try again.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureThatPhotoIsNotOnThisDevice,
+        localizedRecovery:
+            Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
       );
     }
     // ML Kit decodes and reads natively from the path; this isolate only
     // waits on the platform channel. Calling the channel from a runner
     // isolate would not move that native work, so cancel closes the reader.
     if (Platform.isAndroid || Platform.isIOS) {
-      return _recogniseNative(imagePath, cancel);
+      return recogniseNativeOcr(imagePath, cancel);
     }
     final Result<Map<String, Object?>> result = await runIsolate(
       _recognisePath,
@@ -64,7 +65,9 @@ final class _OnDeviceOcr implements OcrService {
   }
 }
 
-Future<OcrResult> _recogniseNative(
+/// Native platform boundary, exposed for channel-level lifecycle regression.
+@visibleForTesting
+Future<OcrResult> recogniseNativeOcr(
   String imagePath,
   CancellationToken? cancel,
 ) async {
@@ -72,11 +75,12 @@ Future<OcrResult> _recogniseNative(
     script: ml.TextRecognitionScript.latin,
   );
   try {
-    final ml.RecognizedText? recognised =
-        await Future.any(<Future<ml.RecognizedText?>>[
-          recognizer.processImage(ml.InputImage.fromFilePath(imagePath)),
-          if (cancel != null) cancel.whenCancelled.then((_) => null),
-        ]);
+    final Future<ml.RecognizedText> work = recognizer.processImage(
+      ml.InputImage.fromFilePath(imagePath),
+    );
+    final ml.RecognizedText? recognised = cancel == null
+        ? await work
+        : await cancel.race<ml.RecognizedText?>(work, onCancel: () => null);
     if (recognised == null) {
       throw const CancelledFailure();
     }
@@ -96,9 +100,9 @@ Future<OcrResult> _recogniseNative(
   } on CancelledFailure {
     rethrow;
   } on Object {
-    throw const ValidationFailure(
-      message: 'That photo could not be read on this device.',
-      recoveryAction: 'Use another photo or enter the value by hand.',
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.failureThatPhotoCouldNotBeReadOn,
+      localizedRecovery: Copy.messages.failureUseAnotherPhotoOrEnterTheValue,
     );
   } finally {
     await recognizer.close();
@@ -142,15 +146,15 @@ const double _readShare = 0.5;
 OcrResult _decodePayload(Map<String, Object?> payload) {
   final Object? error = payload['error'];
   if (error == 'missing') {
-    throw const ValidationFailure(
-      message: 'That photo is not on this device.',
-      recoveryAction: 'Capture the photo again, then try again.',
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.failureThatPhotoIsNotOnThisDevice,
+      localizedRecovery: Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
     );
   }
   if (error == 'unreadable') {
-    throw const ValidationFailure(
-      message: 'That photo could not be read as an image.',
-      recoveryAction: 'Capture the photo again, then try again.',
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.failureThatPhotoCouldNotBeReadAs,
+      localizedRecovery: Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
     );
   }
   final String text = payload['text'] as String? ?? '';

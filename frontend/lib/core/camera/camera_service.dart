@@ -15,10 +15,12 @@ part 'camera_preview_state.dart';
 part 'device_camera_service.dart';
 
 /// Camera preview and shutter. Features never call a camera plugin
-/// (FE-STR-11). Real builds may shutter through [PhotoPicker.take] with a
-/// placeholder preview when no camera package is available.
+/// (FE-STR-11). Android, iOS and the web open the live `camera` preview,
+/// which also implements [CameraPreviewSurface]; desktops have no live
+/// preview and shutter through [PhotoPicker.take].
 abstract interface class CameraService {
-  /// Platform-backed service that shutters via [picker].
+  /// The live device camera on Android, iOS and the web; the photo picker
+  /// everywhere else, or whenever [picker] is given.
   factory CameraService({PhotoPicker? picker}) {
     if (picker == null &&
         (kIsWeb ||
@@ -49,11 +51,13 @@ abstract interface class CameraService {
   /// (FE-TEST-03).
   const factory CameraService.unavailable() = _UnavailableCameraService;
 
-  /// Scripted stand-in for widget and unit tests.
+  /// Scripted stand-in for widget and unit tests. [startFailure] makes every
+  /// start and resume end in the failed state with that failure.
   factory CameraService.fake({
     CameraPreviewState initial = CameraPreviewState.running,
     Uint8List? pictureBytes,
     Failure? takeFailure,
+    Failure? startFailure,
     Size previewSize = const Size(1280, 720),
     double minZoom = 1,
     double maxZoom = 8,
@@ -62,6 +66,7 @@ abstract interface class CameraService {
       initial: initial,
       pictureBytes: pictureBytes ?? Uint8List.fromList(<int>[0xFF, 0xD8, 0xFF]),
       takeFailure: takeFailure,
+      startFailure: startFailure,
       previewSize: previewSize,
       minZoom: minZoom,
       maxZoom: maxZoom,
@@ -76,9 +81,6 @@ abstract interface class CameraService {
 
   /// Current flash mode.
   CameraFlashMode get flashMode;
-
-  /// Whether the composition grid is on.
-  bool get gridEnabled;
 
   /// Current zoom factor within [minZoom]–[maxZoom].
   double get zoom;
@@ -115,9 +117,6 @@ abstract interface class CameraService {
 
   /// Clamps [factor] into [minZoom]–[maxZoom] and applies it.
   Future<double> setZoom(double factor);
-
-  /// Turns the composition grid on or off.
-  Future<void> setGridEnabled(bool enabled);
 }
 
 /// Process-wide camera. Default is unavailable until [main] overrides.
@@ -130,8 +129,8 @@ final Provider<CameraService> cameraServiceProvider = Provider<CameraService>((
 final class _UnavailableCameraService implements CameraService {
   const _UnavailableCameraService();
 
-  static const ProviderFailure _fail = ProviderFailure(
-    message: Copy.photoNoCamera,
+  static final ProviderFailure _fail = ProviderFailure(
+    localizedMessage: Copy.messages.photoNoCamera,
   );
 
   @override
@@ -145,9 +144,6 @@ final class _UnavailableCameraService implements CameraService {
   CameraFlashMode get flashMode => CameraFlashMode.off;
 
   @override
-  bool get gridEnabled => false;
-
-  @override
   double get zoom => 1;
 
   @override
@@ -157,7 +153,7 @@ final class _UnavailableCameraService implements CameraService {
   double get maxZoom => 1;
 
   @override
-  Future<Result<void>> start() async => const FailureResult<void>(_fail);
+  Future<Result<void>> start() async => FailureResult<void>(_fail);
 
   @override
   Future<Result<void>> stop() async => const Success<void>(null);
@@ -166,11 +162,11 @@ final class _UnavailableCameraService implements CameraService {
   Future<Result<void>> pause() async => const Success<void>(null);
 
   @override
-  Future<Result<void>> resume() async => const FailureResult<void>(_fail);
+  Future<Result<void>> resume() async => FailureResult<void>(_fail);
 
   @override
   Future<Result<Uint8List>> takePicture() async {
-    return const FailureResult<Uint8List>(_fail);
+    return FailureResult<Uint8List>(_fail);
   }
 
   @override
@@ -184,9 +180,6 @@ final class _UnavailableCameraService implements CameraService {
 
   @override
   Future<double> setZoom(double factor) async => 1;
-
-  @override
-  Future<void> setGridEnabled(bool enabled) async {}
 }
 
 final class _FakeCameraService implements CameraService {
@@ -194,6 +187,7 @@ final class _FakeCameraService implements CameraService {
     required CameraPreviewState initial,
     required this.pictureBytes,
     required this.takeFailure,
+    required this.startFailure,
     required this.previewSize,
     required this.minZoom,
     required this.maxZoom,
@@ -204,6 +198,7 @@ final class _FakeCameraService implements CameraService {
 
   final Uint8List pictureBytes;
   final Failure? takeFailure;
+  final Failure? startFailure;
   @override
   final Size previewSize;
   @override
@@ -213,7 +208,6 @@ final class _FakeCameraService implements CameraService {
 
   CameraPreviewState _state;
   CameraFlashMode _flash = CameraFlashMode.off;
-  bool _grid = false;
   double _zoom = 1;
   final StreamController<CameraPreviewState> _controller;
 
@@ -222,9 +216,6 @@ final class _FakeCameraService implements CameraService {
 
   @override
   CameraFlashMode get flashMode => _flash;
-
-  @override
-  bool get gridEnabled => _grid;
 
   @override
   double get zoom => _zoom;
@@ -239,13 +230,18 @@ final class _FakeCameraService implements CameraService {
   @override
   Future<Result<void>> start() async {
     _emit(CameraPreviewState.starting);
+    final Failure? failure = startFailure;
+    if (failure != null) {
+      _emit(CameraPreviewState.failed);
+      return FailureResult<void>(failure);
+    }
     _emit(CameraPreviewState.running);
     return const Success<void>(null);
   }
 
   @override
   Future<Result<void>> stop() async {
-    _emit(CameraPreviewState.failed);
+    _emit(CameraPreviewState.starting);
     return const Success<void>(null);
   }
 
@@ -258,10 +254,7 @@ final class _FakeCameraService implements CameraService {
   }
 
   @override
-  Future<Result<void>> resume() async {
-    _emit(CameraPreviewState.running);
-    return const Success<void>(null);
-  }
+  Future<Result<void>> resume() => start();
 
   @override
   Future<Result<Uint8List>> takePicture() async {
@@ -295,11 +288,6 @@ final class _FakeCameraService implements CameraService {
     _zoom = factor.clamp(minZoom, maxZoom);
     return _zoom;
   }
-
-  @override
-  Future<void> setGridEnabled(bool enabled) async {
-    _grid = enabled;
-  }
 }
 
 final class _PhotoPickerCameraService implements CameraService {
@@ -309,7 +297,6 @@ final class _PhotoPickerCameraService implements CameraService {
   final StreamController<CameraPreviewState> _controller =
       StreamController<CameraPreviewState>.broadcast();
   CameraFlashMode _flash = CameraFlashMode.off;
-  bool _grid = false;
   double _zoom = 1;
   CameraPreviewState _state = CameraPreviewState.failed;
 
@@ -321,9 +308,6 @@ final class _PhotoPickerCameraService implements CameraService {
 
   @override
   CameraFlashMode get flashMode => _flash;
-
-  @override
-  bool get gridEnabled => _grid;
 
   @override
   double get zoom => _zoom;
@@ -345,8 +329,8 @@ final class _PhotoPickerCameraService implements CameraService {
   Future<Result<void>> start() async {
     if (!_picker.canTakePhoto) {
       _emit(CameraPreviewState.failed);
-      return const FailureResult<void>(
-        ProviderFailure(message: Copy.photoNoCamera),
+      return FailureResult<void>(
+        ProviderFailure(localizedMessage: Copy.messages.photoNoCamera),
       );
     }
     _emit(CameraPreviewState.starting);
@@ -372,8 +356,8 @@ final class _PhotoPickerCameraService implements CameraService {
   Future<Result<void>> resume() async {
     if (!_picker.canTakePhoto) {
       _emit(CameraPreviewState.failed);
-      return const FailureResult<void>(
-        ProviderFailure(message: Copy.photoNoCamera),
+      return FailureResult<void>(
+        ProviderFailure(localizedMessage: Copy.messages.photoNoCamera),
       );
     }
     _emit(CameraPreviewState.running);
@@ -385,8 +369,8 @@ final class _PhotoPickerCameraService implements CameraService {
     final Result<List<Uint8List>> result = await _picker.take(longEdge: 2048);
     return result.fold(FailureResult<Uint8List>.new, (List<Uint8List> photos) {
       if (photos.isEmpty) {
-        return const FailureResult<Uint8List>(
-          CancelledFailure(message: Copy.photoPickFailed),
+        return FailureResult<Uint8List>(
+          CancelledFailure(localizedMessage: Copy.messages.photoPickFailed),
         );
       }
       return Success<Uint8List>(photos.first);
@@ -415,10 +399,5 @@ final class _PhotoPickerCameraService implements CameraService {
   Future<double> setZoom(double factor) async {
     _zoom = factor.clamp(minZoom, maxZoom);
     return _zoom;
-  }
-
-  @override
-  Future<void> setGridEnabled(bool enabled) async {
-    _grid = enabled;
   }
 }

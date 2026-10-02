@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -20,7 +19,6 @@ abstract final class IsolateRunner {
 }
 
 /// Isolates still running, so tests can prove cancel left none behind.
-@visibleForTesting
 int get debugLiveIsolates => support.debugLiveIsolates;
 
 /// Runs [task] off the UI thread with optional progress and cancellation.

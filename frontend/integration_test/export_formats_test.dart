@@ -14,6 +14,7 @@ import 'package:tapture/core/export/pdf/record_report.dart';
 import 'package:tapture/core/export/value_formatter.dart';
 import 'package:tapture/core/export/xlsx_writer.dart';
 import 'package:tapture/core/export/zip_package.dart';
+import 'package:tapture/features/exports/data/export_pdf.dart';
 import 'package:tapture/features/records/domain/record_entry.dart';
 
 import 'support/harness.dart';
@@ -45,6 +46,7 @@ void main() {
         dictionary: false,
         photoIndex: false,
         photoMode: 'filename',
+        pdfPhotos: 'thumbnail',
         delimiter: ',',
       ),
       records: rows,
@@ -56,8 +58,8 @@ void main() {
     final Uint8List xlsx = await _xlsx(request);
     final PdfDocument pdf = RecordReport.build(
       request,
-      engine: const PdfEngine(),
-      photoColumns: 2,
+      engine: exportPdfEngine(),
+      project: 'Field',
     );
     final ExportManifest manifest = ExportManifest(
       exportId: 'export-1',

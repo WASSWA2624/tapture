@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 
 import 'dimensions.dart';
@@ -13,43 +14,59 @@ class ThemePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Theme'),
-        actions: const <Widget>[
+        title: Text(Copy.of(context).galleryTheme),
+        actions: <Widget>[
           IconButton(
-            tooltip: 'Search',
+            tooltip: Copy.of(context).search,
             onPressed: _ignorePress,
-            icon: Icon(AppIcons.search),
+            icon: const Icon(AppIcons.search),
           ),
         ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(Space.x4),
-        children: const <Widget>[
-          TextField(decoration: InputDecoration(labelText: 'Name')),
-          SizedBox(height: Space.x4),
+        children: <Widget>[
+          TextField(
+            decoration: InputDecoration(
+              labelText: Copy.of(context).gallerySampleName,
+            ),
+          ),
+          const SizedBox(height: Space.x4),
           Wrap(
             spacing: Space.x2,
             runSpacing: Space.x2,
             children: <Widget>[
-              FilledButton(onPressed: _ignorePress, child: Text('Save')),
-              OutlinedButton(onPressed: _ignorePress, child: Text('Cancel')),
-              TextButton(onPressed: _ignorePress, child: Text('Skip')),
+              FilledButton(
+                onPressed: _ignorePress,
+                child: Text(Copy.of(context).save),
+              ),
+              OutlinedButton(
+                onPressed: _ignorePress,
+                child: Text(Copy.of(context).cancel),
+              ),
+              TextButton(
+                onPressed: _ignorePress,
+                child: Text(Copy.of(context).reviewSkip),
+              ),
             ],
           ),
-          SizedBox(height: Space.x4),
+          const SizedBox(height: Space.x4),
           Wrap(
             spacing: Space.x2,
             runSpacing: Space.x2,
             children: <Widget>[
-              Chip(label: Text('Chip')),
-              InputChip(label: Text('Filter'), onPressed: _ignorePress),
+              Chip(label: Text(Copy.of(context).gallerySampleChip)),
+              InputChip(
+                label: Text(Copy.of(context).gallerySampleFilter),
+                onPressed: _ignorePress,
+              ),
             ],
           ),
-          SizedBox(height: Space.x4),
+          const SizedBox(height: Space.x4),
           Card(
             child: ListTile(
-              title: Text('List tile'),
-              subtitle: Text('Secondary line'),
+              title: Text(Copy.of(context).gallerySampleListTile),
+              subtitle: Text(Copy.of(context).gallerySampleSecondaryLine),
             ),
           ),
         ],

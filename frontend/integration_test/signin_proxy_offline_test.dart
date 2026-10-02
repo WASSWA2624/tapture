@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/ai/ai_service.dart';
-import 'package:tapture/core/backend/grant_cache.dart';
-import 'package:tapture/core/backend/offline_authority.dart';
+import 'package:tapture/core/backend/backend_config.dart';
+import 'package:tapture/core/backend/backend_session.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/export/export_record.dart';
+import 'package:tapture/core/security/secure_storage.dart';
+import 'package:tapture/features/account/domain/offline_authority.dart';
+import 'package:tapture/features/account/domain/role_gate.dart';
+import 'package:tapture/features/account/presentation/account_session.dart';
 import 'package:tapture/features/records/domain/record_entry.dart';
 
 import 'support/harness.dart';
@@ -39,31 +45,48 @@ void main() {
     expect(app.backend.signIn(), isFalse);
     expect(app.outboundCallCount, 0);
 
-    final Map<String, String> secrets = <String, String>{};
-    final GrantCache cache = GrantCache(
-      secrets: secrets,
-      now: () => app.clock.nowUtc(),
+    // A session saved at sign-in, restored with no network, past its grant.
+    final BackendSession session = BackendSession(
+      storage: SecureStorage.fake(
+        backing: <SecretKey, String>{
+          SecretKey.backendSession: jsonEncode(<String, Object?>{
+            'baseUrl': 'https://organisation.test',
+            'accessToken': 'access',
+            'refreshToken': 'refresh',
+            'accountId': 'account',
+            'role': 'project_manager',
+            'grants': <String, Object?>{'project': null},
+            'grantValidUntil': app.clock
+                .nowUtc()
+                .add(const Duration(days: 30))
+                .toIso8601String(),
+          }),
+        },
+      ),
+      clock: app.clock,
+      deviceId: 'device',
+      offline: () => true,
     );
-    cache.save(
-      accessToken: 'access',
-      refreshToken: 'refresh',
-      organisationId: 'org-1',
-      refreshedAt: app.clock.nowUtc(),
-    );
+    addTearDown(session.dispose);
+    await session.restore();
     app.clock.advance(const Duration(days: 45));
-    final OfflineAuthority authority = OfflineAuthority(
-      cache.read(at: app.clock.nowUtc()),
+    final OfflineAuthority authority = authorityFor(
+      session,
+      projectId: 'project',
     );
-    expect(authority.may(WorkCapability.capture), isTrue);
-    expect(authority.may(WorkCapability.review), isTrue);
-    expect(authority.may(WorkCapability.edit), isTrue);
-    expect(authority.may(WorkCapability.export), isTrue);
-    expect(authority.may(WorkCapability.relay), isFalse);
-    expect(authority.refusal(WorkCapability.relay), isNotNull);
-    expect(authority.may(WorkCapability.aiProxy), isFalse);
-    expect(authority.refusal(WorkCapability.aiProxy), isNotNull);
-    expect(authority.may(WorkCapability.roleChange), isFalse);
-    expect(authority.refusal(WorkCapability.roleChange), isNotNull);
+    expect(authority.state, AuthorityState.cachedExpired);
+    expect(session.config.needsSignIn, isFalse);
+    expect(authority.may(RoleCapability.capture), isTrue);
+    expect(authority.may(RoleCapability.review), isTrue);
+    expect(authority.may(RoleCapability.export), isTrue);
+    for (final RoleCapability serverBound in <RoleCapability>[
+      RoleCapability.relay,
+      RoleCapability.aiProxy,
+      RoleCapability.manageMembers,
+    ]) {
+      expect(authority.may(serverBound), isFalse);
+      expect(authority.refusal(serverBound), AuthorityRefusal.grantExpired);
+    }
     final RecordEntry later = await app.capture(
       fields: const <String, String>{'serial': 'OFF-2'},
     );

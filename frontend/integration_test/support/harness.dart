@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/export/csv_writer.dart';
 import 'package:tapture/core/export/export_record.dart';
@@ -54,6 +56,7 @@ final class TestApp {
     required this.meetings,
     required this.context,
     required this.contextRecords,
+    required this._callsAtBoot,
   });
 
   /// In-memory database.
@@ -68,8 +71,11 @@ final class TestApp {
   /// Fake organisation server.
   final FakeBackend backend;
 
-  /// Refuses a real socket.
+  /// Counts and refuses every real connection: dart:io HTTP clients and raw
+  /// sockets are routed to it while any test app is booted.
   final SocketGuard socket;
+
+  final int _callsAtBoot;
 
   /// Records store.
   final RecordRepositoryImpl records;
@@ -83,8 +89,9 @@ final class TestApp {
   /// Per-record context writes.
   final ContextRecordWriter contextRecords;
 
-  /// Real outbound attempts. Zero is the offline contract.
-  int get outboundCallCount => socket.calls;
+  /// Real outbound attempts since this app booted, from any code in the
+  /// process. Zero is the offline contract.
+  int get outboundCallCount => socket.calls - _callsAtBoot;
 
   /// Closes the database.
   Future<void> dispose() => db.close();
@@ -165,6 +172,7 @@ final class TestApp {
         dictionary: false,
         photoIndex: false,
         photoMode: 'filename',
+        pdfPhotos: 'thumbnail',
         delimiter: ',',
       ),
       records: rows,
@@ -177,6 +185,7 @@ Future<TestApp> bootTestApp({DateTime? now}) async {
   final TestClock clock = TestClock(now ?? DateTime.utc(2026, 9, 28));
   final AppDatabase db = AppDatabase.memory();
   final IdService ids = UuidV7Service.sequence(clock);
+  _refuseNetwork();
   await seedProjectRow(db, 'project-1', name: 'Field');
   await seedTemplateRow(
     db,
@@ -191,7 +200,8 @@ Future<TestApp> bootTestApp({DateTime? now}) async {
     clock: clock,
     ai: FakeAiService(),
     backend: FakeBackend(),
-    socket: SocketGuard(),
+    socket: _network,
+    callsAtBoot: _network.calls,
     records: RecordRepositoryImpl(
       db: db,
       clock: clock,
@@ -219,4 +229,50 @@ Future<TestApp> bootTestApp({DateTime? now}) async {
       operator: 'Ada',
     ),
   );
+}
+
+/// The guard every booted app shares: the network is refused process-wide,
+/// so a call from any layer is counted, not only one a fake reports.
+final SocketGuard _network = SocketGuard();
+
+bool _refusing = false;
+
+/// Routes dart:io HTTP connections and raw sockets to [_network], once.
+void _refuseNetwork() {
+  if (_refusing) {
+    return;
+  }
+  _refusing = true;
+  HttpOverrides.global = _RefusedHttp();
+  IOOverrides.global = _RefusedSockets();
+}
+
+/// Every HTTP client connects through [_network], which refuses it.
+final class _RefusedHttp extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..connectionFactory = (Uri url, String? _, int? _) async =>
+          _network.block(url.host);
+  }
+}
+
+/// Raw socket connections are refused through [_network].
+final class _RefusedSockets extends IOOverrides {
+  @override
+  Future<Socket> socketConnect(
+    Object? host,
+    int port, {
+    Object? sourceAddress,
+    int sourcePort = 0,
+    Duration? timeout,
+  }) async => _network.block('$host:$port');
+
+  @override
+  Future<ConnectionTask<Socket>> socketStartConnect(
+    Object? host,
+    int port, {
+    Object? sourceAddress,
+    int sourcePort = 0,
+  }) async => _network.block('$host:$port');
 }

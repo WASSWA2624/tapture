@@ -9,6 +9,11 @@ Future<List<int>> readCloudFileRange(String path, int offset, int length) {
   return range.readCloudFileRange(path, offset, length);
 }
 
+/// The size of the file at [path], or null when it is not there.
+Future<int?> cloudFileLength(String path) {
+  return range.cloudFileLength(path);
+}
+
 /// A [CloudBytes] view of [path] that never loads the whole file.
 CloudBytes cloudFile(String path, int length) {
   return (

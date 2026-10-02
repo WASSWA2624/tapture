@@ -6,32 +6,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/nav_shell.dart';
 import 'package:tapture/app/route_paths.dart';
-import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/backend/backend_config.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/export/export_request.dart';
-import 'package:tapture/core/widgets/app_brand_lockup.dart';
-import 'package:tapture/core/widgets/app_icons.dart';
-import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/files/picked_document.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/app_search_field.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/record_status.dart';
-import 'package:tapture/core/widgets/responsive/breakpoints.dart';
-import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/account/presentation/account_route.dart';
 import 'package:tapture/features/account/presentation/account_session.dart';
 import 'package:tapture/features/account/presentation/relay_route.dart';
+import 'package:tapture/features/account/presentation/sign_in_route.dart';
 import 'package:tapture/features/capture/capture.dart';
 import 'package:tapture/features/cloud/presentation/destination_list_screen.dart';
 import 'package:tapture/features/cloud/presentation/upload_history_screen.dart';
 import 'package:tapture/features/context/presentation/context_hierarchy_screen.dart';
 import 'package:tapture/features/context/presentation/context_preset_list.dart';
-import 'package:tapture/features/exports/presentation/export_screen.dart';
-import 'package:tapture/features/import/presentation/import_screen.dart';
+import 'package:tapture/features/exports/presentation/export_workflow_screen.dart';
+import 'package:tapture/features/import/import.dart'
+    show
+        ImportPurposeStep,
+        ImportScreen,
+        ImportSummaryScreen,
+        RecordMappingScreen;
 import 'package:tapture/features/meetings/domain/meeting.dart';
 import 'package:tapture/features/meetings/presentation/meeting_create_screen.dart';
 import 'package:tapture/features/meetings/presentation/meeting_review_screen.dart';
@@ -46,6 +44,8 @@ import 'package:tapture/features/projects/presentation/project_filters_screen.da
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/presentation/project_settings_screen.dart';
+import 'package:tapture/features/projects/projects.dart' show ProjectListRow;
+import 'package:tapture/features/quality/presentation/duplicate_compare_screen.dart';
 import 'package:tapture/features/quality/presentation/duplicates_screen.dart';
 import 'package:tapture/features/quality/presentation/quality_summary_screen.dart';
 import 'package:tapture/features/quality/presentation/variance_screen.dart';
@@ -54,19 +54,24 @@ import 'package:tapture/features/records/presentation/record_edit_screen.dart';
 import 'package:tapture/features/records/presentation/record_history_screen.dart';
 import 'package:tapture/features/records/presentation/records_list_screen.dart';
 import 'package:tapture/features/records/presentation/recycle_bin_screen.dart';
-import 'package:tapture/features/reference/data/dataset_csv_import.dart';
-import 'package:tapture/features/reference/presentation/dataset_browser_screen.dart';
-import 'package:tapture/features/reference/presentation/dataset_key_screen.dart';
-import 'package:tapture/features/reference/presentation/dataset_list_screen.dart';
-import 'package:tapture/features/reference/presentation/dataset_row_edit_screen.dart';
-import 'package:tapture/features/review/presentation/batch_review_route.dart';
-import 'package:tapture/features/review/presentation/review_route.dart';
+import 'package:tapture/features/reference/reference.dart'
+    show
+        DatasetBrowserScreen,
+        DatasetImportDraft,
+        DatasetKeyScreen,
+        DatasetListScreen,
+        DatasetRowEditScreen;
+import 'package:tapture/features/review/review.dart'
+    show BatchReviewScreen, ReviewScreen;
 import 'package:tapture/features/settings/presentation/ai_provider_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/capture_settings_screen.dart';
-import 'package:tapture/features/settings/presentation/egress_summary_screen.dart';
+import 'package:tapture/features/settings/presentation/files_settings_screen.dart';
+import 'package:tapture/features/settings/presentation/language_settings_screen.dart';
+import 'package:tapture/features/settings/presentation/privacy_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
+import 'package:tapture/features/settings/presentation/storage_check_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/presentation/checklist_screen.dart';
@@ -118,10 +123,10 @@ abstract final class AppRoutes {
   static const String projectFilters = RoutePaths.projectFilters;
 
   /// Query key for the project whose structure is being copied.
-  static const String sourceQuery = 'source';
+  static const String sourceQuery = RoutePaths.sourceQuery;
 
   /// Query key for the editable suggested name on the create form.
-  static const String nameQuery = 'name';
+  static const String nameQuery = RoutePaths.nameQuery;
 
   /// Create form, optionally prefilled from [sourceId] and [name].
   static String projectCreateFrom({String? sourceId, String? name}) {
@@ -190,10 +195,6 @@ abstract final class AppRoutes {
   /// Field list for [id]. Task 094 owns the screen.
   static String template(String id) => '$templates/${Uri.encodeComponent(id)}';
 
-  /// Lookup binding for [fieldKey] on [id].
-  static String templateLookup(String id, String fieldKey) =>
-      '${templateField(id, fieldKey)}/lookup';
-
   /// Datasets for [projectId].
   static String projectDatasets(String projectId) =>
       RoutePaths.projectDatasets(projectId);
@@ -208,7 +209,7 @@ abstract final class AppRoutes {
 
   /// Context presets for [projectId].
   static String projectContextPresets(String projectId) =>
-      '${projectContext(projectId)}/presets';
+      RoutePaths.projectContextPresets(projectId);
 
   /// Dataset import for [projectId].
   static String projectDatasetImport(String projectId) =>
@@ -224,9 +225,6 @@ abstract final class AppRoutes {
     String datasetId,
     String rowId,
   ) => RoutePaths.projectDatasetRow(projectId, datasetId, rowId);
-
-  /// JSON export for [id]. Task 100 owns the screen.
-  static String templateExport(String id) => '${template(id)}/export';
 
   /// Add-field destination. Task 095 owns the sheet.
   static String templateFieldCreate(String id) => '${template(id)}/fields/new';
@@ -281,7 +279,9 @@ abstract final class AppRoutes {
   /// [more] so Settings stays in the branch stack. Task 159 owns the screen.
   static const String queue = RoutePaths.queue;
 
-  /// Export history. Nested under [more]. Task 207 owns the screen.
+  /// Legacy global export-history path. Exports belong to a project, so
+  /// it opens Projects; each project's exports live under
+  /// [projectExports].
   static const String exports = RoutePaths.exports;
 
   /// Records list for [projectId].
@@ -317,76 +317,16 @@ abstract final class AppRoutes {
   /// Query key for a filtered list opened from a home count.
   static const String filterQuery = RoutePaths.filterQuery;
 
-  /// Review list filter: records that need a person.
-  static const String reviewFilter = 'needsReview';
-
-  /// Process list filter: records waiting to be processed.
-  static const String processFilter = 'queued';
-
-  /// Export list filter: approved records ready to write out.
-  static const String exportFilter = 'approved';
-
-  /// Share list filter: finished export files.
-  static const String shareFilter = 'share';
-
-  /// Records already filtered to [filter].
-  static String recordsFiltered(String filter) {
-    return Uri(
-      path: records,
-      queryParameters: <String, String>{filterQuery: filter},
-    ).toString();
-  }
-
-  /// Queue already filtered to [filter].
-  static String queueFiltered(String filter) {
-    return Uri(
-      path: queue,
-      queryParameters: <String, String>{filterQuery: filter},
-    ).toString();
-  }
-
-  /// Export history already filtered to [filter].
-  static String exportsFiltered(String filter) {
-    return Uri(
-      path: exports,
-      queryParameters: <String, String>{filterQuery: filter},
-    ).toString();
-  }
-
-  /// Project records already filtered to [filter].
-  static String projectRecordsFiltered(String projectId, String filter) {
-    return Uri(
-      path: projectRecords(projectId),
-      queryParameters: <String, String>{filterQuery: filter},
-    ).toString();
-  }
-
-  /// Project queue already filtered to [filter].
-  static String projectQueueFiltered(String projectId, String filter) {
-    return Uri(
-      path: projectQueue(projectId),
-      queryParameters: <String, String>{filterQuery: filter},
-    ).toString();
-  }
-
-  /// Project export history already filtered to [filter].
-  static String projectExportsFiltered(String projectId, String filter) {
-    return Uri(
-      path: projectExports(projectId),
-      queryParameters: <String, String>{filterQuery: filter},
-    ).toString();
-  }
-
   /// Operator profile under Settings.
   static const String settingsOperator = RoutePaths.settingsOperator;
 
   /// Capture defaults under Settings.
   static const String settingsCapture = RoutePaths.settingsCapture;
 
-  /// AI section. The screen arrives in a later phase.
+  /// AI providers and keys under Settings.
   static const String settingsAi = RoutePaths.settingsAi;
 
-  /// Language section. The screen arrives in a later phase.
+  /// App and voice language under Settings.
   static const String settingsLanguage = RoutePaths.settingsLanguage;
 
   /// Appearance under Settings: system, light, dark or outdoor.
@@ -395,7 +335,10 @@ abstract final class AppRoutes {
   /// Storage usage under Settings.
   static const String settingsStorage = RoutePaths.settingsStorage;
 
-  /// Files section (specification "Data"). The screen arrives later.
+  /// Files checked against their records, under Storage.
+  static const String settingsStorageCheck = RoutePaths.settingsStorageCheck;
+
+  /// Files section (specification "Data"): export, import, uploads, merge.
   static const String settingsFiles = RoutePaths.settingsFiles;
 
   /// App lock under Settings.
@@ -410,8 +353,8 @@ abstract final class AppRoutes {
   /// Backend account and session under Settings.
   static const String settingsAccount = RoutePaths.settingsAccount;
 
-  /// Backend sign-in under Settings.
-  static const String settingsSignIn = RoutePaths.settingsSignIn;
+  /// The one sign-in, outside the shell like [lock].
+  static const String signIn = RoutePaths.signIn;
 
   /// Encrypted relay controls under Settings.
   static const String settingsRelay = RoutePaths.settingsRelay;
@@ -467,15 +410,16 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
 
 /// Where a launch opens. A configured install with no page to resume opens
 /// sign-in when it is not signed in: first run is gated, and only first run
-/// (task 024 step 23). After that a launch resumes the last page.
+/// (task 024 step 23). After that a launch resumes the last page, and an
+/// enrolled device never sees sign-in again, offline or not.
 String _initialLocation(SettingsStore store, {required bool signInFirst}) {
   final String stored = store.read(SettingKeys.lastLocation);
   if (stored.isEmpty && signInFirst) {
-    return AppRoutes.settingsSignIn;
+    return AppRoutes.signIn;
   }
   if (stored.isEmpty ||
       stored == AppRoutes.lock ||
-      stored == AppRoutes.settingsSignIn) {
+      stored == AppRoutes.signIn) {
     return AppRoutes.projects;
   }
   if (!_isInternalLocation(stored)) {
@@ -492,7 +436,7 @@ void _persistLastLocation(SettingsStore store, GoRouter router) {
     return;
   }
   // The lock and the sign-in gate are never where work resumes.
-  if (uri.path == AppRoutes.lock || uri.path == AppRoutes.settingsSignIn) {
+  if (uri.path == AppRoutes.lock || uri.path == AppRoutes.signIn) {
     return;
   }
   final String location = uri.toString();
@@ -517,6 +461,12 @@ List<RouteBase> get _routes {
         return const AppLockScreen();
       },
     ),
+    GoRoute(
+      path: AppRoutes.signIn,
+      builder: (BuildContext _, GoRouterState _) {
+        return const SignInRoute();
+      },
+    ),
     StatefulShellRoute.indexedStack(
       builder:
           (BuildContext _, GoRouterState _, StatefulNavigationShell shell) {
@@ -536,6 +486,26 @@ List<RouteBase> get _routes {
                   builder: (BuildContext _, GoRouterState _) {
                     return const ImportScreen();
                   },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'purpose',
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const ImportPurposeStep();
+                      },
+                    ),
+                    GoRoute(
+                      path: 'records',
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const RecordMappingScreen();
+                      },
+                    ),
+                    GoRoute(
+                      path: 'summary',
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const ImportSummaryScreen();
+                      },
+                    ),
+                  ],
                 ),
                 GoRoute(
                   path: 'new',
@@ -600,24 +570,40 @@ List<RouteBase> get _routes {
                     GoRoute(
                       path: 'duplicates',
                       metadata: _projectScoped,
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const DuplicatesScreen(
-                          pairs: <DuplicatePairRow>[],
+                      builder: (BuildContext _, GoRouterState state) {
+                        return DuplicatesScreen(
+                          projectId: state.pathParameters['projectId']!,
                         );
                       },
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: ':pairId',
+                          metadata: _projectScoped,
+                          builder: (BuildContext _, GoRouterState state) {
+                            return DuplicateCompareScreen(
+                              projectId: state.pathParameters['projectId']!,
+                              pairId: state.pathParameters['pairId']!,
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     GoRoute(
                       path: 'variance',
                       metadata: _projectScoped,
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const VarianceScreen(rows: <VarianceRow>[]);
+                      builder: (BuildContext _, GoRouterState state) {
+                        return VarianceScreen(
+                          projectId: state.pathParameters['projectId']!,
+                          recordId:
+                              state.uri.queryParameters[RoutePaths.recordQuery],
+                        );
                       },
                     ),
                     GoRoute(
                       path: 'review',
                       metadata: _projectScoped,
                       builder: (BuildContext _, GoRouterState state) {
-                        return BatchReviewRoute(
+                        return BatchReviewScreen(
                           projectId: state.pathParameters['projectId']!,
                         );
                       },
@@ -645,14 +631,9 @@ List<RouteBase> get _routes {
                     GoRoute(
                       path: 'quality',
                       metadata: _projectScoped,
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const QualitySummaryScreen(
-                          counts: (
-                            invalid: 0,
-                            duplicates: 0,
-                            conflicts: 0,
-                            unreviewed: 0,
-                          ),
+                      builder: (BuildContext _, GoRouterState state) {
+                        return QualitySummaryScreen(
+                          projectId: state.pathParameters['projectId']!,
                         );
                       },
                     ),
@@ -668,13 +649,15 @@ List<RouteBase> get _routes {
                     GoRoute(
                       path: 'deliverable',
                       metadata: _projectScoped,
-                      builder: (BuildContext _, GoRouterState state) {
-                        return ExportScreen(
-                          scope: ExportScopeKind.approved,
-                          count: 0,
-                          onExport: () {},
-                        );
-                      },
+                      redirect: (BuildContext _, GoRouterState state) => Uri(
+                        path: RoutePaths.projectDeliverables(
+                          state.pathParameters['projectId']!,
+                        ),
+                        query: state.uri.hasQuery ? state.uri.query : null,
+                        fragment: state.uri.hasFragment
+                            ? state.uri.fragment
+                            : null,
+                      ).toString(),
                     ),
                     GoRoute(
                       path: 'exports',
@@ -684,6 +667,24 @@ List<RouteBase> get _routes {
                           projectId: state.pathParameters['projectId']!,
                         );
                       },
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'deliverable',
+                          metadata: _projectScoped,
+                          builder: (BuildContext _, GoRouterState state) =>
+                              ExportWorkflowScreen(
+                                projectId: state.pathParameters['projectId']!,
+                              ),
+                        ),
+                      ],
+                    ),
+                    GoRoute(
+                      path: 'merge-history',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState state) =>
+                          ProjectMergeHistoryScreen(
+                            projectId: state.pathParameters['projectId']!,
+                          ),
                     ),
                     GoRoute(
                       path: 'merge',
@@ -751,6 +752,7 @@ List<RouteBase> get _routes {
                           builder: (BuildContext context, GoRouterState state) {
                             final Object? extra = state.extra;
                             return DatasetKeyScreen(
+                              projectId: state.pathParameters['projectId'],
                               draft: extra is DatasetImportDraft ? extra : null,
                             );
                           },
@@ -771,6 +773,8 @@ List<RouteBase> get _routes {
                               builder:
                                   (BuildContext context, GoRouterState state) {
                                     return DatasetRowEditScreen(
+                                      datasetId:
+                                          state.pathParameters['datasetId']!,
                                       rowId: state.pathParameters['rowId']!,
                                     );
                                   },
@@ -802,6 +806,18 @@ List<RouteBase> get _routes {
                   projectId: state.pathParameters['projectId'] ?? '',
                 );
               },
+              routes: <RouteBase>[
+                // Rapid mode, opened from capture's menu (task 012 step 20).
+                GoRoute(
+                  path: 'rapid',
+                  metadata: _projectScoped,
+                  builder: (BuildContext _, GoRouterState state) {
+                    return RapidModeScreen(
+                      projectId: state.pathParameters['projectId'] ?? '',
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -821,7 +837,7 @@ List<RouteBase> get _routes {
             GoRoute(
               path: AppRoutes.more,
               builder: (BuildContext _, GoRouterState _) {
-                return const SettingsScreen(showAppBar: false);
+                return const SettingsScreen();
               },
               routes: <RouteBase>[
                 GoRoute(
@@ -837,6 +853,12 @@ List<RouteBase> get _routes {
                   },
                 ),
                 GoRoute(
+                  path: 'language',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const LanguageSettingsScreen();
+                  },
+                ),
+                GoRoute(
                   path: 'appearance',
                   builder: (BuildContext _, GoRouterState _) {
                     return const AppearanceSettingsScreen();
@@ -846,6 +868,20 @@ List<RouteBase> get _routes {
                   path: 'storage',
                   builder: (BuildContext _, GoRouterState _) {
                     return const StorageSettingsScreen();
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'check',
+                      builder: (BuildContext _, GoRouterState _) {
+                        return const StorageCheckScreen();
+                      },
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: 'files',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const FilesSettingsScreen();
                   },
                 ),
                 GoRoute(
@@ -857,7 +893,7 @@ List<RouteBase> get _routes {
                 GoRoute(
                   path: 'uploads',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const UploadHistoryScreen(live: true);
+                    return const UploadHistoryScreen();
                   },
                 ),
                 GoRoute(
@@ -869,19 +905,13 @@ List<RouteBase> get _routes {
                 GoRoute(
                   path: 'privacy',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const EgressSummaryScreen();
+                    return const PrivacySettingsScreen();
                   },
                 ),
                 GoRoute(
                   path: 'account',
                   builder: (BuildContext _, GoRouterState _) {
                     return const AccountRoute();
-                  },
-                ),
-                GoRoute(
-                  path: 'sign-in',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const AccountRoute(signIn: true);
                   },
                 ),
                 GoRoute(
@@ -893,7 +923,7 @@ List<RouteBase> get _routes {
                 GoRoute(
                   path: 'ai',
                   builder: (BuildContext _, GoRouterState _) {
-                    return const _AiProviderRoute();
+                    return const AiProviderSettingsScreen();
                   },
                 ),
                 GoRoute(
@@ -936,9 +966,8 @@ List<RouteBase> get _routes {
                 ),
                 GoRoute(
                   path: 'exports',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const _RoutePage(name: 'exports');
-                  },
+                  redirect: (BuildContext _, GoRouterState _) =>
+                      AppRoutes.projects,
                 ),
               ],
             ),
@@ -958,17 +987,6 @@ List<RouteBase> get _routes {
     );
   }
   return routes;
-}
-
-class _AiProviderRoute extends ConsumerWidget {
-  const _AiProviderRoute();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return AiProviderSettingsScreen(
-      settings: ref.watch(projectSettingsStoreProvider),
-    );
-  }
 }
 
 List<RouteBase> _templateChildRoutes() {
@@ -996,6 +1014,10 @@ List<RouteBase> _templateChildRoutes() {
       builder: (BuildContext _, GoRouterState state) {
         return XlsxMappingScreen(
           path: state.extra is String ? state.extra as String : null,
+          document: state.extra is PickedDocument
+              ? state.extra as PickedDocument
+              : null,
+          targetTemplateId: state.uri.queryParameters['template'],
         );
       },
     ),
@@ -1005,12 +1027,6 @@ List<RouteBase> _templateChildRoutes() {
         return FieldListScreen(templateId: state.pathParameters['templateId']!);
       },
       routes: <RouteBase>[
-        GoRoute(
-          path: 'export',
-          builder: (BuildContext _, GoRouterState _) {
-            return const _RoutePage(name: 'template-export');
-          },
-        ),
         GoRoute(
           path: 'required',
           builder: (BuildContext _, GoRouterState state) {
@@ -1123,18 +1139,16 @@ const List<({String from, String to})> _legacyPrefixes =
     ];
 
 Widget _notFound(BuildContext context, GoRouterState state) {
-  final String path = state.uri.path.replaceAll('"', "'");
-  return Scaffold(
-    body: SafeArea(
-      child: Center(
-        child: AppErrorState(
-          failure: ValidationFailure(
-            message: 'The page "$path" is not in Tapture.',
-            recoveryAction: 'Go back to projects and try again.',
-          ),
-          onRetry: () => context.go(AppRoutes.projects),
-        ),
+  final LocalizedCopy localCopy = Copy.of(context);
+
+  return AppPage(
+    title: localCopy.notFoundTitle,
+    body: AppErrorState(
+      failure: ValidationFailure(
+        message: localCopy.notFoundMessage(state.uri.path.replaceAll('"', "'")),
+        recoveryAction: localCopy.notFoundRecovery,
       ),
+      onRetry: () => context.go(AppRoutes.projects),
     ),
   );
 }
@@ -1174,13 +1188,17 @@ List<RouteBase> _recordRoutes({required bool inProject}) {
             );
           },
         ),
-        GoRoute(
-          path: 'review',
-          metadata: scope,
-          builder: (BuildContext _, GoRouterState state) {
-            return ReviewRoute(recordId: state.pathParameters['recordId']);
-          },
-        ),
+        if (inProject)
+          GoRoute(
+            path: 'review',
+            metadata: _projectScoped,
+            builder: (BuildContext _, GoRouterState state) {
+              return ReviewScreen(
+                projectId: state.pathParameters['projectId']!,
+                recordId: state.pathParameters['recordId']!,
+              );
+            },
+          ),
         GoRoute(
           path: 'history',
           metadata: scope,
@@ -1203,131 +1221,6 @@ RecordStatus? _statusQuery(GoRouterState state) {
     return null;
   }
   return RecordStatus.fromStored(raw);
-}
-
-class _RoutePage extends StatelessWidget {
-  const _RoutePage({required this.name});
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    final String title = _titleFor(name);
-    final bool settings = name == 'more';
-    final bool listLike = _isListRoute(name);
-    final bool showSearch = listLike && context.sizeClass != SizeClass.expanded;
-    final bool canPop = Navigator.of(context).canPop();
-    return AppPage(
-      key: ValueKey<String>('route-$name'),
-      title: title,
-      showAppBar: canPop,
-      compactBar: true,
-      inset: !listLike && !settings,
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          if (settings) ...<Widget>[
-            const AppListTile(
-              title: Copy.appName,
-              subtitle: Copy.operatorNameUse,
-              leading: AppBrandLockup(showName: false),
-            ),
-            const AppSectionHeader(title: Copy.navMore),
-            AppListTile(
-              title: Copy.navTemplates,
-              leading: const Icon(AppIcons.template),
-              trailing: const Icon(AppIcons.open),
-              onTap: () => context.go(AppRoutes.templates),
-            ),
-            AppListTile(
-              title: Copy.navQueue,
-              leading: const Icon(AppIcons.queued),
-              trailing: const Icon(AppIcons.open),
-              onTap: () => context.go(AppRoutes.queue),
-            ),
-          ],
-          if (showSearch)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                Space.x3,
-                Space.x1,
-                Space.x3,
-                Space.x2,
-              ),
-              child: AppSearchField(hint: Copy.search, onChanged: (_) {}),
-            ),
-          if (!settings)
-            AppEmptyState(
-              icon: _iconFor(name),
-              headline: Copy.emptyHeadline,
-              message: Copy.emptyMessage,
-            ),
-          SizedBox(
-            width: 0,
-            height: 0,
-            child: TextField(key: ValueKey<String>('field-$name')),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-String _titleFor(String name) {
-  return switch (name) {
-    'projects' || 'project' => Copy.navProjects,
-    'capture' => Copy.navCapture,
-    'records' || 'record' => Copy.navRecords,
-    'more' => Copy.navMore,
-    'templates' => Copy.navTemplates,
-    'datasets' => Copy.navDatasets,
-    'template-library' => Copy.templatesPickLibrary,
-    'template-fields' => Copy.templateFieldsTitle,
-    'template-export' => Copy.templatesExport,
-    'template-required' => Copy.requiredColumnsTitle,
-    'template-identity' => Copy.identityFieldsTitle,
-    'template-output' => Copy.outputMappingTitle,
-    'template-migrate' => Copy.templateMigrationTitle,
-    'field-add' => Copy.templatesAddField,
-    'field-edit' => Copy.templatesEditField,
-    'queue' => Copy.navQueue,
-    'exports' => Copy.navExports,
-    _ => Copy.emptyHeadline,
-  };
-}
-
-IconData _iconFor(String name) {
-  return switch (name) {
-    'projects' || 'project' => AppIcons.project,
-    'capture' => AppIcons.camera,
-    'records' || 'record' => AppIcons.records,
-    'more' => AppIcons.settings,
-    'templates' => AppIcons.template,
-    'datasets' => AppIcons.dataset,
-    'template-library' => AppIcons.template,
-    'template-fields' => AppIcons.fields,
-    'template-export' => AppIcons.export,
-    'template-required' => AppIcons.rules,
-    'template-identity' => AppIcons.identity,
-    'template-output' => AppIcons.columns,
-    'template-migrate' => AppIcons.migrate,
-    'field-add' => AppIcons.add,
-    'field-edit' => AppIcons.edit,
-    'queue' => AppIcons.queued,
-    'exports' => AppIcons.export,
-    _ => AppIcons.empty,
-  };
-}
-
-bool _isListRoute(String name) {
-  return name == 'projects' ||
-      name == 'project' ||
-      name == 'records' ||
-      name == 'record' ||
-      name == 'templates' ||
-      name == 'queue' ||
-      name == 'exports';
 }
 
 const String _projectScopedKey = 'projectScoped';

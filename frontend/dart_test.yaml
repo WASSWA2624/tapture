@@ -1,0 +1,7 @@
+# Keep measured budgets separate from concurrent functional tests in verify.dart.
+# Bound compiler/SQLite/worker overlap on development machines and CI runners.
+# Individual callers may override this; measured gates explicitly use one.
+concurrency: 2
+
+tags:
+  performance: {}

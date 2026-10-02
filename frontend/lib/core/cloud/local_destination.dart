@@ -2,22 +2,28 @@ import 'dart:io';
 
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'cloud_destination.dart';
+import 'cloud_probe_name.dart';
 
 /// A folder on this device or on removable storage.
 ///
-/// Paths resolve under [rootPath], the storage root. Bytes are written to a
-/// temporary name and renamed only when the copy finishes, so a cancel or a
-/// failure leaves no partial file. This backend makes no network call.
+/// A relative [Destination.folder] resolves under [rootPath], the configured
+/// storage root. An absolute one is a folder the person picked — an SD card
+/// or USB drive — whose access the platform picker granted and kept; it is
+/// used as given. Bytes are written to a temporary name and renamed only
+/// when the copy finishes, so a cancel or a failure leaves no partial file.
+/// A resend always starts again from byte 0. This backend makes no network
+/// call.
 final class LocalDestination implements CloudDestination {
   /// Creates the backend rooted at [rootPath].
   LocalDestination({required this.rootPath, int? partBytes})
     : _partBytes = partBytes ?? AppConstants.cloudUpload.partBytes;
 
-  /// Storage root. Folder paths are resolved under this directory.
+  /// Storage root. Relative folders resolve under this directory.
   final String rootPath;
   final int _partBytes;
 
@@ -26,7 +32,7 @@ final class LocalDestination implements CloudDestination {
 
   @override
   Future<Result<void>> check(Destination destination) async {
-    final Result<File> target = _target(destination, '.tapture-check');
+    final Result<File> target = _target(destination, CloudProbeName.create());
     if (target is FailureResult<File>) {
       return FailureResult<void>(target.failure);
     }
@@ -44,10 +50,10 @@ final class LocalDestination implements CloudDestination {
     } on Object {
       await _deleteQuiet(partial);
       await _deleteQuiet(file);
-      return const FailureResult<void>(
+      return FailureResult<void>(
         PermissionFailure(
-          message: 'That folder cannot be written.',
-          recoveryAction: 'Choose the folder again.',
+          localizedMessage: Copy.messages.failureThatFolderCannotBeWritten,
+          localizedRecovery: Copy.messages.failureChooseTheFolderAgain,
         ),
       );
     }
@@ -70,16 +76,19 @@ final class LocalDestination implements CloudDestination {
       return FailureResult<Uri>(target.failure);
     }
     final File finished = (target as Success<File>).value;
-    final File partial = File('${finished.path}.partial');
+    final File partial = File(
+      '${finished.path}.${CloudProbeName.create()}.partial',
+    );
     RandomAccessFile? handle;
     try {
       await finished.parent.create(recursive: true);
-      handle = await partial.open(mode: FileMode.write);
-      var cursor = offset.clamp(0, file.length);
+      final RandomAccessFile writer = await partial.open(mode: FileMode.write);
+      handle = writer;
+      var cursor = 0;
       while (cursor < file.length) {
         if (cancel?.isCancelled ?? false) {
-          await handle!.close();
           handle = null;
+          await writer.close();
           await _deleteQuiet(partial);
           return const FailureResult<Uri>(CancelledFailure());
         }
@@ -87,13 +96,27 @@ final class LocalDestination implements CloudDestination {
             ? _partBytes
             : file.length - cursor;
         final List<int> chunk = await file.read(cursor, count);
-        await handle!.writeFrom(chunk);
+        if (chunk.length != count) {
+          handle = null;
+          await writer.close();
+          await _deleteQuiet(partial);
+          return FailureResult<Uri>(cloudReadFailure);
+        }
+        if (cancel?.isCancelled ?? false) {
+          handle = null;
+          await writer.close();
+          await _deleteQuiet(partial);
+          return const FailureResult<Uri>(CancelledFailure());
+        }
+        await writer.writeFrom(chunk);
         cursor += chunk.length;
+        onProgress?.call(cursor, file.length);
       }
-      await handle!.close();
       handle = null;
-      if (finished.existsSync()) {
-        await finished.delete();
+      await writer.close();
+      if (cancel?.isCancelled ?? false) {
+        await _deleteQuiet(partial);
+        return const FailureResult<Uri>(CancelledFailure());
       }
       await partial.rename(finished.path);
       onProgress?.call(file.length, file.length);
@@ -101,49 +124,67 @@ final class LocalDestination implements CloudDestination {
     } on Object {
       await handle?.close();
       await _deleteQuiet(partial);
-      return const FailureResult<Uri>(
+      return FailureResult<Uri>(
         StorageFailure(
-          message: 'The file could not be written to that folder.',
-          recoveryAction: 'Free some space or choose the folder again.',
+          localizedMessage: Copy.messages.failureTheFileCouldNotBeWrittenTo,
+          localizedRecovery:
+              Copy.messages.failureFreeSomeSpaceOrChooseTheFolder,
         ),
       );
     }
   }
 
   Result<File> _target(Destination destination, String name) {
-    if (destination.folder.contains('..') ||
+    final String folder = destination.folder.trim();
+    if (folder.startsWith('content:') ||
+        folder.startsWith('file:') ||
+        folder.startsWith('/tree/')) {
+      return FailureResult<File>(
+        PermissionFailure(
+          localizedMessage:
+              Copy.messages.failureThisFolderRequiresASupportedSystemFolder,
+          localizedRecovery:
+              Copy.messages.failureChooseAnAccessibleFolderOrAnotherDestination,
+        ),
+      );
+    }
+    if (folder.split(RegExp(r'[\\/]')).contains('..') ||
+        name.isEmpty ||
         name.contains('..') ||
         name.contains('/') ||
         name.contains(r'\')) {
-      return const FailureResult<File>(
+      return FailureResult<File>(
         ValidationFailure(
-          message: 'That folder path is not usable.',
-          recoveryAction: 'Choose the folder again.',
+          localizedMessage: Copy.messages.failureThatFolderPathIsNotUsable,
+          localizedRecovery: Copy.messages.failureChooseTheFolderAgain,
         ),
       );
+    }
+    final String sep = Platform.pathSeparator;
+    if (folder.isNotEmpty && Directory(folder).isAbsolute) {
+      return Success<File>(File('${_trim(folder)}$sep$name'));
     }
     final String root = _trim(rootPath);
-    final String folder = destination.folder.isEmpty
-        ? root
-        : '$root${Platform.pathSeparator}${destination.folder}';
-    if (folder != root &&
-        !folder.startsWith('$root${Platform.pathSeparator}')) {
-      return const FailureResult<File>(
-        ValidationFailure(
-          message: 'That folder is outside this device store.',
-          recoveryAction: 'Choose a folder inside the store.',
+    if (root.isEmpty) {
+      return FailureResult<File>(
+        StorageFailure(
+          localizedMessage: Copy.messages.failureTheTaptureFolderOnThisDeviceIs,
+          localizedRecovery:
+              Copy.messages.failureCheckTheStorageLocationInSettings,
         ),
       );
     }
-    return Success<File>(File('$folder${Platform.pathSeparator}$name'));
+    final String directory = folder.isEmpty ? root : '$root$sep$folder';
+    return Success<File>(File('$directory$sep$name'));
   }
 
   String _trim(String value) {
-    final String sep = Platform.pathSeparator;
-    if (value.endsWith(sep) && value.length > sep.length) {
-      return value.substring(0, value.length - sep.length);
+    var trimmed = value;
+    while (trimmed.length > 1 &&
+        (trimmed.endsWith('/') || trimmed.endsWith(r'\'))) {
+      trimmed = trimmed.substring(0, trimmed.length - 1);
     }
-    return value;
+    return trimmed;
   }
 
   Future<void> _deleteQuiet(File file) async {

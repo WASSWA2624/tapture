@@ -17,6 +17,8 @@ import 'package:tapture/core/time/clock.dart';
 import 'bundle_format.dart';
 import 'bundle_manifest.dart';
 import 'bundle_output.dart';
+import 'bundle_privacy.dart';
+import 'bundle_redaction.dart';
 import 'bundle_tables.dart';
 import 'bundle_zip_job.dart';
 import 'bundle_zip_stub.dart'
@@ -50,7 +52,7 @@ abstract interface class BundleWriter {
 
   /// Bytes the package of [projectId] is expected to take: the file sizes
   /// its rows record, plus its tables.
-  Future<Result<int>> estimate(String projectId);
+  Future<Result<int>> estimate(String projectId, {BundlePrivacy? privacy});
 
   /// Writes the package of [projectId], adding [extras] (such as the
   /// workbook) as entries. A package estimated above [ceiling] is refused
@@ -60,6 +62,8 @@ abstract interface class BundleWriter {
     required CancellationToken cancel,
     void Function(double)? onProgress,
     Map<String, List<int>> extras,
+    BundlePrivacy? privacy,
+    String? password,
   });
 }
 
@@ -91,9 +95,10 @@ final class _BundleWriter implements BundleWriter {
       : AppConstants.bundles.nativeMaxBytes;
 
   @override
-  Future<Result<int>> estimate(String projectId) {
+  Future<Result<int>> estimate(String projectId, {BundlePrivacy? privacy}) {
     return Result.captureAsync(() async {
-      final BundleTables tables = await _read(projectId);
+      final BundleTables original = await _read(projectId);
+      final BundleTables tables = privacy?.apply(original) ?? original;
       final Result<Map<String, List<int>>> encoded = await _encode(tables);
       return tables.recordedFileBytes + _size(_unwrap(encoded));
     });
@@ -105,67 +110,102 @@ final class _BundleWriter implements BundleWriter {
     required CancellationToken cancel,
     void Function(double)? onProgress,
     Map<String, List<int>> extras = const <String, List<int>>{},
+    BundlePrivacy? privacy,
+    String? password,
   }) async {
-    if (cancel.isCancelled) {
-      return const FailureResult<BundleOutput>(CancelledFailure());
-    }
-    final Result<({BundleTables tables, Map<String, List<int>> entries})>
-    prepared = await Result.captureAsync(() async {
-      final BundleTables tables = await _read(projectId);
-      final Map<String, List<int>> json = _unwrap(await _encode(tables));
-      return (tables: tables, entries: <String, List<int>>{...json, ...extras});
-    });
-    if (prepared case FailureResult<
-      ({BundleTables tables, Map<String, List<int>> entries})
-    >(
-      :final Failure failure,
-    )) {
-      return FailureResult<BundleOutput>(failure);
-    }
-    final ({BundleTables tables, Map<String, List<int>> entries}) ready =
-        (prepared
-                as Success<
-                  ({BundleTables tables, Map<String, List<int>> entries})
-                >)
-            .value;
-    final int expected = ready.tables.recordedFileBytes + _size(ready.entries);
-    if (expected > ceiling) {
-      return FailureResult<BundleOutput>(
-        StorageFailure(
-          message: Copy.packageTooLarge(expected, ceiling),
-          recoveryAction: Copy.packageTooLargeRecovery,
-        ),
+    try {
+      if (cancel.isCancelled) {
+        return const FailureResult<BundleOutput>(CancelledFailure());
+      }
+      final Result<({BundleTables tables, Map<String, List<int>> entries})>
+      prepared = await Result.captureAsync(() async {
+        final BundleTables original = await _read(projectId);
+        final BundleTables tables = privacy?.apply(original) ?? original;
+        final Map<String, List<int>> json = _unwrap(await _encode(tables));
+        return (
+          tables: tables,
+          entries: <String, List<int>>{...json, ...extras},
+        );
+      });
+      if (prepared case FailureResult<
+        ({BundleTables tables, Map<String, List<int>> entries})
+      >(
+        :final Failure failure,
+      )) {
+        return FailureResult<BundleOutput>(failure);
+      }
+      final ({BundleTables tables, Map<String, List<int>> entries}) ready =
+          (prepared
+                  as Success<
+                    ({BundleTables tables, Map<String, List<int>> entries})
+                  >)
+              .value;
+      final int expected =
+          ready.tables.recordedFileBytes + _size(ready.entries);
+      if (ready.entries.entries
+              .where(
+                (MapEntry<String, List<int>> entry) =>
+                    BundleFormat.isMetadataEntry(entry.key),
+              )
+              .fold<int>(
+                0,
+                (int size, MapEntry<String, List<int>> entry) =>
+                    size + entry.value.length,
+              ) >
+          AppConstants.bundles.metadataMaxBytes) {
+        return FailureResult<BundleOutput>(
+          ValidationFailure(
+            localizedMessage:
+                Copy.messages.failureTheProjectMetadataIsTooLargeFor,
+            localizedRecovery: Copy.messages.failureChooseASmallerPackageScope,
+          ),
+        );
+      }
+      if (expected > ceiling) {
+        return FailureResult<BundleOutput>(
+          StorageFailure(
+            localizedMessage: Copy.messages.packageTooLarge(expected, ceiling),
+            localizedRecovery: Copy.messages.packageTooLargeRecovery,
+          ),
+        );
+      }
+      final String bundleId = _ids.newId();
+      final BundleManifest manifest = await _manifest(
+        ready.tables,
+        bundleId: bundleId,
+        projectId: projectId,
       );
+      final BundleZipJob job = BundleZipJob(
+        storageRoot: _storageRoot,
+        files: _files,
+        folderName: ready.tables.folderName,
+        targetPath:
+            'projects/${ready.tables.folderName}/exports/$bundleId.'
+            '${BundleFormat.extension}',
+        entries: ready.entries,
+        projectFiles: ready.tables.filePaths,
+        fileSources: privacy?.fileSources ?? const <String, String>{},
+        manifest: manifest,
+        ceiling: ceiling,
+        cancel: cancel,
+        onProgress: onProgress,
+        password: password,
+        patternsYaml: await BundleRedaction.loadPatterns(),
+      );
+      return await (_inBrowser
+          ? browser.zipBundle(job)
+          : platform.zipBundle(job));
+    } on Object catch (error) {
+      return FailureResult<BundleOutput>(Failure.from(error));
     }
-    final String bundleId = _ids.newId();
-    final BundleManifest manifest = await _manifest(
-      ready.tables,
-      bundleId: bundleId,
-      projectId: projectId,
-    );
-    final BundleZipJob job = BundleZipJob(
-      storageRoot: _storageRoot,
-      files: _files,
-      folderName: ready.tables.folderName,
-      targetPath:
-          'projects/${ready.tables.folderName}/exports/$bundleId.'
-          '${BundleFormat.extension}',
-      entries: ready.entries,
-      projectFiles: ready.tables.filePaths,
-      manifest: manifest,
-      ceiling: ceiling,
-      cancel: cancel,
-      onProgress: onProgress,
-    );
-    return _inBrowser ? browser.zipBundle(job) : platform.zipBundle(job);
   }
 
   Future<BundleTables> _read(String projectId) async {
     final BundleTables? tables = await BundleTables.read(_db, projectId);
     if (tables == null) {
-      throw const StorageFailure(
-        message: Copy.packageProjectMissing,
-        recoveryAction: Copy.tryAgain,
+      throw StorageFailure(
+        localizedMessage: Copy.messages.packageProjectMissing,
+        localizedRecovery: Copy.messages.tryAgain,
       );
     }
     return tables;
@@ -206,6 +246,7 @@ final class _BundleWriter implements BundleWriter {
           ? null
           : operatorName,
       counts: <String, int>{...tables.counts, 'files': tables.filePaths.length},
+      versionVectors: tables.versionVectors,
       lineage: <({String device, DateTime at})>[
         ...await _lineage(projectId),
         (device: _deviceId, at: now),
@@ -236,34 +277,40 @@ final class _BundleWriter implements BundleWriter {
     final List<QueryRow> sessions = await _db
         .customSelect(
           'SELECT source_device, imported_at, counts FROM merge_sessions '
-          'ORDER BY imported_at',
+          'WHERE json_valid(counts) AND json_extract(counts, '
+          "'\$.project_id') = ? ORDER BY imported_at",
+          variables: <Variable<Object>>[Variable<String>(projectId)],
         )
         .get();
-    return <({String device, DateTime at})>[
-      for (final QueryRow session in sessions)
-        if (_sessionProject(session.data['counts']) == projectId)
-          (
-            device: session.data['source_device']! as String,
-            at: session.read<DateTime>('imported_at'),
-          ),
-    ];
-  }
-}
-
-String? _sessionProject(Object? counts) {
-  if (counts is! String) {
-    return null;
-  }
-  try {
-    final Object? decoded = jsonDecode(counts);
-    if (decoded is Map<String, Object?>) {
-      final Object? project = decoded['project_id'];
-      return project is String ? project : null;
+    final Map<String, ({String device, DateTime at})> steps =
+        <String, ({String device, DateTime at})>{};
+    void add(String device, DateTime at) {
+      steps['$device/${at.toUtc().toIso8601String()}'] = (
+        device: device,
+        at: at,
+      );
     }
-  } on FormatException {
-    return null;
+
+    for (final QueryRow session in sessions) {
+      final Object? decoded = jsonDecode(session.data['counts']! as String);
+      if (decoded is Map<String, Object?> &&
+          decoded['lineage'] is List<Object?>) {
+        for (final Object? step in decoded['lineage']! as List<Object?>) {
+          if (step is Map<String, Object?> &&
+              step['device'] is String &&
+              step['at'] is String) {
+            final DateTime? at = DateTime.tryParse(step['at']! as String);
+            if (at != null) add(step['device']! as String, at.toUtc());
+          }
+        }
+      }
+      add(
+        session.data['source_device']! as String,
+        session.read<DateTime>('imported_at'),
+      );
+    }
+    return steps.values.toList()..sort((a, b) => a.at.compareTo(b.at));
   }
-  return null;
 }
 
 Map<String, List<int>> _unwrap(Result<Map<String, List<int>>> result) {
@@ -286,5 +333,11 @@ int _size(Map<String, List<int>> entries) {
 Map<String, List<int>> _encodeTables(
   Map<String, List<Map<String, Object?>>> rows,
 ) {
-  return BundleTables(rows).encode();
+  // The table selector omits device credentials entirely; the final encoder
+  // also strips secret keys nested in project settings before serialisation.
+  return BundleTables(<String, List<Map<String, Object?>>>{
+    for (final MapEntry<String, List<Map<String, Object?>>> table
+        in rows.entries)
+      table.key: table.value.map(BundleRedaction.redact).toList(),
+  }).encode();
 }

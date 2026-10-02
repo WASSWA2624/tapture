@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/env.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/app/widgets/status_line.dart';
@@ -14,7 +15,7 @@ import 'router.dart';
 
 /// Wraps the root Navigator with the floating Feedback control and supplies
 /// route context without making the feature depend on the router.
-class FeedbackHost extends ConsumerStatefulWidget {
+class FeedbackHost extends ConsumerWidget {
   /// Creates the host around [child].
   const FeedbackHost({super.key, required this.child});
 
@@ -22,40 +23,36 @@ class FeedbackHost extends ConsumerStatefulWidget {
   final Widget child;
 
   @override
-  ConsumerState<FeedbackHost> createState() => _FeedbackHostState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    return FeedbackOverlay(
+      origin: _origin(context, ref, ref.watch(_routeUriProvider)),
+      child: child,
+    );
+  }
 }
 
-class _FeedbackHostState extends ConsumerState<FeedbackHost> {
-  late final GoRouter _router;
-  late Uri _uri;
+/// The router's current location, followed through its information
+/// provider so the host rebuilds without holding widget state
+/// (FE-STATE-01).
+final NotifierProvider<_RouteUri, Uri> _routeUriProvider =
+    NotifierProvider<_RouteUri, Uri>(_RouteUri.new);
 
+class _RouteUri extends Notifier<Uri> {
   @override
-  void initState() {
-    super.initState();
-    _router = ref.read(routerProvider);
-    _uri = _router.routeInformationProvider.value.uri;
-    _router.routeInformationProvider.addListener(_routeChanged);
-  }
-
-  @override
-  void dispose() {
-    _router.routeInformationProvider.removeListener(_routeChanged);
-    super.dispose();
-  }
-
-  void _routeChanged() {
-    final Uri next = _router.routeInformationProvider.value.uri;
-    if (mounted && next != _uri) {
-      setState(() => _uri = next);
+  Uri build() {
+    final GoRouteInformationProvider information = ref
+        .watch(routerProvider)
+        .routeInformationProvider;
+    void changed() {
+      final Uri next = information.value.uri;
+      if (next != state) {
+        state = next;
+      }
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return FeedbackOverlay(
-      origin: _origin(context, ref, _uri),
-      child: widget.child,
-    );
+    information.addListener(changed);
+    ref.onDispose(() => information.removeListener(changed));
+    return information.value.uri;
   }
 }
 
@@ -74,43 +71,11 @@ FeedbackOrigin _origin(BuildContext context, WidgetRef ref, Uri uri) {
 }
 
 String _routeName(String path) {
-  if (path == AppRoutes.projects || path == '/') {
-    return 'projects';
+  final String? named = _routeNames[path];
+  if (named != null) {
+    return named;
   }
-  if (path == AppRoutes.records) {
-    return 'records';
-  }
-  if (path == AppRoutes.more) {
-    return 'more';
-  }
-  if (path == AppRoutes.settingsOperator) {
-    return 'settingsOperator';
-  }
-  if (path == AppRoutes.settingsCapture) {
-    return 'settingsCapture';
-  }
-  if (path == AppRoutes.settingsAppearance) {
-    return 'settingsAppearance';
-  }
-  if (path == AppRoutes.settingsStorage) {
-    return 'settingsStorage';
-  }
-  if (path == AppRoutes.settingsSecurity) {
-    return 'settingsSecurity';
-  }
-  if (path == AppRoutes.settingsAbout) {
-    return 'settingsAbout';
-  }
-  if (path == AppRoutes.templates) {
-    return 'templates';
-  }
-  if (path == AppRoutes.queue) {
-    return 'queue';
-  }
-  if (path.startsWith('${AppRoutes.projects}/') && path.endsWith('/capture')) {
-    return 'capture';
-  }
-  if (path == '/capture') {
+  if (RoutePaths.isProjectCapture(path)) {
     return 'capture';
   }
   if (path.startsWith('${AppRoutes.projects}/')) {
@@ -121,6 +86,28 @@ String _routeName(String path) {
   }
   return '';
 }
+
+/// Stable names feedback files a screen under, one per fixed path.
+const Map<String, String> _routeNames = <String, String>{
+  '/': 'projects',
+  RoutePaths.projects: 'projects',
+  RoutePaths.captureRoot: 'capture',
+  RoutePaths.records: 'records',
+  RoutePaths.more: 'more',
+  RoutePaths.templates: 'templates',
+  RoutePaths.queue: 'queue',
+  RoutePaths.recycleBin: 'recycleBin',
+  RoutePaths.settingsOperator: 'settingsOperator',
+  RoutePaths.settingsCapture: 'settingsCapture',
+  RoutePaths.settingsAi: 'settingsAi',
+  RoutePaths.settingsLanguage: 'settingsLanguage',
+  RoutePaths.settingsAppearance: 'settingsAppearance',
+  RoutePaths.settingsStorage: 'settingsStorage',
+  RoutePaths.settingsFiles: 'settingsFiles',
+  RoutePaths.settingsSecurity: 'settingsSecurity',
+  RoutePaths.settingsPrivacy: 'settingsPrivacy',
+  RoutePaths.settingsAbout: 'settingsAbout',
+};
 
 String _connectivity(WidgetRef ref) {
   if (ref.watch(offlineByChoiceProvider)) {

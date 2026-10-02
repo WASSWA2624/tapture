@@ -5,17 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/shell_destination.dart';
-import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/app/widgets/offline_banner.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
-import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/context/presentation/context_bar.dart';
 import 'package:tapture/features/context/presentation/context_maintenance.dart';
 import 'package:tapture/features/projects/presentation/project_list_toolbar.dart';
@@ -24,6 +24,8 @@ import 'package:tapture/features/records/presentation/records_list_view.dart';
 
 /// The four-destination frame: bar on compact, rail on medium, rail plus a
 /// list pane on expanded. [shell] keeps each branch's stack (FE-RESP-03).
+/// The pane lists projects on Projects, and a record's siblings beside an
+/// open record.
 class NavShell extends StatelessWidget {
   /// Creates the shell around [shell].
   const NavShell({required this.shell, super.key});
@@ -56,39 +58,32 @@ class _Chrome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool ownsHeader =
-        ShellTitle.header(ref, GoRouterState.of(context).uri) != null;
-    final bool showPane = pane && shellDestinations[shell.currentIndex].hasList;
+    final int index = shell.currentIndex;
+    // Records keeps its list in the body; the pane holds the list only
+    // beside an open record, so it never shows an empty column.
+    final bool showPane =
+        pane &&
+        shellDestinations[index].hasList &&
+        (shellDestinations[index].path != RoutePaths.records ||
+            _openRecord(
+                  GoRouterState.of(context).uri,
+                  ref.watch(currentProjectProvider),
+                ) !=
+                null);
     final BorderSide hairline = BorderSide(
       color: context.colors.outline,
       width: Space.x0 / 2,
     );
+    // The status line is the only title bar on every shell route.
     return ShellHeaderScope(
-      ownsHeader: ownsHeader,
+      ownsHeader: true,
       child: ContextMaintenance(
         child: Scaffold(
           backgroundColor: context.colors.background,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SafeArea(
-                bottom: false,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    const StatusLine(),
-                    // On Capture every level shows, set or not, so a first
-                    // value can be set in place (FBK0000160, D10).
-                    ContextBar(
-                      showsEmptyLevels:
-                          shellDestinations[shell.currentIndex].path ==
-                          RoutePaths.captureRoot,
-                    ),
-                    const OfflineBanner(),
-                  ],
-                ),
-              ),
+              const SafeArea(bottom: false, child: StatusLine()),
               Expanded(
                 // The header above already cleared the status bar. Pages below
                 // must not see that inset again, or every page frame pads the
@@ -102,30 +97,44 @@ class _Chrome extends ConsumerWidget {
                     removeTop: true,
                     child: SafeArea(
                       top: false,
-                      child: Row(
-                        children: <Widget>[
-                          if (rail)
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                border: showPane
-                                    ? null
-                                    : BorderDirectional(end: hairline),
-                              ),
-                              child: _Rail(
-                                shell: shell,
-                                inverted: _darkDesktopRail(context),
-                              ),
+                      child: AppListViewport(
+                        header: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            ContextBar(
+                              showsEmptyLevels:
+                                  shellDestinations[index].path ==
+                                  RoutePaths.captureRoot,
                             ),
-                          if (showPane)
-                            SizedBox(
-                              width: Sizes.listPane,
-                              child: _Pane(index: shell.currentIndex),
+                            const OfflineBanner(),
+                          ],
+                        ),
+                        body: Row(
+                          children: <Widget>[
+                            if (rail)
+                              DecoratedBox(
+                                decoration: BoxDecoration(
+                                  border: showPane
+                                      ? null
+                                      : BorderDirectional(end: hairline),
+                                ),
+                                child: _Rail(
+                                  shell: shell,
+                                  inverted: _darkDesktopRail(context, ref),
+                                ),
+                              ),
+                            if (showPane)
+                              SizedBox(
+                                width: Sizes.listPane,
+                                child: _Pane(index: index),
+                              ),
+                            Expanded(
+                              key: const ValueKey<String>('nav-body-slot'),
+                              child: shell,
                             ),
-                          Expanded(
-                            key: const ValueKey<String>('nav-body-slot'),
-                            child: shell,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -195,11 +204,15 @@ class _BarState extends State<_Bar> {
                   compact: true,
                 ),
                 label:
-                    shellDestinations[index].compactLabel ??
-                    shellDestinations[index].label,
+                    shellDestinations[index].compactLabelFor(
+                      Copy.of(context),
+                    ) ??
+                    shellDestinations[index].labelFor(Copy.of(context)),
                 tooltip:
-                    shellDestinations[index].compactLabel ??
-                    shellDestinations[index].label,
+                    shellDestinations[index].compactLabelFor(
+                      Copy.of(context),
+                    ) ??
+                    shellDestinations[index].labelFor(Copy.of(context)),
               ),
           ],
         ),
@@ -213,13 +226,13 @@ class _BarState extends State<_Bar> {
         _moreKey.currentContext!.findRenderObject()! as RenderBox;
     await showAppOverflowActions(
       context,
+      // Square like every other menu: the shared shape, no override.
       anchor: anchor.localToGlobal(Offset.zero) & anchor.size,
-      borderRadius: BorderRadius.zero,
       items: <AppOverflowAction>[
         for (final ShellDestination destination in moreDestinations)
           AppOverflowAction(
             key: ValueKey<String>('nav-more-${destination.path}'),
-            label: destination.label,
+            label: destination.labelFor(Copy.of(context)),
             icon: destination.icon,
             // The root popup can outlive the compact bar during rotation.
             onTap: () => router.go(destination.path),
@@ -250,6 +263,9 @@ class _Rail extends StatelessWidget {
         onDestinationSelected: (int index) {
           shell.goBranch(index, initialLocation: true);
         },
+        // A landscape phone with the keyboard open is shorter than the four
+        // destinations; the rail scrolls rather than overflowing.
+        scrollable: true,
         labelType: NavigationRailLabelType.all,
         selectedLabelTextStyle: AppText.caption.copyWith(color: selected),
         unselectedLabelTextStyle: AppText.caption.copyWith(color: railInk),
@@ -262,7 +278,7 @@ class _Rail extends StatelessWidget {
                 selected: true,
                 inverted: inverted,
               ),
-              label: Text(shellDestinations[index].label),
+              label: Text(shellDestinations[index].labelFor(Copy.of(context))),
             ),
         ],
       ),
@@ -277,7 +293,6 @@ class _Pane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool projects = index == 0;
     final _OpenRecord? open = _openRecord(
       GoRouterState.of(context).uri,
       ref.watch(currentProjectProvider),
@@ -307,37 +322,26 @@ class _Pane extends ConsumerWidget {
                   currentRecordId: open.recordId,
                   onOpen: (String id) => _openBeside(context, open, id),
                 )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                        Space.x3,
-                        Space.x1,
-                        Space.x3,
-                        Space.x2,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          if (projects && _paneHasRows(ref)) ...<Widget>[
-                            ProjectListActions.paneToolbar(context, ref),
-                            const SizedBox(height: Space.x2),
-                          ],
-                          if (projects) const ProjectListToolbar(),
+              : AppListViewport(
+                  header: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                      Space.x3,
+                      Space.x1,
+                      Space.x3,
+                      Space.x2,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        if (_paneHasRows(ref)) ...<Widget>[
+                          ProjectListActions.paneToolbar(context),
+                          const SizedBox(height: Space.x2),
                         ],
-                      ),
+                        const ProjectListToolbar(),
+                      ],
                     ),
-                    Expanded(
-                      child: projects
-                          ? const ProjectListView(filtered: true)
-                          : AppEmptyState(
-                              icon: shellDestinations[index].icon,
-                              headline: Copy.emptyHeadline,
-                              message: Copy.emptyMessage,
-                            ),
-                    ),
-                  ],
+                  ),
+                  body: const ProjectListView(filtered: true),
                 ),
         ),
       ),
@@ -432,11 +436,10 @@ class _NavIcon extends StatelessWidget {
   }
 }
 
-bool _darkDesktopRail(BuildContext context) {
-  final AppColors colors = context.colors;
-  final bool outdoor =
-      colors.surface == AppColors.outdoor.surface &&
-      colors.onSurface == AppColors.outdoor.onSurface &&
-      colors.outline == AppColors.outdoor.outline;
+/// The desktop rail is the dark panel in the light theme, except outdoor,
+/// which keeps its own high-contrast rail. Read from the chosen mode, not
+/// guessed from colours.
+bool _darkDesktopRail(BuildContext context, WidgetRef ref) {
+  final bool outdoor = ref.watch(themeModeProvider) == AppThemeMode.outdoor;
   return Theme.of(context).brightness == Brightness.light && !outdoor;
 }

@@ -12,6 +12,11 @@ abstract final class RoutePaths {
   static const String fromQuery = 'from';
   static const String filterQuery = 'filter';
 
+  /// Create-form query names: the project whose structure is copied, and
+  /// the editable suggested name.
+  static const String sourceQuery = 'source';
+  static const String nameQuery = 'name';
+
   /// Global operational destinations retained for deep-link compatibility.
   static const String templates = '$more/templates';
   static const String queue = '$more/queue';
@@ -27,14 +32,19 @@ abstract final class RoutePaths {
   static const String settingsLanguage = '$more/language';
   static const String settingsAppearance = '$more/appearance';
   static const String settingsStorage = '$more/storage';
+
+  /// Files checked against their records, under Storage (tasks 004, 005).
+  static const String settingsStorageCheck = '$settingsStorage/check';
   static const String settingsDestinations = '$more/destinations';
   static const String settingsUploads = '$more/uploads';
   static const String settingsFiles = '$more/files';
   static const String settingsSecurity = '$more/security';
   static const String settingsPrivacy = '$more/privacy';
   static const String settingsAccount = '$more/account';
-  static const String settingsSignIn = '$more/sign-in';
   static const String settingsRelay = '$more/relay';
+
+  /// The one sign-in, outside the shell like the lock screen (task 024).
+  static const String signIn = '/sign-in';
   static const String settingsAbout = '$more/about';
   static const String settingsLicences = '$settingsAbout/licences';
 
@@ -44,9 +54,23 @@ abstract final class RoutePaths {
 
   /// The import entry on the projects list (task 020).
   static const String projectImport = '$projects/import';
+
+  /// Whether a chosen spreadsheet holds records or a register (task 020).
+  static const String projectImportPurpose = '$projectImport/purpose';
+
+  /// Matching a chosen spreadsheet's columns onto a template (task 020).
+  static const String projectImportRecords = '$projectImport/records';
+
+  /// What a record import did (task 020).
+  static const String projectImportSummary = '$projectImport/summary';
   static const String projectFilters = '$projects/filters';
   static String projectCapture(String projectId) =>
       '${project(projectId)}/capture';
+
+  /// Rapid mode for [projectId]: one tap saves an item raw and starts the
+  /// next (task 012 step 20).
+  static String projectCaptureRapid(String projectId) =>
+      '${projectCapture(projectId)}/rapid';
   static String projectEdit(String projectId) => '${project(projectId)}/edit';
 
   /// The project's read-only details page (task 076, D8).
@@ -55,6 +79,10 @@ abstract final class RoutePaths {
 
   /// Merging an open package into the project (task 076, W21).
   static String projectMerge(String projectId) => '${project(projectId)}/merge';
+
+  /// Durable merge history and safe undo for one project.
+  static String projectMergeHistory(String projectId) =>
+      '${project(projectId)}/merge-history';
 
   /// The merge's conflicts, one at a time. [conflictId] opens one.
   static String projectMergeConflicts(String projectId, {String? conflictId}) =>
@@ -66,6 +94,8 @@ abstract final class RoutePaths {
       '${project(projectId)}/settings';
   static String projectContext(String projectId) =>
       '${project(projectId)}/context';
+  static String projectContextPresets(String projectId) =>
+      '${projectContext(projectId)}/presets';
   static String projectTemplates(String projectId) =>
       '${project(projectId)}/templates';
 
@@ -86,11 +116,13 @@ abstract final class RoutePaths {
   static String templateImport({String? projectId}) =>
       '${templateRoot(projectId: projectId)}/import';
 
+  /// A template made from a workbook's columns; the workbook's path is the
+  /// route's extra.
+  static String templateXlsx({String? projectId}) =>
+      '${templateRoot(projectId: projectId)}/xlsx';
+
   static String templateDetail(String templateId, {String? projectId}) =>
       '${templateRoot(projectId: projectId)}/${Uri.encodeComponent(templateId)}';
-
-  static String templateExport(String templateId, {String? projectId}) =>
-      '${templateDetail(templateId, projectId: projectId)}/export';
 
   static String templateRequired(String templateId, {String? projectId}) =>
       '${templateDetail(templateId, projectId: projectId)}/required';
@@ -136,9 +168,21 @@ abstract final class RoutePaths {
   static String projectDuplicates(String projectId) =>
       '${project(projectId)}/duplicates';
 
-  /// Variances for [projectId] (task 015).
-  static String projectVariance(String projectId) =>
-      '${project(projectId)}/variance';
+  /// The side-by-side comparison of pair [pairId], where an override
+  /// happens (task 015).
+  static String projectDuplicateCompare(String projectId, String pairId) =>
+      '${projectDuplicates(projectId)}/${Uri.encodeComponent(pairId)}';
+
+  /// Query naming the one record a variance view is limited to.
+  static const String recordQuery = 'record';
+
+  /// Variances for [projectId], or for one record of it when [recordId] is
+  /// given (task 015).
+  static String projectVariance(String projectId, {String? recordId}) =>
+      recordId == null
+      ? '${project(projectId)}/variance'
+      : '${project(projectId)}/variance?$recordQuery='
+            '${Uri.encodeQueryComponent(recordId)}';
 
   /// What still blocks a clean export of [projectId] (task 015).
   static String projectQuality(String projectId) =>
@@ -178,6 +222,10 @@ abstract final class RoutePaths {
   static String projectQueue(String projectId) => '${project(projectId)}/queue';
   static String projectExports(String projectId) =>
       '${project(projectId)}/exports';
+
+  /// Choose report formats and record scope for a project's deliverables.
+  static String projectDeliverables(String projectId) =>
+      '${projectExports(projectId)}/deliverable';
 
   /// One record.
   static String record(String id) => '$records/${Uri.encodeComponent(id)}';

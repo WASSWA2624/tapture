@@ -2,8 +2,12 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:crypto/crypto.dart';
 
 import 'package:record/record.dart' as record;
+import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -12,6 +16,8 @@ import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 
 import 'audio_recorder_service.dart';
+
+part 'wav_take.dart';
 
 /// Suffix of a take the plugin is still writing. It sits beside the target,
 /// never under `.cache`, because it is the only copy until it is published.
@@ -23,7 +29,8 @@ const String _stagingSuffix = '.recording';
 /// The recorder plugins cannot stream WAV, so a take is recorded in file mode
 /// to a staging file beside the target and then published through
 /// [FileWriter.copyIn], which hashes it and renames it into place.
-final class AudioRecorderPlugin implements AudioRecorderService {
+final class AudioRecorderPlugin
+    implements AudioRecorderService, AudioRecoveryService {
   /// Creates an adapter that stages takes under [storageRoot] and publishes
   /// them through [writer]. [recorder] is the test seam.
   AudioRecorderPlugin({
@@ -55,16 +62,24 @@ final class AudioRecorderPlugin implements AudioRecorderService {
 
   @override
   Future<Result<void>> start(String relativePath) async {
+    if (_phase == AudioRecorderPhase.permission ||
+        _phase == AudioRecorderPhase.recording ||
+        _phase == AudioRecorderPhase.paused ||
+        _phase == AudioRecorderPhase.finalizing) {
+      return FailureResult<void>(
+        ValidationFailure(localizedMessage: Copy.messages.audioStartFailed),
+      );
+    }
     try {
       _phase = AudioRecorderPhase.permission;
       _emit();
       if (!await _recorder.hasPermission()) {
         _phase = AudioRecorderPhase.failed;
         _emit();
-        return const FailureResult<void>(
+        return FailureResult<void>(
           PermissionFailure(
-            message: Copy.audioPermissionDenied,
-            recoveryAction: Copy.audioPermissionRecovery,
+            localizedMessage: Copy.messages.audioPermissionDenied,
+            localizedRecovery: Copy.messages.audioPermissionRecovery,
           ),
         );
       }
@@ -76,6 +91,12 @@ final class AudioRecorderPlugin implements AudioRecorderService {
       final File staging = File(
         '${folder.path}/${_relative(relativePath)}$_stagingSuffix',
       );
+      if (await staging.exists() ||
+          await File('${folder.path}/${_relative(relativePath)}').exists()) {
+        throw ValidationFailure(
+          localizedMessage: Copy.messages.audioStartFailed,
+        );
+      }
       await staging.parent.create(recursive: true);
       _path = relativePath;
       _staging = staging;
@@ -111,10 +132,10 @@ final class AudioRecorderPlugin implements AudioRecorderService {
     } on Object {
       _phase = AudioRecorderPhase.failed;
       _emit();
-      return const FailureResult<void>(
+      return FailureResult<void>(
         ProviderFailure(
-          message: Copy.audioStartFailed,
-          recoveryAction: Copy.audioStartFailedRecovery,
+          localizedMessage: Copy.messages.audioStartFailed,
+          localizedRecovery: Copy.messages.audioStartFailedRecovery,
         ),
       );
     }
@@ -168,23 +189,82 @@ final class AudioRecorderPlugin implements AudioRecorderService {
           _emit();
           return FailureResult<Duration>(failure);
         case Success<WrittenFile>(:final WrittenFile value):
+          final Duration duration =
+              (await _WavTake.read(staging))?.duration ?? _elapsed;
           _completed = AudioRecording(
             relativePath: value.relativePath,
             sha256: value.sha256,
             byteLength: value.byteLength,
-            duration: _elapsed,
+            duration: duration,
             mimeType: 'audio/wav',
           );
           _staging = null;
           await discardUnpublishedFile(staging);
           _phase = AudioRecorderPhase.completed;
           _emit();
-          return Success<Duration>(_elapsed);
+          return Success<Duration>(duration);
       }
     } on Object catch (error) {
       _phase = AudioRecorderPhase.failed;
       _emit();
       return FailureResult<Duration>(Failure.from(error));
+    }
+  }
+
+  @override
+  Future<Result<AudioRecording?>> recover(String relativePath) async {
+    try {
+      final String path = _relative(relativePath);
+      if (_path == path &&
+          (_phase == AudioRecorderPhase.recording ||
+              _phase == AudioRecorderPhase.paused)) {
+        final Result<Duration> stopped = await stop();
+        return stopped.map((_) => _completed);
+      }
+      if (_path == path &&
+          (_phase == AudioRecorderPhase.permission ||
+              _phase == AudioRecorderPhase.finalizing)) {
+        return FailureResult<AudioRecording?>(
+          StorageFailure(localizedMessage: Copy.messages.audioStartFailed),
+        );
+      }
+      final Result<Directory> root = await _storageRoot.resolve();
+      if (root case FailureResult<Directory>(:final Failure failure)) {
+        return FailureResult<AudioRecording?>(failure);
+      }
+      final Directory folder = (root as Success<Directory>).value;
+      final File published = File('${folder.path}/$path');
+      if (await published.exists()) {
+        // A kill may occur between publication and saving the session. Do
+        // not overwrite that file; stream its hash and recover its metadata.
+        return runIsolate<(String, String), AudioRecording?>(
+          _readPublishedTake,
+          (published.path, path),
+        );
+      }
+      final File staging = File('${published.path}$_stagingSuffix');
+      if (!await staging.exists()) {
+        return const Success<AudioRecording?>(null);
+      }
+      final _WavTake? take = await _WavTake.read(staging, interrupted: true);
+      if (take == null) throw const FormatException('Invalid staged WAV take.');
+      final Result<WrittenFile> written = await _writer.write(
+        take.repairedBytes(staging),
+        path,
+      );
+      return written.map((WrittenFile file) {
+        // Header repair produces a playable derivative. The raw .recording
+        // file remains beside it, byte-for-byte, for recovery and inspection.
+        return AudioRecording(
+          relativePath: file.relativePath,
+          sha256: file.sha256,
+          byteLength: file.byteLength,
+          duration: take.duration,
+          mimeType: 'audio/wav',
+        );
+      });
+    } on Object catch (error) {
+      return FailureResult<AudioRecording?>(Failure.from(error));
     }
   }
 
@@ -206,9 +286,9 @@ String _relative(String relativePath) {
       relative.startsWith('/') ||
       relative.contains(':') ||
       parts.any((String part) => part.isEmpty || part == '.' || part == '..')) {
-    throw const ValidationFailure(
-      message: Copy.audioPathOutsideStorage,
-      recoveryAction: Copy.audioStartFailedRecovery,
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.audioPathOutsideStorage,
+      localizedRecovery: Copy.messages.audioStartFailedRecovery,
     );
   }
   return relative;

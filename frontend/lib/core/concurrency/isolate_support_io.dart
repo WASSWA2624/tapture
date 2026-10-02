@@ -24,23 +24,23 @@ Future<Result<R>> executeIsolate<M, R>(
   CancellationToken? cancel,
 ) async {
   final ReceivePort replies = ReceivePort();
-  final ReceivePort exits = ReceivePort();
   debugLiveIsolates++;
   late final Isolate isolate;
   try {
-    isolate = await Isolate.spawn(_isolateBoot, <Object?>[
-      replies.sendPort,
-      task,
-      message,
-    ], onExit: exits.sendPort);
+    isolate = await Isolate.spawn(
+      _isolateBoot,
+      <Object?>[replies.sendPort, task, message],
+      onExit: replies.sendPort,
+      onError: replies.sendPort,
+    );
   } on Object catch (error) {
     debugLiveIsolates--;
     replies.close();
-    exits.close();
     return FailureResult<R>(Failure.from(error));
   }
 
   final Completer<Result<R>> done = Completer<Result<R>>();
+  final Completer<void> exited = Completer<void>();
 
   void complete(Result<R> result) {
     if (!done.isCompleted) {
@@ -49,12 +49,22 @@ Future<Result<R>> executeIsolate<M, R>(
   }
 
   final StreamSubscription<dynamic> repliesSub = replies.listen((Object? raw) {
+    if (raw == null) {
+      exited.complete();
+      complete(FailureResult<R>(const ProviderFailure()));
+      return;
+    }
+    if (done.isCompleted) return;
     if (raw is! List<Object?> || raw.isEmpty) {
       return;
     }
     final Object? kind = raw.first;
     if (kind == 'progress' && raw.length > 1 && raw[1] is double) {
-      onProgress?.call(raw[1]! as double);
+      try {
+        onProgress?.call(raw[1]! as double);
+      } on Object catch (error) {
+        complete(FailureResult<R>(Failure.from(error)));
+      }
       return;
     }
     if (kind == 'ok' && raw.length > 1) {
@@ -62,25 +72,26 @@ Future<Result<R>> executeIsolate<M, R>(
       return;
     }
     if (kind == 'err' && raw.length > 1) {
-      complete(FailureResult<R>(Failure.from(StateError('${raw[1]}'))));
+      complete(FailureResult<R>(Failure.from(raw[1]!)));
+      return;
     }
+    // Unhandled isolate errors use the same port so they cannot leave a
+    // waiting caller behind. Error strings never cross the public boundary.
+    complete(FailureResult<R>(const ProviderFailure()));
   });
 
-  final StreamSubscription<void>? cancelSub = cancel == null
-      ? null
-      : Stream<void>.fromFuture(cancel.whenCancelled).listen((_) {
-          complete(FailureResult<R>(const CancelledFailure()));
-        });
+  final void Function()? detachCancellation = cancel?.register(() {
+    complete(FailureResult<R>(const CancelledFailure()));
+  });
 
   try {
     return await done.future;
   } finally {
-    await cancelSub?.cancel();
+    detachCancellation?.call();
+    isolate.kill(priority: Isolate.immediate);
+    await exited.future;
     await repliesSub.cancel();
     replies.close();
-    isolate.kill(priority: Isolate.immediate);
-    await exits.first;
-    exits.close();
     debugLiveIsolates--;
   }
 }
@@ -102,7 +113,7 @@ Future<void> _isolateMain(SendPort send, Function task, Object? message) async {
           : pending;
       send.send(<Object?>['ok', result]);
     } on Object catch (error) {
-      send.send(<Object?>['err', error.toString()]);
+      send.send(<Object?>['err', Failure.from(error)]);
     }
   }, zoneValues: <Object?, Object?>{#taptureIsolateProgress: send});
 }

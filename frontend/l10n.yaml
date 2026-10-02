@@ -1,0 +1,8 @@
+arb-dir: lib/core/copy/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.g.dart
+output-class: AppLocalizations
+output-dir: lib/core/copy/l10n
+use-escaping: true
+nullable-getter: true
+required-resource-attributes: true

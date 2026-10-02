@@ -7,10 +7,10 @@ import 'bundle_zip_job.dart';
 
 /// Used when neither `dart:io` nor the web library is available.
 Future<Result<BundleOutput>> zipBundle(BundleZipJob job) async {
-  return const FailureResult<BundleOutput>(
+  return FailureResult<BundleOutput>(
     StorageFailure(
-      message: Copy.packageWriteFailed,
-      recoveryAction: Copy.tryAgain,
+      localizedMessage: Copy.messages.packageWriteFailed,
+      localizedRecovery: Copy.messages.tryAgain,
     ),
   );
 }

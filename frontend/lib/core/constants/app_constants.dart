@@ -65,6 +65,9 @@ abstract final class AppConstants {
   /// milliseconds, such as an upload retry backoff.
   static const Duration millisecond = Duration(milliseconds: 1);
 
+  /// One microsecond, for exact durations derived from recorded sample bytes.
+  static const Duration microsecond = Duration(microseconds: 1);
+
   /// Bounds for virtualised lists and trays.
   static const ({int pageSize}) lists = (pageSize: listPageSize);
 
@@ -86,6 +89,24 @@ abstract final class AppConstants {
     frame: Duration(milliseconds: 250),
     worstFrame: Duration(seconds: 2),
     livePages: 4,
+  );
+
+  /// Reference datasets (task 010). A table file is read [readChunkBytes]
+  /// at a time and reports progress every [progressRows] rows; a search the
+  /// database cannot fold reads [scanChunk] rows a query; and a search over
+  /// ten thousand rows answers within [searchBudget], as the repository and
+  /// browser measurements assert (FE-TEST-09).
+  static const ({
+    int readChunkBytes,
+    int progressRows,
+    int scanChunk,
+    Duration searchBudget,
+  })
+  datasets = (
+    readChunkBytes: 64 * 1024,
+    progressRows: 1000,
+    scanChunk: 500,
+    searchBudget: Duration(milliseconds: 300),
   );
 
   /// Capture, thumbnail and upload image sizes.
@@ -132,7 +153,10 @@ abstract final class AppConstants {
   );
 
   /// How long a tombstone and its files stay recoverable.
-  static const ({int days}) retention = (days: 30);
+  static const ({int days, Duration duration}) retention = (
+    days: _retentionDays,
+    duration: Duration(days: _retentionDays),
+  );
 
   /// Default proposal bands; a project may override these in settings.
   static const ({double high, double medium}) confidence = (
@@ -235,6 +259,7 @@ abstract final class AppConstants {
     int audioMaxBytes,
     int bundleMaxBytes,
     int archiveUncompressedMaxBytes,
+    Duration incomingBridgeTimeout,
   })
   imports = (
     sniffHeaderBytes: 64,
@@ -244,6 +269,7 @@ abstract final class AppConstants {
     audioMaxBytes: 50 * _mib,
     bundleMaxBytes: 200 * _mib,
     archiveUncompressedMaxBytes: 500 * _mib,
+    incomingBridgeTimeout: Duration(seconds: 5),
   );
 
   /// Caps, backoff and detection cutoffs for processing.
@@ -366,30 +392,18 @@ abstract final class AppConstants {
   );
 
   /// Password sealing for a project bundle (task 019).
-  static const ({int iterations}) bundleSeal = (iterations: 1000);
-
-  /// How exported multi-values are joined, in every format (task 018).
-  static const ({String multiSeparator, double pdfBody}) exportValues = (
-    multiSeparator: '; ',
-    pdfBody: 11,
+  static const ({int iterations, int maxIterations}) bundleSeal = (
+    iterations: 600000,
+    maxIterations: 1200000,
   );
 
-  /// Shared PDF geometry; reports never define private layout values.
-  static const ({
-    double margin,
-    double title,
-    double heading,
-    double gap,
-    double photoGap,
-    double photoHeight,
-    int maxPages,
-  })
-  pdfLayout = (
-    margin: 36,
-    title: 24,
-    heading: 16,
-    gap: 12,
-    photoGap: 4,
+  /// How exported multi-values are joined, in every format (task 018).
+  static const ({String multiSeparator}) exportValues = (multiSeparator: '; ');
+
+  /// Shared PDF page geometry beyond the type and spacing tokens: the photo
+  /// block's full-size height and the page cap. Reports never define
+  /// private layout values.
+  static const ({double photoHeight, int maxPages}) pdfLayout = (
     photoHeight: 400,
     maxPages: 10000,
   );
@@ -477,8 +491,18 @@ abstract final class AppConstants {
   /// disk and stays under the ZIP32 limit, so no ZIP64 is needed; its entries
   /// may uncompress to at most ten percent more. A browser builds and opens
   /// packages in memory under the import ceilings instead.
-  static const ({int nativeMaxBytes, int nativeMaxUncompressedBytes}) bundles =
-      (nativeMaxBytes: 4000000000, nativeMaxUncompressedBytes: 4400000000);
+  static const ({
+    int nativeMaxBytes,
+    int nativeMaxUncompressedBytes,
+    int metadataMaxBytes,
+    int manifestMaxBytes,
+  })
+  bundles = (
+    nativeMaxBytes: 4000000000,
+    nativeMaxUncompressedBytes: 4400000000,
+    metadataMaxBytes: 32 * _mib,
+    manifestMaxBytes: _mib,
+  );
 
   /// Capture's guide (task 076, W18): at most this many fields in each of
   /// its lists, so it stays a glance, not a form.
@@ -529,12 +553,16 @@ abstract final class AppConstants {
     int saltBytes,
     List<Duration> backoff,
     Duration countdownTick,
+    Duration storageTimeout,
+    Duration biometricTimeout,
   })
   lock = (
     pinMin: 4,
     pinMax: 8,
     saltBytes: 16,
     countdownTick: Duration(seconds: 1),
+    storageTimeout: Duration(seconds: 5),
+    biometricTimeout: Duration(minutes: 2),
     backoff: <Duration>[
       Duration(seconds: 1),
       Duration(seconds: 2),
@@ -551,29 +579,58 @@ abstract final class AppConstants {
     int maxAttempts,
     int backoffBaseMs,
     int backoffCapMs,
+    int streamBytes,
+    int replyMaxBytes,
+    Duration requestTimeout,
+    int maxSessions,
+    Duration sessionMaxAge,
+    int googleChunkUnit,
+    int oneDriveChunkUnit,
+    int oneDriveMaxChunkBytes,
+    Duration checkpointTimeout,
+    Duration signInTimeout,
+    int signInCallbackMaxBytes,
+    int signInMaxCallbacks,
   })
   cloudUpload = (
     partBytes: 8 * 1024 * 1024,
     maxAttempts: 5,
     backoffBaseMs: 200,
     backoffCapMs: 5000,
+    streamBytes: 64 * 1024,
+    replyMaxBytes: 1024 * 1024,
+    requestTimeout: Duration(seconds: 60),
+    maxSessions: 8,
+    sessionMaxAge: Duration(days: 7),
+    googleChunkUnit: 256 * 1024,
+    oneDriveChunkUnit: 320 * 1024,
+    oneDriveMaxChunkBytes: 60 * 1024 * 1024,
+    checkpointTimeout: Duration(seconds: 8),
+    signInTimeout: Duration(minutes: 3),
+    signInCallbackMaxBytes: 8192,
+    signInMaxCallbacks: 16,
   );
 
   /// The organisation backend (§30.2): how long a proxied analysis call may
-  /// take before the request is queued for later, how long a grant
-  /// authorises relay and analysis without a refresh, and how recently a
-  /// grant must have been refreshed to count as fresh.
+  /// take before the request is queued for later, and how recently a grant
+  /// must have been confirmed to count as fresh. How long a grant lasts is
+  /// the server's `grantValidUntil`.
   static const ({
     Duration proxyTimeout,
-    Duration grantLifetime,
     Duration grantFreshFor,
+    int relayMaxBytes,
   })
   backend = (
     proxyTimeout: Duration(seconds: 8),
-    grantLifetime: Duration(days: 30),
     grantFreshFor: Duration(hours: 1),
+    // Conservative client ceiling matching the standard server deployment's
+    // PACKAGE_MAX_BYTES. A deployment can enforce a lower ceiling as well.
+    relayMaxBytes: 20000000,
   );
 }
 
 /// One mebibyte, the unit storage and import ceilings are stated in.
 const int _mib = 1024 * 1024;
+
+/// Keeps stored day counts and operational deadlines on the same policy.
+const int _retentionDays = 30;

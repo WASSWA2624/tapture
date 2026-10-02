@@ -2,11 +2,15 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/storage_root.dart';
 
 import 'bundle_entry.dart';
 import 'bundle_format.dart';
+import 'bundle_json.dart';
 import 'bundle_manifest.dart';
 
 /// What one package write zips: the JSON and extra entries in memory, the
@@ -25,6 +29,9 @@ final class BundleZipJob {
     required this.ceiling,
     required this.cancel,
     this.onProgress,
+    this.fileSources = const <String, String>{},
+    this.password,
+    this.patternsYaml = '',
   });
 
   /// The device's storage root.
@@ -45,6 +52,9 @@ final class BundleZipJob {
   /// Paths inside the project folder of every file a row points at.
   final List<String> projectFiles;
 
+  /// Protected storage paths keyed by their path inside the archive.
+  final Map<String, String> fileSources;
+
   /// The manifest, without its entries.
   final BundleManifest manifest;
 
@@ -56,6 +66,12 @@ final class BundleZipJob {
 
   /// Share of the entries written so far, 0 to 1.
   final void Function(double)? onProgress;
+
+  /// Optional password for this write only; never serialized into project data.
+  final String? password;
+
+  /// Canonical secret patterns loaded before the worker begins.
+  final String patternsYaml;
 }
 
 /// The last two entries of a package: `checksums.txt`, one `sha256  path`
@@ -81,10 +97,21 @@ final class BundleZipJob {
       sha256: crypto.sha256.convert(checksums).toString(),
     ),
   ];
-  final List<int> manifestBytes = utf8.encode(
-    const JsonEncoder.withIndent('  ').convert(
-      manifest.withEntries(listed, missingFiles: missingFiles).toJson(),
-    ),
+  final int metadata = sorted
+      .where((BundleEntry entry) => BundleFormat.isMetadataEntry(entry.path))
+      .fold<int>(0, (int bytes, BundleEntry entry) => bytes + entry.byteLength);
+  final int remaining = AppConstants.bundles.metadataMaxBytes - metadata;
+  if (remaining < 0) {
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.failureTheProjectMetadataIsTooLargeFor,
+      localizedRecovery: Copy.messages.failureChooseASmallerPackageScope,
+    );
+  }
+  final List<int> manifestBytes = BundleJson.encode(
+    manifest.withEntries(listed, missingFiles: missingFiles).toJson(),
+    maximum: remaining < AppConstants.bundles.manifestMaxBytes
+        ? remaining
+        : AppConstants.bundles.manifestMaxBytes,
   );
   return (manifest: manifestBytes, checksums: checksums);
 }

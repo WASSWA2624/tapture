@@ -35,7 +35,6 @@ final class _DeviceCameraService
   Future<Result<void>>? _starting;
   int _startingGeneration = 0;
   CameraFlashMode _flash = CameraFlashMode.off;
-  bool _grid = false;
   double _zoom = 1;
   double _minZoom = 1;
   double _maxZoom = 1;
@@ -47,8 +46,6 @@ final class _DeviceCameraService
   Size get previewSize => _camera?.value.previewSize ?? Size.zero;
   @override
   CameraFlashMode get flashMode => _flash;
-  @override
-  bool get gridEnabled => _grid;
   @override
   double get zoom => _zoom;
   @override
@@ -107,7 +104,7 @@ final class _DeviceCameraService
     try {
       final List<platform.CameraDescription> cameras = await _cameras();
       if (cameras.isEmpty) {
-        throw const ProviderFailure(message: Copy.photoNoCamera);
+        throw ProviderFailure(localizedMessage: Copy.messages.photoNoCamera);
       }
       final platform.CameraDescription back = cameras.firstWhere(
         (platform.CameraDescription item) =>
@@ -120,8 +117,7 @@ final class _DeviceCameraService
         await _release(opened);
         return const FailureResult<void>(CancelledFailure());
       }
-      _minZoom = await opened.getMinZoomLevel();
-      _maxZoom = await opened.getMaxZoomLevel();
+      await _readZoomBounds(opened);
       if (generation != _generation) {
         await _release(opened);
         return const FailureResult<void>(CancelledFailure());
@@ -145,6 +141,20 @@ final class _DeviceCameraService
       }
       _states.add(CameraPreviewState.failed);
       return FailureResult<void>(_failure(error));
+    }
+  }
+
+  /// Reads the lens's zoom range. A camera or browser without zoom reports
+  /// an error, sometimes a raw platform one, and keeps a fixed 1x.
+  Future<void> _readZoomBounds(platform.CameraController camera) async {
+    try {
+      final double min = await camera.getMinZoomLevel();
+      final double max = await camera.getMaxZoomLevel();
+      _minZoom = min;
+      _maxZoom = max < min ? min : max;
+    } on Object {
+      _minZoom = 1;
+      _maxZoom = 1;
     }
   }
 
@@ -185,8 +195,8 @@ final class _DeviceCameraService
     if (camera == null ||
         !camera.value.isInitialized ||
         camera.value.isTakingPicture) {
-      return const FailureResult<Uint8List>(
-        ProviderFailure(message: Copy.photoNoCamera),
+      return FailureResult<Uint8List>(
+        ProviderFailure(localizedMessage: Copy.messages.photoNoCamera),
       );
     }
     try {
@@ -216,7 +226,7 @@ final class _DeviceCameraService
         CameraFlashMode.on => platform.FlashMode.always,
       });
       _flash = mode;
-    } on platform.CameraException {
+    } on Object {
       // Unsupported hardware leaves the last usable setting in force.
     }
   }
@@ -225,7 +235,7 @@ final class _DeviceCameraService
   Future<void> focusAt(double x, double y) async {
     try {
       await _camera?.setFocusPoint(Offset(x.clamp(0, 1), y.clamp(0, 1)));
-    } on platform.CameraException {
+    } on Object {
       // Fixed-focus and web cameras keep their normal autofocus behaviour.
     }
   }
@@ -236,21 +246,20 @@ final class _DeviceCameraService
     try {
       await _camera?.setZoomLevel(next);
       _zoom = next;
-    } on platform.CameraException {
-      // Hardware without adjustable zoom stays at its last supported factor.
+    } on Object {
+      // Hardware without adjustable zoom stays at its last supported factor;
+      // the plug-in can report that as a raw platform error, not only as a
+      // camera exception.
     }
     return _zoom;
   }
 
-  @override
-  Future<void> setGridEnabled(bool enabled) async => _grid = enabled;
-
   Failure _failure(Object error) {
     if (error is platform.CameraException && error.code.contains('Access')) {
-      return const PermissionFailure(message: Copy.photoNoCamera);
+      return PermissionFailure(localizedMessage: Copy.messages.photoNoCamera);
     }
     return error is Failure
         ? error
-        : const ProviderFailure(message: Copy.photoNoCamera);
+        : ProviderFailure(localizedMessage: Copy.messages.photoNoCamera);
   }
 }

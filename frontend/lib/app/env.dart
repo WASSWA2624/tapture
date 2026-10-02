@@ -15,6 +15,11 @@ abstract final class Env {
   @visibleForTesting
   static Flavor? debugFlavor;
 
+  /// The organisation backend a build is pointed at
+  /// (`--dart-define=BACKEND_URL=...`), or empty when none was given and the
+  /// operator enters one in Settings.
+  static const String backendUrl = String.fromEnvironment('BACKEND_URL');
+
   static Flavor get _compiledFlavor {
     const String defined = String.fromEnvironment('FLAVOR');
     const String fromGradle = String.fromEnvironment('FLUTTER_APP_FLAVOR');

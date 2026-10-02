@@ -32,6 +32,12 @@ abstract final class BundleFormat {
   /// Folder of one JSON entry per reference dataset.
   static const String referenceFolder = 'reference/';
 
+  /// Entries decoded as JSON objects, sharing the bounded metadata budget.
+  static bool isMetadataEntry(String path) =>
+      path == manifest ||
+      tableEntries.containsKey(path) ||
+      (path.startsWith(referenceFolder) && path.endsWith('.json'));
+
   /// Which tables each JSON entry carries.
   static const Map<String, List<String>> tableEntries = <String, List<String>>{
     'project.json': <String>[

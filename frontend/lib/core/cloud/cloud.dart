@@ -5,5 +5,7 @@
 library;
 
 export 'cloud_destination.dart';
+export 'cloud_settings.dart';
 export 'destination_secrets.dart';
 export 'oauth_destination_client.dart';
+export 'worker_cloud_destination.dart';

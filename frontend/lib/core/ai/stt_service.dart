@@ -70,7 +70,7 @@ final class _UnavailableSttService implements SttService {
     bool onDeviceOnly = false,
   }) {
     return Stream<SttResult>.error(
-      const ProviderFailure(message: Copy.dictationUnavailable),
+      ProviderFailure(localizedMessage: Copy.messages.dictationUnavailable),
     );
   }
 
@@ -193,7 +193,9 @@ final class _PluginSttService implements SttService {
     if (kIsWeb && session.onDeviceOnly) {
       // The browser recogniser streams audio to its vendor (FE-SEC-04).
       session.finish(
-        failure: const NetworkFailure(message: Copy.dictationOfflineOnly),
+        failure: NetworkFailure(
+          localizedMessage: Copy.messages.dictationOfflineOnly,
+        ),
       );
       return;
     }
@@ -355,22 +357,30 @@ Future<void> _quietly(Future<void> Function() call) async {
 Failure _failureFor(String? error, _Session session) {
   final String name = (error ?? '').toLowerCase();
   if (_matches(name, _permissionErrors)) {
-    return const PermissionFailure(message: Copy.dictationNoMicrophone);
+    return PermissionFailure(
+      localizedMessage: Copy.messages.dictationNoMicrophone,
+    );
   }
   if (_matches(name, _silenceErrors)) {
-    return const CancelledFailure(message: Copy.dictationNothingHeard);
+    return CancelledFailure(
+      localizedMessage: Copy.messages.dictationNothingHeard,
+    );
   }
   if (session.onDeviceOnly &&
       _matches(name, <String>[..._networkErrors, ..._unsupportedErrors])) {
-    return const NetworkFailure(message: Copy.dictationOfflineOnly);
+    return NetworkFailure(localizedMessage: Copy.messages.dictationOfflineOnly);
   }
   if (_matches(name, _networkErrors)) {
-    return const NetworkFailure(message: Copy.dictationNeedsConnection);
+    return NetworkFailure(
+      localizedMessage: Copy.messages.dictationNeedsConnection,
+    );
   }
   if (error == null || _matches(name, _unsupportedErrors)) {
-    return const ProviderFailure(message: Copy.dictationUnavailable);
+    return ProviderFailure(
+      localizedMessage: Copy.messages.dictationUnavailable,
+    );
   }
-  return const ProviderFailure(message: Copy.dictationFailed);
+  return ProviderFailure(localizedMessage: Copy.messages.dictationFailed);
 }
 
 /// A listen that failed without naming why.

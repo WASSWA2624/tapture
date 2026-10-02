@@ -8289,6 +8289,18 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _capturedByAccountMeta = const VerificationMeta(
+    'capturedByAccount',
+  );
+  @override
+  late final GeneratedColumn<String> capturedByAccount =
+      GeneratedColumn<String>(
+        'captured_by_account',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _gpsLatMeta = const VerificationMeta('gpsLat');
   @override
   late final GeneratedColumn<double> gpsLat = GeneratedColumn<double>(
@@ -8329,6 +8341,18 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _approvedByAccountMeta = const VerificationMeta(
+    'approvedByAccount',
+  );
+  @override
+  late final GeneratedColumn<String> approvedByAccount =
+      GeneratedColumn<String>(
+        'approved_by_account',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _recordNumberMeta = const VerificationMeta(
     'recordNumber',
   );
@@ -8360,10 +8384,12 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     source,
     capturedAt,
     capturedBy,
+    capturedByAccount,
     gpsLat,
     gpsLon,
     approvedAt,
     approvedBy,
+    approvedByAccount,
     recordNumber,
   ];
   @override
@@ -8531,6 +8557,15 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
     } else if (isInserting) {
       context.missing(_capturedByMeta);
     }
+    if (data.containsKey('captured_by_account')) {
+      context.handle(
+        _capturedByAccountMeta,
+        capturedByAccount.isAcceptableOrUnknown(
+          data['captured_by_account']!,
+          _capturedByAccountMeta,
+        ),
+      );
+    }
     if (data.containsKey('gps_lat')) {
       context.handle(
         _gpsLatMeta,
@@ -8553,6 +8588,15 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
       context.handle(
         _approvedByMeta,
         approvedBy.isAcceptableOrUnknown(data['approved_by']!, _approvedByMeta),
+      );
+    }
+    if (data.containsKey('approved_by_account')) {
+      context.handle(
+        _approvedByAccountMeta,
+        approvedByAccount.isAcceptableOrUnknown(
+          data['approved_by_account']!,
+          _approvedByAccountMeta,
+        ),
       );
     }
     if (data.containsKey('record_number')) {
@@ -8645,6 +8689,10 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
         DriftSqlType.string,
         data['${effectivePrefix}captured_by'],
       )!,
+      capturedByAccount: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}captured_by_account'],
+      ),
       gpsLat: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}gps_lat'],
@@ -8660,6 +8708,10 @@ class $RecordsTable extends Records with TableInfo<$RecordsTable, RecordRow> {
       approvedBy: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}approved_by'],
+      ),
+      approvedByAccount: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}approved_by_account'],
       ),
       recordNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -8697,6 +8749,7 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
   final String templateId;
 
   /// Template shape kept by this record until an explicit migration.
+  /// Zero preserves an older recovery draft whose captured shape is unknown.
   final int templateVersion;
 
   /// Predefined checklist row, when the capture was against one.
@@ -8729,6 +8782,11 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
   /// Operator who captured it.
   final String capturedBy;
 
+  /// Backend account the capturing operator is enrolled as (§71.2). Null
+  /// until this device is enrolled; enrolment annotates earlier records
+  /// without rewriting [capturedBy].
+  final String? capturedByAccount;
+
   /// GPS latitude at capture, when known.
   final double? gpsLat;
 
@@ -8740,6 +8798,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
 
   /// Operator who approved it.
   final String? approvedBy;
+
+  /// Backend account the approving operator is enrolled as (§71.2).
+  final String? approvedByAccount;
 
   /// Number shown in lists, counted per project from 1.
   ///
@@ -8767,10 +8828,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     required this.source,
     required this.capturedAt,
     required this.capturedBy,
+    this.capturedByAccount,
     this.gpsLat,
     this.gpsLon,
     this.approvedAt,
     this.approvedBy,
+    this.approvedByAccount,
     this.recordNumber,
   });
   @override
@@ -8800,6 +8863,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     map['source'] = Variable<String>(source);
     map['captured_at'] = Variable<DateTime>(capturedAt);
     map['captured_by'] = Variable<String>(capturedBy);
+    if (!nullToAbsent || capturedByAccount != null) {
+      map['captured_by_account'] = Variable<String>(capturedByAccount);
+    }
     if (!nullToAbsent || gpsLat != null) {
       map['gps_lat'] = Variable<double>(gpsLat);
     }
@@ -8811,6 +8877,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     }
     if (!nullToAbsent || approvedBy != null) {
       map['approved_by'] = Variable<String>(approvedBy);
+    }
+    if (!nullToAbsent || approvedByAccount != null) {
+      map['approved_by_account'] = Variable<String>(approvedByAccount);
     }
     if (!nullToAbsent || recordNumber != null) {
       map['record_number'] = Variable<int>(recordNumber);
@@ -8844,6 +8913,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       source: Value(source),
       capturedAt: Value(capturedAt),
       capturedBy: Value(capturedBy),
+      capturedByAccount: capturedByAccount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(capturedByAccount),
       gpsLat: gpsLat == null && nullToAbsent
           ? const Value.absent()
           : Value(gpsLat),
@@ -8856,6 +8928,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       approvedBy: approvedBy == null && nullToAbsent
           ? const Value.absent()
           : Value(approvedBy),
+      approvedByAccount: approvedByAccount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(approvedByAccount),
       recordNumber: recordNumber == null && nullToAbsent
           ? const Value.absent()
           : Value(recordNumber),
@@ -8886,10 +8961,16 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       source: serializer.fromJson<String>(json['source']),
       capturedAt: serializer.fromJson<DateTime>(json['capturedAt']),
       capturedBy: serializer.fromJson<String>(json['capturedBy']),
+      capturedByAccount: serializer.fromJson<String?>(
+        json['capturedByAccount'],
+      ),
       gpsLat: serializer.fromJson<double?>(json['gpsLat']),
       gpsLon: serializer.fromJson<double?>(json['gpsLon']),
       approvedAt: serializer.fromJson<DateTime?>(json['approvedAt']),
       approvedBy: serializer.fromJson<String?>(json['approvedBy']),
+      approvedByAccount: serializer.fromJson<String?>(
+        json['approvedByAccount'],
+      ),
       recordNumber: serializer.fromJson<int?>(json['recordNumber']),
     );
   }
@@ -8915,10 +8996,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       'source': serializer.toJson<String>(source),
       'capturedAt': serializer.toJson<DateTime>(capturedAt),
       'capturedBy': serializer.toJson<String>(capturedBy),
+      'capturedByAccount': serializer.toJson<String?>(capturedByAccount),
       'gpsLat': serializer.toJson<double?>(gpsLat),
       'gpsLon': serializer.toJson<double?>(gpsLon),
       'approvedAt': serializer.toJson<DateTime?>(approvedAt),
       'approvedBy': serializer.toJson<String?>(approvedBy),
+      'approvedByAccount': serializer.toJson<String?>(approvedByAccount),
       'recordNumber': serializer.toJson<int?>(recordNumber),
     };
   }
@@ -8942,10 +9025,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     String? source,
     DateTime? capturedAt,
     String? capturedBy,
+    Value<String?> capturedByAccount = const Value.absent(),
     Value<double?> gpsLat = const Value.absent(),
     Value<double?> gpsLon = const Value.absent(),
     Value<DateTime?> approvedAt = const Value.absent(),
     Value<String?> approvedBy = const Value.absent(),
+    Value<String?> approvedByAccount = const Value.absent(),
     Value<int?> recordNumber = const Value.absent(),
   }) => RecordRow(
     id: id ?? this.id,
@@ -8972,10 +9057,16 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     source: source ?? this.source,
     capturedAt: capturedAt ?? this.capturedAt,
     capturedBy: capturedBy ?? this.capturedBy,
+    capturedByAccount: capturedByAccount.present
+        ? capturedByAccount.value
+        : this.capturedByAccount,
     gpsLat: gpsLat.present ? gpsLat.value : this.gpsLat,
     gpsLon: gpsLon.present ? gpsLon.value : this.gpsLon,
     approvedAt: approvedAt.present ? approvedAt.value : this.approvedAt,
     approvedBy: approvedBy.present ? approvedBy.value : this.approvedBy,
+    approvedByAccount: approvedByAccount.present
+        ? approvedByAccount.value
+        : this.approvedByAccount,
     recordNumber: recordNumber.present ? recordNumber.value : this.recordNumber,
   );
   RecordRow copyWithCompanion(RecordsCompanion data) {
@@ -9020,6 +9111,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       capturedBy: data.capturedBy.present
           ? data.capturedBy.value
           : this.capturedBy,
+      capturedByAccount: data.capturedByAccount.present
+          ? data.capturedByAccount.value
+          : this.capturedByAccount,
       gpsLat: data.gpsLat.present ? data.gpsLat.value : this.gpsLat,
       gpsLon: data.gpsLon.present ? data.gpsLon.value : this.gpsLon,
       approvedAt: data.approvedAt.present
@@ -9028,6 +9122,9 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
       approvedBy: data.approvedBy.present
           ? data.approvedBy.value
           : this.approvedBy,
+      approvedByAccount: data.approvedByAccount.present
+          ? data.approvedByAccount.value
+          : this.approvedByAccount,
       recordNumber: data.recordNumber.present
           ? data.recordNumber.value
           : this.recordNumber,
@@ -9055,10 +9152,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
           ..write('source: $source, ')
           ..write('capturedAt: $capturedAt, ')
           ..write('capturedBy: $capturedBy, ')
+          ..write('capturedByAccount: $capturedByAccount, ')
           ..write('gpsLat: $gpsLat, ')
           ..write('gpsLon: $gpsLon, ')
           ..write('approvedAt: $approvedAt, ')
           ..write('approvedBy: $approvedBy, ')
+          ..write('approvedByAccount: $approvedByAccount, ')
           ..write('recordNumber: $recordNumber')
           ..write(')'))
         .toString();
@@ -9084,10 +9183,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
     source,
     capturedAt,
     capturedBy,
+    capturedByAccount,
     gpsLat,
     gpsLon,
     approvedAt,
     approvedBy,
+    approvedByAccount,
     recordNumber,
   ]);
   @override
@@ -9112,10 +9213,12 @@ class RecordRow extends DataClass implements Insertable<RecordRow> {
           other.source == this.source &&
           other.capturedAt == this.capturedAt &&
           other.capturedBy == this.capturedBy &&
+          other.capturedByAccount == this.capturedByAccount &&
           other.gpsLat == this.gpsLat &&
           other.gpsLon == this.gpsLon &&
           other.approvedAt == this.approvedAt &&
           other.approvedBy == this.approvedBy &&
+          other.approvedByAccount == this.approvedByAccount &&
           other.recordNumber == this.recordNumber);
 }
 
@@ -9138,10 +9241,12 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
   final Value<String> source;
   final Value<DateTime> capturedAt;
   final Value<String> capturedBy;
+  final Value<String?> capturedByAccount;
   final Value<double?> gpsLat;
   final Value<double?> gpsLon;
   final Value<DateTime?> approvedAt;
   final Value<String?> approvedBy;
+  final Value<String?> approvedByAccount;
   final Value<int?> recordNumber;
   final Value<int> rowid;
   const RecordsCompanion({
@@ -9163,10 +9268,12 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     this.source = const Value.absent(),
     this.capturedAt = const Value.absent(),
     this.capturedBy = const Value.absent(),
+    this.capturedByAccount = const Value.absent(),
     this.gpsLat = const Value.absent(),
     this.gpsLon = const Value.absent(),
     this.approvedAt = const Value.absent(),
     this.approvedBy = const Value.absent(),
+    this.approvedByAccount = const Value.absent(),
     this.recordNumber = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -9189,10 +9296,12 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     required String source,
     required DateTime capturedAt,
     required String capturedBy,
+    this.capturedByAccount = const Value.absent(),
     this.gpsLat = const Value.absent(),
     this.gpsLon = const Value.absent(),
     this.approvedAt = const Value.absent(),
     this.approvedBy = const Value.absent(),
+    this.approvedByAccount = const Value.absent(),
     this.recordNumber = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
@@ -9226,10 +9335,12 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     Expression<String>? source,
     Expression<DateTime>? capturedAt,
     Expression<String>? capturedBy,
+    Expression<String>? capturedByAccount,
     Expression<double>? gpsLat,
     Expression<double>? gpsLon,
     Expression<DateTime>? approvedAt,
     Expression<String>? approvedBy,
+    Expression<String>? approvedByAccount,
     Expression<int>? recordNumber,
     Expression<int>? rowid,
   }) {
@@ -9252,10 +9363,12 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
       if (source != null) 'source': source,
       if (capturedAt != null) 'captured_at': capturedAt,
       if (capturedBy != null) 'captured_by': capturedBy,
+      if (capturedByAccount != null) 'captured_by_account': capturedByAccount,
       if (gpsLat != null) 'gps_lat': gpsLat,
       if (gpsLon != null) 'gps_lon': gpsLon,
       if (approvedAt != null) 'approved_at': approvedAt,
       if (approvedBy != null) 'approved_by': approvedBy,
+      if (approvedByAccount != null) 'approved_by_account': approvedByAccount,
       if (recordNumber != null) 'record_number': recordNumber,
       if (rowid != null) 'rowid': rowid,
     });
@@ -9280,10 +9393,12 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     Value<String>? source,
     Value<DateTime>? capturedAt,
     Value<String>? capturedBy,
+    Value<String?>? capturedByAccount,
     Value<double?>? gpsLat,
     Value<double?>? gpsLon,
     Value<DateTime?>? approvedAt,
     Value<String?>? approvedBy,
+    Value<String?>? approvedByAccount,
     Value<int?>? recordNumber,
     Value<int>? rowid,
   }) {
@@ -9306,10 +9421,12 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
       source: source ?? this.source,
       capturedAt: capturedAt ?? this.capturedAt,
       capturedBy: capturedBy ?? this.capturedBy,
+      capturedByAccount: capturedByAccount ?? this.capturedByAccount,
       gpsLat: gpsLat ?? this.gpsLat,
       gpsLon: gpsLon ?? this.gpsLon,
       approvedAt: approvedAt ?? this.approvedAt,
       approvedBy: approvedBy ?? this.approvedBy,
+      approvedByAccount: approvedByAccount ?? this.approvedByAccount,
       recordNumber: recordNumber ?? this.recordNumber,
       rowid: rowid ?? this.rowid,
     );
@@ -9372,6 +9489,9 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     if (capturedBy.present) {
       map['captured_by'] = Variable<String>(capturedBy.value);
     }
+    if (capturedByAccount.present) {
+      map['captured_by_account'] = Variable<String>(capturedByAccount.value);
+    }
     if (gpsLat.present) {
       map['gps_lat'] = Variable<double>(gpsLat.value);
     }
@@ -9383,6 +9503,9 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
     }
     if (approvedBy.present) {
       map['approved_by'] = Variable<String>(approvedBy.value);
+    }
+    if (approvedByAccount.present) {
+      map['approved_by_account'] = Variable<String>(approvedByAccount.value);
     }
     if (recordNumber.present) {
       map['record_number'] = Variable<int>(recordNumber.value);
@@ -9414,10 +9537,12 @@ class RecordsCompanion extends UpdateCompanion<RecordRow> {
           ..write('source: $source, ')
           ..write('capturedAt: $capturedAt, ')
           ..write('capturedBy: $capturedBy, ')
+          ..write('capturedByAccount: $capturedByAccount, ')
           ..write('gpsLat: $gpsLat, ')
           ..write('gpsLon: $gpsLon, ')
           ..write('approvedAt: $approvedAt, ')
           ..write('approvedBy: $approvedBy, ')
+          ..write('approvedByAccount: $approvedByAccount, ')
           ..write('recordNumber: $recordNumber, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -16041,12 +16166,35 @@ class $ProcessingTable extends Processing
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _requestGenerationMeta = const VerificationMeta(
+    'requestGeneration',
+  );
+  @override
+  late final GeneratedColumn<int> requestGeneration = GeneratedColumn<int>(
+    'request_generation',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _lastErrorMeta = const VerificationMeta(
     'lastError',
   );
   @override
   late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
     'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastErrorMessageMeta = const VerificationMeta(
+    'lastErrorMessage',
+  );
+  @override
+  late final GeneratedColumn<String> lastErrorMessage = GeneratedColumn<String>(
+    'last_error_message',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -16150,7 +16298,9 @@ class $ProcessingTable extends Processing
     stage,
     status,
     attempts,
+    requestGeneration,
     lastError,
+    lastErrorMessage,
     queuedAt,
     startedAt,
     finishedAt,
@@ -16230,10 +16380,28 @@ class $ProcessingTable extends Processing
         attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta),
       );
     }
+    if (data.containsKey('request_generation')) {
+      context.handle(
+        _requestGenerationMeta,
+        requestGeneration.isAcceptableOrUnknown(
+          data['request_generation']!,
+          _requestGenerationMeta,
+        ),
+      );
+    }
     if (data.containsKey('last_error')) {
       context.handle(
         _lastErrorMeta,
         lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('last_error_message')) {
+      context.handle(
+        _lastErrorMessageMeta,
+        lastErrorMessage.isAcceptableOrUnknown(
+          data['last_error_message']!,
+          _lastErrorMessageMeta,
+        ),
       );
     }
     if (data.containsKey('queued_at')) {
@@ -16336,9 +16504,17 @@ class $ProcessingTable extends Processing
         DriftSqlType.int,
         data['${effectivePrefix}attempts'],
       )!,
+      requestGeneration: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}request_generation'],
+      )!,
       lastError: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}last_error'],
+      ),
+      lastErrorMessage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error_message'],
       ),
       queuedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
@@ -16415,8 +16591,16 @@ class ProcessingJobRow extends DataClass
   /// How many times this job has been retried.
   final int attempts;
 
+  /// Explicit operator retry generation; crash recovery retains this value.
+  /// Stored responses from a previous generation remain evidence, not a cache.
+  final int requestGeneration;
+
   /// Last failure reason, when one exists. Stored as data.
   final String? lastError;
+
+  /// Serializable catalogue key and arguments, independent of audit text.
+  /// Null on legacy rows and failures supplied as explicit custom text.
+  final String? lastErrorMessage;
 
   /// When the job entered the queue.
   final DateTime queuedAt;
@@ -16454,7 +16638,9 @@ class ProcessingJobRow extends DataClass
     required this.stage,
     required this.status,
     required this.attempts,
+    required this.requestGeneration,
     this.lastError,
+    this.lastErrorMessage,
     required this.queuedAt,
     this.startedAt,
     this.finishedAt,
@@ -16480,8 +16666,12 @@ class ProcessingJobRow extends DataClass
       );
     }
     map['attempts'] = Variable<int>(attempts);
+    map['request_generation'] = Variable<int>(requestGeneration);
     if (!nullToAbsent || lastError != null) {
       map['last_error'] = Variable<String>(lastError);
+    }
+    if (!nullToAbsent || lastErrorMessage != null) {
+      map['last_error_message'] = Variable<String>(lastErrorMessage);
     }
     map['queued_at'] = Variable<DateTime>(queuedAt);
     if (!nullToAbsent || startedAt != null) {
@@ -16519,9 +16709,13 @@ class ProcessingJobRow extends DataClass
       stage: Value(stage),
       status: Value(status),
       attempts: Value(attempts),
+      requestGeneration: Value(requestGeneration),
       lastError: lastError == null && nullToAbsent
           ? const Value.absent()
           : Value(lastError),
+      lastErrorMessage: lastErrorMessage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastErrorMessage),
       queuedAt: Value(queuedAt),
       startedAt: startedAt == null && nullToAbsent
           ? const Value.absent()
@@ -16564,7 +16758,9 @@ class ProcessingJobRow extends DataClass
         serializer.fromJson<String>(json['status']),
       ),
       attempts: serializer.fromJson<int>(json['attempts']),
+      requestGeneration: serializer.fromJson<int>(json['requestGeneration']),
       lastError: serializer.fromJson<String?>(json['lastError']),
+      lastErrorMessage: serializer.fromJson<String?>(json['lastErrorMessage']),
       queuedAt: serializer.fromJson<DateTime>(json['queuedAt']),
       startedAt: serializer.fromJson<DateTime?>(json['startedAt']),
       finishedAt: serializer.fromJson<DateTime?>(json['finishedAt']),
@@ -16590,7 +16786,9 @@ class ProcessingJobRow extends DataClass
         $ProcessingTable.$converterstatus.toJson(status),
       ),
       'attempts': serializer.toJson<int>(attempts),
+      'requestGeneration': serializer.toJson<int>(requestGeneration),
       'lastError': serializer.toJson<String?>(lastError),
+      'lastErrorMessage': serializer.toJson<String?>(lastErrorMessage),
       'queuedAt': serializer.toJson<DateTime>(queuedAt),
       'startedAt': serializer.toJson<DateTime?>(startedAt),
       'finishedAt': serializer.toJson<DateTime?>(finishedAt),
@@ -16612,7 +16810,9 @@ class ProcessingJobRow extends DataClass
     String? stage,
     ProcessingJobStatus? status,
     int? attempts,
+    int? requestGeneration,
     Value<String?> lastError = const Value.absent(),
+    Value<String?> lastErrorMessage = const Value.absent(),
     DateTime? queuedAt,
     Value<DateTime?> startedAt = const Value.absent(),
     Value<DateTime?> finishedAt = const Value.absent(),
@@ -16631,7 +16831,11 @@ class ProcessingJobRow extends DataClass
     stage: stage ?? this.stage,
     status: status ?? this.status,
     attempts: attempts ?? this.attempts,
+    requestGeneration: requestGeneration ?? this.requestGeneration,
     lastError: lastError.present ? lastError.value : this.lastError,
+    lastErrorMessage: lastErrorMessage.present
+        ? lastErrorMessage.value
+        : this.lastErrorMessage,
     queuedAt: queuedAt ?? this.queuedAt,
     startedAt: startedAt.present ? startedAt.value : this.startedAt,
     finishedAt: finishedAt.present ? finishedAt.value : this.finishedAt,
@@ -16656,7 +16860,13 @@ class ProcessingJobRow extends DataClass
       stage: data.stage.present ? data.stage.value : this.stage,
       status: data.status.present ? data.status.value : this.status,
       attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      requestGeneration: data.requestGeneration.present
+          ? data.requestGeneration.value
+          : this.requestGeneration,
       lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      lastErrorMessage: data.lastErrorMessage.present
+          ? data.lastErrorMessage.value
+          : this.lastErrorMessage,
       queuedAt: data.queuedAt.present ? data.queuedAt.value : this.queuedAt,
       startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
       finishedAt: data.finishedAt.present
@@ -16688,7 +16898,9 @@ class ProcessingJobRow extends DataClass
           ..write('stage: $stage, ')
           ..write('status: $status, ')
           ..write('attempts: $attempts, ')
+          ..write('requestGeneration: $requestGeneration, ')
           ..write('lastError: $lastError, ')
+          ..write('lastErrorMessage: $lastErrorMessage, ')
           ..write('queuedAt: $queuedAt, ')
           ..write('startedAt: $startedAt, ')
           ..write('finishedAt: $finishedAt, ')
@@ -16712,7 +16924,9 @@ class ProcessingJobRow extends DataClass
     stage,
     status,
     attempts,
+    requestGeneration,
     lastError,
+    lastErrorMessage,
     queuedAt,
     startedAt,
     finishedAt,
@@ -16735,7 +16949,9 @@ class ProcessingJobRow extends DataClass
           other.stage == this.stage &&
           other.status == this.status &&
           other.attempts == this.attempts &&
+          other.requestGeneration == this.requestGeneration &&
           other.lastError == this.lastError &&
+          other.lastErrorMessage == this.lastErrorMessage &&
           other.queuedAt == this.queuedAt &&
           other.startedAt == this.startedAt &&
           other.finishedAt == this.finishedAt &&
@@ -16756,7 +16972,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
   final Value<String> stage;
   final Value<ProcessingJobStatus> status;
   final Value<int> attempts;
+  final Value<int> requestGeneration;
   final Value<String?> lastError;
+  final Value<String?> lastErrorMessage;
   final Value<DateTime> queuedAt;
   final Value<DateTime?> startedAt;
   final Value<DateTime?> finishedAt;
@@ -16776,7 +16994,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     this.stage = const Value.absent(),
     this.status = const Value.absent(),
     this.attempts = const Value.absent(),
+    this.requestGeneration = const Value.absent(),
     this.lastError = const Value.absent(),
+    this.lastErrorMessage = const Value.absent(),
     this.queuedAt = const Value.absent(),
     this.startedAt = const Value.absent(),
     this.finishedAt = const Value.absent(),
@@ -16797,7 +17017,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     required String stage,
     required ProcessingJobStatus status,
     this.attempts = const Value.absent(),
+    this.requestGeneration = const Value.absent(),
     this.lastError = const Value.absent(),
+    this.lastErrorMessage = const Value.absent(),
     required DateTime queuedAt,
     this.startedAt = const Value.absent(),
     this.finishedAt = const Value.absent(),
@@ -16824,7 +17046,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     Expression<String>? stage,
     Expression<String>? status,
     Expression<int>? attempts,
+    Expression<int>? requestGeneration,
     Expression<String>? lastError,
+    Expression<String>? lastErrorMessage,
     Expression<DateTime>? queuedAt,
     Expression<DateTime>? startedAt,
     Expression<DateTime>? finishedAt,
@@ -16845,7 +17069,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
       if (stage != null) 'stage': stage,
       if (status != null) 'status': status,
       if (attempts != null) 'attempts': attempts,
+      if (requestGeneration != null) 'request_generation': requestGeneration,
       if (lastError != null) 'last_error': lastError,
+      if (lastErrorMessage != null) 'last_error_message': lastErrorMessage,
       if (queuedAt != null) 'queued_at': queuedAt,
       if (startedAt != null) 'started_at': startedAt,
       if (finishedAt != null) 'finished_at': finishedAt,
@@ -16868,7 +17094,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     Value<String>? stage,
     Value<ProcessingJobStatus>? status,
     Value<int>? attempts,
+    Value<int>? requestGeneration,
     Value<String?>? lastError,
+    Value<String?>? lastErrorMessage,
     Value<DateTime>? queuedAt,
     Value<DateTime?>? startedAt,
     Value<DateTime?>? finishedAt,
@@ -16889,7 +17117,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
       stage: stage ?? this.stage,
       status: status ?? this.status,
       attempts: attempts ?? this.attempts,
+      requestGeneration: requestGeneration ?? this.requestGeneration,
       lastError: lastError ?? this.lastError,
+      lastErrorMessage: lastErrorMessage ?? this.lastErrorMessage,
       queuedAt: queuedAt ?? this.queuedAt,
       startedAt: startedAt ?? this.startedAt,
       finishedAt: finishedAt ?? this.finishedAt,
@@ -16934,8 +17164,14 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     if (attempts.present) {
       map['attempts'] = Variable<int>(attempts.value);
     }
+    if (requestGeneration.present) {
+      map['request_generation'] = Variable<int>(requestGeneration.value);
+    }
     if (lastError.present) {
       map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (lastErrorMessage.present) {
+      map['last_error_message'] = Variable<String>(lastErrorMessage.value);
     }
     if (queuedAt.present) {
       map['queued_at'] = Variable<DateTime>(queuedAt.value);
@@ -16979,7 +17215,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
           ..write('stage: $stage, ')
           ..write('status: $status, ')
           ..write('attempts: $attempts, ')
+          ..write('requestGeneration: $requestGeneration, ')
           ..write('lastError: $lastError, ')
+          ..write('lastErrorMessage: $lastErrorMessage, ')
           ..write('queuedAt: $queuedAt, ')
           ..write('startedAt: $startedAt, ')
           ..write('finishedAt: $finishedAt, ')
@@ -22331,9 +22569,9 @@ class $MeetingActionsTable extends MeetingActions
   late final GeneratedColumn<DateTime> dueDate = GeneratedColumn<DateTime>(
     'due_date',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
@@ -22434,8 +22672,6 @@ class $MeetingActionsTable extends MeetingActions
         _dueDateMeta,
         dueDate.isAcceptableOrUnknown(data['due_date']!, _dueDateMeta),
       );
-    } else if (isInserting) {
-      context.missing(_dueDateMeta);
     }
     if (data.containsKey('status')) {
       context.handle(
@@ -22489,7 +22725,7 @@ class $MeetingActionsTable extends MeetingActions
       dueDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}due_date'],
-      )!,
+      ),
       status: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}status'],
@@ -22528,8 +22764,9 @@ class MeetingAction extends DataClass implements Insertable<MeetingAction> {
   /// Owner name as captured, stored as data.
   final String ownerName;
 
-  /// When the action is due.
-  final DateTime dueDate;
+  /// When the action is due. Null until somebody sets it, so an undated
+  /// action still sits on the register (task 017).
+  final DateTime? dueDate;
 
   /// Lifecycle status, stored as text.
   final String status;
@@ -22542,7 +22779,7 @@ class MeetingAction extends DataClass implements Insertable<MeetingAction> {
     required this.meetingId,
     required this.action,
     required this.ownerName,
-    required this.dueDate,
+    this.dueDate,
     required this.status,
   });
   @override
@@ -22556,7 +22793,9 @@ class MeetingAction extends DataClass implements Insertable<MeetingAction> {
     map['meeting_id'] = Variable<String>(meetingId);
     map['action'] = Variable<String>(action);
     map['owner_name'] = Variable<String>(ownerName);
-    map['due_date'] = Variable<DateTime>(dueDate);
+    if (!nullToAbsent || dueDate != null) {
+      map['due_date'] = Variable<DateTime>(dueDate);
+    }
     map['status'] = Variable<String>(status);
     return map;
   }
@@ -22571,7 +22810,9 @@ class MeetingAction extends DataClass implements Insertable<MeetingAction> {
       meetingId: Value(meetingId),
       action: Value(action),
       ownerName: Value(ownerName),
-      dueDate: Value(dueDate),
+      dueDate: dueDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dueDate),
       status: Value(status),
     );
   }
@@ -22590,7 +22831,7 @@ class MeetingAction extends DataClass implements Insertable<MeetingAction> {
       meetingId: serializer.fromJson<String>(json['meetingId']),
       action: serializer.fromJson<String>(json['action']),
       ownerName: serializer.fromJson<String>(json['ownerName']),
-      dueDate: serializer.fromJson<DateTime>(json['dueDate']),
+      dueDate: serializer.fromJson<DateTime?>(json['dueDate']),
       status: serializer.fromJson<String>(json['status']),
     );
   }
@@ -22606,7 +22847,7 @@ class MeetingAction extends DataClass implements Insertable<MeetingAction> {
       'meetingId': serializer.toJson<String>(meetingId),
       'action': serializer.toJson<String>(action),
       'ownerName': serializer.toJson<String>(ownerName),
-      'dueDate': serializer.toJson<DateTime>(dueDate),
+      'dueDate': serializer.toJson<DateTime?>(dueDate),
       'status': serializer.toJson<String>(status),
     };
   }
@@ -22620,7 +22861,7 @@ class MeetingAction extends DataClass implements Insertable<MeetingAction> {
     String? meetingId,
     String? action,
     String? ownerName,
-    DateTime? dueDate,
+    Value<DateTime?> dueDate = const Value.absent(),
     String? status,
   }) => MeetingAction(
     id: id ?? this.id,
@@ -22631,7 +22872,7 @@ class MeetingAction extends DataClass implements Insertable<MeetingAction> {
     meetingId: meetingId ?? this.meetingId,
     action: action ?? this.action,
     ownerName: ownerName ?? this.ownerName,
-    dueDate: dueDate ?? this.dueDate,
+    dueDate: dueDate.present ? dueDate.value : this.dueDate,
     status: status ?? this.status,
   );
   MeetingAction copyWithCompanion(MeetingActionsCompanion data) {
@@ -22706,7 +22947,7 @@ class MeetingActionsCompanion extends UpdateCompanion<MeetingAction> {
   final Value<String> meetingId;
   final Value<String> action;
   final Value<String> ownerName;
-  final Value<DateTime> dueDate;
+  final Value<DateTime?> dueDate;
   final Value<String> status;
   final Value<int> rowid;
   const MeetingActionsCompanion({
@@ -22731,7 +22972,7 @@ class MeetingActionsCompanion extends UpdateCompanion<MeetingAction> {
     required String meetingId,
     required String action,
     required String ownerName,
-    required DateTime dueDate,
+    this.dueDate = const Value.absent(),
     required String status,
     this.rowid = const Value.absent(),
   }) : createdAt = Value(createdAt),
@@ -22740,7 +22981,6 @@ class MeetingActionsCompanion extends UpdateCompanion<MeetingAction> {
        meetingId = Value(meetingId),
        action = Value(action),
        ownerName = Value(ownerName),
-       dueDate = Value(dueDate),
        status = Value(status);
   static Insertable<MeetingAction> custom({
     Expression<String>? id,
@@ -22779,7 +23019,7 @@ class MeetingActionsCompanion extends UpdateCompanion<MeetingAction> {
     Value<String>? meetingId,
     Value<String>? action,
     Value<String>? ownerName,
-    Value<DateTime>? dueDate,
+    Value<DateTime?>? dueDate,
     Value<String>? status,
     Value<int>? rowid,
   }) {

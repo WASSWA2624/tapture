@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 import 'package:tapture/core/db/encryption.dart';
+import 'package:tapture/core/security/secure_storage.dart';
 
 /// Enables WAL and foreign keys on a new native connection.
 void _configureSqliteConnection(Database database) {
@@ -20,8 +21,13 @@ QueryExecutor openMemoryExecutor() {
 
 /// Lazy WAL file executor. [directoryPath] overrides the application support
 /// directory so a suite can simulate a hot restart without the real file.
-/// [encryptionKey] decrypts a ciphertext produced by [DatabaseEncryption].
-QueryExecutor openFileExecutor({String? directoryPath, String? encryptionKey}) {
+/// [encryptionKey] decrypts a ciphertext produced by [DatabaseEncryption];
+/// without one, [keyStore] supplies the launch key ([databaseKeyAtLaunch]).
+QueryExecutor openFileExecutor({
+  String? directoryPath,
+  String? encryptionKey,
+  SecureStorage? keyStore,
+}) {
   return LazyDatabase(() async {
     await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
     final Directory directory = directoryPath == null
@@ -30,9 +36,17 @@ QueryExecutor openFileExecutor({String? directoryPath, String? encryptionKey}) {
     if (!directory.existsSync()) {
       directory.createSync(recursive: true);
     }
+    final SecureStorage? store = keyStore;
     return resolveFileExecutor(
       directory: directory,
-      encryptionKey: encryptionKey,
+      encryptionKey:
+          encryptionKey ??
+          (store == null
+              ? null
+              : await databaseKeyAtLaunch(
+                  storage: store,
+                  directory: directory,
+                )),
     );
   });
 }

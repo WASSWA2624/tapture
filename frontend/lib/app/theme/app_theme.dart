@@ -137,7 +137,7 @@ ThemeData buildTheme({required Brightness brightness, bool outdoor = false}) {
         vertical: Space.x1,
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Radii.pill),
+        borderRadius: BorderRadius.circular(Radii.sm),
       ),
       side: BorderSide(
         color: colors.outline,

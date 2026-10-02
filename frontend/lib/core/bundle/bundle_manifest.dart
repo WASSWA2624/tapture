@@ -1,5 +1,6 @@
 import 'bundle_entry.dart';
 import 'bundle_format.dart';
+import 'bundle_vectors.dart';
 
 /// A project package's `manifest.json`: who wrote it, when, from which
 /// project, what it counts, which templates it carries and the checksum of
@@ -23,6 +24,7 @@ final class BundleManifest {
     this.operatorName,
     this.missingFiles = const <String>[],
     this.format = BundleFormat.name,
+    this.versionVectors = const <String, Map<String, Map<String, int>>>{},
   });
 
   /// Reads a manifest. Throws [FormatException] naming what is wrong when a
@@ -44,6 +46,7 @@ final class BundleManifest {
       exportedAt: DateTime.parse(_string(json, 'exported_at')).toUtc(),
       sourceDeviceId: _string(json, 'exported_by_device'),
       operatorName: json['exported_by_operator'] as String?,
+      versionVectors: BundleVectors.decode(json['version_vectors']),
       counts: <String, int>{
         for (final MapEntry<String, Object?> count in _map(
           json,
@@ -126,6 +129,9 @@ final class BundleManifest {
   /// Rows per table, and the files it carries under `files`.
   final Map<String, int> counts;
 
+  /// Causal revision counters of the entities this package carries.
+  final BundleVersionVectors versionVectors;
+
   /// The devices the project has passed through, oldest first, ending with
   /// the writer.
   final List<({String device, DateTime at})> lineage;
@@ -156,6 +162,7 @@ final class BundleManifest {
     'scope': 'FULL',
     'encrypted': false,
     'counts': counts,
+    'version_vectors': versionVectors,
     'lineage': <Map<String, Object?>>[
       for (final ({String device, DateTime at}) step in lineage)
         <String, Object?>{
@@ -197,6 +204,7 @@ final class BundleManifest {
       sourceDeviceId: sourceDeviceId,
       operatorName: operatorName,
       counts: counts,
+      versionVectors: versionVectors,
       lineage: lineage,
       templates: templates,
       entries: entries,

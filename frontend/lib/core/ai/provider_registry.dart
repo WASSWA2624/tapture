@@ -21,15 +21,21 @@ export 'provider_key_custody.dart';
 final class ProviderRegistry {
   /// Creates a registry from typed [descriptors]. [entries] remains as a
   /// compatibility seam for small domain tests.
+  ///
+  /// [allows] is read before every resolution: an operation switched off on
+  /// the privacy page resolves to an unavailable service, so no caller can
+  /// compose a request for it (FE-SEC-03). Omitted, every operation may send.
   ProviderRegistry({
     Map<String, RegistryEntry>? entries,
     List<ProviderDescriptor>? descriptors,
     Map<String, Map<AiOperation, String>>? selection,
+    bool Function(AiOperation operation)? allows,
   }) : _entries = Map<String, RegistryEntry>.unmodifiable(
          entries ?? _entriesFrom(descriptors ?? const []),
        ),
        _catalog = _catalogFrom(entries, descriptors),
-       _selection = _freezeSelection(selection) {
+       _selection = _freezeSelection(selection),
+       _allows = allows ?? _allowAll {
     if (!_entries.containsKey(backendId)) {
       throw ArgumentError.value(
         _entries.keys,
@@ -76,11 +82,17 @@ final class ProviderRegistry {
   final Map<String, RegistryEntry> _entries;
   final List<ProviderDescriptor> _catalog;
   final Map<String, Map<AiOperation, String>> _selection;
+  final bool Function(AiOperation operation) _allows;
 
-  /// A registry whose only entry is the keyless proxy.
-  factory ProviderRegistry.keyless({AiService? proxy}) {
+  /// A registry whose only entry is the keyless proxy. [allows] is as for
+  /// the unnamed constructor.
+  factory ProviderRegistry.keyless({
+    AiService? proxy,
+    bool Function(AiOperation operation)? allows,
+  }) {
     final AiService service = proxy ?? ProxyAiService.unconfigured();
     return ProviderRegistry(
+      allows: allows,
       descriptors: <ProviderDescriptor>[
         ProviderDescriptor(
           id: backendId,
@@ -113,6 +125,9 @@ final class ProviderRegistry {
     required AiOperation operation,
     String? providerId,
   }) {
+    if (!_allows(operation)) {
+      return const AiService.unavailable();
+    }
     final String id =
         providerId ?? _selection[projectId]?[operation] ?? backendId;
     final AiService service = (_entries[id] ?? _entries[backendId]!).service;
@@ -154,6 +169,24 @@ final class ProviderRegistry {
       orElse: () => models.first,
     );
     fellBack = fellBack || model.id != modelId;
+    if (!_allows(operation)) {
+      // Switched off on the privacy page: the choice is kept, and nothing
+      // can be sent through it.
+      return (
+        provider: ProviderDescriptor(
+          id: provider.id,
+          label: provider.label,
+          operations: provider.operations,
+          keyCustody: provider.keyCustody,
+          deviceKeyAllowed: provider.deviceKeyAllowed,
+          available: false,
+          service: const AiService.unavailable(),
+          models: provider.models,
+        ),
+        model: model,
+        fellBack: fellBack,
+      );
+    }
     if (projectId != null && provider.service is ProxyAiService) {
       provider = ProviderDescriptor(
         id: provider.id,
@@ -189,6 +222,8 @@ final class ProviderRegistry {
     return result.fold(_outcome, (_) => ProviderTestOutcome.success);
   }
 }
+
+bool _allowAll(AiOperation _) => true;
 
 /// Application provider/model catalogue. Bootstrap replaces the unavailable
 /// keyless stand-in with the same registry used by processing.

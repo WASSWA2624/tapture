@@ -22,12 +22,14 @@ class OfflineBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool visible = ref.watch(offlineBannerVisibleProvider);
     if (!visible) {
       return const SizedBox.shrink();
     }
     return AppBanner(
-      message: Copy.offlineWorking,
+      message: localCopy.offlineWorking,
       icon: AppIcons.offline,
       tone: SnackTone.info,
       onDismiss: () {

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/export/pdf/minutes_report.dart';
 import 'package:tapture/core/export/pdf/pdf_engine.dart';
+import 'package:tapture/features/exports/data/export_pdf.dart';
 import 'package:tapture/features/meetings/domain/attendee.dart';
 import 'package:tapture/features/meetings/domain/decision.dart';
 import 'package:tapture/features/meetings/domain/meeting.dart';
@@ -83,19 +84,20 @@ void main() {
         isFalse,
       );
       final PdfDocument pdf = MinutesReport.build(
-        engine: const PdfEngine(),
+        engine: exportPdfEngine(),
         project: 'Field',
-        attendance: <String>[stored.meeting.attendees.single.name],
-        agenda: <MinutesSection>[
-          (
-            title: stored.meeting.title,
-            raw: stored.transcript,
-            refined: stored.minutes,
-            decisions: <String>[stored.meeting.decisions.single.text],
-            actions: const <String>[],
-          ),
-        ],
-        photos: const <({String caption, String path})>[],
+        meeting: (
+          title: stored.meeting.title,
+          date: '',
+          present: <String>[stored.meeting.attendees.single.name],
+          apologies: const <String>[],
+          agenda: <MinutesTopic>[(title: stored.meeting.title, notes: '')],
+          rawNotes: stored.transcript,
+          refinedMinutes: stored.minutes,
+          decisions: <String>[stored.meeting.decisions.single.text],
+          actions: const <MinutesAction>[],
+          photos: const <PdfPhoto>[],
+        ),
       );
       expect(pdf.bodyLines.join('\n'), contains('Ada Lovelace'));
       expect(pdf.bodyLines.join('\n'), contains('Paint the gate'));

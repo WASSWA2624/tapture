@@ -9,3 +9,6 @@ Future<List<int>> readCloudFileRange(
   }
   return const <int>[];
 }
+
+/// Web stand-in: there is no file path to measure.
+Future<int?> cloudFileLength(String path) async => null;

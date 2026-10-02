@@ -2,8 +2,33 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key><string>Tapture package</string>
+			<key>CFBundleTypeRole</key><string>Viewer</string>
+			<key>LSHandlerRank</key><string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array><string>public.zip-archive</string><string>com.tapture.bundle</string></array>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key><string>com.tapture.bundle</string>
+			<key>UTTypeDescription</key><string>Tapture package</string>
+			<key>UTTypeConformsTo</key><array><string>public.data</string></array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key><array><string>tapture</string></array>
+				<key>public.mime-type</key><string>application/vnd.tapture.bundle+zip</string>
+			</dict>
+		</dict>
+	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Tapture uses the camera when you take a photo.</string>
+	<string>Tapture uses the camera when you take a photo or scan a barcode.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Tapture opens photos and files you choose to import.</string>
 	<key>NSMicrophoneUsageDescription</key>
@@ -12,6 +37,8 @@
 	<string>Tapture listens when you tap the microphone.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Tapture saves a location only when you turn location on for a project.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Tapture uses Face ID only when you choose biometric app unlock.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -42,10 +69,22 @@
 				<string>tapture</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>google-drive</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(GOOGLE_DRIVE_REVERSED_CLIENT_ID)</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

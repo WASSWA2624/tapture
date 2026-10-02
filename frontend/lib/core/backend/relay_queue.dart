@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:tapture/core/bundle/bundle_encryption.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/blob_store.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/security/secure_storage.dart';
 
-import 'relay_client.dart';
+import 'relay_package.dart';
 import 'relay_snapshot.dart';
 
 /// Durable ciphertext outbox; received bytes stay unacknowledged until applied.
@@ -85,10 +86,9 @@ final class RelayQueue {
     String key,
   ) async => _guard(() async {
     if (key.trim().length < 16) {
-      throw const ValidationFailure(
-        message: 'Use a shared key of at least 16 characters.',
-        recoveryAction:
-            'Ask the project manager for the same key used on the other devices.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureUseASharedKeyOfAtLeast,
+        localizedRecovery: Copy.messages.failureAskTheProjectManagerForTheSame,
       );
     }
     final Map<String, Object?> keys = await _keys();
@@ -97,18 +97,22 @@ final class RelayQueue {
   });
 
   /// Encrypts first and persists the ciphertext before the UI confirms queueing.
-  Future<Result<void>> enqueue(String projectId, Uint8List plain) async =>
-      _guard(() async {
-        final String key = await _key(projectId);
-        final String id = _ids.newId();
-        final Uint8List encrypted = BundleEncryption().seal(plain, key);
-        _unwrap(await _store.write('packages/$id', encrypted));
-        final Map<String, Object?> state = await _read(projectId);
-        final List<Map<String, Object?>> rows = _rows(state);
-        rows.add(<String, Object?>{'id': id, 'status': 'queued'});
-        state['packages'] = rows;
-        _unwrap(await _write(projectId, state));
-      });
+  Future<Result<void>> enqueue(
+    String projectId,
+    Uint8List plain,
+  ) async => _guard(() async {
+    final ValidationFailure? failure = relayPackageSizeFailure(plain.length);
+    if (failure != null) throw failure;
+    final String key = await _key(projectId);
+    final String id = _ids.newId();
+    final Uint8List encrypted = await BundleEncryption().sealAsync(plain, key);
+    _unwrap(await _store.write('packages/$id', encrypted));
+    final Map<String, Object?> state = await _read(projectId);
+    final List<Map<String, Object?>> rows = _rows(state);
+    rows.add(<String, Object?>{'id': id, 'status': 'queued'});
+    state['packages'] = rows;
+    _unwrap(await _write(projectId, state));
+  });
 
   /// Reads local counters immediately. This call never requires the server.
   Future<Result<RelaySnapshot>> snapshot(String projectId) async {
@@ -123,45 +127,44 @@ final class RelayQueue {
   }
 
   /// Registers only metadata and toggles the optional server policy.
-  Future<Result<void>> enable(String projectId, bool enabled) async =>
-      _guard(() async {
-        final registered = await send(
-          method: 'POST',
-          path: '/api/v1/projects',
-          body: <String, Object?>{'id': projectId, 'name': projectId},
+  ///
+  /// A project the server holds for people this account does not work with
+  /// answers 404; that is reported plainly rather than as a lost connection.
+  Future<Result<void>> enable(String projectId, bool enabled) async => _guard(
+    () async {
+      final registered = await send(
+        method: 'POST',
+        path: '/api/v1/projects',
+        body: <String, Object?>{'id': projectId, 'name': projectId},
+      );
+      if (registered.status == 404) {
+        throw PermissionFailure(
+          localizedMessage:
+              Copy.messages.failureThisProjectIsRegisteredOnTheServer,
+          localizedRecovery: Copy.messages.failureAskAnAdministratorToAddYouTo,
         );
-        if (registered.status != 201 && registered.status != 409) {
-          _require(registered.status);
-        }
-        final response = await send(
-          method: 'PATCH',
-          path: '/api/v1/projects/$projectId',
-          body: <String, Object?>{'relayEnabled': enabled},
-        );
-        _require(response.status);
-        final Map<String, Object?> state = await _read(projectId);
-        state['enabled'] = enabled;
-        _unwrap(await _write(projectId, state));
-      });
+      }
+      if (registered.status != 201 && registered.status != 409) {
+        _require(registered.status);
+      }
+      final response = await send(
+        method: 'PATCH',
+        path: '/api/v1/projects/$projectId',
+        body: <String, Object?>{'relayEnabled': enabled},
+      );
+      _require(response.status);
+      final Map<String, Object?> state = await _read(projectId);
+      state['enabled'] = enabled;
+      _unwrap(await _write(projectId, state));
+    },
+  );
 
   /// Flushes the durable queue, retries committed acknowledgements and reads inbox.
   Future<Result<void>> sync(String projectId) async => _guard(() async {
     final Map<String, Object?> state = await _read(projectId);
     final List<Map<String, Object?>> rows = _rows(state);
     // Read project settings before any upload; a never-relay project cannot send.
-    final projects = await send(method: 'GET', path: '/api/v1/projects');
-    _require(projects.status);
-    final Object? list = projects.body is Map
-        ? (projects.body as Map)['items']
-        : projects.body;
-    if (list is List) {
-      for (final Object? value in list) {
-        if (value is Map && value['id'] == projectId) {
-          state['enabled'] = value['relayEnabled'] == true;
-          state['neverRelay'] = value['neverRelay'] == true;
-        }
-      }
-    }
+    await _refreshProjectPolicy(projectId, state);
     if (state['enabled'] != true || state['neverRelay'] == true) {
       _unwrap(await _write(projectId, state));
       return;
@@ -251,6 +254,47 @@ final class RelayQueue {
     _unwrap(await _write(projectId, state));
   });
 
+  Future<void> _refreshProjectPolicy(
+    String projectId,
+    Map<String, Object?> state,
+  ) async {
+    String? cursor;
+    final Set<String> visited = <String>{};
+    do {
+      final String path = Uri(
+        path: '/api/v1/projects',
+        queryParameters: cursor == null
+            ? null
+            : <String, String>{'cursor': cursor},
+      ).toString();
+      final response = await send(method: 'GET', path: path);
+      _require(response.status);
+      final Object? body = response.body;
+      final Object? list = body is Map ? body['items'] : body;
+      if (list is! List) {
+        throw const CorruptionFailure();
+      }
+      for (final Object? value in list) {
+        if (value is Map && value['id'] == projectId) {
+          state['enabled'] = value['relayEnabled'] == true;
+          state['neverRelay'] = value['neverRelay'] == true;
+          return;
+        }
+      }
+      final Object? next = body is Map ? body['nextCursor'] : null;
+      if (next != null && (next is! String || next.isEmpty)) {
+        throw const CorruptionFailure();
+      }
+      cursor = next as String?;
+      if (cursor != null && !visited.add(cursor)) {
+        throw const CorruptionFailure();
+      }
+    } while (cursor != null);
+    // Membership can be revoked while this device retains an enabled cache.
+    // A project absent from every authorized page cannot upload from that cache.
+    state['enabled'] = false;
+  }
+
   /// Downloads and decrypts for the existing import preview, without acknowledging.
   Future<Result<Uint8List>> receive(String projectId, String packageId) async {
     try {
@@ -260,9 +304,14 @@ final class RelayQueue {
       );
       _require(response.status);
       if (response.body is! List<int>) throw const CorruptionFailure();
+      final List<int> ciphertext = response.body! as List<int>;
+      final ValidationFailure? failure = relayCiphertextSizeFailure(
+        ciphertext.length,
+      );
+      if (failure != null) throw failure;
       return Success<Uint8List>(
-        BundleEncryption().open(
-          Uint8List.fromList(response.body! as List<int>),
+        await BundleEncryption().openAsync(
+          ciphertext is Uint8List ? ciphertext : Uint8List.fromList(ciphertext),
           await _key(projectId),
         ),
       );
@@ -299,9 +348,9 @@ final class RelayQueue {
   Future<String> _key(String projectId) async {
     final Object? key = (await _keys())[projectId];
     if (key is! String || key.isEmpty) {
-      throw const ValidationFailure(
-        message: 'Add the shared project key first.',
-        recoveryAction: 'Ask the project manager for the key.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureAddTheSharedProjectKeyFirst,
+        localizedRecovery: Copy.messages.failureAskTheProjectManagerForTheKey,
       );
     }
     return key;
@@ -357,9 +406,10 @@ final class RelayQueue {
   };
   void _require(int status) {
     if (status < 200 || status >= 300) {
-      throw const NetworkFailure(
-        message: 'Relay could not complete this request.',
-        recoveryAction: 'Keep working locally and try Sync again.',
+      throw NetworkFailure(
+        localizedMessage: Copy.messages.failureRelayCouldNotCompleteThisRequest,
+        localizedRecovery:
+            Copy.messages.failureKeepWorkingLocallyAndTrySyncAgain,
       );
     }
   }
@@ -373,4 +423,13 @@ typedef RelayBytesSend =
       Uint8List? body,
       String? idempotencyKey,
       bool json,
+    });
+
+/// One relay HTTP call: a map travels as JSON, bytes as ciphertext.
+typedef RelaySend =
+    Future<({int status, Object? body})> Function({
+      required String method,
+      required String path,
+      Object? body,
+      String? idempotencyKey,
     });

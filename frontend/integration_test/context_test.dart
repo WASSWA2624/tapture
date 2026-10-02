@@ -1,10 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/features/capture/domain/photo_draft.dart';
+import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/context/domain/context_override.dart';
 import 'package:tapture/features/context/domain/context_state.dart';
 import 'package:tapture/features/records/domain/record_entry.dart';
 import 'package:tapture/features/records/domain/record_repository.dart';
 
 import '../test/support/matchers.dart';
+import 'support/capture_rig.dart';
 import 'support/harness.dart';
 
 void main() {
@@ -88,4 +92,58 @@ void main() {
       expect(app.outboundCallCount, 0);
     },
   );
+
+  test('a photo captured into a three-level context is filed under '
+      'photos/Kampala/Kasubi-HC-IV/Theatre', () async {
+    final TestApp app = await bootTestApp();
+    addTearDown(app.dispose);
+    final CaptureRig capture = await CaptureRig.open(app);
+    valueOf(
+      await app.context
+          .saveHierarchy(CaptureRig.projectId, const <ContextLevel>[
+            ContextLevel(fieldKey: 'district', order: 0, label: 'District'),
+            ContextLevel(fieldKey: 'facility', order: 1, label: 'Facility'),
+            ContextLevel(fieldKey: 'department', order: 2, label: 'Department'),
+          ]),
+    );
+    for (final (String level, String value) in <(String, String)>[
+      ('district', 'Kampala'),
+      ('facility', 'Kasubi HC IV'),
+      ('department', 'Theatre'),
+    ]) {
+      valueOf(
+        await app.context.setLevelValue(
+          projectId: CaptureRig.projectId,
+          fieldKey: level,
+          value: value,
+          clearBelow: false,
+        ),
+      );
+    }
+    final ContextState place = valueOf(
+      await app.context.load(CaptureRig.projectId),
+    );
+    // The shutter fires before the page has applied the context.
+    final PhotoDraft shot = await capture.shoot();
+    valueOf(await capture.controller.setTemplate(CaptureRig.templateId));
+    valueOf(await capture.controller.setContext(place.values));
+
+    final String recordId = valueOf(
+      await capture.controller.saveRaw(
+        capture.container.read(captureRecordWriterProvider)!.persist,
+      ),
+    );
+
+    final Photo row = await (app.db.select(
+      app.db.photos,
+    )..where(($PhotosTable table) => table.id.equals(shot.id))).getSingle();
+    expect(row.recordId, recordId);
+    expect(
+      row.relativePath,
+      'photos/Kampala/Kasubi-HC-IV/Theatre/${shot.id}.jpg',
+    );
+    expect(capture.file(row.relativePath).existsSync(), isTrue);
+    expect(capture.file(shot.relativePath).existsSync(), isFalse);
+    expect(app.outboundCallCount, 0);
+  });
 }

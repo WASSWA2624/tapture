@@ -76,14 +76,6 @@ final class BackendConfig {
       reachable: reachable,
     );
   }
-
-  /// Keeps the name captured before enrolment and adds the account id.
-  static ({String operatorName, String accountId}) linkOperator({
-    required String operatorName,
-    required String accountId,
-  }) {
-    return (operatorName: operatorName, accountId: accountId);
-  }
 }
 
 /// How far enrolment has gone. The address lives with this state, never in
@@ -115,4 +107,21 @@ enum EnrolmentEvent {
 
   /// The grant was withdrawn.
   revoke,
+}
+
+/// How far the cached grant reaches right now, derived from the saved
+/// session and the clock. Ordinary work never consults it.
+enum AuthorityState {
+  /// The grant was confirmed by the server a moment ago.
+  fresh,
+
+  /// The saved grant is still inside its window.
+  cachedValid,
+
+  /// The window has passed, or the organisation ended this device's
+  /// sign-in. Capture continues; relay, analysis and role changes do not.
+  cachedExpired,
+
+  /// This install holds no sign-in.
+  neverSignedIn,
 }
