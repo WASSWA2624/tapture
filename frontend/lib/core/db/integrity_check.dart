@@ -1,11 +1,15 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/database_provider.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_reader.dart';
+import 'package:tapture/core/files/storage_root.dart';
 
 /// The type this file is named for (FE-STR-06). The contract name is
 /// [IntegrityFinding].
@@ -30,9 +34,25 @@ sealed class IntegrityFinding {
 ///
 /// Rows are examined in pages of [AppConstants.lists.pageSize]. File existence
 /// runs off the UI thread. Nothing is deleted, rewritten or repaired.
-Future<Result<List<IntegrityFinding>>> runIntegrityCheck(AppDatabase db) {
-  return Result.captureAsync(() => _scan(db));
+/// [files] resolves project-relative media through the app's native or web store.
+Future<Result<List<IntegrityFinding>>> runIntegrityCheck(
+  AppDatabase db, {
+  FileReader? files,
+}) {
+  return Result.captureAsync(() => _scan(db, files));
 }
+
+/// [runIntegrityCheck] over the app database, as a call a page can make
+/// without holding the database itself (FE-STATE-05). Tests override it.
+final Provider<Future<Result<List<IntegrityFinding>>> Function()>
+integrityCheckProvider =
+    Provider<Future<Result<List<IntegrityFinding>>> Function()>((Ref ref) {
+      final AppDatabase db = ref.watch(appDatabaseProvider);
+      final FileReader files = FileReader(
+        storageRoot: ref.watch(storageRootProvider),
+      );
+      return () => runIntegrityCheck(db, files: files);
+    });
 
 final class _Finding extends IntegrityFinding {
   const _Finding({
@@ -51,7 +71,7 @@ final class _Finding extends IntegrityFinding {
   final String detail;
 }
 
-Future<List<IntegrityFinding>> _scan(AppDatabase db) async {
+Future<List<IntegrityFinding>> _scan(AppDatabase db, FileReader? files) async {
   return <IntegrityFinding>[
     ...await _orphans(
       db,
@@ -66,11 +86,13 @@ Future<List<IntegrityFinding>> _scan(AppDatabase db) async {
     ...await _missingFiles(
       db,
       table: 'photos',
+      files: files,
       detail: 'The file this photo points at is missing.',
     ),
     ...await _missingFiles(
       db,
       table: 'attachments',
+      files: files,
       detail: 'The file this attachment points at is missing.',
     ),
     ...await _orphans(
@@ -167,14 +189,16 @@ Future<List<IntegrityFinding>> _missingFiles(
   AppDatabase db, {
   required String table,
   required String detail,
+  required FileReader? files,
 }) async {
   final List<IntegrityFinding> findings = <IntegrityFinding>[];
   String after = '';
   while (true) {
     final List<QueryRow> rows = await db
         .customSelect(
-          'SELECT id, relative_path AS path FROM $table '
-          'WHERE id > ? ORDER BY id LIMIT ?',
+          'SELECT m.id, m.relative_path AS path, p.folder_name AS folder '
+          'FROM $table m LEFT JOIN projects p ON p.id = m.project_id '
+          'WHERE m.id > ? ORDER BY m.id LIMIT ?',
           variables: <Variable<Object>>[
             Variable<String>(after),
             Variable<int>(AppConstants.lists.pageSize),
@@ -187,17 +211,36 @@ Future<List<IntegrityFinding>> _missingFiles(
     final List<String> paths = <String>[
       for (final QueryRow row in rows) row.read<String>('path'),
     ];
-    final Set<String> missing = await _missingPathSet(paths);
-    for (final QueryRow row in rows) {
+    final Set<String>? missing = files == null
+        ? await _missingPathSet(paths)
+        : null;
+    final List<bool>? absent = files == null
+        ? null
+        : await Future.wait(<Future<bool>>[
+            for (final QueryRow row in rows) _isMissing(files, row),
+          ]);
+    for (int index = 0; index < rows.length; index++) {
+      final QueryRow row = rows[index];
       final String id = row.read<String>('id');
       after = id;
       final String path = row.read<String>('path');
-      if (missing.contains(path)) {
+      if (absent?[index] ?? missing!.contains(path)) {
         findings.add(_Finding(entityType: table, entityId: id, detail: detail));
       }
     }
   }
   return findings;
+}
+
+Future<bool> _isMissing(FileReader files, QueryRow row) async {
+  final String? folder = row.readNullable<String>('folder');
+  final String path = row.read<String>('path');
+  if (folder == null || folder.isEmpty || path.isEmpty) return true;
+  final Result<int?> length = await files.length('projects/$folder/$path');
+  return switch (length) {
+    Success<int?>(:final value) => value == null,
+    FailureResult<int?>(:final failure) => throw failure,
+  };
 }
 
 Future<Set<String>> _missingPathSet(List<String> paths) async {

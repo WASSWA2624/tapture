@@ -33,8 +33,11 @@ final class _WebDocumentPicker implements DocumentPicker {
       if (ceiling != null && file.size > ceiling) {
         return FailureResult<PickedDocument>(
           ValidationFailure(
-            message: Copy.documentTooLarge(file.size, ceiling),
-            recoveryAction: Copy.documentTooLargeRecovery,
+            localizedMessage: Copy.messages.documentTooLarge(
+              file.size,
+              ceiling,
+            ),
+            localizedRecovery: Copy.messages.documentTooLargeRecovery,
           ),
         );
       }
@@ -43,10 +46,10 @@ final class _WebDocumentPicker implements DocumentPicker {
         PickedBytes(Uint8List.view(buffer.toDart), file.name),
       );
     } on Object {
-      return const FailureResult<PickedDocument>(
+      return FailureResult<PickedDocument>(
         StorageFailure(
-          message: Copy.documentPickFailed,
-          recoveryAction: Copy.tryAgain,
+          localizedMessage: Copy.messages.documentPickFailed,
+          localizedRecovery: Copy.messages.tryAgain,
         ),
       );
     }

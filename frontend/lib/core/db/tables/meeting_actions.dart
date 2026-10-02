@@ -22,8 +22,9 @@ class MeetingActions extends Table with MergeColumns {
   /// Owner name as captured, stored as data.
   TextColumn get ownerName => text()();
 
-  /// When the action is due.
-  DateTimeColumn get dueDate => dateTime()();
+  /// When the action is due. Null until somebody sets it, so an undated
+  /// action still sits on the register (task 017).
+  DateTimeColumn get dueDate => dateTime().nullable()();
 
   /// Lifecycle status, stored as text.
   TextColumn get status => text()();

@@ -21,11 +21,15 @@ Future<Result<List<Uint8List>>?> showPhotoSourceSheet(
   required int longEdge,
   Future<Result<List<Uint8List>>> Function()? takePhoto,
 }) async {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final _Source? source = await showAppSheet<_Source>(
     context,
-    title: Copy.captureAddSheetTitle,
+    title: localCopy.captureAddSheetTitle,
     contentSized: true,
     builder: (BuildContext sheetContext) {
+      final LocalizedCopy localCopy = Copy.of(sheetContext);
+
       return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.end,
@@ -33,7 +37,7 @@ Future<Result<List<Uint8List>>?> showPhotoSourceSheet(
         children: <Widget>[
           if (picker.canTakePhoto) ...<Widget>[
             AppButton(
-              label: Copy.captureTakePhoto,
+              label: localCopy.captureTakePhoto,
               icon: AppIcons.camera,
               expand: true,
               onPressed: () => Navigator.of(sheetContext).pop(_Source.camera),
@@ -41,7 +45,7 @@ Future<Result<List<Uint8List>>?> showPhotoSourceSheet(
             const SizedBox(height: Space.x2),
           ],
           AppButton(
-            label: Copy.captureChoosePhoto,
+            label: localCopy.captureChoosePhoto,
             icon: AppIcons.photoLibrary,
             variant: AppButtonVariant.secondary,
             expand: true,

@@ -2,11 +2,13 @@ import 'dart:typed_data';
 
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/storage_root.dart';
 
 import 'download_service.dart';
 
 /// Neither a file system nor a browser: every save reports a failure.
-DownloadService platformDownloads() => const _NoDownloads();
+DownloadService platformDownloads({StorageRoot? storageRoot}) =>
+    const _NoDownloads();
 
 final class _NoDownloads implements DownloadService {
   const _NoDownloads();

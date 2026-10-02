@@ -5,10 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/files/volume_stats.dart';
+import 'package:tapture/core/lifecycle/lifecycle_observer.dart';
 
 /// Watched free-space headroom on the storage root's volume.
 ///
@@ -98,10 +100,16 @@ enum HeadroomState {
 }
 
 /// The process-wide [StorageGuard]. Callers never read volume stats themselves.
+/// It polls again whenever the app returns to the foreground.
 final Provider<StorageGuard> storageGuardProvider = Provider<StorageGuard>((
   Ref ref,
 ) {
-  return StorageGuard(storageRoot: ref.watch(storageRootProvider));
+  final StorageGuard guard = StorageGuard(
+    storageRoot: ref.watch(storageRootProvider),
+    lifecycle: ref.watch(lifecycleObserverProvider).states,
+  );
+  ref.onDispose(() => unawaited(guard.dispose()));
+  return guard;
 });
 
 final class _StorageGuard implements StorageGuard {
@@ -138,7 +146,7 @@ final class _StorageGuard implements StorageGuard {
   @override
   Future<Result<VolumeStats>> volume() async {
     if (_volumeFails) {
-      return const FailureResult<VolumeStats>(_unreadable);
+      return FailureResult<VolumeStats>(_unreadable);
     }
     try {
       final Result<Directory> root = await _storageRoot.resolve();
@@ -151,7 +159,7 @@ final class _StorageGuard implements StorageGuard {
     } on Failure catch (failure) {
       return FailureResult<VolumeStats>(failure);
     } on Object {
-      return const FailureResult<VolumeStats>(_unreadable);
+      return FailureResult<VolumeStats>(_unreadable);
     }
   }
 
@@ -197,7 +205,7 @@ final class _StorageGuard implements StorageGuard {
       }
     }
     if (last == HeadroomState.critical) {
-      return const FailureResult<HeadroomState>(_criticalRefusal);
+      return FailureResult<HeadroomState>(_criticalRefusal);
     }
     return Success<HeadroomState>(last);
   }
@@ -252,8 +260,10 @@ HeadroomState _classify(int bytes) {
 const MethodChannel _filesChannel = MethodChannel('com.tapture.app/files');
 
 Future<VolumeStats> _platformVolume(Directory root) {
-  if (Platform.isAndroid) {
-    return _androidVolume(root.path);
+  // iOS forbids subprocesses, so it answers on the files channel as Android
+  // does; `df` is for desktop only.
+  if (Platform.isAndroid || Platform.isIOS) {
+    return _channelVolume(root.path);
   }
   if (Platform.isWindows) {
     return _windowsVolume(root.path);
@@ -261,7 +271,7 @@ Future<VolumeStats> _platformVolume(Directory root) {
   return _posixVolume(root.path);
 }
 
-Future<VolumeStats> _androidVolume(String path) async {
+Future<VolumeStats> _channelVolume(String path) async {
   final Object? raw = await _filesChannel.invokeMethod<Object>(
     'volumeStats',
     <String, Object>{'path': path},
@@ -324,12 +334,12 @@ Future<VolumeStats> _posixVolume(String path) async {
   }
 }
 
-const StorageFailure _criticalRefusal = StorageFailure(
-  message: 'There is not enough free space to take another photo.',
-  recoveryAction: 'Export a project or clean the cache, then try again.',
+final StorageFailure _criticalRefusal = StorageFailure(
+  localizedMessage: Copy.messages.failureThereIsNotEnoughFreeSpaceTo,
+  localizedRecovery: Copy.messages.failureExportAProjectOrCleanTheCache,
 );
 
-const StorageFailure _unreadable = StorageFailure(
-  message: 'Tapture could not read free space on this device.',
-  recoveryAction: 'Free up space or export a project, then try again.',
+final StorageFailure _unreadable = StorageFailure(
+  localizedMessage: Copy.messages.failureTaptureCouldNotReadFreeSpaceOn,
+  localizedRecovery: Copy.messages.failureFreeUpSpaceOrExportAProject,
 );

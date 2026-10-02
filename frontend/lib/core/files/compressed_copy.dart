@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_reader.dart';
@@ -89,7 +90,7 @@ final class _CompressedCopy implements CompressedCopy {
       return FailureResult<WrittenFile>(failure);
     }
     final String relative =
-        '$_cache/$_upload/${(hash as Success<String>).value}_${AppConstants.images.longEdge}';
+        '$_cache/$_upload/${ImageResize.uploadCacheKey((hash as Success<String>).value)}';
     final Result<Uint8List> cached = await _files.read(relative);
     if (cached case Success<Uint8List>(:final value)) {
       final Result<String> digest = await runIsolate(
@@ -132,10 +133,10 @@ final class _CompressedCopy implements CompressedCopy {
       final int edge = longEdge ?? AppConstants.images.longEdge;
       final int jpegQuality = quality ?? AppConstants.images.quality;
       if (edge <= 0 || jpegQuality < 1) {
-        return const FailureResult<WrittenFile>(
+        return FailureResult<WrittenFile>(
           ValidationFailure(
-            message: 'That image size is not valid.',
-            recoveryAction: 'Use the app upload size and try again.',
+            localizedMessage: Copy.messages.failureThatImageSizeIsNotValid,
+            localizedRecovery: Copy.messages.failureUseTheAppUploadSizeAndTry,
           ),
         );
       }
@@ -153,7 +154,8 @@ final class _CompressedCopy implements CompressedCopy {
             case FailureResult<Directory>(:final failure):
               return FailureResult<WrittenFile>(failure);
             case Success<Directory>(value: final Directory rootDir):
-              final String relative = '$_cache/$_upload/${value}_$edge';
+              final String relative =
+                  '$_cache/$_upload/${ImageResize.uploadCacheKey(value, longEdge: edge, quality: jpegQuality)}';
               final File dest = File('${rootDir.path}/$relative');
               if (dest.existsSync()) {
                 return _fromCached(dest, relative);
@@ -164,10 +166,12 @@ final class _CompressedCopy implements CompressedCopy {
                 quality: jpegQuality,
               );
               if (bytes.isEmpty) {
-                return const FailureResult<WrittenFile>(
+                return FailureResult<WrittenFile>(
                   StorageFailure(
-                    message: 'That photo could not be read as an image.',
-                    recoveryAction: 'Capture the photo again, then try again.',
+                    localizedMessage:
+                        Copy.messages.failureThatPhotoCouldNotBeReadAs,
+                    localizedRecovery:
+                        Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
                   ),
                 );
               }
@@ -180,10 +184,12 @@ final class _CompressedCopy implements CompressedCopy {
     } on Failure catch (failure) {
       return FailureResult<WrittenFile>(failure);
     } on Object {
-      return const FailureResult<WrittenFile>(
+      return FailureResult<WrittenFile>(
         StorageFailure(
-          message: 'The reduced copy could not be created on this device.',
-          recoveryAction: 'Free space or allow storage access, then try again.',
+          localizedMessage:
+              Copy.messages.failureTheReducedCopyCouldNotBeCreated,
+          localizedRecovery:
+              Copy.messages.failureFreeSpaceOrAllowStorageAccessThen,
         ),
       );
     }
@@ -235,8 +241,10 @@ final class _CompressedCopy implements CompressedCopy {
 
 StorageFailure _missing(String path) {
   return StorageFailure(
-    message: 'Tapture could not find $path.',
-    recoveryAction: 'Capture the photo again, then try again.',
+    localizedMessage: Copy.messages.failureTaptureCouldNotFindValue(
+      (path).toString(),
+    ),
+    localizedRecovery: Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
   );
 }
 

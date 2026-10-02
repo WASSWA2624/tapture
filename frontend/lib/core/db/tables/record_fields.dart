@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -176,6 +177,8 @@ Future<Result<RecordField>> writeRecordFieldFinal(
 /// previous value. Bumps `rev`, `updated_at` and `updated_by_device`; never
 /// touches the value flags. Throws a [StorageFailure] when the value is not
 /// on this device, so the caller's transaction rolls back.
+/// [emptyIsValue] keeps an explicit withdrawal authoritative when comparing
+/// subsequent operator edits; ordinary value writers retain display fallback.
 Future<bool> writeRecordFieldEdit(
   GeneratedDatabase db, {
   required String id,
@@ -185,6 +188,7 @@ Future<bool> writeRecordFieldEdit(
   String? deviceId,
   String? operator,
   String? reason,
+  bool emptyIsValue = false,
 }) {
   final AppDatabase database = db as AppDatabase;
   final DateTime now = (clock ?? const SystemClock()).nowUtc();
@@ -201,14 +205,19 @@ Future<bool> writeRecordFieldEdit(
         )
         .getSingleOrNull();
     if (row == null) {
-      throw const StorageFailure(
-        message: 'That value is no longer on this device.',
-        recoveryAction: 'Refresh the record and try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureThatValueIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureRefreshTheRecordAndTryAgain,
       );
     }
     final bool gone = row.read<int>('gone') != 0;
     final String shown = gone
         ? ''
+        : emptyIsValue
+        ? row.read<String?>('approved') ??
+              row.read<String?>('refined') ??
+              row.read<String?>('raw') ??
+              ''
         : _shownValue(
             approved: row.read<String?>('approved'),
             refined: row.read<String?>('refined'),
@@ -300,9 +309,9 @@ Future<Result<RecordField>> _writeRecordField(
             (RecordField? value) => value,
           );
     if (existing != null && columns.containsKey('value_raw')) {
-      throw const StorageFailure(
-        message: 'The original value cannot be changed.',
-        recoveryAction: 'Leave the captured value and write a refined one.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureTheOriginalValueCannotBeChanged,
+        localizedRecovery: Copy.messages.failureLeaveTheCapturedValueAndWriteA,
       );
     }
     if (!allowRaw) {
@@ -564,9 +573,9 @@ Future<bool> _writeFlag(
         )
         .getSingleOrNull();
     if (row == null) {
-      throw const StorageFailure(
-        message: 'That value is no longer on this device.',
-        recoveryAction: 'Refresh the record and try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureThatValueIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureRefreshTheRecordAndTryAgain,
       );
     }
     final bool was = row.data['flagged'] != null;

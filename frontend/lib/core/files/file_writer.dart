@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
@@ -9,6 +10,11 @@ import 'file_writer_stub.dart'
     as platform;
 
 part 'written_file.dart';
+
+/// Shared atomic-write boundary for disposable derived-file presentation.
+final Provider<FileWriter> fileWriterProvider = Provider<FileWriter>(
+  (Ref ref) => FileWriter(storageRoot: ref.watch(storageRootProvider)),
+);
 
 /// Removes a file that was never recorded. A missing file is left alone.
 Future<void> discardUnpublishedFile(File file) async {

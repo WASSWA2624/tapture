@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/attachments.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
@@ -59,6 +61,13 @@ abstract interface class OrphanScanner {
   Future<Result<void>> flagMissing(MissingFile row);
 }
 
+/// The app's scanner, stamped with the device id and walking the configured
+/// storage root; `main` overrides it. Null where the app has no database, so
+/// a page offers no scan rather than one stamped with a made-up device.
+final Provider<OrphanScanner?> orphanScannerProvider = Provider<OrphanScanner?>(
+  (Ref _) => null,
+);
+
 final class _OrphanScanner implements OrphanScanner {
   _OrphanScanner({
     required this._db,
@@ -85,10 +94,10 @@ final class _OrphanScanner implements OrphanScanner {
         return const FailureResult<OrphanReport>(CancelledFailure());
       }
       if (projectId.isEmpty) {
-        return const FailureResult<OrphanReport>(
+        return FailureResult<OrphanReport>(
           ValidationFailure(
-            message: 'That project could not be scanned.',
-            recoveryAction: 'Open the project and try again.',
+            localizedMessage: Copy.messages.failureThatProjectCouldNotBeScanned,
+            localizedRecovery: Copy.messages.failureOpenTheProjectAndTryAgain,
           ),
         );
       }
@@ -97,10 +106,10 @@ final class _OrphanScanner implements OrphanScanner {
                 ..where(($ProjectsTable tbl) => tbl.id.equals(projectId)))
               .getSingleOrNull();
       if (project == null) {
-        return const FailureResult<OrphanReport>(
+        return FailureResult<OrphanReport>(
           StorageFailure(
-            message: 'That project is no longer on this device.',
-            recoveryAction: 'Refresh the list and try again.',
+            localizedMessage: Copy.messages.failureThatProjectIsNoLongerOnThis,
+            localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
           ),
         );
       }
@@ -136,10 +145,12 @@ final class _OrphanScanner implements OrphanScanner {
     } on Failure catch (failure) {
       return FailureResult<OrphanReport>(failure);
     } on Object {
-      return const FailureResult<OrphanReport>(
+      return FailureResult<OrphanReport>(
         StorageFailure(
-          message: 'The project folder could not be scanned on this device.',
-          recoveryAction: 'Free space or allow storage access, then try again.',
+          localizedMessage:
+              Copy.messages.failureTheProjectFolderCouldNotBeScanned,
+          localizedRecovery:
+              Copy.messages.failureFreeSpaceOrAllowStorageAccessThen,
         ),
       );
     }
@@ -157,10 +168,10 @@ final class _OrphanScanner implements OrphanScanner {
                 ..where(($RecordsTable tbl) => tbl.id.equals(recordId)))
               .getSingleOrNull();
       if (record == null) {
-        return const FailureResult<void>(
+        return FailureResult<void>(
           StorageFailure(
-            message: 'That record is no longer on this device.',
-            recoveryAction: 'Refresh the list and try again.',
+            localizedMessage: Copy.messages.failureThatRecordIsNoLongerOnThis,
+            localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
           ),
         );
       }
@@ -170,10 +181,10 @@ final class _OrphanScanner implements OrphanScanner {
               )..where(($ProjectsTable tbl) => tbl.id.equals(record.projectId)))
               .getSingleOrNull();
       if (project == null) {
-        return const FailureResult<void>(
+        return FailureResult<void>(
           StorageFailure(
-            message: 'That project is no longer on this device.',
-            recoveryAction: 'Refresh the list and try again.',
+            localizedMessage: Copy.messages.failureThatProjectIsNoLongerOnThis,
+            localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
           ),
         );
       }
@@ -188,9 +199,11 @@ final class _OrphanScanner implements OrphanScanner {
           if (!onDisk.existsSync()) {
             return FailureResult<void>(
               StorageFailure(
-                message: 'Tapture could not find $relative.',
-                recoveryAction:
-                    'Put the file back in the project folder, then try again.',
+                localizedMessage: Copy.messages.failureTaptureCouldNotFindValue(
+                  (relative).toString(),
+                ),
+                localizedRecovery:
+                    Copy.messages.failurePutTheFileBackInTheProject,
               ),
             );
           }
@@ -211,10 +224,11 @@ final class _OrphanScanner implements OrphanScanner {
     } on Failure catch (failure) {
       return FailureResult<void>(failure);
     } on Object {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message: 'The file could not be adopted on this device.',
-          recoveryAction: 'Free space or allow storage access, then try again.',
+          localizedMessage: Copy.messages.failureTheFileCouldNotBeAdoptedOn,
+          localizedRecovery:
+              Copy.messages.failureFreeSpaceOrAllowStorageAccessThen,
         ),
       );
     }
@@ -229,7 +243,7 @@ final class _OrphanScanner implements OrphanScanner {
                   ..where(($PhotosTable tbl) => tbl.id.equals(row.id)))
                 .getSingleOrNull();
         if (photo == null) {
-          return const FailureResult<void>(_missingRow);
+          return FailureResult<void>(_missingRow);
         }
       } else if (row.entityType == _attachments) {
         final Attachment? attachment =
@@ -237,10 +251,10 @@ final class _OrphanScanner implements OrphanScanner {
                   ..where(($AttachmentsTable tbl) => tbl.id.equals(row.id)))
                 .getSingleOrNull();
         if (attachment == null) {
-          return const FailureResult<void>(_missingRow);
+          return FailureResult<void>(_missingRow);
         }
       } else {
-        return const FailureResult<void>(_missingRow);
+        return FailureResult<void>(_missingRow);
       }
       await appendAudit(
         _db,
@@ -258,10 +272,11 @@ final class _OrphanScanner implements OrphanScanner {
     } on Failure catch (failure) {
       return FailureResult<void>(failure);
     } on Object {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message: 'The missing file could not be flagged on this device.',
-          recoveryAction: 'Refresh the list and try again.',
+          localizedMessage:
+              Copy.messages.failureTheMissingFileCouldNotBeFlagged,
+          localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
         ),
       );
     }
@@ -550,16 +565,17 @@ String _safeRelative(String relativePath) {
   if (relative.isEmpty ||
       relative.startsWith('/') ||
       _drive.hasMatch(relative)) {
-    throw const ValidationFailure(
-      message: 'The file path must stay inside the project folder.',
-      recoveryAction: 'Save the file under the project folder and try again.',
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.failureTheFilePathMustStayInsideThe,
+      localizedRecovery: Copy.messages.failureSaveTheFileUnderTheProjectFolder,
     );
   }
   for (final String part in relative.split('/')) {
     if (part.isEmpty || part == '.' || part == '..' || part == _cacheName) {
-      throw const ValidationFailure(
-        message: 'The file path must stay inside the project folder.',
-        recoveryAction: 'Save the file under the project folder and try again.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureTheFilePathMustStayInsideThe,
+        localizedRecovery:
+            Copy.messages.failureSaveTheFileUnderTheProjectFolder,
       );
     }
   }
@@ -577,8 +593,11 @@ String _mime(String path) {
   if (lower.endsWith('.pdf')) {
     return 'application/pdf';
   }
-  if (lower.endsWith('.m4a') || lower.endsWith('.wav')) {
+  if (lower.endsWith('.m4a')) {
     return 'audio/mp4';
+  }
+  if (lower.endsWith('.wav')) {
+    return 'audio/wav';
   }
   return 'application/octet-stream';
 }
@@ -608,9 +627,9 @@ final class _RowFile {
   final String sha256;
 }
 
-const StorageFailure _missingRow = StorageFailure(
-  message: 'That file row is no longer on this device.',
-  recoveryAction: 'Refresh the list and try again.',
+final StorageFailure _missingRow = StorageFailure(
+  localizedMessage: Copy.messages.failureThatFileRowIsNoLongerOn,
+  localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
 );
 
 final RegExp _drive = RegExp(r'^[A-Za-z]:');

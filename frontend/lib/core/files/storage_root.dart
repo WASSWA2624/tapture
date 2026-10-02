@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -86,6 +88,10 @@ abstract interface class StorageRoot {
   /// `Tapture/.cache`, the only home for derived artefacts. Disposable: a
   /// missing folder is created again rather than treated as lost data.
   Future<Result<Directory>> cacheDir();
+
+  /// Serializes atomic writes and partial-file recovery in one directory.
+  /// Writers sharing this root cannot remove one another's unfinished files.
+  Future<T> withWriteLock<T>(String directory, Future<T> Function() write);
 }
 
 /// The process-wide [StorageRoot]. Callers never compose an absolute storage
@@ -147,6 +153,26 @@ final class _StorageRoot implements StorageRoot {
 
   Directory? _root;
   Future<Result<Directory>>? _inFlight;
+  final Map<String, Future<void>> _writes = <String, Future<void>>{};
+
+  @override
+  Future<T> withWriteLock<T>(
+    String directory,
+    Future<T> Function() write,
+  ) async {
+    final Future<void>? previous = _writes[directory];
+    final Completer<void> released = Completer<void>();
+    _writes[directory] = released.future;
+    try {
+      await previous;
+      return await write();
+    } finally {
+      released.complete();
+      if (identical(_writes[directory], released.future)) {
+        _writes.remove(directory);
+      }
+    }
+  }
 
   @override
   Future<Result<Directory>> resolve() {
@@ -181,25 +207,32 @@ final class _StorageRoot implements StorageRoot {
     }
   }
 
+  /// Never throws: a platform with no documents folder (a browser, where
+  /// `dart:io` is unsupported) or a plugin error is a [StorageFailure], so
+  /// [resolve] completes, forgets the attempt and can be retried.
   Future<Result<Directory>> _open() async {
-    final String? preferred = await _readPreferred();
-    if (preferred != null && preferred.isNotEmpty) {
-      final Result<Directory> opened = await _tryOpenRoot(
-        Directory(preferred),
-        writable: _preferredWritable,
-      );
-      if (opened is Success<Directory>) {
-        return opened;
+    try {
+      final String? preferred = await _readPreferred();
+      if (preferred != null && preferred.isNotEmpty) {
+        final Result<Directory> opened = await _tryOpenRoot(
+          Directory(preferred),
+          writable: _preferredWritable,
+        );
+        if (opened is Success<Directory>) {
+          return opened;
+        }
       }
-    }
-    final Directory? shared = await _resolvePublic();
-    if (shared != null) {
-      final Result<Directory> opened = await _tryOpen(shared);
-      if (opened is Success<Directory>) {
-        return opened;
+      final Directory? shared = await _resolvePublic();
+      if (shared != null) {
+        final Result<Directory> opened = await _tryOpen(shared);
+        if (opened is Success<Directory>) {
+          return opened;
+        }
       }
+      return _tryOpen(await _documentsDirectory());
+    } on Object {
+      return FailureResult<Directory>(_noDocumentsFolder);
     }
-    return _tryOpen(await _documentsDirectory());
   }
 
   Future<String?> _readPreferred() async {
@@ -271,9 +304,17 @@ final class _StorageRoot implements StorageRoot {
   }
 }
 
+/// The platform gave no documents folder at all.
+final StorageFailure _noDocumentsFolder = StorageFailure(
+  localizedMessage: Copy.messages.failureThisDeviceHasNoFolderTaptureCan,
+  localizedRecovery: Copy.messages.failureUseTaptureOnAPhoneTabletOr,
+);
+
 StorageFailure _unwritable(String path) {
   return StorageFailure(
-    message: 'Tapture could not write to $path.',
-    recoveryAction: 'Free space or allow storage access, then try again.',
+    localizedMessage: Copy.messages.failureTaptureCouldNotWriteToValue(
+      (path).toString(),
+    ),
+    localizedRecovery: Copy.messages.failureFreeSpaceOrAllowStorageAccessThen,
   );
 }

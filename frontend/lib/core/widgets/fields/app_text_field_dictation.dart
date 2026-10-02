@@ -99,7 +99,12 @@ extension _FieldDictation on _AppTextFieldState {
     if (!mounted || ScaffoldMessenger.maybeOf(context) == null) {
       return;
     }
-    showAppSnack(context, failure.message, tone: SnackTone.warning);
+    showAppSnack(
+      context,
+      failure.message,
+      tone: SnackTone.warning,
+      localizedMessage: failure.explanation,
+    );
   }
 }
 

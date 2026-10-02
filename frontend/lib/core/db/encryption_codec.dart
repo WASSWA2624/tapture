@@ -5,11 +5,16 @@ const String _encName = 'tapture.sqlite.enc';
 const String _partialName = 'tapture.sqlite.enc.partial';
 const String _bakName = 'tapture.sqlite.bak';
 const String _stateName = 'tapture.encryption';
+const String _stateEnabled = 'enabled';
 
 const int _nonceLength = 16;
 const int _macLength = 32;
 const int _blockLength = 32;
 const List<int> _magic = <int>[84, 65, 80, 69, 78, 67, 48, 49];
+const AuthenticatedFileCipher _cipher = AuthenticatedFileCipher(
+  magic: 'TAPENC02',
+  purpose: 'database',
+);
 const List<int> _encLabel = <int>[101, 110, 99];
 const List<int> _macLabel = <int>[109, 97, 99];
 
@@ -38,62 +43,71 @@ Future<void> _cryptInIsolate(List<Object> job) async {
   final String dest = job[1] as String;
   final Uint8List keyBytes = _fromHex(job[2] as String);
   final bool encrypt = job[3] as bool;
-  final List<int> encKey = Hmac(sha256, keyBytes).convert(_encLabel).bytes;
-  final List<int> macKey = Hmac(sha256, keyBytes).convert(_macLabel).bytes;
   if (encrypt) {
-    _encryptPath(source, dest, encKey, macKey);
-  } else {
+    _cipher.sealFile(
+      File(source),
+      File(dest),
+      keyBytes,
+      onProgress: IsolateRunner.reportProgress,
+    );
+  } else if (_hasMagic(File(source), _magic)) {
+    // Read existing installations without ever writing this legacy cipher.
+    // A successful close upgrades the encrypted snapshot to AES-256.
+    final List<int> encKey = Hmac(sha256, keyBytes).convert(_encLabel).bytes;
+    final List<int> macKey = Hmac(sha256, keyBytes).convert(_macLabel).bytes;
     _decryptPath(source, dest, encKey, macKey);
+  } else {
+    _cipher.openFile(
+      File(source),
+      File(dest),
+      keyBytes,
+      onProgress: IsolateRunner.reportProgress,
+    );
   }
 }
 
-void _encryptPath(
-  String source,
-  String dest,
-  List<int> encKey,
-  List<int> macKey,
-) {
-  final File inFile = File(source);
-  final int length = inFile.lengthSync();
-  final Uint8List nonce = _randomBytes(_nonceLength);
-  final Uint8List header = Uint8List(_magic.length + _nonceLength + 8);
-  header.setAll(0, _magic);
-  header.setAll(_magic.length, nonce);
-  _putUint64(header, _magic.length + _nonceLength, length);
-  final RandomAccessFile input = inFile.openSync();
-  final RandomAccessFile output = File(dest).openSync(mode: FileMode.write);
-  final _DigestSink macOut = _DigestSink();
-  final ByteConversionSink mac = Hmac(
-    sha256,
-    macKey,
-  ).startChunkedConversion(macOut);
-  final Uint8List buffer = Uint8List(AppConstants.hashing.chunkBytes);
-  var offset = 0;
+void _verifyEncryptionKey(({String path, String key}) job) {
+  final Uint8List key = _fromHex(job.key);
+  final File source = File(job.path);
+  if (_hasMagic(source, _magic)) {
+    _verifyLegacyMac(source, Hmac(sha256, key).convert(_macLabel).bytes);
+  } else {
+    _cipher.verifyFile(source, key);
+  }
+}
+
+void _verifyLegacyMac(File source, List<int> macKey) {
+  final RandomAccessFile input = source.openSync();
   try {
-    output.writeFromSync(header);
-    mac.add(header);
-    while (true) {
-      final int n = input.readIntoSync(buffer);
-      if (n == 0) {
-        break;
+    final int length = input.lengthSync() - _macLength;
+    if (length < _magic.length + _nonceLength + 8) {
+      throw const FormatException('short');
+    }
+    final _DigestSink digest = _DigestSink();
+    final ByteConversionSink mac = Hmac(
+      sha256,
+      macKey,
+    ).startChunkedConversion(digest);
+    final Uint8List buffer = Uint8List(AppConstants.hashing.chunkBytes);
+    var remaining = length;
+    while (remaining > 0) {
+      final int count = input.readIntoSync(
+        buffer,
+        0,
+        min(buffer.length, remaining),
+      );
+      if (count == 0) {
+        throw const FormatException('truncated');
       }
-      final Uint8List chunk = n == buffer.length
-          ? buffer
-          : Uint8List.fromList(buffer.sublist(0, n));
-      _xor(chunk, encKey, nonce, offset);
-      output.writeFromSync(chunk);
-      mac.add(chunk);
-      offset += n;
-      if (length > 0) {
-        IsolateRunner.reportProgress(offset / length);
-      }
+      mac.add(Uint8List.sublistView(buffer, 0, count));
+      remaining -= count;
     }
     mac.close();
-    output.writeFromSync(Uint8List.fromList(macOut.digest.bytes));
-    IsolateRunner.reportProgress(1);
+    if (!_bytesEqual(input.readSync(_macLength), digest.digest.bytes)) {
+      throw const FormatException('mac');
+    }
   } finally {
     input.closeSync();
-    output.closeSync();
   }
 }
 
@@ -109,6 +123,7 @@ void _decryptPath(
   if (total < minLength) {
     throw const FormatException('short');
   }
+  _verifyLegacyMac(inFile, macKey);
   final RandomAccessFile input = inFile.openSync();
   final RandomAccessFile output = File(dest).openSync(mode: FileMode.write);
   final _DigestSink macOut = _DigestSink();
@@ -269,14 +284,18 @@ bool _looksLikeSqlite(File file) {
 }
 
 bool _looksLikeEncrypted(File file) {
-  if (!file.existsSync() || file.lengthSync() < _magic.length) {
+  return _hasMagic(file, _magic) || _hasMagic(file, _cipher.magic.codeUnits);
+}
+
+bool _hasMagic(File file, List<int> magic) {
+  if (!file.existsSync() || file.lengthSync() < magic.length) {
     return false;
   }
   final RandomAccessFile handle = file.openSync();
   try {
-    final Uint8List head = Uint8List(_magic.length);
+    final Uint8List head = Uint8List(magic.length);
     handle.readIntoSync(head);
-    return _bytesEqual(head, _magic);
+    return _bytesEqual(head, magic);
   } finally {
     handle.closeSync();
   }

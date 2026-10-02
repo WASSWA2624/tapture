@@ -2,8 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/attachments.dart';
+import 'package:tapture/core/db/tables/context.dart'
+    show liveContextDefinitions;
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -44,6 +48,12 @@ abstract interface class FileRelocation {
   Future<Result<int>> relocateRecord(String recordId);
 }
 
+/// The relocator over the app database and storage root. Null where files
+/// are not on a file system (a browser keeps them in one store), so there is
+/// no tree to keep in step. [main] supplies it.
+final Provider<FileRelocation?> fileRelocationProvider =
+    Provider<FileRelocation?>((Ref _) => null);
+
 final class _FileRelocation implements FileRelocation {
   _FileRelocation({
     required this._db,
@@ -72,10 +82,10 @@ final class _FileRelocation implements FileRelocation {
                 ..where(($RecordsTable tbl) => tbl.id.equals(recordId)))
               .getSingleOrNull();
       if (record == null) {
-        return const FailureResult<int>(
+        return FailureResult<int>(
           StorageFailure(
-            message: 'That record is no longer on this device.',
-            recoveryAction: 'Refresh the list and try again.',
+            localizedMessage: Copy.messages.failureThatRecordIsNoLongerOnThis,
+            localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
           ),
         );
       }
@@ -85,10 +95,10 @@ final class _FileRelocation implements FileRelocation {
               )..where(($ProjectsTable tbl) => tbl.id.equals(record.projectId)))
               .getSingleOrNull();
       if (project == null) {
-        return const FailureResult<int>(
+        return FailureResult<int>(
           StorageFailure(
-            message: 'That project is no longer on this device.',
-            recoveryAction: 'Open a project, then try again.',
+            localizedMessage: Copy.messages.failureThatProjectIsNoLongerOnThis,
+            localizedRecovery: Copy.messages.failureOpenAProjectThenTryAgain,
           ),
         );
       }
@@ -232,8 +242,11 @@ final class _FileRelocation implements FileRelocation {
   Future<void> _rename(File from, File to) async {
     if (!from.existsSync()) {
       throw StorageFailure(
-        message: 'Tapture could not find ${from.path}.',
-        recoveryAction: 'Recreate the project folder, then try again.',
+        localizedMessage: Copy.messages.failureTaptureCouldNotFindValue(
+          (from.path).toString(),
+        ),
+        localizedRecovery:
+            Copy.messages.failureRecreateTheProjectFolderThenTryAgain,
       );
     }
     if (_move != null) {
@@ -262,18 +275,14 @@ final class _FileRelocation implements FileRelocation {
     if (decoded is! Map) {
       return const <String>[];
     }
-    final Map<Object?, Object?> map = decoded;
-    final levels =
-        await (_db.select(_db.context)
-              ..where(($ContextTable tbl) => tbl.projectId.equals(projectId))
-              ..orderBy(<OrderClauseGenerator<$ContextTable>>[
-                ($ContextTable tbl) => OrderingTerm.asc(tbl.level),
-              ]))
-            .get();
-    if (levels.isEmpty) {
-      return <String>[for (final Object? value in map.values) '$value'];
-    }
-    return <String>[for (final level in levels) '${map[level.fieldKey] ?? ''}'];
+    final levels = await liveContextDefinitions(
+      _db,
+      projectId: projectId,
+    ).get();
+    return PhotoPathBuilder.contextValues(
+      levelKeys: <String>[for (final level in levels) level.fieldKey],
+      snapshot: decoded,
+    );
   }
 }
 
@@ -284,12 +293,7 @@ PhotoFolderStrategy _strategyOf(Project project) {
       final Object? name =
           decoded['photoFolderStrategy'] ?? decoded['folderStrategy'];
       if (name is String) {
-        return switch (name) {
-          'byTemplate' => PhotoFolderStrategy.byTemplate,
-          'byCaptureDate' => PhotoFolderStrategy.byCaptureDate,
-          'flat' => PhotoFolderStrategy.flat,
-          _ => PhotoFolderStrategy.byContext,
-        };
+        return PhotoPathBuilder.strategyNamed(name);
       }
     }
   } on Object {

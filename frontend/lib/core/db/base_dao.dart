@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
@@ -80,15 +81,15 @@ abstract class BaseDao<T extends Table, R> {
     required String reason,
   }) async {
     if (id.isEmpty) {
-      throw const StorageFailure(
-        message: 'That row is no longer on this device.',
-        recoveryAction: 'Refresh the list and try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureThatRowIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
       );
     }
     if (reason.isEmpty) {
-      throw const StorageFailure(
-        message: 'A delete needs a reason.',
-        recoveryAction: 'Say why this row should be removed, then try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureADeleteNeedsAReason,
+        localizedRecovery: Copy.messages.failureSayWhyThisRowShouldBeRemoved,
       );
     }
     final GeneratedDatabase database = db;
@@ -119,9 +120,10 @@ abstract class BaseDao<T extends Table, R> {
     }
     final R? written = await _load(id);
     if (written == null) {
-      throw const StorageFailure(
-        message: 'The database could not complete that write.',
-        recoveryAction: 'Free up space or export a project, then try again.',
+      throw StorageFailure(
+        localizedMessage:
+            Copy.messages.failureTheDatabaseCouldNotCompleteThatWrite,
+        localizedRecovery: Copy.messages.failureFreeUpSpaceOrExportAProject,
       );
     }
     return written;
@@ -131,9 +133,9 @@ abstract class BaseDao<T extends Table, R> {
     return db.transaction(() async {
       final R? existing = await _load(id);
       if (existing == null) {
-        throw const StorageFailure(
-          message: 'That row is no longer on this device.',
-          recoveryAction: 'Refresh the list and try again.',
+        throw StorageFailure(
+          localizedMessage: Copy.messages.failureThatRowIsNoLongerOnThis,
+          localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
         );
       }
       await recordTombstone(id: id, reason: reason);
@@ -200,9 +202,10 @@ abstract class BaseDao<T extends Table, R> {
     if (column is GeneratedColumn<String>) {
       return column;
     }
-    throw const StorageFailure(
-      message: 'The database could not complete that write.',
-      recoveryAction: 'Free up space or export a project, then try again.',
+    throw StorageFailure(
+      localizedMessage:
+          Copy.messages.failureTheDatabaseCouldNotCompleteThatWrite,
+      localizedRecovery: Copy.messages.failureFreeUpSpaceOrExportAProject,
     );
   }
 

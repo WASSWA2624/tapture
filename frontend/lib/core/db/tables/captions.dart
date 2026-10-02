@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -180,9 +181,10 @@ Future<Caption> _writeCaption(
             (Caption? value) => value,
           );
     if (existing != null && columns.containsKey('text_raw')) {
-      throw const StorageFailure(
-        message: 'The original caption cannot be changed.',
-        recoveryAction: 'Leave the captured text and write a refined one.',
+      throw StorageFailure(
+        localizedMessage:
+            Copy.messages.failureTheOriginalCaptionCannotBeChanged,
+        localizedRecovery: Copy.messages.failureLeaveTheCapturedTextAndWriteA,
       );
     }
     if (!allowRaw) {

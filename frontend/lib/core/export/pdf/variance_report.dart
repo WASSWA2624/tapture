@@ -1,35 +1,50 @@
 import 'pdf_engine.dart';
 
-/// As-recorded against as-found, in three labelled sections (task 018).
+/// As-recorded against as-found (task 018 step 11): register items matched,
+/// register items missing and items found that are not in the register, in
+/// three labelled sections, each item carrying its register key.
 final class VarianceReport {
-  /// Sections for matched, missing and not-in-register rows.
+  /// The report of the three sets. [matched] lines carry their field
+  /// differences in [VarianceLine.detail].
   static PdfDocument build({
     required PdfEngine engine,
     required String project,
     required List<VarianceLine> matched,
     required List<VarianceLine> missing,
     required List<VarianceLine> notInRegister,
+    List<String> cover = const <String>[],
   }) {
+    final PdfLabels text = engine.labels;
+    PdfSection part(String heading, List<VarianceLine> lines) {
+      return engine.section(
+        heading: heading,
+        lines: <String>[
+          for (final VarianceLine line in lines) ...<String>[
+            line.label.isEmpty ? line.key : '${line.key} ${line.label}',
+            ...line.detail,
+          ],
+        ],
+      );
+    }
+
     return engine.document(
-      title: 'Variance report',
+      title: text.varianceReport,
       project: project,
       coverLines: <String>[
-        'matched ${matched.length}',
-        'missing ${missing.length}',
-        'not in register ${notInRegister.length}',
+        ...cover,
+        '${text.matched}: ${matched.length}',
+        '${text.missing}: ${missing.length}',
+        '${text.notInRegister}: ${notInRegister.length}',
       ],
-      bodyLines: <String>[
-        'Matched',
-        for (final VarianceLine line in matched) '${line.key} ${line.label}',
-        'Missing',
-        for (final VarianceLine line in missing) '${line.key} ${line.label}',
-        'Not in register',
-        for (final VarianceLine line in notInRegister)
-          '${line.key} ${line.label}',
+      sections: <PdfSection>[
+        part(text.matched, matched),
+        part(text.missing, missing),
+        part(text.notInRegister, notInRegister),
       ],
     );
   }
 }
 
-/// One variance row and its register key.
-typedef VarianceLine = ({String key, String label});
+/// One variance item: its register key, what it is, and any field
+/// differences found against the register.
+typedef VarianceLine = ({String key, String label, List<String> detail});

@@ -40,9 +40,12 @@ final class ViewportMetrics {
 
 /// Reads [ViewportMetrics] from the nearest view.
 extension ViewportMetricsX on BuildContext {
+  /// The window's logical size, measured by the shared responsive layer.
+  Size get viewportSize => MediaQuery.sizeOf(this);
+
   /// The metrics of the window this context is drawn in.
   ViewportMetrics get viewportMetrics {
-    final Size viewport = MediaQuery.sizeOf(this);
+    final Size viewport = viewportSize;
     final Display display = View.of(this).display;
     final double ratio = display.devicePixelRatio <= 0
         ? 1

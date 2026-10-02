@@ -35,6 +35,8 @@ class AppBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final Color accent = tone.color(colors);
     final VoidCallback? onDismiss = this.onDismiss;
@@ -67,8 +69,8 @@ class AppBanner extends StatelessWidget {
                   if (onDismiss != null)
                     AppIconButton(
                       icon: AppIcons.close,
-                      semanticLabel: Copy.dismiss,
-                      tooltip: Copy.dismiss,
+                      semanticLabel: localCopy.dismiss,
+                      tooltip: localCopy.dismiss,
                       onPressed: onDismiss,
                     ),
                 ],

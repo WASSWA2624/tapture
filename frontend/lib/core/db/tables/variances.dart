@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -98,9 +99,10 @@ Future<Result<Variance>> resolveVariance(
 }) async {
   try {
     if (resolvedBy.isEmpty) {
-      throw const StorageFailure(
-        message: 'A resolution needs an operator.',
-        recoveryAction: 'Sign in, then resolve the variance again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureAResolutionNeedsAnOperator,
+        localizedRecovery:
+            Copy.messages.failureSignInThenResolveTheVarianceAgain,
       );
     }
     final AppDatabase database = db as AppDatabase;
@@ -108,9 +110,9 @@ Future<Result<Variance>> resolveVariance(
       database.variances,
     )..where(($VariancesTable tbl) => tbl.id.equals(id))).getSingleOrNull();
     if (existing == null) {
-      throw const StorageFailure(
-        message: 'That variance is no longer on this device.',
-        recoveryAction: 'Refresh the list and try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureThatVarianceIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
       );
     }
     return _VariancesDao(

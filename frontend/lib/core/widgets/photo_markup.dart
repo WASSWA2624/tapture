@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:image/image.dart' as img;
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/markup_stroke.dart';
@@ -40,7 +41,7 @@ abstract final class PhotoMarkup {
     // Refused here, so the reason reaches the screen rather than an
     // isolate error.
     if (text.text.trim().isEmpty) {
-      return const FailureResult<Uint8List>(_noWords);
+      return FailureResult<Uint8List>(_noWords);
     }
     return runIsolate(_typeJob, <Object?>[
       bytes,
@@ -94,9 +95,9 @@ Future<Uint8List> _cropJob(List<Object?> job) async {
   return bytes;
 }
 
-const ValidationFailure _noWords = ValidationFailure(
-  message: 'Type the words to place on this photo.',
-  recoveryAction: 'Enter text, then save the photo.',
+final ValidationFailure _noWords = ValidationFailure(
+  localizedMessage: Copy.messages.failureTypeTheWordsToPlaceOnThis,
+  localizedRecovery: Copy.messages.failureEnterTextThenSaveThePhoto,
 );
 
 Future<Uint8List> _typeJob(List<Object?> job) async {
@@ -137,9 +138,9 @@ Future<Uint8List> _drawJob(List<Object?> job) async {
 img.Image _decode(Uint8List bytes) {
   final img.Image? image = img.decodeImage(bytes);
   if (image == null) {
-    throw const ValidationFailure(
-      message: 'That photo could not be read as an image.',
-      recoveryAction: 'Capture the photo again, then try again.',
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.failureThatPhotoCouldNotBeReadAs,
+      localizedRecovery: Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
     );
   }
   // The screens show the photo upright, as its EXIF orientation says, so

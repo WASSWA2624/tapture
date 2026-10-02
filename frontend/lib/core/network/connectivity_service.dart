@@ -55,10 +55,7 @@ final class _ConnectivityService implements ConnectivityService {
     required Stream<bool> offlineOverride,
   }) {
     // Sync so a listener that just flipped the override cannot still see online.
-    _output = StreamController<NetworkState>.broadcast(
-      onListen: _replay,
-      sync: true,
-    );
+    _output = StreamController<NetworkState>.broadcast(sync: true);
     _radioSub = source.listen(_onRadio);
     _overrideSub = offlineOverride.listen(_onOverride);
   }
@@ -73,14 +70,18 @@ final class _ConnectivityService implements ConnectivityService {
   bool _closed = false;
 
   @override
-  Stream<NetworkState> watch() => _output.stream;
-
-  void _replay() {
+  Stream<NetworkState> watch() => Stream<NetworkState>.multi((
+    MultiStreamController<NetworkState> listener,
+  ) {
+    final StreamSubscription<NetworkState> subscription = _output.stream.listen(
+      listener.addSync,
+      onError: listener.addErrorSync,
+      onDone: listener.closeSync,
+    );
     final NetworkState? last = _last;
-    if (last != null && !_output.isClosed) {
-      _output.add(last);
-    }
-  }
+    if (last != null && !_closed) listener.addSync(last);
+    listener.onCancel = subscription.cancel;
+  }, isBroadcast: true);
 
   void _onRadio(NetworkState next) {
     _radio = next;

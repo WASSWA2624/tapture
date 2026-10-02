@@ -4,18 +4,41 @@ part of 'failure.dart';
 final class ProviderFailure extends Failure {
   /// Creates a provider failure.
   const ProviderFailure({
-    this.message = 'A service this screen uses failed.',
-    this.recoveryAction = 'Try again. Nothing already captured was lost.',
+    String? message,
+    String? recoveryAction,
+    LocalizedMessage? localizedMessage,
+    LocalizedMessage? localizedRecovery,
     this.kind = ProviderFailureKind.unknown,
-  });
+  }) : _message = message,
+       _recoveryAction = recoveryAction,
+       super(
+         localizedMessage:
+             localizedMessage ??
+             (message == null
+                 ? const LocalizedMessage(
+                     key: 'failureProviderMessage',
+                     fallback: "A service this screen uses failed.",
+                   )
+                 : null),
+         localizedRecovery:
+             localizedRecovery ??
+             (recoveryAction == null
+                 ? const LocalizedMessage(
+                     key: 'failureProviderRecovery',
+                     fallback: "Try again. Nothing already captured was lost.",
+                   )
+                 : null),
+       );
+
+  final String? _message;
+  final String? _recoveryAction;
 
   @override
-  final String message;
+  String get message => _message ?? localizedMessage!.fallback;
 
   @override
-  final String recoveryAction;
+  String get recoveryAction => _recoveryAction ?? localizedRecovery!.fallback;
 
-  /// What went wrong, when the provider said. [ProviderFailureKind.unknown]
-  /// otherwise.
+  /// The provider failure category when the service supplied one.
   final ProviderFailureKind kind;
 }

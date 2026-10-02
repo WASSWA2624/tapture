@@ -39,18 +39,22 @@ class AppStatusPill extends StatelessWidget {
     final (Color color, IconData icon, String styleLabel) = StatusStyle.of(
       status,
       colors,
+      localizedCopy: Copy.of(context),
     );
     final String label = this.label ?? styleLabel;
     final double pad = _compact ? Space.x1 : Space.x2;
     final double iconSize = _compact ? Space.x4 : Space.x5;
     final TextStyle textStyle = (_compact ? AppText.caption : AppText.label)
         .copyWith(color: colors.onSurface);
+    // The label already names the visible word; reading the text too would
+    // announce the status twice inside a merged row.
     return Semantics(
       label: label,
+      excludeSemantics: true,
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: _compact ? colors.surface : colors.surfaceVariant,
-          borderRadius: BorderRadius.circular(Radii.pill),
+          borderRadius: BorderRadius.circular(Radii.sm),
           border: Border.all(
             color: color,
             width: Space.x0 / 2,
@@ -59,23 +63,55 @@ class AppStatusPill extends StatelessWidget {
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: pad, vertical: pad),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(icon, color: color, size: iconSize),
-              SizedBox(width: _compact ? Space.x1 : Space.x2),
-              Flexible(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: textStyle,
-                ),
-              ),
-            ],
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final double gap = _compact ? Space.x1 : Space.x2;
+              // A word that cannot fit is not clipped: a narrow slot at
+              // large text keeps the colour and icon, and the word stays
+              // in the label and the tooltip.
+              if (!_fits(
+                context,
+                label,
+                textStyle,
+                constraints.maxWidth - iconSize - gap,
+              )) {
+                return Tooltip(
+                  message: label,
+                  excludeFromSemantics: true,
+                  child: Icon(icon, color: color, size: iconSize),
+                );
+              }
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(icon, color: color, size: iconSize),
+                  SizedBox(width: gap),
+                  Text(label, maxLines: 1, style: textStyle),
+                ],
+              );
+            },
           ),
         ),
       ),
     );
+  }
+
+  static bool _fits(
+    BuildContext context,
+    String label,
+    TextStyle style,
+    double width,
+  ) {
+    if (!width.isFinite) return true;
+    final TextPainter painter = TextPainter(
+      text: TextSpan(text: label, style: style),
+      maxLines: 1,
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      locale: Localizations.maybeLocaleOf(context),
+    )..layout();
+    final bool fits = painter.width <= width;
+    painter.dispose();
+    return fits;
   }
 }

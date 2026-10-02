@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/blob_store.dart';
+import 'package:tapture/core/files/image_resize.dart';
 import 'package:tapture/core/files/path_sanitizer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 
@@ -82,12 +84,17 @@ abstract interface class EvidencePurge {
   }
 
   /// The key whose copy [name], a file in a per-photo cache folder, is:
-  /// `<key>_<edge>` gives `<key>`, and so does a `.part` left over from
-  /// writing one. Null for any other name, which the purge never removes.
+  /// Legacy `<key>_<edge>` and versioned `<key>_<edge>_<quality>_v<version>`
+  /// give `<key>`, including a `.part` left from writing either copy.
+  /// Null for any other name, which the purge never removes.
   static String? copyOwner(String name) {
     final String whole = name.endsWith(partSuffix)
         ? name.substring(0, name.length - partSuffix.length)
         : name;
+    final RegExpMatch? versioned = _versionedCopy.firstMatch(whole);
+    if (versioned != null) {
+      return versioned.group(1);
+    }
     final int split = whole.lastIndexOf('_');
     if (split <= 0 || !_edge.hasMatch(whole.substring(split + 1))) {
       return null;
@@ -101,7 +108,7 @@ abstract interface class EvidencePurge {
   /// Cache folder of thumbnails, keyed `<sha256>_<edge>` or `<photoId>_<edge>`.
   static const String thumbsFolder = '.cache/thumbs';
 
-  /// Cache folder of reduced upload copies, keyed `<sha256>_<edge>`.
+  /// Cache folder of reduced upload copies, keyed by source, size and encoding.
   static const String uploadFolder = '.cache/upload';
 
   /// Cache folder of capture-time copies, one file per photo id.
@@ -135,15 +142,16 @@ typedef PurgePhoto = ({
 
 /// The edge a cached copy's name ends in: digits only.
 final RegExp _edge = RegExp(r'^[0-9]+$');
+final RegExp _versionedCopy = RegExp(r'^(.+)_[0-9]+_[0-9]+_v[0-9]+$');
 
-const ValidationFailure _outsideProjects = ValidationFailure(
-  message: 'Only files inside a project folder can be removed for good.',
-  recoveryAction: 'Leave the file in place; the purge will skip it.',
+final ValidationFailure _outsideProjects = ValidationFailure(
+  localizedMessage: Copy.messages.failureOnlyFilesInsideAProjectFolderCan,
+  localizedRecovery: Copy.messages.failureLeaveTheFileInPlaceThePurge,
 );
 
-const ValidationFailure _badCacheKey = ValidationFailure(
-  message: 'That photo has no usable name for its cached copies.',
-  recoveryAction: 'Leave the photo in place; the purge will skip it.',
+final ValidationFailure _badCacheKey = ValidationFailure(
+  localizedMessage: Copy.messages.failureThatPhotoHasNoUsableNameFor,
+  localizedRecovery: Copy.messages.failureLeaveThePhotoInPlaceThePurge,
 );
 
 /// The purge over a keyed store. Each path is one key; a key that is not
@@ -214,6 +222,9 @@ final class _StoreEvidencePurge implements EvidencePurge {
       }
       keys.add(
         '${EvidencePurge.uploadFolder}/${sha}_${AppConstants.images.longEdge}',
+      );
+      keys.add(
+        '${EvidencePurge.uploadFolder}/${ImageResize.uploadCacheKey(sha)}',
       );
     }
     return keys;

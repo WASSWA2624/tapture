@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/path_sanitizer.dart';
@@ -48,6 +49,7 @@ final class _FileWriter implements FileWriter {
   final bool _fullDisk;
   final bool _permissionDenied;
   final bool _vanishedParent;
+  final Set<String> _recoveredDirectories = <String>{};
 
   @override
   Future<Result<WrittenFile>> write(
@@ -66,7 +68,6 @@ final class _FileWriter implements FileWriter {
     Stream<List<int>> bytes,
     String relativePath,
   ) async {
-    File? part;
     try {
       final String relative = safeRelativePath(relativePath);
       final Result<Directory> root = await _storageRoot.resolve();
@@ -85,38 +86,52 @@ final class _FileWriter implements FileWriter {
           if (_vanishedParent) {
             return FailureResult<WrittenFile>(_missingParent(dest.parent.path));
           }
-          if (!dest.parent.existsSync() && !await _createParent(dest.parent)) {
+          if (!await dest.parent.exists() &&
+              !await _createParent(dest.parent)) {
             return FailureResult<WrittenFile>(_missingParent(dest.parent.path));
           }
-          await _sweepParts(dest.parent);
-          part = File('$destPath$_partSuffix');
-          if (part.existsSync()) {
-            await part.delete();
-          }
-          final _HashedWrite hashed = await _streamToPart(
-            bytes,
-            part,
-            failAfterBytes: _failAfterBytes,
-          );
-          if (dest.existsSync()) {
-            await dest.delete();
-          }
-          await part.rename(destPath);
-          part = null;
-          return Success<WrittenFile>(
-            WrittenFile(
-              relativePath: relative,
-              sha256: hashed.sha256,
-              byteLength: hashed.byteLength,
-            ),
+          return await _storageRoot.withWriteLock(
+            dest.parent.path,
+            () => _publish(bytes, dest, relative),
           );
       }
     } on Failure catch (failure) {
-      await _discard(part);
       return FailureResult<WrittenFile>(failure);
     } on Object catch (error) {
-      await _discard(part);
       return FailureResult<WrittenFile>(_ioFailure(error, relativePath));
+    }
+  }
+
+  Future<Result<WrittenFile>> _publish(
+    Stream<List<int>> bytes,
+    File dest,
+    String relative,
+  ) async {
+    File? part;
+    try {
+      if (!_recoveredDirectories.contains(dest.parent.path)) {
+        await _sweepParts(dest.parent);
+        _recoveredDirectories.add(dest.parent.path);
+      }
+      part = File('${dest.path}$_partSuffix');
+      final _HashedWrite hashed = await _streamToPart(
+        bytes,
+        part,
+        failAfterBytes: _failAfterBytes,
+      );
+      // Rename replaces a completed target atomically; deleting it first
+      // would lose the previous file if publication failed.
+      await part.rename(dest.path);
+      part = null;
+      return Success<WrittenFile>(
+        WrittenFile(
+          relativePath: relative,
+          sha256: hashed.sha256,
+          byteLength: hashed.byteLength,
+        ),
+      );
+    } finally {
+      await _discard(part);
     }
   }
 }
@@ -126,14 +141,14 @@ Stream<List<int>> _chunksOf(File source) async* {
   final Uint8List buffer = Uint8List(AppConstants.hashing.chunkBytes);
   try {
     while (true) {
-      final int n = handle.readIntoSync(buffer);
+      final int n = await handle.readInto(buffer);
       if (n == 0) {
         break;
       }
-      yield Uint8List.fromList(buffer.sublist(0, n));
+      yield Uint8List.sublistView(buffer, 0, n);
     }
   } finally {
-    handle.closeSync();
+    await handle.close();
   }
 }
 
@@ -191,17 +206,17 @@ Future<_HashedWrite> _streamToPart(
         final int end = offset + chunkBytes < data.length
             ? offset + chunkBytes
             : data.length;
-        final Uint8List slice = data.sublist(offset, end);
+        final Uint8List slice = Uint8List.sublistView(data, offset, end);
         if (failAfterBytes != null && total + slice.length > failAfterBytes) {
           final int remaining = failAfterBytes - total;
           if (remaining > 0) {
-            handle.writeFromSync(slice, 0, remaining);
-            sink.add(slice.sublist(0, remaining));
+            await handle.writeFrom(slice, 0, remaining);
+            sink.add(Uint8List.sublistView(slice, 0, remaining));
             total += remaining;
           }
           throw const _WriteInterrupted();
         }
-        handle.writeFromSync(slice);
+        await handle.writeFrom(slice);
         sink.add(slice);
         total += slice.length;
       }
@@ -217,9 +232,9 @@ Future<_HashedWrite> _streamToPart(
 
 StorageFailure _ioFailure(Object error, String path) {
   if (error is _WriteInterrupted) {
-    return const StorageFailure(
-      message: 'The photo could not be saved on this device.',
-      recoveryAction: 'Free up space or export a project, then try again.',
+    return StorageFailure(
+      localizedMessage: Copy.messages.failureThePhotoCouldNotBeSavedOn,
+      localizedRecovery: Copy.messages.failureFreeUpSpaceOrExportAProject,
     );
   }
   if (error is FileSystemException) {
@@ -235,29 +250,38 @@ StorageFailure _ioFailure(Object error, String path) {
     }
   }
   return StorageFailure(
-    message: 'Tapture could not write to $path.',
-    recoveryAction: 'Free up space or export a project, then try again.',
+    localizedMessage: Copy.messages.failureTaptureCouldNotWriteToValue(
+      (path).toString(),
+    ),
+    localizedRecovery: Copy.messages.failureFreeUpSpaceOrExportAProject,
   );
 }
 
 StorageFailure _fullDiskFailure(String path) {
   return StorageFailure(
-    message: 'There is not enough space to save $path.',
-    recoveryAction: 'Free up space or export a project, then try again.',
+    localizedMessage: Copy.messages.failureThereIsNotEnoughSpaceToSave(
+      (path).toString(),
+    ),
+    localizedRecovery: Copy.messages.failureFreeUpSpaceOrExportAProject,
   );
 }
 
 StorageFailure _permissionFailure(String path) {
   return StorageFailure(
-    message: 'Tapture could not write to $path.',
-    recoveryAction: 'Allow storage access, then try again.',
+    localizedMessage: Copy.messages.failureTaptureCouldNotWriteToValue(
+      (path).toString(),
+    ),
+    localizedRecovery: Copy.messages.failureAllowStorageAccessThenTryAgain,
   );
 }
 
 StorageFailure _missingParent(String path) {
   return StorageFailure(
-    message: 'Tapture could not find $path.',
-    recoveryAction: 'Recreate the project folder, then try again.',
+    localizedMessage: Copy.messages.failureTaptureCouldNotFindValue(
+      (path).toString(),
+    ),
+    localizedRecovery:
+        Copy.messages.failureRecreateTheProjectFolderThenTryAgain,
   );
 }
 

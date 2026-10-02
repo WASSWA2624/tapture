@@ -5,6 +5,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/path_sanitizer.dart';
+import 'package:tapture/core/files/storage_root.dart';
 
 import 'download_service_stub.dart'
     if (dart.library.io) 'download_service_io.dart'
@@ -16,8 +17,11 @@ import 'download_service_stub.dart'
 /// desktop, and the documents folder on iOS. The only way a feature saves
 /// a file for someone to open elsewhere (FE-STR-11).
 abstract interface class DownloadService {
-  /// The service for this platform.
-  factory DownloadService() => platform.platformDownloads();
+  /// The service for this platform. Stored files are read under
+  /// [storageRoot], the app's configured root, so an export written under a
+  /// folder the operator chose is found again; omitted, the default root.
+  factory DownloadService({StorageRoot? storageRoot}) =>
+      platform.platformDownloads(storageRoot: storageRoot);
 
   /// A stand-in that reports each save to [onSave] instead of writing, so
   /// tests never touch a folder or a browser (FE-TEST-03). [fail] makes every
@@ -133,8 +137,8 @@ abstract interface class DownloadService {
   /// [fileName], copying it in chunks so a package larger than memory is
   /// never read whole (FE-PERF-07). Only a file in a project's `exports/`
   /// folder is accepted ([isStoredExport]), so no original photo or
-  /// recording is ever handed out (FE-SEC-08). A browser has no stored files
-  /// and refuses.
+  /// recording is ever handed out (FE-SEC-08). A browser reads the file from
+  /// the project-file store it was written to, and downloads it.
   Future<Result<String?>> saveStored({
     required String relativePath,
     required String fileName,
@@ -285,10 +289,10 @@ final class _FakeDownloadService implements DownloadService {
   }) async {
     _onOpenExternally?.call(fileName, bytes, mimeType);
     if (_openPermissionDenied) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         PermissionFailure(
-          message: Copy.projectOpenPermission,
-          recoveryAction: Copy.projectOpenPermissionRecovery,
+          localizedMessage: Copy.messages.projectOpenPermission,
+          localizedRecovery: Copy.messages.projectOpenPermissionRecovery,
         ),
       );
     }
@@ -332,10 +336,10 @@ final class _FakeDownloadService implements DownloadService {
     }
     _onOpenStoredExternally?.call(relativePath, fileName, mimeType);
     if (_openPermissionDenied) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         PermissionFailure(
-          message: Copy.projectOpenPermission,
-          recoveryAction: Copy.projectOpenPermissionRecovery,
+          localizedMessage: Copy.messages.projectOpenPermission,
+          localizedRecovery: Copy.messages.projectOpenPermissionRecovery,
         ),
       );
     }
@@ -355,8 +359,10 @@ final class _FakeDownloadService implements DownloadService {
 /// The failure any platform returns when the file could not be saved.
 StorageFailure downloadFailure(String fileName) {
   return StorageFailure(
-    message: 'Tapture could not save $fileName.',
-    recoveryAction: 'Free some space, then download again.',
+    localizedMessage: Copy.messages.failureTaptureCouldNotSaveValue(
+      (fileName).toString(),
+    ),
+    localizedRecovery: Copy.messages.failureFreeSomeSpaceThenDownloadAgain,
   );
 }
 
@@ -364,23 +370,23 @@ StorageFailure downloadFailure(String fileName) {
 /// opened. [place] is the short label the operator should look in.
 StorageFailure openFolderFailure(String place) {
   return StorageFailure(
-    message: Copy.feedbackOpenFolderFailed(place),
-    recoveryAction: 'Open Downloads on this device and look in Tapture.',
+    localizedMessage: Copy.messages.feedbackOpenFolderFailed(place),
+    localizedRecovery: Copy.messages.failureOpenDownloadsOnThisDeviceAndLook,
   );
 }
 
 /// The failure any platform returns when a copy could not be handed off.
 StorageFailure openExternallyFailure(String fileName) {
   return StorageFailure(
-    message: Copy.projectOpenFailedNamed(fileName),
-    recoveryAction: Copy.projectOpenFailedRecovery,
+    localizedMessage: Copy.messages.projectOpenFailedNamed(fileName),
+    localizedRecovery: Copy.messages.projectOpenFailedRecovery,
   );
 }
 
 /// The failure when no installed app can open the copy.
 StorageFailure openExternallyNoHandlerFailure() {
-  return const StorageFailure(
-    message: Copy.projectOpenNoApp,
-    recoveryAction: Copy.projectOpenNoAppRecovery,
+  return StorageFailure(
+    localizedMessage: Copy.messages.projectOpenNoApp,
+    localizedRecovery: Copy.messages.projectOpenNoAppRecovery,
   );
 }

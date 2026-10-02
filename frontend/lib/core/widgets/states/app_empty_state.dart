@@ -9,6 +9,8 @@ import 'package:tapture/core/widgets/app_button.dart';
 ///
 /// The next action is either a button under the message, or the icon itself
 /// when [onIconTap] and [iconLabel] are set, never both.
+/// A short bounded viewport scrolls to the action; inside a page scroller the
+/// content keeps its natural height without taking the primary scroll position.
 class AppEmptyState extends StatelessWidget {
   /// Creates an empty state. [onAction] is offered only with [actionLabel];
   /// [onIconTap] makes the icon the action only with [iconLabel].
@@ -59,45 +61,48 @@ class AppEmptyState extends StatelessWidget {
     return Semantics(
       container: true,
       label: headline,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Space.x4,
-          vertical: Space.x6,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            if (onIconTap != null && iconLabel != null)
-              _WellButton(
-                icon: icon,
-                label: iconLabel,
-                color: colors.secondary,
-                fill: colors.surfaceVariant,
-                onTap: onIconTap,
-              )
-            else
-              _Well(
-                icon: icon,
-                color: colors.secondary,
-                fill: colors.surfaceVariant,
-              ),
-            const SizedBox(height: Space.x4),
-            Text(
-              headline,
-              textAlign: TextAlign.center,
-              style: AppText.section.copyWith(color: colors.onSurface),
-            ),
-            const SizedBox(height: Space.x2),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: AppText.caption.copyWith(color: colors.onSurface),
-            ),
-            if (actionLabel != null && onAction != null) ...<Widget>[
+      child: SingleChildScrollView(
+        primary: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: Space.x4,
+            vertical: Space.x6,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (onIconTap != null && iconLabel != null)
+                _WellButton(
+                  icon: icon,
+                  label: iconLabel,
+                  color: colors.secondary,
+                  fill: colors.surfaceVariant,
+                  onTap: onIconTap,
+                )
+              else
+                _Well(
+                  icon: icon,
+                  color: colors.secondary,
+                  fill: colors.surfaceVariant,
+                ),
               const SizedBox(height: Space.x4),
-              AppButton(label: actionLabel, onPressed: onAction),
+              Text(
+                headline,
+                textAlign: TextAlign.center,
+                style: AppText.section.copyWith(color: colors.onSurface),
+              ),
+              const SizedBox(height: Space.x2),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: AppText.caption.copyWith(color: colors.onSurface),
+              ),
+              if (actionLabel != null && onAction != null) ...<Widget>[
+                const SizedBox(height: Space.x4),
+                AppButton(label: actionLabel, onPressed: onAction),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

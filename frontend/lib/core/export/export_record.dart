@@ -16,6 +16,8 @@ final class ExportRecord {
     this.definitions = const <Map<String, Object?>>[],
     this.provenance = const <String, Object?>{},
     this.photoSources = const <String, String>{},
+    this.templateRowId,
+    this.capturedAt = '',
   });
 
   /// Rebuilds a record written by [toJson].
@@ -48,6 +50,8 @@ final class ExportRecord {
         for (final Object? row in _list(json['photos']))
           if (row is Map) _photo(Map<String, Object?>.from(row)),
       ],
+      templateRowId: json['templateRowId'] as String?,
+      capturedAt: json['capturedAt'] as String? ?? '',
     );
   }
 
@@ -93,6 +97,12 @@ final class ExportRecord {
   /// Original storage paths keyed by photo id, retained for request replay.
   final Map<String, String> photoSources;
 
+  /// The predefined checklist row this record answers, when it answers one.
+  final String? templateRowId;
+
+  /// When the record was captured, ISO-8601 in UTC, or empty.
+  final String capturedAt;
+
   /// JSON for the request.
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -108,6 +118,8 @@ final class ExportRecord {
       'definitions': definitions,
       'provenance': provenance,
       'photoSources': photoSources,
+      'templateRowId': templateRowId,
+      'capturedAt': capturedAt,
       'values': <Map<String, Object?>>[
         for (final ExportValue value in values)
           <String, Object?>{

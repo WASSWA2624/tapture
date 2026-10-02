@@ -4,12 +4,37 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'archive_problem.dart';
+import 'picked_document.dart';
 
 export 'archive_problem.dart';
+
+/// Supported photo format from its bytes, shared with capture intake.
+String? imageExtensionFromHeader(Uint8List header) {
+  for (final String extension in const <String>['jpg', 'png', 'webp']) {
+    if (_magicMatches(ImportKind.image, extension, header)) return extension;
+  }
+  return null;
+}
+
+/// Checks image metadata and an optional bounded prefix before a full read.
+Result<ImportKind> validatePickedImage({
+  required String name,
+  required int byteLength,
+  Uint8List? header,
+}) => Result.capture(() {
+  final ImportKind kind = _metadataKind(name, byteLength, const <ImportKind>{
+    ImportKind.image,
+  });
+  if (header != null && !_magicMatches(kind, _extension(name), header)) {
+    throw _mismatch(name);
+  }
+  return kind;
+});
 
 /// The one gate every file from outside the app passes before a parser sees
 /// it: extension, magic bytes, size and archive structure (FE-SEC-06).
@@ -21,6 +46,14 @@ abstract interface class FileValidation {
   /// accept. Archives are walked for traversal, links and zip-bomb size.
   Future<Result<ImportKind>> validate(
     File file, {
+    required Set<ImportKind> allowed,
+  });
+
+  /// The same gate for a document the operator picked: a file on a device,
+  /// judged by the name they chose rather than the picker's copy, or the
+  /// bytes a browser hands over. Nothing is parsed before this passes.
+  Future<Result<ImportKind>> validateDocument(
+    PickedDocument document, {
     required Set<ImportKind> allowed,
   });
 
@@ -109,7 +142,7 @@ enum ImportKind {
   /// A PDF document.
   document,
 
-  /// An XLSX workbook or a CSV table.
+  /// An XLSX workbook, or a CSV or JSON table.
   spreadsheet,
 
   /// Recorded audio (WAV, M4A or MP3).
@@ -128,34 +161,43 @@ final class _FileValidation implements FileValidation {
     required Set<ImportKind> allowed,
   }) {
     return Result.captureAsync(() async {
-      if (!file.existsSync()) {
-        throw _missing(file);
+      return _fileGate(file, name: _basename(file.path), allowed: allowed);
+    });
+  }
+
+  @override
+  Future<Result<ImportKind>> validateDocument(
+    PickedDocument document, {
+    required Set<ImportKind> allowed,
+  }) {
+    return Result.captureAsync(() async {
+      switch (document) {
+        case PickedFile(:final File file):
+          return _fileGate(file, name: document.name, allowed: allowed);
+        case PickedBytes(:final Uint8List bytes):
+          return _gate(
+            name: document.name,
+            length: bytes.length,
+            allowed: allowed,
+            header: () => Uint8List.sublistView(
+              bytes,
+              0,
+              min(AppConstants.imports.sniffHeaderBytes, bytes.length),
+            ),
+            walk: (int maxUncompressed) => _throwOn(
+              checkZipDirectory(
+                length: bytes.length,
+                read: (int offset, int count) => Uint8List.sublistView(
+                  bytes,
+                  offset,
+                  min(offset + count, bytes.length),
+                ),
+                maxUncompressed: maxUncompressed,
+              ),
+              document.name,
+            ),
+          );
       }
-      final int length = file.lengthSync();
-      if (length <= 0) {
-        throw _empty(file);
-      }
-      final ImportKind kind = _kindFromName(file);
-      if (!allowed.contains(kind)) {
-        throw _unsupported(file);
-      }
-      if (length > _ceiling(kind)) {
-        throw _oversized(file, kind);
-      }
-      final Uint8List header = _sniff(file, length);
-      if (!_magicMatches(kind, _extension(file), header)) {
-        throw _mismatch(file);
-      }
-      if (_isArchiveKind(kind, _extension(file))) {
-        final Result<void> archive = await validateArchive(file);
-        switch (archive) {
-          case FailureResult<void>(:final failure):
-            throw failure;
-          case Success<void>():
-            break;
-        }
-      }
-      return kind;
     });
   }
 
@@ -166,22 +208,24 @@ final class _FileValidation implements FileValidation {
     int? maxUncompressed,
   }) {
     return Result.captureAsync(() async {
+      final String name = _basename(archive.path);
       if (!archive.existsSync()) {
-        throw _missing(archive);
+        throw _missing(name);
       }
       final int length = archive.lengthSync();
       if (length < _eocdMin) {
-        throw _notArchive(archive);
+        throw _notArchive(name);
       }
       if (length > (maxBytes ?? AppConstants.imports.bundleMaxBytes)) {
-        throw _oversized(archive, ImportKind.bundle);
+        throw _oversized(name, ImportKind.bundle);
       }
       final Uint8List header = _sniff(archive, length);
       if (!_isZip(header)) {
-        throw _notArchive(archive);
+        throw _notArchive(name);
       }
       _walkZip(
         archive,
+        name,
         length,
         maxUncompressed ?? AppConstants.imports.archiveUncompressedMaxBytes,
       );
@@ -189,11 +233,59 @@ final class _FileValidation implements FileValidation {
   }
 }
 
-ImportKind _kindFromName(File file) {
-  final String ext = _extension(file);
+/// [_gate] over a file on disk, reported under [name].
+ImportKind _fileGate(
+  File file, {
+  required String name,
+  required Set<ImportKind> allowed,
+}) {
+  if (!file.existsSync()) {
+    throw _missing(name);
+  }
+  final int length = file.lengthSync();
+  return _gate(
+    name: name,
+    length: length,
+    allowed: allowed,
+    header: () => _sniff(file, length),
+    walk: (int maxUncompressed) =>
+        _walkZip(file, name, length, maxUncompressed),
+  );
+}
+
+/// The one rule every source passes: not empty, a kind [allowed] by its
+/// extension, within that kind's ceiling, magic bytes that agree with the
+/// name, and for an archive a safe central directory ([walk]). [header]
+/// reads a bounded prefix only (FE-PERF-07).
+ImportKind _gate({
+  required String name,
+  required int length,
+  required Set<ImportKind> allowed,
+  required Uint8List Function() header,
+  required void Function(int maxUncompressed) walk,
+}) {
+  final ImportKind kind = _metadataKind(name, length, allowed);
+  final String ext = _extension(name);
+  if (!_magicMatches(kind, ext, header())) {
+    throw _mismatch(name);
+  }
+  if (_isArchiveKind(kind, ext)) {
+    walk(AppConstants.imports.archiveUncompressedMaxBytes);
+  }
+  return kind;
+}
+
+ImportKind _metadataKind(String name, int length, Set<ImportKind> allowed) {
+  if (length <= 0) {
+    throw _empty(name);
+  }
+  final String ext = _extension(name);
   final ImportKind? kind = _kinds[ext];
-  if (kind == null) {
-    throw _unsupported(file);
+  if (kind == null || !allowed.contains(kind)) {
+    throw _unsupported(name);
+  }
+  if (length > _ceiling(kind)) {
+    throw _oversized(name, kind);
   }
   return kind;
 }
@@ -280,28 +372,35 @@ bool _magicMatches(ImportKind kind, String ext, Uint8List header) {
   }
 }
 
-void _walkZip(File archive, int length, int maxUncompressed) {
+void _walkZip(File archive, String name, int length, int maxUncompressed) {
   final RandomAccessFile raf = archive.openSync();
   try {
-    final ArchiveProblem? problem = checkZipDirectory(
-      length: length,
-      read: (int offset, int count) => _readAt(raf, offset, count),
-      maxUncompressed: maxUncompressed,
+    _throwOn(
+      checkZipDirectory(
+        length: length,
+        read: (int offset, int count) => _readAt(raf, offset, count),
+        maxUncompressed: maxUncompressed,
+      ),
+      name,
     );
-    switch (problem) {
-      case null:
-        return;
-      case ArchiveProblem.notArchive:
-        throw _notArchive(archive);
-      case ArchiveProblem.unsafePath:
-        throw _traversal(archive);
-      case ArchiveProblem.link:
-        throw _symlink(archive);
-      case ArchiveProblem.tooLarge:
-        throw _bomb(archive);
-    }
   } finally {
     raf.closeSync();
+  }
+}
+
+/// Throws the refusal [problem] names for the archive called [name].
+void _throwOn(ArchiveProblem? problem, String name) {
+  switch (problem) {
+    case null:
+      return;
+    case ArchiveProblem.notArchive:
+      throw _notArchive(name);
+    case ArchiveProblem.unsafePath:
+      throw _traversal(name);
+    case ArchiveProblem.link:
+      throw _symlink(name);
+    case ArchiveProblem.tooLarge:
+      throw _bomb(name);
   }
 }
 
@@ -423,13 +522,13 @@ int _u32(Uint8List bytes, int offset) {
       (bytes[offset + 3] << 24);
 }
 
-String _extension(File file) {
-  final String name = _basename(file.path);
-  final int dot = name.lastIndexOf('.');
-  if (dot <= 0 || dot == name.length - 1) {
+String _extension(String name) {
+  final String base = _basename(name);
+  final int dot = base.lastIndexOf('.');
+  if (dot <= 0 || dot == base.length - 1) {
     return '';
   }
-  return name.substring(dot + 1).toLowerCase();
+  return base.substring(dot + 1).toLowerCase();
 }
 
 String _basename(String path) {
@@ -438,79 +537,95 @@ String _basename(String path) {
   return slash == -1 ? n : n.substring(slash + 1);
 }
 
-String _quoted(File file) {
-  final String name = _basename(file.path).replaceAll('"', "'");
-  return '"$name"';
+/// [name]'s base name in quotes, as data (FE-SEC-05).
+String _quoted(String name) {
+  return '"${_basename(name).replaceAll('"', "'")}"';
 }
 
-ValidationFailure _empty(File file) {
+ValidationFailure _empty(String name) {
   return ValidationFailure(
-    message: 'The file ${_quoted(file)} is empty.',
-    recoveryAction: 'Choose a file that has contents and try again.',
+    localizedMessage: DomainCopy.messages.failureTheFileValueIsEmpty(
+      (_quoted(name)).toString(),
+    ),
+    localizedRecovery: DomainCopy.messages.failureChooseAFileThatHasContentsAnd,
   );
 }
 
-ValidationFailure _unsupported(File file) {
+ValidationFailure _unsupported(String name) {
   return ValidationFailure(
-    message: 'The file ${_quoted(file)} is not a supported type.',
-    recoveryAction:
-        'Choose an image, document, spreadsheet, audio file or '
-        'bundle and try again.',
+    localizedMessage: DomainCopy.messages.failureTheFileValueIsNotASupported(
+      (_quoted(name)).toString(),
+    ),
+    localizedRecovery:
+        DomainCopy.messages.failureChooseAnImageDocumentSpreadsheetAudioFile,
   );
 }
 
-ValidationFailure _mismatch(File file) {
+ValidationFailure _mismatch(String name) {
   return ValidationFailure(
-    message: 'The file ${_quoted(file)} does not match its type.',
-    recoveryAction: 'Choose a file of the expected type and try again.',
+    localizedMessage: DomainCopy.messages.failureTheFileValueDoesNotMatchIts(
+      (_quoted(name)).toString(),
+    ),
+    localizedRecovery: DomainCopy.messages.failureChooseAFileOfTheExpectedType,
   );
 }
 
-ValidationFailure _oversized(File file, ImportKind kind) {
+ValidationFailure _oversized(String name, ImportKind kind) {
   return ValidationFailure(
-    message:
-        'The file ${_quoted(file)} is larger than the allowed size for '
-        'a ${_label(kind)}.',
-    recoveryAction: 'Choose a smaller file and try again.',
+    localizedMessage: DomainCopy.messages.failureTheFileValueIsLargerThanThe(
+      (_quoted(name)).toString(),
+      (_label(kind)).toString(),
+    ),
+    localizedRecovery: DomainCopy.messages.failureChooseASmallerFileAndTryAgain,
   );
 }
 
-ValidationFailure _traversal(File file) {
+ValidationFailure _traversal(String name) {
   return ValidationFailure(
-    message:
-        'The archive ${_quoted(file)} contains a path that leaves the '
-        'folder.',
-    recoveryAction: 'Choose a different file and try again.',
+    localizedMessage: DomainCopy.messages
+        .failureTheArchiveValueContainsAPathThat((_quoted(name)).toString()),
+    localizedRecovery:
+        DomainCopy.messages.failureChooseADifferentFileAndTryAgain,
   );
 }
 
-ValidationFailure _symlink(File file) {
+ValidationFailure _symlink(String name) {
   return ValidationFailure(
-    message: 'The archive ${_quoted(file)} contains a link instead of a file.',
-    recoveryAction: 'Choose a different file and try again.',
+    localizedMessage: DomainCopy.messages
+        .failureTheArchiveValueContainsALinkInstead((_quoted(name)).toString()),
+    localizedRecovery:
+        DomainCopy.messages.failureChooseADifferentFileAndTryAgain,
   );
 }
 
-ValidationFailure _bomb(File file) {
+ValidationFailure _bomb(String name) {
   return ValidationFailure(
-    message:
-        'The archive ${_quoted(file)} declares more uncompressed data '
-        'than is allowed.',
-    recoveryAction: 'Choose a different file and try again.',
+    localizedMessage: DomainCopy.messages
+        .failureTheArchiveValueDeclaresMoreUncompressedData(
+          (_quoted(name)).toString(),
+        ),
+    localizedRecovery:
+        DomainCopy.messages.failureChooseADifferentFileAndTryAgain,
   );
 }
 
-ValidationFailure _notArchive(File file) {
+ValidationFailure _notArchive(String name) {
   return ValidationFailure(
-    message: 'The file ${_quoted(file)} is not an archive.',
-    recoveryAction: 'Choose a ZIP bundle or spreadsheet and try again.',
+    localizedMessage: DomainCopy.messages.failureTheFileValueIsNotAnArchive(
+      (_quoted(name)).toString(),
+    ),
+    localizedRecovery:
+        DomainCopy.messages.failureChooseAZIPBundleOrSpreadsheetAnd,
   );
 }
 
-StorageFailure _missing(File file) {
+StorageFailure _missing(String name) {
   return StorageFailure(
-    message: 'Tapture could not find ${_quoted(file)}.',
-    recoveryAction: 'Choose the file again, then try again.',
+    localizedMessage: DomainCopy.messages.failureTaptureCouldNotFindValue(
+      (_quoted(name)).toString(),
+    ),
+    localizedRecovery:
+        DomainCopy.messages.failureChooseTheFileAgainThenTryAgain,
   );
 }
 
@@ -537,6 +652,7 @@ const Map<String, ImportKind> _kinds = <String, ImportKind>{
   'pdf': ImportKind.document,
   'xlsx': ImportKind.spreadsheet,
   'csv': ImportKind.spreadsheet,
+  'json': ImportKind.spreadsheet,
   'wav': ImportKind.audio,
   'm4a': ImportKind.audio,
   'mp3': ImportKind.audio,

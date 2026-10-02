@@ -26,6 +26,10 @@ sealed class Result<T> {
     return fold((_) => orElse(), (T value) => value);
   }
 
+  /// Unwraps inside a transactional operation, preserving the typed failure.
+  T getOrThrow() =>
+      fold((Failure failure) => throw failure, (T value) => value);
+
   /// Runs [body] and converts a thrown object into a [FailureResult].
   static Result<T> capture<T>(T Function() body) {
     try {

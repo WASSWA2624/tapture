@@ -1,4 +1,4 @@
-import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -15,21 +15,21 @@ sealed class FieldExpression {
   static Result<FieldExpression> parse(String source, List<String> fieldKeys) {
     final String trimmed = source.trim();
     if (trimmed.isEmpty) {
-      return const FailureResult<FieldExpression>(_unreadable);
+      return FailureResult<FieldExpression>(_unreadable);
     }
     try {
       final _Parser parser = _Parser(trimmed, fieldKeys.toSet());
       final FieldExpression expression = parser.parseExpression();
       parser.skip();
       if (!parser.done) {
-        return const FailureResult<FieldExpression>(_unreadable);
+        return FailureResult<FieldExpression>(_unreadable);
       }
       return Success<FieldExpression>(expression);
     } on _ParseFailure catch (error) {
       return FailureResult<FieldExpression>(
         ValidationFailure(
           message: error.message,
-          recoveryAction: Copy.validationExpressionAction,
+          localizedRecovery: DomainCopy.messages.validationExpressionAction,
         ),
       );
     }
@@ -49,9 +49,9 @@ Object? evaluate(FieldExpression expression, Map<String, Object?> values) {
   }
 }
 
-const ValidationFailure _unreadable = ValidationFailure(
-  message: Copy.validationExpression,
-  recoveryAction: Copy.validationExpressionAction,
+final ValidationFailure _unreadable = ValidationFailure(
+  localizedMessage: DomainCopy.messages.validationExpression,
+  localizedRecovery: DomainCopy.messages.validationExpressionAction,
 );
 
 /// Stops the parser; [FieldExpression.parse] turns it into the
@@ -66,8 +66,8 @@ final class _ParseFailure implements Exception {
   String get message {
     final String? unknown = name;
     return unknown == null
-        ? Copy.validationExpression
-        : Copy.validationUnknownField(unknown);
+        ? DomainCopy.validationExpression
+        : DomainCopy.validationUnknownField(unknown);
   }
 }
 

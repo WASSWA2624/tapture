@@ -30,6 +30,7 @@ import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_ink_picker.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
@@ -38,6 +39,7 @@ import 'package:tapture/core/widgets/app_progress_steps.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
+import 'package:tapture/core/widgets/app_toolbar_scope.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/error_boundary.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
@@ -107,19 +109,19 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   /// A small encoded photo for the thumb drawn from bytes, as a browser's
   /// capture tray draws it.
   static final Uint8List _photoBytes = _gradientPhoto();
-  static const List<Choice<AppThemeMode>> _themes = <Choice<AppThemeMode>>[
-    Choice<AppThemeMode>(AppThemeMode.light, Copy.galleryLight),
-    Choice<AppThemeMode>(AppThemeMode.dark, Copy.galleryDark),
-    Choice<AppThemeMode>(AppThemeMode.outdoor, Copy.galleryOutdoor),
+  List<Choice<AppThemeMode>> get _themes => <Choice<AppThemeMode>>[
+    Choice<AppThemeMode>(AppThemeMode.light, Copy.of(context).galleryLight),
+    Choice<AppThemeMode>(AppThemeMode.dark, Copy.of(context).galleryDark),
+    Choice<AppThemeMode>(AppThemeMode.outdoor, Copy.of(context).galleryOutdoor),
   ];
-  static const List<Choice<SizeClass>> _widths = <Choice<SizeClass>>[
-    Choice<SizeClass>(SizeClass.compact, Copy.galleryCompact),
-    Choice<SizeClass>(SizeClass.medium, Copy.galleryMedium),
-    Choice<SizeClass>(SizeClass.expanded, Copy.galleryExpanded),
+  List<Choice<SizeClass>> get _widths => <Choice<SizeClass>>[
+    Choice<SizeClass>(SizeClass.compact, Copy.of(context).galleryCompact),
+    Choice<SizeClass>(SizeClass.medium, Copy.of(context).galleryMedium),
+    Choice<SizeClass>(SizeClass.expanded, Copy.of(context).galleryExpanded),
   ];
-  static const List<Choice<double>> _scales = <Choice<double>>[
-    Choice<double>(1, Copy.galleryScale100),
-    Choice<double>(2, Copy.galleryScale200),
+  List<Choice<double>> get _scales => <Choice<double>>[
+    Choice<double>(1, Copy.of(context).galleryScale100),
+    Choice<double>(2, Copy.of(context).galleryScale200),
   ];
   static const List<Choice<String>> _grades = <Choice<String>>[
     Choice<String>('a', 'A'),
@@ -191,6 +193,8 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         final double width = _previewWidth(constraints.maxWidth);
         final double height = constraints.maxHeight.isFinite
             ? constraints.maxHeight
@@ -208,29 +212,29 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
               child: SizedBox(
                 width: width,
                 child: AppPage(
-                  title: Copy.galleryTitle,
+                  title: localCopy.galleryTitle,
                   leading: AppBrandLockup(
                     showName: false,
                     inverted: _theme != AppThemeMode.dark,
                   ),
-                  actions: const <Widget>[
+                  actions: <Widget>[
                     AppIconButton(
                       icon: AppIcons.theme,
-                      semanticLabel: Copy.galleryTheme,
-                      tooltip: Copy.galleryTheme,
+                      semanticLabel: localCopy.galleryTheme,
+                      tooltip: localCopy.galleryTheme,
                       onPressed: _noop,
                     ),
                   ],
-                  overflow: const <AppOverflowAction>[
+                  overflow: <AppOverflowAction>[
                     AppOverflowAction(
                       icon: AppIcons.save,
-                      label: Copy.save,
+                      label: localCopy.save,
                       onTap: _noop,
                     ),
                   ],
                   footer: AppPrimaryAction(
-                    label: Copy.save,
-                    caption: Copy.recordsCount(2),
+                    label: localCopy.save,
+                    caption: localCopy.recordsCount(2),
                     onPressed: _noop,
                   ),
                   body: Column(
@@ -257,9 +261,11 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   }
 
   List<Widget> _switchers() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return <Widget>[
       AppChoiceField<AppThemeMode>(
-        label: Copy.galleryTheme,
+        label: localCopy.galleryTheme,
         options: _themes,
         value: _theme,
         onChanged: (AppThemeMode? value) {
@@ -270,7 +276,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       ),
       const SizedBox(height: Space.x4),
       AppChoiceField<SizeClass>(
-        label: Copy.galleryWidth,
+        label: localCopy.galleryWidth,
         options: _widths,
         value: _size,
         onChanged: (SizeClass? value) {
@@ -281,7 +287,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       ),
       const SizedBox(height: Space.x4),
       AppChoiceField<double>(
-        label: Copy.galleryTextScale,
+        label: localCopy.galleryTextScale,
         options: _scales,
         value: _textScale,
         onChanged: (double? value) {
@@ -295,6 +301,8 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   }
 
   List<Widget> _compare() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<Widget> previews = <Widget>[
       for (final Choice<AppThemeMode> choice in _themes)
         Expanded(
@@ -308,7 +316,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
                   children: <Widget>[
                     Text(choice.label, style: AppText.caption),
                     const SizedBox(height: Space.x2),
-                    const AppButton(label: Copy.save, onPressed: _noop),
+                    AppButton(label: localCopy.save, onPressed: _noop),
                   ],
                 ),
               ),
@@ -319,6 +327,8 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
     return <Widget>[
       ResponsiveBuilder(
         compact: (BuildContext context) {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           return Column(
             children: <Widget>[
               for (final Choice<AppThemeMode> choice in _themes) ...<Widget>[
@@ -330,7 +340,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
                       children: <Widget>[
                         Text(choice.label, style: AppText.caption),
                         const SizedBox(height: Space.x2),
-                        const AppButton(label: Copy.save, onPressed: _noop),
+                        AppButton(label: localCopy.save, onPressed: _noop),
                       ],
                     ),
                   ),
@@ -352,8 +362,10 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   }
 
   List<Widget> _tokens() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return <Widget>[
-      const AppSectionHeader(title: Copy.galleryTokens),
+      AppSectionHeader(title: localCopy.galleryTokens),
       const SizedBox(height: Space.x12 * 6, child: ColorSwatches()),
       const SizedBox(height: Space.x4),
       const SizedBox(height: Space.x12 * 8, child: TypeRamp()),
@@ -364,80 +376,96 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   }
 
   List<Widget> _layout() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return <Widget>[
-      const AppSectionHeader(title: Copy.galleryLayout),
+      AppSectionHeader(title: localCopy.galleryLayout),
       const AppBrandLockup(),
       const SizedBox(height: Space.x3),
-      const ContentConstraint(
-        child: AppCard(child: Text(Copy.galleryLayout, style: AppText.body)),
+      ContentConstraint(
+        child: AppCard(
+          child: Text(localCopy.galleryLayout, style: AppText.body),
+        ),
       ),
       const SizedBox(height: Space.x4),
       ResponsiveBuilder(
         compact: (BuildContext context) {
-          return const AppCard(
-            child: Text(Copy.galleryCompact, style: AppText.body),
+          final LocalizedCopy localCopy = Copy.of(context);
+
+          return AppCard(
+            child: Text(localCopy.galleryCompact, style: AppText.body),
           );
         },
         medium: (BuildContext context) {
-          return const AppCard(
-            child: Text(Copy.galleryMedium, style: AppText.body),
+          final LocalizedCopy localCopy = Copy.of(context);
+
+          return AppCard(
+            child: Text(localCopy.galleryMedium, style: AppText.body),
           );
         },
         expanded: (BuildContext context) {
-          return const AppCard(
-            child: Text(Copy.galleryExpanded, style: AppText.body),
+          final LocalizedCopy localCopy = Copy.of(context);
+
+          return AppCard(
+            child: Text(localCopy.galleryExpanded, style: AppText.body),
           );
         },
       ),
       const SizedBox(height: Space.x4),
       // Stacked on compact; one row, one part to two, from medium up.
-      const ResponsivePair(
+      ResponsivePair(
         start: AppButton(
-          label: Copy.cancel,
+          label: localCopy.cancel,
           variant: AppButtonVariant.secondary,
           expand: true,
           onPressed: _noop,
         ),
-        end: AppButton(label: Copy.save, expand: true, onPressed: _noop),
+        end: AppButton(label: localCopy.save, expand: true, onPressed: _noop),
         endFlex: 2,
       ),
       const SizedBox(height: Space.x4),
       // One level row at every width, even shares.
-      const ResponsivePair(
+      ResponsivePair(
         stacksOnCompact: false,
         matchesHeights: true,
         gap: Space.x2,
         start: AppButton(
-          label: Copy.cancel,
+          label: localCopy.cancel,
           variant: AppButtonVariant.secondary,
           expand: true,
           onPressed: _noop,
         ),
-        end: AppButton(label: Copy.save, expand: true, onPressed: _noop),
+        end: AppButton(label: localCopy.save, expand: true, onPressed: _noop),
       ),
       const SizedBox(height: Space.x6),
     ];
   }
 
   List<Widget> _buttons() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return <Widget>[
-      const AppSectionHeader(title: Copy.galleryButtons),
+      AppSectionHeader(title: localCopy.galleryButtons),
       for (final AppButtonVariant variant
           in AppButtonVariant.values) ...<Widget>[
         Wrap(
           spacing: Space.x2,
           runSpacing: Space.x2,
           children: <Widget>[
-            AppButton(label: Copy.save, variant: variant, onPressed: _noop),
             AppButton(
-              label: Copy.save,
+              label: localCopy.save,
+              variant: variant,
+              onPressed: _noop,
+            ),
+            AppButton(
+              label: localCopy.save,
               variant: variant,
               busy: true,
               onPressed: _noop,
             ),
-            AppButton(label: Copy.save, variant: variant),
+            AppButton(label: localCopy.save, variant: variant),
             AppButton(
-              label: Copy.save,
+              label: localCopy.save,
               variant: variant,
               icon: AppIcons.check,
               onPressed: _noop,
@@ -446,66 +474,76 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         ),
         const SizedBox(height: Space.x3),
       ],
-      const AppButton(
-        label: Copy.save,
+      AppButton(
+        label: localCopy.save,
         variant: AppButtonVariant.secondary,
         expand: true,
         onPressed: _noop,
       ),
       const SizedBox(height: Space.x2),
-      const AppPrimaryAction(label: Copy.save, onPressed: _noop),
+      AppPrimaryAction(label: localCopy.save, onPressed: _noop),
       const SizedBox(height: Space.x3),
-      const Row(
-        children: <Widget>[
-          AppIconButton(
-            icon: AppIcons.search,
-            semanticLabel: Copy.galleryFields,
-            tooltip: Copy.galleryFields,
-            onPressed: _noop,
-          ),
-          SizedBox(width: Space.x2),
-          AppIconButton(
-            icon: AppIcons.dictating,
-            semanticLabel: Copy.galleryFields,
-            tooltip: Copy.galleryFields,
-            selected: true,
-            outlined: false,
-            onPressed: _noop,
-          ),
-        ],
+      // Toolbar ink resolved for both plain icons and Material controls.
+      AppToolbarScope(
+        ink: context.colors.primary,
+        child: Row(
+          children: <Widget>[
+            AppIconButton(
+              icon: AppIcons.search,
+              semanticLabel: localCopy.galleryFields,
+              tooltip: localCopy.galleryFields,
+              onPressed: _noop,
+            ),
+            const SizedBox(width: Space.x2),
+            AppIconButton(
+              icon: AppIcons.dictating,
+              semanticLabel: localCopy.galleryFields,
+              tooltip: localCopy.galleryFields,
+              selected: true,
+              outlined: false,
+              onPressed: _noop,
+            ),
+          ],
+        ),
       ),
       const SizedBox(height: Space.x3),
       ..._overflowMenus(),
       const SizedBox(height: Space.x3),
-      const SizedBox(
+      SizedBox(
         height: Sizes.minTapTarget * 3,
         child: Stack(
           children: <Widget>[
             AppFloatingButton(
               icon: AppIcons.feedback,
-              label: Copy.feedback,
-              hint: Copy.feedbackButtonHint,
+              label: localCopy.feedback,
+              hint: localCopy.feedbackButtonHint,
               onPressed: _ignoreAnchor,
             ),
           ],
         ),
       ),
       const SizedBox(height: Space.x3),
-      const AppPrimaryAction(label: Copy.save),
+      AppPrimaryAction(label: localCopy.save),
       const SizedBox(height: Space.x3),
-      const AppPrimaryAction(label: Copy.save, busy: true, onPressed: _noop),
+      AppPrimaryAction(label: localCopy.save, busy: true, onPressed: _noop),
       const SizedBox(height: Space.x3),
-      const ShellHeaderScope(
+      ShellHeaderScope(
         ownsHeader: true,
-        child: Text(Copy.settingsStorageTitle, style: AppText.bodyStrong),
+        child: Text(localCopy.settingsStorageTitle, style: AppText.bodyStrong),
       ),
       const SizedBox(height: Space.x6),
     ];
   }
 
   List<Widget> _overflowMenus() {
-    const List<AppOverflowAction> items = <AppOverflowAction>[
-      AppOverflowAction(icon: AppIcons.save, label: Copy.save, onTap: _noop),
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final List<AppOverflowAction> items = <AppOverflowAction>[
+      AppOverflowAction(
+        icon: AppIcons.save,
+        label: localCopy.save,
+        onTap: _noop,
+      ),
     ];
     final Color fill = context.colors.surfaceVariant;
     return <Widget>[
@@ -513,50 +551,50 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         spacing: Space.x2,
         runSpacing: Space.x2,
         children: <Widget>[
-          const AppOverflowMenu(
-            key: ValueKey<String>('app-overflow'),
+          AppOverflowMenu(
+            key: const ValueKey<String>('app-overflow'),
             outlined: true,
             items: items,
           ),
           _overflowFill(
             key: const ValueKey<String>('app-overflow-hover'),
             fill: fill,
-            child: const AppOverflowMenu(outlined: true, items: items),
+            child: AppOverflowMenu(outlined: true, items: items),
           ),
           _overflowFill(
             key: const ValueKey<String>('app-overflow-focus'),
             fill: fill,
-            child: const AppOverflowMenu(outlined: true, items: items),
+            child: AppOverflowMenu(outlined: true, items: items),
           ),
           _overflowFill(
             key: const ValueKey<String>('app-overflow-pressed'),
             fill: fill,
-            child: const AppOverflowMenu(outlined: true, items: items),
+            child: AppOverflowMenu(outlined: true, items: items),
           ),
           const AppOverflowMenu(
             key: ValueKey<String>('app-overflow-disabled'),
             outlined: true,
             items: <AppOverflowAction>[],
           ),
-          const AppOverflowMenu(
-            key: ValueKey<String>('app-overflow-borderless'),
+          AppOverflowMenu(
+            key: const ValueKey<String>('app-overflow-borderless'),
             outlined: false,
             items: items,
           ),
           _overflowFill(
             key: const ValueKey<String>('app-overflow-borderless-hover'),
             fill: fill,
-            child: const AppOverflowMenu(outlined: false, items: items),
+            child: AppOverflowMenu(outlined: false, items: items),
           ),
           _overflowFill(
             key: const ValueKey<String>('app-overflow-borderless-focus'),
             fill: fill,
-            child: const AppOverflowMenu(outlined: false, items: items),
+            child: AppOverflowMenu(outlined: false, items: items),
           ),
           _overflowFill(
             key: const ValueKey<String>('app-overflow-borderless-pressed'),
             fill: fill,
-            child: const AppOverflowMenu(outlined: false, items: items),
+            child: AppOverflowMenu(outlined: false, items: items),
           ),
           const AppOverflowMenu(
             key: ValueKey<String>('app-overflow-borderless-disabled'),
@@ -584,79 +622,122 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   }
 
   List<Widget> _fields() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return <Widget>[
-      const AppSectionHeader(title: Copy.galleryFields),
+      AppSectionHeader(title: localCopy.galleryFields),
       KeepFocusedVisible(
-        child: AppTextField(label: 'Name', controller: _empty, hint: 'Name'),
+        child: AppTextField(
+          label: Copy.of(context).gallerySampleName,
+          controller: _empty,
+          hint: Copy.of(context).gallerySampleName,
+        ),
       ),
       const SizedBox(height: Space.x4),
-      AppTextField(label: 'Name', controller: _filled, clearable: true),
+      AppTextField(
+        label: Copy.of(context).gallerySampleName,
+        controller: _filled,
+        clearable: true,
+      ),
       const SizedBox(height: Space.x4),
       AppTextField(
-        label: 'Name',
+        label: Copy.of(context).gallerySampleName,
         controller: _empty,
         requiredness: FieldRequiredness.required,
       ),
       const SizedBox(height: Space.x4),
       AppTextField(
-        label: 'Name',
+        label: Copy.of(context).gallerySampleName,
         controller: _filled,
-        helper: Copy.autoFilled,
+        helper: localCopy.autoFilled,
         requiredness: FieldRequiredness.optional,
       ),
       const SizedBox(height: Space.x4),
       AppTextField(
-        label: 'Name',
+        label: Copy.of(context).gallerySampleName,
         controller: _error,
-        errorText: Copy.outOfRange,
+        errorText: localCopy.outOfRange,
       ),
       const SizedBox(height: Space.x4),
-      AppTextField(label: 'Name', controller: _empty, enabled: false),
+      AppTextField(
+        label: Copy.of(context).gallerySampleName,
+        controller: _empty,
+        enabled: false,
+      ),
       const SizedBox(height: Space.x4),
       AppTextField(
-        label: 'Caption',
+        label: Copy.of(context).gallerySampleCaption,
         controller: _multiline,
         maxLines: 4,
         maxLength: 80,
       ),
       const SizedBox(height: Space.x4),
-      AppNumberField(label: 'Count', min: 0, max: 10, onChanged: (_) {}),
+      AppNumberField(
+        label: Copy.of(context).gallerySampleCount,
+        min: 0,
+        max: 10,
+        onChanged: (_) {},
+      ),
       const SizedBox(height: Space.x4),
-      AppNumberField(label: 'Count', enabled: false, onChanged: (_) {}),
-      const SizedBox(height: Space.x4),
-      AppEmailField(label: 'Email', controller: _empty),
-      const SizedBox(height: Space.x4),
-      AppEmailField(label: 'Email', controller: _filled),
+      AppNumberField(
+        label: Copy.of(context).gallerySampleCount,
+        enabled: false,
+        onChanged: (_) {},
+      ),
       const SizedBox(height: Space.x4),
       AppEmailField(
-        label: 'Email',
-        controller: _error,
-        errorText: Copy.outOfRange,
+        label: Copy.of(context).gallerySampleEmail,
+        controller: _empty,
       ),
       const SizedBox(height: Space.x4),
-      AppEmailField(label: 'Email', controller: _empty, enabled: false),
+      AppEmailField(
+        label: Copy.of(context).gallerySampleEmail,
+        controller: _filled,
+      ),
       const SizedBox(height: Space.x4),
-      AppPhoneField(label: 'Phone', controller: _empty),
+      AppEmailField(
+        label: Copy.of(context).gallerySampleEmail,
+        controller: _error,
+        errorText: localCopy.outOfRange,
+      ),
       const SizedBox(height: Space.x4),
-      AppPhoneField(label: 'Phone', controller: _filled),
+      AppEmailField(
+        label: Copy.of(context).gallerySampleEmail,
+        controller: _empty,
+        enabled: false,
+      ),
       const SizedBox(height: Space.x4),
       AppPhoneField(
-        label: 'Phone',
-        controller: _error,
-        errorText: Copy.outOfRange,
+        label: Copy.of(context).gallerySamplePhone,
+        controller: _empty,
       ),
       const SizedBox(height: Space.x4),
-      AppPhoneField(label: 'Phone', controller: _empty, enabled: false),
+      AppPhoneField(
+        label: Copy.of(context).gallerySamplePhone,
+        controller: _filled,
+      ),
+      const SizedBox(height: Space.x4),
+      AppPhoneField(
+        label: Copy.of(context).gallerySamplePhone,
+        controller: _error,
+        errorText: localCopy.outOfRange,
+      ),
+      const SizedBox(height: Space.x4),
+      AppPhoneField(
+        label: Copy.of(context).gallerySamplePhone,
+        controller: _empty,
+        enabled: false,
+      ),
       const SizedBox(height: Space.x4),
       AppDateField(
-        label: 'When',
+        label: Copy.of(context).gallerySampleWhen,
         mode: DateFieldMode.date,
         clock: _clock,
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
       AppDateField(
-        label: 'When',
+        label: Copy.of(context).gallerySampleWhen,
         mode: DateFieldMode.time,
         value: _clock.nowUtc(),
         clock: _clock,
@@ -664,7 +745,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       ),
       const SizedBox(height: Space.x4),
       AppDateField(
-        label: 'When',
+        label: Copy.of(context).gallerySampleWhen,
         mode: DateFieldMode.dateTime,
         value: _clock.nowUtc(),
         autoFilled: true,
@@ -672,37 +753,37 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
-      AppSearchField(hint: Copy.search, resultCount: 2, onChanged: (_) {}),
+      AppSearchField(hint: localCopy.search, resultCount: 2, onChanged: (_) {}),
       const SizedBox(height: Space.x4),
       AppSearchField(
-        hint: Copy.search,
+        hint: localCopy.search,
         onChanged: (_) {},
         onFilter: _noop,
         activeFilterCount: 1,
       ),
       const SizedBox(height: Space.x4),
       AppChoiceField<String>(
-        label: 'Grade',
+        label: Copy.of(context).gallerySampleGrade,
         options: _grades,
         value: 'a',
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
       AppChoiceField<String>(
-        label: 'Grade',
+        label: Copy.of(context).gallerySampleGrade,
         options: _grades,
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
       AppChoiceField<String>(
-        label: 'Fuel',
+        label: Copy.of(context).gallerySampleFuel,
         options: _tags,
         value: 'water',
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
       AppChoiceField<String>(
-        label: 'Grade',
+        label: Copy.of(context).gallerySampleGrade,
         options: _grades.take(1).toList(),
         value: 'a',
         alwaysSheet: true,
@@ -710,20 +791,20 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       ),
       const SizedBox(height: Space.x4),
       AppRadioGroup<String>(
-        label: 'Grade',
+        label: Copy.of(context).gallerySampleGrade,
         options: _grades,
         value: 'a',
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
       AppRadioGroup<String>(
-        label: 'Grade',
+        label: Copy.of(context).gallerySampleGrade,
         options: _grades,
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
       AppRadioGroup<String>(
-        label: 'Grade',
+        label: Copy.of(context).gallerySampleGrade,
         options: _grades,
         value: 'b',
         framed: false,
@@ -731,7 +812,7 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       ),
       const SizedBox(height: Space.x4),
       AppRadioGroup<String>(
-        label: 'Grade',
+        label: Copy.of(context).gallerySampleGrade,
         options: _grades,
         value: 'b',
         direction: Axis.horizontal,
@@ -739,36 +820,44 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       ),
       const SizedBox(height: Space.x4),
       AppCheckboxGroup<String>(
-        label: 'Tags',
+        label: Copy.of(context).gallerySampleTags,
         options: _tags,
         value: const <String>{'water'},
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
       AppMultiChoiceField<String>(
-        label: 'Tags',
+        label: Copy.of(context).gallerySampleTags,
         options: _tags,
         value: const <String>{},
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
       AppMultiChoiceField<String>(
-        label: 'Tags',
+        label: Copy.of(context).gallerySampleTags,
         options: _tags,
         value: const <String>{'water', 'steam'},
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
-      AppSwitchTile(title: 'GPS', value: true, onChanged: (_) {}),
       AppSwitchTile(
-        title: 'GPS',
+        title: Copy.of(context).gallerySampleLocation,
+        value: true,
+        onChanged: (_) {},
+      ),
+      AppSwitchTile(
+        title: Copy.of(context).gallerySampleLocation,
         value: false,
         enabled: false,
         onChanged: (_) {},
       ),
-      AppSwitchTile.checkbox(title: 'GPS', value: true, onChanged: (_) {}),
       AppSwitchTile.checkbox(
-        title: 'GPS',
+        title: Copy.of(context).gallerySampleLocation,
+        value: true,
+        onChanged: (_) {},
+      ),
+      AppSwitchTile.checkbox(
+        title: Copy.of(context).gallerySampleLocation,
         value: true,
         dense: true,
         controlFirst: true,
@@ -776,8 +865,8 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       ),
       const SizedBox(height: Space.x2),
       AppSwitchTile(
-        title: 'GPS',
-        description: 'Stamp each capture',
+        title: Copy.of(context).gallerySampleLocation,
+        description: Copy.of(context).gallerySampleStampCapture,
         value: true,
         dense: true,
         onChanged: (_) {},
@@ -805,12 +894,12 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       AppForm(
         fields: <Widget>[
           AppTextField(
-            label: 'Name',
+            label: Copy.of(context).gallerySampleName,
             controller: _formName,
-            errorText: Copy.outOfRange,
+            errorText: localCopy.outOfRange,
           ),
         ],
-        submitLabel: Copy.save,
+        submitLabel: localCopy.save,
         onSubmit: () async => true,
       ),
       const SizedBox(height: Space.x6),
@@ -818,66 +907,89 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   }
 
   List<Widget> _containers() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final double edge = AppConstants.images.thumbnailEdge.toDouble();
     return <Widget>[
-      const AppSectionHeader(title: Copy.galleryContainers),
+      AppSectionHeader(title: localCopy.galleryContainers),
       // Collapsible headings, closed and open.
-      const AppSectionHeader(
-        title: Copy.galleryContainers,
+      AppSectionHeader(
+        title: localCopy.galleryContainers,
         expanded: false,
         onToggle: _noop,
       ),
-      const AppSectionHeader(
-        title: Copy.galleryContainers,
+      AppSectionHeader(
+        title: localCopy.galleryContainers,
         expanded: true,
         onToggle: _noop,
       ),
-      const AppCard(child: Text(Copy.galleryContainers)),
+      AppCard(child: Text(localCopy.galleryContainers)),
       const SizedBox(height: Space.x4),
-      const AppCard(onTap: _noop, child: Text(Copy.galleryContainers)),
+      AppCard(onTap: _noop, child: Text(localCopy.galleryContainers)),
       const SizedBox(height: Space.x4),
       AppListTile(
-        title: 'Boiler A',
-        subtitle: Copy.recordsCount(2),
+        title: Copy.of(context).gallerySampleBoilerA,
+        subtitle: localCopy.recordsCount(2),
         status: const AppStatusPill(status: RecordStatus.draft),
         onTap: _noop,
         onLongPress: _noop,
       ),
-      const AppListTile(
-        title: 'Boiler B',
-        subtitle: 'Open beside this list',
+      AppListTile(
+        title: Copy.of(context).gallerySampleBoilerB,
+        subtitle: Copy.of(context).gallerySampleBesideList,
         current: true,
         onTap: _noop,
       ),
-      const AppListTile(
-        title: 'Boiler A',
+      AppListTile(
+        title: Copy.of(context).gallerySampleBoilerA,
         dense: true,
         selected: true,
-        status: AppStatusPill.badge(status: RecordStatus.captured),
+        status: const AppStatusPill.badge(status: RecordStatus.captured),
         onTap: _noop,
         onLongPress: _noop,
       ),
       const SizedBox(height: Space.x4),
-      const AppChip(label: 'Water'),
-      const SizedBox(height: Space.x2),
-      const AppChip(label: 'Water', selected: true, onTap: _noop),
-      const SizedBox(height: Space.x2),
-      const AppChip(label: 'Water', onDismiss: _noop),
+      // A header that scrolls away above a bounded, lazy list.
+      SizedBox(
+        height: Sizes.minTapTarget * 4,
+        child: AppListViewport(
+          header: AppSectionHeader(title: localCopy.galleryContainers),
+          body: ListView(
+            children: <Widget>[
+              for (final String title in <String>[
+                Copy.of(context).gallerySampleBoilerA,
+                Copy.of(context).gallerySampleBoilerB,
+              ])
+                AppListTile(title: title, onTap: _noop),
+            ],
+          ),
+        ),
+      ),
       const SizedBox(height: Space.x4),
-      const AppChipRow(
+      AppChip(label: Copy.of(context).gallerySampleWater),
+      const SizedBox(height: Space.x2),
+      AppChip(
+        label: Copy.of(context).gallerySampleWater,
+        selected: true,
+        onTap: _noop,
+      ),
+      const SizedBox(height: Space.x2),
+      AppChip(label: Copy.of(context).gallerySampleWater, onDismiss: _noop),
+      const SizedBox(height: Space.x4),
+      AppChipRow(
         chips: <AppChip>[
-          AppChip(label: 'Water'),
-          AppChip(label: 'Steam'),
-          AppChip(label: 'Gas'),
+          AppChip(label: Copy.of(context).gallerySampleWater),
+          AppChip(label: Copy.of(context).gallerySampleSteam),
+          AppChip(label: Copy.of(context).gallerySampleGas),
         ],
       ),
       const SizedBox(height: Space.x2),
-      const AppChipRow(
+      AppChipRow(
         scrollable: true,
         chips: <AppChip>[
-          AppChip(label: 'Water'),
-          AppChip(label: 'Steam'),
-          AppChip(label: 'Gas'),
+          AppChip(label: Copy.of(context).gallerySampleWater),
+          AppChip(label: Copy.of(context).gallerySampleSteam),
+          AppChip(label: Copy.of(context).gallerySampleGas),
         ],
       ),
       const SizedBox(height: Space.x4),
@@ -1003,22 +1115,24 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   }
 
   List<Widget> _states() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return <Widget>[
-      const AppSectionHeader(title: Copy.galleryStates),
-      const AppEmptyState(
+      AppSectionHeader(title: localCopy.galleryStates),
+      AppEmptyState(
         icon: AppIcons.empty,
-        headline: Copy.emptyHeadline,
-        message: Copy.emptyMessage,
-        actionLabel: Copy.tryAgain,
+        headline: localCopy.emptyHeadline,
+        message: localCopy.emptyMessage,
+        actionLabel: localCopy.tryAgain,
         onAction: _noop,
       ),
       // The icon is the next action, with no button under it.
-      const AppEmptyState(
+      AppEmptyState(
         icon: AppIcons.addPhoto,
-        headline: Copy.captureNoPhotosHeadline,
-        message: Copy.captureNoPhotosMessage,
+        headline: localCopy.captureNoPhotosHeadline,
+        message: localCopy.captureNoPhotosMessage,
         onIconTap: _noop,
-        iconLabel: Copy.captureAddPhoto,
+        iconLabel: localCopy.captureAddPhoto,
       ),
       const AppErrorState(failure: NetworkFailure(), onRetry: _noop),
       const AppSkeleton(shape: SkeletonShape.list, count: 2),
@@ -1043,10 +1157,10 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         data: (List<String> rows) => Text(rows.join()),
       ),
       AsyncValueView<String>(
-        value: const AsyncData<String>('Boiler A'),
+        value: AsyncData<String>(Copy.of(context).gallerySampleBoilerA),
         data: (String name) => Text(name),
       ),
-      const ErrorBoundary(child: Text(Copy.galleryStates)),
+      ErrorBoundary(child: Text(localCopy.galleryStates)),
       const AppProgressSteps(
         steps: <ProgressStep>[
           ProgressStep(label: 'Read text', state: StepState.done),
@@ -1064,58 +1178,60 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
   }
 
   List<Widget> _feedback() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return <Widget>[
-      const AppSectionHeader(title: Copy.galleryFeedback),
-      const AppBanner(
-        message: Copy.unsavedChanges,
+      AppSectionHeader(title: localCopy.galleryFeedback),
+      AppBanner(
+        message: localCopy.unsavedChanges,
         icon: AppIcons.offline,
         tone: SnackTone.warning,
         onDismiss: _noop,
       ),
       const SizedBox(height: Space.x4),
-      const AppBanner(
-        message: Copy.unsavedChanges,
+      AppBanner(
+        message: localCopy.unsavedChanges,
         icon: AppIcons.info,
         tone: SnackTone.info,
       ),
       const SizedBox(height: Space.x4),
-      const AppSnackbar(
-        message: Copy.save,
+      AppSnackbar(
+        message: localCopy.save,
         tone: SnackTone.success,
-        undoLabel: Copy.undo,
+        undoLabel: localCopy.undo,
         onUndo: _noop,
       ),
       const SizedBox(height: Space.x2),
-      const AppSnackbar(message: Copy.failed, tone: SnackTone.error),
+      AppSnackbar(message: localCopy.failed, tone: SnackTone.error),
       const SizedBox(height: Space.x4),
-      const AppDialog.confirm(
-        title: Copy.discardChangesTitle,
-        message: Copy.unsavedChanges,
-        confirmLabel: Copy.discard,
+      AppDialog.confirm(
+        title: localCopy.discardChangesTitle,
+        message: localCopy.unsavedChanges,
+        confirmLabel: localCopy.discard,
         destructive: true,
         onConfirm: _noop,
         onCancel: _noop,
       ),
       const SizedBox(height: Space.x4),
       AppDialog.alert(
-        title: Copy.save,
-        message: Copy.notDetected,
+        title: localCopy.save,
+        message: localCopy.notDetected,
         onConfirm: _noop,
       ),
       const SizedBox(height: Space.x4),
-      const SizedBox(
+      SizedBox(
         height: Space.x12 * 8,
         child: AppPanelDialog(
-          title: Copy.feedbackGive,
-          child: Text(Copy.galleryFeedback, style: AppText.body),
+          title: localCopy.feedbackGive,
+          child: Text(localCopy.galleryFeedback, style: AppText.body),
         ),
       ),
       const SizedBox(height: Space.x4),
-      const SizedBox(
+      SizedBox(
         height: Space.x12 * 5,
         child: AppBottomSheet(
-          title: 'Grade',
-          child: Text(Copy.galleryFeedback, style: AppText.body),
+          title: Copy.of(context).gallerySampleGrade,
+          child: Text(localCopy.galleryFeedback, style: AppText.body),
         ),
       ),
     ];

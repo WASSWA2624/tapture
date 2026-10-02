@@ -3,6 +3,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 
@@ -13,6 +14,7 @@ class AppSnackbar extends StatelessWidget {
   const AppSnackbar({
     super.key,
     required this.message,
+    this.localizedMessage,
     this.tone = SnackTone.info,
     this.undoLabel,
     this.onUndo,
@@ -20,6 +22,9 @@ class AppSnackbar extends StatelessWidget {
 
   /// Plain-language status. Announced when the snack appears (FE-A11Y-07).
   final String message;
+
+  /// Retains semantic text so an open snack follows locale changes.
+  final LocalizedMessage? localizedMessage;
 
   /// Visual role. Icon plus [message] carry the meaning.
   final SnackTone tone;
@@ -33,6 +38,10 @@ class AppSnackbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
+    final LocalizedMessage? semantic = localizedMessage;
+    final String message = semantic == null
+        ? this.message
+        : Copy.of(context).resolve(semantic);
     final String? undoLabel = this.undoLabel;
     final VoidCallback? onUndo = this.onUndo;
     return Semantics(
@@ -112,6 +121,7 @@ void showAppSnack(
   BuildContext context,
   String message, {
   SnackTone tone = SnackTone.info,
+  LocalizedMessage? localizedMessage,
   String? undoLabel,
   VoidCallback? onUndo,
 }) {
@@ -130,6 +140,7 @@ void showAppSnack(
       ),
       content: AppSnackbar(
         message: message,
+        localizedMessage: localizedMessage,
         tone: tone,
         undoLabel: undoLabel,
         onUndo: onUndo == null

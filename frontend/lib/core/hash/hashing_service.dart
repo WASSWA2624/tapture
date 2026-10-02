@@ -14,11 +14,17 @@ abstract final class HashingService {
     return runIsolate(_hashFileInIsolate, file.path);
   }
 
+  /// Hashes a picked document without blocking the UI isolate.
+  static Future<Result<String>> sha256OfBytes(Uint8List bytes) =>
+      runIsolate(_hashBytesInIsolate, bytes);
+
   /// SHA-256 of [value]'s UTF-8 bytes.
   static String sha256OfString(String value) {
     return sha256.convert(utf8.encode(value)).toString();
   }
 }
+
+String _hashBytesInIsolate(Uint8List bytes) => sha256.convert(bytes).toString();
 
 /// SHA-256 of [file], streamed in chunks on a worker isolate.
 Future<Result<String>> sha256OfFile(File file) {

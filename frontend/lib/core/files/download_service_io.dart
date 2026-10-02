@@ -23,10 +23,11 @@ const MethodChannel _filesChannel = MethodChannel('com.tapture.app/files');
 const String _taptureFolder = 'Tapture';
 
 /// The platform Downloads folder, or the documents folder where a platform
-/// has none (iOS).
-DownloadService platformDownloads() {
+/// has none (iOS). Stored files and the hand-off copies are read and made
+/// under [storageRoot], the app's configured root.
+DownloadService platformDownloads({StorageRoot? storageRoot}) {
   if (Platform.isAndroid) {
-    return androidDownloads();
+    return androidDownloads(root: storageRoot);
   }
   if (Platform.isIOS) {
     return folderDownloads(
@@ -34,14 +35,17 @@ DownloadService platformDownloads() {
       taptureSubfolder: false,
       checkStorage: true,
       useShare: true,
+      root: storageRoot,
     );
   }
-  return folderDownloads(_downloadsFolder);
+  return folderDownloads(_downloadsFolder, root: storageRoot);
 }
 
 /// Saves through [channel], then [fallback] when the channel is missing,
 /// replies `unsupported`, or throws. The seam a suite drives with a test
-/// handler so it never opens MediaStore (FE-STR-11, FE-TEST-03).
+/// handler so it never opens MediaStore (FE-STR-11, FE-TEST-03). [root] is
+/// the app's configured [StorageRoot], read for stored files and hand-off
+/// copies unless [storageRoot] or [cacheDir] replace it.
 DownloadService androidDownloads({
   MethodChannel? channel,
   DownloadService? fallback,
@@ -54,27 +58,32 @@ DownloadService androidDownloads({
   share,
   PermissionsService? permissions,
   Future<Directory> Function()? storageRoot,
+  StorageRoot? root,
 }) {
+  final Future<Directory> Function() stored =
+      storageRoot ?? _rootOf(root) ?? _defaultStorageRoot;
   return _ChannelDownloads(
     channel: channel ?? _filesChannel,
-    root: storageRoot ?? _defaultStorageRoot,
+    root: stored,
     fallback:
         fallback ??
         folderDownloads(
           _downloadsFolder,
-          cacheDir: cacheDir,
+          cacheDir: cacheDir ?? _cacheOf(root),
           share: share,
           permissions: permissions,
           checkStorage: true,
           useShare: true,
-          storageRoot: storageRoot,
+          storageRoot: stored,
         ),
   );
 }
 
 /// Saves into the folder [folder] resolves to. On desktop (and in tests)
 /// that is a `Tapture` subfolder. The seam a suite points at a temporary
-/// folder; the app reaches it only through [DownloadService.new].
+/// folder; the app reaches it only through [DownloadService.new]. Stored
+/// files and hand-off copies are read and made under [root], the app's
+/// configured [StorageRoot], unless [storageRoot] or [cacheDir] replace it.
 DownloadService folderDownloads(
   Future<Directory> Function() folder, {
   bool taptureSubfolder = true,
@@ -92,16 +101,17 @@ DownloadService folderDownloads(
   bool checkStorage = false,
   bool useShare = false,
   Future<Directory> Function()? storageRoot,
+  StorageRoot? root,
 }) {
   return _FolderDownloads(
     folder,
-    root: storageRoot ?? _defaultStorageRoot,
+    root: storageRoot ?? _rootOf(root) ?? _defaultStorageRoot,
     taptureSubfolder: taptureSubfolder,
     canOpenFolder: canOpenFolder ?? taptureSubfolder,
     destination:
         destination ?? (taptureSubfolder ? Copy.downloadsTaptureFolder : null),
     open: open,
-    cacheDir: cacheDir,
+    cacheDir: cacheDir ?? _cacheOf(root),
     share: share,
     permissions: permissions,
     checkStorage: checkStorage,
@@ -616,17 +626,29 @@ Future<File> _storedFile(
   final Directory base = await root();
   final File file = File('${base.path}/${safeRelativePath(relativePath)}');
   if (!file.existsSync()) {
-    throw const StorageFailure(
-      message: Copy.storedFileMissing,
-      recoveryAction: Copy.tryAgain,
+    throw StorageFailure(
+      localizedMessage: Copy.messages.storedFileMissing,
+      localizedRecovery: Copy.messages.tryAgain,
     );
   }
   return file;
 }
 
-Future<Directory> _defaultStorageRoot() async {
-  final Result<Directory> root = await StorageRoot().resolve();
-  switch (root) {
+Future<Directory> _defaultStorageRoot() => _resolvedRoot(StorageRoot());
+
+Future<Directory> Function()? _rootOf(StorageRoot? root) {
+  return root == null ? null : () => _resolvedRoot(root);
+}
+
+Future<Directory> Function()? _cacheOf(StorageRoot? root) {
+  return root == null ? null : () => _resolvedCache(root);
+}
+
+Future<Directory> _defaultCacheDir() => _resolvedCache(StorageRoot());
+
+Future<Directory> _resolvedRoot(StorageRoot root) async {
+  final Result<Directory> resolved = await root.resolve();
+  switch (resolved) {
     case FailureResult<Directory>(:final Failure failure):
       throw failure;
     case Success<Directory>(:final Directory value):
@@ -634,8 +656,8 @@ Future<Directory> _defaultStorageRoot() async {
   }
 }
 
-Future<Directory> _defaultCacheDir() async {
-  final Result<Directory> cache = await StorageRoot().cacheDir();
+Future<Directory> _resolvedCache(StorageRoot root) async {
+  final Result<Directory> cache = await root.cacheDir();
   switch (cache) {
     case FailureResult<Directory>(:final Failure failure):
       throw failure;

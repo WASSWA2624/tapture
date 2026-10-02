@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -15,6 +16,9 @@ Future<Result<WrittenFile>> writeArchive({
   required Uint8List manifest,
   required CancellationToken cancel,
   void Function(double)? onProgress,
-}) async => const FailureResult<WrittenFile>(
-  StorageFailure(message: 'A native file system is unavailable.'),
+  String? manifestSource,
+}) async => FailureResult<WrittenFile>(
+  StorageFailure(
+    localizedMessage: Copy.messages.failureANativeFileSystemIsUnavailable,
+  ),
 );

@@ -102,6 +102,8 @@ class _AppNumberFieldState extends State<AppNumberField> {
   }
 
   String? _rangeError(num? parsed) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (parsed == null) {
       return null;
     }
@@ -112,7 +114,7 @@ class _AppNumberFieldState extends State<AppNumberField> {
     if (!tooLow && !tooHigh) {
       return null;
     }
-    return Copy.outOfRange;
+    return localCopy.outOfRange;
   }
 
   num? _parse(String raw) {

@@ -50,12 +50,14 @@ class AsyncValueView<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return value.when(
       data: (T loaded) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         if (isEmpty?.call(loaded) ?? false) {
           return empty?.call() ??
-              const AppEmptyState(
+              AppEmptyState(
                 icon: AppIcons.empty,
-                headline: Copy.emptyHeadline,
-                message: Copy.emptyMessage,
+                headline: localCopy.emptyHeadline,
+                message: localCopy.emptyMessage,
               );
         }
         return data(loaded);

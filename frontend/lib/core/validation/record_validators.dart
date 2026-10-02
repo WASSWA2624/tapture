@@ -1,4 +1,4 @@
-import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/domain_copy.g.dart';
 
 import 'field_rule.dart';
 import 'field_validators.dart';
@@ -33,7 +33,12 @@ abstract final class RecordValidators {
     }
     if (evidenceDemanded && !hasEvidence) {
       issues.add(
-        const ValidationIssue(null, Severity.error, Copy.validationEvidence),
+        ValidationIssue(
+          null,
+          Severity.error,
+          DomainCopy.validationEvidence,
+          localizedMessage: DomainCopy.messages.validationEvidence,
+        ),
       );
     }
     for (final String fieldKey in conflicts) {
@@ -48,7 +53,8 @@ abstract final class RecordValidators {
         ValidationIssue(
           fieldKey,
           Severity.error,
-          Copy.conflictBlocksApproval(label),
+          DomainCopy.conflictBlocksApproval(label),
+          localizedMessage: DomainCopy.messages.conflictBlocksApproval(label),
         ),
       );
     }

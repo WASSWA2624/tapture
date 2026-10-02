@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -75,9 +76,11 @@ Future<Result<ExportRow>> completeExport(
           database.exports,
         )..where(($ExportsTable tbl) => tbl.id.equals(id))).getSingleOrNull();
         if (existing != null) {
-          throw const StorageFailure(
-            message: 'A completed export cannot be changed.',
-            recoveryAction: 'Run a new export instead of rewriting this one.',
+          throw StorageFailure(
+            localizedMessage:
+                Copy.messages.failureACompletedExportCannotBeChanged,
+            localizedRecovery:
+                Copy.messages.failureRunANewExportInsteadOfRewriting,
           );
         }
       }
@@ -146,9 +149,9 @@ void _ensureCompleted(Insertable<ExportRow> row) {
       fileHash.isEmpty ||
       createdBy == null ||
       createdBy.isEmpty) {
-    throw const StorageFailure(
-      message: 'An export is recorded only when the file is finished.',
-      recoveryAction: 'Finish writing the file, then record the export.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureAnExportIsRecordedOnlyWhenThe,
+      localizedRecovery: Copy.messages.failureFinishWritingTheFileThenRecordThe,
     );
   }
   _ensureJsonArray(columns['formats']);
@@ -158,16 +161,16 @@ void _ensureCompleted(Insertable<ExportRow> row) {
 void _ensureJsonArray(Expression<Object>? expression) {
   final String? raw = _stringExpression(expression);
   if (raw == null) {
-    throw const StorageFailure(
-      message: 'Export formats must be a JSON array.',
-      recoveryAction: 'Fix the formats list and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheExportFormatsAreNotInA,
+      localizedRecovery: Copy.messages.failureFixTheFormatsListAndSaveAgain,
     );
   }
   final Object decoded = _decodeJson(raw);
   if (decoded is! List) {
-    throw const StorageFailure(
-      message: 'Export formats must be a JSON array.',
-      recoveryAction: 'Fix the formats list and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheExportFormatsAreNotInA,
+      localizedRecovery: Copy.messages.failureFixTheFormatsListAndSaveAgain,
     );
   }
 }
@@ -175,16 +178,16 @@ void _ensureJsonArray(Expression<Object>? expression) {
 void _ensureJsonObject(Expression<Object>? expression) {
   final String? raw = _stringExpression(expression);
   if (raw == null) {
-    throw const StorageFailure(
-      message: 'Export filters must be a JSON object.',
-      recoveryAction: 'Store the query, not the exported values.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheExportFiltersAreNotInA,
+      localizedRecovery: Copy.messages.failureStoreTheQueryNotTheExportedValues,
     );
   }
   final Object decoded = _decodeJson(raw);
   if (decoded is! Map) {
-    throw const StorageFailure(
-      message: 'Export filters must be a JSON object.',
-      recoveryAction: 'Store the query, not the exported values.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheExportFiltersAreNotInA,
+      localizedRecovery: Copy.messages.failureStoreTheQueryNotTheExportedValues,
     );
   }
 }
@@ -193,9 +196,9 @@ Object _decodeJson(String raw) {
   try {
     return jsonDecode(raw) as Object;
   } on FormatException {
-    throw const StorageFailure(
-      message: 'That JSON is not valid.',
-      recoveryAction: 'Fix the JSON and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureThatEntryCouldNotBeRead,
+      localizedRecovery: Copy.messages.failureChangeItThenSaveAgain,
     );
   }
 }

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_reader.dart';
@@ -89,24 +91,11 @@ final class _ThumbnailCache implements ThumbnailCache {
       final String relative = '$_cache/$_thumbs/${sha256}_$edge';
       final Future<Result<Uint8List>>? pending = _pendingBytes[relative];
       if (pending != null) return pending;
-      final Future<Result<Uint8List>> work = _gate.run(() async {
-        final Result<Uint8List> cached = await _files.read(relative);
-        if (cached is Success<Uint8List>) return cached;
-        final Result<Uint8List> original = await _files.read(storagePath);
-        if (original is FailureResult<Uint8List>) return original;
-        final Result<Uint8List> resized = await ImageResize.fit(
-          (original as Success<Uint8List>).value,
-          longEdge: edge,
-          quality: AppConstants.images.thumbnailQuality,
-        );
-        if (resized is FailureResult<Uint8List>) return resized;
-        final Uint8List bytes = (resized as Success<Uint8List>).value;
-        final Result<WrittenFile> written = await _writer.write(
-          Stream<List<int>>.value(bytes),
-          relative,
-        );
-        return written.map((WrittenFile _) => bytes);
-      });
+      final Future<Result<Uint8List>> work = _cachedOrDecoded(
+        relative,
+        storagePath,
+        edge: edge,
+      );
       _pendingBytes[relative] = work;
       try {
         return await work;
@@ -118,6 +107,34 @@ final class _ThumbnailCache implements ThumbnailCache {
     } on Object {
       return FailureResult<Uint8List>(FileReader.unreadable(storagePath));
     }
+  }
+
+  /// The cached bytes at [relative]; on a miss only, a decode of
+  /// [storagePath] behind the decode gate, so a hit never waits on one
+  /// (FE-PERF-04).
+  Future<Result<Uint8List>> _cachedOrDecoded(
+    String relative,
+    String storagePath, {
+    required int edge,
+  }) async {
+    final Result<Uint8List> cached = await _files.read(relative);
+    if (cached is Success<Uint8List>) return cached;
+    return _gate.run(() async {
+      final Result<Uint8List> original = await _files.read(storagePath);
+      if (original is FailureResult<Uint8List>) return original;
+      final Result<Uint8List> resized = await ImageResize.fit(
+        (original as Success<Uint8List>).value,
+        longEdge: edge,
+        quality: AppConstants.images.thumbnailQuality,
+      );
+      if (resized is FailureResult<Uint8List>) return resized;
+      final Uint8List bytes = (resized as Success<Uint8List>).value;
+      final Result<WrittenFile> written = await _writer.write(
+        Stream<List<int>>.value(bytes),
+        relative,
+      );
+      return written.map((WrittenFile _) => bytes);
+    });
   }
 
   @override
@@ -135,7 +152,7 @@ final class _ThumbnailCache implements ThumbnailCache {
         case Success<Directory>(:final value):
           final String relative = '$_cache/$_thumbs/${sha256}_$edge';
           final File dest = File('${value.path}/$relative');
-          if (dest.existsSync()) {
+          if (await dest.exists()) {
             return Success<File>(dest);
           }
           final Future<Result<File>>? pending = _inflight[relative];
@@ -158,10 +175,12 @@ final class _ThumbnailCache implements ThumbnailCache {
     } on Failure catch (failure) {
       return FailureResult<File>(failure);
     } on Object {
-      return const FailureResult<File>(
+      return FailureResult<File>(
         StorageFailure(
-          message: 'The thumbnail could not be created on this device.',
-          recoveryAction: 'Free space or allow storage access, then try again.',
+          localizedMessage:
+              Copy.messages.failureTheThumbnailCouldNotBeCreatedOn,
+          localizedRecovery:
+              Copy.messages.failureFreeSpaceOrAllowStorageAccessThen,
         ),
       );
     }
@@ -174,7 +193,7 @@ final class _ThumbnailCache implements ThumbnailCache {
     required int edge,
   }) {
     return _gate.run(() async {
-      if (dest.existsSync()) {
+      if (await dest.exists()) {
         return Success<File>(dest);
       }
       final List<int> bytes = await _resized(
@@ -183,10 +202,11 @@ final class _ThumbnailCache implements ThumbnailCache {
         quality: AppConstants.images.thumbnailQuality,
       );
       if (bytes.isEmpty) {
-        return const FailureResult<File>(
+        return FailureResult<File>(
           StorageFailure(
-            message: 'That photo could not be read as an image.',
-            recoveryAction: 'Capture the photo again, then try again.',
+            localizedMessage: Copy.messages.failureThatPhotoCouldNotBeReadAs,
+            localizedRecovery:
+                Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
           ),
         );
       }
@@ -233,28 +253,30 @@ final class _ThumbnailCache implements ThumbnailCache {
 
 void _assertCacheKey(String sha256, int edge) {
   if (edge <= 0) {
-    throw const ValidationFailure(
-      message: 'That thumbnail size is not valid.',
-      recoveryAction: 'Use the app thumbnail size and try again.',
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.failureThatThumbnailSizeIsNotValid,
+      localizedRecovery: Copy.messages.failureUseTheAppThumbnailSizeAndTry,
     );
   }
   if (sha256.isEmpty ||
       sha256.contains('/') ||
       sha256.contains(r'\') ||
       sha256.contains('..')) {
-    throw const ValidationFailure(
-      message: 'That photo could not be cached.',
-      recoveryAction: 'Capture the photo again, then try again.',
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.failureThatPhotoCouldNotBeCached,
+      localizedRecovery: Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
     );
   }
 }
 
 final class _DecodeGate {
-  _DecodeGate(this._max);
+  _DecodeGate(this._max) {
+    if (_max < 1) throw ArgumentError.value(_max, 'maxConcurrent');
+  }
 
   final int _max;
   int _inFlight = 0;
-  final List<Completer<void>> _waiters = <Completer<void>>[];
+  final Queue<Completer<void>> _waiters = Queue<Completer<void>>();
 
   Future<T> run<T>(Future<T> Function() body) async {
     while (_inFlight >= _max) {
@@ -268,7 +290,7 @@ final class _DecodeGate {
     } finally {
       _inFlight--;
       if (_waiters.isNotEmpty) {
-        _waiters.removeAt(0).complete();
+        _waiters.removeFirst().complete();
       }
     }
   }

@@ -73,12 +73,14 @@ class _AppFormState extends State<AppForm> {
   bool get _shouldGuard => widget.guardUnsaved && _isDirty;
 
   List<String> get _summary {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<String> lines = <String>[...widget.errors];
     for (final Widget field in widget.fields) {
       final _FormField? editable = _formField(field);
       final String? error = editable?.errorText;
       if (editable != null && error != null && error.isNotEmpty) {
-        lines.add(Copy.fieldError(editable.label, error));
+        lines.add(localCopy.fieldError(editable.label, error));
       }
     }
     final Set<String> seen = <String>{};
@@ -150,14 +152,16 @@ class _AppFormState extends State<AppForm> {
   }
 
   Future<void> _onPop(bool didPop, Object? result) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (didPop) {
       return;
     }
     final bool discard = await showAppConfirm(
       context,
-      title: Copy.discardChangesTitle,
-      message: Copy.unsavedChanges,
-      confirmLabel: Copy.discard,
+      title: localCopy.discardChangesTitle,
+      message: localCopy.unsavedChanges,
+      confirmLabel: localCopy.discard,
       destructive: true,
     );
     if (discard && mounted) {
@@ -290,12 +294,14 @@ class _ErrorSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
-    final String heading = Copy.fixFields(errors.length);
+    final String heading = localCopy.fixFields(errors.length);
     return Semantics(
       liveRegion: true,
       container: true,
-      label: Copy.validationAnnouncement(heading, errors),
+      label: localCopy.validationAnnouncement(heading, errors),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: colors.surfaceVariant,

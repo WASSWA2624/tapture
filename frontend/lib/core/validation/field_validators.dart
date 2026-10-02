@@ -1,4 +1,4 @@
-import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/normalise/units.dart';
 
@@ -32,8 +32,11 @@ abstract final class FieldValidators {
           field.fieldKey,
           Severity.error,
           field.identity
-              ? Copy.validationIdentity(field.label)
-              : Copy.validationRequired(field.label),
+              ? DomainCopy.validationIdentity(field.label)
+              : DomainCopy.validationRequired(field.label),
+          localizedMessage: field.identity
+              ? DomainCopy.messages.validationIdentity(field.label)
+              : DomainCopy.messages.validationRequired(field.label),
         ),
       );
       return issues;
@@ -43,7 +46,8 @@ abstract final class FieldValidators {
         ValidationIssue(
           field.fieldKey,
           Severity.warning,
-          Copy.validationRequired(field.label),
+          DomainCopy.validationRequired(field.label),
+          localizedMessage: DomainCopy.messages.validationRequired(field.label),
         ),
       );
       return issues;
@@ -58,7 +62,8 @@ abstract final class FieldValidators {
         ValidationIssue(
           field.fieldKey,
           Severity.error,
-          Copy.validationTooShort(field.label),
+          DomainCopy.validationTooShort(field.label),
+          localizedMessage: DomainCopy.messages.validationTooShort(field.label),
         ),
       );
     }
@@ -68,7 +73,8 @@ abstract final class FieldValidators {
         ValidationIssue(
           field.fieldKey,
           Severity.error,
-          Copy.validationTooLong(field.label),
+          DomainCopy.validationTooLong(field.label),
+          localizedMessage: DomainCopy.messages.validationTooLong(field.label),
         ),
       );
     }
@@ -80,7 +86,10 @@ abstract final class FieldValidators {
           ValidationIssue(
             field.fieldKey,
             Severity.error,
-            Copy.validationPattern(field.label),
+            DomainCopy.validationPattern(field.label),
+            localizedMessage: DomainCopy.messages.validationPattern(
+              field.label,
+            ),
           ),
         );
       }
@@ -94,7 +103,8 @@ abstract final class FieldValidators {
           ValidationIssue(
             field.fieldKey,
             Severity.error,
-            Copy.validationRange(field.label),
+            DomainCopy.validationRange(field.label),
+            localizedMessage: DomainCopy.messages.validationRange(field.label),
           ),
         );
       }
@@ -104,7 +114,8 @@ abstract final class FieldValidators {
         ValidationIssue(
           field.fieldKey,
           Severity.error,
-          Copy.validationOption(field.label),
+          DomainCopy.validationOption(field.label),
+          localizedMessage: DomainCopy.messages.validationOption(field.label),
         ),
       );
     }
@@ -116,7 +127,8 @@ abstract final class FieldValidators {
         ValidationIssue(
           field.fieldKey,
           Severity.error,
-          Copy.validationUnit(field.label),
+          DomainCopy.validationUnit(field.label),
+          localizedMessage: DomainCopy.messages.validationUnit(field.label),
         ),
       );
     }

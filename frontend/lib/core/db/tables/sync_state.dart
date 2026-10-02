@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 import 'package:tapture/core/db/app_database.dart';
-import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -75,26 +74,15 @@ Future<Result<VersionVectorRow>> upsertVersionVector(
 }) async {
   try {
     final AppDatabase database = db as AppDatabase;
-    final VersionVectorRow? existing = await _vectorRow(
-      database,
-      entityType: entityType,
-      entityId: entityId,
-      deviceId: deviceId,
-    );
-    return _SyncStateDao(
-      database,
-      clock: clock,
-      deviceId: deviceId,
-      ids: ids,
-    ).upsert(
-      SyncStateCompanion(
-        id: existing == null
-            ? const Value<String>.absent()
-            : Value<String>(existing.id),
-        entityType: Value<String>(entityType),
-        entityId: Value<String>(entityId),
-        deviceId: Value<String>(deviceId),
-        seenRev: Value<int>(rev),
+    return Success<VersionVectorRow>(
+      await _writeVector(
+        database,
+        entityType: entityType,
+        entityId: entityId,
+        revision: rev,
+        clock: clock,
+        deviceId: deviceId,
+        ids: ids,
       ),
     );
   } on Failure catch (failure) {
@@ -115,20 +103,17 @@ Future<Result<VersionVectorRow>> bumpVersionVector(
 }) async {
   try {
     final AppDatabase database = db as AppDatabase;
-    final VersionVectorRow? existing = await _vectorRow(
-      database,
-      entityType: entityType,
-      entityId: entityId,
-      deviceId: deviceId,
-    );
-    return upsertVersionVector(
-      database,
-      entityType: entityType,
-      entityId: entityId,
-      rev: (existing?.seenRev ?? 0) + 1,
-      clock: clock,
-      deviceId: deviceId,
-      ids: ids,
+    return Success<VersionVectorRow>(
+      await _writeVector(
+        database,
+        entityType: entityType,
+        entityId: entityId,
+        revision: 1,
+        increment: true,
+        clock: clock,
+        deviceId: deviceId,
+        ids: ids,
+      ),
     );
   } on Failure catch (failure) {
     return FailureResult<VersionVectorRow>(failure);
@@ -152,11 +137,42 @@ Future<VersionVectorRow?> _vectorRow(
       .getSingleOrNull();
 }
 
-final class _SyncStateDao extends BaseDao<SyncState, VersionVectorRow> {
-  _SyncStateDao(
-    AppDatabase super.db, {
-    required super.clock,
-    required super.deviceId,
-    required super.ids,
-  }) : super(table: db.syncState);
-}
+Future<VersionVectorRow> _writeVector(
+  AppDatabase db, {
+  required String entityType,
+  required String entityId,
+  required int revision,
+  required Clock clock,
+  required String deviceId,
+  required IdService ids,
+  bool increment = false,
+}) => db.transaction(() async {
+  final DateTime at = clock.nowUtc();
+  await db.customInsert(
+    'INSERT INTO version_vectors '
+    '(id, created_at, updated_at, updated_by_device, rev, '
+    'entity_type, entity_id, device_id, seen_rev) VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?) '
+    'ON CONFLICT(entity_type, entity_id, device_id) DO UPDATE SET '
+    'seen_rev = ${increment ? 'version_vectors.seen_rev + 1' : 'excluded.seen_rev'}, '
+    'updated_at = excluded.updated_at, updated_by_device = excluded.updated_by_device, '
+    'rev = version_vectors.rev + 1 '
+    '${increment ? '' : 'WHERE excluded.seen_rev > version_vectors.seen_rev'}',
+    variables: <Variable<Object>>[
+      Variable<String>(ids.newId()),
+      Variable<DateTime>(at),
+      Variable<DateTime>(at),
+      Variable<String>(deviceId),
+      Variable<String>(entityType),
+      Variable<String>(entityId),
+      Variable<String>(deviceId),
+      Variable<int>(revision),
+    ],
+    updates: <TableInfo<dynamic, dynamic>>{db.syncState},
+  );
+  return (await _vectorRow(
+    db,
+    entityType: entityType,
+    entityId: entityId,
+    deviceId: deviceId,
+  ))!;
+});

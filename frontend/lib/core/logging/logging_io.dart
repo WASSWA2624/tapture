@@ -23,29 +23,25 @@ String? readSecretPatternsYaml() {
 ///
 /// Slots are overwritten rather than removed so this never calls `File.delete`
 /// (FE-SEC-08).
-void persistLogFiles({
+Future<void> persistLogFiles({
   required String directoryPath,
   required List<String> lines,
   required int rotationCount,
   required bool rotate,
-}) {
+}) async {
   final Directory directory = Directory(directoryPath);
-  if (!directory.existsSync()) {
-    directory.createSync(recursive: true);
-  }
+  await directory.create(recursive: true);
   final File current = File('$directoryPath/tapture.log');
-  if (rotate && current.existsSync()) {
+  if (rotate && await current.exists()) {
     for (int index = rotationCount; index >= 1; index--) {
       final File source = index == 1
           ? current
           : File('$directoryPath/tapture.log.${index - 1}');
-      if (!source.existsSync()) {
+      if (!await source.exists()) {
         continue;
       }
-      File(
-        '$directoryPath/tapture.log.$index',
-      ).writeAsStringSync(source.readAsStringSync());
+      await source.copy('$directoryPath/tapture.log.$index');
     }
   }
-  current.writeAsStringSync(lines.join('\n'));
+  await current.writeAsString(lines.join('\n'), flush: true);
 }

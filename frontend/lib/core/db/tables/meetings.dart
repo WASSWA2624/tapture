@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -111,9 +112,9 @@ Future<Result<void>> deleteMeeting(
       id,
     )).fold((Failure failure) => throw failure, (MeetingRow? value) => value);
     if (existing == null) {
-      throw const StorageFailure(
-        message: 'That meeting is no longer on this device.',
-        recoveryAction: 'Refresh the list and try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureThatMeetingIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
       );
     }
     final List<MeetingAttendee> people = await (database.select(
@@ -195,9 +196,11 @@ Future<Result<MeetingRow>> _writeMeeting(
             (MeetingRow? value) => value,
           );
     if (existing != null && columns.containsKey('transcript_raw')) {
-      throw const StorageFailure(
-        message: 'The original transcript cannot be changed.',
-        recoveryAction: 'Leave the captured text and write refined minutes.',
+      throw StorageFailure(
+        localizedMessage:
+            Copy.messages.failureTheOriginalTranscriptCannotBeChanged,
+        localizedRecovery:
+            Copy.messages.failureLeaveTheCapturedTextAndWriteRefined,
       );
     }
     if (!allowRaw) {
@@ -224,15 +227,15 @@ void _ensureAgendaJson(Insertable<MeetingRow> row) {
   try {
     decoded = jsonDecode(raw) as Object?;
   } on FormatException {
-    throw const StorageFailure(
-      message: 'A meeting agenda is not valid JSON.',
-      recoveryAction: 'Fix the agenda list and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheMeetingAgendaCouldNotBeRead,
+      localizedRecovery: Copy.messages.failureFixTheAgendaListAndSaveAgain,
     );
   }
   if (decoded is! List) {
-    throw const StorageFailure(
-      message: 'A meeting agenda must be a JSON array.',
-      recoveryAction: 'Fix the agenda list and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheMeetingAgendaIsNotInA,
+      localizedRecovery: Copy.messages.failureFixTheAgendaListAndSaveAgain,
     );
   }
 }

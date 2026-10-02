@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -33,9 +34,12 @@ abstract interface class PhotoThumbnails {
     );
   }
 
-  /// Serves [paths], keyed by storage path, and fails for any other photo.
-  factory PhotoThumbnails.fake(Map<String, String> paths) =
-      _FakePhotoThumbnails;
+  /// Serves [paths] and, for the browser path, [bytes], both keyed by
+  /// storage path, and fails for any other photo.
+  factory PhotoThumbnails.fake(
+    Map<String, String> paths, {
+    Map<String, Uint8List> bytes,
+  }) = _FakePhotoThumbnails;
 
   /// The cached thumbnail at [edge] for the photo whose file is
   /// [storagePath], relative to the storage root. Generates it on a miss.
@@ -60,9 +64,16 @@ final Provider<PhotoThumbnails> photoThumbnailsProvider =
       return PhotoThumbnails(storageRoot: ref.watch(storageRootProvider));
     });
 
-const StorageFailure _unreadable = StorageFailure(
-  message: Copy.photoUnreadable,
-  recoveryAction: Copy.photoUnreadableRecovery,
+/// Whether stored thumbnails are drawn from bytes ([PhotoThumbnails.bytesFor])
+/// rather than cached files: true in a browser, which has no file to open.
+/// Tests override it to draw the browser path.
+final Provider<bool> thumbnailsFromBytesProvider = Provider<bool>(
+  (Ref _) => kIsWeb,
+);
+
+final StorageFailure _unreadable = StorageFailure(
+  localizedMessage: Copy.messages.photoUnreadable,
+  localizedRecovery: Copy.messages.photoUnreadableRecovery,
 );
 
 final class _PhotoThumbnails implements PhotoThumbnails {
@@ -90,8 +101,8 @@ final class _PhotoThumbnails implements PhotoThumbnails {
         return FailureResult<String>(failure);
       case Success<Directory>(:final Directory value):
         final File source = File('${value.path}/$storagePath');
-        if (!source.existsSync()) {
-          return const FailureResult<String>(_unreadable);
+        if (!await source.exists()) {
+          return FailureResult<String>(_unreadable);
         }
         final Result<File> thumb = await _cache.thumbnail(
           sha256,
@@ -104,16 +115,26 @@ final class _PhotoThumbnails implements PhotoThumbnails {
 }
 
 final class _FakePhotoThumbnails implements PhotoThumbnails {
-  _FakePhotoThumbnails(this._paths);
+  _FakePhotoThumbnails(
+    this._paths, {
+    this._bytes = const <String, Uint8List>{},
+  });
 
   final Map<String, String> _paths;
+  final Map<String, Uint8List> _bytes;
 
   @override
   Future<Result<Uint8List>> bytesFor({
     required String sha256,
     required String storagePath,
     required int edge,
-  }) async => const FailureResult<Uint8List>(_unreadable);
+  }) async {
+    final Uint8List? bytes = _bytes[storagePath];
+    if (bytes == null) {
+      return FailureResult<Uint8List>(_unreadable);
+    }
+    return Success<Uint8List>(bytes);
+  }
 
   @override
   Future<Result<String>> pathFor({
@@ -123,7 +144,7 @@ final class _FakePhotoThumbnails implements PhotoThumbnails {
   }) async {
     final String? path = _paths[storagePath];
     if (path == null) {
-      return const FailureResult<String>(_unreadable);
+      return FailureResult<String>(_unreadable);
     }
     return Success<String>(path);
   }

@@ -100,29 +100,35 @@ enum PhotoType {
   /// Anything else.
   other;
 
-  /// Semantic and tray label.
-  String get label {
+  /// Stable English label for headless consumers and stored diagnostics.
+  String get label => labelFor(Copy.english);
+
+  /// Semantic and tray label in the enclosing app's locale.
+  String labelFor(LocalizedCopy copy) {
     return switch (this) {
-      PhotoType.front => Copy.photoFront,
-      PhotoType.back => Copy.photoBack,
-      PhotoType.serial => Copy.photoSerial,
-      PhotoType.ratingPlate => Copy.photoRatingPlate,
-      PhotoType.damage => Copy.photoDamage,
-      PhotoType.panel => Copy.photoPanel,
-      PhotoType.location => Copy.photoLocation,
-      PhotoType.attendance => Copy.photoAttendance,
-      PhotoType.document => Copy.photoDocument,
-      PhotoType.other => Copy.photoOther,
+      PhotoType.front => copy.photoFront,
+      PhotoType.back => copy.photoBack,
+      PhotoType.serial => copy.photoSerial,
+      PhotoType.ratingPlate => copy.photoRatingPlate,
+      PhotoType.damage => copy.photoDamage,
+      PhotoType.panel => copy.photoPanel,
+      PhotoType.location => copy.photoLocation,
+      PhotoType.attendance => copy.photoAttendance,
+      PhotoType.document => copy.photoDocument,
+      PhotoType.other => copy.photoOther,
     };
   }
 
   /// Short overlay text that fits a corner without covering the subject.
-  String get badgeLabel {
+  String get badgeLabel => badgeLabelFor(Copy.english);
+
+  /// Compact overlay label in the enclosing app's locale.
+  String badgeLabelFor(LocalizedCopy copy) {
     return switch (this) {
-      PhotoType.ratingPlate => Copy.photoRatingPlateBadge,
-      PhotoType.attendance => Copy.photoAttendanceBadge,
-      PhotoType.document => Copy.photoDocumentBadge,
-      _ => label,
+      PhotoType.ratingPlate => copy.photoRatingPlateBadge,
+      PhotoType.attendance => copy.photoAttendanceBadge,
+      PhotoType.document => copy.photoDocumentBadge,
+      _ => labelFor(copy),
     };
   }
 

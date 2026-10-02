@@ -6,9 +6,12 @@ import 'package:tapture/core/widgets/app_icons.dart';
 
 import 'app_icon_button.dart';
 import 'app_overflow_menu.dart';
+import 'app_toolbar_scope.dart';
 import 'responsive/breakpoints.dart';
 import 'responsive/content_constraint.dart';
+import 'responsive/viewport_metrics.dart';
 import 'shell_header_scope.dart';
+import 'trial_report_action.dart';
 
 /// The single page frame every screen composes: app bar, body, optional
 /// footer, safe-area and keyboard insets, and scrolling (FE-RESP-06,
@@ -51,6 +54,8 @@ class AppPage extends StatelessWidget {
   final Widget body;
 
   /// Optional action slot pinned above the keyboard and the gesture bar.
+  /// Tall action groups scroll within half the available viewport, leaving
+  /// the body reachable on a short window or with enlarged text.
   final Widget? footer;
 
   /// When set, the body can be pulled to refresh. Omitted, there is no
@@ -89,6 +94,13 @@ class AppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool shellOwns = ShellHeaderScope.ownsHeaderOf(context);
+    final AppOverflowAction? trial = shellOwns
+        ? null
+        : trialReportAction(context);
+    final List<AppOverflowAction> menu = <AppOverflowAction>[
+      ...overflow,
+      ?trial,
+    ];
     final EdgeInsets padding = _paddingFor(context, inset: inset);
     final Widget content = scrollable
         ? _scrollingBody(context, padding)
@@ -98,12 +110,12 @@ class AppPage extends StatelessWidget {
     final bool invertedBar = Theme.of(context).brightness != Brightness.dark;
     final List<Widget> barActions = <Widget>[
       ...actions,
-      if (actions.isNotEmpty && overflow.isNotEmpty)
+      if (actions.isNotEmpty && menu.isNotEmpty)
         const SizedBox(width: Space.x2),
-      if (overflow.isNotEmpty)
+      if (menu.isNotEmpty)
         AppOverflowMenu(
           key: const ValueKey<String>('app-page-overflow'),
-          items: overflow,
+          items: menu,
           inverted: invertedBar,
         ),
     ];
@@ -115,39 +127,64 @@ class AppPage extends StatelessWidget {
       appBar: showAppBar && !shellOwns
           ? AppBar(
               automaticallyImplyLeading: leading == null,
-              leading: leading == null ? null : Center(child: leading),
+              leading: leading == null
+                  ? null
+                  : Center(child: _barControl(context, leading)),
               leadingWidth: leading == null
                   ? null
                   : Sizes.minTapTarget + Space.x2,
-              toolbarHeight: compactBar
-                  ? Sizes.minTapTarget
-                  : Sizes.minTapTarget + Space.x2,
+              toolbarHeight: _toolbarHeight(
+                context,
+                leading,
+                barActions.length,
+              ),
               titleSpacing: leading == null
                   ? (compactBar ? Space.x2 : Space.x3)
                   : Space.x2,
-              title: Text(title),
-              actions: barActions,
+              title: MediaQuery(
+                data: MediaQuery.of(context),
+                child: Text(
+                  title,
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+              actions: <Widget>[
+                for (final Widget action in barActions)
+                  _barControl(context, action),
+              ],
             )
           : null,
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: SafeArea(bottom: footer == null, child: content),
-          ),
-          if (footer != null)
-            SafeArea(
-              top: false,
-              child: Padding(
-                // Inset even on edge-to-edge pages: a pinned action never
-                // touches the screen edge.
-                padding: _paddingFor(
-                  context,
-                  inset: true,
-                ).copyWith(top: compactBar ? Space.x1 : Space.x2),
-                child: ContentConstraint(child: footer),
-              ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: SafeArea(bottom: footer == null, child: content),
             ),
-        ],
+            if (footer != null)
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: constraints.maxHeight / 2,
+                ),
+                child: SingleChildScrollView(
+                  primary: false,
+                  child: SafeArea(
+                    top: false,
+                    child: Padding(
+                      // Inset even on edge-to-edge pages: a pinned action never
+                      // touches the screen edge.
+                      padding: _paddingFor(
+                        context,
+                        inset: true,
+                      ).copyWith(top: compactBar ? Space.x1 : Space.x2),
+                      child: ContentConstraint(child: footer),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
     if (!shellOwns) {
@@ -163,6 +200,44 @@ class AppPage extends StatelessWidget {
 }
 
 extension on AppPage {
+  // Material 3 icon buttons resolve their own theme ahead of AppBar's
+  // IconTheme. Give toolbar controls the toolbar ink, while keeping the
+  // shared disabled-state treatment and every other button property.
+  Widget _barControl(BuildContext context, Widget child) {
+    return AppToolbarScope(
+      ink:
+          Theme.of(context).appBarTheme.foregroundColor ??
+          context.colors.onSurface,
+      child: child,
+    );
+  }
+
+  /// Reserve the actual scaled title height instead of clipping a long title
+  /// to one toolbar line. Action slots keep their standard touch width.
+  double _toolbarHeight(BuildContext context, Widget? leading, int actions) {
+    final double minimum = compactBar
+        ? Sizes.minTapTarget
+        : Sizes.minTapTarget + Space.x2;
+    final double width =
+        (context.viewportSize.width -
+                (leading == null ? 0 : Sizes.minTapTarget + Space.x2) -
+                actions * Sizes.minTapTarget -
+                Space.x6)
+            .clamp(1, double.infinity)
+            .toDouble();
+    final TextPainter painter = TextPainter(
+      text: TextSpan(
+        text: title,
+        style: Theme.of(context).appBarTheme.titleTextStyle ?? AppText.title,
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(maxWidth: width);
+    final double height = painter.height + Space.x2;
+    painter.dispose();
+    return height < minimum ? minimum : height;
+  }
+
   /// A back control when the route can pop: the same borderless arrow as a
   /// field's controls, so a compact header spends no weight on chrome. Null
   /// where there is nothing to go back to.

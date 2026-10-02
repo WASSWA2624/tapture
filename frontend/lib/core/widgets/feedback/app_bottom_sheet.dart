@@ -44,7 +44,7 @@ class AppBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
     final BorderRadius radius = sidePanel
-        ? BorderRadius.zero
+        ? BorderRadius.circular(Radii.md)
         : const BorderRadius.vertical(top: Radius.circular(Radii.lg));
     final BoxDecoration surface = Elevation.surface(context, level: 2);
     final BorderSide outline = switch (surface.border) {
@@ -214,6 +214,8 @@ Future<void> showAppFilterSheet(
     title: title,
     contentSized: true,
     builder: (BuildContext sheetContext) {
+      final LocalizedCopy localCopy = Copy.of(sheetContext);
+
       return SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(
           Space.x3,
@@ -229,7 +231,7 @@ Future<void> showAppFilterSheet(
             const SizedBox(height: Space.x3),
             AppButton(
               key: const ValueKey<String>('filter-sheet-clear'),
-              label: Copy.searchClearFilters,
+              label: localCopy.searchClearFilters,
               variant: AppButtonVariant.secondary,
               expand: true,
               onPressed: () {

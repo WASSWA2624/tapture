@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -72,10 +73,12 @@ final class _ProjectFolders implements ProjectFolders {
     } on Failure catch (failure) {
       return FailureResult<void>(failure);
     } on Object {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message: 'The project folder could not be removed from this device.',
-          recoveryAction: 'Delete the leftover folder, then try again.',
+          localizedMessage:
+              Copy.messages.failureTheProjectFolderCouldNotBeRemoved,
+          localizedRecovery:
+              Copy.messages.failureDeleteTheLeftoverFolderThenTryAgain,
         ),
       );
     }
@@ -104,12 +107,12 @@ final class _ProjectFolders implements ProjectFolders {
             return Success<Directory>(dest);
           }
           if (dest.existsSync()) {
-            return const FailureResult<Directory>(
+            return FailureResult<Directory>(
               StorageFailure(
-                message:
-                    'That project is already in the recycle area on this device.',
-                recoveryAction:
-                    'Restore it from the recycle area, then try again.',
+                localizedMessage:
+                    Copy.messages.failureThatProjectIsAlreadyInTheRecycle,
+                localizedRecovery:
+                    Copy.messages.failureRestoreItFromTheRecycleAreaThen,
               ),
             );
           }
@@ -120,10 +123,12 @@ final class _ProjectFolders implements ProjectFolders {
     } on Failure catch (failure) {
       return FailureResult<Directory>(failure);
     } on Object {
-      return const FailureResult<Directory>(
+      return FailureResult<Directory>(
         StorageFailure(
-          message: 'The project folder could not be moved to the recycle area.',
-          recoveryAction: 'Free space or allow storage access, then try again.',
+          localizedMessage:
+              Copy.messages.failureTheProjectFolderCouldNotBeMoved,
+          localizedRecovery:
+              Copy.messages.failureFreeSpaceOrAllowStorageAccessThen,
         ),
       );
     }
@@ -141,10 +146,12 @@ final class _ProjectFolders implements ProjectFolders {
         case Success<Directory>(:final value):
           final String stored = project.folderName.trim();
           if (!createTree && stored.isEmpty) {
-            return const FailureResult<Directory>(
+            return FailureResult<Directory>(
               ValidationFailure(
-                message: 'This project has no folder on disk yet.',
-                recoveryAction: 'Create the project folder, then try again.',
+                localizedMessage:
+                    Copy.messages.failureThisProjectHasNoFolderOnDisk,
+                localizedRecovery:
+                    Copy.messages.failureCreateTheProjectFolderThenTryAgain,
               ),
             );
           }
@@ -170,10 +177,12 @@ final class _ProjectFolders implements ProjectFolders {
     } on Failure catch (failure) {
       return FailureResult<Directory>(failure);
     } on Object {
-      return const FailureResult<Directory>(
+      return FailureResult<Directory>(
         StorageFailure(
-          message: 'The project folder could not be created on this device.',
-          recoveryAction: 'Free space or allow storage access, then try again.',
+          localizedMessage:
+              Copy.messages.failureTheProjectFolderCouldNotBeCreated,
+          localizedRecovery:
+              Copy.messages.failureFreeSpaceOrAllowStorageAccessThen,
         ),
       );
     }
@@ -191,17 +200,20 @@ void _assertSafeFolderName(String folderName) {
       folderName.contains('..') ||
       folderName.startsWith('.') ||
       _drive.hasMatch(folderName)) {
-    throw const ValidationFailure(
-      message: 'That project folder name is not a valid folder.',
-      recoveryAction: 'Recreate the project so its folder can be rebuilt.',
+    throw ValidationFailure(
+      localizedMessage: Copy.messages.failureThatProjectFolderNameIsNotA,
+      localizedRecovery: Copy.messages.failureRecreateTheProjectSoItsFolderCan,
     );
   }
 }
 
 StorageFailure _missing(String path) {
   return StorageFailure(
-    message: 'Tapture could not find $path.',
-    recoveryAction: 'Recreate the project folder, then try again.',
+    localizedMessage: Copy.messages.failureTaptureCouldNotFindValue(
+      (path).toString(),
+    ),
+    localizedRecovery:
+        Copy.messages.failureRecreateTheProjectFolderThenTryAgain,
   );
 }
 

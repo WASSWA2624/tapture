@@ -5,14 +5,23 @@ import 'dart:typed_data';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_reader.dart';
+import 'package:tapture/core/files/storage_root.dart';
 
 import 'download_service.dart';
 
-/// A browser download through a temporary object URL.
-DownloadService platformDownloads() => const _BrowserDownloads();
+/// A browser download through a temporary object URL. A stored export is
+/// read back from the project-file store it was written to.
+DownloadService platformDownloads({StorageRoot? storageRoot}) {
+  return _BrowserDownloads(
+    FileReader(storageRoot: storageRoot ?? StorageRoot()),
+  );
+}
 
 final class _BrowserDownloads implements DownloadService {
-  const _BrowserDownloads();
+  const _BrowserDownloads(this._files);
+
+  final FileReader _files;
 
   @override
   String? get destination => null;
@@ -94,8 +103,8 @@ final class _BrowserDownloads implements DownloadService {
     }
   }
 
-  // A browser has no stored files: its exports are built in memory and
-  // saved through [save] (task 076, D6).
+  // A browser keeps each export in its project-file store (task 076), so a
+  // stored export downloads again from there.
   @override
   Future<Result<String?>> saveStored({
     required String relativePath,
@@ -103,7 +112,16 @@ final class _BrowserDownloads implements DownloadService {
     required String mimeType,
     String? subfolder,
   }) async {
-    return FailureResult<String?>(downloadFailure(fileName));
+    if (!isStoredExport(relativePath)) {
+      return FailureResult<String?>(downloadFailure(fileName));
+    }
+    final Result<Uint8List> stored = await _files.read(relativePath);
+    switch (stored) {
+      case FailureResult<Uint8List>():
+        return FailureResult<String?>(downloadFailure(fileName));
+      case Success<Uint8List>(:final Uint8List value):
+        return save(fileName: fileName, bytes: value, mimeType: mimeType);
+    }
   }
 
   @override
@@ -112,7 +130,15 @@ final class _BrowserDownloads implements DownloadService {
     required String fileName,
     required String mimeType,
   }) async {
-    return FailureResult<void>(openExternallyFailure(fileName));
+    final Result<String?> saved = await saveStored(
+      relativePath: relativePath,
+      fileName: fileName,
+      mimeType: mimeType,
+    );
+    return saved.fold(
+      (_) => FailureResult<void>(openExternallyFailure(fileName)),
+      (String? _) => const Success<void>(null),
+    );
   }
 }
 

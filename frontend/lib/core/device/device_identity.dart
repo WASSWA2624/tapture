@@ -1,6 +1,7 @@
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 
+import 'app_version.dart';
 import 'device_stub.dart' if (dart.library.io) 'device_io.dart' as io;
 
 /// The type this file is named for (FE-STR-06). The contract name is
@@ -25,7 +26,10 @@ final class DeviceDescriptor {
     this.appVersion = '1.0.0',
   });
 
-  /// The device model, or the OS name when the platform reports no model.
+  /// The device model where the platform reports one. `dart:io` reports
+  /// none, and no plugin reads it (no hardware identifier, FE-SEC-07), so on
+  /// a device this is the operating system name: `android`, `ios`,
+  /// `windows`, `macos`, `linux`, or `web` in a browser.
   final String model;
 
   /// The operating system version the platform reports.
@@ -37,9 +41,6 @@ final class DeviceDescriptor {
 
 /// In-process cache used when no file path exists (web).
 String? _processId;
-
-/// The application version shipped in `pubspec.yaml`.
-const String _appVersion = '1.0.0';
 
 /// The device identifier, minted once and then read back.
 ///
@@ -98,6 +99,18 @@ Future<DeviceDescriptor> deviceDescriptor({DeviceDescriptor? fake}) async {
   return DeviceDescriptor(
     model: platform.model,
     osVersion: platform.osVersion,
-    appVersion: _appVersion,
+    appVersion: appVersionName,
   );
+}
+
+/// The id a build before task 078 kept in the OS temp folder, or null when
+/// there is none (and always on web). Read once, to carry that id into the
+/// device profile; nothing writes the file any more. [filePath] overrides
+/// the temp location for tests.
+String? legacyDeviceId({String? filePath}) {
+  try {
+    return io.readDeviceIdFile(filePath ?? io.defaultDeviceIdPath());
+  } on Object {
+    return null;
+  }
 }

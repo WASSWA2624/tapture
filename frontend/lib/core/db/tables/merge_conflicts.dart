@@ -115,9 +115,9 @@ Future<Result<MergeConflict>> resolveMergeConflict(
 }) async {
   try {
     if (resolution.isEmpty || resolvedBy.isEmpty) {
-      throw const StorageFailure(
-        message: 'A conflict needs a choice and an operator.',
-        recoveryAction: 'Choose a side, then resolve again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureAConflictNeedsAChoiceAndAn,
+        localizedRecovery: Copy.messages.failureChooseASideThenResolveAgain,
       );
     }
     final AppDatabase database = db as AppDatabase;
@@ -127,9 +127,9 @@ Future<Result<MergeConflict>> resolveMergeConflict(
                 ..where(($MergeConflictsTable tbl) => tbl.id.equals(id)))
               .getSingleOrNull();
       if (existing == null) {
-        throw const StorageFailure(
-          message: 'That conflict is no longer on this device.',
-          recoveryAction: 'Refresh the list and try again.',
+        throw StorageFailure(
+          localizedMessage: Copy.messages.failureThatConflictIsNoLongerOnThis,
+          localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
         );
       }
       final Result<MergeConflict> written =

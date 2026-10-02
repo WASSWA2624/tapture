@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart';
+import 'package:drift/isolate.dart' show DriftRemoteException;
 import 'package:sqlite3/common.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -38,26 +40,33 @@ Future<Result<T>> runInTransaction<T>(
 /// action. Uniqueness and busy/locked are distinct; nothing from sqlite3 is
 /// interpolated into the message.
 StorageFailure storageFailureFrom(Object error) {
+  // File connections execute on Drift's worker. Preserve the native cause
+  // instead of presenting a locked database as a disk-space problem.
+  while (error is DriftRemoteException) {
+    error = error.remoteCause;
+  }
   if (error is StorageFailure) {
     return error;
   }
   if (error is SqliteException) {
     if (error.resultCode == SqlError.SQLITE_BUSY ||
         error.resultCode == SqlError.SQLITE_LOCKED) {
-      return const StorageFailure(
-        message: 'The database is busy.',
-        recoveryAction: 'Wait a moment, then try the save again.',
+      return StorageFailure(
+        localizedMessage: Copy.messages.failureTheDatabaseIsBusy,
+        localizedRecovery: Copy.messages.failureWaitAMomentThenTryTheSave,
       );
     }
     if (error.resultCode == SqlError.SQLITE_CONSTRAINT) {
-      return const StorageFailure(
-        message: 'A record with that identity already exists.',
-        recoveryAction: 'Open the existing record, or change the identity.',
+      return StorageFailure(
+        localizedMessage:
+            Copy.messages.failureARecordWithThatIdentityAlreadyExists,
+        localizedRecovery:
+            Copy.messages.failureOpenTheExistingRecordOrChangeThe,
       );
     }
   }
-  return const StorageFailure(
-    message: 'The database could not complete that write.',
-    recoveryAction: 'Free up space or export a project, then try again.',
+  return StorageFailure(
+    localizedMessage: Copy.messages.failureTheDatabaseCouldNotCompleteThatWrite,
+    localizedRecovery: Copy.messages.failureFreeUpSpaceOrExportAProject,
   );
 }

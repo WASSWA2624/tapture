@@ -1,6 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/permissions/permission_rationale.dart';
 
 /// The one caller of the runtime-permission plugin.
 ///
@@ -57,7 +60,12 @@ abstract interface class PermissionsService {
   Future<PermissionState> status(AppPermission permission);
 }
 
-/// The four runtime permissions this app asks for.
+/// Process-wide permissions. The default never touches the platform and
+/// reports every permission as not yet granted; [main] binds the plug-in.
+final Provider<PermissionsService> permissionsServiceProvider =
+    Provider<PermissionsService>((Ref _) => PermissionsService.fake());
+
+/// The runtime permissions this app asks for, each at its point of use.
 enum AppPermission {
   /// Photographs of equipment and documents.
   camera,
@@ -70,6 +78,9 @@ enum AppPermission {
 
   /// Photos and files the operator chooses to import.
   storage,
+
+  /// A notice when a batch of analysis finishes.
+  notifications,
 }
 
 /// What the platform currently allows.
@@ -101,7 +112,7 @@ final class _PermissionsService implements PermissionsService {
   Future<Result<PermissionState>> request(AppPermission permission) async {
     try {
       if (_locationBlocked(permission)) {
-        return const FailureResult<PermissionState>(_locationOff);
+        return FailureResult<PermissionState>(_locationOff);
       }
       final PermissionState current = await _read(permission);
       if (current == PermissionState.granted) {
@@ -154,34 +165,22 @@ typedef _OpenSettings = Future<void> Function(AppPermission permission);
 
 bool _gpsOff() => false;
 
-const PermissionFailure _locationOff = PermissionFailure(
-  message: 'Location is off for this project.',
-  recoveryAction: 'Turn GPS on, then try again.',
+final PermissionFailure _locationOff = PermissionFailure(
+  localizedMessage: Copy.messages.failureLocationIsOffForThisProject,
+  localizedRecovery: Copy.messages.failureTurnGPSOnThenTryAgain,
 );
 
 PermissionFailure _failure(
   AppPermission permission, {
   required bool permanent,
 }) {
+  // The same sentence the gate showed before the prompt (one copy).
   return PermissionFailure(
-    message: _rationale(permission),
+    message: PermissionRationale.of(permission).message,
     recoveryAction: permanent
         ? 'Allow the permission in settings, then try again.'
         : 'Allow the permission, then try again.',
   );
-}
-
-String _rationale(AppPermission permission) {
-  switch (permission) {
-    case AppPermission.camera:
-      return 'Tapture photographs equipment and documents.';
-    case AppPermission.microphone:
-      return 'Tapture records spoken notes when you tap the microphone.';
-    case AppPermission.location:
-      return 'Tapture can stamp a capture with this device\'s location.';
-    case AppPermission.storage:
-      return 'Tapture reads photos and files you choose to import.';
-  }
 }
 
 Future<PermissionState> _pluginRead(AppPermission permission) async {
@@ -206,6 +205,8 @@ Permission _plugin(AppPermission permission) {
       return Permission.locationWhenInUse;
     case AppPermission.storage:
       return Permission.photos;
+    case AppPermission.notifications:
+      return Permission.notification;
   }
 }
 

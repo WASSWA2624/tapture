@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -9,6 +11,26 @@ import 'document_picker_stub.dart'
 import 'picked_document.dart';
 
 export 'picked_document.dart';
+
+/// Reads a validated pick through the core platform boundary.
+Future<Result<Uint8List>> readPickedDocument(PickedDocument document) =>
+    Result.captureAsync(
+      () async => switch (document) {
+        PickedBytes(:final Uint8List bytes) => bytes,
+        PickedFile(:final file) => await file.readAsBytes(),
+      },
+    );
+
+/// Releases a sandbox copy owned by the picker or incoming-file bridge.
+/// Operator-owned files and browser bytes are left intact.
+Future<Result<void>> discardPickedCopy(PickedDocument? document) =>
+    Result.captureAsync<void>(() async {
+      if (document case PickedFile(isCopy: true, :final file)) {
+        if (await file.exists()) {
+          await file.delete();
+        }
+      }
+    });
 
 /// Picks one document, such as a project package, from the device. The
 /// files channel, the desktop file dialogs and the browser's file input are

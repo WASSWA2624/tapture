@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -143,17 +144,17 @@ void _parseJsonDocument(String raw) {
   try {
     decoded = jsonDecode(raw) as Object?;
   } on FormatException {
-    throw const StorageFailure(
-      message: 'That JSON is not valid.',
-      recoveryAction: 'Fix the JSON and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureThatEntryCouldNotBeRead,
+      localizedRecovery: Copy.messages.failureChangeItThenSaveAgain,
     );
   }
   if (decoded is Map || decoded is List) {
     return;
   }
-  throw const StorageFailure(
-    message: 'That JSON must be an object or an array.',
-    recoveryAction: 'Fix the JSON and save again.',
+  throw StorageFailure(
+    localizedMessage: Copy.messages.failureThatEntryIsNotInAForm,
+    localizedRecovery: Copy.messages.failureChangeItThenSaveAgain,
   );
 }
 

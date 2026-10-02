@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -78,15 +79,16 @@ Future<Result<DuplicatePair>> upsertDetectedDuplicate(
     final String? a = _stringExpression(columns['left_record_id']);
     final String? b = _stringExpression(columns['right_record_id']);
     if (a == null || b == null) {
-      throw const StorageFailure(
-        message: 'A duplicate pair needs two records.',
-        recoveryAction: 'Choose both records and try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureADuplicatePairNeedsTwoRecords,
+        localizedRecovery: Copy.messages.failureChooseBothRecordsAndTryAgain,
       );
     }
     if (a == b) {
-      throw const StorageFailure(
-        message: 'A record cannot be a duplicate of itself.',
-        recoveryAction: 'Choose two different records and try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureARecordCannotBeADuplicateOf,
+        localizedRecovery:
+            Copy.messages.failureChooseTwoDifferentRecordsAndTryAgain,
       );
     }
     final ({String left, String right}) ordered = _orderedPair(a, b);
@@ -111,9 +113,9 @@ Future<Result<DuplicatePair>> upsertDetectedDuplicate(
       );
     } else {
       if (projectId == null || signal == null || score == null) {
-        throw const StorageFailure(
-          message: 'A duplicate pair needs a project, a signal and a score.',
-          recoveryAction: 'Run detection again, then try again.',
+        throw StorageFailure(
+          localizedMessage: Copy.messages.failureADuplicatePairNeedsAProjectA,
+          localizedRecovery: Copy.messages.failureRunDetectionAgainThenTryAgain,
         );
       }
       companion = DuplicatesCompanion(
@@ -152,9 +154,9 @@ Future<Result<DuplicatePair>> resolveDuplicate(
 }) async {
   try {
     if (resolution.isEmpty || resolvedBy.isEmpty) {
-      throw const StorageFailure(
-        message: 'A resolution needs a choice and an operator.',
-        recoveryAction: 'Choose how to resolve the pair, then try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureAResolutionNeedsAChoiceAndAn,
+        localizedRecovery: Copy.messages.failureChooseHowToResolveThePairThen,
       );
     }
     final AppDatabase database = db as AppDatabase;
@@ -162,9 +164,9 @@ Future<Result<DuplicatePair>> resolveDuplicate(
       database.duplicates,
     )..where(($DuplicatesTable tbl) => tbl.id.equals(id))).getSingleOrNull();
     if (existing == null) {
-      throw const StorageFailure(
-        message: 'That pair is no longer on this device.',
-        recoveryAction: 'Refresh the list and try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureThatPairIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
       );
     }
     return _DuplicatesDao(

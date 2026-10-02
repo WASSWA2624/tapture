@@ -44,6 +44,8 @@ final class ValidationDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<ValidationIssue> shown = summary
         ? issues
         : <ValidationIssue>[
@@ -59,7 +61,7 @@ final class ValidationDisplay extends StatelessWidget {
     final int warnings = shown.length - errors;
     final String announcement = shown.isEmpty
         ? ''
-        : Copy.validationIssueCount(errors, warnings);
+        : localCopy.validationIssueCount(errors, warnings);
     return Semantics(
       liveRegion: true,
       label: announcement,
@@ -80,7 +82,7 @@ final class ValidationDisplay extends StatelessWidget {
                     const SizedBox(height: Space.x2),
                     AppButton(
                       key: const ValueKey<String>('validation-first-error'),
-                      label: Copy.validationGoToFirstError,
+                      label: localCopy.validationGoToFirstError,
                       variant: AppButtonVariant.secondary,
                       onPressed: onJumpToError,
                     ),
@@ -101,11 +103,13 @@ class _Line extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool error = issue.severity == Severity.error;
     final AppColors colors = context.colors;
     final String kind = error
-        ? Copy.validationErrorLabel
-        : Copy.validationWarningLabel;
+        ? localCopy.validationErrorLabel
+        : localCopy.validationWarningLabel;
     return Padding(
       padding: const EdgeInsets.only(bottom: Space.x1),
       child: Row(

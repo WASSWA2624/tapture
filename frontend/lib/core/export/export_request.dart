@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'export_record.dart';
+import 'pdf_photo_layout.dart';
 import 'value_formatter.dart';
+
+export 'pdf_photo_layout.dart';
 
 /// One serialisable export. A stored request replays the same files.
 final class ExportRequest {
@@ -13,6 +18,9 @@ final class ExportRequest {
     this.markedIncomplete = false,
     this.files = const <ExportFile>[],
     this.records = const <ExportRecord>[],
+    this.omittedRecordIds = const <String>[],
+    this.photoFaceCounts = const <String, int>{},
+    this.privacyFingerprint = '',
   });
 
   /// Rebuilds a request written by [toJson].
@@ -31,6 +39,13 @@ final class ExportRequest {
       columns: _columns(json['columns']),
       extras: _extras(json['extras']),
       markedIncomplete: json['markedIncomplete'] == true,
+      omittedRecordIds: _list(
+        json['omittedRecordIds'],
+      ).whereType<String>().toList(),
+      photoFaceCounts: json['photoFaceCounts'] is Map
+          ? Map<String, int>.from(json['photoFaceCounts']! as Map)
+          : const <String, int>{},
+      privacyFingerprint: json['privacyFingerprint'] as String? ?? '',
       files: <ExportFile>[
         for (final Object? row in _list(json['files']))
           if (row is Map)
@@ -70,6 +85,15 @@ final class ExportRequest {
   /// Records the writers emit. Stored so a replay needs no new query.
   final List<ExportRecord> records;
 
+  /// Records excluded because required consent was not confirmed.
+  final List<String> omittedRecordIds;
+
+  /// Detected face counts for every photo processed under face protection.
+  final Map<String, int> photoFaceCounts;
+
+  /// Current protection state, checked again before sharing an old artifact.
+  final String privacyFingerprint;
+
   /// JSON covering every field, including [files] and [records].
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -95,9 +119,13 @@ final class ExportRequest {
         'dictionary': extras.dictionary,
         'photoIndex': extras.photoIndex,
         'photoMode': extras.photoMode,
+        'pdfPhotos': extras.pdfPhotos,
         'delimiter': extras.delimiter,
       },
       'markedIncomplete': markedIncomplete,
+      'omittedRecordIds': omittedRecordIds,
+      'photoFaceCounts': photoFaceCounts,
+      'privacyFingerprint': privacyFingerprint,
       'files': <Map<String, Object?>>[
         for (final ExportFile file in files)
           <String, Object?>{'path': file.path, 'role': file.role},
@@ -108,20 +136,50 @@ final class ExportRequest {
     };
   }
 
-  /// The same request with [markedIncomplete] set.
+  /// Serializes a replayable snapshot one record at a time.
+  Iterable<String> chunks() sync* {
+    final Map<String, Object?> metadata = copyWith(
+      records: const <ExportRecord>[],
+    ).toJson()..remove('records');
+    final String header = jsonEncode(metadata);
+    yield '${header.substring(0, header.length - 1)},"records":[';
+    for (int index = 0; index < records.length; index++) {
+      if (index > 0) yield ',';
+      yield jsonEncode(records[index].toJson());
+    }
+    yield ']}';
+  }
+
+  /// Whether this asks for the whole project package rather than chosen
+  /// files: a ZIP with no other format is the full project bundle (§49,
+  /// task 076 D13), which the project package writer produces.
+  bool get isProjectPackage =>
+      formats.length == 1 && formats.contains(ExportFormat.zip);
+
+  /// The same request with the provided fields replaced.
   ExportRequest copyWith({
+    Set<ExportFormat>? formats,
+    ExportScope? scope,
+    ExportColumns? columns,
+    ExportExtras? extras,
     List<ExportRecord>? records,
     List<ExportFile>? files,
+    List<String>? omittedRecordIds,
+    Map<String, int>? photoFaceCounts,
+    String? privacyFingerprint,
   }) {
     return ExportRequest(
       projectId: projectId,
-      formats: formats,
-      scope: scope,
-      columns: columns,
-      extras: extras,
+      formats: formats ?? this.formats,
+      scope: scope ?? this.scope,
+      columns: columns ?? this.columns,
+      extras: extras ?? this.extras,
       markedIncomplete: markedIncomplete,
       records: records ?? this.records,
       files: files ?? this.files,
+      omittedRecordIds: omittedRecordIds ?? this.omittedRecordIds,
+      photoFaceCounts: photoFaceCounts ?? this.photoFaceCounts,
+      privacyFingerprint: privacyFingerprint ?? this.privacyFingerprint,
     );
   }
 
@@ -136,6 +194,9 @@ final class ExportRequest {
       markedIncomplete: true,
       files: files,
       records: records,
+      omittedRecordIds: omittedRecordIds,
+      photoFaceCounts: photoFaceCounts,
+      privacyFingerprint: privacyFingerprint,
     );
   }
 
@@ -149,6 +210,9 @@ final class ExportRequest {
       extras: extras,
       markedIncomplete: markedIncomplete,
       files: files,
+      omittedRecordIds: omittedRecordIds,
+      photoFaceCounts: photoFaceCounts,
+      privacyFingerprint: privacyFingerprint,
       records: <ExportRecord>[
         for (final ExportRecord record in records)
           if (!excluded.contains(record.id)) record,
@@ -192,11 +256,14 @@ typedef ExportColumns = ({
   bool evidence,
 });
 
-/// Extras under the advanced group.
+/// Extras under the advanced group. [photoMode] is the workbook's photo
+/// reference (`filename`, `relative`, `path` or `embed`); [pdfPhotos] is the
+/// reports' photo layout, [PdfPhotoLayout.thumbnail] or [PdfPhotoLayout.full].
 typedef ExportExtras = ({
   bool dictionary,
   bool photoIndex,
   String photoMode,
+  String pdfPhotos,
   String delimiter,
 });
 
@@ -240,6 +307,9 @@ ExportExtras _extras(Object? raw) {
     dictionary: json['dictionary'] == true,
     photoIndex: json['photoIndex'] != false,
     photoMode: json['photoMode'] as String? ?? 'filename',
+    pdfPhotos: json['pdfPhotos'] == PdfPhotoLayout.full
+        ? PdfPhotoLayout.full
+        : PdfPhotoLayout.thumbnail,
     delimiter: json['delimiter'] as String? ?? ',',
   );
 }

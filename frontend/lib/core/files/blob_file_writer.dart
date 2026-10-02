@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/blob_store.dart';
@@ -37,9 +38,11 @@ final class BlobFileWriter implements FileWriter {
       return FailureResult<WrittenFile>(
         StorageFailure(
           message: failure.message,
+          localizedMessage: failure.localizedMessage,
           recoveryAction:
               failure.recoveryAction ??
               'Save the file under the project folder and try again.',
+          localizedRecovery: failure.localizedRecovery,
         ),
       );
     }
@@ -80,10 +83,10 @@ final class BlobFileWriter implements FileWriter {
   /// disk to copy.
   @override
   Future<Result<WrittenFile>> copyIn(File source, String relativePath) async {
-    return const FailureResult<WrittenFile>(
+    return FailureResult<WrittenFile>(
       StorageFailure(
-        message: 'Tapture cannot copy a file from this device here.',
-        recoveryAction: 'Add the file again from Tapture, then try again.',
+        localizedMessage: Copy.messages.failureTaptureCannotCopyAFileFromThis,
+        localizedRecovery: Copy.messages.failureAddTheFileAgainFromTaptureThen,
       ),
     );
   }
@@ -91,8 +94,10 @@ final class BlobFileWriter implements FileWriter {
 
 StorageFailure _writeFailure(String path) {
   return StorageFailure(
-    message: 'Tapture could not write to $path.',
-    recoveryAction: 'Free up space or export a project, then try again.',
+    localizedMessage: Copy.messages.failureTaptureCouldNotWriteToValue(
+      (path).toString(),
+    ),
+    localizedRecovery: Copy.messages.failureFreeUpSpaceOrExportAProject,
   );
 }
 

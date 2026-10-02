@@ -5,16 +5,9 @@ String? defaultLogDirectoryPath() => null;
 String? readSecretPatternsYaml() => null;
 
 /// Web stand-in: the ring buffer is the only store.
-void persistLogFiles({
+Future<void> persistLogFiles({
   required String directoryPath,
   required List<String> lines,
   required int rotationCount,
   required bool rotate,
-}) {
-  if (directoryPath.isEmpty ||
-      lines.isEmpty ||
-      rotationCount < 1 ||
-      rotate && !rotate) {
-    return;
-  }
-}
+}) async {}

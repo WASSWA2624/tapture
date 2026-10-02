@@ -12,8 +12,13 @@ const MethodChannel _filesChannel = MethodChannel('com.tapture.app/files');
 /// Android uses the files channel; desktop uses a native folder dialog.
 FolderPicker platformFolderPicker() => const _IoFolderPicker();
 
+/// Returns native grant identifiers on mobile and ordinary paths on desktop.
+FolderPicker platformDestinationFolderPicker() =>
+    const _IoFolderPicker(destination: true);
+
 final class _IoFolderPicker implements FolderPicker {
-  const _IoFolderPicker();
+  const _IoFolderPicker({this.destination = false});
+  final bool destination;
 
   @override
   bool get canPick => true;
@@ -22,7 +27,7 @@ final class _IoFolderPicker implements FolderPicker {
   Future<Result<String?>> pick() async {
     try {
       if (Platform.isAndroid || Platform.isIOS) {
-        return _channelPick();
+        return _channelPick(destination: destination);
       }
       if (Platform.isWindows) {
         return _windowsPick();
@@ -34,15 +39,15 @@ final class _IoFolderPicker implements FolderPicker {
     } on Failure catch (failure) {
       return FailureResult<String?>(failure);
     } on Object {
-      return const FailureResult<String?>(_failed);
+      return FailureResult<String?>(_failed);
     }
   }
 }
 
-Future<Result<String?>> _channelPick() async {
+Future<Result<String?>> _channelPick({required bool destination}) async {
   try {
     final Object? path = await _filesChannel.invokeMethod<Object>(
-      'pickDirectory',
+      destination ? 'pickDestinationDirectory' : 'pickDirectory',
     );
     if (path is String && path.isNotEmpty) {
       return Success<String?>(path);
@@ -52,7 +57,7 @@ Future<Result<String?>> _channelPick() async {
     if (error.code == 'cancelled') {
       return const FailureResult<String?>(CancelledFailure());
     }
-    return const FailureResult<String?>(_failed);
+    return FailureResult<String?>(_failed);
   }
 }
 
@@ -95,7 +100,7 @@ Future<Result<String?>> _linuxPick() async {
 Result<String?> _processPath(ProcessResult result) {
   final Object? stdout = result.stdout;
   if (stdout is! String) {
-    return const FailureResult<String?>(_failed);
+    return FailureResult<String?>(_failed);
   }
   final String path = stdout.trim();
   if (path.isEmpty) {
@@ -104,7 +109,7 @@ Result<String?> _processPath(ProcessResult result) {
   return Success<String?>(path);
 }
 
-const ProviderFailure _failed = ProviderFailure(
-  message: Copy.settingsStorageRoot,
-  recoveryAction: Copy.tryAgain,
+final ProviderFailure _failed = ProviderFailure(
+  localizedMessage: Copy.messages.settingsStorageRoot,
+  localizedRecovery: Copy.messages.tryAgain,
 );

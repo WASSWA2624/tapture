@@ -3,6 +3,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 /// The large, full-width action capture and review both compose.
 ///
@@ -42,6 +43,7 @@ class AppPrimaryAction extends StatelessWidget {
         ? null
         : () {
             if (!busy) {
+              TrialReportScope.recordAction(context, label);
               onPressed?.call();
             }
           };
@@ -86,10 +88,12 @@ class AppPrimaryAction extends StatelessWidget {
   }
 
   Widget _child(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String semantics = <String>[
       label,
       ?caption,
-      if (busy) Copy.busy,
+      if (busy) localCopy.busy,
     ].join('\n');
     return SizedBox(
       width: double.infinity,

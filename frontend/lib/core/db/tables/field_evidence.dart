@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -113,15 +114,15 @@ void _ensureRegionJson(Insertable<FieldEvidenceRow> row) {
   try {
     decoded = jsonDecode(raw) as Object?;
   } on FormatException {
-    throw const StorageFailure(
-      message: 'A bounding box is not valid JSON.',
-      recoveryAction: 'Fix the region object and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheMarkedAreaOnThePhotoCould,
+      localizedRecovery: Copy.messages.failureFixTheRegionObjectAndSaveAgain,
     );
   }
   if (decoded is! Map) {
-    throw const StorageFailure(
-      message: 'A bounding box must be a JSON object.',
-      recoveryAction: 'Fix the region object and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheMarkedAreaOnThePhotoIs,
+      localizedRecovery: Copy.messages.failureFixTheRegionObjectAndSaveAgain,
     );
   }
 }

@@ -34,7 +34,8 @@ class AppPhotoThumb extends StatelessWidget {
     this.semanticLabel,
   });
 
-  /// Photo to render. Only [PhotoAsset.thumbPath] is decoded.
+  /// Photo to render. Only its thumbnail is decoded: [PhotoAsset.thumbBytes]
+  /// when set, else the file at [PhotoAsset.thumbPath]; never the original.
   final PhotoAsset photo;
 
   /// Layout edge of the square, in logical pixels.
@@ -73,31 +74,10 @@ class AppPhotoThumb extends StatelessWidget {
 
   bool get _interactive => onTap != null || onLongPress != null;
 
-  bool get _missing {
-    if (photo.thumbBytes != null) {
-      return false;
-    }
-    if (kIsWeb) {
-      // A browser has no file to open; without bytes the photo is missing.
-      return true;
-    }
-    if (photo.thumbPath.isEmpty) {
-      return false;
-    }
-    return !File(photo.thumbPath).existsSync();
-  }
-
-  String _resolvedPath() {
-    if (photo.thumbPath.isNotEmpty) {
-      return photo.thumbPath;
-    }
-    return photo.cacheKey(size.round());
-  }
-
-  String get _label {
-    final String base = Copy.photoThumbLabel(
-      type: semanticLabel ?? photo.photoType?.label ?? Copy.photo,
-      missing: _missing,
+  String _label(LocalizedCopy copy, bool missing) {
+    final String base = copy.photoThumbLabel(
+      type: semanticLabel ?? photo.photoType?.labelFor(copy) ?? copy.photo,
+      missing: missing,
       captioned: photo.hasCaption,
       selected: selected,
     );
@@ -110,6 +90,23 @@ class AppPhotoThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb || photo.thumbBytes != null || photo.thumbPath.isEmpty) {
+      return _build(context, missing: kIsWeb && photo.thumbBytes == null);
+    }
+    return _ThumbnailAvailability(
+      path: photo.thumbPath,
+      builder: (BuildContext context, bool? exists) =>
+          _build(context, missing: exists == false, ready: exists != null),
+    );
+  }
+
+  Widget _build(
+    BuildContext context, {
+    required bool missing,
+    bool ready = true,
+  }) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final double edge = size < Sizes.minTapTarget ? Sizes.minTapTarget : size;
     final int decodeEdge = _decodeEdge(context, edge);
@@ -117,11 +114,11 @@ class AppPhotoThumb extends StatelessWidget {
       fit: StackFit.expand,
       children: <Widget>[
         if (quarterTurns % 4 == 0)
-          _subject(colors, decodeEdge)
+          _subject(colors, decodeEdge, missing: missing, ready: ready)
         else
           RotatedBox(
             quarterTurns: quarterTurns,
-            child: _subject(colors, decodeEdge),
+            child: _subject(colors, decodeEdge, missing: missing, ready: ready),
           ),
         if (photo.photoType != null)
           Align(
@@ -192,7 +189,7 @@ class AppPhotoThumb extends StatelessWidget {
       selected: selected,
       image: true,
       enabled: _interactive,
-      label: _label,
+      label: _label(localCopy, missing),
       excludeSemantics: true,
       child: ConstrainedBox(
         constraints: const BoxConstraints(
@@ -228,7 +225,7 @@ class AppPhotoThumb extends StatelessWidget {
                 start: 0,
                 child: _CornerControl(
                   corner: AlignmentDirectional.topStart,
-                  label: Copy.photoSelect,
+                  label: localCopy.photoSelect,
                   selected: selected,
                   filled: selected,
                   icon: selected ? AppIcons.check : null,
@@ -241,7 +238,7 @@ class AppPhotoThumb extends StatelessWidget {
                 end: 0,
                 child: _CornerControl(
                   corner: AlignmentDirectional.topEnd,
-                  label: Copy.captureRemovePhoto,
+                  label: localCopy.captureRemovePhoto,
                   icon: AppIcons.close,
                   onPressed: remove,
                 ),
@@ -252,7 +249,12 @@ class AppPhotoThumb extends StatelessWidget {
     );
   }
 
-  Widget _subject(AppColors colors, int decodeEdge) {
+  Widget _subject(
+    AppColors colors,
+    int decodeEdge, {
+    required bool missing,
+    required bool ready,
+  }) {
     final Uint8List? bytes = photo.thumbBytes;
     if (bytes != null) {
       // Only the width is capped, so a photo keeps its shape and the cover
@@ -267,23 +269,19 @@ class AppPhotoThumb extends StatelessWidget {
         errorBuilder: (_, _, _) => _MissingPlaceholder(colors: colors),
       );
     }
-    if (kIsWeb) {
+    if (missing) {
       return _MissingPlaceholder(colors: colors);
     }
-    final String path = _resolvedPath();
-    if (photo.thumbPath.isNotEmpty) {
-      if (File(path).existsSync()) {
-        return Image.file(
-          File(path),
-          fit: BoxFit.cover,
-          cacheWidth: decodeEdge,
-          cacheHeight: decodeEdge,
-          excludeFromSemantics: true,
-          filterQuality: FilterQuality.medium,
-          errorBuilder: (_, _, _) => _MissingPlaceholder(colors: colors),
-        );
-      }
-      return _MissingPlaceholder(colors: colors);
+    if (ready && photo.thumbPath.isNotEmpty) {
+      return Image.file(
+        File(photo.thumbPath),
+        fit: BoxFit.cover,
+        cacheWidth: decodeEdge,
+        cacheHeight: decodeEdge,
+        excludeFromSemantics: true,
+        filterQuality: FilterQuality.medium,
+        errorBuilder: (_, _, _) => _MissingPlaceholder(colors: colors),
+      );
     }
     return const SizedBox.expand();
   }
@@ -296,6 +294,52 @@ class AppPhotoThumb extends StatelessWidget {
     final int cap = AppConstants.images.previewEdge;
     return px > cap ? cap : px;
   }
+}
+
+// A cached path is checked asynchronously once, rather than blocking every
+// scrolling rebuild with two filesystem queries. A new path starts a new check.
+class _ThumbnailAvailability extends StatefulWidget {
+  const _ThumbnailAvailability({required this.path, required this.builder});
+
+  final String path;
+  final Widget Function(BuildContext, bool?) builder;
+
+  @override
+  State<_ThumbnailAvailability> createState() => _ThumbnailAvailabilityState();
+}
+
+class _ThumbnailAvailabilityState extends State<_ThumbnailAvailability> {
+  late Future<bool> _exists;
+
+  @override
+  void initState() {
+    super.initState();
+    _exists = _read();
+  }
+
+  @override
+  void didUpdateWidget(_ThumbnailAvailability oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.path != widget.path) {
+      _exists = _read();
+    }
+  }
+
+  Future<bool> _read() async {
+    try {
+      return await File(widget.path).exists();
+    } on FileSystemException {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<bool>(
+    key: ValueKey<String>(widget.path),
+    future: _exists,
+    builder: (BuildContext context, AsyncSnapshot<bool> snapshot) =>
+        widget.builder(context, snapshot.data),
+  );
 }
 
 /// A thumbnail corner control: a [Space.x7] square flush in [corner], filled
@@ -417,7 +461,7 @@ class _TypeBadge extends StatelessWidget {
                 Icon(type.icon, size: Space.x4, color: colors.onSurface),
                 const SizedBox(width: Space.x1),
                 Text(
-                  type.badgeLabel,
+                  type.badgeLabelFor(Copy.of(context)),
                   maxLines: 1,
                   style: AppText.caption.copyWith(color: colors.onSurface),
                 ),
@@ -496,6 +540,8 @@ class _MissingPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return ColoredBox(
       color: colors.surfaceVariant,
       child: Padding(
@@ -507,7 +553,7 @@ class _MissingPlaceholder extends StatelessWidget {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                Copy.missingPhoto,
+                localCopy.missingPhoto,
                 maxLines: 1,
                 style: AppText.caption.copyWith(color: colors.onSurface),
               ),

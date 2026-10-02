@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
@@ -101,7 +100,7 @@ typedef _ThumbSource = ({String sha256, String storagePath});
 /// Cached thumbnail path for a stored photo, or null when it cannot be made.
 final _thumbPathProvider = FutureProvider.autoDispose
     .family<PhotoAsset?, _ThumbSource>((Ref ref, _ThumbSource photo) async {
-      if (kIsWeb) {
+      if (ref.watch(thumbnailsFromBytesProvider)) {
         final Result<Uint8List> bytes = await ref
             .watch(photoThumbnailsProvider)
             .bytesFor(

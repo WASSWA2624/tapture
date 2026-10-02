@@ -24,6 +24,7 @@ class AppDialog extends StatelessWidget {
     this.confirmEnabled = true,
     this.alternativeLabel,
     this.onAlternative,
+    this.cancellable = true,
   }) : _alert = false;
 
   /// Creates an alert with a single way out.
@@ -32,13 +33,14 @@ class AppDialog extends StatelessWidget {
     required this.title,
     required this.message,
     this.onConfirm,
-  }) : confirmLabel = Copy.ok,
+  }) : confirmLabel = '',
        destructive = false,
        onCancel = null,
        extra = null,
        confirmEnabled = true,
        alternativeLabel = null,
        onAlternative = null,
+       cancellable = false,
        _alert = true;
 
   /// Heading; also the semantic name of the route (FE-A11Y-02).
@@ -71,10 +73,16 @@ class AppDialog extends StatelessWidget {
   /// Runs when [alternativeLabel] is pressed. Null pops `false`.
   final VoidCallback? onAlternative;
 
+  /// When false there is no Cancel: the question must be answered with
+  /// [confirmLabel] or [alternativeLabel].
+  final bool cancellable;
+
   final bool _alert;
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     return Dialog(
       backgroundColor: colors.surface,
@@ -113,9 +121,9 @@ class AppDialog extends StatelessWidget {
                   spacing: Space.x2,
                   runSpacing: Space.x2,
                   children: <Widget>[
-                    if (!_alert)
+                    if (cancellable)
                       AppButton(
-                        label: Copy.cancel,
+                        label: localCopy.cancel,
                         variant: AppButtonVariant.text,
                         onPressed: () => _cancel(context),
                       ),
@@ -126,7 +134,7 @@ class AppDialog extends StatelessWidget {
                         onPressed: () => _alternative(context),
                       ),
                     AppButton(
-                      label: confirmLabel,
+                      label: _alert ? localCopy.ok : confirmLabel,
                       variant: destructive
                           ? AppButtonVariant.destructive
                           : AppButtonVariant.primary,
@@ -204,12 +212,31 @@ Future<bool> showAppConfirm(
   String? alternativeLabel,
   VoidCallback? onAlternative,
   bool useRootNavigator = true,
+  bool dismissible = true,
 }) async {
   final bool? result = await showDialog<bool>(
     context: context,
     useRootNavigator: useRootNavigator,
-    barrierDismissible: true,
+    barrierDismissible: dismissible,
     builder: (BuildContext dialogContext) {
+      if (!dismissible) {
+        // An answer is required: no Cancel, no barrier and no Back.
+        return PopScope(
+          canPop: false,
+          child: AppDialog.confirm(
+            title: title,
+            message: message,
+            confirmLabel: confirmLabel,
+            destructive: destructive,
+            cancellable: false,
+            alternativeLabel: alternativeLabel,
+            onAlternative: () {
+              onAlternative?.call();
+              Navigator.of(dialogContext).pop(false);
+            },
+          ),
+        );
+      }
       if (typedValue != null && typedValue.isNotEmpty) {
         return _TypedConfirm(
           title: title,

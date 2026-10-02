@@ -5,7 +5,13 @@ part of 'app_progress_steps.dart';
 class ProgressStep {
   /// Creates a step. [detail] is a second line; omitted, the state name is
   /// shown so colour is never the only signal (FE-A11Y-05).
-  const ProgressStep({required this.label, required this.state, this.detail});
+  const ProgressStep({
+    required this.label,
+    required this.state,
+    this.detail,
+    this.localizedLabel,
+    this.localizedDetail,
+  });
 
   /// What this step does, shown as the primary line.
   final String label;
@@ -16,14 +22,23 @@ class ProgressStep {
   /// Optional supporting line (elapsed time, error reason).
   final String? detail;
 
+  /// Semantic label, rendered by the progress widget's current locale.
+  final LocalizedMessage? localizedLabel;
+
+  /// Semantic supporting text retained across background state changes.
+  final LocalizedMessage? localizedDetail;
+
   @override
   bool operator ==(Object other) {
     return other is ProgressStep &&
         other.label == label &&
         other.state == state &&
-        other.detail == detail;
+        other.detail == detail &&
+        other.localizedLabel == localizedLabel &&
+        other.localizedDetail == localizedDetail;
   }
 
   @override
-  int get hashCode => Object.hash(label, state, detail);
+  int get hashCode =>
+      Object.hash(label, state, detail, localizedLabel, localizedDetail);
 }

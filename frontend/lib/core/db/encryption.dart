@@ -9,8 +9,10 @@ import 'package:drift/native.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite3_raw;
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/security/authenticated_file_cipher.dart';
 import 'package:tapture/core/security/secure_storage.dart';
 
 part 'encryption_codec.dart';
@@ -42,7 +44,11 @@ abstract interface class DatabaseEncryption {
 }
 
 /// File executor that decrypts when ciphertext is present, then re-encrypts
-/// on close so the working SQLite file is not what remains at rest.
+/// on close so the working SQLite file is not what remains at rest. With a
+/// key and encryption on (a ciphertext exists, or [databaseKeyAtLaunch]
+/// turned it on for a fresh install), the working file is re-encrypted on
+/// close. Every connection runs on a background isolate, so a large import
+/// never blocks the UI thread (FE-PERF-02).
 Future<QueryExecutor> resolveFileExecutor({
   required Directory directory,
   String? encryptionKey,
@@ -50,12 +56,20 @@ Future<QueryExecutor> resolveFileExecutor({
   final File working = File('${directory.path}/$_plainName');
   final File enc = File('${directory.path}/$_encName');
   final String? key = encryptionKey;
+  if ((enc.existsSync() || _encryptionOn(directory)) &&
+      (key == null || key.isEmpty)) {
+    // A crash may leave the working file beside its encrypted snapshot. The
+    // leftover is still protected by the same key requirement.
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheDatabaseIsEncryptedAndTheKey,
+      localizedRecovery: Copy.messages.failureRestoreTheKeyFromABackupThen,
+    );
+  }
   if (enc.existsSync() && !_looksLikeSqlite(working)) {
     if (key == null || key.isEmpty) {
-      throw const StorageFailure(
-        message: 'The database is encrypted and the key is missing.',
-        recoveryAction:
-            'Restore the key from a backup, then open the app again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureTheDatabaseIsEncryptedAndTheKey,
+        localizedRecovery: Copy.messages.failureRestoreTheKeyFromABackupThen,
       );
     }
     _deleteFile(working);
@@ -67,27 +81,91 @@ Future<QueryExecutor> resolveFileExecutor({
     );
     if (decrypted is FailureResult<void> || !_looksLikeSqlite(working)) {
       _deleteFile(working);
-      throw const StorageFailure(
-        message: 'The database key is missing or unreadable.',
-        recoveryAction:
-            'Restore the key from a backup, then open the app again.',
+      throw StorageFailure(
+        localizedMessage:
+            Copy.messages.failureTheDatabaseKeyIsMissingOrUnreadable,
+        localizedRecovery: Copy.messages.failureRestoreTheKeyFromABackupThen,
       );
     }
-    return NativeDatabase(
-      working,
-      setup: _configureSqlite,
-    ).interceptWith(_ReencryptOnClose(working: working, enc: enc, key: key));
+    return _reencrypting(working: working, enc: enc, key: key);
   }
-  if (_looksLikeSqlite(working) &&
-      enc.existsSync() &&
-      key != null &&
-      key.isNotEmpty) {
-    return NativeDatabase(
-      working,
-      setup: _configureSqlite,
-    ).interceptWith(_ReencryptOnClose(working: working, enc: enc, key: key));
+  if (key != null &&
+      key.isNotEmpty &&
+      (enc.existsSync() || _encryptionOn(directory))) {
+    if (enc.existsSync()) {
+      final Result<void> verified = await runIsolate(_verifyEncryptionKey, (
+        path: enc.path,
+        key: key,
+      ));
+      if (verified is FailureResult<void>) {
+        throw _lostKey;
+      }
+    }
+    return _reencrypting(working: working, enc: enc, key: key);
   }
   return NativeDatabase.createInBackground(working, setup: _configureSqlite);
+}
+
+/// The key the app database opens with at launch, read from [storage].
+///
+/// An existing key is returned as it is, so an encrypted database reopens.
+/// A fresh install — no database file under [directory] yet — gets a new key
+/// here and has encryption turned on, so its file is encrypted at rest from
+/// the first close. An existing unencrypted database gets no key and keeps
+/// opening as it is. A key that cannot be read or stored opens without one:
+/// never a new key over one that was lost, and never a wipe.
+Future<String?> databaseKeyAtLaunch({
+  required SecureStorage storage,
+  required Directory directory,
+}) async {
+  final Result<String?> stored = await storage.readSecret(
+    SecretKey.databaseEncryption,
+  );
+  switch (stored) {
+    case FailureResult<String?>():
+      return null;
+    case Success<String?>(:final String? value):
+      if (value != null && value.isNotEmpty) {
+        return value;
+      }
+  }
+  final bool fresh =
+      !File('${directory.path}/$_plainName').existsSync() &&
+      !File('${directory.path}/$_encName').existsSync();
+  if (!fresh) {
+    return null;
+  }
+  final String key = _newKey();
+  final Result<void> written = await storage.putSecret(
+    SecretKey.databaseEncryption,
+    key,
+  );
+  if (written is FailureResult<void>) {
+    return null;
+  }
+  File('${directory.path}/$_stateName').writeAsStringSync(_stateEnabled);
+  return key;
+}
+
+QueryExecutor _reencrypting({
+  required File working,
+  required File enc,
+  required String key,
+}) {
+  return NativeDatabase.createInBackground(
+    working,
+    setup: _configureSqlite,
+  ).interceptWith(_ReencryptOnClose(working: working, enc: enc, key: key));
+}
+
+/// Whether the recorded state under [directory] says encryption is on.
+bool _encryptionOn(Directory directory) {
+  final File state = File('${directory.path}/$_stateName');
+  try {
+    return state.existsSync() && state.readAsStringSync() == _stateEnabled;
+  } on FileSystemException {
+    return false;
+  }
 }
 
 final class _DatabaseEncryption implements DatabaseEncryption {
@@ -104,7 +182,10 @@ final class _DatabaseEncryption implements DatabaseEncryption {
 
   @override
   Future<Result<bool>> isEnabled() async {
-    return Success<bool>(_enc.existsSync() && !_looksLikeSqlite(_plain));
+    return Success<bool>(
+      _encryptionOn(directory) ||
+          (_enc.existsSync() && _looksLikeEncrypted(_enc)),
+    );
   }
 
   @override
@@ -129,10 +210,12 @@ final class _DatabaseEncryption implements DatabaseEncryption {
   @override
   Future<Result<void>> disable({required String confirmation}) async {
     if (confirmation != kDisableEncryptionConfirmation) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         ValidationFailure(
-          message: 'Type DISABLE ENCRYPTION to turn encryption off.',
-          recoveryAction: 'Enter the confirmation exactly, then try again.',
+          localizedMessage:
+              Copy.messages.failureTypeDISABLEENCRYPTIONToTurnEncryptionOff,
+          localizedRecovery:
+              Copy.messages.failureEnterTheConfirmationExactlyThenTryAgain,
         ),
       );
     }
@@ -144,7 +227,7 @@ final class _DatabaseEncryption implements DatabaseEncryption {
     }
     final String? key = stored.getOrElse(() => null);
     if (key == null || key.isEmpty) {
-      return const FailureResult<void>(_lostKey);
+      return FailureResult<void>(_lostKey);
     }
     if (_looksLikeSqlite(_plain) || !_enc.existsSync()) {
       return _clearEncryption(keyHeld: true);
@@ -160,7 +243,7 @@ final class _DatabaseEncryption implements DatabaseEncryption {
     );
     if (decrypted is FailureResult<void> || !_looksLikeSqlite(decoded)) {
       _deleteFile(decoded);
-      return const FailureResult<void>(_lostKey);
+      return FailureResult<void>(_lostKey);
     }
     _checkpoint(decoded);
     if (_plain.existsSync()) {
@@ -205,11 +288,10 @@ final class _DatabaseEncryption implements DatabaseEncryption {
       _deleteFile(_enc);
     }
     if (!_looksLikeSqlite(_plain)) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message: 'There is no database to encrypt.',
-          recoveryAction:
-              'Open the app once so a database is created, then try again.',
+          localizedMessage: Copy.messages.failureThereIsNoDatabaseToEncrypt,
+          localizedRecovery: Copy.messages.failureOpenTheAppOnceSoADatabase,
         ),
       );
     }
@@ -225,20 +307,20 @@ final class _DatabaseEncryption implements DatabaseEncryption {
     );
     if (copied is FailureResult<void>) {
       _deleteFile(_partial);
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message: 'The database could not be encrypted.',
-          recoveryAction: 'Free up space, then try again.',
+          localizedMessage: Copy.messages.failureTheDatabaseCouldNotBeEncrypted,
+          localizedRecovery: Copy.messages.failureFreeUpSpaceThenTryAgain,
         ),
       );
     }
     if (!await _partialMatches(key, before)) {
       _deleteFile(_partial);
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message: 'The encrypted copy did not match the original.',
-          recoveryAction:
-              'Try encrypting again. The original database was not changed.',
+          localizedMessage: Copy.messages.failureTheEncryptedCopyDidNotMatchThe,
+          localizedRecovery:
+              Copy.messages.failureTryEncryptingAgainTheOriginalDatabaseWas,
         ),
       );
     }
@@ -249,7 +331,7 @@ final class _DatabaseEncryption implements DatabaseEncryption {
     _deleteFile(_plain);
     _deleteSidecars(_plain);
     _deleteFile(_bak);
-    _writeState('enabled');
+    _writeState(_stateEnabled);
     onProgress(1);
     return const Success<void>(null);
   }
@@ -258,14 +340,14 @@ final class _DatabaseEncryption implements DatabaseEncryption {
     if (_looksLikeSqlite(_plain)) {
       _checkpoint(_plain);
       if (!await _encMatches(key, _rowCounts(_plain))) {
-        return const FailureResult<void>(_lostKey);
+        return FailureResult<void>(_lostKey);
       }
       _deleteFile(_plain);
       _deleteSidecars(_plain);
     }
     _deleteFile(_bak);
     _deleteFile(_partial);
-    _writeState('enabled');
+    _writeState(_stateEnabled);
     return const Success<void>(null);
   }
 
@@ -348,9 +430,9 @@ final class _ReencryptOnClose extends QueryInterceptor {
     );
     if (copied is FailureResult<void>) {
       _deleteFile(partial);
-      throw const StorageFailure(
-        message: 'The database could not be encrypted.',
-        recoveryAction: 'Free up space, then try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureTheDatabaseCouldNotBeEncrypted,
+        localizedRecovery: Copy.messages.failureFreeUpSpaceThenTryAgain,
       );
     }
     final File verify = File('${working.path}.verify');
@@ -368,10 +450,10 @@ final class _ReencryptOnClose extends QueryInterceptor {
     _deleteFile(verify);
     if (!matched) {
       _deleteFile(partial);
-      throw const StorageFailure(
-        message: 'The encrypted copy did not match the original.',
-        recoveryAction:
-            'Keep the working database. Free up space, then close again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureTheEncryptedCopyDidNotMatchThe,
+        localizedRecovery:
+            Copy.messages.failureKeepTheWorkingDatabaseFreeUpSpace,
       );
     }
     _deleteFile(enc);
@@ -381,8 +463,7 @@ final class _ReencryptOnClose extends QueryInterceptor {
   }
 }
 
-const StorageFailure _lostKey = StorageFailure(
-  message: 'The database key is missing or unreadable.',
-  recoveryAction:
-      'Restore the key from a backup. The encrypted database was not changed.',
+final StorageFailure _lostKey = StorageFailure(
+  localizedMessage: Copy.messages.failureTheDatabaseKeyIsMissingOrUnreadable,
+  localizedRecovery: Copy.messages.failureRestoreTheKeyFromABackupThe,
 );

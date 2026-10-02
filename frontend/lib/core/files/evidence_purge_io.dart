@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
@@ -74,7 +75,7 @@ final class _DeviceEvidencePurge implements EvidencePurge {
     } on Failure catch (failure) {
       return FailureResult<int>(failure);
     } on Object {
-      return const FailureResult<int>(_notRemoved);
+      return FailureResult<int>(_notRemoved);
     }
   }
 
@@ -101,7 +102,7 @@ final class _DeviceEvidencePurge implements EvidencePurge {
     } on Failure catch (failure) {
       return FailureResult<int>(failure);
     } on Object {
-      return const FailureResult<int>(_notRemoved);
+      return FailureResult<int>(_notRemoved);
     }
   }
 }
@@ -159,7 +160,7 @@ String _nameOf(String path) {
   return slashed.substring(slashed.lastIndexOf('/') + 1);
 }
 
-const StorageFailure _notRemoved = StorageFailure(
-  message: 'A deleted record’s files could not be removed from this device.',
-  recoveryAction: 'Allow storage access; the purge tries again next launch.',
+final StorageFailure _notRemoved = StorageFailure(
+  localizedMessage: Copy.messages.failureADeletedRecordSFilesCouldNot,
+  localizedRecovery: Copy.messages.failureAllowStorageAccessThePurgeTriesAgain,
 );

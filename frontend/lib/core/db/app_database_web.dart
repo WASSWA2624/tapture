@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift/wasm.dart';
 import 'package:sqlite3/wasm.dart';
+import 'package:tapture/core/security/secure_storage.dart';
 
 /// Served from `web/sqlite3.wasm`.
 const String _sqlite3Asset = 'sqlite3.wasm';
@@ -28,14 +29,19 @@ QueryExecutor openMemoryExecutor() {
 }
 
 /// Persistent wasm database. [directoryPath] becomes the IndexedDB/OPFS name
-/// when set. [encryptionKey] is native-only (task 064) and unused here.
-QueryExecutor openFileExecutor({String? directoryPath, String? encryptionKey}) {
+/// when set. [encryptionKey] and [keyStore] are native-only (task 004) and
+/// ignored here: the browser keeps the database in its own storage.
+QueryExecutor openFileExecutor({
+  String? directoryPath,
+  String? encryptionKey,
+  SecureStorage? keyStore,
+}) {
   return LazyDatabase(() async {
     final WasmDatabaseResult opened = await WasmDatabase.open(
       databaseName: _databaseNameFor(directoryPath),
       sqlite3Uri: Uri.parse(_sqlite3Asset),
       driftWorkerUri: Uri.parse(_workerAsset),
-      localSetup: encryptionKey == null ? _configure : _configure,
+      localSetup: _configure,
     );
     return opened.resolvedExecutor;
   });

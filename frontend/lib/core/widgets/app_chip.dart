@@ -50,9 +50,9 @@ class AppChip extends StatelessWidget {
     final Widget pill = Material(
       color: background,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Radii.pill),
+        borderRadius: BorderRadius.circular(Radii.sm),
         side: BorderSide(
-          color: colors.outline,
+          color: selected ? background : colors.outline,
           width: Space.x0 / 2,
           strokeAlign: BorderSide.strokeAlignInside,
         ),
@@ -81,7 +81,7 @@ class AppChip extends StatelessWidget {
           onTap: onTap,
           excludeFromSemantics: true,
           customBorder: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Radii.pill),
+            borderRadius: BorderRadius.circular(Radii.sm),
           ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(
@@ -98,6 +98,8 @@ class AppChip extends StatelessWidget {
   Widget _labelRow(Color foreground) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         final bool bounded = constraints.maxWidth.isFinite;
         final Widget text = Text(
           label,
@@ -119,8 +121,8 @@ class AppChip extends StatelessWidget {
             if (onDismiss != null)
               AppIconButton(
                 icon: AppIcons.close,
-                semanticLabel: Copy.dismissChip(label),
-                tooltip: Copy.dismissChip(label),
+                semanticLabel: localCopy.dismissChip(label),
+                tooltip: localCopy.dismissChip(label),
                 onPressed: onDismiss,
               ),
           ],

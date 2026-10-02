@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -132,9 +133,9 @@ void _ensureRelativePath(Insertable<Photo> row) {
     return;
   }
   if (path.isEmpty || _isAbsolutePath(path)) {
-    throw const StorageFailure(
-      message: 'The file path must stay inside the project folder.',
-      recoveryAction: 'Save the file under the project folder and try again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheFilePathMustStayInsideThe,
+      localizedRecovery: Copy.messages.failureSaveTheFileUnderTheProjectFolder,
     );
   }
 }

@@ -79,6 +79,8 @@ class _AppDateFieldState extends State<AppDateField> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final DateTime? value = widget.value;
     final bool showAuto = widget.autoFilled && value != null;
     return AppTextField(
@@ -86,11 +88,11 @@ class _AppDateFieldState extends State<AppDateField> {
       controller: _controller,
       enabled: widget.enabled,
       readOnly: true,
-      helper: showAuto ? Copy.autoFilled : null,
+      helper: showAuto ? localCopy.autoFilled : null,
       prefix: showAuto
           ? Icon(
               AppIcons.ai,
-              semanticLabel: Copy.autoFilled,
+              semanticLabel: localCopy.autoFilled,
               color: context.colors.secondary,
               size: Space.x6,
             )
@@ -99,8 +101,8 @@ class _AppDateFieldState extends State<AppDateField> {
           ? null
           : AppIconButton(
               icon: AppIcons.clear,
-              semanticLabel: Copy.clearField(widget.label),
-              tooltip: Copy.clearField(widget.label),
+              semanticLabel: localCopy.clearField(widget.label),
+              tooltip: localCopy.clearField(widget.label),
               onPressed: () => widget.onChanged(null),
             ),
       onTap: widget.enabled ? () => unawaited(_open()) : null,

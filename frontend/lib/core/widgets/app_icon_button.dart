@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 /// An icon-only action that cannot be constructed without a name.
 ///
@@ -52,7 +53,12 @@ class AppIconButton extends StatelessWidget {
           )
         : BorderSide.none;
     return IconButton(
-      onPressed: onPressed,
+      onPressed: onPressed == null
+          ? null
+          : () {
+              TrialReportScope.recordAction(context, semanticLabel);
+              onPressed!();
+            },
       tooltip: tooltip,
       isSelected: selected,
       padding: EdgeInsets.zero,

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -105,16 +106,16 @@ Failure? keyFailure(String key) {
   if (BlobStore.isValidKey(key)) {
     return null;
   }
-  return const ValidationFailure(
-    message: 'Tapture could not name that stored file.',
-    recoveryAction: 'Try again. If it keeps happening, export the log.',
+  return ValidationFailure(
+    localizedMessage: Copy.messages.failureTaptureCouldNotNameThatStoredFile,
+    localizedRecovery: Copy.messages.failureTryAgainIfItKeepsHappeningExport,
   );
 }
 
 /// The failure a backend returns when the platform refuses a read or write.
 Failure storeFailure() {
-  return const StorageFailure(
-    message: 'Tapture could not save that on this device.',
-    recoveryAction: 'Free some space, then try again.',
+  return StorageFailure(
+    localizedMessage: Copy.messages.failureTaptureCouldNotSaveThatOnThis,
+    localizedRecovery: Copy.messages.failureFreeSomeSpaceThenTryAgain,
   );
 }

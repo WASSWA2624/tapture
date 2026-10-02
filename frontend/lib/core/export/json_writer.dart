@@ -8,18 +8,20 @@ import 'value_formatter.dart';
 final class JsonWriter {
   /// Writes [request] by appending one record at a time.
   static String write(ExportRequest request) {
+    return chunks(request).join();
+  }
+
+  /// Encodes one record at a time without retaining the finished document.
+  static Iterable<String> chunks(ExportRequest request) sync* {
     const ExportValueFormatter formatter = ExportValueFormatter(<String>{});
-    final StringBuffer buffer = StringBuffer('{"records":[');
+    yield '{"records":[';
     for (var index = 0; index < request.records.length; index++) {
       if (index > 0) {
-        buffer.write(',');
+        yield ',';
       }
-      buffer.write(_record(request, formatter, request.records[index]));
+      yield _record(request, formatter, request.records[index]);
     }
-    buffer.write('],"markedIncomplete":');
-    buffer.write(request.markedIncomplete ? 'true' : 'false');
-    buffer.write('}');
-    return buffer.toString();
+    yield '],"markedIncomplete":${request.markedIncomplete}}';
   }
 
   static String _record(

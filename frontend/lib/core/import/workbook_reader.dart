@@ -133,14 +133,14 @@ Object _readWorkbookInIsolate(String path) {
 Result<WorkbookSnapshot> _snapshotOf(Map<String, Object?> raw) {
   final Object? status = raw['status'];
   if (status == _passwordStatus) {
-    return const FailureResult<WorkbookSnapshot>(_password);
+    return FailureResult<WorkbookSnapshot>(_password);
   }
   if (status != _okStatus) {
-    return const FailureResult<WorkbookSnapshot>(_corrupt);
+    return FailureResult<WorkbookSnapshot>(_corrupt);
   }
   final Object? sheetsRaw = raw['sheets'];
   if (sheetsRaw is! List) {
-    return const FailureResult<WorkbookSnapshot>(_corrupt);
+    return FailureResult<WorkbookSnapshot>(_corrupt);
   }
   return Success<WorkbookSnapshot>((
     sheets: <WorkbookSheet>[
@@ -697,14 +697,14 @@ final RegExp _dimensionRef = RegExp(r'<dimension[^>]*ref="([^"]*)"');
 final RegExp _mergeRef = RegExp(r'<mergeCell[^>]*ref="([^"]*)"');
 final RegExp _cellTag = RegExp(r'<c\b([^>]*)>([\s\S]*?)</c>');
 
-const ValidationFailure _password = ValidationFailure(
-  message: Copy.workbookPassword,
-  recoveryAction: Copy.workbookPasswordRecovery,
+final ValidationFailure _password = ValidationFailure(
+  localizedMessage: Copy.messages.workbookPassword,
+  localizedRecovery: Copy.messages.workbookPasswordRecovery,
 );
 
-const CorruptionFailure _corrupt = CorruptionFailure(
-  message: Copy.workbookCorrupt,
-  recoveryAction: Copy.workbookCorruptRecovery,
+final CorruptionFailure _corrupt = CorruptionFailure(
+  localizedMessage: Copy.messages.workbookCorrupt,
+  localizedRecovery: Copy.messages.workbookCorruptRecovery,
 );
 
 final class _Protected implements Exception {

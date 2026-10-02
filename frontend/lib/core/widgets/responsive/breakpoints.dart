@@ -33,11 +33,21 @@ const double _compactMax = 600;
 /// Expanded begins at this width, in logical pixels.
 const double _expandedMin = 1024;
 
+/// A window is short below this height per unit of text scale, in logical
+/// pixels: too little room beside a fixed header for panes that scroll apart.
+const double _shortMax = 360;
+
 /// Size class and per-class values from the window, never from a raw width
 /// (FE-RESP-02).
 extension SizeClassX on BuildContext {
   /// The size class of the current window.
   SizeClass get sizeClass => SizeClass.fromWidth(MediaQuery.sizeOf(this).width);
+
+  /// Whether the window is short once text is scaled, so a page should
+  /// scroll as one rather than split into panes under a fixed header.
+  bool get isShortForText =>
+      MediaQuery.sizeOf(this).height / MediaQuery.textScalerOf(this).scale(1) <
+      _shortMax;
 
   /// Picks the value for the current class, falling back to the next smaller
   /// one when a larger class is omitted.

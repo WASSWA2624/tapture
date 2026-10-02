@@ -4,13 +4,37 @@ part of 'failure.dart';
 final class CancelledFailure extends Failure {
   /// Creates a cancelled failure.
   const CancelledFailure({
-    this.message = 'The action was cancelled.',
-    this.recoveryAction = 'Start the action again if you still need it.',
-  });
+    String? message,
+    String? recoveryAction,
+    LocalizedMessage? localizedMessage,
+    LocalizedMessage? localizedRecovery,
+  }) : _message = message,
+       _recoveryAction = recoveryAction,
+       super(
+         localizedMessage:
+             localizedMessage ??
+             (message == null
+                 ? const LocalizedMessage(
+                     key: 'failureCancelledMessage',
+                     fallback: "The action was cancelled.",
+                   )
+                 : null),
+         localizedRecovery:
+             localizedRecovery ??
+             (recoveryAction == null
+                 ? const LocalizedMessage(
+                     key: 'failureCancelledRecovery',
+                     fallback: "Start the action again if you still need it.",
+                   )
+                 : null),
+       );
+
+  final String? _message;
+  final String? _recoveryAction;
 
   @override
-  final String message;
+  String get message => _message ?? localizedMessage!.fallback;
 
   @override
-  final String recoveryAction;
+  String get recoveryAction => _recoveryAction ?? localizedRecovery!.fallback;
 }

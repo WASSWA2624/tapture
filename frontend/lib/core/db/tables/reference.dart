@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -102,10 +103,9 @@ Future<Result<ReferenceDatasetRow>> importReferenceDataset(
     final String? sourceFile = _stringOf(dataset, 'source_file');
     final ReferenceScope? scope = _scopeOf(dataset);
     if (sourceFile == null || scope == null) {
-      throw const StorageFailure(
-        message: 'A dataset import needs a source file and a scope.',
-        recoveryAction:
-            'Choose the file and where it belongs, then import again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureADatasetImportNeedsASourceFile,
+        localizedRecovery: Copy.messages.failureChooseTheFileAndWhereItBelongs,
       );
     }
     final String? projectId = _stringOf(dataset, 'project_id');
@@ -305,15 +305,15 @@ void _ensureDatasetWrite(Insertable<ReferenceDatasetRow> row) {
   final String? projectId = _stringOf(row, 'project_id');
   if (scope == ReferenceScope.project &&
       (projectId == null || projectId.isEmpty)) {
-    throw const StorageFailure(
-      message: 'A project dataset needs a project.',
-      recoveryAction: 'Choose the project, then import again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureAProjectDatasetNeedsAProject,
+      localizedRecovery: Copy.messages.failureChooseTheProjectThenImportAgain,
     );
   }
   if (scope == ReferenceScope.global && projectId != null) {
-    throw const StorageFailure(
-      message: 'A global dataset cannot belong to one project.',
-      recoveryAction: 'Clear the project, then import again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureAGlobalDatasetCannotBelongToOne,
+      localizedRecovery: Copy.messages.failureClearTheProjectThenImportAgain,
     );
   }
 }
@@ -325,9 +325,9 @@ void _ensureJsonArray(Expression<Object>? expression) {
   }
   final Object decoded = _decodeJson(raw);
   if (decoded is! List) {
-    throw const StorageFailure(
-      message: 'Dataset columns must be a JSON array.',
-      recoveryAction: 'Fix the column list and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheDatasetColumnsAreNotInA,
+      localizedRecovery: Copy.messages.failureFixTheColumnListAndSaveAgain,
     );
   }
 }
@@ -339,9 +339,9 @@ void _ensureJsonObject(Expression<Object>? expression) {
   }
   final Object decoded = _decodeJson(raw);
   if (decoded is! Map) {
-    throw const StorageFailure(
-      message: 'A reference row must be a JSON object.',
-      recoveryAction: 'Fix the row values and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureAReferenceRowIsNotInA,
+      localizedRecovery: Copy.messages.failureFixTheRowValuesAndSaveAgain,
     );
   }
 }
@@ -350,9 +350,9 @@ Object _decodeJson(String raw) {
   try {
     return jsonDecode(raw) as Object;
   } on FormatException {
-    throw const StorageFailure(
-      message: 'That JSON is not valid.',
-      recoveryAction: 'Fix the JSON and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureThatEntryCouldNotBeRead,
+      localizedRecovery: Copy.messages.failureChangeItThenSaveAgain,
     );
   }
 }

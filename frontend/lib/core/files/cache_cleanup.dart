@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
@@ -37,84 +39,107 @@ final class _CacheCleanup implements CacheCleanup {
         case FailureResult<Directory>(:final failure):
           return FailureResult<int>(failure);
         case Success<Directory>(:final value):
-          return Success<int>(
-            await _prune(
-              value,
-              maxAge: maxAge ?? AppConstants.images.cacheMaxAge,
-              maxBytes: maxBytes ?? AppConstants.images.cacheMaxBytes,
-            ),
+          // Walked and pruned on a worker isolate, so the launch prune never
+          // stalls a frame (FE-PERF-02).
+          final Result<int> pruned = await runIsolate(_pruneInIsolate, (
+            path: value.path,
+            maxAge: maxAge ?? AppConstants.images.cacheMaxAge,
+            maxBytes: maxBytes ?? AppConstants.images.cacheMaxBytes,
+            now: _clock.nowUtc(),
+          ));
+          return pruned.fold(
+            (Failure _) => FailureResult<int>(_notCleaned),
+            Success<int>.new,
           );
       }
     } on Failure catch (failure) {
       return FailureResult<int>(failure);
     } on Object {
-      return const FailureResult<int>(
-        StorageFailure(
-          message: 'The cache could not be cleaned on this device.',
-          recoveryAction: 'Free space or allow storage access, then try again.',
-        ),
-      );
+      return FailureResult<int>(_notCleaned);
     }
   }
+}
 
-  Future<int> _prune(
-    Directory cache, {
-    required Duration maxAge,
-    required int maxBytes,
-  }) async {
-    final List<File> files = await _filesInside(cache);
-    files.sort((File a, File b) {
-      return a.statSync().modified.compareTo(b.statSync().modified);
-    });
-    final DateTime now = _clock.nowUtc();
-    var reclaimed = 0;
-    final List<File> remaining = <File>[];
-    for (final File file in files) {
-      final DateTime modified = file.statSync().modified.toUtc();
-      if (now.difference(modified) > maxAge) {
-        reclaimed += await _remove(file);
-      } else {
-        remaining.add(file);
-      }
+final StorageFailure _notCleaned = StorageFailure(
+  localizedMessage: Copy.messages.failureTheCacheCouldNotBeCleanedOn,
+  localizedRecovery: Copy.messages.failureFreeSpaceOrAllowStorageAccessThen,
+);
+
+/// Isolate entry: prunes the cache at `path` by age against `now`, then by
+/// size, oldest first. Never leaves the folder.
+Future<int> _pruneInIsolate(
+  ({String path, Duration maxAge, int maxBytes, DateTime now}) job,
+) {
+  return _prune(
+    Directory(job.path),
+    maxAge: job.maxAge,
+    maxBytes: job.maxBytes,
+    now: job.now,
+  );
+}
+
+Future<int> _prune(
+  Directory cache, {
+  required Duration maxAge,
+  required int maxBytes,
+  required DateTime now,
+}) async {
+  final List<_CacheEntry> files = await _filesInside(cache);
+  files.sort((_CacheEntry a, _CacheEntry b) {
+    return a.stat.modified.compareTo(b.stat.modified);
+  });
+  var reclaimed = 0;
+  final List<_CacheEntry> remaining = <_CacheEntry>[];
+  for (final _CacheEntry entry in files) {
+    final DateTime modified = entry.stat.modified.toUtc();
+    if (now.difference(modified) > maxAge) {
+      reclaimed += await _remove(entry.file);
+    } else {
+      remaining.add(entry);
     }
-    var total = 0;
-    for (final File file in remaining) {
-      total += file.statSync().size;
-    }
-    for (final File file in remaining) {
-      if (total <= maxBytes) {
-        break;
-      }
-      final int size = file.statSync().size;
-      final int gone = await _remove(file);
-      if (gone > 0) {
-        total -= size;
-        reclaimed += gone;
-      }
-    }
-    return reclaimed;
   }
+  var total = 0;
+  for (final _CacheEntry entry in remaining) {
+    total += entry.stat.size;
+  }
+  for (final _CacheEntry entry in remaining) {
+    if (total <= maxBytes) {
+      break;
+    }
+    final int size = entry.stat.size;
+    final int gone = await _remove(entry.file);
+    if (gone > 0) {
+      total -= size;
+      reclaimed += gone;
+    }
+  }
+  return reclaimed;
+}
 
-  Future<List<File>> _filesInside(Directory cache) async {
-    final String root = _slash(cache.absolute.path);
-    final List<File> files = <File>[];
-    if (!cache.existsSync()) {
-      return files;
-    }
-    await for (final FileSystemEntity entity in cache.list(
-      recursive: true,
-      followLinks: false,
-    )) {
-      if (entity is! File) {
-        continue;
-      }
-      if (!_isInside(root, entity)) {
-        continue;
-      }
-      files.add(entity);
-    }
+typedef _CacheEntry = ({File file, FileStat stat});
+
+Future<List<_CacheEntry>> _filesInside(Directory cache) async {
+  final String root = _slash(cache.absolute.path);
+  final List<_CacheEntry> files = <_CacheEntry>[];
+  if (!cache.existsSync()) {
     return files;
   }
+  await for (final FileSystemEntity entity in cache.list(
+    recursive: true,
+    followLinks: false,
+  )) {
+    if (entity is! File) {
+      continue;
+    }
+    if (!_isInside(root, entity)) {
+      continue;
+    }
+    final FileStat stat = await entity.stat();
+    if (stat.type == FileSystemEntityType.file) {
+      files.add((file: entity, stat: stat));
+    }
+  }
+  return files;
 }
 
 Future<int> _remove(File file) async {

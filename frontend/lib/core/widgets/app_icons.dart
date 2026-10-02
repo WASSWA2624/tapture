@@ -21,6 +21,10 @@ abstract final class AppIcons {
   /// Opens the labelled commands behind a row or the title bar.
   static const IconData more = Icons.more_vert;
 
+  /// The compact bar's More control, which opens secondary destinations
+  /// (§83.1). Horizontal, so it never reads as a row's overflow.
+  static const IconData moreHorizontal = Icons.more_horiz;
+
   /// Opens the row's detail. Mirrors in right-to-left layouts.
   static const IconData open = Icons.chevron_right;
 
@@ -100,6 +104,9 @@ abstract final class AppIcons {
   /// Brings a deleted record back from the recycle bin, whole.
   static const IconData restore = Icons.restore_from_trash_outlined;
 
+  /// The recycle bin as a place. [restore] stays the action inside it.
+  static const IconData recycleBin = Icons.delete_sweep_outlined;
+
   /// Makes a copy.
   static const IconData duplicate = Icons.content_copy_outlined;
 
@@ -111,6 +118,9 @@ abstract final class AppIcons {
 
   /// Reads a file into the app.
   static const IconData import = Icons.upload_file_outlined;
+
+  /// Sends a finished file to an upload destination the person chose.
+  static const IconData upload = Icons.cloud_upload_outlined;
 
   /// Shares through the platform's share sheet, in each platform's own glyph.
   static IconData get share => Icons.adaptive.share;
@@ -179,6 +189,9 @@ abstract final class AppIcons {
 
   /// Working without a connection.
   static const IconData offline = Icons.cloud_off_outlined;
+
+  /// The operator chose to stay offline. Told apart from a lost radio.
+  static const IconData offlineByChoice = Icons.airplanemode_active;
 
   /// Locked behind the app lock.
   static const IconData lock = Icons.lock_outline;

@@ -1,6 +1,7 @@
 import 'dart:io';
 
-/// A writable path for the device id until the files service exists.
+/// Where builds before task 078 kept the device id, in the OS temp folder.
+/// Read once to carry that id into the device profile.
 String defaultDeviceIdPath() {
   return '${Directory.systemTemp.path}/tapture-device/device.id';
 }

@@ -4,15 +4,39 @@ part of 'failure.dart';
 final class NetworkFailure extends Failure {
   /// Creates a network failure.
   const NetworkFailure({
-    this.message =
-        'The network is not available. Work on this device is saved.',
-    this.recoveryAction =
-        'Keep capturing. Processing will retry when you are back online.',
-  });
+    String? message,
+    String? recoveryAction,
+    LocalizedMessage? localizedMessage,
+    LocalizedMessage? localizedRecovery,
+  }) : _message = message,
+       _recoveryAction = recoveryAction,
+       super(
+         localizedMessage:
+             localizedMessage ??
+             (message == null
+                 ? const LocalizedMessage(
+                     key: 'failureNetworkMessage',
+                     fallback:
+                         "The network is not available. Work on this device is saved.",
+                   )
+                 : null),
+         localizedRecovery:
+             localizedRecovery ??
+             (recoveryAction == null
+                 ? const LocalizedMessage(
+                     key: 'failureNetworkRecovery',
+                     fallback:
+                         "Keep capturing. Processing will retry when you are back online.",
+                   )
+                 : null),
+       );
+
+  final String? _message;
+  final String? _recoveryAction;
 
   @override
-  final String message;
+  String get message => _message ?? localizedMessage!.fallback;
 
   @override
-  final String recoveryAction;
+  String get recoveryAction => _recoveryAction ?? localizedRecovery!.fallback;
 }

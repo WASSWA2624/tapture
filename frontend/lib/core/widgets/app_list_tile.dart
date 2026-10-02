@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
+import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 /// The one list row projects, records, templates and datasets render
 /// through (FE-CONS-06). Tap opens; long-press selects (FE-CONS-10).
@@ -17,6 +18,7 @@ class AppListTile extends StatelessWidget {
     this.subtitle,
     this.status,
     this.dense = false,
+    this.wrapText = false,
     this.selected = false,
     this.current = false,
     this.onTap,
@@ -47,6 +49,10 @@ class AppListTile extends StatelessWidget {
   /// When true, vertical padding is tighter. Height still meets 48dp.
   final bool dense;
 
+  /// Allows the title and supporting text to grow with a narrow pane.
+  /// Fixed-height virtualised record rows retain their single-line contract.
+  final bool wrapText;
+
   /// Multi-select highlight. A tick is shown as well as a tint
   /// (FE-A11Y-05).
   final bool selected;
@@ -62,6 +68,9 @@ class AppListTile extends StatelessWidget {
 
   /// Selects the row. Null means long-press does nothing.
   final VoidCallback? onLongPress;
+
+  /// Widest share of the row the status slot may take.
+  static const double _statusShare = 0.55;
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +90,8 @@ class AppListTile extends StatelessWidget {
           horizontal: Space.x4,
           vertical: dense ? Space.x1 : Space.x3,
         ),
-        child: SizedBox(
-          width: double.infinity,
-          child: Row(
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) => Row(
             children: <Widget>[
               if (selected) ...<Widget>[
                 Icon(AppIcons.check, color: colors.primary, size: Space.x6),
@@ -94,33 +102,48 @@ class AppListTile extends StatelessWidget {
                 const SizedBox(width: Space.x3),
               ],
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: (dense ? AppText.label : AppText.bodyStrong)
-                          .copyWith(
-                            color: current ? colors.primary : foreground,
-                          ),
-                    ),
-                    if (subtitle != null) ...<Widget>[
-                      const SizedBox(height: Space.x0),
+                // The row already announces these lines. Keep other slots
+                // outside this exclusion so their meaning and actions survive.
+                child: ExcludeSemantics(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
                       Text(
-                        subtitle!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppText.caption.copyWith(color: foreground),
+                        title,
+                        maxLines: wrapText ? null : 1,
+                        overflow: wrapText
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        style: (dense ? AppText.label : AppText.bodyStrong)
+                            .copyWith(
+                              color: current ? colors.primary : foreground,
+                            ),
                       ),
+                      if (subtitle != null) ...<Widget>[
+                        const SizedBox(height: Space.x0),
+                        Text(
+                          subtitle!,
+                          maxLines: wrapText ? null : 1,
+                          overflow: wrapText
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
+                          style: AppText.caption.copyWith(color: foreground),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
               if (status != null) ...<Widget>[
                 const SizedBox(width: Space.x2),
-                status!,
+                // The status takes its natural width, up to a share that
+                // leaves the title the rest; past it the pill keeps its icon.
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: constraints.maxWidth * _statusShare,
+                  ),
+                  child: status!,
+                ),
               ],
               if (trailing != null) ...<Widget>[
                 const SizedBox(width: Space.x2),
@@ -131,8 +154,19 @@ class AppListTile extends StatelessWidget {
         ),
       ),
     );
+    final VoidCallback? tap = onTap == null
+        ? null
+        : () {
+            TrialReportScope.recordAction(context, title);
+            onTap!();
+          };
     final Widget body = interactive
-        ? InkWell(onTap: onTap, onLongPress: onLongPress, child: content)
+        ? InkWell(
+            excludeFromSemantics: true,
+            onTap: tap,
+            onLongPress: onLongPress,
+            child: content,
+          )
         : content;
     // Drawn in front, so the ink and the fill never cover the mark.
     final Widget row = current
@@ -153,7 +187,7 @@ class AppListTile extends StatelessWidget {
       enabled: interactive,
       label: title,
       hint: subtitle,
-      onTap: onTap,
+      onTap: tap,
       onLongPress: onLongPress,
       child: Material(
         color: selected || current ? colors.surfaceVariant : colors.surface,

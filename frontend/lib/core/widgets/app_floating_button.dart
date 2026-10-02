@@ -85,49 +85,48 @@ class _AppFloatingButtonState extends State<AppFloatingButton> {
               onPanUpdate: _onPanUpdate,
               onTap: () => widget.onPressed(_anchor()),
               child: Semantics(
+                container: true,
                 button: true,
                 label: widget.label,
                 hint: widget.hint,
-                child: UnconstrainedBox(
-                  child: Stack(
-                    alignment: Alignment(2 * _fx - 1, 2 * _fy - 1),
-                    children: <Widget>[
-                      const SizedBox(
-                        width: Sizes.minTapTarget,
-                        height: Sizes.minTapTarget,
-                      ),
-                      AnimatedSize(
-                        key: _buttonKey,
-                        duration: MediaQuery.disableAnimationsOf(context)
-                            ? Duration.zero
-                            : AppConstants.motion.short,
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: const EdgeInsets.all(Space.x0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Icon(
-                                widget.icon,
-                                size: Space.x6,
-                                color: colors.primary,
-                              ),
-                              if (_showLabel) ...<Widget>[
-                                const SizedBox(width: Space.x1),
-                                Text(
-                                  widget.label,
-                                  style: AppText.label.copyWith(
-                                    color: colors.primary,
-                                    decoration: TextDecoration.none,
-                                  ),
+                child: Stack(
+                  alignment: Alignment(2 * _fx - 1, 2 * _fy - 1),
+                  children: <Widget>[
+                    const SizedBox(
+                      width: Sizes.minTapTarget,
+                      height: Sizes.minTapTarget,
+                    ),
+                    AnimatedSize(
+                      key: _buttonKey,
+                      duration: MediaQuery.disableAnimationsOf(context)
+                          ? Duration.zero
+                          : AppConstants.motion.short,
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(Space.x0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              widget.icon,
+                              size: Space.x6,
+                              color: colors.primary,
+                            ),
+                            if (_showLabel) ...<Widget>[
+                              const SizedBox(width: Space.x1),
+                              Text(
+                                widget.label,
+                                style: AppText.label.copyWith(
+                                  color: colors.primary,
+                                  decoration: TextDecoration.none,
                                 ),
-                              ],
+                              ),
                             ],
-                          ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

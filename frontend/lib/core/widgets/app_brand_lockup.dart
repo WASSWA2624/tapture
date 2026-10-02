@@ -24,12 +24,14 @@ class AppBrandLockup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final Color ink = inverted ? colors.onPrimary : colors.onSurface;
     final bool lightInk = ink.computeLuminance() > 0.5;
     return Semantics(
       header: true,
-      label: Copy.appName,
+      label: localCopy.appName,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -45,7 +47,7 @@ class AppBrandLockup extends StatelessWidget {
           if (showName) ...<Widget>[
             const SizedBox(width: Space.x2),
             Text(
-              Copy.appName,
+              localCopy.appName,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: AppText.title.copyWith(color: ink),

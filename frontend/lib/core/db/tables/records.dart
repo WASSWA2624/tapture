@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
 import 'package:tapture/core/db/record_schema.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
+import 'package:tapture/core/db/tables/device_profile.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -30,6 +32,7 @@ class Records extends Table with MergeColumns {
   TextColumn get templateId => text()();
 
   /// Template shape kept by this record until an explicit migration.
+  /// Zero preserves an older recovery draft whose captured shape is unknown.
   IntColumn get templateVersion =>
       integer().withDefault(const Constant<int>(1))();
 
@@ -63,6 +66,11 @@ class Records extends Table with MergeColumns {
   /// Operator who captured it.
   TextColumn get capturedBy => text()();
 
+  /// Backend account the capturing operator is enrolled as (§71.2). Null
+  /// until this device is enrolled; enrolment annotates earlier records
+  /// without rewriting [capturedBy].
+  TextColumn get capturedByAccount => text().nullable()();
+
   /// GPS latitude at capture, when known.
   RealColumn get gpsLat => real().nullable()();
 
@@ -75,6 +83,9 @@ class Records extends Table with MergeColumns {
   /// Operator who approved it.
   TextColumn get approvedBy => text().nullable()();
 
+  /// Backend account the approving operator is enrolled as (§71.2).
+  TextColumn get approvedByAccount => text().nullable()();
+
   /// Number shown in lists, counted per project from 1.
   ///
   /// Nullable so a package from an older build still inserts; the
@@ -85,6 +96,10 @@ class Records extends Table with MergeColumns {
 }
 
 /// Inserts or updates a record after refusing malformed [contextJson].
+///
+/// A record first written here carries the account this device's profile is
+/// enrolled as in [Records.capturedByAccount] (§71.2); an update never
+/// rewrites attribution.
 Future<Result<RecordRow>> upsertRecord(
   GeneratedDatabase db, {
   required Insertable<RecordRow> row,
@@ -98,12 +113,44 @@ Future<Result<RecordRow>> upsertRecord(
     return FailureResult<RecordRow>(failure);
   }
   final AppDatabase database = db as AppDatabase;
+  final Insertable<RecordRow> attributed;
+  try {
+    attributed = await _withAccount(database, row);
+  } on Object catch (error) {
+    return FailureResult<RecordRow>(storageFailureFrom(error));
+  }
   return _RecordsDao(
     database,
     clock: clock,
     deviceId: deviceId,
     ids: ids,
-  ).upsert(row);
+  ).upsert(attributed);
+}
+
+/// [row] with the enrolled account when it creates a record that names none.
+Future<Insertable<RecordRow>> _withAccount(
+  AppDatabase db,
+  Insertable<RecordRow> row,
+) async {
+  if (row is! RecordsCompanion || row.capturedByAccount.present) {
+    return row;
+  }
+  if (row.id.present) {
+    final String id = row.id.value;
+    final TypedResult? existing =
+        await (db.selectOnly(db.records)
+              ..addColumns(<Expression<Object>>[db.records.id])
+              ..where(db.records.id.equals(id)))
+            .getSingleOrNull();
+    if (existing != null) {
+      return row;
+    }
+  }
+  final String? account = await enrolledAccountId(db);
+  if (account == null) {
+    return row;
+  }
+  return row.copyWith(capturedByAccount: Value<String?>(account));
 }
 
 /// A page of [projectId] records in [status], newest [RecordRow.capturedAt]
@@ -139,23 +186,30 @@ Future<Result<List<RecordRow>>> listRecordsByProjectAndStatus(
   }
 }
 
-/// The record with [identityHash], or null when none matches.
-Future<Result<RecordRow?>> lookupRecordByIdentityHash(
+/// Every record with [identityHash], oldest capture first; empty when none
+/// matches. Two records can share a hash (the duplicate outcome), so this is
+/// a list: the caller sees both ids rather than a failure.
+Future<Result<List<RecordRow>>> lookupRecordsByIdentityHash(
   GeneratedDatabase db, {
   required String identityHash,
 }) async {
   try {
     final AppDatabase database = db as AppDatabase;
-    final RecordRow? row =
-        await (database.select(database.records)..where(
-              ($RecordsTable tbl) => tbl.identityHash.equals(identityHash),
-            ))
-            .getSingleOrNull();
-    return Success<RecordRow?>(row);
+    final List<RecordRow> rows =
+        await (database.select(database.records)
+              ..where(
+                ($RecordsTable tbl) => tbl.identityHash.equals(identityHash),
+              )
+              ..orderBy(<OrderClauseGenerator<$RecordsTable>>[
+                ($RecordsTable tbl) => OrderingTerm.asc(tbl.capturedAt),
+                ($RecordsTable tbl) => OrderingTerm.asc(tbl.id),
+              ]))
+            .get();
+    return Success<List<RecordRow>>(rows);
   } on Failure catch (failure) {
-    return FailureResult<RecordRow?>(failure);
+    return FailureResult<List<RecordRow>>(failure);
   } on Object catch (error) {
-    return FailureResult<RecordRow?>(storageFailureFrom(error));
+    return FailureResult<List<RecordRow>>(storageFailureFrom(error));
   }
 }
 
@@ -206,9 +260,13 @@ Future<void> writeRecordStatus(
   await database.transaction(() async {
     final int changed = await database.customUpdate(
       approving
+          // The approval carries the account this device is enrolled as
+          // (§71.2), read in the same statement.
           ? 'UPDATE records SET status = ?, updated_at = ?, '
                 'updated_by_device = ?, rev = rev + 1, approved_at = ?, '
-                'approved_by = ? WHERE id = ?'
+                'approved_by = ?, approved_by_account = '
+                '(SELECT account_id FROM device_profile WHERE id = ?) '
+                'WHERE id = ?'
           : 'UPDATE records SET status = ?, updated_at = ?, '
                 'updated_by_device = ?, rev = rev + 1 WHERE id = ?',
       variables: <Variable<Object>>[
@@ -218,6 +276,7 @@ Future<void> writeRecordStatus(
         if (approving) ...<Variable<Object>>[
           Variable<DateTime>(now),
           Variable<String>(operator),
+          const Variable<String>(deviceProfileRowId),
         ],
         Variable<String>(recordId),
       ],
@@ -225,9 +284,9 @@ Future<void> writeRecordStatus(
       updateKind: UpdateKind.update,
     );
     if (changed == 0) {
-      throw const StorageFailure(
-        message: 'That record is no longer on this device.',
-        recoveryAction: 'Refresh the list and try again.',
+      throw StorageFailure(
+        localizedMessage: Copy.messages.failureThatRecordIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
       );
     }
     await appendAudit(
@@ -261,15 +320,15 @@ void _ensureContextJson(Insertable<RecordRow> row) {
   try {
     decoded = jsonDecode(json) as Object?;
   } on FormatException {
-    throw const StorageFailure(
-      message: 'Record context is not valid JSON.',
-      recoveryAction: 'Fix the context object and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheRecordSContextCouldNotBe,
+      localizedRecovery: Copy.messages.failureFixTheContextObjectAndSaveAgain,
     );
   }
   if (decoded is! Map) {
-    throw const StorageFailure(
-      message: 'Record context must be a JSON object.',
-      recoveryAction: 'Fix the context object and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheRecordSContextIsNotIn,
+      localizedRecovery: Copy.messages.failureFixTheContextObjectAndSaveAgain,
     );
   }
 }

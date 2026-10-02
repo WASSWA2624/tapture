@@ -70,20 +70,45 @@ Future<void> appendAudit(
   await tx
       .into(db.auditLog)
       .insert(
-        AuditLogCompanion.insert(
+        auditEntry(
           entityType: entityType,
           entityId: entityId,
           action: action,
-          fieldKey: Value<String?>(fieldKey),
-          previousValue: Value<String?>(previousValue),
-          newValue: Value<String?>(newValue),
-          reason: Value<String?>(reason),
-          operator: operator ?? '',
-          device: device ?? '',
+          fieldKey: fieldKey,
+          previousValue: previousValue,
+          newValue: newValue,
+          reason: reason,
+          operator: operator,
+          device: device,
           at: now,
-          createdAt: now,
-          updatedAt: now,
-          updatedByDevice: device ?? '',
         ),
       );
 }
+
+/// Builds the same append-only entry for single and bounded batch writes.
+AuditLogCompanion auditEntry({
+  required String entityType,
+  required String entityId,
+  required AuditAction action,
+  required DateTime at,
+  String? fieldKey,
+  String? previousValue,
+  String? newValue,
+  String? reason,
+  String? device,
+  String? operator,
+}) => AuditLogCompanion.insert(
+  entityType: entityType,
+  entityId: entityId,
+  action: action,
+  fieldKey: Value<String?>(fieldKey),
+  previousValue: Value<String?>(previousValue),
+  newValue: Value<String?>(newValue),
+  reason: Value<String?>(reason),
+  operator: operator ?? '',
+  device: device ?? '',
+  at: at,
+  createdAt: at,
+  updatedAt: at,
+  updatedByDevice: device ?? '',
+);

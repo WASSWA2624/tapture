@@ -50,7 +50,7 @@ final class _IoDocumentPicker implements DocumentPicker {
     } on Failure catch (failure) {
       return FailureResult<PickedDocument>(failure);
     } on Object {
-      return const FailureResult<PickedDocument>(_failed);
+      return FailureResult<PickedDocument>(_failed);
     }
   }
 }
@@ -104,7 +104,7 @@ Future<Result<PickedDocument>> _channelPick(
     if (error.code == 'cancelled') {
       return const FailureResult<PickedDocument>(CancelledFailure());
     }
-    return const FailureResult<PickedDocument>(_failed);
+    return FailureResult<PickedDocument>(_failed);
   }
 }
 
@@ -122,7 +122,7 @@ Future<Result<PickedDocument>> _describe(
   required bool isCopy,
 }) async {
   if (!file.existsSync()) {
-    return const FailureResult<PickedDocument>(_failed);
+    return FailureResult<PickedDocument>(_failed);
   }
   final String shown = name is String && name.isNotEmpty
       ? name
@@ -132,7 +132,7 @@ Future<Result<PickedDocument>> _describe(
   );
 }
 
-const StorageFailure _failed = StorageFailure(
-  message: Copy.documentPickFailed,
-  recoveryAction: Copy.tryAgain,
+final StorageFailure _failed = StorageFailure(
+  localizedMessage: Copy.messages.documentPickFailed,
+  localizedRecovery: Copy.messages.tryAgain,
 );

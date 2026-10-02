@@ -6,14 +6,17 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/project_folders.dart';
 import 'package:tapture/core/files/storage_root.dart';
 
-/// Creates the eight-folder tree through [ProjectFolders] (FE-STR-11).
+/// Creates the eight-folder tree through [ProjectFolders] (FE-STR-11), under
+/// [storageRoot]: the app's configured root, so a chosen storage folder holds
+/// the tree its photos are written into. Omitted, the default root.
 Future<Result<void>> writeProjectTree({
   required String id,
   required String name,
   required String folderName,
+  StorageRoot? storageRoot,
 }) async {
   final Result<Directory> created = await ProjectFolders(
-    storageRoot: StorageRoot(),
+    storageRoot: storageRoot ?? StorageRoot(),
   ).create(_row(id: id, name: name, folderName: folderName));
   return created.map((Directory _) {});
 }
@@ -23,20 +26,23 @@ Future<Result<void>> discardProjectTree({
   required String id,
   required String name,
   required String folderName,
+  StorageRoot? storageRoot,
 }) {
   return ProjectFolders(
-    storageRoot: StorageRoot(),
+    storageRoot: storageRoot ?? StorageRoot(),
   ).discard(_row(id: id, name: name, folderName: folderName));
 }
 
-/// Moves a project folder into the recycle area. Missing folders succeed.
+/// Moves a project folder into the recycle area of [storageRoot]. Missing
+/// folders succeed.
 Future<Result<void>> recycleProjectTree({
   required String id,
   required String name,
   required String folderName,
+  StorageRoot? storageRoot,
 }) async {
   final Result<Directory> moved = await ProjectFolders(
-    storageRoot: StorageRoot(),
+    storageRoot: storageRoot ?? StorageRoot(),
   ).recycle(_row(id: id, name: name, folderName: folderName));
   return moved.map((Directory _) {});
 }

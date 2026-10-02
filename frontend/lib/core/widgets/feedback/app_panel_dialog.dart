@@ -49,6 +49,8 @@ class _AppPanelDialogState extends State<AppPanelDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     return Transform.translate(
       offset: _offset,
@@ -109,8 +111,8 @@ class _AppPanelDialogState extends State<AppPanelDialog> {
                       ),
                       child: AppIconButton(
                         icon: AppIcons.close,
-                        semanticLabel: Copy.close,
-                        tooltip: Copy.close,
+                        semanticLabel: localCopy.close,
+                        tooltip: localCopy.close,
                         onPressed:
                             widget.onClose ?? () => Navigator.of(context).pop(),
                       ),

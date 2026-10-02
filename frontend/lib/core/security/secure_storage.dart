@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -11,17 +13,39 @@ abstract interface class SecureStorage {
   /// Wraps the platform Keystore / Keychain.
   factory SecureStorage() {
     const FlutterSecureStorage plugin = FlutterSecureStorage();
-    return _SecureStorage(
-      write: (SecretKey key, String value) {
-        return plugin.write(key: _name(key), value: value);
-      },
-      read: (SecretKey key) {
-        return plugin.read(key: _name(key));
-      },
-      delete: (SecretKey key) {
-        return plugin.delete(key: _name(key));
-      },
-      clear: () => plugin.deleteAll(),
+    return _platformStorage(plugin);
+  }
+
+  /// Real platform storage isolated from the installed application's secrets.
+  /// Android isolates both preferences and Keystore aliases; Apple platforms
+  /// use a distinct Keychain service. Only owned integration fixtures use this.
+  @visibleForTesting
+  factory SecureStorage.namespaced(String namespace) {
+    if (!RegExp(r'^[A-Za-z0-9_-]{1,80}$').hasMatch(namespace)) {
+      throw ArgumentError.value(
+        namespace,
+        'namespace',
+        'Use 1–80 identifier characters',
+      );
+    }
+    if (kIsWeb ||
+        !<TargetPlatform>{
+          TargetPlatform.android,
+          TargetPlatform.iOS,
+          TargetPlatform.macOS,
+        }.contains(defaultTargetPlatform)) {
+      throw UnsupportedError(
+        'Isolated native secure storage requires Android or Apple Keychain.',
+      );
+    }
+    final String service = 'tapture.fixture.$namespace';
+    return _platformStorage(
+      FlutterSecureStorage(
+        aOptions: AndroidOptions(storageNamespace: service),
+        iOptions: IOSOptions(accountName: service),
+        mOptions: MacOsOptions(accountName: service),
+      ),
+      prefix: '$service.',
     );
   }
 
@@ -64,12 +88,31 @@ abstract interface class SecureStorage {
   Future<Result<void>> deleteSecret(SecretKey key);
 }
 
+SecureStorage _platformStorage(
+  FlutterSecureStorage plugin, {
+  String prefix = '',
+}) {
+  return _SecureStorage(
+    write: (SecretKey key, String value) {
+      return plugin.write(key: '$prefix${_name(key)}', value: value);
+    },
+    read: (SecretKey key) {
+      return plugin.read(key: '$prefix${_name(key)}');
+    },
+    delete: (SecretKey key) {
+      return plugin.delete(key: '$prefix${_name(key)}');
+    },
+    clear: () => plugin.deleteAll(),
+  );
+}
+
 /// Closed set of secret names. Arbitrary strings cannot be stored.
 enum SecretKey {
-  /// Salt for the optional app-lock PIN.
+  /// Legacy separate salt for the optional app-lock PIN, read for compatibility.
   pinSalt,
 
-  /// Salted hash of the optional app-lock PIN.
+  /// Atomic versioned salt/hash credential for the optional app-lock PIN.
+  /// Legacy values contain the raw digest and use the separate salt entry.
   pinHash,
 
   /// PIN attempt backoff so a restart does not reset the counter.
@@ -124,9 +167,10 @@ final class _SecureStorage implements SecureStorage {
       return FailureResult<void>(
         error is Failure
             ? error
-            : const StorageFailure(
-                message: 'The secret could not be saved on this device.',
-                recoveryAction: 'Try again.',
+            : StorageFailure(
+                localizedMessage:
+                    Copy.messages.failureTheSecretCouldNotBeSavedOn,
+                localizedRecovery: Copy.messages.failureTryAgain,
               ),
       );
     }
@@ -140,9 +184,10 @@ final class _SecureStorage implements SecureStorage {
       return FailureResult<String?>(
         error is Failure
             ? error
-            : const StorageFailure(
-                message: 'The secret could not be read on this device.',
-                recoveryAction: 'Try again.',
+            : StorageFailure(
+                localizedMessage:
+                    Copy.messages.failureTheSecretCouldNotBeReadOn,
+                localizedRecovery: Copy.messages.failureTryAgain,
               ),
       );
     }
@@ -157,9 +202,10 @@ final class _SecureStorage implements SecureStorage {
       return FailureResult<void>(
         error is Failure
             ? error
-            : const StorageFailure(
-                message: 'The secret could not be removed from this device.',
-                recoveryAction: 'Try again.',
+            : StorageFailure(
+                localizedMessage:
+                    Copy.messages.failureTheSecretCouldNotBeRemovedFrom,
+                localizedRecovery: Copy.messages.failureTryAgain,
               ),
       );
     }

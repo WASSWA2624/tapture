@@ -9,9 +9,7 @@ import 'package:tapture/core/logging/logger.dart';
 /// two exports apart without a server (FE-SEC-10).
 Future<Result<File>> exportLog({required Directory into}) {
   return Result.captureAsync(() async {
-    if (!into.existsSync()) {
-      into.createSync(recursive: true);
-    }
+    await into.create(recursive: true);
     final Logger logger = Logger.current;
     final File file = File('${into.path}/${logger.exportFileName}');
     await file.writeAsString(logger.buffer.join('\n'));

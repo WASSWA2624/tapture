@@ -3,6 +3,7 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 /// The catalogue button. Features compose this instead of a Material button.
 class AppButton extends StatelessWidget {
@@ -46,6 +47,7 @@ class AppButton extends StatelessWidget {
         ? null
         : () {
             if (!busy) {
+              TrialReportScope.recordAction(context, label);
               onPressed?.call();
             }
           };
@@ -103,6 +105,8 @@ class AppButton extends StatelessWidget {
   }
 
   Widget _child(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
@@ -129,7 +133,7 @@ class AppButton extends StatelessWidget {
           label,
           style: AppText.label,
           textAlign: TextAlign.center,
-          semanticsLabel: busy ? Copy.busyAction(label) : null,
+          semanticsLabel: busy ? localCopy.busyAction(label) : null,
         ),
       ],
     );

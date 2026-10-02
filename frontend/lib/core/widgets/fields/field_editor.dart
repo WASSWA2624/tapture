@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 
 import 'app_choice_field.dart';
+import 'app_consent_field.dart';
 import 'app_date_field.dart';
 import 'app_multi_choice_field.dart';
 import 'app_number_field.dart';
@@ -48,7 +50,9 @@ class FieldEditor extends ConsumerWidget {
       validation: field.validation,
     );
     final String? errorText = switch (check) {
-      FailureResult<void>(:final Failure failure) => failure.message,
+      FailureResult<void>(:final Failure failure) => Copy.of(
+        context,
+      ).failureMessage(failure),
       Success<void>() => null,
     };
     final _EditorBuilder builder =
@@ -126,6 +130,7 @@ final Map<String, _EditorBuilder> _catalogue = <String, _EditorBuilder>{
   'appNumberField': _number,
   'appDateField': _date,
   'appSwitchTile': _toggle,
+  'appConsentField': _consent,
   'appChoiceField': _choice,
   'appMultiChoiceField': _multi,
 };
@@ -195,6 +200,21 @@ Widget _toggle({
     title: field.label,
     description: field.helpText,
     value: value == true,
+    onChanged: onChanged,
+  );
+}
+
+Widget _consent({
+  required FieldEditorField field,
+  required Object? value,
+  required String? errorText,
+  required ValueChanged<Object?> onChanged,
+}) {
+  return AppConsentField(
+    key: ValueKey<String>('field-editor-consent-${field.fieldKey}'),
+    label: field.label,
+    value: value,
+    helpText: field.helpText,
     onChanged: onChanged,
   );
 }

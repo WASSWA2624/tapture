@@ -52,16 +52,24 @@ class _ProgressStepRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final (Color color, IconData icon, String stateLabel) = _style(
       step.state,
       colors,
+      localCopy,
     );
-    final String caption = step.detail ?? stateLabel;
-    final String announcement = Copy.progressAnnouncement(
-      label: step.label,
+    final String label = localCopy.stateText(step.localizedLabel, step.label)!;
+    final String? detail = localCopy.stateText(
+      step.localizedDetail,
+      step.detail,
+    );
+    final String caption = detail ?? stateLabel;
+    final String announcement = localCopy.progressAnnouncement(
+      label: label,
       state: stateLabel,
-      detail: step.detail,
+      detail: detail,
     );
     return Semantics(
       liveRegion: true,
@@ -90,7 +98,7 @@ class _ProgressStepRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      step.label,
+                      label,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppText.bodyStrong.copyWith(
@@ -132,11 +140,23 @@ class _RunningMark extends StatelessWidget {
   }
 }
 
-(Color, IconData, String) _style(StepState state, AppColors colors) {
+(Color, IconData, String) _style(
+  StepState state,
+  AppColors colors,
+  LocalizedCopy localCopy,
+) {
   return switch (state) {
-    StepState.done => (colors.success, AppIcons.done, Copy.stepDone),
-    StepState.running => (colors.info, AppIcons.processing, Copy.stepRunning),
-    StepState.waiting => (colors.outline, AppIcons.queued, Copy.stepWaiting),
-    StepState.failed => (colors.danger, AppIcons.error, Copy.failed),
+    StepState.done => (colors.success, AppIcons.done, localCopy.stepDone),
+    StepState.running => (
+      colors.info,
+      AppIcons.processing,
+      localCopy.stepRunning,
+    ),
+    StepState.waiting => (
+      colors.outline,
+      AppIcons.queued,
+      localCopy.stepWaiting,
+    ),
+    StepState.failed => (colors.danger, AppIcons.error, localCopy.failed),
   };
 }

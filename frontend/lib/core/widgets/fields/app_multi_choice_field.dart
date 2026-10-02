@@ -139,6 +139,8 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final List<Choice<T>> visible = <Choice<T>>[
       for (final Choice<T> option in widget.options)
@@ -152,7 +154,7 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
             vertical: Space.x2,
           ),
           child: AppSearchField(
-            hint: Copy.search,
+            hint: localCopy.search,
             debounce: Duration.zero,
             onChanged: (String value) => setState(() => _query = value),
           ),
@@ -163,7 +165,7 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
             children: <Widget>[
               Expanded(
                 child: AppButton(
-                  label: Copy.selectAll,
+                  label: localCopy.selectAll,
                   variant: AppButtonVariant.text,
                   onPressed: visible.isEmpty
                       ? null
@@ -175,7 +177,7 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
               ),
               Expanded(
                 child: AppButton(
-                  label: Copy.clear,
+                  label: localCopy.clear,
                   variant: AppButtonVariant.text,
                   onPressed: _selected.isEmpty ? null : () => _emit(<T>{}),
                 ),

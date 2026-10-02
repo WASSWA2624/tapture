@@ -23,16 +23,34 @@ abstract final class PhotoPathBuilder {
 
   /// The strategy [AppConstants.folders.defaultStrategy] names.
   static PhotoFolderStrategy get defaultStrategy {
-    switch (AppConstants.folders.defaultStrategy) {
-      case 'byTemplate':
-        return PhotoFolderStrategy.byTemplate;
-      case 'byCaptureDate':
-        return PhotoFolderStrategy.byCaptureDate;
-      case 'flat':
-        return PhotoFolderStrategy.flat;
-      default:
-        return PhotoFolderStrategy.byContext;
+    return strategyNamed(AppConstants.folders.defaultStrategy);
+  }
+
+  /// The strategy a stored setting [name] names. A missing or unknown name
+  /// is [PhotoFolderStrategy.byContext], the specification's default.
+  static PhotoFolderStrategy strategyNamed(String? name) {
+    return switch (name) {
+      'byTemplate' => PhotoFolderStrategy.byTemplate,
+      'byCaptureDate' => PhotoFolderStrategy.byCaptureDate,
+      'flat' => PhotoFolderStrategy.flat,
+      _ => PhotoFolderStrategy.byContext,
+    };
+  }
+
+  /// The folder values of a context [snapshot] in hierarchy order: each of
+  /// [levelKeys]' values, or every snapshot value in its own order when the
+  /// project defines no levels. Capture and relocation both read this, so a
+  /// photo written at capture never needs moving for the same context.
+  static List<String> contextValues({
+    required List<String> levelKeys,
+    required Map<Object?, Object?> snapshot,
+  }) {
+    if (levelKeys.isEmpty) {
+      return <String>[for (final Object? value in snapshot.values) '$value'];
     }
+    return <String>[
+      for (final String key in levelKeys) '${snapshot[key] ?? ''}',
+    ];
   }
 }
 

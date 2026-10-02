@@ -199,10 +199,10 @@ class _Segment<T> extends StatelessWidget {
                     const SizedBox(width: Space.x1),
                   ],
                   Flexible(
+                    // Labels wrap rather than clip at large text; the row's
+                    // intrinsic height grows every segment together.
                     child: Text(
                       option.label,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                       style: AppText.label.copyWith(color: foreground),
                     ),
@@ -318,6 +318,8 @@ class _ChoiceSheetState<T> extends State<_ChoiceSheet<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final List<Choice<T>> visible = <Choice<T>>[
       for (final Choice<T> option in widget.options)
@@ -331,7 +333,7 @@ class _ChoiceSheetState<T> extends State<_ChoiceSheet<T>> {
             vertical: Space.x2,
           ),
           child: AppSearchField(
-            hint: Copy.search,
+            hint: localCopy.search,
             debounce: Duration.zero,
             onChanged: (String value) => setState(() => _query = value),
           ),
@@ -341,8 +343,8 @@ class _ChoiceSheetState<T> extends State<_ChoiceSheet<T>> {
               ? SingleChildScrollView(
                   child: AppEmptyState(
                     icon: AppIcons.searchEmpty,
-                    headline: Copy.choiceNoMatch(_query),
-                    message: Copy.searchNoMatchMessage,
+                    headline: localCopy.choiceNoMatch(_query),
+                    message: localCopy.searchNoMatchMessage,
                   ),
                 )
               : ListView.builder(

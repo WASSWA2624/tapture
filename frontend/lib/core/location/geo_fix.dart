@@ -1,5 +1,3 @@
-part of 'location_service.dart';
-
 /// A time-boxed location sample with reported accuracy.
 final class GeoFix {
   /// Creates a fix.

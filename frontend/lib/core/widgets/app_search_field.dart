@@ -140,6 +140,7 @@ class _AppSearchFieldState extends State<AppSearchField> {
       ),
       child: AppTextField(
         label: widget.hint,
+        wrapLabel: true,
         controller: _controller,
         hint: widget.hint,
         enabled: widget.enabled,
@@ -168,13 +169,15 @@ class _AppSearchFieldState extends State<AppSearchField> {
   }
 
   Widget? _afterMic() {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Widget? extra = widget.afterMic;
     final VoidCallback? onFilter = widget.onFilter;
     if (onFilter == null) {
       return extra;
     }
     final int active = widget.activeFilterCount;
-    final String label = Copy.searchFilters(active);
+    final String label = localCopy.searchFilters(active);
     final Widget filter = AppIconButton(
       key: const ValueKey<String>('search-filter'),
       icon: AppIcons.filter,

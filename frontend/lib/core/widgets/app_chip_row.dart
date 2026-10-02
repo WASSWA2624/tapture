@@ -30,6 +30,6 @@ class AppChipRow extends StatelessWidget {
         ),
       );
     }
-    return Wrap(spacing: Space.x1, runSpacing: Space.x2, children: chips);
+    return Wrap(spacing: Space.x2, runSpacing: Space.x2, children: chips);
   }
 }

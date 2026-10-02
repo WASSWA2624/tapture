@@ -1,8 +1,11 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 import 'app_database.dart';
 import 'record_schema.dart';
+import 'tables/merge.dart';
+import 'version_vector_schema.dart';
 
 /// One upgrade from `version - 1` to [version].
 typedef _UpgradeStep = Future<void> Function(Migrator migrator, AppDatabase db);
@@ -41,6 +44,13 @@ kUpgradeSteps = <int, _UpgradeStep>{
   22: migrateToV22,
   23: migrateToV23,
   24: migrateToV24,
+  25: migrateToV25,
+  26: migrateToV26,
+  27: migrateToV27,
+  28: migrateToV28,
+  29: migrateToV29,
+  30: migrateToV30,
+  31: migrateToV31,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -66,9 +76,10 @@ void ensureExportAcknowledged({required bool isDestructive}) {
   if (_exportAcknowledged) {
     return;
   }
-  throw const StorageFailure(
-    message: 'This update would drop or rewrite a column.',
-    recoveryAction: 'Export your projects, then confirm the update.',
+  throw StorageFailure(
+    localizedMessage: Copy.messages.failureThisUpdateWouldDropOrRewriteA,
+    localizedRecovery:
+        Copy.messages.failureExportYourProjectsThenConfirmTheUpdate,
   );
 }
 
@@ -463,6 +474,119 @@ Future<void> migrateToV24(Migrator migrator, AppDatabase db) async {
   );
 }
 
+/// Schema version 25: the backend account on each record (task 024, §71.2).
+///
+/// Adds the nullable `records.captured_by_account` and
+/// `records.approved_by_account`. Nothing is back-filled here: enrolment
+/// annotates this device's earlier records, and `captured_by` and
+/// `approved_by` are never rewritten.
+Future<void> migrateToV25(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> columns = await db
+      .customSelect('PRAGMA table_info("records")')
+      .get();
+  if (columns.isEmpty) {
+    return;
+  }
+  final Set<String> names = <String>{
+    for (final QueryRow row in columns) row.read<String>('name'),
+  };
+  if (!names.contains('captured_by_account')) {
+    await migrator.addColumn(db.records, db.records.capturedByAccount);
+  }
+  if (!names.contains('approved_by_account')) {
+    await migrator.addColumn(db.records, db.records.approvedByAccount);
+  }
+}
+
+/// Schema version 26: an undated meeting action (task 017).
+///
+/// Rebuilds `meeting_actions` with a nullable `due_date`, so an action with
+/// no due date yet is written to the register instead of skipped. Every row
+/// and the table's index are kept; a table already nullable is left alone.
+Future<void> migrateToV26(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> columns = await db
+      .customSelect('PRAGMA table_info("meeting_actions")')
+      .get();
+  final bool required = columns.any(
+    (QueryRow row) =>
+        row.read<String>('name') == 'due_date' && row.read<int>('notnull') == 1,
+  );
+  if (!required) {
+    return;
+  }
+  // ignore: experimental_member_use
+  await migrator.alterTable(TableMigration(db.meetingActions));
+}
+
+/// Schema version 27: causal counters on every authored package row.
+/// Seeds existing author revisions without changing application rows.
+Future<void> migrateToV27(Migrator migrator, AppDatabase db) async {
+  await VersionVectorSchema.ensure(db);
+}
+
+/// Schema version 28: durable generations distinguish retry from crash resume.
+/// Existing jobs and every stored provider response retain their contents.
+Future<void> migrateToV28(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> columns = await db
+      .customSelect('PRAGMA table_info("processing_jobs")')
+      .get();
+  if (columns.isNotEmpty &&
+      !columns.any(
+        (QueryRow row) => row.read<String>('name') == 'request_generation',
+      )) {
+    await migrator.addColumn(db.processing, db.processing.requestGeneration);
+  }
+}
+
+/// Schema version 29: indexed pending intents for bounded launch recovery.
+Future<void> migrateToV29(Migrator migrator, AppDatabase db) =>
+    ensureMergeUndoIndex(db);
+
+/// Schema version 30: stable keyset pages over failed processing jobs.
+Future<void> migrateToV30(Migrator migrator, AppDatabase db) =>
+    ensureProcessingFailureIndex(db);
+
+/// Schema version 31: semantic queue errors alongside unchanged audit text.
+/// Existing failures remain readable without guessing a translation key.
+Future<void> migrateToV31(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> columns = await db
+      .customSelect('PRAGMA table_info("processing_jobs")')
+      .get();
+  if (columns.isNotEmpty &&
+      !columns.any(
+        (QueryRow row) => row.read<String>('name') == 'last_error_message',
+      )) {
+    await migrator.addColumn(db.processing, db.processing.lastErrorMessage);
+  }
+}
+
+/// The failed subset retains both ordering columns, including timestamp ties.
+Future<void> ensureProcessingFailureIndex(AppDatabase db) async {
+  if (!await _hasTable(db, 'processing_jobs')) return;
+  await db.customStatement(
+    'CREATE INDEX IF NOT EXISTS processing_jobs_failures_page ON '
+    "processing_jobs (status, queued_at, id) WHERE status = 'failed'",
+  );
+}
+
+/// Pending undo intents alone require evidence checks during launch recovery.
+Future<void> ensureMergeUndoIndex(AppDatabase db) async {
+  if (!await _hasTable(db, 'merge_sessions')) return;
+  await db.customStatement(
+    'CREATE INDEX IF NOT EXISTS merge_sessions_pending_undo ON merge_sessions (id) '
+    'WHERE $mergePendingUndoWhere',
+  );
+}
+
+Future<bool> _hasTable(AppDatabase db, String name) async =>
+    await db
+        .customSelect(
+          "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+          variables: <Variable<Object>>[Variable<String>(name)],
+        )
+        .getSingleOrNull() !=
+    null;
+
 /// Expression index that serves pinned-first, then newest (FE-PERF-03).
 Future<void> ensureProjectsPinIndex(AppDatabase db) async {
   await db.customStatement(
@@ -492,6 +616,15 @@ MigrationStrategy appMigration(AppDatabase db) {
       await migrator.createAll();
       await ensureProjectsPinIndex(db);
       await RecordSchema.ensure(db);
+      if (db.schemaVersion >= 27) {
+        await VersionVectorSchema.ensure(db);
+      }
+      if (db.schemaVersion >= 29) {
+        await ensureMergeUndoIndex(db);
+      }
+      if (db.schemaVersion >= 30) {
+        await ensureProcessingFailureIndex(db);
+      }
     },
     onUpgrade: (Migrator migrator, int from, int to) async {
       for (int version = from + 1; version <= to; version++) {

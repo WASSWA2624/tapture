@@ -1,13 +1,14 @@
-import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Named haptic patterns. Features never call [HapticFeedback] themselves
 /// (FE-STR-11).
 abstract interface class Haptics {
   /// Platform-backed haptics. [enabled] and reduced-motion are read once
-  /// (FE-A11Y-08).
+  /// (FE-A11Y-08). The platform honours the system haptics setting itself:
+  /// with it off, every pattern is silent (FE-A11Y-08).
   factory Haptics({bool enabled = true, bool? reduceMotion}) {
     return _Haptics(
       enabled: enabled,
@@ -47,6 +48,12 @@ abstract interface class Haptics {
   void selection();
 }
 
+/// Process-wide haptics that capture and save confirm with. Tests override
+/// it with [Haptics.fake].
+final Provider<Haptics> hapticsProvider = Provider<Haptics>((Ref _) {
+  return Haptics();
+});
+
 final class _Haptics implements Haptics {
   _Haptics({
     required this.enabled,
@@ -85,15 +92,13 @@ final class _Haptics implements Haptics {
 }
 
 bool _systemReduceMotion() {
-  return WidgetsBinding
-      .instance
-      .platformDispatcher
-      .accessibilityFeatures
-      .disableAnimations;
+  return PlatformDispatcher.instance.accessibilityFeatures.disableAnimations;
 }
 
+/// Plays [pattern]. A device without a vibrator, or no platform at all, is
+/// not an error the operator should see.
 void _playPlatform(String pattern) {
-  unawaited(_impact(pattern));
+  _impact(pattern).ignore();
 }
 
 Future<void> _impact(String pattern) {

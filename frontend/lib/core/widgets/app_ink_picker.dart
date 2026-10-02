@@ -40,15 +40,17 @@ class AppInkPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const Text(Copy.markupInkLabel, style: AppText.caption),
+        Text(localCopy.markupInkLabel, style: AppText.caption),
         const SizedBox(height: Space.x1),
         Semantics(
           container: true,
-          label: Copy.markupInkLabel,
+          label: localCopy.markupInkLabel,
           child: Wrap(
             spacing: Space.x1,
             runSpacing: Space.x1,
@@ -64,9 +66,9 @@ class AppInkPicker extends StatelessWidget {
         ),
         const SizedBox(height: Space.x2),
         AppChoiceField<int>(
-          label: Copy.markupSize,
-          value: size.clamp(0, _sizes.length - 1),
-          options: _sizes,
+          label: localCopy.markupSize,
+          value: size.clamp(0, 3 - 1),
+          options: _sizes(localCopy),
           onChanged: (int? next) {
             if (next != null) {
               onSize(next);
@@ -82,10 +84,10 @@ class AppInkPicker extends StatelessWidget {
 /// one on an ink swatch.
 const double _lightInk = 0.4;
 
-const List<Choice<int>> _sizes = <Choice<int>>[
-  Choice<int>(0, Copy.markupSizeSmall),
-  Choice<int>(1, Copy.markupSizeMedium),
-  Choice<int>(2, Copy.markupSizeLarge),
+List<Choice<int>> _sizes(LocalizedCopy localCopy) => <Choice<int>>[
+  Choice<int>(0, localCopy.markupSizeSmall),
+  Choice<int>(1, localCopy.markupSizeMedium),
+  Choice<int>(2, localCopy.markupSizeLarge),
 ];
 
 class _Swatch extends StatelessWidget {
@@ -101,8 +103,10 @@ class _Swatch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
-    final String name = Copy.markupInk(ink);
+    final String name = localCopy.markupInk(ink);
     final Color tick = ink.color.computeLuminance() > _lightInk
         ? MarkupInk.black.color
         : MarkupInk.white.color;

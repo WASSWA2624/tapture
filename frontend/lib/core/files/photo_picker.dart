@@ -1,9 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+
+import 'file_validation.dart';
 
 import 'photo_picker_stub.dart'
     if (dart.library.io) 'photo_picker_io.dart'
@@ -46,8 +51,9 @@ abstract interface class PhotoPicker {
   /// Whether this device has a camera the picker can open.
   bool get canTakePhoto;
 
-  /// Up to [limit] photos from the library, scaled so neither side passes
-  /// [longEdge] where the platform can. Empty when the operator cancels.
+  /// Up to [limit] validated originals from the library. [longEdge] remains
+  /// a compatible hint; original evidence is never resized by the picker.
+  /// Empty when the operator cancels.
   Future<Result<List<Uint8List>>> choose({
     required int limit,
     required int longEdge,
@@ -63,9 +69,33 @@ Future<Result<List<Uint8List>>> readPickedPhotos(
 ) async {
   try {
     final List<XFile> files = await pick();
-    return Success<List<Uint8List>>(<Uint8List>[
-      for (final XFile file in files) await file.readAsBytes(),
-    ]);
+    final List<Uint8List> photos = <Uint8List>[];
+    for (final XFile file in files) {
+      final int length = await file.length();
+      // Size and extension are checked before opening even the prefix stream.
+      validatePickedImage(name: file.name, byteLength: length).getOrThrow();
+      final BytesBuilder prefix = BytesBuilder(copy: false);
+      final int end = length < AppConstants.imports.sniffHeaderBytes
+          ? length
+          : AppConstants.imports.sniffHeaderBytes;
+      await for (final Uint8List chunk in file.openRead(0, end)) {
+        prefix.add(chunk);
+      }
+      validatePickedImage(
+        name: file.name,
+        byteLength: length,
+        header: prefix.takeBytes(),
+      ).getOrThrow();
+      final Uint8List bytes = await file.readAsBytes();
+      // Refuse a source that grew or changed while the picker was open.
+      validatePickedImage(
+        name: file.name,
+        byteLength: bytes.length,
+        header: bytes,
+      ).getOrThrow();
+      photos.add(bytes);
+    }
+    return Success<List<Uint8List>>(photos);
   } on Object catch (error) {
     return FailureResult<List<Uint8List>>(photoPickerFailure(error));
   }
@@ -73,29 +103,30 @@ Future<Result<List<Uint8List>>> readPickedPhotos(
 
 /// Maps a picker or camera error onto catalogue copy.
 Failure photoPickerFailure(Object error) {
+  if (error is Failure) return error;
   if (error is PlatformException) {
     final String code = error.code;
     if (code.contains('access_denied')) {
-      return const PermissionFailure(message: Copy.photoNoAccess);
+      return PermissionFailure(localizedMessage: Copy.messages.photoNoAccess);
     }
     if (code == 'no_available_camera') {
-      return const ProviderFailure(message: Copy.photoNoCamera);
+      return ProviderFailure(localizedMessage: Copy.messages.photoNoCamera);
     }
-    return const ProviderFailure(message: Copy.photoPickFailed);
+    return ProviderFailure(localizedMessage: Copy.messages.photoPickFailed);
   }
   final String text = error.toString().toLowerCase();
   if (text.contains('notallowed') ||
       text.contains('permissiondenied') ||
       text.contains('securityerror')) {
-    return const PermissionFailure(message: Copy.photoNoAccess);
+    return PermissionFailure(localizedMessage: Copy.messages.photoNoAccess);
   }
   if (text.contains('notfound') ||
       text.contains('devicesnotfound') ||
       text.contains('overconstrained') ||
       text.contains('no_available_camera')) {
-    return const ProviderFailure(message: Copy.photoNoCamera);
+    return ProviderFailure(localizedMessage: Copy.messages.photoNoCamera);
   }
-  return const ProviderFailure(message: Copy.photoPickFailed);
+  return ProviderFailure(localizedMessage: Copy.messages.photoPickFailed);
 }
 
 final class _FakePhotoPicker implements PhotoPicker {

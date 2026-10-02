@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 /// Boolean input as a full-width tile. Settings and boolean template fields
 /// share this control. The whole tile is the tap target.
@@ -64,6 +65,11 @@ class AppSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
+    void toggle() {
+      TrialReportScope.recordAction(context, title);
+      onChanged(!value);
+    }
+
     return MergeSemantics(
       child: Semantics(
         label: title,
@@ -71,7 +77,7 @@ class AppSwitchTile extends StatelessWidget {
         enabled: enabled,
         checked: _useCheckbox ? value : null,
         toggled: _useCheckbox ? null : value,
-        onTap: enabled ? _toggle : null,
+        onTap: enabled ? toggle : null,
         child: Material(
           type: dense ? MaterialType.transparency : MaterialType.canvas,
           color: dense ? null : colors.surface,
@@ -87,7 +93,7 @@ class AppSwitchTile extends StatelessWidget {
                   : null,
             ),
             child: InkWell(
-              onTap: enabled ? _toggle : null,
+              onTap: enabled ? toggle : null,
               borderRadius: dense
                   ? const BorderRadius.all(Radius.circular(Radii.sm))
                   : null,
@@ -170,6 +176,4 @@ class AppSwitchTile extends StatelessWidget {
       ),
     );
   }
-
-  void _toggle() => onChanged(!value);
 }

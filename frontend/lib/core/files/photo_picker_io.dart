@@ -25,14 +25,8 @@ final class _PluginPhotoPicker implements PhotoPicker {
     required int limit,
     required int longEdge,
   }) {
-    final double edge = longEdge.toDouble();
     return readPickedPhotos(
-      () => _picker.pickMultiImage(
-        maxWidth: edge,
-        maxHeight: edge,
-        limit: limit,
-        requestFullMetadata: false,
-      ),
+      () => _picker.pickMultiImage(limit: limit, requestFullMetadata: false),
     );
   }
 

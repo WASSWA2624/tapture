@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -34,8 +35,16 @@ class Processing extends Table with MergeColumns {
   /// How many times this job has been retried.
   IntColumn get attempts => integer().withDefault(const Constant(0))();
 
+  /// Explicit operator retry generation; crash recovery retains this value.
+  /// Stored responses from a previous generation remain evidence, not a cache.
+  IntColumn get requestGeneration => integer().withDefault(const Constant(0))();
+
   /// Last failure reason, when one exists. Stored as data.
   TextColumn get lastError => text().nullable()();
+
+  /// Serializable catalogue key and arguments, independent of audit text.
+  /// Null on legacy rows and failures supplied as explicit custom text.
+  TextColumn get lastErrorMessage => text().nullable()();
 
   /// When the job entered the queue.
   DateTimeColumn get queuedAt => dateTime()();
@@ -171,9 +180,9 @@ Future<Result<ProcessingJobRow>> retryProcessingJob(
       (Failure failure) => throw failure,
       (ProcessingJobRow? value) {
         if (value == null) {
-          throw const StorageFailure(
-            message: 'That job is no longer on this device.',
-            recoveryAction: 'Refresh the queue and try again.',
+          throw StorageFailure(
+            localizedMessage: Copy.messages.failureThatJobIsNoLongerOnThis,
+            localizedRecovery: Copy.messages.failureRefreshTheQueueAndTryAgain,
           );
         }
         return value;
@@ -220,9 +229,11 @@ Future<Result<ProcessingResult>> insertProcessingResult(
         (ProcessingResult? value) => value,
       );
       if (existing != null) {
-        throw const StorageFailure(
-          message: 'A stored provider response cannot be changed.',
-          recoveryAction: 'Leave the original result and write a new one.',
+        throw StorageFailure(
+          localizedMessage:
+              Copy.messages.failureAStoredProviderResponseCannotBeChanged,
+          localizedRecovery:
+              Copy.messages.failureLeaveTheOriginalResultAndWriteA,
         );
       }
     }
@@ -270,9 +281,10 @@ void _ensureRequestSummary(Insertable<ProcessingResult> row) {
     return;
   }
   if (summary.toLowerCase().contains('bearer ')) {
-    throw const StorageFailure(
-      message: 'A request summary cannot include a secret.',
-      recoveryAction: 'Store shape and size only, then save again.',
+    throw StorageFailure(
+      localizedMessage:
+          Copy.messages.failureARequestSummaryCannotIncludeASecret,
+      localizedRecovery: Copy.messages.failureStoreShapeAndSizeOnlyThenSave,
     );
   }
   late final Object? decoded;
@@ -286,9 +298,10 @@ void _ensureRequestSummary(Insertable<ProcessingResult> row) {
   }
   for (final Object? key in decoded.keys) {
     if (_isSecretSummaryKey(key.toString())) {
-      throw const StorageFailure(
-        message: 'A request summary cannot include a secret.',
-        recoveryAction: 'Store shape and size only, then save again.',
+      throw StorageFailure(
+        localizedMessage:
+            Copy.messages.failureARequestSummaryCannotIncludeASecret,
+        localizedRecovery: Copy.messages.failureStoreShapeAndSizeOnlyThenSave,
       );
     }
   }

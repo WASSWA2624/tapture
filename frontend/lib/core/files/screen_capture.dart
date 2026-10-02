@@ -52,9 +52,9 @@ Failure screenCaptureFailure(Object error) {
   if (text.contains('notallowed') ||
       text.contains('permissiondenied') ||
       text.contains('securityerror')) {
-    return const PermissionFailure(message: Copy.displayNoAccess);
+    return PermissionFailure(localizedMessage: Copy.messages.displayNoAccess);
   }
-  return const ProviderFailure(message: Copy.displayCaptureFailed);
+  return ProviderFailure(localizedMessage: Copy.messages.displayCaptureFailed);
 }
 
 /// Whether a rejected picker is a cancel rather than a refusal.

@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 /// The record schema drift's `createAll` does not build: the indexes the
@@ -260,9 +261,10 @@ abstract final class RecordSchema {
         continue;
       }
     }
-    throw const StorageFailure(
-      message: 'This device cannot build the record search index.',
-      recoveryAction: 'Update the app, then open it again.',
+    throw StorageFailure(
+      localizedMessage:
+          Copy.messages.failureThisDeviceCannotBuildTheRecordSearch,
+      localizedRecovery: Copy.messages.failureUpdateTheAppThenOpenItAgain,
     );
   }
 

@@ -6,6 +6,7 @@ export 'export_dictionary.dart';
 export 'export_manifest.dart';
 export 'export_record.dart';
 export 'export_request.dart';
+export 'export_status_bucket.dart';
 export 'face_blur.dart';
 export 'json_writer.dart';
 export 'pdf/inspection_report.dart';

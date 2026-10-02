@@ -15,6 +15,10 @@ abstract interface class FolderPicker {
   /// The platform picker. Web cannot hold an app-chosen documents folder.
   factory FolderPicker() => platform.platformFolderPicker();
 
+  /// A folder intended for bounded native grant writes rather than a Dart root.
+  factory FolderPicker.destination() =>
+      platform.platformDestinationFolderPicker();
+
   /// A stand-in that returns [path], or [failure], or a cancel.
   const factory FolderPicker.fake({
     String? path,
@@ -35,6 +39,10 @@ final Provider<FolderPicker> folderPickerProvider = Provider<FolderPicker>((_) {
   return FolderPicker();
 });
 
+/// The picker for a cloud/local destination, retaining platform access grants.
+final Provider<FolderPicker> destinationFolderPickerProvider =
+    Provider<FolderPicker>((_) => FolderPicker.destination());
+
 final class _FakeFolderPicker implements FolderPicker {
   const _FakeFolderPicker({
     this.path,
@@ -53,10 +61,10 @@ final class _FakeFolderPicker implements FolderPicker {
   @override
   Future<Result<String?>> pick() async {
     if (!canPick) {
-      return const FailureResult<String?>(
+      return FailureResult<String?>(
         ProviderFailure(
-          message: Copy.settingsStorageRoot,
-          recoveryAction: Copy.tryAgain,
+          localizedMessage: Copy.messages.settingsStorageRoot,
+          localizedRecovery: Copy.messages.tryAgain,
         ),
       );
     }

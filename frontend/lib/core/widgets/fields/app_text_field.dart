@@ -12,6 +12,7 @@ import 'package:tapture/core/normalise/spoken_text.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 import 'dictation_phase.dart';
 import 'dictation_scope.dart';
@@ -37,6 +38,7 @@ class AppTextField extends StatefulWidget {
     this.errorText,
     this.maxLines = 1,
     this.minLines,
+    this.wrapLabel = false,
     this.maxLength,
     this.prefix,
     this.trailing,
@@ -74,11 +76,15 @@ class AppTextField extends StatefulWidget {
   /// Shared validation copy. This widget does not invent it.
   final String? errorText;
 
-  /// Line count. `1` is a single line; larger values grow with the text.
+  /// Line count. `1` is a single line; null grows without a line limit.
   final int? maxLines;
 
   /// Starting height of a multiline field. Ignored when [maxLines] is `1`.
   final int? minLines;
+
+  /// Lets a non-floating search label wrap within a narrow or scaled field.
+  /// The input itself keeps its requested line count and keyboard behaviour.
+  final bool wrapLabel;
 
   /// When set, a locale-formatted character counter is shown.
   final int? maxLength;
@@ -219,7 +225,8 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     final AppTextField field = widget;
-    final int lines = field.maxLines ?? 1;
+    final int? lines = field.maxLines;
+    final bool multiline = lines != 1;
     return ListenableBuilder(
       listenable: Listenable.merge(<Listenable>[field.controller, _dictation]),
       builder: (BuildContext context, Widget? _) {
@@ -233,18 +240,29 @@ class _AppTextFieldState extends State<AppTextField> {
             enabled: field.enabled,
             readOnly: field.readOnly,
             maxLines: lines,
-            minLines: field.minLines ?? (lines > 1 ? lines : null),
+            minLines: multiline ? (field.minLines ?? lines) : null,
             maxLength: field.maxLength,
             keyboardType:
                 field.keyboardType ??
-                (lines > 1 ? TextInputType.multiline : TextInputType.text),
+                (multiline ? TextInputType.multiline : TextInputType.text),
             textInputAction: field.textInputAction,
             inputFormatters: field.inputFormatters,
             autofillHints: field.autofillHints,
-            onChanged: field.onChanged,
-            onSubmitted: field.onSubmitted,
-            onTap: field.onTap,
-            textAlignVertical: lines > 1 ? TextAlignVertical.top : null,
+            onChanged: (String value) {
+              TrialReportScope.recordAction(context, field.label);
+              field.onChanged?.call(value);
+            },
+            onSubmitted: field.onSubmitted == null
+                ? null
+                : (String value) {
+                    TrialReportScope.recordAction(context, field.label);
+                    field.onSubmitted!(value);
+                  },
+            onTap: () {
+              TrialReportScope.recordAction(context, field.label);
+              field.onTap?.call();
+            },
+            textAlignVertical: multiline ? TextAlignVertical.top : null,
             obscureText: field.obscureText && !_revealed,
             autofocus: field.autofocus,
             // Keyed to the field, not the toggle: revealing a secret must
@@ -253,7 +271,12 @@ class _AppTextFieldState extends State<AppTextField> {
             autocorrect: !field.obscureText,
             style: AppText.body.copyWith(color: onSurface),
             decoration: InputDecoration(
-              labelText: _labelText(field),
+              labelText: field.wrapLabel
+                  ? null
+                  : _labelText(field, Copy.of(context)),
+              label: field.wrapLabel
+                  ? Text(_labelText(field, Copy.of(context)))
+                  : null,
               hintText: field.hint,
               helperText: support.text,
               helper: support.widget,
@@ -262,7 +285,7 @@ class _AppTextFieldState extends State<AppTextField> {
                   ? null
                   : 3,
               errorText: field.errorText,
-              alignLabelWithHint: lines > 1,
+              alignLabelWithHint: multiline,
               prefixIcon: field.prefix,
               prefixIconConstraints: const BoxConstraints(
                 minWidth: Sizes.minTapTarget,
@@ -298,6 +321,8 @@ class _AppTextFieldState extends State<AppTextField> {
   }
 
   Widget? _suffix(AppTextField field) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool showClear =
         field.clearable &&
         field.enabled &&
@@ -313,19 +338,19 @@ class _AppTextFieldState extends State<AppTextField> {
     }
     final bool on = _dictation.phase != DictationPhase.idle;
     final String mic = on
-        ? Copy.stopDictating(field.label)
-        : Copy.dictateInto(field.label);
+        ? localCopy.stopDictating(field.label)
+        : localCopy.dictateInto(field.label);
     final String reveal = _revealed
-        ? Copy.hideField(field.label)
-        : Copy.showField(field.label);
+        ? localCopy.hideField(field.label)
+        : localCopy.showField(field.label);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         if (showClear)
           AppIconButton(
             icon: AppIcons.clear,
-            semanticLabel: Copy.clearField(field.label),
-            tooltip: Copy.clearField(field.label),
+            semanticLabel: localCopy.clearField(field.label),
+            tooltip: localCopy.clearField(field.label),
             outlined: false,
             onPressed: () {
               field.controller.clear();
@@ -367,11 +392,11 @@ String _localeName(BuildContext context) {
   return Localizations.localeOf(context).toString();
 }
 
-String _labelText(AppTextField field) {
+String _labelText(AppTextField field, LocalizedCopy localCopy) {
   return switch (field.requiredness) {
     FieldRequiredness.unmarked => field.label,
-    FieldRequiredness.required => Copy.fieldLabelRequired(field.label),
-    FieldRequiredness.optional => Copy.fieldLabelOptional(field.label),
+    FieldRequiredness.required => localCopy.fieldLabelRequired(field.label),
+    FieldRequiredness.optional => localCopy.fieldLabelOptional(field.label),
   };
 }
 

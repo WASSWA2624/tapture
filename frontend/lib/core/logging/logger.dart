@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:tapture/core/constants/app_constants.dart';
 
@@ -8,7 +9,7 @@ import 'logging_stub.dart' if (dart.library.io) 'logging_io.dart' as io;
 ///
 /// [Logger.new] with [persist] off is the in-memory fake. With [persist] on
 /// it is the platform implementation: the same ring buffer, written to a
-/// rotating file after each accepted line.
+/// rotating file through a serialized, coalescing writer.
 abstract interface class Logger {
   /// Creates a logger.
   ///
@@ -56,6 +57,9 @@ abstract interface class Logger {
   /// Each newly accepted line, already redacted.
   Stream<String> get entries;
 
+  /// Waits for pending file writes; unavailable storage keeps the local buffer.
+  Future<void> flush();
+
   /// Written into the export file name until device identity exists (023).
   String get deviceId;
 
@@ -92,6 +96,9 @@ final class _MemoryLogger implements Logger {
            directoryPath ?? (persist ? io.defaultLogDirectoryPath() : null),
        _persist = persist,
        _patterns = _loadPatterns(patternsYaml) {
+    if (_bufferSize < 1) {
+      throw ArgumentError.value(_bufferSize, 'bufferSize', 'Must be positive');
+    }
     _persist = _persist && _directoryPath != null;
   }
 
@@ -104,8 +111,12 @@ final class _MemoryLogger implements Logger {
   final List<({String name, RegExp regex})> _patterns;
 
   bool _persist;
+  bool _writePending = false;
+  bool _rotatePending = false;
+  bool _writing = false;
+  Completer<void>? _flush;
 
-  final List<String> _buffer = <String>[];
+  final Queue<String> _buffer = Queue<String>();
   final StreamController<String> _entries =
       StreamController<String>.broadcast();
 
@@ -114,6 +125,9 @@ final class _MemoryLogger implements Logger {
 
   @override
   Stream<String> get entries => _entries.stream;
+
+  @override
+  Future<void> flush() => _flush?.future ?? Future<void>.value();
 
   @override
   String get exportFileName {
@@ -156,10 +170,10 @@ final class _MemoryLogger implements Logger {
         '${_redact(body, _patterns)}';
     var rotate = false;
     while (_buffer.length >= _bufferSize) {
-      _buffer.removeAt(0);
+      _buffer.removeFirst();
       rotate = true;
     }
-    _buffer.add(line);
+    _buffer.addLast(line);
     _entries.add(line);
     _writeFiles(rotate: rotate);
   }
@@ -169,15 +183,45 @@ final class _MemoryLogger implements Logger {
     if (!_persist || directoryPath == null) {
       return;
     }
-    io.persistLogFiles(
-      directoryPath: directoryPath,
-      lines: _retained(_buffer),
-      rotationCount: AppConstants.logging.rotationCount,
-      rotate: rotate,
-    );
+    _writePending = true;
+    _rotatePending = _rotatePending || rotate;
+    if (_writing) {
+      return;
+    }
+    _writing = true;
+    _flush = Completer<void>();
+    // A burst costs one bounded snapshot, rather than a disk write and a
+    // complete buffer copy for each line. Only one write can be in flight.
+    scheduleMicrotask(() => unawaited(_drainFiles(directoryPath)));
   }
 
-  List<String> _retained(List<String> lines) {
+  Future<void> _drainFiles(String directoryPath) async {
+    try {
+      while (_writePending) {
+        final bool rotate = _rotatePending;
+        _writePending = false;
+        _rotatePending = false;
+        await io.persistLogFiles(
+          directoryPath: directoryPath,
+          lines: _retained(_buffer),
+          rotationCount: AppConstants.logging.rotationCount,
+          rotate: rotate,
+        );
+      }
+    } on Object {
+      // Diagnostics must never break capture when their volume is full or
+      // unavailable. The bounded, redacted buffer remains exportable.
+      _persist = false;
+      _writePending = false;
+      _rotatePending = false;
+    } finally {
+      _writing = false;
+      _flush!.complete();
+      _flush = null;
+    }
+  }
+
+  List<String> _retained(Iterable<String> lines) {
     final DateTime now = _clock().toUtc();
     return lines.where((String line) {
       final DateTime? at = DateTime.tryParse(line.split('\t').first);

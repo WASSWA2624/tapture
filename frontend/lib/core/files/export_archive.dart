@@ -2,6 +2,7 @@ import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -37,9 +38,11 @@ final class ExportArchive {
     required Uint8List manifest,
     required CancellationToken cancel,
     void Function(double)? onProgress,
+    String? manifestSource,
   }) async {
     try {
       safeRelativePath(target);
+      if (manifestSource != null) safeRelativePath(manifestSource);
       for (final MapEntry<String, String> entry in sources.entries) {
         safeRelativePath(entry.key);
         safeRelativePath(entry.value);
@@ -52,10 +55,17 @@ final class ExportArchive {
           manifest: manifest,
           cancel: cancel,
           onProgress: onProgress,
+          manifestSource: manifestSource,
         );
       }
       final Map<String, Uint8List> entries = <String, Uint8List>{};
-      var size = manifest.length;
+      final Uint8List manifestBytes = manifestSource == null
+          ? manifest
+          : (await _files.read(manifestSource)).fold(
+              (Failure failure) => throw failure,
+              (Uint8List bytes) => bytes,
+            );
+      var size = manifestBytes.length;
       for (final MapEntry<String, String> entry in sources.entries) {
         if (cancel.isCancelled) {
           return const FailureResult<WrittenFile>(CancelledFailure());
@@ -67,17 +77,19 @@ final class ExportArchive {
         final Uint8List bytes = (read as Success<Uint8List>).value;
         size += bytes.length;
         if (size > AppConstants.imports.archiveUncompressedMaxBytes) {
-          return const FailureResult<WrittenFile>(
+          return FailureResult<WrittenFile>(
             StorageFailure(
-              message: 'This export is too large for this browser.',
-              recoveryAction: 'Export fewer records or use a desktop device.',
+              localizedMessage:
+                  Copy.messages.failureThisExportIsTooLargeForThis,
+              localizedRecovery:
+                  Copy.messages.failureExportFewerRecordsOrUseADesktop,
             ),
           );
         }
         entries[entry.key] = bytes;
         onProgress?.call(entries.length / (sources.length + 1));
       }
-      entries['manifest.json'] = manifest;
+      entries['manifest.json'] = manifestBytes;
       final Result<Uint8List> encoded =
           await runIsolate<Map<String, Uint8List>, Uint8List>(
             _encode,

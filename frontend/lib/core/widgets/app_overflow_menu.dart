@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 part 'app_overflow_action.dart';
 
@@ -32,19 +33,21 @@ class AppOverflowMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final Color iconColor = inverted ? colors.onPrimary : colors.onSurface;
     return Semantics(
       button: true,
       enabled: items.isNotEmpty,
-      label: Copy.overflowMenu,
+      label: localCopy.overflowMenu,
       child: ConstrainedBox(
         constraints: const BoxConstraints.tightFor(
           width: Sizes.minTapTarget,
           height: Sizes.minTapTarget,
         ),
         child: PopupMenuButton<int>(
-          tooltip: Copy.overflowMenu,
+          tooltip: localCopy.overflowMenu,
           enabled: items.isNotEmpty,
           padding: EdgeInsets.zero,
           offset: const Offset(0, Sizes.minTapTarget),
@@ -58,9 +61,12 @@ class AppOverflowMenu extends StatelessWidget {
             AppIcons.more,
             size: Space.x6,
             color: iconColor,
-            semanticLabel: Copy.overflowMenu,
+            semanticLabel: localCopy.overflowMenu,
           ),
-          onSelected: (int index) => items[index].onTap(),
+          onSelected: (int index) {
+            TrialReportScope.recordAction(context, items[index].label);
+            items[index].onTap();
+          },
           itemBuilder: (BuildContext context) => _menuItems(items),
         ),
       ),
@@ -96,6 +102,9 @@ Future<void> showAppOverflowActions(
     items: _menuItems(items),
   );
   if (chosen != null) {
+    if (context.mounted) {
+      TrialReportScope.recordAction(context, items[chosen].label);
+    }
     items[chosen].onTap();
   }
 }

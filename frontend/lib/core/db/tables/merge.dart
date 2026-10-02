@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -39,6 +40,12 @@ class Merge extends Table with MergeColumns {
   TextColumn get undoSnapshotPath => text()();
 }
 
+/// Sessions holding a pending undo journal. The JSON check runs first, so a
+/// malformed counts value neither fails a write nor the index build.
+const String mergePendingUndoWhere =
+    "CASE WHEN json_valid(counts) THEN json_type(counts, '\$.undo_journal') END "
+    "= 'text'";
+
 /// Inserts a merge session. [MergeSession.counts] must be a JSON object.
 Future<Result<MergeSession>> insertMergeSession(
   GeneratedDatabase db, {
@@ -76,15 +83,15 @@ void _ensureCountsJson(Insertable<MergeSession> row) {
   try {
     decoded = jsonDecode(raw) as Object?;
   } on FormatException {
-    throw const StorageFailure(
-      message: 'Merge counts are not valid JSON.',
-      recoveryAction: 'Fix the counts object and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheMergeSummaryCouldNotBeRead,
+      localizedRecovery: Copy.messages.failureFixTheCountsObjectAndSaveAgain,
     );
   }
   if (decoded is! Map) {
-    throw const StorageFailure(
-      message: 'Merge counts must be a JSON object.',
-      recoveryAction: 'Fix the counts object and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheMergeSummaryIsNotInA,
+      localizedRecovery: Copy.messages.failureFixTheCountsObjectAndSaveAgain,
     );
   }
 }

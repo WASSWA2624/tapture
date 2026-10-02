@@ -1,3 +1,4 @@
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 /// Length cap for one path segment. Kept as a literal so it can be a default
@@ -23,9 +24,10 @@ abstract final class PathSanitizer {
     int maxLength = kMaxPathSegment,
   }) {
     if (_isHostile(input)) {
-      throw const ValidationFailure(
-        message: 'That name is not a valid folder.',
-        recoveryAction: 'Choose a name without slashes that point elsewhere.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureThatNameIsNotAValidFolder,
+        localizedRecovery:
+            Copy.messages.failureChooseANameWithoutSlashesThatPoint,
       );
     }
     String segment = _stripAccents(input);
@@ -37,9 +39,9 @@ abstract final class PathSanitizer {
       segment = segment.substring(0, maxLength).replaceAll(_edgeHyphen, '');
     }
     if (segment.isEmpty || _isDeviceName(segment)) {
-      throw const ValidationFailure(
-        message: 'That name is not a valid folder.',
-        recoveryAction: 'Choose a name with letters or digits.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureThatNameIsNotAValidFolder,
+        localizedRecovery: Copy.messages.failureChooseANameWithLettersOrDigits,
       );
     }
     return segment;
@@ -72,9 +74,9 @@ String safeRelativePath(String relativePath) {
   return PathSanitizer.safeRelativePath(relativePath);
 }
 
-const ValidationFailure _outsideStorage = ValidationFailure(
-  message: 'The file path must stay inside the storage folder.',
-  recoveryAction: 'Save the file under the project folder and try again.',
+final ValidationFailure _outsideStorage = ValidationFailure(
+  localizedMessage: Copy.messages.failureTheFilePathMustStayInsideThe2,
+  localizedRecovery: Copy.messages.failureSaveTheFileUnderTheProjectFolder,
 );
 
 /// Strips accents, turns whitespace into hyphens, removes reserved and
@@ -89,12 +91,32 @@ String sanitiseSegment(String input, {int maxLength = kMaxPathSegment}) {
 
 /// Stored folder name: sanitised [name] plus a short [id] suffix. A later
 /// rename of the display name must not recompute this.
+///
+/// A name with nothing a folder can keep — only emoji, or a script such as
+/// Cyrillic or Chinese that has no ASCII form — becomes `project`:
+/// the id suffix still makes the folder unique, and the display name stays
+/// on the project row. Traversal, absolute paths and drive prefixes are still
+/// refused.
 String folderNameFor({required String name, required String id}) {
   final String hex = id.replaceAll(_notAlnum, '');
   final String suffix = hex.length <= kIdSuffixLength
       ? hex.padLeft(kIdSuffixLength, '0').toLowerCase()
       : hex.substring(hex.length - kIdSuffixLength).toLowerCase();
-  return '${sanitiseSegment(name)}__$suffix';
+  return '${_folderStem(name)}__$suffix';
+}
+
+/// The folder stem used when a project name keeps no letter or digit.
+const String _neutralStem = 'project';
+
+String _folderStem(String name) {
+  if (_isHostile(name)) {
+    return sanitiseSegment(name);
+  }
+  try {
+    return sanitiseSegment(name);
+  } on ValidationFailure {
+    return _neutralStem;
+  }
 }
 
 bool _isHostile(String input) {

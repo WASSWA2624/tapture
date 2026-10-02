@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/blob_store.dart';
@@ -10,6 +12,11 @@ import 'file_reader_stub.dart'
     if (dart.library.io) 'file_reader_io.dart'
     if (dart.library.js_interop) 'file_reader_web.dart'
     as platform;
+
+/// Shared read boundary, replaceable with an in-memory store in widget tests.
+final Provider<FileReader> fileReaderProvider = Provider<FileReader>(
+  (Ref ref) => FileReader(storageRoot: ref.watch(storageRootProvider)),
+);
 
 /// Reads a stored file's bytes back by its path under the storage root: the
 /// read side of [FileWriter], wherever this platform keeps the files
@@ -39,8 +46,10 @@ abstract interface class FileReader {
   /// The failure every reader returns when [path] cannot be read.
   static StorageFailure unreadable(String path) {
     return StorageFailure(
-      message: 'Tapture could not read $path.',
-      recoveryAction: 'Capture or add the file again, then try again.',
+      localizedMessage: Copy.messages.failureTaptureCouldNotReadValue(
+        (path).toString(),
+      ),
+      localizedRecovery: Copy.messages.failureCaptureOrAddTheFileAgainThen,
     );
   }
 }

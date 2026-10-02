@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/columns.dart';
@@ -128,15 +129,15 @@ void _parseProjectSettings(String settings) {
   try {
     decoded = jsonDecode(settings) as Object?;
   } on FormatException {
-    throw const StorageFailure(
-      message: 'Project settings are not valid JSON.',
-      recoveryAction: 'Fix the settings object and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheProjectSettingsCouldNotBeRead,
+      localizedRecovery: Copy.messages.failureChangeTheSettingsAgainThenSave,
     );
   }
   if (decoded is! Map) {
-    throw const StorageFailure(
-      message: 'Project settings must be a JSON object.',
-      recoveryAction: 'Fix the settings object and save again.',
+    throw StorageFailure(
+      localizedMessage: Copy.messages.failureTheProjectSettingsAreNotInA,
+      localizedRecovery: Copy.messages.failureChangeTheSettingsAgainThenSave,
     );
   }
 }

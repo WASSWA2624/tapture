@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/columns.dart';
+import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/time/clock.dart';
 
 part 'context_state.dart';
@@ -33,18 +34,23 @@ class Context extends Table with MergeColumns {
 }
 
 /// Pins [value] at [level] and deletes every lower state row in one write.
+///
+/// State rows are the device's transient current values, never merged; the
+/// step 4 rule clears the lower levels outright. Definitions and presets,
+/// which merge, are only ever tombstoned ([deleteContextDefinition],
+/// [deleteContextPreset]).
 Future<void> setContextLevel(
   GeneratedDatabase tx, {
   required String projectId,
   required int level,
   required String value,
+  required Clock clock,
+  required String deviceId,
   String? fieldKey,
-  Clock? clock,
-  String? deviceId,
 }) async {
   final AppDatabase db = tx as AppDatabase;
-  final DateTime now = (clock ?? const SystemClock()).nowUtc();
-  final String device = deviceId ?? '';
+  final DateTime now = clock.nowUtc();
+  final String device = deviceId;
   final String key = fieldKey ?? 'level-$level';
   await tx.transaction(() async {
     await (tx.delete(db.contextState)..where(
@@ -90,67 +96,133 @@ Future<void> setContextLevel(
   });
 }
 
-/// Inserts a named snapshot of the current context values.
+/// Inserts a named snapshot of the current context values and returns it.
 Future<ContextPreset> upsertContextPreset(
   GeneratedDatabase tx, {
   required String projectId,
   required String name,
   required String values,
-  Clock? clock,
-  String? deviceId,
-}) async {
+  required Clock clock,
+  required String deviceId,
+}) {
   final AppDatabase db = tx as AppDatabase;
-  final DateTime now = (clock ?? const SystemClock()).nowUtc();
-  final String device = deviceId ?? '';
-  await tx
+  final DateTime now = clock.nowUtc();
+  return tx
       .into(db.contextPresets)
-      .insert(
+      .insertReturning(
         ContextPresetsCompanion.insert(
           name: name,
           projectId: projectId,
           values: values,
           createdAt: now,
           updatedAt: now,
-          updatedByDevice: device,
+          updatedByDevice: deviceId,
         ),
       );
-  return (tx.select(db.contextPresets)..where(
-        ($ContextPresetsTable tbl) =>
-            tbl.projectId.equals(projectId) & tbl.name.equals(name),
-      ))
-      .getSingle();
 }
 
-/// Removes one definition after its caller has recorded the merge tombstone.
+/// A project's context definitions that are not deleted, from the root
+/// level down. `.get()` reads them once and `.watch()` follows them; a delete
+/// also changes the watch, because the query reads the tombstones.
+SimpleSelectStatement<$ContextTable, ContextData> liveContextDefinitions(
+  GeneratedDatabase tx, {
+  required String projectId,
+}) {
+  final AppDatabase db = tx as AppDatabase;
+  return db.select(db.context)
+    ..where(
+      ($ContextTable tbl) =>
+          tbl.projectId.equals(projectId) &
+          tbl.id.isNotInQuery(_tombstoned(db, db.context.actualTableName)),
+    )
+    ..orderBy(<OrderClauseGenerator<$ContextTable>>[
+      ($ContextTable tbl) => OrderingTerm.asc(tbl.level),
+    ]);
+}
+
+/// A project's presets that are not deleted, in the order they were saved.
+SimpleSelectStatement<$ContextPresetsTable, ContextPreset> liveContextPresets(
+  GeneratedDatabase tx, {
+  required String projectId,
+}) {
+  final AppDatabase db = tx as AppDatabase;
+  return db.select(db.contextPresets)
+    ..where(
+      ($ContextPresetsTable tbl) =>
+          tbl.projectId.equals(projectId) &
+          tbl.id.isNotInQuery(
+            _tombstoned(db, db.contextPresets.actualTableName),
+          ),
+    )
+    ..orderBy(<OrderClauseGenerator<$ContextPresetsTable>>[
+      ($ContextPresetsTable tbl) => OrderingTerm.asc(tbl.createdAt),
+      ($ContextPresetsTable tbl) => OrderingTerm.asc(tbl.id),
+    ]);
+}
+
+/// Deletes one definition: exactly one tombstone, in the caller's
+/// transaction. The row stays for merge; [liveContextDefinitions] skips it
+/// (FE-SEC-08, FE-SEC-09).
 Future<void> deleteContextDefinition(
   GeneratedDatabase tx, {
   required String id,
-}) async {
+  required String reason,
+  required Clock clock,
+  required String deviceId,
+}) {
   final AppDatabase db = tx as AppDatabase;
-  await (tx.delete(
-    db.context,
-  )..where(($ContextTable table) => table.id.equals(id))).go();
+  return writeTombstone(
+    db,
+    entityType: db.context.actualTableName,
+    entityId: id,
+    reason: reason,
+    clock: clock,
+    deviceId: deviceId,
+  );
 }
 
-/// Removes one preset after its caller has recorded the merge tombstone.
+/// Deletes one preset: exactly one tombstone, in the caller's transaction.
+/// The row stays for merge; [liveContextPresets] skips it.
 Future<void> deleteContextPreset(
   GeneratedDatabase tx, {
   required String id,
-}) async {
+  required String reason,
+  required Clock clock,
+  required String deviceId,
+}) {
   final AppDatabase db = tx as AppDatabase;
-  await (tx.delete(
-    db.contextPresets,
-  )..where(($ContextPresetsTable table) => table.id.equals(id))).go();
+  return writeTombstone(
+    db,
+    entityType: db.contextPresets.actualTableName,
+    entityId: id,
+    reason: reason,
+    clock: clock,
+    deviceId: deviceId,
+  );
 }
 
-/// Clears transient current values before the caller writes a new snapshot.
+/// The ids tombstoned for [entityType], as a one-column subquery.
+JoinedSelectStatement<$TombstonesTable, Tombstone> _tombstoned(
+  AppDatabase db,
+  String entityType,
+) {
+  return db.selectOnly(db.tombstones)
+    ..addColumns(<Expression<Object>>[db.tombstones.entityId])
+    ..where(db.tombstones.entityType.equals(entityType));
+}
+
+/// Clears transient current values (levels, and pins at level 0) before the
+/// caller writes a new snapshot. Rows below level 0 hold the pickers' recent
+/// values and are kept.
 Future<void> clearContextStateForProject(
   GeneratedDatabase tx, {
   required String projectId,
 }) async {
   final AppDatabase db = tx as AppDatabase;
-  await (tx.delete(
-        db.contextState,
-      )..where(($ContextStateTable table) => table.projectId.equals(projectId)))
+  await (tx.delete(db.contextState)..where(
+        ($ContextStateTable table) =>
+            table.projectId.equals(projectId) &
+            table.level.isBiggerOrEqualValue(0),
+      ))
       .go();
 }

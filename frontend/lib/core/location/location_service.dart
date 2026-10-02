@@ -6,11 +6,13 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
-part 'geo_fix.dart';
+import 'location_reader.dart';
+
+export 'geo_fix.dart';
 
 /// Time-boxed location fix. Features never call a geolocation plugin
 /// (FE-STR-11). No permission is requested while GPS is off (FE-SEC-07).
-abstract interface class LocationService {
+abstract interface class LocationService implements LocationReader {
   /// Uses the platform's location service only while GPS is enabled.
   factory LocationService({bool Function()? gpsEnabled}) {
     return _PlatformLocationService(gpsEnabled ?? (() => false));
@@ -38,6 +40,7 @@ abstract interface class LocationService {
 
   /// Requests a fix, waiting at most [timeout]. Returns accuracy with the
   /// coordinates. Does nothing when GPS is off.
+  @override
   Future<Result<GeoFix?>> currentFix({
     Duration timeout = AppConstants.locationTimeout,
   });
@@ -68,50 +71,74 @@ final class _PlatformLocationService implements LocationService {
   Future<Result<GeoFix?>> currentFix({
     Duration timeout = AppConstants.locationTimeout,
   }) async {
-    if (!_gpsEnabled()) {
+    if (!_gpsEnabled() || timeout <= Duration.zero) {
       return const Success<GeoFix?>(null);
     }
+    bool expired = false;
+    final Stopwatch elapsed = Stopwatch()..start();
+    bool active() => !expired && _gpsEnabled();
     try {
-      if (!await Geolocator.isLocationServiceEnabled() || !_gpsEnabled()) {
-        return const Success<GeoFix?>(null);
-      }
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied && _gpsEnabled()) {
-        permission = await Geolocator.requestPermission();
-      }
-      if (!_gpsEnabled() ||
-          (permission != LocationPermission.whileInUse &&
-              permission != LocationPermission.always)) {
-        return const Success<GeoFix?>(null);
-      }
-      final Position position = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: timeout,
-        ),
-      );
-      if (!_gpsEnabled()) {
-        return const Success<GeoFix?>(null);
-      }
-      return Success<GeoFix?>(
-        GeoFix(
-          latitude: position.latitude,
-          longitude: position.longitude,
-          accuracyMetres: position.accuracy,
-          capturedAt: position.timestamp.toUtc(),
-        ),
-      );
-    } on TimeoutException {
+      final GeoFix? fix =
+          await _readFix(
+            active: active,
+            remaining: () => timeout - elapsed.elapsed,
+          ).timeout(
+            timeout,
+            onTimeout: () {
+              // The plug-in cannot cancel a permission prompt. Its late result
+              // must never start another platform call or attach a stale fix.
+              expired = true;
+              return null;
+            },
+          );
+      return Success<GeoFix?>(fix);
+    } on Object {
+      // Location is advisory: denied, insecure and unavailable platforms
+      // leave capture and context usable without coordinates (task 091).
       return const Success<GeoFix?>(null);
-    } on UnsupportedError {
-      return const Success<GeoFix?>(null);
-    } on LocationServiceDisabledException {
-      return const Success<GeoFix?>(null);
-    } on PermissionDeniedException {
-      return const FailureResult<GeoFix?>(PermissionFailure());
-    } on Object catch (error) {
-      return FailureResult<GeoFix?>(Failure.from(error));
+    } finally {
+      expired = true;
+      elapsed.stop();
     }
+  }
+
+  Future<GeoFix?> _readFix({
+    required bool Function() active,
+    required Duration Function() remaining,
+  }) async {
+    if (!await Geolocator.isLocationServiceEnabled() || !active()) {
+      return null;
+    }
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (!active()) {
+      return null;
+    }
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (!active() ||
+        (permission != LocationPermission.whileInUse &&
+            permission != LocationPermission.always)) {
+      return null;
+    }
+    final Duration budget = remaining();
+    if (budget <= Duration.zero) {
+      return null;
+    }
+    final Position position = await Geolocator.getCurrentPosition(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.high,
+        timeLimit: budget,
+      ),
+    );
+    return active()
+        ? GeoFix(
+            latitude: position.latitude,
+            longitude: position.longitude,
+            accuracyMetres: position.accuracy,
+            capturedAt: position.timestamp.toUtc(),
+          )
+        : null;
   }
 }
 

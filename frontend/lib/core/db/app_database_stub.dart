@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/security/secure_storage.dart';
 
 /// Web stand-in: native SQLite is not compiled into the web binary.
 QueryExecutor openMemoryExecutor() {
@@ -6,10 +7,14 @@ QueryExecutor openMemoryExecutor() {
 }
 
 /// Web stand-in: the on-disk database is a later native-only path.
-QueryExecutor openFileExecutor({String? directoryPath, String? encryptionKey}) {
+QueryExecutor openFileExecutor({
+  String? directoryPath,
+  String? encryptionKey,
+  SecureStorage? keyStore,
+}) {
   throw UnsupportedError(
     'AppDatabase.open is not available on web'
     '${directoryPath == null ? '' : ': $directoryPath'}'
-    '${encryptionKey == null ? '' : ' (encrypted)'}',
+    '${encryptionKey == null && keyStore == null ? '' : ' (encrypted)'}',
   );
 }

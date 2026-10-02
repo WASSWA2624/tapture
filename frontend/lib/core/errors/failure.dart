@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:tapture/core/copy/localized_message.dart';
+
 part 'cancelled_failure.dart';
 part 'corruption_failure.dart';
 part 'network_failure.dart';
@@ -15,7 +17,24 @@ part 'validation_failure.dart';
 /// while each class keeps its own file (FE-STR-06).
 sealed class Failure {
   /// Creates a failure.
-  const Failure();
+  const Failure({this.localizedMessage, this.localizedRecovery});
+
+  /// Semantic explanation retained until a widget selects its own locale.
+  final LocalizedMessage? localizedMessage;
+
+  /// Semantic recovery retained independently of the English audit text.
+  final LocalizedMessage? localizedRecovery;
+
+  /// Semantic explanation, or explicitly supplied text kept verbatim.
+  LocalizedMessage get explanation =>
+      localizedMessage ?? LocalizedMessage.literal(message);
+
+  /// Semantic recovery, or explicitly supplied text kept verbatim.
+  LocalizedMessage? get recovery {
+    final String? action = recoveryAction;
+    return localizedRecovery ??
+        (action == null ? null : LocalizedMessage.literal(action));
+  }
 
   /// Plain-language explanation shown to the operator.
   String get message;
