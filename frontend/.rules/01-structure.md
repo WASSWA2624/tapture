@@ -31,9 +31,10 @@ a second public class means a second file.
 Screens end `_screen.dart`, controllers `_controller.dart`, repositories `_repository.dart` and
 `_repository_impl.dart`, providers `_providers.dart`, widgets are named after what they render.
 
-## FE-STR-08 — One barrel per feature
-Cross-feature imports go through `features/<name>/<name>.dart`. Anything not exported there is internal and may be
-changed freely.
+## FE-STR-08 — Explicit public barrels per feature
+Cross-feature imports go through `features/<name>/<name>.dart`. Pure domain consumers use the explicit
+`features/<name>/domain/domain.dart` port, which exports only domain models, interfaces and logic; this keeps
+presentation and platform implementations out of headless workers. All other feature files remain internal.
 
 ## FE-STR-09 — Promotion happens immediately
 The moment a widget, helper or extension is needed by a second feature, it moves to `core/` in the same pull request.

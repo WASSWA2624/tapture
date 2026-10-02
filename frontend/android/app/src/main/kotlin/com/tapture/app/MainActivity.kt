@@ -14,7 +14,7 @@ import android.os.StatFs
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
@@ -29,18 +29,39 @@ private const val COPY_CHUNK = 64 * 1024
 private val io = Executors.newSingleThreadExecutor()
 private val main = Handler(Looper.getMainLooper())
 
-class MainActivity : FlutterActivity() {
+class MainActivity : FlutterFragmentActivity() {
+    private val cloudSignIn = CloudSignIn(this)
+    private val scopedFolderState = lazy { ScopedFolderWriter(applicationContext) }
+    private val scopedFolders get() = scopedFolderState.value
     private var saveAsResult: MethodChannel.Result? = null
     private var saveAsBytes: ByteArray? = null
     private var saveAsFileName: String? = null
     private var pickDirResult: MethodChannel.Result? = null
+    private var pickDestination = false
     private var pickDocResult: MethodChannel.Result? = null
+    private var incomingBundles: IncomingBundles? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.tapture.app/cloud")
             .setMethodCallHandler { call, result ->
                 when (call.method) {
+                    "signIn" -> cloudSignIn.start(call.argument("authorize"), call.argument("redirect"), result)
+                    "cancelSignIn" -> { cloudSignIn.cancel(); result.success(null) }
+                    "folderBegin", "folderAppend", "folderFinish", "folderAbort", "folderProbe" -> scopedFolders.handle(call, result)
+                    else -> result.notImplemented()
+                }
+            }
+        val filesChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        incomingBundles = IncomingBundles(applicationContext, filesChannel)
+        filesChannel
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "takeIncomingBundle" -> result.success(incomingBundles?.take())
+                    "discardIncomingBundles" -> {
+                        incomingBundles?.discard()
+                        result.success(null)
+                    }
                     "saveToDownloads" -> saveToDownloads(
                         call.argument("fileName"),
                         call.argument("mimeType"),
@@ -58,6 +79,7 @@ class MainActivity : FlutterActivity() {
                     "publicDocumentsPath" -> publicDocumentsPath(result)
                     "volumeStats" -> volumeStats(call.argument("path"), result)
                     "pickDirectory" -> pickDirectory(result)
+                    "pickDestinationDirectory" -> pickDirectory(result, destination = true)
                     "pickDocument" -> pickDocument(call.argument("mimeType"), result)
                     "saveFileToDownloads" -> saveFileToDownloads(
                         call.argument("sourcePath"),
@@ -69,7 +91,20 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+        incomingBundles?.receive(intent)
     }
+
+    override fun onNewIntent(intent: Intent) {
+        if (cloudSignIn.receive(intent)) { setIntent(intent); return }
+        if (incomingBundles?.receive(intent) == true) { setIntent(intent); return }
+        super.onNewIntent(intent)
+    }
+
+    override fun onPause() { cloudSignIn.paused(); super.onPause() }
+
+    override fun onResume() { super.onResume(); cloudSignIn.resumed() }
+
+    override fun onDestroy() { cloudSignIn.cancel(); incomingBundles?.close(); if (scopedFolderState.isInitialized()) scopedFolders.close(); super.onDestroy() }
 
     private fun saveAs(
         fileName: String?,
@@ -193,13 +228,17 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun pickDirectory(result: MethodChannel.Result) {
+    private fun pickDirectory(result: MethodChannel.Result, destination: Boolean = false) {
         if (pickDirResult != null) {
             result.error("busy", "A folder pick is already open.", null)
             return
         }
         pickDirResult = result
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        pickDestination = destination
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or Intent.FLAG_GRANT_PREFIX_URI_PERMISSION,
+        )
         try {
             @Suppress("DEPRECATION")
             startActivityForResult(intent, PICK_DIR_REQUEST)
@@ -212,6 +251,8 @@ class MainActivity : FlutterActivity() {
     private fun finishPickDirectory(resultCode: Int, data: Intent?) {
         val pending = pickDirResult
         pickDirResult = null
+        val destination = pickDestination
+        pickDestination = false
         if (pending == null) {
             return
         }
@@ -221,14 +262,16 @@ class MainActivity : FlutterActivity() {
             return
         }
         try {
+            val flags = (data.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION))
+            if (destination && flags != (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)) throw SecurityException()
             contentResolver.takePersistableUriPermission(
                 uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+                flags,
             )
         } catch (_: Exception) {
-            // Persistable grants are optional; a path is enough for resolve.
+            if (destination) { pending.error("grant_lost", "Could not retain access to that folder.", null); return }
         }
+        if (destination) { pending.success(uri.toString()); return }
         val path = treeUriToPath(uri)
         if (path.isNullOrEmpty()) {
             pending.error("pick_failed", "Could not read that folder.", null)
@@ -370,7 +413,9 @@ class MainActivity : FlutterActivity() {
             val base = Environment.getExternalStorageDirectory().absolutePath
             return if (rel.isEmpty()) base else "$base/$rel"
         }
-        return uri.path
+        // A SAF tree identifier is not a filesystem path. Scoped providers
+        // need ContentResolver document operations, never a File(uri.path).
+        return null
     }
 
     private fun publicDocumentsPath(result: MethodChannel.Result) {

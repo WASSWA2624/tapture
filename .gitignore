@@ -18,6 +18,10 @@ __pycache__/
 # Logs
 *.log
 
+# Browser audit sessions and screenshots stay on the reviewing device.
+/.playwright-cli/
+/output/playwright/
+
 # Backend build output. The source and the lockfile stay tracked.
 backend/node_modules/
 backend/dist/

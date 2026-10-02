@@ -130,3 +130,28 @@ field deletion used an empty count provider without retiring stored values. Prod
 count queries, transactional value retirement and historical retired-value exports now have source repairs and
 real database/UI regressions; their current-tree verification is pending. Desktop external-browser PKCE is tracked
 in [098](../21-cloud-upload/098-desktop-oauth-sign-in.md), with registered provider consent still unverified.
+
+## Incremental publishing checkpoint — 2026-10-01
+
+Plan/evidence commit `e4ef641e` is pushed and its hash matches the remote branch. The publication review found no
+captured evidence, credentials or oversized artifacts in the pending changes. Source, generated catalogues,
+migrations, native integrations and their regressions remain a coupled application checkpoint.
+
+Current backend verification passes with 136 successful tests, nine explicit database/Docker skips and zero audit
+vulnerabilities. The real native PDFium capture batch passes 22 tests without skips. The initial golden run passed
+251 cases and found five failures; visual review confirmed six intentional branding/gallery image updates, while
+an explicit thumbnail readiness condition preserved all three existing missing-photo baselines. All seven affected
+golden cases pass on rerun.
+
+Preparation exposed formatting/analyzer issues and ten guardrail failures. Repairs preserve the architecture rules,
+generated-source inclusion and literal-duration detection, and distinguish runtime serialization from style tokens.
+Focused tooling checks pass 29 cases; feature architecture and affected regressions pass. Disposable-file cleanup
+now proves fresh ownership and exclusive creation before deletion. The focused cleanup batch passes 62 durability,
+10 safety and eight related-service tests, including preservation of a concurrently created cipher target.
+The publication hook then found three redundant test imports, two missing queue type tests and a transitive
+Flutter dependency in the plain-Dart domain probe. Import repairs and queue identity/cursor tests pass 45 focused
+cases with a clean analyzer; all owed source files now have tests. Feedback workbook code imports its existing
+pure XLSX types directly, and the unchanged 19-library headless probe plus 11 affected regressions pass.
+An independent review also exposed marker-path aliases and published temporary roots escaping the cleanup proof;
+those negative cases require stronger ownership checks before the application checkpoint can be committed.
+Final aggregate verification and application publication remain pending; unverified acceptance stays open.

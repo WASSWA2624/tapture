@@ -9,6 +9,9 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+  exclude:
+    # Generated compiler output and local audit probes are not package source.
+    - build/**
   language:
     # No implicit downcast from dynamic, no inferred dynamic, no raw generic.
     strict-casts: true

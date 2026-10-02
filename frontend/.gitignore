@@ -49,9 +49,7 @@ app.*.map.json
 
 # Tapture repository hygiene (dev-plan 01-orchestration/002)
 
-# Generated sources. Produced by build_runner from the file beside them.
-*.g.dart
-*.freezed.dart
+# Generated Dart sources are committed so a clean checkout builds directly.
 
 # Android signing material. A key that reaches git is a key that must be rotated.
 *.keystore
@@ -70,8 +68,8 @@ key.properties
 TAPTURE-*.zip
 
 # Operator-captured photos and other user images. Branding and platform
-# icons stay tracked. Every image under test/ is local, including golden
-# PNG baselines and failure dumps.
+# icons stay tracked. Synthetic golden baselines travel with their tests;
+# captured images and failure dumps stay local.
 **/photos/
 *.jpg
 *.jpeg
@@ -81,6 +79,7 @@ TAPTURE-*.zip
 /test/**/*.png
 /test/**/*.gif
 /test/**/*.bmp
+!/test/**/goldens/**/*.png
 
 # Golden comparison dumps. Baselines stay in goldens/; these are local diffs.
 **/failures/
