@@ -1,7 +1,6 @@
 import 'dart:io';
 
-/// Folders that may hold a compiled-in key (FE-SEC-02).
-const List<String> _scanFolders = <String>['lib', 'android', 'ios', 'assets'];
+import 'paths.dart';
 
 /// Extensions that are never text, so they are not decoded.
 const Set<String> _binaryExtensions = <String>{
@@ -187,21 +186,45 @@ File _patternsFile(Directory root) {
   return File('tool/secret_patterns.yaml');
 }
 
-/// Text files under the folders that may not hold a key.
+/// Folders a build or a package manager generates inside the scan roots and
+/// git ignores. They are rebuilt from the scanned sources, and their reports
+/// carry base64 blobs that are not keys.
+const Set<String> _generatedFolders = <String>{
+  'build',
+  '.gradle',
+  '.cxx',
+  '.dart_tool',
+  'Pods',
+  'ephemeral',
+};
+
+/// Text files under the folders that may not hold a key, generated build
+/// output aside.
 List<File> _sources(Directory root) {
   final List<File> sources = <File>[];
-  for (final String name in _scanFolders) {
+  for (final String name in secretScanRoots) {
     final Directory folder = Directory('${root.path}/$name');
     if (!folder.existsSync()) {
       continue;
     }
     for (final FileSystemEntity entity in folder.listSync(recursive: true)) {
-      if (entity is File && _isText(entity)) {
+      if (entity is File && !_isGenerated(folder, entity) && _isText(entity)) {
         sources.add(entity);
       }
     }
   }
   return sources..sort((File a, File b) => a.path.compareTo(b.path));
+}
+
+/// Whether [file] sits in a generated folder somewhere below [folder].
+bool _isGenerated(Directory folder, File file) {
+  final String from = _slash(folder.path);
+  final String to = _slash(file.path);
+  final String relative = to.startsWith('$from/')
+      ? to.substring(from.length + 1)
+      : to;
+  final List<String> segments = relative.split('/');
+  return segments.take(segments.length - 1).any(_generatedFolders.contains);
 }
 
 /// Whether [file] can be decoded as text and is not a known binary type.

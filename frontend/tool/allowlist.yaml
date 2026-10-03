@@ -1,5 +1,5 @@
 # Approved direct dependencies for the Tapture Flutter application
-# (dev-plan 01-orchestration/005).
+# (dev-plan 01-orchestration/001).
 #
 # A package reaches this file the way frontend/.rules/13-workflow.md FE-FLOW-06
 # says it must: its own task, a pinned version, a licence check and a note on
@@ -11,6 +11,30 @@
 # is for, and the task that introduced it. `sdk` is the version of a package
 # that ships with the Flutter SDK rather than from pub.dev.
 packages:
+  url_launcher:
+    version: 6.3.2
+    purpose: Flutter-maintained external browser launch for configured desktop OAuth PKCE through core/cloud. BSD-3-Clause. Replaces the unavailable desktop authorization hand-off without shell commands or embedded credential browsers.
+    task: "098"
+  local_auth:
+    version: 3.0.2
+    purpose: Flutter-maintained native biometric-only app unlock through core/security. BSD-3-Clause. Replaces the permanently unavailable biometric placeholder while preserving the app PIN on cancellation, backgrounding or unavailable enrollment.
+    task: "097"
+  local_auth_android:
+    version: 2.2.0
+    purpose: Flutter-maintained public Android biometric prompt message types. BSD-3-Clause. Replaces the SDK English title, hint and cancel defaults with the current app locale through the existing core security boundary.
+    task: "097"
+  local_auth_darwin:
+    version: 2.0.4
+    purpose: Flutter-maintained public iOS and macOS biometric prompt message types. BSD-3-Clause. Replaces English SDK button defaults and hides system credential fallback while preserving the app PIN.
+    task: "097"
+  flutter_localizations:
+    version: sdk
+    purpose: Flutter-maintained generated ARB catalogues and framework date, number and accessibility localization. BSD-3-Clause, pinned with Flutter SDK. Replaces English-only static UI copy; generated catalogues remain scoped to each app instance.
+    task: "096"
+  google_sign_in:
+    version: 7.2.0
+    purpose: Flutter-maintained mobile Google identity and drive.file authorization. BSD-3-Clause. Replaces unsupported shared custom-scheme Google authentication and lets the SDK renew short-lived tokens without exposing refresh tokens.
+    task: "094"
   camera:
     version: 0.12.1
     purpose: Flutter-maintained live camera preview, shutter, focus, zoom and flash behind core/camera. BSD-3-Clause. Replaces the placeholder camera preview and simulated controls.
@@ -21,7 +45,7 @@ packages:
     task: "092"
   geolocator:
     version: 14.0.2
-    purpose: Time-boxed device location with accuracy on Android, iOS, macOS, Windows and web behind core/location. MIT, Baseflow. Replaces the unavailable location stub without custom platform channels.
+    purpose: Time-boxed device location with accuracy on Android, iOS, macOS, Windows, Linux (GeoClue, through geolocator_linux) and web behind core/location. MIT, Baseflow. Replaces the unavailable location stub without custom platform channels.
     task: "091"
   pdf:
     version: 3.11.3
@@ -34,11 +58,11 @@ packages:
   flutter_riverpod:
     version: ^3.4.3
     purpose: ProviderScope and ConsumerWidget — the only state library (FE-STATE-01). Replaces nothing; this is the first approved state package.
-    task: "019"
+    task: "002"
   crypto:
     version: ^3.0.7
     purpose: Incremental SHA-256 for file identity and duplicate detection (FE-PERF-07). Replaces a hand-rolled digest.
-    task: "024"
+    task: "002"
   cupertino_icons:
     version: ^1.0.9
     purpose: The CupertinoIcons font the Flutter framework itself names. No Tapture code imports Cupertino, but Material pulls the adaptive text-selection and magnifier widgets in, so the compiled app carries IconData pointing at a font that was not bundled and the APK build warned about every one of them. MIT, flutter.dev. Replaces shipping a build that names glyphs it does not carry; icon tree-shaking keeps only the few the framework reaches.
@@ -46,11 +70,11 @@ packages:
   connectivity_plus:
     version: ^7.3.1
     purpose: Platform radio state (online / metered / offline). Reached only through connectivity_service (FE-STR-11). Replaces a hand-rolled reachability check.
-    task: "025"
+    task: "002"
   permission_handler:
     version: ^12.0.3
     purpose: Runtime camera, microphone, location and storage requests. Reached only through permissions_service (FE-STR-11). Replaces a hand-rolled permission channel.
-    task: "026"
+    task: "002"
   record:
     version: ^7.1.1
     purpose: Streams microphone evidence through AudioRecorderService into the atomic project FileWriter. BSD-3-Clause. Replaces the unavailable production recorder stand-in.
@@ -62,43 +86,43 @@ packages:
   flutter_secure_storage:
     version: ^10.3.4
     purpose: Platform Keystore/Keychain for keys and credentials. Reached only through secure_storage (FE-STR-11, FE-SEC-01). Replaces writing secrets to preferences or the database.
-    task: "027"
+    task: "002"
   go_router:
     version: ^17.5.0
-    purpose: One declared route table, typed helpers and a single redirect chain (FE-STR-02). Replaces the MaterialApp.router placeholder in task 019. BSD-3-Clause. Capped below 18 because 18 pulls material_ui that needs @awaitNotRequired, which Dart 3.12.2 does not have.
+    purpose: One declared route table, typed helpers and a single redirect chain (FE-STR-02). Replaces the MaterialApp.router placeholder in task 002. BSD-3-Clause. Capped below 18 because 18 pulls material_ui that needs @awaitNotRequired, which Dart 3.12.2 does not have.
     task: "072"
   json_annotation:
     version: ^4.9.0
     purpose: JsonConverter and @JsonKey so models declare wire names explicitly (FE-CODE-13). Replaces hand-rolled codecs that would follow Dart identifiers.
-    task: "028"
+    task: "002"
   build_runner:
     version: ^2.4.13
     purpose: Runs json_serializable (and later Drift) so generated output is committed (FE-CODE-13). Replaces invoking the generator by hand.
-    task: "028"
+    task: "002"
   json_serializable:
     version: ^6.9.0
     purpose: Generates fromJson/toJson using @JsonKey names from build.yaml. Replaces deriving wire keys from Dart field names.
-    task: "028"
+    task: "002"
   drift:
     version: ">=2.31.0 <2.32.0"
     purpose: Typed SQLite access, lazy WAL connections and the MigrationStrategy later table tasks extend (FE-CODE-13). Replaces raw sqlite3 and an unversioned schema. Capped below 2.32 because 2.32+ needs sqlite3 3.x native assets that prefix dart run stdout, and newer drift_dev conflicts with json_serializable 6.9.0.
-    task: "049"
+    task: "004"
   drift_dev:
     version: ">=2.31.0 <2.32.0"
     purpose: Generates AppDatabase and companions so Drift output is committed (FE-CODE-13). Replaces writing the .g.dart by hand.
-    task: "049"
+    task: "004"
   path_provider:
     version: ^2.1.5
     purpose: Application support directory for the database file. Replaces a hardcoded platform path.
-    task: "049"
+    task: "004"
   sqlite3:
     version: ^2.9.4
     purpose: Typed setup callback that turns WAL and foreign keys on for each native connection. Replaces an untyped pragma runner.
-    task: "049"
+    task: "004"
   sqlite3_flutter_libs:
     version: ^0.5.42
     purpose: Bundles SQLite with the Flutter app so NativeDatabase opens on device. Replaces depending on a system sqlite3.
-    task: "049"
+    task: "004"
   intl:
     version: ^0.20.2
     purpose: Locale-aware date, time and number formatting for catalogue fields (FE-L10N-04, FE-CONS-09). Replaces hand-built day/month/year strings.
@@ -126,7 +150,11 @@ packages:
   flutter_lints:
     version: ^6.0.0
     purpose: The shared lint set analysis_options.yaml layers its rules onto.
-    task: "003"
+    task: "001"
+  analyzer:
+    version: 10.2.0
+    purpose: Dart AST parsing for the router-derived production screen inventory and deliberate missing-coverage fixtures. BSD-3-Clause. Replaces regex-only constructor discovery; pinned to the already resolved toolchain version.
+    task: "023"
   image:
     version: ^4.3.0
     purpose: Pure-Dart decode, resize, orientation and contrast for off-thread preparation and the deterministic desktop/test OCR fallback (FE-PERF-02). MIT. Replaces a native image pipeline the test VM cannot run.
@@ -135,10 +163,18 @@ packages:
     version: ^0.17.1
     purpose: Native on-device Latin-script OCR on Android and iOS, including text blocks and bounding boxes. MIT. Replaces the synthetic fixed-font recogniser that could not read field photographs.
     task: "013"
+  google_mlkit_face_detection:
+    version: 0.15.1
+    purpose: On-device ML Kit face bounding boxes behind core/export/face_detector, required for privacy photo derivatives. MIT. Replaces the missing detector; Android/iOS only, other platforms fail closed when blurring is requested.
+    task: "022"
   battery_plus:
     version: ^7.1.1
     purpose: Whether the device is charging, so opportunistic on-device reading runs only on mains power. Reached only through core/background/power_source (FE-STR-11). BSD-3-Clause, fluttercommunity.dev. Replaces a hand-rolled platform channel on each OS.
     task: "013"
+  pdfrx:
+    version: 1.3.5
+    purpose: Real lazy PDF page rasterization behind core/import/pdf_pages on native and browser platforms. MIT. Replaces invalid placeholder PNGs; pinned to the compatible Flutter and archive 3.x release.
+    task: "012"
   flutter_local_notifications:
     version: ^18.0.1
     purpose: One local notification when a processing batch finishes. BSD-3-Clause. Replaces a hand-rolled notification channel. No push and no remote service.

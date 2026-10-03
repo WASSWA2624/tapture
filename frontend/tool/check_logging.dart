@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'paths.dart';
+
 /// Identifiers a log line may not interpolate (FE-CODE-08).
 const List<String> _bannedWords = <String>[
   'key',
@@ -46,7 +48,7 @@ final RegExp _camelWord = RegExp(r'[A-Z]+(?![a-z])|[A-Z]?[a-z0-9]+');
 /// secrets come from `tool/secret_patterns.yaml`. The matched secret value is
 /// never written out.
 Future<int> main(List<String> args) async {
-  final Directory root = Directory(args.isEmpty ? 'lib' : args.first);
+  final Directory root = Directory(args.isEmpty ? libRoot : args.first);
   final List<_Violation> violations = _findViolations(root);
   for (final _Violation violation in violations) {
     stderr.writeln('${violation.file}:${violation.line}: ${violation.message}');

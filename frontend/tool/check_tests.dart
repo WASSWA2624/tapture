@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'paths.dart';
+
 /// The flag that turns a missing-test report into a failure.
 const String _strictFlag = '--strict';
 
@@ -141,7 +143,7 @@ bool _isCovered(
     return true;
   }
   final String stem = _stem(_basenameFromPath(path));
-  if (path.contains('/core/widgets/') &&
+  if (path.contains('/$coreWidgetsDirectory/') &&
       tests.contains('test/design_system/${stem}_test.dart')) {
     return true;
   }
@@ -153,7 +155,9 @@ bool _isCovered(
 
 /// The test [path] must have, mirroring `lib/` under `test/`.
 String _expectedTest(String path) {
-  final String underLib = path.startsWith('lib/') ? path.substring(4) : path;
+  final String underLib = path.startsWith('$libRoot/')
+      ? path.substring(libRoot.length + 1)
+      : path;
   return 'test/${_stem(underLib)}_test.dart';
 }
 
@@ -165,7 +169,7 @@ String? _layerOf(String path) {
   if (path.contains('/data/')) {
     return 'data';
   }
-  if (path.contains('/core/widgets/')) {
+  if (path.contains('/$coreWidgetsDirectory/')) {
     return 'widgets';
   }
   if (_isScreen(path)) {
@@ -238,7 +242,7 @@ void _writeTable(_Report report) {
 
 /// Hand-written Dart sources under `lib/`.
 List<File> _libSources(Directory root) {
-  final Directory lib = Directory('${root.path}/lib');
+  final Directory lib = Directory('${root.path}/$libRoot');
   if (!lib.existsSync()) {
     return const <File>[];
   }

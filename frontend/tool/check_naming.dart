@@ -1,8 +1,6 @@
 import 'dart:io';
 
-/// Where the application's Dart sources sit relative to `frontend/`, which is
-/// where the checkers run from.
-const String _defaultRoot = 'lib';
+import 'paths.dart';
 
 /// The words a type name may not be built out of
 /// (`frontend/.rules/02-coding-standards.md`, FE-CODE-03). Each of them
@@ -100,7 +98,7 @@ typedef _Declarations = ({
 /// Takes the directory of Dart sources to scan, defaulting to `lib/`. Exits 0
 /// when every name agrees with the rules and 1 on any violation.
 Future<int> main(List<String> args) async {
-  final Directory root = Directory(args.isEmpty ? _defaultRoot : args.first);
+  final Directory root = Directory(args.isEmpty ? libRoot : args.first);
   final List<File> sources = _sources(root);
   final List<_Violation> violations = _findViolations(root, sources);
   for (final _Violation violation in violations) {

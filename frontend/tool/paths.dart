@@ -1,14 +1,36 @@
 /// The directory layout of `frontend/lib/`, as constants.
 ///
 /// Every guardrail that has an opinion about where a file belongs reads it
-/// from here (dev-plan 01-orchestration/004). A checker that hardcodes its own
+/// from here (dev-plan 01-orchestration/001). A checker that hardcodes its own
 /// copy of the list drifts from this one the first time the layout changes,
 /// and then two guardrails disagree about what the architecture is.
+/// `check_structure.dart` fails a `tool/check_*.dart` file that writes one of
+/// these roots as a literal of its own.
 library;
 
 /// The root of the Flutter application's Dart sources, relative to
 /// `frontend/`.
 const String libRoot = 'lib';
+
+/// The design-system catalogue under [libRoot], whose widgets each owe a
+/// behaviour or golden test.
+const String coreWidgetsDirectory = 'core/widgets';
+
+/// The folders, relative to `frontend/`, that may never hold a compiled-in
+/// key (FE-SEC-02): the sources, both native projects and the bundled assets.
+const List<String> secretScanRoots = <String>[
+  libRoot,
+  'android',
+  'ios',
+  'assets',
+];
+
+/// Every root a checker scans, which is what a checker may not spell out
+/// for itself.
+List<String> get checkerRoots => <String>[
+  ...secretScanRoots,
+  coreWidgetsDirectory,
+];
 
 /// The three top-level areas, and no fourth
 /// (`frontend/.rules/01-structure.md`, FE-STR-02).
@@ -26,8 +48,8 @@ const List<String> coreDirectories = <String>[
   'ai',
   'assets',
   'audio',
-  'background',
   'backend',
+  'background',
   'barcode',
   'bundle',
   'camera',
@@ -45,8 +67,8 @@ const List<String> coreDirectories = <String>[
   'ids',
   'import',
   'lifecycle',
-  'logging',
   'location',
+  'logging',
   'naming',
   'network',
   'normalise',
@@ -70,7 +92,6 @@ const List<String> featureDirectories = <String>[
   'import',
   'meetings',
   'merge',
-  'onboarding',
   'processing',
   'projects',
   'quality',

@@ -1,0 +1,9 @@
+{
+  "@resvg/resvg-js": {
+    "version": "2.6.2",
+    "license": "MPL-2.0",
+    "source": "https://github.com/thx/resvg-js",
+    "purpose": "Render self-contained canonical SVG geometry directly at each platform pixel size.",
+    "replaces": "Individually maintained platform rasters without a reproducible vector generation command."
+  }
+}

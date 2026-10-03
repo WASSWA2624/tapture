@@ -3,6 +3,9 @@ import 'dart:io';
 /// The flag that drops the two slowest suites for the pre-commit path.
 const String _fastFlag = '--fast';
 
+/// Measured budgets run alone after the concurrent functional suites finish.
+const String _performanceTag = 'performance';
+
 /// How to call this, printed when an argument is not one this understands.
 const String _usage = 'usage: dart run tool/verify.dart [$_fastFlag]';
 
@@ -69,30 +72,47 @@ typedef _Result = ({
 ///
 /// Takes `--fast`, which sets aside the golden and integration suites for the
 /// pre-commit path; the full run is what continuous integration uses. Exits 0
-/// when every gate passed or was skipped, and 1 as soon as one failed.
+/// when every gate passed or was skipped, and 1 when any gate failed.
 Future<int> main(List<String> args) async {
+  exitCode = await verify(args);
+  return exitCode;
+}
+
+/// Collects every gate, with an injectable command boundary for runner tests.
+Future<int> verify(
+  List<String> args, {
+  Future<ProcessResult> Function(String, List<String>)? runCommand,
+}) async {
   final List<String> unknown = args
       .where((String argument) => argument != _fastFlag)
       .toList();
   if (unknown.isNotEmpty) {
     stderr.writeln('unrecognised argument(s): ${unknown.join(', ')}');
     stderr.writeln(_usage);
-    exitCode = 1;
-    return exitCode;
+    return 1;
   }
 
   final bool fast = args.contains(_fastFlag);
   final List<_Result> results = <_Result>[];
   for (final _Gate gate in _gates(fast: fast)) {
-    results.add(await _runGate(gate));
+    stdout.writeln('Running gate: ${gate.name}');
+    final _Result result = await _runGate(gate, runCommand ?? _execute);
+    results.add(result);
+    stdout.writeln(
+      'Completed ${result.name}: ${result.outcome.name} '
+      '(${_seconds(result.took)})',
+    );
+    if (result.outcome == _Outcome.failed && result.detail.isNotEmpty) {
+      stderr.writeln('--- ${result.name} ---');
+      stderr.writeln(result.detail);
+    }
   }
 
   _report(results, fast: fast);
   final bool anyFailed = results.any(
     (_Result result) => result.outcome == _Outcome.failed,
   );
-  exitCode = anyFailed ? 1 : 0;
-  return exitCode;
+  return anyFailed ? 1 : 0;
 }
 
 /// The gates, in the order a run works through them.
@@ -119,13 +139,37 @@ List<_Gate> _gates({required bool fast}) {
     _command('structure', 'dart', <String>['run', 'tool/check_structure.dart']),
     _command('plan', 'dart', <String>['run', 'tool/check_plan.dart']),
     _command('templates', 'dart', <String>['run', 'tool/check_templates.dart']),
+    _command('localization', 'dart', <String>['run', 'tool/check_l10n.dart']),
+    _command('localization factories', 'dart', <String>[
+      'run',
+      'tool/generate_copy_messages.dart',
+      '--check',
+    ]),
+    _command('domain localization', 'dart', <String>[
+      'run',
+      'tool/generate_domain_copy.dart',
+      '--check',
+    ]),
+    _command('headless domain', 'dart', <String>[
+      'run',
+      'tool/probe_domain_copy.dart',
+    ]),
     _command('test presence', 'dart', <String>[
       'run',
       'tool/check_tests.dart',
       '--strict',
     ]),
     _suite('guardrail tests', _existing(_guardrailSuites)),
-    _suite('unit and widget tests', _unitSuites()),
+    _suite(
+      'unit and widget tests',
+      _unitSuites(),
+      options: const <String>['--exclude-tags', _performanceTag],
+    ),
+    _suite(
+      'performance tests',
+      _unitSuites(),
+      options: const <String>['--tags', _performanceTag, '--concurrency=1'],
+    ),
     _suite(
       'golden tests',
       _existing(<String>[_goldenSuite]),
@@ -134,6 +178,7 @@ List<_Gate> _gates({required bool fast}) {
     _suite(
       'integration tests',
       _existing(<String>[_integrationSuite]),
+      options: const <String>['--concurrency=1'],
       setAside: fast ? 'set aside by $_fastFlag' : null,
     ),
   ];
@@ -151,7 +196,12 @@ _Gate _command(String name, String executable, List<String> arguments) {
 
 /// A gate that runs the tests under [paths], or is skipped when there are none
 /// or when the caller has set it aside.
-_Gate _suite(String name, List<String> paths, {String? setAside}) {
+_Gate _suite(
+  String name,
+  List<String> paths, {
+  String? setAside,
+  List<String> options = const <String>[],
+}) {
   if (setAside != null) {
     return (
       name: name,
@@ -171,13 +221,16 @@ _Gate _suite(String name, List<String> paths, {String? setAside}) {
   return (
     name: name,
     executable: _flutter,
-    arguments: <String>['test', ...paths],
+    arguments: <String>['test', ...options, ...paths],
     skippedBecause: null,
   );
 }
 
 /// Runs one gate, timing it and keeping whatever it said for the report.
-Future<_Result> _runGate(_Gate gate) async {
+Future<_Result> _runGate(
+  _Gate gate,
+  Future<ProcessResult> Function(String, List<String>) execute,
+) async {
   final String? executable = gate.executable;
   if (executable == null) {
     return (
@@ -190,7 +243,7 @@ Future<_Result> _runGate(_Gate gate) async {
   final Stopwatch stopwatch = Stopwatch()..start();
   ProcessResult result;
   try {
-    result = await Process.run(executable, gate.arguments);
+    result = await execute(executable, gate.arguments);
   } on ProcessException catch (error) {
     stopwatch.stop();
     return (
@@ -209,16 +262,12 @@ Future<_Result> _runGate(_Gate gate) async {
   );
 }
 
-/// Prints what every gate said, then the table, so the table is the last thing
-/// on screen and the reason for a failure is right above it.
-void _report(List<_Result> results, {required bool fast}) {
-  for (final _Result result in results) {
-    if (result.outcome == _Outcome.failed && result.detail.isNotEmpty) {
-      stderr.writeln('--- ${result.name} ---');
-      stderr.writeln(result.detail);
-    }
-  }
+Future<ProcessResult> _execute(String executable, List<String> arguments) {
+  return Process.run(executable, arguments);
+}
 
+/// Prints the final table; failures are reported immediately by [verify].
+void _report(List<_Result> results, {required bool fast}) {
   final int width = results
       .map((_Result result) => result.name.length)
       .reduce((int a, int b) => a > b ? a : b);

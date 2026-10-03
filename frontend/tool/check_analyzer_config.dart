@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'paths.dart';
+
 /// The project's own analyzer configuration, and the one that narrows it for
 /// the shared surface under `lib/core/`.
 const String _rootOptions = 'analysis_options.yaml';
@@ -417,7 +419,7 @@ File? _includedFile(String include, File from, Directory root) {
     final Object? packageLib = entry['packageUri'];
     final Uri base = Uri.file(config.path).resolve(_asDirectory(packageRoot));
     final Uri lib = base.resolve(
-      _asDirectory(packageLib is String ? packageLib : 'lib/'),
+      _asDirectory(packageLib is String ? packageLib : libRoot),
     );
     return File(lib.resolve(relative).toFilePath());
   }

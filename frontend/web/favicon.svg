@@ -1,24 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Tapture">
-  <title>Tapture &#8212; favicon and touch icon</title>
-  <defs>
-    <linearGradient id="tapture-bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2662EB"/>
-      <stop offset="1" stop-color="#0F215F"/>
-    </linearGradient>
-  </defs>
-  <rect x="0" y="0" width="1024" height="1024" rx="225.28" fill="url(#tapture-bg)"/>
-  <path d="M 214.56 300.49 A 85.93 85.93 0 0 1 300.49 214.56" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 214.56 300.49 L 214.56 429.38" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 300.49 214.56 L 429.38 214.56" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 723.51 214.56 A 85.93 85.93 0 0 1 809.44 300.49" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 723.51 214.56 L 594.62 214.56" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 809.44 300.49 L 809.44 429.38" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 809.44 723.51 A 85.93 85.93 0 0 1 723.51 809.44" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 809.44 723.51 L 809.44 594.62" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 723.51 809.44 L 594.62 809.44" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 300.49 809.44 A 85.93 85.93 0 0 1 214.56 723.51" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 300.49 809.44 L 429.38 809.44" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <path d="M 214.56 723.51 L 214.56 594.62" fill="none" stroke="#FFFFFF" stroke-width="80.97" stroke-linecap="round"/>
-  <circle cx="512" cy="512" r="183.42" fill="none" stroke="#FFFFFF" stroke-width="36.35"/>
-  <rect x="421.12" y="421.12" width="181.77" height="181.77" rx="52.88" fill="#FFFFFF"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Tapture"><title>Tapture</title><svg x="0" y="0" width="1024" height="1024" viewBox="91 91 818 818"><path d="M 140 244 A 104 104 0 0 1 244 140" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 140 244 L 140 400" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 244 140 L 400 140" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 756 140 A 104 104 0 0 1 860 244" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 756 140 L 600 140" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 860 244 L 860 400" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 860 756 A 104 104 0 0 1 756 860" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 860 756 L 860 600" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 756 860 L 600 860" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 244 860 A 104 104 0 0 1 140 756" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 244 860 L 400 860" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <path d="M 140 756 L 140 600" fill="none" stroke="#075E54" stroke-width="98" stroke-linecap="round"/>
+  <circle cx="500" cy="500" r="222" fill="none" stroke="#075E54" stroke-width="44"/>
+  <rect x="390" y="390" width="220" height="220" rx="64" fill="#075E54"/></svg></svg>

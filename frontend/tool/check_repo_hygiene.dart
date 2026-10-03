@@ -7,14 +7,18 @@ const List<String> _pathsGitMustIgnore = <String>[
   'build/app/outputs/flutter-apk/app-release.apk',
   'android/app/build/intermediates/merged_manifest/AndroidManifest.xml',
   '.dart_tool/package_config.json',
-  'lib/features/projects/data/project_dao.g.dart',
-  'lib/features/projects/domain/project.freezed.dart',
   'android/app/upload.keystore',
   'android/key.properties',
   '.env',
   '.env.local',
   'samples/equipment-inventory__deviceA__2026-09-08T1030.zip',
   'projects/site-a/photos/front.jpg',
+];
+
+/// Generated sources must travel with their source declarations (FE-CODE-13).
+const List<String> _pathsGitMustTrack = <String>[
+  'lib/features/projects/data/project_dao.g.dart',
+  'lib/features/projects/domain/project.freezed.dart',
 ];
 
 /// EditorConfig settings the repository fixes, by section header. A section
@@ -82,6 +86,17 @@ Iterable<({String file, int line, String message})> _gitignoreViolations(
         file: name,
         line: lines.length,
         message: 'no pattern ignores $path',
+      );
+    }
+  }
+  for (final String path in _pathsGitMustTrack) {
+    if (_isIgnored(path, rules)) {
+      yield (
+        file: name,
+        line: lines.length,
+        message:
+            'pattern ignores $path; generated Dart sources must be committed '
+            '(FE-CODE-13)',
       );
     }
   }
