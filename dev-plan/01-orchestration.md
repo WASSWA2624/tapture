@@ -511,7 +511,7 @@ history.
 - [x] Repository and workflow instructions require acceptance updates and tracker regeneration for every implementation.
 - [x] Tests cover state aggregation, deterministic regeneration, read-only drift checks, invalid plans, task creation and safe hook staging; changed tooling passes targeted formatting and analysis.
 - [x] The installed repository hook matches the managed hook, and the real plan passes synchronization and plan checks.
-- [ ] The repository-wide verification gate passes as required by AGENTS.md, with remaining failures resolved rather than marked complete.
+- [x] The repository-wide verification gate passes as required by AGENTS.md, with remaining failures resolved rather than marked complete.
 
 ### Verification status
 
@@ -526,11 +526,7 @@ At this task's verification, the plan had 27 ordered folders and 87 unique tasks
 All live plan links resolve. The historical snapshot's SHA-256 matches its recorded original value.
 The managed pre-commit and commit-message hooks were installed in this checkout and compared with their sources.
 
-The repository-wide fast gate remains open. Its earlier run is recorded under
-[task 079's verification status](24-product-refinements.md#079--show-a-mobile-more-menu-in-the-bottom-navigation): format,
-analysis, allowlist, structure, test-presence and guardrail failures, plus an incomplete failing unit/widget run.
-Those findings are outside this plan/tracker change and have not been repaired or treated as passing here.
-This task remains Partially complete until the required whole-tree gate passes.
+On 2026-10-03 the same gate passed on this tree. `dart format` reported 0 changes across 1290 `lib`/`tool` files and 1088 test files. `flutter analyze` reported no issues. Plan integrity, tracker drift, the dependency allowlist, structure, templates, localization, copy factories, domain copy and strict test presence all passed. Guardrail tests passed 503. Unit and widget tests passed 8993 with 13 skips (`test/accessibility`, `test/app`, `test/core`, `test/features`, `test/hardening`, `test/journeys`, `test/responsive`, `test/security`, `test/states`). The performance-tagged host tests passed 4. `verify.dart` no longer accepts `--fast` (task 100); these are the checks that mode used to run. Golden and integration suites stay outside that gate.
 
 ## 088 — Keep the product specification complete and concise
 
