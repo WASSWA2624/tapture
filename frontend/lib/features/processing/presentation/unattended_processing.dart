@@ -51,6 +51,8 @@ final class UnattendedProcessing {
   bool _foreground = true;
   bool _idle = false;
   bool _pluggedIn = false;
+  bool _disposed = false;
+  int _triggerRevision = 0;
   UnattendedRun _running = UnattendedRun.none;
 
   /// Which path is running now.
@@ -59,6 +61,9 @@ final class UnattendedProcessing {
   /// Starts listening. The app starts in front, so nothing runs until it
   /// goes to the background.
   void start() {
+    if (_disposed || _subscriptions.isNotEmpty) {
+      return;
+    }
     _subscriptions
       ..add(_network.listen(_onNetwork))
       ..add(_lifecycle.listen(_onLifecycle))
@@ -67,6 +72,11 @@ final class UnattendedProcessing {
 
   /// Stops listening and stops any run.
   Future<void> dispose() async {
+    if (_disposed) {
+      return;
+    }
+    _disposed = true;
+    _triggerRevision++;
     _idleTimer?.cancel();
     _stop();
     for (final StreamSubscription<Object?> subscription in _subscriptions) {
@@ -76,8 +86,12 @@ final class UnattendedProcessing {
   }
 
   void _onLifecycle(AppLifecycleState state) {
+    if (_disposed) {
+      return;
+    }
     switch (state) {
       case AppLifecycleState.resumed:
+        _triggerRevision++;
         _foreground = true;
         _idle = false;
         _idleTimer?.cancel();
@@ -101,7 +115,13 @@ final class UnattendedProcessing {
   }
 
   void _onNetwork(NetworkState next) {
+    if (_disposed) {
+      return;
+    }
     final NetworkState? previous = _net;
+    if (previous != next) {
+      _triggerRevision++;
+    }
     _net = next;
     if (_running == UnattendedRun.automatic && !_networkAllowed(next)) {
       _stop();
@@ -111,6 +131,9 @@ final class UnattendedProcessing {
   }
 
   void _onCharging(bool charging) {
+    if (_disposed) {
+      return;
+    }
     _pluggedIn = charging;
     if (!charging && _running == UnattendedRun.onDevice) {
       _stop();
@@ -120,29 +143,40 @@ final class UnattendedProcessing {
   }
 
   Future<void> _maybeProcess(NetworkState? previous, NetworkState next) async {
-    if (_running != UnattendedRun.none) {
+    if (_disposed ||
+        _running != UnattendedRun.none ||
+        !_automaticAllowed(previous, next, underCap: true)) {
       return;
     }
-    final bool enabled = _settings.read(SettingKeys.aiAutoProcess);
-    if (!enabled || _foreground) {
-      return;
-    }
+    final int revision = _triggerRevision;
     final bool underCap = await _underCap();
-    final bool start = AutoProcess.shouldStart(
-      enabled: enabled,
+    // A budget read can outlive this trigger, its settings or this controller.
+    if (_disposed || revision != _triggerRevision || _net != next) {
+      return;
+    }
+    if (_running == UnattendedRun.none &&
+        _automaticAllowed(previous, next, underCap: underCap)) {
+      await _run(UnattendedRun.automatic, _processAll);
+    }
+  }
+
+  bool _automaticAllowed(
+    NetworkState? previous,
+    NetworkState next, {
+    required bool underCap,
+  }) {
+    return AutoProcess.shouldStart(
+      enabled: _settings.read(SettingKeys.aiAutoProcess),
       wifiOnly: _settings.read(SettingKeys.aiWifiOnly),
       previous: previous,
       next: next,
       foreground: _foreground,
       underCap: underCap,
     );
-    if (start && _running == UnattendedRun.none) {
-      await _run(UnattendedRun.automatic, _processAll);
-    }
   }
 
   void _maybeReadOnDevice() {
-    if (_running != UnattendedRun.none) {
+    if (_disposed || _running != UnattendedRun.none) {
       return;
     }
     final bool run = BackgroundOcr.shouldRun(

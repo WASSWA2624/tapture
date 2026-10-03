@@ -1,3 +1,4 @@
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -18,13 +19,13 @@ final class MergeUndo {
     required bool purged,
   }) {
     if (purged) {
-      return const FailureResult<Map<String, String>>(_purged);
+      return FailureResult<Map<String, String>>(_purged);
     }
     return Success<Map<String, String>>(<String, String>{...snapshot});
   }
 }
 
-const StorageFailure _purged = StorageFailure(
-  message: 'The snapshot has been purged.',
-  recoveryAction: 'The merge can no longer be undone.',
+final StorageFailure _purged = StorageFailure(
+  localizedMessage: DomainCopy.messages.failureTheSnapshotHasBeenPurged,
+  localizedRecovery: DomainCopy.messages.failureTheMergeCanNoLongerBeUndone,
 );

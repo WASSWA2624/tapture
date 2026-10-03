@@ -6,6 +6,7 @@ import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
+import 'package:tapture/core/files/photo_privacy_service.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
@@ -56,6 +57,7 @@ final class ProcessingStageWorker {
     required SettingsStore settings,
     FileReader? files,
     FileWriter? writer,
+    PhotoPrivacyService? privacy,
     bool isBrowser = kIsWeb,
   }) {
     final StageSettings stageSettings = StageSettings(
@@ -67,6 +69,16 @@ final class ProcessingStageWorker {
       storageRoot: storageRoot,
       files: files,
       writer: writer,
+      privacy:
+          privacy ??
+          PhotoPrivacyService(
+            db: db,
+            files: files ?? FileReader(storageRoot: storageRoot),
+            writer: writer ?? FileWriter(storageRoot: storageRoot),
+            clock: clock,
+            deviceId: deviceId,
+          ),
+      blurFaces: () => settings.read(SettingKeys.blurFaces),
       isBrowser: isBrowser,
     );
     final OcrCache cache = OcrCache(
@@ -91,6 +103,7 @@ final class ProcessingStageWorker {
     final ProposalCollector collector = ProposalCollector(
       cache: cache,
       responses: responses,
+      paths: paths,
     );
     final OnlineCompletion completion = OnlineCompletion(
       collector: collector,

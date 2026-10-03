@@ -60,22 +60,24 @@ final class MeetingCreateScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppPage(
-        title: Copy.meetingTitle,
+        title: localCopy.meetingTitle,
         body: AppErrorState(failure: failed),
       );
     }
     final DateTime? given = startedAt;
     final String? project = projectId;
     if (given == null && project == null) {
-      return const AppPage(
-        title: Copy.meetingTitle,
+      return AppPage(
+        title: localCopy.meetingTitle,
         body: AppEmptyState(
           icon: AppIcons.records,
-          headline: Copy.meetingEmptyHeadline,
-          message: Copy.meetingEmptyMessage,
+          headline: localCopy.meetingEmptyHeadline,
+          message: localCopy.meetingEmptyMessage,
         ),
       );
     }
@@ -84,10 +86,12 @@ final class MeetingCreateScreen extends ConsumerWidget {
         projectContextProvider(project),
       );
       return contextState.when(
-        loading: () =>
-            const AppPage(title: Copy.meetingTitle, body: SizedBox.shrink()),
+        loading: () => AppPage(
+          title: Copy.of(context).meetingTitle,
+          body: const SizedBox.shrink(),
+        ),
         error: (Object error, StackTrace _) => AppPage(
-          title: Copy.meetingTitle,
+          title: Copy.of(context).meetingTitle,
           body: AppErrorState(failure: Failure.from(error)),
         ),
         data: (ContextState state) {
@@ -119,19 +123,23 @@ final class MeetingCreateScreen extends ConsumerWidget {
     required String place,
     required String who,
   }) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final DateTime utc = started.toUtc();
     return AppPage(
       key: const ValueKey<String>('route-meeting-create'),
-      title: Copy.meetingTitle,
+      title: localCopy.meetingTitle,
       footer: AppButton(
         key: const ValueKey<String>('meeting-start'),
-        label: Copy.meetingStart,
+        label: localCopy.meetingStart,
         expand: true,
         onPressed: () {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           final Meeting meeting = Meeting(
             id: '',
             projectId: projectId ?? '',
-            title: Copy.meetingStartedTitle(utc),
+            title: localCopy.meetingStartedTitle(utc),
             startedAt: utc,
             location: place,
             secretary: who,
@@ -180,7 +188,12 @@ final class MeetingCreateScreen extends ConsumerWidget {
           extra: value.meeting,
         );
       case FailureResult<MeetingRecord>(:final Failure failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
     }
   }
 

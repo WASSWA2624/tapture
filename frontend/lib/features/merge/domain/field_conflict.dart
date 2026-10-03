@@ -19,6 +19,8 @@ final class FieldConflict {
     required this.theirsDevice,
     required this.mineAt,
     required this.theirsAt,
+    this.incomingRowId,
+    this.allowChooseOne = true,
   });
 
   /// What is disagreed about.
@@ -60,6 +62,15 @@ final class FieldConflict {
   /// When the incoming value was last written, as stored.
   final Object? theirsAt;
 
+  /// Incoming row identity when a reference key matches another local UUID.
+  final String? incomingRowId;
+
+  /// False for template forks with incompatible shapes at the same version.
+  /// They must remain separate to preserve captured version metadata.
+  final bool allowChooseOne;
+
   /// Stable across re-planning, so a choice survives a re-plan.
-  String get id => '${kind.name}:$table:$rowId';
+  String get id =>
+      '${kind.name}:$table:$rowId'
+      '${kind == ConflictKind.reference ? ':${incomingRowId ?? rowId}' : ''}';
 }

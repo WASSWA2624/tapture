@@ -68,6 +68,8 @@ class _RecordFieldSheetState extends ConsumerState<RecordFieldSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordEditState state = ref.watch(
       recordEditControllerProvider(widget.row.id),
     );
@@ -103,7 +105,7 @@ class _RecordFieldSheetState extends ConsumerState<RecordFieldSheet> {
           const SizedBox(height: Space.x3),
           AppPrimaryAction(
             key: const ValueKey<String>('record-field-save'),
-            label: Copy.save,
+            label: localCopy.save,
             busy: state.saving,
             onPressed: () => unawaited(_save()),
           ),

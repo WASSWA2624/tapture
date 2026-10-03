@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/processing.dart' as jobs;
 
@@ -16,8 +17,10 @@ abstract final class ProcessingJobMapper {
       recordId: row.recordId,
       stage: row.stage,
       attemptCount: row.attempts,
+      requestGeneration: row.requestGeneration,
       status: jobStatus(row.status),
       lastError: row.lastError,
+      localizedLastError: _message(row.lastErrorMessage),
       leaseExpiresAt: row.leaseExpiresAt,
       permanent: row.status == jobs.ProcessingJobStatus.failed,
       skipReason: row.skipReason,
@@ -42,7 +45,13 @@ abstract final class ProcessingJobMapper {
       stage: Value<String>(job.stage),
       status: Value<jobs.ProcessingJobStatus>(rowStatus(job.status)),
       attempts: Value<int>(job.attemptCount),
+      requestGeneration: Value<int>(job.requestGeneration),
       lastError: Value<String?>(job.lastError),
+      lastErrorMessage: Value<String?>(
+        job.localizedLastError == null
+            ? null
+            : jsonEncode(job.localizedLastError!.toJson()),
+      ),
       queuedAt: Value<DateTime>(job.queuedAt ?? queuedAt),
       startedAt: Value<DateTime?>(job.startedAt),
       finishedAt: Value<DateTime?>(job.finishedAt),
@@ -75,6 +84,25 @@ abstract final class ProcessingJobMapper {
       jobs.ProcessingJobStatus.failed => JobStatus.failed,
     };
   }
+}
+
+/// Old rows retain their literal audit text; malformed optional metadata
+/// cannot make an otherwise readable job disappear from the queue.
+LocalizedMessage? _message(String? raw) {
+  if (raw == null || raw.isEmpty) {
+    return null;
+  }
+  try {
+    final Object? value = jsonDecode(raw);
+    if (value is Map<String, Object?>) {
+      return LocalizedMessage.fromJson(value);
+    }
+  } on FormatException {
+    return null;
+  } on TypeError {
+    return null;
+  }
+  return null;
 }
 
 /// Stored rejections are a JSON list of strings. Anything else reads as

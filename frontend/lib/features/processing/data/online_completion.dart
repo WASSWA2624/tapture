@@ -22,7 +22,7 @@ final class OnlineCompletion {
   final ProposalCollector _collector;
   final StageSettings _settings;
 
-  /// One entry per template field, in field order.
+  /// Extractable template fields in order; consent is always operator input.
   Future<List<SkipField>> forOnline(
     ProcessingJob job,
     RecordBundle bundle,
@@ -38,21 +38,23 @@ final class OnlineCompletion {
     final ProjectSettingsResolved settings = _settings.project(bundle);
     return <SkipField>[
       for (var index = 0; index < bundle.fields.length; index++)
-        if (stored[index].value != null &&
-            stored[index].value!.trim().isNotEmpty)
-          stored[index]
-        else
-          (
-            requiredField: bundle.fields[index].isRequired,
-            value: proposed[bundle.fields[index].fieldKey]?.value,
-            band: proposed[bundle.fields[index].fieldKey] == null
-                ? null
-                : Confidence.band(
-                    score: proposed[bundle.fields[index].fieldKey]!.confidence,
-                    high: settings.confidenceHigh,
-                    medium: settings.confidenceMedium,
-                  ),
-          ),
+        if (bundle.fields[index].type != 'consent')
+          if (stored[index].value != null &&
+              stored[index].value!.trim().isNotEmpty)
+            stored[index]
+          else
+            (
+              requiredField: bundle.fields[index].isRequired,
+              value: proposed[bundle.fields[index].fieldKey]?.value,
+              band: proposed[bundle.fields[index].fieldKey] == null
+                  ? null
+                  : Confidence.band(
+                      score:
+                          proposed[bundle.fields[index].fieldKey]!.confidence,
+                      high: settings.confidenceHigh,
+                      medium: settings.confidenceMedium,
+                    ),
+            ),
     ];
   }
 

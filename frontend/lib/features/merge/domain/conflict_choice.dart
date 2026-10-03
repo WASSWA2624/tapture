@@ -7,6 +7,9 @@ enum ConflictChoice {
   /// Take the incoming value; for a deletion, follow the other device.
   theirs,
 
+  /// Keep both template shapes; incoming new records use a separate copy.
+  keepBoth,
+
   /// Replace both with a value the person types.
   typed,
 

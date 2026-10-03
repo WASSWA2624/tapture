@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/bundle/inspected_bundle.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
@@ -8,6 +10,8 @@ import 'package:tapture/features/quality/quality.dart'
 
 import '../domain/compatibility_report.dart';
 import '../domain/conflict_choice.dart';
+import '../domain/conflict_kind.dart';
+import '../domain/field_conflict.dart';
 import '../domain/merge_plan.dart';
 import '../domain/merge_planner.dart';
 import '../domain/package_import_repository.dart';
@@ -63,6 +67,20 @@ final class MergeController extends AsyncNotifier<MergeView?> {
 
   MergeGround? _ground;
 
+  /// Validates a proposed replacement through the same port used by edits.
+  Future<Result<void>> validateTypedValue(
+    FieldConflict conflict,
+    String value,
+  ) async {
+    final PackageImportRepository? repository = ref.read(
+      packageImportRepositoryProvider,
+    );
+    if (repository == null) {
+      return const FailureResult<void>(CancelledFailure());
+    }
+    return repository.validateTypedValue(conflict, value);
+  }
+
   _Planning _planning(
     InspectedBundle bundle,
     MergeGround ground, {
@@ -71,7 +89,7 @@ final class MergeController extends AsyncNotifier<MergeView?> {
   }) {
     _ground = ground;
     return (
-      incoming: bundle.tables,
+      incoming: bundle.mergeRows,
       local: ground.local,
       elsewhere: ground.elsewhere,
       decided: ground.decided,
@@ -83,7 +101,7 @@ final class MergeController extends AsyncNotifier<MergeView?> {
   }
 
   /// Records [choice] for the conflict [conflictId].
-  void choose(String conflictId, ConflictChoice choice) {
+  void choose(String conflictId, ConflictChoice choice, {String? typedValue}) {
     final MergeView? view = state.value;
     if (view == null) {
       return;
@@ -91,8 +109,13 @@ final class MergeController extends AsyncNotifier<MergeView?> {
     state = AsyncData<MergeView?>(
       view.copyWith(
         choices: <String, ConflictChoice>{...view.choices, conflictId: choice},
+        typedValues: <String, String>{
+          ...view.typedValues,
+          conflictId: ?typedValue,
+        },
       ),
     );
+    _refreshTemplateReport();
   }
 
   /// Records [choice] for every conflict still unsettled.
@@ -107,6 +130,31 @@ final class MergeController extends AsyncNotifier<MergeView?> {
           ...view.choices,
           for (final conflict in view.unsettled) conflict.id: choice,
         },
+      ),
+    );
+    _refreshTemplateReport();
+  }
+
+  void _refreshTemplateReport() {
+    final MergeView? view = state.value;
+    if (view == null) return;
+    final Set<String> resolved = <String>{
+      for (final conflict in view.plan.conflicts)
+        if (conflict.kind == ConflictKind.template &&
+            (view.choices[conflict.id] == ConflictChoice.keepBoth ||
+                (conflict.allowChooseOne &&
+                    (view.choices[conflict.id] == ConflictChoice.mine ||
+                        view.choices[conflict.id] == ConflictChoice.theirs))))
+          conflict.rowId,
+    };
+    state = AsyncData<MergeView?>(
+      view.copyWith(
+        report: TemplateCompatibility.check(
+          incoming: view.bundle.tables,
+          local: view.local,
+          sameProject: projectId == view.bundle.manifest.projectId,
+          resolvedTemplateVersions: resolved,
+        ),
       ),
     );
   }
@@ -182,6 +230,7 @@ final class MergeController extends AsyncNotifier<MergeView?> {
             },
           ),
         );
+        _refreshTemplateReport();
     }
   }
 
@@ -203,6 +252,7 @@ final class MergeController extends AsyncNotifier<MergeView?> {
       projectId: projectId,
       plan: view.plan,
       choices: view.choices,
+      typedValues: view.typedValues,
       duplicates: view.checkDuplicates
           ? view.duplicates
           : const <PossibleDuplicate>[],
@@ -225,6 +275,9 @@ final class MergeController extends AsyncNotifier<MergeView?> {
       }
     } else {
       await flow.applied();
+      // The isolate already compared incoming records with pre-existing
+      // records, and merge persisted those pairs. A project-wide scan would
+      // report local-local pairs and lose this merge's comparison boundary.
     }
     return merged;
   }

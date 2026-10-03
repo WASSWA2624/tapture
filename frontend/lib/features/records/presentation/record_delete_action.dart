@@ -45,6 +45,8 @@ final class RecordDeleteAction extends ConsumerWidget {
     required List<String> ids,
     String reason = RecordDeleteController.operatorReason,
   }) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<String> targets = <String>{...ids}.toList();
     if (targets.isEmpty) {
       return null;
@@ -56,9 +58,12 @@ final class RecordDeleteAction extends ConsumerWidget {
     final BuildContext host = _snackHost(context);
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.recordsDeleteTitle(targets.length),
-      message: Copy.recordsDeleteMessage(records: targets.length, days: days),
-      confirmLabel: Copy.recordsDeleteConfirm,
+      title: localCopy.recordsDeleteTitle(targets.length),
+      message: localCopy.recordsDeleteMessage(
+        records: targets.length,
+        days: days,
+      ),
+      confirmLabel: localCopy.recordsDeleteConfirm,
       destructive: true,
     );
     if (!confirmed) {
@@ -76,8 +81,10 @@ final class RecordDeleteAction extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool busy = ref.watch(recordDeleteControllerProvider);
-    final String label = Copy.recordsDeleteLabel(<String>{...ids}.length);
+    final String label = localCopy.recordsDeleteLabel(<String>{...ids}.length);
     return AppIconButton(
       icon: AppIcons.delete,
       semanticLabel: label,
@@ -111,12 +118,14 @@ void _reportDelete(
   RecordDeleteController controller,
   RecordDeleteOutcome outcome,
 ) {
+  final LocalizedCopy localCopy = Copy.of(host);
+
   final int deleted = outcome.succeeded.length;
   final int failed = outcome.failed.length;
   if (deleted == 0) {
     showAppSnack(
       host,
-      _failureText(outcome, Copy.recordsNotDeleted),
+      _failureText(outcome, localCopy.recordsNotDeleted),
       tone: SnackTone.error,
     );
     return;
@@ -124,10 +133,10 @@ void _reportDelete(
   showAppSnack(
     host,
     failed == 0
-        ? Copy.recordsDeleted(deleted)
-        : Copy.recordsDeletedPartly(deleted: deleted, failed: failed),
+        ? localCopy.recordsDeleted(deleted)
+        : localCopy.recordsDeletedPartly(deleted: deleted, failed: failed),
     tone: failed == 0 ? SnackTone.info : SnackTone.warning,
-    undoLabel: Copy.undo,
+    undoLabel: localCopy.undo,
     onUndo: () => unawaited(_undo(host, controller, outcome.succeeded)),
   );
 }
@@ -138,6 +147,8 @@ Future<void> _undo(
   RecordDeleteController controller,
   List<String> ids,
 ) async {
+  final LocalizedCopy localCopy = Copy.of(host);
+
   final RecordDeleteOutcome outcome = await controller.restore(ids);
   if (!host.mounted) {
     return;
@@ -145,14 +156,14 @@ Future<void> _undo(
   if (outcome.failed.isEmpty) {
     showAppSnack(
       host,
-      Copy.recordsRestored(outcome.succeeded.length),
+      localCopy.recordsRestored(outcome.succeeded.length),
       tone: SnackTone.success,
     );
     return;
   }
   showAppSnack(
     host,
-    _failureText(outcome, Copy.recordsNotRestored),
+    _failureText(outcome, localCopy.recordsNotRestored),
     tone: SnackTone.error,
   );
 }

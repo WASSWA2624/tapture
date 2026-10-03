@@ -8,14 +8,6 @@ import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 
-/// One candidate a person can pick, already labelled by its source.
-typedef ConflictChoice = ({
-  String id,
-  String sourceLabel,
-  String value,
-  String? evidence,
-});
-
 /// The row that resolves one field's conflict (task 015).
 ///
 /// Each candidate sits beside its source. A typed value matching none of
@@ -44,15 +36,17 @@ final class ConflictResolutionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
     }
     if (choices.isEmpty) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: AppIcons.warning,
-        headline: Copy.conflictEmptyHeadline,
-        message: Copy.conflictEmptyMessage,
+        headline: localCopy.conflictEmptyHeadline,
+        message: localCopy.conflictEmptyMessage,
       );
     }
     return _Choices(choices: choices, onPick: onPick, onTyped: onTyped);
@@ -87,6 +81,8 @@ class _ChoicesState extends State<_Choices> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -101,20 +97,28 @@ class _ChoicesState extends State<_Choices> {
           ),
         AppTextField(
           key: const ValueKey<String>('conflict-typed'),
-          label: Copy.conflictTypeOwn,
+          label: localCopy.conflictTypeOwn,
           controller: _typed,
         ),
         AppTextField(
           key: const ValueKey<String>('conflict-reason'),
-          label: Copy.conflictReason,
+          label: localCopy.conflictReason,
           controller: _reason,
         ),
         AppButton(
           key: const ValueKey<String>('conflict-use-typed'),
-          label: Copy.conflictTypeOwn,
+          label: localCopy.conflictUseTyped,
           onPressed: () => widget.onTyped?.call(_typed.text, _reason.text),
         ),
       ],
     );
   }
 }
+
+/// One candidate a person can pick, already labelled by its source.
+typedef ConflictChoice = ({
+  String id,
+  String sourceLabel,
+  String value,
+  String? evidence,
+});

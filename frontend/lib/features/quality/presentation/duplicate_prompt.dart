@@ -1,121 +1,147 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
-import 'package:tapture/core/widgets/states/app_error_state.dart';
 
-/// One field the two records do not share.
-typedef DuplicateDifference = ({
-  String label,
-  String incoming,
-  String existing,
-});
+import '../domain/duplicate_choice.dart';
+import '../domain/duplicate_pair_view.dart';
+import 'duplicate_choice_controller.dart';
+import 'quality_providers.dart';
 
-/// The save-time question: four outcomes, and the values that differ.
+/// The one question a duplicate asks (task 015): the values that differ, the
+/// four outcomes, and one action that goes on with the chosen one.
 ///
-/// Dismissing the sheet chooses nothing. Both records stay, unresolved.
-final class DuplicatePrompt extends StatelessWidget {
-  /// Creates the prompt.
+/// Dismissing the sheet chooses nothing: both records and the pair stay
+/// unresolved. Choosing to update the existing record leads to the
+/// comparison, the only place an override happens.
+final class DuplicatePrompt extends ConsumerWidget {
+  /// Creates the prompt for pair [pairId].
   const DuplicatePrompt({
-    required this.differences,
-    this.failure,
-    this.onChoose,
+    required this.pairId,
+    required this.onChoose,
     super.key,
   });
 
-  /// Fields that differ. Empty is the empty state.
-  final List<DuplicateDifference> differences;
+  /// The pair asked about.
+  final String pairId;
 
-  /// Why the pair could not be read. Null when it could.
-  final Failure? failure;
-
-  /// The choice, when a button is pressed.
-  final ValueChanged<DuplicateChoice>? onChoose;
+  /// Called with the outcome a person chose.
+  final ValueChanged<DuplicateChoice> onChoose;
 
   @override
-  Widget build(BuildContext context) {
-    final Failure? failed = failure;
-    if (failed != null) {
-      return AppErrorState(failure: failed);
-    }
-    if (differences.isEmpty) {
-      return const AppEmptyState(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return AsyncValueView<DuplicatePairView?>(
+      value: ref.watch(duplicatePairProvider(pairId)),
+      onRetry: () => ref.invalidate(duplicatePairProvider(pairId)),
+      isEmpty: (DuplicatePairView? pair) => pair == null,
+      empty: () => AppEmptyState(
         icon: AppIcons.duplicate,
-        headline: Copy.duplicateNoDifferenceHeadline,
-        message: Copy.duplicateNoDifferenceMessage,
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        for (final DuplicateDifference row in differences)
-          AppListTile(
-            title: row.label,
-            subtitle: '${row.existing} → ${row.incoming}',
+        headline: Copy.of(context).duplicatesEmptyHeadline,
+        message: Copy.of(context).duplicatePairGone,
+        actionLabel: Copy.of(context).close,
+        onAction: () => Navigator.of(context).maybePop(),
+      ),
+      data: (DuplicatePairView? pair) => _question(context, ref, pair!),
+    );
+  }
+
+  Widget _question(
+    BuildContext context,
+    WidgetRef ref,
+    DuplicatePairView pair,
+  ) {
+    final String question = 'prompt:$pairId';
+    // Keeping both is offered first and changes nothing irreversible.
+    final DuplicateChoice choice =
+        ref.watch(duplicateChoiceControllerProvider(question)) ??
+        DuplicateChoice.keepBoth;
+    return Padding(
+      padding: const EdgeInsets.all(Space.x4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (pair.differences.isEmpty)
+            AppBanner(
+              message: Copy.of(context).duplicateNoDifferenceMessage,
+              icon: AppIcons.info,
+              tone: SnackTone.info,
+            )
+          else
+            for (final DuplicateDifference row in pair.differences)
+              AppListTile(
+                key: ValueKey<String>('duplicate-difference-${row.fieldKey}'),
+                dense: true,
+                title: row.label,
+                subtitle: Copy.of(
+                  context,
+                ).duplicateValueChange(row.existing, row.incoming),
+              ),
+          const SizedBox(height: Space.x3),
+          AppRadioGroup<DuplicateChoice>(
+            key: const ValueKey<String>('duplicate-choice'),
+            label: Copy.of(context).duplicatePromptQuestion,
+            value: choice,
+            options: <Choice<DuplicateChoice>>[
+              Choice<DuplicateChoice>(
+                DuplicateChoice.keepBoth,
+                Copy.of(context).duplicateLinkBoth,
+              ),
+              Choice<DuplicateChoice>(
+                DuplicateChoice.mergeFields,
+                Copy.of(context).duplicateMerge,
+              ),
+              Choice<DuplicateChoice>(
+                DuplicateChoice.overrideExisting,
+                Copy.of(context).duplicateCompareThenUpdate,
+              ),
+              Choice<DuplicateChoice>(
+                DuplicateChoice.discardNew,
+                Copy.of(context).duplicateDiscard,
+              ),
+            ],
+            onChanged: (DuplicateChoice next) => ref
+                .read(duplicateChoiceControllerProvider(question).notifier)
+                .pick(next),
           ),
-        AppButton(
-          key: const ValueKey<String>('duplicate-override'),
-          label: Copy.duplicateOverride,
-          onPressed: () => onChoose?.call(DuplicateChoice.overrideExisting),
-        ),
-        AppButton(
-          key: const ValueKey<String>('duplicate-keep'),
-          label: Copy.duplicateLinkBoth,
-          variant: AppButtonVariant.secondary,
-          onPressed: () => onChoose?.call(DuplicateChoice.keepBoth),
-        ),
-        AppButton(
-          key: const ValueKey<String>('duplicate-discard'),
-          label: Copy.duplicateDiscard,
-          variant: AppButtonVariant.secondary,
-          onPressed: () => onChoose?.call(DuplicateChoice.discardNew),
-        ),
-        AppButton(
-          key: const ValueKey<String>('duplicate-merge'),
-          label: Copy.duplicateMerge,
-          variant: AppButtonVariant.secondary,
-          onPressed: () => onChoose?.call(DuplicateChoice.mergeFields),
-        ),
-      ],
+          const SizedBox(height: Space.x4),
+          AppPrimaryAction(
+            key: const ValueKey<String>('duplicate-continue'),
+            label: Copy.of(context).duplicatePromptContinue,
+            onPressed: () => onChoose(choice),
+          ),
+        ],
+      ),
     );
   }
 }
 
-/// Opens the prompt. Returns null when it is dismissed.
+/// Opens the prompt for pair [pairId]. Returns the chosen outcome, or null
+/// when the sheet is dismissed, which leaves the pair unresolved.
 Future<DuplicateChoice?> showDuplicatePrompt(
-  BuildContext context, {
-  required List<DuplicateDifference> differences,
-  Failure? failure,
-}) {
+  BuildContext context,
+  String pairId,
+) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   return showAppSheet<DuplicateChoice>(
     context,
-    title: Copy.duplicatePromptTitle,
+    title: localCopy.duplicatePromptTitle,
     contentSized: true,
     builder: (BuildContext sheet) {
       return DuplicatePrompt(
-        differences: differences,
-        failure: failure,
+        pairId: pairId,
         onChoose: (DuplicateChoice choice) => Navigator.of(sheet).pop(choice),
       );
     },
   );
-}
-
-/// The four ways a person can answer a duplicate (task 015).
-enum DuplicateChoice {
-  /// Write the new values onto the existing record.
-  overrideExisting,
-
-  /// Keep both and link them.
-  keepBoth,
-
-  /// Drop the new record.
-  discardNew,
-
-  /// Decide field by field.
-  mergeFields,
 }

@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/bundle/bundle_format.dart';
 import 'package:tapture/core/bundle/bundle_output.dart';
@@ -19,6 +21,7 @@ import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/exports/exports.dart';
@@ -41,7 +44,8 @@ final class ProjectExportScreen extends ConsumerStatefulWidget {
       _ProjectExportScreenState();
 }
 
-class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
+class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
+    with StateRefresh {
   CancellationToken? _cancel;
   bool _busy = false;
   Failure? _failure;
@@ -49,6 +53,8 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<ExportSummary> summary = ref.watch(
       _exportSummaryProvider(widget.projectId),
     );
@@ -61,7 +67,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
         ?.value;
     return AppPage(
       key: const ValueKey<String>('route-project-export'),
-      title: Copy.projectExportTitle,
+      title: localCopy.projectExportTitle,
       footer: _failure == null && (hasRecords || _saved != null)
           ? _footer(downloads)
           : null,
@@ -70,17 +76,22 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
         onRetry: () => ref.invalidate(_exportSummaryProvider(widget.projectId)),
         isEmpty: (ExportSummary loaded) =>
             loaded.records == 0 && _saved == null,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.export,
-          headline: Copy.projectExportEmptyHeadline,
-          message: Copy.projectExportEmptyMessage,
+          headline: Copy.of(context).projectExportEmptyHeadline,
+          message: Copy.of(context).projectExportEmptyMessage,
+          actionLabel: Copy.of(context).recordsEmptyAction,
+          onAction: () =>
+              context.go(RoutePaths.projectCapture(widget.projectId)),
         ),
         data: (ExportSummary loaded) {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           final Failure? failure = _failure;
           if (failure != null) {
             return AppErrorState(
               failure: failure,
-              onRetry: () => setState(() => _failure = null),
+              onRetry: () => refresh(() => _failure = null),
             );
           }
           final ExportedPackage? saved = _saved;
@@ -88,8 +99,8 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               if (offline) ...<Widget>[
-                const AppBanner(
-                  message: Copy.offlineWorking,
+                AppBanner(
+                  message: localCopy.offlineWorking,
                   icon: AppIcons.offline,
                   tone: SnackTone.info,
                 ),
@@ -97,16 +108,28 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
               ],
               if (saved != null) ...<Widget>[
                 AppBanner(
-                  message: Copy.projectExportSaved(saved.fileName),
+                  message: localCopy.projectExportSaved(saved.fileName),
                   icon: AppIcons.success,
                   tone: SnackTone.success,
                 ),
                 const SizedBox(height: Space.x3),
+                ExportPrivacySummaryView(exportId: saved.id, package: true),
               ],
               ExportSummaryView(
                 summary: loaded,
                 destination: downloads.destination,
                 estimatedBytes: saved == null ? estimate : null,
+              ),
+              const SizedBox(height: Space.x3),
+              AppButton(
+                key: const ValueKey<String>('project-export-deliverables'),
+                label: localCopy.exportOutputFiles,
+                variant: AppButtonVariant.secondary,
+                onPressed: _busy
+                    ? null
+                    : () => context.go(
+                        RoutePaths.projectDeliverables(widget.projectId),
+                      ),
               ),
             ],
           );
@@ -118,11 +141,15 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
   /// Export before a save, Cancel while writing, and Share afterwards: the
   /// page's one primary action sits in reach (FE-SIMP-01).
   Widget _footer(DownloadService downloads) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final ExportedPackage? saved = _saved;
     if (saved != null) {
       return AppPrimaryAction(
-        label: Copy.projectExportShare,
-        caption: downloads.canShareToApps ? Copy.projectExportShareHint : null,
+        label: localCopy.projectExportShare,
+        caption: downloads.canShareToApps
+            ? localCopy.projectExportShareHint
+            : null,
         onPressed: () => unawaited(_share(saved)),
       );
     }
@@ -131,7 +158,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
       children: <Widget>[
         if (_busy) ...<Widget>[
           AppButton(
-            label: Copy.projectExportCancel,
+            label: localCopy.projectExportCancel,
             variant: AppButtonVariant.secondary,
             expand: true,
             onPressed: _stop,
@@ -139,9 +166,9 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
           const SizedBox(height: Space.x2),
         ],
         AppPrimaryAction(
-          label: Copy.projectExport,
+          label: localCopy.projectExport,
           busy: _busy,
-          caption: _busy ? Copy.projectExportProgress : null,
+          caption: _busy ? localCopy.projectExportProgress : null,
           onPressed: _busy ? null : () => unawaited(_export()),
         ),
       ],
@@ -149,18 +176,18 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
   }
 
   Future<void> _export() async {
-    final ExportRepository? repository = ref.read(exportRepositoryProvider);
-    if (repository == null) {
-      setState(() => _failure = _filesUnavailable);
+    final ExportRepository? store = ref.read(exportRepositoryProvider);
+    if (store == null) {
+      refresh(() => _failure = _filesUnavailable);
       return;
     }
     final CancellationToken cancel = CancellationToken();
-    setState(() {
+    refresh(() {
       _cancel = cancel;
       _busy = true;
       _failure = null;
     });
-    final Result<ExportedPackage> written = await repository.exportProject(
+    final Result<ExportedPackage> written = await store.exportProject(
       widget.projectId,
       cancel: cancel,
     );
@@ -169,13 +196,13 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
     }
     switch (written) {
       case FailureResult<ExportedPackage>(:final Failure failure):
-        setState(() {
+        refresh(() {
           _busy = false;
           _cancel = null;
           _failure = failure is CancelledFailure ? null : failure;
         });
       case Success<ExportedPackage>(:final ExportedPackage value):
-        setState(() {
+        refresh(() {
           _busy = false;
           _cancel = null;
           _saved = value;
@@ -200,7 +227,12 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
           return;
         }
         if (copy is FailureResult<String?>) {
-          showAppSnack(context, copy.failure.message, tone: SnackTone.error);
+          showAppSnack(
+            context,
+            copy.failure.message,
+            tone: SnackTone.error,
+            localizedMessage: copy.failure.explanation,
+          );
         }
     }
   }
@@ -208,6 +240,20 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
   /// Opens the share sheet. A dismissed sheet says nothing; any other
   /// failure says why (FE-CONS-11).
   Future<void> _share(ExportedPackage saved) async {
+    final ExportRepository? store = ref.read(exportRepositoryProvider);
+    if (store case final ExportSharingPolicy policy) {
+      final Result<void> allowed = await policy.allowShare(saved.id);
+      if (!mounted) return;
+      if (allowed case FailureResult<void>(:final Failure failure)) {
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
+        return;
+      }
+    }
     final DownloadService downloads = ref.read(downloadServiceProvider);
     final Result<void> shared = switch (saved.package) {
       StoredBundle(:final String relativePath) =>
@@ -228,7 +274,12 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
     if (shared case FailureResult<void>(
       :final Failure failure,
     ) when failure is! CancelledFailure) {
-      showAppSnack(context, failure.message, tone: SnackTone.error);
+      showAppSnack(
+        context,
+        failure.message,
+        tone: SnackTone.error,
+        localizedMessage: failure.explanation,
+      );
     }
   }
 
@@ -241,27 +292,27 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen> {
 /// the page says the project files are not here.
 final _exportSummaryProvider = StreamProvider.autoDispose
     .family<ExportSummary, String>((Ref ref, String projectId) {
-      final ExportRepository? repository = ref.watch(exportRepositoryProvider);
-      if (repository == null) {
+      final ExportRepository? store = ref.watch(exportRepositoryProvider);
+      if (store == null) {
         return Stream<ExportSummary>.error(_filesUnavailable);
       }
-      return repository.watchSummary(projectId);
+      return store.watchSummary(projectId);
     }, retry: (int _, Object _) => null);
 
 /// How big the project's package is expected to be; nothing while unknown.
 final _packageEstimateProvider = FutureProvider.autoDispose
     .family<int?, String>((Ref ref, String projectId) async {
-      final ExportRepository? repository = ref.watch(exportRepositoryProvider);
-      if (repository == null) {
+      final ExportRepository? store = ref.watch(exportRepositoryProvider);
+      if (store == null) {
         return null;
       }
-      return switch (await repository.estimatePackage(projectId)) {
+      return switch (await store.estimatePackage(projectId)) {
         Success<int>(:final int value) => value,
         FailureResult<int>() => null,
       };
     }, retry: (int _, Object _) => null);
 
-const StorageFailure _filesUnavailable = StorageFailure(
-  message: 'Project files are not available on this device.',
-  recoveryAction: 'Export from a device that stores this project.',
+final StorageFailure _filesUnavailable = StorageFailure(
+  localizedMessage: Copy.messages.failureProjectFilesAreNotAvailableOnThis,
+  localizedRecovery: Copy.messages.failureExportFromADeviceThatStoresThis,
 );

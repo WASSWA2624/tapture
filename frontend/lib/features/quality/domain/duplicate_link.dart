@@ -10,7 +10,8 @@ abstract final class DuplicateLink {
     return a.compareTo(b) <= 0 ? (left: a, right: b) : (left: b, right: a);
   }
 
-  /// Writes the link and the audit row. Both records stay.
+  /// Writes the link's audit row, naming the ordered pair so a link is
+  /// audited the same whichever way round it was given. Both records stay.
   static void keepBoth({
     required DuplicateLedger ledger,
     required String a,

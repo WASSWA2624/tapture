@@ -82,6 +82,7 @@ final class OnlineStage {
       await _writes.setSkip(job.id, 'Online analysis is off for this project.');
       return;
     }
+    final String privacyRevision = await _paths.privacyRevision(bundle);
     final String ocrText = await _onDevice.text(bundle);
     final List<String> images = ImageEgress.paths(
       holdImages: projectSettings.doNotSendImages,
@@ -89,7 +90,7 @@ final class OnlineStage {
     );
     final List<ExtractionField> fields = <ExtractionField>[
       for (final TemplateField field in bundle.fields)
-        StageSupport.extractionField(field),
+        if (field.type != 'consent') StageSupport.extractionField(field),
     ];
     final List<String> rows = <String>[
       for (final TemplateRow row in bundle.rows) row.label,
@@ -117,7 +118,7 @@ final class OnlineStage {
       final List<String> batch = batches[index];
       final String batchKey =
           '$index:${batch.map(StageSupport.basename).join('|')}';
-      if (await _isBatchParsed(job.id, batchKey)) {
+      if (await _isBatchParsed(job, batchKey)) {
         continue;
       }
       final ExtractionRequest request = ExtractionRequest(
@@ -141,6 +142,7 @@ final class OnlineStage {
         batchKey: batchKey,
         providerId: selection.provider.id,
         modelId: selection.model.id,
+        privacyRevision: privacyRevision,
       );
     }
     if (_settings.read(SettingKeys.aiRefineCaptions)) {
@@ -164,10 +166,11 @@ final class OnlineStage {
     required String batchKey,
     required String providerId,
     required String modelId,
+    required String privacyRevision,
   }) async {
     var repairs = 0;
     String? repairError;
-    final ProcessingResult? pending = await _unparsedBatch(job.id, batchKey);
+    final ProcessingResult? pending = await _unparsedBatch(job, batchKey);
     if (pending != null) {
       final ParseOutcome parsed = ResponseParser.parse(
         pending.rawResponse,
@@ -196,6 +199,11 @@ final class OnlineStage {
     }
     while (true) {
       await _budget.require(job.id, bundle);
+      if (await _paths.privacyRevision(bundle) != privacyRevision) {
+        throw const ValidationFailure(
+          message: 'Photo protection changed. Try analysis again.',
+        );
+      }
       final ExtractFieldsRequest serviceRequest = request.toService();
       final Result<ExtractFieldsResult> result = await service.extractFields(
         ExtractFieldsRequest(
@@ -218,6 +226,7 @@ final class OnlineStage {
           _canonicalResponse(extracted.fields, request);
       final String summary = jsonEncode(<String, Object?>{
         'kind': 'online',
+        'requestGeneration': job.requestGeneration,
         'batchKey': batchKey,
         'repair': repairError != null,
         'imageCount': request.images.length,
@@ -257,33 +266,44 @@ final class OnlineStage {
     }
   }
 
-  Future<bool> _isBatchParsed(String jobId, String batchKey) async {
+  Future<bool> _isBatchParsed(ProcessingJob job, String batchKey) async {
     final List<ProcessingResult> responses = StageSupport.unwrap(
-      await _responses.forJob(jobId),
+      await _responses.forJob(job.id),
     );
     return responses.any(
       (ProcessingResult response) =>
           response.parsedOk &&
+          _sameGeneration(response, job) &&
           StageSupport.summaryValue(response.requestSummary, 'batchKey') ==
               batchKey,
     );
   }
 
   Future<ProcessingResult?> _unparsedBatch(
-    String jobId,
+    ProcessingJob job,
     String batchKey,
   ) async {
     final List<ProcessingResult> responses = StageSupport.unwrap(
-      await _responses.forJob(jobId),
+      await _responses.forJob(job.id),
     );
     for (final ProcessingResult response in responses.reversed) {
       if (!response.parsedOk &&
+          _sameGeneration(response, job) &&
           StageSupport.summaryValue(response.requestSummary, 'batchKey') ==
               batchKey) {
         return response;
       }
     }
     return null;
+  }
+
+  bool _sameGeneration(ProcessingResult response, ProcessingJob job) {
+    final Object? decoded = StageSupport.json(response.requestSummary);
+    final Object? generation = decoded is Map
+        ? decoded['requestGeneration']
+        : null;
+    // Missing generation identifies the original run of a legacy job.
+    return (generation is int ? generation : 0) == job.requestGeneration;
   }
 }
 

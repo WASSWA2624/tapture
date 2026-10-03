@@ -17,6 +17,7 @@ import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 
@@ -39,7 +40,8 @@ class ProjectEditScreen extends ConsumerStatefulWidget {
   ConsumerState<ProjectEditScreen> createState() => _ProjectEditScreenState();
 }
 
-class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
+class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen>
+    with StateRefresh {
   TextEditingController? _name;
   TextEditingController? _description;
   TextEditingController? _organisation;
@@ -56,6 +58,8 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<Project?> value = ref.watch(
       projectByIdProvider(widget.projectId),
     );
@@ -63,15 +67,15 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
     if (project == null) {
       return AppPage(
         key: const ValueKey<String>('route-project-edit'),
-        title: Copy.projectEditFormTitle,
+        title: localCopy.projectEditFormTitle,
         body: value.isLoading
             ? const AppSkeleton()
             : AppEmptyState(
                 icon: AppIcons.project,
-                headline: Copy.projectEditEmptyHeadline,
-                message: Copy.projectEditEmptyMessage,
-                actionLabel: Copy.navProjects,
-                onAction: () => context.go(_projectsRoot),
+                headline: localCopy.projectEditEmptyHeadline,
+                message: localCopy.projectEditEmptyMessage,
+                actionLabel: localCopy.navProjects,
+                onAction: () => context.go(RoutePaths.projects),
               ),
       );
     }
@@ -79,65 +83,75 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
     final _ProjectEditView view = ref.watch(_projectEditProvider);
     return AppPage(
       key: const ValueKey<String>('route-project-edit'),
-      title: Copy.projectEditFormTitle,
+      title: localCopy.projectEditFormTitle,
       scrollable: false,
       overflow: <AppOverflowAction>[
         AppOverflowAction(
-          label: Copy.projectSettingsTitle,
+          label: localCopy.projectSettingsTitle,
           icon: AppIcons.settings,
-          onTap: () => context.go(_settings(project.id)),
+          onTap: () => context.go(RoutePaths.projectSettings(project.id)),
         ),
       ],
       body: AppForm(
         guardUnsaved: true,
         dirty: view.dirty,
-        errors: view.saveError == null
+        errors:
+            Copy.of(
+                  context,
+                ).stateText(view.localizedSaveError, view.saveError) ==
+                null
             ? const <String>[]
-            : <String>[view.saveError!],
+            : <String>[
+                Copy.of(
+                  context,
+                ).stateText(view.localizedSaveError, view.saveError)!,
+              ],
         fields: <Widget>[
           AppTextField(
-            label: Copy.projectName,
+            label: localCopy.projectName,
             controller: _name!,
             requiredness: FieldRequiredness.required,
             textInputAction: TextInputAction.next,
-            errorText: view.nameError,
+            errorText: Copy.of(
+              context,
+            ).stateText(view.localizedNameError, view.nameError),
           ),
           AppTextField(
-            label: Copy.projectDescription,
+            label: localCopy.projectDescription,
             controller: _description!,
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.next,
             maxLines: 3,
           ),
           AppTextField(
-            label: Copy.projectOrganisation,
+            label: localCopy.projectOrganisation,
             controller: _organisation!,
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.next,
           ),
           AppDateField(
-            label: Copy.projectStartsOn,
+            label: localCopy.projectStartsOn,
             value: view.startsOn,
             clock: const SystemClock(),
             onChanged: ref.read(_projectEditProvider.notifier).setStartsOn,
           ),
           AppDateField(
-            label: Copy.projectEndsOn,
+            label: localCopy.projectEndsOn,
             value: view.endsOn,
             clock: const SystemClock(),
             onChanged: ref.read(_projectEditProvider.notifier).setEndsOn,
           ),
           AppChoiceField<ProjectStatus>(
-            label: Copy.projectStatus,
+            label: localCopy.projectStatus,
             value: view.status,
-            options: const <Choice<ProjectStatus>>[
+            options: <Choice<ProjectStatus>>[
               Choice<ProjectStatus>(
                 ProjectStatus.active,
-                Copy.projectStatusActive,
+                localCopy.projectStatusActive,
               ),
               Choice<ProjectStatus>(
                 ProjectStatus.archived,
-                Copy.projectStatusArchived,
+                localCopy.projectStatusArchived,
               ),
             ],
             onChanged: (ProjectStatus? status) {
@@ -157,8 +171,10 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
             },
           ),
         ],
-        submitLabel: Copy.save,
+        submitLabel: localCopy.save,
         onSubmit: () async {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           final bool saved = await ref
               .read(_projectEditProvider.notifier)
               .submit(
@@ -167,7 +183,11 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
                 organisation: _organisation!.text,
               );
           if (saved && context.mounted) {
-            showAppSnack(context, Copy.projectSaved, tone: SnackTone.success);
+            showAppSnack(
+              context,
+              localCopy.projectSaved,
+              tone: SnackTone.success,
+            );
             // After the form has forgotten its edits, so leaving asks
             // nothing: back to the details page (D8).
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -195,16 +215,21 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen> {
   Future<void> _photo(
     Future<Result<ProjectSettings>> Function(_ProjectEdit edit) change,
   ) async {
-    setState(() => _photoBusy = true);
+    refresh(() => _photoBusy = true);
     final Result<ProjectSettings> result = await change(
       ref.read(_projectEditProvider.notifier),
     );
     if (!mounted) {
       return;
     }
-    setState(() => _photoBusy = false);
+    refresh(() => _photoBusy = false);
     if (result case FailureResult<ProjectSettings>(:final failure)) {
-      showAppSnack(context, failure.message, tone: SnackTone.error);
+      showAppSnack(
+        context,
+        failure.message,
+        tone: SnackTone.error,
+        localizedMessage: failure.explanation,
+      );
     }
   }
 
@@ -239,7 +264,9 @@ final NotifierProvider<_ProjectEdit, _ProjectEditView> _projectEditProvider =
 
 typedef _ProjectEditView = ({
   String? nameError,
+  LocalizedMessage? localizedNameError,
   String? saveError,
+  LocalizedMessage? localizedSaveError,
   bool dirty,
   DateTime? startsOn,
   DateTime? endsOn,
@@ -253,7 +280,9 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
   _ProjectEditView build() {
     return (
       nameError: null,
+      localizedNameError: null,
       saveError: null,
+      localizedSaveError: null,
       dirty: false,
       startsOn: null,
       endsOn: null,
@@ -266,7 +295,9 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
     _source = project;
     state = (
       nameError: null,
+      localizedNameError: null,
       saveError: null,
+      localizedSaveError: null,
       dirty: false,
       startsOn: project.startsOn,
       endsOn: project.endsOn,
@@ -313,7 +344,9 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
   void setStartsOn(DateTime? value) {
     state = (
       nameError: state.nameError,
+      localizedNameError: state.localizedNameError,
       saveError: state.saveError,
+      localizedSaveError: state.localizedSaveError,
       dirty: true,
       startsOn: value,
       endsOn: state.endsOn,
@@ -325,7 +358,9 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
   void setEndsOn(DateTime? value) {
     state = (
       nameError: state.nameError,
+      localizedNameError: state.localizedNameError,
       saveError: state.saveError,
+      localizedSaveError: state.localizedSaveError,
       dirty: true,
       startsOn: state.startsOn,
       endsOn: value,
@@ -337,7 +372,9 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
   void setStatus(ProjectStatus status) {
     state = (
       nameError: state.nameError,
+      localizedNameError: state.localizedNameError,
       saveError: state.saveError,
+      localizedSaveError: state.localizedSaveError,
       dirty: true,
       startsOn: state.startsOn,
       endsOn: state.endsOn,
@@ -360,7 +397,9 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
     if (trimmed.isEmpty) {
       state = (
         nameError: Copy.nameRequired,
+        localizedNameError: Copy.messages.nameRequired,
         saveError: null,
+        localizedSaveError: null,
         dirty: state.dirty,
         startsOn: state.startsOn,
         endsOn: state.endsOn,
@@ -389,7 +428,9 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
       case Success<void>():
         state = (
           nameError: null,
+          localizedNameError: null,
           saveError: null,
+          localizedSaveError: null,
           dirty: false,
           startsOn: state.startsOn,
           endsOn: state.endsOn,
@@ -399,7 +440,9 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
       case FailureResult<void>(:final Failure failure):
         state = (
           nameError: null,
+          localizedNameError: null,
           saveError: failure.message,
+          localizedSaveError: failure.explanation,
           dirty: state.dirty,
           startsOn: state.startsOn,
           endsOn: state.endsOn,
@@ -416,11 +459,3 @@ String? _optionalText(String? raw) {
   }
   return raw.trim();
 }
-
-/// Must match [AppRoutes.projectSettings].
-String _settings(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}/$_settingsSegment';
-}
-
-const String _projectsRoot = '/projects';
-const String _settingsSegment = 'settings';

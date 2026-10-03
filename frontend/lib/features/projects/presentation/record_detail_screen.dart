@@ -22,7 +22,7 @@ import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
-import 'captured_items.dart';
+import 'captured_records.dart';
 import 'record_edit_sheet.dart';
 import 'record_field_sheet.dart';
 
@@ -47,6 +47,8 @@ final class RecordDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<ProjectRecordDetail?> value = ref.watch(
       recordDetailProvider(recordId),
     );
@@ -54,13 +56,13 @@ final class RecordDetailScreen extends ConsumerWidget {
     return AppPage(
       key: const ValueKey<String>('route-record'),
       title: detail == null
-          ? Copy.recordDetailTitle
+          ? localCopy.recordDetailTitle
           : projectRecordTitle(detail.row),
       overflow: detail == null
           ? const <AppOverflowAction>[]
           : <AppOverflowAction>[
               AppOverflowAction(
-                label: Copy.recordDelete,
+                label: localCopy.recordDelete,
                 icon: AppIcons.delete,
                 onTap: () => unawaited(_delete(context, ref)),
               ),
@@ -69,7 +71,7 @@ final class RecordDetailScreen extends ConsumerWidget {
           ? null
           : AppPrimaryAction(
               key: const ValueKey<String>('record-edit'),
-              label: Copy.recordEdit,
+              label: localCopy.recordEdit,
               onPressed: () => unawaited(
                 context.push(RoutePaths.projectRecordEdit(projectId, recordId)),
               ),
@@ -77,10 +79,10 @@ final class RecordDetailScreen extends ConsumerWidget {
       body: AsyncValueView<ProjectRecordDetail?>(
         value: value,
         isEmpty: (ProjectRecordDetail? loaded) => loaded == null,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.records,
-          headline: Copy.recordGoneHeadline,
-          message: Copy.recordGoneMessage,
+          headline: Copy.of(context).recordGoneHeadline,
+          message: Copy.of(context).recordGoneMessage,
         ),
         onRetry: () => ref.invalidate(recordDetailProvider(recordId)),
         data: (ProjectRecordDetail? loaded) => _RecordBody(detail: loaded!),
@@ -109,6 +111,8 @@ class _RecordBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final TemplateDef? template = ref
         .watch(recordTemplateProvider(detail.row.templateId))
         .asData
@@ -122,7 +126,7 @@ class _RecordBody extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (detail.photos.isNotEmpty) ...<Widget>[
-          const AppSectionHeader(title: Copy.capturePhotosSection),
+          AppSectionHeader(title: localCopy.capturePhotosSection),
           Wrap(
             spacing: Space.x2,
             runSpacing: Space.x2,
@@ -139,14 +143,14 @@ class _RecordBody extends ConsumerWidget {
           ),
           const SizedBox(height: Space.x4),
         ],
-        const AppSectionHeader(title: Copy.captureRecordCaption),
+        AppSectionHeader(title: localCopy.captureRecordCaption),
         Text(
-          detail.caption.isEmpty ? Copy.recordNoCaption : detail.caption,
+          detail.caption.isEmpty ? localCopy.recordNoCaption : detail.caption,
           style: AppText.body,
         ),
         const SizedBox(height: Space.x4),
         AppSectionHeader(
-          title: Copy.recordSectionFields,
+          title: localCopy.recordSectionFields,
           // An icon beside the heading fits at 200 percent text on a
           // phone, where a worded button would push the heading off.
           action: entries.isEmpty
@@ -154,21 +158,21 @@ class _RecordBody extends ConsumerWidget {
               : AppIconButton(
                   key: const ValueKey<String>('record-edit-fields'),
                   icon: AppIcons.edit,
-                  tooltip: Copy.recordEditFields,
-                  semanticLabel: Copy.recordEditFields,
+                  tooltip: localCopy.recordEditFields,
+                  semanticLabel: localCopy.recordEditFields,
                   onPressed: () =>
                       unawaited(showRecordEditSheet(context, detail.row)),
                 ),
         ),
         if (entries.isEmpty)
-          const Text(Copy.recordEditNoFieldsHeadline, style: AppText.body)
+          Text(localCopy.recordEditNoFieldsHeadline, style: AppText.body)
         else
           for (final RecordEditEntry entry in entries)
             AppListTile(
               key: ValueKey<String>('record-field-${entry.fieldKey}'),
               title: entry.label,
               subtitle: entry.initial.isEmpty
-                  ? Copy.recordFieldEmpty
+                  ? localCopy.recordFieldEmpty
                   : entry.initial,
               dense: true,
               trailing: const ExcludeSemantics(
@@ -181,11 +185,11 @@ class _RecordBody extends ConsumerWidget {
         const SizedBox(height: Space.x4),
         if (detail.audioClips > 0)
           Text(
-            Copy.captureAudioCount(detail.audioClips),
+            localCopy.captureAudioCount(detail.audioClips),
             style: AppText.caption,
           ),
         Text(
-          Copy.recordCapturedAt(
+          localCopy.recordCapturedAt(
             DateFormat.yMMMd(
               locale,
             ).add_jm().format(detail.capturedAt.toLocal()),

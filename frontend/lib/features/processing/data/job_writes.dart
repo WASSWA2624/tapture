@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/processing.dart'
     show ProcessingJobStatus;
@@ -38,13 +39,22 @@ final class JobWrites {
   }
 
   /// Puts the job back on the queue with [message] shown beside it.
-  Future<void> setQueueMessage(String jobId, String message) async {
+  Future<void> setQueueMessage(
+    String jobId,
+    String message, {
+    LocalizedMessage? localizedMessage,
+  }) async {
     await (_db.update(
       _db.processing,
     )..where(($ProcessingTable table) => table.id.equals(jobId))).write(
       ProcessingCompanion(
         status: const Value<ProcessingJobStatus>(ProcessingJobStatus.queued),
         lastError: Value<String>(message),
+        lastErrorMessage: Value<String?>(
+          localizedMessage == null
+              ? null
+              : jsonEncode(localizedMessage.toJson()),
+        ),
         leaseExpiresAt: const Value<DateTime?>(null),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/record_schema.dart';
 import 'package:tapture/core/db/transactions.dart';
@@ -99,16 +100,16 @@ final class RecordPurgeStore implements PurgeStore {
         )
         .getSingleOrNull();
     if (listed == null) {
-      return const FailureResult<int>(_notInBin);
+      return FailureResult<int>(_notInBin);
     }
     final PurgeCandidate current = _candidateOf(listed);
     if (current.deletedAt.isAfter(candidate.deletedAt)) {
       // Restored and deleted again since it was listed: its window starts
       // over, so the job's decision no longer holds.
-      return const FailureResult<int>(_deletedAgain);
+      return FailureResult<int>(_deletedAgain);
     }
     if (current.mergeNeeded) {
-      return const FailureResult<int>(_mergeStillNeeded);
+      return FailureResult<int>(_mergeStillNeeded);
     }
     final _Owned owned = await _ownedRows(recordId);
 
@@ -206,10 +207,46 @@ final class RecordPurgeStore implements PurgeStore {
     await _deleteIds(_db.meetings, owned.meetingIds);
     await _deleteIds(_db.ocrCacheEntries, owned.ocrIds);
     final List<String> every = owned.everyId;
+    // Tombstone and audit rows carry version vectors of their own, so their
+    // ids go with the purged rows' vectors.
+    final List<String> remembering = <String>[
+      ...await _idsWhere(_db.tombstones, every),
+      ...await _idsWhere(_db.auditLog, every),
+    ];
     await _deleteIds(_db.tombstones, every, column: _entityColumn);
-    await _deleteIds(_db.syncState, every, column: _entityColumn);
+    await _deleteIds(_db.syncState, <String>[
+      ...every,
+      ...remembering,
+    ], column: _entityColumn);
     await _deleteIds(_db.mergeConflicts, every, column: _entityColumn);
     await _deleteIds(_db.auditLog, every, column: _entityColumn);
+  }
+
+  /// Ids of the rows of [table] whose entity column is one of [entityIds].
+  Future<List<String>> _idsWhere(
+    TableInfo<Table, Object?> table,
+    List<String> entityIds,
+  ) async {
+    final List<String> found = <String>[];
+    for (var start = 0; start < entityIds.length; start += _chunk) {
+      final List<String> chunk = entityIds.sublist(
+        start,
+        start + _chunk < entityIds.length ? start + _chunk : entityIds.length,
+      );
+      final List<QueryRow> rows = await _db
+          .customSelect(
+            'SELECT id FROM ${table.actualTableName} WHERE $_entityColumn IN '
+            '(${List<String>.filled(chunk.length, '?').join(', ')})',
+            variables: <Variable<Object>>[
+              for (final String id in chunk) Variable<String>(id),
+            ],
+          )
+          .get();
+      found.addAll(<String>[
+        for (final QueryRow row in rows) row.read<String>('id'),
+      ]);
+    }
+    return found;
   }
 
   /// Deletes the rows of [table] whose [column] is one of [ids], a bounded
@@ -469,17 +506,17 @@ const String _ocrSql =
     'AND NOT EXISTS (SELECT 1 FROM photos hp WHERE hp.sha256 = p.sha256 '
     'AND hp.id <> p.id AND (hp.record_id IS NULL OR hp.record_id <> ?1)))';
 
-const ValidationFailure _notInBin = ValidationFailure(
-  message: 'That record is no longer in the recycle bin.',
-  recoveryAction: 'Nothing to remove; it was restored or already removed.',
+final ValidationFailure _notInBin = ValidationFailure(
+  localizedMessage: Copy.messages.failureThatRecordIsNoLongerInThe,
+  localizedRecovery: Copy.messages.failureNothingToRemoveItWasRestoredOr,
 );
 
-const ValidationFailure _deletedAgain = ValidationFailure(
-  message: 'That record was deleted again, so its retention starts over.',
-  recoveryAction: 'Leave it; the purge takes it once its new window passes.',
+final ValidationFailure _deletedAgain = ValidationFailure(
+  localizedMessage: Copy.messages.failureThatRecordWasDeletedAgainSoIts,
+  localizedRecovery: Copy.messages.failureLeaveItThePurgeTakesItOnce,
 );
 
-const ValidationFailure _mergeStillNeeded = ValidationFailure(
-  message: 'A merge still needs that deleted record.',
-  recoveryAction: 'Send a bundle or settle the merge, then try again.',
+final ValidationFailure _mergeStillNeeded = ValidationFailure(
+  localizedMessage: Copy.messages.failureAMergeStillNeedsThatDeletedRecord,
+  localizedRecovery: Copy.messages.failureSendABundleOrSettleTheMerge,
 );

@@ -11,7 +11,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
-import 'captured_items.dart';
+import 'captured_records.dart';
 
 /// Records for the open project, limited by the route filter.
 final class ProjectRecordsScreen extends ConsumerWidget {
@@ -23,6 +23,8 @@ final class ProjectRecordsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String filter =
         GoRouterState.of(context).uri.queryParameters[RoutePaths.filterQuery] ??
         '';
@@ -32,17 +34,17 @@ final class ProjectRecordsScreen extends ConsumerWidget {
     );
     return AppPage(
       key: const ValueKey<String>('route-records'),
-      title: Copy.navRecords,
+      title: localCopy.navRecords,
       body: AsyncValueView<List<ProjectRecordRow>>(
         value: value,
         onRetry: () => ref.invalidate(
           _projectRecordsProvider((projectId: projectId, statuses: statuses)),
         ),
         isEmpty: (List<ProjectRecordRow> rows) => rows.isEmpty,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.records,
-          headline: Copy.projectRecordsEmptyHeadline,
-          message: Copy.projectRecordsEmptyMessage,
+          headline: Copy.of(context).projectRecordsEmptyHeadline,
+          message: Copy.of(context).projectRecordsEmptyMessage,
         ),
         data: (List<ProjectRecordRow> rows) {
           return ListView.builder(
@@ -51,7 +53,7 @@ final class ProjectRecordsScreen extends ConsumerWidget {
             itemCount: rows.length,
             itemBuilder: (BuildContext context, int index) {
               final ProjectRecordRow row = rows[index];
-              return CapturedItemTile(
+              return CapturedRecordTile(
                 projectId: projectId,
                 row: row,
                 position: index + 1,

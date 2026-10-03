@@ -52,6 +52,8 @@ final class ActionsEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -59,9 +61,9 @@ final class ActionsEditor extends StatelessWidget {
     if (actions.isEmpty) {
       return AppEmptyState(
         icon: AppIcons.checklist,
-        headline: Copy.meetingActionsEmpty,
-        message: Copy.meetingActionsEmptyMessage,
-        actionLabel: Copy.meetingAddAction,
+        headline: localCopy.meetingActionsEmpty,
+        message: localCopy.meetingActionsEmptyMessage,
+        actionLabel: localCopy.meetingAddAction,
         onAction: onAdd,
       );
     }
@@ -71,7 +73,7 @@ final class ActionsEditor extends StatelessWidget {
         for (final ActionEntry action in actions) _row(context, action),
         AppButton(
           key: const ValueKey<String>('action-add'),
-          label: Copy.meetingAddAction,
+          label: localCopy.meetingAddAction,
           variant: AppButtonVariant.secondary,
           onPressed: onAdd,
         ),
@@ -80,6 +82,8 @@ final class ActionsEditor extends StatelessWidget {
   }
 
   Widget _row(BuildContext context, ActionEntry action) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppCard(
       key: ValueKey<String>('action-${action.id}'),
       child: Column(
@@ -87,7 +91,7 @@ final class ActionsEditor extends StatelessWidget {
         children: <Widget>[
           AppTextField(
             key: ValueKey<String>('action-text-${action.id}'),
-            label: Copy.meetingActionText,
+            label: localCopy.meetingActionText,
             controller: TextEditingController(text: action.text),
             onChanged: (String text) => _replace(action.copyWith(text: text)),
           ),
@@ -103,7 +107,7 @@ final class ActionsEditor extends StatelessWidget {
           for (final ({String id, String name}) owner in attendeeOwners)
             AppButton(
               key: ValueKey<String>('action-attendee-${action.id}-${owner.id}'),
-              label: Copy.meetingOwnerAttendee,
+              label: localCopy.meetingOwnerAttendee,
               variant: AppButtonVariant.secondary,
               onPressed: () => _replace(
                 action.copyWith(ownerId: owner.id, ownerName: owner.name),
@@ -112,7 +116,7 @@ final class ActionsEditor extends StatelessWidget {
           for (final ({String id, String name}) owner in staffOwners)
             AppButton(
               key: ValueKey<String>('action-staff-${action.id}-${owner.id}'),
-              label: Copy.meetingOwnerStaff,
+              label: localCopy.meetingOwnerStaff,
               variant: AppButtonVariant.secondary,
               onPressed: () => _replace(
                 action.copyWith(ownerId: owner.id, ownerName: owner.name),
@@ -120,7 +124,7 @@ final class ActionsEditor extends StatelessWidget {
             ),
           AppDateField(
             key: ValueKey<String>('action-due-${action.id}'),
-            label: Copy.meetingDue,
+            label: localCopy.meetingDue,
             value: action.due,
             clock: clock,
             onChanged: (DateTime? due) => _replace(
@@ -131,14 +135,14 @@ final class ActionsEditor extends StatelessWidget {
           ),
           AppButton(
             key: ValueKey<String>('action-status-${action.id}'),
-            label: '${Copy.meetingStatus} ${action.status.name}',
+            label: '${localCopy.meetingStatus} ${action.status.name}',
             variant: AppButtonVariant.secondary,
             onPressed: () =>
                 _replace(action.copyWith(status: _next(action.status))),
           ),
           AppButton(
             key: ValueKey<String>('action-remove-${action.id}'),
-            label: Copy.meetingRemove,
+            label: localCopy.meetingRemove,
             variant: AppButtonVariant.secondary,
             onPressed: () => unawaited(_remove(context, action.id)),
           ),
@@ -163,11 +167,13 @@ final class ActionsEditor extends StatelessWidget {
   }
 
   Future<void> _remove(BuildContext context, String id) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.meetingRemoveTitle,
-      message: Copy.meetingRemoveMessage,
-      confirmLabel: Copy.meetingRemoveConfirm,
+      title: localCopy.meetingRemoveTitle,
+      message: localCopy.meetingRemoveMessage,
+      confirmLabel: localCopy.meetingRemoveConfirm,
       destructive: true,
     );
     if (!confirmed) {

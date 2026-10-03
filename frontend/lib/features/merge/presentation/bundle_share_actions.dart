@@ -39,6 +39,8 @@ final class BundleShareActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -47,10 +49,10 @@ final class BundleShareActions extends StatelessWidget {
       return const SizedBox.shrink();
     }
     if (empty) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: AppIcons.export,
-        headline: Copy.bundleScope,
-        message: Copy.bundleScopeFull,
+        headline: localCopy.bundleScope,
+        message: localCopy.bundleScopeFull,
       );
     }
     return Column(
@@ -58,12 +60,12 @@ final class BundleShareActions extends StatelessWidget {
       children: <Widget>[
         AppButton(
           key: const ValueKey<String>('bundle-share'),
-          label: Copy.bundleShare,
+          label: localCopy.bundleShare,
           onPressed: path == null ? null : () => onShare?.call(path!),
         ),
         AppButton(
           key: const ValueKey<String>('bundle-open'),
-          label: Copy.bundleOpen,
+          label: localCopy.bundleOpen,
           variant: AppButtonVariant.secondary,
           onPressed: onOpen,
         ),

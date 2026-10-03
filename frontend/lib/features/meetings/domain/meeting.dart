@@ -58,8 +58,14 @@ final class Meeting {
     );
   }
 
-  /// Shipped meeting-notes template (`MTG-006` in pack `MEET`).
+  /// Key of the shipped meeting-notes template (`MTG-006` in pack `MEET`).
+  /// A meeting's record is filed under the project's installed copy of it,
+  /// never under this key.
   static const String templateKey = 'mtg_meeting_notes_capture';
+
+  /// The template field that, unless optional, makes every action need an
+  /// owner and a due date before approval or export.
+  static const String actionsFieldKey = 'action_items';
 
   /// Meeting row id.
   final String id;

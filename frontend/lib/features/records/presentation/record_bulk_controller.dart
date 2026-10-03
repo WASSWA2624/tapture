@@ -5,6 +5,13 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/processing/processing.dart'
     show ProcessingRepository, processingRepositoryProvider;
+import 'package:tapture/features/review/review.dart'
+    show
+        ApprovalOutcome,
+        Approved,
+        Blocked,
+        ReviewApprover,
+        reviewApproverProvider;
 
 import '../domain/record_repository.dart';
 import '../records.dart' show recordRepositoryProvider;
@@ -45,17 +52,35 @@ final class RecordBulkController extends Notifier<RecordBulkOperation?> {
   /// Whether a bulk action is running, so the bar holds its controls.
   bool get isBusy => state != null;
 
-  /// Approves every record in [ids]. A record the lifecycle does not let
-  /// move to approved, such as one not yet processed, fails validation and
-  /// is left as it was.
+  /// Approves every record in [ids] through review's one approval path, so
+  /// a validation error, an unresolved duplicate or an unresolved conflict
+  /// leaves that record as it was, reported with the field and the reason
+  /// (task 016). A record the lifecycle does not let move to approved, such
+  /// as one not yet processed, fails validation and is left as it was.
   Future<RecordBulkOutcome> approve(List<String> ids) {
-    final RecordRepository records = ref.read(recordRepositoryProvider);
-    return _each(
-      RecordBulkOperation.approve,
-      ids,
-      (String id) =>
-          records.transition(id, RecordStatus.approved, reason: approveReason),
-    );
+    final ReviewApprover approver = ref.read(reviewApproverProvider);
+    return _each(RecordBulkOperation.approve, ids, (String id) async {
+      final Result<ApprovalOutcome> approved = await approver.approve(
+        id,
+        reason: approveReason,
+      );
+      return switch (approved) {
+        Success<ApprovalOutcome>(value: Approved()) => const Success<void>(
+          null,
+        ),
+        Success<ApprovalOutcome>(value: Blocked(:final reasons)) =>
+          FailureResult<void>(
+            ValidationFailure(
+              message: reasons.isEmpty
+                  ? Copy.reviewBlockedAction
+                  : reasons.first.message,
+              localizedRecovery: Copy.messages.reviewBlockedAction,
+            ),
+          ),
+        FailureResult<ApprovalOutcome>(:final Failure failure) =>
+          FailureResult<void>(failure),
+      };
+    });
   }
 
   /// Archives every record in [ids]: out of the list and default exports,
@@ -155,7 +180,7 @@ Future<Result<void>> _guard(Future<Result<void>> Function() call) async {
   }
 }
 
-const ValidationFailure _busy = ValidationFailure(
-  message: Copy.recordsBulkBusy,
-  recoveryAction: Copy.recordsBulkBusyAction,
+final ValidationFailure _busy = ValidationFailure(
+  localizedMessage: Copy.messages.recordsBulkBusy,
+  localizedRecovery: Copy.messages.recordsBulkBusyAction,
 );

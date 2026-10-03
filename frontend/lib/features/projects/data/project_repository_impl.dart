@@ -2,7 +2,10 @@ import 'dart:typed_data';
 
 import 'package:drift/drift.dart' hide Uint8List;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
+import 'package:tapture/core/db/tables/context.dart'
+    show liveContextDefinitions;
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/projects.dart' as projects_db;
 import 'package:tapture/core/db/tables/record_fields.dart';
@@ -20,6 +23,7 @@ import 'package:tapture/core/files/path_sanitizer.dart';
 import 'package:tapture/core/files/project_tree_stub.dart'
     if (dart.library.io) 'package:tapture/core/files/project_tree_io.dart'
     as project_tree;
+import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
@@ -32,7 +36,9 @@ import 'project_mapper.dart';
 final class ProjectRepositoryImpl implements ProjectRepository {
   /// Opens against [_db], stamping writes from [_clock], [_deviceId] and
   /// [_ids]. Tests inject [_createTree] and [_discardTree] so suites never
-  /// touch the real documents folder (FE-TEST-03).
+  /// touch the real documents folder (FE-TEST-03). Otherwise project trees
+  /// are created, discarded and recycled under [storageRoot], the app's
+  /// configured root, so a chosen storage folder holds the whole tree.
   ProjectRepositoryImpl({
     required this._db,
     required this._clock,
@@ -56,10 +62,44 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       required String folderName,
     })?
     recycleTree,
+    StorageRoot? storageRoot,
     this._writer,
-  }) : _createTree = createTree ?? project_tree.writeProjectTree,
-       _discardTree = discardTree ?? project_tree.discardProjectTree,
-       _recycleTree = recycleTree ?? project_tree.recycleProjectTree;
+  }) : _createTree =
+           createTree ??
+           (({
+             required String id,
+             required String name,
+             required String folderName,
+           }) => project_tree.writeProjectTree(
+             id: id,
+             name: name,
+             folderName: folderName,
+             storageRoot: storageRoot,
+           )),
+       _discardTree =
+           discardTree ??
+           (({
+             required String id,
+             required String name,
+             required String folderName,
+           }) => project_tree.discardProjectTree(
+             id: id,
+             name: name,
+             folderName: folderName,
+             storageRoot: storageRoot,
+           )),
+       _recycleTree =
+           recycleTree ??
+           (({
+             required String id,
+             required String name,
+             required String folderName,
+           }) => project_tree.recycleProjectTree(
+             id: id,
+             name: name,
+             folderName: folderName,
+             storageRoot: storageRoot,
+           ));
 
   final sqlite.AppDatabase _db;
   final Clock _clock;
@@ -104,10 +144,12 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     if (project.id.isNotEmpty) {
       final sqlite.Project? existing = await _byId(project.id);
       if (existing != null) {
-        return const FailureResult<Project>(
+        return FailureResult<Project>(
           StorageFailure(
-            message: 'A project with that id already exists.',
-            recoveryAction: 'Open the existing project or use a new id.',
+            localizedMessage:
+                Copy.messages.failureAProjectWithThatIdAlreadyExists,
+            localizedRecovery:
+                Copy.messages.failureOpenTheExistingProjectOrUseA,
           ),
         );
       }
@@ -132,7 +174,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     if (sourceId != null && sourceId.isNotEmpty) {
       source = await _byId(sourceId);
       if (source == null) {
-        return const FailureResult<Project>(_missing);
+        return FailureResult<Project>(_missing);
       }
       settings = ProjectMapper.fromRow(source).settings;
     }
@@ -160,7 +202,9 @@ final class ProjectRepositoryImpl implements ProjectRepository {
         case FailureResult<Project>(:final Failure failure):
           throw StorageFailure(
             message: failure.message,
+            localizedMessage: failure.localizedMessage,
             recoveryAction: failure.recoveryAction ?? 'Try again.',
+            localizedRecovery: failure.localizedRecovery,
           );
         case Success<Project>(:final Project value):
           if (source == null) {
@@ -183,7 +227,9 @@ final class ProjectRepositoryImpl implements ProjectRepository {
               );
               throw StorageFailure(
                 message: failure.message,
+                localizedMessage: failure.localizedMessage,
                 recoveryAction: failure.recoveryAction ?? 'Try again.',
+                localizedRecovery: failure.localizedRecovery,
               );
           }
       }
@@ -198,7 +244,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     }
     final sqlite.Project? existing = await _byId(project.id);
     if (existing == null) {
-      return const FailureResult<void>(_missing);
+      return FailureResult<void>(_missing);
     }
     final Project current = ProjectMapper.fromRow(existing);
     final Result<Project> written = await _write(
@@ -227,11 +273,11 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   ) async {
     final FileWriter? writer = _writer;
     if (writer == null) {
-      return const FailureResult<ProjectSettings>(_noPhotoFiles);
+      return FailureResult<ProjectSettings>(_noPhotoFiles);
     }
     final sqlite.Project? row = await _byId(projectId);
     if (row == null) {
-      return const FailureResult<ProjectSettings>(_missing);
+      return FailureResult<ProjectSettings>(_missing);
     }
     final Project current = ProjectMapper.fromRow(row);
     final String path =
@@ -260,7 +306,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   Future<Result<ProjectSettings>> clearCoverPhoto(String projectId) async {
     final sqlite.Project? row = await _byId(projectId);
     if (row == null) {
-      return const FailureResult<ProjectSettings>(_missing);
+      return FailureResult<ProjectSettings>(_missing);
     }
     final Project current = ProjectMapper.fromRow(row);
     final Result<Project> written = await _write(
@@ -510,7 +556,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
               ..where((sqlite.$RecordsTable tbl) => tbl.id.equals(recordId)))
             .getSingleOrNull();
     if (row == null) {
-      return const FailureResult<void>(_missing);
+      return FailureResult<void>(_missing);
     }
     // The one status writer: the move is stamped and audited.
     return runInTransaction(
@@ -540,7 +586,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
             ))
             .getSingleOrNull();
     if (field == null) {
-      return const FailureResult<void>(_missing);
+      return FailureResult<void>(_missing);
     }
     final Result<sqlite.RecordField> written = await writeRecordFieldRefined(
       _db,
@@ -583,7 +629,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   @override
   Future<Result<ProjectOwnedCounts>> ownedCounts(String id) async {
     if (await _byId(id) == null) {
-      return const FailureResult<ProjectOwnedCounts>(_missing);
+      return FailureResult<ProjectOwnedCounts>(_missing);
     }
     final int records =
         (await (_db.select(_db.records)..where(
@@ -613,7 +659,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   Future<Result<void>> delete(String id) async {
     final sqlite.Project? existing = await _byId(id);
     if (existing == null) {
-      return const FailureResult<void>(_missing);
+      return FailureResult<void>(_missing);
     }
     final Project current = ProjectMapper.fromRow(existing);
     final Result<void> marked = await runInTransaction(_db, () async {
@@ -625,7 +671,9 @@ final class ProjectRepositoryImpl implements ProjectRepository {
         case FailureResult<Project>(:final Failure failure):
           throw StorageFailure(
             message: failure.message,
+            localizedMessage: failure.localizedMessage,
             recoveryAction: failure.recoveryAction ?? 'Try again.',
+            localizedRecovery: failure.localizedRecovery,
           );
         case Success<Project>():
           return;
@@ -648,7 +696,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   Future<Result<void>> setStatus(String id, ProjectStatus status) async {
     final sqlite.Project? existing = await _byId(id);
     if (existing == null) {
-      return const FailureResult<void>(_missing);
+      return FailureResult<void>(_missing);
     }
     final Result<Project> written = await _write(
       ProjectMapper.fromRow(existing).copyWith(status: status),
@@ -660,7 +708,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   Future<Result<void>> setPinned(String id, bool pinned) async {
     final sqlite.Project? existing = await _byId(id);
     if (existing == null) {
-      return const FailureResult<void>(_missing);
+      return FailureResult<void>(_missing);
     }
     try {
       await (_db.update(
@@ -866,9 +914,10 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   Future<void> _copyContext({required String from, required String to}) async {
-    final List<sqlite.ContextData> rows = await (_db.select(
-      _db.context,
-    )..where((sqlite.$ContextTable tbl) => tbl.projectId.equals(from))).get();
+    final List<sqlite.ContextData> rows = await liveContextDefinitions(
+      _db,
+      projectId: from,
+    ).get();
     final DateTime now = _clock.nowUtc();
     for (final sqlite.ContextData row in rows) {
       await _db
@@ -1058,9 +1107,9 @@ final Provider<ProjectRepository> projectRepositoryProvider =
     });
 
 /// Photo writes refused where no files are stored.
-const StorageFailure _noPhotoFiles = StorageFailure(
-  message: 'Project photos cannot be stored on this device.',
-  recoveryAction: 'Add the photo on a device that stores files.',
+final StorageFailure _noPhotoFiles = StorageFailure(
+  localizedMessage: Copy.messages.failureProjectPhotosCannotBeStoredOnThis,
+  localizedRecovery: Copy.messages.failureAddThePhotoOnADeviceThat,
 );
 
 /// Source of a value a person typed, the same tag capture writes.
@@ -1145,7 +1194,7 @@ final class _EmptyProjectRepository implements ProjectRepository {
 
   @override
   Future<Result<void>> archiveRecord(String recordId) async {
-    return const FailureResult<void>(_missing);
+    return FailureResult<void>(_missing);
   }
 
   @override
@@ -1154,7 +1203,7 @@ final class _EmptyProjectRepository implements ProjectRepository {
     required String fieldKey,
     required String value,
   }) async {
-    return const FailureResult<void>(_missing);
+    return FailureResult<void>(_missing);
   }
 
   @override
@@ -1163,12 +1212,12 @@ final class _EmptyProjectRepository implements ProjectRepository {
     required String fieldKey,
     required String value,
   }) async {
-    return const FailureResult<void>(_missing);
+    return FailureResult<void>(_missing);
   }
 
   @override
   Future<Result<Project>> create(Project project) async {
-    return const FailureResult<Project>(_missing);
+    return FailureResult<Project>(_missing);
   }
 
   @override
@@ -1178,12 +1227,12 @@ final class _EmptyProjectRepository implements ProjectRepository {
     String? organisation,
     String? sourceId,
   }) async {
-    return const FailureResult<Project>(_missing);
+    return FailureResult<Project>(_missing);
   }
 
   @override
   Future<Result<void>> update(Project project) async {
-    return const FailureResult<void>(_missing);
+    return FailureResult<void>(_missing);
   }
 
   @override
@@ -1191,32 +1240,32 @@ final class _EmptyProjectRepository implements ProjectRepository {
     String projectId,
     Uint8List bytes,
   ) async {
-    return const FailureResult<ProjectSettings>(_missing);
+    return FailureResult<ProjectSettings>(_missing);
   }
 
   @override
   Future<Result<ProjectSettings>> clearCoverPhoto(String projectId) async {
-    return const FailureResult<ProjectSettings>(_missing);
+    return FailureResult<ProjectSettings>(_missing);
   }
 
   @override
   Future<Result<void>> setStatus(String id, ProjectStatus status) async {
-    return const FailureResult<void>(_missing);
+    return FailureResult<void>(_missing);
   }
 
   @override
   Future<Result<void>> setPinned(String id, bool pinned) async {
-    return const FailureResult<void>(_missing);
+    return FailureResult<void>(_missing);
   }
 
   @override
   Future<Result<void>> delete(String id) async {
-    return const FailureResult<void>(_missing);
+    return FailureResult<void>(_missing);
   }
 
   @override
   Future<Result<ProjectOwnedCounts>> ownedCounts(String id) async {
-    return const FailureResult<ProjectOwnedCounts>(_missing);
+    return FailureResult<ProjectOwnedCounts>(_missing);
   }
 }
 
@@ -1272,7 +1321,9 @@ void _throwIfFailed<T>(Result<T> result) {
     case FailureResult<T>(:final Failure failure):
       throw StorageFailure(
         message: failure.message,
+        localizedMessage: failure.localizedMessage,
         recoveryAction: failure.recoveryAction ?? 'Try again.',
+        localizedRecovery: failure.localizedRecovery,
       );
     case Success<T>():
       return;
@@ -1288,15 +1339,15 @@ String? _optionalText(String? raw) {
 
 ValidationFailure? _validateName(String name) {
   if (name.trim().isEmpty) {
-    return const ValidationFailure(
-      message: 'A project needs a name.',
-      recoveryAction: 'Enter a name and save again.',
+    return ValidationFailure(
+      localizedMessage: Copy.messages.failureAProjectNeedsAName,
+      localizedRecovery: Copy.messages.failureEnterANameAndSaveAgain,
     );
   }
   return null;
 }
 
-const StorageFailure _missing = StorageFailure(
-  message: 'That row is no longer on this device.',
-  recoveryAction: 'Refresh the list and try again.',
+final StorageFailure _missing = StorageFailure(
+  localizedMessage: Copy.messages.failureThatRowIsNoLongerOnThis,
+  localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
 );

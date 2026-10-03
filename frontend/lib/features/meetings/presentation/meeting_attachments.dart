@@ -33,6 +33,8 @@ final class MeetingAttachments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -40,9 +42,9 @@ final class MeetingAttachments extends StatelessWidget {
     if (files.isEmpty) {
       return AppEmptyState(
         icon: AppIcons.import,
-        headline: Copy.meetingAttachmentsEmpty,
-        message: Copy.meetingAttachmentsEmptyMessage,
-        actionLabel: Copy.meetingAddAttachment,
+        headline: localCopy.meetingAttachmentsEmpty,
+        message: localCopy.meetingAttachmentsEmptyMessage,
+        actionLabel: localCopy.meetingAddAttachment,
         onAction: onAdd,
       );
     }
@@ -60,7 +62,7 @@ final class MeetingAttachments extends StatelessWidget {
           ),
         AppButton(
           key: const ValueKey<String>('attachment-add'),
-          label: Copy.meetingAddAttachment,
+          label: localCopy.meetingAddAttachment,
           variant: AppButtonVariant.secondary,
           onPressed: onAdd,
         ),

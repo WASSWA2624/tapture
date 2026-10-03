@@ -26,4 +26,4 @@ export 'settlement_rule.dart';
 export 'template_compatibility.dart';
 export 'template_match.dart';
 export 'tombstone_merge.dart';
-export 'version_vectors.dart';
+export 'version_vector.dart';

@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/feedback/show_app_text_prompt.dart';
 
 import '../domain/package_import_repository.dart';
 import '../domain/package_presence.dart';
@@ -44,7 +45,10 @@ Future<void> startPackageImport(
   String? intoProjectId,
   PickedDocument? supplied,
   Future<void> Function()? onApplied,
+  bool waitForPreview = false,
 }) async {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final PackageImportController flow = ref.read(
     packageImportControllerProvider.notifier,
   );
@@ -57,23 +61,66 @@ Future<void> startPackageImport(
   }
   flow.onApplied = onApplied;
   if (!context.mounted) {
+    await flow.finish();
+    await discardPickedCopy(supplied);
     return;
   }
   final PickedDocument document;
   switch (picked) {
     case FailureResult<PickedDocument>(:final Failure failure):
       if (failure is! CancelledFailure) {
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
       }
       return;
     case Success<PickedDocument>(:final PickedDocument value):
       document = value;
   }
+  final Result<bool> protected = await flow.needsPassword(document);
+  if (!context.mounted) {
+    await flow.finish();
+    return;
+  }
+  if (protected case FailureResult<bool>(:final Failure failure)) {
+    await flow.finish();
+    if (!context.mounted) return;
+    showAppSnack(
+      context,
+      failure.message,
+      tone: SnackTone.error,
+      localizedMessage: failure.explanation,
+    );
+    return;
+  }
+  String? password;
+  if ((protected as Success<bool>).value) {
+    password = await showAppTextPrompt(
+      context,
+      title: localCopy.bundlePassword,
+      label: localCopy.bundlePassword,
+      obscureText: true,
+      validate: (String value) async => value.isEmpty
+          ? FailureResult<void>(
+              ValidationFailure(
+                localizedMessage: Copy.messages.bundlePasswordRequired,
+              ),
+            )
+          : const Success<void>(null),
+    );
+    if (password == null || !context.mounted) {
+      await flow.finish();
+      return;
+    }
+  }
   final Result<InspectedBundle> checked = await _busy(
     context,
-    title: Copy.importChecking,
+    title: localCopy.importChecking,
     onCancel: flow.cancel,
-    work: flow.check(document),
+    work: flow.check(document, password: password),
   );
   if (!context.mounted) {
     await flow.finish();
@@ -83,14 +130,22 @@ Future<void> startPackageImport(
   switch (checked) {
     case FailureResult<InspectedBundle>(:final Failure failure):
       if (failure is! CancelledFailure) {
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
       }
       return;
     case Success<InspectedBundle>(:final InspectedBundle value):
       bundle = value;
   }
   if (intoProjectId != null) {
-    unawaited(context.push(RoutePaths.projectMerge(intoProjectId)));
+    final Future<Object?> preview = context.push(
+      RoutePaths.projectMerge(intoProjectId),
+    );
+    if (waitForPreview) await preview;
     return;
   }
   final Result<PackagePresence> presence = await flow.presence();
@@ -102,23 +157,29 @@ Future<void> startPackageImport(
     case FailureResult<PackagePresence>(:final Failure failure):
       await flow.finish();
       if (context.mounted) {
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
       }
     case Success<PackagePresence>(value: PackagePresence.deleted):
       await flow.finish();
       if (context.mounted) {
         showAppSnack(
           context,
-          Copy.importProjectDeletedHere,
+          localCopy.importProjectDeletedHere,
           tone: SnackTone.error,
         );
       }
     case Success<PackagePresence>(value: PackagePresence.live):
-      unawaited(
-        context.push(RoutePaths.projectMerge(bundle.manifest.projectId)),
+      final Future<Object?> preview = context.push(
+        RoutePaths.projectMerge(bundle.manifest.projectId),
       );
+      if (waitForPreview) await preview;
     case Success<PackagePresence>(value: PackagePresence.absent):
-      await _offer(context, ref, bundle);
+      await _offer(context, ref, bundle, waitForPreview: waitForPreview);
   }
 }
 
@@ -128,14 +189,17 @@ enum _Choice { asNew, mergeInto }
 Future<void> _offer(
   BuildContext context,
   WidgetRef ref,
-  InspectedBundle bundle,
-) async {
+  InspectedBundle bundle, {
+  required bool waitForPreview,
+}) async {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final PackageImportController flow = ref.read(
     packageImportControllerProvider.notifier,
   );
   final _Choice? choice = await showAppSheet<_Choice>(
     context,
-    title: Copy.importSheetTitle,
+    title: localCopy.importSheetTitle,
     contentSized: true,
     builder: (BuildContext sheet) => _ImportSheet(manifest: bundle.manifest),
   );
@@ -156,11 +220,14 @@ Future<void> _offer(
         await flow.finish();
         return;
       }
-      unawaited(context.push(RoutePaths.projectMerge(target)));
+      final Future<Object?> preview = context.push(
+        RoutePaths.projectMerge(target),
+      );
+      if (waitForPreview) await preview;
     case _Choice.asNew:
       final Result<ImportedProject> imported = await _busy(
         context,
-        title: Copy.importCopying,
+        title: localCopy.importCopying,
         work: flow.importAsNew(),
       );
       if (!context.mounted) {
@@ -170,12 +237,17 @@ Future<void> _offer(
         case FailureResult<ImportedProject>(:final Failure failure):
           await flow.finish();
           if (context.mounted) {
-            showAppSnack(context, failure.message, tone: SnackTone.error);
+            showAppSnack(
+              context,
+              failure.message,
+              tone: SnackTone.error,
+              localizedMessage: failure.explanation,
+            );
           }
         case Success<ImportedProject>(:final ImportedProject value):
           showAppSnack(
             context,
-            Copy.importDone(value.records),
+            localCopy.importDone(value.records),
             tone: SnackTone.success,
           );
           context.go(RoutePaths.project(value.projectId));
@@ -190,6 +262,8 @@ class _ImportSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final int bytes = manifest.entries.fold<int>(
       0,
       (int total, entry) => total + entry.byteLength,
@@ -203,20 +277,20 @@ class _ImportSheet extends StatelessWidget {
           AppListTile(
             title: manifest.projectName,
             subtitle:
-                '${Copy.importFrom(manifest.operatorName ?? manifest.sourceDeviceId, manifest.exportedAt)}\n'
-                '${Copy.importHolds(manifest.counts['records'] ?? 0, manifest.counts['photos'] ?? 0, bytes)}',
+                '${localCopy.importFrom(manifest.operatorName ?? manifest.sourceDeviceId, manifest.exportedAt)}\n'
+                '${localCopy.importHolds(manifest.counts['records'] ?? 0, manifest.counts['photos'] ?? 0, bytes)}',
           ),
           const SizedBox(height: Space.x4),
           AppButton(
             key: importAsNewKey,
-            label: Copy.importAsNewProject,
+            label: localCopy.importAsNewProject,
             expand: true,
             onPressed: () => Navigator.of(context).pop(_Choice.asNew),
           ),
           const SizedBox(height: Space.x2),
           AppButton(
             key: importMergeIntoKey,
-            label: Copy.importMergeInto,
+            label: localCopy.importMergeInto,
             variant: AppButtonVariant.secondary,
             expand: true,
             onPressed: () => Navigator.of(context).pop(_Choice.mergeInto),
@@ -262,6 +336,8 @@ class _BusyDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final double progress = ref.watch(
       packageImportControllerProvider.select(
         (PackageImportView view) => view.progress,
@@ -281,7 +357,7 @@ class _BusyDialog extends ConsumerWidget {
           if (onCancel != null)
             AppButton(
               key: importCancelKey,
-              label: Copy.cancel,
+              label: localCopy.cancel,
               variant: AppButtonVariant.text,
               onPressed: onCancel,
             ),

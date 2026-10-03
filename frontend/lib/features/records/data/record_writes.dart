@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/record_schema.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
@@ -14,7 +14,8 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
-import 'package:tapture/features/quality/quality.dart' show identityHash;
+import 'package:tapture/features/quality/quality.dart'
+    show VarianceWriter, identityKeysOf, storedIdentityHash;
 
 import '../domain/record_lifecycle.dart';
 import '../domain/record_repository.dart';
@@ -96,9 +97,10 @@ final class RecordWrites {
   /// [manualSource], [RecordDraft.context] as its frozen context snapshot,
   /// and the next number in its project (the schema's trigger allocates it).
   /// Each typed value is inserted raw with source [typedSource]; a blank key
-  /// or an empty value is skipped. The identity hash is the SHA-256 of the
-  /// record id, the equivalent of capture hashing its session id (which is
-  /// the record id). One `created` audit row (no field key, new value
+  /// or an empty value is skipped. The identity hash is the hash of the
+  /// template's identity values (task 015), or the SHA-256 of the record id
+  /// when none is filled, so a record with no identity never collides on
+  /// it. One `created` audit row (no field key, new value
   /// `draft`, reason [manualSource]) comes before the per-value rows.
   ///
   /// A draft without a project or template, or on another project's
@@ -106,7 +108,7 @@ final class RecordWrites {
   /// [StorageFailure]. Nothing is written in either case.
   Future<Result<String>> save(RecordDraft draft) async {
     if (draft.projectId.trim().isEmpty || draft.templateId.trim().isEmpty) {
-      return const FailureResult<String>(_needsProjectAndTemplate);
+      return FailureResult<String>(_needsProjectAndTemplate);
     }
     return _write<String>((String? operator) async {
       final Failure? unusable = await _unusableTemplate(
@@ -133,7 +135,11 @@ final class RecordWrites {
               processingMode: const Value<String>(manualSource),
               contextJson: Value<String>(jsonEncode(draft.context)),
               identityHash: Value<String>(
-                sha256.convert(utf8.encode(id)).toString(),
+                storedIdentityHash(
+                  recordId: id,
+                  values: draft.fields,
+                  identityKeys: identityKeysOf(template.identityFields),
+                ),
               ),
               source: const Value<String>(manualSource),
               capturedAt: Value<DateTime>(_clock.nowUtc()),
@@ -196,17 +202,17 @@ final class RecordWrites {
     return _write<void>((String? operator) async {
       final _Head? head = await _head(id);
       if (head == null) {
-        return const FailureResult<void>(_missing);
+        return FailureResult<void>(_missing);
       }
       if (to == RecordStatus.deleted) {
-        return const FailureResult<void>(_useDelete);
+        return FailureResult<void>(_useDelete);
       }
       final RecordStatus? from = head.status;
       if (from == null) {
-        return const FailureResult<void>(_unknownStatus);
+        return FailureResult<void>(_unknownStatus);
       }
       if (from == RecordStatus.deleted) {
-        return const FailureResult<void>(_useRestore);
+        return FailureResult<void>(_useRestore);
       }
       final Result<void> legal = RecordLifecycle.check(from, to);
       if (legal is FailureResult<void>) {
@@ -222,6 +228,9 @@ final class RecordWrites {
         operator: operator,
         reason: reason,
       );
+      if (to == RecordStatus.approved) {
+        await _rewriteVariances(id);
+      }
       return const Success<void>(null);
     });
   }
@@ -251,7 +260,7 @@ final class RecordWrites {
     return _write<void>((String? operator) async {
       final _Head? head = await _head(id);
       if (head == null) {
-        return const FailureResult<void>(_missing);
+        return FailureResult<void>(_missing);
       }
       final Result<void> editable = _editable(head);
       if (editable is FailureResult<void>) {
@@ -259,7 +268,7 @@ final class RecordWrites {
       }
       for (final RecordValueEdit edit in edits) {
         if (edit.fieldKey.trim().isEmpty) {
-          return const FailureResult<void>(_needsField);
+          return FailureResult<void>(_needsField);
         }
       }
       return RecordSchema.deferIndexing(_db, () async {
@@ -271,6 +280,10 @@ final class RecordWrites {
         }
         if (changed) {
           await _refreshIdentityHash(head);
+          if (head.status == RecordStatus.approved ||
+              await VarianceWriter.exists(_db, id)) {
+            await _rewriteVariances(id);
+          }
           if (!await _sendBackToReview(head, operator, editedReason)) {
             await _touch(id);
           }
@@ -294,7 +307,7 @@ final class RecordWrites {
     return _inTransaction<TemplateChangePlan>(() async {
       final _Head? head = await _head(id);
       if (head == null) {
-        return const FailureResult<TemplateChangePlan>(_missing);
+        return FailureResult<TemplateChangePlan>(_missing);
       }
       return (await _plan(head, templateId)).map((_Remap remap) => remap.plan);
     });
@@ -319,7 +332,7 @@ final class RecordWrites {
     return _write<void>((String? operator) async {
       final _Head? head = await _head(id);
       if (head == null) {
-        return const FailureResult<void>(_missing);
+        return FailureResult<void>(_missing);
       }
       final Result<void> editable = _editable(head);
       if (editable is FailureResult<void>) {
@@ -403,14 +416,14 @@ final class RecordWrites {
     return _write<void>((String? operator) async {
       final _Head? head = await _head(id);
       if (head == null) {
-        return const FailureResult<void>(_missing);
+        return FailureResult<void>(_missing);
       }
       if (reason.trim().isEmpty) {
-        return const FailureResult<void>(_needsReason);
+        return FailureResult<void>(_needsReason);
       }
       final RecordStatus? from = head.status;
       if (from == null) {
-        return const FailureResult<void>(_unknownStatus);
+        return FailureResult<void>(_unknownStatus);
       }
       final Result<void> legal = RecordLifecycle.check(
         from,
@@ -457,10 +470,10 @@ final class RecordWrites {
     return _write<void>((String? operator) async {
       final _Head? head = await _head(id);
       if (head == null) {
-        return const FailureResult<void>(_missing);
+        return FailureResult<void>(_missing);
       }
       if (head.status != RecordStatus.deleted) {
-        return const FailureResult<void>(_notInBin);
+        return FailureResult<void>(_notInBin);
       }
       final RecordStatus target = RecordLifecycle.restoreTarget(
         RecordStatus.deleted,
@@ -599,6 +612,7 @@ final class RecordWrites {
       _db,
       id: valueId,
       value: edit.value,
+      emptyIsValue: true,
       clock: _clock,
       deviceId: _deviceId,
       operator: operator,
@@ -707,6 +721,19 @@ final class RecordWrites {
     return null;
   }
 
+  /// Recomputes and rewrites record [id]'s variance rows (task 015) inside
+  /// the open transaction: on approval, and whenever its values change
+  /// after an approval.
+  Future<void> _rewriteVariances(String id) {
+    return VarianceWriter.rewrite(
+      _db,
+      recordId: id,
+      clock: _clock,
+      deviceId: _deviceId,
+      ids: _ids,
+    );
+  }
+
   /// Recomputes the stored identity hash from the record's identity values.
   Future<void> _refreshIdentityHash(_Head head) async {
     final List<QueryRow> templates = await _db
@@ -718,12 +745,9 @@ final class RecordWrites {
     if (templates.isEmpty) {
       return;
     }
-    final Object? decoded = jsonDecode(
+    final List<String> keys = identityKeysOf(
       templates.first.read<String>('identity_fields'),
     );
-    final List<String> keys = decoded is List
-        ? <String>[for (final Object? key in decoded) ?key?.toString()]
-        : const <String>[];
     if (keys.isEmpty) {
       return;
     }
@@ -742,7 +766,13 @@ final class RecordWrites {
     await _db.customUpdate(
       'UPDATE records SET identity_hash = ? WHERE id = ?',
       variables: <Variable<Object>>[
-        Variable<String>(identityHash(fields, keys)),
+        Variable<String>(
+          storedIdentityHash(
+            recordId: head.id,
+            values: fields,
+            identityKeys: keys,
+          ),
+        ),
         Variable<String>(head.id),
       ],
       updates: <TableInfo<dynamic, dynamic>>{_db.records},
@@ -761,7 +791,7 @@ final class RecordWrites {
       return FailureResult<_Remap>(unusable);
     }
     if (templateId == head.templateId) {
-      return const FailureResult<_Remap>(_sameTemplate);
+      return FailureResult<_Remap>(_sameTemplate);
     }
     if (unusable != null) {
       return FailureResult<_Remap>(unusable);
@@ -863,57 +893,57 @@ void _expect<T>(Result<T> result) {
 
 const String _tryAgain = 'Try again.';
 
-const StorageFailure _missing = StorageFailure(
-  message: 'That record is no longer on this device.',
-  recoveryAction: 'Refresh the list and try again.',
+final StorageFailure _missing = StorageFailure(
+  localizedMessage: Copy.messages.failureThatRecordIsNoLongerOnThis,
+  localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
 );
 
-const StorageFailure _missingTemplate = StorageFailure(
-  message: 'That template is no longer on this device.',
-  recoveryAction: 'Choose another template and try again.',
+final StorageFailure _missingTemplate = StorageFailure(
+  localizedMessage: Copy.messages.failureThatTemplateIsNoLongerOnThis,
+  localizedRecovery: Copy.messages.failureChooseAnotherTemplateAndTryAgain,
 );
 
-const ValidationFailure _sameTemplate = ValidationFailure(
-  message: 'This record already uses that template.',
-  recoveryAction: 'Choose a different template.',
+final ValidationFailure _sameTemplate = ValidationFailure(
+  localizedMessage: Copy.messages.failureThisRecordAlreadyUsesThatTemplate,
+  localizedRecovery: Copy.messages.failureChooseADifferentTemplate,
 );
 
-const ValidationFailure _otherProject = ValidationFailure(
-  message: 'That template belongs to another project.',
-  recoveryAction: 'Choose a template from this project.',
+final ValidationFailure _otherProject = ValidationFailure(
+  localizedMessage: Copy.messages.failureThatTemplateBelongsToAnotherProject,
+  localizedRecovery: Copy.messages.failureChooseATemplateFromThisProject,
 );
 
-const ValidationFailure _needsProjectAndTemplate = ValidationFailure(
-  message: 'A record needs a project and a template.',
-  recoveryAction: 'Choose a project and a template, then save again.',
+final ValidationFailure _needsProjectAndTemplate = ValidationFailure(
+  localizedMessage: Copy.messages.failureARecordNeedsAProjectAndA,
+  localizedRecovery: Copy.messages.failureChooseAProjectAndATemplateThen,
 );
 
-const ValidationFailure _needsReason = ValidationFailure(
-  message: 'A delete needs a reason.',
-  recoveryAction: 'Say why the record should go, then try again.',
+final ValidationFailure _needsReason = ValidationFailure(
+  localizedMessage: Copy.messages.failureADeleteNeedsAReason,
+  localizedRecovery: Copy.messages.failureSayWhyTheRecordShouldGoThen,
 );
 
-const ValidationFailure _needsField = ValidationFailure(
-  message: 'An edit needs the field it changes.',
-  recoveryAction: 'Choose a field, then save again.',
+final ValidationFailure _needsField = ValidationFailure(
+  localizedMessage: Copy.messages.failureAnEditNeedsTheFieldItChanges,
+  localizedRecovery: Copy.messages.failureChooseAFieldThenSaveAgain,
 );
 
-const ValidationFailure _useDelete = ValidationFailure(
-  message: 'A record goes to the recycle bin only through delete.',
-  recoveryAction: 'Use Delete, which lets you undo it.',
+final ValidationFailure _useDelete = ValidationFailure(
+  localizedMessage: Copy.messages.failureARecordGoesToTheRecycleBin,
+  localizedRecovery: Copy.messages.failureUseDeleteWhichLetsYouUndoIt,
 );
 
-const ValidationFailure _useRestore = ValidationFailure(
-  message: 'This record is in the recycle bin.',
-  recoveryAction: 'Restore it from the recycle bin first.',
+final ValidationFailure _useRestore = ValidationFailure(
+  localizedMessage: Copy.messages.failureThisRecordIsInTheRecycleBin,
+  localizedRecovery: Copy.messages.failureRestoreItFromTheRecycleBinFirst,
 );
 
-const ValidationFailure _notInBin = ValidationFailure(
-  message: 'This record is not in the recycle bin.',
-  recoveryAction: 'Refresh the list; it may already be restored.',
+final ValidationFailure _notInBin = ValidationFailure(
+  localizedMessage: Copy.messages.failureThisRecordIsNotInTheRecycle,
+  localizedRecovery: Copy.messages.failureRefreshTheListItMayAlreadyBe,
 );
 
-const ValidationFailure _unknownStatus = ValidationFailure(
-  message: 'This record has a status this version of the app does not know.',
-  recoveryAction: 'Update the app, then try again.',
+final ValidationFailure _unknownStatus = ValidationFailure(
+  localizedMessage: Copy.messages.failureThisRecordHasAStatusThisVersion,
+  localizedRecovery: Copy.messages.failureUpdateTheAppThenTryAgain,
 );

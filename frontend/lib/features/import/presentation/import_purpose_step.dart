@@ -1,95 +1,101 @@
-import 'package:flutter/widgets.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart' hide StepState;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/files/picked_document.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_progress_steps.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
-import 'package:tapture/features/quality/quality.dart' show VerificationPrefill;
+import 'package:tapture/features/projects/projects.dart'
+    show currentProjectProvider;
 
-/// Spreadsheets only: hold the rows, or verify against them.
-final class ImportPurposeStep extends StatelessWidget {
-  /// Creates the question.
-  const ImportPurposeStep({
-    this.rows = const <Map<String, String>>[],
-    this.binding = const <String, String>{},
-    this.loading = false,
-    this.empty = false,
-    this.failure,
-    this.onRecords,
-    this.onRegister,
-    super.key,
-  });
+import 'import_controller.dart';
+import 'import_screen.dart';
 
-  /// Spreadsheet rows. A register choice turns these into verification
-  /// prefills and creates no records.
-  final List<Map<String, String>> rows;
-
-  /// Field key to column name, for [VerificationPrefill.fromRow].
-  final Map<String, String> binding;
-
-  /// Whether the sheet is still opening.
-  final bool loading;
-
-  /// Whether there is no sheet.
-  final bool empty;
-
-  /// Why the sheet could not be read.
-  final Failure? failure;
-
-  /// Rows become records.
-  final VoidCallback? onRecords;
-
-  /// Rows feed verification and create nothing.
-  final ValueChanged<List<VerificationPrefill>>? onRegister;
+/// Spreadsheets only (task 020 step 2): are the rows records to hold, or
+/// the register to verify against? Records go on to the column mapping; a
+/// register becomes the reference dataset verification checks against,
+/// through the dataset importer, and creates no record.
+final class ImportPurposeStep extends ConsumerWidget {
+  /// Creates the question for the spreadsheet the import page holds.
+  const ImportPurposeStep({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final Failure? failed = failure;
-    if (failed != null) {
-      return AppPage(
-        title: Copy.importPurposeTitle,
-        body: AppErrorState(failure: failed),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final ImportView view = ref.watch(importControllerProvider);
+    final PickedDocument? document = view.document;
+    final Failure? failure = view.failure;
+    final Widget body;
+    if (view.busy) {
+      body = AppProgressSteps(
+        steps: <ProgressStep>[
+          ProgressStep(
+            label: localCopy.importCheckingFile,
+            state: StepState.running,
+          ),
+        ],
       );
-    }
-    if (loading) {
-      return const AppPage(
-        title: Copy.importPurposeTitle,
-        body: SizedBox.shrink(),
+    } else if (failure != null) {
+      body = AppErrorState(
+        failure: failure,
+        onRetry: () => context.go(RoutePaths.projectImport),
       );
-    }
-    if (empty) {
-      return const AppPage(
-        title: Copy.importPurposeTitle,
-        body: AppEmptyState(
-          icon: AppIcons.import,
-          headline: Copy.importEmptyHeadline,
-          message: Copy.importEmptyMessage,
-        ),
+    } else if (document == null) {
+      body = AppEmptyState(
+        icon: AppIcons.import,
+        headline: localCopy.importNoSheetHeadline,
+        message: localCopy.importNoSheetMessage,
+        actionLabel: localCopy.importChooseFile,
+        onAction: () => context.go(RoutePaths.projectImport),
+      );
+    } else {
+      body = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          AppListTile(
+            key: const ValueKey<String>('import-purpose-records'),
+            leading: const Icon(AppIcons.records),
+            title: localCopy.importPurposeRecords,
+            subtitle: localCopy.importPurposeRecordsLine,
+            trailing: const Icon(AppIcons.open),
+            onTap: () =>
+                unawaited(context.push(RoutePaths.projectImportRecords)),
+          ),
+          AppListTile(
+            key: const ValueKey<String>('import-purpose-register'),
+            leading: const Icon(AppIcons.verified),
+            title: localCopy.importPurposeRegister,
+            subtitle: localCopy.importPurposeRegisterLine,
+            trailing: const Icon(AppIcons.open),
+            onTap: () => unawaited(_register(context, ref)),
+          ),
+        ],
       );
     }
     return AppPage(
-      title: Copy.importPurposeTitle,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          AppButton(
-            key: const ValueKey<String>('import-purpose-records'),
-            label: Copy.importPurposeRecords,
-            onPressed: onRecords,
-          ),
-          AppButton(
-            key: const ValueKey<String>('import-purpose-register'),
-            label: Copy.importPurposeRegister,
-            variant: AppButtonVariant.secondary,
-            onPressed: () => onRegister?.call(<VerificationPrefill>[
-              for (final Map<String, String> row in rows)
-                VerificationPrefill.fromRow(row: row, binding: binding),
-            ]),
-          ),
-        ],
-      ),
+      key: const ValueKey<String>('route-import-purpose'),
+      title: localCopy.importPurposeTitle,
+      inset: false,
+      body: body,
     );
   }
+}
+
+Future<void> _register(BuildContext context, WidgetRef ref) async {
+  final ImportDestination? next = await ref
+      .read(importControllerProvider.notifier)
+      .asRegister(projectId: ref.read(currentProjectProvider));
+  if (next == null || !context.mounted) {
+    return;
+  }
+  openImportDestination(context, ref, next);
 }

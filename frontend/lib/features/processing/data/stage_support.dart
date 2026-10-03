@@ -56,7 +56,9 @@ abstract final class StageSupport {
     final Set<String> keys = strings(bundle.template.identityFields).toSet();
     return <IdentityField>[
       for (final TemplateField field in bundle.fields)
-        if (keys.contains(field.fieldKey) && pattern(field) != null)
+        if (field.type != 'consent' &&
+            keys.contains(field.fieldKey) &&
+            pattern(field) != null)
           (fieldKey: field.fieldKey, pattern: pattern(field)!),
     ];
   }

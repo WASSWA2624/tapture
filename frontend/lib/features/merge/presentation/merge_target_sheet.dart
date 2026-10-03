@@ -27,9 +27,11 @@ import 'package_import_controller.dart';
 /// does not lists its reasons and cannot be chosen. Returns the chosen
 /// project's id, or null.
 Future<String?> showMergeTargetSheet(BuildContext context) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   return showAppSheet<String>(
     context,
-    title: Copy.mergeTargetTitle,
+    title: localCopy.mergeTargetTitle,
     builder: (BuildContext _) => const _Targets(),
   );
 }
@@ -45,10 +47,10 @@ final _targetsProvider = FutureProvider.autoDispose<List<_Target>>((
       (PackageImportView view) => view.bundle,
     ),
   );
-  final PackageImportRepository? repository = ref.watch(
+  final PackageImportRepository? store = ref.watch(
     packageImportRepositoryProvider,
   );
-  if (bundle == null || repository == null) {
+  if (bundle == null || store == null) {
     return const <_Target>[];
   }
   final List<Project> projects = await ref
@@ -57,8 +59,8 @@ final _targetsProvider = FutureProvider.autoDispose<List<_Target>>((
       .first;
   final List<_Target> targets = <_Target>[];
   for (final Project project in projects) {
-    final Result<Map<String, List<Map<String, Object?>>>> local =
-        await repository.templatesOf(project.id);
+    final Result<Map<String, List<Map<String, Object?>>>> local = await store
+        .templatesOf(project.id);
     switch (local) {
       case FailureResult<Map<String, List<Map<String, Object?>>>>(
         :final Failure failure,
@@ -95,10 +97,10 @@ class _Targets extends ConsumerWidget {
       child: AsyncValueView<List<_Target>>(
         value: value,
         isEmpty: (List<_Target> targets) => targets.isEmpty,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.project,
-          headline: Copy.mergeTargetTitle,
-          message: Copy.mergeTargetNone,
+          headline: Copy.of(context).mergeTargetTitle,
+          message: Copy.of(context).mergeTargetNone,
         ),
         onRetry: () => ref.invalidate(_targetsProvider),
         data: (List<_Target> targets) => ListView(
@@ -108,7 +110,7 @@ class _Targets extends ConsumerWidget {
                 key: ValueKey<String>('merge-target-${target.project.id}'),
                 title: target.project.name,
                 status: compatibilityPill(target.report.status),
-                subtitle: _reasons(target.report),
+                subtitle: _reasons(context, target.report),
                 onTap: target.report.canMerge
                     ? () => Navigator.of(context).pop(target.project.id)
                     : null,
@@ -120,7 +122,7 @@ class _Targets extends ConsumerWidget {
   }
 
   /// A blocked project's reasons, or a compatible one's differences.
-  String? _reasons(CompatibilityReport report) {
+  String? _reasons(BuildContext context, CompatibilityReport report) {
     if (report.status == CompatibilityStatus.compatible) {
       return null;
     }
@@ -130,7 +132,7 @@ class _Targets extends ConsumerWidget {
         for (final ({CompatibilityIssue issue, String field}) found
             in match.issues)
           if (!blocked || found.issue.blocks)
-            Copy.compatibilityIssue(found.issue.name, found.field),
+            Copy.of(context).compatibilityIssue(found.issue.name, found.field),
     ].join('\n');
   }
 }

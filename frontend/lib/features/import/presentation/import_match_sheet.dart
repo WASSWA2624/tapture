@@ -1,65 +1,122 @@
-import 'dart:async';
-
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/feedback/app_dialog.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
+import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
 
 import '../domain/import_duplicates.dart';
 
-/// Asks how one matched row is settled, through the shared confirm dialog.
-///
-/// The choice can apply to this row only or to every later match.
-final class ImportMatchSheet extends StatelessWidget {
-  /// Creates the sheet.
-  const ImportMatchSheet({required this.onChoice, super.key});
+/// Asks, on one sheet, what happens to spreadsheet row [row], which matches
+/// a record already here (task 020): keep that record, replace it or merge
+/// into it, for this row or for every later match. Null when the sheet is
+/// dismissed, which decides nothing.
+Future<ImportMatchDecision?> showImportMatchSheet(
+  BuildContext context, {
+  required int row,
+}) {
+  final LocalizedCopy localCopy = Copy.of(context);
 
-  /// Reports the choice and whether it covers the rest of the run.
-  final void Function(ImportDuplicateChoice choice, bool applyToAll) onChoice;
+  return showAppSheet<ImportMatchDecision>(
+    context,
+    title: localCopy.importMatchTitle,
+    contentSized: true,
+    builder: (BuildContext _) => ImportMatchSheet(row: row),
+  );
+}
+
+/// The body of [showImportMatchSheet]: the choice, the apply-to-all box and
+/// one confirm, which closes the sheet with the decision.
+final class ImportMatchSheet extends StatefulWidget {
+  /// Creates the sheet for spreadsheet row [row].
+  const ImportMatchSheet({required this.row, super.key});
+
+  /// The spreadsheet row that matched.
+  final int row;
+
+  @override
+  State<ImportMatchSheet> createState() => _ImportMatchSheetState();
+}
+
+class _ImportMatchSheetState extends State<ImportMatchSheet> {
+  final ValueNotifier<ImportMatchDecision> _draft =
+      ValueNotifier<ImportMatchDecision>((
+        choice: ImportDuplicateChoice.keepExisting,
+        applyToAll: false,
+      ));
+
+  @override
+  void dispose() {
+    _draft.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        AppButton(
-          key: const ValueKey<String>('import-match-keep'),
-          label: Copy.importKeepExisting,
-          onPressed: () =>
-              unawaited(_choose(context, ImportDuplicateChoice.keepExisting)),
-        ),
-        AppButton(
-          key: const ValueKey<String>('import-match-replace'),
-          label: Copy.importReplace,
-          variant: AppButtonVariant.secondary,
-          onPressed: () =>
-              unawaited(_choose(context, ImportDuplicateChoice.replace)),
-        ),
-        AppButton(
-          key: const ValueKey<String>('import-match-merge'),
-          label: Copy.importMerge,
-          variant: AppButtonVariant.secondary,
-          onPressed: () =>
-              unawaited(_choose(context, ImportDuplicateChoice.merge)),
-        ),
-      ],
-    );
-  }
+    return Padding(
+      padding: const EdgeInsets.all(Space.x4),
+      child: ValueListenableBuilder<ImportMatchDecision>(
+        valueListenable: _draft,
+        builder: (BuildContext context, ImportMatchDecision draft, Widget? _) {
+          final LocalizedCopy localCopy = Copy.of(context);
 
-  Future<void> _choose(
-    BuildContext context,
-    ImportDuplicateChoice choice,
-  ) async {
-    final bool applyToAll = await showAppConfirm(
-      context,
-      title: Copy.importApplyToAllTitle,
-      message: Copy.importApplyToAllMessage,
-      confirmLabel: Copy.importApplyToAllConfirm,
-      alternativeLabel: Copy.importApplyToThis,
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(localCopy.importMatchMessage(widget.row)),
+              const SizedBox(height: Space.x3),
+              AppRadioGroup<ImportDuplicateChoice>(
+                key: const ValueKey<String>('import-match-choice'),
+                label: localCopy.importMatchChoice,
+                value: draft.choice,
+                options: _options(localCopy),
+                onChanged: (ImportDuplicateChoice next) {
+                  _draft.value = (choice: next, applyToAll: draft.applyToAll);
+                },
+              ),
+              AppSwitchTile.checkbox(
+                key: const ValueKey<String>('import-match-all'),
+                title: localCopy.importApplyToAll,
+                value: draft.applyToAll,
+                onChanged: (bool next) {
+                  _draft.value = (choice: draft.choice, applyToAll: next);
+                },
+              ),
+              const SizedBox(height: Space.x3),
+              AppButton(
+                key: const ValueKey<String>('import-match-confirm'),
+                label: localCopy.importMatchConfirm,
+                expand: true,
+                onPressed: () =>
+                    Navigator.of(context).pop<ImportMatchDecision>(draft),
+              ),
+            ],
+          );
+        },
+      ),
     );
-    if (!context.mounted) {
-      return;
-    }
-    onChoice(choice, applyToAll);
   }
 }
+
+/// What a person decided for one matching row: [choice], and whether it
+/// settles every later match of the run too.
+typedef ImportMatchDecision = ({ImportDuplicateChoice choice, bool applyToAll});
+
+List<Choice<ImportDuplicateChoice>> _options(LocalizedCopy localCopy) =>
+    <Choice<ImportDuplicateChoice>>[
+      Choice<ImportDuplicateChoice>(
+        ImportDuplicateChoice.keepExisting,
+        localCopy.importKeepExisting,
+      ),
+      Choice<ImportDuplicateChoice>(
+        ImportDuplicateChoice.replace,
+        localCopy.importReplace,
+      ),
+      Choice<ImportDuplicateChoice>(
+        ImportDuplicateChoice.merge,
+        localCopy.importMerge,
+      ),
+    ];

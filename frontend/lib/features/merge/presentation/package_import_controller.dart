@@ -29,20 +29,30 @@ class PackageImportController extends Notifier<PackageImportView> {
   Future<void> Function()? onApplied;
   PickedDocument? _picked;
   CancellationToken? _checking;
+  Future<Result<InspectedBundle>>? _inspection;
+  bool _disposed = false;
 
   /// The open package, kept apart from [state] so disposal can close it.
   InspectedBundle? _open;
 
   @override
   PackageImportView build() {
-    ref.onDispose(() => unawaited(_release(_open)));
+    _disposed = false;
+    ref.onDispose(() {
+      _disposed = true;
+      unawaited(finish());
+    });
     return _idle;
   }
 
   /// Asks for a package file, closing any package still open.
   Future<Result<PickedDocument>> pick() async {
     await finish();
-    return ref
+    if (_disposed || !ref.mounted) {
+      return const FailureResult<PickedDocument>(CancelledFailure());
+    }
+    state = (phase: PackageImportPhase.checking, bundle: null, progress: 0);
+    final Result<PickedDocument> picked = await ref
         .read(documentPickerProvider)
         .pick(
           extensions: const <String>[BundleFormat.extension],
@@ -51,38 +61,47 @@ class PackageImportController extends Notifier<PackageImportView> {
               ? AppConstants.imports.bundleMaxBytes
               : AppConstants.bundles.nativeMaxBytes,
         );
+    if (_disposed || !ref.mounted) {
+      if (picked case Success<PickedDocument>(:final value)) {
+        await discardPickedCopy(value);
+      }
+      return const FailureResult<PickedDocument>(CancelledFailure());
+    }
+    if (picked case Success<PickedDocument>(:final value)) {
+      _picked = value;
+    } else {
+      await finish();
+    }
+    return picked;
   }
 
   /// Opens and checks [picked]. A [CancelledFailure] when [cancel] was
   /// called first; the package is then closed as soon as it opens.
-  Future<Result<InspectedBundle>> check(PickedDocument picked) async {
+  Future<Result<InspectedBundle>> check(
+    PickedDocument picked, {
+    String? password,
+  }) async {
     _picked = picked;
     final CancellationToken token = CancellationToken();
     _checking = token;
     state = (phase: PackageImportPhase.checking, bundle: null, progress: 0);
     final Future<Result<InspectedBundle>> inspecting = BundleReader.inspect(
       picked,
+      password: password,
+      cancel: token,
     );
-    final Result<InspectedBundle>? first =
-        await Future.any<Result<InspectedBundle>?>(
-          <Future<Result<InspectedBundle>?>>[
-            inspecting,
-            token.whenCancelled.then((_) => null),
-          ],
-        );
-    if (first == null || token.isCancelled) {
-      unawaited(
-        inspecting.then((Result<InspectedBundle> late) async {
-          if (late case Success<InspectedBundle>(
-            :final InspectedBundle value,
-          )) {
-            await value.close();
-          }
-        }),
-      );
-      await finish();
+    _inspection = inspecting;
+    final Result<InspectedBundle>? first = await token
+        .race<Result<InspectedBundle>?>(inspecting, onCancel: () => null);
+    if (first == null ||
+        token.isCancelled ||
+        _disposed ||
+        !ref.mounted ||
+        !identical(_checking, token)) {
+      if (identical(_checking, token)) await finish();
       return const FailureResult<InspectedBundle>(CancelledFailure());
     }
+    _inspection = null;
     _checking = null;
     switch (first) {
       case FailureResult<InspectedBundle>():
@@ -92,6 +111,13 @@ class PackageImportController extends Notifier<PackageImportView> {
         state = (phase: PackageImportPhase.ready, bundle: value, progress: 0);
     }
     return first;
+  }
+
+  /// Owns the picked copy while inspecting its password header, before prompting.
+  Future<Result<bool>> needsPassword(PickedDocument picked) {
+    _picked = picked;
+    state = (phase: PackageImportPhase.checking, bundle: null, progress: 0);
+    return BundleReader.needsPassword(picked);
   }
 
   /// Stops [check]; the flow returns at once.
@@ -128,7 +154,7 @@ class PackageImportController extends Notifier<PackageImportView> {
     if (imported case Success<ImportedProject>()) {
       await applied();
       await finish();
-    } else {
+    } else if (!_disposed && ref.mounted) {
       state = (phase: PackageImportPhase.ready, bundle: bundle, progress: 0);
     }
     return imported;
@@ -137,6 +163,7 @@ class PackageImportController extends Notifier<PackageImportView> {
   /// Marks a merge as writing, with [progress] from 0 to 1, or back to
   /// ready when [writing] is false.
   void writing({required bool writing, double progress = 0}) {
+    if (_disposed || !ref.mounted) return;
     final InspectedBundle? bundle = state.bundle;
     if (bundle == null) {
       return;
@@ -151,11 +178,22 @@ class PackageImportController extends Notifier<PackageImportView> {
   /// Closes the package and deletes the picker's copy of it.
   Future<void> finish() async {
     onApplied = null;
+    _checking?.cancel();
     final InspectedBundle? bundle = _open;
+    final PickedDocument? picked = _picked;
+    final Future<Result<InspectedBundle>>? inspecting = _inspection;
     _open = null;
+    _picked = null;
+    _inspection = null;
     _checking = null;
-    state = _idle;
-    await _release(bundle);
+    if (!_disposed && ref.mounted) state = _idle;
+    if (inspecting != null) {
+      // Inspection owns file handles until it returns. Cancellation returns
+      // immediately; its late result releases the copy after closing them.
+      unawaited(_releaseInspection(inspecting, picked));
+    }
+    await bundle?.close();
+    if (inspecting == null) await discardPickedCopy(picked);
   }
 
   /// Confirms committed writes to the transport; preview and cancellation do not.
@@ -170,18 +208,16 @@ class PackageImportController extends Notifier<PackageImportView> {
     writing(writing: true, progress: progress);
   }
 
-  Future<void> _release(InspectedBundle? bundle) async {
-    await bundle?.close();
-    final PickedDocument? picked = _picked;
-    _picked = null;
-    if (picked case PickedFile(isCopy: true, :final file)) {
-      try {
-        if (await file.exists()) {
-          await file.delete();
-        }
-      } on Object {
-        // The cache is cleared by the platform in time.
+  Future<void> _releaseInspection(
+    Future<Result<InspectedBundle>> inspecting,
+    PickedDocument? picked,
+  ) async {
+    try {
+      if (await inspecting case Success<InspectedBundle>(:final value)) {
+        await value.close();
       }
+    } finally {
+      await discardPickedCopy(picked);
     }
   }
 }

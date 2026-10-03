@@ -1,3 +1,4 @@
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/record_status.dart';
@@ -24,8 +25,11 @@ abstract final class RecordLifecycle {
     if (from == to) {
       return FailureResult<void>(
         ValidationFailure(
-          message: 'This record is already ${_state[from]}.',
-          recoveryAction: 'Choose a different status, or leave it as it is.',
+          localizedMessage: DomainCopy.messages.failureThisRecordIsAlreadyValue(
+            (_state[from]).toString(),
+          ),
+          localizedRecovery:
+              DomainCopy.messages.failureChooseADifferentStatusOrLeaveIt,
         ),
       );
     }
@@ -34,7 +38,10 @@ abstract final class RecordLifecycle {
     }
     return FailureResult<void>(
       ValidationFailure(
-        message: 'A record that is ${_state[from]} cannot be ${_target[to]}.',
+        localizedMessage: DomainCopy.messages.failureARecordThatIsValueCannotBe(
+          (_state[from]).toString(),
+          (_target[to]).toString(),
+        ),
         recoveryAction: _recovery(from, to),
       ),
     );
@@ -72,10 +79,12 @@ abstract final class RecordLifecycle {
     if (status != RecordStatus.deleted) {
       return const Success<void>(null);
     }
-    return const FailureResult<void>(
+    return FailureResult<void>(
       ValidationFailure(
-        message: 'This record is in the recycle bin.',
-        recoveryAction: 'Restore it from the recycle bin before changing it.',
+        localizedMessage:
+            DomainCopy.messages.failureThisRecordIsInTheRecycleBin,
+        localizedRecovery:
+            DomainCopy.messages.failureRestoreItFromTheRecycleBinBefore,
       ),
     );
   }

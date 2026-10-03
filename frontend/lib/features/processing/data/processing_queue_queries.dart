@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:tapture/core/ai/auxiliary_ai_usage.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
+import 'package:tapture/core/db/record_schema.dart';
 import 'package:tapture/core/db/tables/processing.dart' as jobs;
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
@@ -37,11 +38,12 @@ final class ProcessingQueueQueries {
   }) async {
     final String projectFilter = projectId == null
         ? ''
-        : ' AND EXISTS (SELECT 1 FROM records r '
-              'WHERE r.id = processing_jobs.record_id AND r.project_id = ?)';
+        : ' AND r.project_id = ?';
     final QueryRow row = await _db
         .customSelect(
-          'SELECT COUNT(*) AS c FROM processing_jobs WHERE status = ?'
+          'SELECT COUNT(*) AS c FROM processing_jobs pj '
+          'JOIN records r ON r.id = pj.record_id '
+          'WHERE pj.status = ? AND $_liveJob AND $_liveRecord'
           '$projectFilter',
           variables: <Variable<Object>>[
             Variable<String>(status.name),
@@ -49,14 +51,15 @@ final class ProcessingQueueQueries {
           ],
           readsFrom: <ResultSetImplementation<Object?, Object?>>{
             _db.processing,
-            if (projectId != null) _db.records,
+            _db.records,
+            _db.tombstones,
           },
         )
         .getSingle();
     return row.read<int>('c');
   }
 
-  /// Counts, groups, failures and usage for the queue screen.
+  /// Counts, groups and usage for the queue screen; failure rows are paged.
   Future<QueueSnapshot> snapshot({String? projectId}) async {
     final int queued = await count(
       jobs.ProcessingJobStatus.queued,
@@ -71,9 +74,6 @@ final class ProcessingQueueQueries {
       projectId: projectId,
     );
     final int unprocessed = await _unprocessed(projectId: projectId);
-    final List<sqlite.ProcessingJobRow> failedRows = await _failedRows(
-      projectId: projectId,
-    );
     final ({int requests, int images}) usage = await usageOn(
       _clock.nowUtc(),
       projectId: projectId,
@@ -86,10 +86,6 @@ final class ProcessingQueueQueries {
       imagesToday: usage.images,
       requestCap: await _requestCap(projectId),
       groups: await _groups(projectId: projectId),
-      failures: <ProcessingJob>[
-        for (final sqlite.ProcessingJobRow row in failedRows)
-          ProcessingJobMapper.toJob(row),
-      ],
     );
   }
 
@@ -184,15 +180,19 @@ final class ProcessingQueueQueries {
   }
 
   Future<int> _unprocessed({String? projectId}) async {
-    final String projectFilter = projectId == null ? '' : 'AND project_id = ? ';
+    final String projectFilter = projectId == null
+        ? ''
+        : 'AND r.project_id = ? ';
     final QueryRow row = await _db
         .customSelect(
-          'SELECT COUNT(*) AS c FROM records '
-          'WHERE status = ? '
+          'SELECT COUNT(*) AS c FROM records r '
+          'WHERE r.status = ? AND $_liveRecord '
           '$projectFilter'
           'AND NOT EXISTS ('
           'SELECT 1 FROM processing_jobs '
-          'WHERE processing_jobs.record_id = records.id)',
+          'WHERE processing_jobs.record_id = r.id AND '
+          "NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'processing_jobs' "
+          'AND t.entity_id = processing_jobs.id))',
           variables: <Variable<Object>>[
             Variable<String>(RecordStatus.captured.stored),
             if (projectId != null) Variable<String>(projectId),
@@ -200,6 +200,7 @@ final class ProcessingQueueQueries {
           readsFrom: <ResultSetImplementation<Object?, Object?>>{
             _db.records,
             _db.processing,
+            _db.tombstones,
           },
         )
         .getSingle();
@@ -207,7 +208,9 @@ final class ProcessingQueueQueries {
   }
 
   Future<List<QueueGroup>> _groups({String? projectId}) async {
-    final String projectFilter = projectId == null ? '' : 'AND project_id = ? ';
+    final String projectFilter = projectId == null
+        ? ''
+        : 'AND r.project_id = ? ';
     final String waiting = List<String>.filled(
       _waitingStatuses.length,
       '?',
@@ -215,19 +218,23 @@ final class ProcessingQueueQueries {
     final List<QueryRow> rows = await _db
         .customSelect(
           'SELECT context_json AS label, COUNT(*) AS n FROM records r '
-          'WHERE status IN ($waiting) '
+          'WHERE r.status IN ($waiting) AND $_liveRecord '
           '$projectFilter'
           "AND (NOT EXISTS (SELECT 1 FROM processing_jobs pj "
-          "WHERE pj.record_id = r.id) OR EXISTS ("
+          "WHERE pj.record_id = r.id AND $_liveJob) OR EXISTS ("
           "SELECT 1 FROM processing_jobs pj WHERE pj.record_id = r.id "
-          "AND pj.status IN ('queued', 'running'))) "
+          "AND pj.status IN ('queued', 'running') AND $_liveJob)) "
           "GROUP BY context_json",
           variables: <Variable<Object>>[
             for (final RecordStatus status in _waitingStatuses)
               Variable<String>(status.stored),
             if (projectId != null) Variable<String>(projectId),
           ],
-          readsFrom: <ResultSetImplementation<Object?, Object?>>{_db.records},
+          readsFrom: <ResultSetImplementation<Object?, Object?>>{
+            _db.records,
+            _db.processing,
+            _db.tombstones,
+          },
         )
         .get();
     final Map<String, int> grouped = <String, int>{};
@@ -245,28 +252,68 @@ final class ProcessingQueueQueries {
     ];
   }
 
-  Future<List<sqlite.ProcessingJobRow>> _failedRows({String? projectId}) async {
-    final JoinedSelectStatement<HasResultSet, Object?> query = _db
-        .select(_db.processing)
-        .join(<Join<HasResultSet, Object?>>[
-          innerJoin(
+  /// A bounded live page; literal status matches the partial queued_at/id
+  /// index. Reading limit+1 determines continuation without a count scan.
+  Stream<QueueFailurePage> watchFailurePage({
+    String? projectId,
+    QueueFailureCursor? after,
+    int limit = AppConstants.listPageSize,
+  }) {
+    final int size = limit.clamp(1, AppConstants.listPageSize);
+    return _db
+        .customSelect(
+          'SELECT pj.*, r.record_number AS queue_number, '
+          "COALESCE(sd.sort_name, '') AS queue_name "
+          'FROM processing_jobs pj JOIN records r ON r.id = pj.record_id '
+          'LEFT JOIN ${RecordSchema.searchDocsTable} sd ON sd.record_id = r.id '
+          "WHERE pj.status = 'failed' AND $_liveJob AND $_liveRecord "
+          '${projectId == null ? '' : 'AND r.project_id = ? '}'
+          '${after == null ? '' : 'AND (pj.queued_at, pj.id) > (?, ?) '}'
+          'ORDER BY pj.queued_at ASC, pj.id ASC LIMIT ?',
+          variables: <Variable<Object>>[
+            if (projectId != null) Variable<String>(projectId),
+            if (after != null) ...<Variable<Object>>[
+              Variable<DateTime>(after.queuedAt),
+              Variable<String>(after.id),
+            ],
+            Variable<int>(size + 1),
+          ],
+          readsFrom: <ResultSetImplementation<Object?, Object?>>{
+            _db.processing,
             _db.records,
-            _db.records.id.equalsExp(_db.processing.recordId),
-          ),
-        ]);
-    query.where(
-      _db.processing.status.equalsValue(jobs.ProcessingJobStatus.failed) &
-          (projectId == null
-              ? const Constant<bool>(true)
-              : _db.records.projectId.equals(projectId)),
-    );
-    query.orderBy(<OrderingTerm>[OrderingTerm.asc(_db.processing.queuedAt)]);
-    final List<TypedResult> rows = await query.get();
-    return <sqlite.ProcessingJobRow>[
-      for (final TypedResult row in rows) row.readTable(_db.processing),
-    ];
+            _db.recordFields,
+            _db.tombstones,
+          },
+        )
+        .watch()
+        .map((List<QueryRow> rows) {
+          final List<QueueFailure> failures = <QueueFailure>[
+            for (final QueryRow row in rows.take(size))
+              (
+                job: ProcessingJobMapper.toJob(_db.processing.map(row.data)),
+                name: row.read<String>('queue_name'),
+                number: row.read<int?>('queue_number'),
+              ),
+          ];
+          final ProcessingJob? last = failures.isEmpty
+              ? null
+              : failures.last.job;
+          return QueueFailurePage(
+            items: failures,
+            nextCursor: rows.length > size && last != null
+                ? (queuedAt: last.queuedAt!, id: last.id)
+                : null,
+          );
+        });
   }
 }
+
+const String _liveJob =
+    "NOT EXISTS (SELECT 1 FROM tombstones t "
+    "WHERE t.entity_type = 'processing_jobs' AND t.entity_id = pj.id)";
+const String _liveRecord =
+    "r.status != 'deleted' AND NOT EXISTS ("
+    "SELECT 1 FROM tombstones t WHERE t.entity_type = 'records' AND t.entity_id = r.id)";
 
 int _imageCount(String summary) {
   try {

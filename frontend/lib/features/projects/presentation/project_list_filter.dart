@@ -1,45 +1,19 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/normalise/search_text.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
+import 'package:tapture/core/widgets/fields/app_radio_group.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
 
 import '../domain/project_repository.dart';
 import 'current_project.dart';
 import 'project_list_criteria.dart';
 import 'project_list_criteria_controller.dart';
-
-/// Whether the landing list includes archived projects.
-final class ProjectListFilter extends Notifier<bool> {
-  /// Starts with archived projects hidden.
-  @override
-  bool build() => false;
-
-  /// Shows or hides archived projects on the landing list.
-  void set(bool value) {
-    state = value;
-    final ProjectListCriteria criteria = ref.read(projectListCriteriaProvider);
-    ref
-        .read(projectListCriteriaProvider.notifier)
-        .set(
-          criteria.copyWith(
-            statuses: value
-                ? const <ProjectStatus>{
-                    ProjectStatus.active,
-                    ProjectStatus.archived,
-                  }
-                : const <ProjectStatus>{ProjectStatus.active},
-          ),
-        );
-  }
-}
-
-/// Filter the landing list reads. Off by default so archived rows stay
-/// hidden until the operator asks.
-final NotifierProvider<ProjectListFilter, bool>
-projectListShowArchivedProvider = NotifierProvider<ProjectListFilter, bool>(
-  ProjectListFilter.new,
-  retry: (int _, Object _) => null,
-);
 
 /// The project-list search query. Survives a size-class change so the
 /// pane can restore what was typed (FE-RESP-03).
@@ -67,6 +41,104 @@ projectListFilteredProvider = Provider<AsyncValue<List<ProjectListRow>>>((
     ];
   });
 });
+
+/// Opens the project list's filters, the one filter sheet every list uses
+/// (FBK0000003): status, pinned state and the organisations [rows] name.
+/// Choices apply at once; Clear filters restores the active list and keeps
+/// the search text.
+Future<void> showProjectListFilters(
+  BuildContext context,
+  WidgetRef ref,
+  List<ProjectListRow> rows,
+) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
+  final List<String> organisations = <String>{
+    for (final ProjectListRow row in rows)
+      if ((row.project.organisation ?? '').trim().isNotEmpty)
+        row.project.organisation!.trim(),
+  }.toList()..sort();
+  return showAppFilterSheet(
+    context,
+    title: localCopy.projectFiltersTitle,
+    onClear: ref.read(projectListCriteriaProvider.notifier).clearFilters,
+    facets: (BuildContext _) => _Facets(organisations: organisations),
+  );
+}
+
+class _Facets extends ConsumerWidget {
+  const _Facets({required this.organisations});
+
+  final List<String> organisations;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final ProjectListCriteria criteria = ref.watch(projectListCriteriaProvider);
+    final ProjectListCriteriaController controller = ref.read(
+      projectListCriteriaProvider.notifier,
+    );
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        AppMultiChoiceField<ProjectStatus>(
+          key: const ValueKey<String>('project-status-filter'),
+          label: localCopy.projectStatusFilter,
+          options: <Choice<ProjectStatus>>[
+            Choice<ProjectStatus>(
+              ProjectStatus.active,
+              localCopy.projectStatusActive,
+            ),
+            Choice<ProjectStatus>(
+              ProjectStatus.archived,
+              localCopy.projectStatusArchived,
+            ),
+          ],
+          value: criteria.statuses,
+          onChanged: (Set<ProjectStatus> value) {
+            controller.set(criteria.copyWith(statuses: value));
+          },
+        ),
+        const SizedBox(height: Space.x3),
+        AppRadioGroup<ProjectPinFilter>(
+          key: const ValueKey<String>('project-pin-filter'),
+          label: localCopy.projectPinFilter,
+          direction: Axis.vertical,
+          value: criteria.pin,
+          options: <Choice<ProjectPinFilter>>[
+            for (final ProjectPinFilter value in ProjectPinFilter.values)
+              Choice<ProjectPinFilter>(
+                value,
+                localCopy.projectPinFilterLabel(value.name),
+              ),
+          ],
+          onChanged: (ProjectPinFilter next) {
+            controller.set(criteria.copyWith(pin: next));
+          },
+        ),
+        if (organisations.isNotEmpty) ...<Widget>[
+          const SizedBox(height: Space.x3),
+          AppMultiChoiceField<String>(
+            key: const ValueKey<String>('project-organisation-filter'),
+            label: localCopy.projectOrganisation,
+            // Organisations are project content, shown as stored
+            // (FE-L10N-07).
+            options: <Choice<String>>[
+              for (final String organisation in organisations)
+                Choice<String>(organisation, organisation),
+            ],
+            value: criteria.organisations,
+            onChanged: (Set<String> value) {
+              controller.set(criteria.copyWith(organisations: value));
+            },
+          ),
+        ],
+      ],
+    );
+  }
+}
 
 bool _matches(Project project, ProjectListCriteria criteria, String needle) {
   if (criteria.statuses.isNotEmpty &&

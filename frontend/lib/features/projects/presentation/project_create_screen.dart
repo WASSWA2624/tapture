@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -10,6 +11,7 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
@@ -33,7 +35,8 @@ class ProjectCreateScreen extends ConsumerStatefulWidget {
       _ProjectCreateScreenState();
 }
 
-class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
+class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen>
+    with StateRefresh {
   late final TextEditingController _name;
   final TextEditingController _description = TextEditingController();
   final TextEditingController _organisation = TextEditingController();
@@ -57,46 +60,62 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final _ProjectCreateView view = ref.watch(_projectCreateProvider);
     final bool duplicating =
         widget.sourceId != null && widget.sourceId!.isNotEmpty;
     return AppPage(
       key: const ValueKey<String>('route-project-create'),
-      title: duplicating ? Copy.projectDuplicateTitle : Copy.projectCreateTitle,
+      title: duplicating
+          ? localCopy.projectDuplicateTitle
+          : localCopy.projectCreateTitle,
       scrollable: false,
       body: AppForm(
         guardUnsaved: true,
-        errors: view.saveError == null
+        errors:
+            Copy.of(
+                  context,
+                ).stateText(view.localizedSaveError, view.saveError) ==
+                null
             ? const <String>[]
-            : <String>[view.saveError!],
+            : <String>[
+                Copy.of(
+                  context,
+                ).stateText(view.localizedSaveError, view.saveError)!,
+              ],
         fields: <Widget>[
           AppTextField(
-            label: Copy.projectName,
+            label: localCopy.projectName,
             controller: _name,
             requiredness: FieldRequiredness.required,
             textInputAction: TextInputAction.next,
-            errorText: view.nameError,
+            errorText: Copy.of(
+              context,
+            ).stateText(view.localizedNameError, view.nameError),
           ),
           AppTextField(
-            label: Copy.projectDescription,
+            label: localCopy.projectDescription,
             controller: _description,
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.next,
             maxLines: 3,
           ),
           AppTextField(
-            label: Copy.projectOrganisation,
+            label: localCopy.projectOrganisation,
             controller: _organisation,
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.done,
           ),
           ProjectPhotoField(
             pending: _photo,
-            onPicked: (Uint8List bytes) => setState(() => _photo = bytes),
-            onRemove: () => setState(() => _photo = null),
+            onPicked: (Uint8List bytes) => refresh(() => _photo = bytes),
+            onRemove: () => refresh(() => _photo = null),
           ),
         ],
-        submitLabel: duplicating ? Copy.projectsDuplicate : Copy.projectsCreate,
+        submitLabel: duplicating
+            ? localCopy.projectsDuplicate
+            : localCopy.projectsCreate,
         onSubmit: () async {
           final Project? created = await ref
               .read(_projectCreateProvider.notifier)
@@ -122,12 +141,17 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen> {
             }
             // The project stands without its photo; say why it is missing.
             if (stored case FailureResult<ProjectSettings>(:final failure)) {
-              showAppSnack(context, failure.message, tone: SnackTone.error);
+              showAppSnack(
+                context,
+                failure.message,
+                tone: SnackTone.error,
+                localizedMessage: failure.explanation,
+              );
             }
           }
           final GoRouter? router = GoRouter.maybeOf(context);
           if (router != null) {
-            router.go(_projectHome(created.id));
+            router.go(RoutePaths.project(created.id));
           }
           return true;
         },
@@ -142,12 +166,22 @@ _projectCreateProvider = NotifierProvider<_ProjectCreate, _ProjectCreateView>(
   retry: (int _, Object _) => null,
 );
 
-typedef _ProjectCreateView = ({String? nameError, String? saveError});
+typedef _ProjectCreateView = ({
+  String? nameError,
+  LocalizedMessage? localizedNameError,
+  String? saveError,
+  LocalizedMessage? localizedSaveError,
+});
 
 class _ProjectCreate extends Notifier<_ProjectCreateView> {
   @override
   _ProjectCreateView build() {
-    return (nameError: null, saveError: null);
+    return (
+      nameError: null,
+      localizedNameError: null,
+      saveError: null,
+      localizedSaveError: null,
+    );
   }
 
   /// Validates, writes through [createReady], and opens the new project.
@@ -159,7 +193,12 @@ class _ProjectCreate extends Notifier<_ProjectCreateView> {
   }) async {
     final String trimmed = name.trim();
     if (trimmed.isEmpty) {
-      state = (nameError: Copy.nameRequired, saveError: null);
+      state = (
+        nameError: Copy.nameRequired,
+        localizedNameError: Copy.messages.nameRequired,
+        saveError: null,
+        localizedSaveError: null,
+      );
       return null;
     }
     final Result<Project> result = await ref
@@ -173,18 +212,21 @@ class _ProjectCreate extends Notifier<_ProjectCreateView> {
     switch (result) {
       case Success<Project>(:final Project value):
         ref.read(currentProjectProvider.notifier).open(value.id);
-        state = (nameError: null, saveError: null);
+        state = (
+          nameError: null,
+          localizedNameError: null,
+          saveError: null,
+          localizedSaveError: null,
+        );
         return value;
       case FailureResult<Project>(:final Failure failure):
-        state = (nameError: null, saveError: failure.message);
+        state = (
+          nameError: null,
+          localizedNameError: null,
+          saveError: failure.message,
+          localizedSaveError: failure.explanation,
+        );
         return null;
     }
   }
 }
-
-/// Must match [AppRoutes.project]. This file cannot import `router.dart`.
-String _projectHome(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}';
-}
-
-const String _projectsRoot = '/projects';

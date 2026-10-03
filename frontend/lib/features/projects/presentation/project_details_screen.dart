@@ -32,17 +32,19 @@ final class ProjectDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<Project?> value = ref.watch(
       projectByIdProvider(projectId),
     );
     final bool loaded = value.asData?.value != null;
     return AppPage(
       key: const ValueKey<String>('route-project-details'),
-      title: Copy.projectEditTitle,
+      title: localCopy.projectEditTitle,
       footer: loaded
           ? AppPrimaryAction(
               key: const ValueKey<String>('project-details-edit'),
-              label: Copy.projectEditDetails,
+              label: localCopy.projectEditDetails,
               onPressed: () =>
                   unawaited(context.push(RoutePaths.projectEdit(projectId))),
             )
@@ -50,10 +52,10 @@ final class ProjectDetailsScreen extends ConsumerWidget {
       body: AsyncValueView<Project?>(
         value: value,
         isEmpty: (Project? project) => project == null,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.project,
-          headline: Copy.projectEditEmptyHeadline,
-          message: Copy.projectEditEmptyMessage,
+          headline: Copy.of(context).projectEditEmptyHeadline,
+          message: Copy.of(context).projectEditEmptyMessage,
         ),
         onRetry: () => ref.invalidate(projectByIdProvider(projectId)),
         data: (Project? project) => _ProjectDetails(project: project!),
@@ -69,12 +71,15 @@ class _ProjectDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String locale = Localizations.localeOf(context).toString();
     String day(DateTime? value) => value == null
-        ? Copy.projectValueNotSet
+        ? Copy.of(context).projectValueNotSet
         : DateFormat.yMMMd(locale).format(value.toLocal());
-    String text(String? value) =>
-        value == null || value.trim().isEmpty ? Copy.projectValueNotSet : value;
+    String text(String? value) => value == null || value.trim().isEmpty
+        ? Copy.of(context).projectValueNotSet
+        : value;
     final ProjectCoverPhoto? cover = project.settings.coverPhoto;
     final double edge = AppConstants.images.thumbnailEdge.toDouble();
     return Column(
@@ -93,19 +98,19 @@ class _ProjectDetails extends StatelessWidget {
           ),
           const SizedBox(height: Space.x3),
         ],
-        _row(Copy.projectName, project.name),
-        _row(Copy.projectDescription, text(project.description)),
-        _row(Copy.projectOrganisation, text(project.organisation)),
-        _row(Copy.projectStartsOn, day(project.startsOn)),
-        _row(Copy.projectEndsOn, day(project.endsOn)),
+        _row(localCopy.projectName, project.name),
+        _row(localCopy.projectDescription, text(project.description)),
+        _row(localCopy.projectOrganisation, text(project.organisation)),
+        _row(localCopy.projectStartsOn, day(project.startsOn)),
+        _row(localCopy.projectEndsOn, day(project.endsOn)),
         _row(
-          Copy.projectStatus,
+          localCopy.projectStatus,
           project.status == ProjectStatus.archived
-              ? Copy.projectStatusArchived
-              : Copy.projectStatusActive,
+              ? localCopy.projectStatusArchived
+              : localCopy.projectStatusActive,
         ),
-        _row(Copy.projectCreatedAt, day(project.createdAt)),
-        _row(Copy.projectUpdatedAt, day(project.updatedAt)),
+        _row(localCopy.projectCreatedAt, day(project.createdAt)),
+        _row(localCopy.projectUpdatedAt, day(project.updatedAt)),
       ],
     );
   }

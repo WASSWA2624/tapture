@@ -50,6 +50,8 @@ final class MeetingAudioSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -58,9 +60,9 @@ final class MeetingAudioSection extends StatelessWidget {
     if (!recording && partial == null && versions.isEmpty) {
       return AppEmptyState(
         icon: AppIcons.recordAudio,
-        headline: Copy.meetingRecordingEmpty,
-        message: Copy.meetingRecordingEmptyMessage,
-        actionLabel: Copy.meetingRecord,
+        headline: localCopy.meetingRecordingEmpty,
+        message: localCopy.meetingRecordingEmptyMessage,
+        actionLabel: localCopy.meetingRecord,
         onAction: onStart,
       );
     }
@@ -69,23 +71,23 @@ final class MeetingAudioSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
-          Copy.meetingElapsed(clock),
+          localCopy.meetingElapsed(clock),
           key: const ValueKey<String>('audio-elapsed'),
         ),
         if (remainingLabel.isNotEmpty)
           Text(
-            Copy.meetingRemaining(remainingLabel),
+            localCopy.meetingRemaining(remainingLabel),
             key: const ValueKey<String>('audio-remaining'),
           ),
         if (recording)
           AppButton(
             key: const ValueKey<String>('audio-stop'),
-            label: Copy.meetingStop,
+            label: localCopy.meetingStop,
             onPressed: onStop,
           ),
         if (partial != null)
           Text(
-            '${Copy.meetingInterrupted} $partial',
+            '${localCopy.meetingInterrupted} $partial',
             key: const ValueKey<String>('audio-partial'),
           ),
         for (final TranscriptVersion version in versions)

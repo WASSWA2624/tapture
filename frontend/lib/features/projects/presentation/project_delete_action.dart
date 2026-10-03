@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -25,6 +26,8 @@ class ProjectDeleteAction extends ConsumerWidget {
     WidgetRef ref,
     Project project,
   ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final ProjectRepository repo = ref.read(projectRepositoryProvider);
     final Result<ProjectOwnedCounts> counted = await repo.ownedCounts(
       project.id,
@@ -39,24 +42,24 @@ class ProjectDeleteAction extends ConsumerWidget {
     bool exportFirst = false;
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.projectDeleteTitle(project.name),
-      message: Copy.projectDeleteMessage(
+      title: localCopy.projectDeleteTitle(project.name),
+      message: localCopy.projectDeleteMessage(
         records: counts.records,
         files: counts.files,
         days: AppConstants.retention.days,
       ),
-      confirmLabel: Copy.projectDelete,
+      confirmLabel: localCopy.projectDelete,
       destructive: true,
       typedValue: project.name,
-      typedLabel: Copy.projectDeleteTypeName,
-      alternativeLabel: Copy.projectExportFirst,
+      typedLabel: localCopy.projectDeleteTypeName,
+      alternativeLabel: localCopy.projectExportFirst,
       onAlternative: () => exportFirst = true,
     );
     if (!context.mounted) {
       return;
     }
     if (exportFirst) {
-      context.go(_exportsRoot);
+      context.go(RoutePaths.projectExports(project.id));
       return;
     }
     if (!confirmed) {
@@ -70,13 +73,12 @@ class ProjectDeleteAction extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppButton(
-      label: Copy.projectDelete,
+      label: localCopy.projectDelete,
       variant: AppButtonVariant.destructive,
       onPressed: () => confirm(context, ref, project),
     );
   }
 }
-
-/// Must match [AppRoutes.exports]. This file cannot import `router.dart`.
-const String _exportsRoot = '/more/exports';

@@ -10,6 +10,7 @@ import '../domain/proposal_application.dart';
 import '../domain/provenance.dart';
 import '../domain/response_parser.dart';
 import 'ocr_cache.dart';
+import 'photo_paths.dart';
 import 'record_bundle.dart';
 import 'response_store.dart';
 import 'stage_support.dart';
@@ -18,10 +19,15 @@ import 'stage_support.dart';
 /// that have passed the no-invention guard.
 final class ProposalCollector {
   /// Creates the collector over the OCR [cache] and stored [responses].
-  const ProposalCollector({required this._cache, required this._responses});
+  const ProposalCollector({
+    required this._cache,
+    required this._responses,
+    this._paths,
+  });
 
   final OcrCache _cache;
   final ResponseStore _responses;
+  final PhotoPaths? _paths;
 
   /// Every guarded proposal for [job]'s record, local candidates first.
   ///
@@ -37,7 +43,11 @@ final class ProposalCollector {
     final List<IdentityField> identity = StageSupport.identityFields(bundle);
     for (final Photo photo in bundle.photos) {
       final OcrResult? ocr = StageSupport.unwrap(
-        await _cache.lookup(contentHash: photo.sha256, perceptualHash: ''),
+        await _cache.lookup(
+          contentHash:
+              await _paths?.ocrContentHash(bundle, photo) ?? photo.sha256,
+          perceptualHash: '',
+        ),
       );
       if (ocr == null) {
         continue;
@@ -119,6 +129,7 @@ final class ProposalCollector {
         final TemplateField field = bundle.fields.firstWhere(
           (TemplateField value) => value.fieldKey == parsedField.key,
         );
+        if (field.type == 'consent') continue;
         final GuardOutcome guarded = NoInventionGuard.check(
           fieldKey: parsedField.key,
           value: parsedField.value,

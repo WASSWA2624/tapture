@@ -51,6 +51,8 @@ Future<void> showProjectRecordFilters(
   WidgetRef ref,
   List<ProjectRecordRow> rows,
 ) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final Set<RecordStatus> present = <RecordStatus>{
     for (final ProjectRecordRow row in rows)
       ?ProjectRecordFilter.statusOf(row.status),
@@ -61,7 +63,7 @@ Future<void> showProjectRecordFilters(
   ];
   return showAppFilterSheet(
     context,
-    title: Copy.projectRecordFiltersTitle,
+    title: localCopy.projectRecordFiltersTitle,
     onClear: ref.read(projectRecordFilterProvider.notifier).clear,
     facets: (BuildContext _) => _StatusFacet(statuses: statuses),
   );
@@ -74,10 +76,12 @@ class _StatusFacet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     return AppMultiChoiceField<RecordStatus>(
       key: const ValueKey<String>('record-status-filter'),
-      label: Copy.projectRecordStatusFilter,
+      label: localCopy.projectRecordStatusFilter,
       options: <Choice<RecordStatus>>[
         for (final RecordStatus status in statuses)
           Choice<RecordStatus>(status, StatusStyle.of(status, colors).$3),

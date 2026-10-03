@@ -1,8 +1,13 @@
+import 'dart:convert';
+
+import 'package:tapture/core/db/vector_relation.dart';
 import 'package:tapture/core/widgets/record_status.dart';
 
 import 'conflict_kind.dart';
 import 'field_conflict.dart';
 import 'merge_plan.dart';
+import 'merge_reference.dart';
+import 'merge_templates.dart';
 import 'settlement_rule.dart';
 
 /// Works out a merge by content (task 076, W21, D16): rows in, a
@@ -71,6 +76,32 @@ final class _Planner {
 
   final Map<String, List<Map<String, Object?>>> _inserts =
       <String, List<Map<String, Object?>>>{};
+  final Map<String, List<Map<String, Object?>>> _updates =
+      <String, List<Map<String, Object?>>>{};
+  late final Map<String, Map<String, int>> _incomingClocks = _clocks(incoming);
+  late final Map<String, Map<String, int>> _localClocks = _clocks(local);
+
+  VectorRelation? _relation(
+    String table,
+    Map<String, Object?> here,
+    Map<String, Object?> there,
+  ) {
+    final Map<String, int>? peer = _incomingClocks['$table/${there['id']}'];
+    if (peer == null) return null; // Legacy packages use the content rules.
+    final Map<String, int> mine =
+        _localClocks['$table/${here['id']}'] ??
+        <String, int>{
+          if (here['updated_by_device'] is String && here['rev'] is int)
+            here['updated_by_device']! as String: here['rev']! as int,
+        };
+    return compareVectors(mine, peer);
+  }
+
+  void _advance(String table, Map<String, Object?> row) {
+    _updates.putIfAbsent(table, () => <Map<String, Object?>>[]).add(row);
+    if (table == 'records') _updatedRecords.add(row['id']! as String);
+  }
+
   final Map<String, Set<String>> _inserted = <String, Set<String>>{};
   final List<({String entry, String target})> _files =
       <({String entry, String target})>[];
@@ -109,11 +140,17 @@ final class _Planner {
   List<Map<String, Object?>> _mine(String table) =>
       local[table] ?? const <Map<String, Object?>>[];
 
+  final Map<String, Map<String, Map<String, Object?>>> _localIndexes =
+      <String, Map<String, Map<String, Object?>>>{};
+
   Map<String, Map<String, Object?>> _mineById(String table) =>
-      <String, Map<String, Object?>>{
-        for (final Map<String, Object?> row in _mine(table))
-          row['id']! as String: row,
-      };
+      _localIndexes.putIfAbsent(
+        table,
+        () => <String, Map<String, Object?>>{
+          for (final Map<String, Object?> row in _mine(table))
+            row['id']! as String: row,
+        },
+      );
 
   bool _isElsewhere(String table, String id) =>
       elsewhere[table]?.contains(id) ?? false;
@@ -137,6 +174,11 @@ final class _Planner {
     for (final Map<String, Object?> row in _theirs(table)) {
       final String id = row['id']! as String;
       if (mine.contains(id) || _wasInserted(table, id)) {
+        continue;
+      }
+      if (table != 'tombstones' &&
+          table != 'audit_log' &&
+          (_tombstoned(local, table, id) || _tombstoned(incoming, table, id))) {
         continue;
       }
       if (_isElsewhere(table, id)) {
@@ -225,6 +267,7 @@ final class _Planner {
     );
     return MergePlan(
       inserts: _inserts,
+      updates: _updates,
       files: _files,
       settled: _settled,
       conflicts: _conflicts,
@@ -312,10 +355,52 @@ final class _Planner {
     if (target != source) {
       return;
     }
-    final Set<String> mine = _mineById('templates').keys.toSet();
+    final Map<String, Map<String, Object?>> mine = _mineById('templates');
     for (final Map<String, Object?> template in _theirs('templates')) {
       final String id = template['id']! as String;
-      if (mine.contains(id) || templates.containsKey(id)) {
+      final String theirShape = MergeTemplates.content(incoming, template);
+      final Map<String, Object?>? copy = MergeTemplates.copyFor(
+        template,
+        incoming,
+        local,
+      );
+      if (copy != null) {
+        templates[id] = copy['id']! as String;
+        continue;
+      }
+      final Map<String, Object?>? here = mine[id];
+      if (here != null) {
+        final String mineShape = MergeTemplates.content(local, here);
+        if (mineShape != theirShape) {
+          _raise(
+            FieldConflict(
+              kind: ConflictKind.template,
+              table: 'templates',
+              rowId: id,
+              recordId: '',
+              fieldKey: '',
+              fieldLabel: '',
+              recordLabel: '${template['name'] ?? here['name'] ?? id}',
+              mine: mineShape,
+              theirs: theirShape,
+              mineDevice: '${here['updated_by_device'] ?? ''}',
+              theirsDevice: '${template['updated_by_device'] ?? ''}',
+              mineAt: here['updated_at'],
+              theirsAt: template['updated_at'],
+              allowChooseOne:
+                  _version(here['version']) != _version(template['version']) &&
+                  !MergeTemplates.hasVersionCollision(
+                    template,
+                    incoming,
+                    here,
+                    local,
+                  ),
+            ),
+          );
+        }
+        continue;
+      }
+      if (templates.containsKey(id)) {
         continue;
       }
       if (_isElsewhere('templates', id)) {
@@ -350,16 +435,19 @@ final class _Planner {
     final Map<String, Map<String, Object?>> mine = _mineById(
       'reference_datasets',
     );
-    final Map<String, Set<Object?>> rows = <String, Set<Object?>>{};
+    final Map<String, List<Map<String, Object?>>> rows =
+        <String, List<Map<String, Object?>>>{};
     for (final Map<String, Object?> row in _mine('reference_rows')) {
       rows
           .putIfAbsent(
             '${row['dataset_id']}/${row['key_value']}',
-            () => <Object?>{},
+            () => <Map<String, Object?>>[],
           )
-          .add(row['values']);
+          .add(row);
     }
-    final Set<String> rowIds = _mineById('reference_rows').keys.toSet();
+    final Map<String, Map<String, Object?>> rowIds = _mineById(
+      'reference_rows',
+    );
     final Set<String> merged = <String>{};
     for (final Map<String, Object?> dataset in _theirs('reference_datasets')) {
       final String id = dataset['id']! as String;
@@ -382,7 +470,6 @@ final class _Planner {
     for (final Map<String, Object?> row in _theirs('reference_rows')) {
       final String id = row['id']! as String;
       if (!merged.contains(row['dataset_id']) ||
-          rowIds.contains(id) ||
           _wasInserted('reference_rows', id)) {
         continue;
       }
@@ -390,11 +477,44 @@ final class _Planner {
         _elsewhere += 1;
         continue;
       }
-      final Set<Object?>? here =
-          rows['${row['dataset_id']}/${row['key_value']}'];
+      final List<Map<String, Object?>>? here = rowIds.containsKey(id)
+          ? <Map<String, Object?>>[rowIds[id]!]
+          : rows['${row['dataset_id']}/${row['key_value']}'];
       if (here != null) {
-        if (!here.contains(row['values'])) {
-          _kept += 1;
+        final Map<String, String> peer = _referenceValues(row['values']);
+        if (here.any(
+          (Map<String, Object?> existing) =>
+              MergeReference.resolve(
+                localExists: true,
+                local: _referenceValues(existing['values']),
+                incoming: peer,
+              ) ==
+              ReferenceOutcome.identical,
+        )) {
+          continue;
+        }
+        // An ambiguous accepted key retains each existing row. Each differing
+        // row requires its own explicit choice and audit.
+        for (final Map<String, Object?> existing in here) {
+          _raise(
+            FieldConflict(
+              kind: ConflictKind.reference,
+              table: 'reference_rows',
+              rowId: existing['id']! as String,
+              incomingRowId: id,
+              recordId: '',
+              fieldKey: '${row['key_value'] ?? ''}',
+              fieldLabel: '${row['key_value'] ?? ''}',
+              recordLabel:
+                  '${mine[row['dataset_id']]?['name'] ?? row['dataset_id']}',
+              mine: _canonicalJson(_referenceValues(existing['values'])),
+              theirs: _canonicalJson(peer),
+              mineDevice: '${existing['updated_by_device'] ?? ''}',
+              theirsDevice: '${row['updated_by_device'] ?? ''}',
+              mineAt: existing['updated_at'],
+              theirsAt: row['updated_at'],
+            ),
+          );
         }
         continue;
       }
@@ -406,7 +526,8 @@ final class _Planner {
   ///
   /// A record moved onto another template takes that template's current
   /// version, the field set the compatibility check matched it against, as
-  /// does one from a package that carries no version.
+  /// does one from a package that carries no version. An explicit unknown
+  /// captured version (zero) remains unknown even when template IDs change.
   Set<String> _records() {
     final Map<String, Map<String, Object?>> mine = _mineById('records');
     final Map<String, int> versions = <String, int>{
@@ -431,17 +552,29 @@ final class _Planner {
         if (mineStatus != theirStatus &&
             !_tombstoned(local, 'records', id) &&
             !_tombstoned(incoming, 'records', id)) {
-          _raise(
-            _conflict(
-              ConflictKind.status,
-              table: 'records',
-              mineRow: here,
-              theirRow: record,
-              recordId: id,
-              mine: mineStatus,
-              theirs: theirStatus,
-            ),
-          );
+          final VectorRelation? relation = _relation('records', here, record);
+          if (relation == VectorRelation.dominated) {
+            _advance('records', <String, Object?>{
+              ...here,
+              'status': theirStatus,
+              'rev': record['rev'],
+              'updated_at': record['updated_at'],
+              'updated_by_device': record['updated_by_device'],
+            });
+          } else if (relation != VectorRelation.equal &&
+              relation != VectorRelation.dominates) {
+            _raise(
+              _conflict(
+                ConflictKind.status,
+                table: 'records',
+                mineRow: here,
+                theirRow: record,
+                recordId: id,
+                mine: mineStatus,
+                theirs: theirStatus,
+              ),
+            );
+          }
         }
         continue;
       }
@@ -449,19 +582,24 @@ final class _Planner {
         _elsewhere += 1;
         continue;
       }
-      if (_tombstoned(incoming, 'records', id)) {
+      if (_tombstoned(incoming, 'records', id) ||
+          _tombstoned(local, 'records', id)) {
         continue;
       }
       final String? template = templates[record['template_id']];
       if (template == null) {
         continue;
       }
+      final Object? capturedVersion = record['template_version'];
+      final bool unknownCapture =
+          capturedVersion is int && capturedVersion == 0;
       _add('records', <String, Object?>{
         ...record,
         'project_id': target,
         'template_id': template,
-        if (template != record['template_id'] ||
-            record['template_version'] is! int)
+        if (!unknownCapture &&
+            ((target != source && template != record['template_id']) ||
+                capturedVersion is! int))
           'template_version': versions[template] ?? 1,
       });
       all.add(id);
@@ -487,6 +625,10 @@ final class _Planner {
       final Map<String, Object?>? here =
           byId[id] ?? byKey['$recordId/${value['field_key']}'];
       if (here == null) {
+        if (_tombstoned(local, 'record_fields', id) ||
+            _tombstoned(incoming, 'record_fields', id)) {
+          continue;
+        }
         if (_isElsewhere('record_fields', id)) {
           _elsewhere += 1;
           continue;
@@ -501,6 +643,24 @@ final class _Planner {
       final String mine = _effective(here);
       final String theirs = _effective(value);
       if (mine == theirs) {
+        continue;
+      }
+      final VectorRelation? relation = _relation('record_fields', here, value);
+      if (relation == VectorRelation.equal ||
+          relation == VectorRelation.dominates) {
+        _kept += 1;
+        continue;
+      }
+      if (relation == VectorRelation.dominated) {
+        _settled.add((
+          rowId: here['id']! as String,
+          fieldKey: here['field_key']! as String,
+          previous: mine,
+          value: theirs,
+          verified: _flag(value['verified']),
+          rule: SettlementRule.causalFastForward,
+        ));
+        _updatedRecords.add(recordId);
         continue;
       }
       switch (_settle(here, value, mine: mine, theirs: theirs)) {
@@ -609,6 +769,25 @@ final class _Planner {
       if (mineText == theirText) {
         continue;
       }
+      final VectorRelation? relation = _relation('captions', here, caption);
+      if (relation == VectorRelation.equal ||
+          relation == VectorRelation.dominates) {
+        _kept += 1;
+        continue;
+      }
+      if (relation == VectorRelation.dominated) {
+        _advance('captions', <String, Object?>{
+          ...here,
+          'text_refined': theirText,
+          'rev': caption['rev'],
+          'updated_at': caption['updated_at'],
+          'updated_by_device': caption['updated_by_device'],
+        });
+        if (_mineById('records').containsKey(caption['owner_id'])) {
+          _updatedRecords.add(caption['owner_id']! as String);
+        }
+        continue;
+      }
       if (theirText.isEmpty) {
         _kept += 1;
         continue;
@@ -659,9 +838,17 @@ final class _Planner {
       }
       final Map<String, Object?>? here = _mineById(type)[entity];
       if (here == null) {
+        _add('tombstones', tomb);
         continue;
       }
-      if (_at(here['updated_at']) <= _at(tomb['deleted_at'])) {
+      final VectorRelation? relation = _relation(type, here, <String, Object?>{
+        ...tomb,
+        'id': entity,
+      });
+      if (relation == VectorRelation.dominated ||
+          relation == VectorRelation.equal ||
+          (relation == null &&
+              _at(here['updated_at']) <= _at(tomb['deleted_at']))) {
         _add('tombstones', tomb);
         _deletions += 1;
         continue;
@@ -695,7 +882,14 @@ final class _Planner {
       if (theirs == null) {
         continue;
       }
-      if (_at(theirs['updated_at']) <= _at(tomb['deleted_at'])) {
+      final VectorRelation? relation = _relation(type, <String, Object?>{
+        ...tomb,
+        'id': entity,
+      }, theirs);
+      if (relation == VectorRelation.dominates ||
+          relation == VectorRelation.equal ||
+          (relation == null &&
+              _at(theirs['updated_at']) <= _at(tomb['deleted_at']))) {
         _kept += 1;
         continue;
       }
@@ -776,6 +970,45 @@ final class _Planner {
     }
     return '';
   }
+}
+
+Map<String, Map<String, int>> _clocks(
+  Map<String, List<Map<String, Object?>>> tables,
+) {
+  final Map<String, Map<String, int>> clocks = <String, Map<String, int>>{};
+  for (final Map<String, Object?> row
+      in tables['version_vectors'] ?? const <Map<String, Object?>>[]) {
+    (clocks['${row['entity_type']}/${row['entity_id']}'] ??=
+            <String, int>{})[row['device_id']! as String] =
+        row['seen_rev']! as int;
+  }
+  return clocks;
+}
+
+Map<String, String> _referenceValues(Object? encoded) {
+  final Object? decoded = encoded is String ? jsonDecode(encoded) : encoded;
+  if (decoded is! Map) return <String, String>{};
+  return <String, String>{
+    for (final MapEntry<Object?, Object?> entry in decoded.entries)
+      '${entry.key}': entry.value is String
+          ? entry.value! as String
+          : _canonicalJson(entry.value),
+  };
+}
+
+String _canonicalJson(Object? value) {
+  Object? ordered(Object? node) {
+    if (node is Map) {
+      final List<String> keys = node.keys.cast<String>().toList()..sort();
+      return <String, Object?>{
+        for (final String key in keys) key: ordered(node[key]),
+      };
+    }
+    if (node is List) return node.map(ordered).toList();
+    return node;
+  }
+
+  return jsonEncode(ordered(value));
 }
 
 /// The project columns a person would recognise as its details.

@@ -20,6 +20,8 @@ final class VerificationModeToggle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -27,8 +29,10 @@ final class VerificationModeToggle extends ConsumerWidget {
     final bool on = ref.watch(verificationSessionProvider);
     return AppSwitchTile(
       key: const ValueKey<String>('verification-mode'),
-      title: Copy.verificationModeTitle,
-      description: on ? Copy.verificationModeOn : Copy.verificationModeOff,
+      title: localCopy.verificationModeTitle,
+      description: on
+          ? localCopy.verificationModeOn
+          : localCopy.verificationModeOff,
       value: on,
       onChanged: (bool value) {
         final ValueChanged<bool>? changed = onChanged;

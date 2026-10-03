@@ -61,6 +61,8 @@ final class MergePreviewScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<MergeView?> value = ref.watch(
       mergeControllerProvider(projectId),
     );
@@ -79,15 +81,15 @@ final class MergePreviewScreen extends ConsumerWidget {
       },
       child: AppPage(
         key: const ValueKey<String>('route-project-merge'),
-        title: Copy.mergePackage,
+        title: localCopy.mergePackage,
         footer: view == null ? null : _footer(context, ref, view),
         body: AsyncValueView<MergeView?>(
           value: value,
           isEmpty: (MergeView? view) => view == null,
-          empty: () => const AppEmptyState(
+          empty: () => AppEmptyState(
             icon: AppIcons.import,
-            headline: Copy.mergeNoPackageHeadline,
-            message: Copy.mergeNoPackageMessage,
+            headline: Copy.of(context).mergeNoPackageHeadline,
+            message: Copy.of(context).mergeNoPackageMessage,
           ),
           onRetry: () => ref.invalidate(mergeControllerProvider(projectId)),
           data: (MergeView? view) =>
@@ -98,13 +100,15 @@ final class MergePreviewScreen extends ConsumerWidget {
   }
 
   Widget _footer(BuildContext context, WidgetRef ref, MergeView view) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final int open = view.unsettled.length;
-    final bool ready = view.report.canMerge && !view.plan.isEmpty;
+    final bool ready = !view.plan.isEmpty && (view.report.canMerge || open > 0);
     return Row(
       children: <Widget>[
         AppButton(
           key: cancelKey,
-          label: Copy.cancel,
+          label: localCopy.cancel,
           variant: AppButtonVariant.secondary,
           onPressed: view.applying ? null : () => context.pop(),
         ),
@@ -112,7 +116,9 @@ final class MergePreviewScreen extends ConsumerWidget {
         Expanded(
           child: AppPrimaryAction(
             key: applyKey,
-            label: open > 0 ? Copy.mergeSettleConflicts(open) : Copy.mergeApply,
+            label: open > 0
+                ? localCopy.mergeSettleConflicts(open)
+                : localCopy.mergeApply,
             busy: view.applying,
             onPressed: !ready
                 ? null
@@ -128,23 +134,30 @@ final class MergePreviewScreen extends ConsumerWidget {
   }
 
   Future<void> _apply(BuildContext context, WidgetRef ref) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String name = ref.read(currentOperatorProvider)?.name.trim() ?? '';
     final Result<MergeOutcome> merged = await ref
         .read(mergeControllerProvider(projectId).notifier)
-        .apply(chooser: name.isEmpty ? Copy.conflictThisDevice : name);
+        .apply(chooser: name.isEmpty ? localCopy.conflictThisDevice : name);
     if (!context.mounted) {
       return;
     }
     switch (merged) {
       case FailureResult<MergeOutcome>(:final Failure failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
       case Success<MergeOutcome>():
         // Leave first, then close the package, so the preview never shows
         // an empty state on its way out.
         final PackageImportController flow = ref.read(
           packageImportControllerProvider.notifier,
         );
-        showAppSnack(context, Copy.mergeDone, tone: SnackTone.success);
+        showAppSnack(context, localCopy.mergeDone, tone: SnackTone.success);
         context.go(RoutePaths.project(projectId));
         unawaited(Future<void>.microtask(flow.finish));
     }
@@ -159,6 +172,8 @@ class _Preview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final BundleManifest manifest = view.bundle.manifest;
     final Set<String> expanded = ref.watch(_expandedProvider(projectId));
     void toggle(String count) =>
@@ -181,14 +196,14 @@ class _Preview extends ConsumerWidget {
       children: <Widget>[
         AppListTile(
           title: manifest.projectName,
-          subtitle: Copy.importFrom(
+          subtitle: localCopy.importFrom(
             manifest.operatorName ?? manifest.sourceDeviceId,
             manifest.exportedAt,
           ),
           leading: const Icon(AppIcons.import),
         ),
         if (view.report.templates.isNotEmpty) ...<Widget>[
-          const AppSectionHeader(title: Copy.mergeTemplatesHeading),
+          AppSectionHeader(title: localCopy.mergeTemplatesHeading),
           for (final TemplateMatch match in view.report.templates)
             _TemplateRow(match: match),
         ],
@@ -196,13 +211,13 @@ class _Preview extends ConsumerWidget {
           AppListTile(
             key: const ValueKey<String>('merge-project-kept'),
             dense: true,
-            title: Copy.mergeProjectKept(view.plan.projectKept),
+            title: localCopy.mergeProjectKept(view.plan.projectKept),
           ),
         if (!view.report.canMerge)
-          const _Note(text: Copy.mergeBlocked, error: true)
+          _Note(text: localCopy.mergeBlocked, error: true)
         else if (view.plan.isEmpty)
-          const _Note(text: Copy.mergeNothing),
-        const AppSectionHeader(title: Copy.mergeCountsHeading),
+          _Note(text: localCopy.mergeNothing),
+        AppSectionHeader(title: localCopy.mergeCountsHeading),
         _Count(
           name: 'newRecords',
           n: counts.newRecords,
@@ -245,8 +260,8 @@ class _Preview extends ConsumerWidget {
         ),
         AppSwitchTile(
           key: MergePreviewScreen.duplicatesKey,
-          title: Copy.mergeCheckDuplicates,
-          description: Copy.mergeCheckDuplicatesHelper,
+          title: localCopy.mergeCheckDuplicates,
+          description: localCopy.mergeCheckDuplicatesHelper,
           value: view.checkDuplicates,
           enabled: !view.applying,
           onChanged: (bool on) => unawaited(controller.setCheckDuplicates(on)),
@@ -264,8 +279,8 @@ class _Preview extends ConsumerWidget {
                   dense: true,
                   title: mergeRecordLabel(view.bundle.tables, pair.incomingId),
                   subtitle: view.skipped.contains(pair.incomingId)
-                      ? Copy.duplicateSkipped
-                      : Copy.duplicateSignal(pair.signal.name),
+                      ? localCopy.duplicateSkipped
+                      : localCopy.duplicateSignal(pair.signal.name),
                   trailing: const Icon(AppIcons.open),
                   onTap: () => unawaited(
                     showDuplicatePairSheet(
@@ -292,6 +307,8 @@ class _TemplateRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final CompatibilityStatus status = match.blocks
         ? CompatibilityStatus.incompatible
         : match.issues.isEmpty
@@ -305,7 +322,7 @@ class _TemplateRow extends StatelessWidget {
           : <String>[
               for (final ({CompatibilityIssue issue, String field}) found
                   in match.issues)
-                Copy.compatibilityIssue(found.issue.name, found.field),
+                localCopy.compatibilityIssue(found.issue.name, found.field),
             ].join('\n'),
       status: compatibilityPill(status),
     );
@@ -329,7 +346,9 @@ class _Count extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String title = Copy.mergeCount(name, n);
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final String title = localCopy.mergeCount(name, n);
     if (children.isEmpty) {
       return AppListTile(
         key: ValueKey<String>('merge-count-$name'),
@@ -366,19 +385,27 @@ class _ConflictRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final ConflictChoice? choice = this.choice;
     return AppListTile(
       key: ValueKey<String>('merge-conflict-${conflict.id}'),
       dense: true,
-      title: Copy.mergeConflictLine(
+      title: localCopy.mergeConflictLine(
         conflict.recordLabel.isEmpty
-            ? Copy.mergeRecordUnnamed(conflict.recordId)
+            ? localCopy.mergeRecordUnnamed(conflict.recordId)
             : conflict.recordLabel,
-        Copy.conflictKind(conflict.kind.name, conflict.fieldLabel),
+        localCopy.conflictKind(conflict.kind.name, conflict.fieldLabel),
       ),
-      subtitle: choice == null
-          ? Copy.mergeConflictOpen
-          : Copy.mergeConflictChosen(incoming: choice == ConflictChoice.theirs),
+      subtitle: switch (choice) {
+        null => localCopy.mergeConflictOpen,
+        ConflictChoice.typed => localCopy.mergeConflictTyped,
+        ConflictChoice.later => localCopy.conflictDecideLater,
+        ConflictChoice.keepBoth => localCopy.duplicateKeepBoth,
+        _ => localCopy.mergeConflictChosen(
+          incoming: choice == ConflictChoice.theirs,
+        ),
+      },
       trailing: const Icon(AppIcons.open),
       onTap: () => unawaited(
         context.push(

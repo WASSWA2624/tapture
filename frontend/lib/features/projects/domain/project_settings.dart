@@ -125,6 +125,25 @@ final class ProjectSettings {
   /// the template question is asked once per place. Project-only.
   final Map<String, String>? templatePins;
 
+  /// The [templatePins] key for [context]: every level and value, in
+  /// level-key order. Null for an empty context, which has no place to pin
+  /// to. Capture and processing both read pins through this.
+  static String? templatePinKey(Map<String, String> context) {
+    if (context.isEmpty) {
+      return null;
+    }
+    final List<String> keys = context.keys.toList()..sort();
+    return <String>[
+      for (final String key in keys) '$key=${context[key]}',
+    ].join('|');
+  }
+
+  /// The template pinned for [context], or null.
+  String? templatePinFor(Map<String, String> context) {
+    final String? key = templatePinKey(context);
+    return key == null ? null : templatePins?[key];
+  }
+
   /// The validated object written onto the row. Unset keys are omitted so
   /// a later read can still fall back to the app store.
   Map<String, Object?> toJson() {

@@ -9,6 +9,12 @@ enum ConflictKind {
   /// A record's status.
   status,
 
+  /// Two versions or shapes of the same template.
+  template,
+
+  /// Different attributes for an existing reference key.
+  reference,
+
   /// Deleted on the other device, changed here after that.
   deletedThere,
 

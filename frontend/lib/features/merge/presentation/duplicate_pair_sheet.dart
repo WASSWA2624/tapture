@@ -33,9 +33,11 @@ Future<void> showDuplicatePairSheet(
   required String projectId,
   required PossibleDuplicate pair,
 }) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   return showAppSheet<void>(
     context,
-    title: Copy.duplicateTitle,
+    title: localCopy.duplicateTitle,
     builder: (BuildContext _) => _PairView(projectId: projectId, pair: pair),
   );
 }
@@ -48,6 +50,8 @@ class _PairView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final MergeView? view = ref
         .watch(mergeControllerProvider(projectId))
         .asData
@@ -69,17 +73,20 @@ class _PairView extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(Space.x4),
       children: <Widget>[
-        Text(Copy.duplicateSignal(pair.signal.name), style: AppText.bodyStrong),
+        Text(
+          localCopy.duplicateSignal(pair.signal.name),
+          style: AppText.bodyStrong,
+        ),
         const SizedBox(height: Space.x3),
         ResponsivePair(
           matchesHeights: true,
           start: _Side(
-            heading: Copy.duplicateIncoming,
+            heading: localCopy.duplicateIncoming,
             tables: view.bundle.tables,
             recordId: pair.incomingId,
           ),
           end: _Side(
-            heading: Copy.duplicateHere,
+            heading: localCopy.duplicateHere,
             tables: view.local,
             recordId: pair.localId,
           ),
@@ -90,7 +97,7 @@ class _PairView extends ConsumerWidget {
           matchesHeights: true,
           start: AppButton(
             key: duplicateKeepBothKey,
-            label: Copy.duplicateKeepBoth,
+            label: localCopy.duplicateKeepBoth,
             icon: skipped ? null : AppIcons.check,
             variant: AppButtonVariant.secondary,
             expand: true,
@@ -98,7 +105,7 @@ class _PairView extends ConsumerWidget {
           ),
           end: AppButton(
             key: duplicateSkipKey,
-            label: Copy.duplicateSkipIncoming,
+            label: localCopy.duplicateSkipIncoming,
             icon: skipped ? AppIcons.check : null,
             variant: AppButtonVariant.secondary,
             expand: true,
@@ -123,6 +130,8 @@ class _Side extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<Map<String, Object?>> values = <Map<String, Object?>>[
       for (final Map<String, Object?> row
           in tables['record_fields'] ?? const <Map<String, Object?>>[])
@@ -143,14 +152,14 @@ class _Side extends StatelessWidget {
           const SizedBox(height: Space.x2),
           for (final Map<String, Object?> value in values)
             Text(
-              Copy.duplicateField(
+              localCopy.duplicateField(
                 '${value['field_key']}',
                 '${value['value_final'] ?? value['value_refined'] ?? value['value_raw'] ?? ''}',
               ),
               style: AppText.body,
             ),
           const SizedBox(height: Space.x2),
-          Text(Copy.photosCount(photos), style: AppText.caption),
+          Text(localCopy.photosCount(photos), style: AppText.caption),
         ],
       ),
     );

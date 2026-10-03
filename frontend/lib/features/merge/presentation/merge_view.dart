@@ -17,6 +17,7 @@ final class MergeView {
     required this.plan,
     required this.local,
     this.choices = const <String, ConflictChoice>{},
+    this.typedValues = const <String, String>{},
     this.checkDuplicates = true,
     this.duplicates = const <PossibleDuplicate>[],
     this.skipped = const <String>{},
@@ -38,6 +39,9 @@ final class MergeView {
 
   /// Each settled conflict's choice, by [FieldConflict.id].
   final Map<String, ConflictChoice> choices;
+
+  /// Operator-entered replacements, kept separately from captured evidence.
+  final Map<String, String> typedValues;
 
   /// Whether incoming records are checked for possible duplicates.
   final bool checkDuplicates;
@@ -65,6 +69,7 @@ final class MergeView {
     CompatibilityReport? report,
     MergePlan? plan,
     Map<String, ConflictChoice>? choices,
+    Map<String, String>? typedValues,
     bool? checkDuplicates,
     List<PossibleDuplicate>? duplicates,
     Set<String>? skipped,
@@ -77,6 +82,7 @@ final class MergeView {
       plan: plan ?? this.plan,
       local: local,
       choices: choices ?? this.choices,
+      typedValues: typedValues ?? this.typedValues,
       checkDuplicates: checkDuplicates ?? this.checkDuplicates,
       duplicates: duplicates ?? this.duplicates,
       skipped: skipped ?? this.skipped,

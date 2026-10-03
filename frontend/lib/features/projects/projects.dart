@@ -9,7 +9,7 @@ export 'domain/project_openable_file_lookup.dart';
 export 'domain/project_repository.dart' show ProjectListRow;
 export 'domain/project_settings.dart';
 export 'domain/project_status.dart';
-export 'presentation/captured_items.dart' show capturedItemStatuses;
+export 'presentation/captured_records.dart' show capturedItemStatuses;
 export 'presentation/current_project.dart'
     show
         currentProjectDetailsProvider,
@@ -17,7 +17,6 @@ export 'presentation/current_project.dart'
         openProjectIdProvider,
         projectByIdProvider,
         projectListProvider,
-        projectNavCountProvider,
         projectSettingsStoreProvider;
 export 'presentation/project_list_actions.dart';
 export 'presentation/project_list_criteria.dart';
@@ -26,7 +25,7 @@ export 'presentation/project_list_filter.dart'
     show
         projectListFilteredProvider,
         projectListSearchQueryProvider,
-        projectListShowArchivedProvider;
+        showProjectListFilters;
 export 'presentation/project_list_view.dart';
 export 'presentation/project_open_externally_action.dart';
 export 'presentation/project_template_selection.dart';

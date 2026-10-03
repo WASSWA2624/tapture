@@ -9,6 +9,7 @@ export 'attendee.dart';
 export 'attendee_matching.dart';
 export 'decision.dart';
 export 'meeting.dart';
+export 'meeting_attachment.dart';
 export 'meeting_repository.dart';
 export 'meeting_transcription.dart';
 export 'minutes_refinement.dart';

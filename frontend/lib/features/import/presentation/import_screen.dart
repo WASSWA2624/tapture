@@ -1,131 +1,134 @@
-import 'package:flutter/widgets.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart' hide StepState;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/files/file_validation.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_progress_steps.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/merge/merge.dart' show startPackageImport;
+import 'package:tapture/features/projects/projects.dart'
+    show currentProjectProvider;
 
-/// One entry for every file the app can import (task 020).
+import '../domain/import_flow.dart';
+import 'import_controller.dart';
+
+/// The one entry for every file the app imports (task 020).
 ///
-/// The kind comes from the file gate, not from the extension alone. The
-/// screen explains each destination and opens the one that matches.
-final class ImportScreen extends StatelessWidget {
-  /// Creates the entry. Null [kind] with no [failure] is the empty state.
-  const ImportScreen({
-    this.kind,
-    this.loading = false,
-    this.failure,
-    this.onOpen,
-    super.key,
-  });
-
-  /// Kind the gate reported.
-  final ImportKind? kind;
-
-  /// Whether the file is still being checked.
-  final bool loading;
-
-  /// Why the file was refused.
-  final Failure? failure;
-
-  /// Opens the flow for the detected kind.
-  final ValueChanged<ImportFlow>? onOpen;
+/// One action picks a file; the gate checks it, its kind is detected from
+/// what the gate accepted and its own content, and the flow that owns that
+/// kind opens at once: a bundle the merge flow, a dataset the dataset
+/// importer, a template the template import, and a spreadsheet the purpose
+/// question. Each destination is explained in one line below. A refused
+/// file shows its reason here, before any flow starts.
+final class ImportScreen extends ConsumerWidget {
+  /// Creates the import page.
+  const ImportScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final Failure? failed = failure;
-    if (failed != null) {
-      return AppPage(
-        title: Copy.importTitle,
-        body: AppErrorState(failure: failed),
-      );
-    }
-    if (loading) {
-      return const AppPage(title: Copy.importTitle, body: SizedBox.shrink());
-    }
-    final ImportKind? detected = kind;
-    if (detected == null) {
-      return const AppPage(
-        title: Copy.importTitle,
-        body: AppEmptyState(
-          icon: AppIcons.import,
-          headline: Copy.importEmptyHeadline,
-          message: Copy.importEmptyMessage,
-        ),
-      );
-    }
-    final ImportFlow flow = _flow(detected);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final ImportView view = ref.watch(importControllerProvider);
+    final Failure? failure = view.failure;
+    void choose() => unawaited(chooseImportFile(context, ref));
     return AppPage(
       key: const ValueKey<String>('route-import'),
-      title: Copy.importTitle,
+      title: localCopy.importTitle,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const Text(
-            Copy.importBundleLine,
-            key: ValueKey<String>('import-line-bundle'),
-          ),
-          const Text(
-            Copy.importDatasetLine,
-            key: ValueKey<String>('import-line-dataset'),
-          ),
-          const Text(
-            Copy.importTemplateLine,
-            key: ValueKey<String>('import-line-template'),
-          ),
-          const Text(
-            Copy.importSheetLine,
-            key: ValueKey<String>('import-line-sheet'),
-          ),
-          AppButton(
-            key: ValueKey<String>('import-open-${flow.name}'),
-            label: _label(flow),
-            onPressed: flow == ImportFlow.refused
-                ? null
-                : () => onOpen?.call(flow),
-          ),
+          if (view.busy)
+            AppProgressSteps(
+              key: const ValueKey<String>('import-checking'),
+              steps: <ProgressStep>[
+                ProgressStep(
+                  label: localCopy.importCheckingFile,
+                  state: StepState.running,
+                ),
+              ],
+            )
+          else if (failure != null)
+            AppErrorState(failure: failure, onRetry: choose)
+          else
+            AppEmptyState(
+              icon: AppIcons.import,
+              headline: localCopy.importEmptyHeadline,
+              message: localCopy.importEmptyMessage,
+              actionLabel: localCopy.importChooseFile,
+              onAction: choose,
+            ),
+          AppSectionHeader(title: localCopy.importKindsTitle),
+          for (final _Kind kind in _kinds(localCopy))
+            AppListTile(
+              key: ValueKey<String>('import-kind-${kind.flow.name}'),
+              leading: Icon(kind.icon),
+              title: kind.title,
+              subtitle: kind.line,
+            ),
         ],
       ),
     );
   }
-
-  static ImportFlow _flow(ImportKind kind) {
-    return switch (kind) {
-      ImportKind.bundle => ImportFlow.bundle,
-      ImportKind.spreadsheet => ImportFlow.spreadsheet,
-      ImportKind.document => ImportFlow.template,
-      ImportKind.image || ImportKind.audio => ImportFlow.refused,
-    };
-  }
-
-  static String _label(ImportFlow flow) {
-    return switch (flow) {
-      ImportFlow.bundle => Copy.importOpenBundle,
-      ImportFlow.dataset => Copy.importOpenDataset,
-      ImportFlow.template => Copy.importOpenTemplate,
-      ImportFlow.spreadsheet => Copy.importOpenSheet,
-      ImportFlow.refused => Copy.importRefused,
-    };
-  }
 }
 
-/// Where a validated file goes. The screen applies this; it does not ask.
-enum ImportFlow {
-  /// The merge flow.
-  bundle,
-
-  /// A reference dataset.
-  dataset,
-
-  /// A template workbook.
-  template,
-
-  /// Rows, which still need a purpose.
-  spreadsheet,
-
-  /// A kind this screen does not import.
-  refused,
+/// Picks a file on the import page and opens the flow its kind belongs to.
+/// The page's action, and its retry after a refusal.
+Future<void> chooseImportFile(BuildContext context, WidgetRef ref) async {
+  final ImportDestination? next = await ref
+      .read(importControllerProvider.notifier)
+      .choose(projectId: ref.read(currentProjectProvider));
+  if (next == null || !context.mounted) {
+    return;
+  }
+  openImportDestination(context, ref, next);
 }
+
+/// Opens [next]: the merge flow for a bundle, else its location.
+void openImportDestination(
+  BuildContext context,
+  WidgetRef ref,
+  ImportDestination next,
+) {
+  final String? location = next.location;
+  if (next.flow == ImportFlow.bundle || location == null) {
+    unawaited(startPackageImport(context, ref, supplied: next.document));
+    return;
+  }
+  unawaited(context.push(location, extra: next.extra));
+}
+
+typedef _Kind = ({ImportFlow flow, IconData icon, String title, String line});
+
+List<_Kind> _kinds(LocalizedCopy copy) => <_Kind>[
+  (
+    flow: ImportFlow.bundle,
+    icon: AppIcons.merge,
+    title: copy.importKindBundle,
+    line: copy.importBundleLine,
+  ),
+  (
+    flow: ImportFlow.spreadsheet,
+    icon: AppIcons.columns,
+    title: copy.importKindSheet,
+    line: copy.importSheetLine,
+  ),
+  (
+    flow: ImportFlow.dataset,
+    icon: AppIcons.dataset,
+    title: copy.importKindDataset,
+    line: copy.importDatasetLine,
+  ),
+  (
+    flow: ImportFlow.template,
+    icon: AppIcons.template,
+    title: copy.importKindTemplate,
+    line: copy.importTemplateLine,
+  ),
+];

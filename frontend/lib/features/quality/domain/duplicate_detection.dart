@@ -1,6 +1,7 @@
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/hash/perceptual_hash.dart';
 import 'package:tapture/core/normalise/search_text.dart';
+import 'package:tapture/features/records/domain/domain.dart' show RecordEntry;
 
 import 'duplicate_candidate.dart';
 import 'duplicate_signal.dart';
@@ -12,21 +13,10 @@ import 'identity_hash.dart';
 /// Nothing here merges, discards or overrides a record. Callers run it off
 /// the save path, after the save has already been confirmed.
 abstract interface class DuplicateDetection {
-  /// Candidates for the record described here, strongest first.
-  ///
-  /// The caller passes the stored identity hash and the photo hashes. This
-  /// method never writes.
-  Future<List<DuplicateCandidate>> candidatesFor({
-    required String recordId,
-    required String identity,
-    required Set<String> photoHashes,
-    required Set<String> perceptualHashes,
-    required String? templateRowId,
-    required Map<String, String> context,
-    required String name,
-    required DateTime? capturedAt,
-    required List<DuplicateSubject> others,
-  });
+  /// The other live records of [record]'s project that may be the same
+  /// thing, strongest first. Reads the stored identity hash and photo
+  /// hashes; never writes.
+  Future<List<DuplicateCandidate>> candidatesFor(RecordEntry record);
 }
 
 /// Ranks [others] against the record described by the arguments.

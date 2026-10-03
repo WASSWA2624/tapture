@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -33,31 +35,35 @@ final class MergeHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppPage(
-        title: Copy.mergeHistoryTitle,
+        title: localCopy.mergeHistoryTitle,
         body: AppErrorState(failure: failed),
       );
     }
     if (loading) {
-      return const AppPage(
-        title: Copy.mergeHistoryTitle,
-        body: SizedBox.shrink(),
+      return AppPage(
+        title: localCopy.mergeHistoryTitle,
+        body: const SizedBox.shrink(),
       );
     }
     if (entries.isEmpty) {
-      return const AppPage(
-        title: Copy.mergeHistoryTitle,
+      return AppPage(
+        title: localCopy.mergeHistoryTitle,
         body: AppEmptyState(
           icon: AppIcons.history,
-          headline: Copy.mergeHistoryEmpty,
-          message: Copy.mergeHistoryEmptyMessage,
+          headline: localCopy.mergeHistoryEmpty,
+          message: localCopy.mergeHistoryEmptyMessage,
+          actionLabel: localCopy.importTitle,
+          onAction: () => context.go(RoutePaths.projectImport),
         ),
       );
     }
     return AppPage(
-      title: Copy.mergeHistoryTitle,
+      title: localCopy.mergeHistoryTitle,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -71,7 +77,7 @@ final class MergeHistoryScreen extends StatelessWidget {
             if (entry.undoUntil != null)
               AppButton(
                 key: ValueKey<String>('merge-undo-${entry.id}'),
-                label: Copy.mergeUndoUntil(entry.undoUntil!),
+                label: localCopy.mergeUndoUntil(entry.undoUntil!),
                 variant: AppButtonVariant.secondary,
                 onPressed: () => onUndo?.call(entry.id),
               ),

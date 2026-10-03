@@ -1,6 +1,6 @@
 import 'package:tapture/core/db/vector_relation.dart';
 
-import 'version_vectors.dart';
+import 'version_vector.dart';
 
 /// How a delete travels between devices without resurrecting a row (task 019).
 final class TombstoneMerge {

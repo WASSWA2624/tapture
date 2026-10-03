@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/processing.dart' as jobs;
@@ -167,6 +168,7 @@ final class ProcessingQueueWrites {
               ),
               attempts: const Value<int>(0),
               lastError: const Value<String?>(null),
+              lastErrorMessage: const Value<String?>(null),
               queuedAt: Value<DateTime>(now),
               startedAt: const Value<DateTime?>(null),
               finishedAt: const Value<DateTime?>(null),
@@ -295,6 +297,7 @@ final class ProcessingQueueWrites {
           finishedAt: Value<DateTime>(now),
           leaseExpiresAt: const Value<DateTime?>(null),
           lastError: const Value<String?>(null),
+          lastErrorMessage: const Value<String?>(null),
         ),
       );
       await _auditRun(row, _runCompleted);
@@ -311,6 +314,7 @@ final class ProcessingQueueWrites {
     String jobId,
     String reason, {
     required bool permanent,
+    LocalizedMessage? localizedReason,
   }) {
     return runInTransaction(_db, () async {
       final sqlite.ProcessingJobRow? row = await _one(jobId);
@@ -332,6 +336,11 @@ final class ProcessingQueueWrites {
           ),
           attempts: Value<int>(attempts),
           lastError: Value<String>(reason),
+          lastErrorMessage: Value<String?>(
+            localizedReason == null
+                ? null
+                : jsonEncode(localizedReason.toJson()),
+          ),
           startedAt: Value<DateTime?>(
             stop ? null : now.add(JobRetry.backoffFor(attempts)),
           ),
@@ -392,15 +401,17 @@ final class ProcessingQueueWrites {
       await _write(
         row,
         _clock.nowUtc(),
-        const sqlite.ProcessingCompanion(
-          status: Value<jobs.ProcessingJobStatus>(
+        sqlite.ProcessingCompanion(
+          status: const Value<jobs.ProcessingJobStatus>(
             jobs.ProcessingJobStatus.queued,
           ),
-          attempts: Value<int>(0),
-          lastError: Value<String?>(null),
-          startedAt: Value<DateTime?>(null),
-          finishedAt: Value<DateTime?>(null),
-          leaseExpiresAt: Value<DateTime?>(null),
+          attempts: const Value<int>(0),
+          lastError: const Value<String?>(null),
+          lastErrorMessage: const Value<String?>(null),
+          startedAt: const Value<DateTime?>(null),
+          finishedAt: const Value<DateTime?>(null),
+          leaseExpiresAt: const Value<DateTime?>(null),
+          requestGeneration: Value<int>(row.requestGeneration + 1),
         ),
       );
       await _moveRecord(

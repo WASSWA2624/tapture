@@ -24,9 +24,11 @@ class ProjectArchiveAction extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool archived = project.status == ProjectStatus.archived;
     return AppButton(
-      label: archived ? Copy.projectUnarchive : Copy.projectArchive,
+      label: archived ? localCopy.projectUnarchive : localCopy.projectArchive,
       variant: AppButtonVariant.secondary,
       onPressed: () => apply(ref, project),
     );

@@ -37,14 +37,7 @@ final class TemplateChoiceWriter {
   /// The pin key for a record's stored context JSON: every level and value,
   /// in a stable order. Null when the record has no context to pin to.
   static String? pinKeyFor(String contextJson) {
-    final Map<String, String> context = StageSupport.stringMap(contextJson);
-    if (context.isEmpty) {
-      return null;
-    }
-    final List<String> keys = context.keys.toList()..sort();
-    return <String>[
-      for (final String key in keys) '$key=${context[key]}',
-    ].join('|');
+    return ProjectSettings.templatePinKey(StageSupport.stringMap(contextJson));
   }
 
   /// The template [project] has pinned for [pinKey], or null.

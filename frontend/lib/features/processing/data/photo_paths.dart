@@ -8,6 +8,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/compressed_copy.dart';
 import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
+import 'package:tapture/core/files/photo_privacy_service.dart';
 import 'package:tapture/core/files/storage_root.dart';
 
 import 'record_bundle.dart';
@@ -23,6 +24,8 @@ final class PhotoPaths {
     required StorageRoot storageRoot,
     FileReader? files,
     FileWriter? writer,
+    this._privacy,
+    this._blurFaces,
     this.isBrowser = kIsWeb,
   }) : _storageRoot = storageRoot,
        _files = files ?? FileReader(storageRoot: storageRoot),
@@ -35,6 +38,8 @@ final class PhotoPaths {
   final StorageRoot _storageRoot;
   final FileReader _files;
   final CompressedCopy _compressed;
+  final PhotoPrivacyService? _privacy;
+  final bool Function()? _blurFaces;
 
   /// Browser paths address the project blob store rather than a native file.
   final bool isBrowser;
@@ -64,13 +69,54 @@ final class PhotoPaths {
     Photo photo, {
     CancellationToken? cancel,
   }) async {
-    return StageSupport.unwrap(
+    final String compressed = StageSupport.unwrap(
       await _compressed.reduceStored(
         sourceRelative(bundle, photo),
         cancel: cancel,
       ),
     ).relativePath;
+    final PhotoPrivacyService? privacy = _privacy;
+    if (privacy == null) return compressed;
+    return StageSupport.unwrap(
+      await privacy.prepare(
+        photo.id,
+        compressed,
+        cancel: cancel ?? CancellationToken(),
+        blurFaces: _blurFaces?.call() ?? false,
+      ),
+    ).path;
   }
+
+  /// Privacy-specific cache identity. A policy change cannot reuse text that
+  /// was read from the clear original or a prior set of hidden areas.
+  Future<String> ocrContentHash(
+    RecordBundle bundle,
+    Photo photo, {
+    CancellationToken? cancel,
+  }) async {
+    final PhotoPrivacyService? privacy = _privacy;
+    if (privacy == null ||
+        !StageSupport.unwrap(
+          await privacy.requiresProtection(
+            photo.id,
+            blurFaces: _blurFaces?.call() ?? false,
+          ),
+        )) {
+      return photo.sha256;
+    }
+    final String path = await compressedRelative(bundle, photo, cancel: cancel);
+    return path.startsWith('.cache/privacy/')
+        ? path.split('/').last.split('.').first
+        : photo.sha256;
+  }
+
+  /// Cheap durable policy guard around every provider call, including repair.
+  Future<String> privacyRevision(RecordBundle bundle) async => <String>[
+    (_blurFaces?.call() ?? false).toString(),
+    if (_privacy case final PhotoPrivacyService privacy)
+      for (final Photo photo in bundle.photos)
+        StageSupport.unwrap(await privacy.revision(photo.id)),
+  ].join('|');
 
   /// The storage root on this device.
   Future<Directory> root() async {

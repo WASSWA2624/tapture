@@ -38,6 +38,8 @@ final class AttendeeEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -45,9 +47,9 @@ final class AttendeeEditor extends StatelessWidget {
     if (people.isEmpty) {
       return AppEmptyState(
         icon: AppIcons.identity,
-        headline: Copy.meetingAttendeesEmpty,
-        message: Copy.meetingAttendeesEmptyMessage,
-        actionLabel: Copy.meetingAddAttendee,
+        headline: localCopy.meetingAttendeesEmpty,
+        message: localCopy.meetingAttendeesEmptyMessage,
+        actionLabel: localCopy.meetingAddAttendee,
         onAction: onAdd,
       );
     }
@@ -58,13 +60,13 @@ final class AttendeeEditor extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
-          Copy.meetingAttendanceCount(present),
+          localCopy.meetingAttendanceCount(present),
           key: const ValueKey<String>('attendee-count'),
         ),
         for (final Attendee person in people) _row(context, person),
         AppButton(
           key: const ValueKey<String>('attendee-add'),
-          label: Copy.meetingAddAttendee,
+          label: localCopy.meetingAddAttendee,
           variant: AppButtonVariant.secondary,
           onPressed: onAdd,
         ),
@@ -73,6 +75,8 @@ final class AttendeeEditor extends StatelessWidget {
   }
 
   Widget _row(BuildContext context, Attendee person) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool linked = person.staffId != null;
     final bool offered =
         !linked && (person.suggestedStaffId?.isNotEmpty ?? false);
@@ -83,30 +87,30 @@ final class AttendeeEditor extends StatelessWidget {
         children: <Widget>[
           AppTextField(
             key: ValueKey<String>('attendee-name-${person.id}'),
-            label: Copy.meetingAttendeeName,
+            label: localCopy.meetingAttendeeName,
             controller: TextEditingController(text: person.name),
             onChanged: (String text) => _replace(person.copyWith(name: text)),
           ),
           AppTextField(
-            label: Copy.meetingAttendeeRole,
+            label: localCopy.meetingAttendeeRole,
             controller: TextEditingController(text: person.title),
             onChanged: (String text) => _replace(person.copyWith(title: text)),
           ),
           AppTextField(
-            label: Copy.meetingOrganisation,
+            label: localCopy.meetingOrganisation,
             controller: TextEditingController(text: person.organisation),
             onChanged: (String text) =>
                 _replace(person.copyWith(organisation: text)),
           ),
           AppTextField(
-            label: Copy.meetingContact,
+            label: localCopy.meetingContact,
             controller: TextEditingController(text: person.contact),
             onChanged: (String text) =>
                 _replace(person.copyWith(contact: text)),
           ),
           AppButton(
             key: ValueKey<String>('attendee-present-${person.id}'),
-            label: Copy.meetingPresent,
+            label: localCopy.meetingPresent,
             variant: person.status == AttendanceStatus.present
                 ? AppButtonVariant.primary
                 : AppButtonVariant.secondary,
@@ -115,7 +119,7 @@ final class AttendeeEditor extends StatelessWidget {
           ),
           AppButton(
             key: ValueKey<String>('attendee-apology-${person.id}'),
-            label: Copy.meetingApology,
+            label: localCopy.meetingApology,
             variant: person.status == AttendanceStatus.apology
                 ? AppButtonVariant.primary
                 : AppButtonVariant.secondary,
@@ -125,7 +129,7 @@ final class AttendeeEditor extends StatelessWidget {
           if (offered)
             AppButton(
               key: ValueKey<String>('attendee-link-${person.id}'),
-              label: Copy.meetingAcceptStaff,
+              label: localCopy.meetingAcceptStaff,
               onPressed: () => _replace(
                 person.copyWith(
                   staffId: person.suggestedStaffId,
@@ -139,7 +143,7 @@ final class AttendeeEditor extends StatelessWidget {
               key: ValueKey<String>('attendee-staff-${person.id}'),
             ),
           AppButton(
-            label: Copy.meetingRemove,
+            label: localCopy.meetingRemove,
             variant: AppButtonVariant.secondary,
             onPressed: () => unawaited(_remove(context, person.id)),
           ),
@@ -156,11 +160,13 @@ final class AttendeeEditor extends StatelessWidget {
   }
 
   Future<void> _remove(BuildContext context, String id) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.meetingRemoveTitle,
-      message: Copy.meetingRemoveMessage,
-      confirmLabel: Copy.meetingRemoveConfirm,
+      title: localCopy.meetingRemoveTitle,
+      message: localCopy.meetingRemoveMessage,
+      confirmLabel: localCopy.meetingRemoveConfirm,
       destructive: true,
     );
     if (!confirmed) {

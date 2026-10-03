@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' show AppDatabase;
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -116,7 +117,7 @@ final class RecordRepositoryImpl implements RecordRepository {
         final Result<RecordEntry?> read = await _queries.byId(id);
         return read.flatMap(
           (RecordEntry? entry) => entry == null
-              ? const FailureResult<RecordEntry>(_savedButUnread)
+              ? FailureResult<RecordEntry>(_savedButUnread)
               : Success<RecordEntry>(entry),
         );
     }
@@ -215,7 +216,7 @@ final class _EmptyRecordRepository implements RecordRepository {
 
   @override
   Future<Result<RecordEntry>> save(RecordDraft draft) async {
-    return const FailureResult<RecordEntry>(_unavailable);
+    return FailureResult<RecordEntry>(_unavailable);
   }
 
   @override
@@ -224,7 +225,7 @@ final class _EmptyRecordRepository implements RecordRepository {
     RecordStatus to, {
     String? reason,
   }) async {
-    return const FailureResult<void>(_unavailable);
+    return FailureResult<void>(_unavailable);
   }
 
   @override
@@ -232,7 +233,7 @@ final class _EmptyRecordRepository implements RecordRepository {
     String id,
     List<RecordValueEdit> edits,
   ) async {
-    return const FailureResult<void>(_unavailable);
+    return FailureResult<void>(_unavailable);
   }
 
   @override
@@ -240,35 +241,35 @@ final class _EmptyRecordRepository implements RecordRepository {
     String id,
     String templateId,
   ) async {
-    return const FailureResult<TemplateChangePlan>(_unavailable);
+    return FailureResult<TemplateChangePlan>(_unavailable);
   }
 
   @override
   Future<Result<void>> changeTemplate(String id, String templateId) async {
-    return const FailureResult<void>(_unavailable);
+    return FailureResult<void>(_unavailable);
   }
 
   @override
   Future<Result<void>> delete(String id, {required String reason}) async {
-    return const FailureResult<void>(_unavailable);
+    return FailureResult<void>(_unavailable);
   }
 
   @override
   Future<Result<void>> restore(String id) async {
-    return const FailureResult<void>(_unavailable);
+    return FailureResult<void>(_unavailable);
   }
 }
 
 /// Every write and template-change plan on the empty stand-in: the records
 /// store is not wired to this device's database.
-const StorageFailure _unavailable = StorageFailure(
-  message: 'Records are not available yet.',
-  recoveryAction: 'Restart the app and try again.',
+final StorageFailure _unavailable = StorageFailure(
+  localizedMessage: Copy.messages.failureRecordsAreNotAvailableYet,
+  localizedRecovery: Copy.messages.failureRestartTheAppAndTryAgain,
 );
 
 /// A save that committed but whose record could not be read back: only a
 /// concurrent purge of the new record between the two calls can cause it.
-const StorageFailure _savedButUnread = StorageFailure(
-  message: 'The record was saved but could not be opened.',
-  recoveryAction: 'Open it from the records list.',
+final StorageFailure _savedButUnread = StorageFailure(
+  localizedMessage: Copy.messages.failureTheRecordWasSavedButCouldNot,
+  localizedRecovery: Copy.messages.failureOpenItFromTheRecordsList,
 );

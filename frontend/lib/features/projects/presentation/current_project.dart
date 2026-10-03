@@ -7,7 +7,6 @@ import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 import 'project_list_criteria.dart';
 import 'project_list_criteria_controller.dart';
-import 'project_list_filter.dart';
 
 /// The single open-project id. Persists the choice, restores it on the
 /// next launch, and is the source every project-scoped route reads
@@ -116,45 +115,22 @@ final NotifierProvider<CurrentProject, String?> openProjectIdProvider =
     currentProjectProvider;
 
 /// Active projects with counts for the landing list. Kept alive: the
-/// status line and the list both watch it (FE-STATE-09). Archived rows
-/// appear only when [projectListShowArchivedProvider] is on.
+/// status line and the list both watch it (FE-STATE-09). Archived rows are
+/// read only when the list's status filter asks for them, or lists every
+/// status.
 final StreamProvider<List<ProjectListRow>> projectListProvider =
     StreamProvider<List<ProjectListRow>>((Ref ref) {
-      final bool includeArchived = ref.watch(projectListShowArchivedProvider);
-      final ProjectListCriteria criteria = ref.watch(
-        projectListCriteriaProvider,
+      final bool includeArchived = ref.watch(
+        projectListCriteriaProvider.select(
+          (ProjectListCriteria criteria) =>
+              criteria.statuses.isEmpty ||
+              criteria.statuses.contains(ProjectStatus.archived),
+        ),
       );
       return ref
           .watch(projectRepositoryProvider)
-          .watchList(
-            includeArchived:
-                includeArchived ||
-                criteria.statuses.contains(ProjectStatus.archived),
-          );
+          .watchList(includeArchived: includeArchived);
     }, retry: (int _, Object _) => null);
-
-/// How many active projects the Projects destination opens onto.
-///
-/// Derived from [projectListProvider] so the badge does not open a
-/// second watch (FE-STATE-06). Archived rows are omitted even when the
-/// landing list is showing them, so the number always matches the
-/// default destination list.
-final Provider<int> projectNavCountProvider = Provider<int>((Ref ref) {
-  return ref
-      .watch(projectListProvider)
-      .maybeWhen(
-        data: (List<ProjectListRow> rows) {
-          int count = 0;
-          for (final ProjectListRow row in rows) {
-            if (row.project.status == ProjectStatus.active) {
-              count += 1;
-            }
-          }
-          return count;
-        },
-        orElse: () => 0,
-      );
-});
 
 /// One project by id, archived ones included, or null once it is gone.
 ///
@@ -177,9 +153,11 @@ final projectByIdProvider = StreamProvider.autoDispose.family<Project?, String>(
   retry: (int _, Object _) => null,
 );
 
-/// The open [Project], or null when none is open or the list has not
-/// resolved it yet. Derived from [currentProjectProvider] and
-/// [projectListProvider]; not a second stored copy (FE-STATE-06).
+/// The open [Project], or null when none is open or it has not resolved
+/// yet. Derived from [currentProjectProvider] and [projectByIdProvider], so
+/// an open archived project keeps its home, its settings and its overrides
+/// whatever the landing list is filtering; not a second stored copy
+/// (FE-STATE-06).
 final Provider<Project?> currentProjectDetailsProvider = Provider<Project?>((
   Ref ref,
 ) {
@@ -187,16 +165,5 @@ final Provider<Project?> currentProjectDetailsProvider = Provider<Project?>((
   if (id == null) {
     return null;
   }
-  final AsyncValue<List<ProjectListRow>> list = ref.watch(projectListProvider);
-  return list.maybeWhen(
-    data: (List<ProjectListRow> rows) {
-      for (final ProjectListRow row in rows) {
-        if (row.project.id == id) {
-          return row.project;
-        }
-      }
-      return null;
-    },
-    orElse: () => null,
-  );
+  return ref.watch(projectByIdProvider(id)).asData?.value;
 });

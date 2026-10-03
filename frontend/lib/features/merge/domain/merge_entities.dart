@@ -1,6 +1,6 @@
 import 'package:tapture/core/db/vector_relation.dart';
 
-import 'version_vectors.dart';
+import 'version_vector.dart';
 
 /// Classifies each entity from its version vectors (task 019).
 ///

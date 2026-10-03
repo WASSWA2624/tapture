@@ -33,6 +33,8 @@ class ExportSummaryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String locale = Localizations.localeOf(context).toString();
     final DateTime? first = summary.firstCapturedAt;
     final DateTime? last = summary.lastCapturedAt;
@@ -40,47 +42,63 @@ class ExportSummaryView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const AppSectionHeader(title: Copy.exportSectionProject),
+        AppSectionHeader(title: localCopy.exportSectionProject),
         Text(
           summary.projectName,
           style: AppText.title.copyWith(color: context.colors.onSurface),
         ),
         const SizedBox(height: Space.x2),
-        _row(AppIcons.records, Copy.recordsCount(summary.records)),
-        _row(AppIcons.photoLibrary, Copy.capturePhotoCount(summary.photos)),
+        _row(AppIcons.records, localCopy.recordsCount(summary.records)),
+        _row(
+          AppIcons.photoLibrary,
+          localCopy.capturePhotoCount(summary.photos),
+        ),
         if (summary.audioClips > 0)
-          _row(AppIcons.recordAudio, Copy.exportAudioClips(summary.audioClips)),
+          _row(
+            AppIcons.recordAudio,
+            localCopy.exportAudioClips(summary.audioClips),
+          ),
         if (first != null && last != null)
           _row(
             AppIcons.history,
-            Copy.exportCapturedBetween(
+            localCopy.exportCapturedBetween(
               DateFormat.yMMMd(locale).format(first.toLocal()),
               DateFormat.yMMMd(locale).format(last.toLocal()),
             ),
           ),
         const SizedBox(height: Space.x4),
-        const AppSectionHeader(title: Copy.exportSectionRecords),
-        _row(AppIcons.queued, Copy.exportUnprocessedCount(summary.unprocessed)),
-        _row(AppIcons.review, Copy.exportNeedsReviewCount(summary.needsReview)),
-        _row(AppIcons.verified, Copy.exportApprovedCount(summary.approved)),
+        AppSectionHeader(title: localCopy.exportSectionRecords),
+        _row(
+          AppIcons.queued,
+          localCopy.exportUnprocessedCount(summary.unprocessed),
+        ),
+        _row(
+          AppIcons.review,
+          localCopy.exportNeedsReviewCount(summary.needsReview),
+        ),
+        _row(
+          AppIcons.verified,
+          localCopy.exportApprovedCount(summary.approved),
+        ),
         if (summary.templates.isNotEmpty) ...<Widget>[
           const SizedBox(height: Space.x4),
-          const AppSectionHeader(title: Copy.exportSectionTemplates),
+          AppSectionHeader(title: localCopy.exportSectionTemplates),
           for (final ExportTemplateCount template in summary.templates)
             AppListTile(
               title: template.name,
-              subtitle: Copy.recordsCount(template.records),
+              subtitle: localCopy.recordsCount(template.records),
               leading: const Icon(AppIcons.template),
               dense: true,
             ),
         ],
         const SizedBox(height: Space.x4),
-        const AppSectionHeader(title: Copy.exportSectionFile),
-        _row(AppIcons.export, Copy.exportFileFormat),
-        _row(AppIcons.columns, Copy.exportFileColumns),
+        AppSectionHeader(title: localCopy.exportSectionFile),
+        _row(AppIcons.export, localCopy.exportFileFormat),
+        _row(AppIcons.columns, localCopy.exportFileColumns),
         if (estimatedBytes case final int bytes)
-          _row(AppIcons.save, Copy.exportPackageSize(bytes)),
-        if (place != null) _row(AppIcons.folder, Copy.exportSavedTo(place)),
+          _row(AppIcons.save, localCopy.exportPackageSize(bytes)),
+        if (place != null)
+          _row(AppIcons.folder, localCopy.exportSavedTo(place)),
       ],
     );
   }

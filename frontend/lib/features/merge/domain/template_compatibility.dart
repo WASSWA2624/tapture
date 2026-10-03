@@ -2,6 +2,7 @@ import 'package:tapture/core/bundle/template_key.dart';
 
 import 'compatibility_issue.dart';
 import 'compatibility_report.dart';
+import 'merge_templates.dart';
 import 'template_match.dart';
 
 /// Decides whether a package's templates can take their records into a
@@ -21,7 +22,20 @@ abstract final class TemplateCompatibility {
     required Map<String, List<Map<String, Object?>>> incoming,
     required Map<String, List<Map<String, Object?>>> local,
     required bool sameProject,
+    Set<String> resolvedTemplateVersions = const <String>{},
   }) {
+    if (sameProject) {
+      resolvedTemplateVersions = <String>{
+        ...resolvedTemplateVersions,
+        for (final Map<String, Object?> peer in _rows(incoming, 'templates'))
+          if (_rows(local, 'templates').any(
+            (Map<String, Object?> here) =>
+                here['id'] == peer['id'] &&
+                MergeTemplates.remembersVersion(peer, incoming, here),
+          ))
+            peer['id']! as String,
+      };
+    }
     final Map<String, String> templateOfRecord = <String, String>{
       for (final Map<String, Object?> record in _rows(incoming, 'records'))
         record['id']! as String: record['template_id']! as String,
@@ -36,9 +50,30 @@ abstract final class TemplateCompatibility {
       }
     }
     final Set<String> used = templateOfRecord.values.toSet();
-    final List<Map<String, Object?>> localTemplates = _rows(local, 'templates');
-    final Map<String, List<Map<String, Object?>>> localFields =
-        _fieldsByTemplate(_rows(local, 'template_fields'));
+    final List<Map<String, Object?>> localTemplates = <Map<String, Object?>>[
+      for (final Map<String, Object?> template in _rows(local, 'templates'))
+        if (!sameProject || !resolvedTemplateVersions.contains(template['id']))
+          template,
+      if (sameProject)
+        for (final Map<String, Object?> template in _rows(
+          incoming,
+          'templates',
+        ))
+          if (resolvedTemplateVersions.contains(template['id'])) template,
+    ];
+    final Map<String, List<Map<String, Object?>>>
+    localFields = _fieldsByTemplate(<Map<String, Object?>>[
+      for (final Map<String, Object?> field in _rows(local, 'template_fields'))
+        if (!sameProject ||
+            !resolvedTemplateVersions.contains(field['template_id']))
+          field,
+      if (sameProject)
+        for (final Map<String, Object?> field in _rows(
+          incoming,
+          'template_fields',
+        ))
+          if (resolvedTemplateVersions.contains(field['template_id'])) field,
+    ]);
     final Map<String, List<Map<String, Object?>>> incomingFields =
         _fieldsByTemplate(_rows(incoming, 'template_fields'));
     return CompatibilityReport(<TemplateMatch>[
@@ -51,6 +86,10 @@ abstract final class TemplateCompatibility {
             localTemplates: localTemplates,
             localFields: localFields,
             sameProject: sameProject,
+            preferredLocalId: sameProject
+                ? (MergeTemplates.copyFor(template, incoming, local)?['id']
+                      as String?)
+                : null,
           ),
     ]);
   }
@@ -62,13 +101,14 @@ abstract final class TemplateCompatibility {
     required List<Map<String, Object?>> localTemplates,
     required Map<String, List<Map<String, Object?>>> localFields,
     required bool sameProject,
+    String? preferredLocalId,
   }) {
     final String id = template['id']! as String;
     final String key = templateKeyOf(template);
     final String name = (template['name'] as String?) ?? key;
     Map<String, Object?>? chosen;
     for (final Map<String, Object?> candidate in localTemplates) {
-      if (candidate['id'] == id) {
+      if (candidate['id'] == (preferredLocalId ?? id)) {
         chosen = candidate;
       }
     }

@@ -1,3 +1,5 @@
+import 'package:tapture/core/copy/localized_message.dart';
+
 /// One unit of on-device or online processing for a single record.
 ///
 /// [stage] is the last stage marked complete. A resume skips every stage up
@@ -9,8 +11,10 @@ final class ProcessingJob {
     required this.recordId,
     this.stage = '',
     this.attemptCount = 0,
+    this.requestGeneration = 0,
     this.status = JobStatus.queued,
     this.lastError,
+    this.localizedLastError,
     this.leaseExpiresAt,
     this.permanent = false,
     this.skipReason,
@@ -34,11 +38,17 @@ final class ProcessingJob {
   /// How many attempts have been spent, including the one in progress.
   final int attemptCount;
 
+  /// Durable operator retry generation; crash resumes retain this value.
+  final int requestGeneration;
+
   /// queued, running, completed or failed.
   final JobStatus status;
 
-  /// Failure or cap message, shown verbatim on the queue.
+  /// Stable English failure or cap text retained for auditing.
   final String? lastError;
+
+  /// Semantic failure or cap message rendered in the widget's current locale.
+  final LocalizedMessage? localizedLastError;
 
   /// When the current claim stops being owned by its runner.
   final DateTime? leaseExpiresAt;
@@ -95,8 +105,10 @@ final class ProcessingJob {
     String? recordId,
     String? stage,
     int? attemptCount,
+    int? requestGeneration,
     JobStatus? status,
     String? lastError,
+    LocalizedMessage? localizedLastError,
     bool clearError = false,
     DateTime? leaseExpiresAt,
     bool clearLease = false,
@@ -117,8 +129,13 @@ final class ProcessingJob {
       recordId: recordId ?? this.recordId,
       stage: stage ?? this.stage,
       attemptCount: attemptCount ?? this.attemptCount,
+      requestGeneration: requestGeneration ?? this.requestGeneration,
       status: status ?? this.status,
       lastError: clearError ? null : (lastError ?? this.lastError),
+      localizedLastError: clearError
+          ? null
+          : (localizedLastError ??
+                (lastError == null ? this.localizedLastError : null)),
       leaseExpiresAt: clearLease
           ? null
           : (leaseExpiresAt ?? this.leaseExpiresAt),

@@ -37,6 +37,8 @@ final class BundleScopeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -45,10 +47,10 @@ final class BundleScopeSection extends StatelessWidget {
       return const SizedBox.shrink();
     }
     if (selected == null && sizeLabel == null) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: AppIcons.export,
-        headline: Copy.bundleScope,
-        message: Copy.bundleScopeData,
+        headline: localCopy.bundleScope,
+        message: localCopy.bundleScopeData,
       );
     }
     return Column(
@@ -57,7 +59,7 @@ final class BundleScopeSection extends StatelessWidget {
         for (final BundleScopeKind kind in BundleScopeKind.values)
           AppButton(
             key: ValueKey<String>('bundle-scope-${kind.name}'),
-            label: _label(kind),
+            label: _label(context, kind),
             variant: kind == selected
                 ? AppButtonVariant.primary
                 : AppButtonVariant.secondary,
@@ -65,20 +67,20 @@ final class BundleScopeSection extends StatelessWidget {
           ),
         if (sizeLabel != null)
           Text(
-            Copy.bundleSize(sizeLabel!),
+            localCopy.bundleSize(sizeLabel!),
             key: const ValueKey<String>('bundle-size'),
           ),
       ],
     );
   }
 
-  static String _label(BundleScopeKind kind) {
+  static String _label(BuildContext context, BundleScopeKind kind) {
     return switch (kind) {
-      BundleScopeKind.full => Copy.bundleScopeFull,
-      BundleScopeKind.dateRange => Copy.bundleScopeDates,
-      BundleScopeKind.context => Copy.bundleScopeContext,
-      BundleScopeKind.approved => Copy.bundleScopeApproved,
-      BundleScopeKind.withoutPhotos => Copy.bundleScopeData,
+      BundleScopeKind.full => Copy.of(context).bundleScopeFull,
+      BundleScopeKind.dateRange => Copy.of(context).bundleScopeDates,
+      BundleScopeKind.context => Copy.of(context).bundleScopeContext,
+      BundleScopeKind.approved => Copy.of(context).bundleScopeApproved,
+      BundleScopeKind.withoutPhotos => Copy.of(context).bundleScopeData,
     };
   }
 }

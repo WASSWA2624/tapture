@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 
@@ -20,8 +21,10 @@ class ProjectDuplicateAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppButton(
-      label: Copy.projectsDuplicate,
+      label: localCopy.projectsDuplicate,
       variant: AppButtonVariant.secondary,
       onPressed: () =>
           open(context, sourceId: sourceId, sourceName: sourceName),
@@ -34,21 +37,16 @@ class ProjectDuplicateAction extends StatelessWidget {
     required String sourceId,
     required String sourceName,
   }) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     context.go(
       Uri(
-        path: '$_projectsRoot/$_newSegment',
+        path: RoutePaths.projectCreate,
         queryParameters: <String, String>{
-          _sourceQuery: sourceId,
-          _nameQuery: Copy.projectCopyName(sourceName),
+          RoutePaths.sourceQuery: sourceId,
+          RoutePaths.nameQuery: localCopy.projectCopyName(sourceName),
         },
       ).toString(),
     );
   }
 }
-
-/// Must match [AppRoutes.projects], [AppRoutes.sourceQuery] and
-/// [AppRoutes.nameQuery]. This file cannot import `router.dart`.
-const String _projectsRoot = '/projects';
-const String _newSegment = 'new';
-const String _sourceQuery = 'source';
-const String _nameQuery = 'name';

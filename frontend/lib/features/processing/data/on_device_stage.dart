@@ -37,13 +37,20 @@ final class OnDeviceStage {
       final String relative =
           '${await _paths.compressedRelative(bundle, photo, cancel: cancel)}.ocr.jpg';
       final Uint8List bytes = StageSupport.unwrap(await _paths.read(relative));
+      final String contentHash = await _paths.ocrContentHash(
+        bundle,
+        photo,
+        cancel: cancel,
+      );
+      final bool protected = contentHash != photo.sha256;
       final String perceptual = StageSupport.unwrap(
         await PerceptualHash.ofBytesOffThread(bytes),
       );
       final OcrResult? cached = StageSupport.unwrap(
         await _cache.lookup(
-          contentHash: photo.sha256,
-          perceptualHash: perceptual,
+          contentHash: contentHash,
+          // Similar clear photos must never supply text for protected pixels.
+          perceptualHash: protected ? '' : perceptual,
         ),
       );
       if (cached != null) {
@@ -52,8 +59,8 @@ final class OnDeviceStage {
       final OcrResult result = await _ocr.recognise(path, cancel: cancel);
       StageSupport.unwrap(
         await _cache.put(
-          contentHash: photo.sha256,
-          perceptualHash: perceptual,
+          contentHash: contentHash,
+          perceptualHash: protected ? '' : perceptual,
           result: result,
         ),
       );
@@ -64,8 +71,9 @@ final class OnDeviceStage {
   Future<String> text(RecordBundle bundle) async {
     final List<String> text = <String>[];
     for (final Photo photo in bundle.photos) {
+      final String contentHash = await _paths.ocrContentHash(bundle, photo);
       final OcrResult? result = StageSupport.unwrap(
-        await _cache.lookup(contentHash: photo.sha256, perceptualHash: ''),
+        await _cache.lookup(contentHash: contentHash, perceptualHash: ''),
       );
       if (result != null && result.text.trim().isNotEmpty) {
         text.add(result.text);

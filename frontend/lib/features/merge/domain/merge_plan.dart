@@ -15,10 +15,14 @@ final class MergePlan {
     required this.insertedRecords,
     this.updatedRecords = const <String>[],
     this.projectKept = const <String>[],
+    this.updates = const <String, List<Map<String, Object?>>>{},
   });
 
   /// Rows to insert, by SQL table, already moved to the target project.
   final Map<String, List<Map<String, Object?>>> inserts;
+
+  /// Existing rows advanced from a causally newer peer revision.
+  final Map<String, List<Map<String, Object?>>> updates;
 
   /// Files to copy: the package entry, and the path inside the project
   /// folder it lands at.
@@ -57,6 +61,7 @@ final class MergePlan {
   /// package does.
   bool get isEmpty =>
       inserts.values.every((List<Map<String, Object?>> rows) => rows.isEmpty) &&
+      updates.values.every((List<Map<String, Object?>> rows) => rows.isEmpty) &&
       settled.isEmpty &&
       conflicts.isEmpty;
 }

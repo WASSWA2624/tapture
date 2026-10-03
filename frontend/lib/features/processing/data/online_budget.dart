@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:tapture/core/ai/auxiliary_ai_usage.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/time/clock.dart';
@@ -41,10 +42,19 @@ final class OnlineBudget {
     if (!guard.isBlocked) {
       return;
     }
-    await _writes.setQueueMessage(jobId, guard.blockMessage);
+    await _writes.setQueueMessage(
+      jobId,
+      guard.blockMessage,
+      localizedMessage: guard.localizedBlockMessage,
+    );
     throw CancelledFailure(
       message: guard.blockMessage,
+      localizedMessage: guard.localizedBlockMessage,
       recoveryAction: 'Processing will be available after the daily reset.',
+      localizedRecovery: const LocalizedMessage(
+        key: 'processingDailyResetRecovery',
+        fallback: 'Processing will be available after the daily reset.',
+      ),
     );
   }
 

@@ -756,7 +756,8 @@ String _flagCondition(RecordFlag flag) {
           "WHERE mc.resolution IS NULL AND mc.entity_type = 'photos')",
     RecordFlag.hasVariance =>
       'EXISTS (SELECT 1 FROM variances v WHERE v.record_id = r.id '
-          "AND v.resolved_at IS NULL AND ${_live('variances', 'v.id')})",
+          "AND v.status <> 'match' AND v.resolved_at IS NULL "
+          "AND ${_live('variances', 'v.id')})",
     RecordFlag.evidenceRemoved =>
       'EXISTS (SELECT 1 FROM record_fields ef WHERE ef.record_id = r.id '
           'AND ef.evidence_removed_at IS NOT NULL '
@@ -774,7 +775,12 @@ String _flagCondition(RecordFlag flag) {
 
 String _unresolvedPair(String alias) =>
     "$alias.status = '${DuplicatePairStatus.unresolved.name}' "
-    "AND ${_live('duplicates', '$alias.id')}";
+    "AND ${_live('duplicates', '$alias.id')} "
+    // A pair whose other record went to the recycle bin no longer asks for a
+    // choice (task 015): the quality list and counts leave it out too.
+    'AND NOT EXISTS (SELECT 1 FROM records gone WHERE gone.id IN '
+    "($alias.left_record_id, $alias.right_record_id) "
+    "AND gone.status = '${RecordStatus.deleted.stored}')";
 
 /// The deepest context value of `r`: the value of the project's lowest
 /// context level set in its snapshot, else the last text value in the

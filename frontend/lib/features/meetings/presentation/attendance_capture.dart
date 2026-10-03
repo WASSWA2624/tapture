@@ -48,6 +48,8 @@ final class AttendanceCapture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -55,9 +57,9 @@ final class AttendanceCapture extends StatelessWidget {
     if (photoPath == null && readings.isEmpty) {
       return AppEmptyState(
         icon: AppIcons.camera,
-        headline: Copy.meetingSheetEmpty,
-        message: Copy.meetingSheetEmptyMessage,
-        actionLabel: Copy.meetingPhotographSheet,
+        headline: localCopy.meetingSheetEmpty,
+        message: localCopy.meetingSheetEmptyMessage,
+        actionLabel: localCopy.meetingPhotographSheet,
         onAction: onCapture,
       );
     }
@@ -67,28 +69,28 @@ final class AttendanceCapture extends StatelessWidget {
         if (photoPath != null)
           AppCard(
             key: const ValueKey<String>('attendance-photo'),
-            child: Text('${Copy.photoAttendance} · $photoPath'),
+            child: Text('${localCopy.photoAttendance} · $photoPath'),
           ),
         if (photoPath != null && readings.isEmpty)
-          const Text(Copy.meetingSheetKept),
+          Text(localCopy.meetingSheetKept),
         for (var index = 0; index < readings.length; index++)
-          _row(readings[index], index),
+          _row(context, readings[index], index),
         AppButton(
           key: const ValueKey<String>('attendance-add-row'),
-          label: Copy.meetingAddAttendee,
+          label: localCopy.meetingAddAttendee,
           variant: AppButtonVariant.secondary,
           onPressed: onAddRow,
         ),
         AppButton(
           key: const ValueKey<String>('attendance-accept'),
-          label: Copy.meetingAcceptRows,
+          label: localCopy.meetingAcceptRows,
           onPressed: readings.isEmpty ? null : onAccept,
         ),
       ],
     );
   }
 
-  Widget _row(AttendanceReading reading, int index) {
+  Widget _row(BuildContext context, AttendanceReading reading, int index) {
     return AppCard(
       key: ValueKey<String>('attendance-row-$index'),
       child: Column(
@@ -96,7 +98,7 @@ final class AttendanceCapture extends StatelessWidget {
         children: <Widget>[
           AppTextField(
             key: ValueKey<String>('attendance-name-$index'),
-            label: Copy.meetingAttendeeName,
+            label: Copy.of(context).meetingAttendeeName,
             controller: TextEditingController(text: reading.name),
             onChanged: (String text) =>
                 _replace(index, reading.copyWith(name: text)),

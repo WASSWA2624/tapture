@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
@@ -13,6 +14,7 @@ import 'package:tapture/core/db/tables/merge.dart';
 import 'package:tapture/core/db/tables/projects.dart';
 import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/db/transactions.dart';
+import 'package:tapture/core/db/version_vector_schema.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_writer.dart';
@@ -29,7 +31,11 @@ import 'package:tapture/features/merge/domain/package_import_repository.dart';
 import 'package:tapture/features/merge/domain/package_presence.dart';
 import 'package:tapture/features/quality/quality.dart'
     hide ConflictChoice, FieldConflict;
+import 'package:tapture/features/templates/templates.dart'
+    show FieldDef, TemplateDef, TemplateMapper, TemplateVersioning;
 
+import 'merge_repository_impl.dart';
+import 'merge_snapshot_store.dart';
 import 'package_files.dart';
 
 /// Brings project packages onto this device through Drift and
@@ -68,6 +74,27 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
   final StorageGuard? _guard;
   final ProjectFolders? _folders;
 
+  /// History shares the applying repository's database and evidence store.
+  late final MergeRepositoryImpl historyRepository = MergeRepositoryImpl(
+    db: _db,
+    files: _files,
+    clock: _clock,
+    deviceId: _deviceId,
+  );
+
+  @override
+  Future<Result<void>> validateTypedValue(
+    FieldConflict conflict,
+    String value,
+  ) async {
+    try {
+      await _validateTyped(conflict, value);
+      return const Success<void>(null);
+    } on Object catch (error) {
+      return FailureResult<void>(_failureOf(error));
+    }
+  }
+
   @override
   Future<Result<PackagePresence>> presenceOf(String projectId) async {
     try {
@@ -104,17 +131,17 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     try {
       final BundleTables? tables = await BundleTables.read(_db, projectId);
       if (tables == null) {
-        return const FailureResult<MergeGround>(
+        return FailureResult<MergeGround>(
           StorageFailure(
-            message: Copy.packageProjectMissing,
-            recoveryAction: Copy.importFailedRecovery,
+            localizedMessage: Copy.messages.packageProjectMissing,
+            localizedRecovery: Copy.messages.importFailedRecovery,
           ),
         );
       }
       final Map<String, List<Map<String, Object?>>> local =
           <String, List<Map<String, Object?>>>{
             for (final MapEntry<String, List<Map<String, Object?>>> table
-                in tables.rows.entries)
+                in tables.mergeRows.entries)
               table.key: List<Map<String, Object?>>.of(table.value),
           };
       await _addNamedDatasets(local, incoming);
@@ -148,7 +175,8 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
         for (final QueryRow row in settled)
           '${_kindOf(row.read<String>('mine_meta'))}:'
               '${row.read<String>('entity_type')}:'
-              '${row.read<String>('entity_id')}|'
+              '${row.read<String>('entity_id')}'
+              '${_referenceIdentity(row.read<String>('mine_meta'))}|'
               '${row.read<String>('theirs_value')}',
       };
       return Success<MergeGround>((
@@ -280,17 +308,17 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
       case FailureResult<PackagePresence>(:final Failure failure):
         return FailureResult<ImportedProject>(failure);
       case Success<PackagePresence>(value: PackagePresence.deleted):
-        return const FailureResult<ImportedProject>(
+        return FailureResult<ImportedProject>(
           ValidationFailure(
-            message: Copy.importProjectDeletedHere,
-            recoveryAction: Copy.importProjectDeletedHereRecovery,
+            localizedMessage: Copy.messages.importProjectDeletedHere,
+            localizedRecovery: Copy.messages.importProjectDeletedHereRecovery,
           ),
         );
       case Success<PackagePresence>(value: PackagePresence.live):
-        return const FailureResult<ImportedProject>(
+        return FailureResult<ImportedProject>(
           ValidationFailure(
-            message: Copy.importProjectAlreadyHere,
-            recoveryAction: Copy.importProjectAlreadyHereRecovery,
+            localizedMessage: Copy.messages.importProjectAlreadyHere,
+            localizedRecovery: Copy.messages.importProjectAlreadyHereRecovery,
           ),
         );
       case Success<PackagePresence>(value: PackagePresence.absent):
@@ -340,24 +368,27 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
       final Result<void> stored = await runInTransaction(
         _db,
         () => RecordSchema.deferIndexing(_db, () async {
-          for (final String table in BundleFormat.insertOrder) {
-            if (BundleFormat.referenceTables.contains(table)) {
-              continue;
+          await VersionVectorSchema.remoteWrites(_db, () async {
+            for (final String table in BundleFormat.insertOrder) {
+              if (BundleFormat.referenceTables.contains(table)) {
+                continue;
+              }
+              final List<Map<String, Object?>> rows = switch (table) {
+                'projects' => <Map<String, Object?>>[project],
+                'records' => _onTemplateVersions(
+                  bundle.rowsOf(table),
+                  bundle.rowsOf('templates'),
+                ),
+                _ => bundle.rowsOf(table),
+              };
+              final Set<String> columns = await _columns(table);
+              for (final Map<String, Object?> row in rows) {
+                await _insert(table, row, columns);
+              }
             }
-            final List<Map<String, Object?>> rows = switch (table) {
-              'projects' => <Map<String, Object?>>[project],
-              'records' => _onTemplateVersions(
-                bundle.rowsOf(table),
-                bundle.rowsOf('templates'),
-              ),
-              _ => bundle.rowsOf(table),
-            };
-            final Set<String> columns = await _columns(table);
-            for (final Map<String, Object?> row in rows) {
-              await _insert(table, row, columns);
-            }
-          }
-          await _insertReference(bundle.tables);
+            await _insertReference(bundle.tables);
+            await _mergeVectors(bundle, projectId);
+          });
           await _session(
             bundle,
             status: 'imported',
@@ -398,16 +429,36 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     required List<PossibleDuplicate> duplicates,
     required Set<String> skipped,
     required String chooser,
+    Map<String, String> typedValues = const <String, String>{},
     void Function(double progress)? onProgress,
   }) async {
     for (final FieldConflict conflict in plan.conflicts) {
       if (!choices.containsKey(conflict.id)) {
         return FailureResult<MergeOutcome>(
           ValidationFailure(
-            message: Copy.mergeSettleConflicts(plan.conflicts.length),
-            recoveryAction: Copy.importFailedRecovery,
+            localizedMessage: Copy.messages.mergeSettleConflicts(
+              plan.conflicts.length,
+            ),
+            localizedRecovery: Copy.messages.importFailedRecovery,
           ),
         );
+      }
+      if (choices[conflict.id] == ConflictChoice.typed) {
+        final Result<void> valid = await validateTypedValue(
+          conflict,
+          typedValues[conflict.id] ?? '',
+        );
+        if (!typedValues.containsKey(conflict.id) ||
+            valid is FailureResult<void>) {
+          return FailureResult<MergeOutcome>(
+            valid is FailureResult<void>
+                ? valid.failure
+                : ValidationFailure(
+                    localizedMessage: Copy.messages.conflictTypeValue,
+                    localizedRecovery: Copy.messages.importFailedRecovery,
+                  ),
+          );
+        }
       }
     }
     final QueryRow? target = await _db
@@ -417,10 +468,10 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
         )
         .getSingleOrNull();
     if (target == null) {
-      return const FailureResult<MergeOutcome>(
+      return FailureResult<MergeOutcome>(
         StorageFailure(
-          message: Copy.packageProjectMissing,
-          recoveryAction: Copy.importFailedRecovery,
+          localizedMessage: Copy.messages.packageProjectMissing,
+          localizedRecovery: Copy.messages.importFailedRecovery,
         ),
       );
     }
@@ -451,28 +502,50 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
         onProgress?.call((index + 1) / plan.files.length);
       }
       final String sessionId = _ids.newId();
+      final String snapshotPath = 'projects/$folder/.merge/$sessionId.json';
+      final MergeSnapshotStore snapshots = MergeSnapshotStore(_db, _files);
       final Result<void> stored = await runInTransaction(
         _db,
         () => RecordSchema.deferIndexing(_db, () async {
-          for (final String table in BundleFormat.insertOrder) {
-            final List<Map<String, Object?>> rows =
-                plan.inserts[table] ?? const <Map<String, Object?>>[];
-            if (rows.isEmpty) {
-              continue;
+          final SnapshotRows before = await snapshots.capture(
+            projectId,
+            bundle.tables,
+          );
+          final Set<({String table, String id})> decisions =
+              <({String table, String id})>{};
+          written.add(snapshotPath);
+          await snapshots.publish(
+            path: snapshotPath,
+            projectId: projectId,
+            before: before,
+            after: const <String, List<Map<String, Object?>>>{},
+            importedFiles: written
+                .where((String path) => path != snapshotPath)
+                .toList(),
+          );
+          await VersionVectorSchema.remoteWrites(_db, () async {
+            for (final String table in BundleFormat.insertOrder) {
+              final List<Map<String, Object?>> rows =
+                  plan.inserts[table] ?? const <Map<String, Object?>>[];
+              if (rows.isEmpty) {
+                continue;
+              }
+              final Set<String> columns = await _columns(table);
+              for (final Map<String, Object?> row in rows) {
+                final Object? path = row['relative_path'];
+                await _insert(
+                  table,
+                  path is String && moved.containsKey(path)
+                      ? <String, Object?>{...row, 'relative_path': moved[path]}
+                      : row,
+                  columns,
+                );
+              }
             }
-            final Set<String> columns = await _columns(table);
-            for (final Map<String, Object?> row in rows) {
-              final Object? path = row['relative_path'];
-              await _insert(
-                table,
-                path is String && moved.containsKey(path)
-                    ? <String, Object?>{...row, 'relative_path': moved[path]}
-                    : row,
-                columns,
-              );
-            }
-          }
+            await _advanceRows(plan.updates, chooser: chooser);
+          });
           for (final settled in plan.settled) {
+            decisions.add((table: 'record_fields', id: settled.rowId));
             await _writeValue(
               rowId: settled.rowId,
               previous: settled.previous,
@@ -486,6 +559,7 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
             bundle,
             id: sessionId,
             status: 'applied',
+            snapshotPath: snapshotPath,
             counts: <String, Object?>{
               'project_id': projectId,
               'records': plan.counts.newRecords,
@@ -500,6 +574,8 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
               'skipped': skipped.length,
             },
           );
+          final Map<String, Map<String, String>> vectorAliases =
+              <String, Map<String, String>>{};
           for (final FieldConflict conflict in plan.conflicts) {
             await _settle(
               conflict,
@@ -507,11 +583,38 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
               sessionId: sessionId,
               incoming: bundle.tables,
               chooser: chooser,
+              typedValue: typedValues[conflict.id],
+              insertedRecords: plan.insertedRecords.toSet(),
+              vectorAliases: vectorAliases,
+              decisions: decisions,
             );
           }
           for (final PossibleDuplicate pair in duplicates) {
             await _pair(pair, projectId, skipped: skipped, chooser: chooser);
           }
+          await VersionVectorSchema.remoteWrites(
+            _db,
+            () async => _mergeVectors(
+              bundle,
+              projectId,
+              aliases: vectorAliases,
+              deferred: <String>{
+                for (final FieldConflict conflict in plan.conflicts)
+                  if (choices[conflict.id] == ConflictChoice.later)
+                    '${conflict.table}/${conflict.rowId}',
+                for (final FieldConflict conflict in plan.conflicts)
+                  if (choices[conflict.id] == ConflictChoice.later &&
+                      conflict.incomingRowId != null)
+                    '${conflict.table}/${conflict.incomingRowId}',
+              },
+            ),
+          );
+          await _advanceDecisionVectors(
+            bundle,
+            before: before,
+            decisions: decisions,
+            aliases: vectorAliases,
+          );
           await _auditMerged(
             bundle,
             inserted: <String>[
@@ -522,11 +625,21 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
             updated: <String>[
               ...plan.updatedRecords,
               for (final FieldConflict conflict in plan.conflicts)
-                if (choices[conflict.id] == ConflictChoice.theirs &&
+                if ((choices[conflict.id] == ConflictChoice.theirs ||
+                        choices[conflict.id] == ConflictChoice.typed) &&
                     conflict.recordId.isNotEmpty)
                   conflict.recordId,
             ],
             operator: chooser,
+          );
+          await snapshots.publish(
+            path: snapshotPath,
+            projectId: projectId,
+            before: before,
+            after: await snapshots.capture(projectId, bundle.tables),
+            importedFiles: written
+                .where((String path) => path != snapshotPath)
+                .toList(),
           );
         }),
       );
@@ -553,8 +666,26 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     required String sessionId,
     required Map<String, List<Map<String, Object?>>> incoming,
     required String chooser,
+    String? typedValue,
+    Set<String> insertedRecords = const <String>{},
+    Map<String, Map<String, String>>? vectorAliases,
+    required Set<({String table, String id})> decisions,
   }) async {
+    if ((choice == ConflictChoice.keepBoth &&
+            conflict.kind != ConflictKind.template) ||
+        (conflict.kind == ConflictKind.template &&
+            (choice == ConflictChoice.later ||
+                (!conflict.allowChooseOne &&
+                    choice != ConflictChoice.keepBoth)))) {
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.importFileChanged,
+        localizedRecovery: Copy.messages.importFailedRecovery,
+      );
+    }
     final bool theirs = choice == ConflictChoice.theirs;
+    if (choice == ConflictChoice.typed) {
+      await _validateTyped(conflict, typedValue);
+    }
     final String entityType = conflict.table;
     final String entityId = conflict.rowId;
     final Result<sqlite.MergeConflict> inserted = await insertMergeConflict(
@@ -572,6 +703,8 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
           'kind': conflict.kind.name,
           'device': conflict.mineDevice,
           'at': conflict.mineAt,
+          if (conflict.incomingRowId != null)
+            'incoming_row_id': conflict.incomingRowId,
         }),
         theirsMeta: jsonEncode(<String, Object?>{
           'device': conflict.theirsDevice,
@@ -586,27 +719,75 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
       ids: _ids,
     );
     final String conflictId = _valueOf(inserted).id;
-    _valueOf(
-      await resolveMergeConflict(
-        _db,
-        id: conflictId,
-        resolution: choice.name,
-        resolvedBy: chooser,
-        clock: _clock,
-        deviceId: _deviceId,
-        ids: _ids,
-      ),
-    );
-    final String reason = theirs
+    if (choice == ConflictChoice.later) {
+      // Null resolution is durable and continues to block approval.
+      return;
+    }
+    decisions.add((table: entityType, id: entityId));
+    final List<QueryRow> equivalent = await _db
+        .customSelect(
+          'SELECT id FROM merge_conflicts WHERE resolution IS NULL '
+          'AND entity_type = ? AND entity_id = ? AND field_key = ? '
+          'AND mine_value = ? AND theirs_value = ?',
+          variables: <Variable<Object>>[
+            Variable<String>(entityType),
+            Variable<String>(entityId),
+            Variable<String>(
+              conflict.fieldKey.isEmpty
+                  ? conflict.kind.name
+                  : conflict.fieldKey,
+            ),
+            Variable<String>(conflict.mine),
+            Variable<String>(conflict.theirs),
+          ],
+        )
+        .get();
+    for (final QueryRow unresolved in equivalent) {
+      final String resolvedId = unresolved.read<String>('id');
+      _valueOf(
+        await resolveMergeConflict(
+          _db,
+          id: resolvedId,
+          resolution: choice.name,
+          resolvedBy: chooser,
+          clock: _clock,
+          deviceId: _deviceId,
+          ids: _ids,
+        ),
+      );
+      if (resolvedId != conflictId) {
+        await appendAudit(
+          _db,
+          entityType: 'merge_conflicts',
+          entityId: resolvedId,
+          action: AuditAction.updated,
+          fieldKey: 'resolution',
+          newValue: choice.name,
+          reason: 'merge conflict: settled earlier deferred choice',
+          clock: _clock,
+          device: _deviceId,
+          operator: chooser,
+        );
+      }
+    }
+    final String chosenValue = choice == ConflictChoice.typed
+        ? typedValue!
+        : conflict.theirs;
+    final bool replace = theirs || choice == ConflictChoice.typed;
+    final String reason = choice == ConflictChoice.keepBoth
+        ? 'merge conflict: kept both templates'
+        : choice == ConflictChoice.typed
+        ? 'merge conflict: typed a replacement'
+        : theirs
         ? 'merge conflict: took incoming'
         : "merge conflict: kept this device's";
     switch (conflict.kind) {
       case ConflictKind.value:
-        if (theirs) {
+        if (replace) {
           await _writeValue(
             rowId: entityId,
             previous: conflict.mine,
-            value: conflict.theirs,
+            value: chosenValue,
             verified: true,
             verifiedBy: chooser,
             reason: reason,
@@ -615,12 +796,12 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
           return;
         }
       case ConflictKind.caption:
-        if (theirs) {
+        if (replace) {
           await _update(
             'UPDATE captions SET text_refined = ?, refined_at = ?, '
             'updated_at = ?, updated_by_device = ?, rev = rev + 1 '
             'WHERE id = ?',
-            <Object?>[conflict.theirs, _now, _now, _deviceId, entityId],
+            <Object?>[chosenValue, _now, _now, _deviceId, entityId],
           );
         }
       case ConflictKind.status:
@@ -637,6 +818,30 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
               _deviceId,
               entityId,
             ],
+          );
+        }
+      case ConflictKind.template:
+        await _settleTemplate(
+          conflict,
+          choice,
+          incoming,
+          insertedRecords: insertedRecords,
+          aliases: vectorAliases ?? <String, Map<String, String>>{},
+          decisions: decisions,
+        );
+      case ConflictKind.reference:
+        final String peerId = conflict.incomingRowId ?? entityId;
+        if (vectorAliases != null) {
+          (vectorAliases['reference_rows'] ??= <String, String>{})[peerId] =
+              entityId;
+        }
+        if (theirs) {
+          final Map<String, Object?> peer = incoming['reference_rows']!
+              .firstWhere((Map<String, Object?> row) => row['id'] == peerId);
+          await _update(
+            'UPDATE reference_rows SET "values" = ?, '
+            'updated_at = ?, updated_by_device = ?, rev = rev + 1 WHERE id = ?',
+            <Object?>[peer['values'], _now, _deviceId, entityId],
           );
         }
       case ConflictKind.deletedThere:
@@ -672,12 +877,236 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
           ? conflict.kind.name
           : conflict.fieldKey,
       previousValue: conflict.mine,
-      newValue: theirs ? conflict.theirs : conflict.mine,
+      newValue: replace || choice == ConflictChoice.keepBoth
+          ? chosenValue
+          : conflict.mine,
       reason: '$reason (incoming: ${conflict.theirs})',
       clock: _clock,
       device: _deviceId,
       operator: chooser,
     );
+  }
+
+  Future<void> _settleTemplate(
+    FieldConflict conflict,
+    ConflictChoice choice,
+    Map<String, List<Map<String, Object?>>> incoming, {
+    required Set<String> insertedRecords,
+    required Map<String, Map<String, String>> aliases,
+    required Set<({String table, String id})> decisions,
+  }) async {
+    final sqlite.Template here =
+        await (_db.select(
+              _db.templates,
+            )..where((sqlite.$TemplatesTable t) => t.id.equals(conflict.rowId)))
+            .getSingle();
+    final List<sqlite.TemplateField> fields =
+        await (_db.select(_db.templateFields)..where(
+              (sqlite.$TemplateFieldsTable t) => t.templateId.equals(here.id),
+            ))
+            .get();
+    final List<sqlite.TemplateRow> rows =
+        await (_db.select(_db.templateRows)..where(
+              (sqlite.$TemplateRowsTable t) => t.templateId.equals(here.id),
+            ))
+            .get();
+    final Map<String, Object?> header = incoming['templates']!.firstWhere(
+      (Map<String, Object?> t) => t['id'] == here.id,
+    );
+    final List<Map<String, Object?>> peerFields = <Map<String, Object?>>[
+      for (final Map<String, Object?> row
+          in incoming['template_fields'] ?? const [])
+        if (row['template_id'] == here.id) row,
+    ];
+    final List<Map<String, Object?>> peerRows = <Map<String, Object?>>[
+      for (final Map<String, Object?> row
+          in incoming['template_rows'] ?? const [])
+        if (row['template_id'] == here.id) row,
+    ];
+    final TemplateDef mine = TemplateMapper.fromRows(
+      header: here,
+      fields: fields,
+      rows: rows,
+    );
+    final TemplateDef peer = TemplateMapper.fromRows(
+      header: _db.templates.map(header),
+      fields: <sqlite.TemplateField>[
+        for (final Map<String, Object?> row in peerFields)
+          _db.templateFields.map(row),
+      ],
+      rows: <sqlite.TemplateRow>[
+        for (final Map<String, Object?> row in peerRows)
+          _db.templateRows.map(row),
+      ],
+    );
+    if (choice == ConflictChoice.keepBoth) {
+      final String copyId = _ids.newId();
+      decisions.add((table: 'templates', id: copyId));
+      final Object? decoded = jsonDecode('${header['detection'] ?? '{}'}');
+      final Map<String, Object?> detection = <String, Object?>{
+        if (decoded is Map) ...decoded.cast<String, Object?>(),
+        '_tapture_merge_source': <String, Object?>{
+          'id': here.id,
+          'shape': conflict.theirs,
+        },
+      };
+      await _insert('templates', <String, Object?>{
+        ...header,
+        'id': copyId,
+        'project_id': here.projectId,
+        'detection': jsonEncode(detection),
+        'created_at': _now,
+        'updated_at': _now,
+        'updated_by_device': _deviceId,
+        'rev': 1,
+      }, await _columns('templates'));
+      (aliases['templates'] ??= <String, String>{})[here.id] = copyId;
+      for (final String table in const <String>[
+        'template_fields',
+        'template_rows',
+      ]) {
+        final Set<String> columns = await _columns(table);
+        for (final Map<String, Object?> row
+            in table == 'template_fields' ? peerFields : peerRows) {
+          final String childId = _ids.newId();
+          decisions.add((table: table, id: childId));
+          await _insert(table, <String, Object?>{
+            ...row,
+            'id': childId,
+            'template_id': copyId,
+            'created_at': _now,
+            'updated_at': _now,
+            'updated_by_device': _deviceId,
+            'rev': 1,
+          }, columns);
+          (aliases[table] ??= <String, String>{})[row['id']! as String] =
+              childId;
+        }
+      }
+      for (final Map<String, Object?> record
+          in incoming['records'] ?? const []) {
+        if (record['template_id'] == here.id &&
+            insertedRecords.contains(record['id'])) {
+          decisions.add((table: 'records', id: record['id']! as String));
+          await _update(
+            'UPDATE records SET template_id = ?, updated_at = ?, '
+            'updated_by_device = ?, rev = rev + 1 WHERE id = ?',
+            <Object?>[copyId, _now, _deviceId, record['id']],
+          );
+        }
+      }
+      return;
+    }
+    final bool theirs = choice == ConflictChoice.theirs;
+    final TemplateDef remembered = TemplateVersioning.remember(
+      from: theirs ? mine : peer,
+      to: theirs ? peer : mine,
+    );
+    final TemplateDef selected = remembered.copyWith(
+      detection: <String, Object?>{
+        ...remembered.detection,
+        '_tapture_merge_shapes': <String, Object?>{
+          if (mine.detection['_tapture_merge_shapes'] is Map)
+            ...(mine.detection['_tapture_merge_shapes']! as Map)
+                .cast<String, Object?>(),
+          if (peer.detection['_tapture_merge_shapes'] is Map)
+            ...(peer.detection['_tapture_merge_shapes']! as Map)
+                .cast<String, Object?>(),
+          '${mine.version}': conflict.mine,
+          '${peer.version}': conflict.theirs,
+        },
+      },
+    );
+    final sqlite.TemplatesCompanion stored =
+        TemplateMapper.headerToRow(selected).copyWith(
+          projectId: Value<String?>(here.projectId),
+          updatedAt: Value<DateTime>(_clock.nowUtc()),
+          updatedByDevice: Value<String>(_deviceId),
+          rev: Value<int>(here.rev + 1),
+        );
+    await (_db.update(
+      _db.templates,
+    )..where((sqlite.$TemplatesTable t) => t.id.equals(here.id))).write(stored);
+    if (theirs) {
+      for (final String table in const <String>[
+        'template_fields',
+        'template_rows',
+      ]) {
+        await _db.customStatement(
+          'DELETE FROM $table WHERE template_id = ?',
+          <Object?>[here.id],
+        );
+        final Set<String> columns = await _columns(table);
+        for (final Map<String, Object?> row
+            in table == 'template_fields' ? peerFields : peerRows) {
+          decisions.add((table: table, id: row['id']! as String));
+          await _insert(table, <String, Object?>{
+            ...row,
+            'updated_at': _now,
+            'updated_by_device': _deviceId,
+            'rev': (row['rev'] as int? ?? 1) + 1,
+          }, columns);
+        }
+      }
+    }
+  }
+
+  Future<void> _validateTyped(FieldConflict conflict, String? value) async {
+    if (value == null ||
+        (conflict.kind != ConflictKind.value &&
+            conflict.kind != ConflictKind.caption)) {
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.conflictTypeValue,
+        localizedRecovery: Copy.messages.importFailedRecovery,
+      );
+    }
+    if (conflict.kind == ConflictKind.caption) {
+      return;
+    }
+    final QueryRow? record = await _db
+        .customSelect(
+          'SELECT template_id FROM records WHERE id = ?',
+          variables: <Variable<Object>>[Variable<String>(conflict.recordId)],
+        )
+        .getSingleOrNull();
+    final sqlite.TemplateField? stored = record == null
+        ? null
+        : await (_db.select(_db.templateFields)..where(
+                (sqlite.$TemplateFieldsTable table) =>
+                    table.templateId.equals(
+                      record.read<String>('template_id'),
+                    ) &
+                    table.fieldKey.equals(conflict.fieldKey),
+              ))
+              .getSingleOrNull();
+    if (stored == null) {
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.importFileChanged,
+        localizedRecovery: Copy.messages.importFailedRecovery,
+      );
+    }
+    final FieldDef field = TemplateMapper.fieldFromRow(stored);
+    final List<QueryRow> siblings = await _db
+        .customSelect(
+          'SELECT field_key, value_final, value_raw FROM record_fields WHERE record_id = ?',
+          variables: <Variable<Object>>[Variable<String>(conflict.recordId)],
+        )
+        .get();
+    final issues = RecordRules.validateField(field, value, <String, Object?>{
+      for (final QueryRow sibling in siblings)
+        sibling.read<String>('field_key'):
+            sibling.data['value_final'] ?? sibling.data['value_raw'],
+      field.fieldKey: value,
+    });
+    for (final issue in issues) {
+      if (issue.blocks) {
+        throw ValidationFailure(
+          message: issue.message,
+          localizedMessage: issue.localizedMessage,
+          localizedRecovery: Copy.messages.importFailedRecovery,
+        );
+      }
+    }
   }
 
   /// Appends one history row to each record the package [inserted] (action
@@ -734,9 +1163,9 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
         )
         .getSingleOrNull();
     if (row == null) {
-      throw const StorageFailure(
-        message: Copy.importFileChanged,
-        recoveryAction: Copy.importFailedRecovery,
+      throw StorageFailure(
+        localizedMessage: Copy.messages.importFileChanged,
+        localizedRecovery: Copy.messages.importFailedRecovery,
       );
     }
     await _update(
@@ -817,6 +1246,7 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     required String status,
     required Map<String, Object?> counts,
     String? id,
+    String snapshotPath = '',
   }) async {
     _valueOf(
       await insertMergeSession(
@@ -829,9 +1259,10 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
           counts: jsonEncode(<String, Object?>{
             ...counts,
             'bundle_id': bundle.manifest.bundleId,
+            'lineage': bundle.manifest.toJson()['lineage'],
           }),
           status: status,
-          undoSnapshotPath: '',
+          undoSnapshotPath: snapshotPath,
           createdAt: _clock.nowUtc(),
           updatedAt: _clock.nowUtc(),
           updatedByDevice: _deviceId,
@@ -841,6 +1272,180 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
         ids: _ids,
       ),
     );
+  }
+
+  /// Joins observed clocks only for admitted entities. Deferred edits keep
+  /// their incoming component pending so a later reimport can settle them.
+  Future<void> _mergeVectors(
+    InspectedBundle bundle,
+    String projectId, {
+    Set<String> deferred = const <String>{},
+    Map<String, Map<String, String>> aliases =
+        const <String, Map<String, String>>{},
+  }) async {
+    if (bundle.manifest.versionVectors.isEmpty) return;
+    final BundleTables? admitted = await BundleTables.read(_db, projectId);
+    if (admitted == null) return;
+    final Map<String, Set<Object?>> ids = <String, Set<Object?>>{
+      for (final table in admitted.rows.entries)
+        table.key: table.value
+            .map((Map<String, Object?> row) => row['id'])
+            .toSet(),
+    };
+    final int now = _clock.nowUtc().millisecondsSinceEpoch ~/ 1000;
+    final List<List<Object?>> values = <List<Object?>>[
+      for (final table in bundle.manifest.versionVectors.entries)
+        for (final entity in table.value.entries)
+          if ((ids[table.key]?.contains(
+                    aliases[table.key]?[entity.key] ?? entity.key,
+                  ) ??
+                  false) &&
+              !deferred.contains('${table.key}/${entity.key}'))
+            for (final counter in entity.value.entries)
+              <Object?>[
+                _ids.newId(),
+                table.key,
+                aliases[table.key]?[entity.key] ?? entity.key,
+                counter.key,
+                counter.value,
+                now,
+                now,
+                _deviceId,
+                1,
+              ],
+    ];
+    await _storeVectors(values);
+  }
+
+  /// A resolution is authored after both histories were observed. Preserve
+  /// any trigger increments, but lift its counter above a received component
+  /// for this device, even when the peer observed a newer counter than ours.
+  /// The snapshot supplies the previous counter without additional row reads.
+  Future<void> _advanceDecisionVectors(
+    InspectedBundle bundle, {
+    required SnapshotRows before,
+    required Set<({String table, String id})> decisions,
+    required Map<String, Map<String, String>> aliases,
+  }) async {
+    if (decisions.isEmpty) return;
+    final Map<({String table, String id}), int> floors =
+        <({String table, String id}), int>{
+          for (final entity in decisions) entity: 1,
+        };
+    for (final Map<String, Object?> vector
+        in before['version_vectors'] ?? const <Map<String, Object?>>[]) {
+      if (vector['device_id'] != _deviceId) continue;
+      final entity = (
+        table: vector['entity_type']! as String,
+        id: vector['entity_id']! as String,
+      );
+      if (!decisions.contains(entity)) continue;
+      floors[entity] = (vector['seen_rev']! as int) + 1;
+    }
+    for (final table in bundle.manifest.versionVectors.entries) {
+      for (final incoming in table.value.entries) {
+        final entity = (
+          table: table.key,
+          id: aliases[table.key]?[incoming.key] ?? incoming.key,
+        );
+        final int? observed = incoming.value[_deviceId];
+        if (!decisions.contains(entity) || observed == null) continue;
+        if (observed + 1 > floors[entity]!) {
+          floors[entity] = observed + 1;
+        }
+      }
+    }
+    final int now = _clock.nowUtc().millisecondsSinceEpoch ~/ 1000;
+    await _storeVectors(<List<Object?>>[
+      for (final entry in floors.entries)
+        <Object?>[
+          _ids.newId(),
+          entry.key.table,
+          entry.key.id,
+          _deviceId,
+          entry.value,
+          now,
+          now,
+          _deviceId,
+          1,
+        ],
+    ]);
+  }
+
+  Future<void> _storeVectors(List<List<Object?>> values) async {
+    for (int offset = 0; offset < values.length; offset += 80) {
+      final List<List<Object?>> chunk = values.sublist(
+        offset,
+        offset + 80 < values.length ? offset + 80 : values.length,
+      );
+      await _db.customStatement(
+        'INSERT INTO version_vectors (id, entity_type, entity_id, device_id, '
+        'seen_rev, created_at, updated_at, updated_by_device, rev) VALUES '
+        '${List<String>.filled(chunk.length, '(?, ?, ?, ?, ?, ?, ?, ?, ?)').join(', ')} '
+        'ON CONFLICT(entity_type, entity_id, device_id) DO UPDATE SET '
+        'seen_rev = MAX(version_vectors.seen_rev, excluded.seen_rev), '
+        'updated_at = excluded.updated_at, updated_by_device = excluded.updated_by_device, '
+        'rev = version_vectors.rev + 1 '
+        'WHERE excluded.seen_rev > version_vectors.seen_rev',
+        chunk.expand((List<Object?> row) => row).toList(),
+      );
+    }
+  }
+
+  Future<void> _advanceRows(
+    Map<String, List<Map<String, Object?>>> updates, {
+    required String chooser,
+  }) async {
+    for (final table in updates.entries) {
+      if (!BundleFormat.insertOrder.contains(table.key)) {
+        throw const CorruptionFailure();
+      }
+      final Set<String> columns = await _columns(table.key);
+      for (final Map<String, Object?> row in table.value) {
+        final List<String> names = <String>[
+          for (final String name in row.keys)
+            if (name != 'id' && name != 'created_at' && columns.contains(name))
+              name,
+        ];
+        final QueryRow? before = await _db
+            .customSelect(
+              'SELECT * FROM ${table.key} WHERE id = ?',
+              variables: <Variable<Object>>[
+                Variable<String>(row['id']! as String),
+              ],
+            )
+            .getSingleOrNull();
+        if (before == null) {
+          throw const CorruptionFailure();
+        }
+        await _db.customStatement(
+          'UPDATE ${table.key} SET '
+          '${names.map((String name) => '"$name" = ?').join(', ')} WHERE id = ?',
+          <Object?>[for (final String name in names) row[name], row['id']],
+        );
+        for (final String name in names) {
+          if (name == 'rev' ||
+              name == 'updated_at' ||
+              name == 'updated_by_device' ||
+              before.data[name] == row[name]) {
+            continue;
+          }
+          await appendAudit(
+            _db,
+            entityType: table.key,
+            entityId: row['id']! as String,
+            action: AuditAction.updated,
+            fieldKey: name,
+            previousValue: '${before.data[name] ?? ''}',
+            newValue: '${row[name] ?? ''}',
+            reason: 'merge: causalFastForward',
+            clock: _clock,
+            device: _deviceId,
+            operator: chooser,
+          );
+        }
+      }
+    }
   }
 
   /// Reference datasets and rows, by the merge's rule: a dataset or a row
@@ -959,14 +1564,14 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     required String target,
     required List<String> written,
   }) async {
-    final Uint8List bytes = _valueOf(await bundle.readEntry(entry));
+    final Stream<List<int>> bytes = _valueOf(await bundle.openEntry(entry));
     written.add(target);
-    final WrittenFile file = _valueOf(await _files.write(target, bytes));
+    final WrittenFile file = _valueOf(await _files.writeStream(target, bytes));
     final String? expected = _checksums(bundle)[entry];
     if (expected == null || file.sha256 != expected) {
-      throw const CorruptionFailure(
-        message: Copy.importFileChanged,
-        recoveryAction: Copy.importFailedRecovery,
+      throw CorruptionFailure(
+        localizedMessage: Copy.messages.importFileChanged,
+        localizedRecovery: Copy.messages.importFailedRecovery,
       );
     }
   }
@@ -1015,9 +1620,9 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     if (volume case Success<VolumeStats>(
       :final VolumeStats value,
     ) when value.freeBytes - needed < AppConstants.storage.criticalBytes) {
-      return const StorageFailure(
-        message: Copy.importNoRoom,
-        recoveryAction: Copy.importNoRoomRecovery,
+      return StorageFailure(
+        localizedMessage: Copy.messages.importNoRoom,
+        localizedRecovery: Copy.messages.importNoRoomRecovery,
       );
     }
     return null;
@@ -1128,6 +1733,15 @@ String _kindOf(String meta) {
   return '';
 }
 
+String _referenceIdentity(String meta) {
+  final Object? decoded = jsonDecode(meta);
+  if (decoded is Map && decoded['kind'] == 'reference') {
+    final Object? id = decoded['incoming_row_id'];
+    return id is String ? ':$id' : '';
+  }
+  return '';
+}
+
 Variable<Object> _variable(Object? value) {
   return switch (value) {
     null => const Variable<Object>(null),
@@ -1196,7 +1810,8 @@ Failure _failureOf(Object error) {
   final StorageFailure failure = storageFailureFrom(error);
   return StorageFailure(
     message: failure.message,
-    recoveryAction: Copy.importFailedRecovery,
+    localizedMessage: failure.localizedMessage,
+    localizedRecovery: Copy.messages.importFailedRecovery,
   );
 }
 

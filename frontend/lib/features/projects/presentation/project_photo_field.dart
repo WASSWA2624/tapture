@@ -50,6 +50,8 @@ class ProjectPhotoField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (kIsWeb) {
       return const SizedBox.shrink();
     }
@@ -66,7 +68,7 @@ class ProjectPhotoField extends ConsumerWidget {
               height: edge,
               fit: BoxFit.cover,
               cacheWidth: AppConstants.images.previewEdge,
-              semanticLabel: Copy.projectPhoto,
+              semanticLabel: localCopy.projectPhoto,
             ),
           )
         : saved != null
@@ -82,7 +84,7 @@ class ProjectPhotoField extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const Text(Copy.projectPhoto, style: AppText.label),
+        Text(localCopy.projectPhoto, style: AppText.label),
         const SizedBox(height: Space.x1),
         if (preview != null) ...<Widget>[
           preview,
@@ -93,7 +95,9 @@ class ProjectPhotoField extends ConsumerWidget {
           runSpacing: Space.x1,
           children: <Widget>[
             AppButton(
-              label: has ? Copy.projectPhotoChange : Copy.projectPhotoAdd,
+              label: has
+                  ? localCopy.projectPhotoChange
+                  : localCopy.projectPhotoAdd,
               icon: AppIcons.addPhoto,
               variant: AppButtonVariant.secondary,
               busy: busy,
@@ -101,7 +105,7 @@ class ProjectPhotoField extends ConsumerWidget {
             ),
             if (has && onRemove != null)
               AppButton(
-                label: Copy.projectPhotoRemove,
+                label: localCopy.projectPhotoRemove,
                 icon: AppIcons.delete,
                 variant: AppButtonVariant.text,
                 onPressed: busy ? null : onRemove,
@@ -124,7 +128,12 @@ class ProjectPhotoField extends ConsumerWidget {
     }
     switch (picked) {
       case FailureResult<List<Uint8List>>(:final Failure failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
       case Success<List<Uint8List>>(:final List<Uint8List> value):
         if (value.isNotEmpty) {
           onPicked(value.first);

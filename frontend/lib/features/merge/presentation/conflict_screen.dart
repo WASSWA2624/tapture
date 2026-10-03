@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
+import 'package:tapture/core/widgets/feedback/show_app_text_prompt.dart';
 import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
@@ -67,8 +69,15 @@ final class ConflictScreen extends ConsumerWidget {
     'conflict-decide-later',
   );
 
+  /// Keeps both divergent template shapes and their capture metadata.
+  static const ValueKey<String> keepBothKey = ValueKey<String>(
+    'conflict-keep-both',
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<MergeView?> value = ref.watch(
       mergeControllerProvider(projectId),
     );
@@ -81,22 +90,22 @@ final class ConflictScreen extends ConsumerWidget {
     return AppPage(
       key: const ValueKey<String>('route-project-merge-conflicts'),
       title: shown == null
-          ? Copy.mergePackage
-          : Copy.conflictProgress(index, total),
+          ? localCopy.mergePackage
+          : localCopy.conflictProgress(index, total),
       body: AsyncValueView<MergeView?>(
         value: value,
         isEmpty: (MergeView? _) => shown == null,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.done,
-          headline: Copy.mergePackage,
-          message: Copy.mergeNothing,
+          headline: Copy.of(context).mergePackage,
+          message: Copy.of(context).mergeNothing,
         ),
         onRetry: () => ref.invalidate(mergeControllerProvider(projectId)),
         data: (MergeView? view) => _Conflict(
           conflict: shown!,
           view: view!,
           onChoose: (ConflictChoice choice) =>
-              _choose(context, ref, shown, choice),
+              unawaited(_choose(context, ref, shown, choice)),
           onChooseAll: (ConflictChoice choice) =>
               unawaited(_chooseAll(context, ref, view, choice)),
         ),
@@ -114,15 +123,50 @@ final class ConflictScreen extends ConsumerWidget {
     return unsettled.isEmpty ? null : unsettled.first;
   }
 
-  void _choose(
+  Future<void> _choose(
     BuildContext context,
     WidgetRef ref,
     FieldConflict conflict,
     ConflictChoice choice,
   ) {
+    return _chooseValue(context, ref, conflict, choice);
+  }
+
+  Future<void> _chooseValue(
+    BuildContext context,
+    WidgetRef ref,
+    FieldConflict conflict,
+    ConflictChoice choice,
+  ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    String? typedValue;
+    if (choice == ConflictChoice.typed) {
+      final MergeController controller = ref.read(
+        mergeControllerProvider(projectId).notifier,
+      );
+      typedValue = await showAppTextPrompt(
+        context,
+        title: localCopy.conflictTypeValue,
+        label: conflict.fieldLabel.isEmpty
+            ? localCopy.conflictCaptionLabel
+            : conflict.fieldLabel,
+        initialValue:
+            ref
+                .read(mergeControllerProvider(projectId))
+                .value
+                ?.typedValues[conflict.id] ??
+            conflict.mine,
+        validate: (String value) =>
+            controller.validateTypedValue(conflict, value),
+      );
+      if (typedValue == null || !context.mounted) {
+        return;
+      }
+    }
     ref
         .read(mergeControllerProvider(projectId).notifier)
-        .choose(conflict.id, choice);
+        .choose(conflict.id, choice, typedValue: typedValue);
     final bool done =
         ref.read(mergeControllerProvider(projectId)).value?.unsettled.isEmpty ??
         true;
@@ -137,15 +181,19 @@ final class ConflictScreen extends ConsumerWidget {
     MergeView view,
     ConflictChoice choice,
   ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final int n = view.unsettled.length;
     final bool incoming = choice == ConflictChoice.theirs;
     final bool confirmed = await showAppConfirm(
       context,
-      title: incoming ? Copy.mergeTakeAllIncoming(n) : Copy.mergeKeepAllMine(n),
-      message: Copy.mergeBulkConfirm(n, incoming: incoming),
+      title: incoming
+          ? localCopy.mergeTakeAllIncoming(n)
+          : localCopy.mergeKeepAllMine(n),
+      message: localCopy.mergeBulkConfirm(n, incoming: incoming),
       confirmLabel: incoming
-          ? Copy.conflictTakeIncoming
-          : Copy.conflictKeepMine,
+          ? localCopy.conflictTakeIncoming
+          : localCopy.conflictKeepMine,
     );
     if (!confirmed || !context.mounted) {
       return;
@@ -170,18 +218,20 @@ class _Conflict extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool deletion =
         conflict.kind == ConflictKind.deletedThere ||
         conflict.kind == ConflictKind.deletedHere;
     final String mine = switch (conflict.kind) {
-      ConflictKind.deletedThere => Copy.conflictChanged,
-      ConflictKind.deletedHere => Copy.conflictDeleted,
-      _ => conflict.mine,
+      ConflictKind.deletedThere => localCopy.conflictChanged,
+      ConflictKind.deletedHere => localCopy.conflictDeleted,
+      _ => _displayValue(conflict, conflict.mine, localCopy),
     };
     final String theirs = switch (conflict.kind) {
-      ConflictKind.deletedThere => Copy.conflictDeleted,
-      ConflictKind.deletedHere => Copy.conflictChanged,
-      _ => conflict.theirs,
+      ConflictKind.deletedThere => localCopy.conflictDeleted,
+      ConflictKind.deletedHere => localCopy.conflictChanged,
+      _ => _displayValue(conflict, conflict.theirs, localCopy),
     };
     final ConflictChoice? chosen = view.choices[conflict.id];
     return Column(
@@ -189,30 +239,33 @@ class _Conflict extends StatelessWidget {
       children: <Widget>[
         Text(
           conflict.recordLabel.isEmpty
-              ? Copy.mergeRecordUnnamed(conflict.recordId)
+              ? localCopy.mergeRecordUnnamed(conflict.recordId)
               : conflict.recordLabel,
           style: AppText.section,
         ),
         const SizedBox(height: Space.x1),
         Text(
-          Copy.conflictKind(conflict.kind.name, conflict.fieldLabel),
+          localCopy.conflictKind(conflict.kind.name, conflict.fieldLabel),
           style: AppText.bodyStrong,
         ),
         if (deletion) ...<Widget>[
           const SizedBox(height: Space.x1),
-          Text(Copy.conflictDeletion(conflict.kind.name), style: AppText.body),
+          Text(
+            localCopy.conflictDeletion(conflict.kind.name),
+            style: AppText.body,
+          ),
         ],
         const SizedBox(height: Space.x3),
         ResponsivePair(
           matchesHeights: true,
           start: _Side(
-            heading: Copy.conflictThisDevice,
+            heading: localCopy.conflictThisDevice,
             value: mine,
             device: conflict.mineDevice,
             at: mergeInstant(conflict.mineAt),
           ),
           end: _Side(
-            heading: Copy.conflictIncoming,
+            heading: localCopy.conflictIncoming,
             value: theirs,
             device: conflict.theirsDevice,
             at: mergeInstant(conflict.theirsAt),
@@ -224,38 +277,56 @@ class _Conflict extends StatelessWidget {
           matchesHeights: true,
           start: AppButton(
             key: ConflictScreen.keepMineKey,
-            label: Copy.conflictKeepMine,
+            label: localCopy.conflictKeepMine,
             icon: chosen == ConflictChoice.mine ? AppIcons.check : null,
             variant: AppButtonVariant.secondary,
             expand: true,
-            onPressed: () => onChoose(ConflictChoice.mine),
+            onPressed: conflict.allowChooseOne
+                ? () => onChoose(ConflictChoice.mine)
+                : null,
           ),
           end: AppButton(
             key: ConflictScreen.takeIncomingKey,
-            label: Copy.conflictTakeIncoming,
+            label: localCopy.conflictTakeIncoming,
             icon: chosen == ConflictChoice.theirs ? AppIcons.check : null,
             variant: AppButtonVariant.secondary,
             expand: true,
-            onPressed: () => onChoose(ConflictChoice.theirs),
+            onPressed: conflict.allowChooseOne
+                ? () => onChoose(ConflictChoice.theirs)
+                : null,
           ),
         ),
         const SizedBox(height: Space.x2),
-        AppButton(
-          key: ConflictScreen.typeValueKey,
-          label: Copy.conflictTypeValue,
-          variant: AppButtonVariant.secondary,
-          expand: true,
-          onPressed: () => onChoose(ConflictChoice.typed),
-        ),
+        if (conflict.kind == ConflictKind.template)
+          AppButton(
+            key: ConflictScreen.keepBothKey,
+            label: localCopy.duplicateKeepBoth,
+            variant: AppButtonVariant.secondary,
+            expand: true,
+            onPressed: () => onChoose(ConflictChoice.keepBoth),
+          ),
+        if (conflict.kind == ConflictKind.value ||
+            conflict.kind == ConflictKind.caption)
+          AppButton(
+            key: ConflictScreen.typeValueKey,
+            label: localCopy.conflictTypeValue,
+            variant: AppButtonVariant.secondary,
+            expand: true,
+            onPressed: () => onChoose(ConflictChoice.typed),
+          ),
         const SizedBox(height: Space.x2),
-        AppButton(
-          key: ConflictScreen.decideLaterKey,
-          label: Copy.conflictDecideLater,
-          variant: AppButtonVariant.secondary,
-          expand: true,
-          onPressed: () => onChoose(ConflictChoice.later),
-        ),
-        if (view.unsettled.length > 1) ...<Widget>[
+        if (conflict.kind != ConflictKind.template)
+          AppButton(
+            key: ConflictScreen.decideLaterKey,
+            label: localCopy.conflictDecideLater,
+            variant: AppButtonVariant.secondary,
+            expand: true,
+            onPressed: () => onChoose(ConflictChoice.later),
+          ),
+        if (view.unsettled.length > 1 &&
+            view.unsettled.every(
+              (FieldConflict c) => c.allowChooseOne,
+            )) ...<Widget>[
           const SizedBox(height: Space.x4),
           Wrap(
             spacing: Space.x2,
@@ -263,13 +334,13 @@ class _Conflict extends StatelessWidget {
             children: <Widget>[
               AppButton(
                 key: ConflictScreen.keepAllKey,
-                label: Copy.mergeKeepAllMine(view.unsettled.length),
+                label: localCopy.mergeKeepAllMine(view.unsettled.length),
                 variant: AppButtonVariant.text,
                 onPressed: () => onChooseAll(ConflictChoice.mine),
               ),
               AppButton(
                 key: ConflictScreen.takeAllKey,
-                label: Copy.mergeTakeAllIncoming(view.unsettled.length),
+                label: localCopy.mergeTakeAllIncoming(view.unsettled.length),
                 variant: AppButtonVariant.text,
                 onPressed: () => onChooseAll(ConflictChoice.theirs),
               ),
@@ -279,6 +350,33 @@ class _Conflict extends StatelessWidget {
       ],
     );
   }
+}
+
+String _displayValue(
+  FieldConflict conflict,
+  String encoded,
+  LocalizedCopy copy,
+) {
+  if (conflict.kind != ConflictKind.template &&
+      conflict.kind != ConflictKind.reference) {
+    return encoded;
+  }
+  final Object? decoded = jsonDecode(encoded);
+  if (decoded is! Map) return encoded;
+  if (conflict.kind == ConflictKind.reference) {
+    return decoded.entries
+        .map((MapEntry<Object?, Object?> e) => '${e.key}: ${e.value}')
+        .join('\n');
+  }
+  final Map<Object?, Object?> header = (decoded['header'] as Map)
+      .cast<Object?, Object?>();
+  final List<Object?> fields = (decoded['fields'] as List).cast<Object?>();
+  return <String>[
+    '${header['name'] ?? conflict.recordLabel} · v${header['version'] ?? 1}',
+    for (final Map<Object?, Object?> field
+        in fields.whereType<Map<Object?, Object?>>())
+      '${field['label'] ?? field['field_key']}: ${copy.fieldTypeLabel('${field['type'] ?? 'text'}')}',
+  ].join('\n');
 }
 
 class _Side extends StatelessWidget {
@@ -296,6 +394,8 @@ class _Side extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,11 +403,11 @@ class _Side extends StatelessWidget {
           Text(heading, style: AppText.label),
           const SizedBox(height: Space.x1),
           Text(
-            value.isEmpty ? Copy.conflictEmpty : value,
+            value.isEmpty ? localCopy.conflictEmpty : value,
             style: AppText.bodyStrong,
           ),
           const SizedBox(height: Space.x2),
-          Text(Copy.conflictWrittenBy(device, at), style: AppText.caption),
+          Text(localCopy.conflictWrittenBy(device, at), style: AppText.caption),
         ],
       ),
     );

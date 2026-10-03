@@ -1,93 +1,83 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
-import 'package:tapture/core/widgets/app_overflow_menu.dart'
-    show AppOverflowAction;
-import 'package:tapture/features/merge/merge.dart' show startPackageImport;
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 
-import 'project_list_filter.dart';
+import '../domain/project_status.dart';
+import 'project_list_criteria.dart';
+import 'project_list_criteria_controller.dart';
 
-/// Shared list-level commands the pane header and the compact/medium
-/// title bar both read, so the two layouts cannot drift.
+/// Shared project-list commands for the title bar and the expanded pane.
 abstract final class ProjectListActions {
   /// Create control in the pane header and the title bar.
   static const ValueKey<String> createKey = ValueKey<String>(
     'project-list-create',
   );
 
-  /// Import a project, in the more menu.
+  /// Import, in the more menu.
   static const ValueKey<String> importKey = ValueKey<String>('project-import');
-
-  /// More menu holding Import a project and Show archived.
-  static const ValueKey<String> overflowKey = ValueKey<String>(
-    'project-list-overflow',
-  );
 
   /// Opens the create form. Matches [AppRoutes.projectCreate].
   static void create(BuildContext context) {
-    context.go(_createLocation);
+    context.go(RoutePaths.projectCreate);
   }
 
-  /// Icon-only create for [AppPage.actions]. Empty: the footer or pane
-  /// holds the one create control (FE-SIMP-01).
-  static List<Widget> barActions(BuildContext _) {
-    return const <Widget>[];
-  }
-
-  /// Import a project (task 076, W19), then the labelled Show archived
-  /// row, whose check marks when the filter is on.
+  /// The list's more menu: Import, the one import page, which takes a
+  /// bundle, a spreadsheet, a dataset or a template (task 020). Filters live
+  /// behind the search field's filter button, like every other list.
   static List<AppOverflowAction> overflow(BuildContext context, WidgetRef ref) {
-    final bool show = ref.watch(projectListShowArchivedProvider);
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final bool archived = ref
+        .watch(projectListCriteriaProvider)
+        .statuses
+        .contains(ProjectStatus.archived);
     return <AppOverflowAction>[
       AppOverflowAction(
         key: importKey,
-        label: Copy.projectsImport,
+        label: localCopy.projectsImport,
         icon: AppIcons.import,
-        onTap: () => unawaited(startPackageImport(context, ref)),
+        onTap: () => context.go(RoutePaths.projectImport),
       ),
       AppOverflowAction(
-        key: const ValueKey<String>('project-show-archived'),
-        label: Copy.projectShowArchived,
-        icon: show ? AppIcons.check : AppIcons.archive,
+        label: localCopy.projectShowArchived,
+        icon: archived ? AppIcons.check : AppIcons.archive,
         onTap: () {
-          ref.read(projectListShowArchivedProvider.notifier).set(!show);
+          final ProjectListCriteria criteria = ref.read(
+            projectListCriteriaProvider,
+          );
+          final Set<ProjectStatus> statuses = Set<ProjectStatus>.of(
+            criteria.statuses,
+          );
+          if (archived) {
+            statuses.remove(ProjectStatus.archived);
+          } else {
+            statuses.add(ProjectStatus.archived);
+          }
+          ref
+              .read(projectListCriteriaProvider.notifier)
+              .set(criteria.copyWith(statuses: statuses));
         },
       ),
     ];
   }
 
-  /// Filled create control for the expanded pane header. Show archived
-  /// stays on the Projects title, not in this pane.
-  static Widget paneToolbar(
-    BuildContext context,
-    WidgetRef ref, {
-    bool showCreate = true,
-  }) {
-    return Wrap(
-      spacing: Space.x2,
-      runSpacing: Space.x2,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      alignment: WrapAlignment.spaceBetween,
-      children: <Widget>[
-        if (showCreate)
-          AppButton(
-            key: createKey,
-            label: Copy.projectsCreate,
-            onPressed: () => create(context),
-          ),
-      ],
+  /// Create in the expanded pane, while list-level commands stay in the
+  /// shared title bar at every size.
+  static Widget paneToolbar(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: AppButton(
+        key: createKey,
+        label: localCopy.projectsCreate,
+        onPressed: () => create(context),
+      ),
     );
   }
 }
-
-/// Must match [AppRoutes.projectCreate]. This file cannot import
-/// `router.dart` — the router imports the list screen.
-const String _projectsRoot = '/projects';
-const String _newSegment = 'new';
-const String _createLocation = '$_projectsRoot/$_newSegment';

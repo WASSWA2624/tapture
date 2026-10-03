@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
+import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/project_repository.dart';
@@ -16,13 +20,15 @@ import 'project_list_toolbar.dart';
 import 'project_list_view.dart';
 
 /// Landing list: every active project as one row with counts and
-/// last-worked time. Archived rows sit behind [Copy.projectShowArchived].
+/// last-worked time. Archived rows sit behind the status filter.
 class ProjectListScreen extends ConsumerWidget {
   /// Creates the landing list.
   const ProjectListScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool expanded = context.sizeClass == SizeClass.expanded;
     final AsyncValue<List<ProjectListRow>> value = ref.watch(
       projectListProvider,
@@ -37,54 +43,65 @@ class ProjectListScreen extends ConsumerWidget {
     });
     final String? from = GoRouterState.of(
       context,
-    ).uri.queryParameters[_fromQuery];
+    ).uri.queryParameters[RoutePaths.fromQuery];
     final bool diverted = from != null && from.isNotEmpty;
     if (expanded && open != null && !diverted) {
       return const ProjectHomeScreen();
     }
     return AppPage(
       key: const ValueKey<String>('route-projects'),
-      title: Copy.navProjects,
+      title: localCopy.navProjects,
       showAppBar: !expanded,
-      actions: expanded
-          ? const <Widget>[]
-          : ProjectListActions.barActions(context),
       overflow: ProjectListActions.overflow(context, ref),
       inset: false,
       scrollable: false,
       footer: value.hasValue && !expanded
           ? AppPrimaryAction(
-              label: Copy.projectsCreate,
-              onPressed: () => context.go(_createLocation),
+              label: localCopy.projectsCreate,
+              onPressed: () => ProjectListActions.create(context),
             )
           : null,
       body: expanded
-          ? const SizedBox.shrink()
-          : const Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    Space.x4,
-                    Space.x1,
-                    Space.x4,
-                    Space.x2,
-                  ),
-                  child: ProjectListToolbar(),
+          ? AppEmptyState(
+              icon: AppIcons.project,
+              headline: localCopy.projectsPickHeadline,
+              message: localCopy.projectsPickMessage,
+              // The pane already offers Create when it has projects.
+              actionLabel: value.asData?.value.isNotEmpty == true
+                  ? localCopy.projectsImport
+                  : localCopy.projectsCreate,
+              onAction: () {
+                if (value.asData?.value.isNotEmpty == true) {
+                  context.go(RoutePaths.projectImport);
+                } else {
+                  ProjectListActions.create(context);
+                }
+              },
+            )
+          : const AppListViewport(
+              header: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  Space.x4,
+                  Space.x1,
+                  Space.x4,
+                  Space.x2,
                 ),
-                Expanded(child: ProjectListView(filtered: true)),
-              ],
+                child: ProjectListToolbar(),
+              ),
+              body: ProjectListView(filtered: true),
             ),
     );
   }
 }
 
+/// Reopens the last project once per session, from the persisted id.
 void _resumeLastProject(BuildContext context, WidgetRef ref) {
   if (!context.mounted) {
     return;
   }
   final String? from = GoRouterState.of(
     context,
-  ).uri.queryParameters[_fromQuery];
+  ).uri.queryParameters[RoutePaths.fromQuery];
   if (from != null && from.isNotEmpty) {
     return;
   }
@@ -100,17 +117,5 @@ void _resumeLastProject(BuildContext context, WidgetRef ref) {
   if (id == null) {
     return;
   }
-  context.go(_projectHome(id));
+  context.go(RoutePaths.project(id));
 }
-
-/// Must match [AppRoutes.project]. This file cannot import `router.dart`
-/// — the router imports the screen.
-String _projectHome(String id) {
-  return '$_projectsRoot/${Uri.encodeComponent(id)}';
-}
-
-/// Must match [AppRoutes.projects] and [AppRoutes.projectCreate].
-const String _projectsRoot = '/projects';
-const String _newSegment = 'new';
-const String _createLocation = '$_projectsRoot/$_newSegment';
-const String _fromQuery = 'from';

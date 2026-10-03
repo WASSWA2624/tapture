@@ -16,6 +16,9 @@ final class ProjectListCriteriaController
 
   /// Restores the standard active-project list.
   void clear() => state = ProjectListCriteria();
+
+  /// Restores the default filters and keeps the search text.
+  void clearFilters() => state = ProjectListCriteria(query: state.query);
 }
 
 /// Shared project criteria.

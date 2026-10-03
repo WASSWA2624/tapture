@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/path_sanitizer.dart';
 import 'package:tapture/core/files/storage_root.dart';
@@ -29,7 +30,35 @@ final class _DevicePackageFiles implements PackageFiles {
 
   @override
   Future<Result<WrittenFile>> write(String relativePath, Uint8List bytes) {
-    return _writer.write(Stream<List<int>>.value(bytes), relativePath);
+    return writeStream(relativePath, Stream<List<int>>.value(bytes));
+  }
+
+  @override
+  Future<Result<WrittenFile>> writeStream(
+    String relativePath,
+    Stream<List<int>> bytes,
+  ) => writePackageFileStream(_writer, relativePath, bytes);
+
+  @override
+  Future<Result<Uint8List>> read(String relativePath) {
+    return FileReader(storageRoot: _root).read(relativePath);
+  }
+
+  @override
+  Future<void> move(String source, String target) async {
+    final String? from = await _resolve(source);
+    final String? to = await _resolve(target);
+    if (from == null || to == null) {
+      final StorageFailure pathFailure = FileReader.unreadable(source);
+      throw pathFailure;
+    }
+    final File destination = File(to);
+    if (await destination.exists()) {
+      final StorageFailure pathFailure = FileReader.unreadable(target);
+      throw pathFailure;
+    }
+    await destination.parent.create(recursive: true);
+    await File(from).rename(to);
   }
 
   @override

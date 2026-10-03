@@ -56,14 +56,16 @@ class _RenameDialogState extends State<_RenameDialog> {
     return ValueListenableBuilder<TextEditingValue>(
       valueListenable: _controller,
       builder: (BuildContext context, TextEditingValue value, Widget? _) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         final bool canSave = value.text.trim().isNotEmpty;
         return AppDialog.confirm(
-          title: Copy.projectRenameTitle,
-          message: Copy.projectRenameMessage,
-          confirmLabel: Copy.save,
+          title: localCopy.projectRenameTitle,
+          message: localCopy.projectRenameMessage,
+          confirmLabel: localCopy.save,
           confirmEnabled: canSave,
           extra: AppTextField(
-            label: Copy.projectName,
+            label: localCopy.projectName,
             controller: _controller,
             requiredness: FieldRequiredness.required,
             dictation: false,

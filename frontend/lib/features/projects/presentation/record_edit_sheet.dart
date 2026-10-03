@@ -23,9 +23,11 @@ import 'record_field_input.dart';
 /// Opens the editor for [row] as a sheet, or a side panel on expanded
 /// windows (FE-CONS-05).
 Future<void> showRecordEditSheet(BuildContext context, ProjectRecordRow row) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   return showAppSheet<void>(
     context,
-    title: Copy.recordEdit,
+    title: localCopy.recordEdit,
     builder: (BuildContext _) => RecordEditSheet(row: row),
   );
 }
@@ -81,15 +83,17 @@ class _RecordEditSheetState extends ConsumerState<RecordEditSheet> {
       onRetry: () =>
           ref.invalidate(recordTemplateProvider(widget.row.templateId)),
       data: (TemplateDef? loaded) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         final List<RecordEditEntry> entries = recordEditEntries(
           template: loaded,
           row: widget.row,
         );
         if (entries.isEmpty) {
-          return const AppEmptyState(
+          return AppEmptyState(
             icon: AppIcons.fields,
-            headline: Copy.recordEditNoFieldsHeadline,
-            message: Copy.recordEditNoFieldsMessage,
+            headline: localCopy.recordEditNoFieldsHeadline,
+            message: localCopy.recordEditNoFieldsMessage,
           );
         }
         final Failure? failure = state.failure;
@@ -136,7 +140,7 @@ class _RecordEditSheetState extends ConsumerState<RecordEditSheet> {
               ],
               const SizedBox(height: Space.x3),
               AppPrimaryAction(
-                label: Copy.save,
+                label: localCopy.save,
                 busy: state.saving,
                 onPressed: () => unawaited(_save(entries)),
               ),

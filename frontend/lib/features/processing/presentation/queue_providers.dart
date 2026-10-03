@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -14,6 +17,12 @@ final StreamProvider<QueueSnapshot> queueSnapshotProvider =
       return ref.watch(processingRepositoryProvider).watchQueue();
     });
 
+/// Whether this device cannot read photo text on device, as in a browser,
+/// where the worker skips that stage. The queue says so. Tests override it.
+final Provider<bool> onDeviceReadingUnavailableProvider = Provider<bool>(
+  (Ref _) => kIsWeb,
+);
+
 /// Project-scoped queue snapshot for an open project.
 final queueSnapshotForProjectProvider = StreamProvider.autoDispose
     .family<QueueSnapshot, String>((Ref ref, String projectId) {
@@ -22,7 +31,25 @@ final queueSnapshotForProjectProvider = StreamProvider.autoDispose
           .watchQueue(projectId: projectId);
     });
 
+/// Only the visible failure page keeps a query and its rows alive.
+final queueFailurePageProvider = StreamProvider.autoDispose
+    .family<QueueFailurePage, ({String? projectId, QueueFailureCursor? after})>(
+      (Ref ref, query) {
+        return ref
+            .watch(processingRepositoryProvider)
+            .watchFailurePage(projectId: query.projectId, after: query.after);
+      },
+      retry: (int _, Object _) => null,
+    );
+
 final class _EmptyProcessingRepository implements ProcessingRepository {
+  @override
+  Stream<QueueFailurePage> watchFailurePage({
+    String? projectId,
+    QueueFailureCursor? after,
+    int limit = AppConstants.listPageSize,
+  }) => Stream<QueueFailurePage>.value(const QueueFailurePage());
+
   @override
   Stream<List<ProcessingJob>> watchAll() {
     return Stream<List<ProcessingJob>>.value(const <ProcessingJob>[]);
@@ -87,6 +114,7 @@ final class _EmptyProcessingRepository implements ProcessingRepository {
     String jobId,
     String reason, {
     required bool permanent,
+    LocalizedMessage? localizedReason,
   }) async {
     return const Success<void>(null);
   }

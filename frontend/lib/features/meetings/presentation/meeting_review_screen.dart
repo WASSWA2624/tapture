@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/security/untrusted_text.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -63,21 +64,23 @@ final class MeetingReviewScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppPage(
-        title: Copy.meetingReviewTitle,
+        title: localCopy.meetingReviewTitle,
         body: AppErrorState(failure: failed),
       );
     }
     final Meeting? loaded = meeting;
     if (loaded == null) {
-      return const AppPage(
-        title: Copy.meetingReviewTitle,
+      return AppPage(
+        title: localCopy.meetingReviewTitle,
         body: AppEmptyState(
           icon: AppIcons.review,
-          headline: Copy.meetingReviewEmpty,
-          message: Copy.meetingReviewEmptyMessage,
+          headline: localCopy.meetingReviewEmpty,
+          message: localCopy.meetingReviewEmptyMessage,
         ),
       );
     }
@@ -86,23 +89,23 @@ final class MeetingReviewScreen extends ConsumerWidget {
     );
     final Widget notesPane = AppTextField(
       key: const ValueKey<String>('meeting-notes'),
-      label: Copy.meetingNotes,
+      label: localCopy.meetingNotes,
       controller: TextEditingController(text: notes),
       onChanged: onNotes,
     );
     final Widget minutesPane = AppTextField(
       key: const ValueKey<String>('meeting-minutes'),
-      label: Copy.meetingMinutes,
+      label: localCopy.meetingMinutes,
       controller: TextEditingController(text: minutes),
       onChanged: onMinutes,
     );
     final bool expanded = context.sizeClass == SizeClass.expanded;
     return AppPage(
       key: const ValueKey<String>('route-meeting-review'),
-      title: Copy.meetingReviewTitle,
+      title: localCopy.meetingReviewTitle,
       footer: AppButton(
         key: const ValueKey<String>('meeting-approve'),
-        label: Copy.meetingApprove,
+        label: localCopy.meetingApprove,
         expand: true,
         onPressed: blocks.isEmpty
             ? () {
@@ -130,18 +133,22 @@ final class MeetingReviewScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text(
-            Copy.meetingAttendanceCount(loaded.attendanceCount),
+            localCopy.meetingAttendanceCount(loaded.attendanceCount),
             key: const ValueKey<String>('meeting-attendance-count'),
           ),
           Text('${loaded.decisions.length}'),
           Text('${loaded.actions.length}'),
           if (blocks.isNotEmpty)
             Text(
-              Copy.meetingActionBlocked(blocks.first),
+              localCopy.meetingActionBlocked(blocks.first),
               key: const ValueKey<String>('meeting-approval-block'),
             ),
           if (transcript.isNotEmpty)
-            Text(transcript, key: const ValueKey<String>('meeting-transcript')),
+            // A transcript is outside text: shown as captured, never read.
+            Text(
+              UntrustedText(transcript).forDisplay(),
+              key: const ValueKey<String>('meeting-transcript'),
+            ),
           if (expanded)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

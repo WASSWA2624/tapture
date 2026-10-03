@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 /// Classifies a stage failure and the wait before the next attempt.
@@ -19,10 +20,14 @@ final class JobRetry {
     required this.reason,
     required this.permanent,
     required this.backoff,
+    this.localizedReason,
   });
 
-  /// Text stored on the job and shown verbatim.
+  /// Stable English text stored on the job for auditing.
   final String reason;
+
+  /// Semantic failure preserved for later widget locale resolution.
+  final LocalizedMessage? localizedReason;
 
   /// When true, the job is not claimed again.
   final bool permanent;
@@ -36,8 +41,10 @@ final class JobRetry {
   factory JobRetry.classify(Object error, {required int attempt}) {
     final int cap = AppConstants.processing.maxAttempts;
     final bool stop = !_isTransient(error) || attempt >= cap;
+    final LocalizedMessage message = _reason(error);
     return JobRetry(
-      reason: _reason(error),
+      reason: error is Failure ? error.message : message.fallback,
+      localizedReason: message,
       permanent: stop,
       backoff: stop ? Duration.zero : backoffFor(attempt),
     );
@@ -75,15 +82,24 @@ bool _isTransient(Object error) {
   };
 }
 
-String _reason(Object error) {
+LocalizedMessage _reason(Object error) {
   if (error is Failure) {
-    return error.message;
+    return error.explanation;
   }
   if (error is TimeoutException) {
-    return 'The provider did not answer in time.';
+    return const LocalizedMessage(
+      key: 'processingTimeout',
+      fallback: 'The provider did not answer in time.',
+    );
   }
   if (error is FormatException) {
-    return 'The provider response could not be read.';
+    return const LocalizedMessage(
+      key: 'processingMalformedResponse',
+      fallback: 'The provider response could not be read.',
+    );
   }
-  return 'Processing stopped.';
+  return const LocalizedMessage(
+    key: 'processingStopped',
+    fallback: 'Processing stopped.',
+  );
 }

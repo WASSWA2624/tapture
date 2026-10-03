@@ -1,4 +1,6 @@
 import 'package:drift/drift.dart';
+import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/base_dao.dart';
 import 'package:tapture/core/db/tables/processing.dart' as jobs;
@@ -101,11 +103,23 @@ final class ProcessingRepositoryImpl implements ProcessingRepository {
             _db.processing,
             _db.processingResults,
             _db.records,
+            _db.tombstones,
           },
         )
         .watch()
         .asyncMap((_) => _queries.snapshot(projectId: projectId));
   }
+
+  @override
+  Stream<QueueFailurePage> watchFailurePage({
+    String? projectId,
+    QueueFailureCursor? after,
+    int limit = AppConstants.listPageSize,
+  }) => _queries.watchFailurePage(
+    projectId: projectId,
+    after: after,
+    limit: limit,
+  );
 
   @override
   Future<Result<ProcessingJob?>> byId(String id) async {
@@ -201,8 +215,14 @@ final class ProcessingRepositoryImpl implements ProcessingRepository {
     String jobId,
     String reason, {
     required bool permanent,
+    LocalizedMessage? localizedReason,
   }) {
-    return _writes.fail(jobId, reason, permanent: permanent);
+    return _writes.fail(
+      jobId,
+      reason,
+      permanent: permanent,
+      localizedReason: localizedReason,
+    );
   }
 
   @override

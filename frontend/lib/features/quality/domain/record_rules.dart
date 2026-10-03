@@ -1,6 +1,6 @@
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/validation/validation.dart';
-import 'package:tapture/features/templates/templates.dart';
+import 'package:tapture/features/templates/domain/domain.dart';
 
 /// Maps a template onto the shared engine (task 015).
 ///
@@ -22,7 +22,12 @@ abstract final class RecordRules {
     );
     if (typed is FailureResult<void>) {
       issues.add(
-        ValidationIssue(field.fieldKey, Severity.error, typed.failure.message),
+        ValidationIssue(
+          field.fieldKey,
+          Severity.error,
+          typed.failure.message,
+          localizedMessage: typed.failure.explanation,
+        ),
       );
     }
     issues.addAll(
@@ -54,6 +59,7 @@ abstract final class RecordRules {
             field.fieldKey,
             Severity.error,
             typed.failure.message,
+            localizedMessage: typed.failure.explanation,
           ),
         );
       }

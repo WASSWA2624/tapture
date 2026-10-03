@@ -83,6 +83,8 @@ AppOverflowAction? projectOpenExternallyMenuItem(
   WidgetRef ref,
   Project project,
 ) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final DownloadService downloads = ref.watch(downloadServiceProvider);
   if (!downloads.canOpenExternally && !downloads.canDownloadCopy) {
     return null;
@@ -99,7 +101,7 @@ AppOverflowAction? projectOpenExternallyMenuItem(
   final bool openWith = downloads.canOpenExternally;
   return AppOverflowAction(
     key: ValueKey<String>('project-open-${project.id}'),
-    label: openWith ? Copy.projectOpenWith : Copy.projectDownloadCopy,
+    label: openWith ? localCopy.projectOpenWith : localCopy.projectDownloadCopy,
     icon: openWith ? AppIcons.openExternal : AppIcons.download,
     onTap: () =>
         unawaited(ProjectOpenExternallyAction.open(context, ref, project)),
@@ -111,10 +113,12 @@ Future<void> _showFailure(BuildContext context, Failure failure) {
     context: context,
     barrierDismissible: true,
     builder: (BuildContext dialogContext) {
+      final LocalizedCopy localCopy = Copy.of(dialogContext);
+
       return AppDialog.confirm(
-        title: Copy.projectOpenFailedTitle,
+        title: localCopy.projectOpenFailedTitle,
         message: failure.message,
-        confirmLabel: Copy.ok,
+        confirmLabel: localCopy.ok,
         extra: AppErrorState(failure: failure),
         onConfirm: () {
           Navigator.of(dialogContext).pop();

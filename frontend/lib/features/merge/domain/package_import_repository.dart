@@ -1,9 +1,9 @@
 import 'package:tapture/core/bundle/inspected_bundle.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/features/quality/quality.dart'
-    hide ConflictChoice, FieldConflict;
+import 'package:tapture/features/quality/domain/domain.dart' hide FieldConflict;
 
 import 'conflict_choice.dart';
+import 'field_conflict.dart';
 import 'merge_plan.dart';
 import 'package_presence.dart';
 
@@ -11,6 +11,9 @@ import 'package_presence.dart';
 /// W21): as a new project, or merged into one already here. Every write is
 /// all or nothing (FE-STATE-07); Drift stops at the data layer.
 abstract interface class PackageImportRepository {
+  /// Uses the same template rules as editing before accepting a replacement.
+  Future<Result<void>> validateTypedValue(FieldConflict conflict, String value);
+
   /// Whether the project [projectId] is here, and live.
   Future<Result<PackagePresence>> presenceOf(String projectId);
 
@@ -48,6 +51,7 @@ abstract interface class PackageImportRepository {
     required List<PossibleDuplicate> duplicates,
     required Set<String> skipped,
     required String chooser,
+    Map<String, String> typedValues = const <String, String>{},
     void Function(double progress)? onProgress,
   });
 }

@@ -4,8 +4,9 @@ import 'package:tapture/core/copy/copy.dart';
 /// short form of its id (task 076, W21). Captions are data (FE-SEC-05).
 String mergeRecordLabel(
   Map<String, List<Map<String, Object?>>> tables,
-  String recordId,
-) {
+  String recordId, {
+  LocalizedCopy? localizedCopy,
+}) {
   for (final Map<String, Object?> caption
       in tables['captions'] ?? const <Map<String, Object?>>[]) {
     if (caption['owner_id'] != recordId) {
@@ -19,7 +20,7 @@ String mergeRecordLabel(
       return text.trim();
     }
   }
-  return Copy.mergeRecordUnnamed(recordId);
+  return (localizedCopy ?? Copy.english).mergeRecordUnnamed(recordId);
 }
 
 /// A stored instant, whole seconds since the epoch, as a time; null when it

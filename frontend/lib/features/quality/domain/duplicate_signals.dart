@@ -26,13 +26,7 @@ abstract final class DuplicateSignals {
   }) {
     final _Side theirs = _Side(incoming);
     final _Side mine = _Side(local);
-    final Map<String, List<Map<String, Object?>>> byTemplate =
-        <String, List<Map<String, Object?>>>{};
-    for (final Map<String, Object?> record in mine.live) {
-      byTemplate
-          .putIfAbsent(record['template_id']! as String, () => [])
-          .add(record);
-    }
+    final _Candidates index = _Candidates(mine);
     final List<PossibleDuplicate> pairs = <PossibleDuplicate>[];
     for (final String id in candidates) {
       final Map<String, Object?>? record = theirs.records[id];
@@ -44,9 +38,8 @@ abstract final class DuplicateSignals {
         continue;
       }
       final List<String> identity = mine.identityFields(template);
-      for (final Map<String, Object?> other
-          in byTemplate[template] ?? const <Map<String, Object?>>[]) {
-        final String otherId = other['id']! as String;
+      for (final String otherId in index.find(theirs, record, template)) {
+        final Map<String, Object?> other = mine.records[otherId]!;
         final PossibleDuplicate? pair =
             _identity(theirs, id, mine, otherId, identity) ??
             _photo(theirs, id, mine, otherId) ??
@@ -72,12 +65,12 @@ abstract final class DuplicateSignals {
   ) {
     var shared = 0;
     for (final String field in fields) {
-      final String a = theirs.value(id, field);
-      final String b = mine.value(otherId, field);
-      if (a.isEmpty || b.isEmpty) {
+      final String a = theirs.foldedValue(id, field);
+      final String b = mine.foldedValue(otherId, field);
+      if (!theirs.hasValue(id, field) || !mine.hasValue(otherId, field)) {
         continue;
       }
-      if (foldSearchText(a) != foldSearchText(b)) {
+      if (a != b) {
         return null;
       }
       shared += 1;
@@ -117,7 +110,8 @@ abstract final class DuplicateSignals {
     _Side mine,
     Map<String, Object?> other,
   ) {
-    if (!_sameContext(record['context_json'], other['context_json'])) {
+    if (theirs.context(record['id']! as String) !=
+        mine.context(other['id']! as String)) {
       return null;
     }
     final Object? at = record['captured_at'];
@@ -144,20 +138,6 @@ abstract final class DuplicateSignals {
     );
   }
 
-  static bool _sameContext(Object? left, Object? right) {
-    final Map<String, String> a = _context(left);
-    final Map<String, String> b = _context(right);
-    if (a.length != b.length) {
-      return false;
-    }
-    for (final MapEntry<String, String> entry in a.entries) {
-      if (b[entry.key] != entry.value) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   static Map<String, String> _context(Object? json) {
     if (json is! String || json.isEmpty) {
       return const <String, String>{};
@@ -177,6 +157,96 @@ abstract final class DuplicateSignals {
     }
   }
 }
+
+/// Indexes only necessary comparisons. Partial identities still match when at
+/// least one shared field agrees and no other shared field disagrees.
+final class _Candidates {
+  _Candidates(this.side) {
+    for (final Map<String, Object?> record in side.live) {
+      final String id = record['id']! as String;
+      _order[id] = _order.length;
+      final String template = record['template_id']! as String;
+      for (final String field in side.identityFields(template)) {
+        final String value = side.foldedValue(id, field);
+        if (side.hasValue(id, field)) {
+          _identity
+              .putIfAbsent((template, field, value), () => <String>[])
+              .add(id);
+        }
+      }
+      for (final String hash in side.photoHashes(id)) {
+        _photos.putIfAbsent((template, hash), () => <String>[]).add(id);
+      }
+      final Object? at = record['captured_at'];
+      if (at is int && side.caption(id).isNotEmpty) {
+        _captions
+            .putIfAbsent((template, side.context(id)), () => <_Timed>[])
+            .add((at: at, id: id));
+      }
+    }
+    for (final List<_Timed> records in _captions.values) {
+      records.sort((_Timed a, _Timed b) => a.at.compareTo(b.at));
+    }
+  }
+
+  final _Side side;
+  final Map<String, int> _order = <String, int>{};
+  final Map<(String, String, String), List<String>> _identity =
+      <(String, String, String), List<String>>{};
+  final Map<(String, String), List<String>> _photos =
+      <(String, String), List<String>>{};
+  final Map<(String, String), List<_Timed>> _captions =
+      <(String, String), List<_Timed>>{};
+
+  Iterable<String> find(
+    _Side incoming,
+    Map<String, Object?> record,
+    String template,
+  ) {
+    final String id = record['id']! as String;
+    final Set<String> matches = <String>{};
+    for (final String field in side.identityFields(template)) {
+      final String value = incoming.foldedValue(id, field);
+      if (incoming.hasValue(id, field)) {
+        matches.addAll(_identity[(template, field, value)] ?? const <String>[]);
+      }
+    }
+    for (final String hash in incoming.photoHashes(id)) {
+      matches.addAll(_photos[(template, hash)] ?? const <String>[]);
+    }
+    final Object? at = record['captured_at'];
+    if (at is int && incoming.caption(id).isNotEmpty) {
+      final List<_Timed> nearby =
+          _captions[(template, incoming.context(id))] ?? const <_Timed>[];
+      final int window = AppConstants.merge.duplicateWindow.inSeconds;
+      for (
+        int i = _lowerBound(nearby, at - window);
+        i < nearby.length && nearby[i].at <= at + window;
+        i += 1
+      ) {
+        matches.add(nearby[i].id);
+      }
+    }
+    return matches.toList()
+      ..sort((String a, String b) => _order[a]!.compareTo(_order[b]!));
+  }
+
+  static int _lowerBound(List<_Timed> records, int at) {
+    int lower = 0;
+    int upper = records.length;
+    while (lower < upper) {
+      final int middle = lower + ((upper - lower) ~/ 2);
+      if (records[middle].at < at) {
+        lower = middle + 1;
+      } else {
+        upper = middle;
+      }
+    }
+    return lower;
+  }
+}
+
+typedef _Timed = ({int at, String id});
 
 /// One side's rows, indexed once.
 final class _Side {
@@ -219,6 +289,9 @@ final class _Side {
   final Map<String, String> _values;
   final Map<String, String> _captions;
   final Map<String, Set<String>> _photos;
+  final Map<String, String> _foldedValues = <String, String>{};
+  final Map<String, String> _contexts = <String, String>{};
+  final Map<String, List<String>> _identityFields = <String, List<String>>{};
 
   /// Records not deleted on this side.
   Iterable<Map<String, Object?>> get live => records.values.where(
@@ -226,8 +299,26 @@ final class _Side {
         !_deleted.contains('records/${record['id']}'),
   );
 
-  String value(String recordId, String fieldKey) =>
-      _values['$recordId/$fieldKey'] ?? '';
+  String foldedValue(String recordId, String fieldKey) {
+    final String key = '$recordId/$fieldKey';
+    return _foldedValues.putIfAbsent(
+      key,
+      () => foldSearchText(_values[key] ?? ''),
+    );
+  }
+
+  bool hasValue(String recordId, String fieldKey) =>
+      (_values['$recordId/$fieldKey'] ?? '').isNotEmpty;
+
+  String context(String id) => _contexts.putIfAbsent(id, () {
+    final Map<String, String> values = DuplicateSignals._context(
+      records[id]?['context_json'],
+    );
+    final List<String> keys = values.keys.toList()..sort();
+    return jsonEncode(<String, String>{
+      for (final String key in keys) key: values[key]!,
+    });
+  });
 
   String caption(String recordId) => _captions[recordId] ?? '';
 
@@ -235,20 +326,21 @@ final class _Side {
       _photos[recordId] ?? const <String>{};
 
   /// The field keys [templateId] names as a record's identity.
-  List<String> identityFields(String templateId) {
-    final Object? json = _templates[templateId]?['identity_fields'];
-    if (json is! String || json.isEmpty) {
-      return const <String>[];
-    }
-    try {
-      final Object? decoded = jsonDecode(json);
-      return decoded is List
-          ? <String>[for (final Object? key in decoded) ?key?.toString()]
-          : const <String>[];
-    } on FormatException {
-      return const <String>[];
-    }
-  }
+  List<String> identityFields(String templateId) =>
+      _identityFields.putIfAbsent(templateId, () {
+        final Object? json = _templates[templateId]?['identity_fields'];
+        if (json is! String || json.isEmpty) {
+          return const <String>[];
+        }
+        try {
+          final Object? decoded = jsonDecode(json);
+          return decoded is List
+              ? <String>[for (final Object? key in decoded) ?key?.toString()]
+              : const <String>[];
+        } on FormatException {
+          return const <String>[];
+        }
+      });
 }
 
 List<Map<String, Object?>> _rows(

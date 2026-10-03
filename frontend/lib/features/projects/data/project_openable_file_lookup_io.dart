@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
@@ -82,8 +83,10 @@ final class _IoProjectOpenableFileLookup implements ProjectOpenableFileLookup {
         } on Object {
           return FailureResult<ProjectOpenableFile?>(
             StorageFailure(
-              message: 'Tapture could not read $folderName.',
-              recoveryAction: 'Free some space, then try again.',
+              localizedMessage: Copy.messages.failureTaptureCouldNotReadValue(
+                (folderName).toString(),
+              ),
+              localizedRecovery: Copy.messages.failureFreeSomeSpaceThenTryAgain,
             ),
           );
         }
@@ -113,10 +116,10 @@ final class _IoProjectOpenableFileLookup implements ProjectOpenableFileLookup {
         } on Failure catch (failure) {
           return FailureResult<File?>(failure);
         } on Object {
-          return const FailureResult<File?>(
+          return FailureResult<File?>(
             StorageFailure(
-              message: 'Tapture could not look up a file for this project.',
-              recoveryAction: 'Try again.',
+              localizedMessage: Copy.messages.failureTaptureCouldNotLookUpAFile,
+              localizedRecovery: Copy.messages.failureTryAgain,
             ),
           );
         }

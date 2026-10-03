@@ -82,6 +82,8 @@ final class RecordBulkActions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Set<String> selected = ref.watch(recordSelectionProvider(projectId));
     if (selected.isEmpty) {
       return const SizedBox.shrink();
@@ -99,7 +101,7 @@ final class RecordBulkActions extends ConsumerWidget {
         _BulkCommand(
           key: 'records-bulk-select-all',
           icon: AppIcons.selectAll,
-          label: Copy.recordsSelectAllShown,
+          label: localCopy.recordsSelectAllShown,
           inReach: false,
           run: () => ref
               .read(recordSelectionProvider(projectId).notifier)
@@ -108,35 +110,35 @@ final class RecordBulkActions extends ConsumerWidget {
       _BulkCommand(
         key: 'records-bulk-approve',
         icon: AppIcons.verified,
-        label: Copy.recordsApproveLabel(count),
+        label: localCopy.recordsApproveLabel(count),
         inReach: true,
         run: () => unawaited(_approve(context, ref, ids)),
       ),
       _BulkCommand(
         key: 'records-bulk-archive',
         icon: AppIcons.archive,
-        label: Copy.recordsArchiveLabel(count),
+        label: localCopy.recordsArchiveLabel(count),
         inReach: false,
         run: () => unawaited(_archive(context, ref, ids)),
       ),
       _BulkCommand(
         key: 'records-bulk-reprocess',
         icon: AppIcons.processing,
-        label: Copy.recordsReprocessLabel(count),
+        label: localCopy.recordsReprocessLabel(count),
         inReach: false,
         run: () => unawaited(_reprocess(context, ref, ids)),
       ),
       _BulkCommand(
         key: 'records-bulk-export',
         icon: AppIcons.export,
-        label: Copy.recordsExportLabel(count),
+        label: localCopy.recordsExportLabel(count),
         inReach: false,
         run: () => unawaited(_export(context, ids)),
       ),
       _BulkCommand(
         key: 'records-bulk-delete',
         icon: AppIcons.delete,
-        label: Copy.recordsDeleteLabel(count),
+        label: localCopy.recordsDeleteLabel(count),
         inReach: true,
         run: () => unawaited(_delete(context, ref, ids)),
       ),
@@ -155,6 +157,8 @@ final class RecordBulkActions extends ConsumerWidget {
         ),
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
+            final LocalizedCopy localCopy = Copy.of(context);
+
             final bool wide = constraints.maxWidth >= _inlineWidth;
             final List<_BulkCommand> inline = <_BulkCommand>[
               for (final _BulkCommand command in commands)
@@ -169,8 +173,8 @@ final class RecordBulkActions extends ConsumerWidget {
                 AppIconButton(
                   key: const ValueKey<String>('records-bulk-clear'),
                   icon: AppIcons.close,
-                  semanticLabel: Copy.recordsClearSelection,
-                  tooltip: Copy.recordsClearSelection,
+                  semanticLabel: localCopy.recordsClearSelection,
+                  tooltip: localCopy.recordsClearSelection,
                   outlined: false,
                   onPressed: busy
                       ? null
@@ -183,7 +187,7 @@ final class RecordBulkActions extends ConsumerWidget {
                   child: Semantics(
                     liveRegion: true,
                     child: Text(
-                      Copy.recordsSelectedCount(count),
+                      localCopy.recordsSelectedCount(count),
                       key: const ValueKey<String>('records-bulk-count'),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -235,6 +239,8 @@ final class RecordBulkActions extends ConsumerWidget {
     WidgetRef ref,
     List<String> ids,
   ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordBulkController controller = ref.read(
       recordBulkControllerProvider(projectId).notifier,
     );
@@ -247,8 +253,8 @@ final class RecordBulkActions extends ConsumerWidget {
       _report(
         host,
         outcome,
-        done: Copy.recordsApproved,
-        notDone: Copy.recordsNotApproved,
+        done: localCopy.recordsApproved,
+        notDone: localCopy.recordsNotApproved,
       );
     }
   }
@@ -259,15 +265,17 @@ final class RecordBulkActions extends ConsumerWidget {
     WidgetRef ref,
     List<String> ids,
   ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordBulkController controller = ref.read(
       recordBulkControllerProvider(projectId).notifier,
     );
     final BuildContext host = _snackHost(context);
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.recordsArchiveTitle(ids.length),
-      message: Copy.recordsArchiveMessage(ids.length),
-      confirmLabel: Copy.recordsArchiveConfirm,
+      title: localCopy.recordsArchiveTitle(ids.length),
+      message: localCopy.recordsArchiveMessage(ids.length),
+      confirmLabel: localCopy.recordsArchiveConfirm,
       destructive: true,
     );
     if (!confirmed || !context.mounted) {
@@ -281,8 +289,8 @@ final class RecordBulkActions extends ConsumerWidget {
       _report(
         host,
         outcome,
-        done: Copy.recordsArchived,
-        notDone: Copy.recordsNotArchived,
+        done: localCopy.recordsArchived,
+        notDone: localCopy.recordsNotArchived,
       );
     }
   }
@@ -313,6 +321,8 @@ final class RecordBulkActions extends ConsumerWidget {
     WidgetRef ref,
     List<String> ids,
   ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordBulkController controller = ref.read(
       recordBulkControllerProvider(projectId).notifier,
     );
@@ -323,9 +333,9 @@ final class RecordBulkActions extends ConsumerWidget {
     final BuildContext host = _snackHost(context);
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.recordsReprocessTitle(ids.length),
-      message: Copy.recordsReprocessMessage(ids.length),
-      confirmLabel: Copy.recordsReprocessConfirm,
+      title: localCopy.recordsReprocessTitle(ids.length),
+      message: localCopy.recordsReprocessMessage(ids.length),
+      confirmLabel: localCopy.recordsReprocessConfirm,
     );
     if (!confirmed || !context.mounted) {
       return;
@@ -340,10 +350,10 @@ final class RecordBulkActions extends ConsumerWidget {
       _report(
         host,
         outcome,
-        done: Copy.recordsRequeued,
-        notDone: Copy.recordsNotRequeued,
+        done: localCopy.recordsRequeued,
+        notDone: localCopy.recordsNotRequeued,
         after: offline && queued > 0
-            ? Copy.recordsRequeuedOffline(queued)
+            ? localCopy.recordsRequeuedOffline(queued)
             : null,
       );
     }
@@ -355,11 +365,13 @@ final class RecordBulkActions extends ConsumerWidget {
   /// Confirms what an export holds, naming the count, then hands the ticked
   /// records to [onExport] or opens the project's export page.
   Future<void> _export(BuildContext context, List<String> ids) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.recordsExportTitle(ids.length),
-      message: Copy.recordsExportMessage(ids.length),
-      confirmLabel: Copy.recordsExportConfirm,
+      title: localCopy.recordsExportTitle(ids.length),
+      message: localCopy.recordsExportMessage(ids.length),
+      confirmLabel: localCopy.recordsExportConfirm,
     );
     if (!confirmed || !context.mounted) {
       return;
@@ -425,6 +437,8 @@ void _report(
   required String Function(int n) notDone,
   String? after,
 }) {
+  final LocalizedCopy localCopy = Copy.of(host);
+
   final int changed = outcome.succeeded.length;
   final int failed = outcome.failed.length;
   if (changed == 0 && failed == 0) {
@@ -440,7 +454,7 @@ void _report(
     text = done(changed);
     tone = SnackTone.success;
   } else {
-    text = Copy.recordsBulkOutcome(
+    text = localCopy.recordsBulkOutcome(
       done: done(changed),
       notDone: notDone(failed),
     );

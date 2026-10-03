@@ -1,11 +1,15 @@
 import 'dart:async';
 
+import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'processing_job.dart';
+import 'queue_failure_page.dart';
 
 export 'job_queue.dart';
 export 'processing_job.dart';
+export 'queue_failure_page.dart';
 
 /// Persistence port for processing jobs. Drift types stop at the data layer.
 abstract interface class ProcessingRepository {
@@ -21,8 +25,16 @@ abstract interface class ProcessingRepository {
   /// Tombstones [id]. [reason] is required so a later audit can say why.
   Future<Result<void>> delete(String id, {required String reason});
 
-  /// Counts and groups from queries, plus the failed jobs.
+  /// Live summary counts and groups, without materializing failed jobs.
   Stream<QueueSnapshot> watchQueue({String? projectId});
+
+  /// One live oldest-first page. Tombstoned jobs and records are excluded
+  /// before the limit; [after] survives its row being retried or deleted.
+  Stream<QueueFailurePage> watchFailurePage({
+    String? projectId,
+    QueueFailureCursor? after,
+    int limit = AppConstants.listPageSize,
+  });
 
   /// Queues captured records that do not yet have a job.
   ///
@@ -72,6 +84,7 @@ abstract interface class ProcessingRepository {
     String jobId,
     String reason, {
     required bool permanent,
+    LocalizedMessage? localizedReason,
   });
 
   /// Records [stage] as the last completed stage.
@@ -103,7 +116,6 @@ typedef QueueSnapshot = ({
   int imagesToday,
   int requestCap,
   List<QueueGroup> groups,
-  List<ProcessingJob> failures,
 });
 
 /// An empty snapshot.
@@ -115,5 +127,4 @@ const QueueSnapshot emptyQueueSnapshot = (
   imagesToday: 0,
   requestCap: 0,
   groups: <QueueGroup>[],
-  failures: <ProcessingJob>[],
 );

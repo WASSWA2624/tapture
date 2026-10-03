@@ -10,6 +10,9 @@ enum SettlementRule {
   /// A value beats an empty one nobody ever edited.
   valueBeatsUntouchedEmpty,
 
+  /// The peer clock contains this device's entire earlier revision.
+  causalFastForward,
+
   /// No rule decided. A person has to.
   none,
 }

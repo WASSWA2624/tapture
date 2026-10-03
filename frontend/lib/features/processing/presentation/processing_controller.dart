@@ -62,8 +62,10 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
         steps: <ProgressStep>[
           ProgressStep(
             label: Copy.queueTitle,
+            localizedLabel: Copy.messages.queueTitle,
             state: StepState.failed,
             detail: failure.message,
+            localizedDetail: failure.explanation,
           ),
         ],
       );
@@ -85,14 +87,25 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
       );
       if (claimed case FailureResult<ProcessingJob?>(:final Failure failure)) {
         failed++;
-        _append(Copy.queueTitle, StepState.failed, failure.message);
+        _append(
+          Copy.queueTitle,
+          StepState.failed,
+          failure.message,
+          localizedLabel: Copy.messages.queueTitle,
+          localizedDetail: failure.explanation,
+        );
         break;
       }
       final ProcessingJob? job = (claimed as Success<ProcessingJob?>).value;
       if (job == null) {
         break;
       }
-      _append(job.recordId, StepState.running, Copy.processPreparing);
+      _append(
+        job.recordId,
+        StepState.running,
+        Copy.processPreparing,
+        localizedDetail: Copy.messages.processPreparing,
+      );
       final JobRunner runner = JobRunner(
         perform:
             (
@@ -100,7 +113,13 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
               ProcessingJob current,
               CancellationToken token,
             ) async {
-              _replace(current.recordId, StepState.running, _stageLabel(stage));
+              final LocalizedMessage message = _stageMessage(stage);
+              _replace(
+                current.recordId,
+                StepState.running,
+                message.fallback,
+                localizedDetail: message,
+              );
               if (stage == JobStage.online &&
                   !ref.read(egressConsentProvider)) {
                 final Future<bool> Function(ProcessingJob job)? confirm =
@@ -108,7 +127,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
                 if (confirm == null || !await confirm(current)) {
                   await repository.release(current.id);
                   _token.cancel();
-                  throw const _ProcessingCancelled(Copy.egressDecline);
+                  throw _ProcessingCancelled(Copy.messages.egressDecline);
                 }
                 ref.read(egressConsentProvider.notifier).grant();
               }
@@ -141,35 +160,70 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
           stopAfter: stopAfter,
         );
         if (run.cancelled) {
-          _replace(job.recordId, StepState.waiting, Copy.queueCancel);
+          _replace(
+            job.recordId,
+            StepState.waiting,
+            Copy.queueCancelled,
+            localizedDetail: Copy.messages.queueCancelled,
+          );
           break;
         }
         if (run.paused) {
           succeeded++;
-          _replace(job.recordId, StepState.done, Copy.processReadOnDevice);
+          _replace(
+            job.recordId,
+            StepState.done,
+            Copy.processReadOnDevice,
+            localizedDetail: Copy.messages.processReadOnDevice,
+          );
           continue;
         }
         (await repository.complete(
           job.id,
         )).fold((Failure failure) => throw failure, (_) {});
         succeeded++;
-        _replace(job.recordId, StepState.done, Copy.stepDone);
+        _replace(
+          job.recordId,
+          StepState.done,
+          Copy.stepDone,
+          localizedDetail: Copy.messages.stepDone,
+        );
       } on _ProcessingCancelled catch (cancelled) {
-        _replace(job.recordId, StepState.waiting, cancelled.detail);
+        _replace(
+          job.recordId,
+          StepState.waiting,
+          cancelled.detail.fallback,
+          localizedDetail: cancelled.detail,
+        );
         break;
       } on _AwaitingTemplateChoice {
         await repository.release(job.id);
         waiting.add(job.id);
-        _replace(job.recordId, StepState.waiting, Copy.templateChoiceWaiting);
+        _replace(
+          job.recordId,
+          StepState.waiting,
+          Copy.templateChoiceWaiting,
+          localizedDetail: Copy.messages.templateChoiceWaiting,
+        );
         continue;
       } on _TemplateChoiceFailed catch (error) {
         await repository.release(job.id);
         failed++;
-        _replace(job.recordId, StepState.failed, error.failure.message);
+        _replace(
+          job.recordId,
+          StepState.failed,
+          error.failure.message,
+          localizedDetail: error.failure.explanation,
+        );
         break;
       } on CancelledFailure catch (failure) {
         await repository.release(job.id);
-        _replace(job.recordId, StepState.waiting, failure.message);
+        _replace(
+          job.recordId,
+          StepState.waiting,
+          failure.message,
+          localizedDetail: failure.explanation,
+        );
         break;
       } on Object catch (error) {
         final JobRetry retry = JobRetry.classify(
@@ -180,13 +234,23 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
           job.id,
           retry.reason,
           permanent: retry.permanent,
+          localizedReason: retry.localizedReason,
         );
         failed++;
         final String reason = recorded.fold(
           (Failure failure) => failure.message,
           (_) => retry.reason,
         );
-        _replace(job.recordId, StepState.failed, reason);
+        final LocalizedMessage? message = recorded.fold(
+          (Failure failure) => failure.explanation,
+          (_) => retry.localizedReason,
+        );
+        _replace(
+          job.recordId,
+          StepState.failed,
+          reason,
+          localizedDetail: message,
+        );
       }
     }
     state = state.copyWith(
@@ -227,6 +291,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
             label: jobId,
             state: StepState.failed,
             detail: failure.message,
+            localizedDetail: failure.explanation,
           ),
         ],
       );
@@ -271,7 +336,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
     if (choice == null) {
       await repository.release(job.id);
       _token.cancel();
-      throw const _ProcessingCancelled(Copy.templateChoiceSkipped);
+      throw _ProcessingCancelled(Copy.messages.templateChoiceSkipped);
     }
     final Result<void> applied = await ref.read(
       processingTemplateChoiceProvider,
@@ -298,21 +363,44 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
     return true;
   }
 
-  void _append(String label, StepState stepState, String detail) {
+  void _append(
+    String label,
+    StepState stepState,
+    String detail, {
+    LocalizedMessage? localizedLabel,
+    LocalizedMessage? localizedDetail,
+  }) {
     state = state.copyWith(
       steps: <ProgressStep>[
         ...state.steps,
-        ProgressStep(label: label, state: stepState, detail: detail),
+        ProgressStep(
+          label: label,
+          state: stepState,
+          detail: detail,
+          localizedLabel: localizedLabel,
+          localizedDetail: localizedDetail,
+        ),
       ],
     );
   }
 
-  void _replace(String label, StepState stepState, String detail) {
+  void _replace(
+    String label,
+    StepState stepState,
+    String detail, {
+    LocalizedMessage? localizedDetail,
+  }) {
     state = state.copyWith(
       steps: <ProgressStep>[
         for (final ProgressStep step in state.steps)
           if (step.label == label)
-            ProgressStep(label: label, state: stepState, detail: detail)
+            ProgressStep(
+              label: label,
+              state: stepState,
+              detail: detail,
+              localizedLabel: step.localizedLabel,
+              localizedDetail: localizedDetail,
+            )
           else
             step,
       ],
@@ -340,7 +428,7 @@ final Provider<ProcessingStageWork> processingStageWorkProvider =
 final Provider<ProcessingTemplateChoice> processingTemplateChoiceProvider =
     Provider<ProcessingTemplateChoice>((_) {
       return (TemplateChoiceNeeded _, TemplateChoice _) async {
-        return const FailureResult<void>(
+        return FailureResult<void>(
           ValidationFailure(
             message: Copy.templateChoiceApplyFailed,
             recoveryAction: Copy.templateChoiceApplyRecovery,
@@ -392,13 +480,13 @@ typedef ProcessingEgressSummary =
 typedef ProcessingBatchNotification =
     Future<void> Function(int succeeded, int failed);
 
-String _stageLabel(JobStage stage) {
+LocalizedMessage _stageMessage(JobStage stage) {
   return switch (stage) {
-    JobStage.prepare => Copy.processPreparing,
-    JobStage.onDevice => Copy.processReading,
-    JobStage.detect => Copy.processDetecting,
-    JobStage.online => Copy.processExtracting,
-    JobStage.normalise || JobStage.validate => Copy.processChecking,
+    JobStage.prepare => Copy.messages.processPreparing,
+    JobStage.onDevice => Copy.messages.processReading,
+    JobStage.detect => Copy.messages.processDetecting,
+    JobStage.online => Copy.messages.processExtracting,
+    JobStage.normalise || JobStage.validate => Copy.messages.processChecking,
   };
 }
 
@@ -412,7 +500,7 @@ final class _ProcessingCancelled implements Exception {
   const _ProcessingCancelled(this.detail);
 
   /// Shown on the job's step.
-  final String detail;
+  final LocalizedMessage detail;
 }
 
 final class _TemplateChoiceFailed implements Exception {

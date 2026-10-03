@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -39,9 +39,9 @@ abstract interface class ProjectOpenableFileLookup {
 
 /// The failure when a project has no spreadsheet, document or PDF to open.
 StorageFailure projectNothingToOpenFailure() {
-  return const StorageFailure(
-    message: Copy.projectNothingToOpen,
-    recoveryAction: Copy.projectNothingToOpenRecovery,
+  return StorageFailure(
+    localizedMessage: DomainCopy.messages.projectNothingToOpen,
+    localizedRecovery: DomainCopy.messages.projectNothingToOpenRecovery,
   );
 }
 

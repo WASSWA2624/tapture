@@ -1,4 +1,5 @@
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 
 /// Today's online usage against the project's daily cap.
 ///
@@ -42,6 +43,16 @@ final class CostGuard {
     return "Today's limit of $requestCap online requests is used. "
         'It resets at 00:00 UTC on $day.';
   }
+
+  /// Semantic cap and reset retained without a Flutter dependency.
+  LocalizedMessage get localizedBlockMessage => LocalizedMessage(
+    key: 'processingDailyCap',
+    fallback: blockMessage,
+    arguments: <String, Object?>{
+      'cap': requestCap,
+      'resetDay': resetsAt.toIso8601String().substring(0, 10),
+    },
+  );
 
   /// Adds one request and [images] to today's totals.
   CostGuard record({required int images}) {

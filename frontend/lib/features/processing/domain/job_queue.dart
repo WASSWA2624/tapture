@@ -1,3 +1,4 @@
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -35,7 +36,12 @@ abstract interface class JobQueue {
 
   /// Records [reason] on [jobId]. A permanent failure stops. A transient
   /// one returns to the queue after bounded backoff.
-  Future<void> fail(String jobId, String reason, {required bool permanent});
+  Future<void> fail(
+    String jobId,
+    String reason, {
+    required bool permanent,
+    LocalizedMessage? localizedReason,
+  });
 }
 
 final class _RepositoryJobQueue implements JobQueue {
@@ -75,8 +81,16 @@ final class _RepositoryJobQueue implements JobQueue {
     String jobId,
     String reason, {
     required bool permanent,
+    LocalizedMessage? localizedReason,
   }) async {
-    _value(await _repository.fail(jobId, reason, permanent: permanent));
+    _value(
+      await _repository.fail(
+        jobId,
+        reason,
+        permanent: permanent,
+        localizedReason: localizedReason,
+      ),
+    );
   }
 }
 

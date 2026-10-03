@@ -1,9 +1,16 @@
 import 'dart:async';
 
 import 'package:tapture/core/errors/result.dart';
+import 'merge_history_entry.dart';
 
 /// Persistence port for merge sessions. Drift types stop at the data layer.
 abstract interface class MergeRepository {
+  /// Persisted history with source, timestamp, category counts and resolutions.
+  Stream<List<MergeHistoryEntry>> watchHistory(String projectId);
+
+  /// Restores the latest unchanged merge while preserving audit and evidence.
+  Future<Result<void>> undo(String id);
+
   /// Live list of merge sessions on this device.
   Stream<List<MergeSession>> watchAll();
 

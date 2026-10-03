@@ -50,16 +50,18 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Project? project = ref.watch(currentProjectDetailsProvider);
     if (project == null) {
       return AppPage(
         key: const ValueKey<String>('route-project-settings'),
-        title: Copy.projectSettingsTitle,
+        title: localCopy.projectSettingsTitle,
         body: AppEmptyState(
           icon: AppIcons.settings,
-          headline: Copy.projectSettingsEmptyHeadline,
-          message: Copy.projectSettingsEmptyMessage,
-          actionLabel: Copy.navProjects,
+          headline: localCopy.projectSettingsEmptyHeadline,
+          message: localCopy.projectSettingsEmptyMessage,
+          actionLabel: localCopy.navProjects,
           onAction: () => context.go(RoutePaths.projects),
         ),
       );
@@ -70,11 +72,11 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
     final _ProjectSettingsView view = ref.watch(_projectSettingsProvider);
     return AppPage(
       key: const ValueKey<String>('route-project-settings'),
-      title: Copy.projectSettingsTitle,
+      title: localCopy.projectSettingsTitle,
       scrollable: false,
       overflow: <AppOverflowAction>[
         AppOverflowAction(
-          label: Copy.projectEditTitle,
+          label: localCopy.projectEditTitle,
           icon: AppIcons.info,
           onTap: () =>
               unawaited(context.push(RoutePaths.projectDetails(project.id))),
@@ -83,18 +85,26 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
       body: AppForm(
         guardUnsaved: true,
         dirty: view.dirty,
-        errors: view.saveError == null
+        errors:
+            Copy.of(
+                  context,
+                ).stateText(view.localizedSaveError, view.saveError) ==
+                null
             ? const <String>[]
-            : <String>[view.saveError!],
+            : <String>[
+                Copy.of(
+                  context,
+                ).stateText(view.localizedSaveError, view.saveError)!,
+              ],
         fields: <Widget>[
           AppChoiceField<bool?>(
             label:
-                '${Copy.projectAiEnabled} · ${Copy.projectAppDefault(_onOff(app.aiEnabled))}',
+                '${localCopy.projectAiEnabled} · ${localCopy.projectAppDefault(_onOff(app.aiEnabled, localizedCopy: Copy.of(context)))}',
             value: view.draft.aiEnabled,
-            options: const <Choice<bool?>>[
-              Choice<bool?>(null, Copy.projectUseAppDefault),
-              Choice<bool?>(true, Copy.projectOn),
-              Choice<bool?>(false, Copy.projectOff),
+            options: <Choice<bool?>>[
+              Choice<bool?>(null, localCopy.projectUseAppDefault),
+              Choice<bool?>(true, localCopy.projectOn),
+              Choice<bool?>(false, localCopy.projectOff),
             ],
             onChanged: (bool? value) {
               ref.read(_projectSettingsProvider.notifier).setAiEnabled(value);
@@ -102,12 +112,12 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
           ),
           AppChoiceField<bool?>(
             label:
-                '${Copy.projectDoNotSendImages} · ${Copy.projectAppDefault(_onOff(app.doNotSendImages))}',
+                '${localCopy.projectDoNotSendImages} · ${localCopy.projectAppDefault(_onOff(app.doNotSendImages, localizedCopy: Copy.of(context)))}',
             value: view.draft.doNotSendImages,
-            options: const <Choice<bool?>>[
-              Choice<bool?>(null, Copy.projectUseAppDefault),
-              Choice<bool?>(true, Copy.projectOn),
-              Choice<bool?>(false, Copy.projectOff),
+            options: <Choice<bool?>>[
+              Choice<bool?>(null, localCopy.projectUseAppDefault),
+              Choice<bool?>(true, localCopy.projectOn),
+              Choice<bool?>(false, localCopy.projectOff),
             ],
             onChanged: (bool? value) {
               ref
@@ -117,32 +127,34 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
           ),
           AppChoiceField<bool?>(
             label:
-                '${Copy.settingsGps} · ${Copy.projectAppDefault(_onOff(app.gpsEnabled))}',
+                '${localCopy.settingsGps} · ${localCopy.projectAppDefault(_onOff(app.gpsEnabled, localizedCopy: Copy.of(context)))}',
             value: view.draft.gpsEnabled,
-            options: const <Choice<bool?>>[
-              Choice<bool?>(null, Copy.projectUseAppDefault),
-              Choice<bool?>(true, Copy.projectOn),
-              Choice<bool?>(false, Copy.projectOff),
+            options: <Choice<bool?>>[
+              Choice<bool?>(null, localCopy.projectUseAppDefault),
+              Choice<bool?>(true, localCopy.projectOn),
+              Choice<bool?>(false, localCopy.projectOff),
             ],
             onChanged: (bool? value) {
               ref.read(_projectSettingsProvider.notifier).setGpsEnabled(value);
             },
           ),
           AppChoiceField<String?>(
-            label: Copy.settingsFolderStrategy,
+            label: localCopy.settingsFolderStrategy,
             value: view.draft.folderStrategy,
             options: <Choice<String?>>[
               Choice<String?>(
                 null,
-                Copy.projectAppDefault(_strategyLabel(app.folderStrategy)),
+                localCopy.projectAppDefault(
+                  _strategyLabel(
+                    app.folderStrategy,
+                    localizedCopy: Copy.of(context),
+                  ),
+                ),
               ),
-              const Choice<String?>('byContext', Copy.settingsFolderByContext),
-              const Choice<String?>(
-                'byTemplate',
-                Copy.settingsFolderByTemplate,
-              ),
-              const Choice<String?>('byCaptureDate', Copy.settingsFolderByDate),
-              const Choice<String?>('flat', Copy.settingsFolderFlat),
+              Choice<String?>('byContext', localCopy.settingsFolderByContext),
+              Choice<String?>('byTemplate', localCopy.settingsFolderByTemplate),
+              Choice<String?>('byCaptureDate', localCopy.settingsFolderByDate),
+              Choice<String?>('flat', localCopy.settingsFolderFlat),
             ],
             onChanged: ref
                 .read(_projectSettingsProvider.notifier)
@@ -150,32 +162,36 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
           ),
           const VerificationModeToggle(),
           AppTextField(
-            label: Copy.projectConfidenceHigh,
+            label: localCopy.projectConfidenceHigh,
             controller: _high!,
-            helper: Copy.projectAppDefault(_band(app.confidenceHigh)),
+            helper: localCopy.projectAppDefault(_band(app.confidenceHigh)),
             requiredness: FieldRequiredness.optional,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             textInputAction: TextInputAction.next,
-            errorText: view.highError,
+            errorText: Copy.of(
+              context,
+            ).stateText(view.localizedHighError, view.highError),
             dictation: false,
           ),
           AppTextField(
-            label: Copy.projectConfidenceMedium,
+            label: localCopy.projectConfidenceMedium,
             controller: _medium!,
-            helper: Copy.projectAppDefault(_band(app.confidenceMedium)),
+            helper: localCopy.projectAppDefault(_band(app.confidenceMedium)),
             requiredness: FieldRequiredness.optional,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             textInputAction: TextInputAction.next,
-            errorText: view.mediumError,
+            errorText: Copy.of(
+              context,
+            ).stateText(view.localizedMediumError, view.mediumError),
             dictation: false,
           ),
           AppChoiceField<String?>(
-            label: Copy.templateChoiceLabel,
+            label: localCopy.templateChoiceLabel,
             value: view.draft.templateChoice,
-            options: const <Choice<String?>>[
-              Choice<String?>(null, Copy.templateChoiceAuto),
-              Choice<String?>('suggest', Copy.templateChoiceSuggest),
-              Choice<String?>('manual', Copy.templateChoiceManual),
+            options: <Choice<String?>>[
+              Choice<String?>(null, localCopy.templateChoiceAuto),
+              Choice<String?>('suggest', localCopy.templateChoiceSuggest),
+              Choice<String?>('manual', localCopy.templateChoiceManual),
             ],
             onChanged: (String? value) {
               ref
@@ -185,12 +201,12 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
           ),
           AppChoiceField<bool?>(
             label:
-                '${Copy.projectRefineColumns} · ${Copy.projectAppDefault(_onOff(app.refineColumns))}',
+                '${localCopy.projectRefineColumns} · ${localCopy.projectAppDefault(_onOff(app.refineColumns, localizedCopy: Copy.of(context)))}',
             value: view.draft.refineColumns,
-            options: const <Choice<bool?>>[
-              Choice<bool?>(null, Copy.projectUseAppDefault),
-              Choice<bool?>(true, Copy.projectOn),
-              Choice<bool?>(false, Copy.projectOff),
+            options: <Choice<bool?>>[
+              Choice<bool?>(null, localCopy.projectUseAppDefault),
+              Choice<bool?>(true, localCopy.projectOn),
+              Choice<bool?>(false, localCopy.projectOff),
             ],
             onChanged: (bool? value) {
               ref
@@ -199,15 +215,17 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
             },
           ),
         ],
-        submitLabel: Copy.save,
+        submitLabel: localCopy.save,
         onSubmit: () async {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           final bool saved = await ref
               .read(_projectSettingsProvider.notifier)
               .submit(high: _high!.text, medium: _medium!.text);
           if (saved && context.mounted) {
             showAppSnack(
               context,
-              Copy.projectSettingsSaved,
+              localCopy.projectSettingsSaved,
               tone: SnackTone.success,
             );
           }
@@ -248,8 +266,11 @@ _projectSettingsProvider =
 
 typedef _ProjectSettingsView = ({
   String? saveError,
+  LocalizedMessage? localizedSaveError,
   String? highError,
+  LocalizedMessage? localizedHighError,
   String? mediumError,
+  LocalizedMessage? localizedMediumError,
   bool dirty,
   ProjectSettings draft,
 });
@@ -261,8 +282,11 @@ class _ProjectSettings extends Notifier<_ProjectSettingsView> {
   _ProjectSettingsView build() {
     return (
       saveError: null,
+      localizedSaveError: null,
       highError: null,
+      localizedHighError: null,
       mediumError: null,
+      localizedMediumError: null,
       dirty: false,
       draft: ProjectSettings.defaults,
     );
@@ -273,8 +297,11 @@ class _ProjectSettings extends Notifier<_ProjectSettingsView> {
     _source = project;
     state = (
       saveError: null,
+      localizedSaveError: null,
       highError: null,
+      localizedHighError: null,
       mediumError: null,
+      localizedMediumError: null,
       dirty: false,
       draft: project.settings,
     );
@@ -345,8 +372,15 @@ class _ProjectSettings extends Notifier<_ProjectSettingsView> {
     if (parsedHigh.error != null || parsedMedium.error != null) {
       state = (
         saveError: null,
+        localizedSaveError: null,
         highError: parsedHigh.error,
+        localizedHighError: parsedHigh.error == null
+            ? null
+            : Copy.messages.outOfRange,
         mediumError: parsedMedium.error,
+        localizedMediumError: parsedMedium.error == null
+            ? null
+            : Copy.messages.outOfRange,
         dirty: state.dirty,
         draft: state.draft,
       );
@@ -380,8 +414,11 @@ class _ProjectSettings extends Notifier<_ProjectSettingsView> {
         _source = source.copyWith(settings: draft);
         state = (
           saveError: null,
+          localizedSaveError: null,
           highError: null,
+          localizedHighError: null,
           mediumError: null,
+          localizedMediumError: null,
           dirty: false,
           draft: draft,
         );
@@ -389,8 +426,11 @@ class _ProjectSettings extends Notifier<_ProjectSettingsView> {
       case FailureResult<void>(:final Failure failure):
         state = (
           saveError: failure.message,
+          localizedSaveError: failure.explanation,
           highError: null,
+          localizedHighError: null,
           mediumError: null,
+          localizedMediumError: null,
           dirty: state.dirty,
           draft: draft,
         );
@@ -401,34 +441,42 @@ class _ProjectSettings extends Notifier<_ProjectSettingsView> {
   void _replace(ProjectSettings draft) {
     state = (
       saveError: state.saveError,
+      localizedSaveError: state.localizedSaveError,
       highError: state.highError,
+      localizedHighError: state.localizedHighError,
       mediumError: state.mediumError,
+      localizedMediumError: state.localizedMediumError,
       dirty: true,
       draft: draft,
     );
   }
 }
 
-({double? value, String? error}) _parseBand(String raw) {
+({double? value, String? error}) _parseBand(
+  String raw, {
+  LocalizedCopy? localizedCopy,
+}) {
   final String trimmed = raw.trim();
   if (trimmed.isEmpty) {
     return (value: null, error: null);
   }
   final double? parsed = double.tryParse(trimmed);
   if (parsed == null || parsed < 0 || parsed > 1) {
-    return (value: null, error: Copy.outOfRange);
+    return (value: null, error: (localizedCopy ?? Copy.english).outOfRange);
   }
   return (value: parsed, error: null);
 }
 
-String _onOff(bool value) => value ? Copy.projectOn : Copy.projectOff;
+String _onOff(bool value, {LocalizedCopy? localizedCopy}) => value
+    ? (localizedCopy ?? Copy.english).projectOn
+    : (localizedCopy ?? Copy.english).projectOff;
 
-String _strategyLabel(String strategy) {
+String _strategyLabel(String strategy, {LocalizedCopy? localizedCopy}) {
   return switch (strategy) {
-    'byTemplate' => Copy.settingsFolderByTemplate,
-    'byCaptureDate' => Copy.settingsFolderByDate,
-    'flat' => Copy.settingsFolderFlat,
-    _ => Copy.settingsFolderByContext,
+    'byTemplate' => (localizedCopy ?? Copy.english).settingsFolderByTemplate,
+    'byCaptureDate' => (localizedCopy ?? Copy.english).settingsFolderByDate,
+    'flat' => (localizedCopy ?? Copy.english).settingsFolderFlat,
+    _ => (localizedCopy ?? Copy.english).settingsFolderByContext,
   };
 }
 

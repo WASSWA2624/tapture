@@ -50,57 +50,60 @@ class ProjectListView extends ConsumerWidget {
       ),
       onRetry: () => ref.invalidate(projectListProvider),
       data: (List<ProjectListRow> rows) {
-        return SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              for (int index = 0; index < rows.length; index++)
-                AppListTile(
-                  key: ValueKey<String>(
-                    'project-row-${rows[index].project.id}',
-                  ),
-                  leading: ExcludeSemantics(
-                    child: _leading(rows[index].project, index + 1),
-                  ),
-                  title: rows[index].project.name,
-                  current: rows[index].project.id == openId,
-                  subtitle: Copy.projectListSubtitle(
-                    records: rows[index].recordCount,
-                    unprocessed: rows[index].unprocessedCount,
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      if (rows[index].project.status ==
-                          ProjectStatus.archived) ...<Widget>[
-                        Semantics(
-                          container: true,
-                          label: Copy.projectStatusArchived,
-                          child: const ExcludeSemantics(
-                            child: Icon(AppIcons.archive, size: Space.x5),
-                          ),
-                        ),
-                        const SizedBox(width: Space.x2),
-                      ],
-                      if (rows[index].project.pinnedAt != null) ...<Widget>[
-                        Semantics(
-                          container: true,
-                          label: Copy.pinnedProject,
-                          child: const ExcludeSemantics(
-                            child: Icon(AppIcons.pinned, size: Space.x5),
-                          ),
-                        ),
-                        const SizedBox(width: Space.x2),
-                      ],
-                      AppOverflowMenu(
-                        outlined: false,
-                        items: _rowActions(context, ref, rows[index].project),
-                      ),
-                    ],
-                  ),
-                  onTap: () => _openRow(context, ref, rows[index].project.id),
+        final LocalizedCopy localCopy = Copy.of(context);
+
+        return ListView.builder(
+          itemCount: rows.length,
+          itemBuilder: (BuildContext context, int index) {
+            final ProjectListRow row = rows[index];
+            return AppListTile(
+              key: ValueKey<String>('project-row-${row.project.id}'),
+              leading: ExcludeSemantics(
+                child: _leading(
+                  row.project,
+                  index + 1,
+                  localizedCopy: localCopy,
                 ),
-            ],
-          ),
+              ),
+              title: row.project.name,
+              wrapText: true,
+              current: row.project.id == openId,
+              subtitle: localCopy.projectListSubtitle(
+                records: row.recordCount,
+                unprocessed: row.unprocessedCount,
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (row.project.status == ProjectStatus.archived) ...<Widget>[
+                    Semantics(
+                      container: true,
+                      label: localCopy.projectStatusArchived,
+                      child: const ExcludeSemantics(
+                        child: Icon(AppIcons.archive, size: Space.x5),
+                      ),
+                    ),
+                    const SizedBox(width: Space.x2),
+                  ],
+                  if (row.project.pinnedAt != null) ...<Widget>[
+                    Semantics(
+                      container: true,
+                      label: localCopy.pinnedProject,
+                      child: const ExcludeSemantics(
+                        child: Icon(AppIcons.pinned, size: Space.x5),
+                      ),
+                    ),
+                    const SizedBox(width: Space.x2),
+                  ],
+                  AppOverflowMenu(
+                    outlined: false,
+                    items: _rowActions(context, ref, row.project),
+                  ),
+                ],
+              ),
+              onTap: () => _openRow(context, ref, row.project.id),
+            );
+          },
         );
       },
     );
@@ -108,23 +111,25 @@ class ProjectListView extends ConsumerWidget {
 }
 
 Widget _empty(BuildContext context, {required bool searching}) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final bool expanded = context.sizeClass == SizeClass.expanded;
   return AppEmptyState(
     icon: AppIcons.project,
     headline: searching
-        ? Copy.projectsNoMatchHeadline
-        : Copy.projectsEmptyHeadline,
+        ? localCopy.projectsNoMatchHeadline
+        : localCopy.projectsEmptyHeadline,
     message: searching
-        ? Copy.projectsNoMatchMessage
-        : Copy.projectsEmptyMessage,
-    // Compact keeps its Create footer during a search, so only the expanded
-    // pane's no-match state names it again (FE-SIMP-11).
-    actionLabel: expanded
-        ? Copy.projectsCreate
+        ? localCopy.projectsNoMatchMessage
+        : localCopy.projectsEmptyMessage,
+    // Import complements the body's Create action when the whole list is empty.
+    // A pane search still offers Create when its filter matches no projects.
+    actionLabel: expanded && searching
+        ? localCopy.projectsCreate
         : searching
         ? null
-        : Copy.projectsImport,
-    onAction: expanded
+        : localCopy.projectsImport,
+    onAction: expanded && searching
         ? () => context.go(_createLocation)
         : searching
         ? null
@@ -148,6 +153,8 @@ List<AppOverflowAction> _rowActions(
   WidgetRef ref,
   Project project,
 ) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final bool pinned = project.pinnedAt != null;
   final AppOverflowAction? open = projectOpenExternallyMenuItem(
     context,
@@ -156,17 +163,17 @@ List<AppOverflowAction> _rowActions(
   );
   return <AppOverflowAction>[
     AppOverflowAction(
-      label: Copy.projectExport,
+      label: localCopy.projectExport,
       icon: AppIcons.export,
       onTap: () => context.push(RoutePaths.projectExports(project.id)),
     ),
     AppOverflowAction(
-      label: Copy.projectRename,
+      label: localCopy.projectRename,
       icon: AppIcons.edit,
       onTap: () => unawaited(ProjectRenameAction.open(context, ref, project)),
     ),
     AppOverflowAction(
-      label: pinned ? Copy.projectUnpin : Copy.projectPin,
+      label: pinned ? localCopy.projectUnpin : localCopy.projectPin,
       icon: AppIcons.pin,
       onTap: () => unawaited(
         ref.read(projectRepositoryProvider).setPinned(project.id, !pinned),
@@ -175,13 +182,13 @@ List<AppOverflowAction> _rowActions(
     ?open,
     AppOverflowAction(
       label: project.status == ProjectStatus.archived
-          ? Copy.projectUnarchive
-          : Copy.projectArchive,
+          ? localCopy.projectUnarchive
+          : localCopy.projectArchive,
       icon: AppIcons.archive,
       onTap: () => unawaited(ProjectArchiveAction.apply(ref, project)),
     ),
     AppOverflowAction(
-      label: Copy.projectDeleteMenu,
+      label: localCopy.projectDeleteMenu,
       icon: AppIcons.delete,
       onTap: () =>
           unawaited(ProjectDeleteAction.confirm(context, ref, project)),
@@ -201,7 +208,7 @@ const String _fromQuery = RoutePaths.fromQuery;
 
 /// A project's photo in the number circle when it has one (FBK0000154),
 /// and its list number otherwise.
-Widget _leading(Project project, int number) {
+Widget _leading(Project project, int number, {LocalizedCopy? localizedCopy}) {
   final ProjectCoverPhoto? cover = project.settings.coverPhoto;
   if (cover != null) {
     return RecordThumb(
@@ -212,6 +219,9 @@ Widget _leading(Project project, int number) {
   }
   return FittedBox(
     fit: BoxFit.scaleDown,
-    child: Text(Copy.projectListNumber(number), style: AppText.label),
+    child: Text(
+      (localizedCopy ?? Copy.english).projectListNumber(number),
+      style: AppText.label,
+    ),
   );
 }
