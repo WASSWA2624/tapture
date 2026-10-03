@@ -1,7 +1,7 @@
 # json_serializable options every model in this package inherits.
 #
 # Wire names are never derived from a Dart identifier that may be renamed
-# (dev-plan 02-foundation/028). `field_rename: none` turns off kebab/snake
+# (dev-plan task 002). `field_rename: none` turns off kebab/snake
 # rewriting; each field still states its key with `@JsonKey(name: …)`.
 # `checked` and `disallow_unrecognized_keys` make an unknown shape fail
 # loudly rather than drop fields.

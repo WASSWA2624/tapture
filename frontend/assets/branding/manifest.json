@@ -22,9 +22,9 @@
     }
   },
   "sources": {
-    "tool/branding/source/mark.svg": "12a4a600b78540254718b6d035cfb9f5eb206480266aa474323d191bb9f5ab91",
-    "tool/branding/source/wordmark.svg": "8bfb65c463f4c6ce1f65c35f168bf0377cd3d2fbbe6285074ced06250c0a2225",
-    "lib/app/theme/color_tokens.dart": "dab1bc45399fa2ed9fbcb7f0a1df58e74713327396250ca08b13be7daed3fcce",
+    "tool/branding/source/mark.svg": "ab8cdee16057d2ef550f52ac17f8afe345bf5188099b8adb78edb324a116ff6f",
+    "tool/branding/source/wordmark.svg": "3e80abb66caf6ffa0fa825eccb3d3d84bfa7b2732df1946d152d50c1587603e5",
+    "lib/app/theme/color_tokens.dart": "f1d5a60719c1de6da215a03273c38ccaa2cf0933a338135d05da03b2774bbb32",
     "tool/branding/generate.mjs": "314fe684ca298074d18f6a52f5d6b6ad6a4b36f6ae066dc28688b202aa8f23cb",
     "tool/branding/package.json": "5d4aefb4ac05826392f2d6bbfa1a86b5ce4a735e0aa614932f373083403361bc",
     "tool/branding/package-lock.json": "ad1ede0bc21cc8b266fc8d2fe822180475807b0665c977c78625b8cd92180e71",
@@ -248,20 +248,20 @@
       "bytes": 403
     },
     "assets/branding/favicon.svg": {
-      "sha256": "6cab57c104cde3ea0e4f2ea9277b463a72881c954a8b4b3687f40860641a63ff",
-      "bytes": 1699
+      "sha256": "f08f89b7e2a0272c144a38fd1728542d80f9978f9ee62caac00ccab4ecbe288b",
+      "bytes": 1686
     },
     "assets/branding/splash-dark.svg": {
-      "sha256": "d7127773dc87522c44355574fa3d9b4b1a9d510919bd9948f0f9f5a0ecccb202",
-      "bytes": 1786
+      "sha256": "9581392bd56bbf2c250d620a4d7e45e42a1ce6618a8cb53cc733dd0c4e5c2287",
+      "bytes": 1773
     },
     "assets/branding/splash-light.svg": {
-      "sha256": "2786272058e3cd30fd469e2667cac9422949fc9309079f52e3f0e5d0622a0070",
-      "bytes": 1786
+      "sha256": "94662c85ed59e6ecbbf1d98074ee2f2ad7fe7ba4e38ba37a4c783627c598497a",
+      "bytes": 1773
     },
     "assets/branding/splash-outdoor.svg": {
-      "sha256": "c0779f50afef27d76e42f22a7661a98062b3db879baa4ef59c1cadd3cce01711",
-      "bytes": 1786
+      "sha256": "e6ef558f22f26572b39d195226696c8242f3d2611bb4210efc9532644e665360",
+      "bytes": 1773
     },
     "assets/branding/tapture-lockup-horizontal-2048.png": {
       "sha256": "12d0be2851d7c193a0ef03bb39d783edcf26ef7545a625b196cd05d4303343e0",
@@ -270,16 +270,16 @@
       "height": 557
     },
     "assets/branding/tapture-lockup-horizontal-inverse.svg": {
-      "sha256": "9ce5230cc9a2e390e24b03c6eac05b09c78b21c404950f6baa04a7745ecf3ad6",
-      "bytes": 3536
+      "sha256": "eff4b0a642c96f651c73a96b70151e4c307d9fe6a5526b6da0368ea95fabd365",
+      "bytes": 3509
     },
     "assets/branding/tapture-lockup-horizontal.svg": {
-      "sha256": "4ab461b1b85664716cfeee782d59aef4f91b42da2089edc33210403b219cfdcb",
-      "bytes": 3536
+      "sha256": "2005019b9a5870b62937a5d1fe0cfbd0456778463ea7a9a11cebc91b550d2f88",
+      "bytes": 3509
     },
     "assets/branding/tapture-lockup-stacked.svg": {
-      "sha256": "a2349159caf838c95ce59e02addd8f169d44cd7661a93edc3fbb2f66491943b6",
-      "bytes": 3636
+      "sha256": "28d5f9f758d45435d1c3039a5f6e37f1266ecd4452460339541e1a23e5c92f4b",
+      "bytes": 3609
     },
     "assets/branding/tapture-mark-512.png": {
       "sha256": "13d7dcf17e7d34c11e279764c74de3b9b54daf424ed48f5933f1e158faa3cf93",
@@ -294,12 +294,12 @@
       "height": 512
     },
     "assets/branding/tapture-mark-inverse.svg": {
-      "sha256": "493f0b346c1d451be5f6523010eb1f5b02820700c850f6aa896d252d531f0ca0",
-      "bytes": 1699
+      "sha256": "a3d2a50470de8148b38bae1c9e4a7fa8ae153f2f7921b922f0a6662893bbc5f5",
+      "bytes": 1686
     },
     "assets/branding/tapture-mark.svg": {
-      "sha256": "6cab57c104cde3ea0e4f2ea9277b463a72881c954a8b4b3687f40860641a63ff",
-      "bytes": 1699
+      "sha256": "f08f89b7e2a0272c144a38fd1728542d80f9978f9ee62caac00ccab4ecbe288b",
+      "bytes": 1686
     },
     "ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json": {
       "sha256": "bf34d05e6f70fa4c191ea1439bf8261399f54e459b7b1954a18596d80443b996",
@@ -500,8 +500,8 @@
       "height": 32
     },
     "web/favicon.svg": {
-      "sha256": "6cab57c104cde3ea0e4f2ea9277b463a72881c954a8b4b3687f40860641a63ff",
-      "bytes": 1699
+      "sha256": "f08f89b7e2a0272c144a38fd1728542d80f9978f9ee62caac00ccab4ecbe288b",
+      "bytes": 1686
     },
     "web/icons/apple-touch-icon.png": {
       "sha256": "befc9309963a49c1093d54dbce48a397e50ee3a0e703fbf7895d3b493906ce5b",

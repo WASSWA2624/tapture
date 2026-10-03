@@ -1,6 +1,6 @@
 # 07 — Consistency and uniformity
 
-*Enforced by dev-plan tasks 013 (tokens) and 047 (widget gallery), and by `test/architecture/icons_test.dart` (FE-CONS-08);
+*Enforced by dev-plan tasks 001 (tokens) and 003 (widget gallery), and by `test/architecture/icons_test.dart` (FE-CONS-08);
 every design-system task adds to the catalogue.*
 
 ## FE-CONS-01 — Catalogue first

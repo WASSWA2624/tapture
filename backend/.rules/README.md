@@ -23,7 +23,7 @@ with that, the rule is wrong.
 - **Every rule has an identifier** (`BE-SEC-03`). Cite it in review.
 - **Rules that protect the boundary** — 06-relay-and-retention and 07-ai-proxy — are not style preferences. Breaking
   one turns the product into something it deliberately is not.
-- Backend dev-plan tasks (phase 24) cite the rule files that apply to them.
+- Backend dev-plan tasks (step 23) cite the rule files that apply to them.
 
 ## The files
 

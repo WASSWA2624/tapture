@@ -52,7 +52,7 @@ android {
     }
 
     // Distinct application ids and labels so a development install sits
-    // alongside a production one (dev-plan 02-foundation/019).
+    // alongside a production one (dev-plan task 002).
     flavorDimensions += "flavor"
     productFlavors {
         create("dev") {

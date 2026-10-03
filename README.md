@@ -28,7 +28,7 @@ backend/         the required minimal server (specification Part XI)
   .rules/        11 rule files: structure, coding, API, data, security, the relay boundary,
                  AI proxy, observability, testing, deployment, workflow
 resources/       the planning template catalogue and the generated list of every shipped template
-dev-plan/        281 implementation prompts, in build order
+dev-plan/        one implementation prompt file per step, in build order
 branding/        the identity: logos, app icons, splash, palette, and the generator that draws them
   tool/          one geometry definition; every asset is regenerated from it
 run-tools/        run the app locally, and build the three deployable artefacts
@@ -41,9 +41,9 @@ app-write-up.md  the product and technical specification
 - [app-write-up.md](app-write-up.md) — the full product and technical specification.
 - [resources/template-library.md](resources/template-library.md) — every shipped template, all 2,349, with their
   codes, keys, record types and fields (generated; see §13.4–13.5).
-- [dev-plan/README.md](dev-plan/README.md) — how the build is sequenced, and where to start.
-- [dev-plan/INDEX.md](dev-plan/INDEX.md) — all 281 tasks in one list.
-- [dev-plan/STANDARD.md](dev-plan/STANDARD.md) — the standing prompt every task inherits.
+- [dev-tracker.md](dev-tracker.md) — progress by step, the next task, and every task in build order.
+- [dev-plan/](dev-plan/) — one prompt file per step, `NN-slug.md`, holding its tasks in order.
+- [AGENTS.md](AGENTS.md) — repository instructions and the standard every task inherits.
 - [branding/BRAND.md](branding/BRAND.md) — the identity: mark, wordmark, palette and how to use them.
 - [run-tools/README.md](run-tools/README.md) — running the app locally, and building the APK, web bundle and backend archive.
 - [frontend/.rules/](frontend/.rules/) and [backend/.rules/](backend/.rules/) — the conventions every task obeys.

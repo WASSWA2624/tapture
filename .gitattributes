@@ -1,0 +1,16 @@
+# Branding inputs and the text resources generated from them are hashed byte for
+# byte in frontend/assets/branding/manifest.json, so they stay LF on every
+# checkout whatever core.autocrlf says (frontend/tool/branding/generate.mjs).
+frontend/tool/branding/source/*.svg text eol=lf
+frontend/tool/branding/*.mjs text eol=lf
+frontend/tool/branding/*.json text eol=lf
+frontend/lib/app/theme/color_tokens.dart text eol=lf
+frontend/lib/core/assets/branding_assets.dart text eol=lf
+frontend/assets/branding/*.svg text eol=lf
+frontend/assets/branding/*.json text eol=lf
+frontend/web/favicon.svg text eol=lf
+frontend/web/manifest.json text eol=lf
+frontend/android/app/src/main/res/**/*.xml text eol=lf
+frontend/ios/Runner/Assets.xcassets/**/*.json text eol=lf
+frontend/ios/Runner/Base.lproj/LaunchScreen.storyboard text eol=lf
+frontend/macos/Runner/Assets.xcassets/**/*.json text eol=lf

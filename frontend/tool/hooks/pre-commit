@@ -2,7 +2,7 @@
 #
 # Refreshes the development tracker for every commit, including docs/backend.
 # Runs the review gate in fast mode when a commit touches Dart code.
-# Installed by frontend/tool/install_hooks.dart (dev-plan tasks 001 and 087).
+# Installed by frontend/tool/install_hooks.dart (dev-plan tasks 001, 087 and 099).
 #
 # frontend/.rules/13-workflow.md FE-FLOW-02: the gate is a command, and it runs
 # locally before review exactly as it runs in continuous integration.
@@ -12,9 +12,10 @@ set -e
 cd "$(git rev-parse --show-toplevel)"
 
 # A task's staged checklist must be the checklist used to generate the tracker.
-# Never stage or overwrite the user's selection of individual task-file hunks.
+# Never stage or overwrite the user's selection of individual step-file or
+# task-file hunks.
 git diff --cached --name-only --diff-filter=ACMR -- \
-	'dev-plan/[0-9][0-9]-*/[0-9][0-9][0-9]-*.md' |
+	'dev-plan/[0-9][0-9]-*.md' 'dev-plan/[0-9][0-9]-*/[0-9][0-9]-*.md' |
 while IFS= read -r task; do
 	if ! git diff --quiet -- "$task"; then
 		echo "dev tracker: $task is partially staged. Review and stage or restore its remaining changes before committing." >&2
@@ -25,7 +26,7 @@ done
 cd frontend
 if ! dart run tool/sync_dev_tracker.dart --check; then
 	dart run tool/sync_dev_tracker.dart
-	echo "dev tracker: refreshed generated plan files. Review and stage them, then commit again. Nothing was auto-staged." >&2
+	echo "dev tracker: refreshed dev-tracker.md. Review and stage it, then commit again. Nothing was auto-staged." >&2
 	exit 1
 fi
 cd ..

@@ -94,9 +94,9 @@ List<({String title, String url})> _links(LocalizedCopy copy) =>
       (title: copy.settingsSpecLink, url: _specUrl),
     ];
 
-/// The development plan's index in the public repository.
+/// The development plan's tracker in the public repository.
 const String _planUrl =
-    'https://github.com/WASSWA2624/tapture/blob/main/dev-plan/INDEX.md';
+    'https://github.com/WASSWA2624/tapture/blob/main/dev-tracker.md';
 
 /// The product specification in the public repository.
 const String _specUrl =

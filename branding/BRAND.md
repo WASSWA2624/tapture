@@ -90,7 +90,7 @@ luminous stop on the ramp that still clears AA against white in both directions.
 | `brand-950` | `#0A1236` | **brand ink** — wordmark, dark surface          |
 
 The machine-readable copy is [`palette.json`](palette.json). It is the input to dev-plan task
-[042 — Colour tokens](../dev-plan/03-design-system/042-color-tokens.md); the Dart token file is the only place
+[003 — Design system](../dev-plan/03-design-system.md); the Dart token file is the only place
 these values may be re-declared.
 
 ### The gradient
@@ -133,7 +133,7 @@ all three themes (FE-THEME-03).
 ## 4. Typography
 
 The wordmark is the only lettering that is drawn. Everything else is set in the app's type ramp, whose roles and
-sizes belong to dev-plan task [043](../dev-plan/03-design-system/043-typography-scale.md).
+sizes belong to dev-plan task [003](../dev-plan/03-design-system.md).
 
 For brand material outside the app — store listings, documentation, slides — set text in a neutral geometric or
 humanist sans at a generous size and weight. **Inter** pairs well and is metrically safe on both platforms. Do not

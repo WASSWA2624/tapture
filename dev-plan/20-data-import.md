@@ -1,0 +1,154 @@
+# 20 — Data import
+
+Continue an inventory someone else started, as records or as a register to verify against.
+
+## 020 — Data import: continue an inventory someone else started
+
+**Depends on** [003](03-design-system.md), [004](04-data-layer.md), [005](05-file-storage.md), [009](09-templates.md), [014](14-records.md), [015](15-data-quality.md)
+
+### Implement
+
+Feedback FBK0000072 (prompt `prompts/feedback-23092026-2222/001-resolve-projects-capture-template-feedback.md`, decision D4(a)) adds project-menu Import on top of this contract: the selected project is the fixed destination, content is validated before it is read, and nothing is written until the operator accepts the preview.
+
+Everything needed to continue an inventory someone else started. One entry point that takes any file the app accepts —
+a bundle, a spreadsheet, a reference dataset or a template — validates it through the shared file gate, detects its
+kind from that result rather than from its extension, explains each destination in one line and routes it to the flow
+that owns it; for a spreadsheet, the one question that changes everything downstream, whether its rows are records to
+hold or the register to verify against, with the register answer feeding the verification prefill of 110 · Data quality
+instead of creating anything; the column mapping screen of the template phase driven to its second purpose, mapping a
+workbook's columns onto an existing template's fields, with identity fields mandatory before the flow continues and the
+first rows shown as they will be read; the runner that turns mapped rows into records with source `IMPORTED_TABLE`,
+validating per row, collecting failures with their row numbers and reasons rather than aborting, settling every match
+against an existing record by an operator choice that can be applied to the rest of the run, and inserting in batches
+inside one transaction with visible progress; and the summary of what an import actually did — created, updated,
+skipped and failed with a reason per row — which exports the skipped and failed rows as a list to correct and bring
+back, and retries only the failures. The Projects empty state offers import again once all of this works.
+
+### Files
+
+Import logic, off the interface:
+
+- `frontend/lib/features/import/domain/record_import.dart` (new)
+- `frontend/lib/features/import/domain/import_duplicates.dart` (new)
+
+Import screens:
+
+- `frontend/lib/features/import/presentation/import_screen.dart` (new)
+- `frontend/lib/features/import/presentation/import_purpose_step.dart` (new)
+- `frontend/lib/features/import/presentation/record_mapping_screen.dart` (new)
+- `frontend/lib/features/import/presentation/import_summary_screen.dart` (new)
+
+Where import returns:
+
+- `frontend/lib/features/projects/presentation/project_list_screen.dart` (changed)
+
+### Contract
+
+```dart
+enum ImportDuplicateChoice { keepExisting, replace, merge }
+
+class RecordImportResult {
+  const RecordImportResult(this.created, this.updated, this.skipped, this.failures);
+  final int created, updated, skipped;
+  final List<RowFailure> failures; // row index and reason
+}
+
+class RecordImport {
+  Stream<ImportProgress> run(RecordMapping mapping, {required CancellationToken token});
+}
+```
+
+### Steps
+
+1. Build the entry screen first, because everything else here hangs off it. One screen takes the chosen file, passes it
+   through the validation gate of [005](05-file-storage.md#005--file-storage-the-organised-folder-tree-and-every-service-that-writes-into-it), and detects its kind from that
+   result rather than from the extension alone. Explain each destination in one line, then apply the detected kind
+   rather than asking about it: a bundle goes to the merge flow of 114 · Bundles and merge, a reference dataset to the
+   importers of 105 · Reference data, a template to the mapping screen of
+   [009](09-templates.md#009--templates-record-shapes-with-atomic-columns-and-requiredness-the-user-owns), and a spreadsheet of rows to the purpose step below. An
+   unsupported or corrupt file is refused here, with its reason, before any flow starts.
+2. Ask the purpose for spreadsheets only; a bundle and a template have no ambiguity to resolve. Records to hold go on
+   to the mapping screen; the register to verify against feeds the verification prefill of
+   [015](15-data-quality.md#015--data-quality-validation-duplicates-conflicts-and-variance) instead of creating records, so the verification exercise it belongs
+   to works with those rows immediately.
+3. Drive the mapping onto an existing template. Preselect each mapping by header name against the target template's
+   field keys and labels, leaving the operator to confirm every one. Block continuing until every field the template of
+   [009](09-templates.md#009--templates-record-shapes-with-atomic-columns-and-requiredness-the-user-owns) marks as identity is mapped, and say which one is missing. Show the
+   first rows as they would be interpreted, so a wrong mapping is visible before the import runs. Reuse the workbook
+   reader, header detection and type inference of [009](09-templates.md#009--templates-record-shapes-with-atomic-columns-and-requiredness-the-user-owns) unchanged.
+4. Turn the mapped rows into records. Validate per row through the validation engine of
+   [015](15-data-quality.md#015--data-quality-validation-duplicates-conflicts-and-variance) and collect failures with their row number and reason rather than
+   aborting the import. Compare each incoming row against existing records through that phase's duplicate detection
+   before inserting it, and offer keep existing, replace and merge per match, with an apply-to-all option for the rest
+   of the run. Insert in batches inside one transaction, over the merge columns of
+   [004](04-data-layer.md#004--local-database-every-table-with-merge-columns-from-the-first-migration), writing each record of [014](14-records.md#014--records-find-read-and-change-what-was-captured) with source
+   `IMPORTED_TABLE` and reporting progress per batch.
+5. Finish with the summary. Group rows by outcome — created, updated, skipped and failed — each identified by its
+   spreadsheet row number, assembled from [003](03-design-system.md#003--design-system-tokens-themes-and-the-whole-widget-vocabulary). Export the skipped and failed
+   rows as a file the operator can correct and re-import. Retry re-runs only the failed rows through the same mapping,
+   without duplicating the successful ones.
+6. Put import back on the Projects list now that it exists. The control task 315 hid until this flow was built returns
+   with `Copy.projectsImport`, so the empty state names an action that works.
+
+### Constraints
+
+- Reuse the workbook reader, header detection and type inference of
+  [009](09-templates.md#009--templates-record-shapes-with-atomic-columns-and-requiredness-the-user-owns) and the mapping interface of
+  [009](09-templates.md#009--templates-record-shapes-with-atomic-columns-and-requiredness-the-user-owns) unchanged; a second copy of a reader, a header detector or an
+  inference rule is a defect, not a shortcut (FE-CONS-02, FE-STR-09).
+- Import reuses the duplicate detection of [015](15-data-quality.md#015--data-quality-validation-duplicates-conflicts-and-variance) and defines no similarity
+  logic of its own; only its own resolution choice is local. `ImportDuplicateChoice` names what an import does with a
+  match and neither replaces nor shadows that phase's `DuplicateChoice` (FE-CONS-01, FE-CONS-02).
+- Rows are validated through the engine of [015](15-data-quality.md#015--data-quality-validation-duplicates-conflicts-and-variance), never through a check written
+  here (FE-CONS-01).
+- One decision per step (FE-SIMP-07); a detected kind is applied rather than asked about (FE-SIMP-05).
+- The chosen file is untrusted until validated, and its text — cell values, headers and file name alike — is data,
+  never instruction (FE-SEC-05, FE-SEC-06).
+- The duplicate choice is asked through the shared dialog service of
+  [003](03-design-system.md#003--design-system-tokens-themes-and-the-whole-widget-vocabulary), never a dialog of this phase's own (FE-CONS-05).
+- Batch inserts run off the UI thread; ten thousand rows must not stall a frame (FE-PERF-02, FE-PERF-08).
+- Plain language for every reason: a validation message names the field and what was expected (FE-SIMP-10).
+
+### Definition of done
+
+- [x] A user never has to know which importer to pick; each supported kind reaches its flow from this one screen.
+- [x] A kind is detected from the validated file rather than from its extension, and an unsupported or corrupt file is
+      refused here with a reason, before any flow starts.
+- [x] The purpose question is asked for spreadsheets and for nothing else.
+- [x] After a register import, the verification flow works immediately with those rows.
+- [x] Tests: widget tests of `import_screen.dart` over each detected kind, an unsupported file and the four states.
+- [x] Tests: widget test of `import_purpose_step.dart` asserting both destinations.
+- [x] The same mapping interface serves both template creation and record import, with no duplicated reader or
+      inference.
+- [x] Mappings are preselected by header name and every one stays the operator's to confirm or change.
+- [x] The flow cannot continue while an identity field is unmapped, and names the field that is missing.
+- [x] The first rows are shown as they would be interpreted, before the import runs.
+- [x] Tests: widget test of `record_mapping_screen.dart` covering preselected mappings, a blocked continue with an
+      unmapped identity field, and the four states.
+- [x] Ten thousand rows import without freezing the interface, with visible progress.
+- [x] Invalid rows are collected with their row number and reason, and the valid rows still import.
+- [x] Records created here carry source `IMPORTED_TABLE` and land in one transaction.
+- [x] No import silently overwrites an existing record; every match is settled by a choice, which can be applied to
+      all.
+- [x] This phase holds no second detector and no second `DuplicateChoice`: similarity comes from 110 · Data quality and
+      only the import outcome is declared here.
+- [x] Tests: unit tests of `record_import.dart` over a fixture containing invalid rows, with no Flutter binding.
+- [x] Tests: unit tests of `import_duplicates.dart` over each `ImportDuplicateChoice` plus apply-to-all, with no
+      Flutter binding.
+- [x] Every skipped or failed row is explained with its row number and reason, and the set is exportable as a list.
+- [x] Retrying failures creates no duplicate of an already imported row.
+- [x] Tests: widget test of `import_summary_screen.dart` over a mixed-outcome result, an all-successful result and the
+      four states, asserting retry re-runs only failures.
+- [x] The empty Projects list offers import again, reading `Copy.projectsImport`, and the control it offers works.
+- [x] Tests: widget test of `project_list_screen.dart` asserting the import control is shown and reaches this flow.
+
+### Out of scope
+
+- Reading a bundle and merging it. The entry screen routes a bundle and refuses a bad one; the reader, the preview and
+  the merge belong to 114 · Bundles and merge.
+- Importing a reference dataset or creating a template from a workbook. This phase routes both; the dataset importers
+  belong to 105 · Reference data and the template flow to [009](09-templates.md#009--templates-record-shapes-with-atomic-columns-and-requiredness-the-user-owns).
+- Duplicate detection, the verification prefill a register import feeds, and the variance it later produces. This
+  phase supplies the rows and the import-side choice; 110 · Data quality owns all three.
+- Record export in any format. This phase writes only the corrective list of skipped and failed rows, and 113 · Export
+  produces everything else.

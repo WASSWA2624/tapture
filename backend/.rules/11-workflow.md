@@ -4,9 +4,9 @@
 
 After every backend implementation/status change, update the corresponding dev-plan acceptance checklist and
 automatically regenerate the shared tracker from `frontend/` with `dart run tool/sync_dev_tracker.dart`, followed
-by `--check`. Complete, Partially complete and Pending follow `dev-plan/STANDARD.md`; record
+by `--check`. Complete, Partially complete and Pending follow `AGENTS.md`; record
 `**Implementation started:** Yes` when work exists but no acceptance item is verified. Include generated progress
-changes with the implementation. The shared pre-commit hook also refreshes plan views for backend-only commits,
+changes with the implementation. The shared pre-commit hook also refreshes the tracker for backend-only commits,
 without staging unrelated files; CI rejects drift. Backend verification success alone never updates or approves
 an unchecked acceptance item.
 

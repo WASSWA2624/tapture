@@ -1,6 +1,6 @@
 # 01 — Structure
 
-*Enforced by dev-plan tasks 004 (folder scaffold), 010 (layering test), 011 (naming checker).*
+*Enforced by dev-plan task 001 (folder scaffold, layering test and naming checker).*
 
 ## FE-STR-01 — The app lives in `frontend/`
 The Flutter application is the whole of `frontend/`. Nothing outside `frontend/lib`, `frontend/test`,

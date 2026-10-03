@@ -2,7 +2,7 @@
 
 **Document status:** Revision 4 — consolidated specification, preserving sections 1–84. Requirements describe the
 target product; [dev-tracker.md](dev-tracker.md) records implementation progress. The
-[development plan](dev-plan/INDEX.md) defines implementation order, ending with hardening.
+[development plan](dev-tracker.md) defines implementation order, ending with hardening.
 
 **Architecture:** Local-first with a required organisation-operated minimal backend for identity, permissions, AI access
 and provider keys (Part XI). Project content remains authoritative on the device. Explicit AI requests may carry
@@ -2432,7 +2432,7 @@ Critical test cases:
 
 ## 66. Delivery Plan
 
-The five phases below are **product delivery milestones**, not numbered implementation folders. Follow the canonical [development-plan index](dev-plan/INDEX.md): steps 01–22 establish the application; **23 Backend → 24 Product refinements → 25 Baseline testing/release gates → 26 Documentation → 27 Hardening**. Hardening is last. Task IDs remain stable; folder/sub-step numbers determine implementation order.
+The five phases below are **product delivery milestones**, not numbered implementation steps. Follow the canonical [development-plan task index](dev-tracker.md#task-index): steps 01–22 establish the application; **23 Backend → 24 Product refinements → 25 Baseline testing/release gates → 26 Documentation → 27 Hardening**. Hardening is last. Task IDs remain stable; step/sub-step numbers determine implementation order.
 
 ### Phase 1 — Vertical slice (build this first)
 
@@ -2493,7 +2493,7 @@ Desktop build for consolidation and reporting
 
 ### Phase 5 — Documentation
 
-Implement §84 through [step 26](dev-plan/26-documentation/README.md): validate real document/media fixtures, then import → output definition → optional prompt → AI draft → human review → local export → bundle round trip. Captured projects are default inputs, never required. Extend the same adapters later for more codecs, archive formats and complex Office layouts. Mobile More (task 079, step 24) ships independently before Documentation; final hardening follows in step 27.
+Implement §84 through [step 26](dev-plan/26-documentation.md): validate real document/media fixtures, then import → output definition → optional prompt → AI draft → human review → local export → bundle round trip. Captured projects are default inputs, never required. Extend the same adapters later for more codecs, archive formats and complex Office layouts. Mobile More (task 079, step 24) ships independently before Documentation; final hardening follows in step 27.
 
 ## 67. Definition of Done — MVP
 
@@ -2571,7 +2571,7 @@ Before public release, check Google Play name availability and Uganda/EAC tradem
 | Create documents using AI, evidence-linked review and local file generation | §80–§81 |
 | Portable document resources, versions and reusable definitions | §82 |
 | Mobile three-dot More button with an icon menu | §55–§56, §83 |
-| Documentation implementation sequence and release acceptance | §84; dev-plan/26-documentation |
+| Documentation implementation sequence and release acceptance | §84; dev-plan/26-documentation.md |
 
 ---
 
@@ -3278,8 +3278,8 @@ Avoid duplicate visual components and rounded panels.
 
 ### 84.1 Delivery order
 
-[Development step 26](dev-plan/26-documentation/README.md), tasks 080–086, implements Documentation after the
-independent More-menu task 079. Final whole-product hardening follows in [step 27](dev-plan/27-hardening/README.md).
+[Development step 26](dev-plan/26-documentation.md), tasks 080–086, implements Documentation after the
+independent More-menu task 079. Final whole-product hardening follows in [step 27](dev-plan/27-hardening/).
 
 1. Validate adapters, platform capabilities, security and real fixtures; publish measured format/fidelity support
    and update architectural guardrails for the feature and explicitly adopted prompts.

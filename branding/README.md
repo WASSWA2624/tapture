@@ -59,7 +59,7 @@ Both are the white lockup on the brand gradient, over an oversized mark running 
 ### `palette.json`
 
 Machine-readable colour. The ramp plus the semantic roles, and the input to dev-plan task
-[042 — Colour tokens](../dev-plan/03-design-system/042-color-tokens.md).
+[003 — Design system](../dev-plan/03-design-system.md).
 
 ## Regenerating
 
@@ -80,4 +80,4 @@ skipped until those folders exist.
 
 These are the masters. The app ships copies produced by `apply.py`. Nothing in `frontend/` should re-draw the mark
 or re-declare a colour; it takes them from here. Typed asset constants land in task
-[023 — Hardening](../dev-plan/27-hardening/023-hardening.md), which includes the consolidated branding work.
+[023 — Hardening](../dev-plan/27-hardening/27-hardening.md), which includes the consolidated branding work.

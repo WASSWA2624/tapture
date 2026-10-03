@@ -1,7 +1,7 @@
 /// The directory layout of `frontend/lib/`, as constants.
 ///
 /// Every guardrail that has an opinion about where a file belongs reads it
-/// from here (dev-plan 01-orchestration/001). A checker that hardcodes its own
+/// from here (dev-plan task 001). A checker that hardcodes its own
 /// copy of the list drifts from this one the first time the layout changes,
 /// and then two guardrails disagree about what the architecture is.
 /// `check_structure.dart` fails a `tool/check_*.dart` file that writes one of

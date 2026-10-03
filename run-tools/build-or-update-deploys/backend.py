@@ -100,7 +100,7 @@ def entry() -> None:
     included = [p for p in candidates if not is_excluded(p.relative_to(BACKEND))]
     if not included:
         raise BuildError(
-            "the backend has no files to package. It is built in dev-plan phase 24."
+            "the backend has no files to package. It is built in dev-plan step 23."
         )
     skipped = len(candidates) - len(included)
     info(f"{len(included)} files included, {skipped} excluded")

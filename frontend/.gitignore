@@ -47,7 +47,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Tapture repository hygiene (dev-plan 01-orchestration/002)
+# Tapture repository hygiene (dev-plan task 001)
 
 # Generated Dart sources are committed so a clean checkout builds directly.
 

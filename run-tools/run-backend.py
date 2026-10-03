@@ -8,7 +8,7 @@ Running it again refreshes the server: any previous instance is stopped first,
 so the command is always safe to repeat. The backend and web ports are freed of
 whatever holds them before the server starts. Stop it with Ctrl-C.
 
-The backend itself is built in dev-plan phase 24; until `backend/package.json`
+The backend itself is built in dev-plan step 23 (task 024); until `backend/package.json`
 exists this script says what is missing rather than pretending to start.
 """
 
@@ -95,7 +95,7 @@ def require_backend() -> None:
     if not manifest.is_file():
         raise BuildError(
             "backend/package.json does not exist, so there is no server to run. "
-            "The backend is built in dev-plan phase 24, starting at task 245."
+            "The backend is built in dev-plan step 23, task 024."
         )
     try:
         json.loads(manifest.read_text(encoding="utf-8"))

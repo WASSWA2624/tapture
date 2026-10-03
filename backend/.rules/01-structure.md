@@ -1,6 +1,6 @@
 # 01 — Structure
 
-_Applies to dev-plan phase 24._
+_Applies to dev-plan step 23 (task 024)._
 
 ## BE-STR-01 — The server lives in `backend/`
 

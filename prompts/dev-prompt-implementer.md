@@ -1,6 +1,4 @@
-Follow @prompts/dev-prompt-implementer.md on @dev-plan/<folder>/<NNN-slug>.md.
-
-Read in order: this prompt, the full task, AGENTS.md, dev-plan/STANDARD.md, all rule files named in Constraints, relevant dependencies, and affected code and callers.
+Read in order: this prompt, the full task, AGENTS.md, all rule files named in Constraints, relevant dependencies, and affected code and callers.
 
 Implement only the task’s Files, Contract, Steps, and Definition of done. Respect Out of scope. Make minimal changes; preserve matching files, existing modules, and public APIs. Do not refactor or edit this prompt. Reuse core/ and Radii. Record unrelated discoveries using `dart run tool/new_task.dart` from frontend/.
 
@@ -10,7 +8,7 @@ After each checklist change and before reporting, run from frontend/:
   dart run tool/sync_dev_tracker.dart
   dart run tool/sync_dev_tracker.dart --check
 
-Confirm the tracker row matches the checklist. Leave tracker, index, folder summaries, and Implementation step updates to the synchronizer.
+Confirm the tracker row matches the checklist. Leave tracker updates to the synchronizer.
 
 Run applicable gates:
 - Flutter: format changed Dart files, `flutter analyze`, and `dart run tool/verify.dart --fast` from frontend/.

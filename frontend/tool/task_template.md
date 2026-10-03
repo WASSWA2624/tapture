@@ -1,11 +1,9 @@
-# {{number}} — {{title}}
+## {{number}} — {{title}}
 
-**Phase** {{phase}}  |  **Standard** [STANDARD.md](../STANDARD.md)
+### Implement
 
-## Implement
+### Files
 
-## Files
-
-## Definition of done
+### Definition of done
 
 - [ ] Tests:

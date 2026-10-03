@@ -1,5 +1,5 @@
 # Approved direct dependencies for the Tapture Flutter application
-# (dev-plan 01-orchestration/001).
+# (dev-plan task 001).
 #
 # A package reaches this file the way frontend/.rules/13-workflow.md FE-FLOW-06
 # says it must: its own task, a pinned version, a licence check and a note on

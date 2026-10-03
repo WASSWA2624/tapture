@@ -1,6 +1,6 @@
 # 05 — Responsiveness
 
-*Enforced by dev-plan task 013 (responsive boundary test); built by task 032, audited by 236.*
+*Enforced by dev-plan task 001 (responsive boundary test); built by task 003, audited by task 023.*
 
 ## FE-RESP-01 — Three size classes, one definition
 `compact` under 600dp, `medium` 600-1023dp, `expanded` 1024dp and above. `SizeClass` is the only place these numbers

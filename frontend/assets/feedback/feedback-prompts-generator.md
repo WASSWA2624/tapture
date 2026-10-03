@@ -43,7 +43,7 @@ incomplete without it. Use the files in `screenshots/`; you do not need to extra
    when it contains personal details.
 3. **Read the project rules before writing anything.** In the repository:
    `frontend/.rules/README.md` and every file it lists (rule IDs such as `FE-CONS-01`),
-   `backend/.rules/` for server work, `dev-plan/STANDARD.md` and `dev-plan/INDEX.md`, and any `CLAUDE.md`
+   `backend/.rules/` for server work, `AGENTS.md`, the step prompt files under `dev-plan/` and `dev-tracker.md`, and any `CLAUDE.md`
    or `AGENTS.md`. Every prompt must respect them and cite the rule IDs it touches.
 4. **Confirm against the current code.** The export may predate fixes. For each entry, open the code the
    feedback points at and confirm the problem still exists. If it does not, record the entry as

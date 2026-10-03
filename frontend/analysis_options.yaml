@@ -1,4 +1,4 @@
-# Analyzer configuration for Tapture (dev-plan 01-orchestration/003).
+# Analyzer configuration for Tapture (dev-plan task 001).
 #
 # The analyzer is the first reviewer (frontend/.rules/02-coding-standards.md,
 # FE-CODE-01): the strict type checks are on, and every rule below reports as
