@@ -1,16 +1,25 @@
 import 'package:flutter/widgets.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
-import 'package:tapture/core/widgets/states/app_empty_state.dart';
-import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/core/widgets/app_status_pill.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 
-/// Records that a person confirmed a value, without changing it (task 016).
+/// Records that a person confirmed a value without changing it (task 016).
+///
+/// Verifying is separate from editing: the value stays exactly as it is and
+/// processing never overwrites it afterwards. Once verified, the row shows
+/// who confirmed it. With [confidentCount] it verifies every confident
+/// field of the record at once.
 final class VerifyAction extends StatelessWidget {
-  /// Creates the action.
+  /// Creates the action for the field named [fieldLabel], or for the
+  /// [confidentCount] confident fields.
   const VerifyAction({
     this.fieldLabel,
+    this.verified = false,
     this.verifier,
     this.confidentCount = 0,
     this.failure,
@@ -22,7 +31,10 @@ final class VerifyAction extends StatelessWidget {
   /// The field a single verify applies to. Null when there is no field.
   final String? fieldLabel;
 
-  /// Who verified it, once they have.
+  /// Whether the field is verified already.
+  final bool verified;
+
+  /// Who verified it, once they have. Blank when no operator was known.
   final String? verifier;
 
   /// How many confident fields a bulk verify would cover.
@@ -39,37 +51,53 @@ final class VerifyAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
-      return AppErrorState(failure: failed);
-    }
-    final String? field = fieldLabel;
-    if ((field == null || field.trim().isEmpty) && confidentCount == 0) {
-      return const AppEmptyState(
-        icon: AppIcons.verified,
-        headline: Copy.reviewVerifyEmpty,
-        message: Copy.reviewVerifyEmpty,
+      return AppBanner(
+        key: const ValueKey<String>('review-verify-failure'),
+        message: failed.message,
+        icon: AppIcons.error,
+        tone: SnackTone.error,
       );
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    final String field = (fieldLabel ?? '').trim();
+    if (field.isEmpty && confidentCount == 0) {
+      return AppBanner(
+        key: const ValueKey<String>('review-verify-empty'),
+        message: localCopy.reviewVerifyEmpty,
+        icon: AppIcons.verified,
+        tone: SnackTone.info,
+      );
+    }
+    final String name = (verifier ?? '').trim();
+    return Wrap(
+      spacing: Space.x2,
+      runSpacing: Space.x2,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: <Widget>[
-        if (verifier != null && verifier!.trim().isNotEmpty)
-          Text(
-            Copy.reviewVerifiedBy(verifier!),
+        if (field.isNotEmpty && verified)
+          AppStatusPill.badge(
             key: const ValueKey<String>('review-verifier'),
+            status: RecordStatus.approved,
+            label: name.isEmpty
+                ? localCopy.reviewVerified
+                : localCopy.reviewVerifiedBy(name),
           ),
-        if (field != null && field.trim().isNotEmpty)
+        if (field.isNotEmpty && !verified)
           AppButton(
             key: const ValueKey<String>('review-verify'),
-            label: Copy.reviewVerify,
+            label: localCopy.reviewVerify,
             icon: AppIcons.verified,
+            variant: AppButtonVariant.secondary,
             onPressed: onVerify,
           ),
         if (confidentCount > 0)
           AppButton(
             key: const ValueKey<String>('review-verify-confident'),
-            label: Copy.reviewVerifyConfident,
+            label: localCopy.reviewVerifyConfident,
+            icon: AppIcons.verified,
             variant: AppButtonVariant.secondary,
             onPressed: onVerifyConfident,
           ),

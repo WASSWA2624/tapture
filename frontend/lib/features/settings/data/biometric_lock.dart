@@ -1,21 +1,28 @@
+import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/security/biometric_prompt.dart';
+import 'package:tapture/core/security/biometric_service.dart';
+
 import '../domain/app_lock.dart';
 
 /// Platform biometric unlock, behind an interface so screens and tests
 /// never touch the plugin (FE-STR-11, FE-TEST-03).
 ///
-/// The default factory is unavailable: `local_auth` is not on the
-/// allowlist, and adding it is its own task (FE-FLOW-06). [wrap] is the
-/// hook a later task passes the plugin through.
+/// The default uses the maintained SDK through the core security boundary.
+/// Tests use [fake] or [wrap] without opening a native dialog.
 abstract interface class BiometricLock {
   /// Whether the device has an enrolled biometric.
   Future<bool> isAvailable();
 
   /// One biometric try. Cancel, failure and an unenrolled device never
   /// report [LockAttempt.unlocked].
-  Future<LockAttempt> unlock();
+  Future<LockAttempt> unlock({
+    String? localizedReason,
+    BiometricPrompt? prompt,
+  });
 
-  /// Production stand-in until a later task adds the platform plugin.
-  factory BiometricLock() = _UnavailableBiometricLock;
+  /// Production native biometric authentication (task 097).
+  factory BiometricLock() = _NativeBiometricLock;
 
   /// Hand-written stand-in driven by [available] and [result].
   factory BiometricLock.fake({
@@ -34,14 +41,26 @@ abstract interface class BiometricLock {
   }
 }
 
-final class _UnavailableBiometricLock implements BiometricLock {
-  const _UnavailableBiometricLock();
+final class _NativeBiometricLock implements BiometricLock {
+  final BiometricService _service = BiometricService();
 
   @override
-  Future<bool> isAvailable() async => false;
+  Future<bool> isAvailable() => _service.isAvailable();
 
   @override
-  Future<LockAttempt> unlock() async => LockAttempt.unavailable;
+  Future<LockAttempt> unlock({
+    String? localizedReason,
+    BiometricPrompt? prompt,
+  }) async {
+    final Result<bool> result = await _service.authenticate(
+      localizedReason: localizedReason ?? Copy.permissionBiometrics,
+      prompt: prompt,
+    );
+    return result.fold(
+      (_) => LockAttempt.unavailable,
+      (bool accepted) => accepted ? LockAttempt.unlocked : LockAttempt.wrong,
+    );
+  }
 }
 
 final class _FakeBiometricLock implements BiometricLock {
@@ -57,7 +76,10 @@ final class _FakeBiometricLock implements BiometricLock {
   Future<bool> isAvailable() async => available;
 
   @override
-  Future<LockAttempt> unlock() async => result;
+  Future<LockAttempt> unlock({
+    String? localizedReason,
+    BiometricPrompt? prompt,
+  }) async => result;
 }
 
 final class _WrappedBiometricLock implements BiometricLock {
@@ -76,7 +98,10 @@ final class _WrappedBiometricLock implements BiometricLock {
   }
 
   @override
-  Future<LockAttempt> unlock() async {
+  Future<LockAttempt> unlock({
+    String? localizedReason,
+    BiometricPrompt? prompt,
+  }) async {
     try {
       if (!await _authenticate()) {
         return LockAttempt.wrong;

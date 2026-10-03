@@ -20,10 +20,14 @@ class TemplateDuplicateAction extends ConsumerWidget {
   final TemplateDef template;
 
   /// Writes a new row from [source] and returns it, or null on failure.
-  static Future<TemplateDef?> apply(WidgetRef ref, TemplateDef source) async {
+  static Future<TemplateDef?> apply(
+    WidgetRef ref,
+    TemplateDef source, {
+    LocalizedCopy? localizedCopy,
+  }) async {
     final Result<TemplateDef> result = await ref
         .read(templateRepositoryProvider)
-        .save(draftFrom(source));
+        .save(draftFrom(source, localizedCopy: localizedCopy));
     return switch (result) {
       Success<TemplateDef>(:final TemplateDef value) => value,
       FailureResult<TemplateDef>() => null,
@@ -31,11 +35,14 @@ class TemplateDuplicateAction extends ConsumerWidget {
   }
 
   /// A new unsaved template that reuses [source]'s fields, rows and aliases.
-  static TemplateDef draftFrom(TemplateDef source) {
+  static TemplateDef draftFrom(
+    TemplateDef source, {
+    LocalizedCopy? localizedCopy,
+  }) {
     return TemplateDef(
       id: '',
       templateKey: source.templateKey,
-      name: Copy.templateCopyName(source.name),
+      name: (localizedCopy ?? Copy.english).templateCopyName(source.name),
       version: 1,
       fields: List<FieldDef>.of(source.fields),
       identityFieldKeys: List<String>.of(source.identityFieldKeys),
@@ -55,10 +62,12 @@ class TemplateDuplicateAction extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppButton(
-      label: Copy.projectsDuplicate,
+      label: localCopy.projectsDuplicate,
       variant: AppButtonVariant.secondary,
-      onPressed: () => apply(ref, template),
+      onPressed: () => apply(ref, template, localizedCopy: localCopy),
     );
   }
 }

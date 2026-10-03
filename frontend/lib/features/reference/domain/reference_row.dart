@@ -1,13 +1,14 @@
 /// One row in a [ReferenceDataset].
 final class ReferenceRow {
-  /// Creates a row. [values] are keyed by column name.
-  const ReferenceRow({
+  /// Creates a row. [values] are keyed by column name, kept in their given
+  /// order, and copied so the row cannot change after construction.
+  ReferenceRow({
     required this.id,
     required this.datasetId,
     required this.key,
-    required this.values,
+    required Map<String, String> values,
     this.addedOnDevice = false,
-  });
+  }) : values = Map<String, String>.unmodifiable(values);
 
   /// Stable merge id.
   final String id;
@@ -18,7 +19,7 @@ final class ReferenceRow {
   /// Key as imported or typed.
   final String key;
 
-  /// Cell values keyed by column name.
+  /// Cell values keyed by column name. Unmodifiable.
   final Map<String, String> values;
 
   /// Whether the operator added this row on the device.

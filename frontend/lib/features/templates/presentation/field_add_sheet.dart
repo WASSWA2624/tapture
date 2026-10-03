@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
@@ -129,6 +134,8 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
@@ -140,16 +147,25 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
         widget.fieldKey == null ? 'route-field-add' : 'route-field-edit',
       ),
       title: widget.fieldKey == null
-          ? Copy.templatesAddField
-          : Copy.templatesEditField,
+          ? localCopy.templatesAddField
+          : localCopy.templatesEditField,
       scrollable: false,
+      overflow: <AppOverflowAction>[
+        if (widget.fieldKey != null)
+          AppOverflowAction(
+            key: const ValueKey<String>('field-bind-dataset'),
+            label: localCopy.templatesBindDataset,
+            icon: AppIcons.dataset,
+            onTap: _bindDataset,
+          ),
+      ],
       body: AsyncValueView<TemplateDef?>(
         value: value,
         isEmpty: (TemplateDef? row) => row == null,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.fields,
-          headline: Copy.fieldAddEmptyHeadline,
-          message: Copy.fieldAddEmptyMessage,
+          headline: Copy.of(context).fieldAddEmptyHeadline,
+          message: Copy.of(context).fieldAddEmptyMessage,
         ),
         onRetry: () => ref.invalidate(templateListProvider),
         data: (TemplateDef? row) => _form(row!, view),
@@ -158,41 +174,53 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
   }
 
   Widget _form(TemplateDef template, _FieldAddView view) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool choice =
         view.type == FieldType.choice || view.type == FieldType.multiChoice;
     return AppForm(
       guardUnsaved: true,
       dirty: view.dirty,
       errors: <String>[
-        if (view.saveError != null) view.saveError!,
-        if (view.twoFactsWarning != null) view.twoFactsWarning!,
+        if (Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError) !=
+            null)
+          Copy.of(context).stateText(view.localizedSaveError, view.saveError)!,
+        if (view.twoFactsWarning != null)
+          localCopy.stateText(
+            view.localizedTwoFactsWarning,
+            view.twoFactsWarning,
+          )!,
       ],
       fields: <Widget>[
         if (view.twoFactsWarning != null) ...<Widget>[
-          const AppBanner(
-            message: Copy.fieldTwoFactsWarning,
+          AppBanner(
+            message: localCopy.fieldTwoFactsWarning,
             icon: AppIcons.warning,
             tone: SnackTone.warning,
           ),
           AppButton(
-            label: Copy.fieldKeepAnyway,
+            label: localCopy.fieldKeepAnyway,
             variant: AppButtonVariant.secondary,
             onPressed: () => ref.read(_fieldAddProvider.notifier).keepAnyway(),
           ),
         ],
         AppTextField(
-          label: Copy.fieldLabel,
+          label: localCopy.fieldLabel,
           controller: _label,
           requiredness: FieldRequiredness.required,
-          errorText: view.labelError,
+          errorText: Copy.of(
+            context,
+          ).stateText(view.localizedLabelError, view.labelError),
           textInputAction: TextInputAction.next,
         ),
         AppChoiceField<FieldType>(
-          label: Copy.fieldType,
+          label: localCopy.fieldType,
           value: view.type,
           options: <Choice<FieldType>>[
             for (final FieldType type in FieldType.values)
-              Choice<FieldType>(type, Copy.fieldTypeLabel(type.name)),
+              Choice<FieldType>(type, localCopy.fieldTypeLabel(type.name)),
           ],
           onChanged: (FieldType? type) {
             if (type != null) {
@@ -200,27 +228,40 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
             }
           },
         ),
+        if (view.type == FieldType.lookup && widget.fieldKey != null)
+          AppListTile(
+            key: const ValueKey<String>('field-bind-dataset-row'),
+            title: localCopy.templatesBindDataset,
+            trailing: const Icon(AppIcons.open),
+            onTap: _bindDataset,
+          ),
         AppRadioGroup<Requiredness>(
-          label: Copy.fieldRequiredness,
+          label: localCopy.fieldRequiredness,
           value: view.requiredness,
           direction: Axis.horizontal,
-          options: const <Choice<Requiredness>>[
-            Choice<Requiredness>(Requiredness.required, Copy.fieldRequired),
+          options: <Choice<Requiredness>>[
+            Choice<Requiredness>(
+              Requiredness.required,
+              localCopy.fieldRequired,
+            ),
             Choice<Requiredness>(
               Requiredness.recommended,
-              Copy.fieldRecommended,
+              localCopy.fieldRecommended,
             ),
-            Choice<Requiredness>(Requiredness.optional, Copy.fieldOptional),
+            Choice<Requiredness>(
+              Requiredness.optional,
+              localCopy.fieldOptional,
+            ),
           ],
           onChanged: (Requiredness value) {
             ref.read(_fieldAddProvider.notifier).setRequiredness(value);
           },
         ),
         AppSwitchTile(
-          title: Copy.fieldAdvanced,
+          title: localCopy.fieldAdvanced,
           description: view.advanced
-              ? Copy.fieldAdvancedHide
-              : Copy.fieldAdvancedShow,
+              ? localCopy.fieldAdvancedHide
+              : localCopy.fieldAdvancedShow,
           value: view.advanced,
           dense: true,
           onChanged: (bool on) {
@@ -245,7 +286,11 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
               for (final FieldDef field in template.fields)
                 field.fieldKey: field.label,
             },
-            requiredWhenError: view.requiredWhenError,
+            requiredWhenError: Copy.of(context).stateText(
+              view.localizedRequiredWhenError,
+              view.requiredWhenError,
+            ),
+            localizedRequiredWhenError: view.localizedRequiredWhenError,
             onInputMode: ref.read(_fieldAddProvider.notifier).setInputMode,
             onAutoFill: ref.read(_fieldAddProvider.notifier).setAutoFill,
             onStickable: ref.read(_fieldAddProvider.notifier).setStickable,
@@ -273,7 +318,7 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
             ),
         ],
       ],
-      submitLabel: Copy.save,
+      submitLabel: localCopy.save,
       onSubmit: () =>
           ref.read(_fieldAddProvider.notifier).save(context, this, template),
     );
@@ -286,6 +331,23 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
       }
     }
     return null;
+  }
+
+  /// Opens the lookup binding of the field being edited (task 010 step 6).
+  void _bindDataset() {
+    final String? key = widget.fieldKey;
+    if (key == null) {
+      return;
+    }
+    unawaited(
+      context.push(
+        RoutePaths.templateFieldLookup(
+          widget.templateId,
+          key,
+          projectId: TemplateLocations.projectIdOf(context),
+        ),
+      ),
+    );
   }
 
   void _hydrate(TemplateDef? template) {
@@ -333,9 +395,13 @@ final class _FieldAddView {
     this.validation = const <String, Object?>{},
     this.options = const <Object>[],
     this.labelError,
+    this.localizedLabelError,
     this.requiredWhenError,
+    this.localizedRequiredWhenError,
     this.saveError,
+    this.localizedSaveError,
     this.twoFactsWarning,
+    this.localizedTwoFactsWarning,
   });
 
   final bool advanced;
@@ -352,9 +418,19 @@ final class _FieldAddView {
   final Map<String, Object?> validation;
   final List<Object> options;
   final String? labelError;
+
+  /// Semantic error retained until the current locale renders the form.
+  final LocalizedMessage? localizedLabelError;
   final String? requiredWhenError;
+
+  /// Semantic error retained until the current locale renders the form.
+  final LocalizedMessage? localizedRequiredWhenError;
   final String? saveError;
+
+  /// Semantic error retained until the current locale renders the form.
+  final LocalizedMessage? localizedSaveError;
   final String? twoFactsWarning;
+  final LocalizedMessage? localizedTwoFactsWarning;
 
   _FieldAddView copyWith({
     bool? advanced,
@@ -372,9 +448,13 @@ final class _FieldAddView {
     Map<String, Object?>? validation,
     List<Object>? options,
     String? labelError,
+    LocalizedMessage? localizedLabelError,
     String? requiredWhenError,
+    LocalizedMessage? localizedRequiredWhenError,
     String? saveError,
+    LocalizedMessage? localizedSaveError,
     String? twoFactsWarning,
+    LocalizedMessage? localizedTwoFactsWarning,
     bool clearWarning = false,
   }) {
     return _FieldAddView(
@@ -392,8 +472,14 @@ final class _FieldAddView {
       validation: validation ?? this.validation,
       options: options ?? this.options,
       labelError: labelError,
+      localizedLabelError: localizedLabelError,
       requiredWhenError: requiredWhenError,
+      localizedRequiredWhenError: localizedRequiredWhenError,
       saveError: saveError,
+      localizedSaveError: localizedSaveError,
+      localizedTwoFactsWarning: clearWarning
+          ? null
+          : (localizedTwoFactsWarning ?? this.localizedTwoFactsWarning),
       twoFactsWarning: clearWarning
           ? null
           : (twoFactsWarning ?? this.twoFactsWarning),
@@ -461,6 +547,10 @@ class _FieldAdd extends Notifier<_FieldAddView> {
         Success<void>() => null,
         FailureResult<void>(:final Failure failure) => failure.message,
       },
+      localizedRequiredWhenError: switch (result) {
+        Success<void>() => null,
+        FailureResult<void>(:final Failure failure) => failure.explanation,
+      },
     );
   }
 
@@ -470,16 +560,23 @@ class _FieldAdd extends Notifier<_FieldAddView> {
     _FieldAddSheetState form,
     TemplateDef template,
   ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String label = form._label.text.trim();
     if (label.isEmpty) {
-      state = state.copyWith(labelError: Copy.nameRequired);
+      state = state.copyWith(
+        labelError: localCopy.nameRequired,
+        localizedLabelError: LocalizedMessage.optional(localCopy.nameRequired),
+      );
       return false;
     }
     final String key = widgetKey(form, template, label);
     if (FieldAddSheet.packsTwoFacts(label, key: key) && !state.keepAnyway) {
       state = state.copyWith(
         labelError: null,
+        localizedLabelError: null,
         twoFactsWarning: Copy.fieldTwoFactsWarning,
+        localizedTwoFactsWarning: Copy.messages.fieldTwoFactsWarning,
       );
       return false;
     }
@@ -489,7 +586,8 @@ class _FieldAdd extends Notifier<_FieldAddView> {
     );
     if (when is FailureResult<void>) {
       state = state.copyWith(
-        requiredWhenError: when.failure.message,
+        requiredWhenError: Copy.of(context).failureMessage(when.failure),
+        localizedRequiredWhenError: when.failure.explanation,
         advanced: true,
       );
       return false;
@@ -508,7 +606,10 @@ class _FieldAdd extends Notifier<_FieldAddView> {
         )?.go(TemplateLocations.detail(context, template.id));
         return true;
       case FailureResult<TemplateDef>(:final Failure failure):
-        state = state.copyWith(saveError: failure.message);
+        state = state.copyWith(
+          saveError: Copy.of(context).failureMessage(failure),
+          localizedSaveError: failure.explanation,
+        );
         return false;
     }
   }

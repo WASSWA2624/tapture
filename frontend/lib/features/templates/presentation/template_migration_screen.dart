@@ -32,6 +32,8 @@ class TemplateMigrationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
@@ -43,31 +45,29 @@ class TemplateMigrationScreen extends ConsumerWidget {
     final _MigrationView view = ref.watch(_migrationProvider(templateId));
     final TemplateDef? template = value.asData?.value;
     final TemplateVersioning preview = template == null
-        ? const TemplateVersioning(
-            added: <({String fieldKey, String label, int records})>[],
-            removed: <({String fieldKey, String label, int records})>[],
-            retyped: <({String fieldKey, String label, int records})>[],
-            behindCount: 0,
-          )
+        ? const TemplateVersioning.none()
         : TemplateVersioning.preview(current: template, records: records);
     return AppPage(
       key: const ValueKey<String>('route-template-migrate'),
-      title: Copy.templateMigrationTitle,
+      title: localCopy.templateMigrationTitle,
       scrollable: false,
       footer: preview.isEmpty
           ? null
           : AppPrimaryAction(
-              label: Copy.templateMigrationAction,
+              label: localCopy.templateMigrationAction,
               busy: view.busy,
-              onPressed: () => _commit(context, ref, template!, records),
+              onPressed: () =>
+                  _commit(context, ref, template!, records, preview),
             ),
       body: AsyncValueView<TemplateDef?>(
         value: value,
         isEmpty: (TemplateDef? row) => row == null,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.migrate,
-          headline: Copy.templateMigrationEmptyHeadline,
-          message: Copy.templateMigrationEmptyMessage,
+          headline: Copy.of(context).templatesEmptyHeadline,
+          message: Copy.of(context).templatesEmptyMessage,
+          actionLabel: Copy.of(context).navTemplates,
+          onAction: () => context.go(TemplateLocations.root(context)),
         ),
         onRetry: () => ref.invalidate(templateListProvider),
         data: (TemplateDef? _) => AsyncValueView<List<CapturedTemplateRecord>>(
@@ -75,40 +75,84 @@ class TemplateMigrationScreen extends ConsumerWidget {
           onRetry: () =>
               ref.invalidate(templateCapturedRecordsProvider(templateId)),
           isEmpty: (_) => preview.isEmpty,
-          empty: () => const AppEmptyState(
+          empty: () => AppEmptyState(
             icon: AppIcons.migrate,
-            headline: Copy.templateMigrationEmptyHeadline,
-            message: Copy.templateMigrationEmptyMessage,
+            headline: Copy.of(context).templateMigrationEmptyHeadline,
+            message: Copy.of(context).templateMigrationEmptyMessage,
+            actionLabel: Copy.of(context).templateFieldsTitle,
+            onAction: () =>
+                context.go(TemplateLocations.detail(context, templateId)),
           ),
-          data: (_) => _list(view, preview),
+          data: (_) => _list(context, view, preview),
         ),
       ),
     );
   }
 
-  Widget _list(_MigrationView view, TemplateVersioning preview) {
+  Widget _list(
+    BuildContext context,
+    _MigrationView view,
+    TemplateVersioning preview,
+  ) {
     return ListView(
       padding: const EdgeInsets.only(bottom: Space.x4),
       children: <Widget>[
-        const AppBanner(
-          message: Copy.templateMigrationExplain,
+        AppBanner(
+          message: Copy.of(context).templateMigrationExplain,
           icon: AppIcons.info,
           tone: SnackTone.info,
         ),
-        if (view.saveError != null)
+        if (Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError) !=
+            null)
           AppBanner(
-            message: view.saveError!,
+            message: Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError)!,
             icon: AppIcons.error,
             tone: SnackTone.error,
           ),
-        ..._section(Copy.templateMigrationAdded, preview.added),
-        ..._section(Copy.templateMigrationRemoved, preview.removed),
-        ..._section(Copy.templateMigrationRetyped, preview.retyped),
+        if (preview.unresolved > 0)
+          AppBanner(
+            key: const ValueKey<String>('migration-unresolved'),
+            message: Copy.of(
+              context,
+            ).templateMigrationUnresolved(preview.unresolved),
+            icon: AppIcons.warning,
+            tone: SnackTone.warning,
+          ),
+        AppListTile(
+          key: const ValueKey<String>('migration-behind'),
+          title: Copy.of(context).templateMigrationBehind(preview.behindCount),
+          dense: true,
+        ),
+        ..._section(
+          context,
+          Copy.of(context).templateMigrationAdded,
+          preview.added,
+        ),
+        ..._section(
+          context,
+          Copy.of(context).templateMigrationRemoved,
+          preview.removed,
+        ),
+        ..._section(
+          context,
+          Copy.of(context).templateMigrationRetyped,
+          preview.retyped,
+        ),
+        ..._section(
+          context,
+          Copy.of(context).templateMigrationRetiring,
+          preview.retiring,
+        ),
       ],
     );
   }
 
   List<Widget> _section(
+    BuildContext context,
     String title,
     List<({String fieldKey, String label, int records})> rows,
   ) {
@@ -120,7 +164,7 @@ class TemplateMigrationScreen extends ConsumerWidget {
       for (final ({String fieldKey, String label, int records}) row in rows)
         AppListTile(
           title: row.label,
-          subtitle: Copy.recordsCount(row.records),
+          subtitle: Copy.of(context).recordsCount(row.records),
           dense: true,
         ),
     ];
@@ -140,12 +184,15 @@ class TemplateMigrationScreen extends ConsumerWidget {
     WidgetRef ref,
     TemplateDef template,
     List<CapturedTemplateRecord> reviewed,
+    TemplateVersioning preview,
   ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.templateMigrationConfirmTitle,
-      message: Copy.templateMigrationConfirm,
-      confirmLabel: Copy.templateMigrationAction,
+      title: localCopy.templateMigrationConfirmTitle,
+      message: localCopy.templateMigrationConfirm(preview.behindCount),
+      confirmLabel: localCopy.templateMigrationAction,
     );
     if (!confirmed) {
       return;
@@ -168,7 +215,11 @@ final templateCapturedRecordsProvider = StreamProvider.autoDispose
           ref.watch(templateMigrationRepositoryProvider).watch(templateId),
     );
 
-typedef _MigrationView = ({String? saveError, bool busy});
+typedef _MigrationView = ({
+  String? saveError,
+  LocalizedMessage? localizedSaveError,
+  bool busy,
+});
 
 final class _Migration extends Notifier<_MigrationView> {
   _Migration(this.templateId);
@@ -177,7 +228,7 @@ final class _Migration extends Notifier<_MigrationView> {
 
   @override
   _MigrationView build() {
-    return (saveError: null, busy: false);
+    return (saveError: null, localizedSaveError: null, busy: false);
   }
 
   Future<bool> commit(
@@ -187,7 +238,7 @@ final class _Migration extends Notifier<_MigrationView> {
     if (state.busy) {
       return false;
     }
-    state = (saveError: null, busy: true);
+    state = (saveError: null, localizedSaveError: null, busy: true);
     final Result<void> result = await ref
         .read(templateMigrationRepositoryProvider)
         .migrate(template: template, reviewed: reviewed);
@@ -196,10 +247,14 @@ final class _Migration extends Notifier<_MigrationView> {
     }
     switch (result) {
       case Success<void>():
-        state = (saveError: null, busy: false);
+        state = (saveError: null, localizedSaveError: null, busy: false);
         return true;
       case FailureResult<void>(:final Failure failure):
-        state = (saveError: failure.message, busy: false);
+        state = (
+          saveError: failure.message,
+          localizedSaveError: failure.explanation,
+          busy: false,
+        );
         return false;
     }
   }

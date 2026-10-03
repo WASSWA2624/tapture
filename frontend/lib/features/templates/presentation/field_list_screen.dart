@@ -21,12 +21,16 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/field_def.dart';
 import '../domain/template_def.dart';
-import '../templates.dart' show templateRepositoryProvider;
+import '../templates.dart'
+    show templateMigrationRepositoryProvider, templateRepositoryProvider;
 import 'field_delete_action.dart';
 import 'field_list_filter.dart';
+import 'field_list_query.dart';
 import 'field_reorder.dart';
 import 'template_list_screen.dart' show templateListProvider;
 import 'template_locations.dart';
+
+export 'field_list_query.dart';
 
 /// The one screen where a template's fields are added, edited, reordered
 /// and retired.
@@ -39,49 +43,51 @@ class FieldListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
     final TemplateDef? template = value.asData?.value;
     return AppPage(
       key: const ValueKey<String>('route-template-fields'),
-      title: template?.name ?? Copy.templateFieldsTitle,
+      title: template?.name ?? localCopy.templateFieldsTitle,
       scrollable: false,
       overflow: template == null
           ? const <AppOverflowAction>[]
           : <AppOverflowAction>[
               AppOverflowAction(
-                label: Copy.requiredColumnsTitle,
+                label: localCopy.requiredColumnsTitle,
                 icon: AppIcons.rules,
                 onTap: () => _openRequired(context, template.id),
               ),
               AppOverflowAction(
-                label: Copy.identityFieldsTitle,
+                label: localCopy.identityFieldsTitle,
                 icon: AppIcons.identity,
                 onTap: () => _openIdentity(context, template.id),
               ),
               AppOverflowAction(
-                label: Copy.outputMappingTitle,
+                label: localCopy.outputMappingTitle,
                 icon: AppIcons.columns,
                 onTap: () => _openOutput(context, template.id),
               ),
               AppOverflowAction(
-                label: Copy.templateMigrationTitle,
+                label: localCopy.templateMigrationTitle,
                 icon: AppIcons.migrate,
                 onTap: () => _openMigrate(context, template.id),
               ),
               AppOverflowAction(
-                label: Copy.rowAliasesTitle,
+                label: localCopy.rowAliasesTitle,
                 icon: AppIcons.aliases,
                 onTap: () => _openAliases(context, template.id),
               ),
               AppOverflowAction(
-                label: Copy.checklistTitle,
+                label: localCopy.checklistTitle,
                 icon: AppIcons.checklist,
                 onTap: () => _openChecklist(context, template.id),
               ),
               AppOverflowAction(
-                label: Copy.detectionProfileTitle,
+                label: localCopy.detectionProfileTitle,
                 icon: AppIcons.detection,
                 onTap: () => _openDetection(context, template.id),
               ),
@@ -89,7 +95,7 @@ class FieldListScreen extends ConsumerWidget {
       footer: template == null
           ? null
           : AppPrimaryAction(
-              label: Copy.templatesAddField,
+              label: localCopy.templatesAddField,
               onPressed: () => _openAdd(context, template.id),
             ),
       body: AsyncValueView<TemplateDef?>(
@@ -98,6 +104,8 @@ class FieldListScreen extends ConsumerWidget {
         empty: () => _empty(context, template?.id ?? templateId),
         onRetry: () => ref.invalidate(templateListProvider),
         data: (TemplateDef? row) {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           final TemplateDef loaded = row!;
           final String query = ref.watch(fieldListQueryProvider);
           final FieldListFacets facets = ref.watch(fieldListFilterProvider);
@@ -119,7 +127,7 @@ class FieldListScreen extends ConsumerWidget {
                   Space.x2,
                 ),
                 child: AppSearchField(
-                  hint: Copy.search,
+                  hint: localCopy.search,
                   text: query,
                   onChanged: (String text) {
                     ref.read(fieldListQueryProvider.notifier).set(text);
@@ -159,14 +167,17 @@ class FieldListScreen extends ConsumerWidget {
     required bool narrowed,
     required bool filtered,
   }) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (fields.isEmpty) {
       return AppEmptyState(
         icon: AppIcons.search,
-        headline: Copy.fieldsNoMatch,
-        message: filtered ? Copy.searchFilterNoMatchMessage : Copy.search,
+        headline: localCopy.fieldsNoMatch,
+        message: filtered
+            ? localCopy.searchFilterNoMatchMessage
+            : localCopy.search,
       );
     }
-    final Map<String, int> valueCounts = ref.watch(fieldValueCountsProvider);
     final Map<Requiredness, List<int>> sections = _sections(loaded.fields);
     if (narrowed) {
       return ListView.builder(
@@ -182,7 +193,6 @@ class FieldListScreen extends ConsumerWidget {
             field: field,
             index: stored,
             slots: sections[field.requiredness]!,
-            valueCount: valueCounts[field.fieldKey] ?? 0,
           );
         },
       );
@@ -194,16 +204,13 @@ class FieldListScreen extends ConsumerWidget {
             SliverToBoxAdapter(
               child: AppSectionHeader(
                 key: ValueKey<String>('field-section-${requiredness.name}'),
-                title: _sectionTitle(requiredness),
+                title: _sectionTitle(
+                  requiredness,
+                  localizedCopy: Copy.of(context),
+                ),
               ),
             ),
-            _section(
-              context,
-              ref,
-              loaded,
-              sections[requiredness]!,
-              valueCounts,
-            ),
+            _section(context, ref, loaded, sections[requiredness]!),
           ],
       ],
     );
@@ -214,7 +221,6 @@ class FieldListScreen extends ConsumerWidget {
     WidgetRef ref,
     TemplateDef loaded,
     List<int> slots,
-    Map<String, int> valueCounts,
   ) {
     return SliverReorderableList(
       itemCount: slots.length,
@@ -235,7 +241,6 @@ class FieldListScreen extends ConsumerWidget {
           index: slots[position],
           slots: slots,
           dragIndex: position,
-          valueCount: valueCounts[field.fieldKey] ?? 0,
         );
       },
     );
@@ -258,7 +263,6 @@ class _FieldRow extends ConsumerWidget {
     required this.field,
     required this.index,
     required this.slots,
-    required this.valueCount,
     this.dragIndex,
   });
 
@@ -271,19 +275,19 @@ class _FieldRow extends ConsumerWidget {
   /// Stored positions of the fields in [field]'s section, in order.
   final List<int> slots;
 
-  final int valueCount;
-
   /// Place in its section's reorderable list; null lists it without drag.
   final int? dragIndex;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final int position = slots.indexOf(index);
     final int? dragIndex = this.dragIndex;
     return AppListTile(
       title: field.label,
-      subtitle: Copy.fieldRowSubtitle(
-        typeLabel: Copy.fieldTypeLabel(field.type.name),
+      subtitle: localCopy.fieldRowSubtitle(
+        typeLabel: localCopy.fieldTypeLabel(field.type.name),
         requiredField: field.requiredness == Requiredness.required,
         calculated: field.type == FieldType.computed,
         fromPhotos: _mentioned(template.detection, field.fieldKey),
@@ -291,7 +295,7 @@ class _FieldRow extends ConsumerWidget {
         contextLevel: field.contextLevel,
         defaultValue: field.defaultValue,
       ),
-      status: _pill(field.requiredness),
+      status: _pill(field.requiredness, localizedCopy: Copy.of(context)),
       onTap: () => _openEdit(context, template.id, field.fieldKey),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -299,8 +303,8 @@ class _FieldRow extends ConsumerWidget {
           // Up and down stay inside the field's section (FBK0000003).
           AppIconButton(
             icon: AppIcons.moveUp,
-            semanticLabel: Copy.fieldMoveUp(field.label),
-            tooltip: Copy.fieldMoveUp(field.label),
+            semanticLabel: localCopy.fieldMoveUp(field.label),
+            tooltip: localCopy.fieldMoveUp(field.label),
             outlined: false,
             onPressed: position <= 0
                 ? null
@@ -318,8 +322,8 @@ class _FieldRow extends ConsumerWidget {
           ),
           AppIconButton(
             icon: AppIcons.moveDown,
-            semanticLabel: Copy.fieldMoveDown(field.label),
-            tooltip: Copy.fieldMoveDown(field.label),
+            semanticLabel: localCopy.fieldMoveDown(field.label),
+            tooltip: localCopy.fieldMoveDown(field.label),
             outlined: false,
             onPressed: position < 0 || position >= slots.length - 1
                 ? null
@@ -340,30 +344,25 @@ class _FieldRow extends ConsumerWidget {
               index: dragIndex,
               child: AppIconButton(
                 icon: AppIcons.reorder,
-                semanticLabel: Copy.fieldReorder(field.label),
-                tooltip: Copy.fieldReorder(field.label),
+                semanticLabel: localCopy.fieldReorder(field.label),
+                tooltip: localCopy.fieldReorder(field.label),
                 outlined: false,
               ),
             ),
           AppOverflowMenu(
             items: <AppOverflowAction>[
               AppOverflowAction(
-                label: Copy.templatesEditField,
+                label: localCopy.templatesEditField,
                 icon: AppIcons.edit,
                 onTap: () => _openEdit(context, template.id, field.fieldKey),
               ),
               AppOverflowAction(
-                label: Copy.templatesDeleteField,
+                label: localCopy.templatesDeleteField,
                 icon: AppIcons.delete,
                 onTap: () => unawaited(
                   ref
                       .read(_fieldListProvider.notifier)
-                      .delete(
-                        context,
-                        template: template,
-                        field: field,
-                        valueCount: valueCount,
-                      ),
+                      .delete(context, template: template, field: field),
                 ),
               ),
             ],
@@ -386,11 +385,15 @@ Map<Requiredness, List<int>> _sections(List<FieldDef> fields) {
   return slots;
 }
 
-String _sectionTitle(Requiredness requiredness) {
+String _sectionTitle(
+  Requiredness requiredness, {
+  LocalizedCopy? localizedCopy,
+}) {
   return switch (requiredness) {
-    Requiredness.required => Copy.fieldRequired,
-    Requiredness.recommended => Copy.fieldRecommended,
-    Requiredness.optional => Copy.fieldOptional,
+    Requiredness.required => (localizedCopy ?? Copy.english).fieldRequired,
+    Requiredness.recommended =>
+      (localizedCopy ?? Copy.english).fieldRecommended,
+    Requiredness.optional => (localizedCopy ?? Copy.english).fieldOptional,
   };
 }
 
@@ -402,16 +405,18 @@ bool _matchesQuery(FieldDef field, String needle) {
 }
 
 Widget _empty(BuildContext context, String templateId) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   return AppEmptyState(
     icon: AppIcons.fields,
-    headline: Copy.templatesFieldsEmptyHeadline,
-    message: Copy.templatesFieldsEmptyMessage,
-    actionLabel: Copy.templatesAddField,
+    headline: localCopy.templatesFieldsEmptyHeadline,
+    message: localCopy.templatesFieldsEmptyMessage,
+    actionLabel: localCopy.templatesAddField,
     onAction: () => _openAdd(context, templateId),
   );
 }
 
-AppStatusPill _pill(Requiredness requiredness) {
+AppStatusPill _pill(Requiredness requiredness, {LocalizedCopy? localizedCopy}) {
   return AppStatusPill.badge(
     status: switch (requiredness) {
       Requiredness.required => RecordStatus.needsReview,
@@ -419,9 +424,10 @@ AppStatusPill _pill(Requiredness requiredness) {
       Requiredness.optional => RecordStatus.draft,
     },
     label: switch (requiredness) {
-      Requiredness.required => Copy.fieldRequired,
-      Requiredness.recommended => Copy.fieldRecommended,
-      Requiredness.optional => Copy.fieldOptional,
+      Requiredness.required => (localizedCopy ?? Copy.english).fieldRequired,
+      Requiredness.recommended =>
+        (localizedCopy ?? Copy.english).fieldRecommended,
+      Requiredness.optional => (localizedCopy ?? Copy.english).fieldOptional,
     },
   );
 }
@@ -451,23 +457,51 @@ class _FieldList extends Notifier<bool> {
     BuildContext context, {
     required TemplateDef template,
     required FieldDef field,
-    required int valueCount,
   }) async {
-    final Result<TemplateDef>? result = await FieldDeleteAction.confirmAndApply(
-      context: context,
-      templates: ref.read(templateRepositoryProvider),
-      template: template,
-      field: field,
-      valueCount: valueCount,
-    );
-    if (result == null || !context.mounted) {
-      return;
-    }
-    switch (result) {
-      case Success<TemplateDef>():
+    if (state) return;
+    state = true;
+    try {
+      final Result<Map<String, int>> counts = await ref
+          .read(templateMigrationRepositoryProvider)
+          .fieldValueCounts(template.id);
+      if (!ref.mounted || !context.mounted) return;
+      final Map<String, int> values;
+      switch (counts) {
+        case Success<Map<String, int>>(:final value):
+          values = value;
+        case FailureResult<Map<String, int>>(:final failure):
+          showAppSnack(
+            context,
+            failure.message,
+            tone: SnackTone.error,
+            localizedMessage: failure.explanation,
+          );
+          return;
+      }
+      final Result<TemplateDef>? result =
+          await FieldDeleteAction.confirmAndApply(
+            context: context,
+            templates: ref.read(templateRepositoryProvider),
+            template: template,
+            field: field,
+            valueCount: values[field.fieldKey] ?? 0,
+          );
+      if (result == null || !context.mounted) {
         return;
-      case FailureResult<TemplateDef>(:final failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+      }
+      switch (result) {
+        case Success<TemplateDef>():
+          return;
+        case FailureResult<TemplateDef>(:final failure):
+          showAppSnack(
+            context,
+            failure.message,
+            tone: SnackTone.error,
+            localizedMessage: failure.explanation,
+          );
+      }
+    } finally {
+      if (ref.mounted) state = false;
     }
   }
 
@@ -489,7 +523,12 @@ class _FieldList extends Notifier<bool> {
       case Success<TemplateDef>():
         return;
       case FailureResult<TemplateDef>(:final failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
     }
   }
 }
@@ -499,14 +538,6 @@ final NotifierProvider<_FieldList, bool> _fieldListProvider =
       _FieldList.new,
       retry: (int _, Object _) => null,
     );
-
-/// How many records hold a value for each field key on the open template.
-/// Defaults to none until the records feature watches captures; tests
-/// override this map.
-final Provider<Map<String, int>> fieldValueCountsProvider =
-    Provider<Map<String, int>>((Ref _) {
-      return const <String, int>{};
-    });
 
 void _openAdd(BuildContext context, String templateId) {
   context.go(TemplateLocations.child(context, templateId, 'fields/new'));
@@ -567,12 +598,3 @@ final NotifierProvider<FieldListQuery, String> fieldListQueryProvider =
       FieldListQuery.new,
       retry: (int _, Object _) => null,
     );
-
-/// Holds the field-list search text.
-final class FieldListQuery extends Notifier<String> {
-  @override
-  String build() => '';
-
-  /// Replaces the query.
-  void set(String value) => state = value;
-}

@@ -12,14 +12,6 @@ import 'package:tapture/core/widgets/fields/choice.dart';
 
 import '../domain/field_def.dart';
 
-/// One field being drafted on the new-template page. [id] only tells rows
-/// apart; the stored key comes from the label on Create.
-typedef TemplateFieldDraft = ({
-  int id,
-  FieldType type,
-  Requiredness requiredness,
-});
-
 /// The new-template page's field rows: each asks the add sheet's three
 /// questions (label, type, required), and Add a field adds another
 /// (FE-SIMP-06, FBK0000144).
@@ -59,34 +51,36 @@ class TemplateFieldRows extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         for (int index = 0; index < drafts.length; index++) ...<Widget>[
           AppSectionHeader(
             key: ValueKey<String>('template-field-row-${drafts[index].id}'),
-            title: Copy.templateFieldRowTitle(index + 1),
+            title: localCopy.templateFieldRowTitle(index + 1),
             action: AppIconButton(
               icon: AppIcons.remove,
-              tooltip: Copy.templateFieldRowRemove,
-              semanticLabel: Copy.templateFieldRowRemove,
+              tooltip: localCopy.templateFieldRowRemove,
+              semanticLabel: localCopy.templateFieldRowRemove,
               outlined: false,
               onPressed: () => onRemove(drafts[index].id),
             ),
           ),
           AppTextField(
-            label: Copy.fieldLabel,
+            label: localCopy.fieldLabel,
             controller: labelFor(drafts[index].id),
             textInputAction: TextInputAction.next,
             onChanged: onLabelChanged,
           ),
           const SizedBox(height: Space.x3),
           AppChoiceField<FieldType>(
-            label: Copy.fieldType,
+            label: localCopy.fieldType,
             value: drafts[index].type,
             options: <Choice<FieldType>>[
               for (final FieldType type in FieldType.values)
-                Choice<FieldType>(type, Copy.fieldTypeLabel(type.name)),
+                Choice<FieldType>(type, localCopy.fieldTypeLabel(type.name)),
             ],
             onChanged: (FieldType? type) {
               if (type != null) {
@@ -96,16 +90,22 @@ class TemplateFieldRows extends StatelessWidget {
           ),
           const SizedBox(height: Space.x3),
           AppRadioGroup<Requiredness>(
-            label: Copy.fieldRequiredness,
+            label: localCopy.fieldRequiredness,
             value: drafts[index].requiredness,
             direction: Axis.horizontal,
-            options: const <Choice<Requiredness>>[
-              Choice<Requiredness>(Requiredness.required, Copy.fieldRequired),
+            options: <Choice<Requiredness>>[
+              Choice<Requiredness>(
+                Requiredness.required,
+                localCopy.fieldRequired,
+              ),
               Choice<Requiredness>(
                 Requiredness.recommended,
-                Copy.fieldRecommended,
+                localCopy.fieldRecommended,
               ),
-              Choice<Requiredness>(Requiredness.optional, Copy.fieldOptional),
+              Choice<Requiredness>(
+                Requiredness.optional,
+                localCopy.fieldOptional,
+              ),
             ],
             onChanged: (Requiredness value) =>
                 onRequiredness(drafts[index].id, value),
@@ -113,7 +113,7 @@ class TemplateFieldRows extends StatelessWidget {
           const SizedBox(height: Space.x4),
         ],
         AppButton(
-          label: Copy.templatesAddField,
+          label: localCopy.templatesAddField,
           icon: AppIcons.add,
           variant: AppButtonVariant.secondary,
           expand: true,
@@ -123,3 +123,11 @@ class TemplateFieldRows extends StatelessWidget {
     );
   }
 }
+
+/// One field being drafted on the new-template page. [id] only tells rows
+/// apart; the stored key comes from the label on Create.
+typedef TemplateFieldDraft = ({
+  int id,
+  FieldType type,
+  Requiredness requiredness,
+});

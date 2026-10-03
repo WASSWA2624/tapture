@@ -19,10 +19,14 @@ export 'presentation/record_edit_controller.dart'
 export 'presentation/record_edit_screen.dart';
 export 'presentation/record_field_sheet.dart';
 export 'presentation/record_history_screen.dart';
+export 'presentation/record_photo_viewer_screen.dart'
+    show RecordPhotoViewerScreen;
 export 'presentation/record_photos_editor.dart';
 export 'presentation/record_providers.dart';
 export 'presentation/record_selection.dart';
 export 'presentation/record_template_change.dart';
+export 'presentation/records_list_controller.dart'
+    show recordsListControllerProvider, RecordsListCriteria;
 export 'presentation/records_list_screen.dart';
 export 'presentation/records_list_view.dart';
 export 'presentation/recycle_bin_screen.dart';

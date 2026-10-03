@@ -1,45 +1,44 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/lookup_binding.dart';
 import '../domain/reference_row.dart';
-import '../reference.dart' show referenceRepositoryProvider;
+import 'dataset_row_controller.dart';
 
-/// Opens the add-row sheet for a failed lookup. Returns the saved row.
+/// Opens the add-row sheet for a lookup that found nothing. Completes with
+/// the saved row, flagged added on this device, or null when dismissed.
 Future<ReferenceRow?> showDatasetAddRowSheet({
   required BuildContext context,
   required String datasetId,
   required String keyColumn,
   required LookupBinding binding,
-  Failure? failure,
 }) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   return showAppSheet<ReferenceRow>(
     context,
-    title: Copy.datasetsAddRow,
-    builder: (BuildContext context) {
+    title: localCopy.datasetsAddRow,
+    contentSized: true,
+    builder: (BuildContext _) {
       return DatasetAddRowSheet(
         datasetId: datasetId,
         keyColumn: keyColumn,
         binding: binding,
-        failure: failure,
       );
     },
   );
 }
 
-/// Asks for the key column and the columns the current lookup binding fills.
+/// Asks for the key column and the columns the current lookup binding
+/// fills, nothing more (task 010 step 5). Leaving with typed values asks
+/// first, and a failed save keeps them.
 class DatasetAddRowSheet extends ConsumerStatefulWidget {
   /// Creates the sheet body.
   const DatasetAddRowSheet({
@@ -47,7 +46,6 @@ class DatasetAddRowSheet extends ConsumerStatefulWidget {
     required this.datasetId,
     required this.keyColumn,
     required this.binding,
-    this.failure,
   });
 
   /// Dataset that receives the row.
@@ -56,114 +54,115 @@ class DatasetAddRowSheet extends ConsumerStatefulWidget {
   /// Key column name.
   final String keyColumn;
 
-  /// Binding that failed — only its fill columns are collected.
+  /// Binding that failed; only its fill columns are collected.
   final LookupBinding binding;
-
-  /// Injected failure for widget tests.
-  final Failure? failure;
 
   @override
   ConsumerState<DatasetAddRowSheet> createState() => _DatasetAddRowSheetState();
 }
 
 class _DatasetAddRowSheetState extends ConsumerState<DatasetAddRowSheet> {
-  late final TextEditingController _key;
+  final TextEditingController _key = TextEditingController();
   final Map<String, TextEditingController> _fields =
       <String, TextEditingController>{};
-  Failure? _error;
-  bool _saving = false;
+
+  DatasetRowTarget get _target => (datasetId: widget.datasetId, rowId: '');
 
   @override
   void initState() {
     super.initState();
-    _key = TextEditingController();
     for (final String column in widget.binding.fillMapping.keys) {
-      if (column == widget.keyColumn) {
-        continue;
+      if (column != widget.keyColumn) {
+        _fields[column] = TextEditingController();
       }
-      _fields[column] = TextEditingController();
     }
   }
 
   @override
   void dispose() {
     _key.dispose();
-    for (final TextEditingController controller in _fields.values) {
-      controller.dispose();
+    for (final TextEditingController field in _fields.values) {
+      field.dispose();
     }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Failure? failure = widget.failure ?? _error;
-    if (failure != null) {
-      return AsyncValueView<void>(
-        value: AsyncValue<void>.error(failure, StackTrace.empty),
-        data: (_) => const SizedBox.shrink(),
-        onRetry: () => setState(() => _error = null),
-      );
-    }
     if (widget.datasetId.isEmpty) {
-      return const AppEmptyState(
-        icon: AppIcons.dataset,
-        headline: Copy.datasetsEmptyHeadline,
-        message: Copy.datasetsEmptyMessage,
-      );
+      return _noDataset(context);
     }
-    return Padding(
-      padding: const EdgeInsets.all(Space.x4),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          AppTextField(label: widget.keyColumn, controller: _key),
-          for (final MapEntry<String, TextEditingController> entry
-              in _fields.entries)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: AppTextField(label: entry.key, controller: entry.value),
+    return AsyncValueView<DatasetRowView>(
+      value: ref.watch(datasetRowControllerProvider(_target)),
+      isEmpty: (DatasetRowView view) => view.dataset == null,
+      empty: () => _noDataset(context),
+      onRetry: () => ref.invalidate(datasetRowControllerProvider(_target)),
+      data: (DatasetRowView view) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
+        final String? saveError = Copy.of(
+          context,
+        ).stateText(view.localizedSaveError, view.saveError);
+
+        return AppForm(
+          compact: true,
+          guardUnsaved: true,
+          errors: <String>[?saveError],
+          fields: <Widget>[
+            AppTextField(
+              key: const ValueKey<String>('dataset-add-key'),
+              label: widget.keyColumn,
+              controller: _key,
+              requiredness: FieldRequiredness.required,
+              textInputAction: TextInputAction.next,
             ),
-          const SizedBox(height: 16),
-          AppButton(
-            label: Copy.datasetsAddRow,
-            busy: _saving,
-            onPressed: _saving ? null : () => unawaited(_save()),
-          ),
-        ],
-      ),
+            for (final MapEntry<String, TextEditingController> field
+                in _fields.entries)
+              AppTextField(
+                key: ValueKey<String>('dataset-add-${field.key}'),
+                label: field.key,
+                controller: field.value,
+                textInputAction: TextInputAction.next,
+              ),
+          ],
+          submitLabel: localCopy.datasetsAddRow,
+          onSubmit: _save,
+        );
+      },
     );
   }
 
-  Future<void> _save() async {
-    setState(() => _saving = true);
-    final Map<String, String> values = <String, String>{
-      widget.keyColumn: _key.text,
-      for (final MapEntry<String, TextEditingController> entry
-          in _fields.entries)
-        entry.key: entry.value.text,
-    };
-    final Result<ReferenceRow> saved = await ref
-        .read(referenceRepositoryProvider)
-        .saveRow(
-          ReferenceRow(
-            id: '',
-            datasetId: widget.datasetId,
-            key: _key.text.trim(),
-            values: values,
-            addedOnDevice: true,
-          ),
-        );
-    if (!mounted) {
-      return;
-    }
-    switch (saved) {
-      case FailureResult<ReferenceRow>(:final Failure failure):
-        setState(() {
-          _saving = false;
-          _error = failure;
+  Widget _noDataset(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    return AppEmptyState(
+      icon: AppIcons.dataset,
+      headline: localCopy.datasetsAddRowNoDatasetHeadline,
+      message: localCopy.datasetsAddRowNoDatasetMessage,
+      actionLabel: localCopy.close,
+      onAction: () => Navigator.of(context).maybePop(),
+    );
+  }
+
+  Future<bool> _save() async {
+    final ReferenceRow? saved = await ref
+        .read(datasetRowControllerProvider(_target).notifier)
+        .save(<String, String>{
+          widget.keyColumn: _key.text,
+          for (final MapEntry<String, TextEditingController> field
+              in _fields.entries)
+            field.key: field.value.text,
         });
-      case Success<ReferenceRow>(:final ReferenceRow value):
-        Navigator.of(context).pop(value);
+    if (saved == null || !mounted) {
+      return false;
     }
+    // The form forgets its edits once this returns, so close on the next
+    // frame, when there is nothing left to guard.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Navigator.of(context).pop(saved);
+      }
+    });
+    return true;
   }
 }

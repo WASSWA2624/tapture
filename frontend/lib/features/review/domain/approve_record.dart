@@ -1,38 +1,44 @@
-import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/validation/severity.dart';
 import 'package:tapture/core/validation/validation_issue.dart';
-import 'package:tapture/features/records/records.dart' show RecordFilter;
+import 'package:tapture/features/records/domain/domain.dart' show RecordFilter;
 
 import 'approval_outcome.dart';
 import 'approval_steps.dart';
+
+export 'approval_steps.dart';
 
 /// Decides whether a record may be approved, then which record is next
 /// (task 016).
 ///
 /// Validation errors, an unresolved duplicate and an unresolved conflict
-/// all block. Nothing here approves a value that a person did not accept.
+/// all block, each naming the field and what must be fixed. Nothing here
+/// approves a value that a person did not accept.
 final class ApproveRecord {
   /// The block conditions and the clean path, with no I/O.
+  ///
+  /// [conflictFields] maps each field still in an unresolved conflict to the
+  /// label the block names it by.
   static ApprovalOutcome assess({
     required List<ValidationIssue> issues,
     required bool unresolvedDuplicate,
-    required List<String> conflictFields,
+    required Map<String, String> conflictFields,
     required String? nextRecordId,
   }) {
     final List<ValidationIssue> reasons = <ValidationIssue>[
       for (final ValidationIssue issue in issues)
         if (issue.blocks) issue,
       if (unresolvedDuplicate)
-        const ValidationIssue(
+        ValidationIssue(
           null,
           Severity.error,
-          Copy.reviewBlockedDuplicate,
+          DomainCopy.reviewBlockedDuplicate,
         ),
-      for (final String fieldKey in conflictFields)
+      for (final MapEntry<String, String> field in conflictFields.entries)
         ValidationIssue(
-          fieldKey,
+          field.key,
           Severity.error,
-          Copy.conflictBlocksApproval(fieldKey),
+          DomainCopy.conflictBlocksApproval(field.value),
         ),
     ];
     if (reasons.isNotEmpty) {
@@ -61,7 +67,8 @@ final class ApproveRecord {
   }
 }
 
-/// Contract entry. The batch screen passes the [steps] that read and write.
+/// Contract entry: approves [recordId] through [steps] unless something
+/// blocks, and names the next unreviewed record in [filter].
 Future<ApprovalOutcome> approveAndNext(
   String recordId,
   RecordFilter filter, {

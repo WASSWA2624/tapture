@@ -17,9 +17,11 @@ Future<ReferenceRow?> showLookupPickerSheet({
   required List<String> distinguishColumns,
   Failure? failure,
 }) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   return showAppSheet<ReferenceRow>(
     context,
-    title: Copy.datasetsPickMatch,
+    title: localCopy.datasetsPickMatch,
     builder: (BuildContext context) {
       return LookupPickerSheet(
         matches: matches,
@@ -51,6 +53,8 @@ class LookupPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (failure != null) {
       return AsyncValueView<void>(
         value: AsyncValue<void>.error(failure!, StackTrace.empty),
@@ -58,10 +62,12 @@ class LookupPickerSheet extends StatelessWidget {
       );
     }
     if (matches.isEmpty) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: AppIcons.searchEmpty,
-        headline: Copy.datasetsBrowserEmptyHeadline,
-        message: Copy.datasetsBrowserEmptyMessage,
+        headline: localCopy.datasetsNoMatchHeadline,
+        message: localCopy.datasetsPickNoMatchMessage,
+        actionLabel: localCopy.close,
+        onAction: () => Navigator.of(context).maybePop(),
       );
     }
     return ListView(
@@ -70,10 +76,10 @@ class LookupPickerSheet extends StatelessWidget {
         for (final ReferenceRow row in matches)
           AppListTile(
             title: row.key,
-            subtitle: <String>[
+            subtitle: localCopy.datasetsPickerSubtitle(<String, String>{
               for (final String column in distinguishColumns)
-                '$column: ${row.values[column] ?? ''}',
-            ].join(' · '),
+                column: row.values[column] ?? '',
+            }),
             onTap: () => Navigator.of(context).pop(row),
           ),
       ],

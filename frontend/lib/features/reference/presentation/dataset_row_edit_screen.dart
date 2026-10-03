@@ -1,32 +1,35 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
+import '../domain/reference_dataset.dart';
 import '../domain/reference_row.dart';
-import '../reference.dart' show referenceRepositoryProvider;
+import 'dataset_row_controller.dart';
 
-/// In-place correction of one dataset row. Does not rewrite prefilled records.
+/// In-place correction of one dataset row (task 010 step 5). A failed
+/// save keeps what was typed and says why; records already prefilled from
+/// the row keep the values they captured.
 class DatasetRowEditScreen extends ConsumerStatefulWidget {
-  /// Creates the editor for [rowId].
-  const DatasetRowEditScreen({super.key, required this.rowId, this.failure});
+  /// Creates the editor for [rowId] in [datasetId].
+  const DatasetRowEditScreen({
+    super.key,
+    required this.rowId,
+    this.datasetId = '',
+  });
 
   /// Row to edit.
   final String rowId;
 
-  /// Injected failure for widget tests.
-  final Failure? failure;
+  /// Dataset the row belongs to; read from the row when empty.
+  final String datasetId;
 
   @override
   ConsumerState<DatasetRowEditScreen> createState() =>
@@ -34,166 +37,128 @@ class DatasetRowEditScreen extends ConsumerStatefulWidget {
 }
 
 class _DatasetRowEditScreenState extends ConsumerState<DatasetRowEditScreen> {
-  ReferenceRow? _row;
-  Map<String, String> _previous = const <String, String>{};
-  final Map<String, TextEditingController> _controllers =
+  final Map<String, TextEditingController> _fields =
       <String, TextEditingController>{};
-  Failure? _error;
-  bool _loading = true;
-  bool _saving = false;
 
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_load());
-  }
+  /// The row the fields were filled from, so a rebuild never overwrites
+  /// what the operator typed.
+  String? _bound;
+
+  DatasetRowTarget get _target =>
+      (datasetId: widget.datasetId, rowId: widget.rowId);
 
   @override
   void dispose() {
-    for (final TextEditingController controller in _controllers.values) {
-      controller.dispose();
+    for (final TextEditingController field in _fields.values) {
+      field.dispose();
     }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Failure? failure = widget.failure ?? _error;
-    if (failure != null) {
-      return AppPage(
-        title: Copy.datasetsEditRow,
-        showAppBar: false,
-        body: AsyncValueView<void>(
-          value: AsyncValue<void>.error(failure, StackTrace.empty),
-          data: (_) => const SizedBox.shrink(),
-          onRetry: () => unawaited(_load()),
-        ),
-      );
-    }
-    if (_loading || _row == null) {
-      if (!_loading && _row == null) {
-        return const AppPage(
-          title: Copy.datasetsEditRow,
-          showAppBar: false,
-          body: AppEmptyState(
-            icon: AppIcons.editLocked,
-            headline: Copy.datasetsBrowserEmptyHeadline,
-            message: Copy.datasetsBrowserEmptyMessage,
-          ),
-        );
-      }
-      return AppPage(
-        title: Copy.datasetsEditRow,
-        showAppBar: false,
-        body: AsyncValueView<void>(
-          value: const AsyncValue<void>.loading(),
-          data: (_) => const SizedBox.shrink(),
-        ),
-      );
-    }
-    final ReferenceRow row = _row!;
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final AsyncValue<DatasetRowView> value = ref.watch(
+      datasetRowControllerProvider(_target),
+    );
     return AppPage(
-      title: Copy.datasetsEditRow,
-      showAppBar: false,
+      key: const ValueKey<String>('route-dataset-row'),
+      title: localCopy.datasetsEditRow,
       scrollable: false,
-      footer: AppPrimaryAction(
-        label: Copy.datasetsSaveRow,
-        onPressed: _saving ? null : () => unawaited(_save()),
-      ),
-      body: ListView(
-        children: <Widget>[
-          for (final MapEntry<String, TextEditingController> entry
-              in _controllers.entries)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: AppTextField(label: entry.key, controller: entry.value),
-            ),
-          if (row.addedOnDevice)
-            const Padding(
-              padding: EdgeInsets.all(Space.x4),
-              child: Text(Copy.datasetsAddedOnDevice),
-            ),
-        ],
+      body: AsyncValueView<DatasetRowView>(
+        value: value,
+        isEmpty: (DatasetRowView view) => view.row == null,
+        empty: () => SingleChildScrollView(
+          child: AppEmptyState(
+            icon: AppIcons.datasetRow,
+            headline: Copy.of(context).datasetsRowMissingHeadline,
+            message: Copy.of(context).datasetsRowMissingMessage,
+            actionLabel: Copy.of(context).close,
+            onAction: () => Navigator.of(context).maybePop(),
+          ),
+        ),
+        onRetry: () => ref.invalidate(datasetRowControllerProvider(_target)),
+        data: _form,
       ),
     );
   }
 
-  Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    final Result<ReferenceRow?> result = await ref
-        .read(referenceRepositoryProvider)
-        .rowById(widget.rowId);
-    if (!mounted) {
-      return;
-    }
-    switch (result) {
-      case FailureResult<ReferenceRow?>(:final Failure failure):
-        setState(() {
-          _loading = false;
-          _error = failure;
-        });
-      case Success<ReferenceRow?>(:final ReferenceRow? value):
-        if (value == null) {
-          setState(() {
-            _loading = false;
-            _row = null;
-          });
-          return;
-        }
-        for (final TextEditingController controller in _controllers.values) {
-          controller.dispose();
-        }
-        _controllers
-          ..clear()
-          ..addEntries(<MapEntry<String, TextEditingController>>[
-            for (final MapEntry<String, String> entry in value.values.entries)
-              MapEntry<String, TextEditingController>(
-                entry.key,
-                TextEditingController(text: entry.value),
-              ),
-          ]);
-        setState(() {
-          _row = value;
-          _previous = Map<String, String>.of(value.values);
-          _loading = false;
-        });
-    }
+  Widget _form(DatasetRowView view) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final ReferenceRow row = view.row!;
+    final ReferenceDataset? dataset = view.dataset;
+    _bind(row, dataset);
+    final String? saveError = Copy.of(
+      context,
+    ).stateText(view.localizedSaveError, view.saveError);
+
+    return AppForm(
+      guardUnsaved: true,
+      errors: <String>[?saveError],
+      fields: <Widget>[
+        if (row.addedOnDevice)
+          AppBanner(
+            message: localCopy.datasetsAddedOnDevice,
+            icon: AppIcons.info,
+            tone: SnackTone.info,
+          ),
+        for (final MapEntry<String, TextEditingController> field
+            in _fields.entries)
+          AppTextField(
+            key: ValueKey<String>('dataset-row-field-${field.key}'),
+            label: field.key,
+            controller: field.value,
+            requiredness: field.key == dataset?.keyColumn
+                ? FieldRequiredness.required
+                : FieldRequiredness.optional,
+            textInputAction: TextInputAction.next,
+          ),
+      ],
+      submitLabel: localCopy.datasetsSaveRow,
+      onSubmit: _save,
+    );
   }
 
-  Future<void> _save() async {
-    final ReferenceRow? row = _row;
-    if (row == null) {
+  /// Fills one field per column, in dataset order, from [row] once.
+  void _bind(ReferenceRow row, ReferenceDataset? dataset) {
+    if (_bound == row.id) {
       return;
     }
-    setState(() => _saving = true);
-    final Map<String, String> values = <String, String>{
-      for (final MapEntry<String, TextEditingController> entry
-          in _controllers.entries)
-        entry.key: entry.value.text,
-    };
-    final Result<ReferenceRow> saved = await ref
-        .read(referenceRepositoryProvider)
-        .saveRow(
-          row.copyWith(
-            key: values[row.values.keys.first] ?? row.key,
-            values: values,
-          ),
-          previousValues: _previous,
-        );
-    if (!mounted) {
-      return;
+    for (final TextEditingController field in _fields.values) {
+      field.dispose();
     }
-    switch (saved) {
-      case FailureResult<ReferenceRow>(:final Failure failure):
-        setState(() {
-          _saving = false;
-          _error = failure;
+    _fields.clear();
+    final List<String> columns = <String>[
+      ...?dataset?.columns,
+      for (final String column in row.values.keys)
+        if (!(dataset?.columns.contains(column) ?? false)) column,
+    ];
+    for (final String column in columns) {
+      _fields[column] = TextEditingController(text: row.values[column] ?? '');
+    }
+    _bound = row.id;
+  }
+
+  Future<bool> _save() async {
+    final ReferenceRow? saved = await ref
+        .read(datasetRowControllerProvider(_target).notifier)
+        .save(<String, String>{
+          for (final MapEntry<String, TextEditingController> field
+              in _fields.entries)
+            field.key: field.value.text,
         });
-      case Success<ReferenceRow>():
-        context.pop();
+    if (saved == null || !mounted) {
+      return false;
     }
+    // The form forgets its edits once this returns, so leave on the next
+    // frame, when there is nothing left to guard.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Navigator.of(context).maybePop();
+      }
+    });
+    return true;
   }
 }

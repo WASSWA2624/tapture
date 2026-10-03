@@ -116,11 +116,7 @@ final class TemplateDef {
     sourceFilePath,
     sheetName,
     headerRow,
-    Object.hashAll(
-      detection.entries.map(
-        (MapEntry<String, Object?> e) => Object.hash(e.key, e.value),
-      ),
-    ),
+    _jsonHash(detection),
   );
 
   @override
@@ -159,17 +155,47 @@ bool _listEquals<T>(List<T> left, List<T> right) {
   return true;
 }
 
-bool _mapEquals(Map<String, Object?> left, Map<String, Object?> right) {
+/// JSON-shaped detection values nest maps and lists, so compare them deeply.
+bool _mapEquals(Map<String, Object?> left, Map<String, Object?> right) =>
+    _jsonEquals(left, right);
+
+bool _jsonEquals(Object? left, Object? right) {
   if (identical(left, right)) {
     return true;
   }
-  if (left.length != right.length) {
-    return false;
-  }
-  for (final MapEntry<String, Object?> entry in left.entries) {
-    if (!right.containsKey(entry.key) || right[entry.key] != entry.value) {
+  if (left is Map && right is Map) {
+    if (left.length != right.length) {
       return false;
     }
+    for (final MapEntry<Object?, Object?> entry in left.entries) {
+      if (!right.containsKey(entry.key) ||
+          !_jsonEquals(entry.value, right[entry.key])) {
+        return false;
+      }
+    }
+    return true;
   }
-  return true;
+  if (left is List && right is List) {
+    if (left.length != right.length) {
+      return false;
+    }
+    for (int index = 0; index < left.length; index++) {
+      if (!_jsonEquals(left[index], right[index])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return left == right;
 }
+
+/// A hash consistent with [_jsonEquals]; map order does not matter.
+int _jsonHash(Object? value) => switch (value) {
+  final Map<Object?, Object?> map => Object.hashAllUnordered(
+    map.entries.map(
+      (MapEntry<Object?, Object?> e) => Object.hash(e.key, _jsonHash(e.value)),
+    ),
+  ),
+  final List<Object?> list => Object.hashAll(list.map(_jsonHash)),
+  _ => value.hashCode,
+};

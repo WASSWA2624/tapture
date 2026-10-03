@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -41,6 +43,8 @@ final class RecycleBinScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<List<DeletedRecord>> bin = ref.watch(recycleBinProvider);
     final int days = ref.watch(recordRetentionDaysProvider);
     final RecycleBinActivity activity = ref.watch(recycleBinControllerProvider);
@@ -49,7 +53,7 @@ final class RecycleBinScreen extends ConsumerWidget {
         bin.asData?.value ?? const <DeletedRecord>[];
     return AppPage(
       key: const ValueKey<String>('route-recycle-bin'),
-      title: Copy.recycleBinTitle,
+      title: localCopy.recycleBinTitle,
       scrollable: false,
       inset: false,
       footer: held.isEmpty
@@ -65,8 +69,10 @@ final class RecycleBinScreen extends ConsumerWidget {
         isEmpty: (List<DeletedRecord> rows) => rows.isEmpty,
         empty: () => AppEmptyState(
           icon: AppIcons.restore,
-          headline: Copy.recycleBinEmptyHeadline,
-          message: Copy.recycleBinEmptyMessage(days),
+          headline: Copy.of(context).recycleBinEmptyHeadline,
+          message: Copy.of(context).recycleBinEmptyMessage(days),
+          actionLabel: Copy.of(context).navRecords,
+          onAction: () => context.go(RoutePaths.records),
         ),
         data: (List<DeletedRecord> rows) =>
             _BinList(rows: rows, days: days, activity: activity),
@@ -77,18 +83,20 @@ final class RecycleBinScreen extends ConsumerWidget {
   /// Confirms with the count typed, empties the recycle bin, and reports
   /// what went, what a merge kept, and what failed.
   Future<void> _emptyNow(BuildContext context, WidgetRef ref, int count) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecycleBinController controller = ref.read(
       recycleBinControllerProvider.notifier,
     );
     final BuildContext host = _snackHost(context);
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.recycleBinEmptyTitle(count),
-      message: Copy.recycleBinEmptyWarning(count),
-      confirmLabel: Copy.recycleBinEmptyConfirm,
+      title: localCopy.recycleBinEmptyTitle(count),
+      message: localCopy.recycleBinEmptyWarning(count),
+      confirmLabel: localCopy.recycleBinEmptyConfirm,
       destructive: true,
       typedValue: '$count',
-      typedLabel: Copy.recycleBinEmptyTypeCount(count),
+      typedLabel: localCopy.recycleBinEmptyTypeCount(count),
     );
     if (!confirmed) {
       return;
@@ -101,7 +109,7 @@ final class RecycleBinScreen extends ConsumerWidget {
       case Success<PurgeReport>(:final PurgeReport value):
         showAppSnack(
           host,
-          Copy.recycleBinEmptied(
+          localCopy.recycleBinEmptied(
             purged: value.purged,
             kept: value.skippedMergeNeeded,
             failed: value.failed,
@@ -137,6 +145,8 @@ class _BinList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final DateTime now = ref.watch(recordClockProvider).nowUtc();
     final double gutter = AppPage.gutter(context);
     return Column(
@@ -145,7 +155,7 @@ class _BinList extends ConsumerWidget {
         Padding(
           padding: EdgeInsets.fromLTRB(gutter, Space.x2, gutter, Space.x2),
           child: Text(
-            Copy.recycleBinKeptFor(days),
+            localCopy.recycleBinKeptFor(days),
             style: AppText.caption.copyWith(color: context.colors.onSurface),
           ),
         ),
@@ -186,16 +196,18 @@ class _BinRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordSummary summary = record.summary;
     final bool named = summary.name.trim().isNotEmpty;
     final String title = named
         ? summary.name
-        : Copy.recordsUntitled(summary.number);
+        : localCopy.recordsUntitled(summary.number);
     final RecordPhoto? thumb = summary.thumb;
     return AppListTile(
       key: ValueKey<String>('recycle-bin-row-${record.id}'),
       title: title,
-      subtitle: Copy.recycleBinRowSubtitle(
+      subtitle: localCopy.recycleBinRowSubtitle(
         number: named ? summary.number : null,
         projectName: record.projectName,
         deletedAt: record.deletedAt,
@@ -210,13 +222,13 @@ class _BinRow extends ConsumerWidget {
             ),
       status: AppStatusPill.badge(
         status: RecordStatus.deleted,
-        label: Copy.recycleBinDaysLeft(daysLeft),
+        label: localCopy.recycleBinDaysLeft(daysLeft),
       ),
       trailing: AppIconButton(
         key: ValueKey<String>('recycle-bin-restore-${record.id}'),
         icon: AppIcons.restore,
-        semanticLabel: Copy.recycleBinRestoreLabel(title),
-        tooltip: Copy.recycleBinRestore,
+        semanticLabel: localCopy.recycleBinRestoreLabel(title),
+        tooltip: localCopy.recycleBinRestore,
         onPressed: restoring || locked
             ? null
             : () => unawaited(_restore(context, ref)),
@@ -226,6 +238,8 @@ class _BinRow extends ConsumerWidget {
 
   /// Restores the record in one press and says so; the row leaves the bin.
   Future<void> _restore(BuildContext context, WidgetRef ref) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecycleBinController controller = ref.read(
       recycleBinControllerProvider.notifier,
     );
@@ -236,7 +250,11 @@ class _BinRow extends ConsumerWidget {
     }
     switch (restored) {
       case Success<void>():
-        showAppSnack(host, Copy.recordsRestored(1), tone: SnackTone.success);
+        showAppSnack(
+          host,
+          localCopy.recordsRestored(1),
+          tone: SnackTone.success,
+        );
       case FailureResult<void>(:final Failure failure):
         showAppSnack(host, failure.message, tone: SnackTone.error);
     }
@@ -258,13 +276,15 @@ class _EmptyNowBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (!available) ...<Widget>[
           Text(
-            Copy.recycleBinEmptyUnavailable,
+            localCopy.recycleBinEmptyUnavailable,
             key: const ValueKey<String>('recycle-bin-empty-unavailable'),
             style: AppText.caption.copyWith(color: context.colors.onSurface),
           ),
@@ -272,7 +292,7 @@ class _EmptyNowBar extends StatelessWidget {
         ],
         AppButton(
           key: const ValueKey<String>('recycle-bin-empty'),
-          label: Copy.recycleBinEmpty,
+          label: localCopy.recycleBinEmpty,
           icon: AppIcons.delete,
           variant: AppButtonVariant.destructive,
           expand: true,

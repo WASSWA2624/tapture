@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/device_profile.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -185,10 +186,13 @@ final class _DeviceSettingsStore implements SettingsStore {
   @override
   Future<Result<void>> write<T>(SettingKey<T> key, T value) async {
     if (!_isEncodable(value)) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         ValidationFailure(
           message: 'That preference cannot be stored.',
+          localizedMessage: Copy.messages.settingsPreferenceUnsupported,
           recoveryAction: 'Choose a supported value and save again.',
+          localizedRecovery:
+              Copy.messages.settingsPreferenceUnsupportedRecovery,
         ),
       );
     }
@@ -270,18 +274,23 @@ final class _FakeSettingsStore implements SettingsStore {
   @override
   Future<Result<void>> write<T>(SettingKey<T> key, T value) async {
     if (!_isEncodable(value)) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         ValidationFailure(
           message: 'That preference cannot be stored.',
+          localizedMessage: Copy.messages.settingsPreferenceUnsupported,
           recoveryAction: 'Choose a supported value and save again.',
+          localizedRecovery:
+              Copy.messages.settingsPreferenceUnsupportedRecovery,
         ),
       );
     }
     if (failWrites) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
           message: 'The preference could not be saved on this device.',
+          localizedMessage: Copy.messages.settingsPreferenceSaveFailed,
           recoveryAction: 'Try again. Your last change was not stored.',
+          localizedRecovery: Copy.messages.settingsPreferenceSaveRecovery,
         ),
       );
     }

@@ -4,382 +4,393 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
-import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/files/download_service.dart';
-import 'package:tapture/core/files/storage_root.dart';
-import 'package:tapture/core/ids/uuid_service.dart';
-import 'package:tapture/core/time/clock.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 
 import '../domain/reference_dataset.dart';
 import '../domain/reference_row.dart';
-import '../reference.dart' show DatasetExport, referenceRepositoryProvider;
+import 'dataset_browser_controller.dart';
+import 'dataset_browser_providers.dart';
 
-/// Virtualised, paged, searchable browser for one dataset.
-class DatasetBrowserScreen extends ConsumerStatefulWidget {
+/// A virtualised, paged, searchable browser for one dataset (task 010
+/// step 4). Only the pages on screen are read, so ten thousand rows scroll
+/// like ten, and an edited row shows its new values on return.
+class DatasetBrowserScreen extends ConsumerWidget {
   /// Creates the browser for [datasetId] in [projectId].
   const DatasetBrowserScreen({
     super.key,
     required this.datasetId,
     this.projectId,
-    this.failure,
   });
 
   /// Dataset to browse.
   final String datasetId;
 
-  /// Owning project for navigation.
+  /// Owning project for navigation; the dataset's or the open one when null.
   final String? projectId;
 
-  /// Injected failure for widget tests.
-  final Failure? failure;
-
   @override
-  ConsumerState<DatasetBrowserScreen> createState() =>
-      _DatasetBrowserScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
 
-class _DatasetBrowserScreenState extends ConsumerState<DatasetBrowserScreen> {
-  final List<ReferenceRow> _rows = <ReferenceRow>[];
-  bool _loading = true;
-  bool _loadingMore = false;
-  bool _hasMore = true;
-  Failure? _error;
-  String _query = '';
-  Set<String> _visible = <String>{};
-  int _generation = 0;
-  bool _exporting = false;
-  final CancellationToken _cancel = CancellationToken();
-
-  @override
-  void dispose() {
-    _cancel.cancel();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_reload());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Failure? failure = widget.failure ?? _error;
-    if (failure != null) {
-      return AppPage(
-        title: Copy.navDatasets,
-        showAppBar: false,
-        body: AsyncValueView<void>(
-          value: AsyncValue<void>.error(failure, StackTrace.empty),
-          data: (_) => const SizedBox.shrink(),
-          onRetry: () => unawaited(_reload()),
-        ),
-      );
-    }
     final AsyncValue<ReferenceDataset?> header = ref.watch(
-      datasetHeaderProvider(widget.datasetId),
+      datasetHeaderProvider(datasetId),
     );
+    final ReferenceDataset? dataset = header.asData?.value;
+    final String? project =
+        _present(projectId) ??
+        _present(dataset?.projectId) ??
+        _present(ref.watch(currentProjectProvider));
     return AppPage(
-      title: header.asData?.value?.name ?? Copy.navDatasets,
-      showAppBar: false,
+      key: const ValueKey<String>('route-dataset'),
+      title: dataset?.name ?? localCopy.navDatasets,
       inset: false,
       scrollable: false,
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(Space.x4),
-            child: AppSearchField(
-              hint: Copy.datasetsSearchHint,
-              text: _query,
-              onChanged: (String value) {
-                _query = value;
-                unawaited(_reload());
-              },
+      overflow: dataset == null
+          ? const <AppOverflowAction>[]
+          : <AppOverflowAction>[
+              AppOverflowAction(
+                key: const ValueKey<String>('dataset-columns'),
+                label: localCopy.datasetsColumns,
+                icon: AppIcons.columns,
+                onTap: () => unawaited(_pickColumns(context, dataset)),
+              ),
+              AppOverflowAction(
+                key: const ValueKey<String>('dataset-export-csv'),
+                label: localCopy.datasetsExportCsv,
+                icon: AppIcons.export,
+                onTap: () => unawaited(_export(context, ref, dataset, false)),
+              ),
+              AppOverflowAction(
+                key: const ValueKey<String>('dataset-export-json'),
+                label: localCopy.datasetsExportJson,
+                icon: AppIcons.export,
+                onTap: () => unawaited(_export(context, ref, dataset, true)),
+              ),
+            ],
+      body: AsyncValueView<ReferenceDataset?>(
+        value: header,
+        isEmpty: (ReferenceDataset? found) => found == null,
+        empty: () => SingleChildScrollView(
+          child: AppEmptyState(
+            icon: AppIcons.dataset,
+            headline: Copy.of(context).datasetsMissingHeadline,
+            message: Copy.of(context).datasetsMissingMessage,
+            actionLabel: Copy.of(context).navDatasets,
+            onAction: () => context.go(
+              project == null
+                  ? RoutePaths.projects
+                  : RoutePaths.projectDatasets(project),
             ),
           ),
-          if (header.asData?.value case final ReferenceDataset dataset)
-            Wrap(
-              spacing: Space.x2,
-              children: <Widget>[
-                if (_narrow(context))
-                  TextButton(
-                    onPressed: () => _pickColumns(header.asData!.value!),
-                    child: const Text(Copy.datasetsColumns),
-                  ),
-                for (final bool json in <bool>[false, true])
-                  AppButton(
-                    label:
-                        '${Copy.datasetsExport} ${Copy.datasetSourceLabel(json ? 'json' : 'csv')}',
-                    variant: AppButtonVariant.secondary,
-                    busy: _exporting,
-                    onPressed: _exporting
-                        ? null
-                        : () => unawaited(_export(dataset, json)),
-                  ),
-              ],
-            ),
-          Expanded(
-            child: _loading
-                ? AsyncValueView<List<ReferenceRow>>(
-                    value: const AsyncValue<List<ReferenceRow>>.loading(),
-                    data: (_) => const SizedBox.shrink(),
-                  )
-                : _rows.isEmpty
-                ? const AppEmptyState(
-                    icon: AppIcons.datasetRow,
-                    headline: Copy.datasetsBrowserEmptyHeadline,
-                    message: Copy.datasetsBrowserEmptyMessage,
-                  )
-                : NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification notice) {
-                      if (notice.metrics.pixels >
-                              notice.metrics.maxScrollExtent - 200 &&
-                          !_loadingMore &&
-                          _hasMore) {
-                        unawaited(_loadMore(header.asData?.value));
-                      }
-                      return false;
-                    },
-                    child: ListView.builder(
-                      itemCount: _rows.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final ReferenceRow row = _rows[index];
-                        final ReferenceDataset? dataset = header.asData?.value;
-                        final List<String> cols = _columnsFor(dataset);
-                        return AppListTile(
-                          title: row.key,
-                          subtitle: <String>[
-                            for (final String column in cols)
-                              if (column != dataset?.keyColumn)
-                                row.values[column] ?? '',
-                            if (row.addedOnDevice) Copy.datasetsAddedOnDevice,
-                          ].where((String s) => s.isNotEmpty).join(' · '),
-                          onTap: () => _openRow(row),
-                        );
-                      },
-                    ),
-                  ),
-          ),
-        ],
+        ),
+        onRetry: () => ref.invalidate(datasetHeaderProvider(datasetId)),
+        data: (ReferenceDataset? found) =>
+            _DatasetRows(dataset: found!, projectId: project),
       ),
     );
   }
 
-  Future<void> _export(ReferenceDataset dataset, bool json) async {
-    setState(() => _exporting = true);
-    final String? projectId =
-        widget.projectId ??
-        dataset.projectId ??
-        ref.read(currentProjectProvider);
-    if (projectId == null) {
-      setState(() => _exporting = false);
+  Future<void> _pickColumns(BuildContext context, ReferenceDataset dataset) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    return showAppSheet<void>(
+      context,
+      title: localCopy.datasetsColumns,
+      contentSized: true,
+      builder: (BuildContext _) => _ColumnPicker(dataset: dataset),
+    );
+  }
+
+  Future<void> _export(
+    BuildContext context,
+    WidgetRef ref,
+    ReferenceDataset dataset,
+    bool json,
+  ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final Result<String?>? saved = await ref
+        .read(datasetBrowserControllerProvider(datasetId).notifier)
+        .export(dataset, json: json, projectId: projectId);
+    if (saved == null || !context.mounted) {
       return;
     }
-    try {
-      final Project? selected = await ref.read(
-        projectByIdProvider(projectId).future,
-      );
-      if (!mounted) {
-        return;
-      }
-      if (selected == null) {
-        throw const StorageFailure(
-          message: 'Open a project before exporting this dataset.',
-          recoveryAction: 'Open the project and try again.',
-        );
-      }
-      final Result<String?> saved = await DatasetExport.download(
-        dataset: dataset,
-        repository: ref.read(referenceRepositoryProvider),
-        downloads: ref.read(downloadServiceProvider),
-        storageRoot: ref.read(storageRootProvider),
-        projectFolder: selected.folderName,
-        exportId: UuidV7Service(const SystemClock()).newId(),
-        json: json,
-        cancel: _cancel,
-      );
-      if (!mounted) {
-        return;
-      }
-      saved.fold(
-        (Failure failure) =>
-            showAppSnack(context, failure.message, tone: SnackTone.error),
-        (String? _) => showAppSnack(
-          context,
-          Copy.projectExportSaved(dataset.name),
-          tone: SnackTone.success,
-        ),
-      );
-    } on Object catch (error) {
-      if (mounted) {
+    switch (saved) {
+      case Success<String?>():
         showAppSnack(
           context,
-          Failure.from(error).message,
+          localCopy.projectExportSaved(dataset.name),
+          tone: SnackTone.success,
+        );
+      case FailureResult<String?>(:final Failure failure):
+        showAppSnack(
+          context,
+          failure.message,
           tone: SnackTone.error,
+          localizedMessage: failure.explanation,
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _exporting = false);
-      }
     }
   }
+}
 
-  List<String> _columnsFor(ReferenceDataset? dataset) {
-    if (dataset == null) {
-      return const <String>[];
-    }
-    if (_visible.isNotEmpty) {
-      return <String>[
-        dataset.keyColumn,
-        ...dataset.columns.where(_visible.contains),
-      ];
-    }
-    final List<String> rest = <String>[
-      for (final String column in dataset.columns)
-        if (column != dataset.keyColumn) column,
-    ];
-    return <String>[dataset.keyColumn, ...rest.take(2)];
-  }
+/// The search field over the rows it filters.
+class _DatasetRows extends ConsumerWidget {
+  const _DatasetRows({required this.dataset, required this.projectId});
 
-  bool _narrow(BuildContext context) {
-    return context.sizeClass == SizeClass.compact;
-  }
+  final ReferenceDataset dataset;
+  final String? projectId;
 
-  Future<void> _pickColumns(ReferenceDataset dataset) async {
-    final Set<String> next = Set<String>.of(
-      _visible.isEmpty ? dataset.columns.take(3) : _visible,
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final DatasetBrowserView view = ref.watch(
+      datasetBrowserControllerProvider(dataset.id),
     );
-    await showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(Copy.datasetsColumns),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setLocal) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    for (final String column in dataset.columns)
-                      CheckboxListTile(
-                        title: Text(column),
-                        value: next.contains(column),
-                        onChanged: (bool? value) {
-                          setLocal(() {
-                            if (value ?? false) {
-                              next.add(column);
-                            } else {
-                              next.remove(column);
-                            }
-                          });
-                        },
-                      ),
-                  ],
-                ),
-              );
-            },
+    final DatasetBrowserController controller = ref.read(
+      datasetBrowserControllerProvider(dataset.id).notifier,
+    );
+    final ({String datasetId, String query}) search = (
+      datasetId: dataset.id,
+      query: view.query,
+    );
+    final AsyncValue<int> count = ref.watch(datasetRowCountProvider(search));
+    final double gutter = AppPage.gutter(context);
+    final List<String> shown = _shownColumns(
+      dataset,
+      view.columns,
+      context.responsive(compact: 2, medium: 4, expanded: 6),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.fromLTRB(gutter, Space.x2, gutter, Space.x2),
+          child: AppSearchField(
+            key: const ValueKey<String>('dataset-search'),
+            hint: localCopy.datasetsSearchHint,
+            text: view.query,
+            onChanged: controller.search,
+            resultCount: view.query.isEmpty ? null : count.asData?.value,
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                setState(() => _visible = next);
-                Navigator.of(context).pop();
-              },
-              child: const Text(Copy.ok),
+        ),
+        if (view.exporting)
+          AppBanner(
+            message: localCopy.datasetsExporting,
+            icon: AppIcons.export,
+            tone: SnackTone.info,
+          ),
+        Expanded(
+          child: AsyncValueView<int>(
+            value: count,
+            onRetry: () => ref.invalidate(datasetRowCountProvider(search)),
+            isEmpty: (int total) => total == 0,
+            empty: () => SingleChildScrollView(
+              child: view.query.isEmpty
+                  ? AppEmptyState(
+                      icon: AppIcons.datasetRow,
+                      headline: Copy.of(context).datasetsBrowserEmptyHeadline,
+                      message: Copy.of(context).datasetsBrowserEmptyMessage,
+                      actionLabel: Copy.of(context).datasetsImport,
+                      onAction: projectId == null
+                          ? null
+                          : () => context.push(
+                              RoutePaths.projectDatasetImport(projectId!),
+                            ),
+                    )
+                  : AppEmptyState(
+                      icon: AppIcons.searchEmpty,
+                      headline: Copy.of(context).datasetsNoMatchHeadline,
+                      message: Copy.of(context).datasetsNoMatchMessage,
+                      actionLabel: Copy.of(context).datasetsClearSearch,
+                      onAction: () => controller.search(''),
+                    ),
             ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _reload() async {
-    _generation++;
-    setState(() {
-      _loading = true;
-      _error = null;
-      _rows.clear();
-      _hasMore = true;
-      _loadingMore = false;
-    });
-    await _loadMore(null, reset: true);
-  }
-
-  Future<void> _loadMore(ReferenceDataset? _, {bool reset = false}) async {
-    if (_loadingMore) {
-      return;
-    }
-    setState(() => _loadingMore = true);
-    final int generation = _generation;
-    final Result<List<ReferenceRow>> page = await ref
-        .read(referenceRepositoryProvider)
-        .pageRows(
-          datasetId: widget.datasetId,
-          offset: reset ? 0 : _rows.length,
-          limit: AppConstants.lists.pageSize,
-          query: _query,
-        );
-    if (!mounted || generation != _generation) {
-      return;
-    }
-    switch (page) {
-      case FailureResult<List<ReferenceRow>>(:final Failure failure):
-        setState(() {
-          _loading = false;
-          _loadingMore = false;
-          _error = failure;
-        });
-      case Success<List<ReferenceRow>>(:final List<ReferenceRow> value):
-        setState(() {
-          if (reset) {
-            _rows
-              ..clear()
-              ..addAll(value);
-          } else {
-            _rows.addAll(value);
-          }
-          _hasMore = value.length >= AppConstants.lists.pageSize;
-          _loading = false;
-          _loadingMore = false;
-        });
-    }
-  }
-
-  void _openRow(ReferenceRow row) {
-    final String? projectId =
-        widget.projectId ?? ref.read(currentProjectProvider);
-    if (projectId == null || projectId.isEmpty) {
-      return;
-    }
-    context.go(
-      RoutePaths.projectDatasetRow(projectId, widget.datasetId, row.id),
+            data: (int total) => Scrollbar(
+              child: ListView.builder(
+                key: const ValueKey<String>('dataset-rows'),
+                itemCount: total,
+                prototypeItem: const _PrototypeRow(),
+                itemBuilder: (BuildContext context, int index) {
+                  return _DatasetRow(
+                    dataset: dataset,
+                    query: view.query,
+                    index: index,
+                    shown: shown,
+                    projectId: projectId,
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-/// Dataset header for the browser title.
-final datasetHeaderProvider = FutureProvider.autoDispose
-    .family<ReferenceDataset?, String>((Ref ref, String id) async {
-      final Result<ReferenceDataset?> result = await ref
-          .watch(referenceRepositoryProvider)
-          .byId(id);
-      return switch (result) {
-        Success<ReferenceDataset?>(:final ReferenceDataset? value) => value,
-        FailureResult<ReferenceDataset?>() => null,
-      };
-    }, retry: (int _, Object _) => null);
+/// Row [index] of the browser, read from the page it falls in: the row, a
+/// skeleton while its page loads, or why the page failed with a tap to read
+/// it again.
+class _DatasetRow extends ConsumerWidget {
+  const _DatasetRow({
+    required this.dataset,
+    required this.query,
+    required this.index,
+    required this.shown,
+    required this.projectId,
+  });
+
+  final ReferenceDataset dataset;
+  final String query;
+  final int index;
+  final List<String> shown;
+  final String? projectId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final int size = AppConstants.lists.pageSize;
+    final ({String datasetId, String query, int page}) at = (
+      datasetId: dataset.id,
+      query: query,
+      page: index ~/ size,
+    );
+    final AsyncValue<List<ReferenceRow>> page = ref.watch(
+      datasetRowsPageProvider(at),
+    );
+    final int offset = index % size;
+    // A page being read again keeps showing what it held.
+    final List<ReferenceRow>? rows = page.value;
+    if (rows != null && offset < rows.length) {
+      final ReferenceRow row = rows[offset];
+      final String? project = projectId;
+      return AppListTile(
+        key: ValueKey<String>('dataset-row-${row.id}'),
+        title: row.key,
+        subtitle: localCopy.datasetRowSubtitle(<String>[
+          for (final String column in shown) row.values[column] ?? '',
+        ], addedOnDevice: row.addedOnDevice),
+        trailing: project == null ? null : const Icon(AppIcons.open),
+        onTap: project == null
+            ? null
+            : () => context.push(
+                RoutePaths.projectDatasetRow(project, dataset.id, row.id),
+              ),
+      );
+    }
+    final Object? error = page.error;
+    if (error != null) {
+      final Failure failure = Failure.from(error);
+      return AppListTile(
+        title: Copy.of(context).failureMessage(failure),
+        subtitle:
+            Copy.of(context).failureRecovery(failure) ?? localCopy.tryAgain,
+        leading: Icon(
+          AppIcons.error,
+          color: context.colors.danger,
+          size: Space.x6,
+        ),
+        onTap: () => ref.invalidate(datasetRowsPageProvider(at)),
+      );
+    }
+    return const AppSkeleton(count: 1);
+  }
+}
+
+/// What every row measures against, so the list jumps to any of thousands
+/// of rows without building the ones between. Laid out once, never shown.
+class _PrototypeRow extends StatelessWidget {
+  const _PrototypeRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    return AppListTile(
+      title: localCopy.datasetsKeyTitle,
+      subtitle: localCopy.datasetsAddedOnDevice,
+      trailing: const Icon(AppIcons.open),
+    );
+  }
+}
+
+/// The columns shown beside the key, chosen live in a sheet.
+class _ColumnPicker extends ConsumerWidget {
+  const _ColumnPicker({required this.dataset});
+
+  final ReferenceDataset dataset;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final DatasetBrowserView view = ref.watch(
+      datasetBrowserControllerProvider(dataset.id),
+    );
+    final List<String> shown = _shownColumns(
+      dataset,
+      view.columns,
+      context.responsive(compact: 2, medium: 4, expanded: 6),
+    );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        Space.x3,
+        Space.x0,
+        Space.x3,
+        Space.x3,
+      ),
+      child: AppCheckboxGroup<String>(
+        label: localCopy.datasetsVisibleColumns,
+        options: <Choice<String>>[
+          for (final String column in dataset.columns)
+            if (column != dataset.keyColumn) Choice<String>(column, column),
+        ],
+        value: shown.toSet(),
+        onChanged: ref
+            .read(datasetBrowserControllerProvider(dataset.id).notifier)
+            .showColumns,
+      ),
+    );
+  }
+}
+
+/// The columns shown beside the key: the ones chosen, else the first
+/// [fallback] after the key (task 010 step 4), in dataset order.
+List<String> _shownColumns(
+  ReferenceDataset dataset,
+  Set<String>? chosen,
+  int fallback,
+) {
+  final List<String> rest = <String>[
+    for (final String column in dataset.columns)
+      if (column != dataset.keyColumn) column,
+  ];
+  if (chosen == null) {
+    return rest.take(fallback).toList(growable: false);
+  }
+  return rest.where(chosen.contains).toList(growable: false);
+}
+
+String? _present(String? id) => id == null || id.isEmpty ? null : id;

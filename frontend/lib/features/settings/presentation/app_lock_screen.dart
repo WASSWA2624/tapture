@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -12,11 +13,13 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/lifecycle/lifecycle_observer.dart';
+import 'package:tapture/core/security/biometric_prompt.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 
@@ -56,6 +59,8 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     ref.listen<AppLockSession>(appLockSessionProvider, (
       AppLockSession? previous,
       AppLockSession next,
@@ -69,16 +74,29 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
     });
     final _LockView view = ref.watch(_appLockViewProvider);
     if (widget.manage) {
+      // Not scrollable, so the form pins its one primary action (FE-SIMP-01).
+      // Removing the PIN is the rarer, destructive path: it lives in the
+      // overflow behind a confirmation (FE-SIMP-07).
       return AppPage(
-        title: Copy.appLockTitle,
-        subtitle: view.enabled ? Copy.appLockOn : Copy.appLockOff,
+        title: localCopy.appLockTitle,
+        subtitle: view.enabled ? localCopy.appLockOn : localCopy.appLockOff,
+        scrollable: false,
+        overflow: <AppOverflowAction>[
+          if (view.enabled)
+            AppOverflowAction(
+              key: const ValueKey<String>('app-lock-remove'),
+              label: localCopy.appLockRemove,
+              icon: AppIcons.delete,
+              onTap: () => unawaited(_confirmRemove()),
+            ),
+        ],
         body: _manageBody(view),
       );
     }
     return PopScope(
       canPop: false,
       child: AppPage(
-        title: Copy.appLockUnlockTitle,
+        title: localCopy.appLockUnlockTitle,
         showAppBar: false,
         body: _unlockBody(view),
       ),
@@ -87,9 +105,13 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
 
   /// Deliberately bare: one field, one action, one status line.
   Widget _unlockBody(_LockView view) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Color ink = context.colors.onSurface;
     final bool waiting = view.remaining > Duration.zero;
-    final String? status = view.message;
+    final String? status = view.message == null
+        ? null
+        : localCopy.resolve(view.message!);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -97,13 +119,13 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
         Icon(AppIcons.lock, size: Space.x10, color: ink),
         const SizedBox(height: Space.x3),
         Text(
-          Copy.appLockUnlockTitle,
+          localCopy.appLockUnlockTitle,
           textAlign: TextAlign.center,
           style: AppText.title.copyWith(color: ink),
         ),
         const SizedBox(height: Space.x6),
         AppTextField(
-          label: Copy.appLockPin,
+          label: localCopy.appLockPin,
           controller: _pin,
           autofocus: true,
           obscureText: true,
@@ -113,7 +135,9 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(AppConstants.lock.pinMax),
           ],
-          errorText: view.pinError,
+          errorText: view.pinError == null
+              ? null
+              : localCopy.resolve(view.pinError!),
           onSubmitted: (String _) {
             if (!waiting) {
               unawaited(_unlock());
@@ -130,23 +154,32 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
         ],
         const SizedBox(height: Space.x4),
         AppPrimaryAction(
-          label: Copy.appLockUnlock,
+          label: localCopy.appLockUnlock,
           busy: view.busy,
           onPressed: waiting ? null : () => unawaited(_unlock()),
         ),
         if (view.biometrics)
           AppButton(
-            label: Copy.appLockBiometrics,
+            label: localCopy.appLockBiometrics,
             variant: AppButtonVariant.text,
             onPressed: view.busy
                 ? null
                 : () {
-                    ref.read(_appLockViewProvider.notifier).unlockBiometrics();
+                    ref
+                        .read(_appLockViewProvider.notifier)
+                        .unlockBiometrics(
+                          localizedReason: localCopy.permissionBiometrics,
+                          prompt: BiometricPrompt(
+                            title: localCopy.appLockUnlockTitle,
+                            hint: localCopy.appLockBiometrics,
+                            cancel: localCopy.cancel,
+                          ),
+                        );
                   },
           ),
         const SizedBox(height: Space.x8),
         Text(
-          Copy.appLockRecovery,
+          localCopy.appLockRecovery,
           textAlign: TextAlign.center,
           style: AppText.caption.copyWith(color: ink),
         ),
@@ -155,10 +188,14 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
   }
 
   Widget _manageBody(_LockView view) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final Color ink = context.colors.onSurface;
     final List<Widget> fields = <Widget>[
       if (view.enabled)
         AppTextField(
-          label: Copy.appLockCurrentPin,
+          label: localCopy.appLockCurrentPin,
+          helper: localCopy.appLockCurrentPinHelper,
           controller: _current,
           obscureText: true,
           keyboardType: TextInputType.number,
@@ -167,10 +204,12 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly,
           ],
-          errorText: view.currentError,
+          errorText: view.currentError == null
+              ? null
+              : localCopy.resolve(view.currentError!),
         ),
       AppTextField(
-        label: view.enabled ? Copy.appLockNewPin : Copy.appLockPin,
+        label: view.enabled ? localCopy.appLockNewPin : localCopy.appLockPin,
         controller: _pin,
         obscureText: true,
         keyboardType: TextInputType.number,
@@ -179,10 +218,12 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.digitsOnly,
         ],
-        errorText: view.pinError,
+        errorText: view.pinError == null
+            ? null
+            : localCopy.resolve(view.pinError!),
       ),
       AppTextField(
-        label: Copy.appLockConfirmPin,
+        label: localCopy.appLockConfirmPin,
         controller: _confirm,
         obscureText: true,
         keyboardType: TextInputType.number,
@@ -191,67 +232,56 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.digitsOnly,
         ],
-        errorText: view.confirmError,
+        errorText: view.confirmError == null
+            ? null
+            : localCopy.resolve(view.confirmError!),
       ),
-    ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        AppSectionHeader(
-          title: view.enabled ? Copy.appLockChange : Copy.appLockSet,
-        ),
-        AppForm(
-          fields: fields,
-          submitLabel: view.enabled ? Copy.appLockChange : Copy.appLockSet,
-          errors: view.message == null
-              ? const <String>[]
-              : <String>[view.message!],
-          onSubmit: () {
-            return view.enabled
-                ? ref
-                      .read(_appLockViewProvider.notifier)
-                      .changePin(
-                        current: _current.text,
-                        pin: _pin.text,
-                        confirm: _confirm.text,
-                      )
-                : ref
-                      .read(_appLockViewProvider.notifier)
-                      .setPin(pin: _pin.text, confirm: _confirm.text);
-          },
-        ),
-        if (view.enabled) ...<Widget>[
-          const SizedBox(height: Space.x4),
-          AppButton(
-            label: Copy.appLockRemove,
-            variant: AppButtonVariant.destructive,
-            busy: view.busy,
-            onPressed: () {
-              ref.read(_appLockViewProvider.notifier).removePin(_current.text);
-            },
-          ),
-        ],
-        const SizedBox(height: Space.x6),
-        if (view.enabled) ...<Widget>[
-          Text(
-            Copy.appLockSetEffect,
-            style: AppText.body.copyWith(color: context.colors.onSurface),
-          ),
-          const SizedBox(height: Space.x3),
-        ],
+      if (view.enabled)
         Text(
-          Copy.appLockRecovery,
-          style: AppText.body.copyWith(color: context.colors.onSurface),
+          localCopy.appLockSetEffect,
+          style: AppText.body.copyWith(color: ink),
         ),
-        if (view.enabled) ...<Widget>[
-          const SizedBox(height: Space.x3),
-          Text(
-            Copy.appLockRemoveEffect,
-            style: AppText.body.copyWith(color: context.colors.onSurface),
-          ),
-        ],
-      ],
+      Text(localCopy.appLockRecovery, style: AppText.body.copyWith(color: ink)),
+    ];
+    return AppForm(
+      fields: fields,
+      submitLabel: view.enabled
+          ? localCopy.appLockChange
+          : localCopy.appLockSet,
+      errors: view.message == null
+          ? const <String>[]
+          : <String>[localCopy.resolve(view.message!)],
+      onSubmit: () {
+        return view.enabled
+            ? ref
+                  .read(_appLockViewProvider.notifier)
+                  .changePin(
+                    current: _current.text,
+                    pin: _pin.text,
+                    confirm: _confirm.text,
+                  )
+            : ref
+                  .read(_appLockViewProvider.notifier)
+                  .setPin(pin: _pin.text, confirm: _confirm.text);
+      },
     );
+  }
+
+  /// Asks before the PIN goes, then checks the current PIN typed above.
+  Future<void> _confirmRemove() async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final bool confirmed = await showAppConfirm(
+      context,
+      title: localCopy.appLockRemoveConfirmTitle,
+      message: localCopy.appLockRemoveEffect,
+      confirmLabel: localCopy.appLockRemove,
+      destructive: true,
+    );
+    if (!confirmed || !mounted) {
+      return;
+    }
+    await ref.read(_appLockViewProvider.notifier).removePin(_current.text);
   }
 
   Future<void> _unlock() async {
@@ -268,12 +298,14 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
   }
 
   void _goIntended() {
-    final String? from = GoRouterState.of(context).uri.queryParameters['from'];
+    final String? from = GoRouterState.of(
+      context,
+    ).uri.queryParameters[RoutePaths.fromQuery];
     if (from != null && from.startsWith('/') && !from.startsWith('//')) {
       context.go(from);
       return;
     }
-    context.go('/projects');
+    context.go(RoutePaths.projects);
   }
 }
 
@@ -367,10 +399,10 @@ final NotifierProvider<_AppLockForm, _LockView> _appLockViewProvider =
 typedef _LockView = ({
   bool enabled,
   bool biometrics,
-  String? pinError,
-  String? confirmError,
-  String? currentError,
-  String? message,
+  LocalizedMessage? pinError,
+  LocalizedMessage? confirmError,
+  LocalizedMessage? currentError,
+  LocalizedMessage? message,
   Duration remaining,
   bool busy,
 });
@@ -396,10 +428,12 @@ class _AppLockForm extends Notifier<_LockView> {
   }
 
   Future<bool> setPin({required String pin, required String confirm}) async {
-    final String? pinError = isAppLockPin(pin) ? null : Copy.appLockPinLength;
-    final String? confirmError = pin == confirm
+    final LocalizedMessage? pinError = isAppLockPin(pin)
         ? null
-        : Copy.appLockPinMismatch;
+        : Copy.messages.appLockPinLength;
+    final LocalizedMessage? confirmError = pin == confirm
+        ? null
+        : Copy.messages.appLockPinMismatch;
     if (pinError != null || confirmError != null) {
       state = (
         enabled: state.enabled,
@@ -437,7 +471,7 @@ class _AppLockForm extends Notifier<_LockView> {
       pinError: null,
       confirmError: null,
       currentError: null,
-      message: failed.failure.message,
+      message: failed.failure.explanation,
       remaining: lock.remainingBackoff,
       busy: false,
     );
@@ -449,11 +483,15 @@ class _AppLockForm extends Notifier<_LockView> {
     required String pin,
     required String confirm,
   }) async {
-    final String? currentError = current.isEmpty ? Copy.appLockWrongPin : null;
-    final String? pinError = isAppLockPin(pin) ? null : Copy.appLockPinLength;
-    final String? confirmError = pin == confirm
+    final LocalizedMessage? currentError = current.isEmpty
+        ? Copy.messages.appLockWrongPin
+        : null;
+    final LocalizedMessage? pinError = isAppLockPin(pin)
         ? null
-        : Copy.appLockPinMismatch;
+        : Copy.messages.appLockPinLength;
+    final LocalizedMessage? confirmError = pin == confirm
+        ? null
+        : Copy.messages.appLockPinMismatch;
     if (currentError != null || pinError != null || confirmError != null) {
       state = (
         enabled: true,
@@ -471,7 +509,11 @@ class _AppLockForm extends Notifier<_LockView> {
     state = _busy(lock);
     final LockAttempt attempt = await lock.unlockWithPin(current);
     if (attempt != LockAttempt.unlocked) {
-      state = _fromAttempt(lock, attempt, currentError: Copy.appLockWrongPin);
+      state = _fromAttempt(
+        lock,
+        attempt,
+        currentError: Copy.messages.appLockWrongPin,
+      );
       _followBackoff(lock);
       return false;
     }
@@ -497,7 +539,7 @@ class _AppLockForm extends Notifier<_LockView> {
       pinError: null,
       confirmError: null,
       currentError: null,
-      message: failed.failure.message,
+      message: failed.failure.explanation,
       remaining: lock.remainingBackoff,
       busy: false,
     );
@@ -511,7 +553,7 @@ class _AppLockForm extends Notifier<_LockView> {
         biometrics: state.biometrics,
         pinError: null,
         confirmError: null,
-        currentError: Copy.appLockWrongPin,
+        currentError: Copy.messages.appLockRemoveNeedsPin,
         message: null,
         remaining: Duration.zero,
         busy: false,
@@ -536,13 +578,15 @@ class _AppLockForm extends Notifier<_LockView> {
       return;
     }
     final FailureResult<void> failed = result as FailureResult<void>;
+    // Stated once, on the field it is about; the summary lists field
+    // errors already.
     state = (
       enabled: true,
       biometrics: state.biometrics,
       pinError: null,
       confirmError: null,
-      currentError: failed.failure.message,
-      message: failed.failure.message,
+      currentError: failed.failure.explanation,
+      message: null,
       remaining: lock.remainingBackoff,
       busy: false,
     );
@@ -558,7 +602,7 @@ class _AppLockForm extends Notifier<_LockView> {
         pinError: null,
         confirmError: null,
         currentError: null,
-        message: Copy.appLockWait(lock.remainingBackoff),
+        message: Copy.messages.appLockWait(lock.remainingBackoff),
         remaining: lock.remainingBackoff,
         busy: false,
       );
@@ -586,10 +630,16 @@ class _AppLockForm extends Notifier<_LockView> {
     return attempt;
   }
 
-  Future<void> unlockBiometrics() async {
+  Future<void> unlockBiometrics({
+    String? localizedReason,
+    BiometricPrompt? prompt,
+  }) async {
     final AppLock lock = ref.read(appLockProvider);
     state = _busy(lock);
-    final LockAttempt attempt = await lock.unlockWithBiometrics();
+    final LockAttempt attempt = await lock.unlockWithBiometrics(
+      localizedReason: localizedReason,
+      prompt: prompt,
+    );
     if (attempt == LockAttempt.unlocked) {
       ref.read(appLockSessionProvider.notifier).unlock();
       state = (
@@ -660,7 +710,7 @@ class _AppLockForm extends Notifier<_LockView> {
         pinError: state.pinError,
         confirmError: state.confirmError,
         currentError: state.currentError,
-        message: left > Duration.zero ? Copy.appLockWait(left) : null,
+        message: left > Duration.zero ? Copy.messages.appLockWait(left) : null,
         remaining: left,
         busy: state.busy,
       );
@@ -684,20 +734,22 @@ class _AppLockForm extends Notifier<_LockView> {
   _LockView _fromAttempt(
     AppLock lock,
     LockAttempt attempt, {
-    String? currentError,
+    LocalizedMessage? currentError,
   }) {
     final Duration remaining = lock.remainingBackoff;
     // A wrong PIN is already stated on its field, so the line under it
     // carries the wait instead of repeating that.
-    final String? message = switch (attempt) {
+    final LocalizedMessage? message = switch (attempt) {
       LockAttempt.unlocked => null,
-      _ when remaining > Duration.zero => Copy.appLockWait(remaining),
-      _ => Copy.appLockWrongPin,
+      _ when remaining > Duration.zero => Copy.messages.appLockWait(remaining),
+      _ => Copy.messages.appLockWrongPin,
     };
     return (
       enabled: lock.isEnabled,
       biometrics: state.biometrics,
-      pinError: attempt == LockAttempt.wrong ? Copy.appLockWrongPin : null,
+      pinError: attempt == LockAttempt.wrong
+          ? Copy.messages.appLockWrongPin
+          : null,
       confirmError: null,
       currentError: currentError,
       message: message,

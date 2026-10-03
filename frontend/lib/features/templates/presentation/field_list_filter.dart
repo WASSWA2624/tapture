@@ -73,6 +73,8 @@ Future<void> showFieldListFilters(
   WidgetRef ref,
   List<FieldDef> fields,
 ) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final Set<FieldType> present = <FieldType>{
     for (final FieldDef field in fields) field.type,
   };
@@ -82,7 +84,7 @@ Future<void> showFieldListFilters(
   ];
   return showAppFilterSheet(
     context,
-    title: Copy.fieldFiltersTitle,
+    title: localCopy.fieldFiltersTitle,
     onClear: ref.read(fieldListFilterProvider.notifier).clear,
     facets: (BuildContext _) => _FieldFacets(types: types),
   );
@@ -95,6 +97,8 @@ class _FieldFacets extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final FieldListFacets facets = ref.watch(fieldListFilterProvider);
     final FieldListFilter filter = ref.read(fieldListFilterProvider.notifier);
     return Column(
@@ -103,14 +107,20 @@ class _FieldFacets extends ConsumerWidget {
       children: <Widget>[
         AppMultiChoiceField<Requiredness>(
           key: const ValueKey<String>('field-requiredness-filter'),
-          label: Copy.fieldRequirednessFilter,
-          options: const <Choice<Requiredness>>[
-            Choice<Requiredness>(Requiredness.required, Copy.fieldRequired),
+          label: localCopy.fieldRequirednessFilter,
+          options: <Choice<Requiredness>>[
+            Choice<Requiredness>(
+              Requiredness.required,
+              localCopy.fieldRequired,
+            ),
             Choice<Requiredness>(
               Requiredness.recommended,
-              Copy.fieldRecommended,
+              localCopy.fieldRecommended,
             ),
-            Choice<Requiredness>(Requiredness.optional, Copy.fieldOptional),
+            Choice<Requiredness>(
+              Requiredness.optional,
+              localCopy.fieldOptional,
+            ),
           ],
           value: facets.requiredness,
           onChanged: filter.setRequiredness,
@@ -118,10 +128,10 @@ class _FieldFacets extends ConsumerWidget {
         const SizedBox(height: Space.x3),
         AppMultiChoiceField<FieldType>(
           key: const ValueKey<String>('field-type-filter'),
-          label: Copy.fieldType,
+          label: localCopy.fieldType,
           options: <Choice<FieldType>>[
             for (final FieldType type in types)
-              Choice<FieldType>(type, Copy.fieldTypeLabel(type.name)),
+              Choice<FieldType>(type, localCopy.fieldTypeLabel(type.name)),
           ],
           value: facets.types,
           onChanged: filter.setTypes,

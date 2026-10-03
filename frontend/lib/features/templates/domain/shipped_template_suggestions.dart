@@ -1,4 +1,5 @@
 import 'package:tapture/core/ai/ai_service.dart';
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -63,10 +64,12 @@ final class ShippedTemplateSuggestions {
     for (final String field in fields) {
       final int index = options.indexOf(values[field] ?? '');
       if (index < 0 || !seen.add(candidates[index].templateKey)) {
-        return const FailureResult<List<String>>(
+        return FailureResult<List<String>>(
           ProviderFailure(
-            message: 'The suggested order could not be read.',
-            recoveryAction: 'Use the on-device results or try again.',
+            localizedMessage:
+                DomainCopy.messages.failureTheSuggestedOrderCouldNotBeRead,
+            localizedRecovery:
+                DomainCopy.messages.failureUseTheOnDeviceResultsOrTry,
             kind: ProviderFailureKind.malformed,
           ),
         );

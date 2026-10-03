@@ -82,18 +82,19 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
   }) async {
     final String trimmed = name.trim();
     if (trimmed.isEmpty) {
-      return const FailureResult<TemplateDef>(
+      return FailureResult<TemplateDef>(
         ValidationFailure(
-          message: 'A template needs a name.',
-          recoveryAction: 'Enter a name and save again.',
+          localizedMessage: Copy.messages.failureATemplateNeedsAName,
+          localizedRecovery: Copy.messages.failureEnterANameAndSaveAgain,
         ),
       );
     }
     if (projectId.isEmpty) {
-      return const FailureResult<TemplateDef>(
+      return FailureResult<TemplateDef>(
         ValidationFailure(
-          message: Copy.statusNoProject,
-          recoveryAction: 'Open a project, then add the template.',
+          localizedMessage: Copy.messages.statusNoProject,
+          localizedRecovery:
+              Copy.messages.failureOpenAProjectThenAddTheTemplate,
         ),
       );
     }
@@ -117,7 +118,8 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     } on Object catch (error) {
       return FailureResult<T>(
         StorageFailure(
-          message: 'The shipped templates could not be read.',
+          localizedMessage:
+              Copy.messages.failureTheShippedTemplatesCouldNotBeRead,
           recoveryAction: Failure.from(error).recoveryAction ?? 'Try again.',
         ),
       );
@@ -132,9 +134,10 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
         ? null
         : _templateIn(_object(jsonDecode(await _read(path))), templateKey);
     if (asset == null) {
-      throw const ValidationFailure(
-        message: 'That shipped template is not on this device.',
-        recoveryAction: 'Pick another template from the library.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureThatShippedTemplateIsNotOnThis,
+        localizedRecovery:
+            Copy.messages.failurePickAnotherTemplateFromTheLibrary,
       );
     }
     final _Schema schema = await _schema();
@@ -225,8 +228,9 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
   Future<Map<String, _Group>> _groupsAt(String path, _Schema schema) async {
     final Map<String, Object?> root = _object(jsonDecode(await _read(path)));
     if (root.isEmpty) {
-      throw const CorruptionFailure(
-        message: 'The inherited field groups could not be read.',
+      throw CorruptionFailure(
+        localizedMessage:
+            Copy.messages.failureTheInheritedFieldGroupsCouldNotBe,
       );
     }
     return <String, _Group>{
@@ -250,27 +254,30 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     for (final String key in schema.assetKeys) {
       if (!asset.containsKey(key)) {
         throw ValidationFailure(
-          message: 'A shipped template is missing "$key".',
-          recoveryAction: 'Reinstall the app, then try again.',
+          localizedMessage: Copy.messages.failureAShippedTemplateIsMissingValue(
+            (key).toString(),
+          ),
+          localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
         );
       }
     }
     if (asset['schema_version'] != 1) {
-      throw const ValidationFailure(
-        message: 'A shipped template uses an unknown schema.',
-        recoveryAction: 'Update the app, then try again.',
+      throw ValidationFailure(
+        localizedMessage:
+            Copy.messages.failureAShippedTemplateUsesAnUnknownSchema,
+        localizedRecovery: Copy.messages.failureUpdateTheAppThenTryAgain,
       );
     }
     if (!_snake.hasMatch(_string(asset['template_key']))) {
-      throw const ValidationFailure(
-        message: 'A shipped template has an invalid key.',
-        recoveryAction: 'Reinstall the app, then try again.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureAShippedTemplateHasAnInvalidKey,
+        localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
       );
     }
     if (!_string(asset['name']).startsWith(_keyPrefix)) {
-      throw const ValidationFailure(
-        message: 'A shipped template name is not a localisation key.',
-        recoveryAction: 'Reinstall the app, then try again.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureAShippedTemplateNameIsNotA,
+        localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
       );
     }
   }
@@ -288,9 +295,10 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     final List<String> identity = _strings(asset['identity_fields']);
     for (final String key in identity) {
       if (!keys.contains(key)) {
-        throw const ValidationFailure(
-          message: 'A shipped template names an unknown identity field.',
-          recoveryAction: 'Reinstall the app, then try again.',
+        throw ValidationFailure(
+          localizedMessage:
+              Copy.messages.failureAShippedTemplateNamesAnUnknownIdentity,
+          localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
         );
       }
     }
@@ -330,9 +338,10 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     if (parentKey.isNotEmpty) {
       final Map<String, Object?>? parent = byKey[parentKey];
       if (parent == null) {
-        throw const ValidationFailure(
-          message: 'A shipped template names an unknown parent.',
-          recoveryAction: 'Reinstall the app, then try again.',
+        throw ValidationFailure(
+          localizedMessage:
+              Copy.messages.failureAShippedTemplateNamesAnUnknownParent,
+          localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
         );
       }
       addAll(_resolveFields(parent, groups, byKey, schema));
@@ -340,9 +349,10 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     for (final String name in _strings(asset['inherits_groups'])) {
       final _Group? group = groups[name];
       if (group == null) {
-        throw const ValidationFailure(
-          message: 'A shipped template names an unknown field group.',
-          recoveryAction: 'Reinstall the app, then try again.',
+        throw ValidationFailure(
+          localizedMessage:
+              Copy.messages.failureAShippedTemplateNamesAnUnknownField,
+          localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
         );
       }
       addAll(group.fields);
@@ -362,30 +372,32 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     for (final String key in schema.fieldKeys) {
       if (!raw.containsKey(key)) {
         throw ValidationFailure(
-          message: 'A shipped field is missing "$key".',
-          recoveryAction: 'Reinstall the app, then try again.',
+          localizedMessage: Copy.messages.failureAShippedFieldIsMissingValue(
+            (key).toString(),
+          ),
+          localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
         );
       }
     }
     final String typeName = _string(raw['type']);
     if (!schema.types.contains(typeName)) {
-      throw const ValidationFailure(
-        message: 'A shipped field uses an unknown type.',
-        recoveryAction: 'Reinstall the app, then try again.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureAShippedFieldUsesAnUnknownType,
+        localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
       );
     }
     final FieldType? type = _typeOf(typeName);
     if (type == null) {
-      throw const ValidationFailure(
-        message: 'A shipped field uses an unknown type.',
-        recoveryAction: 'Reinstall the app, then try again.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureAShippedFieldUsesAnUnknownType,
+        localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
       );
     }
     final String label = _string(raw['label']);
     if (!label.startsWith(_keyPrefix)) {
-      throw const ValidationFailure(
-        message: 'A shipped field label is not a localisation key.',
-        recoveryAction: 'Reinstall the app, then try again.',
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureAShippedFieldLabelIsNotA,
+        localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
       );
     }
     return FieldDef(
@@ -655,8 +667,8 @@ _Catalogue _indexCatalogue(_CatalogueSource source) {
   };
   final List<Map<String, Object?>> categories = _objects(index['categories']);
   if (categories.length != source.files.length) {
-    throw const CorruptionFailure(
-      message: 'A shipped template could not be read.',
+    throw CorruptionFailure(
+      localizedMessage: Copy.messages.failureAShippedTemplateCouldNotBeRead,
     );
   }
   final List<ShippedTemplateEntry> entries = <ShippedTemplateEntry>[];
@@ -674,9 +686,10 @@ _Catalogue _indexCatalogue(_CatalogueSource source) {
     )) {
       final String key = _string(template['template_key']);
       if (!_snake.hasMatch(key) || assetOf.containsKey(key)) {
-        throw const ValidationFailure(
-          message: 'A shipped template has an invalid key.',
-          recoveryAction: 'Reinstall the app, then try again.',
+        throw ValidationFailure(
+          localizedMessage:
+              Copy.messages.failureAShippedTemplateHasAnInvalidKey,
+          localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
         );
       }
       final List<String> own = <String>[
@@ -687,9 +700,10 @@ _Catalogue _indexCatalogue(_CatalogueSource source) {
       for (final String group in _strings(template['inherits_groups'])) {
         final Set<String>? keys = groupKeys[group];
         if (keys == null) {
-          throw const ValidationFailure(
-            message: 'A shipped template names an unknown field group.',
-            recoveryAction: 'Reinstall the app, then try again.',
+          throw ValidationFailure(
+            localizedMessage:
+                Copy.messages.failureAShippedTemplateNamesAnUnknownField,
+            localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
           );
         }
         resolved.addAll(keys);
@@ -705,9 +719,11 @@ _Catalogue _indexCatalogue(_CatalogueSource source) {
           category: category,
           recordType:
               types[_string(template['pack'])] ??
-              (throw const ValidationFailure(
-                message: 'A shipped template names an unknown record type.',
-                recoveryAction: 'Reinstall the app, then try again.',
+              (throw ValidationFailure(
+                localizedMessage:
+                    Copy.messages.failureAShippedTemplateNamesAnUnknownRecord,
+                localizedRecovery:
+                    Copy.messages.failureReinstallTheAppThenTryAgain,
               )),
           privacy: _string(template['privacy']),
           rollout: _string(template['rollout']),
@@ -725,6 +741,6 @@ final RegExp _snake = RegExp(r'^[a-z][a-z0-9]*(_[a-z0-9]+)*$');
 const String _keyPrefix = 'templates.';
 const String _shippedSource = 'shipped';
 
-const CorruptionFailure _corrupt = CorruptionFailure(
-  message: 'A shipped template could not be read.',
+final CorruptionFailure _corrupt = CorruptionFailure(
+  localizedMessage: Copy.messages.failureAShippedTemplateCouldNotBeRead,
 );

@@ -76,10 +76,10 @@ final class RecordTemplateChangeController
   Future<Result<void>> apply() async {
     final String? targetId = state.targetId;
     if (targetId == null) {
-      return const FailureResult<void>(_nothingChosen);
+      return FailureResult<void>(_nothingChosen);
     }
     if (state.applying) {
-      return const FailureResult<void>(_alreadyApplying);
+      return FailureResult<void>(_alreadyApplying);
     }
     state = (targetId: targetId, applying: true, failure: null);
     final RecordRepository records = ref.read(recordRepositoryProvider);
@@ -115,12 +115,12 @@ typedef RecordTemplateChangeState = ({
   Failure? failure,
 });
 
-const ValidationFailure _nothingChosen = ValidationFailure(
+final ValidationFailure _nothingChosen = ValidationFailure(
   message: Copy.recordTemplateChangeHint,
   recoveryAction: Copy.recordTemplateChangeChooseAction,
 );
 
-const ValidationFailure _alreadyApplying = ValidationFailure(
+final ValidationFailure _alreadyApplying = ValidationFailure(
   message: Copy.recordTemplateChangeApplying,
   recoveryAction: Copy.recordTemplateChangeApplyingAction,
 );

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/database_provider.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
@@ -25,6 +26,32 @@ final class TemplateMigrationRepositoryImpl
 
   final AppDatabase _db;
   final Clock _clock;
+
+  @override
+  Future<Result<Map<String, int>>> fieldValueCounts(String templateId) async {
+    try {
+      final List<QueryRow> rows = await _db
+          .customSelect(
+            'SELECT f.field_key, COUNT(*) AS value_count '
+            'FROM records r JOIN record_fields f ON f.record_id = r.id '
+            "WHERE r.template_id = ? AND r.status != 'deleted' "
+            "AND NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'records' AND t.entity_id = r.id) "
+            "AND NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'record_fields' AND t.entity_id = f.id) "
+            "AND (NULLIF(TRIM(f.value_raw), '') IS NOT NULL "
+            "OR NULLIF(TRIM(f.value_refined), '') IS NOT NULL "
+            "OR NULLIF(TRIM(f.value_final), '') IS NOT NULL) "
+            'GROUP BY f.field_key',
+            variables: <Variable<Object>>[Variable<String>(templateId)],
+          )
+          .get();
+      return Success<Map<String, int>>(<String, int>{
+        for (final QueryRow row in rows)
+          row.read<String>('field_key'): row.read<int>('value_count'),
+      });
+    } on Object catch (error) {
+      return FailureResult<Map<String, int>>(storageFailureFrom(error));
+    }
+  }
 
   @override
   Stream<List<CapturedTemplateRecord>> watch(String templateId) {
@@ -175,8 +202,7 @@ List<CapturedTemplateRecord> _captured(List<QueryRow> rows) {
 }
 
 /// The template or a reviewed record moved on after the preview was read.
-const StorageFailure _staleFailure = StorageFailure(
-  message:
-      'The template or its records changed while you reviewed the migration.',
-  recoveryAction: 'Review the updated changes and try again.',
+final StorageFailure _staleFailure = StorageFailure(
+  localizedMessage: Copy.messages.failureTheTemplateOrItsRecordsChangedWhile,
+  localizedRecovery: Copy.messages.failureReviewTheUpdatedChangesAndTryAgain,
 );

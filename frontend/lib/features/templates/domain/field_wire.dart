@@ -1,3 +1,4 @@
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 import 'field_def.dart';
@@ -58,9 +59,10 @@ abstract final class FieldWire {
       'signature' => FieldType.signature,
       'computed' => FieldType.computed,
       'consent' => FieldType.consent,
-      _ => throw const StorageFailure(
-        message: 'That field type is not recognised.',
-        recoveryAction: 'Pick a type from the list and save again.',
+      _ => throw StorageFailure(
+        localizedMessage:
+            DomainCopy.messages.failureThatFieldTypeIsNotRecognised,
+        localizedRecovery: DomainCopy.messages.failurePickATypeFromTheListAnd,
       ),
     };
   }
@@ -82,9 +84,11 @@ abstract final class FieldWire {
       'MANUAL_ONLY' => InputMode.manualOnly,
       'AI_ALLOWED' => InputMode.aiAllowed,
       'AUTO' => InputMode.auto,
-      _ => throw const StorageFailure(
-        message: 'That input mode is not recognised.',
-        recoveryAction: 'Pick an input mode from the list and save again.',
+      _ => throw StorageFailure(
+        localizedMessage:
+            DomainCopy.messages.failureThatInputModeIsNotRecognised,
+        localizedRecovery:
+            DomainCopy.messages.failurePickAnInputModeFromTheList,
       ),
     };
   }

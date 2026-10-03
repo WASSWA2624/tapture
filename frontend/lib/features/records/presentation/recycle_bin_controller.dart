@@ -55,7 +55,7 @@ final class RecycleBinController extends Notifier<RecycleBinActivity> {
   /// before it was deleted, and says why when it cannot.
   Future<Result<void>> restore(String id) async {
     if (state.restoring.contains(id)) {
-      return const FailureResult<void>(_restoring);
+      return FailureResult<void>(_restoring);
     }
     final RecordRepository records = ref.read(recordRepositoryProvider);
     _set(restoring: <String>{...state.restoring, id});
@@ -77,10 +77,10 @@ final class RecycleBinController extends Notifier<RecycleBinActivity> {
   Future<Result<PurgeReport>> emptyNow() async {
     final PurgeJob? job = ref.read(recordPurgeJobProvider);
     if (job == null) {
-      return const FailureResult<PurgeReport>(_unavailable);
+      return FailureResult<PurgeReport>(_unavailable);
     }
     if (state.emptying) {
-      return const FailureResult<PurgeReport>(_emptying);
+      return FailureResult<PurgeReport>(_emptying);
     }
     _set(emptying: true);
     try {
@@ -106,17 +106,17 @@ final class RecycleBinController extends Notifier<RecycleBinActivity> {
 /// and whether it is being emptied.
 typedef RecycleBinActivity = ({Set<String> restoring, bool emptying});
 
-const ValidationFailure _restoring = ValidationFailure(
+final ValidationFailure _restoring = ValidationFailure(
   message: Copy.recycleBinRestoring,
   recoveryAction: Copy.recycleBinRestoringAction,
 );
 
-const ValidationFailure _unavailable = ValidationFailure(
+final ValidationFailure _unavailable = ValidationFailure(
   message: Copy.recycleBinEmptyUnavailable,
   recoveryAction: Copy.recycleBinEmptyUnavailableAction,
 );
 
-const ValidationFailure _emptying = ValidationFailure(
+final ValidationFailure _emptying = ValidationFailure(
   message: Copy.recycleBinEmptying,
   recoveryAction: Copy.recycleBinEmptyingAction,
 );

@@ -94,12 +94,14 @@ Future<void> showShippedLibraryFilters(
   WidgetRef ref,
   List<ShippedTemplateEntry> entries,
 ) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final Map<String, String> areas = <String, String>{};
   final Map<String, String> recordTypes = <String, String>{};
   final Set<String> tiers = <String>{};
   for (final ShippedTemplateEntry entry in entries) {
     final ShippedCatalogueCategory category = entry.category;
-    areas[category.supergroupCode] = Copy.shippedAreaTitle(
+    areas[category.supergroupCode] = localCopy.shippedAreaTitle(
       category.supergroupCode,
       category.supergroupTitle,
     );
@@ -110,7 +112,7 @@ Future<void> showShippedLibraryFilters(
     ..sort((String a, String b) => recordTypes[a]!.compareTo(recordTypes[b]!));
   return showAppFilterSheet(
     context,
-    title: Copy.shippedFiltersTitle,
+    title: localCopy.shippedFiltersTitle,
     onClear: ref.read(shippedLibraryFilterProvider.notifier).clear,
     facets: (BuildContext _) => _Facets(
       areas: areas,
@@ -135,6 +137,8 @@ class _Facets extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final ShippedLibraryFilterState filter = ref.watch(
       shippedLibraryFilterProvider,
     );
@@ -147,7 +151,7 @@ class _Facets extends ConsumerWidget {
       children: <Widget>[
         AppMultiChoiceField<String>(
           key: const ValueKey<String>('shipped-area-filter'),
-          label: Copy.shippedAreaFilter,
+          label: localCopy.shippedAreaFilter,
           // Area names are catalogue data and are shown as stored
           // (FE-L10N-07).
           options: <Choice<String>>[
@@ -161,7 +165,7 @@ class _Facets extends ConsumerWidget {
           const SizedBox(height: Space.x3),
           AppMultiChoiceField<String>(
             key: const ValueKey<String>('shipped-record-type-filter'),
-            label: Copy.shippedRecordTypeFilter,
+            label: localCopy.shippedRecordTypeFilter,
             options: <Choice<String>>[
               for (final MapEntry<String, String> type in recordTypes.entries)
                 Choice<String>(type.key, type.value),
@@ -173,10 +177,10 @@ class _Facets extends ConsumerWidget {
         const SizedBox(height: Space.x3),
         AppMultiChoiceField<String>(
           key: const ValueKey<String>('shipped-tier-filter'),
-          label: Copy.shippedTierFilter,
+          label: localCopy.shippedTierFilter,
           options: <Choice<String>>[
             for (final String tier in tiers)
-              Choice<String>(tier, Copy.shippedTierLabel(tier)),
+              Choice<String>(tier, localCopy.shippedTierLabel(tier)),
           ],
           value: filter.tiers,
           onChanged: notifier.setTiers,

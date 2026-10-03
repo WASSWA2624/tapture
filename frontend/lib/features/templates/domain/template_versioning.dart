@@ -16,7 +16,19 @@ final class TemplateVersioning {
     required this.removed,
     required this.retyped,
     required this.behindCount,
+    this.unresolved = 0,
+    this.retiring = const <({String fieldKey, String label, int records})>[],
   });
+
+  /// The preview when there is no template to compare against: nothing
+  /// moves.
+  const TemplateVersioning.none()
+    : added = const <({String fieldKey, String label, int records})>[],
+      removed = const <({String fieldKey, String label, int records})>[],
+      retyped = const <({String fieldKey, String label, int records})>[],
+      behindCount = 0,
+      unresolved = 0,
+      retiring = const <({String fieldKey, String label, int records})>[];
 
   /// Fields on the current template that older records do not have.
   final List<({String fieldKey, String label, int records})> added;
@@ -29,6 +41,15 @@ final class TemplateVersioning {
 
   /// Records still on an earlier captured version.
   final int behindCount;
+
+  /// Behind records whose captured version this device no longer knows, so
+  /// their added, removed and retyped fields cannot be listed.
+  final int unresolved;
+
+  /// Stored values of the [unresolved] records that a move retires because
+  /// the current template has no such field, with how many records hold
+  /// each. The operator sees them before anything moves.
+  final List<({String fieldKey, String label, int records})> retiring;
 
   /// Whether any record would move.
   bool get isEmpty => behindCount == 0;
@@ -90,17 +111,45 @@ final class TemplateVersioning {
   }) {
     // Every persisted edit receives a version, including a name-only edit.
     // Remember each predecessor so a captured version always resolves.
-    final Map<int, TemplateDef> history = _historyOf(from);
+    final Map<int, TemplateDef> history = <int, TemplateDef>{
+      ..._historyOf(to),
+      ..._historyOf(from),
+    };
     history.putIfAbsent(from.version, () => from);
     return to.copyWith(detection: _writeHistory(to.detection, history));
   }
 
   /// The field list as it was at [capturedVersion], or null when unknown.
   static TemplateDef? shapeFor(TemplateDef current, int capturedVersion) {
+    if (capturedVersion <= 0) {
+      return null;
+    }
     if (capturedVersion == current.version) {
       return current;
     }
     return _historyOf(current)[capturedVersion];
+  }
+
+  /// Decodes stored shapes once for a batch of captured records.
+  static Map<int, TemplateDef> shapesOf(TemplateDef current) =>
+      Map<int, TemplateDef>.unmodifiable(<int, TemplateDef>{
+        ..._historyOf(current),
+        current.version: current,
+      });
+
+  /// Latest known definitions, including retired keys and their visibility.
+  static Map<String, FieldDef> latestFields(Iterable<TemplateDef> shapes) {
+    final Map<String, (int, FieldDef)> latest = <String, (int, FieldDef)>{};
+    for (final TemplateDef shape in shapes) {
+      for (final FieldDef field in shape.fields) {
+        if (shape.version >= (latest[field.fieldKey]?.$1 ?? -1)) {
+          latest[field.fieldKey] = (shape.version, field);
+        }
+      }
+    }
+    return <String, FieldDef>{
+      for (final entry in latest.entries) entry.key: entry.value.$2,
+    };
   }
 
   /// Preview of added, removed and retyped fields for records still behind.
@@ -118,9 +167,23 @@ final class TemplateVersioning {
         <String, ({String label, int records})>{};
     final Map<String, ({String label, int records})> retyped =
         <String, ({String label, int records})>{};
+    final Map<String, ({String label, int records})> retiring =
+        <String, ({String label, int records})>{};
+    final Set<String> active = <String>{
+      for (final FieldDef field in current.fields) field.fieldKey,
+    };
+    final Map<int, TemplateDef> shapes = shapesOf(current);
+    int unresolved = 0;
     for (final CapturedTemplateRecord record in behind) {
-      final TemplateDef? old = shapeFor(current, record.templateVersion);
+      final TemplateDef? old = shapes[record.templateVersion];
       if (old == null) {
+        // The captured shape is gone, so name what the move would retire:
+        // every stored value the current template has no field for.
+        unresolved++;
+        _tally(retiring, <String>[
+          for (final String key in record.fields.keys)
+            if (!active.contains(key) && !record.retired.contains(key)) key,
+        ], current);
         continue;
       }
       final ({List<String> added, List<String> removed, List<String> retyped})
@@ -134,6 +197,8 @@ final class TemplateVersioning {
       removed: _rows(removed),
       retyped: _rows(retyped),
       behindCount: behind.length,
+      unresolved: unresolved,
+      retiring: _rows(retiring),
     );
   }
 
@@ -183,25 +248,27 @@ typedef CapturedTemplateRecord = ({
 
 const String _versionsKey = '_tapture_versions';
 
+/// [record] on [current]'s version. The one retirement rule, which the
+/// durable move applies too: every stored value the current template has
+/// no field for is retired, and one it defines again is live again.
 CapturedTemplateRecord _move(
   CapturedTemplateRecord record,
   TemplateDef current,
 ) {
-  final TemplateDef? old = TemplateVersioning.shapeFor(
-    current,
-    record.templateVersion,
-  );
-  final Set<String> retired = <String>{...record.retired};
-  if (old != null) {
-    final ({List<String> added, List<String> removed, List<String> retyped})
-    change = TemplateVersioning.diff(old, current);
-    retired.addAll(change.removed);
-  }
+  final Set<String> active = <String>{
+    for (final FieldDef field in current.fields) field.fieldKey,
+  };
   return (
     id: record.id,
     templateVersion: current.version,
     fields: Map<String, String>.of(record.fields),
-    retired: retired,
+    retired: <String>{
+      for (final String key in <String>{
+        ...record.fields.keys,
+        ...record.retired,
+      })
+        if (!active.contains(key)) key,
+    },
   );
 }
 

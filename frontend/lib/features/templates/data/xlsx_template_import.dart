@@ -1,16 +1,22 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/projects.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/document_picker.dart';
 import 'package:tapture/core/files/file_writer.dart';
-import 'package:tapture/core/files/path_sanitizer.dart';
+import 'package:tapture/core/files/path_sanitizer.dart' show safeRelativePath;
 import 'package:tapture/core/files/project_folders.dart';
 import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/security/untrusted_text.dart';
+import 'package:tapture/core/time/clock.dart';
 
 import '../domain/template_repository.dart';
+import 'template_document_import.dart';
 import 'template_mapper.dart';
 
 /// Copies a chosen workbook into the project `templates/` folder and saves
@@ -36,6 +42,52 @@ final class XlsxTemplateImport {
   /// Where the confirmed template is saved.
   final TemplateRepository templates;
 
+  /// Preserves byte-based browser picks through the same atomic file writer.
+  Future<Result<TemplateDef>> applyDocument({
+    required String projectId,
+    required String projectName,
+    required String folderName,
+    required PickedDocument document,
+    required TemplateDef draft,
+  }) async {
+    final Result<void> checked = await TemplateDocumentImport.validate(
+      document,
+    );
+    if (checked case FailureResult<void>(:final Failure failure)) {
+      return FailureResult<TemplateDef>(failure);
+    }
+    final Result<Uint8List> read = await readPickedDocument(document);
+    if (read case FailureResult<Uint8List>(:final Failure failure)) {
+      return FailureResult<TemplateDef>(failure);
+    }
+    final String folder = folderName.trim().isEmpty
+        ? folderNameFor(name: projectName, id: projectId)
+        : folderName;
+    final String relative;
+    try {
+      final String name = UntrustedText(document.name).forFileName();
+      final String id = UuidV7Service(const SystemClock()).newId();
+      relative = safeRelativePath('projects/$folder/templates/$id-$name');
+    } on Failure catch (failure) {
+      return FailureResult<TemplateDef>(failure);
+    }
+    final Result<WrittenFile> copied = await writer.write(
+      Stream<List<int>>.value((read as Success<Uint8List>).value),
+      relative,
+    );
+    return switch (copied) {
+      FailureResult<WrittenFile>(:final Failure failure) =>
+        FailureResult<TemplateDef>(failure),
+      Success<WrittenFile>(:final WrittenFile value) => templates.save(
+        draft.copyWith(
+          projectId: projectId,
+          source: _importedSource,
+          sourceFilePath: value.relativePath,
+        ),
+      ),
+    };
+  }
+
   /// Reads a suggested type name. Unknown names become [FieldType.text].
   static FieldType typeFromWire(String raw) {
     try {
@@ -55,13 +107,14 @@ final class XlsxTemplateImport {
     required String folderName,
     required String path,
     required TemplateDef draft,
+    bool preserveId = false,
   }) async {
     final File source = File(path);
     if (path.trim().isEmpty || !source.existsSync()) {
-      return const FailureResult<TemplateDef>(
+      return FailureResult<TemplateDef>(
         ValidationFailure(
-          message: Copy.xlsxMappingMissing,
-          recoveryAction: Copy.xlsxMappingMissingRecovery,
+          localizedMessage: Copy.messages.xlsxMappingMissing,
+          localizedRecovery: Copy.messages.xlsxMappingMissingRecovery,
         ),
       );
     }
@@ -76,6 +129,7 @@ final class XlsxTemplateImport {
           folderName: folderName,
           source: source,
           draft: draft,
+          preserveId: preserveId,
           root: value,
         );
     }
@@ -88,6 +142,7 @@ final class XlsxTemplateImport {
     required File source,
     required TemplateDef draft,
     required Directory root,
+    required bool preserveId,
   }) async {
     final Result<Directory> projectDir = await folders.create(
       _folderRow(id: projectId, name: projectName, folderName: folderName),
@@ -102,6 +157,7 @@ final class XlsxTemplateImport {
           draft: draft,
           root: root,
           projectDir: value,
+          preserveId: preserveId,
         );
     }
   }
@@ -112,6 +168,7 @@ final class XlsxTemplateImport {
     required TemplateDef draft,
     required Directory root,
     required Directory projectDir,
+    required bool preserveId,
   }) async {
     final Directory templatesDir = Directory(
       '${projectDir.path}/$_templatesFolder',
@@ -119,10 +176,10 @@ final class XlsxTemplateImport {
     final String destName = _uniqueName(source, templatesDir);
     final File dest = File('${templatesDir.path}/$destName');
     if (dest.existsSync()) {
-      return const FailureResult<TemplateDef>(
+      return FailureResult<TemplateDef>(
         StorageFailure(
-          message: Copy.xlsxMappingExists,
-          recoveryAction: Copy.xlsxMappingExistsRecovery,
+          localizedMessage: Copy.messages.xlsxMappingExists,
+          localizedRecovery: Copy.messages.xlsxMappingExistsRecovery,
         ),
       );
     }
@@ -139,7 +196,7 @@ final class XlsxTemplateImport {
       case Success<WrittenFile>(:final WrittenFile value):
         return templates.save(
           draft.copyWith(
-            id: '',
+            id: preserveId ? draft.id : '',
             projectId: projectId,
             version: draft.version < 1 ? 1 : draft.version,
             source: _importedSource,
@@ -157,12 +214,8 @@ String _uniqueName(File source, Directory templatesDir) {
   final int dot = original.lastIndexOf('.');
   final String ext = dot <= 0 ? '' : original.substring(dot).toLowerCase();
   final String stem = dot <= 0 ? original : original.substring(0, dot);
-  String safe;
-  try {
-    safe = sanitiseSegment(stem);
-  } on Failure {
-    safe = 'workbook';
-  }
+  // The picked file's name is outside text (FE-SEC-05).
+  final String safe = UntrustedText(stem).forFileName();
   var name = '$safe$ext';
   var suffix = 2;
   while (File('${templatesDir.path}/$name').existsSync()) {
@@ -183,9 +236,9 @@ String _relativeTo(String root, String dest) {
       path.length > base.length) {
     return path.substring(base.length);
   }
-  throw const ValidationFailure(
-    message: Copy.xlsxMappingMissing,
-    recoveryAction: Copy.xlsxMappingMissingRecovery,
+  throw ValidationFailure(
+    localizedMessage: Copy.messages.xlsxMappingMissing,
+    localizedRecovery: Copy.messages.xlsxMappingMissingRecovery,
   );
 }
 

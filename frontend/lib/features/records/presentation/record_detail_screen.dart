@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
@@ -10,7 +11,6 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/validation/validation_issue.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
@@ -28,10 +28,14 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/field_value.dart';
 import 'package:tapture/core/widgets/record_thumb.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
-import 'package:tapture/features/quality/quality.dart' show RecordRules;
+import 'package:tapture/features/processing/processing.dart'
+    show ConfidenceBand, ConfidenceIndicator;
+import 'package:tapture/features/quality/quality.dart' show DuplicateLinks;
+import 'package:tapture/features/review/review.dart' show ReviewApproval;
 import 'package:tapture/features/templates/templates.dart'
     show FieldDef, TemplateDef;
 
@@ -82,6 +86,8 @@ class RecordDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<RecordEntry?> record = ref.watch(
       recordEntryProvider(recordId),
     );
@@ -93,16 +99,21 @@ class RecordDetailScreen extends ConsumerWidget {
     }
     return AppPage(
       key: const ValueKey<String>('route-record'),
-      title: entry == null ? Copy.recordDetailTitle : _titleOf(entry),
-      subtitle: entry == null ? null : _subtitleOf(entry),
+      title: entry == null
+          ? localCopy.recordDetailTitle
+          : _titleOf(entry, localizedCopy: Copy.of(context)),
+      subtitle: entry == null
+          ? null
+          : _subtitleOf(entry, localizedCopy: Copy.of(context)),
+      scrollable: entry == null,
       actions: entry == null
           ? const <Widget>[]
           : <Widget>[
               AppIconButton(
                 key: const ValueKey<String>('record-history'),
                 icon: AppIcons.history,
-                semanticLabel: Copy.recordHistoryTitle,
-                tooltip: Copy.recordHistoryTitle,
+                semanticLabel: localCopy.recordHistoryTitle,
+                tooltip: localCopy.recordHistoryTitle,
                 onPressed: () => unawaited(context.push<void>(_historyRoute)),
               ),
             ],
@@ -117,9 +128,9 @@ class RecordDetailScreen extends ConsumerWidget {
         isEmpty: (RecordEntry? loaded) => loaded == null,
         empty: () => AppEmptyState(
           icon: AppIcons.records,
-          headline: Copy.recordGoneHeadline,
-          message: Copy.recordGoneMessage,
-          actionLabel: Copy.recordDetailBackToList,
+          headline: Copy.of(context).recordGoneHeadline,
+          message: Copy.of(context).recordGoneMessage,
+          actionLabel: Copy.of(context).recordDetailBackToList,
           onAction: () => _backToList(context),
         ),
         onRetry: () => ref.invalidate(recordEntryProvider(recordId)),
@@ -157,6 +168,8 @@ class RecordDetailScreen extends ConsumerWidget {
     WidgetRef ref,
     RecordEntry entry,
   ) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (entry.isDeleted) {
       return const <AppOverflowAction>[];
     }
@@ -164,13 +177,13 @@ class RecordDetailScreen extends ConsumerWidget {
     return <AppOverflowAction>[
       AppOverflowAction(
         key: const ValueKey<String>('record-menu-values'),
-        label: Copy.recordValuesEditTitle,
+        label: localCopy.recordValuesEditTitle,
         icon: AppIcons.edit,
         onTap: () => unawaited(context.push<void>(_valuesRoute)),
       ),
       AppOverflowAction(
         key: const ValueKey<String>('record-menu-template'),
-        label: Copy.recordTemplateChangeTitle,
+        label: localCopy.recordTemplateChangeTitle,
         icon: AppIcons.template,
         onTap: () => unawaited(
           RecordTemplateChange.show(
@@ -183,21 +196,21 @@ class RecordDetailScreen extends ConsumerWidget {
       if (RecordDetailController.canArchive(status))
         AppOverflowAction(
           key: const ValueKey<String>('record-menu-archive'),
-          label: Copy.recordsArchiveLabel(1),
+          label: localCopy.recordsArchiveLabel(1),
           icon: AppIcons.archive,
           onTap: () => unawaited(_archive(context, ref, status)),
         ),
       if (RecordDetailController.canUnarchive(status))
         AppOverflowAction(
           key: const ValueKey<String>('record-menu-unarchive'),
-          label: Copy.recordDetailUnarchive,
+          label: localCopy.recordDetailUnarchive,
           icon: AppIcons.unarchive,
           onTap: () => unawaited(_unarchive(context, ref)),
         ),
       if (RecordDetailController.canDelete(status))
         AppOverflowAction(
           key: const ValueKey<String>('record-menu-delete'),
-          label: Copy.recordsDeleteLabel(1),
+          label: localCopy.recordsDeleteLabel(1),
           icon: AppIcons.delete,
           onTap: () => unawaited(_delete(context, ref)),
         ),
@@ -207,17 +220,19 @@ class RecordDetailScreen extends ConsumerWidget {
   /// Edit photos and captions (FBK0000148), or Restore for a record in the
   /// recycle bin.
   Widget _footerFor(BuildContext context, WidgetRef ref, RecordEntry entry) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (entry.isDeleted) {
       return AppPrimaryAction(
         key: const ValueKey<String>('record-restore'),
-        label: Copy.recycleBinRestore,
+        label: localCopy.recycleBinRestore,
         busy: ref.watch(recordDeleteControllerProvider),
         onPressed: () => unawaited(_restore(context, ref)),
       );
     }
     return AppPrimaryAction(
       key: const ValueKey<String>('record-edit'),
-      label: Copy.recordDetailEditPhotos,
+      label: localCopy.recordDetailEditPhotos,
       onPressed: () => unawaited(
         RecordPhotosEditor.open(
           context,
@@ -235,14 +250,16 @@ class RecordDetailScreen extends ConsumerWidget {
     WidgetRef ref,
     RecordStatus from,
   ) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordDetailController controller = ref.read(
       recordDetailControllerProvider(recordId).notifier,
     );
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.recordsArchiveTitle(1),
-      message: Copy.recordsArchiveMessage(1),
-      confirmLabel: Copy.recordsArchiveConfirm,
+      title: localCopy.recordsArchiveTitle(1),
+      message: localCopy.recordsArchiveMessage(1),
+      confirmLabel: localCopy.recordsArchiveConfirm,
     );
     if (!confirmed) {
       return;
@@ -253,8 +270,8 @@ class RecordDetailScreen extends ConsumerWidget {
     }
     showAppSnack(
       context,
-      Copy.recordsArchived(1),
-      undoLabel: Copy.undo,
+      localCopy.recordsArchived(1),
+      undoLabel: localCopy.undo,
       onUndo: () => unawaited(controller.unarchive(previous: from)),
     );
   }
@@ -262,6 +279,8 @@ class RecordDetailScreen extends ConsumerWidget {
   /// Brings the record back from the archive, to the status its history
   /// says it had before.
   Future<void> _unarchive(BuildContext context, WidgetRef ref) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<RecordHistoryEvent>? history = ref
         .read(recordHistoryProvider(recordId))
         .value;
@@ -276,7 +295,11 @@ class RecordDetailScreen extends ConsumerWidget {
                 ),
         );
     if (back is Success<void> && context.mounted) {
-      showAppSnack(context, Copy.recordDetailUnarchived, tone: SnackTone.info);
+      showAppSnack(
+        context,
+        localCopy.recordDetailUnarchived,
+        tone: SnackTone.info,
+      );
     }
   }
 
@@ -301,6 +324,8 @@ class RecordDetailScreen extends ConsumerWidget {
 
   /// Brings the record back from the recycle bin, whole.
   Future<void> _restore(BuildContext context, WidgetRef ref) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordDeleteOutcome outcome = await ref
         .read(recordDeleteControllerProvider.notifier)
         .restore(<String>[recordId]);
@@ -309,10 +334,19 @@ class RecordDetailScreen extends ConsumerWidget {
     }
     final Failure? failure = outcome.failed[recordId];
     if (failure == null) {
-      showAppSnack(context, Copy.recordsRestored(1), tone: SnackTone.success);
+      showAppSnack(
+        context,
+        localCopy.recordsRestored(1),
+        tone: SnackTone.success,
+      );
       return;
     }
-    showAppSnack(context, failure.message, tone: SnackTone.error);
+    showAppSnack(
+      context,
+      failure.message,
+      tone: SnackTone.error,
+      localizedMessage: failure.explanation,
+    );
   }
 
   /// Back where the record was opened from, or to its list when the page
@@ -328,15 +362,15 @@ class RecordDetailScreen extends ConsumerWidget {
 }
 
 /// The record's name, or its number when nothing names it yet.
-String _titleOf(RecordEntry entry) {
+String _titleOf(RecordEntry entry, {LocalizedCopy? localizedCopy}) {
   return entry.name.trim().isEmpty
-      ? Copy.recordsUntitled(entry.number)
+      ? (localizedCopy ?? Copy.english).recordsUntitled(entry.number)
       : entry.name;
 }
 
 /// Number, identifier and context, as the records list shows them.
-String? _subtitleOf(RecordEntry entry) {
-  final String line = Copy.recordsRowSubtitle(
+String? _subtitleOf(RecordEntry entry, {LocalizedCopy? localizedCopy}) {
+  final String line = (localizedCopy ?? Copy.english).recordsRowSubtitle(
     number: entry.number,
     identifier: entry.identifier,
     context: entry.contextLabel,
@@ -355,6 +389,8 @@ class _RecordBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> template = ref.watch(
       recordCapturedTemplateProvider((
         id: entry.templateId,
@@ -369,51 +405,86 @@ class _RecordBody extends ConsumerWidget {
     final bool summarised = entry.values.any(
       (RecordValue value) => value.hasValue,
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (entry.isDeleted) ...<Widget>[
-          const AppBanner(
-            key: ValueKey<String>('record-deleted-notice'),
-            message: Copy.recordDetailDeletedNotice,
-            icon: AppIcons.delete,
-            tone: SnackTone.warning,
-          ),
-          const SizedBox(height: Space.x3),
-        ],
-        if (failure != null) ...<Widget>[
-          AppBanner(
-            key: const ValueKey<String>('record-detail-failure'),
-            message: <String>[
-              failure.message,
-              ?failure.recoveryAction,
-            ].join(' '),
-            icon: AppIcons.error,
-            tone: SnackTone.error,
-            onDismiss: () => ref
-                .read(recordDetailControllerProvider(entry.id).notifier)
-                .dismissFailure(),
-          ),
-          const SizedBox(height: Space.x3),
-        ],
-        _Header(entry: entry, busy: state.busy),
-        if (entry.photos.isNotEmpty) ...<Widget>[
-          const SizedBox(height: Space.x4),
-          _Photos(entry: entry),
-        ],
-        const SizedBox(height: Space.x4),
-        _Caption(entry: entry),
-        const SizedBox(height: Space.x4),
-        _Fields(entry: entry, template: template, valuesRoute: valuesRoute),
-        const SizedBox(height: Space.x4),
-        _Context(entry: entry, labels: labels),
-        if (summarised) ...<Widget>[
-          const SizedBox(height: Space.x4),
-          _Provenance(entry: entry),
-        ],
-        const SizedBox(height: Space.x4),
-        _Dates(entry: entry),
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppPage.gutter(context)),
+      child: ContentConstraint(
+        child: CustomScrollView(
+          key: const ValueKey<String>('record-detail-scroll'),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          slivers: <Widget>[
+            const SliverToBoxAdapter(child: SizedBox(height: Space.x2)),
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  if (entry.isDeleted) ...<Widget>[
+                    AppBanner(
+                      key: const ValueKey<String>('record-deleted-notice'),
+                      message: localCopy.recordDetailDeletedNotice,
+                      icon: AppIcons.delete,
+                      tone: SnackTone.warning,
+                    ),
+                    const SizedBox(height: Space.x3),
+                  ],
+                  if (failure != null) ...<Widget>[
+                    AppBanner(
+                      key: const ValueKey<String>('record-detail-failure'),
+                      message: <String>[
+                        Copy.of(context).failureMessage(failure),
+                        ?Copy.of(context).failureRecovery(failure),
+                      ].join(' '),
+                      icon: AppIcons.error,
+                      tone: SnackTone.error,
+                      onDismiss: () => ref
+                          .read(
+                            recordDetailControllerProvider(entry.id).notifier,
+                          )
+                          .dismissFailure(),
+                    ),
+                    const SizedBox(height: Space.x3),
+                  ],
+                  _Header(entry: entry, busy: state.busy),
+                ],
+              ),
+            ),
+            if (entry.photos.isNotEmpty) ...<Widget>[
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: Space.x4),
+                  child: AppSectionHeader(
+                    title: localCopy.capturePhotosSection,
+                  ),
+                ),
+              ),
+              _Photos(entry: entry),
+            ],
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  const SizedBox(height: Space.x4),
+                  _Caption(entry: entry),
+                  const SizedBox(height: Space.x4),
+                  _Fields(
+                    entry: entry,
+                    template: template,
+                    valuesRoute: valuesRoute,
+                  ),
+                  const SizedBox(height: Space.x4),
+                  _Context(entry: entry, labels: labels),
+                  if (summarised) ...<Widget>[
+                    const SizedBox(height: Space.x4),
+                    _Provenance(entry: entry),
+                  ],
+                  const SizedBox(height: Space.x4),
+                  _Dates(entry: entry),
+                ],
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: Space.x2)),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -430,6 +501,8 @@ class _Header extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordStatus status = entry.status;
     final List<RecordFlag> flags = <RecordFlag>[
       for (final RecordFlag flag in RecordFlag.values)
@@ -450,16 +523,28 @@ class _Header extends ConsumerWidget {
             if (RecordDetailController.canApprove(status))
               AppButton(
                 key: const ValueKey<String>('record-approve'),
-                label: Copy.recordsApproveLabel(1),
+                label: localCopy.recordsApproveLabel(1),
                 icon: AppIcons.verified,
                 variant: AppButtonVariant.secondary,
                 busy: busy,
                 onPressed: () => unawaited(_approve(context, ref)),
               ),
+            if (status == RecordStatus.needsReview)
+              AppButton(
+                key: const ValueKey<String>('record-review'),
+                label: localCopy.reviewTitle,
+                icon: AppIcons.review,
+                variant: AppButtonVariant.secondary,
+                onPressed: () => unawaited(
+                  context.push<void>(
+                    RoutePaths.projectRecordReview(entry.projectId, entry.id),
+                  ),
+                ),
+              ),
             if (RecordDetailController.canSendToReview(status))
               AppButton(
                 key: const ValueKey<String>('record-send-to-review'),
-                label: Copy.recordDetailSendToReview,
+                label: localCopy.recordDetailSendToReview,
                 icon: AppIcons.review,
                 variant: AppButtonVariant.secondary,
                 busy: busy,
@@ -476,71 +561,42 @@ class _Header extends ConsumerWidget {
               for (final RecordFlag flag in flags)
                 AppChip(
                   key: ValueKey<String>('record-flag-${flag.name}'),
-                  label: _flagLabel(flag),
+                  label: _flagLabel(flag, localizedCopy: Copy.of(context)),
                   icon: _flagIcon(flag),
                 ),
             ],
           ),
         ],
+        DuplicateLinks(projectId: entry.projectId, recordId: entry.id),
       ],
     );
   }
 
+  /// Approves through review's one approval path, so validation, an
+  /// unresolved duplicate and an unresolved conflict block here as they do
+  /// everywhere, naming the field (task 016).
   Future<void> _approve(BuildContext context, WidgetRef ref) async {
-    final TemplateDef? template = ref
-        .read(
-          recordCapturedTemplateProvider((
-            id: entry.templateId,
-            version: entry.templateVersion,
-          )),
-        )
-        .asData
-        ?.value;
-    if (template != null) {
-      final List<ValidationIssue> issues = RecordRules.validateRecord(
-        template: template,
-        values: <String, Object?>{
-          for (final RecordValue value in entry.values)
-            value.fieldKey: value.display,
-        },
-        hasEvidence: entry.photos.isNotEmpty,
-        conflicts: <String>[
-          for (final RecordValue value in entry.values)
-            if (value.evidenceRemoved) value.fieldKey,
-        ],
-      );
-      final ValidationIssue? block = issues
-          .where((ValidationIssue issue) => issue.blocks)
-          .firstOrNull;
-      if (block != null && context.mounted) {
-        showAppSnack(context, block.message, tone: SnackTone.error);
-        return;
-      }
-    }
-    final Result<void> approved = await ref
-        .read(recordDetailControllerProvider(entry.id).notifier)
-        .approve(entry.status);
-    if (approved is Success<void> && context.mounted) {
-      showAppSnack(context, Copy.recordsApproved(1), tone: SnackTone.success);
-    }
+    await ReviewApproval.approve(context, ref, recordId: entry.id);
   }
 
   Future<void> _sendToReview(BuildContext context, WidgetRef ref) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Result<void> sent = await ref
         .read(recordDetailControllerProvider(entry.id).notifier)
         .sendToReview(entry.status);
     if (sent is Success<void> && context.mounted) {
       showAppSnack(
         context,
-        Copy.recordDetailSentToReview,
+        localCopy.recordDetailSentToReview,
         tone: SnackTone.success,
       );
     }
   }
 }
 
-/// The record's photos as cached thumbnails; a tap opens the full photo in
-/// the viewer, the only place the original is decoded (FE-PERF-04).
+/// A lazy sliver of cached thumbnails; only visible rows and the viewport's
+/// cache mount thumbnail providers (FE-PERF-03, FE-PERF-04).
 class _Photos extends StatelessWidget {
   const _Photos({required this.entry});
 
@@ -548,24 +604,35 @@ class _Photos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final int total = entry.photos.length;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        const AppSectionHeader(title: Copy.capturePhotosSection),
-        Wrap(
-          spacing: Space.x2,
-          runSpacing: Space.x2,
-          children: <Widget>[
-            for (int index = 0; index < total; index++)
-              RecordThumb(
+    const double edge = Space.x12 * 2;
+    return SliverLayoutBuilder(
+      builder: (BuildContext context, SliverConstraints constraints) {
+        final int columns =
+            ((constraints.crossAxisExtent + Space.x2) / (edge + Space.x2))
+                .floor()
+                .clamp(1, total)
+                .toInt();
+        return SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: columns,
+            mainAxisExtent: edge,
+            crossAxisSpacing: Space.x2,
+            mainAxisSpacing: Space.x2,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) => Align(
+              alignment: AlignmentDirectional.topStart,
+              child: RecordThumb(
                 key: ValueKey<String>('record-photo-${entry.photos[index].id}'),
                 sha256: entry.photos[index].sha256,
                 storagePath: entry.photos[index].storagePath,
                 quarterTurns: entry.photos[index].quarterTurns,
-                size: Space.x12 * 2,
+                size: edge,
                 hasCaption: entry.photos[index].hasCaption,
-                semanticLabel: Copy.recordPhotoPosition(index + 1, total),
+                semanticLabel: localCopy.recordPhotoPosition(index + 1, total),
                 onTap: () => unawaited(
                   RecordPhotoViewerScreen.open(
                     context,
@@ -574,9 +641,12 @@ class _Photos extends StatelessWidget {
                   ),
                 ),
               ),
-          ],
-        ),
-      ],
+            ),
+            childCount: total,
+            addAutomaticKeepAlives: false,
+          ),
+        );
+      },
     );
   }
 }
@@ -589,21 +659,23 @@ class _Caption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final String caption = entry.caption.trim();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const AppSectionHeader(title: Copy.captureRecordCaption),
+        AppSectionHeader(title: localCopy.captureRecordCaption),
         Text(
-          caption.isEmpty ? Copy.recordNoCaption : entry.caption,
+          caption.isEmpty ? localCopy.recordNoCaption : entry.caption,
           key: const ValueKey<String>('record-caption'),
           style: AppText.body.copyWith(color: colors.onSurface),
         ),
         if (entry.audioClips > 0) ...<Widget>[
           const SizedBox(height: Space.x1),
           Text(
-            Copy.captureAudioCount(entry.audioClips),
+            localCopy.captureAudioCount(entry.audioClips),
             key: const ValueKey<String>('record-audio'),
             style: AppText.caption.copyWith(color: colors.onSurface),
           ),
@@ -639,6 +711,8 @@ class _Fields extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return switch (template) {
       AsyncData<TemplateDef?>(:final TemplateDef? value) => _loaded(
         context,
@@ -647,7 +721,7 @@ class _Fields extends ConsumerWidget {
       AsyncError<TemplateDef?>(:final Object error) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const AppSectionHeader(title: Copy.recordSectionFields),
+          AppSectionHeader(title: localCopy.recordSectionFields),
           AppErrorState(
             failure: Failure.from(error),
             onRetry: () =>
@@ -657,17 +731,19 @@ class _Fields extends ConsumerWidget {
           ..._tiles(context, _unlabelled()),
         ],
       ),
-      _ => const Column(
+      _ => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          AppSectionHeader(title: Copy.recordSectionFields),
-          AppSkeleton(count: 2),
+          AppSectionHeader(title: localCopy.recordSectionFields),
+          const AppSkeleton(count: 2),
         ],
       ),
     };
   }
 
   Widget _loaded(BuildContext context, TemplateDef? template) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool deleted = entry.isDeleted;
     final List<RecordEditEntry> editable = template == null || deleted
         ? const <RecordEditEntry>[]
@@ -707,7 +783,7 @@ class _Fields extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         AppSectionHeader(
-          title: Copy.recordSectionFields,
+          title: localCopy.recordSectionFields,
           // An icon beside the heading fits at 200 percent text on a
           // phone, where a worded button would push the heading off.
           action: editable.isEmpty
@@ -715,15 +791,15 @@ class _Fields extends ConsumerWidget {
               : AppIconButton(
                   key: const ValueKey<String>('record-edit-fields'),
                   icon: AppIcons.edit,
-                  tooltip: Copy.recordValuesEditTitle,
-                  semanticLabel: Copy.recordValuesEditTitle,
+                  tooltip: localCopy.recordValuesEditTitle,
+                  semanticLabel: localCopy.recordValuesEditTitle,
                   onPressed: () => unawaited(context.push<void>(valuesRoute)),
                 ),
         ),
         if (template == null) ...<Widget>[
-          const AppBanner(
-            key: ValueKey<String>('record-template-missing'),
-            message: Copy.recordTemplateMissingNotice,
+          AppBanner(
+            key: const ValueKey<String>('record-template-missing'),
+            message: localCopy.recordTemplateMissingNotice,
             icon: AppIcons.template,
             tone: SnackTone.info,
           ),
@@ -731,19 +807,19 @@ class _Fields extends ConsumerWidget {
         ],
         if (live.isEmpty && retired.isEmpty)
           Text(
-            Copy.recordDetailNoValues,
+            localCopy.recordDetailNoValues,
             key: const ValueKey<String>('record-no-values'),
             style: AppText.body.copyWith(color: colors.onSurface),
           ),
         ..._tiles(context, live),
         if (retired.isNotEmpty) ...<Widget>[
           const SizedBox(height: Space.x3),
-          const AppSectionHeader(
-            title: Copy.recordRetiredValuesTitle,
+          AppSectionHeader(
+            title: localCopy.recordRetiredValuesTitle,
             dense: true,
           ),
           Text(
-            Copy.recordRetiredValuesMessage,
+            localCopy.recordRetiredValuesMessage,
             style: AppText.caption.copyWith(color: colors.onSurface),
           ),
           const SizedBox(height: Space.x1),
@@ -815,19 +891,21 @@ class _ValueTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordValue? value = row.value;
     final bool filled = value != null && value.hasValue;
     return AppListTile(
       key: ValueKey<String>('record-field-${row.fieldKey}'),
       title: row.label,
-      subtitle: filled ? value.display : Copy.recordFieldEmpty,
+      subtitle: filled ? value.display : localCopy.recordFieldEmpty,
       dense: true,
       trailing: filled
           ? _ValueMarks(value: value, retired: row.retired)
           : row.retired
-          ? const AppStatusPill.badge(
+          ? AppStatusPill.badge(
               status: RecordStatus.archived,
-              label: Copy.recordValueRetired,
+              label: localCopy.recordValueRetired,
             )
           : null,
       onTap: onTap,
@@ -846,13 +924,23 @@ class _ValueMarks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final ValueSource source = value.valueSource;
-    final String sourceLabel = _sourceLabel(source);
-    final _Band? band = _bandOf(value);
+    final String sourceLabel = _sourceLabel(
+      source,
+      localizedCopy: Copy.of(context),
+    );
+    // A value typed by a person has no band, whatever an earlier reading
+    // scored; any other shows its stored band, else its score.
+    final ConfidenceBand? band = ConfidenceBand.fromStored(value.band);
+    final double? score = value.confidence;
+    final bool banded =
+        source != ValueSource.manual && (band != null || score != null);
     return Semantics(
-      label: Copy.recordValueMarks(
+      label: localCopy.recordValueMarks(
         source: sourceLabel,
-        band: band?.label ?? '',
+        band: !banded ? '' : band?.label ?? localCopy.recordBandScore(score!),
         evidenceRemoved: value.evidenceRemoved,
         retired: retired,
       ),
@@ -874,12 +962,13 @@ class _ValueMarks extends StatelessWidget {
                 label: sourceLabel,
                 icon: _sourceIcon(source),
               ),
-              if (band != null) ...<Widget>[
+              if (banded) ...<Widget>[
                 const SizedBox(height: Space.x1),
-                AppStatusPill.badge(
+                ConfidenceIndicator(
                   key: ValueKey<String>('record-band-${value.fieldKey}'),
-                  status: band.tone,
-                  label: band.label,
+                  band: band,
+                  score: score,
+                  compact: true,
                 ),
               ],
               if (value.evidenceRemoved) ...<Widget>[
@@ -889,7 +978,7 @@ class _ValueMarks extends StatelessWidget {
                     'record-evidence-removed-${value.fieldKey}',
                   ),
                   status: RecordStatus.needsReview,
-                  label: Copy.recordValueEvidenceRemoved,
+                  label: localCopy.recordValueEvidenceRemoved,
                 ),
               ],
               if (retired) ...<Widget>[
@@ -897,7 +986,7 @@ class _ValueMarks extends StatelessWidget {
                 AppStatusPill.badge(
                   key: ValueKey<String>('record-retired-${value.fieldKey}'),
                   status: RecordStatus.archived,
-                  label: Copy.recordValueRetired,
+                  label: localCopy.recordValueRetired,
                 ),
               ],
             ],
@@ -908,50 +997,19 @@ class _ValueMarks extends StatelessWidget {
   }
 }
 
-/// How sure a reading was: the pill's colour and icon, and its words.
-typedef _Band = ({RecordStatus tone, String label});
-
-/// The band [value] was read with: its stored band, else its score as a
-/// percentage. A value typed by a person has none, whatever an earlier
-/// reading scored.
-_Band? _bandOf(RecordValue value) {
-  if (value.valueSource == ValueSource.manual) {
-    return null;
-  }
-  final String stored = (value.band ?? '').toLowerCase().replaceAll(
-    _nonLetter,
-    '',
-  );
-  switch (stored) {
-    case 'high':
-      return (tone: RecordStatus.approved, label: Copy.recordBandHigh);
-    case 'medium':
-      return (tone: RecordStatus.needsReview, label: Copy.recordBandMedium);
-    case 'reviewrequired' || 'low':
-      return (tone: RecordStatus.failed, label: Copy.recordBandLow);
-  }
-  final double? score = value.confidence;
-  if (score == null) {
-    return null;
-  }
-  return (tone: RecordStatus.extracted, label: Copy.recordBandScore(score));
-}
-
-final RegExp _nonLetter = RegExp('[^a-z]');
-
 /// Where a value came from, in the operator's words.
-String _sourceLabel(ValueSource source) {
+String _sourceLabel(ValueSource source, {LocalizedCopy? localizedCopy}) {
   return switch (source) {
-    ValueSource.manual => Copy.recordSourceTyped,
-    ValueSource.ocr => Copy.recordSourceOcr,
-    ValueSource.aiVision => Copy.recordSourceAiPhoto,
-    ValueSource.aiText => Copy.recordSourceAiText,
-    ValueSource.stt => Copy.recordSourceSpeech,
-    ValueSource.barcode => Copy.recordSourceBarcode,
-    ValueSource.lookup => Copy.recordSourceLookup,
-    ValueSource.context => Copy.recordSourceContext,
-    ValueSource.auto => Copy.recordSourceDefault,
-    ValueSource.import => Copy.recordSourceImported,
+    ValueSource.manual => (localizedCopy ?? Copy.english).recordSourceTyped,
+    ValueSource.ocr => (localizedCopy ?? Copy.english).recordSourceOcr,
+    ValueSource.aiVision => (localizedCopy ?? Copy.english).recordSourceAiPhoto,
+    ValueSource.aiText => (localizedCopy ?? Copy.english).recordSourceAiText,
+    ValueSource.stt => (localizedCopy ?? Copy.english).recordSourceSpeech,
+    ValueSource.barcode => (localizedCopy ?? Copy.english).recordSourceBarcode,
+    ValueSource.lookup => (localizedCopy ?? Copy.english).recordSourceLookup,
+    ValueSource.context => (localizedCopy ?? Copy.english).recordSourceContext,
+    ValueSource.auto => (localizedCopy ?? Copy.english).recordSourceDefault,
+    ValueSource.import => (localizedCopy ?? Copy.english).recordSourceImported,
   };
 }
 
@@ -972,14 +1030,20 @@ IconData _sourceIcon(ValueSource source) {
 }
 
 /// A quality flag in the records list's words.
-String _flagLabel(RecordFlag flag) {
+String _flagLabel(RecordFlag flag, {LocalizedCopy? localizedCopy}) {
   return switch (flag) {
-    RecordFlag.hasPhotos => Copy.recordsFlagHasPhotos,
-    RecordFlag.hasDuplicate => Copy.recordsFlagHasDuplicate,
-    RecordFlag.hasConflict => Copy.recordsFlagHasConflict,
-    RecordFlag.hasVariance => Copy.recordsFlagHasVariance,
-    RecordFlag.evidenceRemoved => Copy.recordsFlagEvidenceRemoved,
-    RecordFlag.mergedFromBundle => Copy.recordsFlagMerged,
+    RecordFlag.hasPhotos =>
+      (localizedCopy ?? Copy.english).recordsFlagHasPhotos,
+    RecordFlag.hasDuplicate =>
+      (localizedCopy ?? Copy.english).recordsFlagHasDuplicate,
+    RecordFlag.hasConflict =>
+      (localizedCopy ?? Copy.english).recordsFlagHasConflict,
+    RecordFlag.hasVariance =>
+      (localizedCopy ?? Copy.english).recordsFlagHasVariance,
+    RecordFlag.evidenceRemoved =>
+      (localizedCopy ?? Copy.english).recordsFlagEvidenceRemoved,
+    RecordFlag.mergedFromBundle =>
+      (localizedCopy ?? Copy.english).recordsFlagMerged,
   };
 }
 
@@ -1017,6 +1081,8 @@ class _Context extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<MapEntry<String, String>> levels = <MapEntry<String, String>>[
       for (final MapEntry<String, String> level in entry.context.entries)
         if (level.value.trim().isNotEmpty) level,
@@ -1024,10 +1090,10 @@ class _Context extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const AppSectionHeader(title: Copy.recordDetailContextTitle),
+        AppSectionHeader(title: localCopy.recordDetailContextTitle),
         if (levels.isEmpty)
           Text(
-            Copy.recordDetailContextEmpty,
+            localCopy.recordDetailContextEmpty,
             key: const ValueKey<String>('record-context-empty'),
             style: AppText.body.copyWith(color: context.colors.onSurface),
           )
@@ -1054,6 +1120,8 @@ class _Provenance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<RecordValue> filled = <RecordValue>[
       for (final RecordValue value in entry.values)
         if (value.hasValue) value,
@@ -1073,37 +1141,37 @@ class _Provenance extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const AppSectionHeader(title: Copy.recordDetailProvenanceTitle),
+        AppSectionHeader(title: localCopy.recordDetailProvenanceTitle),
         for (final ValueSource source in ValueSource.values)
           if ((bySource[source] ?? 0) > 0)
             AppListTile(
               key: ValueKey<String>('record-provenance-${source.name}'),
               leading: Icon(_sourceIcon(source), color: icon),
-              title: _sourceLabel(source),
-              subtitle: Copy.recordDetailValuesCount(bySource[source]!),
+              title: _sourceLabel(source, localizedCopy: Copy.of(context)),
+              subtitle: localCopy.recordDetailValuesCount(bySource[source]!),
               dense: true,
             ),
         if (verified > 0)
           AppListTile(
             key: const ValueKey<String>('record-provenance-verified'),
             leading: Icon(AppIcons.verified, color: icon),
-            title: Copy.recordDetailVerified,
-            subtitle: Copy.recordDetailValuesCount(verified),
+            title: localCopy.recordDetailVerified,
+            subtitle: localCopy.recordDetailValuesCount(verified),
             dense: true,
           ),
         if (removed > 0)
           AppListTile(
             key: const ValueKey<String>('record-provenance-evidence'),
             leading: Icon(AppIcons.brokenFile, color: icon),
-            title: Copy.recordValueEvidenceRemoved,
-            subtitle: Copy.recordDetailValuesCount(removed),
+            title: localCopy.recordValueEvidenceRemoved,
+            subtitle: localCopy.recordDetailValuesCount(removed),
             dense: true,
           ),
         if (readers.isNotEmpty)
           AppListTile(
             key: const ValueKey<String>('record-provenance-readers'),
             leading: Icon(AppIcons.ai, color: icon),
-            title: Copy.recordDetailReadBy,
+            title: localCopy.recordDetailReadBy,
             subtitle: readers.join(', '),
             dense: true,
           ),
@@ -1135,16 +1203,18 @@ class _Dates extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final DateTime? approvedAt = entry.approvedAt;
     final DateTime? exportedAt = entry.exportedAt;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const AppSectionHeader(title: Copy.recordDetailDatesTitle),
+        AppSectionHeader(title: localCopy.recordDetailDatesTitle),
         AppListTile(
           key: const ValueKey<String>('record-date-captured'),
-          title: Copy.recordDetailCaptured,
-          subtitle: Copy.recordDetailWhen(
+          title: localCopy.recordDetailCaptured,
+          subtitle: localCopy.recordDetailWhen(
             entry.capturedAt.toLocal(),
             by: entry.capturedBy,
           ),
@@ -1152,15 +1222,15 @@ class _Dates extends StatelessWidget {
         ),
         AppListTile(
           key: const ValueKey<String>('record-date-updated'),
-          title: Copy.recordDetailUpdated,
-          subtitle: Copy.recordDetailWhen(entry.updatedAt.toLocal()),
+          title: localCopy.recordDetailUpdated,
+          subtitle: localCopy.recordDetailWhen(entry.updatedAt.toLocal()),
           dense: true,
         ),
         if (approvedAt != null)
           AppListTile(
             key: const ValueKey<String>('record-date-approved'),
-            title: Copy.recordDetailApproved,
-            subtitle: Copy.recordDetailWhen(
+            title: localCopy.recordDetailApproved,
+            subtitle: localCopy.recordDetailWhen(
               approvedAt.toLocal(),
               by: entry.approvedBy ?? '',
             ),
@@ -1168,10 +1238,10 @@ class _Dates extends StatelessWidget {
           ),
         AppListTile(
           key: const ValueKey<String>('record-date-exported'),
-          title: Copy.recordDetailExported,
+          title: localCopy.recordDetailExported,
           subtitle: exportedAt == null
-              ? Copy.recordDetailNotExported
-              : Copy.recordDetailWhen(exportedAt.toLocal()),
+              ? localCopy.recordDetailNotExported
+              : localCopy.recordDetailWhen(exportedAt.toLocal()),
           dense: true,
         ),
       ],

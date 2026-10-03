@@ -58,10 +58,12 @@ final class RecordTemplateChange extends ConsumerStatefulWidget {
     required String projectId,
     required String recordId,
   }) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final BuildContext host = _snackHost(context);
     final _Moved? moved = await showAppSheet<_Moved>(
       context,
-      title: Copy.recordTemplateChangeTitle,
+      title: localCopy.recordTemplateChangeTitle,
       builder: (BuildContext _) =>
           RecordTemplateChange(projectId: projectId, recordId: recordId),
     );
@@ -70,7 +72,7 @@ final class RecordTemplateChange extends ConsumerStatefulWidget {
     }
     showAppSnack(
       host,
-      Copy.recordTemplateChanged(backToReview: moved.backToReview),
+      localCopy.recordTemplateChanged(backToReview: moved.backToReview),
       tone: SnackTone.success,
     );
   }
@@ -93,10 +95,10 @@ class _RecordTemplateChangeState extends ConsumerState<RecordTemplateChange> {
       value: entry,
       onRetry: () => ref.invalidate(recordEntryProvider(widget.recordId)),
       isEmpty: (RecordEntry? loaded) => loaded == null,
-      empty: () => const AppEmptyState(
+      empty: () => AppEmptyState(
         icon: AppIcons.records,
-        headline: Copy.recordTemplateChangeGoneHeadline,
-        message: Copy.recordTemplateChangeGoneMessage,
+        headline: Copy.of(context).recordTemplateChangeGoneHeadline,
+        message: Copy.of(context).recordTemplateChangeGoneMessage,
       ),
       data: (RecordEntry? loaded) {
         final RecordEntry record = loaded!;
@@ -108,9 +110,9 @@ class _RecordTemplateChangeState extends ConsumerState<RecordTemplateChange> {
           isEmpty: (List<TemplateDef> all) => _choicesFor(record, all).isEmpty,
           empty: () => AppEmptyState(
             icon: AppIcons.template,
-            headline: Copy.recordTemplateChangeEmptyHeadline,
-            message: Copy.recordTemplateChangeEmptyMessage,
-            actionLabel: Copy.recordTemplateChangeEmptyAction,
+            headline: Copy.of(context).recordTemplateChangeEmptyHeadline,
+            message: Copy.of(context).recordTemplateChangeEmptyMessage,
+            actionLabel: Copy.of(context).recordTemplateChangeEmptyAction,
             onAction: _openTemplates,
           ),
           data: (List<TemplateDef> all) => _body(record, all),
@@ -120,6 +122,8 @@ class _RecordTemplateChangeState extends ConsumerState<RecordTemplateChange> {
   }
 
   Widget _body(RecordEntry record, List<TemplateDef> all) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordTemplateChangeState state = ref.watch(
       recordTemplateChangeControllerProvider(widget.recordId),
     );
@@ -156,21 +160,21 @@ class _RecordTemplateChangeState extends ConsumerState<RecordTemplateChange> {
               children: <Widget>[
                 if (current != null) ...<Widget>[
                   Text(
-                    Copy.recordTemplateChangeCurrent(current.name),
+                    localCopy.recordTemplateChangeCurrent(current.name),
                     style: AppText.caption.copyWith(color: colors.onSurface),
                   ),
                   const SizedBox(height: Space.x2),
                 ],
                 if (record.status == RecordStatus.approved) ...<Widget>[
-                  const AppBanner(
-                    message: Copy.recordTemplateChangeApprovedNotice,
+                  AppBanner(
+                    message: localCopy.recordTemplateChangeApprovedNotice,
                     icon: AppIcons.warning,
                     tone: SnackTone.warning,
                   ),
                   const SizedBox(height: Space.x2),
                 ],
-                const AppSectionHeader(
-                  title: Copy.recordTemplateChangeChoose,
+                AppSectionHeader(
+                  title: localCopy.recordTemplateChangeChoose,
                   dense: true,
                 ),
                 for (final TemplateDef choice in choices)
@@ -179,7 +183,7 @@ class _RecordTemplateChangeState extends ConsumerState<RecordTemplateChange> {
                       'template-change-choice-${choice.id}',
                     ),
                     title: choice.name,
-                    subtitle: Copy.fieldsCount(choice.fields.length),
+                    subtitle: localCopy.fieldsCount(choice.fields.length),
                     selected: choice.id == target?.id,
                     onTap: state.applying
                         ? null
@@ -188,7 +192,7 @@ class _RecordTemplateChangeState extends ConsumerState<RecordTemplateChange> {
                 const SizedBox(height: Space.x3),
                 if (target == null || plan == null)
                   Text(
-                    Copy.recordTemplateChangeHint,
+                    localCopy.recordTemplateChangeHint,
                     style: AppText.body.copyWith(color: colors.onSurface),
                   )
                 else
@@ -222,7 +226,7 @@ class _RecordTemplateChangeState extends ConsumerState<RecordTemplateChange> {
           const SizedBox(height: Space.x3),
           AppPrimaryAction(
             key: const ValueKey<String>('record-template-change-apply'),
-            label: Copy.recordTemplateChangeApply,
+            label: localCopy.recordTemplateChangeApply,
             busy: state.applying,
             onPressed: plan?.hasValue ?? false
                 ? () => unawaited(_apply(record))
@@ -279,6 +283,8 @@ final class _TemplateChangePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool nothing =
         plan.mapped.isEmpty &&
         plan.retired.isEmpty &&
@@ -286,7 +292,7 @@ final class _TemplateChangePreview extends StatelessWidget {
         plan.restored.isEmpty;
     if (nothing) {
       return Text(
-        Copy.recordTemplateChangeNoValues,
+        localCopy.recordTemplateChangeNoValues,
         style: AppText.body.copyWith(color: context.colors.onSurface),
       );
     }
@@ -295,34 +301,34 @@ final class _TemplateChangePreview extends StatelessWidget {
       children: <Widget>[
         ..._section(
           'mapped',
-          Copy.recordTemplateChangeMapped(plan.mapped.length),
+          localCopy.recordTemplateChangeMapped(plan.mapped.length),
           plan.mapped,
           labels: to,
         ),
         ..._section(
           'retired',
-          Copy.recordTemplateChangeRetired(plan.retired.length),
+          localCopy.recordTemplateChangeRetired(plan.retired.length),
           plan.retired,
           labels: from,
         ),
         if (plan.retired.isNotEmpty) ...<Widget>[
           const SizedBox(height: Space.x2),
-          const AppBanner(
-            message: Copy.recordTemplateChangeRetiredNotice,
+          AppBanner(
+            message: localCopy.recordTemplateChangeRetiredNotice,
             icon: AppIcons.info,
             tone: SnackTone.info,
           ),
         ],
         ..._section(
           'added',
-          Copy.recordTemplateChangeAdded(plan.added.length),
+          localCopy.recordTemplateChangeAdded(plan.added.length),
           plan.added,
           labels: to,
           withValues: false,
         ),
         ..._section(
           'restored',
-          Copy.recordTemplateChangeRestored(plan.restored.length),
+          localCopy.recordTemplateChangeRestored(plan.restored.length),
           plan.restored,
           labels: to,
         ),

@@ -1,18 +1,19 @@
 /// An imported table used to prefill a record.
 final class ReferenceDataset {
-  /// Creates a dataset. [columns] stay in import order for a later export.
-  const ReferenceDataset({
+  /// Creates a dataset. [columns] stay in import order for a later export,
+  /// and are copied so the dataset cannot change after construction.
+  ReferenceDataset({
     required this.id,
     required this.name,
     required this.keyColumn,
-    required this.columns,
+    required List<String> columns,
     required this.source,
     required this.importedAt,
     required this.rowCount,
     this.duplicatesAllowed = false,
     this.projectId,
     this.sourceFile = '',
-  });
+  }) : columns = List<String>.unmodifiable(columns);
 
   /// Stable merge id.
   final String id;
@@ -23,7 +24,7 @@ final class ReferenceDataset {
   /// Column used as the lookup key.
   final String keyColumn;
 
-  /// Column names in import order.
+  /// Column names in import order. Unmodifiable.
   final List<String> columns;
 
   /// How the dataset arrived on the device.

@@ -39,7 +39,15 @@ abstract final class LookupSearch {
         ),
       );
       if (folded.isNotEmpty) {
-        return Success<LookupSearchResult>((matches: folded, suggested: false));
+        // A singular key lookup returns no row when an exact key repeats.
+        // Keep those exact candidates ahead of merely normalised matches.
+        final List<ReferenceRow> exactKeys = folded
+            .where((ReferenceRow row) => row.key == trimmed)
+            .toList(growable: false);
+        return Success<LookupSearchResult>((
+          matches: exactKeys.isEmpty ? folded : exactKeys,
+          suggested: false,
+        ));
       }
       final List<String> columns = binding.matchColumns.isEmpty
           ? <String>[dataset.keyColumn]

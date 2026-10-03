@@ -1,22 +1,27 @@
 import 'dart:typed_data';
 
 import 'package:tapture/core/concurrency/isolate_runner.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/import/header_detection.dart';
 import 'package:tapture/core/import/workbook_reader.dart';
+import 'package:tapture/core/time/clock.dart';
 
+import '../domain/dataset_import_draft.dart';
 import '../domain/reference_dataset.dart';
-import '../domain/reference_row.dart';
-import 'dataset_csv_import.dart';
 
-/// Parses a spreadsheet via [WorkbookReader] into a draft [ReferenceDataset].
+/// Parses a spreadsheet into a [DatasetImportDraft] through the shared
+/// [WorkbookReader] and [HeaderDetection], never a second copy of either
+/// (FE-CONS-01, FE-STR-09).
 abstract final class DatasetXlsxImport {
-  /// Uses the same workbook parser for browser-selected spreadsheet bytes.
+  /// Reads browser-selected spreadsheet [bytes] the same way.
   static Future<Result<DatasetImportDraft>> parseBytes(
     Uint8List bytes, {
     required String sourceName,
     String? projectId,
+    String? name,
+    Clock clock = const SystemClock(),
     void Function(double)? onProgress,
     CancellationToken? cancel,
   }) async {
@@ -26,24 +31,25 @@ abstract final class DatasetXlsxImport {
       onProgress: onProgress,
       cancel: cancel,
     );
-    return switch (opened) {
-      FailureResult<WorkbookSnapshot>(:final Failure failure) =>
-        FailureResult<DatasetImportDraft>(failure),
-      Success<WorkbookSnapshot>(:final WorkbookSnapshot value) => _fromSnapshot(
-        value,
-        path: sourceName,
-        projectId: projectId,
-        sheetIndex: 0,
-      ),
-    };
+    return _draftOf(
+      opened,
+      sourceFile: sourceName,
+      projectId: projectId,
+      name: name,
+      importedAt: clock.nowUtc(),
+      sheetIndex: 0,
+      cancel: cancel,
+    );
   }
 
-  /// Opens [path] with the shared workbook reader (FE-CONS-01, FE-STR-09).
+  /// Opens [path] on a worker isolate, then builds the draft of sheet
+  /// [sheetIndex] on another, so neither step blocks the interface.
   static Future<Result<DatasetImportDraft>> parse(
     String path, {
     String? projectId,
     String? name,
     int sheetIndex = 0,
+    Clock clock = const SystemClock(),
     void Function(double)? onProgress,
     CancellationToken? cancel,
   }) async {
@@ -52,132 +58,106 @@ abstract final class DatasetXlsxImport {
       onProgress: onProgress,
       cancel: cancel,
     );
-    return switch (opened) {
-      FailureResult<WorkbookSnapshot>(:final Failure failure) =>
-        FailureResult<DatasetImportDraft>(failure),
-      Success<WorkbookSnapshot>(:final WorkbookSnapshot value) => _fromSnapshot(
-        value,
-        path: path,
-        projectId: projectId,
-        name: name,
-        sheetIndex: sheetIndex,
-      ),
-    };
+    return _draftOf(
+      opened,
+      sourceFile: path,
+      projectId: projectId,
+      name: name,
+      importedAt: clock.nowUtc(),
+      sheetIndex: sheetIndex,
+      cancel: cancel,
+    );
   }
 }
 
-Result<DatasetImportDraft> _fromSnapshot(
-  WorkbookSnapshot snapshot, {
-  required String path,
+/// What the worker isolate builds a draft from.
+typedef _SheetJob = ({
+  WorkbookSnapshot book,
+  int sheetIndex,
+  String sourceFile,
   String? projectId,
   String? name,
+  DateTime importedAt,
+});
+
+Future<Result<DatasetImportDraft>> _draftOf(
+  Result<WorkbookSnapshot> opened, {
+  required String sourceFile,
+  required String? projectId,
+  required String? name,
+  required DateTime importedAt,
   required int sheetIndex,
-}) {
-  if (snapshot.sheets.isEmpty) {
-    return const FailureResult<DatasetImportDraft>(
+  CancellationToken? cancel,
+}) async {
+  switch (opened) {
+    case FailureResult<WorkbookSnapshot>(:final Failure failure):
+      return FailureResult<DatasetImportDraft>(failure);
+    case Success<WorkbookSnapshot>(:final WorkbookSnapshot value):
+      final Result<Result<DatasetImportDraft>> built =
+          await runIsolate(_sheetDraft, (
+            book: value,
+            sheetIndex: sheetIndex,
+            sourceFile: sourceFile,
+            projectId: projectId,
+            name: name,
+            importedAt: importedAt,
+          ), cancel: cancel);
+      return built.fold(
+        FailureResult<DatasetImportDraft>.new,
+        (Result<DatasetImportDraft> draft) => draft,
+      );
+  }
+}
+
+Result<DatasetImportDraft> _sheetDraft(_SheetJob job) {
+  final List<WorkbookSheet> sheets = job.book.sheets;
+  if (sheets.isEmpty) {
+    return FailureResult<DatasetImportDraft>(
       ValidationFailure(
-        message: 'That workbook has no sheets.',
-        recoveryAction: 'Choose a workbook with a sheet of data.',
+        localizedMessage: Copy.messages.failureThatWorkbookHasNoSheets,
+        localizedRecovery: Copy.messages.failureChooseAWorkbookWithASheetOf,
       ),
     );
   }
-  final int index = sheetIndex < 0 || sheetIndex >= snapshot.sheets.length
-      ? 0
-      : sheetIndex;
-  final WorkbookSheet sheet = snapshot.sheets[index];
+  final WorkbookSheet sheet =
+      sheets[job.sheetIndex < 0 || job.sheetIndex >= sheets.length
+          ? 0
+          : job.sheetIndex];
   final HeaderGuess header = sheet.header.labels.isNotEmpty
       ? sheet.header
       : HeaderDetection.choose(sheet.rows);
   if (header.labels.isEmpty) {
-    return const FailureResult<DatasetImportDraft>(
+    return FailureResult<DatasetImportDraft>(
       ValidationFailure(
-        message: 'That sheet has no header row.',
-        recoveryAction: 'Add a header row and try again.',
+        localizedMessage: Copy.messages.failureThatSheetHasNoHeaderRow,
+        localizedRecovery: Copy.messages.failureAddAHeaderRowAndTryAgain,
       ),
     );
   }
-  final List<String> columns = <String>[];
-  for (int i = 0; i < header.labels.length; i++) {
-    columns.add(_unique(header.labels[i].trim(), i, columns));
-  }
-  final int dataStart = header.rowNumber; // 1-based
-  final List<Map<String, String>> rows = <Map<String, String>>[];
-  for (int r = dataStart; r < sheet.rows.length; r++) {
-    final List<String> line = sheet.rows[r];
-    if (line.every((String cell) => cell.trim().isEmpty)) {
-      continue;
-    }
-    rows.add(<String, String>{
-      for (int c = 0; c < columns.length; c++)
-        columns[c]: c < line.length ? line[c] : '',
-    });
-  }
-  final String keyGuess = columns.first;
-  final List<ReferenceRow> mapped = <ReferenceRow>[
-    for (final Map<String, String> row in rows)
-      ReferenceRow(
-        id: '',
-        datasetId: '',
-        key: row[keyGuess] ?? '',
-        values: row,
-      ),
+  final List<String> columns = DatasetDraft.uniqueColumns(header.labels);
+  final List<Map<String, String>> rows = <Map<String, String>>[
+    // The header's row number is 1-based, so it is the first data row's
+    // index.
+    for (final List<String> line in sheet.rows.skip(header.rowNumber))
+      if (line.any((String cell) => cell.trim().isNotEmpty))
+        <String, String>{
+          for (int column = 0; column < columns.length; column++)
+            columns[column]: column < line.length ? line[column] : '',
+        },
   ];
-  final Map<String, int> duplicateCounts = <String, int>{
-    for (final String column in columns) column: _dups(rows, column),
-  };
-  final Map<String, List<String>> samples = <String, List<String>>{
-    for (final String column in columns)
-      column: <String>[
-        for (final Map<String, String> row in rows.take(3)) row[column] ?? '',
-      ],
-  };
-  final String fileName = path.replaceAll('\\', '/').split('/').last;
-  return Success<DatasetImportDraft>((
-    dataset: ReferenceDataset(
-      id: '',
-      name: (name == null || name.isEmpty)
-          ? fileName.replaceAll(RegExp(r'\.[^.]+$'), '')
-          : name,
-      keyColumn: keyGuess,
-      columns: columns,
-      source: DatasetSource.xlsx,
-      importedAt: DateTime.now().toUtc(),
-      rowCount: mapped.length,
-      projectId: projectId,
-      sourceFile: path,
-    ),
-    rows: mapped,
-    duplicateCounts: duplicateCounts,
-    samples: samples,
-  ));
-}
-
-String _unique(String label, int index, List<String> headers) {
-  final String base = label.isEmpty ? 'column_${index + 1}' : label;
-  int suffix = 2;
-  String candidate = base;
-  final Set<String> earlier = <String>{
-    for (int i = 0; i < index; i++)
-      headers[i].trim().isEmpty ? 'column_${i + 1}' : headers[i].trim(),
-  };
-  while (earlier.contains(candidate)) {
-    candidate = '${base}_$suffix';
-    suffix++;
+  try {
+    return Success<DatasetImportDraft>(
+      DatasetDraft.build(
+        columns: columns,
+        rows: rows,
+        source: DatasetSource.xlsx,
+        sourceFile: job.sourceFile,
+        importedAt: job.importedAt,
+        projectId: job.projectId,
+        name: job.name,
+      ),
+    );
+  } on Failure catch (buildFailure) {
+    return FailureResult<DatasetImportDraft>(buildFailure);
   }
-  return candidate;
-}
-
-int _dups(List<Map<String, String>> rows, String column) {
-  final Map<String, int> counts = <String, int>{};
-  for (final Map<String, String> row in rows) {
-    final String value = row[column] ?? '';
-    counts[value] = (counts[value] ?? 0) + 1;
-  }
-  int dups = 0;
-  for (final int count in counts.values) {
-    if (count > 1) {
-      dups += count - 1;
-    }
-  }
-  return dups;
 }

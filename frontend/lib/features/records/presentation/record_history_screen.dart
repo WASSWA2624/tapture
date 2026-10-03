@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -43,6 +45,8 @@ class RecordHistoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<List<RecordHistoryEvent>> history = ref.watch(
       recordHistoryProvider(recordId),
     );
@@ -52,11 +56,14 @@ class RecordHistoryScreen extends ConsumerWidget {
     final RecordEntry? entry = record.value;
     final String subject = entry == null
         ? ''
-        : Copy.recordHistorySubject(number: entry.number, name: entry.name);
+        : localCopy.recordHistorySubject(
+            number: entry.number,
+            name: entry.name,
+          );
     final List<RecordHistoryEvent>? events = history.value;
     return AppPage(
       key: const ValueKey<String>('route-record-history'),
-      title: Copy.recordHistoryTitle,
+      title: localCopy.recordHistoryTitle,
       subtitle: subject.isEmpty ? null : subject,
       scrollable: false,
       body: !history.hasError && events != null && events.isNotEmpty
@@ -82,20 +89,30 @@ class RecordHistoryScreen extends ConsumerWidget {
   /// The empty panel: a record that is not on this device says so;
   /// otherwise the history is merely empty, and the next step is the record.
   Widget _empty(BuildContext context, AsyncValue<RecordEntry?> record) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (!record.hasError && record.hasValue && record.value == null) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: AppIcons.records,
-        headline: Copy.recordGoneHeadline,
-        message: Copy.recordGoneMessage,
+        headline: localCopy.recordGoneHeadline,
+        message: localCopy.recordGoneMessage,
+        actionLabel: localCopy.navRecords,
+        onAction: () => context.go(RoutePaths.records),
       );
     }
     final bool canGoBack = ModalRoute.of(context)?.canPop ?? false;
     return AppEmptyState(
       icon: AppIcons.history,
-      headline: Copy.recordHistoryEmptyHeadline,
-      message: Copy.recordHistoryEmptyMessage,
-      actionLabel: canGoBack ? Copy.recordHistoryBackToRecord : null,
-      onAction: canGoBack ? () => Navigator.of(context).maybePop() : null,
+      headline: localCopy.recordHistoryEmptyHeadline,
+      message: localCopy.recordHistoryEmptyMessage,
+      actionLabel: localCopy.recordHistoryBackToRecord,
+      onAction: () {
+        if (canGoBack) {
+          Navigator.of(context).pop();
+        } else {
+          context.go(RoutePaths.record(recordId));
+        }
+      },
     );
   }
 }
@@ -187,7 +204,7 @@ final class _HistoryNames {
 
   /// Template [id] in a line's detail: its name, a stand-in for a
   /// template not on this device, or blank when there was none.
-  String templateDetail(String id) {
+  String templateDetail(String id, {LocalizedCopy? localizedCopy}) {
     if (id.isEmpty) {
       return '';
     }
@@ -195,7 +212,9 @@ final class _HistoryNames {
     if (name.isNotEmpty) {
       return name;
     }
-    return _known.contains(id) ? id : Copy.recordHistoryTemplateGone;
+    return _known.contains(id)
+        ? id
+        : (localizedCopy ?? Copy.english).recordHistoryTemplateGone;
   }
 }
 
@@ -227,8 +246,9 @@ final class _HistoryLine {
   static _HistoryLine of(
     RecordHistoryEvent event,
     _HistoryNames names,
-    AppColors colors,
-  ) {
+    AppColors colors, {
+    LocalizedCopy? localizedCopy,
+  }) {
     final String previous = event.previous ?? '';
     final String next = event.next ?? '';
     final String key = event.fieldKey ?? '';
@@ -238,13 +258,13 @@ final class _HistoryLine {
         return _HistoryLine(
           icon: byHand ? AppIcons.draft : AppIcons.captured,
           sentence: byHand
-              ? Copy.recordHistoryCreatedByHand
-              : Copy.recordHistoryCaptured,
+              ? (localizedCopy ?? Copy.english).recordHistoryCreatedByHand
+              : (localizedCopy ?? Copy.english).recordHistoryCaptured,
         );
       case RecordHistoryKind.valueChanged:
         return _HistoryLine(
           icon: AppIcons.edit,
-          sentence: Copy.recordHistoryValue(
+          sentence: (localizedCopy ?? Copy.english).recordHistoryValue(
             names.field(key),
             previous: previous,
             next: next,
@@ -265,7 +285,7 @@ final class _HistoryLine {
             : StatusStyle.of(to, colors).$3;
         return _HistoryLine(
           icon: to == null ? AppIcons.review : StatusStyle.of(to, colors).$2,
-          sentence: Copy.recordHistoryStatus(
+          sentence: (localizedCopy ?? Copy.english).recordHistoryStatus(
             previous: fromLabel,
             next: toLabel,
           ),
@@ -275,20 +295,20 @@ final class _HistoryLine {
           reason: _wordsOf(event.reason),
         );
       case RecordHistoryKind.photoAdded:
-        return const _HistoryLine(
+        return _HistoryLine(
           icon: AppIcons.addPhoto,
-          sentence: Copy.recordHistoryPhotoAdded,
+          sentence: (localizedCopy ?? Copy.english).recordHistoryPhotoAdded,
         );
       case RecordHistoryKind.photoRemoved:
-        return const _HistoryLine(
+        return _HistoryLine(
           icon: AppIcons.remove,
-          sentence: Copy.recordHistoryPhotoRemoved,
+          sentence: (localizedCopy ?? Copy.english).recordHistoryPhotoRemoved,
         );
       case RecordHistoryKind.captionChanged:
         return _HistoryLine(
           icon: AppIcons.caption,
-          sentence: Copy.recordHistoryValue(
-            Copy.recordHistoryCaption,
+          sentence: (localizedCopy ?? Copy.english).recordHistoryValue(
+            (localizedCopy ?? Copy.english).recordHistoryCaption,
             previous: previous,
             next: next,
           ),
@@ -299,13 +319,13 @@ final class _HistoryLine {
       case RecordHistoryKind.templateChanged:
         return _HistoryLine(
           icon: AppIcons.template,
-          sentence: Copy.recordHistoryTemplate(
+          sentence: (localizedCopy ?? Copy.english).recordHistoryTemplate(
             previous: names.template(previous),
             next: names.template(next),
           ),
           values: true,
-          before: names.templateDetail(previous),
-          after: names.templateDetail(next),
+          before: names.templateDetail(previous, localizedCopy: localizedCopy),
+          after: names.templateDetail(next, localizedCopy: localizedCopy),
         );
       case RecordHistoryKind.processed:
         final Map<String, Object?> run = _jsonOf(event.reason);
@@ -313,14 +333,13 @@ final class _HistoryLine {
           final Object? attempts = run['attempts'];
           return _HistoryLine(
             icon: AppIcons.error,
-            sentence: Copy.recordHistoryProcessingFailed(
-              attempts is int ? attempts : 0,
-            ),
+            sentence: (localizedCopy ?? Copy.english)
+                .recordHistoryProcessingFailed(attempts is int ? attempts : 0),
           );
         }
         return _HistoryLine(
           icon: AppIcons.processing,
-          sentence: Copy.recordHistoryProcessed(
+          sentence: (localizedCopy ?? Copy.english).recordHistoryProcessed(
             provider: _textOf(run['provider']),
             model: _textOf(run['model']),
           ),
@@ -330,49 +349,54 @@ final class _HistoryLine {
         return _HistoryLine(
           icon: AppIcons.merge,
           sentence: next == _inserted
-              ? Copy.recordHistoryImported(package)
-              : Copy.recordHistoryMerged(package),
+              ? (localizedCopy ?? Copy.english).recordHistoryImported(package)
+              : (localizedCopy ?? Copy.english).recordHistoryMerged(package),
         );
       case RecordHistoryKind.exported:
         return _HistoryLine(
           icon: AppIcons.export,
-          sentence: Copy.recordHistoryExported(next),
+          sentence: (localizedCopy ?? Copy.english).recordHistoryExported(next),
         );
       case RecordHistoryKind.evidenceRemoved:
         final String label = names.field(key);
         return next == _no
             ? _HistoryLine(
                 icon: AppIcons.photoLibrary,
-                sentence: Copy.recordHistoryEvidenceRestored(label),
+                sentence: (localizedCopy ?? Copy.english)
+                    .recordHistoryEvidenceRestored(label),
               )
             : _HistoryLine(
                 icon: AppIcons.brokenFile,
-                sentence: Copy.recordHistoryEvidenceRemoved(label),
+                sentence: (localizedCopy ?? Copy.english)
+                    .recordHistoryEvidenceRemoved(label),
               );
       case RecordHistoryKind.retired:
         final String label = names.field(key);
         return next == _no
             ? _HistoryLine(
                 icon: AppIcons.unarchive,
-                sentence: Copy.recordHistoryMappedAgain(label),
+                sentence: (localizedCopy ?? Copy.english)
+                    .recordHistoryMappedAgain(label),
               )
             : _HistoryLine(
                 icon: AppIcons.archive,
-                sentence: Copy.recordHistoryRetired(label),
+                sentence: (localizedCopy ?? Copy.english).recordHistoryRetired(
+                  label,
+                ),
               );
       case RecordHistoryKind.other:
         return switch (key) {
-          _templateRowKey => const _HistoryLine(
+          _templateRowKey => _HistoryLine(
             icon: AppIcons.checklist,
-            sentence: Copy.recordHistoryRowMatched,
+            sentence: (localizedCopy ?? Copy.english).recordHistoryRowMatched,
           ),
-          _evidenceMissingKey => const _HistoryLine(
+          _evidenceMissingKey => _HistoryLine(
             icon: AppIcons.brokenFile,
-            sentence: Copy.recordHistoryFileMissing,
+            sentence: (localizedCopy ?? Copy.english).recordHistoryFileMissing,
           ),
-          _ => const _HistoryLine(
+          _ => _HistoryLine(
             icon: AppIcons.history,
-            sentence: Copy.recordHistoryOther,
+            sentence: (localizedCopy ?? Copy.english).recordHistoryOther,
           ),
         };
     }
@@ -421,11 +445,13 @@ class _Chronology extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: Space.x4),
       itemCount: slots.length,
       itemBuilder: (BuildContext context, int index) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         return ContentConstraint(
           child: switch (slots[index]) {
             _DaySlot(:final DateTime day) => AppSectionHeader(
               key: ValueKey<String>('record-history-day-${_dayKey(day)}'),
-              title: Copy.recordHistoryDay(day),
+              title: localCopy.recordHistoryDay(day),
               dense: true,
             ),
             _EventSlot(:final RecordHistoryEvent event) => _HistoryRow(
@@ -455,13 +481,20 @@ class _HistoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
-    final _HistoryLine line = _HistoryLine.of(event, names, colors);
+    final _HistoryLine line = _HistoryLine.of(
+      event,
+      names,
+      colors,
+      localizedCopy: Copy.of(context),
+    );
     return AppListTile(
       key: ValueKey<String>('record-history-${event.id}'),
       leading: Icon(line.icon, color: colors.onSurface),
       title: line.sentence,
-      subtitle: Copy.recordHistoryByline(
+      subtitle: localCopy.recordHistoryByline(
         at: event.at.toLocal(),
         operator: event.operator,
         device: event.device,
@@ -469,7 +502,7 @@ class _HistoryRow extends StatelessWidget {
       onTap: () => unawaited(
         showAppSheet<void>(
           context,
-          title: Copy.recordHistoryLineTitle,
+          title: Copy.of(context).recordHistoryLineTitle,
           contentSized: true,
           builder: (BuildContext _) => _HistoryDetail(event: event, line: line),
         ),
@@ -488,6 +521,8 @@ class _HistoryDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final String? reason = line.reason;
     return SingleChildScrollView(
@@ -508,36 +543,36 @@ class _HistoryDetail extends StatelessWidget {
           ),
           if (line.values) ...<Widget>[
             _DetailLine(
-              label: Copy.recordHistoryBefore,
+              label: localCopy.recordHistoryBefore,
               value: line.before.isEmpty
-                  ? Copy.recordHistoryEmptyValue
+                  ? localCopy.recordHistoryEmptyValue
                   : line.before,
             ),
             _DetailLine(
-              label: Copy.recordHistoryAfter,
+              label: localCopy.recordHistoryAfter,
               value: line.after.isEmpty
-                  ? Copy.recordHistoryEmptyValue
+                  ? localCopy.recordHistoryEmptyValue
                   : line.after,
             ),
           ],
           _DetailLine(
-            label: Copy.recordHistoryWhen,
-            value: Copy.recordHistoryAt(event.at.toLocal()),
+            label: localCopy.recordHistoryWhen,
+            value: localCopy.recordHistoryAt(event.at.toLocal()),
           ),
           _DetailLine(
-            label: Copy.recordHistoryOperator,
+            label: localCopy.recordHistoryOperator,
             value: event.operator.isEmpty
-                ? Copy.recordHistoryNotRecorded
+                ? localCopy.recordHistoryNotRecorded
                 : event.operator,
           ),
           _DetailLine(
-            label: Copy.recordHistoryDevice,
+            label: localCopy.recordHistoryDevice,
             value: event.device.isEmpty
-                ? Copy.recordHistoryNotRecorded
+                ? localCopy.recordHistoryNotRecorded
                 : event.device,
           ),
           if (reason != null)
-            _DetailLine(label: Copy.recordHistoryReason, value: reason),
+            _DetailLine(label: localCopy.recordHistoryReason, value: reason),
         ],
       ),
     );

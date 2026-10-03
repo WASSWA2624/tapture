@@ -8,6 +8,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -16,6 +17,7 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 
@@ -23,7 +25,10 @@ import '../domain/template_def.dart';
 import '../templates.dart' show templateRepositoryProvider;
 import 'template_duplicate_action.dart';
 import 'template_list_filter.dart';
+import 'template_list_query.dart';
 import 'template_locations.dart';
+
+export 'template_list_query.dart';
 
 /// A project's templates, each row showing field and record counts.
 class TemplateListScreen extends ConsumerWidget {
@@ -35,13 +40,17 @@ class TemplateListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<List<TemplateDef>> value = ref.watch(templateListProvider);
     final Map<String, int> recordCounts = ref.watch(
       templateRecordCountsProvider,
     );
     return AppPage(
       key: const ValueKey<String>('route-templates'),
-      title: projectId == null ? Copy.navTemplates : Copy.projectTemplatesTitle,
+      title: projectId == null
+          ? localCopy.navTemplates
+          : localCopy.projectTemplatesTitle,
       showAppBar: false,
       inset: false,
       scrollable: false,
@@ -51,15 +60,15 @@ class TemplateListScreen extends ConsumerWidget {
               children: <Widget>[
                 AppButton(
                   label: (value.asData?.value.isEmpty ?? true)
-                      ? Copy.templatesAddChoices
-                      : Copy.templatesAddMore,
+                      ? localCopy.templatesAddChoices
+                      : localCopy.templatesAddMore,
                   variant: AppButtonVariant.secondary,
                   expand: true,
                   onPressed: () => unawaited(_addTemplates(context)),
                 ),
                 const SizedBox(height: Space.x2),
                 AppPrimaryAction(
-                  label: Copy.templatesCreate,
+                  label: localCopy.templatesCreate,
                   onPressed: () => context.go(
                     TemplateLocations.create(context, projectId: projectId),
                   ),
@@ -72,6 +81,8 @@ class TemplateListScreen extends ConsumerWidget {
         isEmpty: (List<TemplateDef> _) => false,
         onRetry: () => ref.invalidate(templateListProvider),
         data: (List<TemplateDef> rows) {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           final String query = ref.watch(templateListQueryProvider);
           final Set<String> kinds = ref.watch(templateListFilterProvider);
           final String needle = query.trim().toLowerCase();
@@ -82,60 +93,57 @@ class TemplateListScreen extends ConsumerWidget {
                   TemplateListFilter.matches(template, kinds))
                 template,
           ];
-          return Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  Space.x4,
-                  Space.x1,
-                  Space.x4,
-                  Space.x2,
-                ),
-                child: AppSearchField(
-                  hint: Copy.search,
-                  text: query,
-                  onChanged: (String text) {
-                    ref.read(templateListQueryProvider.notifier).set(text);
-                  },
-                  onFilter: () =>
-                      unawaited(showTemplateListFilters(context, ref, rows)),
-                  activeFilterCount: kinds.length,
-                ),
+          return AppListViewport(
+            header: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Space.x4,
+                Space.x1,
+                Space.x4,
+                Space.x2,
               ),
-              Expanded(
-                child: visible.isEmpty
-                    ? (rows.isEmpty
-                          ? _empty()
-                          : AppEmptyState(
-                              icon: AppIcons.searchEmpty,
-                              headline: Copy.templatesNoMatch,
-                              message: kinds.isEmpty
-                                  ? Copy.searchNoMatchMessage
-                                  : Copy.searchFilterNoMatchMessage,
-                            ))
-                    : ListView(
-                        children: <Widget>[
-                          for (final TemplateDef template in visible)
-                            AppListTile(
-                              title: template.name,
-                              subtitle: Copy.templateListSubtitle(
-                                fields: template.fields.length,
-                                records: recordCounts[template.id] ?? 0,
-                              ),
-                              trailing: AppOverflowMenu(
-                                items: _actions(
-                                  context,
-                                  ref,
-                                  template,
-                                  recordCounts[template.id] ?? 0,
-                                ),
-                              ),
-                              onTap: () => _open(context, template.id),
-                            ),
-                        ],
-                      ),
+              child: AppSearchField(
+                hint: localCopy.search,
+                text: query,
+                onChanged: (String text) {
+                  ref.read(templateListQueryProvider.notifier).set(text);
+                },
+                onFilter: () =>
+                    unawaited(showTemplateListFilters(context, ref, rows)),
+                activeFilterCount: kinds.length,
               ),
-            ],
+            ),
+            body: visible.isEmpty
+                ? (rows.isEmpty
+                      ? _empty(localizedCopy: Copy.of(context))
+                      : AppEmptyState(
+                          icon: AppIcons.searchEmpty,
+                          headline: localCopy.templatesNoMatch,
+                          message: kinds.isEmpty
+                              ? localCopy.searchNoMatchMessage
+                              : localCopy.searchFilterNoMatchMessage,
+                        ))
+                : ListView.builder(
+                    itemCount: visible.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final TemplateDef template = visible[index];
+                      return AppListTile(
+                        title: template.name,
+                        subtitle: localCopy.templateListSubtitle(
+                          fields: template.fields.length,
+                          records: recordCounts[template.id] ?? 0,
+                        ),
+                        trailing: AppOverflowMenu(
+                          items: _actions(
+                            context,
+                            ref,
+                            template,
+                            recordCounts[template.id] ?? 0,
+                          ),
+                        ),
+                        onTap: () => _open(context, template.id),
+                      );
+                    },
+                  ),
           );
         },
       ),
@@ -148,36 +156,38 @@ class TemplateListScreen extends ConsumerWidget {
     TemplateDef template,
     int recordCount,
   ) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return <AppOverflowAction>[
       AppOverflowAction(
-        label: Copy.templatesEdit,
+        label: localCopy.templatesEdit,
         icon: AppIcons.edit,
         onTap: () => unawaited(_rename(context, ref, template)),
       ),
       AppOverflowAction(
-        label: Copy.templatesOpen,
+        label: localCopy.templatesOpen,
         icon: AppIcons.template,
         onTap: () => _open(context, template.id),
       ),
       AppOverflowAction(
-        label: Copy.projectsDuplicate,
+        label: localCopy.projectsDuplicate,
         icon: AppIcons.duplicate,
         onTap: () => unawaited(_duplicate(context, ref, template)),
       ),
       AppOverflowAction(
-        label: Copy.templatesExport,
+        label: localCopy.templatesExport,
         icon: AppIcons.export,
         onTap: () =>
             context.go(TemplateLocations.child(context, template.id, 'export')),
       ),
       AppOverflowAction(
-        label: Copy.templatesImport,
+        label: localCopy.templatesImport,
         icon: AppIcons.import,
         onTap: () => context.go(TemplateLocations.import(context)),
       ),
       if (recordCount == 0)
         AppOverflowAction(
-          label: Copy.templatesDelete,
+          label: localCopy.templatesDelete,
           icon: AppIcons.delete,
           onTap: () => unawaited(_delete(context, ref, template, recordCount)),
         ),
@@ -187,11 +197,11 @@ class TemplateListScreen extends ConsumerWidget {
 
 /// The empty list names the next step; the footer's add action offers it
 /// (FE-SIMP-11), so the page has one add button, not two.
-Widget _empty() {
-  return const AppEmptyState(
+Widget _empty({LocalizedCopy? localizedCopy}) {
+  return AppEmptyState(
     icon: AppIcons.template,
-    headline: Copy.templatesEmptyHeadline,
-    message: Copy.templatesAddEmptyMessage,
+    headline: (localizedCopy ?? Copy.english).templatesEmptyHeadline,
+    message: (localizedCopy ?? Copy.english).templatesAddEmptyMessage,
   );
 }
 
@@ -200,7 +210,11 @@ Future<void> _duplicate(
   WidgetRef ref,
   TemplateDef template,
 ) async {
-  final TemplateDef? copy = await TemplateDuplicateAction.apply(ref, template);
+  final TemplateDef? copy = await TemplateDuplicateAction.apply(
+    ref,
+    template,
+    localizedCopy: Copy.of(context),
+  );
   if (copy == null || !context.mounted) {
     return;
   }
@@ -213,14 +227,16 @@ Future<void> _delete(
   TemplateDef template,
   int recordCount,
 ) async {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final bool confirmed = await showAppConfirm(
     context,
-    title: Copy.templatesDeleteTitle(template.name),
-    message: Copy.templatesDeleteMessage(
+    title: localCopy.templatesDeleteTitle(template.name),
+    message: localCopy.templatesDeleteMessage(
       fields: template.fields.length,
       records: recordCount,
     ),
-    confirmLabel: Copy.templatesDelete,
+    confirmLabel: localCopy.templatesDelete,
     destructive: true,
   );
   if (!confirmed || !context.mounted) {
@@ -274,33 +290,28 @@ final NotifierProvider<TemplateListQuery, String> templateListQueryProvider =
       retry: (int _, Object _) => null,
     );
 
-/// Holds the template-list search text.
-final class TemplateListQuery extends Notifier<String> {
-  @override
-  String build() => '';
-
-  /// Replaces the query.
-  void set(String value) => state = value;
-}
-
 Future<void> _addTemplates(BuildContext context) async {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   await showAppSheet<void>(
     context,
-    title: Copy.templatesAddChoices,
+    title: localCopy.templatesAddChoices,
     contentSized: true,
     builder: (BuildContext sheetContext) {
+      final LocalizedCopy localCopy = Copy.of(sheetContext);
+
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           AppListTile(
-            title: Copy.templatesUpload,
+            title: localCopy.templatesUpload,
             onTap: () {
               Navigator.of(sheetContext).pop();
               context.go(TemplateLocations.import(context));
             },
           ),
           AppListTile(
-            title: Copy.templatesUseExisting,
+            title: localCopy.templatesUseExisting,
             onTap: () {
               Navigator.of(sheetContext).pop();
               context.go(TemplateLocations.library(context));
@@ -317,9 +328,11 @@ Future<void> _rename(
   WidgetRef ref,
   TemplateDef template,
 ) async {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final String? name = await showAppSheet<String>(
     context,
-    title: Copy.templatesEdit,
+    title: localCopy.templatesEdit,
     contentSized: true,
     builder: (BuildContext sheetContext) {
       return _RenameTemplate(initial: template.name);
@@ -342,7 +355,7 @@ class _RenameTemplate extends StatefulWidget {
   State<_RenameTemplate> createState() => _RenameTemplateState();
 }
 
-class _RenameTemplateState extends State<_RenameTemplate> {
+class _RenameTemplateState extends State<_RenameTemplate> with StateRefresh {
   late final TextEditingController _name = TextEditingController(
     text: widget.initial,
   );
@@ -356,17 +369,19 @@ class _RenameTemplateState extends State<_RenameTemplate> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        AppTextField(label: Copy.projectName, controller: _name),
+        AppTextField(label: localCopy.projectName, controller: _name),
         if (_error != null) Text(_error!),
         AppButton(
-          label: Copy.save,
+          label: localCopy.save,
           onPressed: () {
             final String trimmed = _name.text.trim();
             if (trimmed.isEmpty) {
-              setState(() => _error = Copy.nameRequired);
+              refresh(() => _error = Copy.of(context).nameRequired);
               return;
             }
             Navigator.of(context).pop(trimmed);

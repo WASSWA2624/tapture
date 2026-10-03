@@ -38,13 +38,15 @@ final class RecordsFilterSheet extends ConsumerWidget {
   /// Opens [projectId]'s records filters in the one filter sheet, with its
   /// Clear filters action turning every filter off (FBK0000003).
   static Future<void> show(BuildContext context, {required String projectId}) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final ProviderContainer container = ProviderScope.containerOf(
       context,
       listen: false,
     );
     return showAppFilterSheet(
       context,
-      title: Copy.recordsFiltersTitle,
+      title: localCopy.recordsFiltersTitle,
       onClear: container
           .read(recordsListControllerProvider(projectId).notifier)
           .clearFilters,
@@ -61,11 +63,11 @@ final class RecordsFilterSheet extends ConsumerWidget {
       value: facets,
       onRetry: () => ref.invalidate(recordsFacetsProvider(projectId)),
       isEmpty: (RecordFacets loaded) => loaded.isEmpty,
-      empty: () => const AppEmptyState(
-        key: ValueKey<String>('records-filters-empty'),
+      empty: () => AppEmptyState(
+        key: const ValueKey<String>('records-filters-empty'),
         icon: AppIcons.filter,
-        headline: Copy.recordsFiltersEmptyHeadline,
-        message: Copy.recordsFiltersEmptyMessage,
+        headline: Copy.of(context).recordsFiltersEmptyHeadline,
+        message: Copy.of(context).recordsFiltersEmptyMessage,
       ),
       data: (RecordFacets loaded) {
         return _Facets(projectId: projectId, facets: loaded);
@@ -75,14 +77,20 @@ final class RecordsFilterSheet extends ConsumerWidget {
 }
 
 /// What a quality flag is called in the filters and on its chip.
-String recordFlagLabel(RecordFlag flag) {
+String recordFlagLabel(RecordFlag flag, {LocalizedCopy? localizedCopy}) {
   return switch (flag) {
-    RecordFlag.hasPhotos => Copy.recordsFlagHasPhotos,
-    RecordFlag.hasDuplicate => Copy.recordsFlagHasDuplicate,
-    RecordFlag.hasConflict => Copy.recordsFlagHasConflict,
-    RecordFlag.hasVariance => Copy.recordsFlagHasVariance,
-    RecordFlag.evidenceRemoved => Copy.recordsFlagEvidenceRemoved,
-    RecordFlag.mergedFromBundle => Copy.recordsFlagMerged,
+    RecordFlag.hasPhotos =>
+      (localizedCopy ?? Copy.english).recordsFlagHasPhotos,
+    RecordFlag.hasDuplicate =>
+      (localizedCopy ?? Copy.english).recordsFlagHasDuplicate,
+    RecordFlag.hasConflict =>
+      (localizedCopy ?? Copy.english).recordsFlagHasConflict,
+    RecordFlag.hasVariance =>
+      (localizedCopy ?? Copy.english).recordsFlagHasVariance,
+    RecordFlag.evidenceRemoved =>
+      (localizedCopy ?? Copy.english).recordsFlagEvidenceRemoved,
+    RecordFlag.mergedFromBundle =>
+      (localizedCopy ?? Copy.english).recordsFlagMerged,
   };
 }
 
@@ -103,6 +111,8 @@ class _Facets extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordFilter filter = ref
         .watch(recordsListControllerProvider(projectId))
         .filter;
@@ -127,7 +137,7 @@ class _Facets extends ConsumerWidget {
       if (statuses.isNotEmpty)
         AppMultiChoiceField<RecordStatus>(
           key: const ValueKey<String>('records-filter-status'),
-          label: Copy.recordsFilterStatus,
+          label: localCopy.recordsFilterStatus,
           options: <Choice<RecordStatus>>[
             for (final RecordStatus status in statuses)
               Choice<RecordStatus>(status, StatusStyle.of(status, colors).$3),
@@ -139,13 +149,13 @@ class _Facets extends ConsumerWidget {
       if (facets.templates.isNotEmpty)
         AppMultiChoiceField<String>(
           key: const ValueKey<String>('records-filter-template'),
-          label: Copy.recordsFilterTemplate,
+          label: localCopy.recordsFilterTemplate,
           options: <Choice<String>>[
             for (final ({String id, String name}) template in facets.templates)
               Choice<String>(
                 template.id,
                 template.name.trim().isEmpty
-                    ? Copy.recordsTemplateUnnamed
+                    ? localCopy.recordsTemplateUnnamed
                     : template.name,
               ),
           ],
@@ -173,7 +183,7 @@ class _Facets extends ConsumerWidget {
           ),
       AppDateField(
         key: const ValueKey<String>('records-filter-from'),
-        label: Copy.recordsFilterFrom,
+        label: localCopy.recordsFilterFrom,
         value: from,
         clock: clock,
         onChanged: (DateTime? picked) => apply(
@@ -184,7 +194,7 @@ class _Facets extends ConsumerWidget {
       ),
       AppDateField(
         key: const ValueKey<String>('records-filter-to'),
-        label: Copy.recordsFilterTo,
+        label: localCopy.recordsFilterTo,
         value: to,
         clock: clock,
         onChanged: (DateTime? picked) => apply(
@@ -196,7 +206,7 @@ class _Facets extends ConsumerWidget {
       if (facets.operators.isNotEmpty)
         AppMultiChoiceField<String>(
           key: const ValueKey<String>('records-filter-operator'),
-          label: Copy.recordsFilterOperator,
+          label: localCopy.recordsFilterOperator,
           options: <Choice<String>>[
             for (final ({String id, String label}) operator in facets.operators)
               Choice<String>(
@@ -212,7 +222,7 @@ class _Facets extends ConsumerWidget {
       if (facets.conditions.isNotEmpty)
         AppMultiChoiceField<String>(
           key: const ValueKey<String>('records-filter-condition'),
-          label: Copy.recordsFilterCondition,
+          label: localCopy.recordsFilterCondition,
           options: <Choice<String>>[
             for (final String code in facets.conditions)
               Choice<String>(code, code),
@@ -224,10 +234,13 @@ class _Facets extends ConsumerWidget {
         ),
       AppMultiChoiceField<RecordFlag>(
         key: const ValueKey<String>('records-filter-flags'),
-        label: Copy.recordsFilterFlags,
+        label: localCopy.recordsFilterFlags,
         options: <Choice<RecordFlag>>[
           for (final RecordFlag flag in _filterFlags)
-            Choice<RecordFlag>(flag, recordFlagLabel(flag)),
+            Choice<RecordFlag>(
+              flag,
+              recordFlagLabel(flag, localizedCopy: Copy.of(context)),
+            ),
         ],
         value: filter.flags,
         onChanged: (Set<RecordFlag> next) =>

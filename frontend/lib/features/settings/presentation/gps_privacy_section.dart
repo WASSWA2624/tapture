@@ -54,27 +54,29 @@ final class GpsPrivacySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         AppSwitchTile(
           key: const ValueKey<String>('gps-capture'),
-          title: Copy.gpsPrivacyCapture,
+          title: localCopy.gpsPrivacyCapture,
           value: gpsOn,
           onChanged: (bool value) => onGps?.call(value),
         ),
         AppSwitchTile(
           key: const ValueKey<String>('gps-exclude'),
-          title: Copy.gpsPrivacyExclude,
+          title: localCopy.gpsPrivacyExclude,
           value: excludeCoordinates,
           onChanged: (bool value) => onExclude?.call(value),
         ),
         AppButton(
           key: const ValueKey<String>('gps-remove'),
-          label: Copy.gpsPrivacyRemove,
-          onPressed: () => unawaited(_remove()),
+          label: localCopy.gpsPrivacyRemove,
+          onPressed: onRemove == null ? null : () => unawaited(_remove()),
         ),
-        if (removed != null) Text(Copy.gpsPrivacyRemoved(removed!)),
+        if (removed != null) Text(localCopy.gpsPrivacyRemoved(removed!)),
       ],
     );
   }

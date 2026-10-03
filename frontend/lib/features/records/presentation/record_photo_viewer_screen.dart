@@ -77,24 +77,28 @@ class _RecordPhotoViewerScreenState extends State<RecordPhotoViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<RecordPhoto> photos = widget.photos;
     if (photos.isEmpty) {
-      return const AppPage(
-        key: ValueKey<String>('route-record-photo'),
-        title: Copy.missingPhoto,
+      return AppPage(
+        key: const ValueKey<String>('route-record-photo'),
+        title: localCopy.missingPhoto,
         body: AppEmptyState(
           icon: AppIcons.brokenFile,
-          headline: Copy.missingPhoto,
-          message: Copy.photoUnreadableRecovery,
+          headline: localCopy.missingPhoto,
+          message: localCopy.photoUnreadableRecovery,
         ),
       );
     }
     return ValueListenableBuilder<int>(
       valueListenable: _shown,
       builder: (BuildContext context, int shown, Widget? _) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         return AppPage(
           key: const ValueKey<String>('route-record-photo'),
-          title: Copy.recordPhotoPosition(shown + 1, photos.length),
+          title: localCopy.recordPhotoPosition(shown + 1, photos.length),
           scrollable: false,
           inset: false,
           body: LayoutBuilder(
@@ -109,9 +113,11 @@ class _RecordPhotoViewerScreenState extends State<RecordPhotoViewerScreen> {
                       itemCount: photos.length,
                       onPageChanged: (int index) => _shown.value = index,
                       itemBuilder: (BuildContext _, int index) {
+                        final LocalizedCopy localCopy = Copy.of(context);
+
                         return _PhotoPage(
                           photo: photos[index],
-                          label: Copy.recordPhotoPosition(
+                          label: localCopy.recordPhotoPosition(
                             index + 1,
                             photos.length,
                           ),
@@ -165,10 +171,12 @@ class _PhotoPage extends ConsumerWidget {
               gaplessPlayback: true,
               errorBuilder:
                   (BuildContext context, Object error, StackTrace? stack) {
-                    return const AppEmptyState(
+                    final LocalizedCopy localCopy = Copy.of(context);
+
+                    return AppEmptyState(
                       icon: AppIcons.brokenFile,
-                      headline: Copy.missingPhoto,
-                      message: Copy.photoUnreadable,
+                      headline: localCopy.missingPhoto,
+                      message: localCopy.photoUnreadable,
                     );
                   },
             ),
@@ -199,6 +207,8 @@ class _Caption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final double gutter = AppPage.gutter(context);
     return SafeArea(
@@ -209,12 +219,12 @@ class _Caption extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const AppSectionHeader(
-              title: Copy.captureRecordCaption,
+            AppSectionHeader(
+              title: localCopy.captureRecordCaption,
               dense: true,
             ),
             Text(
-              photo.hasCaption ? photo.caption : Copy.photoNoCaption,
+              photo.hasCaption ? photo.caption : localCopy.photoNoCaption,
               style: AppText.body.copyWith(color: colors.onSurface),
             ),
           ],

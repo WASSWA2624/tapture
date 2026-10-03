@@ -32,6 +32,8 @@ abstract final class RecordPhotosEditor {
     required String projectId,
     required String recordId,
   }) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Object? outcome = await GoRouter.of(
       context,
     ).push<Object?>(RoutePaths.projectRecordEdit(projectId, recordId));
@@ -41,9 +43,9 @@ abstract final class RecordPhotosEditor {
     }
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.recordPhotosProcessTitle,
-      message: Copy.recordPhotosProcessMessage(added),
-      confirmLabel: Copy.recordPhotosProcessConfirm,
+      title: localCopy.recordPhotosProcessTitle,
+      message: localCopy.recordPhotosProcessMessage(added),
+      confirmLabel: localCopy.recordPhotosProcessConfirm,
     );
     if (!confirmed || !context.mounted) {
       return;
@@ -74,6 +76,8 @@ Future<Result<String>> _queue(
   RecordPhotosEditorController controller,
   String recordId,
 ) async {
+  final LocalizedCopy localCopy = Copy.of(host);
+
   final Result<String> queued = await controller.processAgain(recordId);
   if (!host.mounted) {
     return queued;
@@ -82,7 +86,7 @@ Future<Result<String>> _queue(
     case Success<String>():
       showAppSnack(
         host,
-        Copy.recordPhotosProcessQueued,
+        localCopy.recordPhotosProcessQueued,
         tone: SnackTone.success,
       );
     case FailureResult<String>(:final Failure failure):
@@ -90,8 +94,9 @@ Future<Result<String>> _queue(
         host,
         failure.message,
         tone: SnackTone.error,
-        undoLabel: Copy.queueRetry,
+        undoLabel: localCopy.queueRetry,
         onUndo: () => unawaited(_queue(host, controller, recordId)),
+        localizedMessage: failure.explanation,
       );
   }
   return queued;

@@ -47,18 +47,20 @@ class _RecordsListScreenState extends ConsumerState<RecordsListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String? projectId =
         widget.projectId ?? ref.watch(currentProjectProvider);
     if (projectId == null) {
       return AppPage(
         key: const ValueKey<String>('route-records'),
-        title: Copy.navRecords,
+        title: localCopy.navRecords,
         body: AppEmptyState(
           key: const ValueKey<String>('records-no-project'),
           icon: AppIcons.project,
-          headline: Copy.recordsNoProjectHeadline,
-          message: Copy.recordsNoProjectMessage,
-          actionLabel: Copy.recordsOpenProject,
+          headline: localCopy.recordsNoProjectHeadline,
+          message: localCopy.recordsNoProjectMessage,
+          actionLabel: localCopy.recordsOpenProject,
           onAction: () => context.go(RoutePaths.projects),
         ),
       );
@@ -66,7 +68,7 @@ class _RecordsListScreenState extends ConsumerState<RecordsListScreen> {
     _narrowForVisit(projectId);
     return AppPage(
       key: const ValueKey<String>('route-records'),
-      title: Copy.navRecords,
+      title: localCopy.navRecords,
       scrollable: false,
       inset: false,
       body: RecordsListView(

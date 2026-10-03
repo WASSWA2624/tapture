@@ -31,53 +31,73 @@ class IdentityFieldsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
     final _IdentityView view = ref.watch(_identityFieldsProvider(templateId));
     return AppPage(
       key: const ValueKey<String>('route-template-identity'),
-      title: Copy.identityFieldsTitle,
+      title: localCopy.identityFieldsTitle,
       scrollable: false,
-      footer: value.asData?.value == null
+      footer: value.asData?.value?.fields.isNotEmpty != true
           ? null
           : AppPrimaryAction(
-              label: Copy.save,
+              label: localCopy.save,
               onPressed: () => _commit(context, ref),
             ),
       body: AsyncValueView<TemplateDef?>(
         value: value,
         isEmpty: (TemplateDef? row) => row == null || row.fields.isEmpty,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.identity,
-          headline: Copy.identityFieldsEmptyHeadline,
-          message: Copy.identityFieldsEmptyMessage,
+          headline: Copy.of(context).identityFieldsEmptyHeadline,
+          message: Copy.of(context).identityFieldsEmptyMessage,
+          actionLabel: value.asData?.value == null
+              ? Copy.of(context).navTemplates
+              : Copy.of(context).templatesAddField,
+          onAction: () => context.go(
+            value.asData?.value == null
+                ? TemplateLocations.root(context)
+                : TemplateLocations.child(context, templateId, 'fields/new'),
+          ),
         ),
         onRetry: () => ref.invalidate(templateListProvider),
-        data: (TemplateDef? row) => _list(ref, row!, view),
+        data: (TemplateDef? row) => _list(context, ref, row!, view),
       ),
     );
   }
 
-  Widget _list(WidgetRef ref, TemplateDef template, _IdentityView view) {
+  Widget _list(
+    BuildContext context,
+    WidgetRef ref,
+    TemplateDef template,
+    _IdentityView view,
+  ) {
     return ListView(
       padding: const EdgeInsets.only(bottom: Space.x4),
       children: <Widget>[
-        const AppBanner(
-          message: Copy.identityFieldsExplain,
+        AppBanner(
+          message: Copy.of(context).identityFieldsExplain,
           icon: AppIcons.info,
           tone: SnackTone.info,
         ),
-        if (view.saveError != null)
+        if (Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError) !=
+            null)
           AppBanner(
-            message: view.saveError!,
+            message: Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError)!,
             icon: AppIcons.error,
             tone: SnackTone.error,
           ),
         Padding(
           padding: const EdgeInsets.fromLTRB(Space.x4, Space.x2, Space.x4, 0),
           child: AppCheckboxGroup<String>(
-            label: Copy.identityFieldsTitle,
+            label: Copy.of(context).identityFieldsTitle,
             showLabel: false,
             value: view.selected,
             options: <Choice<String>>[
@@ -114,7 +134,12 @@ class IdentityFieldsScreen extends ConsumerWidget {
   }
 }
 
-typedef _IdentityView = ({Set<String> selected, String? saveError, bool dirty});
+typedef _IdentityView = ({
+  Set<String> selected,
+  String? saveError,
+  LocalizedMessage? localizedSaveError,
+  bool dirty,
+});
 
 final class _IdentityFields extends Notifier<_IdentityView> {
   _IdentityFields(this.templateId);
@@ -134,27 +159,43 @@ final class _IdentityFields extends Notifier<_IdentityView> {
     }
     for (final TemplateDef row in rows) {
       if (row.id == templateId) {
-        return (selected: _selectedOf(row), saveError: null, dirty: false);
+        return (
+          selected: _selectedOf(row),
+          saveError: null,
+          localizedSaveError: null,
+          dirty: false,
+        );
       }
     }
-    return (selected: <String>{}, saveError: null, dirty: false);
+    return (
+      selected: <String>{},
+      saveError: null,
+      localizedSaveError: null,
+      dirty: false,
+    );
   }
 
   void set(Set<String> selected) {
-    state = (selected: selected, saveError: null, dirty: true);
+    state = (
+      selected: selected,
+      saveError: null,
+      localizedSaveError: null,
+      dirty: true,
+    );
     _held = state;
   }
 
   Future<bool> commit() async {
     final TemplateDef? source = _source();
     if (source == null) {
-      const StorageFailure missing = StorageFailure(
-        message: 'That template is no longer on this device.',
-        recoveryAction: 'Open the template list and try again.',
+      final StorageFailure missing = StorageFailure(
+        localizedMessage: Copy.messages.failureThatTemplateIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureOpenTheTemplateListAndTryAgain,
       );
       state = (
         selected: state.selected,
         saveError: missing.message,
+        localizedSaveError: missing.explanation,
         dirty: state.dirty,
       );
       _held = state;
@@ -169,6 +210,7 @@ final class _IdentityFields extends Notifier<_IdentityView> {
         state = (
           selected: _selectedOf(result.value),
           saveError: null,
+          localizedSaveError: null,
           dirty: false,
         );
         return true;
@@ -176,6 +218,7 @@ final class _IdentityFields extends Notifier<_IdentityView> {
         state = (
           selected: state.selected,
           saveError: failure.message,
+          localizedSaveError: failure.explanation,
           dirty: true,
         );
         _held = state;

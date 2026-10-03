@@ -4,20 +4,27 @@ import 'dart:typed_data';
 
 import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_validation.dart';
 import 'package:tapture/core/files/picked_document.dart';
+import 'package:tapture/core/time/clock.dart';
 
+import '../domain/dataset_import_draft.dart';
 import 'dataset_csv_import.dart';
 import 'dataset_json_import.dart';
 import 'dataset_xlsx_import.dart';
 
-/// Routes chosen documents to the existing dataset readers on every platform.
+/// Routes a chosen document to the CSV, JSON or spreadsheet reader on every
+/// platform. Each reads and builds its draft off the UI thread.
 abstract final class DatasetImport {
-  /// Validates the selection before parsing and computing key summaries.
+  /// Validates the selection, then parses it into a draft named after the
+  /// file. [onProgress] hears the share read; [clock] stamps the import.
   static Future<Result<DatasetImportDraft>> read(
     PickedDocument document, {
     String? projectId,
+    Clock clock = const SystemClock(),
     CancellationToken? cancel,
     void Function(double)? onProgress,
   }) async {
@@ -25,23 +32,31 @@ abstract final class DatasetImport {
     if (!const <String>{'csv', 'json', 'xlsx'}.contains(extension) ||
         document.byteLength <= 0 ||
         document.byteLength > AppConstants.imports.spreadsheetMaxBytes) {
-      return const FailureResult<DatasetImportDraft>(
+      return FailureResult<DatasetImportDraft>(
         ValidationFailure(
-          message:
-              'Choose a CSV, JSON or XLSX table within the import size limit.',
-          recoveryAction:
-              'Choose another file or split this table into smaller files.',
+          localizedMessage: Copy.messages.failureChooseACSVJSONOrXLSXTable,
+          localizedRecovery:
+              Copy.messages.failureChooseAnotherFileOrSplitThisTable,
         ),
       );
     }
+    // The one import gate reads the header and size before any parser runs.
+    final Result<ImportKind> gate = await FileValidation().validateDocument(
+      document,
+      allowed: const <ImportKind>{ImportKind.spreadsheet},
+    );
+    if (gate case FailureResult<ImportKind>(:final Failure failure)) {
+      return FailureResult<DatasetImportDraft>(failure);
+    }
+    // Named like every reader names a dataset: without the extension.
+    final String name = document.name.replaceAll(_extension, '');
     if (document case PickedFile(:final File file)) {
-      // Named like the browser readers name a dataset: without the extension.
-      final String name = document.name.replaceAll(_extension, '');
       return switch (extension) {
         'xlsx' => DatasetXlsxImport.parse(
           file.path,
           projectId: projectId,
           name: name,
+          clock: clock,
           cancel: cancel,
           onProgress: onProgress,
         ),
@@ -49,6 +64,7 @@ abstract final class DatasetImport {
           file.path,
           projectId: projectId,
           name: name,
+          clock: clock,
           cancel: cancel,
           onProgress: onProgress,
         ),
@@ -56,6 +72,7 @@ abstract final class DatasetImport {
           file.path,
           projectId: projectId,
           name: name,
+          clock: clock,
           cancel: cancel,
           onProgress: onProgress,
         ),
@@ -67,6 +84,8 @@ abstract final class DatasetImport {
         bytes,
         sourceName: document.name,
         projectId: projectId,
+        name: name,
+        clock: clock,
         cancel: cancel,
         onProgress: onProgress,
       );
@@ -75,9 +94,11 @@ abstract final class DatasetImport {
       _parseText,
       (
         bytes: bytes,
-        name: document.name,
+        sourceFile: document.name,
+        name: name,
         projectId: projectId,
         json: extension == 'json',
+        importedAt: clock.nowUtc(),
       ),
       cancel: cancel,
       onProgress: onProgress,
@@ -90,26 +111,38 @@ abstract final class DatasetImport {
 }
 
 Result<DatasetImportDraft> _parseText(
-  ({Uint8List bytes, String name, String? projectId, bool json}) input,
+  ({
+    Uint8List bytes,
+    String sourceFile,
+    String name,
+    String? projectId,
+    bool json,
+    DateTime importedAt,
+  })
+  input,
 ) {
   try {
-    final String text = utf8.decode(input.bytes).replaceFirst('\uFEFF', '');
+    final String text = utf8.decode(input.bytes).replaceFirst('﻿', '');
     if (text.contains('\u0000')) {
-      return const FailureResult<DatasetImportDraft>(_unreadableText);
+      return FailureResult<DatasetImportDraft>(_unreadableText);
     }
     return input.json
         ? DatasetJsonImport.parseText(
             text,
-            sourceFile: input.name,
+            sourceFile: input.sourceFile,
             projectId: input.projectId,
+            name: input.name,
+            importedAt: input.importedAt,
           )
         : DatasetCsvImport.parseText(
             text,
-            sourceFile: input.name,
+            sourceFile: input.sourceFile,
             projectId: input.projectId,
+            name: input.name,
+            importedAt: input.importedAt,
           );
   } on FormatException {
-    return const FailureResult<DatasetImportDraft>(_unreadableText);
+    return FailureResult<DatasetImportDraft>(_unreadableText);
   }
 }
 
@@ -117,7 +150,7 @@ Result<DatasetImportDraft> _parseText(
 final RegExp _extension = RegExp(r'\.[^.]+$');
 
 /// Bytes that are not UTF-8 text, or that carry NUL characters.
-const ValidationFailure _unreadableText = ValidationFailure(
-  message: 'That table could not be read as text.',
-  recoveryAction: 'Save it as UTF-8 CSV or a JSON array and try again.',
+final ValidationFailure _unreadableText = ValidationFailure(
+  localizedMessage: Copy.messages.failureThatTableCouldNotBeReadAs,
+  localizedRecovery: Copy.messages.failureSaveItAsUTFCSVOrA,
 );

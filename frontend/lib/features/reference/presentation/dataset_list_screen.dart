@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
@@ -15,9 +14,10 @@ import 'package:tapture/features/projects/projects.dart';
 import '../domain/reference_dataset.dart';
 import '../reference.dart' show referenceRepositoryProvider;
 
-/// A project's reference datasets with import as the empty next action.
+/// A project's reference datasets: each with its row count, source and
+/// import date, and import as the way to add one (task 010 step 4).
 class DatasetListScreen extends ConsumerWidget {
-  /// Creates the list.
+  /// Creates the list for [projectId], or for the open project when null.
   const DatasetListScreen({super.key, this.projectId});
 
   /// Owning project when opened from a project route.
@@ -25,50 +25,69 @@ class DatasetListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String? id = projectId ?? ref.watch(currentProjectProvider);
-    final AsyncValue<List<ReferenceDataset>> value = id == null || id.isEmpty
-        ? const AsyncValue<List<ReferenceDataset>>.data(<ReferenceDataset>[])
-        : ref.watch(datasetListProvider(id));
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final String? id =
+        _present(projectId) ?? _present(ref.watch(currentProjectProvider));
+    if (id == null) {
+      return AppPage(
+        key: const ValueKey<String>('route-datasets'),
+        title: localCopy.navDatasets,
+        body: AppEmptyState(
+          icon: AppIcons.dataset,
+          headline: localCopy.datasetsNoProjectHeadline,
+          message: localCopy.datasetsNoProjectMessage,
+          actionLabel: localCopy.navProjects,
+          onAction: () => context.go(RoutePaths.projects),
+        ),
+      );
+    }
+    final AsyncValue<List<ReferenceDataset>> value = ref.watch(
+      datasetListProvider(id),
+    );
+    void import() => context.push(RoutePaths.projectDatasetImport(id));
     return AppPage(
       key: const ValueKey<String>('route-datasets'),
-      title: Copy.navDatasets,
-      showAppBar: false,
+      title: localCopy.navDatasets,
       inset: false,
       scrollable: false,
-      footer: value.hasValue
-          ? AppPrimaryAction(
-              label: Copy.datasetsImport,
-              onPressed: () => context.go(_importLocation(id ?? '')),
-            )
+      // The empty list offers import itself, so the footer only appears
+      // beside rows and the action is never shown twice.
+      footer: (value.asData?.value.isNotEmpty ?? false)
+          ? AppPrimaryAction(label: localCopy.datasetsImport, onPressed: import)
           : null,
       body: AsyncValueView<List<ReferenceDataset>>(
         value: value,
         isEmpty: (List<ReferenceDataset> rows) => rows.isEmpty,
-        empty: () => AppEmptyState(
-          icon: AppIcons.dataset,
-          headline: Copy.datasetsEmptyHeadline,
-          message: Copy.datasetsEmptyMessage,
-          actionLabel: Copy.datasetsImport,
-          onAction: () => context.go(_importLocation(id ?? '')),
+        empty: () => SingleChildScrollView(
+          child: AppEmptyState(
+            icon: AppIcons.dataset,
+            headline: Copy.of(context).datasetsEmptyHeadline,
+            message: Copy.of(context).datasetsEmptyMessage,
+            actionLabel: Copy.of(context).datasetsImport,
+            onAction: import,
+          ),
         ),
-        onRetry: id == null
-            ? null
-            : () => ref.invalidate(datasetListProvider(id)),
+        onRetry: () => ref.invalidate(datasetListProvider(id)),
         data: (List<ReferenceDataset> rows) {
           return ListView.builder(
+            key: const ValueKey<String>('dataset-list'),
             itemCount: rows.length,
             itemBuilder: (BuildContext context, int index) {
+              final LocalizedCopy localCopy = Copy.of(context);
+
               final ReferenceDataset dataset = rows[index];
               return AppListTile(
+                key: ValueKey<String>('dataset-${dataset.id}'),
                 title: dataset.name,
-                subtitle: Copy.datasetListSubtitle(
+                subtitle: localCopy.datasetListSubtitle(
                   rows: dataset.rowCount,
-                  source: Copy.datasetSourceLabel(dataset.source.name),
-                  importedAt: DateFormat.yMMMd().format(
-                    dataset.importedAt.toLocal(),
-                  ),
+                  source: localCopy.datasetSourceLabel(dataset.source.name),
+                  importedAt: dataset.importedAt,
                 ),
-                onTap: () => context.go(_browserLocation(id ?? '', dataset.id)),
+                trailing: const Icon(AppIcons.open),
+                onTap: () =>
+                    context.push(RoutePaths.projectDataset(id, dataset.id)),
               );
             },
           );
@@ -78,16 +97,10 @@ class DatasetListScreen extends ConsumerWidget {
   }
 }
 
-/// Live datasets for [projectId].
+/// Live datasets for [projectId]: its own and the global ones.
 final datasetListProvider = StreamProvider.autoDispose
     .family<List<ReferenceDataset>, String>((Ref ref, String projectId) {
       return ref.watch(referenceRepositoryProvider).watchByProject(projectId);
     }, retry: (int _, Object _) => null);
 
-String _importLocation(String projectId) {
-  return RoutePaths.projectDatasetImport(projectId);
-}
-
-String _browserLocation(String projectId, String datasetId) {
-  return RoutePaths.projectDataset(projectId, datasetId);
-}
+String? _present(String? id) => id == null || id.isEmpty ? null : id;

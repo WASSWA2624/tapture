@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/files/photo_path_builder.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -15,113 +14,138 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/setting_key.dart';
 import '../domain/setting_keys.dart';
 import '../settings.dart' show SettingsStore;
 import 'offline_switch.dart';
+import 'setting_choice.dart';
 
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
 
-/// Capture defaults: camera, dates, GPS, quality, folders and names.
+/// Capture defaults: camera, dates, location, quality, folders and names.
+///
+/// Every enumerated default shows all its choices through [SettingChoice];
+/// nothing cycles on tap. Each row says in one line what it changes.
 class CaptureSettingsScreen extends ConsumerWidget {
   /// Creates the capture defaults screen.
   const CaptureSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<_CaptureView> value = ref.watch(captureSettingsProvider);
     return AppPage(
-      title: Copy.navCapture,
+      title: localCopy.settingsCaptureTitle,
+      inset: false,
       body: AsyncValueView<_CaptureView>(
         value: value,
         isEmpty: (_CaptureView view) => view.missing,
         onRetry: () => ref.invalidate(captureSettingsProvider),
         empty: () {
-          return const AppEmptyState(
+          final LocalizedCopy localCopy = Copy.of(context);
+
+          return AppEmptyState(
             icon: AppIcons.camera,
-            headline: Copy.settingsCaptureEmptyHeadline,
-            message: Copy.settingsCaptureEmptyMessage,
+            headline: localCopy.settingsCaptureEmptyHeadline,
+            message: localCopy.settingsCaptureEmptyMessage,
+            actionLabel: localCopy.tryAgain,
+            onAction: () => ref.invalidate(captureSettingsProvider),
           );
         },
         data: (_CaptureView view) {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           final _CaptureSettings notifier = ref.read(
             captureSettingsProvider.notifier,
           );
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              AppListTile(
-                title: Copy.settingsCamera,
-                subtitle: Copy.settingsCameraSubtitle(
-                  _cameraLabel(view.cameraMode),
-                ),
-                onTap: () {
-                  unawaited(
-                    notifier.write(
-                      SettingKeys.cameraMode,
-                      _nextCamera(view.cameraMode),
-                    ),
-                  );
+              SettingChoice<String>(
+                key: const ValueKey<String>('capture-camera'),
+                label: localCopy.settingsCamera,
+                effect: localCopy.settingsCameraEffect,
+                value: view.cameraMode,
+                options: <Choice<String>>[
+                  Choice<String>('photo', localCopy.settingsCameraPhoto),
+                  Choice<String>('document', localCopy.settingsCameraDocument),
+                ],
+                onChanged: (String next) {
+                  unawaited(notifier.write(SettingKeys.cameraMode, next));
                 },
               ),
               AppSwitchTile(
-                title: Copy.settingsAutoFillDates,
-                description: Copy.settingsAutoFillDatesEffect,
+                title: localCopy.settingsAutoFillDates,
+                description: localCopy.settingsAutoFillDatesEffect,
                 value: view.autoFillDates,
                 onChanged: (bool value) {
                   unawaited(notifier.write(SettingKeys.autoFillDates, value));
                 },
               ),
+              // The one location switch (FE-SIMP-10). Privacy links here.
               AppSwitchTile(
-                title: Copy.settingsGps,
-                description: Copy.settingsGpsWhyOff,
+                key: const ValueKey<String>('capture-gps'),
+                title: localCopy.gpsPrivacyCapture,
+                description: localCopy.settingsGpsWhyOff,
                 value: view.gpsEnabled,
                 onChanged: (bool value) {
                   unawaited(notifier.write(SettingKeys.gpsEnabled, value));
                 },
               ),
-              AppListTile(
-                title: Copy.settingsPhotoQuality,
-                subtitle: Copy.settingsPhotoQualitySubtitle(
-                  _qualityLabel(view.photoQuality),
-                ),
-                onTap: () {
-                  unawaited(
-                    notifier.write(
-                      SettingKeys.photoQuality,
-                      _nextQuality(view.photoQuality),
+              SettingChoice<int>(
+                key: const ValueKey<String>('capture-quality'),
+                label: localCopy.settingsPhotoQuality,
+                effect: localCopy.settingsPhotoQualityEffect,
+                value: view.photoQuality,
+                options: <Choice<int>>[
+                  Choice<int>(
+                    AppConstants.images.quality,
+                    localCopy.settingsQualityStandard,
+                  ),
+                  Choice<int>(
+                    AppConstants.images.thumbnailQuality,
+                    localCopy.settingsQualitySmaller,
+                  ),
+                ],
+                onChanged: (int next) {
+                  unawaited(notifier.write(SettingKeys.photoQuality, next));
+                },
+              ),
+              SettingChoice<String>(
+                key: const ValueKey<String>('capture-folders'),
+                label: localCopy.settingsFolderStrategy,
+                effect: localCopy.settingsFolderStrategyNewFilesOnly,
+                value: view.folderStrategy,
+                options: <Choice<String>>[
+                  for (final PhotoFolderStrategy strategy
+                      in PhotoFolderStrategy.values)
+                    Choice<String>(
+                      strategy.name,
+                      _strategyLabel(strategy.name, localCopy),
                     ),
-                  );
+                ],
+                onChanged: (String next) {
+                  unawaited(notifier.write(SettingKeys.folderStrategy, next));
                 },
               ),
               AppListTile(
-                title: Copy.settingsFolderStrategy,
-                subtitle: Copy.settingsFolderStrategySubtitle(
-                  _strategyLabel(view.folderStrategy),
-                ),
-                onTap: () {
-                  unawaited(
-                    notifier.write(
-                      SettingKeys.folderStrategy,
-                      _nextStrategy(view.folderStrategy),
-                    ),
-                  );
-                },
-              ),
-              AppListTile(
-                title: Copy.settingsNamingPattern,
-                subtitle: Copy.settingsNamingSubtitle(view.namingPattern),
+                title: localCopy.settingsNamingPattern,
+                subtitle: localCopy.settingsNamingSubtitle(view.namingPattern),
+                trailing: const Icon(AppIcons.edit),
                 onTap: () {
                   unawaited(_editNaming(context, notifier, view.namingPattern));
                 },
               ),
-              const AppSectionHeader(title: Copy.contextHierarchyTitle),
+              AppSectionHeader(title: localCopy.contextHierarchyTitle),
               AppSwitchTile(
-                title: Copy.settingsContextAutoClear,
-                description: Copy.settingsContextAutoClearEffect,
+                title: localCopy.settingsContextAutoClear,
+                description: localCopy.settingsContextAutoClearEffect,
                 value: view.autoClear,
                 onChanged: (bool value) {
                   unawaited(
@@ -129,23 +153,27 @@ class CaptureSettingsScreen extends ConsumerWidget {
                   );
                 },
               ),
-              AppListTile(
-                title: Copy.settingsContextIdleSubtitle(view.idleSeconds ~/ 60),
-                onTap: () {
-                  unawaited(
-                    notifier.write(
-                      SettingKeys.contextAutoClearSeconds,
-                      _cycle(
-                        view.idleSeconds,
-                        AppConstants.context.idleChoices,
-                      ),
+              SettingChoice<int>(
+                key: const ValueKey<String>('capture-idle'),
+                label: localCopy.settingsContextIdle,
+                effect: localCopy.settingsContextIdleEffect,
+                value: view.idleSeconds,
+                options: <Choice<int>>[
+                  for (final int seconds in AppConstants.context.idleChoices)
+                    Choice<int>(
+                      seconds,
+                      localCopy.settingsContextIdleOption(seconds ~/ 60),
                     ),
+                ],
+                onChanged: (int next) {
+                  unawaited(
+                    notifier.write(SettingKeys.contextAutoClearSeconds, next),
                   );
                 },
               ),
               AppSwitchTile(
-                title: Copy.settingsContextMovement,
-                description: Copy.settingsContextMovementEffect,
+                title: localCopy.settingsContextMovement,
+                description: localCopy.settingsContextMovementEffect,
                 value: view.movementPrompt,
                 onChanged: (bool value) {
                   unawaited(
@@ -156,19 +184,21 @@ class CaptureSettingsScreen extends ConsumerWidget {
                   );
                 },
               ),
-              AppListTile(
-                title: Copy.settingsContextDistanceSubtitle(
-                  view.movementMetres,
-                ),
-                onTap: () {
-                  unawaited(
-                    notifier.write(
-                      SettingKeys.contextMovementMetres,
-                      _cycle(
-                        view.movementMetres,
-                        AppConstants.context.distanceChoices,
-                      ),
+              SettingChoice<int>(
+                key: const ValueKey<String>('capture-distance'),
+                label: localCopy.settingsContextDistance,
+                effect: localCopy.settingsContextDistanceEffect,
+                value: view.movementMetres,
+                options: <Choice<int>>[
+                  for (final int metres in AppConstants.context.distanceChoices)
+                    Choice<int>(
+                      metres,
+                      localCopy.settingsContextDistanceOption(metres),
                     ),
+                ],
+                onChanged: (int next) {
+                  unawaited(
+                    notifier.write(SettingKeys.contextMovementMetres, next),
                   );
                 },
               ),
@@ -305,84 +335,48 @@ Object _asError(Object error) {
   return Exception(error.toString());
 }
 
-String _cameraLabel(String mode) {
-  return switch (mode) {
-    'document' => Copy.settingsCameraDocument,
-    _ => Copy.settingsCameraPhoto,
-  };
-}
-
-String _nextCamera(String mode) {
-  return mode == 'document' ? 'photo' : 'document';
-}
-
 Future<void> _editNaming(
   BuildContext context,
   _CaptureSettings notifier,
   String current,
 ) async {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final TextEditingController controller = TextEditingController(text: current);
   await showAppSheet<void>(
     context,
-    title: Copy.settingsNamingEdit,
+    title: localCopy.settingsNamingEdit,
     builder: (BuildContext sheetContext) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
+      final LocalizedCopy localCopy = Copy.of(sheetContext);
+
+      return AppForm(
+        fields: <Widget>[
           AppTextField(
-            label: Copy.settingsNamingPattern,
+            label: localCopy.settingsNamingPattern,
+            helper: localCopy.settingsNamingPatternEffect,
             controller: controller,
             dictation: false,
           ),
-          AppButton(
-            label: Copy.save,
-            onPressed: () {
-              unawaited(
-                notifier.write(SettingKeys.namingPattern, controller.text),
-              );
-              Navigator.of(sheetContext).pop();
-            },
-          ),
         ],
+        submitLabel: localCopy.save,
+        onSubmit: () async {
+          await notifier.write(SettingKeys.namingPattern, controller.text);
+          if (sheetContext.mounted) {
+            Navigator.of(sheetContext).pop();
+          }
+          return true;
+        },
       );
     },
   );
   controller.dispose();
 }
 
-String _qualityLabel(int quality) {
-  if (quality == AppConstants.images.thumbnailQuality) {
-    return Copy.settingsQualitySmaller;
-  }
-  return Copy.settingsQualityStandard;
-}
-
-int _nextQuality(int quality) {
-  if (quality == AppConstants.images.quality) {
-    return AppConstants.images.thumbnailQuality;
-  }
-  return AppConstants.images.quality;
-}
-
-String _strategyLabel(String strategy) {
+String _strategyLabel(String strategy, LocalizedCopy copy) {
   return switch (strategy) {
-    'byTemplate' => Copy.settingsFolderByTemplate,
-    'byCaptureDate' => Copy.settingsFolderByDate,
-    'flat' => Copy.settingsFolderFlat,
-    _ => Copy.settingsFolderByContext,
+    'byTemplate' => copy.settingsFolderByTemplate,
+    'byCaptureDate' => copy.settingsFolderByDate,
+    'flat' => copy.settingsFolderFlat,
+    _ => copy.settingsFolderByContext,
   };
-}
-
-String _nextStrategy(String strategy) {
-  final List<String> names = PhotoFolderStrategy.values
-      .map((PhotoFolderStrategy value) => value.name)
-      .toList();
-  final int index = names.indexOf(strategy);
-  return names[(index + 1) % names.length];
-}
-
-int _cycle(int current, List<int> choices) {
-  final int index = choices.indexOf(current);
-  return choices[(index + 1) % choices.length];
 }

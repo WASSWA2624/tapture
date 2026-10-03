@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
@@ -81,6 +82,7 @@ final class RequirednessController extends Notifier<RequirednessView> {
       shippedHidden: state.shippedHidden,
       expandedGroups: next,
       saveError: state.saveError,
+      localizedSaveError: state.localizedSaveError,
       dirty: state.dirty,
     );
     _held = state;
@@ -90,9 +92,9 @@ final class RequirednessController extends Notifier<RequirednessView> {
   Future<TemplateVersion> commit() async {
     final TemplateDef? source = _source();
     if (source == null) {
-      const StorageFailure missing = StorageFailure(
-        message: 'That template is no longer on this device.',
-        recoveryAction: 'Open the template list and try again.',
+      final StorageFailure missing = StorageFailure(
+        localizedMessage: Copy.messages.failureThatTemplateIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureOpenTheTemplateListAndTryAgain,
       );
       state = (
         templateId: state.templateId,
@@ -101,6 +103,7 @@ final class RequirednessController extends Notifier<RequirednessView> {
         shippedHidden: state.shippedHidden,
         expandedGroups: state.expandedGroups,
         saveError: missing.message,
+        localizedSaveError: missing.explanation,
         dirty: state.dirty,
       );
       _held = state;
@@ -135,6 +138,7 @@ final class RequirednessController extends Notifier<RequirednessView> {
           shippedHidden: state.shippedHidden,
           expandedGroups: state.expandedGroups,
           saveError: failure.message,
+          localizedSaveError: failure.explanation,
           dirty: true,
         );
         _held = state;
@@ -150,6 +154,7 @@ final class RequirednessController extends Notifier<RequirednessView> {
       shippedHidden: state.shippedHidden,
       expandedGroups: state.expandedGroups,
       saveError: null,
+      localizedSaveError: null,
       dirty: true,
     );
     _held = state;
@@ -176,6 +181,7 @@ typedef RequirednessView = ({
   Map<String, bool> shippedHidden,
   Set<String> expandedGroups,
   String? saveError,
+  LocalizedMessage? localizedSaveError,
   bool dirty,
 });
 
@@ -200,6 +206,7 @@ RequirednessView _from(TemplateDef template) {
     },
     expandedGroups: const <String>{},
     saveError: null,
+    localizedSaveError: null,
     dirty: false,
   );
 }
@@ -212,6 +219,7 @@ RequirednessView _empty(String templateId) {
     shippedHidden: const <String, bool>{},
     expandedGroups: const <String>{},
     saveError: null,
+    localizedSaveError: null,
     dirty: false,
   );
 }

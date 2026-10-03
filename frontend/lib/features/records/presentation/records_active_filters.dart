@@ -33,6 +33,8 @@ final class RecordsActiveFilters extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordsListController controller = ref.read(
       recordsListControllerProvider(projectId).notifier,
     );
@@ -66,7 +68,9 @@ final class RecordsActiveFilters extends ConsumerWidget {
         for (final String id in _sorted(filter.templateIds))
           AppChip(
             key: ValueKey<String>('records-chip-template-$id'),
-            label: Copy.recordsChipTemplate(_templateName(facets, id)),
+            label: localCopy.recordsChipTemplate(
+              _templateName(facets, id, localizedCopy: Copy.of(context)),
+            ),
             onDismiss: () =>
                 apply((RecordFilter current) => current.withoutTemplate(id)),
           ),
@@ -74,7 +78,10 @@ final class RecordsActiveFilters extends ConsumerWidget {
           for (final String value in _sorted(filter.context[key]!))
             AppChip(
               key: ValueKey<String>('records-chip-context-$key-$value'),
-              label: Copy.recordsChipContext(_levelLabel(facets, key), value),
+              label: localCopy.recordsChipContext(
+                _levelLabel(facets, key),
+                value,
+              ),
               onDismiss: () => apply(
                 (RecordFilter current) =>
                     current.withoutContextValue(key, value),
@@ -83,7 +90,7 @@ final class RecordsActiveFilters extends ConsumerWidget {
         if (filter.hasCapturedRange)
           AppChip(
             key: const ValueKey<String>('records-chip-dates'),
-            label: Copy.recordsChipDates(
+            label: localCopy.recordsChipDates(
               from: filter.capturedFrom?.toLocal(),
               to: filter.capturedTo?.toLocal(),
               locale: locale,
@@ -94,14 +101,14 @@ final class RecordsActiveFilters extends ConsumerWidget {
         for (final String id in _sorted(filter.operators))
           AppChip(
             key: ValueKey<String>('records-chip-operator-$id'),
-            label: Copy.recordsChipOperator(_operatorLabel(facets, id)),
+            label: localCopy.recordsChipOperator(_operatorLabel(facets, id)),
             onDismiss: () =>
                 apply((RecordFilter current) => current.withoutOperator(id)),
           ),
         for (final String code in _sorted(filter.conditions))
           AppChip(
             key: ValueKey<String>('records-chip-condition-$code'),
-            label: Copy.recordsChipCondition(code),
+            label: localCopy.recordsChipCondition(code),
             onDismiss: () =>
                 apply((RecordFilter current) => current.withoutCondition(code)),
           ),
@@ -115,7 +122,7 @@ final class RecordsActiveFilters extends ConsumerWidget {
             ),
         AppChip(
           key: const ValueKey<String>('records-clear-filters'),
-          label: Copy.searchClearFilters,
+          label: localCopy.searchClearFilters,
           icon: AppIcons.clear,
           onTap: controller.clearFilters,
         ),
@@ -124,13 +131,17 @@ final class RecordsActiveFilters extends ConsumerWidget {
   }
 }
 
-String _templateName(RecordFacets facets, String id) {
+String _templateName(
+  RecordFacets facets,
+  String id, {
+  LocalizedCopy? localizedCopy,
+}) {
   for (final ({String id, String name}) template in facets.templates) {
     if (template.id == id && template.name.trim().isNotEmpty) {
       return template.name;
     }
   }
-  return Copy.recordsTemplateUnnamed;
+  return (localizedCopy ?? Copy.english).recordsTemplateUnnamed;
 }
 
 String _levelLabel(RecordFacets facets, String key) {

@@ -46,6 +46,8 @@ class RecordEditScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<RecordEntry?> record = ref.watch(
       recordEntryProvider(recordId),
     );
@@ -60,14 +62,15 @@ class RecordEditScreen extends ConsumerWidget {
           );
     return AppPage(
       key: const ValueKey<String>('route-record-values'),
-      title: Copy.recordValuesEditTitle,
+      title: localCopy.recordValuesEditTitle,
       subtitle: entry == null || entry.name.isEmpty ? null : entry.name,
       scrollable: false,
-      body: _body(ref, record, template),
+      body: _body(context, ref, record, template),
     );
   }
 
   Widget _body(
+    BuildContext context,
     WidgetRef ref,
     AsyncValue<RecordEntry?> record,
     AsyncValue<TemplateDef?> template,
@@ -104,18 +107,18 @@ class RecordEditScreen extends ConsumerWidget {
         loadingShape: SkeletonShape.detail,
         onRetry: () => ref.invalidate(recordEntryProvider(recordId)),
         isEmpty: (RecordEntry? loaded) => loaded == null,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.records,
-          headline: Copy.recordGoneHeadline,
-          message: Copy.recordGoneMessage,
+          headline: Copy.of(context).recordGoneHeadline,
+          message: Copy.of(context).recordGoneMessage,
         ),
         data: (RecordEntry? loaded) {
           final RecordEntry found = loaded!;
           if (found.isDeleted) {
-            return const AppEmptyState(
+            return AppEmptyState(
               icon: AppIcons.delete,
-              headline: Copy.recordEditDeletedHeadline,
-              message: Copy.recordEditDeletedMessage,
+              headline: Copy.of(context).recordEditDeletedHeadline,
+              message: Copy.of(context).recordEditDeletedMessage,
             );
           }
           return AsyncValueView<TemplateDef?>(
@@ -125,10 +128,10 @@ class RecordEditScreen extends ConsumerWidget {
                 ref.invalidate(recordEditTemplateProvider(found.templateId)),
             data: (TemplateDef? loadedTemplate) => AppEmptyState(
               icon: AppIcons.fields,
-              headline: Copy.recordEditNoFieldsHeadline,
+              headline: Copy.of(context).recordEditNoFieldsHeadline,
               message: loadedTemplate == null
-                  ? Copy.recordTemplateMissingNotice
-                  : Copy.recordEditNoFieldsMessage,
+                  ? Copy.of(context).recordTemplateMissingNotice
+                  : Copy.of(context).recordEditNoFieldsMessage,
             ),
           );
         },
@@ -156,6 +159,8 @@ class _RecordValuesForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Map<String, String> draft = ref.watch(
       recordFieldDraftProvider(record.id),
     );
@@ -166,21 +171,23 @@ class _RecordValuesForm extends ConsumerWidget {
     return AppForm(
       guardUnsaved: true,
       dirty: _changesIn(draft).isNotEmpty,
-      errors: state.problems,
-      submitLabel: Copy.save,
+      errors: state.localizedProblems
+          .map(localCopy.resolve)
+          .toList(growable: false),
+      submitLabel: localCopy.save,
       onSubmit: () => _save(context, ref),
       fields: <Widget>[
         if (template == null)
-          const AppBanner(
-            key: ValueKey<String>('record-edit-template-missing'),
-            message: Copy.recordTemplateMissingNotice,
+          AppBanner(
+            key: const ValueKey<String>('record-edit-template-missing'),
+            message: localCopy.recordTemplateMissingNotice,
             icon: AppIcons.warning,
             tone: SnackTone.warning,
           ),
         if (record.status == RecordStatus.approved)
-          const AppBanner(
-            key: ValueKey<String>('record-edit-approved'),
-            message: Copy.recordEditApprovedNotice,
+          AppBanner(
+            key: const ValueKey<String>('record-edit-approved'),
+            message: localCopy.recordEditApprovedNotice,
             icon: AppIcons.review,
             tone: SnackTone.warning,
           ),
@@ -188,8 +195,8 @@ class _RecordValuesForm extends ConsumerWidget {
           AppBanner(
             key: const ValueKey<String>('record-edit-failure'),
             message: <String>[
-              failure.message,
-              ?failure.recoveryAction,
+              Copy.of(context).failureMessage(failure),
+              ?Copy.of(context).failureRecovery(failure),
             ].join(' '),
             icon: AppIcons.error,
             tone: SnackTone.error,
@@ -208,9 +215,9 @@ class _RecordValuesForm extends ConsumerWidget {
             },
           ),
         if (retired.isNotEmpty) ...<Widget>[
-          const AppSectionHeader(title: Copy.recordRetiredValuesTitle),
+          AppSectionHeader(title: localCopy.recordRetiredValuesTitle),
           Text(
-            Copy.recordRetiredValuesMessage,
+            localCopy.recordRetiredValuesMessage,
             style: AppText.caption.copyWith(color: context.colors.onSurface),
           ),
           for (final RecordValue value in retired)
@@ -232,6 +239,8 @@ class _RecordValuesForm extends ConsumerWidget {
   /// Writes what changed, then says so and leaves. A failure stays on the
   /// page with everything typed (FE-SIMP-09).
   Future<bool> _save(BuildContext context, WidgetRef ref) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final NavigatorState navigator = Navigator.of(context);
     final RecordFieldDraft drafts = ref.read(
       recordFieldDraftProvider(record.id).notifier,
@@ -259,7 +268,7 @@ class _RecordValuesForm extends ConsumerWidget {
     drafts.clear();
     showAppSnack(
       context,
-      Copy.recordValuesSaved(changes.length, backToReview: backToReview),
+      localCopy.recordValuesSaved(changes.length, backToReview: backToReview),
       tone: SnackTone.success,
     );
     if (navigator.canPop()) {

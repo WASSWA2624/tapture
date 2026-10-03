@@ -1,62 +1,28 @@
+import 'dart:typed_data';
+
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/features/feedback/domain/domain.dart'
+    show FeedbackCategory, FeedbackContext, FeedbackEntry, FeedbackRepository;
 
-/// One problem a field tester flagged. It never leaves the device on its own.
+/// Field reports use the same durable local journal and screenshot export as feedback.
 final class FrictionLog {
-  final List<
-    ({
-      String screen,
-      DateTime at,
-      String operatorName,
-      String? projectId,
-      String action,
-      String? note,
-      String? screenshotPath,
-    })
-  >
-  _entries =
-      <
-        ({
-          String screen,
-          DateTime at,
-          String operatorName,
-          String? projectId,
-          String action,
-          String? note,
-          String? screenshotPath,
-        })
-      >[];
+  /// Composes the local journal port; never sends anything to a provider.
+  const FrictionLog({required this._repository});
 
-  /// Records [screen] and the last [action]. [note] and a screenshot are optional.
-  Future<Result<void>> logFriction({
-    required String screen,
-    required String action,
-    required DateTime at,
-    String operatorName = '',
-    String? projectId,
+  final FeedbackRepository _repository;
+
+  /// An optional note and screenshot accompany the captured screen context.
+  Future<Result<FeedbackEntry>> logFriction({
+    required FeedbackContext context,
     String? note,
-    String? screenshotPath,
-  }) async {
-    _entries.add((
-      screen: screen,
-      at: at,
-      operatorName: operatorName,
-      projectId: projectId,
-      action: action,
-      note: note,
-      screenshotPath: screenshotPath,
-    ));
-    return const Success<void>(null);
-  }
-
-  /// Every entry and screenshot path, as one text file the tester exports.
-  String exportText() {
-    final StringBuffer buffer = StringBuffer();
-    for (final entry in _entries) {
-      buffer.writeln(
-        '${entry.at.toIso8601String()} ${entry.screen} ${entry.action} '
-        '${entry.projectId ?? ''} ${entry.note ?? ''} ${entry.screenshotPath ?? ''}',
-      );
-    }
-    return buffer.toString();
-  }
+    Uint8List? screenshot,
+  }) => _repository.add(
+    category: FeedbackCategory.error,
+    message: note == null || note.trim().isEmpty
+        ? DomainCopy.frictionLogAction
+        : note.trim(),
+    context: context,
+    screenshots: <Uint8List>[?screenshot],
+  );
 }

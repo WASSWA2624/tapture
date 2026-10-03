@@ -52,36 +52,40 @@ class _TemplateCreateScreenState extends ConsumerState<TemplateCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final _TemplateCreateView view = ref.watch(_templateCreateProvider);
     final _TemplateCreate notifier = ref.read(_templateCreateProvider.notifier);
     return AppPage(
       key: const ValueKey<String>('route-template-create'),
-      title: Copy.templatesCreateTitle,
+      title: localCopy.templatesCreateTitle,
       scrollable: false,
       body: AppForm(
         guardUnsaved: true,
         dirty: view.dirty,
         errors: <String>[
-          ?view.saveError,
-          if (view.warnTwoFacts) Copy.fieldTwoFactsWarning,
+          ?Copy.of(context).stateText(view.localizedSaveError, view.saveError),
+          if (view.warnTwoFacts) localCopy.fieldTwoFactsWarning,
         ],
         fields: <Widget>[
           AppTextField(
-            label: Copy.projectName,
+            label: localCopy.projectName,
             controller: _name,
             requiredness: FieldRequiredness.required,
             textInputAction: TextInputAction.next,
-            errorText: view.nameError,
+            errorText: Copy.of(
+              context,
+            ).stateText(view.localizedNameError, view.nameError),
             onChanged: (String _) => notifier.markDirty(),
           ),
           if (view.warnTwoFacts) ...<Widget>[
-            const AppBanner(
-              message: Copy.fieldTwoFactsWarning,
+            AppBanner(
+              message: localCopy.fieldTwoFactsWarning,
               icon: AppIcons.warning,
               tone: SnackTone.warning,
             ),
             AppButton(
-              label: Copy.fieldKeepAnyway,
+              label: localCopy.fieldKeepAnyway,
               variant: AppButtonVariant.secondary,
               onPressed: notifier.keepAnyway,
             ),
@@ -99,7 +103,7 @@ class _TemplateCreateScreenState extends ConsumerState<TemplateCreateScreen> {
             onAdd: notifier.addRow,
           ),
         ],
-        submitLabel: Copy.templatesCreate,
+        submitLabel: localCopy.templatesCreate,
         onSubmit: () async {
           final TemplateDef? created = await notifier.submit(
             name: _name.text,
@@ -135,7 +139,9 @@ _templateCreateProvider =
 
 typedef _TemplateCreateView = ({
   String? nameError,
+  LocalizedMessage? localizedNameError,
   String? saveError,
+  LocalizedMessage? localizedSaveError,
   List<TemplateFieldDraft> rows,
   bool warnTwoFacts,
   bool keepAnyway,
@@ -148,7 +154,9 @@ class _TemplateCreate extends Notifier<_TemplateCreateView> {
   _TemplateCreateView build() {
     return (
       nameError: null,
+      localizedNameError: null,
       saveError: null,
+      localizedSaveError: null,
       rows: const <TemplateFieldDraft>[_firstRow],
       warnTwoFacts: false,
       keepAnyway: false,
@@ -213,12 +221,20 @@ class _TemplateCreate extends Notifier<_TemplateCreateView> {
   }) async {
     final String trimmed = name.trim();
     if (trimmed.isEmpty) {
-      _update(nameError: Copy.nameRequired, clearSaveError: true);
+      _update(
+        nameError: Copy.nameRequired,
+        localizedNameError: Copy.messages.nameRequired,
+        clearSaveError: true,
+      );
       return null;
     }
     final String? projectId = ref.read(currentProjectProvider);
     if (projectId == null || projectId.isEmpty) {
-      _update(saveError: Copy.statusNoProject, clearNameError: true);
+      _update(
+        saveError: Copy.statusNoProject,
+        localizedSaveError: Copy.messages.statusNoProject,
+        clearNameError: true,
+      );
       return null;
     }
     final List<({TemplateFieldDraft row, String label})> named =
@@ -272,7 +288,11 @@ class _TemplateCreate extends Notifier<_TemplateCreateView> {
         _update(clearNameError: true, clearSaveError: true, dirty: false);
         return value;
       case FailureResult<TemplateDef>(:final Failure failure):
-        _update(saveError: failure.message, clearNameError: true);
+        _update(
+          saveError: failure.message,
+          localizedSaveError: failure.explanation,
+          clearNameError: true,
+        );
         return null;
     }
   }
@@ -292,8 +312,10 @@ class _TemplateCreate extends Notifier<_TemplateCreateView> {
 
   void _update({
     String? nameError,
+    LocalizedMessage? localizedNameError,
     bool clearNameError = false,
     String? saveError,
+    LocalizedMessage? localizedSaveError,
     bool clearSaveError = false,
     List<TemplateFieldDraft>? rows,
     bool? warnTwoFacts,
@@ -303,7 +325,13 @@ class _TemplateCreate extends Notifier<_TemplateCreateView> {
   }) {
     state = (
       nameError: clearNameError ? null : (nameError ?? state.nameError),
+      localizedNameError: clearNameError
+          ? null
+          : (localizedNameError ?? state.localizedNameError),
       saveError: clearSaveError ? null : (saveError ?? state.saveError),
+      localizedSaveError: clearSaveError
+          ? null
+          : (localizedSaveError ?? state.localizedSaveError),
       rows: rows ?? state.rows,
       warnTwoFacts: warnTwoFacts ?? state.warnTwoFacts,
       keepAnyway: keepAnyway ?? state.keepAnyway,

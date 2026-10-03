@@ -32,6 +32,7 @@ class FieldAdvancedSection extends StatelessWidget {
     required this.knownKeys,
     required this.labelsByKey,
     required this.requiredWhenError,
+    this.localizedRequiredWhenError,
     required this.onInputMode,
     required this.onAutoFill,
     required this.onStickable,
@@ -55,6 +56,9 @@ class FieldAdvancedSection extends StatelessWidget {
   final Iterable<String> knownKeys;
   final Map<String, String> labelsByKey;
   final String? requiredWhenError;
+
+  /// Semantic error retained until the current locale renders the form.
+  final LocalizedMessage? localizedRequiredWhenError;
   final ValueChanged<InputMode> onInputMode;
   final ValueChanged<AutoFill?> onAutoFill;
   final ValueChanged<bool> onStickable;
@@ -86,8 +90,9 @@ class FieldAdvancedSection extends StatelessWidget {
   /// Plain-language reading of [expression], or empty when it is blank.
   static String previewRequiredWhen(
     String? expression,
-    Map<String, String> labelsByKey,
-  ) {
+    Map<String, String> labelsByKey, {
+    LocalizedCopy? localizedCopy,
+  }) {
     final String trimmed = expression?.trim() ?? '';
     if (trimmed.isEmpty) {
       return '';
@@ -101,27 +106,36 @@ class FieldAdvancedSection extends StatelessWidget {
         .replaceAll('!=', 'is not')
         .replaceAll('true', 'yes')
         .replaceAll('false', 'no');
-    return Copy.fieldRequiredWhenPreview(reading);
+    return (localizedCopy ?? Copy.english).fieldRequiredWhenPreview(reading);
   }
 
   @override
   Widget build(BuildContext context) {
-    final String preview = previewRequiredWhen(requiredWhen.text, labelsByKey);
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final String preview = previewRequiredWhen(
+      requiredWhen.text,
+      labelsByKey,
+      localizedCopy: localCopy,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const AppSectionHeader(title: Copy.fieldAdvanced, dense: true),
-        AppTextField(label: Copy.fieldDefaultValue, controller: defaultValue),
-        AppTextField(label: Copy.fieldUnit, controller: unit),
-        AppTextField(label: Copy.fieldHelp, controller: help),
+        AppSectionHeader(title: localCopy.fieldAdvanced, dense: true),
+        AppTextField(
+          label: localCopy.fieldDefaultValue,
+          controller: defaultValue,
+        ),
+        AppTextField(label: localCopy.fieldUnit, controller: unit),
+        AppTextField(label: localCopy.fieldHelp, controller: help),
         AppChoiceField<InputMode>(
-          label: Copy.fieldInputMode,
+          label: localCopy.fieldInputMode,
           value: inputMode,
-          options: const <Choice<InputMode>>[
-            Choice<InputMode>(InputMode.any, Copy.fieldInputAny),
-            Choice<InputMode>(InputMode.manualOnly, Copy.fieldInputManual),
-            Choice<InputMode>(InputMode.aiAllowed, Copy.fieldInputAi),
-            Choice<InputMode>(InputMode.auto, Copy.fieldInputAuto),
+          options: <Choice<InputMode>>[
+            Choice<InputMode>(InputMode.any, localCopy.fieldInputAny),
+            Choice<InputMode>(InputMode.manualOnly, localCopy.fieldInputManual),
+            Choice<InputMode>(InputMode.aiAllowed, localCopy.fieldInputAi),
+            Choice<InputMode>(InputMode.auto, localCopy.fieldInputAuto),
           ],
           onChanged: (InputMode? value) {
             if (value != null) {
@@ -130,12 +144,15 @@ class FieldAdvancedSection extends StatelessWidget {
           },
         ),
         AppChoiceField<String>(
-          label: Copy.fieldAutoFill,
+          label: localCopy.fieldAutoFill,
           value: autoFill?.name ?? _none,
           options: <Choice<String>>[
-            const Choice<String>(_none, Copy.fieldAutoFillNone),
+            Choice<String>(_none, localCopy.fieldAutoFillNone),
             for (final AutoFill source in AutoFill.values)
-              Choice<String>(source.name, Copy.fieldAutoFillLabel(source.name)),
+              Choice<String>(
+                source.name,
+                localCopy.fieldAutoFillLabel(source.name),
+              ),
           ],
           onChanged: (String? value) {
             if (value == null || value == _none) {
@@ -151,40 +168,43 @@ class FieldAdvancedSection extends StatelessWidget {
           },
         ),
         AppTextField(
-          label: Copy.fieldContextLevel,
+          label: localCopy.fieldContextLevel,
           controller: contextLevel,
           keyboardType: TextInputType.number,
         ),
         AppSwitchTile(
-          title: Copy.fieldStickable,
+          title: localCopy.fieldStickable,
           value: stickable,
           dense: true,
           onChanged: onStickable,
         ),
         AppSwitchTile(
-          title: Copy.fieldRefine,
+          title: localCopy.fieldRefine,
           value: refine,
           dense: true,
           onChanged: onRefine,
         ),
         AppSwitchTile(
-          title: Copy.fieldIdentity,
+          title: localCopy.fieldIdentity,
           value: identity,
           dense: true,
           onChanged: onIdentity,
         ),
         AppTextField(
-          label: Copy.fieldRequiredWhen,
+          label: localCopy.fieldRequiredWhen,
           controller: requiredWhen,
-          errorText: requiredWhenError,
+          errorText: localCopy.stateText(
+            localizedRequiredWhenError,
+            requiredWhenError,
+          ),
           helper: requiredWhenError == null && preview.isNotEmpty
               ? preview
               : null,
           onChanged: onRequiredWhenChanged,
         ),
         AppSwitchTile(
-          title: Copy.fieldHidden,
-          description: Copy.fieldHiddenHelp,
+          title: localCopy.fieldHidden,
+          description: localCopy.fieldHiddenHelp,
           value: hidden,
           dense: true,
           onChanged: onHidden,

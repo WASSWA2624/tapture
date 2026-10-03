@@ -3,6 +3,7 @@ import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/ai/auxiliary_ai_usage.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/network/offline_now.dart';
@@ -88,13 +89,14 @@ final class ShippedSuggestionsController
           .resolve(appProjectSettingsDefaults(settings))
           .dailyRequestCap;
       if (requests >= cap) {
-        throw const ProviderFailure(
-          message: 'The daily analysis limit is reached.',
-          recoveryAction: 'Use the on-device suggestions or try tomorrow.',
+        throw ProviderFailure(
+          localizedMessage: Copy.messages.failureTheDailyAnalysisLimitIsReached,
+          localizedRecovery:
+              Copy.messages.failureUseTheOnDeviceSuggestionsOrTry,
           kind: ProviderFailureKind.rateLimited,
         );
       }
-      if (!ref.mounted || ref.read(shippedSuggestionServiceProvider) == null) {
+      if (!_isCurrent(service, project.id)) {
         return;
       }
       final Result<void> reserved = await settings.write(
@@ -105,6 +107,9 @@ final class ShippedSuggestionsController
       );
       if (reserved case FailureResult<void>(:final failure)) {
         throw failure;
+      }
+      if (!_isCurrent(service, project.id)) {
+        return;
       }
       final Result<List<String>> result =
           await ShippedTemplateSuggestions(service).suggest(
@@ -139,8 +144,22 @@ final class ShippedSuggestionsController
           failure: Failure.from(error),
         );
       }
+    } finally {
+      if (ref.mounted && state.busy) {
+        state = (
+          busy: false,
+          query: state.query,
+          keys: state.keys,
+          failure: state.failure,
+        );
+      }
     }
   }
+
+  bool _isCurrent(AiService service, String projectId) =>
+      ref.mounted &&
+      ref.read(currentProjectDetailsProvider)?.id == projectId &&
+      identical(ref.read(shippedSuggestionServiceProvider), service);
 
   /// Discards only the suggested order; picked templates remain untouched.
   void clear() => state = (

@@ -120,75 +120,79 @@ class _FieldValidationEditorState extends State<FieldValidationEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failure = widget.failure;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const AppSectionHeader(title: Copy.fieldValidationTitle, dense: true),
+        AppSectionHeader(title: localCopy.fieldValidationTitle, dense: true),
         if (_isEmpty)
-          const AppEmptyState(
+          AppEmptyState(
             icon: AppIcons.rules,
-            headline: Copy.fieldValidationEmptyHeadline,
-            message: Copy.fieldValidationEmptyMessage,
+            headline: localCopy.fieldValidationEmptyHeadline,
+            message: localCopy.fieldValidationEmptyMessage,
           ),
         if (failure != null) AppErrorState(failure: failure),
         AppChoiceField<String>(
-          label: Copy.fieldPattern,
+          label: localCopy.fieldPattern,
           value: _kind,
-          options: const <Choice<String>>[
-            Choice<String>(_none, Copy.fieldPatternNone),
-            Choice<String>(_serial, Copy.fieldPatternSerial),
-            Choice<String>(_assetTag, Copy.fieldPatternAssetTag),
-            Choice<String>(_registration, Copy.fieldPatternRegistration),
-            Choice<String>(_customKind, Copy.fieldPatternCustom),
+          options: <Choice<String>>[
+            Choice<String>(_none, localCopy.fieldPatternNone),
+            Choice<String>(_serial, localCopy.fieldPatternSerial),
+            Choice<String>(_assetTag, localCopy.fieldPatternAssetTag),
+            Choice<String>(_registration, localCopy.fieldPatternRegistration),
+            Choice<String>(_customKind, localCopy.fieldPatternCustom),
           ],
           onChanged: _setKind,
         ),
         if (_kind == _customKind)
           AppTextField(
-            label: Copy.fieldPatternCustom,
+            label: localCopy.fieldPatternCustom,
             controller: _custom,
             onChanged: (_) => _emit(),
           ),
         AppTextField(
-          label: Copy.fieldMinLength,
+          label: localCopy.fieldMinLength,
           controller: _minLength,
           keyboardType: TextInputType.number,
           onChanged: (_) => _emit(),
         ),
         AppTextField(
-          label: Copy.fieldMaxLength,
+          label: localCopy.fieldMaxLength,
           controller: _maxLength,
           keyboardType: TextInputType.number,
           onChanged: (_) => _emit(),
         ),
         AppTextField(
-          label: Copy.fieldRangeMin,
+          label: localCopy.fieldRangeMin,
           controller: _min,
           keyboardType: TextInputType.number,
           onChanged: (_) => _emit(),
         ),
         AppTextField(
-          label: Copy.fieldRangeMax,
+          label: localCopy.fieldRangeMax,
           controller: _max,
           keyboardType: TextInputType.number,
           onChanged: (_) => _emit(),
         ),
         AppTextField(
-          label: Copy.fieldRequiredWith,
+          label: localCopy.fieldRequiredWith,
           controller: _requiredWith,
           onChanged: (_) => _emit(),
         ),
         ListenableBuilder(
           listenable: _sample,
           builder: (BuildContext context, Widget? _) {
+            final LocalizedCopy localCopy = Copy.of(context);
+
             final String? testError = _errorFor(_sample.text);
             return AppTextField(
-              label: Copy.fieldPatternTest,
+              label: localCopy.fieldPatternTest,
               controller: _sample,
               errorText: testError,
               helper: testError == null && _sample.text.isNotEmpty
-                  ? Copy.fieldPatternTestPass
+                  ? localCopy.fieldPatternTestPass
                   : null,
             );
           },
@@ -241,7 +245,9 @@ class _FieldValidationEditorState extends State<FieldValidationEditor> {
     );
     return switch (result) {
       Success<void>() => null,
-      FailureResult<void>(:final Failure failure) => failure.message,
+      FailureResult<void>(:final Failure failure) => Copy.of(
+        context,
+      ).failureMessage(failure),
     };
   }
 }

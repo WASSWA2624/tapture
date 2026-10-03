@@ -36,7 +36,7 @@ final recordPhotoBytesProvider = FutureProvider.autoDispose
       };
     }, retry: (int _, Object _) => null);
 
-const StorageFailure _unreadable = StorageFailure(
-  message: Copy.photoUnreadable,
-  recoveryAction: Copy.photoUnreadableRecovery,
+final StorageFailure _unreadable = StorageFailure(
+  localizedMessage: Copy.messages.photoUnreadable,
+  localizedRecovery: Copy.messages.photoUnreadableRecovery,
 );

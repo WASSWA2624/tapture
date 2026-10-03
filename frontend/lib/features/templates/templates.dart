@@ -4,6 +4,7 @@ library;
 export 'data/predefined_rows_import.dart' show PredefinedRowsImport;
 export 'data/shipped_template_loader.dart'
     show shippedTemplateLoaderProvider, ShippedTemplateLoader;
+export 'data/template_document_import.dart' show TemplateDocumentImport;
 export 'data/template_json.dart' show TemplateJson;
 export 'data/template_mapper.dart' show TemplateMapper;
 export 'data/template_migration_repository_impl.dart'

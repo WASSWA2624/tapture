@@ -17,6 +17,8 @@ dependencies:
   drift: '>=2.31.0 <2.32.0'
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_riverpod: ^3.4.3
   # Keep this migration-capable v10 release for at least one production cycle
   # before moving to v11, which removes the legacy Android cipher migration.
@@ -25,10 +27,15 @@ dependencies:
   go_router: ^17.5.0
   geolocator: 14.0.2
   google_mlkit_text_recognition: ^0.17.1
+  google_mlkit_face_detection: 0.15.1
+  google_sign_in: 7.2.0
   image: ^4.3.0
   image_picker: ^1.2.3
   intl: ^0.20.2
   json_annotation: ^4.9.0
+  local_auth: 3.0.2
+  local_auth_android: 2.2.0
+  local_auth_darwin: 2.0.4
   mobile_scanner: 7.4.2
   path_provider: ^2.1.5
   permission_handler: ^12.0.3
@@ -37,9 +44,12 @@ dependencies:
   speech_to_text: ^7.5.0
   sqlite3: ^2.9.4
   sqlite3_flutter_libs: ^0.5.42
+  url_launcher: 6.3.2
   pdf: 3.11.3
+  pdfrx: 1.3.5
 
 dev_dependencies:
+  analyzer: 10.2.0
   build_runner: ^2.4.13
   drift_dev: '>=2.31.0 <2.32.0'
   flutter_lints: ^6.0.0
@@ -59,8 +69,10 @@ dependency_overrides:
   path_provider_foundation: 2.5.1
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
+    - tool/secret_patterns.yaml
     - assets/branding/
     - assets/feedback/
     - assets/fonts/

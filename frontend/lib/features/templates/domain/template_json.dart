@@ -1,8 +1,10 @@
 import 'dart:convert';
 
-import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/features/reference/domain/domain.dart'
+    show LookupBinding;
 
 import 'field_def.dart';
 import 'field_wire.dart';
@@ -40,7 +42,7 @@ abstract final class TemplateJson {
   static Result<TemplateDef> decode(Object? raw, {required String projectId}) {
     final Object? json = _parsed(raw);
     if (json is! Map) {
-      return const FailureResult<TemplateDef>(_invalid);
+      return FailureResult<TemplateDef>(_invalid);
     }
     return _decodeMap(_stringMap(json), projectId: projectId);
   }
@@ -91,11 +93,11 @@ Result<TemplateDef> _decodeMap(
 }) {
   final Object? version = map[_schemaVersionKey];
   if (version is! int || version != TemplateJson.schemaVersion) {
-    return const FailureResult<TemplateDef>(_unknownSchema);
+    return FailureResult<TemplateDef>(_unknownSchema);
   }
   final String? name = _text(map[_nameKey]);
   if (name == null) {
-    return const FailureResult<TemplateDef>(_invalid);
+    return FailureResult<TemplateDef>(_invalid);
   }
   final Result<List<FieldDef>> fields = _fieldsOf(map[_fieldsKey]);
   if (fields is FailureResult<List<FieldDef>>) {
@@ -122,6 +124,15 @@ Result<TemplateDef> _decodeMap(
   final List<FieldDef> decodedFields = fields.getOrElse(
     () => const <FieldDef>[],
   );
+  final String? unbindable = _lookupProblem(decodedFields);
+  if (unbindable != null) {
+    return FailureResult<TemplateDef>(
+      ValidationFailure(
+        message: unbindable,
+        localizedRecovery: DomainCopy.messages.lookupImportRecovery,
+      ),
+    );
+  }
   List<String> identityKeys = identity.getOrElse(() => const <String>[]);
   if (identityKeys.isEmpty) {
     identityKeys = <String>[
@@ -153,12 +164,35 @@ Result<TemplateDef> _decodeMap(
   );
 }
 
+/// Why a field's lookup cannot be accepted: it fills a field the template
+/// does not define, or fills one field twice (task 010 step 6). Null when
+/// every binding holds.
+String? _lookupProblem(List<FieldDef> fields) {
+  final Set<String> keys = <String>{
+    for (final FieldDef field in fields) field.fieldKey,
+  };
+  for (final FieldDef field in fields) {
+    final LookupBinding? binding = LookupBinding.fromMap(field.lookup);
+    if (binding == null) {
+      continue;
+    }
+    final String? problem = LookupBinding.validate(
+      binding: binding,
+      templateFieldKeys: keys,
+    );
+    if (problem != null) {
+      return problem;
+    }
+  }
+  return null;
+}
+
 Result<List<FieldDef>> _fieldsOf(Object? raw) {
   if (raw == null) {
     return const Success<List<FieldDef>>(<FieldDef>[]);
   }
   if (raw is! List) {
-    return const FailureResult<List<FieldDef>>(_invalid);
+    return FailureResult<List<FieldDef>>(_invalid);
   }
   final List<FieldDef> fields = <FieldDef>[];
   final Set<String> seen = <String>{};
@@ -185,28 +219,28 @@ Result<FieldDef> _fieldOf(
   required Set<String> seen,
 }) {
   if (raw is! Map) {
-    return const FailureResult<FieldDef>(_invalid);
+    return FailureResult<FieldDef>(_invalid);
   }
   final Map<String, Object?> map = _stringMap(raw);
   final String? fieldKey = _text(map[_fieldKeyKey]);
   final String? typeName = _text(map[_typeKey]);
   if (fieldKey == null || typeName == null) {
-    return const FailureResult<FieldDef>(_invalid);
+    return FailureResult<FieldDef>(_invalid);
   }
   if (seen.contains(fieldKey)) {
-    return const FailureResult<FieldDef>(_duplicateField);
+    return FailureResult<FieldDef>(_duplicateField);
   }
   final FieldType? type = _typeOf(typeName);
   if (type == null) {
-    return const FailureResult<FieldDef>(_invalid);
+    return FailureResult<FieldDef>(_invalid);
   }
   final Requiredness? requiredness = _requirednessOf(map[_requiredKey]);
   if (requiredness == null) {
-    return const FailureResult<FieldDef>(_invalid);
+    return FailureResult<FieldDef>(_invalid);
   }
   final InputMode? inputMode = _inputModeOf(map[_inputModeKey]);
   if (inputMode == null) {
-    return const FailureResult<FieldDef>(_invalid);
+    return FailureResult<FieldDef>(_invalid);
   }
   final Result<AutoFill?> autoFill = _autoFillOf(map[_autoFillKey]);
   if (autoFill is FailureResult<AutoFill?>) {
@@ -220,7 +254,7 @@ Result<FieldDef> _fieldOf(
       refine == null ||
       hidden == null ||
       identity == null) {
-    return const FailureResult<FieldDef>(_invalid);
+    return FailureResult<FieldDef>(_invalid);
   }
   final Result<int?> contextLevel = _optionalInt(map[_contextLevelKey]);
   if (contextLevel is FailureResult<int?>) {
@@ -276,7 +310,7 @@ Result<List<TemplateRow>> _rowsOf(Object? raw) {
     return const Success<List<TemplateRow>>(<TemplateRow>[]);
   }
   if (raw is! List) {
-    return const FailureResult<List<TemplateRow>>(_invalid);
+    return FailureResult<List<TemplateRow>>(_invalid);
   }
   final List<TemplateRow> rows = <TemplateRow>[];
   for (final Object? item in raw) {
@@ -293,17 +327,17 @@ Result<List<TemplateRow>> _rowsOf(Object? raw) {
 
 Result<TemplateRow> _rowOf(Object? raw) {
   if (raw is! Map) {
-    return const FailureResult<TemplateRow>(_invalid);
+    return FailureResult<TemplateRow>(_invalid);
   }
   final Map<String, Object?> map = _stringMap(raw);
   final String? identifier = _text(map[_identifierKey]);
   final Result<int?> outputRow = _optionalInt(map[_outputRowKey]);
   if (identifier == null || outputRow is FailureResult<int?>) {
-    return const FailureResult<TemplateRow>(_invalid);
+    return FailureResult<TemplateRow>(_invalid);
   }
   final int? outputRowNumber = outputRow.getOrElse(() => null);
   if (outputRowNumber == null) {
-    return const FailureResult<TemplateRow>(_invalid);
+    return FailureResult<TemplateRow>(_invalid);
   }
   final Result<List<String>> aliases = _stringListOf(map[_aliasesKey]);
   if (aliases is FailureResult<List<String>>) {
@@ -330,13 +364,13 @@ Result<List<String>> _stringListOf(Object? raw) {
     return const Success<List<String>>(<String>[]);
   }
   if (raw is! List) {
-    return const FailureResult<List<String>>(_invalid);
+    return FailureResult<List<String>>(_invalid);
   }
   final List<String> values = <String>[];
   for (final Object? item in raw) {
     final String? text = _text(item);
     if (text == null) {
-      return const FailureResult<List<String>>(_invalid);
+      return FailureResult<List<String>>(_invalid);
     }
     values.add(text);
   }
@@ -348,7 +382,7 @@ Result<List<Object>> _optionsOf(Object? raw) {
     return const Success<List<Object>>(<Object>[]);
   }
   if (raw is! List) {
-    return const FailureResult<List<Object>>(_invalid);
+    return FailureResult<List<Object>>(_invalid);
   }
   return Success<List<Object>>(<Object>[
     for (final Object? item in raw)
@@ -361,7 +395,7 @@ Result<Map<String, Object?>> _objectMapOf(Object? raw) {
     return const Success<Map<String, Object?>>(<String, Object?>{});
   }
   if (raw is! Map) {
-    return const FailureResult<Map<String, Object?>>(_invalid);
+    return FailureResult<Map<String, Object?>>(_invalid);
   }
   return Success<Map<String, Object?>>(_stringMap(raw));
 }
@@ -372,7 +406,7 @@ Result<int?> _optionalInt(Object? raw) {
   }
   final int? value = _asInt(raw);
   if (value == null) {
-    return const FailureResult<int?>(_invalid);
+    return FailureResult<int?>(_invalid);
   }
   return Success<int?>(value);
 }
@@ -382,11 +416,11 @@ Result<AutoFill?> _autoFillOf(Object? raw) {
     return const Success<AutoFill?>(null);
   }
   if (raw is! String) {
-    return const FailureResult<AutoFill?>(_invalid);
+    return FailureResult<AutoFill?>(_invalid);
   }
   final AutoFill? value = _autoFillFromWire(raw);
   if (value == null) {
-    return const FailureResult<AutoFill?>(_invalid);
+    return FailureResult<AutoFill?>(_invalid);
   }
   return Success<AutoFill?>(value);
 }
@@ -575,17 +609,17 @@ const String _metadataKey = 'metadata';
 const String _foundStatusKey = 'found_status';
 const String _versionsKey = '_tapture_versions';
 
-const ValidationFailure _unknownSchema = ValidationFailure(
-  message: Copy.templatesImportUnknownSchema,
-  recoveryAction: Copy.templatesImportUnknownSchemaRecovery,
+final ValidationFailure _unknownSchema = ValidationFailure(
+  localizedMessage: DomainCopy.messages.templatesImportUnknownSchema,
+  localizedRecovery: DomainCopy.messages.templatesImportUnknownSchemaRecovery,
 );
 
-const ValidationFailure _invalid = ValidationFailure(
-  message: Copy.templatesImportInvalid,
-  recoveryAction: Copy.templatesImportInvalidRecovery,
+final ValidationFailure _invalid = ValidationFailure(
+  localizedMessage: DomainCopy.messages.templatesImportInvalid,
+  localizedRecovery: DomainCopy.messages.templatesImportInvalidRecovery,
 );
 
-const ValidationFailure _duplicateField = ValidationFailure(
-  message: Copy.templatesImportDuplicateField,
-  recoveryAction: Copy.templatesImportDuplicateFieldRecovery,
+final ValidationFailure _duplicateField = ValidationFailure(
+  localizedMessage: DomainCopy.messages.templatesImportDuplicateField,
+  localizedRecovery: DomainCopy.messages.templatesImportDuplicateFieldRecovery,
 );

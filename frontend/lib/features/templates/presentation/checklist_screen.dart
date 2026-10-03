@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
@@ -15,6 +17,7 @@ import '../domain/template_def.dart';
 import '../domain/template_row.dart';
 import '../templates.dart' show PredefinedRowsImport;
 import 'template_list_screen.dart' show templateListProvider;
+import 'template_locations.dart';
 
 /// Capture checklist grouped by context, with found versus missing.
 class ChecklistScreen extends ConsumerWidget {
@@ -26,21 +29,45 @@ class ChecklistScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
+    final TemplateDef? template = value.asData?.value;
     return AppPage(
       key: const ValueKey<String>('route-checklist'),
-      title: Copy.checklistTitle,
+      title: localCopy.checklistTitle,
       scrollable: false,
       inset: false,
+      overflow: template == null
+          ? const <AppOverflowAction>[]
+          : <AppOverflowAction>[
+              AppOverflowAction(
+                label: localCopy.checklistImportRows,
+                icon: AppIcons.import,
+                onTap: () => context.go(_importRows(context, template.id)),
+              ),
+            ],
       body: AsyncValueView<TemplateDef?>(
         value: value,
         isEmpty: (TemplateDef? row) => row == null || row.rows.isEmpty,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.checklist,
-          headline: Copy.checklistEmptyHeadline,
-          message: Copy.checklistEmptyMessage,
+          headline: template == null
+              ? Copy.of(context).templatesEmptyHeadline
+              : Copy.of(context).checklistEmptyHeadline,
+          message: template == null
+              ? Copy.of(context).templatesEmptyMessage
+              : Copy.of(context).checklistEmptyMessage,
+          actionLabel: template == null
+              ? Copy.of(context).navTemplates
+              : Copy.of(context).checklistImportRows,
+          onAction: () => context.go(
+            template == null
+                ? TemplateLocations.root(context)
+                : _importRows(context, template.id),
+          ),
         ),
         onRetry: () => ref.invalidate(templateListProvider),
         data: (TemplateDef? row) => _list(context, ref, row!),
@@ -49,10 +76,15 @@ class ChecklistScreen extends ConsumerWidget {
   }
 
   Widget _list(BuildContext context, WidgetRef ref, TemplateDef template) {
-    final List<_ChecklistLine> lines = _linesOf(template.rows);
+    final List<_ChecklistLine> lines = _linesOf(
+      template.rows,
+      localizedCopy: Copy.of(context),
+    );
     return ListView.builder(
       itemCount: lines.length,
       itemBuilder: (BuildContext context, int index) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         final _ChecklistLine line = lines[index];
         return switch (line) {
           _ChecklistGroup(
@@ -62,7 +94,7 @@ class ChecklistScreen extends ConsumerWidget {
           ) =>
             AppSectionHeader(
               key: ValueKey<String>('checklist-group-$name'),
-              title: Copy.checklistProgress(
+              title: localCopy.checklistProgress(
                 group: name,
                 found: found,
                 total: total,
@@ -72,7 +104,7 @@ class ChecklistScreen extends ConsumerWidget {
           _ChecklistRow(:final TemplateRow row) => AppListTile(
             key: ValueKey<String>('checklist-${row.identifier}'),
             title: row.label,
-            status: _pill(row),
+            status: _pill(row, localizedCopy: Copy.of(context)),
             onTap: () => _openCapture(context, ref, row),
           ),
         };
@@ -102,6 +134,13 @@ class ChecklistScreen extends ConsumerWidget {
   }
 }
 
+String _importRows(BuildContext context, String templateId) => Uri(
+  path: RoutePaths.templateXlsx(
+    projectId: TemplateLocations.projectIdOf(context),
+  ),
+  queryParameters: <String, String>{'template': templateId},
+).toString();
+
 sealed class _ChecklistLine {
   const _ChecklistLine();
 }
@@ -120,12 +159,16 @@ final class _ChecklistRow extends _ChecklistLine {
   final TemplateRow row;
 }
 
-List<_ChecklistLine> _linesOf(List<TemplateRow> rows) {
+List<_ChecklistLine> _linesOf(
+  List<TemplateRow> rows, {
+  LocalizedCopy? localizedCopy,
+}) {
   final Map<String, List<TemplateRow>> groups = <String, List<TemplateRow>>{};
   final List<String> order = <String>[];
   for (final TemplateRow row in rows) {
     final String name =
-        PredefinedRowsImport.contextOf(row) ?? Copy.checklistUngrouped;
+        PredefinedRowsImport.contextOf(row) ??
+        (localizedCopy ?? Copy.english).checklistUngrouped;
     final List<TemplateRow>? existing = groups[name];
     if (existing == null) {
       order.add(name);
@@ -146,11 +189,13 @@ List<_ChecklistLine> _linesOf(List<TemplateRow> rows) {
   ];
 }
 
-AppStatusPill _pill(TemplateRow row) {
+AppStatusPill _pill(TemplateRow row, {LocalizedCopy? localizedCopy}) {
   final bool found = _isFound(row);
   return AppStatusPill.badge(
     status: found ? RecordStatus.approved : RecordStatus.needsReview,
-    label: found ? Copy.checklistFound : Copy.checklistMissing,
+    label: found
+        ? (localizedCopy ?? Copy.english).checklistFound
+        : (localizedCopy ?? Copy.english).checklistMissing,
   );
 }
 

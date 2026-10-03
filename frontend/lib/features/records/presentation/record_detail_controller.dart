@@ -146,7 +146,7 @@ final class RecordDetailController extends Notifier<RecordDetailState> {
     String reason,
   ) async {
     if (ref.mounted && state.busy) {
-      return const FailureResult<void>(_busy);
+      return FailureResult<void>(_busy);
     }
     final Result<void> legal = _legal(from, to);
     if (legal case FailureResult<void>(:final Failure failure)) {
@@ -202,9 +202,9 @@ const Set<RecordStatus> _toReview = <RecordStatus>{
 
 const RecordDetailState _idle = (busy: false, failure: null);
 
-const ValidationFailure _busy = ValidationFailure(
-  message: Copy.recordDetailBusy,
-  recoveryAction: Copy.recordDetailBusyAction,
+final ValidationFailure _busy = ValidationFailure(
+  localizedMessage: Copy.messages.recordDetailBusy,
+  localizedRecovery: Copy.messages.recordDetailBusyAction,
 );
 
 /// Whether a status move is being written, and the last move that was

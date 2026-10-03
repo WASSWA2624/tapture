@@ -7,6 +7,7 @@ import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -58,6 +59,8 @@ final class RecordsListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordsListCriteria criteria = ref.watch(
       recordsListControllerProvider(projectId),
     );
@@ -72,66 +75,89 @@ final class RecordsListView extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.fromLTRB(gutter, Space.x2, gutter, Space.x2),
-          child: AppSearchField(
-            key: const ValueKey<String>('records-search'),
-            hint: Copy.recordsSearchHint,
-            text: filter.search,
-            onChanged: controller.setSearch,
-            onFilter: () => unawaited(
-              RecordsFilterSheet.show(context, projectId: projectId),
-            ),
-            activeFilterCount: filter.activeCount,
-            resultCount: filter.isEmpty ? null : count.asData?.value,
-            afterMic: RecordsSortMenu(projectId: projectId),
-          ),
-        ),
-        if (filter.activeCount > 0)
-          Padding(
-            padding: EdgeInsets.fromLTRB(gutter, Space.x0, gutter, Space.x2),
-            child: RecordsActiveFilters(projectId: projectId, filter: filter),
-          ),
         Expanded(
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              final Widget body = AsyncValueView<int>(
-                value: count,
-                onRetry: () => ref.invalidate(
-                  recordsCountProvider((projectId: projectId, filter: filter)),
+          child: AppListViewport(
+            header: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    gutter,
+                    Space.x2,
+                    gutter,
+                    Space.x2,
+                  ),
+                  child: AppSearchField(
+                    key: const ValueKey<String>('records-search'),
+                    hint: localCopy.recordsSearchHint,
+                    text: filter.search,
+                    onChanged: controller.setSearch,
+                    onFilter: () => unawaited(
+                      RecordsFilterSheet.show(context, projectId: projectId),
+                    ),
+                    activeFilterCount: filter.activeCount,
+                    resultCount: filter.isEmpty ? null : count.asData?.value,
+                    afterMic: RecordsSortMenu(projectId: projectId),
+                  ),
                 ),
-                isEmpty: (int total) => total == 0,
-                empty: () => _EmptyList(
-                  projectId: projectId,
-                  filter: filter,
-                  controller: controller,
-                ),
-                loadingCount: _rowsThatFit(constraints.maxHeight),
-                data: (int total) => _RecordRows(
-                  key: ValueKey<RecordsListCriteria>(criteria),
-                  projectId: projectId,
-                  criteria: criteria,
-                  total: total,
-                  pane: pane,
-                  currentRecordId: currentRecordId,
-                  onOpen: onOpen,
-                  onShown: (String id) {
-                    ref
-                        .read(
-                          _shownProvider(
-                            _shownKey(projectId, criteria),
-                          ).notifier,
-                        )
-                        .note(id);
-                  },
-                ),
-              );
-              // The failure panel scrolls, so it is whole on a short window
-              // and at 200 percent text (FE-RESP-06).
-              return count.hasError && !count.hasValue
-                  ? SingleChildScrollView(child: body)
-                  : body;
-            },
+                if (filter.activeCount > 0)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      gutter,
+                      Space.x0,
+                      gutter,
+                      Space.x2,
+                    ),
+                    child: RecordsActiveFilters(
+                      projectId: projectId,
+                      filter: filter,
+                    ),
+                  ),
+              ],
+            ),
+            body: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final Widget body = AsyncValueView<int>(
+                  value: count,
+                  onRetry: () => ref.invalidate(
+                    recordsCountProvider((
+                      projectId: projectId,
+                      filter: filter,
+                    )),
+                  ),
+                  isEmpty: (int total) => total == 0,
+                  empty: () => _EmptyList(
+                    projectId: projectId,
+                    filter: filter,
+                    controller: controller,
+                  ),
+                  loadingCount: _rowsThatFit(constraints.maxHeight),
+                  data: (int total) => _RecordRows(
+                    key: ValueKey<RecordsListCriteria>(criteria),
+                    projectId: projectId,
+                    criteria: criteria,
+                    total: total,
+                    pane: pane,
+                    currentRecordId: currentRecordId,
+                    onOpen: onOpen,
+                    onShown: (String id) {
+                      ref
+                          .read(
+                            _shownProvider(
+                              _shownKey(projectId, criteria),
+                            ).notifier,
+                          )
+                          .note(id);
+                    },
+                  ),
+                );
+                // The failure panel scrolls, so it is whole on a short window
+                // and at 200 percent text (FE-RESP-06).
+                return count.hasError && !count.hasValue
+                    ? SingleChildScrollView(child: body)
+                    : body;
+              },
+            ),
           ),
         ),
         _BulkBar(projectId: projectId, criteria: criteria),
@@ -226,30 +252,32 @@ class _EmptyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool searching = filter.search.trim().isNotEmpty;
     final bool filtering = filter.activeCount > 0;
     final Widget state = !searching && !filtering
         ? AppEmptyState(
             key: const ValueKey<String>('records-empty'),
             icon: AppIcons.records,
-            headline: Copy.recordsEmptyHeadline,
-            message: Copy.recordsEmptyMessage,
-            actionLabel: Copy.recordsEmptyAction,
+            headline: localCopy.recordsEmptyHeadline,
+            message: localCopy.recordsEmptyMessage,
+            actionLabel: localCopy.recordsEmptyAction,
             onAction: () =>
                 unawaited(context.push(RoutePaths.projectCapture(projectId))),
           )
         : AppEmptyState(
             key: const ValueKey<String>('records-no-match'),
             icon: AppIcons.searchEmpty,
-            headline: Copy.recordsNoMatch(filter.search),
+            headline: localCopy.recordsNoMatch(filter.search),
             message: filtering
-                ? Copy.searchFilterNoMatchMessage
-                : Copy.searchNoMatchMessage,
+                ? localCopy.searchFilterNoMatchMessage
+                : localCopy.searchNoMatchMessage,
             actionLabel: searching && filtering
-                ? Copy.recordsClearAll
+                ? localCopy.recordsClearAll
                 : filtering
-                ? Copy.searchClearFilters
-                : Copy.recordsClearSearch,
+                ? localCopy.searchClearFilters
+                : localCopy.recordsClearSearch,
             onAction: controller.clearAll,
           );
     return SingleChildScrollView(child: state);

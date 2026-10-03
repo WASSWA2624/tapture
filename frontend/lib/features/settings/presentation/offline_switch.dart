@@ -24,10 +24,12 @@ class OfflineSwitch extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool on = ref.watch(offlineByChoiceProvider);
     return AppSwitchTile(
-      title: Copy.settingsOfflineTitle,
-      description: Copy.settingsOfflineEffect,
+      title: localCopy.settingsOfflineTitle,
+      description: localCopy.settingsOfflineEffect,
       value: on,
       onChanged: (bool next) {
         unawaited(ref.read(offlineByChoiceProvider.notifier).setEnabled(next));

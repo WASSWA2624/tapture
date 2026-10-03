@@ -20,6 +20,7 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/projects.dart';
@@ -49,7 +50,8 @@ class ShippedPickerScreen extends ConsumerStatefulWidget {
       _ShippedPickerScreenState();
 }
 
-class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
+class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
+    with StateRefresh {
   final TextEditingController _name = TextEditingController();
   String _query = '';
   final Set<String> _picked = <String>{};
@@ -69,6 +71,8 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<List<ShippedTemplateEntry>> value = ref.watch(
       shippedLibraryProvider,
     );
@@ -82,17 +86,19 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
     }
     return AppPage(
       key: const ValueKey<String>('route-template-library'),
-      title: preview == null ? Copy.templatesLibraryTitle : preview.title,
+      title: preview == null ? localCopy.templatesLibraryTitle : preview.title,
       scrollable: false,
       footer: preview != null
           ? null
           : value.maybeWhen(
               data: (List<ShippedTemplateEntry> rows) {
+                final LocalizedCopy localCopy = Copy.of(context);
+
                 if (rows.isEmpty) {
                   return null;
                 }
                 return AppPrimaryAction(
-                  label: Copy.save,
+                  label: localCopy.save,
                   busy: _saving,
                   onPressed: _picked.isEmpty
                       ? null
@@ -105,8 +111,8 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           ? null
           : AppIconButton(
               icon: AppIcons.back,
-              semanticLabel: Copy.close,
-              tooltip: Copy.close,
+              semanticLabel: localCopy.close,
+              tooltip: localCopy.close,
               outlined: false,
               onPressed: () {
                 _name.clear();
@@ -116,7 +122,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
       body: AsyncValueView<List<ShippedTemplateEntry>>(
         value: value,
         isEmpty: (List<ShippedTemplateEntry> rows) => rows.isEmpty,
-        empty: _empty,
+        empty: () => _empty(context),
         onRetry: () => ref.invalidate(shippedLibraryProvider),
         data: (List<ShippedTemplateEntry> rows) {
           final Set<String> attached = <String>{
@@ -140,7 +146,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           .read(shippedLibraryExpandedProvider.notifier)
           .open(entry.category.code);
     }
-    setState(() {
+    refresh(() {
       if (picked) {
         _picked.add(entry.templateKey);
       } else {
@@ -150,6 +156,8 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   }
 
   Future<void> _savePicked() async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (_saving || _picked.isEmpty) {
       return;
     }
@@ -157,7 +165,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
         ref.read(currentProjectProvider) ??
         TemplateLocations.projectIdOf(context);
     if (projectId == null || projectId.isEmpty) {
-      showAppSnack(context, Copy.statusNoProject, tone: SnackTone.error);
+      showAppSnack(context, localCopy.statusNoProject, tone: SnackTone.error);
       return;
     }
     final Map<String, ShippedTemplateEntry> rows =
@@ -168,7 +176,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
             entry.templateKey: entry,
         };
     final List<String> keys = List<String>.of(_picked);
-    setState(() => _saving = true);
+    refresh(() => _saving = true);
     Failure? failure;
     for (final String key in keys) {
       final ShippedTemplateEntry? source = rows[key];
@@ -191,15 +199,22 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
     if (!mounted) {
       return;
     }
-    setState(() => _saving = false);
+    refresh(() => _saving = false);
     if (failure != null) {
-      showAppSnack(context, failure.message, tone: SnackTone.error);
+      showAppSnack(
+        context,
+        failure.message,
+        tone: SnackTone.error,
+        localizedMessage: failure.explanation,
+      );
       return;
     }
     context.go(TemplateLocations.root(context));
   }
 
   Widget _library(List<ShippedTemplateEntry> rows, Set<String> attached) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final ShippedLibraryFilterState filter = ref.watch(
       shippedLibraryFilterProvider,
     );
@@ -243,7 +258,11 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
         ? <_Row>[
             for (final ShippedTemplateEntry entry in shown) _Template(entry),
           ]
-        : _rows(shown, ref.watch(shippedLibraryExpandedProvider));
+        : _rows(
+            shown,
+            ref.watch(shippedLibraryExpandedProvider),
+            localizedCopy: Copy.of(context),
+          );
     final double gutter = AppPage.gutter(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -251,9 +270,9 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
         Padding(
           padding: EdgeInsets.fromLTRB(gutter, Space.x1, gutter, Space.x2),
           child: AppSearchField(
-            hint: Copy.shippedLibrarySearchHint,
+            hint: localCopy.shippedLibrarySearchHint,
             text: _query,
-            onChanged: (String value) => setState(() => _query = value),
+            onChanged: (String value) => refresh(() => _query = value),
             onFilter: () =>
                 unawaited(showShippedLibraryFilters(context, ref, rows)),
             activeFilterCount: active,
@@ -266,7 +285,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           Padding(
             padding: EdgeInsets.fromLTRB(gutter, Space.x0, gutter, Space.x2),
             child: AppButton(
-              label: Copy.shippedSuggestWithAi,
+              label: localCopy.shippedSuggestWithAi,
               variant: AppButtonVariant.secondary,
               busy: suggestion.busy,
               onPressed: () => unawaited(
@@ -278,12 +297,12 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           ),
         if (hasSuggestion)
           AppListTile(
-            title: Copy.shippedAiSuggestion,
-            subtitle: Copy.shippedAiSuggestionHelp,
+            title: localCopy.shippedAiSuggestion,
+            subtitle: localCopy.shippedAiSuggestionHelp,
             trailing: AppIconButton(
               icon: AppIcons.close,
-              semanticLabel: Copy.close,
-              tooltip: Copy.close,
+              semanticLabel: localCopy.close,
+              tooltip: localCopy.close,
               onPressed: () =>
                   ref.read(shippedSuggestionsProvider.notifier).clear(),
             ),
@@ -299,8 +318,14 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           child: shown.isEmpty
               ? AppEmptyState(
                   icon: AppIcons.searchEmpty,
-                  headline: Copy.shippedLibraryNoMatch(_query),
-                  message: Copy.shippedLibraryNoMatchMessage,
+                  headline: localCopy.shippedLibraryNoMatch(_query),
+                  message: localCopy.shippedLibraryNoMatchMessage,
+                  actionLabel: localCopy.searchClearFilters,
+                  onAction: () {
+                    refresh(() => _query = '');
+                    ref.read(shippedLibraryFilterProvider.notifier).clear();
+                    ref.read(shippedSuggestionsProvider.notifier).clear();
+                  },
                 )
               : ListView.builder(
                   itemCount: items.length,
@@ -337,6 +362,8 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   /// type and kind, its own field labels, and how its record type is
   /// captured, assisted and output. Built once per loaded list.
   List<ShippedSearchDocument> _searchIndex(List<ShippedTemplateEntry> rows) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (identical(rows, _indexed)) {
       return _documents;
     }
@@ -347,7 +374,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
           entry,
           fieldLabels: <String>[
             for (final String key in entry.fieldKeys)
-              Copy.shippedLabel('templates.$key'),
+              localCopy.shippedLabel('templates.$key'),
           ],
         ),
     ];
@@ -355,13 +382,15 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
   }
 
   Widget _libraryRow(ShippedTemplateEntry entry, Set<String> attached) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool isAttached = attached.contains(entry.templateKey);
     final bool picked = _picked.contains(entry.templateKey);
     return AppListTile(
       title: entry.title,
       subtitle: isAttached
-          ? Copy.shippedAddedToProject
-          : Copy.shippedCatalogueSubtitle(
+          ? localCopy.shippedAddedToProject
+          : localCopy.shippedCatalogueSubtitle(
               entry.code,
               entry.recordType.title,
               entry.fieldCount,
@@ -384,29 +413,39 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
     _ShippedPickerView view,
     bool attached,
   ) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef> template = ref.watch(
       shippedTemplateProvider(entry.templateKey),
     );
     return AppForm(
       guardUnsaved: true,
-      errors: view.saveError == null
+      errors:
+          Copy.of(context).stateText(view.localizedSaveError, view.saveError) ==
+              null
           ? const <String>[]
-          : <String>[view.saveError!],
+          : <String>[
+              Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError)!,
+            ],
       fields: <Widget>[
         AppTextField(
-          label: Copy.projectName,
+          label: localCopy.projectName,
           controller: _name,
           requiredness: FieldRequiredness.required,
           textInputAction: TextInputAction.done,
-          errorText: view.nameError,
+          errorText: Copy.of(
+            context,
+          ).stateText(view.localizedNameError, view.nameError),
         ),
         if (attached)
-          const AppListTile(
-            title: Copy.shippedAddedToProject,
-            leading: Icon(AppIcons.success),
+          AppListTile(
+            title: localCopy.shippedAddedToProject,
+            leading: const Icon(AppIcons.success),
             dense: true,
           ),
-        ..._about(entry),
+        ..._about(entry, localizedCopy: Copy.of(context)),
         ...template.when(
           data: _fieldRows,
           loading: () => const <Widget>[AppSkeleton()],
@@ -420,8 +459,8 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
         ),
       ],
       submitLabel: attached
-          ? Copy.templatesCustomCopy
-          : Copy.templatesAddToProject,
+          ? localCopy.templatesCustomCopy
+          : localCopy.templatesAddToProject,
       onSubmit: () async {
         final GoRouter? router = GoRouter.maybeOf(context);
         final TemplateDef? created = await ref
@@ -442,29 +481,38 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen> {
 
 /// What a template is: its category, record type, suggested privacy and
 /// tier, and how its record type is captured, assisted, output and reviewed.
-List<Widget> _about(ShippedTemplateEntry entry) {
+List<Widget> _about(
+  ShippedTemplateEntry entry, {
+  LocalizedCopy? localizedCopy,
+}) {
   final ShippedRecordType type = entry.recordType;
   return <Widget>[
     AppListTile(
-      title: Copy.shippedCategoryLabel,
+      title: (localizedCopy ?? Copy.english).shippedCategoryLabel,
       subtitle: '${entry.code} · ${entry.category.title}',
       dense: true,
     ),
     AppListTile(
-      title: Copy.shippedRecordTypeLabel,
+      title: (localizedCopy ?? Copy.english).shippedRecordTypeLabel,
       subtitle: type.title,
       dense: true,
     ),
     AppListTile(
-      title: Copy.shippedPrivacyTierLabel,
-      subtitle: Copy.shippedPrivacyTier(entry.privacy, entry.rollout),
+      title: (localizedCopy ?? Copy.english).shippedPrivacyTierLabel,
+      subtitle: (localizedCopy ?? Copy.english).shippedPrivacyTier(
+        entry.privacy,
+        entry.rollout,
+      ),
       dense: true,
     ),
     for (final (String label, String text) in <(String, String)>[
-      (Copy.shippedCaptureLabel, type.capture),
-      (Copy.shippedAiAssistanceLabel, type.aiAssistance),
-      (Copy.shippedOutputsLabel, type.outputs),
-      (Copy.shippedReviewLabel, type.review),
+      ((localizedCopy ?? Copy.english).shippedCaptureLabel, type.capture),
+      (
+        (localizedCopy ?? Copy.english).shippedAiAssistanceLabel,
+        type.aiAssistance,
+      ),
+      ((localizedCopy ?? Copy.english).shippedOutputsLabel, type.outputs),
+      ((localizedCopy ?? Copy.english).shippedReviewLabel, type.review),
     ])
       if (text.isNotEmpty)
         AppListTile(title: label, subtitle: text, dense: true),
@@ -473,22 +521,25 @@ List<Widget> _about(ShippedTemplateEntry entry) {
 
 /// [template]'s resolved fields under a heading per group, in stored order,
 /// each with its type and suggested requiredness.
-List<Widget> _fieldRows(TemplateDef template) {
+List<Widget> _fieldRows(TemplateDef template, {LocalizedCopy? localizedCopy}) {
   final List<Widget> rows = <Widget>[];
   String? group;
   for (final FieldDef field in template.fields) {
     if (field.group != null && field.group != group) {
       group = field.group;
       rows.add(
-        AppSectionHeader(title: Copy.requiredColumnGroup(group!), dense: true),
+        AppSectionHeader(
+          title: (localizedCopy ?? Copy.english).requiredColumnGroup(group!),
+          dense: true,
+        ),
       );
     }
     rows.add(
       AppListTile(
-        title: Copy.shippedLabel(field.label),
-        subtitle: Copy.shippedFieldSubtitle(
+        title: (localizedCopy ?? Copy.english).shippedLabel(field.label),
+        subtitle: (localizedCopy ?? Copy.english).shippedFieldSubtitle(
           field.type.name,
-          _requiredness(field.requiredness),
+          _requiredness(field.requiredness, localizedCopy: localizedCopy),
         ),
         dense: true,
       ),
@@ -497,11 +548,15 @@ List<Widget> _fieldRows(TemplateDef template) {
   return rows;
 }
 
-String _requiredness(Requiredness requiredness) {
+String _requiredness(
+  Requiredness requiredness, {
+  LocalizedCopy? localizedCopy,
+}) {
   return switch (requiredness) {
-    Requiredness.required => Copy.fieldRequired,
-    Requiredness.recommended => Copy.fieldRecommended,
-    Requiredness.optional => Copy.fieldOptional,
+    Requiredness.required => (localizedCopy ?? Copy.english).fieldRequired,
+    Requiredness.recommended =>
+      (localizedCopy ?? Copy.english).fieldRecommended,
+    Requiredness.optional => (localizedCopy ?? Copy.english).fieldOptional,
   };
 }
 
@@ -534,7 +589,11 @@ final class _Template extends _Row {
 /// [shown] as list lines, in catalogue order: each area's heading, then its
 /// categories with their counts, each listing its templates only while it
 /// is in [expanded]. The list stays lazy (FE-PERF-03).
-List<_Row> _rows(List<ShippedTemplateEntry> shown, Set<String> expanded) {
+List<_Row> _rows(
+  List<ShippedTemplateEntry> shown,
+  Set<String> expanded, {
+  LocalizedCopy? localizedCopy,
+}) {
   final Map<String, int> counts = <String, int>{};
   for (final ShippedTemplateEntry entry in shown) {
     counts.update(entry.category.code, (int n) => n + 1, ifAbsent: () => 1);
@@ -549,7 +608,7 @@ List<_Row> _rows(List<ShippedTemplateEntry> shown, Set<String> expanded) {
       section = null;
       rows.add(
         _Heading(
-          Copy.shippedAreaTitle(
+          (localizedCopy ?? Copy.english).shippedAreaTitle(
             category.supergroupCode,
             category.supergroupTitle,
           ),
@@ -562,7 +621,7 @@ List<_Row> _rows(List<ShippedTemplateEntry> shown, Set<String> expanded) {
       rows.add(
         _Category(
           category.code,
-          Copy.shippedCategoryHeading(
+          (localizedCopy ?? Copy.english).shippedCategoryHeading(
             category.code,
             category.title,
             counts[category.code]!,
@@ -578,11 +637,15 @@ List<_Row> _rows(List<ShippedTemplateEntry> shown, Set<String> expanded) {
   return rows;
 }
 
-Widget _empty() {
-  return const AppEmptyState(
+Widget _empty(BuildContext context) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
+  return AppEmptyState(
     icon: AppIcons.template,
-    headline: Copy.templatesLibraryEmptyHeadline,
-    message: Copy.templatesLibraryEmptyMessage,
+    headline: localCopy.templatesLibraryEmptyHeadline,
+    message: localCopy.templatesLibraryEmptyMessage,
+    actionLabel: localCopy.navTemplates,
+    onAction: () => context.go(TemplateLocations.root(context)),
   );
 }
 
@@ -638,23 +701,43 @@ _shippedPickerProvider = NotifierProvider<_ShippedPicker, _ShippedPickerView>(
 typedef _ShippedPickerView = ({
   String? previewKey,
   String? nameError,
+  LocalizedMessage? localizedNameError,
   String? saveError,
+  LocalizedMessage? localizedSaveError,
 });
 
 class _ShippedPicker extends Notifier<_ShippedPickerView> {
   @override
   _ShippedPickerView build() {
-    return (previewKey: null, nameError: null, saveError: null);
+    return (
+      previewKey: null,
+      nameError: null,
+      localizedNameError: null,
+      saveError: null,
+      localizedSaveError: null,
+    );
   }
 
   /// Opens the resolved field list for [templateKey].
   void preview(String templateKey) {
-    state = (previewKey: templateKey, nameError: null, saveError: null);
+    state = (
+      previewKey: templateKey,
+      nameError: null,
+      localizedNameError: null,
+      saveError: null,
+      localizedSaveError: null,
+    );
   }
 
   /// Returns to the library list.
   void closePreview() {
-    state = (previewKey: null, nameError: null, saveError: null);
+    state = (
+      previewKey: null,
+      nameError: null,
+      localizedNameError: null,
+      saveError: null,
+      localizedSaveError: null,
+    );
   }
 
   /// Copies [templateKey] into the open project under [name].
@@ -667,7 +750,9 @@ class _ShippedPicker extends Notifier<_ShippedPickerView> {
       state = (
         previewKey: state.previewKey,
         nameError: Copy.nameRequired,
+        localizedNameError: Copy.messages.nameRequired,
         saveError: null,
+        localizedSaveError: null,
       );
       return null;
     }
@@ -676,7 +761,9 @@ class _ShippedPicker extends Notifier<_ShippedPickerView> {
       state = (
         previewKey: state.previewKey,
         nameError: null,
+        localizedNameError: null,
         saveError: Copy.statusNoProject,
+        localizedSaveError: Copy.messages.statusNoProject,
       );
       return null;
     }
@@ -689,13 +776,21 @@ class _ShippedPicker extends Notifier<_ShippedPickerView> {
         );
     switch (result) {
       case Success<TemplateDef>(:final TemplateDef value):
-        state = (previewKey: null, nameError: null, saveError: null);
+        state = (
+          previewKey: null,
+          nameError: null,
+          localizedNameError: null,
+          saveError: null,
+          localizedSaveError: null,
+        );
         return value;
       case FailureResult<TemplateDef>(:final Failure failure):
         state = (
           previewKey: state.previewKey,
           nameError: null,
+          localizedNameError: null,
           saveError: failure.message,
+          localizedSaveError: failure.explanation,
         );
         return null;
     }

@@ -9,7 +9,7 @@ void main() {
   testWidgets('an uncaught error is captured and the app still renders', (
     WidgetTester tester,
   ) async {
-    await app.main();
+    await tester.runAsync(app.main);
     await tester.pump();
 
     final StateError error = StateError('bootstrap');

@@ -36,25 +36,35 @@ final class RecordsSortMenu extends ConsumerWidget {
   ];
 
   /// What [sort] is called in the choice and on the control.
-  static String labelOf(RecordSort sort) {
+  static String labelOf(RecordSort sort, {LocalizedCopy? localizedCopy}) {
     return switch ((sort.key, sort.ascending)) {
-      (RecordSortKey.number, false) => Copy.recordsSortNumberDescending,
-      (RecordSortKey.number, true) => Copy.recordsSortNumberAscending,
-      (RecordSortKey.capturedAt, false) => Copy.recordsSortCapturedDescending,
-      (RecordSortKey.capturedAt, true) => Copy.recordsSortCapturedAscending,
-      (RecordSortKey.name, true) => Copy.recordsSortNameAscending,
-      (RecordSortKey.name, false) => Copy.recordsSortNameDescending,
+      (RecordSortKey.number, false) =>
+        (localizedCopy ?? Copy.english).recordsSortNumberDescending,
+      (RecordSortKey.number, true) =>
+        (localizedCopy ?? Copy.english).recordsSortNumberAscending,
+      (RecordSortKey.capturedAt, false) =>
+        (localizedCopy ?? Copy.english).recordsSortCapturedDescending,
+      (RecordSortKey.capturedAt, true) =>
+        (localizedCopy ?? Copy.english).recordsSortCapturedAscending,
+      (RecordSortKey.name, true) =>
+        (localizedCopy ?? Copy.english).recordsSortNameAscending,
+      (RecordSortKey.name, false) =>
+        (localizedCopy ?? Copy.english).recordsSortNameDescending,
     };
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordSort sort = ref.watch(
       recordsListControllerProvider(
         projectId,
       ).select((RecordsListCriteria criteria) => criteria.sort),
     );
-    final String label = Copy.recordsSortLabel(labelOf(sort));
+    final String label = localCopy.recordsSortLabel(
+      labelOf(sort, localizedCopy: localCopy),
+    );
     return AppIconButton(
       key: const ValueKey<String>('records-sort'),
       icon: AppIcons.sort,
@@ -66,9 +76,11 @@ final class RecordsSortMenu extends ConsumerWidget {
   }
 
   Future<void> _open(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return showAppSheet<void>(
       context,
-      title: Copy.recordsSortTitle,
+      title: localCopy.recordsSortTitle,
       contentSized: true,
       builder: (BuildContext sheetContext) {
         return _SortChoice(projectId: projectId);
@@ -84,6 +96,8 @@ class _SortChoice extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final RecordSort sort = ref.watch(
       recordsListControllerProvider(
         projectId,
@@ -98,11 +112,14 @@ class _SortChoice extends ConsumerWidget {
       ),
       child: AppRadioGroup<RecordSort>(
         key: const ValueKey<String>('records-sort-choice'),
-        label: Copy.recordsSortTitle,
+        label: localCopy.recordsSortTitle,
         showLabel: false,
         options: <Choice<RecordSort>>[
           for (final RecordSort order in RecordsSortMenu.orders)
-            Choice<RecordSort>(order, RecordsSortMenu.labelOf(order)),
+            Choice<RecordSort>(
+              order,
+              RecordsSortMenu.labelOf(order, localizedCopy: localCopy),
+            ),
         ],
         value: sort,
         onChanged: (RecordSort chosen) {

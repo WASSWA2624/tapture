@@ -34,6 +34,8 @@ class RequiredColumnsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
@@ -42,21 +44,29 @@ class RequiredColumnsScreen extends ConsumerWidget {
     );
     return AppPage(
       key: const ValueKey<String>('route-template-required'),
-      title: Copy.requiredColumnsTitle,
+      title: localCopy.requiredColumnsTitle,
       scrollable: false,
-      footer: value.asData?.value == null
+      footer: value.asData?.value?.fields.isNotEmpty != true
           ? null
           : AppPrimaryAction(
-              label: Copy.save,
+              label: localCopy.save,
               onPressed: () => _commit(context, ref),
             ),
       body: AsyncValueView<TemplateDef?>(
         value: value,
         isEmpty: (TemplateDef? row) => row == null || row.fields.isEmpty,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.rules,
-          headline: Copy.requiredColumnsEmptyHeadline,
-          message: Copy.requiredColumnsEmptyMessage,
+          headline: Copy.of(context).requiredColumnsEmptyHeadline,
+          message: Copy.of(context).requiredColumnsEmptyMessage,
+          actionLabel: value.asData?.value == null
+              ? Copy.of(context).navTemplates
+              : Copy.of(context).templatesAddField,
+          onAction: () => context.go(
+            value.asData?.value == null
+                ? TemplateLocations.root(context)
+                : TemplateLocations.child(context, templateId, 'fields/new'),
+          ),
         ),
         onRetry: () => ref.invalidate(templateListProvider),
         data: (TemplateDef? _) => _list(context, ref, view),
@@ -65,13 +75,20 @@ class RequiredColumnsScreen extends ConsumerWidget {
   }
 
   Widget _list(BuildContext context, WidgetRef ref, RequirednessView view) {
-    final List<_Group> groups = _groups(view);
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final List<_Group> groups = _groups(view, localizedCopy: Copy.of(context));
     return ListView(
       padding: const EdgeInsets.only(bottom: Space.x4),
       children: <Widget>[
-        if (view.saveError != null)
+        if (Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError) !=
+            null)
           AppBanner(
-            message: view.saveError!,
+            message: Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError)!,
             icon: AppIcons.error,
             tone: SnackTone.error,
           ),
@@ -82,8 +99,8 @@ class RequiredColumnsScreen extends ConsumerWidget {
             action: group.inherited
                 ? AppButton(
                     label: group.expanded
-                        ? Copy.requiredColumnHideGroup
-                        : Copy.requiredColumnShowGroup,
+                        ? localCopy.requiredColumnHideGroup
+                        : localCopy.requiredColumnShowGroup,
                     variant: AppButtonVariant.secondary,
                     onPressed: () {
                       ref
@@ -96,13 +113,19 @@ class RequiredColumnsScreen extends ConsumerWidget {
                 : null,
           ),
           if (group.expanded)
-            for (final FieldDef field in group.fields) _row(ref, view, field),
+            for (final FieldDef field in group.fields)
+              _row(context, ref, view, field),
         ],
       ],
     );
   }
 
-  Widget _row(WidgetRef ref, RequirednessView view, FieldDef field) {
+  Widget _row(
+    BuildContext context,
+    WidgetRef ref,
+    RequirednessView view,
+    FieldDef field,
+  ) {
     final Requiredness? shipped = view.shippedRequiredness[field.fieldKey];
     final bool moved = shipped != null && shipped != field.requiredness;
     final RequirednessController controller = ref.read(
@@ -113,13 +136,17 @@ class RequiredColumnsScreen extends ConsumerWidget {
       children: <Widget>[
         AppListTile(
           title: field.label,
-          subtitle: moved ? Copy.requiredColumnShipped(_mark(shipped)) : null,
+          subtitle: moved
+              ? Copy.of(context).requiredColumnShipped(
+                  _mark(shipped, localizedCopy: Copy.of(context)),
+                )
+              : null,
           dense: true,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: Space.x4),
           child: AppSwitchTile(
-            title: Copy.requiredColumnHide,
+            title: Copy.of(context).requiredColumnHide,
             value: field.hidden,
             dense: true,
             divided: false,
@@ -131,22 +158,31 @@ class RequiredColumnsScreen extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(Space.x4, 0, Space.x4, Space.x2),
           child: AppRadioGroup<Requiredness>(
-            label: Copy.requiredColumnRadios(field.label),
+            label: Copy.of(context).requiredColumnRadios(field.label),
             showLabel: false,
             direction: Axis.horizontal,
             value: field.requiredness,
             options: <Choice<Requiredness>>[
               Choice<Requiredness>(
                 Requiredness.required,
-                Copy.requiredColumnCell(field.label, Copy.fieldRequired),
+                Copy.of(context).requiredColumnCell(
+                  field.label,
+                  Copy.of(context).fieldRequired,
+                ),
               ),
               Choice<Requiredness>(
                 Requiredness.recommended,
-                Copy.requiredColumnCell(field.label, Copy.fieldRecommended),
+                Copy.of(context).requiredColumnCell(
+                  field.label,
+                  Copy.of(context).fieldRecommended,
+                ),
               ),
               Choice<Requiredness>(
                 Requiredness.optional,
-                Copy.requiredColumnCell(field.label, Copy.fieldOptional),
+                Copy.of(context).requiredColumnCell(
+                  field.label,
+                  Copy.of(context).fieldOptional,
+                ),
               ),
             ],
             onChanged: (Requiredness value) {
@@ -199,7 +235,7 @@ final class _Group {
   final List<FieldDef> fields;
 }
 
-List<_Group> _groups(RequirednessView view) {
+List<_Group> _groups(RequirednessView view, {LocalizedCopy? localizedCopy}) {
   final List<String> order = <String>[];
   final Map<String, List<FieldDef>> byKey = <String, List<FieldDef>>{};
   for (final FieldDef field in view.fields) {
@@ -217,8 +253,8 @@ List<_Group> _groups(RequirednessView view) {
       _Group(
         key: key,
         title: key.isEmpty
-            ? Copy.requiredColumnUngrouped
-            : Copy.requiredColumnGroup(key),
+            ? (localizedCopy ?? Copy.english).requiredColumnUngrouped
+            : (localizedCopy ?? Copy.english).requiredColumnGroup(key),
         inherited: _inherited.contains(key),
         expanded:
             !_inherited.contains(key) || view.expandedGroups.contains(key),
@@ -227,11 +263,12 @@ List<_Group> _groups(RequirednessView view) {
   ];
 }
 
-String _mark(Requiredness requiredness) {
+String _mark(Requiredness requiredness, {LocalizedCopy? localizedCopy}) {
   return switch (requiredness) {
-    Requiredness.required => Copy.fieldRequired,
-    Requiredness.recommended => Copy.fieldRecommended,
-    Requiredness.optional => Copy.fieldOptional,
+    Requiredness.required => (localizedCopy ?? Copy.english).fieldRequired,
+    Requiredness.recommended =>
+      (localizedCopy ?? Copy.english).fieldRecommended,
+    Requiredness.optional => (localizedCopy ?? Copy.english).fieldOptional,
   };
 }
 

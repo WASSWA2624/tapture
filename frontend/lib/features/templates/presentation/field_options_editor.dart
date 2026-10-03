@@ -110,6 +110,8 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<({String code, String label, bool retired})> rows = widget
         .options
         .map(FieldOptionsEditor.decode)
@@ -122,23 +124,23 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const AppSectionHeader(title: Copy.fieldOptionsTitle, dense: true),
+        AppSectionHeader(title: localCopy.fieldOptionsTitle, dense: true),
         if (rows.isEmpty)
-          const AppEmptyState(
+          AppEmptyState(
             icon: AppIcons.fields,
-            headline: Copy.fieldOptionsEmptyHeadline,
-            message: Copy.fieldOptionsEmptyMessage,
+            headline: localCopy.fieldOptionsEmptyHeadline,
+            message: localCopy.fieldOptionsEmptyMessage,
           ),
         if (failure != null) AppErrorState(failure: failure),
         for (int index = 0; index < rows.length; index++) _row(rows, index),
         AppTextField(
-          label: Copy.fieldOptionLabel,
+          label: localCopy.fieldOptionLabel,
           controller: _label,
           textInputAction: TextInputAction.done,
           onSubmitted: (_) => _add(rows),
         ),
         AppButton(
-          label: Copy.fieldOptionAdd,
+          label: localCopy.fieldOptionAdd,
           variant: AppButtonVariant.secondary,
           onPressed: () => _add(rows),
         ),
@@ -150,6 +152,8 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
     List<({String code, String label, bool retired})> rows,
     int index,
   ) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final ({String code, String label, bool retired}) row = rows[index];
     final TextEditingController rename = _renames.putIfAbsent(
       row.code,
@@ -162,9 +166,9 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
           subtitle: row.code,
           dense: true,
           status: row.retired
-              ? const AppStatusPill.badge(
+              ? AppStatusPill.badge(
                   status: RecordStatus.archived,
-                  label: Copy.fieldOptionRetired,
+                  label: localCopy.fieldOptionRetired,
                 )
               : null,
           trailing: Row(
@@ -172,8 +176,8 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
             children: <Widget>[
               AppIconButton(
                 icon: AppIcons.moveUp,
-                semanticLabel: Copy.fieldMoveUp(row.label),
-                tooltip: Copy.fieldMoveUp(row.label),
+                semanticLabel: localCopy.fieldMoveUp(row.label),
+                tooltip: localCopy.fieldMoveUp(row.label),
                 outlined: false,
                 onPressed: index == 0
                     ? null
@@ -181,8 +185,8 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
               ),
               AppIconButton(
                 icon: AppIcons.moveDown,
-                semanticLabel: Copy.fieldMoveDown(row.label),
-                tooltip: Copy.fieldMoveDown(row.label),
+                semanticLabel: localCopy.fieldMoveDown(row.label),
+                tooltip: localCopy.fieldMoveDown(row.label),
                 outlined: false,
                 onPressed: index == rows.length - 1
                     ? null
@@ -191,8 +195,8 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
               if (!row.retired)
                 AppIconButton(
                   icon: AppIcons.hideOption,
-                  semanticLabel: Copy.fieldOptionRetire,
-                  tooltip: Copy.fieldOptionRetire,
+                  semanticLabel: localCopy.fieldOptionRetire,
+                  tooltip: localCopy.fieldOptionRetire,
                   outlined: false,
                   onPressed: () => _emit(<Object>[
                     for (int i = 0; i < rows.length; i++)
@@ -205,7 +209,7 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
           ),
         ),
         AppTextField(
-          label: Copy.fieldOptionLabel,
+          label: localCopy.fieldOptionLabel,
           controller: rename,
           onChanged: (String label) {
             _emit(<Object>[

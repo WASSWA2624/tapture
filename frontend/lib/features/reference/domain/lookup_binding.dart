@@ -1,3 +1,5 @@
+import 'package:tapture/core/copy/domain_copy.g.dart';
+
 /// How a template field binds to a [ReferenceDataset] (§12.2 / §16).
 final class LookupBinding {
   /// Creates a binding. [matchColumns] are tried in order; [fillMapping]
@@ -30,21 +32,36 @@ final class LookupBinding {
   final NoMatchBehaviour onNoMatch;
 
   /// Reads a binding from a [FieldDef.lookup] map, or null when empty.
+  ///
+  /// Reads the attribute [toMap] writes and the §16.2 wire form alike:
+  /// `dataset`, `match_on`, `fuzzy`, `fills` (template field → dataset
+  /// column) and `on_no_match`, so an imported template stays bound.
   static LookupBinding? fromMap(Map<String, Object?> raw) {
     if (raw.isEmpty) {
       return null;
     }
-    final Object? datasetId = raw['datasetId'];
+    final Object? datasetId = raw['datasetId'] ?? raw['dataset'];
     if (datasetId is! String || datasetId.isEmpty) {
       return null;
     }
+    final Object? fills = raw['fills'];
     return LookupBinding(
       datasetId: datasetId,
-      matchColumns: _stringList(raw['matchColumns']),
-      fillMapping: _stringMap(raw['fillMapping']),
-      fuzzyEnabled: raw['fuzzyEnabled'] == true,
-      fuzzyThreshold: _doubleOf(raw['fuzzyThreshold'], 0.8),
-      onNoMatch: _behaviourOf(raw['onNoMatch']),
+      matchColumns: _stringList(raw['matchColumns'] ?? raw['match_on']),
+      fillMapping: fills is Map && raw['fillMapping'] == null
+          ? <String, String>{
+              for (final MapEntry<String, String> fill in _stringMap(
+                fills,
+              ).entries)
+                fill.value: fill.key,
+            }
+          : _stringMap(raw['fillMapping']),
+      fuzzyEnabled: (raw['fuzzyEnabled'] ?? raw['fuzzy']) == true,
+      fuzzyThreshold: _doubleOf(
+        raw['fuzzyThreshold'] ?? raw['fuzzy_threshold'],
+        0.8,
+      ),
+      onNoMatch: _behaviourOf(raw['onNoMatch'] ?? raw['on_no_match']),
     );
   }
 
@@ -64,15 +81,24 @@ final class LookupBinding {
   static String? validate({
     required LookupBinding binding,
     required Set<String> templateFieldKeys,
+  }) => validationMessage(
+    binding: binding,
+    templateFieldKeys: templateFieldKeys,
+  )?.fallback;
+
+  /// Retains the fill-rule explanation until the editor chooses its locale.
+  static LocalizedMessage? validationMessage({
+    required LookupBinding binding,
+    required Set<String> templateFieldKeys,
   }) {
     final Set<String> seenTargets = <String>{};
     for (final MapEntry<String, String> entry in binding.fillMapping.entries) {
       final String target = entry.value;
       if (!templateFieldKeys.contains(target)) {
-        return 'Unknown fill target "$target".';
+        return DomainCopy.messages.lookupUnknownTarget(target);
       }
       if (!seenTargets.add(target)) {
-        return 'Fill target "$target" is mapped more than once.';
+        return DomainCopy.messages.lookupTargetTwice(target);
       }
     }
     return null;
@@ -156,9 +182,20 @@ NoMatchBehaviour _behaviourOf(Object? raw) {
         return value;
       }
     }
+    return _wireBehaviours[raw] ?? NoMatchBehaviour.leaveEmpty;
   }
   return NoMatchBehaviour.leaveEmpty;
 }
+
+/// The §16.2 `on_no_match` spellings.
+const Map<String, NoMatchBehaviour> _wireBehaviours =
+    <String, NoMatchBehaviour>{
+      'ALLOW_FREE_TEXT_AND_OFFER_ADD': NoMatchBehaviour.promptAddRow,
+      'OFFER_ADD': NoMatchBehaviour.promptAddRow,
+      'ALLOW_FREE_TEXT': NoMatchBehaviour.leaveEmpty,
+      'LEAVE_EMPTY': NoMatchBehaviour.leaveEmpty,
+      'WARN': NoMatchBehaviour.warn,
+    };
 
 bool _listEquals(List<String> left, List<String> right) {
   if (left.length != right.length) {

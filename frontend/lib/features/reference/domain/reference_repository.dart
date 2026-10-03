@@ -32,8 +32,22 @@ abstract interface class ReferenceRepository {
   /// Tombstones [id]. [reason] is required so a later audit can say why.
   Future<Result<void>> delete(String id, {required String reason});
 
-  /// One page of rows for [datasetId], ordered by key.
+  /// One page of rows for [datasetId], ordered by key. A non-empty [query]
+  /// keeps rows whose key or a value contains it, ignoring case.
   Future<Result<List<ReferenceRow>>> pageRows({
+    required String datasetId,
+    required int offset,
+    required int limit,
+    String query = '',
+  });
+
+  /// How many of [datasetId]'s rows [query] keeps, as [pageRows] filters
+  /// them, re-emitted whenever the rows change.
+  Stream<int> watchRowCount({required String datasetId, String query = ''});
+
+  /// The [pageRows] page for [offset] and [limit], re-read whenever the rows
+  /// change, so a list shows an edit without being told to refresh.
+  Stream<List<ReferenceRow>> watchRows({
     required String datasetId,
     required int offset,
     required int limit,
@@ -60,7 +74,4 @@ abstract interface class ReferenceRepository {
     required String datasetId,
     required String query,
   });
-
-  /// Every row in [datasetId] for export. Prefer paging for UI.
-  Future<Result<List<ReferenceRow>>> allRows(String datasetId);
 }

@@ -1,5 +1,7 @@
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/security/consent_stamp.dart';
 
 import 'field_def.dart';
 
@@ -100,9 +102,9 @@ abstract final class FieldTypeRegistry {
         storageForm: StorageForm.computed,
       ),
       FieldType.consent => (
-        editor: FieldEditorKind.appSwitchTile,
-        validator: _validateText,
-        normaliser: _normaliseText,
+        editor: FieldEditorKind.appConsentField,
+        validator: _validateConsent,
+        normaliser: _normaliseConsent,
         storageForm: StorageForm.text,
       ),
     };
@@ -164,6 +166,9 @@ enum FieldEditorKind {
   /// AppSwitchTile — boolean.
   appSwitchTile,
 
+  /// AppConsentField — attributed confirmation stored with its UTC timestamp.
+  appConsentField,
+
   /// AppChoiceField — choice and lookup.
   appChoiceField,
 
@@ -189,6 +194,7 @@ enum FieldEditorKind {
       FieldEditorKind.appNumberField ||
       FieldEditorKind.appDateField ||
       FieldEditorKind.appSwitchTile ||
+      FieldEditorKind.appConsentField ||
       FieldEditorKind.appChoiceField ||
       FieldEditorKind.appMultiChoiceField => true,
     };
@@ -201,6 +207,7 @@ enum FieldEditorKind {
       FieldEditorKind.appNumberField => 'AppNumberField',
       FieldEditorKind.appDateField => 'AppDateField',
       FieldEditorKind.appSwitchTile => 'AppSwitchTile',
+      FieldEditorKind.appConsentField => 'AppConsentField',
       FieldEditorKind.appChoiceField => 'AppChoiceField',
       FieldEditorKind.appMultiChoiceField => 'AppMultiChoiceField',
       FieldEditorKind.signaturePad ||
@@ -277,95 +284,96 @@ typedef FieldEditorBuilder<T extends Object> =
       required void Function(Object? value) onChanged,
     });
 
-const ValidationFailure _notText = ValidationFailure(
-  message: 'That value is not text.',
-  recoveryAction: 'Enter text, or leave the field empty.',
+final ValidationFailure _notText = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotText,
+  localizedRecovery: DomainCopy.messages.failureEnterTextOrLeaveTheFieldEmpty,
 );
 
-const ValidationFailure _notANumber = ValidationFailure(
-  message: 'That value is not a whole number.',
-  recoveryAction: 'Enter a whole number, or leave the field empty.',
+final ValidationFailure _notANumber = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotAWholeNumber,
+  localizedRecovery: DomainCopy.messages.failureEnterAWholeNumberOrLeaveThe,
 );
 
-const ValidationFailure _notADecimal = ValidationFailure(
-  message: 'That value is not a number.',
-  recoveryAction: 'Enter a number, or leave the field empty.',
+final ValidationFailure _notADecimal = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotANumber,
+  localizedRecovery: DomainCopy.messages.failureEnterANumberOrLeaveTheField,
 );
 
-const ValidationFailure _outOfRange = ValidationFailure(
-  message: 'That number is outside the allowed range.',
-  recoveryAction: 'Enter a number inside the range, or leave the field empty.',
+final ValidationFailure _outOfRange = ValidationFailure(
+  localizedMessage:
+      DomainCopy.messages.failureThatNumberIsOutsideTheAllowedRange,
+  localizedRecovery: DomainCopy.messages.failureEnterANumberInsideTheRangeOr,
 );
 
-const ValidationFailure _tooShort = ValidationFailure(
-  message: 'That value is shorter than this field allows.',
-  recoveryAction: 'Enter a longer value, or leave the field empty.',
+final ValidationFailure _tooShort = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsShorterThanThisField,
+  localizedRecovery: DomainCopy.messages.failureEnterALongerValueOrLeaveThe,
 );
 
-const ValidationFailure _tooLong = ValidationFailure(
-  message: 'That value is longer than this field allows.',
-  recoveryAction: 'Shorten the value, or leave the field empty.',
+final ValidationFailure _tooLong = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsLongerThanThisField,
+  localizedRecovery: DomainCopy.messages.failureShortenTheValueOrLeaveTheField,
 );
 
-const ValidationFailure _patternMismatch = ValidationFailure(
-  message: 'That value does not match the expected pattern.',
-  recoveryAction:
-      'Enter a value in the expected form, or leave the field empty.',
+final ValidationFailure _patternMismatch = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueDoesNotMatchTheExpected,
+  localizedRecovery: DomainCopy.messages.failureEnterAValueInTheExpectedForm,
 );
 
-const ValidationFailure _badPattern = ValidationFailure(
-  message: "This field's pattern is not valid.",
-  recoveryAction: "Open the template and correct the field's pattern.",
+final ValidationFailure _badPattern = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThisFieldSPatternIsNotValid,
+  localizedRecovery:
+      DomainCopy.messages.failureOpenTheTemplateAndCorrectTheField,
 );
 
-const ValidationFailure _notADate = ValidationFailure(
-  message: 'That value is not a date.',
-  recoveryAction: 'Enter a calendar date, or leave the field empty.',
+final ValidationFailure _notADate = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotADate,
+  localizedRecovery: DomainCopy.messages.failureEnterACalendarDateOrLeaveThe,
 );
 
-const ValidationFailure _notATime = ValidationFailure(
-  message: 'That value is not a time of day.',
-  recoveryAction: 'Enter a time, or leave the field empty.',
+final ValidationFailure _notATime = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotATimeOf,
+  localizedRecovery: DomainCopy.messages.failureEnterATimeOrLeaveTheField,
 );
 
-const ValidationFailure _notADateTime = ValidationFailure(
-  message: 'That value is not a date and time.',
-  recoveryAction: 'Enter a date and time, or leave the field empty.',
+final ValidationFailure _notADateTime = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotADateAnd,
+  localizedRecovery: DomainCopy.messages.failureEnterADateAndTimeOrLeave,
 );
 
-const ValidationFailure _notABoolean = ValidationFailure(
-  message: 'That value is not a yes or no.',
-  recoveryAction: 'Switch the field on or off, or leave it unset.',
+final ValidationFailure _notABoolean = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotAYesOr,
+  localizedRecovery: DomainCopy.messages.failureSwitchTheFieldOnOrOffOr,
 );
 
-const ValidationFailure _notAChoice = ValidationFailure(
-  message: 'That value is not a choice.',
-  recoveryAction: 'Pick an option from the list, or leave the field empty.',
+final ValidationFailure _notAChoice = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotAChoice,
+  localizedRecovery: DomainCopy.messages.failurePickAnOptionFromTheListOr,
 );
 
-const ValidationFailure _notOnList = ValidationFailure(
-  message: 'That choice is not on the list.',
-  recoveryAction: 'Pick an option from the list, or leave the field empty.',
+final ValidationFailure _notOnList = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatChoiceIsNotOnTheList,
+  localizedRecovery: DomainCopy.messages.failurePickAnOptionFromTheListOr,
 );
 
-const ValidationFailure _notAPath = ValidationFailure(
-  message: 'That value is not a file path.',
-  recoveryAction: 'Attach a file, or leave the field empty.',
+final ValidationFailure _notAPath = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotAFilePath,
+  localizedRecovery: DomainCopy.messages.failureAttachAFileOrLeaveTheField,
 );
 
-const ValidationFailure _notALocation = ValidationFailure(
-  message: 'That value is not a location.',
-  recoveryAction: 'Capture a GPS fix, or leave the field empty.',
+final ValidationFailure _notALocation = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatValueIsNotALocation,
+  localizedRecovery: DomainCopy.messages.failureCaptureAGPSFixOrLeaveThe,
 );
 
-const ValidationFailure _locationOutOfRange = ValidationFailure(
-  message: 'That location is outside the earth.',
-  recoveryAction: 'Capture a GPS fix again, or leave the field empty.',
+final ValidationFailure _locationOutOfRange = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThatLocationIsOutsideTheEarth,
+  localizedRecovery: DomainCopy.messages.failureCaptureAGPSFixAgainOrLeave,
 );
 
-const ValidationFailure _missingEditor = ValidationFailure(
-  message: 'This field type has no editor on this screen.',
-  recoveryAction: 'Open the template and pick a type this screen supports.',
+final ValidationFailure _missingEditor = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureThisFieldTypeHasNoEditorOn,
+  localizedRecovery: DomainCopy.messages.failureOpenTheTemplateAndPickAType,
 );
 
 const String _minKey = 'min';
@@ -398,17 +406,32 @@ const int _maxSecond = 59;
 
 Result<void> _validateText(Object? value, FieldDef field) {
   if (!_holdsText(field.type)) {
-    return const FailureResult<void>(_notText);
+    return FailureResult<void>(_notText);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
   }
   final String? text = _asTrimmed(value);
   if (text == null) {
-    return const FailureResult<void>(_notText);
+    return FailureResult<void>(_notText);
   }
   return _textRules(text, field);
 }
+
+Result<void> _validateConsent(Object? value, FieldDef field) {
+  if (_isBlank(value) || ConsentStamp.parse(value) != null) {
+    return const Success<void>(null);
+  }
+  return FailureResult<void>(
+    ValidationFailure(
+      localizedMessage:
+          DomainCopy.messages.failureConfirmConsentWithTheNamedOperator,
+    ),
+  );
+}
+
+Object? _normaliseConsent(Object? value, FieldDef field) =>
+    ConsentStamp.parse(value)?.toJson();
 
 Object? _normaliseText(Object? value, FieldDef field) {
   if (!_holdsText(field.type)) {
@@ -423,14 +446,14 @@ Object? _normaliseText(Object? value, FieldDef field) {
 
 Result<void> _validateInteger(Object? value, FieldDef field) {
   if (field.type != FieldType.number) {
-    return const FailureResult<void>(_notANumber);
+    return FailureResult<void>(_notANumber);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
   }
   final int? parsed = _asInt(value);
   if (parsed == null) {
-    return const FailureResult<void>(_notANumber);
+    return FailureResult<void>(_notANumber);
   }
   return _inRange(parsed, field);
 }
@@ -444,14 +467,14 @@ Object? _normaliseInteger(Object? value, FieldDef field) {
 
 Result<void> _validateDecimal(Object? value, FieldDef field) {
   if (!_holdsDecimal(field.type)) {
-    return const FailureResult<void>(_notADecimal);
+    return FailureResult<void>(_notADecimal);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
   }
   final num? parsed = _asNum(value);
   if (parsed == null) {
-    return const FailureResult<void>(_notADecimal);
+    return FailureResult<void>(_notADecimal);
   }
   return _inRange(parsed, field);
 }
@@ -465,13 +488,13 @@ Object? _normaliseDecimal(Object? value, FieldDef field) {
 
 Result<void> _validateDate(Object? value, FieldDef field) {
   if (field.type != FieldType.date) {
-    return const FailureResult<void>(_notADate);
+    return FailureResult<void>(_notADate);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
   }
   return _asDate(value) == null
-      ? const FailureResult<void>(_notADate)
+      ? FailureResult<void>(_notADate)
       : const Success<void>(null);
 }
 
@@ -488,13 +511,13 @@ Object? _normaliseDate(Object? value, FieldDef field) {
 
 Result<void> _validateTime(Object? value, FieldDef field) {
   if (field.type != FieldType.time) {
-    return const FailureResult<void>(_notATime);
+    return FailureResult<void>(_notATime);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
   }
   return _asTime(value) == null
-      ? const FailureResult<void>(_notATime)
+      ? FailureResult<void>(_notATime)
       : const Success<void>(null);
 }
 
@@ -507,13 +530,13 @@ Object? _normaliseTime(Object? value, FieldDef field) {
 
 Result<void> _validateDateTime(Object? value, FieldDef field) {
   if (field.type != FieldType.dateTime) {
-    return const FailureResult<void>(_notADateTime);
+    return FailureResult<void>(_notADateTime);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
   }
   return _asDateTime(value) == null
-      ? const FailureResult<void>(_notADateTime)
+      ? FailureResult<void>(_notADateTime)
       : const Success<void>(null);
 }
 
@@ -526,13 +549,13 @@ Object? _normaliseDateTime(Object? value, FieldDef field) {
 
 Result<void> _validateBoolean(Object? value, FieldDef field) {
   if (field.type != FieldType.boolean) {
-    return const FailureResult<void>(_notABoolean);
+    return FailureResult<void>(_notABoolean);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
   }
   return _asBool(value) == null
-      ? const FailureResult<void>(_notABoolean)
+      ? FailureResult<void>(_notABoolean)
       : const Success<void>(null);
 }
 
@@ -545,19 +568,19 @@ Object? _normaliseBoolean(Object? value, FieldDef field) {
 
 Result<void> _validateChoice(Object? value, FieldDef field) {
   if (field.type != FieldType.choice && field.type != FieldType.lookup) {
-    return const FailureResult<void>(_notAChoice);
+    return FailureResult<void>(_notAChoice);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
   }
   if (_asTrimmed(value) == null) {
-    return const FailureResult<void>(_notAChoice);
+    return FailureResult<void>(_notAChoice);
   }
   if (field.options.isEmpty) {
     return const Success<void>(null);
   }
   return _choiceCode(value, field.options) == null
-      ? const FailureResult<void>(_notOnList)
+      ? FailureResult<void>(_notOnList)
       : const Success<void>(null);
 }
 
@@ -573,7 +596,7 @@ Object? _normaliseChoice(Object? value, FieldDef field) {
 
 Result<void> _validateMultiChoice(Object? value, FieldDef field) {
   if (field.type != FieldType.multiChoice) {
-    return const FailureResult<void>(_notAChoice);
+    return FailureResult<void>(_notAChoice);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
@@ -584,12 +607,12 @@ Result<void> _validateMultiChoice(Object? value, FieldDef field) {
     }
     if (field.options.isEmpty) {
       if (_asTrimmed(item) == null) {
-        return const FailureResult<void>(_notAChoice);
+        return FailureResult<void>(_notAChoice);
       }
       continue;
     }
     if (_choiceCode(item, field.options) == null) {
-      return const FailureResult<void>(_notOnList);
+      return FailureResult<void>(_notOnList);
     }
   }
   return const Success<void>(null);
@@ -620,7 +643,7 @@ Object? _normaliseMultiChoice(Object? value, FieldDef field) {
 Result<void> _validatePaths(Object? value, FieldDef field) {
   if (field.type != FieldType.photoReference &&
       field.type != FieldType.documentReference) {
-    return const FailureResult<void>(_notAPath);
+    return FailureResult<void>(_notAPath);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
@@ -628,7 +651,7 @@ Result<void> _validatePaths(Object? value, FieldDef field) {
   for (final Object? item in _asItems(value)) {
     final String? path = _asTrimmed(item);
     if (path == null) {
-      return const FailureResult<void>(_notAPath);
+      return FailureResult<void>(_notAPath);
     }
     final Result<void> length = _lengthOk(path, field);
     if (length is FailureResult<void>) {
@@ -658,29 +681,29 @@ Object? _normalisePaths(Object? value, FieldDef field) {
 
 Result<void> _validateGps(Object? value, FieldDef field) {
   if (field.type != FieldType.gpsLocation) {
-    return const FailureResult<void>(_notALocation);
+    return FailureResult<void>(_notALocation);
   }
   if (_isBlank(value)) {
     return const Success<void>(null);
   }
   final Map<String, Object?>? map = _asStringKeyMap(value);
   if (map == null) {
-    return const FailureResult<void>(_notALocation);
+    return FailureResult<void>(_notALocation);
   }
   final double? latitude = _asDouble(map[_latitudeKey]);
   final double? longitude = _asDouble(map[_longitudeKey]);
   if (latitude == null || longitude == null) {
-    return const FailureResult<void>(_notALocation);
+    return FailureResult<void>(_notALocation);
   }
   if (latitude < _minLatitude ||
       latitude > _maxLatitude ||
       longitude < _minLongitude ||
       longitude > _maxLongitude) {
-    return const FailureResult<void>(_locationOutOfRange);
+    return FailureResult<void>(_locationOutOfRange);
   }
   final Object? accuracy = map[_accuracyKey];
   if (accuracy != null && _asDouble(accuracy) == null) {
-    return const FailureResult<void>(_notALocation);
+    return FailureResult<void>(_notALocation);
   }
   return _inRange(_asDouble(accuracy), field);
 }
@@ -714,7 +737,7 @@ Result<void> _validateComputed(Object? value, FieldDef field) {
   final bool accepted = field.type == FieldType.computed || value == null;
   return accepted && field.type == FieldType.computed
       ? const Success<void>(null)
-      : const FailureResult<void>(_notText);
+      : FailureResult<void>(_notText);
 }
 
 Object? _normaliseComputed(Object? value, FieldDef field) {
@@ -958,11 +981,11 @@ Result<void> _textRules(String text, FieldDef field) {
 Result<void> _lengthOk(String text, FieldDef field) {
   final int? minLength = _ruleInt(field, _minLengthKey, _minLengthSnake);
   if (minLength != null && text.length < minLength) {
-    return const FailureResult<void>(_tooShort);
+    return FailureResult<void>(_tooShort);
   }
   final int? maxLength = _ruleInt(field, _maxLengthKey, _maxLengthSnake);
   if (maxLength != null && text.length > maxLength) {
-    return const FailureResult<void>(_tooLong);
+    return FailureResult<void>(_tooLong);
   }
   return const Success<void>(null);
 }
@@ -975,9 +998,9 @@ Result<void> _matchPattern(String text, Object? pattern) {
     if (RegExp(pattern).hasMatch(text)) {
       return const Success<void>(null);
     }
-    return const FailureResult<void>(_patternMismatch);
+    return FailureResult<void>(_patternMismatch);
   } on FormatException {
-    return const FailureResult<void>(_badPattern);
+    return FailureResult<void>(_badPattern);
   }
 }
 
@@ -988,10 +1011,10 @@ Result<void> _inRange(num? value, FieldDef field) {
   final num? min = _ruleNum(field, _minKey, _minKey);
   final num? max = _ruleNum(field, _maxKey, _maxKey);
   if (min != null && value < min) {
-    return const FailureResult<void>(_outOfRange);
+    return FailureResult<void>(_outOfRange);
   }
   if (max != null && value > max) {
-    return const FailureResult<void>(_outOfRange);
+    return FailureResult<void>(_outOfRange);
   }
   return const Success<void>(null);
 }

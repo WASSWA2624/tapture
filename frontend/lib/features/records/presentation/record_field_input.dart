@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/security/consent_stamp.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/fields/field_editor.dart';
@@ -37,6 +40,8 @@ class RecordFieldInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final FieldDef field = entry.field;
     final RecordValue? stored = entry.value;
     final bool untouched = text == entry.initial;
@@ -70,7 +75,7 @@ class RecordFieldInput extends StatelessWidget {
           child: AppStatusPill.badge(
             key: ValueKey<String>('record-evidence-removed-${entry.fieldKey}'),
             status: RecordStatus.needsReview,
-            label: Copy.recordValueEvidenceRemoved,
+            label: localCopy.recordValueEvidenceRemoved,
           ),
         ),
       ],
@@ -82,7 +87,11 @@ class RecordFieldInput extends StatelessWidget {
 /// when it still declares the key, else the key itself), what it holds and
 /// a Retired pill, with no tap, so it can be read but never edited or
 /// deleted.
-AppListTile recordRetiredValueTile(RecordValue value, {TemplateDef? template}) {
+AppListTile recordRetiredValueTile(
+  RecordValue value, {
+  TemplateDef? template,
+  LocalizedCopy? localizedCopy,
+}) {
   String title = value.fieldKey;
   for (final FieldDef field in template?.fields ?? const <FieldDef>[]) {
     if (field.fieldKey == value.fieldKey && field.label.isNotEmpty) {
@@ -93,11 +102,13 @@ AppListTile recordRetiredValueTile(RecordValue value, {TemplateDef? template}) {
   return AppListTile(
     key: ValueKey<String>('record-retired-${value.fieldKey}'),
     title: title,
-    subtitle: value.hasValue ? value.display : Copy.recordFieldEmpty,
+    subtitle: value.hasValue
+        ? value.display
+        : (localizedCopy ?? Copy.english).recordFieldEmpty,
     dense: true,
-    status: const AppStatusPill.badge(
+    status: AppStatusPill.badge(
       status: RecordStatus.archived,
-      label: Copy.recordValueRetired,
+      label: (localizedCopy ?? Copy.english).recordValueRetired,
     ),
   );
 }
@@ -181,6 +192,7 @@ Object? editorValueOf(FieldType type, String text) {
     FieldType.time => _timeOf(text) ?? text,
     FieldType.date || FieldType.dateTime => DateTime.tryParse(text) ?? text,
     FieldType.boolean => text == 'true',
+    FieldType.consent => ConsentStamp.parse(text)?.toJson(),
     FieldType.multiChoice => <String>[
       for (final String part in text.split(_listSeparator))
         if (part.trim().isNotEmpty) part.trim(),
@@ -194,6 +206,10 @@ Object? editorValueOf(FieldType type, String text) {
 String storedTextOf(FieldType type, Object? value) {
   if (value == null) {
     return '';
+  }
+  if (type == FieldType.consent) {
+    final ConsentStamp? stamp = ConsentStamp.parse(value);
+    return stamp == null ? '' : jsonEncode(stamp.toJson());
   }
   if (value is DateTime) {
     return switch (type) {
@@ -215,7 +231,9 @@ RecordEditEntry _entryFor(FieldDef field, RecordValue? value) {
   return (
     fieldKey: field.fieldKey,
     label: field.label.isEmpty ? field.fieldKey : field.label,
-    initial: value?.display ?? '',
+    initial: field.type == FieldType.consent
+        ? value?.approved ?? value?.refined ?? value?.raw ?? ''
+        : value?.display ?? '',
     stored: value != null,
     field: field,
     value: value,

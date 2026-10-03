@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
+import 'package:tapture/core/db/tables/audit_log.dart';
+import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/db/tables/template_fields.dart';
 import 'package:tapture/core/db/tables/template_rows.dart';
 import 'package:tapture/core/db/tables/templates.dart';
@@ -77,17 +80,30 @@ final class TemplateRepositoryImpl implements TemplateRepository {
         case FailureResult<sqlite.Template>(:final Failure failure):
           throw StorageFailure(
             message: failure.message,
+            localizedMessage: failure.localizedMessage,
             recoveryAction: failure.recoveryAction ?? 'Try again.',
+            localizedRecovery: failure.localizedRecovery,
           );
         case Success<sqlite.Template>(:final sqlite.Template value):
           await _replaceFields(templateId: value.id, fields: stamped.fields);
+          if (existing != null) {
+            final Set<String> active = stamped.fields
+                .map((field) => field.fieldKey)
+                .toSet();
+            for (final FieldDef field in existing.fields) {
+              if (!active.contains(field.fieldKey)) {
+                await _retireFieldValues(value.id, field.fieldKey);
+              }
+            }
+          }
           await _replaceRows(templateId: value.id, rows: stamped.rows);
           final TemplateDef? loaded = await _load(value.id);
           if (loaded == null) {
-            throw const StorageFailure(
-              message: 'The database could not complete that write.',
-              recoveryAction:
-                  'Free up space or export a project, then try again.',
+            throw StorageFailure(
+              localizedMessage:
+                  Copy.messages.failureTheDatabaseCouldNotCompleteThatWrite,
+              localizedRecovery:
+                  Copy.messages.failureFreeUpSpaceOrExportAProject,
             );
           }
           return loaded;
@@ -98,17 +114,17 @@ final class TemplateRepositoryImpl implements TemplateRepository {
   @override
   Future<Result<void>> delete(String id, {required String reason}) async {
     if (id.isEmpty) {
-      return const FailureResult<void>(_missing);
+      return FailureResult<void>(_missing);
     }
     if (reason.trim().isEmpty) {
-      return const FailureResult<void>(_needsReason);
+      return FailureResult<void>(_needsReason);
     }
     return runInTransaction(_db, () async {
       final sqlite.Template? header = await _header(id);
       if (header == null || await _isTombstoned(_db.templates, id)) {
-        throw const StorageFailure(
-          message: 'That row is no longer on this device.',
-          recoveryAction: 'Refresh the list and try again.',
+        throw StorageFailure(
+          localizedMessage: Copy.messages.failureThatRowIsNoLongerOnThis,
+          localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
         );
       }
       for (final sqlite.TemplateField field in await _fieldsOf(id)) {
@@ -122,18 +138,16 @@ final class TemplateRepositoryImpl implements TemplateRepository {
   }
 
   Future<List<TemplateDef>> _listOwned(String projectId) async {
-    final List<sqlite.Template> headers =
-        await (_db.select(_db.templates)..where(
-              (sqlite.$TemplatesTable tbl) => tbl.projectId.equals(projectId),
-            ))
-            .get();
-    final Set<String> dead = await _tombstoned(_db.templates);
+    final List<QueryRow> rows = await _db
+        .customSelect(
+          'SELECT h.* FROM templates h WHERE h.project_id = ? '
+          "AND NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'templates' AND t.entity_id = h.id)",
+          variables: <Variable<Object>>[Variable<String>(projectId)],
+        )
+        .get();
     final List<TemplateDef> list = <TemplateDef>[];
-    for (final sqlite.Template header in headers) {
-      if (dead.contains(header.id)) {
-        continue;
-      }
-      list.add(await _assemble(header));
+    for (final QueryRow row in rows) {
+      list.add(await _assemble(_db.templates.map(row.data)));
     }
     list.sort(_byName);
     return list;
@@ -148,8 +162,11 @@ final class TemplateRepositoryImpl implements TemplateRepository {
   }
 
   Future<TemplateDef> _assemble(sqlite.Template header) async {
-    final Set<String> deadFields = await _tombstoned(_db.templateFields);
-    final Set<String> deadRows = await _tombstoned(_db.templateRows);
+    final Set<String> deadFields = await _tombstoned(
+      _db.templateFields,
+      header.id,
+    );
+    final Set<String> deadRows = await _tombstoned(_db.templateRows, header.id);
     final List<sqlite.TemplateField> fields = (await _fieldsOf(header.id))
         .where((sqlite.TemplateField row) => !deadFields.contains(row.id))
         .toList();
@@ -172,13 +189,14 @@ final class TemplateRepositoryImpl implements TemplateRepository {
     for (int index = 0; index < fields.length; index++) {
       final FieldDef field = fields[index];
       keep.add(field.fieldKey);
+      final String? reused = existing[field.fieldKey]?.id;
       _throwIfFailed(
         await upsertTemplateField(
           _db,
           row: TemplateMapper.fieldToRow(
             field,
             templateId: templateId,
-            id: existing[field.fieldKey]?.id,
+            id: reused,
             sortOrder: index,
           ),
           clock: _clock,
@@ -186,6 +204,14 @@ final class TemplateRepositoryImpl implements TemplateRepository {
           ids: _ids,
         ),
       );
+      if (reused != null) {
+        // A reintroduced key reuses its removed row, so lift that removal.
+        await removeTombstone(
+          _db,
+          entityType: _db.templateFields.actualTableName,
+          entityId: reused,
+        );
+      }
     }
     for (final sqlite.TemplateField row in existing.values) {
       if (!keep.contains(row.fieldKey)) {
@@ -206,24 +232,87 @@ final class TemplateRepositoryImpl implements TemplateRepository {
     final Set<String> keep = <String>{};
     for (final TemplateRow row in rows) {
       keep.add(row.identifier);
+      final String? reused = existing[row.identifier]?.id;
       _throwIfFailed(
         await upsertTemplateRow(
           _db,
-          row: TemplateMapper.rowToRow(
-            row,
-            templateId: templateId,
-            id: existing[row.identifier]?.id,
-          ),
+          row: TemplateMapper.rowToRow(row, templateId: templateId, id: reused),
           clock: _clock,
           deviceId: _deviceId,
           ids: _ids,
         ),
       );
+      if (reused != null) {
+        await removeTombstone(
+          _db,
+          entityType: _db.templateRows.actualTableName,
+          entityId: reused,
+        );
+      }
     }
     for (final sqlite.TemplateRow row in existing.values) {
       if (!keep.contains(row.identifier)) {
         await _tombstone(_db.templateRows, row.id, _removedReason);
       }
+    }
+  }
+
+  // A template deletion changes value flags, not captured template versions.
+  // One transaction covers definition, flags, causal stamps and per-record
+  // history. Pages and batches bound host memory and database round trips.
+  Future<void> _retireFieldValues(String templateId, String fieldKey) async {
+    const int pageSize = 128;
+    String cursor = '';
+    final DateTime now = _clock.nowUtc();
+    while (true) {
+      final List<QueryRow> rows = await _db
+          .customSelect(
+            'SELECT f.id, f.record_id FROM record_fields f '
+            'JOIN records r ON r.id = f.record_id '
+            'WHERE r.template_id = ? AND f.field_key = ? '
+            "AND r.status != 'deleted' AND f.retired_at IS NULL AND f.id > ? "
+            "AND NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'records' AND t.entity_id = r.id) "
+            "AND NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'record_fields' AND t.entity_id = f.id) "
+            'ORDER BY f.id LIMIT ?',
+            variables: <Variable<Object>>[
+              Variable<String>(templateId),
+              Variable<String>(fieldKey),
+              Variable<String>(cursor),
+              const Variable<int>(pageSize),
+            ],
+          )
+          .get();
+      if (rows.isEmpty) return;
+      await _db.batch((Batch batch) {
+        for (final QueryRow row in rows) {
+          batch.update(
+            _db.recordFields,
+            sqlite.RecordFieldsCompanion.custom(
+              retiredAt: Variable<DateTime>(now),
+              updatedAt: Variable<DateTime>(now),
+              updatedByDevice: Variable<String>(_deviceId),
+              rev: _db.recordFields.rev + const Constant<int>(1),
+            ),
+            where: (table) => table.id.equals(row.read<String>('id')),
+          );
+          batch.insert(
+            _db.auditLog,
+            auditEntry(
+              entityType: 'records',
+              entityId: row.read<String>('record_id'),
+              action: AuditAction.updated,
+              fieldKey: fieldKey,
+              previousValue: 'false',
+              newValue: 'true',
+              reason: retiredAuditReason,
+              device: _deviceId,
+              at: now,
+            ),
+          );
+        }
+      });
+      cursor = rows.last.read<String>('id');
+      if (rows.length < pageSize) return;
     }
   }
 
@@ -242,7 +331,9 @@ final class TemplateRepositoryImpl implements TemplateRepository {
       case FailureResult<List<sqlite.TemplateField>>(:final Failure failure):
         throw StorageFailure(
           message: failure.message,
+          localizedMessage: failure.localizedMessage,
           recoveryAction: failure.recoveryAction ?? 'Try again.',
+          localizedRecovery: failure.localizedRecovery,
         );
       case Success<List<sqlite.TemplateField>>(
         :final List<sqlite.TemplateField> value,
@@ -258,21 +349,37 @@ final class TemplateRepositoryImpl implements TemplateRepository {
         .get();
   }
 
-  Future<Set<String>> _tombstoned(TableInfo<dynamic, dynamic> table) async {
-    final List<sqlite.Tombstone> rows =
-        await (_db.select(_db.tombstones)..where(
-              (sqlite.$TombstonesTable tbl) =>
-                  tbl.entityType.equals(table.actualTableName),
-            ))
-            .get();
-    return <String>{for (final sqlite.Tombstone row in rows) row.entityId};
+  Future<Set<String>> _tombstoned(
+    TableInfo<dynamic, dynamic> table,
+    String templateId,
+  ) async {
+    final List<QueryRow> rows = await _db
+        .customSelect(
+          'SELECT t.entity_id FROM tombstones t '
+          'JOIN "${table.actualTableName}" child ON child.id = t.entity_id '
+          'WHERE t.entity_type = ? AND child.template_id = ?',
+          variables: <Variable<Object>>[
+            Variable<String>(table.actualTableName),
+            Variable<String>(templateId),
+          ],
+        )
+        .get();
+    return <String>{
+      for (final QueryRow row in rows) row.read<String>('entity_id'),
+    };
   }
 
   Future<bool> _isTombstoned(
     TableInfo<dynamic, dynamic> table,
     String id,
   ) async {
-    return (await _tombstoned(table)).contains(id);
+    return await (_db.select(_db.tombstones)..where(
+              (sqlite.$TombstonesTable row) =>
+                  row.entityType.equals(table.actualTableName) &
+                  row.entityId.equals(id),
+            ))
+            .getSingleOrNull() !=
+        null;
   }
 
   Future<void> _tombstone(
@@ -341,34 +448,35 @@ final class _EmptyTemplateRepository implements TemplateRepository {
 
   @override
   Future<Result<TemplateDef>> save(TemplateDef template) async {
-    return const FailureResult<TemplateDef>(_missing);
+    return FailureResult<TemplateDef>(_missing);
   }
 
   @override
   Future<Result<void>> delete(String id, {required String reason}) async {
-    return const FailureResult<void>(_missing);
+    return FailureResult<void>(_missing);
   }
 }
 
 ValidationFailure? _validate(TemplateDef template) {
   if (template.name.trim().isEmpty) {
-    return const ValidationFailure(
-      message: 'A template needs a name.',
-      recoveryAction: 'Enter a name and save again.',
+    return ValidationFailure(
+      localizedMessage: Copy.messages.failureATemplateNeedsAName,
+      localizedRecovery: Copy.messages.failureEnterANameAndSaveAgain,
     );
   }
   final Set<String> keys = <String>{};
   for (final FieldDef field in template.fields) {
     if (field.fieldKey.trim().isEmpty) {
-      return const ValidationFailure(
-        message: 'A field needs a key.',
-        recoveryAction: 'Give every field a key and save again.',
+      return ValidationFailure(
+        localizedMessage: Copy.messages.failureAFieldNeedsAKey,
+        localizedRecovery: Copy.messages.failureGiveEveryFieldAKeyAndSave,
       );
     }
     if (!keys.add(field.fieldKey)) {
-      return const ValidationFailure(
-        message: 'Each field key must be unique on a template.',
-        recoveryAction: 'Rename the duplicate key and save again.',
+      return ValidationFailure(
+        localizedMessage: Copy.messages.failureEachFieldKeyMustBeUniqueOn,
+        localizedRecovery:
+            Copy.messages.failureRenameTheDuplicateKeyAndSaveAgain,
       );
     }
   }
@@ -403,21 +511,23 @@ void _throwIfFailed<T>(Result<T> result) {
     case FailureResult<T>(:final Failure failure):
       throw StorageFailure(
         message: failure.message,
+        localizedMessage: failure.localizedMessage,
         recoveryAction: failure.recoveryAction ?? 'Try again.',
+        localizedRecovery: failure.localizedRecovery,
       );
     case Success<T>():
       return;
   }
 }
 
-const StorageFailure _missing = StorageFailure(
-  message: 'That row is no longer on this device.',
-  recoveryAction: 'Refresh the list and try again.',
+final StorageFailure _missing = StorageFailure(
+  localizedMessage: Copy.messages.failureThatRowIsNoLongerOnThis,
+  localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
 );
 
-const StorageFailure _needsReason = StorageFailure(
-  message: 'A delete needs a reason.',
-  recoveryAction: 'Say why this row should be removed, then try again.',
+final StorageFailure _needsReason = StorageFailure(
+  localizedMessage: Copy.messages.failureADeleteNeedsAReason,
+  localizedRecovery: Copy.messages.failureSayWhyThisRowShouldBeRemoved,
 );
 
 const String _removedReason = 'Removed from the template.';

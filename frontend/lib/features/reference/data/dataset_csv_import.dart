@@ -3,41 +3,52 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:tapture/core/concurrency/isolate_runner.dart';
+import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/time/clock.dart';
 
+import '../domain/dataset_import_draft.dart';
 import '../domain/reference_dataset.dart';
-import '../domain/reference_row.dart';
 
-/// Parses a CSV file into a draft [ReferenceDataset] and its rows.
+/// Parses a CSV table into a [DatasetImportDraft].
+///
+/// The delimiter is read from the header line (comma, semicolon or tab);
+/// quoted values may hold the delimiter, line breaks and doubled quotes; a
+/// byte-order mark is dropped; and blank lines are skipped without shifting
+/// a column.
 abstract final class DatasetCsvImport {
-  /// Streams [path] off the UI thread. Progress is a row count fraction.
+  /// Streams [path] on a worker isolate and builds the draft there, so a
+  /// large file never blocks the interface. [onProgress] hears the share of
+  /// the file read, every [AppConstants.datasets] `progressRows` rows.
   static Future<Result<DatasetImportDraft>> parse(
     String path, {
     String? projectId,
     String? name,
+    Clock clock = const SystemClock(),
     void Function(double)? onProgress,
     CancellationToken? cancel,
   }) async {
-    final Result<Object> parsed = await runIsolate(
-      _parseInIsolate,
-      <String, Object?>{'path': path},
-      onProgress: onProgress,
-      cancel: cancel,
-    );
-    return switch (parsed) {
-      FailureResult<Object>(:final Failure failure) =>
-        FailureResult<DatasetImportDraft>(failure),
-      Success<Object>(:final Object value) => _draftOf(
-        value,
+    final Result<Result<DatasetImportDraft>> parsed = await runIsolate(
+      _parseFile,
+      (
         path: path,
         projectId: projectId,
         name: name,
+        importedAt: clock.nowUtc(),
       ),
-    };
+      onProgress: onProgress,
+      cancel: cancel,
+    );
+    return parsed.fold(
+      FailureResult<DatasetImportDraft>.new,
+      (Result<DatasetImportDraft> draft) => draft,
+    );
   }
 
-  /// Parses [text] in-process (tests and round-trips).
+  /// Parses [text] on the calling isolate: browser bytes already on a
+  /// worker, and round-trips. Progress is reported the same way.
   static Result<DatasetImportDraft> parseText(
     String text, {
     required String sourceFile,
@@ -46,316 +57,241 @@ abstract final class DatasetCsvImport {
     DateTime? importedAt,
   }) {
     try {
-      final ({List<String> columns, List<Map<String, String>> rows}) parsed =
-          _parseCsv(text);
+      final _CsvTable table = _CsvTable();
+      final int step = AppConstants.datasets.readChunkBytes;
+      for (int start = 0; start < text.length; start += step) {
+        final int end = start + step < text.length ? start + step : text.length;
+        table.fraction = end / text.length;
+        table.add(text.substring(start, end));
+      }
+      table.close();
       return Success<DatasetImportDraft>(
-        _toDraft(
-          columns: parsed.columns,
-          rows: parsed.rows,
+        table.draft(
           sourceFile: sourceFile,
-          source: DatasetSource.csv,
           projectId: projectId,
           name: name,
-          importedAt: importedAt,
+          importedAt: importedAt ?? const SystemClock().nowUtc(),
         ),
       );
-    } on Failure catch (failure) {
-      return FailureResult<DatasetImportDraft>(failure);
+    } on Failure catch (parseFailure) {
+      return FailureResult<DatasetImportDraft>(parseFailure);
     }
   }
 }
 
-/// Parsed header and rows before the key-column screen saves them.
-typedef DatasetImportDraft = ({
-  ReferenceDataset dataset,
-  List<ReferenceRow> rows,
-  Map<String, int> duplicateCounts,
-  Map<String, List<String>> samples,
+/// What the worker isolate is asked to read.
+typedef _FileJob = ({
+  String path,
+  String? projectId,
+  String? name,
+  DateTime importedAt,
 });
 
-Object _parseInIsolate(Map<String, Object?> message) {
-  final Object? path = message['path'];
-  if (path is! String) {
-    return <String, Object?>{'ok': false, 'error': 'path'};
-  }
+Result<DatasetImportDraft> _parseFile(_FileJob job) {
+  RandomAccessFile? file;
   try {
-    final Uint8List bytes = File(path).readAsBytesSync();
-    final String text = _decodeBom(bytes);
-    final ({List<String> columns, List<Map<String, String>> rows}) parsed =
-        _parseCsv(text);
-    IsolateRunner.reportProgress(1);
-    return <String, Object?>{
-      'ok': true,
-      'columns': parsed.columns,
-      'rows': <Map<String, String>>[
-        for (final Map<String, String> row in parsed.rows) row,
-      ],
-    };
-  } on Failure catch (failure) {
-    return <String, Object?>{
-      'ok': false,
-      'message': failure.message,
-      'recovery': failure.recoveryAction,
-    };
-  } on Object {
-    return <String, Object?>{'ok': false, 'error': 'io'};
+    file = File(job.path).openSync();
+    final int total = file.lengthSync();
+    final _CsvTable table = _CsvTable();
+    final ByteConversionSink bytes = const Utf8Decoder().startChunkedConversion(
+      table,
+    );
+    final Uint8List buffer = Uint8List(AppConstants.datasets.readChunkBytes);
+    int read = 0;
+    while (true) {
+      final int count = file.readIntoSync(buffer);
+      if (count == 0) {
+        break;
+      }
+      read += count;
+      table.fraction = total == 0 ? 1 : read / total;
+      bytes.addSlice(buffer, 0, count, false);
+    }
+    bytes.close();
+    return Success<DatasetImportDraft>(
+      table.draft(
+        sourceFile: job.path,
+        projectId: job.projectId,
+        name: job.name,
+        importedAt: job.importedAt,
+      ),
+    );
+  } on Failure catch (readFailure) {
+    return FailureResult<DatasetImportDraft>(readFailure);
+  } on FormatException {
+    return FailureResult<DatasetImportDraft>(_notText);
+  } on FileSystemException {
+    return FailureResult<DatasetImportDraft>(_unreadable);
+  } finally {
+    file?.closeSync();
   }
 }
 
-Result<DatasetImportDraft> _draftOf(
-  Object value, {
-  required String path,
-  String? projectId,
-  String? name,
-}) {
-  if (value is! Map) {
-    return const FailureResult<DatasetImportDraft>(_corrupt);
+/// Collects decoded text into a header and rows as it arrives, a chunk at a
+/// time, so the file itself is never held whole.
+final class _CsvTable implements Sink<String> {
+  /// Share of the input consumed so far, reported with progress.
+  double fraction = 0;
+
+  final StringBuffer _head = StringBuffer();
+  final StringBuffer _cell = StringBuffer();
+  List<String> _row = <String>[];
+  int? _delimiter;
+  bool _inQuotes = false;
+  bool _quoteSeen = false;
+  List<String>? _columns;
+  final List<Map<String, String>> _rows = <Map<String, String>>[];
+
+  @override
+  void add(String chunk) {
+    if (_delimiter != null) {
+      _consume(chunk);
+      return;
+    }
+    // The delimiter is read from the header line, so text waits here until
+    // that line has arrived whole.
+    _head.write(chunk);
+    final String head = _head.toString();
+    if (head.contains('\n')) {
+      _start(head);
+    }
   }
-  final Map<Object?, Object?> map = value;
-  if (map['ok'] != true) {
-    final Object? message = map['message'];
-    if (message is String) {
-      return FailureResult<DatasetImportDraft>(
-        ValidationFailure(
-          message: message,
-          recoveryAction:
-              map['recovery'] as String? ?? 'Fix the file and try again.',
-        ),
+
+  @override
+  void close() {
+    if (_delimiter == null) {
+      _start(_head.toString());
+    }
+    if (_quoteSeen) {
+      _inQuotes = false;
+      _quoteSeen = false;
+    }
+    if (_inQuotes) {
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureAQuotedCSVValueIsUnfinished,
+        localizedRecovery: Copy.messages.failureCloseTheQuotedValueAndImportThe,
       );
     }
-    return const FailureResult<DatasetImportDraft>(_corrupt);
-  }
-  final List<String> columns = <String>[
-    for (final Object? item in (map['columns'] as List? ?? const <Object>[]))
-      if (item is String) item,
-  ];
-  final List<Map<String, String>> rows = <Map<String, String>>[];
-  for (final Object? item in (map['rows'] as List? ?? const <Object>[])) {
-    if (item is Map) {
-      rows.add(<String, String>{
-        for (final MapEntry<Object?, Object?> e in item.entries)
-          if (e.key is String) e.key! as String: '${e.value ?? ''}',
-      });
+    if (_cell.isNotEmpty || _row.isNotEmpty) {
+      _endRow();
     }
   }
-  return Success<DatasetImportDraft>(
-    _toDraft(
+
+  /// The draft this table lands as.
+  DatasetImportDraft draft({
+    required String sourceFile,
+    required DateTime importedAt,
+    String? projectId,
+    String? name,
+  }) {
+    final List<String>? columns = _columns;
+    if (columns == null) {
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.failureThatFileIsEmpty,
+        localizedRecovery: Copy.messages.failureChooseACSVWithAHeaderAnd,
+      );
+    }
+    return DatasetDraft.build(
       columns: columns,
-      rows: rows,
-      sourceFile: path,
+      rows: _rows,
       source: DatasetSource.csv,
+      sourceFile: sourceFile,
+      importedAt: importedAt,
       projectId: projectId,
       name: name,
-    ),
-  );
-}
-
-DatasetImportDraft _toDraft({
-  required List<String> columns,
-  required List<Map<String, String>> rows,
-  required String sourceFile,
-  required DatasetSource source,
-  String? projectId,
-  String? name,
-  DateTime? importedAt,
-}) {
-  if (columns.isEmpty) {
-    throw const ValidationFailure(
-      message: 'That file has no columns.',
-      recoveryAction: 'Add a header row and try again.',
     );
   }
-  final List<String> dataColumns = columns
-      .where((String column) => column != 'addedOnDevice')
-      .toList();
-  if (dataColumns.isEmpty) {
-    throw const ValidationFailure(message: 'That file has no data columns.');
-  }
-  final String keyGuess = dataColumns.first;
-  final List<ReferenceRow> mapped = <ReferenceRow>[
-    for (int i = 0; i < rows.length; i++)
-      ReferenceRow(
-        id: '',
-        datasetId: '',
-        key: rows[i][keyGuess] ?? '',
-        values: <String, String>{
-          for (final String column in dataColumns)
-            column: rows[i][column] ?? '',
-        },
-        addedOnDevice: rows[i]['addedOnDevice'] == 'true',
-      ),
-  ];
-  final Map<String, int> duplicateCounts = <String, int>{
-    for (final String column in dataColumns)
-      column: _duplicateCount(rows, column),
-  };
-  final Map<String, List<String>> samples = <String, List<String>>{
-    for (final String column in dataColumns)
-      column: <String>[
-        for (final Map<String, String> row in rows.take(3)) row[column] ?? '',
-      ],
-  };
-  final String fileName = sourceFile.replaceAll('\\', '/').split('/').last;
-  return (
-    dataset: ReferenceDataset(
-      id: '',
-      name: (name == null || name.isEmpty)
-          ? fileName.replaceAll(RegExp(r'\.[^.]+$'), '')
-          : name,
-      keyColumn: keyGuess,
-      columns: dataColumns,
-      source: source,
-      importedAt: importedAt ?? DateTime.now().toUtc(),
-      rowCount: mapped.length,
-      projectId: projectId,
-      sourceFile: sourceFile,
-    ),
-    rows: mapped,
-    duplicateCounts: duplicateCounts,
-    samples: samples,
-  );
-}
 
-int _duplicateCount(List<Map<String, String>> rows, String column) {
-  final Map<String, int> counts = <String, int>{};
-  for (final Map<String, String> row in rows) {
-    final String value = row[column] ?? '';
-    counts[value] = (counts[value] ?? 0) + 1;
+  void _start(String head) {
+    final String body = head.startsWith('﻿') ? head.substring(1) : head;
+    _head.clear();
+    _delimiter = _delimiterOf(body.split('\n').first);
+    _consume(body);
   }
-  int dups = 0;
-  for (final int count in counts.values) {
-    if (count > 1) {
-      dups += count - 1;
-    }
-  }
-  return dups;
-}
 
-String _decodeBom(Uint8List bytes) {
-  if (bytes.length >= 3 &&
-      bytes[0] == 0xEF &&
-      bytes[1] == 0xBB &&
-      bytes[2] == 0xBF) {
-    return utf8.decode(bytes.sublist(3));
-  }
-  return utf8.decode(bytes);
-}
-
-({List<String> columns, List<Map<String, String>> rows}) _parseCsv(
-  String text,
-) {
-  final String body = text.replaceFirst(RegExp(r'^\uFEFF'), '');
-  final List<List<String>> grid = _readGrid(body);
-  if (grid.isEmpty) {
-    throw const ValidationFailure(
-      message: 'That file is empty.',
-      recoveryAction: 'Choose a CSV with a header and rows.',
-    );
-  }
-  final List<String> columns = <String>[];
-  for (int i = 0; i < grid.first.length; i++) {
-    columns.add(_uniqueHeader(grid.first[i].trim(), i, columns));
-  }
-  final List<Map<String, String>> rows = <Map<String, String>>[];
-  for (int r = 1; r < grid.length; r++) {
-    final List<String> line = grid[r];
-    if (line.every((String cell) => cell.trim().isEmpty)) {
-      continue;
-    }
-    final Map<String, String> row = <String, String>{};
-    for (int c = 0; c < columns.length; c++) {
-      row[columns[c]] = c < line.length ? line[c] : '';
-    }
-    rows.add(row);
-  }
-  return (columns: columns, rows: rows);
-}
-
-String _uniqueHeader(String label, int index, List<String> headers) {
-  final String base = label.isEmpty ? 'column_${index + 1}' : label;
-  int suffix = 2;
-  String candidate = base;
-  final Set<String> earlier = <String>{
-    for (int i = 0; i < index; i++)
-      headers[i].trim().isEmpty ? 'column_${i + 1}' : headers[i].trim(),
-  };
-  while (earlier.contains(candidate)) {
-    candidate = '${base}_$suffix';
-    suffix++;
-  }
-  return candidate;
-}
-
-List<List<String>> _readGrid(String text) {
-  final String delimiter = _detectDelimiter(text);
-  final List<List<String>> rows = <List<String>>[];
-  final List<String> current = <String>[];
-  final StringBuffer cell = StringBuffer();
-  bool inQuotes = false;
-  for (int i = 0; i < text.length; i++) {
-    final String ch = text[i];
-    if (inQuotes) {
-      if (ch == '"') {
-        if (i + 1 < text.length && text[i + 1] == '"') {
-          cell.write('"');
-          i++;
-        } else {
-          inQuotes = false;
+  void _consume(String text) {
+    final int delimiter = _delimiter!;
+    for (int index = 0; index < text.length; index++) {
+      final int unit = text.codeUnitAt(index);
+      if (_quoteSeen) {
+        _quoteSeen = false;
+        if (unit == _quote) {
+          _cell.writeCharCode(_quote);
+          continue;
         }
-      } else {
-        cell.write(ch);
+        _inQuotes = false;
+      } else if (_inQuotes) {
+        if (unit == _quote) {
+          _quoteSeen = true;
+        } else {
+          _cell.writeCharCode(unit);
+        }
+        continue;
       }
-      continue;
+      if (unit == _quote) {
+        _inQuotes = true;
+      } else if (unit == delimiter) {
+        _row.add(_cell.toString());
+        _cell.clear();
+      } else if (unit == _newline) {
+        _endRow();
+      } else if (unit != _return) {
+        _cell.writeCharCode(unit);
+      }
     }
-    if (ch == '"') {
-      inQuotes = true;
-      continue;
-    }
-    if (ch == delimiter) {
-      current.add(cell.toString());
-      cell.clear();
-      continue;
-    }
-    if (ch == '\n') {
-      current.add(cell.toString());
-      cell.clear();
-      rows.add(List<String>.of(current));
-      current.clear();
-      continue;
-    }
-    if (ch == '\r') {
-      continue;
-    }
-    cell.write(ch);
   }
-  if (cell.isNotEmpty || current.isNotEmpty) {
-    current.add(cell.toString());
-    rows.add(current);
+
+  void _endRow() {
+    _row.add(_cell.toString());
+    _cell.clear();
+    final List<String> cells = _row;
+    _row = <String>[];
+    final List<String>? columns = _columns;
+    if (columns == null) {
+      _columns = DatasetDraft.uniqueColumns(cells);
+      return;
+    }
+    if (cells.every((String cell) => cell.trim().isEmpty)) {
+      return;
+    }
+    _rows.add(<String, String>{
+      for (int column = 0; column < columns.length; column++)
+        columns[column]: column < cells.length ? cells[column] : '',
+    });
+    if (_rows.length % AppConstants.datasets.progressRows == 0) {
+      IsolateRunner.reportProgress(fraction);
+    }
   }
-  if (inQuotes) {
-    throw const ValidationFailure(
-      message: 'A quoted CSV value is unfinished.',
-      recoveryAction: 'Close the quoted value and import the file again.',
-    );
-  }
-  return rows;
 }
 
-String _detectDelimiter(String text) {
-  final String sample = text.split(RegExp(r'\r?\n')).first;
-  final int commas = ','.allMatches(sample).length;
-  final int semis = ';'.allMatches(sample).length;
-  final int tabs = '\t'.allMatches(sample).length;
+/// The delimiter [header] uses most: semicolon or tab when either outnumbers
+/// commas, else comma.
+int _delimiterOf(String header) {
+  final int commas = ','.allMatches(header).length;
+  final int semis = ';'.allMatches(header).length;
+  final int tabs = '\t'.allMatches(header).length;
   if (semis > commas && semis >= tabs) {
-    return ';';
+    return _semicolon;
   }
   if (tabs > commas && tabs > semis) {
-    return '\t';
+    return _tab;
   }
-  return ',';
+  return _comma;
 }
 
-const ValidationFailure _corrupt = ValidationFailure(
-  message: 'That CSV could not be read.',
-  recoveryAction: 'Check the file and try again.',
+const int _quote = 0x22;
+const int _comma = 0x2C;
+const int _semicolon = 0x3B;
+const int _tab = 0x09;
+const int _newline = 0x0A;
+const int _return = 0x0D;
+
+final ValidationFailure _notText = ValidationFailure(
+  localizedMessage: Copy.messages.failureThatTableCouldNotBeReadAs,
+  localizedRecovery: Copy.messages.failureSaveItAsUTFCSVAndTry,
+);
+
+final StorageFailure _unreadable = StorageFailure(
+  localizedMessage: Copy.messages.failureThatCSVCouldNotBeRead,
+  localizedRecovery: Copy.messages.failureCheckTheFileAndTryAgain,
 );

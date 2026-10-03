@@ -39,12 +39,14 @@ Future<void> showTemplateListFilters(
   WidgetRef ref,
   List<TemplateDef> templates,
 ) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final List<String> kinds = <String>{
     for (final TemplateDef template in templates) template.kind.trim(),
   }.toList()..sort();
   return showAppFilterSheet(
     context,
-    title: Copy.templateFiltersTitle,
+    title: localCopy.templateFiltersTitle,
     onClear: ref.read(templateListFilterProvider.notifier).clear,
     facets: (BuildContext _) => _KindFacet(kinds: kinds),
   );
@@ -57,13 +59,18 @@ class _KindFacet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppMultiChoiceField<String>(
       key: const ValueKey<String>('template-kind-filter'),
-      label: Copy.templateKindFilter,
+      label: localCopy.templateKindFilter,
       // Kinds are template content and are shown as stored (FE-L10N-07).
       options: <Choice<String>>[
         for (final String kind in kinds)
-          Choice<String>(kind, kind.isEmpty ? Copy.templateKindNone : kind),
+          Choice<String>(
+            kind,
+            kind.isEmpty ? localCopy.templateKindNone : kind,
+          ),
       ],
       value: ref.watch(templateListFilterProvider),
       onChanged: ref.read(templateListFilterProvider.notifier).set,

@@ -12,6 +12,27 @@ abstract final class SettingKeys {
     false,
   );
 
+  /// Exports leave coordinates out: location fields and photo location
+  /// details. On until a person turns it off (FE-SEC-07).
+  static const SettingKey<bool> excludeCoordinates = SettingKey<bool>(
+    'privacy.excludeCoordinates',
+    true,
+  );
+
+  /// Exported photos have detected faces blurred; a photo whose faces cannot
+  /// be checked stays out of the export. Off until a person turns it on.
+  static const SettingKey<bool> blurFaces = SettingKey<bool>(
+    'privacy.blurFaces',
+    false,
+  );
+
+  /// Explicit outbound permissions, encoded by EgressSwitches. Missing or
+  /// legacy implicit permissions keep every path off.
+  static const SettingKey<String> egressOff = SettingKey<String>(
+    'privacy.egressOff',
+    '{}',
+  );
+
   /// Clear the lowest context level after idle. Off by default.
   static const SettingKey<bool> contextAutoClearEnabled = SettingKey<bool>(
     'context.autoClearEnabled',
@@ -277,6 +298,9 @@ abstract final class SettingKeys {
   /// Wire names of every declared key, so a raw string cannot sneak in.
   static List<String> get names => <String>[
     gpsEnabled.name,
+    excludeCoordinates.name,
+    blurFaces.name,
+    egressOff.name,
     contextAutoClearEnabled.name,
     contextAutoClearSeconds.name,
     contextMovementPromptEnabled.name,

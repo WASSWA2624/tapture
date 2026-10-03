@@ -35,35 +35,42 @@ class DetectionProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
     final _ProfileView view = ref.watch(_detectionProfileProvider(templateId));
     return AppPage(
       key: const ValueKey<String>('route-detection-profile'),
-      title: Copy.detectionProfileTitle,
+      title: localCopy.detectionProfileTitle,
       scrollable: false,
       footer: value.asData?.value == null
           ? null
           : AppPrimaryAction(
-              label: Copy.save,
+              label: localCopy.save,
               onPressed: () => unawaited(_commit(context, ref)),
             ),
       body: AsyncValueView<TemplateDef?>(
         value: value,
         isEmpty: (TemplateDef? row) => row == null,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.detection,
-          headline: Copy.detectionProfileEmptyHeadline,
-          message: Copy.detectionProfileEmptyMessage,
+          headline: Copy.of(context).detectionProfileEmptyHeadline,
+          message: Copy.of(context).detectionProfileEmptyMessage,
         ),
         onRetry: () => ref.invalidate(templateListProvider),
-        data: (TemplateDef? row) => _form(ref, row!, view),
+        data: (TemplateDef? row) => _form(context, ref, row!, view),
       ),
     );
   }
 
-  Widget _form(WidgetRef ref, TemplateDef template, _ProfileView view) {
+  Widget _form(
+    BuildContext context,
+    WidgetRef ref,
+    TemplateDef template,
+    _ProfileView view,
+  ) {
     final _DetectionProfile controller = ref.read(
       _detectionProfileProvider(templateId).notifier,
     );
@@ -72,36 +79,41 @@ class DetectionProfileScreen extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.only(bottom: Space.x4),
       children: <Widget>[
-        const AppBanner(
-          message: Copy.detectionProfileExplain,
+        AppBanner(
+          message: Copy.of(context).detectionProfileExplain,
           icon: AppIcons.info,
           tone: SnackTone.info,
         ),
-        if (view.saveError != null)
+        if (Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError) !=
+            null)
           AppBanner(
-            message: view.saveError!,
+            message: Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError)!,
             icon: AppIcons.error,
             tone: SnackTone.error,
           ),
         _TokenField(
           key: const ValueKey<String>('detection-classes'),
-          label: Copy.detectionProfileClasses,
+          label: Copy.of(context).detectionProfileClasses,
           value: view.objectClasses.join(', '),
           onChanged: controller.setClasses,
         ),
         _TokenField(
           key: const ValueKey<String>('detection-keywords'),
-          label: Copy.detectionProfileKeywords,
+          label: Copy.of(context).detectionProfileKeywords,
           value: view.keywords.join(', '),
           onChanged: controller.setKeywords,
         ),
-        const AppSectionHeader(
-          title: Copy.detectionProfilePatterns,
+        AppSectionHeader(
+          title: Copy.of(context).detectionProfilePatterns,
           dense: true,
         ),
         if (patterned.isEmpty)
-          const AppBanner(
-            message: Copy.detectionProfileNoPatterns,
+          AppBanner(
+            message: Copy.of(context).detectionProfileNoPatterns,
             icon: AppIcons.info,
             tone: SnackTone.info,
           )
@@ -109,7 +121,7 @@ class DetectionProfileScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(Space.x4, Space.x2, Space.x4, 0),
             child: AppCheckboxGroup<String>(
-              label: Copy.detectionProfilePatterns,
+              label: Copy.of(context).detectionProfilePatterns,
               showLabel: false,
               value: view.identifierFields,
               options: <Choice<String>>[
@@ -119,13 +131,13 @@ class DetectionProfileScreen extends ConsumerWidget {
               onChanged: controller.setIdentifierFields,
             ),
           ),
-        const AppSectionHeader(
-          title: Copy.detectionProfileDatasets,
+        AppSectionHeader(
+          title: Copy.of(context).detectionProfileDatasets,
           dense: true,
         ),
         if (datasets.isEmpty)
-          const AppBanner(
-            message: Copy.detectionProfileNoDatasets,
+          AppBanner(
+            message: Copy.of(context).detectionProfileNoDatasets,
             icon: AppIcons.info,
             tone: SnackTone.info,
           )
@@ -133,7 +145,7 @@ class DetectionProfileScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(Space.x4, Space.x2, Space.x4, 0),
             child: AppCheckboxGroup<String>(
-              label: Copy.detectionProfileDatasets,
+              label: Copy.of(context).detectionProfileDatasets,
               showLabel: false,
               value: view.datasets,
               options: <Choice<String>>[
@@ -145,7 +157,7 @@ class DetectionProfileScreen extends ConsumerWidget {
           ),
         _TokenField(
           key: const ValueKey<String>('detection-negative'),
-          label: Copy.detectionProfileNegative,
+          label: Copy.of(context).detectionProfileNegative,
           value: view.negativeKeywords.join(', '),
           onChanged: controller.setNegative,
         ),
@@ -207,6 +219,7 @@ typedef _ProfileView = ({
   Set<String> datasets,
   List<String> negativeKeywords,
   String? saveError,
+  LocalizedMessage? localizedSaveError,
   bool dirty,
 });
 
@@ -241,6 +254,7 @@ final class _DetectionProfile extends Notifier<_ProfileView> {
         datasets: const <String>{},
         negativeKeywords: const <String>[],
         saveError: null,
+        localizedSaveError: null,
         dirty: false,
       );
     }
@@ -252,6 +266,7 @@ final class _DetectionProfile extends Notifier<_ProfileView> {
       datasets: profile.datasets,
       negativeKeywords: profile.negativeKeywords,
       saveError: null,
+      localizedSaveError: null,
       dirty: false,
     );
   }
@@ -269,9 +284,9 @@ final class _DetectionProfile extends Notifier<_ProfileView> {
   Future<bool> commit() async {
     final TemplateDef? source = _source();
     if (source == null) {
-      const StorageFailure missing = StorageFailure(
-        message: Copy.detectionProfileMissing,
-        recoveryAction: Copy.detectionProfileMissingRecovery,
+      final StorageFailure missing = StorageFailure(
+        localizedMessage: Copy.messages.detectionProfileMissing,
+        localizedRecovery: Copy.messages.detectionProfileMissingRecovery,
       );
       state = (
         objectClasses: state.objectClasses,
@@ -280,6 +295,7 @@ final class _DetectionProfile extends Notifier<_ProfileView> {
         datasets: state.datasets,
         negativeKeywords: state.negativeKeywords,
         saveError: missing.message,
+        localizedSaveError: missing.explanation,
         dirty: state.dirty,
       );
       _held = state;
@@ -298,6 +314,7 @@ final class _DetectionProfile extends Notifier<_ProfileView> {
           datasets: state.datasets,
           negativeKeywords: state.negativeKeywords,
           saveError: null,
+          localizedSaveError: null,
           dirty: false,
         );
         return true;
@@ -309,6 +326,7 @@ final class _DetectionProfile extends Notifier<_ProfileView> {
           datasets: state.datasets,
           negativeKeywords: state.negativeKeywords,
           saveError: failure.message,
+          localizedSaveError: failure.explanation,
           dirty: true,
         );
         _held = state;
@@ -330,6 +348,7 @@ final class _DetectionProfile extends Notifier<_ProfileView> {
       datasets: datasets ?? state.datasets,
       negativeKeywords: negativeKeywords ?? state.negativeKeywords,
       saveError: null,
+      localizedSaveError: null,
       dirty: true,
     );
     _held = state;
@@ -403,12 +422,14 @@ class _TokenFieldState extends State<_TokenField> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(Space.x4, Space.x2, Space.x4, 0),
       child: AppTextField(
         label: widget.label,
         controller: _controller,
-        hint: Copy.detectionProfileHint,
+        hint: localCopy.detectionProfileHint,
         onChanged: widget.onChanged,
       ),
     );

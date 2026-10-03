@@ -1,22 +1,10 @@
 import 'package:tapture/core/widgets/fields/field_value.dart';
-import 'package:tapture/features/records/records.dart';
-import 'package:tapture/features/templates/templates.dart';
+import 'package:tapture/features/processing/domain/domain.dart'
+    show ConfidenceBand;
+import 'package:tapture/features/records/domain/domain.dart';
+import 'package:tapture/features/templates/domain/domain.dart';
 
-/// Attention-first review order (task 016).
-///
-/// Low-confidence, missing, conflicting and duplicate-flagged fields come
-/// first. Confident fields follow, for a group the screen starts collapsed.
-final class FieldOrdering {
-  /// Orders [record]'s fields against [template].
-  static List<(FieldValue, ReviewGroup)> order(
-    RecordEntry record,
-    TemplateDef template,
-  ) {
-    return orderForReview(record, template);
-  }
-}
-
-/// Which review group a field belongs to.
+/// Which review group a field belongs to (task 016).
 enum ReviewGroup {
   /// A person should look before approving.
   needsAttention,
@@ -26,6 +14,11 @@ enum ReviewGroup {
 }
 
 /// [record]'s fields, attention first, in template order within each group.
+///
+/// Low-confidence, missing, conflicting and duplicate-flagged fields, and a
+/// value whose photo evidence was removed, come first. Confident fields
+/// follow, for a group the screen starts collapsed. Hidden template fields
+/// are left out; a value no template field declares is kept, after them.
 List<(FieldValue, ReviewGroup)> orderForReview(
   RecordEntry record,
   TemplateDef template,
@@ -37,49 +30,44 @@ List<(FieldValue, ReviewGroup)> orderForReview(
   final List<(FieldValue, ReviewGroup)> confident =
       <(FieldValue, ReviewGroup)>[];
   final Set<String> seen = <String>{};
-  for (final FieldDef field in fields) {
-    if (field.hidden) {
-      continue;
-    }
-    seen.add(field.fieldKey);
-    final RecordValue? value = record.valueOf(field.fieldKey);
+  void place(String fieldKey, RecordValue? value) {
     final ReviewGroup group = _group(record, value);
-    final (FieldValue, ReviewGroup) row = (
-      _asField(field.fieldKey, value),
+    (group == ReviewGroup.needsAttention ? attention : confident).add((
+      _asField(fieldKey, value),
       group,
-    );
-    (group == ReviewGroup.needsAttention ? attention : confident).add(row);
+    ));
+  }
+
+  for (final FieldDef field in fields) {
+    seen.add(field.fieldKey);
+    if (!field.hidden) {
+      place(field.fieldKey, record.valueOf(field.fieldKey));
+    }
   }
   for (final RecordValue value in record.values) {
     if (value.retired || seen.contains(value.fieldKey)) {
       continue;
     }
-    final ReviewGroup group = _group(record, value);
-    final (FieldValue, ReviewGroup) row = (
-      _asField(value.fieldKey, value),
-      group,
-    );
-    (group == ReviewGroup.needsAttention ? attention : confident).add(row);
+    place(value.fieldKey, value);
   }
   return <(FieldValue, ReviewGroup)>[...attention, ...confident];
 }
 
 ReviewGroup _group(RecordEntry record, RecordValue? value) {
-  if (value == null || !value.hasValue) {
-    return ReviewGroup.needsAttention;
-  }
-  if (value.evidenceRemoved) {
+  if (value == null || !value.hasValue || value.evidenceRemoved) {
     return ReviewGroup.needsAttention;
   }
   if (record.flags.contains(RecordFlag.hasConflict) ||
       record.flags.contains(RecordFlag.hasDuplicate)) {
     return ReviewGroup.needsAttention;
   }
-  final String band = (value.band ?? '').replaceAll('_', '').toLowerCase();
-  if (band.isEmpty || band == 'high') {
+  if (value.verified) {
     return ReviewGroup.confident;
   }
-  return ReviewGroup.needsAttention;
+  final ConfidenceBand? band = ConfidenceBand.fromStored(value.band);
+  return band == null || band == ConfidenceBand.high
+      ? ReviewGroup.confident
+      : ReviewGroup.needsAttention;
 }
 
 FieldValue _asField(String fieldKey, RecordValue? value) {

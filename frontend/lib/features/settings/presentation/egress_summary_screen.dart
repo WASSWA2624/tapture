@@ -31,6 +31,9 @@ final class EgressSummaryScreen extends StatelessWidget {
     this.onGps,
     this.onExclude,
     this.onRemoveCoordinates,
+    this.removedCoordinates,
+    this.blurFaces = false,
+    this.onBlurFaces,
     super.key,
   });
 
@@ -73,17 +76,31 @@ final class EgressSummaryScreen extends StatelessWidget {
   /// Removes coordinates already stored and returns how many changed.
   final Future<int> Function()? onRemoveCoordinates;
 
+  /// Count from the last committed removal.
+  final int? removedCoordinates;
+
+  /// Whether exported photos must pass face detection and blurring.
+  final bool blurFaces;
+
+  /// Persists the face-blurring preference.
+  final ValueChanged<bool>? onBlurFaces;
+
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppPage(
-        title: Copy.privacyScreenTitle,
+        title: localCopy.privacyScreenTitle,
         body: AppErrorState(failure: failed),
       );
     }
     if (loading) {
-      return const AppPage(title: Copy.privacyScreenTitle, body: AppSkeleton());
+      return AppPage(
+        title: localCopy.privacyScreenTitle,
+        body: const AppSkeleton(),
+      );
     }
     final List<Widget> rows = <Widget>[
       for (final ProviderDescriptor provider in providers)
@@ -91,7 +108,7 @@ final class EgressSummaryScreen extends StatelessWidget {
           AppSwitchTile(
             key: ValueKey<String>('egress-${provider.id}-${operation.name}'),
             title: provider.label,
-            description: '${_sends(operation)} · ${provider.label}',
+            description: '${_sends(operation, localCopy)} · ${provider.label}',
             value: operationEnabled?.call(operation) ?? false,
             onChanged: (bool enabled) => onOperation?.call(operation, enabled),
           ),
@@ -99,21 +116,21 @@ final class EgressSummaryScreen extends StatelessWidget {
         AppSwitchTile(
           key: ValueKey<String>('egress-upload-${destination.id}'),
           title: destination.label,
-          description: '${Copy.egressSendsFile} · ${destination.label}',
+          description: '${localCopy.egressSendsFile} · ${destination.label}',
           value: uploadEnabled?.call(destination.id) ?? false,
           onChanged: (bool enabled) => onUpload?.call(destination.id, enabled),
         ),
     ];
     return AppPage(
-      title: Copy.privacyScreenTitle,
+      title: localCopy.privacyScreenTitle,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           if (rows.isEmpty)
-            const AppEmptyState(
+            AppEmptyState(
               icon: AppIcons.export,
-              headline: Copy.privacyEmptyHeadline,
-              message: Copy.privacyEmptyMessage,
+              headline: localCopy.privacyEmptyHeadline,
+              message: localCopy.privacyEmptyMessage,
             )
           else
             ...rows,
@@ -123,18 +140,27 @@ final class EgressSummaryScreen extends StatelessWidget {
             onGps: onGps,
             onExclude: onExclude,
             onRemove: onRemoveCoordinates,
+            removed: removedCoordinates,
+          ),
+          AppSwitchTile(
+            key: const ValueKey<String>('privacy-blur-faces'),
+            title: localCopy.faceBlurTitle,
+            description: localCopy.faceBlurEffect,
+            value: blurFaces,
+            enabled: onBlurFaces != null,
+            onChanged: (bool on) => onBlurFaces?.call(on),
           ),
         ],
       ),
     );
   }
 
-  static String _sends(AiOperation operation) {
+  static String _sends(AiOperation operation, LocalizedCopy copy) {
     return switch (operation) {
-      AiOperation.readText => Copy.egressSendsImage,
+      AiOperation.readText => copy.egressSendsImage,
       AiOperation.extractFields ||
-      AiOperation.refineText => Copy.egressSendsText,
-      AiOperation.transcribe => Copy.egressSendsAudio,
+      AiOperation.refineText => copy.egressSendsText,
+      AiOperation.transcribe => copy.egressSendsAudio,
     };
   }
 }

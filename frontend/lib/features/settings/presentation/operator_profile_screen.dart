@@ -3,13 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/db/app_database.dart';
-import 'package:tapture/core/db/database_provider.dart';
-import 'package:tapture/core/db/tables/device_profile.dart';
-import 'package:tapture/core/device/device_identity.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/ids/uuid_service.dart';
-import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/fields/app_email_field.dart';
@@ -18,6 +13,7 @@ import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 
 import '../domain/operator_profile.dart';
+import '../settings.dart' show operatorProfileRepositoryProvider;
 
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
@@ -69,30 +65,36 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<_OperatorProfileView> value = ref.watch(
       operatorProfileProvider,
     );
     return AppPage(
-      title: Copy.operatorProfileTitle,
-      subtitle: Copy.operatorNameUse,
+      title: localCopy.operatorProfileTitle,
+      subtitle: localCopy.operatorNameUse,
       body: AsyncValueView<_OperatorProfileView>(
         value: value,
         onRetry: () => ref.invalidate(operatorProfileProvider),
         data: (_OperatorProfileView view) {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           _bind(view);
           return AppForm(
             key: ValueKey<int>(view.generation),
             guardUnsaved: true,
             errors: view.saveError == null
                 ? const <String>[]
-                : <String>[view.saveError!],
+                : <String>[localCopy.resolve(view.saveError!)],
             fields: <Widget>[
               AppTextField(
-                label: Copy.operatorName,
+                label: localCopy.operatorName,
                 controller: _name,
                 requiredness: FieldRequiredness.required,
                 textInputAction: TextInputAction.next,
-                errorText: view.nameError,
+                errorText: view.nameError == null
+                    ? null
+                    : localCopy.resolve(view.nameError!),
                 onChanged: (String value) {
                   if (!_initialsOverridden) {
                     _initials.text = OperatorProfile.initialsFrom(value);
@@ -100,32 +102,36 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
                 },
               ),
               AppTextField(
-                label: Copy.operatorInitials,
+                label: localCopy.operatorInitials,
                 controller: _initials,
                 requiredness: FieldRequiredness.required,
                 dictation: false,
                 textInputAction: TextInputAction.next,
                 maxLength: AppConstants.operator.initialsMax,
-                errorText: view.initialsError,
+                errorText: view.initialsError == null
+                    ? null
+                    : localCopy.resolve(view.initialsError!),
                 onChanged: (String _) {
                   _initialsOverridden = true;
                 },
               ),
               AppEmailField(
-                label: Copy.operatorEmail,
+                label: localCopy.operatorEmail,
                 controller: _email,
                 requiredness: FieldRequiredness.optional,
                 textInputAction: TextInputAction.next,
-                errorText: view.emailError,
+                errorText: view.emailError == null
+                    ? null
+                    : localCopy.resolve(view.emailError!),
               ),
               AppPhoneField(
-                label: Copy.operatorPhone,
+                label: localCopy.operatorPhone,
                 controller: _phone,
                 requiredness: FieldRequiredness.optional,
                 textInputAction: TextInputAction.done,
               ),
             ],
-            submitLabel: Copy.save,
+            submitLabel: localCopy.save,
             onSubmit: () {
               return ref
                   .read(operatorProfileProvider.notifier)
@@ -175,10 +181,10 @@ final Provider<OperatorProfile?> currentOperatorProvider =
 
 typedef _OperatorProfileView = ({
   OperatorProfile profile,
-  String? nameError,
-  String? initialsError,
-  String? emailError,
-  String? saveError,
+  LocalizedMessage? nameError,
+  LocalizedMessage? initialsError,
+  LocalizedMessage? emailError,
+  LocalizedMessage? saveError,
   int generation,
 });
 
@@ -193,9 +199,6 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
   _OperatorProfile.withStore(this._store);
 
   final _OperatorProfileStore? _store;
-
-  AppDatabase? _db;
-  String? _device;
 
   @override
   Future<_OperatorProfileView> build() async {
@@ -239,12 +242,15 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
           saveError: null,
           generation: 0,
         );
-    final String? nameError = trimmedName.isEmpty ? Copy.nameRequired : null;
-    final String? initialsError = !_validInitials(trimmedInitials)
-        ? Copy.initialsLength
+    final LocalizedMessage? nameError = trimmedName.isEmpty
+        ? Copy.messages.nameRequired
         : null;
-    final String? emailError = storedEmail != null && !storedEmail.contains('@')
-        ? Copy.emailNeedsAt
+    final LocalizedMessage? initialsError = !_validInitials(trimmedInitials)
+        ? Copy.messages.initialsLength
+        : null;
+    final LocalizedMessage? emailError =
+        storedEmail != null && !storedEmail.contains('@')
+        ? Copy.messages.emailNeedsAt
         : null;
     if (nameError != null || initialsError != null || emailError != null) {
       state = AsyncData<_OperatorProfileView>((
@@ -282,66 +288,35 @@ class _OperatorProfile extends AsyncNotifier<_OperatorProfileView> {
           nameError: null,
           initialsError: null,
           emailError: null,
-          saveError: failure.message,
+          saveError: failure.explanation,
           generation: current.generation,
         ));
         return false;
     }
   }
 
+  /// The stored profile. A failed read fails the load, so the screen shows
+  /// the error with a retry rather than an empty form.
   Future<OperatorProfile> _read() async {
     final _OperatorProfileStore? store = _store;
     if (store != null) {
       return store.load();
     }
-    final DeviceProfileIdentity identity = await readDeviceProfile(
-      _database(),
-      deviceId: await _deviceId(),
-    );
-    return OperatorProfile.fromStored(
-      name: identity.operatorName,
-      preferences: identity.preferences,
-      accountId: identity.accountId,
-    );
+    final Result<OperatorProfile> loaded = await ref
+        .read(operatorProfileRepositoryProvider)
+        .load();
+    return switch (loaded) {
+      Success<OperatorProfile>(:final OperatorProfile value) => value,
+      FailureResult<OperatorProfile>(:final Failure failure) => throw failure,
+    };
   }
 
-  Future<Result<OperatorProfile>> _persist(OperatorProfile profile) async {
+  Future<Result<OperatorProfile>> _persist(OperatorProfile profile) {
     final _OperatorProfileStore? store = _store;
     if (store != null) {
       return store.save(profile);
     }
-    return Result.captureAsync(() async {
-      final DeviceProfileIdentity current = await readDeviceProfile(
-        _database(),
-        deviceId: await _deviceId(),
-      );
-      await writeDeviceProfile(
-        _database(),
-        deviceId: await _deviceId(),
-        operatorName: profile.name,
-        preferences: profile.mergePreferences(current.preferences),
-      );
-      return profile;
-    });
-  }
-
-  AppDatabase _database() {
-    final AppDatabase? existing = _db;
-    if (existing != null) {
-      return existing;
-    }
-    final AppDatabase opened = ref.read(appDatabaseProvider);
-    _db = opened;
-    return opened;
-  }
-
-  Future<String> _deviceId() async {
-    final String? existing = _device;
-    if (existing != null) {
-      return existing;
-    }
-    const SystemClock clock = SystemClock();
-    return _device = await deviceId(clock: clock, ids: UuidV7Service(clock));
+    return ref.read(operatorProfileRepositoryProvider).save(profile);
   }
 
   bool _validInitials(String value) {

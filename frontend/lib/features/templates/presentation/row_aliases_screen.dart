@@ -2,10 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/export/xlsx_sheet.dart';
+import 'package:tapture/core/files/document_picker.dart';
+import 'package:tapture/core/import/import.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
@@ -20,8 +27,12 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import '../domain/template_def.dart';
 import '../domain/template_row.dart';
 import '../templates.dart'
-    show PredefinedRowsImport, templateRepositoryProvider;
+    show
+        PredefinedRowsImport,
+        TemplateDocumentImport,
+        templateRepositoryProvider;
 import 'template_list_screen.dart' show templateListProvider;
+import 'template_locations.dart';
 
 /// Per-row aliases that teach the matcher local names.
 class RowAliasesScreen extends ConsumerWidget {
@@ -36,31 +47,41 @@ class RowAliasesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
+    final TemplateDef? template = value.asData?.value;
+    final bool hasRows = template != null && template.rows.isNotEmpty;
     final _AliasesView view = ref.watch(_rowAliasesProvider(templateId));
     return AppPage(
       key: const ValueKey<String>('route-row-aliases'),
-      title: Copy.rowAliasesTitle,
+      title: localCopy.rowAliasesTitle,
       scrollable: false,
-      overflow: value.asData?.value == null || sheetRows == null
+      overflow: !hasRows
           ? const <AppOverflowAction>[]
           : <AppOverflowAction>[
               AppOverflowAction(
-                label: Copy.rowAliasesImport,
+                label: localCopy.rowAliasesImport,
                 icon: AppIcons.columns,
                 onTap: () {
-                  ref
-                      .read(_rowAliasesProvider(templateId).notifier)
-                      .promptColumn();
+                  final _RowAliases controller = ref.read(
+                    _rowAliasesProvider(templateId).notifier,
+                  );
+                  if (sheetRows != null) {
+                    controller.promptColumn();
+                  } else {
+                    unawaited(controller.pickColumn());
+                  }
                 },
               ),
             ],
-      footer: value.asData?.value == null
+      footer: !hasRows
           ? null
           : AppPrimaryAction(
-              label: Copy.save,
+              label: localCopy.save,
+              busy: view.busy,
               onPressed: () {
                 unawaited(
                   ref.read(_rowAliasesProvider(templateId).notifier).commit(),
@@ -70,31 +91,59 @@ class RowAliasesScreen extends ConsumerWidget {
       body: AsyncValueView<TemplateDef?>(
         value: value,
         isEmpty: (TemplateDef? row) => row == null || row.rows.isEmpty,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.aliases,
-          headline: Copy.rowAliasesEmptyHeadline,
-          message: Copy.rowAliasesEmptyMessage,
+          headline: template == null
+              ? Copy.of(context).templatesEmptyHeadline
+              : Copy.of(context).rowAliasesEmptyHeadline,
+          message: template == null
+              ? Copy.of(context).templatesEmptyMessage
+              : Copy.of(context).rowAliasesEmptyMessage,
+          actionLabel: template == null
+              ? Copy.of(context).navTemplates
+              : Copy.of(context).templateFieldsTitle,
+          onAction: () => context.go(
+            template == null
+                ? TemplateLocations.root(context)
+                : TemplateLocations.detail(context, template.id),
+          ),
         ),
         onRetry: () => ref.invalidate(templateListProvider),
-        data: (TemplateDef? row) => _list(ref, row!, view),
+        data: (TemplateDef? row) => _list(context, ref, row!, view),
       ),
     );
   }
 
-  Widget _list(WidgetRef ref, TemplateDef template, _AliasesView view) {
+  Widget _list(
+    BuildContext context,
+    WidgetRef ref,
+    TemplateDef template,
+    _AliasesView view,
+  ) {
     final _RowAliases controller = ref.read(
       _rowAliasesProvider(templateId).notifier,
     );
     final int leading =
-        (view.saveError != null ? 1 : 0) + (view.importColumn ? 1 : 0);
+        (Copy.of(context).stateText(view.localizedSaveError, view.saveError) !=
+                null
+            ? 1
+            : 0) +
+        (view.importColumn ? 1 : 0);
     return ListView.builder(
       padding: const EdgeInsets.only(bottom: Space.x4),
       itemCount: template.rows.length + leading,
       itemBuilder: (BuildContext context, int index) {
-        if (view.saveError != null) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
+        if (Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError) !=
+            null) {
           if (index == 0) {
             return AppBanner(
-              message: view.saveError!,
+              message: Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError)!,
               icon: AppIcons.error,
               tone: SnackTone.error,
             );
@@ -110,14 +159,27 @@ class RowAliasesScreen extends ConsumerWidget {
                 Space.x4,
                 Space.x2,
               ),
-              child: _AliasField(
-                key: const ValueKey<String>('alias-column'),
-                label: Copy.rowAliasesColumn,
-                value: view.column,
-                onChanged: controller.setColumn,
-                onSubmitted: (_) {
-                  controller.importColumn(template, sheetRows: sheetRows);
-                },
+              child: Column(
+                children: <Widget>[
+                  _AliasField(
+                    key: const ValueKey<String>('alias-column'),
+                    label: localCopy.rowAliasesColumn,
+                    value: view.column,
+                    onChanged: controller.setColumn,
+                    onSubmitted: (_) {
+                      controller.importColumn(template, sheetRows: sheetRows);
+                    },
+                  ),
+                  AppButton(
+                    label: localCopy.rowAliasesImport,
+                    onPressed: view.column.trim().isEmpty
+                        ? null
+                        : () => controller.importColumn(
+                            template,
+                            sheetRows: sheetRows,
+                          ),
+                  ),
+                ],
               ),
             );
           }
@@ -132,7 +194,7 @@ class RowAliasesScreen extends ConsumerWidget {
             AppListTile(
               key: ValueKey<String>('alias-${row.identifier}'),
               title: row.label,
-              subtitle: Copy.rowAliasesList(aliases),
+              subtitle: localCopy.rowAliasesList(aliases),
               selected: view.editing == row.identifier,
               onTap: () => controller.edit(row.identifier),
             ),
@@ -172,9 +234,11 @@ typedef _AliasesView = ({
   Map<String, List<String>> aliases,
   String? editing,
   String? saveError,
+  LocalizedMessage? localizedSaveError,
   String column,
   bool importColumn,
   bool dirty,
+  bool busy,
 });
 
 final class _RowAliases extends Notifier<_AliasesView> {
@@ -183,10 +247,78 @@ final class _RowAliases extends Notifier<_AliasesView> {
   final String templateId;
 
   _AliasesView? _held;
+  List<List<String>>? _pickedRows;
+  CancellationToken? _reading;
+
+  Future<void> pickColumn() async {
+    if (state.busy) return;
+    state = (
+      aliases: state.aliases,
+      editing: state.editing,
+      saveError: null,
+      localizedSaveError: null,
+      column: state.column,
+      importColumn: false,
+      dirty: true,
+      busy: true,
+    );
+    _held = state;
+    final Result<PickedDocument> picked = await ref
+        .read(documentPickerProvider)
+        .pick(
+          extensions: const <String>['csv', 'xlsx'],
+          mimeType: '',
+          maxBytes: AppConstants.imports.spreadsheetMaxBytes,
+        );
+    if (picked case FailureResult<PickedDocument>(:final Failure failure)) {
+      if (ref.mounted) {
+        _pickFinished(failure is CancelledFailure ? null : failure);
+      }
+      return;
+    }
+    final PickedDocument document = (picked as Success<PickedDocument>).value;
+    final CancellationToken cancel = CancellationToken();
+    _reading = cancel;
+    try {
+      if (!ref.mounted) return;
+      final Result<WorkbookSnapshot> read =
+          await TemplateDocumentImport.workbook(document, cancel: cancel);
+      if (!ref.mounted) return;
+      switch (read) {
+        case FailureResult<WorkbookSnapshot>(:final Failure failure):
+          _pickFinished(failure);
+        case Success<WorkbookSnapshot>(:final WorkbookSnapshot value):
+          _pickedRows = value.sheets.isEmpty ? null : value.sheets.first.rows;
+          _pickFinished(null);
+          if (_pickedRows != null) promptColumn();
+      }
+    } finally {
+      _reading = null;
+      await TemplateDocumentImport.discard(document);
+    }
+  }
+
+  void _pickFinished(Failure? failure) {
+    state = (
+      aliases: state.aliases,
+      editing: state.editing,
+      saveError: failure?.message,
+      localizedSaveError: LocalizedMessage.optional(failure?.message),
+      column: state.column,
+      importColumn: state.importColumn,
+      dirty: state.dirty,
+      busy: false,
+    );
+    _held = state;
+  }
 
   @override
   _AliasesView build() {
-    ref.onDispose(() => _held = null);
+    ref.onDispose(() {
+      _reading?.cancel();
+      _held = null;
+      _pickedRows = null;
+    });
     final _AliasesView? held = _held;
     if (held != null && held.dirty) {
       return held;
@@ -195,9 +327,11 @@ final class _RowAliases extends Notifier<_AliasesView> {
       aliases: _aliasesOf(_source()),
       editing: null,
       saveError: null,
+      localizedSaveError: null,
       column: '',
       importColumn: false,
       dirty: false,
+      busy: false,
     );
   }
 
@@ -244,12 +378,27 @@ final class _RowAliases extends Notifier<_AliasesView> {
     TemplateDef template, {
     required List<List<String>>? sheetRows,
   }) {
-    if (sheetRows == null || state.column.trim().isEmpty) {
+    final List<List<String>>? sheet = sheetRows ?? _pickedRows;
+    if (sheet == null || state.column.trim().isEmpty) {
+      return;
+    }
+    final int count = sheet.fold<int>(
+      0,
+      (int count, List<String> row) => row.length > count ? row.length : count,
+    );
+    final String column = state.column.trim().toUpperCase();
+    if (!List<String>.generate(count, XlsxSheet.columnName).contains(column)) {
+      _pickFinished(
+        ValidationFailure(
+          localizedMessage: Copy.messages.rowAliasesInvalidColumn,
+          localizedRecovery: Copy.messages.rowAliasesInvalidColumnRecovery,
+        ),
+      );
       return;
     }
     final List<TemplateRow> merged = PredefinedRowsImport.mergeAliases(
       rows: template.rows,
-      sheet: sheetRows,
+      sheet: sheet,
       aliasColumn: state.column,
     );
     _set(
@@ -264,35 +413,52 @@ final class _RowAliases extends Notifier<_AliasesView> {
   }
 
   Future<bool> commit() async {
+    if (state.busy) return false;
     final TemplateDef? source = _source();
     if (source == null) {
-      const StorageFailure missing = StorageFailure(
-        message: Copy.xlsxMappingMissing,
-        recoveryAction: Copy.xlsxMappingMissingRecovery,
+      final StorageFailure missing = StorageFailure(
+        localizedMessage: Copy.messages.xlsxMappingMissing,
+        localizedRecovery: Copy.messages.xlsxMappingMissingRecovery,
       );
       state = (
         aliases: state.aliases,
         editing: state.editing,
         saveError: missing.message,
+        localizedSaveError: missing.explanation,
         column: state.column,
         importColumn: state.importColumn,
         dirty: state.dirty,
+        busy: false,
       );
       _held = state;
       return false;
     }
+    state = (
+      aliases: state.aliases,
+      editing: state.editing,
+      saveError: null,
+      localizedSaveError: null,
+      column: state.column,
+      importColumn: state.importColumn,
+      dirty: state.dirty,
+      busy: true,
+    );
+    _held = state;
     final Result<TemplateDef> result = await PredefinedRowsImport(
       ref.read(templateRepositoryProvider),
     ).apply(template: source, rows: _merged(source));
+    if (!ref.mounted) return false;
     switch (result) {
       case Success<TemplateDef>():
         state = (
           aliases: state.aliases,
           editing: state.editing,
           saveError: null,
+          localizedSaveError: null,
           column: state.column,
           importColumn: false,
           dirty: false,
+          busy: false,
         );
         _held = state;
         return true;
@@ -301,9 +467,11 @@ final class _RowAliases extends Notifier<_AliasesView> {
           aliases: state.aliases,
           editing: state.editing,
           saveError: failure.message,
+          localizedSaveError: failure.explanation,
           column: state.column,
           importColumn: state.importColumn,
           dirty: true,
+          busy: false,
         );
         _held = state;
         return false;
@@ -316,13 +484,16 @@ final class _RowAliases extends Notifier<_AliasesView> {
     required String column,
     required bool importColumn,
   }) {
+    if (state.busy) return;
     state = (
       aliases: aliases,
       editing: editing,
       saveError: null,
+      localizedSaveError: null,
       column: column,
       importColumn: importColumn,
       dirty: true,
+      busy: false,
     );
     _held = state;
   }
@@ -391,10 +562,12 @@ class _AliasFieldState extends State<_AliasField> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppTextField(
-      label: widget.label ?? Copy.rowAliasesField,
+      label: widget.label ?? localCopy.rowAliasesField,
       controller: _controller,
-      hint: Copy.rowAliasesHint,
+      hint: localCopy.rowAliasesHint,
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,
     );

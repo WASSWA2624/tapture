@@ -30,48 +30,68 @@ class OutputMappingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AsyncValue<TemplateDef?> value = ref
         .watch(templateListProvider)
         .whenData(_pick);
     final _OutputView view = ref.watch(_outputMappingProvider(templateId));
     return AppPage(
       key: const ValueKey<String>('route-template-output'),
-      title: Copy.outputMappingTitle,
+      title: localCopy.outputMappingTitle,
       scrollable: false,
-      footer: value.asData?.value == null
+      footer: value.asData?.value?.fields.isNotEmpty != true
           ? null
           : AppPrimaryAction(
-              label: Copy.save,
+              label: localCopy.save,
               onPressed: () => _commit(context, ref),
             ),
       body: AsyncValueView<TemplateDef?>(
         value: value,
         isEmpty: (TemplateDef? row) => row == null || row.fields.isEmpty,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.columns,
-          headline: Copy.outputMappingEmptyHeadline,
-          message: Copy.outputMappingEmptyMessage,
+          headline: Copy.of(context).outputMappingEmptyHeadline,
+          message: Copy.of(context).outputMappingEmptyMessage,
+          actionLabel: value.asData?.value == null
+              ? Copy.of(context).navTemplates
+              : Copy.of(context).templatesAddField,
+          onAction: () => context.go(
+            value.asData?.value == null
+                ? TemplateLocations.root(context)
+                : TemplateLocations.child(context, templateId, 'fields/new'),
+          ),
         ),
         onRetry: () => ref.invalidate(templateListProvider),
-        data: (TemplateDef? row) => _list(ref, row!, view),
+        data: (TemplateDef? row) => _list(context, ref, row!, view),
       ),
     );
   }
 
-  Widget _list(WidgetRef ref, TemplateDef template, _OutputView view) {
+  Widget _list(
+    BuildContext context,
+    WidgetRef ref,
+    TemplateDef template,
+    _OutputView view,
+  ) {
     return ListView(
       padding: const EdgeInsets.only(bottom: Space.x4),
       children: <Widget>[
         AppBanner(
           message: view.imported
-              ? Copy.outputMappingImportedHint
-              : Copy.outputMappingBuiltHint,
+              ? Copy.of(context).outputMappingImportedHint
+              : Copy.of(context).outputMappingBuiltHint,
           icon: AppIcons.info,
           tone: SnackTone.info,
         ),
-        if (view.saveError != null)
+        if (Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError) !=
+            null)
           AppBanner(
-            message: view.saveError!,
+            message: Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError)!,
             icon: AppIcons.error,
             tone: SnackTone.error,
           ),
@@ -132,6 +152,7 @@ String? duplicateOutputColumn(Iterable<String?> columns) {
 typedef _OutputView = ({
   Map<String, String> columns,
   String? saveError,
+  LocalizedMessage? localizedSaveError,
   bool imported,
   bool dirty,
 });
@@ -157,6 +178,7 @@ final class _OutputMapping extends Notifier<_OutputView> {
         return (
           columns: _columnsOf(row),
           saveError: null,
+          localizedSaveError: null,
           imported: row.source == _importedSource,
           dirty: false,
         );
@@ -165,6 +187,7 @@ final class _OutputMapping extends Notifier<_OutputView> {
     return (
       columns: <String, String>{},
       saveError: null,
+      localizedSaveError: null,
       imported: false,
       dirty: false,
     );
@@ -174,6 +197,7 @@ final class _OutputMapping extends Notifier<_OutputView> {
     state = (
       columns: <String, String>{...state.columns, fieldKey: column},
       saveError: null,
+      localizedSaveError: null,
       imported: state.imported,
       dirty: true,
     );
@@ -183,13 +207,14 @@ final class _OutputMapping extends Notifier<_OutputView> {
   Future<bool> commit() async {
     final TemplateDef? source = _source();
     if (source == null) {
-      const StorageFailure missing = StorageFailure(
-        message: 'That template is no longer on this device.',
-        recoveryAction: 'Open the template list and try again.',
+      final StorageFailure missing = StorageFailure(
+        localizedMessage: Copy.messages.failureThatTemplateIsNoLongerOnThis,
+        localizedRecovery: Copy.messages.failureOpenTheTemplateListAndTryAgain,
       );
       state = (
         columns: state.columns,
         saveError: missing.message,
+        localizedSaveError: missing.explanation,
         imported: state.imported,
         dirty: state.dirty,
       );
@@ -200,6 +225,7 @@ final class _OutputMapping extends Notifier<_OutputView> {
       state = (
         columns: state.columns,
         saveError: Copy.outputMappingDuplicate,
+        localizedSaveError: Copy.messages.outputMappingDuplicate,
         imported: state.imported,
         dirty: true,
       );
@@ -215,6 +241,7 @@ final class _OutputMapping extends Notifier<_OutputView> {
         state = (
           columns: _columnsOf(result.value),
           saveError: null,
+          localizedSaveError: null,
           imported: result.value.source == _importedSource,
           dirty: false,
         );
@@ -223,6 +250,7 @@ final class _OutputMapping extends Notifier<_OutputView> {
         state = (
           columns: state.columns,
           saveError: failure.message,
+          localizedSaveError: failure.explanation,
           imported: state.imported,
           dirty: true,
         );

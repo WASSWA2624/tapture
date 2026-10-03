@@ -56,9 +56,13 @@ class RecordFieldSheet extends ConsumerWidget {
     required String fieldKey,
     String? label,
   }) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return showAppSheet<void>(
       context,
-      title: label == null || label.isEmpty ? Copy.recordValueEditTitle : label,
+      title: label == null || label.isEmpty
+          ? localCopy.recordValueEditTitle
+          : label,
       contentSized: true,
       builder: (BuildContext _) =>
           RecordFieldSheet(recordId: recordId, fieldKey: fieldKey),
@@ -86,18 +90,20 @@ class RecordFieldSheet extends ConsumerWidget {
         loadingCount: 1,
         onRetry: () => ref.invalidate(recordEntryProvider(recordId)),
         isEmpty: (RecordEntry? loaded) => loaded == null,
-        empty: () => const AppEmptyState(
+        empty: () => AppEmptyState(
           icon: AppIcons.records,
-          headline: Copy.recordGoneHeadline,
-          message: Copy.recordGoneMessage,
+          headline: Copy.of(context).recordGoneHeadline,
+          message: Copy.of(context).recordGoneMessage,
         ),
         data: (RecordEntry? loaded) {
+          final LocalizedCopy localCopy = Copy.of(context);
+
           final RecordEntry found = loaded!;
           if (found.isDeleted) {
-            return const AppEmptyState(
+            return AppEmptyState(
               icon: AppIcons.delete,
-              headline: Copy.recordEditDeletedHeadline,
-              message: Copy.recordEditDeletedMessage,
+              headline: localCopy.recordEditDeletedHeadline,
+              message: localCopy.recordEditDeletedMessage,
             );
           }
           return AsyncValueView<TemplateDef?>(
@@ -106,14 +112,18 @@ class RecordFieldSheet extends ConsumerWidget {
             onRetry: () =>
                 ref.invalidate(recordEditTemplateProvider(found.templateId)),
             data: (TemplateDef? loadedTemplate) =>
-                _valueOf(found, loadedTemplate),
+                _valueOf(context, found, loadedTemplate),
           );
         },
       ),
     );
   }
 
-  Widget _valueOf(RecordEntry record, TemplateDef? template) {
+  Widget _valueOf(
+    BuildContext context,
+    RecordEntry record,
+    TemplateDef? template,
+  ) {
     for (final RecordEditEntry entry in recordEditEntries(
       template: template,
       record: record,
@@ -130,10 +140,10 @@ class RecordFieldSheet extends ConsumerWidget {
         return _RetiredValue(value: value, template: template);
       }
     }
-    return const AppEmptyState(
+    return AppEmptyState(
       icon: AppIcons.fields,
-      headline: Copy.recordFieldMissingHeadline,
-      message: Copy.recordFieldMissingMessage,
+      headline: Copy.of(context).recordFieldMissingHeadline,
+      message: Copy.of(context).recordFieldMissingMessage,
     );
   }
 }
@@ -147,6 +157,8 @@ class _FieldForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String text =
         ref.watch(recordFieldDraftProvider(record.id))[entry.fieldKey] ??
         entry.initial;
@@ -159,9 +171,9 @@ class _FieldForm extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (record.status == RecordStatus.approved) ...<Widget>[
-          const AppBanner(
-            key: ValueKey<String>('record-field-approved'),
-            message: Copy.recordEditApprovedNotice,
+          AppBanner(
+            key: const ValueKey<String>('record-field-approved'),
+            message: localCopy.recordEditApprovedNotice,
             icon: AppIcons.review,
             tone: SnackTone.warning,
           ),
@@ -179,7 +191,9 @@ class _FieldForm extends ConsumerWidget {
                 .clearProblems();
           },
         ),
-        for (final String problem in state.problems) ...<Widget>[
+        for (final String problem in state.localizedProblems.map(
+          localCopy.resolve,
+        )) ...<Widget>[
           const SizedBox(height: Space.x2),
           AppBanner(
             key: const ValueKey<String>('record-field-problem'),
@@ -193,8 +207,8 @@ class _FieldForm extends ConsumerWidget {
           AppBanner(
             key: const ValueKey<String>('record-field-failure'),
             message: <String>[
-              failure.message,
-              ?failure.recoveryAction,
+              Copy.of(context).failureMessage(failure),
+              ?Copy.of(context).failureRecovery(failure),
             ].join(' '),
             icon: AppIcons.error,
             tone: SnackTone.error,
@@ -203,7 +217,7 @@ class _FieldForm extends ConsumerWidget {
         const SizedBox(height: Space.x3),
         AppPrimaryAction(
           key: const ValueKey<String>('record-field-save'),
-          label: Copy.save,
+          label: localCopy.save,
           busy: state.saving,
           onPressed: () => unawaited(_save(context, ref)),
         ),
@@ -214,6 +228,8 @@ class _FieldForm extends ConsumerWidget {
   /// Writes the value when it changed, then says so and closes. A failure
   /// keeps the sheet open with the typed value (FE-SIMP-09).
   Future<void> _save(BuildContext context, WidgetRef ref) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final NavigatorState navigator = Navigator.of(context);
     final RecordFieldDraft drafts = ref.read(
       recordFieldDraftProvider(record.id).notifier,
@@ -236,7 +252,7 @@ class _FieldForm extends ConsumerWidget {
     drafts.forget(<String>[entry.fieldKey]);
     showAppSnack(
       context,
-      Copy.recordValuesSaved(1, backToReview: backToReview),
+      localCopy.recordValuesSaved(1, backToReview: backToReview),
       tone: SnackTone.success,
     );
     navigator.pop();
@@ -254,12 +270,14 @@ class _RetiredValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
-          Copy.recordRetiredValuesMessage,
+          localCopy.recordRetiredValuesMessage,
           style: AppText.caption.copyWith(color: context.colors.onSurface),
         ),
         const SizedBox(height: Space.x2),

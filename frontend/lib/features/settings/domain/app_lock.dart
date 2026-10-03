@@ -1,12 +1,14 @@
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/security/biometric_prompt.dart';
 
 /// Optional lock on launch and resume.
 ///
 /// Only a salted hash of the PIN is stored. The PIN is never written,
 /// never logged, and not retained after a comparison (FE-SEC-01).
 abstract interface class AppLock {
-  /// Whether a PIN hash is stored.
+  /// Whether the gate is armed. An unreadable secure store keeps it armed
+  /// until the stored lock state can be established safely.
   bool get isEnabled;
 
   /// Stores a new salted hash and arms the lock.
@@ -22,10 +24,13 @@ abstract interface class AppLock {
   Future<bool> biometricsAvailable();
 
   /// Tries the biometric path. Failure never reports [LockAttempt.unlocked].
-  Future<LockAttempt> unlockWithBiometrics();
+  Future<LockAttempt> unlockWithBiometrics({
+    String? localizedReason,
+    BiometricPrompt? prompt,
+  });
 
-  /// Loads whether a hash is already stored. The router guard is
-  /// synchronous, so this runs before the first redirect.
+  /// Loads whether a hash is already stored. An unavailable store fails
+  /// closed. The synchronous router guard requires this before redirecting.
   Future<void> hydrate();
 
   /// Time left in the current backoff, or [Duration.zero].

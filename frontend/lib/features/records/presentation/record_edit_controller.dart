@@ -48,12 +48,27 @@ final class RecordEditController extends Notifier<RecordEditState> {
       state = _idle;
       return const Success<void>(null);
     }
-    final List<String> problems = _problemsIn(changes);
+    final List<LocalizedMessage> messages = _problemsIn(changes);
+    final List<String> problems = messages
+        .map((LocalizedMessage m) => m.fallback)
+        .toList(growable: false);
     if (problems.isNotEmpty) {
-      state = (saving: false, failure: null, problems: problems);
-      return FailureResult<void>(ValidationFailure(message: problems.first));
+      state = (
+        saving: false,
+        failure: null,
+        problems: problems,
+        localizedProblems: messages,
+      );
+      return FailureResult<void>(
+        ValidationFailure(localizedMessage: messages.first),
+      );
     }
-    state = (saving: true, failure: null, problems: const <String>[]);
+    state = (
+      saving: true,
+      failure: null,
+      problems: const <String>[],
+      localizedProblems: const <LocalizedMessage>[],
+    );
     final RecordRepository repository = ref.read(recordRepositoryProvider);
     Result<void> written;
     try {
@@ -73,6 +88,7 @@ final class RecordEditController extends Notifier<RecordEditState> {
         saving: false,
         failure: failure,
         problems: const <String>[],
+        localizedProblems: const <LocalizedMessage>[],
       ),
     };
     return written;
@@ -85,19 +101,33 @@ final class RecordEditController extends Notifier<RecordEditState> {
     if (state.saving || state.problems.isEmpty) {
       return;
     }
-    state = (saving: false, failure: state.failure, problems: const <String>[]);
+    state = (
+      saving: false,
+      failure: state.failure,
+      problems: const <String>[],
+      localizedProblems: const <LocalizedMessage>[],
+    );
   }
 
-  List<String> _problemsIn(List<RecordFieldChange> changes) {
+  List<LocalizedMessage> _problemsIn(List<RecordFieldChange> changes) {
     final Map<String, Object?> siblings = <String, Object?>{
       for (final RecordFieldChange change in changes)
         change.entry.fieldKey: change.text,
     };
-    final List<String> problems = <String>[];
+    final List<LocalizedMessage> problems = <LocalizedMessage>[];
     for (final RecordFieldChange change in changes) {
       final RecordEditEntry entry = change.entry;
+      // Withdrawal is a durable operator correction. Required consent will
+      // hold this record at the export gate rather than prevent withdrawal.
+      if (entry.field.type == FieldType.consent && change.text.trim().isEmpty) {
+        continue;
+      }
       if (entry.initial.isNotEmpty && change.text.trim().isEmpty) {
-        problems.add(Copy.fieldError(entry.label, Copy.recordValueCannotEmpty));
+        problems.add(
+          Copy.messages
+              .fieldError(entry.label, Copy.recordValueCannotEmpty)
+              .withArgument('error', Copy.messages.recordValueCannotEmpty),
+        );
         continue;
       }
       final List<ValidationIssue> issues = RecordRules.validateField(
@@ -107,7 +137,11 @@ final class RecordEditController extends Notifier<RecordEditState> {
       );
       for (final ValidationIssue issue in issues) {
         if (issue.blocks) {
-          problems.add(Copy.fieldError(entry.label, issue.message));
+          problems.add(
+            Copy.messages
+                .fieldError(entry.label, issue.message)
+                .withArgument('error', issue.explanation),
+          );
         }
       }
     }
@@ -125,12 +159,14 @@ typedef RecordEditState = ({
   bool saving,
   Failure? failure,
   List<String> problems,
+  List<LocalizedMessage> localizedProblems,
 });
 
 const RecordEditState _idle = (
   saving: false,
   failure: null,
   problems: <String>[],
+  localizedProblems: <LocalizedMessage>[],
 );
 
 /// The template record values are edited against, by template id; null
@@ -150,24 +186,24 @@ final recordEditTemplateProvider = FutureProvider.autoDispose
 /// Resolves the saved shape, so later template edits cannot silently retype a record.
 final recordCapturedTemplateProvider = Provider.autoDispose
     .family<AsyncValue<TemplateDef?>, ({String id, int version})>(
-      (
-        Ref ref,
-        ({String id, int version}) captured,
-      ) => ref.watch(recordEditTemplateProvider(captured.id)).whenData((
-        TemplateDef? template,
-      ) {
-        if (template == null) return null;
-        final TemplateDef? shape = TemplateVersioning.shapeFor(
-          template,
-          captured.version,
-        );
-        if (shape == null) {
-          throw const StorageFailure(
-            message: 'The captured template version is unavailable.',
-            recoveryAction:
-                'Restore the original project package before editing these values.',
-          );
-        }
-        return shape;
-      }),
+      (Ref ref, ({String id, int version}) captured) => ref
+          .watch(recordEditTemplateProvider(captured.id))
+          .whenData((TemplateDef? template) {
+            if (template == null) return null;
+            final TemplateDef? shape = TemplateVersioning.shapeFor(
+              template,
+              captured.version,
+            );
+            if (shape == null) {
+              throw StorageFailure(
+                localizedMessage: Copy
+                    .messages
+                    .failureTheCapturedTemplateVersionIsUnavailable,
+                localizedRecovery: Copy
+                    .messages
+                    .failureRestoreTheOriginalProjectPackageBeforeEditing,
+              );
+            }
+            return shape;
+          }),
     );

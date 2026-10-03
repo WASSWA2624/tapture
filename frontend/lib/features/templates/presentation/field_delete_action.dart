@@ -17,11 +17,13 @@ final class FieldDeleteAction {
     required FieldDef field,
     required int valueCount,
   }) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool confirmed = await showAppConfirm(
       context,
-      title: Copy.templatesDeleteFieldTitle(field.label),
-      message: Copy.templatesDeleteFieldMessage(values: valueCount),
-      confirmLabel: Copy.templatesDeleteField,
+      title: localCopy.templatesDeleteFieldTitle(field.label),
+      message: localCopy.templatesDeleteFieldMessage(values: valueCount),
+      confirmLabel: localCopy.templatesDeleteField,
       destructive: true,
     );
     if (!confirmed) {

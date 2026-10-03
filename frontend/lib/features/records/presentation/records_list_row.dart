@@ -125,9 +125,11 @@ class _PageFailedRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppListTile(
-      title: failure.message,
-      subtitle: failure.recoveryAction ?? Copy.tryAgain,
+      title: Copy.of(context).failureMessage(failure),
+      subtitle: Copy.of(context).failureRecovery(failure) ?? localCopy.tryAgain,
       leading: Icon(
         AppIcons.error,
         color: context.colors.danger,
@@ -159,6 +161,8 @@ class _SummaryRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String id = summary.id;
     final bool selected = ref.watch(
       recordSelectionProvider(
@@ -171,7 +175,7 @@ class _SummaryRow extends ConsumerWidget {
       ).select((Set<String> ids) => ids.isNotEmpty),
     );
     final RecordPhoto? thumb = summary.thumb;
-    final String subtitle = Copy.recordsRowSubtitle(
+    final String subtitle = localCopy.recordsRowSubtitle(
       number: summary.number,
       identifier: summary.identifier,
       context: summary.contextLabel,
@@ -184,7 +188,7 @@ class _SummaryRow extends ConsumerWidget {
       key: ValueKey<String>('record-row-$id'),
       title: summary.name.trim().isNotEmpty
           ? summary.name
-          : Copy.recordsUntitled(summary.number),
+          : localCopy.recordsUntitled(summary.number),
       subtitle: subtitle.isEmpty ? null : subtitle,
       leading: thumb == null
           ? null
@@ -208,8 +212,8 @@ class _SummaryRow extends ConsumerWidget {
                 AppIconButton(
                   key: ValueKey<String>('record-edit-$id'),
                   icon: AppIcons.edit,
-                  tooltip: Copy.recordEdit,
-                  semanticLabel: Copy.recordEdit,
+                  tooltip: localCopy.recordEdit,
+                  semanticLabel: localCopy.recordEdit,
                   // The capture page edits photos and captions; values are
                   // edited from the record's page.
                   onPressed: () => unawaited(
@@ -297,9 +301,11 @@ class _PrototypeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppListTile(
-      title: Copy.recordsUntitled(0),
-      subtitle: Copy.recordsRowSubtitle(number: 0),
+      title: localCopy.recordsUntitled(0),
+      subtitle: localCopy.recordsRowSubtitle(number: 0),
       leading: const SizedBox.square(dimension: Sizes.minTapTarget),
       status: const AppStatusPill.badge(status: RecordStatus.needsReview),
       dense: pane,
@@ -321,9 +327,11 @@ class _SkeletonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     return Semantics(
-      label: Copy.loading,
+      label: localCopy.loading,
       child: ExcludeSemantics(
         child: Padding(
           padding: EdgeInsets.symmetric(

@@ -169,11 +169,13 @@ List<String> _stringList(String raw) {
   }
 }
 
+/// The stored cells of a row, always a fresh map the mapper may change: a
+/// malformed value reads as a row with no cells rather than failing.
 Map<String, String> _stringMap(String raw) {
   try {
     final Object decoded = jsonDecode(raw) as Object;
     if (decoded is! Map) {
-      return const <String, String>{};
+      return <String, String>{};
     }
     final Map<String, String> out = <String, String>{};
     for (final MapEntry<Object?, Object?> entry in decoded.entries) {
@@ -185,6 +187,6 @@ Map<String, String> _stringMap(String raw) {
     }
     return out;
   } on FormatException {
-    return const <String, String>{};
+    return <String, String>{};
   }
 }

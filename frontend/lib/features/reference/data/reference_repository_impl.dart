@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/reference.dart';
@@ -100,11 +101,12 @@ final class ReferenceRepositoryImpl implements ReferenceRepository {
       final Set<String> seen = <String>{};
       for (final ReferenceRow row in rows) {
         if (!seen.add(row.key)) {
-          return const FailureResult<ReferenceDataset>(
+          return FailureResult<ReferenceDataset>(
             ValidationFailure(
-              message: 'That key column has duplicate values.',
-              recoveryAction:
-                  'Pick another key column, or confirm duplicates are expected.',
+              localizedMessage:
+                  Copy.messages.failureThatKeyColumnHasDuplicateValues,
+              localizedRecovery:
+                  Copy.messages.failurePickAnotherKeyColumnOrConfirmDuplicates,
             ),
           );
         }
@@ -146,17 +148,17 @@ final class ReferenceRepositoryImpl implements ReferenceRepository {
   @override
   Future<Result<void>> delete(String id, {required String reason}) async {
     if (id.isEmpty) {
-      return const FailureResult<void>(_missing);
+      return FailureResult<void>(_missing);
     }
     if (reason.trim().isEmpty) {
-      return const FailureResult<void>(_needsReason);
+      return FailureResult<void>(_needsReason);
     }
     return runInTransaction(_db, () async {
       final sqlite.ReferenceDatasetRow? header = await _header(id);
       if (header == null || await _isTombstoned(_db.reference, id)) {
-        throw const StorageFailure(
-          message: 'That row is no longer on this device.',
-          recoveryAction: 'Refresh the list and try again.',
+        throw StorageFailure(
+          localizedMessage: Copy.messages.failureThatRowIsNoLongerOnThis,
+          localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
         );
       }
       final List<sqlite.ReferenceLookupRow> rows =
@@ -193,35 +195,80 @@ final class ReferenceRepositoryImpl implements ReferenceRepository {
     String query = '',
   }) async {
     try {
-      if (limit <= 0) {
-        return const Success<List<ReferenceRow>>(<ReferenceRow>[]);
-      }
-      final String needle = query.trim().toLowerCase();
-      final int start = offset < 0 ? 0 : offset;
-      // SQLite's lower() folds ASCII letters only, so only an ASCII needle is
-      // filtered and paged in SQLite. Any other needle keeps Dart's Unicode
-      // case folding over bounded key-ordered pages. Either way only the
-      // requested page crosses the repository boundary.
       return Success<List<ReferenceRow>>(
-        _isAscii(needle)
-            ? await _liveRows(
-                datasetId,
-                needle: needle,
-                offset: start,
-                limit: limit,
-              )
-            : await _scanRows(
-                datasetId,
-                needle: needle,
-                offset: start,
-                limit: limit,
-              ),
+        await _page(datasetId, query: query, offset: offset, limit: limit),
       );
     } on Failure catch (failure) {
       return FailureResult<List<ReferenceRow>>(failure);
     } on Object catch (error) {
       return FailureResult<List<ReferenceRow>>(storageFailureFrom(error));
     }
+  }
+
+  @override
+  Stream<int> watchRowCount({required String datasetId, String query = ''}) {
+    final String needle = query.trim().toLowerCase();
+    return _changes().asyncMap(
+      (_) => _guarded(
+        () => _isAscii(needle)
+            ? _countLive(datasetId, needles: _needles(needle))
+            : _scanCount(datasetId, needle: needle),
+      ),
+    );
+  }
+
+  @override
+  Stream<List<ReferenceRow>> watchRows({
+    required String datasetId,
+    required int offset,
+    required int limit,
+    String query = '',
+  }) {
+    return _changes().asyncMap(
+      (_) => _guarded(
+        () => _page(datasetId, query: query, offset: offset, limit: limit),
+      ),
+    );
+  }
+
+  /// [read], with any error a stream reader sees as a typed [Failure].
+  Future<T> _guarded<T>(Future<T> Function() read) async {
+    try {
+      return await read();
+    } on Failure {
+      rethrow;
+    } on Object catch (error) {
+      final StorageFailure readFailure = storageFailureFrom(error);
+      throw readFailure;
+    }
+  }
+
+  /// One page of [datasetId]'s rows [query] keeps, in key order.
+  ///
+  /// SQLite's lower() folds ASCII letters only, so only an ASCII needle is
+  /// filtered and paged in SQLite. Any other needle is narrowed in SQLite to
+  /// rows holding one of its case forms, then kept by Dart's Unicode case
+  /// folding over bounded key-ordered chunks. Either way only the requested
+  /// page crosses the repository boundary.
+  Future<List<ReferenceRow>> _page(
+    String datasetId, {
+    required String query,
+    required int offset,
+    required int limit,
+  }) {
+    if (limit <= 0) {
+      return Future<List<ReferenceRow>>.value(const <ReferenceRow>[]);
+    }
+    final String needle = query.trim().toLowerCase();
+    final int start = offset < 0 ? 0 : offset;
+    return _isAscii(needle)
+        ? _liveRows(
+            datasetId,
+            needles: _needles(needle),
+            offset: start,
+            limit: limit,
+          )
+        : _scanRows(datasetId, needle: needle, offset: start, limit: limit);
   }
 
   @override
@@ -251,10 +298,10 @@ final class ReferenceRepositoryImpl implements ReferenceRepository {
     Map<String, String>? previousValues,
   }) async {
     if (row.datasetId.isEmpty || row.key.trim().isEmpty) {
-      return const FailureResult<ReferenceRow>(
+      return FailureResult<ReferenceRow>(
         ValidationFailure(
-          message: 'A row needs a dataset and a key.',
-          recoveryAction: 'Fill those fields and save again.',
+          localizedMessage: Copy.messages.failureARowNeedsADatasetAndA,
+          localizedRecovery: Copy.messages.failureFillThoseFieldsAndSaveAgain,
         ),
       );
     }
@@ -275,7 +322,9 @@ final class ReferenceRepositoryImpl implements ReferenceRepository {
         FailureResult<sqlite.ReferenceLookupRow>(:final Failure failure) =>
           throw StorageFailure(
             message: failure.message,
+            localizedMessage: failure.localizedMessage,
             recoveryAction: failure.recoveryAction ?? 'Try again.',
+            localizedRecovery: failure.localizedRecovery,
           ),
       };
       if (previousValues != null) {
@@ -310,7 +359,10 @@ final class ReferenceRepositoryImpl implements ReferenceRepository {
           device: _deviceId,
         );
       }
-      final int count = await _countLiveRows(row.datasetId);
+      final int count = await _countLive(
+        row.datasetId,
+        needles: const <String>[],
+      );
       final ReferenceDataset? header = await _load(row.datasetId);
       if (header != null && header.rowCount != count) {
         await upsertReferenceDataset(
@@ -386,11 +438,6 @@ final class ReferenceRepositoryImpl implements ReferenceRepository {
     };
   }
 
-  @override
-  Future<Result<List<ReferenceRow>>> allRows(String datasetId) async {
-    return pageRows(datasetId: datasetId, offset: 0, limit: 1 << 30);
-  }
-
   Future<List<ReferenceDataset>> _listAll() async {
     final List<sqlite.ReferenceDatasetRow> headers = await _db
         .select(_db.reference)
@@ -429,34 +476,88 @@ final class ReferenceRepositoryImpl implements ReferenceRepository {
         .getSingleOrNull();
   }
 
-  Future<int> _countLiveRows(String datasetId) async {
-    final List<sqlite.ReferenceLookupRow> rows =
-        await (_db.select(_db.referenceRows)..where(
-              (sqlite.$ReferenceRowsTable tbl) =>
-                  tbl.datasetId.equals(datasetId),
-            ))
-            .get();
-    final Set<String> dead = await _tombstoned(_db.referenceRows);
-    return rows
-        .where((sqlite.ReferenceLookupRow r) => !dead.contains(r.id))
-        .length;
+  /// Live rows of [datasetId] holding one of [needles] under SQLite's ASCII
+  /// folding, counted in SQLite rather than loaded (FE-PERF-06).
+  Future<int> _countLive(
+    String datasetId, {
+    required List<String> needles,
+  }) async {
+    final QueryRow row = await _db
+        .customSelect(
+          'SELECT COUNT(*) AS n FROM reference_rows r '
+          'WHERE ${_liveWhere(needles.length)}',
+          variables: _liveVariables(datasetId, needles),
+          readsFrom: <TableInfo<Table, Object?>>{
+            _db.referenceRows,
+            _db.tombstones,
+          },
+        )
+        .getSingle();
+    return row.read<int>('n');
   }
 
+  /// Rows of [datasetId] that [needle] keeps under Dart's Unicode folding,
+  /// counted a bounded chunk at a time.
+  Future<int> _scanCount(String datasetId, {required String needle}) async {
+    int count = 0;
+    await _scan(datasetId, needle, (ReferenceRow _) {
+      count++;
+      return true;
+    });
+    return count;
+  }
+
+  /// Walks [datasetId]'s live rows in key order, a bounded chunk at a time,
+  /// handing [found] each row [needle] keeps under Dart's Unicode folding
+  /// until it answers false.
+  ///
+  /// SQLite first narrows the walk to rows holding one of the needle's case
+  /// forms, so a search reads its likely rows rather than the dataset.
+  Future<void> _scan(
+    String datasetId,
+    String needle,
+    bool Function(ReferenceRow row) found,
+  ) async {
+    final int chunk = AppConstants.datasets.scanChunk;
+    final List<String> forms = _caseForms(needle);
+    ({String key, String id})? after;
+    while (true) {
+      final List<sqlite.ReferenceLookupRow> rows = await _livePage(
+        datasetId,
+        needles: forms,
+        offset: 0,
+        limit: chunk,
+        after: after,
+      );
+      for (final sqlite.ReferenceLookupRow raw in rows) {
+        final ReferenceRow row = ReferenceMapper.rowFromRow(raw);
+        if (_rowMatches(row, needle) && !found(row)) {
+          return;
+        }
+      }
+      if (rows.length < chunk) {
+        return;
+      }
+      after = (key: rows.last.keyValue, id: rows.last.id);
+    }
+  }
+
+  /// One event now, and one whenever a dataset, a row or a tombstone is
+  /// written, so every watch re-reads what it shows. Only the notice is
+  /// watched; no table is read to produce it.
   Stream<void> _changes() {
     return Stream<void>.multi((MultiStreamController<void> listener) {
       listener.add(null);
-      final StreamSubscription<List<sqlite.ReferenceDatasetRow>> a = _db
-          .select(_db.reference)
-          .watch()
+      final StreamSubscription<Set<TableUpdate>> updates = _db
+          .tableUpdates(
+            TableUpdateQuery.onAllTables(<TableInfo<Table, Object?>>[
+              _db.reference,
+              _db.referenceRows,
+              _db.tombstones,
+            ]),
+          )
           .listen((_) => listener.add(null));
-      final StreamSubscription<List<sqlite.ReferenceLookupRow>> b = _db
-          .select(_db.referenceRows)
-          .watch()
-          .listen((_) => listener.add(null));
-      listener.onCancel = () async {
-        await a.cancel();
-        await b.cancel();
-      };
+      listener.onCancel = updates.cancel;
     });
   }
 
@@ -481,38 +582,51 @@ final class ReferenceRepositoryImpl implements ReferenceRepository {
     return row != null;
   }
 
-  /// Live rows of [datasetId] in key order, resuming just past [after].
+  /// Live rows of [datasetId] in key order.
   ///
-  /// A non-empty [needle] keeps rows whose key or a visible value contains it
-  /// after SQLite's ASCII case folding; the device marker is never searched.
+  /// Non-empty [needles] keep rows whose key or a visible value contains one
+  /// of them after SQLite's ASCII case folding; the device marker is never
+  /// searched.
   Future<List<ReferenceRow>> _liveRows(
     String datasetId, {
-    required String needle,
+    required List<String> needles,
     required int offset,
     required int limit,
-    ReferenceRow? after,
   }) async {
+    return <ReferenceRow>[
+      for (final sqlite.ReferenceLookupRow row in await _livePage(
+        datasetId,
+        needles: needles,
+        offset: offset,
+        limit: limit,
+      ))
+        ReferenceMapper.rowFromRow(row),
+    ];
+  }
+
+  /// The stored rows [_liveRows] maps, not yet decoded, resuming just past
+  /// [after].
+  Future<List<sqlite.ReferenceLookupRow>> _livePage(
+    String datasetId, {
+    required List<String> needles,
+    required int offset,
+    required int limit,
+    ({String key, String id})? after,
+  }) async {
+    // A row-value bound lets SQLite seek the key index straight to the
+    // next chunk instead of re-reading every earlier row.
     final List<QueryRow> page = await _db
         .customSelect(
           '''SELECT r.* FROM reference_rows r
-WHERE r.dataset_id = ?
-AND NOT EXISTS (SELECT 1 FROM tombstones t
-  WHERE t.entity_type = 'reference_rows' AND t.entity_id = r.id)
-AND (? = '' OR instr(lower(r.key_value), ?) > 0 OR EXISTS (
-  SELECT 1 FROM json_each(r."values") cell
-  WHERE cell.key <> ? AND instr(lower(CAST(cell.value AS TEXT)), ?) > 0))
-AND (? IS NULL OR r.key_value > ? OR (r.key_value = ? AND r.id > ?))
+WHERE ${_liveWhere(needles.length)}
+${after == null ? '' : 'AND (r.key_value, r.id) > (?, ?)'}
 ORDER BY r.key_value, r.id LIMIT ? OFFSET ?''',
           variables: <Variable<Object>>[
-            Variable<String>(datasetId),
-            Variable<String>(needle),
-            Variable<String>(needle),
-            const Variable<String>(ReferenceMapper.addedOnDeviceKey),
-            Variable<String>(needle),
-            Variable<String>(after?.id),
-            Variable<String>(after?.key),
-            Variable<String>(after?.key),
-            Variable<String>(after?.id),
+            ..._liveVariables(datasetId, needles),
+            if (after != null) ...<Variable<Object>>[
+              Variable<String>(after.key),
+              Variable<String>(after.id),
+            ],
             Variable<int>(limit),
             Variable<int>(offset),
           ],
@@ -522,64 +636,43 @@ ORDER BY r.key_value, r.id LIMIT ? OFFSET ?''',
           },
         )
         .get();
-    return <ReferenceRow>[
-      for (final QueryRow row in page)
-        ReferenceMapper.rowFromRow(_db.referenceRows.map(row.data)),
+    return <sqlite.ReferenceLookupRow>[
+      for (final QueryRow row in page) _db.referenceRows.map(row.data),
     ];
   }
 
   /// Rows of [datasetId] whose key or a value contains [needle] under Dart's
-  /// Unicode case folding, read one key-ordered page at a time.
+  /// Unicode case folding: the page from [offset], at most [limit] rows.
   Future<List<ReferenceRow>> _scanRows(
     String datasetId, {
     required String needle,
     required int offset,
     required int limit,
   }) async {
-    final int chunk = AppConstants.lists.pageSize;
     final List<ReferenceRow> matches = <ReferenceRow>[];
     int skipped = 0;
-    ReferenceRow? after;
-    while (matches.length < limit) {
-      final List<ReferenceRow> rows = await _liveRows(
-        datasetId,
-        needle: '',
-        offset: 0,
-        limit: chunk,
-        after: after,
-      );
-      for (final ReferenceRow row in rows) {
-        if (matches.length == limit) {
-          break;
-        }
-        if (!_rowMatches(row, needle)) {
-          continue;
-        }
-        if (skipped < offset) {
-          skipped++;
-        } else {
-          matches.add(row);
-        }
+    await _scan(datasetId, needle, (ReferenceRow row) {
+      if (skipped < offset) {
+        skipped++;
+      } else {
+        matches.add(row);
       }
-      if (rows.length < chunk) {
-        break;
-      }
-      after = rows.last;
-    }
+      return matches.length < limit;
+    });
     return matches;
   }
 
   ValidationFailure? _validateDataset(ReferenceDataset dataset) {
     if (dataset.name.trim().isEmpty || dataset.keyColumn.trim().isEmpty) {
-      return const ValidationFailure(
-        message: 'A dataset needs a name and a key column.',
-        recoveryAction: 'Fill those fields and save again.',
+      return ValidationFailure(
+        localizedMessage: Copy.messages.failureADatasetNeedsANameAndA,
+        localizedRecovery: Copy.messages.failureFillThoseFieldsAndSaveAgain,
       );
     }
     if (!dataset.columns.contains(dataset.keyColumn)) {
-      return const ValidationFailure(
-        message: 'The key column must be one of the dataset columns.',
-        recoveryAction: 'Pick a key from the column list.',
+      return ValidationFailure(
+        localizedMessage: Copy.messages.failureTheKeyColumnMustBeOneOf,
+        localizedRecovery: Copy.messages.failurePickAKeyFromTheColumnList,
       );
     }
     return null;
@@ -599,6 +692,35 @@ ORDER BY r.key_value, r.id LIMIT ? OFFSET ?''',
 
   static bool _isAscii(String value) {
     return value.codeUnits.every((int unit) => unit < _asciiLimit);
+  }
+
+  /// [needle] as the one string SQLite looks for, or none when empty.
+  static List<String> _needles(String needle) {
+    return needle.isEmpty ? const <String>[] : <String>[needle];
+  }
+
+  /// The case forms of [needle] SQLite can find after folding only ASCII:
+  /// each letter outside ASCII both as typed and upper-cased. Past
+  /// [_maxCaseForms] forms only the needle's start is looked for, which a
+  /// row holding the needle still holds. Dart's folding then decides.
+  static List<String> _caseForms(String needle) {
+    List<String> forms = <String>[''];
+    for (final int rune in needle.runes) {
+      final String letter = String.fromCharCode(rune);
+      final String upper = letter.toUpperCase();
+      final List<String> cases =
+          rune < _asciiLimit || upper == letter || upper.runes.length != 1
+          ? <String>[letter]
+          : <String>[letter, upper];
+      if (forms.length * cases.length > _maxCaseForms) {
+        break;
+      }
+      forms = <String>[
+        for (final String form in forms)
+          for (final String variant in cases) '$form$variant',
+      ];
+    }
+    return forms;
   }
 
   static int _byName(ReferenceDataset a, ReferenceDataset b) {
@@ -630,17 +752,17 @@ final class _EmptyReferenceRepository implements ReferenceRepository {
 
   @override
   Future<Result<ReferenceDataset>> save(ReferenceDataset dataset) async =>
-      const FailureResult<ReferenceDataset>(_unavailable);
+      FailureResult<ReferenceDataset>(_unavailable);
 
   @override
   Future<Result<ReferenceDataset>> importDataset({
     required ReferenceDataset dataset,
     required List<ReferenceRow> rows,
-  }) async => const FailureResult<ReferenceDataset>(_unavailable);
+  }) async => FailureResult<ReferenceDataset>(_unavailable);
 
   @override
   Future<Result<void>> delete(String id, {required String reason}) async =>
-      const FailureResult<void>(_unavailable);
+      FailureResult<void>(_unavailable);
 
   @override
   Future<Result<List<ReferenceRow>>> pageRows({
@@ -658,7 +780,7 @@ final class _EmptyReferenceRepository implements ReferenceRepository {
   Future<Result<ReferenceRow>> saveRow(
     ReferenceRow row, {
     Map<String, String>? previousValues,
-  }) async => const FailureResult<ReferenceRow>(_unavailable);
+  }) async => FailureResult<ReferenceRow>(_unavailable);
 
   @override
   Future<Result<ReferenceRow?>> lookupByKey({
@@ -673,24 +795,71 @@ final class _EmptyReferenceRepository implements ReferenceRepository {
   }) async => const Success<List<ReferenceRow>>(<ReferenceRow>[]);
 
   @override
-  Future<Result<List<ReferenceRow>>> allRows(String datasetId) async =>
-      const Success<List<ReferenceRow>>(<ReferenceRow>[]);
+  Stream<int> watchRowCount({required String datasetId, String query = ''}) =>
+      Stream<int>.value(0);
+
+  @override
+  Stream<List<ReferenceRow>> watchRows({
+    required String datasetId,
+    required int offset,
+    required int limit,
+    String query = '',
+  }) => Stream<List<ReferenceRow>>.value(const <ReferenceRow>[]);
 }
 
 /// First code unit outside ASCII, the only range SQLite's lower() folds.
 const int _asciiLimit = 0x80;
 
-const StorageFailure _missing = StorageFailure(
-  message: 'That row is no longer on this device.',
-  recoveryAction: 'Refresh the list and try again.',
+/// The most case forms a search outside ASCII hands SQLite.
+const int _maxCaseForms = 16;
+
+/// The live rows of one dataset that hold one of [needles] needles: not
+/// tombstoned, and, when there are needles, one found in the key or a
+/// visible value after SQLite's ASCII folding. The device marker is never
+/// searched. Its variables come from [_liveVariables].
+String _liveWhere(int needles) {
+  const String live = '''r.dataset_id = ?
+AND NOT EXISTS (SELECT 1 FROM tombstones t
+  WHERE t.entity_type = 'reference_rows' AND t.entity_id = r.id)''';
+  if (needles == 0) {
+    return live;
+  }
+  final String inKey = List<String>.filled(
+    needles,
+    'instr(lower(r.key_value), ?) > 0',
+  ).join(' OR ');
+  final String inCell = List<String>.filled(
+    needles,
+    'instr(lower(CAST(cell.value AS TEXT)), ?) > 0',
+  ).join(' OR ');
+  return '''$live
+AND ($inKey OR EXISTS (
+  SELECT 1 FROM json_each(r."values") cell
+  WHERE cell.key <> ? AND ($inCell)))''';
+}
+
+/// The variables [_liveWhere] binds for [needles], in order.
+List<Variable<Object>> _liveVariables(String datasetId, List<String> needles) {
+  return <Variable<Object>>[
+    Variable<String>(datasetId),
+    for (final String needle in needles) Variable<String>(needle),
+    if (needles.isNotEmpty)
+      const Variable<String>(ReferenceMapper.addedOnDeviceKey),
+    for (final String needle in needles) Variable<String>(needle),
+  ];
+}
+
+final StorageFailure _missing = StorageFailure(
+  localizedMessage: Copy.messages.failureThatRowIsNoLongerOnThis,
+  localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
 );
 
-const StorageFailure _needsReason = StorageFailure(
-  message: 'A delete needs a reason.',
-  recoveryAction: 'Say why this row should be removed, then try again.',
+final StorageFailure _needsReason = StorageFailure(
+  localizedMessage: Copy.messages.failureADeleteNeedsAReason,
+  localizedRecovery: Copy.messages.failureSayWhyThisRowShouldBeRemoved,
 );
 
-const StorageFailure _unavailable = StorageFailure(
-  message: 'Reference data is not available yet.',
-  recoveryAction: 'Restart the app and try again.',
+final StorageFailure _unavailable = StorageFailure(
+  localizedMessage: Copy.messages.failureReferenceDataIsNotAvailableYet,
+  localizedRecovery: Copy.messages.failureRestartTheAppAndTryAgain,
 );
