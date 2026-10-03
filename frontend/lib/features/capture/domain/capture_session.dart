@@ -1,7 +1,10 @@
-import 'package:tapture/core/location/location_service.dart';
+import 'package:tapture/core/location/geo_fix.dart';
+import 'package:tapture/core/security/coordinate_policy.dart';
 
 import 'audio_draft.dart';
 import 'capture_session_key.dart';
+import 'document_draft.dart';
+import 'pending_audio_draft.dart';
 import 'photo_draft.dart';
 
 /// In-progress capture: evidence, captions and typed values for one record.
@@ -14,10 +17,13 @@ final class CaptureSession {
     required this.id,
     required this.templateId,
     required this.contextSnapshot,
+    this.templateVersion,
     this.projectId = '',
     this.recordId,
     this.photos = const <PhotoDraft>[],
     this.audio = const <AudioDraft>[],
+    this.documents = const <DocumentDraft>[],
+    this.pendingAudio = const <PendingAudioDraft>[],
     this.captions = const <String, String>{},
     this.values = const <String, Object?>{},
     this.isDirty = false,
@@ -36,6 +42,9 @@ final class CaptureSession {
   /// Template in force.
   final String templateId;
 
+  /// Selected shape; null before selection and zero for legacy unknown drafts.
+  final int? templateVersion;
+
   /// Context values frozen at session start / last apply.
   final Map<String, String> contextSnapshot;
 
@@ -47,6 +56,12 @@ final class CaptureSession {
 
   /// Durable audio evidence waiting to be linked to the record.
   final List<AudioDraft> audio;
+
+  /// Original documents, rendered only when a page is requested.
+  final List<DocumentDraft> documents;
+
+  /// References saved before recording, retained until publication succeeds.
+  final List<PendingAudioDraft> pendingAudio;
 
   /// Caption text keyed by photo id, plus `''` or `record` for the record
   /// caption.
@@ -81,7 +96,18 @@ final class CaptureSession {
   String get recordCaption => captions[''] ?? captions['record'] ?? '';
 
   /// Whether at least one photo or document is present.
-  bool get hasEvidence => photos.isNotEmpty || audio.isNotEmpty;
+  bool get hasEvidence =>
+      photos.isNotEmpty || audio.isNotEmpty || documents.isNotEmpty;
+
+  /// Whether anything was captured that an interruption would lose:
+  /// evidence, a typed value or caption text. Template and context alone
+  /// are settings, not work.
+  bool get hasContent {
+    return hasEvidence ||
+        pendingAudio.isNotEmpty ||
+        values.isNotEmpty ||
+        captions.values.any((String text) => text.isNotEmpty);
+  }
 
   /// JSON for interrupted-session recovery.
   Map<String, Object?> toJson() {
@@ -89,6 +115,7 @@ final class CaptureSession {
       'id': id,
       'projectId': projectId,
       'templateId': templateId,
+      'templateVersion': templateVersion,
       'contextSnapshot': contextSnapshot,
       'recordId': recordId,
       'photos': <Map<String, Object?>>[
@@ -96,6 +123,12 @@ final class CaptureSession {
       ],
       'audio': <Map<String, Object?>>[
         for (final AudioDraft clip in audio) clip.toJson(),
+      ],
+      'documents': <Map<String, Object?>>[
+        for (final DocumentDraft document in documents) document.toJson(),
+      ],
+      'pendingAudio': <Map<String, Object?>>[
+        for (final PendingAudioDraft clip in pendingAudio) clip.toJson(),
       ],
       'captions': captions,
       'values': values,
@@ -162,10 +195,25 @@ final class CaptureSession {
       id: json['id'] as String? ?? '',
       projectId: json['projectId'] as String? ?? '',
       templateId: json['templateId'] as String? ?? '',
+      templateVersion: json.containsKey('templateVersion')
+          ? json['templateVersion'] as int?
+          : 0,
       contextSnapshot: context,
       recordId: json['recordId'] as String?,
       photos: photos,
       audio: audio,
+      documents: <DocumentDraft>[
+        for (final Object? row
+            in json['documents'] as List<Object?>? ?? const <Object?>[])
+          if (row is Map)
+            DocumentDraft.fromJson(Map<String, Object?>.from(row)),
+      ],
+      pendingAudio: <PendingAudioDraft>[
+        for (final Object? row
+            in json['pendingAudio'] as List<Object?>? ?? const <Object?>[])
+          if (row is Map)
+            PendingAudioDraft.fromJson(Map<String, Object?>.from(row)),
+      ],
       captions: captions,
       values: values,
       isDirty: json['isDirty'] as bool? ?? false,
@@ -180,21 +228,54 @@ final class CaptureSession {
     );
   }
 
+  /// Removes captured coordinates while retaining every other draft value.
+  CaptureSession withoutCoordinates(Set<String> fieldKeys) {
+    bool keep(String key) =>
+        !CoordinatePolicy.isKey(key) && !fieldKeys.contains(key);
+    return copyWith(
+      clearLocation: true,
+      photos: <PhotoDraft>[
+        for (final PhotoDraft photo in photos)
+          photo.copyWith(clearCoordinates: true),
+      ],
+      contextSnapshot: <String, String>{
+        for (final MapEntry<String, String> entry in contextSnapshot.entries)
+          if (keep(entry.key)) entry.key: entry.value,
+      },
+      values: <String, Object?>{
+        for (final MapEntry<String, Object?> entry in values.entries)
+          if (keep(entry.key)) entry.key: entry.value,
+      },
+      valueSources: <String, String>{
+        for (final MapEntry<String, String> entry in valueSources.entries)
+          if (keep(entry.key)) entry.key: entry.value,
+      },
+      lookupRows: <String, String>{
+        for (final MapEntry<String, String> entry in lookupRows.entries)
+          if (keep(entry.key)) entry.key: entry.value,
+      },
+    );
+  }
+
   /// Returns a copy with the provided fields replaced.
   CaptureSession copyWith({
     String? id,
     String? projectId,
     String? templateId,
+    int? templateVersion,
     Map<String, String>? contextSnapshot,
     String? recordId,
     bool clearRecordId = false,
     List<PhotoDraft>? photos,
     List<AudioDraft>? audio,
+    List<DocumentDraft>? documents,
+    List<PendingAudioDraft>? pendingAudio,
     Map<String, String>? captions,
     Map<String, Object?>? values,
     bool? isDirty,
     bool? editing,
     GeoFix? location,
+    bool clearLocation = false,
     Map<String, String>? valueSources,
     Map<String, String>? lookupRows,
   }) {
@@ -202,15 +283,22 @@ final class CaptureSession {
       id: id ?? this.id,
       projectId: projectId ?? this.projectId,
       templateId: templateId ?? this.templateId,
+      templateVersion:
+          templateVersion ??
+          (templateId != null && templateId != this.templateId
+              ? null
+              : this.templateVersion),
       contextSnapshot: contextSnapshot ?? this.contextSnapshot,
       recordId: clearRecordId ? null : (recordId ?? this.recordId),
       photos: photos ?? this.photos,
       audio: audio ?? this.audio,
+      documents: documents ?? this.documents,
+      pendingAudio: pendingAudio ?? this.pendingAudio,
       captions: captions ?? this.captions,
       values: values ?? this.values,
       isDirty: isDirty ?? this.isDirty,
       editing: editing ?? this.editing,
-      location: location ?? this.location,
+      location: clearLocation ? null : (location ?? this.location),
       valueSources: valueSources ?? this.valueSources,
       lookupRows: lookupRows ?? this.lookupRows,
     );

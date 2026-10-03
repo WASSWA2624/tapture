@@ -9,6 +9,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 
 /// Walkthrough audio recorder with elapsed and level.
 final class AudioRecorder extends StatefulWidget {
@@ -38,7 +39,7 @@ final class AudioRecorder extends StatefulWidget {
 }
 
 class _AudioRecorderState extends State<AudioRecorder>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, StateRefresh {
   AudioRecorderState _state = const AudioRecorderState(
     phase: AudioRecorderPhase.idle,
   );
@@ -50,7 +51,7 @@ class _AudioRecorderState extends State<AudioRecorder>
     WidgetsBinding.instance.addObserver(this);
     _sub = widget.recorder.state.listen((AudioRecorderState next) {
       if (mounted) {
-        setState(() => _state = next);
+        refresh(() => _state = next);
       }
     });
   }
@@ -77,6 +78,8 @@ class _AudioRecorderState extends State<AudioRecorder>
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     // Nothing to show until a take starts, and nothing once it is saved: the
     // capture page lists saved clips itself.
     if (_state.phase == AudioRecorderPhase.idle ||
@@ -89,7 +92,7 @@ class _AudioRecorderState extends State<AudioRecorder>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text(
-            Copy.audioRecorderStatus(
+            localCopy.audioRecorderStatus(
               _state.phase.name,
               _state.elapsed.inSeconds,
             ),
@@ -104,18 +107,18 @@ class _AudioRecorderState extends State<AudioRecorder>
             children: <Widget>[
               if (_state.phase == AudioRecorderPhase.recording)
                 AppButton(
-                  label: Copy.capturePauseAudio,
+                  label: localCopy.capturePauseAudio,
                   onPressed: () => widget.recorder.pause(),
                 ),
               if (_state.phase == AudioRecorderPhase.paused)
                 AppButton(
-                  label: Copy.captureResume,
+                  label: localCopy.captureResume,
                   onPressed: () => widget.recorder.resume(),
                 ),
               if (_state.phase == AudioRecorderPhase.recording ||
                   _state.phase == AudioRecorderPhase.paused)
                 AppButton(
-                  label: Copy.captureStopAudio,
+                  label: localCopy.captureStopAudio,
                   onPressed: () async {
                     final Result<Duration> stopped = await widget.recorder
                         .stop();
@@ -125,6 +128,7 @@ class _AudioRecorderState extends State<AudioRecorder>
                           context,
                           failure.message,
                           tone: SnackTone.error,
+                          localizedMessage: failure.explanation,
                         );
                       },
                       (Duration elapsed) {

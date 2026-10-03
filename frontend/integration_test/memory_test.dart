@@ -228,126 +228,132 @@ void main() {
   test(
     'merge two thousand real JPEG files through package inspection and apply, sample RSS',
     () async {
-      await measure('merge-2000-photos', () async {
-        final BundleFixture source = await seedProjectForBundle(records: 2000);
-        databases++;
-        // The general package fixture exercises a deleted final record. This
-        // scenario instead measures 2,000 live photos; deletion has its own
-        // package/merge regressions and must retain its production behavior.
-        await (source.db.delete(
-          source.db.tombstones,
-        )..where(($TombstonesTable row) => row.id.equals('tomb-1'))).go();
-        final AppDatabase target = AppDatabase.memory();
-        databases++;
-        final Directory documents = await Directory.systemTemp.createTemp(
-          'tapture-memory-merge-',
-        );
-        final FixedClock clock = FixedClock(DateTime.utc(2026, 10));
-        final StorageRoot root = StorageRoot.fake(
-          documentsDirectory: documents,
-        );
-        InspectedBundle? inspected;
-        try {
-          final StoredBundle written =
-              valueOf(
-                    await BundleWriter(
-                      db: source.db,
-                      storageRoot: source.storageRoot,
-                      files: FileReader(storageRoot: source.storageRoot),
-                      clock: clock,
-                      ids: UuidV7Service.sequence(clock),
-                      deviceId: 'source-device',
-                      device: () async => const DeviceDescriptor.fake(),
-                    ).write(
-                      projectId: source.projectId,
-                      cancel: CancellationToken(),
-                    ),
-                  )
-                  as StoredBundle;
-          final InspectedBundle bundle = valueOf(
-            await BundleReader.inspect(
-              PickedFile(
-                File('${source.root.path}/${written.relativePath}'),
-                'memory.zip',
-                written.byteLength,
+      final BundleFixture source = await seedProjectForBundle(records: 2000);
+      databases++;
+      // The general package fixture exercises a deleted final record. This
+      // scenario instead measures 2,000 live photos; deletion has its own
+      // package/merge regressions and must retain its production behavior.
+      await (source.db.delete(
+        source.db.tombstones,
+      )..where(($TombstonesTable row) => row.id.equals('tomb-1'))).go();
+      final AppDatabase target = AppDatabase.memory();
+      databases++;
+      final Directory documents = await Directory.systemTemp.createTemp(
+        'tapture-memory-merge-',
+      );
+      final FixedClock clock = FixedClock(DateTime.utc(2026, 10));
+      final StorageRoot root = StorageRoot.fake(documentsDirectory: documents);
+      try {
+        // Seeding the sender and writing its package are fixture work, so
+        // the ceiling covers only inspecting and applying the package.
+        final StoredBundle written =
+            valueOf(
+                  await BundleWriter(
+                    db: source.db,
+                    storageRoot: source.storageRoot,
+                    files: FileReader(storageRoot: source.storageRoot),
+                    clock: clock,
+                    ids: UuidV7Service.sequence(clock),
+                    deviceId: 'source-device',
+                    device: () async => const DeviceDescriptor.fake(),
+                  ).write(
+                    projectId: source.projectId,
+                    cancel: CancellationToken(),
+                  ),
+                )
+                as StoredBundle;
+        await measure('merge-2000-photos', () async {
+          InspectedBundle? inspected;
+          try {
+            final InspectedBundle bundle = valueOf(
+              await BundleReader.inspect(
+                PickedFile(
+                  File('${source.root.path}/${written.relativePath}'),
+                  'memory.zip',
+                  written.byteLength,
+                ),
               ),
-            ),
-          );
-          inspected = bundle;
-          bundles++;
-          expect(bundle.rowsOf('photos'), hasLength(2000));
-          for (final String table in <String>[
-            'projects',
-            'templates',
-            'template_fields',
-          ]) {
-            for (final Map<String, Object?> row in bundle.rowsOf(table)) {
-              await insertRow(target, table, row);
+            );
+            inspected = bundle;
+            bundles++;
+            expect(bundle.rowsOf('photos'), hasLength(2000));
+            for (final String table in <String>[
+              'projects',
+              'templates',
+              'template_fields',
+            ]) {
+              for (final Map<String, Object?> row in bundle.rowsOf(table)) {
+                await insertRow(target, table, row);
+              }
+            }
+            final PackageImportRepositoryImpl repository =
+                PackageImportRepositoryImpl(
+                  db: target,
+                  files: PackageFiles(storageRoot: root),
+                  clock: clock,
+                  deviceId: 'target-device',
+                  ids: UuidV7Service.sequence(clock),
+                );
+            final MergeGround ground = valueOf(
+              await repository.groundFor(
+                projectId: source.projectId,
+                incoming: bundle.tables,
+              ),
+            );
+            final CompatibilityReport compatible = TemplateCompatibility.check(
+              incoming: bundle.tables,
+              local: ground.local,
+              sameProject: true,
+            );
+            expect(compatible.canMerge, isTrue);
+            final MergePlan plan = MergePlanner.plan(
+              incoming: bundle.tables,
+              local: ground.local,
+              templateMapping: compatible.mapping,
+              targetProjectId: source.projectId,
+              incomingProjectId: source.projectId,
+              elsewhere: ground.elsewhere,
+              decided: ground.decided,
+            );
+            expect(plan.conflicts, isEmpty);
+            valueOf(
+              await repository.merge(
+                bundle: bundle,
+                projectId: source.projectId,
+                plan: plan,
+                choices: const <String, ConflictChoice>{},
+                duplicates: const <PossibleDuplicate>[],
+                skipped: const <String>{},
+                chooser: 'Memory audit',
+              ),
+            );
+            final List<Photo> photos = await target.select(target.photos).get();
+            expect(photos, hasLength(2000));
+            final Directory base = valueOf(await root.resolve());
+            for (final Photo photo in <Photo>[photos.first, photos.last]) {
+              final File file = File(
+                '${base.path}/projects/${source.folderName}/${photo.relativePath}',
+              );
+              expect(
+                await file.readAsBytes(),
+                source.files[photo.relativePath],
+              );
+            }
+          } finally {
+            if (inspected != null) {
+              await inspected.close();
+              bundles--;
             }
           }
-          final PackageImportRepositoryImpl repository =
-              PackageImportRepositoryImpl(
-                db: target,
-                files: PackageFiles(storageRoot: root),
-                clock: clock,
-                deviceId: 'target-device',
-                ids: UuidV7Service.sequence(clock),
-              );
-          final MergeGround ground = valueOf(
-            await repository.groundFor(
-              projectId: source.projectId,
-              incoming: bundle.tables,
-            ),
-          );
-          final CompatibilityReport compatible = TemplateCompatibility.check(
-            incoming: bundle.tables,
-            local: ground.local,
-            sameProject: true,
-          );
-          expect(compatible.canMerge, isTrue);
-          final MergePlan plan = MergePlanner.plan(
-            incoming: bundle.tables,
-            local: ground.local,
-            templateMapping: compatible.mapping,
-            targetProjectId: source.projectId,
-            incomingProjectId: source.projectId,
-            elsewhere: ground.elsewhere,
-            decided: ground.decided,
-          );
-          expect(plan.conflicts, isEmpty);
-          valueOf(
-            await repository.merge(
-              bundle: bundle,
-              projectId: source.projectId,
-              plan: plan,
-              choices: const <String, ConflictChoice>{},
-              duplicates: const <PossibleDuplicate>[],
-              skipped: const <String>{},
-              chooser: 'Memory audit',
-            ),
-          );
-          final List<Photo> photos = await target.select(target.photos).get();
-          expect(photos, hasLength(2000));
-          final Directory base = valueOf(await root.resolve());
-          for (final Photo photo in <Photo>[photos.first, photos.last]) {
-            final File file = File(
-              '${base.path}/projects/${source.folderName}/${photo.relativePath}',
-            );
-            expect(await file.readAsBytes(), source.files[photo.relativePath]);
-          }
-        } finally {
-          if (inspected != null) {
-            await inspected.close();
-            bundles--;
-          }
-          await target.close();
-          databases--;
-          await source.db.close();
-          databases--;
-          await source.root.parent.delete(recursive: true);
-          await documents.delete(recursive: true);
-        }
-      });
+        });
+      } finally {
+        await target.close();
+        databases--;
+        await source.db.close();
+        databases--;
+        await source.root.parent.delete(recursive: true);
+        await documents.delete(recursive: true);
+      }
     },
   );
 }

@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/markup_ink.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -15,27 +16,36 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/export/image_redaction.dart';
+import 'package:tapture/core/files/image_resize.dart';
 import 'package:tapture/core/files/photo_picker.dart';
+import 'package:tapture/core/files/photo_privacy_service.dart';
 import 'package:tapture/core/files/photo_thumbnails.dart';
+import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/network/offline_now.dart';
-import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/photo_source_sheet.dart';
+import 'package:tapture/core/widgets/responsive/breakpoints.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
-import 'package:tapture/features/capture/domain/audio_draft.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/capture_session_key.dart';
 import 'package:tapture/features/capture/domain/capture_template_choice.dart';
+import 'package:tapture/features/capture/domain/document_draft.dart';
+import 'package:tapture/features/capture/domain/gps_capture.dart';
+import 'package:tapture/features/capture/domain/pending_audio_draft.dart';
 import 'package:tapture/features/capture/domain/photo_derivation.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
@@ -44,16 +54,21 @@ import 'package:tapture/features/capture/domain/save_and_analyse.dart';
 import 'package:tapture/features/capture/presentation/audio_recorder.dart';
 import 'package:tapture/features/capture/presentation/barcode_scanner_screen.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
+import 'package:tapture/features/capture/presentation/capture_document_viewer.dart';
 import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
 import 'package:tapture/features/capture/presentation/capture_guide_state.dart';
+import 'package:tapture/features/capture/presentation/capture_photo_intake.dart';
 import 'package:tapture/features/capture/presentation/capture_recovery_prompt.dart';
+import 'package:tapture/features/capture/presentation/capture_storage_guard.dart';
 import 'package:tapture/features/capture/presentation/capture_target_fields.dart';
+import 'package:tapture/features/capture/presentation/document_picker.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
 import 'package:tapture/features/capture/presentation/live_camera_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_delete_action.dart';
 import 'package:tapture/features/capture/presentation/photo_doodle_screen.dart';
+import 'package:tapture/features/capture/presentation/photo_redaction_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
 import 'package:tapture/features/capture/presentation/photo_type_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_viewer_screen.dart';
@@ -66,6 +81,9 @@ import 'package:tapture/features/templates/templates.dart';
 
 export 'capture_target_fields.dart' show captureProjectTemplatesProvider;
 
+part 'capture_screen_documents.dart';
+part 'capture_screen_sessions.dart';
+
 /// Templates for the open project, read through the templates barrel.
 final StreamProvider<List<TemplateDef>> captureTemplatesProvider =
     StreamProvider<List<TemplateDef>>((Ref ref) {
@@ -76,47 +94,54 @@ final StreamProvider<List<TemplateDef>> captureTemplatesProvider =
       return ref.watch(templateRepositoryProvider).watchByProject(projectId);
     });
 
-/// The screen's own state: the next audio id, whether a save is running,
-/// and how many captions have been added to photos, which resets the
-/// caption field after each add.
-typedef _CaptureUiState = ({String audioId, bool saving, int captionAdds});
+/// The screen's own state for one session key: the next audio id, whether a
+/// save is running, how many captions have been added to photos (which
+/// resets the caption field after each add), and whether the stored copy of
+/// the session has been checked for an interrupted run.
+typedef _CaptureUiState = ({
+  String audioId,
+  bool saving,
+  int captionAdds,
+  bool checked,
+});
 
-final _captureUiProvider =
-    NotifierProvider.family<_CaptureUiController, _CaptureUiState, String>(
+/// Lives as long as a capture page shows the session, so each visit checks
+/// the stored copy afresh.
+final _captureUiProvider = NotifierProvider.autoDispose
+    .family<_CaptureUiController, _CaptureUiState, String>(
       _CaptureUiController.new,
     );
 
 final class _CaptureUiController extends Notifier<_CaptureUiState> {
   _CaptureUiController(String _);
 
-  final IdService _ids = UuidV7Service(const SystemClock());
+  IdService get _ids => ref.read(captureIdsProvider);
 
   @override
   _CaptureUiState build() {
-    return (audioId: _ids.newId(), saving: false, captionAdds: 0);
-  }
-
-  void renewAudioId() {
-    state = (
+    return (
       audioId: _ids.newId(),
-      saving: state.saving,
-      captionAdds: state.captionAdds,
+      saving: false,
+      captionAdds: 0,
+      checked: false,
     );
   }
 
-  void setSaving(bool saving) {
-    state = (
-      audioId: state.audioId,
-      saving: saving,
-      captionAdds: state.captionAdds,
-    );
-  }
+  void renewAudioId() => _set(audioId: _ids.newId());
 
-  void captionAdded() {
+  void setSaving(bool saving) => _set(saving: saving);
+
+  void captionAdded() => _set(captionAdds: state.captionAdds + 1);
+
+  /// The stored copy has been checked; the page may now write the session.
+  void checked() => _set(checked: true);
+
+  void _set({String? audioId, bool? saving, int? captionAdds, bool? checked}) {
     state = (
-      audioId: state.audioId,
-      saving: state.saving,
-      captionAdds: state.captionAdds + 1,
+      audioId: audioId ?? state.audioId,
+      saving: saving ?? state.saving,
+      captionAdds: captionAdds ?? state.captionAdds,
+      checked: checked ?? state.checked,
     );
   }
 }
@@ -124,18 +149,14 @@ final class _CaptureUiController extends Notifier<_CaptureUiState> {
 /// Capture surface: tray, caption, template choice, saves. With a
 /// [recordId] it edits that saved record's photos, captions and audio
 /// instead, and saves them back to it (FBK0000148).
+///
+/// Only a project is needed to capture, and only one piece of evidence to
+/// save (STANDARD rule 3). An interrupted session found on opening is
+/// offered back before anything on the page can write, so a fresh session
+/// never overwrites it (task 012 step 19, task 073).
 final class CaptureScreen extends ConsumerStatefulWidget {
   /// Creates the screen for [projectId].
-  const CaptureScreen({
-    required this.projectId,
-    this.recordId,
-    this.fields = const <FieldDef>[],
-    this.onAddPhoto,
-    this.onSaveRaw,
-    this.onSaveAndAnalyse,
-    this.headroom,
-    super.key,
-  });
+  const CaptureScreen({required this.projectId, this.recordId, super.key});
 
   /// Open project. Empty on the Capture tab root.
   final String projectId;
@@ -143,37 +164,25 @@ final class CaptureScreen extends ConsumerStatefulWidget {
   /// The saved record to edit. Null captures a new record.
   final String? recordId;
 
-  /// Template fields for the inline section.
-  final List<FieldDef> fields;
-
-  /// When set, replaces the add-photo sheet.
-  final VoidCallback? onAddPhoto;
-
-  /// Raw save.
-  final VoidCallback? onSaveRaw;
-
-  /// Analyse save.
-  final VoidCallback? onSaveAndAnalyse;
-
-  /// Optional storage banner.
-  final Widget? headroom;
-
   @override
   ConsumerState<CaptureScreen> createState() => _CaptureScreenState();
 }
 
-class _CaptureScreenState extends ConsumerState<CaptureScreen> {
+class _CaptureScreenState extends ConsumerState<CaptureScreen>
+    with StateRefresh {
   final Set<String> _selected = <String>{};
   final Map<String, Uint8List> _bytes = <String, Uint8List>{};
   final Map<String, String> _thumbs = <String, String>{};
   final Map<String, Uint8List> _thumbnailBytes = <String, Uint8List>{};
   final Set<String> _missing = <String>{};
   String? _derivationNotice;
-  bool _restored = false;
   bool _onStage = true;
   String? _chosen;
   String? _locationSession;
-  final IdService _ids = UuidV7Service(const SystemClock());
+
+  /// The session key whose stored copy is being checked, so one check runs
+  /// per key; [_captureUiProvider] records when it is done.
+  String? _checkingKey;
 
   /// What the open photo preview shows, set again after each new version so
   /// the preview follows crop, draw, type-on and revert (FBK0000150).
@@ -188,14 +197,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   void _keepMarkupStyle(MarkupInk ink, int size) {
     _markupInk = ink;
     _markupSize = size;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(_restore());
-    });
   }
 
   @override
@@ -239,33 +240,50 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   }
 
   void _chooseProject(String id) {
-    setState(() => _chosen = id);
+    refresh(() => _chosen = id);
     ref.read(currentProjectProvider.notifier).open(id);
   }
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     ref.watch(currentProjectProvider);
     final String projectId = _projectId();
+    final String key = _sessionKey();
+    final _CaptureUiState uiState = ref.watch(_captureUiProvider(key));
+    if (_checkingKey != key && !uiState.checked) {
+      // The stored copy of this session is checked, and an interrupted one
+      // offered back, before anything on the page writes to it.
+      _checkingKey = key;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(_restore(key));
+      });
+    }
     final AsyncValue<List<TemplateDef>> templateState = ref.watch(
       captureProjectTemplatesProvider(projectId),
     );
-    final List<TemplateDef> templates =
-        templateState.asData?.value ?? const <TemplateDef>[];
-    final CaptureSession session = ref.watch(
-      captureControllerProvider(_sessionKey()),
+    // Most recently used first, then by name (task 012 step 22).
+    final List<TemplateDef> templates = CaptureTemplateChoice.ordered(
+      templateState.asData?.value ?? const <TemplateDef>[],
+      recentIds:
+          ref.watch(captureRecentTemplatesProvider(projectId)).asData?.value ??
+          const <String>[],
     );
-    if (!_editing && session.id != _locationSession) {
+    final CaptureSession session = ref.watch(captureControllerProvider(key));
+    final bool settled = uiState.checked;
+    if (!_editing && settled && session.id != _locationSession) {
       _locationSession = session.id;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) unawaited(_captureLocation(session.id, _sessionKey()));
+        if (mounted) unawaited(_captureLocation(session.id, key));
       });
     }
-    // An edit is ready once its record has loaded; its template and context
-    // are the record's own and stay as they are.
+    // Only a project is needed to capture (STANDARD rule 3). An edit is
+    // ready once its record has loaded; its template and context are the
+    // record's own and stay as they are.
     final bool ready = _editing
         ? session.projectId.isNotEmpty
-        : projectId.isNotEmpty && templates.isNotEmpty;
+        : projectId.isNotEmpty && settled;
     final bool visible = _visible(context);
     if (_onStage && !visible) {
       _onStage = false;
@@ -276,26 +294,29 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       _onStage = true;
     }
     final CaptureController controller = ref.read(
-      captureControllerProvider(_sessionKey()).notifier,
-    );
-    final _CaptureUiState uiState = ref.watch(
-      _captureUiProvider(_sessionKey()),
+      captureControllerProvider(key).notifier,
     );
     final ContextState? activeContext = _projectId().isEmpty
         ? null
         : ref.watch(projectContextProvider(_projectId())).asData?.value;
-    if (activeContext != null && !_editing) {
-      final Map<String, String> snapshot = <String, String>{
-        ...activeContext.values,
-        ...activeContext.pinned,
-      };
-      if (!_sameContext(session.contextSnapshot, snapshot)) {
+    // Where capture is now: the live context, or the session's own until
+    // the live one has loaded.
+    final Map<String, String> place = activeContext == null
+        ? session.contextSnapshot
+        : <String, String>{...activeContext.values, ...activeContext.pinned};
+    if (activeContext != null && !_editing && settled) {
+      if (!_sameContext(session.contextSnapshot, place)) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) unawaited(controller.setContext(snapshot));
+          if (mounted) unawaited(controller.setContext(place));
         });
       }
     }
     final Project? project = ref.watch(currentProjectDetailsProvider);
+    // A template pinned to this place applies whenever capture is here
+    // again (spec section 14, task 012 step 22).
+    final String? placePin = _editing
+        ? null
+        : project?.settings.templatePinFor(place);
     final String? templateId = CaptureTemplateChoice.resolve(
       templateIds: <String>[
         for (final TemplateDef template in templates) template.id,
@@ -303,45 +324,94 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       selection: ref.watch(projectTemplateSelectionProvider),
       sessionTemplateId: session.templateId,
       choice: project?.settings.templateChoice,
+      contextPin: placePin,
     );
-    if (!_editing && templateId != null && session.templateId != templateId) {
+    if (!_editing &&
+        settled &&
+        templateId != null &&
+        (session.templateId != templateId ||
+            (session.templateVersion == null && !session.hasContent))) {
+      final TemplateDef selected = templates.firstWhere(
+        (TemplateDef template) => template.id == templateId,
+      );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          unawaited(controller.setTemplate(templateId));
+          unawaited(
+            controller.setTemplate(templateId, version: selected.version),
+          );
         }
       });
     }
-    final bool needsChoice = !_editing && ready && templateId == null;
     final bool offline = ref.watch(offlineNowProvider);
     // What the chosen template asks for (FBK0000157, D14).
     CaptureGuide guide = const CaptureGuide(
       photoFields: <String>[],
       captionFields: <String>[],
     );
-    List<FieldDef> fields = widget.fields;
+    List<FieldDef> fields = const <FieldDef>[];
     for (final TemplateDef template in templates) {
       if (template.id == templateId) {
-        guide = CaptureGuide.of(template);
-        if (fields.isEmpty) {
-          fields = template.fields
-              .where((FieldDef field) => !field.hidden)
-              .toList();
-        }
+        final TemplateDef? shape =
+            session.templateId == template.id && session.templateVersion != null
+            ? TemplateVersioning.shapeFor(template, session.templateVersion!)
+            : template;
+        if (shape == null) continue;
+        guide = CaptureGuide.of(shape);
+        fields = shape.fields.where((FieldDef field) => !field.hidden).toList();
       }
     }
     final CaptureGuideView guideView = ref.watch(captureGuideStateProvider);
     final List<String> captionTargets = _captionTargets(session);
-    final String title = _editing ? Copy.recordEditTitle : Copy.navCapture;
-    final Widget? banner = widget.headroom;
+    final String title = _editing
+        ? localCopy.recordEditTitle
+        : localCopy.navCapture;
+    // With no project there is nothing to file under: the target fields say
+    // so and offer the next step, and nothing else is drawn.
+    final bool noProject = !_editing && projectId.isEmpty;
+    // On a wide window the photo column and the field column each scroll,
+    // so a long template does not drag the photos with it.
+    // Columns that scroll apart need room under the fixed header; a short
+    // window at large text scrolls as one page instead.
+    final bool splitColumns =
+        !noProject &&
+        context.sizeClass != SizeClass.compact &&
+        !context.isShortForText;
     return AppPage(
       key: const ValueKey<String>('route-capture'),
       title: title,
       showAppBar: false,
-      scrollable: true,
-      footer: _editing
+      scrollable: !splitColumns,
+      overflow: _editing || projectId.isEmpty
+          ? const <AppOverflowAction>[]
+          : <AppOverflowAction>[
+              AppOverflowAction(
+                key: const ValueKey<String>('capture-rapid-mode'),
+                label: localCopy.captureRapidMode,
+                icon: AppIcons.camera,
+                onTap: () => unawaited(
+                  context.push(RoutePaths.projectCaptureRapid(projectId)),
+                ),
+              ),
+              // The session pin is the template field; this one outlives
+              // the session, for this place only.
+              if (project != null &&
+                  templateId != null &&
+                  placePin != templateId &&
+                  ProjectSettings.templatePinKey(place) != null)
+                AppOverflowAction(
+                  key: const ValueKey<String>('capture-pin-template'),
+                  label: localCopy.templateChoicePin,
+                  icon: AppIcons.pin,
+                  onTap: () =>
+                      unawaited(_pinTemplateHere(project, templateId, place)),
+                ),
+            ],
+      footer: noProject
+          ? null
+          : _editing
           ? AppPrimaryAction(
               key: const ValueKey<String>('record-edit-save'),
-              label: Copy.recordEditSave,
+              label: localCopy.recordEditSave,
               busy: uiState.saving,
               onPressed: ready ? () => unawaited(_saveEdits()) : null,
             )
@@ -358,20 +428,17 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                   matchesHeights: true,
                   gap: Space.x2,
                   start: AppButton(
-                    label: Copy.captureSaveRaw,
+                    label: localCopy.captureSaveRaw,
                     variant: AppButtonVariant.secondary,
                     expand: true,
                     busy: uiState.saving,
-                    onPressed: ready
-                        ? (widget.onSaveRaw ?? () => unawaited(_save(false)))
-                        : null,
+                    onPressed: ready ? () => unawaited(_save(false)) : null,
                   ),
                   end: AppPrimaryAction(
-                    label: Copy.captureSaveAndAnalyse,
+                    label: localCopy.captureSaveAndAnalyse,
                     busy: uiState.saving,
                     onPressed: ready && !offline
-                        ? (widget.onSaveAndAnalyse ??
-                              () => unawaited(_save(true)))
+                        ? () => unawaited(_save(true))
                         : null,
                   ),
                 ),
@@ -380,179 +447,245 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 // stay one height.
                 if (offline) ...<Widget>[
                   const SizedBox(height: Space.x1),
-                  const Text(
-                    Copy.captureProcessNeedsNetwork,
-                    key: ValueKey<String>('capture-saves-offline'),
+                  Text(
+                    localCopy.captureProcessNeedsNetwork,
+                    key: const ValueKey<String>('capture-saves-offline'),
                     style: AppText.caption,
                     textAlign: TextAlign.center,
                   ),
                 ],
               ],
             ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          if (banner != null) ...<Widget>[banner, _blockGap],
-          // An edit keeps the record's project and template.
-          if (!_editing) ...<Widget>[
-            CaptureTargetFields(
-              selectedProjectId: projectId,
-              templates: templates,
-              templateId: templateId,
-              onProjectSelected: _chooseProject,
-            ),
-            _blockGap,
-          ],
-          if (!guide.isEmpty) ...<Widget>[
-            CaptureGuideCard(guide: guide),
-            _blockGap,
-          ],
-          PhotoTray(
-            photos: _activePhotos(session),
-            captions: session.captions,
-            selectedIds: _selected,
-            thumbPaths: _thumbs,
-            thumbBytes: kIsWeb ? _thumbnailBytes : const <String, Uint8List>{},
-            missingIds: _missing,
-            onAdd: !ready || needsChoice ? null : (widget.onAddPhoto ?? _add),
-            onLongPress: (PhotoDraft photo) {
-              setState(() {
-                if (!_selected.add(photo.id)) {
-                  _selected.remove(photo.id);
-                }
-              });
-            },
-            onTap: (PhotoDraft photo) => _openViewer(session, photo),
-            onRemove: (PhotoDraft photo) {
-              unawaited(
-                PhotoDeleteAction.run(
-                  context: context,
-                  photo: photo,
-                  delete: (String id) async {
-                    final Result<PhotoDraft?> removed = await controller
-                        .removePhoto(id);
-                    return removed.fold((Failure failure) {
-                      if (context.mounted) {
-                        showAppSnack(
-                          context,
-                          failure.message,
-                          tone: SnackTone.error,
-                        );
-                      }
-                      return null;
-                    }, (PhotoDraft? value) => value);
-                  },
-                  undo: (PhotoDraft removed) async {
-                    final Result<void> restored = await controller.undoRemove(
-                      removed,
-                    );
-                    if (restored is FailureResult<void> && context.mounted) {
-                      showAppSnack(
-                        context,
-                        restored.failure.message,
-                        tone: SnackTone.error,
-                      );
-                    }
-                  },
-                ),
-              );
-            },
-          ),
-          _blockGap,
-          RecordCaptionField(
-            enabled: ready,
-            // Typing and dictation write the record's own caption only; a
-            // photo gets the text from the add button below (FBK0000155).
-            value: session.recordCaption,
-            resetKey: uiState.captionAdds,
-            guide: templateId == null || guideView.closedFor == templateId
-                ? const <String>[]
-                : guide.captionFields,
-            onCloseGuide: templateId == null
-                ? null
-                : () => ref
-                      .read(captureGuideStateProvider.notifier)
-                      .closePanelFor(templateId),
-            recorder: ref.watch(audioRecorderServiceProvider),
-            onChanged: (String text) async {
-              final Result<void> result = await controller.setCaption(
-                null,
-                text,
-              );
-              return result is Success<void>;
-            },
-            onWriteFailed: (String _) {
-              showAppSnack(
-                context,
-                Copy.captureSaveFailed,
-                tone: SnackTone.error,
-              );
-            },
-            afterDictation: _RecordAudioButton(
-              enabled: ready,
-              recorder: ref.watch(audioRecorderServiceProvider),
-              relativePath: project == null
-                  ? null
-                  : 'projects/${project.folderName}/audio/${uiState.audioId}.wav',
-              onCompleted: (AudioRecording recording) =>
-                  unawaited(_audioStopped(recording)),
-            ),
-          ),
-          if (captionTargets.isNotEmpty) ...<Widget>[
-            const SizedBox(height: Space.x2),
-            AppButton(
-              key: const ValueKey<String>('capture-caption-add'),
-              label: _anyTicked(session)
-                  ? Copy.captionAddToTicked(captionTargets.length)
-                  : Copy.captionAddToAll(captionTargets.length),
-              variant: AppButtonVariant.secondary,
-              expand: true,
-              onPressed: ready && session.recordCaption.trim().isNotEmpty
-                  ? () => unawaited(_addCaption())
-                  : null,
-            ),
-          ],
-          // The recorder block carries its own gap and is empty while idle.
-          if (project != null) ...<Widget>[
-            AudioRecorder(
-              recorder: ref.watch(audioRecorderServiceProvider),
-              relativePath:
-                  'projects/${project.folderName}/audio/${uiState.audioId}.wav',
-              onCompleted: (AudioRecording recording) =>
-                  unawaited(_audioStopped(recording)),
-            ),
-            if (session.audio.isNotEmpty) ...<Widget>[
-              const SizedBox(height: Space.x2),
-              Text(
-                Copy.captureAudioCount(session.audio.length),
-                style: AppText.caption,
+      body: _framed(
+        context,
+        split: splitColumns,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            // Free space: nothing while ample; a warning, or the stop with
+            // Export, below the thresholds (task 012 step 21).
+            CaptureStorageGuard(projectId: projectId),
+            // An edit keeps the record's project and template.
+            if (!_editing) ...<Widget>[
+              CaptureTargetFields(
+                selectedProjectId: projectId,
+                templates: templates,
+                templatesLoaded: templateState.hasValue,
+                templateId: templateId,
+                onProjectSelected: _chooseProject,
               ),
+              if (!noProject) _blockGap,
             ],
+            if (!noProject)
+              _fill(
+                splitColumns,
+                _EvidenceAndFields(
+                  fill: splitColumns,
+                  evidence: _evidence(
+                    session: session,
+                    controller: controller,
+                    uiState: uiState,
+                    project: project,
+                    ready: ready,
+                    templateId: templateId,
+                    guide: guide,
+                    guideView: guideView,
+                    captionTargets: captionTargets,
+                  ),
+                  // Field values are edited from the record page (FBK0000148).
+                  fields: _editing || fields.isEmpty
+                      ? null
+                      : InlineFieldsSection(
+                          key: ValueKey<String>(
+                            'inline-${session.id}-$templateId',
+                          ),
+                          fields: fields,
+                          values: <String, Object?>{
+                            ...session.contextSnapshot,
+                            ...session.values,
+                          },
+                          onChanged: (String key, Object? value) {
+                            unawaited(controller.setValue(key, value));
+                          },
+                          onLookup: (FieldDef field) =>
+                              unawaited(_lookup(field)),
+                          onScan: (FieldDef field) => unawaited(_scan(field)),
+                          linkedFields: session.lookupRows.keys.toSet(),
+                        ),
+                ),
+              ),
           ],
-          // Field values are edited from the record page (FBK0000148).
-          if (!_editing) ...<Widget>[
-            _blockGap,
-            InlineFieldsSection(
-              key: ValueKey<String>('inline-${session.id}-$templateId'),
-              fields: fields,
-              values: <String, Object?>{
-                ...session.contextSnapshot,
-                ...session.values,
-              },
-              onChanged: (String key, Object? value) {
-                unawaited(controller.setValue(key, value));
-              },
-              onLookup: (FieldDef field) => unawaited(_lookup(field)),
-              onScan: (FieldDef field) => unawaited(_scan(field)),
-              linkedFields: session.lookupRows.keys.toSet(),
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }
 
+  /// The tray, caption and audio: everything evidence is added through once
+  /// there is a project to file it under.
+  List<Widget> _evidence({
+    required CaptureSession session,
+    required CaptureController controller,
+    required _CaptureUiState uiState,
+    required Project? project,
+    required bool ready,
+    required String? templateId,
+    required CaptureGuide guide,
+    required CaptureGuideView guideView,
+    required List<String> captionTargets,
+  }) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    return <Widget>[
+      if (!guide.isEmpty) ...<Widget>[
+        CaptureGuideCard(guide: guide),
+        _blockGap,
+      ],
+      PhotoTray(
+        photos: _activePhotos(session),
+        captions: session.captions,
+        selectedIds: _selected,
+        thumbPaths: _thumbs,
+        thumbBytes: kIsWeb ? _thumbnailBytes : const <String, Uint8List>{},
+        missingIds: _missing,
+        onAdd: ready ? _add : null,
+        onLongPress: (PhotoDraft photo) {
+          refresh(() {
+            if (!_selected.add(photo.id)) {
+              _selected.remove(photo.id);
+            }
+          });
+        },
+        onTap: (PhotoDraft photo) => _openViewer(session, photo),
+        onRemove: (PhotoDraft photo) {
+          unawaited(
+            PhotoDeleteAction.run(
+              context: context,
+              photo: photo,
+              delete: (String id) async {
+                final Result<PhotoDraft?> removed = await controller
+                    .removePhoto(id);
+                return removed.fold((Failure failure) {
+                  if (mounted) {
+                    showAppSnack(
+                      context,
+                      failure.message,
+                      tone: SnackTone.error,
+                      localizedMessage: failure.explanation,
+                    );
+                  }
+                  return null;
+                }, (PhotoDraft? value) => value);
+              },
+              undo: (PhotoDraft removed) async {
+                final Result<void> restored = await controller.undoRemove(
+                  removed,
+                );
+                if (restored is FailureResult<void> && mounted) {
+                  showAppSnack(
+                    context,
+                    restored.failure.message,
+                    tone: SnackTone.error,
+                    localizedMessage: restored.failure.explanation,
+                  );
+                }
+              },
+            ),
+          );
+        },
+      ),
+      _blockGap,
+      if (project != null && ready) ...<Widget>[
+        DocumentPicker(
+          onImported: (Uint8List bytes, String name) =>
+              _documentImported(project, bytes, name),
+        ),
+        for (final DocumentDraft document in session.documents)
+          AppButton(
+            label: document.originalFilename,
+            variant: AppButtonVariant.secondary,
+            onPressed: document.canRenderPages
+                ? () => _openDocument(project, document)
+                : null,
+          ),
+        _blockGap,
+      ],
+      RecordCaptionField(
+        enabled: ready,
+        // Typing and dictation write the record's own caption only; a
+        // photo gets the text from the add button below (FBK0000155).
+        value: session.recordCaption,
+        resetKey: uiState.captionAdds,
+        guide: templateId == null || guideView.closedFor == templateId
+            ? const <String>[]
+            : guide.captionFields,
+        onCloseGuide: templateId == null
+            ? null
+            : () => ref
+                  .read(captureGuideStateProvider.notifier)
+                  .closePanelFor(templateId),
+        recorder: ref.watch(audioRecorderServiceProvider),
+        onChanged: (String text) async {
+          final Result<void> result = await controller.setCaption(null, text);
+          return result is Success<void>;
+        },
+        onWriteFailed: (String _) {
+          final LocalizedCopy localCopy = Copy.of(context);
+
+          showAppSnack(
+            context,
+            localCopy.captureSaveFailed,
+            tone: SnackTone.error,
+          );
+        },
+        afterDictation: _RecordAudioButton(
+          enabled: ready,
+          recorder: ref.watch(audioRecorderServiceProvider),
+          relativePath: project == null
+              ? null
+              : 'projects/${project.folderName}/audio/${uiState.audioId}.wav',
+          beforeStart: project == null ? null : () => _stageAudio(project),
+          onCompleted: (AudioRecording recording) =>
+              unawaited(_audioStopped(recording)),
+        ),
+      ),
+      if (captionTargets.isNotEmpty) ...<Widget>[
+        const SizedBox(height: Space.x2),
+        AppButton(
+          key: const ValueKey<String>('capture-caption-add'),
+          label: _anyTicked(session)
+              ? localCopy.captionAddToTicked(captionTargets.length)
+              : localCopy.captionAddToAll(captionTargets.length),
+          variant: AppButtonVariant.secondary,
+          expand: true,
+          onPressed: ready && session.recordCaption.trim().isNotEmpty
+              ? () => unawaited(_addCaption())
+              : null,
+        ),
+      ],
+      // The recorder block carries its own gap and is empty while idle.
+      if (project != null) ...<Widget>[
+        AudioRecorder(
+          recorder: ref.watch(audioRecorderServiceProvider),
+          relativePath:
+              'projects/${project.folderName}/audio/${uiState.audioId}.wav',
+          onCompleted: (AudioRecording recording) =>
+              unawaited(_audioStopped(recording)),
+        ),
+        if (session.audio.isNotEmpty) ...<Widget>[
+          const SizedBox(height: Space.x2),
+          Text(
+            localCopy.captureAudioCount(session.audio.length),
+            style: AppText.caption,
+          ),
+        ],
+      ],
+    ];
+  }
+
   Future<void> _add() async {
+    if (!await _admitted()) {
+      return;
+    }
     final PhotoPicker picker = ref.read(photoPickerProvider);
     final CameraService camera = ref.read(cameraServiceProvider);
     if (!mounted) {
@@ -563,12 +696,24 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       picker: picker,
       takePhoto: camera is CameraPreviewSurface
           ? () async {
-              await Navigator.of(context).push<void>(
+              // Full screen, over the shell's chrome.
+              await Navigator.of(context, rootNavigator: true).push<void>(
                 MaterialPageRoute<void>(
                   builder: (_) => LiveCameraScreen(
                     camera: camera,
                     onCaptured: (Uint8List bytes) =>
-                        _storePhoto(bytes, derivedFrom: null),
+                        _storePhoto(bytes, derivedFrom: null, notify: false),
+                    // Tombstoned, so the file stays recoverable.
+                    onRetake: (PhotoDraft photo) async =>
+                        (await ref
+                                .read(
+                                  captureControllerProvider(
+                                    _sessionKey(),
+                                  ).notifier,
+                                )
+                                .removePhoto(photo.id))
+                            .map<void>((PhotoDraft? _) {}),
+                    onCorrected: _commitDerived,
                   ),
                 ),
               );
@@ -584,14 +729,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   }
 
   Future<void> _scan(FieldDef field) async {
-    final String? code = await Navigator.of(context).push<String>(
-      MaterialPageRoute<String>(
-        builder: (BuildContext context) => BarcodeScannerScreen(
-          scanner: ref.read(barcodeScannerServiceProvider),
-          onConfirmed: (String code) => Navigator.of(context).pop(code),
-        ),
-      ),
-    );
+    final String? code = await Navigator.of(context, rootNavigator: true)
+        .push<String>(
+          MaterialPageRoute<String>(
+            builder: (BuildContext context) => BarcodeScannerScreen(
+              scanner: ref.read(barcodeScannerServiceProvider),
+              onConfirmed: (String code) => Navigator.of(context).pop(code),
+            ),
+          ),
+        );
     if (!mounted || code == null) return;
     await ref
         .read(captureControllerProvider(_sessionKey()).notifier)
@@ -600,6 +746,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   }
 
   Future<void> _lookup(FieldDef field) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final LookupBinding? binding = LookupBinding.fromMap(field.lookup);
     if (binding == null) return;
     final CaptureController controller = ref.read(
@@ -610,10 +758,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
     final String query =
         '${session.values[field.fieldKey] ?? session.contextSnapshot[field.fieldKey] ?? ''}';
-    final ReferenceRepository repository = ref.read(
+    final ReferenceRepository referenceStore = ref.read(
       referenceRepositoryProvider,
     );
-    final Result<ReferenceDataset?> loaded = await repository.byId(
+    final Result<ReferenceDataset?> loaded = await referenceStore.byId(
       binding.datasetId,
     );
     if (!mounted) return;
@@ -623,20 +771,25 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     if (dataset == null) {
       showAppSnack(
         context,
-        Copy.datasetsBrowserEmptyMessage,
+        localCopy.datasetsBrowserEmptyMessage,
         tone: SnackTone.warning,
       );
       return;
     }
     final Result<LookupSearchResult> found = await LookupSearch.find(
-      repository: repository,
+      repository: referenceStore,
       binding: binding,
       dataset: dataset,
       query: query,
     );
     if (!mounted) return;
     if (found is FailureResult<LookupSearchResult>) {
-      showAppSnack(context, found.failure.message, tone: SnackTone.error);
+      showAppSnack(
+        context,
+        found.failure.message,
+        tone: SnackTone.error,
+        localizedMessage: found.failure.explanation,
+      );
       return;
     }
     final LookupSearchResult result =
@@ -653,7 +806,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       } else if (binding.onNoMatch == NoMatchBehaviour.warn) {
         showAppSnack(
           context,
-          Copy.datasetsBrowserEmptyMessage,
+          localCopy.datasetsBrowserEmptyMessage,
           tone: SnackTone.warning,
         );
       }
@@ -672,7 +825,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         entry.value: selected.values[entry.key] ?? '',
     }, selected.id);
     if (mounted && saved is FailureResult<void>) {
-      showAppSnack(context, saved.failure.message, tone: SnackTone.error);
+      showAppSnack(
+        context,
+        saved.failure.message,
+        tone: SnackTone.error,
+        localizedMessage: saved.failure.explanation,
+      );
     }
   }
 
@@ -680,7 +838,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     switch (result) {
       case FailureResult<List<Uint8List>>(:final Failure failure):
         if (mounted) {
-          showAppSnack(context, failure.message, tone: SnackTone.error);
+          showAppSnack(
+            context,
+            failure.message,
+            tone: SnackTone.error,
+            localizedMessage: failure.explanation,
+          );
         }
       case Success<List<Uint8List>>(:final List<Uint8List> value):
         for (final Uint8List bytes in value) {
@@ -689,57 +852,68 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     }
   }
 
-  Future<void> _storePhoto(
+  /// Stores [bytes] as the next photo and hands back what was stored. A
+  /// failure is shown here unless [notify] is off because the caller, the
+  /// live camera, says it itself.
+  Future<Result<PhotoDraft>> _storePhoto(
     Uint8List bytes, {
     required String? derivedFrom,
+    bool notify = true,
   }) async {
-    final String id = _ids.newId();
-    final CaptureSession session = ref.read(
-      captureControllerProvider(_sessionKey()),
-    );
-    // After the last position in use, so a photo added after a removal
-    // never shares a place with one still in the tray.
-    int sortOrder = 0;
-    for (final PhotoDraft photo in session.photos) {
-      if (photo.sortOrder >= sortOrder) {
-        sortOrder = photo.sortOrder + 1;
-      }
-    }
-    final PhotoDraft draft = PhotoDraft(
-      id: id,
+    final Result<PhotoDraft> saved = await CapturePhotoIntake.store(
+      ref,
+      sessionKey: _sessionKey(),
       projectId: _projectId(),
-      captureSessionId: session.id,
-      originalFilename: '$id.jpg',
-      storedFilename: '$id.jpg',
-      relativePath: 'photos/$id.jpg',
-      sha256: sha256.convert(bytes).toString(),
-      fileSize: bytes.length,
-      mimeType: 'image/jpeg',
-      capturedAt: const SystemClock().nowUtc(),
+      bytes: bytes,
       derivedFrom: derivedFrom,
-      sortOrder: sortOrder,
-      gpsLat: session.location?.latitude,
-      gpsLon: session.location?.longitude,
     );
-    final Result<void> saved = await ref
-        .read(captureControllerProvider(_sessionKey()).notifier)
-        .addPhoto(draft, bytes: bytes);
-    if (!mounted) {
-      return;
-    }
     switch (saved) {
-      case FailureResult<void>(:final Failure failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
-      case Success<void>():
-        setState(() => _bytes[id] = bytes);
-        unawaited(_refreshThumbs(<PhotoDraft>[draft]));
+      case FailureResult<PhotoDraft>(:final Failure failure):
+        if (notify && mounted) {
+          showAppSnack(
+            context,
+            failure.message,
+            tone: SnackTone.error,
+            localizedMessage: failure.explanation,
+          );
+        }
+      case Success<PhotoDraft>(:final PhotoDraft value):
+        if (mounted) {
+          refresh(() => _bytes[value.id] = bytes);
+          unawaited(_refreshThumbs(<PhotoDraft>[value]));
+        }
     }
+    return saved;
   }
 
+  /// Whether a new capture may start: refused only when the device is known
+  /// to be full, with the reason and the way out (task 012 step 21).
+  Future<bool> _admitted() async {
+    final Result<HeadroomState>? admitted = await CapturePhotoIntake.admit(ref);
+    if (admitted case FailureResult<HeadroomState>(:final Failure failure)) {
+      if (mounted) {
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
+      }
+      return false;
+    }
+    return mounted;
+  }
+
+  /// Stamps a fix on [sessionId] when the project uses GPS. A slow or
+  /// missing fix never holds up a save: nothing awaits this.
   Future<void> _captureLocation(String sessionId, String sessionKey) async {
-    final Result<GeoFix?> result = await ref
-        .read(locationServiceProvider)
-        .currentFix();
+    final Project? project = ref.read(currentProjectDetailsProvider);
+    final Result<GeoFix?> result = await GpsCapture.maybeFix(
+      // A project with no GPS preference of its own leaves the choice to
+      // the location service, which reads the device setting.
+      gpsEnabled: project?.settings.gpsEnabled ?? true,
+      location: ref.read(locationServiceProvider),
+    );
     if (!mounted || result is! Success<GeoFix?> || result.value == null) return;
     await ref
         .read(captureControllerProvider(sessionKey).notifier)
@@ -750,6 +924,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   /// then clears the field and says how many photos got it (D7). A failed
   /// add keeps the typed text (FE-SIMP-09).
   Future<void> _addCaption() async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final CaptureController controller = ref.read(
       captureControllerProvider(_sessionKey()).notifier,
     );
@@ -773,7 +949,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       return;
     }
     if (added is FailureResult<void>) {
-      showAppSnack(context, Copy.captureSaveFailed, tone: SnackTone.error);
+      showAppSnack(context, localCopy.captureSaveFailed, tone: SnackTone.error);
       return;
     }
     final Result<void> cleared = await controller.setCaption(null, '');
@@ -785,7 +961,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     }
     showAppSnack(
       context,
-      Copy.captionAdded(targets.length),
+      localCopy.captionAdded(targets.length),
       tone: SnackTone.success,
     );
   }
@@ -816,11 +992,16 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       case Success<List<PhotoDraft>>(:final List<PhotoDraft> value):
         return value;
       case FailureResult<List<PhotoDraft>>(:final Failure failure):
-        if (_derivationNotice != failure.message) {
-          _derivationNotice = failure.message;
+        if (_derivationNotice != Copy.of(context).failureMessage(failure)) {
+          _derivationNotice = Copy.of(context).failureMessage(failure);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
-              showAppSnack(context, failure.message, tone: SnackTone.error);
+              showAppSnack(
+                context,
+                failure.message,
+                tone: SnackTone.error,
+                localizedMessage: failure.explanation,
+              );
             }
           });
         }
@@ -871,6 +1052,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                     context,
                     saved.failure.message,
                     tone: SnackTone.error,
+                    localizedMessage: saved.failure.explanation,
                   );
                 }
                 return saved is Success<void>;
@@ -881,6 +1063,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               onDraw: (PhotoDraft current) {
                 unawaited(_draw(routeContext, current));
               },
+              onRedact: ref.read(photoPrivacyServiceProvider) == null
+                  ? null
+                  : (PhotoDraft current) =>
+                        unawaited(_redact(routeContext, current)),
               onType: (PhotoDraft current) {
                 unawaited(_type(routeContext, current));
               },
@@ -895,7 +1081,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
   }
 
-  Future<void> _audioStopped(AudioRecording recording) async {
+  Future<Result<void>> _stageAudio(Project project) async {
     final _CaptureUiState uiState = ref.read(_captureUiProvider(_sessionKey()));
     final CaptureSession session = ref.read(
       captureControllerProvider(_sessionKey()),
@@ -904,28 +1090,33 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     final List<String> photoIds = _selected.isEmpty
         ? <String>[for (final PhotoDraft photo in visible) photo.id]
         : _selected.toList(growable: false);
-    final int audioSegment = recording.relativePath.indexOf('audio/');
-    final String projectPath = audioSegment < 0
-        ? 'audio/${uiState.audioId}.wav'
-        : recording.relativePath.substring(audioSegment);
-    final Result<void> saved = await ref
+    return ref
         .read(captureControllerProvider(_sessionKey()).notifier)
-        .addAudio(
-          AudioDraft(
+        .stageAudio(
+          PendingAudioDraft(
             id: uiState.audioId,
             projectId: _projectId(),
-            relativePath: projectPath,
-            mimeType: recording.mimeType,
-            fileSize: recording.byteLength,
-            sha256: recording.sha256,
-            durationMs: recording.duration.inMilliseconds,
+            relativePath: 'audio/${uiState.audioId}.wav',
+            storageRelativePath:
+                'projects/${project.folderName}/audio/${uiState.audioId}.wav',
             photoIds: photoIds,
           ),
         );
+  }
+
+  Future<void> _audioStopped(AudioRecording recording) async {
+    final Result<void> saved = await ref
+        .read(captureControllerProvider(_sessionKey()).notifier)
+        .publishAudio(recording);
     if (!mounted) return;
     switch (saved) {
       case FailureResult<void>(:final Failure failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
       case Success<void>():
         ref.read(_captureUiProvider(_sessionKey()).notifier).renewAudioId();
     }
@@ -964,10 +1155,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   }
 
   Future<void> _draw(BuildContext routeContext, PhotoDraft photo) async {
+    final LocalizedCopy localCopy = Copy.of(routeContext);
+
     final Uint8List? bytes = await _readPhoto(photo);
     if (bytes == null) {
       if (mounted) {
-        showAppSnack(context, Copy.missingPhoto, tone: SnackTone.error);
+        showAppSnack(context, localCopy.missingPhoto, tone: SnackTone.error);
       }
       return;
     }
@@ -997,6 +1190,52 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
   }
 
+  Future<void> _redact(BuildContext routeContext, PhotoDraft photo) async {
+    final LocalizedCopy localCopy = Copy.of(routeContext);
+
+    final PhotoPrivacyService? privacy = ref.read(photoPrivacyServiceProvider);
+    if (privacy == null) return;
+    final Uint8List? bytes = await _readPhoto(photo);
+    if (bytes == null || !routeContext.mounted) return;
+    final Result<({Uint8List bytes, int width, int height})> preview =
+        await ImageResize.preview(bytes);
+    final Result<List<ImageRect>> marks = await privacy.marks(photo.id);
+    if (!routeContext.mounted) return;
+    if (preview is FailureResult<({Uint8List bytes, int width, int height})>) {
+      showAppSnack(
+        routeContext,
+        preview.failure.message,
+        tone: SnackTone.error,
+        localizedMessage: preview.failure.explanation,
+      );
+      return;
+    }
+    if (marks is FailureResult<List<ImageRect>>) {
+      showAppSnack(
+        routeContext,
+        marks.failure.message,
+        tone: SnackTone.error,
+        localizedMessage: marks.failure.explanation,
+      );
+      return;
+    }
+    final bool? saved = await Navigator.of(routeContext).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (BuildContext _) => PhotoRedactionScreen(
+          photoId: photo.id,
+          preview:
+              (preview as Success<({Uint8List bytes, int width, int height})>)
+                  .value,
+          marks: (marks as Success<List<ImageRect>>).value,
+          privacy: privacy,
+        ),
+      ),
+    );
+    if (saved == true && routeContext.mounted) {
+      showAppSnack(routeContext, localCopy.redactionSaved);
+    }
+  }
+
   Future<void> _revert(String photoId) async {
     final Result<void> reverted = await ref
         .read(captureControllerProvider(_sessionKey()).notifier)
@@ -1006,9 +1245,14 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     }
     switch (reverted) {
       case FailureResult<void>(:final Failure failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
       case Success<void>():
-        setState(() {
+        refresh(() {
           _bytes.remove(photoId);
           _thumbs.remove(photoId);
           _thumbnailBytes.remove(photoId);
@@ -1023,38 +1267,30 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     PhotoDraft derived,
     Uint8List png,
   ) async {
-    final CaptureController controller = ref.read(
-      captureControllerProvider(_sessionKey()).notifier,
-    );
-    final Result<void> saved = await controller.updatePhoto(
-      derived.copyWith(
-        projectId: _projectId(),
-        sha256: sha256.convert(png).toString(),
-        fileSize: png.length,
-      ),
+    final Result<PhotoDraft> saved = await CapturePhotoIntake.storeDerived(
+      ref,
+      sessionKey: _sessionKey(),
+      projectId: _projectId(),
+      source: source,
+      derived: derived,
       bytes: png,
     );
     if (!mounted) {
-      return false;
+      return saved is Success<PhotoDraft>;
     }
     switch (saved) {
-      case FailureResult<void>(:final Failure failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
-        return false;
-      case Success<void>():
-        final CaptureSession session = ref.read(
-          captureControllerProvider(_sessionKey()),
+      case FailureResult<PhotoDraft>(:final Failure failure):
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
         );
-        final String? caption = session.captions[source.id];
-        if (caption != null && caption.isNotEmpty) {
-          await controller.setCaption(derived.id, caption);
-        }
-        if (!mounted) {
-          return true;
-        }
-        setState(() => _bytes[derived.id] = png);
+        return false;
+      case Success<PhotoDraft>(:final PhotoDraft value):
+        refresh(() => _bytes[value.id] = png);
         _showNewestInViewer();
-        unawaited(_refreshThumbs(<PhotoDraft>[derived]));
+        unawaited(_refreshThumbs(<PhotoDraft>[value]));
         return true;
     }
   }
@@ -1064,30 +1300,29 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     if (cached != null) {
       return cached;
     }
-    final PhotoRepository repository = ref
+    final PhotoRepository photoStore = ref
         .read(capturePersistenceProvider)
         .photos;
-    if (repository is! CapturePhotoRepository) {
+    if (photoStore is! CapturePhotoRepository) {
       return null;
     }
-    final Result<Uint8List> bytes = await repository.readBytes(photo);
+    final Result<Uint8List> bytes = await photoStore.readBytes(photo);
     switch (bytes) {
       case FailureResult<Uint8List>():
         if (mounted) {
-          setState(() => _missing.add(photo.id));
+          refresh(() => _missing.add(photo.id));
         }
         return null;
       case Success<Uint8List>(:final Uint8List value):
-        _bytes[photo.id] = value;
         return value;
     }
   }
 
   Future<void> _refreshThumbs(List<PhotoDraft> photos) async {
-    final PhotoRepository repository = ref
+    final PhotoRepository photoStore = ref
         .read(capturePersistenceProvider)
         .photos;
-    if (repository is! CapturePhotoRepository) {
+    if (photoStore is! CapturePhotoRepository) {
       return;
     }
     final Map<String, String> next = Map<String, String>.of(_thumbs);
@@ -1116,23 +1351,22 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
         }
         continue;
       }
-      Result<String> thumb = await repository.cachedThumbnailPath(
+      Result<String> thumb = await photoStore.cachedThumbnailPath(
         photo,
         edge: AppConstants.images.thumbnailEdge,
       );
       final Uint8List? held = _bytes[photo.id];
       if (thumb is FailureResult<String> && held != null) {
-        thumb = await repository.cachedThumbnailForBytes(
+        thumb = await photoStore.cachedThumbnailForBytes(
           photo,
           held,
           edge: AppConstants.images.thumbnailEdge,
         );
       }
       if (thumb is FailureResult<String> && held == null) {
-        final Result<Uint8List> read = await repository.readBytes(photo);
+        final Result<Uint8List> read = await photoStore.readBytes(photo);
         if (read is Success<Uint8List>) {
-          _bytes[photo.id] = read.value;
-          thumb = await repository.cachedThumbnailForBytes(
+          thumb = await photoStore.cachedThumbnailForBytes(
             photo,
             read.value,
             edge: AppConstants.images.thumbnailEdge,
@@ -1152,7 +1386,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
       }
     }
     if (mounted) {
-      setState(() {
+      refresh(() {
         _thumbs
           ..clear()
           ..addAll(next);
@@ -1164,10 +1398,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
   }
 
   Future<void> _type(BuildContext routeContext, PhotoDraft photo) async {
+    final LocalizedCopy localCopy = Copy.of(routeContext);
+
     final Uint8List? bytes = await _readPhoto(photo);
     if (bytes == null) {
       if (mounted) {
-        showAppSnack(context, Copy.missingPhoto, tone: SnackTone.error);
+        showAppSnack(context, localCopy.missingPhoto, tone: SnackTone.error);
       }
       return;
     }
@@ -1197,291 +1433,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
     );
   }
 
-  Future<void> _restore() async {
-    if (_restored || !mounted) {
-      return;
-    }
-    _restored = true;
-    if (_editing) {
-      await _restoreEdit();
-      return;
-    }
-    final Result<CaptureSession?> loaded = await ref
-        .read(capturePersistenceProvider)
-        .loadSession(_projectId());
-    if (!mounted) {
-      return;
-    }
-    final CaptureSession? session = switch (loaded) {
-      Success<CaptureSession?>(:final CaptureSession? value) => value,
-      FailureResult<CaptureSession?>() => null,
-    };
-    if (session == null || !_hasContent(session)) {
-      return;
-    }
-    if (session.projectId.isNotEmpty &&
-        _projectId().isNotEmpty &&
-        session.projectId != _projectId()) {
-      return;
-    }
-    if (!mounted) {
-      return;
-    }
-    await showDialog<void>(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return CaptureRecoveryPrompt(
-          photoCount: session.photos.length,
-          onResume: () {
-            Navigator.of(dialogContext).pop();
-            unawaited(() async {
-              await ref
-                  .read(captureControllerProvider(_sessionKey()).notifier)
-                  .replaceSession(session);
-              if (mounted) {
-                await _refreshThumbs(_activePhotos(session));
-              }
-            }());
-          },
-          onDiscard: () async {
-            final Result<void> discarded = await ref
-                .read(captureControllerProvider(_sessionKey()).notifier)
-                .discardSession(interrupted: session);
-            if (discarded is FailureResult<void>) {
-              if (mounted) {
-                showAppSnack(
-                  context,
-                  discarded.failure.message,
-                  tone: SnackTone.error,
-                );
-              }
-              return;
-            }
-            if (dialogContext.mounted) {
-              Navigator.of(dialogContext).pop();
-            }
-          },
-        );
-      },
-    );
-  }
-
-  /// Offers a stored, changed edit of this record, and otherwise loads the
-  /// record as it is saved now.
-  Future<void> _restoreEdit() async {
-    final String recordId = widget.recordId!;
-    final CaptureController controller = ref.read(
-      captureControllerProvider(_sessionKey()).notifier,
-    );
-    final Result<CaptureSession?> stored = await ref
-        .read(capturePersistenceProvider)
-        .loadSession(_sessionKey());
-    if (!mounted) {
-      return;
-    }
-    final CaptureSession? interrupted = switch (stored) {
-      Success<CaptureSession?>(:final CaptureSession? value) => value,
-      FailureResult<CaptureSession?>() => null,
-    };
-    if (interrupted != null && interrupted.editing && interrupted.isDirty) {
-      await showDialog<void>(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return CaptureRecoveryPrompt(
-            photoCount: interrupted.photos.length,
-            onResume: () {
-              Navigator.of(dialogContext).pop();
-              unawaited(() async {
-                await controller.replaceSession(interrupted);
-                if (mounted) {
-                  await _refreshThumbs(_activePhotos(interrupted));
-                }
-              }());
-            },
-            onDiscard: () async {
-              await controller.replaceSession(interrupted);
-              await controller.discardSession();
-              if (dialogContext.mounted) {
-                Navigator.of(dialogContext).pop();
-              }
-              await _loadRecord(recordId);
-            },
-          );
-        },
-      );
-      return;
-    }
-    await _loadRecord(recordId);
-  }
-
-  Future<void> _loadRecord(String recordId) async {
-    final Result<void> loaded = await ref
-        .read(captureControllerProvider(_sessionKey()).notifier)
-        .loadRecord(recordId);
-    if (!mounted) {
-      return;
-    }
-    switch (loaded) {
-      case FailureResult<void>(:final Failure failure):
-        showAppSnack(context, failure.message, tone: SnackTone.error);
-      case Success<void>():
-        await _refreshThumbs(
-          _activePhotos(ref.read(captureControllerProvider(_sessionKey()))),
-        );
-    }
-  }
-
-  /// Writes the edit to its record and returns to the record's page with a
-  /// [CaptureEditOutcome]. A failure keeps every change and offers Retry.
-  Future<void> _saveEdits() async {
-    final _CaptureUiController ui = ref.read(
-      _captureUiProvider(_sessionKey()).notifier,
-    );
-    if (ref.read(_captureUiProvider(_sessionKey())).saving || !mounted) {
-      return;
-    }
-    // Photos not yet filed on the record are the ones this save adds.
-    final CaptureSession editing = ref.read(
-      captureControllerProvider(_sessionKey()),
-    );
-    final int added = editing.photos
-        .where((PhotoDraft photo) => photo.recordId != editing.recordId)
-        .length;
-    ui.setSaving(true);
-    final Result<void> saved;
-    try {
-      saved = await ref
-          .read(captureControllerProvider(_sessionKey()).notifier)
-          .saveEdits();
-    } finally {
-      ui.setSaving(false);
-    }
-    if (!mounted) {
-      return;
-    }
-    switch (saved) {
-      case FailureResult<void>(:final Failure failure):
-        showAppSnack(
-          context,
-          failure.message,
-          tone: SnackTone.error,
-          undoLabel: Copy.queueRetry,
-          onUndo: () => unawaited(_saveEdits()),
-        );
-      case Success<void>():
-        showAppSnack(context, Copy.recordEditSaved, tone: SnackTone.success);
-        unawaited(
-          Navigator.of(
-            context,
-          ).maybePop<CaptureEditOutcome>((photosAdded: added)),
-        );
-    }
-  }
-
-  Future<void> _persist() async {
-    if (!mounted) {
-      return;
-    }
-    final CaptureSession session = ref.read(
-      captureControllerProvider(_sessionKey()),
-    );
-    if (!_hasContent(session)) {
-      return;
-    }
-    // An edit is kept only while it holds changes; a saved or untouched
-    // edit leaves nothing behind to offer next time.
-    if (session.editing && !session.isDirty) {
-      return;
-    }
-    await ref.read(capturePersistenceProvider).saveSession(session);
-  }
-
-  Future<void> _save(bool process) async {
-    final _CaptureUiController ui = ref.read(
-      _captureUiProvider(_sessionKey()).notifier,
-    );
-    if (ref.read(_captureUiProvider(_sessionKey())).saving || !mounted) {
-      return;
-    }
-    final CaptureRecordPersistence? writer = ref.read(
-      captureRecordWriterProvider,
-    );
-    if (writer == null) {
-      showAppSnack(context, Copy.captureSaveFailed, tone: SnackTone.error);
-      return;
-    }
-    ui.setSaving(true);
-    final CaptureController controller = ref.read(
-      captureControllerProvider(_sessionKey()).notifier,
-    );
-    late final Result<Object> result;
-    try {
-      if (process) {
-        result = await controller.saveAndAnalyse(
-          persist: writer.persist,
-          enqueue: (String recordId) async {
-            final Result<String> queued = await ref
-                .read(processingRepositoryProvider)
-                .enqueue(recordId);
-            return queued.map(
-              (String jobId) =>
-                  SaveAndAnalyse.jobFor(jobId: jobId, recordId: recordId),
-            );
-          },
-        );
-      } else {
-        result = await controller.saveRaw(writer.persist);
-      }
-    } finally {
-      ui.setSaving(false);
-    }
-    if (!mounted) {
-      return;
-    }
-    switch (result) {
-      case FailureResult<Object>(:final Failure failure):
-        showAppSnack(
-          context,
-          failure.message,
-          tone: SnackTone.error,
-          undoLabel: Copy.queueRetry,
-          onUndo: () => unawaited(_save(process)),
-        );
-      case Success<Object>(:final Object value):
-        if (value is SaveAndAnalyseResult && value.enqueueFailed) {
-          showAppSnack(
-            context,
-            Copy.captureEnqueueFailed,
-            tone: SnackTone.error,
-            undoLabel: Copy.queueRetry,
-            onUndo: () => unawaited(_save(true)),
-          );
-          return;
-        }
-        _bytes.clear();
-        _thumbnailBytes.clear();
-        _thumbs.clear();
-        _missing.clear();
-        _selected.clear();
-        showAppSnack(context, Copy.captureSaved, tone: SnackTone.success);
-    }
-  }
-
-  bool _hasContent(CaptureSession session) {
-    if (session.photos.isNotEmpty || session.audio.isNotEmpty) {
-      return true;
-    }
-    if (session.values.isNotEmpty) {
-      return true;
-    }
-    for (final String text in session.captions.values) {
-      if (text.isNotEmpty) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   bool _visible(BuildContext context) {
     bool onStage = true;
     context.visitAncestorElements((Element element) {
@@ -1501,12 +1452,14 @@ final class _RecordAudioButton extends StatefulWidget {
   const _RecordAudioButton({
     required this.recorder,
     required this.relativePath,
+    this.beforeStart,
     this.onCompleted,
     this.enabled = true,
   });
 
   final AudioRecorderService recorder;
   final String? relativePath;
+  final Future<Result<void>> Function()? beforeStart;
   final ValueChanged<AudioRecording>? onCompleted;
 
   /// When false, record and stop do not accept a press.
@@ -1516,16 +1469,18 @@ final class _RecordAudioButton extends StatefulWidget {
   State<_RecordAudioButton> createState() => _RecordAudioButtonState();
 }
 
-class _RecordAudioButtonState extends State<_RecordAudioButton> {
+class _RecordAudioButtonState extends State<_RecordAudioButton>
+    with StateRefresh {
   AudioRecorderPhase _phase = AudioRecorderPhase.idle;
   StreamSubscription<AudioRecorderState>? _sub;
+  bool _starting = false;
 
   @override
   void initState() {
     super.initState();
     _sub = widget.recorder.state.listen((AudioRecorderState next) {
       if (mounted) {
-        setState(() => _phase = next.phase);
+        refresh(() => _phase = next.phase);
       }
     });
   }
@@ -1542,30 +1497,62 @@ class _RecordAudioButtonState extends State<_RecordAudioButton> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool live = _live;
     return AppIconButton(
       key: const ValueKey<String>('capture-record-audio'),
       icon: live ? AppIcons.stop : AppIcons.recordAudio,
-      semanticLabel: live ? Copy.captureStopAudio : Copy.captureRecordAudio,
-      tooltip: live ? Copy.captureStopAudio : Copy.captureRecordAudio,
+      semanticLabel: live
+          ? localCopy.captureStopAudio
+          : localCopy.captureRecordAudio,
+      tooltip: live ? localCopy.captureStopAudio : localCopy.captureRecordAudio,
       outlined: false,
-      onPressed: widget.enabled ? (live ? _stop : _start) : null,
+      onPressed:
+          widget.enabled &&
+              !_starting &&
+              _phase != AudioRecorderPhase.permission &&
+              _phase != AudioRecorderPhase.finalizing
+          ? (live ? _stop : _start)
+          : null,
     );
   }
 
   Future<void> _start() async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String? path = widget.relativePath;
     if (path == null || path.isEmpty) {
-      showAppSnack(context, Copy.homeEmptyHeadline, tone: SnackTone.error);
+      showAppSnack(context, localCopy.homeEmptyHeadline, tone: SnackTone.error);
       return;
     }
-    final Result<void> result = await widget.recorder.start(path);
-    if (!mounted) {
-      return;
+    if (_starting) return;
+    refresh(() => _starting = true);
+    try {
+      final Result<void>? prepared = await widget.beforeStart?.call();
+      if (!mounted) return;
+      if (prepared case FailureResult<void>(:final Failure failure)) {
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
+        return;
+      }
+      final Result<void> result = await widget.recorder.start(path);
+      if (!mounted) return;
+      result.fold((Failure failure) {
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
+      }, (_) {});
+    } finally {
+      if (mounted) refresh(() => _starting = false);
     }
-    result.fold((Failure failure) {
-      showAppSnack(context, failure.message, tone: SnackTone.error);
-    }, (_) {});
   }
 
   Future<void> _stop() async {
@@ -1575,7 +1562,12 @@ class _RecordAudioButtonState extends State<_RecordAudioButton> {
     }
     stopped.fold(
       (Failure failure) {
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
       },
       (Duration _) {
         final AudioRecording? completed = widget.recorder.completed;
@@ -1583,6 +1575,113 @@ class _RecordAudioButtonState extends State<_RecordAudioButton> {
           widget.onCompleted?.call(completed);
         }
       },
+    );
+  }
+}
+
+/// Expands [child] only when the capture page is giving the columns a height.
+Widget _fill(bool fill, Widget child) {
+  return fill ? Expanded(child: child) : child;
+}
+
+/// On a wide window the page does not scroll, so the columns need the same
+/// side inset and readable width the scrolling page would have given them.
+Widget _framed(
+  BuildContext context, {
+  required bool split,
+  required Widget child,
+}) {
+  if (!split) {
+    return child;
+  }
+  return Padding(
+    padding: EdgeInsets.symmetric(
+      horizontal: AppPage.gutter(context),
+      vertical: Space.x2,
+    ),
+    child: ContentConstraint(child: child),
+  );
+}
+
+/// The evidence column and the template's inline fields: stacked on a
+/// phone, side by side from medium width up (task 012 step 2). [fill] gives
+/// each column its own scroll view. Without fields the evidence takes the
+/// whole width.
+final class _EvidenceAndFields extends StatelessWidget {
+  const _EvidenceAndFields({
+    required this.evidence,
+    required this.fields,
+    this.fill = false,
+  });
+
+  final List<Widget> evidence;
+  final Widget? fields;
+
+  /// When true, each side scrolls inside the space the page leaves it.
+  final bool fill;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget column = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: evidence,
+    );
+    final Widget? fields = this.fields;
+    if (fields == null) {
+      return fill ? SingleChildScrollView(child: column) : column;
+    }
+    if (!fill) {
+      return ResponsivePair(
+        key: const ValueKey<String>('capture-evidence-and-fields'),
+        gap: Space.x4,
+        start: column,
+        end: fields,
+      );
+    }
+    return Row(
+      key: const ValueKey<String>('capture-evidence-and-fields'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(child: _ColumnScroll(child: column)),
+        const SizedBox(width: Space.x4),
+        Expanded(child: _ColumnScroll(child: fields)),
+      ],
+    );
+  }
+}
+
+/// One capture column: its own scrollbar and scroll position.
+class _ColumnScroll extends StatefulWidget {
+  const _ColumnScroll({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_ColumnScroll> createState() => _ColumnScrollState();
+}
+
+class _ColumnScrollState extends State<_ColumnScroll> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scrollbar(
+      controller: _controller,
+      thumbVisibility: true,
+      child: SingleChildScrollView(
+        controller: _controller,
+        primary: false,
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: const EdgeInsets.only(bottom: Space.x2),
+        child: widget.child,
+      ),
     );
   }
 }

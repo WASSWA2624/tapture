@@ -1,3 +1,4 @@
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -18,10 +19,12 @@ abstract final class PhotoDerivation {
     final Map<String, PhotoDraft> byId = <String, PhotoDraft>{};
     for (final PhotoDraft photo in photos) {
       if (byId.containsKey(photo.id)) {
-        return const FailureResult<List<PhotoDraft>>(
+        return FailureResult<List<PhotoDraft>>(
           ValidationFailure(
-            message: 'This photo appears more than once.',
-            recoveryAction: 'Reload the capture and try again.',
+            localizedMessage:
+                DomainCopy.messages.failureThisPhotoAppearsMoreThanOnce,
+            localizedRecovery:
+                DomainCopy.messages.failureReloadTheCaptureAndTryAgain,
           ),
         );
       }
@@ -33,19 +36,23 @@ abstract final class PhotoDerivation {
         continue;
       }
       if (!byId.containsKey(parentId)) {
-        return const FailureResult<List<PhotoDraft>>(
+        return FailureResult<List<PhotoDraft>>(
           ValidationFailure(
-            message: 'An edited photo is missing its original.',
-            recoveryAction: 'Keep this capture and restore the original photo.',
+            localizedMessage:
+                DomainCopy.messages.failureAnEditedPhotoIsMissingItsOriginal,
+            localizedRecovery:
+                DomainCopy.messages.failureKeepThisCaptureAndRestoreTheOriginal,
           ),
         );
       }
     }
     if (_cycles(byId)) {
-      return const FailureResult<List<PhotoDraft>>(
+      return FailureResult<List<PhotoDraft>>(
         ValidationFailure(
-          message: 'These photo edits loop back on themselves.',
-          recoveryAction: 'Reload the capture and try again.',
+          localizedMessage:
+              DomainCopy.messages.failureThesePhotoEditsLoopBackOnThemselves,
+          localizedRecovery:
+              DomainCopy.messages.failureReloadTheCaptureAndTryAgain,
         ),
       );
     }

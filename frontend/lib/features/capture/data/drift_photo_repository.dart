@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:drift/drift.dart' hide Uint8List;
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/tables/tombstones.dart';
@@ -93,9 +94,10 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
               ..where((sqlite.$PhotosTable row) => row.id.equals(photo.id)))
             .getSingleOrNull();
     if (existing == null) {
-      return const FailureResult<PhotoAsset>(
+      return FailureResult<PhotoAsset>(
         ValidationFailure(
-          message: 'Complete photo metadata is required for a new capture.',
+          localizedMessage:
+              Copy.messages.failureCompletePhotoMetadataIsRequiredForA,
         ),
       );
     }
@@ -127,8 +129,10 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
                 ))
                 .getSingleOrNull();
         if (project == null) {
-          return const FailureResult<PhotoDraft>(
-            StorageFailure(message: 'The photo project was not found.'),
+          return FailureResult<PhotoDraft>(
+            StorageFailure(
+              localizedMessage: Copy.messages.failureThePhotoProjectWasNotFound,
+            ),
           );
         }
         final Result<WrittenFile> file = await _writer.write(
@@ -198,8 +202,10 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
               ))
               .getSingleOrNull();
       if (project == null) {
-        return const FailureResult<Uint8List>(
-          StorageFailure(message: 'The photo project was not found.'),
+        return FailureResult<Uint8List>(
+          StorageFailure(
+            localizedMessage: Copy.messages.failureThePhotoProjectWasNotFound,
+          ),
         );
       }
       final Result<Uint8List> bytes = await _reader.read(
@@ -207,7 +213,7 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
       );
       return switch (bytes) {
         Success<Uint8List>() => bytes,
-        FailureResult<Uint8List>() => const FailureResult<Uint8List>(
+        FailureResult<Uint8List>() => FailureResult<Uint8List>(
           _unreadablePhoto,
         ),
       };
@@ -223,10 +229,11 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
   }) async {
     final ThumbnailCache? thumbs = _thumbs;
     if (thumbs == null) {
-      return const FailureResult<String>(
+      return FailureResult<String>(
         StorageFailure(
-          message: 'That photo could not be read from this device.',
-          recoveryAction: 'Capture the photo again, then try again.',
+          localizedMessage: Copy.messages.failureThatPhotoCouldNotBeReadFrom,
+          localizedRecovery:
+              Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
         ),
       );
     }
@@ -236,10 +243,12 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
         return FailureResult<String>(failure);
       case Success<File>(:final File value):
         if (!value.existsSync()) {
-          return const FailureResult<String>(
+          return FailureResult<String>(
             StorageFailure(
-              message: 'That photo could not be read from this device.',
-              recoveryAction: 'Capture the photo again, then try again.',
+              localizedMessage:
+                  Copy.messages.failureThatPhotoCouldNotBeReadFrom,
+              localizedRecovery:
+                  Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
             ),
           );
         }
@@ -260,10 +269,11 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
   }) async {
     final StorageRoot? storageRoot = _storageRoot;
     if (storageRoot == null || bytes.isEmpty) {
-      return const FailureResult<String>(
+      return FailureResult<String>(
         StorageFailure(
-          message: 'That photo could not be read from this device.',
-          recoveryAction: 'Capture the photo again, then try again.',
+          localizedMessage: Copy.messages.failureThatPhotoCouldNotBeReadFrom,
+          localizedRecovery:
+              Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
         ),
       );
     }
@@ -317,10 +327,10 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
         return const Success<void>(null);
       }
       if (row.derivedFrom == null) {
-        return const FailureResult<void>(
+        return FailureResult<void>(
           ValidationFailure(
-            message: 'The original photo stays in place.',
-            recoveryAction: 'Revert an edited photo instead.',
+            localizedMessage: Copy.messages.failureTheOriginalPhotoStaysInPlace,
+            localizedRecovery: Copy.messages.failureRevertAnEditedPhotoInstead,
           ),
         );
       }
@@ -341,10 +351,11 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
   Future<Result<File>> _sourceFile(PhotoDraft photo) async {
     final StorageRoot? storageRoot = _storageRoot;
     if (storageRoot == null) {
-      return const FailureResult<File>(
+      return FailureResult<File>(
         StorageFailure(
-          message: 'That photo could not be read from this device.',
-          recoveryAction: 'Capture the photo again, then try again.',
+          localizedMessage: Copy.messages.failureThatPhotoCouldNotBeReadFrom,
+          localizedRecovery:
+              Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
         ),
       );
     }
@@ -354,8 +365,10 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
             ))
             .getSingleOrNull();
     if (project == null) {
-      return const FailureResult<File>(
-        StorageFailure(message: 'The photo project was not found.'),
+      return FailureResult<File>(
+        StorageFailure(
+          localizedMessage: Copy.messages.failureThePhotoProjectWasNotFound,
+        ),
       );
     }
     final Result<Directory> root = await storageRoot.resolve();
@@ -399,9 +412,9 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
 }
 
 /// A photo whose file is gone or cannot be read on this device.
-const StorageFailure _unreadablePhoto = StorageFailure(
-  message: 'That photo could not be read from this device.',
-  recoveryAction: 'Capture the photo again, then try again.',
+final StorageFailure _unreadablePhoto = StorageFailure(
+  localizedMessage: Copy.messages.failureThatPhotoCouldNotBeReadFrom,
+  localizedRecovery: Copy.messages.failureCaptureThePhotoAgainThenTryAgain,
 );
 
 PhotoAsset _asset(sqlite.Photo row) => (

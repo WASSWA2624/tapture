@@ -38,31 +38,33 @@ final class ExportHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppPage(
-        title: Copy.exportHistoryTitle,
+        title: localCopy.exportHistoryTitle,
         body: AppErrorState(failure: failed),
       );
     }
     if (loading) {
-      return const AppPage(
-        title: Copy.exportHistoryTitle,
-        body: SizedBox.shrink(),
+      return AppPage(
+        title: localCopy.exportHistoryTitle,
+        body: const SizedBox.shrink(),
       );
     }
     if (entries.isEmpty) {
-      return const AppPage(
-        title: Copy.exportHistoryTitle,
+      return AppPage(
+        title: localCopy.exportHistoryTitle,
         body: AppEmptyState(
           icon: AppIcons.history,
-          headline: Copy.exportHistoryEmpty,
-          message: Copy.exportHistoryEmptyMessage,
+          headline: localCopy.exportHistoryEmpty,
+          message: localCopy.exportHistoryEmptyMessage,
         ),
       );
     }
     return AppPage(
-      title: Copy.exportHistoryTitle,
+      title: localCopy.exportHistoryTitle,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[

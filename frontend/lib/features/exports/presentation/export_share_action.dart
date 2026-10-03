@@ -43,6 +43,8 @@ final class ExportShareAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -51,23 +53,23 @@ final class ExportShareAction extends StatelessWidget {
       return const SizedBox.shrink();
     }
     if (empty || (path == null && !missing)) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: AppIcons.export,
-        headline: Copy.exportHistoryEmpty,
-        message: Copy.exportHistoryEmptyMessage,
+        headline: localCopy.exportHistoryEmpty,
+        message: localCopy.exportHistoryEmptyMessage,
       );
     }
     if (missing) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const Text(
-            Copy.exportMissing,
-            key: ValueKey<String>('export-missing'),
+          Text(
+            localCopy.exportMissing,
+            key: const ValueKey<String>('export-missing'),
           ),
           AppButton(
             key: const ValueKey<String>('export-rerun'),
-            label: Copy.exportRerun,
+            label: localCopy.exportRerun,
             onPressed: onRerun,
           ),
         ],
@@ -75,7 +77,7 @@ final class ExportShareAction extends StatelessWidget {
     }
     return AppButton(
       key: const ValueKey<String>('export-share'),
-      label: Copy.exportShare,
+      label: localCopy.exportShare,
       onPressed: () => onShare?.call(path!),
     );
   }

@@ -35,10 +35,12 @@ class AppSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     if (_inline) {
       return Semantics(
-        label: Copy.loading,
+        label: localCopy.loading,
         child: ExcludeSemantics(
           child: SizedBox(
             width: Space.x5,
@@ -55,13 +57,19 @@ class AppSkeleton extends StatelessWidget {
       );
     }
     return Semantics(
-      label: Copy.loading,
+      label: localCopy.loading,
       child: ExcludeSemantics(
-        child: switch (shape) {
-          SkeletonShape.list => _ListSkeleton(colors: colors, count: count),
-          SkeletonShape.card => _CardSkeleton(colors: colors, count: count),
-          SkeletonShape.detail => _DetailSkeleton(colors: colors, count: count),
-        },
+        child: SingleChildScrollView(
+          primary: false,
+          child: switch (shape) {
+            SkeletonShape.list => _ListSkeleton(colors: colors, count: count),
+            SkeletonShape.card => _CardSkeleton(colors: colors, count: count),
+            SkeletonShape.detail => _DetailSkeleton(
+              colors: colors,
+              count: count,
+            ),
+          },
+        ),
       ),
     );
   }

@@ -1,97 +1,102 @@
+import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/files/document_picker.dart' as platform;
+import 'package:tapture/core/files/file_validation.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 
-/// Attaches PDF/document bytes after extension and magic validation.
-final class DocumentPicker extends StatelessWidget {
-  /// Creates a picker. [pickBytes] is the test/import seam (no file plugin).
+import '../domain/capture_document_format.dart';
+
+/// Picks and validates original documents at the same gate as other imports.
+final class DocumentPicker extends ConsumerWidget {
+  /// Production uses the platform picker; tests may supply [pickBytes].
   const DocumentPicker({
     required this.onImported,
     this.pickBytes,
-    this.maxBytes = 40 * 1024 * 1024,
-    this.allowedExtensions = const <String>{'pdf', 'png', 'jpg', 'jpeg'},
+    this.maxBytes,
+    this.allowedExtensions = CaptureDocumentFormat.extensions,
     super.key,
   });
 
-  /// Validated document bytes + original filename.
-  final void Function(Uint8List bytes, String filename) onImported;
+  /// Receives validated bytes without modifying the operator's source.
+  final FutureOr<void> Function(Uint8List bytes, String filename) onImported;
 
-  /// Optional seam that returns bytes and a filename.
+  /// Focused picker seam for widget tests.
   final Future<({Uint8List bytes, String filename})?> Function()? pickBytes;
 
-  /// Size ceiling.
-  final int maxBytes;
+  /// An optional stricter ceiling; the standard import limit still applies.
+  final int? maxBytes;
 
-  /// Allowed extensions (lowercase, no dot).
+  /// Allowed lowercase extensions.
   final Set<String> allowedExtensions;
 
-  Future<void> _pick(BuildContext context) async {
-    final Future<({Uint8List bytes, String filename})?> Function()? pick =
-        pickBytes;
-    if (pick == null) {
-      if (!context.mounted) {
-        return;
-      }
-      showAppSnack(
-        context,
-        Copy.captureImportRejected(Copy.pdfInvalid),
-        tone: SnackTone.warning,
-      );
-      return;
-    }
-    final ({Uint8List bytes, String filename})? chosen = await pick();
-    if (!context.mounted) {
-      return;
-    }
-    if (chosen == null) {
-      return;
-    }
-    final String ext = chosen.filename.contains('.')
-        ? chosen.filename.split('.').last.toLowerCase()
-        : '';
-    if (!allowedExtensions.contains(ext)) {
-      showAppSnack(
-        context,
-        Copy.captureImportRejected('Wrong file type.'),
-        tone: SnackTone.warning,
-      );
-      return;
-    }
-    if (chosen.bytes.length > maxBytes) {
-      showAppSnack(
-        context,
-        Copy.captureImportRejected('File too large.'),
-        tone: SnackTone.warning,
-      );
-      return;
-    }
-    if (ext == 'pdf' && !_isPdf(chosen.bytes)) {
-      showAppSnack(
-        context,
-        Copy.captureImportRejected(Copy.pdfInvalid),
-        tone: SnackTone.warning,
-      );
-      return;
-    }
-    onImported(chosen.bytes, chosen.filename);
-  }
+  Future<void> _pick(BuildContext context, WidgetRef ref) async {
+    final LocalizedCopy localCopy = Copy.of(context);
 
-  static bool _isPdf(Uint8List bytes) {
-    return bytes.length >= 5 &&
-        bytes[0] == 0x25 &&
-        bytes[1] == 0x50 &&
-        bytes[2] == 0x44 &&
-        bytes[3] == 0x46;
+    try {
+      final platform.PickedDocument chosen;
+      final Future<({Uint8List bytes, String filename})?> Function()? pick =
+          pickBytes;
+      if (pick != null) {
+        final ({Uint8List bytes, String filename})? value = await pick();
+        if (value == null) return;
+        chosen = platform.PickedBytes(value.bytes, value.filename);
+      } else {
+        chosen =
+            (await ref
+                    .read(platform.documentPickerProvider)
+                    .pick(
+                      extensions: allowedExtensions.toList(),
+                      mimeType: CaptureDocumentFormat.pickerMimeTypes,
+                      maxBytes:
+                          maxBytes ?? AppConstants.imports.documentMaxBytes,
+                    ))
+                .fold(
+                  (Failure failure) => throw failure,
+                  (platform.PickedDocument value) => value,
+                );
+      }
+      if (!allowedExtensions.contains(
+            chosen.name.split('.').last.toLowerCase(),
+          ) ||
+          chosen.byteLength >
+              (maxBytes ?? AppConstants.imports.documentMaxBytes)) {
+        throw ValidationFailure(
+          message: localCopy.captureDocumentInvalid(chosen.name),
+          recoveryAction: localCopy.tryAnotherFile,
+        );
+      }
+      (await FileValidation().validateDocument(
+        chosen,
+        allowed: CaptureDocumentFormat.kinds,
+      )).fold((Failure failure) => throw failure, (_) {});
+      final Uint8List bytes = (await platform.readPickedDocument(
+        chosen,
+      )).fold((Failure failure) => throw failure, (Uint8List value) => value);
+      if (context.mounted) await onImported(bytes, chosen.name);
+    } on CancelledFailure {
+      return;
+    } on Object catch (error) {
+      if (context.mounted) {
+        showAppSnack(
+          context,
+          localCopy.captureImportRejected(Failure.from(error).message),
+          tone: SnackTone.warning,
+        );
+      }
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AppButton(
-      label: Copy.captureImportDocument,
-      onPressed: () => _pick(context),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => AppButton(
+    label: Copy.of(context).captureImportDocument,
+    variant: AppButtonVariant.secondary,
+    onPressed: () => unawaited(_pick(context, ref)),
+  );
 }

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/concurrency/concurrency.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/download_service.dart';
@@ -36,6 +37,7 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
       visible: AppConstants.userFeedback.listPageSize,
       busy: false,
       error: null,
+      localizedError: null,
     );
   }
 
@@ -83,9 +85,10 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
     bool chooseLocation = false,
   }) async {
     if (matching.isEmpty || state.filter.isRangeBackwards) {
-      return const FailureResult<String?>(
+      return FailureResult<String?>(
         ValidationFailure(
-          recoveryAction: 'Change or clear the filters, then try again.',
+          localizedRecovery:
+              Copy.messages.failureChangeOrClearTheFiltersThenTry,
         ),
       );
     }
@@ -113,7 +116,7 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
       }
       switch (read) {
         case FailureResult<List<Uint8List>>(:final Failure failure):
-          _idle(failure.message);
+          _idle(failure);
           return FailureResult<String?>(failure);
         case Success<List<Uint8List>>(:final List<Uint8List> value):
           for (int index = 0; index < value.length; index++) {
@@ -141,11 +144,9 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
       workbook: workbook,
       guide: guide,
     );
-    final Result<Uint8List> encoded = await runIsolate(
-      FeedbackArchive.encode,
-      pack,
-      cancel: cancel,
-    );
+    final Result<Uint8List> encoded = await ref.read(
+      feedbackArchiveEncoderProvider,
+    )(pack, cancel);
     if (!ref.mounted) {
       return const FailureResult<String?>(CancelledFailure());
     }
@@ -154,11 +155,8 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
       case Success<Uint8List>(:final Uint8List value):
         bytes = value;
       case FailureResult<Uint8List>(:final Failure failure):
-        if (failure is CancelledFailure) {
-          _idle(null);
-          return FailureResult<String?>(failure);
-        }
-        bytes = FeedbackArchive.encode(pack);
+        _idle(failure is CancelledFailure ? null : failure);
+        return FailureResult<String?>(failure);
     }
     final Result<String?> saved = chooseLocation
         ? await downloads.saveAs(
@@ -178,15 +176,19 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
         if (failure is CancelledFailure) {
           _idle(null);
         } else {
-          _idle(failure.message);
+          _idle(failure);
         }
     }
     return saved;
   }
 
-  void _idle(String? error) {
+  void _idle(Failure? failure) {
     if (ref.mounted) {
-      _set(busy: false, error: error);
+      _set(
+        busy: false,
+        error: failure?.message,
+        localizedError: failure?.explanation,
+      );
     }
   }
 
@@ -197,6 +199,7 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
     int? visible,
     bool? busy,
     Object? error = _keep,
+    LocalizedMessage? localizedError,
   }) {
     state = (
       filter: filter ?? state.filter,
@@ -204,12 +207,31 @@ final class DownloadFeedbackController extends Notifier<DownloadFeedbackView> {
       visible: visible ?? state.visible,
       busy: busy ?? state.busy,
       error: identical(error, _keep) ? state.error : error as String?,
+      localizedError: identical(error, _keep)
+          ? state.localizedError
+          : localizedError,
     );
   }
 }
 
 /// Marks "leave the error as it is" in [DownloadFeedbackController._set].
 const Object _keep = Object();
+
+/// The cancellable worker boundary for feedback archive creation.
+typedef FeedbackArchiveEncoder =
+    Future<Result<Uint8List>> Function(
+      FeedbackArchive archive,
+      CancellationToken cancel,
+    );
+
+/// Keeps workbook and archive encoding off the interface thread. A worker
+/// failure is reported for retry rather than repeating heavy work on the UI.
+final Provider<FeedbackArchiveEncoder> feedbackArchiveEncoderProvider =
+    Provider<FeedbackArchiveEncoder>(
+      (Ref _) =>
+          (FeedbackArchive archive, CancellationToken cancel) =>
+              runIsolate(FeedbackArchive.encode, archive, cancel: cancel),
+    );
 
 /// Filter and download state for [DownloadFeedbackScreen]. Disposed with
 /// the screen, so every opening starts from no filter (FE-STATE-09).

@@ -23,6 +23,8 @@ abstract final class FeedbackContextCapture {
     required DeviceDescriptor device,
     OperatorProfile? operator,
     String? deviceId,
+    String? lastAction,
+    bool fieldTrial = false,
   }) {
     final ViewportMetrics metrics = context.viewportMetrics;
     final String? name = operator != null && operator.hasName
@@ -43,6 +45,8 @@ abstract final class FeedbackContextCapture {
           ? account.trim()
           : null,
       screen: origin.screen,
+      lastAction: lastAction,
+      fieldTrial: fieldTrial,
       route: origin.route,
       routeName: origin.routeName,
       pageUrl: facts.pageUrl,

@@ -1,9 +1,5 @@
 import 'dart:math' as math;
 
-/// Reads one fix. Callers pass this only after [ContextMovementPrompt.evaluate]
-/// says a read is allowed, so an off switch never touches location.
-typedef ContextFixReader = ({double latitude, double longitude})? Function();
-
 /// Asks the operator to confirm context after travelling a configured distance.
 ///
 /// Never changes the context itself — only decides whether to prompt and
@@ -65,3 +61,7 @@ abstract final class ContextMovementPrompt {
     return 2 * earthRadiusMetres * math.asin(math.min(1, math.sqrt(h)));
   }
 }
+
+/// Reads one fix. Callers pass this only after [ContextMovementPrompt.evaluate]
+/// says a read is allowed, so an off switch never touches location.
+typedef ContextFixReader = ({double latitude, double longitude})? Function();

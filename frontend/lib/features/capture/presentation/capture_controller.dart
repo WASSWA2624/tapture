@@ -1,24 +1,37 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/audio/audio_recorder_service.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/feedback/haptics.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/location/location_service.dart';
+import 'package:tapture/core/security/coordinate_removal_events.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
+import 'package:tapture/features/capture/domain/capture_document_repository.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_reset.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/capture_session_key.dart';
+import 'package:tapture/features/capture/domain/document_draft.dart';
+import 'package:tapture/features/capture/domain/pending_audio_draft.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
 import 'package:tapture/features/capture/domain/save_and_analyse.dart';
 import 'package:tapture/features/capture/domain/save_raw.dart';
+import 'package:tapture/features/capture/domain/template_usage.dart';
 import 'package:tapture/features/processing/processing.dart';
+import 'package:tapture/features/projects/projects.dart'
+    show Project, ProjectSettings, projectRepositoryProvider;
+import 'package:tapture/features/quality/quality.dart'
+    show qualityRepositoryProvider;
 
 /// Default photo repository stub — [main] / tests override.
 final Provider<PhotoRepository> photoRepositoryProvider =
@@ -36,6 +49,39 @@ final Provider<CapturePersistence> capturePersistenceProvider =
 /// a focused in-memory implementation without crossing presentation into data.
 final Provider<CaptureRecordPersistence?> captureRecordWriterProvider =
     Provider<CaptureRecordPersistence?>((Ref _) => null);
+
+/// Durable original-document storage; bootstrap supplies the concrete service.
+final Provider<CaptureDocumentRepository?> captureDocumentRepositoryProvider =
+    Provider<CaptureDocumentRepository?>((Ref _) => null);
+
+/// The clock capture stamps photos and session ids with. Tests freeze it.
+final Provider<Clock> captureClockProvider = Provider<Clock>(
+  (Ref _) => const SystemClock(),
+);
+
+/// Ids for new sessions, photos and audio, read from [captureClockProvider].
+final Provider<IdService> captureIdsProvider = Provider<IdService>(
+  (Ref ref) => UuidV7Service(ref.watch(captureClockProvider)),
+);
+
+/// The project's template ids, most recently captured with first, from the
+/// record writer when it can tell. Empty otherwise.
+final captureRecentTemplatesProvider =
+    FutureProvider.family<List<String>, String>((
+      Ref ref,
+      String projectId,
+    ) async {
+      final CaptureRecordPersistence? records = ref.watch(
+        captureRecordWriterProvider,
+      );
+      if (records case final TemplateUsage usage when projectId.isNotEmpty) {
+        final Result<List<String>> recent = await usage.recentTemplateIds(
+          projectId,
+        );
+        return recent.getOrElse(() => const <String>[]);
+      }
+      return const <String>[];
+    });
 
 /// Capture session for a session key: a project id for a new capture, and
 /// [CaptureSessionKey.edit] for a saved record's edit (D6). Persist before
@@ -55,10 +101,88 @@ final class CaptureController extends Notifier<CaptureSession> {
 
   CapturePersistence get _persistence => ref.read(capturePersistenceProvider);
 
-  IdService get _ids => UuidV7Service(const SystemClock());
+  IdService get _ids => ref.read(captureIdsProvider);
+
+  final Map<String, CoordinateRemoval> _removedCoordinates =
+      <String, CoordinateRemoval>{};
+  final Set<String> _removedPhotoCoordinates = <String>{};
+  int _coordinateRemovalRevision = 0;
 
   @override
-  CaptureSession build() => _empty();
+  CaptureSession build() {
+    ref.listen<CoordinateRemoval?>(coordinateRemovalEventsProvider, (
+      CoordinateRemoval? _,
+      CoordinateRemoval? event,
+    ) {
+      if (event == null || event.projectId != state.projectId) return;
+      _coordinateRemovalRevision += 1;
+      _removedCoordinates[state.id] = event;
+      _removedPhotoCoordinates.addAll(
+        state.photos.map((PhotoDraft photo) => photo.id),
+      );
+      _emit(state);
+    });
+    return _empty();
+  }
+
+  CaptureSession _withoutRemovedCoordinates(CaptureSession session) {
+    final CoordinateRemoval? removal = _removedCoordinates[session.id];
+    return removal == null
+        ? session
+        : session.withoutCoordinates(
+            removal.keysFor(
+              session.templateId,
+              session.templateVersion,
+              recordId: session.recordId,
+            ),
+          );
+  }
+
+  PhotoDraft _withoutPhotoCoordinates(PhotoDraft photo, String sessionId) =>
+      _removedPhotoCoordinates.contains(photo.id) ||
+          _removedCoordinates.containsKey(
+            photo.captureSessionId.isEmpty ? sessionId : photo.captureSessionId,
+          )
+      ? photo.copyWith(clearCoordinates: true)
+      : photo;
+
+  void _emit(CaptureSession session) =>
+      state = _withoutRemovedCoordinates(session);
+
+  Future<Result<void>> _saveSession(CaptureSession session) async {
+    while (true) {
+      final int revision = _coordinateRemovalRevision;
+      final Result<void> saved = await _persistence.saveSession(
+        _withoutRemovedCoordinates(session),
+      );
+      if (saved is FailureResult<void> ||
+          revision == _coordinateRemovalRevision) {
+        return saved;
+      }
+    }
+  }
+
+  Future<Result<PhotoDraft>> _savePhoto(
+    PhotoDraft photo, {
+    Uint8List? bytes,
+  }) async {
+    final String sessionId = state.id;
+    PhotoDraft next = photo;
+    while (true) {
+      final int revision = _coordinateRemovalRevision;
+      final Result<PhotoDraft> saved = await _persistence.savePhoto(
+        _withoutPhotoCoordinates(next, sessionId),
+        bytes: bytes,
+      );
+      if (saved is FailureResult<PhotoDraft> ||
+          revision == _coordinateRemovalRevision) {
+        return saved;
+      }
+      next = (saved as Success<PhotoDraft>).value;
+      // The first pass already copied the original file durably.
+      bytes = null;
+    }
+  }
 
   CaptureSession _empty() {
     final String? recordId = CaptureSessionKey.recordOf(key);
@@ -96,13 +220,13 @@ final class CaptureController extends Notifier<CaptureSession> {
       captureRecordWriterProvider,
     );
     if (records == null) {
-      return const FailureResult<void>(_noRecords);
+      return FailureResult<void>(_noRecords);
     }
     final Result<CaptureSession> loaded = await records.load(recordId);
     return loaded.fold(FailureResult<void>.new, (CaptureSession session) async {
-      final Result<void> saved = await _persistence.saveSession(session);
+      final Result<void> saved = await _saveSession(session);
       return saved.fold(FailureResult<void>.new, (_) {
-        state = session;
+        _emit(session);
         return const Success<void>(null);
       });
     });
@@ -115,29 +239,128 @@ final class CaptureController extends Notifier<CaptureSession> {
       captureRecordWriterProvider,
     );
     if (records == null || !state.editing) {
-      return const FailureResult<void>(_noRecords);
+      return FailureResult<void>(_noRecords);
     }
+    final Result<void> audio = await finaliseAudio();
+    if (audio is FailureResult<void>) return audio;
     final CaptureSession edited = state;
     final Result<void> updated = await records.update(edited);
     return updated.fold(FailureResult<void>.new, (_) async {
-      state = edited.copyWith(isDirty: false);
+      _emit(edited.copyWith(isDirty: false));
       return _persistence.clearSession(edited.storageKey);
     });
   }
 
   /// Seeds or replaces the live session (recovery / tests).
   Future<Result<void>> replaceSession(CaptureSession session) async {
-    final Result<void> saved = await _persistence.saveSession(session);
+    final Result<void> saved = await _saveSession(session);
     return saved.fold(FailureResult<void>.new, (_) {
-      state = session;
+      _emit(session);
       return const Success<void>(null);
     });
+  }
+
+  /// Brings back a session [discardSession] set aside: its photos lose their
+  /// tombstones and it becomes the live session again (the Undo of a
+  /// discard). Photos already filed on the record being edited were never
+  /// tombstoned.
+  Future<Result<void>> restoreDiscarded(CaptureSession discarded) async {
+    for (final PhotoDraft photo in discarded.photos) {
+      if (discarded.editing &&
+          photo.recordId != null &&
+          photo.recordId == discarded.recordId) {
+        continue;
+      }
+      final Result<PhotoDraft> restored = await _savePhoto(photo);
+      if (restored is FailureResult<PhotoDraft>) {
+        return FailureResult<void>(restored.failure);
+      }
+    }
+    return replaceSession(discarded);
+  }
+
+  /// The stored copy of this session when an interruption left work in it
+  /// to offer back (task 012 step 19); otherwise null.
+  ///
+  /// For a new capture, a stored session from another project or with
+  /// nothing in it is not offered; an empty one only hands its pinned
+  /// template to the fresh session, so the pin outlives a restart (step
+  /// 22). For an edit, only a changed edit is offered. Nothing here writes
+  /// over the stored copy.
+  Future<CaptureSession?> interrupted() async {
+    final CaptureSession? stored = (await _persistence.loadSession(
+      key,
+    )).getOrElse(() => null);
+    if (stored == null) {
+      return null;
+    }
+    if (CaptureSessionKey.recordOf(key) != null) {
+      return stored.editing && stored.isDirty ? stored : null;
+    }
+    if (stored.projectId.isNotEmpty && stored.projectId != key) {
+      return null;
+    }
+    if (!stored.hasContent) {
+      if (stored.templateId.isNotEmpty && ref.mounted) {
+        await keepPinnedTemplate(stored.templateId);
+      }
+      return null;
+    }
+    return stored;
+  }
+
+  /// Stores the live session so it can be offered back after the page is
+  /// left or the app is killed. A session with nothing in it, or an edit
+  /// with no change, leaves nothing behind.
+  Future<Result<void>> checkpoint() async {
+    final CaptureSession current = state;
+    if (!current.hasContent || (current.editing && !current.isDirty)) {
+      return const Success<void>(null);
+    }
+    return _saveSession(current);
+  }
+
+  /// Pins [templateId] to the context [place] in [project]'s settings, so
+  /// capture uses it whenever it is back at that context level (spec
+  /// section 14.3, task 012 step 22). The session's own template is the
+  /// session pin; this one outlives it.
+  Future<Result<void>> pinTemplateToPlace({
+    required Project project,
+    required String templateId,
+    required Map<String, String> place,
+  }) async {
+    final String? pinKey = ProjectSettings.templatePinKey(place);
+    if (pinKey == null) {
+      return const Success<void>(null);
+    }
+    return ref
+        .read(projectRepositoryProvider)
+        .update(
+          project.copyWith(
+            settings: project.settings.copyWith(
+              templatePins: <String, String>{
+                ...?project.settings.templatePins,
+                pinKey: templateId,
+              },
+            ),
+          ),
+        );
+  }
+
+  /// Carries the template pinned before a save or a restart into this fresh
+  /// session, unless one is already chosen (task 012 step 22).
+  Future<Result<void>> keepPinnedTemplate(String templateId) {
+    return _store(
+      (CaptureSession current) => current.templateId.isNotEmpty
+          ? current
+          : current.copyWith(templateId: templateId),
+    );
   }
 
   /// Adds [photo] after durable write. In an edit it is kept off the record
   /// until [saveEdits] files it.
   Future<Result<void>> addPhoto(PhotoDraft photo, {Uint8List? bytes}) async {
-    final Result<PhotoDraft> saved = await _persistence.savePhoto(
+    final Result<PhotoDraft> saved = await _savePhoto(
       state.editing ? photo.copyWith(clearRecordId: true) : photo,
       bytes: bytes,
     );
@@ -151,15 +374,157 @@ final class CaptureController extends Notifier<CaptureSession> {
     });
   }
 
+  /// Publishes a durable original document into recovery state.
+  Future<Result<void>> addDocument(DocumentDraft document) => _store(
+    (CaptureSession current) => current.copyWith(
+      documents: <DocumentDraft>[
+        ...current.documents.where(
+          (DocumentDraft row) => row.id != document.id,
+        ),
+        document,
+      ],
+      isDirty: true,
+    ),
+  );
+
+  /// Validates and stores an original before adding it to the live draft.
+  Future<Result<void>> importDocument({
+    required Uint8List bytes,
+    required String filename,
+    required String projectId,
+    required String folder,
+  }) async {
+    final CaptureDocumentRepository? documents = ref.read(
+      captureDocumentRepositoryProvider,
+    );
+    if (documents == null) {
+      return FailureResult<void>(
+        StorageFailure(
+          localizedMessage: Copy.messages.captureDocumentsUnavailable,
+          localizedRecovery: Copy.messages.captureDocumentsUnavailableRecovery,
+        ),
+      );
+    }
+    final Result<DocumentDraft> imported = await documents.import(
+      bytes: bytes,
+      filename: filename,
+      projectId: projectId,
+      folder: folder,
+    );
+    return imported.fold(FailureResult<void>.new, addDocument);
+  }
+
   /// Adds an already-flushed audio clip and persists recovery state before it
   /// appears in the capture session.
   Future<Result<void>> addAudio(AudioDraft clip) {
     return _store(
       (CaptureSession current) => current.copyWith(
-        audio: <AudioDraft>[...current.audio, clip],
+        audio: <AudioDraft>[
+          ...current.audio.where((AudioDraft stored) => stored.id != clip.id),
+          clip,
+        ],
+        pendingAudio: current.pendingAudio
+            .where((PendingAudioDraft pending) => pending.id != clip.id)
+            .toList(growable: false),
         isDirty: true,
       ),
     );
+  }
+
+  /// Saves microphone ownership before the adapter is allowed to write bytes.
+  Future<Result<void>> stageAudio(PendingAudioDraft take) {
+    return _store((CaptureSession current) {
+      if (current.pendingAudio.any(
+        (PendingAudioDraft row) => row.id == take.id,
+      )) {
+        return current;
+      }
+      return current.copyWith(
+        pendingAudio: <PendingAudioDraft>[...current.pendingAudio, take],
+        isDirty: true,
+      );
+    });
+  }
+
+  /// Registers a published take with the identity and photo ownership saved
+  /// when it started. Retrying this operation never duplicates a clip.
+  Future<Result<void>> publishAudio(AudioRecording recording) {
+    PendingAudioDraft? pending;
+    for (final PendingAudioDraft take in state.pendingAudio) {
+      if (take.storageRelativePath == recording.relativePath) {
+        pending = take;
+        break;
+      }
+    }
+    if (pending == null) {
+      final String path = recording.relativePath;
+      return state.audio.any(
+            (AudioDraft clip) => path.endsWith('/${clip.relativePath}'),
+          )
+          ? Future<Result<void>>.value(const Success<void>(null))
+          : Future<Result<void>>.value(
+              FailureResult<void>(
+                StorageFailure(
+                  localizedMessage: Copy.messages.captureSaveFailed,
+                ),
+              ),
+            );
+    }
+    return addAudio(
+      AudioDraft(
+        id: pending.id,
+        projectId: pending.projectId,
+        relativePath: pending.relativePath,
+        mimeType: recording.mimeType,
+        fileSize: recording.byteLength,
+        sha256: recording.sha256,
+        durationMs: recording.duration.inMilliseconds,
+        photoIds: pending.photoIds,
+      ),
+    );
+  }
+
+  /// Finalises a live take or recovers staged takes after a restart. A failed
+  /// publication leaves every reference intact so Resume or Save can retry.
+  Future<Result<void>> finaliseAudio() async {
+    final AudioRecorderService recorder = ref.read(
+      audioRecorderServiceProvider,
+    );
+    for (final PendingAudioDraft pending in List<PendingAudioDraft>.of(
+      state.pendingAudio,
+    )) {
+      AudioRecording? recording = recorder.completed;
+      if (recording?.relativePath != pending.storageRelativePath) {
+        if (recorder case final AudioRecoveryService recovery) {
+          final Result<AudioRecording?> recovered = await recovery.recover(
+            pending.storageRelativePath,
+          );
+          if (recovered case FailureResult<AudioRecording?>(
+            :final Failure failure,
+          )) {
+            return FailureResult<void>(failure);
+          }
+          recording = (recovered as Success<AudioRecording?>).value;
+        } else {
+          final Result<Duration> stopped = await recorder.stop();
+          if (stopped case FailureResult<Duration>(:final Failure failure)) {
+            return FailureResult<void>(failure);
+          }
+          recording = recorder.completed;
+        }
+      }
+      final Result<void> saved = recording == null
+          ? await _store(
+              (CaptureSession current) => current.copyWith(
+                pendingAudio: current.pendingAudio
+                    .where((PendingAudioDraft row) => row.id != pending.id)
+                    .toList(growable: false),
+              ),
+            )
+          : await publishAudio(recording);
+      if (saved is FailureResult<void>) return saved;
+    }
+    return const Success<void>(null);
   }
 
   /// Removes [photoId] after tombstone; leaves emitted state unchanged on
@@ -189,9 +554,9 @@ final class CaptureController extends Notifier<CaptureSession> {
         captions: state.captions,
         isDirty: true,
       );
-      final Result<void> session = await _persistence.saveSession(next);
+      final Result<void> session = await _saveSession(next);
       return session.fold(FailureResult<PhotoDraft?>.new, (_) {
-        state = next;
+        _emit(next);
         return Success<PhotoDraft?>(removed);
       });
     });
@@ -203,7 +568,7 @@ final class CaptureController extends Notifier<CaptureSession> {
   Future<Result<void>> undoRemove(PhotoDraft photo) async {
     final Result<PhotoDraft> saved = _filed(photo)
         ? Success<PhotoDraft>(photo)
-        : await _persistence.savePhoto(photo);
+        : await _savePhoto(photo);
     return saved.fold(FailureResult<void>.new, (PhotoDraft stored) {
       return _store((CaptureSession current) {
         final List<PhotoDraft> photos =
@@ -226,10 +591,10 @@ final class CaptureController extends Notifier<CaptureSession> {
         !orderedIds.toSet().containsAll(
           state.photos.map((PhotoDraft p) => p.id),
         )) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         ValidationFailure(
-          message: 'The photo order is incomplete.',
-          recoveryAction: 'Keep every photo in the tray and try again.',
+          localizedMessage: Copy.messages.captureOrderIncomplete,
+          localizedRecovery: Copy.messages.captureOrderIncompleteRecovery,
         ),
       );
     }
@@ -247,15 +612,15 @@ final class CaptureController extends Notifier<CaptureSession> {
       if (_filed(photo)) {
         continue;
       }
-      final Result<PhotoDraft> saved = await _persistence.savePhoto(photo);
+      final Result<PhotoDraft> saved = await _savePhoto(photo);
       if (saved is FailureResult<PhotoDraft>) {
         return FailureResult<void>(saved.failure);
       }
     }
     final CaptureSession next = state.copyWith(photos: ordered, isDirty: true);
-    final Result<void> session = await _persistence.saveSession(next);
+    final Result<void> session = await _saveSession(next);
     return session.fold(FailureResult<void>.new, (_) {
-      state = next;
+      _emit(next);
       return const Success<void>(null);
     });
   }
@@ -313,6 +678,9 @@ final class CaptureController extends Notifier<CaptureSession> {
   /// Keeps [fix] on session [sessionId]; a fix that arrives after the next
   /// session has begun is dropped.
   Future<Result<void>> setLocation(GeoFix fix, {required String sessionId}) {
+    if (_removedCoordinates.containsKey(sessionId)) {
+      return Future<Result<void>>.value(const Success<void>(null));
+    }
     return _store(
       (CaptureSession current) =>
           current.id == sessionId ? current.copyWith(location: fix) : current,
@@ -381,16 +749,16 @@ final class CaptureController extends Notifier<CaptureSession> {
     ];
     for (final PhotoDraft photo in photos) {
       if (photo.id == photoId && !_filed(photo)) {
-        final Result<PhotoDraft> saved = await _persistence.savePhoto(photo);
+        final Result<PhotoDraft> saved = await _savePhoto(photo);
         if (saved is FailureResult<PhotoDraft>) {
           return FailureResult<void>(saved.failure);
         }
       }
     }
     final CaptureSession next = state.copyWith(photos: photos, isDirty: true);
-    final Result<void> session = await _persistence.saveSession(next);
+    final Result<void> session = await _saveSession(next);
     return session.fold(FailureResult<void>.new, (_) {
-      state = next;
+      _emit(next);
       return const Success<void>(null);
     });
   }
@@ -428,9 +796,9 @@ final class CaptureController extends Notifier<CaptureSession> {
           .toList(growable: false),
       isDirty: true,
     );
-    final Result<void> session = await _persistence.saveSession(next);
+    final Result<void> session = await _saveSession(next);
     return session.fold(FailureResult<void>.new, (_) {
-      state = next;
+      _emit(next);
       return const Success<void>(null);
     });
   }
@@ -439,26 +807,29 @@ final class CaptureController extends Notifier<CaptureSession> {
   Future<Result<void>> setPhoto(PhotoDraft photo) async {
     final Result<PhotoDraft> saved = _filed(photo)
         ? Success<PhotoDraft>(photo)
-        : await _persistence.savePhoto(photo);
+        : await _savePhoto(photo);
     return saved.fold(FailureResult<void>.new, (PhotoDraft stored) async {
       final List<PhotoDraft> photos = <PhotoDraft>[
         for (final PhotoDraft row in state.photos)
           row.id == stored.id ? stored : row,
       ];
       final CaptureSession next = state.copyWith(photos: photos, isDirty: true);
-      final Result<void> session = await _persistence.saveSession(next);
+      final Result<void> session = await _saveSession(next);
       return session.fold(FailureResult<void>.new, (_) {
-        state = next;
+        _emit(next);
         return const Success<void>(null);
       });
     });
   }
 
   /// Sets the template for this session.
-  Future<Result<void>> setTemplate(String templateId) {
+  Future<Result<void>> setTemplate(String templateId, {int? version}) {
     return _store(
-      (CaptureSession current) =>
-          current.copyWith(templateId: templateId, isDirty: true),
+      (CaptureSession current) => current.copyWith(
+        templateId: templateId,
+        templateVersion: version,
+        isDirty: true,
+      ),
     );
   }
 
@@ -480,19 +851,19 @@ final class CaptureController extends Notifier<CaptureSession> {
     for (var attempt = 0; attempt < 8; attempt++) {
       final CaptureSession base = state;
       final CaptureSession next = build(base);
-      final Result<void> saved = await _persistence.saveSession(next);
+      final Result<void> saved = await _saveSession(next);
       if (saved is FailureResult<void>) {
         return saved;
       }
       if (identical(state, base)) {
-        state = next;
+        _emit(next);
         return const Success<void>(null);
       }
     }
-    return const FailureResult<void>(
+    return FailureResult<void>(
       StorageFailure(
-        message: 'That change could not be saved.',
-        recoveryAction: 'Try again. Nothing already captured was lost.',
+        localizedMessage: Copy.messages.captureChangeNotSaved,
+        localizedRecovery: Copy.messages.captureChangeNotSavedRecovery,
       ),
     );
   }
@@ -501,6 +872,10 @@ final class CaptureController extends Notifier<CaptureSession> {
   Future<Result<String>> saveRaw(
     Future<Result<String>> Function(CaptureSession session) persist,
   ) async {
+    final Result<void> audio = await finaliseAudio();
+    if (audio case FailureResult<void>(:final Failure failure)) {
+      return FailureResult<String>(failure);
+    }
     final String? committedId = state.recordId;
     if (committedId != null) {
       final Result<void> completed = await _completeSave(committedId);
@@ -521,6 +896,10 @@ final class CaptureController extends Notifier<CaptureSession> {
     required Future<Result<String>> Function(CaptureSession session) persist,
     required Future<Result<ProcessingJob>> Function(String recordId) enqueue,
   }) async {
+    final Result<void> audio = await finaliseAudio();
+    if (audio case FailureResult<void>(:final Failure failure)) {
+      return FailureResult<SaveAndAnalyseResult>(failure);
+    }
     final Result<SaveAndAnalyseResult> saved = await SaveAndAnalyse.run(
       session: state,
       persist: persist,
@@ -537,10 +916,9 @@ final class CaptureController extends Notifier<CaptureSession> {
         // The raw record transaction is already durable. Keep that fact in
         // memory even if checkpointing the resumable session fails, so Retry
         // never attempts another raw write in this process.
-        state = committed;
-        final Result<void> persisted = await _persistence.saveSession(
-          committed,
-        );
+        _emit(committed);
+        _confirmSaved();
+        final Result<void> persisted = await _saveSession(committed);
         return persisted.fold(
           FailureResult<SaveAndAnalyseResult>.new,
           (_) => Success<SaveAndAnalyseResult>(result),
@@ -551,6 +929,22 @@ final class CaptureController extends Notifier<CaptureSession> {
     });
   }
 
+  /// The record is durable: confirm it in the hand with the save pattern,
+  /// which is told apart from the shutter without looking (FE-A11Y-09).
+  void _confirmSaved() {
+    if (ref.mounted) {
+      ref.read(hapticsProvider).save();
+      // Duplicate detection (task 015) runs after the save is confirmed and
+      // is never awaited, so it cannot delay the confirmation.
+      final String? saved = state.recordId;
+      if (saved != null) {
+        unawaited(
+          ref.read(qualityRepositoryProvider).scanRecords(<String>[saved]),
+        );
+      }
+    }
+  }
+
   Future<Result<void>> _completeSave(String recordId) async {
     final CaptureSession committed = state.copyWith(
       recordId: recordId,
@@ -558,20 +952,23 @@ final class CaptureController extends Notifier<CaptureSession> {
     );
     // The record transaction has committed at this point. Reflect it locally
     // before checkpoint/cleanup so a retry cannot duplicate raw evidence.
-    state = committed;
-    final Result<void> checkpoint = await _persistence.saveSession(committed);
+    _emit(committed);
+    _confirmSaved();
+    final Result<void> checkpoint = await _saveSession(committed);
     if (checkpoint case FailureResult<void>()) {
       return checkpoint;
     }
-    final Result<void> cleared = await _persistence.clearSession(key);
-    if (cleared case FailureResult<void>()) {
-      return cleared;
-    }
+    // The next session replaces the saved one in the store, so the pinned
+    // template and context outlive a restart as well as the reset.
     final CaptureSession next = CaptureReset.next(
       previous: committed,
       ids: _ids,
     );
-    state = next;
+    final Result<void> stored = await _saveSession(next);
+    if (stored case FailureResult<void>()) {
+      return stored;
+    }
+    _emit(next);
     return const Success<void>(null);
   }
 
@@ -589,25 +986,30 @@ final class CaptureController extends Notifier<CaptureSession> {
       );
       if (deleted is FailureResult<void>) return deleted;
     }
-    final Result<void> cleared = await _persistence.clearSession(key);
-    if (cleared is FailureResult<void>) return cleared;
     if (state.editing) {
-      state = _empty();
+      final Result<void> cleared = await _persistence.clearSession(key);
+      if (cleared is FailureResult<void>) return cleared;
+      _emit(_empty());
       return const Success<void>(null);
     }
-    state = CaptureSession(
+    // The fresh session keeps the pinned template and context, in the store
+    // as in memory, and takes the interrupted one's place there.
+    final CaptureSession fresh = CaptureSession(
       id: _ids.newId(),
       projectId: key,
-      templateId: state.templateId,
-      contextSnapshot: state.contextSnapshot,
+      templateId: target.templateId,
+      contextSnapshot: target.contextSnapshot,
     );
+    final Result<void> stored = await _saveSession(fresh);
+    if (stored is FailureResult<void>) return stored;
+    _emit(fresh);
     return const Success<void>(null);
   }
 }
 
-const StorageFailure _noRecords = StorageFailure(
-  message: 'Saved records cannot be edited on this device.',
-  recoveryAction: 'Open the record on a device that stores records.',
+final StorageFailure _noRecords = StorageFailure(
+  localizedMessage: Copy.messages.captureRecordsUnavailable,
+  localizedRecovery: Copy.messages.captureRecordsUnavailableRecovery,
 );
 
 final class _MemoryPhotoRepository implements PhotoRepository {

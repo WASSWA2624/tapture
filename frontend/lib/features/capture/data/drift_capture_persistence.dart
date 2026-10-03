@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/capture_sessions.dart';
 import 'package:tapture/core/db/transactions.dart';
@@ -55,8 +56,10 @@ final class DriftCapturePersistence implements CapturePersistence {
     try {
       final String payload = jsonEncode(session.toJson());
       if (!isCaptureSessionJson(payload) || session.projectId.isEmpty) {
-        return const FailureResult<void>(
-          ValidationFailure(message: 'The capture session is not valid.'),
+        return FailureResult<void>(
+          ValidationFailure(
+            localizedMessage: Copy.messages.failureTheCaptureSessionIsNotValid,
+          ),
         );
       }
       // The project_id column holds the storage key: the project for a new

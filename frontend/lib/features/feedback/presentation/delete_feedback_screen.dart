@@ -45,13 +45,15 @@ class DeleteFeedbackScreen extends ConsumerWidget {
       isEmpty: (List<FeedbackEntry> all) => all.isEmpty,
       empty: () => _frame(
         context,
-        const AppEmptyState(
+        AppEmptyState(
           icon: AppIcons.feedback,
-          headline: Copy.feedbackEmptyHeadline,
-          message: Copy.feedbackEmptyMessage,
+          headline: Copy.of(context).feedbackEmptyHeadline,
+          message: Copy.of(context).feedbackEmptyMessage,
         ),
       ),
       data: (List<FeedbackEntry> all) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         final List<FeedbackEntry> matching = view.filter.apply(all);
         final Set<String> matchingIds = <String>{
           for (final FeedbackEntry entry in matching) entry.id,
@@ -68,11 +70,12 @@ class DeleteFeedbackScreen extends ConsumerWidget {
           onToggleMoreFilters: controller.toggleMoreFilters,
           onShowMore: controller.showMore,
           error: view.error,
+          localizedError: view.localizedError,
           lead: Padding(
             padding: const EdgeInsets.symmetric(horizontal: Space.x4),
             child: AppSwitchTile.checkbox(
               key: const ValueKey<String>('feedback-select-all'),
-              title: Copy.selectAll,
+              title: localCopy.selectAll,
               value: selected.length == matchingIds.length,
               dense: true,
               controlFirst: true,
@@ -89,7 +92,7 @@ class DeleteFeedbackScreen extends ConsumerWidget {
           ),
         );
         final Widget action = AppPrimaryAction(
-          label: Copy.feedbackDeleteCount(selected.length),
+          label: localCopy.feedbackDeleteCount(selected.length),
           busy: view.busy,
           compact: true,
           onPressed: selected.isEmpty
@@ -102,15 +105,17 @@ class DeleteFeedbackScreen extends ConsumerWidget {
   }
 
   Widget _frame(BuildContext context, Widget body, {Widget? footer}) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppPage(
-      title: Copy.feedbackDelete,
+      title: localCopy.feedbackDelete,
       compactBar: true,
       inset: false,
       footer: footer,
       leading: AppIconButton(
         icon: AppIcons.close,
-        semanticLabel: Copy.close,
-        tooltip: Copy.close,
+        semanticLabel: localCopy.close,
+        tooltip: localCopy.close,
         outlined: false,
         onPressed: () => Navigator.of(context).maybePop(),
       ),
@@ -124,11 +129,13 @@ Future<void> _delete(
   DeleteFeedbackController controller,
   int count,
 ) async {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final bool confirmed = await showAppConfirm(
     context,
-    title: Copy.feedbackDeleteTitle(count),
-    message: Copy.feedbackDeleteMessage(count),
-    confirmLabel: Copy.feedbackDeleteCount(count),
+    title: localCopy.feedbackDeleteTitle(count),
+    message: localCopy.feedbackDeleteMessage(count),
+    confirmLabel: localCopy.feedbackDeleteCount(count),
     destructive: true,
   );
   if (!confirmed || !context.mounted) {
@@ -143,9 +150,9 @@ Future<void> _delete(
     case Success<List<RemovedFeedback>>(:final List<RemovedFeedback> value):
       showAppSnack(
         context,
-        Copy.feedbackDeleted(value.length),
+        localCopy.feedbackDeleted(value.length),
         tone: SnackTone.success,
-        undoLabel: Copy.undo,
+        undoLabel: localCopy.undo,
         onUndo: () => unawaited(controller.restore(value)),
       );
     case FailureResult<List<RemovedFeedback>>():

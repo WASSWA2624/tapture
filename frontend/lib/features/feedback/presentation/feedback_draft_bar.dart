@@ -8,13 +8,14 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
-import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 
 import 'feedback_confirmations.dart';
 import 'feedback_draft.dart';
 import 'feedback_draft_controller.dart';
+import 'feedback_shots.dart' show addFeedbackWindowStill;
 import 'feedback_window_share_controller.dart';
 
 /// The folded feedback draft: one line to keep typing or speaking into while
@@ -62,6 +63,8 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final int images = ref.watch(
       feedbackDraftProvider.select((FeedbackDraft? d) => d?.shots.length ?? 0),
     );
@@ -90,16 +93,16 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
               children: <Widget>[
                 Expanded(
                   child: AppTextField(
-                    label: Copy.feedbackMessage,
+                    label: localCopy.feedbackMessage,
                     controller: _message,
-                    hint: Copy.feedbackMessageHint,
+                    hint: localCopy.feedbackMessageHint,
                     maxLines: 2,
                     minLines: 1,
                   ),
                 ),
                 if (images > 0)
                   Semantics(
-                    label: Copy.feedbackImageCount(images),
+                    label: localCopy.feedbackImageCount(images),
                     child: ExcludeSemantics(
                       child: Padding(
                         padding: const EdgeInsetsDirectional.only(
@@ -125,34 +128,41 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
                       ),
                     ),
                   ),
-                if (sharing)
-                  AppIconButton(
-                    icon: AppIcons.window,
-                    semanticLabel: Copy.feedbackAddWindow,
-                    tooltip: Copy.feedbackAddWindow,
-                    selected: true,
-                    outlined: false,
-                    onPressed: () => unawaited(_addStill(context)),
-                  ),
-                if (widget.onAddScreen != null)
-                  AppIconButton(
-                    icon: AppIcons.screenshot,
-                    semanticLabel: Copy.feedbackAddScreen,
-                    tooltip: Copy.feedbackAddScreen,
-                    outlined: false,
-                    onPressed: widget.onAddScreen,
+                // Expand and discard stay in view; adding a still goes in
+                // the menu so the message keeps its room at 200 percent
+                // text on a phone (FE-RESP-06).
+                if (sharing || widget.onAddScreen != null)
+                  AppOverflowMenu(
+                    key: const ValueKey<String>('feedback-bar-more'),
+                    items: <AppOverflowAction>[
+                      if (sharing)
+                        AppOverflowAction(
+                          key: const ValueKey<String>('feedback-bar-window'),
+                          icon: AppIcons.window,
+                          label: localCopy.feedbackAddWindow,
+                          onTap: () =>
+                              unawaited(addFeedbackWindowStill(context, ref)),
+                        ),
+                      if (widget.onAddScreen case final VoidCallback add)
+                        AppOverflowAction(
+                          key: const ValueKey<String>('feedback-bar-screen'),
+                          icon: AppIcons.screenshot,
+                          label: localCopy.feedbackAddScreen,
+                          onTap: add,
+                        ),
+                    ],
                   ),
                 AppIconButton(
                   icon: AppIcons.expandPanel,
-                  semanticLabel: Copy.feedbackContinue,
-                  tooltip: Copy.feedbackContinue,
+                  semanticLabel: localCopy.feedbackContinue,
+                  tooltip: localCopy.feedbackContinue,
                   outlined: false,
                   onPressed: _draft.expand,
                 ),
                 AppIconButton(
                   icon: AppIcons.close,
-                  semanticLabel: Copy.feedbackDiscardDraft,
-                  tooltip: Copy.feedbackDiscardDraft,
+                  semanticLabel: localCopy.feedbackDiscardDraft,
+                  tooltip: localCopy.feedbackDiscardDraft,
                   outlined: false,
                   onPressed: () => unawaited(_discard()),
                 ),
@@ -162,23 +172,6 @@ class _FeedbackDraftBarState extends ConsumerState<FeedbackDraftBar> {
         ),
       ),
     );
-  }
-
-  Future<void> _addStill(BuildContext context) async {
-    final int before = ref.read(feedbackDraftProvider)?.shots.length ?? 0;
-    final String? problem = await ref
-        .read(feedbackWindowShareProvider.notifier)
-        .addStill();
-    if (!context.mounted) {
-      return;
-    }
-    if (problem != null) {
-      showAppSnack(context, problem, tone: SnackTone.warning);
-      return;
-    }
-    if ((ref.read(feedbackDraftProvider)?.shots.length ?? 0) > before) {
-      showAppSnack(context, Copy.feedbackShotAdded(Copy.feedbackOtherWindow));
-    }
   }
 
   Future<void> _discard() async {

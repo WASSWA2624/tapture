@@ -8,11 +8,13 @@ Future<bool> confirmDiscardFeedbackDraft(
   BuildContext context, {
   required int images,
 }) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   return showAppConfirm(
     context,
-    title: Copy.feedbackDiscardDraftTitle,
-    message: Copy.feedbackDiscardDraftMessage(images),
-    confirmLabel: Copy.discard,
+    title: localCopy.feedbackDiscardDraftTitle,
+    message: localCopy.feedbackDiscardDraftMessage(images),
+    confirmLabel: localCopy.discard,
     destructive: true,
     useRootNavigator: false,
   );

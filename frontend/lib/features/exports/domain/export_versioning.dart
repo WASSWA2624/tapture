@@ -1,25 +1,28 @@
-/// Allocates a dated, versioned folder for one export (task 018).
+/// Allocates a dated, versioned folder for one export (task 018 step 15).
 ///
-/// `v1`, `v2` and so on sit under the day's date. A later export never
-/// reuses a folder that already exists.
+/// `v1`, `v2` and so on sit under the day's date inside a project's export
+/// folder, so a repeated export never overwrites an earlier one. The writer
+/// seeds [taken] with the folders its recorded exports already occupy.
 final class ExportVersioning {
-  /// Creates an allocator over the [taken] paths already on disk.
+  /// Creates an allocator over the [taken] folders, as [allocate] returns
+  /// them.
   ExportVersioning(this.taken);
 
-  /// Paths already allocated, `project/yyyy-mm-dd/vN`.
+  /// Folders already allocated, `<root>/yyyy-mm-dd/vN`.
   final Set<String> taken;
 
-  /// The next free directory for [projectId] on [now].
-  Future<String> allocate(String projectId, DateTime now) async {
+  /// The next free folder under [root], the project's export folder, for
+  /// the UTC day of [now]. Never returns one already in [taken].
+  Future<String> allocate(String root, DateTime now) async {
     final DateTime utc = now.toUtc();
     final String month = utc.month.toString().padLeft(2, '0');
     final String day = utc.day.toString().padLeft(2, '0');
     final String date = '${utc.year}-$month-$day';
     var version = 1;
-    while (taken.contains('$projectId/$date/v$version')) {
+    while (taken.contains('$root/$date/v$version')) {
       version += 1;
     }
-    final String path = '$projectId/$date/v$version';
+    final String path = '$root/$date/v$version';
     taken.add(path);
     return path;
   }

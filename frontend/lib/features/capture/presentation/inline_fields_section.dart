@@ -3,6 +3,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/fields/field_editor.dart';
 import 'package:tapture/core/widgets/fields/field_value.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 /// Inline template fields: identity + required visible; rest behind More.
@@ -44,11 +45,14 @@ final class InlineFieldsSection extends StatefulWidget {
   State<InlineFieldsSection> createState() => _InlineFieldsSectionState();
 }
 
-class _InlineFieldsSectionState extends State<InlineFieldsSection> {
+class _InlineFieldsSectionState extends State<InlineFieldsSection>
+    with StateRefresh {
   bool _moreOpen = false;
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (widget.fields.isEmpty) {
       return const SizedBox.shrink(key: Key('inline-empty'));
     }
@@ -70,8 +74,8 @@ class _InlineFieldsSectionState extends State<InlineFieldsSection> {
         for (final FieldDef field in primary) _field(field),
         if (more.isNotEmpty) ...<Widget>[
           TextButton(
-            onPressed: () => setState(() => _moreOpen = !_moreOpen),
-            child: const Text(Copy.captureMoreFields),
+            onPressed: () => refresh(() => _moreOpen = !_moreOpen),
+            child: Text(localCopy.captureMoreFields),
           ),
           if (_moreOpen)
             for (final FieldDef field in more) _field(field),
@@ -81,6 +85,8 @@ class _InlineFieldsSectionState extends State<InlineFieldsSection> {
   }
 
   Widget _field(FieldDef field) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final FieldEditorKind kind = FieldTypeRegistry.of(field.type).editor;
     return Padding(
       key: ValueKey<String>('field-${field.fieldKey}-$kind'),
@@ -105,12 +111,12 @@ class _InlineFieldsSectionState extends State<InlineFieldsSection> {
                 if (field.lookup.isNotEmpty && widget.onLookup != null)
                   TextButton(
                     onPressed: () => widget.onLookup!(field),
-                    child: const Text(Copy.search),
+                    child: Text(localCopy.search),
                   ),
                 if (field.type == FieldType.barcode && widget.onScan != null)
                   TextButton(
                     onPressed: () => widget.onScan!(field),
-                    child: const Text(Copy.barcodeRescan),
+                    child: Text(localCopy.barcodeRescan),
                   ),
                 if (widget.linkedFields.contains(field.fieldKey))
                   TextButton(
@@ -118,7 +124,7 @@ class _InlineFieldsSectionState extends State<InlineFieldsSection> {
                       field.fieldKey,
                       widget.values[field.fieldKey],
                     ),
-                    child: const Text(Copy.recordSourceLookup),
+                    child: Text(localCopy.recordSourceLookup),
                   ),
               ],
             ),

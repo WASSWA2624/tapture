@@ -1,7 +1,8 @@
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/record_status.dart';
-import 'package:tapture/features/processing/processing.dart';
+import 'package:tapture/features/processing/domain/domain.dart';
 
 import 'capture_session.dart';
 
@@ -36,10 +37,10 @@ abstract final class SaveAndAnalyse {
     required Future<Result<ProcessingJob>> Function(String recordId) enqueue,
   }) async {
     if (!session.hasEvidence && session.recordCaption.trim().isEmpty) {
-      return const FailureResult<SaveAndAnalyseResult>(
+      return FailureResult<SaveAndAnalyseResult>(
         ValidationFailure(
-          message: 'Add at least one photo or a caption before saving.',
-          recoveryAction: 'Add evidence, then try again.',
+          localizedMessage: DomainCopy.messages.captureNeedsEvidence,
+          localizedRecovery: DomainCopy.messages.captureNeedsEvidenceRecovery,
         ),
       );
     }

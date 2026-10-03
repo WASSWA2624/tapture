@@ -22,17 +22,19 @@ final class PhotoMultiSelect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Row(
       children: <Widget>[
-        Text(Copy.captureSelectedCount(selectedIds.length)),
+        Text(localCopy.captureSelectedCount(selectedIds.length)),
         const Spacer(),
         TextButton(
           onPressed: () => onChanged(allIds.toSet()),
-          child: const Text(Copy.captureSelectAll),
+          child: Text(localCopy.captureSelectAll),
         ),
         TextButton(
           onPressed: () => onChanged(<String>{}),
-          child: const Text(Copy.captureClearSelection),
+          child: Text(localCopy.captureClearSelection),
         ),
       ],
     );

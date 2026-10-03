@@ -51,20 +51,20 @@ final class FeedbackWindowShareController extends Notifier<bool> {
   ///
   /// Returns why none was added, or null; a cancelled picker is not a
   /// failure. A full draft keeps sharing.
-  Future<String?> addStill() async {
+  Future<LocalizedMessage?> addStill() async {
     final FeedbackDraft? draft = ref.read(feedbackDraftProvider);
     if (draft == null) {
-      return Copy.somethingWentWrong;
+      return Copy.messages.somethingWentWrong;
     }
     if (draft.shots.length >= AppConstants.userFeedback.maxShots) {
-      return Copy.feedbackShotsFull;
+      return Copy.messages.feedbackShotsFull;
     }
     final ScreenCapture capture = ref.read(feedbackScreenCaptureProvider);
     if (!state) {
       final Result<bool> started = await capture.start();
       switch (started) {
         case FailureResult<bool>(:final Failure failure):
-          return failure.message;
+          return failure.explanation;
         case Success<bool>(:final bool value):
           if (!value) {
             return null;
@@ -77,7 +77,7 @@ final class FeedbackWindowShareController extends Notifier<bool> {
     );
     switch (still) {
       case FailureResult<Uint8List>(:final Failure failure):
-        return failure.message;
+        return failure.explanation;
       case Success<Uint8List>(:final Uint8List value):
         if (value.isEmpty) {
           return null;

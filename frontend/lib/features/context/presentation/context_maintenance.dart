@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
@@ -17,12 +18,14 @@ import '../context.dart' show contextRepositoryProvider;
 import '../domain/context_auto_clear.dart';
 import '../domain/context_movement_prompt.dart';
 import '../domain/context_state.dart';
+import 'context_picker_sheet.dart';
 import 'context_providers.dart';
 
 /// Runs the two optional context settings. Both stay inert while off.
 ///
 /// Auto-clear removes only the lowest level and offers one undo.
-/// The movement prompt asks for confirmation and never writes context.
+/// The movement prompt asks whether the context still holds and, if not,
+/// opens the lowest level's picker; it never writes context itself.
 /// No location read and no permission request happen while it is off.
 class ContextMaintenance extends ConsumerStatefulWidget {
   /// Creates the host. It paints nothing.
@@ -40,7 +43,9 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
   StreamSubscription<SettingKey<Object?>>? _settings;
   DateTime? _lastActivity;
   bool _fired = false;
-  bool _busy = false;
+  // Separate, so a slow location fix never holds up an auto-clear tick.
+  bool _clearing = false;
+  bool _moving = false;
   ({double latitude, double longitude})? _origin;
   String _signature = '';
 
@@ -72,6 +77,12 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
         unawaited(ref.read(contextRepositoryProvider).load(next));
       }
     });
+    // Keeps the open project's context live for the checks below, whether
+    // or not a context bar is on screen.
+    ref.listen<AsyncValue<ContextState>>(
+      openProjectContextProvider,
+      (AsyncValue<ContextState>? _, AsyncValue<ContextState> _) {},
+    );
     return Listener(
       behavior: HitTestBehavior.translucent,
       onPointerDown: (_) => _activity(),
@@ -112,7 +123,7 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
   }
 
   Future<void> _tick() async {
-    if (!mounted || _busy) {
+    if (!mounted) {
       return;
     }
     final String? projectId = ref.read(currentProjectProvider);
@@ -120,22 +131,29 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
       return;
     }
     final ContextState? state = ref
-        .read(projectContextProvider(projectId))
+        .read(openProjectContextProvider)
         .asData
         ?.value;
     if (state == null) {
       return;
     }
-    _busy = true;
-    try {
-      _noteActivity(state);
-      await _autoClear(projectId, state);
-      if (!mounted) {
-        return;
+    _noteActivity(state);
+    if (!_clearing) {
+      _clearing = true;
+      try {
+        await _autoClear(projectId, state);
+      } finally {
+        _clearing = false;
       }
-      await _movement();
+    }
+    if (!mounted || _moving) {
+      return;
+    }
+    _moving = true;
+    try {
+      await _movement(projectId, state);
     } finally {
-      _busy = false;
+      _moving = false;
     }
   }
 
@@ -157,6 +175,8 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
   }
 
   Future<void> _autoClear(String projectId, ContextState state) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final SettingsStore store = ref.read(projectSettingsStoreProvider);
     final bool enabled = store.read(SettingKeys.contextAutoClearEnabled);
     if (!enabled) {
@@ -197,16 +217,17 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
     final String label = _label(state, fieldKey);
     showAppSnack(
       context,
-      Copy.contextAutoClearMessage(label),
-      undoLabel: Copy.contextAutoClearUndo,
+      localCopy.contextAutoClearMessage(label),
+      undoLabel: localCopy.contextAutoClearUndo,
       onUndo: () => unawaited(_undo(projectId, fieldKey, value)),
     );
   }
 
+  /// Puts the cleared value back exactly; a failed write says why.
   Future<void> _undo(String projectId, String fieldKey, String value) async {
     _fired = false;
     _lastActivity = ref.read(contextClockProvider).nowUtc();
-    await ref
+    final Result<ContextState> restored = await ref
         .read(contextRepositoryProvider)
         .setLevelValue(
           projectId: projectId,
@@ -214,9 +235,22 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
           value: value,
           clearBelow: false,
         );
+    if (!mounted) {
+      return;
+    }
+    if (restored case FailureResult<ContextState>(:final Failure failure)) {
+      showAppSnack(
+        context,
+        failure.message,
+        tone: SnackTone.error,
+        localizedMessage: failure.explanation,
+      );
+    }
   }
 
-  Future<void> _movement() async {
+  Future<void> _movement(String projectId, ContextState state) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final SettingsStore store = ref.read(projectSettingsStoreProvider);
     final bool enabled = store.read(SettingKeys.contextMovementPromptEnabled);
     final bool gps =
@@ -258,18 +292,26 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
       distanceMetres: metres,
       thresholdMetres: store.read(SettingKeys.contextMovementMetres).toDouble(),
     );
-    if (!ask || !mounted) {
+    if (!ask || !mounted || state.levels.isEmpty) {
       return;
     }
     _origin = current;
-    _busy = true;
-    await showAppConfirm(
+    final bool change = await showAppConfirm(
       context,
-      title: Copy.contextMovementTitle,
-      message: Copy.contextMovementMessage,
-      confirmLabel: Copy.ok,
+      title: localCopy.contextMovementTitle,
+      message: localCopy.contextMovementMessage,
+      confirmLabel: localCopy.contextMovementChange,
     );
-    _busy = false;
+    if (!change || !mounted) {
+      return;
+    }
+    final ContextLevel lowest = orderedLevels(state).last;
+    await showContextPickerSheet(
+      context: context,
+      projectId: projectId,
+      level: lowest,
+      currentValue: state.values[lowest.fieldKey] ?? '',
+    );
   }
 
   String _label(ContextState state, String fieldKey) {

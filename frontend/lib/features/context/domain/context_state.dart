@@ -22,28 +22,36 @@ final class ContextState {
   /// Whether nothing is defined or pinned.
   bool get isEmpty => levels.isEmpty && pinned.isEmpty;
 
-  /// Returns a copy with the provided fields replaced.
+  /// Returns a copy with the provided fields replaced. Replacements are
+  /// copied into unmodifiable collections, so a caller's list or map never
+  /// escapes into the state (FE-CODE-04).
   ContextState copyWith({
     List<ContextLevel>? levels,
     Map<String, String>? values,
     Map<String, String>? pinned,
   }) {
     return ContextState(
-      levels: levels ?? this.levels,
-      values: values ?? this.values,
-      pinned: pinned ?? this.pinned,
+      levels: levels == null
+          ? this.levels
+          : List<ContextLevel>.unmodifiable(levels),
+      values: values == null
+          ? this.values
+          : Map<String, String>.unmodifiable(values),
+      pinned: pinned == null
+          ? this.pinned
+          : Map<String, String>.unmodifiable(pinned),
     );
   }
 
   @override
   int get hashCode => Object.hash(
     Object.hashAll(levels),
-    Object.hashAll(
+    Object.hashAllUnordered(
       values.entries.map(
         (MapEntry<String, String> e) => Object.hash(e.key, e.value),
       ),
     ),
-    Object.hashAll(
+    Object.hashAllUnordered(
       pinned.entries.map(
         (MapEntry<String, String> e) => Object.hash(e.key, e.value),
       ),

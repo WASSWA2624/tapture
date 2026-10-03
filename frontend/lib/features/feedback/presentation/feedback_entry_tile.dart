@@ -35,6 +35,8 @@ class FeedbackEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String locale = Localizations.localeOf(context).toString();
     final String when = DateFormat.yMMMd(
       locale,
@@ -46,13 +48,16 @@ class FeedbackEntryTile extends StatelessWidget {
         .replaceAll(RegExp(r'\s+'), ' ')
         .trim();
     return AppListTile(
-      title: Copy.feedbackEntryTitle(
+      title: localCopy.feedbackEntryTitle(
         formattedNumber,
         entry.reference,
         oneLineMessage,
       ),
-      subtitle: Copy.feedbackEntryFacts(
-        FeedbackLabels.category(entry.category),
+      subtitle: localCopy.feedbackEntryFacts(
+        FeedbackLabels.category(
+          entry.category,
+          localizedCopy: Copy.of(context),
+        ),
         when,
         entry.context.screen,
       ),

@@ -44,6 +44,8 @@ final class FeedbackContext {
     this.deviceId,
     this.deviceModel,
     this.osVersion,
+    this.lastAction,
+    this.fieldTrial = false,
   });
 
   /// Reads a stored context. Missing keys fall back rather than failing, so
@@ -86,6 +88,8 @@ final class FeedbackContext {
       deviceId: _optional(json[_deviceId]),
       deviceModel: _optional(json[_deviceModel]),
       osVersion: _optional(json[_osVersion]),
+      lastAction: _optional(json[_lastAction]),
+      fieldTrial: json[_fieldTrial] == true,
     );
   }
 
@@ -109,6 +113,12 @@ final class FeedbackContext {
 
   /// See [FeedbackOrigin.screen].
   final String screen;
+
+  /// The named control most recently used before a trial report was opened.
+  final String? lastAction;
+
+  /// Whether this entry was raised through the field-trial action.
+  final bool fieldTrial;
 
   /// See [FeedbackOrigin.route].
   final String route;
@@ -224,6 +234,8 @@ final class FeedbackContext {
       _deviceId: deviceId,
       _deviceModel: deviceModel,
       _osVersion: osVersion,
+      _lastAction: lastAction,
+      _fieldTrial: fieldTrial,
     };
   }
 }
@@ -261,6 +273,8 @@ const String _addresses = 'addresses';
 const String _deviceId = 'device_id';
 const String _deviceModel = 'device_model';
 const String _osVersion = 'os_version';
+const String _lastAction = 'last_action';
+const String _fieldTrial = 'field_trial';
 
 String _text(Object? value) => value is String ? value : '';
 

@@ -45,6 +45,8 @@ final class ExportOptionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -53,10 +55,10 @@ final class ExportOptionsSection extends StatelessWidget {
       return const SizedBox.shrink();
     }
     if (empty) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: AppIcons.fields,
-        headline: Copy.exportEmptyHeadline,
-        message: Copy.exportEmptyMessage,
+        headline: localCopy.exportEmptyHeadline,
+        message: localCopy.exportEmptyMessage,
       );
     }
     return Column(
@@ -64,7 +66,7 @@ final class ExportOptionsSection extends StatelessWidget {
       children: <Widget>[
         AppSwitchTile(
           key: const ValueKey<String>('export-refined'),
-          title: Copy.exportRefined,
+          title: localCopy.exportRefined,
           value: columns.refined,
           onChanged: (bool value) => onChanged?.call((
             raw: columns.raw,
@@ -74,7 +76,7 @@ final class ExportOptionsSection extends StatelessWidget {
           )),
         ),
         AppSwitchTile(
-          title: Copy.exportRaw,
+          title: localCopy.exportRaw,
           value: columns.raw,
           onChanged: (bool value) => onChanged?.call((
             raw: value,
@@ -85,13 +87,13 @@ final class ExportOptionsSection extends StatelessWidget {
         ),
         AppButton(
           key: const ValueKey<String>('export-advanced'),
-          label: Copy.exportAdvanced,
+          label: localCopy.exportAdvanced,
           variant: AppButtonVariant.secondary,
           onPressed: onToggleAdvanced,
         ),
         if (advancedOpen) ...<Widget>[
           AppSwitchTile(
-            title: Copy.exportConfidence,
+            title: localCopy.exportConfidence,
             value: columns.confidence,
             onChanged: (bool value) => onChanged?.call((
               raw: columns.raw,
@@ -101,7 +103,7 @@ final class ExportOptionsSection extends StatelessWidget {
             )),
           ),
           AppSwitchTile(
-            title: Copy.exportEvidence,
+            title: localCopy.exportEvidence,
             value: columns.evidence,
             onChanged: (bool value) => onChanged?.call((
               raw: columns.raw,

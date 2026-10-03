@@ -7,6 +7,8 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/projects/projects.dart';
 
+import 'account_session.dart';
+
 /// The app injects durable storage and an authenticated transport once.
 final relayQueueProvider = Provider<RelayQueue?>((Ref _) => null);
 
@@ -56,6 +58,16 @@ final class RelayController extends Notifier<RelayActionState> {
       if (ref.mounted) state = (busy: false, failure: Failure.from(error));
     }
   }
+
+  /// Turns relay on or off for the open project. Registering the project
+  /// may give this account a new grant, so the session refreshes after it.
+  Future<void> enable(bool enabled) => run((RelayQueue queue, String id) async {
+    final Result<void> result = await queue.enable(id, enabled);
+    if (result is Success<void>) {
+      await ref.read(backendSessionProvider)?.refresh();
+    }
+    return result;
+  });
 
   /// Builds through ExportRepository, then persists only an encrypted derivative.
   Future<void> queueProject() => run((RelayQueue queue, String id) async {

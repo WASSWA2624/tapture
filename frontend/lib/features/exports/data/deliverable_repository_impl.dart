@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/exports.dart';
@@ -15,6 +16,7 @@ import 'package:tapture/core/export/export_manifest.dart';
 import 'package:tapture/core/export/export_record.dart';
 import 'package:tapture/core/export/export_request.dart';
 import 'package:tapture/core/export/photo_naming.dart';
+import 'package:tapture/core/export/text_export_writer.dart';
 import 'package:tapture/core/export/value_formatter.dart';
 import 'package:tapture/core/export/xlsx_multi_sheet.dart';
 import 'package:tapture/core/export/xlsx_photo_refs.dart';
@@ -23,37 +25,95 @@ import 'package:tapture/core/files/export_archive.dart';
 import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/path_sanitizer.dart';
+import 'package:tapture/core/files/photo_privacy_service.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/features/meetings/meetings.dart';
+import 'package:tapture/features/quality/quality.dart';
 import 'package:tapture/features/records/records.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/deliverable_repository.dart';
+import '../domain/export_sharing_policy.dart';
+import '../domain/export_versioning.dart';
 import 'deliverable_renderer.dart';
+import 'deliverable_reports.dart';
+import 'export_operator.dart';
+import 'export_privacy.dart';
 import 'export_record_loader.dart';
 
 /// Writes deliverables from actual selected records and commits history only
 /// after both output and its replayable request are durable.
-final class DeliverableRepositoryImpl implements DeliverableRepository {
-  /// Composes the same stores already used by capture and review.
+final class DeliverableRepositoryImpl
+    implements DeliverableRepository, ExportSharingPolicy {
+  /// Composes the same stores already used by capture and review. The
+  /// meetings and quality stores default to ones over [db].
   DeliverableRepositoryImpl({
-    required this._db,
+    required sqlite.AppDatabase db,
     required StorageRoot storageRoot,
     required RecordRepository records,
     required TemplateRepository templates,
-    required this._clock,
-    required this._ids,
-    required this._deviceId,
+    required Clock clock,
+    required IdService ids,
+    required String deviceId,
+    MeetingRepository? meetings,
+    QualityRepository? quality,
     FileReader? files,
     FileWriter? writer,
     EvidencePurge? cleanup,
     bool inBrowser = kIsWeb,
     Future<Uint8List> Function()? font,
-  }) : _files = files ?? FileReader(storageRoot: storageRoot),
+    PhotoPrivacyService? privacy,
+    Future<bool> Function()? excludeCoordinates,
+    Future<bool> Function()? blurFaces,
+  }) : _db = db,
+       _clock = clock,
+       _ids = ids,
+       _deviceId = deviceId,
+       _streamText = !inBrowser,
+       _textWriter = TextExportWriter(storageRoot),
+       _templates = templates,
+       _files = files ?? FileReader(storageRoot: storageRoot),
        _writer = writer ?? FileWriter(storageRoot: storageRoot),
        _cleanup = cleanup ?? EvidencePurge(storageRoot: storageRoot),
        _loader = ExportRecordLoader(records: records, templates: templates),
+       _privacy = ExportPrivacy(
+         db: db,
+         records: records,
+         templates: templates,
+         photos:
+             privacy ??
+             PhotoPrivacyService(
+               db: db,
+               files: files ?? FileReader(storageRoot: storageRoot),
+               writer: writer ?? FileWriter(storageRoot: storageRoot),
+               clock: clock,
+               deviceId: deviceId,
+             ),
+         excludeCoordinates: excludeCoordinates ?? _excludeByDefault,
+         blurFaces: blurFaces ?? _noFaceBlur,
+       ),
+       _reports = DeliverableReports(
+         db: db,
+         meetings:
+             meetings ??
+             MeetingRepositoryImpl(
+               db: db,
+               clock: clock,
+               deviceId: deviceId,
+               ids: ids,
+             ),
+         quality:
+             quality ??
+             QualityRepositoryImpl(
+               db: db,
+               clock: clock,
+               deviceId: deviceId,
+               ids: ids,
+               templates: templates,
+             ),
+       ),
        _renderer = DeliverableRenderer(
          files: files ?? FileReader(storageRoot: storageRoot),
          font: font,
@@ -69,10 +129,15 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
   final Clock _clock;
   final IdService _ids;
   final String _deviceId;
+  final bool _streamText;
+  final TextExportWriter _textWriter;
+  final TemplateRepository _templates;
   final FileReader _files;
   final FileWriter _writer;
   final EvidencePurge _cleanup;
   final ExportRecordLoader _loader;
+  final ExportPrivacy _privacy;
+  final DeliverableReports _reports;
   final DeliverableRenderer _renderer;
   final ExportArchive _archive;
 
@@ -85,7 +150,7 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
     try {
       final sqlite.Project? project = await _project(projectId);
       if (project == null) {
-        return const FailureResult<ExportRequest>(_missingProjectFailure);
+        return FailureResult<ExportRequest>(_missingProjectFailure);
       }
       final Map<String, Object?> settings = Map<String, Object?>.from(
         jsonDecode(project.settings) as Map,
@@ -99,10 +164,7 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
               })
             : ExportRequest(
                 projectId: projectId,
-                formats: const <ExportFormat>{
-                  ExportFormat.xlsx,
-                  ExportFormat.zip,
-                },
+                formats: const <ExportFormat>{ExportFormat.zip},
                 scope: (
                   kind: ExportScopeKind.approved,
                   context: null,
@@ -120,6 +182,7 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
                   dictionary: true,
                   photoIndex: true,
                   photoMode: 'relative',
+                  pdfPhotos: PdfPhotoLayout.thumbnail,
                   delimiter: ',',
                 ),
               ),
@@ -134,7 +197,7 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
     try {
       final sqlite.Project? project = await _project(request.projectId);
       if (project == null) {
-        return const FailureResult<void>(_missingProjectFailure);
+        return FailureResult<void>(_missingProjectFailure);
       }
       final Map<String, Object?> settings = Map<String, Object?>.from(
         jsonDecode(project.settings) as Map,
@@ -171,7 +234,68 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
   Future<Result<PreparedDeliverable>> prepare(
     ExportRequest request, {
     required CancellationToken cancel,
-  }) => _loader.load(request, cancel: cancel);
+  }) async {
+    final Result<PreparedDeliverable> loaded = await _loader.load(
+      request,
+      cancel: cancel,
+    );
+    if (loaded is! Success<PreparedDeliverable>) {
+      return loaded;
+    }
+    try {
+      final PreparedDeliverable prepared = loaded.value;
+      final List<String> blocked = await _blockedMeetings(
+        prepared.request.records,
+        request.projectId,
+      );
+      return Success<PreparedDeliverable>((
+        request: prepared.request,
+        validation: (
+          incomplete: prepared.validation.incomplete,
+          unapproved: prepared.validation.unapproved,
+          blocked: blocked,
+        ),
+      ));
+    } on Object catch (error) {
+      return FailureResult<PreparedDeliverable>(Failure.from(error));
+    }
+  }
+
+  /// Meeting records whose actions lack an owner or a due date while their
+  /// template asks for them (task 017): they are not exported as they are.
+  Future<List<String>> _blockedMeetings(
+    List<ExportRecord> records,
+    String projectId,
+  ) async {
+    final Map<String, MeetingRecord> meetings = await _reports.meetingsOf(
+      projectId,
+      <String>{for (final ExportRecord record in records) record.id},
+    );
+    final List<String> blocked = <String>[];
+    for (final ExportRecord record in records) {
+      final MeetingRecord? meeting = meetings[record.id];
+      if (meeting == null) {
+        continue;
+      }
+      final Result<TemplateDef?> template = await _templates.byId(
+        record.templateId,
+      );
+      final bool requireOwner = switch (template) {
+        Success<TemplateDef?>(:final TemplateDef value?) => value.fields.any(
+          (FieldDef field) =>
+              field.fieldKey == _actionsField &&
+              field.requiredness != Requiredness.optional,
+        ),
+        // A meeting whose template is gone keeps the strict rule its review
+        // screen applies.
+        _ => true,
+      };
+      if (meeting.meeting.exportBlocks(requireOwner: requireOwner).isNotEmpty) {
+        blocked.add(record.id);
+      }
+    }
+    return blocked;
+  }
 
   @override
   Future<Result<DeliverableEntry>> write(
@@ -184,63 +308,122 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
     try {
       _checkCancelled(cancel);
       if (request.records.isEmpty) {
-        throw const ValidationFailure(
-          message: 'Nothing to export',
-          recoveryAction: 'Choose a scope with records.',
+        throw ValidationFailure(
+          localizedMessage: Copy.messages.projectExportEmptyHeadline,
+          localizedRecovery: Copy.messages.exportEmptyRecovery,
         );
       }
       if (request.formats.difference(const <ExportFormat>{
         ExportFormat.zip,
       }).isEmpty) {
-        throw const ValidationFailure(message: 'Choose an output format.');
+        throw ValidationFailure(localizedMessage: Copy.messages.exportNoFormat);
       }
       final sqlite.Project? project = await _project(request.projectId);
       if (project == null) {
         throw _missingProjectFailure;
       }
-      _report(onProgress, 'records', 1);
+      request = await _privacy.resolve(request, cancel);
+      if (request.records.isEmpty) {
+        throw ValidationFailure(
+          message: request.omittedRecordIds.isEmpty
+              ? Copy.projectExportEmptyHeadline
+              : Copy.exportConsentOmitted(request.omittedRecordIds),
+        );
+      }
       final String id = _ids.newId();
       final DateTime createdAt = _clock.nowUtc();
-      final String date = createdAt.toIso8601String().substring(0, 10);
-      final String folder = 'projects/${project.folderName}/exports/$date/$id';
-      final ExportRequest named = _namePhotos(request, project.name);
-      final Map<String, String> sources = <String, String>{};
-      for (final ExportRecord record in named.records) {
-        for (final ExportPhoto photo in record.photos) {
-          sources[photo.storedPath] =
-              record.photoSources[photo.id] ?? photo.storedPath;
-        }
-      }
-      _report(onProgress, 'photos', 1);
+      final String operator = await exportOperator(_db, fallback: _deviceId);
+      final String folder = await ExportVersioning(
+        await _takenFolders(request.projectId),
+      ).allocate('projects/${project.folderName}/exports', createdAt);
+      final ExportRequest named = _namePhotos(
+        request,
+        project.name,
+        (double fraction) => _report(onProgress, 'records', fraction),
+      );
+      final Map<String, String> sources = <String, String>{
+        for (final ExportRecord record in named.records)
+          for (final ExportPhoto photo in record.photos)
+            photo.storedPath: record.photoSources[photo.id] ?? photo.storedPath,
+      };
+      _report(onProgress, 'records', 1);
+      _checkCancelled(cancel);
+      final DeliverableReportInputs reports = await _reports.load(
+        named,
+        projectName: project.name,
+        operator: operator,
+        createdAt: createdAt,
+      );
+      final Map<String, WrittenFile> text = _streamText
+          ? _unwrap(await _textWriter.write(named, folder, cancel: cancel))
+          : const <String, WrittenFile>{};
+      unpublished.addAll(
+        text.values.map((WrittenFile file) => file.relativePath),
+      );
       final Map<String, Uint8List> outputs = _unwrap(
         await _renderer.render(
           named,
+          includeText: !_streamText,
           createdAt: createdAt,
           cancel: cancel,
-          onProgress: (double fraction) =>
-              _report(onProgress, 'reports', fraction),
+          reports: reports,
+          onStage: (String stage, double fraction) =>
+              _report(onProgress, stage, fraction),
         ),
       );
       _checkCancelled(cancel);
       final bool zip =
           named.formats.contains(ExportFormat.zip) ||
-          outputs.length != 1 ||
+          outputs.length + text.length != 1 ||
           sources.isNotEmpty;
       // Photo links in `relative` mode assume this layout (XlsxPhotoRefs).
       const String outputsFolder = XlsxPhotoRefs.outputsFolder;
       final List<ExportFile> paths = <ExportFile>[
-        for (final String name in outputs.keys)
+        for (final String name in <String>{...outputs.keys, ...text.keys})
           (path: zip ? '$outputsFolder/$name' : name, role: 'output'),
         for (final String name in sources.keys) (path: name, role: 'photo'),
       ];
       final ExportRequest resolved = named.copyWith(files: paths);
       final String snapshotPath = '$folder/request.json';
       final String manifestPath = '$folder/manifest.json';
-      final Uint8List manifest = Uint8List.fromList(
-        utf8.encode(_manifest(id, createdAt, resolved).encode()),
+      final ExportManifest manifestDocument = _manifest(
+        id,
+        createdAt,
+        operator,
+        await _privacy.publicSnapshot(resolved),
       );
+      final Uint8List manifest = _streamText
+          ? Uint8List(0)
+          : Uint8List.fromList(utf8.encode(manifestDocument.encode()));
+      unpublished.addAll(<String>[snapshotPath, manifestPath]);
+      if (_streamText) {
+        _unwrap(
+          await _textWriter.writeSnapshots(
+            resolved,
+            manifestDocument,
+            folder,
+            cancel: cancel,
+          ),
+        );
+      } else {
+        _unwrap(
+          await _writer.write(
+            Stream<List<int>>.value(utf8.encode(jsonEncode(resolved.toJson()))),
+            snapshotPath,
+          ),
+        );
+        _unwrap(
+          await _writer.write(Stream<List<int>>.value(manifest), manifestPath),
+        );
+      }
       WrittenFile output;
       if (zip) {
+        temporary.addAll(
+          text.values.map((WrittenFile file) => file.relativePath),
+        );
+        for (final MapEntry<String, WrittenFile> file in text.entries) {
+          sources['$outputsFolder/${file.key}'] = file.value.relativePath;
+        }
         final List<MapEntry<String, Uint8List>> staged = outputs.entries
             .toList();
         for (int index = 0; index < staged.length; index++) {
@@ -263,11 +446,14 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
             target: target,
             sources: sources,
             manifest: manifest,
+            manifestSource: _streamText ? manifestPath : null,
             cancel: cancel,
             onProgress: (double fraction) =>
                 _report(onProgress, 'archive', fraction),
           ),
         );
+      } else if (text.isNotEmpty) {
+        output = text.values.single;
       } else {
         final MapEntry<String, Uint8List> entry = outputs.entries.single;
         final String target = '$folder/${sanitiseSegment(entry.key)}';
@@ -277,19 +463,15 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
         );
       }
       _checkCancelled(cancel);
-      unpublished.addAll(<String>[snapshotPath, manifestPath]);
-      _unwrap(
-        await _writer.write(
-          Stream<List<int>>.value(utf8.encode(jsonEncode(resolved.toJson()))),
-          snapshotPath,
-        ),
-      );
-      _unwrap(
-        await _writer.write(Stream<List<int>>.value(manifest), manifestPath),
-      );
       _checkCancelled(cancel);
       final sqlite.ExportRow row = _unwrap(
         await runInTransaction(_db, () async {
+          if (resolved.privacyFingerprint !=
+              await _privacy.fingerprint(request.projectId)) {
+            throw ValidationFailure(
+              localizedMessage: Copy.messages.exportPrivacyChanged,
+            );
+          }
           final sqlite.ExportRow row = _unwrap(
             await completeExport(
               _db,
@@ -304,13 +486,18 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
                 filters: Value<String>(
                   jsonEncode(<String, Object?>{
                     'kind': 'deliverable',
-                    'scope': request.toJson()['scope'],
+                    'scope': request
+                        .copyWith(records: const <ExportRecord>[])
+                        .toJson()['scope'],
+                    'privacyFingerprint': resolved.privacyFingerprint,
+                    'omittedRecordIds': resolved.omittedRecordIds,
+                    'photoFaceCounts': resolved.photoFaceCounts,
                   }),
                 ),
                 recordCount: Value<int>(request.records.length),
                 filePath: Value<String>(output.relativePath),
                 fileHash: Value<String>(output.sha256),
-                createdBy: Value<String>(_deviceId),
+                createdBy: Value<String>(operator),
               ),
               clock: _clock,
               deviceId: _deviceId,
@@ -344,6 +531,21 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
     }
   }
 
+  /// The folders [projectId]'s recorded exports already occupy, so a new
+  /// export never lands in one.
+  Future<Set<String>> _takenFolders(String projectId) async {
+    final List<sqlite.ExportRow> rows =
+        await (_db.select(_db.exports)..where(
+              (sqlite.$ExportsTable row) => row.projectId.equals(projectId),
+            ))
+            .get();
+    return <String>{
+      for (final sqlite.ExportRow row in rows)
+        if (row.filePath.contains('/'))
+          row.filePath.substring(0, row.filePath.lastIndexOf('/')),
+    };
+  }
+
   /// Stops a write the operator cancelled before its next durable step.
   static void _checkCancelled(CancellationToken cancel) {
     if (cancel.isCancelled) {
@@ -362,26 +564,30 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
 
   @override
   Stream<List<DeliverableEntry>> watchHistory({String? projectId}) {
-    final SimpleSelectStatement<sqlite.$ExportsTable, sqlite.ExportRow> query =
-        _db.select(_db.exports)
-          ..where(
-            (sqlite.$ExportsTable row) =>
-                row.filters.like('%"kind":"deliverable"%'),
-          )
-          ..orderBy(<OrderClauseGenerator<sqlite.$ExportsTable>>[
-            (sqlite.$ExportsTable row) => OrderingTerm.desc(row.createdAt),
-          ]);
-    if (projectId != null) {
-      query.where(
-        (sqlite.$ExportsTable row) => row.projectId.equals(projectId),
-      );
-    }
+    final sqlite.$ExportsTable exports = _db.exports;
+    final sqlite.$ProjectsTable projects = _db.projects;
+    final JoinedSelectStatement<HasResultSet, dynamic> query = _db
+        .select(exports)
+        .join(<Join<HasResultSet, Object?>>[
+          leftOuterJoin(projects, projects.id.equalsExp(exports.projectId)),
+        ]);
+    query
+      ..where(
+        exports.filters.like('%"kind":"deliverable"%') |
+            exports.formats.like('%"bundle"%'),
+      )
+      ..orderBy(<OrderingTerm>[
+        OrderingTerm.desc(exports.createdAt),
+        OrderingTerm.desc(exports.id),
+      ]);
+    if (projectId != null) query.where(exports.projectId.equals(projectId));
     return query.watch().asyncMap(
-      (List<sqlite.ExportRow> rows) async => <DeliverableEntry>[
-        for (final sqlite.ExportRow row in rows)
+      (List<TypedResult> rows) async => <DeliverableEntry>[
+        for (final TypedResult row in rows)
           await _entry(
-            row,
-            (await _project(row.projectId))?.name ?? row.projectId,
+            row.readTable(exports),
+            row.readTableOrNull(projects)?.name ??
+                row.readTable(exports).projectId,
           ),
       ],
     );
@@ -413,6 +619,7 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
       },
       sha256: row.fileHash,
       missing: length is! Success<int?> || length.value == null,
+      package: row.formats.contains('"bundle"'),
     );
   }
 
@@ -424,8 +631,8 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
                 ..where((sqlite.$ExportsTable row) => row.id.equals(exportId)))
               .getSingleOrNull();
       if (row == null) {
-        throw const StorageFailure(
-          message: 'This export is no longer available.',
+        throw StorageFailure(
+          localizedMessage: Copy.messages.exportReplayMissing,
         );
       }
       final String parent = row.filePath.substring(
@@ -444,7 +651,54 @@ final class DeliverableRepositoryImpl implements DeliverableRepository {
       return FailureResult<ExportRequest>(Failure.from(error));
     }
   }
+
+  @override
+  Future<Result<void>> allowShare(String exportId) =>
+      Result.captureAsync(() async {
+        final sqlite.ExportRow? row =
+            await (_db.select(_db.exports)..where(
+                  (sqlite.$ExportsTable table) => table.id.equals(exportId),
+                ))
+                .getSingleOrNull();
+        if (row == null) {
+          throw StorageFailure(
+            localizedMessage: Copy.messages.exportReplayMissing,
+          );
+        }
+        final Map<String, Object?> filters = Map<String, Object?>.from(
+          jsonDecode(row.filters) as Map,
+        );
+        if (filters['privacyFingerprint'] !=
+            await _privacy.fingerprint(row.projectId)) {
+          throw ValidationFailure(
+            localizedMessage: Copy.messages.exportPrivacyChanged,
+          );
+        }
+      });
+
+  @override
+  Future<Result<ExportPrivacySummary>> privacySummary(String exportId) =>
+      Result.captureAsync(() async {
+        final sqlite.ExportRow row =
+            await (_db.select(_db.exports)..where(
+                  (sqlite.$ExportsTable table) => table.id.equals(exportId),
+                ))
+                .getSingle();
+        final Map<String, Object?> value = Map<String, Object?>.from(
+          jsonDecode(row.filters) as Map,
+        );
+        return (
+          omittedRecordIds: (value['omittedRecordIds'] as List? ?? <Object?>[])
+              .cast<String>(),
+          photoFaceCounts: Map<String, int>.from(
+            value['photoFaceCounts'] as Map? ?? <Object?, Object?>{},
+          ),
+        );
+      });
 }
+
+Future<bool> _excludeByDefault() async => true;
+Future<bool> _noFaceBlur() async => false;
 
 /// Production composition root supplies this shared export workflow.
 final Provider<DeliverableRepository?> deliverableRepositoryProvider =
@@ -455,12 +709,18 @@ T _unwrap<T>(Result<T> result) => switch (result) {
   FailureResult<T>(failure: final Failure resultFailure) => throw resultFailure,
 };
 
-const StorageFailure _missingProjectFailure = StorageFailure(
-  message: 'The project was not found.',
+final StorageFailure _missingProjectFailure = StorageFailure(
+  localizedMessage: Copy.messages.failureTheProjectWasNotFound,
 );
 
 /// Folder inside an export's own folder holding outputs until they are zipped.
 const String _stagingFolder = '.staging';
+
+/// The meeting template's action register field (task 017).
+const String _actionsField = 'action_items';
+
+/// Records named per batch while reporting the records stage.
+const int _namingBatch = 50;
 
 /// [projectName] as a shared file's stem. A name with nothing a file name can
 /// keep falls back, so a committed export is never reported as failed.
@@ -472,37 +732,53 @@ String _fileStem(String projectName) {
   }
 }
 
-ExportRequest _namePhotos(ExportRequest request, String projectName) {
+/// [request] with every photo named from the naming pattern, in its
+/// persisted order; [onProgress] hears each batch of records named.
+ExportRequest _namePhotos(
+  ExportRequest request,
+  String projectName,
+  void Function(double fraction) onProgress,
+) {
   final Set<String> taken = <String>{};
   const PhotoNaming names = PhotoNaming('{record}_{type}_{sequence}');
-  return request.copyWith(
-    records: <ExportRecord>[
-      for (final ExportRecord record in request.records)
-        ExportRecord.fromJson(<String, Object?>{
-          ...record.toJson(),
-          'photoSources': <String, String>{
-            for (final ExportPhoto photo in record.photos)
-              photo.id: record.photoSources[photo.id] ?? photo.storedPath,
-          },
-          'photos': <Map<String, Object?>>[
-            for (final ExportPhoto photo in record.photos)
-              <String, Object?>{
-                'id': photo.id,
-                'recordId': photo.recordId,
-                'type': photo.type,
-                'caption': photo.caption,
-                'originalName': photo.originalName,
-                'sequence': photo.sequence,
-                'storedPath':
-                    'photos/${names.nameFor((project: projectName, recordNumber: record.number, photoType: photo.type, sequence: photo.sequence, context: const <String, String>{}, serial: null, asset: null), taken: taken)}.${photo.storedPath.split('.').last}',
-              },
-          ],
-        }),
-    ],
-  );
+  final List<ExportRecord> named = <ExportRecord>[];
+  for (int index = 0; index < request.records.length; index++) {
+    final ExportRecord record = request.records[index];
+    named.add(
+      ExportRecord.fromJson(<String, Object?>{
+        ...record.toJson(),
+        'photoSources': <String, String>{
+          for (final ExportPhoto photo in record.photos)
+            photo.id: record.photoSources[photo.id] ?? photo.storedPath,
+        },
+        'photos': <Map<String, Object?>>[
+          for (final ExportPhoto photo in record.photos)
+            <String, Object?>{
+              'id': photo.id,
+              'recordId': photo.recordId,
+              'type': photo.type,
+              'caption': photo.caption,
+              'originalName': photo.originalName,
+              'sequence': photo.sequence,
+              'storedPath':
+                  'photos/${names.nameFor((project: projectName, recordNumber: record.number, photoType: photo.type, sequence: photo.sequence, context: const <String, String>{}, serial: null, asset: null), taken: taken)}.${photo.storedPath.split('.').last}',
+            },
+        ],
+      }),
+    );
+    if ((index + 1) % _namingBatch == 0) {
+      onProgress((index + 1) / request.records.length);
+    }
+  }
+  return request.copyWith(records: named);
 }
 
-ExportManifest _manifest(String id, DateTime time, ExportRequest request) {
+ExportManifest _manifest(
+  String id,
+  DateTime time,
+  String operator,
+  ExportRequest request,
+) {
   final Map<String, String> templates = <String, String>{
     for (final ExportRecord record in request.records)
       record.templateId: record.templateName,
@@ -519,6 +795,7 @@ ExportManifest _manifest(String id, DateTime time, ExportRequest request) {
   return ExportManifest(
     exportId: id,
     createdAt: time,
+    exportedBy: operator,
     request: request,
     entries: <ManifestEntry>[
       for (final ExportRecord record in request.records)

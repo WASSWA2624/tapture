@@ -38,6 +38,8 @@ final class ExportScopeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -46,10 +48,10 @@ final class ExportScopeSection extends StatelessWidget {
       return const SizedBox.shrink();
     }
     if (selected == null && count == null) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: AppIcons.export,
-        headline: Copy.exportEmptyHeadline,
-        message: Copy.exportEmptyMessage,
+        headline: localCopy.exportEmptyHeadline,
+        message: localCopy.exportEmptyMessage,
       );
     }
     return Column(
@@ -58,7 +60,7 @@ final class ExportScopeSection extends StatelessWidget {
         for (final ExportScopeKind kind in ExportScopeKind.values)
           AppButton(
             key: ValueKey<String>('export-scope-${kind.name}'),
-            label: _label(kind),
+            label: _label(context, kind),
             variant: kind == selected
                 ? AppButtonVariant.primary
                 : AppButtonVariant.secondary,
@@ -66,20 +68,20 @@ final class ExportScopeSection extends StatelessWidget {
           ),
         if (count != null)
           Text(
-            Copy.exportCount(count!),
+            localCopy.exportCount(count!),
             key: const ValueKey<String>('export-count'),
           ),
       ],
     );
   }
 
-  static String _label(ExportScopeKind kind) {
+  static String _label(BuildContext context, ExportScopeKind kind) {
     return switch (kind) {
-      ExportScopeKind.approved => Copy.exportScopeApproved,
-      ExportScopeKind.all => Copy.exportScopeAll,
-      ExportScopeKind.context => Copy.exportScopeContext,
-      ExportScopeKind.dateRange => Copy.exportScopeDates,
-      ExportScopeKind.filter => Copy.exportScopeFilter,
+      ExportScopeKind.approved => Copy.of(context).exportScopeApproved,
+      ExportScopeKind.all => Copy.of(context).exportScopeAll,
+      ExportScopeKind.context => Copy.of(context).exportScopeContext,
+      ExportScopeKind.dateRange => Copy.of(context).exportScopeDates,
+      ExportScopeKind.filter => Copy.of(context).exportScopeFilter,
     };
   }
 }

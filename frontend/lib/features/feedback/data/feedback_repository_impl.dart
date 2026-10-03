@@ -63,10 +63,19 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
   List<FeedbackEntry> _entries = <FeedbackEntry>[];
   int _nextNumber = 1;
   bool _loaded = false;
+  Future<void> _pending = Future<void>.value();
+
+  Future<Result<T>> _serial<T>(Future<Result<T>> Function() work) {
+    final Future<Result<T>> operation = _pending.then(
+      (_) => Result.captureAsync(() async => (await work()).getOrThrow()),
+    );
+    _pending = operation.then<void>((_) {});
+    return operation;
+  }
 
   @override
   Stream<List<FeedbackEntry>> watch() async* {
-    await _load();
+    (await _serial<void>(_load)).getOrThrow();
     yield _snapshot();
     yield* _updates.stream;
   }
@@ -78,24 +87,46 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
     required FeedbackContext context,
     String? otherCategory,
     List<Uint8List> screenshots = const <Uint8List>[],
+  }) {
+    final List<Uint8List> snapshots = <Uint8List>[
+      for (final Uint8List image in screenshots) Uint8List.fromList(image),
+    ];
+    return _serial(
+      () => _add(
+        category: category,
+        message: message,
+        context: context,
+        otherCategory: otherCategory,
+        screenshots: snapshots,
+      ),
+    );
+  }
+
+  Future<Result<FeedbackEntry>> _add({
+    required FeedbackCategory category,
+    required String message,
+    required FeedbackContext context,
+    String? otherCategory,
+    List<Uint8List> screenshots = const <Uint8List>[],
   }) async {
-    await _load();
+    (await _load()).getOrThrow();
     final String trimmed = message.trim();
     if (trimmed.isEmpty) {
-      return const FailureResult<FeedbackEntry>(
+      return FailureResult<FeedbackEntry>(
         ValidationFailure(
-          message: Copy.feedbackMessageRequired,
-          recoveryAction: 'Write your feedback, then save again.',
+          localizedMessage: Copy.messages.feedbackMessageRequired,
+          localizedRecovery:
+              Copy.messages.failureWriteYourFeedbackThenSaveAgain,
         ),
       );
     }
     final String? other = otherCategory?.trim();
     if (category == FeedbackCategory.other &&
         (other == null || other.isEmpty)) {
-      return const FailureResult<FeedbackEntry>(
+      return FailureResult<FeedbackEntry>(
         ValidationFailure(
-          message: Copy.feedbackOtherRequired,
-          recoveryAction: 'Name the type, then save again.',
+          localizedMessage: Copy.messages.feedbackOtherRequired,
+          localizedRecovery: Copy.messages.failureNameTheTypeThenSaveAgain,
         ),
       );
     }
@@ -137,7 +168,11 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
 
   @override
   Future<Result<List<Uint8List>>> screenshots(String id) async {
-    await _load();
+    return _serial(() => _screenshots(id));
+  }
+
+  Future<Result<List<Uint8List>>> _screenshots(String id) async {
+    (await _load()).getOrThrow();
     for (final FeedbackEntry entry in _entries) {
       if (entry.id == id) {
         return _readShots(entry);
@@ -148,7 +183,12 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
 
   @override
   Future<Result<List<RemovedFeedback>>> remove(Set<String> ids) async {
-    await _load();
+    final Set<String> snapshot = Set<String>.of(ids);
+    return _serial(() => _remove(snapshot));
+  }
+
+  Future<Result<List<RemovedFeedback>>> _remove(Set<String> ids) async {
+    (await _load()).getOrThrow();
     if (ids.isEmpty) {
       return const Success<List<RemovedFeedback>>(<RemovedFeedback>[]);
     }
@@ -193,7 +233,12 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
 
   @override
   Future<Result<void>> restore(List<RemovedFeedback> removed) async {
-    await _load();
+    final List<RemovedFeedback> snapshot = List<RemovedFeedback>.of(removed);
+    return _serial(() => _restore(snapshot));
+  }
+
+  Future<Result<void>> _restore(List<RemovedFeedback> removed) async {
+    (await _load()).getOrThrow();
     if (removed.isEmpty) {
       return const Success<void>(null);
     }
@@ -230,25 +275,25 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
     return const Success<void>(null);
   }
 
-  Future<void> _load() async {
+  Future<Result<void>> _load() async {
     if (_loaded) {
-      return;
+      return const Success<void>(null);
     }
-    _loaded = true;
     final Result<Uint8List?> read = await _store.read(_indexKey);
     switch (read) {
-      case FailureResult<Uint8List?>():
-        _entries = <FeedbackEntry>[];
-        _nextNumber = 1;
-        return;
+      case FailureResult<Uint8List?>(:final Failure failure):
+        return FailureResult<void>(failure);
       case Success<Uint8List?>(:final Uint8List? value):
         if (value == null || value.isEmpty) {
           _entries = <FeedbackEntry>[];
           _nextNumber = 1;
-          return;
+          _loaded = true;
+          return const Success<void>(null);
         }
         _readIndex(value);
+        _loaded = true;
     }
+    return const Success<void>(null);
   }
 
   void _readIndex(Uint8List bytes) {
@@ -256,24 +301,30 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
     try {
       decoded = jsonDecode(utf8.decode(bytes));
     } on FormatException {
-      _entries = <FeedbackEntry>[];
-      _nextNumber = 1;
-      return;
+      throw StorageFailure(
+        localizedMessage: Copy.messages.feedbackJournalInvalid,
+        localizedRecovery: Copy.messages.feedbackJournalRecovery,
+      );
     }
     if (decoded is! Map) {
-      _entries = <FeedbackEntry>[];
-      _nextNumber = 1;
-      return;
+      throw StorageFailure(
+        localizedMessage: Copy.messages.feedbackJournalInvalid,
+        localizedRecovery: Copy.messages.feedbackJournalRecovery,
+      );
     }
     final Map<String, Object?> map = Map<String, Object?>.from(decoded);
     final List<FeedbackEntry> entries = <FeedbackEntry>[];
     final Object? raw = map[_entriesKey];
-    if (raw is List) {
-      for (final Object? row in raw) {
-        final FeedbackEntry? entry = FeedbackEntry.fromJson(row);
-        if (entry != null) {
-          entries.add(entry);
-        }
+    if (raw is! List) {
+      throw StorageFailure(
+        localizedMessage: Copy.messages.feedbackJournalInvalid,
+        localizedRecovery: Copy.messages.feedbackJournalRecovery,
+      );
+    }
+    for (final Object? row in raw) {
+      final FeedbackEntry? entry = FeedbackEntry.fromJson(row);
+      if (entry != null) {
+        entries.add(entry);
       }
     }
     entries.sort(
@@ -328,9 +379,15 @@ final class FeedbackRepositoryImpl implements FeedbackRepository {
         case FailureResult<Uint8List?>(:final Failure failure):
           return FailureResult<List<Uint8List>>(failure);
         case Success<Uint8List?>(:final Uint8List? value):
-          if (value != null && value.isNotEmpty) {
-            shots.add(value);
+          if (value == null || value.isEmpty) {
+            return FailureResult<List<Uint8List>>(
+              StorageFailure(
+                localizedMessage: Copy.messages.feedbackImageMissing,
+                localizedRecovery: Copy.messages.feedbackImageRecovery,
+              ),
+            );
           }
+          shots.add(value);
       }
     }
     return Success<List<Uint8List>>(shots);

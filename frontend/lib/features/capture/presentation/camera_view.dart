@@ -1,66 +1,73 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
-import 'package:tapture/app/theme/typography.dart';
-import 'package:tapture/core/camera/camera_preview_surface.dart';
-import 'package:tapture/core/camera/camera_service.dart';
+import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/core/camera/camera.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/core/widgets/states/app_loading_state.dart';
 
-/// Live camera preview sized from the service report.
-final class CameraView extends StatefulWidget {
+import 'live_camera_controller.dart';
+import 'live_camera_state.dart';
+
+/// The live preview: starting, running or failed (FE-STATE-11), with the
+/// grid, tap to focus and pinch to zoom. The camera is released while the
+/// app is in the background and opened again on return (step 3).
+final class CameraView extends ConsumerStatefulWidget {
   /// Creates a view over [camera].
-  const CameraView({required this.camera, this.gridOverlay = false, super.key});
+  const CameraView({required this.camera, super.key});
+
+  /// The running preview, whichever camera draws it.
+  static const Key previewKey = ValueKey<String>('camera-preview');
 
   /// Camera port.
   final CameraService camera;
 
-  /// Composition grid when enabled.
-  final bool gridOverlay;
-
   @override
-  State<CameraView> createState() => _CameraViewState();
+  ConsumerState<CameraView> createState() => _CameraViewState();
 }
 
-class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
-  CameraPreviewState _state = CameraPreviewState.starting;
-  StreamSubscription<CameraPreviewState>? _subscription;
+class _CameraViewState extends ConsumerState<CameraView>
+    with WidgetsBindingObserver {
+  /// The zoom a pinch started from, so one pinch never compounds.
+  double _pinchFrom = 1;
+
+  LiveCameraController get _controller =>
+      ref.read(liveCameraControllerProvider(widget.camera).notifier);
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _subscription = widget.camera.previewState.listen((
-      CameraPreviewState next,
-    ) {
-      if (mounted) {
-        setState(() => _state = next);
-      }
-    });
-    unawaited(widget.camera.start());
+    unawaited(_controller.start());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(_subscription?.cancel());
-    unawaited(widget.camera.stop());
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    final CameraPreviewState preview = ref
+        .read(liveCameraControllerProvider(widget.camera))
+        .preview;
     switch (state) {
       case AppLifecycleState.inactive:
         // The first-run permission prompt makes the app inactive while the
         // camera is still opening; only a running preview is released.
-        if (_state == CameraPreviewState.running) {
-          unawaited(widget.camera.pause());
+        if (preview == CameraPreviewState.running) {
+          unawaited(_controller.pause());
         }
       case AppLifecycleState.hidden || AppLifecycleState.paused:
-        unawaited(widget.camera.pause());
+        unawaited(_controller.pause());
       case AppLifecycleState.resumed:
-        unawaited(widget.camera.resume());
+        unawaited(_controller.resume());
       case AppLifecycleState.detached:
         break;
     }
@@ -68,38 +75,130 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = widget.camera.previewSize;
-    return Semantics(
-      label: Copy.captureTitle,
-      child: AspectRatio(
-        aspectRatio: size.width <= 0 || size.height <= 0
-            ? 4 / 3
-            : size.width / size.height,
-        child: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            if (_state == CameraPreviewState.running &&
-                widget.camera is CameraPreviewSurface)
-              (widget.camera as CameraPreviewSurface).buildPreview()
-            else
-              ColoredBox(
-                color: switch (_state) {
-                  CameraPreviewState.starting => AppColors.dark.surfaceVariant,
-                  CameraPreviewState.running => AppColors.dark.background,
-                  CameraPreviewState.failed => AppColors.dark.danger,
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final LiveCameraState view = ref.watch(
+      liveCameraControllerProvider(widget.camera),
+    );
+    return switch (view.preview) {
+      CameraPreviewState.starting => const Center(
+        child: AppSkeleton(shape: SkeletonShape.card, count: 1),
+      ),
+      CameraPreviewState.failed => Center(
+        child: SingleChildScrollView(
+          child: AppErrorState(
+            failure:
+                view.failure ??
+                ProviderFailure(message: localCopy.photoNoCamera),
+            onRetry: () => unawaited(_controller.start()),
+          ),
+        ),
+      ),
+      CameraPreviewState.running => _running(context, view),
+    };
+  }
+
+  Widget _running(BuildContext context, LiveCameraState view) {
+    final CameraService camera = widget.camera;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
+        final Widget preview = switch (camera) {
+          // The plug-in preview sizes and rotates itself.
+          final CameraPreviewSurface surface => surface.buildPreview(),
+          _ => AspectRatio(
+            aspectRatio: _aspect(camera.previewSize, constraints),
+            child: ColoredBox(color: context.colors.onSurface),
+          ),
+        };
+        return Center(
+          child: Semantics(
+            label: localCopy.captureCameraTitle,
+            // The builder's size is the preview's, so a tap is measured
+            // against the image rather than the space around it.
+            child: Builder(
+              builder: (BuildContext surface) => GestureDetector(
+                key: CameraView.previewKey,
+                onTapUp: (TapUpDetails details) => _focus(surface, details),
+                onScaleStart: (ScaleStartDetails _) => _pinchFrom = view.zoom,
+                onScaleUpdate: (ScaleUpdateDetails details) {
+                  if (details.pointerCount > 1) {
+                    unawaited(_controller.zoomTo(_pinchFrom * details.scale));
+                  }
                 },
-                child: Center(
-                  child: Text(
-                    _state.name,
-                    style: AppText.caption.copyWith(
-                      color: AppColors.dark.onSurface,
-                    ),
-                  ),
+                child: Stack(
+                  children: <Widget>[
+                    preview,
+                    if (view.grid)
+                      Positioned.fill(
+                        child: CustomPaint(
+                          painter: _GridPainter(context.colors.outline),
+                        ),
+                      ),
+                    if (view.focus case final ({double x, double y}) focus)
+                      Positioned.fill(child: _FocusRing(focus: focus)),
+                  ],
                 ),
               ),
-            if (widget.gridOverlay || widget.camera.gridEnabled)
-              const CustomPaint(painter: _GridPainter()),
-          ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _focus(BuildContext surface, TapUpDetails details) {
+    final Size size = surface.size ?? Size.zero;
+    if (size.isEmpty) {
+      return;
+    }
+    unawaited(
+      _controller.focusAt(
+        details.localPosition.dx / size.width,
+        details.localPosition.dy / size.height,
+      ),
+    );
+  }
+}
+
+/// The sensor's aspect ratio, turned to match the space it is shown in: a
+/// portrait surface gets a portrait preview.
+double _aspect(Size sensor, BoxConstraints space) {
+  if (sensor.isEmpty) {
+    return 3 / 4;
+  }
+  final double long = max(sensor.width, sensor.height);
+  final double short = min(sensor.width, sensor.height);
+  final bool portrait = space.maxHeight > space.maxWidth;
+  return portrait ? short / long : long / short;
+}
+
+/// Marks where the lens was asked to focus.
+final class _FocusRing extends StatelessWidget {
+  const _FocusRing({required this.focus});
+
+  final ({double x, double y}) focus;
+
+  @override
+  Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    return Semantics(
+      container: true,
+      label: localCopy.captureFocus,
+      child: Align(
+        alignment: Alignment(focus.x * 2 - 1, focus.y * 2 - 1),
+        child: SizedBox.square(
+          dimension: Sizes.minTapTarget,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: context.colors.warning,
+                width: Space.x0,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -107,12 +206,14 @@ class _CameraViewState extends State<CameraView> with WidgetsBindingObserver {
 }
 
 final class _GridPainter extends CustomPainter {
-  const _GridPainter();
+  const _GridPainter(this.color);
+
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = AppColors.dark.outline
+      ..color = color
       ..strokeWidth = 1;
     for (var i = 1; i < 3; i++) {
       final double dx = size.width * i / 3;
@@ -123,5 +224,6 @@ final class _GridPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _GridPainter oldDelegate) =>
+      oldDelegate.color != color;
 }

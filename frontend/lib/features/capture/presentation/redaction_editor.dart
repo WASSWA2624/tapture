@@ -1,110 +1,155 @@
 import 'dart:typed_data';
 
-import 'package:flutter/widgets.dart';
-import 'package:image/image.dart' as img;
-import 'package:tapture/core/concurrency/isolate_runner.dart';
+import 'package:flutter/material.dart';
+import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/export/image_redaction.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 
-/// Marks rectangles on a photo. Marks are burned into a copy, not the original.
-final class RedactionEditor extends StatelessWidget {
-  /// Creates the editor.
+/// Marks regions on the actual upright photo, independently of preview size.
+final class RedactionEditor extends StatefulWidget {
   const RedactionEditor({
     required this.marks,
     required this.onChanged,
+    this.bytes,
+    this.imageWidth = 1,
+    this.imageHeight = 1,
     this.failure,
     this.empty = false,
     super.key,
   });
 
-  /// Marks already placed, in image pixels.
+  final Uint8List? bytes;
+  final int imageWidth;
+  final int imageHeight;
   final List<RedactionMark> marks;
-
-  /// Called with the marks after a tap adds one.
   final ValueChanged<List<RedactionMark>> onChanged;
-
-  /// Why the photo could not be shown.
   final String? failure;
-
-  /// Whether there is no photo to mark.
   final bool empty;
 
-  /// Burns [marks] into a copy of [original]. Pixels outside the marks match.
+  /// Compatibility wrapper; protection failures cannot return clear pixels.
   static Future<Uint8List> burn(
     Uint8List original,
     List<RedactionMark> marks,
   ) async {
-    final Result<Uint8List> burned = await runIsolate<List<Object>, Uint8List>(
-      _burn,
-      <Object>[
-        original,
-        <int>[
-          for (final RedactionMark mark in marks) ...<int>[
-            mark.x,
-            mark.y,
-            mark.width,
-            mark.height,
-          ],
-        ],
-      ],
-    );
-    return burned.fold(
-      (_) => Uint8List.fromList(original),
-      (Uint8List value) => value,
-    );
+    return switch (await ImageRedaction.burn(original, marks)) {
+      Success<Uint8List>(:final Uint8List value) => value,
+      FailureResult<Uint8List>(:final Failure failure) => throw failure,
+    };
   }
 
   @override
+  State<RedactionEditor> createState() => _RedactionEditorState();
+}
+
+final class _RedactionEditorState extends State<RedactionEditor>
+    with StateRefresh<RedactionEditor> {
+  Offset? _start;
+  Offset? _end;
+
+  @override
   Widget build(BuildContext context) {
-    if (failure != null) {
-      return Text(failure!);
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    if (widget.failure != null) return Text(widget.failure!);
+    if (widget.empty || widget.bytes == null) {
+      return Text(localCopy.redactionEmptyMessage);
     }
-    if (empty) {
-      return const SizedBox.shrink();
-    }
-    return GestureDetector(
-      key: const ValueKey<String>('redaction-surface'),
-      behavior: HitTestBehavior.opaque,
-      onTapDown: (TapDownDetails details) {
-        onChanged(<RedactionMark>[
-          ...marks,
-          (
-            x: details.localPosition.dx.round(),
-            y: details.localPosition.dy.round(),
-            width: 8,
-            height: 8,
-          ),
-        ]);
-      },
-      child: const SizedBox.expand(key: ValueKey<String>('redaction-photo')),
+    return Semantics(
+      label: localCopy.redactionHint,
+      child: AspectRatio(
+        aspectRatio: widget.imageWidth / widget.imageHeight,
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints box) {
+            Offset point(Offset value) => Offset(
+              (value.dx / box.maxWidth).clamp(0, 1),
+              (value.dy / box.maxHeight).clamp(0, 1),
+            );
+            return GestureDetector(
+              key: const ValueKey<String>('redaction-surface'),
+              behavior: HitTestBehavior.opaque,
+              onPanStart: (DragStartDetails details) => refresh(() {
+                _start = point(details.localPosition);
+                _end = _start;
+              }),
+              onPanUpdate: (DragUpdateDetails details) => refresh(() {
+                _end = point(details.localPosition);
+              }),
+              onPanCancel: () => refresh(() {
+                _start = null;
+                _end = null;
+              }),
+              onPanEnd: (_) {
+                final ImageRect? mark = _selection;
+                if (mark != null && mark.width > 0 && mark.height > 0) {
+                  widget.onChanged(<ImageRect>[...widget.marks, mark]);
+                }
+                refresh(() {
+                  _start = null;
+                  _end = null;
+                });
+              },
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Image.memory(
+                    widget.bytes!,
+                    key: const ValueKey<String>('redaction-photo'),
+                    fit: BoxFit.fill,
+                    gaplessPlayback: true,
+                  ),
+                  IgnorePointer(
+                    child: CustomPaint(
+                      painter: _MarksPainter(<ImageRect>[
+                        ...widget.marks,
+                        if (_selection case final ImageRect mark) mark,
+                      ], Theme.of(context).colorScheme.scrim),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
     );
+  }
+
+  ImageRect? get _selection {
+    final Offset? start = _start;
+    final Offset? end = _end;
+    if (start == null || end == null) return null;
+    final Rect rect = Rect.fromPoints(start, end);
+    return (x: rect.left, y: rect.top, width: rect.width, height: rect.height);
   }
 }
 
-/// One obscured rectangle, in image pixels.
-typedef RedactionMark = ({int x, int y, int width, int height});
+/// Stored normalized mark reused by preview, analysis and export.
+typedef RedactionMark = ImageRect;
 
-Uint8List _burn(List<Object> message) {
-  final Uint8List original = message[0] as Uint8List;
-  final List<int> flat = message[1] as List<int>;
-  final img.Image? decoded = img.decodeImage(original);
-  if (decoded == null) {
-    return Uint8List.fromList(original);
-  }
-  final img.Image copy = img.Image.from(decoded);
-  final img.ColorRgb8 fill = img.ColorRgb8(0, 0, 0);
-  for (var index = 0; index + 3 < flat.length; index += 4) {
-    final int x = flat[index];
-    final int y = flat[index + 1];
-    final int width = flat[index + 2];
-    final int height = flat[index + 3];
-    for (var py = y; py < y + height && py < copy.height; py++) {
-      for (var px = x; px < x + width && px < copy.width; px++) {
-        if (px < 0 || py < 0) {
-          continue;
-        }
-        copy.setPixel(px, py, fill);
-      }
+final class _MarksPainter extends CustomPainter {
+  const _MarksPainter(this.marks, this.color);
+  final List<ImageRect> marks;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()..color = color;
+    for (final ImageRect mark in marks) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          mark.x * size.width,
+          mark.y * size.height,
+          mark.width * size.width,
+          mark.height * size.height,
+        ),
+        paint,
+      );
     }
   }
-  return img.encodePng(copy);
+
+  @override
+  bool shouldRepaint(_MarksPainter oldDelegate) =>
+      oldDelegate.marks != marks || oldDelegate.color != color;
 }

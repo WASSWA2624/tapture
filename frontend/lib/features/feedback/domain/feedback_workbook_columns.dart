@@ -81,6 +81,17 @@ List<_Column> _columns({required String localHeader}) {
     _blank('Plan Tier', 14),
     _blank('Subscription Status', 20),
     _text(_screenHeader, _screenWidth, (FeedbackEntry e) => e.context.screen),
+    _text(
+      'Last Action',
+      32,
+      (FeedbackEntry e) => e.context.lastAction,
+      wrap: true,
+    ),
+    _text(
+      'Field Trial',
+      12,
+      (FeedbackEntry e) => e.context.fieldTrial ? 'Yes' : 'No',
+    ),
     _text('Route', 32, (FeedbackEntry e) => e.context.route, wrap: true),
     _text('Route Name', 20, (FeedbackEntry e) => e.context.routeName),
     _text('Page URL', 40, (FeedbackEntry e) => e.context.pageUrl, wrap: true),

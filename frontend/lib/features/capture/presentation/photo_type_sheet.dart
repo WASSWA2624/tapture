@@ -1,38 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
 
-/// Spec photo types with last-used default.
-abstract final class PhotoTypes {
-  /// Every type key in spec order.
-  static const List<String> all = <String>[
-    'front',
-    'back',
-    'serial',
-    'ratingPlate',
-    'damage',
-    'panel',
-    'location',
-    'attendance',
-    'document',
-    'other',
-  ];
+import 'photo_types.dart';
 
-  /// Catalogue label for [key].
-  static String label(String key) {
-    return switch (key) {
-      'front' => Copy.photoFront,
-      'back' => Copy.photoBack,
-      'serial' => Copy.photoSerial,
-      'ratingPlate' => Copy.photoRatingPlate,
-      'damage' => Copy.photoDamage,
-      'panel' => Copy.photoPanel,
-      'location' => Copy.photoLocation,
-      'attendance' => Copy.photoAttendance,
-      'document' => Copy.photoDocument,
-      _ => Copy.photoOther,
-    };
-  }
-}
+export 'photo_types.dart';
 
 /// Bottom sheet listing photo types.
 final class PhotoTypeSheet extends StatelessWidget {
@@ -60,7 +31,7 @@ final class PhotoTypeSheet extends StatelessWidget {
       children: <Widget>[
         for (final String key in ordered)
           ListTile(
-            title: Text(PhotoTypes.label(key)),
+            title: Text(PhotoTypes.label(key, localizedCopy: Copy.of(context))),
             selected: key == lastUsed,
             onTap: () => onSelected(key),
           ),

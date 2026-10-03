@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:tapture/core/bundle/bundle_output.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/export/export_request.dart';
 
 /// Persistence port for completed exports. Drift types stop at the data layer.
 abstract interface class ExportRepository {
@@ -26,12 +27,20 @@ abstract interface class ExportRepository {
   Future<Result<ExportedPackage>> exportProject(
     String projectId, {
     required CancellationToken cancel,
+    ExportScope? scope,
+    bool withoutPhotos = false,
+    String? password,
     void Function(double)? onProgress,
+    void Function(({String stage, double fraction}))? onStageProgress,
   });
 
   /// Bytes the package of [projectId] is expected to take, shown before the
   /// export starts.
-  Future<Result<int>> estimatePackage(String projectId);
+  Future<Result<int>> estimatePackage(
+    String projectId, {
+    ExportScope? scope,
+    bool withoutPhotos = false,
+  });
 
   /// What an export of [projectId] would hold: the records [exportProject]
   /// writes, with their photos, audio, statuses, templates and dates.

@@ -26,7 +26,8 @@ final class ContextPreset {
   /// When this preset was last applied, for list ordering.
   final DateTime? lastUsedAt;
 
-  /// Returns a copy with the provided fields replaced.
+  /// Returns a copy with the provided fields replaced. Replacement maps are
+  /// copied unmodifiable (FE-CODE-04).
   ContextPreset copyWith({
     String? id,
     String? name,
@@ -37,27 +38,45 @@ final class ContextPreset {
     return ContextPreset(
       id: id ?? this.id,
       name: name ?? this.name,
-      values: values ?? this.values,
-      pinned: pinned ?? this.pinned,
+      values: values == null
+          ? this.values
+          : Map<String, String>.unmodifiable(values),
+      pinned: pinned == null
+          ? this.pinned
+          : Map<String, String>.unmodifiable(pinned),
       lastUsedAt: lastUsedAt ?? this.lastUsedAt,
     );
   }
 
+  /// Whether [state] holds exactly what applying this preset writes: its
+  /// value on every level it names, nothing on the levels it omits, and its
+  /// pins.
+  bool isAppliedTo(ContextState state) {
+    for (final ContextLevel level in state.levels) {
+      final String want = values[level.fieldKey] ?? '';
+      if ((state.values[level.fieldKey] ?? '') != want) {
+        return false;
+      }
+    }
+    return _mapEquals(pinned, state.pinned);
+  }
+
+  /// [lastUsedAt] is ordering metadata, not identity, so it is in neither
+  /// [==] nor [hashCode].
   @override
   int get hashCode => Object.hash(
     id,
     name,
-    Object.hashAll(
+    Object.hashAllUnordered(
       values.entries.map(
         (MapEntry<String, String> e) => Object.hash(e.key, e.value),
       ),
     ),
-    Object.hashAll(
+    Object.hashAllUnordered(
       pinned.entries.map(
         (MapEntry<String, String> e) => Object.hash(e.key, e.value),
       ),
     ),
-    lastUsedAt,
   );
 
   @override

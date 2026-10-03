@@ -1,30 +1,6 @@
-/// How a caption write combines with existing text.
-enum CaptionApplyMode {
-  /// Adds [text] on a new line after the previous value.
-  append,
+import 'caption_write.dart';
 
-  /// Replaces the previous value; caller keeps history separately.
-  replace,
-}
-
-/// One independent caption row to persist.
-final class CaptionWrite {
-  /// Creates a write.
-  const CaptionWrite({
-    required this.photoId,
-    required this.text,
-    this.previousText,
-  });
-
-  /// Photo that owns this row.
-  final String photoId;
-
-  /// New raw caption text.
-  final String text;
-
-  /// Previous text kept recoverable on replace.
-  final String? previousText;
-}
+export 'caption_write.dart';
 
 /// Builds per-photo caption rows for a scope (task 012 captions).
 abstract final class CaptionApply {
@@ -89,4 +65,13 @@ abstract final class CaptionApply {
     }
     return '$previous\n$next';
   }
+}
+
+/// How a caption write combines with existing text.
+enum CaptionApplyMode {
+  /// Adds [text] on a new line after the previous value.
+  append,
+
+  /// Replaces the previous value; caller keeps history separately.
+  replace,
 }

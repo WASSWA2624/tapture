@@ -18,6 +18,7 @@ import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/markup_text.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/photo_frame.dart';
 
@@ -59,7 +60,7 @@ final class PhotoTypeScreen extends StatefulWidget {
   State<PhotoTypeScreen> createState() => _PhotoTypeScreenState();
 }
 
-class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
+class _PhotoTypeScreenState extends State<PhotoTypeScreen> with StateRefresh {
   late final TextEditingController _words = TextEditingController()
     ..addListener(_typed);
   late MarkupText _text = MarkupText(
@@ -68,7 +69,7 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
     size: widget.size,
   );
   Size? _photoSize;
-  String? _error;
+  LocalizedMessage? _error;
   bool _busy = false;
 
   @override
@@ -82,10 +83,10 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
     if (!mounted) {
       return;
     }
-    setState(() {
+    refresh(() {
       _photoSize = size;
       if (size == null) {
-        _error = Copy.photoUnreadable;
+        _error = Copy.messages.photoUnreadable;
       }
     });
   }
@@ -98,21 +99,23 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
 
   void _typed() {
     if (_words.text != _text.text) {
-      setState(() => _text = _text.copyWith(text: _words.text));
+      refresh(() => _text = _text.copyWith(text: _words.text));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Size? photoSize = _photoSize;
     final Widget controls = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         AppTextField(
-          label: Copy.photoTypeOn,
+          label: localCopy.photoTypeOn,
           controller: _words,
-          helper: Copy.markupTypeHint,
+          helper: localCopy.markupTypeHint,
           minLines: 1,
           maxLines: 4,
           keyboardType: TextInputType.multiline,
@@ -127,21 +130,21 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
         ),
         const SizedBox(height: Space.x2),
         AppSwitchTile(
-          title: Copy.markupBacking,
-          description: Copy.markupBackingDescription,
+          title: localCopy.markupBacking,
+          description: localCopy.markupBackingDescription,
           value: _text.backing,
           onChanged: (bool on) {
-            setState(() => _text = _text.copyWith(backing: on));
+            refresh(() => _text = _text.copyWith(backing: on));
           },
         ),
         if (_error != null)
           Padding(
             padding: const EdgeInsets.only(top: Space.x2),
-            child: Text(_error!),
+            child: Text(localCopy.resolve(_error!)),
           ),
         const SizedBox(height: Space.x2),
         AppPrimaryAction(
-          label: Copy.save,
+          label: localCopy.save,
           busy: _busy,
           onPressed: _busy || photoSize == null
               ? null
@@ -150,13 +153,15 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
       ],
     );
     return Scaffold(
-      appBar: AppBar(title: const Text(Copy.photoTypeOn)),
+      appBar: AppBar(title: Text(localCopy.photoTypeOn)),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints limits) {
+            final LocalizedCopy localCopy = Copy.of(context);
+
             final bool wide = limits.maxWidth > limits.maxHeight;
             final Widget canvas = photoSize == null
-                ? Center(child: Text(_error == null ? Copy.loading : ''))
+                ? Center(child: Text(_error == null ? localCopy.loading : ''))
                 : _canvas(photoSize);
             final Widget panel = SingleChildScrollView(
               key: const ValueKey<String>('type-controls'),
@@ -236,7 +241,7 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
   void _move(Rect photo, DragUpdateDetails details) {
     final Offset step = PhotoFrame.fractionOf(details.delta, photo);
     final Offset next = _text.centre + step;
-    setState(() {
+    refresh(() {
       _text = _text.copyWith(
         centre: Offset(next.dx.clamp(0.0, 1.0), next.dy.clamp(0.0, 1.0)),
       );
@@ -244,12 +249,12 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
   }
 
   void _style(MarkupInk ink, int size) {
-    setState(() => _text = _text.copyWith(ink: ink, size: size));
+    refresh(() => _text = _text.copyWith(ink: ink, size: size));
     widget.onStyle?.call(ink, size);
   }
 
   Future<void> _save() async {
-    setState(() {
+    refresh(() {
       _busy = true;
       _error = null;
     });
@@ -263,9 +268,9 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
     }
     switch (typed) {
       case FailureResult<Uint8List>(:final Failure failure):
-        setState(() {
+        refresh(() {
           _busy = false;
-          _error = failure.message;
+          _error = failure.explanation;
         });
       case Success<Uint8List>(:final Uint8List value):
         final String id = UuidV7Service(const SystemClock()).newId();
@@ -282,7 +287,7 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> {
           ),
           value,
         );
-        setState(() => _busy = false);
+        refresh(() => _busy = false);
     }
   }
 }

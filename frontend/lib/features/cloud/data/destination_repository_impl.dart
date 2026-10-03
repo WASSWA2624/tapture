@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/cloud/cloud_destination.dart';
 import 'package:tapture/core/cloud/destination_secrets.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/database_provider.dart';
 import 'package:tapture/core/db/tables/tombstones.dart';
@@ -125,9 +126,11 @@ final class DestinationRepositoryImpl implements DestinationRepository {
       return FailureResult<void>(
         error is Failure
             ? error
-            : const StorageFailure(
+            : StorageFailure(
                 message: 'The destination could not be saved.',
+                localizedMessage: Copy.messages.cloudDestinationSaveFailed,
                 recoveryAction: 'Try again.',
+                localizedRecovery: Copy.messages.failureTryAgain,
               ),
       );
     }
@@ -137,20 +140,23 @@ final class DestinationRepositoryImpl implements DestinationRepository {
   Future<Result<void>> remove(String id) async {
     final DestinationRow? row = await _listed(id);
     if (row == null) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         ValidationFailure(
           message: 'That destination is no longer listed.',
+          localizedMessage: Copy.messages.cloudDestinationMissing,
           recoveryAction: 'Refresh the list.',
+          localizedRecovery: Copy.messages.cloudRefreshDestinations,
         ),
       );
     }
     final Result<void> secret = await secrets.forget(row.credentialRef);
     if (secret is FailureResult<void>) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message:
-              'The destination is still listed. The sign-in is still saved.',
-          recoveryAction: 'Try removing it again.',
+          message: Copy.destinationRemoveNothing,
+          localizedMessage: Copy.messages.destinationRemoveNothing,
+          recoveryAction: Copy.destinationRemoveAgain,
+          localizedRecovery: Copy.messages.destinationRemoveAgain,
         ),
       );
     }
@@ -164,14 +170,38 @@ final class DestinationRepositoryImpl implements DestinationRepository {
         deviceId: deviceId,
       );
     } on Object {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message: 'The sign-in was removed. The destination is still listed.',
-          recoveryAction: 'Try removing it again.',
+          message: Copy.destinationRemoveHalf,
+          localizedMessage: Copy.messages.destinationRemoveHalf,
+          recoveryAction: Copy.destinationRemoveAgain,
+          localizedRecovery: Copy.messages.destinationRemoveAgain,
         ),
       );
     }
     return const Success<void>(null);
+  }
+
+  /// Lists [id] again after a removal the person undid. The sign-in is
+  /// written back by the caller, which held it only for the undo.
+  Future<Result<void>> restore(String id) async {
+    try {
+      await removeTombstone(
+        database,
+        entityType: database.destinations.actualTableName,
+        entityId: id,
+      );
+      return const Success<void>(null);
+    } on Object {
+      return FailureResult<void>(
+        StorageFailure(
+          message: Copy.destinationRestoreFailed,
+          localizedMessage: Copy.messages.destinationRestoreFailed,
+          recoveryAction: Copy.destinationAddAgain,
+          localizedRecovery: Copy.messages.destinationAddAgain,
+        ),
+      );
+    }
   }
 
   /// Inserts the attempt as interrupted before any byte is sent.
@@ -192,6 +222,7 @@ final class DestinationRepositoryImpl implements DestinationRepository {
         endedAt: null,
         outcome: 'interrupted',
         failureReason: null,
+        localizedFailure: null,
         offset: attempt.offset,
       );
       await database
@@ -214,10 +245,12 @@ final class DestinationRepositoryImpl implements DestinationRepository {
           );
       return Success<UploadAttempt>(stored);
     } on Object {
-      return const FailureResult<UploadAttempt>(
+      return FailureResult<UploadAttempt>(
         StorageFailure(
           message: 'The upload could not be recorded.',
+          localizedMessage: Copy.messages.cloudUploadRecordFailed,
           recoveryAction: 'Try again.',
+          localizedRecovery: Copy.messages.failureTryAgain,
         ),
       );
     }
@@ -236,10 +269,12 @@ final class DestinationRepositoryImpl implements DestinationRepository {
       );
       return const Success<void>(null);
     } on Object {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
           message: 'The upload history could not be updated.',
+          localizedMessage: Copy.messages.cloudUploadHistoryUpdateFailed,
           recoveryAction: 'The file on this device was not changed.',
+          localizedRecovery: Copy.messages.cloudUploadHistoryUpdateRecovery,
         ),
       );
     }
@@ -278,6 +313,25 @@ final class DestinationRepositoryImpl implements DestinationRepository {
       for (final UploadAttempt attempt in attempts)
         if (attempt.destinationId == destinationId) attempt,
     ]);
+  }
+
+  /// Attempts newest first, updated as each one starts and ends.
+  Stream<List<UploadAttempt>> watchAttempts() {
+    final SimpleSelectStatement<$ExportsTable, ExportRow> query =
+        database.select(database.exports)
+          ..where(
+            ($ExportsTable table) =>
+                table.projectId.equals(_uploadProject) &
+                table.formats.equals(_uploadFormats),
+          )
+          ..orderBy(<OrderClauseGenerator<$ExportsTable>>[
+            ($ExportsTable table) => OrderingTerm.desc(table.createdAt),
+          ]);
+    return query.watch().map(
+      (List<ExportRow> rows) => <UploadAttempt>[
+        for (final ExportRow row in rows) _attempt(row),
+      ],
+    );
   }
 
   /// History callbacks for [UploadRunner].
@@ -340,6 +394,7 @@ final class DestinationRepositoryImpl implements DestinationRepository {
       'byteSize': attempt.byteSize,
       'outcome': attempt.outcome,
       'failureReason': attempt.failureReason,
+      'localizedFailure': ?attempt.localizedFailure?.toJson(),
       'offset': attempt.offset,
       'endedAt': attempt.endedAt?.toUtc().toIso8601String(),
       'startedAt': attempt.startedAt.toUtc().toIso8601String(),
@@ -354,6 +409,7 @@ final class DestinationRepositoryImpl implements DestinationRepository {
     final Object? ended = json['endedAt'];
     final Object? started = json['startedAt'];
     final Object? reason = json['failureReason'];
+    final Object? localized = json['localizedFailure'];
     final Object? size = json['byteSize'];
     final Object? offset = json['offset'];
     return (
@@ -368,8 +424,19 @@ final class DestinationRepositoryImpl implements DestinationRepository {
       endedAt: ended is String ? DateTime.parse(ended) : null,
       outcome: '${json['outcome'] ?? 'interrupted'}',
       failureReason: reason is String ? reason : null,
+      localizedFailure: _failureMessage(localized),
       offset: offset is int ? offset : 0,
     );
+  }
+
+  LocalizedMessage? _failureMessage(Object? value) {
+    try {
+      return value is Map
+          ? LocalizedMessage.fromJson(value.cast<String, Object?>())
+          : null;
+    } on Object {
+      return null;
+    }
   }
 }
 

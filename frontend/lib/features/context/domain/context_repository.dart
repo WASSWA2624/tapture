@@ -1,8 +1,19 @@
 import 'dart:async';
 
+import 'package:tapture/core/copy/domain_copy.g.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'context_state.dart';
+
+/// What [ContextRepository.savePreset] returns for a name the project already
+/// uses when overwrite was not asked for. Callers compare by identity, never
+/// by message text.
+final ValidationFailure presetNameTaken = ValidationFailure(
+  localizedMessage: DomainCopy.messages.failureAPresetWithThatNameAlreadyExists,
+  localizedRecovery:
+      DomainCopy.messages.failureChooseAnotherNameOrConfirmOverwrite,
+);
 
 /// Persistence port for project context. Drift types stop at the data layer.
 abstract interface class ContextRepository {
@@ -41,7 +52,8 @@ abstract interface class ContextRepository {
   /// Live presets for [projectId], most recently used first.
   Stream<List<ContextPreset>> watchPresets(String projectId);
 
-  /// Saves a preset. [overwrite] replaces an existing name.
+  /// Saves a preset. A name already in use fails with [presetNameTaken]
+  /// unless [overwrite] is true, which replaces that preset's values.
   Future<Result<ContextPreset>> savePreset({
     required String projectId,
     required String name,
@@ -53,7 +65,8 @@ abstract interface class ContextRepository {
   /// Deletes a preset by id.
   Future<Result<void>> deletePreset(String id, {required String reason});
 
-  /// Recent values for [fieldKey], newest first.
+  /// Recent values for a level or pin [fieldKey], newest first. They
+  /// survive an app restart.
   Future<Result<List<String>>> recentValues({
     required String projectId,
     required String fieldKey,

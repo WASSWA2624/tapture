@@ -1,4 +1,4 @@
-import 'package:tapture/features/templates/templates.dart';
+import 'package:tapture/features/templates/domain/domain.dart';
 
 /// Stable hierarchy suggestions and any ambiguity that requires attention.
 final class TemplateContextProposal {

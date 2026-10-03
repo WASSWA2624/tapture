@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/text_store.dart';
@@ -88,7 +89,10 @@ final class CapturePersistenceImpl implements CapturePersistence {
       return const Success<void>(null);
     } on Object catch (error) {
       return FailureResult<void>(
-        StorageFailure(message: error.toString(), recoveryAction: 'Try again.'),
+        StorageFailure(
+          message: error.toString(),
+          localizedRecovery: Copy.messages.failureTryAgain,
+        ),
       );
     }
   }
@@ -107,7 +111,8 @@ final class CapturePersistenceImpl implements CapturePersistence {
       return FailureResult<CaptureSession?>(
         StorageFailure(
           message: error.toString(),
-          recoveryAction: 'Discard the interrupted session and start again.',
+          localizedRecovery:
+              Copy.messages.failureDiscardTheInterruptedSessionAndStartAgain,
         ),
       );
     }
@@ -123,7 +128,10 @@ final class CapturePersistenceImpl implements CapturePersistence {
       return const Success<void>(null);
     } on Object catch (error) {
       return FailureResult<void>(
-        StorageFailure(message: error.toString(), recoveryAction: 'Try again.'),
+        StorageFailure(
+          message: error.toString(),
+          localizedRecovery: Copy.messages.failureTryAgain,
+        ),
       );
     }
   }

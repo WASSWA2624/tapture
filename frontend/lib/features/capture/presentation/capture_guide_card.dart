@@ -22,6 +22,8 @@ class CaptureGuideCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (guide.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -32,7 +34,7 @@ class CaptureGuideCard extends ConsumerWidget {
       children: <Widget>[
         AppSectionHeader(
           key: const ValueKey<String>('capture-guide-toggle'),
-          title: Copy.captureGuideTitle,
+          title: localCopy.captureGuideTitle,
           dense: true,
           expanded: open,
           onToggle: ref.read(captureGuideStateProvider.notifier).toggle,
@@ -41,13 +43,13 @@ class CaptureGuideCard extends ConsumerWidget {
           if (guide.photoFields.isNotEmpty)
             _GuideList(
               icon: AppIcons.camera,
-              title: Copy.captureGuidePhotos,
+              title: localCopy.captureGuidePhotos,
               labels: guide.photoFields,
             ),
           if (guide.captionFields.isNotEmpty)
             _GuideList(
               icon: AppIcons.caption,
-              title: Copy.captureGuideCaption,
+              title: localCopy.captureGuideCaption,
               labels: guide.captionFields,
             ),
         ],
@@ -73,6 +75,8 @@ class _GuideList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Color ink = context.colors.onSurface;
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -92,7 +96,7 @@ class _GuideList extends StatelessWidget {
               children: <Widget>[
                 Text(title, style: AppText.label.copyWith(color: ink)),
                 Text(
-                  Copy.captureGuideItems(labels),
+                  localCopy.captureGuideItems(labels),
                   style: AppText.body.copyWith(color: ink),
                 ),
               ],

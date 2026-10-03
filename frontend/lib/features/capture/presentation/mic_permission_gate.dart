@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 
 /// Asks for the microphone on first mic tap only.
 final class MicPermissionGate extends StatefulWidget {
@@ -26,7 +27,8 @@ final class MicPermissionGate extends StatefulWidget {
   State<MicPermissionGate> createState() => _MicPermissionGateState();
 }
 
-class _MicPermissionGateState extends State<MicPermissionGate> {
+class _MicPermissionGateState extends State<MicPermissionGate>
+    with StateRefresh {
   PermissionState _state = PermissionState.denied;
 
   @override
@@ -40,7 +42,7 @@ class _MicPermissionGateState extends State<MicPermissionGate> {
       AppPermission.microphone,
     );
     if (mounted) {
-      setState(() => _state = status);
+      refresh(() => _state = status);
     }
   }
 
@@ -53,6 +55,8 @@ class _MicPermissionGateState extends State<MicPermissionGate> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (_state == PermissionState.granted) {
       return widget.child;
     }
@@ -62,8 +66,8 @@ class _MicPermissionGateState extends State<MicPermissionGate> {
         widget.child,
         if (_state == PermissionState.denied ||
             _state == PermissionState.permanentlyDenied) ...<Widget>[
-          const Text(Copy.captureMicReason),
-          AppButton(label: Copy.captureListening, onPressed: request),
+          Text(localCopy.captureMicReason),
+          AppButton(label: localCopy.captureListening, onPressed: request),
           if (widget.deniedChild != null) widget.deniedChild!,
         ],
       ],

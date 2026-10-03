@@ -9,40 +9,66 @@ import '../domain/feedback_submitter.dart';
 /// domain types so a workbook does not change language with the interface.
 abstract final class FeedbackLabels {
   /// The type as shown on the form and in lists.
-  static String category(FeedbackCategory category) {
+  static String category(
+    FeedbackCategory category, {
+    LocalizedCopy? localizedCopy,
+  }) {
     return switch (category) {
-      FeedbackCategory.general => Copy.feedbackCategoryGeneral,
-      FeedbackCategory.improvement => Copy.feedbackCategoryImprovement,
-      FeedbackCategory.error => Copy.feedbackCategoryError,
-      FeedbackCategory.suggestion => Copy.feedbackCategorySuggestion,
-      FeedbackCategory.other => Copy.feedbackCategoryOther,
+      FeedbackCategory.general =>
+        (localizedCopy ?? Copy.english).feedbackCategoryGeneral,
+      FeedbackCategory.improvement =>
+        (localizedCopy ?? Copy.english).feedbackCategoryImprovement,
+      FeedbackCategory.error =>
+        (localizedCopy ?? Copy.english).feedbackCategoryError,
+      FeedbackCategory.suggestion =>
+        (localizedCopy ?? Copy.english).feedbackCategorySuggestion,
+      FeedbackCategory.other =>
+        (localizedCopy ?? Copy.english).feedbackCategoryOther,
     };
   }
 
   /// Who wrote an entry, as shown on filters and lists.
-  static String submitter(FeedbackSubmitter submitter) {
+  static String submitter(
+    FeedbackSubmitter submitter, {
+    LocalizedCopy? localizedCopy,
+  }) {
     return switch (submitter) {
-      FeedbackSubmitter.signedInUser => Copy.feedbackSubmitterSignedIn,
-      FeedbackSubmitter.localOperator => Copy.feedbackSubmitterLocal,
-      FeedbackSubmitter.anonymous => Copy.feedbackSubmitterAnonymous,
+      FeedbackSubmitter.signedInUser =>
+        (localizedCopy ?? Copy.english).feedbackSubmitterSignedIn,
+      FeedbackSubmitter.localOperator =>
+        (localizedCopy ?? Copy.english).feedbackSubmitterLocal,
+      FeedbackSubmitter.anonymous =>
+        (localizedCopy ?? Copy.english).feedbackSubmitterAnonymous,
     };
   }
 
   /// The device kind as shown on filters.
-  static String deviceType(FeedbackDeviceType type) {
+  static String deviceType(
+    FeedbackDeviceType type, {
+    LocalizedCopy? localizedCopy,
+  }) {
     return switch (type) {
-      FeedbackDeviceType.mobile => Copy.feedbackDeviceMobile,
-      FeedbackDeviceType.tablet => Copy.feedbackDeviceTablet,
-      FeedbackDeviceType.desktop => Copy.feedbackDeviceDesktop,
+      FeedbackDeviceType.mobile =>
+        (localizedCopy ?? Copy.english).feedbackDeviceMobile,
+      FeedbackDeviceType.tablet =>
+        (localizedCopy ?? Copy.english).feedbackDeviceTablet,
+      FeedbackDeviceType.desktop =>
+        (localizedCopy ?? Copy.english).feedbackDeviceDesktop,
     };
   }
 
   /// Whether a screenshot is attached, as shown on filters.
-  static String screenshot(FeedbackScreenshotFilter filter) {
+  static String screenshot(
+    FeedbackScreenshotFilter filter, {
+    LocalizedCopy? localizedCopy,
+  }) {
     return switch (filter) {
-      FeedbackScreenshotFilter.any => Copy.feedbackScreenshotAny,
-      FeedbackScreenshotFilter.attached => Copy.feedbackScreenshotWith,
-      FeedbackScreenshotFilter.missing => Copy.feedbackScreenshotWithout,
+      FeedbackScreenshotFilter.any =>
+        (localizedCopy ?? Copy.english).feedbackScreenshotAny,
+      FeedbackScreenshotFilter.attached =>
+        (localizedCopy ?? Copy.english).feedbackScreenshotWith,
+      FeedbackScreenshotFilter.missing =>
+        (localizedCopy ?? Copy.english).feedbackScreenshotWithout,
     };
   }
 }

@@ -8,5 +8,7 @@ export 'presentation/capture_controller.dart'
         captureControllerProvider,
         capturePersistenceProvider,
         captureRecordWriterProvider,
+        captureDocumentRepositoryProvider,
         photoRepositoryProvider;
 export 'presentation/capture_screen.dart';
+export 'presentation/rapid_mode_screen.dart';

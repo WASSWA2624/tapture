@@ -2,8 +2,8 @@
 
 import 'dart:convert';
 
-import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/attachments.dart';
@@ -16,22 +16,29 @@ import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_relocation.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
+import 'package:tapture/features/quality/quality.dart' show storedIdentityHash;
 import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/audio_draft.dart';
 import '../domain/auto_fields.dart';
 import '../domain/capture_record_persistence.dart';
 import '../domain/capture_session.dart';
+import '../domain/document_draft.dart';
 import '../domain/photo_draft.dart';
+import '../domain/template_usage.dart';
+
+part 'capture_record_documents.dart';
 
 /// The single transaction boundary that turns a capture session into a raw
 /// record. Processing can add proposals later, but never rewrites these raw
 /// values or the frozen context object. An edit session later changes the
 /// record's evidence through [update], beside the raw values (D6).
-final class CaptureRecordWriter implements CaptureRecordPersistence {
+final class CaptureRecordWriter
+    implements CaptureRecordPersistence, TemplateUsage {
   /// Creates a writer over the application database.
   const CaptureRecordWriter({
     required sqlite.AppDatabase db,
@@ -40,12 +47,14 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
     required IdService ids,
     String Function()? operatorName,
     bool Function()? autoFillDates,
+    FileRelocation? relocation,
   }) : _db = db,
        _clock = clock,
        _deviceId = deviceId,
        _ids = ids,
        _operatorName = operatorName,
-       _autoFillDates = autoFillDates;
+       _autoFillDates = autoFillDates,
+       _relocation = relocation;
 
   final sqlite.AppDatabase _db;
   final Clock _clock;
@@ -53,11 +62,58 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
   final IdService _ids;
   final String Function()? _operatorName;
   final bool Function()? _autoFillDates;
+  final FileRelocation? _relocation;
 
-  /// Persists one complete captured record or rolls every row back.
+  /// Persists one complete captured record or rolls every row back, then
+  /// files its photos under the folder the record's own context names.
   @override
-  Future<Result<String>> persist(CaptureSession session) {
-    return createRecord(session);
+  Future<Result<String>> persist(CaptureSession session) async {
+    final Result<String> created = await createRecord(session);
+    if (created case Success<String>(:final String value)) {
+      await _fileUnderContext(value);
+    }
+    return created;
+  }
+
+  /// The project's templates, most recently captured with first. A template
+  /// no record has used yet is not listed.
+  @override
+  Future<Result<List<String>>> recentTemplateIds(String projectId) async {
+    try {
+      final Expression<DateTime> latest = _db.records.capturedAt.max();
+      final List<TypedResult> rows =
+          await (_db.selectOnly(_db.records)
+                ..addColumns(<Expression<Object>>[
+                  _db.records.templateId,
+                  latest,
+                ])
+                ..where(_db.records.projectId.equals(projectId))
+                ..groupBy(<Expression<Object>>[_db.records.templateId])
+                ..orderBy(<OrderingTerm>[OrderingTerm.desc(latest)]))
+              .get();
+      return Success<List<String>>(<String>[
+        for (final TypedResult row in rows)
+          if (row.read(_db.records.templateId) case final String id
+              when id.isNotEmpty)
+            id,
+      ]);
+    } on Object catch (error) {
+      return FailureResult<List<String>>(storageFailureFrom(error));
+    }
+  }
+
+  /// Moves [recordId]'s photos into the folder its context snapshot names,
+  /// promoting any captured under `_unfiled` (spec section 8.1). A failed
+  /// move leaves files and rows agreeing where they were, so the saved
+  /// record stands either way.
+  Future<void> _fileUnderContext(String recordId) async {
+    await _relocation?.relocateRecord(recordId);
+  }
+
+  /// The signed-in operator's name, or null when none is set.
+  String? _operator() {
+    final String? name = _operatorName?.call().trim();
+    return name == null || name.isEmpty ? null : name;
   }
 
   /// Create-path implementation kept distinct so raw-column guardrails can
@@ -78,6 +134,26 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
       final sqlite.Template? template = await (_db.select(
         _db.templates,
       )..where((row) => row.id.equals(session.templateId))).getSingleOrNull();
+      final int version =
+          session.templateVersion ??
+          (template != null && template.version > 1 && session.hasContent
+              ? 0
+              : template?.version ?? 1);
+      final List<sqlite.TemplateField> templateFields = template == null
+          ? const <sqlite.TemplateField>[]
+          : await (_db.select(
+              _db.templateFields,
+            )..where((row) => row.templateId.equals(session.templateId))).get();
+      final TemplateDef? shape = template == null
+          ? null
+          : TemplateVersioning.shapeFor(
+              TemplateMapper.fromRows(
+                header: template,
+                fields: templateFields,
+                rows: const <sqlite.TemplateRow>[],
+              ),
+              version,
+            );
       _expect(
         await upsertRecord(
           _db,
@@ -85,12 +161,16 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
             id: Value<String>(recordId),
             projectId: Value<String>(session.projectId),
             templateId: Value<String>(session.templateId),
-            templateVersion: Value<int>(template?.version ?? 1),
+            templateVersion: Value<int>(version),
             status: Value<String>(RecordStatus.captured.stored),
             processingMode: const Value<String>('manual'),
             contextJson: Value<String>(jsonEncode(session.contextSnapshot)),
             identityHash: Value<String>(
-              sha256.convert(utf8.encode(session.id)).toString(),
+              storedIdentityHash(
+                recordId: session.id,
+                values: session.values,
+                identityKeys: shape?.identityFieldKeys ?? const <String>[],
+              ),
             ),
             source: const Value<String>('capture'),
             capturedAt: Value<DateTime>(now),
@@ -114,6 +194,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         reason: _captureAuditReason,
         clock: _clock,
         device: _deviceId,
+        operator: _operator(),
       );
 
       for (final PhotoDraft photo in session.photos) {
@@ -142,6 +223,8 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
               capturedAt: Value<DateTime>(photo.capturedAt ?? now),
               gpsLat: Value<double?>(photo.gpsLat),
               gpsLon: Value<double?>(photo.gpsLon),
+              derivedFrom: Value<String?>(photo.derivedFrom),
+              rotationDegrees: Value<int?>(photo.rotationDegrees),
             ),
             clock: _clock,
             deviceId: _deviceId,
@@ -196,6 +279,15 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         }
       }
 
+      for (int index = 0; index < session.documents.length; index++) {
+        await _fileDocument(
+          session.documents[index],
+          recordId: recordId,
+          index: index,
+          now: now,
+        );
+      }
+
       final String recordCaption = session.recordCaption.trim();
       if (recordCaption.isNotEmpty) {
         _expect(
@@ -234,16 +326,13 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         );
       }
 
-      final List<sqlite.TemplateField> templateFields = await (_db.select(
-        _db.templateFields,
-      )..where((row) => row.templateId.equals(session.templateId))).get();
       final sqlite.RecordRow stored = await (_db.select(
         _db.records,
       )..where((row) => row.id.equals(recordId))).getSingle();
       final Map<String, Object?> automatic = AutoFields.forTemplate(
-        fields: templateFields.map(TemplateMapper.fieldFromRow),
+        fields: shape?.fields ?? const <FieldDef>[],
         nowUtc: now,
-        operatorName: _operatorName?.call() ?? _deviceId,
+        operatorName: _operator() ?? _deviceId,
         deviceId: _deviceId,
         sequence: stored.recordNumber,
         context: session.contextSnapshot,
@@ -283,6 +372,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
             clock: _clock,
             deviceId: _deviceId,
             ids: _ids,
+            operator: _operatorName?.call(),
           ),
         );
       }
@@ -295,7 +385,7 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
     try {
       final CaptureSession? session = await _read(recordId);
       if (session == null) {
-        return const FailureResult<CaptureSession>(_recordGoneFailure);
+        return FailureResult<CaptureSession>(_recordGoneFailure);
       }
       return Success<CaptureSession>(session);
     } on Failure catch (failure) {
@@ -314,15 +404,23 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
   /// changed goes back to needsReview (task 014 step 5). Template, context
   /// and field values stay.
   @override
-  Future<Result<void>> update(CaptureSession edited) {
+  Future<Result<void>> update(CaptureSession edited) async {
     final String? recordId = edited.recordId;
     if (!edited.editing || recordId == null) {
-      return Future<Result<void>>.value(
-        const FailureResult<void>(
-          ValidationFailure(message: 'Only a record edit can be saved here.'),
+      return FailureResult<void>(
+        ValidationFailure(
+          localizedMessage: Copy.messages.failureOnlyARecordEditCanBeSaved,
         ),
       );
     }
+    final Result<void> updated = await _update(edited, recordId);
+    if (updated is Success<void>) {
+      await _fileUnderContext(recordId);
+    }
+    return updated;
+  }
+
+  Future<Result<void>> _update(CaptureSession edited, String recordId) {
     return runInTransaction(_db, () async {
       final CaptureSession? stored = await _read(recordId);
       if (stored == null) {
@@ -493,6 +591,21 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
         await _appendPhotoAudit(recordId, photoId, _photoAdded);
       }
 
+      final Set<String> documentIds = <String>{
+        for (final DocumentDraft row in stored.documents) row.id,
+      };
+      int documentIndex = stored.documents.length;
+      for (final DocumentDraft document in edited.documents) {
+        if (documentIds.contains(document.id)) continue;
+        await _fileDocument(
+          document,
+          recordId: recordId,
+          index: documentIndex++,
+          now: now,
+        );
+        changed = true;
+      }
+
       // New audio is linked to the record and to its photos.
       final Set<String> heard = <String>{
         for (final AudioDraft clip in stored.audio) clip.id,
@@ -641,11 +754,13 @@ final class CaptureRecordWriter implements CaptureRecordPersistence {
       id: recordId,
       projectId: record.projectId,
       templateId: record.templateId,
+      templateVersion: record.templateVersion,
       contextSnapshot: _context(record.contextJson),
       recordId: recordId,
       editing: true,
       photos: photos,
       audio: await _audio(recordId),
+      documents: await _documents(recordId),
       captions: captions,
     );
   }
@@ -832,9 +947,9 @@ const String _photoRemoved = 'removed';
 /// Audit reason of the status move an edit of an approved record makes.
 const String _editStatusReason = 'Photos, captions or audio edited.';
 
-const StorageFailure _recordGoneFailure = StorageFailure(
-  message: 'That record is no longer on this device.',
-  recoveryAction: 'Go back to the project and pick another record.',
+final StorageFailure _recordGoneFailure = StorageFailure(
+  localizedMessage: Copy.messages.failureThatRecordIsNoLongerOnThis,
+  localizedRecovery: Copy.messages.failureGoBackToTheProjectAndPick,
 );
 
 Map<String, String> _context(String json) {
@@ -869,7 +984,9 @@ void _expect<T>(Result<T> result) {
     case FailureResult<T>(:final Failure failure):
       throw StorageFailure(
         message: failure.message,
+        localizedMessage: failure.localizedMessage,
         recoveryAction: failure.recoveryAction ?? 'Try again.',
+        localizedRecovery: failure.localizedRecovery,
       );
   }
 }

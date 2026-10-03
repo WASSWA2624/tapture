@@ -124,6 +124,8 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -155,7 +157,7 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
           },
           child: AppTextField(
             controller: _controller,
-            label: Copy.captureRecordCaption,
+            label: localCopy.captureRecordCaption,
             minLines: 3,
             maxLines: 6,
             enabled: widget.enabled,
@@ -180,6 +182,8 @@ class _CaptionGuidePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final VoidCallback? close = onClose;
     return Padding(
@@ -208,11 +212,11 @@ class _CaptionGuidePanel extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        Copy.captureGuideCaption,
+                        localCopy.captureGuideCaption,
                         style: AppText.label.copyWith(color: colors.onSurface),
                       ),
                       Text(
-                        Copy.captureGuideItems(labels),
+                        localCopy.captureGuideItems(labels),
                         style: AppText.body.copyWith(color: colors.onSurface),
                       ),
                     ],
@@ -222,8 +226,8 @@ class _CaptionGuidePanel extends StatelessWidget {
                   AppIconButton(
                     key: const ValueKey<String>('capture-caption-guide-close'),
                     icon: AppIcons.close,
-                    tooltip: Copy.captureGuideClose,
-                    semanticLabel: Copy.captureGuideClose,
+                    tooltip: localCopy.captureGuideClose,
+                    semanticLabel: localCopy.captureGuideClose,
                     outlined: false,
                     onPressed: close,
                   ),

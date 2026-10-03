@@ -21,16 +21,21 @@ final class ExportValidation {
         for (final ExportRecord record in records)
           if (!record.approved) record.id,
       ],
+      blocked: const <String>[],
     );
   }
 
   /// Whether [report] names nothing.
   static bool isClean(ExportValidationReport report) {
-    return report.incomplete.isEmpty && report.unapproved.isEmpty;
+    return report.incomplete.isEmpty &&
+        report.unapproved.isEmpty &&
+        report.blocked.isEmpty;
   }
 
   /// Applies [choice]. Fix now does not export. Exclude drops the named
-  /// records. Export anyway sets the incomplete mark on the request.
+  /// records. Export anyway sets the incomplete mark on the request. A
+  /// blocked record never goes out, whatever the choice (task 017: a
+  /// meeting is not exported while its actions lack an owner).
   static ExportGate apply({
     required ExportRequest request,
     required ExportValidationReport report,
@@ -39,7 +44,9 @@ final class ExportValidation {
     final Set<String> named = <String>{
       ...report.incomplete,
       ...report.unapproved,
+      ...report.blocked,
     };
+    final Set<String> blocked = report.blocked.toSet();
     return switch (choice) {
       ExportGateChoice.fixNow => (
         proceed: false,
@@ -53,17 +60,20 @@ final class ExportValidation {
       ),
       ExportGateChoice.exportAnyway => (
         proceed: true,
-        request: request.markIncomplete(),
+        request: request.without(blocked).markIncomplete(),
         named: named.toList(),
       ),
     };
   }
 }
 
-/// What the gate found.
+/// What the gate found. [blocked] records cannot be exported as they are,
+/// such as a meeting whose actions have no owner when its template requires
+/// one.
 typedef ExportValidationReport = ({
   List<String> incomplete,
   List<String> unapproved,
+  List<String> blocked,
 });
 
 /// The operator's decision.

@@ -34,7 +34,11 @@ abstract final class ContextMapper {
         }
       }
     }
-    return ContextState(levels: levels, values: values, pinned: pinned);
+    return ContextState(
+      levels: List<ContextLevel>.unmodifiable(levels),
+      values: Map<String, String>.unmodifiable(values),
+      pinned: Map<String, String>.unmodifiable(pinned),
+    );
   }
 
   /// Encodes label + optional datasetId for the definitions table.
@@ -59,6 +63,45 @@ abstract final class ContextMapper {
       fieldKey: Value<String>(level.fieldKey),
       label: Value<String>(encodeLabel(level)),
     );
+  }
+
+  /// State rows for [state]: one level-0 row holding the pins as JSON, when
+  /// any are set, then one row per level that has a value, at the level's
+  /// 1-based number. [fromRows] reads these back into an equal state.
+  static List<sqlite.ContextStateCompanion> stateToRows({
+    required String projectId,
+    required ContextState state,
+    required DateTime now,
+    required String deviceId,
+  }) {
+    sqlite.ContextStateCompanion row({
+      required int level,
+      required String fieldKey,
+      required String value,
+    }) {
+      return sqlite.ContextStateCompanion.insert(
+        projectId: projectId,
+        level: level,
+        fieldKey: Value<String>(fieldKey),
+        value: value,
+        setAt: now,
+        createdAt: now,
+        updatedAt: now,
+        updatedByDevice: deviceId,
+      );
+    }
+
+    return <sqlite.ContextStateCompanion>[
+      if (state.pinned.isNotEmpty)
+        row(level: 0, fieldKey: '', value: jsonEncode(state.pinned)),
+      for (final ContextLevel level in state.levels)
+        if ((state.values[level.fieldKey] ?? '').isNotEmpty)
+          row(
+            level: level.order + 1,
+            fieldKey: level.fieldKey,
+            value: state.values[level.fieldKey]!,
+          ),
+    ];
   }
 
   /// Preset from a stored row.

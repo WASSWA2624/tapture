@@ -36,6 +36,8 @@ final class ExportProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppErrorState(failure: failed);
@@ -44,10 +46,10 @@ final class ExportProgress extends StatelessWidget {
       return const SizedBox.shrink();
     }
     if (empty || stages.isEmpty) {
-      return const AppEmptyState(
+      return AppEmptyState(
         icon: AppIcons.waiting,
-        headline: Copy.exportEmptyHeadline,
-        message: Copy.exportEmptyMessage,
+        headline: localCopy.exportEmptyHeadline,
+        message: localCopy.exportEmptyMessage,
       );
     }
     return Column(
@@ -61,7 +63,7 @@ final class ExportProgress extends StatelessWidget {
         ),
         AppButton(
           key: const ValueKey<String>('export-cancel'),
-          label: Copy.exportCancel,
+          label: localCopy.exportCancel,
           variant: AppButtonVariant.secondary,
           onPressed: onCancel,
         ),

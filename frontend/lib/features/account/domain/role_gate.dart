@@ -1,4 +1,10 @@
+import 'package:tapture/core/backend/backend_config.dart';
+
 /// Decides which actions a role is shown. No HTTP and no database.
+///
+/// This is the device's one copy of the server's role matrix
+/// (`backend/src/domain/permissions.ts`); `role_matrix_test.dart` reads that
+/// file so the two cannot drift apart.
 final class RoleGate {
   /// Creates a gate for [role]. [contextScope] limits review to one context.
   const RoleGate(this.role, {this.contextScope});
@@ -53,6 +59,41 @@ final class RoleGate {
     }
     return true;
   }
+}
+
+/// The gate for the role cached in [config], or null when the server's role
+/// is unknown. With [projectId], also null when the cached grant does not
+/// include that project and the role is not an administrator's.
+RoleGate? roleGateFor(BackendConfig config, {String? projectId}) {
+  final AccountRole? role = switch (config.role) {
+    'administrator' => AccountRole.administrator,
+    'project_manager' => AccountRole.projectManager,
+    'reviewer' => AccountRole.reviewer,
+    'field_operator' => AccountRole.fieldOperator,
+    _ => null,
+  };
+  if (role == null) return null;
+  if (projectId != null &&
+      role != AccountRole.administrator &&
+      !config.grants.containsKey(projectId)) {
+    return null;
+  }
+  return RoleGate(role, contextScope: config.grants[projectId]);
+}
+
+/// Whether the AI proxy may be offered for [projectId] from the cached
+/// [config]: the role includes it and the cached grant covers the project,
+/// which an administrator's role always does. The server bills and
+/// authorises every call per project, so an empty id is never offered.
+bool mayUseProxy(BackendConfig config, String projectId) {
+  if (projectId.isEmpty) {
+    return false;
+  }
+  return roleGateFor(
+        config,
+        projectId: projectId,
+      )?.allows(RoleCapability.aiProxy) ==
+      true;
 }
 
 /// A role the server understands. This file is the only copy on the device.

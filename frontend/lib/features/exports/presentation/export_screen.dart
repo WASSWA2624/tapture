@@ -70,34 +70,39 @@ final class ExportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Failure? failed = failure;
     if (failed != null) {
       return AppPage(
-        title: Copy.exportTitle,
+        title: localCopy.exportTitle,
         body: AppErrorState(failure: failed),
       );
     }
     if (loading) {
-      return const AppPage(title: Copy.exportTitle, body: SizedBox.shrink());
+      return AppPage(
+        title: localCopy.exportTitle,
+        body: const SizedBox.shrink(),
+      );
     }
     if (scope == null && count == null && !running) {
-      return const AppPage(
-        title: Copy.exportTitle,
+      return AppPage(
+        title: localCopy.exportTitle,
         body: AppEmptyState(
           icon: AppIcons.export,
-          headline: Copy.exportEmptyHeadline,
-          message: Copy.exportEmptyMessage,
+          headline: localCopy.exportEmptyHeadline,
+          message: localCopy.exportEmptyMessage,
         ),
       );
     }
     return AppPage(
       key: const ValueKey<String>('route-export'),
-      title: Copy.exportTitle,
+      title: localCopy.exportTitle,
       footer: running
           ? null
           : AppButton(
               key: const ValueKey<String>('export-run'),
-              label: Copy.exportRun,
+              label: localCopy.exportRun,
               expand: true,
               onPressed: onExport,
             ),

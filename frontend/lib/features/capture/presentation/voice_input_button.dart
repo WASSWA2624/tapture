@@ -8,6 +8,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 
 /// Mic affordance for long-text fields: listening state and live partials.
 final class VoiceInputButton extends StatefulWidget {
@@ -40,7 +41,7 @@ final class VoiceInputButton extends StatefulWidget {
   State<VoiceInputButton> createState() => _VoiceInputButtonState();
 }
 
-class _VoiceInputButtonState extends State<VoiceInputButton> {
+class _VoiceInputButtonState extends State<VoiceInputButton> with StateRefresh {
   bool _listening = false;
   String _partial = '';
   StreamSubscription<SttResult>? _sub;
@@ -54,7 +55,7 @@ class _VoiceInputButtonState extends State<VoiceInputButton> {
   Future<void> _toggle() async {
     if (_listening) {
       await widget.stt.stop();
-      setState(() => _listening = false);
+      refresh(() => _listening = false);
       return;
     }
     final PermissionsService? permissions = widget.permissions;
@@ -70,7 +71,7 @@ class _VoiceInputButtonState extends State<VoiceInputButton> {
         return;
       }
     }
-    setState(() {
+    refresh(() {
       _listening = true;
       _partial = '';
     });
@@ -80,32 +81,36 @@ class _VoiceInputButtonState extends State<VoiceInputButton> {
           (SttResult result) {
             if (result.isFinal) {
               widget.onFinal(result.text);
-              setState(() {
+              refresh(() {
                 _listening = false;
                 _partial = '';
               });
             } else {
               widget.onPartial?.call(result.text);
-              setState(() => _partial = result.text);
+              refresh(() => _partial = result.text);
             }
           },
           onError: (Object _) {
-            setState(() => _listening = false);
+            refresh(() => _listening = false);
           },
         );
   }
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         IconButton(
-          tooltip: _listening ? Copy.stopDictating('') : Copy.dictateInto(''),
+          tooltip: _listening
+              ? localCopy.stopDictating('')
+              : localCopy.dictateInto(''),
           onPressed: _toggle,
           icon: Icon(_listening ? AppIcons.dictating : AppIcons.dictate),
         ),
-        if (_listening) const Text(Copy.captureListening),
+        if (_listening) Text(localCopy.captureListening),
         if (_partial.isNotEmpty) Text(_partial),
       ],
     );

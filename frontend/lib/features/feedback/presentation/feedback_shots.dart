@@ -10,6 +10,7 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/feedback/app_panel_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
@@ -35,6 +36,8 @@ class FeedbackShots extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     // Selected, not watched whole: typing in the form must not rebuild this.
     final List<FeedbackShot> shots = ref.watch(
       feedbackDraftProvider.select(
@@ -61,13 +64,13 @@ class FeedbackShots extends ConsumerWidget {
       children: <Widget>[
         shots.isEmpty
             ? Text(
-                Copy.feedbackNoScreenshot,
+                localCopy.feedbackNoScreenshot,
                 style: AppText.caption.copyWith(
                   color: context.colors.onSurface,
                 ),
               )
             : AppSwitchTile.checkbox(
-                title: Copy.feedbackAttachImages(shots.length),
+                title: localCopy.feedbackAttachImages(shots.length),
                 value: attach,
                 dense: true,
                 controlFirst: true,
@@ -76,7 +79,7 @@ class FeedbackShots extends ConsumerWidget {
               ),
         if (onAddScreen != null)
           AppSwitchTile.checkbox(
-            title: Copy.feedbackIncludeUi,
+            title: localCopy.feedbackIncludeUi,
             value: includeUi,
             dense: true,
             controlFirst: true,
@@ -88,25 +91,26 @@ class FeedbackShots extends ConsumerWidget {
             if (onAddScreen != null)
               AppIconButton(
                 icon: AppIcons.screenshot,
-                semanticLabel: Copy.feedbackAddScreen,
-                tooltip: Copy.feedbackAddScreen,
+                semanticLabel: localCopy.feedbackAddScreen,
+                tooltip: localCopy.feedbackAddScreen,
                 outlined: false,
                 onPressed: onAddScreen,
               ),
             if (canCapture)
               AppIconButton(
                 icon: AppIcons.window,
-                semanticLabel: Copy.feedbackAddWindow,
-                tooltip: Copy.feedbackAddWindow,
+                semanticLabel: localCopy.feedbackAddWindow,
+                tooltip: localCopy.feedbackAddWindow,
                 selected: sharing ? true : null,
                 outlined: false,
-                onPressed: () => unawaited(_addWindow(context, ref)),
+                onPressed: () =>
+                    unawaited(addFeedbackWindowStill(context, ref)),
               ),
             if (sharing)
               AppIconButton(
                 icon: AppIcons.stopSharing,
-                semanticLabel: Copy.feedbackStopSharing,
-                tooltip: Copy.feedbackStopSharing,
+                semanticLabel: localCopy.feedbackStopSharing,
+                tooltip: localCopy.feedbackStopSharing,
                 outlined: false,
                 onPressed: () {
                   ref.read(feedbackWindowShareProvider.notifier).stop();
@@ -115,15 +119,15 @@ class FeedbackShots extends ConsumerWidget {
             if (canTakePhoto)
               AppIconButton(
                 icon: AppIcons.camera,
-                semanticLabel: Copy.feedbackTakePhoto,
-                tooltip: Copy.feedbackTakePhoto,
+                semanticLabel: localCopy.feedbackTakePhoto,
+                tooltip: localCopy.feedbackTakePhoto,
                 outlined: false,
                 onPressed: () => unawaited(_add(context, form, camera: true)),
               ),
             AppIconButton(
               icon: AppIcons.photoLibrary,
-              semanticLabel: Copy.feedbackChoosePhoto,
-              tooltip: Copy.feedbackChoosePhoto,
+              semanticLabel: localCopy.feedbackChoosePhoto,
+              tooltip: localCopy.feedbackChoosePhoto,
               outlined: false,
               onPressed: () => unawaited(_add(context, form, camera: false)),
             ),
@@ -132,7 +136,7 @@ class FeedbackShots extends ConsumerWidget {
         if (sharing) ...<Widget>[
           const SizedBox(height: Space.x1),
           Text(
-            Copy.feedbackSharingWindow,
+            localCopy.feedbackSharingWindow,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: AppText.caption.copyWith(color: context.colors.onSurface),
@@ -141,11 +145,11 @@ class FeedbackShots extends ConsumerWidget {
         if (!canCapture) ...<Widget>[
           const SizedBox(height: Space.x1),
           Text(
-            Copy.feedbackShotTipScreens,
+            localCopy.feedbackShotTipScreens,
             style: AppText.caption.copyWith(color: context.colors.onSurface),
           ),
           Text(
-            Copy.feedbackShotTipApps,
+            localCopy.feedbackShotTipApps,
             style: AppText.caption.copyWith(color: context.colors.onSurface),
           ),
         ],
@@ -165,30 +169,50 @@ class FeedbackShots extends ConsumerWidget {
     GiveFeedbackController form, {
     required bool camera,
   }) async {
-    final String? problem = await form.addPhotos(camera: camera);
+    final LocalizedMessage? problem = await form.addPhotos(camera: camera);
     if (problem != null && context.mounted) {
-      showAppSnack(context, problem, tone: SnackTone.warning);
-    }
-  }
-
-  Future<void> _addWindow(BuildContext context, WidgetRef ref) async {
-    final int before = ref.read(feedbackDraftProvider)?.shots.length ?? 0;
-    final String? problem = await ref
-        .read(feedbackWindowShareProvider.notifier)
-        .addStill();
-    if (!context.mounted) {
-      return;
-    }
-    if (problem != null) {
-      showAppSnack(context, problem, tone: SnackTone.warning);
-      return;
-    }
-    if ((ref.read(feedbackDraftProvider)?.shots.length ?? 0) > before) {
-      showAppSnack(context, Copy.feedbackShotAdded(Copy.feedbackOtherWindow));
+      showAppSnack(
+        context,
+        problem.fallback,
+        localizedMessage: problem,
+        tone: SnackTone.warning,
+      );
     }
   }
 }
 
+/// Adds one still of the shared window to the draft and says how it went.
+/// The form's shot row and the folded bar both call this, so the two
+/// cannot drift (FE-CONS-01).
+Future<void> addFeedbackWindowStill(BuildContext context, WidgetRef ref) async {
+  final int before = ref.read(feedbackDraftProvider)?.shots.length ?? 0;
+  final LocalizedMessage? problem = await ref
+      .read(feedbackWindowShareProvider.notifier)
+      .addStill();
+  if (!context.mounted) {
+    return;
+  }
+  final LocalizedCopy localCopy = Copy.of(context);
+  if (problem != null) {
+    showAppSnack(
+      context,
+      problem.fallback,
+      localizedMessage: problem,
+      tone: SnackTone.warning,
+    );
+    return;
+  }
+  if ((ref.read(feedbackDraftProvider)?.shots.length ?? 0) > before) {
+    showAppSnack(
+      context,
+      localCopy.feedbackShotAdded(localCopy.feedbackOtherWindow),
+    );
+  }
+}
+
+/// The attached images as [AppPhotoThumb]s: one at the gallery size, several
+/// in balanced rows of equal squares. Tap previews, the corner control
+/// removes (FE-CONS-06).
 class _ShotGallery extends StatelessWidget {
   const _ShotGallery({required this.shots, required this.onRemove});
 
@@ -200,21 +224,11 @@ class _ShotGallery extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final double width = constraints.maxWidth;
-        final double ratio = MediaQuery.devicePixelRatioOf(context);
         if (shots.length == 1) {
           final double side = min(AppConstants.userFeedback.galleryTile, width);
           return Align(
             alignment: AlignmentDirectional.centerStart,
-            child: SizedBox(
-              width: side,
-              height: side,
-              child: _ShotTile(
-                shot: shots.single,
-                decodeWidth: (side * ratio).round(),
-                onRemove: onRemove,
-                square: true,
-              ),
-            ),
+            child: _thumb(context, shots.single, side),
           );
         }
         // Balanced rows: five images at up to four across are 3 and 2.
@@ -229,98 +243,37 @@ class _ShotGallery extends StatelessWidget {
           spacing: gap,
           runSpacing: gap,
           children: <Widget>[
-            for (final FeedbackShot shot in shots)
-              SizedBox(
-                width: cell,
-                height: cell,
-                child: _ShotTile(
-                  shot: shot,
-                  decodeWidth: (cell * ratio).round(),
-                  onRemove: onRemove,
-                  square: true,
-                ),
-              ),
+            for (final FeedbackShot shot in shots) _thumb(context, shot, cell),
           ],
         );
       },
     );
   }
-}
 
-class _ShotTile extends StatelessWidget {
-  const _ShotTile({
-    required this.shot,
-    required this.decodeWidth,
-    required this.onRemove,
-    this.square = false,
-  });
+  Widget _thumb(BuildContext context, FeedbackShot shot, double size) {
+    final LocalizedCopy localCopy = Copy.of(context);
 
-  final FeedbackShot shot;
-  final int decodeWidth;
-  final ValueChanged<String> onRemove;
-  final bool square;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppColors colors = context.colors;
-    final BorderSide side = BorderSide(
-      color: colors.outline,
-      width: Theme.of(context).dividerTheme.thickness ?? Space.x0 / 2,
-    );
-    const BorderRadius radius = BorderRadius.all(Radius.circular(Radii.sm));
-    final String remove = Copy.feedbackRemoveShot(shot.label);
-    return Stack(
-      fit: square ? StackFit.expand : StackFit.loose,
-      children: <Widget>[
-        Material(
-          color: colors.surfaceVariant,
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(borderRadius: radius, side: side),
-          child: InkWell(
-            onTap: () => unawaited(_preview(context)),
-            child: Semantics(
-              label: Copy.feedbackScreenshotPreview,
-              image: true,
-              button: true,
-              child: Image.memory(
-                shot.bytes,
-                width: double.infinity,
-                fit: square ? BoxFit.cover : BoxFit.fitWidth,
-                // Decoded at the size it is drawn, not the capture's edge.
-                cacheWidth: decodeWidth,
-                gaplessPlayback: true,
-              ),
-            ),
-          ),
-        ),
-        PositionedDirectional(
-          top: Space.x1,
-          end: Space.x1,
-          // A solid backing keeps the control legible over any image.
-          child: Material(
-            color: colors.surface,
-            shape: const RoundedRectangleBorder(borderRadius: radius),
-            child: AppIconButton(
-              icon: AppIcons.close,
-              semanticLabel: remove,
-              tooltip: remove,
-              onPressed: () => onRemove(shot.id),
-            ),
-          ),
-        ),
-      ],
+    return AppPhotoThumb(
+      key: ValueKey<String>('feedback-shot-${shot.id}'),
+      photo: PhotoAsset(sha256: shot.id, thumbBytes: shot.bytes),
+      size: size,
+      semanticLabel: localCopy.feedbackScreenshotPreview,
+      onTap: () => unawaited(_preview(context, shot)),
+      onRemove: () => onRemove(shot.id),
     );
   }
 
-  Future<void> _preview(BuildContext context) {
+  Future<void> _preview(BuildContext context, FeedbackShot shot) {
     return showAppPanelDialog<void>(
       context,
       title: shot.label,
       maxWidth: AppConstants.userFeedback.previewWidth,
       builder: (BuildContext _) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         return SingleChildScrollView(
           child: Semantics(
-            label: Copy.feedbackShotPreview,
+            label: localCopy.feedbackShotPreview,
             image: true,
             child: Image.memory(
               shot.bytes,

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tapture/app/theme/color_tokens.dart';
-import 'package:tapture/app/theme/dimensions.dart';
-import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/feedback_entry.dart';
@@ -32,6 +31,7 @@ class FeedbackBrowser extends StatelessWidget {
     required this.tile,
     this.lead,
     this.error,
+    this.localizedError,
   });
 
   /// Every stored entry.
@@ -70,9 +70,14 @@ class FeedbackBrowser extends StatelessWidget {
   /// Why the last action failed, when it did.
   final String? error;
 
+  /// Semantic action error resolved against the browser's current locale.
+  final LocalizedMessage? localizedError;
+
   @override
   Widget build(BuildContext context) {
-    final String? error = this.error;
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    final String? error = localCopy.stateText(localizedError, this.error);
     final Widget? lead = this.lead;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -88,30 +93,35 @@ class FeedbackBrowser extends StatelessWidget {
         Semantics(
           liveRegion: true,
           child: AppSectionHeader(
-            title: Copy.feedbackMatching(matching.length, all.length),
+            title: localCopy.feedbackMatching(matching.length, all.length),
             dense: true,
-            action: filter.isEmpty
+            // With nothing matching, the empty state offers Clear filters
+            // instead, so the page shows it once.
+            action: filter.isEmpty || matching.isEmpty
                 ? null
                 : AppButton(
-                    label: Copy.feedbackClearFilters,
+                    label: localCopy.feedbackClearFilters,
                     variant: AppButtonVariant.text,
                     onPressed: () => onFilter(const FeedbackFilter()),
                   ),
           ),
         ),
         if (error != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Space.x4),
-            child: Text(
-              error,
-              style: AppText.body.copyWith(color: context.colors.onSurface),
-            ),
+          AppBanner(
+            key: const ValueKey<String>('feedback-browser-error'),
+            message: error,
+            icon: AppIcons.warning,
+            tone: SnackTone.warning,
           ),
         if (matching.isEmpty)
-          const AppEmptyState(
+          AppEmptyState(
             icon: AppIcons.filter,
-            headline: Copy.feedbackNoMatchHeadline,
-            message: Copy.feedbackNoMatchMessage,
+            headline: localCopy.feedbackNoMatchHeadline,
+            message: localCopy.feedbackNoMatchMessage,
+            actionLabel: filter.isEmpty ? null : localCopy.feedbackClearFilters,
+            onAction: filter.isEmpty
+                ? null
+                : () => onFilter(const FeedbackFilter()),
           )
         else ...<Widget>[
           ?lead,
@@ -120,7 +130,7 @@ class FeedbackBrowser extends StatelessWidget {
             tile(entry, index + 1),
           if (visible < matching.length)
             AppButton(
-              label: Copy.feedbackShowMore,
+              label: localCopy.feedbackShowMore,
               variant: AppButtonVariant.text,
               onPressed: onShowMore,
             ),

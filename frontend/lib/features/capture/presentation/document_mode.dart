@@ -1,73 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
+import 'package:tapture/features/capture/domain/document_correction.dart';
 
-/// Document-mode boundary detection outcome for the shutter path.
-enum DocumentBoundary {
-  /// Page edge found; offer perspective correction.
-  detected,
-
-  /// No edge; capture normally.
-  notDetected,
-
-  /// Correction failed; keep the original.
-  correctionFailed,
-}
-
-/// Document mode UI: reports boundary outcome without blocking the shutter.
+/// Document mode's word on the last shot. It never blocks the shutter: a
+/// found page offers the straightened copy beside the kept original, and a
+/// missing or failed one says the photo was kept as it is.
 final class DocumentMode extends StatelessWidget {
-  /// Creates a document-mode banner.
+  /// Creates the notice for [boundary].
   const DocumentMode({
     required this.boundary,
-    this.onUseCorrected,
-    this.onKeepOriginal,
+    required this.onUseCorrected,
+    required this.onKeepOriginal,
     super.key,
   });
 
   /// Detection outcome.
   final DocumentBoundary boundary;
 
-  /// Use the perspective-corrected derived file.
-  final VoidCallback? onUseCorrected;
+  /// Stores the perspective-corrected derived file.
+  final VoidCallback onUseCorrected;
 
-  /// Keep the uncorrected original.
-  final VoidCallback? onKeepOriginal;
+  /// Keeps only the uncorrected original; also dismisses the notice.
+  final VoidCallback onKeepOriginal;
 
   @override
   Widget build(BuildContext context) {
-    final String message = switch (boundary) {
-      DocumentBoundary.detected => 'Page edge found.',
-      DocumentBoundary.notDetected => Copy.captureNoPageBoundary,
-      DocumentBoundary.correctionFailed => 'Correction failed. Kept original.',
-    };
-    return Semantics(
-      label: message,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(Space.x3),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(message),
-              if (boundary == DocumentBoundary.detected) ...<Widget>[
-                const SizedBox(height: 8),
-                Row(
-                  children: <Widget>[
-                    TextButton(
-                      onPressed: onUseCorrected,
-                      child: const Text('Use corrected'),
-                    ),
-                    TextButton(
-                      onPressed: onKeepOriginal,
-                      child: const Text(Copy.captureKeepPhoto),
-                    ),
-                  ],
-                ),
-              ],
-            ],
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    return switch (boundary) {
+      DocumentBoundary.detected => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          AppBanner(
+            message: localCopy.capturePageBoundaryFound,
+            icon: AppIcons.photoDocument,
+            tone: SnackTone.info,
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(Space.x2),
+            child: ResponsivePair(
+              stacksOnCompact: false,
+              start: AppButton(
+                label: localCopy.captureKeepPhoto,
+                variant: AppButtonVariant.secondary,
+                expand: true,
+                onPressed: onKeepOriginal,
+              ),
+              end: AppButton(
+                label: localCopy.captureUseCorrected,
+                expand: true,
+                onPressed: onUseCorrected,
+              ),
+            ),
+          ),
+        ],
       ),
-    );
+      DocumentBoundary.notDetected => AppBanner(
+        message: localCopy.captureNoPageBoundary,
+        icon: AppIcons.info,
+        tone: SnackTone.info,
+        onDismiss: onKeepOriginal,
+      ),
+      DocumentBoundary.correctionFailed => AppBanner(
+        message: localCopy.captureCorrectionFailed,
+        icon: AppIcons.warning,
+        tone: SnackTone.warning,
+        onDismiss: onKeepOriginal,
+      ),
+    };
   }
 }

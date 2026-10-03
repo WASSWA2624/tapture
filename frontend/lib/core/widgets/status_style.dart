@@ -7,49 +7,61 @@ part of 'app_status_pill.dart';
 abstract final class StatusStyle {
   /// Resolves [status] against [colors]. Labels are the shared vocabulary,
   /// not invented per screen (FE-CONS-07).
-  static (Color, IconData, String) of(RecordStatus status, AppColors colors) {
+  static (Color, IconData, String) of(
+    RecordStatus status,
+    AppColors colors, {
+    LocalizedCopy? localizedCopy,
+  }) {
     return switch (status) {
       RecordStatus.draft => (
         colors.secondary,
         AppIcons.draft,
-        Copy.statusDraft,
+        (localizedCopy ?? Copy.english).statusDraft,
       ),
       RecordStatus.captured => (
         colors.info,
         AppIcons.captured,
-        Copy.statusCaptured,
+        (localizedCopy ?? Copy.english).statusCaptured,
       ),
-      RecordStatus.queued => (colors.info, AppIcons.queued, Copy.statusQueued),
+      RecordStatus.queued => (
+        colors.info,
+        AppIcons.queued,
+        (localizedCopy ?? Copy.english).statusQueued,
+      ),
       RecordStatus.processing => (
         colors.secondary,
         AppIcons.processing,
-        Copy.statusProcessing,
+        (localizedCopy ?? Copy.english).statusProcessing,
       ),
       RecordStatus.extracted => (
         colors.info,
         AppIcons.ai,
-        Copy.statusExtracted,
+        (localizedCopy ?? Copy.english).statusExtracted,
       ),
       RecordStatus.needsReview => (
         colors.warning,
         AppIcons.review,
-        Copy.statusNeedsReview,
+        (localizedCopy ?? Copy.english).statusNeedsReview,
       ),
       RecordStatus.approved => (
         colors.success,
         AppIcons.verified,
-        Copy.statusApproved,
+        (localizedCopy ?? Copy.english).statusApproved,
       ),
-      RecordStatus.failed => (colors.danger, AppIcons.error, Copy.failed),
+      RecordStatus.failed => (
+        colors.danger,
+        AppIcons.error,
+        (localizedCopy ?? Copy.english).failed,
+      ),
       RecordStatus.archived => (
         colors.outline,
         AppIcons.archive,
-        Copy.statusArchived,
+        (localizedCopy ?? Copy.english).statusArchived,
       ),
       RecordStatus.deleted => (
         colors.danger,
         AppIcons.delete,
-        Copy.statusDeleted,
+        (localizedCopy ?? Copy.english).statusDeleted,
       ),
     };
   }

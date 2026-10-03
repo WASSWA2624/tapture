@@ -60,6 +60,8 @@ final class PhotoTray extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     if (photos.isEmpty) {
       // The catalogue empty state names the next step, and its add-photo
       // icon is the action, with no button under it (FBK0000004,
@@ -67,22 +69,24 @@ final class PhotoTray extends StatelessWidget {
       // is plain and the gate message above says why.
       return AppEmptyState(
         icon: AppIcons.addPhoto,
-        headline: Copy.captureNoPhotosHeadline,
-        message: Copy.captureNoPhotosMessage,
+        headline: localCopy.captureNoPhotosHeadline,
+        message: localCopy.captureNoPhotosMessage,
         onIconTap: onAdd,
-        iconLabel: Copy.captureAddPhoto,
+        iconLabel: localCopy.captureAddPhoto,
       );
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(Copy.capturePhotoCount(photos.length)),
+        Text(localCopy.capturePhotoCount(photos.length)),
         SizedBox(
           height: Space.x12 * 2,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: photos.length + 1,
             itemBuilder: (BuildContext context, int index) {
+              final LocalizedCopy localCopy = Copy.of(context);
+
               const double edge = Space.x12 * 2;
               if (index == photos.length) {
                 return Align(
@@ -118,7 +122,7 @@ final class PhotoTray extends StatelessWidget {
                     selected: selectedIds.contains(photo.id),
                     statusLabel: photo.processingState == 'ready'
                         ? null
-                        : Copy.capturePhotoProcessing,
+                        : localCopy.capturePhotoProcessing,
                     onTap: () => onTap?.call(photo),
                     onLongPress: () => onLongPress?.call(photo),
                     onSelectedChanged: (bool _) => onLongPress?.call(photo),
@@ -146,12 +150,14 @@ class _AddPhotoTarget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     return Semantics(
       button: true,
-      label: Copy.captureAddPhoto,
+      label: localCopy.captureAddPhoto,
       child: Tooltip(
-        message: Copy.captureAddPhoto,
+        message: localCopy.captureAddPhoto,
         child: SizedBox(
           width: edge,
           height: edge,

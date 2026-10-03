@@ -24,8 +24,11 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
 
   static const GiveFeedbackView _clean = (
     messageError: null,
+    localizedMessageError: null,
     otherError: null,
+    localizedOtherError: null,
     saveError: null,
+    localizedSaveError: null,
   );
 
   @override
@@ -36,8 +39,11 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
     ref.read(feedbackDraftProvider.notifier).setCategory(category);
     state = (
       messageError: state.messageError,
+      localizedMessageError: state.localizedMessageError,
       otherError: null,
+      localizedOtherError: null,
       saveError: null,
+      localizedSaveError: null,
     );
   }
 
@@ -49,7 +55,7 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
   /// Adds photos from the camera, or up to the room left from the library,
   /// each capped to the feedback long edge. Returns why none were added, or
   /// null; a cancelled picker is not a failure.
-  Future<String?> addPhotos({required bool camera}) async {
+  Future<LocalizedMessage?> addPhotos({required bool camera}) async {
     final FeedbackDraftController draft = ref.read(
       feedbackDraftProvider.notifier,
     );
@@ -57,7 +63,7 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
         AppConstants.userFeedback.maxShots -
         (ref.read(feedbackDraftProvider)?.shots.length ?? 0);
     if (room <= 0) {
-      return Copy.feedbackShotsFull;
+      return Copy.messages.feedbackShotsFull;
     }
     final PhotoPicker picker = ref.read(feedbackPhotosProvider);
     final int edge = AppConstants.userFeedback.screenshotLongEdge;
@@ -66,10 +72,10 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
         : await picker.choose(limit: room, longEdge: edge);
     switch (picked) {
       case FailureResult<List<Uint8List>>(:final Failure failure):
-        return failure.message;
+        return failure.explanation;
       case Success<List<Uint8List>>(:final List<Uint8List> value):
         for (final Uint8List photo in value) {
-          final String? full = draft.addShot(
+          final LocalizedMessage? full = draft.addShot(
             await FeedbackShotFit.cap(photo),
             label: Copy.photo,
           );
@@ -88,16 +94,20 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
     );
     final FeedbackDraft? draft = ref.read(feedbackDraftProvider);
     if (draft == null) {
-      const ValidationFailure missing = ValidationFailure(
-        message: Copy.somethingWentWrong,
-        recoveryAction: 'Close this, tap Feedback, then try again.',
+      final ValidationFailure missing = ValidationFailure(
+        localizedMessage: Copy.messages.somethingWentWrong,
+        localizedRecovery:
+            Copy.messages.failureCloseThisTapFeedbackThenTryAgain,
       );
       state = (
         messageError: null,
+        localizedMessageError: null,
         otherError: null,
+        localizedOtherError: null,
         saveError: missing.message,
+        localizedSaveError: missing.explanation,
       );
-      return const FailureResult<FeedbackEntry>(missing);
+      return FailureResult<FeedbackEntry>(missing);
     }
     final String text = draft.message.trim();
     final bool isOther = draft.category == FeedbackCategory.other;
@@ -105,19 +115,30 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
     final String? messageError = text.isEmpty
         ? Copy.feedbackMessageRequired
         : null;
+    final LocalizedMessage? localizedMessageError = text.isEmpty
+        ? Copy.messages.feedbackMessageRequired
+        : null;
     final String? otherError = isOther && named.isEmpty
         ? Copy.feedbackOtherRequired
+        : null;
+    final LocalizedMessage? localizedOtherError = isOther && named.isEmpty
+        ? Copy.messages.feedbackOtherRequired
         : null;
     if (messageError != null || otherError != null) {
       state = (
         messageError: messageError,
+        localizedMessageError: localizedMessageError,
         otherError: otherError,
+        localizedOtherError: localizedOtherError,
         saveError: null,
+        localizedSaveError: null,
       );
       return FailureResult<FeedbackEntry>(
         ValidationFailure(
           message: messageError ?? otherError!,
-          recoveryAction: 'Correct the highlighted field and save again.',
+          localizedMessage: localizedMessageError ?? localizedOtherError,
+          localizedRecovery:
+              Copy.messages.failureCorrectTheHighlightedFieldAndSaveAgain,
         ),
       );
     }
@@ -147,8 +168,11 @@ final class GiveFeedbackController extends Notifier<GiveFeedbackView> {
       case FailureResult<FeedbackEntry>(:final Failure failure):
         state = (
           messageError: null,
+          localizedMessageError: null,
           otherError: null,
+          localizedOtherError: null,
           saveError: failure.message,
+          localizedSaveError: failure.explanation,
         );
     }
     return result;

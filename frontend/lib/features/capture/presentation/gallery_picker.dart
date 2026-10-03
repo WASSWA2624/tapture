@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/file_validation.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -46,25 +47,33 @@ final class GalleryPicker extends StatelessWidget {
       limit: limit,
       longEdge: longEdge,
     );
+    if (!context.mounted) return;
     result.fold(
       (Failure failure) {
-        showAppSnack(context, failure.message, tone: SnackTone.error);
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
       },
       (List<Uint8List> photos) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         final List<Uint8List> ok = <Uint8List>[];
         for (final Uint8List bytes in photos) {
           if (bytes.length > maxBytes) {
             showAppSnack(
               context,
-              Copy.captureImportRejected('File too large.'),
+              localCopy.captureImportRejected('File too large.'),
               tone: SnackTone.warning,
             );
             continue;
           }
-          if (!_looksLikeImage(bytes)) {
+          if (imageExtensionFromHeader(bytes) == null) {
             showAppSnack(
               context,
-              Copy.captureImportRejected('Not an image.'),
+              localCopy.captureImportRejected('Not an image.'),
               tone: SnackTone.warning,
             );
             continue;
@@ -78,23 +87,12 @@ final class GalleryPicker extends StatelessWidget {
     );
   }
 
-  static bool _looksLikeImage(Uint8List bytes) {
-    if (bytes.length < 3) {
-      return false;
-    }
-    if (bytes[0] == 0xFF && bytes[1] == 0xD8) {
-      return true;
-    }
-    if (bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E) {
-      return true;
-    }
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppButton(
-      label: Copy.captureImportGallery,
+      label: localCopy.captureImportGallery,
       onPressed: () => _pick(context),
     );
   }

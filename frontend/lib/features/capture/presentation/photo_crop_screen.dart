@@ -11,6 +11,7 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/photo_frame.dart';
 
@@ -41,11 +42,11 @@ final class PhotoCropScreen extends StatefulWidget {
   State<PhotoCropScreen> createState() => _PhotoCropScreenState();
 }
 
-class _PhotoCropScreenState extends State<PhotoCropScreen> {
+class _PhotoCropScreenState extends State<PhotoCropScreen> with StateRefresh {
   /// The crop as fractions of the photo as shown, after its rotation.
   Rect _fraction = const Rect.fromLTWH(0.1, 0.1, 0.8, 0.8);
   Size? _photoSize;
-  String? _error;
+  LocalizedMessage? _error;
   bool _busy = false;
 
   @override
@@ -62,28 +63,30 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
     if (!mounted) {
       return;
     }
-    setState(() {
+    refresh(() {
       _photoSize = size;
       if (size == null) {
-        _error = Copy.photoUnreadable;
+        _error = Copy.messages.photoUnreadable;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Uint8List? bytes = widget.bytes;
     final Size? size = _photoSize;
     final AppColors colors = context.colors;
     return Scaffold(
-      appBar: AppBar(title: const Text(Copy.photoCrop)),
+      appBar: AppBar(title: Text(localCopy.photoCrop)),
       body: Column(
         children: <Widget>[
           Expanded(
             child: bytes == null
                 ? Center(child: Text(widget.photo.id))
                 : size == null
-                ? Center(child: Text(_error == null ? Copy.loading : ''))
+                ? Center(child: Text(_error == null ? localCopy.loading : ''))
                 : _CropFrame(
                     bytes: bytes,
                     photoSize: size,
@@ -92,13 +95,13 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
                       widget.photo.rotationDegrees,
                     ),
                     color: colors.primary,
-                    onChanged: (Rect next) => setState(() => _fraction = next),
+                    onChanged: (Rect next) => refresh(() => _fraction = next),
                   ),
           ),
           if (_error != null)
             Padding(
               padding: const EdgeInsets.all(Space.x2),
-              child: Text(_error!),
+              child: Text(localCopy.resolve(_error!)),
             ),
           Padding(
             padding: const EdgeInsets.all(Space.x2),
@@ -106,7 +109,7 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
               children: <Widget>[
                 Expanded(
                   child: AppButton(
-                    label: Copy.photoCrop,
+                    label: localCopy.photoCrop,
                     busy: _busy,
                     onPressed: _busy || (bytes != null && size == null)
                         ? null
@@ -116,7 +119,7 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
                 const SizedBox(width: Space.x2),
                 Expanded(
                   child: AppButton(
-                    label: Copy.photoRevert,
+                    label: localCopy.photoRevert,
                     variant: AppButtonVariant.secondary,
                     onPressed: () => widget.onRevert(widget.photo),
                   ),
@@ -131,7 +134,7 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
 
   Future<void> _apply() async {
     final Uint8List? bytes = widget.bytes;
-    setState(() {
+    refresh(() {
       _busy = true;
       _error = null;
     });
@@ -147,9 +150,9 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
       }
       switch (cropped) {
         case FailureResult<Uint8List>(:final Failure failure):
-          setState(() {
+          refresh(() {
             _busy = false;
-            _error = failure.message;
+            _error = failure.explanation;
           });
           return;
         case Success<Uint8List>(:final Uint8List value):
@@ -171,7 +174,7 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> {
       png,
     );
     if (mounted) {
-      setState(() => _busy = false);
+      refresh(() => _busy = false);
     }
   }
 }
@@ -210,6 +213,8 @@ class _CropFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints limits) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         final Size area = limits.biggest;
         final Rect photo = PhotoFrame.fit(
           Size(
@@ -236,7 +241,7 @@ class _CropFrame extends StatelessWidget {
             Positioned.fromRect(
               rect: frame,
               child: Semantics(
-                label: Copy.photoCropFrame,
+                label: localCopy.photoCropFrame,
                 child: GestureDetector(
                   key: const ValueKey<String>('photo-crop-frame'),
                   behavior: HitTestBehavior.opaque,
@@ -263,7 +268,7 @@ class _CropFrame extends StatelessWidget {
                 width: Sizes.minTapTarget,
                 height: Sizes.minTapTarget,
                 child: Semantics(
-                  label: Copy.photoCropCorner,
+                  label: localCopy.photoCropCorner,
                   child: GestureDetector(
                     key: ValueKey<String>('photo-crop-corner-$corner'),
                     behavior: HitTestBehavior.opaque,

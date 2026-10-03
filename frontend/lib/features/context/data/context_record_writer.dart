@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/db/transactions.dart';
@@ -69,7 +70,9 @@ final class ContextRecordWriter {
           )) {
             throw StorageFailure(
               message: failure.message,
+              localizedMessage: failure.localizedMessage,
               recoveryAction: failure.recoveryAction ?? 'Try again.',
+              localizedRecovery: failure.localizedRecovery,
             );
           }
         }
@@ -103,10 +106,10 @@ final class ContextRecordWriter {
             ))
             .getSingleOrNull();
     if (existing == null) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         ValidationFailure(
-          message: 'That field is not on this record.',
-          recoveryAction: 'Open the record and try again.',
+          localizedMessage: Copy.messages.failureThatFieldIsNotOnThisRecord,
+          localizedRecovery: Copy.messages.failureOpenTheRecordAndTryAgain,
         ),
       );
     }

@@ -13,11 +13,13 @@ final class PhotoDeleteAction {
     required Future<PhotoDraft?> Function(String photoId) delete,
     required Future<void> Function(PhotoDraft photo) undo,
   }) async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final bool ok = await showAppConfirm(
       context,
-      title: Copy.captureDeletePhotoTitle,
-      message: Copy.captureDeletePhotoMessage,
-      confirmLabel: Copy.captureDeletePhotoTitle,
+      title: localCopy.captureDeletePhotoTitle,
+      message: localCopy.captureDeletePhotoMessage,
+      confirmLabel: localCopy.captureDeletePhotoTitle,
       destructive: true,
     );
     if (!ok) {
@@ -29,8 +31,8 @@ final class PhotoDeleteAction {
     }
     showAppSnack(
       context,
-      Copy.capturePhotoDeleted,
-      undoLabel: Copy.captureUndoDelete,
+      localCopy.capturePhotoDeleted,
+      undoLabel: localCopy.captureUndoDelete,
       onUndo: () {
         undo(removed);
       },

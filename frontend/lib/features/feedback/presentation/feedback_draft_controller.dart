@@ -23,7 +23,10 @@ final class FeedbackDraftController extends Notifier<FeedbackDraft?> {
   /// A Feedback tap on [context]. Starts a fresh draft, unless one is open,
   /// which keeps its text and gains [screenshot]. Returns why the open
   /// draft could not take it, or null.
-  String? capture({required FeedbackContext context, Uint8List? screenshot}) {
+  LocalizedMessage? capture({
+    required FeedbackContext context,
+    Uint8List? screenshot,
+  }) {
     final FeedbackDraft? current = state;
     final bool pictured = screenshot != null && screenshot.isNotEmpty;
     final String label = Copy.feedbackScreenshotOf(context.screen);
@@ -69,13 +72,13 @@ final class FeedbackDraftController extends Notifier<FeedbackDraft?> {
 
   /// Adds an image while there is room, and turns attach on. Returns why
   /// it could not, or null.
-  String? addShot(Uint8List bytes, {required String label}) {
+  LocalizedMessage? addShot(Uint8List bytes, {required String label}) {
     final FeedbackDraft? current = state;
     if (current == null) {
-      return Copy.somethingWentWrong;
+      return Copy.messages.somethingWentWrong;
     }
     if (current.shots.length >= AppConstants.userFeedback.maxShots) {
-      return Copy.feedbackShotsFull;
+      return Copy.messages.feedbackShotsFull;
     }
     state = current.copyWith(
       shots: <FeedbackShot>[...current.shots, _shot(bytes, label)],

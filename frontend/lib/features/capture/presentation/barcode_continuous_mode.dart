@@ -1,73 +1,42 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:tapture/core/barcode/barcode_scanner_service.dart';
-import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 
-/// Continuous scan with debounce, running count and undo.
-final class BarcodeContinuousMode extends StatefulWidget {
-  /// Creates continuous mode.
-  const BarcodeContinuousMode({
-    required this.scanner,
-    this.debounce = AppConstants.barcodeRepeatWindow,
-    super.key,
-  });
+/// Count mode's running tally under the live scanner: how many codes have
+/// been counted and each one, newest first, so the last scan is always in
+/// view for undo (§25 continuous mode). The scanner screen owns the camera,
+/// the repeat window and the undo control.
+final class BarcodeContinuousMode extends StatelessWidget {
+  /// Creates the tally of [scans], oldest first.
+  const BarcodeContinuousMode({required this.scans, super.key});
 
-  /// Scanner port.
-  final BarcodeScannerService scanner;
-
-  /// Repeat-code window.
-  final Duration debounce;
-
-  @override
-  State<BarcodeContinuousMode> createState() => _BarcodeContinuousModeState();
-}
-
-class _BarcodeContinuousModeState extends State<BarcodeContinuousMode> {
-  final List<String> _scans = <String>[];
-  StreamSubscription<BarcodeHit>? _sub;
-
-  @override
-  void initState() {
-    super.initState();
-    _sub =
-        BarcodeScannerService.debounceRepeats(
-          widget.scanner.hits,
-          window: widget.debounce,
-        ).listen((BarcodeHit hit) {
-          setState(() => _scans.add(hit.rawValue));
-        });
-    unawaited(widget.scanner.start());
-  }
-
-  @override
-  void dispose() {
-    _sub?.cancel();
-    widget.scanner.stop();
-    super.dispose();
-  }
+  /// The codes counted so far, oldest first.
+  final List<String> scans;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Text(Copy.barcodeScanCount(_scans.length)),
-        Expanded(
-          child: ListView(
-            children: <Widget>[
-              for (final String code in _scans) ListTile(title: Text(code)),
-            ],
-          ),
-        ),
-        AppButton(
-          label: Copy.barcodeUndoLast,
-          onPressed: _scans.isEmpty
-              ? null
-              : () => setState(() => _scans.removeLast()),
-        ),
-      ],
+    return ListView.builder(
+      itemCount: scans.length + 1,
+      itemBuilder: (BuildContext context, int index) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
+        if (index == 0) {
+          return AppBanner(
+            message: localCopy.barcodeScanCount(scans.length),
+            icon: AppIcons.checklist,
+            tone: SnackTone.info,
+          );
+        }
+        final int position = scans.length - index;
+        return AppListTile(
+          title: scans[position],
+          subtitle: localCopy.barcodeCountPosition(position + 1),
+          dense: true,
+        );
+      },
     );
   }
 }

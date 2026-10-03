@@ -13,15 +13,17 @@ Future<bool> confirmUpload(
   required String destination,
   required String folder,
 }) {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   return showAppConfirm(
     context,
-    title: Copy.uploadConfirmTitle,
-    message: Copy.uploadConfirmMessage(
+    title: localCopy.uploadConfirmTitle,
+    message: localCopy.uploadConfirmMessage(
       name: name,
       size: size,
       destination: destination,
       folder: folder,
     ),
-    confirmLabel: Copy.uploadConfirm,
+    confirmLabel: localCopy.uploadConfirm,
   );
 }

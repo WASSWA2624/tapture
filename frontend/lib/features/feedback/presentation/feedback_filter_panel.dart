@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
-import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/time/clock.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
-import 'package:tapture/core/widgets/responsive/breakpoints.dart';
+import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 
 import '../domain/feedback_category.dart';
 import '../domain/feedback_device_type.dart';
@@ -61,11 +60,9 @@ class FeedbackFilterPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppColors colors = context.colors;
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final int folded = _foldedInUse(filter);
-    final String toggle = expanded
-        ? Copy.feedbackFewerFilters
-        : Copy.feedbackMoreFilters(folded);
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(
         Space.x4,
@@ -76,40 +73,21 @@ class FeedbackFilterPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: AppSearchField(
-                  hint: Copy.feedbackSearch,
-                  text: filter.search,
-                  onChanged: (String value) {
-                    onChanged(filter.copyWith(search: value));
-                  },
-                ),
-              ),
-              const SizedBox(width: Space.x2),
-              Semantics(
-                expanded: expanded,
-                child: Badge.count(
-                  key: const ValueKey<String>('feedback-more-filters'),
-                  count: folded,
-                  isLabelVisible: folded > 0 && !expanded,
-                  backgroundColor: colors.primary,
-                  textColor: colors.onPrimary,
-                  child: AppIconButton(
-                    icon: AppIcons.filter,
-                    semanticLabel: toggle,
-                    tooltip: toggle,
-                    selected: expanded,
-                    onPressed: onToggleExpanded,
-                  ),
-                ),
-              ),
-            ],
+          // The shared search field draws the one filter button, with the
+          // count of folded facets in use, as every list does (FE-CONS-05).
+          AppSearchField(
+            key: const ValueKey<String>('feedback-more-filters'),
+            hint: localCopy.feedbackSearch,
+            text: filter.search,
+            onChanged: (String value) {
+              onChanged(filter.copyWith(search: value));
+            },
+            onFilter: onToggleExpanded,
+            activeFilterCount: folded,
           ),
           const SizedBox(height: Space.x2),
           AppCheckboxGroup<FeedbackCategory>(
-            label: Copy.feedbackTypes,
+            label: localCopy.feedbackTypes,
             value: filter.categories,
             options: <Choice<FeedbackCategory>>[
               for (final FeedbackCategory category
@@ -118,7 +96,10 @@ class FeedbackFilterPanel extends StatelessWidget {
                   ))
                 Choice<FeedbackCategory>(
                   category,
-                  FeedbackLabels.category(category),
+                  FeedbackLabels.category(
+                    category,
+                    localizedCopy: Copy.of(context),
+                  ),
                 ),
             ],
             onChanged: (Set<FeedbackCategory> value) {
@@ -135,12 +116,12 @@ class FeedbackFilterPanel extends StatelessWidget {
   }
 
   List<Widget> _folded(BuildContext context) {
-    final bool paired = context.responsive(compact: false, medium: true);
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final List<Widget> facets = <Widget>[
-      _pair(
-        paired,
-        AppDateField(
-          label: Copy.feedbackFrom,
+      ResponsivePair(
+        start: AppDateField(
+          label: localCopy.feedbackFrom,
           mode: DateFieldMode.dateTime,
           value: filter.fromUtc?.toLocal(),
           clock: clock,
@@ -153,8 +134,8 @@ class FeedbackFilterPanel extends StatelessWidget {
             );
           },
         ),
-        AppDateField(
-          label: Copy.feedbackTo,
+        end: AppDateField(
+          label: localCopy.feedbackTo,
           mode: DateFieldMode.dateTime,
           value: filter.toUtc?.toLocal(),
           clock: clock,
@@ -166,17 +147,15 @@ class FeedbackFilterPanel extends StatelessWidget {
         ),
       ),
       if (filter.isRangeBackwards)
-        Semantics(
-          liveRegion: true,
-          child: Text(
-            Copy.feedbackRangeBackwards,
-            style: AppText.caption.copyWith(color: context.colors.onSurface),
-          ),
+        AppBanner(
+          key: const ValueKey<String>('feedback-range-backwards'),
+          message: localCopy.feedbackRangeBackwards,
+          icon: AppIcons.warning,
+          tone: SnackTone.warning,
         ),
-      _pair(
-        paired,
-        AppMultiChoiceField<String>(
-          label: Copy.feedbackScreens,
+      ResponsivePair(
+        start: AppMultiChoiceField<String>(
+          label: localCopy.feedbackScreens,
           value: filter.screens,
           options: <Choice<String>>[
             for (final String screen in FeedbackFilter.screensIn(entries))
@@ -186,8 +165,8 @@ class FeedbackFilterPanel extends StatelessWidget {
             onChanged(filter.copyWith(screens: value));
           },
         ),
-        AppMultiChoiceField<String>(
-          label: Copy.feedbackPlatforms,
+        end: AppMultiChoiceField<String>(
+          label: localCopy.feedbackPlatforms,
           value: filter.platforms,
           options: <Choice<String>>[
             for (final String platform in FeedbackFilter.platformsIn(entries))
@@ -199,7 +178,7 @@ class FeedbackFilterPanel extends StatelessWidget {
         ),
       ),
       AppRadioGroup<FeedbackScreenshotFilter>(
-        label: Copy.feedbackScreenshot,
+        label: localCopy.feedbackScreenshot,
         direction: Axis.horizontal,
         value: filter.screenshot,
         options: <Choice<FeedbackScreenshotFilter>>[
@@ -207,34 +186,45 @@ class FeedbackFilterPanel extends StatelessWidget {
               in FeedbackScreenshotFilter.values)
             Choice<FeedbackScreenshotFilter>(
               option,
-              FeedbackLabels.screenshot(option),
+              FeedbackLabels.screenshot(
+                option,
+                localizedCopy: Copy.of(context),
+              ),
             ),
         ],
         onChanged: (FeedbackScreenshotFilter value) {
           onChanged(filter.copyWith(screenshot: value));
         },
       ),
-      _pair(
-        paired,
-        AppCheckboxGroup<FeedbackDeviceType>(
-          label: Copy.feedbackDeviceTypes,
+      ResponsivePair(
+        start: AppCheckboxGroup<FeedbackDeviceType>(
+          label: localCopy.feedbackDeviceTypes,
           value: filter.deviceTypes,
           options: <Choice<FeedbackDeviceType>>[
             for (final FeedbackDeviceType type in FeedbackDeviceType.values)
-              Choice<FeedbackDeviceType>(type, FeedbackLabels.deviceType(type)),
+              Choice<FeedbackDeviceType>(
+                type,
+                FeedbackLabels.deviceType(
+                  type,
+                  localizedCopy: Copy.of(context),
+                ),
+              ),
           ],
           onChanged: (Set<FeedbackDeviceType> value) {
             onChanged(filter.copyWith(deviceTypes: value));
           },
         ),
-        AppCheckboxGroup<FeedbackSubmitter>(
-          label: Copy.feedbackSubmittedBy,
+        end: AppCheckboxGroup<FeedbackSubmitter>(
+          label: localCopy.feedbackSubmittedBy,
           value: filter.submitters,
           options: <Choice<FeedbackSubmitter>>[
             for (final FeedbackSubmitter submitter in FeedbackSubmitter.values)
               Choice<FeedbackSubmitter>(
                 submitter,
-                FeedbackLabels.submitter(submitter),
+                FeedbackLabels.submitter(
+                  submitter,
+                  localizedCopy: Copy.of(context),
+                ),
               ),
           ],
           onChanged: (Set<FeedbackSubmitter> value) {
@@ -250,28 +240,6 @@ class FeedbackFilterPanel extends StatelessWidget {
       ],
     ];
   }
-}
-
-/// [first] and [second] side by side when [paired], else stacked.
-Widget _pair(bool paired, Widget first, Widget second) {
-  if (!paired) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        first,
-        const SizedBox(height: Space.x2),
-        second,
-      ],
-    );
-  }
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      Expanded(child: first),
-      const SizedBox(width: Space.x3),
-      Expanded(child: second),
-    ],
-  );
 }
 
 /// How many folded facets narrow the list, for the toggle's badge.

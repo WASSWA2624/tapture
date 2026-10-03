@@ -1,4 +1,5 @@
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/export/export_record.dart';
@@ -52,7 +53,12 @@ final class ExportRecordLoader {
     try {
       final List<ExportRecord> output = <ExportRecord>[];
       final List<String> incomplete = <String>[];
+      final List<String> omitted = <String>[];
       final Map<String, TemplateDef?> templates = <String, TemplateDef?>{};
+      final Map<String, Map<int, TemplateDef>> shapes =
+          <String, Map<int, TemplateDef>>{};
+      final Map<String, Map<String, FieldDef>> definitions =
+          <String, Map<String, FieldDef>>{};
       int offset = 0;
       while (true) {
         if (cancel.isCancelled) {
@@ -77,8 +83,9 @@ final class ExportRecordLoader {
           }
           final RecordEntry? record = (read as Success<RecordEntry?>).value;
           if (record == null) {
-            throw const StorageFailure(
-              message: 'A selected record is missing. Refresh the export.',
+            throw StorageFailure(
+              localizedMessage:
+                  Copy.messages.failureASelectedRecordIsMissingRefreshThe,
             );
           }
           if (!templates.containsKey(record.templateId)) {
@@ -93,17 +100,34 @@ final class ExportRecordLoader {
             // A deleted template is remembered as null, so it is read once.
             templates[record.templateId] =
                 (template as Success<TemplateDef?>).value;
+            final TemplateDef? loaded = templates[record.templateId];
+            final Map<int, TemplateDef> versions = loaded == null
+                ? const <int, TemplateDef>{}
+                : TemplateVersioning.shapesOf(loaded);
+            shapes[record.templateId] = versions;
+            definitions[record.templateId] = TemplateVersioning.latestFields(
+              versions.values,
+            );
           }
           final TemplateDef? current = templates[record.templateId];
-          final TemplateDef? captured = current == null
-              ? null
-              : TemplateVersioning.shapeFor(current, record.templateVersion);
+          final TemplateDef? captured =
+              shapes[record.templateId]![record.templateVersion];
+          if (!hasConsent(record, captured ?? current)) {
+            omitted.add(record.id);
+            continue;
+          }
           if (captured == null || _blocks(record, captured)) {
             // Without its captured shape a record cannot be checked, so the
             // operator decides whether it goes out; it never stops the rest.
             incomplete.add(record.id);
           }
-          output.add(_row(record, captured ?? _storedShape(record, current)));
+          output.add(
+            _row(
+              record,
+              captured ?? _storedShape(record, current),
+              definitions[record.templateId]!,
+            ),
+          );
         }
         if (page.length < _pageSize) {
           break;
@@ -111,13 +135,14 @@ final class ExportRecordLoader {
         offset += page.length;
       }
       return Success<PreparedDeliverable>((
-        request: request.copyWith(records: output),
+        request: request.copyWith(records: output, omittedRecordIds: omitted),
         validation: (
           incomplete: incomplete,
           unapproved: <String>[
             for (final ExportRecord record in output)
               if (!record.approved) record.id,
           ],
+          blocked: const <String>[],
         ),
       ));
     } on Failure catch (failure) {
@@ -125,6 +150,34 @@ final class ExportRecordLoader {
     } on Object catch (error) {
       return FailureResult<PreparedDeliverable>(Failure.from(error));
     }
+  }
+
+  /// Required consent accepts attributable capture or an operator correction.
+  static bool hasConsent(RecordEntry record, TemplateDef? shape) {
+    for (final FieldDef field in shape?.fields ?? const <FieldDef>[]) {
+      if (field.type != FieldType.consent ||
+          field.requiredness != Requiredness.required) {
+        continue;
+      }
+      final RecordValue? value = record.values
+          .where(
+            (RecordValue value) =>
+                value.fieldKey == field.fieldKey && !value.retired,
+          )
+          .firstOrNull;
+      if (value == null ||
+          ConsentField.authorized(
+                raw: value.raw,
+                refined: value.refined,
+                approved: value.approved,
+                source: value.source,
+                verified: value.verified,
+              ) ==
+              null) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /// Whether [record] fails a blocking check of its captured [shape].
@@ -174,10 +227,31 @@ final class ExportRecordLoader {
     );
   }
 
-  ExportRecord _row(RecordEntry record, TemplateDef shape) {
+  ExportRecord _row(
+    RecordEntry record,
+    TemplateDef shape,
+    Map<String, FieldDef> historical,
+  ) {
     final Map<String, RecordValue> values = <String, RecordValue>{
       for (final RecordValue value in record.values) value.fieldKey: value,
     };
+    final Set<String> declared = shape.fields
+        .map((field) => field.fieldKey)
+        .toSet();
+    final List<FieldDef> exportedFields = <FieldDef>[
+      for (final FieldDef field in shape.fields)
+        if (!field.hidden) field,
+      for (final RecordValue value in record.values)
+        if (value.retired &&
+            !declared.contains(value.fieldKey) &&
+            historical[value.fieldKey]?.hidden != true)
+          historical[value.fieldKey] ??
+              FieldDef(
+                fieldKey: value.fieldKey,
+                label: value.fieldKey,
+                type: FieldType.text,
+              ),
+    ];
     return ExportRecord(
       id: record.id,
       number: '${record.number ?? record.id}',
@@ -190,12 +264,14 @@ final class ExportRecordLoader {
           .where((String value) => value.isNotEmpty)
           .join(' / '),
       operatorName: record.capturedBy,
+      templateRowId: record.templateRowId,
+      capturedAt: record.capturedAt.toUtc().toIso8601String(),
       photoSources: <String, String>{
         for (final RecordPhoto photo in record.photos)
           photo.id: photo.storagePath,
       },
       values: <ExportValue>[
-        for (final FieldDef field in shape.fields)
+        for (final FieldDef field in exportedFields)
           if (!field.hidden)
             (
               key: field.fieldKey,
@@ -213,7 +289,7 @@ final class ExportRecordLoader {
             ),
       ],
       definitions: <Map<String, Object?>>[
-        for (final FieldDef field in shape.fields)
+        for (final FieldDef field in exportedFields)
           if (!field.hidden)
             <String, Object?>{
               'key': field.fieldKey,

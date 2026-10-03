@@ -78,6 +78,8 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final GiveFeedbackView view = ref.watch(giveFeedbackControllerProvider);
     final GiveFeedbackController form = ref.read(
       giveFeedbackControllerProvider.notifier,
@@ -95,13 +97,13 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
         }
       },
       child: AppPage(
-        title: Copy.feedbackGive,
+        title: localCopy.feedbackGive,
         compactBar: true,
         scrollable: false,
         leading: AppIconButton(
           icon: AppIcons.collapsePanel,
-          semanticLabel: Copy.feedbackContinueLater,
-          tooltip: Copy.feedbackContinueLater,
+          semanticLabel: localCopy.feedbackContinueLater,
+          tooltip: localCopy.feedbackContinueLater,
           outlined: false,
           onPressed: _draft.collapse,
         ),
@@ -109,7 +111,7 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
           AppOverflowAction(
             key: const ValueKey<String>('feedback-discard-draft'),
             icon: AppIcons.delete,
-            label: Copy.feedbackDiscardDraft,
+            label: localCopy.feedbackDiscardDraft,
             onTap: () => unawaited(_discard()),
           ),
         ],
@@ -117,7 +119,7 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
           compact: true,
           fields: <Widget>[
             AppRadioGroup<FeedbackCategory>(
-              label: Copy.feedbackType,
+              label: localCopy.feedbackType,
               showLabel: false,
               direction: Axis.horizontal,
               value: category,
@@ -125,34 +127,45 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
                 for (final FeedbackCategory option in FeedbackCategory.offered)
                   Choice<FeedbackCategory>(
                     option,
-                    FeedbackLabels.category(option),
+                    FeedbackLabels.category(
+                      option,
+                      localizedCopy: Copy.of(context),
+                    ),
                   ),
               ],
               onChanged: form.chooseCategory,
             ),
             if (category == FeedbackCategory.other)
               AppTextField(
-                label: Copy.feedbackOtherType,
+                label: localCopy.feedbackOtherType,
                 controller: _other,
                 maxLength: AppConstants.userFeedback.maxOtherLength,
-                errorText: view.otherError,
+                errorText: Copy.of(
+                  context,
+                ).stateText(view.localizedOtherError, view.otherError),
                 textInputAction: TextInputAction.next,
               ),
             AppTextField(
-              label: Copy.feedbackMessage,
+              label: localCopy.feedbackMessage,
               controller: _message,
-              hint: Copy.feedbackMessageHint,
+              hint: localCopy.feedbackMessageHint,
               minLines: 3,
               maxLines: 8,
               maxLength: AppConstants.userFeedback.maxMessageLength,
-              errorText: view.messageError,
+              errorText: Copy.of(
+                context,
+              ).stateText(view.localizedMessageError, view.messageError),
               keyboardType: TextInputType.multiline,
               textInputAction: TextInputAction.newline,
             ),
             FeedbackShots(onAddScreen: widget.onAddScreen),
           ],
-          errors: <String>[?view.saveError],
-          submitLabel: Copy.feedbackSave,
+          errors: <String>[
+            ?Copy.of(
+              context,
+            ).stateText(view.localizedSaveError, view.saveError),
+          ],
+          submitLabel: localCopy.feedbackSave,
           onSubmit: _save,
         ),
       ),
@@ -160,6 +173,8 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
   }
 
   Future<bool> _save() async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     // The form leaves the tree once the draft clears; the Feedback
     // navigator's context outlives it for the confirmation.
     final BuildContext root = Navigator.of(context).context;
@@ -168,7 +183,7 @@ class _GiveFeedbackState extends ConsumerState<GiveFeedbackScreen> {
         .save();
     final bool saved = result is Success<FeedbackEntry>;
     if (saved && root.mounted) {
-      showAppSnack(root, Copy.feedbackSaved, tone: SnackTone.success);
+      showAppSnack(root, localCopy.feedbackSaved, tone: SnackTone.success);
     }
     return saved;
   }

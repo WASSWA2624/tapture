@@ -1,14 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/tables/context.dart'
     show
         clearContextStateForProject,
         deleteContextDefinition,
         deleteContextPreset,
+        liveContextDefinitions,
+        liveContextPresets,
         upsertContextPreset;
 import 'package:tapture/core/db/tables/tombstones.dart';
 import 'package:tapture/core/db/transactions.dart';
@@ -25,20 +27,24 @@ import 'context_persistence.dart';
 
 /// Drift-backed [ContextRepository].
 final class ContextRepositoryImpl implements ContextRepository {
-  /// Opens against [_db] with stamp sources.
+  /// Opens against [_db] with stamp sources. Recents are kept in the same
+  /// database ([ContextPersistence]), so they survive a restart.
   ContextRepositoryImpl({
     required this._db,
     required this._clock,
     required this._deviceId,
     required this._ids,
-    ContextPersistence? persistence,
-  }) : _persistence = persistence ?? MemoryContextPersistence();
+  });
 
   final sqlite.AppDatabase _db;
   final Clock _clock;
   final String _deviceId;
   final IdService _ids;
-  final ContextPersistence _persistence;
+  late final ContextPersistence _persistence = ContextPersistence(
+    db: _db,
+    clock: _clock,
+    deviceId: _deviceId,
+  );
   final Map<String, ContextState> _cache = <String, ContextState>{};
 
   @override
@@ -67,50 +73,95 @@ final class ContextRepositoryImpl implements ContextRepository {
     List<ContextLevel> levels,
   ) async {
     return runInTransaction(_db, () async {
+      // Every definition this project ever had, deleted ones included: a
+      // field key keeps its row, so a level that comes back is restored.
       final List<sqlite.ContextData> existing =
           await (_db.select(_db.context)..where(
                 (sqlite.$ContextTable tbl) => tbl.projectId.equals(projectId),
               ))
               .get();
-      for (final sqlite.ContextData row in existing) {
-        await writeTombstone(
+      final Set<String> live = <String>{
+        for (final sqlite.ContextData row in await liveContextDefinitions(
           _db,
-          entityType: _db.context.actualTableName,
-          entityId: row.id,
-          reason: 'Context hierarchy replaced.',
-          clock: _clock,
-          deviceId: _deviceId,
-        );
-        await deleteContextDefinition(_db, id: row.id);
-      }
+          projectId: projectId,
+        ).get())
+          row.id,
+      };
       final List<ContextLevel> ordered = List<ContextLevel>.of(levels);
-      final DateTime now = _clock.nowUtc();
-      for (final ContextLevel level in ordered) {
-        await _db
-            .into(_db.context)
-            .insert(
-              sqlite.ContextCompanion.insert(
-                id: Value<String>(_ids.newId()),
-                projectId: projectId,
-                level: level.order + 1,
-                fieldKey: level.fieldKey,
-                label: ContextMapper.encodeLabel(level),
-                createdAt: now,
-                updatedAt: now,
-                updatedByDevice: _deviceId,
-              ),
-            );
-      }
-      // Drop values whose field keys are no longer levels.
       final Set<String> keys = <String>{
         for (final ContextLevel level in ordered) level.fieldKey,
       };
+      for (final sqlite.ContextData row in existing) {
+        if (live.contains(row.id) && !keys.contains(row.fieldKey)) {
+          await deleteContextDefinition(
+            _db,
+            id: row.id,
+            reason: 'Context hierarchy replaced.',
+            clock: _clock,
+            deviceId: _deviceId,
+          );
+        }
+      }
+      final Map<String, sqlite.ContextData> byKey =
+          <String, sqlite.ContextData>{
+            for (final sqlite.ContextData row in existing) row.fieldKey: row,
+          };
+      final DateTime now = _clock.nowUtc();
+      for (final ContextLevel level in ordered) {
+        final sqlite.ContextData? row = byKey[level.fieldKey];
+        final String label = ContextMapper.encodeLabel(level);
+        if (row == null) {
+          await _db
+              .into(_db.context)
+              .insert(
+                ContextMapper.definitionToRow(
+                  projectId: projectId,
+                  level: level,
+                ).copyWith(
+                  id: Value<String>(_ids.newId()),
+                  createdAt: Value<DateTime>(now),
+                  updatedAt: Value<DateTime>(now),
+                  updatedByDevice: Value<String>(_deviceId),
+                ),
+              );
+          continue;
+        }
+        final bool restored = !live.contains(row.id);
+        if (restored) {
+          await removeTombstone(
+            _db,
+            entityType: _db.context.actualTableName,
+            entityId: row.id,
+          );
+        }
+        if (restored || row.level != level.order + 1 || row.label != label) {
+          await (_db.update(
+            _db.context,
+          )..where((sqlite.$ContextTable tbl) => tbl.id.equals(row.id))).write(
+            sqlite.ContextCompanion(
+              level: Value<int>(level.order + 1),
+              label: Value<String>(label),
+              updatedAt: Value<DateTime>(now),
+              updatedByDevice: Value<String>(_deviceId),
+              rev: Value<int>(row.rev + 1),
+            ),
+          );
+        }
+      }
+      // Drop values whose field keys are no longer levels.
       final ContextState current = await _load(projectId);
       final Map<String, String> nextValues = <String, String>{
         for (final MapEntry<String, String> e in current.values.entries)
           if (keys.contains(e.key)) e.key: e.value,
       };
-      await _writeValues(projectId, ordered, nextValues, current.pinned);
+      await _writeValues(
+        projectId,
+        ContextState(
+          levels: ordered,
+          values: nextValues,
+          pinned: current.pinned,
+        ),
+      );
       return _load(projectId);
     });
   }
@@ -126,9 +177,9 @@ final class ContextRepositoryImpl implements ContextRepository {
       final ContextState current = await _load(projectId);
       final ContextLevel? level = _levelOf(current, fieldKey);
       if (level == null) {
-        throw const ValidationFailure(
-          message: 'That field is not a context level.',
-          recoveryAction: 'Pick a level from the hierarchy and try again.',
+        throw ValidationFailure(
+          localizedMessage: Copy.messages.failureThatFieldIsNotAContextLevel,
+          localizedRecovery: Copy.messages.failurePickALevelFromTheHierarchyAnd,
         );
       }
       final ContextState next = clearBelow
@@ -140,7 +191,7 @@ final class ContextRepositoryImpl implements ContextRepository {
           : current.copyWith(
               values: <String, String>{...current.values, fieldKey: value},
             );
-      await _writeValues(projectId, next.levels, next.values, next.pinned);
+      await _writeValues(projectId, next);
       await _persistence.rememberRecent(
         projectId: projectId,
         fieldKey: fieldKey,
@@ -157,7 +208,17 @@ final class ContextRepositoryImpl implements ContextRepository {
   ) async {
     return runInTransaction(_db, () async {
       final ContextState current = await _load(projectId);
-      await _writeValues(projectId, current.levels, current.values, pinned);
+      await _writeValues(projectId, current.copyWith(pinned: pinned));
+      // A pin's picker offers its recent values first, as a level's does.
+      for (final MapEntry<String, String> pin in pinned.entries) {
+        if (current.pinned[pin.key] != pin.value) {
+          await _persistence.rememberRecent(
+            projectId: projectId,
+            fieldKey: pin.key,
+            value: pin.value,
+          );
+        }
+      }
       return _load(projectId);
     });
   }
@@ -176,7 +237,10 @@ final class ContextRepositoryImpl implements ContextRepository {
           nextValues[level.fieldKey] = value;
         }
       }
-      await _writeValues(projectId, current.levels, nextValues, preset.pinned);
+      await _writeValues(
+        projectId,
+        current.copyWith(values: nextValues, pinned: preset.pinned),
+      );
       await (_db.update(_db.contextPresets)..where(
             (sqlite.$ContextPresetsTable tbl) => tbl.id.equals(preset.id),
           ))
@@ -205,27 +269,23 @@ final class ContextRepositoryImpl implements ContextRepository {
   }) async {
     final String trimmed = name.trim();
     if (trimmed.isEmpty) {
-      return const FailureResult<ContextPreset>(
+      return FailureResult<ContextPreset>(
         ValidationFailure(
-          message: 'A preset needs a name.',
-          recoveryAction: 'Enter a name and try again.',
+          localizedMessage: Copy.messages.failureAPresetNeedsAName,
+          localizedRecovery: Copy.messages.failureEnterANameAndTryAgain,
         ),
       );
     }
     try {
       final sqlite.ContextPreset? existing =
-          await (_db.select(_db.contextPresets)..where(
-                (sqlite.$ContextPresetsTable tbl) =>
-                    tbl.projectId.equals(projectId) & tbl.name.equals(trimmed),
-              ))
+          await (liveContextPresets(_db, projectId: projectId)
+                ..where(
+                  (sqlite.$ContextPresetsTable tbl) => tbl.name.equals(trimmed),
+                )
+                ..limit(1))
               .getSingleOrNull();
       if (existing != null && !overwrite) {
-        return const FailureResult<ContextPreset>(
-          ValidationFailure(
-            message: 'A preset with that name already exists.',
-            recoveryAction: 'Choose another name, or confirm overwrite.',
-          ),
-        );
+        return FailureResult<ContextPreset>(presetNameTaken);
       }
       final String payload = ContextMapper.encodePresetPayload(
         values: values,
@@ -270,23 +330,21 @@ final class ContextRepositoryImpl implements ContextRepository {
   @override
   Future<Result<void>> deletePreset(String id, {required String reason}) async {
     if (id.isEmpty || reason.trim().isEmpty) {
-      return const FailureResult<void>(
+      return FailureResult<void>(
         StorageFailure(
-          message: 'A delete needs an id and a reason.',
-          recoveryAction: 'Try again.',
+          localizedMessage: Copy.messages.failureADeleteNeedsAnIdAndA,
+          localizedRecovery: Copy.messages.failureTryAgain,
         ),
       );
     }
     return runInTransaction(_db, () async {
-      await writeTombstone(
+      await deleteContextPreset(
         _db,
-        entityType: _db.contextPresets.actualTableName,
-        entityId: id,
+        id: id,
         reason: reason,
         clock: _clock,
         deviceId: _deviceId,
       );
-      await deleteContextPreset(_db, id: id);
     });
   }
 
@@ -301,16 +359,10 @@ final class ContextRepositoryImpl implements ContextRepository {
   }
 
   Future<ContextState> _load(String projectId) async {
-    final List<sqlite.ContextData> definitions =
-        await (_db.select(_db.context)
-              ..where(
-                (sqlite.$ContextTable tbl) => tbl.projectId.equals(projectId),
-              )
-              ..orderBy(<OrderClauseGenerator<sqlite.$ContextTable>>[
-                (sqlite.$ContextTable tbl) =>
-                    OrderingTerm(expression: tbl.level),
-              ]))
-            .get();
+    final List<sqlite.ContextData> definitions = await liveContextDefinitions(
+      _db,
+      projectId: projectId,
+    ).get();
     final List<sqlite.ContextStateRow> states =
         await (_db.select(_db.contextState)..where(
               (sqlite.$ContextStateTable tbl) =>
@@ -326,49 +378,17 @@ final class ContextRepositoryImpl implements ContextRepository {
     return state;
   }
 
-  Future<void> _writeValues(
-    String projectId,
-    List<ContextLevel> levels,
-    Map<String, String> values,
-    Map<String, String> pinned,
-  ) async {
+  /// Replaces the project's value and pin rows with [state]'s, in the
+  /// caller's transaction. Recents rows (below level 0) are kept.
+  Future<void> _writeValues(String projectId, ContextState state) async {
     await clearContextStateForProject(_db, projectId: projectId);
-    final DateTime now = _clock.nowUtc();
-    if (pinned.isNotEmpty) {
-      await _db
-          .into(_db.contextState)
-          .insert(
-            sqlite.ContextStateCompanion.insert(
-              projectId: projectId,
-              level: 0,
-              fieldKey: const Value<String>(''),
-              value: jsonEncode(pinned),
-              setAt: now,
-              createdAt: now,
-              updatedAt: now,
-              updatedByDevice: _deviceId,
-            ),
-          );
-    }
-    for (final ContextLevel level in levels) {
-      final String? value = values[level.fieldKey];
-      if (value == null || value.isEmpty) {
-        continue;
-      }
-      await _db
-          .into(_db.contextState)
-          .insert(
-            sqlite.ContextStateCompanion.insert(
-              projectId: projectId,
-              level: level.order + 1,
-              fieldKey: Value<String>(level.fieldKey),
-              value: value,
-              setAt: now,
-              createdAt: now,
-              updatedAt: now,
-              updatedByDevice: _deviceId,
-            ),
-          );
+    for (final sqlite.ContextStateCompanion row in ContextMapper.stateToRows(
+      projectId: projectId,
+      state: state,
+      now: _clock.nowUtc(),
+      deviceId: _deviceId,
+    )) {
+      await _db.into(_db.contextState).insert(row);
     }
   }
 
@@ -382,12 +402,10 @@ final class ContextRepositoryImpl implements ContextRepository {
   }
 
   Future<List<ContextPreset>> _listPresets(String projectId) async {
-    final List<sqlite.ContextPreset> rows =
-        await (_db.select(_db.contextPresets)..where(
-              (sqlite.$ContextPresetsTable tbl) =>
-                  tbl.projectId.equals(projectId),
-            ))
-            .get();
+    final List<sqlite.ContextPreset> rows = await liveContextPresets(
+      _db,
+      projectId: projectId,
+    ).get();
     final List<ContextPreset> list = <ContextPreset>[
       for (final sqlite.ContextPreset row in rows)
         ContextMapper.presetFromRow(row),
@@ -414,11 +432,10 @@ final class ContextRepositoryImpl implements ContextRepository {
       listener.add(null);
       final List<StreamSubscription<Object?>> subs =
           <StreamSubscription<Object?>>[
-            (_db.select(_db.context)..where(
-                  (sqlite.$ContextTable tbl) => tbl.projectId.equals(projectId),
-                ))
-                .watch()
-                .listen((_) => listener.add(null)),
+            liveContextDefinitions(
+              _db,
+              projectId: projectId,
+            ).watch().listen((_) => listener.add(null)),
             (_db.select(_db.contextState)..where(
                   (sqlite.$ContextStateTable tbl) =>
                       tbl.projectId.equals(projectId),
@@ -437,13 +454,10 @@ final class ContextRepositoryImpl implements ContextRepository {
   Stream<void> _presetChanges(String projectId) {
     return Stream<void>.multi((MultiStreamController<void> listener) {
       listener.add(null);
-      final StreamSubscription<Object?> sub =
-          (_db.select(_db.contextPresets)..where(
-                (sqlite.$ContextPresetsTable tbl) =>
-                    tbl.projectId.equals(projectId),
-              ))
-              .watch()
-              .listen((_) => listener.add(null));
+      final StreamSubscription<Object?> sub = liveContextPresets(
+        _db,
+        projectId: projectId,
+      ).watch().listen((_) => listener.add(null));
       listener.onCancel = sub.cancel;
     });
   }
@@ -468,7 +482,7 @@ final class _EmptyContextRepository implements ContextRepository {
   Future<Result<ContextState>> saveHierarchy(
     String projectId,
     List<ContextLevel> levels,
-  ) async => const FailureResult<ContextState>(_unavailable);
+  ) async => FailureResult<ContextState>(_unavailable);
 
   @override
   Future<Result<ContextState>> setLevelValue({
@@ -476,19 +490,19 @@ final class _EmptyContextRepository implements ContextRepository {
     required String fieldKey,
     required String value,
     bool clearBelow = true,
-  }) async => const FailureResult<ContextState>(_unavailable);
+  }) async => FailureResult<ContextState>(_unavailable);
 
   @override
   Future<Result<ContextState>> savePinned(
     String projectId,
     Map<String, String> pinned,
-  ) async => const FailureResult<ContextState>(_unavailable);
+  ) async => FailureResult<ContextState>(_unavailable);
 
   @override
   Future<Result<ContextState>> applyPreset(
     String projectId,
     ContextPreset preset,
-  ) async => const FailureResult<ContextState>(_unavailable);
+  ) async => FailureResult<ContextState>(_unavailable);
 
   @override
   Stream<List<ContextPreset>> watchPresets(String projectId) =>
@@ -501,13 +515,13 @@ final class _EmptyContextRepository implements ContextRepository {
     required Map<String, String> values,
     required Map<String, String> pinned,
     bool overwrite = false,
-  }) async => const FailureResult<ContextPreset>(_unavailable);
+  }) async => FailureResult<ContextPreset>(_unavailable);
 
   @override
   Future<Result<void>> deletePreset(
     String id, {
     required String reason,
-  }) async => const FailureResult<void>(_unavailable);
+  }) async => FailureResult<void>(_unavailable);
 
   @override
   Future<Result<List<String>>> recentValues({
@@ -516,7 +530,7 @@ final class _EmptyContextRepository implements ContextRepository {
   }) async => const Success<List<String>>(<String>[]);
 }
 
-const StorageFailure _unavailable = StorageFailure(
-  message: 'Context is not available yet.',
-  recoveryAction: 'Restart the app and try again.',
+final StorageFailure _unavailable = StorageFailure(
+  localizedMessage: Copy.messages.failureContextIsNotAvailableYet,
+  localizedRecovery: Copy.messages.failureRestartTheAppAndTryAgain,
 );

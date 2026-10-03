@@ -15,12 +15,15 @@ import 'package:tapture/core/lifecycle/lifecycle.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/responsive/form_factor.dart';
 import 'package:tapture/core/widgets/responsive/viewport_metrics.dart';
+import 'package:tapture/core/widgets/trial_report_scope.dart';
 import 'package:tapture/features/settings/settings.dart';
 
+import '../domain/feedback_context.dart';
 import '../domain/feedback_origin.dart';
 import 'delete_feedback_screen.dart';
 import 'download_feedback_screen.dart';
@@ -69,16 +72,18 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
   bool _feedbackRouteCoversApp = false;
   bool _openingMenu = false;
   bool _menuOpen = false;
+  bool _openingTrial = false;
+  String? _lastTrialAction;
 
   /// The folded bar's laid-out height, which the app beneath keeps clear of
-  /// while the draft is folded (FBK0000145).
-  double _foldedBarHeight = 0;
+  /// while the draft is folded (FBK0000145). A listenable, so only the
+  /// inset rebuilds when it changes (FE-STATE-01).
+  final ValueNotifier<double> _foldedBarHeight = ValueNotifier<double>(0);
 
   void _setFoldedBarHeight(double height) {
-    if (!mounted || _foldedBarHeight == height) {
-      return;
+    if (mounted) {
+      _foldedBarHeight.value = height;
     }
-    setState(() => _foldedBarHeight = height);
   }
 
   @override
@@ -107,6 +112,7 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
     _lifecycle.removeExitCheck(_exitCheck);
     _leave.close();
     _leaveGuard.release(this);
+    _foldedBarHeight.dispose();
     super.dispose();
   }
 
@@ -133,6 +139,8 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     // Only the fold state is watched: typing into the draft must not
     // rebuild the shell underneath.
     final ({bool open, bool expanded}) fold = ref.watch(
@@ -144,8 +152,14 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
     final bool expanded = fold.open && fold.expanded;
     final bool docked = expanded && context.sizeClass == SizeClass.expanded;
     final Widget app = RepaintBoundary(key: _boundaryKey, child: widget.child);
-    final Widget appFrame = _FoldedBarInset(
-      barHeight: fold.open && !expanded ? _foldedBarHeight : 0,
+    final Widget appFrame = ValueListenableBuilder<double>(
+      valueListenable: _foldedBarHeight,
+      builder: (BuildContext _, double height, Widget? framed) {
+        return _FoldedBarInset(
+          barHeight: fold.open && !expanded ? height : 0,
+          child: framed!,
+        );
+      },
       child: docked
           ? Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -156,72 +170,135 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
             )
           : app,
     );
-    return RepaintBoundary(
+    final Widget workspace = RepaintBoundary(
       key: _workspaceKey,
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          appFrame,
-          Positioned.fill(
-            child: _FeedbackHitRegion(
-              hitTestAt: (Offset position) => _hitTestFeedback(
-                context,
-                position,
-                open: fold.open,
-                expanded: expanded,
-                docked: docked,
-              ),
-              child: HeroControllerScope.none(
-                child: Navigator(
-                  key: _feedbackNavigatorKey,
-                  observers: <NavigatorObserver>[_navigatorObserver],
-                  onGenerateRoute: (RouteSettings settings) {
-                    return PageRouteBuilder<void>(
-                      settings: settings,
-                      opaque: false,
-                      barrierColor: null,
-                      transitionDuration: Duration.zero,
-                      reverseTransitionDuration: Duration.zero,
-                      pageBuilder:
-                          (
-                            BuildContext _,
-                            Animation<double> _,
-                            Animation<double> _,
-                          ) {
-                            return _FeedbackLayer(key: _layerKey, host: this);
-                          },
-                    );
-                  },
+      child: Semantics(
+        container: true,
+        explicitChildNodes: true,
+        child: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            appFrame,
+            Positioned.fill(
+              child: _FeedbackHitRegion(
+                hitTestAt: (Offset position) => _hitTestFeedback(
+                  context,
+                  position,
+                  open: fold.open,
+                  expanded: expanded,
+                  docked: docked,
+                ),
+                child: HeroControllerScope.none(
+                  child: Navigator(
+                    key: _feedbackNavigatorKey,
+                    observers: <NavigatorObserver>[_navigatorObserver],
+                    onGenerateRoute: (RouteSettings settings) {
+                      return _FeedbackLayerRoute(
+                        settings: settings,
+                        builder: (BuildContext _) =>
+                            _FeedbackLayer(key: _layerKey, host: this),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
-          if (!expanded)
-            AppFloatingButton(
-              key: const ValueKey<String>('feedback-button'),
-              icon: AppIcons.feedback,
-              label: Copy.feedback,
-              hint: Copy.feedbackButtonHint,
-              expandOnHover: context.formFactor == FormFactor.desktop,
-              startX: AppConstants.userFeedback.buttonStartX,
-              startY: AppConstants.userFeedback.buttonStartY,
-              onPressed: (Rect anchor) {
-                final BuildContext? uiContext = _layerKey.currentContext;
-                if (uiContext != null) {
-                  unawaited(_openMenu(uiContext, anchor));
-                }
-              },
-            ),
-        ],
+            if (!expanded)
+              AppFloatingButton(
+                key: const ValueKey<String>('feedback-button'),
+                icon: AppIcons.feedback,
+                label: localCopy.feedback,
+                hint: localCopy.feedbackButtonHint,
+                expandOnHover: context.formFactor == FormFactor.desktop,
+                startX: AppConstants.userFeedback.buttonStartX,
+                startY: AppConstants.userFeedback.buttonStartY,
+                onPressed: (Rect anchor) {
+                  final BuildContext? uiContext = _layerKey.currentContext;
+                  if (uiContext != null) {
+                    unawaited(_openMenu(uiContext, anchor));
+                  }
+                },
+              ),
+          ],
+        ),
       ),
+    );
+    if (!ref.watch(fieldTrialProvider)) {
+      return workspace;
+    }
+    return TrialReportScope(
+      label: localCopy.frictionLogAction,
+      onReport: () => unawaited(_reportFriction()),
+      onAction: (String label) {
+        if (!_openingTrial) {
+          _lastTrialAction = label;
+        }
+      },
+      child: workspace,
     );
   }
 
-  void _setRouteCoverage(bool coversApp) {
-    if (!mounted || _feedbackRouteCoversApp == coversApp) {
+  Future<void> _reportFriction() async {
+    final LocalizedCopy localCopy = Copy.of(context);
+
+    if (_openingTrial) {
       return;
     }
-    setState(() => _feedbackRouteCoversApp = coversApp);
+    _openingTrial = true;
+    try {
+      final String? lastAction = _lastTrialAction;
+      final FeedbackOrigin origin = widget.origin;
+      OperatorProfile? operator = ref.read(currentOperatorProvider);
+      if (operator == null) {
+        try {
+          await ref.read(operatorProfileProvider.future);
+          if (!mounted) {
+            return;
+          }
+          operator = ref.read(currentOperatorProvider);
+        } on Object {
+          // A missing profile must not prevent a local report.
+        }
+      }
+      final BuildContext? sheetContext = _layerKey.currentContext;
+      if (!mounted || sheetContext == null || !sheetContext.mounted) {
+        return;
+      }
+      final FeedbackContext captured = FeedbackContextCapture.from(
+        context: context,
+        origin: origin,
+        clock: ref.read(feedbackClockProvider),
+        facts: ref.read(feedbackPlatformFactsProvider),
+        device: ref.read(feedbackDeviceProvider),
+        operator: operator,
+        deviceId: ref.read(feedbackDeviceIdProvider),
+        lastAction: lastAction,
+        fieldTrial: true,
+      );
+      final bool? saved = await showAppSheet<bool>(
+        sheetContext,
+        title: localCopy.frictionLogAction,
+        contentSized: true,
+        builder: (BuildContext _) => FrictionReportSheet(
+          origin: captured,
+          capture: () => _capture(_boundaryKey),
+        ),
+      );
+      if (saved == true && sheetContext.mounted) {
+        showAppSnack(
+          sheetContext,
+          localCopy.frictionSaved,
+          tone: SnackTone.success,
+        );
+      }
+    } finally {
+      _openingTrial = false;
+    }
+  }
+
+  /// Read only when hit-testing, so recording it needs no rebuild.
+  void _setRouteCoverage(bool coversApp) {
+    _feedbackRouteCoversApp = coversApp;
   }
 
   bool _hitTestFeedback(
@@ -279,6 +356,8 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
   }
 
   Future<void> _openMenu(BuildContext uiContext, Rect anchor) async {
+    final LocalizedCopy localCopy = Copy.of(uiContext);
+
     if (_menuOpen) {
       _feedbackNavigatorKey.currentState?.pop();
       return;
@@ -305,26 +384,19 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
           AppOverflowAction(
             key: ValueKey<String>(open ? 'feedback-continue' : 'feedback-give'),
             icon: AppIcons.feedback,
-            label: open ? Copy.feedbackContinue : Copy.feedbackGive,
+            label: open ? localCopy.feedbackContinue : localCopy.feedbackGive,
             onTap: () => ref.read(feedbackDraftProvider.notifier).expand(),
           ),
-          if (open)
-            AppOverflowAction(
-              key: const ValueKey<String>('feedback-add-screen'),
-              icon: AppIcons.screenshot,
-              label: Copy.feedbackAddScreen,
-              onTap: () => unawaited(_addThisScreen(uiContext)),
-            ),
           AppOverflowAction(
             key: const ValueKey<String>('feedback-download'),
             icon: AppIcons.download,
-            label: Copy.feedbackDownload,
+            label: localCopy.feedbackDownload,
             onTap: () => unawaited(_openDownload(uiContext)),
           ),
           AppOverflowAction(
             key: const ValueKey<String>('feedback-delete'),
             icon: AppIcons.delete,
-            label: Copy.feedbackDelete,
+            label: localCopy.feedbackDelete,
             onTap: () => unawaited(_openDelete(uiContext)),
           ),
         ],
@@ -337,7 +409,7 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
 
   /// Captures this screen into the draft. Returns why an open draft could
   /// not take it, or null.
-  Future<String?> _captureDraft() async {
+  Future<LocalizedMessage?> _captureDraft() async {
     final FeedbackDraft? open = ref.read(feedbackDraftProvider);
     OperatorProfile? operator = ref.read(currentOperatorProvider);
     if (operator == null && (open == null || !open.open)) {
@@ -372,13 +444,17 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
   }
 
   Future<void> _addThisScreen(BuildContext uiContext) async {
-    final String? problem = await _captureDraft();
+    final LocalizedMessage? problem = await _captureDraft();
     if (!mounted || !uiContext.mounted) {
       return;
     }
+    final LocalizedCopy localCopy = Copy.of(uiContext);
     showAppSnack(
       uiContext,
-      problem ?? Copy.feedbackShotAdded(widget.origin.screen),
+      problem == null
+          ? localCopy.feedbackShotAdded(widget.origin.screen)
+          : problem.fallback,
+      localizedMessage: problem,
       tone: problem == null ? SnackTone.success : SnackTone.warning,
     );
   }
@@ -652,6 +728,29 @@ class _FeedbackNavigatorObserver extends NavigatorObserver {
     _reportedCoverage = coverage;
     onCoverageChanged(coverage);
   }
+}
+
+/// The persistent feedback layer is not a modal screen. A transparent modal
+/// barrier would still hide the workspace from assistive technology, even
+/// though pointer hit testing passes through it. Pushed feedback dialogs keep
+/// their own normal barriers and focus behavior.
+class _FeedbackLayerRoute extends PageRouteBuilder<void> {
+  _FeedbackLayerRoute({
+    required RouteSettings settings,
+    required WidgetBuilder builder,
+  }) : super(
+         settings: settings,
+         opaque: false,
+         requestFocus: false,
+         transitionDuration: Duration.zero,
+         reverseTransitionDuration: Duration.zero,
+         pageBuilder:
+             (BuildContext context, Animation<double> _, Animation<double> _) =>
+                 builder(context),
+       );
+
+  @override
+  Widget buildModalBarrier() => const SizedBox.shrink();
 }
 
 class _FeedbackHitRegion extends SingleChildRenderObjectWidget {

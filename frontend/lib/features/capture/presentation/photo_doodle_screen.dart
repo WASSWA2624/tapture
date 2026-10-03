@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_ink_picker.dart';
 import 'package:tapture/core/widgets/markup_stroke.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/photo_frame.dart';
 
@@ -56,13 +57,14 @@ final class PhotoDoodleScreen extends StatefulWidget {
   State<PhotoDoodleScreen> createState() => _PhotoDoodleScreenState();
 }
 
-class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
+class _PhotoDoodleScreenState extends State<PhotoDoodleScreen>
+    with StateRefresh {
   final List<MarkupStroke> _strokes = <MarkupStroke>[];
   MarkupStroke? _current;
   late MarkupInk _ink = widget.ink;
   late int _size = widget.size;
   Size? _photoSize;
-  String? _error;
+  LocalizedMessage? _error;
   bool _busy = false;
 
   @override
@@ -76,16 +78,18 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
     if (!mounted) {
       return;
     }
-    setState(() {
+    refresh(() {
       _photoSize = size;
       if (size == null) {
-        _error = Copy.photoUnreadable;
+        _error = Copy.messages.photoUnreadable;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final Size? photoSize = _photoSize;
     final Widget controls = Column(
       mainAxisSize: MainAxisSize.min,
@@ -94,7 +98,7 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
         if (_error != null)
           Padding(
             padding: const EdgeInsets.only(bottom: Space.x2),
-            child: Text(_error!),
+            child: Text(localCopy.resolve(_error!)),
           ),
         AppInkPicker(
           ink: _ink,
@@ -104,7 +108,7 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
         ),
         const SizedBox(height: Space.x2),
         AppButton(
-          label: Copy.save,
+          label: localCopy.save,
           busy: _busy,
           onPressed: _busy || _strokes.isEmpty
               ? null
@@ -114,18 +118,18 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
     );
     return Scaffold(
       appBar: AppBar(
-        title: const Text(Copy.photoDraw),
+        title: Text(localCopy.photoDraw),
         actions: <Widget>[
           AppIconButton(
             icon: AppIcons.undo,
-            tooltip: Copy.photoUndoDraw,
-            semanticLabel: Copy.photoUndoDraw,
+            tooltip: localCopy.photoUndoDraw,
+            semanticLabel: localCopy.photoUndoDraw,
             onPressed: _strokes.isEmpty && _current == null ? null : _undo,
           ),
           AppIconButton(
             icon: AppIcons.delete,
-            tooltip: Copy.photoClearDraw,
-            semanticLabel: Copy.photoClearDraw,
+            tooltip: localCopy.photoClearDraw,
+            semanticLabel: localCopy.photoClearDraw,
             onPressed: _strokes.isEmpty ? null : _clear,
           ),
         ],
@@ -133,9 +137,11 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints limits) {
+            final LocalizedCopy localCopy = Copy.of(context);
+
             final bool wide = limits.maxWidth > limits.maxHeight;
             final Widget canvas = photoSize == null
-                ? Center(child: Text(_error == null ? Copy.loading : ''))
+                ? Center(child: Text(_error == null ? localCopy.loading : ''))
                 : _canvas(photoSize);
             final Widget panel = SingleChildScrollView(
               key: const ValueKey<String>('doodle-controls'),
@@ -216,7 +222,7 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
   }
 
   void _style(MarkupInk ink, int size) {
-    setState(() {
+    refresh(() {
       _ink = ink;
       _size = size;
     });
@@ -229,7 +235,7 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
     if (!photo.contains(local)) {
       return;
     }
-    setState(() {
+    refresh(() {
       _current = MarkupStroke(
         points: <Offset>[_fraction(photo, local)],
         ink: _ink,
@@ -243,23 +249,23 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
     if (current == null) {
       return;
     }
-    setState(() => _current = current.adding(_fraction(photo, local)));
+    refresh(() => _current = current.adding(_fraction(photo, local)));
   }
 
   void _end() {
     final MarkupStroke? current = _current;
     if (current == null || current.points.length < 2) {
-      setState(() => _current = null);
+      refresh(() => _current = null);
       return;
     }
-    setState(() {
+    refresh(() {
       _strokes.add(current);
       _current = null;
     });
   }
 
   void _undo() {
-    setState(() {
+    refresh(() {
       if (_current != null) {
         _current = null;
         return;
@@ -271,7 +277,7 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
   }
 
   void _clear() {
-    setState(() {
+    refresh(() {
       _strokes.clear();
       _current = null;
     });
@@ -288,7 +294,7 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
   }
 
   Future<void> _save() async {
-    setState(() {
+    refresh(() {
       _busy = true;
       _error = null;
     });
@@ -302,9 +308,9 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
     }
     switch (drawn) {
       case FailureResult<Uint8List>(:final Failure failure):
-        setState(() {
+        refresh(() {
           _busy = false;
-          _error = failure.message;
+          _error = failure.explanation;
         });
       case Success<Uint8List>(:final Uint8List value):
         final String id = UuidV7Service(const SystemClock()).newId();
@@ -321,7 +327,7 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen> {
           ),
           value,
         );
-        setState(() => _busy = false);
+        refresh(() => _busy = false);
     }
   }
 }

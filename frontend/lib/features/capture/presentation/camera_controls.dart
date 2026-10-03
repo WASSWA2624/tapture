@@ -1,159 +1,83 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:tapture/app/theme/color_tokens.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
-import 'package:tapture/core/camera/camera_service.dart';
+import 'package:tapture/core/camera/camera.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 
-/// Flash, focus, zoom and grid controls for capture.
-final class CameraControls extends StatefulWidget {
+import 'live_camera_controller.dart';
+import 'live_camera_state.dart';
+
+/// Flash, grid, zoom and document-mode controls for the live camera: 48dp,
+/// labelled, and naming their current state (FE-A11Y-01, FE-A11Y-02).
+final class CameraControls extends ConsumerWidget {
   /// Creates controls wired to [camera].
-  const CameraControls({
-    required this.camera,
-    this.onShutter,
-    this.onFlashChanged,
-    this.onGridChanged,
-    super.key,
-  });
+  const CameraControls({required this.camera, super.key});
+
+  /// How far one press of zoom in or zoom out moves.
+  static const double zoomStep = 0.5;
 
   /// Camera port.
   final CameraService camera;
 
-  /// Shutter press.
-  final VoidCallback? onShutter;
-
-  /// Flash mode after a cycle.
-  final ValueChanged<CameraFlashMode>? onFlashChanged;
-
-  /// Grid toggle persistence.
-  final ValueChanged<bool>? onGridChanged;
-
   @override
-  State<CameraControls> createState() => _CameraControlsState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
 
-class _CameraControlsState extends State<CameraControls> {
-  Offset? _focus;
-
-  Future<void> _cycleFlash() async {
-    final CameraFlashMode mode = await widget.camera.cycleFlash();
-    widget.onFlashChanged?.call(mode);
-    setState(() {});
-  }
-
-  Future<void> _toggleGrid() async {
-    final bool next = !widget.camera.gridEnabled;
-    await widget.camera.setGridEnabled(next);
-    widget.onGridChanged?.call(next);
-    setState(() {});
-  }
-
-  Future<void> _zoom(double delta) async {
-    await widget.camera.setZoom(widget.camera.zoom + delta);
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
+    final LiveCameraState view = ref.watch(
+      liveCameraControllerProvider(camera),
+    );
+    final LiveCameraController controller = ref.read(
+      liveCameraControllerProvider(camera).notifier,
+    );
+    final (IconData flashIcon, String flashLabel) = switch (view.flash) {
+      CameraFlashMode.off => (AppIcons.flashOff, localCopy.captureFlashOff),
+      CameraFlashMode.auto => (AppIcons.flashAuto, localCopy.captureFlashAuto),
+      CameraFlashMode.on => (AppIcons.flashOn, localCopy.captureFlashOn),
+    };
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: Space.x2,
+      runSpacing: Space.x2,
       children: <Widget>[
-        Expanded(
-          child: GestureDetector(
-            onTapDown: (TapDownDetails details) async {
-              final RenderBox box = context.findRenderObject()! as RenderBox;
-              final Offset local = box.globalToLocal(details.globalPosition);
-              final double x = (local.dx / box.size.width).clamp(0.0, 1.0);
-              final double y = (local.dy / box.size.height).clamp(0.0, 1.0);
-              await widget.camera.focusAt(x, y);
-              setState(() => _focus = local);
-            },
-            onScaleUpdate: (ScaleUpdateDetails details) async {
-              await widget.camera.setZoom(
-                widget.camera.zoom * details.scale.clamp(0.5, 2.0),
-              );
-              setState(() {});
-            },
-            child: Stack(
-              children: <Widget>[
-                if (_focus != null)
-                  Positioned(
-                    left: _focus!.dx - 24,
-                    top: _focus!.dy - 24,
-                    child: Semantics(
-                      label: Copy.captureFocus,
-                      child: Container(
-                        width: Sizes.minTapTarget,
-                        height: Sizes.minTapTarget,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: AppColors.dark.warning,
-                            width: Space.x0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
+        AppIconButton(
+          icon: flashIcon,
+          semanticLabel: flashLabel,
+          tooltip: flashLabel,
+          onPressed: () => unawaited(controller.cycleFlash()),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Semantics(
-              label: Copy.captureFlash,
-              button: true,
-              child: IconButton(
-                iconSize: 28,
-                onPressed: _cycleFlash,
-                icon: Icon(switch (widget.camera.flashMode) {
-                  CameraFlashMode.off => AppIcons.flashOff,
-                  CameraFlashMode.auto => AppIcons.flashAuto,
-                  CameraFlashMode.on => AppIcons.flashOn,
-                }),
-              ),
-            ),
-            Semantics(
-              label: Copy.captureGrid,
-              button: true,
-              child: IconButton(
-                iconSize: 28,
-                onPressed: _toggleGrid,
-                icon: Icon(
-                  widget.camera.gridEnabled
-                      ? AppIcons.gridOn
-                      : AppIcons.gridOff,
-                ),
-              ),
-            ),
-            Semantics(
-              label: Copy.captureZoom,
-              button: true,
-              child: IconButton(
-                iconSize: 28,
-                onPressed: () => _zoom(-0.5),
-                icon: const Icon(AppIcons.zoomOut),
-              ),
-            ),
-            Semantics(
-              label: Copy.captureZoom,
-              button: true,
-              child: IconButton(
-                iconSize: 28,
-                onPressed: () => _zoom(0.5),
-                icon: const Icon(AppIcons.zoomIn),
-              ),
-            ),
-            Semantics(
-              label: Copy.captureShutter,
-              button: true,
-              child: IconButton(
-                iconSize: 48,
-                onPressed: widget.onShutter,
-                icon: const Icon(AppIcons.shutter),
-              ),
-            ),
-          ],
+        AppIconButton(
+          icon: view.grid ? AppIcons.gridOn : AppIcons.gridOff,
+          semanticLabel: localCopy.captureGrid,
+          tooltip: localCopy.captureGrid,
+          selected: view.grid,
+          onPressed: () => unawaited(controller.setGrid(!view.grid)),
+        ),
+        AppIconButton(
+          icon: AppIcons.zoomOut,
+          semanticLabel: localCopy.captureZoomOut,
+          tooltip: localCopy.captureZoomOut,
+          onPressed: view.zoom > camera.minZoom
+              ? () => unawaited(controller.zoomBy(-zoomStep))
+              : null,
+        ),
+        AppIconButton(
+          icon: AppIcons.zoomIn,
+          semanticLabel: localCopy.captureZoomIn,
+          tooltip: localCopy.captureZoomIn,
+          onPressed: view.zoom < camera.maxZoom
+              ? () => unawaited(controller.zoomBy(zoomStep))
+              : null,
+        ),
+        AppIconButton(
+          icon: AppIcons.photoDocument,
+          semanticLabel: localCopy.captureDocumentMode,
+          tooltip: localCopy.captureDocumentMode,
+          selected: view.documentMode,
+          onPressed: () => controller.setDocumentMode(!view.documentMode),
         ),
       ],
     );

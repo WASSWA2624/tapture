@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
@@ -27,6 +28,7 @@ final class DeleteFeedbackController extends Notifier<DeleteFeedbackView> {
       visible: AppConstants.userFeedback.listPageSize,
       busy: false,
       error: null,
+      localizedError: null,
     );
   }
 
@@ -83,7 +85,11 @@ final class DeleteFeedbackController extends Notifier<DeleteFeedbackView> {
       case Success<List<RemovedFeedback>>():
         _set(selected: const <String>{}, busy: false, error: null);
       case FailureResult<List<RemovedFeedback>>(:final Failure failure):
-        _set(busy: false, error: failure.message);
+        _set(
+          busy: false,
+          error: failure.message,
+          localizedError: failure.explanation,
+        );
     }
     return result;
   }
@@ -102,6 +108,7 @@ final class DeleteFeedbackController extends Notifier<DeleteFeedbackView> {
     int? visible,
     bool? busy,
     Object? error = _keep,
+    LocalizedMessage? localizedError,
   }) {
     state = (
       filter: filter ?? state.filter,
@@ -110,6 +117,9 @@ final class DeleteFeedbackController extends Notifier<DeleteFeedbackView> {
       visible: visible ?? state.visible,
       busy: busy ?? state.busy,
       error: identical(error, _keep) ? state.error : error as String?,
+      localizedError: identical(error, _keep)
+          ? state.localizedError
+          : localizedError,
     );
   }
 }

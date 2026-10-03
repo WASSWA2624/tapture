@@ -1,7 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:tapture/core/constants/app_constants.dart';
-import 'package:tapture/core/export/export.dart';
+import 'package:tapture/core/export/xlsx_book.dart';
+import 'package:tapture/core/export/xlsx_cell.dart';
+import 'package:tapture/core/export/xlsx_column.dart';
+import 'package:tapture/core/export/xlsx_encoder.dart';
+import 'package:tapture/core/export/xlsx_image.dart';
+import 'package:tapture/core/export/xlsx_sheet.dart';
 
 import 'feedback_entry.dart';
 import 'feedback_filter.dart';

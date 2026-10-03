@@ -49,13 +49,15 @@ class DownloadFeedbackScreen extends ConsumerWidget {
       empty: () => _frame(
         context,
         controller,
-        const AppEmptyState(
+        AppEmptyState(
           icon: AppIcons.feedback,
-          headline: Copy.feedbackEmptyHeadline,
-          message: Copy.feedbackEmptyMessage,
+          headline: Copy.of(context).feedbackEmptyHeadline,
+          message: Copy.of(context).feedbackEmptyMessage,
         ),
       ),
       data: (List<FeedbackEntry> all) {
+        final LocalizedCopy localCopy = Copy.of(context);
+
         final List<FeedbackEntry> matching = view.filter.apply(all);
         final bool canDownload =
             matching.isNotEmpty && !view.filter.isRangeBackwards;
@@ -70,11 +72,12 @@ class DownloadFeedbackScreen extends ConsumerWidget {
           onToggleMoreFilters: controller.toggleMoreFilters,
           onShowMore: controller.showMore,
           error: view.error,
+          localizedError: view.localizedError,
           tile: (FeedbackEntry entry, int number) =>
               FeedbackEntryTile(entry: entry, number: number),
         );
         final Widget action = AppPrimaryAction(
-          label: Copy.feedbackDownloadCount(matching.length),
+          label: localCopy.feedbackDownloadCount(matching.length),
           busy: view.busy,
           compact: true,
           onPressed: canDownload
@@ -110,8 +113,10 @@ class DownloadFeedbackScreen extends ConsumerWidget {
     bool busy = false,
     VoidCallback? onSaveToFolder,
   }) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     return AppPage(
-      title: Copy.feedbackDownload,
+      title: localCopy.feedbackDownload,
       compactBar: true,
       inset: false,
       footer: _footer(
@@ -123,8 +128,8 @@ class DownloadFeedbackScreen extends ConsumerWidget {
       ),
       leading: AppIconButton(
         icon: AppIcons.close,
-        semanticLabel: Copy.close,
-        tooltip: Copy.close,
+        semanticLabel: localCopy.close,
+        tooltip: localCopy.close,
         outlined: false,
         onPressed: () => Navigator.of(context).maybePop(),
       ),
@@ -139,6 +144,8 @@ class DownloadFeedbackScreen extends ConsumerWidget {
     required bool busy,
     VoidCallback? onSaveToFolder,
   }) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final String? destination = controller.destination;
     final bool canOpen = controller.canOpenFolder;
     final bool canChoose = controller.canChooseLocation;
@@ -151,7 +158,7 @@ class DownloadFeedbackScreen extends ConsumerWidget {
       children: <Widget>[
         if (destination != null)
           Text(
-            Copy.feedbackDownloadsGoTo(destination),
+            localCopy.feedbackDownloadsGoTo(destination),
             style: AppText.caption,
             textAlign: TextAlign.center,
           ),
@@ -163,13 +170,13 @@ class DownloadFeedbackScreen extends ConsumerWidget {
             children: <Widget>[
               if (canOpen)
                 AppButton(
-                  label: Copy.feedbackOpenFolder,
+                  label: localCopy.feedbackOpenFolder,
                   variant: AppButtonVariant.text,
                   onPressed: () => unawaited(_openFolder(context, controller)),
                 ),
               if (canChoose)
                 AppButton(
-                  label: Copy.feedbackSaveToFolder,
+                  label: localCopy.feedbackSaveToFolder,
                   variant: AppButtonVariant.text,
                   busy: busy,
                   onPressed: onSaveToFolder,
@@ -198,7 +205,12 @@ Future<void> _openFolder(
     case Success<void>():
       break;
     case FailureResult<void>(:final Failure failure):
-      showAppSnack(context, failure.message, tone: SnackTone.warning);
+      showAppSnack(
+        context,
+        failure.message,
+        tone: SnackTone.warning,
+        localizedMessage: failure.explanation,
+      );
   }
 }
 
@@ -208,6 +220,8 @@ Future<void> _download(
   List<FeedbackEntry> matching, {
   bool chooseLocation = false,
 }) async {
+  final LocalizedCopy localCopy = Copy.of(context);
+
   final Result<String?> result = await controller.download(
     matching,
     chooseLocation: chooseLocation,
@@ -220,8 +234,8 @@ Future<void> _download(
       showAppSnack(
         context,
         value == null
-            ? Copy.feedbackDownloadStarted
-            : Copy.feedbackDownloadedTo(value),
+            ? localCopy.feedbackDownloadStarted
+            : localCopy.feedbackDownloadedTo(value),
         tone: SnackTone.success,
       );
       Navigator.of(context).pop(true);

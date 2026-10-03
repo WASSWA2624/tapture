@@ -23,14 +23,17 @@ class AppErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+
     final AppColors colors = context.colors;
     final (IconData icon, Color color) = _visual(failure, colors);
-    final String? recovery = failure.recoveryAction;
+    final String message = localCopy.failureMessage(failure);
+    final String? recovery = localCopy.failureRecovery(failure);
     final VoidCallback? onRetry = this.onRetry;
     return Semantics(
       container: true,
       liveRegion: true,
-      label: failure.message,
+      label: message,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: Space.x4,
@@ -57,7 +60,7 @@ class AppErrorState extends StatelessWidget {
             ),
             const SizedBox(height: Space.x4),
             Text(
-              failure.message,
+              message,
               textAlign: TextAlign.center,
               style: AppText.section.copyWith(color: colors.onSurface),
             ),
@@ -71,7 +74,7 @@ class AppErrorState extends StatelessWidget {
             ],
             if (onRetry != null) ...<Widget>[
               const SizedBox(height: Space.x4),
-              AppButton(label: Copy.tryAgain, onPressed: onRetry),
+              AppButton(label: localCopy.tryAgain, onPressed: onRetry),
             ],
           ],
         ),

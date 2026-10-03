@@ -1,3 +1,4 @@
+import 'package:tapture/core/copy/domain_copy.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/record_status.dart';
@@ -16,10 +17,10 @@ abstract final class SaveRaw {
     required Future<Result<String>> Function(CaptureSession session) persist,
   }) async {
     if (!session.hasEvidence && session.recordCaption.trim().isEmpty) {
-      return const FailureResult<String>(
+      return FailureResult<String>(
         ValidationFailure(
-          message: 'Add at least one photo or a caption before saving.',
-          recoveryAction: 'Add evidence, then try again.',
+          localizedMessage: DomainCopy.messages.captureNeedsEvidence,
+          localizedRecovery: DomainCopy.messages.captureNeedsEvidenceRecovery,
         ),
       );
     }
