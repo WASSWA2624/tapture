@@ -67,19 +67,18 @@ key.properties
 *__*__*.zip
 TAPTURE-*.zip
 
+# Test suites, with their goldens and fixtures, stay local.
+/test/
+/integration_test/
+
 # Operator-captured photos and other user images. Branding and platform
-# icons stay tracked. Synthetic golden baselines travel with their tests;
-# captured images and failure dumps stay local.
+# icons stay tracked; captured images and failure dumps stay local.
 **/photos/
 *.jpg
 *.jpeg
 *.heic
 *.heif
 *.webp
-/test/**/*.png
-/test/**/*.gif
-/test/**/*.bmp
-!/test/**/goldens/**/*.png
 
 # Golden comparison dumps. Baselines stay in goldens/; these are local diffs.
 **/failures/

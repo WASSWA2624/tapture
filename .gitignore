@@ -26,8 +26,13 @@ __pycache__/
 backend/node_modules/
 backend/dist/
 
+# Test suites stay local (frontend/test and frontend/integration_test are
+# ignored in frontend/.gitignore), as does local agent configuration.
+backend/test/
+/.claude/
+
 # Operator-captured photos and local app data. Branding and icons stay
-# tracked. Images under frontend/test are ignored in frontend/.gitignore.
+# tracked.
 /Tapture/
 **/photos/
 *.jpg
