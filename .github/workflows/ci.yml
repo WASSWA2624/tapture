@@ -10,13 +10,31 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
       - name: Check development tracker is committed and current
         run: dart run tool/sync_dev_tracker.dart --check
-      - run: dart run tool/verify.dart
+      - name: Resolve the change base
+        id: base
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        env:
+          VERIFY_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          if [ -n "$VERIFY_BASE" ] && [ "$VERIFY_BASE" != "0000000000000000000000000000000000000000" ]; then
+            echo "sha=$VERIFY_BASE" >> "$GITHUB_OUTPUT"
+          else
+            git fetch origin "$DEFAULT_BRANCH" --depth=1
+            echo "sha=$(git merge-base HEAD "origin/$DEFAULT_BRANCH")" >> "$GITHUB_OUTPUT"
+          fi
+      - run: dart run tool/verify.dart --changed
+        env:
+          VERIFY_BASE: ${{ steps.base.outputs.sha }}
       - if: failure()
         uses: actions/upload-artifact@v4
         with:

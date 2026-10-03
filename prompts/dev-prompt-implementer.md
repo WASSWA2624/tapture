@@ -11,7 +11,7 @@ After each checklist change and before reporting, run from frontend/:
 Confirm the tracker row matches the checklist. Leave tracker updates to the synchronizer.
 
 Run applicable gates:
-- Flutter: format changed Dart files, `flutter analyze`, and `dart run tool/verify.dart --fast` from frontend/.
+- Flutter: `dart run tool/verify.dart --changed` from frontend/.
 - Backend: `npm run verify` from backend/.
 
 Add and run the named tests; exercise changed screens and interactions. New checkers must pass valid code, reject a violating fixture, and report file and line. Report blockers and unrun checks.

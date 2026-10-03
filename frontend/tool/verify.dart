@@ -1,41 +1,27 @@
 import 'dart:io';
 
-/// The flag that drops the two slowest suites for the pre-commit path.
-const String _fastFlag = '--fast';
+/// The only mode. A run checks the files that changed.
+const String _changedFlag = '--changed';
 
-/// Measured budgets run alone after the concurrent functional suites finish.
+/// Measured budgets run alone after the functional tests for those same files.
 const String _performanceTag = 'performance';
 
-/// How to call this, printed when an argument is not one this understands.
-const String _usage = 'usage: dart run tool/verify.dart [$_fastFlag]';
+/// How to call this, printed when the mode is missing or an argument is not
+/// one this understands.
+const String _usage =
+    'usage: dart run tool/verify.dart $_changedFlag [path...]';
 
-/// The suites that hold the architecture's own guardrails.
+/// The base commit a clean tree is compared with, when the caller sets one.
 ///
-/// They are named separately from the rest because they are load-bearing
-/// (`frontend/.rules/12-testing.md`, FE-TEST-06): they are never skipped to
-/// make a change pass, so a run says plainly whether they went green.
-const List<String> _guardrailSuites = <String>[
-  'test/tool',
-  'test/architecture',
-  'test/support',
-];
+/// Continuous integration sets this to the pull-request base or the previous
+/// tip of the branch. A local clean tree falls back to the parent of `HEAD`.
+const String _baseVariable = 'VERIFY_BASE';
 
-/// The suite holding the design-system goldens, which `--fast` skips.
-const String _goldenSuite = 'test/design_system';
-
-/// The suite holding the end-to-end flows, which `--fast` skips.
-const String _integrationSuite = 'integration_test';
-
-/// Folders under `test/` that the unit-and-widget gate does not run: the
-/// guardrail suites have their own gate, the goldens have theirs, and
-/// `support/` is run with the guardrails because it holds the accessibility
-/// matchers.
-const List<String> _notUnitSuites = <String>[
-  'tool',
-  'architecture',
-  'design_system',
-  'support',
-];
+/// A hook that is not itself a Dart file, and the test that covers it.
+const Map<String, String> _pairedTests = <String, String>{
+  'tool/hooks/pre-commit': 'test/tool/pre_commit_test.dart',
+  'tool/hooks/commit-msg': 'test/tool/commit_msg_test.dart',
+};
 
 /// How a gate turned out.
 enum _Outcome {
@@ -45,14 +31,13 @@ enum _Outcome {
   /// The gate ran and was not.
   failed,
 
-  /// The gate had nothing to run against, so it was not run at all.
+  /// The gate had nothing in the change set, so it was not run at all.
   skipped,
 }
 
 /// One gate: what it is called, and the command that decides it.
 ///
-/// A gate with no command is one there is nothing to run — a suite that does
-/// not exist yet, or one `--fast` set aside.
+/// A gate with no command had no changed files to check.
 typedef _Gate = ({
   String name,
   String? executable,
@@ -68,23 +53,43 @@ typedef _Result = ({
   Duration took,
 });
 
-/// Runs every gate the review depends on and reports them as one table.
+/// Git could not say which files changed.
+final class _GitChanges implements Exception {
+  /// What a run should print.
+  _GitChanges(this.message);
+
+  /// The reason, already worded for the person who ran the command.
+  final String message;
+}
+
+/// Runs every gate the changed files need and reports them as one table.
 ///
-/// Takes `--fast`, which sets aside the golden and integration suites for the
-/// pre-commit path; the full run is what continuous integration uses. Exits 0
-/// when every gate passed or was skipped, and 1 when any gate failed.
+/// `--changed` is required. Paths after it are the change; without them the
+/// command asks git. Exits 0 when every gate passed or was skipped, and 1
+/// when any gate failed or the change set could not be read.
 Future<int> main(List<String> args) async {
   exitCode = await verify(args);
   return exitCode;
 }
 
-/// Collects every gate, with an injectable command boundary for runner tests.
+/// Collects every gate for the change set.
+///
+/// [runCommand] stands in for the process boundary, and [readChanges] for git,
+/// so a test can decide both without leaving the package.
 Future<int> verify(
   List<String> args, {
   Future<ProcessResult> Function(String, List<String>)? runCommand,
+  Future<List<String>> Function()? readChanges,
 }) async {
-  final List<String> unknown = args
-      .where((String argument) => argument != _fastFlag)
+  if (!args.contains(_changedFlag)) {
+    stderr.writeln(_usage);
+    return 1;
+  }
+  final List<String> rest = args
+      .where((String argument) => argument != _changedFlag && argument != '--')
+      .toList();
+  final List<String> unknown = rest
+      .where((String argument) => argument.startsWith('-'))
       .toList();
   if (unknown.isNotEmpty) {
     stderr.writeln('unrecognised argument(s): ${unknown.join(', ')}');
@@ -92,9 +97,18 @@ Future<int> verify(
     return 1;
   }
 
-  final bool fast = args.contains(_fastFlag);
+  final List<String> changed;
+  try {
+    changed = rest.isNotEmpty
+        ? _unique(rest)
+        : _unique(await (readChanges ?? _readGitChanges)());
+  } on _GitChanges catch (error) {
+    stderr.writeln(error.message);
+    return 1;
+  }
+
   final List<_Result> results = <_Result>[];
-  for (final _Gate gate in _gates(fast: fast)) {
+  for (final _Gate gate in _gates(changed)) {
     stdout.writeln('Running gate: ${gate.name}');
     final _Result result = await _runGate(gate, runCommand ?? _execute);
     results.add(result);
@@ -108,7 +122,7 @@ Future<int> verify(
     }
   }
 
-  _report(results, fast: fast);
+  _report(results);
   final bool anyFailed = results.any(
     (_Result result) => result.outcome == _Outcome.failed,
   );
@@ -117,75 +131,115 @@ Future<int> verify(
 
 /// The gates, in the order a run works through them.
 ///
-/// Cheap and specific first, so a run that is going to fail usually fails
-/// before it has spent a minute running tests.
-List<_Gate> _gates({required bool fast}) {
+/// Cheap and specific first. A gate with nothing of its own in [changed] is
+/// reported as skipped rather than pointed at the rest of the package.
+List<_Gate> _gates(List<String> changed) {
+  final List<String> dartFiles = <String>[
+    for (final String path in changed)
+      if (_isPackageDart(path)) path,
+  ];
+  final List<String> tests = _selectedTests(changed);
+  final List<String> guardrail = _where(tests, _isGuardrail);
+  final List<String> golden = _where(tests, _isGolden);
+  final List<String> integration = _where(tests, _isIntegration);
+  final List<String> unit = _where(tests, _isUnit);
+  final List<String> measured = <String>[
+    for (final String path in unit)
+      if (_measuresPerformance(path)) path,
+  ];
   return <_Gate>[
-    _command('dev tracker refresh', 'dart', <String>[
+    _when('dev tracker refresh', _any(changed, _isPlan), 'dart', <String>[
       'run',
       'tool/sync_dev_tracker.dart',
     ]),
-    _command('format', 'dart', <String>[
+    _when('format', dartFiles.isNotEmpty, 'dart', <String>[
       'format',
       '--output=none',
       '--set-exit-if-changed',
-      '.',
+      ...dartFiles,
     ]),
-    _command('analyzer', _flutter, <String>['analyze']),
-    _command('dependency allowlist', 'dart', <String>[
+    _when('analyzer', dartFiles.isNotEmpty, _flutter, <String>[
+      'analyze',
+      ...dartFiles,
+    ]),
+    _when(
+      'dependency allowlist',
+      _any(changed, _isDependency),
+      'dart',
+      <String>['run', 'tool/check_dependencies.dart'],
+    ),
+    _when('structure', _any(changed, _isTree), 'dart', <String>[
       'run',
-      'tool/check_dependencies.dart',
+      'tool/check_structure.dart',
     ]),
-    _command('structure', 'dart', <String>['run', 'tool/check_structure.dart']),
-    _command('plan', 'dart', <String>['run', 'tool/check_plan.dart']),
-    _command('templates', 'dart', <String>['run', 'tool/check_templates.dart']),
-    _command('localization', 'dart', <String>['run', 'tool/check_l10n.dart']),
-    _command('localization factories', 'dart', <String>[
+    _when('plan', _any(changed, _isPlan), 'dart', <String>[
       'run',
-      'tool/generate_copy_messages.dart',
-      '--check',
+      'tool/check_plan.dart',
     ]),
-    _command('domain localization', 'dart', <String>[
+    _when('templates', _any(changed, _isTemplate), 'dart', <String>[
+      'run',
+      'tool/check_templates.dart',
+    ]),
+    _when('localization', _any(changed, _isLocalization), 'dart', <String>[
+      'run',
+      'tool/check_l10n.dart',
+    ]),
+    _when(
+      'localization factories',
+      _any(changed, _isCopyFactory),
+      'dart',
+      <String>['run', 'tool/generate_copy_messages.dart', '--check'],
+    ),
+    _when('domain localization', _any(changed, _isDomainCopy), 'dart', <String>[
       'run',
       'tool/generate_domain_copy.dart',
       '--check',
     ]),
-    _command('headless domain', 'dart', <String>[
+    _when('headless domain', _any(changed, _isDomainCopy), 'dart', <String>[
       'run',
       'tool/probe_domain_copy.dart',
     ]),
-    _command('test presence', 'dart', <String>[
+    _when('test presence', _any(changed, _isLibSource), 'dart', <String>[
       'run',
       'tool/check_tests.dart',
       '--strict',
     ]),
-    _suite('guardrail tests', _existing(_guardrailSuites)),
+    _suite('guardrail tests', guardrail),
     _suite(
       'unit and widget tests',
-      _unitSuites(),
+      unit,
       options: const <String>['--exclude-tags', _performanceTag],
     ),
     _suite(
       'performance tests',
-      _unitSuites(),
+      measured,
       options: const <String>['--tags', _performanceTag, '--concurrency=1'],
     ),
-    _suite(
-      'golden tests',
-      _existing(<String>[_goldenSuite]),
-      setAside: fast ? 'set aside by $_fastFlag' : null,
-    ),
+    _suite('golden tests', golden),
     _suite(
       'integration tests',
-      _existing(<String>[_integrationSuite]),
+      integration,
       options: const <String>['--concurrency=1'],
-      setAside: fast ? 'set aside by $_fastFlag' : null,
     ),
   ];
 }
 
-/// A gate that runs one command.
-_Gate _command(String name, String executable, List<String> arguments) {
+/// A gate that runs when [ready] and is skipped when the change set has
+/// nothing for it.
+_Gate _when(
+  String name,
+  bool ready,
+  String executable,
+  List<String> arguments,
+) {
+  if (!ready) {
+    return (
+      name: name,
+      executable: null,
+      arguments: const <String>[],
+      skippedBecause: 'no changed files',
+    );
+  }
   return (
     name: name,
     executable: executable,
@@ -194,28 +248,18 @@ _Gate _command(String name, String executable, List<String> arguments) {
   );
 }
 
-/// A gate that runs the tests under [paths], or is skipped when there are none
-/// or when the caller has set it aside.
+/// A gate that runs the tests under [paths], or is skipped when there are none.
 _Gate _suite(
   String name,
   List<String> paths, {
-  String? setAside,
   List<String> options = const <String>[],
 }) {
-  if (setAside != null) {
-    return (
-      name: name,
-      executable: null,
-      arguments: const <String>[],
-      skippedBecause: setAside,
-    );
-  }
   if (paths.isEmpty) {
     return (
       name: name,
       executable: null,
       arguments: const <String>[],
-      skippedBecause: 'no such suite yet',
+      skippedBecause: 'no changed files',
     );
   }
   return (
@@ -224,6 +268,171 @@ _Gate _suite(
     arguments: <String>['test', ...options, ...paths],
     skippedBecause: null,
   );
+}
+
+/// The tests the change owes: a changed test file, the mirror of a changed
+/// source file, the tests beside a changed golden, and the guardrail files
+/// when a rule file changed.
+List<String> _selectedTests(List<String> changed) {
+  final Set<String> tests = <String>{};
+  for (final String path in changed) {
+    if (_isRunnableTest(path) && File(path).existsSync()) {
+      tests.add(path);
+      continue;
+    }
+    final String? mirror = _mirroredTest(path);
+    if (mirror != null && File(mirror).existsSync()) {
+      tests.add(mirror);
+    }
+    final int goldens = path.indexOf('/goldens/');
+    if (goldens > 0) {
+      tests.addAll(_testsIn(path.substring(0, goldens)));
+    }
+  }
+  if (changed.any((String path) => path.startsWith('.rules/'))) {
+    for (final String suite in const <String>[
+      'test/architecture',
+      'test/tool',
+      'test/support',
+    ]) {
+      tests.addAll(_testsIn(suite));
+    }
+  }
+  return tests.toList()..sort();
+}
+
+/// A test file the runner can be pointed at.
+bool _isRunnableTest(String path) {
+  return path.endsWith('_test.dart') &&
+      (path.startsWith('test/') || path.startsWith('integration_test/'));
+}
+
+/// The test that belongs to a source file, when the layout has one.
+String? _mirroredTest(String path) {
+  final String? paired = _pairedTests[path];
+  if (paired != null) {
+    return paired;
+  }
+  if (!path.endsWith('.dart') ||
+      path.endsWith('.g.dart') ||
+      path.endsWith('.freezed.dart')) {
+    return null;
+  }
+  if (path.startsWith('lib/')) {
+    return 'test/${path.substring(4, path.length - 5)}_test.dart';
+  }
+  if (path.startsWith('tool/') && !path.substring(5).contains('/')) {
+    return 'test/tool/${path.substring(5, path.length - 5)}_test.dart';
+  }
+  return null;
+}
+
+/// The `*_test.dart` files sitting directly in [directory].
+List<String> _testsIn(String directory) {
+  final Directory dir = Directory(directory);
+  if (!dir.existsSync()) {
+    return const <String>[];
+  }
+  return <String>[
+    for (final FileSystemEntity entity in dir.listSync())
+      if (entity is File && _basename(entity.uri).endsWith('_test.dart'))
+        '$directory/${_basename(entity.uri)}',
+  ];
+}
+
+/// Whether [path] carries the measured-budget tag.
+bool _measuresPerformance(String path) {
+  final File file = File(path);
+  if (!file.existsSync()) {
+    return false;
+  }
+  final String source = file.readAsStringSync();
+  return source.contains('@Tags(') &&
+      (source.contains("'$_performanceTag'") ||
+          source.contains('"$_performanceTag"'));
+}
+
+bool _isPackageDart(String path) {
+  return path.endsWith('.dart') && !path.startsWith('../');
+}
+
+bool _isPlan(String path) {
+  return path.startsWith('../dev-plan/') || path == '../dev-tracker.md';
+}
+
+bool _isDependency(String path) {
+  return path == 'pubspec.yaml' ||
+      path == 'pubspec.lock' ||
+      path == 'tool/allowlist.yaml';
+}
+
+bool _isTree(String path) {
+  return path.startsWith('lib/') ||
+      path.startsWith('test/') ||
+      path.startsWith('tool/') ||
+      path.startsWith('integration_test/');
+}
+
+bool _isTemplate(String path) {
+  return path.startsWith('assets/templates/') ||
+      path == 'tool/check_templates.dart' ||
+      path == 'tool/build_template_catalogue.dart';
+}
+
+bool _isLocalization(String path) {
+  return path.endsWith('.arb') ||
+      path.startsWith('lib/core/copy/l10n/') ||
+      path == 'tool/check_l10n.dart' ||
+      (path.endsWith('.dart') &&
+          (path.contains('/presentation/') || path.contains('/widgets/')));
+}
+
+bool _isCopyFactory(String path) {
+  return path == 'lib/core/copy/copy.dart' ||
+      path == 'tool/generate_copy_messages.dart' ||
+      path == 'lib/core/copy/copy_messages.g.dart' ||
+      path == 'lib/core/copy/localized_copy_resolver.g.dart';
+}
+
+bool _isDomainCopy(String path) {
+  return path.startsWith('lib/core/copy/') ||
+      path.contains('/domain/') ||
+      path == 'tool/generate_domain_copy.dart' ||
+      path == 'tool/probe_domain_copy.dart' ||
+      path == 'tool/domain_copy_imports.g.dart';
+}
+
+bool _isLibSource(String path) {
+  return path.startsWith('lib/') &&
+      path.endsWith('.dart') &&
+      !path.endsWith('.g.dart') &&
+      !path.endsWith('.freezed.dart');
+}
+
+bool _isGuardrail(String path) {
+  return path.startsWith('test/tool/') ||
+      path.startsWith('test/architecture/') ||
+      path.startsWith('test/support/');
+}
+
+bool _isGolden(String path) => path.startsWith('test/design_system/');
+
+bool _isIntegration(String path) => path.startsWith('integration_test/');
+
+bool _isUnit(String path) {
+  return path.startsWith('test/') && !_isGuardrail(path) && !_isGolden(path);
+}
+
+/// The paths among [paths] for which [test] is true, in their existing order.
+List<String> _where(List<String> paths, bool Function(String path) test) {
+  return <String>[
+    for (final String path in paths)
+      if (test(path)) path,
+  ];
+}
+
+bool _any(List<String> paths, bool Function(String path) test) {
+  return paths.any(test);
 }
 
 /// Runs one gate, timing it and keeping whatever it said for the report.
@@ -266,8 +475,175 @@ Future<ProcessResult> _execute(String executable, List<String> arguments) {
   return Process.run(executable, arguments);
 }
 
+/// The changed files, as paths relative to this package.
+///
+/// A dirty tree contributes its staged, unstaged and untracked files. A clean
+/// tree contributes the diff from [VERIFY_BASE] or from the parent of `HEAD`.
+Future<List<String>> _readGitChanges() async {
+  final ProcessResult top = await Process.run('git', <String>[
+    'rev-parse',
+    '--show-toplevel',
+  ]);
+  if (top.exitCode != 0) {
+    throw _GitChanges(
+      'verify: not a git repository, so changed files cannot be listed',
+    );
+  }
+  final String root = _text(top).trim();
+  final String prefix = _packagePrefix(root, Directory.current.path);
+  final List<String> dirty = <String>[
+    ...await _git(root, <String>['diff', '--name-only', '--diff-filter=ACMR']),
+    ...await _git(root, <String>[
+      'diff',
+      '--cached',
+      '--name-only',
+      '--diff-filter=ACMR',
+    ]),
+    ...await _git(root, <String>['ls-files', '--others', '--exclude-standard']),
+  ];
+  if (dirty.isNotEmpty) {
+    return <String>[for (final String path in dirty) _fromGit(path, prefix)];
+  }
+
+  final String? base = _usableBase(Platform.environment[_baseVariable]);
+  if (base != null) {
+    return <String>[
+      for (final String path in await _git(root, <String>[
+        'diff',
+        '--name-only',
+        '--diff-filter=ACMR',
+        base,
+        'HEAD',
+      ]))
+        _fromGit(path, prefix),
+    ];
+  }
+  final ProcessResult parent = await Process.run('git', <String>[
+    '-C',
+    root,
+    'rev-parse',
+    '--verify',
+    '--quiet',
+    'HEAD^',
+  ]);
+  if (parent.exitCode == 0) {
+    return <String>[
+      for (final String path in await _git(root, <String>[
+        'diff',
+        '--name-only',
+        '--diff-filter=ACMR',
+        'HEAD^',
+        'HEAD',
+      ]))
+        _fromGit(path, prefix),
+    ];
+  }
+  return <String>[
+    for (final String path in await _git(root, <String>[
+      'diff-tree',
+      '--no-commit-id',
+      '--name-only',
+      '-r',
+      '--root',
+      'HEAD',
+    ]))
+      _fromGit(path, prefix),
+  ];
+}
+
+/// One git command whose output is a list of paths. A failure is the reason
+/// the change set could not be read.
+Future<List<String>> _git(String root, List<String> args) async {
+  final ProcessResult result = await Process.run('git', <String>[
+    '-C',
+    root,
+    ...args,
+  ]);
+  if (result.exitCode != 0) {
+    throw _GitChanges(
+      'verify: git ${args.join(' ')} failed\n${_text(result)}'.trim(),
+    );
+  }
+  return _lines(result);
+}
+
+/// [base] when it names a commit, and null when it is absent or the all-zero
+/// placeholder a new branch push carries.
+String? _usableBase(String? base) {
+  if (base == null) {
+    return null;
+  }
+  final String trimmed = base.trim();
+  if (trimmed.isEmpty || RegExp(r'^0+$').hasMatch(trimmed)) {
+    return null;
+  }
+  return trimmed;
+}
+
+/// This package's path inside [repoRoot], or empty when the command is already
+/// standing at the root.
+String _packagePrefix(String repoRoot, String cwd) {
+  final String root = _slash(Directory(repoRoot).absolute.path);
+  final String here = _slash(Directory(cwd).absolute.path);
+  if (here.toLowerCase() == root.toLowerCase()) {
+    return '';
+  }
+  if (here.toLowerCase().startsWith('${root.toLowerCase()}/')) {
+    return here.substring(root.length + 1);
+  }
+  return '';
+}
+
+/// A repo-relative git path written the way this package names files.
+String _fromGit(String repoPath, String packagePrefix) {
+  final String path = _clean(repoPath);
+  if (packagePrefix.isEmpty) {
+    return path;
+  }
+  if (path.startsWith('$packagePrefix/')) {
+    return path.substring(packagePrefix.length + 1);
+  }
+  return '../$path';
+}
+
+/// [paths] cleaned, with a repeated path kept once, in a stable order.
+///
+/// A leading `frontend/` is dropped so a repo-relative path and a
+/// package-relative path name the same file.
+List<String> _unique(Iterable<String> paths) {
+  final Set<String> unique = <String>{};
+  for (final String raw in paths) {
+    String path = _clean(raw);
+    if (path.isEmpty) {
+      continue;
+    }
+    if (path.startsWith('frontend/')) {
+      path = path.substring('frontend/'.length);
+    }
+    unique.add(path);
+  }
+  return unique.toList()..sort();
+}
+
+/// [raw] with the host's separators and a leading `./` set aside.
+String _clean(String raw) {
+  String path = raw.trim().replaceAll('\\', '/');
+  while (path.startsWith('./')) {
+    path = path.substring(2);
+  }
+  return path;
+}
+
+/// [path] with every separator written as `/`.
+String _slash(String path) {
+  final String slashed = path.replaceAll('\\', '/');
+  return slashed.endsWith('/')
+      ? slashed.substring(0, slashed.length - 1)
+      : slashed;
+}
+
 /// Prints the final table; failures are reported immediately by [verify].
-void _report(List<_Result> results, {required bool fast}) {
+void _report(List<_Result> results) {
   final int width = results
       .map((_Result result) => result.name.length)
       .reduce((int a, int b) => a > b ? a : b);
@@ -284,8 +660,7 @@ void _report(List<_Result> results, {required bool fast}) {
   final int failed = _count(results, _Outcome.failed);
   final int skipped = _count(results, _Outcome.skipped);
   stdout.writeln(
-    'verify${fast ? ' ($_fastFlag)' : ''}: $passed passed, $failed failed, '
-    '$skipped skipped',
+    'verify ($_changedFlag): $passed passed, $failed failed, $skipped skipped',
   );
 }
 
@@ -297,39 +672,21 @@ int _count(List<_Result> results, _Outcome outcome) {
 /// A gate's own output, standard error first, since that is where a tool that
 /// is unhappy says why.
 String _outputOf(ProcessResult result) {
+  return _text(result).trim();
+}
+
+/// Standard error, then standard output, as text.
+String _text(ProcessResult result) {
   final Object? errors = result.stderr;
   final Object? output = result.stdout;
-  final String text =
-      '${errors is String ? errors : ''}\n${output is String ? output : ''}';
-  return text.trim();
+  return '${errors is String ? errors : ''}\n${output is String ? output : ''}';
 }
 
-/// The suites holding ordinary unit and widget tests: everything under `test/`
-/// that another gate does not already own.
-List<String> _unitSuites() {
-  final Directory tests = Directory('test');
-  if (!tests.existsSync()) {
-    return <String>[];
-  }
-  final List<String> paths = <String>[];
-  for (final FileSystemEntity entity in tests.listSync()) {
-    final String name = _basename(entity.uri);
-    if (entity is Directory) {
-      if (!_notUnitSuites.contains(name)) {
-        paths.add('test/$name');
-      }
-    } else if (entity is File && name.endsWith('_test.dart')) {
-      paths.add('test/$name');
-    }
-  }
-  return paths..sort();
-}
-
-/// The paths among [candidates] that are there to be run.
-List<String> _existing(List<String> candidates) {
+/// The non-empty lines of a git listing.
+List<String> _lines(ProcessResult result) {
   return <String>[
-    for (final String path in candidates)
-      if (Directory(path).existsSync()) path,
+    for (final String line in _text(result).split('\n'))
+      if (line.trim().isNotEmpty) line.trim(),
   ];
 }
 

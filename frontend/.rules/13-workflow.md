@@ -6,8 +6,9 @@
 `task/<number>-<slug>`. Commit subjects start with the task number. A pull request that touches two tasks is split.
 
 ## FE-FLOW-02 — The gate is a command
-`dart run tool/verify.dart` runs format, analyzer, dependency allowlist, structure, plan integrity, guardrails and
-tests. It runs locally before review and identically in continuous integration.
+`dart run tool/verify.dart --changed` is the only gate. It runs format, the analyzer and tests for the files that
+changed, and a repository checker only when one of that checker's inputs changed. The same command runs locally
+before review and in continuous integration.
 
 ## FE-FLOW-03 — Done means the checklist is ticked
 Every box in the task's Definition of done, including the tests. A partially finished task stays open rather than

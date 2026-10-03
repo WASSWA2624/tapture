@@ -79,7 +79,7 @@ verification can refresh it; on a fresh checkout install the managed hooks once 
 
 | Work | Gate |
 | :--- | :--- |
-| Flutter | `dart format` applied, `flutter analyze` clean, `dart run tool/verify.dart --fast` green |
+| Flutter | `dart format` applied, `flutter analyze` clean, `dart run tool/verify.dart --changed` green |
 | Backend | `npm run verify` green — format, lint, type check, unit, integration and contract tests |
 
 A guardrail or checker a task asks for must pass on the current tree, fail on a deliberate violation, ship a fixture

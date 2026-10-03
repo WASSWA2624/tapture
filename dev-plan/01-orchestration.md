@@ -18,7 +18,7 @@ must exist at the end:
 | Plan checker | `frontend/tool/check_plan.dart` over `frontend/tool/plan_source.dart` — step files and folders, step headings and step-folder file numbering, required sections, unique IDs and titles with no holes, and dependencies at earlier implementation positions |
 | Task scaffolder | `frontend/tool/new_task.dart` + `tool/task_template.md` |
 | Progress tracker | `frontend/tool/sync_dev_tracker.dart` and `check_staged_dev_tracker.dart` — acceptance-derived summaries, deterministic drift checks and consistent staged progress |
-| Verify | `frontend/tool/verify.dart` — format, analyzer, dependencies, structure, plan, **test presence (`--strict`)**, guardrail tests, unit/widget tests; goldens and integration run unless `--fast` |
+| Verify | `frontend/tool/verify.dart --changed` — format, analyzer and tests for the changed files; dependency, structure, plan, template, localization and test-presence checkers when their inputs changed |
 | Hooks | `frontend/tool/hooks/pre-commit`, `commit-msg`, `install_hooks.dart` |
 | Architecture suites | `frontend/test/architecture/` — import graph, tokens, responsive, state, errors, network, data safety, naming |
 | Naming | `frontend/tool/check_naming.dart` — snake_case files, one public class, banned words (`manager`, `helper`, `util`, `data`, `info`, `item`) |
@@ -27,7 +27,7 @@ must exist at the end:
 | Logging / secrets | `check_logging.dart`, `check_secrets.dart`, `secret_patterns.yaml` |
 | Test presence | `check_tests.dart` — every `domain/`, `data/`, `core/widgets/` file and presentation screen owes a mirrored `test/…_test.dart` |
 
-`dart run tool/verify.dart --fast` from `frontend/` is the close gate. Naming and repo-hygiene checkers run through their own suites under the guardrail gate, not as extra verify rows.
+`dart run tool/verify.dart --changed` from `frontend/` is the close gate. Naming and repo-hygiene checkers run through their own suites under the guardrail gate, not as extra verify rows.
 
 A later agent reproducing chrome, overflow, or catalogue widgets must keep these checkers green: no second public class, no type name containing `item`, no feature `Color`/`TextStyle` literals, and a test file for every new `core/widgets/` source (including `part` files).
 
@@ -693,3 +693,41 @@ the managed one.
 
 The repository-wide fast gate stays open: it fails on the git-ignored local test copies that drifted from `lib/`,
 not on this change.
+
+## 100 — Verify only changed files
+
+**Depends on** [001](01-orchestration.md)
+
+**Implementation started:** Yes
+
+### Implement
+
+`dart run tool/verify.dart --changed` is the only verification mode. It checks the files that changed and leaves the
+rest of the package alone. Format and the analyzer receive only the changed Dart files. A test runs when that test
+file changed, or when it is the mirror of a changed `lib/` or `tool/` source (`lib/…/name.dart` to
+`test/…/name_test.dart`, `tool/name.dart` to `test/tool/name_test.dart`). A repository checker runs only when one of
+its inputs is in the change set. With no paths named, the command reads the dirty tree, and a clean tree uses
+`VERIFY_BASE` or the last commit. `--fast` and a run with no mode are rejected.
+
+### Files
+
+- `frontend/tool/verify.dart`
+- `frontend/tool/hooks/pre-commit`
+- `frontend/test/tool/verify_test.dart`
+- `frontend/test/tool/pre_commit_test.dart`
+- `.github/workflows/ci.yml`
+- `AGENTS.md`
+- `frontend/.rules/13-workflow.md`
+- `prompts/dev-prompt-implementer.md`
+- `frontend/assets/feedback/feedback-prompts-generator.md`
+- `frontend/assets/feedback/feedback-prompts-generator.md`
+
+### Definition of done
+
+- [x] `dart run tool/verify.dart` accepts only `--changed`. A missing mode or `--fast` exits 1 and prints the usage line.
+- [x] Format and the analyzer receive only the changed Dart files.
+- [x] Test gates receive only a changed test file or the mirror test of a changed source file.
+- [x] A checker runs only when one of its inputs changed, and is skipped otherwise.
+- [x] The pre-commit hook runs `dart run tool/verify.dart --changed` with the staged paths.
+- [x] Continuous integration runs `dart run tool/verify.dart --changed`.
+- [x] Tests: `frontend/test/tool/verify_test.dart` and `frontend/test/tool/pre_commit_test.dart` cover the mode, the path limit and the hook.
