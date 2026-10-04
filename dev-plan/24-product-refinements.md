@@ -4926,6 +4926,10 @@ Exact file names are confirmed against the tree at implementation time, and any 
   reads that path); once task 124 resolves `MeetingRecord.transcript` from the transcripts table, minutes must not
   print it again in the raw notes; `BundleFormat.version` was not raised, so an older app reports a new package as
   unreadable rather than newer.
+- 2026-10-04 orchestrator gate: the whole-tree `dart analyze` found `frontend/integration_test/meeting_test.dart`
+  still building `MinutesContent` without the new `transcripts` field, which also failed `strict_analysis_test`. It now
+  passes an empty transcript list; `test/journeys/journeys_test.dart`, which runs the meeting journey on the host,
+  passes 11/11.
 
 ## 128 — Measure on-device speech load, speed and memory on Windows
 

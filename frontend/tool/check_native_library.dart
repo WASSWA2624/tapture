@@ -10,7 +10,9 @@ import 'dart:typed_data';
 /// any of them.
 Future<int> main(List<String> args) async {
   if (args.isEmpty) {
-    stderr.writeln('usage: dart run tool/check_native_library.dart <lib.so>...');
+    stderr.writeln(
+      'usage: dart run tool/check_native_library.dart <lib.so>...',
+    );
     exitCode = 64;
     return exitCode;
   }
@@ -223,9 +225,11 @@ final class _ElfImage {
       final int entrySize = wide ? 16 : 8;
       final List<int> neededOffsets = <int>[];
       int strtab = -1;
-      for (int at = dynamicOffset;
-          at + entrySize <= dynamicOffset + dynamicSize;
-          at += entrySize) {
+      for (
+        int at = dynamicOffset;
+        at + entrySize <= dynamicOffset + dynamicSize;
+        at += entrySize
+      ) {
         final int tag = word(at);
         final int value = word(at + entrySize ~/ 2);
         if (tag == _dtNull) {
@@ -258,9 +262,11 @@ final class _ElfImage {
       final int symbolSize = word(wide ? at + 56 : at + 36);
       final int linkAt = sectionOffset + link * sectionSize;
       final int strings = word(wide ? linkAt + 24 : linkAt + 16);
-      for (int s = symbolsOffset + symbolSize;
-          s + symbolSize <= symbolsOffset + symbolsSize;
-          s += symbolSize) {
+      for (
+        int s = symbolsOffset + symbolSize;
+        s + symbolSize <= symbolsOffset + symbolsSize;
+        s += symbolSize
+      ) {
         final int name = u32(s);
         final int info = bytes[wide ? s + 4 : s + 12];
         final int other = bytes[wide ? s + 5 : s + 13];
