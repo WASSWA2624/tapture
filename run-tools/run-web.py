@@ -15,10 +15,6 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
-import threading
-import time
-import urllib.error
-import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -26,7 +22,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import (  # noqa: E402
     FRONTEND,
     BuildError,
-    flutter,
     info,
     listeners_on,
     main,
@@ -79,23 +74,15 @@ def free_port(port: int, keep: bool) -> None:
     release_port(port, "web")
 
 
-def _serving(port: int) -> bool:
-    """True once the compiled app, not only the HTML shell, is being served.
+def served_announcement(text: str) -> bool:
+    """True when Flutter has finished the compile and is serving the app.
 
-    The dev server answers `/` before `flutter_bootstrap.js` exists. Opening
-    Chrome then leaves it on a page that never connects the debug client.
+    `flutter_bootstrap.js` and even the compiled entry are available while the
+    first debug compile is still running. A browser that loads then keeps a
+    failed module script, so the tab stays blank until a refresh. Flutter
+    prints this line only after that compile.
     """
-    for host in ("127.0.0.1", "localhost"):
-        try:
-            with urllib.request.urlopen(
-                f"http://{host}:{port}/flutter_bootstrap.js",
-                timeout=2,
-            ) as response:
-                if response.status == 200:
-                    return True
-        except (urllib.error.URLError, TimeoutError, OSError):
-            continue
-    return False
+    return "is being served at" in text
 
 
 def _open_chrome(url: str) -> None:
@@ -122,15 +109,43 @@ def _open_chrome(url: str) -> None:
     webbrowser.open(url)
 
 
-def _open_chrome_when_ready(port: int) -> None:
-    """Wait out the web compile, then open the served app."""
-    deadline = time.monotonic() + 15 * 60
-    while time.monotonic() < deadline:
-        if _serving(port):
-            _open_chrome(f"http://localhost:{port}")
-            return
-        time.sleep(1)
-    info(f"Chrome was not opened; the server did not answer on port {port}")
+def _run_flutter(command: list[str], port: int, open_browser: bool) -> None:
+    """Stream Flutter and open Chrome only after the app is being served."""
+    executable = tool("flutter")
+    info(
+        f"$ {executable} {' '.join(command)}   (in frontend)"
+    )
+    process = subprocess.Popen(
+        [executable, *command],
+        cwd=str(FRONTEND),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    opened = False
+    window = ""
+    try:
+        assert process.stdout is not None
+        while True:
+            chunk = process.stdout.read(256)
+            if not chunk:
+                break
+            sys.stdout.write(chunk)
+            sys.stdout.flush()
+            if open_browser and not opened:
+                window = (window + chunk)[-400:]
+                if served_announcement(window):
+                    opened = True
+                    _open_chrome(f"http://localhost:{port}")
+    except KeyboardInterrupt:
+        process.terminate()
+        process.wait()
+        raise
+    code = process.wait()
+    if code != 0:
+        raise BuildError(f"command failed ({code}): {executable} {' '.join(command)}")
 
 
 def entry() -> None:
@@ -147,7 +162,7 @@ def entry() -> None:
     # `-d chrome` drives the page through Chrome's remote debugger. On this
     # Windows/Chrome pair Debugger.enable never returns, so that launch exits
     # before the app is usable. The dev server still hot-reloads; Chrome is
-    # opened on the URL once the server answers.
+    # opened when Flutter reports that the app is being served.
     where = "this machine" if args.server else "Chrome"
     step(f"Starting the web app for {where} at http://localhost:{args.port}")
     command = [
@@ -165,14 +180,7 @@ def entry() -> None:
     ]
     if args.server:
         command += ["--web-hostname", "0.0.0.0"]
-    else:
-        threading.Thread(
-            target=_open_chrome_when_ready,
-            args=(args.port,),
-            name="open-chrome",
-            daemon=True,
-        ).start()
-    flutter(command)
+    _run_flutter(command, args.port, open_browser=not args.server)
 
 
 if __name__ == "__main__":

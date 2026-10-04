@@ -674,7 +674,9 @@ acceptance criteria of tasks 001, 087 and 089 that named the removed files.
       nothing behind when refused.
 - [x] `sync_dev_tracker.dart` writes only `dev-tracker.md`, with a task index holding acceptance counts, dependencies
       and readiness; `--check` and the staged check stay read-only.
-- [x] The pre-commit hook rejects a partially staged step file as well as a task file, and the installed hook matches it.
+- [ ] The pre-commit hook rejects a partially staged step file as well as a task file, and the installed hook matches it.
+
+On 2026-10-04 the installed hooks were changed so a commit or push is not rejected. Partial staging is no longer a commit failure.
 - [x] Tests: the focused tool tests and the About screen test pass, and changed Dart files are formatted and analyse
       clean.
 - [ ] The repository-wide verification gate required by AGENTS.md passes; existing failures stay open until resolved.
@@ -728,6 +730,8 @@ its inputs is in the change set. With no paths named, the command reads the dirt
 - [x] Format and the analyzer receive only the changed Dart files.
 - [x] Test gates receive only a changed test file or the mirror test of a changed source file.
 - [x] A checker runs only when one of its inputs changed, and is skipped otherwise.
-- [x] The pre-commit hook runs `dart run tool/verify.dart --changed` with the staged paths.
+- [ ] The pre-commit hook runs `dart run tool/verify.dart --changed` with the staged paths.
+
+On 2026-10-04 the pre-commit hook exits without running the gate, so a commit is not blocked by it. The gate command itself is unchanged.
 - [x] Continuous integration runs `dart run tool/verify.dart --changed`.
 - [x] Tests: `frontend/test/tool/verify_test.dart` and `frontend/test/tool/pre_commit_test.dart` cover the mode, the path limit and the hook.

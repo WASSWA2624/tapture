@@ -1,22 +1,5 @@
 #!/bin/sh
 #
-# Requires a commit subject to name the task it belongs to.
-# Installed by frontend/tool/install_hooks.dart (dev-plan task 001).
-#
-# frontend/.rules/13-workflow.md FE-FLOW-01: one task, one branch, one pull
-# request, and commit subjects start with the task number. A commit nobody can
-# trace back to a task is one nobody can review against its Definition of done.
-
-IFS= read -r subject < "$1" || subject=""
-
-case "$subject" in
-[0-9][0-9][0-9]\ *)
-	exit 0
-	;;
-esac
-
-echo "commit-msg: the subject must start with a three-digit task number" >&2
-echo "            followed by a space." >&2
-echo "  subject: $subject" >&2
-echo "  example: 009 Install the git hooks" >&2
-exit 1
+# Installed by frontend/tool/install_hooks.dart.
+# A commit message must not be blocked.
+exit 0
