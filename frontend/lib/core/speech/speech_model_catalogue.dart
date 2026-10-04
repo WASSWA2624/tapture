@@ -119,10 +119,15 @@ abstract final class SpeechModelCatalogue {
   }
 
   /// The import-only entry whose size and SHA-256 both equal the picked
-  /// file's, or null when the file is not one the app accepts.
-  static SpeechModelEntry? matchImport(int bytes, String sha256) {
+  /// file's, or null when the file is not one the app accepts. [among] is
+  /// the catalogue searched; a store's tests pass their own.
+  static SpeechModelEntry? matchImport(
+    int bytes,
+    String sha256, {
+    List<SpeechModelEntry> among = all,
+  }) {
     final String digest = sha256.toLowerCase();
-    for (final SpeechModelEntry entry in all) {
+    for (final SpeechModelEntry entry in among) {
       if (entry.asset == null &&
           entry.bytes == bytes &&
           entry.sha256 == digest) {

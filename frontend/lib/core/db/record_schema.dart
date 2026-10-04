@@ -11,8 +11,8 @@ import 'package:tapture/core/errors/failure.dart';
 ///
 /// Search is one FTS5 document per record, rebuilt by triggers in the same
 /// transaction as every write that changes what the record says: its field
-/// values, its own and its photos' captions, its transcripts and the OCR
-/// text of its photos. A record whose status is `deleted` keeps its document
+/// values, its own and its photos' captions, its transcripts (including the
+/// finished live transcripts of its audio) and the OCR text of its photos. A record whose status is `deleted` keeps its document
 /// so a restore finds it again; lists exclude deleted records by status. The
 /// index is never exported: bundles select their tables by name.
 ///
@@ -40,7 +40,8 @@ import 'package:tapture/core/errors/failure.dart';
 /// these tables, so a watched query declares `readsFrom` on the sources:
 /// `db.records`, `db.recordFields`, `db.captions`, `db.photos`,
 /// `db.tombstones`, `db.ocrCacheEntries`, `db.processing`,
-/// `db.processingResults` and `db.meetings`.
+/// `db.processingResults`, `db.meetings`, `db.transcripts`,
+/// `db.transcriptSegments` and `db.attachmentOwners`.
 abstract final class RecordSchema {
   /// Every stored record status, spelled as `RecordStatus.name` and in the
   /// enum's order. Legacy spellings (`NEEDS_REVIEW`, `needs_review`) are
@@ -132,6 +133,11 @@ abstract final class RecordSchema {
     'meetings_search_ai',
     'meetings_search_au',
     'meetings_search_ad',
+    'transcripts_search_ai',
+    'transcripts_search_au',
+    'transcripts_search_ad',
+    'attachment_owners_search_ai',
+    'attachment_owners_search_ad',
     'tombstones_search_ai',
     'tombstones_search_au',
     'tombstones_search_ad',
@@ -153,6 +159,9 @@ abstract final class RecordSchema {
     'templates',
     'template_fields',
     'template_rows',
+    'transcripts',
+    'transcript_segments',
+    'attachment_owners',
   ];
 
   /// Creates or refreshes everything above inside the caller's migration,
@@ -409,9 +418,12 @@ abstract final class RecordSchema {
   /// Body: every live value (raw, then refined and approved where they
   /// differ), the record's and its live photos' captions, stored transcripts
   /// (processing results of kind `transcript`, meeting transcripts and
-  /// minutes), the OCR text of its live photos, and its checklist row. Each
-  /// source is one correlated aggregate, one line per text.
-  static String get _body {
+  /// minutes, and the finished live transcripts of the record's audio, raw
+  /// segments in reading order then the edit), the OCR text of its live
+  /// photos, and its checklist row. Each source is one correlated aggregate,
+  /// one line per text. [ordered] false reads segments in scan order, for a
+  /// library without ordered aggregates (see [_identifier]).
+  static String _body({required bool ordered}) {
     final String field =
         'FROM record_fields f WHERE f.record_id = r.id '
         "AND ${_live('record_fields', 'f.id', 'xf')}";
@@ -440,6 +452,7 @@ abstract final class RecordSchema {
       "SELECT group_concat(m.transcript_raw || char(10) || "
           "COALESCE(m.minutes_refined, ''), char(10)) FROM meetings m "
           "WHERE m.record_id = r.id AND ${_live('meetings', 'm.id', 'xm')}",
+      _liveTranscripts(ordered: ordered),
       'SELECT tr.identifier || char(10) || tr.label FROM template_rows tr '
           'WHERE tr.id = r.template_row_id',
     ];
@@ -448,10 +461,29 @@ abstract final class RecordSchema {
         .join(' || char(10) || ');
   }
 
+  /// The finished transcripts heard from audio filed on the record (alias
+  /// `r`): raw segments joined in reading order, then the edit when there
+  /// is one. A live transcript, a tombstoned one and a tombstoned link are
+  /// left out.
+  static String _liveTranscripts({required bool ordered}) {
+    final String order = ordered ? ' ORDER BY s.start_ms, s.seq' : '';
+    return 'SELECT group_concat('
+        "COALESCE((SELECT group_concat(s.text_raw, ' '$order) "
+        'FROM transcript_segments s WHERE s.transcript_id = t.id), '
+        "'') || CASE WHEN t.text_edited IS NULL THEN '' "
+        'ELSE char(10) || t.text_edited END, char(10)) '
+        'FROM transcripts t JOIN attachment_owners o '
+        "ON o.attachment_id = t.attachment_id AND o.owner_type = 'record' "
+        'WHERE o.owner_id = r.id '
+        "AND t.status <> '$_liveTranscript' "
+        "AND ${_live('transcripts', 't.id', 'xt')} "
+        "AND ${_live('attachment_owners', 'o.id', 'xo')}";
+  }
+
   static String _sourceView({required bool ordered}) =>
       'CREATE VIEW $searchSourceView AS SELECT '
       'r.id AS record_id, r.project_id AS project_id, '
-      '$_body AS body, $_sortName AS sort_name, '
+      '${_body(ordered: ordered)} AS body, $_sortName AS sort_name, '
       '${_identifier(ordered: ordered)} AS identifier '
       'FROM records r';
 
@@ -521,7 +553,16 @@ abstract final class RecordSchema {
       "${_json('$row.request_summary', r'$.kind')} = 'transcript'";
 
   static const String _searchedTombstones =
-      "('record_fields', 'photos', 'captions', 'meetings')";
+      "('record_fields', 'photos', 'captions', 'meetings', 'transcripts', "
+      "'attachment_owners')";
+
+  /// The stored status of a transcript still being recorded or finished.
+  static const String _liveTranscript = 'live';
+
+  /// The records whose audio the transcript [row] was heard from.
+  static String _transcriptOwners(String row) =>
+      'SELECT o.owner_id FROM attachment_owners o '
+      "WHERE o.attachment_id = $row.attachment_id AND o.owner_type = 'record'";
 
   static String _tombstoneOwners(String row) =>
       'SELECT f.record_id FROM record_fields f '
@@ -535,7 +576,13 @@ abstract final class RecordSchema {
       "ON p.id = c.owner_id WHERE $row.entity_type = 'captions' "
       "AND c.id = $row.entity_id AND c.owner_type = 'photo' "
       'UNION SELECT m.record_id FROM meetings m '
-      "WHERE $row.entity_type = 'meetings' AND m.id = $row.entity_id";
+      "WHERE $row.entity_type = 'meetings' AND m.id = $row.entity_id "
+      'UNION SELECT o.owner_id FROM transcripts t JOIN attachment_owners o '
+      "ON o.attachment_id = t.attachment_id AND o.owner_type = 'record' "
+      "WHERE $row.entity_type = 'transcripts' AND t.id = $row.entity_id "
+      'UNION SELECT o.owner_id FROM attachment_owners o '
+      "WHERE $row.entity_type = 'attachment_owners' AND o.id = $row.entity_id "
+      "AND o.owner_type = 'record'";
 
   static List<String> get _triggers => <String>[
     _trigger(
@@ -708,6 +755,39 @@ abstract final class RecordSchema {
       'DELETE ON meetings',
       '',
       _rebuild('SELECT OLD.record_id'),
+    ),
+    _trigger(
+      'transcripts_search_ai',
+      'INSERT ON transcripts',
+      "NEW.status <> '$_liveTranscript' AND NEW.attachment_id IS NOT NULL",
+      _rebuild(_transcriptOwners('NEW')),
+    ),
+    _trigger(
+      'transcripts_search_au',
+      'UPDATE OF status, attachment_id, text_edited ON transcripts',
+      "(NEW.status <> '$_liveTranscript' OR OLD.status <> '$_liveTranscript') "
+          'AND (NEW.attachment_id IS NOT NULL OR OLD.attachment_id IS NOT NULL)',
+      _rebuild('${_transcriptOwners('NEW')} UNION ${_transcriptOwners('OLD')}'),
+    ),
+    _trigger(
+      'transcripts_search_ad',
+      'DELETE ON transcripts',
+      "OLD.status <> '$_liveTranscript' AND OLD.attachment_id IS NOT NULL",
+      _rebuild(_transcriptOwners('OLD')),
+    ),
+    _trigger(
+      'attachment_owners_search_ai',
+      'INSERT ON attachment_owners',
+      "NEW.owner_type = 'record' AND EXISTS (SELECT 1 FROM transcripts t "
+          'WHERE t.attachment_id = NEW.attachment_id)',
+      _rebuild('SELECT NEW.owner_id'),
+    ),
+    _trigger(
+      'attachment_owners_search_ad',
+      'DELETE ON attachment_owners',
+      "OLD.owner_type = 'record' AND EXISTS (SELECT 1 FROM transcripts t "
+          'WHERE t.attachment_id = OLD.attachment_id)',
+      _rebuild('SELECT OLD.owner_id'),
     ),
     _trigger(
       'tombstones_search_ai',

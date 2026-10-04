@@ -23,6 +23,8 @@ export 'speech_model_header.dart';
 export 'speech_model_kind.dart';
 export 'speech_model_shape.dart';
 export 'speech_model_source.dart';
+export 'speech_model_status.dart';
+export 'speech_model_store.dart';
 export 'speech_model_tier.dart';
 export 'speech_piece.dart';
 export 'speech_piece_text.dart';

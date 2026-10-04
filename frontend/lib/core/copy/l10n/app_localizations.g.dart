@@ -295,6 +295,24 @@ abstract class AppLocalizations {
   /// **'Choose one of the model files named in Settings.'**
   String get speechImportUnknownRecovery;
 
+  /// A transcript or part of one could not be written to the device's database.
+  ///
+  /// In en, this message translates to:
+  /// **'The transcript could not be saved on this device.'**
+  String get transcriptSaveFailed;
+
+  /// A transcript segment skipped ahead or contradicted one already saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Part of the transcript arrived out of order and was not saved.'**
+  String get transcriptSegmentOutOfOrder;
+
+  /// An edit was refused because the transcript is still being recorded or finished.
+  ///
+  /// In en, this message translates to:
+  /// **'This transcript is still being recorded. Edit it once the recording has finished.'**
+  String get transcriptStillRecording;
+
   /// A value filled in rather than typed.
   ///
   /// In en, this message translates to:

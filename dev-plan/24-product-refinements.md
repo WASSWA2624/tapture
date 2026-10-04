@@ -2990,26 +2990,53 @@ violations and `test/core/assets/branding_assets_test.dart` passes.
 
 ### Definition of done
 
-- [ ] `third_party/whisper.cpp` holds exactly the KEEP list, and `VENDOR.json` records patch 0001 with upstream, patched and patch hashes.
-- [ ] `whisper_vendor.dart --check` passes on the tree. `whisper_vendor_test` proves, in one run with `path:line` and exit 1, each of:
+- [x] `third_party/whisper.cpp` holds exactly the KEEP list, and `VENDOR.json` records patch 0001 with upstream, patched and patch hashes.
+- [x] `whisper_vendor.dart --check` passes on the tree. `whisper_vendor_test` proves, in one run with `path:line` and exit 1, each of:
   - a missing file;
   - an extra file;
   - a hash drift;
   - an unrecorded patch change;
   - a stale forwarder.
-- [ ] `check_dependencies` reports zero violations or warnings on the tree. Its fixtures prove the pass case and each of these, all reported with file and line in one run:
+- [x] `check_dependencies` reports zero violations or warnings on the tree. Its fixtures prove the pass case and each of these, all reported with file and line in one run:
   - a path outside `packages/`;
   - a missing `version:`;
   - a version mismatch;
   - a `hook/`;
   - an unapproved package dependency.
-- [ ] `check_secrets` reports a key planted in `packages/x/lib` and in `web/whisper/x.js` fixtures, and skips `third_party`.
-- [ ] `check_naming` reports an `Info`-suffixed type and a second public class in a `packages/x/lib` fixture.
-- [ ] `check_structure_test` still passes on the shipped tree.
-- [ ] FE-STR-01 names `frontend/packages/` with the local-package conditions, and the rule change and its rationale are recorded in this task's evidence note for the commit body.
-- [ ] `flutter pub get` resolves the workspace, or the README records the fallback and `strict_analysis_test` gains a package-analysis case. `dart analyze` over `frontend/` reports zero diagnostics.
-- [ ] `git check-attr` confirms `third_party/** -text`, `*.wasm binary` and `web/whisper/*.js eol=lf`.
-- [ ] `package_manifest_test` parses the four `LICENSE` blocks in the 80-dash format.
+- [x] `check_secrets` reports a key planted in `packages/x/lib` and in `web/whisper/x.js` fixtures, and skips `third_party`.
+- [x] `check_naming` reports an `Info`-suffixed type and a second public class in a `packages/x/lib` fixture.
+- [x] `check_structure_test` still passes on the shipped tree.
+- [x] FE-STR-01 names `frontend/packages/` with the local-package conditions, and the rule change and its rationale are recorded in this task's evidence note for the commit body.
+- [x] `flutter pub get` resolves the workspace, or the README records the fallback and `strict_analysis_test` gains a package-analysis case. `dart analyze` over `frontend/` reports zero diagnostics.
+- [x] `git check-attr` confirms `third_party/** -text`, `*.wasm binary` and `web/whisper/*.js eol=lf`.
+- [x] `package_manifest_test` parses the four `LICENSE` blocks in the 80-dash format.
+
+**Evidence note (FE-STR-01 rule change, for the commit body):** FE-STR-01 now names `frontend/packages/` as part of the app, for local Flutter plugin packages that wrap native code no approved package provides. Each is a pinned path dependency (`path:` plus a nested `version:` equal to its own) approved in `tool/allowlist.yaml` with every dependency it declares, has no Dart build hook and no `example/`, keeps vendored upstream in hash-verified `third_party/` with any patch recorded, is imported only by its `core/` adapter (FE-STR-11), and keeps FE-CODE/FE-STR naming in `packages/*/lib`. Rationale: offline speech needs whisper.cpp built from source with one recorded patch, and no approved pub package provides that; `check_dependencies`, `check_naming` and `check_secrets` enforce the conditions in the same change (FE-FLOW-07).
+
+### Verification
+
+- 2026-10-04 (independent review): the pinned tarball hashes to `57e280ce…44ae`. Every vendored file is byte-identical to the
+  tarball except `src/whisper.cpp`, which equals upstream plus `git apply` of patch 0001 (CR-insensitive compare). The VAD
+  call is unchanged. The recorded patch, upstream and patched SHA-256 values were recomputed and match `VENDOR.json`.
+  Re-running `--from` on the tarball into a scratch tree reproduced `third_party/`, `VENDOR.json` and the Darwin forwarders
+  exactly.
+- 2026-10-04: `dart run tool/whisper_vendor.dart --check` reports clean, exit 0. On a scratch copy of the real package,
+  planted violations were each reported at `path:line` with exit 1: a missing file, an extra file, hash drift, a
+  stale forwarder, a stray forwarder, an unrecorded patch edit, and a hand edit to the patched file whose hashes had
+  been re-recorded (caught by the reverse-apply check).
+- 2026-10-04: `flutter test` on `test/tool/whisper_vendor_test.dart`, `check_dependencies_test.dart`,
+  `check_secrets_test.dart`, `check_naming_test.dart` and `check_structure_test.dart`: 114 passed.
+  `check_repo_hygiene_test.dart` and `check_analyzer_config_test.dart`: 27 passed. In `packages/tapture_whisper`,
+  `flutter test test/package_manifest_test.dart`: 7 passed.
+- 2026-10-04: `check_dependencies`, `check_secrets`, `check_naming` (1325 files), `check_structure`,
+  `check_repo_hygiene` and `check_analyzer_config` are all clean on the tree. `flutter pub get` under the `pub` lock
+  resolves the workspace (`workspace_ref.json` points at `frontend/`), and `dart analyze` from `frontend/` reports no
+  issues.
+- 2026-10-04: `git check-attr` confirms `third_party/** text: unset` with linguist-vendored, the patch `-text`,
+  `*.wasm`, `*.bin` and `*.wav` binary, `web/whisper/*.js` and `*.json` `eol=lf`, `src/** eol=lf` and the speech
+  manifest `eol=lf`. `git check-ignore` confirms `/packages/*/test/`, `/packages/*/build/` and `/assets/speech/*.bin`.
+- Deviation, recorded for task 105: forwarder names keep the source extension (`tw_cpu__arch_quants_c.c`), so
+  `ggml.c` and `ggml.cpp` do not collide in Xcode.
 
 ## 103 — Build the whisper C ABI for Windows, Linux and Android libraries
 
@@ -3441,8 +3468,8 @@ Segment samples are absolute and clamped to `[offset, offset + originalCount)`. 
 
 ### Definition of done
 
-- [ ] `SpeechEngine.unavailable` returns `ProviderFailure(unavailable, speechUnavailable)` for every operation, and its probe reports `available: false`.
-- [ ] `fake_speech_engine_test` runs `runSpeechEngineContract`:
+- [x] `SpeechEngine.unavailable` returns `ProviderFailure(unavailable, speechUnavailable)` for every operation, and its probe reports `available: false`.
+- [x] `fake_speech_engine_test` runs `runSpeechEngineContract`:
   - order;
   - per-lease supersession;
   - preemption;
@@ -3453,13 +3480,28 @@ Segment samples are absolute and clamped to `[offset, offset + originalCount)`. 
   - the live-handles baseline;
   - a partial VAD frame;
   - `''` and `'auto'` refused.
-- [ ] Each adversarial mode of the fake has a unit case proving its effect.
-- [ ] `speech_languages_test` covers en-UG→en, sw→sw and lg→null.
-- [ ] `audioContextFor` returns 0 for pad 0, and `min(1500, roundUp(ceil(s·50)+pad, 64))` otherwise.
-- [ ] `SpeechPieceText.group` merges split code points and keeps the first t0 and the last t1.
-- [ ] `TranscriptSegment` JSON round-trips.
-- [ ] Every spec §30.4.4 row has a builder with catalogue copy, and the copy pipeline `--check`s pass.
-- [ ] `check_structure`, `check_naming`, `check_logging`, `tokens_test` and strict analysis pass.
+- [x] Each adversarial mode of the fake has a unit case proving its effect.
+- [x] `speech_languages_test` covers en-UG→en, sw→sw and lg→null.
+- [x] `audioContextFor` returns 0 for pad 0, and `min(1500, roundUp(ceil(s·50)+pad, 64))` otherwise.
+- [x] `SpeechPieceText.group` merges split code points and keeps the first t0 and the last t1.
+- [x] `TranscriptSegment` JSON round-trips.
+- [x] Every spec §30.4.4 row has a builder with catalogue copy, and the copy pipeline `--check`s pass.
+- [x] `check_structure`, `check_naming`, `check_logging`, `tokens_test` and strict analysis pass.
+
+### Verification
+
+- 2026-10-04: independent review re-ran every check in this session.
+  - `flutter test` on the eight task suites in `frontend/test/core/speech/` (decode profile, engine, failures, languages, text, piece text, transcript segment, fake engine): all 71 pass, including all ten `runSpeechEngineContract` cases against `FakeSpeechEngine` and one unit case per adversarial mode.
+  - Mutation checks on `FakeSpeechEngine` confirm the contract cases are not vacuous. Each of these breaks fails its case: global interim supersession, shared VAD state, aborting every lease, and no committed preemption.
+  - The `whisperLanguageFor` table equals the 100 `g_lang` codes of the pinned whisper.cpp 1.9.4 source.
+  - `dart analyze lib/core test/core/speech test/support`: no issues. `dart format --set-exit-if-changed` on the task files: clean.
+  - `check_structure`, `check_naming`, `check_logging` and `check_l10n` exit 0. `flutter test test/architecture` (tokens, errors, layering, naming, state and the rest) passes +111, and `flutter test test/core/copy` passes +21.
+  - The copy pipeline passes its three `--check` steps (`[copy_pipeline] ok; content changes in: none`).
+- 2026-10-04: review added a contract case. It checks that segments and pieces are absolute and clamped to `[offset, offset + count)`, the contract's sample rule.
+- Known deviations, accepted for now:
+  - `SpeechEngine.platform()` has no `@visibleForTesting` parameters or conditional import yet, because their types arrive in task 110. Task 110 adds both.
+  - `speech_model_source.dart` already exists for the contract. Task 109 extends it.
+  - `SpeechDecodeRequest.isWellFormed` is the shared request rule.
 
 ## 109 — Resolve, verify and import speech models
 
@@ -3926,10 +3968,42 @@ Add the web `CaptureStaging` factory and the main.dart web override.
 
 ### Definition of done
 
-- [ ] Over `BlobStore.memory`: one key per 5 s chunk plus the manifest, and `checkpoint` flushes the pending chunk.
-- [ ] The `publish` bytes equal the IO WAV for the same input, the store stays readable after publish, and the keys are removed only by `release()`.
-- [ ] `abandon` keeps the chunks, and recovery after a simulated reload assembles a playable take.
-- [ ] `failWrites` maps to `StorageFailure` and stops capture cleanly.
+- [x] Over `BlobStore.memory`: one key per 5 s chunk plus the manifest, and `checkpoint` flushes the pending chunk.
+- [x] The `publish` bytes equal the IO WAV for the same input, the store stays readable after publish, and the keys are removed only by `release()`.
+- [x] `abandon` keeps the chunks, and recovery after a simulated reload assembles a playable take.
+- [x] `failWrites` maps to `StorageFailure` and stops capture cleanly.
+
+### Verification
+
+- 2026-10-04 (adversarial review): read `blob_capture_staging.dart`, `capture_staging_web.dart`, the conditional import in
+  `capture_staging.dart`, `stagedTakeDuration` in `staged_take.dart`, `StagedTakeRecovery.chunked` and the web-only
+  `audioCaptureServiceProvider` override in `main.dart` against design §6.
+- Fixed: when an append wrote a whole chunk and a later write in the same append (the manifest) failed, a chunk that
+  had already been flushed as partial was left holding the full chunk, so every later `publish` failed. A failed append
+  now marks the pending chunk dirty, so the next flush writes back exactly what the take holds (regression test "an
+  append whose chunk landed before its manifest failed leaves a publishable take", which failed before the fix).
+- Fixed: the session cap now refuses every later append (sticky), so a shorter append after a refusal can no longer
+  leave a gap in the take (test "once the cap refuses audio, a shorter append is refused too").
+- `flutter test test/core/audio/blob_capture_staging_test.dart`: 23 passed. They cover 5 s chunk keys plus the
+  manifest, checkpoint flushing, publish byte-equal to the IO WAV (12.3 s, 10 s, 0 s, with sha256, length and
+  duration), reads after publish, key removal only by `release()` after a publish, abandon keeping the chunks
+  byte-for-byte, recovery after a reload through `StagedTakeRecovery.chunked` (a consistent `WavTake` with identical
+  samples), at most one chunk lost on a tab kill, and `failWrites` at open and mid-take giving `StorageFailure` with
+  every later append refused.
+- "Stops capture cleanly" is proven in two parts, because on the VM `CaptureStaging.open` selects the IO staging.
+  The staging refuses every append after `failWrites`, and `audio_capture_plugin_test` "audio that cannot be kept fails
+  the capture and stops the microphone" shows that any `StorageFailure` from `append` becomes `CaptureFailed` and stops
+  the recorder.
+- Neighbouring suites `staged_take_test`, `audio_capture_plugin_test`, `audio_recorder_plugin_test` and
+  `file_pcm_store_test`: 53 passed. Architecture guardrails (plugin_imports, data_safety, naming, layering, errors,
+  tokens, state) all passed. `check_structure`, `check_naming`, `check_logging`, `check_dependencies`, `check_tests`,
+  `check_l10n` and `check_repo_hygiene` exit 0. `dart analyze lib/core/audio lib/main.dart test/core/audio` and
+  `dart format --set-exit-if-changed` are clean.
+- `flutter build web --no-web-resources-cdn` of `lib/main.dart` built, which compiles the web staging and the
+  `main.dart` override. Its wasm dry run reported "Unexpected wasm dry run failure (252)". That is not attributed to
+  this task: the implementer's probe, which reached the same staging code, passed the dry run.
+- Real-browser microphone capture into the chunk store remains for task 131. Wiring `StagedTakeRecovery.chunked` into
+  web session recovery belongs to the session journal (task 119).
 
 ## 116 — Segment live speech into utterances
 

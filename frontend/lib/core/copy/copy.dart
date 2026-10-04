@@ -130,6 +130,19 @@ abstract final class Copy {
   static String get speechImportUnknownRecovery =>
       _english.speechImportUnknownRecovery;
 
+  /// A transcript or part of one could not be written to the device's
+  /// database.
+  static String get transcriptSaveFailed => _english.transcriptSaveFailed;
+
+  /// A transcript segment skipped ahead or contradicted one already saved.
+  static String get transcriptSegmentOutOfOrder =>
+      _english.transcriptSegmentOutOfOrder;
+
+  /// An edit was refused because the transcript is still being recorded or
+  /// finished.
+  static String get transcriptStillRecording =>
+      _english.transcriptStillRecording;
+
   /// A value filled in rather than typed.
   static String get autoFilled => _english.autoFilled;
 

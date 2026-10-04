@@ -166,6 +166,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Choose one of the model files named in Settings.';
 
   @override
+  String get transcriptSaveFailed =>
+      'The transcript could not be saved on this device.';
+
+  @override
+  String get transcriptSegmentOutOfOrder =>
+      'Part of the transcript arrived out of order and was not saved.';
+
+  @override
+  String get transcriptStillRecording =>
+      'This transcript is still being recorded. Edit it once the recording has finished.';
+
+  @override
   String get autoFilled => 'Auto-filled';
 
   @override
@@ -11875,6 +11887,18 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   @override
   String get speechImportUnknownRecovery =>
       'Chóósé óné óf thé módél fílés náméd ín Séttíngs.·················';
+
+  @override
+  String get transcriptSaveFailed =>
+      'Thé tránscrípt cóúld nót bé sávéd ón thís dévícé.··················';
+
+  @override
+  String get transcriptSegmentOutOfOrder =>
+      'Párt óf thé tránscrípt árrívéd óút óf órdér ánd wás nót sávéd.······················';
+
+  @override
+  String get transcriptStillRecording =>
+      'Thís tránscrípt ís stíll béíng récórdéd. Édít ít óncé thé récórdíng hás fíníshéd.·····························';
 
   @override
   String get autoFilled => 'Áútó-fílléd····';

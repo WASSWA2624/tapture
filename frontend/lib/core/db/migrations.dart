@@ -51,6 +51,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   29: migrateToV29,
   30: migrateToV30,
   31: migrateToV31,
+  32: migrateToV32,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -560,6 +561,33 @@ Future<void> migrateToV31(Migrator migrator, AppDatabase db) async {
   }
 }
 
+/// Schema version 32: live transcripts and their write-once segments
+/// (task 119).
+///
+/// Creates `transcripts` and `transcript_segments` with their indexes when
+/// they are missing, then runs [RecordSchema.ensure], so a record's search
+/// document also reads the finished transcripts of its audio. Nothing is
+/// rewritten: existing rows only gain documents rebuilt from the same text.
+Future<void> migrateToV32(Migrator migrator, AppDatabase db) async {
+  if (!await _hasTable(db, 'transcripts')) {
+    await migrator.createTable(db.transcripts);
+  }
+  if (!await _hasTable(db, 'transcript_segments')) {
+    await migrator.createTable(db.transcriptSegments);
+  }
+  for (final Index index in <Index>[
+    db.transcriptsByProject,
+    db.transcriptsByAttachment,
+    db.transcriptsByOwner,
+    db.transcriptSegmentsByTranscript,
+  ]) {
+    if (!await _hasIndex(db, index.entityName)) {
+      await migrator.createIndex(index);
+    }
+  }
+  await RecordSchema.ensure(db);
+}
+
 /// The failed subset retains both ordering columns, including timestamp ties.
 Future<void> ensureProcessingFailureIndex(AppDatabase db) async {
   if (!await _hasTable(db, 'processing_jobs')) return;
@@ -582,6 +610,15 @@ Future<bool> _hasTable(AppDatabase db, String name) async =>
     await db
         .customSelect(
           "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+          variables: <Variable<Object>>[Variable<String>(name)],
+        )
+        .getSingleOrNull() !=
+    null;
+
+Future<bool> _hasIndex(AppDatabase db, String name) async =>
+    await db
+        .customSelect(
+          "SELECT 1 FROM sqlite_master WHERE type = 'index' AND name = ?",
           variables: <Variable<Object>>[Variable<String>(name)],
         )
         .getSingleOrNull() !=

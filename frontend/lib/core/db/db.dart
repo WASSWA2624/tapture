@@ -30,5 +30,6 @@ export 'tables/template_fields.dart';
 export 'tables/template_rows.dart';
 export 'tables/templates.dart';
 export 'tables/tombstones.dart';
+export 'tables/transcripts.dart';
 export 'tables/variances.dart';
 export 'transactions.dart';

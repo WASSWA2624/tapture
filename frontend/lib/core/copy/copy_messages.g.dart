@@ -211,6 +211,26 @@ final class CopyMessages {
     fallback: Copy.speechImportUnknownRecovery,
   );
 
+  /// A transcript or part of one could not be written to the device's
+  /// database.
+  LocalizedMessage get transcriptSaveFailed => LocalizedMessage(
+    key: 'transcriptSaveFailed',
+    fallback: Copy.transcriptSaveFailed,
+  );
+
+  /// A transcript segment skipped ahead or contradicted one already saved.
+  LocalizedMessage get transcriptSegmentOutOfOrder => LocalizedMessage(
+    key: 'transcriptSegmentOutOfOrder',
+    fallback: Copy.transcriptSegmentOutOfOrder,
+  );
+
+  /// An edit was refused because the transcript is still being recorded or
+  /// finished.
+  LocalizedMessage get transcriptStillRecording => LocalizedMessage(
+    key: 'transcriptStillRecording',
+    fallback: Copy.transcriptStillRecording,
+  );
+
   /// A value filled in rather than typed.
   LocalizedMessage get autoFilled =>
       LocalizedMessage(key: 'autoFilled', fallback: Copy.autoFilled);

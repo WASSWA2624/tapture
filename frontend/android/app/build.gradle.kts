@@ -46,6 +46,12 @@ android {
         versionName = flutter.versionName
     }
 
+    // Speech models (assets/speech/*.bin) stay uncompressed in the APK, so
+    // extractFlutterAsset streams them out without inflating (task 109).
+    androidResources {
+        noCompress += "bin"
+    }
+
     // AGP 9 turns resValues off by default. The flavour labels below use it.
     buildFeatures {
         resValues = true

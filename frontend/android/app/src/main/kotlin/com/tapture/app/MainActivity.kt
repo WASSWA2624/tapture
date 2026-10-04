@@ -14,11 +14,17 @@ import android.os.StatFs
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.system.ErrnoException
+import android.system.OsConstants
+import io.flutter.FlutterInjector
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.concurrent.Executors
 
 private const val CHANNEL = "com.tapture.app/files"
@@ -81,6 +87,11 @@ class MainActivity : FlutterFragmentActivity() {
                     "pickDirectory" -> pickDirectory(result)
                     "pickDestinationDirectory" -> pickDirectory(result, destination = true)
                     "pickDocument" -> pickDocument(call.argument("mimeType"), result)
+                    "extractFlutterAsset" -> extractFlutterAsset(
+                        call.argument("asset"),
+                        call.argument("path"),
+                        result,
+                    )
                     "saveFileToDownloads" -> saveFileToDownloads(
                         call.argument("sourcePath"),
                         call.argument("fileName"),
@@ -337,6 +348,66 @@ class MainActivity : FlutterFragmentActivity() {
                 main.post { pending.error("pick_failed", "Could not read that file.", null) }
             }
         }
+    }
+
+    /// Streams the bundled Flutter asset [asset] into [path] through
+    /// `<path>.part`, synced and renamed, so a large model never passes
+    /// through the Dart heap. The asset is stored uncompressed
+    /// (`noCompress "bin"`). Returns the byte count, or the error `missing`,
+    /// `nospace` or `io`.
+    private fun extractFlutterAsset(asset: String?, path: String?, result: MethodChannel.Result) {
+        if (asset == null || path == null) {
+            result.error("io", "Could not extract the asset.", null)
+            return
+        }
+        io.execute {
+            val target = File(path)
+            val part = File("$path.part")
+            try {
+                val key = FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(asset)
+                val input = try {
+                    assets.open(key)
+                } catch (_: FileNotFoundException) {
+                    null
+                }
+                if (input == null) {
+                    main.post { result.error("missing", "The asset is not in this build.", null) }
+                    return@execute
+                }
+                target.parentFile?.mkdirs()
+                val written = input.use { source ->
+                    FileOutputStream(part).use { output ->
+                        val count = source.copyTo(output, COPY_CHUNK)
+                        output.flush()
+                        output.fd.sync()
+                        count
+                    }
+                }
+                if (!part.renameTo(target)) {
+                    throw IOException("rename")
+                }
+                main.post { result.success(written) }
+            } catch (error: Exception) {
+                part.delete()
+                val code = if (isNoSpace(error)) "nospace" else "io"
+                main.post { result.error(code, "Could not extract the asset.", null) }
+            }
+        }
+    }
+
+    /// Whether [error] reports a full disk (`ENOSPC`).
+    private fun isNoSpace(error: Throwable): Boolean {
+        var cause: Throwable? = error
+        while (cause != null) {
+            if (cause is ErrnoException && cause.errno == OsConstants.ENOSPC) {
+                return true
+            }
+            if (cause.message?.contains("ENOSPC") == true) {
+                return true
+            }
+            cause = cause.cause
+        }
+        return false
     }
 
     /// Streams a stored file into the shared Downloads folder, so a package

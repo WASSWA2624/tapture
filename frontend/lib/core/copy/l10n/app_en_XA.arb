@@ -176,6 +176,18 @@
   "@speechImportUnknownRecovery": {
     "description": "What to do when an imported file is not a known speech model."
   },
+  "transcriptSaveFailed": "Thé tránscrípt cóúld nót bé sávéd ón thís dévícé.··················",
+  "@transcriptSaveFailed": {
+    "description": "A transcript or part of one could not be written to the device's database."
+  },
+  "transcriptSegmentOutOfOrder": "Párt óf thé tránscrípt árrívéd óút óf órdér ánd wás nót sávéd.······················",
+  "@transcriptSegmentOutOfOrder": {
+    "description": "A transcript segment skipped ahead or contradicted one already saved."
+  },
+  "transcriptStillRecording": "Thís tránscrípt ís stíll béíng récórdéd. Édít ít óncé thé récórdíng hás fíníshéd.·····························",
+  "@transcriptStillRecording": {
+    "description": "An edit was refused because the transcript is still being recorded or finished."
+  },
   "autoFilled": "Áútó-fílléd····",
   "@autoFilled": {
     "description": "A value filled in rather than typed."

@@ -236,6 +236,42 @@ abstract final class AppConstants {
     adoptLockBudget: Duration(milliseconds: 100),
   );
 
+  /// Live transcripts and their history (spec §30.4.3). Interim text is
+  /// shown at most every `partialInterval`; dictation waits up to
+  /// `dictationFinalize` for its last words. A paragraph breaks after a
+  /// pause of `paragraphGap`, or at `paragraphMaxSegments` segments or
+  /// `paragraphMaxChars` characters. A history row previews
+  /// `previewChars` characters, `historyPage` rows at a time. Appending an
+  /// utterance stays within `segmentWriteBudget` with `benchmarkSegments`
+  /// segments stored, and the first history page within
+  /// `historyQueryBudget` over `benchmarkTranscripts` transcripts.
+  static const ({
+    Duration partialInterval,
+    Duration dictationFinalize,
+    Duration paragraphGap,
+    int paragraphMaxSegments,
+    int paragraphMaxChars,
+    int previewChars,
+    int historyPage,
+    Duration segmentWriteBudget,
+    Duration historyQueryBudget,
+    int benchmarkSegments,
+    int benchmarkTranscripts,
+  })
+  transcripts = (
+    partialInterval: Duration(milliseconds: 250),
+    dictationFinalize: Duration(seconds: 12),
+    paragraphGap: Duration(milliseconds: 1500),
+    paragraphMaxSegments: 6,
+    paragraphMaxChars: 600,
+    previewChars: 120,
+    historyPage: listPageSize,
+    segmentWriteBudget: Duration(milliseconds: 20),
+    historyQueryBudget: Duration(milliseconds: 150),
+    benchmarkSegments: 5000,
+    benchmarkTranscripts: 2000,
+  );
+
   /// How long a location fix may take before capture goes on without one.
   static const Duration locationTimeout = Duration(seconds: 3);
 

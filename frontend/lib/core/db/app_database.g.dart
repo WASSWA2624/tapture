@@ -23096,6 +23096,1880 @@ class MeetingActionsCompanion extends UpdateCompanion<MeetingAction> {
   }
 }
 
+class $TranscriptsTable extends Transcripts
+    with TableInfo<$TranscriptsTable, TranscriptRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TranscriptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _projectIdMeta = const VerificationMeta(
+    'projectId',
+  );
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+    'project_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ownerKindMeta = const VerificationMeta(
+    'ownerKind',
+  );
+  @override
+  late final GeneratedColumn<String> ownerKind = GeneratedColumn<String>(
+    'owner_kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _attachmentIdMeta = const VerificationMeta(
+    'attachmentId',
+  );
+  @override
+  late final GeneratedColumn<String> attachmentId = GeneratedColumn<String>(
+    'attachment_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _audioPathMeta = const VerificationMeta(
+    'audioPath',
+  );
+  @override
+  late final GeneratedColumn<String> audioPath = GeneratedColumn<String>(
+    'audio_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _languageTagMeta = const VerificationMeta(
+    'languageTag',
+  );
+  @override
+  late final GeneratedColumn<String> languageTag = GeneratedColumn<String>(
+    'language_tag',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _modelIdMeta = const VerificationMeta(
+    'modelId',
+  );
+  @override
+  late final GeneratedColumn<String> modelId = GeneratedColumn<String>(
+    'model_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _endedAtMeta = const VerificationMeta(
+    'endedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> endedAt = GeneratedColumn<DateTime>(
+    'ended_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _durationMsMeta = const VerificationMeta(
+    'durationMs',
+  );
+  @override
+  late final GeneratedColumn<int> durationMs = GeneratedColumn<int>(
+    'duration_ms',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _coveredMsMeta = const VerificationMeta(
+    'coveredMs',
+  );
+  @override
+  late final GeneratedColumn<int> coveredMs = GeneratedColumn<int>(
+    'covered_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _skippedRangesMeta = const VerificationMeta(
+    'skippedRanges',
+  );
+  @override
+  late final GeneratedColumn<String> skippedRanges = GeneratedColumn<String>(
+    'skipped_ranges',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _textEditedMeta = const VerificationMeta(
+    'textEdited',
+  );
+  @override
+  late final GeneratedColumn<String> textEdited = GeneratedColumn<String>(
+    'text_edited',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _editedAtMeta = const VerificationMeta(
+    'editedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> editedAt = GeneratedColumn<DateTime>(
+    'edited_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    ownerKind,
+    ownerId,
+    attachmentId,
+    audioPath,
+    title,
+    languageTag,
+    modelId,
+    status,
+    startedAt,
+    endedAt,
+    durationMs,
+    coveredMs,
+    skippedRanges,
+    textEdited,
+    editedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'transcripts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TranscriptRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(
+        _projectIdMeta,
+        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('owner_kind')) {
+      context.handle(
+        _ownerKindMeta,
+        ownerKind.isAcceptableOrUnknown(data['owner_kind']!, _ownerKindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerKindMeta);
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    }
+    if (data.containsKey('attachment_id')) {
+      context.handle(
+        _attachmentIdMeta,
+        attachmentId.isAcceptableOrUnknown(
+          data['attachment_id']!,
+          _attachmentIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('audio_path')) {
+      context.handle(
+        _audioPathMeta,
+        audioPath.isAcceptableOrUnknown(data['audio_path']!, _audioPathMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_audioPathMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    }
+    if (data.containsKey('language_tag')) {
+      context.handle(
+        _languageTagMeta,
+        languageTag.isAcceptableOrUnknown(
+          data['language_tag']!,
+          _languageTagMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_languageTagMeta);
+    }
+    if (data.containsKey('model_id')) {
+      context.handle(
+        _modelIdMeta,
+        modelId.isAcceptableOrUnknown(data['model_id']!, _modelIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_modelIdMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startedAtMeta);
+    }
+    if (data.containsKey('ended_at')) {
+      context.handle(
+        _endedAtMeta,
+        endedAt.isAcceptableOrUnknown(data['ended_at']!, _endedAtMeta),
+      );
+    }
+    if (data.containsKey('duration_ms')) {
+      context.handle(
+        _durationMsMeta,
+        durationMs.isAcceptableOrUnknown(data['duration_ms']!, _durationMsMeta),
+      );
+    }
+    if (data.containsKey('covered_ms')) {
+      context.handle(
+        _coveredMsMeta,
+        coveredMs.isAcceptableOrUnknown(data['covered_ms']!, _coveredMsMeta),
+      );
+    }
+    if (data.containsKey('skipped_ranges')) {
+      context.handle(
+        _skippedRangesMeta,
+        skippedRanges.isAcceptableOrUnknown(
+          data['skipped_ranges']!,
+          _skippedRangesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('text_edited')) {
+      context.handle(
+        _textEditedMeta,
+        textEdited.isAcceptableOrUnknown(data['text_edited']!, _textEditedMeta),
+      );
+    }
+    if (data.containsKey('edited_at')) {
+      context.handle(
+        _editedAtMeta,
+        editedAt.isAcceptableOrUnknown(data['edited_at']!, _editedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TranscriptRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TranscriptRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      projectId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}project_id'],
+      )!,
+      ownerKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_kind'],
+      )!,
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      ),
+      attachmentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}attachment_id'],
+      ),
+      audioPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}audio_path'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      languageTag: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}language_tag'],
+      )!,
+      modelId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}model_id'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      endedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}ended_at'],
+      ),
+      durationMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration_ms'],
+      ),
+      coveredMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}covered_ms'],
+      )!,
+      skippedRanges: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skipped_ranges'],
+      )!,
+      textEdited: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}text_edited'],
+      ),
+      editedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}edited_at'],
+      ),
+    );
+  }
+
+  @override
+  $TranscriptsTable createAlias(String alias) {
+    return $TranscriptsTable(attachedDatabase, alias);
+  }
+}
+
+class TranscriptRow extends DataClass implements Insertable<TranscriptRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// Project the transcript belongs to. Written once.
+  final String projectId;
+
+  /// `capture`, `meeting` or `standalone`. Written once.
+  final String ownerKind;
+
+  /// The meeting id for a meeting transcript; null otherwise.
+  final String? ownerId;
+
+  /// The audio attachment the transcript was heard from. Set once.
+  final String? attachmentId;
+
+  /// Storage-root-relative path of the take's `.wav`. Written once.
+  final String audioPath;
+
+  /// Operator-facing title, stored as data. Audited on rename.
+  final String title;
+
+  /// BCP 47 tag: requested at begin, the one used at completion.
+  final String languageTag;
+
+  /// Catalogue id of the model that decoded it; empty before one loaded.
+  final String modelId;
+
+  /// `live`, `complete` or `interrupted`.
+  final String status;
+
+  /// When recording started. Written once.
+  final DateTime startedAt;
+
+  /// When the transcript finished, complete or interrupted.
+  final DateTime? endedAt;
+
+  /// How much audio the recording holds, in milliseconds.
+  final int? durationMs;
+
+  /// The highest point of the audio processed, decoded or skipped, in
+  /// milliseconds.
+  final int coveredMs;
+
+  /// JSON `[[fromMs, toMs], …]` of utterances left untranscribed.
+  final String skippedRanges;
+
+  /// The operator's edit, written beside the raw segments, never over them.
+  final String? textEdited;
+
+  /// When the edit was last written or cleared.
+  final DateTime? editedAt;
+  const TranscriptRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.projectId,
+    required this.ownerKind,
+    this.ownerId,
+    this.attachmentId,
+    required this.audioPath,
+    required this.title,
+    required this.languageTag,
+    required this.modelId,
+    required this.status,
+    required this.startedAt,
+    this.endedAt,
+    this.durationMs,
+    required this.coveredMs,
+    required this.skippedRanges,
+    this.textEdited,
+    this.editedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['project_id'] = Variable<String>(projectId);
+    map['owner_kind'] = Variable<String>(ownerKind);
+    if (!nullToAbsent || ownerId != null) {
+      map['owner_id'] = Variable<String>(ownerId);
+    }
+    if (!nullToAbsent || attachmentId != null) {
+      map['attachment_id'] = Variable<String>(attachmentId);
+    }
+    map['audio_path'] = Variable<String>(audioPath);
+    map['title'] = Variable<String>(title);
+    map['language_tag'] = Variable<String>(languageTag);
+    map['model_id'] = Variable<String>(modelId);
+    map['status'] = Variable<String>(status);
+    map['started_at'] = Variable<DateTime>(startedAt);
+    if (!nullToAbsent || endedAt != null) {
+      map['ended_at'] = Variable<DateTime>(endedAt);
+    }
+    if (!nullToAbsent || durationMs != null) {
+      map['duration_ms'] = Variable<int>(durationMs);
+    }
+    map['covered_ms'] = Variable<int>(coveredMs);
+    map['skipped_ranges'] = Variable<String>(skippedRanges);
+    if (!nullToAbsent || textEdited != null) {
+      map['text_edited'] = Variable<String>(textEdited);
+    }
+    if (!nullToAbsent || editedAt != null) {
+      map['edited_at'] = Variable<DateTime>(editedAt);
+    }
+    return map;
+  }
+
+  TranscriptsCompanion toCompanion(bool nullToAbsent) {
+    return TranscriptsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      projectId: Value(projectId),
+      ownerKind: Value(ownerKind),
+      ownerId: ownerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ownerId),
+      attachmentId: attachmentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(attachmentId),
+      audioPath: Value(audioPath),
+      title: Value(title),
+      languageTag: Value(languageTag),
+      modelId: Value(modelId),
+      status: Value(status),
+      startedAt: Value(startedAt),
+      endedAt: endedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endedAt),
+      durationMs: durationMs == null && nullToAbsent
+          ? const Value.absent()
+          : Value(durationMs),
+      coveredMs: Value(coveredMs),
+      skippedRanges: Value(skippedRanges),
+      textEdited: textEdited == null && nullToAbsent
+          ? const Value.absent()
+          : Value(textEdited),
+      editedAt: editedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(editedAt),
+    );
+  }
+
+  factory TranscriptRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TranscriptRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      projectId: serializer.fromJson<String>(json['projectId']),
+      ownerKind: serializer.fromJson<String>(json['ownerKind']),
+      ownerId: serializer.fromJson<String?>(json['ownerId']),
+      attachmentId: serializer.fromJson<String?>(json['attachmentId']),
+      audioPath: serializer.fromJson<String>(json['audioPath']),
+      title: serializer.fromJson<String>(json['title']),
+      languageTag: serializer.fromJson<String>(json['languageTag']),
+      modelId: serializer.fromJson<String>(json['modelId']),
+      status: serializer.fromJson<String>(json['status']),
+      startedAt: serializer.fromJson<DateTime>(json['startedAt']),
+      endedAt: serializer.fromJson<DateTime?>(json['endedAt']),
+      durationMs: serializer.fromJson<int?>(json['durationMs']),
+      coveredMs: serializer.fromJson<int>(json['coveredMs']),
+      skippedRanges: serializer.fromJson<String>(json['skippedRanges']),
+      textEdited: serializer.fromJson<String?>(json['textEdited']),
+      editedAt: serializer.fromJson<DateTime?>(json['editedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'projectId': serializer.toJson<String>(projectId),
+      'ownerKind': serializer.toJson<String>(ownerKind),
+      'ownerId': serializer.toJson<String?>(ownerId),
+      'attachmentId': serializer.toJson<String?>(attachmentId),
+      'audioPath': serializer.toJson<String>(audioPath),
+      'title': serializer.toJson<String>(title),
+      'languageTag': serializer.toJson<String>(languageTag),
+      'modelId': serializer.toJson<String>(modelId),
+      'status': serializer.toJson<String>(status),
+      'startedAt': serializer.toJson<DateTime>(startedAt),
+      'endedAt': serializer.toJson<DateTime?>(endedAt),
+      'durationMs': serializer.toJson<int?>(durationMs),
+      'coveredMs': serializer.toJson<int>(coveredMs),
+      'skippedRanges': serializer.toJson<String>(skippedRanges),
+      'textEdited': serializer.toJson<String?>(textEdited),
+      'editedAt': serializer.toJson<DateTime?>(editedAt),
+    };
+  }
+
+  TranscriptRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? projectId,
+    String? ownerKind,
+    Value<String?> ownerId = const Value.absent(),
+    Value<String?> attachmentId = const Value.absent(),
+    String? audioPath,
+    String? title,
+    String? languageTag,
+    String? modelId,
+    String? status,
+    DateTime? startedAt,
+    Value<DateTime?> endedAt = const Value.absent(),
+    Value<int?> durationMs = const Value.absent(),
+    int? coveredMs,
+    String? skippedRanges,
+    Value<String?> textEdited = const Value.absent(),
+    Value<DateTime?> editedAt = const Value.absent(),
+  }) => TranscriptRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    projectId: projectId ?? this.projectId,
+    ownerKind: ownerKind ?? this.ownerKind,
+    ownerId: ownerId.present ? ownerId.value : this.ownerId,
+    attachmentId: attachmentId.present ? attachmentId.value : this.attachmentId,
+    audioPath: audioPath ?? this.audioPath,
+    title: title ?? this.title,
+    languageTag: languageTag ?? this.languageTag,
+    modelId: modelId ?? this.modelId,
+    status: status ?? this.status,
+    startedAt: startedAt ?? this.startedAt,
+    endedAt: endedAt.present ? endedAt.value : this.endedAt,
+    durationMs: durationMs.present ? durationMs.value : this.durationMs,
+    coveredMs: coveredMs ?? this.coveredMs,
+    skippedRanges: skippedRanges ?? this.skippedRanges,
+    textEdited: textEdited.present ? textEdited.value : this.textEdited,
+    editedAt: editedAt.present ? editedAt.value : this.editedAt,
+  );
+  TranscriptRow copyWithCompanion(TranscriptsCompanion data) {
+    return TranscriptRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      ownerKind: data.ownerKind.present ? data.ownerKind.value : this.ownerKind,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      attachmentId: data.attachmentId.present
+          ? data.attachmentId.value
+          : this.attachmentId,
+      audioPath: data.audioPath.present ? data.audioPath.value : this.audioPath,
+      title: data.title.present ? data.title.value : this.title,
+      languageTag: data.languageTag.present
+          ? data.languageTag.value
+          : this.languageTag,
+      modelId: data.modelId.present ? data.modelId.value : this.modelId,
+      status: data.status.present ? data.status.value : this.status,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      endedAt: data.endedAt.present ? data.endedAt.value : this.endedAt,
+      durationMs: data.durationMs.present
+          ? data.durationMs.value
+          : this.durationMs,
+      coveredMs: data.coveredMs.present ? data.coveredMs.value : this.coveredMs,
+      skippedRanges: data.skippedRanges.present
+          ? data.skippedRanges.value
+          : this.skippedRanges,
+      textEdited: data.textEdited.present
+          ? data.textEdited.value
+          : this.textEdited,
+      editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TranscriptRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('ownerKind: $ownerKind, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('attachmentId: $attachmentId, ')
+          ..write('audioPath: $audioPath, ')
+          ..write('title: $title, ')
+          ..write('languageTag: $languageTag, ')
+          ..write('modelId: $modelId, ')
+          ..write('status: $status, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('endedAt: $endedAt, ')
+          ..write('durationMs: $durationMs, ')
+          ..write('coveredMs: $coveredMs, ')
+          ..write('skippedRanges: $skippedRanges, ')
+          ..write('textEdited: $textEdited, ')
+          ..write('editedAt: $editedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    projectId,
+    ownerKind,
+    ownerId,
+    attachmentId,
+    audioPath,
+    title,
+    languageTag,
+    modelId,
+    status,
+    startedAt,
+    endedAt,
+    durationMs,
+    coveredMs,
+    skippedRanges,
+    textEdited,
+    editedAt,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TranscriptRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.projectId == this.projectId &&
+          other.ownerKind == this.ownerKind &&
+          other.ownerId == this.ownerId &&
+          other.attachmentId == this.attachmentId &&
+          other.audioPath == this.audioPath &&
+          other.title == this.title &&
+          other.languageTag == this.languageTag &&
+          other.modelId == this.modelId &&
+          other.status == this.status &&
+          other.startedAt == this.startedAt &&
+          other.endedAt == this.endedAt &&
+          other.durationMs == this.durationMs &&
+          other.coveredMs == this.coveredMs &&
+          other.skippedRanges == this.skippedRanges &&
+          other.textEdited == this.textEdited &&
+          other.editedAt == this.editedAt);
+}
+
+class TranscriptsCompanion extends UpdateCompanion<TranscriptRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> projectId;
+  final Value<String> ownerKind;
+  final Value<String?> ownerId;
+  final Value<String?> attachmentId;
+  final Value<String> audioPath;
+  final Value<String> title;
+  final Value<String> languageTag;
+  final Value<String> modelId;
+  final Value<String> status;
+  final Value<DateTime> startedAt;
+  final Value<DateTime?> endedAt;
+  final Value<int?> durationMs;
+  final Value<int> coveredMs;
+  final Value<String> skippedRanges;
+  final Value<String?> textEdited;
+  final Value<DateTime?> editedAt;
+  final Value<int> rowid;
+  const TranscriptsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.ownerKind = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.attachmentId = const Value.absent(),
+    this.audioPath = const Value.absent(),
+    this.title = const Value.absent(),
+    this.languageTag = const Value.absent(),
+    this.modelId = const Value.absent(),
+    this.status = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.endedAt = const Value.absent(),
+    this.durationMs = const Value.absent(),
+    this.coveredMs = const Value.absent(),
+    this.skippedRanges = const Value.absent(),
+    this.textEdited = const Value.absent(),
+    this.editedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TranscriptsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String projectId,
+    required String ownerKind,
+    this.ownerId = const Value.absent(),
+    this.attachmentId = const Value.absent(),
+    required String audioPath,
+    this.title = const Value.absent(),
+    required String languageTag,
+    required String modelId,
+    required String status,
+    required DateTime startedAt,
+    this.endedAt = const Value.absent(),
+    this.durationMs = const Value.absent(),
+    this.coveredMs = const Value.absent(),
+    this.skippedRanges = const Value.absent(),
+    this.textEdited = const Value.absent(),
+    this.editedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       projectId = Value(projectId),
+       ownerKind = Value(ownerKind),
+       audioPath = Value(audioPath),
+       languageTag = Value(languageTag),
+       modelId = Value(modelId),
+       status = Value(status),
+       startedAt = Value(startedAt);
+  static Insertable<TranscriptRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? projectId,
+    Expression<String>? ownerKind,
+    Expression<String>? ownerId,
+    Expression<String>? attachmentId,
+    Expression<String>? audioPath,
+    Expression<String>? title,
+    Expression<String>? languageTag,
+    Expression<String>? modelId,
+    Expression<String>? status,
+    Expression<DateTime>? startedAt,
+    Expression<DateTime>? endedAt,
+    Expression<int>? durationMs,
+    Expression<int>? coveredMs,
+    Expression<String>? skippedRanges,
+    Expression<String>? textEdited,
+    Expression<DateTime>? editedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (projectId != null) 'project_id': projectId,
+      if (ownerKind != null) 'owner_kind': ownerKind,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (attachmentId != null) 'attachment_id': attachmentId,
+      if (audioPath != null) 'audio_path': audioPath,
+      if (title != null) 'title': title,
+      if (languageTag != null) 'language_tag': languageTag,
+      if (modelId != null) 'model_id': modelId,
+      if (status != null) 'status': status,
+      if (startedAt != null) 'started_at': startedAt,
+      if (endedAt != null) 'ended_at': endedAt,
+      if (durationMs != null) 'duration_ms': durationMs,
+      if (coveredMs != null) 'covered_ms': coveredMs,
+      if (skippedRanges != null) 'skipped_ranges': skippedRanges,
+      if (textEdited != null) 'text_edited': textEdited,
+      if (editedAt != null) 'edited_at': editedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TranscriptsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? projectId,
+    Value<String>? ownerKind,
+    Value<String?>? ownerId,
+    Value<String?>? attachmentId,
+    Value<String>? audioPath,
+    Value<String>? title,
+    Value<String>? languageTag,
+    Value<String>? modelId,
+    Value<String>? status,
+    Value<DateTime>? startedAt,
+    Value<DateTime?>? endedAt,
+    Value<int?>? durationMs,
+    Value<int>? coveredMs,
+    Value<String>? skippedRanges,
+    Value<String?>? textEdited,
+    Value<DateTime?>? editedAt,
+    Value<int>? rowid,
+  }) {
+    return TranscriptsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      projectId: projectId ?? this.projectId,
+      ownerKind: ownerKind ?? this.ownerKind,
+      ownerId: ownerId ?? this.ownerId,
+      attachmentId: attachmentId ?? this.attachmentId,
+      audioPath: audioPath ?? this.audioPath,
+      title: title ?? this.title,
+      languageTag: languageTag ?? this.languageTag,
+      modelId: modelId ?? this.modelId,
+      status: status ?? this.status,
+      startedAt: startedAt ?? this.startedAt,
+      endedAt: endedAt ?? this.endedAt,
+      durationMs: durationMs ?? this.durationMs,
+      coveredMs: coveredMs ?? this.coveredMs,
+      skippedRanges: skippedRanges ?? this.skippedRanges,
+      textEdited: textEdited ?? this.textEdited,
+      editedAt: editedAt ?? this.editedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (ownerKind.present) {
+      map['owner_kind'] = Variable<String>(ownerKind.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (attachmentId.present) {
+      map['attachment_id'] = Variable<String>(attachmentId.value);
+    }
+    if (audioPath.present) {
+      map['audio_path'] = Variable<String>(audioPath.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (languageTag.present) {
+      map['language_tag'] = Variable<String>(languageTag.value);
+    }
+    if (modelId.present) {
+      map['model_id'] = Variable<String>(modelId.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (endedAt.present) {
+      map['ended_at'] = Variable<DateTime>(endedAt.value);
+    }
+    if (durationMs.present) {
+      map['duration_ms'] = Variable<int>(durationMs.value);
+    }
+    if (coveredMs.present) {
+      map['covered_ms'] = Variable<int>(coveredMs.value);
+    }
+    if (skippedRanges.present) {
+      map['skipped_ranges'] = Variable<String>(skippedRanges.value);
+    }
+    if (textEdited.present) {
+      map['text_edited'] = Variable<String>(textEdited.value);
+    }
+    if (editedAt.present) {
+      map['edited_at'] = Variable<DateTime>(editedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TranscriptsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('projectId: $projectId, ')
+          ..write('ownerKind: $ownerKind, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('attachmentId: $attachmentId, ')
+          ..write('audioPath: $audioPath, ')
+          ..write('title: $title, ')
+          ..write('languageTag: $languageTag, ')
+          ..write('modelId: $modelId, ')
+          ..write('status: $status, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('endedAt: $endedAt, ')
+          ..write('durationMs: $durationMs, ')
+          ..write('coveredMs: $coveredMs, ')
+          ..write('skippedRanges: $skippedRanges, ')
+          ..write('textEdited: $textEdited, ')
+          ..write('editedAt: $editedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TranscriptSegmentsTable extends TranscriptSegments
+    with TableInfo<$TranscriptSegmentsTable, TranscriptSegmentRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TranscriptSegmentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: uuidV7,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedByDeviceMeta = const VerificationMeta(
+    'updatedByDevice',
+  );
+  @override
+  late final GeneratedColumn<String> updatedByDevice = GeneratedColumn<String>(
+    'updated_by_device',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revMeta = const VerificationMeta('rev');
+  @override
+  late final GeneratedColumn<int> rev = GeneratedColumn<int>(
+    'rev',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _transcriptIdMeta = const VerificationMeta(
+    'transcriptId',
+  );
+  @override
+  late final GeneratedColumn<String> transcriptId = GeneratedColumn<String>(
+    'transcript_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _seqMeta = const VerificationMeta('seq');
+  @override
+  late final GeneratedColumn<int> seq = GeneratedColumn<int>(
+    'seq',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startMsMeta = const VerificationMeta(
+    'startMs',
+  );
+  @override
+  late final GeneratedColumn<int> startMs = GeneratedColumn<int>(
+    'start_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _endMsMeta = const VerificationMeta('endMs');
+  @override
+  late final GeneratedColumn<int> endMs = GeneratedColumn<int>(
+    'end_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _textRawMeta = const VerificationMeta(
+    'textRaw',
+  );
+  @override
+  late final GeneratedColumn<String> textRaw = GeneratedColumn<String>(
+    'text_raw',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _confidenceMeta = const VerificationMeta(
+    'confidence',
+  );
+  @override
+  late final GeneratedColumn<double> confidence = GeneratedColumn<double>(
+    'confidence',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    transcriptId,
+    seq,
+    startMs,
+    endMs,
+    textRaw,
+    confidence,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'transcript_segments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TranscriptSegmentRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('updated_by_device')) {
+      context.handle(
+        _updatedByDeviceMeta,
+        updatedByDevice.isAcceptableOrUnknown(
+          data['updated_by_device']!,
+          _updatedByDeviceMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedByDeviceMeta);
+    }
+    if (data.containsKey('rev')) {
+      context.handle(
+        _revMeta,
+        rev.isAcceptableOrUnknown(data['rev']!, _revMeta),
+      );
+    }
+    if (data.containsKey('transcript_id')) {
+      context.handle(
+        _transcriptIdMeta,
+        transcriptId.isAcceptableOrUnknown(
+          data['transcript_id']!,
+          _transcriptIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_transcriptIdMeta);
+    }
+    if (data.containsKey('seq')) {
+      context.handle(
+        _seqMeta,
+        seq.isAcceptableOrUnknown(data['seq']!, _seqMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_seqMeta);
+    }
+    if (data.containsKey('start_ms')) {
+      context.handle(
+        _startMsMeta,
+        startMs.isAcceptableOrUnknown(data['start_ms']!, _startMsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startMsMeta);
+    }
+    if (data.containsKey('end_ms')) {
+      context.handle(
+        _endMsMeta,
+        endMs.isAcceptableOrUnknown(data['end_ms']!, _endMsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_endMsMeta);
+    }
+    if (data.containsKey('text_raw')) {
+      context.handle(
+        _textRawMeta,
+        textRaw.isAcceptableOrUnknown(data['text_raw']!, _textRawMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_textRawMeta);
+    }
+    if (data.containsKey('confidence')) {
+      context.handle(
+        _confidenceMeta,
+        confidence.isAcceptableOrUnknown(data['confidence']!, _confidenceMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TranscriptSegmentRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TranscriptSegmentRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      updatedByDevice: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by_device'],
+      )!,
+      rev: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rev'],
+      )!,
+      transcriptId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}transcript_id'],
+      )!,
+      seq: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}seq'],
+      )!,
+      startMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}start_ms'],
+      )!,
+      endMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}end_ms'],
+      )!,
+      textRaw: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}text_raw'],
+      )!,
+      confidence: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}confidence'],
+      ),
+    );
+  }
+
+  @override
+  $TranscriptSegmentsTable createAlias(String alias) {
+    return $TranscriptSegmentsTable(attachedDatabase, alias);
+  }
+}
+
+class TranscriptSegmentRow extends DataClass
+    implements Insertable<TranscriptSegmentRow> {
+  /// Merge identity. Minted as UUIDv7 text when the insert omits it.
+  final String id;
+
+  /// When the row was first written. Later updates leave this alone.
+  final DateTime createdAt;
+
+  /// When the row last changed. The write helper advances this.
+  final DateTime updatedAt;
+
+  /// Device that last wrote the row.
+  final String updatedByDevice;
+
+  /// Monotonic write counter. The write helper adds one on every update.
+  final int rev;
+
+  /// The transcript this segment belongs to.
+  final String transcriptId;
+
+  /// 1-based insertion order within the transcript.
+  final int seq;
+
+  /// Where the segment starts in the recording, in milliseconds.
+  final int startMs;
+
+  /// Where the segment ends in the recording, in milliseconds.
+  final int endMs;
+
+  /// The text as decoded. Written once at insert, never updated or logged.
+  final String textRaw;
+
+  /// Mean word probability from 0 to 1, when the decode reported one.
+  final double? confidence;
+  const TranscriptSegmentRow({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.updatedByDevice,
+    required this.rev,
+    required this.transcriptId,
+    required this.seq,
+    required this.startMs,
+    required this.endMs,
+    required this.textRaw,
+    this.confidence,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['updated_by_device'] = Variable<String>(updatedByDevice);
+    map['rev'] = Variable<int>(rev);
+    map['transcript_id'] = Variable<String>(transcriptId);
+    map['seq'] = Variable<int>(seq);
+    map['start_ms'] = Variable<int>(startMs);
+    map['end_ms'] = Variable<int>(endMs);
+    map['text_raw'] = Variable<String>(textRaw);
+    if (!nullToAbsent || confidence != null) {
+      map['confidence'] = Variable<double>(confidence);
+    }
+    return map;
+  }
+
+  TranscriptSegmentsCompanion toCompanion(bool nullToAbsent) {
+    return TranscriptSegmentsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      updatedByDevice: Value(updatedByDevice),
+      rev: Value(rev),
+      transcriptId: Value(transcriptId),
+      seq: Value(seq),
+      startMs: Value(startMs),
+      endMs: Value(endMs),
+      textRaw: Value(textRaw),
+      confidence: confidence == null && nullToAbsent
+          ? const Value.absent()
+          : Value(confidence),
+    );
+  }
+
+  factory TranscriptSegmentRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TranscriptSegmentRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
+      rev: serializer.fromJson<int>(json['rev']),
+      transcriptId: serializer.fromJson<String>(json['transcriptId']),
+      seq: serializer.fromJson<int>(json['seq']),
+      startMs: serializer.fromJson<int>(json['startMs']),
+      endMs: serializer.fromJson<int>(json['endMs']),
+      textRaw: serializer.fromJson<String>(json['textRaw']),
+      confidence: serializer.fromJson<double?>(json['confidence']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedByDevice': serializer.toJson<String>(updatedByDevice),
+      'rev': serializer.toJson<int>(rev),
+      'transcriptId': serializer.toJson<String>(transcriptId),
+      'seq': serializer.toJson<int>(seq),
+      'startMs': serializer.toJson<int>(startMs),
+      'endMs': serializer.toJson<int>(endMs),
+      'textRaw': serializer.toJson<String>(textRaw),
+      'confidence': serializer.toJson<double?>(confidence),
+    };
+  }
+
+  TranscriptSegmentRow copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? updatedByDevice,
+    int? rev,
+    String? transcriptId,
+    int? seq,
+    int? startMs,
+    int? endMs,
+    String? textRaw,
+    Value<double?> confidence = const Value.absent(),
+  }) => TranscriptSegmentRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+    rev: rev ?? this.rev,
+    transcriptId: transcriptId ?? this.transcriptId,
+    seq: seq ?? this.seq,
+    startMs: startMs ?? this.startMs,
+    endMs: endMs ?? this.endMs,
+    textRaw: textRaw ?? this.textRaw,
+    confidence: confidence.present ? confidence.value : this.confidence,
+  );
+  TranscriptSegmentRow copyWithCompanion(TranscriptSegmentsCompanion data) {
+    return TranscriptSegmentRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      updatedByDevice: data.updatedByDevice.present
+          ? data.updatedByDevice.value
+          : this.updatedByDevice,
+      rev: data.rev.present ? data.rev.value : this.rev,
+      transcriptId: data.transcriptId.present
+          ? data.transcriptId.value
+          : this.transcriptId,
+      seq: data.seq.present ? data.seq.value : this.seq,
+      startMs: data.startMs.present ? data.startMs.value : this.startMs,
+      endMs: data.endMs.present ? data.endMs.value : this.endMs,
+      textRaw: data.textRaw.present ? data.textRaw.value : this.textRaw,
+      confidence: data.confidence.present
+          ? data.confidence.value
+          : this.confidence,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TranscriptSegmentRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('transcriptId: $transcriptId, ')
+          ..write('seq: $seq, ')
+          ..write('startMs: $startMs, ')
+          ..write('endMs: $endMs, ')
+          ..write('textRaw: $textRaw, ')
+          ..write('confidence: $confidence')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    updatedByDevice,
+    rev,
+    transcriptId,
+    seq,
+    startMs,
+    endMs,
+    textRaw,
+    confidence,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TranscriptSegmentRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.updatedByDevice == this.updatedByDevice &&
+          other.rev == this.rev &&
+          other.transcriptId == this.transcriptId &&
+          other.seq == this.seq &&
+          other.startMs == this.startMs &&
+          other.endMs == this.endMs &&
+          other.textRaw == this.textRaw &&
+          other.confidence == this.confidence);
+}
+
+class TranscriptSegmentsCompanion
+    extends UpdateCompanion<TranscriptSegmentRow> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> updatedByDevice;
+  final Value<int> rev;
+  final Value<String> transcriptId;
+  final Value<int> seq;
+  final Value<int> startMs;
+  final Value<int> endMs;
+  final Value<String> textRaw;
+  final Value<double?> confidence;
+  final Value<int> rowid;
+  const TranscriptSegmentsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.updatedByDevice = const Value.absent(),
+    this.rev = const Value.absent(),
+    this.transcriptId = const Value.absent(),
+    this.seq = const Value.absent(),
+    this.startMs = const Value.absent(),
+    this.endMs = const Value.absent(),
+    this.textRaw = const Value.absent(),
+    this.confidence = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TranscriptSegmentsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String updatedByDevice,
+    this.rev = const Value.absent(),
+    required String transcriptId,
+    required int seq,
+    required int startMs,
+    required int endMs,
+    required String textRaw,
+    this.confidence = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       updatedByDevice = Value(updatedByDevice),
+       transcriptId = Value(transcriptId),
+       seq = Value(seq),
+       startMs = Value(startMs),
+       endMs = Value(endMs),
+       textRaw = Value(textRaw);
+  static Insertable<TranscriptSegmentRow> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? updatedByDevice,
+    Expression<int>? rev,
+    Expression<String>? transcriptId,
+    Expression<int>? seq,
+    Expression<int>? startMs,
+    Expression<int>? endMs,
+    Expression<String>? textRaw,
+    Expression<double>? confidence,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
+      if (rev != null) 'rev': rev,
+      if (transcriptId != null) 'transcript_id': transcriptId,
+      if (seq != null) 'seq': seq,
+      if (startMs != null) 'start_ms': startMs,
+      if (endMs != null) 'end_ms': endMs,
+      if (textRaw != null) 'text_raw': textRaw,
+      if (confidence != null) 'confidence': confidence,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TranscriptSegmentsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? updatedByDevice,
+    Value<int>? rev,
+    Value<String>? transcriptId,
+    Value<int>? seq,
+    Value<int>? startMs,
+    Value<int>? endMs,
+    Value<String>? textRaw,
+    Value<double?>? confidence,
+    Value<int>? rowid,
+  }) {
+    return TranscriptSegmentsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedByDevice: updatedByDevice ?? this.updatedByDevice,
+      rev: rev ?? this.rev,
+      transcriptId: transcriptId ?? this.transcriptId,
+      seq: seq ?? this.seq,
+      startMs: startMs ?? this.startMs,
+      endMs: endMs ?? this.endMs,
+      textRaw: textRaw ?? this.textRaw,
+      confidence: confidence ?? this.confidence,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (updatedByDevice.present) {
+      map['updated_by_device'] = Variable<String>(updatedByDevice.value);
+    }
+    if (rev.present) {
+      map['rev'] = Variable<int>(rev.value);
+    }
+    if (transcriptId.present) {
+      map['transcript_id'] = Variable<String>(transcriptId.value);
+    }
+    if (seq.present) {
+      map['seq'] = Variable<int>(seq.value);
+    }
+    if (startMs.present) {
+      map['start_ms'] = Variable<int>(startMs.value);
+    }
+    if (endMs.present) {
+      map['end_ms'] = Variable<int>(endMs.value);
+    }
+    if (textRaw.present) {
+      map['text_raw'] = Variable<String>(textRaw.value);
+    }
+    if (confidence.present) {
+      map['confidence'] = Variable<double>(confidence.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TranscriptSegmentsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('updatedByDevice: $updatedByDevice, ')
+          ..write('rev: $rev, ')
+          ..write('transcriptId: $transcriptId, ')
+          ..write('seq: $seq, ')
+          ..write('startMs: $startMs, ')
+          ..write('endMs: $endMs, ')
+          ..write('textRaw: $textRaw, ')
+          ..write('confidence: $confidence, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ExportsTable extends Exports with TableInfo<$ExportsTable, ExportRow> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -26130,6 +28004,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $MeetingsTable meetings = $MeetingsTable(this);
   late final $AttendeesTable attendees = $AttendeesTable(this);
   late final $MeetingActionsTable meetingActions = $MeetingActionsTable(this);
+  late final $TranscriptsTable transcripts = $TranscriptsTable(this);
+  late final $TranscriptSegmentsTable transcriptSegments =
+      $TranscriptSegmentsTable(this);
   late final $ExportsTable exports = $ExportsTable(this);
   late final $MergeTable merge = $MergeTable(this);
   late final $MergeConflictsTable mergeConflicts = $MergeConflictsTable(this);
@@ -26214,6 +28091,22 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'meeting_actions_by_meeting_status',
     'CREATE INDEX meeting_actions_by_meeting_status ON meeting_actions (meeting_id, status)',
   );
+  late final Index transcriptsByProject = Index(
+    'transcripts_by_project',
+    'CREATE INDEX transcripts_by_project ON transcripts (project_id, started_at)',
+  );
+  late final Index transcriptsByAttachment = Index(
+    'transcripts_by_attachment',
+    'CREATE INDEX transcripts_by_attachment ON transcripts (attachment_id)',
+  );
+  late final Index transcriptsByOwner = Index(
+    'transcripts_by_owner',
+    'CREATE INDEX transcripts_by_owner ON transcripts (owner_kind, owner_id)',
+  );
+  late final Index transcriptSegmentsByTranscript = Index(
+    'transcript_segments_by_transcript',
+    'CREATE UNIQUE INDEX transcript_segments_by_transcript ON transcript_segments (transcript_id, seq)',
+  );
   late final Index exportsByProjectCreated = Index(
     'exports_by_project_created',
     'CREATE INDEX exports_by_project_created ON exports (project_id, created_at)',
@@ -26256,6 +28149,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     meetings,
     attendees,
     meetingActions,
+    transcripts,
+    transcriptSegments,
     exports,
     merge,
     mergeConflicts,
@@ -26280,6 +28175,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     variancesByField,
     variancesByProjectStatus,
     meetingActionsByMeetingStatus,
+    transcriptsByProject,
+    transcriptsByAttachment,
+    transcriptsByOwner,
+    transcriptSegmentsByTranscript,
     exportsByProjectCreated,
     mergeConflictsBySessionResolution,
   ];

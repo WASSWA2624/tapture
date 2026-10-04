@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -75,6 +76,21 @@ abstract interface class StorageRoot {
     );
   }
 
+  /// The app-private `Tapture/` tree under application support, for derived
+  /// application files that are never evidence, such as speech models
+  /// (spec §8.1 rule 8). It is never in the visible tree, a bundle or an
+  /// export. In a browser, which has no application support folder, [resolve]
+  /// returns a [StorageFailure]. [supportDirectory] is the test seam that
+  /// replaces the platform's application support folder.
+  factory StorageRoot.private({
+    @visibleForTesting Future<Directory> Function()? supportDirectory,
+  }) {
+    return _StorageRoot(
+      documentsDirectory: supportDirectory ?? _platformSupportDirectory,
+      publicDocuments: () async => null,
+    );
+  }
+
   /// The visible `Tapture/` folder. Creates it and `.cache` if they are
   /// absent, memoises a successful result for the process, and returns a
   /// [StorageFailure] naming the path when the location is missing or not
@@ -134,6 +150,17 @@ Future<Directory> _platformDocumentsDirectory() async {
     }
   }
   return getApplicationDocumentsDirectory();
+}
+
+/// The app-private application support directory. A browser has none, so
+/// this throws there and [StorageRoot.resolve] reports a [StorageFailure].
+Future<Directory> _platformSupportDirectory() {
+  if (kIsWeb) {
+    return Future<Directory>.error(
+      UnsupportedError('No application support folder in a browser'),
+    );
+  }
+  return getApplicationSupportDirectory();
 }
 
 final class _StorageRoot implements StorageRoot {

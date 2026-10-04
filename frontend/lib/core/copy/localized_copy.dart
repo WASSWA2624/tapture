@@ -126,6 +126,18 @@ final class LocalizedCopy {
   String get speechImportUnknownRecovery =>
       _catalog.speechImportUnknownRecovery;
 
+  /// A transcript or part of one could not be written to the device's
+  /// database.
+  String get transcriptSaveFailed => _catalog.transcriptSaveFailed;
+
+  /// A transcript segment skipped ahead or contradicted one already saved.
+  String get transcriptSegmentOutOfOrder =>
+      _catalog.transcriptSegmentOutOfOrder;
+
+  /// An edit was refused because the transcript is still being recorded or
+  /// finished.
+  String get transcriptStillRecording => _catalog.transcriptStillRecording;
+
   /// A value filled in rather than typed.
   String get autoFilled => _catalog.autoFilled;
 

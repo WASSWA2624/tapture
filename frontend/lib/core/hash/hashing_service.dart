@@ -10,8 +10,20 @@ import 'package:tapture/core/errors/result.dart';
 /// Content hashing for file identity and duplicate detection.
 abstract final class HashingService {
   /// SHA-256 of [file], streamed in chunks on a worker isolate.
-  static Future<Result<String>> sha256OfFile(File file) {
-    return runIsolate(_hashFileInIsolate, file.path);
+  ///
+  /// [onProgress] receives the fraction read, ending at 1.0. [cancel] stops
+  /// the isolate and completes with a `CancelledFailure`.
+  static Future<Result<String>> sha256OfFile(
+    File file, {
+    CancellationToken? cancel,
+    void Function(double)? onProgress,
+  }) {
+    return runIsolate(
+      _hashFileInIsolate,
+      file.path,
+      cancel: cancel,
+      onProgress: onProgress,
+    );
   }
 
   /// Hashes a picked document without blocking the UI isolate.
@@ -27,8 +39,16 @@ abstract final class HashingService {
 String _hashBytesInIsolate(Uint8List bytes) => sha256.convert(bytes).toString();
 
 /// SHA-256 of [file], streamed in chunks on a worker isolate.
-Future<Result<String>> sha256OfFile(File file) {
-  return HashingService.sha256OfFile(file);
+Future<Result<String>> sha256OfFile(
+  File file, {
+  CancellationToken? cancel,
+  void Function(double)? onProgress,
+}) {
+  return HashingService.sha256OfFile(
+    file,
+    cancel: cancel,
+    onProgress: onProgress,
+  );
 }
 
 /// SHA-256 of [value]'s UTF-8 bytes.
@@ -52,7 +72,7 @@ Future<String> _hashFileInIsolate(String path) async {
       }
       sink.add(n == buffer.length ? buffer : buffer.sublist(0, n));
       read += n;
-      if (length > 0) {
+      if (length > 0 && read < length) {
         IsolateRunner.reportProgress(read / length);
       }
     }
@@ -60,6 +80,7 @@ Future<String> _hashFileInIsolate(String path) async {
   } finally {
     handle.closeSync();
   }
+  IsolateRunner.reportProgress(1);
   final Digest digest = output.digest;
   return digest.toString();
 }

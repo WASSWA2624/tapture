@@ -182,15 +182,21 @@ final class BlobCaptureStaging implements CaptureStaging {
     if (failed != null) throw failed;
     if (_closed) throw StateError('The staged take is closed.');
     if (_length + samples.length > _maxSamples) {
-      throw StorageFailure(
+      // A full take stays full: a shorter append later would leave a gap.
+      final Failure fullFailure = StorageFailure(
         localizedMessage: Copy.messages.audioTakeLimitReached,
         localizedRecovery: Copy.messages.audioTakeLimitReachedRecovery,
       );
+      _failure = fullFailure;
+      throw fullFailure;
     }
     try {
       await _keep(samples);
     } on Object catch (error) {
       _failure = error is Failure ? error : _writeFailure(_path);
+      // A chunk may have been written whole before a later write failed;
+      // the next flush puts back exactly what the take holds.
+      _dirty = _pendingLength > 0;
       rethrow;
     }
   });
