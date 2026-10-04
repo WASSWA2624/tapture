@@ -14,6 +14,8 @@ runs after all feature work in step 27.
 
 Reopened the app-integration criteria contradicted by the current source. frontend/lib/main.dart constructs ProviderRegistry.keyless(); app/router.dart supplies an empty BackendConfig, a no-op sign-in handler and constant relay counters. Server/client components and their recorded checked criteria remain, but production enrolment, cached identity/role affordances, relay UI wiring and default proxy extraction are not established. This task is Partially complete; task 084 also identifies the proxy integration gap. This audit updates the plan, not the implementation.
 
+On 2026-10-04 a relayed package merged through the same plan and conflict choices as a hand-carried bundle, including a replayed push, and the project screen showed queued, sent and purged counts. Thirteen relay tests passed. Real PostgreSQL, the container image, a red pipeline and the remaining enrolment, role and proxy criteria stay open.
+
 ### Backend implementation audit — 2026-09-30
 
 Implemented server gaps found during the full-codebase review: generic registration/reset-request responses; purpose-, organisation-, state- and expiry-checked one-use invitation/reset consumption; operator-issued private reset capabilities; isolated refresh chains; startup-warmed Argon verification and successful parameter rehash; transactional account/enrollment rereads; closed HTTP request objects and safe malformed-JSON errors; bounded route metric labels and logs; project/organisation daily and lifetime quota reservations; cancellation of provider calls; configured-model cost bounds; safe deployment key/policy audit; retention changes applied to existing transit state; complete credential-free metadata export and confirmed whole-deployment destruction; and bounded cleanup of expired account/replay/lockout metadata. Relay counters move only after unique committed operations, and storage/usage checks aggregate in PostgreSQL rather than copying full history.
@@ -724,10 +726,10 @@ abstract class OfflineAuthority {
 - [x] Tests: a table test per role over the capability list, compared against the server's matrix; unit tests over all
       four authority states and every capability; a clock-advance test proving expiry never disables capture or
       export.
-- [ ] Relayed packages merge through exactly the same preview and conflict path as a hand-carried bundle.
+- [x] Relayed packages merge through exactly the same preview and conflict path as a hand-carried bundle.
 - [x] Relay is off until a project manager turns it on, and a never-relay project offers no way to send.
-- [ ] What has been queued, sent and purged is always visible for a project.
-- [ ] Tests: an integration test relaying between two local databases through a fake server, including a replayed
+- [x] What has been queued, sent and purged is always visible for a project.
+- [x] Tests: an integration test relaying between two local databases through a fake server, including a replayed
       push, plus widget tests for each relay control and the queue view.
 - [ ] A fresh install performs AI extraction with no key ever entered on the device.
 - [x] Choosing the proxy or a device key changes no code in any feature that uses AI.
