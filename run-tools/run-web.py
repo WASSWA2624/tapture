@@ -4,6 +4,7 @@
     python run-tools/run-web.py --server        # serve only, print the URL
     python run-tools/run-web.py --port 9090
     python run-tools/run-web.py --release       # run the optimised build
+    python run-tools/run-web.py --isolated      # cross-origin isolated: threaded speech
     python run-tools/run-web.py --keep-ports    # fail on a busy port instead
 
 Running it again refreshes the app: whatever holds the web port is stopped
@@ -33,6 +34,15 @@ from common import (  # noqa: E402
 
 DEFAULT_PORT = 5173
 
+# The headers that make the page cross-origin isolated, so the speech worker
+# can run the threaded WebAssembly engine (dev-plan task 111, app-write-up
+# section 30.4.8). `credentialless` keeps cross-origin loads that send no
+# credentials working without a CORP header on each of them.
+ISOLATION_HEADERS = (
+    ("Cross-Origin-Opener-Policy", "same-origin"),
+    ("Cross-Origin-Embedder-Policy", "credentialless"),
+)
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run the Tapture web app locally.")
@@ -48,11 +58,29 @@ def parse_args() -> argparse.Namespace:
         "--release", action="store_true", help="run the optimised build, not the debug build"
     )
     parser.add_argument(
+        "--isolated",
+        action="store_true",
+        help="send COOP/COEP headers, so the page is cross-origin isolated and "
+        "speech uses the threaded engine",
+    )
+    parser.add_argument(
         "--keep-ports",
         action="store_true",
         help="fail on a busy port instead of stopping whatever holds it",
     )
     return parser.parse_args()
+
+
+def isolation_arguments(isolated: bool) -> list[str]:
+    """The `flutter run` arguments that add the cross-origin isolation headers.
+
+    Without them the page is not cross-origin isolated and the speech worker
+    runs the single-thread engine, which is the default for development and
+    for production hosts that do not send the headers.
+    """
+    if not isolated:
+        return []
+    return [f"--web-header={name}={value}" for name, value in ISOLATION_HEADERS]
 
 
 def free_port(port: int, keep: bool) -> None:
@@ -164,7 +192,8 @@ def entry() -> None:
     # before the app is usable. The dev server still hot-reloads; Chrome is
     # opened when Flutter reports that the app is being served.
     where = "this machine" if args.server else "Chrome"
-    step(f"Starting the web app for {where} at http://localhost:{args.port}")
+    isolation = " (cross-origin isolated)" if args.isolated else ""
+    step(f"Starting the web app for {where} at http://localhost:{args.port}{isolation}")
     command = [
         "run",
         "-d",
@@ -177,6 +206,7 @@ def entry() -> None:
         # /canvaskit/; this makes the app load it from there.
         "--no-web-resources-cdn",
         "--release" if args.release else "--debug",
+        *isolation_arguments(args.isolated),
     ]
     if args.server:
         command += ["--web-hostname", "0.0.0.0"]

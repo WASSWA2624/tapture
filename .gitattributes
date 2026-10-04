@@ -27,4 +27,6 @@ frontend/packages/tapture_whisper/src/** text eol=lf
 *.wav binary
 frontend/web/whisper/*.js text eol=lf
 frontend/web/whisper/*.json text eol=lf
+frontend/web/whisper/*.txt text eol=lf
+frontend/packages/tapture_whisper/wasm/* text eol=lf
 frontend/assets/speech/manifest.json text eol=lf

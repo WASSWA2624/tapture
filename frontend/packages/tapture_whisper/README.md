@@ -18,6 +18,7 @@ dependency of the app, approved in `frontend/tool/allowlist.yaml`, with no Dart 
 | `src/tapture_whisper.{h,cpp}`, `src/tw_sha256.{c,h}` | The C ABI v1 and its implementation (see below) |
 | `src/CMakeLists.txt`, `src/wasm_exports.txt`, `src/smoke/tw_smoke.c` | The one native build, the WebAssembly export list and the smoke tool |
 | `windows/`, `linux/`, `android/` | The Flutter plugin builds, each running `src/CMakeLists.txt` |
+| `wasm/emsdk_version.txt`, `wasm/smoke.mjs` | The one Emscripten release the WebAssembly build accepts, and its Node smoke |
 | `darwin/tapture_whisper/Sources/tapture_whisper/` | Generated forwarders for the Apple builds (see below) |
 | `darwin/tapture_whisper.podspec`, `darwin/tapture_whisper/Package.swift` | The CocoaPods and SwiftPM manifests that compile them |
 | `LICENSE` | Four blocks in Flutter's 80-dash format: this package, whisper.cpp/ggml, the Whisper weights, Silero VAD |
@@ -130,6 +131,60 @@ dart run tool/check_native_library.dart build/tw-android-*/libtapture_whisper.so
 `DT_NEEDED` outside `libc.so`, `libm.so`, `libdl.so` and `liblog.so` (so a `libomp.so` or `libc++_shared.so`
 dependency is caught).
 
+## WebAssembly (dev-plan task 111, app-write-up §30.4.8)
+
+The same shim and source list compile with Emscripten into two ES-module factories (`createTaptureWhisper`) committed
+under `frontend/web/whisper/`: `tapture_whisper_st` (one thread) and `tapture_whisper_mt` (pthreads, a strict pool of
+8 workers, at most 4 compute threads). Both use SIMD128 and native wasm exceptions, `ENVIRONMENT=worker,node`, no
+filesystem, a 64 MB to 2 GB growable heap and a 5 MB stack. `src/CMakeLists.txt` holds every flag and writes them to
+`tw_wasm_flags.txt` for the build record. Two web-only settings keep the heap near what is used: ggml's split-input
+context is sized for 1 input (one CPU backend never copies one; the default 30 commits about 70 MB per scheduler) and
+a growth step adds at most 2 MB. Measured under Node after loading: tiny about 277 MiB, base about 326 MiB; most of it
+is whisper's own `n_vocab × n_text_ctx` logits reserve and worst-case decode buffer (93 MB each, for any model).
+
+Run from `frontend/`; `--build` needs the pinned emsdk activated (in Git Bash on Windows, set `EMSDK_PYTHON` to the
+emsdk's own `python.exe` first), `--check` needs nothing:
+
+```sh
+source /path/to/emsdk/emsdk_env.sh            # must report emcc 6.0.11 (wasm/emsdk_version.txt)
+dart run tool/whisper_wasm.dart --build --smoke   # build/tw-wasm-{st,mt} -> web/whisper, then the Node smoke
+dart run tool/whisper_wasm.dart --check           # hashes, ABI, export list, worker tables
+dart run tool/whisper_wasm.dart --smoke           # node wasm/smoke.mjs --variant st, then mt
+```
+
+- `--build` refuses any emcc other than the pinned release, takes CMake and Ninja from `$CMAKE`/`$NINJA`, then the
+  Android SDK's `cmake/<version>/bin`, then `PATH`, and writes `web/whisper/LICENSES.txt` (this package's four blocks
+  plus Emscripten, musl, libc++/libc++abi/libunwind and compiler-rt) and `web/whisper/BUILD_INFO.json`
+  (`abi, whisper, commit, patches, emsdk, flags, inputs, files`, SHA-256 of text with LF line ends).
+- `--check` reports, with `path:line`, every input or artifact whose hash differs from `BUILD_INFO.json`, an ABI or
+  emsdk drift, an export list that is not exactly the header's `TW_API` names, a glue file missing one of them, and a
+  worker struct or status table that differs from `TW_SIZEOF_*`, `tw_struct_id` or `tw_status`.
+- `wasm/smoke.mjs` runs the committed `web/whisper/whisper_worker.js` in a Node worker thread standing in for a
+  browser module worker, with the models served from `127.0.0.1`: init and struct sizes, cross-origin refusal, wrong
+  SHA-256 and size refused with `model_mismatch`, the jfk phrase with tiny, `floor(n/512)` Silero probabilities, and on
+  mt an `Atomics.store` abort plus 50 consecutive 4-thread decodes with `liveObjects` unchanged.
+
+`web/whisper/whisper_worker.js` is hand-written. It picks mt only when `crossOriginIsolated` and `SharedArrayBuffer`
+exist (otherwise st, without an error), imports only its own directory, accepts only same-origin model URLs, caches
+models in OPFS (`whisper-models/<cacheKey>`) and lends them to `tw_context_open_js` / `tw_vad_open_js` as a file id
+read through `Module.twSourceRead`, so the model is never copied whole into the heap and the shim's SHA-256 replaces
+`crypto.subtle` (plain-HTTP LAN serving works). The protocol is documented at the top of the file.
+
+### Serving with cross-origin isolation
+
+Development and production use st unless the host sends both headers. `python run-tools/run-web.py --isolated` (and
+the `tapture-web-preview-isolated` launch configuration, port 5181) adds them to the Flutter dev server. A production
+host adds them to every response of the app:
+
+```
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: credentialless
+```
+
+Safari does not support COEP `credentialless`, so it stays on st there. COOP `same-origin` severs `window.opener`
+between the app and a sign-in popup on another origin, so check every sign-in flow on the isolated host before
+enabling the headers in production.
+
 ## Pub workspace
 
 `frontend/pubspec.yaml` lists this package under `workspace:` and depends on it in block YAML:
@@ -149,4 +204,5 @@ Flutter 3.44.6 resolves the workspace with `flutter pub get`, so the documented 
 
 `test/` is local, like every Tapture test suite. `test/package_manifest_test.dart` checks the pubspec's plugin
 platforms, the absence of a build hook and an example app, and the four `LICENSE` blocks. The vendoring tool's own
-tests are `frontend/test/tool/whisper_vendor_test.dart`.
+tests are `frontend/test/tool/whisper_vendor_test.dart`; the WebAssembly tool's are
+`frontend/test/tool/whisper_wasm_test.dart`.

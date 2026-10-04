@@ -7,17 +7,18 @@ import unittest
 from pathlib import Path
 
 
-def _served_announcement():
+def _run_web():
     path = Path(__file__).resolve().parents[1] / "run-web.py"
     spec = importlib.util.spec_from_file_location("run_web", path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load {path}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.served_announcement
+    return module
 
 
-served_announcement = _served_announcement()
+run_web = _run_web()
+served_announcement = run_web.served_announcement
 
 
 class ServedAnnouncementTests(unittest.TestCase):
@@ -34,6 +35,22 @@ class ServedAnnouncementTests(unittest.TestCase):
             served_announcement(
                 "lib\\main.dart is being served at http://localhost:5173"
             )
+        )
+
+
+class IsolationTests(unittest.TestCase):
+    """--isolated serves COOP and COEP, so speech can use the threaded engine."""
+
+    def test_default_sends_no_isolation_headers(self) -> None:
+        self.assertEqual(run_web.isolation_arguments(False), [])
+
+    def test_isolated_sends_coop_and_credentialless_coep(self) -> None:
+        self.assertEqual(
+            run_web.isolation_arguments(True),
+            [
+                "--web-header=Cross-Origin-Opener-Policy=same-origin",
+                "--web-header=Cross-Origin-Embedder-Policy=credentialless",
+            ],
         )
 
 
