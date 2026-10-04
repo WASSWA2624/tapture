@@ -25,6 +25,8 @@ abstract final class VersionVectorSchema {
     'meetings',
     'attendees',
     'meeting_actions',
+    'transcripts',
+    'transcript_segments',
     'variances',
     'processing_jobs',
     'processing_results',

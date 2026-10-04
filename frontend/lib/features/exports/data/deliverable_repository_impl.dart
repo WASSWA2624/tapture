@@ -33,6 +33,8 @@ import 'package:tapture/features/meetings/meetings.dart';
 import 'package:tapture/features/quality/quality.dart';
 import 'package:tapture/features/records/records.dart';
 import 'package:tapture/features/templates/templates.dart';
+import 'package:tapture/features/transcripts/transcripts.dart'
+    show TranscriptRepository, TranscriptRepositoryImpl;
 
 import '../domain/deliverable_repository.dart';
 import '../domain/export_sharing_policy.dart';
@@ -48,7 +50,7 @@ import 'export_record_loader.dart';
 final class DeliverableRepositoryImpl
     implements DeliverableRepository, ExportSharingPolicy {
   /// Composes the same stores already used by capture and review. The
-  /// meetings and quality stores default to ones over [db].
+  /// meetings, quality and transcript stores default to ones over [db].
   DeliverableRepositoryImpl({
     required sqlite.AppDatabase db,
     required StorageRoot storageRoot,
@@ -59,6 +61,7 @@ final class DeliverableRepositoryImpl
     required String deviceId,
     MeetingRepository? meetings,
     QualityRepository? quality,
+    TranscriptRepository? transcripts,
     FileReader? files,
     FileWriter? writer,
     EvidencePurge? cleanup,
@@ -112,6 +115,14 @@ final class DeliverableRepositoryImpl
                deviceId: deviceId,
                ids: ids,
                templates: templates,
+             ),
+         transcripts:
+             transcripts ??
+             TranscriptRepositoryImpl(
+               db: db,
+               clock: clock,
+               deviceId: deviceId,
+               ids: ids,
              ),
        ),
        _renderer = DeliverableRenderer(

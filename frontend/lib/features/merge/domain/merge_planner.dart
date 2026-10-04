@@ -20,7 +20,9 @@ import 'settlement_rule.dart';
 /// rules in order, then to a person; so do a differing caption and status.
 /// A delete applies when this side has not changed since; otherwise a
 /// person decides. Photos and attachments already here by content are not
-/// copied twice.
+/// copied twice. Finished transcripts arrive with their audio, their raw
+/// segments appended once each, and an edit both sides hold resolves by
+/// when it was written (task 127).
 abstract final class MergePlanner {
   /// Plans merging [incoming] into [local], the target project's rows.
   ///
@@ -134,6 +136,10 @@ final class _Planner {
   int _kept = 0;
   int _elsewhere = 0;
 
+  /// Incoming photo and attachment ids already here under another id, by
+  /// `<table>/<incoming id>`, mapped to this device's id.
+  final Map<String, String> _sameFile = <String, String>{};
+
   List<Map<String, Object?>> _theirs(String table) =>
       incoming[table] ?? const <Map<String, Object?>>[];
 
@@ -231,6 +237,8 @@ final class _Planner {
             meetings.contains(row['meeting_id']),
       );
     }
+    _transcripts(attachments, meetings);
+    _segments();
     _union(
       'variances',
       ready: (Map<String, Object?> row) => records.contains(row['record_id']),
@@ -699,9 +707,9 @@ final class _Planner {
   /// file. Returns every one the project holds after the merge.
   Set<String> _media(String table, Set<String> records) {
     final Set<String> ids = _mineById(table).keys.toSet();
-    final Set<String> shas = <String>{
+    final Map<String, String> shas = <String, String>{
       for (final Map<String, Object?> row in _mine(table))
-        row['sha256']! as String,
+        row['sha256']! as String: row['id']! as String,
     };
     final Set<String> paths = <String>{
       for (final Map<String, Object?> row in _mine(table))
@@ -723,7 +731,8 @@ final class _Planner {
         continue;
       }
       final String sha = row['sha256']! as String;
-      if (shas.contains(sha)) {
+      if (shas[sha] case final String here) {
+        _sameFile['$table/$id'] = here;
         if (table == 'photos') {
           _photosHere += 1;
         }
@@ -739,7 +748,7 @@ final class _Planner {
         'relative_path': landing,
       });
       _files.add((entry: path, target: landing));
-      shas.add(sha);
+      shas[sha] = id;
       paths.add(landing);
       all.add(id);
       if (table == 'photos') {
@@ -803,6 +812,162 @@ final class _Planner {
           theirs: theirText,
         ),
       );
+    }
+  }
+
+  /// Finished transcripts new here arrive with the audio they were heard
+  /// from and, for a meeting, with that meeting; audio already here under
+  /// another id is linked to that copy. A transcript still being recorded
+  /// on the other device stays there. One both sides hold merges through
+  /// [_transcriptHeader].
+  void _transcripts(Set<String> attachments, Set<String> meetings) {
+    final Map<String, Map<String, Object?>> mine = _mineById('transcripts');
+    for (final Map<String, Object?> row in _theirs('transcripts')) {
+      final String id = row['id']! as String;
+      final bool deleted =
+          _tombstoned(local, 'transcripts', id) ||
+          _tombstoned(incoming, 'transcripts', id);
+      final Map<String, Object?>? here = mine[id];
+      if (here != null) {
+        if (!deleted) {
+          _transcriptHeader(here, row);
+        }
+        continue;
+      }
+      if (deleted || row['status'] == _liveTranscript) {
+        continue;
+      }
+      if (_isElsewhere('transcripts', id)) {
+        _elsewhere += 1;
+        continue;
+      }
+      final Object? heard = row['attachment_id'];
+      final String? audio = heard is String
+          ? _sameFile['attachments/$heard'] ?? heard
+          : null;
+      if ((audio != null && !attachments.contains(audio)) ||
+          (row['owner_kind'] == 'meeting' &&
+              !meetings.contains(row['owner_id']))) {
+        continue;
+      }
+      _add('transcripts', <String, Object?>{
+        ...row,
+        'project_id': target,
+        'attachment_id': audio,
+      });
+    }
+  }
+
+  /// A transcript both sides hold. A causally newer revision from the other
+  /// device is taken whole; otherwise the edit written last (by
+  /// `edited_at`) wins, the coverage is the further of the two, and an
+  /// untranscribed range stays only while neither side has transcribed it.
+  /// The apply step writes one audit row per column it changes.
+  void _transcriptHeader(
+    Map<String, Object?> here,
+    Map<String, Object?> there,
+  ) {
+    if (_transcriptColumns.every(
+      (String column) => '${here[column]}' == '${there[column]}',
+    )) {
+      return;
+    }
+    final VectorRelation? relation = _relation('transcripts', here, there);
+    if (relation == VectorRelation.equal ||
+        relation == VectorRelation.dominates) {
+      _kept += 1;
+      return;
+    }
+    final bool newer = relation == VectorRelation.dominated;
+    final Map<String, Object?> edit =
+        _at(there['edited_at']) > _at(here['edited_at']) ? there : here;
+    final int mineCovered = _whole(here['covered_ms']);
+    final int theirCovered = _whole(there['covered_ms']);
+    final Map<String, Object?> next = <String, Object?>{
+      ...here,
+      if (newer) ...<String, Object?>{
+        for (final String column in _transcriptFollowed) column: there[column],
+        'attachment_id': here['attachment_id'] ?? there['attachment_id'],
+        'rev': there['rev'],
+        'updated_at': there['updated_at'],
+        'updated_by_device': there['updated_by_device'],
+      },
+      'text_edited': edit['text_edited'],
+      'edited_at': edit['edited_at'],
+      'covered_ms': mineCovered > theirCovered ? mineCovered : theirCovered,
+      'skipped_ranges': newer
+          ? there['skipped_ranges']
+          : _mergedRanges(
+              here['skipped_ranges'],
+              mineCovered,
+              there['skipped_ranges'],
+              theirCovered,
+            ),
+    };
+    if (_transcriptColumns.every(
+      (String column) => '${next[column]}' == '${here[column]}',
+    )) {
+      _kept += 1;
+      return;
+    }
+    _advance('transcripts', next);
+  }
+
+  /// Raw segments append idempotently by `(transcript_id, seq)`. A segment
+  /// already here, by id, by the same number over the same span, or by the
+  /// same words over the same span, is not added again. One the other
+  /// device numbered like a different utterance here takes the next free
+  /// number, so no raw words are lost and none are doubled.
+  void _segments() {
+    final Set<String> transcripts = <String>{
+      ..._mineById('transcripts').keys,
+      ...?_inserted['transcripts'],
+    };
+    final Map<Object?, Map<int, Map<String, Object?>>> held =
+        <Object?, Map<int, Map<String, Object?>>>{};
+    for (final Map<String, Object?> row in _mine('transcript_segments')) {
+      final Map<int, Map<String, Object?>> numbered =
+          held[row['transcript_id']] ??= <int, Map<String, Object?>>{};
+      numbered[_whole(row['seq'])] = row;
+    }
+    final Set<String> mine = _mineById('transcript_segments').keys.toSet();
+    final List<Map<String, Object?>> theirs =
+        List<Map<String, Object?>>.of(_theirs('transcript_segments'))..sort(
+          (Map<String, Object?> a, Map<String, Object?> b) =>
+              _whole(a['seq']).compareTo(_whole(b['seq'])),
+        );
+    for (final Map<String, Object?> row in theirs) {
+      final String id = row['id']! as String;
+      final Object? transcript = row['transcript_id'];
+      if (mine.contains(id) ||
+          _wasInserted('transcript_segments', id) ||
+          !transcripts.contains(transcript)) {
+        continue;
+      }
+      if (_isElsewhere('transcript_segments', id)) {
+        _elsewhere += 1;
+        continue;
+      }
+      final Map<int, Map<String, Object?>> numbered = held[transcript] ??=
+          <int, Map<String, Object?>>{};
+      final int seq = _whole(row['seq']);
+      final Map<String, Object?>? same = numbered[seq];
+      if ((same != null && _sameSpan(same, row)) ||
+          numbered.values.any(
+            (Map<String, Object?> segment) =>
+                _sameSpan(segment, row) &&
+                segment['text_raw'] == row['text_raw'],
+          )) {
+        continue;
+      }
+      final int free = same == null
+          ? seq
+          : numbered.keys.reduce((int a, int b) => a > b ? a : b) + 1;
+      final Map<String, Object?> added = free == seq
+          ? row
+          : <String, Object?>{...row, 'seq': free};
+      numbered[free] = added;
+      _add('transcript_segments', added);
     }
   }
 
@@ -1088,6 +1253,83 @@ String _statusOf(Object? value) {
 
 /// Stored instants arrive as whole seconds; anything else sorts first.
 int _at(Object? value) => value is int ? value : 0;
+
+/// A stored whole number; anything else reads as zero.
+int _whole(Object? value) => value is int ? value : 0;
+
+/// The stored status of a transcript still being recorded.
+const String _liveTranscript = 'live';
+
+/// The transcript columns a merge compares and may change.
+const List<String> _transcriptColumns = <String>[
+  ..._transcriptFollowed,
+  'covered_ms',
+  'skipped_ranges',
+  'text_edited',
+  'edited_at',
+];
+
+/// The transcript columns taken whole from a causally newer revision.
+const List<String> _transcriptFollowed = <String>[
+  'title',
+  'language_tag',
+  'model_id',
+  'status',
+  'ended_at',
+  'duration_ms',
+  'attachment_id',
+];
+
+/// Whether two segments cover the same span of the recording.
+bool _sameSpan(Map<String, Object?> a, Map<String, Object?> b) =>
+    _whole(a['start_ms']) == _whole(b['start_ms']) &&
+    _whole(a['end_ms']) == _whole(b['end_ms']);
+
+/// The untranscribed ranges after merging two transcripts of one
+/// recording: a range both sides still skip within the shorter coverage,
+/// and every range the further-covered side skipped beyond it. A range
+/// either side has since transcribed is gone, because its segments merge.
+String _mergedRanges(
+  Object? mine,
+  int mineCovered,
+  Object? theirs,
+  int theirCovered,
+) {
+  final List<List<int>> here = _ranges(mine);
+  final List<List<int>> there = _ranges(theirs);
+  final int shared = mineCovered < theirCovered ? mineCovered : theirCovered;
+  final List<List<int>> further = mineCovered >= theirCovered ? here : there;
+  final Set<String> both = <String>{
+    for (final List<int> range in there) range.join(','),
+  };
+  final List<List<int>> merged = <List<int>>[
+    for (final List<int> range in here)
+      if (range.first < shared && both.contains(range.join(','))) range,
+    for (final List<int> range in further)
+      if (range.first >= shared) range,
+  ]..sort((List<int> a, List<int> b) => a.first.compareTo(b.first));
+  return jsonEncode(merged);
+}
+
+/// Stored `[[fromMs, toMs], ...]`; an entry that is not a pair of whole
+/// numbers is left out.
+List<List<int>> _ranges(Object? stored) {
+  Object? decoded;
+  try {
+    decoded = stored is String ? jsonDecode(stored) : null;
+  } on FormatException {
+    decoded = null;
+  }
+  return <List<int>>[
+    if (decoded is List<Object?>)
+      for (final Object? entry in decoded)
+        if (entry is List<Object?> &&
+            entry.length == 2 &&
+            entry[0] is int &&
+            entry[1] is int)
+          <int>[entry[0]! as int, entry[1]! as int],
+  ];
+}
 
 /// Never edited since it was written.
 bool _untouched(Map<String, Object?> row) {

@@ -10410,6 +10410,30 @@
   "@pdfMinutesReport": {
     "description": "Report title: meeting minutes."
   },
+  "pdfTranscriptReport": "Tránscrípts····",
+  "@pdfTranscriptReport": {
+    "description": "Report title: the transcripts heard on the device from the exported records' audio."
+  },
+  "pdfTranscriptRaw": "{title} (ás héárd)····",
+  "@pdfTranscriptRaw": {
+    "description": "Heading of a transcript's raw text, exactly as the device heard it.",
+    "placeholders": {
+      "title": {
+        "type": "Object",
+        "description": "Value of title in pdfTranscriptRaw. User-provided content is not translated."
+      }
+    }
+  },
+  "pdfTranscriptEdited": "{title} (édítéd)····",
+  "@pdfTranscriptEdited": {
+    "description": "Heading of the operator's edit of a transcript, printed beside the raw text and never as recorded speech.",
+    "placeholders": {
+      "title": {
+        "type": "Object",
+        "description": "Value of title in pdfTranscriptEdited. User-provided content is not translated."
+      }
+    }
+  },
   "pdfDue": "Dúé··",
   "@pdfDue": {
     "description": "Label of an action's due date."

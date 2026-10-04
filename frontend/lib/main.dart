@@ -358,7 +358,10 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
               writer: evidenceWriter,
               store: BlobStore.platform(AppConstants.projectFiles.storeName),
             )
-          : StagedTakeRecovery(writer: evidenceWriter, storageRoot: storageRoot),
+          : StagedTakeRecovery(
+              writer: evidenceWriter,
+              storageRoot: storageRoot,
+            ),
       meetings: MeetingRepositoryImpl(
         db: db,
         clock: clock,
@@ -956,36 +959,34 @@ Future<void> _recoverTranscripts(
   required MeetingRepositoryImpl meetings,
   required Logger logger,
 }) async {
-  final Result<int> settled = await TranscriptRecovery(
-    repository: store,
-    logger: logger,
-  ).run(
-    recoverAudio: takes.recover,
-    fileAudio: (TranscriptSummary item, AudioRecording audio) async {
-      final String? meetingId = item.ownerId;
-      switch (item.ownerKind) {
-        case TranscriptOwnerKind.meeting when meetingId != null:
-          final Result<MeetingAttachment> attached = await meetings
-              .attachStored(
-                meetingId,
-                storagePath: audio.relativePath,
-                mimeType: audio.mimeType,
-                bytes: audio.byteLength,
-                sha256: audio.sha256,
-                duration: audio.duration,
+  final Result<int> settled =
+      await TranscriptRecovery(repository: store, logger: logger).run(
+        recoverAudio: takes.recover,
+        fileAudio: (TranscriptSummary item, AudioRecording audio) async {
+          final String? meetingId = item.ownerId;
+          switch (item.ownerKind) {
+            case TranscriptOwnerKind.meeting when meetingId != null:
+              final Result<MeetingAttachment> attached = await meetings
+                  .attachStored(
+                    meetingId,
+                    storagePath: audio.relativePath,
+                    mimeType: audio.mimeType,
+                    bytes: audio.byteLength,
+                    sha256: audio.sha256,
+                    duration: audio.duration,
+                  );
+              return attached.map<String?>((MeetingAttachment file) => file.id);
+            case TranscriptOwnerKind.standalone:
+              final Result<String> filed = await store.fileStandaloneAudio(
+                item.id,
+                audio,
               );
-          return attached.map<String?>((MeetingAttachment file) => file.id);
-        case TranscriptOwnerKind.standalone:
-          final Result<String> filed = await store.fileStandaloneAudio(
-            item.id,
-            audio,
-          );
-          return filed.map<String?>((String attachment) => attachment);
-        case TranscriptOwnerKind.meeting || TranscriptOwnerKind.capture:
-          return const Success<String?>(null);
-      }
-    },
-  );
+              return filed.map<String?>((String attachment) => attachment);
+            case TranscriptOwnerKind.meeting || TranscriptOwnerKind.capture:
+              return const Success<String?>(null);
+          }
+        },
+      );
   if (settled case FailureResult<int>(:final Failure failure)) {
     logger.warn('speech', 'stale recordings need a retry', error: failure);
   }

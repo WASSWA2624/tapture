@@ -115,6 +115,23 @@ final class BundlePrivacy {
       'attachments',
       (Map<String, Object?> row) => attachments.contains(row['id']),
     );
+    // A transcript travels only with the audio it was heard from and, for
+    // a meeting, with that meeting; its raw segments follow it.
+    final Set<Object?> audio = ids('attachments');
+    keep('transcripts', (Map<String, Object?> row) {
+      final Object? attachment = row['attachment_id'];
+      final bool heard = attachment == null
+          ? row['owner_kind'] != 'capture'
+          : audio.contains(attachment);
+      return heard &&
+          (row['owner_kind'] != 'meeting' ||
+              meetings.contains(row['owner_id']));
+    });
+    final Set<Object?> transcripts = ids('transcripts');
+    keep(
+      'transcript_segments',
+      (Map<String, Object?> row) => transcripts.contains(row['transcript_id']),
+    );
     final Set<Object?> owned = <Object?>{
       for (final MapEntry<String, List<Map<String, Object?>>> table
           in rows.entries)

@@ -11887,6 +11887,24 @@ abstract class AppLocalizations {
   /// **'Meeting minutes'**
   String get pdfMinutesReport;
 
+  /// Report title: the transcripts heard on the device from the exported records' audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcripts'**
+  String get pdfTranscriptReport;
+
+  /// Heading of a transcript's raw text, exactly as the device heard it.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} (as heard)'**
+  String pdfTranscriptRaw(Object title);
+
+  /// Heading of the operator's edit of a transcript, printed beside the raw text and never as recorded speech.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} (edited)'**
+  String pdfTranscriptEdited(Object title);
+
   /// Label of an action's due date.
   ///
   /// In en, this message translates to:

@@ -41,6 +41,9 @@ final class PdfLabels {
     required this.agenda,
     required this.rawNotes,
     required this.refinedMinutes,
+    required this.transcriptReport,
+    required this.transcriptRaw,
+    required this.transcriptEdited,
     required this.decisions,
     required this.actions,
     required this.owner,
@@ -154,6 +157,16 @@ final class PdfLabels {
 
   /// Label of the refined minutes, never presented as recorded speech.
   final String refinedMinutes;
+
+  /// Title of the transcripts report.
+  final String transcriptReport;
+
+  /// Heading of a transcript's raw text, exactly as heard.
+  final String Function(String title) transcriptRaw;
+
+  /// Heading of the operator's edit of a transcript, never presented as
+  /// recorded speech.
+  final String Function(String title) transcriptEdited;
 
   /// Heading of the decisions.
   final String decisions;

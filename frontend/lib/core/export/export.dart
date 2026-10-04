@@ -14,6 +14,7 @@ export 'pdf/minutes_report.dart';
 export 'pdf/pdf_engine.dart';
 export 'pdf/record_report.dart';
 export 'pdf/summary_report.dart';
+export 'pdf/transcript_report.dart';
 export 'pdf/variance_report.dart';
 export 'photo_index_sheet.dart';
 export 'photo_naming.dart';

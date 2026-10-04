@@ -28,7 +28,8 @@ final class Transcript {
   final DateTime? editedAt;
 
   /// The raw text, lines joined with one space. Never logged.
-  String get rawText => SpeechText.join(lines.map((TranscriptLine l) => l.text));
+  String get rawText =>
+      SpeechText.join(lines.map((TranscriptLine l) => l.text));
 
   /// What the transcript reads as: the edit when one stands, else the raw
   /// text.

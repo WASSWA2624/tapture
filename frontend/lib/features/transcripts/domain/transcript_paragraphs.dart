@@ -18,7 +18,11 @@ final class TranscriptParagraphs {
       _lastLines = 0,
       _previous = null;
 
-  const TranscriptParagraphs._(this.paragraphs, this._lastLines, this._previous);
+  const TranscriptParagraphs._(
+    this.paragraphs,
+    this._lastLines,
+    this._previous,
+  );
 
   /// The paragraphs of [lines], taken in the order given.
   static List<String> group(List<TranscriptLine> lines) {

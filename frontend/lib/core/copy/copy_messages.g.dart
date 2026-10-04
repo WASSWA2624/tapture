@@ -11405,6 +11405,32 @@ final class CopyMessages {
     fallback: Copy.pdfMinutesReport,
   );
 
+  /// Report title: the transcripts heard on the device from the exported
+  /// records' audio.
+  LocalizedMessage get pdfTranscriptReport => LocalizedMessage(
+    key: 'pdfTranscriptReport',
+    fallback: Copy.pdfTranscriptReport,
+  );
+
+  /// Heading of a transcript's raw text, exactly as the device heard it.
+  LocalizedMessage pdfTranscriptRaw(String title) => LocalizedMessage(
+    key: 'pdfTranscriptRaw',
+    fallback: Copy.pdfTranscriptRaw(title),
+    arguments: <String, Object?>{
+      'title': LocalizedMessage.encodeArgument(title),
+    },
+  );
+
+  /// Heading of the operator's edit of a transcript, printed beside the raw
+  /// text and never as recorded speech.
+  LocalizedMessage pdfTranscriptEdited(String title) => LocalizedMessage(
+    key: 'pdfTranscriptEdited',
+    fallback: Copy.pdfTranscriptEdited(title),
+    arguments: <String, Object?>{
+      'title': LocalizedMessage.encodeArgument(title),
+    },
+  );
+
   /// Label of an action's due date.
   LocalizedMessage get pdfDue =>
       LocalizedMessage(key: 'pdfDue', fallback: Copy.pdfDue);

@@ -109,8 +109,11 @@ static int check_vector(const char* label, const uint8_t* data, size_t n, const 
 static int self_test(void) {
   static const char abc[] = "abc";
   static const char two_blocks[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
+  /* The 896-bit message, in two literals: one 112-letter run reads as a key
+   * to tool/check_secrets.dart. */
   static const char four_blocks[] =
-      "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
+      "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn"
+      "hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
   uint8_t* million;
   int ok = 1;
 

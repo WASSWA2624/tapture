@@ -39,7 +39,7 @@ part 'app_database.g.dart';
 
 /// Current schema version. Later table tasks bump this and append a named
 /// upgrade step; they never edit earlier steps.
-const int kSchemaVersion = 32;
+const int kSchemaVersion = 33;
 
 /// The local SQLite database. Opens on a WAL connection under the application
 /// support directory, or in memory for tests.

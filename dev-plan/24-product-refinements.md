@@ -3147,13 +3147,37 @@ void tw_debug_abort_after_checks(int32_t n);  int32_t tw_sha256(const void*, siz
 
 ### Definition of done
 
-- [ ] On this machine, `tw_smoke` (MSVC Release) transcribes `jfk.wav` with `ggml-tiny-q5_1.bin` and its sha, and the output contains "ask not what your country can do for you".
-- [ ] On this machine, `tw_smoke --abort-after-checks 50` returns `ABORTED` during the encoder (never OK with 0 segments), and the immediate retry on the same context succeeds.
-- [ ] On this machine, `tw_smoke` with a wrong `--sha256` exits with `MODEL_MISMATCH` without parsing, and a truncated copy exits with `MODEL_MISMATCH`.
-- [ ] `flutter build windows --debug` and `--release` place `tapture_whisper.dll` beside `tapture.exe`; `dumpbin /exports` lists only `tw_*`; the bundle has no ggml or whisper `.lib` or `include/`; the build log shows `/O2` and no `/RTC1` on vendored sources.
-- [ ] On this machine, NDK CMake + Ninja builds `libtapture_whisper.so` for arm64-v8a, x86_64 and armeabi-v7a (stub), and `check_native_library` passes all three. arm64 shows no `libomp.so` NEEDED.
-- [ ] `check_native_library_test` proves the 16 KiB fixture passes, and that the 4 KiB, extra-export and `needs_libomp` fixtures are each reported, in one run.
-- [ ] `linux/CMakeLists.txt` mirrors Windows, and its compile is recorded as owned by task 130.
+- [x] On this machine, `tw_smoke` (MSVC Release) transcribes `jfk.wav` with `ggml-tiny-q5_1.bin` and its sha, and the output contains "ask not what your country can do for you".
+- [x] On this machine, `tw_smoke --abort-after-checks 50` returns `ABORTED` during the encoder (never OK with 0 segments), and the immediate retry on the same context succeeds.
+- [x] On this machine, `tw_smoke` with a wrong `--sha256` exits with `MODEL_MISMATCH` without parsing, and a truncated copy exits with `MODEL_MISMATCH`.
+- [x] `flutter build windows --debug` and `--release` place `tapture_whisper.dll` beside `tapture.exe`; `dumpbin /exports` lists only `tw_*`; the bundle has no ggml or whisper `.lib` or `include/`; the build log shows `/O2` and no `/RTC1` on vendored sources.
+- [x] On this machine, NDK CMake + Ninja builds `libtapture_whisper.so` for arm64-v8a, x86_64 and armeabi-v7a (stub), and `check_native_library` passes all three. arm64 shows no `libomp.so` NEEDED.
+- [x] `check_native_library_test` proves the 16 KiB fixture passes, and that the 4 KiB, extra-export and `needs_libomp` fixtures are each reported, in one run.
+- [x] `linux/CMakeLists.txt` mirrors Windows, and its compile is recorded as owned by task 130.
+
+### Verification
+
+- 2026-10-04, adversarial review: two exception-path leaks fixed in `src/tapture_whisper.cpp`. `tw_copy_result` now owns its `tw_result` through a `unique_ptr`, and `tw_vad_segments` owns both `tw_spans` and `whisper_vad_segments` until the copy completes, so a throwing copy leaks neither. All checks below ran on the fixed code.
+- 2026-10-04, clean MSVC configure and build of `src/CMakeLists.txt` (`-DTW_BUILD_SMOKE=ON`) into `build/tw-review-103`, Release and Debug: exit 0, with no warning from the shim at `/W4`.
+- 2026-10-04, `tw_smoke --self-test`: all five NIST vectors pass, both one-shot and incremental.
+- 2026-10-04, `tw_smoke` (Release) on `assets/speech/ggml-tiny-q5_1.bin` with its independently computed sha `8187…c3d7` and `jfk.wav`: `run: OK`, the text contains the phrase, exit 0.
+- 2026-10-04, `--abort-after-checks 50`, on both the Release and Debug DLLs: `ABORTED (8)`, whisper code −6 ("failed to encode"), so the abort lands in the encoder. The immediate retry on the same context returns OK with the phrase, and every live counter ends at 0.
+- 2026-10-04, model checks:
+  - an all-zero `--sha256` gives `MODEL_MISMATCH` (exit 15) with 0 loader lines at INFO level, against about 30 `whisper_model_load` lines on a successful open, and 0 live contexts;
+  - a 16,000,000-byte truncated copy gives `MODEL_MISMATCH` both through the hash (its own size) and through the size check (`--bytes 32152673`);
+  - a missing file gives `FILE_OPEN`.
+- 2026-10-04, `flutter build windows --debug` and `--release`: both exit 0, and `tapture_whisper.dll` sits beside `tapture.exe` in `build/windows/x64/runner/{Debug,Release}`.
+  - `dumpbin /exports`: 53 names in each, none outside `tw_*`, and exactly the header's `TW_API` set (which also equals `src/wasm_exports.txt`).
+  - The bundles contain no `.lib`, `.exp`, `include/` or ggml/whisper DLL. The dependents are the release CRT only.
+  - In the MSBuild `CL.command.1.tlog` for `tw_ggml_base`, `tw_ggml_cpu`, `tw_whisper` and `tapture_whisper`, in both configurations, every compile has `/O2`, `/MD` and `NDEBUG`, and none has `/RTC` or `/Od`. `/arch:AVX2` appears on `tw_ggml_cpu` only.
+- 2026-10-04, clean NDK 28.2.13676358 builds with SDK CMake and Ninja 3.22.1 (`c++_static`, API 24) for arm64-v8a (engine, OpenMP), x86_64 (engine, OpenMP) and armeabi-v7a (stub): all exit 0 with no shim warnings.
+  - `dart run tool/check_native_library.dart` on the three `.so` files: exit 0.
+  - `llvm-readelf`: NEEDED is `libdl.so`, `libm.so` and `libc.so` only (no `libomp.so`), and every LOAD has align `0x4000`.
+  - `llvm-nm -D`: 53 `tw_*` exports in each. In arm64, `__kmpc_fork_call` is local, so OpenMP is linked statically.
+- 2026-10-04, `flutter test test/tool/check_native_library_test.dart`: 4 passed. One run reports the 4 KiB fixture (3 × `p_align 4096`), `helper_value` and `libomp.so`, each as `path:0`, and nothing for the 16 KiB fixture. `llvm-readelf` confirms that each fixture is what the test claims.
+- 2026-10-04, other tests: `flutter test test/tool/whisper_vendor_test.dart test/tool/check_secrets_test.dart test/tool/check_structure_test.dart` (48 passed), and the package's `test/package_manifest_test.dart` (7 passed).
+- 2026-10-04, analysis and checkers: `dart analyze` on the tool, its test and `packages/tapture_whisper` reports no issues. `check_secrets`, `check_structure`, `check_repo_hygiene`, `check_naming`, `check_dependencies`, `check_tests`, `check_logging`, `check_analyzer_config` and `whisper_vendor.dart --check` are all clean.
+- 2026-10-04, Linux: `linux/CMakeLists.txt` differs from `windows/CMakeLists.txt` only in its header comment. That comment, the README platform table and task 130's `flutter-builds` job (linux) record that task 130 owns the compile. The Linux compile itself is not run here, because this machine has no Linux toolchain.
 
 ## 104 — Expose the whisper Dart API and library loader
 
@@ -3216,14 +3240,14 @@ WhisperTranscript WhisperModel.transcribe(Float32List pcm, WhisperDecodeOptions 
 
 ### Definition of done
 
-- [ ] Package unit tests pass:
+- [x] Package unit tests pass:
   - `library_candidates_test`;
   - `cpu_preflight_test`, including proof that `open` is never attempted on an unsupported CPU;
   - `native_layout_test`: sizes and offsets **parsed from `TW_SIZEOF_*` in the header** equal Dart `sizeOf`, and the `TW_API` names equal `wasm_exports.txt` equal the binding symbols;
   - `decode_options_test`, which refuses `''` and `auto`;
   - `transcript_reader_test`, with a split "é";
   - `status_test`, covering codes 0–15.
-- [ ] `abi_native_test` passes against the Windows Debug DLL:
+- [x] `abi_native_test` passes against the Windows Debug DLL:
   - struct sizes, CPU supported, memory total > 0;
   - `fileOpen`, `modelInvalid`, `modelMismatch` (wrong sha, wrong size) and `modelLoad`;
   - a non-ASCII model path;
@@ -3234,11 +3258,11 @@ WhisperTranscript WhisperModel.transcribe(Float32List pcm, WhisperDecodeOptions 
   - finalizer cleanup after detach-free close (no double free over 100 cycles);
   - 100 open/close cycles return every `tw_live_objects` counter to 0;
   - no drained log line contains a path or `.bin`.
-- [ ] `vad_native_test` passes:
+- [x] `vad_native_test` passes:
   - 1000-sample feeds give `floor(n/512)` probs with `pending == n % 512`, within 1e-4 of a whole-buffer feed;
   - the first jfk span starts at 200–400 ms;
   - 5 s of silence gives no spans.
-- [ ] On this machine, `integration_test/whisper_native_smoke_test.dart` passes with `-d windows` when `TAPTURE_STT_NATIVE` is set, and skips otherwise:
+- [x] On this machine, `integration_test/whisper_native_smoke_test.dart` passes with `-d windows` when `TAPTURE_STT_NATIVE` is set, and skips otherwise:
   - it loads through the standard candidates;
   - jfk text and language `en`;
   - abort within `speechBudgets.abortLatencyDesktop`, then a retry;
@@ -3246,8 +3270,35 @@ WhisperTranscript WhisperModel.transcribe(Float32List pcm, WhisperDecodeOptions 
   - a `TAPTURE_METRIC` line is printed.
 
   If the Windows integration runner fails here, `frontend/test/hardening/whisper_native_smoke_host_test.dart` mirrors it and the substitution is recorded.
-- [ ] `plugin_imports_test` passes on `lib/`. The forbidden fixtures report exactly 9 violations with file and line, the capture_screen fixture still reports 2, and exports are caught.
-- [ ] The barrel exports exactly the contract types, and `dart analyze` reports zero diagnostics.
+- [x] `plugin_imports_test` passes on `lib/`. The forbidden fixtures report exactly 9 violations with file and line, the capture_screen fixture still reports 2, and exports are caught.
+- [x] The barrel exports exactly the contract types, and `dart analyze` reports zero diagnostics.
+
+### Verification
+
+- 2026-10-04: adversarial review re-ran every item on this machine. Package unit tests
+  (`library_candidates`, `cpu_preflight`, `native_layout`, `decode_options`, `transcript_reader`, `status`,
+  `package_manifest`): 59/59 pass. `dart analyze` in the package (`lib`, `test`) and on
+  `packages/tapture_whisper`, `integration_test/whisper_native_smoke_test.dart`, `plugin_imports_test.dart` and
+  its fixtures: no issues. `dart format --set-exit-if-changed`: 0 changed.
+- 2026-10-04: `test/native/abi_native_test.dart` and `test/native/vad_native_test.dart` with
+  `TAPTURE_TEST_WHISPER_LIB=build/windows/x64/runner/Debug/tapture_whisper.dll` and
+  `TAPTURE_TEST_SPEECH_MODELS=assets/speech` (absolute paths): 17/17 pass. Without the defines, all 17 skip.
+- 2026-10-04: `flutter test integration_test/whisper_native_smoke_test.dart -d windows` with
+  `TAPTURE_STT_NATIVE=true` (under the windows lock, fresh Debug build): passes and prints
+  `TAPTURE_METRIC {"threads":4,"whisperLoadMs":385,"whisperRtfTiny":0.164,"abortLatencyMs":122,"whisperRtfBase":0.380}`.
+  The abort latency is within `speechBudgets.abortLatencyDesktop` (500 ms). Without the define: "All tests skipped".
+  The host-mirror fallback was not needed.
+- 2026-10-04: review fix in `plugin_imports_test`. The directive scan read only the first URI of a directive, so a
+  conditional import branch (`import 'stub.dart' if (dart.library.ffi) 'package:tapture_whisper/...'`, which
+  `dart format` puts on its own line) slipped past confinement. The scan now reads every quoted URI of every
+  directive line through the closing `;`. The forbidden `core/audio/audio_stream_source.dart` fixture reaches
+  `tapture_whisper` through such a branch (reported at line 6), and the ffi re-export is reported at line 8. The
+  test passes 9/9 with exactly 9 violations, capture_screen still reports 2, and `lib/` is clean.
+- 2026-10-04: `check_naming`, `check_logging`, `check_structure`, `check_dependencies`, `check_repo_hygiene`,
+  `check_secrets`, `check_tests` and `check_analyzer_config` are all clean. `naming_test`, `errors_test`,
+  `check_naming_test`, `check_dependencies_test`, `check_secrets_test` and `whisper_vendor_test` pass.
+  `data_safety_test` fails only on `features/exports/data/export_pdf.dart:52` (a `transcriptRaw` write that
+  belongs to concurrent transcript work, not this task).
 
 ## 105 — Generate the whisper plugin's Apple build manifests
 
@@ -3561,15 +3612,23 @@ abstract interface class SpeechModelStore { bool get canImport; Future<Result<Li
 
 ### Definition of done
 
-- [ ] `bundledAssetPath` tests cover Windows, Linux, macOS, iOS and the Android sha-keyed name.
-- [ ] The Android extraction, through a mocked channel, covers success, `missing` → null and `nospace` → `StorageFailure`.
-- [ ] A stale `bundled/<oldsha>-…` file is removed at store start, and the current one is kept.
-- [ ] `reextract` discards and re-extracts once.
-- [ ] `derived_files_test`: removal under the private root succeeds, and a path outside it gives `ValidationFailure` with the file untouched. `data_safety_test` passes with no new allowance.
-- [ ] `verifySpeechModelFile` refuses wrong size, bad magic, a base header labelled tiny, a hash mismatch and a truncated file, each with the mapped Failure.
-- [ ] `sha256OfFile` cancel returns `CancelledFailure`, progress reaches 1.0, and existing callers are unchanged.
-- [ ] Import accepts only a file matching bytes and sha, copies it atomically with progress, leaves no `.part` on cancel and discards the picked copy. Anything else gives `ValidationFailure(speechImportUnknown)`.
-- [ ] `inventory` reports presence without hashing.
+- [x] `bundledAssetPath` tests cover Windows, Linux, macOS, iOS and the Android sha-keyed name.
+- [x] The Android extraction, through a mocked channel, covers success, `missing` → null and `nospace` → `StorageFailure`.
+- [x] A stale `bundled/<oldsha>-…` file is removed at store start, and the current one is kept.
+- [x] `reextract` discards and re-extracts once.
+- [x] `derived_files_test`: removal under the private root succeeds, and a path outside it gives `ValidationFailure` with the file untouched. `data_safety_test` passes with no new allowance.
+- [x] `verifySpeechModelFile` refuses wrong size, bad magic, a base header labelled tiny, a hash mismatch and a truncated file, each with the mapped Failure.
+- [x] `sha256OfFile` cancel returns `CancelledFailure`, progress reaches 1.0, and existing callers are unchanged.
+- [x] Import accepts only a file matching bytes and sha, copies it atomically with progress, leaves no `.part` on cancel and discards the picked copy. Anything else gives `ValidationFailure(speechImportUnknown)`.
+- [x] `inventory` reports presence without hashing.
+
+### Verification
+
+- 2026-10-04 (adversarial review): `flutter test` of `test/core/files/{bundled_assets,storage_root,derived_files}_test.dart`, `test/core/hash/hashing_service_test.dart` and `test/core/speech/{speech_model_verification,speech_model_store_io}_test.dart` passed (+70). The opt-in real-model case ran against the fetched `assets/speech` files (tiny, base and silero pass; base labelled tiny is refused).
+- 2026-10-04: existing callers and neighbours passed (+70): `compressed_copy`, `orphan_scanner`, `file_writer`, `thumbnail_cache`, `speech_model_catalogue`, `speech_model_header`, `speech_failures`, `xlsx_template_import` and `test/tool/speech_models_test.dart`. Architecture suites `data_safety` (no allowance names a task 109 file), `errors`, `naming`, `layering`, `network`, `state`, `plugin_imports` and `capture_authority` passed (+86). `dart analyze` on `lib/core/{files,hash,speech}` and the task's tests reported no issues. `check_naming` and `check_logging` exited 0; `check_tests` lists only task 119 transcript files.
+- 2026-10-04 review fixes: `reextract` now discards the `<sha12>-<file>` copy by name and then locates. Before, it called `locate` first, so a model with no copy yet was extracted twice; a new test covers that case. The stale-copy sweep now tolerates an unreadable `speech/bundled` folder instead of throwing out of `inventory`/`locate`.
+- 2026-10-04 accepted deviations: `BundledAssets.pathOf` takes `extractTo`; `precheckSpeechModelFile` and `bundledCopyName` are public for task 110 and the sweep. The header check compares the six catalogue facts, not all 11 hparams; the SHA-256 and the shim's shape check cover the rest. On Android, the first `inventory` extracts each bundled model once (it never hashes).
+- Not verified here and outside this task: compiling the Kotlin `extractFlutterAsset` and `noCompress "bin"` (task 130), device extraction and the `ENOSPC` mapping (task 131), and a web compile of the conditional imports.
 
 ## 110 — Run Whisper on native speech workers
 
@@ -4285,21 +4344,30 @@ The full signatures are in spec §30.4.6.
 
 ### Definition of done
 
-- [ ] Both tables exist at schema 32 after `onCreate` and after a v31 upgrade with existing rows kept. `migrateToV32` is idempotent, and `kUpgradeSteps.length == kSchemaVersion`.
-- [ ] Segments are insert-only and contiguous: a repeated seq with the same text is ignored, and a gap or different text gives `StorageFailure`.
-- [ ] A skipped utterance adds a range, a later fill removes it, and reading order is by time.
-- [ ] `appendUtterance` writes segments, `coveredMs` and `skippedRanges` atomically.
-- [ ] `saveEdit` writes `text_edited`, `edited_at` and one audit row while the raw rows stay byte-identical. `clearEdit` writes null. `rename` writes an audit row with field `title`. Editing a live row gives `ValidationFailure`.
-- [ ] `sinkFor(id).finish` completes or interrupts the row. `reopenForRemaining` allows `transcribeRemaining` on complete or interrupted rows and restores the status on finish.
-- [ ] Record search:
+- [x] Both tables exist at schema 32 after `onCreate` and after a v31 upgrade with existing rows kept. `migrateToV32` is idempotent, and `kUpgradeSteps.length == kSchemaVersion`.
+- [x] Segments are insert-only and contiguous: a repeated seq with the same text is ignored, and a gap or different text gives `StorageFailure`.
+- [x] A skipped utterance adds a range, a later fill removes it, and reading order is by time.
+- [x] `appendUtterance` writes segments, `coveredMs` and `skippedRanges` atomically.
+- [x] `saveEdit` writes `text_edited`, `edited_at` and one audit row while the raw rows stay byte-identical. `clearEdit` writes null. `rename` writes an audit row with field `title`. Editing a live row gives `ValidationFailure`.
+- [x] `sinkFor(id).finish` completes or interrupts the row. `reopenForRemaining` allows `transcribeRemaining` on complete or interrupted rows and restores the status on finish.
+- [x] Record search:
   - finds raw and edited words through the attachment link;
   - excludes live and tombstoned rows;
   - segment inserts never rebuild documents;
   - `triggerNames` matches `sqlite_master`.
-- [ ] `watchProject` escapes `%` and `_`, excludes tombstones, and orders and limits correctly. `watchRecord`, `watchMeeting` and `completedForAttachment` work.
-- [ ] Boot recovery marks capture rows interrupted and recovers and files meeting and standalone audio, never deleting a file.
-- [ ] `check_tests --strict` passes with one test per new domain and data file.
-- [ ] Perf (performance tag): `appendUtterance` p90 ≤ `segmentWriteBudget` with 5000 segments, and the first `watchProject` emission ≤ `historyQueryBudget` over 2000 transcripts.
+- [x] `watchProject` escapes `%` and `_`, excludes tombstones, and orders and limits correctly. `watchRecord`, `watchMeeting` and `completedForAttachment` work.
+- [x] Boot recovery marks capture rows interrupted and recovers and files meeting and standalone audio, never deleting a file.
+- [x] `check_tests --strict` passes with one test per new domain and data file.
+- [x] Perf (performance tag): `appendUtterance` p90 ≤ `segmentWriteBudget` with 5000 segments, and the first `watchProject` emission ≤ `historyQueryBudget` over 2000 transcripts.
+
+### Verification
+
+- 2026-10-04 (adversarial review): read the task, design §10/§12 and every changed file (`git diff` plus commits 1101e99b and ea4dac05). `dart analyze` on lib/main.dart, lib/core/db, lib/features/transcripts, record_queries.dart, tool/paths.dart, test/core/db and test/features/transcripts found no issues. `dart format --set-exit-if-changed` on the touched paths is clean.
+- 2026-10-04: `flutter test test/features/transcripts test/core/db/tables/transcripts_test.dart test/core/db/migrations_test.dart test/core/db/record_schema_test.dart` passed (+160). These cover schema 32 after onCreate, after a v31 unwind with seeded rows and after a v1 file upgrade. They also cover migrateToV32 run twice, `kUpgradeSteps.length == kSchemaVersion`, contiguous and idempotent segments with the out-of-order key, the rollback of a failing second segment, skipped ranges filled in time order, audited edits and renames over byte-identical raw rows, sink finish and reopen with status restore, record search through `attachment_owners` (live and tombstones excluded, segment inserts rebuild nothing, triggers equal to `sqlite_master`) and the watchers.
+- 2026-10-04: the perf suite `transcript_repository_perf_test.dart` (tag `performance`) passed twice on this Windows host: appendUtterance p90 within 20 ms over 5000 segments, and the first watchProject page within 150 ms over 2000 transcripts. Mobile device budgets belong to task 131.
+- 2026-10-04: added the test "an interrupted meeting take is repaired and filed on its meeting" to `transcript_recovery_test.dart`. It runs a real StagedTakeRecovery and `MeetingRepositoryImpl.attachStored`, which is the meeting branch of the boot wiring in main.dart. The staged file stays byte-identical, no file is removed, and the transcript is linked to the attachment row filed on the meeting's record. Recovery tests: +8. The device-level take after a process kill belongs to task 131.
+- 2026-10-04: `dart run tool/check_tests.dart --strict` reported that every owed file has a test. check_structure, check_naming, check_logging, check_l10n (exit 0) and check_secrets all pass. The architecture suites passed (+107): data_safety, errors, layering, naming, state, network, plugin_imports, tokens and check_structure_test. Neighbouring suites passed (+129 and +87): bootstrap, app_database, integrity_check, version_vector_schema, record_queries, record_search, meeting_repository_impl, structural_merge, core/copy, bundle_writer, bundle_reader, encryption and package_import_repository_impl.
+- Deviation kept: `sinkFor` returns `Future<Result<TranscriptSink>>`, because FE-CODE-06 (`errors_test`) rejects a repository method that returns neither Result nor Stream. Spec §30.4.6 and the Contract above still show `TranscriptSink sinkFor(String id)`. Tasks 118 and 122 to 125 must await and unwrap it.
 
 ## 120 — Route field dictation through on-device Whisper
 

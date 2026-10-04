@@ -85,18 +85,19 @@ final class TranscriptRepositoryImpl implements TranscriptRepository {
       fromMs: transcriptMillisecondOf(utterance.fromSample),
       toMs: transcriptMillisecondOf(utterance.toSample),
       skipped: utterance.skipped,
-      segments: <
-        ({int seq, int startMs, int endMs, String text, double? confidence})
-      >[
-        for (final TranscriptSegment segment in utterance.segments)
-          (
-            seq: segment.id,
-            startMs: transcriptMillisecondOf(segment.startSample),
-            endMs: transcriptMillisecondOf(segment.endSample),
-            text: segment.text,
-            confidence: segment.confidence,
-          ),
-      ],
+      segments:
+          <
+            ({int seq, int startMs, int endMs, String text, double? confidence})
+          >[
+            for (final TranscriptSegment segment in utterance.segments)
+              (
+                seq: segment.id,
+                startMs: transcriptMillisecondOf(segment.startSample),
+                endMs: transcriptMillisecondOf(segment.endSample),
+                text: segment.text,
+                confidence: segment.confidence,
+              ),
+          ],
       clock: _time,
       deviceId: _device,
       ids: _idService,
@@ -113,8 +114,9 @@ final class TranscriptRepositoryImpl implements TranscriptRepository {
   @override
   Future<Result<void>> linkAttachment(String id, String attachmentId) async {
     final Result<TranscriptRow> row = await _row(id);
-    if (row case Success<TranscriptRow>(:final TranscriptRow value)
-        when value.attachmentId == attachmentId) {
+    if (row case Success<TranscriptRow>(
+      :final TranscriptRow value,
+    ) when value.attachmentId == attachmentId) {
       return const Success<void>(null);
     }
     return _then(
@@ -299,7 +301,8 @@ final class TranscriptRepositoryImpl implements TranscriptRepository {
                   ($TranscriptSegmentsTable tbl) => tbl.transcriptId.equals(id),
                 )
                 ..orderBy(<OrderClauseGenerator<$TranscriptSegmentsTable>>[
-                  ($TranscriptSegmentsTable tbl) => OrderingTerm.asc(tbl.startMs),
+                  ($TranscriptSegmentsTable tbl) =>
+                      OrderingTerm.asc(tbl.startMs),
                   ($TranscriptSegmentsTable tbl) => OrderingTerm.asc(tbl.seq),
                 ]))
               .get();
@@ -323,7 +326,7 @@ final class TranscriptRepositoryImpl implements TranscriptRepository {
     } on Failure catch (failure) {
       return FailureResult<Transcript?>(failure);
     } on Object catch (error) {
-      return FailureResult<Transcript?>(_failureFrom(error));
+      return FailureResult<Transcript?>(storageFailureFrom(error));
     }
   }
 
@@ -349,20 +352,27 @@ final class TranscriptRepositoryImpl implements TranscriptRepository {
     String query = '',
     int limit = AppConstants.listPageSize,
   }) {
-    final String pattern = '%${_escapeLike(query.trim())}%';
+    final String needle = query.trim();
+    final List<String> where = <String>[
+      if (projectId != null) 't.project_id = ?',
+      if (needle.isNotEmpty)
+        r"(t.title LIKE ? ESCAPE '\' OR t.text_edited LIKE ? ESCAPE '\' "
+            'OR EXISTS (SELECT 1 FROM transcript_segments s '
+            r"WHERE s.transcript_id = t.id AND s.text_raw LIKE ? ESCAPE '\'))",
+    ];
+    final String pattern = '%${_escapeLike(needle)}%';
     return _summaries(
-      '(?1 IS NULL OR t.project_id = ?1) AND (?2 = \'\' '
-      "OR t.title LIKE ?3 ESCAPE '\\' "
-      "OR t.text_edited LIKE ?3 ESCAPE '\\' "
-      'OR EXISTS (SELECT 1 FROM transcript_segments s '
-      "WHERE s.transcript_id = t.id AND s.text_raw LIKE ?3 ESCAPE '\\'))",
+      where.isEmpty ? '1' : where.join(' AND '),
       <Variable<Object>>[
-        Variable<String>(projectId),
-        Variable<String>(query.trim()),
-        Variable<String>(pattern),
+        if (projectId != null) Variable<String>(projectId),
+        if (needle.isNotEmpty) ...<Variable<Object>>[
+          Variable<String>(pattern),
+          Variable<String>(pattern),
+          Variable<String>(pattern),
+        ],
         Variable<int>(limit),
       ],
-      limit: 'LIMIT ?4',
+      limit: 'LIMIT ?',
     ).watch().map(_toSummaries);
   }
 
@@ -531,8 +541,9 @@ final class TranscriptRepositoryImpl implements TranscriptRepository {
 
   Future<Result<TranscriptRow>> _live(String id) async {
     final Result<TranscriptRow> row = await _row(id);
-    if (row case Success<TranscriptRow>(:final TranscriptRow value)
-        when value.status != TranscriptStatus.live.name) {
+    if (row case Success<TranscriptRow>(
+      :final TranscriptRow value,
+    ) when value.status != TranscriptStatus.live.name) {
       return FailureResult<TranscriptRow>(
         StorageFailure(
           localizedMessage: Copy.messages.transcriptSaveFailed,
@@ -639,8 +650,15 @@ final class TranscriptRepositoryImpl implements TranscriptRepository {
   }
 
   /// Runs [body] in one transaction, joining the caller's.
-  Future<Result<T>> _inTransaction<T>(Future<T> Function() body) =>
-      _guard(() => _database.transaction(body));
+  Future<Result<T>> _inTransaction<T>(Future<T> Function() body) async {
+    final Result<T> written = await _guard(() => _database.transaction(body));
+    return switch (written) {
+      FailureResult<T>(:final Failure failure) => FailureResult<T>(
+        transcriptWriteFailure(failure),
+      ),
+      Success<T>() => written,
+    };
+  }
 
   Future<Result<T>> _guard<T>(Future<T> Function() body) async {
     try {
@@ -648,7 +666,7 @@ final class TranscriptRepositoryImpl implements TranscriptRepository {
     } on Failure catch (failure) {
       return FailureResult<T>(failure);
     } on Object catch (error) {
-      return FailureResult<T>(_failureFrom(error));
+      return FailureResult<T>(storageFailureFrom(error));
     }
   }
 }
@@ -703,14 +721,11 @@ String _previewOf(String text) {
 }
 
 /// [query] with `\`, `%` and `_` escaped for `LIKE … ESCAPE '\'`.
-String _escapeLike(String query) => query
-    .replaceAll(r'\', r'\\')
-    .replaceAll('%', r'\%')
-    .replaceAll('_', r'\_');
+String _escapeLike(String query) =>
+    query.replaceAll(r'\', r'\\').replaceAll('%', r'\%').replaceAll('_', r'\_');
 
 TranscriptStatus _statusOf(String stored) {
-  final TranscriptStatus? status = TranscriptStatus.values
-      .asNameMap()[stored];
+  final TranscriptStatus? status = TranscriptStatus.values.asNameMap()[stored];
   if (status == null) {
     throw const CorruptionFailure();
   }
@@ -720,13 +735,6 @@ TranscriptStatus _statusOf(String stored) {
 StorageFailure _missingFailure() => StorageFailure(
   localizedMessage: Copy.messages.failureThatRowIsNoLongerOnThis,
   localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
-);
-
-/// A thrown database error as `transcriptSaveFailed`, with the recovery its
-/// cause calls for.
-StorageFailure _failureFrom(Object error) => StorageFailure(
-  localizedMessage: Copy.messages.transcriptSaveFailed,
-  localizedRecovery: storageFailureFrom(error).localizedRecovery,
 );
 
 /// [first] when it failed, else what [next] makes of its value.

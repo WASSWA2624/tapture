@@ -22,6 +22,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <mutex>
 #include <new>
 #include <string>
@@ -292,9 +293,16 @@ int32_t tw_logical_threads() {
   return n == 0 ? 1 : static_cast<int32_t>(n);
 }
 
+// WebAssembly threads come from a strict pool of 8 workers (task 111): at most
+// 4 compute threads, so ggml's 3 secondaries and whisper's mel threads can
+// never exhaust it.
+[[maybe_unused]] constexpr int32_t kWasmMaxThreads = 4;
+
 int32_t tw_max_threads() {
 #if defined(__EMSCRIPTEN__) && !defined(TW_WASM_THREADS)
   return 1;
+#elif defined(__EMSCRIPTEN__)
+  return std::min<int32_t>(tw_logical_threads(), kWasmMaxThreads);
 #else
   return std::min<int32_t>(tw_logical_threads(), TW_MAX_THREADS);
 #endif
@@ -785,6 +793,104 @@ class tw_buffer_source final : public tw_source {
   size_t position_ = 0;
 };
 
+#if defined(__EMSCRIPTEN__)
+// The sources whisper_worker.js registers: an OPFS sync access handle or a
+// fetched ArrayBuffer, named by a positive file id. The worker installs
+// Module.twSourceSize and Module.twSourceRead; without them every id is
+// unknown. Both run on the calling thread, which is the worker's own.
+EM_JS(double, tw_js_size, (int32_t file_id), {
+  try {
+    const size = Module['twSourceSize'];
+    return typeof size === 'function' ? size(file_id) : -1;
+  } catch (e) {
+    return -1;
+  }
+});
+
+// Copies up to n bytes at offset of file_id into dst; returns the number
+// copied, 0 at the end, or -1.
+EM_JS(int32_t, tw_js_read, (int32_t file_id, int64_t offset, uint8_t* dst, int32_t n), {
+  try {
+    const read = Module['twSourceRead'];
+    return typeof read === 'function' ? read(file_id, Number(offset), dst, n) : -1;
+  } catch (e) {
+    return -1;
+  }
+});
+
+// A worker-registered source read through tw_js_read, so the model is never
+// copied whole into the heap. Small reads (the header and vocabulary) are
+// served from a 64 KiB window; tensor-sized reads go straight to their
+// destination.
+class tw_js_source final : public tw_source {
+ public:
+  // Returns TW_OK, or TW_ERR_FILE_OPEN for an id the worker does not know.
+  int32_t open(int32_t file_id) {
+    const double size = tw_js_size(file_id);
+    if (!(size >= 0) || size > 9007199254740991.0) {
+      return TW_ERR_FILE_OPEN;
+    }
+    id_ = file_id;
+    size_ = static_cast<int64_t>(size);
+    window_.resize(kHashChunk);
+    return TW_OK;
+  }
+
+  int64_t size() const override { return size_; }
+
+  bool rewind() override {
+    position_ = 0;
+    filled_ = 0;
+    cursor_ = 0;
+    failed_ = false;
+    return true;
+  }
+
+  size_t read(void* destination, size_t n) override {
+    auto* out = static_cast<uint8_t*>(destination);
+    size_t done = 0;
+    while (done < n && position_ < size_ && !failed_) {
+      if (cursor_ < filled_) {
+        const size_t take = std::min(n - done, filled_ - cursor_);
+        std::memcpy(out + done, window_.data() + cursor_, take);
+        cursor_ += take;
+        position_ += static_cast<int64_t>(take);
+        done += take;
+        continue;
+      }
+      const bool direct = n - done >= window_.size();
+      const size_t want = direct ? std::min<size_t>(n - done, kMaxRead) : window_.size();
+      const int32_t got = tw_js_read(id_, position_, direct ? out + done : window_.data(),
+                                     static_cast<int32_t>(want));
+      if (got <= 0 || static_cast<size_t>(got) > want) {
+        failed_ = true;
+        break;
+      }
+      if (direct) {
+        position_ += got;
+        done += static_cast<size_t>(got);
+      } else {
+        filled_ = static_cast<size_t>(got);
+        cursor_ = 0;
+      }
+    }
+    return done;
+  }
+
+  bool at_end() const override { return failed_ || position_ >= size_; }
+
+ private:
+  static constexpr size_t kMaxRead = size_t{1} << 30;
+  int32_t id_ = 0;
+  int64_t size_ = -1;
+  int64_t position_ = 0;
+  std::vector<uint8_t> window_;
+  size_t filled_ = 0;
+  size_t cursor_ = 0;
+  bool failed_ = false;
+};
+#endif  // __EMSCRIPTEN__
+
 // Size check (expected_bytes < 0 skips it), streamed SHA-256 (a null sha
 // skips it), then the magic. Leaves the source rewound to byte 0.
 int32_t tw_verify(tw_source& source, int64_t expected_bytes, const uint8_t* expected_sha256) {
@@ -1260,7 +1366,8 @@ int32_t tw_blob_offset(const std::vector<uint8_t>& blob) {
 // Copies everything out of the state into an immutable result.
 tw_result* tw_copy_result(tw_context* context, const char* language, bool token_timestamps,
                           int64_t wall_ms) {
-  auto* result = new tw_result();
+  // Owned until it is complete: a throwing copy must not leak it.
+  auto result = std::make_unique<tw_result>();
   whisper_state* state = context->state;
   const whisper_token eot = whisper_token_eot(context->whisper);
   const int n_segments = whisper_full_n_segments_from_state(state);
@@ -1314,7 +1421,7 @@ tw_result* tw_copy_result(tw_context* context, const char* language, bool token_
   std::snprintf(result->language, sizeof(result->language), "%s",
                 detected != nullptr ? detected : language);
   result->wall_ms = wall_ms;
-  return result;
+  return result.release();
 }
 #endif  // TW_ENGINE
 
@@ -1626,9 +1733,70 @@ int32_t tw_context_open_buffer(const void* data, size_t size, const uint8_t* exp
   }
 }
 
-#if !defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__)
+// The verified open of open_file over a source whisper_worker.js registered
+// as file_id: the size, the streamed SHA-256 and the magic are checked before
+// whisper.cpp parses a byte (task 111).
+int32_t tw_context_open_js(int32_t file_id, int64_t expected_bytes,
+                           const uint8_t* expected_sha256,
+                           const tw_context_options* options, tw_context** out) {
+  if (out == nullptr) {
+    return TW_ERR_INVALID_ARGUMENT;
+  }
+  *out = nullptr;
+  try {
+    int32_t status = tw_open_preflight(options);
+    if (status != TW_OK) {
+      return status;
+    }
+    if (file_id <= 0 || expected_bytes <= 0 || expected_sha256 == nullptr) {
+      return TW_ERR_INVALID_ARGUMENT;
+    }
+    tw_js_source source;
+    status = source.open(file_id);
+    if (status != TW_OK) {
+      tw_log_own(TW_LOG_WARN, "model source is not registered (%d)", status);
+      return status;
+    }
+    return tw_open_context(source, expected_bytes, expected_sha256, options, out);
+  } catch (const std::bad_alloc&) {
+    return TW_ERR_OUT_OF_MEMORY;
+  } catch (...) {
+    return TW_ERR_INTERNAL;
+  }
+}
+
+int32_t tw_vad_open_js(int32_t file_id, int64_t expected_bytes,
+                       const uint8_t* expected_sha256,
+                       const tw_context_options* options, tw_vad** out) {
+  if (out == nullptr) {
+    return TW_ERR_INVALID_ARGUMENT;
+  }
+  *out = nullptr;
+  try {
+    int32_t status = tw_open_preflight(options);
+    if (status != TW_OK) {
+      return status;
+    }
+    if (file_id <= 0 || expected_bytes <= 0 || expected_sha256 == nullptr) {
+      return TW_ERR_INVALID_ARGUMENT;
+    }
+    tw_js_source source;
+    status = source.open(file_id);
+    if (status != TW_OK) {
+      tw_log_own(TW_LOG_WARN, "VAD source is not registered (%d)", status);
+      return status;
+    }
+    return tw_open_vad(source, expected_bytes, expected_sha256, options, out);
+  } catch (const std::bad_alloc&) {
+    return TW_ERR_OUT_OF_MEMORY;
+  } catch (...) {
+    return TW_ERR_INTERNAL;
+  }
+}
+#else
 // File ids name sources registered by the WebAssembly worker; native builds
-// have none (task 111 defines these for the WebAssembly library).
+// have none.
 int32_t tw_context_open_js(int32_t file_id, int64_t expected_bytes,
                            const uint8_t* expected_sha256,
                            const tw_context_options* options, tw_context** out) {
@@ -2101,7 +2269,9 @@ int32_t tw_vad_segments(tw_vad* vad, const float* pcm, int32_t n_samples,
     whisper_vad_reset_state(vad->vad);
     vad->pending.clear();
     vad->probs.clear();
-    auto* spans = new tw_spans();
+    // Both are owned here until the copy is complete, so a throwing copy
+    // leaks neither.
+    auto spans = std::make_unique<tw_spans>();
     if (n_samples > 0) {
       whisper_vad_params params = whisper_vad_default_params();
       params.threshold = options->threshold;
@@ -2110,26 +2280,26 @@ int32_t tw_vad_segments(tw_vad* vad, const float* pcm, int32_t n_samples,
       params.max_speech_duration_s = options->max_speech_s;
       params.speech_pad_ms = options->speech_pad_ms;
       params.samples_overlap = options->samples_overlap_s;
-      whisper_vad_segments* segments =
-          whisper_vad_segments_from_samples(vad->vad, params, pcm, n_samples);
+      std::unique_ptr<whisper_vad_segments, void (*)(whisper_vad_segments*)> segments(
+          whisper_vad_segments_from_samples(vad->vad, params, pcm, n_samples),
+          whisper_vad_free_segments);
       whisper_vad_reset_state(vad->vad);
       if (segments == nullptr) {
-        delete spans;
         tw_log_own(TW_LOG_ERROR, "VAD segmentation failed (%d)", TW_ERR_INFERENCE);
         return TW_ERR_INFERENCE;
       }
-      const int n = whisper_vad_segments_n_segments(segments);
+      const int n = whisper_vad_segments_n_segments(segments.get());
+      spans->spans.reserve(static_cast<size_t>(std::max(0, n)));
       for (int i = 0; i < n; i++) {
         // whisper stores centiseconds; the log line is what divides by 100.
-        const float t0 = whisper_vad_segments_get_segment_t0(segments, i);
-        const float t1 = whisper_vad_segments_get_segment_t1(segments, i);
+        const float t0 = whisper_vad_segments_get_segment_t0(segments.get(), i);
+        const float t1 = whisper_vad_segments_get_segment_t1(segments.get(), i);
         spans->spans.push_back({static_cast<int64_t>(std::llround(t0 * 10.0)),
                                 static_cast<int64_t>(std::llround(t1 * 10.0))});
       }
-      whisper_vad_free_segments(segments);
     }
     tw_count(TW_OBJ_SPANS, 1);
-    *out = spans;
+    *out = spans.release();
     return TW_OK;
   } catch (const std::bad_alloc&) {
     return TW_ERR_OUT_OF_MEMORY;

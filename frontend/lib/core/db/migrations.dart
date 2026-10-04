@@ -52,6 +52,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   30: migrateToV30,
   31: migrateToV31,
   32: migrateToV32,
+  33: migrateToV33,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -587,6 +588,15 @@ Future<void> migrateToV32(Migrator migrator, AppDatabase db) async {
   }
   await RecordSchema.ensure(db);
 }
+
+/// Schema version 33: transcripts travel in packages and merges (task 127).
+///
+/// Installs the version-vector triggers of `transcripts` and
+/// `transcript_segments` through [VersionVectorSchema.ensure], which also
+/// seeds a clock for every row already authored on this device. Nothing is
+/// rewritten, and the step can run twice.
+Future<void> migrateToV33(Migrator migrator, AppDatabase db) =>
+    VersionVectorSchema.ensure(db);
 
 /// The failed subset retains both ordering columns, including timestamp ties.
 Future<void> ensureProcessingFailureIndex(AppDatabase db) async {

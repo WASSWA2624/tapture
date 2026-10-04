@@ -76,18 +76,23 @@ final class _IoSpeechModelStore implements SpeechModelStore {
 
   /// Removes every extracted copy whose name is not a current catalogue
   /// model's `<sha12>-<file>`, so a changed model never lingers.
+  /// An unreadable folder is left for the next start: a stale copy costs
+  /// space, never a model.
   Future<void> _removeStaleCopies(Directory folder) async {
-    if (!await folder.exists()) {
-      return;
-    }
     final Set<String> current = <String>{
       for (final SpeechModelEntry entry in _catalogue)
         if (entry.asset case final String asset)
           bundledCopyName(key: asset, sha256: entry.sha256),
     };
-    final List<FileSystemEntity> found = await folder
-        .list(followLinks: false)
-        .toList();
+    final List<FileSystemEntity> found;
+    try {
+      if (!await folder.exists()) {
+        return;
+      }
+      found = await folder.list(followLinks: false).toList();
+    } on FileSystemException {
+      return;
+    }
     for (final FileSystemEntity entity in found) {
       if (entity is File && !current.contains(_nameOf(entity.path))) {
         await discardDerivedFile(entity, privateRoot: _privateRoot);
@@ -182,20 +187,22 @@ final class _IoSpeechModelStore implements SpeechModelStore {
 
   @override
   Future<Result<SpeechModelSource>> reextract(SpeechModelEntry entry) async {
-    final Result<SpeechModelSource> located = await locate(entry);
+    final String? asset = entry.asset;
+    if (asset == null) {
+      return locate(entry);
+    }
     final Result<Directory> root = await _root();
-    if (entry.asset == null ||
-        located is! Success<SpeechModelSource> ||
-        root is! Success<Directory>) {
-      return located;
+    if (root case FailureResult<Directory>(:final Failure failure)) {
+      return FailureResult<SpeechModelSource>(failure);
     }
-    final String? path = located.value.path;
-    final String folder = '${root.value.path}/$_bundledFolder/';
-    if (path == null || !path.startsWith(folder)) {
-      return located;
-    }
+    // Only an extracted copy lives here; a bundle read in place never does,
+    // so discarding the copy by name never extracts first or touches it.
+    final File copy = File(
+      '${(root as Success<Directory>).value.path}/$_bundledFolder/'
+      '${bundledCopyName(key: asset, sha256: entry.sha256)}',
+    );
     final Result<void> discarded = await discardDerivedFile(
-      File(path),
+      copy,
       privateRoot: _privateRoot,
     );
     if (discarded case FailureResult<void>(:final Failure failure)) {

@@ -12,9 +12,10 @@ import 'package:tapture/core/errors/failure.dart';
 /// Search is one FTS5 document per record, rebuilt by triggers in the same
 /// transaction as every write that changes what the record says: its field
 /// values, its own and its photos' captions, its transcripts (including the
-/// finished live transcripts of its audio) and the OCR text of its photos. A record whose status is `deleted` keeps its document
-/// so a restore finds it again; lists exclude deleted records by status. The
-/// index is never exported: bundles select their tables by name.
+/// finished live transcripts of its audio) and the OCR text of its photos.
+/// A record whose status is `deleted` keeps its document so a restore finds
+/// it again; lists exclude deleted records by status. The index is never
+/// exported: bundles select their tables by name.
 ///
 /// Build the MATCH text from each search word double-quoted (inner quotes
 /// doubled) and suffixed with `*`, joined by spaces (AND), dropping words

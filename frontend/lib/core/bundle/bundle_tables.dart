@@ -14,10 +14,11 @@ import 'bundle_vectors.dart';
 /// templates with their fields and rows, the project's reference datasets
 /// and the global ones its fields or levels look up, records and their field
 /// values and evidence, captions, photos, attachments and their owners,
-/// meetings, attendees and actions, variances, finished processing jobs and
-/// their results, duplicate pairs, audit rows and tombstones. It leaves out
-/// capture drafts, the processing queue, the OCR cache, export history,
-/// merge bookkeeping and the device profile. Causal clocks travel in the
+/// meetings, attendees and actions, finished transcripts and their raw
+/// segments, variances, finished processing jobs and their results,
+/// duplicate pairs, audit rows and tombstones. It leaves out capture drafts,
+/// transcripts still being recorded, the processing queue, the OCR cache,
+/// export history, merge bookkeeping and the device profile. Causal clocks travel in the
 /// manifest rather than in a table entry.
 final class BundleTables {
   /// Creates tables from [rows].
@@ -284,6 +285,14 @@ const Map<String, String> _byProject = <String, String>{
       'SELECT * FROM attendees WHERE meeting_id IN $_meetings ORDER BY id',
   'meeting_actions':
       'SELECT * FROM meeting_actions WHERE meeting_id IN $_meetings ORDER BY id',
+  // A transcript still being recorded belongs to this device's live
+  // session and stays behind until it finishes (task 127).
+  'transcripts':
+      'SELECT * FROM transcripts WHERE id IN $_transcripts '
+      'ORDER BY started_at, id',
+  'transcript_segments':
+      'SELECT * FROM transcript_segments WHERE transcript_id IN '
+      '$_transcripts ORDER BY transcript_id, seq',
   'variances': 'SELECT * FROM variances WHERE project_id = ?1 ORDER BY id',
   // Finished jobs are history; a job still queued or running is this
   // device's queue and stays behind (D7).
@@ -305,6 +314,8 @@ const String _templates = '(SELECT id FROM templates WHERE project_id = ?1)';
 const String _records = '(SELECT id FROM records WHERE project_id = ?1)';
 const String _meetings =
     '(SELECT id FROM meetings WHERE record_id IN $_records)';
+const String _transcripts =
+    "(SELECT id FROM transcripts WHERE project_id = ?1 AND status <> 'live')";
 
 /// Every id a package carries, for the audit rows and tombstones about them.
 const String _owned =
@@ -320,6 +331,7 @@ const String _owned =
     'UNION ALL SELECT id FROM attachments WHERE project_id = ?1 '
     'UNION ALL SELECT id FROM captions WHERE owner_id IN $_records '
     'UNION ALL SELECT id FROM meetings WHERE record_id IN $_records '
+    'UNION ALL SELECT id FROM $_transcripts '
     'UNION ALL SELECT id FROM variances WHERE project_id = ?1 '
     'UNION ALL SELECT id FROM duplicates WHERE project_id = ?1 '
     'UNION ALL SELECT id FROM reference_datasets WHERE project_id = ?1';

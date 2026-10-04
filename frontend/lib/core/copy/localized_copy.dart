@@ -6781,6 +6781,18 @@ final class LocalizedCopy {
   /// Report title: meeting minutes.
   String get pdfMinutesReport => _catalog.pdfMinutesReport;
 
+  /// Report title: the transcripts heard on the device from the exported
+  /// records' audio.
+  String get pdfTranscriptReport => _catalog.pdfTranscriptReport;
+
+  /// Heading of a transcript's raw text, exactly as the device heard it.
+  String pdfTranscriptRaw(String title) => _catalog.pdfTranscriptRaw(title);
+
+  /// Heading of the operator's edit of a transcript, printed beside the raw
+  /// text and never as recorded speech.
+  String pdfTranscriptEdited(String title) =>
+      _catalog.pdfTranscriptEdited(title);
+
   /// Label of an action's due date.
   String get pdfDue => _catalog.pdfDue;
 

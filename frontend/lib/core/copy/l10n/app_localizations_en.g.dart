@@ -8041,6 +8041,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdfMinutesReport => 'Meeting minutes';
 
   @override
+  String get pdfTranscriptReport => 'Transcripts';
+
+  @override
+  String pdfTranscriptRaw(Object title) {
+    return '$title (as heard)';
+  }
+
+  @override
+  String pdfTranscriptEdited(Object title) {
+    return '$title (edited)';
+  }
+
+  @override
   String get pdfDue => 'Due';
 
   @override
@@ -19859,6 +19872,19 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get pdfMinutesReport => 'Méétíng mínútés······';
+
+  @override
+  String get pdfTranscriptReport => 'Tránscrípts····';
+
+  @override
+  String pdfTranscriptRaw(Object title) {
+    return '$title (ás héárd)····';
+  }
+
+  @override
+  String pdfTranscriptEdited(Object title) {
+    return '$title (édítéd)····';
+  }
 
   @override
   String get pdfDue => 'Dúé··';

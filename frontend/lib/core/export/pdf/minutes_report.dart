@@ -1,9 +1,12 @@
 import 'pdf_engine.dart';
+import 'transcript_report.dart';
 
 /// Meeting minutes (task 018 step 12, A52): attendance, agenda, the raw
 /// notes and the refined minutes side by side and each labelled as what it
-/// is, decisions, the action register and a photo appendix referenced from
-/// the discussion. Refined text is never presented as recorded speech.
+/// is, the meeting's transcripts heard on the device with any edit beside
+/// each (task 127), decisions, the action register and a photo appendix
+/// referenced from the discussion. Refined or edited text is never
+/// presented as recorded speech.
 final class MinutesReport {
   /// The minutes of [meeting] in [project].
   static PdfDocument build({
@@ -47,6 +50,7 @@ final class MinutesReport {
               text.photoReference(meeting.photos.length),
           ],
         ),
+        ...TranscriptReport.sections(engine, meeting.transcripts),
         engine.section(
           heading: text.refinedMinutes,
           lines: <String>[
@@ -88,6 +92,7 @@ typedef MinutesContent = ({
   List<String> apologies,
   List<MinutesTopic> agenda,
   String rawNotes,
+  List<TranscriptContent> transcripts,
   String refinedMinutes,
   List<String> decisions,
   List<MinutesAction> actions,

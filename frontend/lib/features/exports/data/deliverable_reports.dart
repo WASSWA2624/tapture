@@ -9,6 +9,7 @@ import 'package:tapture/core/export/pdf/minutes_report.dart';
 import 'package:tapture/core/export/pdf/pdf_engine.dart';
 import 'package:tapture/core/export/pdf/record_report.dart';
 import 'package:tapture/core/export/pdf/summary_report.dart';
+import 'package:tapture/core/export/pdf/transcript_report.dart';
 import 'package:tapture/core/export/pdf/variance_report.dart';
 import 'package:tapture/core/export/value_formatter.dart';
 import 'package:tapture/core/files/path_sanitizer.dart';
@@ -16,19 +17,23 @@ import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/meetings/meetings.dart';
 import 'package:tapture/features/quality/quality.dart';
 import 'package:tapture/features/records/records.dart' show RecordFilter;
+import 'package:tapture/features/transcripts/transcripts.dart'
+    show Transcript, TranscriptRepository, TranscriptSummary;
 
 /// Reads report inputs and turns them into the A52 report documents.
 final class DeliverableReports {
-  /// Reads through [meetings] and [quality] over [db].
+  /// Reads through [meetings], [quality] and [transcripts] over [db].
   const DeliverableReports({
     required this._db,
     required this._meetings,
     required this._quality,
+    required this._transcripts,
   });
 
   final sqlite.AppDatabase _db;
   final MeetingRepository _meetings;
   final QualityRepository _quality;
+  final TranscriptRepository _transcripts;
 
   /// The meetings filed on [recordIds] in [projectId], keyed by record id.
   Future<Map<String, MeetingRecord>> meetingsOf(
@@ -79,7 +84,25 @@ final class DeliverableReports {
     final List<DeliverableMeeting> minutes = <DeliverableMeeting>[
       for (final ExportRecord record in request.records)
         if (meetings[record.id] case final MeetingRecord meeting)
-          (number: record.number, minutes: minutesOf(meeting, record)),
+          (
+            number: record.number,
+            minutes: minutesOf(
+              meeting,
+              record,
+              transcripts: await _heard(
+                _transcripts.watchMeeting(meeting.meeting.id),
+                untitled: meeting.meeting.title,
+              ),
+            ),
+          ),
+    ];
+    final List<TranscriptContent> transcripts = <TranscriptContent>[
+      for (final ExportRecord record in request.records)
+        ...await _heard(
+          _transcripts.watchRecord(record.id),
+          untitled: '${record.templateName} ${record.number}',
+          printedWith: meetings[record.id]?.meeting.id,
+        ),
     ];
     return (
       projectName: projectName,
@@ -92,6 +115,7 @@ final class DeliverableReports {
       ],
       checklists: await _checklists(request.records),
       meetings: minutes,
+      transcripts: transcripts,
       variance: await _variance(request),
       actionRegister: <List<String>>[
         if (minutes.any((DeliverableMeeting m) => m.minutes.actions.isNotEmpty))
@@ -115,9 +139,41 @@ final class DeliverableReports {
     );
   }
 
+  /// The finished transcripts [summaries] lists, each read whole: its raw
+  /// text as heard and the operator's edit beside it (task 127). A
+  /// transcript still being recorded, or one of meeting [printedWith],
+  /// whose minutes print it, is left out. An untitled one takes [untitled].
+  Future<List<TranscriptContent>> _heard(
+    Stream<List<TranscriptSummary>> summaries, {
+    required String untitled,
+    String? printedWith,
+  }) async {
+    final List<TranscriptContent> heard = <TranscriptContent>[];
+    for (final TranscriptSummary summary in await summaries.first) {
+      if (!summary.status.settled ||
+          (printedWith != null && summary.ownerId == printedWith)) {
+        continue;
+      }
+      final Result<Transcript?> read = await _transcripts.read(summary.id);
+      if (read case Success<Transcript?>(value: final Transcript transcript?)) {
+        heard.add((
+          title: summary.title.trim().isEmpty ? untitled : summary.title,
+          raw: transcript.rawText,
+          edited: transcript.editedText,
+        ));
+      }
+    }
+    return heard;
+  }
+
   /// The minutes of [meeting], with the photos of its [record] as the
-  /// appendix, in their persisted order.
-  static MinutesContent minutesOf(MeetingRecord meeting, ExportRecord record) {
+  /// appendix, in their persisted order, and the meeting's [transcripts]
+  /// beside its notes.
+  static MinutesContent minutesOf(
+    MeetingRecord meeting,
+    ExportRecord record, {
+    List<TranscriptContent> transcripts = const <TranscriptContent>[],
+  }) {
     final Meeting body = meeting.meeting;
     return (
       title: body.title,
@@ -143,6 +199,7 @@ final class DeliverableReports {
         meeting.notes,
         meeting.transcript,
       ].where((String part) => part.trim().isNotEmpty).join('\n'),
+      transcripts: transcripts,
       refinedMinutes: meeting.minutes,
       decisions: <String>[
         for (final Decision decision in body.decisions) decision.text,
@@ -166,7 +223,8 @@ final class DeliverableReports {
   /// The report documents of [request], keyed by their file name: the
   /// record report and project summary always, an inspection report per
   /// checklist, the variance report where the project checks a register,
-  /// and minutes per meeting. Pure, so it runs on the isolate.
+  /// minutes per meeting, and the transcripts of the records' audio when
+  /// there are any. Pure, so it runs on the isolate.
   static Map<String, PdfDocument> documents(
     ExportRequest request,
     DeliverableReportInputs inputs,
@@ -221,6 +279,13 @@ final class DeliverableReports {
           project: project,
           meeting: meeting.minutes,
           photoColumns: columns,
+          cover: inputs.cover,
+        ),
+      if (inputs.transcripts.isNotEmpty)
+        name('transcripts'): TranscriptReport.build(
+          engine: engine,
+          project: project,
+          transcripts: inputs.transcripts,
           cover: inputs.cover,
         ),
     };
@@ -394,13 +459,15 @@ const ExportValueFormatter _formatter = ExportValueFormatter(<String>{});
 
 /// What the PDF reports need beyond the exported records, read once from
 /// the stores that own it: checklist rows (task 009), meetings (task 017),
-/// and variances and missing items (task 015). Plain data, so the reports
+/// variances and missing items (task 015), and the transcripts heard from
+/// the records' audio (task 127). Plain data, so the reports
 /// are built on the isolate with the rest of the render.
 typedef DeliverableReportInputs = ({
   String projectName,
   List<String> cover,
   List<DeliverableChecklist> checklists,
   List<DeliverableMeeting> meetings,
+  List<TranscriptContent> transcripts,
   DeliverableVariance? variance,
   List<List<String>> actionRegister,
 });

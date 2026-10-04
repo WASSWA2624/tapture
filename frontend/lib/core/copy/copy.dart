@@ -6241,6 +6241,19 @@ abstract final class Copy {
   /// Report title: meeting minutes.
   static String get pdfMinutesReport => _english.pdfMinutesReport;
 
+  /// Report title: the transcripts heard on the device from the exported
+  /// records' audio.
+  static String get pdfTranscriptReport => _english.pdfTranscriptReport;
+
+  /// Heading of a transcript's raw text, exactly as the device heard it.
+  static String pdfTranscriptRaw(String title) =>
+      _english.pdfTranscriptRaw(title);
+
+  /// Heading of the operator's edit of a transcript, printed beside the raw
+  /// text and never as recorded speech.
+  static String pdfTranscriptEdited(String title) =>
+      _english.pdfTranscriptEdited(title);
+
   /// Label of an action's due date.
   static String get pdfDue => _english.pdfDue;
 

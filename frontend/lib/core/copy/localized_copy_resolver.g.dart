@@ -3048,6 +3048,17 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'pdfMatched' => pdfMatched,
     'pdfNotInRegister' => pdfNotInRegister,
     'pdfMinutesReport' => pdfMinutesReport,
+    'pdfTranscriptReport' => pdfTranscriptReport,
+    'pdfTranscriptRaw' => pdfTranscriptRaw(
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+    ),
+    'pdfTranscriptEdited' => pdfTranscriptEdited(
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+    ),
     'pdfDue' => pdfDue,
     'pdfActionStatus' => pdfActionStatus(
       (message.argument('stored') is LocalizedMessage

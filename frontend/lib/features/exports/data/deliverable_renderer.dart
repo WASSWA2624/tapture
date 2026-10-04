@@ -9,6 +9,7 @@ import 'package:tapture/core/export/export_record.dart';
 import 'package:tapture/core/export/export_request.dart';
 import 'package:tapture/core/export/json_writer.dart';
 import 'package:tapture/core/export/pdf/pdf_engine.dart';
+import 'package:tapture/core/export/pdf/transcript_report.dart';
 import 'package:tapture/core/export/value_formatter.dart';
 import 'package:tapture/core/export/xlsx_encoder.dart';
 import 'package:tapture/core/export/xlsx_writer.dart';
@@ -150,6 +151,7 @@ DeliverableReportInputs _recordsOnly(ExportRequest request) => (
   cover: const <String>[],
   checklists: const <DeliverableChecklist>[],
   meetings: const <DeliverableMeeting>[],
+  transcripts: const <TranscriptContent>[],
   variance: null,
   actionRegister: const <List<String>>[],
 );

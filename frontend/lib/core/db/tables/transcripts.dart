@@ -145,7 +145,9 @@ Future<Result<TranscriptRow>> updateTranscript(
         );
       }
     }
-    return dao.upsert(RawValuesInsertable<TranscriptRow>(columns)).then(_unwrap);
+    return dao
+        .upsert(RawValuesInsertable<TranscriptRow>(columns))
+        .then(_unwrap);
   });
 }
 
@@ -301,7 +303,10 @@ Future<Result<TranscriptRow>> renameTranscript(
     final TranscriptRow existing = await _required(dao, id);
     final TranscriptRow written = _unwrap(
       await dao.upsert(
-        TranscriptsCompanion(id: Value<String>(id), title: Value<String>(title)),
+        TranscriptsCompanion(
+          id: Value<String>(id),
+          title: Value<String>(title),
+        ),
       ),
     );
     await appendAudit(
@@ -343,11 +348,10 @@ List<(int, int)> transcriptSkippedRanges(String stored) {
 }
 
 /// [ranges] in the stored [Transcripts.skippedRanges] form.
-String encodeTranscriptRanges(List<(int, int)> ranges) => jsonEncode(<
-  List<int>
->[
-  for (final (int from, int to) in ranges) <int>[from, to],
-]);
+String encodeTranscriptRanges(List<(int, int)> ranges) =>
+    jsonEncode(<List<int>>[
+      for (final (int from, int to) in ranges) <int>[from, to],
+    ]);
 
 /// The millisecond on the session timeline that [sample] falls in.
 int transcriptMillisecondOf(int sample) =>
@@ -413,9 +417,9 @@ Future<TranscriptRow> _required(_TranscriptsDao dao, String? id) async {
   return row;
 }
 
-/// Runs [body] in one transaction (joining the caller's). A [Failure] is
-/// returned as it is; any other error becomes `transcriptSaveFailed` with
-/// the recovery its cause calls for.
+/// Runs [body] in one transaction (joining the caller's). A rule this file
+/// enforces is returned as it is; a database error becomes
+/// `transcriptSaveFailed` with the recovery its cause calls for.
 Future<Result<T>> _guarded<T>(
   GeneratedDatabase db,
   Future<T> Function() body,
@@ -423,15 +427,25 @@ Future<Result<T>> _guarded<T>(
   try {
     return Success<T>(await db.transaction(body));
   } on Failure catch (failure) {
-    return FailureResult<T>(failure);
+    return FailureResult<T>(transcriptWriteFailure(failure));
   } on Object catch (error) {
-    return FailureResult<T>(
-      StorageFailure(
-        localizedMessage: Copy.messages.transcriptSaveFailed,
-        localizedRecovery: storageFailureFrom(error).localizedRecovery,
-      ),
-    );
+    return FailureResult<T>(transcriptWriteFailure(storageFailureFrom(error)));
   }
+}
+
+/// [failure] of a transcript write as the operator reads it: the database's
+/// generic write failure becomes `transcriptSaveFailed`, keeping its
+/// recovery; any other failure is returned as it is.
+Failure transcriptWriteFailure(Failure failure) {
+  if (failure is! StorageFailure ||
+      failure.localizedMessage?.key !=
+          Copy.messages.failureTheDatabaseCouldNotCompleteThatWrite.key) {
+    return failure;
+  }
+  return StorageFailure(
+    localizedMessage: Copy.messages.transcriptSaveFailed,
+    localizedRecovery: failure.localizedRecovery,
+  );
 }
 
 T _unwrap<T>(Result<T> result) => result.getOrThrow();

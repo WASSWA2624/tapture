@@ -43,7 +43,11 @@ final class TranscriptRecovery {
     if (found case FailureResult<List<TranscriptSummary>>(
       :final Failure failure,
     )) {
-      _logger.warn(_tag, 'stale recordings could not be listed', error: failure);
+      _logger.warn(
+        _tag,
+        'stale recordings could not be listed',
+        error: failure,
+      );
       return FailureResult<int>(failure);
     }
     final List<TranscriptSummary> stale =
@@ -116,7 +120,11 @@ final class TranscriptRecovery {
       attachmentId,
     );
     if (linked case FailureResult<void>(:final Failure failure)) {
-      _logger.warn(_tag, 'a recovered recording was not linked', error: failure);
+      _logger.warn(
+        _tag,
+        'a recovered recording was not linked',
+        error: failure,
+      );
       return false;
     }
     return true;

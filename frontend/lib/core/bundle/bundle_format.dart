@@ -50,6 +50,7 @@ abstract final class BundleFormat {
     'captions.json': <String>['captions'],
     'media.json': <String>['photos', 'attachments', 'attachment_owners'],
     'meetings.json': <String>['meetings', 'attendees', 'meeting_actions'],
+    'transcripts.json': <String>['transcripts', 'transcript_segments'],
     'variances.json': <String>['variances'],
     'processing.json': <String>['processing_jobs', 'processing_results'],
     'duplicates.json': <String>['duplicates'],
@@ -84,6 +85,8 @@ abstract final class BundleFormat {
     'meetings',
     'attendees',
     'meeting_actions',
+    'transcripts',
+    'transcript_segments',
     'variances',
     'processing_jobs',
     'processing_results',
@@ -105,12 +108,27 @@ abstract final class BundleFormat {
         'attachments': <String>['project_id', 'relative_path', 'sha256'],
         'reference_datasets': <String>['name'],
         'reference_rows': <String>['dataset_id', 'key_value'],
+        'transcripts': <String>['project_id', 'owner_kind', 'status'],
+        'transcript_segments': <String>[
+          'transcript_id',
+          'seq',
+          'start_ms',
+          'end_ms',
+          'text_raw',
+        ],
       };
+
+  /// Table entries added after packages of this format version were first
+  /// written. A package without one is still read, as carrying no rows of
+  /// its tables (task 127).
+  static const Set<String> optionalEntries = <String>{'transcripts.json'};
 
   /// The entries every package holds, whatever the project contains.
   static Set<String> get requiredEntries => <String>{
     manifest,
     checksums,
-    ...tableEntries.keys,
+    ...tableEntries.keys.where(
+      (String entry) => !optionalEntries.contains(entry),
+    ),
   };
 }
