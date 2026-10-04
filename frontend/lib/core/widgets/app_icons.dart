@@ -257,6 +257,15 @@ abstract final class AppIcons {
   /// Stops a recording.
   static const IconData stop = Icons.stop;
 
+  /// Pauses a recording without closing it.
+  static const IconData pause = Icons.pause;
+
+  /// Resumes a paused recording.
+  static const IconData resume = Icons.play_arrow;
+
+  /// A transcript: the words recognised in a recording.
+  static const IconData transcript = Icons.subject;
+
   /// Takes the photo.
   static const IconData shutter = Icons.camera;
 

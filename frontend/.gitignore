@@ -67,6 +67,11 @@ key.properties
 *__*__*.zip
 TAPTURE-*.zip
 
+# Speech models are fetched by pinned URL and SHA-256 (tool/speech_models.dart,
+# dev-plan task 101); only their generated manifest.json is tracked.
+/assets/speech/*.bin
+/assets/speech/*.part
+
 # Test suites, with their goldens and fixtures, stay local.
 /test/
 /integration_test/

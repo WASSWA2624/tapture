@@ -75,6 +75,7 @@ const List<String> coreDirectories = <String>[
   'permissions',
   'security',
   'serialisation',
+  'speech',
   'team',
   'time',
   'validation',

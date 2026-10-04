@@ -13,12 +13,17 @@ const List<String> _pathsGitMustIgnore = <String>[
   '.env.local',
   'samples/equipment-inventory__deviceA__2026-09-08T1030.zip',
   'projects/site-a/photos/front.jpg',
+  // Speech models are fetched by hash, never committed (dev-plan task 101).
+  'assets/speech/ggml-base-q5_1.bin',
+  'assets/speech/ggml-base-q5_1.bin.part',
 ];
 
 /// Generated sources must travel with their source declarations (FE-CODE-13).
 const List<String> _pathsGitMustTrack = <String>[
   'lib/features/projects/data/project_dao.g.dart',
   'lib/features/projects/domain/project.freezed.dart',
+  // The speech model manifest keeps the asset folder in a clean checkout.
+  'assets/speech/manifest.json',
 ];
 
 /// EditorConfig settings the repository fixes, by section header. A section
@@ -95,7 +100,7 @@ Iterable<({String file, int line, String message})> _gitignoreViolations(
         file: name,
         line: lines.length,
         message:
-            'pattern ignores $path; generated Dart sources must be committed '
+            'pattern ignores $path; generated sources must be committed '
             '(FE-CODE-13)',
       );
     }

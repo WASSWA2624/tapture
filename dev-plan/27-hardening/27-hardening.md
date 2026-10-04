@@ -91,7 +91,8 @@ coordinated gate. No physical device class has been measured; all related physic
 Run this final whole-product pass after the baseline release tooling and Documentation acceptance are implemented.
 Include Documentation and the product refinements in every applicable screen, accessibility, failure-path and
 performance check below. Rerun the existing app and backend release gates against the final tree; no production
-release is ready until this task's acceptance and those gates pass.
+release is ready until this task's acceptance and those gates pass. This final release pass runs after task 131
+(on-device speech acceptance on physical devices), and release approval requires both.
 
 One hardening pass over the whole app, leaving it fast, legible, reachable and hard to break in the field: every
 primary screen driven through the size-class matrix, the accessibility matchers and 200 percent text scale, with each

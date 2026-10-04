@@ -76,4 +76,5 @@ flutter:
     - assets/branding/
     - assets/feedback/
     - assets/fonts/
+    - assets/speech/
     - assets/templates/

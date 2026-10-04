@@ -4522,6 +4522,10 @@ final class CopyMessages {
     fallback: Copy.audioRecorderUnavailable,
   );
 
+  /// Refusal when another recording already holds the microphone.
+  LocalizedMessage get microphoneBusy =>
+      LocalizedMessage(key: 'microphoneBusy', fallback: Copy.microphoneBusy);
+
   /// The recorder refused to start a take.
   LocalizedMessage get audioStartFailed => LocalizedMessage(
     key: 'audioStartFailed',
@@ -4562,6 +4566,61 @@ final class CopyMessages {
           'seconds': LocalizedMessage.encodeArgument(seconds),
         },
       );
+
+  /// Recording bar control that starts a recording with a live transcript.
+  LocalizedMessage get liveTranscriptStart => LocalizedMessage(
+    key: 'liveTranscriptStart',
+    fallback: Copy.liveTranscriptStart,
+  );
+
+  /// Recording bar control that discards the recording in progress.
+  LocalizedMessage get liveTranscriptCancel => LocalizedMessage(
+    key: 'liveTranscriptCancel',
+    fallback: Copy.liveTranscriptCancel,
+  );
+
+  /// Recording bar status while the microphone opens.
+  LocalizedMessage get liveTranscriptStatusStarting => LocalizedMessage(
+    key: 'liveTranscriptStatusStarting',
+    fallback: Copy.liveTranscriptStatusStarting,
+  );
+
+  /// Recording bar status while audio is recorded and transcribed.
+  LocalizedMessage get liveTranscriptStatusListening => LocalizedMessage(
+    key: 'liveTranscriptStatusListening',
+    fallback: Copy.liveTranscriptStatusListening,
+  );
+
+  /// Recording bar status while the recording is paused.
+  LocalizedMessage get liveTranscriptStatusPaused => LocalizedMessage(
+    key: 'liveTranscriptStatusPaused',
+    fallback: Copy.liveTranscriptStatusPaused,
+  );
+
+  /// Recording bar status while the recording is closed and the transcript
+  /// completes.
+  LocalizedMessage get liveTranscriptStatusFinishing => LocalizedMessage(
+    key: 'liveTranscriptStatusFinishing',
+    fallback: Copy.liveTranscriptStatusFinishing,
+  );
+
+  /// Transcript view before any words are recognised.
+  LocalizedMessage get liveTranscriptEmpty => LocalizedMessage(
+    key: 'liveTranscriptEmpty',
+    fallback: Copy.liveTranscriptEmpty,
+  );
+
+  /// Transcript view control that scrolls back to the newest words.
+  LocalizedMessage get liveTranscriptJumpToLatest => LocalizedMessage(
+    key: 'liveTranscriptJumpToLatest',
+    fallback: Copy.liveTranscriptJumpToLatest,
+  );
+
+  /// Accessible name of the transcript view.
+  LocalizedMessage get transcriptViewLabel => LocalizedMessage(
+    key: 'transcriptViewLabel',
+    fallback: Copy.transcriptViewLabel,
+  );
 
   /// Audio evidence association sheet.
   LocalizedMessage get captureAudioScopeTitle => LocalizedMessage(

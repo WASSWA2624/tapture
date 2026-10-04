@@ -2990,6 +2990,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Audio recording is not available on this device.';
 
   @override
+  String get microphoneBusy =>
+      'The microphone is in use by another recording. Stop it first, then try again.';
+
+  @override
   String get audioStartFailed => 'Recording could not start.';
 
   @override
@@ -3036,6 +3040,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
     return '$label · ${secondsString}s';
   }
+
+  @override
+  String get liveTranscriptStart => 'Start recording';
+
+  @override
+  String get liveTranscriptCancel => 'Discard';
+
+  @override
+  String get liveTranscriptStatusStarting => 'Opening the microphone';
+
+  @override
+  String get liveTranscriptStatusListening => 'Recording and transcribing';
+
+  @override
+  String get liveTranscriptStatusPaused => 'Paused';
+
+  @override
+  String get liveTranscriptStatusFinishing => 'Finishing the transcript';
+
+  @override
+  String get liveTranscriptEmpty => 'Speak, and the words appear here.';
+
+  @override
+  String get liveTranscriptJumpToLatest => 'Jump to latest';
+
+  @override
+  String get transcriptViewLabel => 'Transcript';
 
   @override
   String get captureAudioScopeTitle => 'Use audio with';
@@ -14646,6 +14677,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
       'Áúdíó récórdíng ís nót áváíláblé ón thís dévícé.·················';
 
   @override
+  String get microphoneBusy =>
+      'Thé mícróphóné ís ín úsé by ánóthér récórdíng. Stóp ít fírst, thén try ágáín.···························';
+
+  @override
   String get audioStartFailed => 'Récórdíng cóúld nót stárt.··········';
 
   @override
@@ -14694,6 +14729,36 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
     return '$label · ${secondsString}s·';
   }
+
+  @override
+  String get liveTranscriptStart => 'Stárt récórdíng······';
+
+  @override
+  String get liveTranscriptCancel => 'Díscárd···';
+
+  @override
+  String get liveTranscriptStatusStarting => 'Ópéníng thé mícróphóné········';
+
+  @override
+  String get liveTranscriptStatusListening =>
+      'Récórdíng ánd tránscríbíng··········';
+
+  @override
+  String get liveTranscriptStatusPaused => 'Páúséd···';
+
+  @override
+  String get liveTranscriptStatusFinishing =>
+      'Fíníshíng thé tránscrípt·········';
+
+  @override
+  String get liveTranscriptEmpty =>
+      'Spéák, ánd thé wórds áppéár héré.············';
+
+  @override
+  String get liveTranscriptJumpToLatest => 'Júmp tó látést·····';
+
+  @override
+  String get transcriptViewLabel => 'Tránscrípt····';
 
   @override
   String get captureAudioScopeTitle => 'Úsé áúdíó wíth·····';

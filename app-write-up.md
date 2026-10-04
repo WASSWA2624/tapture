@@ -16,7 +16,7 @@ selected content; the optional relay holds transient ciphertext. Backend unavail
 | [II — Data & Storage](#part-ii--data--storage) | 7–10: outbound policy, files, database and identity |
 | [III — Templates & Reference Data](#part-iii--templates--reference-data) | 11–18: fields, catalogue, detection, lookups, verification and versions |
 | [IV — Capture](#part-iv--capture) | 19–28: context, photos, captions, voice, identifiers, deferred capture and meetings |
-| [V — AI Processing](#part-v--ai-processing) | 29–36: pipeline, providers, validation, provenance, evidence and cost |
+| [V — AI Processing](#part-v--ai-processing) | 29–36: pipeline, providers, on-device speech, validation, provenance, evidence and cost |
 | [VI — Review & Data Quality](#part-vi--review--data-quality) | 37–43: editing, validation, duplicates, conflicts, lifecycle and audit |
 | [VII — Collaboration](#part-vii--collaboration) | 44–48: bundles, import, merge and conflict resolution |
 | [VIII — Output & Distribution](#part-viii--output--distribution) | 49–54: formats, Excel, photos, PDF, versions and cloud upload |
@@ -39,7 +39,7 @@ evidence. Its project-scoped **Documentation** module turns existing resources a
 into reviewed deliverables following user-defined output requirements (Part XII).
 
 1. Capture photos, documents, audio and notes offline.
-2. Extract information with OCR, vision AI and real-time speech-to-text.
+2. Extract information with OCR, vision AI and real-time on-device speech-to-text (§30.4) that needs no network.
 3. Map it to user-defined spreadsheet or in-app templates.
 4. Require human review and approval.
 5. Export verified data as XLSX, CSV, JSON, PDF or a portable ZIP bundle.
@@ -253,11 +253,15 @@ All these operations are optional; local work remains usable without them.
 | --- | --- | --- |
 | Cloud vision/extraction | Selected compressed images, captions and template fields | Analyse or processing queue |
 | Cloud OCR, when local OCR is insufficient | Selected images | Analyse or processing queue |
-| Cloud STT, when local language support is unavailable | Audio clip | User records voice |
+| Cloud STT re-transcription of a saved recording, when no on-device transcript exists and the user opted into online processing | Saved audio clip | Processing queue or explicit re-transcription (§30.1) |
 | Caption/minutes refinement | Raw text | Refine or enabled automatic refinement |
 | Documentation AI | Selected text/chunks, permitted media derivatives, output requirements and effective prompt (§80.2) | Create documents or explicitly resume run; preparation/review/rendering remain offline |
 | Manual cloud upload | Selected export | Upload (§54) |
 | App/model versions and pricing metadata | No personal data | Manual update check |
+
+Live speech never leaves the device: dictation, the caption recorder, meeting recording and Transcribe run
+whisper.cpp on the device (§30.4), and a platform recogniser is used only where it provably stays on device (§24).
+Speech models ship inside the app or are imported from a local file; the app never downloads a model.
 
 ### 7.2 Guarantees
 
@@ -311,7 +315,7 @@ Use one app-visible root, accessible by file manager or USB:
 │       │   └── _unfiled/                     # captured before a context was set
 │       ├── documents/
 │       ├── documentation/                    # original resources, extraction snapshots and run manifests (§82)
-│       ├── audio/                            # voice notes and meeting recordings
+│       ├── audio/                            # voice notes, meeting recordings and live-transcription audio
 │       ├── meetings/
 │       ├── reference/                        # imported lookup tables
 │       ├── templates/                        # original template workbooks, unmodified
@@ -333,6 +337,9 @@ Use one app-visible root, accessible by file manager or USB:
 5. Project folder strategies: **By context** (default), **By template**, **By capture date**, **Flat**.
 6. Store project-relative file paths so root moves and bundle restores preserve references.
 7. Check storage before each capture session: warn below 500 MB; below 100 MB block new capture and offer export/cleanup.
+8. Speech models are **derived application files** under the app-support directory (`StorageRoot.private`), never
+   under `Tapture/`, in bundles or in exports. They are the one class of file removed outside the purge job, and
+   only through `discardDerivedFile` (stale extracted copies, removal of an imported model; §30.4.2).
 
 ## 9. Database Overview
 
@@ -354,6 +361,8 @@ record_variances      as-recorded vs as-found differences (verification mode)
 photos
 documents
 audio_clips
+transcripts           one live or file transcription: owner, audio, language, model, status, coveredMs, skippedRanges, edit
+transcript_segments   raw segments, written once in insertion order, read in time order; edits sit beside them (§30.4.6)
 captions              record-level and photo-level, raw + refined
 reference_datasets    imported lookup tables
 reference_rows
@@ -1156,14 +1165,23 @@ Bulk application writes independent caption rows for later individual edits.
 
 ## 24. Voice Input
 
-- Microphones appear on record/photo captions, long-text fields and meeting mode.
-- Use on-device STT where platform/language permits, otherwise the configured online service; clearly report
-  unavailability offline.
-- Preserve verbatim raw transcripts beside refinement (§32). Save long meeting/walkthrough recordings in `audio/`
-  for later retranscription.
+- Microphones appear on record/photo captions, free-text fields, the caption recorder, meeting mode and the
+  Transcribe screen (§55).
+- Speech-to-text runs on the device with whisper.cpp (§30.4) and never needs a network. Field dictation uses Whisper
+  when it is ready; otherwise the platform recogniser, only where it is proven on device (Android 12+ with the
+  on-device recogniser, iOS, macOS); otherwise it reports "works offline only with the speech model". The web uses
+  the WebAssembly build of the same engine or reports unavailable (§30.4.8).
+- Three long-form surfaces share one live transcription session (§30.4.5): meeting recording (§28), the Capture
+  caption recorder (§26.1) and the standalone Transcribe screen with its history (§55). Each shows interim text and
+  commits stable segments in order, without duplicates or gaps.
+- Moving the app to the background pauses capture with everything captured so far durable; there is no background
+  recording. Resume is always explicit. Cancel keeps the audio take; nothing captured is destroyed.
+- Save the audio in `audio/`. Finalized segments are appended as they are produced, raw and write-once; edits are
+  saved beside the raw text (§32). Skipped or untranscribed audio can be finished on the device later.
 - Speech-derived values use `source = STT` and require the same review as AI output.
-- English is the initial default; enable Luganda, Swahili, Runyankole, Acholi, French, Arabic and other languages as
-  device/platform or selected service support permits.
+- The voice language comes from Settings (§57); English is the default. Whisper covers English, Swahili, French,
+  Arabic and other languages. Luganda, Runyankole and Acholi are not supported by Whisper, and the app says so
+  plainly; typing stays available, and a configured online service may re-transcribe a saved recording (§7.1).
 
 ## 25. Barcode / QR & Identifier-First Capture
 
@@ -1197,7 +1215,8 @@ Deferred processing is a first-class mode.
 ### 26.1 Saving raw
 
 **Save raw — analyse later** stores photos, captions, transcripts, identifiers, context and automatic fields as
-**Captured (unprocessed)**. No network or AI runs; capture continues immediately.
+**Captured (unprocessed)**. No network or AI runs; capture continues immediately. A transcript produced live on
+the device while recording (§24) is captured evidence, not processing.
 
 ### 26.2 The processing queue
 
@@ -1276,7 +1295,7 @@ requiredness (§13.2).
 
 | Input | Handling |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Voice recording of the meeting | Saved to`audio/`, transcribed; the transcript is preserved verbatim |
+| Voice recording of the meeting | Saved to `audio/` with a live on-device transcript (§24), the meeting's transcript source; raw text is preserved verbatim, edits sit beside it, and older cloud transcript versions remain read-only legacy re-transcriptions |
 | Typed notes | Preserved verbatim as the raw note |
 | Photo of the attendance sheet | OCR to rows of`name / title / organisation / signature present`, each editable |
 | Photos of participants, venue, whiteboards, handouts | Attached, captioned, classified`ATTENDANCE` or `DOCUMENT` |
@@ -1369,7 +1388,7 @@ abstract class AiService {
 }
 ```
 
-Implement on-device ML Kit OCR/platform STT and each configured online provider. Select per project, with per-operation overrides.
+Implement on-device ML Kit OCR, on-device speech (§30.4) and each configured online provider. Select per project, with per-operation overrides. `transcribe` uses the record's on-device transcript when one exists; live speech never passes through `AiService`.
 
 ### 30.2 Keys
 
@@ -1385,7 +1404,7 @@ Implement on-device ML Kit OCR/platform STT and each configured online provider.
 | -------------------------------------- | ------------------------------------------------------------------------------------- |
 | Capture photos, captions, typed values | Works                                                                                 |
 | Sign-in, identity and role checks      | Works from the cached session and the last cached grant (§70.4)                       |
-| Speech-to-text                         | Works where the device supports the language offline; otherwise queued or unavailable |
+| Speech-to-text                         | Works on-device (§30.4); unavailable only where neither a speech model nor an on-device platform recogniser serves the device and language (§24) |
 | Text OCR                               | Works (on-device)                                                                     |
 | Barcode / QR                           | Works                                                                                 |
 | Reference lookup and prefill           | Works                                                                                 |
@@ -1397,6 +1416,918 @@ Implement on-device ML Kit OCR/platform STT and each configured online provider.
 | Review, edit, approve                  | Works                                                                                 |
 | Export XLSX / CSV / JSON / PDF / ZIP   | Works                                                                                 |
 | Cloud upload                           | Unavailable, queued as a pending user action                                          |
+
+### 30.4 On-device speech engine
+
+Live speech-to-text runs entirely on the device. This section is the durable engine contract; §24 states product
+behaviour, §59 the targets and §7.1 the network rule. Plan tasks cite these subsections and inline only the
+signatures they publish.
+
+- **Engine.** whisper.cpp 1.9.4 (MIT), CPU-only, vendored with one recorded patch in the local plugin
+  `frontend/packages/tapture_whisper` behind the flat `tw_*` C ABI v1 (§30.4.1). Native platforms call it through FFI
+  on two long-lived worker isolates; the web runs the same shim compiled to WebAssembly in module Web Workers
+  (§30.4.8).
+- **Layering.** `core/speech`: `LiveTranscriptionService` → `SpeechPipeline` → `SpeechEngineLease` →
+  `SpeechEngineHost` → `SpeechEngine`, plus dictation (`WhisperSttService`, `RoutedSttService`), the model catalogue
+  and store, the device probe, the selector and readiness. `core/audio` owns capture (`AudioCaptureService`,
+  `MicrophoneArbiter`), `core/ai` keeps the unchanged `SttService` contract and adds `PlatformRecogniserPolicy`, and
+  `features/transcripts` owns persistence. Features reach them only through barrels.
+- **No network.** `core/speech` sits outside `core/ai`, `core/cloud` and `core/backend`, so it is network-free by
+  construction (no HTTP there). The only network use is the build-time `frontend/tool/speech_models.dart --fetch`.
+- **Models.** Bundled: `tiny-q5_1`, `base-q5_1` and `silero-v6.2.0`, at exact bytes and SHA-256. Import only, native
+  only: `small-q5_1`. The fetch tool downloads by pinned revision URL and hash into `frontend/assets/speech/`
+  (gitignored), or copies from `--from <dir>`; the release gate row `speech-assets` fails without them. A
+  development build without models reports `modelMissing`: long-form surfaces record only, and dictation uses the
+  on-device platform fallback or reports unavailable. There is no in-app download.
+- **Lifecycle.** `paused` and `hidden` pause capture behind an awaited pause flush (§30.4.5); `detached` stops
+  sessions without waiting; a bare `inactive` never pauses. There is no background recording.
+
+Single owners — a second implementation of any of these is a defect:
+
+| Concern | The one implementation |
+| --- | --- |
+| Resampling | `core/audio/pcm_resampler.dart` |
+| WAV header and repair | `core/audio/wav_header.dart`, `core/audio/wav_take.dart` |
+| Publishing staged takes | `core/audio/staged_take.dart` (`publishStagedTake` over `FileWriter.adoptStaged`, plus `StagedTakeRecovery`) |
+| Native worker protocol | `core/concurrency/worker_isolate.dart` + `worker_port.dart` |
+| Web worker protocol | `frontend/web/whisper/whisper_worker.js` ↔ `core/speech/speech_worker_codec.dart` |
+| Model integrity at load | the C shim (`tw_*_open_*` with expected size + SHA-256, hashing in-shim before parsing) |
+| Model integrity at import and in settings | `verifySpeechModelFile` (size, header, `HashingService.sha256OfFile`) |
+| Transcript store | tables `transcripts` + `transcript_segments`, reached through `TranscriptSink` (§30.4.6). Task 012's `TranscriptStore` caption-row record is kept, untouched |
+| Meeting transcript text | the live `transcripts` row; `TranscriptVersion`s remain only for legacy cloud runs |
+| Decode thresholds | `AppConstants.speechEngine` |
+| Piece-to-text grouping | `core/speech/speech_piece_text.dart` (io and web) |
+| Model catalogue | `core/speech/speech_model_catalogue.dart`, which also generates `assets/speech/manifest.json` |
+
+#### 30.4.1 C ABI v1
+
+**Vendored source.** Tarball `whisper.cpp-v1.9.4.tar.gz`, sha256
+`57e280cee375ab02425b806ad5146b99f6eb9357e3c2b31357c8a6af2e2e44ae`, commit
+`927cfce34f31707e17f2bff35c349632fb9e2c3a`. `frontend/tool/whisper_vendor.dart --from <tarball>` verifies the hash,
+extracts only the KEEP list, applies `third_party/patches/*.patch` in order, writes `VENDOR.json`
+(`{tag, commit, tarballSha256, patches:[{name, sha256, files:{path:{upstreamSha256, patchedSha256}}}], files:{path:{bytes, sha256}}}`)
+and regenerates the Darwin forwarders. `--check` needs no network; it reports every missing, extra or drifted file,
+every patch whose recorded hashes no longer match, every `whisper_sources.cmake` entry that is not vendored and
+every stale forwarder as `path:line: message`, and exits 1 on any.
+
+- **KEEP:** `LICENSE`, `AUTHORS`, `include/whisper.h`, `src/whisper.cpp`, `src/whisper-arch.h`;
+  `ggml/include/{ggml.h,ggml-alloc.h,ggml-backend.h,ggml-cpp.h,ggml-cpu.h,ggml-opt.h,gguf.h}`;
+  `ggml/src/{ggml.c,ggml.cpp,ggml-alloc.c,ggml-backend.cpp,ggml-backend-meta.cpp,ggml-backend-dl.cpp,ggml-backend-dl.h,ggml-backend-reg.cpp,ggml-backend-impl.h,ggml-common.h,ggml-feats.h,ggml-impl.h,ggml-opt.cpp,ggml-quants.c,ggml-quants.h,ggml-threading.cpp,ggml-threading.h,gguf.cpp}`;
+  `ggml/src/ggml-cpu/{ggml-cpu.c,ggml-cpu.cpp,ggml-cpu-impl.h,common.h,arch-fallback.h,binary-ops.*,unary-ops.*,hbm.*,iqp.*,ops.*,quants.*,repack.*,simd-gemm.h,simd-mappings.h,traits.*,vec.*}`;
+  `ggml/src/ggml-cpu/amx/*`, `ggml/src/ggml-cpu/arch/{arm,x86}/{quants.c,repack.cpp}`,
+  `ggml/src/ggml-cpu/arch/wasm/quants.c`; loader fixtures (not usable weights) `samples/jfk.wav`,
+  `models/for-tests-ggml-tiny.bin`, `models/for-tests-silero-v6.2.0-ggml.bin`.
+- **DROP:** every upstream CMake, `cmake/`, Makefile and xcframework script; non-CPU backends; kleidiai, llamafile
+  and spacemit; other architectures and `cpu-feats.cpp`; parakeet; `src/{coreml,openvino,vitisai}`; examples, tests,
+  bindings, scripts, grammars and `*.md`.
+- **Patch `0001-sched-abort-callback.patch`**, the only vendored modification: the `sched` overload of
+  `ggml_graph_compute_helper` (`src/whisper.cpp:194`) gains `ggml_abort_callback abort_callback, void *
+  abort_callback_data` and sets them on each scheduler backend through the `ggml_backend_set_abort_callback` proc
+  address, as the first overload does (`:172-192`). The four call sites in `whisper_encode_internal`
+  (`:2440,2480,2496`) and `whisper_decode_internal` (`:2993`) pass their abort callback through, so the CPU backend
+  checks the abort once per graph node (`ggml-cpu.c:3150`) rather than once per encoder pass. The VAD call (`:5269`)
+  is unchanged.
+
+**Header** `src/tapture_whisper.h`, the only public header. `TW_API` is `__declspec(dllexport)` on Windows when
+`TW_BUILD` is defined and `__declspec(dllimport)` otherwise, `EMSCRIPTEN_KEEPALIVE` plus default visibility on WASM,
+and default visibility elsewhere; everything vendored is built with hidden visibility. Defines: `TW_ABI_VERSION 1`,
+`TW_SAMPLE_RATE 16000`, `TW_MAX_SAMPLES (16000*600)`, `TW_MAX_THREADS 8`, `TW_LANGUAGE_CAPACITY 8`,
+`TW_LOG_TEXT_CAPACITY 504`, `TW_LOG_RING_CAPACITY 256`, `TW_SHA256_BYTES 32`.
+
+- **`tw_status`:** 0 OK, 1 INVALID_ARGUMENT (includes an empty or `auto` language), 2 ABI_MISMATCH,
+  3 UNSUPPORTED_CPU, 4 FILE_OPEN, 5 MODEL_INVALID (magic or header), 6 MODEL_LOAD, 7 OUT_OF_MEMORY, 8 ABORTED,
+  9 INFERENCE, 10 POISONED, 11 BUSY, 12 AUDIO_TOO_LONG, 13 ENGINE_NOT_BUILT, 14 INTERNAL, 15 MODEL_MISMATCH (size or
+  SHA-256 differs from the expectation).
+- **Enums:** `tw_struct_id` 1–10: CONTEXT_OPTIONS, TRANSCRIBE_OPTIONS, CPU_INFO, MEMORY_INFO, MODEL_FACTS, SEGMENT,
+  TOKEN, SPAN, LOG_ENTRY, VAD_OPTIONS. `tw_object_kind`: CONTEXT, RESULT, VAD, SPANS, CELL, HASHER. `tw_arch`:
+  UNKNOWN, X86_64, ARM64, ARM32, WASM32, X86. `tw_log_level`: 1..4. `tw_strategy`: GREEDY, BEAM.
+- **CPU feature bits:** b0 SSE3, b1 SSSE3, b2 SSE42, b3 AVX, b4 AVX2, b5 FMA, b6 F16C, b7 BMI2, b8 AVX512F,
+  b9 AVX_VNNI, b16 NEON, b17 ARM_FMA, b18 FP16_VA, b19 DOTPROD, b20 I8MM, b21 SVE, b22 SME, b32 WASM_SIMD.
+
+**POD structs.** The layout is identical on 64-bit and wasm32. Each struct is `static_assert`ed and exposed as
+`TW_SIZEOF_*`; layout tests parse `TW_SIZEOF_*` from the header rather than copying sizes.
+
+| struct | size | fields |
+| --- | --- | --- |
+| `tw_context_options` | 16 | `u32 struct_size; i32 n_threads; u8 use_gpu(0); u8 flash_attn(1); u8 reserved[6]` |
+| `tw_transcribe_options` | 84 | `u32 struct_size; i32 strategy, n_threads, best_of(5), beam_size(5), max_tokens(0), audio_ctx(0), n_max_text_ctx(16384); f32 temperature(0), temperature_inc(0.2), entropy_thold(2.4), logprob_thold(-1), no_speech_thold(0.6), length_penalty(-1), max_initial_ts(1), token_thold_pt(.01), token_thold_ptsum(.01); u8 translate(0), no_context(1), single_segment(0), no_timestamps(0), token_timestamps(0), suppress_blank(1), suppress_nst(1), carry_initial_prompt(0); char language[8]` |
+| `tw_cpu_info` | 40 | `u32 struct_size; i32 n_logical, n_performance; u32 arch; u64 runtime_features, required_features; u8 supported, engine_built, reserved[6]` |
+| `tw_memory_info` | 32 | `u32 struct_size, reserved; i64 total_bytes, available_bytes, process_limit_bytes` (−1 unknown) |
+| `tw_model_facts` | 56 | `u32 struct_size; i32 n_vocab, n_audio_ctx, n_audio_state, n_audio_head, n_audio_layer, n_text_ctx, n_text_state, n_text_head, n_text_layer, n_mels, ftype, model_type, multilingual` |
+| `tw_segment` | 48 | `i64 t0_ms, t1_ms; i32 text_offset, text_length, token_offset, token_count; f32 no_speech_prob, avg_logprob, mean_p, min_p` |
+| `tw_token` | 32 | `i32 id, bytes_offset, bytes_length; f32 p; i64 t0_ms, t1_ms` |
+| `tw_span` | 16 | `i64 t0_ms, t1_ms` |
+| `tw_log_entry` | 512 | `i32 level, length; char text[504]` |
+| `tw_vad_options` | 28 | `u32 struct_size; f32 threshold(.5); i32 min_speech_ms(250), min_silence_ms(100); f32 max_speech_s(FLT_MAX); i32 speech_pad_ms(30); f32 samples_overlap_s(.1)` |
+
+`avg_logprob` is the mean of `plog` over all tokens of the segment, including timestamp tokens (whisper's
+`sum_logprobs/result_len`); `mean_p` and `min_p` are taken over text tokens.
+
+```c
+/* library — any thread; the first two never initialise ggml */
+int32_t tw_abi_version(void);  int32_t tw_struct_size(int32_t id);  const char* tw_version(void);  const char* tw_system_info(void);
+int32_t tw_cpu_info_get(tw_cpu_info*);  int32_t tw_memory_info_get(tw_memory_info*);
+void tw_debug_set_cpu_override(int32_t supported);       /* tests */
+void tw_debug_abort_after_checks(int32_t n);              /* tests: abort after n abort checks; 0 = off */
+int32_t tw_live_objects(int32_t kind);  int32_t tw_lang_id(const char* code);
+/* SHA-256 (in-house tw_sha256.c, NIST-vector tested) */
+int32_t tw_sha256(const void* data, size_t n, uint8_t out[32]);
+tw_hasher* tw_sha256_new(void);  void tw_sha256_update(tw_hasher*, const void*, size_t);  int32_t tw_sha256_finish(tw_hasher*, uint8_t out[32]); /* frees */
+/* logging */
+void tw_log_set_min_level(int32_t);  int32_t tw_log_drain(tw_log_entry* out, int32_t cap);  uint32_t tw_log_dropped(void);  int32_t tw_set_crash_file(const char* path_utf8);
+/* reference-counted atomic abort cells; shared memory on WASM mt */
+int32_t* tw_cell_new(void);  void tw_cell_retain(int32_t*);  void tw_cell_release(int32_t*);  void tw_cell_store(int32_t*, int32_t);  int32_t tw_cell_load(const int32_t*);
+/* whisper context — one thread at a time per handle */
+void tw_context_options_init(tw_context_options*);
+int32_t tw_context_open_file(const char* path_utf8, int64_t expected_bytes, const uint8_t* expected_sha256 /*required*/, const tw_context_options*, tw_context** out);
+int32_t tw_context_open_buffer(const void* data, size_t size, const uint8_t* expected_sha256 /*nullable: test fixtures*/, const tw_context_options*, tw_context** out);
+int32_t tw_context_open_js(int32_t file_id, int64_t expected_bytes, const uint8_t* expected_sha256, const tw_context_options*, tw_context** out); /* WASM only */
+void tw_context_close(tw_context*);  int32_t tw_context_facts(tw_context*, tw_model_facts*);
+float* tw_context_pcm_buffer(tw_context*, int32_t n_samples);  int32_t tw_last_whisper_code(const tw_context*);
+void tw_transcribe_options_init(tw_transcribe_options*);
+int32_t tw_transcribe(tw_context*, const float* pcm, int32_t n, const tw_transcribe_options*, const char* initial_prompt_utf8,
+                      const int32_t* prompt_tokens, int32_t n_prompt_tokens, const int32_t* abort_cell, int32_t job_id, tw_result** out);
+void tw_result_free(tw_result*);  const tw_segment* tw_result_segments(const tw_result*, int32_t* count);
+const tw_token* tw_result_tokens(const tw_result*, int32_t* count);  const uint8_t* tw_result_text(const tw_result*, int32_t* length);
+const char* tw_result_language(const tw_result*);  int64_t tw_result_wall_ms(const tw_result*);
+/* Silero VAD */
+int32_t tw_vad_open_file(const char*, int64_t expected_bytes, const uint8_t* expected_sha256, const tw_context_options*, tw_vad**);
+int32_t tw_vad_open_buffer(const void*, size_t, const uint8_t* expected_sha256, const tw_context_options*, tw_vad**);
+int32_t tw_vad_open_js(int32_t file_id, int64_t expected_bytes, const uint8_t* expected_sha256, const tw_context_options*, tw_vad**);
+void tw_vad_close(tw_vad*);  int32_t tw_vad_window_samples(const tw_vad*);  float* tw_vad_pcm_buffer(tw_vad*, int32_t n);
+int32_t tw_vad_feed(tw_vad*, const float* pcm, int32_t n, int32_t* out_n_probs);  const float* tw_vad_probs(const tw_vad*, int32_t* count);
+int32_t tw_vad_pending_samples(const tw_vad*);  void tw_vad_reset(tw_vad*);  void tw_vad_options_init(tw_vad_options*);
+int32_t tw_vad_segments(tw_vad*, const float* pcm, int32_t n, const tw_vad_options*, tw_spans** out);
+const tw_span* tw_spans_data(const tw_spans*, int32_t* count);  void tw_spans_free(tw_spans*);
+```
+
+**Semantics.**
+
+- **Init.** `std::call_once` installs `whisper_log_set(tw_log_sink)` and `ggml_set_abort_callback(tw_on_ggml_abort)`;
+  on MSVC it also calls `_set_abort_behavior(0, …)`.
+- **Verified open (single handle).** `open_file` returns a status at the first failing step: (1) open once — Windows
+  `_wfsopen(utf16, L"rb", _SH_DENYWR)`, POSIX `open(O_RDONLY)` + `fstat`; (2) size must equal `expected_bytes`, else
+  `MODEL_MISMATCH`; (3) stream the whole file through SHA-256 in 64 KiB reads and compare, else `MODEL_MISMATCH`;
+  (4) rewind and check the `6C 6D 67 67` magic, else `MODEL_INVALID`; (5) parse through a `whisper_model_loader`
+  over the **same** handle. Unverified bytes are never parsed. `open_js` does the same through an `EM_JS` import
+  `tw_js_read(file_id, offset, dst, n)` (`offset` an i64 under WASM_BIGINT), served by the worker from an OPFS
+  `FileSystemSyncAccessHandle` or a fetched `ArrayBuffer`, so the model is never copied whole into the WASM heap.
+  `open_buffer` hashes only when a sha is given. Residual POSIX risk: the file can be modified in place between hash
+  and parse; bundled files sit in app-private or install directories, and this is documented. No path is ever
+  logged. Context params: `use_gpu=false`, `flash_attn` from the options, `dtw_token_timestamps=false`.
+- **Explicit state.** The shim opens with `whisper_init_with_params_no_state`, then `whisper_init_state`; every
+  transcription goes through `whisper_full_with_state`. On rc −7 the state has already been freed, so the shim nulls
+  it and returns `POISONED` until close. `whisper_get_timings` is never called; the only timing reported is `wall_ms`.
+- **Transcribe validation:** `1 ≤ n ≤ TW_MAX_SAMPLES`; `best_of` and `beam_size` in 1..8;
+  `audio_ctx ∈ {0} ∪ [64, n_audio_ctx]`; language a known code, **never empty or `auto`**, so whisper's separate,
+  non-abortable language-detection pass is unreachable; prompt ids `< n_vocab`; English forced on `.en` models.
+- **Fixed overrides:** every `print_*` false, `debug_mode=false`, `tdrz=false`, `vad=false`,
+  `detect_language=false`; `max_len=0`, `split_on_word=false`, no grammar; `encoder_begin_callback` and
+  `progress_callback` unset; `n_threads` clamped to `[1, min(hw, 8)]`, and 1 on WASM st.
+- **Copy-out:** segment text goes into one blob; text tokens (`id < eot`) carry piece bytes and `p`; times are
+  converted from centiseconds ×10 to milliseconds.
+- **Abort rule.** (1) The shim's `abort_callback` returns true iff `abort_cell && job_id > 0 &&
+  atomic_load(abort_cell) >= job_id` (or the debug counter fires); patch 0001 makes the CPU backend consult it per
+  graph node. (2) **After `whisper_full_with_state` returns, whatever its code**, the shim re-evaluates the
+  condition; if it holds, it discards any partial result and returns `ABORTED`, so an aborted job is never mistaken
+  for an empty success. (3) After `ABORTED` the state stays reusable; kv caches are cleared at the next run.
+  (4) Latency is bounded by one graph node plus the non-abortable mel computation of at most 30 s of audio. There is
+  no progress cell in ABI v1.
+- **Cells.** `tw_cell_new` returns refcount 1; `tw_cell_retain` and `tw_cell_release` adjust it, and the cell is
+  freed at 0. A worker lane retains the cell it borrows and releases it after its last native call has returned.
+  `tw_live_objects(CELL)` counts cells not yet freed.
+- **Concurrency.** An atomic `busy` flag makes a concurrent call on the same handle return `BUSY`; a close during a
+  call is deferred; every free, close or release function is NULL-safe with the shape `void f(T*)`.
+- **VAD streaming.** `tw_vad_feed` runs `whisper_vad_detect_speech_no_reset` only on whole multiples of `n_window`,
+  keeps the remainder pending and never zero-pads mid-stream. `tw_vad_segments` resets the state first; its spans are
+  converted from centiseconds ×10 to milliseconds.
+- **Logging and privacy.** The sink drops DEBUG and CONT and anything below `min_level` (default WARN). Kept lines go
+  into a mutex-guarded 256-entry ring with a drop counter; the shim's own lines are prefixed `tapture_whisper:`. A
+  crash file, when set, receives `"<unix_ms>\t<msg>\n"` before ggml aborts.
+- **Probes.** CPU features: x86 CPUID/XGETBV (with `XCR0&6`), arm64 Linux/Android `getauxval`, Apple
+  `sysctlbyname`, wasm SIMD. Performance cores: Windows `EfficiencyClass`, Linux `cpuinfo_max_freq`, Apple
+  `perflevel0`. Memory: Windows `GlobalMemoryStatusEx`, Linux `/proc/meminfo`, macOS `hw.memsize` +
+  `host_statistics64`, iOS `os_proc_available_memory`, wasm −1.
+- **Exceptions.** `std::bad_alloc` maps to `OUT_OF_MEMORY`; any other exception maps to `INTERNAL`.
+- **Stub build** (`TW_ENGINE=0`): ABI, struct, cell, SHA-256, log, CPU and memory functions work and
+  `engine_built=0`; every open returns `ENGINE_NOT_BUILT`.
+
+**Builds.** One `src/CMakeLists.txt` serves NDK, MSVC and Emscripten, with no FetchContent, `file(DOWNLOAD)`,
+`install()`, git probes, `GGML_NATIVE`, BLAS or Metal. `TW_OPENMP` is ON only for Android (static OpenMP).
+`TW_BUILD_SMOKE` builds `tw_smoke --model <bin> --sha256 <hex> --wav <16k s16 mono> --expect "<phrase>"
+[--abort-after-checks N]`, which exits non-zero on a missing phrase, or with `--abort-after-checks` unless the call
+returns `ABORTED` and an immediate retry on the same context succeeds.
+
+| Target | Engine |
+| --- | --- |
+| Windows x64 | `/arch:AVX2` (+ FMA, F16C, BMI2; required mask 0xFF); Dart preflight `IsProcessorFeaturePresent(40)` before `DynamicLibrary.open` |
+| Linux x64 | `-msse4.2 -mavx -mavx2 -mfma -mf16c -mbmi2`; preflight from `/proc/cpuinfo` |
+| Android arm64-v8a | armv8-a baseline, 16 KB page alignment, `c++_static`, OpenMP static |
+| Android x86_64 | `-msse4.2 -mpopcnt` (emulator) |
+| Linux arm64 | armv8-a |
+| iOS / macOS | default + `GGML_USE_ACCELERATE` (vDSP only); generated forwarders; CocoaPods and SwiftPM |
+| wasm32 | `-msimd128 -fwasm-exceptions`; mt adds `-pthread` (§30.4.8) |
+| Android armeabi-v7a, Windows ARM64, x86 | stub: `engineNotBuilt` |
+
+`frontend/tool/check_native_library.dart` rejects, listing every violation, each Android `PT_LOAD p_align < 16384`,
+each dynamic export not matching `^tw_` and each `DT_NEEDED` outside `{libc.so, libm.so, libdl.so, liblog.so}`.
+
+**Dart API.** `package:tapture_whisper/tapture_whisper.dart` exposes no `dart:ffi` type and one public type per
+file. `WhisperLibrary.open` returns `WhisperLibraryLoaded` or `WhisperLibraryUnavailable` with a
+`WhisperUnavailableReason` (`unsupportedPlatform`, `libraryMissing`, `abiMismatch`, `unsupportedCpu`,
+`engineNotBuilt`). The x86_64 preflight runs before `DynamicLibrary.open`; after it, the ABI, all ten struct sizes,
+`engine_built` and `supported` are checked. Every native-handle owner attaches a `NativeFinalizer` with
+`externalSize` and `detach`, and `close()` detaches before the native close; a `WhisperCell` finalizer only
+releases. Only `core/speech/speech_native_api_io.dart` imports the package (FE-STR-11), and its identifier word is
+"piece", never "token".
+
+#### 30.4.2 Engine contract
+
+`frontend/lib/core/speech/`; the barrel `speech.dart` exports the public types and never `_io`, `_web`, `_stub` or
+`pipeline/` files. Each file holds one public type named after the file.
+
+```dart
+abstract interface class SpeechEngine {
+  factory SpeechEngine.platform({@visibleForTesting String? libraryPath,
+      @visibleForTesting SpeechNativeApi Function(String? libraryPath)? openApi,
+      @visibleForTesting SpeechAbortCell Function(String? libraryPath)? openAbortCell});   // conditional import io|web|stub
+  const factory SpeechEngine.unavailable();
+  Future<Result<SpeechRuntimeFacts>> probe();
+  Future<Result<SpeechLoadReport>> load(SpeechModelSource model, {required int threads, CancellationToken? cancel});
+  Future<Result<SpeechVadHandle>> openVad(SpeechModelSource vad);                     // one per lease
+  Future<Result<SpeechDecodeResult>> decode(SpeechDecodeRequest request, {required int leaseId, CancellationToken? cancel});
+  Future<Result<SpeechVadResult>> detectSpeech(SpeechVadHandle vad, Float32List samples, {bool resetState = false, CancellationToken? cancel});
+  Future<void> closeVad(SpeechVadHandle vad);
+  void abortLease(int leaseId);                       // pending jobs of the lease removed; its in-flight job aborted
+  Future<Result<void>> unload(); Future<void> dispose();
+  SpeechLoadReport? get loaded; Stream<SpeechEngineState> get states; @visibleForTesting int get debugLiveHandles;
+}
+final Provider<SpeechEngine> speechEngineProvider;      // default SpeechEngine.unavailable()
+final class SpeechVadHandle { const SpeechVadHandle({required int id, required int frameSamples}); }
+enum SpeechDecodeKind { interim, committed }
+final class SpeechDecodeRequest { const SpeechDecodeRequest({required Float32List samples /*16 kHz mono, 1..maxDecodeSamples*/,
+  required String language /*whisper code; never '' or 'auto'*/, required SpeechDecodeKind kind, int offsetSamples = 0, String prompt = '',
+  required SpeechDecodeProfile profile, bool pieceTimings = false}); }
+final class SpeechDecodeProfile { const SpeechDecodeProfile({required int threads, int bestOf = 1, int beamSize = 0, double temperatureStep = 0,
+  double noSpeechThreshold, double logprobThreshold, double entropyThreshold, bool singleSegment = false, bool timestamps = true,
+  int maxPieces = 0, int audioContextPad = 0, bool suppressBlank = true, bool suppressNonSpeech = true});
+  int audioContextFor(int sampleCount);  // 0 when pad == 0, else min(maxAudioContext, roundUp(ceil(sec*encoderFramesPerSecond)+pad, 64))
+  SpeechDecodeProfile copyWith({...}); }
+final class SpeechDecodeResult { const SpeechDecodeResult({required List<SpeechSegment> segments, required String language,
+  required int offsetSamples, required int sampleCount /*original, before padding*/, required Duration elapsed}); double get realTimeFactor; }
+final class SpeechSegment { /* startSample, endSample: absolute = offset + ms*16, clamped to [offset, offset+originalCount); text raw;
+  noSpeechProbability, averageLogProbability, confidence (mean p); pieces */ }
+final class SpeechPiece { /* startSample, endSample, text (valid UTF-8), probability */ }
+final class SpeechVadResult { const SpeechVadResult({required Float32List probabilities, required int frameSamples}); }
+final class SpeechLoadReport { /* model entry, shape, threads, loadTime (includes in-shim verification) */ }
+final class SpeechModelShape { /* nVocab, nAudioCtx, nAudioState, nAudioLayer, nTextLayer, nMels, ftype, multilingual */ }
+enum SpeechUnavailableReason { platform, library, abi, cpu, engineNotBuilt, simd }
+final class SpeechRuntimeFacts { /* available, unavailableReason, engineVersion, abiVersion, cpu features, is64Bit, total/available/processLimit
+  memory, logicalCores, performanceCores, webThreads, webSimd */ }
+enum SpeechCpuFeature { avx, avx2, fma, f16c, neon, armFma, dotProd, fp16, wasmSimd }
+enum SpeechEngineState { idle, starting, ready, loading, loaded, busy, unloading, disposed, failed }
+
+// Transcript value types shared by the session, the sink and features
+final class TranscriptSegment { /* id (1-based insertion seq), utteranceId, startSample, endSample, text, languageTag, modelId,
+  noSpeechProbability, averageLogProbability, confidence, words; start/end Durations; toJson/fromJson */ }
+final class TranscriptWord { /* text, startSample, endSample, probability */ }
+final class FinishedUtterance { const FinishedUtterance({required int utteranceId, required int fromSample, required int toSample,
+  required List<TranscriptSegment> segments, bool skipped = false}); }       // skipped: range not transcribed, recorded as a gap
+final class TranscriptOutcome { const TranscriptOutcome({required bool complete, required Duration captured, required int coveredToSample,
+  required String languageTag, String? modelId}); }
+abstract interface class TranscriptSink {
+  Future<Result<void>> appendUtterance(FinishedUtterance utterance);   // durable before success
+  Future<Result<void>> finish(TranscriptOutcome outcome);              // complete or interrupted; durable before success
+}
+abstract final class SpeechText { static String join(Iterable<String> texts); }
+abstract final class SpeechPieceText { static List<SpeechPiece> group(List<({List<int> bytes, int startSample, int endSample, double probability})> raw); }
+String? whisperLanguageFor(String tag);   // speech_languages.dart: 'en-UG'→'en', 'lg'→null
+```
+
+**Fakes and the contract suite.** `FakeSpeechEngine` is driven by a `SpokenScript` of `(word, startSample,
+endSample)` with adversarial modes: `truncateEdgeWord`, `completeEdgeWord`, `dropEdgeWord`, `timeJitter: ±300 ms`,
+`echoPrompt: p`, `loopAtSpeechRate`, `hallucinate` and a reported (never slept) `computeTime`. Every engine passes
+`runSpeechEngineContract`: results in order; interim supersession per lease; committed preemption; `abortLease(A)`
+never cancels lease B's jobs; two leases' interleaved VAD give each the probabilities of a solo run within 1e-4;
+decode before load gives `ProviderFailure(unavailable)`; decode after dispose gives `ProviderFailure`;
+`debugLiveHandles` returns to baseline; a partial VAD frame and a `''` or `'auto'` language give `ValidationFailure`.
+
+**Native engine** (`speech_engine_io.dart`). Two `WorkerIsolate` lanes, spawned lazily on the first load:
+`speech-decode` (one whisper context) and `speech-vad` (Silero, 1 thread, one `tw_vad` per lease, so LSTM state
+never crosses sessions). `speech_native_api_io.dart` is the only importer of `package:tapture_whisper`:
+
+```dart
+abstract interface class SpeechNativeApi {   // worker side; throws only Failures
+  SpeechRuntimeFacts facts();
+  int loadModel(String path, {required int threads, required int bytes, required String sha256});   // in-shim verified open
+  SpeechModelShape shape(int model);
+  int loadVad(String path, {required int bytes, required String sha256}); int vadWindow(int vad);
+  SpeechDecodeResult decode(int model, SpeechDecodeRequest request, {required int abortAddress, required int jobId});
+  Float32List detectSpeech(int vad, Float32List samples, {required bool reset});
+  void release(int handle); List<({int level, String line})> drainLog(int max); int get droppedLogLines; int get liveHandles; void close();
+}
+abstract interface class SpeechAbortCell { int get address; void abortThrough(int jobId); void close(); }   // main side; close = release
+```
+
+- **Abort and cell lifetime.** The main isolate creates the cell (refcount 1); the decode lane `borrowCell`s it
+  (retain) and releases it in `onClose`, after its last `transcribe` has returned. **Job ids are assigned at
+  dispatch**, monotonic per lane from 1; cancelling a pending request only dequeues it, and with at most one job in
+  flight `abortThrough(J)` under the `≥` rule affects only job J. `abortLease(id)`, interim supersession and a
+  request's `CancellationToken` act only on that lease's jobs. `ABORTED` maps to `CancelledFailure()`. `dispose()`:
+  `abortThrough(int32 max)`, `close()` both lanes, **await `exited`**, then release the main reference.
+- **Decode queue.** One job in flight per lane. Per lease, a new interim replaces that lease's pending interim. A
+  committed request preempts an in-flight interim of **any** lease; interims are disposable. Committed requests are
+  FIFO across leases and never dropped.
+- **Samples.** Sent as `TransferableTypedData`; `1 ≤ n ≤ maxDecodeSamples`, otherwise `ValidationFailure`. Input is
+  zero-padded to `minDecodeSamples`, and results are **clamped to the original count**: pieces starting at or beyond
+  the original end are dropped. Pieces are grouped by `SpeechPieceText.group`; text is decoded with
+  `utf8.decode(allowMalformed: true)`.
+- **Load.** The lane prechecks size and the 48-byte header (`SpeechModelHeader`) → `CorruptionFailure` or
+  `ProviderFailure(speechModelMissing)`; `loadModel` runs and the shim hashes before parsing; `shape` must equal the
+  catalogue, otherwise the model is closed and the call fails with `CorruptionFailure`. A load cannot be interrupted;
+  a cancelled load waits, frees and returns `CancelledFailure`.
+- **Logs and probe.** Shim minimum level WARN; after each command a lane emits at most `logLinesPerDrain` lines of at
+  most `logLineChars`, plus a suppressed-count line, logged on the main isolate as `warn` or `error` with tag
+  `'speech'`. No transcript, prompt or audio text is ever logged. `probe()` is a one-shot `runIsolate` reading CPU
+  and memory facts; it never starts lanes. The crash file `<private>/speech/crash.log` is diagnostic only; its line
+  count is logged at start.
+
+```text
+idle → starting → ready → loading → loaded ⇄ busy
+loading --fail--> ready
+loaded --unload--> unloading → ready
+any --lane exit--> failed --next load--> starting   (≤ maxWorkerRestarts per host session)
+any --dispose--> disposed
+```
+
+An unexpected lane exit fails pending requests with `speechEngineStopped()`. The web engine is in §30.4.8.
+
+**Device probe, quality and selection.**
+
+```dart
+abstract interface class SpeechDeviceProbe { factory SpeechDeviceProbe.platform({required SpeechEngine engine, required PowerSource power});
+  factory SpeechDeviceProbe.fake(SpeechDeviceProfile profile); Future<SpeechDeviceProfile> read(); }
+final class SpeechDeviceProfile { /* runtime, platform, isWeb, isMobile, charging, batteryPercent, batterySaver */ }
+enum SpeechQuality { auto, fast, accurate; static SpeechQuality parse(String wire); }
+final Provider<SpeechQuality> speechQualityProvider;      // default auto; main overrides from settings (task 126)
+final Provider<String> speechLanguageProvider;            // default AppConstants.defaultLanguage; main overrides from voiceLanguageProvider (task 120 only)
+enum SpeechVerdict { ready, engineMissing, unsupportedDevice, modelMissing, lowMemory, languageUnsupported }
+final class SpeechSelection { /* model, vad, threads, language, interim profile, committed profile, reason */ }
+final class SpeechAvailability { /* verdict, selection?, failure?, reason */ }
+abstract final class SpeechModelSelector {
+  static SpeechAvailability choose({required SpeechDeviceProfile device, required SpeechQuality quality, required List<SpeechModelStatus> inventory,
+      required String languageTag, Set<String> suspectModelIds = const <String>{}});
+  static bool fits(SpeechModelEntry entry, SpeechDeviceProfile device);
+}
+```
+
+Selector rules, in order; every number is an `AppConstants.speechEngine` field (§30.4.3):
+
+1. **engineMissing:** `!available` with reason `platform`, `library` or `abi`, or the ABI is not 1.
+2. **unsupportedDevice:** `!available` with reason `cpu`, `engineNotBuilt` or `simd`; io and `!is64Bit`;
+   `totalMemory < minTotalMemoryBytes` (1.5 GiB) or web `deviceMemory < 2`; or `logicalCores < 2`.
+3. **languageUnsupported:** `whisperLanguageFor(tag) == null`.
+4. **modelMissing:** VAD or tiny is absent or damaged.
+5. **Tier.** `powerOk = charging || (!saver && (percent == null || percent ≥ 30))`. **fast:** tiny. **auto:**
+   desktop base when memory ≥ 3 GiB (unknown counts as yes), performance cores (or logical/2) ≥ 4 and powerOk,
+   otherwise tiny; web base only with mt threads and `deviceMemory ≥ 4`, otherwise tiny; mobile **tiny** until task
+   131 records device evidence. **accurate:** desktop small when imported, memory ≥ 6 GiB, cores ≥ 6 and powerOk,
+   otherwise base; mobile base when it fits and powerOk, otherwise tiny; web base under the auto-web conditions.
+6. **Fit.** Step down while `available != null && memoryEstimate × 125/100 > available`, skipping suspect models; if
+   tiny still does not fit, the verdict is **lowMemory**.
+7. **Threads.** Desktop `clamp(logical ~/ 2, 2, 8)`; mobile `clamp(performance ?? (logical ≥ 8 ? 4 : logical ~/ 2),
+   2, 4)`; `!powerOk || saver` → `min(t, 2)`; web mt `clamp(hc − 1, 1, 4)`; web st 1.
+8. **Profiles.** Interim: `bestOf 1`, `temperatureStep 0`, `singleSegment true`, `timestamps false`,
+   `maxPieces 96`, `audioContextPad 64`. Committed: `bestOf` 2 on desktop and 1 elsewhere, `temperatureStep 0.2`,
+   `timestamps true`, `audioContextPad 0`; mobile **dictation** finals for utterances under 10 s use
+   `mobileDictationCommittedPad` (256), which task 131's WER gate can revert. Thresholds 0.6 / −1.0 / 2.4.
+   `no_context = 1` always, and never `n_max_text_ctx = 0`.
+
+**Host, lease and readiness.**
+
+```dart
+final class SpeechEngineHost {
+  SpeechEngineHost({required SpeechEngine engine, required SpeechModelStore store, required SpeechDeviceProbe probe,
+    required SpeechQuality Function() quality, required Stream<AppLifecycleState> lifecycle, required Stream<void> memoryPressure,
+    BlobStore? attempts, Clock clock = const SystemClock(), Future<void> Function(Duration)? delay, Logger? logger});
+  Future<SpeechAvailability> availability({required String languageTag});   // never loads
+  Future<Result<SpeechEngineLease>> acquire({required String languageTag, CancellationToken? cancel});
+  Future<void> warmUp({required String languageTag}); int get activeLeases; Stream<void> get changes; Future<void> dispose();
+}
+abstract interface class SpeechEngineLease {
+  factory SpeechEngineLease.over(SpeechEngine engine, SpeechSelection selection, {required int leaseId, required SpeechVadHandle vad});
+  SpeechSelection get selection; String get modelId; int get vadFrameSamples;
+  Future<Result<SpeechDecodeResult>> decode(SpeechDecodeRequest request, {CancellationToken? cancel});
+  Future<Result<SpeechVadResult>> detectSpeech(Float32List samples, {bool resetState = false, CancellationToken? cancel});
+  void abort();               // this lease only
+  Future<void> release();     // idempotent; closes the lease's VAD handle
+}
+final class SpeechReadiness { /* verdict, selection?, reason?; static notReady; bool get ready */ }
+final class SpeechReadinessNotifier extends Notifier<SpeechReadiness> { /* own file speech_readiness_notifier.dart */ }
+final NotifierProvider<SpeechReadinessNotifier, SpeechReadiness> speechReadinessProvider;
+```
+
+- **Readiness.** `SpeechReadinessNotifier.build()` returns `notReady` with no `late final`, then refreshes
+  asynchronously from `host.availability(languageTag: ref.watch(speechLanguageProvider))` and on `host.changes`.
+- **Lease semantics.** One load serves many leases, and the model is never swapped while a lease is held. Each lease
+  owns its own VAD handle; `abort()` and supersession reach only that lease's jobs; `release()` is idempotent.
+- **Idle release.** After the last lease is released the host waits through the injected `delay`, then unloads:
+  `idleRelease` (2 min) on mobile on battery, `idleReleaseExtended` (10 min) on desktop or while charging. With no
+  lease held, `paused`, `hidden` or memory pressure release at once; `inactive` is ignored.
+- **Load fallback.** `ProviderFailure` on base → retry once with tiny; tiny fails → `engineMissing` for the host
+  session. `CorruptionFailure` on an Android extracted copy → `store.reextract(entry)` once, then retry; otherwise, or
+  on a second failure → `store.markDamaged` and `speechModelDamaged`.
+- **Crash-loop marker** (single owner). Before a load, write `BlobStore.platform('speech')['load-attempt'] =
+  {modelId, appVersion, attempts, startedAtMs}`; delete it on success. At start, a surviving marker for the current
+  app version increments `attempts`; with `attempts ≥ maxLoadAttempts` (2) that model joins `suspectModelIds`.
+
+**Models.** `core/constants/speech_assets.dart` (`SpeechAssets`: `folder`, `manifest`, `tinyModel`, `baseModel`,
+`vadModel` under `assets/speech/`). `SpeechModelEntry` (pure Dart): `id`, `kind`, `fileName`, `asset?`, `bytes`,
+`sha256`, `sourceUrl` pinned to a revision (`https://huggingface.co/<repo>/resolve/<commit>/<file>`), header facts,
+`memoryEstimateBytes`, `tier`, `webAllowed`. `SpeechModelCatalogue` exposes `all`, `tiny`, `base`, `small`, `vad`,
+`byId` and `matchImport(bytes, sha256)`. Repositories: `ggerganov/whisper.cpp` for the whisper models and
+`ggml-org/whisper-vad` for Silero; each commit is resolved once and pinned. Header facts and memory estimates are
+provisional, pinned by native shape tests and recalibrated by benchmarks.
+
+| id | file | bytes | sha256 | header (vocab/state/aL/tL/mels/ftype%1000) | mem est. | packaging |
+| --- | --- | --- | --- | --- | --- | --- |
+| `tiny-q5_1` | ggml-tiny-q5_1.bin | 32,152,673 | 818710568da3ca15689e31a743197b520007872ff9576237bda97bd1b469c3d7 | 51865/384/4/4/80/9 | 160 MiB | bundled |
+| `base-q5_1` | ggml-base-q5_1.bin | 59,707,625 | 422f1ae452ade6f30a004d7e5c6a43195e4433bc370bf23fac9cc591f01a8898 | 51865/512/6/6/80/9 | 260 MiB | bundled |
+| `small-q5_1` | ggml-small-q5_1.bin | 190,085,487 | ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb | 51865/768/12/12/80/9 | 560 MiB | import only, `webAllowed: false` |
+| `silero-v6.2.0` | ggml-silero-v6.2.0.bin | 885,098 | 2aa269b785eeb53a82983a20501ddf7c1d9c48e33ab63a41391ac6c9f7fb6987 | magic only | 8 MiB | bundled (vad) |
+
+`frontend/tool/speech_models.dart`: `--fetch [--only <id>] [--from <dir>]` streams each bundled entry into
+`assets/speech/<file>.part`, hashing while writing, checks size and sha, renames, skips files already correct and
+writes a deterministic `manifest.json`; `--check` (no network), `--verify <file>` and
+`--import-model <id> --out <dir>` print one `path:0: problem` line per violation and exit 1 on any
+(`List<String> checkSpeechModels(Directory frontendRoot)`).
+
+| Platform | Model location |
+| --- | --- |
+| Windows/Linux | `<exeDir>/data/flutter_assets/<key>` (read in place) |
+| macOS | `<exeDir>/../Frameworks/App.framework/Resources/flutter_assets/<key>` |
+| iOS | `<exeDir>/Frameworks/App.framework/flutter_assets/<key>` |
+| Android | `<support>/Tapture/speech/bundled/<sha256[0..12]>-<file>` |
+| Imported (native) | `<support>/Tapture/speech/imported/<file>` |
+| Web | worker OPFS `whisper-models/<id>-<sha12>` |
+
+Android extraction streams the uncompressed asset (`noCompress "bin"`) into `<path>.part`, fsyncs and renames; it is
+keyed by the sha prefix, so a catalogue change extracts afresh. At store start, `bundled/*` files whose prefix is not
+in the catalogue are removed with `discardDerivedFile` (§8.1 rule 8); `reextract(entry)` discards the copy and
+extracts again. `rootBundle.load` is never used. `verifySpeechModelFile(path, entry, {cancel, onProgress})` checks,
+in order, size, the 48-byte header (magic `0x67676d6c` LE, the 11 hparams with `ftype % 1000`, magic only for VAD)
+and `HashingService.sha256OfFile`; loads do only the size and header precheck in Dart, and the shim hashes.
+
+```dart
+abstract interface class SpeechModelStore {
+  factory SpeechModelStore.platform({required StorageRoot privateRoot, required BundledAssets assets, SpeechEngine? webEngine});
+  const factory SpeechModelStore.empty();
+  factory SpeechModelStore.fake(Map<String, SpeechModelStatus> statuses, {Failure? importFailure});
+  bool get canImport;
+  Future<Result<List<SpeechModelStatus>>> inventory();          // cheap: no hashing
+  Future<Result<SpeechModelSource>> locate(SpeechModelEntry entry, {CancellationToken? cancel});
+  Future<Result<SpeechModelSource>> reextract(SpeechModelEntry entry);   // Android bundled only; else returns locate
+  Future<Result<void>> verify(SpeechModelSource source, {CancellationToken? cancel, void Function(double)? onProgress});
+  Future<Result<SpeechModelEntry>> import(PickedDocument picked, {CancellationToken? cancel, void Function(double)? onProgress});
+  Future<Result<void>> remove(SpeechModelEntry entry);           // imported only; discardDerivedFile
+  void markDamaged(String modelId);
+}
+final class SpeechModelSource { /* entry + exactly one of path | url */ }
+final class SpeechModelStatus { /* entry, present, imported, damaged */ }
+final Provider<SpeechModelStore> speechModelStoreProvider;      // default .empty()
+```
+
+Import: `DocumentPicker.pick(extensions: ['bin'], maxBytes: <largest importable>)`; size, header and hash, then
+`matchImport`; `FileWriter(storageRoot: StorageRoot.private()).copyIn(..., 'speech/imported/<file>')`;
+`discardPickedCopy`. An unknown file gives `ValidationFailure(speechImportUnknown)`; a cancel leaves no `.part`.
+
+#### 30.4.3 Constants and budgets
+
+All live in `frontend/lib/core/constants/app_constants.dart`; durations below are shorthand for `Duration` fields.
+
+**`speechEngine`:**
+
+| Field | Value | Field | Value |
+| --- | --- | --- | --- |
+| `workerStart` | 10 s | `workerCloseGrace` | 5 s |
+| `idleRelease` | 2 min | `idleReleaseExtended` | 10 min |
+| `minTotalMemoryBytes` | 1.5 GiB | `webMinDeviceMemoryGiB` | 2 |
+| `webBaseDeviceMemoryGiB` | 4 | `balancedMemoryBytes` | 3 GiB |
+| `accurateMemoryBytes` | 6 GiB | `balancedCores` | 4 |
+| `accurateCores` | 6 | `memoryHeadroomPercent` | 125 |
+| `lowBatteryPercent` | 30 | `mobileMaxThreads` | 4 |
+| `desktopMaxThreads` | 8 | `saverThreads` | 2 |
+| `webMaxThreads` | 4 | `maxDecodeSamples` | 30 × 16000 |
+| `minDecodeSamples` | 16000 | `interimMaxPieces` | 96 |
+| `interimAudioContextPad` | 64 | `reducedAudioContextPad` | 128 |
+| `mobileDictationCommittedPad` | 256 | `mobileDictationShortUtterance` | 10 s |
+| `encoderFramesPerSecond` | 50 | `maxAudioContext` | 1500 |
+| `noSpeechThreshold` | 0.6 | `logprobThreshold` | −1.0 |
+| `entropyThreshold` | 2.4 | `temperatureStep` | 0.2 |
+| `logLineChars` | 160 | `logLinesPerDrain` | 8 |
+| `maxWorkerRestarts` | 2 | `maxLoadAttempts` | 2 |
+
+**`speechPipeline`:**
+
+| Field | Value | Field | Value |
+| --- | --- | --- | --- |
+| `vadOnThreshold` | 0.5 | `vadOffThreshold` | 0.35 |
+| `vadBatchWindows` | 4 | `minSpeech` | 250 ms |
+| `onsetGapTolerance` | 96 ms | `preRoll` | 320 ms |
+| `endSilence` | 800 ms | `postRoll` | 192 ms |
+| `softMaxUtterance` | 20 s | `maxUtterance` | 25 s |
+| `cutSearchWindow` | 3 s | `seamOverlap` | 1 s |
+| `seamTolerance` | 200 ms | `noiseFloorWindow` | 5 s |
+| `energyGateMarginDb` | 3 | `energyGateCeilingDbfs` | −60 |
+| `interimMinAudio` | 800 ms | `interimMinStep` | 600 ms |
+| `interimMaxStep` | 3 s | `interimMaxDutyDesktop` | 0.6 |
+| `interimMaxDutyMobile` | 0.3 | `mobileInterimMaxUtterance` | 10 s |
+| `interimEwmaAlpha` | 0.3 | `promptCarryChars` | 200 |
+| `promptCarryMinUtterance` | 2 s | `promptCarryMinDbfs` | −55 |
+| `promptResetGap` | 60 s | `hallucinationEnergyDbfs` | −55 |
+| `hallucinationSpeechRatio` | 0.3 | `hallucinationLogProb` | −0.8 |
+| `loopMinRepeatsPhrase` | 3 | `loopMinRepeatsWord` | 4 |
+| `loopMaxNgram` | 6 | `minSecondsPerWord` | 0.12 |
+| `loopWordsPerSecond` | 4 | `ringDuration` | 30 s |
+| `finalBacklogInterimsOff` | 10 s | `finalBacklogReducedContext` | 30 s |
+| `finalBacklogRecover` | 3 s | `engineBehindNoticeInterval` | 30 s |
+| `maxConsecutiveDecodeFailures` | 3 | `resamplerZeroCrossings` | 16 |
+| `resamplerKaiserBeta` | 7.0 | `resamplerCutoffRatio` | 0.9 |
+| `resamplerMaxPhases` | 512 | | |
+
+**`speechSession`:** `fallbackCaptureRates` [48000, 44100], `wavFlushInterval` 5 s, `webChunkDuration` 5 s,
+`maxSessionDuration` 4 h, `webMaxSessionDuration` 30 min, `storageCheckInterval` 60 s, `adoptLockBudget` 100 ms.
+
+**`speechBudgets`** (desktop; recalibrated by benchmarks; §59):
+
+| Field | Value | Field | Value |
+| --- | --- | --- | --- |
+| `tinyLoad` | 2 s (includes in-shim hash) | `baseLoad` | 4 s |
+| `tinyRealTime` | 0.35 | `baseRealTime` | 0.5 |
+| `abortLatencyDesktop` | 500 ms | `vadSecond` | 60 ms |
+| `tinyPeakRssBytes` | 320 MiB | `basePeakRssBytes` | 480 MiB |
+| `retainedRssBytes` | 32 MiB | `pipelinePerAudioSecond` | 15 ms |
+| `firstPartialCompute` | 1500 ms | `finalizeCompute` | 1000 ms |
+| `longSessionPeakRssBytes` | 64 MiB | `longSessionRetainedRssBytes` | 8 MiB |
+| `uiDrift` | 32 ms | | |
+
+**`transcripts`:** `partialInterval` 250 ms, `dictationFinalize` 12 s, `paragraphGap` 1500 ms,
+`paragraphMaxSegments` 6, `paragraphMaxChars` 600, `previewChars` 120, `historyPage` `listPageSize`,
+`segmentWriteBudget` 20 ms, `historyQueryBudget` 150 ms, `benchmarkSegments` 5000, `benchmarkTranscripts` 2000.
+
+Mobile device budgets come from `frontend/tool/devices.yaml` (task 131).
+
+#### 30.4.4 Error mapping
+
+Only existing `Failure` variants are used; builders live in `core/speech/speech_failures.dart`.
+
+| Condition | Failure | Copy |
+| --- | --- | --- |
+| `libraryMissing`, `abiMismatch`, `unsupportedPlatform`, worker never ready, `fetch_failed`, `cross_origin` | `ProviderFailure(unavailable)` | `speechUnavailable` |
+| `unsupportedCpu`, `engineNotBuilt`, `no_simd`, verdict `unsupportedDevice` | `ProviderFailure(unavailable)` | `speechDeviceUnsupported` |
+| Model file absent, `fileOpen` | `ProviderFailure(unavailable)` | `speechModelMissing` / `speechModelMissingRecovery` |
+| Dart size/header precheck, `modelInvalid`, `modelMismatch`, shape mismatch | `CorruptionFailure` | `speechModelDamaged` / `speechModelDamagedRecovery` |
+| `modelLoad`, `outOfMemory`, verdict `lowMemory` | `ProviderFailure(unavailable)` | `speechLowMemory` / `speechLowMemoryRecovery` |
+| Extraction `nospace` | `StorageFailure` | `failureFreeSomeSpaceThenTryAgain` |
+| Extraction `io`, OPFS `storage` | `StorageFailure` | existing store copy |
+| `aborted`, cancel, supersession | `CancelledFailure()` | — |
+| `inference`, `internal`, `busy` | `ProviderFailure(unknown)` | `speechTranscriptionFailed`; the pipeline retries once, then skips (recorded as a gap) |
+| `poisoned` | `ProviderFailure(unknown)` | `speechTranscriptionFailed`; the engine closes and reopens, then retries once |
+| `invalidArgument`, `audioTooLong`, partial VAD frame, `''` or `'auto'` language | `ValidationFailure` (logged ERROR) | default |
+| Verdict `languageUnsupported` | `ValidationFailure` | `speechLanguageUnsupported` |
+| Lane exit, disposed engine | `ProviderFailure(unknown)` | `speechEngineStopped` |
+| Unknown import | `ValidationFailure` | `speechImportUnknown` / `speechImportUnknownRecovery` |
+| Platform route cannot stay on device | `NetworkFailure` | `dictationOfflineOnly` (existing) |
+
+#### 30.4.5 Session state machine and durability
+
+**Capture** (`core/audio`):
+
+```dart
+abstract interface class AudioCaptureService {
+  factory AudioCaptureService({required FileWriter writer, required StorageRoot storageRoot, required MicrophoneAccess access,
+      required MicrophoneArbiter arbiter, @visibleForTesting record.AudioRecorder Function()? recorderFactory}) = AudioCapturePlugin;
+  const factory AudioCaptureService.unavailable();
+  Future<Result<AudioCaptureSession>> start(AudioCaptureRequest request);
+}
+final Provider<AudioCaptureService> audioCaptureServiceProvider;   // default .unavailable()
+final class AudioCaptureRequest { const AudioCaptureRequest({required MicrophoneOwner owner, String? relativePath /*null = memory only*/,
+  Duration? maxDuration, VoidCallback? onPreempted}); }
+abstract interface class AudioCaptureSession {
+  Stream<PcmChunk> get chunks;            // contiguous; emitted only after the store append
+  Stream<AudioCaptureEvent> get events;
+  int get capturedSamples; PcmStore get store; CaptureFormat get format;
+  Future<Result<void>> pause(); Future<Result<void>> resume();
+  Future<Result<void>> checkpoint();      // io: patch header + flush(fsync); web: flush pending chunk
+  Future<Result<AudioRecording?>> stop(); // publishes; the store stays readable (rebased onto the published file)
+  Future<void> release();                 // closes the store; web deletes chunk keys; idempotent; required after stop
+  Future<Result<String?>> abandon();      // header patched; staging kept byte-for-byte; returns staging path
+}
+final class PcmChunk { const PcmChunk(this.startSample, this.samples); }
+abstract interface class PcmStore { int get length; Future<Result<Int16List>> read(int from, int to); }   // ring for recent audio, file/chunks otherwise
+sealed class AudioCaptureEvent {}  // parts: CaptureLevel, CapturePaused{reason, atSample}, CaptureResumed, CaptureFailed, CaptureFormatChanged
+enum CapturePauseReason { user, background, interruption, microphoneLost, permissionRevoked }
+enum MicrophoneOwner { dictation, liveTranscription, fileRecorder }
+```
+
+- **Start:** arbiter claim; access; staging refused if `<path>.recording` or `<path>` exists, then a zero-length
+  header; a new recorder; state and config listeners subscribed before starting;
+  `startStream(pcm16bits, 16000, mono, audioInterruption: pause, androidConfig: voiceRecognition)`; a synchronous
+  listen; fallback rates `[48000, 44100]`.
+- **Bytes:** a 0–3-byte carry handles odd lengths, then downmix → `PcmResampler` → staging append → level meter →
+  emit.
+- **Staging:** io `<root>/<path>.recording`, one `RandomAccessFile`, `patchLengths` + `flush()` every
+  `wavFlushInterval` and on every pause or checkpoint; web `BlobCaptureStaging`, one 5 s chunk per key plus a
+  manifest.
+- **Stop:** drain; flush the resampler tail; patch the header; close the writer handle and the store's read handle;
+  `publishStagedTake` → `FileWriter.adoptStaged` (stream-hash the staged file outside the lock, fsync, then under
+  `withWriteLock(dest.parent)` refuse an existing target and rename; `copyIn` across volumes), so no copy is made;
+  `store.rebase(published)`; dispose the recorder and release the microphone lease. On web, publish streams the
+  chunks through `BlobFileWriter`, and chunk keys remain until `release()`.
+- **Recovery** (`StagedTakeRecovery`): a staging file whose header lengths match its size is adopted as-is;
+  otherwise a repaired derivative is published and the raw `.recording` is kept (§8.1 rule 1).
+
+**Session** (`core/speech`):
+
+```dart
+abstract interface class LiveTranscriptionService {
+  factory LiveTranscriptionService({required AudioCaptureService capture, required SpeechEngineHost host, required LifecycleObserver lifecycle,
+      required LeaveGuard leaveGuard, required StorageGuard storageGuard, Logger? logger}) = _LiveTranscriptionService;
+  const factory LiveTranscriptionService.unavailable();
+  Future<Result<LiveTranscriptionSession>> start(LiveTranscriptionRequest request);
+  Future<Result<AudioRecording?>> recoverAudio(String audioPath);
+  Stream<LiveTranscriptionEvent> transcribeRemaining(String audioPath, {required List<(int, int)> gaps, required int fromSample,
+      required int nextSegmentId, required String languageTag, required TranscriptSink sink});   // explicit user action; gaps first, then tail
+  Future<void> dispose();
+}
+final class LiveTranscriptionRequest { const LiveTranscriptionRequest({required TranscriptionKind kind, required String languageTag,
+  String? audioPath, TranscriptSink? sink, int nextSegmentId = 1, bool transcribe = true, bool interims = true,
+  Duration? autoStopAfterSilence, Duration? maxDuration, VoidCallback? onPreempted}); }
+abstract interface class LiveTranscriptionSession {
+  Stream<LiveTranscriptionEvent> get events; LiveTranscriptionPhase get phase; CapturePauseReason? get pauseReason;
+  Future<Result<void>> pause(); Future<Result<void>> resume();
+  Future<Result<StoppedCapture>> stop();             // completes once the audio is published; transcript keeps draining (idempotent)
+  Future<Result<LiveTranscriptionResult>> get done;  // after drain or skip; sink.finish has completed
+  void skipRemaining(); Future<Result<CancelledTranscription>> cancel();
+}
+final class StoppedCapture { AudioRecording? audio; Duration captured; StopReason reason; }
+final class LiveTranscriptionResult { List<TranscriptSegment> segments; String languageTag; String? modelId; Duration captured;
+  bool transcriptComplete; int coveredToSample; List<FinishedUtterance> unsaved; StopReason stopReason; }
+enum LiveTranscriptionPhase { preparing, listening, paused, stopping, draining, completed, cancelled, failed }
+enum StopReason { user, silence, maxDuration, sessionLimit, storage, exit, captureFailed, preempted }
+sealed class LiveTranscriptionEvent {}  // TranscriptionStateChanged · InputLevelChanged · InterimTranscript{utteranceId, startSample, stable, tentative}
+  // · SegmentFinalized{segment, durable} · UtteranceFinalized · TranscriptionDraining{pending} · TranscriptionWarning{kind, lag, cause} · TranscriptionFailed
+enum TranscriptionWarningKind { transcriptionUnavailable, engineBehind, utteranceSkipped, transcriptUnsaved, storageLow, storageStop, sessionLimit }
+```
+
+```text
+start: preparing --(arbiter, permission, staging, stream)--> listening   [engine acquire in parallel]
+       capture fails --> failed (nothing written; lease released)
+       engine acquire fails: longForm → listening + Warning(transcriptionUnavailable) (record-only, Rule 3); dictation → failed
+listening --pause()--> paused(user); --lifecycle paused|hidden--> paused(background)
+listening --CapturePaused(interruption|microphoneLost|permissionRevoked)--> paused(that)
+paused --resume()--> isGranted ? listening : paused(permissionRevoked) + PermissionFailure   (never auto-resumes)
+listening|paused --stop()|auto-stop--> stopping: capture.stop() publishes → stop() completes → draining
+draining: pipeline.finish(drain:true) --drained|skipRemaining--> sink.finish(outcome) → capture.release() → completed (done)
+publish failure → failed(StorageFailure; staging kept)
+any active --cancel()--> cancelled: pipeline.abort(); capture.abandon(); release()
+detached: stop() without awaiting the drain
+```
+
+- **Durability.** The service registers **one** `lifecycle.addPauseFlush(_checkpointAll)` in its constructor.
+  `_checkpointAll` awaits, for every active long-form session, `capture.checkpoint()` and `pipeline.sinkIdle`.
+  `LifecycleObserver.handle(paused|hidden)` therefore returns only after the take's header is patched and fsynced and
+  the last transcript write has landed. `LifecycleObserver` stays the only `WidgetsBindingObserver`; its pause
+  flushes run after `onPauseFlush`.
+- **Draining ownership.** The kept-alive service owns draining sessions, independent of any feature controller, so
+  leaving a page never loses a transcript; on service dispose it aborts the drains and calls
+  `sink.finish(complete:false)`. Saving never waits on transcription (Rule 3).
+- **Lifecycle rule.** `pausesCapture(s) => s == paused || s == hidden`; `inactive` is ignored and `detached` stops.
+- **Dictation sessions:** background stops the session; `autoStopAfterSilence = AppConstants.dictation.pauseFor`;
+  `maxDuration = AppConstants.dictation.listenFor`; memory-only; preempted by evidence owners.
+- **Long-form guards:** `leaveGuard.hold(session)`; `addExitCheck` checkpoints all, marks the sessions for recovery
+  and returns true — it never drains and never publishes, because recovery adopts the checkpointed take.
+- **Storage and caps:** `StorageGuard.admitCapture()` at start; a check every 60 s of audio, stopping with
+  `storageStop` or warning with `storageLow`; session caps of 4 h, or 30 min on web.
+- **Decode failures:** retry once, then skip with a recorded gap and `utteranceSkipped`; after 3 consecutive
+  failures the session goes record-only.
+- **Logging:** tag `'speech'` (`'audio'` for capture): start, pause and resume reasons, warnings, failure types, and
+  a stop summary (utterances, segments, dropped, collapsed, gated ratio, mean and p90 compute, RTF, ladder). **Never
+  any text.** Counter `debugLiveTranscriptionSessions`; wired in `main.dart`, production only.
+- **Interruptions and permission.** On mobile, revoking the microphone permission in system settings kills the
+  process; that case is recovered through `TranscriptRecovery` and `StagedTakeRecovery`.
+
+**Dictation** (§24). `WhisperSttService implements SttService` returns a lazy single-subscription stream: one empty
+partial when the microphone opens; partials are `committed + stable` only (tentative words are never emitted), and
+each final is aligned to the already-emitted stable prefix by `WordSequence.key`, then by time, so emitted words
+never change; partials are throttled to `transcripts.partialInterval` with a trailing emit and never repeat; exactly
+one final follows, with language and mean confidence. Heard words are never dropped: an error after words still
+yields a final, `stop()` is bounded by `dictationFinalize`, and a new listen hands the previous words over; `cancel()`
+drops unfinal words. Errors are raised only when nothing was heard: permission →
+`PermissionFailure(dictationNoMicrophone)`, microphone busy → `ValidationFailure(microphoneBusy)`, silence →
+`CancelledFailure(dictationNothingHeard)`, engine failures pass through, anything else `dictationFailed`.
+
+`RoutedSttService({SttService Function()? whisper, SttService? platform, required PlatformRecogniserPolicy policy,
+required bool Function() whisperReady, required MicrophoneArbiter arbiter})` chooses per listen: Whisper when ready;
+else, if `platform != null && await policy.keepsSpeechOnDevice()`, `platform.listen(..., onDeviceOnly: true)` under a
+`MicrophoneOwner.dictation` claim; else `NetworkFailure(dictationOfflineOnly)`. `PlatformRecogniserPolicy.platform()`
+answers Android `onDeviceRecognitionAvailable` on `com.tapture.app/files` (`SDK_INT >= 31 &&
+isOnDeviceRecognitionAvailable`), iOS/macOS true (the plugin sets `requiresOnDeviceRecognition`), Windows, Linux and
+web false.
+
+#### 30.4.6 Transcript persistence
+
+Schema 32 (`core/db/tables/transcripts.dart` + part `transcript_segments.dart`, `MergeColumns`).
+
+| `transcripts` column | Notes |
+| --- | --- |
+| `projectId` | write-once |
+| `ownerKind` | `capture`/`meeting`/`standalone`; write-once |
+| `ownerId?` | |
+| `attachmentId?` | set once |
+| `audioPath` | write-once |
+| `title` | audited on rename |
+| `languageTag`, `modelId` | |
+| `status` | `live`/`complete`/`interrupted` |
+| `startedAt` | write-once |
+| `endedAt?`, `durationMs?` | |
+| `coveredMs` | default 0: the highest sample processed, decoded or skipped |
+| `skippedRanges` | TEXT JSON `[[fromMs,toMs],…]`, default `'[]'` |
+| `textEdited?`, `editedAt?` | the edit beside the raw segments |
+
+Indexes `(projectId, startedAt)`, `(attachmentId)`, `(ownerKind, ownerId)`. **`transcript_segments`:**
+`transcriptId`, `seq` (1-based insertion order = `TranscriptSegment.id`), `startMs`, `endMs`, `textRaw` (written
+once, at insert), `confidence?`; unique index `(transcriptId, seq)`. **Reading order** is `ORDER BY start_ms, seq`,
+so segments that fill a gap later slot into time order.
+
+Helpers, each returning `Result`:
+
+- `insertTranscript`; `updateTranscript` strips the write-once columns and refuses a different `attachmentId`.
+- `appendTranscriptUtterance`, in one transaction: `seq == count+1` → insert; `seq ≤ count` with identical text →
+  ignore; anything else → `StorageFailure(transcriptSegmentOutOfOrder)`; a skipped utterance adds its range to
+  `skippedRanges`; an utterance inside a recorded range removes that range; `coveredMs = max(coveredMs,
+  toSample/16)`.
+- `writeTranscriptEdit`: `text_edited`, `edited_at` and an `appendAudit` row with field `transcript`.
+- `renameTranscript`: `title` and an `appendAudit` row with field `title`.
+
+`migrateToV32` uses guarded create, then `RecordSchema.ensure`; `kDestructiveSteps` stays empty. Version-vector
+triggers arrive with `migrateToV33` (bundles, merge and export). **Search:** `requiredTables` adds `transcripts`,
+`transcript_segments` and `attachment_owners`; a record's search body adds raw segment text in reading order, then
+`text_edited`, of non-live transcripts linked through `attachment_owners(owner_type='record')`, excluding
+tombstones. Triggers: `transcripts_search_ai`, `_au` (`UPDATE OF status, attachment_id, text_edited`) and `_ad`, plus
+`attachment_owners_search_ai` and `_ad`; segment inserts fire no trigger.
+
+Domain types (pure, one file each): `TranscriptOwnerKind`, `TranscriptStatus`, `TranscriptLine`, `TranscriptGap`,
+`TranscriptSummary` (with `coveredMs`, `gaps`, `remaining`), `Transcript` (`rawText`, `displayText`),
+`TranscriptStart` (record) and `TranscriptParagraphs`.
+
+```dart
+abstract interface class TranscriptRepository {
+  Future<Result<TranscriptSummary>> begin(TranscriptStart start);
+  Future<Result<void>> appendUtterance(String transcriptId, FinishedUtterance utterance);
+  TranscriptSink sinkFor(String transcriptId);     // finish → complete / markInterrupted
+  Future<Result<void>> linkAttachment(String id, String attachmentId);
+  Future<Result<TranscriptSummary>> complete(String id, {required Duration duration, required String languageTag, String? modelId});
+  Future<Result<TranscriptSummary>> markInterrupted(String id, {Duration? duration});
+  Future<Result<String>> fileStandaloneAudio(String id, AudioRecording audio);
+  Future<Result<void>> discard(String id); Future<Result<TranscriptSummary>> rename(String id, String title, {String? operator});
+  Future<Result<Transcript>> saveEdit(String id, String text, {String? operator}); Future<Result<Transcript>> clearEdit(String id, {String? operator});
+  Future<Result<void>> reopenForRemaining(String id);   // complete|interrupted → live for transcribeRemaining; restored on finish
+  Future<Result<Transcript?>> read(String id); Stream<Transcript?> watch(String id);
+  Stream<List<TranscriptSummary>> watchProject(String? projectId, {String query = '', int limit});
+  Stream<List<TranscriptSummary>> watchRecord(String recordId); Stream<List<TranscriptSummary>> watchMeeting(String meetingId);
+  Future<Result<TranscriptSummary?>> completedForAttachment(String attachmentId);
+  Future<Result<List<TranscriptSummary>>> stale();
+}
+```
+
+- **Recovery.** `TranscriptRecovery.run` executes at boot, after merge recovery. Each stale `live` row: `capture` →
+  `markInterrupted`; `meeting`/`standalone` → `recoverAudio` (adopt or repair), file the audio, then
+  `markInterrupted`. It never deletes a file and logs counts only.
+- **Finishing later.** **Finish the transcript** is offered whenever `gaps` is non-empty or
+  `coveredMs < durationMs` and readiness is ready, on any status, through `reopenForRemaining` +
+  `transcribeRemaining`.
+- **Owners.** Meetings: `MeetingRecord.transcript` resolves to non-empty `transcriptRaw` (legacy import), otherwise
+  the latest non-live meeting `transcripts` row (`displayText`), otherwise `versions.last.text`, so Refine minutes and
+  exports read it unchanged. Capture: Save awaits only the publish and `linkAttachment`; the transcript drains
+  afterwards. Processing: `OnlineTranscripts.forJob` uses `completedForAttachment` first and calls the online
+  `transcribe` only when no on-device transcript exists (§30.1).
+
+#### 30.4.7 Pipeline invariants
+
+`core/speech/pipeline/` is internal and pure Dart on the main isolate; VAD and decode run through the lease. The
+timeline is the sample count of the 16 kHz take.
+
+```dart
+final class SpeechPipeline { SpeechPipeline({required PcmStore store, required SpeechPipelineConfig config, TranscriptSink? sink,
+  required int nextSegmentId, required void Function(LiveTranscriptionEvent) emit});
+  void attachLease(SpeechEngineLease lease); void audioAvailable(int totalSamples); void markPause(int atSample, CapturePauseReason why);
+  void markResume(int atSample); Future<void> finish({required bool drain}); Future<void> abort(); Future<Result<void>> retryUnsaved();
+  int get coveredToSample; Duration get backlog; List<FinishedUtterance> get unsaved; Future<void> get sinkIdle; }
+```
+
+- **VAD cursor.** Batches of 4 × `vadFrameSamples` are read from the `PcmStore`, one in flight, so a slow engine
+  causes lag, never loss.
+- **Energy pre-gate** (near-silence only, consulted only in silence): a window is quiet iff
+  `dbfs < energyGateCeilingDbfs (−60)` **and** `dbfs < noiseFloor + energyGateMarginDb (3)`. An all-quiet batch
+  skips the engine call (p = 0) and sets `needsReset`; the gated-batch ratio is reported in the stop summary.
+- **VAD resets** at session start, after each utterance close, after resume and after a gated stretch, with 10
+  warm-up windows.
+- **Segmenter:** onset ≥ 250 ms, a hangover with 800 ms end silence, 320 ms pre-roll and 192 ms post-roll, a soft cut
+  at 20 s, and a hard cut at 25 s at the minimum-energy 96 ms span with a 1 s seam overlap.
+- **Scheduler.** One job in flight per pipeline; finals are FIFO and never dropped; interims use one slot. Interims
+  are offered at ≥ 800 ms of utterance and ≥ `step` of growth, `step = clamp(ewma/duty, 600 ms, 3 s)`, where `duty`
+  is `interimMaxDutyDesktop` (0.6) or `interimMaxDutyMobile` (0.3). Interims stop for an utterance when
+  `ewma > 3 s × duty`, and on mobile once it exceeds `mobileInterimMaxUtterance` (10 s).
+- **Backpressure ladder:** backlog > 10 s → `interimsOff` (interims off; `engineBehind`); > 30 s →
+  `reducedContext` (finals use `audioContextPad` 128); each level is left when backlog < 3 s.
+- **Finals** read `[seamFromSample ?? start, end)` from the `PcmStore` **at dispatch**; after stop the store is
+  rebased onto the published file, so backlog at stop is never lost.
+- **`InterimStabiliser`** (LocalAgreement-2): `agree = commonPrefix(prev, H)`, `candidate = min(agree, |H|−1)`; the
+  stable part is append-only.
+- **`SegmentAssembler`**, per finished utterance in id order:
+  1. reorder buffer;
+  2. clamp segment and word times;
+  3. `SegmentText.clean`: collapse whitespace; remove `[\[(][^\])]{0,40}[\])]` and `♪ ♫`; remove a space before
+     punctuation; digits, URLs and ellipses untouched;
+  4. **`HallucinationFilter`** drops a segment that is empty or punctuation only; or `noSpeech > 0.6 && avgLogprob <
+     −1.0`; or a `HallucinationPhrases` phrase on weak audio (mean dB < −55, or speech ratio < 0.3, or
+     `avgLogprob < −0.8`); or a prompt echo (normalised text is a substring of the carried prompt and
+     `avgLogprob < −0.8`). Edge words lying over windows with `p < off` are trimmed;
+  5. **`RepetitionCollapse`:** for n = 6..1, a run repeated ≥ 3 times (n ≥ 2) or ≥ 4 times (n = 1) collapses to one
+     copy when its word count exceeds the utterance's VAD speech seconds × `loopWordsPerSecond` (4), or it is faster
+     than 0.12 s per word;
+  6. **`SeamAligner`**, after hard cuts only: drop the largest k-word overlap, with prefix or edit-distance-1
+     matching on the boundary word; with k = 0, drop leading words whose midpoint is earlier than
+     `R.end − seamTolerance` (200 ms); the previous utterance is never edited;
+  7. times made monotonic; ids from the session counter;
+  8. **`sink.appendUtterance` is awaited**, then `SegmentFinalized` × n and `UtteranceFinalized` are emitted. A
+     skipped utterance (two decode failures) is appended with `skipped: true` and recorded as a gap. A failing sink
+     queues the utterance in order and retries it before the next one; events still go out with `durable: false`,
+     plus a `transcriptUnsaved` warning;
+  9. **`PromptCarry`:** the last 200 characters, cut at a word boundary; not passed for utterances under 2 s or with
+     mean dB < −55; reset after a loop collapse, a hallucination-only utterance or 60 s without speech.
+- **Memory bound.** `debugPipelineRetainedSamples ≤ (ring + maxUtterance + seamOverlap) × 16000`.
+
+#### 30.4.8 Web
+
+The web runs the same shim (§30.4.1), built twice with Emscripten by `frontend/tool/whisper_wasm.dart --build`
+(requires `$EMSDK` with `emcc --version` equal to `packages/tapture_whisper/wasm/emsdk_version.txt`; Ninja from
+`$NINJA`, then the Android SDK CMake directory, then PATH). Common link flags:
+
+```text
+-O3 -msimd128 -fwasm-exceptions --no-entry -sMODULARIZE -sEXPORT_ES6 -sEXPORT_NAME=createTaptureWhisper
+-sALLOW_MEMORY_GROWTH -sINITIAL_MEMORY=64MB -sMAXIMUM_MEMORY=2GB -sSTACK_SIZE=5MB -sFILESYSTEM=0 -sWASM_BIGINT
+-sEXPORTED_FUNCTIONS=@src/wasm_exports.txt
+-sEXPORTED_RUNTIME_METHODS=HEAPU8,HEAP32,HEAPU32,HEAPF32,HEAP64,wasmMemory,UTF8ToString,stringToUTF8,lengthBytesUTF8
+```
+
+- **Variants.** st: `-sENVIRONMENT=worker,node`. mt: `-sENVIRONMENT=worker,node -pthread -sPTHREAD_POOL_SIZE=8
+  -sPTHREAD_POOL_SIZE_STRICT=2`, with web threads capped at 4 (3 secondaries). STRICT stays 2 deliberately: a worker
+  cannot start a non-pooled pthread while ggml spin-waits, so pool exhaustion must fail loudly; with the cap of 4 and a
+  pool of 8 it cannot occur.
+- **Outputs**, committed under `frontend/web/whisper/`: `tapture_whisper_{st,mt}.{js,wasm}`, `BUILD_INFO.json`
+  (`{abi, whisper, commit, patches, emsdk, flags, inputs:{path:sha256}, files:{name:sha256}}`) and `LICENSES.txt`.
+  `--check` needs no emsdk: it verifies the hashes, that the ABI equals the header, that `wasm_exports.txt` equals the
+  header's `TW_API` names and that the worker's struct-size table equals `TW_SIZEOF_*`. `--smoke` runs
+  `node packages/tapture_whisper/wasm/smoke.mjs` for st and mt: the jfk phrase with tiny, VAD probability count
+  `floor(n/512)`, struct sizes, a mismatched sha returning `MODEL_MISMATCH`, and for mt 50 consecutive decodes with
+  `tw_live_objects` stable and no pool exhaustion.
+- **Worker** `frontend/web/whisper/whisper_worker.js` (hand-written module worker). Requests `{id, op, args}`; replies
+  `{id, ok:true, result}` or `{id, ok:false, error:{code, status, whisperCode}}`; events `{event:'log', entries}`.
+  Typed heap views are never cached: a `heap()` helper re-derives them whenever `wasmMemory.buffer` changed, and all
+  64-bit fields are read through `HEAP64`. Ops:
+  - `init {variant}`: SIMD validate probe; mt iff `crossOriginIsolated && SharedArrayBuffer`; ABI and struct check;
+    returns `{abi, variant, maxThreads, logicalCores, deviceMemoryGb, version}`, plus `{memory,
+    abortCell:{byteOffset}}` on mt.
+  - `loadModel {kind, url, cacheKey, sha256, bytes, threads, flashAttn}`: only a same-origin URL is accepted
+    (`cross_origin`); an OPFS hit (`whisper-models/<cacheKey>`) opens a sync access handle; a miss streams `fetch` into
+    OPFS, then opens; without OPFS it fetches into an ArrayBuffer; the source is registered as a `file_id` and
+    `tw_*_open_js` is called with the expected size and sha, so the shim hashes before parsing (no `crypto.subtle`;
+    plain-HTTP LAN serving works); `MODEL_MISMATCH` deletes the OPFS entry. Returns `{handle, facts}` or
+    `{handle, windowSamples}`.
+  - `verify {cacheKey, sha256, bytes}` streams the OPFS entry through `tw_sha256_*` for Settings;
+    `transcribe {handle, jobId, pcm (transferred), options, initialPrompt}` returns the native copy-out shape;
+    `vadFeed {handle, pcm}` → `{probs}`; `vadReset {handle}`; `abort {jobId, leaseId}` drops queued jobs of that
+    lease; `memory`, `liveObjects`, `close {handle}`, `dispose`.
+  - Error codes: snake-case `tw_status` names plus `no_simd`, `fetch_failed`, `storage` and `cross_origin`.
+- **Web engine** (`speech_engine_web.dart`). Two module Workers from `Uri.base.resolve('whisper/whisper_worker.js')`:
+  decode (`variant:'auto'`) and vad (`variant:'st'`), with VAD handles per lease inside the vad worker. Interop uses
+  `dart:js_interop` extension types only (no `package:web`, no `dart:html`); the pure codec
+  `speech_worker_codec.dart` is unit-tested on the VM. Model URL
+  `Uri.base.resolve(ui_web.assetManager.getAssetUrl(SpeechAssets.tinyModel))`, asserted same-origin; the catalogue
+  sha and byte count travel in `loadModel`. mt threads = `clamp(hardwareConcurrency − 1, 1, webMaxThreads 4)`.
+  Counters `debugLiveHandles` (worker `liveObjects`) and `debugLiveSpeechWorkers`.
+- **Abort.** mt: `Atomics.store(Int32Array(memory.buffer), abortCell.byteOffset >> 2, jobId)`. st: interim
+  preemption is disabled, so a committed request waits for a short in-flight interim; `abortLease` drops queued jobs
+  and terminates the worker only if the in-flight job belongs to that lease and is committed; `dispose` terminates
+  the worker; after a terminate, pending jobs fail with `CancelledFailure` and the next load respawns and reopens
+  from OPFS without refetching.
+- **Serving.** Threads (mt) need cross-origin isolation. `run-tools/run-web.py --isolated` adds COOP `same-origin`
+  and COEP `credentialless`, and `.claude/launch.json` has `tapture-web-preview-isolated` (port 5181). Default
+  development and **production** web use the single-thread build unless the host sends the COOP/COEP isolation
+  headers; the plugin README gives the header snippet and notes that Safari lacks COEP `credentialless` and that COOP
+  can affect popup sign-in. Sessions on web are capped at 30 minutes (§30.4.5).
 
 ## 31. Structured Output & Validation
 
@@ -2099,10 +3030,12 @@ Route map:
 /p/:projectId/reference
 /p/:projectId/export
 /p/:projectId/merge
+/p/:projectId/transcripts          transcript history; /new Transcribe; /:transcriptId detail (§24)
+/more/transcripts                  the same across projects
 /settings
 ```
 
-This conceptual map uses the existing `RoutePaths` conventions: `/projects/:projectId/...` and secondary destinations under `/more`. Documentation follows these conventions without duplicate aliases; §83 specifies its routes and menu behaviour.
+This conceptual map uses the existing `RoutePaths` conventions: `/projects/:projectId/...` and secondary destinations under `/more`. Documentation follows these conventions without duplicate aliases; §83 specifies its routes and menu behaviour. Transcribe is a More entry and a project-home overflow action, keeping four bottom controls (§56 rule 2); meetings start from **Start a meeting** and open their review by id.
 
 ### 55.1 Project home
 
@@ -2188,6 +3121,11 @@ AI
 Language
   App language
   Voice language
+  Speech recognition                             (works offline, §30.4)
+    Engine in use                                (read-only)
+    Transcription quality                        Automatic / Fast / Accurate
+    Speech models                                bundled and imported; Verify; Remove imported
+    Import a speech model                        (native only; verified before use)
 
 Storage
   Storage used, by project
@@ -2216,6 +3154,8 @@ About
 - Put primary actions in the lower third for one-handed use.
 - Pair status colours with icons and text.
 - Preserve in-progress captures through calls and screen locks.
+- Live transcription pauses without losing audio or committed text when the app is backgrounded, a call arrives or
+  the microphone is lost, and states the reason; resume is explicit (§30.4.5).
 
 ## 59. Performance
 
@@ -2230,7 +3170,22 @@ Targets on a mid-range Android device:
 | Search across 10,000 records | < 300 ms (indexed) |
 | XLSX export, 5,000 records | < 30 s, on a background isolate with progress |
 
-Page queries; index project, status, context, identity hash and timestamps. Generate thumbnails once and cache them; load full images only in the viewer. Run compression, hashing, exports and merge on background isolates. Never perform file or database work on the UI thread.
+Speech targets on the Windows desktop reference machine (`speechBudgets`, §30.4.3); mobile device-class targets are
+recorded from physical-device evidence (task 131, `tool/devices.yaml`):
+
+| Action | Target |
+| --- | --- |
+| Model load, including in-engine SHA-256 verification | ≤ 2 s tiny, ≤ 4 s base |
+| Decoding speed | ≤ 0.35× real time tiny, ≤ 0.5× base |
+| First interim text after speech starts | ≤ 1.5 s compute |
+| Final segment after an utterance closes | ≤ 1 s compute |
+| Abort of an in-flight decode (tiny) | ≤ 500 ms |
+| Voice-activity detection | ≤ 60 ms per audio second |
+| Pipeline overhead | ≤ 15 ms per audio second; UI frame drift ≤ 32 ms |
+| Engine memory | peak ≤ 320 MiB tiny, ≤ 480 MiB base; ≤ 32 MiB retained after release |
+| Long live session | ≤ 64 MiB peak and ≤ 8 MiB retained above the engine; no lost audio |
+
+Page queries; index project, status, context, identity hash and timestamps. Generate thumbnails once and cache them; load full images only in the viewer. Run compression, hashing, exports, merge, audio resampling and speech inference off the UI thread (worker isolates; Web Workers on the web). Never perform file or database work on the UI thread.
 
 ## 60. Security & Privacy
 
@@ -2270,8 +3225,9 @@ Page queries; index project, status, context, identity hash and timestamps. Gene
 ## 61. Technology Stack
 
 ```text
-Flutter (Android first; iOS, Windows and Web later)
+Flutter (Android first; iOS, macOS, Windows, Linux and Web)
 Dart
+whisper.cpp         on-device speech: FFI on native platforms, WebAssembly on the web (§30.4)
 Riverpod            state management
 GoRouter            navigation
 Material 3          theming
@@ -2281,7 +3237,7 @@ Isolates            image processing, export generation, merge
 
 Every deployment requires the minimal Node.js/Express/PostgreSQL backend (Part XI): a versioned REST API for users, credentials, role grants and provider keys. Inject it as a service; use cached sessions/grants and queue processing when unreachable (§70.4). AI normally uses its proxy; direct HTTPS provider calls require administrator permission for a device-held key (§30.2).
 
-Use standard camera, storage, speech and secure-storage plugins without further Android-only dependencies, preserving iOS/desktop portability.
+Use standard camera, storage, speech and secure-storage plugins without further Android-only dependencies, preserving iOS/desktop portability. Speech recognition uses the local whisper.cpp plugin (§30.4.1), the only native code the project builds itself.
 
 ## 62. Project Structure
 
@@ -2304,6 +3260,7 @@ lib/
 │   ├── validation/       field, record and export validation
 │   ├── normalise/        units, choices, dates, aliases
 │   ├── security/         secure storage, app lock, redaction
+│   ├── speech/           on-device speech engine, models, live transcription (no network)
 │   ├── errors/
 │   ├── utils/
 │   └── widgets/
@@ -2324,6 +3281,7 @@ lib/
 │   ├── records/
 │   ├── duplicates/
 │   ├── meetings/
+│   ├── transcripts/      live transcripts, Transcribe screen and history
 │   ├── documentation/     resources, output definitions, prompts, runs and document review
 │   ├── exports/
 │   ├── cloud/
@@ -2331,6 +3289,9 @@ lib/
 │   └── settings/
 └── shared/
 ```
+
+`frontend/packages/tapture_whisper` holds the native speech plugin outside `lib/`; only `core/speech` imports it
+(frontend rules FE-STR-01, FE-STR-11).
 
 Each feature uses `data/ · domain/ · presentation/`:
 
@@ -2373,8 +3334,9 @@ camera / image_picker / file_picker          capture and selection
 image                                        resize, rotate, quality checks
 google_mlkit_text_recognition                on-device OCR
 mobile_scanner                               barcode / QR
-speech_to_text                               on-device speech
-record + just_audio                          meeting audio
+tapture_whisper (local) + ffi                whisper.cpp on-device speech engine (§30.4)
+speech_to_text                               platform dictation fallback, on device only (§24)
+record + just_audio                          audio recording, microphone streaming and playback
 drift + sqlite3_flutter_libs                 database (sqlcipher_flutter_libs when encryption is on)
 path_provider                                storage roots
 crypto                                       SHA-256
@@ -2393,15 +3355,18 @@ flutter_local_notifications                  processing and export notifications
 
 Library choice for XLSX must be validated early against a real client template; see §50.1 rule 7.
 
+The speech plugin and the web build ship licence blocks for the shim, whisper.cpp/ggml, the OpenAI Whisper weights
+and Silero VAD (all MIT), shown under Settings → About → Licences.
+
 Documentation needs PDF extraction, DOCX read/write, media decoding and shared rich text adapters (§77–§80). Select them using real fixtures and platform, licence, memory and fidelity checks in tasks 080–085; listed packages do not establish capability. Reuse file, queue, AI, export, security and bundle interfaces.
 
 ## 65. Testing Strategy
 
 | Level | Coverage |
 | --- | --- |
-| **Unit** | Field validation, normalisation, alias and row matching, identity hashing, file naming, folder pathing, context inheritance and clearing, auto-fill, merge algorithm and version vectors, duplicate detection, spreadsheet schema parsing, export writers |
+| **Unit** | Field validation, normalisation, alias and row matching, identity hashing, file naming, folder pathing, context inheritance and clearing, auto-fill, merge algorithm and version vectors, duplicate detection, spreadsheet schema parsing, export writers, audio resampling, voice-activity gating, utterance segmentation, transcript assembly |
 | **Widget** | Capture screen, context bar, photo tray and caption scope, review screen, conflict resolution, template builder |
-| **Integration** | Camera to saved record; deferred queue to processed record; import spreadsheet to records; export to XLSX/CSV/JSON/PDF/ZIP; bundle export to import on a second database |
+| **Integration** | Camera to saved record; deferred queue to processed record; import spreadsheet to records; export to XLSX/CSV/JSON/PDF/ZIP; bundle export to import on a second database; live transcription of a recorded fixture through the real engine |
 | **End-to-end** | Create project → shipped template → set context → capture 3 records offline → process → review → approve → export ZIP → import on a second device → merge with conflicts → resolve → export again |
 
 Critical test cases:
@@ -2428,6 +3393,8 @@ Critical test cases:
 19 Documentation multi-output     source pack + requirements -> grounded report + matching workbook (§84)
 20 Documentation interruption     offline, restart, cancel and retry preserve sources and draft versions
 21 Mobile More menu               three dots, icons, dismissal, route state, keyboard and large-text access
+22 Live transcript                30-minute live session with pauses: no duplicated, missing or reordered words
+23 Corrupt speech model           refused before parse; typing and capture continue
 ```
 
 ## 66. Delivery Plan
@@ -2545,6 +3512,7 @@ Before public release, check Google Play name availability and Uganda/EAC tradem
 | Photos saved on the device in organised folders with subfolders | §8 |
 | Database stored locally on the device | §8, §9 |
 | Everything local except online AI, OCR and STT | §7 |
+| Real-time speech-to-text on the device, without a network | §24, §30.4 |
 | Prefill from existing data by asset or serial number, then edit | §16, §17, §25 |
 | Supplying the existing data record | §16.1, §46.3 |
 | Record raw data first, map later | §26 |

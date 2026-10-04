@@ -1,39 +1,47 @@
-part of 'audio_recorder_plugin.dart';
+import 'dart:io';
+import 'dart:typed_data';
 
-Future<AudioRecording?> _readPublishedTake((String, String) paths) async {
-  final File published = File(paths.$1);
-  final _WavTake? take = await _WavTake.read(published);
-  if (take == null) throw const FormatException('Invalid WAV take.');
-  final Digest hash = await sha256.bind(published.openRead()).first;
-  return AudioRecording(
-    relativePath: paths.$2,
-    sha256: hash.toString(),
-    byteLength: await published.length(),
-    duration: take.duration,
-    mimeType: 'audio/wav',
-  );
-}
+import 'package:tapture/core/constants/app_constants.dart';
 
-/// Bounded RIFF header inspection; audio samples are always streamed. Record
-/// writes PCM WAV, whose length fields may remain zero after a process kill.
-final class _WavTake {
-  const _WavTake({
+/// Bounded RIFF header inspection of a WAV take; audio samples are always
+/// streamed. A take's length fields may still be zero after a process
+/// kill, and [read] can measure it from the bytes on disk instead.
+final class WavTake {
+  /// A take whose [header] ends at [dataOffset] and which holds
+  /// [dataLength] bytes of samples at [byteRate] bytes a second.
+  const WavTake({
     required this.header,
     required this.dataOffset,
     required this.dataLength,
     required this.byteRate,
+    this.consistent = false,
   });
 
+  /// The header bytes up to the first sample.
   final Uint8List header;
+
+  /// Byte offset of the first sample.
   final int dataOffset;
+
+  /// Bytes of whole sample frames.
   final int dataLength;
+
+  /// Bytes per second of audio.
   final int byteRate;
 
+  /// Whether the header's two length fields match the file exactly, so it
+  /// can be published as it stands.
+  final bool consistent;
+
+  /// Length of the audio, from its bytes rather than wall time.
   Duration get duration =>
       AppConstants.microsecond *
       (dataLength * Duration.microsecondsPerSecond ~/ byteRate);
 
-  static Future<_WavTake?> read(File file, {bool interrupted = false}) async {
+  /// Reads [file]'s header. With [interrupted], the samples are measured
+  /// from the file size whatever the header says. Null when the file is not
+  /// a PCM WAV take holding at least one frame.
+  static Future<WavTake?> read(File file, {bool interrupted = false}) async {
     final RandomAccessFile handle = await file.open();
     try {
       final int length = await handle.length();
@@ -49,6 +57,7 @@ final class _WavTake {
         return null;
       }
       final ByteData numbers = ByteData.sublistView(bytes);
+      final int riffSize = numbers.getUint32(4, Endian.little);
       int offset = 12;
       int byteRate = 0;
       int blockAlign = 0;
@@ -71,11 +80,15 @@ final class _WavTake {
           if (dataLength <= 0 || dataOffset + dataLength - 8 > 0xffffffff) {
             return null;
           }
-          return _WavTake(
+          return WavTake(
             header: Uint8List.sublistView(bytes, 0, dataOffset),
             dataOffset: dataOffset,
             dataLength: dataLength,
             byteRate: byteRate,
+            consistent:
+                size == available &&
+                size == dataLength &&
+                riffSize == length - 8,
           );
         }
         offset += 8 + size + size % 2;
@@ -86,6 +99,8 @@ final class _WavTake {
     }
   }
 
+  /// [original]'s samples behind a header whose lengths match them: a
+  /// playable derivative. [original] itself is only read.
   Stream<List<int>> repairedBytes(File original) async* {
     final Uint8List repaired = Uint8List.fromList(header);
     final ByteData lengths = ByteData.sublistView(repaired);

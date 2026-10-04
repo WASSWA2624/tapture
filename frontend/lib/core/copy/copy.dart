@@ -2543,6 +2543,9 @@ abstract final class Copy {
   static String get audioRecorderUnavailable =>
       _english.audioRecorderUnavailable;
 
+  /// Refusal when another recording already holds the microphone.
+  static String get microphoneBusy => _english.microphoneBusy;
+
   /// The recorder refused to start a take.
   static String get audioStartFailed => _english.audioStartFailed;
 
@@ -2562,6 +2565,39 @@ abstract final class Copy {
   /// Recorder phase and elapsed time.
   static String audioRecorderStatus(String phase, int seconds) =>
       _english.audioRecorderStatus(phase, seconds);
+
+  /// Recording bar control that starts a recording with a live transcript.
+  static String get liveTranscriptStart => _english.liveTranscriptStart;
+
+  /// Recording bar control that discards the recording in progress.
+  static String get liveTranscriptCancel => _english.liveTranscriptCancel;
+
+  /// Recording bar status while the microphone opens.
+  static String get liveTranscriptStatusStarting =>
+      _english.liveTranscriptStatusStarting;
+
+  /// Recording bar status while audio is recorded and transcribed.
+  static String get liveTranscriptStatusListening =>
+      _english.liveTranscriptStatusListening;
+
+  /// Recording bar status while the recording is paused.
+  static String get liveTranscriptStatusPaused =>
+      _english.liveTranscriptStatusPaused;
+
+  /// Recording bar status while the recording is closed and the transcript
+  /// completes.
+  static String get liveTranscriptStatusFinishing =>
+      _english.liveTranscriptStatusFinishing;
+
+  /// Transcript view before any words are recognised.
+  static String get liveTranscriptEmpty => _english.liveTranscriptEmpty;
+
+  /// Transcript view control that scrolls back to the newest words.
+  static String get liveTranscriptJumpToLatest =>
+      _english.liveTranscriptJumpToLatest;
+
+  /// Accessible name of the transcript view.
+  static String get transcriptViewLabel => _english.transcriptViewLabel;
 
   /// Audio evidence association sheet.
   static String get captureAudioScopeTitle => _english.captureAudioScopeTitle;

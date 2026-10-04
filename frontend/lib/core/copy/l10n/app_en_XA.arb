@@ -3965,6 +3965,10 @@
   "@audioRecorderUnavailable": {
     "description": "Audio recorder unavailable."
   },
+  "microphoneBusy": "Thé mícróphóné ís ín úsé by ánóthér récórdíng. Stóp ít fírst, thén try ágáín.···························",
+  "@microphoneBusy": {
+    "description": "Refusal when another recording already holds the microphone."
+  },
   "audioStartFailed": "Récórdíng cóúld nót stárt.··········",
   "@audioStartFailed": {
     "description": "The recorder refused to start a take."
@@ -4027,6 +4031,42 @@
         "format": "decimalPattern"
       }
     }
+  },
+  "liveTranscriptStart": "Stárt récórdíng······",
+  "@liveTranscriptStart": {
+    "description": "Recording bar control that starts a recording with a live transcript."
+  },
+  "liveTranscriptCancel": "Díscárd···",
+  "@liveTranscriptCancel": {
+    "description": "Recording bar control that discards the recording in progress."
+  },
+  "liveTranscriptStatusStarting": "Ópéníng thé mícróphóné········",
+  "@liveTranscriptStatusStarting": {
+    "description": "Recording bar status while the microphone opens."
+  },
+  "liveTranscriptStatusListening": "Récórdíng ánd tránscríbíng··········",
+  "@liveTranscriptStatusListening": {
+    "description": "Recording bar status while audio is recorded and transcribed."
+  },
+  "liveTranscriptStatusPaused": "Páúséd···",
+  "@liveTranscriptStatusPaused": {
+    "description": "Recording bar status while the recording is paused."
+  },
+  "liveTranscriptStatusFinishing": "Fíníshíng thé tránscrípt·········",
+  "@liveTranscriptStatusFinishing": {
+    "description": "Recording bar status while the recording is closed and the transcript completes."
+  },
+  "liveTranscriptEmpty": "Spéák, ánd thé wórds áppéár héré.············",
+  "@liveTranscriptEmpty": {
+    "description": "Transcript view before any words are recognised."
+  },
+  "liveTranscriptJumpToLatest": "Júmp tó látést·····",
+  "@liveTranscriptJumpToLatest": {
+    "description": "Transcript view control that scrolls back to the newest words."
+  },
+  "transcriptViewLabel": "Tránscrípt····",
+  "@transcriptViewLabel": {
+    "description": "Accessible name of the transcript view."
   },
   "captureAudioScopeTitle": "Úsé áúdíó wíth·····",
   "@captureAudioScopeTitle": {

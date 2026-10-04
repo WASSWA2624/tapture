@@ -12,6 +12,10 @@ abstract final class Sizes {
   /// column cap so the detail pane keeps most of the width (FE-RESP-04).
   static const double listPane = 280;
 
+  /// Height of a transcript pane placed where nothing bounds its height, so
+  /// a long transcript scrolls inside the pane instead of growing the page.
+  static const double transcriptPane = 320;
+
   /// Confirmation and alert maximum. Material 3's dialog cap, so a
   /// confirmation stays a readable column on tablets and desktops
   /// (FE-RESP-04).

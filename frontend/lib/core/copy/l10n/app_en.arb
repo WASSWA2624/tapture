@@ -3965,7 +3965,11 @@
   "@audioRecorderUnavailable": {
     "description": "Audio recorder unavailable."
   },
-  "audioStartFailed": "Recording could not start.",
+  "microphoneBusy": "The microphone is in use by another recording. Stop it first, then try again.",
+  "@microphoneBusy": {
+    "description": "Refusal when another recording already holds the microphone."
+  },
+  "audioStartFailed":"Recording could not start.",
   "@audioStartFailed": {
     "description": "The recorder refused to start a take."
   },
@@ -4027,6 +4031,42 @@
         "format": "decimalPattern"
       }
     }
+  },
+  "liveTranscriptStart": "Start recording",
+  "@liveTranscriptStart": {
+    "description": "Recording bar control that starts a recording with a live transcript."
+  },
+  "liveTranscriptCancel": "Discard",
+  "@liveTranscriptCancel": {
+    "description": "Recording bar control that discards the recording in progress."
+  },
+  "liveTranscriptStatusStarting": "Opening the microphone",
+  "@liveTranscriptStatusStarting": {
+    "description": "Recording bar status while the microphone opens."
+  },
+  "liveTranscriptStatusListening": "Recording and transcribing",
+  "@liveTranscriptStatusListening": {
+    "description": "Recording bar status while audio is recorded and transcribed."
+  },
+  "liveTranscriptStatusPaused": "Paused",
+  "@liveTranscriptStatusPaused": {
+    "description": "Recording bar status while the recording is paused."
+  },
+  "liveTranscriptStatusFinishing": "Finishing the transcript",
+  "@liveTranscriptStatusFinishing": {
+    "description": "Recording bar status while the recording is closed and the transcript completes."
+  },
+  "liveTranscriptEmpty": "Speak, and the words appear here.",
+  "@liveTranscriptEmpty": {
+    "description": "Transcript view before any words are recognised."
+  },
+  "liveTranscriptJumpToLatest": "Jump to latest",
+  "@liveTranscriptJumpToLatest": {
+    "description": "Transcript view control that scrolls back to the newest words."
+  },
+  "transcriptViewLabel": "Transcript",
+  "@transcriptViewLabel": {
+    "description": "Accessible name of the transcript view."
   },
   "captureAudioScopeTitle": "Use audio with",
   "@captureAudioScopeTitle": {

@@ -51,6 +51,61 @@ abstract final class AppConstants {
     settle: Duration(seconds: 2),
   );
 
+  /// The on-device speech engine (spec §30.4.3). A worker isolate has
+  /// [workerStart] to begin serving, and [workerCloseGrace] to clean up after
+  /// a close before it is killed.
+  static const ({Duration workerStart, Duration workerCloseGrace})
+  speechEngine = (
+    workerStart: Duration(seconds: 10),
+    workerCloseGrace: Duration(seconds: 5),
+  );
+
+  /// The on-device speech pipeline (spec §30.4.3). The resampler brings a
+  /// 48 or 44.1 kHz capture down to 16 kHz with a Kaiser-windowed sinc:
+  /// `resamplerZeroCrossings` per side, a β of `resamplerKaiserBeta` (about
+  /// 70 dB stopband), a cutoff at `resamplerCutoffRatio` of the lower
+  /// Nyquist rate, and at most `resamplerMaxPhases` polyphase branches. The
+  /// last `ringDuration` of a take is served from memory, the rest from
+  /// its file.
+  static const ({
+    Duration ringDuration,
+    int resamplerZeroCrossings,
+    double resamplerKaiserBeta,
+    double resamplerCutoffRatio,
+    int resamplerMaxPhases,
+  })
+  speechPipeline = (
+    ringDuration: Duration(seconds: 30),
+    resamplerZeroCrossings: 16,
+    resamplerKaiserBeta: 7,
+    resamplerCutoffRatio: 0.9,
+    resamplerMaxPhases: 512,
+  );
+
+  /// Streaming capture and live-session limits (spec §30.4.3). A capture
+  /// that refuses 16 kHz retries `fallbackCaptureRates` in order. The
+  /// staging WAV header is patched and flushed every `wavFlushInterval` of
+  /// audio. Publishing a take holds the directory lock for no longer than
+  /// `adoptLockBudget`.
+  static const ({
+    List<int> fallbackCaptureRates,
+    Duration wavFlushInterval,
+    Duration webChunkDuration,
+    Duration maxSessionDuration,
+    Duration webMaxSessionDuration,
+    Duration storageCheckInterval,
+    Duration adoptLockBudget,
+  })
+  speechSession = (
+    fallbackCaptureRates: <int>[48000, 44100],
+    wavFlushInterval: Duration(seconds: 5),
+    webChunkDuration: Duration(seconds: 5),
+    maxSessionDuration: Duration(hours: 4),
+    webMaxSessionDuration: Duration(minutes: 30),
+    storageCheckInterval: Duration(seconds: 60),
+    adoptLockBudget: Duration(milliseconds: 100),
+  );
+
   /// How long a location fix may take before capture goes on without one.
   static const Duration locationTimeout = Duration(seconds: 3);
 

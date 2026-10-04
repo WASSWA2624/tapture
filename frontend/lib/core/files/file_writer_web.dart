@@ -26,6 +26,7 @@ FileWriter openFileWriter({
   bool fullDisk = false,
   bool permissionDenied = false,
   bool vanishedParent = false,
+  bool crossVolume = false,
 }) {
   return BlobFileWriter(projectFileStore(), onFirstWrite: _askToPersist);
 }

@@ -291,3 +291,55 @@ Future<int> main(List<String> args);
 ### Out of scope
 
 - Relay, which is not in the MVP (A67, A72).
+
+## 130 — Build and gate the speech engine in CI and release
+
+**Depends on** [025](25-testing-and-release.md), [101](24-product-refinements.md), [103](24-product-refinements.md), [105](24-product-refinements.md), [109](24-product-refinements.md), [111](24-product-refinements.md), [120](24-product-refinements.md)
+
+### Implement
+
+**Workflow.** `.github/workflows/speech.yml` is path-filtered, with nightly, `release/**` and dispatch triggers, and `flutter-version: 3.44.6`. Jobs:
+
+| Job | Runner | Steps |
+|---|---|---|
+| `speech-assets` | ubuntu | Cached `speech_models --fetch` + `--check`; `whisper_vendor --check`; `whisper_wasm --check` |
+| `native-smoke` | ubuntu, windows, macos | `cmake -DTW_BUILD_SMOKE=ON`; `tw_smoke` on jfk with tiny, including `--abort-after-checks` |
+| `flutter-builds` | windows, linux, macos + ios no-codesign (CocoaPods **and** SwiftPM), android, web | Android: debug APK + `check_native_library` on every ABI's `.so` (this also compiles the `MainActivity.kt` methods of 109 and 120). Web: `--no-web-resources-cdn` + `build/web/whisper` equals `web/whisper` |
+| `wasm-node-smoke` | ubuntu | Node 22, st and mt |
+| `wasm-rebuild` | ubuntu | dispatch only; warns on byte drift |
+
+**Release build.** `ci.yml` `release-build` fetches and checks the models first.
+
+**Release gate.** `frontend/tool/release_gate.dart` gains `speech-assets`. It passes only when all of these hold, and otherwise lists every problem:
+- every bundled model at its hash;
+- the vendor check (including patch hashes) passing;
+- the WASM `BUILD_INFO` check passing;
+- the four-block `LICENSE`.
+
+### Files
+
+- `.github/workflows/speech.yml`, `.github/workflows/ci.yml`, `frontend/tool/release_gate.dart`
+- `frontend/test/tool/release_gate_test.dart`
+
+### Contract
+
+`releaseGates` gains `'speech-assets'`. `Future<String> speechAssetsOutcome(Directory frontendRoot)` returns `'passed'` or a failure text naming every problem.
+
+### Constraints
+
+- FE-FLOW-02: no review command and no `verify.dart`.
+- Tests are gitignored, so CI proves behaviour through the smoke programs only.
+
+### Out of scope
+
+- Running Flutter test suites in CI.
+- Code signing.
+
+### Definition of done
+
+- [ ] On this machine, `release_gate_test` proves the row passes with models present, and fails, listing each problem, for a missing model, a changed hash, a stale WASM file, a drifted patch and a missing licence block. A waiver is honoured.
+- [ ] `speech.yml` passes actionlint, or a YAML parse plus a recorded job and step review.
+- [ ] Every job is green on GitHub Actions and fails once on a deliberate violation (a dropped vendored file, a tampered `.wasm`, a 4 KiB-aligned `.so`), with run URLs recorded.
+- [ ] Linux, macOS and iOS (CocoaPods and SwiftPM) builds succeed, and `tw_*` resolves from Dart in each.
+- [ ] The Android debug APK contains `libtapture_whisper.so` for arm64-v8a, armeabi-v7a (stub) and x86_64, and `check_native_library` passes each.
+- [ ] `release-build` fetches and checks the models before building.

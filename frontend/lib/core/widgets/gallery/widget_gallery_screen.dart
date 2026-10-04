@@ -36,10 +36,13 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_progress_steps.dart';
+import 'package:tapture/core/widgets/app_recording_bar.dart';
+import 'package:tapture/core/widgets/app_recording_phase.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/app_toolbar_scope.dart';
+import 'package:tapture/core/widgets/app_transcript_view.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/error_boundary.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
@@ -531,7 +534,23 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         ownsHeader: true,
         child: Text(localCopy.settingsStorageTitle, style: AppText.bodyStrong),
       ),
-      const SizedBox(height: Space.x6),
+      const SizedBox(height: Space.x3),
+      // The recording controls in every phase.
+      for (final AppRecordingPhase phase
+          in AppRecordingPhase.values) ...<Widget>[
+        AppRecordingBar(
+          phase: phase,
+          elapsed: const Duration(minutes: 1, seconds: 5),
+          level: 0.4,
+          onStart: _noop,
+          onPause: _noop,
+          onResume: _noop,
+          onStop: _noop,
+          onCancel: _noop,
+        ),
+        const SizedBox(height: Space.x3),
+      ],
+      const SizedBox(height: Space.x3),
     ];
   }
 
@@ -1109,6 +1128,25 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         size: _inkSize,
         onInk: (MarkupInk ink) => setState(() => _ink = ink),
         onSize: (int size) => setState(() => _inkSize = size),
+      ),
+      const SizedBox(height: Space.x4),
+      // A live transcript: settled lines, then the words still arriving.
+      SizedBox(
+        height: Space.x12 * 4,
+        child: AppTranscriptView(
+          paragraphs: <String>[
+            localCopy.gallerySampleBoilerA,
+            localCopy.gallerySampleStampCapture,
+            localCopy.gallerySampleBesideList,
+          ],
+          tentative: localCopy.gallerySampleSteam,
+          live: true,
+        ),
+      ),
+      const SizedBox(height: Space.x4),
+      const SizedBox(
+        height: Space.x12 * 2,
+        child: AppTranscriptView(paragraphs: <String>[]),
       ),
       const SizedBox(height: Space.x6),
     ];

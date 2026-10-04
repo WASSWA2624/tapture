@@ -2691,6 +2691,9 @@ final class LocalizedCopy {
   /// Audio recorder unavailable.
   String get audioRecorderUnavailable => _catalog.audioRecorderUnavailable;
 
+  /// Refusal when another recording already holds the microphone.
+  String get microphoneBusy => _catalog.microphoneBusy;
+
   /// The recorder refused to start a take.
   String get audioStartFailed => _catalog.audioStartFailed;
 
@@ -2719,6 +2722,37 @@ final class LocalizedCopy {
     };
     return _catalog.audioRecorderStatusS(label, seconds);
   }
+
+  /// Recording bar control that starts a recording with a live transcript.
+  String get liveTranscriptStart => _catalog.liveTranscriptStart;
+
+  /// Recording bar control that discards the recording in progress.
+  String get liveTranscriptCancel => _catalog.liveTranscriptCancel;
+
+  /// Recording bar status while the microphone opens.
+  String get liveTranscriptStatusStarting =>
+      _catalog.liveTranscriptStatusStarting;
+
+  /// Recording bar status while audio is recorded and transcribed.
+  String get liveTranscriptStatusListening =>
+      _catalog.liveTranscriptStatusListening;
+
+  /// Recording bar status while the recording is paused.
+  String get liveTranscriptStatusPaused => _catalog.liveTranscriptStatusPaused;
+
+  /// Recording bar status while the recording is closed and the transcript
+  /// completes.
+  String get liveTranscriptStatusFinishing =>
+      _catalog.liveTranscriptStatusFinishing;
+
+  /// Transcript view before any words are recognised.
+  String get liveTranscriptEmpty => _catalog.liveTranscriptEmpty;
+
+  /// Transcript view control that scrolls back to the newest words.
+  String get liveTranscriptJumpToLatest => _catalog.liveTranscriptJumpToLatest;
+
+  /// Accessible name of the transcript view.
+  String get transcriptViewLabel => _catalog.transcriptViewLabel;
 
   /// Audio evidence association sheet.
   String get captureAudioScopeTitle => _catalog.captureAudioScopeTitle;

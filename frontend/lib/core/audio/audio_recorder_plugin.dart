@@ -2,12 +2,8 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:crypto/crypto.dart';
 
 import 'package:record/record.dart' as record;
-import 'package:tapture/core/concurrency/isolate_runner.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -16,34 +12,44 @@ import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 
 import 'audio_recorder_service.dart';
-
-part 'wav_take.dart';
-
-/// Suffix of a take the plugin is still writing. It sits beside the target,
-/// never under `.cache`, because it is the only copy until it is published.
-const String _stagingSuffix = '.recording';
+import 'microphone_arbiter.dart';
+import 'microphone_lease.dart';
+import 'microphone_owner.dart';
+import 'staged_take.dart';
+import 'staged_take_recovery.dart';
 
 /// Native microphone adapter. Plugin types stop in this core platform file;
 /// capture depends only on [AudioRecorderService].
 ///
 /// The recorder plugins cannot stream WAV, so a take is recorded in file mode
 /// to a staging file beside the target and then published through
-/// [FileWriter.copyIn], which hashes it and renames it into place.
+/// [publishStagedTake], which hashes it and renames it into place.
+///
+/// The microphone is claimed from [MicrophoneArbiter] as
+/// [MicrophoneOwner.fileRecorder] for the length of a take.
 final class AudioRecorderPlugin
     implements AudioRecorderService, AudioRecoveryService {
   /// Creates an adapter that stages takes under [storageRoot] and publishes
-  /// them through [writer]. [recorder] is the test seam.
+  /// them through [writer]. [arbiter] is the app's one microphone owner; a
+  /// recorder of its own is used when it is omitted. [recorder] is the test
+  /// seam.
   AudioRecorderPlugin({
     required FileWriter writer,
     required StorageRoot storageRoot,
+    MicrophoneArbiter? arbiter,
     record.AudioRecorder? recorder,
   }) : _writer = writer,
        _storageRoot = storageRoot,
+       _arbiter = arbiter ?? MicrophoneArbiter(),
+       _recovery = StagedTakeRecovery(writer: writer, storageRoot: storageRoot),
        _recorder = recorder ?? record.AudioRecorder();
 
   final FileWriter _writer;
   final StorageRoot _storageRoot;
+  final MicrophoneArbiter _arbiter;
+  final StagedTakeRecovery _recovery;
   final record.AudioRecorder _recorder;
+  MicrophoneLease? _lease;
   final StreamController<AudioRecorderState> _states =
       StreamController<AudioRecorderState>.broadcast();
   StreamSubscription<record.Amplitude>? _amplitude;
@@ -70,11 +76,21 @@ final class AudioRecorderPlugin
         ValidationFailure(localizedMessage: Copy.messages.audioStartFailed),
       );
     }
+    final Result<MicrophoneLease> claimed = await _arbiter.claim(
+      MicrophoneOwner.fileRecorder,
+    );
+    switch (claimed) {
+      case FailureResult<MicrophoneLease>(:final Failure failure):
+        return FailureResult<void>(failure);
+      case Success<MicrophoneLease>(:final MicrophoneLease value):
+        _lease = value;
+    }
     try {
       _phase = AudioRecorderPhase.permission;
       _emit();
       if (!await _recorder.hasPermission()) {
         _phase = AudioRecorderPhase.failed;
+        _releaseMicrophone();
         _emit();
         return FailureResult<void>(
           PermissionFailure(
@@ -88,11 +104,10 @@ final class AudioRecorderPlugin
         Success<Directory>(:final Directory value) => value,
         FailureResult<Directory>(:final Failure failure) => throw failure,
       };
-      final File staging = File(
-        '${folder.path}/${_relative(relativePath)}$_stagingSuffix',
-      );
+      final String relative = stagedTakePath(relativePath);
+      final File staging = File('${folder.path}/$relative$stagedTakeSuffix');
       if (await staging.exists() ||
-          await File('${folder.path}/${_relative(relativePath)}').exists()) {
+          await File('${folder.path}/$relative').exists()) {
         throw ValidationFailure(
           localizedMessage: Copy.messages.audioStartFailed,
         );
@@ -127,10 +142,12 @@ final class AudioRecorderPlugin
       return const Success<void>(null);
     } on Failure catch (failure) {
       _phase = AudioRecorderPhase.failed;
+      _releaseMicrophone();
       _emit();
       return FailureResult<void>(failure);
     } on Object {
       _phase = AudioRecorderPhase.failed;
+      _releaseMicrophone();
       _emit();
       return FailureResult<void>(
         ProviderFailure(
@@ -175,37 +192,35 @@ final class AudioRecorderPlugin
       _phase = AudioRecorderPhase.finalizing;
       _emit();
       await _recorder.stop();
+      _releaseMicrophone();
       final File? staging = _staging;
       final String? path = _path;
       if (staging == null || path == null) {
         throw StateError('No audio take is active.');
       }
-      final Result<WrittenFile> result = await _writer.copyIn(staging, path);
+      final Result<AudioRecording> result = await publishStagedTake(
+        writer: _writer,
+        staging: staging,
+        relativePath: path,
+        fallback: _elapsed,
+      );
       switch (result) {
-        case FailureResult<WrittenFile>(:final Failure failure):
+        case FailureResult<AudioRecording>(:final Failure failure):
           // The staging file is the only copy; it stays for the next attempt
           // and the orphan report (FE-SIMP-09).
           _phase = AudioRecorderPhase.failed;
           _emit();
           return FailureResult<Duration>(failure);
-        case Success<WrittenFile>(:final WrittenFile value):
-          final Duration duration =
-              (await _WavTake.read(staging))?.duration ?? _elapsed;
-          _completed = AudioRecording(
-            relativePath: value.relativePath,
-            sha256: value.sha256,
-            byteLength: value.byteLength,
-            duration: duration,
-            mimeType: 'audio/wav',
-          );
+        case Success<AudioRecording>(:final AudioRecording value):
+          _completed = value;
           _staging = null;
-          await discardUnpublishedFile(staging);
           _phase = AudioRecorderPhase.completed;
           _emit();
-          return Success<Duration>(duration);
+          return Success<Duration>(value.duration);
       }
     } on Object catch (error) {
       _phase = AudioRecorderPhase.failed;
+      _releaseMicrophone();
       _emit();
       return FailureResult<Duration>(Failure.from(error));
     }
@@ -214,7 +229,7 @@ final class AudioRecorderPlugin
   @override
   Future<Result<AudioRecording?>> recover(String relativePath) async {
     try {
-      final String path = _relative(relativePath);
+      final String path = stagedTakePath(relativePath);
       if (_path == path &&
           (_phase == AudioRecorderPhase.recording ||
               _phase == AudioRecorderPhase.paused)) {
@@ -228,44 +243,15 @@ final class AudioRecorderPlugin
           StorageFailure(localizedMessage: Copy.messages.audioStartFailed),
         );
       }
-      final Result<Directory> root = await _storageRoot.resolve();
-      if (root case FailureResult<Directory>(:final Failure failure)) {
-        return FailureResult<AudioRecording?>(failure);
-      }
-      final Directory folder = (root as Success<Directory>).value;
-      final File published = File('${folder.path}/$path');
-      if (await published.exists()) {
-        // A kill may occur between publication and saving the session. Do
-        // not overwrite that file; stream its hash and recover its metadata.
-        return runIsolate<(String, String), AudioRecording?>(
-          _readPublishedTake,
-          (published.path, path),
-        );
-      }
-      final File staging = File('${published.path}$_stagingSuffix');
-      if (!await staging.exists()) {
-        return const Success<AudioRecording?>(null);
-      }
-      final _WavTake? take = await _WavTake.read(staging, interrupted: true);
-      if (take == null) throw const FormatException('Invalid staged WAV take.');
-      final Result<WrittenFile> written = await _writer.write(
-        take.repairedBytes(staging),
-        path,
-      );
-      return written.map((WrittenFile file) {
-        // Header repair produces a playable derivative. The raw .recording
-        // file remains beside it, byte-for-byte, for recovery and inspection.
-        return AudioRecording(
-          relativePath: file.relativePath,
-          sha256: file.sha256,
-          byteLength: file.byteLength,
-          duration: take.duration,
-          mimeType: 'audio/wav',
-        );
-      });
+      return _recovery.recover(path);
     } on Object catch (error) {
       return FailureResult<AudioRecording?>(Failure.from(error));
     }
+  }
+
+  void _releaseMicrophone() {
+    _lease?.release();
+    _lease = null;
   }
 
   void _emit({double level = 0}) {
@@ -275,21 +261,4 @@ final class AudioRecorderPlugin
       );
     }
   }
-}
-
-/// [relativePath] with forward slashes, refused when it could leave the
-/// storage folder. [FileWriter.copyIn] applies the same rule to the target.
-String _relative(String relativePath) {
-  final String relative = relativePath.replaceAll(r'\', '/').trim();
-  final List<String> parts = relative.split('/');
-  if (relative.isEmpty ||
-      relative.startsWith('/') ||
-      relative.contains(':') ||
-      parts.any((String part) => part.isEmpty || part == '.' || part == '..')) {
-    throw ValidationFailure(
-      localizedMessage: Copy.messages.audioPathOutsideStorage,
-      localizedRecovery: Copy.messages.audioStartFailedRecovery,
-    );
-  }
-  return relative;
 }

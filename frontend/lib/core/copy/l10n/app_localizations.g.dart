@@ -4873,6 +4873,12 @@ abstract class AppLocalizations {
   /// **'Audio recording is not available on this device.'**
   String get audioRecorderUnavailable;
 
+  /// Refusal when another recording already holds the microphone.
+  ///
+  /// In en, this message translates to:
+  /// **'The microphone is in use by another recording. Stop it first, then try again.'**
+  String get microphoneBusy;
+
   /// The recorder refused to start a take.
   ///
   /// In en, this message translates to:
@@ -4950,6 +4956,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{label} · {seconds}s'**
   String audioRecorderStatusS(Object label, int seconds);
+
+  /// Recording bar control that starts a recording with a live transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'Start recording'**
+  String get liveTranscriptStart;
+
+  /// Recording bar control that discards the recording in progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get liveTranscriptCancel;
+
+  /// Recording bar status while the microphone opens.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening the microphone'**
+  String get liveTranscriptStatusStarting;
+
+  /// Recording bar status while audio is recorded and transcribed.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording and transcribing'**
+  String get liveTranscriptStatusListening;
+
+  /// Recording bar status while the recording is paused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get liveTranscriptStatusPaused;
+
+  /// Recording bar status while the recording is closed and the transcript completes.
+  ///
+  /// In en, this message translates to:
+  /// **'Finishing the transcript'**
+  String get liveTranscriptStatusFinishing;
+
+  /// Transcript view before any words are recognised.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak, and the words appear here.'**
+  String get liveTranscriptEmpty;
+
+  /// Transcript view control that scrolls back to the newest words.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to latest'**
+  String get liveTranscriptJumpToLatest;
+
+  /// Accessible name of the transcript view.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcript'**
+  String get transcriptViewLabel;
 
   /// Audio evidence association sheet.
   ///

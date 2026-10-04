@@ -34,14 +34,16 @@ Future<void> discardUnpublishedFile(File file) async {
 abstract interface class FileWriter {
   /// The writer for this platform. On device it writes under [storageRoot];
   /// tests pass [StorageRoot.fake] and the failure seams so a suite can
-  /// interrupt a write without filling a disk. A browser keeps its files in
-  /// IndexedDB and ignores both.
+  /// interrupt a write without filling a disk; `crossVolume` makes
+  /// [adoptStaged] treat its staging file as one on another volume. A
+  /// browser keeps its files in IndexedDB and ignores both.
   factory FileWriter({
     required StorageRoot storageRoot,
     int? failAfterBytes,
     bool fullDisk = false,
     bool permissionDenied = false,
     bool vanishedParent = false,
+    bool crossVolume = false,
   }) {
     return platform.openFileWriter(
       storageRoot: storageRoot,
@@ -49,6 +51,7 @@ abstract interface class FileWriter {
       fullDisk: fullDisk,
       permissionDenied: permissionDenied,
       vanishedParent: vanishedParent,
+      crossVolume: crossVolume,
     );
   }
 
@@ -61,4 +64,14 @@ abstract interface class FileWriter {
 
   /// Copies [source] through the same atomic write as [write].
   Future<Result<WrittenFile>> copyIn(File source, String relativePath);
+
+  /// Publishes [staging], a finished file the app wrote itself, at
+  /// [relativePath] by renaming it, so a long take is never copied.
+  ///
+  /// The file is hashed and flushed to disk before the directory lock is
+  /// taken; under the lock an existing target is refused and the rename is
+  /// made. A [staging] file on another volume is copied in through
+  /// [copyIn] and then removed. A browser has no file to rename and
+  /// returns a `ProviderFailure`.
+  Future<Result<WrittenFile>> adoptStaged(File staging, String relativePath);
 }

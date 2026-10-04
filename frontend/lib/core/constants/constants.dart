@@ -2,4 +2,5 @@
 library;
 
 export 'app_constants.dart';
+export 'speech_assets.dart';
 export 'template_assets.dart';

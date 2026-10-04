@@ -2,8 +2,9 @@
 
 Complete the field-feedback, storage, template, capture and navigation refinements that extend the core app before
 Documentation is built. The backend is available before task 077; project packages from task 076 support document
-archive inputs, and task 079 applies compact More navigation after the earlier Settings-label change. The final
-whole-app hardening pass follows every feature in [step 27](27-hardening/).
+archive inputs, and task 079 applies compact More navigation after the earlier Settings-label change. Tasks 101–129
+add real-time on-device speech-to-text with whisper.cpp (spec §30.4). The final whole-app hardening pass follows
+every feature in [step 27](27-hardening/).
 
 ## 026 — In-app feedback: floating button, capture, download and delete
 
@@ -64,7 +65,7 @@ fold the remaining facets behind More filters, and keep their action pinned. The
 Restart, Export log and Recycle bin in one row that wraps only when it must.
 
 Every free-text `AppTextField` gains a microphone at its end. Speech is reached through
-`core/ai/stt_service.dart` (the 131 contract), the transcript is tidied (spacing, punctuation,
+`core/ai/stt_service.dart` (this task's contract), the transcript is tidied (spacing, punctuation,
 capitals) before it lands at the caret, and a field stops its session when it is disposed. The
 offline switch keeps dictation on the device or refuses it (FE-SEC-04).
 
@@ -85,7 +86,7 @@ checkbox.
 
 ### Files
 
-- `frontend/lib/core/ai/stt_service.dart` (new, 131 contract), `frontend/lib/core/normalise/spoken_text.dart` (new)
+- `frontend/lib/core/ai/stt_service.dart` (new, this task's contract), `frontend/lib/core/normalise/spoken_text.dart` (new)
 - `frontend/lib/core/widgets/fields/dictation_scope.dart`, `dictation_session.dart` (new)
 - `frontend/lib/core/widgets/fields/app_text_field.dart`, `app_radio_group.dart`, `app_switch_tile.dart`
 - `frontend/lib/core/widgets/app_icon_button.dart`, `app_page.dart`, `forms/app_form.dart`
@@ -2822,3 +2823,1860 @@ manifest held hashes of CRLF bytes that git had normalized away on commit. The r
 generator's inputs and text outputs LF on every checkout, and the regenerated manifest records LF hashes for ten
 SVG outputs and three inputs; no other resource changed. `node tool/branding/generate.mjs --check` reports zero
 violations and `test/core/assets/branding_assets_test.dart` passes.
+
+## 101 — Pin the speech models and fetch them by hash
+
+**Depends on** [002](02-foundation.md)
+
+### Implement
+
+**The core speech module.**
+- Register `'speech'` in `frontend/tool/paths.dart` `coreDirectories`, between `'serialisation'` and `'team'`.
+- Add the barrel `frontend/lib/core/speech/speech.dart`.
+
+**The pure-Dart catalogue.**
+- `SpeechAssets`, `SpeechModelEntry`, `SpeechModelKind`, `SpeechModelTier`, `SpeechModelCatalogue` and `SpeechModelHeader.parse`.
+- The catalogue holds tiny-q5_1, base-q5_1, small-q5_1 (import-only, `webAllowed: false`) and silero-v6.2.0, at the PO's exact bytes and sha256.
+- Resolve each Hugging Face repository's current commit once (`ggerganov/whisper.cpp`, `ggml-org/whisper-vad`) and pin it into `sourceUrl` as `resolve/<commit>/<file>`.
+
+**The fetch tool,** `frontend/tool/speech_models.dart`:
+- `--fetch [--only <id>] [--from <dir>]` streams through `.part`, hashes while it writes and renames.
+- `--check` never uses the network.
+- `--verify <file>`.
+- `--import-model <id> --out <dir>`.
+- It writes a deterministic `frontend/assets/speech/manifest.json` and exports `checkSpeechModels`.
+
+**Repository wiring.**
+- Add the `assets/speech/` asset.
+- Gitignore `*.bin` and `*.part` there.
+- `check_repo_hygiene` requires that rule.
+
+### Files
+
+- `frontend/lib/core/constants/speech_assets.dart`
+- `frontend/lib/core/speech/speech.dart`, `frontend/lib/core/speech/speech_model_entry.dart`, `frontend/lib/core/speech/speech_model_kind.dart`, `frontend/lib/core/speech/speech_model_tier.dart`, `frontend/lib/core/speech/speech_model_catalogue.dart`, `frontend/lib/core/speech/speech_model_header.dart`
+- `frontend/tool/speech_models.dart`, `frontend/tool/paths.dart`, `frontend/tool/check_repo_hygiene.dart`
+- `frontend/assets/speech/manifest.json`, `frontend/pubspec.yaml` (assets), `frontend/.gitignore`
+- Tests:
+  - `frontend/test/core/speech/speech_model_catalogue_test.dart`
+  - `frontend/test/core/speech/speech_model_header_test.dart`
+  - `frontend/test/tool/speech_models_test.dart`
+  - `frontend/test/tool/check_repo_hygiene_test.dart`
+  - `frontend/test/core/constants/speech_assets_test.dart`
+
+### Contract
+
+- `dart run tool/speech_models.dart --fetch [--only <id>] [--from <dir>] | --check | --verify <file> | --import-model <id> --out <dir>` prints one `path:0: problem` per violation and exits 1 on any.
+- `List<String> checkSpeechModels(Directory frontendRoot)`.
+- `SpeechModelCatalogue.{all, tiny, base, small, vad, byId(String), matchImport(int bytes, String sha256)}`.
+- `SpeechModelHeader.parse(Uint8List first48) → SpeechModelHeader?`, with fields magic, nVocab, nAudioCtx, nAudioState, nAudioHead, nAudioLayer, nTextCtx, nTextState, nTextHead, nTextLayer, nMels and ftype.
+
+### Constraints
+
+- The catalogue is pure Dart with no Flutter import, because the tool imports it.
+- FE-STR-12: no asset path literals at call sites.
+- `core/speech` imports no network client.
+
+### Out of scope
+
+- Runtime model loading or verification (109, 110).
+- In-app download.
+
+### Definition of done
+
+- [x] The catalogue holds the four entries at the PO's exact bytes and sha256, with revision-pinned `sourceUrl`s.
+- [x] `speech_model_catalogue_test`:
+  - ids are unique;
+  - each sha256 is 64 lowercase hex;
+  - every `SpeechAssets` path is in the catalogue;
+  - there is exactly one VAD entry;
+  - small is import-only and not web-allowed;
+  - `matchImport` matches only on both bytes and sha;
+  - every `sourceUrl` contains `/resolve/` followed by a 40-hex commit.
+- [x] `speech_model_header_test` covers a valid LE header, bad magic, a short file, `ftype % 1000`, an hparam mismatch and the VAD magic-only check.
+- [x] On this machine, `--fetch` downloads the three bundled files, `--check` then passes without writing, and `--fetch --from <dir>` succeeds with no network.
+- [x] `speech_models_test` proves all of these:
+  - missing, size, sha and manifest drift are reported together;
+  - a hash mismatch during download leaves no final file;
+  - `--check` never calls the fetcher.
+- [x] `check_repo_hygiene_test` fails a `.gitignore` fixture that lacks the `/assets/speech/*.bin` rule.
+- [x] A Windows debug build with only `manifest.json` under `frontend/assets/speech/` builds and starts.
+- [x] `check_structure` passes with `speech` registered.
+
+### Verification
+
+- 2026-10-04 (review): checked the pins against the network. `curl -sI` on the four `resolve/<commit>/` URLs gave 302 each time, with `X-Linked-Size` and `X-Linked-ETag` equal to the catalogue bytes and sha256. The HF API `sha` of `ggerganov/whisper.cpp` is `5359861c…958b1` and of `ggml-org/whisper-vad` is `9ffd54a1…1639b`, the commits pinned. The real tiny, base and silero headers match the catalogue facts (tiny and base `ftype` 1009; silero has the ggml magic). The first 48 bytes of small match too (768/12/12/80/1009).
+- 2026-10-04 (review): `flutter test` passed 72 tests across the catalogue, header, speech_assets, speech_models, check_repo_hygiene and check_structure suites. The architecture suites network, naming, layering, data_safety, plugin_imports, tokens and errors passed 78 tests. `dart analyze` on every changed path found no issues, and `dart format` changed nothing. These checkers came back clean: `check_structure` (106 directories), `check_repo_hygiene`, `check_naming`, `check_logging`, `check_secrets`, `check_tests` and `check_l10n`.
+- 2026-10-04 (review): `--fetch` over the network, run into an empty temp root through `runSpeechModels`, downloaded all three bundled files in 584 s and exited 0. `checkSpeechModels` was then clean and left the file listing and mtimes unchanged. On the real tree, `--check` is clean and `--verify` matches each of the three files.
+- 2026-10-04 (review): showed that `--fetch --from <scratchpad models>` uses no network. It ran into an empty temp root under an `HttpOverrides.global` whose `createHttpClient` throws. It exited 0 with 0 HTTP client attempts, and the check after it was clean. As a control, the same harness ran a network `--fetch --only silero-v6.2.0`; that made 1 attempt, failed with exit 1 and left no `.part`.
+- 2026-10-04 (review): ran `flutter build windows --debug` under the `windows` lock while `assets/speech` held only `manifest.json`; the three gitignored `.bin` files were moved aside and then moved back. The build exited 0, and the bundled `data/flutter_assets/assets/speech` held only `manifest.json`. `tapture.exe` (PID 44740, window 'Tapture') was still running after 15 s, then stopped by that PID. The first build attempt failed because another agent had a half-written edit in `widget_gallery_screen.dart`. That failure was not caused by this task, and the retry passed.
+- 2026-10-04 (review fix): `checkSpeechModels` skipped the leftover-`.part` report whenever the final file was missing, which is the state an interrupted first fetch leaves. It now reports both, and the new `speech_models_test` case "reports an unfinished download whose final file never landed" covers this. The speech_models and check_repo_hygiene suites passed again (32 tests).
+
+## 102 — Vendor whisper.cpp in a local FFI plugin
+
+**Depends on** [001](01-orchestration.md), [002](02-foundation.md), [100](01-orchestration.md)
+
+### Implement
+
+**The package.**
+- Create `frontend/packages/tapture_whisper/` as a classic `ffiPlugin`: workspace member, `version: 1.9.4+1`, no build hooks, no `example/`.
+- Dev dependencies: `flutter_test` (sdk) and `flutter_lints`.
+
+**Vendoring** (`frontend/tool/whisper_vendor.dart`):
+- `--from <tarball>`:
+  1. verifies sha256 `57e280cee375ab02425b806ad5146b99f6eb9357e3c2b31357c8a6af2e2e44ae` (commit 927cfce3);
+  2. extracts the KEEP list (spec §30.4.1);
+  3. applies `third_party/patches/0001-sched-abort-callback.patch`;
+  4. writes `VENDOR.json` with file and patch hashes;
+  5. generates the Darwin forwarders.
+- `--check` re-verifies everything with no network and reports every violation.
+
+**Wiring, in block YAML:**
+- `frontend/pubspec.yaml`: the `workspace:` entry and the `tapture_whisper` path dependency with a nested `version:`.
+- `frontend/tool/allowlist.yaml`: `tapture_whisper` and `ffi`.
+- `frontend/tool/paths.dart`: `localPackagesRoot` and `nativeSourceScanRoots`. Neither joins `checkerRoots`.
+
+**Checker changes:**
+- `check_dependencies` gains rules 1–5. Rule 5 counts a local package's dependencies as declared.
+- `check_secrets` scans `nativeSourceScanRoots`, skips `third_party`, and treats wasm, a, dylib, so and gguf as binary.
+- `check_naming` scans `packages/*/lib`.
+
+**Rules and repository files:**
+- Amend FE-STR-01 with the local-package conditions, including that FE-CODE/FE-STR naming applies in `packages/*/lib`.
+- Add the `.gitignore` and `.gitattributes` rules.
+- Commit the four-block `LICENSE`.
+
+### Files
+
+- `frontend/packages/tapture_whisper/pubspec.yaml`, `frontend/packages/tapture_whisper/analysis_options.yaml`, `frontend/packages/tapture_whisper/LICENSE`, `frontend/packages/tapture_whisper/VENDOR.json`, `frontend/packages/tapture_whisper/README.md`
+- `frontend/packages/tapture_whisper/third_party/whisper.cpp/**`, `frontend/packages/tapture_whisper/third_party/patches/0001-sched-abort-callback.patch`
+- `frontend/packages/tapture_whisper/src/whisper_sources.cmake`, `frontend/packages/tapture_whisper/src/generated/ggml-version.h`
+- `frontend/tool/whisper_vendor.dart`, `frontend/tool/check_dependencies.dart`, `frontend/tool/check_secrets.dart`, `frontend/tool/check_naming.dart`, `frontend/tool/paths.dart`, `frontend/tool/allowlist.yaml`
+- `frontend/pubspec.yaml`, `frontend/.rules/01-structure.md`, `frontend/.gitignore`, `.gitattributes`
+- Tests:
+  - `frontend/test/tool/whisper_vendor_test.dart` + `frontend/test/tool/fixtures/whisper_vendor/**`
+  - `frontend/test/tool/check_dependencies_test.dart` (`_fixture()` also copies the package pubspec; summaries re-pinned) + `frontend/test/tool/fixtures/dependencies/{local_ok,outside_packages,unpinned_path,version_mismatch,build_hook,package_unapproved}/**`
+  - `frontend/test/tool/check_secrets_test.dart` + `frontend/test/tool/fixtures/secrets/packages/**`
+  - `frontend/test/tool/check_naming_test.dart` + `frontend/test/tool/fixtures/naming/packages/**`
+  - `frontend/test/tool/check_structure_test.dart` (unchanged expectation: the shipped tree passes)
+  - `frontend/packages/tapture_whisper/test/package_manifest_test.dart`
+
+### Contract
+
+- `dart run tool/whisper_vendor.dart --from <tarball> | --check`. The output is `path:line: message` per violation, with exit 1 on any.
+- `frontend/pubspec.yaml`:
+
+  ```yaml
+  tapture_whisper:
+    path: packages/tapture_whisper
+    version: 1.9.4+1
+  ```
+
+- `const String localPackagesRoot`; `const List<String> nativeSourceScanRoots`.
+
+### Constraints
+
+- FE-FLOW-06: each allowlist entry has a purpose, a licence and task 102.
+- FE-FLOW-07: the rule edit, the checker changes and the fixtures land together.
+- The only network use is the one-time tarball download.
+- The patch is the only modification to vendored source.
+
+### Out of scope
+
+- The C shim and native builds (103).
+- The Dart API (104).
+- Apple manifests (105).
+- WASM (111).
+
+### Definition of done
+
+- [ ] `third_party/whisper.cpp` holds exactly the KEEP list, and `VENDOR.json` records patch 0001 with upstream, patched and patch hashes.
+- [ ] `whisper_vendor.dart --check` passes on the tree. `whisper_vendor_test` proves, in one run with `path:line` and exit 1, each of:
+  - a missing file;
+  - an extra file;
+  - a hash drift;
+  - an unrecorded patch change;
+  - a stale forwarder.
+- [ ] `check_dependencies` reports zero violations or warnings on the tree. Its fixtures prove the pass case and each of these, all reported with file and line in one run:
+  - a path outside `packages/`;
+  - a missing `version:`;
+  - a version mismatch;
+  - a `hook/`;
+  - an unapproved package dependency.
+- [ ] `check_secrets` reports a key planted in `packages/x/lib` and in `web/whisper/x.js` fixtures, and skips `third_party`.
+- [ ] `check_naming` reports an `Info`-suffixed type and a second public class in a `packages/x/lib` fixture.
+- [ ] `check_structure_test` still passes on the shipped tree.
+- [ ] FE-STR-01 names `frontend/packages/` with the local-package conditions, and the rule change and its rationale are recorded in this task's evidence note for the commit body.
+- [ ] `flutter pub get` resolves the workspace, or the README records the fallback and `strict_analysis_test` gains a package-analysis case. `dart analyze` over `frontend/` reports zero diagnostics.
+- [ ] `git check-attr` confirms `third_party/** -text`, `*.wasm binary` and `web/whisper/*.js eol=lf`.
+- [ ] `package_manifest_test` parses the four `LICENSE` blocks in the 80-dash format.
+
+## 103 — Build the whisper C ABI for Windows, Linux and Android libraries
+
+**Depends on** [101](24-product-refinements.md), [102](24-product-refinements.md)
+
+### Implement
+
+**The shim.** Implement ABI v1 (spec §30.4.1) in `src/tapture_whisper.h` and `src/tapture_whisper.cpp`, plus `src/tw_sha256.{c,h}`:
+- **Verified single-handle open:** size, then streamed SHA-256, then magic, then parse through the same handle. Windows uses `_wfsopen` with `_SH_DENYWR`.
+- **Explicit `whisper_state`:** `POISONED` on rc −7.
+- **Language:** a known code only. `''` and `auto` are refused.
+- **Abort:** through patch 0001 plus a post-return cell check. There is no progress cell. Includes `tw_debug_abort_after_checks`.
+- **Cells:** refcounted.
+- **Handles:** a per-handle busy flag and deferred close.
+- **Logging:** a filtered log ring and the crash file.
+- **Probes:** CPU and memory.
+- **Counters:** live counters, including HASHER.
+- **Stub build, `static_assert`s and `TW_SIZEOF_*`,** with `tw_model_facts` = 56.
+
+**The build.** `src/CMakeLists.txt`:
+- the canonical source list;
+- `/O2` or `-O3` with `NDEBUG` in every configuration; `/RTC1` stripped; UNICODE removed;
+- arch flags on ggml-cpu only; hidden visibility;
+- `TW_OPENMP` (ON for Android, with `-fopenmp -static-openmp`);
+- 16 KiB pages on Android;
+- `TW_BUILD_SMOKE`.
+
+Also add `windows/CMakeLists.txt`, `linux/CMakeLists.txt` and `android/build.gradle`.
+
+**The checker.** `frontend/tool/check_native_library.dart` with fixtures.
+
+**README.** Record the NDK CMake + Ninja commands, which need no Gradle.
+
+### Files
+
+- `frontend/packages/tapture_whisper/src/tapture_whisper.h`, `frontend/packages/tapture_whisper/src/tapture_whisper.cpp`, `frontend/packages/tapture_whisper/src/tw_sha256.c`, `frontend/packages/tapture_whisper/src/tw_sha256.h`, `frontend/packages/tapture_whisper/src/CMakeLists.txt`, `frontend/packages/tapture_whisper/src/wasm_exports.txt`, `frontend/packages/tapture_whisper/src/smoke/tw_smoke.c`
+- `frontend/packages/tapture_whisper/windows/CMakeLists.txt`, `frontend/packages/tapture_whisper/linux/CMakeLists.txt`, `frontend/packages/tapture_whisper/android/build.gradle`, `frontend/packages/tapture_whisper/README.md`
+- `frontend/tool/check_native_library.dart`, `frontend/test/tool/check_native_library_test.dart`, `frontend/test/tool/fixtures/native_library/{aligned16k.so,aligned4k.so,extra_export.so,needs_libomp.so}`
+
+### Contract
+
+**Status codes** 0–15:
+
+| Code | Status |
+|---|---|
+| 0 | OK |
+| 1 | INVALID_ARGUMENT |
+| 2 | ABI_MISMATCH |
+| 3 | UNSUPPORTED_CPU |
+| 4 | FILE_OPEN |
+| 5 | MODEL_INVALID |
+| 6 | MODEL_LOAD |
+| 7 | OUT_OF_MEMORY |
+| 8 | ABORTED |
+| 9 | INFERENCE |
+| 10 | POISONED |
+| 11 | BUSY |
+| 12 | AUDIO_TOO_LONG |
+| 13 | ENGINE_NOT_BUILT |
+| 14 | INTERNAL |
+| 15 | MODEL_MISMATCH |
+
+**Struct sizes:**
+
+| Struct | Size |
+|---|---|
+| context_options | 16 |
+| transcribe_options | 84 |
+| cpu_info | 40 |
+| memory_info | 32 |
+| model_facts | 56 |
+| segment | 48 |
+| token | 32 |
+| span | 16 |
+| log_entry | 512 |
+| vad_options | 28 |
+
+**Key functions** (the full list is in spec §30.4.1):
+
+```c
+int32_t tw_context_open_file(const char* path_utf8, int64_t expected_bytes, const uint8_t* expected_sha256, const tw_context_options*, tw_context** out);
+int32_t tw_context_open_buffer(const void* data, size_t size, const uint8_t* expected_sha256, const tw_context_options*, tw_context** out);
+int32_t tw_transcribe(tw_context*, const float* pcm, int32_t n, const tw_transcribe_options*, const char* initial_prompt_utf8,
+                      const int32_t* prompt_tokens, int32_t n_prompt_tokens, const int32_t* abort_cell, int32_t job_id, tw_result** out);
+int32_t* tw_cell_new(void); void tw_cell_retain(int32_t*); void tw_cell_release(int32_t*); void tw_cell_store(int32_t*, int32_t); int32_t tw_cell_load(const int32_t*);
+int32_t tw_vad_open_file(const char*, int64_t expected_bytes, const uint8_t* expected_sha256, const tw_context_options*, tw_vad**);
+void tw_debug_abort_after_checks(int32_t n);  int32_t tw_sha256(const void*, size_t, uint8_t out[32]);
+```
+
+**Abort rule.** A job is aborted iff `job_id > 0 && load(cell) >= job_id`. It is evaluated per graph node, and again after `whisper_full_with_state` returns. When it holds, the call returns `ABORTED` and nothing else.
+
+**Smoke tool.** `tw_smoke --model <bin> --sha256 <hex> --wav <wav> --expect "<phrase>" [--abort-after-checks N]`.
+
+**Native-library checker.** `dart run tool/check_native_library.dart <so>...` lists each `p_align < 16384`, each non-`tw_` export and each `DT_NEEDED` outside `{libc.so, libm.so, libdl.so, liblog.so}`, and exits 1 on any.
+
+### Constraints
+
+- No `apply_standard_settings`, FetchContent, `file(DOWNLOAD)`, `install()`, git probes, BLAS, Metal or `GGML_NATIVE`.
+- Never log a model path or transcript text. Every `print_*` flag is false.
+- Never set `encoder_begin_callback` or `progress_callback`.
+
+### Out of scope
+
+- The Dart bindings (104).
+- Apple (105).
+- The WASM branch (111).
+- The APK, the Linux compile and any Android runtime (130, 131).
+
+### Definition of done
+
+- [ ] On this machine, `tw_smoke` (MSVC Release) transcribes `jfk.wav` with `ggml-tiny-q5_1.bin` and its sha, and the output contains "ask not what your country can do for you".
+- [ ] On this machine, `tw_smoke --abort-after-checks 50` returns `ABORTED` during the encoder (never OK with 0 segments), and the immediate retry on the same context succeeds.
+- [ ] On this machine, `tw_smoke` with a wrong `--sha256` exits with `MODEL_MISMATCH` without parsing, and a truncated copy exits with `MODEL_MISMATCH`.
+- [ ] `flutter build windows --debug` and `--release` place `tapture_whisper.dll` beside `tapture.exe`; `dumpbin /exports` lists only `tw_*`; the bundle has no ggml or whisper `.lib` or `include/`; the build log shows `/O2` and no `/RTC1` on vendored sources.
+- [ ] On this machine, NDK CMake + Ninja builds `libtapture_whisper.so` for arm64-v8a, x86_64 and armeabi-v7a (stub), and `check_native_library` passes all three. arm64 shows no `libomp.so` NEEDED.
+- [ ] `check_native_library_test` proves the 16 KiB fixture passes, and that the 4 KiB, extra-export and `needs_libomp` fixtures are each reported, in one run.
+- [ ] `linux/CMakeLists.txt` mirrors Windows, and its compile is recorded as owned by task 130.
+
+## 104 — Expose the whisper Dart API and library loader
+
+**Depends on** [103](24-product-refinements.md)
+
+### Implement
+
+**Bindings.** Hand-written `WhisperBindings` and `Native*` structs in header order. `isLeaf` is used only on short calls.
+
+**Loader.**
+- Candidates per OS.
+- An x86_64 preflight **before** `DynamicLibrary.open`: Windows `IsProcessorFeaturePresent(40)`; Linux `/proc/cpuinfo` `avx2 fma f16c bmi2`.
+- After loading, check the ABI, the struct sizes, `engine_built` and `supported`.
+
+**Public API** (design §2.5): one public type per file, `WhisperCpuFacts` and `WhisperMemoryFacts`, and `WhisperModelExpectation`.
+
+**Finalizers.**
+- `NativeFinalizer` with `externalSize` and `detach`.
+- `close()` detaches before the native close.
+- A cell finalizer only releases.
+
+**Results.** Copy-out only; native result handles never escape.
+
+**Confinement** in `plugin_imports_test`: imports and exports of `tapture_whisper`, `dart:ffi` and `package:ffi` confined to `core/speech/`; `record` to `core/audio/`; `speech_to_text` to `core/ai/`.
+
+### Files
+
+- `frontend/packages/tapture_whisper/lib/tapture_whisper.dart`
+- `frontend/packages/tapture_whisper/lib/src/{whisper_bindings,native_types,library_candidates,cpu_preflight,whisper_library,whisper_library_load,whisper_library_loaded,whisper_library_unavailable,whisper_unavailable_reason,whisper_model_expectation,whisper_context_options,whisper_model,whisper_decode_options,whisper_strategy,whisper_transcript,whisper_segment,whisper_piece,whisper_vad,whisper_vad_options,whisper_speech_span,whisper_cell,whisper_status,whisper_native_exception,whisper_cpu_facts,whisper_memory_facts,whisper_model_facts,whisper_live_objects,whisper_log_line,whisper_log_level}.dart`
+- `frontend/test/architecture/plugin_imports_test.dart` and its fixtures:
+  - `frontend/test/architecture/fixtures/plugins/allowed/lib/{core/speech/speech_native_api_io.dart,core/audio/audio_capture_plugin.dart,core/ai/stt_service.dart}`
+  - `frontend/test/architecture/fixtures/plugins/forbidden/lib/{features/meetings/presentation/meeting_live_section.dart,core/audio/audio_stream_source.dart}`
+- Package tests:
+  - `frontend/packages/tapture_whisper/test/{library_candidates_test,cpu_preflight_test,native_layout_test,decode_options_test,transcript_reader_test,status_test}.dart`
+  - `frontend/packages/tapture_whisper/test/native/{abi_native_test,vad_native_test}.dart`
+- `frontend/integration_test/whisper_native_smoke_test.dart`
+
+### Contract
+
+```dart
+static WhisperLibraryLoad WhisperLibrary.open({String? path});   // WhisperLibraryLoaded | WhisperLibraryUnavailable(reason, detail)
+WhisperModel openModel(String path, WhisperModelExpectation expect, {WhisperContextOptions options});
+WhisperModel openModelBytes(Uint8List bytes, {WhisperModelExpectation? expect, WhisperContextOptions options});
+WhisperVad openVad(String path, WhisperModelExpectation expect, {int threads = 1});
+WhisperCell newCell(); WhisperCell borrowCell(int address);   // borrow retains; close releases
+WhisperTranscript WhisperModel.transcribe(Float32List pcm, WhisperDecodeOptions options, {String? initialPrompt, Int32List? promptPieces, WhisperCell? abort, int jobId = 0});
+```
+
+`WhisperNativeException{status, whisperCode}` covers every `WhisperStatus`, including `modelMismatch`. Only `WhisperCell.address` (an int) crosses isolates.
+
+### Constraints
+
+- `public_member_api_docs` is clean.
+- "piece" replaces "token" in identifiers.
+- No public API exposes a `dart:ffi` type.
+
+### Out of scope
+
+- The speech engine and lanes (110).
+
+### Definition of done
+
+- [ ] Package unit tests pass:
+  - `library_candidates_test`;
+  - `cpu_preflight_test`, including proof that `open` is never attempted on an unsupported CPU;
+  - `native_layout_test`: sizes and offsets **parsed from `TW_SIZEOF_*` in the header** equal Dart `sizeOf`, and the `TW_API` names equal `wasm_exports.txt` equal the binding symbols;
+  - `decode_options_test`, which refuses `''` and `auto`;
+  - `transcript_reader_test`, with a split "é";
+  - `status_test`, covering codes 0–15.
+- [ ] `abi_native_test` passes against the Windows Debug DLL:
+  - struct sizes, CPU supported, memory total > 0;
+  - `fileOpen`, `modelInvalid`, `modelMismatch` (wrong sha, wrong size) and `modelLoad`;
+  - a non-ASCII model path;
+  - forced-unsupported refusal;
+  - cross-isolate cells with refcount (the cell survives the main close until the borrower closes);
+  - exactly one `busy`;
+  - an encoder-time abort returns `aborted`, never an empty success, and a retry succeeds;
+  - finalizer cleanup after detach-free close (no double free over 100 cycles);
+  - 100 open/close cycles return every `tw_live_objects` counter to 0;
+  - no drained log line contains a path or `.bin`.
+- [ ] `vad_native_test` passes:
+  - 1000-sample feeds give `floor(n/512)` probs with `pending == n % 512`, within 1e-4 of a whole-buffer feed;
+  - the first jfk span starts at 200–400 ms;
+  - 5 s of silence gives no spans.
+- [ ] On this machine, `integration_test/whisper_native_smoke_test.dart` passes with `-d windows` when `TAPTURE_STT_NATIVE` is set, and skips otherwise:
+  - it loads through the standard candidates;
+  - jfk text and language `en`;
+  - abort within `speechBudgets.abortLatencyDesktop`, then a retry;
+  - counters return to 0;
+  - a `TAPTURE_METRIC` line is printed.
+
+  If the Windows integration runner fails here, `frontend/test/hardening/whisper_native_smoke_host_test.dart` mirrors it and the substitution is recorded.
+- [ ] `plugin_imports_test` passes on `lib/`. The forbidden fixtures report exactly 9 violations with file and line, the capture_screen fixture still reports 2, and exports are caught.
+- [ ] The barrel exports exactly the contract types, and `dart analyze` reports zero diagnostics.
+
+## 105 — Generate the whisper plugin's Apple build manifests
+
+**Depends on** [104](24-product-refinements.md)
+
+### Implement
+
+**Forwarders,** generated through `whisper_vendor.dart`:
+- one TU forwarder per vendored source, with unique names and arch-selecting `quants`/`repack` forwarders;
+- `forward/` header forwarders;
+- the `include/` forwarder.
+
+**Manifests:**
+- `darwin/tapture_whisper.podspec`: `-O3` in every configuration, Accelerate (vDSP only), hidden symbols, the shared defines, iOS 13 and macOS 10.15.
+- `darwin/tapture_whisper/Package.swift`: a `.dynamic` product `tapture-whisper`.
+
+No Metal, CoreML, BLAS or OpenMP. No AVX2 on macOS x86_64.
+
+### Files
+
+- `frontend/packages/tapture_whisper/darwin/tapture_whisper.podspec`, `frontend/packages/tapture_whisper/darwin/tapture_whisper/Package.swift`, `frontend/packages/tapture_whisper/darwin/tapture_whisper/Sources/tapture_whisper/**`
+- `frontend/tool/whisper_vendor.dart`, `frontend/test/tool/whisper_vendor_test.dart`
+
+### Constraints
+
+- The forwarders are generated and checked, never hand-edited.
+
+### Out of scope
+
+- Building or running on Apple hardware (130 CI, 131 devices).
+- XCFramework.
+- Metal.
+
+### Definition of done
+
+- [ ] `whisper_vendor.dart --check` verifies the forwarders against `whisper_sources.cmake`, and `whisper_vendor_test` reports a stale-forwarder fixture.
+- [ ] `whisper_vendor_test` asserts that the podspec and `Package.swift` list the same defines and flags as `src/CMakeLists.txt` for Apple, with no `-mavx2` and no Metal or OpenMP.
+
+## 106 — Add a long-lived worker isolate to core/concurrency
+
+**Depends on** [002](02-foundation.md)
+
+### Implement
+
+Promote the duplex protocol from `core/cloud/worker_cloud_destination_io.dart` into a reusable primitive (FE-STR-09):
+- `WorkerIsolate`: `spawn`, `request`, `events`, `close`, `exited`, `isOpen`;
+- `WorkerPort`: `serve`, `emit`, `ask`;
+- `debugLiveWorkers`;
+- a web stub.
+
+Create `AppConstants.speechEngine` with `workerStart` and `workerCloseGrace`. Task 108 grows the record.
+
+### Files
+
+- `frontend/lib/core/concurrency/worker_isolate.dart`, `frontend/lib/core/concurrency/worker_isolate_io.dart`, `frontend/lib/core/concurrency/worker_isolate_stub.dart`, `frontend/lib/core/concurrency/worker_port.dart`, `frontend/lib/core/concurrency/concurrency.dart`
+- `frontend/lib/core/constants/app_constants.dart`
+- `frontend/test/core/concurrency/worker_isolate_test.dart`
+
+### Contract
+
+```dart
+static Future<Result<WorkerIsolate>> spawn<A>(Future<void> Function(WorkerPort port, A argument) entry, A argument,
+    {required String debugName, Duration? startTimeout, RootIsolateToken? platformToken, Future<Result<Object?>> Function(Object? question)? answer});
+Future<Result<R>> request<R>(Object? payload, {CancellationToken? cancel, void Function()? onCancel});
+Stream<Object?> get events; Future<void> close({Duration? grace}); Future<void> get exited; bool get isOpen;
+@visibleForTesting int get debugLiveWorkers;
+WorkerPort: Future<void> serve({required handle, required onClose}); void emit(Object? event); Future<Result<R>> ask<R>(Object? question);
+```
+
+Requests are served one at a time, in arrival order. `exited` completes only when the isolate has ended.
+
+### Constraints
+
+- FE-TEST-07: no fixed delays.
+- FE-STATE-09: every port and isolate is released.
+
+### Out of scope
+
+- Migrating the cloud worker (107).
+
+### Definition of done
+
+- [x] The ready handshake works, and an entry that never serves fails with `ProviderFailure` after the start timeout.
+- [x] Requests are serial and FIFO, events are delivered, and ask/answer round-trips.
+- [x] A cancel completes `CancelledFailure`, runs `onCancel` and drops the late reply.
+- [x] A handler throw becomes `Failure.from`, and an unexpected exit fails every pending request with `ProviderFailure`.
+- [x] `close()` runs `onClose`, a worker that ignores close is killed after the grace period, and `exited` completes in both cases.
+- [x] `debugLiveWorkers` returns to baseline in every case.
+- [x] The web stub returns `ProviderFailure(kind: unavailable)`.
+- [x] Analysis is clean.
+
+### Verification
+
+- 2026-10-04: an adversarial review read the task, design §3.1 and every changed file. It added a test, 'an uncaught worker error fails every pending request', which covers the `onError` path as well as `Isolate.exit`. `flutter test test/core/concurrency/worker_isolate_test.dart` passed 17 of 17 tests on three runs in a row. The tests use no fixed delays, and the tearDown checks `debugLiveWorkers` against the setUp baseline for every case.
+- 2026-10-04: `dart analyze lib/core/concurrency lib/core/constants/app_constants.dart test/core/concurrency/worker_isolate_test.dart` reported no issues. The architecture suites errors, layering, naming, state, tokens, plugin_imports and data_safety passed, along with `isolate_runner_test` and `cancellation_token_test` (89 tests). `check_naming`, `check_structure`, `check_logging` and `check_repo_hygiene` were clean.
+- 2026-10-04: the web stub was checked by calling `worker_isolate_stub.dart` from a host test. No web compile was run. The web `dart:ui` defines `RootIsolateToken`, and the stub never imports `dart:isolate`. The `platformToken` boot is not covered here because `RootIsolateToken.instance` is null under `flutter test`. Task 107's cloud-worker tests exercise it.
+- 2026-10-04: these behaviours differ from design §3.1 or the design does not specify them:
+  - `WorkerIsolate` and `WorkerPort` are declared as `abstract interface class`, so that the io and stub files can implement them across a conditional import.
+  - A request whose token is already cancelled returns `CancelledFailure` without calling `onCancel`.
+  - Asks are answered one at a time, in order, and only after `ready`.
+
+## 107 — Move the cloud worker onto the shared worker isolate
+
+**Depends on** [098](21-cloud-upload.md), [106](24-product-refinements.md)
+
+### Implement
+
+Re-express `sendOnWorker` in `worker_cloud_destination_io.dart` as:
+- `WorkerIsolate.spawn(_work, job, platformToken:, answer: _answerCloud)`;
+- `request('send')`;
+- `close()`.
+
+`_permit`, `_secret` and `_nativeToken` become `port.ask`; `_progress` becomes `emit`; cancel goes through `request(cancel:)`.
+
+### Files
+
+- `frontend/lib/core/cloud/worker_cloud_destination_io.dart`
+- `frontend/test/core/cloud/worker_cloud_destination_io_test.dart`, `frontend/test/core/cloud/cloud_destination_test.dart` (expectations unchanged; `debugLiveWorkers` assertions added)
+
+### Constraints
+
+- A behaviour-preserving refactor.
+
+### Out of scope
+
+- Speech code.
+
+### Definition of done
+
+- [ ] The ad-hoc ready, ack and id maps are gone.
+- [ ] Every existing cloud worker and destination test passes unchanged.
+- [ ] `debugLiveWorkers` returns to 0 after success, failure and cancel.
+
+## 108 — Define the speech engine contract and transcript value types
+
+**Depends on** [101](24-product-refinements.md)
+
+### Implement
+
+Add the engine contract of spec §30.4.2:
+- `SpeechEngine` with `.platform` (conditional io/web/stub, `unavailable` until 110 and 112) and `.unavailable`, plus `speechEngineProvider`;
+- `SpeechVadHandle`, lease-scoped `decode`/`abortLease`, `openVad`/`closeVad`;
+- the request, profile, result, segment, piece, VAD result, load-report, shape, runtime-facts, reason, CPU-feature and state types;
+- `audioContextFor` and `copyWith`;
+- `whisperLanguageFor`;
+- the speech failure builders.
+
+Add the transcript value types: `TranscriptSegment`, `TranscriptWord`, `FinishedUtterance` (with `skipped`), `TranscriptOutcome`, `TranscriptSink` (`appendUtterance` and `finish`), `SpeechText` and `SpeechPieceText`.
+
+Grow `AppConstants.speechEngine` and `speechBudgets`.
+
+Add the `FakeSpeechEngine`, which is SpokenScript-driven and has the adversarial modes `truncateEdgeWord`, `completeEdgeWord`, `dropEdgeWord`, `timeJitter`, `echoPrompt`, `loopAtSpeechRate` and `hallucinate`. Add the contract suite.
+
+### Files
+
+- `frontend/lib/core/speech/{speech_engine,speech_engine_stub,speech_vad_handle,speech_decode_request,speech_decode_kind,speech_decode_profile,speech_decode_result,speech_segment,speech_piece,speech_piece_text,speech_vad_result,speech_load_report,speech_model_shape,speech_runtime_facts,speech_unavailable_reason,speech_cpu_feature,speech_engine_state,speech_languages,speech_failures,speech_text,transcript_segment,transcript_word,finished_utterance,transcript_outcome,transcript_sink}.dart`, `frontend/lib/core/speech/speech.dart`
+- `frontend/lib/core/constants/app_constants.dart`
+- `frontend/lib/core/copy/l10n/app_en.arb` + generated copy (the `speech*` keys)
+- Tests:
+  - `frontend/test/support/fakes/fake_speech_engine.dart`
+  - `frontend/test/support/spoken_script.dart`
+  - `frontend/test/core/speech/speech_engine_contract.dart`
+  - `frontend/test/core/speech/{fake_speech_engine_test,speech_languages_test,speech_decode_profile_test,speech_text_test,speech_piece_text_test,transcript_segment_test,speech_failures_test}.dart`
+
+### Contract
+
+```dart
+Future<Result<SpeechLoadReport>> load(SpeechModelSource model, {required int threads, CancellationToken? cancel});
+Future<Result<SpeechVadHandle>> openVad(SpeechModelSource vad);
+Future<Result<SpeechDecodeResult>> decode(SpeechDecodeRequest request, {required int leaseId, CancellationToken? cancel});
+Future<Result<SpeechVadResult>> detectSpeech(SpeechVadHandle vad, Float32List samples, {bool resetState = false, CancellationToken? cancel});
+void abortLease(int leaseId);
+abstract interface class TranscriptSink { Future<Result<void>> appendUtterance(FinishedUtterance u); Future<Result<void>> finish(TranscriptOutcome o); }
+```
+
+Segment samples are absolute and clamped to `[offset, offset + originalCount)`. `language` is never `''` or `'auto'`. A sink completes successfully only once its write is durable.
+
+### Constraints
+
+- No new Failure variant.
+- Every user string goes through ARB.
+- No `Duration(<literal>)` outside `core/constants`.
+- One public type per file.
+
+### Out of scope
+
+- Implementations (110, 112).
+- The store (109).
+
+### Definition of done
+
+- [ ] `SpeechEngine.unavailable` returns `ProviderFailure(unavailable, speechUnavailable)` for every operation, and its probe reports `available: false`.
+- [ ] `fake_speech_engine_test` runs `runSpeechEngineContract`:
+  - order;
+  - per-lease supersession;
+  - preemption;
+  - `abortLease(A)` sparing lease B;
+  - two leases' VAD equal to solo runs;
+  - decode before load;
+  - dispose;
+  - the live-handles baseline;
+  - a partial VAD frame;
+  - `''` and `'auto'` refused.
+- [ ] Each adversarial mode of the fake has a unit case proving its effect.
+- [ ] `speech_languages_test` covers en-UG→en, sw→sw and lg→null.
+- [ ] `audioContextFor` returns 0 for pad 0, and `min(1500, roundUp(ceil(s·50)+pad, 64))` otherwise.
+- [ ] `SpeechPieceText.group` merges split code points and keeps the first t0 and the last t1.
+- [ ] `TranscriptSegment` JSON round-trips.
+- [ ] Every spec §30.4.4 row has a builder with catalogue copy, and the copy pipeline `--check`s pass.
+- [ ] `check_structure`, `check_naming`, `check_logging`, `tokens_test` and strict analysis pass.
+
+## 109 — Resolve, verify and import speech models
+
+**Depends on** [108](24-product-refinements.md)
+
+### Implement
+
+**Storage and files.**
+- `StorageRoot.private()`.
+- `discardDerivedFile`, which refuses paths outside the private root and is documented as the derived-file exemption.
+- `BundledAssets` (+io, stub) with the pure `bundledAssetPath` table. On Android, extraction is keyed by `<sha12>-<file>` through `extractFlutterAsset` on `com.tapture.app/files`, with `noCompress "bin"`.
+
+**Hashing.** `HashingService.sha256OfFile` gains `cancel` and `onProgress`.
+
+**Verification.** `verifySpeechModelFile` checks size, then header, then hash, for import and settings.
+
+**The store.** `SpeechModelStore` (+io, stub):
+- `inventory`, `locate`, `reextract`, `verify`, `import`, `remove` (`discardDerivedFile`), `canImport`, `markDamaged`;
+- startup removal of stale `bundled/*` files.
+
+Add `speechModelStoreProvider`.
+
+### Files
+
+- `frontend/lib/core/files/storage_root.dart`, `frontend/lib/core/files/derived_files.dart`, `frontend/lib/core/files/bundled_assets.dart`, `frontend/lib/core/files/bundled_assets_io.dart`, `frontend/lib/core/files/bundled_assets_stub.dart`, `frontend/lib/core/hash/hashing_service.dart`
+- `frontend/android/app/src/main/kotlin/com/tapture/app/MainActivity.kt`, `frontend/android/app/build.gradle.kts`
+- `frontend/lib/core/speech/{speech_model_source,speech_model_status,speech_model_verification,speech_model_store,speech_model_store_io,speech_model_store_stub}.dart`
+- Tests:
+  - `frontend/test/core/files/{bundled_assets_test,storage_root_test,derived_files_test}.dart`
+  - `frontend/test/core/hash/hashing_service_test.dart`
+  - `frontend/test/core/speech/{speech_model_verification_test,speech_model_store_io_test}.dart`
+
+### Contract
+
+```dart
+Future<Result<void>> verifySpeechModelFile(String path, SpeechModelEntry entry, {CancellationToken? cancel, void Function(double)? onProgress});
+Future<Result<void>> discardDerivedFile(File file, {required StorageRoot privateRoot});
+abstract interface class SpeechModelStore { bool get canImport; Future<Result<List<SpeechModelStatus>>> inventory();
+  Future<Result<SpeechModelSource>> locate(SpeechModelEntry e, {CancellationToken? cancel}); Future<Result<SpeechModelSource>> reextract(SpeechModelEntry e);
+  Future<Result<void>> verify(SpeechModelSource s, {cancel, onProgress}); Future<Result<SpeechModelEntry>> import(PickedDocument p, {cancel, onProgress});
+  Future<Result<void>> remove(SpeechModelEntry e); void markDamaged(String modelId); }
+```
+
+`extractFlutterAsset({asset, path})` returns the byte count or the error `missing`, `nospace` or `io`.
+
+### Constraints
+
+- FE-PERF-07: never `rootBundle.load` a model.
+- No `File(...).delete()` or `deleteSync`. Removal goes through `discardDerivedFile` only.
+
+### Out of scope
+
+- Engine loading (110).
+- Selection (113).
+- The settings UI (126).
+- The Kotlin compile and device extraction (130, 131).
+
+### Definition of done
+
+- [ ] `bundledAssetPath` tests cover Windows, Linux, macOS, iOS and the Android sha-keyed name.
+- [ ] The Android extraction, through a mocked channel, covers success, `missing` → null and `nospace` → `StorageFailure`.
+- [ ] A stale `bundled/<oldsha>-…` file is removed at store start, and the current one is kept.
+- [ ] `reextract` discards and re-extracts once.
+- [ ] `derived_files_test`: removal under the private root succeeds, and a path outside it gives `ValidationFailure` with the file untouched. `data_safety_test` passes with no new allowance.
+- [ ] `verifySpeechModelFile` refuses wrong size, bad magic, a base header labelled tiny, a hash mismatch and a truncated file, each with the mapped Failure.
+- [ ] `sha256OfFile` cancel returns `CancelledFailure`, progress reaches 1.0, and existing callers are unchanged.
+- [ ] Import accepts only a file matching bytes and sha, copies it atomically with progress, leaves no `.part` on cancel and discards the picked copy. Anything else gives `ValidationFailure(speechImportUnknown)`.
+- [ ] `inventory` reports presence without hashing.
+
+## 110 — Run Whisper on native speech workers
+
+**Depends on** [104](24-product-refinements.md), [106](24-product-refinements.md), [109](24-product-refinements.md)
+
+### Implement
+
+**`speech_engine_io.dart`:**
+- Two `WorkerIsolate` lanes: decode, and VAD with one `tw_vad` per lease.
+- A decode queue: one job in flight, per-lease interim supersession, committed preemption, committed FIFO.
+- **Job ids assigned at dispatch.**
+- `abortLease`, scoped to the lease.
+- A refcounted cell: the lane retains it and releases it after its last call. `dispose` aborts, closes, **awaits `exited`** and then releases.
+- Size and header precheck, then the verified native open (expected bytes + sha), then the shape check.
+- Pad to `minDecodeSamples`, with results clamped to the original count.
+- The state machine, the restart budget and rate-limited log forwarding.
+
+**`speech_native_api_io.dart`** is the only importer of `package:tapture_whisper` and implements `SpeechNativeApi` and `SpeechAbortCell`.
+
+**Probe.** A one-shot `runIsolate`.
+
+### Files
+
+- `frontend/lib/core/speech/{speech_engine_io,speech_native_api,speech_abort_cell,speech_native_api_io}.dart`
+- Tests:
+  - `frontend/test/core/speech/speech_engine_io_test.dart`: a scripted `SpeechNativeApi` and a pure-Dart fake `SpeechAbortCell`; no `package:ffi` in frontend tests.
+  - `frontend/test/core/speech/speech_engine_native_test.dart`: opt-in through `TAPTURE_TEST_WHISPER` and `TAPTURE_TEST_SPEECH_MODELS`.
+
+### Contract
+
+```dart
+abstract interface class SpeechNativeApi { SpeechRuntimeFacts facts();
+  int loadModel(String path, {required int threads, required int bytes, required String sha256}); SpeechModelShape shape(int model);
+  int loadVad(String path, {required int bytes, required String sha256}); int vadWindow(int vad);
+  SpeechDecodeResult decode(int model, SpeechDecodeRequest request, {required int abortAddress, required int jobId});
+  Float32List detectSpeech(int vad, Float32List samples, {required bool reset}); void release(int handle);
+  List<({int level, String line})> drainLog(int max); int get droppedLogLines; int get liveHandles; void close(); }
+abstract interface class SpeechAbortCell { int get address; void abortThrough(int jobId); void close(); }
+```
+
+`aborted` maps to `CancelledFailure()`. `modelMismatch` and `modelInvalid` map to `CorruptionFailure`. The rest follow spec §30.4.4.
+
+### Constraints
+
+- FE-PERF-02: the UI isolate makes no FFI calls except creating, storing to and closing the cell.
+- Never log text, prompts or audio.
+- Identifiers avoid token, value and transcript.
+
+### Out of scope
+
+- The host and selection (113).
+- The pipeline (116, 117).
+
+### Definition of done
+
+- [ ] `speech_engine_io_test` runs the contract suite over the scripted API and proves:
+  - the precheck runs before `loadModel`, and a corrupted fixture never reaches it;
+  - per-lease supersession and preemption go through the cell;
+  - `abortLease(A)` never touches lease B;
+  - a pending cancel never aborts the in-flight job;
+  - ids are assigned at dispatch;
+  - a lane crash fails pending requests, and the next load respawns the lane;
+  - VAD is never blocked by an in-flight decode;
+  - a 400 ms input padded to 1 s yields segments ending at or before offset + 6400;
+  - the log drain is rate-limited, with no scripted text in the Logger buffer;
+  - unload and dispose return the handle and worker counters to baseline.
+- [ ] On this machine, `speech_engine_native_test` passes against the built DLL and fetched models:
+  - shape equals the catalogue for tiny and base;
+  - the jfk text;
+  - samples are monotonic and inside the window;
+  - VAD frame 512, with p > 0.5 on speech and < 0.5 on 1 s of zeros;
+  - a 30 s decode is aborted within `speechBudgets.abortLatencyDesktop`;
+  - **dispose during a 30 s decode does not crash, and `liveObjects().cells` reaches 0 only after `exited`;**
+  - a corrupted copy gives `CorruptionFailure` with handles unchanged;
+  - 20 load/unload cycles return to 0;
+  - the full contract suite.
+
+## 111 — Compile whisper to WebAssembly with a worker protocol
+
+**Depends on** [101](24-product-refinements.md), [103](24-product-refinements.md)
+
+### Implement
+
+**The build.** Add the Emscripten branch to `src/CMakeLists.txt`, including the `EM_JS` `tw_js_read` and `tw_*_open_js`.
+
+**`frontend/tool/whisper_wasm.dart`:**
+- `--build` requires the pinned emsdk version and builds two variants:
+  - st: `ENVIRONMENT=worker,node`;
+  - mt: `-pthread`, `ENVIRONMENT=worker,node`, pool 8, STRICT=2, threads capped at 4.
+
+  Exported runtime methods include HEAP64 and HEAPU32.
+- `--check` verifies input and output hashes, the ABI, the export list and the worker's struct table.
+- `--smoke` runs Node for st and mt.
+
+**Artifacts.** Commit `frontend/web/whisper/{tapture_whisper_st,tapture_whisper_mt}.{js,wasm}`, `BUILD_INFO.json` and `LICENSES.txt`.
+
+**The worker.** Hand-write `frontend/web/whisper/whisper_worker.js`:
+- the SIMD probe and variant choice;
+- same-origin URLs only;
+- OPFS sync-access-handle sources registered as `file_id`, so there is no full-model heap copy;
+- shim-side SHA-256 before parse, with no `crypto.subtle`;
+- a `heap()` view refresh;
+- a lease-aware abort;
+- the shared-memory abort cell for mt.
+
+**Serving.** `run-web.py --isolated`, the isolated `launch.json` configuration, and the README header snippet for production hosts.
+
+### Files
+
+- `frontend/packages/tapture_whisper/src/CMakeLists.txt`, `frontend/packages/tapture_whisper/src/tapture_whisper.cpp` (WASM `open_js`), `frontend/packages/tapture_whisper/src/wasm_exports.txt`
+- `frontend/packages/tapture_whisper/wasm/emsdk_version.txt`, `frontend/packages/tapture_whisper/wasm/smoke.mjs`, `frontend/packages/tapture_whisper/README.md`
+- `frontend/tool/whisper_wasm.dart`
+- `frontend/web/whisper/{tapture_whisper_st.js,tapture_whisper_st.wasm,tapture_whisper_mt.js,tapture_whisper_mt.wasm,whisper_worker.js,BUILD_INFO.json,LICENSES.txt}`
+- `run-tools/run-web.py`, `.claude/launch.json`
+- `frontend/test/tool/whisper_wasm_test.dart`
+
+### Contract
+
+- `dart run tool/whisper_wasm.dart --build [--smoke] | --check | --smoke`.
+- Worker messages:
+  - Requests `{id, op, args}`; replies `{id, ok, result | error:{code, status, whisperCode}}`.
+  - Ops: `init`, `loadModel`, `verify`, `transcribe`, `vadFeed`, `vadReset`, `abort {jobId, leaseId}`, `memory`, `liveObjects`, `close`, `dispose`.
+  - Events: `{event:'log', entries}`.
+- `int32_t tw_context_open_js(int32_t file_id, int64_t expected_bytes, const uint8_t* sha, const tw_context_options*, tw_context**)`, and the VAD equivalent.
+
+### Constraints
+
+- Same origin only. No CDN.
+- Threads only under `crossOriginIsolated`; otherwise st runs without an error.
+
+### Out of scope
+
+- The Dart bridge (112).
+- Memory64 and WebGPU.
+- Other browsers (131).
+
+### Definition of done
+
+- [ ] On this machine, `--build` produces both variants with the pinned emsdk and refuses any other version. `--check` passes.
+- [ ] `whisper_wasm_test` proves that a changed shim input, a tampered `.wasm` and a worker struct-table drift are each reported with exit 1.
+- [ ] On this machine, `--smoke` passes under Node:
+  - st: jfk with tiny, VAD `floor(n/512)`, struct sizes, and a wrong sha giving `MODEL_MISMATCH`;
+  - mt: the same, plus 50 consecutive decodes at 4 threads with `liveObjects` stable.
+- [ ] In the Browser pane, the default server selects st, and `--isolated` reports `crossOriginIsolated` true and selects mt. After loading base, `memory.buffer.byteLength` ≤ model bytes + 260 MiB.
+- [ ] The worker rejects a cross-origin URL and a mismatched model without loading it, and a reload with devtools offline serves from OPFS.
+- [ ] Backend sign-in works on web in both the default and `--isolated` modes.
+
+## 112 — Bridge the speech engine to the browser workers
+
+**Depends on** [071](24-product-refinements.md), [109](24-product-refinements.md), [111](24-product-refinements.md)
+
+### Implement
+
+**`speech_engine_web.dart`:**
+- `dart:js_interop` only;
+- decode and VAD workers;
+- per-lease VAD handles;
+- mt abort through `Atomics.store`;
+- on st, no interim preemption, and terminate plus respawn only for an owned in-flight committed job or on dispose;
+- threads `clamp(hc−1, 1, 4)`;
+- the counters.
+
+**`speech_worker_codec.dart`:** pure encode and decode.
+
+**`speech_model_store_web.dart`:** location and `verify` through the worker op; `canImport` false.
+
+### Files
+
+- `frontend/lib/core/speech/{speech_engine_web,speech_worker_codec,speech_model_store_web}.dart`
+- `frontend/test/core/speech/speech_worker_codec_test.dart`
+
+### Contract
+
+The same `SpeechEngine` contract as native. Model URLs are `Uri.base.resolve(assetManager.getAssetUrl(key))`, asserted same-origin.
+
+### Constraints
+
+- No `dart:html`.
+- Model bytes never cross the Dart heap.
+
+### Out of scope
+
+- Web import.
+
+### Definition of done
+
+- [ ] `speech_worker_codec_test` round-trips every op and maps every error code to its spec §30.4.4 Failure.
+- [ ] A non-same-origin model URL is refused in Dart (unit test).
+- [ ] On this machine, in the Browser pane, load, decode of `jfk.wav` and abort are recorded for st (terminate + respawn) and mt (Atomics). Two leases' aborts do not cross. `debugLiveSpeechWorkers` returns to baseline after dispose.
+
+## 113 — Choose the speech model for each device
+
+**Depends on** [110](24-product-refinements.md), [112](24-product-refinements.md)
+
+### Implement
+
+- `PowerSource.read()`.
+- `LifecycleObserver.memoryPressure`.
+- `SpeechDeviceProbe` (+io, web, stub).
+- `SpeechQuality` with `speechQualityProvider`; `speechLanguageProvider` (defaults only).
+- `SpeechVerdict`, `SpeechAvailability`, `SpeechSelection`.
+- `SpeechModelSelector`: mobile `auto` → tiny; web threads cap 4.
+- `SpeechEngineHost` and `SpeechEngineLease`:
+  - per-lease VAD;
+  - `idleRelease` and `idleReleaseExtended`;
+  - lifecycle and memory-pressure release;
+  - base → tiny fallback;
+  - re-extract-once on an Android corruption;
+  - the single `load-attempt` crash marker;
+  - the crash file.
+- `SpeechReadiness`, `SpeechReadinessNotifier` and `speechReadinessProvider`.
+- main overrides for the engine, store, probe and host.
+
+### Files
+
+- `frontend/lib/core/background/power_source.dart`, `frontend/lib/core/lifecycle/lifecycle_observer.dart`
+- `frontend/lib/core/speech/{speech_device_profile,speech_device_probe,speech_device_probe_io,speech_device_probe_web,speech_device_probe_stub,speech_quality,speech_preferences,speech_verdict,speech_availability,speech_selection,speech_model_selector,speech_engine_host,speech_engine_lease,speech_readiness,speech_readiness_notifier}.dart`
+- `frontend/lib/main.dart`
+- Tests:
+  - `frontend/test/core/speech/{speech_model_selector_test,speech_engine_host_test,speech_device_probe_test,speech_readiness_test}.dart`
+  - `frontend/test/core/background/power_source_test.dart`
+  - `frontend/test/core/lifecycle/lifecycle_observer_test.dart`
+
+### Contract
+
+```dart
+Future<SpeechAvailability> availability({required String languageTag});   // never loads
+Future<Result<SpeechEngineLease>> acquire({required String languageTag, CancellationToken? cancel});
+SpeechEngineLease: selection, modelId, vadFrameSamples, decode, detectSpeech, abort() (this lease only), release() (idempotent)
+static SpeechAvailability SpeechModelSelector.choose({device, quality, inventory, languageTag, suspectModelIds}); static bool fits(entry, device);
+```
+
+The selector rules and constants are in spec §30.4.2 and §30.4.3. A lease never swaps the model.
+
+### Constraints
+
+- Core never imports features.
+- No `late final` in `build()`.
+- `LifecycleObserver` stays the only `WidgetsBindingObserver`.
+
+### Out of scope
+
+- The settings UI (126).
+- The pipeline (116+).
+
+### Definition of done
+
+- [ ] `speech_model_selector_test` is table-driven over every rule:
+  - each unavailable reason;
+  - 32-bit;
+  - memory, cores and web thresholds;
+  - an unsupported language;
+  - a missing or damaged model;
+  - auto, fast and accurate on desktop, mobile and web (mobile auto = tiny);
+  - power step-down;
+  - fit step-down and `lowMemory`;
+  - a suspect downgrade;
+  - the thread formulas, including web cap 4;
+  - the interim, committed and mobile-dictation profiles.
+- [ ] `speech_engine_host_test` proves:
+  - one load serves many acquires;
+  - each lease gets its own VAD handle, closed on release;
+  - idle release after `idleRelease` on mobile and after `idleReleaseExtended` on desktop or charging;
+  - `paused` or `hidden` with no lease releases;
+  - `paused` with a lease does nothing;
+  - `inactive` is ignored;
+  - memory pressure releases;
+  - base → tiny fallback once;
+  - an Android extracted-copy `CorruptionFailure` re-extracts once, then marks damaged only on a second failure;
+  - the `load-attempt` marker is written, cleared and honoured;
+  - `availability()` never loads.
+- [ ] `speech_readiness_test` proves the notifier starts `notReady`, refreshes on `host.changes`, and reruns `build()` without error.
+- [ ] `power_source_test` covers `read()`, `lifecycle_observer_test` covers `memoryPressure`, and existing fakes still compile.
+- [ ] On this machine, the Windows app boots with models (`ready`, selection logged) and without models (`modelMissing`, no crash).
+
+## 114 — Stream microphone audio into the durable take
+
+**Depends on** [002](02-foundation.md), [065](24-product-refinements.md), [067](24-product-refinements.md)
+
+### Implement
+
+**The `core/audio` streaming path** (spec §30.4.5 capture part):
+- `AudioCaptureService`, `AudioCaptureSession` (`stop` publishes while the store stays readable; `release`) and `AudioCapturePlugin` over `record.startStream`, with a synchronous listen;
+- the IO `CaptureStaging` tee: a zero-length header, patched on checkpoint;
+- `PcmStore` with `rebase`, `PcmRing` and `MemoryPcmStore`;
+- `PcmResampler`, downmix and `PcmLevelMeter`;
+- interruptions;
+- `MicrophoneAccess` and `MicrophoneArbiter`.
+
+**Publishing without a copy.** `FileWriter.adoptStaged` hashes outside the lock, fsyncs, and renames under the lock.
+
+**Shared helpers.** Extract `WavHeader`, `WavTake`, `publishStagedTake` (over `adoptStaged`) and `StagedTakeRecovery` (which adopts a consistent take, or repairs a derivative and keeps the raw) from `audio_recorder_plugin.dart`. `AudioRecorderPlugin` uses them and claims `fileRecorder`.
+
+Add the `speechSession` and resampler constants.
+
+### Files
+
+- `frontend/lib/core/audio/{audio_capture_service,audio_capture_plugin,audio_capture_session,audio_capture_request,audio_capture_event,capture_pause_reason,capture_format,pcm_chunk,pcm_store,pcm_ring,memory_pcm_store,file_pcm_store,pcm_resampler,pcm_level_meter,wav_header,wav_take,staged_take,capture_staging,capture_staging_io,capture_staging_stub,microphone_arbiter,microphone_lease,microphone_owner,microphone_access,audio_recorder_plugin,audio}.dart`
+- `frontend/lib/core/files/file_writer.dart`, `frontend/lib/core/files/file_writer_io.dart`, `frontend/lib/core/files/file_writer_web.dart`, `frontend/lib/core/files/file_writer_stub.dart`
+- `frontend/lib/core/constants/app_constants.dart`; ARB `microphoneBusy`
+- Tests:
+  - `frontend/test/core/audio/{pcm_resampler_test,pcm_level_meter_test,wav_header_test,staged_take_test,audio_capture_plugin_test,microphone_arbiter_test,microphone_access_test,file_pcm_store_test}.dart`
+  - `frontend/test/core/files/file_writer_adopt_test.dart`
+  - `frontend/test/support/fakes/fake_record_recorder.dart` (it can stream a WAV file)
+  - `frontend/test/support/fakes/fake_audio_capture_service.dart`
+  - `frontend/test/core/audio/audio_recorder_plugin_test.dart` (existing)
+  - `frontend/integration_test/audio_capture_windows_test.dart`
+
+### Contract
+
+```dart
+Future<Result<AudioCaptureSession>> AudioCaptureService.start(AudioCaptureRequest request);
+AudioCaptureSession: chunks, events, capturedSamples, store, format, pause(), resume(), checkpoint(), stop() → AudioRecording?, release(), abandon() → String?
+Future<Result<WrittenFile>> FileWriter.adoptStaged(File staging, String relativePath);
+abstract interface class PcmStore { int get length; Future<Result<Int16List>> read(int from, int to); }
+```
+
+Chunks are contiguous and emitted only after the store append. After `stop()`, `store.read` serves the published file until `release()`.
+
+### Constraints
+
+- FE-STR-11: only `core/audio` imports `record`.
+- Rule 1: abandon keeps the bytes, and adopt renames the raw take itself.
+- `streamBufferSize` stays null.
+
+### Out of scope
+
+- Web staging (115).
+- Transcription (116+).
+- Background recording.
+- Manual microphone sessions (131).
+
+### Definition of done
+
+- [x] A fake recorder that emits a chunk synchronously on start loses nothing.
+- [x] The staging WAV equals the 44-byte header plus every sample. Its lengths are zero mid-take and patched on checkpoint and stop.
+- [x] `stop` closes the handles, publishes through `adoptStaged` (no copy: the published inode or path equals the renamed staging), rebases the store (`read` after stop returns the same samples) and keeps staging on failure. `AudioRecorderPlugin`'s existing tests pass.
+- [x] `file_writer_adopt_test`:
+  - a 500 MB fake take holds the write lock for less than `speechSession.adoptLockBudget`;
+  - an existing target is refused;
+  - a cross-volume source falls back to `copyIn`;
+  - web and stub return `ProviderFailure`.
+- [x] Recovery adopts a consistent staged take as-is, and repairs an inconsistent one into a derivative while keeping the raw `.recording`.
+- [x] A 16 kHz rejection retries 48000 then 44100. Resampler checks:
+  - ±0.1 dB passband;
+  - ≤ −55 dB at 12 kHz from 48k;
+  - chunked output bit-exact with one-shot;
+  - length `floor(N·L/M) ± 1` over 10 min;
+  - impulse peak at 0 ± 1;
+  - L > 512 throws.
+- [x] Odd-length and misaligned chunks are handled, stereo is downmixed, an unrequested pause gives `interruption`, and a stream error gives `microphoneLost` with staging intact.
+- [x] Resume re-opens the stream with contiguous samples.
+- [x] The permission matrix is unit-tested: Windows `0x80070005` → `PermissionFailure`; Linux `ProcessException` → unavailable.
+- [x] The arbiter refuses dictation while evidence holds the microphone, preempts dictation for evidence, and refuses evidence against evidence.
+- [x] The recorder is disposed and the lease released on every path, and `debugLiveCaptureSessions` returns to 0.
+- [x] On this machine, `audio_capture_windows_test` (`-d windows`, or the host mirror `frontend/test/hardening/audio_capture_host_test.dart` if the runner fails) streams a WAV through the fake recorder: pause, resume and stop publish a WAV byte-identical to the expected samples, and a simulated kill mid-take recovers.
+
+### Verification
+
+- 2026-10-04 (adversarial review): `dart analyze` on `lib/core/audio`, `lib/core/files`, `lib/core/constants`, `lib/main.dart`, the task's tests, fakes and integration test: no issues. `dart format --set-exit-if-changed` on the same paths: clean.
+- 2026-10-04: `flutter test test/architecture/ test/core/audio/ test/core/files/ test/features/merge/data/package_files_test.dart test/features/merge/data/package_import_repository_impl_test.dart test/features/capture/presentation/capture_audio_recovery_test.dart`: +493, all passed (the 10 existing `audio_recorder_plugin_test` cases included). `file_writer_adopt_test`: the 500 MB take held the lock once, for less than `adoptLockBudget`.
+- 2026-10-04: `flutter test integration_test/audio_capture_windows_test.dart -d windows` (under the `windows` lock) built `tapture.exe` and passed +2 on this machine; the host mirror also passed.
+- 2026-10-04: `check_naming`, `check_logging`, `check_structure`, `check_l10n`, `check_tests` and `check_repo_hygiene` all exit 0.
+- 2026-10-04 review fixes: (1) `FilePcmStore` file reads made between `closeFile` and `rebase`/`reopen` now wait, because a read of audio older than the ring during publishing reopened the `.recording` file and the Windows rename failed (errno 32, confirmed by a probe); staging reopens reads after a failed publish or an abandon. New tests in `file_pcm_store_test` and `audio_capture_plugin_test` fail without the fix and pass with it. (2) `adoptStaged` matches only this platform's cross-volume code (`ERROR_NOT_SAME_DEVICE` 17 on Windows, `EXDEV` 18 on POSIX), not both, since 17 is `EEXIST` on POSIX. (3) The resampler passband test now sweeps 100 Hz–6 kHz at 48 and 44.1 kHz, and the 12 kHz stopband tone is phase-shifted off the sample grid, so it is not cancelled trivially.
+- Real-microphone behaviour (device rates, audio-focus interruptions, privacy blocks on hardware) is not certified here; it belongs to tasks 130 and 131.
+
+## 115 — Keep browser takes durable in chunked storage
+
+**Depends on** [071](24-product-refinements.md), [114](24-product-refinements.md)
+
+### Implement
+
+Add `BlobCaptureStaging` over `BlobStore`:
+- one 5 s chunk per key, plus a manifest;
+- `checkpoint` flushes;
+- `publish` writes through `BlobFileWriter`;
+- **the chunk keys are removed only by `release()`** after the drain;
+- `abandon` keeps the chunks;
+- recovery from the manifest;
+- `webMaxSessionDuration`.
+
+Add the web `CaptureStaging` factory and the main.dart web override.
+
+### Files
+
+- `frontend/lib/core/audio/blob_capture_staging.dart`, `frontend/lib/core/audio/capture_staging_web.dart`, `frontend/lib/core/audio/staged_take.dart`, `frontend/lib/main.dart`
+- `frontend/test/core/audio/blob_capture_staging_test.dart`
+
+### Constraints
+
+- At most one chunk (5 s) is lost on a tab kill.
+
+### Out of scope
+
+- Real-browser microphones (131).
+
+### Definition of done
+
+- [ ] Over `BlobStore.memory`: one key per 5 s chunk plus the manifest, and `checkpoint` flushes the pending chunk.
+- [ ] The `publish` bytes equal the IO WAV for the same input, the store stays readable after publish, and the keys are removed only by `release()`.
+- [ ] `abandon` keeps the chunks, and recovery after a simulated reload assembles a playable take.
+- [ ] `failWrites` maps to `StorageFailure` and stops capture cleanly.
+
+## 116 — Segment live speech into utterances
+
+**Depends on** [113](24-product-refinements.md), [114](24-product-refinements.md)
+
+### Implement
+
+`core/speech/pipeline/`:
+- `PcmConversion` and `NoiseFloor`;
+- `EnergyGate`, near-silence only: quiet iff dBFS < −60 **and** < floor + 3;
+- `UtteranceSegmenter` with its boundary, end-reason, phase and evidence types;
+- the VAD driver: 4-window batches over the lease's own VAD, resets and warm-up;
+- the gated-ratio statistic.
+
+Add the `AppConstants.speechPipeline` VAD and segmenter fields.
+
+### Files
+
+- `frontend/lib/core/speech/pipeline/{pcm_conversion,noise_floor,energy_gate,utterance_segmenter,utterance_boundary,utterance_end_reason,segmenter_phase,utterance_evidence,vad_driver,speech_pipeline_config}.dart`
+- `frontend/lib/core/constants/app_constants.dart`
+- Tests: `frontend/test/core/speech/pipeline/{utterance_segmenter_test,energy_gate_test,vad_driver_test,noise_floor_test}.dart`, `frontend/test/support/pcm_fixtures.dart`
+
+### Contract
+
+Internal to `core/speech` (spec §30.4.7):
+- utterances are ordered, with length ≤ 26 s;
+- overlap occurs only at hard cuts, by exactly 1 s;
+- every confirmed speech window is covered;
+- no utterance spans a pause.
+
+### Constraints
+
+- Thresholds come only from `AppConstants.speechPipeline`.
+- Every `detectSpeech` call carries whole frames.
+
+### Out of scope
+
+- Decoding and assembly (117).
+
+### Definition of done
+
+- [ ] Segmenter cases:
+  - onset ≥ 250 ms;
+  - a 160 ms click rejected;
+  - a 600 ms pause kept within one utterance;
+  - an 800 ms close with post-roll;
+  - pre-roll clamping;
+  - a soft cut at 20 s;
+  - a hard cut at 25 s with `seamFrom = cut − 1 s`.
+- [ ] A property test over 500 random scripts holds every invariant.
+- [ ] VAD resets at start, after each close, after resume and after a gated stretch, and every call is whole frames.
+- [ ] Energy gate:
+  - −50 dBFS speech over a −55 floor is not gated;
+  - −48 over −52 is not gated;
+  - −62 over −75 is not gated;
+  - digital silence is gated;
+  - nothing is gated in speech;
+  - the gated ratio is reported.
+
+## 117 — Stabilise interim text and assemble final segments
+
+**Depends on** [116](24-product-refinements.md)
+
+### Implement
+
+**Scheduling.** `DecodeScheduler`: finals FIFO, one interim slot, EWMA cadence with per-platform duty (0.3 mobile, 0.6 desktop), mobile interims stopped beyond 10 s, and the ladder.
+
+**Interims.** `InterimStabiliser` (LocalAgreement-2) and `WordSequence`.
+
+**Assembly:**
+- `SegmentAssembler`, `SegmentText`;
+- `HallucinationFilter`, which includes the prompt-echo rule;
+- `HallucinationPhrases`;
+- `RepetitionCollapse`, using the VAD-speech words-per-second rule or the speed rule;
+- `SeamAligner`;
+- `PromptCarry`, not passed for utterances under 2 s or below −55 dBFS.
+
+**`SpeechPipeline`:**
+- the sink write is awaited before `SegmentFinalized` is emitted;
+- skipped utterances are appended with `skipped: true`;
+- an unsaved queue;
+- `sinkIdle`;
+- `coveredToSample`;
+- `debugPipelineRetainedSamples`.
+
+**Benchmark.** The pipeline benchmark.
+
+### Files
+
+- `frontend/lib/core/speech/pipeline/{decode_scheduler,decode_job,backpressure_level,interim_stabiliser,word_sequence,segment_assembler,segment_text,hallucination_filter,hallucination_phrases,repetition_collapse,seam_aligner,prompt_carry,speech_pipeline}.dart`
+- `frontend/lib/core/speech/live_transcription_event.dart` + its part files
+- Tests:
+  - `frontend/test/core/speech/pipeline/{decode_scheduler_test,interim_stabiliser_test,seam_aligner_test,hallucination_filter_test,repetition_collapse_test,segment_text_test,prompt_carry_test,speech_pipeline_test,speech_pipeline_benchmark_test}.dart`
+  - `frontend/test/core/speech/pipeline/speech_pipeline_real_seam_test.dart` (opt-in real engine)
+
+### Contract
+
+`SpeechPipeline` (internal; spec §30.4.7):
+- `attachLease`, `audioAvailable`, `markPause`, `markResume`, `finish({drain})`, `abort`, `retryUnsaved`;
+- `coveredToSample`, `backlog`, `unsaved`, `sinkIdle`.
+
+`SegmentFinalized` follows the sink write, with `durable: false` only on sink failure.
+
+### Constraints
+
+- Finals are never dropped.
+- Finalized audio is never re-decoded.
+- Interim text is never persisted or logged.
+
+### Out of scope
+
+- The session (118).
+- Mid-session model fallback.
+
+### Definition of done
+
+- [ ] Across 50 random SpokenScripts **with the adversarial modes on** (edge truncation, completion and drop; ±300 ms jitter; prompt echo at p = 0.2; loops at speech rate), the concatenated finals equal the script words in order, with nothing duplicated, missing or reordered beyond the injected edge drop.
+- [ ] Repeated speech across a silence seam is kept, and seam dedupe applies only to hard-cut overlaps.
+- [ ] Interim stable text is monotone, the last word is held back, and the final supersedes the interim.
+- [ ] With a 2× real-time engine, interims switch off, the ladder shows hysteresis, finals arrive in order, and a stop with 90 s of backlog delivers every final from the store with none skipped.
+- [ ] 10 min of silence gives zero decodes and zero segments, even with a hallucinating engine.
+- [ ] `[BLANK_AUDIO]`, `(music)` and `♪` are dropped. A quiet "Thank you." is dropped and a loud one is kept. A prompt echo is dropped.
+- [ ] A sentence looped at normal pace beyond VAD speech × 4 words/s collapses. "no, no, no" and a phrase said twice are kept.
+- [ ] `SegmentText` leaves `3.5`, `10:30`, `1,200`, `v2.1`, `example.com` and `...` untouched.
+- [ ] Segment times are sample-based and exclude paused time, and ids are contiguous from `nextSegmentId`.
+- [ ] A failing sink keeps utterances queued in order, retries them before the next one and raises `transcriptUnsaved`. A skipped utterance reaches the sink as `skipped: true`.
+- [ ] `debugPipelineRetainedSamples` stays within bound over a 1 h synthetic run.
+- [ ] The Logger buffer contains no scripted word.
+- [ ] On this machine, `speech_pipeline_real_seam_test` (tiny; jfk × 6 with a forced hard cut inside "country") produces no duplicated or missing word.
+- [ ] The benchmark (performance tag) meets p90 ≤ `speechBudgets.pipelinePerAudioSecond`, with evidence in `frontend/build/stt-pipeline-benchmark.json`.
+
+## 118 — Run live transcription sessions
+
+**Depends on** [115](24-product-refinements.md), [117](24-product-refinements.md)
+
+### Implement
+
+**`LiveTranscriptionService` and `LiveTranscriptionSession`** (spec §30.4.5):
+- phases including `draining`;
+- **`stop()` completes on publish**, the service-owned drain continues, and `done` completes after `sink.finish`;
+- `pausesCapture` (paused or hidden; `inactive` ignored; `detached` stops);
+- **`LifecycleObserver.addPauseFlush`/`removePauseFlush`,** with the service registering `_checkpointAll`, which awaits capture checkpoints and `sinkIdle`;
+- permission re-check on resume;
+- dictation semantics;
+- `LeaveGuard`;
+- an exit check that checkpoints and marks sessions for recovery;
+- `StorageGuard` checks and the caps;
+- cancel keeps staging;
+- `recoverAudio` and `transcribeRemaining` (gaps first, then the tail);
+- record-only mode;
+- logging and counters.
+
+**Memory profiling.** `validateScenarioProfiles` with per-scenario budgets in `frontend/tool/profile_memory.dart`; `validateMemoryProfiles` delegates and is unchanged. Add the `stt-long-session` scenario (fake engine), validated separately against `speechBudgets.longSession*`.
+
+**main.** Production wiring.
+
+### Files
+
+- `frontend/lib/core/speech/{live_transcription_service,live_transcription_session,live_transcription_request,live_transcription_result,stopped_capture,cancelled_transcription,live_transcription_phase,transcription_kind,stop_reason,transcription_warning_kind}.dart`
+- `frontend/lib/core/lifecycle/lifecycle_observer.dart`, `frontend/lib/main.dart`, `frontend/tool/profile_memory.dart`
+- Tests:
+  - `frontend/test/core/speech/{live_transcription_service_test,live_transcription_recovery_test,long_session_memory_test}.dart`
+  - `frontend/test/core/lifecycle/lifecycle_observer_test.dart`
+  - `frontend/test/tool/profile_memory_test.dart`
+  - `frontend/integration_test/stt_whisper_test.dart` (opt-in)
+  - `frontend/test/hardening/stt_whisper_host_test.dart` (mirror)
+
+### Contract
+
+```dart
+Future<Result<LiveTranscriptionSession>> start(LiveTranscriptionRequest request);
+LiveTranscriptionSession: events, phase, pauseReason, pause(), resume(), stop() → StoppedCapture{audio, captured, reason}, done → LiveTranscriptionResult,
+  skipRemaining(), cancel() → CancelledTranscription
+Stream<LiveTranscriptionEvent> transcribeRemaining(String audioPath, {required List<(int,int)> gaps, required int fromSample, required int nextSegmentId,
+  required String languageTag, required TranscriptSink sink});
+void LifecycleObserver.addPauseFlush(Future<void> Function() flush); void removePauseFlush(Future<void> Function() flush);
+List<String> validateScenarioProfiles(List<MemoryProfile> profiles, {required Map<String, ({int additional, int retained})> budgets});
+```
+
+### Constraints
+
+- Rule 3: long-form records even without transcription, and nothing on a save path waits for the drain.
+- Rule 1: cancel never deletes audio.
+- Durability is complete when `handle(paused)` returns.
+
+### Out of scope
+
+- Feature persistence wiring (122).
+- Dictation adapters (120).
+- Mobile permission revocation, which kills the process (131).
+
+### Definition of done
+
+- [ ] State-machine tests cover:
+  - start, pause, resume, stop and cancel;
+  - paused or hidden → `paused(background)`;
+  - `inactive` → no change;
+  - `detached` → stop without awaiting the drain;
+  - a resume with revoked permission (Windows, macOS and web paths) → `paused(permissionRevoked)`;
+  - interruption;
+  - microphone lost, then resume.
+- [ ] `lifecycle_observer_test` and `live_transcription_service_test` prove that `handle(paused)` returns only after the take's header is patched and flushed and the in-flight sink write has completed. A registered flush is removed on session end.
+- [ ] `stop()` completes while a `FakeSpeechEngine` is held mid-decode, with the audio published. The drain then completes, and `sink.finish(complete: true)` runs before `done`.
+- [ ] A long-form engine-load failure continues record-only and publishes the audio. A dictation load failure fails.
+- [ ] Cancel keeps `<audio>.wav.recording` byte-for-byte, returns no transcript, and releases the lease, guard, flush and exit check.
+- [ ] The exit check returns true without draining, and recovery adopts the checkpointed take.
+- [ ] `transcribeRemaining` fills gaps, then the tail, into the sink with contiguous ids.
+- [ ] Dictation auto-stops on silence and on max duration, stops on background, and stops as `preempted`.
+- [ ] Storage stop, the low warning and the limits work with `StorageGuard.fake`.
+- [ ] Every session, capture and worker counter returns to 0 on every path.
+- [ ] `profile_memory_test` proves `validateMemoryProfiles` is unchanged and that `validateScenarioProfiles` applies per-scenario budgets and reports missing and unknown scenarios.
+- [ ] `stt-long-session` (performance tag) passes its budgets.
+- [ ] On this machine, the opt-in `stt_whisper_test` with `-d windows` (or the host mirror, recorded) passes with tiny and base: first-partial and finalize compute within budget; jfk × 6 with no seam duplication; `outboundCallCount == 0`.
+
+## 119 — Persist transcripts beside their audio
+
+**Depends on** [004](04-data-layer.md), [014](14-records.md), [017](17-meetings.md), [067](24-product-refinements.md), [108](24-product-refinements.md)
+
+### Implement
+
+**Schema 32:**
+- `transcripts`, with `coveredMs`, `skippedRanges`, `title` and the write-once columns;
+- `transcript_segments`;
+- `migrateToV32`.
+
+**Helpers:**
+- `insertTranscript`;
+- `updateTranscript`;
+- `appendTranscriptUtterance`: contiguous, idempotent, gap-aware, atomic;
+- `writeTranscriptEdit` (audited);
+- `renameTranscript` (audited).
+
+**Search.** Record search body and triggers. Reading order is `(start_ms, seq)`.
+
+**Feature `features/transcripts`** (domain and data, plus a presentation barrel), registered in `featureDirectories`:
+- `TranscriptRepository` and `TranscriptRepositoryImpl`, including `sinkFor` (whose `finish` → `complete`/`markInterrupted`), `linkAttachment`, `reopenForRemaining` and `completedForAttachment`;
+- the providers;
+- `TranscriptRecovery`, wired at boot.
+
+**`TranscriptStore` is not touched.**
+
+### Files
+
+- `frontend/lib/core/db/tables/transcripts.dart`, `frontend/lib/core/db/tables/transcript_segments.dart`, `frontend/lib/core/db/app_database.dart` (+`.g.dart`), `frontend/lib/core/db/migrations.dart`, `frontend/lib/core/db/record_schema.dart`
+- `frontend/lib/features/records/data/record_queries.dart`
+- `frontend/lib/features/transcripts/transcripts.dart`
+- `frontend/lib/features/transcripts/domain/{domain,transcript_owner_kind,transcript_status,transcript_line,transcript_gap,transcript_summary,transcript,transcript_start,transcript_paragraphs,transcript_repository}.dart`
+- `frontend/lib/features/transcripts/data/{data,transcript_repository_impl,transcript_recovery,transcript_providers}.dart`
+- `frontend/lib/features/transcripts/presentation/presentation.dart`
+- `frontend/tool/paths.dart`, `frontend/lib/main.dart`
+- ARB: `transcriptSaveFailed`, `transcriptSegmentOutOfOrder`, `transcriptStillRecording`
+- Tests:
+  - `frontend/test/core/db/tables/transcripts_test.dart`, `frontend/test/core/db/migrations_test.dart`, `frontend/test/core/db/record_schema_test.dart`
+  - `frontend/test/features/transcripts/domain/{transcript_owner_kind_test,transcript_status_test,transcript_line_test,transcript_gap_test,transcript_summary_test,transcript_test,transcript_start_test,transcript_paragraphs_test}.dart`
+  - `frontend/test/features/transcripts/data/{transcript_repository_impl_test,transcript_recovery_test,transcript_repository_perf_test}.dart`
+  - `frontend/test/features/transcripts/fakes/fake_transcript_repository.dart`
+
+### Contract
+
+```dart
+abstract interface class TranscriptRepository { begin; appendUtterance; TranscriptSink sinkFor(String id); linkAttachment(String id, String attachmentId);
+  complete; markInterrupted; fileStandaloneAudio; discard; rename(String id, String title, {String? operator}); saveEdit; clearEdit;
+  reopenForRemaining(String id); read; watch; watchProject; watchRecord; watchMeeting; completedForAttachment(String attachmentId); stale; }
+```
+
+The full signatures are in spec §30.4.6.
+
+### Constraints
+
+- FE-SEC-08 and `data_safety_test`: `textRaw` is written only in the insert helper, with no new allowance.
+- `kDestructiveSteps` stays empty.
+- Version-vector triggers belong to 127.
+
+### Out of scope
+
+- Package, merge and export (127).
+- UI (122+).
+- Removing `TranscriptStore`.
+
+### Definition of done
+
+- [ ] Both tables exist at schema 32 after `onCreate` and after a v31 upgrade with existing rows kept. `migrateToV32` is idempotent, and `kUpgradeSteps.length == kSchemaVersion`.
+- [ ] Segments are insert-only and contiguous: a repeated seq with the same text is ignored, and a gap or different text gives `StorageFailure`.
+- [ ] A skipped utterance adds a range, a later fill removes it, and reading order is by time.
+- [ ] `appendUtterance` writes segments, `coveredMs` and `skippedRanges` atomically.
+- [ ] `saveEdit` writes `text_edited`, `edited_at` and one audit row while the raw rows stay byte-identical. `clearEdit` writes null. `rename` writes an audit row with field `title`. Editing a live row gives `ValidationFailure`.
+- [ ] `sinkFor(id).finish` completes or interrupts the row. `reopenForRemaining` allows `transcribeRemaining` on complete or interrupted rows and restores the status on finish.
+- [ ] Record search:
+  - finds raw and edited words through the attachment link;
+  - excludes live and tombstoned rows;
+  - segment inserts never rebuild documents;
+  - `triggerNames` matches `sqlite_master`.
+- [ ] `watchProject` escapes `%` and `_`, excludes tombstones, and orders and limits correctly. `watchRecord`, `watchMeeting` and `completedForAttachment` work.
+- [ ] Boot recovery marks capture rows interrupted and recovers and files meeting and standalone audio, never deleting a file.
+- [ ] `check_tests --strict` passes with one test per new domain and data file.
+- [ ] Perf (performance tag): `appendUtterance` p90 ≤ `segmentWriteBudget` with 5000 segments, and the first `watchProject` emission ≤ `historyQueryBudget` over 2000 transcripts.
+
+## 120 — Route field dictation through on-device Whisper
+
+**Depends on** [012](12-capture.md), [027](24-product-refinements.md), [118](24-product-refinements.md)
+
+### Implement
+
+**`WhisperSttService`** over `LiveTranscriptionService` (dictation):
+- partials are `committed + stable`, and tentative words are never emitted;
+- each final is aligned to the emitted stable prefix, so emitted words never change.
+
+**`PlatformRecogniserPolicy`** (core/ai):
+- Android uses `onDeviceRecognitionAvailable` on `com.tapture.app/files` (`SDK_INT >= 31 && SpeechRecognizer.isOnDeviceRecognitionAvailable`);
+- iOS and macOS return true;
+- Windows, Linux and web return false.
+
+**`RoutedSttService`:** Whisper when ready; else the platform recogniser with `onDeviceOnly: true` when the policy allows; else `NetworkFailure(dictationOfflineOnly)`.
+
+**Providers and main.** `platformRecogniserProvider` and `dictationSttProvider`. main overrides `sttServiceProvider` and **`speechLanguageProvider`** (this task is the sole owner).
+
+**Rules and plan text.**
+- Add the FE-SEC-04 clause.
+- Correct the `stt_service.dart` doc comments: the Android guarantee now comes from the policy, and the stale "task 131" references point to 027.
+- Edit task 012 item 12's text (`dev-plan/12-capture.md:238`) to on-device-only with a cross-reference. No tick changes.
+
+### Files
+
+- `frontend/lib/core/speech/whisper_stt_service.dart`, `frontend/lib/core/speech/routed_stt_service.dart`
+- `frontend/lib/core/ai/platform_recogniser_policy.dart`, `frontend/lib/core/ai/stt_service.dart` (doc only), `frontend/lib/core/ai/ai.dart`
+- `frontend/android/app/src/main/kotlin/com/tapture/app/MainActivity.kt`, `frontend/lib/main.dart`
+- `frontend/.rules/11-security-privacy.md`, `dev-plan/12-capture.md` (item 12 text)
+- Tests:
+  - `frontend/test/core/speech/{whisper_stt_service_test,routed_stt_service_test,dictation_stt_provider_test}.dart`
+  - `frontend/test/core/ai/platform_recogniser_policy_test.dart`
+  - `frontend/test/core/widgets/fields/whisper_dictation_field_test.dart`
+  - `frontend/test/architecture/network_test.dart` (existing; enforces the clause for `core/speech`)
+
+### Contract
+
+`WhisperSttService` and `RoutedSttService` implement the unchanged `SttService`. `SttResult`, `FakeSttService`, `DictationScope`, `DictationSession` and `AppTextField` do not change.
+
+```dart
+abstract interface class PlatformRecogniserPolicy { factory PlatformRecogniserPolicy.platform(); factory PlatformRecogniserPolicy.fake(bool onDevice);
+  Future<bool> keepsSpeechOnDevice(); }
+```
+
+### Constraints
+
+- Speech never goes online.
+- Web is Whisper only.
+- Heard words are never logged.
+
+### Out of scope
+
+- Saving dictation audio.
+- The Kotlin compile (130).
+- Device fallback behaviour (131).
+
+### Definition of done
+
+- [ ] An empty partial follows the microphone opening even while the model loads, and an early Stop still inserts the final (widget test). Refused permission emits no partial.
+- [ ] Partials are prefix-stable and throttled (20 updates in 250 ms give ≤ 2 partials). Exactly one final follows, then close.
+- [ ] `whisper_dictation_field_test`: the final revises an interim ("I scream" → "ice cream") while the operator typed mid-listen, and no word is duplicated or dropped in the field.
+- [ ] Heard words are kept on error, the stop bound expires into a final plus cancel, and cancel drops unfinal words. A new listen hands over the previous words.
+- [ ] Silence gives `dictationNothingHeard`, and a busy microphone gives `microphoneBusy`.
+- [ ] `routed_stt_service_test`:
+  - routing follows readiness per listen;
+  - every platform listen has `onDeviceOnly: true`;
+  - with the policy false (Android SDK < 31 or no on-device recogniser, Windows, web), `platform.listen` is never called and `dictationOfflineOnly` is emitted.
+- [ ] `platform_recogniser_policy_test` covers each platform with a mocked channel.
+- [ ] `dictationSttProvider` returns a new instance only when "any engine usable" flips.
+- [ ] Existing `stt_service`, `dictation_session`, `app_text_field_dictation` and dictation golden tests pass unchanged.
+- [ ] FE-SEC-04 carries the clause, with `routed_stt_service_test` and `network_test` named as its enforcement and recorded for the commit body.
+- [ ] Task 012 item 12's text matches PO decision 2, and no box changes.
+- [ ] On this machine, the Windows app dictates into a free-text field with Whisper while the network adapter is disabled. A WAV-fed fake recorder is acceptable if no microphone is present; record which was used.
+
+## 121 — Add the recording bar and transcript view to the catalogue
+
+**Depends on** [003](03-design-system.md), [065](24-product-refinements.md)
+
+### Implement
+
+- `AppRecordingPhase`, `AppRecordingBar` and `AppTranscriptView` (design §11).
+- `AppIcons.pause/resume/transcript`, `Sizes.transcriptPane`, and gallery entries.
+- Refactor `frontend/lib/features/capture/presentation/audio_recorder.dart` to render `AppRecordingBar` (FE-CONS-01), with no behaviour change.
+
+### Files
+
+- `frontend/lib/core/widgets/app_recording_phase.dart`, `frontend/lib/core/widgets/app_recording_bar.dart`, `frontend/lib/core/widgets/app_transcript_view.dart`, `frontend/lib/core/widgets/app_icons.dart`
+- `frontend/lib/app/theme/sizes.dart`, `frontend/lib/features/settings/presentation/widget_gallery_screen.dart`, `frontend/lib/features/capture/presentation/audio_recorder.dart`
+- ARB status and control keys
+- Tests: `frontend/test/design_system/{app_recording_phase_test,app_recording_bar_test,app_transcript_view_test,app_transcript_view_perf_test}.dart`, `frontend/test/design_system/catalogue_golden_test.dart` samples + goldens
+
+### Contract
+
+```dart
+enum AppRecordingPhase { idle, starting, recording, paused, finishing }
+AppRecordingBar({required AppRecordingPhase phase, Duration elapsed, double level, String? status, String? startLabel, VoidCallback? onStart,
+  VoidCallback? onPause, VoidCallback? onResume, VoidCallback? onStop, VoidCallback? onCancel})
+AppTranscriptView({required List<String> paragraphs, String? tentative, bool live, String? emptyMessage})
+```
+
+### Constraints
+
+- `Radii` corners, never zero.
+- `UntrustedText`.
+- No animation on follow.
+
+### Definition of done
+
+- [x] `app_recording_phase_test` asserts each phase's control set through `AppRecordingBar`.
+- [x] Each control has a semantic label, a tooltip and a ≥ 48-dp target, with a live-region status.
+- [x] `AppTranscriptView` separates stable from tentative text, follows the latest line, offers "Jump to latest" after the reader scrolls up, and rebuilds only the last row.
+- [x] Both widgets wrap without overflow at compact width and 200% text scale.
+- [x] Light, dark and outdoor goldens pass.
+- [x] Perf: appending to 2000 paragraphs keeps p90 ≤ `AppConstants.scrolling.frame`.
+- [x] `check_tests --strict` passes, and the existing `audio_recorder` tests pass.
+
+### Verification
+
+- 2026-10-04: Reviewed against the plan contract and design §11; the gallery entries live in `frontend/lib/core/widgets/gallery/widget_gallery_screen.dart` (the path listed in Files does not exist).
+- 2026-10-04: `flutter test` on `app_recording_phase_test` and `app_recording_bar_test`: pass. `app_transcript_view_test`: 10 pass, including a new case that appends after following a 200-paragraph transcript to its end and checks earlier rows are reused. `app_transcript_view_perf_test` (2000 paragraphs): pass, within `AppConstants.scrolling.frame` and `worstFrame`.
+- 2026-10-04: `catalogue_golden_test`: the `app_recording_bar` and `app_transcript_view` light, dark and outdoor goldens pass, and so does the baseline coverage test. One case fails, `app_list_tile`. That failure predates this task: commit a12f2378 changed `app_list_tile`/`app_status_pill` after the baseline was made on 2026-10-01.
+- 2026-10-04: The capture widget, feedback, audio recovery and guide tests pass without changes, and so do the gallery screen and gallery golden tests (including 200% text) and the architecture tokens, icons, naming, layering, responsive, state, errors and data-safety suites. `check_tests --strict`, `check_l10n`, `check_naming`, `check_structure` and `check_logging` all exit 0. `dart analyze` and `dart format` report nothing on the changed files.
+- 2026-10-04: Review fix: the stop handler in `AudioRecorder` again hands a finished take to `onStopped`/`onCompleted` when the bar has left the screen, as it did before the refactor. Only the error snack is now guarded by `mounted`.
+- 2026-10-04: Open follow-up (outside the DoD): `AudioRecorder` still passes its per-second `audioRecorderStatus` ("Recording · 12s") as the bar's live-region status. Screen readers may therefore announce it every second, and it repeats the bar's clock. It should pass a status with no ticking value, which needs a copy change and updates to the capture tests; task 125 reworks this recorder.
+
+## 122 — Run live transcription sessions for any surface
+
+**Depends on** [118](24-product-refinements.md), [119](24-product-refinements.md), [121](24-product-refinements.md)
+
+### Implement
+
+Add these, with their providers:
+- `LiveTranscriptController` (family by session key);
+- `TranscriptSessionTarget`, built only in `*_providers.dart` or `*_controller.dart` files;
+- `LiveTranscriptKey`;
+- `LiveTranscriptPanel`;
+- `TranscriptListSection`.
+
+**Start:** `audioPath()`, then `beforeStart()`, then `repository.begin`, then `service.start` with `sinkFor`.
+
+**Stop:**
+1. `session.stop()`, which completes on publish;
+2. `target.fileAudio`;
+3. `repository.linkAttachment`.
+
+The transcript then completes through the service-owned drain, even if the controller is disposed.
+
+**Other behaviour:**
+- `retrySave` resumes from the failed filing step.
+- Discard asks for confirmation.
+- Keep-alive.
+- A `ValueListenable` for frames.
+
+### Files
+
+- `frontend/lib/features/transcripts/presentation/{live_transcript_controller,live_transcript_key,transcript_session_target,live_transcript_panel,transcript_list_section,transcript_providers}.dart`
+- ARB `liveTranscript*` keys, `speechOfflineBadge`
+- Tests:
+  - `frontend/test/features/transcripts/presentation/{live_transcript_controller_test,live_transcript_panel_test,transcript_list_section_test,transcribe_flow_test}.dart`
+  - `frontend/test/support/fakes/fake_live_transcription_service.dart`
+
+### Contract
+
+```dart
+final class TranscriptSessionTarget { const TranscriptSessionTarget({required String sessionKey, required String projectId,
+  required TranscriptOwnerKind ownerKind, String? ownerId, required Future<Result<String>> Function() audioPath,
+  Future<Result<void>> Function()? beforeStart, required Future<Result<String?>> Function(AudioRecording audio) fileAudio,
+  Future<void> Function()? onDiscard, TranscriptMode mode = TranscriptMode.live, bool keepAlive = true}); }
+LiveTranscriptController: start(TranscriptSessionTarget), pause(), resume(), stop() → Result<String?> attachmentId, retrySave(), discard(), frames
+```
+
+### Constraints
+
+- No `setState` in features.
+- No `late final` in `build()`.
+- No new `WidgetsBindingObserver`.
+- Targets are never built in widget files (`state_test`).
+
+### Out of scope
+
+- Screens (123–125).
+
+### Definition of done
+
+- [ ] `start` makes the row durable before the microphone opens.
+- [ ] Segments persist in order. A failed write is retried before the next one, never reordered, and never stops recording.
+- [ ] `stop` returns once the audio is filed and linked, while a held fake engine is still decoding. The row completes after the drain even if the controller was disposed.
+- [ ] `stop` releases the keep-alive, guard and exit check, and `retrySave` resumes each failing step.
+- [ ] Background and interruption reasons are shown, a bare `inactive` does not pause, resume needs a tap, and permission loss keeps what was recorded.
+- [ ] Discard asks first, tombstones the row and never deletes audio.
+- [ ] `transcribe_flow_test` (start, 5 segments, background pause, resume, stop) ends with 5 ordered segments, a complete row and a linked attachment.
+- [ ] `state_test` passes.
+
+## 123 — Add the Transcribe screen and transcript history
+
+**Depends on** [006](06-app-shell.md), [079](24-product-refinements.md), [122](24-product-refinements.md)
+
+### Implement
+
+**Routes:** `/more/transcripts`, `/more/transcripts/new` and `/more/transcripts/:transcriptId`, plus the project equivalents. Add the More entry, the shell titles and the project home overflow "Transcribe".
+
+**Screens and controllers:**
+- `TranscriptsScreen`: search, paging, origin/status/edited chips, a ScreenFixture.
+- `TranscribeScreen`: an unavailable state linking to Language settings; records into `projects/<folder>/audio/<id>.wav`.
+- `TranscriptDetailScreen`:
+  - edit beside the raw text, revert, rename (audited);
+  - read-only while live;
+  - an unsaved-edits guard;
+  - **Finish the transcript** whenever gaps exist or `coveredMs < durationMs` and readiness is ready, on any status, through `reopenForRemaining` + `transcribeRemaining`.
+- `TranscriptDetailController` and `TranscriptEditor`.
+
+### Files
+
+- `frontend/lib/features/transcripts/presentation/{transcripts_screen,transcribe_screen,transcript_detail_screen,transcript_detail_controller,transcript_editor}.dart`
+- `frontend/lib/app/route_paths.dart`, `frontend/lib/app/router.dart`, `frontend/lib/app/shell_destination.dart`, `frontend/lib/app/shell_title.dart`, `frontend/lib/features/projects/presentation/project_home_screen.dart`
+- `frontend/test/support/screen_fixtures.dart`; ARB `transcripts*`, `transcribe*`, `transcript*`, `navTranscripts`
+- Tests:
+  - `frontend/test/features/transcripts/presentation/{transcripts_screen_test,transcribe_screen_test,transcript_detail_screen_test,transcript_editor_test,transcript_detail_controller_test}.dart`
+  - `frontend/integration_test/transcripts_offline_test.dart`
+  - `frontend/test/hardening/transcripts_offline_host_test.dart`
+
+### Constraints
+
+- FE-CONS-01/02: catalogue widgets and `AsyncValueView` only.
+- The screen matrix must pass.
+
+### Out of scope
+
+- Audio playback.
+- File export of transcripts.
+- Manual microphone sessions (131).
+
+### Definition of done
+
+- [ ] Transcripts is reachable from the More menu, the Settings root (medium width and up) and the project home. The list searches, pages and shows the chips.
+- [ ] Transcribe records (fake capture service), saves and opens the detail page, and explains when transcription is unavailable.
+- [ ] The detail screen saves edits beside the raw text (raw unchanged), reverts with audit, renames with audit, blocks editing while live and guards unsaved edits.
+- [ ] Finish the transcript fills the gaps and then the tail with contiguous ids. That includes a record-only transcript completed later on-device.
+- [ ] The `TranscriptsScreen` ScreenFixture passes the 36-cell matrix, the empty-state check and the a11y checks.
+- [ ] On this machine, `transcripts_offline_test` passes (`-d windows`, or the host mirror, recorded) with a WAV-fed recorder: `outboundCallCount == 0`, audio byte-identical, raw unchanged after an edit.
+
+## 124 — Transcribe meetings live
+
+**Depends on** [017](17-meetings.md), [119](24-product-refinements.md), [122](24-product-refinements.md), [123](24-product-refinements.md)
+
+### Implement
+
+**Entry and routing.**
+- "Start a meeting" in the project home overflow.
+- The review route loads by id through `meetingRecordProvider`.
+
+**`MeetingLiveSection`:**
+- target built in `frontend/lib/features/meetings/presentation/meeting_review_providers.dart`;
+- `storagePathFor(meetingId, 'recording.wav')`;
+- `fileAudio = attachStored`;
+- `audioOnly` without readiness;
+- a web-unavailable state.
+
+**Single transcript source.** In `meeting_repository_impl.dart`, `MeetingRecord.transcript` resolves to non-empty `transcriptRaw`, otherwise to the latest non-live `transcripts` row for the meeting (`displayText`, read from the core table), otherwise to `versions.last.text`. Refine minutes and the minutes export use it unchanged.
+
+**One list.** `MeetingAudioSection` renders one list: live transcripts first, then legacy `TranscriptVersion`s as read-only rows labelled `meetingTranscriptCloudVersion`.
+
+**Follow-up.** Create a `new_task.dart` follow-up to retire the meetings `_Wav` duplicate in favour of `core/audio/wav_take.dart`.
+
+### Files
+
+- `frontend/lib/features/meetings/presentation/{meeting_live_section,meeting_review_providers,meeting_audio_section,meeting_review_screen}.dart`
+- `frontend/lib/features/meetings/data/meeting_repository_impl.dart`
+- `frontend/lib/app/router.dart`, `frontend/lib/features/projects/presentation/project_home_screen.dart`; ARB `meetingTranscriptCloudVersion`
+- Tests:
+  - `frontend/test/features/meetings/presentation/{meeting_live_section_test,meeting_audio_section_test,meeting_review_screen_test}.dart`
+  - `frontend/test/features/meetings/data/meeting_repository_impl_test.dart`
+  - `frontend/test/features/projects/presentation/project_home_screen_test.dart`
+
+### Constraints
+
+- `meetings/domain` is untouched.
+- `transcriptRaw` stays write-once.
+- The existing review-controller leak is a separate follow-up task.
+
+### Definition of done
+
+- [ ] Start a meeting is reachable, and the review route loads by id while existing cases pass.
+- [ ] Live mode: start creates a live row, segments save, and stop files the WAV through `attachStored` and completes a transcript that is searchable on the meeting record.
+- [ ] `meeting_repository_impl_test` proves the transcript resolution order, and that Refine minutes receives the live transcript text (edited text when an edit exists).
+- [ ] The review page shows a single list containing live transcripts and legacy versions, and opens the editor.
+- [ ] Without a model, the meeting records audio only, with an explanation. Web without capture says so.
+- [ ] On this machine, a WAV-fed meeting session on Windows (`-d windows`, or the host mirror) pauses with its reason when driven through `LifecycleObserver.handle(paused)` and resumes on tap.
+
+## 125 — Transcribe caption recordings live
+
+**Depends on** [065](24-product-refinements.md), [067](24-product-refinements.md), [073](24-product-refinements.md), [122](24-product-refinements.md), [123](24-product-refinements.md)
+
+### Implement
+
+**`capture_screen.dart`.** "Record and transcribe" appears when readiness is ready. It:
+- stages the `PendingAudioDraft` first;
+- uses `LiveTranscriptPanel(showIdleControls: false)`;
+- builds the target in `capture_providers.dart` (`fileAudio = publishAudio`, `keepAlive: false`).
+
+**`CaptureController`:**
+- `dropAudio(pendingId)`;
+- save, `saveRaw`, `saveAndAnalyse` and `saveEdits` call `finishCaptureIfActive()`, which awaits **only** `session.stop()` + `publishAudio` + `linkAttachment`, before `finaliseAudio`. The transcript drains afterwards.
+
+**`RecordCaptionField`** shows its guide panel from the controller phase.
+
+**Record detail page.** It lists the record's transcripts and offers **Transcribe on this device** for an audio attachment with no transcript: `begin` (`ownerKind capture`, `attachmentId`) plus `transcribeRemaining` from 0.
+
+### Files
+
+- `frontend/lib/features/capture/presentation/{capture_screen,capture_controller,capture_providers,record_caption_field}.dart`
+- `frontend/lib/features/records/presentation/record_detail_screen.dart`
+- `dev-plan/12-capture.md` (cross-reference only); ARB `captureRecordTranscribe`, `transcriptTranscribeOnDevice`
+- Tests:
+  - `frontend/test/features/capture/presentation/{capture_live_transcript_test,capture_feedback_test,capture_controller_test}.dart`
+  - `frontend/test/features/records/presentation/record_detail_screen_test.dart`
+  - `frontend/test/features/capture/data/capture_record_writer_test.dart`
+
+### Constraints
+
+- Without a ready engine, behaviour is exactly task 065.
+- `capture_authority_test`: save raw stays network-silent.
+- Rule 3: no save path waits for transcription.
+
+### Definition of done
+
+- [ ] Without a model, the caption recorder behaves exactly as in task 065 (existing tests unchanged).
+- [ ] With a model, the draft is staged before the microphone opens, segments save while recording, and stop publishes through `publishAudio` with `attachment_id == audioId`.
+- [ ] **With a `FakeSpeechEngine` held mid-decode, Save completes and attaches the audio without waiting.** The transcript completes later and becomes searchable.
+- [ ] Leaving the page stops and saves the audio, and the transcript completes through the service.
+- [ ] Discard drops the pending draft and tombstones the transcript without deleting audio.
+- [ ] The record page lists its transcripts. Transcribe on this device creates a complete transcript for an untranscribed clip (fake engine), and record search finds its words.
+- [ ] Dictation while recording shows `microphoneBusy`.
+
+## 126 — Add speech settings to the Language screen
+
+**Depends on** [109](24-product-refinements.md), [113](24-product-refinements.md), [120](24-product-refinements.md)
+
+### Implement
+
+- `SettingKeys.speechQuality` (`'speech.quality'`, `'auto'`), appended to `names`, with the FE-SIMP-12 justification.
+- `speechQualitySettingProvider`.
+- `SpeechSettingsSection` on `LanguageSettingsScreen`:
+  - the engine line (Whisper model, on-device platform, or none) and the offline badge;
+  - the quality choice;
+  - model rows (present, imported, damaged, in use, too large) with **Verify** (`store.verify`);
+  - import where `canImport`, and removal of imported models.
+- main overrides `speechQualityProvider` only. `speechLanguageProvider` belongs to 120.
+
+### Files
+
+- `frontend/lib/features/settings/domain/setting_keys.dart`
+- `frontend/lib/features/settings/presentation/speech_settings_section.dart`, `frontend/lib/features/settings/presentation/language_settings_screen.dart`, `frontend/lib/features/settings/presentation/speech_settings_providers.dart`
+- `frontend/lib/main.dart`; ARB `settingsSpeech*`
+- Tests:
+  - `frontend/test/features/settings/presentation/{speech_settings_section_test,language_settings_screen_test}.dart`
+  - `frontend/test/features/settings/domain/setting_keys_test.dart`
+
+### Constraints
+
+- FE-SIMP-12: one new setting, defaulting to Automatic.
+
+### Out of scope
+
+- Thread or model pickers beyond quality.
+
+### Definition of done
+
+- [ ] The section shows each engine line, the badge and the quality choice (Automatic by default). Writing the quality refreshes readiness.
+- [ ] Model rows show origin, integrity and size, mark the model in use, and warn when a model is too large. Verify reports success and a mismatch.
+- [ ] Import reports success, refuses a mismatch in plain copy, is silent on cancel and is hidden where `canImport` is false. Removing an imported model works.
+- [ ] The `setting_keys_test` names order passes.
+
+## 127 — Carry transcripts in packages, merges and exports
+
+**Depends on** [019](19-bundles-and-merge.md), [076](24-product-refinements.md), [119](24-product-refinements.md)
+
+### Implement
+
+**Table lists.** Add `transcripts` and `transcript_segments` to:
+- `VersionVectorSchema.tables`;
+- `BundleFormat.insertOrder`;
+- the bundle writer and reader.
+
+**Migration.** Add `migrateToV33` (`VersionVectorSchema.ensure`), raising `kSchemaVersion` to 33. `onCreate` already ensures vectors.
+
+**Merge planner.** Segments append idempotently by `(transcriptId, seq)`. `skippedRanges`, `coveredMs` and edits merge by `editedAt`, with an audit row.
+
+**Exports.** Deliverable and minutes exports include raw and edited transcripts.
+
+### Files
+
+- `frontend/lib/core/bundle/bundle_format.dart`, `frontend/lib/core/bundle/bundle_writer.dart`, `frontend/lib/core/bundle/bundle_reader.dart`
+- `frontend/lib/core/db/version_vector_schema.dart`, `frontend/lib/core/db/migrations.dart`, `frontend/lib/core/db/app_database.dart`
+- `frontend/lib/features/merge/data/merge_planner.dart`, `frontend/lib/features/exports/data/deliverable_export_builder.dart`, `frontend/lib/features/meetings/data/minutes_export_builder.dart`
+- Tests:
+  - `frontend/test/core/db/version_vector_schema_test.dart`, `frontend/test/core/db/migrations_test.dart`
+  - `frontend/test/core/bundle/bundle_round_trip_test.dart`
+  - `frontend/test/features/merge/data/merge_planner_test.dart`
+  - `frontend/test/features/exports/data/deliverable_export_builder_test.dart`, `frontend/test/features/meetings/data/minutes_export_builder_test.dart`
+
+Exact file names are confirmed against the tree at implementation time, and any difference is recorded.
+
+### Definition of done
+
+- [ ] `version_vector_schema_test` passes with both tables, which have vector triggers after `onCreate` and after a v32 → v33 upgrade.
+- [ ] A project package round-trips transcripts and segments with the raw text unchanged.
+- [ ] Merges never duplicate segments, and conflicting edits resolve by `editedAt` with an audit row.
+- [ ] Exports include raw and edited transcript text.
+
+## 128 — Measure on-device speech load, speed and memory on Windows
+
+**Depends on** [118](24-product-refinements.md)
+
+### Implement
+
+**Performance suite** (opt-in, real engine):
+- load p50 over 3 runs for tiny and base, including the in-shim hash;
+- median RTF over 5 jfk decodes;
+- VAD cost per audio second;
+- abort latency;
+- UI-isolate timer drift;
+- **tokens/s with `TW_OPENMP` OFF versus ON (`/openmp:llvm`)**, recorded in a decision note. Create a follow-up task if ON wins by more than 15%.
+
+**Memory scenario.** `speech-engine` (load tiny, 30 decodes, 300 VAD calls, unload, dispose) through `validateScenarioProfiles`.
+
+**Recalibration.** Recalibrate the catalogue memory estimates and `speechBudgets` from the evidence, with a note.
+
+### Files
+
+- `frontend/test/core/speech/speech_engine_benchmark_test.dart` (`@Tags(['performance'])`)
+- `frontend/integration_test/speech_memory_test.dart`, `frontend/test/hardening/speech_memory_host_test.dart`, `frontend/integration_test/speech_engine_test.dart`
+- `frontend/lib/core/speech/speech_model_catalogue.dart`, `frontend/lib/core/constants/app_constants.dart` (recalibration only)
+
+### Constraints
+
+- Budgets are never loosened without recorded evidence.
+
+### Definition of done
+
+- [ ] On this machine: load, RTF (tiny and base), VAD per second, abort latency and UI drift are within `speechBudgets`, with evidence in `frontend/build/speech-benchmark.json`.
+- [ ] On this machine: the OpenMP comparison is recorded, with its decision.
+- [ ] On this machine: the `speech-engine` profile meets the peak and retained budgets, with workers, handles and isolates back at baseline (`frontend/build/speech-memory-profile.json`).
+- [ ] On this machine: `speech_engine_test` resolves bundled models from `data/flutter_assets`, transcribes jfk through the host with `outboundCallCount == 0`, and skips cleanly without opt-in.
+- [ ] Catalogue memory estimates are replaced with measured peaks, with a note.
+
+## 129 — Use the on-device transcript before online transcription
+
+**Depends on** [013](13-processing.md), [119](24-product-refinements.md), [125](24-product-refinements.md)
+
+### Implement
+
+In `OnlineTranscripts.forJob`, for each audio attachment:
+1. Use `TranscriptRepository.completedForAttachment(audio.id)` (through the `features/transcripts` barrel) and its `displayText`.
+2. Otherwise, use a stored response.
+3. Only otherwise call the online provider.
+
+Record the source in the request summary as `'source': 'device'`, with no provider call and no online budget charge.
+
+Update spec §30.1 to the wording in design §14.
+
+### Files
+
+- `frontend/lib/features/processing/data/online_transcripts.dart`, `frontend/lib/features/processing/data/processing_providers.dart`
+- `app-write-up.md` (§30.1)
+- `frontend/test/features/processing/data/online_transcripts_test.dart`
+
+### Constraints
+
+- Processing never runs Whisper itself.
+- The online path stays opt-in as today.
+
+### Out of scope
+
+- On-device transcription inside processing jobs.
+
+### Definition of done
+
+- [ ] With a completed on-device transcript, `forJob` returns its display text with zero provider calls and no budget charge.
+- [ ] Without one, the existing online behaviour is unchanged (existing tests pass).
+- [ ] A live or interrupted transcript is not used.

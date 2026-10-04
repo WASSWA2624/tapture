@@ -90,6 +90,22 @@ final class BlobFileWriter implements FileWriter {
       ),
     );
   }
+
+  /// A browser keeps no staging file to rename: its takes are published
+  /// from stored chunks through [write].
+  @override
+  Future<Result<WrittenFile>> adoptStaged(
+    File staging,
+    String relativePath,
+  ) async {
+    return FailureResult<WrittenFile>(
+      ProviderFailure(
+        kind: ProviderFailureKind.unavailable,
+        localizedMessage: Copy.messages.failureTaptureCannotCopyAFileFromThis,
+        localizedRecovery: Copy.messages.failureAddTheFileAgainFromTaptureThen,
+      ),
+    );
+  }
 }
 
 StorageFailure _writeFailure(String path) {

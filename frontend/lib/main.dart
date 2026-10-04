@@ -19,6 +19,7 @@ import 'core/ai/provider_registry.dart';
 import 'core/ai/stt_service.dart';
 import 'core/audio/audio_recorder_plugin.dart';
 import 'core/audio/audio_recorder_service.dart';
+import 'core/audio/microphone_arbiter.dart';
 import 'core/backend/backend_session.dart';
 import 'core/backend/relay_package.dart';
 import 'core/backend/relay_queue.dart';
@@ -681,12 +682,13 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
           deviceId: id,
         ),
       ),
-      audioRecorderServiceProvider.overrideWith((Ref _) {
+      audioRecorderServiceProvider.overrideWith((Ref ref) {
         return kIsWeb
             ? const AudioRecorderService.unavailable()
             : AudioRecorderPlugin(
                 writer: evidenceWriter,
                 storageRoot: storageRoot,
+                arbiter: ref.watch(microphoneArbiterProvider),
               );
       }),
       processingRepositoryProvider.overrideWith((Ref ref) {

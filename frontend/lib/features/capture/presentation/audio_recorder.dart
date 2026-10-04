@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/dimensions.dart';
-import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/audio/audio_recorder_service.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_recording_bar.dart';
+import 'package:tapture/core/widgets/app_recording_phase.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
 
@@ -78,74 +78,67 @@ class _AudioRecorderState extends State<AudioRecorder>
 
   @override
   Widget build(BuildContext context) {
-    final LocalizedCopy localCopy = Copy.of(context);
-
     // Nothing to show until a take starts, and nothing once it is saved: the
     // capture page lists saved clips itself.
     if (_state.phase == AudioRecorderPhase.idle ||
         _state.phase == AudioRecorderPhase.completed) {
       return const SizedBox.shrink();
     }
+    final LocalizedCopy localCopy = Copy.of(context);
     return Padding(
       padding: const EdgeInsets.only(top: Space.x2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(
-            localCopy.audioRecorderStatus(
-              _state.phase.name,
-              _state.elapsed.inSeconds,
-            ),
-            style: AppText.caption,
-          ),
-          const SizedBox(height: Space.x1),
-          LinearProgressIndicator(value: _state.level.clamp(0.0, 1.0)),
-          const SizedBox(height: Space.x2),
-          Wrap(
-            spacing: Space.x2,
-            runSpacing: Space.x2,
-            children: <Widget>[
-              if (_state.phase == AudioRecorderPhase.recording)
-                AppButton(
-                  label: localCopy.capturePauseAudio,
-                  onPressed: () => widget.recorder.pause(),
-                ),
-              if (_state.phase == AudioRecorderPhase.paused)
-                AppButton(
-                  label: localCopy.captureResume,
-                  onPressed: () => widget.recorder.resume(),
-                ),
-              if (_state.phase == AudioRecorderPhase.recording ||
-                  _state.phase == AudioRecorderPhase.paused)
-                AppButton(
-                  label: localCopy.captureStopAudio,
-                  onPressed: () async {
-                    final Result<Duration> stopped = await widget.recorder
-                        .stop();
-                    stopped.fold(
-                      (Failure failure) {
-                        showAppSnack(
-                          context,
-                          failure.message,
-                          tone: SnackTone.error,
-                          localizedMessage: failure.explanation,
-                        );
-                      },
-                      (Duration elapsed) {
-                        widget.onStopped?.call(elapsed);
-                        final AudioRecording? completed =
-                            widget.recorder.completed;
-                        if (completed != null) {
-                          widget.onCompleted?.call(completed);
-                        }
-                      },
-                    );
-                  },
-                ),
-            ],
-          ),
-        ],
+      child: AppRecordingBar(
+        phase: _barPhase(_state.phase),
+        elapsed: _state.elapsed,
+        level: _state.level,
+        status: localCopy.audioRecorderStatus(
+          _state.phase.name,
+          _state.elapsed.inSeconds,
+        ),
+        onPause: () => widget.recorder.pause(),
+        onResume: () => widget.recorder.resume(),
+        onStop: _stop,
       ),
+    );
+  }
+
+  /// A failed take has no controls of its own: the capture page starts the
+  /// next one, so it shows as idle with its status.
+  static AppRecordingPhase _barPhase(AudioRecorderPhase phase) {
+    return switch (phase) {
+      AudioRecorderPhase.permission => AppRecordingPhase.starting,
+      AudioRecorderPhase.recording => AppRecordingPhase.recording,
+      AudioRecorderPhase.paused => AppRecordingPhase.paused,
+      AudioRecorderPhase.finalizing => AppRecordingPhase.finishing,
+      AudioRecorderPhase.idle ||
+      AudioRecorderPhase.failed ||
+      AudioRecorderPhase.completed => AppRecordingPhase.idle,
+    };
+  }
+
+  Future<void> _stop() async {
+    final Result<Duration> stopped = await widget.recorder.stop();
+    // The finished take is still handed on if the bar has left the screen;
+    // only the error snack needs a mounted context.
+    stopped.fold(
+      (Failure failure) {
+        if (!mounted) {
+          return;
+        }
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
+      },
+      (Duration elapsed) {
+        widget.onStopped?.call(elapsed);
+        final AudioRecording? completed = widget.recorder.completed;
+        if (completed != null) {
+          widget.onCompleted?.call(completed);
+        }
+      },
     );
   }
 }
