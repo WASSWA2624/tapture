@@ -4364,20 +4364,41 @@ Internal to `core/speech` (spec §30.4.7):
 
 ### Definition of done
 
-- [ ] Across 50 random SpokenScripts **with the adversarial modes on** (edge truncation, completion and drop; ±300 ms jitter; prompt echo at p = 0.2; loops at speech rate), the concatenated finals equal the script words in order, with nothing duplicated, missing or reordered beyond the injected edge drop.
-- [ ] Repeated speech across a silence seam is kept, and seam dedupe applies only to hard-cut overlaps.
-- [ ] Interim stable text is monotone, the last word is held back, and the final supersedes the interim.
-- [ ] With a 2× real-time engine, interims switch off, the ladder shows hysteresis, finals arrive in order, and a stop with 90 s of backlog delivers every final from the store with none skipped.
-- [ ] 10 min of silence gives zero decodes and zero segments, even with a hallucinating engine.
-- [ ] `[BLANK_AUDIO]`, `(music)` and `♪` are dropped. A quiet "Thank you." is dropped and a loud one is kept. A prompt echo is dropped.
-- [ ] A sentence looped at normal pace beyond VAD speech × 4 words/s collapses. "no, no, no" and a phrase said twice are kept.
-- [ ] `SegmentText` leaves `3.5`, `10:30`, `1,200`, `v2.1`, `example.com` and `...` untouched.
-- [ ] Segment times are sample-based and exclude paused time, and ids are contiguous from `nextSegmentId`.
-- [ ] A failing sink keeps utterances queued in order, retries them before the next one and raises `transcriptUnsaved`. A skipped utterance reaches the sink as `skipped: true`.
-- [ ] `debugPipelineRetainedSamples` stays within bound over a 1 h synthetic run.
-- [ ] The Logger buffer contains no scripted word.
-- [ ] On this machine, `speech_pipeline_real_seam_test` (tiny; jfk × 6 with a forced hard cut inside "country") produces no duplicated or missing word.
-- [ ] The benchmark (performance tag) meets p90 ≤ `speechBudgets.pipelinePerAudioSecond`, with evidence in `frontend/build/stt-pipeline-benchmark.json`.
+- [x] Across 50 random SpokenScripts **with the adversarial modes on** (edge truncation, completion and drop; ±300 ms jitter; prompt echo at p = 0.2; loops at speech rate), the concatenated finals equal the script words in order, with nothing duplicated, missing or reordered beyond the injected edge drop.
+- [x] Repeated speech across a silence seam is kept, and seam dedupe applies only to hard-cut overlaps.
+- [x] Interim stable text is monotone, the last word is held back, and the final supersedes the interim.
+- [x] With a 2× real-time engine, interims switch off, the ladder shows hysteresis, finals arrive in order, and a stop with 90 s of backlog delivers every final from the store with none skipped.
+- [x] 10 min of silence gives zero decodes and zero segments, even with a hallucinating engine.
+- [x] `[BLANK_AUDIO]`, `(music)` and `♪` are dropped. A quiet "Thank you." is dropped and a loud one is kept. A prompt echo is dropped.
+- [x] A sentence looped at normal pace beyond VAD speech × 4 words/s collapses. "no, no, no" and a phrase said twice are kept.
+- [x] `SegmentText` leaves `3.5`, `10:30`, `1,200`, `v2.1`, `example.com` and `...` untouched.
+- [x] Segment times are sample-based and exclude paused time, and ids are contiguous from `nextSegmentId`.
+- [x] A failing sink keeps utterances queued in order, retries them before the next one and raises `transcriptUnsaved`. A skipped utterance reaches the sink as `skipped: true`.
+- [x] `debugPipelineRetainedSamples` stays within bound over a 1 h synthetic run.
+- [x] The Logger buffer contains no scripted word.
+- [x] On this machine, `speech_pipeline_real_seam_test` (tiny; jfk × 6 with a forced hard cut inside "country") produces no duplicated or missing word.
+- [x] The benchmark (performance tag) meets p90 ≤ `speechBudgets.pipelinePerAudioSecond`, with evidence in `frontend/build/stt-pipeline-benchmark.json`.
+
+### Verification
+
+- 2026-10-04 (adversarial review): `flutter test --no-pub --exclude-tags performance` over `decode_scheduler_test`, `interim_stabiliser_test`, `seam_aligner_test`, `hallucination_filter_test`, `repetition_collapse_test`, `segment_text_test`, `prompt_carry_test`, `speech_pipeline_test`, `speech_pipeline_real_seam_test` (skipped without its defines) and `fake_speech_engine_test`: 101 passed, 1 skipped. After the review edit, `speech_pipeline_test` with task 116's `vad_driver_test`, `utterance_segmenter_test`, `energy_gate_test` and `noise_floor_test`: 50 passed, 1 skipped.
+- 2026-10-04: the property test was also run over 200 seeds it was never tuned on (700–899, from a temporary copy of the test, since removed): all exact, with nothing duplicated, missing or reordered.
+- 2026-10-04: `speech_pipeline_real_seam_test` under the `windows` lock with `build/tw-windows/Debug/tapture_whisper.dll` and `assets/speech` (tiny-q5_1, Silero v6.2.0): 1 passed, not skipped. It checks 0 inserted and 0 missing words, at most one substituted word per hard cut, and the first cut inside "country" (5.65–6.41 s).
+- 2026-10-04: the benchmark (`--tags performance`) passed: p50 2.20 ms, p90 5.14 ms, max 12.8 ms against the 15 ms budget, over 600 s of audio and 738 decodes. Evidence is in `frontend/build/stt-pipeline-benchmark.json`.
+- 2026-10-04: these checks are clean: `dart analyze lib/core/speech lib/core/constants test/core/speech test/support`, `dart format --set-exit-if-changed`, the architecture suites (`layering`, `naming`, `tokens`, `errors`, `data_safety`, `state`, `network`, `plugin_imports`; 90 passed), and `check_naming`, `check_structure`, `check_logging`, `check_repo_hygiene`, `check_tests`, `check_secrets` and `check_plan`.
+- 2026-10-04: these deviations from design §7.2 were accepted, and §30.4.7 now records them:
+  - `SeamAligner` holds back the cut utterance's last words and joins them to the next final by text, with no time-based drop.
+  - No prompt is passed to an utterance that continues a hard cut.
+  - Edge trim removes only weak words, and only at edges that border silence.
+  - `RepetitionCollapse` collapses a loop to its shortest repeating unit.
+  - `FakeSpeechEngine` now emits a prompt echo as its own weak segment, and a loop keeps the words after it.
+- 2026-10-04: review fixes:
+  - The silence-seam test now asserts that the second final carried a prompt, so its "every decode echoes" claim is not vacuous.
+  - A stale `AppConstants.speechPipeline` doc line ("judged by time") was corrected.
+- 2026-10-04: known limits, recorded rather than fixed:
+  - A loop whose phrase is one word said twice collapses to a single word.
+  - Held seam words wait for the next utterance's final. If that final is skipped, or the drain stops before it, they are not stored. Recovery starts at the next utterance's `seamFromSample`, so a held word that starts up to `seamTolerance` before it can be re-heard only in part.
+  - Task 118 maps the pipeline's warnings and the assembler's counters into the session.
 
 ## 118 — Run live transcription sessions
 

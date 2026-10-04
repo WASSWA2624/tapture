@@ -41,7 +41,8 @@ final class VadDriver {
   /// A driver over `store` with [config]'s thresholds. Closed utterances go
   /// to `onClosed` in order; `onAdvanced` follows every batch; a detector
   /// or store failure goes to `onFailure` and stops the driver until a
-  /// lease is attached again.
+  /// lease is attached again. Detection starts at [startSample] of the
+  /// store, the audio before it already accounted for.
   VadDriver({
     required this._store,
     required SpeechPipelineConfig config,
@@ -49,8 +50,11 @@ final class VadDriver {
     this._onAdvanced,
     this._onFailure,
     int firstUtteranceId = 1,
+    int startSample = 0,
   }) : _config = config,
        _firstId = firstUtteranceId,
+       _cursor = startSample,
+       _warmFloor = startSample,
        _gate = EnergyGate(config: config);
 
   final PcmStore _store;
@@ -67,8 +71,8 @@ final class VadDriver {
   UtteranceSegmenter? _segmenter;
   Failure? _failure;
   int _available = 0;
-  int _cursor = 0;
-  int _warmFloor = 0;
+  int _cursor;
+  int _warmFloor;
   int _attachments = 0;
   bool _needsReset = true;
   bool _aborted = false;

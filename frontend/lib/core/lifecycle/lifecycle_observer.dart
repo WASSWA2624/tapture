@@ -36,6 +36,9 @@ class LifecycleObserver with WidgetsBindingObserver {
 
   final List<Future<bool> Function()> _exitChecks = <Future<bool> Function()>[];
 
+  final List<Future<void> Function()> _pauseFlushes =
+      <Future<void> Function()>[];
+
   /// Lifecycle events as the binding reports them.
   Stream<AppLifecycleState> get states => _states.stream;
 
@@ -53,7 +56,19 @@ class LifecycleObserver with WidgetsBindingObserver {
     _exitChecks.remove(check);
   }
 
-  /// Applies [state] as the binding would, awaiting a pause flush.
+  /// Registers [flush], awaited in registration order after [onPauseFlush]
+  /// whenever the app is hidden or paused, so [handle] returns only once
+  /// it has made its owner's work durable.
+  void addPauseFlush(Future<void> Function() flush) {
+    _pauseFlushes.add(flush);
+  }
+
+  /// Drops [flush] so a later pause no longer awaits it.
+  void removePauseFlush(Future<void> Function() flush) {
+    _pauseFlushes.remove(flush);
+  }
+
+  /// Applies [state] as the binding would, awaiting the pause flushes.
   Future<void> handle(AppLifecycleState state) async {
     _states.add(state);
     switch (state) {
@@ -62,6 +77,10 @@ class LifecycleObserver with WidgetsBindingObserver {
         if (!_flushed) {
           _flushed = true;
           await onPauseFlush?.call();
+          for (final Future<void> Function() flush
+              in List<Future<void> Function()>.of(_pauseFlushes)) {
+            await flush();
+          }
         }
       case AppLifecycleState.resumed:
         _flushed = false;

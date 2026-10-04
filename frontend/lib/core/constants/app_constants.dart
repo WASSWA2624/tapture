@@ -228,8 +228,9 @@ abstract final class AppConstants {
   /// to `loopMaxNgram` words repeated `loopMinRepeatsPhrase` times (a word
   /// `loopMinRepeatsWord` times) collapses when it has more words than
   /// `loopWordsPerSecond` per second of detected speech, or is said faster
-  /// than `minSecondsPerWord` a word. Words within `seamTolerance` of a
-  /// hard cut's seam are judged by time.
+  /// than `minSecondsPerWord` a word. Across a hard cut, the earlier
+  /// utterance holds back its words ending past the seam less
+  /// `seamTolerance`, and the next one's decode settles them by text.
   ///
   /// The resampler brings a 48 or 44.1 kHz capture down to 16 kHz with a
   /// Kaiser-windowed sinc:

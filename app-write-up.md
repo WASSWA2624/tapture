@@ -2264,20 +2264,26 @@ final class SpeechPipeline { SpeechPipeline({required PcmStore store, required S
   4. **`HallucinationFilter`** drops a segment that is empty or punctuation only; or `noSpeech > 0.6 && avgLogprob <
      −1.0`; or a `HallucinationPhrases` phrase on weak audio (mean dB < −55, or speech ratio < 0.3, or
      `avgLogprob < −0.8`); or a prompt echo (normalised text is a substring of the carried prompt and
-     `avgLogprob < −0.8`). Edge words lying over windows with `p < off` are trimmed;
+     `avgLogprob < −0.8`). Weak edge words (ln p < `hallucinationLogProb`) lying wholly over windows with `p < off`
+     are trimmed, only at an edge bordering silence (not the start of an utterance continuing a hard cut, nor the end
+     of one a hard cut ended); a confident word is kept wherever whisper timed it;
   5. **`RepetitionCollapse`:** for n = 6..1, a run repeated ≥ 3 times (n ≥ 2) or ≥ 4 times (n = 1) collapses to one
      copy when its word count exceeds the utterance's VAD speech seconds × `loopWordsPerSecond` (4), or it is faster
-     than 0.12 s per word;
-  6. **`SeamAligner`**, after hard cuts only: drop the largest k-word overlap, with prefix or edit-distance-1
-     matching on the boundary word; with k = 0, drop leading words whose midpoint is earlier than
-     `R.end − seamTolerance` (200 ms); the previous utterance is never edited;
+     than 0.12 s per word; a phrase that is itself a shorter phrase repeated collapses at that shorter length;
+  6. **`SeamAligner`**, after hard cuts only: the cut utterance stores its words up to the seam and holds back the
+     run of last words ending after `seamFrom − seamTolerance` (200 ms); the next utterance's final joins them by
+     text: of the runs both decodes read alike (by key; an edge fragment matches its whole word; two words of 4+
+     letters within one edit), the one best joining the held words' end to the next utterance's start wins, held
+     words before it are kept, the next utterance's confident words before it follow (a weak one there is its
+     misheard edge), then the run and the rest. With no run both sides are kept; nothing is dropped by time. The
+     stored previous utterance is never edited;
   7. times made monotonic; ids from the session counter;
   8. **`sink.appendUtterance` is awaited**, then `SegmentFinalized` × n and `UtteranceFinalized` are emitted. A
      skipped utterance (two decode failures) is appended with `skipped: true` and recorded as a gap. A failing sink
      queues the utterance in order and retries it before the next one; events still go out with `durable: false`,
      plus a `transcriptUnsaved` warning;
-  9. **`PromptCarry`:** the last 200 characters, cut at a word boundary; not passed for utterances under 2 s or with
-     mean dB < −55; reset after a loop collapse, a hallucination-only utterance or 60 s without speech.
+  9. **`PromptCarry`:** the last 200 characters, cut at a word boundary; not passed for utterances under 2 s, with
+     mean dB < −55, or continuing a hard cut (its seam re-decode already carries the context); reset after a loop collapse, a hallucination-only utterance or 60 s without speech.
 - **Memory bound.** `debugPipelineRetainedSamples ≤ (ring + maxUtterance + seamOverlap) × 16000`.
 
 #### 30.4.8 Web

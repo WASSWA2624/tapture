@@ -175,38 +175,82 @@ Future<int> main(List<String> args) async {
 }
 
 /// Rejects missing/repeated scenarios as well as budget and lifetime failures.
+/// The three integration scenarios share one budget pair; this delegates to
+/// the per-scenario validation with that pair for each of them.
 List<String> validateMemoryProfiles(
   List<MemoryProfile> profiles, {
   required int maxAdditionalRss,
   required int maxRetainedRss,
 }) {
-  const Set<String> expected = <String>{
-    'capture-200',
-    'export-5000',
-    'merge-2000-photos',
-  };
+  final ({int additional, int retained}) budget = (
+    additional: maxAdditionalRss,
+    retained: maxRetainedRss,
+  );
+  return _validateProfiles(
+    profiles,
+    budgets: <String, ({int additional, int retained})>{
+      for (final String scenario in _integrationScenarios) scenario: budget,
+    },
+    unknownBudget: budget,
+  );
+}
+
+/// The scenarios integration_test/memory_test.dart measures.
+const List<String> _integrationScenarios = <String>[
+  'capture-200',
+  'export-5000',
+  'merge-2000-photos',
+];
+
+/// Validates [profiles] against a budget per scenario: exactly the scenarios
+/// [budgets] names must be measured, once each, each within its own peak
+/// (`additional`) and retained RSS, with its resources back where they
+/// started. A scenario [budgets] does not name is reported as unknown and
+/// still checked for a post-cleanup sample and leaked resources.
+List<String> validateScenarioProfiles(
+  List<MemoryProfile> profiles, {
+  required Map<String, ({int additional, int retained})> budgets,
+}) {
+  return _validateProfiles(profiles, budgets: budgets);
+}
+
+List<String> _validateProfiles(
+  List<MemoryProfile> profiles, {
+  required Map<String, ({int additional, int retained})> budgets,
+  ({int additional, int retained})? unknownBudget,
+}) {
   final List<String> failures = <String>[];
   final Set<String> seen = <String>{};
   for (final MemoryProfile profile in profiles) {
     if (!seen.add(profile.scenario)) {
       failures.add('${profile.scenario}: repeated scenario');
     }
-    if (!expected.contains(profile.scenario)) {
+    final ({int additional, int retained})? budget = budgets[profile.scenario];
+    if (budget == null) {
       failures.add('${profile.scenario}: unknown scenario');
     }
+    // An unknown scenario has no RSS budget of its own; its measurement and
+    // lifetime rules still apply.
+    final ({int additional, int retained}) applied =
+        budget ??
+        unknownBudget ??
+        (additional: _unbounded, retained: _unbounded);
     failures.addAll(
       memoryViolations(
         profile,
-        maxAdditionalRss: maxAdditionalRss,
-        maxRetainedRss: maxRetainedRss,
+        maxAdditionalRss: applied.additional,
+        maxRetainedRss: applied.retained,
       ),
     );
   }
-  for (final String missing in expected.difference(seen)) {
+  for (final String missing in budgets.keys.toSet().difference(seen)) {
     failures.add('$missing: missing measured scenario');
   }
   return failures;
 }
+
+/// A budget no measurement exceeds.
+const int _unbounded = 1 << 62;
 
 /// Strict decoding prevents malformed metrics from being counted as zero.
 MemoryProfile parseMemoryProfile(Object? value) {

@@ -62,7 +62,9 @@ import 'word_sequence.dart';
 final class SpeechPipeline {
   /// A pipeline over [store] with [config], writing to `sink` (none for
   /// memory-only dictation), numbering segments from [nextSegmentId] and
-  /// reporting through `emit`.
+  /// reporting through `emit`. It starts at [startSample]: the audio
+  /// before it is accounted for elsewhere, as when the rest of a stored
+  /// take is transcribed.
   SpeechPipeline({
     required PcmStore store,
     required SpeechPipelineConfig config,
@@ -70,6 +72,7 @@ final class SpeechPipeline {
     required int nextSegmentId,
     required this._emit,
     Logger? logger,
+    int startSample = 0,
   }) : _store = store,
        _config = config,
        _logger = logger ?? Logger.current,
@@ -86,6 +89,7 @@ final class SpeechPipeline {
       onClosed: _onClosed,
       onAdvanced: _onAdvanced,
       onFailure: _onDetectorFailure,
+      startSample: startSample,
     );
   }
 
@@ -111,6 +115,10 @@ final class SpeechPipeline {
   int _attempts = 0;
   int _consecutiveFailures = 0;
   int _retained = 0;
+  int _utterances = 0;
+  int _segments = 0;
+  int _finalAudioSamples = 0;
+  final List<int> _finalComputeMicros = <int>[];
   int? _lastNoticeAt;
   bool _decodingStopped = false;
   bool _detectorDone = false;
@@ -146,6 +154,50 @@ final class SpeechPipeline {
 
   /// Completes once no sink write is in flight.
   Future<void> get sinkIdle => _writing?.future ?? Future<void>.value();
+
+  /// The sample up to which the take has been through voice detection.
+  int get detectedTo => _vad.cursor;
+
+  /// The end of the last speech the detector heard, or 0 before any.
+  int get lastSpeechSample => _vad.lastSpeechSample;
+
+  /// What the take cost so far, for the session's stop summary: finished
+  /// utterances and their segments, segments dropped as hallucinations,
+  /// loops collapsed, the share of detector batches the energy gate
+  /// skipped, the mean and 90th-percentile compute of a final, the finals'
+  /// compute over their audio, and the highest backpressure level reached.
+  /// Counts only; never text.
+  ({
+    int utterances,
+    int segments,
+    int dropped,
+    int collapsed,
+    double gatedRatio,
+    Duration meanCompute,
+    Duration p90Compute,
+    double realTimeFactor,
+    BackpressureLevel ladder,
+  })
+  get stats {
+    final List<int> computes = List<int>.of(_finalComputeMicros)..sort();
+    final int total = computes.fold(0, (int sum, int micros) => sum + micros);
+    final int audioMicros = _durationOf(_finalAudioSamples).inMicroseconds;
+    final int mean = computes.isEmpty ? 0 : total ~/ computes.length;
+    final int p90 = computes.isEmpty
+        ? 0
+        : computes[math.min(computes.length - 1, computes.length * 9 ~/ 10)];
+    return (
+      utterances: _utterances,
+      segments: _segments,
+      dropped: _assembler.droppedSegments,
+      collapsed: _assembler.collapsedLoops,
+      gatedRatio: _vad.gatedRatio,
+      meanCompute: Duration(microseconds: mean),
+      p90Compute: Duration(microseconds: p90),
+      realTimeFactor: audioMicros == 0 ? 0 : total / audioMicros,
+      ladder: _scheduler.highestLevel,
+    );
+  }
 
   /// Samples the pipeline holds right now for decoding; bounded by one
   /// utterance plus its seam whatever the backlog.
@@ -418,6 +470,8 @@ final class SpeechPipeline {
         _attempts = 0;
         _consecutiveFailures = 0;
         _scheduler.completed(job);
+        _finalComputeMicros.add(value.elapsed.inMicroseconds);
+        _finalAudioSamples += job.length;
         _assemble(utterance, value, lease: lease, prompt: prompt);
       case FailureResult<SpeechDecodeResult>(:final Failure failure):
         _scheduler.released(job);
@@ -478,6 +532,8 @@ final class SpeechPipeline {
       } else {
         _prompt.commit(done.utterance.segments);
       }
+      _utterances++;
+      _segments += done.utterance.segments.length;
       _unsaved.addLast(_Unsaved(done.utterance));
     }
     if (ready.isNotEmpty) {

@@ -67,6 +67,7 @@ import 'core/network/connectivity_service.dart';
 import 'core/network/offline_now.dart';
 import 'core/permissions/permissions_service.dart';
 import 'core/security/secure_storage.dart';
+import 'core/speech/live_transcription_service.dart';
 import 'core/speech/speech_device_probe.dart';
 import 'core/speech/speech_engine.dart';
 import 'core/speech/speech_engine_host.dart';
@@ -779,18 +780,43 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
               );
       }),
       audioCaptureServiceProvider.overrideWith((Ref ref) {
-        // A browser stages its takes as chunks in the project files' store
-        // and publishes them through the same writer.
-        return kIsWeb
-            ? AudioCaptureService(
-                writer: evidenceWriter,
-                storageRoot: storageRoot,
-                access: MicrophoneAccess.platform(
-                  permissions: ref.watch(permissionsServiceProvider),
+        // Takes are staged beside their target (a browser stages chunks in
+        // the project files' store) and published through the same writer.
+        return AudioCaptureService(
+          writer: evidenceWriter,
+          storageRoot: storageRoot,
+          access: MicrophoneAccess.platform(
+            permissions: ref.watch(permissionsServiceProvider),
+          ),
+          arbiter: ref.watch(microphoneArbiterProvider),
+        );
+      }),
+      // Live transcription (task 118): the streaming capture and the
+      // on-device Whisper host under one service that owns every drain.
+      liveTranscriptionServiceProvider.overrideWith((Ref ref) {
+        final LiveTranscriptionService service = LiveTranscriptionService(
+          capture: ref.watch(audioCaptureServiceProvider),
+          host: ref.watch(speechEngineHostProvider),
+          lifecycle: ref.watch(lifecycleObserverProvider),
+          leaveGuard: ref.watch(leaveGuardProvider),
+          storageGuard: ref.watch(storageGuardProvider),
+          recovery: kIsWeb
+              ? StagedTakeRecovery.chunked(
+                  writer: evidenceWriter,
+                  store: BlobStore.platform(
+                    AppConstants.projectFiles.storeName,
+                  ),
+                )
+              : StagedTakeRecovery(
+                  writer: evidenceWriter,
+                  storageRoot: storageRoot,
                 ),
-                arbiter: ref.watch(microphoneArbiterProvider),
-              )
-            : const AudioCaptureService.unavailable();
+          storageRoot: storageRoot,
+          reader: FileReader(storageRoot: storageRoot),
+          logger: logger,
+        );
+        ref.onDispose(() => unawaited(service.dispose()));
+        return service;
       }),
       processingRepositoryProvider.overrideWith((Ref ref) {
         return ProcessingRepositoryImpl(

@@ -6,9 +6,14 @@
 /// (`_io`, `_web`) and stubs are never exported.
 library;
 
+export 'cancelled_transcription.dart';
 export 'finished_utterance.dart';
 export 'live_transcription_event.dart';
 export 'live_transcription_phase.dart';
+export 'live_transcription_request.dart';
+export 'live_transcription_result.dart';
+export 'live_transcription_service.dart';
+export 'live_transcription_session.dart';
 export 'speech_abort_cell.dart';
 export 'speech_availability.dart';
 export 'speech_cpu_feature.dart';
@@ -50,8 +55,11 @@ export 'speech_unavailable_reason.dart';
 export 'speech_vad_handle.dart';
 export 'speech_vad_result.dart';
 export 'speech_verdict.dart';
+export 'stop_reason.dart';
+export 'stopped_capture.dart';
 export 'transcript_outcome.dart';
 export 'transcript_segment.dart';
 export 'transcript_sink.dart';
 export 'transcript_word.dart';
+export 'transcription_kind.dart';
 export 'transcription_warning_kind.dart';
