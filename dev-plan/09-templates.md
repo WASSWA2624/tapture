@@ -12,8 +12,9 @@ Field deletion still read an empty count provider and only changed the template 
 helper did not prove durable retirement or post-migration export. Reopened the affected acceptance below. The
 source repair aggregates live value counts on demand, retires removed keys in bounded transaction batches with
 per-record audit and causal counters, and caches historic definitions so retired raw/refined/final values survive
-exports after explicit migration. Hidden retired fields remain excluded. Current database/UI regressions and the
-standard gates must pass before these items are checked again.
+exports after explicit migration. Hidden retired fields remain excluded. On 2026-10-04 the
+field-list widget tests and the retirement/export tests passed: empty, failure and reorder, and a
+delete that keeps captured values and exports them as retired.
 
 ### Review evidence — 2026-09-28
 
@@ -457,7 +458,7 @@ class FieldEditor extends ConsumerWidget {
       first.
 - [x] The field list is the only place fields are managed.
 - [x] Reordering never changes stored values or output column mapping.
-- [ ] Deleting a field never loses captured data: retired values survive and export as retired.
+- [x] Deleting a field never loses captured data: retired values survive and export as retired.
 - [x] A field is added in under ten seconds and lands OPTIONAL unless the user says otherwise; a two-fact label is
       questioned once and the user can still insist.
 - [x] `required_when` naming an unknown field is refused at edit time, not at capture time.
@@ -476,7 +477,7 @@ class FieldEditor extends ConsumerWidget {
       states; a test that duplication copies fields, rows and aliases and copies no records.
 - [x] Tests: repository tests for `shipped_template_loader.dart` against an in-memory database, plus the fake later
       tests use; widget test of `shipped_picker_screen.dart` covering its empty and failure states.
-- [ ] Tests: widget test of `field_list_screen.dart` covering empty and failure states and a reorder; a test that
+- [x] Tests: widget test of `field_list_screen.dart` covering empty and failure states and a reorder; a test that
       retired values survive a delete and export as retired.
 - [x] Tests: unit tests over key generation and collision handling, `required_when` expression validation, the
       hide/unhide value round trip, and option rename leaving stored codes untouched; widget tests of
