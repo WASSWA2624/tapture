@@ -19,6 +19,7 @@ dependency of the app, approved in `frontend/tool/allowlist.yaml`, with no Dart 
 | `src/CMakeLists.txt`, `src/wasm_exports.txt`, `src/smoke/tw_smoke.c` | The one native build, the WebAssembly export list and the smoke tool |
 | `windows/`, `linux/`, `android/` | The Flutter plugin builds, each running `src/CMakeLists.txt` |
 | `darwin/tapture_whisper/Sources/tapture_whisper/` | Generated forwarders for the Apple builds (see below) |
+| `darwin/tapture_whisper.podspec`, `darwin/tapture_whisper/Package.swift` | The CocoaPods and SwiftPM manifests that compile them |
 | `LICENSE` | Four blocks in Flutter's 80-dash format: this package, whisper.cpp/ggml, the Whisper weights, Silero VAD |
 
 ## Vendoring
@@ -58,8 +59,15 @@ SwiftPM forbids include paths outside the package target, so the Apple builds co
 generated one-line files instead of `-I` paths: one `tw_<group>__<name>_<ext>.<ext>` translation unit per entry of
 `whisper_sources.cmake` (the extension is part of the name, so `ggml.c` and `ggml.cpp` never share an object name),
 one arch-selecting unit per architecture file (`__aarch64__` or `__x86_64__`), one per shim source, a `forward/`
-header per vendored header, and `include/tapture_whisper.h`. The podspec and `Package.swift` that compile them belong
-to dev-plan task 105.
+header per vendored header, and `include/tapture_whisper.h`.
+
+Two manifests compile them (dev-plan task 105): `darwin/tapture_whisper.podspec` for CocoaPods and
+`darwin/tapture_whisper/Package.swift` for SwiftPM, a `.dynamic` product `tapture-whisper` so the `tw_*` symbols are
+never dead-stripped. Both target iOS 13 and macOS 10.15, use `-O3` in every configuration with hidden symbols, and carry
+the definitions and flags `src/CMakeLists.txt` uses for Apple plus Accelerate (vDSP only). There are no architecture
+flags, so no AVX2 on macOS x86_64, and no Metal, CoreML, BLAS or OpenMP. Nothing here can build them:
+`frontend/test/tool/whisper_vendor_test.dart` holds both manifests to `src/CMakeLists.txt`, and the Apple builds run in
+CI (task 130).
 
 ## The C ABI and the native builds
 

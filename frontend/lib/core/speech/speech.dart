@@ -7,6 +7,7 @@
 library;
 
 export 'finished_utterance.dart';
+export 'speech_abort_cell.dart';
 export 'speech_cpu_feature.dart';
 export 'speech_decode_kind.dart';
 export 'speech_decode_profile.dart';
@@ -26,6 +27,7 @@ export 'speech_model_source.dart';
 export 'speech_model_status.dart';
 export 'speech_model_store.dart';
 export 'speech_model_tier.dart';
+export 'speech_native_api.dart';
 export 'speech_piece.dart';
 export 'speech_piece_text.dart';
 export 'speech_runtime_facts.dart';

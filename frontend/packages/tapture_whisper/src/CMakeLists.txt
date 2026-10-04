@@ -252,9 +252,9 @@ if(EMSCRIPTEN)
   # app-write-up section 30.4.8. The worker allocates its scratch (options,
   # out-pointers, hashes, prompts) on the stack, so malloc is not exported.
   # 64-bit values cross as BigInt, which Emscripten 6 always uses (the
-  # WASM_BIGINT setting is deprecated there). Growth steps are capped at
-  # 16 MB, so the heap stays close to what is allocated (the default 20%
-  # step, up to 96 MB, would hold the base model's heap above its budget).
+  # WASM_BIGINT setting is deprecated there). A growth step adds at most
+  # 2 MB beyond the request, so the heap stays at what is allocated (the
+  # default 20% step adds up to 96 MB, which a heap never gives back).
   # STRICT=2 with a pool of 8 and at most 4 compute threads: exhaustion fails
   # loudly instead of hanging a worker that cannot start a non-pooled thread
   # while ggml spin-waits.

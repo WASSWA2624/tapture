@@ -5,13 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/errors/result.dart';
 
+import 'speech_abort_cell.dart';
 import 'speech_decode_request.dart';
 import 'speech_decode_result.dart';
 import 'speech_engine_state.dart';
-import 'speech_engine_stub.dart' as platform;
+import 'speech_engine_stub.dart'
+    if (dart.library.io) 'speech_engine_io.dart'
+    as platform;
 import 'speech_failures.dart';
 import 'speech_load_report.dart';
 import 'speech_model_source.dart';
+import 'speech_native_api.dart';
 import 'speech_runtime_facts.dart';
 import 'speech_unavailable_reason.dart';
 import 'speech_vad_handle.dart';
@@ -26,9 +30,22 @@ import 'speech_vad_result.dart';
 /// throw (spec §30.4.4).
 abstract interface class SpeechEngine {
   /// The engine this platform runs: native worker isolates on a device and
-  /// Web Workers in a browser. Until those engines exist (tasks 110 and 112)
-  /// every platform gets [SpeechEngine.unavailable].
-  factory SpeechEngine.platform() => platform.createSpeechEngine();
+  /// Web Workers in a browser (task 112); [SpeechEngine.unavailable]
+  /// elsewhere.
+  ///
+  /// Tests may load the library from [libraryPath], and may replace the
+  /// native library behind the workers with [openApi] and the main
+  /// isolate's abort cell with [openAbortCell].
+  factory SpeechEngine.platform({
+    @visibleForTesting String? libraryPath,
+    @visibleForTesting SpeechNativeApi Function(String? libraryPath)? openApi,
+    @visibleForTesting
+    SpeechAbortCell Function(String? libraryPath)? openAbortCell,
+  }) => platform.createSpeechEngine(
+    libraryPath: libraryPath,
+    openApi: openApi,
+    openAbortCell: openAbortCell,
+  );
 
   /// A stand-in that cannot transcribe, and the provider default
   /// (FE-TEST-03). Every operation fails with `speechUnavailable()`.

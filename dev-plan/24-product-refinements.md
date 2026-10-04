@@ -3334,8 +3334,16 @@ No Metal, CoreML, BLAS or OpenMP. No AVX2 on macOS x86_64.
 
 ### Definition of done
 
-- [ ] `whisper_vendor.dart --check` verifies the forwarders against `whisper_sources.cmake`, and `whisper_vendor_test` reports a stale-forwarder fixture.
-- [ ] `whisper_vendor_test` asserts that the podspec and `Package.swift` list the same defines and flags as `src/CMakeLists.txt` for Apple, with no `-mavx2` and no Metal or OpenMP.
+- [x] `whisper_vendor.dart --check` verifies the forwarders against `whisper_sources.cmake`, and `whisper_vendor_test` reports a stale-forwarder fixture.
+- [x] `whisper_vendor_test` asserts that the podspec and `Package.swift` list the same defines and flags as `src/CMakeLists.txt` for Apple, with no `-mavx2` and no Metal or OpenMP.
+
+### Verification
+
+- 2026-10-04: `flutter test test/tool/whisper_vendor_test.dart` passed 18/18. This includes the 8 task-105 tests: shipped forwarders, `--check` on stale, missing and stray forwarder fixtures, and Apple-manifest drift.
+- 2026-10-04: `dart run tool/whisper_vendor.dart --check` is clean. `dart analyze` and `dart format --set-exit-if-changed` are clean on `tool/whisper_vendor.dart` and `test/tool/whisper_vendor_test.dart`. `check_secrets` and `check_repo_hygiene` are clean.
+- 2026-10-04: a mutation probe edited the shipped manifests and forwarders, then restored them. The test failed on each of these: podspec adds `GGML_USE_METAL`, drops `TW_BUILD`, adds `-march=haswell`, sets iOS 12 or links CoreML; `Package.swift` adds `GGML_AVX2` or `-mavx2`, or uses C++14; a shipped forwarder is edited (caught by `--check`).
+- 2026-10-04: a script walked the include graph from every Darwin translation unit. It resolved each quoted include relative to the including file, then through `forward/`. Every include that did not resolve sits behind a disabled backend or platform guard (CUDA, Metal, BLAS, kleidiai, llamafile, CoreML, OpenVINO, `windows.h`), as in the CMake build.
+- Not run here, because there is no Apple toolchain: `pod lib lint`, `swift build` and any Xcode build. That checking belongs to task 130 (CI Apple builds) and task 131 (devices), and is outside this task's scope. Task 130 should also confirm three things. Flutter's SwiftPM integration accepts `unsafeFlags` from this path dependency. `WHISPER_VERSION="1.9.4"` keeps its quotes when Xcode builds the package. The framework exports `tw_*`.
 
 ## 106 — Add a long-lived worker isolate to core/concurrency
 
