@@ -44,6 +44,7 @@ import 'core/device/platform_facts.dart';
 import 'core/errors/failure.dart';
 import 'core/errors/result.dart';
 import 'core/files/blob_store.dart';
+import 'core/files/bundled_assets.dart';
 import 'core/files/cache_cleanup.dart';
 import 'core/files/download_service.dart';
 import 'core/files/evidence_purge.dart';
@@ -66,6 +67,11 @@ import 'core/network/connectivity_service.dart';
 import 'core/network/offline_now.dart';
 import 'core/permissions/permissions_service.dart';
 import 'core/security/secure_storage.dart';
+import 'core/speech/speech_device_probe.dart';
+import 'core/speech/speech_engine.dart';
+import 'core/speech/speech_engine_host.dart';
+import 'core/speech/speech_model_store.dart';
+import 'core/speech/speech_preferences.dart';
 import 'core/time/clock.dart';
 import 'core/widgets/fields/app_consent_field.dart';
 import 'core/widgets/fields/field_editor.dart';
@@ -535,6 +541,46 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
         ref.onDispose(() => unawaited(speech.cancel()));
         return speech;
       }),
+      // On-device speech (task 113): the platform's Whisper engine, the
+      // models this build bundles or the operator imported, and the device
+      // probe, under the one host that loads and releases the model.
+      speechEngineProvider.overrideWith((Ref ref) {
+        final SpeechEngine engine = SpeechEngine.platform();
+        ref.onDispose(() => unawaited(engine.dispose()));
+        return engine;
+      }),
+      speechModelStoreProvider.overrideWith(
+        (Ref ref) => SpeechModelStore.platform(
+          privateRoot: StorageRoot.private(),
+          assets: BundledAssets.platform(),
+          webEngine: kIsWeb ? ref.watch(speechEngineProvider) : null,
+        ),
+      ),
+      speechDeviceProbeProvider.overrideWith(
+        (Ref ref) => SpeechDeviceProbe.platform(
+          engine: ref.watch(speechEngineProvider),
+          power: PowerSource(),
+        ),
+      ),
+      speechEngineHostProvider.overrideWith((Ref ref) {
+        final LifecycleObserver lifecycle = ref.watch(
+          lifecycleObserverProvider,
+        );
+        final SpeechEngineHost host = SpeechEngineHost(
+          engine: ref.watch(speechEngineProvider),
+          store: ref.watch(speechModelStoreProvider),
+          probe: ref.watch(speechDeviceProbeProvider),
+          quality: () => ref.read(speechQualityProvider),
+          lifecycle: lifecycle.states,
+          memoryPressure: lifecycle.memoryPressure,
+          // The crash-loop marker survives the process it guards.
+          attempts: BlobStore.platform('speech'),
+          clock: clock,
+          logger: logger,
+        );
+        ref.onDispose(() => unawaited(host.dispose()));
+        return host;
+      }),
       projectRepositoryProvider.overrideWith((Ref _) {
         return ProjectRepositoryImpl(
           db: db,
@@ -891,6 +937,7 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
         _purgeExpiredRecords(purgeJob),
         _checkIntegrity(db, storageRoot),
         _pruneCache(storageRoot),
+        _recordSpeechCrashes(),
         backendSession.refresh().then<void>((_) {}),
       ];
       fixture?.maintenance.addAll(work);
@@ -1034,6 +1081,30 @@ Future<void> _pruneCache(StorageRoot storageRoot) async {
       logger.info('cache', 'pruned $reclaimed bytes');
     case FailureResult<int>(:final Failure failure):
       logger.warn('cache', 'the cache could not be pruned', error: failure);
+  }
+}
+
+/// Points the speech engine's fatal-abort record at
+/// `<private>/speech/crash.log` and logs how many lines earlier runs left
+/// there. Diagnostic only: the crash-loop decision is the host's marker.
+Future<void> _recordSpeechCrashes() async {
+  if (kIsWeb) {
+    return;
+  }
+  final Logger logger = Logger.current;
+  final Result<String> crashFile = (await StorageRoot.private().resolve()).map(
+    (folder) => '${folder.path}/speech/crash.log',
+  );
+  switch (crashFile) {
+    case Success<String>(value: final String path):
+      final int? lines = await recordSpeechCrashes(path);
+      if (lines == null) {
+        logger.info('speech', 'no native engine to record crashes');
+      } else {
+        logger.info('speech', 'native crash record holds $lines lines');
+      }
+    case FailureResult<String>(:final Failure failure):
+      logger.warn('speech', 'crash record not set up', error: failure);
   }
 }
 

@@ -11,3 +11,6 @@ SpeechEngine createSpeechEngine({
   SpeechNativeApi Function(String? libraryPath)? openApi,
   SpeechAbortCell Function(String? libraryPath)? openAbortCell,
 }) => const SpeechEngine.unavailable();
+
+/// No native engine here, so nothing can crash in it.
+Future<int?> recordSpeechCrashes(String path) => Future<int?>.value();

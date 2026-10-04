@@ -114,6 +114,14 @@ abstract interface class SpeechEngine {
   int get debugLiveHandles;
 }
 
+/// Points the native engine's record of a fatal abort at the file [path],
+/// creating its folder, and returns how many lines the file already holds:
+/// one per earlier fatal abort, kept for diagnostics only (the crash-loop
+/// decision is the host's load marker). Null where no native engine runs,
+/// as in a browser, or when the library cannot be opened.
+Future<int?> recordSpeechCrashes(String path) =>
+    platform.recordSpeechCrashes(path);
+
 /// The app's speech engine. The stand-in until `main` overrides it with
 /// [SpeechEngine.platform]. Kept alive: one engine and one loaded model per
 /// process (FE-STATE-09).

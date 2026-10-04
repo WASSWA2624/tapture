@@ -1,6 +1,6 @@
 # 131 — Accept on-device speech on physical devices
 
-**Depends on** [123](../24-product-refinements.md), [124](../24-product-refinements.md), [125](../24-product-refinements.md), [126](../24-product-refinements.md), [128](../24-product-refinements.md), [129](../24-product-refinements.md), [130](../25-testing-and-release.md)
+**Depends on** [123](../24-product-refinements.md), [124](../24-product-refinements.md), [125](../24-product-refinements.md), [126](../24-product-refinements.md), [128](../24-product-refinements.md), [129](../24-product-refinements.md)
 
 ## Implement
 

@@ -329,6 +329,10 @@ Future<int> main(List<String> args);
 
 - FE-FLOW-02: no review command and no `verify.dart`.
 - Tests are gitignored, so CI proves behaviour through the smoke programs only.
+- The CI gate never blocks anything (product owner, 2026-10-04). Every `speech.yml` job is advisory: it reports pass
+  or fail with `continue-on-error: true`, no other job `needs:` it, and it is never configured as a required check.
+  In `ci.yml`, the release build's model fetch and check is a warning step, so a failed fetch cannot fail the
+  build. A deliberate violation shows as a reported failure, not a stopped pipeline. No task depends on this one.
 
 ### Out of scope
 

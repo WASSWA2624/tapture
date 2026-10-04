@@ -27,6 +27,9 @@ class LifecycleObserver with WidgetsBindingObserver {
   final StreamController<AppLifecycleState> _states =
       StreamController<AppLifecycleState>.broadcast();
 
+  final StreamController<void> _memoryPressure =
+      StreamController<void>.broadcast();
+
   bool _flushed = false;
 
   Future<void> _inFlight = Future<void>.value();
@@ -35,6 +38,10 @@ class LifecycleObserver with WidgetsBindingObserver {
 
   /// Lifecycle events as the binding reports them.
   Stream<AppLifecycleState> get states => _states.stream;
+
+  /// One event each time the platform asks the app to free memory, so a
+  /// holder of a large cache, such as the speech model, can release it.
+  Stream<void> get memoryPressure => _memoryPressure.stream;
 
   /// Registers [check]; a false result cancels the window close.
   void addExitCheck(Future<bool> Function() check) {
@@ -69,6 +76,14 @@ class LifecycleObserver with WidgetsBindingObserver {
     _inFlight = handle(state);
   }
 
+  /// Forwards the platform's low-memory warning to [memoryPressure].
+  @override
+  void didHaveMemoryPressure() {
+    if (!_memoryPressure.isClosed) {
+      _memoryPressure.add(null);
+    }
+  }
+
   /// Cancels the close if any registered check returns false.
   @override
   Future<AppExitResponse> didRequestAppExit() async {
@@ -84,6 +99,7 @@ class LifecycleObserver with WidgetsBindingObserver {
   /// Releases the event stream after any in-flight flush. The binding still
   /// holds the observer until [WidgetsBinding.removeObserver] is called.
   void dispose() {
+    unawaited(_memoryPressure.close());
     unawaited(_inFlight.whenComplete(_states.close));
   }
 }

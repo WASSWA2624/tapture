@@ -8,6 +8,8 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/network/network.dart';
+import 'package:tapture/core/speech/speech.dart'
+    show SpeechReadiness, speechReadinessProvider;
 import 'package:tapture/core/widgets/error_boundary.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/features/processing/processing.dart'
@@ -62,6 +64,12 @@ class TaptureApp extends ConsumerWidget {
     // Keeps automatic processing and opportunistic reading listening for
     // the app's life; each stays off until its setting is on.
     ref.watch(unattendedProcessingProvider);
+    // Keeps on-device speech readiness checked from launch, without
+    // rebuilding the shell when it changes; checking never loads a model.
+    ref.listen<SpeechReadiness>(
+      speechReadinessProvider,
+      (SpeechReadiness? _, SpeechReadiness _) {},
+    );
     return MaterialApp.router(
       title: title,
       locale: ref.watch(appLocaleProvider),

@@ -1838,8 +1838,19 @@ final NotifierProvider<SpeechReadinessNotifier, SpeechReadiness> speechReadiness
   session. `CorruptionFailure` on an Android extracted copy → `store.reextract(entry)` once, then retry; otherwise, or
   on a second failure → `store.markDamaged` and `speechModelDamaged`.
 - **Crash-loop marker** (single owner). Before a load, write `BlobStore.platform('speech')['load-attempt'] =
-  {modelId, appVersion, attempts, startedAtMs}`; delete it on success. At start, a surviving marker for the current
-  app version increments `attempts`; with `attempts ≥ maxLoadAttempts` (2) that model joins `suspectModelIds`.
+  {modelId, appVersion, attempts, startedAtMs}`; delete it once the load returns, successful or not (only a load that
+  ends the process leaves it). At start, a surviving marker for the current app version increments `attempts` and is
+  removed, the count travelling with the next marker for that model; with `attempts ≥ maxLoadAttempts` (2) that model
+  joins `suspectModelIds`.
+- **Browser threads.** `probe()` reports `webThreads` only while the decode worker can run threaded: once it has
+  fallen back to the single-thread build, it reports false. After loading a model larger than tiny in a browser, the
+  host reads the probe again and loads the new choice when it differs.
+- **Wiring.** `speechDeviceProbeProvider` defaults to the platform probe with unknown power, and
+  `speechEngineHostProvider` to a host over the engine, store and probe providers with no marker store; `main`
+  overrides the engine (`SpeechEngine.platform()`), the store, the probe (with `PowerSource()`) and the host (with
+  `BlobStore.platform('speech')`). `PowerSource.read()` returns `({bool charging, int? percent, bool saver})` and
+  `LifecycleObserver.memoryPressure` forwards `didHaveMemoryPressure`. After the first frame `main` calls
+  `recordSpeechCrashes('<private>/speech/crash.log')`, which arms `tw_set_crash_file` and logs the file's line count.
 
 **Models.** `core/constants/speech_assets.dart` (`SpeechAssets`: `folder`, `manifest`, `tinyModel`, `baseModel`,
 `vadModel` under `assets/speech/`). `SpeechModelEntry` (pure Dart): `id`, `kind`, `fileName`, `asset?`, `bytes`,

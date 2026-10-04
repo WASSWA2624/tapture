@@ -3935,6 +3935,8 @@ The same `SpeechEngine` contract as native. Model URLs are `Uri.base.resolve(ass
 
 **Depends on** [110](24-product-refinements.md), [112](24-product-refinements.md)
 
+**Implementation started:** Yes
+
 ### Implement
 
 - `PowerSource.read()`.

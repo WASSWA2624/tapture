@@ -45,6 +45,9 @@ SpeechEngine createSpeechEngine({
   SpeechAbortCell Function(String? libraryPath)? openAbortCell,
 }) => _WebSpeechEngine();
 
+/// A browser runs the engine in Workers, which keep no crash file.
+Future<int?> recordSpeechCrashes(String path) => Future<int?>.value();
+
 /// Speech Workers this page is running, for leak checks: it returns to its
 /// starting value once every engine is disposed.
 @visibleForTesting
@@ -151,9 +154,14 @@ final class _WebSpeechEngine implements SpeechEngine {
             ? null
             : (gibibytes * _bytesPerGibibyte).round(),
         logicalCores: navigator?.hardwareConcurrency?.toDartDouble.toInt() ?? 0,
+        // Isolation allows threads, but the threaded worker may still fail
+        // to start its pool and fall back to one thread: once the decode
+        // worker runs, its variant decides.
         webThreads:
             (_crossOriginIsolated?.toDart ?? false) &&
-            _sharedArrayBuffer != null,
+            _sharedArrayBuffer != null &&
+            _decodeVariant != SpeechWorkerCodec.variantSingle &&
+            (_decode?.threaded ?? true),
         webSimd: simd,
       ),
     );

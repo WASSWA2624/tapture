@@ -59,6 +59,28 @@ SpeechAbortCell openSpeechAbortCell(String? libraryPath) {
   }
 }
 
+/// Points the fatal-abort record of the library at [libraryPath] (the
+/// platform's own when null) at the file [path]. The setting is
+/// process-wide. False when the library cannot be opened or refuses.
+bool armSpeechCrashFile(String path, {String? libraryPath}) {
+  WhisperLibrary? library = _cellLibraries[libraryPath];
+  if (library == null) {
+    switch (WhisperLibrary.open(path: libraryPath)) {
+      case WhisperLibraryLoaded(library: final WhisperLibrary opened):
+        library = opened;
+        _cellLibraries[libraryPath] = opened;
+      case WhisperLibraryUnavailable():
+        return false;
+    }
+  }
+  try {
+    library.setCrashFile(path);
+    return true;
+  } on WhisperNativeException {
+    return false;
+  }
+}
+
 /// Libraries the main isolate opened for its abort cells, by path.
 final Map<String?, WhisperLibrary> _cellLibraries = <String?, WhisperLibrary>{};
 

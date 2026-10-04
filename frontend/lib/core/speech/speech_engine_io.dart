@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show File, FileSystemException;
 import 'dart:isolate';
 import 'dart:typed_data';
 
@@ -49,6 +50,24 @@ SpeechEngine createSpeechEngine({
   openApi ?? openSpeechNativeApi,
   openAbortCell ?? openSpeechAbortCell,
 );
+
+/// Creates the folder of [path], counts the lines it holds and points the
+/// library's fatal-abort record at it. The library is process-wide, so
+/// every worker that later loads a model writes there.
+Future<int?> recordSpeechCrashes(String path) async {
+  final File file = File(path);
+  try {
+    await file.parent.create(recursive: true);
+    final int lines = await file.exists()
+        ? (await file.readAsLines())
+              .where((String line) => line.isNotEmpty)
+              .length
+        : 0;
+    return armSpeechCrashFile(path) ? lines : null;
+  } on FileSystemException {
+    return null;
+  }
+}
 
 /// What a worker isolate needs to open the library.
 typedef _LaneSetup = ({
