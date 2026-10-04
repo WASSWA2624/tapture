@@ -16,6 +16,13 @@ copy retains same-version forks without rewriting captured metadata. Reference c
 identities and append per-conflict audit. The focused structural verification is pending. Merge history, undo,
 causal vectors and lineage have production implementations and regressions; final verification remains pending.
 
+On 2026-10-04, 46 bundle and merge tests passed, including the writer round-trip, manifest clocks,
+production lineage, the four conflict choices, snapshot undo and the history screen's four states.
+The 2,000-photo package stayed inside its memory budget. Email size, every incoming transport,
+captured template version under each resolution, differing reference attributes as a production
+conflict, conflict-screen empty/loading/failure states and a scan limited to the merge boundary
+stay open.
+
 ### Implement
 
 **Implementation started:** Yes
@@ -375,9 +382,9 @@ class MergeUndo {
 #### Writing a bundle
 
 - [x] The written layout matches the specification file for file, manifest field for field.
-- [ ] Every entry carries a checksum, and the manifest carries the version vectors and the lineage.
-- [ ] A bundle containing two thousand photos writes without memory exceeding its baseline budget.
-- [ ] Tests: schema test of a written manifest, a round-trip test writing then re-reading a seeded project, and a
+- [x] Every entry carries a checksum, and the manifest carries the version vectors and the lineage.
+- [x] A bundle containing two thousand photos writes without memory exceeding its baseline budget.
+- [x] Tests: schema test of a written manifest, a round-trip test writing then re-reading a seeded project, and a
       measured memory assertion for the two-thousand-photo case.
 - [ ] A data-only bundle of a large project is small enough to send by email, and its size is stated before writing.
 - [ ] Receiving a bundle by any transport lands in the same import screen.
@@ -431,7 +438,7 @@ class MergeUndo {
 - [x] Cancelling leaves the project and its files entirely unchanged.
 - [x] Tests: widget test of `merge_preview_screen.dart` over a plan with every category populated, an empty plan and a
       load failure, plus an assertion that cancelling writes nothing.
-- [ ] All four choices resolve a conflict, and typing a value is validated like any other edit.
+- [x] All four choices resolve a conflict, and typing a value is validated like any other edit.
 - [x] A record with an unresolved conflict cannot be approved.
 - [x] A bulk action appears in the audit log as one entry per conflict it settled, not as a single line.
 - [ ] Tests: widget tests of `conflict_screen.dart` over each of the four choices and the four states, and of
@@ -442,8 +449,8 @@ class MergeUndo {
 - [x] A failure part-way through leaves the project exactly as it was, files included.
 - [ ] History lists every past merge with its source device, bundle id, timestamp, counts per category and
       resolutions, and states the undo deadline.
-- [ ] Undo restores rows and files exactly, including deleted ones, and disappears once its snapshot is purged.
-- [ ] Tests: unit tests of `merge_apply.dart` simulating a mid-merge failure and of `merge_undo.dart` comparing
+- [x] Undo restores rows and files exactly, including deleted ones, and disappears once its snapshot is purged.
+- [x] Tests: unit tests of `merge_apply.dart` simulating a mid-merge failure and of `merge_undo.dart` comparing
       project state before the merge with state after undo, plus a widget test of `merge_history_screen.dart`
       covering the four states.
 - [x] The scan runs automatically after every merge and lists candidate pairs with their scores for review.
