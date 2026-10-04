@@ -3935,8 +3935,6 @@ The same `SpeechEngine` contract as native. Model URLs are `Uri.base.resolve(ass
 
 **Depends on** [110](24-product-refinements.md), [112](24-product-refinements.md)
 
-**Implementation started:** Yes
-
 ### Implement
 
 - `PowerSource.read()`.
@@ -3990,7 +3988,7 @@ The selector rules and constants are in spec §30.4.2 and §30.4.3. A lease neve
 
 ### Definition of done
 
-- [ ] `speech_model_selector_test` is table-driven over every rule:
+- [x] `speech_model_selector_test` is table-driven over every rule:
   - each unavailable reason;
   - 32-bit;
   - memory, cores and web thresholds;
@@ -4002,7 +4000,7 @@ The selector rules and constants are in spec §30.4.2 and §30.4.3. A lease neve
   - a suspect downgrade;
   - the thread formulas, including web cap 4;
   - the interim, committed and mobile-dictation profiles.
-- [ ] `speech_engine_host_test` proves:
+- [x] `speech_engine_host_test` proves:
   - one load serves many acquires;
   - each lease gets its own VAD handle, closed on release;
   - idle release after `idleRelease` on mobile and after `idleReleaseExtended` on desktop or charging;
@@ -4014,9 +4012,37 @@ The selector rules and constants are in spec §30.4.2 and §30.4.3. A lease neve
   - an Android extracted-copy `CorruptionFailure` re-extracts once, then marks damaged only on a second failure;
   - the `load-attempt` marker is written, cleared and honoured;
   - `availability()` never loads.
-- [ ] `speech_readiness_test` proves the notifier starts `notReady`, refreshes on `host.changes`, and reruns `build()` without error.
-- [ ] `power_source_test` covers `read()`, `lifecycle_observer_test` covers `memoryPressure`, and existing fakes still compile.
-- [ ] On this machine, the Windows app boots with models (`ready`, selection logged) and without models (`modelMissing`, no crash).
+- [x] `speech_readiness_test` proves the notifier starts `notReady`, refreshes on `host.changes`, and reruns `build()` without error.
+- [x] `power_source_test` covers `read()`, `lifecycle_observer_test` covers `memoryPressure`, and existing fakes still compile.
+- [x] On this machine, the Windows app boots with models (`ready`, selection logged) and without models (`modelMissing`, no crash).
+
+### Verification
+
+- 2026-10-04 (adversarial review): `flutter test --no-pub` over `speech_model_selector_test`, `speech_engine_host_test`,
+  `speech_readiness_test`, `speech_device_probe_test`, `power_source_test` and `lifecycle_observer_test`: 139 passed.
+  Read every test against its DoD line: the selector table asserts verdict, failure type, model and threads per row;
+  the host tests drive a fake engine/store/probe and a captured `delay`, and assert loads, live handles, waits,
+  markers and re-extract/damage calls directly.
+- 2026-10-04: existing suites still compile and pass with the `app.dart`, `main.dart` and engine edits: every test
+  that pumps `TaptureApp` (bootstrap, nav shell, router, route guards, feedback host, more menu, theme controller,
+  global error page, offline banner, status line, app lock, three golden suites): 117 passed;
+  `speech_engine_io_test` and `speech_engine_test`: 38 passed.
+- 2026-10-04: `dart analyze` on `lib/app/app.dart`, `lib/main.dart`, `lib/core/{speech,background,lifecycle}` and their
+  tests: no issues. Architecture suites (data safety, errors, layering, naming, network, plugin imports, state, capture
+  authority, tokens): 97 passed. `check_naming`, `check_logging`, `check_structure`, `check_plan`, `check_tests`,
+  `check_secrets`, `check_repo_hygiene`, `check_dependencies`, `check_analyzer_config`: clean.
+- 2026-10-04: `flutter build windows --debug` under the `windows` lock (198 s), then the Debug `tapture.exe` launched
+  twice and stopped by PID. With the bundled models: `info speech verdict ready base-q5_1 with 4 threads: auto on
+  desktop: memory, cores and power allow base; 4 threads`. With the three `.bin` files moved out of the build's
+  `flutter_assets/assets/speech` (restored afterwards): `info speech native crash record holds 0 lines` and
+  `info speech verdict modelMissing: silero-v6.2.0 absent`, no error line, and both processes alive until stopped.
+- 2026-10-04 fix: `recordSpeechCrashes` counted crash-file lines with UTF-8 decoding, so an abort message in another
+  encoding (ggml writes `__FILE__` paths) would throw a `FormatException` out of the start-up maintenance; it now
+  reads as Latin-1, which decodes any byte.
+- Recorded deviations (spec §30.4.2 updated by the implementer): the marker is removed once a load returns, failed or
+  not, and a surviving marker is counted and removed at start; `app.dart` listens to readiness from launch; extra
+  `speechDeviceProbeProvider` and `speechEngineHostProvider`. Android re-extraction and the crash marker on a real
+  device, and the browser single-thread reload in a real browser, are unit-tested only here and belong to task 131.
 
 ## 114 — Stream microphone audio into the durable take
 
@@ -4218,7 +4244,7 @@ Internal to `core/speech` (spec §30.4.7):
 
 ### Definition of done
 
-- [ ] Segmenter cases:
+- [x] Segmenter cases:
   - onset ≥ 250 ms;
   - a 160 ms click rejected;
   - a 600 ms pause kept within one utterance;
@@ -4226,9 +4252,9 @@ Internal to `core/speech` (spec §30.4.7):
   - pre-roll clamping;
   - a soft cut at 20 s;
   - a hard cut at 25 s with `seamFrom = cut − 1 s`.
-- [ ] A property test over 500 random scripts holds every invariant.
-- [ ] VAD resets at start, after each close, after resume and after a gated stretch, and every call is whole frames.
-- [ ] Energy gate:
+- [x] A property test over 500 random scripts holds every invariant.
+- [x] VAD resets at start, after each close, after resume and after a gated stretch, and every call is whole frames.
+- [x] Energy gate:
   - −50 dBFS speech over a −55 floor is not gated;
   - −48 over −52 is not gated;
   - −62 over −75 is not gated;
@@ -4236,9 +4262,54 @@ Internal to `core/speech` (spec §30.4.7):
   - nothing is gated in speech;
   - the gated ratio is reported.
 
+### Verification
+
+- 2026-10-04, adversarial review. `flutter test --no-pub test/core/speech/pipeline`: 33 passed, 1 skipped (the
+  opt-in real-detector run). The suites are `noise_floor_test`, `energy_gate_test`, `utterance_segmenter_test` and
+  `vad_driver_test`.
+  - The segmenter cases assert exact samples. Onset opens at 8 frames (256 ms) and 7 frames stay an onset. A 5-frame
+    click is rejected, at stop too. A 608 ms dip keeps one utterance. The close comes at exactly 800 ms, ending
+    192 ms after the silence started. Pre-roll is clamped to sample 0, to a soft cut's end and to a resume. A dip at
+    9.6 s is no cut, and the first dip after 20 s is a soft cut. At 25 s a hard cut lands at the centre of the quietest
+    three frames, and the next utterance's start and `seamFromSample` equal cut − 1 s.
+  - The 500-script property test checks contiguous ids, `start < end`, increasing starts and length ≤ 26 s. It checks
+    that overlap occurs only after a hard cut, by exactly 1 s. No utterance spans a pause, and every frame of a
+    confirmed speech run is covered.
+- 2026-10-04, review fixes in `vad_driver.dart` and `vad_driver_test.dart`.
+  - A mutation run showed the "after a gated stretch" reset was not proven: deleting it left every test green, because
+    each gated stretch in the suite either opened the take or followed a close. The review added "resets after a gated
+    stretch even when nothing closed". It runs room tone, then digital silence, then a word. The first call after the
+    gap resets and warms up 10 frames with no close before it, and the earlier calls do not reset. The test fails when
+    the reset is deleted.
+  - Race fixed: a lease attached while a batch was in flight let that batch's success clear `_needsReset`, so the new
+    lease's first call did not reset. With a frame-size change, the batch also stepped the replaced segmenter. A batch
+    now discards its result when a lease was attached during it, and reruns on the new lease from a reset. The test "a
+    lease attached mid-batch reruns that batch from a reset" fails without the fix.
+- 2026-10-04: the real Silero v6.2.0 run passed under the `windows` lock, with the existing Debug
+  `tapture_whisper.dll` and `assets/speech`. Command: `flutter test --no-pub
+  test/core/speech/pipeline/vad_driver_test.dart --plain-name jfk --dart-define=TAPTURE_TEST_WHISPER=…
+  --dart-define=TAPTURE_TEST_SPEECH_MODELS=…`. All four measured speech spans of jfk.wav lie inside one utterance,
+  and every call is whole 512-sample frames.
+- 2026-10-04: these checks are clean or green.
+  - `dart analyze lib/core/speech test/core/speech/pipeline lib/core/constants test/support/pcm_fixtures.dart` and
+    `dart format --set-exit-if-changed` on the touched paths are clean.
+  - `check_naming`, `check_structure`, `check_logging`, `check_repo_hygiene` and `check_tests` exit clean.
+  - The architecture suites `layering`, `naming`, `tokens`, `errors`, `data_safety`, `state`, `plugin_imports` and
+    `capture_authority` passed, 86 tests.
+  - `pcm_resampler_test` and `file_pcm_store_test` passed, 26 tests.
+- Recorded deviations, for task 117 to consume:
+  - `UtteranceBoundary` carries `evidence` and has the getters `decodeFromSample` and `length`.
+  - A soft cut ends at `min(silenceStart + postRoll, frame end)`.
+  - The warm-up length is `preRoll`.
+  - The `VadDriver` API is `attachLease`, `audioAvailable`, `markPause`, `markResume`, `finish(atSample)` and
+    `abort`, with `gatedRatio` and `batches` for the stop summary.
+  - The frame size is validated only as > 0.
+
 ## 117 — Stabilise interim text and assemble final segments
 
 **Depends on** [116](24-product-refinements.md)
+
+**Implementation started:** Yes
 
 ### Implement
 

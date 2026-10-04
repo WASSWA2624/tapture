@@ -7,6 +7,8 @@
 library;
 
 export 'finished_utterance.dart';
+export 'live_transcription_event.dart';
+export 'live_transcription_phase.dart';
 export 'speech_abort_cell.dart';
 export 'speech_availability.dart';
 export 'speech_cpu_feature.dart';
@@ -52,3 +54,4 @@ export 'transcript_outcome.dart';
 export 'transcript_segment.dart';
 export 'transcript_sink.dart';
 export 'transcript_word.dart';
+export 'transcription_warning_kind.dart';

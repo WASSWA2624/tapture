@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert' show latin1;
 import 'dart:io' show File, FileSystemException;
 import 'dart:isolate';
 import 'dart:typed_data';
@@ -58,10 +59,12 @@ Future<int?> recordSpeechCrashes(String path) async {
   final File file = File(path);
   try {
     await file.parent.create(recursive: true);
+    // Latin-1 decodes any byte, so an abort message in another encoding
+    // cannot make the count throw.
     final int lines = await file.exists()
-        ? (await file.readAsLines())
-              .where((String line) => line.isNotEmpty)
-              .length
+        ? (await file.readAsLines(
+            encoding: latin1,
+          )).where((String line) => line.isNotEmpty).length
         : 0;
     return armSpeechCrashFile(path) ? lines : null;
   } on FileSystemException {

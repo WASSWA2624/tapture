@@ -190,22 +190,143 @@ abstract final class AppConstants {
     uiDrift: Duration(milliseconds: 32),
   );
 
-  /// The on-device speech pipeline (spec §30.4.3). The resampler brings a
-  /// 48 or 44.1 kHz capture down to 16 kHz with a Kaiser-windowed sinc:
+  /// The on-device speech pipeline (spec §30.4.3, §30.4.7).
+  ///
+  /// Voice detection: a frame counts as speech from `vadOnThreshold` and
+  /// keeps an utterance going down to `vadOffThreshold`; frames are sent to
+  /// the detector `vadBatchWindows` at a time. Durations are rounded up to
+  /// whole detector frames. An utterance opens after `minSpeech` of speech,
+  /// tolerating dips up to `onsetGapTolerance` while it builds, and starts
+  /// `preRoll` before its onset (also the detector's warm-up context after
+  /// a reset). It closes after `endSilence` of silence, keeping `postRoll`
+  /// past its last speech; past `softMaxUtterance` it closes at the first
+  /// dip, and at `maxUtterance` it is cut at the quietest three frames of
+  /// the last `cutSearchWindow`, the next one re-reading `seamOverlap`
+  /// before the cut. In silence a frame is quiet, and a batch of quiet
+  /// frames skips the detector, only below `energyGateCeilingDbfs` and
+  /// within `energyGateMarginDb` of the quietest level of the last
+  /// `noiseFloorWindow`.
+  ///
+  /// Decoding: an open utterance is drafted from `interimMinAudio` on, each
+  /// time it grows by a step of its smoothed interim compute time
+  /// (`interimEwmaAlpha`) over the duty share (`interimMaxDutyDesktop`,
+  /// `interimMaxDutyMobile`), held between `interimMinStep` and
+  /// `interimMaxStep`; a phone stops drafting past
+  /// `mobileInterimMaxUtterance`. Finals waiting beyond
+  /// `finalBacklogInterimsOff` switch drafts off and warn at most every
+  /// `engineBehindNoticeInterval` of audio; beyond
+  /// `finalBacklogReducedContext` finals encode a shorter context; both
+  /// recover below `finalBacklogRecover`. After
+  /// `maxConsecutiveDecodeFailures` failed decodes in a row transcription
+  /// stops. The last `promptCarryChars` of the transcript condition the
+  /// next decode, except for an utterance shorter than
+  /// `promptCarryMinUtterance` or quieter than `promptCarryMinDbfs`, and
+  /// are forgotten after `promptResetGap` without speech. A known
+  /// hallucination is dropped over audio quieter than
+  /// `hallucinationEnergyDbfs`, less than `hallucinationSpeechRatio` speech
+  /// or a mean log probability below `hallucinationLogProb`. A phrase of up
+  /// to `loopMaxNgram` words repeated `loopMinRepeatsPhrase` times (a word
+  /// `loopMinRepeatsWord` times) collapses when it has more words than
+  /// `loopWordsPerSecond` per second of detected speech, or is said faster
+  /// than `minSecondsPerWord` a word. Words within `seamTolerance` of a
+  /// hard cut's seam are judged by time.
+  ///
+  /// The resampler brings a 48 or 44.1 kHz capture down to 16 kHz with a
+  /// Kaiser-windowed sinc:
   /// `resamplerZeroCrossings` per side, a β of `resamplerKaiserBeta` (about
   /// 70 dB stopband), a cutoff at `resamplerCutoffRatio` of the lower
   /// Nyquist rate, and at most `resamplerMaxPhases` polyphase branches. The
   /// last `ringDuration` of a take is served from memory, the rest from
   /// its file.
   static const ({
+    double vadOnThreshold,
+    double vadOffThreshold,
+    int vadBatchWindows,
+    Duration minSpeech,
+    Duration onsetGapTolerance,
+    Duration preRoll,
+    Duration endSilence,
+    Duration postRoll,
+    Duration softMaxUtterance,
+    Duration maxUtterance,
+    Duration cutSearchWindow,
+    Duration seamOverlap,
+    Duration seamTolerance,
+    Duration noiseFloorWindow,
+    double energyGateMarginDb,
+    double energyGateCeilingDbfs,
+    Duration interimMinAudio,
+    Duration interimMinStep,
+    Duration interimMaxStep,
+    double interimMaxDutyDesktop,
+    double interimMaxDutyMobile,
+    Duration mobileInterimMaxUtterance,
+    double interimEwmaAlpha,
+    int promptCarryChars,
+    Duration promptCarryMinUtterance,
+    double promptCarryMinDbfs,
+    Duration promptResetGap,
+    double hallucinationEnergyDbfs,
+    double hallucinationSpeechRatio,
+    double hallucinationLogProb,
+    int loopMinRepeatsPhrase,
+    int loopMinRepeatsWord,
+    int loopMaxNgram,
+    double minSecondsPerWord,
+    double loopWordsPerSecond,
     Duration ringDuration,
+    Duration finalBacklogInterimsOff,
+    Duration finalBacklogReducedContext,
+    Duration finalBacklogRecover,
+    Duration engineBehindNoticeInterval,
+    int maxConsecutiveDecodeFailures,
     int resamplerZeroCrossings,
     double resamplerKaiserBeta,
     double resamplerCutoffRatio,
     int resamplerMaxPhases,
   })
   speechPipeline = (
+    vadOnThreshold: 0.5,
+    vadOffThreshold: 0.35,
+    vadBatchWindows: 4,
+    minSpeech: Duration(milliseconds: 250),
+    onsetGapTolerance: Duration(milliseconds: 96),
+    preRoll: Duration(milliseconds: 320),
+    endSilence: Duration(milliseconds: 800),
+    postRoll: Duration(milliseconds: 192),
+    softMaxUtterance: Duration(seconds: 20),
+    maxUtterance: Duration(seconds: 25),
+    cutSearchWindow: Duration(seconds: 3),
+    seamOverlap: Duration(seconds: 1),
+    seamTolerance: Duration(milliseconds: 200),
+    noiseFloorWindow: Duration(seconds: 5),
+    energyGateMarginDb: 3,
+    energyGateCeilingDbfs: -60,
+    interimMinAudio: Duration(milliseconds: 800),
+    interimMinStep: Duration(milliseconds: 600),
+    interimMaxStep: Duration(seconds: 3),
+    interimMaxDutyDesktop: 0.6,
+    interimMaxDutyMobile: 0.3,
+    mobileInterimMaxUtterance: Duration(seconds: 10),
+    interimEwmaAlpha: 0.3,
+    promptCarryChars: 200,
+    promptCarryMinUtterance: Duration(seconds: 2),
+    promptCarryMinDbfs: -55,
+    promptResetGap: Duration(seconds: 60),
+    hallucinationEnergyDbfs: -55,
+    hallucinationSpeechRatio: 0.3,
+    hallucinationLogProb: -0.8,
+    loopMinRepeatsPhrase: 3,
+    loopMinRepeatsWord: 4,
+    loopMaxNgram: 6,
+    minSecondsPerWord: 0.12,
+    loopWordsPerSecond: 4,
     ringDuration: Duration(seconds: 30),
+    finalBacklogInterimsOff: Duration(seconds: 10),
+    finalBacklogReducedContext: Duration(seconds: 30),
+    finalBacklogRecover: Duration(seconds: 3),
+    engineBehindNoticeInterval: Duration(seconds: 30),
+    maxConsecutiveDecodeFailures: 3,
     resamplerZeroCrossings: 16,
     resamplerKaiserBeta: 7,
     resamplerCutoffRatio: 0.9,
