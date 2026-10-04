@@ -21,8 +21,7 @@ const Map<String, String> _owedKind = <String, String>{
 
 /// Checks that every source file that owes a test has one.
 ///
-/// Takes `--strict`, which exits 1 when a required test is missing — that is
-/// the run `verify.dart` calls. Without it the same table is printed and the
+/// Takes `--strict`, which exits 1 when a required test is missing. Without it the same table is printed and the
 /// process exits 0. An optional directory argument is the project root,
 /// defaulting to the working directory.
 Future<int> main(List<String> args) async {

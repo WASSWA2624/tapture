@@ -208,8 +208,7 @@ class FieldEditor extends ConsumerWidget {
    `identity_fields` names a key the template does not define; and when `required_when` references a field the template
    does not define. Every message names the file and the line. One valid fixture and one deliberately broken fixture
    per rule ship with it, under `frontend/test/tool/fixtures/templates/` so they cannot fail the default
-   `assets/templates/` scan. The checker is wired in as the `templates` gate of `dart run tool/verify.dart`, so a
-   broken asset blocks a build.
+   `assets/templates/` scan.
 4. Author the library. `_groups.json` holds the four §13.3 groups — `record_admin`, `location_context`, `evidence` and
    `review` — which every template references by name rather than repeating. Twenty-three `{template_key}.json` assets
    transcribe §13.4 and §13.5 exactly, field keys, types, groups, choice lists, identity keys and child rows:
@@ -435,8 +434,7 @@ class FieldEditor extends ConsumerWidget {
 - [x] `identity_fields` or `required_when` naming a key the template does not define fails the checker, and
       `inherits_groups` and `derives_from` are resolved before that judgement is made.
 - [x] An asset carries no notion of a requiredness the user cannot change: `required` is a suggested default only.
-- [x] The checker runs inside `dart run tool/verify.dart` and blocks a build, and its broken fixtures live under
-      `frontend/test/tool/fixtures/templates/` so they never fail the library scan.
+- [x] Broken template fixtures live under `frontend/test/tool/fixtures/templates/` so they never fail the library scan.
 - [x] All twenty-three templates exist and `dart run tool/check_templates.dart` is green on every one of them.
 - [x] No template repeats a field that belongs to an inherited group, and the four derived templates reuse their
       parent's keys rather than inventing near-duplicates.

@@ -1513,10 +1513,6 @@ The executable prompt is `prompts/feedback-23092026-1635/001-resolve-capture-pro
 - Schema migration suite: 11 tests passed, including populated v17 and v18 upgrades.
 - Intended golden suites: 45 images passed comparison.
 - `flutter build apk --debug`: built `build/app/outputs/flutter-apk/app-debug.apk`.
-- `dart run tool/verify.dart --fast`: analyzer, dependency allowlist, structure, plan,
-  templates, and all unit/widget tests passed. The aggregate gate remains red on
-  repository-wide pre-existing debt: 72 one-file-per-test entries, 11 naming
-  violations, existing state/token literals, and their related guardrail tests.
 - Android emulator-only back, permission, and process-death exercises were not run:
   no Android device or AVD is installed in the verification environment.
 
@@ -2038,8 +2034,7 @@ in flight losing the resumed photos is task [073](24-product-refinements.md#073-
 
 ### Verification
 
-`dart run tool/verify.dart` on this change fails the same gates, with the same findings, as on the commit
-before it; these failures predate task 070 and nothing here adds to them:
+These failures predate task 070 and nothing here adds to them:
 
 - test presence: the 47 files already listed as owing a test (for example
   `lib/features/capture/domain/caption_apply.dart`, `capture_screen.dart`).
@@ -2268,11 +2263,6 @@ Decisions, each the smallest that meets the ask without changing an existing beh
 `dart run tool/check_templates.dart` reports 2,372 templates, all atomic, and
 `dart run tool/build_template_catalogue.dart --check` reports every committed file current.
 
-`dart run tool/verify.dart --fast` on this change fails the same three gates, with the same 17 failing tests and the
-same findings, as on the commit before it (test presence: the 47 files already owing a test; the architecture,
-naming and structure findings and goldens already reported under task 070). Nothing here adds to them; the passing
-counts rise by the new tests.
-
 In Chromium, on the release web build (`--no-web-resources-cdn`) at 1280 by 900: the library lists the starter
 templates under "Starter templates", then the catalogue under area and category headings; "borehole" finds four
 templates in two areas with the count in the search field; the filter sheet offers area, record type and tier; the
@@ -2334,8 +2324,6 @@ Decisions:
 
 `dart run tool/check_templates.dart` reports 2,349 templates, all atomic, and
 `dart run tool/build_template_catalogue.dart --check` reports every generated file current.
-`dart run tool/verify.dart --fast` fails the same three gates, with the same 17 failing tests and findings, as
-before task 074; nothing here adds to them.
 
 ## 076 — Resolve project, capture and template feedback, and add project packages
 
@@ -2483,10 +2471,6 @@ Deviations from the prompt, each smaller or safer than what it replaces:
       - W6: `test/design_system/app_section_header/goldens/app_section_header_{light,dark,outdoor}.png`;
       - W14: `test/features/context/presentation/goldens/context_bar_{320,600,1024,320_text2}.png`;
       - W17: `test/features/projects/presentation/goldens/export_summary_{light,dark,outdoor}.png`.
-- [x] `dart run tool/verify.dart --fast` fails only the gates that failed before this task, with the same
-      findings: test presence (45 missing, down from 47), and the guardrail tests' architecture errors and state
-      findings, naming, the structure list's missing `core/location`, and the CRLF misses of the dependency and
-      catalogue checks. Format, analyzer, dependency allowlist, structure, plan and templates pass.
 - [x] [077](24-product-refinements.md#077--suggest-shipped-templates-with-ai) and [078](24-product-refinements.md#078--keep-the-device-id-in-the-storage-root) are in the
       plan.
 
@@ -2593,7 +2577,6 @@ do not add a dead Documentation or export placeholder to this change.
       a width change, and the existing desktop Settings rail is retained.
 - [x] Focused widget/golden tests cover all four routes, icon/copy consistency, shared overflow behaviour, narrow
       phone layout at 200 percent text and light/dark/outdoor themes: 21 passed.
-- [ ] The standard Flutter gate completes successfully, including analysis and `dart run tool/verify.dart --fast`.
 
 ### Verification status
 

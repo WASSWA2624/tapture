@@ -742,6 +742,4 @@ abstract class OfflineAuthority {
 - Widening the closed package metadata list of BE-RELAY-06. A further column on a package, acknowledgement or vector
   row needs its own task and a written justification, because the closed list is what makes "the server cannot read a
   package" checkable rather than merely intended.
-- The release gate over both artefacts. This phase's own gate — `npm run verify` for the server and
-  `dart run tool/verify.dart --fast` for the app — closes each task here; the suites, the pipeline and the run proving
-  a required backend is never a required connection belong to 120 · Testing and release.
+- The release gate over both artefacts belongs to 120 · Testing and release.

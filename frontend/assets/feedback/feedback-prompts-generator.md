@@ -187,7 +187,6 @@ factors and themes.
 ### Steps
 1. Concrete, imperative, in order. Where a decision applies, write "per D1".
 2. Add or update tests at the layer FE-TEST-02 names; goldens for design-system visuals.
-3. `cd frontend && dart run tool/verify.dart --changed` is green.
 
 ### Review stop
 ⛔ Stop before step N and show <what step N-1 produced>. Proceed only with an explicit answer.
@@ -200,7 +199,6 @@ factors and themes.
 …
 
 ## Verification
-- After the last item, `cd frontend && dart run tool/verify.dart --changed` is green.
 - Regenerate goldens with `--update-goldens` only for visuals an item intends to change, and list the
   files regenerated under that item.
 ```

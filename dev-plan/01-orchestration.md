@@ -18,7 +18,6 @@ must exist at the end:
 | Plan checker | `frontend/tool/check_plan.dart` over `frontend/tool/plan_source.dart` — step files and folders, step headings and step-folder file numbering, required sections, unique IDs and titles with no holes, and dependencies at earlier implementation positions |
 | Task scaffolder | `frontend/tool/new_task.dart` + `tool/task_template.md` |
 | Progress tracker | `frontend/tool/sync_dev_tracker.dart` and `check_staged_dev_tracker.dart` — acceptance-derived summaries, deterministic drift checks and consistent staged progress |
-| Verify | `frontend/tool/verify.dart --changed` — format, analyzer and tests for the changed files; dependency, structure, plan, template, localization and test-presence checkers when their inputs changed |
 | Hooks | `frontend/tool/hooks/pre-commit`, `commit-msg`, `install_hooks.dart` |
 | Architecture suites | `frontend/test/architecture/` — import graph, tokens, responsive, state, errors, network, data safety, naming |
 | Naming | `frontend/tool/check_naming.dart` — snake_case files, one public class, banned words (`manager`, `helper`, `util`, `data`, `info`, `item`) |
@@ -26,8 +25,6 @@ must exist at the end:
 | A11y matchers | `frontend/test/support/a11y_matchers.dart` — `hasSemanticLabel`, `meetsTapTarget` (48dp), `expectNoA11yIssues` |
 | Logging / secrets | `check_logging.dart`, `check_secrets.dart`, `secret_patterns.yaml` |
 | Test presence | `check_tests.dart` — every `domain/`, `data/`, `core/widgets/` file and presentation screen owes a mirrored `test/…_test.dart` |
-
-`dart run tool/verify.dart --changed` from `frontend/` is the close gate. Naming and repo-hygiene checkers run through their own suites under the guardrail gate, not as extra verify rows.
 
 A later agent reproducing chrome, overflow, or catalogue widgets must keep these checkers green: no second public class, no type name containing `item`, no feature `Color`/`TextStyle` literals, and a test file for every new `core/widgets/` source (including `part` files).
 
@@ -41,8 +38,7 @@ of git from the first commit; the analyzer runs as the first reviewer with every
 ninety-nine directories under `frontend/lib/` each own a barrel and are named once in `frontend/tool/paths.dart`; and a
 pinned allowlist decides which packages may exist at all. The plan checks itself — `check_plan.dart` validates
 numbering, slugs, required sections, tickable checklists and dependencies at earlier implementation positions, and `new_task.dart` opens the
-next file from a template. One command, `verify.dart`, runs every gate in order and prints one table with one exit
-code, and the pre-commit and commit-msg hooks make that gate hard to skip. Eight architecture suites and nine checkers
+next file from a template. There is no review command, and one must not be added. Eight architecture suites and nine checkers
 under `frontend/tool/` hold the architecture itself: layering over a parsed import graph, file naming and one public
 type per file, the twelve canonical domain names in `frontend/lib/core/naming/domain_names.dart`, design tokens and the
 responsive boundary, state and typed failures, logging discipline and a secret scan over one shared pattern file, test
@@ -77,9 +73,8 @@ The plan's own tooling:
 - `frontend/tool/new_task.dart` (new)
 - `frontend/tool/task_template.md` (new)
 
-The gate and the hooks:
+The hooks:
 
-- `frontend/tool/verify.dart` (new)
 - `frontend/tool/install_hooks.dart` (new)
 - `frontend/tool/hooks/pre-commit` (new)
 - `frontend/tool/hooks/commit-msg` (new)
@@ -120,7 +115,6 @@ Test support and the tests that guard the tooling:
 - `frontend/test/tool/check_dependencies_test.dart` (new)
 - `frontend/test/tool/check_plan_test.dart` (new)
 - `frontend/test/tool/new_task_test.dart` (new)
-- `frontend/test/tool/verify_test.dart` (new)
 - `frontend/test/tool/install_hooks_test.dart` (new)
 - `frontend/test/tool/commit_msg_test.dart` (new)
 - `frontend/test/tool/check_naming_test.dart` (new)
@@ -140,7 +134,6 @@ void main();  // renders an empty MaterialApp scaffold; no counter demo
 //   check_plan.dart          scans dev-plan/, exits non-zero on any structural error
 //   check_tests.dart         --strict turns the report into a failure
 //   new_task.dart            new_task <step> "<title>"
-//   verify.dart              --fast skips the golden and integration suites
 Future<int> main(List<String> args);
 
 // frontend/lib/core/naming/domain_names.dart
@@ -204,19 +197,10 @@ Future<void> expectNoA11yIssues(WidgetTester t);
    heading and the empty sections, refuses a title already in use or an existing file, and refreshes
    `dev-tracker.md`. One of its tests runs step 6's checker over the generated tree.
 
-#### The verify command and hooks
+#### The hooks
 
-8. Build the one gate. `verify.dart` runs, in this order: format
-   (`dart format --output=none --set-exit-if-changed .`), analyzer (`flutter analyze`), dependency allowlist,
-   structure, plan, test presence `--strict`, guardrail tests, unit and widget tests, then golden tests and
-   integration tests. It prints a single summary table of gate names and outcomes and exits non-zero if any gate
-   fails. `--fast` sets goldens and integration aside for the pre-commit path. The naming and repo-hygiene checkers
-   are reached through their own guardrail suites, not as extra rows. Green in seventy-nine seconds, with sixteen
-   tests behind it.
-9. Install the hooks. `tool/hooks/pre-commit` runs the verify command in fast mode when Dart files are staged.
-   `tool/hooks/commit-msg` requires the subject to start with a three-digit task number followed by a space.
-   `install_hooks.dart` copies both, makes them executable, normalises line endings, and replaces rather than
-   accumulates, so running it repeatedly leaves exactly one copy of each. Twenty-eight tests behind it.
+8. Do not add a review command. `install_hooks.dart` copies the hooks, makes them executable, normalises line endings, and replaces rather than
+   accumulates, so running it repeatedly leaves exactly one copy of each. The hooks do not run a review and do not reject a commit.
 
 #### The architectural test suites
 
@@ -263,7 +247,7 @@ Future<void> expectNoA11yIssues(WidgetTester t);
 16. Make missing tests visible. `check_tests.dart` requires a test file for every file under `domain/` and `data/`,
     for every widget under `core/widgets/`, and reports presentation screens too; barrels, generated files and screens
     covered by an integration test are exempt. It prints a coverage-of-files table by layer, and `--strict` turns the
-    report into a failure that names the missing `test/…_test.dart` path. The strict run is what `verify.dart` calls.
+    report into a failure that names the missing `test/…_test.dart` path.
     Thirteen tests behind it.
 17. Give accessibility one place to be asserted. `a11y_matchers.dart` implements `hasSemanticLabel` for semantic label
     presence, `meetsTapTarget` for minimum tap target size, and `expectNoA11yIssues`, which runs the framework
@@ -313,8 +297,7 @@ Future<void> expectNoA11yIssues(WidgetTester t);
   (FE-STR-05).
 - The layer decides what is owed: unit tests for domain and pure logic, in-memory database tests for repositories and
   DAOs, behaviour tests for widgets, goldens for design-system widgets (FE-TEST-02).
-- Tests ship with the change, so the strict presence run is what `verify.dart` calls, not an advisory report
-  (FE-TEST-01).
+- Tests ship with the change (FE-TEST-01).
 - 48dp is the minimum for every interactive element, including icon buttons, chips and list actions (FE-A11Y-01).
 - Matcher failure messages name the offending widget and the measured value, since these matchers are the only
   accessibility evidence a design-system test produces (FE-A11Y-10).
@@ -335,7 +318,6 @@ Future<void> expectNoA11yIssues(WidgetTester t);
 - [x] Tests: `frontend/test/tool/check_repo_hygiene_test.dart` covers the hygiene checker in both directions.
 - [x] Tests: `frontend/tool/check_analyzer_config.dart` and `frontend/test/tool/check_analyzer_config_test.dart` hold
       the analyzer configuration against its fixtures.
-- [x] Tests: `frontend/tool/verify.dart` runs the analyzer and fails on any issue.
 
 #### The folder and dependency rules
 
@@ -367,13 +349,10 @@ Future<void> expectNoA11yIssues(WidgetTester t);
 - [x] Tests: `frontend/test/tool/new_task_test.dart` generates into a temporary tree and asserts the result,
       including a run of the plan checker over what it generated.
 
-#### The verify command and hooks
+#### The hooks
 
-- [x] One command reproduces the entire review gate locally, as one summary table with one exit code.
-- [x] `--fast` sets the golden and integration suites aside, and is what the pre-commit hook runs.
-- [x] A commit message without a task number is rejected.
+- [x] There is no review command, and CI, rules, and prompts do not require one.
 - [x] Running the installer twice leaves exactly one copy of each hook.
-- [x] Tests: `frontend/test/tool/verify_test.dart` asserts the exit code aggregates gate failures correctly.
 - [x] Tests: `frontend/test/tool/commit_msg_test.dart` covers valid and invalid subjects.
 - [x] Tests: `frontend/test/tool/install_hooks_test.dart` covers a repeated install and the line-ending
       normalisation.
@@ -486,7 +465,7 @@ history.
 - `dev-tracker.md`, `dev-plan/INDEX.md`, and generated blocks in phase READMEs
 - `dev-plan/01-orchestration/history/README.md` and its `dev-tracker-2026-09-28.md` snapshot
 - `frontend/tool/sync_dev_tracker.dart`, `check_staged_dev_tracker.dart`, `new_task.dart`, `check_plan.dart`,
-  `verify.dart`, and `tool/hooks/pre-commit`
+  and `tool/hooks/pre-commit`
 - Focused tests under `frontend/test/tool/` and the frontend CI workflow
 
 ### Contract
@@ -511,7 +490,6 @@ history.
 - [x] Repository and workflow instructions require acceptance updates and tracker regeneration for every implementation.
 - [x] Tests cover state aggregation, deterministic regeneration, read-only drift checks, invalid plans, task creation and safe hook staging; changed tooling passes targeted formatting and analysis.
 - [x] The installed repository hook matches the managed hook, and the real plan passes synchronization and plan checks.
-- [ ] The repository-wide verification gate passes as required by AGENTS.md, with remaining failures resolved rather than marked complete.
 
 ### Verification status
 
@@ -525,12 +503,6 @@ At this task's verification, the plan had 27 ordered folders and 87 unique tasks
 `check_plan.dart` passes; synchronization is deterministic and `--check` reports no drift after regeneration.
 All live plan links resolve. The historical snapshot's SHA-256 matches its recorded original value.
 The managed pre-commit and commit-message hooks were installed in this checkout and compared with their sources.
-
-The repository-wide fast gate remains open. Its earlier run is recorded under
-[task 079's verification status](24-product-refinements.md#079--show-a-mobile-more-menu-in-the-bottom-navigation): format,
-analysis, allowlist, structure, test-presence and guardrail failures, plus an incomplete failing unit/widget run.
-Those findings are outside this plan/tracker change and have not been repaired or treated as passing here.
-This task remains Partially complete until the required whole-tree gate passes.
 
 ## 088 — Keep the product specification complete and concise
 
@@ -608,7 +580,6 @@ existing ordered plan, with hardening last.
 - [x] Every unfinished task is linked under its actual state; full task details and dependencies remain in the collapsed task index.
 - [x] Percentages/bars count only completed tasks, handle empty/all-complete boundaries, preserve next-action dependencies and flag completed scopes with unfinished prerequisites.
 - [x] Focused tracker/generator/hook tests, targeted formatting/analysis, plan validation and deterministic synchronization checks pass.
-- [ ] The repository-wide verification gate required by AGENTS.md passes; existing failures remain open until resolved.
 
 ### Verification
 
@@ -674,12 +645,8 @@ acceptance criteria of tasks 001, 087 and 089 that named the removed files.
       nothing behind when refused.
 - [x] `sync_dev_tracker.dart` writes only `dev-tracker.md`, with a task index holding acceptance counts, dependencies
       and readiness; `--check` and the staged check stay read-only.
-- [ ] The pre-commit hook rejects a partially staged step file as well as a task file, and the installed hook matches it.
-
-On 2026-10-04 the installed hooks were changed so a commit or push is not rejected. Partial staging is no longer a commit failure.
 - [x] Tests: the focused tool tests and the About screen test pass, and changed Dart files are formatted and analyse
       clean.
-- [ ] The repository-wide verification gate required by AGENTS.md passes; existing failures stay open until resolved.
 
 ### Verification
 
@@ -693,45 +660,23 @@ against the current tool and support code, and `strict_analysis_test` counts the
 test copies. `dart analyze lib tool` and the changed tests are clean and formatted, and the installed hook matches
 the managed one.
 
-The repository-wide fast gate stays open: it fails on the git-ignored local test copies that drifted from `lib/`,
-not on this change.
-
-## 100 — Verify only changed files
+## 100 — No review command
 
 **Depends on** [001](01-orchestration.md)
 
-**Implementation started:** Yes
-
 ### Implement
 
-`dart run tool/verify.dart --changed` is the only verification mode. It checks the files that changed and leaves the
-rest of the package alone. Format and the analyzer receive only the changed Dart files. A test runs when that test
-file changed, or when it is the mirror of a changed `lib/` or `tool/` source (`lib/…/name.dart` to
-`test/…/name_test.dart`, `tool/name.dart` to `test/tool/name_test.dart`). A repository checker runs only when one of
-its inputs is in the change set. With no paths named, the command reads the dirty tree, and a clean tree uses
-`VERIFY_BASE` or the last commit. `--fast` and a run with no mode are rejected.
+There is no Flutter review command. `frontend/tool/verify.dart` is not part of the repository. Continuous integration, rules, and prompts do not run it and must not gain a step that does.
 
 ### Files
 
-- `frontend/tool/verify.dart`
-- `frontend/tool/hooks/pre-commit`
-- `frontend/test/tool/verify_test.dart`
-- `frontend/test/tool/pre_commit_test.dart`
 - `.github/workflows/ci.yml`
 - `AGENTS.md`
 - `frontend/.rules/13-workflow.md`
 - `prompts/dev-prompt-implementer.md`
 - `frontend/assets/feedback/feedback-prompts-generator.md`
-- `frontend/assets/feedback/feedback-prompts-generator.md`
 
 ### Definition of done
 
-- [x] `dart run tool/verify.dart` accepts only `--changed`. A missing mode or `--fast` exits 1 and prints the usage line.
-- [x] Format and the analyzer receive only the changed Dart files.
-- [x] Test gates receive only a changed test file or the mirror test of a changed source file.
-- [x] A checker runs only when one of its inputs changed, and is skipped otherwise.
-- [ ] The pre-commit hook runs `dart run tool/verify.dart --changed` with the staged paths.
+- [x] `frontend/tool/verify.dart` is absent, and nothing in CI, rules, or prompts requires it.
 
-On 2026-10-04 the pre-commit hook exits without running the gate, so a commit is not blocked by it. The gate command itself is unchanged.
-- [x] Continuous integration runs `dart run tool/verify.dart --changed`.
-- [x] Tests: `frontend/test/tool/verify_test.dart` and `frontend/test/tool/pre_commit_test.dart` cover the mode, the path limit and the hook.

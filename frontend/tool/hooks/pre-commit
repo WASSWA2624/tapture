@@ -1,6 +1,5 @@
 #!/bin/sh
 #
 # Installed by frontend/tool/install_hooks.dart.
-# A commit must not be blocked. The review gate stays available as
-# `dart run tool/verify.dart --changed` from frontend/.
+# A commit must not be blocked.
 exit 0

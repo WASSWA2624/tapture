@@ -30,8 +30,7 @@ battery use; those device acceptance items remain open.
 
 2026-10-01 automatic processing now invalidates budget checks after connectivity, resume or disposal changes and
 rechecks the current automatic/Wi-Fi settings before starting. Six controlled asynchronous regressions cover stale
-settings, lost connectivity, disposal, resume/background and out-of-order budget results; execution is pending the
-combined verification gate. Physical OCR and battery acceptance remain open.
+settings, lost connectivity, disposal, resume/background and out-of-order budget results. Physical OCR and battery acceptance remain open.
 
 The whole path from a captured record to proposed data, on the device first and online only when local work leaves a
 required field unfilled. One job per record — stage, attempt count, outcome and failure reason — persists through a

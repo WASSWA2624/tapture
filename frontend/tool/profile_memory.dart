@@ -135,8 +135,8 @@ Map<String, Object?> memoryProfileJson(MemoryProfile profile) =>
       'resourcesAfter': profile.resourcesAfter,
     };
 
-/// Validates evidence produced by integration_test/memory_test.dart. The
-/// integration runner remains tool/verify.dart; no physical result is invented.
+/// Validates evidence produced by integration_test/memory_test.dart.
+/// No physical result is invented.
 Future<int> main(List<String> args) async {
   if (args.length != 3 ||
       int.tryParse(args[1]) == null ||
