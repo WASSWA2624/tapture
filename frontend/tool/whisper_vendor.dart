@@ -1,0 +1,1011 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:archive/archive.dart';
+import 'package:crypto/crypto.dart';
+
+import 'paths.dart';
+
+/// The pinned upstream a vendoring run reproduces: the release tag, its
+/// commit, the SHA-256 of its source tarball and the KEEP list of paths,
+/// relative to the tarball's top folder, that are vendored.
+typedef WhisperVendorPin = ({
+  String tag,
+  String commit,
+  String tarballSha256,
+  List<String> keep,
+});
+
+/// whisper.cpp v1.9.4 (ggml 0.23.0), the only upstream Tapture vendors
+/// (dev-plan task 102, app-write-up §30.4.1).
+const WhisperVendorPin upstreamWhisperPin = (
+  tag: 'v1.9.4',
+  commit: '927cfce34f31707e17f2bff35c349632fb9e2c3a',
+  tarballSha256:
+      '57e280cee375ab02425b806ad5146b99f6eb9357e3c2b31357c8a6af2e2e44ae',
+  keep: <String>[
+    'LICENSE',
+    'AUTHORS',
+    'include/whisper.h',
+    'src/whisper.cpp',
+    'src/whisper-arch.h',
+    'ggml/include/ggml.h',
+    'ggml/include/ggml-alloc.h',
+    'ggml/include/ggml-backend.h',
+    'ggml/include/ggml-cpp.h',
+    'ggml/include/ggml-cpu.h',
+    'ggml/include/ggml-opt.h',
+    'ggml/include/gguf.h',
+    'ggml/src/ggml.c',
+    'ggml/src/ggml.cpp',
+    'ggml/src/ggml-alloc.c',
+    'ggml/src/ggml-backend.cpp',
+    'ggml/src/ggml-backend-meta.cpp',
+    'ggml/src/ggml-backend-dl.cpp',
+    'ggml/src/ggml-backend-dl.h',
+    'ggml/src/ggml-backend-reg.cpp',
+    'ggml/src/ggml-backend-impl.h',
+    'ggml/src/ggml-common.h',
+    'ggml/src/ggml-feats.h',
+    'ggml/src/ggml-impl.h',
+    'ggml/src/ggml-opt.cpp',
+    'ggml/src/ggml-quants.c',
+    'ggml/src/ggml-quants.h',
+    'ggml/src/ggml-threading.cpp',
+    'ggml/src/ggml-threading.h',
+    'ggml/src/gguf.cpp',
+    'ggml/src/ggml-cpu/ggml-cpu.c',
+    'ggml/src/ggml-cpu/ggml-cpu.cpp',
+    'ggml/src/ggml-cpu/ggml-cpu-impl.h',
+    'ggml/src/ggml-cpu/common.h',
+    'ggml/src/ggml-cpu/arch-fallback.h',
+    'ggml/src/ggml-cpu/binary-ops.cpp',
+    'ggml/src/ggml-cpu/binary-ops.h',
+    'ggml/src/ggml-cpu/unary-ops.cpp',
+    'ggml/src/ggml-cpu/unary-ops.h',
+    'ggml/src/ggml-cpu/hbm.cpp',
+    'ggml/src/ggml-cpu/hbm.h',
+    'ggml/src/ggml-cpu/iqp.cpp',
+    'ggml/src/ggml-cpu/iqp.h',
+    'ggml/src/ggml-cpu/ops.cpp',
+    'ggml/src/ggml-cpu/ops.h',
+    'ggml/src/ggml-cpu/quants.c',
+    'ggml/src/ggml-cpu/quants.h',
+    'ggml/src/ggml-cpu/repack.cpp',
+    'ggml/src/ggml-cpu/repack.h',
+    'ggml/src/ggml-cpu/simd-gemm.h',
+    'ggml/src/ggml-cpu/simd-mappings.h',
+    'ggml/src/ggml-cpu/traits.cpp',
+    'ggml/src/ggml-cpu/traits.h',
+    'ggml/src/ggml-cpu/vec.cpp',
+    'ggml/src/ggml-cpu/vec.h',
+    'ggml/src/ggml-cpu/amx/amx.cpp',
+    'ggml/src/ggml-cpu/amx/amx.h',
+    'ggml/src/ggml-cpu/amx/common.h',
+    'ggml/src/ggml-cpu/amx/mmq.cpp',
+    'ggml/src/ggml-cpu/amx/mmq.h',
+    'ggml/src/ggml-cpu/arch/arm/quants.c',
+    'ggml/src/ggml-cpu/arch/arm/repack.cpp',
+    'ggml/src/ggml-cpu/arch/x86/quants.c',
+    'ggml/src/ggml-cpu/arch/x86/repack.cpp',
+    'ggml/src/ggml-cpu/arch/wasm/quants.c',
+    'samples/jfk.wav',
+    'models/for-tests-ggml-tiny.bin',
+    'models/for-tests-silero-v6.2.0-ggml.bin',
+  ],
+);
+
+/// The plugin package this tool maintains, relative to `frontend/`.
+const String whisperPackage = '$localPackagesRoot/tapture_whisper';
+
+const String _vendorDir = 'third_party/whisper.cpp';
+const String _patchDir = 'third_party/patches';
+const String _record = 'VENDOR.json';
+const String _sourceList = 'src/whisper_sources.cmake';
+const String _forwarderDir = 'darwin/tapture_whisper/Sources/tapture_whisper';
+
+/// The shim's own translation units, relative to the package's `src/`.
+/// They are not vendored, but the Darwin build compiles them through
+/// forwarders like every vendored one.
+const List<String> _shimSources = <String>[
+  'tapture_whisper.cpp',
+  'tw_sha256.c',
+];
+
+/// The vendored directories whose headers get a `forward/` header, so the
+/// Darwin build needs no include path outside the SwiftPM target.
+const List<String> _forwardedHeaderDirs = <String>[
+  'ggml/include',
+  'ggml/src',
+  'ggml/src/ggml-cpu',
+  'include',
+];
+
+/// The source sets of `whisper_sources.cmake` compiled on every Apple
+/// architecture: the forwarder group name and the folder its names are
+/// taken relative to.
+const Map<String, ({String group, String base})> _commonSets =
+    <String, ({String group, String base})>{
+      'TW_GGML_BASE_SOURCES': (group: 'base', base: 'ggml/src/'),
+      'TW_GGML_CPU_SOURCES': (group: 'cpu', base: 'ggml/src/ggml-cpu/'),
+      'TW_WHISPER_SOURCES': (group: 'whisper', base: 'src/'),
+    };
+
+/// The architecture source sets and the compiler macro that selects each in
+/// an arch forwarder. A null macro is a set Apple never builds.
+const Map<String, String?> _archSets = <String, String?>{
+  'TW_GGML_CPU_SOURCES_ARM64': '__aarch64__',
+  'TW_GGML_CPU_SOURCES_X86_64': '__x86_64__',
+  'TW_GGML_CPU_SOURCES_WASM': null,
+};
+
+const String _generatedBanner =
+    '// Generated by frontend/tool/whisper_vendor.dart from '
+    'src/whisper_sources.cmake\n'
+    '// (dev-plan task 102). Do not edit; re-run the tool instead.\n';
+
+const String _usage =
+    'usage: dart run tool/whisper_vendor.dart --from <tarball> | --check';
+
+/// Vendors whisper.cpp into `packages/tapture_whisper` or checks the
+/// vendored tree (dev-plan task 102), printing one `path:line: message` per
+/// violation. Run from `frontend/`.
+Future<void> main(List<String> args) async {
+  exitCode = runWhisperVendor(args, root: Directory.current);
+}
+
+/// Runs one command against the `frontend/` tree at [root] and returns the
+/// exit code: 0 when clean, 1 when any violation was printed, 64 for bad
+/// arguments. Violations go to [problems] and the summary to [progress],
+/// defaulting to stderr and stdout.
+int runWhisperVendor(
+  List<String> args, {
+  required Directory root,
+  WhisperVendorPin pin = upstreamWhisperPin,
+  StringSink? problems,
+  StringSink? progress,
+}) {
+  final StringSink problemSink = problems ?? stderr;
+  final StringSink progressSink = progress ?? stdout;
+  final bool check = args.length == 1 && args.single == '--check';
+  final bool from = args.length == 2 && args.first == '--from';
+  if (!check && !from) {
+    problemSink.writeln(_usage);
+    return 64;
+  }
+  final List<String> found = check
+      ? checkWhisperVendor(root, pin: pin)
+      : vendorWhisper(root, File(args[1]), pin: pin);
+  for (final String problem in found) {
+    problemSink.writeln(problem);
+  }
+  progressSink.writeln(
+    found.isEmpty
+        ? 'whisper vendor: clean'
+        : 'whisper vendor: ${found.length} violation(s)',
+  );
+  return found.isEmpty ? 0 : 1;
+}
+
+/// Extracts the KEEP list of [pin] from [tarball] into the package under
+/// [frontendRoot], applies every `third_party/patches/*.patch` in name
+/// order, writes `VENDOR.json` and the Darwin forwarders, then checks the
+/// result. Nothing is written unless the tarball matches its pin and every
+/// patch applies. Returns one `path:line: message` per violation.
+List<String> vendorWhisper(
+  Directory frontendRoot,
+  File tarball, {
+  WhisperVendorPin pin = upstreamWhisperPin,
+}) {
+  final String tarballName = _slash(tarball.path);
+  if (!tarball.existsSync()) {
+    return <String>['$tarballName:0: there is no tarball here'];
+  }
+  final Uint8List packed = tarball.readAsBytesSync();
+  final String digest = sha256.convert(packed).toString();
+  if (digest != pin.tarballSha256) {
+    return <String>[
+      '$tarballName:0: sha256 $digest is not the pinned ${pin.tarballSha256} '
+          '(${pin.tag})',
+    ];
+  }
+  final Map<String, Uint8List> upstream = _untar(packed);
+  final List<String> problems = <String>[
+    for (final String path in pin.keep)
+      if (!upstream.containsKey(path))
+        '$tarballName:0: the KEEP entry $path is not in the tarball',
+  ];
+  final Map<String, Uint8List> vendored = <String, Uint8List>{
+    for (final String path in pin.keep)
+      if (upstream.containsKey(path)) path: upstream[path]!,
+  };
+  final _Package package = _Package(frontendRoot);
+  final List<Map<String, Object>> patchRecords = <Map<String, Object>>[];
+  for (final File patchFile in package.patches()) {
+    final String display = package.display(patchFile);
+    final Uint8List patchBytes = patchFile.readAsBytesSync();
+    final _Patch patch = _Patch.parse(latin1.decode(patchBytes));
+    final Map<String, Object> touched = <String, Object>{};
+    for (final _FilePatch filePatch in patch.files) {
+      final Uint8List? before = vendored[filePatch.path];
+      if (before == null) {
+        problems.add(
+          '$display:${filePatch.line}: patches ${filePatch.path}, which is '
+          'not on the KEEP list',
+        );
+        continue;
+      }
+      final _Applied applied = filePatch.apply(before);
+      if (applied.failedAt != null) {
+        problems.add(
+          '$display:${applied.failedAt}: this hunk does not apply to '
+          '${filePatch.path}',
+        );
+        continue;
+      }
+      vendored[filePatch.path] = applied.bytes;
+      touched[filePatch.path] = <String, Object>{
+        'upstreamSha256': sha256.convert(before).toString(),
+        'patchedSha256': sha256.convert(applied.bytes).toString(),
+      };
+    }
+    patchRecords.add(<String, Object>{
+      'name': _basename(patchFile.path),
+      'sha256': sha256.convert(patchBytes).toString(),
+      'files': touched,
+    });
+  }
+  if (problems.isNotEmpty) {
+    return problems;
+  }
+  final List<String> sorted = vendored.keys.toList()..sort();
+  for (final String path in sorted) {
+    package.vendoredFile(path)
+      ..parent.createSync(recursive: true)
+      ..writeAsBytesSync(vendored[path]!);
+  }
+  final Map<String, Object> record = <String, Object>{
+    'tag': pin.tag,
+    'commit': pin.commit,
+    'tarballSha256': pin.tarballSha256,
+    'patches': patchRecords,
+    'files': <String, Object>{
+      for (final String path in sorted)
+        path: <String, Object>{
+          'bytes': vendored[path]!.length,
+          'sha256': sha256.convert(vendored[path]!).toString(),
+        },
+    },
+  };
+  package
+      .file(_record)
+      .writeAsStringSync(
+        '${const JsonEncoder.withIndent('  ').convert(record)}\n',
+      );
+  final _SourceList sources = _SourceList.read(package.file(_sourceList));
+  final Map<String, String> forwarders = _forwarders(sources, pin.keep);
+  for (final MapEntry<String, String> forwarder in forwarders.entries) {
+    package.file(forwarder.key)
+      ..parent.createSync(recursive: true)
+      ..writeAsStringSync(forwarder.value);
+  }
+  return checkWhisperVendor(frontendRoot, pin: pin);
+}
+
+/// Checks the vendored tree under [frontendRoot] without the network and
+/// without writing. Reports, together, every missing, extra or drifted
+/// vendored file, every patch whose recorded hashes no longer hold, every
+/// `whisper_sources.cmake` entry that is not vendored and every missing,
+/// stale or stray Darwin forwarder, one `path:line: message` each.
+List<String> checkWhisperVendor(
+  Directory frontendRoot, {
+  WhisperVendorPin pin = upstreamWhisperPin,
+}) {
+  final _Package package = _Package(frontendRoot);
+  final File recordFile = package.file(_record);
+  final String recordName = package.display(recordFile);
+  if (!recordFile.existsSync()) {
+    return <String>[
+      '$recordName:0: missing; run dart run tool/whisper_vendor.dart '
+          '--from <tarball>',
+    ];
+  }
+  final List<String> recordLines = recordFile
+      .readAsStringSync()
+      .replaceAll('\r\n', '\n')
+      .split('\n');
+  final _Record? record = _Record.parse(recordLines.join('\n'));
+  if (record == null) {
+    return <String>['$recordName:1: is not a vendor record'];
+  }
+  int lineOf(String needle, {int from = 0}) {
+    for (int index = from; index < recordLines.length; index++) {
+      if (recordLines[index].contains(needle)) {
+        return index + 1;
+      }
+    }
+    return 1;
+  }
+
+  final int filesLine = recordLines.indexOf('  "files": {') + 1;
+  int fileLine(String path) => lineOf('"$path": {', from: filesLine);
+  final List<String> problems = <String>[
+    if (record.tag != pin.tag)
+      '$recordName:${lineOf('"tag"')}: records ${record.tag}, the pin is '
+          '${pin.tag}',
+    if (record.commit != pin.commit)
+      '$recordName:${lineOf('"commit"')}: records commit ${record.commit}, '
+          'the pin is ${pin.commit}',
+    if (record.tarballSha256 != pin.tarballSha256)
+      '$recordName:${lineOf('"tarballSha256"')}: records tarball '
+          '${record.tarballSha256}, the pin is ${pin.tarballSha256}',
+    for (final String path in pin.keep)
+      if (!record.files.containsKey(path))
+        '$recordName:$filesLine: the KEEP entry $path is not recorded',
+  ];
+
+  final Map<String, String> current = <String, String>{};
+  for (final MapEntry<String, ({int bytes, String sha256})> entry
+      in record.files.entries) {
+    final String path = entry.key;
+    final File file = package.vendoredFile(path);
+    if (!pin.keep.contains(path)) {
+      problems.add(
+        '$recordName:${fileLine(path)}: $path is recorded but not on the '
+        'KEEP list',
+      );
+    }
+    if (!file.existsSync()) {
+      problems.add(
+        '$recordName:${fileLine(path)}: $_vendorDir/$path is recorded but '
+        'missing',
+      );
+      continue;
+    }
+    final Uint8List bytes = file.readAsBytesSync();
+    final String digest = sha256.convert(bytes).toString();
+    current[path] = digest;
+    if (bytes.length != entry.value.bytes || digest != entry.value.sha256) {
+      problems.add(
+        '${package.display(file)}:1: ${bytes.length} bytes, sha256 $digest; '
+        '$_record:${fileLine(path)} records ${entry.value.bytes} bytes, '
+        'sha256 ${entry.value.sha256}',
+      );
+    }
+  }
+  for (final File file in package.vendoredFiles()) {
+    final String path = package.vendoredPath(file);
+    if (!record.files.containsKey(path)) {
+      problems.add(
+        '${package.display(file)}:1: not recorded in $_record; only the '
+        'KEEP list is vendored',
+      );
+    }
+  }
+
+  problems.addAll(_patchProblems(package, record, recordName, current, lineOf));
+
+  final File sourceFile = package.file(_sourceList);
+  if (!sourceFile.existsSync()) {
+    problems.add('${package.display(sourceFile)}:0: missing');
+    return problems;
+  }
+  final _SourceList sources = _SourceList.read(sourceFile);
+  final String sourceName = package.display(sourceFile);
+  for (final _SourceSet set in sources.sets) {
+    if (!_commonSets.containsKey(set.name) &&
+        !_archSets.containsKey(set.name)) {
+      problems.add(
+        '$sourceName:${set.line}: ${set.name} is not a source set the '
+        'builds know',
+      );
+    }
+    for (final ({String path, int line}) entry in set.entries) {
+      if (!record.files.containsKey(entry.path)) {
+        problems.add(
+          '$sourceName:${entry.line}: ${entry.path} is not vendored',
+        );
+      }
+    }
+  }
+  problems.addAll(_forwarderProblems(package, sources, pin.keep));
+  return problems;
+}
+
+/// Every way the patches on disk and the patches [record] recorded have
+/// come apart: a patch added, changed or removed since the record was
+/// written, a patched file that is no longer what the patch produced, and a
+/// patched file that no longer reverses to its recorded upstream bytes.
+List<String> _patchProblems(
+  _Package package,
+  _Record record,
+  String recordName,
+  Map<String, String> current,
+  int Function(String needle, {int from}) lineOf,
+) {
+  final List<String> problems = <String>[];
+  final Map<String, File> onDisk = <String, File>{
+    for (final File file in package.patches()) _basename(file.path): file,
+  };
+  final Set<String> recorded = <String>{
+    for (final _PatchRecord patch in record.patches) patch.name,
+  };
+  for (final MapEntry<String, File> patch in onDisk.entries) {
+    if (!recorded.contains(patch.key)) {
+      problems.add(
+        '${package.display(patch.value)}:1: this patch is not recorded in '
+        '$_record; re-run --from',
+      );
+    }
+  }
+  for (final _PatchRecord patch in record.patches) {
+    final int patchLine = lineOf('"name": "${patch.name}"');
+    final File? file = onDisk[patch.name];
+    if (file == null) {
+      problems.add(
+        '$recordName:$patchLine: ${patch.name} is recorded but missing from '
+        '$_patchDir',
+      );
+      continue;
+    }
+    final Uint8List bytes = file.readAsBytesSync();
+    final String digest = sha256.convert(bytes).toString();
+    if (digest != patch.sha256) {
+      problems.add(
+        '${package.display(file)}:1: sha256 $digest; $_record:$patchLine '
+        'records ${patch.sha256}. An unrecorded patch change; re-run --from',
+      );
+      continue;
+    }
+    final _Patch parsed = _Patch.parse(latin1.decode(bytes));
+    for (final MapEntry<String, ({String upstream, String patched})> target
+        in patch.files.entries) {
+      final String? now = current[target.key];
+      if (now == null) {
+        continue;
+      }
+      if (now != target.value.patched) {
+        problems.add(
+          '$recordName:$patchLine: ${patch.name} records ${target.key} '
+          'patched as ${target.value.patched}, the tree holds $now',
+        );
+        continue;
+      }
+      final _FilePatch? filePatch = parsed.forPath(target.key);
+      final _Applied? reversed = filePatch?.apply(
+        package.vendoredFile(target.key).readAsBytesSync(),
+        reverse: true,
+      );
+      final String? upstream = reversed == null || reversed.failedAt != null
+          ? null
+          : sha256.convert(reversed.bytes).toString();
+      if (upstream != target.value.upstream) {
+        problems.add(
+          '${package.display(file)}:${filePatch?.line ?? 1}: reversing this '
+          'patch does not give the recorded upstream ${target.key}',
+        );
+      }
+    }
+  }
+  return problems;
+}
+
+/// Every forwarder that is missing, stale, or not generated at all.
+List<String> _forwarderProblems(
+  _Package package,
+  _SourceList sources,
+  List<String> keep,
+) {
+  final Map<String, String> expected = _forwarders(sources, keep);
+  final List<String> problems = <String>[];
+  for (final MapEntry<String, String> forwarder in expected.entries) {
+    final File file = package.file(forwarder.key);
+    final String display = package.display(file);
+    if (!file.existsSync()) {
+      problems.add('$display:1: forwarder missing; re-run --from');
+    } else if (file.readAsStringSync().replaceAll('\r\n', '\n') !=
+        forwarder.value) {
+      problems.add(
+        '$display:1: stale forwarder; it no longer matches '
+        '$_sourceList, re-run --from',
+      );
+    }
+  }
+  final Directory folder = package.directory(_forwarderDir);
+  if (folder.existsSync()) {
+    for (final FileSystemEntity entity in folder.listSync(recursive: true)) {
+      if (entity is File &&
+          !expected.containsKey(package.packagePath(entity))) {
+        problems.add(
+          '${package.display(entity)}:1: stale forwarder; nothing in '
+          '$_sourceList generates it',
+        );
+      }
+    }
+  }
+  return problems;
+}
+
+/// The Darwin forwarders [sources] and [keep] generate, as package-relative
+/// path to content: one translation unit per common source, one
+/// arch-selecting unit per architecture file name, one per shim source, a
+/// `forward/` header per vendored header in [_forwardedHeaderDirs] plus
+/// `ggml-version.h`, and the public `include/` header.
+Map<String, String> _forwarders(_SourceList sources, List<String> keep) {
+  const String up4 = '../../../..';
+  const String up5 = '../../../../..';
+  final Map<String, String> files = <String, String>{};
+  void unit(String name, String body) {
+    files['$_forwarderDir/$name'] = '$_generatedBanner$body';
+  }
+
+  final Map<String, List<({String macro, String path})>> arch =
+      <String, List<({String macro, String path})>>{};
+  for (final _SourceSet set in sources.sets) {
+    final ({String group, String base})? common = _commonSets[set.name];
+    final String? macro = _archSets[set.name];
+    for (final ({String path, int line}) entry in set.entries) {
+      if (common != null) {
+        final String relative = entry.path.startsWith(common.base)
+            ? entry.path.substring(common.base.length)
+            : entry.path;
+        unit(
+          'tw_${common.group}__${_flatten(relative)}.${_extension(relative)}',
+          '#include "$up4/$_vendorDir/${entry.path}"\n',
+        );
+      } else if (macro != null) {
+        arch
+            .putIfAbsent(
+              _basename(entry.path),
+              () => <({String macro, String path})>[],
+            )
+            .add((macro: macro, path: entry.path));
+      }
+    }
+  }
+  final List<String> archNames = arch.keys.toList()..sort();
+  for (final String name in archNames) {
+    final List<({String macro, String path})> variants = arch[name]!
+      ..sort(
+        (({String macro, String path}) a, ({String macro, String path}) b) =>
+            a.macro.compareTo(b.macro),
+      );
+    final StringBuffer body = StringBuffer();
+    for (int index = 0; index < variants.length; index++) {
+      body
+        ..write(index == 0 ? '#if' : '#elif')
+        ..write(' defined(${variants[index].macro})\n')
+        ..write('#include "$up4/$_vendorDir/${variants[index].path}"\n');
+    }
+    body.write('#endif\n');
+    unit('tw_cpu__arch_${_flatten(name)}.${_extension(name)}', body.toString());
+  }
+  for (final String shim in _shimSources) {
+    unit(
+      'tw_shim__${_flatten(shim)}.${_extension(shim)}',
+      '#include "$up4/src/$shim"\n',
+    );
+  }
+  final List<String> headers =
+      keep
+          .where(
+            (String path) =>
+                path.endsWith('.h') &&
+                _forwardedHeaderDirs.contains(_directory(path)),
+          )
+          .toList()
+        ..sort();
+  for (final String header in headers) {
+    files['$_forwarderDir/forward/${_basename(header)}'] =
+        '$_generatedBanner#include "$up5/$_vendorDir/$header"\n';
+  }
+  files['$_forwarderDir/forward/ggml-version.h'] =
+      '$_generatedBanner#include "$up5/src/generated/ggml-version.h"\n';
+  files['$_forwarderDir/include/tapture_whisper.h'] =
+      '$_generatedBanner#include "$up5/src/tapture_whisper.h"\n';
+  return files;
+}
+
+/// [path] with every `/`, `.` and `-` written as `_`, extension included,
+/// so `ggml.c` and `ggml.cpp` never share an object-file name in Xcode.
+String _flatten(String path) => path.replaceAll(RegExp(r'[/.\-]'), '_');
+
+String _extension(String path) => path.substring(path.lastIndexOf('.') + 1);
+
+String _directory(String path) {
+  final int slash = path.lastIndexOf('/');
+  return slash == -1 ? '' : path.substring(0, slash);
+}
+
+String _basename(String path) {
+  final String slashed = _slash(path);
+  return slashed.substring(slashed.lastIndexOf('/') + 1);
+}
+
+String _slash(String path) => path.replaceAll(r'\', '/');
+
+/// The regular files of a gzipped tarball, keyed by their path below the
+/// tarball's single top folder.
+Map<String, Uint8List> _untar(Uint8List packed) {
+  final Archive archive = TarDecoder().decodeBytes(
+    GZipDecoder().decodeBytes(packed),
+  );
+  final Map<String, Uint8List> files = <String, Uint8List>{};
+  for (final ArchiveFile file in archive.files) {
+    if (!file.isFile) {
+      continue;
+    }
+    final String name = _slash(file.name);
+    final int slash = name.indexOf('/');
+    if (slash == -1) {
+      continue;
+    }
+    final Object? content = file.content;
+    if (content is List<int>) {
+      files[name.substring(slash + 1)] = Uint8List.fromList(content);
+    }
+  }
+  return files;
+}
+
+/// The package directory and the paths inside it.
+final class _Package {
+  _Package(this.frontendRoot);
+
+  final Directory frontendRoot;
+
+  String get _root => '${_slash(frontendRoot.path)}/$whisperPackage';
+
+  File file(String relative) => File('$_root/$relative');
+
+  Directory directory(String relative) => Directory('$_root/$relative');
+
+  File vendoredFile(String path) => file('$_vendorDir/$path');
+
+  /// How [entity] is named in a report: relative to `frontend/`.
+  String display(FileSystemEntity entity) {
+    final String from = _slash(frontendRoot.path);
+    final String to = _slash(entity.path);
+    return to.startsWith('$from/') ? to.substring(from.length + 1) : to;
+  }
+
+  /// [entity]'s path relative to the package.
+  String packagePath(FileSystemEntity entity) =>
+      _slash(entity.path).substring(_root.length + 1);
+
+  /// [file]'s path relative to `third_party/whisper.cpp`.
+  String vendoredPath(File file) =>
+      packagePath(file).substring(_vendorDir.length + 1);
+
+  /// Every file under `third_party/whisper.cpp`, sorted.
+  List<File> vendoredFiles() => _filesUnder(directory(_vendorDir));
+
+  /// Every `*.patch` under `third_party/patches`, in the order they apply.
+  List<File> patches() => _filesUnder(
+    directory(_patchDir),
+  ).where((File file) => file.path.endsWith('.patch')).toList();
+
+  List<File> _filesUnder(Directory folder) {
+    if (!folder.existsSync()) {
+      return <File>[];
+    }
+    return folder.listSync(recursive: true).whereType<File>().toList()
+      ..sort((File a, File b) => _slash(a.path).compareTo(_slash(b.path)));
+  }
+}
+
+/// One `set(NAME ...)` block of `whisper_sources.cmake`.
+typedef _SourceSet = ({
+  String name,
+  int line,
+  List<({String path, int line})> entries,
+});
+
+/// The parsed `whisper_sources.cmake`.
+final class _SourceList {
+  const _SourceList(this.sets);
+
+  /// Reads every `set(NAME entry ...)` block, with the line of each entry.
+  /// Comments are dropped; anything outside a block is ignored.
+  factory _SourceList.read(File file) {
+    if (!file.existsSync()) {
+      return const _SourceList(<_SourceSet>[]);
+    }
+    final List<_SourceSet> sets = <_SourceSet>[];
+    final List<String> lines = file.readAsLinesSync();
+    String? name;
+    int nameLine = 0;
+    List<({String path, int line})> entries = <({String path, int line})>[];
+    for (int index = 0; index < lines.length; index++) {
+      String text = lines[index];
+      final int hash = text.indexOf('#');
+      if (hash != -1) {
+        text = text.substring(0, hash);
+      }
+      final Match? open = RegExp(r'^\s*set\(\s*(\w+)').firstMatch(text);
+      if (name == null && open != null) {
+        name = open.group(1);
+        nameLine = index + 1;
+        entries = <({String path, int line})>[];
+        text = text.substring(open.end);
+      }
+      if (name == null) {
+        continue;
+      }
+      final int close = text.indexOf(')');
+      final String body = close == -1 ? text : text.substring(0, close);
+      for (final String token in body.split(RegExp(r'\s+'))) {
+        if (token.isNotEmpty) {
+          entries.add((path: token, line: index + 1));
+        }
+      }
+      if (close != -1) {
+        sets.add((name: name, line: nameLine, entries: entries));
+        name = null;
+      }
+    }
+    return _SourceList(sets);
+  }
+
+  final List<_SourceSet> sets;
+}
+
+/// One recorded patch: its name, hash and per-file hashes.
+typedef _PatchRecord = ({
+  String name,
+  String sha256,
+  Map<String, ({String upstream, String patched})> files,
+});
+
+/// The parsed `VENDOR.json`.
+final class _Record {
+  const _Record({
+    required this.tag,
+    required this.commit,
+    required this.tarballSha256,
+    required this.patches,
+    required this.files,
+  });
+
+  final String tag;
+  final String commit;
+  final String tarballSha256;
+  final List<_PatchRecord> patches;
+  final Map<String, ({int bytes, String sha256})> files;
+
+  /// The record in [text], or null when it is not one.
+  static _Record? parse(String text) {
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(text);
+    } on FormatException {
+      return null;
+    }
+    if (decoded is! Map<String, Object?>) {
+      return null;
+    }
+    final Object? tag = decoded['tag'];
+    final Object? commit = decoded['commit'];
+    final Object? tarball = decoded['tarballSha256'];
+    final Object? patches = decoded['patches'];
+    final Object? files = decoded['files'];
+    if (tag is! String ||
+        commit is! String ||
+        tarball is! String ||
+        patches is! List<Object?> ||
+        files is! Map<String, Object?>) {
+      return null;
+    }
+    final Map<String, ({int bytes, String sha256})> fileHashes =
+        <String, ({int bytes, String sha256})>{};
+    for (final MapEntry<String, Object?> entry in files.entries) {
+      final Object? value = entry.value;
+      if (value is! Map<String, Object?>) {
+        return null;
+      }
+      final Object? bytes = value['bytes'];
+      final Object? digest = value['sha256'];
+      if (bytes is! int || digest is! String) {
+        return null;
+      }
+      fileHashes[entry.key] = (bytes: bytes, sha256: digest);
+    }
+    final List<_PatchRecord> patchRecords = <_PatchRecord>[];
+    for (final Object? patch in patches) {
+      if (patch is! Map<String, Object?>) {
+        return null;
+      }
+      final Object? name = patch['name'];
+      final Object? digest = patch['sha256'];
+      final Object? touched = patch['files'];
+      if (name is! String ||
+          digest is! String ||
+          touched is! Map<String, Object?>) {
+        return null;
+      }
+      final Map<String, ({String upstream, String patched})> targets =
+          <String, ({String upstream, String patched})>{};
+      for (final MapEntry<String, Object?> target in touched.entries) {
+        final Object? value = target.value;
+        if (value is! Map<String, Object?>) {
+          return null;
+        }
+        final Object? upstream = value['upstreamSha256'];
+        final Object? patched = value['patchedSha256'];
+        if (upstream is! String || patched is! String) {
+          return null;
+        }
+        targets[target.key] = (upstream: upstream, patched: patched);
+      }
+      patchRecords.add((name: name, sha256: digest, files: targets));
+    }
+    return _Record(
+      tag: tag,
+      commit: commit,
+      tarballSha256: tarball,
+      patches: patchRecords,
+      files: fileHashes,
+    );
+  }
+}
+
+/// The result of applying one file's hunks: the new bytes, or the patch
+/// line of the first hunk that did not match.
+typedef _Applied = ({Uint8List bytes, int? failedAt});
+
+/// One hunk: where it starts in the old and new file, its lines with their
+/// leading ` `, `-` or `+`, and the patch line of its `@@` header.
+typedef _Hunk = ({int oldStart, int newStart, List<String> lines, int line});
+
+/// A unified diff, as the files it changes.
+final class _Patch {
+  const _Patch(this.files);
+
+  /// Parses [text]: any preamble before the first `--- ` line is ignored,
+  /// `a/` and `b/` prefixes are dropped, and only exact hunks are read.
+  factory _Patch.parse(String text) {
+    final List<String> lines = text.replaceAll('\r\n', '\n').split('\n');
+    final List<_FilePatch> files = <_FilePatch>[];
+    final RegExp header = RegExp(
+      r'^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@',
+    );
+    int index = 0;
+    while (index < lines.length) {
+      if (!lines[index].startsWith('--- ') ||
+          index + 1 >= lines.length ||
+          !lines[index + 1].startsWith('+++ ')) {
+        index++;
+        continue;
+      }
+      final int fileLine = index + 1;
+      final String path = _stripPrefix(lines[index + 1].substring(4).trim());
+      index += 2;
+      final List<_Hunk> hunks = <_Hunk>[];
+      while (index < lines.length) {
+        final Match? match = header.firstMatch(lines[index]);
+        if (match == null) {
+          break;
+        }
+        final int hunkLine = index + 1;
+        int oldLeft = int.parse(match.group(2) ?? '1');
+        int newLeft = int.parse(match.group(4) ?? '1');
+        final List<String> body = <String>[];
+        index++;
+        while (index < lines.length && (oldLeft > 0 || newLeft > 0)) {
+          // A blank context line may have lost its leading space in transit.
+          final String line = lines[index].isEmpty ? ' ' : lines[index];
+          index++;
+          if (line.startsWith(r'\')) {
+            continue;
+          }
+          body.add(line);
+          if (!line.startsWith('+')) {
+            oldLeft--;
+          }
+          if (!line.startsWith('-')) {
+            newLeft--;
+          }
+        }
+        while (index < lines.length && lines[index].startsWith(r'\')) {
+          index++;
+        }
+        hunks.add((
+          oldStart: int.parse(match.group(1)!),
+          newStart: int.parse(match.group(3)!),
+          lines: body,
+          line: hunkLine,
+        ));
+      }
+      files.add(_FilePatch(path, fileLine, hunks));
+    }
+    return _Patch(files);
+  }
+
+  final List<_FilePatch> files;
+
+  /// The hunks for [path], or null when the patch does not touch it.
+  _FilePatch? forPath(String path) {
+    for (final _FilePatch file in files) {
+      if (file.path == path) {
+        return file;
+      }
+    }
+    return null;
+  }
+
+  static String _stripPrefix(String path) {
+    final String name = path.split('\t').first;
+    return name.startsWith('a/') || name.startsWith('b/')
+        ? name.substring(2)
+        : name;
+  }
+}
+
+/// The hunks one patch applies to one file.
+final class _FilePatch {
+  const _FilePatch(this.path, this.line, this.hunks);
+
+  final String path;
+  final int line;
+  final List<_Hunk> hunks;
+
+  /// Applies every hunk to [bytes] with no fuzz and no offset search, or
+  /// undoes them when [reverse] is set. Bytes are read as Latin-1, so the
+  /// result is byte-exact whatever the file's encoding.
+  _Applied apply(Uint8List bytes, {bool reverse = false}) {
+    final String text = latin1.decode(bytes);
+    final bool trailingNewline = text.endsWith('\n');
+    final List<String> source =
+        (trailingNewline ? text.substring(0, text.length - 1) : text).split(
+          '\n',
+        );
+    final List<String> output = <String>[];
+    int cursor = 0;
+    final String removed = reverse ? '+' : '-';
+    final String added = reverse ? '-' : '+';
+    for (final _Hunk hunk in hunks) {
+      final List<String> expected = <String>[
+        for (final String line in hunk.lines)
+          if (line.startsWith(' ') || line.startsWith(removed))
+            line.substring(1),
+      ];
+      // A hunk with no old lines inserts after its start line rather than
+      // at it (`@@ -12,0 +13,2 @@`).
+      final int origin = reverse ? hunk.newStart : hunk.oldStart;
+      final int start = expected.isEmpty ? origin : origin - 1;
+      final bool matches =
+          start >= cursor &&
+          start + expected.length <= source.length &&
+          _same(source.sublist(start, start + expected.length), expected);
+      if (!matches) {
+        return (bytes: bytes, failedAt: hunk.line);
+      }
+      output
+        ..addAll(source.sublist(cursor, start))
+        ..addAll(<String>[
+          for (final String line in hunk.lines)
+            if (line.startsWith(' ') || line.startsWith(added))
+              line.substring(1),
+        ]);
+      cursor = start + expected.length;
+    }
+    output.addAll(source.sublist(cursor));
+    final String joined = output.join('\n');
+    return (
+      bytes: Uint8List.fromList(
+        latin1.encode(trailingNewline ? '$joined\n' : joined),
+      ),
+      failedAt: null,
+    );
+  }
+
+  static bool _same(List<String> a, List<String> b) {
+    for (int index = 0; index < a.length; index++) {
+      if (a[index] != b[index]) {
+        return false;
+      }
+    }
+    return true;
+  }
+}

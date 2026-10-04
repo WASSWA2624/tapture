@@ -23,6 +23,10 @@ const Set<String> _binaryExtensions = <String>{
   'ttf',
   'otf',
   'woff',
+  'wasm',
+  'a',
+  'dylib',
+  'gguf',
 };
 
 /// A documented placeholder is allowed only inside a test fixture.
@@ -198,11 +202,20 @@ const Set<String> _generatedFolders = <String>{
   'ephemeral',
 };
 
+/// Folders of vendored upstream source inside the scan roots. They are not
+/// scanned for keys because `tool/whisper_vendor.dart --check` verifies every
+/// byte of them against its pinned hash instead (dev-plan task 102).
+const Set<String> _hashVerifiedFolders = <String>{'third_party'};
+
 /// Text files under the folders that may not hold a key, generated build
-/// output aside.
+/// output and hash-verified vendored source aside: [secretScanRoots] and the
+/// native and browser sources in [nativeSourceScanRoots].
 List<File> _sources(Directory root) {
   final List<File> sources = <File>[];
-  for (final String name in secretScanRoots) {
+  for (final String name in <String>{
+    ...secretScanRoots,
+    ...nativeSourceScanRoots,
+  }) {
     final Directory folder = Directory('${root.path}/$name');
     if (!folder.existsSync()) {
       continue;
@@ -216,7 +229,8 @@ List<File> _sources(Directory root) {
   return sources..sort((File a, File b) => a.path.compareTo(b.path));
 }
 
-/// Whether [file] sits in a generated folder somewhere below [folder].
+/// Whether [file] sits in a generated or hash-verified folder somewhere
+/// below [folder].
 bool _isGenerated(Directory folder, File file) {
   final String from = _slash(folder.path);
   final String to = _slash(file.path);
@@ -224,7 +238,13 @@ bool _isGenerated(Directory folder, File file) {
       ? to.substring(from.length + 1)
       : to;
   final List<String> segments = relative.split('/');
-  return segments.take(segments.length - 1).any(_generatedFolders.contains);
+  return segments
+      .take(segments.length - 1)
+      .any(
+        (String segment) =>
+            _generatedFolders.contains(segment) ||
+            _hashVerifiedFolders.contains(segment),
+      );
 }
 
 /// Whether [file] can be decoded as text and is not a known binary type.

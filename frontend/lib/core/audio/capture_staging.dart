@@ -9,6 +9,7 @@ import 'package:tapture/core/files/storage_root.dart';
 import 'audio_recording.dart';
 import 'capture_staging_stub.dart'
     if (dart.library.io) 'capture_staging_io.dart'
+    if (dart.library.js_interop) 'capture_staging_web.dart'
     as platform;
 import 'memory_pcm_store.dart';
 import 'pcm_store.dart';
@@ -17,7 +18,8 @@ import 'pcm_store.dart';
 /// between the microphone and the published take.
 ///
 /// On device a take is a WAV file beside its target, written as it is
-/// captured, with its header patched at every checkpoint. A capture with no
+/// captured, with its header patched at every checkpoint; in a browser it
+/// is a run of stored chunks (`BlobCaptureStaging`). A capture with no
 /// target keeps its audio in memory only. Every call is applied in order.
 abstract interface class CaptureStaging {
   /// Opens staging for a take published at [relativePath] under [root]
@@ -55,11 +57,12 @@ abstract interface class CaptureStaging {
   PcmStore get store;
 
   /// Appends 16 kHz mono [samples]. Once it completes they are in [store]
-  /// and handed to the operating system.
+  /// and handed to the operating system; a browser holds the chunk being
+  /// filled in memory until it is full or a [checkpoint].
   Future<Result<void>> append(Int16List samples);
 
   /// Patches the take's header to its current length and flushes it to
-  /// disk.
+  /// disk; in a browser, writes the chunk still being filled.
   Future<Result<void>> checkpoint();
 
   /// Finishes and publishes the take; null for a memory-only capture. On
@@ -75,7 +78,8 @@ abstract interface class CaptureStaging {
   /// a start that never opened the microphone.
   Future<void> discardIfEmpty();
 
-  /// Closes [store]; later reads fail.
+  /// Closes [store]; later reads fail. A browser take's chunks are removed
+  /// here, and only once the take was published.
   Future<void> release();
 }
 

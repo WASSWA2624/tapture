@@ -124,6 +124,58 @@
   "@dictationFailed": {
     "description": "The recogniser stopped for a reason it did not name."
   },
+  "speechUnavailable": "Speech recognition is not available in this version of the app.",
+  "@speechUnavailable": {
+    "description": "The on-device speech engine is missing or could not start."
+  },
+  "speechModelMissing": "The speech model is not installed on this device.",
+  "@speechModelMissing": {
+    "description": "The on-device speech model file is absent."
+  },
+  "speechModelMissingRecovery": "Reinstall the app, or import the model in Settings.",
+  "@speechModelMissingRecovery": {
+    "description": "What to do when the on-device speech model is absent."
+  },
+  "speechModelDamaged": "The speech model file is damaged, so it was not used.",
+  "@speechModelDamaged": {
+    "description": "The on-device speech model failed its size, header or checksum check."
+  },
+  "speechModelDamagedRecovery": "Reinstall the app, or import the model again in Settings.",
+  "@speechModelDamagedRecovery": {
+    "description": "What to do when the on-device speech model is damaged."
+  },
+  "speechDeviceUnsupported": "This device cannot run speech recognition.",
+  "@speechDeviceUnsupported": {
+    "description": "The processor, memory or browser cannot run the on-device speech engine."
+  },
+  "speechLowMemory": "There is not enough free memory to load the speech model.",
+  "@speechLowMemory": {
+    "description": "The on-device speech model could not be loaded for lack of memory."
+  },
+  "speechLowMemoryRecovery": "Close other apps, then try again.",
+  "@speechLowMemoryRecovery": {
+    "description": "What to do when memory is too low for the on-device speech model."
+  },
+  "speechTranscriptionFailed": "Part of the speech could not be turned into text. The audio is kept.",
+  "@speechTranscriptionFailed": {
+    "description": "The on-device speech engine failed on one stretch of audio."
+  },
+  "speechLanguageUnsupported": "Speech recognition on this device does not support the chosen voice language.",
+  "@speechLanguageUnsupported": {
+    "description": "The voice language has no on-device speech model."
+  },
+  "speechEngineStopped": "Speech recognition stopped unexpectedly. Try again.",
+  "@speechEngineStopped": {
+    "description": "The on-device speech engine stopped or was closed mid-task."
+  },
+  "speechImportUnknown": "This file is not a speech model the app recognises.",
+  "@speechImportUnknown": {
+    "description": "An imported file matches no known speech model."
+  },
+  "speechImportUnknownRecovery": "Choose one of the model files named in Settings.",
+  "@speechImportUnknownRecovery": {
+    "description": "What to do when an imported file is not a known speech model."
+  },
   "autoFilled": "Auto-filled",
   "@autoFilled": {
     "description": "A value filled in rather than typed."
@@ -3977,6 +4029,14 @@
   "@audioStartFailedRecovery": {
     "description": "Recovery for [audioStartFailed]."
   },
+  "audioTakeLimitReached": "This recording reached the longest take this browser can keep. Everything captured so far is kept.",
+  "@audioTakeLimitReached": {
+    "description": "A browser take refused more audio at its length cap."
+  },
+  "audioTakeLimitReachedRecovery": "Stop this recording, then start a new one to continue.",
+  "@audioTakeLimitReachedRecovery": {
+    "description": "Recovery for [audioTakeLimitReached]."
+  },
   "audioPathOutsideStorage": "The recording must be saved inside the project folder.",
   "@audioPathOutsideStorage": {
     "description": "A recording path that would leave the storage folder."
@@ -4016,21 +4076,6 @@
   "audioRecorderStatusAudioReady": "Audio ready",
   "@audioRecorderStatusAudioReady": {
     "description": "Recorder phase and elapsed time."
-  },
-  "audioRecorderStatusS": "{label} · {seconds}s",
-  "@audioRecorderStatusS": {
-    "description": "Recorder phase and elapsed time.",
-    "placeholders": {
-      "label": {
-        "type": "Object",
-        "description": "Value of label in audioRecorderStatus. User-provided content is not translated."
-      },
-      "seconds": {
-        "type": "int",
-        "description": "Value of seconds in audioRecorderStatus. User-provided content is not translated.",
-        "format": "decimalPattern"
-      }
-    }
   },
   "liveTranscriptStart": "Start recording",
   "@liveTranscriptStart": {

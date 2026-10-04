@@ -217,6 +217,84 @@ abstract class AppLocalizations {
   /// **'Voice input stopped. Try again, or type instead.'**
   String get dictationFailed;
 
+  /// The on-device speech engine is missing or could not start.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech recognition is not available in this version of the app.'**
+  String get speechUnavailable;
+
+  /// The on-device speech model file is absent.
+  ///
+  /// In en, this message translates to:
+  /// **'The speech model is not installed on this device.'**
+  String get speechModelMissing;
+
+  /// What to do when the on-device speech model is absent.
+  ///
+  /// In en, this message translates to:
+  /// **'Reinstall the app, or import the model in Settings.'**
+  String get speechModelMissingRecovery;
+
+  /// The on-device speech model failed its size, header or checksum check.
+  ///
+  /// In en, this message translates to:
+  /// **'The speech model file is damaged, so it was not used.'**
+  String get speechModelDamaged;
+
+  /// What to do when the on-device speech model is damaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Reinstall the app, or import the model again in Settings.'**
+  String get speechModelDamagedRecovery;
+
+  /// The processor, memory or browser cannot run the on-device speech engine.
+  ///
+  /// In en, this message translates to:
+  /// **'This device cannot run speech recognition.'**
+  String get speechDeviceUnsupported;
+
+  /// The on-device speech model could not be loaded for lack of memory.
+  ///
+  /// In en, this message translates to:
+  /// **'There is not enough free memory to load the speech model.'**
+  String get speechLowMemory;
+
+  /// What to do when memory is too low for the on-device speech model.
+  ///
+  /// In en, this message translates to:
+  /// **'Close other apps, then try again.'**
+  String get speechLowMemoryRecovery;
+
+  /// The on-device speech engine failed on one stretch of audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Part of the speech could not be turned into text. The audio is kept.'**
+  String get speechTranscriptionFailed;
+
+  /// The voice language has no on-device speech model.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech recognition on this device does not support the chosen voice language.'**
+  String get speechLanguageUnsupported;
+
+  /// The on-device speech engine stopped or was closed mid-task.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech recognition stopped unexpectedly. Try again.'**
+  String get speechEngineStopped;
+
+  /// An imported file matches no known speech model.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is not a speech model the app recognises.'**
+  String get speechImportUnknown;
+
+  /// What to do when an imported file is not a known speech model.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose one of the model files named in Settings.'**
+  String get speechImportUnknownRecovery;
+
   /// A value filled in rather than typed.
   ///
   /// In en, this message translates to:
@@ -4891,6 +4969,18 @@ abstract class AppLocalizations {
   /// **'Try again. Nothing already captured was lost.'**
   String get audioStartFailedRecovery;
 
+  /// A browser take refused more audio at its length cap.
+  ///
+  /// In en, this message translates to:
+  /// **'This recording reached the longest take this browser can keep. Everything captured so far is kept.'**
+  String get audioTakeLimitReached;
+
+  /// Recovery for [audioTakeLimitReached].
+  ///
+  /// In en, this message translates to:
+  /// **'Stop this recording, then start a new one to continue.'**
+  String get audioTakeLimitReachedRecovery;
+
   /// A recording path that would leave the storage folder.
   ///
   /// In en, this message translates to:
@@ -4950,12 +5040,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Audio ready'**
   String get audioRecorderStatusAudioReady;
-
-  /// Recorder phase and elapsed time.
-  ///
-  /// In en, this message translates to:
-  /// **'{label} · {seconds}s'**
-  String audioRecorderStatusS(Object label, int seconds);
 
   /// Recording bar control that starts a recording with a live transcript.
   ///

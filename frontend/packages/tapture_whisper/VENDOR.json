@@ -1,0 +1,291 @@
+{
+  "tag": "v1.9.4",
+  "commit": "927cfce34f31707e17f2bff35c349632fb9e2c3a",
+  "tarballSha256": "57e280cee375ab02425b806ad5146b99f6eb9357e3c2b31357c8a6af2e2e44ae",
+  "patches": [
+    {
+      "name": "0001-sched-abort-callback.patch",
+      "sha256": "e6043293682f20fa710c8a0e52504591dd0ecc71b94bdd234f26fdaa0b503773",
+      "files": {
+        "src/whisper.cpp": {
+          "upstreamSha256": "c48686fbc2cba1b0ac0f9c8e964188c691e67fff5906f2629f3223ff64f92d16",
+          "patchedSha256": "9dbdbadfaa877227d1c021a70b70aa2df7761edd2da8e0f92085734dea6c23ab"
+        }
+      }
+    }
+  ],
+  "files": {
+    "AUTHORS": {
+      "bytes": 21736,
+      "sha256": "09800c8c5bdf54bcfd65d869c85ea1b1756016f15798bef9e706ca390ab04f12"
+    },
+    "LICENSE": {
+      "bytes": 1078,
+      "sha256": "94f29bbed6a22c35b992c5c6ebf0e7c92f13b836b90f36f461c9cf2f0f1d010d"
+    },
+    "ggml/include/ggml-alloc.h": {
+      "bytes": 3753,
+      "sha256": "94e4cd069b9313b2ceb35dacec901981e0bb478d8bb31035b7126be091998c23"
+    },
+    "ggml/include/ggml-backend.h": {
+      "bytes": 25374,
+      "sha256": "46d84cb998105f871240864fd0f55446939a2fe86c5c281afa63a010fb1f65a2"
+    },
+    "ggml/include/ggml-cpp.h": {
+      "bytes": 1652,
+      "sha256": "bc15ba002c68685df23faae42df0d2b3d58032011f88b649021ab92485862c72"
+    },
+    "ggml/include/ggml-cpu.h": {
+      "bytes": 7753,
+      "sha256": "316279e004cdeb8e6ef78599acb602bf79a8abdf897fed9fd1914808c1518c6e"
+    },
+    "ggml/include/ggml-opt.h": {
+      "bytes": 14040,
+      "sha256": "3586de1bc8a934b5c72339e2b6937b0641e8f149b512231e666f67de0736eea2"
+    },
+    "ggml/include/ggml.h": {
+      "bytes": 113310,
+      "sha256": "34192eac913444df9dc1d23025a618448cdee1ee7d78597af4979d8edc77b695"
+    },
+    "ggml/include/gguf.h": {
+      "bytes": 11355,
+      "sha256": "e56714aab702e5ce62ee587a409643c08f7e93e8fbb77f48ef7cc85075f96fa4"
+    },
+    "ggml/src/ggml-alloc.c": {
+      "bytes": 47847,
+      "sha256": "213b48d6ef6d6ffef55c438db837116105de72cdae3dd152673035e61508d384"
+    },
+    "ggml/src/ggml-backend-dl.cpp": {
+      "bytes": 1051,
+      "sha256": "acd76df8b83bcdef6807bc7b0520f57b379d61b4ff1027c04aa4d140d16ad07f"
+    },
+    "ggml/src/ggml-backend-dl.h": {
+      "bytes": 791,
+      "sha256": "225bd83a197c4e8b5f985717176824d1144e2b74a79f04838f51b84115c14dc5"
+    },
+    "ggml/src/ggml-backend-impl.h": {
+      "bytes": 14798,
+      "sha256": "683e0583268e91e1f50b4ffc416b6523e0cec2dfdb3984c89792bda29e32566b"
+    },
+    "ggml/src/ggml-backend-meta.cpp": {
+      "bytes": 118653,
+      "sha256": "890f527a231068c1a3f6cad4515dbeba36d4d32889f12f20fc35af7bf97c3216"
+    },
+    "ggml/src/ggml-backend-reg.cpp": {
+      "bytes": 18555,
+      "sha256": "0f63c69ad083e0744872f57d59d049b069283303f5bbc646222907d779afe4d1"
+    },
+    "ggml/src/ggml-backend.cpp": {
+      "bytes": 99806,
+      "sha256": "331159cfbf00b8a1e4a8fb3a1caa1b66365d67fd76a7480e09800319288174e8"
+    },
+    "ggml/src/ggml-common.h": {
+      "bytes": 135161,
+      "sha256": "0061131b615c5721fc88a78feeb22c1f8c450f1c2646a317d80796a653bf595c"
+    },
+    "ggml/src/ggml-cpu/amx/amx.cpp": {
+      "bytes": 8265,
+      "sha256": "636d1e4b858a86ad6568100bbdb4bf9715d9dfb25d3831415d55e04e39acad86"
+    },
+    "ggml/src/ggml-cpu/amx/amx.h": {
+      "bytes": 202,
+      "sha256": "9d098ceee6a8114d4a660ff269064a27aa25b8a4f205d1e6984d17bec5104f0d"
+    },
+    "ggml/src/ggml-cpu/amx/common.h": {
+      "bytes": 2675,
+      "sha256": "c694f6bb066a820b717f986914b0d112dca0d8d3a1e239e958fce30c864751c3"
+    },
+    "ggml/src/ggml-cpu/amx/mmq.cpp": {
+      "bytes": 108216,
+      "sha256": "0f95c80e0300eca3b3a3df07272042fee708425e19cd5f2c4cba7b253b26d226"
+    },
+    "ggml/src/ggml-cpu/amx/mmq.h": {
+      "bytes": 397,
+      "sha256": "bd33d0713b12daf9eedea1619dd715619baaa36b98c44ec754d532909d80933a"
+    },
+    "ggml/src/ggml-cpu/arch-fallback.h": {
+      "bytes": 21654,
+      "sha256": "2dc6b116f732329effe45d3f9384d5ebae628f3c19e2f2ac69551fd2e3721917"
+    },
+    "ggml/src/ggml-cpu/arch/arm/quants.c": {
+      "bytes": 216963,
+      "sha256": "9fccd3897db24c9df89b8431b588175894e5f54697cf45768d0c6e6c5544093e"
+    },
+    "ggml/src/ggml-cpu/arch/arm/repack.cpp": {
+      "bytes": 255596,
+      "sha256": "2e7ba6aaf10834601315fc8f5e7f52a1638076bf6c0435542247c3de1ee4cce7"
+    },
+    "ggml/src/ggml-cpu/arch/wasm/quants.c": {
+      "bytes": 46731,
+      "sha256": "defc3f28aa882d52a390d4573f5308ddc3aa95c5f487bbdaf311e7b0874493b3"
+    },
+    "ggml/src/ggml-cpu/arch/x86/quants.c": {
+      "bytes": 197407,
+      "sha256": "3c489fdc77e3ab484a5f188bff9c60c0e9483c951ed65c1a562a04c249d5628e"
+    },
+    "ggml/src/ggml-cpu/arch/x86/repack.cpp": {
+      "bytes": 665038,
+      "sha256": "c69735f83caf854172cac78eed2cbc022ef81c077e5f6aca55a49d3404a02331"
+    },
+    "ggml/src/ggml-cpu/binary-ops.cpp": {
+      "bytes": 6709,
+      "sha256": "2df261aadce36a20f5e3bf6961d4ca27b8c2d461afc41488361ee6ad09c1730d"
+    },
+    "ggml/src/ggml-cpu/binary-ops.h": {
+      "bytes": 518,
+      "sha256": "5915519c4e2227db28239b2a5d3b8a5f9022730cc0ddb7880b24748ee78cd1f9"
+    },
+    "ggml/src/ggml-cpu/common.h": {
+      "bytes": 2333,
+      "sha256": "db7c19747a28c819d18922aa43b91b224df3730e424e6d8a4cf4fd16bfb1db14"
+    },
+    "ggml/src/ggml-cpu/ggml-cpu-impl.h": {
+      "bytes": 13723,
+      "sha256": "e7008069e3e46f1db5e3d2eaafb4ddec3c7d0ece5c0454f99c5a8e33a50f20ba"
+    },
+    "ggml/src/ggml-cpu/ggml-cpu.c": {
+      "bytes": 132081,
+      "sha256": "839197aab9a2fb3c509221699e2810a4c4f3f3043416f55e653c380a46ed74cf"
+    },
+    "ggml/src/ggml-cpu/ggml-cpu.cpp": {
+      "bytes": 24546,
+      "sha256": "b620923a8966395ba9c5f2ee4acb35b8d42ea77a58943d7eb733a917c4c1cafb"
+    },
+    "ggml/src/ggml-cpu/hbm.cpp": {
+      "bytes": 2003,
+      "sha256": "3c75b5aaf9b51d17060ecfb93cb5f8b22ce3974d7eff3d76dec2156d2f194b80"
+    },
+    "ggml/src/ggml-cpu/hbm.h": {
+      "bytes": 155,
+      "sha256": "340c84ac6a1c83d2218a15d6d71c1efb6ba1a5517162c2fde4baa0a9204af26b"
+    },
+    "ggml/src/ggml-cpu/iqp.cpp": {
+      "bytes": 48342,
+      "sha256": "0e2ab5a4be4bea1dbce740a5ff436ddeac0bcfdaff6fd9edfa367dc75c069126"
+    },
+    "ggml/src/ggml-cpu/iqp.h": {
+      "bytes": 1732,
+      "sha256": "3b30f9968e3264fd611a6ff14148af296e95b7b442443c54c830958d2da89f69"
+    },
+    "ggml/src/ggml-cpu/ops.cpp": {
+      "bytes": 417140,
+      "sha256": "dbffc3df9816cc3f7e5428f9fb9afa13db4ac2979899605a057121bb031ba136"
+    },
+    "ggml/src/ggml-cpu/ops.h": {
+      "bytes": 10103,
+      "sha256": "15c27f1127f0c9edd9dcd4e684eb8b2bd5d2038b4b32594d4a4b8b827407d33a"
+    },
+    "ggml/src/ggml-cpu/quants.c": {
+      "bytes": 45124,
+      "sha256": "a61f1011e49d05b5f99d352b158d5b8e36cf008294bb0db309f72bdd7f1d4e35"
+    },
+    "ggml/src/ggml-cpu/quants.h": {
+      "bytes": 10862,
+      "sha256": "918d6755b3e601ec7bb83c7dbf1d73304490651ccbb4072b0d31a2b45df751da"
+    },
+    "ggml/src/ggml-cpu/repack.cpp": {
+      "bytes": 195909,
+      "sha256": "4ff9c018a0514664a5df0e65bebac47be27f6becf0c81145b372ee80dad5ed89"
+    },
+    "ggml/src/ggml-cpu/repack.h": {
+      "bytes": 19905,
+      "sha256": "fe472315b4106400d7890fca308659c74bcdedad1b011a9ba60c02dcd5bef57b"
+    },
+    "ggml/src/ggml-cpu/simd-gemm.h": {
+      "bytes": 7471,
+      "sha256": "ce613195325cea048ede4c7a86c382ac6abf4c701c91eee640bd3cc78b39ce5e"
+    },
+    "ggml/src/ggml-cpu/simd-mappings.h": {
+      "bytes": 54751,
+      "sha256": "d1ca849419a643d4304d82d3921d11b02722ccf69d607a86c2c579b864f700b2"
+    },
+    "ggml/src/ggml-cpu/traits.cpp": {
+      "bytes": 1231,
+      "sha256": "a85bd3ff50c91cb67d14221988544664dfe5975db0811b330dc4a2f385239de4"
+    },
+    "ggml/src/ggml-cpu/traits.h": {
+      "bytes": 1157,
+      "sha256": "26e1b41879091a663325848aa82a4023b459fd1e688b3b0e2a9bde3e72a3a764"
+    },
+    "ggml/src/ggml-cpu/unary-ops.cpp": {
+      "bytes": 11555,
+      "sha256": "e63b382766f1b8c5ded1577be9704e85cb4e9cd24584f3e1474911a40146df33"
+    },
+    "ggml/src/ggml-cpu/unary-ops.h": {
+      "bytes": 2442,
+      "sha256": "280b7979055079d43bdde7790a7290bf04f75640481c59abc2364c46d6ac6d8e"
+    },
+    "ggml/src/ggml-cpu/vec.cpp": {
+      "bytes": 25309,
+      "sha256": "cda0babb53f9c8ff1faa7459b2c49019d15e5970dfe0c613d58e2659e919f524"
+    },
+    "ggml/src/ggml-cpu/vec.h": {
+      "bytes": 66060,
+      "sha256": "926330bae1c5d003bd654035426e31381fafcdca23ffcc23201d219dbb97cbeb"
+    },
+    "ggml/src/ggml-feats.h": {
+      "bytes": 4885,
+      "sha256": "4490179fd8c6df80fe29fc602ed7236eb828c51e9c379efb0dd510cb5cb81fec"
+    },
+    "ggml/src/ggml-impl.h": {
+      "bytes": 25604,
+      "sha256": "2ed56e264202906d107e26d08eabb242d3107b026ebfb78096fa1e5f94bdbbb8"
+    },
+    "ggml/src/ggml-opt.cpp": {
+      "bytes": 42081,
+      "sha256": "e35fd27856e37f3611d3bc6f17ee963be51bfe92bec96fad0a9fa2c7ebbe9c46"
+    },
+    "ggml/src/ggml-quants.c": {
+      "bytes": 228250,
+      "sha256": "07143d7068936ae46b3c528b2f3d4bbb666e74d88992165716174d243573965d"
+    },
+    "ggml/src/ggml-quants.h": {
+      "bytes": 9803,
+      "sha256": "28ae5fca1f3be636b36cd6c4fa2ca74fd42d229bfbd5352eaf66f3727bb8a6da"
+    },
+    "ggml/src/ggml-threading.cpp": {
+      "bytes": 250,
+      "sha256": "13a18d885393722b7c9f42d4cf8575a4d41699926d656f78a867fa4fac9dad20"
+    },
+    "ggml/src/ggml-threading.h": {
+      "bytes": 198,
+      "sha256": "9652729043ed91482392c1aa08af5d813190d0ace2e7982d2539d28240ab8d8b"
+    },
+    "ggml/src/ggml.c": {
+      "bytes": 258604,
+      "sha256": "683cbf1340ae08791d720045d1bc8b416b5cfa8de37484f878c03cf02de304b7"
+    },
+    "ggml/src/ggml.cpp": {
+      "bytes": 738,
+      "sha256": "64e6b5c8d716ae8697e45481a7153540be01f721be2dc7e753aa47b36a69c753"
+    },
+    "ggml/src/gguf.cpp": {
+      "bytes": 58052,
+      "sha256": "615894b49182f94d711280d570a215860e1247ecc05d4289c9382295170b53bc"
+    },
+    "include/whisper.h": {
+      "bytes": 37439,
+      "sha256": "a7d19f7feb5be52426628ff07e0602de28a30dc4312d0d0603e1e536753f76dd"
+    },
+    "models/for-tests-ggml-tiny.bin": {
+      "bytes": 575451,
+      "sha256": "c486fb9f14a28b1c1dc252741a431646cc573450c900b9d9c406e10294aa01e6"
+    },
+    "models/for-tests-silero-v6.2.0-ggml.bin": {
+      "bytes": 885098,
+      "sha256": "2aa269b785eeb53a82983a20501ddf7c1d9c48e33ab63a41391ac6c9f7fb6987"
+    },
+    "samples/jfk.wav": {
+      "bytes": 352078,
+      "sha256": "59dfb9a4acb36fe2a2affc14bacbee2920ff435cb13cc314a08c13f66ba7860e"
+    },
+    "src/whisper-arch.h": {
+      "bytes": 9212,
+      "sha256": "f35cf51d54c4df7e1c504ba8ef3f06012ba483459ddf2a5cba533deb7b85c239"
+    },
+    "src/whisper.cpp": {
+      "bytes": 342057,
+      "sha256": "9dbdbadfaa877227d1c021a70b70aa2df7761edd2da8e0f92085734dea6c23ab"
+    }
+  }
+}

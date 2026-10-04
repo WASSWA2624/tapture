@@ -14,3 +14,17 @@ frontend/android/app/src/main/res/**/*.xml text eol=lf
 frontend/ios/Runner/Assets.xcassets/**/*.json text eol=lf
 frontend/ios/Runner/Base.lproj/LaunchScreen.storyboard text eol=lf
 frontend/macos/Runner/Assets.xcassets/**/*.json text eol=lf
+
+# On-device speech (dev-plan task 102). Vendored whisper.cpp is hashed byte for
+# byte in frontend/packages/tapture_whisper/VENDOR.json and its one patch is
+# hashed too, so git never rewrites either. Models, audio and WebAssembly are
+# binary; the shim sources, the WebAssembly glue and the speech manifest stay LF.
+frontend/packages/tapture_whisper/third_party/** -text linguist-vendored
+frontend/packages/tapture_whisper/third_party/patches/*.patch -text
+frontend/packages/tapture_whisper/src/** text eol=lf
+*.wasm binary
+*.bin binary
+*.wav binary
+frontend/web/whisper/*.js text eol=lf
+frontend/web/whisper/*.json text eol=lf
+frontend/assets/speech/manifest.json text eol=lf

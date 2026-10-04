@@ -115,6 +115,57 @@ class AppLocalizationsEn extends AppLocalizations {
       'Voice input stopped. Try again, or type instead.';
 
   @override
+  String get speechUnavailable =>
+      'Speech recognition is not available in this version of the app.';
+
+  @override
+  String get speechModelMissing =>
+      'The speech model is not installed on this device.';
+
+  @override
+  String get speechModelMissingRecovery =>
+      'Reinstall the app, or import the model in Settings.';
+
+  @override
+  String get speechModelDamaged =>
+      'The speech model file is damaged, so it was not used.';
+
+  @override
+  String get speechModelDamagedRecovery =>
+      'Reinstall the app, or import the model again in Settings.';
+
+  @override
+  String get speechDeviceUnsupported =>
+      'This device cannot run speech recognition.';
+
+  @override
+  String get speechLowMemory =>
+      'There is not enough free memory to load the speech model.';
+
+  @override
+  String get speechLowMemoryRecovery => 'Close other apps, then try again.';
+
+  @override
+  String get speechTranscriptionFailed =>
+      'Part of the speech could not be turned into text. The audio is kept.';
+
+  @override
+  String get speechLanguageUnsupported =>
+      'Speech recognition on this device does not support the chosen voice language.';
+
+  @override
+  String get speechEngineStopped =>
+      'Speech recognition stopped unexpectedly. Try again.';
+
+  @override
+  String get speechImportUnknown =>
+      'This file is not a speech model the app recognises.';
+
+  @override
+  String get speechImportUnknownRecovery =>
+      'Choose one of the model files named in Settings.';
+
+  @override
   String get autoFilled => 'Auto-filled';
 
   @override
@@ -3001,6 +3052,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Try again. Nothing already captured was lost.';
 
   @override
+  String get audioTakeLimitReached =>
+      'This recording reached the longest take this browser can keep. Everything captured so far is kept.';
+
+  @override
+  String get audioTakeLimitReachedRecovery =>
+      'Stop this recording, then start a new one to continue.';
+
+  @override
   String get audioPathOutsideStorage =>
       'The recording must be saved inside the project folder.';
 
@@ -3031,15 +3090,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get audioRecorderStatusAudioReady => 'Audio ready';
-
-  @override
-  String audioRecorderStatusS(Object label, int seconds) {
-    final intl.NumberFormat secondsNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
-    final String secondsString = secondsNumberFormat.format(seconds);
-
-    return '$label · ${secondsString}s';
-  }
 
   @override
   String get liveTranscriptStart => 'Start recording';
@@ -11775,6 +11825,58 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
       'Vóícé ínpút stóppéd. Try ágáín, ór typé ínstéád.·················';
 
   @override
+  String get speechUnavailable =>
+      'Spééch récógnítíón ís nót áváíláblé ín thís vérsíón óf thé ápp.·······················';
+
+  @override
+  String get speechModelMissing =>
+      'Thé spééch módél ís nót ínstálléd ón thís dévícé.··················';
+
+  @override
+  String get speechModelMissingRecovery =>
+      'Réínstáll thé ápp, ór ímpórt thé módél ín Séttíngs.··················';
+
+  @override
+  String get speechModelDamaged =>
+      'Thé spééch módél fílé ís dámágéd, só ít wás nót úséd.···················';
+
+  @override
+  String get speechModelDamagedRecovery =>
+      'Réínstáll thé ápp, ór ímpórt thé módél ágáín ín Séttíngs.····················';
+
+  @override
+  String get speechDeviceUnsupported =>
+      'Thís dévícé cánnót rún spééch récógnítíón.···············';
+
+  @override
+  String get speechLowMemory =>
+      'Théré ís nót énóúgh fréé mémóry tó lóád thé spééch módél.····················';
+
+  @override
+  String get speechLowMemoryRecovery =>
+      'Clósé óthér ápps, thén try ágáín.············';
+
+  @override
+  String get speechTranscriptionFailed =>
+      'Párt óf thé spééch cóúld nót bé túrnéd íntó téxt. Thé áúdíó ís képt.························';
+
+  @override
+  String get speechLanguageUnsupported =>
+      'Spééch récógnítíón ón thís dévícé dóés nót súppórt thé chósén vóícé lángúágé.···························';
+
+  @override
+  String get speechEngineStopped =>
+      'Spééch récógnítíón stóppéd únéxpéctédly. Try ágáín.··················';
+
+  @override
+  String get speechImportUnknown =>
+      'Thís fílé ís nót á spééch módél thé ápp récógnísés.··················';
+
+  @override
+  String get speechImportUnknownRecovery =>
+      'Chóósé óné óf thé módél fílés náméd ín Séttíngs.·················';
+
+  @override
   String get autoFilled => 'Áútó-fílléd····';
 
   @override
@@ -14688,6 +14790,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
       'Try ágáín. Nóthíng álréády cáptúréd wás lóst.················';
 
   @override
+  String get audioTakeLimitReached =>
+      'Thís récórdíng réáchéd thé lóngést táké thís brówsér cán kéép. Évérythíng cáptúréd só fár ís képt.···································';
+
+  @override
+  String get audioTakeLimitReachedRecovery =>
+      'Stóp thís récórdíng, thén stárt á néw óné tó cóntínúé.···················';
+
+  @override
   String get audioPathOutsideStorage =>
       'Thé récórdíng múst bé sávéd ínsídé thé prójéct fóldér.···················';
 
@@ -14720,15 +14830,6 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get audioRecorderStatusAudioReady => 'Áúdíó réády····';
-
-  @override
-  String audioRecorderStatusS(Object label, int seconds) {
-    final intl.NumberFormat secondsNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
-    final String secondsString = secondsNumberFormat.format(seconds);
-
-    return '$label · ${secondsString}s·';
-  }
 
   @override
   String get liveTranscriptStart => 'Stárt récórdíng······';

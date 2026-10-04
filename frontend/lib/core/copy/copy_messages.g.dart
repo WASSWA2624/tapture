@@ -135,6 +135,82 @@ final class CopyMessages {
   LocalizedMessage get dictationFailed =>
       LocalizedMessage(key: 'dictationFailed', fallback: Copy.dictationFailed);
 
+  /// The on-device speech engine is missing or could not start.
+  LocalizedMessage get speechUnavailable => LocalizedMessage(
+    key: 'speechUnavailable',
+    fallback: Copy.speechUnavailable,
+  );
+
+  /// The on-device speech model file is absent.
+  LocalizedMessage get speechModelMissing => LocalizedMessage(
+    key: 'speechModelMissing',
+    fallback: Copy.speechModelMissing,
+  );
+
+  /// What to do when the on-device speech model is absent.
+  LocalizedMessage get speechModelMissingRecovery => LocalizedMessage(
+    key: 'speechModelMissingRecovery',
+    fallback: Copy.speechModelMissingRecovery,
+  );
+
+  /// The on-device speech model failed its size, header or checksum check.
+  LocalizedMessage get speechModelDamaged => LocalizedMessage(
+    key: 'speechModelDamaged',
+    fallback: Copy.speechModelDamaged,
+  );
+
+  /// What to do when the on-device speech model is damaged.
+  LocalizedMessage get speechModelDamagedRecovery => LocalizedMessage(
+    key: 'speechModelDamagedRecovery',
+    fallback: Copy.speechModelDamagedRecovery,
+  );
+
+  /// The processor, memory or browser cannot run the on-device speech engine.
+  LocalizedMessage get speechDeviceUnsupported => LocalizedMessage(
+    key: 'speechDeviceUnsupported',
+    fallback: Copy.speechDeviceUnsupported,
+  );
+
+  /// The on-device speech model could not be loaded for lack of memory.
+  LocalizedMessage get speechLowMemory =>
+      LocalizedMessage(key: 'speechLowMemory', fallback: Copy.speechLowMemory);
+
+  /// What to do when memory is too low for the on-device speech model.
+  LocalizedMessage get speechLowMemoryRecovery => LocalizedMessage(
+    key: 'speechLowMemoryRecovery',
+    fallback: Copy.speechLowMemoryRecovery,
+  );
+
+  /// The on-device speech engine failed on one stretch of audio.
+  LocalizedMessage get speechTranscriptionFailed => LocalizedMessage(
+    key: 'speechTranscriptionFailed',
+    fallback: Copy.speechTranscriptionFailed,
+  );
+
+  /// The voice language has no on-device speech model.
+  LocalizedMessage get speechLanguageUnsupported => LocalizedMessage(
+    key: 'speechLanguageUnsupported',
+    fallback: Copy.speechLanguageUnsupported,
+  );
+
+  /// The on-device speech engine stopped or was closed mid-task.
+  LocalizedMessage get speechEngineStopped => LocalizedMessage(
+    key: 'speechEngineStopped',
+    fallback: Copy.speechEngineStopped,
+  );
+
+  /// An imported file matches no known speech model.
+  LocalizedMessage get speechImportUnknown => LocalizedMessage(
+    key: 'speechImportUnknown',
+    fallback: Copy.speechImportUnknown,
+  );
+
+  /// What to do when an imported file is not a known speech model.
+  LocalizedMessage get speechImportUnknownRecovery => LocalizedMessage(
+    key: 'speechImportUnknownRecovery',
+    fallback: Copy.speechImportUnknownRecovery,
+  );
+
   /// A value filled in rather than typed.
   LocalizedMessage get autoFilled =>
       LocalizedMessage(key: 'autoFilled', fallback: Copy.autoFilled);
@@ -4538,6 +4614,18 @@ final class CopyMessages {
     fallback: Copy.audioStartFailedRecovery,
   );
 
+  /// A browser take refused more audio at its length cap.
+  LocalizedMessage get audioTakeLimitReached => LocalizedMessage(
+    key: 'audioTakeLimitReached',
+    fallback: Copy.audioTakeLimitReached,
+  );
+
+  /// Recovery for [audioTakeLimitReached].
+  LocalizedMessage get audioTakeLimitReachedRecovery => LocalizedMessage(
+    key: 'audioTakeLimitReachedRecovery',
+    fallback: Copy.audioTakeLimitReachedRecovery,
+  );
+
   /// A recording path that would leave the storage folder.
   LocalizedMessage get audioPathOutsideStorage => LocalizedMessage(
     key: 'audioPathOutsideStorage',
@@ -4556,16 +4644,14 @@ final class CopyMessages {
     fallback: Copy.audioPermissionRecovery,
   );
 
-  /// Recorder phase and elapsed time.
-  LocalizedMessage audioRecorderStatus(String phase, int seconds) =>
-      LocalizedMessage(
-        key: 'audioRecorderStatus',
-        fallback: Copy.audioRecorderStatus(phase, seconds),
-        arguments: <String, Object?>{
-          'phase': LocalizedMessage.encodeArgument(phase),
-          'seconds': LocalizedMessage.encodeArgument(seconds),
-        },
-      );
+  /// Recorder phase, without the elapsed time the recording bar shows.
+  LocalizedMessage audioRecorderStatus(String phase) => LocalizedMessage(
+    key: 'audioRecorderStatus',
+    fallback: Copy.audioRecorderStatus(phase),
+    arguments: <String, Object?>{
+      'phase': LocalizedMessage.encodeArgument(phase),
+    },
+  );
 
   /// Recording bar control that starts a recording with a live transcript.
   LocalizedMessage get liveTranscriptStart => LocalizedMessage(

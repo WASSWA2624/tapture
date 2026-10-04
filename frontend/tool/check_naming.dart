@@ -93,24 +93,78 @@ typedef _Declarations = ({
   List<_Declaration> variables,
 });
 
+/// One folder of Dart sources to scan, and how a report names it.
+typedef _Root = ({Directory folder, String display});
+
+/// The flag that scans a whole project: its `lib/` and the `lib/` of every
+/// local package under it.
+const String _projectFlag = '--project';
+
 /// Checks file names and type names, printing one line per violation.
 ///
-/// Takes the directory of Dart sources to scan, defaulting to `lib/`. Exits 0
-/// when every name agrees with the rules and 1 on any violation.
+/// With no argument it scans `lib/` and the `lib/` of every local package
+/// under `packages/` (FE-STR-01, dev-plan task 102). `--project <dir>` scans
+/// the same folders of another project, and any other argument is one folder
+/// of Dart sources to scan on its own. Exits 0 when every name agrees with
+/// the rules and 1 on any violation.
 Future<int> main(List<String> args) async {
-  final Directory root = Directory(args.isEmpty ? libRoot : args.first);
-  final List<File> sources = _sources(root);
-  final List<_Violation> violations = _findViolations(root, sources);
+  final List<_Root> roots = args.isEmpty
+      ? _projectRoots(Directory.current)
+      : args.length == 2 && args.first == _projectFlag
+      ? _projectRoots(Directory(args[1]))
+      : <_Root>[
+          (
+            folder: Directory(args.first),
+            display: _displayRoot(Directory(args.first)),
+          ),
+        ];
+  int count = 0;
+  final List<_Violation> violations = <_Violation>[];
+  for (final _Root root in roots) {
+    final List<File> sources = _sources(root.folder);
+    count += sources.length;
+    violations.addAll(_findViolations(root, sources));
+  }
   for (final _Violation violation in violations) {
     stderr.writeln('${violation.file}:${violation.line}: ${violation.message}');
   }
   stdout.writeln(
     violations.isEmpty
-        ? 'naming: ${sources.length} files, names and types in agreement'
+        ? 'naming: $count files, names and types in agreement'
         : 'naming: ${violations.length} violation(s)',
   );
   exitCode = violations.isEmpty ? 0 : 1;
   return exitCode;
+}
+
+/// The folders a project's names are checked in: its own `lib/`, then the
+/// `lib/` of each package under `packages/`, in name order. The project's
+/// `lib/` is listed even when absent only if no package `lib/` exists, so an
+/// empty project is reported rather than passing.
+List<_Root> _projectRoots(Directory project) {
+  final String base = _forwardSlashed(project.path);
+  final Directory app = Directory('$base/$libRoot');
+  final List<_Root> packages = <_Root>[];
+  final Directory local = Directory('$base/$localPackagesRoot');
+  if (local.existsSync()) {
+    final List<Directory> folders =
+        local.listSync().whereType<Directory>().toList()
+          ..sort((Directory a, Directory b) => a.path.compareTo(b.path));
+    for (final Directory folder in folders) {
+      final String name = _basename(folder.uri);
+      final Directory sources = Directory('${folder.path}/$libRoot');
+      if (sources.existsSync()) {
+        packages.add((
+          folder: sources,
+          display: '$localPackagesRoot/$name/$libRoot',
+        ));
+      }
+    }
+  }
+  return <_Root>[
+    if (app.existsSync() || packages.isEmpty) (folder: app, display: libRoot),
+    ...packages,
+  ];
 }
 
 /// Reports every name under [root] that breaks a rule: a file not written in
@@ -119,11 +173,11 @@ Future<int> main(List<String> args) async {
 /// as one, and a type built out of a word FE-CODE-03 bans.
 ///
 /// Reports all of them, so one run says everything that has to change.
-List<_Violation> _findViolations(Directory root, List<File> sources) {
-  if (!root.existsSync()) {
+List<_Violation> _findViolations(_Root root, List<File> sources) {
+  if (!root.folder.existsSync()) {
     return <_Violation>[
       (
-        file: _displayRoot(root),
+        file: root.display,
         line: 0,
         message: 'there is no directory here to check',
       ),
@@ -132,7 +186,7 @@ List<_Violation> _findViolations(Directory root, List<File> sources) {
   return <_Violation>[
     for (final File source in sources)
       ..._fileViolations(
-        '${_displayRoot(root)}/${_relative(root, source)}',
+        '${root.display}/${_relative(root.folder, source)}',
         _basename(source.uri),
         source.readAsStringSync(),
       ),

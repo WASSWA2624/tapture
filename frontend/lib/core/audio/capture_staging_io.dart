@@ -126,11 +126,7 @@ final class _FileCaptureStaging implements CaptureStaging {
       writer: _writer,
       staging: _staging,
       relativePath: _path,
-      fallback:
-          AppConstants.microsecond *
-          (_samples *
-              Duration.microsecondsPerSecond ~/
-              AppConstants.audio.sampleRate),
+      fallback: stagedTakeDuration(_samples),
     );
     if (published is Success<AudioRecording>) {
       await _store.rebase(_target);

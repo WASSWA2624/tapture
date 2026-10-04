@@ -1,0 +1,6 @@
+# Analyzer configuration for the tapture_whisper plugin (dev-plan task 102).
+#
+# The package is held to the same strict options as shared code: every lint
+# the app promotes is an error here too, and every public member carries a doc
+# comment (frontend/.rules/02-coding-standards.md, FE-CODE-12).
+include: ../../lib/core/analysis_options.yaml

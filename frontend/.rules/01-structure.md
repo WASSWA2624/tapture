@@ -4,8 +4,15 @@
 
 ## FE-STR-01 — The app lives in `frontend/`
 The Flutter application is the whole of `frontend/`. Nothing outside `frontend/lib`, `frontend/test`,
-`frontend/tool`, `frontend/assets` and the platform folders belongs to it. The backend, the plan and the
-specification are siblings, never imports.
+`frontend/tool`, `frontend/assets`, `frontend/packages` and the platform folders belongs to it. The backend, the
+plan and the specification are siblings, never imports.
+
+`frontend/packages/<name>/` holds only local Flutter plugin packages that wrap native code no approved package
+provides. Each one is a pinned path dependency (`path:` plus a nested `version:` equal to the package's own) approved
+in `tool/allowlist.yaml` with every dependency it declares; has no Dart build hook (`hook/`) and no `example/`; keeps
+vendored upstream source in `third_party/`, verified by hash, with any patch recorded; and is imported only by its
+`core/` adapter (FE-STR-11). FE-CODE and FE-STR naming rules apply inside `packages/*/lib`.
+`tool/check_dependencies.dart` enforces the dependency conditions and `tool/check_naming.dart` the naming ones.
 
 ## FE-STR-02 — Three top-level areas, and no fourth
 `lib/app/` is the shell (entry, router, theme, navigation). `lib/core/` is everything shared. `lib/features/` is

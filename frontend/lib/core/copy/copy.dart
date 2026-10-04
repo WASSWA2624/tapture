@@ -86,6 +86,50 @@ abstract final class Copy {
   /// The recogniser stopped for a reason it did not name.
   static String get dictationFailed => _english.dictationFailed;
 
+  /// The on-device speech engine is missing or could not start.
+  static String get speechUnavailable => _english.speechUnavailable;
+
+  /// The on-device speech model file is absent.
+  static String get speechModelMissing => _english.speechModelMissing;
+
+  /// What to do when the on-device speech model is absent.
+  static String get speechModelMissingRecovery =>
+      _english.speechModelMissingRecovery;
+
+  /// The on-device speech model failed its size, header or checksum check.
+  static String get speechModelDamaged => _english.speechModelDamaged;
+
+  /// What to do when the on-device speech model is damaged.
+  static String get speechModelDamagedRecovery =>
+      _english.speechModelDamagedRecovery;
+
+  /// The processor, memory or browser cannot run the on-device speech engine.
+  static String get speechDeviceUnsupported => _english.speechDeviceUnsupported;
+
+  /// The on-device speech model could not be loaded for lack of memory.
+  static String get speechLowMemory => _english.speechLowMemory;
+
+  /// What to do when memory is too low for the on-device speech model.
+  static String get speechLowMemoryRecovery => _english.speechLowMemoryRecovery;
+
+  /// The on-device speech engine failed on one stretch of audio.
+  static String get speechTranscriptionFailed =>
+      _english.speechTranscriptionFailed;
+
+  /// The voice language has no on-device speech model.
+  static String get speechLanguageUnsupported =>
+      _english.speechLanguageUnsupported;
+
+  /// The on-device speech engine stopped or was closed mid-task.
+  static String get speechEngineStopped => _english.speechEngineStopped;
+
+  /// An imported file matches no known speech model.
+  static String get speechImportUnknown => _english.speechImportUnknown;
+
+  /// What to do when an imported file is not a known speech model.
+  static String get speechImportUnknownRecovery =>
+      _english.speechImportUnknownRecovery;
+
   /// A value filled in rather than typed.
   static String get autoFilled => _english.autoFilled;
 
@@ -2553,6 +2597,13 @@ abstract final class Copy {
   static String get audioStartFailedRecovery =>
       _english.audioStartFailedRecovery;
 
+  /// A browser take refused more audio at its length cap.
+  static String get audioTakeLimitReached => _english.audioTakeLimitReached;
+
+  /// Recovery for [audioTakeLimitReached].
+  static String get audioTakeLimitReachedRecovery =>
+      _english.audioTakeLimitReachedRecovery;
+
   /// A recording path that would leave the storage folder.
   static String get audioPathOutsideStorage => _english.audioPathOutsideStorage;
 
@@ -2562,9 +2613,9 @@ abstract final class Copy {
   /// Tells the operator how to grant microphone access.
   static String get audioPermissionRecovery => _english.audioPermissionRecovery;
 
-  /// Recorder phase and elapsed time.
-  static String audioRecorderStatus(String phase, int seconds) =>
-      _english.audioRecorderStatus(phase, seconds);
+  /// Recorder phase, without the elapsed time the recording bar shows.
+  static String audioRecorderStatus(String phase) =>
+      _english.audioRecorderStatus(phase);
 
   /// Recording bar control that starts a recording with a live transcript.
   static String get liveTranscriptStart => _english.liveTranscriptStart;

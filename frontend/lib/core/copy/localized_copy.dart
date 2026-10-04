@@ -86,6 +86,46 @@ final class LocalizedCopy {
   /// The recogniser stopped for a reason it did not name.
   String get dictationFailed => _catalog.dictationFailed;
 
+  /// The on-device speech engine is missing or could not start.
+  String get speechUnavailable => _catalog.speechUnavailable;
+
+  /// The on-device speech model file is absent.
+  String get speechModelMissing => _catalog.speechModelMissing;
+
+  /// What to do when the on-device speech model is absent.
+  String get speechModelMissingRecovery => _catalog.speechModelMissingRecovery;
+
+  /// The on-device speech model failed its size, header or checksum check.
+  String get speechModelDamaged => _catalog.speechModelDamaged;
+
+  /// What to do when the on-device speech model is damaged.
+  String get speechModelDamagedRecovery => _catalog.speechModelDamagedRecovery;
+
+  /// The processor, memory or browser cannot run the on-device speech engine.
+  String get speechDeviceUnsupported => _catalog.speechDeviceUnsupported;
+
+  /// The on-device speech model could not be loaded for lack of memory.
+  String get speechLowMemory => _catalog.speechLowMemory;
+
+  /// What to do when memory is too low for the on-device speech model.
+  String get speechLowMemoryRecovery => _catalog.speechLowMemoryRecovery;
+
+  /// The on-device speech engine failed on one stretch of audio.
+  String get speechTranscriptionFailed => _catalog.speechTranscriptionFailed;
+
+  /// The voice language has no on-device speech model.
+  String get speechLanguageUnsupported => _catalog.speechLanguageUnsupported;
+
+  /// The on-device speech engine stopped or was closed mid-task.
+  String get speechEngineStopped => _catalog.speechEngineStopped;
+
+  /// An imported file matches no known speech model.
+  String get speechImportUnknown => _catalog.speechImportUnknown;
+
+  /// What to do when an imported file is not a known speech model.
+  String get speechImportUnknownRecovery =>
+      _catalog.speechImportUnknownRecovery;
+
   /// A value filled in rather than typed.
   String get autoFilled => _catalog.autoFilled;
 
@@ -2700,6 +2740,13 @@ final class LocalizedCopy {
   /// Recovery for [audioStartFailed].
   String get audioStartFailedRecovery => _catalog.audioStartFailedRecovery;
 
+  /// A browser take refused more audio at its length cap.
+  String get audioTakeLimitReached => _catalog.audioTakeLimitReached;
+
+  /// Recovery for [audioTakeLimitReached].
+  String get audioTakeLimitReachedRecovery =>
+      _catalog.audioTakeLimitReachedRecovery;
+
   /// A recording path that would leave the storage folder.
   String get audioPathOutsideStorage => _catalog.audioPathOutsideStorage;
 
@@ -2709,9 +2756,11 @@ final class LocalizedCopy {
   /// Tells the operator how to grant microphone access.
   String get audioPermissionRecovery => _catalog.audioPermissionRecovery;
 
-  /// Recorder phase and elapsed time.
-  String audioRecorderStatus(String phase, int seconds) {
-    final String label = switch (phase) {
+  /// Recorder phase. It carries no elapsed time: the recording bar shows the
+  /// clock and announces this status, so a ticking value would be read out
+  /// every second.
+  String audioRecorderStatus(String phase) {
+    return switch (phase) {
       'permission' => _catalog.audioRecorderStatus,
       'recording' => _catalog.audioRecorderStatusRecording,
       'paused' => _catalog.audioRecorderStatusPaused,
@@ -2720,7 +2769,6 @@ final class LocalizedCopy {
       'completed' => _catalog.audioRecorderStatusAudioSaved,
       _ => _catalog.audioRecorderStatusAudioReady,
     };
-    return _catalog.audioRecorderStatusS(label, seconds);
   }
 
   /// Recording bar control that starts a recording with a live transcript.

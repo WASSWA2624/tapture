@@ -51,13 +51,143 @@ abstract final class AppConstants {
     settle: Duration(seconds: 2),
   );
 
-  /// The on-device speech engine (spec §30.4.3). A worker isolate has
-  /// [workerStart] to begin serving, and [workerCloseGrace] to clean up after
-  /// a close before it is killed.
-  static const ({Duration workerStart, Duration workerCloseGrace})
+  /// The on-device speech engine (spec §30.4.3).
+  ///
+  /// Lifetimes: a worker isolate has `workerStart` to begin serving and
+  /// `workerCloseGrace` to clean up after a close before it is killed. An
+  /// idle model is released after `idleRelease` on a phone on battery, and
+  /// after `idleReleaseExtended` on a desktop or while charging.
+  ///
+  /// Device thresholds for model selection: memory in bytes (or GiB of the
+  /// browser's `deviceMemory`), cores, the `memoryHeadroomPercent` a model's
+  /// estimate is scaled by, and the battery level below which a phone is
+  /// treated as saving power. Thread caps per class of device.
+  ///
+  /// Decoding: a request carries `minDecodeSamples` to `maxDecodeSamples`
+  /// of 16 kHz audio. The encoder sees `encoderFramesPerSecond` frames per
+  /// second of audio, at most `maxAudioContext`; a profile's pad adds
+  /// context frames past the audio (`interimAudioContextPad`,
+  /// `reducedAudioContextPad` under backlog, `mobileDictationCommittedPad`
+  /// for dictation finals shorter than `mobileDictationShortUtterance`).
+  /// The three thresholds and `temperatureStep` are whisper's fallback
+  /// rules. Native log lines are cut to `logLineChars`, at most
+  /// `logLinesPerDrain` per command. A lane restarts at most
+  /// `maxWorkerRestarts` times per host session, and a model whose load
+  /// killed the process `maxLoadAttempts` times is held as suspect.
+  static const ({
+    Duration workerStart,
+    Duration workerCloseGrace,
+    Duration idleRelease,
+    Duration idleReleaseExtended,
+    int minTotalMemoryBytes,
+    int webMinDeviceMemoryGiB,
+    int webBaseDeviceMemoryGiB,
+    int balancedMemoryBytes,
+    int accurateMemoryBytes,
+    int balancedCores,
+    int accurateCores,
+    int memoryHeadroomPercent,
+    int lowBatteryPercent,
+    int mobileMaxThreads,
+    int desktopMaxThreads,
+    int saverThreads,
+    int webMaxThreads,
+    int maxDecodeSamples,
+    int minDecodeSamples,
+    int interimMaxPieces,
+    int interimAudioContextPad,
+    int reducedAudioContextPad,
+    int mobileDictationCommittedPad,
+    Duration mobileDictationShortUtterance,
+    int encoderFramesPerSecond,
+    int maxAudioContext,
+    double noSpeechThreshold,
+    double logprobThreshold,
+    double entropyThreshold,
+    double temperatureStep,
+    int logLineChars,
+    int logLinesPerDrain,
+    int maxWorkerRestarts,
+    int maxLoadAttempts,
+  })
   speechEngine = (
     workerStart: Duration(seconds: 10),
     workerCloseGrace: Duration(seconds: 5),
+    idleRelease: Duration(minutes: 2),
+    idleReleaseExtended: Duration(minutes: 10),
+    minTotalMemoryBytes: 1536 * _mib,
+    webMinDeviceMemoryGiB: 2,
+    webBaseDeviceMemoryGiB: 4,
+    balancedMemoryBytes: 3072 * _mib,
+    accurateMemoryBytes: 6144 * _mib,
+    balancedCores: 4,
+    accurateCores: 6,
+    memoryHeadroomPercent: 125,
+    lowBatteryPercent: 30,
+    mobileMaxThreads: 4,
+    desktopMaxThreads: 8,
+    saverThreads: 2,
+    webMaxThreads: 4,
+    maxDecodeSamples: 30 * 16000,
+    minDecodeSamples: 16000,
+    interimMaxPieces: 96,
+    interimAudioContextPad: 64,
+    reducedAudioContextPad: 128,
+    mobileDictationCommittedPad: 256,
+    mobileDictationShortUtterance: Duration(seconds: 10),
+    encoderFramesPerSecond: 50,
+    maxAudioContext: 1500,
+    noSpeechThreshold: 0.6,
+    logprobThreshold: -1,
+    entropyThreshold: 2.4,
+    temperatureStep: 0.2,
+    logLineChars: 160,
+    logLinesPerDrain: 8,
+    maxWorkerRestarts: 2,
+    maxLoadAttempts: 2,
+  );
+
+  /// Speech budgets the benchmarks assert (spec §30.4.3, FE-TEST-09).
+  /// Desktop values are provisional: task 128 recalibrates them from
+  /// recorded evidence and never loosens one without a note. Load times
+  /// include the in-shim SHA-256 check. A real-time factor is compute time
+  /// over audio time. `vadSecond` is VAD compute per second of audio, and
+  /// `pipelinePerAudioSecond` the pipeline's own main-isolate work per
+  /// second. RSS budgets are peaks while loaded and what stays after
+  /// release; `uiDrift` is the most a frame may slip during a session.
+  static const ({
+    Duration tinyLoad,
+    Duration baseLoad,
+    double tinyRealTime,
+    double baseRealTime,
+    Duration abortLatencyDesktop,
+    Duration vadSecond,
+    int tinyPeakRssBytes,
+    int basePeakRssBytes,
+    int retainedRssBytes,
+    Duration pipelinePerAudioSecond,
+    Duration firstPartialCompute,
+    Duration finalizeCompute,
+    int longSessionPeakRssBytes,
+    int longSessionRetainedRssBytes,
+    Duration uiDrift,
+  })
+  speechBudgets = (
+    tinyLoad: Duration(seconds: 2),
+    baseLoad: Duration(seconds: 4),
+    tinyRealTime: 0.35,
+    baseRealTime: 0.5,
+    abortLatencyDesktop: Duration(milliseconds: 500),
+    vadSecond: Duration(milliseconds: 60),
+    tinyPeakRssBytes: 320 * _mib,
+    basePeakRssBytes: 480 * _mib,
+    retainedRssBytes: 32 * _mib,
+    pipelinePerAudioSecond: Duration(milliseconds: 15),
+    firstPartialCompute: Duration(milliseconds: 1500),
+    finalizeCompute: Duration(milliseconds: 1000),
+    longSessionPeakRssBytes: 64 * _mib,
+    longSessionRetainedRssBytes: 8 * _mib,
+    uiDrift: Duration(milliseconds: 32),
   );
 
   /// The on-device speech pipeline (spec §30.4.3). The resampler brings a

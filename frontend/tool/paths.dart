@@ -25,6 +25,23 @@ const List<String> secretScanRoots = <String>[
   'assets',
 ];
 
+/// Where the local Flutter plugin packages live, relative to `frontend/`
+/// (FE-STR-01, dev-plan task 102). Each one is a pinned path dependency.
+///
+/// Not part of [checkerRoots]: `check_analyzer_config.dart` uses the word
+/// `packages` with another meaning (the package_config entries).
+const String localPackagesRoot = 'packages';
+
+/// The folders, relative to `frontend/`, that hold native or browser source
+/// shipped with the app and that `check_secrets.dart` scans in addition to
+/// [secretScanRoots]: the local plugin packages and the WebAssembly speech
+/// engine's glue. Vendored `third_party/` folders inside them are verified by
+/// hash instead (dev-plan task 102).
+const List<String> nativeSourceScanRoots = <String>[
+  localPackagesRoot,
+  'web/whisper',
+];
+
 /// Every root a checker scans, which is what a checker may not spell out
 /// for itself.
 List<String> get checkerRoots => <String>[

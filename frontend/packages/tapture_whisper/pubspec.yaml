@@ -1,0 +1,40 @@
+name: tapture_whisper
+description: "On-device speech-to-text for Tapture: whisper.cpp 1.9.4 and ggml (CPU) behind one small C ABI."
+version: 1.9.4+1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.12.2
+  flutter: ">=3.44.0"
+
+# Every dependency here is approved in frontend/tool/allowlist.yaml at this
+# exact pin (frontend/.rules/01-structure.md FE-STR-01, check_dependencies
+# rule 5).
+dependencies:
+  ffi: 2.2.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+# A classic FFI plugin: the platform build compiles src/ into one shared
+# library. There are no Dart build hooks and no example app.
+flutter:
+  plugin:
+    platforms:
+      android:
+        ffiPlugin: true
+      ios:
+        ffiPlugin: true
+        sharedDarwinSource: true
+      linux:
+        ffiPlugin: true
+      macos:
+        ffiPlugin: true
+        sharedDarwinSource: true
+      windows:
+        ffiPlugin: true

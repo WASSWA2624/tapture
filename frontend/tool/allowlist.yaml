@@ -135,6 +135,14 @@ packages:
     version: ^7.5.0
     purpose: On-device and platform speech recognition behind core/ai/stt_service (FE-STR-11), so every free-text field can take dictation. BSD-3-Clause. Replaces a hand-rolled Android/iOS/web recogniser channel. Raised to 7.5 in task 332 because 7.4 applies the Kotlin Gradle Plugin, which the Android build warns a future Flutter will reject; 7.5 uses built-in Kotlin and needs exactly the Flutter 3.44 / Dart 3.12 this project pins.
     task: "283"
+  tapture_whisper:
+    version: 1.9.4+1
+    purpose: In-repo FFI plugin (frontend/packages/tapture_whisper, a pinned path dependency) wrapping vendored whisper.cpp 1.9.4 and ggml for offline on-device speech-to-text, reached only through core/speech (FE-STR-11). whisper.cpp/ggml MIT; the OpenAI Whisper weights and Silero VAD are MIT. Replaces sending audio to an online transcriber; speech_to_text stays the on-device platform fallback.
+    task: "102"
+  ffi:
+    version: 2.2.0
+    purpose: Dart-maintained native memory helpers (calloc, Utf8 strings) used only inside tapture_whisper; no app code imports it. BSD-3-Clause. Replaces hand-written allocation over dart:ffi; already the resolved transitive version.
+    task: "102"
   image_picker:
     version: ^1.2.3
     purpose: Camera and photo-library picks behind core/files/photo_picker (FE-STR-11), so feedback can attach device photos on Android, iOS, web and desktop. BSD-3-Clause, flutter.dev. Replaces a hand-rolled browser file input that left native builds with no camera or library.

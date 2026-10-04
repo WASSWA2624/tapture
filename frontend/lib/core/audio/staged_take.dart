@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -67,3 +68,12 @@ Future<Result<AudioRecording>> publishStagedTake({
 
 /// The media type of every take.
 const String stagedTakeMimeType = 'audio/wav';
+
+/// The length of [samples] samples of 16 kHz mono audio, exact to the
+/// microsecond, as [WavTake.duration] measures a published take.
+Duration stagedTakeDuration(int samples) {
+  return AppConstants.microsecond *
+      (samples *
+          Duration.microsecondsPerSecond ~/
+          AppConstants.audio.sampleRate);
+}

@@ -91,10 +91,7 @@ class _AudioRecorderState extends State<AudioRecorder>
         phase: _barPhase(_state.phase),
         elapsed: _state.elapsed,
         level: _state.level,
-        status: localCopy.audioRecorderStatus(
-          _state.phase.name,
-          _state.elapsed.inSeconds,
-        ),
+        status: localCopy.audioRecorderStatus(_state.phase.name),
         onPause: () => widget.recorder.pause(),
         onResume: () => widget.recorder.resume(),
         onStop: _stop,

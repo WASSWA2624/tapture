@@ -3338,7 +3338,7 @@ Re-express `sendOnWorker` in `worker_cloud_destination_io.dart` as:
 ### Files
 
 - `frontend/lib/core/cloud/worker_cloud_destination_io.dart`
-- `frontend/test/core/cloud/worker_cloud_destination_io_test.dart`, `frontend/test/core/cloud/cloud_destination_test.dart` (expectations unchanged; `debugLiveWorkers` assertions added)
+- `frontend/test/core/cloud/worker_cloud_destination_test.dart`, `frontend/test/core/cloud/worker_cloud_resume_test.dart`, `frontend/test/core/cloud/cloud_destination_test.dart` (expectations unchanged; `debugLiveWorkers` assertions added)
 
 ### Constraints
 
@@ -3350,9 +3350,38 @@ Re-express `sendOnWorker` in `worker_cloud_destination_io.dart` as:
 
 ### Definition of done
 
-- [ ] The ad-hoc ready, ack and id maps are gone.
-- [ ] Every existing cloud worker and destination test passes unchanged.
-- [ ] `debugLiveWorkers` returns to 0 after success, failure and cancel.
+- [x] The ad-hoc ready, ack and id maps are gone.
+- [x] Every existing cloud worker and destination test passes unchanged.
+- [x] `debugLiveWorkers` returns to 0 after success, failure and cancel.
+
+### Verification
+
+- 2026-10-04: Reviewed `frontend/lib/core/cloud/worker_cloud_destination_io.dart` against HEAD. `sendOnWorker` now does
+  `WorkerIsolate.spawn` (debug name `cloud-upload`, platform token only for a local folder on Android/iOS, answers from
+  the private `_CloudParent`), then `request('send', cancel:, onCancel:)`, then `close(grace:)`. Permit, secret writes
+  and native-token renewal are `port.ask`, progress is `port.emit`, and cancel reaches the worker's token over one
+  `cancel-port` ask. There are no ready/ack/done tags, no reply maps or completers, no `nextWrite` ids and no
+  `runIsolate`/`BackgroundIsolateBinaryMessenger` in the file (grep). A send that was already cancelled still starts
+  the worker in its stopped state, so the checkpoint is cleared as before.
+- 2026-10-04: The original test expectations were diffed against the pre-task backups (ignoring line endings). The
+  only changes are added `debugLiveWorkers` assertions and three added tests: mid-flight cancel clears the
+  checkpoint, pre-cancel clears the checkpoint, and progress arrives in order. With the HEAD implementation
+  temporarily restored, `flutter test` on `worker_cloud_destination_test.dart` and `worker_cloud_resume_test.dart`
+  gave +11 passed. With the new implementation, those two files plus `cloud_destination_test.dart` gave +13 passed.
+  `test/core/concurrency/worker_isolate_test.dart` and `test/features/cloud/data/cloud_backends_io_test.dart` gave
+  +21 passed.
+- 2026-10-04: The reviewer added in-flight `expect(debugLiveWorkers, 1)` checks before success and cancel, so the
+  return to 0 is a real check. A `tearDown` plus inline assertions show the count is 0 after success (renewal,
+  progress, durable ACK, resume), after failure (refused renewal, permission, rejected or stalled persistence,
+  interrupted resume) and after cancel (stalled renewal, mid-flight, pre-cancel). The file gave +10 passed.
+- 2026-10-04: `dart analyze lib/core/cloud lib/core/concurrency` and the three test files reported no issues.
+  `dart format --set-exit-if-changed` changed 0 files. `tool/check_{naming,structure,logging,secrets}.dart` were
+  clean. The architecture suites `errors`, `data_safety`, `layering`, `naming`, `network`, `plugin_imports` and
+  `state` gave +79 passed.
+- 2026-10-04 (known residue, not a regression): if a cancel lands after the worker has decided its result but before
+  the reply arrives, the caller now gets `CancelledFailure` because the primitive drops the late reply. The old code
+  had the same kind of window at the worker's final `token.isCancelled` check. The Android/iOS platform-token path
+  cannot be run here; tasks 130/131 cover the device runs.
 
 ## 108 — Define the speech engine contract and transcript value types
 
@@ -4322,7 +4351,7 @@ AppTranscriptView({required List<String> paragraphs, String? tentative, bool liv
 - 2026-10-04: `catalogue_golden_test`: the `app_recording_bar` and `app_transcript_view` light, dark and outdoor goldens pass, and so does the baseline coverage test. One case fails, `app_list_tile`. That failure predates this task: commit a12f2378 changed `app_list_tile`/`app_status_pill` after the baseline was made on 2026-10-01.
 - 2026-10-04: The capture widget, feedback, audio recovery and guide tests pass without changes, and so do the gallery screen and gallery golden tests (including 200% text) and the architecture tokens, icons, naming, layering, responsive, state, errors and data-safety suites. `check_tests --strict`, `check_l10n`, `check_naming`, `check_structure` and `check_logging` all exit 0. `dart analyze` and `dart format` report nothing on the changed files.
 - 2026-10-04: Review fix: the stop handler in `AudioRecorder` again hands a finished take to `onStopped`/`onCompleted` when the bar has left the screen, as it did before the refactor. Only the error snack is now guarded by `mounted`.
-- 2026-10-04: Open follow-up (outside the DoD): `AudioRecorder` still passes its per-second `audioRecorderStatus` ("Recording · 12s") as the bar's live-region status. Screen readers may therefore announce it every second, and it repeats the bar's clock. It should pass a status with no ticking value, which needs a copy change and updates to the capture tests; task 125 reworks this recorder.
+- 2026-10-04: Follow-up resolved: `AudioRecorder` passed its per-second status ("Recording · 12s") as the bar's live-region status, so a screen reader would have read it out every second. `LocalizedCopy.audioRecorderStatus` and `Copy.audioRecorderStatus` now take only the phase, and the unused `audioRecorderStatusS` catalogue message is removed (copy pipeline regenerated and `--check`ed). `capture_widgets_test` asserts that the status text stays the same while the clock ticks. The capture widget and feedback tests and `app_recording_bar_test` pass (77 tests), and `dart analyze` on `lib/core/copy`, `lib/features/capture` and `test/features/capture` reports no issues.
 
 ## 122 — Run live transcription sessions for any surface
 

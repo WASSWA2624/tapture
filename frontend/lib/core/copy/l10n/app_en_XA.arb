@@ -124,6 +124,58 @@
   "@dictationFailed": {
     "description": "The recogniser stopped for a reason it did not name."
   },
+  "speechUnavailable": "Spééch récógnítíón ís nót áváíláblé ín thís vérsíón óf thé ápp.·······················",
+  "@speechUnavailable": {
+    "description": "The on-device speech engine is missing or could not start."
+  },
+  "speechModelMissing": "Thé spééch módél ís nót ínstálléd ón thís dévícé.··················",
+  "@speechModelMissing": {
+    "description": "The on-device speech model file is absent."
+  },
+  "speechModelMissingRecovery": "Réínstáll thé ápp, ór ímpórt thé módél ín Séttíngs.··················",
+  "@speechModelMissingRecovery": {
+    "description": "What to do when the on-device speech model is absent."
+  },
+  "speechModelDamaged": "Thé spééch módél fílé ís dámágéd, só ít wás nót úséd.···················",
+  "@speechModelDamaged": {
+    "description": "The on-device speech model failed its size, header or checksum check."
+  },
+  "speechModelDamagedRecovery": "Réínstáll thé ápp, ór ímpórt thé módél ágáín ín Séttíngs.····················",
+  "@speechModelDamagedRecovery": {
+    "description": "What to do when the on-device speech model is damaged."
+  },
+  "speechDeviceUnsupported": "Thís dévícé cánnót rún spééch récógnítíón.···············",
+  "@speechDeviceUnsupported": {
+    "description": "The processor, memory or browser cannot run the on-device speech engine."
+  },
+  "speechLowMemory": "Théré ís nót énóúgh fréé mémóry tó lóád thé spééch módél.····················",
+  "@speechLowMemory": {
+    "description": "The on-device speech model could not be loaded for lack of memory."
+  },
+  "speechLowMemoryRecovery": "Clósé óthér ápps, thén try ágáín.············",
+  "@speechLowMemoryRecovery": {
+    "description": "What to do when memory is too low for the on-device speech model."
+  },
+  "speechTranscriptionFailed": "Párt óf thé spééch cóúld nót bé túrnéd íntó téxt. Thé áúdíó ís képt.························",
+  "@speechTranscriptionFailed": {
+    "description": "The on-device speech engine failed on one stretch of audio."
+  },
+  "speechLanguageUnsupported": "Spééch récógnítíón ón thís dévícé dóés nót súppórt thé chósén vóícé lángúágé.···························",
+  "@speechLanguageUnsupported": {
+    "description": "The voice language has no on-device speech model."
+  },
+  "speechEngineStopped": "Spééch récógnítíón stóppéd únéxpéctédly. Try ágáín.··················",
+  "@speechEngineStopped": {
+    "description": "The on-device speech engine stopped or was closed mid-task."
+  },
+  "speechImportUnknown": "Thís fílé ís nót á spééch módél thé ápp récógnísés.··················",
+  "@speechImportUnknown": {
+    "description": "An imported file matches no known speech model."
+  },
+  "speechImportUnknownRecovery": "Chóósé óné óf thé módél fílés náméd ín Séttíngs.·················",
+  "@speechImportUnknownRecovery": {
+    "description": "What to do when an imported file is not a known speech model."
+  },
   "autoFilled": "Áútó-fílléd····",
   "@autoFilled": {
     "description": "A value filled in rather than typed."
@@ -3977,6 +4029,14 @@
   "@audioStartFailedRecovery": {
     "description": "Recovery for [audioStartFailed]."
   },
+  "audioTakeLimitReached": "Thís récórdíng réáchéd thé lóngést táké thís brówsér cán kéép. Évérythíng cáptúréd só fár ís képt.···································",
+  "@audioTakeLimitReached": {
+    "description": "A browser take refused more audio at its length cap."
+  },
+  "audioTakeLimitReachedRecovery": "Stóp thís récórdíng, thén stárt á néw óné tó cóntínúé.···················",
+  "@audioTakeLimitReachedRecovery": {
+    "description": "Recovery for [audioTakeLimitReached]."
+  },
   "audioPathOutsideStorage": "Thé récórdíng múst bé sávéd ínsídé thé prójéct fóldér.···················",
   "@audioPathOutsideStorage": {
     "description": "A recording path that would leave the storage folder."
@@ -4016,21 +4076,6 @@
   "audioRecorderStatusAudioReady": "Áúdíó réády····",
   "@audioRecorderStatusAudioReady": {
     "description": "Recorder phase and elapsed time."
-  },
-  "audioRecorderStatusS": "{label} · {seconds}s·",
-  "@audioRecorderStatusS": {
-    "description": "Recorder phase and elapsed time.",
-    "placeholders": {
-      "label": {
-        "type": "Object",
-        "description": "Value of label in audioRecorderStatus. User-provided content is not translated."
-      },
-      "seconds": {
-        "type": "int",
-        "description": "Value of seconds in audioRecorderStatus. User-provided content is not translated.",
-        "format": "decimalPattern"
-      }
-    }
   },
   "liveTranscriptStart": "Stárt récórdíng······",
   "@liveTranscriptStart": {

@@ -17,8 +17,10 @@ import 'core/ai/ai_service.dart';
 import 'core/ai/ocr_service.dart';
 import 'core/ai/provider_registry.dart';
 import 'core/ai/stt_service.dart';
+import 'core/audio/audio_capture_service.dart';
 import 'core/audio/audio_recorder_plugin.dart';
 import 'core/audio/audio_recorder_service.dart';
+import 'core/audio/microphone_access.dart';
 import 'core/audio/microphone_arbiter.dart';
 import 'core/backend/backend_session.dart';
 import 'core/backend/relay_package.dart';
@@ -690,6 +692,20 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
                 storageRoot: storageRoot,
                 arbiter: ref.watch(microphoneArbiterProvider),
               );
+      }),
+      audioCaptureServiceProvider.overrideWith((Ref ref) {
+        // A browser stages its takes as chunks in the project files' store
+        // and publishes them through the same writer.
+        return kIsWeb
+            ? AudioCaptureService(
+                writer: evidenceWriter,
+                storageRoot: storageRoot,
+                access: MicrophoneAccess.platform(
+                  permissions: ref.watch(permissionsServiceProvider),
+                ),
+                arbiter: ref.watch(microphoneArbiterProvider),
+              )
+            : const AudioCaptureService.unavailable();
       }),
       processingRepositoryProvider.overrideWith((Ref ref) {
         return ProcessingRepositoryImpl(
