@@ -11,6 +11,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/logging/logger.dart';
 
 import 'speech_abort_cell.dart';
+import 'speech_decode_job.dart';
 import 'speech_decode_kind.dart';
 import 'speech_decode_profile.dart';
 import 'speech_decode_request.dart';
@@ -25,9 +26,7 @@ import 'speech_model_source.dart';
 import 'speech_model_verification.dart';
 import 'speech_native_api.dart';
 import 'speech_native_api_io.dart';
-import 'speech_piece.dart';
 import 'speech_runtime_facts.dart';
-import 'speech_segment.dart';
 import 'speech_vad_handle.dart';
 import 'speech_vad_result.dart';
 
@@ -84,12 +83,12 @@ final class _NativeSpeechEngine implements SpeechEngine {
   final SpeechAbortCell Function(String? libraryPath) _openAbortCell;
   final StreamController<SpeechEngineState> _states =
       StreamController<SpeechEngineState>.broadcast();
-  final List<_Job> _queue = <_Job>[];
+  final List<SpeechDecodeJob> _queue = <SpeechDecodeJob>[];
   SpeechEngineState _state = SpeechEngineState.idle;
   _Lanes? _lanes;
   Future<Result<_Lanes>>? _starting;
   Future<void> _teardown = Future<void>.value();
-  _Job? _inFlight;
+  SpeechDecodeJob? _inFlight;
   SpeechLoadReport? _loaded;
   int _restarts = 0;
   int _decodeHandles = 0;
@@ -151,6 +150,7 @@ final class _NativeSpeechEngine implements SpeechEngine {
       await lanes.decode.request<_Loaded>(
         _LoadCommand(path: path, entry: model.entry, threads: threads),
       ),
+      lanes,
       lanes.decode,
     );
     final Logger logger = Logger.current;
@@ -160,6 +160,9 @@ final class _NativeSpeechEngine implements SpeechEngine {
         _settleState(lanes, SpeechEngineState.ready);
         return FailureResult<SpeechLoadReport>(failure);
       case Success<_Loaded>(value: final _Loaded done):
+        if (_disposed) {
+          return FailureResult<SpeechLoadReport>(speechEngineStopped());
+        }
         if (cancel?.isCancelled ?? false) {
           await lanes.decode.request<Object?>(const _UnloadCommand());
           _settleState(lanes, SpeechEngineState.ready);
@@ -201,6 +204,7 @@ final class _NativeSpeechEngine implements SpeechEngine {
           await lanes.vad.request<SpeechVadHandle>(
             _OpenVadCommand(path: path, entry: vad.entry),
           ),
+          lanes,
           lanes.vad,
         );
     }
@@ -228,14 +232,14 @@ final class _NativeSpeechEngine implements SpeechEngine {
         FailureResult<SpeechDecodeResult>(speechCancelled()),
       );
     }
-    final _Job job = _Job(leaseId, request);
+    final SpeechDecodeJob job = SpeechDecodeJob(leaseId, request);
     if (job.committed) {
-      final _Job? running = _inFlight;
+      final SpeechDecodeJob? running = _inFlight;
       if (running != null && !running.committed) {
         _abort(running);
       }
     } else {
-      for (final _Job pending in _queue.toList()) {
+      for (final SpeechDecodeJob pending in _queue.toList()) {
         if (!pending.committed && pending.leaseId == leaseId) {
           _queue.remove(pending);
           pending.finish(FailureResult<SpeechDecodeResult>(speechCancelled()));
@@ -282,6 +286,7 @@ final class _NativeSpeechEngine implements SpeechEngine {
         ),
         cancel: cancel,
       ),
+      lanes,
       lanes.vad,
     );
     return switch (reply) {
@@ -308,13 +313,13 @@ final class _NativeSpeechEngine implements SpeechEngine {
 
   @override
   void abortLease(int leaseId) {
-    for (final _Job pending in _queue.toList()) {
+    for (final SpeechDecodeJob pending in _queue.toList()) {
       if (pending.leaseId == leaseId) {
         _queue.remove(pending);
         pending.finish(FailureResult<SpeechDecodeResult>(speechCancelled()));
       }
     }
-    final _Job? running = _inFlight;
+    final SpeechDecodeJob? running = _inFlight;
     if (running != null && running.leaseId == leaseId) {
       _abort(running);
     }
@@ -331,13 +336,14 @@ final class _NativeSpeechEngine implements SpeechEngine {
       return const Success<void>(null);
     }
     _failQueue(speechCancelled());
-    final _Job? running = _inFlight;
+    final SpeechDecodeJob? running = _inFlight;
     if (running != null) {
       _abort(running);
     }
     _setState(SpeechEngineState.unloading);
     final Result<Object?> reply = _settled(
       await lanes.decode.request<Object?>(const _UnloadCommand()),
+      lanes,
       lanes.decode,
     );
     _settleState(lanes, SpeechEngineState.ready);
@@ -407,8 +413,10 @@ final class _NativeSpeechEngine implements SpeechEngine {
         ]);
     final List<WorkerIsolate> workers = <WorkerIsolate>[
       for (final Result<WorkerIsolate> worker in spawned)
-        if (worker case Success<WorkerIsolate>(:final WorkerIsolate value))
-          value,
+        if (worker case Success<WorkerIsolate>(
+          value: final WorkerIsolate running,
+        ))
+          running,
     ];
     Failure? refusal = workers.length == spawned.length
         ? null
@@ -508,8 +516,8 @@ final class _NativeSpeechEngine implements SpeechEngine {
       _failQueue(speechUnavailable());
       return;
     }
-    final _Job job = _queue.firstWhere(
-      (_Job waiting) => waiting.committed,
+    final SpeechDecodeJob job = _queue.firstWhere(
+      (SpeechDecodeJob waiting) => waiting.committed,
       orElse: () => _queue.first,
     );
     _queue.remove(job);
@@ -519,7 +527,7 @@ final class _NativeSpeechEngine implements SpeechEngine {
     unawaited(_dispatch(lanes, job));
   }
 
-  Future<void> _dispatch(_Lanes lanes, _Job job) async {
+  Future<void> _dispatch(_Lanes lanes, SpeechDecodeJob job) async {
     final SpeechDecodeRequest request = job.request;
     final Result<SpeechDecodeResult> reply = _settled(
       await lanes.decode.request<SpeechDecodeResult>(
@@ -535,6 +543,7 @@ final class _NativeSpeechEngine implements SpeechEngine {
           jobId: job.jobId,
         ),
       ),
+      lanes,
       lanes.decode,
     );
     _inFlight = null;
@@ -549,7 +558,7 @@ final class _NativeSpeechEngine implements SpeechEngine {
     _pump();
   }
 
-  void _cancel(_Job job) {
+  void _cancel(SpeechDecodeJob job) {
     if (_queue.remove(job)) {
       job.finish(FailureResult<SpeechDecodeResult>(speechCancelled()));
     } else if (identical(_inFlight, job)) {
@@ -558,7 +567,7 @@ final class _NativeSpeechEngine implements SpeechEngine {
   }
 
   /// Aborts the in-flight [job] through the abort cell.
-  void _abort(_Job job) {
+  void _abort(SpeechDecodeJob job) {
     if (job.aborted) {
       return;
     }
@@ -567,18 +576,21 @@ final class _NativeSpeechEngine implements SpeechEngine {
   }
 
   void _failQueue(Failure failure) {
-    final List<_Job> waiting = _queue.toList();
+    final List<SpeechDecodeJob> waiting = _queue.toList();
     _queue.clear();
-    for (final _Job job in waiting) {
+    for (final SpeechDecodeJob job in waiting) {
       job.finish(FailureResult<SpeechDecodeResult>(failure));
     }
   }
 
-  /// A failure from [worker] once it has ended means the engine stopped.
-  Result<T> _settled<T>(Result<T> result, WorkerIsolate worker) {
-    if (result case FailureResult<T>(
-      failure: ProviderFailure(),
-    ) when !worker.isOpen && !_disposed) {
+  /// A failure from [worker] once it has ended, or once [lanes] are torn
+  /// down because a worker ended unasked (which cancels what the other
+  /// worker still had), means the engine stopped.
+  Result<T> _settled<T>(Result<T> result, _Lanes lanes, WorkerIsolate worker) {
+    if (result case FailureResult<T>(:final Failure failure)
+        when !_disposed &&
+            (failure is ProviderFailure || failure is CancelledFailure) &&
+            (lanes.closing || !worker.isOpen)) {
       return FailureResult<T>(speechEngineStopped());
     }
     return result;
@@ -621,31 +633,6 @@ final class _Lanes {
   bool closing = false;
 
   bool get isOpen => !closing && decode.isOpen && vad.isOpen;
-}
-
-/// One decode request on the main isolate's queue.
-final class _Job {
-  _Job(this.leaseId, this.request);
-
-  final int leaseId;
-  final SpeechDecodeRequest request;
-  final Completer<Result<SpeechDecodeResult>> done =
-      Completer<Result<SpeechDecodeResult>>();
-
-  /// Assigned when the job is sent to the worker; 0 while it waits.
-  int jobId = 0;
-  bool aborted = false;
-  void Function()? detach;
-
-  bool get committed => request.kind == SpeechDecodeKind.committed;
-
-  void finish(Result<SpeechDecodeResult> result) {
-    detach?.call();
-    detach = null;
-    if (!done.isCompleted) {
-      done.complete(result);
-    }
-  }
 }
 
 // Commands, sent within the isolate group.
@@ -770,7 +757,7 @@ final class _LaneServer {
 
   Future<Object?> _run(Object? command) async {
     final SpeechNativeApi api = switch (_opened) {
-      Success<SpeechNativeApi>(:final SpeechNativeApi value) => value,
+      Success<SpeechNativeApi>(value: final SpeechNativeApi opened) => opened,
       FailureResult<SpeechNativeApi>(:final Failure failure) => throw failure,
     };
     return switch (command) {
@@ -803,7 +790,7 @@ final class _LaneServer {
       api.release(model);
       rethrow;
     }
-    if (shape != _catalogueShape(entry)) {
+    if (shape != SpeechModelShape.expectedFor(entry)) {
       api.release(model);
       throw speechModelDamaged();
     }
@@ -844,7 +831,7 @@ final class _LaneServer {
       abortAddress: command.abortAddress,
       jobId: command.jobId,
     );
-    return _clamped(raw, command.offset, count);
+    return raw.clampedTo(count);
   }
 
   Future<SpeechVadHandle> _openVad(
@@ -925,68 +912,4 @@ final class _LaneServer {
       throw failure;
     }
   }
-
-  /// The shape a whisper model must report to be [entry]: every published
-  /// whisper model has the full encoder context.
-  static SpeechModelShape _catalogueShape(SpeechModelEntry entry) =>
-      SpeechModelShape(
-        nVocab: entry.nVocab,
-        nAudioCtx: AppConstants.speechEngine.maxAudioContext,
-        nAudioState: entry.nAudioState,
-        nAudioLayer: entry.nAudioLayer,
-        nTextLayer: entry.nTextLayer,
-        nMels: entry.nMels,
-        ftype: entry.ftype,
-        multilingual: entry.multilingual,
-      );
-
-  /// [raw] limited to `[offset, offset + count)`: anything starting at or
-  /// past the original end came from padding and is dropped.
-  static SpeechDecodeResult _clamped(
-    SpeechDecodeResult raw,
-    int offset,
-    int count,
-  ) {
-    final int end = offset + count;
-    return SpeechDecodeResult(
-      segments: <SpeechSegment>[
-        for (final SpeechSegment segment in raw.segments)
-          if (segment.startSample < end) _segment(segment, offset, end),
-      ],
-      language: raw.language,
-      offsetSamples: offset,
-      sampleCount: count,
-      elapsed: raw.elapsed,
-    );
-  }
-
-  static SpeechSegment _segment(SpeechSegment segment, int offset, int end) {
-    final int start = _bounded(segment.startSample, offset, end);
-    return SpeechSegment(
-      startSample: start,
-      endSample: _bounded(segment.endSample, start, end),
-      text: segment.text,
-      noSpeechProbability: segment.noSpeechProbability,
-      averageLogProbability: segment.averageLogProbability,
-      confidence: segment.confidence,
-      pieces: <SpeechPiece>[
-        for (final SpeechPiece piece in segment.pieces)
-          if (piece.startSample < end) _piece(piece, offset, end),
-      ],
-    );
-  }
-
-  static SpeechPiece _piece(SpeechPiece piece, int offset, int end) {
-    final int start = _bounded(piece.startSample, offset, end);
-    return SpeechPiece(
-      startSample: start,
-      endSample: _bounded(piece.endSample, start, end),
-      text: piece.text,
-      probability: piece.probability,
-    );
-  }
-
-  /// [sample] held inside `[low, high]`.
-  static int _bounded(int sample, int low, int high) =>
-      sample < low ? low : (sample > high ? high : sample);
 }

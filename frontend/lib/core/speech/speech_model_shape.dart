@@ -1,3 +1,7 @@
+import 'package:tapture/core/constants/app_constants.dart';
+
+import 'speech_model_entry.dart';
+
 /// The hyperparameters of a whisper model as the engine loaded it, compared
 /// against the catalogue so a mislabelled file is refused.
 final class SpeechModelShape {
@@ -12,6 +16,21 @@ final class SpeechModelShape {
     required this.ftype,
     required this.multilingual,
   });
+
+  /// The shape a whisper model must report to be [entry]: its catalogue
+  /// header facts, with the full encoder context every published whisper
+  /// model has.
+  factory SpeechModelShape.expectedFor(SpeechModelEntry entry) =>
+      SpeechModelShape(
+        nVocab: entry.nVocab,
+        nAudioCtx: AppConstants.speechEngine.maxAudioContext,
+        nAudioState: entry.nAudioState,
+        nAudioLayer: entry.nAudioLayer,
+        nTextLayer: entry.nTextLayer,
+        nMels: entry.nMels,
+        ftype: entry.ftype,
+        multilingual: entry.multilingual,
+      );
 
   /// Vocabulary size.
   final int nVocab;

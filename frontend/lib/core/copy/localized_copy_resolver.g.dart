@@ -3049,7 +3049,7 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'pdfNotInRegister' => pdfNotInRegister,
     'pdfMinutesReport' => pdfMinutesReport,
     'pdfTranscriptReport' => pdfTranscriptReport,
-    'pdfTranscriptRaw' => pdfTranscriptRaw(
+    'pdfTranscriptHeard' => pdfTranscriptHeard(
       (message.argument('title') is LocalizedMessage
           ? resolve(message.argument('title') as LocalizedMessage)
           : message.argument('title') as String),

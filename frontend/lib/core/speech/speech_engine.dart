@@ -11,6 +11,7 @@ import 'speech_decode_result.dart';
 import 'speech_engine_state.dart';
 import 'speech_engine_stub.dart'
     if (dart.library.io) 'speech_engine_io.dart'
+    if (dart.library.js_interop) 'speech_engine_web.dart'
     as platform;
 import 'speech_failures.dart';
 import 'speech_load_report.dart';
@@ -30,8 +31,7 @@ import 'speech_vad_result.dart';
 /// throw (spec §30.4.4).
 abstract interface class SpeechEngine {
   /// The engine this platform runs: native worker isolates on a device and
-  /// Web Workers in a browser (task 112); [SpeechEngine.unavailable]
-  /// elsewhere.
+  /// Web Workers in a browser; [SpeechEngine.unavailable] elsewhere.
   ///
   /// Tests may load the library from [libraryPath], and may replace the
   /// native library behind the workers with [openApi] and the main

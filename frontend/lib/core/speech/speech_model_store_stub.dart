@@ -6,7 +6,8 @@ import 'speech_model_entry.dart';
 import 'speech_model_store.dart';
 
 /// The store a platform without files gets: nothing installed and no
-/// import. Task 112 adds the browser store behind the same conditional
+/// import. The device store (`speech_model_store_io.dart`) and the browser
+/// store (`speech_model_store_web.dart`) sit behind the same conditional
 /// import.
 SpeechModelStore openSpeechModelStore({
   required StorageRoot privateRoot,

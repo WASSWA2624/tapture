@@ -14,7 +14,7 @@ final class TranscriptReport {
     return <PdfSection>[
       for (final TranscriptContent transcript in transcripts) ...<PdfSection>[
         engine.section(
-          heading: text.transcriptRaw(transcript.title),
+          heading: text.transcriptHeard(transcript.title),
           lines: <String>[if (transcript.raw.isNotEmpty) transcript.raw],
         ),
         if (transcript.edited case final String edited)

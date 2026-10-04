@@ -11897,7 +11897,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'{title} (as heard)'**
-  String pdfTranscriptRaw(Object title);
+  String pdfTranscriptHeard(Object title);
 
   /// Heading of the operator's edit of a transcript, printed beside the raw text and never as recorded speech.
   ///

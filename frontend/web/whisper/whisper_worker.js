@@ -97,10 +97,15 @@ const STATUS = Object.freeze({
   OK: 0,
   INVALID_ARGUMENT: 1,
   ABI_MISMATCH: 2,
+  OUT_OF_MEMORY: 7,
   ABORTED: 8,
+  AUDIO_TOO_LONG: 12,
   INTERNAL: 14,
   MODEL_MISMATCH: 15,
 });
+
+// TW_MAX_SAMPLES: one transcription is at most 10 minutes of 16 kHz audio.
+const MAX_SAMPLES = 16000 * 600;
 
 // tw_object_kind.
 const OBJECT_KINDS = Object.freeze({
@@ -168,7 +173,9 @@ const printed = [];
 let heapBuffer = null;
 let heapViews = null;
 
-// Typed views of the current heap. Never cache them: growth replaces the
+// HEAPU8, HEAP32, HEAPU32, HEAPF32 and HEAP64 views of the current heap,
+// re-derived from wasmMemory.buffer whenever it changed; 64-bit fields are
+// read through the HEAP64 view. Never cache a view: growth replaces the
 // buffer, and on mt another thread may grow it at any time.
 function heap() {
   const buffer = wasm.wasmMemory.buffer;
@@ -377,7 +384,9 @@ async function fetchModel(url) {
 }
 
 // Streams the response into the OPFS entry and returns its open sync handle.
-async function downloadToCache(directory, cacheKey, url) {
+// A response longer than the expected bytes is refused as model_mismatch
+// before it can fill the origin's storage.
+async function downloadToCache(directory, cacheKey, url, bytes) {
   const response = await fetchModel(url);
   let access;
   try {
@@ -400,6 +409,10 @@ async function downloadToCache(directory, cacheKey, url) {
       }
       if (chunk.done) {
         break;
+      }
+      if (offset + chunk.value.byteLength > bytes) {
+        await reader.cancel().catch(() => {});
+        throw new WorkerFailure('model_mismatch', STATUS.MODEL_MISMATCH);
       }
       try {
         offset += access.write(chunk.value, { at: offset });
@@ -452,13 +465,18 @@ async function init(args) {
   const threadsUsable =
     globalThis.crossOriginIsolated === true && typeof SharedArrayBuffer === 'function';
   const variant = requested !== 'st' && threadsUsable ? 'mt' : 'st';
-  const { default: create } = await import(`./tapture_whisper_${variant}.js`);
-  wasm = await create({
-    twSourceSize: sourceSize,
-    twSourceRead: sourceRead,
-    print: (text) => printed.push({ level: 2, text: String(text) }),
-    printErr: (text) => printed.push({ level: 4, text: String(text) }),
-  });
+  try {
+    const { default: create } = await import(`./tapture_whisper_${variant}.js`);
+    wasm = await create({
+      twSourceSize: sourceSize,
+      twSourceRead: sourceRead,
+      print: (text) => printed.push({ level: 2, text: String(text) }),
+      printErr: (text) => printed.push({ level: 4, text: String(text) }),
+    });
+  } catch (_) {
+    wasm = null;
+    throw new WorkerFailure('fetch_failed');
+  }
   if (wasm._tw_abi_version() !== ABI_VERSION) {
     wasm = null;
     throw new WorkerFailure('abi_mismatch', STATUS.ABI_MISMATCH);
@@ -484,7 +502,10 @@ async function init(args) {
   if (variant === 'mt') {
     abortCell = wasm._tw_cell_new();
     if (abortCell === 0) {
-      throw new WorkerFailure('out_of_memory', 7);
+      // Without the cell a later init would return an mt info with no abort.
+      wasm = null;
+      info = null;
+      throw new WorkerFailure('out_of_memory', STATUS.OUT_OF_MEMORY);
     }
     info.memory = wasm.wasmMemory;
     info.abortCell = { byteOffset: abortCell };
@@ -569,7 +590,7 @@ async function loadModel(args) {
     access = await openCached(directory, cacheKey, bytes);
     servedFrom = 'opfs';
     if (access === null) {
-      access = await downloadToCache(directory, cacheKey, url);
+      access = await downloadToCache(directory, cacheKey, url, bytes);
       servedFrom = 'network';
     }
   } else {
@@ -635,7 +656,7 @@ async function verify(args) {
       const out = alloc(32);
       const hasher = wasm._tw_sha256_new();
       if (hasher === 0) {
-        throw new WorkerFailure('out_of_memory', 7);
+        throw new WorkerFailure('out_of_memory', STATUS.OUT_OF_MEMORY);
       }
       const source = sourceOverAccessHandle(access);
       for (let offset = 0; offset < args.bytes; ) {
@@ -759,7 +780,9 @@ function transcribe(args) {
     if (pcm.length > 0) {
       samples = wasm._tw_context_pcm_buffer(handle, pcm.length);
       if (samples === 0) {
-        throw statusFailure(pcm.length > 16000 * 600 ? 12 : STATUS.INVALID_ARGUMENT);
+        throw statusFailure(
+          pcm.length > MAX_SAMPLES ? STATUS.AUDIO_TOO_LONG : STATUS.INVALID_ARGUMENT,
+        );
       }
       heap().f32.set(pcm, samples >> 2);
     }
@@ -887,6 +910,10 @@ function dispose() {
 function abort(args) {
   const leaseId = args?.leaseId;
   const jobId = args?.jobId ?? null;
+  const validLease = typeof leaseId === 'number' || typeof leaseId === 'string';
+  if (!validLease || (jobId !== null && !Number.isInteger(jobId))) {
+    throw invalid();
+  }
   let dropped = 0;
   for (let i = queue.length - 1; i >= 0; i--) {
     const request = queue[i];

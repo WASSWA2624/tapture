@@ -437,10 +437,10 @@ final class _WhisperNativeApi implements SpeechNativeApi {
     );
   }
 
-  /// Copies [transcript] onto the session timeline of [request].
+  /// Copies [decoded] onto the session timeline of [request].
   static SpeechDecodeResult _result(
     SpeechDecodeRequest request,
-    WhisperTranscript transcript,
+    WhisperTranscript decoded,
   ) {
     final int offset = request.offsetSamples;
     int at(int milliseconds) =>
@@ -450,7 +450,7 @@ final class _WhisperNativeApi implements SpeechNativeApi {
             Duration.millisecondsPerSecond;
     return SpeechDecodeResult(
       segments: <SpeechSegment>[
-        for (final WhisperSegment segment in transcript.segments)
+        for (final WhisperSegment segment in decoded.segments)
           SpeechSegment(
             startSample: at(segment.startMs),
             endSample: at(segment.endMs),
@@ -478,10 +478,10 @@ final class _WhisperNativeApi implements SpeechNativeApi {
                 : const <SpeechPiece>[],
           ),
       ],
-      language: transcript.language,
+      language: decoded.language,
       offsetSamples: offset,
       sampleCount: request.samples.length,
-      elapsed: Duration(milliseconds: transcript.wallMs),
+      elapsed: Duration(milliseconds: decoded.wallMs),
     );
   }
 

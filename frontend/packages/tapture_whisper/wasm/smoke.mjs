@@ -13,6 +13,8 @@
 //   - a cross-origin model URL is refused with cross_origin;
 //   - a wrong SHA-256 and a wrong size are refused with model_mismatch;
 //   - jfk.wav with tiny-q5_1 contains the phrase;
+//   - `abort {leaseId}` drops that lease's queued decode, answered `aborted`,
+//     while other leases' decodes still run;
 //   - Silero gives floor(n / 512) probabilities for n samples;
 //   - mt: an Atomics.store abort, then N consecutive decodes at 4 threads
 //     (default 50) with liveObjects unchanged after each;
@@ -133,6 +135,29 @@ async function smoke({ variant, decodes, worker, origin, tiny, silero, pcm, path
   expect(words.includes('ask not what your country can do for you'), 'jfk phrase missing');
   expect(first.segments.length > 0 && first.pieces.length > 0, 'no segments or pieces');
   report(`jfk with tiny in ${Date.now() - started} ms at ${info.maxThreads} thread(s): phrase found`);
+
+  // A (lease 3) runs, or waits out the worker's yield after the previous
+  // request, while B (lease 2), C (lease 1) and the abort of lease 1 queue
+  // behind it: C is dropped unstarted, A and B still run.
+  const clip = pcm.slice(0, 3 * 16000);
+  const queued = (id, leaseId) =>
+    worker.call('transcribe', {
+      handle: whisper.handle,
+      jobId: id,
+      leaseId,
+      pcm: clip.slice(),
+      options: { language: 'en', threads: info.maxThreads },
+    });
+  const a = queued(jobId++, 3);
+  const b = queued(jobId++, 2);
+  const c = expectFailure(queued(jobId++, 1), 'aborted', 8);
+  const dropped = await worker.call('abort', { leaseId: 1 });
+  await a;
+  await b;
+  await c;
+  expect(dropped.dropped === 1, `abort dropped ${dropped.dropped} queued jobs, expected 1`);
+  await expectFailure(worker.call('abort', {}), 'invalid_argument', 1);
+  report("abort of lease 1 drops its queued job only; leases 2 and 3 still run");
 
   const vadResult = await worker.call('vadFeed', { handle: vad.handle, pcm: pcm.slice() });
   const expected = Math.floor(pcm.length / 512);

@@ -6786,7 +6786,7 @@ final class LocalizedCopy {
   String get pdfTranscriptReport => _catalog.pdfTranscriptReport;
 
   /// Heading of a transcript's raw text, exactly as the device heard it.
-  String pdfTranscriptRaw(String title) => _catalog.pdfTranscriptRaw(title);
+  String pdfTranscriptHeard(String title) => _catalog.pdfTranscriptHeard(title);
 
   /// Heading of the operator's edit of a transcript, printed beside the raw
   /// text and never as recorded speech.

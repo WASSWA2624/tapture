@@ -10414,13 +10414,13 @@
   "@pdfTranscriptReport": {
     "description": "Report title: the transcripts heard on the device from the exported records' audio."
   },
-  "pdfTranscriptRaw": "{title} (ás héárd)····",
-  "@pdfTranscriptRaw": {
+  "pdfTranscriptHeard": "{title} (ás héárd)····",
+  "@pdfTranscriptHeard": {
     "description": "Heading of a transcript's raw text, exactly as the device heard it.",
     "placeholders": {
       "title": {
         "type": "Object",
-        "description": "Value of title in pdfTranscriptRaw. User-provided content is not translated."
+        "description": "Value of title in pdfTranscriptHeard. User-provided content is not translated."
       }
     }
   },

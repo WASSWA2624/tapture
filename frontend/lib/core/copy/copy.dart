@@ -6246,8 +6246,8 @@ abstract final class Copy {
   static String get pdfTranscriptReport => _english.pdfTranscriptReport;
 
   /// Heading of a transcript's raw text, exactly as the device heard it.
-  static String pdfTranscriptRaw(String title) =>
-      _english.pdfTranscriptRaw(title);
+  static String pdfTranscriptHeard(String title) =>
+      _english.pdfTranscriptHeard(title);
 
   /// Heading of the operator's edit of a transcript, printed beside the raw
   /// text and never as recorded speech.

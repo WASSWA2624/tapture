@@ -161,7 +161,8 @@ dart run tool/whisper_wasm.dart --smoke           # node wasm/smoke.mjs --varian
   worker struct or status table that differs from `TW_SIZEOF_*`, `tw_struct_id` or `tw_status`.
 - `wasm/smoke.mjs` runs the committed `web/whisper/whisper_worker.js` in a Node worker thread standing in for a
   browser module worker, with the models served from `127.0.0.1`: init and struct sizes, cross-origin refusal, wrong
-  SHA-256 and size refused with `model_mismatch`, the jfk phrase with tiny, `floor(n/512)` Silero probabilities, and on
+  SHA-256 and size refused with `model_mismatch`, the jfk phrase with tiny, a lease's `abort` dropping only that
+  lease's queued decode, `floor(n/512)` Silero probabilities, and on
   mt an `Atomics.store` abort plus 50 consecutive 4-thread decodes with `liveObjects` unchanged.
 
 `web/whisper/whisper_worker.js` is hand-written. It picks mt only when `crossOriginIsolated` and `SharedArrayBuffer`

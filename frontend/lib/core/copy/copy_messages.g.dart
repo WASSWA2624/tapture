@@ -11413,9 +11413,9 @@ final class CopyMessages {
   );
 
   /// Heading of a transcript's raw text, exactly as the device heard it.
-  LocalizedMessage pdfTranscriptRaw(String title) => LocalizedMessage(
-    key: 'pdfTranscriptRaw',
-    fallback: Copy.pdfTranscriptRaw(title),
+  LocalizedMessage pdfTranscriptHeard(String title) => LocalizedMessage(
+    key: 'pdfTranscriptHeard',
+    fallback: Copy.pdfTranscriptHeard(title),
     arguments: <String, Object?>{
       'title': LocalizedMessage.encodeArgument(title),
     },

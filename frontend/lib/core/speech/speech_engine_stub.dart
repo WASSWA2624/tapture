@@ -4,7 +4,8 @@ import 'speech_native_api.dart';
 
 /// The engine a platform without on-device speech gets: one that refuses
 /// every operation. The native engine (`speech_engine_io.dart`) and the
-/// browser engine (task 112) sit behind the same conditional import.
+/// browser engine (`speech_engine_web.dart`) sit behind the same
+/// conditional import.
 SpeechEngine createSpeechEngine({
   String? libraryPath,
   SpeechNativeApi Function(String? libraryPath)? openApi,

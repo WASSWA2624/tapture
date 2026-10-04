@@ -15,6 +15,7 @@ import 'speech_model_source.dart';
 import 'speech_model_status.dart';
 import 'speech_model_store_stub.dart'
     if (dart.library.io) 'speech_model_store_io.dart'
+    if (dart.library.js_interop) 'speech_model_store_web.dart'
     as platform;
 
 /// Where this device keeps each catalogue speech model, and the one place

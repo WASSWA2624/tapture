@@ -42,7 +42,7 @@ final class PdfLabels {
     required this.rawNotes,
     required this.refinedMinutes,
     required this.transcriptReport,
-    required this.transcriptRaw,
+    required this.transcriptHeard,
     required this.transcriptEdited,
     required this.decisions,
     required this.actions,
@@ -162,7 +162,7 @@ final class PdfLabels {
   final String transcriptReport;
 
   /// Heading of a transcript's raw text, exactly as heard.
-  final String Function(String title) transcriptRaw;
+  final String Function(String title) transcriptHeard;
 
   /// Heading of the operator's edit of a transcript, never presented as
   /// recorded speech.

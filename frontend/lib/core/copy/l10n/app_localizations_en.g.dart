@@ -8044,7 +8044,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdfTranscriptReport => 'Transcripts';
 
   @override
-  String pdfTranscriptRaw(Object title) {
+  String pdfTranscriptHeard(Object title) {
     return '$title (as heard)';
   }
 
@@ -19877,7 +19877,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get pdfTranscriptReport => 'Tránscrípts····';
 
   @override
-  String pdfTranscriptRaw(Object title) {
+  String pdfTranscriptHeard(Object title) {
     return '$title (ás héárd)····';
   }
 

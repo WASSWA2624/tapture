@@ -49,7 +49,7 @@ final PdfLabels exportPdfLabels = PdfLabels(
   rawNotes: Copy.meetingNotes,
   refinedMinutes: Copy.meetingMinutes,
   transcriptReport: Copy.pdfTranscriptReport,
-  transcriptRaw: Copy.pdfTranscriptRaw,
+  transcriptHeard: Copy.pdfTranscriptHeard,
   transcriptEdited: Copy.pdfTranscriptEdited,
   decisions: Copy.meetingDecisions,
   actions: Copy.meetingActions,

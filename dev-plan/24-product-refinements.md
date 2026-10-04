@@ -3692,7 +3692,7 @@ abstract interface class SpeechAbortCell { int get address; void abortThrough(in
 
 ### Definition of done
 
-- [ ] `speech_engine_io_test` runs the contract suite over the scripted API and proves:
+- [x] `speech_engine_io_test` runs the contract suite over the scripted API and proves:
   - the precheck runs before `loadModel`, and a corrupted fixture never reaches it;
   - per-lease supersession and preemption go through the cell;
   - `abortLease(A)` never touches lease B;
@@ -3703,7 +3703,7 @@ abstract interface class SpeechAbortCell { int get address; void abortThrough(in
   - a 400 ms input padded to 1 s yields segments ending at or before offset + 6400;
   - the log drain is rate-limited, with no scripted text in the Logger buffer;
   - unload and dispose return the handle and worker counters to baseline.
-- [ ] On this machine, `speech_engine_native_test` passes against the built DLL and fetched models:
+- [x] On this machine, `speech_engine_native_test` passes against the built DLL and fetched models:
   - shape equals the catalogue for tiny and base;
   - the jfk text;
   - samples are monotonic and inside the window;
@@ -3714,9 +3714,44 @@ abstract interface class SpeechAbortCell { int get address; void abortThrough(in
   - 20 load/unload cycles return to 0;
   - the full contract suite.
 
+### Verification
+
+- 2026-10-04 (adversarial review): `flutter test test/core/speech/speech_engine_io_test.dart` passed 30/30 on two consecutive
+  runs: the 11-case contract suite over the scripted API in the real `speech-decode` and `speech-vad` workers, every
+  case above, and three cases the review added (a cancelled load frees the model and reports a cancel; a load that
+  finishes during dispose leaves nothing loaded; a voice-worker crash stops the in-flight decode as
+  `speechEngineStopped`, not as a cancel).
+- 2026-10-04: mutation probes, each reverted, failed the matching case: precheck removed; `abortLease` ignoring the
+  lease; cell released before `exited`; job ids assigned at enqueue; a pending cancel aborting the in-flight job;
+  results not clamped; log drain not rate-limited.
+- 2026-10-04: `flutter test test/core/speech/speech_engine_native_test.dart` with `TAPTURE_TEST_WHISPER` set to
+  `build/windows/x64/runner/Debug/tapture_whisper.dll` and `TAPTURE_TEST_SPEECH_MODELS` set to `assets/speech` passed
+  19/19, none skipped, both before and after the review's fixes. That is 8 native cases plus the contract suite on
+  tiny, Silero and 6 s of jfk.
+- 2026-10-04: review fixes in `speech_engine_io.dart`:
+  - A failure that a lane teardown causes after an unexpected worker exit now maps to `speechEngineStopped()`. This
+    includes the in-flight decode cancelled when the VAD worker dies. Before, that decode returned `CancelledFailure`.
+  - A load that completes after `dispose` no longer sets `loaded`.
+  - Local `value`/`transcript` identifiers were renamed to follow the identifier constraint.
+- 2026-10-04: other checks:
+  - `dart analyze lib/core/speech test/core/speech` and `dart format --set-exit-if-changed` are clean.
+  - `check_logging`, `check_naming`, `check_structure`, `check_tests` and `check_secrets` are clean.
+  - The architecture suites passed: plugin_imports, layering, naming, errors, tokens, network and state, along with
+    `speech_engine_test` and `fake_speech_engine_test`.
+  - `data_safety_test` fails only on `features/exports/data/export_pdf.dart:52`, a `transcriptRaw` write outside this
+    task.
+- Open notes, outside the acceptance items:
+  - Creating the abort cell opens `WhisperLibrary` once per path on the main isolate. That runs the CPU preflight and
+    the ABI and struct-size checks, which are short FFI calls beyond FE-PERF-02's create/store/close; the task-104 Dart
+    API offers no cell-only open.
+  - Design §4.2's crash file (`tw_set_crash_file`) belongs with task 113's host wiring.
+  - The shim should reset Silero state in `tw_vad_open_*`; the engine resets each new detector as a workaround.
+
 ## 111 — Compile whisper to WebAssembly with a worker protocol
 
 **Depends on** [101](24-product-refinements.md), [103](24-product-refinements.md)
+
+**Implementation started:** Yes
 
 ### Implement
 
@@ -3775,14 +3810,49 @@ abstract interface class SpeechAbortCell { int get address; void abortThrough(in
 
 ### Definition of done
 
-- [ ] On this machine, `--build` produces both variants with the pinned emsdk and refuses any other version. `--check` passes.
-- [ ] `whisper_wasm_test` proves that a changed shim input, a tampered `.wasm` and a worker struct-table drift are each reported with exit 1.
-- [ ] On this machine, `--smoke` passes under Node:
+- [x] On this machine, `--build` produces both variants with the pinned emsdk and refuses any other version. `--check` passes.
+- [x] `whisper_wasm_test` proves that a changed shim input, a tampered `.wasm` and a worker struct-table drift are each reported with exit 1.
+- [x] On this machine, `--smoke` passes under Node:
   - st: jfk with tiny, VAD `floor(n/512)`, struct sizes, and a wrong sha giving `MODEL_MISMATCH`;
   - mt: the same, plus 50 consecutive decodes at 4 threads with `liveObjects` stable.
 - [ ] In the Browser pane, the default server selects st, and `--isolated` reports `crossOriginIsolated` true and selects mt. After loading base, `memory.buffer.byteLength` ≤ model bytes + 260 MiB.
-- [ ] The worker rejects a cross-origin URL and a mismatched model without loading it, and a reload with devtools offline serves from OPFS.
+- [x] The worker rejects a cross-origin URL and a mismatched model without loading it, and a reload with devtools offline serves from OPFS.
 - [ ] Backend sign-in works on web in both the default and `--isolated` modes.
+
+### Verification
+
+- 2026-10-04 (review): `dart run tool/whisper_wasm.dart --build` with emsdk 6.0.11 (`EMSDK_PYTHON` set, because
+  `emsdk_env.sh` otherwise hits the Windows Store `python3` alias) rebuilt st and mt from empty `build/tw-wasm-*`
+  directories: exit 0, `whisper wasm: clean`, and all four artifacts, `BUILD_INFO.json` and `LICENSES.txt` came out
+  byte-identical to the committed ones. Without an activated emsdk the same command exits 1 with `EMSDK is not set`
+  before building; a non-pinned emcc (6.0.10) is refused by the `whisper_wasm_test` seam (no second emsdk here).
+  Standalone `--check` exits 0.
+- 2026-10-04: `flutter test --no-pub test/tool/whisper_wasm_test.dart` 15/15 (changed shim input, tampered `.wasm`,
+  struct size/id/row drift, status drift, export and glue drift, every violation in one run, CRLF, shipped tree);
+  `check_secrets_test` 19/19; `check_secrets` and `check_repo_hygiene` clean; `dart analyze` and `dart format` clean
+  on the tool and test; `python -m unittest run-tools/tests/test_run_web.py` 4 OK.
+- 2026-10-04: `dart run tool/whisper_wasm.dart --smoke` exit 0. st and mt: 10 struct sizes equal the header,
+  cross-origin refused, wrong SHA-256 and size give `model_mismatch` (15) with no live context, jfk phrase with tiny,
+  lease abort drops only that lease's queued job, 343 = floor(176000/512) probabilities; mt adds the `Atomics.store`
+  abort and 50 consecutive 4-thread decodes (508 s under load) with `liveObjects` stable. After the review's worker
+  fixes, st and mt (`--decodes 2`) smokes pass again.
+- 2026-10-04 Browser pane (Chromium), driving the worker from the app page: on `tapture-web-preview` (5180)
+  `crossOriginIsolated` is false and `init {variant:'auto'}` selects st; on `tapture-web-preview-isolated` (5181) it is
+  true and selects mt (shared memory, abort cell, 4 threads), an mt decode runs, and an `Atomics.store` aborts a
+  running decode (`aborted`, status 8). `https://example.com/...` and `http://127.0.0.1:5180/...` are refused with
+  `cross_origin`; a wrong SHA-256 gives `model_mismatch` with no context, the heap still at its initial 64 MiB and the
+  OPFS entry removed. Base loads from the network, then from OPFS (`servedFrom:'opfs'`), from OPFS in a fresh worker
+  given a same-origin URL that does not exist, and from OPFS with the dev server stopped (page fetches fail).
+  Substitution: devtools offline cannot be toggled from the pane, and the debug dev server has no service worker, so
+  the page itself cannot reload offline; the stopped-server load and the fresh-worker load stand in for the offline
+  reload. `verify` reports `{present:true, ok:true}` and `ok:false` for a wrong hash.
+- Open: the memory clause of the Browser-pane item fails. After loading base, `memory.buffer.byteLength` is
+  341,377,024 B in both st and mt, against a budget of 59,707,625 B + 260 MiB = 332,337,385 B (over by 9,039,639 B).
+  The floor is whisper.cpp's fixed `whisper_init_state` allocations (logits reserve and worst-case decode buffer);
+  meeting the budget needs either a revised budget or a second vendored patch, which the design does not allow.
+  The item stays open until that is decided.
+- Open: backend sign-in in both modes was not run (no backend session in this review); check it with the backend
+  running on ports 5180 and 5181.
 
 ## 112 — Bridge the speech engine to the browser workers
 
@@ -4783,10 +4853,45 @@ Exact file names are confirmed against the tree at implementation time, and any 
 
 ### Definition of done
 
-- [ ] `version_vector_schema_test` passes with both tables, which have vector triggers after `onCreate` and after a v32 → v33 upgrade.
-- [ ] A project package round-trips transcripts and segments with the raw text unchanged.
-- [ ] Merges never duplicate segments, and conflicting edits resolve by `editedAt` with an audit row.
-- [ ] Exports include raw and edited transcript text.
+- [x] `version_vector_schema_test` passes with both tables, which have vector triggers after `onCreate` and after a v32 → v33 upgrade.
+- [x] A project package round-trips transcripts and segments with the raw text unchanged.
+- [x] Merges never duplicate segments, and conflicting edits resolve by `editedAt` with an audit row.
+- [x] Exports include raw and edited transcript text.
+
+### Verification
+
+- 2026-10-04 (adversarial review): file names differ from the Files list and were confirmed against the tree:
+  tables are selected in `frontend/lib/core/bundle/bundle_tables.dart` and filtered in `bundle_privacy.dart`
+  (`bundle_writer.dart` and `bundle_reader.dart` are table-list driven and needed no change); the planner is
+  `frontend/lib/features/merge/domain/merge_planner.dart`; the deliverable builder is
+  `frontend/lib/features/exports/data/deliverable_reports.dart`; minutes print through
+  `frontend/lib/core/export/pdf/minutes_report.dart` and the new `transcript_report.dart`. Tests sit beside them
+  (`test/features/merge/domain/merge_planner_test.dart`, `test/features/merge/data/package_import_repository_impl_test.dart`,
+  `test/features/exports/data/deliverable_reports_test.dart`, `deliverable_repository_impl_test.dart`,
+  `test/core/export/minutes_report_test.dart`, `transcript_report_test.dart`). `transcripts.json` is an optional
+  entry (`BundleFormat.optionalEntries`), so earlier packages still read; live transcripts never travel.
+- 2026-10-04: `flutter test test/core/db/migrations_test.dart test/core/db/version_vector_schema_test.dart
+  test/core/db/app_database_test.dart` — 72 passed (fresh database and a real v32 file with the triggers dropped,
+  upgraded to 33, then a rerun of `ensure`).
+- 2026-10-04: bundle round-trip, reader, writer, vectors, redaction and protection tests — all passed
+  (`bundle_protection_test` "native encrypted packages…" timed out once in the batch under machine load and passed
+  alone in 15 s).
+- 2026-10-04: `merge_planner_test`, `package_import_repository_impl_test`, `structural_merge_test`,
+  `merge_repository_impl_test`, `merge_snapshot_store_test` — 77 passed; the integration test merges real packages,
+  asserts one `text_edited` audit row and no doubled segments, and a re-plan of the same package is empty.
+- 2026-10-04: export tests (`transcript_report_test`, `minutes_report_test`, `pdf_reports_golden_test`,
+  `deliverable_reports_test`, `export_pdf_test`, `deliverable_repository_impl_test`, `deliverable_renderer_test`) —
+  33 passed; the repository test reads the written PDFs and finds "(as heard)" and "(edited)" text.
+- 2026-10-04: `flutter test test/architecture` — 113 passed; `test/features/transcripts/data` and `test/core/db/tables`
+  — 153 passed; `dart analyze` on the touched lib and test paths — no issues; `check_structure`, `check_naming`,
+  `check_logging`, `check_l10n`, `check_repo_hygiene`, `check_tests --strict` — clean. Reviewer fix: formatted
+  `test/core/export/transcript_report_test.dart`.
+- Not verified: the opt-in performance test `bundle_writer_memory_test` timed out for the implementer under load.
+  Known gaps for later tasks: a merged or imported transcript keeps the sender's `audio_path` even when its
+  attachment lands under another path or is linked to a local copy (matters once skipped-range transcription
+  reads that path); once task 124 resolves `MeetingRecord.transcript` from the transcripts table, minutes must not
+  print it again in the raw notes; `BundleFormat.version` was not raised, so an older app reports a new package as
+  unreadable rather than newer.
 
 ## 128 — Measure on-device speech load, speed and memory on Windows
 
