@@ -1,7 +1,7 @@
 /*
  * tapture_whisper: on-device speech-to-text for Tapture, ABI v1.
  *
- * The only public header of the plugin (app-write-up §30.4.1). It wraps the
+ * The only public header of the plugin (app-write-up section 30.4.1). It wraps the
  * vendored whisper.cpp 1.9.4 / ggml 0.23.0 CPU engine behind plain C calls,
  * POD structs with fixed layouts and opaque handles, so Dart FFI and a
  * WebAssembly worker can bind it without a generator.

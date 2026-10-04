@@ -1,5 +1,5 @@
 /*
- * SHA-256 as specified in FIPS 180-4 §4.1.2, §5.1.1, §5.3.3 and §6.2.
+ * SHA-256 as specified in FIPS 180-4 sections 4.1.2, 5.1.1, 5.3.3 and 6.2.
  *
  * Written for tapture_whisper so that model verification needs no platform
  * crypto: it runs the same on Windows, Android, Linux, Apple and in a
@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-/* FIPS 180-4 §4.2.2: the first 32 bits of the fractional parts of the cube
+/* FIPS 180-4 section 4.2.2: the first 32 bits of the fractional parts of the cube
  * roots of the first 64 primes. */
 static const uint32_t tw_sha256_k[64] = {
     0x428a2f98u, 0x71374491u, 0xb5c0fbcfu, 0xe9b5dba5u, 0x3956c25bu,
@@ -43,7 +43,7 @@ static void tw_store_be32(uint8_t* p, uint32_t v) {
   p[3] = (uint8_t)v;
 }
 
-/* FIPS 180-4 §6.2.2: one 512-bit block. */
+/* FIPS 180-4 section 6.2.2: one 512-bit block. */
 static void tw_sha256_compress(uint32_t h[8], const uint8_t block[64]) {
   uint32_t w[64];
   uint32_t a, b, c, d, e, f, g, hh;
@@ -95,7 +95,7 @@ static void tw_sha256_compress(uint32_t h[8], const uint8_t block[64]) {
 }
 
 void tw_sha256_state_begin(tw_sha256_state* state) {
-  /* FIPS 180-4 §5.3.3. */
+  /* FIPS 180-4 section 5.3.3. */
   state->h[0] = 0x6a09e667u;
   state->h[1] = 0xbb67ae85u;
   state->h[2] = 0x3c6ef372u;
@@ -139,7 +139,7 @@ void tw_sha256_state_feed(tw_sha256_state* state, const void* data, size_t n) {
 }
 
 void tw_sha256_state_end(tw_sha256_state* state, uint8_t out[32]) {
-  /* FIPS 180-4 §5.1.1: a 1 bit, zeros to 448 mod 512, the 64-bit length. */
+  /* FIPS 180-4 section 5.1.1: a 1 bit, zeros to 448 mod 512, the 64-bit length. */
   const uint64_t bits = state->total_bytes * 8u;
   int i;
   state->block[state->used++] = 0x80u;

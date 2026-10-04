@@ -458,6 +458,10 @@ final class RecordQueries {
         _db.processing,
         _db.processingResults,
         _db.meetings,
+        // Segment inserts change no document (spec §30.4.6); a document
+        // reads segments again only when its transcript row changes.
+        _db.transcripts,
+        _db.attachmentOwners,
         _db.templates,
         _db.templateFields,
         _db.templateRows,

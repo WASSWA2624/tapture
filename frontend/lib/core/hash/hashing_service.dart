@@ -1,29 +1,49 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:tapture/core/concurrency/cooperative_cancellation.dart';
 import 'package:tapture/core/concurrency/isolate_runner.dart';
+import 'package:tapture/core/concurrency/worker_cancellation.dart';
 import 'package:tapture/core/constants/app_constants.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 /// Content hashing for file identity and duplicate detection.
 abstract final class HashingService {
   /// SHA-256 of [file], streamed in chunks on a worker isolate.
   ///
-  /// [onProgress] receives the fraction read, ending at 1.0. [cancel] stops
-  /// the isolate and completes with a `CancelledFailure`.
+  /// [onProgress] receives the fraction read, ending at 1.0. [cancel]
+  /// completes with a `CancelledFailure` after the worker has closed the
+  /// file at its next chunk, so a cancelled hash never leaves the file held
+  /// open (Windows refuses to remove a file that is).
   static Future<Result<String>> sha256OfFile(
     File file, {
     CancellationToken? cancel,
     void Function(double)? onProgress,
-  }) {
-    return runIsolate(
-      _hashFileInIsolate,
-      file.path,
-      cancel: cancel,
-      onProgress: onProgress,
+  }) async {
+    if (cancel == null) {
+      return runIsolate(_hashFileInIsolate, (
+        file.path,
+        null,
+      ), onProgress: onProgress);
+    }
+    if (cancel.isCancelled) {
+      return const FailureResult<String>(CancelledFailure());
+    }
+    final CooperativeCancellation cancellation = CooperativeCancellation(
+      cancel,
     );
+    try {
+      return await runIsolate(_hashFileInIsolate, (
+        file.path,
+        cancellation.handshake,
+      ), onProgress: onProgress);
+    } finally {
+      cancellation.close();
+    }
   }
 
   /// Hashes a picked document without blocking the UI isolate.
@@ -56,7 +76,11 @@ String sha256OfString(String value) {
   return HashingService.sha256OfString(value);
 }
 
-Future<String> _hashFileInIsolate(String path) async {
+Future<String> _hashFileInIsolate((String, SendPort?) job) async {
+  final (String path, SendPort? handshake) = job;
+  final WorkerCancellation? cancellation = handshake == null
+      ? null
+      : WorkerCancellation(handshake);
   final File file = File(path);
   final int length = file.lengthSync();
   final RandomAccessFile handle = file.openSync();
@@ -66,6 +90,7 @@ Future<String> _hashFileInIsolate(String path) async {
   var read = 0;
   try {
     while (true) {
+      await cancellation?.checkpoint();
       final int n = handle.readIntoSync(buffer);
       if (n == 0) {
         break;
@@ -79,6 +104,7 @@ Future<String> _hashFileInIsolate(String path) async {
     sink.close();
   } finally {
     handle.closeSync();
+    cancellation?.close();
   }
   IsolateRunner.reportProgress(1);
   final Digest digest = output.digest;

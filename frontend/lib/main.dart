@@ -22,6 +22,7 @@ import 'core/audio/audio_recorder_plugin.dart';
 import 'core/audio/audio_recorder_service.dart';
 import 'core/audio/microphone_access.dart';
 import 'core/audio/microphone_arbiter.dart';
+import 'core/audio/staged_take_recovery.dart';
 import 'core/backend/backend_session.dart';
 import 'core/backend/relay_package.dart';
 import 'core/backend/relay_queue.dart';
@@ -32,6 +33,7 @@ import 'core/camera/camera_service.dart';
 import 'core/cloud/cloud_operation_policy.dart';
 import 'core/cloud/destination_secrets.dart';
 import 'core/concurrency/cancellation_token.dart';
+import 'core/constants/app_constants.dart';
 import 'core/db/app_database.dart';
 import 'core/db/checkpoint.dart';
 import 'core/db/database_provider.dart';
@@ -83,6 +85,7 @@ import 'features/feedback/presentation/feedback_providers.dart';
 import 'features/import/import.dart'
     show RecordImportStoreImpl, recordImportStoreProvider;
 import 'features/meetings/data/meeting_repository_impl.dart';
+import 'features/meetings/domain/meeting_attachment.dart';
 import 'features/merge/data/merge_repository_impl.dart';
 import 'features/merge/merge.dart';
 import 'features/processing/data/notifications.dart';
@@ -115,6 +118,13 @@ import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
 import 'features/templates/data/template_repository_impl.dart';
 import 'features/templates/presentation/field_editor_bindings.dart';
+import 'features/transcripts/transcripts.dart'
+    show
+        TranscriptOwnerKind,
+        TranscriptRecovery,
+        TranscriptRepositoryImpl,
+        TranscriptSummary,
+        transcriptRepositoryProvider;
 
 /// Errors captured for bootstrap tests; the same objects are also logged.
 @visibleForTesting
@@ -333,6 +343,32 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
       );
     }
     final FileWriter evidenceWriter = FileWriter(storageRoot: storageRoot);
+    // Transcripts a closed app left live are settled before any session can
+    // start, so a new session is never taken for a stale one (task 119).
+    final TranscriptRepositoryImpl transcriptStore = TranscriptRepositoryImpl(
+      db: db,
+      clock: clock,
+      deviceId: id,
+      ids: ids,
+    );
+    await _recoverTranscripts(
+      transcriptStore,
+      takes: kIsWeb
+          ? StagedTakeRecovery.chunked(
+              writer: evidenceWriter,
+              store: BlobStore.platform(AppConstants.projectFiles.storeName),
+            )
+          : StagedTakeRecovery(writer: evidenceWriter, storageRoot: storageRoot),
+      meetings: MeetingRepositoryImpl(
+        db: db,
+        clock: clock,
+        deviceId: id,
+        ids: ids,
+        storageRoot: storageRoot,
+        writer: evidenceWriter,
+      ),
+      logger: logger,
+    );
     final DriftPhotoRepository capturePhotos = DriftPhotoRepository(
       db: db,
       writer: evidenceWriter,
@@ -810,6 +846,7 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
           writer: evidenceWriter,
         );
       }),
+      transcriptRepositoryProvider.overrideWith((Ref _) => transcriptStore),
       qualityRepositoryProvider.overrideWith((Ref ref) {
         return QualityRepositoryImpl(
           db: db,
@@ -907,6 +944,50 @@ Future<SettingsStore> _openOfflineStore(AppDatabase? db, String? id) async {
     );
   } on Object {
     return SettingsStore.fake();
+  }
+}
+
+/// Settles the transcripts a closed app left live: recovers and files a
+/// meeting's or a standalone recording's take, then marks each interrupted.
+/// Never deletes a file; logs counts only.
+Future<void> _recoverTranscripts(
+  TranscriptRepositoryImpl store, {
+  required AudioRecoveryService takes,
+  required MeetingRepositoryImpl meetings,
+  required Logger logger,
+}) async {
+  final Result<int> settled = await TranscriptRecovery(
+    repository: store,
+    logger: logger,
+  ).run(
+    recoverAudio: takes.recover,
+    fileAudio: (TranscriptSummary item, AudioRecording audio) async {
+      final String? meetingId = item.ownerId;
+      switch (item.ownerKind) {
+        case TranscriptOwnerKind.meeting when meetingId != null:
+          final Result<MeetingAttachment> attached = await meetings
+              .attachStored(
+                meetingId,
+                storagePath: audio.relativePath,
+                mimeType: audio.mimeType,
+                bytes: audio.byteLength,
+                sha256: audio.sha256,
+                duration: audio.duration,
+              );
+          return attached.map<String?>((MeetingAttachment file) => file.id);
+        case TranscriptOwnerKind.standalone:
+          final Result<String> filed = await store.fileStandaloneAudio(
+            item.id,
+            audio,
+          );
+          return filed.map<String?>((String attachment) => attachment);
+        case TranscriptOwnerKind.meeting || TranscriptOwnerKind.capture:
+          return const Success<String?>(null);
+      }
+    },
+  );
+  if (settled case FailureResult<int>(:final Failure failure)) {
+    logger.warn('speech', 'stale recordings need a retry', error: failure);
   }
 }
 

@@ -1,6 +1,6 @@
 // tapture_whisper ABI v1: the C shim over whisper.cpp 1.9.4 and ggml 0.23.0.
 //
-// app-write-up §30.4.1 is the contract; dev-plan task 103 builds it. The
+// app-write-up section 30.4.1 is the contract; dev-plan task 103 builds it. The
 // shim owns every allocation it returns, verifies every model by size and
 // SHA-256 before whisper.cpp parses a byte of it, keeps an explicit
 // whisper_state per context, aborts per graph node through patch 0001 and a
@@ -184,7 +184,7 @@ void tw_log_push(int32_t level, const char* text, size_t length) {
 
 // Records one of the shim's own lines, prefixed "tapture_whisper:". Callers
 // pass only fixed text and numbers: never a path, a prompt or a transcript.
-void tw_log_own(int32_t level, const char* format, int32_t value) {
+[[maybe_unused]] void tw_log_own(int32_t level, const char* format, int32_t value) {
   if (level < g_log_min_level.load(std::memory_order_relaxed)) {
     return;
   }
@@ -323,7 +323,7 @@ uint32_t tw_arch_now() {
 // What the compiler targets, for builds that do not pass TW_REQUIRED_FEATURES
 // (the Darwin forwarders): CMake builds pass the ggml-cpu mask instead,
 // because this file itself is compiled without architecture flags.
-constexpr uint64_t tw_compiled_features() {
+[[maybe_unused]] constexpr uint64_t tw_compiled_features() {
   return 0
 #if defined(__SSE3__)
          | TW_CPU_SSE3

@@ -118,6 +118,7 @@ const List<String> featureDirectories = <String>[
   'review',
   'settings',
   'templates',
+  'transcripts',
 ];
 
 /// The layers inside every feature, in dependency order

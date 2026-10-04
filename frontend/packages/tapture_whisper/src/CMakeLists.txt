@@ -1,5 +1,5 @@
 # tapture_whisper: the shim and the vendored whisper.cpp 1.9.4 / ggml 0.23.0
-# CPU engine as one shared library (dev-plan task 103, app-write-up §30.4.1).
+# CPU engine as one shared library (dev-plan task 103, app-write-up section 30.4.1).
 #
 # One file serves the Android NDK (CMake 3.22.1), MSVC (CMake 4.x) and the
 # Linux desktop. The vendored sources come from whisper_sources.cmake; none of
@@ -200,17 +200,23 @@ if(TW_OPENMP)
   # A static OpenMP runtime: no libomp.so to ship or to load.
   target_link_options(tapture_whisper PRIVATE -fopenmp -static-openmp)
 endif()
+if(UNIX AND NOT APPLE)
+  # ELF exports exactly tw_*: hidden visibility cannot hide the typeinfo and
+  # vtables that libc++ headers mark visible (std::regex in whisper.cpp).
+  set(TW_EXPORT_MAP "${CMAKE_CURRENT_BINARY_DIR}/tapture_whisper.map")
+  file(WRITE "${TW_EXPORT_MAP}" "{ global: tw_*; local: *; };\n")
+  target_link_options(tapture_whisper PRIVATE
+    "-Wl,--version-script=${TW_EXPORT_MAP}"
+    "-Wl,--gc-sections"
+    "-Wl,--exclude-libs,ALL")
+  set_property(TARGET tapture_whisper APPEND PROPERTY LINK_DEPENDS "${TW_EXPORT_MAP}")
+endif()
 if(ANDROID)
+  # 16 KiB pages (Android 15+ devices), checked by tool/check_native_library.dart.
   target_link_options(tapture_whisper PRIVATE
     "-Wl,-z,max-page-size=16384"
     "-Wl,-z,common-page-size=16384"
-    "-Wl,--gc-sections"
-    "-Wl,--exclude-libs,ALL"
     "-Wl,--build-id")
-elseif(UNIX AND NOT APPLE)
-  target_link_options(tapture_whisper PRIVATE
-    "-Wl,--gc-sections"
-    "-Wl,--exclude-libs,ALL")
 endif()
 
 if(TW_BUILD_SMOKE)

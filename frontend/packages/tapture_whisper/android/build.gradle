@@ -1,0 +1,40 @@
+// The Android build of the tapture_whisper FFI plugin (dev-plan task 103).
+//
+// The Android Gradle Plugin runs ../src/CMakeLists.txt once per ABI and
+// packages libtapture_whisper.so. arm64-v8a and x86_64 carry the engine;
+// armeabi-v7a is a stub library, so 32-bit devices report engineNotBuilt and
+// fall back to the platform recogniser. The app's settings already put the
+// Android Gradle Plugin on the classpath, so there is no buildscript block,
+// and there are no Java or Kotlin sources.
+//
+// The same .so builds without Gradle through NDK CMake and Ninja; see the
+// README. The APK build itself is verified in CI (task 130).
+group = "com.tapture.whisper"
+version = "1.9.4"
+
+apply plugin: "com.android.library"
+
+android {
+    namespace = "com.tapture.whisper"
+    compileSdk = 36
+    ndkVersion = "28.2.13676358"
+
+    defaultConfig {
+        minSdk = 24
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a", "x86_64"
+        }
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_static"
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = "../src/CMakeLists.txt"
+            version = "3.22.1"
+        }
+    }
+}

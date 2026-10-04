@@ -1,6 +1,6 @@
 /*
  * SHA-256 (FIPS 180-4) for tapture_whisper: the shim verifies every model
- * before whisper.cpp parses a byte of it (app-write-up §30.4.1).
+ * before whisper.cpp parses a byte of it (app-write-up section 30.4.1).
  *
  * Internal to the library. The exported ABI wraps it as tw_sha256,
  * tw_sha256_new, tw_sha256_update and tw_sha256_finish in tapture_whisper.h.
