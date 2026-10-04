@@ -296,6 +296,8 @@ Future<int> main(List<String> args);
 
 **Depends on** [025](25-testing-and-release.md), [101](24-product-refinements.md), [103](24-product-refinements.md), [105](24-product-refinements.md), [109](24-product-refinements.md), [111](24-product-refinements.md), [120](24-product-refinements.md)
 
+**Implementation started:** Yes
+
 ### Implement
 
 **Workflow.** `.github/workflows/speech.yml` is path-filtered, with nightly, `release/**` and dispatch triggers, and `flutter-version: 3.44.6`. Jobs:
@@ -341,9 +343,33 @@ Future<int> main(List<String> args);
 
 ### Definition of done
 
-- [ ] On this machine, `release_gate_test` proves the row passes with models present, and fails, listing each problem, for a missing model, a changed hash, a stale WASM file, a drifted patch and a missing licence block. A waiver is honoured.
-- [ ] `speech.yml` passes actionlint, or a YAML parse plus a recorded job and step review.
+- [x] On this machine, `release_gate_test` proves the row passes with models present, and fails, listing each problem, for a missing model, a changed hash, a stale WASM file, a drifted patch and a missing licence block. A waiver is honoured.
+- [x] `speech.yml` passes actionlint, or a YAML parse plus a recorded job and step review.
 - [ ] Every job is green on GitHub Actions and fails once on a deliberate violation (a dropped vendored file, a tampered `.wasm`, a 4 KiB-aligned `.so`), with run URLs recorded.
 - [ ] Linux, macOS and iOS (CocoaPods and SwiftPM) builds succeed, and `tw_*` resolves from Dart in each.
 - [ ] The Android debug APK contains `libtapture_whisper.so` for arm64-v8a, armeabi-v7a (stub) and x86_64, and `check_native_library` passes each.
 - [ ] `release-build` fetches and checks the models before building.
+
+### Verification
+
+- 2026-10-04: adversarial review. `flutter test test/tool/release_gate_test.dart --no-pub` passed 12/12. The
+  row passes on the real tree with the models present and on a restored temp copy. On a copy carrying all five
+  defects at once, it lists each one as its own `path:line` problem: missing Silero model, changed tiny hash,
+  stale `tapture_whisper_st.wasm`, drifted patch 0001 and dropped Silero licence block. The failure blocks the
+  release record, and a waiver is honoured. `dart analyze` and `dart format` are clean on both files.
+- 2026-10-04: review fix in `frontend/tool/release_gate.dart`. `main` now sets `exitCode`, because the VM ignores
+  main's return value: a failing gate used to exit 0. The usage error now exits 64. `dart run tool/release_gate.dart
+  --tag t130-review` exits 1 (the other rows are skipped), and its `speech-assets` row is `passed`.
+- 2026-10-04: actionlint is not installed, so `speech.yml` and `ci.yml` were checked by PyYAML parse plus a job and
+  step review.
+  - All five jobs are `continue-on-error: true`, and none has `needs:`. `wasm-rebuild` runs only on dispatch, and
+    drift there is a `::warning::`.
+  - Every flag and path the jobs use was confirmed against the tree: the `tw_smoke` flags (`--self-test`, `--model`,
+    `--sha256`, `--wav`, `--expect`, `--abort-after-checks`), the `TW_BUILD_SMOKE` CMake option, the vendored
+    `samples/jfk.wav` and the manifest's `tiny-q5_1` sha256 entry.
+  - Also confirmed: `smoke.mjs --variant st|mt`, `emsdk_version.txt`, `whisper_wasm.dart --build` honouring
+    `CMAKE`/`NINJA`/`EMSDK`, the `dev` flavor (`app-dev-debug.apk`), and the `_tw_*` lines in `wasm_exports.txt`.
+  - Every tool CI calls (`check_native_library`, `speech_models`, `whisper_vendor`, `whisper_wasm`) sets `exitCode`.
+- Open: the CI-run, Linux/macOS/iOS, APK and `release-build` items need a pushed GitHub Actions run, which this
+  Windows machine cannot provide. Gradle/APK builds and Apple and Linux builds are not possible here. The
+  `release-build` step is written before "Build the signed release" as a warning-only step, but no run proves it.

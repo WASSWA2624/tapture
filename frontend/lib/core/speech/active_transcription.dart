@@ -60,6 +60,7 @@ final class _ActiveTranscription implements LiveTranscriptionSession {
   StreamSubscription<AudioCaptureEvent>? _captureEvents;
   Future<Result<StoppedCapture>>? _stopRun;
   Future<Result<CancelledTranscription>>? _cancelRun;
+  Future<void>? _drainRun;
   Failure? _endFailure;
   CapturePauseReason? _requestedPause;
   LiveTranscriptionPhase _phase = LiveTranscriptionPhase.listening;
@@ -73,6 +74,7 @@ final class _ActiveTranscription implements LiveTranscriptionSession {
   bool _skipRequested = false;
   bool _exiting = false;
   bool _ended = false;
+  bool _finishingSink = false;
 
   Logger get _log => _service._logger;
 
@@ -129,14 +131,14 @@ final class _ActiveTranscription implements LiveTranscriptionSession {
 
   void _onAcquired(Result<SpeechEngineLease> acquired) {
     switch (acquired) {
-      case Success<SpeechEngineLease>(:final SpeechEngineLease value):
+      case Success<SpeechEngineLease>(value: final SpeechEngineLease lease):
         if (_ended) {
-          unawaited(value.release());
+          unawaited(lease.release());
           return;
         }
-        _lease = value;
-        _pipeline?.attachLease(value);
-        _log.info(_tag, 'transcribing with ${value.modelId}');
+        _lease = lease;
+        _pipeline?.attachLease(lease);
+        _log.info(_tag, 'transcribing with ${lease.modelId}');
       case FailureResult<SpeechEngineLease>(:final Failure failure):
         if (_ended) {
           return;
@@ -348,7 +350,7 @@ final class _ActiveTranscription implements LiveTranscriptionSession {
       case Success<AudioRecording?>(:final AudioRecording? value):
         _pipeline?.audioAvailable(captured);
         _setPhase(LiveTranscriptionPhase.draining);
-        unawaited(_drain(captured));
+        unawaited(_drainRun = _drain(captured));
         return Success<StoppedCapture>(
           StoppedCapture(
             audio: value,
@@ -385,6 +387,9 @@ final class _ActiveTranscription implements LiveTranscriptionSession {
     }
     final int covered = pipeline?.coveredToSample ?? 0;
     final bool complete = covered >= captured;
+    // From here the drain ends the session itself: a shutdown waits for it
+    // rather than finishing the sink a second time.
+    _finishingSink = true;
     await _finishSink(captured: captured, covered: covered, complete: complete);
     if (_ended) {
       return;
@@ -523,7 +528,9 @@ final class _ActiveTranscription implements LiveTranscriptionSession {
   /// Background: a long-form take is paused, patched and flushed and its
   /// last transcript write lands before this completes; dictation stops.
   Future<void> _toBackground() async {
-    if (_ended || _exiting) {
+    // A take already left for recovery is still made durable here: another
+    // exit check may have cancelled the close.
+    if (_ended) {
       return;
     }
     if (_dictation) {
@@ -585,6 +592,10 @@ final class _ActiveTranscription implements LiveTranscriptionSession {
       await stopping;
     }
     if (_ended) {
+      return;
+    }
+    if (_finishingSink) {
+      await _drainRun;
       return;
     }
     if (_phase == LiveTranscriptionPhase.draining) {

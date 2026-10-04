@@ -14,6 +14,7 @@ import android.os.StatFs
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.speech.SpeechRecognizer
 import android.system.ErrnoException
 import android.system.OsConstants
 import io.flutter.FlutterInjector
@@ -91,6 +92,12 @@ class MainActivity : FlutterFragmentActivity() {
                         call.argument("asset"),
                         call.argument("path"),
                         result,
+                    )
+                    // Field dictation falls back to the platform recogniser only
+                    // when it provably stays on the device (FE-SEC-04, task 120).
+                    "onDeviceRecognitionAvailable" -> result.success(
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                            SpeechRecognizer.isOnDeviceRecognitionAvailable(applicationContext),
                     )
                     "saveFileToDownloads" -> saveFileToDownloads(
                         call.argument("sourcePath"),

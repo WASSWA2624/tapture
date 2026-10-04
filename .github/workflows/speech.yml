@@ -1,0 +1,324 @@
+# The speech engine's advisory CI (dev-plan task 130, app-write-up section 30.4).
+#
+# Advisory by decision of the product owner (2026-10-04): every job reports pass
+# or fail with continue-on-error, no job needs another, and none is a required
+# check, so a red job here never blocks a merge, a release or another workflow.
+# Flutter test suites stay local (tests are gitignored); CI proves behaviour
+# through the asset checks, tw_smoke, the Node WebAssembly smoke and the builds.
+name: speech
+
+on:
+  pull_request:
+    paths:
+      - "frontend/packages/tapture_whisper/**"
+      - "frontend/lib/core/speech/**"
+      - "frontend/lib/core/audio/**"
+      - "frontend/web/whisper/**"
+      - "frontend/assets/speech/**"
+      - "frontend/tool/speech_models.dart"
+      - "frontend/tool/whisper_vendor.dart"
+      - "frontend/tool/whisper_wasm.dart"
+      - "frontend/tool/check_native_library.dart"
+      - "frontend/tool/release_gate.dart"
+      - "frontend/android/app/src/main/kotlin/**"
+      - ".github/workflows/speech.yml"
+  push:
+    branches:
+      - "release/**"
+  schedule:
+    - cron: "30 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: speech-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+    working-directory: frontend
+
+jobs:
+  speech-assets:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.6
+          cache: true
+      - run: flutter pub get
+      - name: Restore the speech models
+        uses: actions/cache@v4
+        with:
+          path: frontend/assets/speech/*.bin
+          key: speech-models-${{ runner.os }}-${{ hashFiles('frontend/lib/core/speech/speech_model_catalogue.dart') }}
+      - name: Fetch the bundled models by pinned URL and SHA-256
+        run: dart run tool/speech_models.dart --fetch
+      - name: Check every bundled model and the manifest
+        run: dart run tool/speech_models.dart --check
+      - name: Check the vendored whisper.cpp and its patch hashes
+        run: dart run tool/whisper_vendor.dart --check
+      - name: Check the committed WebAssembly engine against BUILD_INFO.json
+        run: dart run tool/whisper_wasm.dart --check
+
+  native-smoke:
+    name: native-smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.6
+          cache: true
+      - run: flutter pub get
+      - name: Restore the speech models
+        uses: actions/cache@v4
+        with:
+          path: frontend/assets/speech/*.bin
+          key: speech-models-${{ runner.os }}-${{ hashFiles('frontend/lib/core/speech/speech_model_catalogue.dart') }}
+      - name: Fetch the bundled models by pinned URL and SHA-256
+        run: dart run tool/speech_models.dart --fetch
+      - name: Build the engine and tw_smoke
+        run: |
+          cmake -S packages/tapture_whisper/src -B build/tw-smoke -DTW_BUILD_SMOKE=ON -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/tw-smoke --config Release --parallel
+      - name: Run tw_smoke on jfk with tiny, then abort mid-decode
+        run: |
+          smoke="$(find build/tw-smoke -type f \( -name tw_smoke -o -name tw_smoke.exe \) -print -quit)"
+          if [ -z "$smoke" ]; then
+            echo "::error title=tw_smoke::the build produced no tw_smoke"
+            exit 1
+          fi
+          sha="$(jq -r '.models[] | select(.id == "tiny-q5_1") | .sha256' assets/speech/manifest.json)"
+          wav=packages/tapture_whisper/third_party/whisper.cpp/samples/jfk.wav
+          phrase="ask not what your country can do for you"
+          "$smoke" --self-test
+          "$smoke" --model assets/speech/ggml-tiny-q5_1.bin --sha256 "$sha" --wav "$wav" --expect "$phrase"
+          "$smoke" --model assets/speech/ggml-tiny-q5_1.bin --sha256 "$sha" --wav "$wav" --expect "$phrase" \
+            --abort-after-checks 50
+
+  flutter-builds:
+    name: flutter-builds (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: windows
+            os: windows-latest
+          - target: linux
+            os: ubuntu-latest
+          - target: macos
+            os: macos-latest
+          - target: ios-cocoapods
+            os: macos-latest
+          - target: ios-swiftpm
+            os: macos-latest
+          - target: android
+            os: ubuntu-latest
+          - target: web
+            os: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - if: matrix.target == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - if: matrix.target == 'linux'
+        name: Install the Linux desktop toolchain
+        working-directory: .
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
+            libsecret-1-dev libjsoncpp-dev
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.6
+          cache: true
+      - if: matrix.target == 'ios-cocoapods'
+        run: flutter config --no-enable-swift-package-manager
+      - if: matrix.target == 'ios-swiftpm'
+        run: flutter config --enable-swift-package-manager
+      - run: flutter pub get
+
+      - if: matrix.target == 'windows'
+        run: flutter build windows --release
+      - if: matrix.target == 'linux'
+        run: flutter build linux --release
+      - if: matrix.target == 'macos'
+        run: flutter build macos --release
+      - if: startsWith(matrix.target, 'ios-')
+        run: flutter build ios --release --no-codesign
+      - if: matrix.target == 'android'
+        run: flutter build apk --debug --flavor dev
+      - if: matrix.target == 'web'
+        run: flutter build web --release --no-web-resources-cdn
+
+      - if: contains(fromJSON('["windows", "linux", "macos"]'), matrix.target)
+        name: Resolve every tw_* symbol from Dart
+        run: |
+          case "${{ matrix.target }}" in
+            windows) library=build/windows/x64/runner/Release/tapture_whisper.dll ;;
+            linux) library=build/linux/x64/release/bundle/lib/libtapture_whisper.so ;;
+            macos) library="$(find build/macos/Build/Products/Release -type f \
+                     \( -path '*tapture_whisper.framework/*' -name tapture_whisper \
+                        -o -name libtapture_whisper.dylib \) -print -quit)" ;;
+          esac
+          if [ -z "$library" ] || [ ! -f "$library" ]; then
+            echo "::error title=tapture_whisper::the ${{ matrix.target }} build does not ship the engine library"
+            exit 1
+          fi
+          probe="$RUNNER_TEMP/tw_resolve.dart"
+          cat > "$probe" <<'DART'
+          import 'dart:ffi';
+          import 'dart:io';
+
+          void main(List<String> args) {
+            final DynamicLibrary library = DynamicLibrary.open(args[0]);
+            final List<String> missing = <String>[
+              for (final String line in File(args[1]).readAsLinesSync())
+                if (line.startsWith('_tw_') && !library.providesSymbol(line.substring(1)))
+                  line.substring(1),
+            ];
+            for (final String name in missing) {
+              stderr.writeln('${args[0]}: $name does not resolve');
+            }
+            stdout.writeln('${args[0]}: ${missing.isEmpty ? 'every tw_* symbol resolves' : '${missing.length} missing'}');
+            exitCode = missing.isEmpty ? 0 : 1;
+          }
+          DART
+          dart "$probe" "$library" packages/tapture_whisper/src/wasm_exports.txt
+
+      - if: startsWith(matrix.target, 'ios-')
+        name: Find every tw_* symbol in the iOS app
+        run: |
+          app=build/ios/iphoneos/Runner.app
+          exported="$RUNNER_TEMP/exported.txt"
+          : > "$exported"
+          while IFS= read -r binary; do
+            case "$(file -b "$binary")" in
+              *Mach-O*) { nm -gU "$binary" 2>/dev/null || true; } | awk '{ print $NF }' >> "$exported" ;;
+            esac
+          done < <(find "$app" -type f)
+          missing=0
+          while IFS= read -r name; do
+            case "$name" in _tw_*) ;; *) continue ;; esac
+            if ! grep -qx "$name" "$exported"; then
+              echo "::error title=tapture_whisper::$name is not exported by $app"
+              missing=$((missing + 1))
+            fi
+          done < packages/tapture_whisper/src/wasm_exports.txt
+          test "$missing" -eq 0
+
+      - if: matrix.target == 'android'
+        name: Check each ABI's libtapture_whisper.so in the APK
+        run: |
+          apk=build/app/outputs/flutter-apk/app-dev-debug.apk
+          rm -rf build/apk-libs
+          unzip -q -o "$apk" 'lib/*/libtapture_whisper.so' -d build/apk-libs || true
+          libraries=()
+          missing=0
+          for abi in arm64-v8a armeabi-v7a x86_64; do
+            library="build/apk-libs/lib/$abi/libtapture_whisper.so"
+            if [ -f "$library" ]; then
+              libraries+=("$library")
+            else
+              echo "::error title=libtapture_whisper.so::$apk has no lib/$abi/libtapture_whisper.so"
+              missing=$((missing + 1))
+            fi
+          done
+          if [ "${#libraries[@]}" -gt 0 ]; then
+            dart run tool/check_native_library.dart "${libraries[@]}"
+          fi
+          test "$missing" -eq 0
+
+      - if: matrix.target == 'web'
+        name: The web build ships web/whisper unchanged
+        run: diff -r web/whisper build/web/whisper
+
+  wasm-node-smoke:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.6
+          cache: true
+      - run: flutter pub get
+      - name: Restore the speech models
+        uses: actions/cache@v4
+        with:
+          path: frontend/assets/speech/*.bin
+          key: speech-models-${{ runner.os }}-${{ hashFiles('frontend/lib/core/speech/speech_model_catalogue.dart') }}
+      - name: Fetch the bundled models by pinned URL and SHA-256
+        run: dart run tool/speech_models.dart --fetch
+      - name: Smoke the single-threaded engine under Node
+        run: node packages/tapture_whisper/wasm/smoke.mjs --variant st
+      - name: Smoke the pthread engine under Node
+        run: node packages/tapture_whisper/wasm/smoke.mjs --variant mt
+
+  wasm-rebuild:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install CMake and Ninja
+        working-directory: .
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.6
+          cache: true
+      - run: flutter pub get
+      - name: Rebuild both variants with the pinned emsdk
+        run: |
+          version="$(tr -d '[:space:]' < packages/tapture_whisper/wasm/emsdk_version.txt)"
+          git clone --depth 1 https://github.com/emscripten-core/emsdk.git "$RUNNER_TEMP/emsdk"
+          "$RUNNER_TEMP/emsdk/emsdk" install "$version"
+          "$RUNNER_TEMP/emsdk/emsdk" activate "$version"
+          source "$RUNNER_TEMP/emsdk/emsdk_env.sh"
+          CMAKE="$(command -v cmake)" NINJA="$(command -v ninja)" dart run tool/whisper_wasm.dart --build
+      - name: Warn on byte drift from the committed engine
+        run: |
+          if git diff --quiet -- web/whisper; then
+            echo "The rebuilt engine matches web/whisper byte for byte."
+          else
+            git diff --stat -- web/whisper
+            echo "::warning title=WebAssembly drift::the rebuilt engine differs from the committed web/whisper; see the uploaded artifact"
+          fi
+      - name: Check the rebuilt engine against its record
+        run: dart run tool/whisper_wasm.dart --check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: whisper-wasm-rebuild
+          path: frontend/web/whisper/
+          if-no-files-found: error

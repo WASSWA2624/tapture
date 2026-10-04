@@ -2814,6 +2814,100 @@ final class LocalizedCopy {
   /// Accessible name of the transcript view.
   String get transcriptViewLabel => _catalog.transcriptViewLabel;
 
+  /// Recording bar status once the audio is saved while the last words are
+  /// still being transcribed.
+  String get liveTranscriptStatusDraining =>
+      _catalog.liveTranscriptStatusDraining;
+
+  /// Recording bar status once the recording and its transcript are saved.
+  String get liveTranscriptStatusSaved => _catalog.liveTranscriptStatusSaved;
+
+  /// Recording bar status after the app went to the background during a
+  /// recording.
+  String get liveTranscriptStatusPausedBackground =>
+      _catalog.liveTranscriptStatusPausedBackground;
+
+  /// Recording bar status after a call or another app took the audio.
+  String get liveTranscriptStatusPausedInterruption =>
+      _catalog.liveTranscriptStatusPausedInterruption;
+
+  /// Recording bar status after the microphone was unplugged or switched
+  /// off.
+  String get liveTranscriptMicLost => _catalog.liveTranscriptMicLost;
+
+  /// Recording bar status after microphone access was withdrawn during a
+  /// recording.
+  String get liveTranscriptPermissionRevoked =>
+      _catalog.liveTranscriptPermissionRevoked;
+
+  /// Button that retries filing a stopped recording and its transcript.
+  String get liveTranscriptRetrySave => _catalog.liveTranscriptRetrySave;
+
+  /// Button that opens the transcript just saved.
+  String get liveTranscriptOpen => _catalog.liveTranscriptOpen;
+
+  /// Title of the confirmation before a recording in progress is discarded.
+  String get liveTranscriptCancelTitle => _catalog.liveTranscriptCancelTitle;
+
+  /// Message of the confirmation before a recording in progress is
+  /// discarded.
+  String get liveTranscriptCancelMessage =>
+      _catalog.liveTranscriptCancelMessage;
+
+  /// Notice while a recording is kept without a live transcript.
+  String get liveTranscriptAudioOnly => _catalog.liveTranscriptAudioOnly;
+
+  /// Notice while transcription lags [minutes] behind the recording.
+  String liveTranscriptBehind(int minutes) {
+    return _catalog.liveTranscriptBehind(minutes);
+  }
+
+  /// Notice when part of a recording is left untranscribed.
+  String get liveTranscriptUtteranceSkipped =>
+      _catalog.liveTranscriptUtteranceSkipped;
+
+  /// Notice while transcript text waits to be saved.
+  String get liveTranscriptUnsaved => _catalog.liveTranscriptUnsaved;
+
+  /// Notice when a recording stops at the session length limit.
+  String get liveTranscriptSessionLimit => _catalog.liveTranscriptSessionLimit;
+
+  /// Notice when a recording stops because storage ran out.
+  String get liveTranscriptStorageStop => _catalog.liveTranscriptStorageStop;
+
+  /// Notice when storage runs low during a recording.
+  String get liveTranscriptStorageLow => _catalog.liveTranscriptStorageLow;
+
+  /// Heading of the transcripts heard from a record's or meeting's audio.
+  String get liveTranscriptListTitle => _catalog.liveTranscriptListTitle;
+
+  /// Name of a transcript that has not been named.
+  String get liveTranscriptUntitled => _catalog.liveTranscriptUntitled;
+
+  /// When a transcript was recorded, [at], then the start of its text,
+  /// [preview], when it has any. [preview] is heard speech, shown as given.
+  String liveTranscriptRow(DateTime at, String preview) {
+    return _withLocale(() {
+      final String when = DateFormat.yMMMd().add_jm().format(at.toLocal());
+      return preview.isEmpty
+          ? _catalog.liveTranscriptRowWhen(when)
+          : _catalog.liveTranscriptRowDetail(when, preview);
+    });
+  }
+
+  /// Marks a transcript whose text was edited beside the original.
+  String get liveTranscriptEdited => _catalog.liveTranscriptEdited;
+
+  /// Marks a transcript whose recording ended before it was finished.
+  String get liveTranscriptInterrupted => _catalog.liveTranscriptInterrupted;
+
+  /// Marks a transcript still being recorded.
+  String get liveTranscriptRecording => _catalog.liveTranscriptRecording;
+
+  /// Badge saying speech is turned into text on this device, without the
+  /// network.
+  String get speechOfflineBadge => _catalog.speechOfflineBadge;
+
   /// Audio evidence association sheet.
   String get captureAudioScopeTitle => _catalog.captureAudioScopeTitle;
 

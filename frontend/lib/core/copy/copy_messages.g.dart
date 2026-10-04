@@ -4728,6 +4728,166 @@ final class CopyMessages {
     fallback: Copy.transcriptViewLabel,
   );
 
+  /// Recording bar status once the audio is saved while the last words are
+  /// still being transcribed.
+  LocalizedMessage get liveTranscriptStatusDraining => LocalizedMessage(
+    key: 'liveTranscriptStatusDraining',
+    fallback: Copy.liveTranscriptStatusDraining,
+  );
+
+  /// Recording bar status once the recording and its transcript are saved.
+  LocalizedMessage get liveTranscriptStatusSaved => LocalizedMessage(
+    key: 'liveTranscriptStatusSaved',
+    fallback: Copy.liveTranscriptStatusSaved,
+  );
+
+  /// Recording bar status after the app went to the background during a
+  /// recording.
+  LocalizedMessage get liveTranscriptStatusPausedBackground => LocalizedMessage(
+    key: 'liveTranscriptStatusPausedBackground',
+    fallback: Copy.liveTranscriptStatusPausedBackground,
+  );
+
+  /// Recording bar status after a call or another app took the audio.
+  LocalizedMessage get liveTranscriptStatusPausedInterruption =>
+      LocalizedMessage(
+        key: 'liveTranscriptStatusPausedInterruption',
+        fallback: Copy.liveTranscriptStatusPausedInterruption,
+      );
+
+  /// Recording bar status after the microphone was unplugged or switched
+  /// off.
+  LocalizedMessage get liveTranscriptMicLost => LocalizedMessage(
+    key: 'liveTranscriptMicLost',
+    fallback: Copy.liveTranscriptMicLost,
+  );
+
+  /// Recording bar status after microphone access was withdrawn during a
+  /// recording.
+  LocalizedMessage get liveTranscriptPermissionRevoked => LocalizedMessage(
+    key: 'liveTranscriptPermissionRevoked',
+    fallback: Copy.liveTranscriptPermissionRevoked,
+  );
+
+  /// Button that retries filing a stopped recording and its transcript.
+  LocalizedMessage get liveTranscriptRetrySave => LocalizedMessage(
+    key: 'liveTranscriptRetrySave',
+    fallback: Copy.liveTranscriptRetrySave,
+  );
+
+  /// Button that opens the transcript just saved.
+  LocalizedMessage get liveTranscriptOpen => LocalizedMessage(
+    key: 'liveTranscriptOpen',
+    fallback: Copy.liveTranscriptOpen,
+  );
+
+  /// Title of the confirmation before a recording in progress is discarded.
+  LocalizedMessage get liveTranscriptCancelTitle => LocalizedMessage(
+    key: 'liveTranscriptCancelTitle',
+    fallback: Copy.liveTranscriptCancelTitle,
+  );
+
+  /// Message of the confirmation before a recording in progress is
+  /// discarded.
+  LocalizedMessage get liveTranscriptCancelMessage => LocalizedMessage(
+    key: 'liveTranscriptCancelMessage',
+    fallback: Copy.liveTranscriptCancelMessage,
+  );
+
+  /// Notice while a recording is kept without a live transcript.
+  LocalizedMessage get liveTranscriptAudioOnly => LocalizedMessage(
+    key: 'liveTranscriptAudioOnly',
+    fallback: Copy.liveTranscriptAudioOnly,
+  );
+
+  /// Notice while transcription lags [minutes] behind the recording.
+  LocalizedMessage liveTranscriptBehind(int minutes) => LocalizedMessage(
+    key: 'liveTranscriptBehind',
+    fallback: Copy.liveTranscriptBehind(minutes),
+    arguments: <String, Object?>{
+      'minutes': LocalizedMessage.encodeArgument(minutes),
+    },
+  );
+
+  /// Notice when part of a recording is left untranscribed.
+  LocalizedMessage get liveTranscriptUtteranceSkipped => LocalizedMessage(
+    key: 'liveTranscriptUtteranceSkipped',
+    fallback: Copy.liveTranscriptUtteranceSkipped,
+  );
+
+  /// Notice while transcript text waits to be saved.
+  LocalizedMessage get liveTranscriptUnsaved => LocalizedMessage(
+    key: 'liveTranscriptUnsaved',
+    fallback: Copy.liveTranscriptUnsaved,
+  );
+
+  /// Notice when a recording stops at the session length limit.
+  LocalizedMessage get liveTranscriptSessionLimit => LocalizedMessage(
+    key: 'liveTranscriptSessionLimit',
+    fallback: Copy.liveTranscriptSessionLimit,
+  );
+
+  /// Notice when a recording stops because storage ran out.
+  LocalizedMessage get liveTranscriptStorageStop => LocalizedMessage(
+    key: 'liveTranscriptStorageStop',
+    fallback: Copy.liveTranscriptStorageStop,
+  );
+
+  /// Notice when storage runs low during a recording.
+  LocalizedMessage get liveTranscriptStorageLow => LocalizedMessage(
+    key: 'liveTranscriptStorageLow',
+    fallback: Copy.liveTranscriptStorageLow,
+  );
+
+  /// Heading of the transcripts heard from a record's or meeting's audio.
+  LocalizedMessage get liveTranscriptListTitle => LocalizedMessage(
+    key: 'liveTranscriptListTitle',
+    fallback: Copy.liveTranscriptListTitle,
+  );
+
+  /// Name of a transcript that has not been named.
+  LocalizedMessage get liveTranscriptUntitled => LocalizedMessage(
+    key: 'liveTranscriptUntitled',
+    fallback: Copy.liveTranscriptUntitled,
+  );
+
+  /// When a transcript was recorded, [at], then the start of its text,
+  /// [preview], when it has any.
+  LocalizedMessage liveTranscriptRow(DateTime at, String preview) =>
+      LocalizedMessage(
+        key: 'liveTranscriptRow',
+        fallback: Copy.liveTranscriptRow(at, preview),
+        arguments: <String, Object?>{
+          'at': LocalizedMessage.encodeArgument(at),
+          'preview': LocalizedMessage.encodeArgument(preview),
+        },
+      );
+
+  /// Marks a transcript whose text was edited beside the original.
+  LocalizedMessage get liveTranscriptEdited => LocalizedMessage(
+    key: 'liveTranscriptEdited',
+    fallback: Copy.liveTranscriptEdited,
+  );
+
+  /// Marks a transcript whose recording ended before it was finished.
+  LocalizedMessage get liveTranscriptInterrupted => LocalizedMessage(
+    key: 'liveTranscriptInterrupted',
+    fallback: Copy.liveTranscriptInterrupted,
+  );
+
+  /// Marks a transcript still being recorded.
+  LocalizedMessage get liveTranscriptRecording => LocalizedMessage(
+    key: 'liveTranscriptRecording',
+    fallback: Copy.liveTranscriptRecording,
+  );
+
+  /// Badge saying speech is turned into text on this device, without the
+  /// network.
+  LocalizedMessage get speechOfflineBadge => LocalizedMessage(
+    key: 'speechOfflineBadge',
+    fallback: Copy.speechOfflineBadge,
+  );
+
   /// Audio evidence association sheet.
   LocalizedMessage get captureAudioScopeTitle => LocalizedMessage(
     key: 'captureAudioScopeTitle',

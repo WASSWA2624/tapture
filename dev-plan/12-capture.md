@@ -235,8 +235,9 @@ class SttResult {
 #### Voice and audio
 
 12. Ask for the microphone at the first mic tap, never at launch; refusal leaves typing fully available and asks again
-    only on a later explicit tap. Recognise on device in the configured language, falling back to the online recogniser
-    only when configured and online, otherwise reporting unavailable rather than failing silently. Attach the mic
+    only on a later explicit tap. Recognise on device in the configured language with Whisper, falling back to the
+    platform recogniser on device only ([task 120](24-product-refinements.md)), otherwise reporting unavailable rather
+    than failing silently. Attach the mic
     affordance to any long-text field: show listening state and live partial text, stop on tap or silence, and land the
     final text in the field as editable text that is never auto-submitted. Store transcript, language and confidence
     alongside the caption row (055), where refinement can never overwrite them.

@@ -2663,6 +2663,99 @@ abstract final class Copy {
   /// Accessible name of the transcript view.
   static String get transcriptViewLabel => _english.transcriptViewLabel;
 
+  /// Recording bar status once the audio is saved while the last words are
+  /// still being transcribed.
+  static String get liveTranscriptStatusDraining =>
+      _english.liveTranscriptStatusDraining;
+
+  /// Recording bar status once the recording and its transcript are saved.
+  static String get liveTranscriptStatusSaved =>
+      _english.liveTranscriptStatusSaved;
+
+  /// Recording bar status after the app went to the background during a
+  /// recording.
+  static String get liveTranscriptStatusPausedBackground =>
+      _english.liveTranscriptStatusPausedBackground;
+
+  /// Recording bar status after a call or another app took the audio.
+  static String get liveTranscriptStatusPausedInterruption =>
+      _english.liveTranscriptStatusPausedInterruption;
+
+  /// Recording bar status after the microphone was unplugged or switched
+  /// off.
+  static String get liveTranscriptMicLost => _english.liveTranscriptMicLost;
+
+  /// Recording bar status after microphone access was withdrawn during a
+  /// recording.
+  static String get liveTranscriptPermissionRevoked =>
+      _english.liveTranscriptPermissionRevoked;
+
+  /// Button that retries filing a stopped recording and its transcript.
+  static String get liveTranscriptRetrySave => _english.liveTranscriptRetrySave;
+
+  /// Button that opens the transcript just saved.
+  static String get liveTranscriptOpen => _english.liveTranscriptOpen;
+
+  /// Title of the confirmation before a recording in progress is discarded.
+  static String get liveTranscriptCancelTitle =>
+      _english.liveTranscriptCancelTitle;
+
+  /// Message of the confirmation before a recording in progress is
+  /// discarded.
+  static String get liveTranscriptCancelMessage =>
+      _english.liveTranscriptCancelMessage;
+
+  /// Notice while a recording is kept without a live transcript.
+  static String get liveTranscriptAudioOnly => _english.liveTranscriptAudioOnly;
+
+  /// Notice while transcription lags [minutes] behind the recording.
+  static String liveTranscriptBehind(int minutes) =>
+      _english.liveTranscriptBehind(minutes);
+
+  /// Notice when part of a recording is left untranscribed.
+  static String get liveTranscriptUtteranceSkipped =>
+      _english.liveTranscriptUtteranceSkipped;
+
+  /// Notice while transcript text waits to be saved.
+  static String get liveTranscriptUnsaved => _english.liveTranscriptUnsaved;
+
+  /// Notice when a recording stops at the session length limit.
+  static String get liveTranscriptSessionLimit =>
+      _english.liveTranscriptSessionLimit;
+
+  /// Notice when a recording stops because storage ran out.
+  static String get liveTranscriptStorageStop =>
+      _english.liveTranscriptStorageStop;
+
+  /// Notice when storage runs low during a recording.
+  static String get liveTranscriptStorageLow =>
+      _english.liveTranscriptStorageLow;
+
+  /// Heading of the transcripts heard from a record's or meeting's audio.
+  static String get liveTranscriptListTitle => _english.liveTranscriptListTitle;
+
+  /// Name of a transcript that has not been named.
+  static String get liveTranscriptUntitled => _english.liveTranscriptUntitled;
+
+  /// When a transcript was recorded, [at], then the start of its text,
+  /// [preview], when it has any.
+  static String liveTranscriptRow(DateTime at, String preview) =>
+      _english.liveTranscriptRow(at, preview);
+
+  /// Marks a transcript whose text was edited beside the original.
+  static String get liveTranscriptEdited => _english.liveTranscriptEdited;
+
+  /// Marks a transcript whose recording ended before it was finished.
+  static String get liveTranscriptInterrupted =>
+      _english.liveTranscriptInterrupted;
+
+  /// Marks a transcript still being recorded.
+  static String get liveTranscriptRecording => _english.liveTranscriptRecording;
+
+  /// Badge saying speech is turned into text on this device, without the
+  /// network.
+  static String get speechOfflineBadge => _english.speechOfflineBadge;
+
   /// Audio evidence association sheet.
   static String get captureAudioScopeTitle => _english.captureAudioScopeTitle;
 

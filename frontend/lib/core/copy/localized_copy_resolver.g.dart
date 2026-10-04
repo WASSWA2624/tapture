@@ -1245,6 +1245,39 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'liveTranscriptEmpty' => liveTranscriptEmpty,
     'liveTranscriptJumpToLatest' => liveTranscriptJumpToLatest,
     'transcriptViewLabel' => transcriptViewLabel,
+    'liveTranscriptStatusDraining' => liveTranscriptStatusDraining,
+    'liveTranscriptStatusSaved' => liveTranscriptStatusSaved,
+    'liveTranscriptStatusPausedBackground' =>
+      liveTranscriptStatusPausedBackground,
+    'liveTranscriptStatusPausedInterruption' =>
+      liveTranscriptStatusPausedInterruption,
+    'liveTranscriptMicLost' => liveTranscriptMicLost,
+    'liveTranscriptPermissionRevoked' => liveTranscriptPermissionRevoked,
+    'liveTranscriptRetrySave' => liveTranscriptRetrySave,
+    'liveTranscriptOpen' => liveTranscriptOpen,
+    'liveTranscriptCancelTitle' => liveTranscriptCancelTitle,
+    'liveTranscriptCancelMessage' => liveTranscriptCancelMessage,
+    'liveTranscriptAudioOnly' => liveTranscriptAudioOnly,
+    'liveTranscriptBehind' => liveTranscriptBehind(
+      message.argument('minutes') as int,
+    ),
+    'liveTranscriptUtteranceSkipped' => liveTranscriptUtteranceSkipped,
+    'liveTranscriptUnsaved' => liveTranscriptUnsaved,
+    'liveTranscriptSessionLimit' => liveTranscriptSessionLimit,
+    'liveTranscriptStorageStop' => liveTranscriptStorageStop,
+    'liveTranscriptStorageLow' => liveTranscriptStorageLow,
+    'liveTranscriptListTitle' => liveTranscriptListTitle,
+    'liveTranscriptUntitled' => liveTranscriptUntitled,
+    'liveTranscriptRow' => liveTranscriptRow(
+      message.argument('at') as DateTime,
+      (message.argument('preview') is LocalizedMessage
+          ? resolve(message.argument('preview') as LocalizedMessage)
+          : message.argument('preview') as String),
+    ),
+    'liveTranscriptEdited' => liveTranscriptEdited,
+    'liveTranscriptInterrupted' => liveTranscriptInterrupted,
+    'liveTranscriptRecording' => liveTranscriptRecording,
+    'speechOfflineBadge' => speechOfflineBadge,
     'captureAudioScopeTitle' => captureAudioScopeTitle,
     'captureAudioCurrentPhoto' => captureAudioCurrentPhoto,
     'captureAudioSelectedPhotos' => captureAudioSelectedPhotos(

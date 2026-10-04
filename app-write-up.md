@@ -2063,7 +2063,9 @@ enum MicrophoneOwner { dictation, liveTranscription, fileRecorder }
 ```dart
 abstract interface class LiveTranscriptionService {
   factory LiveTranscriptionService({required AudioCaptureService capture, required SpeechEngineHost host, required LifecycleObserver lifecycle,
-      required LeaveGuard leaveGuard, required StorageGuard storageGuard, Logger? logger}) = _LiveTranscriptionService;
+      required LeaveGuard leaveGuard, required StorageGuard storageGuard, AudioRecoveryService? recovery /*recoverAudio*/,
+      StorageRoot? storageRoot, FileReader? reader /*transcribeRemaining reads the published take*/,
+      @visibleForTesting Duration? sessionLimit, Logger? logger}) = _LiveTranscriptionService;
   const factory LiveTranscriptionService.unavailable();
   Future<Result<LiveTranscriptionSession>> start(LiveTranscriptionRequest request);
   Future<Result<AudioRecording?>> recoverAudio(String audioPath);
@@ -2071,6 +2073,8 @@ abstract interface class LiveTranscriptionService {
       required int nextSegmentId, required String languageTag, required TranscriptSink sink});   // explicit user action; gaps first, then tail
   Future<void> dispose();
 }
+final Provider<LiveTranscriptionService> liveTranscriptionServiceProvider;   // default .unavailable(); main binds it
+@visibleForTesting int get debugLiveTranscriptionSessions;
 final class LiveTranscriptionRequest { const LiveTranscriptionRequest({required TranscriptionKind kind, required String languageTag,
   String? audioPath, TranscriptSink? sink, int nextSegmentId = 1, bool transcribe = true, bool interims = true,
   Duration? autoStopAfterSilence, Duration? maxDuration, VoidCallback? onPreempted}); }
@@ -2105,8 +2109,10 @@ any active --cancel()--> cancelled: pipeline.abort(); capture.abandon(); release
 detached: stop() without awaiting the drain
 ```
 
-- **Durability.** The service registers **one** `lifecycle.addPauseFlush(_checkpointAll)` in its constructor.
-  `_checkpointAll` awaits, for every active long-form session, `capture.checkpoint()` and `pipeline.sinkIdle`.
+- **Durability.** The service holds **one** `lifecycle.addPauseFlush(_checkpointAll)` (and one exit check) while
+  any session is active: registered with the first session and removed when the last one ends.
+  `_checkpointAll` pauses every listening long-form session as `background` and awaits, for each,
+  `capture.checkpoint()` and `pipeline.sinkIdle`; a dictation session stops instead.
   `LifecycleObserver.handle(paused|hidden)` therefore returns only after the take's header is patched and fsynced and
   the last transcript write has landed. `LifecycleObserver` stays the only `WidgetsBindingObserver`; its pause
   flushes run after `onPauseFlush`.
@@ -2119,7 +2125,12 @@ detached: stop() without awaiting the drain
 - **Long-form guards:** `leaveGuard.hold(session)`; `addExitCheck` checkpoints all, marks the sessions for recovery
   and returns true — it never drains and never publishes, because recovery adopts the checkpointed take.
 - **Storage and caps:** `StorageGuard.admitCapture()` at start; a check every 60 s of audio, stopping with
-  `storageStop` or warning with `storageLow`; session caps of 4 h, or 30 min on web.
+  `storageStop` or warning with `storageLow`; session caps of 4 h, or 30 min on web. Only a volume read as critical
+  refuses a start; one that cannot be read never blocks capture (Rule 3).
+- **Remaining transcription:** `transcribeRemaining` runs the same pipeline from each gap's first sample, then
+  from `fromSample`, over the published take (read in place, or whole through `FileReader` in a browser), with ids
+  continuing from `nextSegmentId`. A gap decoded to its end is closed by an empty utterance over the whole gap; the
+  first range that cannot be finished ends the run, and the sink is always finished.
 - **Decode failures:** retry once, then skip with a recorded gap and `utteranceSkipped`; after 3 consecutive
   failures the session goes record-only.
 - **Logging:** tag `'speech'` (`'audio'` for capture): start, pause and resume reasons, warnings, failure types, and
@@ -2231,10 +2242,14 @@ timeline is the sample count of the 16 kHz take.
 
 ```dart
 final class SpeechPipeline { SpeechPipeline({required PcmStore store, required SpeechPipelineConfig config, TranscriptSink? sink,
-  required int nextSegmentId, required void Function(LiveTranscriptionEvent) emit});
+  required int nextSegmentId, required void Function(LiveTranscriptionEvent) emit, Logger? logger,
+  int startSample = 0 /*detection starts here; earlier audio is accounted for elsewhere*/});
   void attachLease(SpeechEngineLease lease); void audioAvailable(int totalSamples); void markPause(int atSample, CapturePauseReason why);
   void markResume(int atSample); Future<void> finish({required bool drain}); Future<void> abort(); Future<Result<void>> retryUnsaved();
-  int get coveredToSample; Duration get backlog; List<FinishedUtterance> get unsaved; Future<void> get sinkIdle; }
+  int get coveredToSample; Duration get backlog; List<FinishedUtterance> get unsaved; Future<void> get sinkIdle;
+  int get detectedTo; int get lastSpeechSample;   // the session's silence auto-stop
+  ({int utterances, int segments, int dropped, int collapsed, double gatedRatio, Duration meanCompute, Duration p90Compute,
+    double realTimeFactor, BackpressureLevel ladder}) get stats; }   // counts only, for the stop summary
 ```
 
 - **VAD cursor.** Batches of 4 × `vadFrameSamples` are read from the `PcmStore`, one in flight, so a slow engine

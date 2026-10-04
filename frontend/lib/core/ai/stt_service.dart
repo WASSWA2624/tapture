@@ -12,7 +12,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'stt_result.dart';
 
 /// Speech to text on this device. The platform recogniser is reached only
-/// here (FE-STR-11); the contract is task 131's.
+/// here (FE-STR-11); the contract is task 027's.
 abstract interface class SttService {
   /// The platform recogniser. The platform has one microphone session, so
   /// the app holds one of these.
@@ -37,8 +37,12 @@ abstract interface class SttService {
   /// arrive, then at most one final result, then closes. Errors are
   /// [Failure]s carrying catalogue copy. A new listen ends the previous one
   /// first, handing over the words it had heard. Cancelling the subscription
-  /// cancels the recognition. With [onDeviceOnly] speech never leaves the
-  /// device; where that is impossible the listen fails (FE-SEC-04).
+  /// cancels the recognition. With [onDeviceOnly] the recogniser is asked
+  /// to keep speech on the device. The platform plugin cannot promise that
+  /// everywhere (Android below 12, or without its on-device recogniser,
+  /// goes online), so field dictation reaches the platform recogniser only
+  /// through `RoutedSttService`, whose `PlatformRecogniserPolicy` refuses
+  /// any platform that would not stay on device (FE-SEC-04).
   Stream<SttResult> listen({
     required String languageTag,
     bool onDeviceOnly = false,
@@ -273,7 +277,7 @@ final class _PluginSttService implements SttService {
       ready = false;
     }
     if (!ready) {
-      // Refusal is asked again only on a later explicit tap (task 131).
+      // Refusal is asked again only on a later explicit tap (task 027).
       _ready = null;
     }
     return ready;

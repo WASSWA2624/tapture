@@ -4125,6 +4125,129 @@
   "@transcriptViewLabel": {
     "description": "Accessible name of the transcript view."
   },
+  "liveTranscriptStatusDraining": "Saved. Finishing the transcript.",
+  "@liveTranscriptStatusDraining": {
+    "description": "Recording bar status once the audio is saved while the last words are still being transcribed."
+  },
+  "liveTranscriptStatusSaved": "Saved on this device",
+  "@liveTranscriptStatusSaved": {
+    "description": "Recording bar status once the recording and its transcript are saved."
+  },
+  "liveTranscriptStatusPausedBackground": "Paused while Tapture was in the background. Everything so far is saved.",
+  "@liveTranscriptStatusPausedBackground": {
+    "description": "Recording bar status after the app went to the background during a recording."
+  },
+  "liveTranscriptStatusPausedInterruption": "Paused by another app or a call.",
+  "@liveTranscriptStatusPausedInterruption": {
+    "description": "Recording bar status after a call or another app took the audio."
+  },
+  "liveTranscriptMicLost": "The microphone was turned off. What was recorded is saved.",
+  "@liveTranscriptMicLost": {
+    "description": "Recording bar status after the microphone was unplugged or switched off."
+  },
+  "liveTranscriptPermissionRevoked": "Microphone access was turned off. What was recorded is saved. Allow access to go on, or stop to keep it.",
+  "@liveTranscriptPermissionRevoked": {
+    "description": "Recording bar status after microphone access was withdrawn during a recording."
+  },
+  "liveTranscriptRetrySave": "Try saving again",
+  "@liveTranscriptRetrySave": {
+    "description": "Button that retries filing a stopped recording and its transcript."
+  },
+  "liveTranscriptOpen": "Open transcript",
+  "@liveTranscriptOpen": {
+    "description": "Button that opens the transcript just saved."
+  },
+  "liveTranscriptCancelTitle": "Discard this recording?",
+  "@liveTranscriptCancelTitle": {
+    "description": "Title of the confirmation before a recording in progress is discarded."
+  },
+  "liveTranscriptCancelMessage": "It is not added here. The audio file stays in the project folder.",
+  "@liveTranscriptCancelMessage": {
+    "description": "Message of the confirmation before a recording in progress is discarded."
+  },
+  "liveTranscriptAudioOnly": "Recording without a live transcript: no speech model is available.",
+  "@liveTranscriptAudioOnly": {
+    "description": "Notice while a recording is kept without a live transcript."
+  },
+  "liveTranscriptBehind": "{minutes, plural, =0{The transcript is catching up. Recording goes on.} one{The transcript is 1 minute behind. Recording goes on.} other{The transcript is {minutes} minutes behind. Recording goes on.}}",
+  "@liveTranscriptBehind": {
+    "description": "Notice while transcription lags behind the recording.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "description": "Value of minutes in liveTranscriptBehind. User-provided content is not translated.",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "liveTranscriptUtteranceSkipped": "A part could not be transcribed. Its audio is kept.",
+  "@liveTranscriptUtteranceSkipped": {
+    "description": "Notice when part of a recording is left untranscribed."
+  },
+  "liveTranscriptUnsaved": "The transcript could not be saved yet. The recording is kept, and saving is tried again.",
+  "@liveTranscriptUnsaved": {
+    "description": "Notice while transcript text waits to be saved."
+  },
+  "liveTranscriptSessionLimit": "The recording reached the longest length allowed and was saved.",
+  "@liveTranscriptSessionLimit": {
+    "description": "Notice when a recording stops at the session length limit."
+  },
+  "liveTranscriptStorageStop": "Storage is full, so recording stopped. What was recorded is saved.",
+  "@liveTranscriptStorageStop": {
+    "description": "Notice when a recording stops because storage ran out."
+  },
+  "liveTranscriptStorageLow": "Storage is running low. Recording goes on.",
+  "@liveTranscriptStorageLow": {
+    "description": "Notice when storage runs low during a recording."
+  },
+  "liveTranscriptListTitle": "Transcripts",
+  "@liveTranscriptListTitle": {
+    "description": "Heading of the transcripts heard from a record's or meeting's audio."
+  },
+  "liveTranscriptUntitled": "Untitled transcript",
+  "@liveTranscriptUntitled": {
+    "description": "Name of a transcript that has not been named."
+  },
+  "liveTranscriptRowWhen": "Recorded {when}",
+  "@liveTranscriptRowWhen": {
+    "description": "When a transcript was recorded.",
+    "placeholders": {
+      "when": {
+        "type": "Object",
+        "description": "Value of when in liveTranscriptRowWhen. User-provided content is not translated."
+      }
+    }
+  },
+  "liveTranscriptRowDetail": "{when} · {preview}",
+  "@liveTranscriptRowDetail": {
+    "description": "When a transcript was recorded, then the start of its text.",
+    "placeholders": {
+      "when": {
+        "type": "Object",
+        "description": "Value of when in liveTranscriptRowDetail. User-provided content is not translated."
+      },
+      "preview": {
+        "type": "Object",
+        "description": "Value of preview in liveTranscriptRowDetail. User-provided content is not translated."
+      }
+    }
+  },
+  "liveTranscriptEdited": "Edited",
+  "@liveTranscriptEdited": {
+    "description": "Marks a transcript whose text was edited beside the original."
+  },
+  "liveTranscriptInterrupted": "Interrupted",
+  "@liveTranscriptInterrupted": {
+    "description": "Marks a transcript whose recording ended before it was finished."
+  },
+  "liveTranscriptRecording": "Recording",
+  "@liveTranscriptRecording": {
+    "description": "Marks a transcript still being recorded."
+  },
+  "speechOfflineBadge": "On this device",
+  "@speechOfflineBadge": {
+    "description": "Badge saying speech is turned into text on this device, without the network."
+  },
   "captureAudioScopeTitle": "Use audio with",
   "@captureAudioScopeTitle": {
     "description": "Audio evidence association sheet."

@@ -4125,6 +4125,129 @@
   "@transcriptViewLabel": {
     "description": "Accessible name of the transcript view."
   },
+  "liveTranscriptStatusDraining": "Sávéd. Fíníshíng thé tránscrípt.············",
+  "@liveTranscriptStatusDraining": {
+    "description": "Recording bar status once the audio is saved while the last words are still being transcribed."
+  },
+  "liveTranscriptStatusSaved": "Sávéd ón thís dévícé·······",
+  "@liveTranscriptStatusSaved": {
+    "description": "Recording bar status once the recording and its transcript are saved."
+  },
+  "liveTranscriptStatusPausedBackground": "Páúséd whílé Táptúré wás ín thé báckgróúnd. Évérythíng só fár ís sávéd.·························",
+  "@liveTranscriptStatusPausedBackground": {
+    "description": "Recording bar status after the app went to the background during a recording."
+  },
+  "liveTranscriptStatusPausedInterruption": "Páúséd by ánóthér ápp ór á cáll.············",
+  "@liveTranscriptStatusPausedInterruption": {
+    "description": "Recording bar status after a call or another app took the audio."
+  },
+  "liveTranscriptMicLost": "Thé mícróphóné wás túrnéd óff. Whát wás récórdéd ís sávéd.·····················",
+  "@liveTranscriptMicLost": {
+    "description": "Recording bar status after the microphone was unplugged or switched off."
+  },
+  "liveTranscriptPermissionRevoked": "Mícróphóné áccéss wás túrnéd óff. Whát wás récórdéd ís sávéd. Állów áccéss tó gó ón, ór stóp tó kéép ít.·····································",
+  "@liveTranscriptPermissionRevoked": {
+    "description": "Recording bar status after microphone access was withdrawn during a recording."
+  },
+  "liveTranscriptRetrySave": "Try sávíng ágáín······",
+  "@liveTranscriptRetrySave": {
+    "description": "Button that retries filing a stopped recording and its transcript."
+  },
+  "liveTranscriptOpen": "Ópén tránscrípt······",
+  "@liveTranscriptOpen": {
+    "description": "Button that opens the transcript just saved."
+  },
+  "liveTranscriptCancelTitle": "Díscárd thís récórdíng?·········",
+  "@liveTranscriptCancelTitle": {
+    "description": "Title of the confirmation before a recording in progress is discarded."
+  },
+  "liveTranscriptCancelMessage": "Ít ís nót áddéd héré. Thé áúdíó fílé stáys ín thé prójéct fóldér.·······················",
+  "@liveTranscriptCancelMessage": {
+    "description": "Message of the confirmation before a recording in progress is discarded."
+  },
+  "liveTranscriptAudioOnly": "Récórdíng wíthóút á lívé tránscrípt: nó spééch módél ís áváíláblé.························",
+  "@liveTranscriptAudioOnly": {
+    "description": "Notice while a recording is kept without a live transcript."
+  },
+  "liveTranscriptBehind": "{minutes, plural, =0{Thé tránscrípt ís cátchíng úp. Récórdíng góés ón.··················} one{Thé tránscrípt ís 1 mínúté béhínd. Récórdíng góés ón.···················} other{Thé tránscrípt ís ·······{minutes} mínútés béhínd. Récórdíng góés ón.·············}}",
+  "@liveTranscriptBehind": {
+    "description": "Notice while transcription lags behind the recording.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "description": "Value of minutes in liveTranscriptBehind. User-provided content is not translated.",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "liveTranscriptUtteranceSkipped": "Á párt cóúld nót bé tránscríbéd. Íts áúdíó ís képt.··················",
+  "@liveTranscriptUtteranceSkipped": {
+    "description": "Notice when part of a recording is left untranscribed."
+  },
+  "liveTranscriptUnsaved": "Thé tránscrípt cóúld nót bé sávéd yét. Thé récórdíng ís képt, ánd sávíng ís tríéd ágáín.·······························",
+  "@liveTranscriptUnsaved": {
+    "description": "Notice while transcript text waits to be saved."
+  },
+  "liveTranscriptSessionLimit": "Thé récórdíng réáchéd thé lóngést léngth állówéd ánd wás sávéd.·······················",
+  "@liveTranscriptSessionLimit": {
+    "description": "Notice when a recording stops at the session length limit."
+  },
+  "liveTranscriptStorageStop": "Stórágé ís fúll, só récórdíng stóppéd. Whát wás récórdéd ís sávéd.························",
+  "@liveTranscriptStorageStop": {
+    "description": "Notice when a recording stops because storage ran out."
+  },
+  "liveTranscriptStorageLow": "Stórágé ís rúnníng lów. Récórdíng góés ón.···············",
+  "@liveTranscriptStorageLow": {
+    "description": "Notice when storage runs low during a recording."
+  },
+  "liveTranscriptListTitle": "Tránscrípts····",
+  "@liveTranscriptListTitle": {
+    "description": "Heading of the transcripts heard from a record's or meeting's audio."
+  },
+  "liveTranscriptUntitled": "Úntítléd tránscrípt·······",
+  "@liveTranscriptUntitled": {
+    "description": "Name of a transcript that has not been named."
+  },
+  "liveTranscriptRowWhen": "Récórdéd ····{when}",
+  "@liveTranscriptRowWhen": {
+    "description": "When a transcript was recorded.",
+    "placeholders": {
+      "when": {
+        "type": "Object",
+        "description": "Value of when in liveTranscriptRowWhen. User-provided content is not translated."
+      }
+    }
+  },
+  "liveTranscriptRowDetail": "{when} · {preview}",
+  "@liveTranscriptRowDetail": {
+    "description": "When a transcript was recorded, then the start of its text.",
+    "placeholders": {
+      "when": {
+        "type": "Object",
+        "description": "Value of when in liveTranscriptRowDetail. User-provided content is not translated."
+      },
+      "preview": {
+        "type": "Object",
+        "description": "Value of preview in liveTranscriptRowDetail. User-provided content is not translated."
+      }
+    }
+  },
+  "liveTranscriptEdited": "Édítéd···",
+  "@liveTranscriptEdited": {
+    "description": "Marks a transcript whose text was edited beside the original."
+  },
+  "liveTranscriptInterrupted": "Íntérrúptéd····",
+  "@liveTranscriptInterrupted": {
+    "description": "Marks a transcript whose recording ended before it was finished."
+  },
+  "liveTranscriptRecording": "Récórdíng····",
+  "@liveTranscriptRecording": {
+    "description": "Marks a transcript still being recorded."
+  },
+  "speechOfflineBadge": "Ón thís dévícé·····",
+  "@speechOfflineBadge": {
+    "description": "Badge saying speech is turned into text on this device, without the network."
+  },
   "captureAudioScopeTitle": "Úsé áúdíó wíth·····",
   "@captureAudioScopeTitle": {
     "description": "Audio evidence association sheet."

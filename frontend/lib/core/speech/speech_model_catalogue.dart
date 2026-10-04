@@ -26,9 +26,13 @@ const int _q5Ftype = 9;
 ///
 /// The single source of truth for the model files: `tool/speech_models.dart`
 /// fetches and checks the bundled entries and generates
-/// `assets/speech/manifest.json` from them. Header facts and memory
-/// estimates are provisional until the native shape tests and task 128
-/// measure them.
+/// `assets/speech/manifest.json` from them. Header facts are pinned by the
+/// native shape tests. Memory estimates are the peak RSS a loaded model adds
+/// while it decodes jfk with the desktop committed profile, worker isolates
+/// included, measured on the Windows reference machine by
+/// `speech_engine_benchmark_test` (task 128, 2026-10-05), rounded up to
+/// 8 MiB (1 MiB for the voice detector): tiny 126.4, base 166.2, small
+/// 349.7 and Silero 8.3 MiB.
 abstract final class SpeechModelCatalogue {
   /// The bundled fast model.
   static const SpeechModelEntry tiny = SpeechModelEntry(
@@ -45,7 +49,7 @@ abstract final class SpeechModelCatalogue {
     nTextLayer: 4,
     nMels: _whisperMels,
     ftype: _q5Ftype,
-    memoryEstimateBytes: 160 * _mebibyte,
+    memoryEstimateBytes: 128 * _mebibyte,
     tier: SpeechModelTier.fast,
   );
 
@@ -64,7 +68,7 @@ abstract final class SpeechModelCatalogue {
     nTextLayer: 6,
     nMels: _whisperMels,
     ftype: _q5Ftype,
-    memoryEstimateBytes: 260 * _mebibyte,
+    memoryEstimateBytes: 168 * _mebibyte,
     tier: SpeechModelTier.balanced,
   );
 
@@ -82,7 +86,7 @@ abstract final class SpeechModelCatalogue {
     nTextLayer: 12,
     nMels: _whisperMels,
     ftype: _q5Ftype,
-    memoryEstimateBytes: 560 * _mebibyte,
+    memoryEstimateBytes: 352 * _mebibyte,
     tier: SpeechModelTier.accurate,
     webAllowed: false,
   );
@@ -96,7 +100,7 @@ abstract final class SpeechModelCatalogue {
     bytes: 885098,
     sha256: '2aa269b785eeb53a82983a20501ddf7c1d9c48e33ab63a41391ac6c9f7fb6987',
     sourceUrl: '$_vadSource/ggml-silero-v6.2.0.bin',
-    memoryEstimateBytes: 8 * _mebibyte,
+    memoryEstimateBytes: 9 * _mebibyte,
     tier: null,
   );
 

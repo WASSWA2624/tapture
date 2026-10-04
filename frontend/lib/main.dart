@@ -68,6 +68,7 @@ import 'core/network/offline_now.dart';
 import 'core/permissions/permissions_service.dart';
 import 'core/security/secure_storage.dart';
 import 'core/speech/live_transcription_service.dart';
+import 'core/speech/routed_stt_service.dart';
 import 'core/speech/speech_device_probe.dart';
 import 'core/speech/speech_engine.dart';
 import 'core/speech/speech_engine_host.dart';
@@ -121,6 +122,8 @@ import 'features/records/records.dart'
 import 'features/reference/data/reference_repository_impl.dart';
 import 'features/settings/presentation/ai_provider_settings_screen.dart'
     show providerKeyStorageProvider;
+import 'features/settings/presentation/language_settings_screen.dart'
+    show voiceLanguageProvider;
 import 'features/settings/presentation/offline_switch.dart';
 import 'features/settings/settings.dart';
 import 'features/templates/data/template_repository_impl.dart';
@@ -204,6 +207,42 @@ Future<AsyncCallback> runDeviceMetricsApp({
     await shutdown();
     rethrow;
   }
+}
+
+/// How field dictation is bound in production (task 120): every text
+/// field's microphone uses the routed on-device service in the voice
+/// language. [platformRecogniser] makes the platform's own recogniser, or
+/// null where the build has none; it is used only where it provably keeps
+/// speech on the device.
+@visibleForTesting
+List<Override> dictationOverrides({
+  required SttService? Function() platformRecogniser,
+}) {
+  return <Override>[
+    platformRecogniserProvider.overrideWith((Ref ref) {
+      final SttService? speech = platformRecogniser();
+      if (speech != null) {
+        ref.onDispose(() => unawaited(speech.cancel()));
+      }
+      return speech;
+    }),
+    sttServiceProvider.overrideWith(
+      (Ref ref) => ref.watch(dictationSttProvider),
+    ),
+    speechLanguageProvider.overrideWith(
+      (Ref ref) => ref.watch(voiceLanguageProvider),
+    ),
+  ];
+}
+
+/// The platform recogniser, or null in a browser (whose recogniser streams
+/// to its vendor) or where the plugin has none.
+SttService? _platformRecogniser() {
+  if (kIsWeb) {
+    return null;
+  }
+  final SttService speech = SttService();
+  return speech.isSupported ? speech : null;
 }
 
 final class _FixtureBootstrap {
@@ -358,17 +397,17 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
       deviceId: id,
       ids: ids,
     );
+    // Adopts a take a killed process left staged: at startup here, and on
+    // request through the live transcription service.
+    final AudioRecoveryService takeRecovery = kIsWeb
+        ? StagedTakeRecovery.chunked(
+            writer: evidenceWriter,
+            store: BlobStore.platform(AppConstants.projectFiles.storeName),
+          )
+        : StagedTakeRecovery(writer: evidenceWriter, storageRoot: storageRoot);
     await _recoverTranscripts(
       transcriptStore,
-      takes: kIsWeb
-          ? StagedTakeRecovery.chunked(
-              writer: evidenceWriter,
-              store: BlobStore.platform(AppConstants.projectFiles.storeName),
-            )
-          : StagedTakeRecovery(
-              writer: evidenceWriter,
-              storageRoot: storageRoot,
-            ),
+      takes: takeRecovery,
       meetings: MeetingRepositoryImpl(
         db: db,
         clock: clock,
@@ -537,11 +576,9 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
       }),
       feedbackPhotosProvider.overrideWith((Ref _) => PhotoPicker()),
       feedbackScreenCaptureProvider.overrideWith((Ref _) => ScreenCapture()),
-      sttServiceProvider.overrideWith((Ref ref) {
-        final SttService speech = SttService();
-        ref.onDispose(() => unawaited(speech.cancel()));
-        return speech;
-      }),
+      // Field dictation stays on the device: Whisper, else a platform
+      // recogniser proven on device (task 120).
+      ...dictationOverrides(platformRecogniser: _platformRecogniser),
       // On-device speech (task 113): the platform's Whisper engine, the
       // models this build bundles or the operator imported, and the device
       // probe, under the one host that loads and releases the model.
@@ -800,17 +837,7 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
           lifecycle: ref.watch(lifecycleObserverProvider),
           leaveGuard: ref.watch(leaveGuardProvider),
           storageGuard: ref.watch(storageGuardProvider),
-          recovery: kIsWeb
-              ? StagedTakeRecovery.chunked(
-                  writer: evidenceWriter,
-                  store: BlobStore.platform(
-                    AppConstants.projectFiles.storeName,
-                  ),
-                )
-              : StagedTakeRecovery(
-                  writer: evidenceWriter,
-                  storageRoot: storageRoot,
-                ),
+          recovery: takeRecovery,
           storageRoot: storageRoot,
           reader: FileReader(storageRoot: storageRoot),
           logger: logger,

@@ -3131,6 +3131,110 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcriptViewLabel => 'Transcript';
 
   @override
+  String get liveTranscriptStatusDraining => 'Saved. Finishing the transcript.';
+
+  @override
+  String get liveTranscriptStatusSaved => 'Saved on this device';
+
+  @override
+  String get liveTranscriptStatusPausedBackground =>
+      'Paused while Tapture was in the background. Everything so far is saved.';
+
+  @override
+  String get liveTranscriptStatusPausedInterruption =>
+      'Paused by another app or a call.';
+
+  @override
+  String get liveTranscriptMicLost =>
+      'The microphone was turned off. What was recorded is saved.';
+
+  @override
+  String get liveTranscriptPermissionRevoked =>
+      'Microphone access was turned off. What was recorded is saved. Allow access to go on, or stop to keep it.';
+
+  @override
+  String get liveTranscriptRetrySave => 'Try saving again';
+
+  @override
+  String get liveTranscriptOpen => 'Open transcript';
+
+  @override
+  String get liveTranscriptCancelTitle => 'Discard this recording?';
+
+  @override
+  String get liveTranscriptCancelMessage =>
+      'It is not added here. The audio file stays in the project folder.';
+
+  @override
+  String get liveTranscriptAudioOnly =>
+      'Recording without a live transcript: no speech model is available.';
+
+  @override
+  String liveTranscriptBehind(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other:
+          'The transcript is $minutesString minutes behind. Recording goes on.',
+      one: 'The transcript is 1 minute behind. Recording goes on.',
+      zero: 'The transcript is catching up. Recording goes on.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get liveTranscriptUtteranceSkipped =>
+      'A part could not be transcribed. Its audio is kept.';
+
+  @override
+  String get liveTranscriptUnsaved =>
+      'The transcript could not be saved yet. The recording is kept, and saving is tried again.';
+
+  @override
+  String get liveTranscriptSessionLimit =>
+      'The recording reached the longest length allowed and was saved.';
+
+  @override
+  String get liveTranscriptStorageStop =>
+      'Storage is full, so recording stopped. What was recorded is saved.';
+
+  @override
+  String get liveTranscriptStorageLow =>
+      'Storage is running low. Recording goes on.';
+
+  @override
+  String get liveTranscriptListTitle => 'Transcripts';
+
+  @override
+  String get liveTranscriptUntitled => 'Untitled transcript';
+
+  @override
+  String liveTranscriptRowWhen(Object when) {
+    return 'Recorded $when';
+  }
+
+  @override
+  String liveTranscriptRowDetail(Object when, Object preview) {
+    return '$when · $preview';
+  }
+
+  @override
+  String get liveTranscriptEdited => 'Edited';
+
+  @override
+  String get liveTranscriptInterrupted => 'Interrupted';
+
+  @override
+  String get liveTranscriptRecording => 'Recording';
+
+  @override
+  String get speechOfflineBadge => 'On this device';
+
+  @override
   String get captureAudioScopeTitle => 'Use audio with';
 
   @override
@@ -14897,6 +15001,113 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get transcriptViewLabel => 'Tránscrípt····';
+
+  @override
+  String get liveTranscriptStatusDraining =>
+      'Sávéd. Fíníshíng thé tránscrípt.············';
+
+  @override
+  String get liveTranscriptStatusSaved => 'Sávéd ón thís dévícé·······';
+
+  @override
+  String get liveTranscriptStatusPausedBackground =>
+      'Páúséd whílé Táptúré wás ín thé báckgróúnd. Évérythíng só fár ís sávéd.·························';
+
+  @override
+  String get liveTranscriptStatusPausedInterruption =>
+      'Páúséd by ánóthér ápp ór á cáll.············';
+
+  @override
+  String get liveTranscriptMicLost =>
+      'Thé mícróphóné wás túrnéd óff. Whát wás récórdéd ís sávéd.·····················';
+
+  @override
+  String get liveTranscriptPermissionRevoked =>
+      'Mícróphóné áccéss wás túrnéd óff. Whát wás récórdéd ís sávéd. Állów áccéss tó gó ón, ór stóp tó kéép ít.·····································';
+
+  @override
+  String get liveTranscriptRetrySave => 'Try sávíng ágáín······';
+
+  @override
+  String get liveTranscriptOpen => 'Ópén tránscrípt······';
+
+  @override
+  String get liveTranscriptCancelTitle => 'Díscárd thís récórdíng?·········';
+
+  @override
+  String get liveTranscriptCancelMessage =>
+      'Ít ís nót áddéd héré. Thé áúdíó fílé stáys ín thé prójéct fóldér.·······················';
+
+  @override
+  String get liveTranscriptAudioOnly =>
+      'Récórdíng wíthóút á lívé tránscrípt: nó spééch módél ís áváíláblé.························';
+
+  @override
+  String liveTranscriptBehind(int minutes) {
+    final intl.NumberFormat minutesNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String minutesString = minutesNumberFormat.format(minutes);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other:
+          'Thé tránscrípt ís ·······$minutesString mínútés béhínd. Récórdíng góés ón.·············',
+      one:
+          'Thé tránscrípt ís 1 mínúté béhínd. Récórdíng góés ón.···················',
+      zero:
+          'Thé tránscrípt ís cátchíng úp. Récórdíng góés ón.··················',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get liveTranscriptUtteranceSkipped =>
+      'Á párt cóúld nót bé tránscríbéd. Íts áúdíó ís képt.··················';
+
+  @override
+  String get liveTranscriptUnsaved =>
+      'Thé tránscrípt cóúld nót bé sávéd yét. Thé récórdíng ís képt, ánd sávíng ís tríéd ágáín.·······························';
+
+  @override
+  String get liveTranscriptSessionLimit =>
+      'Thé récórdíng réáchéd thé lóngést léngth állówéd ánd wás sávéd.·······················';
+
+  @override
+  String get liveTranscriptStorageStop =>
+      'Stórágé ís fúll, só récórdíng stóppéd. Whát wás récórdéd ís sávéd.························';
+
+  @override
+  String get liveTranscriptStorageLow =>
+      'Stórágé ís rúnníng lów. Récórdíng góés ón.···············';
+
+  @override
+  String get liveTranscriptListTitle => 'Tránscrípts····';
+
+  @override
+  String get liveTranscriptUntitled => 'Úntítléd tránscrípt·······';
+
+  @override
+  String liveTranscriptRowWhen(Object when) {
+    return 'Récórdéd ····$when';
+  }
+
+  @override
+  String liveTranscriptRowDetail(Object when, Object preview) {
+    return '$when · $preview';
+  }
+
+  @override
+  String get liveTranscriptEdited => 'Édítéd···';
+
+  @override
+  String get liveTranscriptInterrupted => 'Íntérrúptéd····';
+
+  @override
+  String get liveTranscriptRecording => 'Récórdíng····';
+
+  @override
+  String get speechOfflineBadge => 'Ón thís dévícé·····';
 
   @override
   String get captureAudioScopeTitle => 'Úsé áúdíó wíth·····';

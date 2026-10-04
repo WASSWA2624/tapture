@@ -1,3 +1,18 @@
+# Device-class tolerances for tool/device_matrix.dart.
+#
+# <name>Ms is a duration ceiling in milliseconds; <name>Rtf is a ratio ceiling.
+# integration_test/device_metrics_test.dart emits coldStart, shutter, export
+# and merge; integration_test/speech_metrics_test.dart emits the stt metrics
+# (task 131) with the tiny model:
+#   sttModelLoad    model load, including the in-engine SHA-256 check
+#   sttFirstPartial compute of a live session's first interim decode
+#   sttFinalize     compute of a live session's committed decodes, p90
+#   sttDecode10s    compute of one committed decode of 10 s of speech
+#   sttRtf          that decode's compute over its audio time
+#   sttAbort        abort of an in-flight committed decode to its return
+# The desktop class carries the Windows reference targets (spec §59,
+# AppConstants.speechBudgets). The phone and tablet stt ceilings are
+# provisional until physical-device evidence is recorded (task 131).
 devices:
   - id: low
     deviceId: null
@@ -6,6 +21,12 @@ devices:
     shutterMs: 400
     exportMs: 8000
     mergeMs: 12000
+    sttModelLoadMs: 5000
+    sttFirstPartialMs: 4000
+    sttFinalizeMs: 3500
+    sttDecode10sMs: 9000
+    sttRtf: 0.9
+    sttAbortMs: 1500
   - id: mid
     deviceId: null
     name: Mid-range phone
@@ -13,6 +34,12 @@ devices:
     shutterMs: 250
     exportMs: 5000
     mergeMs: 8000
+    sttModelLoadMs: 3000
+    sttFirstPartialMs: 2500
+    sttFinalizeMs: 2000
+    sttDecode10sMs: 6000
+    sttRtf: 0.6
+    sttAbortMs: 1000
   - id: tablet
     deviceId: null
     name: Tablet
@@ -20,3 +47,18 @@ devices:
     shutterMs: 250
     exportMs: 5000
     mergeMs: 8000
+    sttModelLoadMs: 3000
+    sttFirstPartialMs: 2500
+    sttFinalizeMs: 2000
+    sttDecode10sMs: 6000
+    sttRtf: 0.6
+    sttAbortMs: 1000
+  - id: desktop
+    deviceId: windows
+    name: Windows desktop reference machine
+    sttModelLoadMs: 2000
+    sttFirstPartialMs: 1500
+    sttFinalizeMs: 1000
+    sttDecode10sMs: 3500
+    sttRtf: 0.35
+    sttAbortMs: 500

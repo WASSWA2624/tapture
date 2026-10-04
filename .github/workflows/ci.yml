@@ -48,6 +48,20 @@ jobs:
         with:
           channel: stable
           cache: true
+      # Advisory (product owner, 2026-10-04): a failed fetch or check is a
+      # warning annotation, never a failed build. tool/release_gate.dart's
+      # speech-assets row is the release-approval gate for the models.
+      - name: Fetch and check the speech models (advisory)
+        working-directory: frontend
+        continue-on-error: true
+        run: |
+          if flutter pub get &&
+            dart run tool/speech_models.dart --fetch &&
+            dart run tool/speech_models.dart --check; then
+            echo "Speech models fetched and checked."
+          else
+            echo "::warning title=Speech models::the bundled speech models could not be fetched or checked; this build ships without them"
+          fi
       - name: Build the signed release
         working-directory: frontend
         env:

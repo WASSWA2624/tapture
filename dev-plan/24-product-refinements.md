@@ -4404,6 +4404,8 @@ Internal to `core/speech` (spec §30.4.7):
 
 **Depends on** [115](24-product-refinements.md), [117](24-product-refinements.md)
 
+**Implementation started:** Yes
+
 ### Implement
 
 **`LiveTranscriptionService` and `LiveTranscriptionSession`** (spec §30.4.5):
@@ -4462,7 +4464,7 @@ List<String> validateScenarioProfiles(List<MemoryProfile> profiles, {required Ma
 
 ### Definition of done
 
-- [ ] State-machine tests cover:
+- [x] State-machine tests cover:
   - start, pause, resume, stop and cancel;
   - paused or hidden → `paused(background)`;
   - `inactive` → no change;
@@ -4470,18 +4472,26 @@ List<String> validateScenarioProfiles(List<MemoryProfile> profiles, {required Ma
   - a resume with revoked permission (Windows, macOS and web paths) → `paused(permissionRevoked)`;
   - interruption;
   - microphone lost, then resume.
-- [ ] `lifecycle_observer_test` and `live_transcription_service_test` prove that `handle(paused)` returns only after the take's header is patched and flushed and the in-flight sink write has completed. A registered flush is removed on session end.
-- [ ] `stop()` completes while a `FakeSpeechEngine` is held mid-decode, with the audio published. The drain then completes, and `sink.finish(complete: true)` runs before `done`.
-- [ ] A long-form engine-load failure continues record-only and publishes the audio. A dictation load failure fails.
-- [ ] Cancel keeps `<audio>.wav.recording` byte-for-byte, returns no transcript, and releases the lease, guard, flush and exit check.
-- [ ] The exit check returns true without draining, and recovery adopts the checkpointed take.
-- [ ] `transcribeRemaining` fills gaps, then the tail, into the sink with contiguous ids.
-- [ ] Dictation auto-stops on silence and on max duration, stops on background, and stops as `preempted`.
-- [ ] Storage stop, the low warning and the limits work with `StorageGuard.fake`.
-- [ ] Every session, capture and worker counter returns to 0 on every path.
-- [ ] `profile_memory_test` proves `validateMemoryProfiles` is unchanged and that `validateScenarioProfiles` applies per-scenario budgets and reports missing and unknown scenarios.
+- [x] `lifecycle_observer_test` and `live_transcription_service_test` prove that `handle(paused)` returns only after the take's header is patched and flushed and the in-flight sink write has completed. A registered flush is removed on session end.
+- [x] `stop()` completes while a `FakeSpeechEngine` is held mid-decode, with the audio published. The drain then completes, and `sink.finish(complete: true)` runs before `done`.
+- [x] A long-form engine-load failure continues record-only and publishes the audio. A dictation load failure fails.
+- [x] Cancel keeps `<audio>.wav.recording` byte-for-byte, returns no transcript, and releases the lease, guard, flush and exit check.
+- [x] The exit check returns true without draining, and recovery adopts the checkpointed take.
+- [x] `transcribeRemaining` fills gaps, then the tail, into the sink with contiguous ids.
+- [x] Dictation auto-stops on silence and on max duration, stops on background, and stops as `preempted`.
+- [x] Storage stop, the low warning and the limits work with `StorageGuard.fake`.
+- [x] Every session, capture and worker counter returns to 0 on every path.
+- [x] `profile_memory_test` proves `validateMemoryProfiles` is unchanged and that `validateScenarioProfiles` applies per-scenario budgets and reports missing and unknown scenarios.
 - [ ] `stt-long-session` (performance tag) passes its budgets.
 - [ ] On this machine, the opt-in `stt_whisper_test` with `-d windows` (or the host mirror, recorded) passes with tiny and base: first-partial and finalize compute within budget; jfk × 6 with no seam duplication; `outboundCallCount == 0`.
+
+### Verification
+
+- 2026-10-04 (adversarial review): re-ran `flutter test --no-pub` on `test/core/speech/live_transcription_service_test.dart`, `live_transcription_recovery_test.dart`, `test/core/lifecycle/lifecycle_observer_test.dart`, `test/tool/profile_memory_test.dart`, `test/app/native_bootstrap_bindings_test.dart`, `test/app/bootstrap_test.dart`, `test/smoke_test.dart` and the architecture suites (layering, naming, tokens, errors, data_safety, state, network, plugin_imports, capture_authority): 146 passed. `test/core/speech/pipeline/{vad_driver,speech_pipeline}_test.dart`: passed (one opt-in skip). `dart analyze` on the touched paths: no issues; `dart format --set-exit-if-changed`: clean; `check_naming`, `check_structure`, `check_logging`, `check_secrets`, `check_tests`, `check_repo_hygiene`: clean.
+- 2026-10-04 review fixes: (1) a service shut down while a drain was finishing its sink finished the sink a second time as incomplete; the session now waits for that drain, proven by a new service test that fails without the guard (two outcomes) and passes with it; (2) a session left for recovery by the exit check skipped later pause flushes, so a close cancelled by another exit check lost background durability; the flush now still checkpoints it; (3) the lease's model id was logged through an identifier named `value`, renamed `lease`; (4) `main.dart` built the staged-take recovery twice and now reuses one `takeRecovery`; (5) the reader-path `transcribeRemaining` test leaked an undisposed rig and temporary folder.
+- 2026-10-04: the cancel test proves the lease, the leave guard and the pause flush are released; the exit check is removed in the same `_untrack` step as the flush and has no separate observable counter. Unit paths prove sessions, captures and leases at 0; the worker and engine-handle counters are proven at 0 by the real-engine host mirror after dispose.
+- 2026-10-04 open: `stt-long-session` (`test/core/speech/long_session_memory_test.dart`, performance tag) fails retained RSS: second-session peak 30.9 MiB (budget 64 MiB) but retained 18.6 MiB against the 8 MiB `longSessionRetainedRssBytes`; session and capture counters return to 0 and 1400/1400 words are stored. Not shown to be a leak; needs a live-heap measurement or recalibration with evidence (task 128).
+- 2026-10-04 open: host mirror `test/hardening/stt_whisper_host_test.dart` (recorded substitution for `-d windows`; Release `tapture_whisper.dll`, windows lock) fails only its last assertion, finalize compute p90 against 1000 ms: tiny 1722 ms, base 6115 ms. Passing before it: take byte-identical, both jfk clauses heard, 0 inserted words (no seam duplication), transcript complete, no skipped utterance, drafts shown, first partial tiny 742 ms / base 826 ms (budget 1500 ms), `outboundCallCount == 0`, capture/handle/worker counters 0 after dispose. Evidence `frontend/build/stt-whisper-{tiny-q5_1,base-q5_1}.json`. Quality concern outside this task: tiny deleted 30 and base 35 of 138 words (base kept only 1 of 6 copies of the first clause), attributed by the implementer's reverted experiment to task 117's prompt carry suppressing repeated sentences; it needs its own task.
 
 ## 119 — Persist transcripts beside their audio
 

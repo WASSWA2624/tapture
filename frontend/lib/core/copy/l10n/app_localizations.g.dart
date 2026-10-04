@@ -5113,6 +5113,156 @@ abstract class AppLocalizations {
   /// **'Transcript'**
   String get transcriptViewLabel;
 
+  /// Recording bar status once the audio is saved while the last words are still being transcribed.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. Finishing the transcript.'**
+  String get liveTranscriptStatusDraining;
+
+  /// Recording bar status once the recording and its transcript are saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this device'**
+  String get liveTranscriptStatusSaved;
+
+  /// Recording bar status after the app went to the background during a recording.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused while Tapture was in the background. Everything so far is saved.'**
+  String get liveTranscriptStatusPausedBackground;
+
+  /// Recording bar status after a call or another app took the audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused by another app or a call.'**
+  String get liveTranscriptStatusPausedInterruption;
+
+  /// Recording bar status after the microphone was unplugged or switched off.
+  ///
+  /// In en, this message translates to:
+  /// **'The microphone was turned off. What was recorded is saved.'**
+  String get liveTranscriptMicLost;
+
+  /// Recording bar status after microphone access was withdrawn during a recording.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone access was turned off. What was recorded is saved. Allow access to go on, or stop to keep it.'**
+  String get liveTranscriptPermissionRevoked;
+
+  /// Button that retries filing a stopped recording and its transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'Try saving again'**
+  String get liveTranscriptRetrySave;
+
+  /// Button that opens the transcript just saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Open transcript'**
+  String get liveTranscriptOpen;
+
+  /// Title of the confirmation before a recording in progress is discarded.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this recording?'**
+  String get liveTranscriptCancelTitle;
+
+  /// Message of the confirmation before a recording in progress is discarded.
+  ///
+  /// In en, this message translates to:
+  /// **'It is not added here. The audio file stays in the project folder.'**
+  String get liveTranscriptCancelMessage;
+
+  /// Notice while a recording is kept without a live transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording without a live transcript: no speech model is available.'**
+  String get liveTranscriptAudioOnly;
+
+  /// Notice while transcription lags behind the recording.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =0{The transcript is catching up. Recording goes on.} one{The transcript is 1 minute behind. Recording goes on.} other{The transcript is {minutes} minutes behind. Recording goes on.}}'**
+  String liveTranscriptBehind(int minutes);
+
+  /// Notice when part of a recording is left untranscribed.
+  ///
+  /// In en, this message translates to:
+  /// **'A part could not be transcribed. Its audio is kept.'**
+  String get liveTranscriptUtteranceSkipped;
+
+  /// Notice while transcript text waits to be saved.
+  ///
+  /// In en, this message translates to:
+  /// **'The transcript could not be saved yet. The recording is kept, and saving is tried again.'**
+  String get liveTranscriptUnsaved;
+
+  /// Notice when a recording stops at the session length limit.
+  ///
+  /// In en, this message translates to:
+  /// **'The recording reached the longest length allowed and was saved.'**
+  String get liveTranscriptSessionLimit;
+
+  /// Notice when a recording stops because storage ran out.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage is full, so recording stopped. What was recorded is saved.'**
+  String get liveTranscriptStorageStop;
+
+  /// Notice when storage runs low during a recording.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage is running low. Recording goes on.'**
+  String get liveTranscriptStorageLow;
+
+  /// Heading of the transcripts heard from a record's or meeting's audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcripts'**
+  String get liveTranscriptListTitle;
+
+  /// Name of a transcript that has not been named.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled transcript'**
+  String get liveTranscriptUntitled;
+
+  /// When a transcript was recorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded {when}'**
+  String liveTranscriptRowWhen(Object when);
+
+  /// When a transcript was recorded, then the start of its text.
+  ///
+  /// In en, this message translates to:
+  /// **'{when} · {preview}'**
+  String liveTranscriptRowDetail(Object when, Object preview);
+
+  /// Marks a transcript whose text was edited beside the original.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited'**
+  String get liveTranscriptEdited;
+
+  /// Marks a transcript whose recording ended before it was finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Interrupted'**
+  String get liveTranscriptInterrupted;
+
+  /// Marks a transcript still being recorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording'**
+  String get liveTranscriptRecording;
+
+  /// Badge saying speech is turned into text on this device, without the network.
+  ///
+  /// In en, this message translates to:
+  /// **'On this device'**
+  String get speechOfflineBadge;
+
   /// Audio evidence association sheet.
   ///
   /// In en, this message translates to:

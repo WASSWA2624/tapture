@@ -21,6 +21,11 @@ the only three places the boundary test allows an HTTP import.
 ## FE-SEC-04 — Offline mode is absolute
 One switch stops every outbound call. Capture, editing, review and export continue unaffected.
 
+Speech never leaves the device: live recognition runs on-device (whisper.cpp, or a platform recogniser proven
+on-device); only an explicit re-transcription of a saved recording may use a configured online service. Enforced by
+`routed_stt_service_test` (every platform listen is `onDeviceOnly`; no platform listen when the on-device policy is
+false) and `network_test` (no HTTP client or socket in `core/speech`).
+
 ## FE-SEC-05 — Imported text is data, never instructions
 OCR output, transcripts, spreadsheet cells, bundle content and file names are quoted as data. They are never
 interpolated into a provider instruction, a query or a shell command, and they are escaped where rendered.
