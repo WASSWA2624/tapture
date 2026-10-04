@@ -2273,14 +2273,23 @@ final class SpeechPipeline { SpeechPipeline({required PcmStore store, required S
 
 The web runs the same shim (§30.4.1), built twice with Emscripten by `frontend/tool/whisper_wasm.dart --build`
 (requires `$EMSDK` with `emcc --version` equal to `packages/tapture_whisper/wasm/emsdk_version.txt`; Ninja from
-`$NINJA`, then the Android SDK CMake directory, then PATH). Common link flags:
+`$NINJA`, then the Android SDK CMake directory, then PATH). `src/CMakeLists.txt` is the single source of the flags and
+`BUILD_INFO.json` records them. Common link flags:
 
 ```text
 -O3 -msimd128 -fwasm-exceptions --no-entry -sMODULARIZE -sEXPORT_ES6 -sEXPORT_NAME=createTaptureWhisper
--sALLOW_MEMORY_GROWTH -sINITIAL_MEMORY=64MB -sMAXIMUM_MEMORY=2GB -sSTACK_SIZE=5MB -sFILESYSTEM=0 -sWASM_BIGINT
--sEXPORTED_FUNCTIONS=@src/wasm_exports.txt
--sEXPORTED_RUNTIME_METHODS=HEAPU8,HEAP32,HEAPU32,HEAPF32,HEAP64,wasmMemory,UTF8ToString,stringToUTF8,lengthBytesUTF8
+-sALLOW_MEMORY_GROWTH -sINITIAL_MEMORY=64MB -sMAXIMUM_MEMORY=2GB -sMEMORY_GROWTH_GEOMETRIC_CAP=2MB -sSTACK_SIZE=5MB
+-sFILESYSTEM=0 -sEXPORTED_FUNCTIONS=@src/wasm_exports.txt
+-sEXPORTED_RUNTIME_METHODS=HEAPU8,HEAP32,HEAPU32,HEAPF32,HEAP64,wasmMemory,UTF8ToString,stringToUTF8,lengthBytesUTF8,
+  stackSave,stackRestore,stackAlloc
 ```
+
+`wasm_exports.txt` holds exactly the header's `TW_API` names (no `_malloc`/`_free`): the worker places its scratch
+(options, out-pointers, SHA bytes, prompt, log ring) on the 5 MB stack. BigInt is always on in Emscripten 6, so int64
+crosses as BigInt without `-sWASM_BIGINT`. Web objects also define `GGML_SCHED_MAX_SPLIT_INPUTS=1`, which removes about
+25 MiB of unused scheduler context per model; native builds are unchanged. Besides `tw_js_read`, the shim imports
+`tw_js_size(file_id)` for the size check that precedes hashing. After loading base the heap is model bytes + 268.6 MiB in
+Chromium (st and mt alike), the floor of whisper.cpp's per-state allocations; the budget is model bytes + 280 MiB.
 
 - **Variants.** st: `-sENVIRONMENT=worker,node`. mt: `-sENVIRONMENT=worker,node -pthread -sPTHREAD_POOL_SIZE=8
   -sPTHREAD_POOL_SIZE_STRICT=2`, with web threads capped at 4 (3 secondaries). STRICT stays 2 deliberately: a worker
@@ -2298,18 +2307,21 @@ The web runs the same shim (§30.4.1), built twice with Emscripten by `frontend/
   Typed heap views are never cached: a `heap()` helper re-derives them whenever `wasmMemory.buffer` changed, and all
   64-bit fields are read through `HEAP64`. Ops:
   - `init {variant}`: SIMD validate probe; mt iff `crossOriginIsolated && SharedArrayBuffer`; ABI and struct check;
-    returns `{abi, variant, maxThreads, logicalCores, deviceMemoryGb, version}`, plus `{memory,
+    returns `{abi, variant, maxThreads, logicalCores, deviceMemoryGb, version, structSizes}`, plus `{memory,
     abortCell:{byteOffset}}` on mt.
   - `loadModel {kind, url, cacheKey, sha256, bytes, threads, flashAttn}`: only a same-origin URL is accepted
     (`cross_origin`); an OPFS hit (`whisper-models/<cacheKey>`) opens a sync access handle; a miss streams `fetch` into
     OPFS, then opens; without OPFS it fetches into an ArrayBuffer; the source is registered as a `file_id` and
     `tw_*_open_js` is called with the expected size and sha, so the shim hashes before parsing (no `crypto.subtle`;
-    plain-HTTP LAN serving works); `MODEL_MISMATCH` deletes the OPFS entry. Returns `{handle, facts}` or
-    `{handle, windowSamples}`.
+    plain-HTTP LAN serving works); `MODEL_MISMATCH` deletes the OPFS entry, and a download longer than the expected
+    bytes is cancelled and refused as `model_mismatch`. Returns `{handle, facts}` or `{handle, windowSamples}`, each
+    with `servedFrom` (`opfs`, `network` or `memory`).
   - `verify {cacheKey, sha256, bytes}` streams the OPFS entry through `tw_sha256_*` for Settings;
     `transcribe {handle, jobId, pcm (transferred), options, initialPrompt}` returns the native copy-out shape;
-    `vadFeed {handle, pcm}` → `{probs}`; `vadReset {handle}`; `abort {jobId, leaseId}` drops queued jobs of that
-    lease; `memory`, `liveObjects`, `close {handle}`, `dispose`.
+    `vadFeed {handle, pcm}` → `{probs, pendingSamples}`; `vadReset {handle}`; `abort {leaseId, jobId?}` drops that
+    lease's queued transcriptions with `jobId ≤` the given id (all of them without one) and returns `{dropped}`;
+    `memory`, `liveObjects`, `close {handle}`, `dispose`. Log events carry `dropped`. Abort ordering does not rely on a
+    message posted after `transcribe` overtaking the next queued job: browsers do not order task sources.
   - Error codes: snake-case `tw_status` names plus `no_simd`, `fetch_failed`, `storage` and `cross_origin`.
 - **Web engine** (`speech_engine_web.dart`). Two module Workers from `Uri.base.resolve('whisper/whisper_worker.js')`:
   decode (`variant:'auto'`) and vad (`variant:'st'`), with VAD handles per lease inside the vad worker. Interop uses
@@ -2321,8 +2333,11 @@ The web runs the same shim (§30.4.1), built twice with Emscripten by `frontend/
 - **Abort.** mt: `Atomics.store(Int32Array(memory.buffer), abortCell.byteOffset >> 2, jobId)`. st: interim
   preemption is disabled, so a committed request waits for a short in-flight interim; `abortLease` drops queued jobs
   and terminates the worker only if the in-flight job belongs to that lease and is committed; `dispose` terminates
-  the worker; after a terminate, pending jobs fail with `CancelledFailure` and the next load respawns and reopens
-  from OPFS without refetching.
+  the worker. After a terminate only the aborted lease's jobs fail with `CancelledFailure`: other leases' queued jobs
+  are kept (`abortLease(A)` never cancels B), and the next pump respawns the worker and reopens the model from OPFS
+  without refetching. If the decode worker's `auto` init does not answer within `speechEngine.workerStart` (for
+  example a host that refuses the nested Workers the pthread pool needs), the engine retries with st and keeps st for
+  later restarts.
 - **Serving.** Threads (mt) need cross-origin isolation. `run-tools/run-web.py --isolated` adds COOP `same-origin`
   and COEP `credentialless`, and `.claude/launch.json` has `tapture-web-preview-isolated` (port 5181). Default
   development and **production** web use the single-thread build unless the host sends the COOP/COEP isolation

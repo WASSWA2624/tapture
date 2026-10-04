@@ -18,12 +18,12 @@ const String _moduleType = 'module';
 /// what `init` reported, and on the threaded variant the shared abort cell.
 /// The browser engine's transport; requests and replies are
 /// [SpeechWorkerCodec] maps, converted to JavaScript only here.
-final class SpeechWorkerChannel {
-  SpeechWorkerChannel._(this._worker, this._onLog, this._onCrash);
+final class SpeechWorkerChannelWeb {
+  SpeechWorkerChannelWeb._(this._worker, this._onLog, this._onCrash);
 
   final _Worker _worker;
   final void Function(List<({int level, String line})> lines) _onLog;
-  final void Function(SpeechWorkerChannel channel) _onCrash;
+  final void Function(SpeechWorkerChannelWeb channel) _onCrash;
   final Map<
     int,
     Completer<({Result<Map<Object?, Object?>> result, String? code})>
@@ -71,10 +71,10 @@ final class SpeechWorkerChannel {
   /// cannot be created, fails to load, or does not answer within
   /// `workerStart` is `speechUnavailable`; a browser without SIMD is
   /// `speechDeviceUnsupported`.
-  static Future<Result<SpeechWorkerChannel>> open({
+  static Future<Result<SpeechWorkerChannelWeb>> open({
     required String variant,
     required void Function(List<({int level, String line})> lines) onLog,
-    required void Function(SpeechWorkerChannel channel) onCrash,
+    required void Function(SpeechWorkerChannelWeb channel) onCrash,
   }) async {
     final _Worker worker;
     try {
@@ -83,10 +83,10 @@ final class SpeechWorkerChannel {
         _WorkerOptions(type: _moduleType.toJS),
       );
     } on Object {
-      return FailureResult<SpeechWorkerChannel>(speechUnavailable());
+      return FailureResult<SpeechWorkerChannelWeb>(speechUnavailable());
     }
     _liveWorkers++;
-    final SpeechWorkerChannel channel = SpeechWorkerChannel._(
+    final SpeechWorkerChannelWeb channel = SpeechWorkerChannelWeb._(
       worker,
       onLog,
       onCrash,
@@ -106,7 +106,7 @@ final class SpeechWorkerChannel {
                 code: null,
               ),
             );
-    final Result<SpeechWorkerChannel> started = answer.result
+    final Result<SpeechWorkerChannelWeb> started = answer.result
         .flatMap(SpeechWorkerCodec.decodeInit)
         .map((info) {
           channel
@@ -118,15 +118,15 @@ final class SpeechWorkerChannel {
             .._ready = true;
           return channel;
         });
-    if (started case FailureResult<SpeechWorkerChannel>(
+    if (started case FailureResult<SpeechWorkerChannelWeb>(
       :final Failure failure,
     )) {
       channel.terminate(failure);
-      return FailureResult<SpeechWorkerChannel>(failure);
+      return FailureResult<SpeechWorkerChannelWeb>(failure);
     }
     if (channel.threaded && channel._memory == null) {
       channel.terminate(speechUnavailable());
-      return FailureResult<SpeechWorkerChannel>(speechUnavailable());
+      return FailureResult<SpeechWorkerChannelWeb>(speechUnavailable());
     }
     return started;
   }

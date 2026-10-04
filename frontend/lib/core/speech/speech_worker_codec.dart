@@ -429,13 +429,14 @@ abstract final class SpeechWorkerCodec {
       }
       segments.add(segment);
     }
+    final int wallMs = _int(result['wallMs']) ?? 0;
     return Success<SpeechDecodeResult>(
       SpeechDecodeResult(
         segments: segments,
         language: _string(result['language']) ?? request.language,
         offsetSamples: offset,
         sampleCount: request.samples.length,
-        elapsed: Duration(milliseconds: _int(result['wallMs']) ?? 0),
+        elapsed: Duration(milliseconds: wallMs),
       ).clampedTo(request.samples.length),
     );
   }

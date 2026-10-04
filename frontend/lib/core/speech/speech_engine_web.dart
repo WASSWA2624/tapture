@@ -48,7 +48,7 @@ SpeechEngine createSpeechEngine({
 /// Speech Workers this page is running, for leak checks: it returns to its
 /// starting value once every engine is disposed.
 @visibleForTesting
-int get debugLiveSpeechWorkers => SpeechWorkerChannel.live;
+int get debugLiveSpeechWorkers => SpeechWorkerChannelWeb.live;
 
 /// Hashes the browser's cached copy of [entry] in [engine]'s worker, for the
 /// settings check: whether a copy is cached, and whether it has the expected
@@ -98,10 +98,10 @@ final class _WebSpeechEngine implements SpeechEngine {
   final List<SpeechDecodeJob> _queue = <SpeechDecodeJob>[];
   final Set<int> _vadHandles = <int>{};
   SpeechEngineState _state = SpeechEngineState.idle;
-  SpeechWorkerChannel? _decode;
-  Future<Result<SpeechWorkerChannel>>? _decodeOpening;
-  SpeechWorkerChannel? _vad;
-  Future<Result<SpeechWorkerChannel>>? _vadOpening;
+  SpeechWorkerChannelWeb? _decode;
+  Future<Result<SpeechWorkerChannelWeb>>? _decodeOpening;
+  SpeechWorkerChannelWeb? _vad;
+  Future<Result<SpeechWorkerChannelWeb>>? _vadOpening;
   Future<void>? _reviving;
   SpeechDecodeJob? _inFlight;
 
@@ -113,6 +113,10 @@ final class _WebSpeechEngine implements SpeechEngine {
   SpeechLoadReport? _loaded;
   int _nextJobId = 0;
   int _restarts = 0;
+
+  /// The variant the decode worker asks for: `auto` until the threaded one
+  /// failed to start here.
+  String _decodeVariant = SpeechWorkerCodec.variantAuto;
   bool _disposed = false;
 
   @override
@@ -180,7 +184,7 @@ final class _WebSpeechEngine implements SpeechEngine {
     // never open a model each.
     await _reviving;
     final SpeechLoadReport? current = _loaded;
-    final SpeechWorkerChannel? running = _decode;
+    final SpeechWorkerChannelWeb? running = _decode;
     if (current != null &&
         current.model.id == model.entry.id &&
         _wanted?.threads == threads &&
@@ -189,12 +193,12 @@ final class _WebSpeechEngine implements SpeechEngine {
         running.isOpen) {
       return Success<SpeechLoadReport>(current);
     }
-    final SpeechWorkerChannel channel;
+    final SpeechWorkerChannelWeb channel;
     switch (await _decodeChannel()) {
-      case FailureResult<SpeechWorkerChannel>(:final Failure failure):
+      case FailureResult<SpeechWorkerChannelWeb>(:final Failure failure):
         return FailureResult<SpeechLoadReport>(failure);
-      case Success<SpeechWorkerChannel>(
-        value: final SpeechWorkerChannel opened,
+      case Success<SpeechWorkerChannelWeb>(
+        value: final SpeechWorkerChannelWeb opened,
       ):
         channel = opened;
     }
@@ -260,12 +264,12 @@ final class _WebSpeechEngine implements SpeechEngine {
     if (request case FailureResult<Map<String, Object?>>(:final failure)) {
       return FailureResult<SpeechVadHandle>(failure);
     }
-    final SpeechWorkerChannel channel;
+    final SpeechWorkerChannelWeb channel;
     switch (await _vadChannel()) {
-      case FailureResult<SpeechWorkerChannel>(:final Failure failure):
+      case FailureResult<SpeechWorkerChannelWeb>(:final Failure failure):
         return FailureResult<SpeechVadHandle>(failure);
-      case Success<SpeechWorkerChannel>(
-        value: final SpeechWorkerChannel opened,
+      case Success<SpeechWorkerChannelWeb>(
+        value: final SpeechWorkerChannelWeb opened,
       ):
         channel = opened;
     }
@@ -343,7 +347,7 @@ final class _WebSpeechEngine implements SpeechEngine {
     if (vad.frameSamples < 1 || samples.length % vad.frameSamples != 0) {
       return _refused<SpeechVadResult>('voice batch refused: partial frame');
     }
-    final SpeechWorkerChannel? channel = _vad;
+    final SpeechWorkerChannelWeb? channel = _vad;
     if (channel == null || !channel.isOpen || !_vadHandles.contains(vad.id)) {
       return FailureResult<SpeechVadResult>(speechEngineStopped());
     }
@@ -401,7 +405,7 @@ final class _WebSpeechEngine implements SpeechEngine {
 
   @override
   Future<void> closeVad(SpeechVadHandle vad) async {
-    final SpeechWorkerChannel? channel = _vad;
+    final SpeechWorkerChannelWeb? channel = _vad;
     if (!_vadHandles.remove(vad.id) || channel == null || !channel.isOpen) {
       return;
     }
@@ -431,7 +435,7 @@ final class _WebSpeechEngine implements SpeechEngine {
     _loaded = null;
     _wanted = null;
     _failQueue(speechCancelled());
-    final SpeechWorkerChannel? channel = _decode;
+    final SpeechWorkerChannelWeb? channel = _decode;
     if (channel == null || !channel.isOpen) {
       _model = null;
       return const Success<void>(null);
@@ -463,8 +467,8 @@ final class _WebSpeechEngine implements SpeechEngine {
     _failQueue(speechEngineStopped());
     await _decodeOpening;
     await _vadOpening;
-    final SpeechWorkerChannel? decode = _decode;
-    final SpeechWorkerChannel? vad = _vad;
+    final SpeechWorkerChannelWeb? decode = _decode;
+    final SpeechWorkerChannelWeb? vad = _vad;
     _decode = null;
     _vad = null;
     _model = null;
@@ -485,10 +489,10 @@ final class _WebSpeechEngine implements SpeechEngine {
       return FailureResult<({bool present, bool ok})>(speechEngineStopped());
     }
     switch (await _vadChannel()) {
-      case FailureResult<SpeechWorkerChannel>(:final Failure failure):
+      case FailureResult<SpeechWorkerChannelWeb>(:final Failure failure):
         return FailureResult<({bool present, bool ok})>(failure);
-      case Success<SpeechWorkerChannel>(
-        value: final SpeechWorkerChannel channel,
+      case Success<SpeechWorkerChannelWeb>(
+        value: final SpeechWorkerChannelWeb channel,
       ):
         final _Answer answer = await channel.send(
           SpeechWorkerCodec.verify(entry),
@@ -501,11 +505,11 @@ final class _WebSpeechEngine implements SpeechEngine {
 
   /// The running decode worker, starting it (or restarting it after it
   /// failed, within the restart budget) when there is none.
-  Future<Result<SpeechWorkerChannel>> _decodeChannel() {
-    final SpeechWorkerChannel? channel = _decode;
+  Future<Result<SpeechWorkerChannelWeb>> _decodeChannel() {
+    final SpeechWorkerChannelWeb? channel = _decode;
     if (channel != null && channel.isOpen) {
-      return Future<Result<SpeechWorkerChannel>>.value(
-        Success<SpeechWorkerChannel>(channel),
+      return Future<Result<SpeechWorkerChannelWeb>>.value(
+        Success<SpeechWorkerChannelWeb>(channel),
       );
     }
     return _decodeOpening ??= _openDecode().whenComplete(
@@ -513,23 +517,37 @@ final class _WebSpeechEngine implements SpeechEngine {
     );
   }
 
-  Future<Result<SpeechWorkerChannel>> _openDecode() async {
+  Future<Result<SpeechWorkerChannelWeb>> _openDecode() async {
     final SpeechEngineState before = _state;
     if (before == SpeechEngineState.failed) {
       if (_restarts >= AppConstants.speechEngine.maxWorkerRestarts) {
-        return FailureResult<SpeechWorkerChannel>(speechEngineStopped());
+        return FailureResult<SpeechWorkerChannelWeb>(speechEngineStopped());
       }
       _restarts++;
     }
     _setState(SpeechEngineState.starting);
     final Stopwatch watch = Stopwatch()..start();
-    final Result<SpeechWorkerChannel> opened = await SpeechWorkerChannel.open(
-      variant: SpeechWorkerCodec.variantAuto,
+    Result<SpeechWorkerChannelWeb> opened = await SpeechWorkerChannelWeb.open(
+      variant: _decodeVariant,
       onLog: _onLog,
       onCrash: _onDecodeCrash,
     );
+    if (opened is FailureResult<SpeechWorkerChannelWeb> &&
+        _decodeVariant != SpeechWorkerCodec.variantSingle &&
+        !_disposed) {
+      // A browser that is cross-origin isolated but cannot start the
+      // threaded variant's nested workers never answers `init`: fall back
+      // to the single-thread variant, and keep it for later restarts.
+      Logger.current.warn(_logTag, 'threaded worker failed; single thread');
+      _decodeVariant = SpeechWorkerCodec.variantSingle;
+      opened = await SpeechWorkerChannelWeb.open(
+        variant: _decodeVariant,
+        onLog: _onLog,
+        onCrash: _onDecodeCrash,
+      );
+    }
     switch (opened) {
-      case FailureResult<SpeechWorkerChannel>(:final Failure failure):
+      case FailureResult<SpeechWorkerChannelWeb>(:final Failure failure):
         _setState(
           before == SpeechEngineState.failed ? before : SpeechEngineState.idle,
         );
@@ -538,12 +556,12 @@ final class _WebSpeechEngine implements SpeechEngine {
           'decode worker did not start: ${failure.runtimeType}',
         );
         return opened;
-      case Success<SpeechWorkerChannel>(
-        value: final SpeechWorkerChannel channel,
+      case Success<SpeechWorkerChannelWeb>(
+        value: final SpeechWorkerChannelWeb channel,
       ):
         if (_disposed) {
           channel.terminate(speechEngineStopped());
-          return FailureResult<SpeechWorkerChannel>(speechEngineStopped());
+          return FailureResult<SpeechWorkerChannelWeb>(speechEngineStopped());
         }
         _decode = channel;
         _setState(SpeechEngineState.ready);
@@ -557,28 +575,29 @@ final class _WebSpeechEngine implements SpeechEngine {
   }
 
   /// The running detector worker, started once; a failed one starts again.
-  Future<Result<SpeechWorkerChannel>> _vadChannel() {
-    final SpeechWorkerChannel? channel = _vad;
+  Future<Result<SpeechWorkerChannelWeb>> _vadChannel() {
+    final SpeechWorkerChannelWeb? channel = _vad;
     if (channel != null && channel.isOpen) {
-      return Future<Result<SpeechWorkerChannel>>.value(
-        Success<SpeechWorkerChannel>(channel),
+      return Future<Result<SpeechWorkerChannelWeb>>.value(
+        Success<SpeechWorkerChannelWeb>(channel),
       );
     }
     return _vadOpening ??= _openVad().whenComplete(() => _vadOpening = null);
   }
 
-  Future<Result<SpeechWorkerChannel>> _openVad() async {
-    final Result<SpeechWorkerChannel> opened = await SpeechWorkerChannel.open(
-      variant: SpeechWorkerCodec.variantSingle,
-      onLog: _onLog,
-      onCrash: _onVadCrash,
-    );
-    if (opened case Success<SpeechWorkerChannel>(
-      value: final SpeechWorkerChannel channel,
+  Future<Result<SpeechWorkerChannelWeb>> _openVad() async {
+    final Result<SpeechWorkerChannelWeb> opened =
+        await SpeechWorkerChannelWeb.open(
+          variant: SpeechWorkerCodec.variantSingle,
+          onLog: _onLog,
+          onCrash: _onVadCrash,
+        );
+    if (opened case Success<SpeechWorkerChannelWeb>(
+      value: final SpeechWorkerChannelWeb channel,
     )) {
       if (_disposed) {
         channel.terminate(speechEngineStopped());
-        return FailureResult<SpeechWorkerChannel>(speechEngineStopped());
+        return FailureResult<SpeechWorkerChannelWeb>(speechEngineStopped());
       }
       _vad = channel;
     }
@@ -588,7 +607,7 @@ final class _WebSpeechEngine implements SpeechEngine {
   /// Opens [source] in [channel] with [threads] and checks its shape; a
   /// model of the wrong shape is closed again.
   Future<Result<_Opened>> _openModel(
-    SpeechWorkerChannel channel,
+    SpeechWorkerChannelWeb channel,
     SpeechModelSource source,
     int threads,
   ) async {
@@ -626,22 +645,23 @@ final class _WebSpeechEngine implements SpeechEngine {
         }
         return FailureResult<_Opened>(failure);
       case Success<({int handle, SpeechModelShape shape, String servedFrom})>(
-        :final value,
+        value: (
+          :final int handle,
+          :final SpeechModelShape shape,
+          :final String servedFrom,
+        ),
       ):
-        Logger.current.info(
-          _logTag,
-          'model bytes served from ${value.servedFrom}',
-        );
+        Logger.current.info(_logTag, 'model bytes served from $servedFrom');
         return Success<_Opened>((
-          handle: value.handle,
-          shape: value.shape,
+          handle: handle,
+          shape: shape,
           loadTime: watch.elapsed,
         ));
     }
   }
 
   /// Closes the loaded model in [channel], if there is one.
-  Future<void> _closeModel(SpeechWorkerChannel channel) async {
+  Future<void> _closeModel(SpeechWorkerChannelWeb channel) async {
     final int? model = _model;
     _model = null;
     if (model != null && channel.isOpen) {
@@ -662,7 +682,7 @@ final class _WebSpeechEngine implements SpeechEngine {
       _failQueue(speechUnavailable());
       return;
     }
-    final SpeechWorkerChannel? channel = _decode;
+    final SpeechWorkerChannelWeb? channel = _decode;
     final int? model = _model;
     if (channel == null || !channel.isOpen || model == null) {
       _revive();
@@ -697,16 +717,18 @@ final class _WebSpeechEngine implements SpeechEngine {
     ({SpeechModelSource source, int threads}) wanted,
   ) async {
     final Result<_Opened> opened = switch (await _decodeChannel()) {
-      FailureResult<SpeechWorkerChannel>(:final Failure failure) =>
+      FailureResult<SpeechWorkerChannelWeb>(:final Failure failure) =>
         FailureResult<_Opened>(failure),
-      Success<SpeechWorkerChannel>(value: final SpeechWorkerChannel channel) =>
+      Success<SpeechWorkerChannelWeb>(
+        value: final SpeechWorkerChannelWeb channel,
+      ) =>
         await _openModel(
           channel,
           wanted.source,
           channel.threadsFor(wanted.threads),
         ),
     };
-    final SpeechWorkerChannel? channel = _decode;
+    final SpeechWorkerChannelWeb? channel = _decode;
     switch (opened) {
       case FailureResult<_Opened>(:final Failure failure):
         Logger.current.warn(
@@ -733,7 +755,7 @@ final class _WebSpeechEngine implements SpeechEngine {
   }
 
   Future<void> _dispatch(
-    SpeechWorkerChannel channel,
+    SpeechWorkerChannelWeb channel,
     int model,
     SpeechDecodeJob job,
   ) async {
@@ -777,7 +799,7 @@ final class _WebSpeechEngine implements SpeechEngine {
 
   /// Replaces the poisoned model with a fresh one from the browser cache;
   /// null when that failed.
-  Future<int?> _reopen(SpeechWorkerChannel channel) async {
+  Future<int?> _reopen(SpeechWorkerChannelWeb channel) async {
     final ({SpeechModelSource source, int threads})? wanted = _wanted;
     await _closeModel(channel);
     if (wanted == null || !channel.isOpen) {
@@ -805,7 +827,7 @@ final class _WebSpeechEngine implements SpeechEngine {
       return;
     }
     job.aborted = true;
-    final SpeechWorkerChannel? channel = _decode;
+    final SpeechWorkerChannelWeb? channel = _decode;
     if (channel != null && channel.threaded) {
       channel.abortThrough(job.jobId);
       return;
@@ -823,7 +845,7 @@ final class _WebSpeechEngine implements SpeechEngine {
   /// the model from the browser cache, so one lease's abort never cancels
   /// another's work.
   void _terminateDecode() {
-    final SpeechWorkerChannel? channel = _decode;
+    final SpeechWorkerChannelWeb? channel = _decode;
     if (channel == null) {
       return;
     }
@@ -833,7 +855,7 @@ final class _WebSpeechEngine implements SpeechEngine {
     Logger.current.info(_logTag, 'decode worker stopped to abort a final');
   }
 
-  void _onDecodeCrash(SpeechWorkerChannel channel) {
+  void _onDecodeCrash(SpeechWorkerChannelWeb channel) {
     if (!identical(_decode, channel)) {
       return;
     }
@@ -848,7 +870,7 @@ final class _WebSpeechEngine implements SpeechEngine {
     }
   }
 
-  void _onVadCrash(SpeechWorkerChannel channel) {
+  void _onVadCrash(SpeechWorkerChannelWeb channel) {
     if (!identical(_vad, channel)) {
       return;
     }
@@ -870,7 +892,7 @@ final class _WebSpeechEngine implements SpeechEngine {
   }
 
   /// Reads how many engine objects [channel]'s worker holds.
-  Future<void> _refreshObjects(SpeechWorkerChannel channel) async {
+  Future<void> _refreshObjects(SpeechWorkerChannelWeb channel) async {
     if (!channel.isOpen) {
       return;
     }
@@ -890,7 +912,7 @@ final class _WebSpeechEngine implements SpeechEngine {
   }
 
   /// Moves to [state] unless [channel] was replaced or the engine is gone.
-  void _settleState(SpeechWorkerChannel channel, SpeechEngineState state) {
+  void _settleState(SpeechWorkerChannelWeb channel, SpeechEngineState state) {
     if (identical(_decode, channel) && channel.isOpen && !_disposed) {
       _setState(state);
     }

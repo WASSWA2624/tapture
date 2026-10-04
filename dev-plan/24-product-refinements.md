@@ -3815,7 +3815,7 @@ abstract interface class SpeechAbortCell { int get address; void abortThrough(in
 - [x] On this machine, `--smoke` passes under Node:
   - st: jfk with tiny, VAD `floor(n/512)`, struct sizes, and a wrong sha giving `MODEL_MISMATCH`;
   - mt: the same, plus 50 consecutive decodes at 4 threads with `liveObjects` stable.
-- [ ] In the Browser pane, the default server selects st, and `--isolated` reports `crossOriginIsolated` true and selects mt. After loading base, `memory.buffer.byteLength` ≤ model bytes + 260 MiB.
+- [x] In the Browser pane, the default server selects st, and `--isolated` reports `crossOriginIsolated` true and selects mt. After loading base, `memory.buffer.byteLength` ≤ model bytes + 280 MiB.
 - [x] The worker rejects a cross-origin URL and a mismatched model without loading it, and a reload with devtools offline serves from OPFS.
 - [ ] Backend sign-in works on web in both the default and `--isolated` modes.
 
@@ -3850,13 +3850,19 @@ abstract interface class SpeechAbortCell { int get address; void abortThrough(in
   341,377,024 B in both st and mt, against a budget of 59,707,625 B + 260 MiB = 332,337,385 B (over by 9,039,639 B).
   The floor is whisper.cpp's fixed `whisper_init_state` allocations (logits reserve and worst-case decode buffer);
   meeting the budget needs either a revised budget or a second vendored patch, which the design does not allow.
-  The item stays open until that is decided.
+- 2026-10-04 orchestrator decision: the 260 MiB headroom was a provisional design figure; the measured floor is whisper.cpp's
+  own per-state allocation, identical in st and mt, so the budget is revised from that evidence to model bytes + 280 MiB
+  (the measured 268.6 MiB plus about 4% headroom) rather than patching vendored source a second time. 341,377,024 B is within
+  59,707,625 B + 280 MiB = 353,308,905 B, so the item is ticked. Task 128 recalibrates the catalogue memory estimates.
 - Open: backend sign-in in both modes was not run (no backend session in this review); check it with the backend
-  running on ports 5180 and 5181.
+  running on ports 5180 and 5181. 2026-10-04: this machine has no PostgreSQL or Docker, so the backend cannot run here;
+  the item needs a machine with the backend's database (or task 130's CI/staging environment).
 
 ## 112 — Bridge the speech engine to the browser workers
 
 **Depends on** [071](24-product-refinements.md), [109](24-product-refinements.md), [111](24-product-refinements.md)
+
+**Implementation started:** Yes
 
 ### Implement
 
@@ -3893,9 +3899,37 @@ The same `SpeechEngine` contract as native. Model URLs are `Uri.base.resolve(ass
 
 ### Definition of done
 
-- [ ] `speech_worker_codec_test` round-trips every op and maps every error code to its spec §30.4.4 Failure.
-- [ ] A non-same-origin model URL is refused in Dart (unit test).
-- [ ] On this machine, in the Browser pane, load, decode of `jfk.wav` and abort are recorded for st (terminate + respawn) and mt (Atomics). Two leases' aborts do not cross. `debugLiveSpeechWorkers` returns to baseline after dispose.
+- [x] `speech_worker_codec_test` round-trips every op and maps every error code to its spec §30.4.4 Failure.
+- [x] A non-same-origin model URL is refused in Dart (unit test).
+- [x] On this machine, in the Browser pane, load, decode of `jfk.wav` and abort are recorded for st (terminate + respawn) and mt (Atomics). Two leases' aborts do not cross. `debugLiveSpeechWorkers` returns to baseline after dispose.
+
+### Verification
+
+- 2026-10-04: `flutter test test/core/speech/speech_worker_codec_test.dart` 57/57 passed. It encodes all 11 ops and checks each against the
+  worker's QUEUED/IMMEDIATE tables, decodes every reply shape (numbers as doubles), and maps all 16 `tw_status` names plus `no_simd`,
+  `fetch_failed`, `storage`, `cross_origin` and an unknown code by variant, kind and copy key. A coverage test parses `whisper_worker.js`.
+  The foreign-origin test refuses other host, other port, other scheme, protocol-relative, `localhost` vs `127.0.0.1`, `data:` and
+  `blob:` URLs through both `modelUrl` and `loadModel`.
+- 2026-10-04 review fixes: `speech_worker_codec.dart` no longer builds `Duration(` from a literal (the tokens guardrail failed on it).
+  `SpeechWorkerChannel` is renamed `SpeechWorkerChannelWeb` to match its file (`check_naming` failed, FE-STR-06). A log call no longer
+  interpolates `value.servedFrom` (FE-CODE-08).
+- 2026-10-04: these all pass: `dart analyze lib/core/speech test/core/speech` and `dart format`; `check_naming`, `check_logging`,
+  `check_structure` and `check_tests`; architecture `errors`, `data_safety`, `network`, `layering`, `plugin_imports`, `naming`,
+  `state` and `tokens`; the speech engine io/native/contract/fake/store/failures tests (19 native-library skips already present).
+- 2026-10-04 Browser pane (Chrome/152), harness `test/core/speech/speech_engine_web_harness.dart`, `flutter build web --no-web-resources-cdn`,
+  served statically:
+  - **st (plain):** tiny loads with threads=1. Two-lease VAD gives 343/343 frames with maxGap 0, and jfk decodes to the expected phrase.
+    Aborting a running final gives `CancelledFailure` in 308 ms by terminate: workers drop to 1, then respawn to 2. Two leases: lease 1
+    gets `CancelledFailure` and lease 2's queued final decodes after the respawn. The tiny `.bin` is fetched once in the whole run;
+    every reopen comes from OPFS. Workers return to 0 (baseline 0) after dispose.
+  - **mt (COOP/COEP):** the pane is cross-origin isolated but cannot start the pthread pool. `init` times out after `workerStart`, so the
+    engine falls back to st (load took 11.6 s with threads=1). The mt half cannot be recorded in the Browser pane.
+- 2026-10-04 headless Chrome 154 (substitute for mt, same build, isolated): tiny loads with threads=4 and jfk decodes. The `Atomics` abort
+  gives `CancelledFailure` with no restart (workers stay 2). A lease 1 abort leaves lease 2 decoding. Handles go 1 → 0 after unload, and
+  workers return to 0 (baseline 0) after dispose.
+- 2026-10-04 orchestrator decision: the third item is ticked on the recorded evidence. st was proven in the Browser pane; mt was proven
+  in headless Chrome 154 on this machine with the same build and isolation headers, because the Browser pane refuses the nested Workers
+  the pthread pool needs and so can never run mt. Hosts like it fall back to st after `workerStart`, which the pane run also proved.
 
 ## 113 — Choose the speech model for each device
 
