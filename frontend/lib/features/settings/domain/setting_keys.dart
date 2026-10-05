@@ -274,6 +274,16 @@ abstract final class SettingKeys {
     'en',
   );
 
+  /// How on-device speech trades speed for accuracy: `auto`, `fast` or
+  /// `accurate` (spec §30.4.2). Automatic, so most people never touch it;
+  /// FE-SIMP-12: one device serves battery-limited field days (fast) and
+  /// accuracy-critical meetings while charging (accurate), which no single
+  /// default can serve both.
+  static const SettingKey<String> speechQuality = SettingKey<String>(
+    'speech.quality',
+    'auto',
+  );
+
   /// Chosen appearance. Survives a restart and a cache clear.
   static const SettingKey<String> themeMode = SettingKey<String>(
     'appearance.themeMode',
@@ -340,6 +350,7 @@ abstract final class SettingKeys {
     aiModel.name,
     appLanguage.name,
     voiceLanguage.name,
+    speechQuality.name,
     themeMode.name,
     verificationMode.name,
     reviewValueSide.name,

@@ -2734,6 +2734,9 @@ final class LocalizedCopy {
   /// Audio recorder start.
   String get captureRecordAudio => _catalog.captureRecordAudio;
 
+  /// Caption recorder start that also transcribes on this device.
+  String get captureRecordTranscribe => _catalog.captureRecordTranscribe;
+
   /// Audio recorder pause.
   String get capturePauseAudio => _catalog.capturePauseAudio;
 
@@ -2907,6 +2910,133 @@ final class LocalizedCopy {
   /// Badge saying speech is turned into text on this device, without the
   /// network.
   String get speechOfflineBadge => _catalog.speechOfflineBadge;
+
+  /// Headline of the Transcribe screen when no speech model can run.
+  String get liveTranscriptUnavailable => _catalog.liveTranscriptUnavailable;
+
+  /// What to do when live transcription is unavailable.
+  String get liveTranscriptUnavailableRecovery =>
+      _catalog.liveTranscriptUnavailableRecovery;
+
+  /// More menu entry: the transcript history.
+  String get navTranscripts => _catalog.navTranscripts;
+
+  /// Title of the transcript history.
+  String get transcriptsTitle => _catalog.transcriptsTitle;
+
+  /// Opens the Transcribe screen to record a new transcript.
+  String get transcriptsNew => _catalog.transcriptsNew;
+
+  /// Headline of the transcript history with no transcripts.
+  String get transcriptsEmptyHeadline => _catalog.transcriptsEmptyHeadline;
+
+  /// Message of the transcript history with no transcripts.
+  String get transcriptsEmptyMessage => _catalog.transcriptsEmptyMessage;
+
+  /// Headline when a transcript search matches nothing.
+  String get transcriptsNoMatchHeadline => _catalog.transcriptsNoMatchHeadline;
+
+  /// Prompt of the transcript history search field.
+  String get transcriptsSearchHint => _catalog.transcriptsSearchHint;
+
+  /// Headline of the Transcribe screen with no project open.
+  String get transcriptsNoProject => _catalog.transcriptsNoProject;
+
+  /// Why a project is needed before transcribing.
+  String get transcriptsNoProjectMessage =>
+      _catalog.transcriptsNoProjectMessage;
+
+  /// Title of the screen that records and transcribes speech.
+  String get transcribeTitle => _catalog.transcribeTitle;
+
+  /// Title of one transcript's page.
+  String get transcriptDetailTitle => _catalog.transcriptDetailTitle;
+
+  /// Headline when an opened transcript no longer exists.
+  String get transcriptMissing => _catalog.transcriptMissing;
+
+  /// Why an opened transcript is missing.
+  String get transcriptMissingMessage => _catalog.transcriptMissingMessage;
+
+  /// Marks a transcript heard from a capture's recording.
+  String get transcriptOriginCapture => _catalog.transcriptOriginCapture;
+
+  /// Marks a transcript heard from a meeting's recording.
+  String get transcriptOriginMeeting => _catalog.transcriptOriginMeeting;
+
+  /// Marks a transcript recorded on the Transcribe screen.
+  String get transcriptOriginStandalone => _catalog.transcriptOriginStandalone;
+
+  /// Notice on a transcript whose recording ended before it was finished.
+  String get transcriptStatusInterrupted =>
+      _catalog.transcriptStatusInterrupted;
+
+  /// The operator's edit of a transcript, kept beside the original.
+  String get transcriptEditedLabel => _catalog.transcriptEditedLabel;
+
+  /// The transcript exactly as it was heard, never changed.
+  String get transcriptOriginalLabel => _catalog.transcriptOriginalLabel;
+
+  /// Saves the edited transcript beside the original.
+  String get transcriptSaveEdit => _catalog.transcriptSaveEdit;
+
+  /// Confirms an edited transcript was saved.
+  String get transcriptEditSaved => _catalog.transcriptEditSaved;
+
+  /// Removes the edit and shows the transcript as heard.
+  String get transcriptRevert => _catalog.transcriptRevert;
+
+  /// Title of the confirmation before an edit is removed.
+  String get transcriptRevertTitle => _catalog.transcriptRevertTitle;
+
+  /// What removing a transcript edit does.
+  String get transcriptRevertMessage => _catalog.transcriptRevertMessage;
+
+  /// Confirms removing a transcript edit.
+  String get transcriptRevertConfirm => _catalog.transcriptRevertConfirm;
+
+  /// Confirms a transcript edit was removed.
+  String get transcriptReverted => _catalog.transcriptReverted;
+
+  /// Gives a transcript a new title.
+  String get transcriptRename => _catalog.transcriptRename;
+
+  /// Field for a transcript's title.
+  String get transcriptTitleLabel => _catalog.transcriptTitleLabel;
+
+  /// The [language] a transcript was heard in.
+  String transcriptLanguage(String language) =>
+      _catalog.transcriptLanguage(language);
+
+  /// The speech [model] that heard a transcript.
+  String transcriptModel(String model) => _catalog.transcriptModel(model);
+
+  /// How long a transcript's recording is, as minutes and seconds.
+  String transcriptAudioLength(Duration length) {
+    final String minutes = length.inMinutes.toString().padLeft(2, '0');
+    final String seconds = length.inSeconds
+        .remainder(60)
+        .toString()
+        .padLeft(2, '0');
+    return _catalog.transcriptAudioLength(minutes, seconds);
+  }
+
+  /// A transcript whose recording is not filed on this device.
+  String get transcriptNoAudio => _catalog.transcriptNoAudio;
+
+  /// How many parts, [count], of a transcript's recording are left
+  /// untranscribed.
+  String transcriptGaps(int count) => _catalog.transcriptGaps(count);
+
+  /// Transcribes the parts of a recording left untranscribed.
+  String get transcriptFinish => _catalog.transcriptFinish;
+
+  /// Confirms the rest of a recording was transcribed.
+  String get transcriptFinished => _catalog.transcriptFinished;
+
+  /// Transcribes a record's untranscribed audio clips on this device.
+  String get transcriptTranscribeOnDevice =>
+      _catalog.transcriptTranscribeOnDevice;
 
   /// Audio evidence association sheet.
   String get captureAudioScopeTitle => _catalog.captureAudioScopeTitle;
@@ -3209,6 +3339,132 @@ final class LocalizedCopy {
 
   /// The language dictation listens for.
   String get settingsVoiceLanguage => _catalog.settingsVoiceLanguage;
+
+  /// Heading of the on-device speech settings on the Language screen.
+  String get settingsSpeechSection => _catalog.settingsSpeechSection;
+
+  /// Which engine turns speech into text: the app's own on-device model.
+  String settingsSpeechEngineWhisper(String model) {
+    return _catalog.settingsSpeechEngineWhisper(model);
+  }
+
+  /// Which engine turns speech into text: the operating system's
+  /// recogniser, kept on the device.
+  String get settingsSpeechEnginePlatform =>
+      _catalog.settingsSpeechEnginePlatform;
+
+  /// No engine can turn speech into text on this device now.
+  String get settingsSpeechEngineNone => _catalog.settingsSpeechEngineNone;
+
+  /// Name of the speed-or-accuracy speech setting.
+  String get settingsSpeechQuality => _catalog.settingsSpeechQuality;
+
+  /// What the transcription quality setting changes.
+  String get settingsSpeechQualityEffect =>
+      _catalog.settingsSpeechQualityEffect;
+
+  /// Quality choice: the device decides.
+  String get settingsSpeechQualityAuto => _catalog.settingsSpeechQualityAuto;
+
+  /// Quality choice: always the fast model.
+  String get settingsSpeechQualityFast => _catalog.settingsSpeechQualityFast;
+
+  /// Quality choice: the largest model the device can hold.
+  String get settingsSpeechQualityAccurate =>
+      _catalog.settingsSpeechQualityAccurate;
+
+  /// Heading of the list of speech model files.
+  String get settingsSpeechModels => _catalog.settingsSpeechModels;
+
+  /// Name of the smallest, quickest speech model.
+  String get settingsSpeechModelFast => _catalog.settingsSpeechModelFast;
+
+  /// Name of the middle speech model.
+  String get settingsSpeechModelBalanced =>
+      _catalog.settingsSpeechModelBalanced;
+
+  /// Name of the largest, most accurate speech model.
+  String get settingsSpeechModelAccurate =>
+      _catalog.settingsSpeechModelAccurate;
+
+  /// Name of the small model that notices when someone speaks.
+  String get settingsSpeechModelVad => _catalog.settingsSpeechModelVad;
+
+  /// Where a speech model came from: the app itself.
+  String get settingsSpeechModelBundled => _catalog.settingsSpeechModelBundled;
+
+  /// Where a speech model came from: a file the operator imported.
+  String get settingsSpeechModelImported =>
+      _catalog.settingsSpeechModelImported;
+
+  /// Where a speech model comes from: not in the app, only by import.
+  String get settingsSpeechModelImportOnly =>
+      _catalog.settingsSpeechModelImportOnly;
+
+  /// A speech model file is on this device and has not been checked this
+  /// session.
+  String get settingsSpeechModelPresent => _catalog.settingsSpeechModelPresent;
+
+  /// A speech model file matched its published size and fingerprint.
+  String get settingsSpeechModelVerified =>
+      _catalog.settingsSpeechModelVerified;
+
+  /// A speech model file is not on this device.
+  String get settingsSpeechModelMissing => _catalog.settingsSpeechModelMissing;
+
+  /// A speech model file failed a check.
+  String get settingsSpeechModelDamaged => _catalog.settingsSpeechModelDamaged;
+
+  /// Marks the speech model that turns speech into text now.
+  String get settingsSpeechModelInUse => _catalog.settingsSpeechModelInUse;
+
+  /// A speech model row's supporting line: where it came from, its state
+  /// and its size.
+  String settingsSpeechModelDetail(String origin, String state, String size) {
+    return _catalog.settingsSpeechModelDetail(origin, state, size);
+  }
+
+  /// Warns that a speech model does not fit this device now.
+  String get settingsSpeechTooLarge => _catalog.settingsSpeechTooLarge;
+
+  /// Checks a speech model file against its published fingerprint.
+  String get settingsSpeechVerify => _catalog.settingsSpeechVerify;
+
+  /// A speech model passed its check.
+  String settingsSpeechVerified(String model) {
+    return _catalog.settingsSpeechVerified(model);
+  }
+
+  /// A speech model failed its check.
+  String settingsSpeechVerifyMismatch(String model) {
+    return _catalog.settingsSpeechVerifyMismatch(model);
+  }
+
+  /// Picks a speech model file to add to this device.
+  String get settingsSpeechImport => _catalog.settingsSpeechImport;
+
+  /// An imported speech model passed its check and was added.
+  String settingsSpeechImported(String model) {
+    return _catalog.settingsSpeechImported(model);
+  }
+
+  /// Removes an imported speech model from this device.
+  String get settingsSpeechRemove => _catalog.settingsSpeechRemove;
+
+  /// Title of the confirmation before an imported speech model is
+  /// removed.
+  String settingsSpeechRemoveTitle(String model) {
+    return _catalog.settingsSpeechRemoveTitle(model);
+  }
+
+  /// What removing an imported speech model does.
+  String get settingsSpeechRemoveMessage =>
+      _catalog.settingsSpeechRemoveMessage;
+
+  /// An imported speech model was removed.
+  String settingsSpeechRemoved(String model) {
+    return _catalog.settingsSpeechRemoved(model);
+  }
 
   /// Voice-language names, each in its own language's usual English name.
   String get languageEnglish => _catalog.languageEnglish;
@@ -6496,6 +6752,10 @@ final class LocalizedCopy {
   /// One transcription run of the recording.
   String meetingTranscriptVersion(int version) =>
       _catalog.meetingTranscriptVersion(version);
+
+  /// Marks an older, read-only online transcription run of a recording.
+  String get meetingTranscriptCloudVersion =>
+      _catalog.meetingTranscriptCloudVersion;
 
   /// Parts of a recording one run could not transcribe.
   String meetingTranscriptGaps(int count) {

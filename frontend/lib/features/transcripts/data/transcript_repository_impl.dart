@@ -388,6 +388,55 @@ final class TranscriptRepositoryImpl implements TranscriptRepository {
   }
 
   @override
+  Stream<List<TranscriptStart>> watchUntranscribedAudio(String recordId) {
+    return _database
+        .customSelect(
+          'SELECT a.id, a.project_id, a.relative_path, a.created_at, '
+          'p.folder_name FROM attachment_owners o '
+          'JOIN attachments a ON a.id = o.attachment_id '
+          'JOIN projects p ON p.id = a.project_id '
+          "WHERE o.owner_type = 'record' AND o.owner_id = ? AND a.kind = ? "
+          "AND TRIM(p.folder_name) <> '' "
+          'AND ${_notDiscarded('attachment_owners', 'o.id')} '
+          'AND NOT EXISTS (SELECT 1 FROM transcripts t '
+          'WHERE t.attachment_id = a.id '
+          'AND ${_notDiscarded(_entityType, 't.id')}) '
+          'ORDER BY o.sort_order, a.id',
+          variables: <Variable<Object>>[
+            Variable<String>(recordId),
+            Variable<String>(AttachmentKind.audio.name),
+          ],
+          readsFrom: <ResultSetImplementation<dynamic, dynamic>>{
+            _database.attachmentOwners,
+            _database.attachments,
+            _database.projects,
+            _database.transcripts,
+            _database.tombstones,
+          },
+        )
+        .watch()
+        .map((List<QueryRow> rows) {
+          return <TranscriptStart>[
+            for (final QueryRow row in rows)
+              (
+                projectId: row.read<String>('project_id'),
+                ownerKind: TranscriptOwnerKind.capture,
+                ownerId: null,
+                attachmentId: row.read<String>('id'),
+                audioPath:
+                    '${EvidencePurge.projectsFolder}/'
+                    '${row.read<String>('folder_name').trim()}/'
+                    '${row.read<String>('relative_path')}',
+                title: '',
+                languageTag: '',
+                modelId: '',
+                startedAt: row.read<DateTime>('created_at'),
+              ),
+          ];
+        });
+  }
+
+  @override
   Stream<List<TranscriptSummary>> watchMeeting(String meetingId) {
     return _summaries('t.owner_kind = ? AND t.owner_id = ?', <Variable<Object>>[
       Variable<String>(TranscriptOwnerKind.meeting.name),

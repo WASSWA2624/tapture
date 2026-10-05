@@ -2590,6 +2590,9 @@ abstract final class Copy {
   /// Audio recorder start.
   static String get captureRecordAudio => _english.captureRecordAudio;
 
+  /// Caption recorder start that also transcribes on this device.
+  static String get captureRecordTranscribe => _english.captureRecordTranscribe;
+
   /// Audio recorder pause.
   static String get capturePauseAudio => _english.capturePauseAudio;
 
@@ -2755,6 +2758,133 @@ abstract final class Copy {
   /// Badge saying speech is turned into text on this device, without the
   /// network.
   static String get speechOfflineBadge => _english.speechOfflineBadge;
+
+  /// Headline of the Transcribe screen when no speech model can run.
+  static String get liveTranscriptUnavailable =>
+      _english.liveTranscriptUnavailable;
+
+  /// What to do when live transcription is unavailable.
+  static String get liveTranscriptUnavailableRecovery =>
+      _english.liveTranscriptUnavailableRecovery;
+
+  /// More menu entry: the transcript history.
+  static String get navTranscripts => _english.navTranscripts;
+
+  /// Title of the transcript history.
+  static String get transcriptsTitle => _english.transcriptsTitle;
+
+  /// Opens the Transcribe screen to record a new transcript.
+  static String get transcriptsNew => _english.transcriptsNew;
+
+  /// Headline of the transcript history with no transcripts.
+  static String get transcriptsEmptyHeadline =>
+      _english.transcriptsEmptyHeadline;
+
+  /// Message of the transcript history with no transcripts.
+  static String get transcriptsEmptyMessage => _english.transcriptsEmptyMessage;
+
+  /// Headline when a transcript search matches nothing.
+  static String get transcriptsNoMatchHeadline =>
+      _english.transcriptsNoMatchHeadline;
+
+  /// Prompt of the transcript history search field.
+  static String get transcriptsSearchHint => _english.transcriptsSearchHint;
+
+  /// Headline of the Transcribe screen with no project open.
+  static String get transcriptsNoProject => _english.transcriptsNoProject;
+
+  /// Why a project is needed before transcribing.
+  static String get transcriptsNoProjectMessage =>
+      _english.transcriptsNoProjectMessage;
+
+  /// Title of the screen that records and transcribes speech.
+  static String get transcribeTitle => _english.transcribeTitle;
+
+  /// Title of one transcript's page.
+  static String get transcriptDetailTitle => _english.transcriptDetailTitle;
+
+  /// Headline when an opened transcript no longer exists.
+  static String get transcriptMissing => _english.transcriptMissing;
+
+  /// Why an opened transcript is missing.
+  static String get transcriptMissingMessage =>
+      _english.transcriptMissingMessage;
+
+  /// Marks a transcript heard from a capture's recording.
+  static String get transcriptOriginCapture => _english.transcriptOriginCapture;
+
+  /// Marks a transcript heard from a meeting's recording.
+  static String get transcriptOriginMeeting => _english.transcriptOriginMeeting;
+
+  /// Marks a transcript recorded on the Transcribe screen.
+  static String get transcriptOriginStandalone =>
+      _english.transcriptOriginStandalone;
+
+  /// Notice on a transcript whose recording ended before it was finished.
+  static String get transcriptStatusInterrupted =>
+      _english.transcriptStatusInterrupted;
+
+  /// The operator's edit of a transcript, kept beside the original.
+  static String get transcriptEditedLabel => _english.transcriptEditedLabel;
+
+  /// The transcript exactly as it was heard, never changed.
+  static String get transcriptOriginalLabel => _english.transcriptOriginalLabel;
+
+  /// Saves the edited transcript beside the original.
+  static String get transcriptSaveEdit => _english.transcriptSaveEdit;
+
+  /// Confirms an edited transcript was saved.
+  static String get transcriptEditSaved => _english.transcriptEditSaved;
+
+  /// Removes the edit and shows the transcript as heard.
+  static String get transcriptRevert => _english.transcriptRevert;
+
+  /// Title of the confirmation before an edit is removed.
+  static String get transcriptRevertTitle => _english.transcriptRevertTitle;
+
+  /// What removing a transcript edit does.
+  static String get transcriptRevertMessage => _english.transcriptRevertMessage;
+
+  /// Confirms removing a transcript edit.
+  static String get transcriptRevertConfirm => _english.transcriptRevertConfirm;
+
+  /// Confirms a transcript edit was removed.
+  static String get transcriptReverted => _english.transcriptReverted;
+
+  /// Gives a transcript a new title.
+  static String get transcriptRename => _english.transcriptRename;
+
+  /// Field for a transcript's title.
+  static String get transcriptTitleLabel => _english.transcriptTitleLabel;
+
+  /// The [language] a transcript was heard in.
+  static String transcriptLanguage(String language) =>
+      _english.transcriptLanguage(language);
+
+  /// The speech [model] that heard a transcript.
+  static String transcriptModel(String model) =>
+      _english.transcriptModel(model);
+
+  /// How long a transcript's recording is, as minutes and seconds.
+  static String transcriptAudioLength(Duration length) =>
+      _english.transcriptAudioLength(length);
+
+  /// A transcript whose recording is not filed on this device.
+  static String get transcriptNoAudio => _english.transcriptNoAudio;
+
+  /// How many parts, [count], of a transcript's recording are left
+  /// untranscribed.
+  static String transcriptGaps(int count) => _english.transcriptGaps(count);
+
+  /// Transcribes the parts of a recording left untranscribed.
+  static String get transcriptFinish => _english.transcriptFinish;
+
+  /// Confirms the rest of a recording was transcribed.
+  static String get transcriptFinished => _english.transcriptFinished;
+
+  /// Transcribes a record's untranscribed audio clips on this device.
+  static String get transcriptTranscribeOnDevice =>
+      _english.transcriptTranscribeOnDevice;
 
   /// Audio evidence association sheet.
   static String get captureAudioScopeTitle => _english.captureAudioScopeTitle;
@@ -3058,6 +3188,136 @@ abstract final class Copy {
 
   /// The language dictation listens for.
   static String get settingsVoiceLanguage => _english.settingsVoiceLanguage;
+
+  /// Heading of the on-device speech settings on the Language screen.
+  static String get settingsSpeechSection => _english.settingsSpeechSection;
+
+  /// Which engine turns speech into text: the app's own on-device model.
+  static String settingsSpeechEngineWhisper(String model) =>
+      _english.settingsSpeechEngineWhisper(model);
+
+  /// Which engine turns speech into text: the operating system's
+  /// recogniser, kept on the device.
+  static String get settingsSpeechEnginePlatform =>
+      _english.settingsSpeechEnginePlatform;
+
+  /// No engine can turn speech into text on this device now.
+  static String get settingsSpeechEngineNone =>
+      _english.settingsSpeechEngineNone;
+
+  /// Name of the speed-or-accuracy speech setting.
+  static String get settingsSpeechQuality => _english.settingsSpeechQuality;
+
+  /// What the transcription quality setting changes.
+  static String get settingsSpeechQualityEffect =>
+      _english.settingsSpeechQualityEffect;
+
+  /// Quality choice: the device decides.
+  static String get settingsSpeechQualityAuto =>
+      _english.settingsSpeechQualityAuto;
+
+  /// Quality choice: always the fast model.
+  static String get settingsSpeechQualityFast =>
+      _english.settingsSpeechQualityFast;
+
+  /// Quality choice: the largest model the device can hold.
+  static String get settingsSpeechQualityAccurate =>
+      _english.settingsSpeechQualityAccurate;
+
+  /// Heading of the list of speech model files.
+  static String get settingsSpeechModels => _english.settingsSpeechModels;
+
+  /// Name of the smallest, quickest speech model.
+  static String get settingsSpeechModelFast => _english.settingsSpeechModelFast;
+
+  /// Name of the middle speech model.
+  static String get settingsSpeechModelBalanced =>
+      _english.settingsSpeechModelBalanced;
+
+  /// Name of the largest, most accurate speech model.
+  static String get settingsSpeechModelAccurate =>
+      _english.settingsSpeechModelAccurate;
+
+  /// Name of the small model that notices when someone speaks.
+  static String get settingsSpeechModelVad => _english.settingsSpeechModelVad;
+
+  /// Where a speech model came from: the app itself.
+  static String get settingsSpeechModelBundled =>
+      _english.settingsSpeechModelBundled;
+
+  /// Where a speech model came from: a file the operator imported.
+  static String get settingsSpeechModelImported =>
+      _english.settingsSpeechModelImported;
+
+  /// Where a speech model comes from: not in the app, only by import.
+  static String get settingsSpeechModelImportOnly =>
+      _english.settingsSpeechModelImportOnly;
+
+  /// A speech model file is on this device and has not been checked this
+  /// session.
+  static String get settingsSpeechModelPresent =>
+      _english.settingsSpeechModelPresent;
+
+  /// A speech model file matched its published size and fingerprint.
+  static String get settingsSpeechModelVerified =>
+      _english.settingsSpeechModelVerified;
+
+  /// A speech model file is not on this device.
+  static String get settingsSpeechModelMissing =>
+      _english.settingsSpeechModelMissing;
+
+  /// A speech model file failed a check.
+  static String get settingsSpeechModelDamaged =>
+      _english.settingsSpeechModelDamaged;
+
+  /// Marks the speech model that turns speech into text now.
+  static String get settingsSpeechModelInUse =>
+      _english.settingsSpeechModelInUse;
+
+  /// A speech model row's supporting line: where it came from, its state
+  /// and its size.
+  static String settingsSpeechModelDetail(
+    String origin,
+    String state,
+    String size,
+  ) => _english.settingsSpeechModelDetail(origin, state, size);
+
+  /// Warns that a speech model does not fit this device now.
+  static String get settingsSpeechTooLarge => _english.settingsSpeechTooLarge;
+
+  /// Checks a speech model file against its published fingerprint.
+  static String get settingsSpeechVerify => _english.settingsSpeechVerify;
+
+  /// A speech model passed its check.
+  static String settingsSpeechVerified(String model) =>
+      _english.settingsSpeechVerified(model);
+
+  /// A speech model failed its check.
+  static String settingsSpeechVerifyMismatch(String model) =>
+      _english.settingsSpeechVerifyMismatch(model);
+
+  /// Picks a speech model file to add to this device.
+  static String get settingsSpeechImport => _english.settingsSpeechImport;
+
+  /// An imported speech model passed its check and was added.
+  static String settingsSpeechImported(String model) =>
+      _english.settingsSpeechImported(model);
+
+  /// Removes an imported speech model from this device.
+  static String get settingsSpeechRemove => _english.settingsSpeechRemove;
+
+  /// Title of the confirmation before an imported speech model is
+  /// removed.
+  static String settingsSpeechRemoveTitle(String model) =>
+      _english.settingsSpeechRemoveTitle(model);
+
+  /// What removing an imported speech model does.
+  static String get settingsSpeechRemoveMessage =>
+      _english.settingsSpeechRemoveMessage;
+
+  /// An imported speech model was removed.
+  static String settingsSpeechRemoved(String model) =>
+      _english.settingsSpeechRemoved(model);
 
   /// Voice-language names, each in its own language's usual English name.
   static String get languageEnglish => _english.languageEnglish;
@@ -5973,6 +6233,10 @@ abstract final class Copy {
   /// One transcription run of the recording.
   static String meetingTranscriptVersion(int version) =>
       _english.meetingTranscriptVersion(version);
+
+  /// Marks an older, read-only online transcription run of a recording.
+  static String get meetingTranscriptCloudVersion =>
+      _english.meetingTranscriptCloudVersion;
 
   /// Parts of a recording one run could not transcribe.
   static String meetingTranscriptGaps(int count) =>

@@ -445,7 +445,7 @@ final class _WhisperNativeApi implements SpeechNativeApi {
       threads: profile.threads,
       bestOf: profile.bestOf < 1 ? 1 : profile.bestOf,
       beamSize: beam ? profile.beamSize : 1,
-      maxPieces: profile.maxPieces,
+      maxPieces: profile.maxPiecesFor(request.samples.length),
       audioContext: profile.audioContextFor(request.samples.length),
       temperatureIncrement: profile.temperatureStep,
       entropyThreshold: profile.entropyThreshold,

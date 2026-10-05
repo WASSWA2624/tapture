@@ -237,14 +237,16 @@ class SttResult {
 12. Ask for the microphone at the first mic tap, never at launch; refusal leaves typing fully available and asks again
     only on a later explicit tap. Recognise on device in the configured language with Whisper, falling back to the
     platform recogniser on device only ([task 120](24-product-refinements.md)), otherwise reporting unavailable rather
-    than failing silently. Attach the mic
-    affordance to any long-text field: show listening state and live partial text, stop on tap or silence, and land the
-    final text in the field as editable text that is never auto-submitted. Store transcript, language and confidence
-    alongside the caption row (055), where refinement can never overwrite them.
+    than failing silently. Attach the mic affordance to any long-text field: show listening state and live partial
+    text, stop on tap or silence, and land the final text in the field as editable text that is never auto-submitted.
+    Store transcript, language and confidence alongside the caption row (055), where refinement can never overwrite
+    them.
 13. Record a walkthrough or a meeting to a file attached to the record as a document, showing elapsed duration and
     input level while recording, with pause and stop. Write incrementally through the file writer (067) so an app kill
     keeps everything recorded up to that moment, and register the finished file in the documents table with its
-    duration (055).
+    duration (055). With an on-device speech model ready, the caption recorder also transcribes while it records
+    ([task 125](24-product-refinements.md)); that is still evidence capture, and without a model this step is
+    unchanged.
 
 #### Identifiers
 

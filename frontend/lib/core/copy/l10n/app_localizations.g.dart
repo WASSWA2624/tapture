@@ -4951,6 +4951,12 @@ abstract class AppLocalizations {
   /// **'Record audio'**
   String get captureRecordAudio;
 
+  /// Caption recorder start when a speech model is ready: records the audio and writes down the words on this device.
+  ///
+  /// In en, this message translates to:
+  /// **'Record and transcribe'**
+  String get captureRecordTranscribe;
+
   /// Audio recorder pause.
   ///
   /// In en, this message translates to:
@@ -5262,6 +5268,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'On this device'**
   String get speechOfflineBadge;
+
+  /// Headline of the Transcribe screen when no speech model can run.
+  ///
+  /// In en, this message translates to:
+  /// **'Live transcription needs a speech model on this device.'**
+  String get liveTranscriptUnavailable;
+
+  /// What to do when live transcription is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings, Language, to check the speech model.'**
+  String get liveTranscriptUnavailableRecovery;
+
+  /// More menu entry: the transcript history.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcripts'**
+  String get navTranscripts;
+
+  /// Title of the transcript history.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcripts'**
+  String get transcriptsTitle;
+
+  /// Opens the Transcribe screen to record a new transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'New transcription'**
+  String get transcriptsNew;
+
+  /// Headline of the transcript history with no transcripts.
+  ///
+  /// In en, this message translates to:
+  /// **'No transcripts yet'**
+  String get transcriptsEmptyHeadline;
+
+  /// Message of the transcript history with no transcripts.
+  ///
+  /// In en, this message translates to:
+  /// **'Record speech and Tapture writes it down on this device. No connection is needed.'**
+  String get transcriptsEmptyMessage;
+
+  /// Headline when a transcript search matches nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching transcripts'**
+  String get transcriptsNoMatchHeadline;
+
+  /// Prompt of the transcript history search field.
+  ///
+  /// In en, this message translates to:
+  /// **'Search transcripts'**
+  String get transcriptsSearchHint;
+
+  /// Headline of the Transcribe screen with no project open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a project to transcribe'**
+  String get transcriptsNoProject;
+
+  /// Why a project is needed before transcribing.
+  ///
+  /// In en, this message translates to:
+  /// **'Recordings and transcripts are saved in the project folder.'**
+  String get transcriptsNoProjectMessage;
+
+  /// Title of the screen that records and transcribes speech, and its project menu entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcribe'**
+  String get transcribeTitle;
+
+  /// Title of one transcript's page.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcript'**
+  String get transcriptDetailTitle;
+
+  /// Headline when an opened transcript no longer exists.
+  ///
+  /// In en, this message translates to:
+  /// **'This transcript is not on this device'**
+  String get transcriptMissing;
+
+  /// Why an opened transcript is missing.
+  ///
+  /// In en, this message translates to:
+  /// **'It was discarded, or it belongs to a project that is not here.'**
+  String get transcriptMissingMessage;
+
+  /// Marks a transcript heard from a capture's recording.
+  ///
+  /// In en, this message translates to:
+  /// **'From a capture'**
+  String get transcriptOriginCapture;
+
+  /// Marks a transcript heard from a meeting's recording.
+  ///
+  /// In en, this message translates to:
+  /// **'From a meeting'**
+  String get transcriptOriginMeeting;
+
+  /// Marks a transcript recorded on the Transcribe screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcription'**
+  String get transcriptOriginStandalone;
+
+  /// Notice on a transcript whose recording ended before it was finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Interrupted. What was heard is kept.'**
+  String get transcriptStatusInterrupted;
+
+  /// The operator's edit of a transcript, kept beside the original.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited text'**
+  String get transcriptEditedLabel;
+
+  /// The transcript exactly as it was heard, never changed.
+  ///
+  /// In en, this message translates to:
+  /// **'Original, as heard'**
+  String get transcriptOriginalLabel;
+
+  /// Saves the edited transcript beside the original.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get transcriptSaveEdit;
+
+  /// Confirms an edited transcript was saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved. The original transcript is kept.'**
+  String get transcriptEditSaved;
+
+  /// Removes the edit and shows the transcript as heard.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back to the original'**
+  String get transcriptRevert;
+
+  /// Title of the confirmation before an edit is removed.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back to the original transcript?'**
+  String get transcriptRevertTitle;
+
+  /// What removing a transcript edit does.
+  ///
+  /// In en, this message translates to:
+  /// **'Your changes are removed. The original stays as it was recorded.'**
+  String get transcriptRevertMessage;
+
+  /// Confirms removing a transcript edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Use original'**
+  String get transcriptRevertConfirm;
+
+  /// Confirms a transcript edit was removed.
+  ///
+  /// In en, this message translates to:
+  /// **'The original transcript is back.'**
+  String get transcriptReverted;
+
+  /// Gives a transcript a new title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get transcriptRename;
+
+  /// Field for a transcript's title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get transcriptTitleLabel;
+
+  /// The language a transcript was heard in.
+  ///
+  /// In en, this message translates to:
+  /// **'Language: {language}'**
+  String transcriptLanguage(Object language);
+
+  /// The speech model that heard a transcript.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech model: {model}'**
+  String transcriptModel(Object model);
+
+  /// How long a transcript's recording is.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording {minutes}:{seconds}'**
+  String transcriptAudioLength(Object minutes, Object seconds);
+
+  /// A transcript whose recording is not filed on this device.
+  ///
+  /// In en, this message translates to:
+  /// **'The recording was not kept on this device.'**
+  String get transcriptNoAudio;
+
+  /// How many parts of a transcript's recording are left untranscribed.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{All of the recording is transcribed.} one{One part of the recording is not transcribed yet.} other{{count} parts of the recording are not transcribed yet.}}'**
+  String transcriptGaps(int count);
+
+  /// Transcribes the parts of a recording left untranscribed, on this device.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish the transcript'**
+  String get transcriptFinish;
+
+  /// Confirms the rest of a recording was transcribed.
+  ///
+  /// In en, this message translates to:
+  /// **'The transcript is finished.'**
+  String get transcriptFinished;
+
+  /// On a record page, writes down the words of its audio clips that have no transcript yet, on this device.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcribe on this device'**
+  String get transcriptTranscribeOnDevice;
 
   /// Audio evidence association sheet.
   ///
@@ -5803,6 +6037,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Voice language'**
   String get settingsVoiceLanguage;
+
+  /// Heading of the on-device speech settings on the Language screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech recognition'**
+  String get settingsSpeechSection;
+
+  /// Which engine turns speech into text: the app's own on-device model.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech is turned into text on this device by the {model}.'**
+  String settingsSpeechEngineWhisper(Object model);
+
+  /// Which engine turns speech into text: the operating system's recogniser, kept on the device.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech is turned into text by this device’s own speech service, on the device only.'**
+  String get settingsSpeechEnginePlatform;
+
+  /// No engine can turn speech into text on this device now.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice input is not available on this device yet.'**
+  String get settingsSpeechEngineNone;
+
+  /// Name of the speed-or-accuracy speech setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcription quality'**
+  String get settingsSpeechQuality;
+
+  /// What the transcription quality setting changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic picks the best model this device can run smoothly.'**
+  String get settingsSpeechQualityEffect;
+
+  /// Quality choice: the device decides.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic'**
+  String get settingsSpeechQualityAuto;
+
+  /// Quality choice: always the fast model.
+  ///
+  /// In en, this message translates to:
+  /// **'Faster, uses less battery'**
+  String get settingsSpeechQualityFast;
+
+  /// Quality choice: the largest model the device can hold.
+  ///
+  /// In en, this message translates to:
+  /// **'More accurate, needs a stronger device'**
+  String get settingsSpeechQualityAccurate;
+
+  /// Heading of the list of speech model files.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech models'**
+  String get settingsSpeechModels;
+
+  /// Name of the smallest, quickest speech model.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast model'**
+  String get settingsSpeechModelFast;
+
+  /// Name of the middle speech model.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced model'**
+  String get settingsSpeechModelBalanced;
+
+  /// Name of the largest, most accurate speech model.
+  ///
+  /// In en, this message translates to:
+  /// **'Accurate model'**
+  String get settingsSpeechModelAccurate;
+
+  /// Name of the small model that notices when someone speaks.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice detector'**
+  String get settingsSpeechModelVad;
+
+  /// Where a speech model came from: the app itself.
+  ///
+  /// In en, this message translates to:
+  /// **'Included with the app'**
+  String get settingsSpeechModelBundled;
+
+  /// Where a speech model came from: a file the operator imported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported'**
+  String get settingsSpeechModelImported;
+
+  /// Where a speech model comes from: not in the app, only by import.
+  ///
+  /// In en, this message translates to:
+  /// **'Import only'**
+  String get settingsSpeechModelImportOnly;
+
+  /// A speech model file is on this device and has not been checked this session.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get settingsSpeechModelPresent;
+
+  /// A speech model file matched its published size and fingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked'**
+  String get settingsSpeechModelVerified;
+
+  /// A speech model file is not on this device.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing'**
+  String get settingsSpeechModelMissing;
+
+  /// A speech model file failed a check.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged'**
+  String get settingsSpeechModelDamaged;
+
+  /// Marks the speech model that turns speech into text now.
+  ///
+  /// In en, this message translates to:
+  /// **'In use'**
+  String get settingsSpeechModelInUse;
+
+  /// A speech model row's supporting line: where it came from, its state and its size.
+  ///
+  /// In en, this message translates to:
+  /// **'{origin} · {state} · {size}'**
+  String settingsSpeechModelDetail(Object origin, Object state, Object size);
+
+  /// Warns that a speech model does not fit this device now.
+  ///
+  /// In en, this message translates to:
+  /// **'Too large for the memory this device has free. A smaller model is used.'**
+  String get settingsSpeechTooLarge;
+
+  /// Checks a speech model file against its published fingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get settingsSpeechVerify;
+
+  /// A speech model passed its check.
+  ///
+  /// In en, this message translates to:
+  /// **'The {model} matches its published file.'**
+  String settingsSpeechVerified(Object model);
+
+  /// A speech model failed its check.
+  ///
+  /// In en, this message translates to:
+  /// **'The {model} does not match its published file. Import it again or reinstall the app.'**
+  String settingsSpeechVerifyMismatch(Object model);
+
+  /// Picks a speech model file to add to this device.
+  ///
+  /// In en, this message translates to:
+  /// **'Import a speech model'**
+  String get settingsSpeechImport;
+
+  /// An imported speech model passed its check and was added.
+  ///
+  /// In en, this message translates to:
+  /// **'The {model} was checked and added.'**
+  String settingsSpeechImported(Object model);
+
+  /// Removes an imported speech model from this device.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get settingsSpeechRemove;
+
+  /// Title of the confirmation before an imported speech model is removed.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the {model}?'**
+  String settingsSpeechRemoveTitle(Object model);
+
+  /// What removing an imported speech model does.
+  ///
+  /// In en, this message translates to:
+  /// **'Its file is deleted from this device. Speech uses a smaller model until you import it again.'**
+  String get settingsSpeechRemoveMessage;
+
+  /// An imported speech model was removed.
+  ///
+  /// In en, this message translates to:
+  /// **'The {model} was removed.'**
+  String settingsSpeechRemoved(Object model);
 
   /// Voice-language names, each in its own language's usual English name.
   ///
@@ -11371,6 +11803,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Transcript, run {version}'**
   String meetingTranscriptVersion(int version);
+
+  /// Marks an older transcription run of a meeting recording made by an online service; it is read-only.
+  ///
+  /// In en, this message translates to:
+  /// **'Online transcription'**
+  String get meetingTranscriptCloudVersion;
 
   /// Parts of a recording one run could not transcribe.
   ///

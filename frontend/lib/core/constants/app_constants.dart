@@ -147,14 +147,30 @@ abstract final class AppConstants {
     maxLoadAttempts: 2,
   );
 
-  /// Speech budgets the benchmarks assert (spec §30.4.3, FE-TEST-09).
-  /// Desktop values are provisional: task 128 recalibrates them from
-  /// recorded evidence and never loosens one without a note. Load times
-  /// include the in-shim SHA-256 check. A real-time factor is compute time
-  /// over audio time. `vadSecond` is VAD compute per second of audio, and
-  /// `pipelinePerAudioSecond` the pipeline's own main-isolate work per
-  /// second. RSS budgets are peaks while loaded and what stays after
-  /// release; `uiDrift` is the most a frame may slip during a session.
+  /// Speech budgets the benchmarks assert (spec §30.4.3, FE-TEST-09), on
+  /// the Windows reference machine. Load times include the in-shim SHA-256
+  /// check. A real-time factor is compute time over audio time. `vadSecond`
+  /// is VAD compute per second of audio, and `pipelinePerAudioSecond` the
+  /// pipeline's own main-isolate work per second. RSS budgets are peaks
+  /// while loaded and what stays after release; `uiDrift` bounds how much
+  /// later than with the engine idle the 99th-percentile tick of a
+  /// frame-rate timer on the UI isolate fires while a decode runs (an idle
+  /// tick is already late by the system timer's granularity). Benchmarks
+  /// check the other budgets on medians because other work on the machine
+  /// adds noise.
+  ///
+  /// Recalibrated by task 128 (2026-10-05, i7-1165G7, 29–100% busy with
+  /// other work; evidence in `build/speech-benchmark*.json`,
+  /// `speech-memory-profile.json` and `stt-long-session-heap.json`). The
+  /// peak RSS budgets are tightened to about 1.5 times the measured peaks
+  /// (tiny 119–128 MiB, base 165–167 MiB). `longSessionRetainedRssBytes` is
+  /// raised from 8 MiB: five identical sessions kept the live heap after a
+  /// forced collection flat (121.3–122.2 MiB) while RSS retention, which
+  /// is garbage not yet collected, ranged from −38 to 40.5 MiB. The rest
+  /// stand as designed and are not loosened: the committed desktop profile
+  /// (best of 2, full context) meets the real-time factors with the machine
+  /// up to 60% busy but misses them above that, and misses
+  /// `finalizeCompute` at any load, because every final encodes 30 s.
   static const ({
     Duration tinyLoad,
     Duration baseLoad,
@@ -179,14 +195,14 @@ abstract final class AppConstants {
     baseRealTime: 0.5,
     abortLatencyDesktop: Duration(milliseconds: 500),
     vadSecond: Duration(milliseconds: 60),
-    tinyPeakRssBytes: 320 * _mib,
-    basePeakRssBytes: 480 * _mib,
+    tinyPeakRssBytes: 192 * _mib,
+    basePeakRssBytes: 256 * _mib,
     retainedRssBytes: 32 * _mib,
     pipelinePerAudioSecond: Duration(milliseconds: 15),
     firstPartialCompute: Duration(milliseconds: 1500),
     finalizeCompute: Duration(milliseconds: 1000),
     longSessionPeakRssBytes: 64 * _mib,
-    longSessionRetainedRssBytes: 8 * _mib,
+    longSessionRetainedRssBytes: 48 * _mib,
     uiDrift: Duration(milliseconds: 32),
   );
 
@@ -212,14 +228,19 @@ abstract final class AppConstants {
   /// (`interimEwmaAlpha`) over the duty share (`interimMaxDutyDesktop`,
   /// `interimMaxDutyMobile`), held between `interimMinStep` and
   /// `interimMaxStep`; a phone stops drafting past
-  /// `mobileInterimMaxUtterance`. Finals waiting beyond
+  /// `mobileInterimMaxUtterance`. A draft's words from where it repeats a
+  /// phrase of `interimRepeatWords` words it already said stay tentative.
+  /// Finals waiting beyond
   /// `finalBacklogInterimsOff` switch drafts off and warn at most every
   /// `engineBehindNoticeInterval` of audio; beyond
   /// `finalBacklogReducedContext` finals encode a shorter context; both
   /// recover below `finalBacklogRecover`. After
   /// `maxConsecutiveDecodeFailures` failed decodes in a row transcription
-  /// stops. The last `promptCarryChars` of the transcript condition the
-  /// next decode, except for an utterance shorter than
+  /// stops. Drafts never carry a prompt, and finals carry one only with
+  /// `carryPrompt`, off by default as in whisper.cpp's streaming example:
+  /// whisper skips speech its prompt already holds, which drops repeated
+  /// sentences. When on, the last `promptCarryChars` of the transcript
+  /// condition the next final, except for an utterance shorter than
   /// `promptCarryMinUtterance` or quieter than `promptCarryMinDbfs`, and
   /// are forgotten after `promptResetGap` without speech. A known
   /// hallucination is dropped over audio quieter than
@@ -263,6 +284,8 @@ abstract final class AppConstants {
     double interimMaxDutyMobile,
     Duration mobileInterimMaxUtterance,
     double interimEwmaAlpha,
+    int interimRepeatWords,
+    bool carryPrompt,
     int promptCarryChars,
     Duration promptCarryMinUtterance,
     double promptCarryMinDbfs,
@@ -310,6 +333,8 @@ abstract final class AppConstants {
     interimMaxDutyMobile: 0.3,
     mobileInterimMaxUtterance: Duration(seconds: 10),
     interimEwmaAlpha: 0.3,
+    interimRepeatWords: 3,
+    carryPrompt: false,
     promptCarryChars: 200,
     promptCarryMinUtterance: Duration(seconds: 2),
     promptCarryMinDbfs: -55,

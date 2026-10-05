@@ -11,6 +11,8 @@ import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/settings/settings.dart';
+import 'package:tapture/features/transcripts/transcripts.dart'
+    show TranscriptRepository, TranscriptRepositoryImpl;
 
 import '../domain/processing_job.dart';
 import '../domain/template_choice_needed.dart';
@@ -42,10 +44,13 @@ import 'validate_stage.dart';
 /// Originals are read only. Derived images live in the disposable cache,
 /// OCR is cached by content and perceptual hash, provider responses are
 /// stored before parsing, and validation writes proposals plus evidence.
-/// Each stage is its own collaborator; this type loads the record and
-/// dispatches to the one asked for.
+/// Audio is transcribed online only when it has no complete on-device
+/// transcript in [TranscriptRepository]. Each stage is its own
+/// collaborator; this type loads the record and dispatches to the one asked
+/// for.
 final class ProcessingStageWorker {
-  /// Creates the local-first worker.
+  /// Creates the local-first worker. [transcripts] is the app's transcript
+  /// store; without one, a store over [db] is read.
   factory ProcessingStageWorker({
     required AppDatabase db,
     required Clock clock,
@@ -58,6 +63,7 @@ final class ProcessingStageWorker {
     FileReader? files,
     FileWriter? writer,
     PhotoPrivacyService? privacy,
+    TranscriptRepository? transcripts,
     bool isBrowser = kIsWeb,
   }) {
     final StageSettings stageSettings = StageSettings(
@@ -153,6 +159,14 @@ final class ProcessingStageWorker {
           responses: responses,
           settings: stageSettings,
           budget: budget,
+          deviceTranscripts:
+              transcripts ??
+              TranscriptRepositoryImpl(
+                db: db,
+                clock: clock,
+                deviceId: deviceId,
+                ids: ids,
+              ),
         ),
         budget: budget,
         responses: responses,

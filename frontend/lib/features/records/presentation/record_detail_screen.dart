@@ -11,6 +11,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/speech/speech_readiness_notifier.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
@@ -38,6 +39,13 @@ import 'package:tapture/features/quality/quality.dart' show DuplicateLinks;
 import 'package:tapture/features/review/review.dart' show ReviewApproval;
 import 'package:tapture/features/templates/templates.dart'
     show FieldDef, TemplateDef;
+import 'package:tapture/features/transcripts/transcripts.dart'
+    show
+        TranscriptListSection,
+        TranscriptStart,
+        TranscriptSummary,
+        recordAudioTranscriptionControllerProvider,
+        recordUntranscribedAudioProvider;
 
 import '../domain/record_entry.dart';
 import '../domain/record_flag.dart';
@@ -134,8 +142,12 @@ class RecordDetailScreen extends ConsumerWidget {
           onAction: () => _backToList(context),
         ),
         onRetry: () => ref.invalidate(recordEntryProvider(recordId)),
-        data: (RecordEntry? loaded) =>
-            _RecordBody(entry: loaded!, valuesRoute: _valuesRoute),
+        data: (RecordEntry? loaded) => _RecordBody(
+          entry: loaded!,
+          valuesRoute: _valuesRoute,
+          openTranscript: (String transcriptId) =>
+              _openTranscript(context, transcriptId),
+        ),
       ),
     );
   }
@@ -145,6 +157,19 @@ class RecordDetailScreen extends ConsumerWidget {
     return project == null
         ? RoutePaths.recordValuesEdit(recordId)
         : RoutePaths.projectRecordValuesEdit(project, recordId);
+  }
+
+  /// Opens transcript [transcriptId]: over this page inside its project,
+  /// otherwise in the transcript history.
+  void _openTranscript(BuildContext context, String transcriptId) {
+    final String? project = projectId;
+    if (project == null) {
+      context.go(RoutePaths.transcript(transcriptId));
+    } else {
+      unawaited(
+        context.push<void>(RoutePaths.projectTranscript(project, transcriptId)),
+      );
+    }
   }
 
   String get _historyRoute {
@@ -380,12 +405,19 @@ String? _subtitleOf(RecordEntry entry, {LocalizedCopy? localizedCopy}) {
 
 /// Everything the page shows of a loaded record, top to bottom.
 class _RecordBody extends ConsumerWidget {
-  const _RecordBody({required this.entry, required this.valuesRoute});
+  const _RecordBody({
+    required this.entry,
+    required this.valuesRoute,
+    required this.openTranscript,
+  });
 
   final RecordEntry entry;
 
   /// Where Edit values on the Fields heading goes.
   final String valuesRoute;
+
+  /// Opens a transcript of the record's audio.
+  final ValueChanged<String> openTranscript;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -464,6 +496,7 @@ class _RecordBody extends ConsumerWidget {
                 children: <Widget>[
                   const SizedBox(height: Space.x4),
                   _Caption(entry: entry),
+                  _Transcripts(entry: entry, open: openTranscript),
                   const SizedBox(height: Space.x4),
                   _Fields(
                     entry: entry,
@@ -682,6 +715,76 @@ class _Caption extends StatelessWidget {
         ],
       ],
     );
+  }
+}
+
+/// The transcripts heard from the record's audio, and **Transcribe on this
+/// device** while a speech model is ready and a clip has none (task 125).
+/// Shows nothing for a record without either.
+class _Transcripts extends ConsumerWidget {
+  const _Transcripts({required this.entry, required this.open});
+
+  final RecordEntry entry;
+
+  /// Opens a transcript by id.
+  final ValueChanged<String> open;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy localCopy = Copy.of(context);
+    final bool canTranscribe =
+        entry.audioClips > 0 &&
+        !entry.isDeleted &&
+        ref.watch(speechReadinessProvider).ready;
+    final List<TranscriptStart> untranscribed = canTranscribe
+        ? ref.watch(recordUntranscribedAudioProvider(entry.id)).value ??
+              const <TranscriptStart>[]
+        : const <TranscriptStart>[];
+    final bool running = ref.watch(
+      recordAudioTranscriptionControllerProvider(entry.id),
+    );
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        TranscriptListSection(
+          recordId: entry.id,
+          onOpen: (TranscriptSummary transcript) => open(transcript.id),
+        ),
+        if (running || untranscribed.isNotEmpty) ...<Widget>[
+          const SizedBox(height: Space.x2),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: AppButton(
+              key: const ValueKey<String>('record-transcribe-on-device'),
+              label: localCopy.transcriptTranscribeOnDevice,
+              icon: AppIcons.transcript,
+              variant: AppButtonVariant.secondary,
+              busy: running,
+              onPressed: running
+                  ? null
+                  : () => unawaited(_transcribe(context, ref)),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Future<void> _transcribe(BuildContext context, WidgetRef ref) async {
+    final Result<void> done = await ref
+        .read(recordAudioTranscriptionControllerProvider(entry.id).notifier)
+        .transcribe();
+    if (done case FailureResult<void>(
+      :final Failure failure,
+    ) when context.mounted) {
+      showAppSnack(
+        context,
+        failure.message,
+        tone: SnackTone.error,
+        localizedMessage: failure.explanation,
+      );
+    }
   }
 }
 

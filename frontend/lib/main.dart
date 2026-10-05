@@ -74,6 +74,7 @@ import 'core/speech/speech_engine.dart';
 import 'core/speech/speech_engine_host.dart';
 import 'core/speech/speech_model_store.dart';
 import 'core/speech/speech_preferences.dart';
+import 'core/speech/speech_quality.dart';
 import 'core/time/clock.dart';
 import 'core/widgets/fields/app_consent_field.dart';
 import 'core/widgets/fields/field_editor.dart';
@@ -125,6 +126,8 @@ import 'features/settings/presentation/ai_provider_settings_screen.dart'
 import 'features/settings/presentation/language_settings_screen.dart'
     show voiceLanguageProvider;
 import 'features/settings/presentation/offline_switch.dart';
+import 'features/settings/presentation/speech_settings_providers.dart'
+    show speechQualitySettingProvider;
 import 'features/settings/settings.dart';
 import 'features/templates/data/template_repository_impl.dart';
 import 'features/templates/presentation/field_editor_bindings.dart';
@@ -235,11 +238,31 @@ List<Override> dictationOverrides({
   ];
 }
 
+/// How the speech quality is bound in production (task 126): core reads
+/// the quality the settings store holds, so a new choice rebuilds
+/// readiness and the host reads it at the next model load.
+@visibleForTesting
+Override speechQualityOverride() {
+  return speechQualityProvider.overrideWith(
+    (Ref ref) => SpeechQuality.parse(ref.watch(speechQualitySettingProvider)),
+  );
+}
+
 /// The platform recogniser, or null in a browser (whose recogniser streams
-/// to its vendor) or where the plugin has none.
+/// to its vendor), where the plugin has none, or where
+/// `PlatformRecogniserPolicy` never lets it listen (Windows, Linux): there
+/// only Whisper dictates, so no microphone is offered until it is ready.
 SttService? _platformRecogniser() {
   if (kIsWeb) {
     return null;
+  }
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android || TargetPlatform.iOS || TargetPlatform.macOS:
+      break;
+    case TargetPlatform.windows ||
+        TargetPlatform.linux ||
+        TargetPlatform.fuchsia:
+      return null;
   }
   final SttService speech = SttService();
   return speech.isSupported ? speech : null;
@@ -470,6 +493,7 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
       ocr: OcrService(),
       providers: providerRegistry,
       settings: offlineStore,
+      transcripts: transcriptStore,
     );
     overrides.addAll(<Override>[
       backendSessionProvider.overrideWith((Ref ref) {
@@ -579,6 +603,8 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
       // Field dictation stays on the device: Whisper, else a platform
       // recogniser proven on device (task 120).
       ...dictationOverrides(platformRecogniser: _platformRecogniser),
+      // The operator's speech quality (task 126).
+      speechQualityOverride(),
       // On-device speech (task 113): the platform's Whisper engine, the
       // models this build bundles or the operator imported, and the device
       // probe, under the one host that loads and releases the model.

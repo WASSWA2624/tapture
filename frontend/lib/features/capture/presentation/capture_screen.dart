@@ -25,6 +25,7 @@ import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/network/offline_now.dart';
+import 'package:tapture/core/speech/speech_readiness_notifier.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
@@ -37,6 +38,7 @@ import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
+import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
@@ -58,9 +60,11 @@ import 'package:tapture/features/capture/presentation/capture_document_viewer.da
 import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
 import 'package:tapture/features/capture/presentation/capture_guide_state.dart';
 import 'package:tapture/features/capture/presentation/capture_photo_intake.dart';
+import 'package:tapture/features/capture/presentation/capture_providers.dart';
 import 'package:tapture/features/capture/presentation/capture_recovery_prompt.dart';
 import 'package:tapture/features/capture/presentation/capture_storage_guard.dart';
 import 'package:tapture/features/capture/presentation/capture_target_fields.dart';
+import 'package:tapture/features/capture/presentation/capture_transcribe_button.dart';
 import 'package:tapture/features/capture/presentation/document_picker.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
@@ -78,6 +82,14 @@ import 'package:tapture/features/processing/processing.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/reference/reference.dart';
 import 'package:tapture/features/templates/templates.dart';
+import 'package:tapture/features/transcripts/transcripts.dart'
+    show
+        LiveTranscriptKey,
+        LiveTranscriptPanel,
+        LiveTranscriptStatus,
+        TranscriptSessionPhase,
+        TranscriptSessionTarget,
+        liveTranscriptControllerProvider;
 
 export 'capture_target_fields.dart' show captureProjectTemplatesProvider;
 
@@ -252,6 +264,16 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     final String projectId = _projectId();
     final String key = _sessionKey();
     final _CaptureUiState uiState = ref.watch(_captureUiProvider(key));
+    // Each live transcript take gets its own audio id: the next one starts
+    // once a take is filed or let go (task 125).
+    ref.listen<LiveTranscriptStatus>(
+      liveTranscriptControllerProvider(LiveTranscriptKey.capture(key)),
+      (LiveTranscriptStatus? previous, LiveTranscriptStatus next) {
+        if (_liveTakeEnded(previous, next)) {
+          ref.read(_captureUiProvider(key).notifier).renewAudioId();
+        }
+      },
+    );
     if (_checkingKey != key && !uiState.checked) {
       // The stored copy of this session is checked, and an interrupted one
       // offered back, before anything on the page writes to it.
@@ -534,6 +556,22 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     required List<String> captionTargets,
   }) {
     final LocalizedCopy localCopy = Copy.of(context);
+    // With a speech model ready the caption recorder also transcribes, on
+    // this device (task 125); a take already running keeps its controls
+    // whatever the readiness. Without one it is the plain recorder.
+    final String key = _sessionKey();
+    final LiveTranscriptStatus liveStatus = ref.watch(
+      liveTranscriptControllerProvider(LiveTranscriptKey.capture(key)),
+    );
+    final TranscriptSessionTarget? liveTarget = project == null
+        ? null
+        : ref.watch(captureTranscriptTargetProvider(key))(
+            _pendingTake(project, uiState.audioId),
+          );
+    final bool live =
+        liveTarget != null &&
+        (ref.watch(speechReadinessProvider).ready ||
+            _holdsLiveTake(liveStatus, session));
 
     return <Widget>[
       if (!guide.isEmpty) ...<Widget>[
@@ -624,6 +662,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
                   .read(captureGuideStateProvider.notifier)
                   .closePanelFor(templateId),
         recorder: ref.watch(audioRecorderServiceProvider),
+        liveRecording:
+            live &&
+            (liveStatus.phase == TranscriptSessionPhase.recording ||
+                liveStatus.phase == TranscriptSessionPhase.paused),
         onChanged: (String text) async {
           final Result<void> result = await controller.setCaption(null, text);
           return result is Success<void>;
@@ -637,16 +679,20 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
             tone: SnackTone.error,
           );
         },
-        afterDictation: _RecordAudioButton(
-          enabled: ready,
-          recorder: ref.watch(audioRecorderServiceProvider),
-          relativePath: project == null
-              ? null
-              : 'projects/${project.folderName}/audio/${uiState.audioId}.wav',
-          beforeStart: project == null ? null : () => _stageAudio(project),
-          onCompleted: (AudioRecording recording) =>
-              unawaited(_audioStopped(recording)),
-        ),
+        afterDictation: live
+            ? CaptureTranscribeButton(target: liveTarget, enabled: ready)
+            : _RecordAudioButton(
+                enabled: ready,
+                recorder: ref.watch(audioRecorderServiceProvider),
+                relativePath: project == null
+                    ? null
+                    : 'projects/${project.folderName}/audio/${uiState.audioId}.wav',
+                beforeStart: project == null
+                    ? null
+                    : () => _stageAudio(project),
+                onCompleted: (AudioRecording recording) =>
+                    unawaited(_audioStopped(recording)),
+              ),
       ),
       if (captionTargets.isNotEmpty) ...<Widget>[
         const SizedBox(height: Space.x2),
@@ -671,6 +717,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
           onCompleted: (AudioRecording recording) =>
               unawaited(_audioStopped(recording)),
         ),
+        if (live && _showsLiveTake(liveStatus, session)) ...<Widget>[
+          const SizedBox(height: Space.x2),
+          LiveTranscriptPanel(target: liveTarget, showIdleControls: false),
+        ],
         if (session.audio.isNotEmpty) ...<Widget>[
           const SizedBox(height: Space.x2),
           Text(
@@ -1083,6 +1133,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
 
   Future<Result<void>> _stageAudio(Project project) async {
     final _CaptureUiState uiState = ref.read(_captureUiProvider(_sessionKey()));
+    return ref
+        .read(captureControllerProvider(_sessionKey()).notifier)
+        .stageAudio(_pendingTake(project, uiState.audioId));
+  }
+
+  /// The take [audioId] as it is staged before the microphone opens: its
+  /// place in [project] and the photos it goes with, the ticked ones or
+  /// else every photo shown.
+  PendingAudioDraft _pendingTake(Project project, String audioId) {
     final CaptureSession session = ref.read(
       captureControllerProvider(_sessionKey()),
     );
@@ -1090,18 +1149,13 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     final List<String> photoIds = _selected.isEmpty
         ? <String>[for (final PhotoDraft photo in visible) photo.id]
         : _selected.toList(growable: false);
-    return ref
-        .read(captureControllerProvider(_sessionKey()).notifier)
-        .stageAudio(
-          PendingAudioDraft(
-            id: uiState.audioId,
-            projectId: _projectId(),
-            relativePath: 'audio/${uiState.audioId}.wav',
-            storageRelativePath:
-                'projects/${project.folderName}/audio/${uiState.audioId}.wav',
-            photoIds: photoIds,
-          ),
-        );
+    return PendingAudioDraft(
+      id: audioId,
+      projectId: _projectId(),
+      relativePath: 'audio/$audioId.wav',
+      storageRelativePath: 'projects/${project.folderName}/audio/$audioId.wav',
+      photoIds: photoIds,
+    );
   }
 
   Future<void> _audioStopped(AudioRecording recording) async {
@@ -1577,6 +1631,44 @@ class _RecordAudioButtonState extends State<_RecordAudioButton>
       },
     );
   }
+}
+
+/// Whether a live transcript take ended between [previous] and [next]:
+/// filed, discarded, or failed with nothing left to save.
+bool _liveTakeEnded(LiveTranscriptStatus? previous, LiveTranscriptStatus next) {
+  final TranscriptSessionPhase? before = previous?.phase;
+  if (before == null || before == next.phase) {
+    return false;
+  }
+  return switch (next.phase) {
+    TranscriptSessionPhase.idle || TranscriptSessionPhase.saved => true,
+    TranscriptSessionPhase.failed => !next.retryable,
+    _ => false,
+  };
+}
+
+/// Whether the live take's panel shows: from its start until the record
+/// its audio was filed in is saved, which leaves the clip out of
+/// [session].
+bool _showsLiveTake(LiveTranscriptStatus status, CaptureSession session) {
+  final String? filed = status.attachmentId;
+  return switch (status.phase) {
+    TranscriptSessionPhase.idle => false,
+    TranscriptSessionPhase.saved =>
+      filed != null && session.audio.any((AudioDraft clip) => clip.id == filed),
+    _ => true,
+  };
+}
+
+/// Whether the live take still needs its controls once no model is ready:
+/// while it is shown and has something left to save. A take filed into a
+/// saved record, or one that failed with nothing to save, gives the caption
+/// recorder back to the plain recorder (task 065).
+bool _holdsLiveTake(LiveTranscriptStatus status, CaptureSession session) {
+  if (status.phase == TranscriptSessionPhase.failed && !status.retryable) {
+    return false;
+  }
+  return _showsLiveTake(status, session);
 }
 
 /// Expands [child] only when the capture page is giving the columns a height.

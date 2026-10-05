@@ -13,11 +13,13 @@ import '../domain/setting_key.dart';
 import '../domain/setting_keys.dart';
 import '../settings.dart' show SettingsStore;
 import 'offline_switch.dart';
+import 'speech_settings_section.dart';
 
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
 
-/// The app language and the language dictation listens for (§57).
+/// The app language, the language dictation listens for, and on-device
+/// speech (§57, §30.4.2).
 class LanguageSettingsScreen extends ConsumerWidget {
   /// Creates the Language screen.
   const LanguageSettingsScreen({super.key});
@@ -61,6 +63,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
               },
             ),
           ),
+          const SpeechSettingsSection(),
         ],
       ),
     );

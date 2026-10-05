@@ -56,6 +56,7 @@ final class ShellDestination {
           RoutePaths.templates => copy.navTemplates,
           RoutePaths.queue => copy.navQueue,
           RoutePaths.recycleBin => copy.recycleBinTitle,
+          RoutePaths.transcripts => copy.navTranscripts,
           _ => label,
         }
       : copy.resolve(localizedLabel!);
@@ -113,6 +114,12 @@ final List<ShellDestination> moreDestinations = <ShellDestination>[
     label: Copy.navQueue,
     icon: AppIcons.queued,
     selectedIcon: AppIcons.queued,
+  ),
+  ShellDestination(
+    path: RoutePaths.transcripts,
+    label: Copy.navTranscripts,
+    icon: AppIcons.transcript,
+    selectedIcon: AppIcons.transcript,
   ),
   ShellDestination(
     path: RoutePaths.recycleBin,

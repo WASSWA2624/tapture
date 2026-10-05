@@ -12,8 +12,9 @@ import 'package:tapture/core/widgets/fields/app_text_field.dart';
 
 /// Persist-as-you-type record caption. With a [guide], a small panel above
 /// the field lists what the caption should cover while the field has focus,
-/// dictation runs or [recorder] records (FBK0000159, D14). It never takes
-/// focus and never covers the field.
+/// dictation runs, [recorder] records or a live transcript take records
+/// ([liveRecording], task 125) (FBK0000159, D14). It never takes focus and
+/// never covers the field.
 final class RecordCaptionField extends StatefulWidget {
   /// Creates the field.
   const RecordCaptionField({
@@ -26,6 +27,7 @@ final class RecordCaptionField extends StatefulWidget {
     this.guide = const <String>[],
     this.onCloseGuide,
     this.recorder,
+    this.liveRecording = false,
     super.key,
   });
 
@@ -38,6 +40,10 @@ final class RecordCaptionField extends StatefulWidget {
 
   /// The audio recorder whose recording also shows the panel.
   final AudioRecorderService? recorder;
+
+  /// Whether the caption recorder's live transcript take is recording, as
+  /// its controller's phase says; it also shows the panel.
+  final bool liveRecording;
 
   /// Current caption.
   final String value;
@@ -71,6 +77,7 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
   final ValueNotifier<bool> _typing = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _dictating = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _recording = ValueNotifier<bool>(false);
+  late final ValueNotifier<bool> _live;
   StreamSubscription<AudioRecorderState>? _recorder;
 
   @override
@@ -78,6 +85,7 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _controller = TextEditingController(text: widget.value);
+    _live = ValueNotifier<bool>(widget.liveRecording);
     _recorder = widget.recorder?.state.listen((AudioRecorderState next) {
       _recording.value =
           next.phase == AudioRecorderPhase.recording ||
@@ -88,6 +96,7 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
   @override
   void didUpdateWidget(covariant RecordCaptionField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _live.value = widget.liveRecording;
     if (widget.value == _controller.text) {
       return;
     }
@@ -105,6 +114,7 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
     _typing.dispose();
     _dictating.dispose();
     _recording.dispose();
+    _live.dispose();
     super.dispose();
   }
 
@@ -135,10 +145,14 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
             _typing,
             _dictating,
             _recording,
+            _live,
           ]),
           builder: (BuildContext context, Widget? _) {
             final bool active =
-                _typing.value || _dictating.value || _recording.value;
+                _typing.value ||
+                _dictating.value ||
+                _recording.value ||
+                _live.value;
             if (!active || widget.guide.isEmpty) {
               return const SizedBox.shrink();
             }

@@ -2,9 +2,11 @@ import '../transcript_segment.dart';
 import 'speech_pipeline_config.dart';
 import 'utterance_boundary.dart';
 
-/// The end of the transcript so far, passed to the next decode so whisper
-/// keeps its punctuation, casing and spelling across utterances
-/// (spec §30.4.7). Never logged.
+/// The end of the transcript so far, passed to the next final so whisper
+/// keeps its punctuation, casing and spelling across utterances, when
+/// `carryPrompt` is on (spec §30.4.7). Off by default: whisper skips speech
+/// its prompt already holds, so a sentence said again is lost. Drafts never
+/// carry it. Never logged.
 ///
 /// The text is the last `promptCarryChars` characters, cut forward to a
 /// word boundary. It is not passed for an utterance shorter than
@@ -32,34 +34,22 @@ final class PromptCarry {
   /// word.
   String get text => _text;
 
-  /// The prompt for a decode of [utterance]: the carried text, or empty
+  /// The prompt for the final of [utterance]: the carried text, or empty
   /// when the utterance is too short or too quiet to be given it, or
   /// continues a hard cut. Such an utterance starts by decoding again the
   /// seam the carried text ends with, which already gives whisper the
   /// context, and with the same words in its prompt whisper reads on from
-  /// the prompt past the audio.
+  /// the prompt past the audio. Forgets the carried text first when the
+  /// utterance starts `promptResetGap` after the last speech.
   String promptFor(UtteranceBoundary utterance) {
-    final String prompt = promptAt(
-      startSample: utterance.startSample,
-      length: utterance.length,
-      meanDbfs: utterance.evidence.meanDbfs(),
-    );
-    return utterance.seamFromSample == null ? prompt : '';
-  }
-
-  /// The prompt for audio of [length] samples from [startSample] with a
-  /// mean level of [meanDbfs], when known. Forgets the carried text first
-  /// when the audio starts `promptResetGap` after the last speech.
-  String promptAt({
-    required int startSample,
-    required int length,
-    double? meanDbfs,
-  }) {
     final int? lastSpeech = _lastSpeechEnd;
-    if (lastSpeech != null && startSample - lastSpeech >= _resetSamples) {
+    if (lastSpeech != null &&
+        utterance.startSample - lastSpeech >= _resetSamples) {
       reset();
     }
-    if (length < _minSamples || (meanDbfs != null && meanDbfs < _minDbfs)) {
+    if (utterance.seamFromSample != null ||
+        utterance.length < _minSamples ||
+        utterance.evidence.meanDbfs() < _minDbfs) {
       return '';
     }
     return _text;

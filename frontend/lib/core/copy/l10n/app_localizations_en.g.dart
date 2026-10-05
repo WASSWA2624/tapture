@@ -3043,6 +3043,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureRecordAudio => 'Record audio';
 
   @override
+  String get captureRecordTranscribe => 'Record and transcribe';
+
+  @override
   String get capturePauseAudio => 'Pause';
 
   @override
@@ -3233,6 +3236,147 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get speechOfflineBadge => 'On this device';
+
+  @override
+  String get liveTranscriptUnavailable =>
+      'Live transcription needs a speech model on this device.';
+
+  @override
+  String get liveTranscriptUnavailableRecovery =>
+      'Open Settings, Language, to check the speech model.';
+
+  @override
+  String get navTranscripts => 'Transcripts';
+
+  @override
+  String get transcriptsTitle => 'Transcripts';
+
+  @override
+  String get transcriptsNew => 'New transcription';
+
+  @override
+  String get transcriptsEmptyHeadline => 'No transcripts yet';
+
+  @override
+  String get transcriptsEmptyMessage =>
+      'Record speech and Tapture writes it down on this device. No connection is needed.';
+
+  @override
+  String get transcriptsNoMatchHeadline => 'No matching transcripts';
+
+  @override
+  String get transcriptsSearchHint => 'Search transcripts';
+
+  @override
+  String get transcriptsNoProject => 'Open a project to transcribe';
+
+  @override
+  String get transcriptsNoProjectMessage =>
+      'Recordings and transcripts are saved in the project folder.';
+
+  @override
+  String get transcribeTitle => 'Transcribe';
+
+  @override
+  String get transcriptDetailTitle => 'Transcript';
+
+  @override
+  String get transcriptMissing => 'This transcript is not on this device';
+
+  @override
+  String get transcriptMissingMessage =>
+      'It was discarded, or it belongs to a project that is not here.';
+
+  @override
+  String get transcriptOriginCapture => 'From a capture';
+
+  @override
+  String get transcriptOriginMeeting => 'From a meeting';
+
+  @override
+  String get transcriptOriginStandalone => 'Transcription';
+
+  @override
+  String get transcriptStatusInterrupted =>
+      'Interrupted. What was heard is kept.';
+
+  @override
+  String get transcriptEditedLabel => 'Edited text';
+
+  @override
+  String get transcriptOriginalLabel => 'Original, as heard';
+
+  @override
+  String get transcriptSaveEdit => 'Save changes';
+
+  @override
+  String get transcriptEditSaved =>
+      'Changes saved. The original transcript is kept.';
+
+  @override
+  String get transcriptRevert => 'Go back to the original';
+
+  @override
+  String get transcriptRevertTitle => 'Go back to the original transcript?';
+
+  @override
+  String get transcriptRevertMessage =>
+      'Your changes are removed. The original stays as it was recorded.';
+
+  @override
+  String get transcriptRevertConfirm => 'Use original';
+
+  @override
+  String get transcriptReverted => 'The original transcript is back.';
+
+  @override
+  String get transcriptRename => 'Rename';
+
+  @override
+  String get transcriptTitleLabel => 'Title';
+
+  @override
+  String transcriptLanguage(Object language) {
+    return 'Language: $language';
+  }
+
+  @override
+  String transcriptModel(Object model) {
+    return 'Speech model: $model';
+  }
+
+  @override
+  String transcriptAudioLength(Object minutes, Object seconds) {
+    return 'Recording $minutes:$seconds';
+  }
+
+  @override
+  String get transcriptNoAudio => 'The recording was not kept on this device.';
+
+  @override
+  String transcriptGaps(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString parts of the recording are not transcribed yet.',
+      one: 'One part of the recording is not transcribed yet.',
+      zero: 'All of the recording is transcribed.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get transcriptFinish => 'Finish the transcript';
+
+  @override
+  String get transcriptFinished => 'The transcript is finished.';
+
+  @override
+  String get transcriptTranscribeOnDevice => 'Transcribe on this device';
 
   @override
   String get captureAudioScopeTitle => 'Use audio with';
@@ -3612,6 +3756,125 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsVoiceLanguage => 'Voice language';
+
+  @override
+  String get settingsSpeechSection => 'Speech recognition';
+
+  @override
+  String settingsSpeechEngineWhisper(Object model) {
+    return 'Speech is turned into text on this device by the $model.';
+  }
+
+  @override
+  String get settingsSpeechEnginePlatform =>
+      'Speech is turned into text by this device’s own speech service, on the device only.';
+
+  @override
+  String get settingsSpeechEngineNone =>
+      'Voice input is not available on this device yet.';
+
+  @override
+  String get settingsSpeechQuality => 'Transcription quality';
+
+  @override
+  String get settingsSpeechQualityEffect =>
+      'Automatic picks the best model this device can run smoothly.';
+
+  @override
+  String get settingsSpeechQualityAuto => 'Automatic';
+
+  @override
+  String get settingsSpeechQualityFast => 'Faster, uses less battery';
+
+  @override
+  String get settingsSpeechQualityAccurate =>
+      'More accurate, needs a stronger device';
+
+  @override
+  String get settingsSpeechModels => 'Speech models';
+
+  @override
+  String get settingsSpeechModelFast => 'Fast model';
+
+  @override
+  String get settingsSpeechModelBalanced => 'Balanced model';
+
+  @override
+  String get settingsSpeechModelAccurate => 'Accurate model';
+
+  @override
+  String get settingsSpeechModelVad => 'Voice detector';
+
+  @override
+  String get settingsSpeechModelBundled => 'Included with the app';
+
+  @override
+  String get settingsSpeechModelImported => 'Imported';
+
+  @override
+  String get settingsSpeechModelImportOnly => 'Import only';
+
+  @override
+  String get settingsSpeechModelPresent => 'Installed';
+
+  @override
+  String get settingsSpeechModelVerified => 'Checked';
+
+  @override
+  String get settingsSpeechModelMissing => 'Missing';
+
+  @override
+  String get settingsSpeechModelDamaged => 'Damaged';
+
+  @override
+  String get settingsSpeechModelInUse => 'In use';
+
+  @override
+  String settingsSpeechModelDetail(Object origin, Object state, Object size) {
+    return '$origin · $state · $size';
+  }
+
+  @override
+  String get settingsSpeechTooLarge =>
+      'Too large for the memory this device has free. A smaller model is used.';
+
+  @override
+  String get settingsSpeechVerify => 'Verify';
+
+  @override
+  String settingsSpeechVerified(Object model) {
+    return 'The $model matches its published file.';
+  }
+
+  @override
+  String settingsSpeechVerifyMismatch(Object model) {
+    return 'The $model does not match its published file. Import it again or reinstall the app.';
+  }
+
+  @override
+  String get settingsSpeechImport => 'Import a speech model';
+
+  @override
+  String settingsSpeechImported(Object model) {
+    return 'The $model was checked and added.';
+  }
+
+  @override
+  String get settingsSpeechRemove => 'Remove';
+
+  @override
+  String settingsSpeechRemoveTitle(Object model) {
+    return 'Remove the $model?';
+  }
+
+  @override
+  String get settingsSpeechRemoveMessage =>
+      'Its file is deleted from this device. Speech uses a smaller model until you import it again.';
+
+  @override
+  String settingsSpeechRemoved(Object model) {
+    return 'The $model was removed.';
+  }
 
   @override
   String get languageEnglish => 'English';
@@ -7704,6 +7967,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
     return 'Transcript, run $versionString';
   }
+
+  @override
+  String get meetingTranscriptCloudVersion => 'Online transcription';
 
   @override
   String meetingTranscriptGaps(int count) {
@@ -14910,6 +15176,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureRecordAudio => 'Récórd áúdíó·····';
 
   @override
+  String get captureRecordTranscribe => 'Récórd ánd tránscríbé········';
+
+  @override
   String get capturePauseAudio => 'Páúsé··';
 
   @override
@@ -15108,6 +15377,154 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get speechOfflineBadge => 'Ón thís dévícé·····';
+
+  @override
+  String get liveTranscriptUnavailable =>
+      'Lívé tránscríptíón nééds á spééch módél ón thís dévícé.····················';
+
+  @override
+  String get liveTranscriptUnavailableRecovery =>
+      'Ópén Séttíngs, Lángúágé, tó chéck thé spééch módél.··················';
+
+  @override
+  String get navTranscripts => 'Tránscrípts····';
+
+  @override
+  String get transcriptsTitle => 'Tránscrípts····';
+
+  @override
+  String get transcriptsNew => 'Néw tránscríptíón······';
+
+  @override
+  String get transcriptsEmptyHeadline => 'Nó tránscrípts yét·······';
+
+  @override
+  String get transcriptsEmptyMessage =>
+      'Récórd spééch ánd Táptúré wrítés ít dówn ón thís dévícé. Nó cónnéctíón ís néédéd.·····························';
+
+  @override
+  String get transcriptsNoMatchHeadline => 'Nó mátchíng tránscrípts·········';
+
+  @override
+  String get transcriptsSearchHint => 'Séárch tránscrípts·······';
+
+  @override
+  String get transcriptsNoProject => 'Ópén á prójéct tó tránscríbé··········';
+
+  @override
+  String get transcriptsNoProjectMessage =>
+      'Récórdíngs ánd tránscrípts áré sávéd ín thé prójéct fóldér.·····················';
+
+  @override
+  String get transcribeTitle => 'Tránscríbé····';
+
+  @override
+  String get transcriptDetailTitle => 'Tránscrípt····';
+
+  @override
+  String get transcriptMissing =>
+      'Thís tránscrípt ís nót ón thís dévícé·············';
+
+  @override
+  String get transcriptMissingMessage =>
+      'Ít wás díscárdéd, ór ít bélóngs tó á prójéct thát ís nót héré.······················';
+
+  @override
+  String get transcriptOriginCapture => 'Fróm á cáptúré·····';
+
+  @override
+  String get transcriptOriginMeeting => 'Fróm á méétíng·····';
+
+  @override
+  String get transcriptOriginStandalone => 'Tránscríptíón·····';
+
+  @override
+  String get transcriptStatusInterrupted =>
+      'Íntérrúptéd. Whát wás héárd ís képt.·············';
+
+  @override
+  String get transcriptEditedLabel => 'Édítéd téxt····';
+
+  @override
+  String get transcriptOriginalLabel => 'Órígínál, ás héárd·······';
+
+  @override
+  String get transcriptSaveEdit => 'Sávé chángés·····';
+
+  @override
+  String get transcriptEditSaved =>
+      'Chángés sávéd. Thé órígínál tránscrípt ís képt.·················';
+
+  @override
+  String get transcriptRevert => 'Gó báck tó thé órígínál·········';
+
+  @override
+  String get transcriptRevertTitle =>
+      'Gó báck tó thé órígínál tránscrípt?·············';
+
+  @override
+  String get transcriptRevertMessage =>
+      'Yóúr chángés áré rémóvéd. Thé órígínál stáys ás ít wás récórdéd.·······················';
+
+  @override
+  String get transcriptRevertConfirm => 'Úsé órígínál·····';
+
+  @override
+  String get transcriptReverted =>
+      'Thé órígínál tránscrípt ís báck.············';
+
+  @override
+  String get transcriptRename => 'Rénámé···';
+
+  @override
+  String get transcriptTitleLabel => 'Títlé··';
+
+  @override
+  String transcriptLanguage(Object language) {
+    return 'Lángúágé: ····$language';
+  }
+
+  @override
+  String transcriptModel(Object model) {
+    return 'Spééch módél: ·····$model';
+  }
+
+  @override
+  String transcriptAudioLength(Object minutes, Object seconds) {
+    return 'Récórdíng ····$minutes:$seconds';
+  }
+
+  @override
+  String get transcriptNoAudio =>
+      'Thé récórdíng wás nót képt ón thís dévícé.···············';
+
+  @override
+  String transcriptGaps(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$countString párts óf thé récórdíng áré nót tránscríbéd yét.·················',
+      one:
+          'Óné párt óf thé récórdíng ís nót tránscríbéd yét.··················',
+      zero: 'Áll óf thé récórdíng ís tránscríbéd.·············',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get transcriptFinish => 'Fínísh thé tránscrípt········';
+
+  @override
+  String get transcriptFinished => 'Thé tránscrípt ís fíníshéd.··········';
+
+  @override
+  String get transcriptTranscribeOnDevice =>
+      'Tránscríbé ón thís dévícé·········';
 
   @override
   String get captureAudioScopeTitle => 'Úsé áúdíó wíth·····';
@@ -15495,6 +15912,125 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get settingsVoiceLanguage => 'Vóícé lángúágé·····';
+
+  @override
+  String get settingsSpeechSection => 'Spééch récógnítíón·······';
+
+  @override
+  String settingsSpeechEngineWhisper(Object model) {
+    return 'Spééch ís túrnéd íntó téxt ón thís dévícé by thé ··················$model.';
+  }
+
+  @override
+  String get settingsSpeechEnginePlatform =>
+      'Spééch ís túrnéd íntó téxt by thís dévícé’s ówn spééch sérvícé, ón thé dévícé ónly.······························';
+
+  @override
+  String get settingsSpeechEngineNone =>
+      'Vóícé ínpút ís nót áváíláblé ón thís dévícé yét.·················';
+
+  @override
+  String get settingsSpeechQuality => 'Tránscríptíón qúálíty········';
+
+  @override
+  String get settingsSpeechQualityEffect =>
+      'Áútómátíc pícks thé bést módél thís dévícé cán rún smóóthly.·····················';
+
+  @override
+  String get settingsSpeechQualityAuto => 'Áútómátíc····';
+
+  @override
+  String get settingsSpeechQualityFast => 'Fástér, úsés léss báttéry·········';
+
+  @override
+  String get settingsSpeechQualityAccurate =>
+      'Móré áccúráté, nééds á stróngér dévícé··············';
+
+  @override
+  String get settingsSpeechModels => 'Spééch módéls·····';
+
+  @override
+  String get settingsSpeechModelFast => 'Fást módél····';
+
+  @override
+  String get settingsSpeechModelBalanced => 'Báláncéd módél·····';
+
+  @override
+  String get settingsSpeechModelAccurate => 'Áccúráté módél·····';
+
+  @override
+  String get settingsSpeechModelVad => 'Vóícé détéctór·····';
+
+  @override
+  String get settingsSpeechModelBundled => 'Ínclúdéd wíth thé ápp········';
+
+  @override
+  String get settingsSpeechModelImported => 'Ímpórtéd···';
+
+  @override
+  String get settingsSpeechModelImportOnly => 'Ímpórt ónly····';
+
+  @override
+  String get settingsSpeechModelPresent => 'Ínstálléd····';
+
+  @override
+  String get settingsSpeechModelVerified => 'Chéckéd···';
+
+  @override
+  String get settingsSpeechModelMissing => 'Míssíng···';
+
+  @override
+  String get settingsSpeechModelDamaged => 'Dámágéd···';
+
+  @override
+  String get settingsSpeechModelInUse => 'Ín úsé···';
+
+  @override
+  String settingsSpeechModelDetail(Object origin, Object state, Object size) {
+    return '$origin · $state · $size';
+  }
+
+  @override
+  String get settingsSpeechTooLarge =>
+      'Tóó lárgé fór thé mémóry thís dévícé hás fréé. Á smállér módél ís úséd.·························';
+
+  @override
+  String get settingsSpeechVerify => 'Vérífy···';
+
+  @override
+  String settingsSpeechVerified(Object model) {
+    return 'Thé ··$model mátchés íts públíshéd fílé.··········';
+  }
+
+  @override
+  String settingsSpeechVerifyMismatch(Object model) {
+    return 'Thé ··$model dóés nót mátch íts públíshéd fílé. Ímpórt ít ágáín ór réínstáll thé ápp.··························';
+  }
+
+  @override
+  String get settingsSpeechImport => 'Ímpórt á spééch módél········';
+
+  @override
+  String settingsSpeechImported(Object model) {
+    return 'Thé ··$model wás chéckéd ánd áddéd.·········';
+  }
+
+  @override
+  String get settingsSpeechRemove => 'Rémóvé···';
+
+  @override
+  String settingsSpeechRemoveTitle(Object model) {
+    return 'Rémóvé thé ····$model?';
+  }
+
+  @override
+  String get settingsSpeechRemoveMessage =>
+      'Íts fílé ís délétéd fróm thís dévícé. Spééch úsés á smállér módél úntíl yóú ímpórt ít ágáín.·································';
+
+  @override
+  String settingsSpeechRemoved(Object model) {
+    return 'Thé ··$model wás rémóvéd.·····';
+  }
 
   @override
   String get languageEnglish => 'Énglísh···';
@@ -19641,6 +20177,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
     return 'Tránscrípt, rún ······$versionString';
   }
+
+  @override
+  String get meetingTranscriptCloudVersion => 'Ónlíné tránscríptíón·······';
 
   @override
   String meetingTranscriptGaps(int count) {

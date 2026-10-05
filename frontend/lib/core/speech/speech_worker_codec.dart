@@ -164,7 +164,7 @@ abstract final class SpeechWorkerCodec {
         'threads': _clamp(profile.threads, 1, threads < 1 ? 1 : threads),
         'bestOf': profile.bestOf < 1 ? 1 : profile.bestOf,
         'beamSize': beam ? profile.beamSize : 1,
-        'maxPieces': profile.maxPieces,
+        'maxPieces': profile.maxPiecesFor(padded.length),
         'audioCtx': profile.audioContextFor(padded.length),
         'temperature': 0.0,
         'temperatureInc': profile.temperatureStep,

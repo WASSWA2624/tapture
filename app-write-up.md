@@ -1388,7 +1388,7 @@ abstract class AiService {
 }
 ```
 
-Implement on-device ML Kit OCR, on-device speech (§30.4) and each configured online provider. Select per project, with per-operation overrides. `transcribe` uses the record's on-device transcript when one exists; live speech never passes through `AiService`.
+Implement on-device ML Kit OCR, on-device speech (§30.4) and each configured online provider. Select per project, with per-operation overrides. `transcribe` uses the record's on-device transcript when one exists: processing takes each clip's complete on-device transcript as it reads (edit first; never a live or interrupted one), records it as `source: device` with no provider call and no charge against the daily cap, and sends only a clip without one to the opted-in online provider. Processing never runs speech recognition itself; live speech never passes through `AiService`.
 
 ### 30.2 Keys
 
@@ -1614,6 +1614,14 @@ const tw_span* tw_spans_data(const tw_spans*, int32_t* count);  void tw_spans_fr
 
 **Builds.** One `src/CMakeLists.txt` serves NDK, MSVC and Emscripten, with no FetchContent, `file(DOWNLOAD)`,
 `install()`, git probes, `GGML_NATIVE`, BLAS or Metal. `TW_OPENMP` is ON only for Android (static OpenMP).
+Windows stays OFF (task 128 decision, 2026-10-05). A second MSVC build with `/openmp:llvm` and `GGML_USE_OPENMP` was
+run against the default build in four interleaved pairs, with the machine 29–100% busy with other work. Median
+tokens/s decoding jfk: tiny 8.06 ON against 6.74 OFF (+20%), base 3.71 against 3.87 (−4%). ON was also worse for
+voice detection (median 60 against 33 ms per audio second) and abort latency. One 30 s base decode under load ran
+past four minutes. The `libomp140` runtime ships only in Visual Studio's `debug_nonredist` folder, so it cannot be
+redistributed. A review re-measure in three interleaved pairs (machine 23–87% busy) gave tiny 14.37 ON against
+12.98 OFF (+11%), base 5.76 against 5.87 (−2%), with ON again worse for voice detection (22.6 against 12.1 ms per
+audio second) and abort latency (71 against 40 ms). ON does not win by more than 15%, so no follow-up task.
 `TW_BUILD_SMOKE` builds `tw_smoke --model <bin> --sha256 <hex> --wav <16k s16 mono> --expect "<phrase>"
 [--abort-after-checks N]`, which exits non-zero on a missing phrase, or with `--abort-after-checks` unless the call
 returns `ABORTED` and an immediate retry on the same context succeeds.
@@ -1857,15 +1865,17 @@ final NotifierProvider<SpeechReadinessNotifier, SpeechReadiness> speechReadiness
 `sha256`, `sourceUrl` pinned to a revision (`https://huggingface.co/<repo>/resolve/<commit>/<file>`), header facts,
 `memoryEstimateBytes`, `tier`, `webAllowed`. `SpeechModelCatalogue` exposes `all`, `tiny`, `base`, `small`, `vad`,
 `byId` and `matchImport(bytes, sha256)`. Repositories: `ggerganov/whisper.cpp` for the whisper models and
-`ggml-org/whisper-vad` for Silero; each commit is resolved once and pinned. Header facts and memory estimates are
-provisional, pinned by native shape tests and recalibrated by benchmarks.
+`ggml-org/whisper-vad` for Silero; each commit is resolved once and pinned. Header facts are pinned by native shape
+tests. Memory estimates are the peak RSS a loaded model adds while decoding jfk with the desktop committed profile,
+worker isolates included, measured on the Windows reference machine (task 128) and rounded up to 8 MiB (1 MiB for
+Silero): tiny 126.4, base 166.2, small 349.7 and Silero 8.3 MiB.
 
 | id | file | bytes | sha256 | header (vocab/state/aL/tL/mels/ftype%1000) | mem est. | packaging |
 | --- | --- | --- | --- | --- | --- | --- |
-| `tiny-q5_1` | ggml-tiny-q5_1.bin | 32,152,673 | 818710568da3ca15689e31a743197b520007872ff9576237bda97bd1b469c3d7 | 51865/384/4/4/80/9 | 160 MiB | bundled |
-| `base-q5_1` | ggml-base-q5_1.bin | 59,707,625 | 422f1ae452ade6f30a004d7e5c6a43195e4433bc370bf23fac9cc591f01a8898 | 51865/512/6/6/80/9 | 260 MiB | bundled |
-| `small-q5_1` | ggml-small-q5_1.bin | 190,085,487 | ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb | 51865/768/12/12/80/9 | 560 MiB | import only, `webAllowed: false` |
-| `silero-v6.2.0` | ggml-silero-v6.2.0.bin | 885,098 | 2aa269b785eeb53a82983a20501ddf7c1d9c48e33ab63a41391ac6c9f7fb6987 | magic only | 8 MiB | bundled (vad) |
+| `tiny-q5_1` | ggml-tiny-q5_1.bin | 32,152,673 | 818710568da3ca15689e31a743197b520007872ff9576237bda97bd1b469c3d7 | 51865/384/4/4/80/9 | 128 MiB | bundled |
+| `base-q5_1` | ggml-base-q5_1.bin | 59,707,625 | 422f1ae452ade6f30a004d7e5c6a43195e4433bc370bf23fac9cc591f01a8898 | 51865/512/6/6/80/9 | 168 MiB | bundled |
+| `small-q5_1` | ggml-small-q5_1.bin | 190,085,487 | ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb | 51865/768/12/12/80/9 | 352 MiB | import only, `webAllowed: false` |
+| `silero-v6.2.0` | ggml-silero-v6.2.0.bin | 885,098 | 2aa269b785eeb53a82983a20501ddf7c1d9c48e33ab63a41391ac6c9f7fb6987 | magic only | 9 MiB | bundled (vad) |
 
 `frontend/tool/speech_models.dart`: `--fetch [--only <id>] [--from <dir>]` streams each bundled entry into
 `assets/speech/<file>.part`, hashing while writing, checks size and sha, renames, skips files already correct and
@@ -1976,11 +1986,25 @@ All live in `frontend/lib/core/constants/app_constants.dart`; durations below ar
 | `tinyLoad` | 2 s (includes in-shim hash) | `baseLoad` | 4 s |
 | `tinyRealTime` | 0.35 | `baseRealTime` | 0.5 |
 | `abortLatencyDesktop` | 500 ms | `vadSecond` | 60 ms |
-| `tinyPeakRssBytes` | 320 MiB | `basePeakRssBytes` | 480 MiB |
+| `tinyPeakRssBytes` | 192 MiB | `basePeakRssBytes` | 256 MiB |
 | `retainedRssBytes` | 32 MiB | `pipelinePerAudioSecond` | 15 ms |
 | `firstPartialCompute` | 1500 ms | `finalizeCompute` | 1000 ms |
-| `longSessionPeakRssBytes` | 64 MiB | `longSessionRetainedRssBytes` | 8 MiB |
+| `longSessionPeakRssBytes` | 64 MiB | `longSessionRetainedRssBytes` | 48 MiB |
 | `uiDrift` | 32 ms | | |
+
+Benchmarks check medians and record the processor load, because other work on the machine adds noise; `uiDrift`
+bounds how much later than the idle median (the system timer's granularity, about 15.6 ms on Windows) the
+99th-percentile tick of a 16 ms timer on the UI isolate fires during a 30 s decode (maxima follow the machine's
+load: up to 188 ms with the engine idle). Task 128 recalibration (2026-10-05, i7-1165G7, 29–100% busy): peak RSS
+budgets tightened to about 1.5× the measured peaks; `longSessionRetainedRssBytes` raised from 8 MiB because five
+identical long sessions kept the live heap after a forced collection flat (121.3–122.2 MiB) while RSS retention,
+garbage not yet collected, ranged from −38 to 40.5 MiB. The real-time factors and `finalizeCompute` are not loosened.
+With the committed desktop profile (best of 2, temperature fallback, full encoder context) the real-time factors are
+met with the machine 29–60% busy (tiny 0.16–0.17, base 0.31–0.38) and missed at 66–100% (tiny 0.30–0.46, base
+0.51–0.77). `finalizeCompute` is missed at any load: a 2.6 s utterance takes 1.4–1.5 s to finalise with tiny and
+3.8–5.4 s with base at the quietest, because every final encodes the full 30 s context.
+In headless Chrome 154 on the same loaded machine (task 112 harness, tiny, jfk, three alternating runs), the
+threaded build with 4 threads was no faster than the single-thread one: real-time factor medians 1.88 and 1.85.
 
 **`transcripts`:** `partialInterval` 250 ms, `dictationFinalize` 12 s, `paragraphGap` 1500 ms,
 `paragraphMaxSegments` 6, `paragraphMaxChars` 600, `previewChars` 120, `historyPage` `listPageSize`,
@@ -2141,9 +2165,11 @@ detached: stop() without awaiting the drain
 
 **Dictation** (§24). `WhisperSttService implements SttService` returns a lazy single-subscription stream: one empty
 partial when the microphone opens; partials are `committed + stable` only (tentative words are never emitted), and
-each final is aligned to the already-emitted stable prefix by `WordSequence.key`, then by time, so emitted words
-never change; partials are throttled to `transcripts.partialInterval` with a trailing emit and never repeat; exactly
-one final follows, with language and mean confidence. Heard words are never dropped: an error after words still
+each final is aligned to the already-emitted stable prefix by `WordSequence.key` (drafts carry no word times, so a
+final that diverges inside it is cut after the last word both agree on plus the shown words after it), so emitted
+words never change, and a later utterance is shown only once every earlier one is final; partials are throttled to
+`transcripts.partialInterval` with a trailing emit and never repeat; exactly one final follows, with language and
+mean confidence. Heard words are never dropped: an error after words still
 yields a final, `stop()` is bounded by `dictationFinalize`, and a new listen hands the previous words over; `cancel()`
 drops unfinal words. Errors are raised only when nothing was heard: permission →
 `PermissionFailure(dictationNoMicrophone)`, microphone busy → `ValidationFailure(microphoneBusy)`, silence →
@@ -2155,7 +2181,8 @@ else, if `platform != null && await policy.keepsSpeechOnDevice()`, `platform.lis
 `MicrophoneOwner.dictation` claim; else `NetworkFailure(dictationOfflineOnly)`. `PlatformRecogniserPolicy.platform()`
 answers Android `onDeviceRecognitionAvailable` on `com.tapture.app/files` (`SDK_INT >= 31 &&
 isOnDeviceRecognitionAvailable`), iOS/macOS true (the plugin sets `requiresOnDeviceRecognition`), Windows, Linux and
-web false.
+web false. `main` binds a platform recogniser only on Android, iOS and macOS, so on Windows, Linux and the web a
+field offers the microphone only once Whisper is ready.
 
 #### 30.4.6 Transcript persistence
 
@@ -2229,6 +2256,21 @@ abstract interface class TranscriptRepository {
 - **Finishing later.** **Finish the transcript** is offered whenever `gaps` is non-empty or
   `coveredMs < durationMs` and readiness is ready, on any status, through `reopenForRemaining` +
   `transcribeRemaining`.
+- **Surface sessions** (`features/transcripts/presentation`). `LiveTranscriptController` is a
+  `NotifierProvider.autoDispose.family` keyed by `LiveTranscriptKey` (`capture:`, `meeting:`, `standalone:`).
+  `TranscriptSessionTarget({sessionKey, projectId, ownerKind, ownerId?, audioPath, beforeStart?, fileAudio, onDiscard?,
+  mode = TranscriptMode.live|audioOnly, keepAlive = true})` is built only in `*_providers.dart` or `*_controller.dart`
+  files (`state_test`). **Start:** `audioPath()` → `beforeStart()` → `begin` (row `live`, durable before the
+  microphone) → `sinkFor` → `service.start(longForm, transcribe: mode == live)`; a failure before the microphone opens
+  discards the row and calls `onDiscard`. **Stop** (`Result<String?>` attachment id): `session.stop()` (publish) →
+  `fileAudio` → `linkAttachment`, then the keep-alive link, the leave guard and the controller's exit check are
+  released while the transcript drains under the service. `retrySave` resumes from the failed step; a take that was
+  never published is left to boot recovery. A session that stops itself is filed the same way, and a disposed
+  controller files a take still open through references captured at start. **Discard** (the panel confirms first):
+  `cancel` (staging kept) or `skipRemaining`, `discard`, `onDiscard`; audio is never deleted. Status
+  (`LiveTranscriptStatus`) carries the phase, pause reason, warning, unsaved flag and draining; words travel through
+  the `frames` `ValueListenable`. `LiveTranscriptPanel` renders notices, `AppRecordingBar` and `AppTranscriptView`;
+  `TranscriptListSection` lists a record's or meeting's transcripts and renders nothing when there are none.
 - **Owners.** Meetings: `MeetingRecord.transcript` resolves to non-empty `transcriptRaw` (legacy import), otherwise
   the latest non-live meeting `transcripts` row (`displayText`), otherwise `versions.last.text`, so Refine minutes and
   exports read it unchanged. Capture: Save awaits only the publish and `linkAttachment`; the transcript drains
@@ -3228,9 +3270,9 @@ recorded from physical-device evidence (task 131, `tool/devices.yaml`):
 | Final segment after an utterance closes | ≤ 1 s compute |
 | Abort of an in-flight decode (tiny) | ≤ 500 ms |
 | Voice-activity detection | ≤ 60 ms per audio second |
-| Pipeline overhead | ≤ 15 ms per audio second; UI frame drift ≤ 32 ms |
-| Engine memory | peak ≤ 320 MiB tiny, ≤ 480 MiB base; ≤ 32 MiB retained after release |
-| Long live session | ≤ 64 MiB peak and ≤ 8 MiB retained above the engine; no lost audio |
+| Pipeline overhead | ≤ 15 ms per audio second; UI timer drift ≤ 32 ms (p99 above idle, during a decode) |
+| Engine memory | peak ≤ 192 MiB tiny, ≤ 256 MiB base; ≤ 32 MiB retained after release |
+| Long live session | ≤ 64 MiB peak and ≤ 48 MiB retained RSS above the engine (live heap flat); no lost audio |
 
 Page queries; index project, status, context, identity hash and timestamps. Generate thumbnails once and cache them; load full images only in the viewer. Run compression, hashing, exports, merge, audio resampling and speech inference off the UI thread (worker isolates; Web Workers on the web). Never perform file or database work on the UI thread.
 

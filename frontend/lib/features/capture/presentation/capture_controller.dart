@@ -32,6 +32,12 @@ import 'package:tapture/features/projects/projects.dart'
     show Project, ProjectSettings, projectRepositoryProvider;
 import 'package:tapture/features/quality/quality.dart'
     show qualityRepositoryProvider;
+import 'package:tapture/features/transcripts/transcripts.dart'
+    show
+        LiveTranscriptKey,
+        LiveTranscriptStatus,
+        TranscriptSessionPhase,
+        liveTranscriptControllerProvider;
 
 /// Default photo repository stub — [main] / tests override.
 final Provider<PhotoRepository> photoRepositoryProvider =
@@ -241,6 +247,8 @@ final class CaptureController extends Notifier<CaptureSession> {
     if (records == null || !state.editing) {
       return FailureResult<void>(_noRecords);
     }
+    final Result<void> live = await finishCaptureIfActive();
+    if (live is FailureResult<void>) return live;
     final Result<void> audio = await finaliseAudio();
     if (audio is FailureResult<void>) return audio;
     final CaptureSession edited = state;
@@ -484,6 +492,46 @@ final class CaptureController extends Notifier<CaptureSession> {
     );
   }
 
+  /// Forgets the pending take [pendingId], as when its recording is
+  /// discarded or never started. Only the reference goes: the staged or
+  /// published file is never touched (rule 1).
+  Future<Result<void>> dropAudio(String pendingId) {
+    return _store(
+      (CaptureSession current) => current.copyWith(
+        pendingAudio: current.pendingAudio
+            .where((PendingAudioDraft row) => row.id != pendingId)
+            .toList(growable: false),
+      ),
+    );
+  }
+
+  /// Stops the caption recorder's live transcript take, when one is still
+  /// open, and waits only until its audio is published through
+  /// [publishAudio] and linked to its transcript. The transcript itself
+  /// finishes afterwards under the speech service, so no save waits for
+  /// transcription (rule 3). Without a live take this does nothing.
+  Future<Result<void>> finishCaptureIfActive() async {
+    final String liveKey = LiveTranscriptKey.capture(key);
+    final LiveTranscriptStatus status = ref.read(
+      liveTranscriptControllerProvider(liveKey),
+    );
+    final bool open = switch (status.phase) {
+      TranscriptSessionPhase.starting ||
+      TranscriptSessionPhase.recording ||
+      TranscriptSessionPhase.paused ||
+      TranscriptSessionPhase.finishing => true,
+      TranscriptSessionPhase.failed => status.retryable,
+      TranscriptSessionPhase.idle || TranscriptSessionPhase.saved => false,
+    };
+    if (!open) {
+      return const Success<void>(null);
+    }
+    final Result<String?> filed = await ref
+        .read(liveTranscriptControllerProvider(liveKey).notifier)
+        .stop();
+    return filed.map((String? _) {});
+  }
+
   /// Finalises a live take or recovers staged takes after a restart. A failed
   /// publication leaves every reference intact so Resume or Save can retry.
   Future<Result<void>> finaliseAudio() async {
@@ -514,13 +562,7 @@ final class CaptureController extends Notifier<CaptureSession> {
         }
       }
       final Result<void> saved = recording == null
-          ? await _store(
-              (CaptureSession current) => current.copyWith(
-                pendingAudio: current.pendingAudio
-                    .where((PendingAudioDraft row) => row.id != pending.id)
-                    .toList(growable: false),
-              ),
-            )
+          ? await dropAudio(pending.id)
           : await publishAudio(recording);
       if (saved is FailureResult<void>) return saved;
     }
@@ -872,6 +914,10 @@ final class CaptureController extends Notifier<CaptureSession> {
   Future<Result<String>> saveRaw(
     Future<Result<String>> Function(CaptureSession session) persist,
   ) async {
+    final Result<void> live = await finishCaptureIfActive();
+    if (live case FailureResult<void>(:final Failure failure)) {
+      return FailureResult<String>(failure);
+    }
     final Result<void> audio = await finaliseAudio();
     if (audio case FailureResult<void>(:final Failure failure)) {
       return FailureResult<String>(failure);
@@ -896,6 +942,10 @@ final class CaptureController extends Notifier<CaptureSession> {
     required Future<Result<String>> Function(CaptureSession session) persist,
     required Future<Result<ProcessingJob>> Function(String recordId) enqueue,
   }) async {
+    final Result<void> live = await finishCaptureIfActive();
+    if (live case FailureResult<void>(:final Failure failure)) {
+      return FailureResult<SaveAndAnalyseResult>(failure);
+    }
     final Result<void> audio = await finaliseAudio();
     if (audio case FailureResult<void>(:final Failure failure)) {
       return FailureResult<SaveAndAnalyseResult>(failure);

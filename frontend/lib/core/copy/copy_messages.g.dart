@@ -4600,6 +4600,12 @@ final class CopyMessages {
     fallback: Copy.captureRecordAudio,
   );
 
+  /// Caption recorder start that also transcribes on this device.
+  LocalizedMessage get captureRecordTranscribe => LocalizedMessage(
+    key: 'captureRecordTranscribe',
+    fallback: Copy.captureRecordTranscribe,
+  );
+
   /// Audio recorder pause.
   LocalizedMessage get capturePauseAudio => LocalizedMessage(
     key: 'capturePauseAudio',
@@ -4886,6 +4892,241 @@ final class CopyMessages {
   LocalizedMessage get speechOfflineBadge => LocalizedMessage(
     key: 'speechOfflineBadge',
     fallback: Copy.speechOfflineBadge,
+  );
+
+  /// Headline of the Transcribe screen when no speech model can run.
+  LocalizedMessage get liveTranscriptUnavailable => LocalizedMessage(
+    key: 'liveTranscriptUnavailable',
+    fallback: Copy.liveTranscriptUnavailable,
+  );
+
+  /// What to do when live transcription is unavailable.
+  LocalizedMessage get liveTranscriptUnavailableRecovery => LocalizedMessage(
+    key: 'liveTranscriptUnavailableRecovery',
+    fallback: Copy.liveTranscriptUnavailableRecovery,
+  );
+
+  /// More menu entry: the transcript history.
+  LocalizedMessage get navTranscripts =>
+      LocalizedMessage(key: 'navTranscripts', fallback: Copy.navTranscripts);
+
+  /// Title of the transcript history.
+  LocalizedMessage get transcriptsTitle => LocalizedMessage(
+    key: 'transcriptsTitle',
+    fallback: Copy.transcriptsTitle,
+  );
+
+  /// Opens the Transcribe screen to record a new transcript.
+  LocalizedMessage get transcriptsNew =>
+      LocalizedMessage(key: 'transcriptsNew', fallback: Copy.transcriptsNew);
+
+  /// Headline of the transcript history with no transcripts.
+  LocalizedMessage get transcriptsEmptyHeadline => LocalizedMessage(
+    key: 'transcriptsEmptyHeadline',
+    fallback: Copy.transcriptsEmptyHeadline,
+  );
+
+  /// Message of the transcript history with no transcripts.
+  LocalizedMessage get transcriptsEmptyMessage => LocalizedMessage(
+    key: 'transcriptsEmptyMessage',
+    fallback: Copy.transcriptsEmptyMessage,
+  );
+
+  /// Headline when a transcript search matches nothing.
+  LocalizedMessage get transcriptsNoMatchHeadline => LocalizedMessage(
+    key: 'transcriptsNoMatchHeadline',
+    fallback: Copy.transcriptsNoMatchHeadline,
+  );
+
+  /// Prompt of the transcript history search field.
+  LocalizedMessage get transcriptsSearchHint => LocalizedMessage(
+    key: 'transcriptsSearchHint',
+    fallback: Copy.transcriptsSearchHint,
+  );
+
+  /// Headline of the Transcribe screen with no project open.
+  LocalizedMessage get transcriptsNoProject => LocalizedMessage(
+    key: 'transcriptsNoProject',
+    fallback: Copy.transcriptsNoProject,
+  );
+
+  /// Why a project is needed before transcribing.
+  LocalizedMessage get transcriptsNoProjectMessage => LocalizedMessage(
+    key: 'transcriptsNoProjectMessage',
+    fallback: Copy.transcriptsNoProjectMessage,
+  );
+
+  /// Title of the screen that records and transcribes speech.
+  LocalizedMessage get transcribeTitle =>
+      LocalizedMessage(key: 'transcribeTitle', fallback: Copy.transcribeTitle);
+
+  /// Title of one transcript's page.
+  LocalizedMessage get transcriptDetailTitle => LocalizedMessage(
+    key: 'transcriptDetailTitle',
+    fallback: Copy.transcriptDetailTitle,
+  );
+
+  /// Headline when an opened transcript no longer exists.
+  LocalizedMessage get transcriptMissing => LocalizedMessage(
+    key: 'transcriptMissing',
+    fallback: Copy.transcriptMissing,
+  );
+
+  /// Why an opened transcript is missing.
+  LocalizedMessage get transcriptMissingMessage => LocalizedMessage(
+    key: 'transcriptMissingMessage',
+    fallback: Copy.transcriptMissingMessage,
+  );
+
+  /// Marks a transcript heard from a capture's recording.
+  LocalizedMessage get transcriptOriginCapture => LocalizedMessage(
+    key: 'transcriptOriginCapture',
+    fallback: Copy.transcriptOriginCapture,
+  );
+
+  /// Marks a transcript heard from a meeting's recording.
+  LocalizedMessage get transcriptOriginMeeting => LocalizedMessage(
+    key: 'transcriptOriginMeeting',
+    fallback: Copy.transcriptOriginMeeting,
+  );
+
+  /// Marks a transcript recorded on the Transcribe screen.
+  LocalizedMessage get transcriptOriginStandalone => LocalizedMessage(
+    key: 'transcriptOriginStandalone',
+    fallback: Copy.transcriptOriginStandalone,
+  );
+
+  /// Notice on a transcript whose recording ended before it was finished.
+  LocalizedMessage get transcriptStatusInterrupted => LocalizedMessage(
+    key: 'transcriptStatusInterrupted',
+    fallback: Copy.transcriptStatusInterrupted,
+  );
+
+  /// The operator's edit of a transcript, kept beside the original.
+  LocalizedMessage get transcriptEditedLabel => LocalizedMessage(
+    key: 'transcriptEditedLabel',
+    fallback: Copy.transcriptEditedLabel,
+  );
+
+  /// The transcript exactly as it was heard, never changed.
+  LocalizedMessage get transcriptOriginalLabel => LocalizedMessage(
+    key: 'transcriptOriginalLabel',
+    fallback: Copy.transcriptOriginalLabel,
+  );
+
+  /// Saves the edited transcript beside the original.
+  LocalizedMessage get transcriptSaveEdit => LocalizedMessage(
+    key: 'transcriptSaveEdit',
+    fallback: Copy.transcriptSaveEdit,
+  );
+
+  /// Confirms an edited transcript was saved.
+  LocalizedMessage get transcriptEditSaved => LocalizedMessage(
+    key: 'transcriptEditSaved',
+    fallback: Copy.transcriptEditSaved,
+  );
+
+  /// Removes the edit and shows the transcript as heard.
+  LocalizedMessage get transcriptRevert => LocalizedMessage(
+    key: 'transcriptRevert',
+    fallback: Copy.transcriptRevert,
+  );
+
+  /// Title of the confirmation before an edit is removed.
+  LocalizedMessage get transcriptRevertTitle => LocalizedMessage(
+    key: 'transcriptRevertTitle',
+    fallback: Copy.transcriptRevertTitle,
+  );
+
+  /// What removing a transcript edit does.
+  LocalizedMessage get transcriptRevertMessage => LocalizedMessage(
+    key: 'transcriptRevertMessage',
+    fallback: Copy.transcriptRevertMessage,
+  );
+
+  /// Confirms removing a transcript edit.
+  LocalizedMessage get transcriptRevertConfirm => LocalizedMessage(
+    key: 'transcriptRevertConfirm',
+    fallback: Copy.transcriptRevertConfirm,
+  );
+
+  /// Confirms a transcript edit was removed.
+  LocalizedMessage get transcriptReverted => LocalizedMessage(
+    key: 'transcriptReverted',
+    fallback: Copy.transcriptReverted,
+  );
+
+  /// Gives a transcript a new title.
+  LocalizedMessage get transcriptRename => LocalizedMessage(
+    key: 'transcriptRename',
+    fallback: Copy.transcriptRename,
+  );
+
+  /// Field for a transcript's title.
+  LocalizedMessage get transcriptTitleLabel => LocalizedMessage(
+    key: 'transcriptTitleLabel',
+    fallback: Copy.transcriptTitleLabel,
+  );
+
+  /// The [language] a transcript was heard in.
+  LocalizedMessage transcriptLanguage(String language) => LocalizedMessage(
+    key: 'transcriptLanguage',
+    fallback: Copy.transcriptLanguage(language),
+    arguments: <String, Object?>{
+      'language': LocalizedMessage.encodeArgument(language),
+    },
+  );
+
+  /// The speech [model] that heard a transcript.
+  LocalizedMessage transcriptModel(String model) => LocalizedMessage(
+    key: 'transcriptModel',
+    fallback: Copy.transcriptModel(model),
+    arguments: <String, Object?>{
+      'model': LocalizedMessage.encodeArgument(model),
+    },
+  );
+
+  /// How long a transcript's recording is, as minutes and seconds.
+  LocalizedMessage transcriptAudioLength(Duration length) => LocalizedMessage(
+    key: 'transcriptAudioLength',
+    fallback: Copy.transcriptAudioLength(length),
+    arguments: <String, Object?>{
+      'length': LocalizedMessage.encodeArgument(length),
+    },
+  );
+
+  /// A transcript whose recording is not filed on this device.
+  LocalizedMessage get transcriptNoAudio => LocalizedMessage(
+    key: 'transcriptNoAudio',
+    fallback: Copy.transcriptNoAudio,
+  );
+
+  /// How many parts, [count], of a transcript's recording are left
+  /// untranscribed.
+  LocalizedMessage transcriptGaps(int count) => LocalizedMessage(
+    key: 'transcriptGaps',
+    fallback: Copy.transcriptGaps(count),
+    arguments: <String, Object?>{
+      'count': LocalizedMessage.encodeArgument(count),
+    },
+  );
+
+  /// Transcribes the parts of a recording left untranscribed.
+  LocalizedMessage get transcriptFinish => LocalizedMessage(
+    key: 'transcriptFinish',
+    fallback: Copy.transcriptFinish,
+  );
+
+  /// Confirms the rest of a recording was transcribed.
+  LocalizedMessage get transcriptFinished => LocalizedMessage(
+    key: 'transcriptFinished',
+    fallback: Copy.transcriptFinished,
+  );
+
+  /// Transcribes a record's untranscribed audio clips on this device.
+  LocalizedMessage get transcriptTranscribeOnDevice => LocalizedMessage(
+    key: 'transcriptTranscribeOnDevice',
+    fallback: Copy.transcriptTranscribeOnDevice,
   );
 
   /// Audio evidence association sheet.
@@ -5443,6 +5684,237 @@ final class CopyMessages {
   LocalizedMessage get settingsVoiceLanguage => LocalizedMessage(
     key: 'settingsVoiceLanguage',
     fallback: Copy.settingsVoiceLanguage,
+  );
+
+  /// Heading of the on-device speech settings on the Language screen.
+  LocalizedMessage get settingsSpeechSection => LocalizedMessage(
+    key: 'settingsSpeechSection',
+    fallback: Copy.settingsSpeechSection,
+  );
+
+  /// Which engine turns speech into text: the app's own on-device model.
+  LocalizedMessage settingsSpeechEngineWhisper(String model) =>
+      LocalizedMessage(
+        key: 'settingsSpeechEngineWhisper',
+        fallback: Copy.settingsSpeechEngineWhisper(model),
+        arguments: <String, Object?>{
+          'model': LocalizedMessage.encodeArgument(model),
+        },
+      );
+
+  /// Which engine turns speech into text: the operating system's
+  /// recogniser, kept on the device.
+  LocalizedMessage get settingsSpeechEnginePlatform => LocalizedMessage(
+    key: 'settingsSpeechEnginePlatform',
+    fallback: Copy.settingsSpeechEnginePlatform,
+  );
+
+  /// No engine can turn speech into text on this device now.
+  LocalizedMessage get settingsSpeechEngineNone => LocalizedMessage(
+    key: 'settingsSpeechEngineNone',
+    fallback: Copy.settingsSpeechEngineNone,
+  );
+
+  /// Name of the speed-or-accuracy speech setting.
+  LocalizedMessage get settingsSpeechQuality => LocalizedMessage(
+    key: 'settingsSpeechQuality',
+    fallback: Copy.settingsSpeechQuality,
+  );
+
+  /// What the transcription quality setting changes.
+  LocalizedMessage get settingsSpeechQualityEffect => LocalizedMessage(
+    key: 'settingsSpeechQualityEffect',
+    fallback: Copy.settingsSpeechQualityEffect,
+  );
+
+  /// Quality choice: the device decides.
+  LocalizedMessage get settingsSpeechQualityAuto => LocalizedMessage(
+    key: 'settingsSpeechQualityAuto',
+    fallback: Copy.settingsSpeechQualityAuto,
+  );
+
+  /// Quality choice: always the fast model.
+  LocalizedMessage get settingsSpeechQualityFast => LocalizedMessage(
+    key: 'settingsSpeechQualityFast',
+    fallback: Copy.settingsSpeechQualityFast,
+  );
+
+  /// Quality choice: the largest model the device can hold.
+  LocalizedMessage get settingsSpeechQualityAccurate => LocalizedMessage(
+    key: 'settingsSpeechQualityAccurate',
+    fallback: Copy.settingsSpeechQualityAccurate,
+  );
+
+  /// Heading of the list of speech model files.
+  LocalizedMessage get settingsSpeechModels => LocalizedMessage(
+    key: 'settingsSpeechModels',
+    fallback: Copy.settingsSpeechModels,
+  );
+
+  /// Name of the smallest, quickest speech model.
+  LocalizedMessage get settingsSpeechModelFast => LocalizedMessage(
+    key: 'settingsSpeechModelFast',
+    fallback: Copy.settingsSpeechModelFast,
+  );
+
+  /// Name of the middle speech model.
+  LocalizedMessage get settingsSpeechModelBalanced => LocalizedMessage(
+    key: 'settingsSpeechModelBalanced',
+    fallback: Copy.settingsSpeechModelBalanced,
+  );
+
+  /// Name of the largest, most accurate speech model.
+  LocalizedMessage get settingsSpeechModelAccurate => LocalizedMessage(
+    key: 'settingsSpeechModelAccurate',
+    fallback: Copy.settingsSpeechModelAccurate,
+  );
+
+  /// Name of the small model that notices when someone speaks.
+  LocalizedMessage get settingsSpeechModelVad => LocalizedMessage(
+    key: 'settingsSpeechModelVad',
+    fallback: Copy.settingsSpeechModelVad,
+  );
+
+  /// Where a speech model came from: the app itself.
+  LocalizedMessage get settingsSpeechModelBundled => LocalizedMessage(
+    key: 'settingsSpeechModelBundled',
+    fallback: Copy.settingsSpeechModelBundled,
+  );
+
+  /// Where a speech model came from: a file the operator imported.
+  LocalizedMessage get settingsSpeechModelImported => LocalizedMessage(
+    key: 'settingsSpeechModelImported',
+    fallback: Copy.settingsSpeechModelImported,
+  );
+
+  /// Where a speech model comes from: not in the app, only by import.
+  LocalizedMessage get settingsSpeechModelImportOnly => LocalizedMessage(
+    key: 'settingsSpeechModelImportOnly',
+    fallback: Copy.settingsSpeechModelImportOnly,
+  );
+
+  /// A speech model file is on this device and has not been checked this
+  /// session.
+  LocalizedMessage get settingsSpeechModelPresent => LocalizedMessage(
+    key: 'settingsSpeechModelPresent',
+    fallback: Copy.settingsSpeechModelPresent,
+  );
+
+  /// A speech model file matched its published size and fingerprint.
+  LocalizedMessage get settingsSpeechModelVerified => LocalizedMessage(
+    key: 'settingsSpeechModelVerified',
+    fallback: Copy.settingsSpeechModelVerified,
+  );
+
+  /// A speech model file is not on this device.
+  LocalizedMessage get settingsSpeechModelMissing => LocalizedMessage(
+    key: 'settingsSpeechModelMissing',
+    fallback: Copy.settingsSpeechModelMissing,
+  );
+
+  /// A speech model file failed a check.
+  LocalizedMessage get settingsSpeechModelDamaged => LocalizedMessage(
+    key: 'settingsSpeechModelDamaged',
+    fallback: Copy.settingsSpeechModelDamaged,
+  );
+
+  /// Marks the speech model that turns speech into text now.
+  LocalizedMessage get settingsSpeechModelInUse => LocalizedMessage(
+    key: 'settingsSpeechModelInUse',
+    fallback: Copy.settingsSpeechModelInUse,
+  );
+
+  /// A speech model row's supporting line: where it came from, its state
+  /// and its size.
+  LocalizedMessage settingsSpeechModelDetail(
+    String origin,
+    String state,
+    String size,
+  ) => LocalizedMessage(
+    key: 'settingsSpeechModelDetail',
+    fallback: Copy.settingsSpeechModelDetail(origin, state, size),
+    arguments: <String, Object?>{
+      'origin': LocalizedMessage.encodeArgument(origin),
+      'state': LocalizedMessage.encodeArgument(state),
+      'size': LocalizedMessage.encodeArgument(size),
+    },
+  );
+
+  /// Warns that a speech model does not fit this device now.
+  LocalizedMessage get settingsSpeechTooLarge => LocalizedMessage(
+    key: 'settingsSpeechTooLarge',
+    fallback: Copy.settingsSpeechTooLarge,
+  );
+
+  /// Checks a speech model file against its published fingerprint.
+  LocalizedMessage get settingsSpeechVerify => LocalizedMessage(
+    key: 'settingsSpeechVerify',
+    fallback: Copy.settingsSpeechVerify,
+  );
+
+  /// A speech model passed its check.
+  LocalizedMessage settingsSpeechVerified(String model) => LocalizedMessage(
+    key: 'settingsSpeechVerified',
+    fallback: Copy.settingsSpeechVerified(model),
+    arguments: <String, Object?>{
+      'model': LocalizedMessage.encodeArgument(model),
+    },
+  );
+
+  /// A speech model failed its check.
+  LocalizedMessage settingsSpeechVerifyMismatch(String model) =>
+      LocalizedMessage(
+        key: 'settingsSpeechVerifyMismatch',
+        fallback: Copy.settingsSpeechVerifyMismatch(model),
+        arguments: <String, Object?>{
+          'model': LocalizedMessage.encodeArgument(model),
+        },
+      );
+
+  /// Picks a speech model file to add to this device.
+  LocalizedMessage get settingsSpeechImport => LocalizedMessage(
+    key: 'settingsSpeechImport',
+    fallback: Copy.settingsSpeechImport,
+  );
+
+  /// An imported speech model passed its check and was added.
+  LocalizedMessage settingsSpeechImported(String model) => LocalizedMessage(
+    key: 'settingsSpeechImported',
+    fallback: Copy.settingsSpeechImported(model),
+    arguments: <String, Object?>{
+      'model': LocalizedMessage.encodeArgument(model),
+    },
+  );
+
+  /// Removes an imported speech model from this device.
+  LocalizedMessage get settingsSpeechRemove => LocalizedMessage(
+    key: 'settingsSpeechRemove',
+    fallback: Copy.settingsSpeechRemove,
+  );
+
+  /// Title of the confirmation before an imported speech model is
+  /// removed.
+  LocalizedMessage settingsSpeechRemoveTitle(String model) => LocalizedMessage(
+    key: 'settingsSpeechRemoveTitle',
+    fallback: Copy.settingsSpeechRemoveTitle(model),
+    arguments: <String, Object?>{
+      'model': LocalizedMessage.encodeArgument(model),
+    },
+  );
+
+  /// What removing an imported speech model does.
+  LocalizedMessage get settingsSpeechRemoveMessage => LocalizedMessage(
+    key: 'settingsSpeechRemoveMessage',
+    fallback: Copy.settingsSpeechRemoveMessage,
+  );
+
+  /// An imported speech model was removed.
+  LocalizedMessage settingsSpeechRemoved(String model) => LocalizedMessage(
+    key: 'settingsSpeechRemoved',
+    fallback: Copy.settingsSpeechRemoved(model),
+    arguments: <String, Object?>{
+      'model': LocalizedMessage.encodeArgument(model),
+    },
   );
 
   /// Voice-language names, each in its own language's usual English name.
@@ -10907,6 +11379,12 @@ final class CopyMessages {
     arguments: <String, Object?>{
       'version': LocalizedMessage.encodeArgument(version),
     },
+  );
+
+  /// Marks an older, read-only online transcription run of a recording.
+  LocalizedMessage get meetingTranscriptCloudVersion => LocalizedMessage(
+    key: 'meetingTranscriptCloudVersion',
+    fallback: Copy.meetingTranscriptCloudVersion,
   );
 
   /// Parts of a recording one run could not transcribe.

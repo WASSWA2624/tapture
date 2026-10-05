@@ -266,8 +266,9 @@ final class LiveTranscriptController extends Notifier<LiveTranscriptStatus> {
   }
 
   void _noteRefusal(_LiveRun run, Result<void> result) {
-    if (result case FailureResult<void>(:final Failure failure)
-        when ref.mounted && identical(_run, run)) {
+    if (result case FailureResult<void>(
+      :final Failure failure,
+    ) when ref.mounted && identical(_run, run)) {
       state = state.copyWith(failure: failure);
     }
   }
@@ -328,11 +329,21 @@ final class LiveTranscriptController extends Notifier<LiveTranscriptStatus> {
     );
     if (discarded case FailureResult<void>(:final Failure failure)) {
       run.logger.warn(_tag, 'discard failed (${failure.runtimeType})');
+      // A cancelled take is left staged for recovery, with its row still
+      // live, so nothing is held for it; a published take not yet filed
+      // can still be saved.
+      final bool busy = run.busy;
+      if (!busy) {
+        run.release();
+      }
       if (ref.mounted && identical(_run, run)) {
+        if (!busy) {
+          _closeKeepAlive();
+        }
         state = state.copyWith(
           phase: TranscriptSessionPhase.failed,
           failure: failure,
-          retryable: false,
+          retryable: busy,
         );
       }
       return discarded;

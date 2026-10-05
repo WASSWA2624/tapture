@@ -105,6 +105,13 @@ abstract interface class TranscriptRepository {
   /// Transcripts heard from audio filed on record [recordId], newest first.
   Stream<List<TranscriptSummary>> watchRecord(String recordId);
 
+  /// The audio clips filed on record [recordId] that no transcript has been
+  /// heard from, in the record's order, kept current: for each, the
+  /// capture transcript it would begin, naming the clip as its attachment,
+  /// its take as the audio and its filing time as the start. The language
+  /// and the model are left empty for the caller.
+  Stream<List<TranscriptStart>> watchUntranscribedAudio(String recordId);
+
   /// Transcripts of meeting [meetingId], newest first.
   Stream<List<TranscriptSummary>> watchMeeting(String meetingId);
 

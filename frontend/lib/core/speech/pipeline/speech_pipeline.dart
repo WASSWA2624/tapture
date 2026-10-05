@@ -82,6 +82,7 @@ final class SpeechPipeline {
          nextSegmentId: nextSegmentId,
        ),
        _prompt = PromptCarry(config: config),
+       _stabiliser = InterimStabiliser(repeatWords: config.interimRepeatWords),
        _noticeSamples = config.samplesOf(config.engineBehindNoticeInterval) {
     _vad = VadDriver(
       store: store,
@@ -101,7 +102,7 @@ final class SpeechPipeline {
   final DecodeScheduler _scheduler;
   final SegmentAssembler _assembler;
   final PromptCarry _prompt;
-  final InterimStabiliser _stabiliser = InterimStabiliser();
+  final InterimStabiliser _stabiliser;
   final int _noticeSamples;
   final ListQueue<_Unsaved> _unsaved = ListQueue<_Unsaved>();
   final List<Completer<void>> _drainWaiters = <Completer<void>>[];
@@ -375,9 +376,11 @@ final class SpeechPipeline {
     final CancellationToken cancel = _inFlightCancel = CancellationToken();
     final bool committed = job.kind == SpeechDecodeKind.committed;
     final UtteranceBoundary? utterance = job.utterance;
-    final String prompt = utterance != null
-        ? _prompt.promptFor(utterance)
-        : _prompt.promptAt(startSample: job.fromSample, length: job.length);
+    // Drafts never carry a prompt: two drafts conditioned on the same text
+    // can agree on a phrase whisper read on from it.
+    final String prompt = committed && _config.carryPrompt
+        ? _prompt.promptFor(utterance!)
+        : '';
     _retained = job.length;
     final Result<Int16List> read = await _store.read(
       job.fromSample,
@@ -426,10 +429,12 @@ final class SpeechPipeline {
     final SpeechDecodeProfile profile = _config.dictation
         ? lease.selection.dictationCommittedFor(samples)
         : lease.selection.committed;
-    return _scheduler.level == BackpressureLevel.reducedContext
-        ? profile.copyWith(
-            audioContextPad: AppConstants.speechEngine.reducedAudioContextPad,
-          )
+    final int reduced = AppConstants.speechEngine.reducedAudioContextPad;
+    final int pad = profile.audioContextPad;
+    // Under backlog a final encodes no more than the reduced context.
+    return _scheduler.level == BackpressureLevel.reducedContext &&
+            (pad == 0 || pad > reduced)
+        ? profile.copyWith(audioContextPad: reduced)
         : profile;
   }
 
@@ -529,7 +534,7 @@ final class SpeechPipeline {
         in ready) {
       if (done.resetPrompt) {
         _prompt.reset();
-      } else {
+      } else if (_config.carryPrompt) {
         _prompt.commit(done.utterance.segments);
       }
       _utterances++;

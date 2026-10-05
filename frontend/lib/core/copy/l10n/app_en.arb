@@ -4017,6 +4017,10 @@
   "@captureRecordAudio": {
     "description": "Audio recorder start."
   },
+  "captureRecordTranscribe": "Record and transcribe",
+  "@captureRecordTranscribe": {
+    "description": "Caption recorder start when a speech model is ready: records the audio and writes down the words on this device."
+  },
   "capturePauseAudio": "Pause",
   "@capturePauseAudio": {
     "description": "Audio recorder pause."
@@ -4247,6 +4251,187 @@
   "speechOfflineBadge": "On this device",
   "@speechOfflineBadge": {
     "description": "Badge saying speech is turned into text on this device, without the network."
+  },
+  "liveTranscriptUnavailable": "Live transcription needs a speech model on this device.",
+  "@liveTranscriptUnavailable": {
+    "description": "Headline of the Transcribe screen when no speech model can run."
+  },
+  "liveTranscriptUnavailableRecovery": "Open Settings, Language, to check the speech model.",
+  "@liveTranscriptUnavailableRecovery": {
+    "description": "What to do when live transcription is unavailable."
+  },
+  "navTranscripts": "Transcripts",
+  "@navTranscripts": {
+    "description": "More menu entry: the transcript history."
+  },
+  "transcriptsTitle": "Transcripts",
+  "@transcriptsTitle": {
+    "description": "Title of the transcript history."
+  },
+  "transcriptsNew": "New transcription",
+  "@transcriptsNew": {
+    "description": "Opens the Transcribe screen to record a new transcript."
+  },
+  "transcriptsEmptyHeadline": "No transcripts yet",
+  "@transcriptsEmptyHeadline": {
+    "description": "Headline of the transcript history with no transcripts."
+  },
+  "transcriptsEmptyMessage": "Record speech and Tapture writes it down on this device. No connection is needed.",
+  "@transcriptsEmptyMessage": {
+    "description": "Message of the transcript history with no transcripts."
+  },
+  "transcriptsNoMatchHeadline": "No matching transcripts",
+  "@transcriptsNoMatchHeadline": {
+    "description": "Headline when a transcript search matches nothing."
+  },
+  "transcriptsSearchHint": "Search transcripts",
+  "@transcriptsSearchHint": {
+    "description": "Prompt of the transcript history search field."
+  },
+  "transcriptsNoProject": "Open a project to transcribe",
+  "@transcriptsNoProject": {
+    "description": "Headline of the Transcribe screen with no project open."
+  },
+  "transcriptsNoProjectMessage": "Recordings and transcripts are saved in the project folder.",
+  "@transcriptsNoProjectMessage": {
+    "description": "Why a project is needed before transcribing."
+  },
+  "transcribeTitle": "Transcribe",
+  "@transcribeTitle": {
+    "description": "Title of the screen that records and transcribes speech, and its project menu entry."
+  },
+  "transcriptDetailTitle": "Transcript",
+  "@transcriptDetailTitle": {
+    "description": "Title of one transcript's page."
+  },
+  "transcriptMissing": "This transcript is not on this device",
+  "@transcriptMissing": {
+    "description": "Headline when an opened transcript no longer exists."
+  },
+  "transcriptMissingMessage": "It was discarded, or it belongs to a project that is not here.",
+  "@transcriptMissingMessage": {
+    "description": "Why an opened transcript is missing."
+  },
+  "transcriptOriginCapture": "From a capture",
+  "@transcriptOriginCapture": {
+    "description": "Marks a transcript heard from a capture's recording."
+  },
+  "transcriptOriginMeeting": "From a meeting",
+  "@transcriptOriginMeeting": {
+    "description": "Marks a transcript heard from a meeting's recording."
+  },
+  "transcriptOriginStandalone": "Transcription",
+  "@transcriptOriginStandalone": {
+    "description": "Marks a transcript recorded on the Transcribe screen."
+  },
+  "transcriptStatusInterrupted": "Interrupted. What was heard is kept.",
+  "@transcriptStatusInterrupted": {
+    "description": "Notice on a transcript whose recording ended before it was finished."
+  },
+  "transcriptEditedLabel": "Edited text",
+  "@transcriptEditedLabel": {
+    "description": "The operator's edit of a transcript, kept beside the original."
+  },
+  "transcriptOriginalLabel": "Original, as heard",
+  "@transcriptOriginalLabel": {
+    "description": "The transcript exactly as it was heard, never changed."
+  },
+  "transcriptSaveEdit": "Save changes",
+  "@transcriptSaveEdit": {
+    "description": "Saves the edited transcript beside the original."
+  },
+  "transcriptEditSaved": "Changes saved. The original transcript is kept.",
+  "@transcriptEditSaved": {
+    "description": "Confirms an edited transcript was saved."
+  },
+  "transcriptRevert": "Go back to the original",
+  "@transcriptRevert": {
+    "description": "Removes the edit and shows the transcript as heard."
+  },
+  "transcriptRevertTitle": "Go back to the original transcript?",
+  "@transcriptRevertTitle": {
+    "description": "Title of the confirmation before an edit is removed."
+  },
+  "transcriptRevertMessage": "Your changes are removed. The original stays as it was recorded.",
+  "@transcriptRevertMessage": {
+    "description": "What removing a transcript edit does."
+  },
+  "transcriptRevertConfirm": "Use original",
+  "@transcriptRevertConfirm": {
+    "description": "Confirms removing a transcript edit."
+  },
+  "transcriptReverted": "The original transcript is back.",
+  "@transcriptReverted": {
+    "description": "Confirms a transcript edit was removed."
+  },
+  "transcriptRename": "Rename",
+  "@transcriptRename": {
+    "description": "Gives a transcript a new title."
+  },
+  "transcriptTitleLabel": "Title",
+  "@transcriptTitleLabel": {
+    "description": "Field for a transcript's title."
+  },
+  "transcriptLanguage": "Language: {language}",
+  "@transcriptLanguage": {
+    "description": "The language a transcript was heard in.",
+    "placeholders": {
+      "language": {
+        "type": "Object",
+        "description": "Value of language in transcriptLanguage. User-provided content is not translated."
+      }
+    }
+  },
+  "transcriptModel": "Speech model: {model}",
+  "@transcriptModel": {
+    "description": "The speech model that heard a transcript.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "Value of model in transcriptModel. User-provided content is not translated."
+      }
+    }
+  },
+  "transcriptAudioLength": "Recording {minutes}:{seconds}",
+  "@transcriptAudioLength": {
+    "description": "How long a transcript's recording is.",
+    "placeholders": {
+      "minutes": {
+        "type": "Object",
+        "description": "Value of minutes in transcriptAudioLength. User-provided content is not translated."
+      },
+      "seconds": {
+        "type": "Object",
+        "description": "Value of seconds in transcriptAudioLength. User-provided content is not translated."
+      }
+    }
+  },
+  "transcriptNoAudio": "The recording was not kept on this device.",
+  "@transcriptNoAudio": {
+    "description": "A transcript whose recording is not filed on this device."
+  },
+  "transcriptGaps": "{count, plural, =0{All of the recording is transcribed.} one{One part of the recording is not transcribed yet.} other{{count} parts of the recording are not transcribed yet.}}",
+  "@transcriptGaps": {
+    "description": "How many parts of a transcript's recording are left untranscribed.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Value of count in transcriptGaps. User-provided content is not translated.",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "transcriptFinish": "Finish the transcript",
+  "@transcriptFinish": {
+    "description": "Transcribes the parts of a recording left untranscribed, on this device."
+  },
+  "transcriptFinished": "The transcript is finished.",
+  "@transcriptFinished": {
+    "description": "Confirms the rest of a recording was transcribed."
+  },
+  "transcriptTranscribeOnDevice": "Transcribe on this device",
+  "@transcriptTranscribeOnDevice": {
+    "description": "On a record page, writes down the words of its audio clips that have no transcript yet, on this device."
   },
   "captureAudioScopeTitle": "Use audio with",
   "@captureAudioScopeTitle": {
@@ -4714,6 +4899,188 @@
   "settingsVoiceLanguage": "Voice language",
   "@settingsVoiceLanguage": {
     "description": "The language dictation listens for."
+  },
+  "settingsSpeechSection": "Speech recognition",
+  "@settingsSpeechSection": {
+    "description": "Heading of the on-device speech settings on the Language screen."
+  },
+  "settingsSpeechEngineWhisper": "Speech is turned into text on this device by the {model}.",
+  "@settingsSpeechEngineWhisper": {
+    "description": "Which engine turns speech into text: the app's own on-device model.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name, such as 'Fast model'."
+      }
+    }
+  },
+  "settingsSpeechEnginePlatform": "Speech is turned into text by this device’s own speech service, on the device only.",
+  "@settingsSpeechEnginePlatform": {
+    "description": "Which engine turns speech into text: the operating system's recogniser, kept on the device."
+  },
+  "settingsSpeechEngineNone": "Voice input is not available on this device yet.",
+  "@settingsSpeechEngineNone": {
+    "description": "No engine can turn speech into text on this device now."
+  },
+  "settingsSpeechQuality": "Transcription quality",
+  "@settingsSpeechQuality": {
+    "description": "Name of the speed-or-accuracy speech setting."
+  },
+  "settingsSpeechQualityEffect": "Automatic picks the best model this device can run smoothly.",
+  "@settingsSpeechQualityEffect": {
+    "description": "What the transcription quality setting changes."
+  },
+  "settingsSpeechQualityAuto": "Automatic",
+  "@settingsSpeechQualityAuto": {
+    "description": "Quality choice: the device decides."
+  },
+  "settingsSpeechQualityFast": "Faster, uses less battery",
+  "@settingsSpeechQualityFast": {
+    "description": "Quality choice: always the fast model."
+  },
+  "settingsSpeechQualityAccurate": "More accurate, needs a stronger device",
+  "@settingsSpeechQualityAccurate": {
+    "description": "Quality choice: the largest model the device can hold."
+  },
+  "settingsSpeechModels": "Speech models",
+  "@settingsSpeechModels": {
+    "description": "Heading of the list of speech model files."
+  },
+  "settingsSpeechModelFast": "Fast model",
+  "@settingsSpeechModelFast": {
+    "description": "Name of the smallest, quickest speech model."
+  },
+  "settingsSpeechModelBalanced": "Balanced model",
+  "@settingsSpeechModelBalanced": {
+    "description": "Name of the middle speech model."
+  },
+  "settingsSpeechModelAccurate": "Accurate model",
+  "@settingsSpeechModelAccurate": {
+    "description": "Name of the largest, most accurate speech model."
+  },
+  "settingsSpeechModelVad": "Voice detector",
+  "@settingsSpeechModelVad": {
+    "description": "Name of the small model that notices when someone speaks."
+  },
+  "settingsSpeechModelBundled": "Included with the app",
+  "@settingsSpeechModelBundled": {
+    "description": "Where a speech model came from: the app itself."
+  },
+  "settingsSpeechModelImported": "Imported",
+  "@settingsSpeechModelImported": {
+    "description": "Where a speech model came from: a file the operator imported."
+  },
+  "settingsSpeechModelImportOnly": "Import only",
+  "@settingsSpeechModelImportOnly": {
+    "description": "Where a speech model comes from: not in the app, only by import."
+  },
+  "settingsSpeechModelPresent": "Installed",
+  "@settingsSpeechModelPresent": {
+    "description": "A speech model file is on this device and has not been checked this session."
+  },
+  "settingsSpeechModelVerified": "Checked",
+  "@settingsSpeechModelVerified": {
+    "description": "A speech model file matched its published size and fingerprint."
+  },
+  "settingsSpeechModelMissing": "Missing",
+  "@settingsSpeechModelMissing": {
+    "description": "A speech model file is not on this device."
+  },
+  "settingsSpeechModelDamaged": "Damaged",
+  "@settingsSpeechModelDamaged": {
+    "description": "A speech model file failed a check."
+  },
+  "settingsSpeechModelInUse": "In use",
+  "@settingsSpeechModelInUse": {
+    "description": "Marks the speech model that turns speech into text now."
+  },
+  "settingsSpeechModelDetail": "{origin} · {state} · {size}",
+  "@settingsSpeechModelDetail": {
+    "description": "A speech model row's supporting line: where it came from, its state and its size.",
+    "placeholders": {
+      "origin": {
+        "type": "Object",
+        "description": "Where the model came from."
+      },
+      "state": {
+        "type": "Object",
+        "description": "Whether the file is installed, checked, missing or damaged."
+      },
+      "size": {
+        "type": "Object",
+        "description": "The file size, already formatted."
+      }
+    }
+  },
+  "settingsSpeechTooLarge": "Too large for the memory this device has free. A smaller model is used.",
+  "@settingsSpeechTooLarge": {
+    "description": "Warns that a speech model does not fit this device now."
+  },
+  "settingsSpeechVerify": "Verify",
+  "@settingsSpeechVerify": {
+    "description": "Checks a speech model file against its published fingerprint."
+  },
+  "settingsSpeechVerified": "The {model} matches its published file.",
+  "@settingsSpeechVerified": {
+    "description": "A speech model passed its check.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
+  },
+  "settingsSpeechVerifyMismatch": "The {model} does not match its published file. Import it again or reinstall the app.",
+  "@settingsSpeechVerifyMismatch": {
+    "description": "A speech model failed its check.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
+  },
+  "settingsSpeechImport": "Import a speech model",
+  "@settingsSpeechImport": {
+    "description": "Picks a speech model file to add to this device."
+  },
+  "settingsSpeechImported": "The {model} was checked and added.",
+  "@settingsSpeechImported": {
+    "description": "An imported speech model passed its check and was added.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
+  },
+  "settingsSpeechRemove": "Remove",
+  "@settingsSpeechRemove": {
+    "description": "Removes an imported speech model from this device."
+  },
+  "settingsSpeechRemoveTitle": "Remove the {model}?",
+  "@settingsSpeechRemoveTitle": {
+    "description": "Title of the confirmation before an imported speech model is removed.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
+  },
+  "settingsSpeechRemoveMessage": "Its file is deleted from this device. Speech uses a smaller model until you import it again.",
+  "@settingsSpeechRemoveMessage": {
+    "description": "What removing an imported speech model does."
+  },
+  "settingsSpeechRemoved": "The {model} was removed.",
+  "@settingsSpeechRemoved": {
+    "description": "An imported speech model was removed.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
   },
   "languageEnglish": "English",
   "@languageEnglish": {
@@ -9935,6 +10302,10 @@
         "format": "decimalPattern"
       }
     }
+  },
+  "meetingTranscriptCloudVersion": "Online transcription",
+  "@meetingTranscriptCloudVersion": {
+    "description": "Marks an older transcription run of a meeting recording made by an online service; it is read-only."
   },
   "meetingTranscriptGaps": "{count, plural, one{1 part could not be transcribed} other{{count} parts could not be transcribed}}",
   "@meetingTranscriptGaps": {

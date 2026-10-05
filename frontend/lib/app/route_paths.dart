@@ -25,6 +25,17 @@ abstract final class RoutePaths {
   /// Deleted records across projects, restorable until the purge (task 014).
   static const String recycleBin = '$more/recycle-bin';
 
+  /// Transcripts across projects, newest first (task 123).
+  static const String transcripts = '$more/transcripts';
+
+  /// Records and transcribes in the open project (task 123). Listed before
+  /// [transcript] so `new` is not taken for an id.
+  static const String transcribe = '$transcripts/new';
+
+  /// One transcript, from the transcripts across projects (task 123).
+  static String transcript(String id) =>
+      '$transcripts/${Uri.encodeComponent(id)}';
+
   /// Settings destinations.
   static const String settingsOperator = '$more/operator';
   static const String settingsCapture = '$more/capture';
@@ -199,6 +210,18 @@ abstract final class RoutePaths {
   /// Reviews one meeting on [projectId] (task 017).
   static String projectMeetingReview(String projectId, String meetingId) =>
       '${project(projectId)}/meetings/${Uri.encodeComponent(meetingId)}/review';
+
+  /// The transcripts of [projectId], newest first (task 123).
+  static String projectTranscripts(String projectId) =>
+      '${project(projectId)}/transcripts';
+
+  /// Records and transcribes in [projectId] (task 123).
+  static String projectTranscribe(String projectId) =>
+      '${projectTranscripts(projectId)}/new';
+
+  /// One transcript of [projectId] (task 123).
+  static String projectTranscript(String projectId, String transcriptId) =>
+      '${projectTranscripts(projectId)}/${Uri.encodeComponent(transcriptId)}';
 
   /// Review of one record inside its project (task 016).
   static String projectRecordReview(String projectId, String recordId) =>

@@ -4017,6 +4017,10 @@
   "@captureRecordAudio": {
     "description": "Audio recorder start."
   },
+  "captureRecordTranscribe": "Récórd ánd tránscríbé········",
+  "@captureRecordTranscribe": {
+    "description": "Caption recorder start when a speech model is ready: records the audio and writes down the words on this device."
+  },
   "capturePauseAudio": "Páúsé··",
   "@capturePauseAudio": {
     "description": "Audio recorder pause."
@@ -4247,6 +4251,187 @@
   "speechOfflineBadge": "Ón thís dévícé·····",
   "@speechOfflineBadge": {
     "description": "Badge saying speech is turned into text on this device, without the network."
+  },
+  "liveTranscriptUnavailable": "Lívé tránscríptíón nééds á spééch módél ón thís dévícé.····················",
+  "@liveTranscriptUnavailable": {
+    "description": "Headline of the Transcribe screen when no speech model can run."
+  },
+  "liveTranscriptUnavailableRecovery": "Ópén Séttíngs, Lángúágé, tó chéck thé spééch módél.··················",
+  "@liveTranscriptUnavailableRecovery": {
+    "description": "What to do when live transcription is unavailable."
+  },
+  "navTranscripts": "Tránscrípts····",
+  "@navTranscripts": {
+    "description": "More menu entry: the transcript history."
+  },
+  "transcriptsTitle": "Tránscrípts····",
+  "@transcriptsTitle": {
+    "description": "Title of the transcript history."
+  },
+  "transcriptsNew": "Néw tránscríptíón······",
+  "@transcriptsNew": {
+    "description": "Opens the Transcribe screen to record a new transcript."
+  },
+  "transcriptsEmptyHeadline": "Nó tránscrípts yét·······",
+  "@transcriptsEmptyHeadline": {
+    "description": "Headline of the transcript history with no transcripts."
+  },
+  "transcriptsEmptyMessage": "Récórd spééch ánd Táptúré wrítés ít dówn ón thís dévícé. Nó cónnéctíón ís néédéd.·····························",
+  "@transcriptsEmptyMessage": {
+    "description": "Message of the transcript history with no transcripts."
+  },
+  "transcriptsNoMatchHeadline": "Nó mátchíng tránscrípts·········",
+  "@transcriptsNoMatchHeadline": {
+    "description": "Headline when a transcript search matches nothing."
+  },
+  "transcriptsSearchHint": "Séárch tránscrípts·······",
+  "@transcriptsSearchHint": {
+    "description": "Prompt of the transcript history search field."
+  },
+  "transcriptsNoProject": "Ópén á prójéct tó tránscríbé··········",
+  "@transcriptsNoProject": {
+    "description": "Headline of the Transcribe screen with no project open."
+  },
+  "transcriptsNoProjectMessage": "Récórdíngs ánd tránscrípts áré sávéd ín thé prójéct fóldér.·····················",
+  "@transcriptsNoProjectMessage": {
+    "description": "Why a project is needed before transcribing."
+  },
+  "transcribeTitle": "Tránscríbé····",
+  "@transcribeTitle": {
+    "description": "Title of the screen that records and transcribes speech, and its project menu entry."
+  },
+  "transcriptDetailTitle": "Tránscrípt····",
+  "@transcriptDetailTitle": {
+    "description": "Title of one transcript's page."
+  },
+  "transcriptMissing": "Thís tránscrípt ís nót ón thís dévícé·············",
+  "@transcriptMissing": {
+    "description": "Headline when an opened transcript no longer exists."
+  },
+  "transcriptMissingMessage": "Ít wás díscárdéd, ór ít bélóngs tó á prójéct thát ís nót héré.······················",
+  "@transcriptMissingMessage": {
+    "description": "Why an opened transcript is missing."
+  },
+  "transcriptOriginCapture": "Fróm á cáptúré·····",
+  "@transcriptOriginCapture": {
+    "description": "Marks a transcript heard from a capture's recording."
+  },
+  "transcriptOriginMeeting": "Fróm á méétíng·····",
+  "@transcriptOriginMeeting": {
+    "description": "Marks a transcript heard from a meeting's recording."
+  },
+  "transcriptOriginStandalone": "Tránscríptíón·····",
+  "@transcriptOriginStandalone": {
+    "description": "Marks a transcript recorded on the Transcribe screen."
+  },
+  "transcriptStatusInterrupted": "Íntérrúptéd. Whát wás héárd ís képt.·············",
+  "@transcriptStatusInterrupted": {
+    "description": "Notice on a transcript whose recording ended before it was finished."
+  },
+  "transcriptEditedLabel": "Édítéd téxt····",
+  "@transcriptEditedLabel": {
+    "description": "The operator's edit of a transcript, kept beside the original."
+  },
+  "transcriptOriginalLabel": "Órígínál, ás héárd·······",
+  "@transcriptOriginalLabel": {
+    "description": "The transcript exactly as it was heard, never changed."
+  },
+  "transcriptSaveEdit": "Sávé chángés·····",
+  "@transcriptSaveEdit": {
+    "description": "Saves the edited transcript beside the original."
+  },
+  "transcriptEditSaved": "Chángés sávéd. Thé órígínál tránscrípt ís képt.·················",
+  "@transcriptEditSaved": {
+    "description": "Confirms an edited transcript was saved."
+  },
+  "transcriptRevert": "Gó báck tó thé órígínál·········",
+  "@transcriptRevert": {
+    "description": "Removes the edit and shows the transcript as heard."
+  },
+  "transcriptRevertTitle": "Gó báck tó thé órígínál tránscrípt?·············",
+  "@transcriptRevertTitle": {
+    "description": "Title of the confirmation before an edit is removed."
+  },
+  "transcriptRevertMessage": "Yóúr chángés áré rémóvéd. Thé órígínál stáys ás ít wás récórdéd.·······················",
+  "@transcriptRevertMessage": {
+    "description": "What removing a transcript edit does."
+  },
+  "transcriptRevertConfirm": "Úsé órígínál·····",
+  "@transcriptRevertConfirm": {
+    "description": "Confirms removing a transcript edit."
+  },
+  "transcriptReverted": "Thé órígínál tránscrípt ís báck.············",
+  "@transcriptReverted": {
+    "description": "Confirms a transcript edit was removed."
+  },
+  "transcriptRename": "Rénámé···",
+  "@transcriptRename": {
+    "description": "Gives a transcript a new title."
+  },
+  "transcriptTitleLabel": "Títlé··",
+  "@transcriptTitleLabel": {
+    "description": "Field for a transcript's title."
+  },
+  "transcriptLanguage": "Lángúágé: ····{language}",
+  "@transcriptLanguage": {
+    "description": "The language a transcript was heard in.",
+    "placeholders": {
+      "language": {
+        "type": "Object",
+        "description": "Value of language in transcriptLanguage. User-provided content is not translated."
+      }
+    }
+  },
+  "transcriptModel": "Spééch módél: ·····{model}",
+  "@transcriptModel": {
+    "description": "The speech model that heard a transcript.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "Value of model in transcriptModel. User-provided content is not translated."
+      }
+    }
+  },
+  "transcriptAudioLength": "Récórdíng ····{minutes}:{seconds}",
+  "@transcriptAudioLength": {
+    "description": "How long a transcript's recording is.",
+    "placeholders": {
+      "minutes": {
+        "type": "Object",
+        "description": "Value of minutes in transcriptAudioLength. User-provided content is not translated."
+      },
+      "seconds": {
+        "type": "Object",
+        "description": "Value of seconds in transcriptAudioLength. User-provided content is not translated."
+      }
+    }
+  },
+  "transcriptNoAudio": "Thé récórdíng wás nót képt ón thís dévícé.···············",
+  "@transcriptNoAudio": {
+    "description": "A transcript whose recording is not filed on this device."
+  },
+  "transcriptGaps": "{count, plural, =0{Áll óf thé récórdíng ís tránscríbéd.·············} one{Óné párt óf thé récórdíng ís nót tránscríbéd yét.··················} other{{count} párts óf thé récórdíng áré nót tránscríbéd yét.·················}}",
+  "@transcriptGaps": {
+    "description": "How many parts of a transcript's recording are left untranscribed.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Value of count in transcriptGaps. User-provided content is not translated.",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "transcriptFinish": "Fínísh thé tránscrípt········",
+  "@transcriptFinish": {
+    "description": "Transcribes the parts of a recording left untranscribed, on this device."
+  },
+  "transcriptFinished": "Thé tránscrípt ís fíníshéd.··········",
+  "@transcriptFinished": {
+    "description": "Confirms the rest of a recording was transcribed."
+  },
+  "transcriptTranscribeOnDevice": "Tránscríbé ón thís dévícé·········",
+  "@transcriptTranscribeOnDevice": {
+    "description": "On a record page, writes down the words of its audio clips that have no transcript yet, on this device."
   },
   "captureAudioScopeTitle": "Úsé áúdíó wíth·····",
   "@captureAudioScopeTitle": {
@@ -4714,6 +4899,188 @@
   "settingsVoiceLanguage": "Vóícé lángúágé·····",
   "@settingsVoiceLanguage": {
     "description": "The language dictation listens for."
+  },
+  "settingsSpeechSection": "Spééch récógnítíón·······",
+  "@settingsSpeechSection": {
+    "description": "Heading of the on-device speech settings on the Language screen."
+  },
+  "settingsSpeechEngineWhisper": "Spééch ís túrnéd íntó téxt ón thís dévícé by thé ··················{model}.",
+  "@settingsSpeechEngineWhisper": {
+    "description": "Which engine turns speech into text: the app's own on-device model.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name, such as 'Fast model'."
+      }
+    }
+  },
+  "settingsSpeechEnginePlatform": "Spééch ís túrnéd íntó téxt by thís dévícé’s ówn spééch sérvícé, ón thé dévícé ónly.······························",
+  "@settingsSpeechEnginePlatform": {
+    "description": "Which engine turns speech into text: the operating system's recogniser, kept on the device."
+  },
+  "settingsSpeechEngineNone": "Vóícé ínpút ís nót áváíláblé ón thís dévícé yét.·················",
+  "@settingsSpeechEngineNone": {
+    "description": "No engine can turn speech into text on this device now."
+  },
+  "settingsSpeechQuality": "Tránscríptíón qúálíty········",
+  "@settingsSpeechQuality": {
+    "description": "Name of the speed-or-accuracy speech setting."
+  },
+  "settingsSpeechQualityEffect": "Áútómátíc pícks thé bést módél thís dévícé cán rún smóóthly.·····················",
+  "@settingsSpeechQualityEffect": {
+    "description": "What the transcription quality setting changes."
+  },
+  "settingsSpeechQualityAuto": "Áútómátíc····",
+  "@settingsSpeechQualityAuto": {
+    "description": "Quality choice: the device decides."
+  },
+  "settingsSpeechQualityFast": "Fástér, úsés léss báttéry·········",
+  "@settingsSpeechQualityFast": {
+    "description": "Quality choice: always the fast model."
+  },
+  "settingsSpeechQualityAccurate": "Móré áccúráté, nééds á stróngér dévícé··············",
+  "@settingsSpeechQualityAccurate": {
+    "description": "Quality choice: the largest model the device can hold."
+  },
+  "settingsSpeechModels": "Spééch módéls·····",
+  "@settingsSpeechModels": {
+    "description": "Heading of the list of speech model files."
+  },
+  "settingsSpeechModelFast": "Fást módél····",
+  "@settingsSpeechModelFast": {
+    "description": "Name of the smallest, quickest speech model."
+  },
+  "settingsSpeechModelBalanced": "Báláncéd módél·····",
+  "@settingsSpeechModelBalanced": {
+    "description": "Name of the middle speech model."
+  },
+  "settingsSpeechModelAccurate": "Áccúráté módél·····",
+  "@settingsSpeechModelAccurate": {
+    "description": "Name of the largest, most accurate speech model."
+  },
+  "settingsSpeechModelVad": "Vóícé détéctór·····",
+  "@settingsSpeechModelVad": {
+    "description": "Name of the small model that notices when someone speaks."
+  },
+  "settingsSpeechModelBundled": "Ínclúdéd wíth thé ápp········",
+  "@settingsSpeechModelBundled": {
+    "description": "Where a speech model came from: the app itself."
+  },
+  "settingsSpeechModelImported": "Ímpórtéd···",
+  "@settingsSpeechModelImported": {
+    "description": "Where a speech model came from: a file the operator imported."
+  },
+  "settingsSpeechModelImportOnly": "Ímpórt ónly····",
+  "@settingsSpeechModelImportOnly": {
+    "description": "Where a speech model comes from: not in the app, only by import."
+  },
+  "settingsSpeechModelPresent": "Ínstálléd····",
+  "@settingsSpeechModelPresent": {
+    "description": "A speech model file is on this device and has not been checked this session."
+  },
+  "settingsSpeechModelVerified": "Chéckéd···",
+  "@settingsSpeechModelVerified": {
+    "description": "A speech model file matched its published size and fingerprint."
+  },
+  "settingsSpeechModelMissing": "Míssíng···",
+  "@settingsSpeechModelMissing": {
+    "description": "A speech model file is not on this device."
+  },
+  "settingsSpeechModelDamaged": "Dámágéd···",
+  "@settingsSpeechModelDamaged": {
+    "description": "A speech model file failed a check."
+  },
+  "settingsSpeechModelInUse": "Ín úsé···",
+  "@settingsSpeechModelInUse": {
+    "description": "Marks the speech model that turns speech into text now."
+  },
+  "settingsSpeechModelDetail": "{origin} · {state} · {size}",
+  "@settingsSpeechModelDetail": {
+    "description": "A speech model row's supporting line: where it came from, its state and its size.",
+    "placeholders": {
+      "origin": {
+        "type": "Object",
+        "description": "Where the model came from."
+      },
+      "state": {
+        "type": "Object",
+        "description": "Whether the file is installed, checked, missing or damaged."
+      },
+      "size": {
+        "type": "Object",
+        "description": "The file size, already formatted."
+      }
+    }
+  },
+  "settingsSpeechTooLarge": "Tóó lárgé fór thé mémóry thís dévícé hás fréé. Á smállér módél ís úséd.·························",
+  "@settingsSpeechTooLarge": {
+    "description": "Warns that a speech model does not fit this device now."
+  },
+  "settingsSpeechVerify": "Vérífy···",
+  "@settingsSpeechVerify": {
+    "description": "Checks a speech model file against its published fingerprint."
+  },
+  "settingsSpeechVerified": "Thé ··{model} mátchés íts públíshéd fílé.··········",
+  "@settingsSpeechVerified": {
+    "description": "A speech model passed its check.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
+  },
+  "settingsSpeechVerifyMismatch": "Thé ··{model} dóés nót mátch íts públíshéd fílé. Ímpórt ít ágáín ór réínstáll thé ápp.··························",
+  "@settingsSpeechVerifyMismatch": {
+    "description": "A speech model failed its check.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
+  },
+  "settingsSpeechImport": "Ímpórt á spééch módél········",
+  "@settingsSpeechImport": {
+    "description": "Picks a speech model file to add to this device."
+  },
+  "settingsSpeechImported": "Thé ··{model} wás chéckéd ánd áddéd.·········",
+  "@settingsSpeechImported": {
+    "description": "An imported speech model passed its check and was added.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
+  },
+  "settingsSpeechRemove": "Rémóvé···",
+  "@settingsSpeechRemove": {
+    "description": "Removes an imported speech model from this device."
+  },
+  "settingsSpeechRemoveTitle": "Rémóvé thé ····{model}?",
+  "@settingsSpeechRemoveTitle": {
+    "description": "Title of the confirmation before an imported speech model is removed.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
+  },
+  "settingsSpeechRemoveMessage": "Íts fílé ís délétéd fróm thís dévícé. Spééch úsés á smállér módél úntíl yóú ímpórt ít ágáín.·································",
+  "@settingsSpeechRemoveMessage": {
+    "description": "What removing an imported speech model does."
+  },
+  "settingsSpeechRemoved": "Thé ··{model} wás rémóvéd.·····",
+  "@settingsSpeechRemoved": {
+    "description": "An imported speech model was removed.",
+    "placeholders": {
+      "model": {
+        "type": "Object",
+        "description": "The model's name."
+      }
+    }
   },
   "languageEnglish": "Énglísh···",
   "@languageEnglish": {
@@ -9935,6 +10302,10 @@
         "format": "decimalPattern"
       }
     }
+  },
+  "meetingTranscriptCloudVersion": "Ónlíné tránscríptíón·······",
+  "@meetingTranscriptCloudVersion": {
+    "description": "Marks an older transcription run of a meeting recording made by an online service; it is read-only."
   },
   "meetingTranscriptGaps": "{count, plural, one{1 párt cóúld nót bé tránscríbéd···········} other{{count} párts cóúld nót bé tránscríbéd···········}}",
   "@meetingTranscriptGaps": {

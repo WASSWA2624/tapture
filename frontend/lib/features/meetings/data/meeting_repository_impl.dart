@@ -13,6 +13,7 @@ import 'package:tapture/core/db/tables/attachments.dart';
 import 'package:tapture/core/db/tables/meetings.dart';
 import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/db/tables/tombstones.dart';
+import 'package:tapture/core/db/tables/transcripts.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -22,6 +23,7 @@ import 'package:tapture/core/files/path_sanitizer.dart';
 import 'package:tapture/core/files/picked_document.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/speech/speech_text.dart';
 import 'package:tapture/core/time/clock.dart';
 
 import '../domain/action_entry.dart';
@@ -271,6 +273,10 @@ final class MeetingRepositoryImpl implements MeetingRepository {
     }
   }
 
+  /// The meeting [id]. Its transcript is the one source Refine minutes and
+  /// the minutes export read: an imported raw transcript when there is
+  /// one, otherwise the latest settled on-device transcript, otherwise the
+  /// last online transcription run.
   @override
   Future<Result<MeetingRecord?>> read(String id) async {
     try {
@@ -295,9 +301,10 @@ final class MeetingRepositoryImpl implements MeetingRepository {
         meeting: meeting,
         notes: document['notes'] as String? ?? '',
         minutes: row.minutesRefined ?? '',
-        transcript: row.transcriptRaw.isNotEmpty || versions.isEmpty
+        transcript: row.transcriptRaw.isNotEmpty
             ? row.transcriptRaw
-            : versions.last.text,
+            : await _heardTranscript(row.id) ??
+                  (versions.isEmpty ? '' : versions.last.text),
         transcripts: versions,
         attachments: files,
       ));
@@ -655,6 +662,59 @@ final class MeetingRepositoryImpl implements MeetingRepository {
     )..where(($MeetingsTable tbl) => tbl.id.equals(id))).getSingleOrNull();
   }
 
+  /// What the latest settled on-device transcript of meeting [meetingId]
+  /// that holds words reads as: the operator's edit when one stands, else
+  /// its raw segments in reading order. A take recorded without words (as
+  /// audio only) never hides an earlier one that has them. Null when there
+  /// is none. A transcript still recording or discarded is never read.
+  Future<String?> _heardTranscript(String meetingId) async {
+    final List<TranscriptRow> rows =
+        await (_database.select(_database.transcripts)
+              ..where(
+                ($TranscriptsTable tbl) =>
+                    tbl.ownerKind.equals(_meetingOwnerKind) &
+                    tbl.ownerId.equals(meetingId) &
+                    tbl.status.equals(transcriptLiveStatus).not(),
+              )
+              ..orderBy(<OrderClauseGenerator<$TranscriptsTable>>[
+                ($TranscriptsTable tbl) => OrderingTerm.desc(tbl.startedAt),
+                ($TranscriptsTable tbl) => OrderingTerm.desc(tbl.id),
+              ]))
+            .get();
+    final Set<String> gone = await _tombstoned(_transcriptsEntity, <String>[
+      for (final TranscriptRow row in rows) row.id,
+    ]);
+    for (final TranscriptRow row in rows) {
+      if (gone.contains(row.id)) {
+        continue;
+      }
+      final String text = row.textEdited ?? await _rawTranscript(row.id);
+      if (text.trim().isNotEmpty) {
+        return text;
+      }
+    }
+    return null;
+  }
+
+  /// The raw text of transcript [transcriptId]: its segments by start time,
+  /// then insertion order, joined as every transcript reads them.
+  Future<String> _rawTranscript(String transcriptId) async {
+    final List<TranscriptSegmentRow> segments =
+        await (_database.select(_database.transcriptSegments)
+              ..where(
+                ($TranscriptSegmentsTable tbl) =>
+                    tbl.transcriptId.equals(transcriptId),
+              )
+              ..orderBy(<OrderClauseGenerator<$TranscriptSegmentsTable>>[
+                ($TranscriptSegmentsTable tbl) => OrderingTerm.asc(tbl.startMs),
+                ($TranscriptSegmentsTable tbl) => OrderingTerm.asc(tbl.seq),
+              ]))
+            .get();
+    return SpeechText.join(
+      segments.map((TranscriptSegmentRow segment) => segment.textRaw),
+    );
+  }
+
   Future<bool> _isTombstoned(String entityType, String id) async {
     return (await _tombstoned(entityType, <String>[id])).isNotEmpty;
   }
@@ -784,6 +844,10 @@ const String _meetingsEntity = 'meetings';
 const String _attendeesEntity = 'attendees';
 const String _actionsEntity = 'meeting_actions';
 const String _attachmentsEntity = 'attachments';
+const String _transcriptsEntity = 'transcripts';
+
+/// The stored owner kind of a transcript recorded for a meeting.
+const String _meetingOwnerKind = 'meeting';
 
 /// Where a meeting's files sit inside the project folder.
 const String _meetingsFolder = 'meetings';

@@ -51,6 +51,11 @@ abstract final class ShellTitle {
     if (path.startsWith('${AppRoutes.templates}/')) {
       return localCopy.navTemplates;
     }
+    if (path.startsWith('${RoutePaths.transcripts}/')) {
+      return path == RoutePaths.transcribe
+          ? localCopy.transcribeTitle
+          : localCopy.transcriptDetailTitle;
+    }
     final String? titled = _titles(localCopy)[path];
     if (titled != null) {
       return titled;
@@ -105,6 +110,7 @@ Map<String, String> _titles(LocalizedCopy localCopy) => <String, String>{
   RoutePaths.templates: localCopy.navTemplates,
   RoutePaths.queue: localCopy.navQueue,
   RoutePaths.recycleBin: localCopy.recycleBinTitle,
+  RoutePaths.transcripts: localCopy.transcriptsTitle,
   RoutePaths.settingsAccount: localCopy.backendSettingsTitle,
   RoutePaths.settingsOperator: localCopy.operatorProfileTitle,
   RoutePaths.settingsRelay: localCopy.relayTitle,
@@ -149,6 +155,11 @@ String _projectLeaf(List<String> segments, LocalizedCopy localCopy) {
     'variance' => localCopy.varianceTitle,
     'quality' => localCopy.qualitySummaryTitle,
     'review' => localCopy.reviewTitle,
+    'transcripts' => switch (segments.length) {
+      1 => localCopy.transcriptsTitle,
+      _ when segments[1] == 'new' => localCopy.transcribeTitle,
+      _ => localCopy.transcriptDetailTitle,
+    },
     'meetings' =>
       segments.length >= 3 && segments.last == 'review'
           ? localCopy.meetingReviewTitle

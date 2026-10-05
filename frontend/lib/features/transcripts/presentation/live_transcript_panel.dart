@@ -79,7 +79,11 @@ class LiveTranscriptPanel extends ConsumerWidget {
         phase == TranscriptSessionPhase.idle ||
         phase == TranscriptSessionPhase.saved ||
         (phase == TranscriptSessionPhase.failed && !status.retryable);
-    final List<Widget> notices = _notices(localCopy, status);
+    // Before a session starts, the target says how it will record.
+    final TranscriptMode mode = phase == TranscriptSessionPhase.idle
+        ? target.mode
+        : status.mode;
+    final List<Widget> notices = _notices(localCopy, status, mode);
     final String? transcriptId = status.transcriptId;
     final ValueChanged<String>? open = onOpenTranscript;
     final Widget transcript = ValueListenableBuilder<LiveTranscriptFrame>(
@@ -106,24 +110,26 @@ class LiveTranscriptPanel extends ConsumerWidget {
         ],
         ValueListenableBuilder<LiveTranscriptFrame>(
           valueListenable: controller.frames,
-          builder: (BuildContext context, LiveTranscriptFrame frame, Widget? _) {
-            return AppRecordingBar(
-              phase: _barPhase(phase),
-              elapsed: frame.elapsed,
-              level: frame.level,
-              status: _barStatus(localCopy, status),
-              startLabel: startLabel,
-              onStart: canStart
-                  ? () => unawaited(controller.start(target))
-                  : null,
-              onPause: () => unawaited(controller.pause()),
-              onResume: () => unawaited(controller.resume()),
-              onStop: () => unawaited(controller.stop()),
-              onCancel: () => unawaited(_confirmDiscard(context, controller)),
-            );
-          },
+          builder:
+              (BuildContext context, LiveTranscriptFrame frame, Widget? _) {
+                return AppRecordingBar(
+                  phase: _barPhase(phase),
+                  elapsed: frame.elapsed,
+                  level: frame.level,
+                  status: _barStatus(localCopy, status, mode),
+                  startLabel: startLabel,
+                  onStart: canStart
+                      ? () => unawaited(controller.start(target))
+                      : null,
+                  onPause: () => unawaited(controller.pause()),
+                  onResume: () => unawaited(controller.resume()),
+                  onStop: () => unawaited(controller.stop()),
+                  onCancel: () =>
+                      unawaited(_confirmDiscard(context, controller)),
+                );
+              },
         ),
-        if (status.mode == TranscriptMode.live) ...<Widget>[
+        if (mode == TranscriptMode.live) ...<Widget>[
           const SizedBox(height: Space.x2),
           Align(
             alignment: AlignmentDirectional.centerStart,
@@ -133,9 +139,8 @@ class LiveTranscriptPanel extends ConsumerWidget {
             ),
           ),
         ],
-        if (phase == TranscriptSessionPhase.failed && status.retryable) ...<
-          Widget
-        >[
+        if (phase == TranscriptSessionPhase.failed &&
+            status.retryable) ...<Widget>[
           const SizedBox(height: Space.x2),
           Align(
             alignment: AlignmentDirectional.centerStart,
@@ -202,6 +207,7 @@ class LiveTranscriptPanel extends ConsumerWidget {
   static String? _barStatus(
     LocalizedCopy localCopy,
     LiveTranscriptStatus status,
+    TranscriptMode mode,
   ) {
     switch (status.phase) {
       case TranscriptSessionPhase.paused:
@@ -217,7 +223,7 @@ class LiveTranscriptPanel extends ConsumerWidget {
         };
       case TranscriptSessionPhase.recording:
         final bool recordOnly =
-            status.mode == TranscriptMode.audioOnly ||
+            mode == TranscriptMode.audioOnly ||
             status.warning == TranscriptionWarningKind.transcriptionUnavailable;
         return recordOnly ? localCopy.audioRecorderStatus('recording') : null;
       case TranscriptSessionPhase.saved:
@@ -236,11 +242,12 @@ class LiveTranscriptPanel extends ConsumerWidget {
   static List<Widget> _notices(
     LocalizedCopy localCopy,
     LiveTranscriptStatus status,
+    TranscriptMode mode,
   ) {
     final Failure? failure = status.failure;
     final String? warning = _warningText(localCopy, status);
     final bool audioOnly =
-        status.mode == TranscriptMode.audioOnly &&
+        mode == TranscriptMode.audioOnly &&
         status.warning != TranscriptionWarningKind.transcriptionUnavailable;
     return <Widget>[
       if (failure != null)

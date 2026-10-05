@@ -38,6 +38,8 @@ final class SpeechPipelineConfig {
     double? interimMaxDuty,
     Duration? interimMaxUtterance,
     double? interimEwmaAlpha,
+    int? interimRepeatWords,
+    bool? carryPrompt,
     int? promptCarryChars,
     Duration? promptCarryMinUtterance,
     double? promptCarryMinDbfs,
@@ -104,6 +106,9 @@ final class SpeechPipelineConfig {
                : null),
        interimEwmaAlpha =
            interimEwmaAlpha ?? AppConstants.speechPipeline.interimEwmaAlpha,
+       interimRepeatWords =
+           interimRepeatWords ?? AppConstants.speechPipeline.interimRepeatWords,
+       carryPrompt = carryPrompt ?? AppConstants.speechPipeline.carryPrompt,
        promptCarryChars =
            promptCarryChars ?? AppConstants.speechPipeline.promptCarryChars,
        promptCarryMinUtterance =
@@ -218,7 +223,15 @@ final class SpeechPipelineConfig {
   /// The weight of the newest compute time in the smoothed one.
   final double interimEwmaAlpha;
 
-  /// Characters of the transcript carried into the next decode.
+  /// The length of a phrase whose repeat within a draft keeps the rest of
+  /// the draft tentative.
+  final int interimRepeatWords;
+
+  /// Whether a final is decoded with the end of the transcript so far as
+  /// its prompt. Drafts never are.
+  final bool carryPrompt;
+
+  /// Characters of the transcript carried into the next final.
   final int promptCarryChars;
 
   /// An utterance shorter than this is decoded without the carried text.

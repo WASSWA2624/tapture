@@ -236,6 +236,20 @@ List<AppOverflowAction> _projectHomeMenu(
       onTap: () => context.push(RoutePaths.projectExports(project.id)),
     ),
     AppOverflowAction(
+      key: const ValueKey<String>('project-transcribe'),
+      label: localCopy.transcribeTitle,
+      icon: AppIcons.transcript,
+      onTap: () =>
+          unawaited(context.push(RoutePaths.projectTranscripts(project.id))),
+    ),
+    AppOverflowAction(
+      key: const ValueKey<String>('project-start-meeting'),
+      label: localCopy.meetingStartEntry,
+      icon: AppIcons.recordAudio,
+      onTap: () =>
+          unawaited(context.push(RoutePaths.projectMeetingCreate(project.id))),
+    ),
+    AppOverflowAction(
       key: const ValueKey<String>('project-merge-package'),
       label: localCopy.mergePackage,
       icon: AppIcons.import,

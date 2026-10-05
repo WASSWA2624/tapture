@@ -16,4 +16,7 @@ export 'operator_profile_screen.dart';
 export 'privacy_settings_screen.dart';
 export 'setting_choice.dart';
 export 'settings_screen.dart';
+export 'speech_models_view.dart';
+export 'speech_settings_providers.dart';
+export 'speech_settings_section.dart';
 export 'storage_settings_screen.dart';

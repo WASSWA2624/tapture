@@ -1220,6 +1220,7 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'captureMicReason' => captureMicReason,
     'captureListening' => captureListening,
     'captureRecordAudio' => captureRecordAudio,
+    'captureRecordTranscribe' => captureRecordTranscribe,
     'capturePauseAudio' => capturePauseAudio,
     'captureStopAudio' => captureStopAudio,
     'audioRecorderUnavailable' => audioRecorderUnavailable,
@@ -1278,6 +1279,54 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'liveTranscriptInterrupted' => liveTranscriptInterrupted,
     'liveTranscriptRecording' => liveTranscriptRecording,
     'speechOfflineBadge' => speechOfflineBadge,
+    'liveTranscriptUnavailable' => liveTranscriptUnavailable,
+    'liveTranscriptUnavailableRecovery' => liveTranscriptUnavailableRecovery,
+    'navTranscripts' => navTranscripts,
+    'transcriptsTitle' => transcriptsTitle,
+    'transcriptsNew' => transcriptsNew,
+    'transcriptsEmptyHeadline' => transcriptsEmptyHeadline,
+    'transcriptsEmptyMessage' => transcriptsEmptyMessage,
+    'transcriptsNoMatchHeadline' => transcriptsNoMatchHeadline,
+    'transcriptsSearchHint' => transcriptsSearchHint,
+    'transcriptsNoProject' => transcriptsNoProject,
+    'transcriptsNoProjectMessage' => transcriptsNoProjectMessage,
+    'transcribeTitle' => transcribeTitle,
+    'transcriptDetailTitle' => transcriptDetailTitle,
+    'transcriptMissing' => transcriptMissing,
+    'transcriptMissingMessage' => transcriptMissingMessage,
+    'transcriptOriginCapture' => transcriptOriginCapture,
+    'transcriptOriginMeeting' => transcriptOriginMeeting,
+    'transcriptOriginStandalone' => transcriptOriginStandalone,
+    'transcriptStatusInterrupted' => transcriptStatusInterrupted,
+    'transcriptEditedLabel' => transcriptEditedLabel,
+    'transcriptOriginalLabel' => transcriptOriginalLabel,
+    'transcriptSaveEdit' => transcriptSaveEdit,
+    'transcriptEditSaved' => transcriptEditSaved,
+    'transcriptRevert' => transcriptRevert,
+    'transcriptRevertTitle' => transcriptRevertTitle,
+    'transcriptRevertMessage' => transcriptRevertMessage,
+    'transcriptRevertConfirm' => transcriptRevertConfirm,
+    'transcriptReverted' => transcriptReverted,
+    'transcriptRename' => transcriptRename,
+    'transcriptTitleLabel' => transcriptTitleLabel,
+    'transcriptLanguage' => transcriptLanguage(
+      (message.argument('language') is LocalizedMessage
+          ? resolve(message.argument('language') as LocalizedMessage)
+          : message.argument('language') as String),
+    ),
+    'transcriptModel' => transcriptModel(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
+    'transcriptAudioLength' => transcriptAudioLength(
+      message.argument('length') as Duration,
+    ),
+    'transcriptNoAudio' => transcriptNoAudio,
+    'transcriptGaps' => transcriptGaps(message.argument('count') as int),
+    'transcriptFinish' => transcriptFinish,
+    'transcriptFinished' => transcriptFinished,
+    'transcriptTranscribeOnDevice' => transcriptTranscribeOnDevice,
     'captureAudioScopeTitle' => captureAudioScopeTitle,
     'captureAudioCurrentPhoto' => captureAudioCurrentPhoto,
     'captureAudioSelectedPhotos' => captureAudioSelectedPhotos(
@@ -1408,6 +1457,73 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'settingsAppLanguage' => settingsAppLanguage,
     'settingsAppLanguageEffect' => settingsAppLanguageEffect,
     'settingsVoiceLanguage' => settingsVoiceLanguage,
+    'settingsSpeechSection' => settingsSpeechSection,
+    'settingsSpeechEngineWhisper' => settingsSpeechEngineWhisper(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
+    'settingsSpeechEnginePlatform' => settingsSpeechEnginePlatform,
+    'settingsSpeechEngineNone' => settingsSpeechEngineNone,
+    'settingsSpeechQuality' => settingsSpeechQuality,
+    'settingsSpeechQualityEffect' => settingsSpeechQualityEffect,
+    'settingsSpeechQualityAuto' => settingsSpeechQualityAuto,
+    'settingsSpeechQualityFast' => settingsSpeechQualityFast,
+    'settingsSpeechQualityAccurate' => settingsSpeechQualityAccurate,
+    'settingsSpeechModels' => settingsSpeechModels,
+    'settingsSpeechModelFast' => settingsSpeechModelFast,
+    'settingsSpeechModelBalanced' => settingsSpeechModelBalanced,
+    'settingsSpeechModelAccurate' => settingsSpeechModelAccurate,
+    'settingsSpeechModelVad' => settingsSpeechModelVad,
+    'settingsSpeechModelBundled' => settingsSpeechModelBundled,
+    'settingsSpeechModelImported' => settingsSpeechModelImported,
+    'settingsSpeechModelImportOnly' => settingsSpeechModelImportOnly,
+    'settingsSpeechModelPresent' => settingsSpeechModelPresent,
+    'settingsSpeechModelVerified' => settingsSpeechModelVerified,
+    'settingsSpeechModelMissing' => settingsSpeechModelMissing,
+    'settingsSpeechModelDamaged' => settingsSpeechModelDamaged,
+    'settingsSpeechModelInUse' => settingsSpeechModelInUse,
+    'settingsSpeechModelDetail' => settingsSpeechModelDetail(
+      (message.argument('origin') is LocalizedMessage
+          ? resolve(message.argument('origin') as LocalizedMessage)
+          : message.argument('origin') as String),
+      (message.argument('state') is LocalizedMessage
+          ? resolve(message.argument('state') as LocalizedMessage)
+          : message.argument('state') as String),
+      (message.argument('size') is LocalizedMessage
+          ? resolve(message.argument('size') as LocalizedMessage)
+          : message.argument('size') as String),
+    ),
+    'settingsSpeechTooLarge' => settingsSpeechTooLarge,
+    'settingsSpeechVerify' => settingsSpeechVerify,
+    'settingsSpeechVerified' => settingsSpeechVerified(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
+    'settingsSpeechVerifyMismatch' => settingsSpeechVerifyMismatch(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
+    'settingsSpeechImport' => settingsSpeechImport,
+    'settingsSpeechImported' => settingsSpeechImported(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
+    'settingsSpeechRemove' => settingsSpeechRemove,
+    'settingsSpeechRemoveTitle' => settingsSpeechRemoveTitle(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
+    'settingsSpeechRemoveMessage' => settingsSpeechRemoveMessage,
+    'settingsSpeechRemoved' => settingsSpeechRemoved(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
     'languageEnglish' => languageEnglish,
     'languageFrench' => languageFrench,
     'languageSwahili' => languageSwahili,
@@ -2904,6 +3020,7 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'meetingTranscriptVersion' => meetingTranscriptVersion(
       message.argument('version') as int,
     ),
+    'meetingTranscriptCloudVersion' => meetingTranscriptCloudVersion,
     'meetingTranscriptGaps' => meetingTranscriptGaps(
       message.argument('count') as int,
     ),

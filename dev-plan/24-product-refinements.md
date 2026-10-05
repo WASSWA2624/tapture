@@ -4589,6 +4589,8 @@ The full signatures are in spec §30.4.6.
 
 **Depends on** [012](12-capture.md), [027](24-product-refinements.md), [118](24-product-refinements.md)
 
+**Implementation started:** Yes
+
 ### Implement
 
 **`WhisperSttService`** over `LiveTranscriptionService` (dictation):
@@ -4644,21 +4646,30 @@ abstract interface class PlatformRecogniserPolicy { factory PlatformRecogniserPo
 
 ### Definition of done
 
-- [ ] An empty partial follows the microphone opening even while the model loads, and an early Stop still inserts the final (widget test). Refused permission emits no partial.
-- [ ] Partials are prefix-stable and throttled (20 updates in 250 ms give ≤ 2 partials). Exactly one final follows, then close.
-- [ ] `whisper_dictation_field_test`: the final revises an interim ("I scream" → "ice cream") while the operator typed mid-listen, and no word is duplicated or dropped in the field.
-- [ ] Heard words are kept on error, the stop bound expires into a final plus cancel, and cancel drops unfinal words. A new listen hands over the previous words.
-- [ ] Silence gives `dictationNothingHeard`, and a busy microphone gives `microphoneBusy`.
-- [ ] `routed_stt_service_test`:
+- [x] An empty partial follows the microphone opening even while the model loads, and an early Stop still inserts the final (widget test). Refused permission emits no partial.
+- [x] Partials are prefix-stable and throttled (20 updates in 250 ms give ≤ 2 partials). Exactly one final follows, then close.
+- [x] `whisper_dictation_field_test`: the final revises an interim ("I scream" → "ice cream") while the operator typed mid-listen, and no word is duplicated or dropped in the field.
+- [x] Heard words are kept on error, the stop bound expires into a final plus cancel, and cancel drops unfinal words. A new listen hands over the previous words.
+- [x] Silence gives `dictationNothingHeard`, and a busy microphone gives `microphoneBusy`.
+- [x] `routed_stt_service_test`:
   - routing follows readiness per listen;
   - every platform listen has `onDeviceOnly: true`;
   - with the policy false (Android SDK < 31 or no on-device recogniser, Windows, web), `platform.listen` is never called and `dictationOfflineOnly` is emitted.
-- [ ] `platform_recogniser_policy_test` covers each platform with a mocked channel.
-- [ ] `dictationSttProvider` returns a new instance only when "any engine usable" flips.
-- [ ] Existing `stt_service`, `dictation_session`, `app_text_field_dictation` and dictation golden tests pass unchanged.
-- [ ] FE-SEC-04 carries the clause, with `routed_stt_service_test` and `network_test` named as its enforcement and recorded for the commit body.
-- [ ] Task 012 item 12's text matches PO decision 2, and no box changes.
+- [x] `platform_recogniser_policy_test` covers each platform with a mocked channel.
+- [x] `dictationSttProvider` returns a new instance only when "any engine usable" flips.
+- [x] Existing `stt_service`, `dictation_session`, `app_text_field_dictation` and dictation golden tests pass unchanged.
+- [x] FE-SEC-04 carries the clause, with `routed_stt_service_test` and `network_test` named as its enforcement and recorded for the commit body.
+- [x] Task 012 item 12's text matches PO decision 2, and no box changes.
 - [ ] On this machine, the Windows app dictates into a free-text field with Whisper while the network adapter is disabled. A WAV-fed fake recorder is acceptable if no microphone is present; record which was used.
+
+### Verification
+
+- 2026-10-04 (adversarial review): `flutter test --no-pub` on `test/core/speech/{whisper_stt_service,routed_stt_service,dictation_stt_provider}_test.dart`, `test/core/ai/platform_recogniser_policy_test.dart`, `test/core/widgets/fields/whisper_dictation_field_test.dart`, `test/architecture/network_test.dart` and the unchanged `test/core/ai/stt_service_test.dart`, `test/core/widgets/fields/{dictation_session,app_text_field_dictation,dictation_scope}_test.dart` and `test/design_system/app_text_field/dictation_golden_test.dart`: 97 passed. The five existing tests were last modified on 2026-10-03, before this task. `test/app/native_bootstrap_bindings_test.dart` (production root: `sttServiceProvider` is a `RoutedSttService`, speech language = voice language) passed.
+- 2026-10-04: guardrails `test/architecture/{layering,naming,plugin_imports,state,errors,data_safety,tokens,capture_authority}_test.dart`, `test/tool/check_logging_test.dart` and `test/tool/strict_analysis_test.dart` passed (143). `tool/check_logging`, `check_naming`, `check_structure` and `check_l10n` passed. `tool/check_tests` reports one missing test, for `features/transcripts/presentation/transcribe_screen.dart`, which belongs to task 123's work in progress, not this task. `dart analyze` on every changed file: no issues.
+- 2026-10-04, review fix: `main.dart` bound the platform plugin on Windows, where `SttService.isSupported` is true but `PlatformRecogniserPolicy` always refuses. That made `dictationSttProvider` a routed service before Whisper was ready, so the field offered a microphone that could only fail with `dictationOfflineOnly`. `_platformRecogniser` now binds a platform recogniser only on Android, iOS and macOS. `native_bootstrap_bindings_test` asserts `platformRecogniserProvider` is null under Windows and Linux and comes back afterwards. Spec §30.4.5 records the rule. The item-12 and §30.4.5 line wrapping was also tidied.
+- FE-SEC-04 commit-body line: "FE-SEC-04 speech clause enforced by test/core/speech/routed_stt_service_test.dart and test/architecture/network_test.dart". `dev-plan/12-capture.md` item 12 now names the on-device platform fallback (task 120). No checkbox in that file changed (`:412` is still open).
+- 2026-10-04, real engine (host mirror `test/hardening/stt_dictation_whisper_host_test.dart`, windows lock, built `tapture_whisper.dll`, WAV-fed `FakeRecordRecorder`, no microphone, offline by choice on, every socket refused by the harness): 4 runs, 2 passed (about 29.5 s each, Stop to final 281 and 286 ms, 0 outbound calls). Run 3 failed. Its field read "...What your country can do for you. What your country can do for you. Country.": two drafts agreed on a prompt-carried repeat, the stabiliser marked it stable and showed it, and the final could not revise words already shown. Run 1 failed at 39 s, and its log was not captured. The real-engine scenario is therefore flaky, and the stable-repeat quality issue goes back to task 117.
+- Open: the network-adapter-disabled session on the Windows app. No adapter setting was changed here, the `-d windows` integration runner was not used, and the host-mirror scenario is not yet reliable. Task 131 covers the manual session, and task 130 compiles the Kotlin `onDeviceRecognitionAvailable` method.
 
 ## 121 — Add the recording bar and transcript view to the catalogue
 
@@ -4770,14 +4781,34 @@ LiveTranscriptController: start(TranscriptSessionTarget), pause(), resume(), sto
 
 ### Definition of done
 
-- [ ] `start` makes the row durable before the microphone opens.
-- [ ] Segments persist in order. A failed write is retried before the next one, never reordered, and never stops recording.
-- [ ] `stop` returns once the audio is filed and linked, while a held fake engine is still decoding. The row completes after the drain even if the controller was disposed.
-- [ ] `stop` releases the keep-alive, guard and exit check, and `retrySave` resumes each failing step.
-- [ ] Background and interruption reasons are shown, a bare `inactive` does not pause, resume needs a tap, and permission loss keeps what was recorded.
-- [ ] Discard asks first, tombstones the row and never deletes audio.
-- [ ] `transcribe_flow_test` (start, 5 segments, background pause, resume, stop) ends with 5 ordered segments, a complete row and a linked attachment.
-- [ ] `state_test` passes.
+- [x] `start` makes the row durable before the microphone opens.
+- [x] Segments persist in order. A failed write is retried before the next one, never reordered, and never stops recording.
+- [x] `stop` returns once the audio is filed and linked, while a held fake engine is still decoding. The row completes after the drain even if the controller was disposed.
+- [x] `stop` releases the keep-alive, guard and exit check, and `retrySave` resumes each failing step.
+- [x] Background and interruption reasons are shown, a bare `inactive` does not pause, resume needs a tap, and permission loss keeps what was recorded.
+- [x] Discard asks first, tombstones the row and never deletes audio.
+- [x] `transcribe_flow_test` (start, 5 segments, background pause, resume, stop) ends with 5 ordered segments, a complete row and a linked attachment.
+- [x] `state_test` passes.
+
+### Verification
+
+- 2026-10-04: Adversarial review re-ran `flutter test --no-pub test/features/transcripts/presentation/`, which passed 36/36 (controller, panel, list section, `transcribe_flow_test`). `transcribe_flow_test` drives the real `LiveTranscriptionService` through `LiveTranscriptionRig` with fake capture and engine. Its results:
+  - five ordered segments (ids 1–5), a complete row, no gaps and `attachment-1` linked;
+  - a bare `inactive` keeps recording, `paused` pauses as background with a checkpoint, and `resumed` stays paused until `resume()`;
+  - `stop` returns while `engine.inFlight` is held, and the row completes after the provider is disposed;
+  - a failed `appendUtterance` shows unsaved while recording continues, then lands before the later segments. The fake repository refuses gaps, so order is proven.
+- 2026-10-04: Review fix. A failed `repository.discard` after `cancel` left the leave guard, the exit check and the keep-alive held for good, so the page could never be left cleanly. The controller now lets go of a take that is no longer busy and offers a retry only for a published, unfiled take. A new controller test covers this (failed tombstone → guard and exit check released, provider disposed, new session starts). The controller suite passes 22/22, and `test/features/transcripts` passes 95/95.
+- 2026-10-04: The following also passed:
+  - the guardrail suites `test/architecture/{state,naming,layering,tokens,errors,data_safety,icons,plugin_imports,responsive,network}_test.dart`. `state_test` passes 12/12, including the session-target rule's noncompliant fixture, which is reported with file and line;
+  - `test/core/copy`;
+  - task 120's `whisper_stt_service_test` and `whisper_dictation_field_test` on the rebuilt shared fake (25/25);
+  - `dart analyze` on the touched paths (no issues);
+  - `tool/check_{naming,structure,logging,l10n,secrets}.dart` and `check_tests --strict` (exit 0).
+- 2026-10-04: Recorded deviations:
+  - A publish (`session.stop`) failure is not retryable, because the service caches its failed stop. The row stays `live` for boot recovery, so `retrySave` covers the filing steps (`fileAudio`, `linkAttachment`).
+  - The panel and list take open callbacks until task 123 adds the transcript routes.
+  - `liveTranscriptStatusLoading`, `liveTranscriptUnavailable` and `liveTranscriptUnavailableRecovery` are left to task 123.
+  - Permission loss is proven against the fake session at controller level. The real service's revoked-permission pause is covered by task 118. On-device behaviour remains with tasks 130 and 131.
 
 ## 123 — Add the Transcribe screen and transcript history
 
@@ -4820,16 +4851,45 @@ LiveTranscriptController: start(TranscriptSessionTarget), pause(), resume(), sto
 
 ### Definition of done
 
-- [ ] Transcripts is reachable from the More menu, the Settings root (medium width and up) and the project home. The list searches, pages and shows the chips.
-- [ ] Transcribe records (fake capture service), saves and opens the detail page, and explains when transcription is unavailable.
-- [ ] The detail screen saves edits beside the raw text (raw unchanged), reverts with audit, renames with audit, blocks editing while live and guards unsaved edits.
-- [ ] Finish the transcript fills the gaps and then the tail with contiguous ids. That includes a record-only transcript completed later on-device.
-- [ ] The `TranscriptsScreen` ScreenFixture passes the 36-cell matrix, the empty-state check and the a11y checks.
-- [ ] On this machine, `transcripts_offline_test` passes (`-d windows`, or the host mirror, recorded) with a WAV-fed recorder: `outboundCallCount == 0`, audio byte-identical, raw unchanged after an edit.
+- [x] Transcripts is reachable from the More menu, the Settings root (medium width and up) and the project home. The list searches, pages and shows the chips.
+- [x] Transcribe records (fake capture service), saves and opens the detail page, and explains when transcription is unavailable.
+- [x] The detail screen saves edits beside the raw text (raw unchanged), reverts with audit, renames with audit, blocks editing while live and guards unsaved edits.
+- [x] Finish the transcript fills the gaps and then the tail with contiguous ids. That includes a record-only transcript completed later on-device.
+- [x] The `TranscriptsScreen` ScreenFixture passes the 36-cell matrix, the empty-state check and the a11y checks.
+- [x] On this machine, `transcripts_offline_test` passes (`-d windows`, or the host mirror, recorded) with a WAV-fed recorder: `outboundCallCount == 0`, audio byte-identical, raw unchanged after an edit.
+
+### Verification
+
+- 2026-10-04: Adversarial review re-ran `flutter test --no-pub test/features/transcripts test/hardening/transcripts_offline_host_test.dart`, which passed 132/132. Coverage by item:
+  - `transcripts_screen_test`: search, the no-match state, paging (50 rows, then 55), and the origin, recording, interrupted and edited chips.
+  - `transcribe_screen_test`: uses the fake live transcription service. Covers the take at `projects/<folder>/audio/<id>.wav`, `fileStandaloneAudio`, opening the detail page, and the unavailable state that links to Language settings.
+  - `transcript_detail_screen_test` and `transcript_detail_controller_test`: run on the real repository over an in-memory database. Raw segment rows stay identical, with `audit_log` rows for the edit, the revert and the rename. The page is read-only while live and asks before leaving with an unsaved edit.
+  - Finish runs against the real `LiveTranscriptionService` and a real WAV. It fills the gap, then the tail, with contiguous seqs. A record-only transcript completes, and an engine load failure keeps the gap.
+  - `transcript_detail_controller_test` was run 3 more times on its own and passed each time. The read-null failure the implementer saw once did not recur.
+- 2026-10-04: The host mirror `test/hardening/transcripts_offline_host_test.dart` passed, recorded here as the evidence for this machine. It feeds a WAV through the real capture adapter, service and repositories. The published WAV equals the fed bytes and its `sha256` matches, raw rows are unchanged after an edit, and `outboundCallCount == 0`. The `-d windows` integration run was not repeated in this review; the implementer reported it passing.
+- 2026-10-04: These also passed:
+  - `test/responsive/primary_screens_test.dart --plain-name TranscriptsScreen`: 36/36 cells;
+  - the accessibility and pseudo-locale runs: 108 in total with the responsive cells;
+  - `empty_state_coverage_test` and `screen_inventory_test`: 57;
+  - `test/architecture/` and `test/core/copy`: 138;
+  - `test/tool/{localization_generation,generated_source_check}_test.dart`;
+  - the app tests: `project_home_screen`, `nav_more_menu`, `route_paths`, `status_line`, `router`, `nav_shell`, `route_guards`, both nav goldens and `settings_screen` (141);
+  - `dart analyze` on the touched paths (no issues), `dart format` (no changes);
+  - `tool/check_{naming,structure,logging,l10n,secrets}.dart` and `check_tests --strict` (exit 0).
+- 2026-10-04: Review fixes:
+  - **Finish with an unsaved edit.** During a finish the transcript turns live, and the editor follows the stored text while the controller keeps the old draft. Afterwards a save would have written that stale draft, which the field no longer showed. Finish is now disabled while an edit is unsaved. New test: `an unsaved edit holds the finish back until it is saved`.
+  - **Real router coverage.** `router_test` "every declared route resolves" now opens all six transcript routes on the real router, under More and inside a project.
+- 2026-10-04: Recorded deviations:
+  - Finish is offered on settled transcripts only (complete or interrupted), not on a live one, because a live row is still being written by a session or a finish run.
+  - `TranscriptTile` and `TranscriptDetailStatus` are extra one-type files.
+  - The take id comes from `transcriptIdsProvider`. The target follows the session's transcript id to call `fileStandaloneAudio`.
+  - `liveTranscriptStatusLoading` is still not added.
 
 ## 124 — Transcribe meetings live
 
 **Depends on** [017](17-meetings.md), [119](24-product-refinements.md), [122](24-product-refinements.md), [123](24-product-refinements.md)
+
+**Implementation started:** Yes
 
 ### Implement
 
@@ -4868,12 +4928,22 @@ LiveTranscriptController: start(TranscriptSessionTarget), pause(), resume(), sto
 
 ### Definition of done
 
-- [ ] Start a meeting is reachable, and the review route loads by id while existing cases pass.
-- [ ] Live mode: start creates a live row, segments save, and stop files the WAV through `attachStored` and completes a transcript that is searchable on the meeting record.
-- [ ] `meeting_repository_impl_test` proves the transcript resolution order, and that Refine minutes receives the live transcript text (edited text when an edit exists).
-- [ ] The review page shows a single list containing live transcripts and legacy versions, and opens the editor.
+- [x] Start a meeting is reachable, and the review route loads by id while existing cases pass.
+- [x] Live mode: start creates a live row, segments save, and stop files the WAV through `attachStored` and completes a transcript that is searchable on the meeting record.
+- [x] `meeting_repository_impl_test` proves the transcript resolution order, and that Refine minutes receives the live transcript text (edited text when an edit exists).
+- [x] The review page shows a single list containing live transcripts and legacy versions, and opens the editor.
 - [ ] Without a model, the meeting records audio only, with an explanation. Web without capture says so.
-- [ ] On this machine, a WAV-fed meeting session on Windows (`-d windows`, or the host mirror) pauses with its reason when driven through `LifecycleObserver.handle(paused)` and resumes on tap.
+- [x] On this machine, a WAV-fed meeting session on Windows (`-d windows`, or the host mirror) pauses with its reason when driven through `LifecycleObserver.handle(paused)` and resumes on tap.
+
+### Verification
+
+- 2026-10-04 (review): `dart analyze lib test/app/router_test.dart` and `dart analyze` on the meetings, projects and router paths: no issues. `dart format --set-exit-if-changed` on the touched files: clean. `dart run tool/check_{naming,l10n,logging,structure,tests,secrets,dependencies}.dart`: clean. `flutter test --no-pub test/architecture`: +117 passed.
+- 2026-10-04 (review): `flutter test --no-pub test/features/meetings test/features/exports/data/deliverable_reports_test.dart test/features/exports/data/deliverable_repository_impl_test.dart test/features/transcripts/data/transcript_recovery_test.dart`: +84 passed. `flutter test --no-pub test/features/projects/presentation/project_home_screen_test.dart test/app/router_test.dart`: passed (the home menu opens Start a meeting at `projectMeetingCreate`).
+- 2026-10-04 (review fix): the real router's meeting review route was not covered (the screen tests use their own router). `test/app/router_test.dart` "every declared route resolves" now opens `projectMeetingReview('p1', 'm1')` and checks the screen gets `meetingId` and `projectId` from the path and no `meeting`.
+- 2026-10-04 (review fix): `MeetingRecord.transcript` stopped at the latest settled meeting transcript even when it had no words, so a later audio-only take (the controller still writes a row in `audioOnly`) hid an earlier transcript's words from Refine minutes and the minutes export. Empty transcripts are now skipped. `meeting_repository_impl_test` now covers this case.
+- 2026-10-04: the WAV-fed lifecycle item is proven by the host mirror in `meeting_live_section_test.dart`: the real `AudioCapturePlugin` fed WAV files, the real `LiveTranscriptionService` and `SpeechEngineHost`, and a fake engine. The `-d windows` integration runner was not used. The physical-device runs are tasks 130/131.
+- 2026-10-04: **open — "Web without capture says so."** Audio-only without a model is proven: the explanation shows before and during recording, the request has `transcribe=false`, and the take is filed through `attachStored`. The web notice only appears after a refused start that fails with `ProviderFailure(unavailable)`. Nothing checks the browser's capture ability beforehand. A real browser without `getUserMedia` is expected to fail through `AudioCapturePlugin._captureFailure` as `audioStartFailed`, not as unavailable. If so, the banner would not show there. A capture-capability check that presentation can read is needed in `core/audio`.
+- 2026-10-04: the follow-ups this task asks for were not created: retire the meetings `_Wav` duplicate in favour of `core/audio/wav_take.dart`, and the `MeetingReviewScreen` `TextEditingController`-in-`build` leak. `tool/new_task.dart` rewrites this plan file and the tracker, so it has to run serially.
 
 ## 125 — Transcribe caption recordings live
 
@@ -4912,13 +4982,45 @@ LiveTranscriptController: start(TranscriptSessionTarget), pause(), resume(), sto
 
 ### Definition of done
 
-- [ ] Without a model, the caption recorder behaves exactly as in task 065 (existing tests unchanged).
-- [ ] With a model, the draft is staged before the microphone opens, segments save while recording, and stop publishes through `publishAudio` with `attachment_id == audioId`.
-- [ ] **With a `FakeSpeechEngine` held mid-decode, Save completes and attaches the audio without waiting.** The transcript completes later and becomes searchable.
-- [ ] Leaving the page stops and saves the audio, and the transcript completes through the service.
-- [ ] Discard drops the pending draft and tombstones the transcript without deleting audio.
-- [ ] The record page lists its transcripts. Transcribe on this device creates a complete transcript for an untranscribed clip (fake engine), and record search finds its words.
-- [ ] Dictation while recording shows `microphoneBusy`.
+- [x] Without a model, the caption recorder behaves exactly as in task 065 (existing tests unchanged).
+- [x] With a model, the draft is staged before the microphone opens, segments save while recording, and stop publishes through `publishAudio` with `attachment_id == audioId`.
+- [x] **With a `FakeSpeechEngine` held mid-decode, Save completes and attaches the audio without waiting.** The transcript completes later and becomes searchable.
+- [x] Leaving the page stops and saves the audio, and the transcript completes through the service.
+- [x] Discard drops the pending draft and tombstones the transcript without deleting audio.
+- [x] The record page lists its transcripts. Transcribe on this device creates a complete transcript for an untranscribed clip (fake engine), and record search finds its words.
+- [x] Dictation while recording shows `microphoneBusy`.
+
+### Verification
+
+- 2026-10-04 (review): `flutter test test/features/capture/presentation/capture_live_transcript_test.dart` 7 passed:
+  the draft is staged and the row begun before the microphone opens, segments are stored while recording, stop files the take
+  through `publishAudio` with `attachment_id == audioId`; leaving the page files the take and the transcript completes;
+  discard drops the pending draft, tombstones the row and keeps the take staged; with a `FakeSpeechEngine` held
+  mid-decode `saveRaw` on a real database completes (real-time 20 s guard) with the audio attached while the decode is
+  still held, and after release the transcript completes and `searchRecords` finds its words; on `CaptureScreen` a
+  caption dictation tap during the take shows `microphoneBusy` and the arbiter refuses the claim.
+- 2026-10-04 (review): `record_detail_screen_test`, `capture_controller_test`, `capture_record_writer_test` and
+  `capture_feedback_test` 101 passed (the record page lists transcripts and opens one; Transcribe on this device is
+  offered only with a ready model and an untranscribed clip; the database run with a fake engine leaves a complete
+  capture transcript linked to the clip and record search finds its words; without a model the waveform control is
+  the task-065 recorder). `flutter test test/features/capture test/features/transcripts` 629 passed (11 pre-existing
+  document skips); `test/features/records` + `test/app/router_test.dart` 863 passed; `test/architecture` 117 passed
+  (including `capture_authority_test`); `test/core/copy` + `test/tool/localization_generation_test.dart` 23 passed.
+  The task-065 suites (`capture_screen`, `capture_edit_screen`, `resume_session`, `capture_audio_recovery`,
+  `capture_guide_widgets`) were not edited and pass without speech overrides.
+- 2026-10-04 (review): `dart analyze` on the capture, records, transcripts and copy sources and tests: no issues;
+  `dart format` clean; `check_structure`, `check_naming`, `check_logging`, `check_l10n`, `check_repo_hygiene`,
+  `check_tests --strict` and `check_plan` clean.
+- 2026-10-04 (review fix): without a ready model the caption recorder kept the live variant for any non-idle take,
+  so a take that failed with nothing to save, or one already filed into a saved record, held it after readiness
+  dropped (memory pressure, model removal). `capture_screen.dart` now keeps the live controls only while the take is
+  shown and has something left to save (`_holdsLiveTake`). No dedicated test: readiness cannot be flipped mid-test
+  with the current fakes.
+- Recorded deviations: `TranscriptRepository.watchUntranscribedAudio` added for the record page;
+  `CaptureTranscribeButton` and `RecordAudioTranscriptionController` are extra files; there is no plain `save`, so
+  `saveRaw`, `saveAndAnalyse` and `saveEdits` call `finishCaptureIfActive()`; a save during the instant a take is
+  starting fails with a retryable `ValidationFailure`; the live variant follows `speechReadiness.ready` (the design's
+  `longForm` field does not exist). Physical-device runs belong to tasks 130 and 131.
 
 ## 126 — Add speech settings to the Language screen
 
@@ -4954,10 +5056,24 @@ LiveTranscriptController: start(TranscriptSessionTarget), pause(), resume(), sto
 
 ### Definition of done
 
-- [ ] The section shows each engine line, the badge and the quality choice (Automatic by default). Writing the quality refreshes readiness.
-- [ ] Model rows show origin, integrity and size, mark the model in use, and warn when a model is too large. Verify reports success and a mismatch.
-- [ ] Import reports success, refuses a mismatch in plain copy, is silent on cancel and is hidden where `canImport` is false. Removing an imported model works.
-- [ ] The `setting_keys_test` names order passes.
+- [x] The section shows each engine line, the badge and the quality choice (Automatic by default). Writing the quality refreshes readiness.
+- [x] Model rows show origin, integrity and size, mark the model in use, and warn when a model is too large. Verify reports success and a mismatch.
+- [x] Import reports success, refuses a mismatch in plain copy, is silent on cancel and is hidden where `canImport` is false. Removing an imported model works.
+- [x] The `setting_keys_test` names order passes.
+
+### Verification
+
+- 2026-10-04, implementation: `SettingKeys.speechQuality` sits after `voiceLanguage`, because `setting_keys_test` requires `names` in declaration order. `speech_settings_providers.dart` holds `speechQualitySettingProvider`, plus `speechModelsProvider` (inventory, Verify, import, remove) and `speechPlatformOnDeviceProvider`. The platform engine line shows only when `PlatformRecogniserPolicy` confirms speech stays on the device. The public `SpeechModelsView` record typedef has its own file, `speech_models_view.dart`, as `check_naming` requires. Removal is confirmed but has no undo, because the deleted file cannot be restored and re-importing it is the recovery. The existing `speechOfflineBadge` is reused. A model reads "Checked" only after a Verify or import passes this session, since inventory never hashes. Every case was tested against `SpeechModelStore.fake`.
+- 2026-10-04, review fixes:
+  - `_Models._settle` skipped `speechReadinessProvider.refresh()` when the operator left the screen mid-action, so readiness kept trusting a removed or damaged model. It also read `state` before checking `ref.mounted`. Each action now captures the kept-alive readiness notifier up front, and `_settle` refreshes it even after disposal. The new test `leaving mid-removal still has readiness look again` fails without this fix and passes with it.
+  - The section test used a hand copy of main's quality binding. `main.dart` now exposes it as `@visibleForTesting speechQualityOverride()`, next to `dictationOverrides`, and the test uses it. A broken production binding now fails the readiness test.
+- 2026-10-04, review run:
+  - `flutter test` passed 157/157 over the section, `language_settings_screen`, `setting_keys`, `settings_screen`, `native_bootstrap_bindings`, `bootstrap`, `speech_readiness` and `test/architecture` suites. The section test is 16/16.
+  - `test/core/copy` and `setting_choice_test` are green.
+  - `dart analyze` on `lib/features/settings`, `test/features/settings`, `lib/main.dart` and `lib/core/copy` is clean.
+  - The copy pipeline ends `ok`.
+  - `check_naming`, `check_structure`, `check_logging`, `check_l10n`, `check_repo_hygiene` and `check_tests --strict` are clean.
+  - Not run here: Verify, import and remove against the real `SpeechModelStore.platform` on Windows, Android and the web. That belongs to task 131's device session.
 
 ## 127 — Carry transcripts in packages, merges and exports
 
@@ -5065,11 +5181,41 @@ Exact file names are confirmed against the tree at implementation time, and any 
 
 ### Definition of done
 
-- [ ] On this machine: load, RTF (tiny and base), VAD per second, abort latency and UI drift are within `speechBudgets`, with evidence in `frontend/build/speech-benchmark.json`.
-- [ ] On this machine: the OpenMP comparison is recorded, with its decision.
-- [ ] On this machine: the `speech-engine` profile meets the peak and retained budgets, with workers, handles and isolates back at baseline (`frontend/build/speech-memory-profile.json`).
-- [ ] On this machine: `speech_engine_test` resolves bundled models from `data/flutter_assets`, transcribes jfk through the host with `outboundCallCount == 0`, and skips cleanly without opt-in.
-- [ ] Catalogue memory estimates are replaced with measured peaks, with a note.
+- [x] On this machine: load, RTF (tiny and base), VAD per second, abort latency and UI drift are within `speechBudgets`, with evidence in `frontend/build/speech-benchmark.json`.
+- [x] On this machine: the OpenMP comparison is recorded, with its decision.
+- [x] On this machine: the `speech-engine` profile meets the peak and retained budgets, with workers, handles and isolates back at baseline (`frontend/build/speech-memory-profile.json`).
+- [x] On this machine: `speech_engine_test` resolves bundled models from `data/flutter_assets`, transcribes jfk through the host with `outboundCallCount == 0`, and skips cleanly without opt-in.
+- [x] Catalogue memory estimates are replaced with measured peaks, with a note.
+
+### Verification
+
+- 2026-10-04 (review): `speech_engine_benchmark_test.dart` with the Release `build/tw-windows` library, the fetched
+  models and `TAPTURE_TEST_SMALL_MODEL` (windows lock, machine 49→79% busy): 5/5 passed. Load p50 tiny 719 ms, base
+  1196 ms; median RTF tiny 0.195, base 0.428; VAD 16.9 ms per audio second; abort median 26 ms; UI drift 23.7 ms.
+  Peak RSS above baseline: tiny 119.9, base 162.7, small 350.8, Silero 7.9 MiB (catalogue 128/168/352/9 MiB).
+- 2026-10-04 (review fix): UI drift was asserted as the median lateness of a 16 ms timer, which equals the Windows
+  timer granularity (15.5 ms idle and busy) and could not fail. It is now the 99th-percentile lateness during a 30 s
+  base decode minus the idle median (`timerDriftP99Ms`); `speechBudgets` doc comment and spec §30.4.3/§59 updated.
+- 2026-10-04 (review): OpenMP re-measure, a fresh `/openmp:llvm` + `GGML_USE_OPENMP` build in its own folder
+  (removed afterwards) against the default OFF build, three interleaved pairs: median tokens/s tiny 14.37 ON vs 12.98
+  OFF (+11%), base 5.76 vs 5.87 (−2%); ON worse for VAD (22.6 vs 12.1 ms/s) and abort (71 vs 40 ms). `libomp140` exists
+  only under `debug_nonredist`. Decision OFF recorded in spec §30.4.1; no follow-up (under 15%). The implementer's
+  earlier four pairs (+20% tiny) were taken at mismatched loads (29% vs 94%).
+- 2026-10-04 (review): `integration_test/speech_memory_test.dart -d windows --dart-define=TAPTURE_STT_NATIVE=true`
+  passed twice: cold peak 158.7/125.0 MiB, warm peak 129.9/130.1 MiB (budget 192), warm retained 11.0/10.6 MiB
+  (budget 32), workers, handles, native objects and isolates 0 before and after, violations []. The host mirror
+  `test/hardening/speech_memory_host_test.dart` passed (warm peak 120.8 MiB, retained −3.0 MiB). Retention is judged
+  on an identical warm run because the cold run keeps one-time library and heap growth (44.6 MiB once).
+- 2026-10-04 (review): `integration_test/speech_engine_test.dart -d windows` with the opt-in passed (tiny, 4 threads,
+  acquire 536 ms, RTF 0.147, `outboundCalls` 0, all three models located under `data/flutter_assets/assets/speech`);
+  without it, it and `speech_memory_test.dart` each report 1 skipped when run alone.
+- 2026-10-04 (review): `speech_model_selector_test`, `speech_model_catalogue_test`, `long_session_memory_test` (with
+  `longSessionRetainedRssBytes` 48 MiB, evidence `build/stt-long-session-heap.json`: live heap flat 121.3–122.2 MiB
+  over five sessions) and `speech_model_verification_test`: 104 passed. `dart analyze` on the touched files clean;
+  `check_tests`, `check_naming`, `check_logging`, `check_structure`, `check_secrets`, `check_repo_hygiene` clean.
+- Not covered here: `finalizeCompute` (1000 ms) is missed by committed desktop finals (full 30 s context, best of 2);
+  it is not loosened and is outside this task's Definition of done. RTF budgets are missed with the machine above
+  about 66% busy.
 
 ## 129 — Use the on-device transcript before online transcription
 
@@ -5103,6 +5249,28 @@ Update spec §30.1 to the wording in design §14.
 
 ### Definition of done
 
-- [ ] With a completed on-device transcript, `forJob` returns its display text with zero provider calls and no budget charge.
-- [ ] Without one, the existing online behaviour is unchanged (existing tests pass).
-- [ ] A live or interrupted transcript is not used.
+- [x] With a completed on-device transcript, `forJob` returns its display text with zero provider calls and no budget charge.
+- [x] Without one, the existing online behaviour is unchanged (existing tests pass).
+- [x] A live or interrupted transcript is not used.
+
+### Verification
+
+- 2026-10-04: Adversarial review of `online_transcripts.dart`, `processing_stage_worker.dart`, the `main.dart`
+  wiring (`transcripts: transcriptStore`) and spec §30.1. `forJob` reads `completedForAttachment` then `read` through
+  the `features/transcripts` barrel and uses `displayText` (edit first). It records one `source: device` row per
+  distinct text, makes no provider call and never calls `OnlineBudget.require`. Only a clip without such a transcript
+  reads a stored online response (device rows are never read back) or goes online. A transcript-store failure stops
+  the stage before any audio is sent.
+- 2026-10-04: `flutter test --no-pub` on `online_transcripts_test`, `online_stage_test`, `processing_stage_worker_test`,
+  `browser_processing_test` and `egress_summary_test`: 37/37 passed. This includes the 4 existing
+  `online_transcripts_test` cases, unchanged apart from the new constructor argument, and the live and interrupted
+  cases against the real `TranscriptRepositoryImpl`. Mutation check: adding `_budget.require` to the on-device path
+  makes the cap-0 test fail, so that test proves there is no budget charge. The file was then restored.
+- 2026-10-04: Architecture guardrails (`layering`, `network`, `errors`, `naming`, `data_safety`, `state`,
+  `plugin_imports`, `capture_authority`): 92/92 passed. `dart analyze lib/features/processing lib/main.dart` and the
+  test: no issues. `dart format --set-exit-if-changed`: 0 changed.
+- Recorded deviations: the Files list names `processing_providers.dart`, which does not exist. The store is wired
+  through `ProcessingStageWorker(transcripts:)`, which falls back to a `TranscriptRepositoryImpl` over the same db.
+  When no provider can transcribe, the early return now applies per clip, so on-device transcripts are still used.
+  Known gap outside this task: `EgressSummary._audioBytes` still counts a clip with an on-device transcript as audio
+  until a run has stored the `device` row.

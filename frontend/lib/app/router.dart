@@ -89,6 +89,9 @@ import 'package:tapture/features/templates/presentation/template_import_action.d
 import 'package:tapture/features/templates/presentation/template_list_screen.dart';
 import 'package:tapture/features/templates/presentation/template_migration_screen.dart';
 import 'package:tapture/features/templates/presentation/xlsx_mapping_screen.dart';
+import 'package:tapture/features/transcripts/presentation/transcribe_screen.dart';
+import 'package:tapture/features/transcripts/presentation/transcript_detail_screen.dart';
+import 'package:tapture/features/transcripts/presentation/transcripts_screen.dart';
 
 export 'package:tapture/features/projects/presentation/current_project.dart'
     show CurrentProject, currentProjectProvider, openProjectIdProvider;
@@ -624,9 +627,21 @@ List<RouteBase> get _routes {
                         final Object? extra = state.extra;
                         return MeetingReviewScreen(
                           meeting: extra is Meeting ? extra : null,
+                          meetingId: state.pathParameters['meetingId'],
+                          projectId: state.pathParameters['projectId'],
                           requireActionDetails: true,
                         );
                       },
+                    ),
+                    GoRoute(
+                      path: 'transcripts',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState state) {
+                        return TranscriptsScreen(
+                          projectId: state.pathParameters['projectId'],
+                        );
+                      },
+                      routes: _transcriptRoutes(inProject: true),
                     ),
                     GoRoute(
                       path: 'quality',
@@ -938,6 +953,13 @@ List<RouteBase> get _routes {
                   },
                 ),
                 GoRoute(
+                  path: 'transcripts',
+                  builder: (BuildContext _, GoRouterState _) {
+                    return const TranscriptsScreen();
+                  },
+                  routes: _transcriptRoutes(inProject: false),
+                ),
+                GoRoute(
                   path: 'about',
                   builder: (BuildContext _, GoRouterState _) {
                     return const AboutScreen();
@@ -1209,6 +1231,35 @@ List<RouteBase> _recordRoutes({required bool inProject}) {
           },
         ),
       ],
+    ),
+  ];
+}
+
+/// Transcribe and one transcript (task 123). `new` is listed before the id
+/// so it is not taken for one. [inProject] keeps the routes inside a project
+/// branch and behind the project-scope guard; outside one, Transcribe
+/// records into the open project.
+List<RouteBase> _transcriptRoutes({required bool inProject}) {
+  final Map<String, dynamic>? scope = inProject ? _projectScoped : null;
+  return <RouteBase>[
+    GoRoute(
+      path: 'new',
+      metadata: scope,
+      builder: (BuildContext _, GoRouterState state) {
+        return TranscribeScreen(
+          projectId: inProject ? state.pathParameters['projectId'] : null,
+        );
+      },
+    ),
+    GoRoute(
+      path: ':transcriptId',
+      metadata: scope,
+      builder: (BuildContext _, GoRouterState state) {
+        return TranscriptDetailScreen(
+          transcriptId: state.pathParameters['transcriptId']!,
+          projectId: inProject ? state.pathParameters['projectId'] : null,
+        );
+      },
     ),
   ];
 }
