@@ -17,9 +17,14 @@ import 'word_sequence.dart';
 /// a [HallucinationPhrases] phrase over weak audio (quieter than
 /// `hallucinationEnergyDbfs`, less than `hallucinationSpeechRatio` speech
 /// frames, or a mean log probability below `hallucinationLogProb`); or when
-/// it echoes the prompt it was decoded with, weakly. Weak edge words (a log
+/// it echoes the prompt it was decoded with, weakly (only a decode given a
+/// prompt can echo one). The last of several segments of an utterance that
+/// ended in silence is dropped when the detector heard less than
+/// `minSpeech` of speech under it ([dropsTail]). Weak edge words (a log
 /// probability below `hallucinationLogProb`) lying over frames the detector
-/// heard as non-speech are trimmed; interior words never are. A confident
+/// heard as non-speech, with none heard as speech within
+/// `edgeTrimTolerance` either side, are trimmed; interior words never are.
+/// A confident
 /// word is kept wherever its time falls: whisper's word times stray by
 /// more than the pre-roll, so time alone would trim real speech.
 final class HallucinationFilter {
@@ -28,9 +33,13 @@ final class HallucinationFilter {
     : _off = config.vadOffThreshold,
       _energyDbfs = config.hallucinationEnergyDbfs,
       _speechRatio = config.hallucinationSpeechRatio,
-      _logProbability = config.hallucinationLogProb;
+      _logProbability = config.hallucinationLogProb,
+      _toleranceSamples = config.samplesOf(config.edgeTrimTolerance),
+      _minSpeechSamples = config.samplesOf(config.minSpeech);
 
   final double _off;
+  final int _toleranceSamples;
+  final int _minSpeechSamples;
   final double _energyDbfs;
   final double _speechRatio;
   final double _logProbability;
@@ -71,6 +80,21 @@ final class HallucinationFilter {
     return weakScore && _echoes(texts, prompt);
   }
 
+  /// Whether the last segment of an utterance that ended in silence, over
+  /// samples `[startSample, endSample)` and decoded after other text of it,
+  /// holds less speech than an utterance needs to open. whisper decodes
+  /// what is left after its last timestamp as a window of its own, often
+  /// only the fading end of the word before and the post-roll, and then
+  /// tends to hear a word that was never said, however confidently.
+  bool dropsTail({
+    required int startSample,
+    required int endSample,
+    required UtteranceEvidence evidence,
+  }) =>
+      evidence.length > 0 &&
+      evidence.speechSamples(_off, from: startSample, to: endSample) <
+          _minSpeechSamples;
+
   /// [words] without a leading or trailing run of weak words that lie
   /// wholly over frames with a probability below the off threshold.
   ///
@@ -100,18 +124,21 @@ final class HallucinationFilter {
   }
 
   /// Whether [word] is weak and every frame it overlaps, at least one, is
-  /// non-speech.
+  /// non-speech, as is every frame within the tolerance of it.
   bool _overSilence(TranscriptWord word, UtteranceEvidence evidence) {
     if (evidence.length == 0 ||
         (word.probability > 0 &&
             math.log(word.probability) >= _logProbability)) {
       return false;
     }
-    final int end = word.endSample > word.startSample
-        ? word.endSample
-        : word.startSample + 1;
+    final int end =
+        (word.endSample > word.startSample
+            ? word.endSample
+            : word.startSample + 1) +
+        _toleranceSamples;
     final int first =
-        ((word.startSample - evidence.firstStart) ~/ evidence.frameSamples)
+        ((word.startSample - _toleranceSamples - evidence.firstStart) ~/
+                evidence.frameSamples)
             .clamp(0, evidence.length);
     final int last =
         ((end - evidence.firstStart + evidence.frameSamples - 1) ~/

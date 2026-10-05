@@ -79,10 +79,13 @@ final class UtteranceEvidence {
     return _speechFrames(threshold, first, last) / (last - first);
   }
 
-  /// Samples of the frames whose probability reaches [threshold]: how much
-  /// speech the detector heard.
-  int speechSamples(double threshold) =>
-      _speechFrames(threshold, 0, length) * frameSamples;
+  /// Samples of the frames overlapping `[from, to)`, by default all of
+  /// them, whose probability reaches [threshold]: how much speech the
+  /// detector heard there.
+  int speechSamples(double threshold, {int? from, int? to}) {
+    final (int first, int last) = _range(from, to);
+    return _speechFrames(threshold, first, last) * frameSamples;
+  }
 
   /// Quantises probability [p] to the byte this evidence stores.
   static int quantiseProbability(double p) => (p * 255).round().clamp(0, 255);

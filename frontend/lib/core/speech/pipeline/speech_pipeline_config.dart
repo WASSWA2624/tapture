@@ -47,6 +47,7 @@ final class SpeechPipelineConfig {
     double? hallucinationEnergyDbfs,
     double? hallucinationSpeechRatio,
     double? hallucinationLogProb,
+    Duration? edgeTrimTolerance,
     int? loopMinRepeatsPhrase,
     int? loopMinRepeatsWord,
     int? loopMaxNgram,
@@ -127,6 +128,8 @@ final class SpeechPipelineConfig {
        hallucinationLogProb =
            hallucinationLogProb ??
            AppConstants.speechPipeline.hallucinationLogProb,
+       edgeTrimTolerance =
+           edgeTrimTolerance ?? AppConstants.speechPipeline.edgeTrimTolerance,
        loopMinRepeatsPhrase =
            loopMinRepeatsPhrase ??
            AppConstants.speechPipeline.loopMinRepeatsPhrase,
@@ -256,6 +259,10 @@ final class SpeechPipelineConfig {
   /// A known hallucination or a prompt echo below this mean log probability
   /// is dropped.
   final double hallucinationLogProb;
+
+  /// A weak edge word is trimmed only when no speech frame lies within
+  /// this of it.
+  final Duration edgeTrimTolerance;
 
   /// Repeats of a phrase of two or more words that make a loop.
   final int loopMinRepeatsPhrase;

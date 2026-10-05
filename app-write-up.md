@@ -1806,10 +1806,23 @@ Selector rules, in order; every number is an `AppConstants.speechEngine` field (
 7. **Threads.** Desktop `clamp(logical ~/ 2, 2, 8)`; mobile `clamp(performance ?? (logical ≥ 8 ? 4 : logical ~/ 2),
    2, 4)`; `!powerOk || saver` → `min(t, 2)`; web mt `clamp(hc − 1, 1, 4)`; web st 1.
 8. **Profiles.** Interim: `bestOf 1`, `temperatureStep 0`, `singleSegment true`, `timestamps false`,
-   `maxPieces 96`, `audioContextPad 64`. Committed: `bestOf` 2 on desktop and 1 elsewhere, `temperatureStep 0.2`,
-   `timestamps true`, `audioContextPad 0`; mobile **dictation** finals for utterances under 10 s use
-   `mobileDictationCommittedPad` (256), which task 131's WER gate can revert. Thresholds 0.6 / −1.0 / 2.4.
-   `no_context = 1` always, and never `n_max_text_ctx = 0`.
+   `maxPieces 96`, `audioContextPad 64`. Committed, on every device: `bestOf 1` (greedy) with `temperatureStep 0.2`
+   fallback, `timestamps true`, and the encoder context sized to the utterance, `audioContextPad 128` over a floor of
+   `minAudioContext 896` frames (17.9 s; `committedAudioContextPad`, `committedMinAudioContext`). Mobile
+   **dictation** finals for utterances under 10 s use `mobileDictationCommittedPad` (256) with no floor, which task
+   131's WER gate can revert. Thresholds 0.6 / −1.0 / 2.4. `no_context = 1` always, and never `n_max_text_ctx = 0`.
+
+   *Decision (2026-10-05, i7-1165G7, 4 cores, otherwise idle; tasks 117 and 118 verification).* The full 30 s
+   context made every final cost a full encode (tiny p90 1.6 s, base 4.0 s over jfk × 6), so finals are sized. A
+   context sized by a pad alone is not safe: with 64, 128 or 256 frames past the audio, tiny and base looped, invented
+   words ("Episden", "hobbit", "I'm going to get") or dropped up to 35 of 138 words, because whisper, trained on 30 s
+   windows, misbehaves when its context ends soon after the speech. With a floor of 768 tiny still heard "ask not" as
+   one word; floors of 896 and 1024 kept every word with both models, and 896 is the cheaper. A second candidate
+   (`bestOf 2`) changed no word in the same measurements and only added compute. Base cannot finalise within
+   1000 ms on this 4-core machine at any context that keeps every word, so `speechBudgets` holds a finalize budget per
+   model (§30.4.3) rather than `auto` falling back to tiny below a core threshold: base heard jfk × 6 with no
+   substitution where tiny misheard "ask" six to nine times, its drafts still appear within `firstPartialCompute`,
+   and its finals land within 2 s. `auto` therefore keeps choosing base where rule 5 allows it.
 
 **Host, lease and readiness.**
 
@@ -1941,6 +1954,7 @@ All live in `frontend/lib/core/constants/app_constants.dart`; durations below ar
 | `webMaxThreads` | 4 | `maxDecodeSamples` | 30 × 16000 |
 | `minDecodeSamples` | 16000 | `interimMaxPieces` | 96 |
 | `interimAudioContextPad` | 64 | `reducedAudioContextPad` | 128 |
+| `committedAudioContextPad` | 128 | `committedMinAudioContext` | 896 |
 | `mobileDictationCommittedPad` | 256 | `mobileDictationShortUtterance` | 10 s |
 | `encoderFramesPerSecond` | 50 | `maxAudioContext` | 1500 |
 | `noSpeechThreshold` | 0.6 | `logprobThreshold` | −1.0 |
@@ -1963,10 +1977,12 @@ All live in `frontend/lib/core/constants/app_constants.dart`; durations below ar
 | `interimMinAudio` | 800 ms | `interimMinStep` | 600 ms |
 | `interimMaxStep` | 3 s | `interimMaxDutyDesktop` | 0.6 |
 | `interimMaxDutyMobile` | 0.3 | `mobileInterimMaxUtterance` | 10 s |
-| `interimEwmaAlpha` | 0.3 | `promptCarryChars` | 200 |
+| `interimEwmaAlpha` | 0.3 | `interimRepeatWords` | 3 |
+| `carryPrompt` | false | `promptCarryChars` | 200 |
 | `promptCarryMinUtterance` | 2 s | `promptCarryMinDbfs` | −55 |
 | `promptResetGap` | 60 s | `hallucinationEnergyDbfs` | −55 |
 | `hallucinationSpeechRatio` | 0.3 | `hallucinationLogProb` | −0.8 |
+| `edgeTrimTolerance` | 96 ms | | |
 | `loopMinRepeatsPhrase` | 3 | `loopMinRepeatsWord` | 4 |
 | `loopMaxNgram` | 6 | `minSecondsPerWord` | 0.12 |
 | `loopWordsPerSecond` | 4 | `ringDuration` | 30 s |
@@ -1988,9 +2004,9 @@ All live in `frontend/lib/core/constants/app_constants.dart`; durations below ar
 | `abortLatencyDesktop` | 500 ms | `vadSecond` | 60 ms |
 | `tinyPeakRssBytes` | 192 MiB | `basePeakRssBytes` | 256 MiB |
 | `retainedRssBytes` | 32 MiB | `pipelinePerAudioSecond` | 15 ms |
-| `firstPartialCompute` | 1500 ms | `finalizeCompute` | 1000 ms |
+| `firstPartialCompute` | 1500 ms | `tinyFinalizeCompute` | 1000 ms |
+| `baseFinalizeCompute` | 2000 ms | `uiDrift` | 32 ms |
 | `longSessionPeakRssBytes` | 64 MiB | `longSessionRetainedRssBytes` | 48 MiB |
-| `uiDrift` | 32 ms | | |
 
 Benchmarks check medians and record the processor load, because other work on the machine adds noise; `uiDrift`
 bounds how much later than the idle median (the system timer's granularity, about 15.6 ms on Windows) the
@@ -1998,11 +2014,16 @@ bounds how much later than the idle median (the system timer's granularity, abou
 load: up to 188 ms with the engine idle). Task 128 recalibration (2026-10-05, i7-1165G7, 29–100% busy): peak RSS
 budgets tightened to about 1.5× the measured peaks; `longSessionRetainedRssBytes` raised from 8 MiB because five
 identical long sessions kept the live heap after a forced collection flat (121.3–122.2 MiB) while RSS retention,
-garbage not yet collected, ranged from −38 to 40.5 MiB. The real-time factors and `finalizeCompute` are not loosened.
-With the committed desktop profile (best of 2, temperature fallback, full encoder context) the real-time factors are
-met with the machine 29–60% busy (tiny 0.16–0.17, base 0.31–0.38) and missed at 66–100% (tiny 0.30–0.46, base
-0.51–0.77). `finalizeCompute` is missed at any load: a 2.6 s utterance takes 1.4–1.5 s to finalise with tiny and
-3.8–5.4 s with base at the quietest, because every final encodes the full 30 s context.
+garbage not yet collected, ranged from −38 to 40.5 MiB. The real-time factors are not loosened. With the committed
+desktop profile of that time (best of 2, temperature fallback, full encoder context) they were met with the machine
+29–60% busy (tiny 0.16–0.17, base 0.31–0.38) and missed at 66–100% (tiny 0.30–0.46, base 0.51–0.77).
+
+The single 1000 ms `finalizeCompute` became a budget per model on 2026-10-05 (tasks 117 and 118, machine otherwise
+idle). With finals sized over a floor (§30.4.2 rule 8) the live jfk × 6 host mirror finalises at p90 within the
+original 1000 ms with tiny, which `tinyFinalizeCompute` keeps. Base needs more: the cheapest context that kept every
+word with base still cost 1.1–2.2 s per final, against 3.1–4.3 s with the full context it replaces, so
+`baseFinalizeCompute` is 2000 ms. The measured values are in the task 118 verification notes; the choice between
+this and `auto` choosing tiny on four cores is recorded under §30.4.2 rule 8.
 In headless Chrome 154 on the same loaded machine (task 112 harness, tiny, jfk, three alternating runs), the
 threaded build with 4 threads was no faster than the single-thread one: real-time factor medians 1.88 and 1.85.
 
@@ -2308,11 +2329,16 @@ final class SpeechPipeline { SpeechPipeline({required PcmStore store, required S
   is `interimMaxDutyDesktop` (0.6) or `interimMaxDutyMobile` (0.3). Interims stop for an utterance when
   `ewma > 3 s × duty`, and on mobile once it exceeds `mobileInterimMaxUtterance` (10 s).
 - **Backpressure ladder:** backlog > 10 s → `interimsOff` (interims off; `engineBehind`); > 30 s →
-  `reducedContext` (finals use `audioContextPad` 128); each level is left when backlog < 3 s.
+  `reducedContext` (a final that would encode the full context is sized, `audioContextPad` 128 over the committed
+  floor; a final already sized keeps its profile, because below the floor whisper invents words at hard cuts); each
+  level is left when backlog < 3 s.
 - **Finals** read `[seamFromSample ?? start, end)` from the `PcmStore` **at dispatch**; after stop the store is
   rebased onto the published file, so backlog at stop is never lost.
-- **`InterimStabiliser`** (LocalAgreement-2): `agree = commonPrefix(prev, H)`, `candidate = min(agree, |H|−1)`; the
-  stable part is append-only.
+- **`InterimStabiliser`** (LocalAgreement-2): `agree = commonPrefix(prev, H)`,
+  `candidate = min(agree, |H|−1, repeatStart(H))`, where `repeatStart` is the first index at which a phrase of
+  `interimRepeatWords` (3) words repeats one earlier in the same draft, compared by key; the stable part is
+  append-only. A draft's repeated tail therefore stays tentative however many drafts agree on it, and dictation, which
+  shows only stable words, never shows it. Drafts are decoded without a prompt.
 - **`SegmentAssembler`**, per finished utterance in id order:
   1. reorder buffer;
   2. clamp segment and word times;
@@ -2320,10 +2346,14 @@ final class SpeechPipeline { SpeechPipeline({required PcmStore store, required S
      punctuation; digits, URLs and ellipses untouched;
   4. **`HallucinationFilter`** drops a segment that is empty or punctuation only; or `noSpeech > 0.6 && avgLogprob <
      −1.0`; or a `HallucinationPhrases` phrase on weak audio (mean dB < −55, or speech ratio < 0.3, or
-     `avgLogprob < −0.8`); or a prompt echo (normalised text is a substring of the carried prompt and
-     `avgLogprob < −0.8`). Weak edge words (ln p < `hallucinationLogProb`) lying wholly over windows with `p < off`
-     are trimmed, only at an edge bordering silence (not the start of an utterance continuing a hard cut, nor the end
-     of one a hard cut ended); a confident word is kept wherever whisper timed it;
+     `avgLogprob < −0.8`); or a prompt echo (normalised text is a substring of the prompt the final was decoded with
+     and `avgLogprob < −0.8`; a final decoded without a prompt echoes nothing). Of several segments of an utterance
+     not ended by a hard cut, the last is dropped when the detector heard less than `minSpeech` (250 ms) of speech
+     under it: whisper decodes what follows its last timestamp as a window of its own and tends to hear a word there
+     that was never said. Weak edge words (ln p < `hallucinationLogProb`) are trimmed when every window they overlap,
+     and every window within `edgeTrimTolerance` (96 ms) of them, has `p < off`, only at an edge bordering silence
+     (not the start of an utterance continuing a hard cut, nor the end of one a hard cut ended); a confident word is
+     kept wherever whisper timed it, and the tolerance keeps a weak first word whisper timed just before the onset;
   5. **`RepetitionCollapse`:** for n = 6..1, a run repeated ≥ 3 times (n ≥ 2) or ≥ 4 times (n = 1) collapses to one
      copy when its word count exceeds the utterance's VAD speech seconds × `loopWordsPerSecond` (4), or it is faster
      than 0.12 s per word; a phrase that is itself a shorter phrase repeated collapses at that shorter length;
@@ -2339,8 +2369,11 @@ final class SpeechPipeline { SpeechPipeline({required PcmStore store, required S
      skipped utterance (two decode failures) is appended with `skipped: true` and recorded as a gap. A failing sink
      queues the utterance in order and retries it before the next one; events still go out with `durable: false`,
      plus a `transcriptUnsaved` warning;
-  9. **`PromptCarry`:** the last 200 characters, cut at a word boundary; not passed for utterances under 2 s, with
-     mean dB < −55, or continuing a hard cut (its seam re-decode already carries the context); reset after a loop collapse, a hallucination-only utterance or 60 s without speech.
+  9. **`PromptCarry`**, only with `carryPrompt`, which is off by default as in whisper.cpp's streaming example:
+     whisper skips speech its prompt already holds, which lost 30 of 138 words with tiny and 35 with base over
+     jfk × 6. Drafts never carry a prompt. When on: the last 200 characters, cut at a word boundary; not passed for
+     utterances under 2 s, with mean dB < −55, or continuing a hard cut (its seam re-decode already carries the
+     context); reset after a loop collapse, a hallucination-only utterance or 60 s without speech.
 - **Memory bound.** `debugPipelineRetainedSamples ≤ (ring + maxUtterance + seamOverlap) × 16000`.
 
 #### 30.4.8 Web

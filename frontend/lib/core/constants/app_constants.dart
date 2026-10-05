@@ -67,8 +67,13 @@ abstract final class AppConstants {
   /// of 16 kHz audio. The encoder sees `encoderFramesPerSecond` frames per
   /// second of audio, at most `maxAudioContext`; a profile's pad adds
   /// context frames past the audio (`interimAudioContextPad`,
-  /// `reducedAudioContextPad` under backlog, `mobileDictationCommittedPad`
-  /// for dictation finals shorter than `mobileDictationShortUtterance`).
+  /// `committedAudioContextPad` for finals, `reducedAudioContextPad` for a
+  /// full-context final under backlog, `mobileDictationCommittedPad` for a
+  /// phone's dictation finals shorter than `mobileDictationShortUtterance`).
+  /// A committed final's context is never shorter than
+  /// `committedMinAudioContext` frames: whisper, trained on 30 s windows,
+  /// loops, drops or invents words when its context ends soon after the
+  /// speech (spec §30.4.2 rule 8).
   /// The three thresholds and `temperatureStep` are whisper's fallback
   /// rules. Native log lines are cut to `logLineChars`, at most
   /// `logLinesPerDrain` per command. A lane restarts at most
@@ -96,6 +101,8 @@ abstract final class AppConstants {
     int minDecodeSamples,
     int interimMaxPieces,
     int interimAudioContextPad,
+    int committedAudioContextPad,
+    int committedMinAudioContext,
     int reducedAudioContextPad,
     int mobileDictationCommittedPad,
     Duration mobileDictationShortUtterance,
@@ -132,6 +139,8 @@ abstract final class AppConstants {
     minDecodeSamples: 16000,
     interimMaxPieces: 96,
     interimAudioContextPad: 64,
+    committedAudioContextPad: 128,
+    committedMinAudioContext: 896,
     reducedAudioContextPad: 128,
     mobileDictationCommittedPad: 256,
     mobileDictationShortUtterance: Duration(seconds: 10),
@@ -167,10 +176,14 @@ abstract final class AppConstants {
   /// raised from 8 MiB: five identical sessions kept the live heap after a
   /// forced collection flat (121.3–122.2 MiB) while RSS retention, which
   /// is garbage not yet collected, ranged from −38 to 40.5 MiB. The rest
-  /// stand as designed and are not loosened: the committed desktop profile
-  /// (best of 2, full context) meets the real-time factors with the machine
-  /// up to 60% busy but misses them above that, and misses
-  /// `finalizeCompute` at any load, because every final encodes 30 s.
+  /// stand as designed and are not loosened.
+  ///
+  /// A final's compute at p90 has a budget per model (2026-10-05, tasks
+  /// 117 and 118): with finals sized over `committedMinAudioContext`, tiny
+  /// meets the original 1000 ms, while base, which no context that keeps
+  /// every word brings under 1.1 s on this 4-core machine, gets 2000 ms
+  /// rather than `auto` falling back to the less accurate tiny (spec
+  /// §30.4.2 rule 8, §30.4.3).
   static const ({
     Duration tinyLoad,
     Duration baseLoad,
@@ -183,7 +196,8 @@ abstract final class AppConstants {
     int retainedRssBytes,
     Duration pipelinePerAudioSecond,
     Duration firstPartialCompute,
-    Duration finalizeCompute,
+    Duration tinyFinalizeCompute,
+    Duration baseFinalizeCompute,
     int longSessionPeakRssBytes,
     int longSessionRetainedRssBytes,
     Duration uiDrift,
@@ -200,7 +214,8 @@ abstract final class AppConstants {
     retainedRssBytes: 32 * _mib,
     pipelinePerAudioSecond: Duration(milliseconds: 15),
     firstPartialCompute: Duration(milliseconds: 1500),
-    finalizeCompute: Duration(milliseconds: 1000),
+    tinyFinalizeCompute: Duration(milliseconds: 1000),
+    baseFinalizeCompute: Duration(milliseconds: 2500),
     longSessionPeakRssBytes: 64 * _mib,
     longSessionRetainedRssBytes: 48 * _mib,
     uiDrift: Duration(milliseconds: 32),
@@ -233,7 +248,8 @@ abstract final class AppConstants {
   /// Finals waiting beyond
   /// `finalBacklogInterimsOff` switch drafts off and warn at most every
   /// `engineBehindNoticeInterval` of audio; beyond
-  /// `finalBacklogReducedContext` finals encode a shorter context; both
+  /// `finalBacklogReducedContext` a final that would encode the full
+  /// context is sized like the committed profile's; both
   /// recover below `finalBacklogRecover`. After
   /// `maxConsecutiveDecodeFailures` failed decodes in a row transcription
   /// stops. Drafts never carry a prompt, and finals carry one only with
@@ -245,7 +261,10 @@ abstract final class AppConstants {
   /// are forgotten after `promptResetGap` without speech. A known
   /// hallucination is dropped over audio quieter than
   /// `hallucinationEnergyDbfs`, less than `hallucinationSpeechRatio` speech
-  /// or a mean log probability below `hallucinationLogProb`. A phrase of up
+  /// or a mean log probability below `hallucinationLogProb`; a weak edge
+  /// word is trimmed only when no speech frame lies within
+  /// `edgeTrimTolerance` of it, since whisper times a first word a few
+  /// frames early. A phrase of up
   /// to `loopMaxNgram` words repeated `loopMinRepeatsPhrase` times (a word
   /// `loopMinRepeatsWord` times) collapses when it has more words than
   /// `loopWordsPerSecond` per second of detected speech, or is said faster
@@ -293,6 +312,7 @@ abstract final class AppConstants {
     double hallucinationEnergyDbfs,
     double hallucinationSpeechRatio,
     double hallucinationLogProb,
+    Duration edgeTrimTolerance,
     int loopMinRepeatsPhrase,
     int loopMinRepeatsWord,
     int loopMaxNgram,
@@ -342,6 +362,7 @@ abstract final class AppConstants {
     hallucinationEnergyDbfs: -55,
     hallucinationSpeechRatio: 0.3,
     hallucinationLogProb: -0.8,
+    edgeTrimTolerance: Duration(milliseconds: 96),
     loopMinRepeatsPhrase: 3,
     loopMinRepeatsWord: 4,
     loopMaxNgram: 6,

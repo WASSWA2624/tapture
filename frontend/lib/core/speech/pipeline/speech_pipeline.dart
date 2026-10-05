@@ -429,12 +429,15 @@ final class SpeechPipeline {
     final SpeechDecodeProfile profile = _config.dictation
         ? lease.selection.dictationCommittedFor(samples)
         : lease.selection.committed;
-    final int reduced = AppConstants.speechEngine.reducedAudioContextPad;
-    final int pad = profile.audioContextPad;
-    // Under backlog a final encodes no more than the reduced context.
+    // Under backlog a final that would encode the full context is sized
+    // instead. A sized one keeps its floor: below it, whisper invents words
+    // at hard cuts.
     return _scheduler.level == BackpressureLevel.reducedContext &&
-            (pad == 0 || pad > reduced)
-        ? profile.copyWith(audioContextPad: reduced)
+            profile.audioContextPad == 0
+        ? profile.copyWith(
+            audioContextPad: AppConstants.speechEngine.reducedAudioContextPad,
+            minAudioContext: AppConstants.speechEngine.committedMinAudioContext,
+          )
         : profile;
   }
 

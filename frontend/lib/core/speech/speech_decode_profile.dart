@@ -18,8 +18,8 @@ final class SpeechDecodeProfile {
     this.singleSegment = false,
     this.timestamps = true,
     this.maxPieces = 0,
-    this.piecesPerSecond = 0,
     this.audioContextPad = 0,
+    this.minAudioContext = 0,
     this.suppressBlank = true,
     this.suppressNonSpeech = true,
   });
@@ -51,17 +51,15 @@ final class SpeechDecodeProfile {
   /// Whether segments carry timestamps.
   final bool timestamps;
 
-  /// Most pieces one decoding pass yields; 0 is unlimited. With
-  /// [piecesPerSecond] it is the allowance before the audio's share.
+  /// Most pieces decoded; 0 is unlimited.
   final int maxPieces;
-
-  /// Pieces a pass may add per second of audio on top of [maxPieces]; 0
-  /// keeps [maxPieces] fixed. Bounds the cost of a pass that loops, which
-  /// otherwise runs to whisper's own limit before it falls back.
-  final int piecesPerSecond;
 
   /// Encoder frames past the audio; 0 encodes the full context.
   final int audioContextPad;
+
+  /// The fewest encoder frames a sized context gets, whatever the audio's
+  /// length; 0 sets no floor. Ignored when [audioContextPad] is 0.
+  final int minAudioContext;
 
   /// Whether a blank first piece is suppressed.
   final bool suppressBlank;
@@ -71,7 +69,8 @@ final class SpeechDecodeProfile {
 
   /// The encoder context for [sampleCount] samples at 16 kHz: 0 (the full
   /// context) when [audioContextPad] is 0, otherwise the audio's frames plus
-  /// the pad, rounded up to whisper's step and capped at the model maximum.
+  /// the pad, at least [minAudioContext], rounded up to whisper's step and
+  /// capped at the model maximum.
   int audioContextFor(int sampleCount) {
     if (audioContextPad == 0) return 0;
     final int rate = AppConstants.audio.sampleRate;
@@ -80,22 +79,15 @@ final class SpeechDecodeProfile {
             rate -
             1) ~/
         rate;
-    final int padded = frames + audioContextPad;
+    final int padded = frames + audioContextPad < minAudioContext
+        ? minAudioContext
+        : frames + audioContextPad;
     final int rounded =
         (padded + _audioContextStep - 1) ~/
         _audioContextStep *
         _audioContextStep;
     final int cap = AppConstants.speechEngine.maxAudioContext;
     return rounded < cap ? rounded : cap;
-  }
-
-  /// The most pieces one pass yields for [sampleCount] samples at 16 kHz:
-  /// [maxPieces] when [piecesPerSecond] is 0, otherwise [maxPieces] plus
-  /// [piecesPerSecond] for each second of audio, rounded up.
-  int maxPiecesFor(int sampleCount) {
-    if (piecesPerSecond == 0) return maxPieces;
-    final int rate = AppConstants.audio.sampleRate;
-    return maxPieces + (sampleCount * piecesPerSecond + rate - 1) ~/ rate;
   }
 
   /// This profile with the given fields replaced.
@@ -110,8 +102,8 @@ final class SpeechDecodeProfile {
     bool? singleSegment,
     bool? timestamps,
     int? maxPieces,
-    int? piecesPerSecond,
     int? audioContextPad,
+    int? minAudioContext,
     bool? suppressBlank,
     bool? suppressNonSpeech,
   }) {
@@ -126,8 +118,8 @@ final class SpeechDecodeProfile {
       singleSegment: singleSegment ?? this.singleSegment,
       timestamps: timestamps ?? this.timestamps,
       maxPieces: maxPieces ?? this.maxPieces,
-      piecesPerSecond: piecesPerSecond ?? this.piecesPerSecond,
       audioContextPad: audioContextPad ?? this.audioContextPad,
+      minAudioContext: minAudioContext ?? this.minAudioContext,
       suppressBlank: suppressBlank ?? this.suppressBlank,
       suppressNonSpeech: suppressNonSpeech ?? this.suppressNonSpeech,
     );
@@ -146,8 +138,8 @@ final class SpeechDecodeProfile {
       other.singleSegment == singleSegment &&
       other.timestamps == timestamps &&
       other.maxPieces == maxPieces &&
-      other.piecesPerSecond == piecesPerSecond &&
       other.audioContextPad == audioContextPad &&
+      other.minAudioContext == minAudioContext &&
       other.suppressBlank == suppressBlank &&
       other.suppressNonSpeech == suppressNonSpeech;
 
@@ -163,8 +155,8 @@ final class SpeechDecodeProfile {
     singleSegment,
     timestamps,
     maxPieces,
-    piecesPerSecond,
     audioContextPad,
+    minAudioContext,
     suppressBlank,
     suppressNonSpeech,
   );

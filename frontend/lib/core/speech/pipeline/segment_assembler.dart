@@ -137,6 +137,15 @@ final class SegmentAssembler {
         ))
           draft,
     ];
+    if (kept.length > 1 &&
+        utterance.reason != UtteranceEndReason.hardCut &&
+        _filter.dropsTail(
+          startSample: kept.last.startSample,
+          endSample: kept.last.endSample,
+          evidence: utterance.evidence,
+        )) {
+      kept.removeLast();
+    }
     _droppedSegments += heard.length - kept.length;
     final bool hallucinationOnly = heard.isNotEmpty && kept.isEmpty;
 

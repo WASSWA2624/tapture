@@ -28,9 +28,6 @@ const int _minLogicalCores = 2;
 /// The fewest threads a native device decodes with.
 const int _minThreads = 2;
 
-/// Candidates a desktop's final decode samples; phones and browsers use 1.
-const int _desktopBestOf = 2;
-
 /// Logical processors from which a phone without a performance-core count
 /// is given the mobile maximum.
 const int _mobileManyCores = 8;
@@ -333,9 +330,12 @@ abstract final class SpeechModelSelector {
       logprobThreshold: AppConstants.speechEngine.logprobThreshold,
       entropyThreshold: AppConstants.speechEngine.entropyThreshold,
     );
+    // Greedy with temperature fallback: a second candidate changed no word
+    // on this machine's measurements and only added compute.
     final SpeechDecodeProfile committed = shared.copyWith(
-      bestOf: device.isDesktop ? _desktopBestOf : 1,
       temperatureStep: AppConstants.speechEngine.temperatureStep,
+      audioContextPad: AppConstants.speechEngine.committedAudioContextPad,
+      minAudioContext: AppConstants.speechEngine.committedMinAudioContext,
     );
     return (
       interim: shared.copyWith(
@@ -349,6 +349,7 @@ abstract final class SpeechModelSelector {
           ? committed.copyWith(
               audioContextPad:
                   AppConstants.speechEngine.mobileDictationCommittedPad,
+              minAudioContext: 0,
             )
           : null,
     );
