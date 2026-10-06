@@ -30,6 +30,11 @@ export async function auditConfiguration(
       configured: config.aiProviderKey.length > 0,
     }),
     setting(
+      'personal_credential_encryption_key',
+      config.aiCredentialEncryptionKey,
+      { configured: config.aiCredentialEncryptionKey !== '' },
+    ),
+    setting(
       'relay_policy',
       [
         config.retentionDays,
@@ -48,6 +53,12 @@ export async function auditConfiguration(
       'ai_policy',
       [
         config.aiProviderUrl,
+        config.aiProvider,
+        config.aiGeminiModel,
+        config.aiOpenaiModel,
+        config.aiOpenaiUrl,
+        config.aiModelCostCeilings,
+        config.aiMaxOutputTokens,
         config.aiProviderModel,
         config.aiRequestCostCeiling,
         config.aiRetryLimit,
@@ -63,6 +74,12 @@ export async function auditConfiguration(
       ],
       {
         providerUrl: config.aiProviderUrl,
+        provider: config.aiProvider,
+        geminiModel: config.aiGeminiModel,
+        openaiModel: config.aiOpenaiModel,
+        openaiUrl: config.aiOpenaiUrl,
+        modelCostCeilings: config.aiModelCostCeilings,
+        maxOutputTokens: config.aiMaxOutputTokens,
         model: config.aiProviderModel,
         requestCostCeiling: config.aiRequestCostCeiling,
         retryLimit: config.aiRetryLimit,

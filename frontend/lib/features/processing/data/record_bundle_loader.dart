@@ -3,6 +3,7 @@ import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/attachments.dart';
 import 'package:tapture/core/db/tables/photos.dart';
+import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 import 'record_bundle.dart';
@@ -28,6 +29,16 @@ final class RecordBundleLoader {
   /// Throws a [StorageFailure] when the record is gone and a
   /// [ValidationFailure] when its project or template is missing.
   Future<RecordBundle> load(String recordId) async {
+    try {
+      return await _load(recordId);
+    } on Failure {
+      rethrow;
+    } on Object catch (error) {
+      throw Failure.from(storageFailureFrom(error));
+    }
+  }
+
+  Future<RecordBundle> _load(String recordId) async {
     final RecordRow? record =
         await (_db.select(_db.records)
               ..where(($RecordsTable table) => table.id.equals(recordId)))
@@ -64,6 +75,25 @@ final class RecordBundleLoader {
     final List<String> attachmentIds = <String>[
       for (final AttachmentOwner owner in audioOwners) owner.attachmentId,
     ];
+    final List<AttachmentOwner> photoAudioOwners = attachmentIds.isEmpty
+        ? const <AttachmentOwner>[]
+        : await (_db.select(_db.attachmentOwners)..where(
+                ($AttachmentOwnersTable table) =>
+                    table.attachmentId.isIn(attachmentIds) &
+                    table.ownerType.equalsValue(AttachmentOwnerType.photo),
+              ))
+              .get();
+    final List<TranscriptRow> transcripts = attachmentIds.isEmpty
+        ? const <TranscriptRow>[]
+        : await (_db.select(_db.transcripts)..where(
+                ($TranscriptsTable table) =>
+                    table.attachmentId.isIn(attachmentIds) &
+                    table.status.equals('complete') &
+                    const CustomExpression<bool>(
+                      "NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'transcripts' AND t.entity_id = transcripts.id)",
+                    ),
+              ))
+              .get();
     // Only the photos the record shows now: a removed photo, or an original
     // replaced by its edited copy, is never read again, so re-processing
     // cannot link fresh evidence to it (task 014 step 5).
@@ -117,6 +147,22 @@ final class RecordBundleLoader {
                   ($AttachmentsTable table) =>
                       table.id.isIn(attachmentIds) &
                       table.kind.equalsValue(AttachmentKind.audio),
+                ))
+                .get(),
+      audioPhotoIds: <String, List<String>>{
+        for (final String id in attachmentIds)
+          id: <String>[
+            for (final AttachmentOwner owner in photoAudioOwners)
+              if (owner.attachmentId == id) owner.ownerId,
+          ]..sort(),
+      },
+      deviceTranscripts: transcripts,
+      transcriptSegments: transcripts.isEmpty
+          ? const <TranscriptSegmentRow>[]
+          : await (_db.select(_db.transcriptSegments)..where(
+                  ($TranscriptSegmentsTable table) => table.transcriptId.isIn(
+                    transcripts.map((TranscriptRow row) => row.id),
+                  ),
                 ))
                 .get(),
       existing:

@@ -2,7 +2,7 @@
 
 **Tap it. It's data.**
 
-A local-first Flutter app for field data capture. Photograph or describe a thing — equipment, a building, stock, a plot, a meeting — and Tapture turns the evidence into structured records you can export as XLSX, CSV, JSON, PDF or a portable ZIP bundle.
+A local-first Flutter app for field data capture. Photograph or describe a thing — equipment, a building, stock, a plot, a meeting — and Tapture turns the evidence into reviewed records you can export as Excel, Word, text, CSV, JSON, PDF or a portable ZIP bundle.
 
 - **Offline by default.** Capture, edit, search, review, approve and export all work with no network, for weeks at a time. Only the online AI steps, the first sign-in and uploads you tap go out.
 - **The device is the store of record.** Every record, photo and export lives on the device. A small required server holds people, permissions and AI keys — never project content, and never a backup.
@@ -46,8 +46,9 @@ app-write-up.md  the product and technical specification
 - [AGENTS.md](AGENTS.md) — repository instructions and the standard every task inherits.
 - [branding/BRAND.md](branding/BRAND.md) — the identity: mark, wordmark, palette and how to use them.
 - [run-tools/README.md](run-tools/README.md) — running the app locally, and building the APK, web bundle and backend archive.
+- [backend/RUNBOOK.md](backend/RUNBOOK.md) — managed/personal AI configuration, encrypted credentials, spending limits and request recovery.
 - [frontend/.rules/](frontend/.rules/) and [backend/.rules/](backend/.rules/) — the conventions every task obeys.
 
 ## Status
 
-Specification and plan complete; implementation starts at dev-plan task 001. The MVP is two artefacts that ship together — the app and the backend at its smallest useful size — and one release gate covers both.
+The specification and plan are in place; [dev-tracker.md](dev-tracker.md) records verified implementation progress and unfinished acceptance criteria. The MVP is two artefacts that ship together — the app and the backend at its smallest useful size — and one release gate covers both.

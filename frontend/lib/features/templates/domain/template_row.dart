@@ -6,6 +6,7 @@ final class TemplateRow {
     required this.identifier,
     required this.label,
     required this.outputRowNumber,
+    this.id = '',
     this.aliases = const <String>[],
     this.metadata = const <String, Object?>{},
     this.foundStatus = 'missing',
@@ -13,6 +14,10 @@ final class TemplateRow {
 
   /// Stable identifier within the template.
   final String identifier;
+
+  /// Persisted association used by records and output targeting; value equality
+  /// compares checklist content independently of this storage identity.
+  final String id;
 
   /// Operator-facing label, stored as data.
   final String label;
@@ -34,12 +39,14 @@ final class TemplateRow {
     String? identifier,
     String? label,
     int? outputRowNumber,
+    String? id,
     List<String>? aliases,
     Map<String, Object?>? metadata,
     String? foundStatus,
   }) {
     return TemplateRow(
       identifier: identifier ?? this.identifier,
+      id: id ?? this.id,
       label: label ?? this.label,
       outputRowNumber: outputRowNumber ?? this.outputRowNumber,
       aliases: aliases ?? this.aliases,

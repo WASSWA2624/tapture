@@ -658,16 +658,21 @@ async function verify(args) {
       if (hasher === 0) {
         throw new WorkerFailure('out_of_memory', STATUS.OUT_OF_MEMORY);
       }
-      const source = sourceOverAccessHandle(access);
-      for (let offset = 0; offset < args.bytes; ) {
-        const read = source.read(offset, chunk, Math.min(VERIFY_CHUNK, args.bytes - offset));
-        if (read <= 0) {
-          break;
+      // finish is the only call that frees the hasher, so a read that throws
+      // still reaches it.
+      try {
+        const source = sourceOverAccessHandle(access);
+        for (let offset = 0; offset < args.bytes; ) {
+          const read = source.read(offset, chunk, Math.min(VERIFY_CHUNK, args.bytes - offset));
+          if (read <= 0) {
+            break;
+          }
+          wasm._tw_sha256_update(hasher, chunk, read);
+          offset += read;
         }
-        wasm._tw_sha256_update(hasher, chunk, read);
-        offset += read;
+      } finally {
+        wasm._tw_sha256_finish(hasher, out);
       }
-      wasm._tw_sha256_finish(hasher, out);
       return Array.from(heap().u8.subarray(out, out + 32), (b) =>
         b.toString(16).padStart(2, '0'),
       ).join('');

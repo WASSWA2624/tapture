@@ -15,6 +15,9 @@ final class RecordBundle {
     required this.captions,
     required this.audio,
     required this.existing,
+    this.audioPhotoIds = const <String, List<String>>{},
+    this.deviceTranscripts = const <TranscriptRow>[],
+    this.transcriptSegments = const <TranscriptSegmentRow>[],
   });
 
   /// The record being processed.
@@ -40,6 +43,15 @@ final class RecordBundle {
 
   /// Audio clips attached to the record.
   final List<Attachment> audio;
+
+  /// Explicit photo owners of each audio clip; record ownership stays intact.
+  final Map<String, List<String>> audioPhotoIds;
+
+  /// Complete on-device transcript headers used to detect edited evidence.
+  final List<TranscriptRow> deviceTranscripts;
+
+  /// Original segments of those transcripts, retained beside any edits.
+  final List<TranscriptSegmentRow> transcriptSegments;
 
   /// Field values already stored on the record.
   final List<RecordField> existing;

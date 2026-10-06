@@ -29,6 +29,29 @@ backend/dist/
 # Test suites stay local (frontend/test and frontend/integration_test are
 # ignored in frontend/.gitignore), as does local agent configuration.
 backend/test/
+# Task 132 AI contracts and their fixtures travel with the implementation.
+!backend/test/
+backend/test/**
+!backend/test/**/
+!backend/test/helpers.ts
+!backend/test/postgres_fixture.ts
+!backend/test/config/config.test.ts
+!backend/test/contract/contract.test.ts
+!backend/test/contract/openapi.ts
+!backend/test/contract/compare.ts
+!backend/test/contract/fixtures/drifted_route.ts
+!backend/test/db/migrate.test.ts
+!backend/test/fakes/relay_fixture.ts
+!backend/test/middleware/cors.test.ts
+!backend/test/repositories/ai_state.test.ts
+!backend/test/repositories/postgres_ai.test.ts
+!backend/test/routes/ai_processing.test.ts
+!backend/test/services/ai_credentials.test.ts
+!backend/test/services/ai_processing.test.ts
+!backend/test/services/ai_resilience.test.ts
+!backend/test/services/http_provider.test.ts
+!backend/test/services/openai_provider.test.ts
+!backend/test/services/runtime_hardening.test.ts
 /.claude/
 
 # Operator-captured photos and local app data. Branding and icons stay

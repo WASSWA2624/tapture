@@ -9,7 +9,9 @@ export type ErrorCode =
   | 'rate_limited'
   | 'quota_exceeded'
   | 'internal'
-  | 'unavailable';
+  | 'unavailable'
+  | 'ai_request_uncertain'
+  | 'ai_result_unavailable';
 
 /// One failure the API is allowed to return. The message is safe to show.
 export class AppError extends Error {
@@ -74,3 +76,17 @@ export const internalError = (): AppError =>
 /// A dependency this deployment has not configured; retrying cannot help.
 export const unavailable = (): AppError =>
   new AppError('unavailable', 503, 'This service is not available.');
+
+export const uncertainAiRequest = (): AppError =>
+  new AppError(
+    'ai_request_uncertain',
+    409,
+    'This analysis attempt may have been charged. Keep the same attempt paused; approve a new attempt before retrying.',
+  );
+
+export const unavailableAiResult = (): AppError =>
+  new AppError(
+    'ai_result_unavailable',
+    409,
+    'This analysis already completed. Recover the saved response on your device or approve a new attempt; this attempt will not be billed again.',
+  );

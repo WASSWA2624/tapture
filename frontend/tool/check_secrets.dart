@@ -202,14 +202,10 @@ const Set<String> _generatedFolders = <String>{
   'ephemeral',
 };
 
-/// Folders of vendored upstream source inside the scan roots. They are not
-/// scanned for keys because `tool/whisper_vendor.dart --check` verifies every
-/// byte of them against its pinned hash instead (dev-plan task 102).
-const Set<String> _hashVerifiedFolders = <String>{'third_party'};
-
 /// Text files under the folders that may not hold a key, generated build
-/// output and hash-verified vendored source aside: [secretScanRoots] and the
-/// native and browser sources in [nativeSourceScanRoots].
+/// output and the hash-verified vendored trees of [hashVerifiedVendorRoots]
+/// aside: [secretScanRoots] and the native and browser sources in
+/// [nativeSourceScanRoots].
 List<File> _sources(Directory root) {
   final List<File> sources = <File>[];
   for (final String name in <String>{
@@ -221,7 +217,10 @@ List<File> _sources(Directory root) {
       continue;
     }
     for (final FileSystemEntity entity in folder.listSync(recursive: true)) {
-      if (entity is File && !_isGenerated(folder, entity) && _isText(entity)) {
+      if (entity is File &&
+          !_isGenerated(folder, entity) &&
+          !_isHashVerified(root, entity) &&
+          _isText(entity)) {
         sources.add(entity);
       }
     }
@@ -229,8 +228,7 @@ List<File> _sources(Directory root) {
   return sources..sort((File a, File b) => a.path.compareTo(b.path));
 }
 
-/// Whether [file] sits in a generated or hash-verified folder somewhere
-/// below [folder].
+/// Whether [file] sits in a generated folder somewhere below [folder].
 bool _isGenerated(Directory folder, File file) {
   final String from = _slash(folder.path);
   final String to = _slash(file.path);
@@ -240,11 +238,17 @@ bool _isGenerated(Directory folder, File file) {
   final List<String> segments = relative.split('/');
   return segments
       .take(segments.length - 1)
-      .any(
-        (String segment) =>
-            _generatedFolders.contains(segment) ||
-            _hashVerifiedFolders.contains(segment),
-      );
+      .any(_generatedFolders.contains);
+}
+
+/// Whether [file] lies in one of the [hashVerifiedVendorRoots], which
+/// `tool/whisper_vendor.dart --check` verifies instead (dev-plan task 102).
+/// Matched on the whole path from [root], never on a folder name alone.
+bool _isHashVerified(Directory root, File file) {
+  final String relative = _relative(root, file);
+  return hashVerifiedVendorRoots.any(
+    (String vendored) => relative.startsWith('$vendored/'),
+  );
 }
 
 /// Whether [file] can be decoded as text and is not a known binary type.

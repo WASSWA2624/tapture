@@ -13,7 +13,7 @@ import { createPostgresRepository } from './repositories/postgres.js';
 import { schedulePurge } from './jobs/schedule_purge.js';
 import { aiRoutePrefix } from './routes/ai.js';
 import { registerRoutes } from './routes/index.js';
-import { httpProvider } from './services/ai/http_provider.js';
+import { configuredProvider } from './services/ai/provider-selection.js';
 import { emptyMetrics, noteRequest } from './services/metrics/metrics.js';
 import { warmPasswordVerification } from './services/auth/password.js';
 import { auditConfiguration } from './services/configuration.js';
@@ -116,7 +116,7 @@ async function main(): Promise<void> {
   const store = createPostgresRepository(pool);
   if (
     !(await store.schemaHistory()).some(
-      (row) => row.name === '010_scoped_pagination.sql',
+      (row) => row.name === '011_ai_processing.sql',
     )
   ) {
     await pool.drain();
@@ -128,7 +128,11 @@ async function main(): Promise<void> {
     store,
     config,
     pool,
-    provider: httpProvider(config),
+    provider: configuredProvider(
+      config,
+      config.aiProvider,
+      config.aiProviderKey,
+    ),
     metrics: emptyMetrics(),
     log,
   };

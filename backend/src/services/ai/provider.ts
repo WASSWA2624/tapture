@@ -1,13 +1,18 @@
+import type { TokenUsage } from '../../domain/ai.js';
+
 export interface AiRequest {
   projectId: string;
   model: string;
   payload: Buffer;
   signal?: AbortSignal;
+  /** Distinguishes a configured provider and billing account for breaker isolation. */
+  accountId?: string;
 }
 
 export interface AiResult {
   text: string;
   model: string;
+  usage?: TokenUsage;
 }
 
 export interface AiProvider {

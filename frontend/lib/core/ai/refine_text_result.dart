@@ -9,6 +9,8 @@ final class RefineTextResult {
     this.provider,
     this.model,
     this.promptVersion,
+    this.billingKind,
+    this.usage,
   });
 
   /// The cleaned text. The original stays where it was written.
@@ -25,4 +27,10 @@ final class RefineTextResult {
 
   /// Prompt contract version used for provenance.
   final String? promptVersion;
+
+  /// Account charged by the server.
+  final String? billingKind;
+
+  /// Reported usage and conservative reserved cost.
+  final AiUsage? usage;
 }

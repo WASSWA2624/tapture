@@ -19,6 +19,7 @@ final class ExtractionRequest {
     this.transcripts = const <UntrustedText>[],
     this.rules = defaultRules,
     this.basis = '',
+    this.sources = const <Map<String, Object?>>[],
   });
 
   /// Rules quoted as data on every request.
@@ -26,6 +27,8 @@ final class ExtractionRequest {
     'Return only values supported by the supplied evidence.',
     'Use null when a value is not present. Never guess.',
     'Return valid JSON matching the schema.',
+    'Every non-null value must cite the supplied source IDs in evidence.',
+    'Flag conflicting values, missing requirements and uncertain item grouping for review.',
   ];
 
   /// Template display name.
@@ -58,6 +61,9 @@ final class ExtractionRequest {
   /// Explicit rules, quoted as data.
   final List<String> rules;
 
+  /// Source identities and ownership remain structured rather than flattened.
+  final List<Map<String, Object?>> sources;
+
   /// Wire shape from the specification.
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -76,6 +82,7 @@ final class ExtractionRequest {
       ],
       'rules': rules,
       if (basis.isNotEmpty) 'basis': basis,
+      if (sources.isNotEmpty) 'sources': sources,
     };
   }
 
@@ -101,6 +108,7 @@ final class ExtractionRequest {
       ],
       predefinedRows: predefinedRows,
       rules: rules,
+      sources: sources,
     );
   }
 

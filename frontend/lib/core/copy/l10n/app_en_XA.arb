@@ -6608,7 +6608,7 @@
       }
     }
   },
-  "aiSelectionFallback": "Thé sávéd chóícé ís únáváíláblé. Thé órgánísátíón báckénd ís séléctéd fór nów.····························",
+  "aiSelectionFallback": "Thé sávéd próvídér ór módél ís únáváíláblé. Chóósé éxplícítly béfóré ánálysís cán cóntínúé.································",
   "@aiSelectionFallback": {
     "description": "Saved choice fallback explanation."
   },
@@ -15277,5 +15277,139 @@
   "cloudSignInAgain": "Sígn ín ágáín.·····",
   "@cloudSignInAgain": {
     "description": "Sign in again."
+  },
+  "exportFormatDocx": "Wórd dócúmént (DÓCX)·······",
+  "@exportFormatDocx": {
+    "description": "File choice: an editable Word report."
+  },
+  "exportFormatTxt": "Pláín téxt (TXT)······",
+  "@exportFormatTxt": {
+    "description": "File choice: a UTF-8 record report."
+  },
+  "serverApiKeySaved": "Éncryptéd ón thé órgánísátíón sérvér·············",
+  "@serverApiKeySaved": {
+    "description": "A saved server credential status; never shows the key."
+  },
+  "serverApiKeyCustody": "Yóúr kéy ís éncryptéd ón thé órgánísátíón sérvér. Réqúésts úsé yóúr próvídér áccóúnt; nó áútómátíc bíllíng-áccóúnt swítch.···········································",
+  "@serverApiKeyCustody": {
+    "description": "Explains encrypted personal credential custody."
+  },
+  "aiRequestUncertain": "Thís réqúést máy hávé béén chárgéd. Íts résúlt ís únáváíláblé. Révíéw béfóré stártíng á néw áttémpt.···································",
+  "@aiRequestUncertain": {
+    "description": "A provider request has an uncertain billing result."
+  },
+  "aiManagedAccount": "Órgánísátíón-mánágéd áccóúnt··········",
+  "@aiManagedAccount": {
+    "description": "The selected managed billing account."
+  },
+  "aiPersonalAccount": "Yóúr ··{provider} áccóúnt···",
+  "@aiPersonalAccount": {
+    "description": "The selected personal billing account.",
+    "placeholders": {
+      "provider": {
+        "type": "String",
+        "description": "The selected provider name."
+      }
+    }
+  },
+  "aiSpendingLimit": "Máxímúm cóst pér réqúést·········",
+  "@aiSpendingLimit": {
+    "description": "Explicit AI request budget control."
+  },
+  "aiSpendingLimitHint": "Búdgét úníts cónfígúréd by yóúr órgánísátíón. Híghér-cóst módéls réqúíré éxplícít áppróvál.································",
+  "@aiSpendingLimitHint": {
+    "description": "Explains request budgets and escalation approval."
+  },
+  "serverCredentialRemoveMessage": "Délété yóúr éncryptéd próvídér kéy fróm thé órgánísátíón sérvér. Ánálysís fór thís áccóúnt stóps úntíl á kéy ís sávéd ágáín.············································",
+  "@serverCredentialRemoveMessage": {
+    "description": "Confirmation when deleting a personal server credential."
+  },
+  "processingFindingsTitle": "Ánálysís fíndíngs······",
+  "@processingFindingsTitle": {
+    "description": "Processing review and retry control."
+  },
+  "processingRetryChargeTitle": "Rétry ánálysís?······",
+  "@processingRetryChargeTitle": {
+    "description": "Processing review and retry control."
+  },
+  "processingRetryChargeBody": "Thé prévíóús réqúést máy hávé béén chárgéd. Rétryíng stárts á néw réqúést ánd máy spénd móré.·································",
+  "@processingRetryChargeBody": {
+    "description": "Processing review and retry control."
+  },
+  "processingRetryChargeConfirm": "Áppróvé rétry·····",
+  "@processingRetryChargeConfirm": {
+    "description": "Processing review and retry control."
+  },
+  "processingReservedCost": "Résérvéd cóst: ······{amount} {unit} (spéndíng céílíng)·······",
+  "@processingReservedCost": {
+    "description": "Processing usage and cost display.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "description": "The reserved numeric ceiling."
+      },
+      "unit": {
+        "type": "String",
+        "description": "The organisation-configured billing unit."
+      }
+    }
+  },
+  "processingTokens": "{count, plural, one{{count} répórtéd tókén······} other{{count} répórtéd tókéns······}}",
+  "@processingTokens": {
+    "description": "Processing usage and cost display.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Provider-reported token count."
+      }
+    }
+  },
+  "processingEgressSelection": "Próvídér: ····{provider}. Módél: ····{model}. Bíllíng: ····{account}. Áppróvéd réqúést límít: ··········{limit}.",
+  "@processingEgressSelection": {
+    "description": "Explicit processing consent for the provider, model, billing account and spending ceiling.",
+    "placeholders": {
+      "provider": {
+        "type": "String",
+        "description": "Selected provider."
+      },
+      "model": {
+        "type": "String",
+        "description": "Selected model."
+      },
+      "account": {
+        "type": "String",
+        "description": "Selected account."
+      },
+      "limit": {
+        "type": "String",
+        "description": "Selected limit."
+      }
+    }
+  },
+  "processingEgressManaged": "Mánágéd áccóúnt······",
+  "@processingEgressManaged": {
+    "description": "Explicit processing consent for the provider, model, billing account and spending ceiling."
+  },
+  "processingEgressPersonal": "Yóúr sérvér-héld kéy·······",
+  "@processingEgressPersonal": {
+    "description": "Explicit processing consent for the provider, model, billing account and spending ceiling."
+  },
+  "processingEgressLimitDefault": "cónfígúréd sérvér límít·········",
+  "@processingEgressLimitDefault": {
+    "description": "Explicit processing consent for the provider, model, billing account and spending ceiling."
+  },
+  "aiModelCostCeiling": "Thís módél résérvés úp tó ··········{amount} {unit} pér réqúést.·····",
+  "@aiModelCostCeiling": {
+    "description": "Visible configured spending ceiling for the selected provider model before approval.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "description": "Configured maximum model cost formatted for display."
+      },
+      "unit": {
+        "type": "String",
+        "description": "Budget unit label configured by the organisation."
+      }
+    }
   }
 }

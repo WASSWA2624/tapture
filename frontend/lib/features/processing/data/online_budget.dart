@@ -1,14 +1,11 @@
-import 'package:drift/drift.dart';
-import 'package:tapture/core/ai/auxiliary_ai_usage.dart';
-import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/localized_message.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/time/clock.dart';
-import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/cost_guard.dart';
 import 'job_writes.dart';
+import 'processing_usage.dart';
 import 'record_bundle.dart';
 import 'stage_settings.dart';
 
@@ -58,33 +55,8 @@ final class OnlineBudget {
     );
   }
 
-  Future<int> _requestsToday(String projectId) async {
-    final DateTime now = _clock.nowUtc();
-    final DateTime start = DateTime.utc(now.year, now.month, now.day);
-    final DateTime end = start.add(AppConstants.processing.dayWindow);
-    final QueryRow row = await _db
-        .customSelect(
-          'SELECT COUNT(*) AS c FROM processing_results pr '
-          'JOIN processing_jobs pj ON pj.id = pr.job_id '
-          'JOIN records r ON r.id = pj.record_id '
-          'WHERE r.project_id = ? AND pr.created_at >= ? '
-          'AND pr.created_at < ? AND pr.request_summary LIKE ?',
-          variables: <Variable<Object>>[
-            Variable<String>(projectId),
-            Variable<DateTime>(start),
-            Variable<DateTime>(end),
-            const Variable<String>('%"kind":"online"%'),
-          ],
-          readsFrom: <ResultSetImplementation<Object?, Object?>>{
-            _db.processingResults,
-            _db.processing,
-            _db.records,
-          },
-        )
-        .getSingle();
-    return row.read<int>('c') +
-        AuxiliaryAiUsage(
-          _settings.read(SettingKeys.aiAuxiliaryUsage),
-        ).count(now, projectId: projectId);
-  }
+  Future<int> _requestsToday(String projectId) async => (await ProcessingUsage(
+    db: _db,
+    settings: _settings.store,
+  ).on(_clock.nowUtc(), projectId: projectId)).getOrThrow().requests;
 }

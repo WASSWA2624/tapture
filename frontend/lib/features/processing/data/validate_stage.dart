@@ -5,6 +5,7 @@ import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/field_evidence.dart';
 import 'package:tapture/core/db/tables/records.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/normalise/choices.dart';
 import 'package:tapture/core/normalise/dates.dart';
@@ -20,8 +21,10 @@ import '../domain/proposal_application.dart';
 import '../domain/provenance.dart';
 import 'job_writes.dart';
 import 'processing_repository_impl.dart';
+import 'processing_snapshot.dart';
 import 'proposal_collector.dart';
 import 'record_bundle.dart';
+import 'record_bundle_loader.dart';
 import 'stage_settings.dart';
 import 'stage_support.dart';
 
@@ -45,6 +48,8 @@ final class ValidateStage {
     required this._settings,
     required this._collector,
     required this._writes,
+    this._loader,
+    this._currentRevision,
   });
 
   final AppDatabase _db;
@@ -54,6 +59,8 @@ final class ValidateStage {
   final StageSettings _settings;
   final ProposalCollector _collector;
   final JobWrites _writes;
+  final RecordBundleLoader? _loader;
+  final Future<String> Function(ProcessingJob, RecordBundle)? _currentRevision;
 
   /// Applies [job]'s proposals to [bundle]'s record in one transaction.
   Future<void> run(
@@ -61,6 +68,10 @@ final class ValidateStage {
     RecordBundle bundle,
     CancellationToken cancel,
   ) async {
+    if (cancel.isCancelled) throw const CancelledFailure();
+    final String revision =
+        await _currentRevision?.call(job, bundle) ??
+        await ProcessingSnapshot.sourceRevision(bundle, privacyRevision: '');
     final List<ExistingValue> existing = <ExistingValue>[
       for (final RecordField field in bundle.existing)
         (
@@ -88,7 +99,39 @@ final class ValidateStage {
       },
     );
     final List<String> priorRejections = await _writes.rejections(job.id);
+    final List<String> missing = <String>[
+      for (final TemplateField field in bundle.fields)
+        if (field.isRequired &&
+            !existing.any(
+              (ExistingValue value) =>
+                  value.fieldKey == field.fieldKey &&
+                  (value.capturedValue ?? '').trim().isNotEmpty,
+            ) &&
+            !plan.writes.any(
+              (ProposalWrite value) =>
+                  value.fieldKey == field.fieldKey &&
+                  (value.proposed ?? '').trim().isNotEmpty,
+            ))
+          '${field.fieldKey} is missing. Review or capture more evidence.',
+    ];
     await _db.transaction(() async {
+      if (cancel.isCancelled) throw const CancelledFailure();
+      final RecordBundle currentBundle =
+          await _loader?.load(bundle.record.id) ?? bundle;
+      final String currentRevision =
+          await _currentRevision?.call(job, currentBundle) ??
+          await ProcessingSnapshot.sourceRevision(
+            currentBundle,
+            privacyRevision: '',
+          );
+      if (currentRevision != revision) {
+        throw const CancelledFailure(
+          message:
+              'The evidence or analysis selection changed before application.',
+          recoveryAction: 'Resume processing to analyse the current evidence.',
+        );
+      }
+      if (cancel.isCancelled) throw const CancelledFailure();
       for (final ProposalWrite write in plan.writes) {
         final TemplateField field = bundle.fields.firstWhere(
           (TemplateField value) => value.fieldKey == write.fieldKey,
@@ -147,7 +190,9 @@ final class ValidateStage {
       await writeRecordStatus(
         _db,
         recordId: bundle.record.id,
-        status: plan.status,
+        status: selection.rejections.isNotEmpty || missing.isNotEmpty
+            ? ProposalApplication.needsReviewStatus
+            : plan.status,
         previousStatus: current?.status ?? bundle.record.status,
         clock: _clock,
         deviceId: _deviceId,
@@ -160,12 +205,14 @@ final class ValidateStage {
           rejections: Value<String?>(
             priorRejections.isEmpty &&
                     selection.rejections.isEmpty &&
+                    missing.isEmpty &&
                     plan.skips.isEmpty
                 ? null
                 : jsonEncode(
                     <String>{
                       ...priorRejections,
                       ...selection.rejections,
+                      ...missing,
                       ...plan.skips,
                     }.toList(),
                   ),

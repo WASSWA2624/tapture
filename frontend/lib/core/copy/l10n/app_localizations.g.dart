@@ -7937,7 +7937,7 @@ abstract class AppLocalizations {
   /// Saved choice fallback explanation.
   ///
   /// In en, this message translates to:
-  /// **'The saved choice is unavailable. The organisation backend is selected for now.'**
+  /// **'The saved provider or model is unavailable. Choose explicitly before analysis can continue.'**
   String get aiSelectionFallback;
 
   /// Provider test could not run because the descriptor is unavailable.
@@ -18145,6 +18145,137 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in again.'**
   String get cloudSignInAgain;
+
+  /// File choice: an editable Word report.
+  ///
+  /// In en, this message translates to:
+  /// **'Word document (DOCX)'**
+  String get exportFormatDocx;
+
+  /// File choice: a UTF-8 record report.
+  ///
+  /// In en, this message translates to:
+  /// **'Plain text (TXT)'**
+  String get exportFormatTxt;
+
+  /// A saved server credential status; never shows the key.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted on the organisation server'**
+  String get serverApiKeySaved;
+
+  /// Explains encrypted personal credential custody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your key is encrypted on the organisation server. Requests use your provider account; no automatic billing-account switch.'**
+  String get serverApiKeyCustody;
+
+  /// A provider request has an uncertain billing result.
+  ///
+  /// In en, this message translates to:
+  /// **'This request may have been charged. Its result is unavailable. Review before starting a new attempt.'**
+  String get aiRequestUncertain;
+
+  /// The selected managed billing account.
+  ///
+  /// In en, this message translates to:
+  /// **'Organisation-managed account'**
+  String get aiManagedAccount;
+
+  /// The selected personal billing account.
+  ///
+  /// In en, this message translates to:
+  /// **'Your {provider} account'**
+  String aiPersonalAccount(String provider);
+
+  /// Explicit AI request budget control.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum cost per request'**
+  String get aiSpendingLimit;
+
+  /// Explains request budgets and escalation approval.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget units configured by your organisation. Higher-cost models require explicit approval.'**
+  String get aiSpendingLimitHint;
+
+  /// Confirmation when deleting a personal server credential.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your encrypted provider key from the organisation server. Analysis for this account stops until a key is saved again.'**
+  String get serverCredentialRemoveMessage;
+
+  /// Processing review and retry control.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis findings'**
+  String get processingFindingsTitle;
+
+  /// Processing review and retry control.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry analysis?'**
+  String get processingRetryChargeTitle;
+
+  /// Processing review and retry control.
+  ///
+  /// In en, this message translates to:
+  /// **'The previous request may have been charged. Retrying starts a new request and may spend more.'**
+  String get processingRetryChargeBody;
+
+  /// Processing review and retry control.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve retry'**
+  String get processingRetryChargeConfirm;
+
+  /// Processing usage and cost display.
+  ///
+  /// In en, this message translates to:
+  /// **'Reserved cost: {amount} {unit} (spending ceiling)'**
+  String processingReservedCost(String amount, String unit);
+
+  /// Processing usage and cost display.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} reported token} other{{count} reported tokens}}'**
+  String processingTokens(int count);
+
+  /// Explicit processing consent for the provider, model, billing account and spending ceiling.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider: {provider}. Model: {model}. Billing: {account}. Approved request limit: {limit}.'**
+  String processingEgressSelection(
+    String provider,
+    String model,
+    String account,
+    String limit,
+  );
+
+  /// Explicit processing consent for the provider, model, billing account and spending ceiling.
+  ///
+  /// In en, this message translates to:
+  /// **'Managed account'**
+  String get processingEgressManaged;
+
+  /// Explicit processing consent for the provider, model, billing account and spending ceiling.
+  ///
+  /// In en, this message translates to:
+  /// **'Your server-held key'**
+  String get processingEgressPersonal;
+
+  /// Explicit processing consent for the provider, model, billing account and spending ceiling.
+  ///
+  /// In en, this message translates to:
+  /// **'configured server limit'**
+  String get processingEgressLimitDefault;
+
+  /// Visible configured spending ceiling for the selected provider model before approval.
+  ///
+  /// In en, this message translates to:
+  /// **'This model reserves up to {amount} {unit} per request.'**
+  String aiModelCostCeiling(String amount, String unit);
 }
 
 class _AppLocalizationsDelegate

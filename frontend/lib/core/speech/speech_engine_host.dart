@@ -23,6 +23,7 @@ import 'speech_device_profile.dart';
 import 'speech_engine.dart';
 import 'speech_engine_lease.dart';
 import 'speech_failures.dart';
+import 'speech_languages.dart';
 import 'speech_load_report.dart';
 import 'speech_model_catalogue.dart';
 import 'speech_model_entry.dart';
@@ -32,6 +33,7 @@ import 'speech_model_status.dart';
 import 'speech_model_store.dart';
 import 'speech_preferences.dart';
 import 'speech_quality.dart';
+import 'speech_runtime_facts.dart';
 import 'speech_selection.dart';
 import 'speech_vad_handle.dart';
 import 'speech_vad_result.dart';
@@ -199,8 +201,10 @@ final class SpeechEngineHost {
     // A lease wanted again cancels a pending idle release.
     _idleGeneration++;
     final SpeechAvailability chosen = await _choose(languageTag);
-    final SpeechSelection? wanted = chosen.selection;
-    if (!chosen.ready || wanted == null) {
+    final SpeechSelection? wanted = chosen.ready
+        ? chosen.selection
+        : _sharedFor(chosen, languageTag);
+    if (wanted == null) {
       _scheduleIdle();
       return FailureResult<SpeechEngineLease>(
         chosen.failure ?? speechUnavailable(),
@@ -240,6 +244,21 @@ final class SpeechEngineHost {
     }
   }
 
+  /// The model leases already hold, in [languageTag], when memory is the
+  /// only refusal: sharing a resident model costs no more than a detector.
+  SpeechSelection? _sharedFor(SpeechAvailability chosen, String languageTag) {
+    final SpeechSelection? current = _loaded;
+    final String? language = whisperLanguageFor(languageTag);
+    if (chosen.verdict != SpeechVerdict.lowMemory ||
+        _leases == 0 ||
+        current == null ||
+        language == null ||
+        _engine.loaded?.model.id != current.model.id) {
+      return null;
+    }
+    return current.forLanguage(language);
+  }
+
   /// The verdict now, logged when it differs from the last one.
   Future<SpeechAvailability> _choose(String languageTag) async {
     final SpeechAvailability chosen;
@@ -250,8 +269,9 @@ final class SpeechEngineHost {
         reason: 'the fast model failed to load this session',
       );
     } else {
-      final SpeechDeviceProfile device = await _probe.read();
-      _device = device;
+      final SpeechDeviceProfile read = await _probe.read();
+      _device = read;
+      final SpeechDeviceProfile device = _creditLoaded(read);
       final Result<List<SpeechModelStatus>> inventory = await _store
           .inventory();
       chosen = switch (inventory) {
@@ -275,6 +295,40 @@ final class SpeechEngineHost {
     }
     _logVerdict(chosen);
     return chosen;
+  }
+
+  /// [device] with the loaded model's estimate added back to the memory
+  /// free now: the probe reads free memory after this process's own model,
+  /// which would otherwise count against itself.
+  SpeechDeviceProfile _creditLoaded(SpeechDeviceProfile device) {
+    final SpeechRuntimeFacts runtime = device.runtime;
+    final int? available = runtime.availableMemoryBytes;
+    final SpeechLoadReport? report = _engine.loaded;
+    if (available == null || report == null) {
+      return device;
+    }
+    return SpeechDeviceProfile(
+      runtime: SpeechRuntimeFacts(
+        available: runtime.available,
+        is64Bit: runtime.is64Bit,
+        logicalCores: runtime.logicalCores,
+        unavailableReason: runtime.unavailableReason,
+        engineVersion: runtime.engineVersion,
+        abiVersion: runtime.abiVersion,
+        cpuFeatures: runtime.cpuFeatures,
+        totalMemoryBytes: runtime.totalMemoryBytes,
+        availableMemoryBytes: available + report.model.memoryEstimateBytes,
+        processLimitBytes: runtime.processLimitBytes,
+        performanceCores: runtime.performanceCores,
+        webThreads: runtime.webThreads,
+        webSimd: runtime.webSimd,
+      ),
+      platform: device.platform,
+      isWeb: device.isWeb,
+      charging: device.charging,
+      batteryPercent: device.batteryPercent,
+      batterySaver: device.batterySaver,
+    );
   }
 
   void _logVerdict(SpeechAvailability chosen) {

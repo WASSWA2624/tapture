@@ -5,6 +5,7 @@ import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/settings/settings.dart';
 
@@ -13,6 +14,7 @@ import '../domain/response_parser.dart';
 import '../domain/row_matching.dart';
 import 'on_device_stage.dart';
 import 'record_bundle.dart';
+import 'record_bundle_loader.dart';
 import 'response_store.dart';
 import 'stage_settings.dart';
 import 'stage_support.dart';
@@ -33,6 +35,8 @@ final class NormaliseStage {
     required this._onDevice,
     required this._settings,
     required this._responses,
+    this._currentRevision,
+    this._loader,
   });
 
   final AppDatabase _db;
@@ -41,6 +45,8 @@ final class NormaliseStage {
   final OnDeviceStage _onDevice;
   final StageSettings _settings;
   final ResponseStore _responses;
+  final Future<String> Function(ProcessingJob, RecordBundle)? _currentRevision;
+  final RecordBundleLoader? _loader;
 
   /// Matches [bundle]'s record to a row unless it already has one.
   Future<void> run(
@@ -48,9 +54,11 @@ final class NormaliseStage {
     RecordBundle bundle,
     CancellationToken cancel,
   ) async {
+    if (cancel.isCancelled) throw const CancelledFailure();
     if (bundle.record.templateRowId != null || bundle.rows.isEmpty) {
       return;
     }
+    final String? revision = await _currentRevision?.call(job, bundle);
     final RowMatch? match = await RowMatching.match(
       query: await _onDevice.text(bundle),
       rows: <MatchableRow>[
@@ -68,7 +76,27 @@ final class NormaliseStage {
     if (match == null) {
       return;
     }
+    if (cancel.isCancelled) throw const CancelledFailure();
     await _db.transaction(() async {
+      if (cancel.isCancelled) throw const CancelledFailure();
+      final RecordRow? current =
+          await (_db.select(_db.records)
+                ..where(($RecordsTable row) => row.id.equals(bundle.record.id)))
+              .getSingleOrNull();
+      final RecordBundle currentBundle =
+          await _loader?.load(bundle.record.id) ?? bundle;
+      if (current == null ||
+          current.rev != bundle.record.rev ||
+          current.templateRowId != bundle.record.templateRowId ||
+          (revision != null &&
+              await _currentRevision?.call(job, currentBundle) != revision)) {
+        throw const CancelledFailure(
+          message:
+              'The record or analysis selection changed before row matching could be applied.',
+          recoveryAction: 'Resume processing to match the current evidence.',
+        );
+      }
+      if (cancel.isCancelled) throw const CancelledFailure();
       await (_db.update(_db.records)
             ..where(($RecordsTable table) => table.id.equals(bundle.record.id)))
           .write(
@@ -78,7 +106,7 @@ final class NormaliseStage {
               rowMatchScore: Value<double>(match.score),
               updatedAt: Value<DateTime>(_clock.nowUtc()),
               updatedByDevice: Value<String>(_deviceId),
-              rev: Value<int>(bundle.record.rev + 1),
+              rev: Value<int>(current.rev + 1),
             ),
           );
       await appendAudit(
@@ -108,10 +136,25 @@ final class NormaliseStage {
     final List<ProcessingResult> stored = StageSupport.unwrap(
       await _responses.forJob(job.id),
     );
+    final String? revision = await _currentRevision?.call(job, bundle);
     for (final ProcessingResult response in stored.reversed) {
+      final Object? summary = StageSupport.json(response.requestSummary);
+      final Object? document = StageSupport.json(response.rawResponse);
       if (!response.parsedOk ||
-          StageSupport.summaryValue(response.requestSummary, 'kind') !=
-              'online' ||
+          (StageSupport.summaryValue(response.requestSummary, 'kind') !=
+                  'online' &&
+              StageSupport.summaryValue(response.requestSummary, 'kind') !=
+                  'cache') ||
+          (summary is Map &&
+              ((summary['requestGeneration'] ?? 0) != job.requestGeneration ||
+                  (revision != null &&
+                      summary['projectRevision'] != null &&
+                      summary['projectRevision'] != revision))) ||
+          (document is Map &&
+              (document['grouping_uncertain'] == true ||
+                  document['groupingUncertain'] == true ||
+                  (document['conflicts'] is List &&
+                      (document['conflicts']! as List<Object?>).isNotEmpty))) ||
           StageSupport.summaryValue(response.requestSummary, 'operation') !=
               null) {
         continue;

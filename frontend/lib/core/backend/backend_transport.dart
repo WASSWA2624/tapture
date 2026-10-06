@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 
@@ -52,6 +53,7 @@ final class BackendTransport {
     required String path,
     Map<String, Object?>? body,
     String? token,
+    CancellationToken? cancellationToken,
   }) async {
     final Uri base = _base();
     try {
@@ -64,6 +66,7 @@ final class BackendTransport {
           if (token != null) 'Authorization': 'Bearer $token',
         },
         body: body == null ? null : jsonEncode(body),
+        cancellationToken: cancellationToken,
       );
       final Object? decoded = response.body.isEmpty
           ? <String, Object?>{}

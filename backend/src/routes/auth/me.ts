@@ -3,6 +3,7 @@ import { invalidRequest } from '../../domain/errors.js';
 import type { Deps } from '../../deps.js';
 import { asyncRoute } from '../../http.js';
 import { authenticate } from '../../middleware/authenticate.js';
+import { aiAvailable } from '../../services/ai/provider-selection.js';
 export function registerMe(app: Express, deps: Deps): void {
   app.get(
     '/api/v1/auth/me',
@@ -22,9 +23,7 @@ export function registerMe(app: Express, deps: Deps): void {
         userId: user.id,
         organisationId: user.organisationId,
         role: user.role,
-        aiAvailable:
-          deps.config.aiProviderKey.length > 0 &&
-          deps.config.aiRequestCostCeiling > 0,
+        aiAvailable: await aiAvailable(deps.store, deps.config, principal),
         grants,
         grantValidUntil: new Date(
           Date.now() + deps.config.refreshTtlSeconds * 1000,

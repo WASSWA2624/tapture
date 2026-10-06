@@ -6979,6 +6979,80 @@ final class LocalizedCopy {
   /// File choice: the PDF reports.
   String get exportFormatPdf => _catalog.exportFormatPdf;
 
+  /// File choice: an editable Word report.
+  String get exportFormatDocx => _catalog.exportFormatDocx;
+
+  /// File choice: a UTF-8 record report.
+  String get exportFormatTxt => _catalog.exportFormatTxt;
+
+  /// Explicit processing consent selection.
+  String processingEgressSelection(
+    String provider,
+    String model,
+    String account,
+    String limit,
+  ) => _catalog.processingEgressSelection(provider, model, account, limit);
+
+  /// Explicit processing consent selection.
+  String get processingEgressManaged => _catalog.processingEgressManaged;
+
+  /// Explicit processing consent selection.
+  String get processingEgressPersonal => _catalog.processingEgressPersonal;
+
+  /// Explicit processing consent selection.
+  String get processingEgressLimitDefault =>
+      _catalog.processingEgressLimitDefault;
+
+  /// Reserved request ceiling in configured billing units.
+  String processingReservedCost(String amount, String unit) =>
+      _catalog.processingReservedCost(amount, unit);
+
+  /// Provider-reported tokens, when supplied.
+  String processingTokens(int count) => _catalog.processingTokens(count);
+
+  /// Processing review and retry control.
+  String get processingFindingsTitle => _catalog.processingFindingsTitle;
+
+  /// Processing review and retry control.
+  String get processingRetryChargeTitle => _catalog.processingRetryChargeTitle;
+
+  /// Processing review and retry control.
+  String get processingRetryChargeBody => _catalog.processingRetryChargeBody;
+
+  /// Processing review and retry control.
+  String get processingRetryChargeConfirm =>
+      _catalog.processingRetryChargeConfirm;
+
+  /// A saved server credential status; never shows the key.
+  String get serverApiKeySaved => _catalog.serverApiKeySaved;
+
+  /// Explains encrypted personal credential custody.
+  String get serverApiKeyCustody => _catalog.serverApiKeyCustody;
+
+  /// A provider request has an uncertain billing result.
+  String get aiRequestUncertain => _catalog.aiRequestUncertain;
+
+  /// The selected managed billing account.
+  String get aiManagedAccount => _catalog.aiManagedAccount;
+
+  /// The selected personal billing account.
+  String aiPersonalAccount(String provider) =>
+      _catalog.aiPersonalAccount(provider);
+
+  /// Explicit AI request budget control.
+  String get aiSpendingLimit => _catalog.aiSpendingLimit;
+
+  /// Configured model ceiling displayed before a spending approval.
+  String aiModelCostCeiling(String amount, String unit) =>
+      _catalog.aiModelCostCeiling(amount, unit);
+
+  /// Explains request budgets and escalation approval.
+  String get aiSpendingLimitHint => _catalog.aiSpendingLimitHint;
+
+  /// Confirmation when deleting a personal server credential.
+  String get serverCredentialRemoveMessage =>
+      _catalog.serverCredentialRemoveMessage;
+
   /// The name of an export scope, by its stored kind.
   String exportScopeName(String kind) => switch (kind) {
     'all' => exportScopeAll,

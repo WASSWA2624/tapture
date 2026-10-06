@@ -532,3 +532,30 @@ Tests:
 - [x] Tests: widget test `frontend/test/features/capture/presentation/live_camera_screen_test.dart` covering the
       preview states, a shot written before the next is enabled, a failed shot and a failed write; unit test
       `live_camera_controller_test.dart`; camera view and scanner screen cases in `capture_widgets_test.dart`.
+
+## 133 — Approve the XML parser for preserving Office templates
+
+**Depends on** [001](01-orchestration.md)
+
+### Implement
+
+**Implementation started:** Yes
+
+Promote the existing transitive `xml` 6.6.1 to a pinned direct dependency for task 132's namespace-aware Office
+template editing. Reuse `archive` for the ZIP container. XML parsing stays behind `frontend/lib/core/export/` and
+never performs network access or resolves external entities. This replaces ad hoc rewriting, not the shared XLSX
+encoder or export value formatter. The installed package and [publisher licence](https://pub.dev/packages/xml/versions/6.6.1/license)
+both identify the MIT licence.
+
+### Files
+
+- `frontend/pubspec.yaml` and `frontend/pubspec.lock`
+- `frontend/tool/allowlist.yaml`
+
+### Definition of done
+
+- [x] `xml` 6.6.1 is pinned directly with its licence, purpose and replacement recorded in the dependency allowlist.
+- [x] Tests: dependency allowlist validation passes against the updated manifest and lockfile.
+
+2026-10-06: `flutter pub get --offline` promoted exactly the previously resolved XML version; `dart run
+tool/check_dependencies.dart` passes with the updated manifest, lockfile and allowlist.

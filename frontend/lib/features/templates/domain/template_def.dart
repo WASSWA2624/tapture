@@ -54,7 +54,7 @@ final class TemplateDef {
   /// Where the template came from: shipped, imported or built.
   final String source;
 
-  /// Imported workbook path, when [source] is an import.
+  /// Original imported output template path, when [source] is an import.
   final String? sourceFilePath;
 
   /// Imported sheet name, stored as data.

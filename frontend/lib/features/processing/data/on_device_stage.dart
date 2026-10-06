@@ -81,4 +81,25 @@ final class OnDeviceStage {
     }
     return text.join('\n');
   }
+
+  /// Cached text with its photo identity; OCR never loses its source owner.
+  Future<List<Map<String, Object?>>> sources(RecordBundle bundle) async {
+    final List<Map<String, Object?>> sources = <Map<String, Object?>>[];
+    for (final Photo photo in bundle.photos) {
+      final String contentHash = await _paths.ocrContentHash(bundle, photo);
+      final OcrResult? result = StageSupport.unwrap(
+        await _cache.lookup(contentHash: contentHash, perceptualHash: ''),
+      );
+      if (result != null && result.text.trim().isNotEmpty) {
+        sources.add(<String, Object?>{
+          'id': 'ocr:${photo.id}',
+          'kind': 'ocr',
+          'photoId': photo.id,
+          'sha256': contentHash,
+          'text': result.text,
+        });
+      }
+    }
+    return sources;
+  }
 }

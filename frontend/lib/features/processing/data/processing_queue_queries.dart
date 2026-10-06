@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:tapture/core/ai/auxiliary_ai_usage.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
 import 'package:tapture/core/db/record_schema.dart';
@@ -14,6 +13,7 @@ import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/processing_repository.dart';
 import 'processing_job_mapper.dart';
+import 'processing_usage.dart';
 
 /// The read-only queries behind the queue screen: counts, context groups,
 /// failures and today's online usage. Counts come from SQL, so the queue
@@ -94,44 +94,11 @@ final class ProcessingQueueQueries {
     DateTime day, {
     String? projectId,
   }) async {
-    final DateTime start = DateTime.utc(day.year, day.month, day.day);
-    final DateTime end = start.add(AppConstants.processing.dayWindow);
-    final String projectFilter = projectId == null
-        ? ''
-        : 'AND r.project_id = ? ';
-    final List<QueryRow> rows = await _db
-        .customSelect(
-          'SELECT pr.request_summary FROM processing_results pr '
-          'JOIN processing_jobs pj ON pj.id = pr.job_id '
-          'JOIN records r ON r.id = pj.record_id '
-          'WHERE pr.created_at >= ? AND pr.created_at < ? '
-          '$projectFilter'
-          'AND pr.request_summary LIKE ?',
-          variables: <Variable<Object>>[
-            Variable<DateTime>(start),
-            Variable<DateTime>(end),
-            if (projectId != null) Variable<String>(projectId),
-            const Variable<String>('%"kind":"online"%'),
-          ],
-          readsFrom: <ResultSetImplementation<Object?, Object?>>{
-            _db.processingResults,
-            _db.processing,
-            _db.records,
-          },
-        )
-        .get();
-    var images = 0;
-    for (final QueryRow row in rows) {
-      images += _imageCount(row.read<String>('request_summary'));
-    }
-    return (
-      requests:
-          rows.length +
-          AuxiliaryAiUsage(
-            _settings.read(SettingKeys.aiAuxiliaryUsage),
-          ).count(day, projectId: projectId),
-      images: images,
-    );
+    final usage = (await ProcessingUsage(
+      db: _db,
+      settings: _settings,
+    ).on(day, projectId: projectId)).getOrThrow();
+    return (requests: usage.requests, images: usage.images);
   }
 
   /// The queue screen's label for a record's stored context: district,
@@ -314,21 +281,6 @@ const String _liveJob =
 const String _liveRecord =
     "r.status != 'deleted' AND NOT EXISTS ("
     "SELECT 1 FROM tombstones t WHERE t.entity_type = 'records' AND t.entity_id = r.id)";
-
-int _imageCount(String summary) {
-  try {
-    final Object? decoded = jsonDecode(summary);
-    if (decoded is Map && decoded['images'] is List) {
-      return (decoded['images'] as List).length;
-    }
-    if (decoded is Map && decoded['imageCount'] is int) {
-      return decoded['imageCount'] as int;
-    }
-  } on FormatException {
-    return 0;
-  }
-  return 0;
-}
 
 /// Record statuses whose records wait on the queue: captured without a job,
 /// or queued or processing with one still to run.

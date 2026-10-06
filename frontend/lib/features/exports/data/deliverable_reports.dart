@@ -168,13 +168,21 @@ final class DeliverableReports {
 
   /// The minutes of [meeting], with the photos of its [record] as the
   /// appendix, in their persisted order, and the meeting's [transcripts]
-  /// beside its notes.
+  /// beside its notes. A meeting transcript that one of [transcripts]
+  /// already prints, as heard or as edited, stays out of the raw notes, so
+  /// an edit is never shown as recorded notes and no text prints twice.
   static MinutesContent minutesOf(
     MeetingRecord meeting,
     ExportRecord record, {
     List<TranscriptContent> transcripts = const <TranscriptContent>[],
   }) {
     final Meeting body = meeting.meeting;
+    final Set<String> printed = <String>{
+      for (final TranscriptContent heard in transcripts) ...<String>[
+        heard.raw.trim(),
+        if (heard.edited case final String edit) edit.trim(),
+      ],
+    };
     return (
       title: body.title,
       date: _formatter.format(body.startedAt, 'dateTime', ExportFormat.pdf),
@@ -197,7 +205,7 @@ final class DeliverableReports {
       ],
       rawNotes: <String>[
         meeting.notes,
-        meeting.transcript,
+        if (!printed.contains(meeting.transcript.trim())) meeting.transcript,
       ].where((String part) => part.trim().isNotEmpty).join('\n'),
       transcripts: transcripts,
       refinedMinutes: meeting.minutes,

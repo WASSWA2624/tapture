@@ -11777,6 +11777,155 @@ final class CopyMessages {
   LocalizedMessage get exportFormatPdf =>
       LocalizedMessage(key: 'exportFormatPdf', fallback: Copy.exportFormatPdf);
 
+  /// File choice: an editable Word report.
+  LocalizedMessage get exportFormatDocx => LocalizedMessage(
+    key: 'exportFormatDocx',
+    fallback: Copy.exportFormatDocx,
+  );
+
+  /// File choice: a UTF-8 record report.
+  LocalizedMessage get exportFormatTxt =>
+      LocalizedMessage(key: 'exportFormatTxt', fallback: Copy.exportFormatTxt);
+
+  /// Explicit processing consent selection.
+  LocalizedMessage processingEgressSelection(
+    String provider,
+    String model,
+    String account,
+    String limit,
+  ) => LocalizedMessage(
+    key: 'processingEgressSelection',
+    fallback: Copy.processingEgressSelection(provider, model, account, limit),
+    arguments: <String, Object?>{
+      'provider': LocalizedMessage.encodeArgument(provider),
+      'model': LocalizedMessage.encodeArgument(model),
+      'account': LocalizedMessage.encodeArgument(account),
+      'limit': LocalizedMessage.encodeArgument(limit),
+    },
+  );
+
+  /// Explicit processing consent selection.
+  LocalizedMessage get processingEgressManaged => LocalizedMessage(
+    key: 'processingEgressManaged',
+    fallback: Copy.processingEgressManaged,
+  );
+
+  /// Explicit processing consent selection.
+  LocalizedMessage get processingEgressPersonal => LocalizedMessage(
+    key: 'processingEgressPersonal',
+    fallback: Copy.processingEgressPersonal,
+  );
+
+  /// Explicit processing consent selection.
+  LocalizedMessage get processingEgressLimitDefault => LocalizedMessage(
+    key: 'processingEgressLimitDefault',
+    fallback: Copy.processingEgressLimitDefault,
+  );
+
+  /// Reserved request ceiling in configured billing units.
+  LocalizedMessage processingReservedCost(String amount, String unit) =>
+      LocalizedMessage(
+        key: 'processingReservedCost',
+        fallback: Copy.processingReservedCost(amount, unit),
+        arguments: <String, Object?>{
+          'amount': LocalizedMessage.encodeArgument(amount),
+          'unit': LocalizedMessage.encodeArgument(unit),
+        },
+      );
+
+  /// Provider-reported tokens, when supplied.
+  LocalizedMessage processingTokens(int count) => LocalizedMessage(
+    key: 'processingTokens',
+    fallback: Copy.processingTokens(count),
+    arguments: <String, Object?>{
+      'count': LocalizedMessage.encodeArgument(count),
+    },
+  );
+
+  /// Processing review and retry control.
+  LocalizedMessage get processingFindingsTitle => LocalizedMessage(
+    key: 'processingFindingsTitle',
+    fallback: Copy.processingFindingsTitle,
+  );
+
+  /// Processing review and retry control.
+  LocalizedMessage get processingRetryChargeTitle => LocalizedMessage(
+    key: 'processingRetryChargeTitle',
+    fallback: Copy.processingRetryChargeTitle,
+  );
+
+  /// Processing review and retry control.
+  LocalizedMessage get processingRetryChargeBody => LocalizedMessage(
+    key: 'processingRetryChargeBody',
+    fallback: Copy.processingRetryChargeBody,
+  );
+
+  /// Processing review and retry control.
+  LocalizedMessage get processingRetryChargeConfirm => LocalizedMessage(
+    key: 'processingRetryChargeConfirm',
+    fallback: Copy.processingRetryChargeConfirm,
+  );
+
+  /// A saved server credential status; never shows the key.
+  LocalizedMessage get serverApiKeySaved => LocalizedMessage(
+    key: 'serverApiKeySaved',
+    fallback: Copy.serverApiKeySaved,
+  );
+
+  /// Explains encrypted personal credential custody.
+  LocalizedMessage get serverApiKeyCustody => LocalizedMessage(
+    key: 'serverApiKeyCustody',
+    fallback: Copy.serverApiKeyCustody,
+  );
+
+  /// A provider request has an uncertain billing result.
+  LocalizedMessage get aiRequestUncertain => LocalizedMessage(
+    key: 'aiRequestUncertain',
+    fallback: Copy.aiRequestUncertain,
+  );
+
+  /// The selected managed billing account.
+  LocalizedMessage get aiManagedAccount => LocalizedMessage(
+    key: 'aiManagedAccount',
+    fallback: Copy.aiManagedAccount,
+  );
+
+  /// The selected personal billing account.
+  LocalizedMessage aiPersonalAccount(String provider) => LocalizedMessage(
+    key: 'aiPersonalAccount',
+    fallback: Copy.aiPersonalAccount(provider),
+    arguments: <String, Object?>{
+      'provider': LocalizedMessage.encodeArgument(provider),
+    },
+  );
+
+  /// Explicit AI request budget control.
+  LocalizedMessage get aiSpendingLimit =>
+      LocalizedMessage(key: 'aiSpendingLimit', fallback: Copy.aiSpendingLimit);
+
+  /// Configured model ceiling displayed before a spending approval.
+  LocalizedMessage aiModelCostCeiling(String amount, String unit) =>
+      LocalizedMessage(
+        key: 'aiModelCostCeiling',
+        fallback: Copy.aiModelCostCeiling(amount, unit),
+        arguments: <String, Object?>{
+          'amount': LocalizedMessage.encodeArgument(amount),
+          'unit': LocalizedMessage.encodeArgument(unit),
+        },
+      );
+
+  /// Explains request budgets and escalation approval.
+  LocalizedMessage get aiSpendingLimitHint => LocalizedMessage(
+    key: 'aiSpendingLimitHint',
+    fallback: Copy.aiSpendingLimitHint,
+  );
+
+  /// Confirmation when deleting a personal server credential.
+  LocalizedMessage get serverCredentialRemoveMessage => LocalizedMessage(
+    key: 'serverCredentialRemoveMessage',
+    fallback: Copy.serverCredentialRemoveMessage,
+  );
+
   /// The name of an export scope, by its stored kind.
   LocalizedMessage exportScopeName(String kind) => LocalizedMessage(
     key: 'exportScopeName',

@@ -106,10 +106,13 @@ final class ProcessingStageWorker {
       settings: stageSettings,
       writes: writes,
     );
+    late final OnlineStage online;
     final ProposalCollector collector = ProposalCollector(
       cache: cache,
       responses: responses,
       paths: paths,
+      currentRevision: (ProcessingJob job, RecordBundle bundle) =>
+          online.currentRevision(job, bundle),
     );
     final OnlineCompletion completion = OnlineCompletion(
       collector: collector,
@@ -125,6 +128,8 @@ final class ProcessingStageWorker {
       clock: clock,
       deviceId: deviceId,
       ids: ids,
+      loader: loader,
+      settings: stageSettings,
     );
     return ProcessingStageWorker._(
       loader: loader,
@@ -148,7 +153,8 @@ final class ProcessingStageWorker {
         budget: budget,
         responses: responses,
       ),
-      online: OnlineStage(
+      online: online = OnlineStage(
+        loader: loader,
         settings: stageSettings,
         paths: paths,
         onDevice: onDevice,
@@ -189,6 +195,9 @@ final class ProcessingStageWorker {
         onDevice: onDevice,
         settings: stageSettings,
         responses: responses,
+        loader: loader,
+        currentRevision: (ProcessingJob job, RecordBundle bundle) =>
+            online.currentRevision(job, bundle),
       ),
       validate: ValidateStage(
         db: db,
@@ -198,6 +207,9 @@ final class ProcessingStageWorker {
         settings: stageSettings,
         collector: collector,
         writes: writes,
+        loader: loader,
+        currentRevision: (ProcessingJob job, RecordBundle bundle) =>
+            online.currentRevision(job, bundle),
       ),
       egress: EgressSummary(
         loader: loader,
@@ -273,9 +285,10 @@ final class ProcessingStageWorker {
   /// The model's pick from [needed]'s shortlist, or null for the operator.
   Future<String?> templateAssist(
     ProcessingJob job,
-    TemplateChoiceNeeded needed,
-  ) {
-    return _assist.choose(job, needed);
+    TemplateChoiceNeeded needed, [
+    CancellationToken? cancel,
+  ]) {
+    return _assist.choose(job, needed, cancel);
   }
 
   /// Exact payload summary shown before the first provider call.
@@ -284,4 +297,7 @@ final class ProcessingStageWorker {
   ) {
     return _egress.summarise(job);
   }
+
+  /// The provider, billing account and approved limit shown in the preview.
+  Future<String> egressIdentity(ProcessingJob job) => _egress.identity(job);
 }

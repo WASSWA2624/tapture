@@ -4,50 +4,18 @@ import type { Deps } from '../deps.js';
 import { asyncRoute, objectBody, pageQuery } from '../http.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { proxyAi, usageReport } from '../services/ai/proxy.js';
+import {
+  credentialStatus,
+  deleteCredential,
+  saveCredential,
+} from '../services/ai/credentials.js';
+import { providerCatalogue } from '../services/ai/provider-selection.js';
+import { aiInput, providerName } from './ai-input.js';
 
 /// AI routes parse their own JSON body, after authentication, with the larger
 /// `aiBodyLimitBytes` limit. The global parser skips this prefix.
 export const aiRoutePrefix = '/api/v1/ai/';
 
-function payload(body: unknown): {
-  projectId: string;
-  model: string;
-  payload: Buffer;
-} {
-  objectBody(body, ['projectId', 'model', 'payload']);
-  if (typeof body !== 'object' || body === null || Array.isArray(body)) {
-    throw invalidRequest('Missing project or model.');
-  }
-  const record = body as {
-    projectId?: unknown;
-    model?: unknown;
-    payload?: unknown;
-  };
-  if (
-    typeof record.projectId !== 'string' ||
-    record.projectId.length === 0 ||
-    typeof record.model !== 'string' ||
-    record.model.length === 0
-  ) {
-    throw invalidRequest('Missing project or model.');
-  }
-  return {
-    projectId: record.projectId,
-    model: record.model,
-    payload: envelope(record.payload),
-  };
-}
-
-/// The provider envelope as bytes. The app sends it as a JSON object with its
-/// media base64-encoded once; a base64 string is still accepted from older
-/// clients.
-function envelope(value: unknown): Buffer {
-  if (typeof value === 'string') return Buffer.from(value, 'base64');
-  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-    return Buffer.from(JSON.stringify(value), 'utf8');
-  }
-  throw invalidRequest('Missing payload.');
-}
 /// Registers the AI proxy. Bodies are read only after authentication succeeds.
 export function registerAi(app: Express, deps: Deps): void {
   const auth = authenticate(deps);
@@ -60,20 +28,87 @@ export function registerAi(app: Express, deps: Deps): void {
       asyncRoute(async (req, res) => {
         const principal = req.principal;
         if (principal === undefined) throw invalidRequest('Missing session.');
-        const input = payload(req.body);
-        const result = await proxyAi(
-          deps.store,
-          deps.config,
-          deps.provider,
-          principal,
-          method,
-          input,
-          deps.metrics,
-        );
-        res.json(result);
+        const input = aiInput(req.body);
+        const controller = new AbortController();
+        const abort = () => {
+          if (!res.writableEnded) controller.abort();
+        };
+        req.once('aborted', abort);
+        res.once('close', abort);
+        try {
+          const result = await proxyAi(
+            deps.store,
+            deps.config,
+            deps.provider,
+            principal,
+            method,
+            { ...input, signal: controller.signal },
+            deps.metrics,
+            deps.providerFactory,
+          );
+          if (!res.destroyed) res.json(result);
+        } finally {
+          req.removeListener('aborted', abort);
+          res.removeListener('close', abort);
+        }
       }),
     );
   }
+  const credentialPath = `${aiRoutePrefix}credentials/:provider`;
+  app.get(
+    credentialPath,
+    auth,
+    asyncRoute(async (req, res) => {
+      if (req.principal === undefined) throw invalidRequest('Missing session.');
+      res.json(
+        await credentialStatus(
+          deps.store,
+          req.principal,
+          providerName(req.params['provider']),
+        ),
+      );
+    }),
+  );
+  app.put(
+    credentialPath,
+    auth,
+    express.json({ limit: deps.config.bodyLimitBytes }),
+    asyncRoute(async (req, res) => {
+      if (req.principal === undefined) throw invalidRequest('Missing session.');
+      const row = objectBody(req.body, ['apiKey']);
+      if (typeof row['apiKey'] !== 'string')
+        throw invalidRequest('Enter a provider credential.');
+      await saveCredential(
+        deps.store,
+        deps.config,
+        req.principal,
+        providerName(req.params['provider']),
+        row['apiKey'],
+      );
+      res.status(204).end();
+    }),
+  );
+  app.delete(
+    credentialPath,
+    auth,
+    asyncRoute(async (req, res) => {
+      if (req.principal === undefined) throw invalidRequest('Missing session.');
+      await deleteCredential(
+        deps.store,
+        req.principal,
+        providerName(req.params['provider']),
+      );
+      res.status(204).end();
+    }),
+  );
+  app.get(
+    `${aiRoutePrefix}providers`,
+    auth,
+    asyncRoute(async (req, res) => {
+      if (req.principal === undefined) throw invalidRequest('Missing session.');
+      res.json(await providerCatalogue(deps.store, deps.config, req.principal));
+    }),
+  );
   app.get(
     `${aiRoutePrefix}usage`,
     auth,

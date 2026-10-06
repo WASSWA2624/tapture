@@ -11,6 +11,8 @@ final class ExtractFieldsResult {
     this.provider,
     this.model,
     this.promptVersion,
+    this.usage,
+    this.billingKind,
   });
 
   /// Field key to proposed value. Absent or unknown fields are omitted or
@@ -28,4 +30,10 @@ final class ExtractFieldsResult {
 
   /// Prompt contract version used for provenance.
   final String? promptVersion;
+
+  /// Provider-reported token usage and reserved budget cost.
+  final AiUsage? usage;
+
+  /// The explicit managed or personal account used for this request.
+  final String? billingKind;
 }

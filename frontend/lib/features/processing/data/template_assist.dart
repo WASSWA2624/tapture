@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
+import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/features/projects/projects.dart'
@@ -12,8 +13,10 @@ import '../domain/extraction_request.dart';
 import '../domain/processing_job.dart';
 import '../domain/response_parser.dart';
 import '../domain/template_choice_needed.dart';
+import 'extraction_responses.dart';
 import 'on_device_stage.dart';
 import 'online_budget.dart';
+import 'processing_snapshot.dart';
 import 'record_bundle.dart';
 import 'record_bundle_loader.dart';
 import 'response_store.dart';
@@ -45,9 +48,14 @@ final class TemplateAssist {
   final ResponseStore _responses;
 
   /// The template the model chose from [needed]'s shortlist, or null.
-  Future<String?> choose(ProcessingJob job, TemplateChoiceNeeded needed) async {
+  Future<String?> choose(
+    ProcessingJob job,
+    TemplateChoiceNeeded needed, [
+    CancellationToken? cancel,
+  ]) async {
     if (needed.shortlist.isEmpty ||
-        _settings.read(SettingKeys.offlineByChoice)) {
+        _settings.read(SettingKeys.offlineByChoice) ||
+        (cancel?.isCancelled ?? false)) {
       return null;
     }
     try {
@@ -56,10 +64,8 @@ final class TemplateAssist {
       if (!project.aiEnabled) {
         return null;
       }
-      final AiService service = _settings
-          .selection(bundle, AiOperation.extractFields)
-          .provider
-          .service;
+      final choice = _settings.selection(bundle, AiOperation.extractFields);
+      final AiService service = choice.provider.service;
       if (!service.isAvailable) {
         return null;
       }
@@ -68,7 +74,81 @@ final class TemplateAssist {
             in needed.shortlist)
           option.label,
       ];
-      await _budget.require(job.id, bundle);
+      final double approvedMaxCost = _settings.read(
+        SettingKeys.aiRequestMaxCost,
+      );
+      final String scope = _settings.egressScope(bundle);
+      final String sourceRevision = await ProcessingSnapshot.sourceRevision(
+        bundle,
+        privacyRevision: '',
+      );
+      if ((needed.sourceRevision != null &&
+              needed.sourceRevision != sourceRevision) ||
+          (needed.recordRevision != null &&
+              needed.recordRevision != bundle.record.rev) ||
+          (needed.analysisScope != null && needed.analysisScope != scope)) {
+        return null;
+      }
+      final List<Map<String, Object?>> sources = await _onDevice.sources(
+        bundle,
+      );
+      final String revision = await ProcessingSnapshot.auxiliaryRevision(
+        <String, Object?>{
+          'operation': 'detectTemplate',
+          'sourceRevision': sourceRevision,
+          'scope': scope,
+          'sources': sources,
+          'options': <Map<String, String>>[
+            for (final option in needed.shortlist)
+              <String, String>{'id': option.templateId, 'label': option.label},
+          ],
+        },
+      );
+      final ExtractionResponses checkpoints = ExtractionResponses(_responses);
+      final ProcessingResult? cached = await checkpoints.latest(
+        job,
+        revision: revision,
+        batchKey: 'detectTemplate',
+      );
+      if (cached != null) {
+        if (!await _isCurrent(bundle, sourceRevision, scope, cancel)) {
+          return null;
+        }
+        final String? answer = _answer(cached.rawResponse, labels, needed);
+        if (answer != null && !cached.parsedOk) {
+          StageSupport.unwrap(await _responses.markParsed(cached.id));
+        }
+        if (!await _isCurrent(bundle, sourceRevision, scope, cancel)) {
+          return null;
+        }
+        return answer;
+      }
+      final String identity = ProcessingSnapshot.requestId(
+        revision: revision,
+        recordId: bundle.record.id,
+        generation: job.requestGeneration,
+        batch: 0,
+        repair: 0,
+      );
+      if (!await checkpoints.hasAttempt(job, identity)) {
+        await _budget.require(job.id, bundle);
+      }
+      if (cancel?.isCancelled ?? false) return null;
+      await checkpoints.begin(
+        job: job,
+        summary: <String, Object?>{
+          'operation': 'detectTemplate',
+          'batchKey': 'detectTemplate',
+          'imageCount': 0,
+          'projectRevision': revision,
+          'idempotencyKey': identity,
+          'requestGeneration': job.requestGeneration,
+          'sourceRevision': sourceRevision,
+          'provider': choice.provider.id,
+          'model': choice.model.id,
+        },
+      );
+      if (cancel?.isCancelled ?? false) return null;
       final ExtractFieldsResult result = StageSupport.unwrap(
         await service.extractFields(
           ExtractFieldsRequest(
@@ -92,6 +172,12 @@ final class TemplateAssist {
             ],
             predefinedRows: const <String>[],
             rules: ExtractionRequest.defaultRules,
+            sources: sources,
+            projectRevision: revision,
+            recordId: bundle.record.id,
+            idempotencyKey: identity,
+            approvedMaxCost: approvedMaxCost,
+            cancellationToken: cancel,
           ),
         ),
       );
@@ -111,45 +197,74 @@ final class TemplateAssist {
           requestSummary: jsonEncode(<String, Object?>{
             'kind': 'online',
             'operation': 'detectTemplate',
+            'batchKey': 'detectTemplate',
+            'projectRevision': revision,
+            'idempotencyKey': identity,
+            'requestGeneration': job.requestGeneration,
             'imageCount': 0,
             'optionCount': labels.length,
             'provider': result.provider,
             'model': result.model,
             'promptVersion': result.promptVersion,
+            'billingKind': ?result.billingKind,
+            if (result.usage != null) 'usage': result.usage!.toJson(),
           }),
           rawResponse: raw,
           parsedOk: false,
         ),
       );
-      final ParseOutcome parsed = ResponseParser.parse(
-        raw,
-        schema: <FieldSchema>[
-          (
-            key: _field,
-            type: 'choice',
-            requiredField: true,
-            pattern: null,
-            options: labels,
-          ),
-        ],
-      );
-      if (!parsed.ok) {
+      if (cancel?.isCancelled ?? false) return null;
+      if (!await _isCurrent(bundle, sourceRevision, scope, cancel)) {
         return null;
       }
+      final String? answer = _answer(raw, labels, needed);
+      if (answer == null) return null;
       StageSupport.unwrap(await _responses.markParsed(stored.id));
-      final String? answer = parsed.fields[_field]?.value?.trim().toLowerCase();
-      for (final ({String templateId, String label}) option
-          in needed.shortlist) {
-        if (option.label.trim().toLowerCase() == answer) {
-          return option.templateId;
-        }
+      if (!await _isCurrent(bundle, sourceRevision, scope, cancel)) {
+        return null;
       }
-      return null;
+      return answer;
     } on Failure {
       // The cap, the network or the provider said no: the operator decides.
       return null;
     }
   }
+
+  Future<bool> _isCurrent(
+    RecordBundle original,
+    String revision,
+    String scope,
+    CancellationToken? cancel,
+  ) async {
+    if (cancel?.isCancelled ?? false) return false;
+    final RecordBundle current = await _loader.load(original.record.id);
+    return !(cancel?.isCancelled ?? false) &&
+        current.record.rev == original.record.rev &&
+        _settings.egressScope(current) == scope &&
+        await ProcessingSnapshot.sourceRevision(current, privacyRevision: '') ==
+            revision;
+  }
+}
+
+String? _answer(String raw, List<String> labels, TemplateChoiceNeeded needed) {
+  final ParseOutcome parsed = ResponseParser.parse(
+    raw,
+    schema: <FieldSchema>[
+      (
+        key: _field,
+        type: 'choice',
+        requiredField: true,
+        pattern: null,
+        options: labels,
+      ),
+    ],
+  );
+  if (!parsed.ok) return null;
+  final String? answer = parsed.fields[_field]?.value?.trim().toLowerCase();
+  for (final option in needed.shortlist) {
+    if (option.label.trim().toLowerCase() == answer) return option.templateId;
+  }
+  return null;
 }
 
 /// The one field the assist asks about, quoted as data.

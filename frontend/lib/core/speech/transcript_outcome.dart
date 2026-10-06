@@ -4,17 +4,18 @@ final class TranscriptOutcome {
   /// audio, covered up to [coveredToSample], in [languageTag] by [modelId].
   const TranscriptOutcome({
     required this.complete,
-    required this.captured,
     required this.coveredToSample,
     required this.languageTag,
+    this.captured,
     this.modelId,
   });
 
   /// Whether every captured sample was transcribed or recorded as a gap.
   final bool complete;
 
-  /// How much audio the recording holds.
-  final Duration captured;
+  /// How much audio the recording holds, or null when the take could not be
+  /// read, so the length the transcript already records stands.
+  final Duration? captured;
 
   /// The sample up to which the transcript accounts for the audio.
   final int coveredToSample;

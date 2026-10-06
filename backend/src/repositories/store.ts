@@ -5,6 +5,8 @@ import type { Role } from '../domain/permissions.js';
 import type { Repository } from './repository.js';
 import { emptyUsageTotals, type QuotaUsage, type UsageRow } from './usage.js';
 import type { RuntimeSetting } from './settings.js';
+import type { AiState, UsageMetadata } from './ai-state.js';
+import type { AiReceipt, CredentialRow, ProviderName } from '../domain/ai.js';
 import {
   compareText,
   identifierPage,
@@ -56,7 +58,7 @@ export interface IdempotentResult {
   body: unknown;
 }
 
-interface Snapshot {
+interface Snapshot extends AiState {
   orgs: Organisation[];
   users: User[];
   devices: Device[];
@@ -111,6 +113,8 @@ export class Store {
     lockouts: [],
     schema: [],
     settings: [],
+    credentials: [],
+    receipts: [],
   };
 
   private readonly transactionContext = new AsyncLocalStorage<boolean>();
@@ -482,10 +486,55 @@ export class Store {
     outcome: string,
     durationMs: number,
     model: string,
+    metadata: UsageMetadata = {},
   ): void {
     this.data.usage = this.data.usage.map((row) =>
-      row.id === id ? { ...row, outcome, durationMs, model } : row,
+      row.id === id ? { ...row, outcome, durationMs, model, ...metadata } : row,
     );
+  }
+
+  aiCredential(
+    userId: string,
+    provider: ProviderName,
+  ): CredentialRow | undefined {
+    return this.data.credentials.find(
+      (row) => row.userId === userId && row.provider === provider,
+    );
+  }
+
+  saveAiCredential(row: CredentialRow): void {
+    this.data.credentials = this.data.credentials.filter(
+      (current) =>
+        current.userId !== row.userId || current.provider !== row.provider,
+    );
+    this.data.credentials.push(row);
+  }
+
+  deleteAiCredential(userId: string, provider: ProviderName): void {
+    this.data.credentials = this.data.credentials.filter(
+      (row) => row.userId !== userId || row.provider !== provider,
+    );
+  }
+
+  aiReceipt(idempotencyKey: string): AiReceipt | undefined {
+    return this.data.receipts.find(
+      (row) => row.idempotencyKey === idempotencyKey,
+    );
+  }
+
+  saveAiReceipt(row: AiReceipt): void {
+    const previous = this.aiReceipt(row.idempotencyKey);
+    if (
+      previous !== undefined &&
+      (previous.bindingHash !== row.bindingHash ||
+        previous.usageId !== row.usageId ||
+        row.status === 'running')
+    )
+      throw conflict('This analysis attempt already exists.');
+    this.data.receipts = this.data.receipts.filter(
+      (current) => current.idempotencyKey !== row.idempotencyKey,
+    );
+    this.data.receipts.push(row);
   }
 
   quotaUsage(
@@ -639,6 +688,10 @@ export class Store {
         ({ tokenHash: _hash, ...row }) => row,
       ),
       usage: this.data.usage,
+      aiReceipts: this.data.receipts,
+      aiCredentials: this.data.credentials.map(
+        ({ encryptedKey: _key, ...row }) => row,
+      ),
       idempotency: this.data.idempotency,
       lockouts: this.data.lockouts,
       configuration: this.data.settings.map(
@@ -672,6 +725,8 @@ export class Store {
       idempotency: [],
       lockouts: [],
       settings: [],
+      credentials: [],
+      receipts: [],
     };
     return [
       'organisation',
@@ -691,6 +746,8 @@ export class Store {
       'idempotency',
       'lockouts',
       'configuration-metadata',
+      'ai-credentials',
+      'ai-receipts',
     ];
   }
 

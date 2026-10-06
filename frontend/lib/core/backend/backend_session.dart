@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -30,6 +31,7 @@ final class BackendSession {
     this.linkAccount,
     bool Function()? offline,
   }) : _offline = offline ?? _online,
+       _usesPlatformSend = send == null,
        _config = BackendConfig(baseUrl: initialUrl) {
     _send = send ?? BackendTransport(baseUrl: () => _config.baseUrl).send;
   }
@@ -37,6 +39,7 @@ final class BackendSession {
   final SecureStorage _storage;
   final Clock _clock;
   final bool Function() _offline;
+  final bool _usesPlatformSend;
   late final BackendSend _send;
   final StreamController<BackendConfig> _changes =
       StreamController<BackendConfig>.broadcast();
@@ -258,25 +261,45 @@ final class BackendSession {
     required String method,
     required String path,
     Map<String, Object?>? body,
+    CancellationToken? cancellationToken,
   }) async {
+    if (cancellationToken?.isCancelled == true) throw const CancelledFailure();
     if (!canUseBackend) return (status: 503, body: <String, Object?>{});
+    Future<({int status, Map<String, Object?> body})> call() {
+      final Future<({int status, Map<String, Object?> body})> pending =
+          _usesPlatformSend
+          ? BackendTransport(baseUrl: () => _config.baseUrl).send(
+              method: method,
+              path: path,
+              body: body,
+              token: _tokens!.accessToken,
+              cancellationToken: cancellationToken,
+            )
+          : _send(
+              method: method,
+              path: path,
+              body: body,
+              token: _tokens!.accessToken,
+            );
+      return cancellationToken?.race(
+            pending,
+            onCancel: () => throw const CancelledFailure(),
+          ) ??
+          pending;
+    }
+
     try {
-      var response = await _send(
-        method: method,
-        path: path,
-        body: body,
-        token: _tokens!.accessToken,
-      );
+      var response = await call();
       if (response.status == 401 && await refresh()) {
-        response = await _send(
-          method: method,
-          path: path,
-          body: body,
-          token: _tokens!.accessToken,
-        );
+        if (cancellationToken?.isCancelled == true) {
+          throw const CancelledFailure();
+        }
+        response = await call();
       }
       _reachability(true);
       return response;
+    } on CancelledFailure {
+      rethrow;
     } on Object {
       _reachability(false);
       rethrow;

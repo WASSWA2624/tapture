@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
@@ -13,6 +17,7 @@ import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
@@ -22,6 +27,7 @@ import '../domain/template_choice_needed.dart';
 import '../processing.dart';
 import 'process_actions.dart';
 import 'processing_batch_state.dart';
+import 'processing_spend_line.dart';
 import 'queue_providers.dart';
 import 'queue_selection.dart';
 import 'template_choice_sheet.dart';
@@ -242,11 +248,7 @@ class _QueueScreenState extends ConsumerState<QueueScreen> with StateRefresh {
           icon: AppIcons.processing,
           semanticLabel: localCopy.queueRetryLabel(record),
           tooltip: localCopy.queueRetry,
-          onPressed: running
-              ? null
-              : () => ref
-                    .read(processingControllerProvider.notifier)
-                    .retry(job.id),
+          onPressed: running ? null : () => _retry(job),
         ),
       );
     }
@@ -266,7 +268,43 @@ class _QueueScreenState extends ConsumerState<QueueScreen> with StateRefresh {
     if (header != null) {
       return AppSectionHeader(title: header);
     }
-    return _QueueSummary(snapshot: snapshot, batch: batch);
+    return _QueueSummary(
+      snapshot: snapshot,
+      batch: batch,
+      projectId: widget.projectId,
+    );
+  }
+
+  Future<void> _retry(ProcessingJob job) async {
+    final String reason = (job.lastError ?? '').toLowerCase();
+    final Result<bool> checked = await ref
+        .read(processingFindingsStoreProvider)
+        .requiresRetryApproval(job.id);
+    if (!mounted) return;
+    if (checked case FailureResult<bool>(:final Failure failure)) {
+      showAppSnack(
+        context,
+        failure.message,
+        localizedMessage: failure.explanation,
+        tone: SnackTone.error,
+      );
+      return;
+    }
+    final bool needsApproval =
+        reason.contains('charged') ||
+        reason.contains('uncertain') ||
+        (checked as Success<bool>).value;
+    if (needsApproval &&
+        !await showAppConfirm(
+          context,
+          title: Copy.of(context).processingRetryChargeTitle,
+          message: Copy.of(context).processingRetryChargeBody,
+          confirmLabel: Copy.of(context).processingRetryChargeConfirm,
+        )) {
+      return;
+    }
+    if (!mounted) return;
+    await ref.read(processingControllerProvider.notifier).retry(job.id);
   }
 
   /// Captures a record: in this project when the queue is scoped to one.
@@ -309,6 +347,9 @@ class _QueueScreenState extends ConsumerState<QueueScreen> with StateRefresh {
     final ({int imageCount, int payloadBytes}) summary = await ref.read(
       processingEgressSummaryProvider,
     )(job);
+    final String identity = await ref.read(processingEgressIdentityProvider)(
+      job,
+    );
     if (summary.imageCount == 0 && summary.payloadBytes == 0) {
       return true;
     }
@@ -319,8 +360,33 @@ class _QueueScreenState extends ConsumerState<QueueScreen> with StateRefresh {
       context,
       imageCount: summary.imageCount,
       payloadBytes: summary.payloadBytes,
+      selectionDetails: _selectionDetails(identity, Copy.of(context)),
     );
   }
+}
+
+String? _selectionDetails(String identity, LocalizedCopy copy) {
+  if (identity.isEmpty) return null;
+  final Object? decoded = jsonDecode(identity);
+  if (decoded is! Map<String, Object?>) return null;
+  final Object? entries = decoded['selections'];
+  if (entries is! List<Object?>) return null;
+  final Object? cost = decoded['maxCost'];
+  final String limit = cost is num && cost > 0
+      ? cost.toString()
+      : copy.processingEgressLimitDefault;
+  return <String>{
+    for (final Object? entry in entries)
+      if (entry is Map<String, Object?>)
+        copy.processingEgressSelection(
+          entry['provider']?.toString() ?? '',
+          entry['model']?.toString() ?? '',
+          entry['personal'] == true
+              ? copy.processingEgressPersonal
+              : copy.processingEgressManaged,
+          limit,
+        ),
+  }.join('\n');
 }
 
 /// Whether [snapshot] has nothing to process and nothing failed.
@@ -343,10 +409,15 @@ Set<String> _selected(Set<String> picked, QueueSnapshot snapshot) {
 /// on-device reading is unavailable, the three counts, today's online
 /// usage, and the running or finished batch.
 class _QueueSummary extends ConsumerWidget {
-  const _QueueSummary({required this.snapshot, required this.batch});
+  const _QueueSummary({
+    required this.snapshot,
+    required this.batch,
+    this.projectId,
+  });
 
   final QueueSnapshot snapshot;
   final ProcessingBatchState batch;
+  final String? projectId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -398,6 +469,7 @@ class _QueueSummary extends ConsumerWidget {
             ),
           ),
           ProcessBatchLine(batch: batch),
+          ProcessingSpendLine(projectId: projectId),
         ],
       ),
     );

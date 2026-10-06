@@ -8,6 +8,7 @@ import 'package:tapture/features/settings/settings.dart';
 import '../domain/template_choice_needed.dart';
 import '../domain/template_detection.dart';
 import 'on_device_stage.dart';
+import 'processing_snapshot.dart';
 import 'record_bundle.dart';
 import 'stage_settings.dart';
 import 'stage_support.dart';
@@ -100,6 +101,12 @@ final class DetectStage {
       ],
       pinKey: pinKey,
       modelMayDecide: decision.callModel,
+      sourceRevision: await ProcessingSnapshot.sourceRevision(
+        bundle,
+        privacyRevision: '',
+      ),
+      recordRevision: bundle.record.rev,
+      analysisScope: _settings.egressScope(bundle),
     );
   }
 

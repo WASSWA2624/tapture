@@ -9,6 +9,7 @@ import 'csv_writer.dart';
 import 'export_manifest.dart';
 import 'export_request.dart';
 import 'json_writer.dart';
+import 'plain_text_writer.dart';
 import 'text_export_writer_stub.dart'
     if (dart.library.io) 'text_export_writer_io.dart'
     as platform;
@@ -29,6 +30,8 @@ final class TextExportWriter {
     if (request.formats.contains(ExportFormat.csv)) ...CsvWriter.files(request),
     if (request.formats.contains(ExportFormat.json))
       'records.json': JsonWriter.chunks(request),
+    if (request.formats.contains(ExportFormat.txt))
+      'records.txt': PlainTextWriter.chunks(request),
   };
 
   /// Snapshot and manifest streams used by native export publication.

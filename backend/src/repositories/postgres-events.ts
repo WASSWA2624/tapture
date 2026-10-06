@@ -3,6 +3,7 @@ import type { AuditEvent } from '../types/index.js';
 import type { QuotaUsage, UsageRow } from './usage.js';
 import type { Sql } from './sql.js';
 import type { UsageQuery } from './queries.js';
+import type { UsageMetadata } from './ai-state.js';
 
 export function eventRepository(sql: Sql) {
   const addEvent = (
@@ -38,11 +39,11 @@ export function eventRepository(sql: Sql) {
       addEvent('security_events', event),
     usage: () =>
       sql.rows<UsageRow>(
-        'SELECT project_id AS "projectId",user_id AS "userId",model,byte_size AS "byteSize",duration_ms AS "durationMs",outcome,cost,at FROM ai_usage ORDER BY at,id',
+        'SELECT project_id AS "projectId",user_id AS "userId",model,byte_size AS "byteSize",duration_ms AS "durationMs",outcome,cost,at,provider,billing_kind AS "billingKind",input_tokens AS "inputTokens",output_tokens AS "outputTokens",total_tokens AS "totalTokens" FROM ai_usage ORDER BY at,id',
       ),
     usagePage: (query: UsageQuery) =>
       sql.rows<UsageRow & { id: string }>(
-        'SELECT id,project_id AS "projectId",user_id AS "userId",model,byte_size AS "byteSize",duration_ms AS "durationMs",outcome,cost,at FROM ai_usage WHERE project_id=$1 AND user_id=$2 AND at >= $3 AND at <= $4 AND ($5::text IS NULL OR id>$5) ORDER BY id LIMIT $6',
+        'SELECT id,project_id AS "projectId",user_id AS "userId",model,byte_size AS "byteSize",duration_ms AS "durationMs",outcome,cost,at,provider,billing_kind AS "billingKind",input_tokens AS "inputTokens",output_tokens AS "outputTokens",total_tokens AS "totalTokens" FROM ai_usage WHERE project_id=$1 AND user_id=$2 AND at >= $3 AND at <= $4 AND ($5::text IS NULL OR id>$5) ORDER BY id LIMIT $6',
         [
           query.projectId,
           query.userId,
@@ -55,7 +56,7 @@ export function eventRepository(sql: Sql) {
     addUsage: async (row: UsageRow) => {
       const id = randomUUID();
       await sql.write(
-        'INSERT INTO ai_usage(id,project_id,user_id,model,byte_size,duration_ms,outcome,cost,at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+        'INSERT INTO ai_usage(id,project_id,user_id,model,byte_size,duration_ms,outcome,cost,at,provider,billing_kind) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
         [
           id,
           row.projectId,
@@ -66,6 +67,8 @@ export function eventRepository(sql: Sql) {
           row.outcome,
           row.cost,
           row.at,
+          row.provider ?? null,
+          row.billingKind ?? null,
         ],
       );
       return id;
@@ -75,10 +78,19 @@ export function eventRepository(sql: Sql) {
       outcome: string,
       durationMs: number,
       model: string,
+      metadata: UsageMetadata = {},
     ) =>
       sql.write(
-        'UPDATE ai_usage SET outcome=$2,duration_ms=$3,model=$4 WHERE id=$1',
-        [id, outcome, durationMs, model],
+        'UPDATE ai_usage SET outcome=$2,duration_ms=$3,model=$4,input_tokens=$5,output_tokens=$6,total_tokens=$7 WHERE id=$1',
+        [
+          id,
+          outcome,
+          durationMs,
+          model,
+          metadata.inputTokens ?? null,
+          metadata.outputTokens ?? null,
+          metadata.totalTokens ?? null,
+        ],
       ),
     quotaUsage: async (
       organisationId: string,

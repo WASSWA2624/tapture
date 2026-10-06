@@ -8,14 +8,17 @@ import 'package:tapture/features/settings/settings.dart';
 ///
 /// The project's own choice wins, then the app's per-operation choice, then
 /// the app-wide provider and model. The registry validates the result, so an
-/// unknown or unavailable choice falls back to the keyless backend. Callers
-/// get a service and ids, and never branch on where the key lives.
+/// unknown or unavailable choice remains unavailable until the operator repairs
+/// it. Callers get a service and ids, and never switch a billing account.
 final class ProviderSelection {
   /// Creates the resolver over the app [settings] and the [providers].
   const ProviderSelection({required this._settings, required this._providers});
 
   final SettingsStore _settings;
   final ProviderRegistry _providers;
+
+  /// The approved ceiling is part of every processing dispatch identity.
+  double get maxCost => _settings.read(SettingKeys.aiRequestMaxCost);
 
   /// The provider and model [project] uses for [operation].
   ({ProviderDescriptor provider, ModelDescriptor model, bool fellBack}) resolve(

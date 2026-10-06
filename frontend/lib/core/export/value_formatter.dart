@@ -19,6 +19,8 @@ final class ValueFormatter {
       ExportFormat.csv ||
       ExportFormat.json ||
       ExportFormat.pdf ||
+      ExportFormat.docx ||
+      ExportFormat.txt ||
       ExportFormat.zip => rendered,
     };
   }
@@ -27,6 +29,10 @@ final class ValueFormatter {
   Object? typed(Object? value, String type) {
     if (value == null) {
       return null;
+    }
+    if (value is String && _number(type)) {
+      final num? number = num.tryParse(value.trim());
+      if (number != null && number.isFinite) return number;
     }
     if (_identifier(type) || value is String) {
       return _text(value, type);
@@ -126,6 +132,12 @@ enum ExportFormat {
 
   /// A report.
   pdf,
+
+  /// Editable Word document.
+  docx,
+
+  /// Plain UTF-8 record report.
+  txt,
 
   /// A package of the other outputs.
   zip,

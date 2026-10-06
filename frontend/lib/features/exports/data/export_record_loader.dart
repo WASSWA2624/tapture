@@ -2,6 +2,7 @@ import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/export/export_output_template.dart';
 import 'package:tapture/core/export/export_record.dart';
 import 'package:tapture/core/export/export_request.dart';
 import 'package:tapture/core/widgets/record_status.dart';
@@ -54,6 +55,8 @@ final class ExportRecordLoader {
       final List<ExportRecord> output = <ExportRecord>[];
       final List<String> incomplete = <String>[];
       final List<String> omitted = <String>[];
+      final Map<String, ExportOutputTemplate> outputTemplates =
+          <String, ExportOutputTemplate>{};
       final Map<String, TemplateDef?> templates = <String, TemplateDef?>{};
       final Map<String, Map<int, TemplateDef>> shapes =
           <String, Map<int, TemplateDef>>{};
@@ -128,6 +131,32 @@ final class ExportRecordLoader {
               definitions[record.templateId]!,
             ),
           );
+          final String? sourcePath = captured?.sourceFilePath;
+          if (captured != null && sourcePath != null) {
+            final String kind = sourcePath.split('.').last.toLowerCase();
+            if (const <String>{'xlsx', 'docx', 'txt'}.contains(kind)) {
+              final ExportOutputTemplate snapshot = ExportOutputTemplate(
+                templateId: captured.id,
+                templateVersion: '${captured.version}',
+                sourcePath: sourcePath,
+                sourceHash: captured.detection['sourceSha256'] as String? ?? '',
+                kind: kind,
+                sheetName: captured.sheetName,
+                headerRow: captured.headerRow ?? 1,
+                columns: <String, String>{
+                  for (final FieldDef field in captured.fields)
+                    if (!field.hidden)
+                      if (field.outputColumn case final String column)
+                        field.fieldKey: column,
+                },
+                rows: <String, int>{
+                  for (final TemplateRow row in captured.rows)
+                    row.id: row.outputRowNumber,
+                },
+              );
+              outputTemplates.putIfAbsent(snapshot.key, () => snapshot);
+            }
+          }
         }
         if (page.length < _pageSize) {
           break;
@@ -135,7 +164,11 @@ final class ExportRecordLoader {
         offset += page.length;
       }
       return Success<PreparedDeliverable>((
-        request: request.copyWith(records: output, omittedRecordIds: omitted),
+        request: request.copyWith(
+          records: output,
+          omittedRecordIds: omitted,
+          outputTemplates: outputTemplates.values.toList(),
+        ),
         validation: (
           incomplete: incomplete,
           unapproved: <String>[

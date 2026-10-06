@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import type { AppConfig } from '../config/schema.js';
 import { forbidden } from '../domain/errors.js';
 
-const allowMethods = 'GET, POST, PATCH, DELETE';
+const allowMethods = 'GET, POST, PUT, PATCH, DELETE';
 const allowHeaders =
   'Authorization, Content-Type, X-Api-Version, Idempotency-Key';
 const exposeHeaders = 'Retry-After, X-Request-Id';

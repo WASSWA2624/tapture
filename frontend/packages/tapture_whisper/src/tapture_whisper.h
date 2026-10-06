@@ -39,6 +39,7 @@ extern "C" {
 #define TW_ABI_VERSION       1
 #define TW_SAMPLE_RATE       16000                /* mono float PCM, Hz */
 #define TW_MAX_SAMPLES       (16000 * 600)        /* one call: at most 10 min */
+#define TW_VAD_MAX_MS        60000                /* each VAD ms option: at most 60 s */
 #define TW_MAX_THREADS       8
 #define TW_LANGUAGE_CAPACITY 8
 #define TW_LOG_TEXT_CAPACITY 504
@@ -261,7 +262,9 @@ typedef struct tw_log_entry {
   char text[TW_LOG_TEXT_CAPACITY]; /* 8 */
 } tw_log_entry;
 
-/* Options of tw_vad_segments; defaults from tw_vad_options_init. */
+/* Options of tw_vad_segments; defaults from tw_vad_options_init. The three
+ * millisecond options lie in [0, TW_VAD_MAX_MS]; whisper.cpp scales them to
+ * samples in 32-bit int arithmetic. */
 typedef struct tw_vad_options {
   uint32_t struct_size;    /*  0 = TW_SIZEOF_VAD_OPTIONS */
   float threshold;         /*  4 0.5 */

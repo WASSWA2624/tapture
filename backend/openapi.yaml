@@ -3,10 +3,12 @@ info:
   title: Tapture backend
   version: '1'
   description:
-    Browsers may call the API cross-origin only from the exact origins in CORS_ORIGINS. Those origins
-    receive Access-Control-Allow-Origin and Vary Origin, and preflights answer 204 allowing GET, POST, PATCH
-    and DELETE with the Authorization, Content-Type, X-Api-Version and Idempotency-Key headers. Other
-    preflights answer 403. Credentials are never allowed. An empty CORS_ORIGINS sends no CORS headers.
+    Browsers may call the API cross-origin only from the exact origins
+    in CORS_ORIGINS. Those origins receive Access-Control-Allow-Origin and Vary
+    Origin, and preflights answer 204 allowing GET, POST, PUT, PATCH and DELETE
+    with the Authorization, Content-Type, X-Api-Version and Idempotency-Key
+    headers. Other preflights answer 403. Credentials are never allowed. An
+    empty CORS_ORIGINS sends no CORS headers.
 paths:
   /health:
     get:
@@ -148,8 +150,9 @@ paths:
   /api/v1/auth/register:
     post:
       description:
-        Processes registration without revealing whether an address exists. Existing and new addresses
-        receive the same accepted response and no account identifier.
+        Processes registration without revealing whether an address exists.
+        Existing and new addresses receive the same accepted response and no
+        account identifier.
       responses:
         '200':
           description: Accepted.
@@ -288,8 +291,8 @@ paths:
   /api/v1/auth/login:
     post:
       description:
-        Signs into this organisation and enrols a device. organisationId is optional when the deployment
-        hosts exactly one organisation.
+        Signs into this organisation and enrols a device. organisationId is
+        optional when the deployment hosts exactly one organisation.
       requestBody:
         required: true
         content:
@@ -409,8 +412,8 @@ paths:
   /api/v1/auth/me:
     get:
       description:
-        Returns cached identity, memberships, grant expiry and aiAvailable indicating configured provider
-        custody; never a provider credential.
+        Returns cached identity, memberships, grant expiry and aiAvailable
+        indicating configured provider custody; never a provider credential.
       responses:
         '200':
           description: Identity
@@ -1089,13 +1092,22 @@ paths:
           schema: *a1
   /api/v1/ai/extract:
     post:
-      description:
-        '`{projectId, model, payload}` where payload is the provider envelope object (instructions, data,
-        media[{mimeType, base64}], responseMimeType); a base64 string of that JSON is also accepted. The body
-        may carry inline media up to AI_BODY_LIMIT_BYTES. Every other JSON route keeps BODY_LIMIT_BYTES. The
-        server enforces shared project/organisation request and budget limits, including UTC daily limits,
-        with a durable reservation before dispatch. A missing AI_REQUEST_COST_CEILING returns unavailable;
-        reported cost is the conservative charge, not a provider invoice.'
+      description: 'Authenticated request-lifetime analysis. Legacy
+        projectId/model/payload requests remain supported. Optional processing
+        v1 binds revision, record, exact decoded payload hash and idempotency
+        key to actor/device/project/operation/model/provider/billing. Send a
+        base64 UTF-8 envelope to preserve exact hash bytes between JSON
+        encoders. Concurrent active duplicates share one operation;
+        completed/uncertain receipts never dispatch or charge again. Responses
+        are never persisted; after completion/restart, replay returns
+        ai_result_unavailable or ai_request_uncertain and requires device
+        recovery or explicit approval of a new attempt. Optional billing selects
+        managed/personal Gemini/OpenAI explicitly; omission selects configured
+        managed billing. No provider/account fallback. New versioned or personal
+        requests never automatically retry after dispatch. Only allowlisted
+        escalation models with approved maxCost are accepted. Quotas reserve
+        configured conservative cost before provider calls; token usage is
+        reported when returned by the provider.'
       responses:
         '200':
           description: Pass-through.
@@ -1130,13 +1142,22 @@ paths:
       parameters: []
   /api/v1/ai/ocr:
     post:
-      description:
-        '`{projectId, model, payload}` where payload is the provider envelope object (instructions, data,
-        media[{mimeType, base64}], responseMimeType); a base64 string of that JSON is also accepted. The body
-        may carry inline media up to AI_BODY_LIMIT_BYTES. The server enforces shared project/organisation
-        request and budget limits, including UTC daily limits, with a durable reservation before dispatch. A
-        missing AI_REQUEST_COST_CEILING returns unavailable; reported cost is the conservative charge, not a
-        provider invoice.'
+      description: 'Authenticated request-lifetime analysis. Legacy
+        projectId/model/payload requests remain supported. Optional processing
+        v1 binds revision, record, exact decoded payload hash and idempotency
+        key to actor/device/project/operation/model/provider/billing. Send a
+        base64 UTF-8 envelope to preserve exact hash bytes between JSON
+        encoders. Concurrent active duplicates share one operation;
+        completed/uncertain receipts never dispatch or charge again. Responses
+        are never persisted; after completion/restart, replay returns
+        ai_result_unavailable or ai_request_uncertain and requires device
+        recovery or explicit approval of a new attempt. Optional billing selects
+        managed/personal Gemini/OpenAI explicitly; omission selects configured
+        managed billing. No provider/account fallback. New versioned or personal
+        requests never automatically retry after dispatch. Only allowlisted
+        escalation models with approved maxCost are accepted. Quotas reserve
+        configured conservative cost before provider calls; token usage is
+        reported when returned by the provider.'
       responses:
         '200':
           description: Pass-through.
@@ -1171,13 +1192,22 @@ paths:
       parameters: []
   /api/v1/ai/transcribe:
     post:
-      description:
-        '`{projectId, model, payload}` where payload is the provider envelope object (instructions, data,
-        media[{mimeType, base64}], responseMimeType); a base64 string of that JSON is also accepted. The body
-        may carry inline media up to AI_BODY_LIMIT_BYTES. The server enforces shared project/organisation
-        request and budget limits, including UTC daily limits, with a durable reservation before dispatch. A
-        missing AI_REQUEST_COST_CEILING returns unavailable; reported cost is the conservative charge, not a
-        provider invoice.'
+      description: 'Authenticated request-lifetime analysis. Legacy
+        projectId/model/payload requests remain supported. Optional processing
+        v1 binds revision, record, exact decoded payload hash and idempotency
+        key to actor/device/project/operation/model/provider/billing. Send a
+        base64 UTF-8 envelope to preserve exact hash bytes between JSON
+        encoders. Concurrent active duplicates share one operation;
+        completed/uncertain receipts never dispatch or charge again. Responses
+        are never persisted; after completion/restart, replay returns
+        ai_result_unavailable or ai_request_uncertain and requires device
+        recovery or explicit approval of a new attempt. Optional billing selects
+        managed/personal Gemini/OpenAI explicitly; omission selects configured
+        managed billing. No provider/account fallback. New versioned or personal
+        requests never automatically retry after dispatch. Only allowlisted
+        escalation models with approved maxCost are accepted. Quotas reserve
+        configured conservative cost before provider calls; token usage is
+        reported when returned by the provider.'
       responses:
         '200':
           description: Pass-through.
@@ -1212,13 +1242,22 @@ paths:
       parameters: []
   /api/v1/ai/refine:
     post:
-      description:
-        '`{projectId, model, payload}` where payload is the provider envelope object (instructions, data,
-        media[{mimeType, base64}], responseMimeType); a base64 string of that JSON is also accepted. The body
-        may carry inline media up to AI_BODY_LIMIT_BYTES. The server enforces shared project/organisation
-        request and budget limits, including UTC daily limits, with a durable reservation before dispatch. A
-        missing AI_REQUEST_COST_CEILING returns unavailable; reported cost is the conservative charge, not a
-        provider invoice.'
+      description: 'Authenticated request-lifetime analysis. Legacy
+        projectId/model/payload requests remain supported. Optional processing
+        v1 binds revision, record, exact decoded payload hash and idempotency
+        key to actor/device/project/operation/model/provider/billing. Send a
+        base64 UTF-8 envelope to preserve exact hash bytes between JSON
+        encoders. Concurrent active duplicates share one operation;
+        completed/uncertain receipts never dispatch or charge again. Responses
+        are never persisted; after completion/restart, replay returns
+        ai_result_unavailable or ai_request_uncertain and requires device
+        recovery or explicit approval of a new attempt. Optional billing selects
+        managed/personal Gemini/OpenAI explicitly; omission selects configured
+        managed billing. No provider/account fallback. New versioned or personal
+        requests never automatically retry after dispatch. Only allowlisted
+        escalation models with approved maxCost are accepted. Quotas reserve
+        configured conservative cost before provider calls; token usage is
+        reported when returned by the provider.'
       responses:
         '200':
           description: Pass-through.
@@ -1293,6 +1332,74 @@ paths:
           in: query
           required: true
           schema: *a1
+  /api/v1/ai/credentials/{provider}:
+    get:
+      description: Self-scoped credential status only. No endpoint retrieves a provider key.
+      parameters: &a9
+        - in: path
+          name: provider
+          required: true
+          schema:
+            type: string
+            enum:
+              - gemini
+              - openai
+      responses:
+        '200':
+          description: Credential presence.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialStatus'
+        default: &a10
+          $ref: '#/components/responses/Error'
+    put:
+      description:
+        Save a personal provider key encrypted with AES-256-GCM. The server
+        encryption key stays outside the database. Saving never selects a
+        billing account automatically.
+      parameters: *a9
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                apiKey:
+                  type: string
+                  minLength: 1
+                  maxLength: 4096
+              required:
+                - apiKey
+              additionalProperties: false
+      responses:
+        '204':
+          description: Credential saved.
+        default: *a10
+    delete:
+      description: Delete only this user's selected provider credential. Future
+        personal dispatch is unavailable; it never falls back to managed
+        billing.
+      parameters: *a9
+      responses:
+        '204':
+          description: Credential deleted.
+        default: *a10
+  /api/v1/ai/providers:
+    get:
+      description: Configured base models, allowlisted escalation models and
+        conservative attempt ceilings, with managed/personal availability.
+        Credentials are never returned.
+      responses:
+        '200':
+          description: Configured providers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderCatalogue'
+        default:
+          $ref: '#/components/responses/Error'
 components:
   parameters:
     Cursor:
@@ -1302,7 +1409,9 @@ components:
       schema:
         type: string
         minLength: 1
-      description: Resume after the previous page's nextCursor. The cursor remains valid when its row is removed.
+      description:
+        Resume after the previous page's nextCursor. The cursor remains
+        valid when its row is removed.
     Limit:
       name: limit
       in: query
@@ -1333,6 +1442,8 @@ components:
                 - quota_exceeded
                 - internal
                 - unavailable
+                - ai_request_uncertain
+                - ai_result_unavailable
             message: *a1
             details:
               type: object
@@ -1563,6 +1674,13 @@ components:
           oneOf:
             - type: string
             - $ref: '#/components/schemas/AiEnvelope'
+        billing:
+          $ref: '#/components/schemas/AiBilling'
+        processing:
+          $ref: '#/components/schemas/ProcessingIdentity'
+        maxCost:
+          type: number
+          minimum: 0
       required:
         - projectId
         - model
@@ -1573,9 +1691,26 @@ components:
       properties:
         text: *a1
         model: *a1
+        provider:
+          type: string
+          enum:
+            - gemini
+            - openai
+        billingKind:
+          type: string
+          enum:
+            - managed
+            - personal
+        usage:
+          $ref: '#/components/schemas/AiUsage'
+        receipt:
+          $ref: '#/components/schemas/AiReceipt'
       required:
         - text
         - model
+        - provider
+        - billingKind
+        - usage
       additionalProperties: false
     Usage:
       type: object
@@ -1596,6 +1731,30 @@ components:
           type: number
           minimum: 0
         at: *a1
+        provider:
+          type: string
+          enum:
+            - gemini
+            - openai
+          nullable: true
+        billingKind:
+          type: string
+          enum:
+            - managed
+            - personal
+          nullable: true
+        inputTokens:
+          type: integer
+          minimum: 0
+          nullable: true
+        outputTokens:
+          type: integer
+          minimum: 0
+          nullable: true
+        totalTokens:
+          type: integer
+          minimum: 0
+          nullable: true
       required:
         - id
         - projectId
@@ -1672,6 +1831,140 @@ components:
         - aiRequests
         - aiCost
         - authFailures
+      additionalProperties: false
+    AiBilling:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+            - managed
+            - personal
+        provider:
+          type: string
+          enum:
+            - gemini
+            - openai
+      required:
+        - kind
+        - provider
+      additionalProperties: false
+    ProcessingIdentity:
+      type: object
+      properties:
+        version:
+          type: integer
+          enum:
+            - 1
+        projectRevision: &a8
+          type: string
+          minLength: 1
+        recordId: *a8
+        requestHash:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        idempotencyKey:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+      required:
+        - version
+        - projectRevision
+        - recordId
+        - requestHash
+        - idempotencyKey
+      additionalProperties: false
+    AiUsage:
+      type: object
+      properties:
+        inputTokens: &a8
+          type: integer
+          minimum: 0
+        outputTokens: *a8
+        totalTokens: *a8
+        reservedCost:
+          type: number
+          minimum: 0
+        currency:
+          type: string
+          enum:
+            - configured
+      required:
+        - reservedCost
+        - currency
+      additionalProperties: false
+    AiReceipt:
+      type: object
+      properties:
+        idempotencyKey:
+          type: string
+          minLength: 1
+        status:
+          type: string
+          enum:
+            - completed
+      required:
+        - idempotencyKey
+        - status
+      additionalProperties: false
+    CredentialStatus:
+      type: object
+      properties:
+        provider:
+          type: string
+          enum:
+            - gemini
+            - openai
+        configured:
+          type: boolean
+      required:
+        - provider
+        - configured
+      additionalProperties: false
+    ProviderCatalogue:
+      type: object
+      properties:
+        providers:
+          type: array
+          items:
+            type: object
+            properties:
+              provider:
+                type: string
+                enum:
+                  - gemini
+                  - openai
+              model: &a8
+                type: string
+                minLength: 1
+              models:
+                type: array
+                items: *a8
+              modelCostCeilings:
+                type: object
+                additionalProperties: &a9
+                  type: number
+                  minimum: 0
+              requestCostCeiling: *a9
+              currency:
+                type: string
+                enum:
+                  - configured
+              managed:
+                type: boolean
+              personalConfigured:
+                type: boolean
+            required:
+              - provider
+              - model
+              - models
+              - modelCostCeilings
+              - requestCostCeiling
+              - currency
+              - managed
+              - personalConfigured
+            additionalProperties: false
+      required:
+        - providers
       additionalProperties: false
   responses:
     Error:

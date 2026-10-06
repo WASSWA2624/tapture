@@ -12,6 +12,9 @@ final class TemplateChoiceNeeded {
     required this.shortlist,
     this.pinKey,
     this.modelMayDecide = false,
+    this.sourceRevision,
+    this.recordRevision,
+    this.analysisScope,
   });
 
   /// The record whose template is undecided.
@@ -30,6 +33,15 @@ final class TemplateChoiceNeeded {
   /// Whether local scoring narrowed the choice enough for a model to pick
   /// from [shortlist] before the operator is asked.
   final bool modelMayDecide;
+
+  /// Captured evidence identity the returned choice must still describe.
+  final String? sourceRevision;
+
+  /// Prevents a late choice from replacing a newer record edit.
+  final int? recordRevision;
+
+  /// Account, model and spending approval when model assistance was offered.
+  final String? analysisScope;
 }
 
 /// The operator's answer: the chosen template and whether to pin it to the

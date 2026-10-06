@@ -37,6 +37,12 @@ final class EgressSummary {
   final OnDeviceStage _onDevice;
   final OnlineCompletion _completion;
 
+  /// The selected accounts, models and approved limits covered by a preview.
+  Future<String> identity(ProcessingJob job) async {
+    final RecordBundle bundle = await _loader.load(job.recordId);
+    return _settings.egressScope(bundle);
+  }
+
   /// The image count and approximate payload bytes for [job], or zero for
   /// both when no online call would be made.
   ///
@@ -69,7 +75,7 @@ final class EgressSummary {
       bytes += utf8.encode(field.label).length;
     }
     for (final Caption caption in bundle.captions) {
-      bytes += utf8.encode(caption.textRaw).length;
+      bytes += utf8.encode(caption.textRefined ?? caption.textRaw).length;
     }
     for (final MapEntry<String, String> entry in StageSupport.stringMap(
       bundle.record.contextJson,
@@ -94,12 +100,7 @@ final class EgressSummary {
   }
 
   Future<int> _audioBytes(ProcessingJob job, RecordBundle bundle) async {
-    if (bundle.audio.isEmpty ||
-        !_settings
-            .selection(bundle, AiOperation.transcribe)
-            .provider
-            .service
-            .isAvailable) {
+    if (bundle.audio.isEmpty) {
       return 0;
     }
     final Map<String, String> transcripts = <String, String>{
@@ -115,9 +116,27 @@ final class EgressSummary {
     };
     var bytes = 0;
     for (final Attachment audio in bundle.audio) {
-      final String? transcript = transcripts[audio.id];
+      final TranscriptRow? device = bundle.deviceTranscripts.reversed
+          .where((TranscriptRow row) => row.attachmentId == audio.id)
+          .firstOrNull;
+      final String? transcript = device == null
+          ? transcripts[audio.id]
+          : device.textEdited ??
+                bundle.transcriptSegments
+                    .where(
+                      (TranscriptSegmentRow row) =>
+                          row.transcriptId == device.id,
+                    )
+                    .map((TranscriptSegmentRow row) => row.textRaw)
+                    .join(' ');
       bytes += transcript == null
-          ? audio.fileSize
+          ? (_settings
+                    .selection(bundle, AiOperation.transcribe)
+                    .provider
+                    .service
+                    .isAvailable
+                ? audio.fileSize
+                : 0)
           : utf8.encode(transcript).length;
     }
     return bytes;

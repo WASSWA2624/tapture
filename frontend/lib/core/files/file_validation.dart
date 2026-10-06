@@ -139,7 +139,7 @@ enum ImportKind {
   /// A photograph (JPEG, PNG or WebP).
   image,
 
-  /// A PDF document.
+  /// A PDF, DOCX or plain text document.
   document,
 
   /// An XLSX workbook, or a CSV or JSON table.
@@ -307,6 +307,7 @@ int _ceiling(ImportKind kind) {
 
 bool _isArchiveKind(ImportKind kind, String ext) {
   return kind == ImportKind.bundle ||
+      (kind == ImportKind.document && ext == 'docx') ||
       (kind == ImportKind.spreadsheet && ext == 'xlsx');
 }
 
@@ -346,6 +347,14 @@ bool _magicMatches(ImportKind kind, String ext, Uint8List header) {
       }
       return false;
     case ImportKind.document:
+      if (ext == 'docx') return _isZip(header);
+      if (ext == 'txt') {
+        return !_isZip(header) &&
+            !_prefix(header, _mz) &&
+            !_prefix(header, _pdf) &&
+            !_prefix(header, _jpeg) &&
+            !_prefix(header, _png);
+      }
       return _prefix(header, _pdf);
     case ImportKind.spreadsheet:
       if (ext == 'xlsx') {
@@ -650,6 +659,8 @@ const Map<String, ImportKind> _kinds = <String, ImportKind>{
   'png': ImportKind.image,
   'webp': ImportKind.image,
   'pdf': ImportKind.document,
+  'docx': ImportKind.document,
+  'txt': ImportKind.document,
   'xlsx': ImportKind.spreadsheet,
   'csv': ImportKind.spreadsheet,
   'json': ImportKind.spreadsheet,

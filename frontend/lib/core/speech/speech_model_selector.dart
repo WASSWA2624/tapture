@@ -331,9 +331,12 @@ abstract final class SpeechModelSelector {
       entropyThreshold: AppConstants.speechEngine.entropyThreshold,
     );
     // Greedy with temperature fallback: a second candidate changed no word
-    // on this machine's measurements and only added compute.
+    // on this machine's measurements and only added compute. The length
+    // bound stops a looping fallback round well short of whisper's own.
     final SpeechDecodeProfile committed = shared.copyWith(
       temperatureStep: AppConstants.speechEngine.temperatureStep,
+      piecesPerSecond: AppConstants.speechEngine.committedPiecesPerSecond,
+      minPieces: AppConstants.speechEngine.committedMinPieces,
       audioContextPad: AppConstants.speechEngine.committedAudioContextPad,
       minAudioContext: AppConstants.speechEngine.committedMinAudioContext,
     );

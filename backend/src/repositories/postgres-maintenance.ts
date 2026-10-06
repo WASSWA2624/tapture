@@ -39,6 +39,8 @@ export async function exportMetadata(
     'invitations',(SELECT coalesce(jsonb_agg(to_jsonb(r)-'token_hash'),'[]'::jsonb) FROM invitations r),
     'refreshFamilies',(SELECT coalesce(jsonb_agg(to_jsonb(r)-'token_hash'),'[]'::jsonb) FROM refresh_families r),
     'usage',(SELECT coalesce(jsonb_agg(to_jsonb(r)),'[]'::jsonb) FROM ai_usage r),
+    'aiReceipts',(SELECT coalesce(jsonb_agg(to_jsonb(r)),'[]'::jsonb) FROM ai_receipts r),
+    'aiCredentials',(SELECT coalesce(jsonb_agg(to_jsonb(r)-'encrypted_key'),'[]'::jsonb) FROM ai_credentials r),
     'idempotency',(SELECT coalesce(jsonb_agg(to_jsonb(r)),'[]'::jsonb) FROM idempotency_keys r),
     'lockouts',(SELECT coalesce(jsonb_agg(to_jsonb(r)),'[]'::jsonb) FROM login_lockouts r),
     'configuration',(SELECT coalesce(jsonb_agg(to_jsonb(r)-'fingerprint'),'[]'::jsonb) FROM runtime_settings r),
@@ -87,7 +89,7 @@ export async function destroyDeployment(
       'Destroy requires a single matching organisation deployment.',
     );
   await sql.write(
-    'TRUNCATE TABLE relay_blobs,relay_acknowledgements,relay_packages,relay_vectors,project_members,ai_usage,projects,invitations,refresh_families,devices,users,organisations,audit_events,security_events,idempotency_keys,login_lockouts,runtime_settings',
+    'TRUNCATE TABLE relay_blobs,relay_acknowledgements,relay_packages,relay_vectors,project_members,ai_receipts,ai_credentials,ai_usage,projects,invitations,refresh_families,devices,users,organisations,audit_events,security_events,idempotency_keys,login_lockouts,runtime_settings',
   );
   return [
     'organisation',
@@ -107,5 +109,7 @@ export async function destroyDeployment(
     'idempotency',
     'lockouts',
     'configuration-metadata',
+    'ai-credentials',
+    'ai-receipts',
   ];
 }

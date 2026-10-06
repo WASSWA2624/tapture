@@ -130,12 +130,12 @@ final class ProviderRegistry {
     }
     final String id =
         providerId ?? _selection[projectId]?[operation] ?? backendId;
-    final AiService service = (_entries[id] ?? _entries[backendId]!).service;
+    final AiService service =
+        _entries[id]?.service ?? const AiService.unavailable();
     return service is ProxyAiService ? service.forProject(projectId) : service;
   }
 
-  /// Returns a valid provider/model choice, falling back to the backend
-  /// without erasing the unavailable saved ids held by SettingsStore.
+  /// Keeps the explicit billing/provider choice, refusing unavailable IDs.
   ({ProviderDescriptor provider, ModelDescriptor model, bool fellBack})
   validateSelection({
     required String providerId,
@@ -143,33 +143,59 @@ final class ProviderRegistry {
     required AiOperation operation,
     String? projectId,
   }) {
-    ProviderDescriptor provider = _catalog.firstWhere(
-      (ProviderDescriptor value) => value.id == providerId,
-      orElse: () => _catalog.firstWhere(
-        (ProviderDescriptor value) => value.id == backendId,
-      ),
-    );
-    bool fellBack =
-        provider.id != providerId ||
-        !provider.operations.contains(operation) ||
-        !provider.service.isAvailable;
-    if (fellBack) {
-      provider = _catalog.firstWhere(
-        (ProviderDescriptor value) => value.id == backendId,
+    ProviderDescriptor? saved;
+    for (final ProviderDescriptor candidate in _catalog) {
+      if (candidate.id == providerId) saved = candidate;
+    }
+    ModelDescriptor? selectedModel;
+    for (final ModelDescriptor candidate
+        in saved?.models ?? const <ModelDescriptor>[]) {
+      if ((candidate.id == modelId ||
+              (modelId.isEmpty && candidate.id == 'default')) &&
+          candidate.operations.contains(operation)) {
+        selectedModel = candidate;
+      }
+    }
+    final ModelDescriptor model =
+        selectedModel ??
+        ModelDescriptor(
+          id: modelId,
+          label: modelId,
+          operations: <AiOperation>{operation},
+        );
+    ProviderDescriptor provider =
+        saved ??
+        ProviderDescriptor(
+          id: providerId,
+          label: providerId,
+          operations: <AiOperation>{operation},
+          keyCustody: ProviderKeyCustody.backend,
+          deviceKeyAllowed: false,
+          available: false,
+          service: const AiService.unavailable(),
+          models: <ModelDescriptor>[model],
+        );
+    if (projectId != null && provider.service is ProxyAiService) {
+      final ProxyAiService scoped = (provider.service as ProxyAiService)
+          .forProject(projectId, model: model.id);
+      provider = ProviderDescriptor(
+        id: provider.id,
+        label: provider.label,
+        operations: provider.operations,
+        keyCustody: provider.keyCustody,
+        deviceKeyAllowed: provider.deviceKeyAllowed,
+        available: scoped.isAvailable,
+        service: scoped,
+        models: provider.models,
+        serverCredentialProvider: provider.serverCredentialProvider,
       );
     }
-    final List<ModelDescriptor> models = provider.models
-        .where((ModelDescriptor value) => value.operations.contains(operation))
-        .toList(growable: false);
-    if (models.isEmpty) {
-      throw ArgumentError.value(operation, 'operation', 'No supported model');
-    }
-    final ModelDescriptor model = models.firstWhere(
-      (ModelDescriptor value) => value.id == modelId,
-      orElse: () => models.first,
-    );
-    fellBack = fellBack || model.id != modelId;
-    if (!_allows(operation)) {
+    final bool invalid =
+        saved == null ||
+        selectedModel == null ||
+        !provider.operations.contains(operation) ||
+        !provider.service.isAvailable;
+    if (!_allows(operation) || invalid) {
       // Switched off on the privacy page: the choice is kept, and nothing
       // can be sent through it.
       return (
@@ -182,27 +208,13 @@ final class ProviderRegistry {
           available: false,
           service: const AiService.unavailable(),
           models: provider.models,
+          serverCredentialProvider: provider.serverCredentialProvider,
         ),
         model: model,
-        fellBack: fellBack,
+        fellBack: invalid,
       );
     }
-    if (projectId != null && provider.service is ProxyAiService) {
-      provider = ProviderDescriptor(
-        id: provider.id,
-        label: provider.label,
-        operations: provider.operations,
-        keyCustody: provider.keyCustody,
-        deviceKeyAllowed: provider.deviceKeyAllowed,
-        available: provider.service.isAvailable,
-        service: (provider.service as ProxyAiService).forProject(
-          projectId,
-          model: model.id,
-        ),
-        models: provider.models,
-      );
-    }
-    return (provider: provider, model: model, fellBack: fellBack);
+    return (provider: provider, model: model, fellBack: false);
   }
 
   /// Whether [id] keeps its key on the backend. Missing entries do.

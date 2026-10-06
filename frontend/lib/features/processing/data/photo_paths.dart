@@ -130,10 +130,15 @@ final class PhotoPaths {
   }
 
   /// The absolute paths of every compressed copy, in capture order.
-  Future<List<String>> compressed(RecordBundle bundle) async {
+  Future<List<String>> compressed(
+    RecordBundle bundle, {
+    CancellationToken? cancel,
+  }) async {
     return <String>[
       for (final Photo photo in bundle.photos)
-        await servicePath(await compressedRelative(bundle, photo)),
+        await servicePath(
+          await compressedRelative(bundle, photo, cancel: cancel),
+        ),
     ];
   }
 }

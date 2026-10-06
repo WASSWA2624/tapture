@@ -1145,18 +1145,21 @@ int32_t tw_open_context(tw_source& source, int64_t expected_bytes,
     tw_log_own(TW_LOG_ERROR, "model failed to load (%d)", TW_ERR_MODEL_LOAD);
     return TW_ERR_MODEL_LOAD;
   }
+  // whisper_init_state allocates with throwing operations (the logits
+  // reserve alone is ~93 MB), so the loaded weights are owned here until the
+  // context takes them, and a throw frees them before it reaches the caller.
+  std::unique_ptr<whisper_context, void (*)(whisper_context*)> owned(whisper, whisper_free);
   whisper_state* state = whisper_init_state(whisper);
   if (state == nullptr) {
-    whisper_free(whisper);
     tw_log_own(TW_LOG_ERROR, "state allocation failed (%d)", TW_ERR_OUT_OF_MEMORY);
     return TW_ERR_OUT_OF_MEMORY;
   }
   auto* context = new (std::nothrow) tw_context();
   if (context == nullptr) {
     whisper_free_state(state);
-    whisper_free(whisper);
     return TW_ERR_OUT_OF_MEMORY;
   }
+  owned.release();
   tw_count(TW_OBJ_CONTEXT, 1);
   context->whisper = whisper;
   context->state = state;
@@ -2254,9 +2257,13 @@ int32_t tw_vad_segments(tw_vad* vad, const float* pcm, int32_t n_samples,
   if (n_samples > TW_MAX_SAMPLES) {
     return TW_ERR_AUDIO_TOO_LONG;
   }
-  if (!(options->threshold > 0.0f && options->threshold < 1.0f) || options->min_speech_ms < 0 ||
-      options->min_silence_ms < 0 || !(options->max_speech_s > 0.0f) ||
-      options->speech_pad_ms < 0 || !(options->samples_overlap_s >= 0.0f)) {
+  // whisper.cpp turns each ms option into samples as a 32-bit int
+  // (rate * ms / 1000, then twice the pad), so they are bounded first.
+  const auto ms_ok = [](int32_t ms) { return ms >= 0 && ms <= TW_VAD_MAX_MS; };
+  if (!(options->threshold > 0.0f && options->threshold < 1.0f) ||
+      !ms_ok(options->min_speech_ms) || !ms_ok(options->min_silence_ms) ||
+      !(options->max_speech_s > 0.0f) || !ms_ok(options->speech_pad_ms) ||
+      !(options->samples_overlap_s >= 0.0f)) {
     return TW_ERR_INVALID_ARGUMENT;
   }
 #if TW_ENGINE

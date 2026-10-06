@@ -1,5 +1,10 @@
 import type { AppConfig } from '../../config/schema.js';
-import { AppError, internalError, rateLimited } from '../../domain/errors.js';
+import {
+  AppError,
+  internalError,
+  rateLimited,
+  uncertainAiRequest,
+} from '../../domain/errors.js';
 import type { AiProvider, AiRequest, AiResult } from './provider.js';
 
 interface Breaker {
@@ -7,7 +12,7 @@ interface Breaker {
   openUntil: number;
 }
 
-const breakers = new Map<string, Breaker>();
+let breakers = new WeakMap<AppConfig, Map<string, Breaker>>();
 
 async function timedCall(
   provider: AiProvider,
@@ -17,7 +22,9 @@ async function timedCall(
 ): Promise<AiResult> {
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let detach: () => void = () => undefined;
   try {
+    if (request.signal?.aborted === true) throw uncertainAiRequest();
     return await Promise.race([
       provider[method]({
         ...request,
@@ -29,14 +36,18 @@ async function timedCall(
       new Promise<never>((_resolve, reject) => {
         timer = setTimeout(() => {
           controller.abort();
-          reject(new Error('timeout'));
+          reject(uncertainAiRequest());
         }, timeoutMs);
+        const abort = () => reject(uncertainAiRequest());
+        request.signal?.addEventListener('abort', abort, { once: true });
+        detach = () => request.signal?.removeEventListener('abort', abort);
       }),
     ]);
   } finally {
     // Successful calls release their deadline immediately. A busy proxy must
     // not keep one timer per completed request until the timeout elapses.
     clearTimeout(timer);
+    detach();
   }
 }
 
@@ -61,11 +72,15 @@ export async function callProvider(
   method: keyof AiProvider,
   request: AiRequest,
   config: AppConfig,
+  retryLimit = config.aiRetryLimit,
 ): Promise<AiResult> {
-  const breaker = breakers.get(request.model) ?? { failures: 0, openUntil: 0 };
+  const pool = breakers.get(config) ?? new Map<string, Breaker>();
+  breakers.set(config, pool);
+  const key = `${request.accountId ?? 'legacy'}:${request.model}`;
+  const breaker = pool.get(key) ?? { failures: 0, openUntil: 0 };
   if (breaker.openUntil > Date.now()) throw rateLimited();
   let last: unknown;
-  for (let attempt = 0; attempt <= config.aiRetryLimit; attempt += 1) {
+  for (let attempt = 0; attempt <= retryLimit; attempt += 1) {
     try {
       const result = await timedCall(
         provider,
@@ -73,18 +88,24 @@ export async function callProvider(
         request,
         config.aiTimeoutMs,
       );
-      breakers.set(request.model, { failures: 0, openUntil: 0 });
+      pool.set(key, { failures: 0, openUntil: 0 });
       if (result.text.length === 0) throw new Error('malformed');
       return result;
     } catch (error) {
+      if (
+        request.signal?.aborted === true ||
+        (error instanceof Error &&
+          ['AbortError', 'TimeoutError'].includes(error.name))
+      )
+        throw uncertainAiRequest();
       if (isFinal(error)) throw error;
       last = error;
       breaker.failures += 1;
       if (breaker.failures >= config.aiBreakerThreshold) {
         breaker.openUntil = Date.now() + config.aiTimeoutMs;
       }
-      breakers.set(request.model, breaker);
-      await sleep(20 * (attempt + 1));
+      pool.set(key, breaker);
+      if (attempt < retryLimit) await sleep(20 * (attempt + 1));
     }
   }
   if (last instanceof Error && last.message === 'malformed') {
@@ -94,5 +115,5 @@ export async function callProvider(
 }
 
 export function resetBreakers(): void {
-  breakers.clear();
+  breakers = new WeakMap();
 }

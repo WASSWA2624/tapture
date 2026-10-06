@@ -120,16 +120,12 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
                 message.fallback,
                 localizedDetail: message,
               );
-              if (stage == JobStage.online &&
-                  !ref.read(egressConsentProvider)) {
-                final Future<bool> Function(ProcessingJob job)? confirm =
-                    confirmOnline;
-                if (confirm == null || !await confirm(current)) {
+              if (stage == JobStage.online) {
+                if (!await _mayGoOnline(current, confirmOnline)) {
                   await repository.release(current.id);
                   _token.cancel();
                   throw _ProcessingCancelled(Copy.messages.egressDecline);
                 }
-                ref.read(egressConsentProvider.notifier).grant();
               }
               await _runStage(
                 stage,
@@ -319,12 +315,14 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
     if (needed == null) {
       return;
     }
+    if (_token.isCancelled) throw const CancelledFailure();
     TemplateChoice? choice;
     if (needed.modelMayDecide && await _mayGoOnline(job, confirmOnline)) {
-      final String? assisted = await ref.read(processingTemplateAssistProvider)(
-        job,
-        needed,
-      );
+      final cancellable = ref.read(processingCancellableTemplateAssistProvider);
+      final String? assisted = cancellable == null
+          ? await ref.read(processingTemplateAssistProvider)(job, needed)
+          : await cancellable(job, needed, _token);
+      if (_token.isCancelled) throw const CancelledFailure();
       if (assisted != null) {
         choice = (templateId: assisted, pin: false);
       }
@@ -353,13 +351,19 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
     ProcessingJob job,
     Future<bool> Function(ProcessingJob job)? confirmOnline,
   ) async {
-    if (ref.read(egressConsentProvider)) {
+    final identity = ref.read(processingEgressIdentityProvider);
+    final String scope = await identity(job);
+    final EgressConsent consent = ref.read(egressConsentProvider.notifier);
+    if (consent.covers(scope)) {
       return true;
     }
     if (confirmOnline == null || !await confirmOnline(job)) {
       return false;
     }
-    ref.read(egressConsentProvider.notifier).grant();
+    if (_token.isCancelled || scope != await identity(job)) {
+      return false;
+    }
+    consent.grant(scope: scope);
     return true;
   }
 
@@ -445,6 +449,23 @@ final Provider<ProcessingTemplateAssist> processingTemplateAssistProvider =
       return (ProcessingJob _, TemplateChoiceNeeded _) async => null;
     });
 
+/// Production template assistance can abort transport with the batch token.
+final Provider<
+  Future<String?> Function(
+    ProcessingJob,
+    TemplateChoiceNeeded,
+    CancellationToken,
+  )?
+>
+processingCancellableTemplateAssistProvider =
+    Provider<
+      Future<String?> Function(
+        ProcessingJob,
+        TemplateChoiceNeeded,
+        CancellationToken,
+      )?
+    >((_) => null);
+
 /// Batch notification boundary. Production uses the local plugin.
 final Provider<ProcessingBatchNotification> processingNotificationsProvider =
     Provider<ProcessingBatchNotification>((_) {
@@ -455,6 +476,13 @@ final Provider<ProcessingBatchNotification> processingNotificationsProvider =
 final Provider<ProcessingEgressSummary> processingEgressSummaryProvider =
     Provider<ProcessingEgressSummary>((_) {
       return (ProcessingJob _) async => (imageCount: 0, payloadBytes: 0);
+    });
+
+/// The selected billing scope, supplied by the same worker as the payload size.
+final Provider<Future<String> Function(ProcessingJob)>
+processingEgressIdentityProvider =
+    Provider<Future<String> Function(ProcessingJob)>((_) {
+      return (ProcessingJob _) async => '';
     });
 
 /// Runs one stage of a job. The token is cancelled when the batch is.

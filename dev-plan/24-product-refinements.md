@@ -4043,6 +4043,19 @@ The selector rules and constants are in spec §30.4.2 and §30.4.3. A lease neve
   not, and a surviving marker is counted and removed at start; `app.dart` listens to readiness from launch; extra
   `speechDeviceProbeProvider` and `speechEngineHostProvider`. Android re-extraction and the crash marker on a real
   device, and the browser single-thread reload in a real browser, are unit-tested only here and belong to task 131.
+- 2026-10-05 (decode profiles, with tasks 117/118): rule 8's committed profile changed in
+  `speech_model_selector.dart`: `bestOf` 1 on every device (was 2 on desktop) with the 0.2 temperature fallback, and
+  the context sized to the utterance, `committedAudioContextPad` 128 over `committedMinAudioContext` 896 frames (was
+  the full 1500). The phone dictation profile keeps pad 256 with no floor for task 131's WER gate. Rule 5 is
+  unchanged: `auto` still picks base on this 4-core machine, decided against falling back to tiny (spec §30.4.2
+  rule 8); evidence in the task 117/118 notes. `speech_model_selector_test` asserts the new committed profile, that
+  a committed final is never the full context for an utterance it can size and never below the floor on desktop,
+  phone and browser, and the phone dictation profile's pad without floor; it passed with the speech unit set (348
+  passed, 6 opt-in skips).
+- 2026-10-05 (independent review): selector unchanged by the review. 16 live jfk × 6 host-mirror runs support
+  `auto` keeping base: base had 0 word edits in every run, while tiny, whose temperature-fallback finals took
+  1.1–12.7 s, was not reliably faster at p90 (tiny 652–4404 ms, base 1239–3097 ms). `speech_model_selector_test` passed
+  in the speech unit set (380 passed, 6 opt-in skips).
 
 ## 114 — Stream microphone audio into the durable take
 
@@ -4399,6 +4412,58 @@ Internal to `core/speech` (spec §30.4.7):
   - A loop whose phrase is one word said twice collapses to a single word.
   - Held seam words wait for the next utterance's final. If that final is skipped, or the drain stops before it, they are not stored. Recovery starts at the next utterance's `seamFromSample`, so a held word that starts up to `seamTolerance` before it can be re-heard only in part.
   - Task 118 maps the pipeline's warnings and the assembler's counters into the session.
+- 2026-10-05 (fix of the long-form, dictation and latency defects found by the 118/120/128 reviews; machine
+  otherwise idle, Release `build/tw-windows` DLL, windows lock):
+  - Prompt carry: finals carry no prompt by default (`carryPrompt` false, as whisper.cpp's stream example) and drafts
+    never do; the echo rule acts only where a prompt was sent. With carry, tiny lost 30 and base 35 of 138 words.
+  - Drafts: a draft's tail from where a 3-word phrase repeats (`interimRepeatWords`) stays tentative however many
+    drafts agree; LocalAgreement-2 is otherwise unchanged.
+  - Committed context: measured on jfk × 6 in a pipeline harness (since removed). A pad alone is unsafe: pad 64 tiny
+    deleted 6 words ("S-Love", "No"), base inserted 9 ("As long as not"); pad 128 tiny invented "Episden" and
+    finals reached 6.2 s through fallbacks; pad 256 base deleted 35 words and tiny inserted 7. A floor fixes it: 768
+    kept every base word but tiny heard "ask not" as one word twice; 896 and 1024 gave 0 inserted and 0 deleted with
+    both models. Chosen: pad 128 over a floor of 896. `bestOf` 2 changed no word in isolated decodes and is dropped.
+  - Edge trim: base times jfk's weak "what" 20 ms before the speech onset, so trim dropped it in 2 of 6 copies; a
+    weak edge word is now kept when a speech frame lies within `edgeTrimTolerance` (96 ms).
+  - Tail rule: the last of several segments of an utterance not ended by a hard cut is dropped when under it the
+    detector heard less than `minSpeech`: whisper decodes the remainder after its last timestamp as its own window
+    and invented "Pretty", "hobbit" and "The." there.
+  - Backlog: a sized final keeps its profile under `reducedContext`; dropping the floor there made base insert "I'm
+    going to get" at a hard cut.
+  - `speech_pipeline_real_seam_test` now runs the production selection for tiny (fast) and base (accurate) and writes
+    `build/stt-real-seam-<model>.json`: both passed, 12 hard cuts each, tiny 0 inserted, 0 deleted, 6 substituted;
+    base 0 inserted, 0 deleted, 5 substituted.
+  - Unit tests: `test/core/speech/pipeline/` (property test with adversarial modes and carried prompt included),
+    `whisper_stt_service`, `routed_stt_service`, `dictation_stt_provider`, `whisper_dictation_field`,
+    `speech_model_selector`, `speech_decode_profile`, `speech_worker_codec`, `fake_speech_engine`,
+    `live_transcription_service`, `live_transcription_recovery`, `word_edits` and both host mirrors without opt-in:
+    348 passed, 6 skipped (opt-in). New regressions: a weak first word timed just before the onset is kept
+    (`hallucination_filter_test`, fails with a zero tolerance); a final sized under backlog keeps the floor
+    (`speech_pipeline_test`); drafts that loop never show the repeat end to end (`whisper_stt_service_test`, fails
+    with the repeat rule removed). The by-default no-prompt and repeated-tail stabiliser tests already existed.
+  - `dart analyze` on `lib/core`, `test/core/speech`, `test/support`, `test/hardening` and the two STT integration
+    scenarios: no issues; `dart format --set-exit-if-changed`: clean; `check_logging`, `check_naming`,
+    `check_structure`, `check_tests`, `check_secrets` and `tokens`, `naming`, `network`, `layering`,
+    `check_logging_test`: passed (77).
+- 2026-10-05 (independent review; Release `build/tw-windows` DLL, windows lock; the machine was not idle: 18–52%
+  busy before each run from other user processes):
+  - `speech_pipeline_real_seam_test`, 10 consecutive runs: all passed; deterministic output, 12 hard cuts per model;
+    tiny 0 inserted, 0 deleted, 6 substituted ("as" for "ask") every run; base 0 inserted, 0 deleted, 5 substituted
+    ("asked" for "ask") every run. Evidence `frontend/build/review-stt/seam10/`.
+  - The adversarial property test now runs every seed twice, with the default (no prompt, which it asserts no final
+    carries) and with the prompt carried, so the production path is covered; it passed.
+  - `baseFinalizeCompute` in `app_constants.dart` was 2500 ms against the 2000 ms in the spec and these notes; set to
+    2000 ms.
+  - Speech unit set (pipeline directory, `whisper_stt_service`, `routed_stt_service`, `dictation_stt_provider`,
+    `whisper_dictation_field`, `speech_model_selector`, `speech_decode_profile`, `speech_worker_codec`,
+    `fake_speech_engine`, `live_transcription_service`, `live_transcription_recovery`, `speech_engine_host`,
+    `word_edits`, both host mirrors without opt-in): 380 passed, 6 skipped (opt-in). The benchmark (performance tag)
+    failed at p90 17.2 ms while run beside the real-engine seam runs, and passed alone at p90 8.1 ms (budget 15 ms).
+    `dart analyze` on the changed paths: no issues; `dart format`: clean; `tokens`, `naming`, `network`, `layering`
+    and `check_logging_test`: 77 passed; `check_logging`, `check_naming`, `check_structure`, `check_tests`,
+    `check_secrets`: clean. No transcript text in logs and no Duration literal outside `AppConstants` in the diff.
+  - Open risk, not covered by a pipeline-level test: the tail rule drops a real last word heard for less than
+    `minSpeech` when whisper puts it in a segment of its own.
 
 ## 118 — Run live transcription sessions
 
@@ -4492,6 +4557,109 @@ List<String> validateScenarioProfiles(List<MemoryProfile> profiles, {required Ma
 - 2026-10-04: the cancel test proves the lease, the leave guard and the pause flush are released; the exit check is removed in the same `_untrack` step as the flush and has no separate observable counter. Unit paths prove sessions, captures and leases at 0; the worker and engine-handle counters are proven at 0 by the real-engine host mirror after dispose.
 - 2026-10-04 open: `stt-long-session` (`test/core/speech/long_session_memory_test.dart`, performance tag) fails retained RSS: second-session peak 30.9 MiB (budget 64 MiB) but retained 18.6 MiB against the 8 MiB `longSessionRetainedRssBytes`; session and capture counters return to 0 and 1400/1400 words are stored. Not shown to be a leak; needs a live-heap measurement or recalibration with evidence (task 128).
 - 2026-10-04 open: host mirror `test/hardening/stt_whisper_host_test.dart` (recorded substitution for `-d windows`; Release `tapture_whisper.dll`, windows lock) fails only its last assertion, finalize compute p90 against 1000 ms: tiny 1722 ms, base 6115 ms. Passing before it: take byte-identical, both jfk clauses heard, 0 inserted words (no seam duplication), transcript complete, no skipped utterance, drafts shown, first partial tiny 742 ms / base 826 ms (budget 1500 ms), `outboundCallCount == 0`, capture/handle/worker counters 0 after dispose. Evidence `frontend/build/stt-whisper-{tiny-q5_1,base-q5_1}.json`. Quality concern outside this task: tiny deleted 30 and base 35 of 138 words (base kept only 1 of 6 copies of the first clause), attributed by the implementer's reverted experiment to task 117's prompt carry suppressing repeated sentences; it needs its own task.
+- 2026-10-05 (with the task 117 fix; machine otherwise idle): host mirror `test/hardening/stt_whisper_host_test.dart`
+  (Release DLL, windows lock), which now also asserts 0 deleted words and the model's finalize budget, passed twice.
+  Run 1: tiny first partial 513 ms, finalize p90 608 ms, 0 inserted, 0 deleted, 9 substituted ("as" for "ask");
+  base first partial 682 ms, finalize p90 1461 ms (1076–1584), 0 inserted, 0 deleted, 0 substituted. Run 2: tiny
+  539 ms / p90 652 ms (one fallback final 3872 ms), 0/0/7; base 722 ms / p90 1358 ms (1064–1443), 0/0/0. Both runs:
+  every clause heard, take byte-identical, nothing skipped, `outboundCallCount` 0, counters 0 after dispose. Evidence
+  `frontend/build/stt-whisper-{tiny-q5_1,base-q5_1}.json`. Base cannot finalise within 1000 ms on this 4-core
+  machine at any context that keeps every word, so `speechBudgets.finalizeCompute` became `tinyFinalizeCompute`
+  (1000 ms) and `baseFinalizeCompute` (2000 ms), with `auto` keeping base (spec §30.4.2 rule 8, §30.4.3). The
+  real-engine item was ticked on these runs, then unticked by the review below.
+- 2026-10-05 (independent review; same DLL and lock; machine 18–52% busy before each run from other user
+  processes): the host mirror was run 16 times (1 + 10 + 5). Words: base 0 inserted, 0 deleted, 0 substituted in all
+  16; tiny 0 inserted and 0 deleted in 15, 6–11 substituted ("as", "is" or "it's" for "ask"), and 1 inserted in the
+  first run ("what you are country": "your" heard as "you are", not a seam duplicate). `outboundCallCount` 0 and
+  counters 0 in every run. Compute: first partial tiny 415–1217 ms, base 686–1669 ms (base over 1500 ms once, at 70%
+  load). Finalize p90: tiny 652–4404 ms, within 1000 ms in 2 of 16 runs; most tiny finals took 0.5–0.8 s, but one to
+  three temperature-fallback finals per run took 1.1–12.7 s. Base 1239–3097 ms, within 2000 ms in 9 of 16. The host
+  mirror passed in 1 of 16 runs. The implementer's two passing runs are not reproduced, so the real-engine item is
+  unticked: tiny's fallback finals need bounding (or the budget an evidence-backed change), and base's p90 is within
+  2000 ms only on a quiet machine. Evidence `frontend/build/review-stt/{long-1-*,long10,long5b}/`, with per-run CPU
+  samples.
+- 2026-10-05 (finals bounded by length; Release `build/tw-windows` DLL, windows lock; CPU load sampled for 5 s
+  before every run; the background load is the user's own processes and was not stopped):
+  - Change: `SpeechDecodeProfile.piecesPerSecond`, `minPieces` and `maxPiecesFor(samples)` =
+    `min(maxPieces if set, ceil(seconds × rate) + floor)`, passed per request as whisper's `max_tokens` by
+    `speechDecodeOptions` (native, now a `@visibleForTesting` top-level function) and `SpeechWorkerCodec.transcribe`
+    (web), counted on the request's own audio, not the padding (corrected by the review below: both now count
+    the audio sent, padded to at least 1 s). The committed profile, and so every dictation
+    profile derived from it, carries `committedPiecesPerSecond` 10 and `committedMinPieces` 24; drafts keep
+    `interimMaxPieces` 96. Unit tests: `maxPiecesFor` maths and cap, copyWith and equality
+    (`speech_decode_profile_test`); committed and dictation profiles on desktop, phone and browser carry the bound
+    and drafts do not (`speech_model_selector_test`); the web codec (`speech_worker_codec_test`) and the native
+    options (`speech_engine_native_test`, not opt-in) pass 29, 54 and 134 pieces for 0.5, 3 and 11 s.
+  - Long-form host mirror with the final settings (10 per second plus 24, `temperatureStep` 0.2), 17 runs
+    (1 + 8 + 8): every run 0 deleted words, `outboundCallCount` 0 and every clause heard; base 0 inserted and 0
+    substituted in all 17; tiny 6–12 substituted ("as" for "ask") and 1 inserted in 2 runs at 54% and 62% load
+    ("you are" for "your", a mishearing, not a seam duplicate). Per run, CPU before / tiny first partial, finalize
+    p90 / base first partial, finalize p90 (ms): 18% 474, 1091 / 745, 1314; 23% 405, 1117 / 713, 1708; 30% 484,
+    811 / 842, 1891; 20% 428, 1095 / 677, 1278; 18% 401, 608 / 676, 1322; 18% 641, 1142 / 708, 1293; 18% 398,
+    710 / 682, 1339; 19% 402, 1153 / 1038, 2732; 83% 1130, 1298 / 752, 1355; 37% 1715, 1333 / 1307, 2796; 49%
+    551, 1907 / 1231, 3987; 54% 564, 1720 / 1716, 3155; 34% 525, 1848 / 1129, 2803; 71% 597, 1988 / 965, 2769;
+    31% 558, 937 / 1140, 3366; 35% 531, 1553 / 917, 2531; 62% 518, 1102 / 1413, 3819. Tiny's slowest final fell
+    from 12.7 s (review) to 4.0 s and its pooled finals' p90 from 1650 to 1342 ms. Tiny met 1000 ms in 4 of 17
+    runs and base 2000 ms in 8 of 17. At ≤ 30% load (8 runs): tiny run p90 608–1153 ms, median 1093, 3 within
+    budget; base 1278–2732 ms, median 1331, 7 within budget; first partials ≤ 1038 ms. At 31–83% (9 runs): tiny
+    1102–1988 ms, median 1553; base 1355–3987 ms, median 2803; first partial over 1500 ms in 2 runs (tiny 1715,
+    base 1716).
+  - Rejected on evidence: `temperatureStep` 0.4 (8 runs, 18–34% load): tiny deleted 1 word in 3 runs and inserted
+    up to 7, tiny p90 median 1322 ms, base 4 of 8 within budget. A tighter bound of 6 per second plus 16 (8 runs,
+    20–66%): tiny deleted 1 word at 20% load. A diagnostic with fallback off (`temperatureStep` 0, 2 runs): one to
+    three tiny finals per run still took 1.0–1.3 s and tiny inserted a word, so the remaining slow finals are not
+    only fallback rounds.
+  - Dictation host mirror, 10 runs (CPU before 20–65%): all passed; Stop to final 294–620 ms, 14–17 words shown
+    before Stop, 4–7 texts shown, each extending the one before, 0 inserted, 0 deleted, 1 substituted,
+    `outboundCalls` 0.
+  - `speech_pipeline_real_seam_test`, 3 runs (33–43%): passed, 12 hard cuts per model, tiny 0 inserted, 0 deleted,
+    6 substituted and base 0, 0, 5, as before the bound.
+  - Unit and guardrails: the speech unit set (pipeline directory, profile, selector, codec, native, fake engine,
+    `whisper_stt_service`, routed, dictation provider, live transcription service and recovery, engine host, engine,
+    engine io, both host mirrors without opt-in) plus `tokens`, `naming`, `network`, `layering` and
+    `check_logging_test`: 496 passed, 25 skipped (opt-in), 1 failed: the pipeline benchmark (performance tag) in
+    the parallel run, which passed twice alone (CPU 33% before). `dart analyze` on the changed paths: no issues;
+    `dart format`: clean; `check_logging`, `check_naming`, `check_structure`, `check_secrets`: clean.
+  - Verdict: the real-engine item stays open. Its budgets are not met on this machine with 0 deleted words: tiny's
+    p90 of 13 finals is the second-slowest, and one to three finals per run cost about twice a normal one even at
+    low load. Recommendation, not applied: `tinyFinalizeCompute` 1250 ms (every run at ≤ 30% load within it, max
+    1153 ms) and `baseFinalizeCompute` kept at 2000 ms (7 of 8 at ≤ 30%), both stated for a machine at most 30%
+    busy; under heavier background load neither holds (medians 1553 and 2803 ms). Evidence
+    `frontend/build/stt-bound/` (`r10f24-probe`, `r10f24`, `r10f24-b`, `r10f24-t04`, `r6f16`, `diag-t0`,
+    `dict-r10f24`, `seam`), each with per-run CPU samples and `summary.txt`.
+- 2026-10-05 (independent review of the length bound; same DLL and lock; CPU sampled for 5 s before every run, the
+  user's own background load not stopped):
+  - Long-form host mirror, 8 runs at 17–40% load: every run 0 inserted and 0 deleted words with both models, every
+    clause heard, `outboundCallCount` 0; tiny 6–9 substituted ("as" for "ask"), base 0. Per run, CPU before / tiny
+    first partial, finalize p90 / base first partial, finalize p90 (ms): 40% 881, 1296 / 747, 2469; 25% 437,
+    4187 / 759, 2905; 32% 510, 1601 / 982, 1747; 29% 507, 1487 / 768, 1938; 32% 1441, 1485 / 738, 1783; 24% 488,
+    1233 / 749, 1870; 21% 442, 3800 / 737, 1814; 17% 449, 1591 / 746, 1943. Tiny met 1000 ms in 0 of 8 (pooled
+    finals median 743, p90 1526, max 8164 ms), base 2000 ms in 6 of 8 (pooled median 1719, p90 2055, max 4206 ms);
+    first partials within 1500 ms. Normal tiny finals took 0.6–0.9 s and base 1.5–1.9 s, slower than in the
+    implementer's runs at similar load. Not reproduced: tiny's slowest final at 4.0 s (8164 ms here, at 25% load)
+    and the 1250 ms tiny recommendation (5 runs at ≤ 30% load gave tiny p90 1233–4187 ms). Over all 25 bounded runs
+    tiny met 1000 ms in 4 and base 2000 ms in 14. Evidence `frontend/build/stt-bound-review/long8/`.
+  - Dictation host mirror, 5 runs at 16–27% load: all passed; Stop to final 274–562 ms, 14–17 words shown before
+    Stop, 5–7 texts each extending the one before, 0 inserted, 0 deleted, 1 substituted, `outboundCalls` 0.
+    Evidence `frontend/build/stt-bound-review/dict5/`.
+  - Truncation review: whisper's `max_tokens` counts per decode pass; at the bound this whisper.cpp (PRs 3798 and
+    2629) allows only a timestamp or the end and seeks on from the pass's last timestamp, so a bounded pass does not
+    drop the rest of the utterance. From 19.6 s (`maxUtterance` is 25 s) the bound exceeds whisper's own 220-token
+    pass limit and changes nothing. Open risk: whisper's tokenizer (openai-whisper, multilingual) gives 1.14 pieces
+    a word on English, 1.38–1.64 on French, Portuguese and Spanish, but 3.17 on Swahili and 3.05 on Arabic, all
+    offered voice languages; fast speech there, about 7–10 pieces a second, nears 10 a second plus 24, and the
+    bound is measured on English only.
+  - Fix: the web codec counted the unpadded audio while native counts the request padded to `minDecodeSamples`, so
+    a 0.5 s final got 29 pieces on web and 34 on native; the web codec now counts the padded audio, as its
+    `audioCtx` already did (`speech_worker_codec_test` 34). Docs: "speech runs at 3 to 4 pieces a second" now says
+    English and states the per-pass semantics; the unsupported 1250 ms recommendation was removed from
+    `AppConstants.speechBudgets` and spec §30.4.3.
+  - Unit: `speech_worker_codec`, `speech_decode_profile`, `speech_engine_native`, `speech_model_selector`,
+    `whisper_stt_service` and the pipeline directory: 277 passed, 22 skipped (opt-in); `tokens`, `naming`,
+    `check_logging_test`: 40 passed; `check_logging`, `check_naming`: clean; `dart analyze` on the changed paths: no
+    issues; `dart format`: clean. No transcript text logged and no Duration literal outside `AppConstants`.
+  - Verdict: words are clean (0 deleted in 25 runs per model, dictation 15 of 15), but the real-engine item stays
+    unticked: tiny's finalize p90 is not within 1000 ms, and no other tiny budget is supported by the evidence.
 
 ## 119 — Persist transcripts beside their audio
 
@@ -4670,6 +4838,24 @@ abstract interface class PlatformRecogniserPolicy { factory PlatformRecogniserPo
 - FE-SEC-04 commit-body line: "FE-SEC-04 speech clause enforced by test/core/speech/routed_stt_service_test.dart and test/architecture/network_test.dart". `dev-plan/12-capture.md` item 12 now names the on-device platform fallback (task 120). No checkbox in that file changed (`:412` is still open).
 - 2026-10-04, real engine (host mirror `test/hardening/stt_dictation_whisper_host_test.dart`, windows lock, built `tapture_whisper.dll`, WAV-fed `FakeRecordRecorder`, no microphone, offline by choice on, every socket refused by the harness): 4 runs, 2 passed (about 29.5 s each, Stop to final 281 and 286 ms, 0 outbound calls). Run 3 failed. Its field read "...What your country can do for you. What your country can do for you. Country.": two drafts agreed on a prompt-carried repeat, the stabiliser marked it stable and showed it, and the final could not revise words already shown. Run 1 failed at 39 s, and its log was not captured. The real-engine scenario is therefore flaky, and the stable-repeat quality issue goes back to task 117.
 - Open: the network-adapter-disabled session on the Windows app. No adapter setting was changed here, the `-d windows` integration runner was not used, and the host-mirror scenario is not yet reliable. Task 131 covers the manual session, and task 130 compiles the Kotlin `onDeviceRecognitionAvailable` method.
+- 2026-10-05 (with the task 117 fix): the dictation host mirror
+  `test/hardening/stt_dictation_whisper_host_test.dart` (tiny, Release DLL, windows lock, WAV-fed `FakeRecordRecorder`,
+  no microphone, every socket refused) passed 10 consecutive runs: Stop to final 296–576 ms, 14–17 words shown before
+  Stop, `outboundCalls` 0, and in every run 0 inserted, 0 deleted and 1 substituted word ("as" for "ask"), the
+  shown words kept as the field's prefix. The scenario now checks the field against jfk's sentence by word edit (0
+  inserted, 0 deleted, at most 2 misheard) instead of whole-clause text: an earlier 10-run series with the same code
+  failed once only because tiny heard "as what you can do", while the clause check could not see a duplicated or
+  invented word (a pre-fix run had ended "...your country. The."). Drafts carry no prompt and a repeated draft tail
+  stays tentative (task 117), which removes the stable repeat seen on 2026-10-04. The network-adapter item stays open.
+- 2026-10-05 (independent review; tiny, same DLL and lock): the dictation host mirror passed 10 consecutive runs:
+  Stop to final 278–553 ms, 17 words shown before Stop, `outboundCalls` 0, and every run 0 inserted, 0 deleted and 1
+  substituted ("as" for "ask"). The scenario now also records every text the field shows (5–7 per run) and asserts
+  each extends the one before, so prefix stability is checked across the whole listen, not only at Stop. Evidence
+  `frontend/build/review-stt/dict10/`. The network-adapter item stays open.
+- 2026-10-05 (finals bounded by length, task 118): the dictation host mirror passed 10 runs by the implementer
+  (20–65% load) and 5 by the independent review (16–27%): Stop to final 274–620 ms, 0 inserted, 0 deleted, 1
+  substituted, `outboundCalls` 0. Evidence `frontend/build/stt-bound/dict-r10f24/` and
+  `frontend/build/stt-bound-review/dict5/`. The network-adapter item stays open.
 
 ## 121 — Add the recording bar and transcript view to the catalogue
 
@@ -5274,3 +5460,79 @@ Update spec §30.1 to the wording in design §14.
   When no provider can transcribe, the early return now applies per clip, so on-device transcripts are still used.
   Known gap outside this task: `EgressSummary._audioBytes` still counts a clip with an on-device transcript as audio
   until a run has stored the `device` row.
+
+## 132 — Integrate versioned project AI processing and approved template outputs
+
+**Depends on** [133](02-foundation.md)
+
+### Implement
+
+**Implementation started:** Yes
+
+Implement `prompts/ai.md` against the existing capture, processing, review, export and authenticated proxy contracts.
+Keep authoritative evidence, jobs and approved records on the device. Submit versioned evidence snapshots through
+the backend; retain only encrypted user credentials, usage and idempotency metadata server-side. A lost remote
+response must never cause an automatic second charge. Hardware acceptance and unrelated Documentation work remain
+with their existing tasks. The explicit prompt authorizes this integration despite their remaining acceptance.
+
+### Files
+
+- `frontend/lib/core/ai/`, `frontend/lib/core/backend/`, `frontend/lib/features/account/data/backend_proxy.dart`
+- `frontend/lib/features/processing/`, `frontend/lib/features/settings/presentation/ai_provider_settings_screen.dart`
+- `frontend/lib/features/exports/`, `frontend/lib/core/export/`, `frontend/lib/features/templates/`
+- `backend/src/services/ai/`, `backend/src/routes/ai.ts`, `backend/src/repositories/`, `backend/src/config/`
+- `backend/migrations/`, `backend/openapi.yaml`, frontend/backend regression tests, setup documentation
+
+### Contract
+
+The existing AI envelope accepts optional `processing` v1 metadata (project revision, record ID, exact payload
+SHA-256 and idempotency key), an explicit managed/personal billing selection and maximum approved cost. Omission
+preserves the legacy managed route. Credentials have status/save/delete APIs and are never retrievable. Provider
+responses remain local proposals; valid source identifiers are required for application. Results expose provider,
+model, account kind, usage and reserved cost. An uncertain receipt requires a deliberate retry decision.
+
+### Definition of done
+
+- [x] Versioned requests retain explicit photo/caption/audio/transcript sources; originals remain unchanged.
+- [x] Input changes invalidate extraction caches; stale or unsupported results cannot become proposals.
+- [x] Durable processing retains online intent offline, resumes checkpoints, cancels between calls and exposes
+      missing values, conflicts and uncertain grouping for review without approving AI data.
+- [x] Authenticated backend idempotency prevents duplicate calls/charges, including concurrency and restart;
+      cancellation and uncertain timeout recovery are explicit.
+- [x] Managed AI is the default; optional personal keys are encrypted server-side, removable, and never returned,
+      stored on the device, logged or exported. Provider/model/account never silently switch.
+- [x] Configurable adapters use a low-cost default, explicit budget-approved escalation, enforced spending limits
+      and attributable provider/model/token/cost metadata.
+- [x] Approved reusable records produce template-preserving Excel, Word and text outputs with original evidence
+      untouched; existing export formats remain usable.
+- [x] Tests cover real transport shapes, source/caching/review/restart/cancel failures, credential isolation,
+      quotas/idempotency and output package preservation; frontend analysis and backend `npm run verify` pass.
+- [x] Setup, credential/deletion controls and recovery limitations are documented; tracker sync and `--check` pass.
+
+### Verification
+
+- 2026-10-06: Backend `npm run verify` passes against an isolated PostgreSQL 18.4 instance: 165 passed, zero failed,
+  one Docker image smoke skip. The real database tests verify receipt/ciphertext persistence after repository
+  recreation, one dispatch for concurrent requests from independent repositories, guarded receipt bindings,
+  quota reservation, metadata export isolation and credential deletion. Formatting, lint, strict types, production
+  build, adapter regressions and advisory/secret checks pass; no new backend package is needed.
+- 2026-10-06: Final backend gate passes all six stages, 156 tests and ten infrastructure skips (nine PostgreSQL,
+  one Docker); the isolated real-database run above supplies the PostgreSQL persistence/concurrency evidence.
+  The final approval-ceiling receipt-binding regression also passes. Docker image smoke and charged live-provider
+  requests were not run; configuration, privacy, spending units and recovery limits are in `backend/RUNBOOK.md`.
+- 2026-10-06: Verified 640 distinct Flutter regression/architecture checks across processing, review, real proxy
+  shapes, credential/settings isolation, export/template preservation and eight architecture suites. The combined
+  run passed 639; its one timing-dependent cancellation fixture was made deterministic and the seven-test versioned
+  transport suite then passed. Malformed real-proxy output is retained before one bounded repair; fresh and cached
+  template choices, caption refinements and row matching reject edits that race application. Resumed attempts retain
+  their charged identity even at the local request cap. Original evidence and approved/manual values remain intact.
+- 2026-10-06: `dart analyze lib test/features/processing test/core/ai/versioned_proxy_test.dart
+  test/features/settings/presentation/server_ai_settings_test.dart` is clean. Secret, logging, localization,
+  dependency, structure, plan and repository-hygiene checks pass. New test import/export closure has no ignored
+  dependencies; focused format checks pass. Independent openpyxl/python-docx readers verify actual fixture outputs,
+  including Excel numeric cells/formulas/styles/charts/merges and Word tables/headers/logo/formatting.
+- 2026-10-06: Setup, credential deletion, uncertain receipts, captured template versions and output limits are
+  documented in the spec and READMEs. Tracker generation and `--check` pass. Pre-existing transcript purge and
+  standard-workbook embedded-photo/dictionary gaps are separately tracked as [134](27-hardening/30-purge-transcript-rows-with-their-deleted-audio-attachments.md)
+  and [135](27-hardening/31-verify-embedded-photos-and-dictionary-in-xlsx-outputs.md); hardware and whole-product
+  release acceptance remain open in their existing tasks.

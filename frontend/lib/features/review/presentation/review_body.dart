@@ -35,6 +35,7 @@ import 'evidence_viewer.dart';
 import 'not_detected_row.dart';
 import 'raw_refined_toggle.dart';
 import 'reanalyse_action.dart';
+import 'review_analysis_findings.dart';
 import 'review_controller.dart';
 import 'review_providers.dart';
 import 'verify_action.dart';
@@ -167,6 +168,7 @@ class _Loaded extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        ReviewAnalysisFindings(recordId: entry.id),
         if (state.failure case final Failure failure) ...<Widget>[
           AppBanner(
             key: const ValueKey<String>('review-failure'),

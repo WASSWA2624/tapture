@@ -5,6 +5,7 @@ import { projectRepository } from './postgres-projects.js';
 import { eventRepository } from './postgres-events.js';
 import { relayRepository } from './postgres-relay.js';
 import { settingsRepository } from './postgres-settings.js';
+import { aiRepository } from './postgres-ai.js';
 import { Sql } from './sql.js';
 import {
   applyRetention,
@@ -26,6 +27,7 @@ function repository(connection: SqlConnection, pool?: AppPool): Repository {
     ...eventRepository(sql),
     ...relayRepository(sql),
     ...settingsRepository(sql),
+    ...aiRepository(sql),
     applyRetention: (days) => applyRetention(sql, days),
     purgeTransient: (now, limit) => purgeTransient(sql, now, limit),
     exportMetadata: () => exportMetadata(sql),

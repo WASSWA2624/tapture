@@ -19,7 +19,7 @@ import '../domain/template_repository.dart';
 import 'template_document_import.dart';
 import 'template_mapper.dart';
 
-/// Copies a chosen workbook into the project `templates/` folder and saves
+/// Copies a chosen output template into the project `templates/` folder and saves
 /// the confirmed mapping as a template. Writes nothing of its own.
 final class XlsxTemplateImport {
   /// Creates the importer. Tests pass a fake [storageRoot] and repository.
@@ -30,7 +30,7 @@ final class XlsxTemplateImport {
     required this.templates,
   });
 
-  /// Root the copied workbook is stored under.
+  /// Root the copied template is stored under.
   final StorageRoot storageRoot;
 
   /// Creates and resolves the project's `templates/` folder.
@@ -42,7 +42,7 @@ final class XlsxTemplateImport {
   /// Where the confirmed template is saved.
   final TemplateRepository templates;
 
-  /// Preserves byte-based browser picks through the same atomic file writer.
+  /// Preserves workbook, Word and text picks through the same atomic file writer.
   Future<Result<TemplateDef>> applyDocument({
     required String projectId,
     required String projectName,
@@ -65,7 +65,11 @@ final class XlsxTemplateImport {
         : folderName;
     final String relative;
     try {
-      final String name = UntrustedText(document.name).forFileName();
+      final int dot = document.name.lastIndexOf('.');
+      final String stem = UntrustedText(
+        document.name.substring(0, dot),
+      ).forFileName();
+      final String name = '$stem${document.name.substring(dot).toLowerCase()}';
       final String id = UuidV7Service(const SystemClock()).newId();
       relative = safeRelativePath('projects/$folder/templates/$id-$name');
     } on Failure catch (failure) {
@@ -83,6 +87,10 @@ final class XlsxTemplateImport {
           projectId: projectId,
           source: _importedSource,
           sourceFilePath: value.relativePath,
+          detection: <String, Object?>{
+            ...draft.detection,
+            'sourceSha256': value.sha256,
+          },
         ),
       ),
     };
@@ -201,6 +209,10 @@ final class XlsxTemplateImport {
             version: draft.version < 1 ? 1 : draft.version,
             source: _importedSource,
             sourceFilePath: value.relativePath,
+            detection: <String, Object?>{
+              ...draft.detection,
+              'sourceSha256': value.sha256,
+            },
           ),
         );
     }

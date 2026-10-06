@@ -35,11 +35,19 @@ const String localPackagesRoot = 'packages';
 /// The folders, relative to `frontend/`, that hold native or browser source
 /// shipped with the app and that `check_secrets.dart` scans in addition to
 /// [secretScanRoots]: the local plugin packages and the WebAssembly speech
-/// engine's glue. Vendored `third_party/` folders inside them are verified by
-/// hash instead (dev-plan task 102).
+/// engine's glue. Only the vendored trees in [hashVerifiedVendorRoots] are
+/// left out, because they are verified by hash instead (dev-plan task 102).
 const List<String> nativeSourceScanRoots = <String>[
   localPackagesRoot,
   'web/whisper',
+];
+
+/// The vendored upstream trees, relative to `frontend/`, that
+/// `tool/whisper_vendor.dart --check` verifies byte for byte against their
+/// pinned hash, so `check_secrets.dart` does not scan them. Any other
+/// `third_party/` folder is scanned like the rest of the sources.
+const List<String> hashVerifiedVendorRoots = <String>[
+  '$localPackagesRoot/tapture_whisper/third_party/whisper.cpp',
 ];
 
 /// Every root a checker scans, which is what a checker may not spell out

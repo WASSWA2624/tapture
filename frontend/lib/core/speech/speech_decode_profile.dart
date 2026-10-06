@@ -18,6 +18,8 @@ final class SpeechDecodeProfile {
     this.singleSegment = false,
     this.timestamps = true,
     this.maxPieces = 0,
+    this.piecesPerSecond = 0,
+    this.minPieces = 0,
     this.audioContextPad = 0,
     this.minAudioContext = 0,
     this.suppressBlank = true,
@@ -51,8 +53,16 @@ final class SpeechDecodeProfile {
   /// Whether segments carry timestamps.
   final bool timestamps;
 
-  /// Most pieces decoded; 0 is unlimited.
+  /// Most pieces decoded, whatever the audio's length; 0 is unlimited.
   final int maxPieces;
+
+  /// Pieces allowed per second of audio on top of [minPieces]; 0 sets no
+  /// bound by length. See [maxPiecesFor].
+  final int piecesPerSecond;
+
+  /// Pieces any decode is allowed whatever its length. Ignored when
+  /// [piecesPerSecond] is 0.
+  final int minPieces;
 
   /// Encoder frames past the audio; 0 encodes the full context.
   final int audioContextPad;
@@ -90,6 +100,22 @@ final class SpeechDecodeProfile {
     return rounded < cap ? rounded : cap;
   }
 
+  /// The most pieces a decode of [sampleCount] samples at 16 kHz may give,
+  /// as whisper's `max_tokens`: `ceil(seconds · piecesPerSecond) +
+  /// minPieces` when [piecesPerSecond] is set, never more than [maxPieces]
+  /// when that is set, and 0 (unlimited) when neither is. Whisper applies
+  /// it to each decode pass and seeks on from the pass's last timestamp.
+  /// English speech runs at about 3 to 4 pieces a second, so there the
+  /// bound only stops a decode that loops or invents text (spec §30.4.2
+  /// rule 8).
+  int maxPiecesFor(int sampleCount) {
+    if (piecesPerSecond <= 0) return maxPieces;
+    final int rate = AppConstants.audio.sampleRate;
+    final int byLength =
+        (sampleCount * piecesPerSecond + rate - 1) ~/ rate + minPieces;
+    return maxPieces > 0 && maxPieces < byLength ? maxPieces : byLength;
+  }
+
   /// This profile with the given fields replaced.
   SpeechDecodeProfile copyWith({
     int? threads,
@@ -102,6 +128,8 @@ final class SpeechDecodeProfile {
     bool? singleSegment,
     bool? timestamps,
     int? maxPieces,
+    int? piecesPerSecond,
+    int? minPieces,
     int? audioContextPad,
     int? minAudioContext,
     bool? suppressBlank,
@@ -118,6 +146,8 @@ final class SpeechDecodeProfile {
       singleSegment: singleSegment ?? this.singleSegment,
       timestamps: timestamps ?? this.timestamps,
       maxPieces: maxPieces ?? this.maxPieces,
+      piecesPerSecond: piecesPerSecond ?? this.piecesPerSecond,
+      minPieces: minPieces ?? this.minPieces,
       audioContextPad: audioContextPad ?? this.audioContextPad,
       minAudioContext: minAudioContext ?? this.minAudioContext,
       suppressBlank: suppressBlank ?? this.suppressBlank,
@@ -138,6 +168,8 @@ final class SpeechDecodeProfile {
       other.singleSegment == singleSegment &&
       other.timestamps == timestamps &&
       other.maxPieces == maxPieces &&
+      other.piecesPerSecond == piecesPerSecond &&
+      other.minPieces == minPieces &&
       other.audioContextPad == audioContextPad &&
       other.minAudioContext == minAudioContext &&
       other.suppressBlank == suppressBlank &&
@@ -155,6 +187,8 @@ final class SpeechDecodeProfile {
     singleSegment,
     timestamps,
     maxPieces,
+    piecesPerSecond,
+    minPieces,
     audioContextPad,
     minAudioContext,
     suppressBlank,

@@ -11,6 +11,10 @@
 # is for, and the task that introduced it. `sdk` is the version of a package
 # that ships with the Flutter SDK rather than from pub.dev.
 packages:
+  xml:
+    version: 6.6.1
+    purpose: Pure-Dart namespace-aware XML parsing and editing behind core/export for template-preserving XLSX and DOCX. MIT. Replaces ad hoc Office XML rewriting; promotes the already resolved transitive version and reuses the existing ZIP package.
+    task: "133"
   url_launcher:
     version: 6.3.2
     purpose: Flutter-maintained external browser launch for configured desktop OAuth PKCE through core/cloud. BSD-3-Clause. Replaces the unavailable desktop authorization hand-off without shell commands or embedded credential browsers.

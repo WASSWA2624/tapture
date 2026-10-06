@@ -12,6 +12,9 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/projects/projects.dart' show ProjectSettings;
 
 import '../domain/template_choice_needed.dart';
+import 'processing_snapshot.dart';
+import 'record_bundle_loader.dart';
+import 'stage_settings.dart';
 import 'stage_support.dart';
 
 /// Applies a template decided during processing, and keeps the pins that
@@ -27,12 +30,16 @@ final class TemplateChoiceWriter {
     required this._clock,
     required this._deviceId,
     required this._ids,
+    this._loader,
+    this._settings,
   });
 
   final AppDatabase _db;
   final Clock _clock;
   final String _deviceId;
   final IdService _ids;
+  final RecordBundleLoader? _loader;
+  final StageSettings? _settings;
 
   /// The pin key for a record's stored context JSON: every level and value,
   /// in a stable order. Null when the record has no context to pin to.
@@ -67,6 +74,26 @@ final class TemplateChoiceWriter {
       }
       final String? pinKey = needed.pinKey;
       await _db.transaction(() async {
+        final loader = _loader ?? RecordBundleLoader(db: _db);
+        final current = await loader.load(needed.recordId);
+        if ((needed.recordRevision != null &&
+                current.record.rev != needed.recordRevision) ||
+            (needed.sourceRevision != null &&
+                await ProcessingSnapshot.sourceRevision(
+                      current,
+                      privacyRevision: '',
+                    ) !=
+                    needed.sourceRevision) ||
+            (needed.analysisScope != null &&
+                _settings != null &&
+                _settings.egressScope(current) != needed.analysisScope)) {
+          throw const CancelledFailure(
+            message:
+                'The record or analysis selection changed before the template choice was applied.',
+            recoveryAction:
+                'Resume processing to choose from the current evidence.',
+          );
+        }
         await setTemplate(needed.recordId, choice.templateId, reason: 'chosen');
         if (choice.pin && pinKey != null) {
           await _pin(needed.projectId, pinKey, choice.templateId);

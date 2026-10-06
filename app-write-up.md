@@ -412,7 +412,7 @@ Template
                     | METER | PERSON | STAFF | HOUSEHOLD | LAND | PLANT | LIVESTOCK
                     | DOCUMENT | MEETING | EVENT | INCIDENT | CUSTOM
   source            SHIPPED | XLSX_IMPORT | BUILT_IN_APP | DERIVED
-  source_file_path  original workbook, preserved unmodified
+  source_file_path  original imported template, preserved unmodified
   sheet_name
   header_row
   identity_fields   json list of field_keys used for duplicate detection
@@ -1394,6 +1394,8 @@ Implement on-device ML Kit OCR, on-device speech (§30.4) and each configured on
 
 - **Backend custody is the default** (§70.1, §73): administrators enter and rotate provider keys centrally; devices call the backend, which calls the provider.
 - **Never compile keys into the app or return them through an endpoint** (§75).
+- Optional personal accounts save their keys directly to an encrypted server keystore (§73.1); selecting one is
+  an explicit billing choice. Removing its key leaves that selection unavailable until the operator changes it.
 - Administrators may permit **device-held keys**, for example when an operator cannot reach the server. Enter them in Settings; store only in Android Keystore/iOS Keychain via `flutter_secure_storage`, never in the database, logs, exports or bundles.
 - Mask entered keys and offer a one-call **Test connection** for server- or device-held keys.
 - Each project may select a configured provider or none.
@@ -1414,7 +1416,7 @@ Implement on-device ML Kit OCR, on-device speech (§30.4) and each configured on
 | Documentation AI drafting              | Waits for connectivity and explicit run/resume; existing drafts remain editable (§80) |
 | Documentation rendering                | Existing draft/approved content renders locally to supported formats (§78); no fresh AI call |
 | Review, edit, approve                  | Works                                                                                 |
-| Export XLSX / CSV / JSON / PDF / ZIP   | Works                                                                                 |
+| Export XLSX / DOCX / TXT / CSV / JSON / PDF / ZIP | Works                                                                                 |
 | Cloud upload                           | Unavailable, queued as a pending user action                                          |
 
 ### 30.4 On-device speech engine
@@ -1808,9 +1810,13 @@ Selector rules, in order; every number is an `AppConstants.speechEngine` field (
 8. **Profiles.** Interim: `bestOf 1`, `temperatureStep 0`, `singleSegment true`, `timestamps false`,
    `maxPieces 96`, `audioContextPad 64`. Committed, on every device: `bestOf 1` (greedy) with `temperatureStep 0.2`
    fallback, `timestamps true`, and the encoder context sized to the utterance, `audioContextPad 128` over a floor of
-   `minAudioContext 896` frames (17.9 s; `committedAudioContextPad`, `committedMinAudioContext`). Mobile
-   **dictation** finals for utterances under 10 s use `mobileDictationCommittedPad` (256) with no floor, which task
-   131's WER gate can revert. Thresholds 0.6 / −1.0 / 2.4. `no_context = 1` always, and never `n_max_text_ctx = 0`.
+   `minAudioContext 896` frames (17.9 s; `committedAudioContextPad`, `committedMinAudioContext`), and its length
+   bounded: whisper's `max_tokens` is `ceil(seconds × committedPiecesPerSecond) + committedMinPieces` (10 per second
+   plus 24) of the audio sent, at least `minDecodeSamples` (1 s) on native and web alike
+   (`SpeechDecodeProfile.maxPiecesFor`, never more than a set `maxPieces`). From about 19.6 s it exceeds whisper's
+   own 220-token window limit and changes nothing. Mobile **dictation** finals for utterances under 10 s use `mobileDictationCommittedPad` (256)
+   with no floor, which task 131's WER gate can revert; they keep the length bound. Thresholds 0.6 / −1.0 / 2.4.
+   `no_context = 1` always, and never `n_max_text_ctx = 0`.
 
    *Decision (2026-10-05, i7-1165G7, 4 cores, otherwise idle; tasks 117 and 118 verification).* The full 30 s
    context made every final cost a full encode (tiny p90 1.6 s, base 4.0 s over jfk × 6), so finals are sized. A
@@ -1822,7 +1828,21 @@ Selector rules, in order; every number is an `AppConstants.speechEngine` field (
    1000 ms on this 4-core machine at any context that keeps every word, so `speechBudgets` holds a finalize budget per
    model (§30.4.3) rather than `auto` falling back to tiny below a core threshold: base heard jfk × 6 with no
    substitution where tiny misheard "ask" six to nine times, its drafts still appear within `firstPartialCompute`,
-   and its finals land within 2 s. `auto` therefore keeps choosing base where rule 5 allows it.
+   and its finals land within 2 s. `auto` therefore keeps choosing base where rule 5 allows it. The review's 16
+   runs support the choice: base had no word edit in any run, and tiny, whose fallback finals cost 1.1–12.7 s, was
+   not reliably faster at p90 (tiny 652–4404 ms, base 1239–3097 ms; §30.4.3).
+
+   *Decision (2026-10-05, same machine; task 118 verification).* Finals are bounded by length. Unbounded, a final
+   that looped ran every temperature fallback round to whisper's 220-token window limit and cost up to 12.7 s;
+   English speech runs at 3 to 4 pieces a second, so there 10 a second plus 24 only stops a decode that loops or
+   invents text, and `max_tokens` counts per decode pass: at the bound this whisper.cpp allows only a timestamp or
+   the end, and seeks on from the pass's last timestamp, so a bounded pass does not drop the rest of the utterance.
+   Open risk: whisper's tokenizer spends about 3 pieces a word on Swahili and Arabic (1.1–1.6 on English, French,
+   Spanish and Portuguese), so their fast speech, about 7–10 pieces a second, nears the bound; it is measured on
+   English (jfk) only. Over 25 jfk × 6 runs per model the bound kept 0 deleted words and cut tiny's slowest final
+   from 12.7 s to 8.2 s: it shortens runaway finals but does not remove them (cause not yet traced; a pass that
+   meets the bound is followed by further passes, each with its own fallback rounds). A tighter 6 a second plus 16 deleted a word, and a coarser `temperatureStep`
+   of 0.4 deleted a word in 3 of 8 runs and inserted up to 7, so both were rejected and the step stays 0.2.
 
 **Host, lease and readiness.**
 
@@ -1953,6 +1973,7 @@ All live in `frontend/lib/core/constants/app_constants.dart`; durations below ar
 | `desktopMaxThreads` | 8 | `saverThreads` | 2 |
 | `webMaxThreads` | 4 | `maxDecodeSamples` | 30 × 16000 |
 | `minDecodeSamples` | 16000 | `interimMaxPieces` | 96 |
+| `committedPiecesPerSecond` | 10 | `committedMinPieces` | 24 |
 | `interimAudioContextPad` | 64 | `reducedAudioContextPad` | 128 |
 | `committedAudioContextPad` | 128 | `committedMinAudioContext` | 896 |
 | `mobileDictationCommittedPad` | 256 | `mobileDictationShortUtterance` | 10 s |
@@ -2023,7 +2044,16 @@ idle). With finals sized over a floor (§30.4.2 rule 8) the live jfk × 6 host m
 original 1000 ms with tiny, which `tinyFinalizeCompute` keeps. Base needs more: the cheapest context that kept every
 word with base still cost 1.1–2.2 s per final, against 3.1–4.3 s with the full context it replaces, so
 `baseFinalizeCompute` is 2000 ms. The measured values are in the task 118 verification notes; the choice between
-this and `auto` choosing tiny on four cores is recorded under §30.4.2 rule 8.
+this and `auto` choosing tiny on four cores is recorded under §30.4.2 rule 8. The independent review's 16 runs on
+the same machine (2026-10-05, 18–52% busy before each run) did not confirm the tiny figure: most tiny finals took
+0.5–0.8 s, but one to three temperature-fallback finals per run (1.1–12.7 s) put its p90 above 1000 ms in 14 of 16
+runs, and base met 2000 ms in 9 of 16. With finals bounded by length (§30.4.2 rule 8; 25 runs per model, every
+run 0 deleted words) tiny's p90 met 1000 ms in 4 of 25 runs and base's 2000 ms in 14 of 25. The p90 of 13 finals is
+the second-slowest, and one or two tiny finals per run still cost 1.5–8.2 s, even at 17–30% load (the review's 8
+runs: tiny p90 1233–4187 ms, none within 1000; base 1747–2905 ms, 6 within 2000); with fallback turned off (two
+diagnostic runs) one to three tiny finals per run still took 1.0–1.3 s. Background load roughly doubles a normal
+final's compute. No tiny budget is yet backed by the evidence; the budgets are unchanged pending a decision
+(task 118).
 In headless Chrome 154 on the same loaded machine (task 112 harness, tiny, jfk, three alternating runs), the
 threaded build with 4 threads was no faster than the single-thread one: real-time factor medians 1.88 and 1.85.
 
@@ -2947,11 +2977,15 @@ Show conflict progress, record number/item/identifier and field, with local/inco
 
 ## 49. Export Formats
 
-All five record-export formats work offline. Documentation adds DOCX/Markdown and reuses XLSX, CSV, PDF and ZIP (§78), through a distinct output selector. Render saved content offline; new AI content requires the selected online service (§80).
+All seven record-export formats work offline and reuse the same saved records. Approved records are the default
+scope; an operator can export an incomplete set with an explicit mark. Documentation uses a distinct output selector
+for saved narrative content (§78). Rendering requires no AI call; new AI content requires the selected online service (§80).
 
 | Format   | Contents                                                                                                                                           | Typical use                                |
 | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| **XLSX** | Populated template workbook with Photo index (§50.2); optional Raw vs Refined, Evidence, Variance, Not found, Duplicates and Audit sheets | Primary deliverable |
+| **XLSX** | Standard records workbook with selected raw/refined, confidence and evidence columns and Photo index; separate filled copies of imported workbooks (§50) | Primary deliverable |
+| **DOCX** | Editable records report and one filled imported Word template per record, where supplied (§49.4) | Word deliverable |
+| **TXT** | UTF-8 records report and one filled imported text template per record, where supplied (§49.4) | Plain text deliverable |
 | **CSV** | One file per template/sheet, UTF-8 BOM, configurable delimiter; ZIP multiple files | Analysis, data warehouses |
 | **JSON** | Full fidelity: records, raw/refined values, provenance, confidence, evidence, context, templates and data dictionary | Programmatic/data-centre use |
 | **PDF** | Photo reports, meeting minutes or variance reports | Sharing outside the app |
@@ -2962,12 +2996,12 @@ All five record-export formats work offline. Documentation adds DOCX/Markdown an
 ```text
 Export
 
-  Format      [x] XLSX  [ ] CSV  [ ] JSON  [ ] PDF
+  Format      [x] XLSX  [ ] DOCX  [ ] TXT  [ ] CSV  [ ] JSON  [ ] PDF
   Package     [x] Include photos    -> produces a ZIP
 
   Records     (o) Approved only  ( ) All  ( ) This context  ( ) Date range
   Columns     [x] Raw values  [x] AI-refined values  [ ] Confidence  [ ] Evidence
-  XLSX        Photo index always included
+  XLSX        Photo index included in the standard records workbook
   Extras      [ ] Variance  [ ] Not found  [ ] Audit log
 
                        [ EXPORT ]
@@ -2975,76 +3009,98 @@ Export
 
 ### 49.2 Data dictionary
 
-JSON and XLSX exports can include a **Data dictionary** sheet/section with each field's key, label, type, unit, options/codes, requiredness and description for app-independent interpretation.
+The optional **Data dictionary** is currently delivered as `dictionary.json`, containing the captured field
+definitions for each template version. JSON records also include their captured definitions. These explain keys,
+labels, types, units, options/codes, requiredness and descriptions independently of the app. A Data dictionary sheet
+in the standard workbook remains a format requirement tracked by task 135; the source workbook is not extended
+with new sheets.
 
 ### 49.3 Data package layout
 
+Illustrative record-deliverable package; only selected formats, applicable templates and requested extras appear.
+Multiple outputs or included photos produce a ZIP. A full project bundle uses the separate §45 contract.
+
 ```text
 MEDICAL_EQUIPMENT_2026-09-08_v2.zip
-├── data.xlsx
-├── data.csv
-├── data.json
-├── report.pdf
-├── data_dictionary.csv
+├── outputs/
+│   ├── records.xlsx
+│   ├── records.docx
+│   ├── records.txt
+│   ├── Medical Equipment.csv
+│   ├── records.json
+│   ├── template-{id}-v{version}.xlsx
+│   ├── template-{id}-v{version}-{record-number}.docx
+│   ├── template-output-summary.json
+│   └── dictionary.json
 ├── photos/
 │   └── Kampala/Kasubi-HC-IV/Theatre/AUTOCLAVE_SN458923_FRONT_01.jpg
-├── documents/
 └── manifest.json
 ```
 
-Manifest:
+The manifest uses `exportId`, `createdAt`, `exportedBy`, the replayable `request` and `entries`. Each entry contains
+`recordId`, `recordNumber`, `sheet`, `row` and `photoPaths`. The sheet/row locate the record in the standard workbook;
+source-template mappings, captured versions and approved values are in the request. The template output summary
+lists missing field keys per record, predefined rows not captured, unmatched records and preservation limitations.
+PDF reports and filled TXT copies appear under `outputs/` when selected.
 
-```json
-{
-  "project": "2026 Medical Equipment Inventory",
-  "exported_at": "2026-09-08T08:30:00Z",
-  "exported_by": "W. Wasswa",
-  "record_count": 532,
-  "records": [
-    {
-      "record_id": "0192f3c1-…",
-      "record_number": 124,
-      "output_row": 126,
-      "template": "Medical Equipment",
-      "context": {"district": "Kampala", "facility": "Kasubi HC IV", "department": "Theatre"},
-      "photos": [
-        "photos/Kampala/Kasubi-HC-IV/Theatre/AUTOCLAVE_SN458923_FRONT_01.jpg",
-        "photos/Kampala/Kasubi-HC-IV/Theatre/AUTOCLAVE_SN458923_RATING-PLATE_02.jpg"
-      ]
-    }
-  ]
-}
-```
+### 49.4 Word and text templates
+
+Import DOCX or UTF-8 TXT templates with explicit `{{field_key}}` placeholders, then confirm the schema. Word fills
+placeholders across text runs, table cells, headers and footers while retaining other package parts, formatting,
+images and page settings. TXT substitutes placeholders while retaining surrounding wording and line endings.
+Missing values leave blanks and appear in the output summary; the renderer never invents prose or values. The
+standard `records.docx` and `records.txt` reports accompany filled copies and use the same selected record values.
+
+Source files remain unchanged. Each output uses the record's captured template version and mappings; a changed
+hashed source, invalid package or invalid mapping refuses the output. Office input is bounded to 15 MiB, declared
+expanded package contents to 500 MiB and each parsed part to 15 MiB. Encrypted packages, unsafe paths and XML document
+types are rejected. Existing Office digital signatures require signing the filled output again; the summary records
+that limitation. Preserving package parts does not promise formula recalculation or identical pagination in every
+Office reader.
 
 ## 50. Excel Generation
 
 ### 50.1 Rules
 
 1. **Never modify the original workbook**; write a new file in `exports/`.
-2. Populate a copy of imported spreadsheets, preserving supported sheet names, headers, widths, fonts, borders, styles, frozen panes and formulas.
-3. Map `field_key -> output_column`; append after the last used row or populate the matched predefined row.
-4. When both field `refine` and its export option are enabled, place raw/refined columns adjacently:
+2. Emit a standard `records.xlsx` plus a filled copy for each captured imported workbook/version. The filled copy
+   retains sheet order and untouched package contents, including styles, headers, widths, fonts, borders, frozen
+   panes, formulas, images and charts. Only confirmed mapped cells on the selected sheet are filled.
+3. Map `field_key -> output_column`. A captured predefined-row identity selects its original row; unmatched records
+   are omitted from that source copy and listed in the summary. Without predefined rows, fill sequentially from
+   `header_row + 1`, replacing any sample values in mapped cells in the copy. Do not claim append-after-last-used-row
+   behavior. Duplicate row assignments and mapped formula cells refuse the output.
+4. The source copy receives each field's final approved value. The standard workbook places selected raw/refined
+   columns adjacently when field `refine` and the export option are both enabled:
 
 ```text
 | Description (raw)                              | Description (AI refined)                        |
 | uh this is a thirteen litre autoclave in ...   | 13 litre autoclave located in the theatre. ...  |
 ```
 
-5. Produce one sheet per template.
-6. Preserve long text as text and identifier leading zeros; never coerce text into numbers/dates.
-7. Charts, pivot tables, macros and some conditional formats may not survive Dart library round trips. If preservation is uncertain, write a clean, formatted workbook and disclose the limitation in the export summary.
+5. The standard workbook has one records sheet per template and a Photo index. Optional Variance, Not found,
+   Duplicates and Audit sheets remain specialist export requirements; none are inserted into the filled source copy.
+6. Preserve long text and identifiers, including leading zeros, as text. Explicit numeric field types accept finite
+   numeric values; text fields are never inferred as numbers or dates.
+7. Fill the existing Office package rather than rebuilding its unmodified parts. Invalid sources and mappings
+   produce an error; do not silently substitute a clean workbook. Verify preservation against real client fixtures.
+   Digital signatures and reader-specific layout/recalculation limits are disclosed under §49.4.
 
 ### 50.2 Photo references in the spreadsheet
 
-Three modes, selectable per project:
+Photo reference modes apply to the standard records workbook; source copies retain their existing layout:
 
 | Mode                   | Cell content                                                              |
 | ---------------------- | ------------------------------------------------------------------------- |
 | **Filename** (default) | `AUTOCLAVE_SN458923_FRONT_01.jpg`                                         |
-| **Relative path**      | `photos/Kampala/Kasubi-HC-IV/Theatre/AUTOCLAVE_SN458923_FRONT_01.jpg`     |
-| **Embedded image**     | The image itself, inserted and row-height adjusted (larger files, slower) |
+| **Relative path**      | `../photos/Kampala/Kasubi-HC-IV/Theatre/AUTOCLAVE_SN458923_FRONT_01.jpg`, from `outputs/` |
+| **Stored path**        | The exported photo path without the workbook-relative prefix |
+| **Embedded image** (required) | The image itself, inserted and row-height adjusted (larger files, slower) |
 
-A **Photo index** sheet always lists record number, photo type, caption and path, including in filename mode.
+The standard `records.xlsx` always includes a **Photo index** sheet listing record number, photo type, caption and
+path, including in filename mode. Filled source workbooks do not add a Photo index or new images. Filename and path
+references are implemented. Embedded-image output remains a requirement: the current record writer uses the filename
+and increased row height in that mode, without inserting the photo (task 135).
 
 ## 51. Photo Naming & References
 
@@ -3799,7 +3855,10 @@ Encrypt packages on-device with a project key shared among member devices and di
 
 ### 73.1 Arrangement
 
-The organisation holds provider keys on the backend. Devices request proxy calls; the backend calls the provider and returns results. Backend-managed keys never reach device storage. Administrator-permitted, device-held keys are the explicit exception (§30.2, §73.3).
+The organisation holds managed provider keys on the backend. Optional personal keys are encrypted there with
+AES-256-GCM and a deployment-held wrapping key, bound to the signed-in user and provider. Status/save/delete APIs
+never retrieve a key. Devices explicitly select the managed or personal account; failures never switch provider,
+model or billing account. Legacy administrator-permitted device adapters remain the exception (§30.2).
 
 ### 73.2 Why this is better than keys on devices
 
@@ -3812,9 +3871,32 @@ The organisation holds provider keys on the backend. Devices request proxy calls
 
 Use record (§31) or typed Documentation (§80.3) schemas. Validate request envelopes, capabilities, permissions and budgets; call providers and return structured proposals. Keep parsing, chunk selection, orchestration, review and rendering on-device; expose no persistent document workspace or provider file store. Queue unavailable proxy calls (§70.4). Organisation-permitted device-held keys support emergency direct calls.
 
+Record processing submits a versioned project evidence snapshot per record/batch. Content hashes cover the captured
+template, context, original/edited evidence, explicit caption/photo/audio/transcript relationships and selected
+provider/model. Durable local checkpoints preserve the exact source snapshot before dispatch; unchanged inputs
+reuse valid local responses. Source changes invalidate cached extraction and prevent stale proposals. Provider
+evidence must reference supplied source IDs; missing values, conflicting candidates and uncertain grouping remain
+review findings. Only a person approves reusable records, and Excel/Word/text rendering uses those local records.
+
+The backend reserves configured cost ceilings atomically and stores metadata-only idempotency tombstones bound to
+the actor/device/project, source revision, exact payload hash, operation, model and billing account. A concurrent
+duplicate may share an active request; a later replay never charges again. An interrupted or lost response requires
+explicit retry approval rather than a promise that the provider was not paid. Low-cost base models are configured
+per adapter; escalation requires a configured model and an explicit sufficient maximum cost. Usage exposes actual
+provider token counts when reported and conservative reserved cost in the deployment's budget units.
+
 ### 73.4 Retention
 
 Retain no images, audio, source documents, prompts, output requirements, generated content or extracted text beyond the request. Log only project, user, model, size, duration, outcome and cost, consistent with §75.
+
+Only credential ciphertext and usage/idempotency metadata persist server-side. Originals, source snapshots,
+responses and approved records stay in private device storage. Record retention purge removes its processing jobs,
+snapshots and responses alongside owned evidence; it does not currently purge stored transcript headers/segments.
+Transcript discard only hides them with a tombstone, so record deletion must not be described as complete transcript
+erasure. Deleting a personal key prevents future reservations; a previously dispatched request may still complete.
+Confirmed deployment destruction removes credentials and receipt metadata. Output templates stay local; imported
+Office packages are filled at confirmed mappings/placeholders while untouched package entries and original bytes
+are retained.
 
 ## 74. Deployment and API Surface
 
@@ -3848,6 +3930,8 @@ GET  /projects/:id/relay/state           version vectors and queue state
 
 POST /ai/extract              POST /ai/ocr                POST /ai/transcribe
 POST /ai/refine               GET  /ai/usage
+GET  /ai/providers            GET /ai/credentials/:provider
+PUT  /ai/credentials/:provider           DELETE /ai/credentials/:provider
 POST /ai/compose              bounded Documentation draft request (§80.3)
 
 GET  /health                  GET  /version

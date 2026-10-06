@@ -1,13 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/document_picker.dart';
+import 'package:tapture/core/files/file_reader.dart';
+import 'package:tapture/core/files/file_writer.dart';
+import 'package:tapture/core/files/project_folders.dart';
+import 'package:tapture/core/files/storage_root.dart';
+import 'package:tapture/features/projects/projects.dart';
 
 import '../domain/template_def.dart';
 import '../templates.dart'
-    show TemplateDocumentImport, templateRepositoryProvider;
+    show TemplateDocumentImport, XlsxTemplateImport, templateRepositoryProvider;
 
 /// Owns validated import preview and the explicit durable save.
 final class TemplateImportController extends AsyncNotifier<TemplateDef?> {
@@ -15,10 +22,14 @@ final class TemplateImportController extends AsyncNotifier<TemplateDef?> {
 
   final ({String projectId, Object? payload}) input;
   final CancellationToken _cancel = CancellationToken();
+  PickedDocument? _outputDocument;
 
   @override
   Future<TemplateDef?> build() async {
     ref.onDispose(_cancel.cancel);
+    ref.onDispose(
+      () => unawaited(TemplateDocumentImport.discard(_outputDocument)),
+    );
     final Object? payload = input.payload;
     if (payload == null || (payload is String && payload.trim().isEmpty)) {
       return null;
@@ -61,6 +72,21 @@ final class TemplateImportController extends AsyncNotifier<TemplateDef?> {
     try {
       _value(await TemplateDocumentImport.validate(document));
       if (!ref.mounted) return null;
+      if (TemplateDocumentImport.isOutput(document)) {
+        final TemplateDef draft = _value(
+          await TemplateDocumentImport.output(
+            document,
+            projectId: input.projectId,
+            cancel: _cancel,
+          ),
+        );
+        await TemplateDocumentImport.discard(_outputDocument);
+        if (!ref.mounted) return null;
+        _outputDocument = document;
+        transferred = true;
+        state = AsyncData<TemplateDef?>(draft);
+        return null;
+      }
       if (!TemplateDocumentImport.isJson(document)) {
         transferred = true;
         state = const AsyncData<TemplateDef?>(null);
@@ -73,6 +99,8 @@ final class TemplateImportController extends AsyncNotifier<TemplateDef?> {
           cancel: _cancel,
         ),
       );
+      await TemplateDocumentImport.discard(_outputDocument);
+      _outputDocument = null;
       if (ref.mounted) state = AsyncData<TemplateDef?>(draft);
     } on Object catch (error, stack) {
       if (ref.mounted) {
@@ -88,9 +116,33 @@ final class TemplateImportController extends AsyncNotifier<TemplateDef?> {
     final TemplateDef? draft = state.asData?.value;
     if (draft == null || state.isLoading) return null;
     state = const AsyncLoading<TemplateDef?>();
-    final Result<TemplateDef> result = await ref
-        .read(templateRepositoryProvider)
-        .save(draft);
+    Result<TemplateDef> result;
+    if (_outputDocument case final PickedDocument document) {
+      try {
+        final Project? project = await ref.read(
+          projectByIdProvider(input.projectId).future,
+        );
+        if (project == null) throw FileReader.unreadable(input.projectId);
+        final StorageRoot storage = ref.read(storageRootProvider);
+        result =
+            await XlsxTemplateImport(
+              storageRoot: storage,
+              folders: ProjectFolders(storageRoot: storage),
+              writer: ref.read(fileWriterProvider),
+              templates: ref.read(templateRepositoryProvider),
+            ).applyDocument(
+              projectId: project.id,
+              projectName: project.name,
+              folderName: project.folderName,
+              document: document,
+              draft: draft,
+            );
+      } on Object catch (error) {
+        result = FailureResult<TemplateDef>(Failure.from(error));
+      }
+    } else {
+      result = await ref.read(templateRepositoryProvider).save(draft);
+    }
     if (ref.mounted) state = AsyncData<TemplateDef?>(draft);
     return result;
   }

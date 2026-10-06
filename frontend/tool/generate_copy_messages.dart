@@ -74,7 +74,7 @@ void main(List<String> args) {
     resolver.writeln("    '$name' => $name(${typed.join(',')}),");
   }
   factory.writeln('}');
-  resolver.writeln('''    _ => message.fallback,
+  resolver.write('''    _ => message.fallback,
   };
 
   /// Localizes a typed failure while its .message stays English for audit.

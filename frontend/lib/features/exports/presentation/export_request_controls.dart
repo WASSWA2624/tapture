@@ -219,6 +219,8 @@ String _label(ExportFormat format, {LocalizedCopy? localizedCopy}) =>
       ExportFormat.csv => (localizedCopy ?? Copy.english).exportFormatCsv,
       ExportFormat.json => (localizedCopy ?? Copy.english).exportFormatJson,
       ExportFormat.pdf => (localizedCopy ?? Copy.english).exportFormatPdf,
+      ExportFormat.docx => (localizedCopy ?? Copy.english).exportFormatDocx,
+      ExportFormat.txt => (localizedCopy ?? Copy.english).exportFormatTxt,
       ExportFormat.zip => (localizedCopy ?? Copy.english).exportFileFormat,
     };
 

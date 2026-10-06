@@ -4,6 +4,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'field_def.dart';
 import 'template_def.dart';
 import 'template_json.dart';
+import 'template_row.dart';
 
 /// Consecutive template diffs, stored snapshots, and record migration (§18).
 ///
@@ -326,7 +327,13 @@ Map<String, Object?> _writeHistory(
   final Map<String, Object?> next = Map<String, Object?>.of(detection);
   next[_versionsKey] = <String, Object?>{
     for (final MapEntry<int, TemplateDef> entry in history.entries)
-      '${entry.key}': <String, Object?>{...TemplateJson.encode(entry.value)},
+      '${entry.key}': <String, Object?>{
+        ...TemplateJson.encode(entry.value),
+        '_tapture_source_file_path': entry.value.sourceFilePath,
+        '_tapture_row_ids': <String, String>{
+          for (final row in entry.value.rows) row.identifier: row.id,
+        },
+      },
   };
   return next;
 }
@@ -342,11 +349,22 @@ TemplateDef _shapeFrom(
       projectId: current.projectId ?? '',
     );
     if (decoded case Success<TemplateDef>(:final TemplateDef value)) {
+      final Object? storedIds = raw['_tapture_row_ids'];
+      final Map<String, String> ids = storedIds is Map
+          ? Map<String, String>.from(storedIds)
+          : <String, String>{
+              for (final row in current.rows) row.identifier: row.id,
+            };
       return value.copyWith(
         id: current.id,
         version: version,
         projectId: current.projectId,
         source: current.source,
+        sourceFilePath: raw['_tapture_source_file_path'] as String?,
+        rows: <TemplateRow>[
+          for (final row in value.rows)
+            row.copyWith(id: ids[row.identifier] ?? ''),
+        ],
       );
     }
   }

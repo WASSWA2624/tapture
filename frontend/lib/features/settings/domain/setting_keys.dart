@@ -6,6 +6,19 @@ import 'setting_key.dart';
 ///
 /// Limits and durations come from [AppConstants]. Secrets never appear here.
 abstract final class SettingKeys {
+  /// Nonsecret backend provider/model capabilities cached for offline selection.
+  static const SettingKey<String> aiCatalogue = SettingKey<String>(
+    'ai.catalogue',
+    '[]',
+  );
+
+  /// Explicit per-request approval in the organisation's budget units; zero
+  /// allows only its base model. A default cannot authorize costly escalation.
+  static const SettingKey<double> aiRequestMaxCost = SettingKey<double>(
+    'ai.requestMaxCost',
+    0,
+  );
+
   /// GPS at capture. Off until a person turns it on (FE-SEC-07).
   static const SettingKey<bool> gpsEnabled = SettingKey<bool>(
     'capture.gps',
@@ -307,6 +320,8 @@ abstract final class SettingKeys {
 
   /// Wire names of every declared key, so a raw string cannot sneak in.
   static List<String> get names => <String>[
+    aiCatalogue.name,
+    aiRequestMaxCost.name,
     gpsEnabled.name,
     excludeCoordinates.name,
     blurFaces.name,

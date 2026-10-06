@@ -2,6 +2,7 @@ import 'dart:ffi' show IntPtr, sizeOf;
 import 'dart:io' show Platform;
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture_whisper/tapture_whisper.dart';
@@ -57,6 +58,33 @@ SpeechAbortCell openSpeechAbortCell(String? libraryPath) {
   } on WhisperNativeException catch (error) {
     throw _failureFor(error.status);
   }
+}
+
+/// The library options for [request]: greedy unless the profile asks for
+/// a beam, never detecting the language, and never carrying context
+/// between windows.
+@visibleForTesting
+WhisperDecodeOptions speechDecodeOptions(SpeechDecodeRequest request) {
+  final SpeechDecodeProfile profile = request.profile;
+  final bool beam = profile.beamSize > 0;
+  return WhisperDecodeOptions(
+    language: request.language,
+    strategy: beam ? WhisperStrategy.beam : WhisperStrategy.greedy,
+    threads: profile.threads,
+    bestOf: profile.bestOf < 1 ? 1 : profile.bestOf,
+    beamSize: beam ? profile.beamSize : 1,
+    maxPieces: profile.maxPiecesFor(request.samples.length),
+    audioContext: profile.audioContextFor(request.samples.length),
+    temperatureIncrement: profile.temperatureStep,
+    entropyThreshold: profile.entropyThreshold,
+    logProbabilityThreshold: profile.logprobThreshold,
+    noSpeechThreshold: profile.noSpeechThreshold,
+    singleSegment: profile.singleSegment,
+    noTimestamps: !profile.timestamps,
+    pieceTimestamps: request.pieceTimings,
+    suppressBlank: profile.suppressBlank,
+    suppressNonSpeech: profile.suppressNonSpeech,
+  );
 }
 
 /// Points the fatal-abort record of the library at [libraryPath] (the
@@ -326,7 +354,9 @@ final class _WhisperNativeApi implements SpeechNativeApi {
     required int jobId,
   }) {
     _model(model);
-    final WhisperDecodeOptions options = _guard(() => _options(request));
+    final WhisperDecodeOptions options = _guard(
+      () => speechDecodeOptions(request),
+    );
     final WhisperCell? cell = abortAddress == 0 ? null : _borrow(abortAddress);
     WhisperTranscript transcribe() => _model(model).transcribe(
       request.samples,
@@ -432,32 +462,6 @@ final class _WhisperNativeApi implements SpeechNativeApi {
   /// retained on first use and released by [close].
   WhisperCell _borrow(int address) =>
       _cells[address] ??= _guard(() => _library.borrowCell(address));
-
-  /// The library options for [request]: greedy unless the profile asks for
-  /// a beam, never detecting the language, and never carrying context
-  /// between windows.
-  static WhisperDecodeOptions _options(SpeechDecodeRequest request) {
-    final SpeechDecodeProfile profile = request.profile;
-    final bool beam = profile.beamSize > 0;
-    return WhisperDecodeOptions(
-      language: request.language,
-      strategy: beam ? WhisperStrategy.beam : WhisperStrategy.greedy,
-      threads: profile.threads,
-      bestOf: profile.bestOf < 1 ? 1 : profile.bestOf,
-      beamSize: beam ? profile.beamSize : 1,
-      maxPieces: profile.maxPieces,
-      audioContext: profile.audioContextFor(request.samples.length),
-      temperatureIncrement: profile.temperatureStep,
-      entropyThreshold: profile.entropyThreshold,
-      logProbabilityThreshold: profile.logprobThreshold,
-      noSpeechThreshold: profile.noSpeechThreshold,
-      singleSegment: profile.singleSegment,
-      noTimestamps: !profile.timestamps,
-      pieceTimestamps: request.pieceTimings,
-      suppressBlank: profile.suppressBlank,
-      suppressNonSpeech: profile.suppressNonSpeech,
-    );
-  }
 
   /// Copies [decoded] onto the session timeline of [request].
   static SpeechDecodeResult _result(

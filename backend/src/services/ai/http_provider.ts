@@ -1,79 +1,40 @@
 import type { AppConfig } from '../../config/schema.js';
 import {
-  type AppError,
   internalError,
   invalidRequest,
-  payloadTooLarge,
   unavailable,
 } from '../../domain/errors.js';
 import type { AiProvider, AiRequest, AiResult } from './provider.js';
-
-function object(
-  value: unknown,
-  failure: () => AppError,
-): Record<string, unknown> {
-  if (typeof value !== 'object' || value === null || Array.isArray(value))
-    throw failure();
-  return value as Record<string, unknown>;
-}
-
-const invalidPayload = (): AppError =>
-  invalidRequest('Invalid analysis payload.');
-
-/// Maps a provider refusal. A refused payload is the caller's fault and a
-/// refused key or configured model is this deployment's; neither is retried.
-/// Throttling, timeouts and provider faults stay transient.
-function refusal(status: number, configuredModel: boolean): AppError {
-  if (status === 401 || status === 403 || (status === 404 && configuredModel))
-    return unavailable();
-  if (status === 413) return payloadTooLarge();
-  if (status >= 400 && status < 500 && status !== 408 && status !== 429)
-    return invalidRequest('The analysis provider refused this request.');
-  return internalError();
-}
+import {
+  assertProviderModel,
+  providerEnvelope,
+  providerObject,
+  providerTokens,
+} from './provider-envelope.js';
+import { providerRefusal } from './provider-refusal.js';
 
 /** Gemini generateContent adapter. Prompts and media are composed on the device. */
 export function httpProvider(
   config: AppConfig,
   request: typeof fetch = fetch,
+  key = config.aiProviderKey,
 ): AiProvider {
-  const key = config.aiProviderKey;
   async function call(input: AiRequest): Promise<AiResult> {
     if (!key) throw unavailable();
-    const configuredModel = input.model === 'default';
-    const model = configuredModel ? config.aiProviderModel : input.model;
+    const configuredModel =
+      input.model === 'default' ||
+      input.model === config.aiGeminiModel ||
+      config.aiModelCostCeilings[`gemini:${input.model}`] !== undefined;
+    const model =
+      input.model === 'default' ? config.aiGeminiModel : input.model;
     if (!/^[A-Za-z0-9._-]+$/.test(model))
       throw invalidRequest('Invalid model.');
-    let decoded: unknown;
-    try {
-      decoded = JSON.parse(input.payload.toString('utf8'));
-    } catch {
-      throw invalidPayload();
-    }
-    const envelope = object(decoded, invalidPayload);
-    if (
-      typeof envelope['instructions'] !== 'string' ||
-      !Array.isArray(envelope['media']) ||
-      (envelope['responseMimeType'] !== 'application/json' &&
-        envelope['responseMimeType'] !== 'text/plain')
-    )
-      throw invalidPayload();
-    const parts: unknown[] = [
-      { text: JSON.stringify(object(envelope['data'], invalidPayload)) },
-    ];
-    for (const value of envelope['media']) {
-      const media = object(value, invalidPayload);
-      if (
-        typeof media['mimeType'] !== 'string' ||
-        typeof media['base64'] !== 'string' ||
-        !/^(image|audio)\/[a-zA-Z0-9.+-]+$/.test(media['mimeType'])
-      )
-        throw invalidRequest('Invalid analysis media.');
+    const envelope = providerEnvelope(input.payload);
+    const parts: unknown[] = [{ text: JSON.stringify(envelope.data) }];
+    for (const media of envelope.media)
       parts.push({
-        inlineData: { mimeType: media['mimeType'], data: media['base64'] },
+        inlineData: { mimeType: media.mimeType, data: media.base64 },
       });
-    }
-    // Only documented GenerateContentRequest fields: the API rejects others.
     const response = await request(
       `${config.aiProviderUrl}/models/${model}:generateContent`,
       {
@@ -81,9 +42,12 @@ export function httpProvider(
         redirect: 'error',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: envelope['instructions'] }] },
+          systemInstruction: { parts: [{ text: envelope.instructions }] },
           contents: [{ role: 'user', parts }],
-          generationConfig: { responseMimeType: envelope['responseMimeType'] },
+          generationConfig: {
+            responseMimeType: envelope.responseMimeType,
+            maxOutputTokens: config.aiMaxOutputTokens,
+          },
         }),
         signal:
           input.signal === undefined
@@ -94,19 +58,19 @@ export function httpProvider(
               ]),
       },
     );
-    if (!response.ok) throw refusal(response.status, configuredModel);
-    const output: unknown = await response.json();
-    const root = object(output, internalError);
+    if (!response.ok) throw providerRefusal(response.status, configuredModel);
+    const root = providerObject(await response.json());
+    assertProviderModel(root, 'modelVersion', model);
     const candidates = root['candidates'];
     if (!Array.isArray(candidates) || candidates.length === 0)
       throw internalError();
-    const candidate = object(candidates[0], internalError);
+    const candidate = providerObject(candidates[0]);
     if (candidate['finishReason'] !== 'STOP') throw internalError();
-    const content = object(candidate['content'], internalError);
+    const content = providerObject(candidate['content']);
     if (!Array.isArray(content['parts'])) throw internalError();
     const text = content['parts']
       .map((part: unknown) => {
-        const value = object(part, internalError);
+        const value = providerObject(part);
         return value['thought'] === true
           ? ''
           : typeof value['text'] === 'string'
@@ -115,7 +79,12 @@ export function httpProvider(
       })
       .join('');
     if (text.length === 0 || text.includes(key)) throw internalError();
-    return { text, model };
+    const usage = providerTokens(root['usageMetadata'], [
+      'promptTokenCount',
+      'candidatesTokenCount',
+      'totalTokenCount',
+    ]);
+    return { text, model, ...(usage === undefined ? {} : { usage }) };
   }
   return { extract: call, ocr: call, transcribe: call, refine: call };
 }

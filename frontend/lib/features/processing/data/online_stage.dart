@@ -1,43 +1,37 @@
-import 'dart:convert';
-
 import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/tables/captions.dart';
 import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/security/untrusted_text.dart';
 import 'package:tapture/features/projects/projects.dart'
-    show ImageEgress, ProjectSettingsResolved;
+    show ProjectSettingsResolved;
 import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/extraction_request.dart';
 import '../domain/online_skip_rule.dart';
 import '../domain/processing_job.dart';
 import '../domain/request_batching.dart';
-import '../domain/response_parser.dart';
-import '../domain/response_repair.dart';
 import 'caption_refinement_service.dart';
 import 'job_writes.dart';
 import 'on_device_stage.dart';
 import 'online_budget.dart';
 import 'online_completion.dart';
+import 'online_extraction.dart';
 import 'online_transcripts.dart';
 import 'photo_paths.dart';
+import 'processing_snapshot.dart';
 import 'record_bundle.dart';
+import 'record_bundle_loader.dart';
 import 'response_store.dart';
 import 'stage_settings.dart';
 import 'stage_support.dart';
 
-/// The online stage: one extraction request per batch of photos, stored as
-/// it arrived before parsing, repaired at most once.
-///
-/// It is skipped, with the reason written on the job, when local work
-/// already suffices, the device is offline by choice, the project has AI
-/// off, or no provider is available.
+/// Extraction of a versioned local record with explicit evidence relationships.
 final class OnlineStage {
-  /// Creates the stage and its collaborators.
+  /// Creates the stage over the existing local queue and evidence stores.
   const OnlineStage({
     required this._settings,
     required this._paths,
@@ -48,6 +42,7 @@ final class OnlineStage {
     required this._responses,
     required this._captionRefinement,
     required this._writes,
+    this._loader,
   });
 
   final StageSettings _settings;
@@ -59,14 +54,32 @@ final class OnlineStage {
   final ResponseStore _responses;
   final CaptionRefinementService _captionRefinement;
   final JobWrites _writes;
+  final RecordBundleLoader? _loader;
 
-  /// Requests every batch not already parsed, then refines captions when
-  /// the app setting asks for it.
+  /// Rebuilds identity without dispatching; proposal/cache readers use it too.
+  Future<String> currentRevision(ProcessingJob job, RecordBundle bundle) async {
+    final selection = _settings.selection(bundle, AiOperation.extractFields);
+    return _revision(
+      bundle,
+      await _sources(
+        job,
+        bundle,
+        allowOnline: false,
+        cancel: CancellationToken(),
+      ),
+      await _paths.privacyRevision(bundle),
+      selection.provider.id,
+      selection.model.id,
+    );
+  }
+
+  /// Offline or unavailable analysis remains queued, with local evidence intact.
   Future<void> run(
     ProcessingJob job,
     RecordBundle bundle,
     CancellationToken cancel,
   ) async {
+    _check(cancel);
     final List<SkipField> local = await _completion.forOnline(job, bundle);
     final String? localReason = OnlineSkipRule.reason(local);
     if (localReason != null) {
@@ -74,267 +87,223 @@ final class OnlineStage {
       return;
     }
     if (_settings.read(SettingKeys.offlineByChoice)) {
-      await _writes.setSkip(job.id, 'Offline mode is on.');
-      return;
+      throw const CancelledFailure(
+        message: 'Analysis is queued while offline mode is on.',
+        recoveryAction: 'Continue capturing, then resume analysis when ready.',
+      );
     }
     final ProjectSettingsResolved projectSettings = _settings.project(bundle);
     if (!projectSettings.aiEnabled) {
       await _writes.setSkip(job.id, 'Online analysis is off for this project.');
       return;
     }
-    final String privacyRevision = await _paths.privacyRevision(bundle);
-    final String ocrText = await _onDevice.text(bundle);
-    final List<String> images = ImageEgress.paths(
-      holdImages: projectSettings.doNotSendImages,
-      images: await _paths.compressed(bundle),
-    );
-    final List<ExtractionField> fields = <ExtractionField>[
-      for (final TemplateField field in bundle.fields)
-        if (field.type != 'consent') StageSupport.extractionField(field),
-    ];
-    final List<String> rows = <String>[
-      for (final TemplateRow row in bundle.rows) row.label,
-    ];
-    final Map<String, String> context = StageSupport.stringMap(
-      bundle.record.contextJson,
-    );
-    final String caption = bundle.captions
-        .map((Caption row) => row.textRaw)
-        .where((String value) => value.trim().isNotEmpty)
-        .join('\n');
     final selection = _settings.selection(bundle, AiOperation.extractFields);
     final AiService service = selection.provider.service;
-    if (!service.isAvailable) {
-      await _writes.setSkip(
-        job.id,
-        'No online provider is available. Local results were kept.',
+    if (!service.isAvailable || selection.fellBack) {
+      throw const CancelledFailure(
+        message: 'The selected analysis provider or model is unavailable.',
+        recoveryAction:
+            'Check the selection, then resume this queued analysis.',
       );
-      return;
     }
-    // Audio leaves only once extraction will run, as the preview says.
-    final List<String> transcripts = await _transcripts.forJob(job, bundle);
-    final List<List<String>> batches = RequestBatching.split(images);
-    for (var index = 0; index < batches.length; index++) {
-      final List<String> batch = batches[index];
-      final String batchKey =
-          '$index:${batch.map(StageSupport.basename).join('|')}';
-      if (await _isBatchParsed(job, batchKey)) {
-        continue;
+    final String scope = _settings.egressScope(bundle);
+    final double approvedMaxCost = _settings.read(SettingKeys.aiRequestMaxCost);
+    Future<void> verifyScope() async {
+      _check(cancel);
+      final RecordBundle current =
+          await _loader?.load(bundle.record.id) ?? bundle;
+      if (_settings.egressScope(current) != scope) {
+        throw const CancelledFailure(
+          message: 'The selected account, model or spending limit changed.',
+          recoveryAction: 'Resume processing to preview the updated selection.',
+        );
       }
+    }
+
+    if (_settings.read(SettingKeys.aiRefineCaptions)) {
+      final List<String> rejected = await _captionRefinement.refine(
+        jobId: job.id,
+        job: job,
+        project: bundle.project,
+        captions: bundle.captions,
+        cancel: cancel,
+        beforeRequest: () async {
+          _check(cancel);
+          await verifyScope();
+          await _budget.require(job.id, bundle);
+        },
+      );
+      if (rejected.isNotEmpty) await _writes.appendRejections(job.id, rejected);
+      bundle = await _loader?.load(bundle.record.id) ?? bundle;
+    }
+    _check(cancel);
+    final String privacyRevision = await _paths.privacyRevision(bundle);
+    final List<Map<String, Object?>> sources = await _sources(
+      job,
+      bundle,
+      allowOnline: true,
+      cancel: cancel,
+      beforeRequest: verifyScope,
+    );
+    _check(cancel);
+    final String revision = await _revision(
+      bundle,
+      sources,
+      privacyRevision,
+      selection.provider.id,
+      selection.model.id,
+      approvedMaxCost: approvedMaxCost,
+    );
+    final String sourceRevision = await ProcessingSnapshot.sourceRevision(
+      bundle,
+      privacyRevision: '',
+    );
+    final List<String> images = projectSettings.doNotSendImages
+        ? const <String>[]
+        : await _paths.compressed(bundle, cancel: cancel);
+    final List<List<String>> batches = RequestBatching.split(images);
+    final OnlineExtraction extraction = OnlineExtraction(
+      budget: _budget,
+      responses: _responses,
+      writes: _writes,
+    );
+    for (var index = 0; index < batches.length; index++) {
+      _check(cancel);
+      final List<String> batch = batches[index];
+      final Set<String> photoIds = images.isEmpty
+          ? <String>{}
+          : <String>{
+              for (var offset = 0; offset < batch.length; offset++)
+                bundle.photos[index * ExtractionRequest.imageCap + offset].id,
+            };
+      final List<Map<String, Object?>> batchSources = <Map<String, Object?>>[
+        for (final Map<String, Object?> source in sources)
+          if (source['kind'] != 'photo' || photoIds.contains(source['photoId']))
+            <String, Object?>{
+              ...source,
+              if (source['kind'] == 'photo')
+                'imageIndex':
+                    bundle.photos.indexWhere(
+                      (Photo photo) => photo.id == source['photoId'],
+                    ) -
+                    index * ExtractionRequest.imageCap,
+            },
+      ];
       final ExtractionRequest request = ExtractionRequest(
         template: bundle.template.name,
-        fields: fields,
-        context: context,
-        predefinedRows: rows,
-        caption: UntrustedText(caption),
-        ocrText: UntrustedText(ocrText),
-        images: batch,
-        transcripts: <UntrustedText>[
-          for (final String text in transcripts) UntrustedText(text),
+        fields: <ExtractionField>[
+          for (final TemplateField field in bundle.fields)
+            if (field.type != 'consent') StageSupport.extractionField(field),
         ],
+        context: StageSupport.stringMap(bundle.record.contextJson),
+        predefinedRows: <String>[
+          for (final TemplateRow row in bundle.rows) row.label,
+        ],
+        caption: const UntrustedText(''),
+        ocrText: const UntrustedText(''),
+        images: batch,
+        sources: batchSources,
         basis: projectSettings.doNotSendImages ? Copy.egressTextOnly : '',
       );
-      await _requestOnce(
+      await extraction.run(
         job: job,
         bundle: bundle,
         service: service,
         request: request,
-        batchKey: batchKey,
+        batch: index,
+        revision: revision,
+        sourceRevision: sourceRevision,
+        privacyRevision: privacyRevision,
         providerId: selection.provider.id,
         modelId: selection.model.id,
-        privacyRevision: privacyRevision,
-      );
-    }
-    if (_settings.read(SettingKeys.aiRefineCaptions)) {
-      final List<String> rejected = await _captionRefinement.refine(
-        jobId: job.id,
-        project: bundle.project,
-        captions: bundle.captions,
-        beforeRequest: () => _budget.require(job.id, bundle),
-      );
-      if (rejected.isNotEmpty) {
-        await _writes.appendRejections(job.id, rejected);
-      }
-    }
-  }
-
-  Future<void> _requestOnce({
-    required ProcessingJob job,
-    required RecordBundle bundle,
-    required AiService service,
-    required ExtractionRequest request,
-    required String batchKey,
-    required String providerId,
-    required String modelId,
-    required String privacyRevision,
-  }) async {
-    var repairs = 0;
-    String? repairError;
-    final ProcessingResult? pending = await _unparsedBatch(job, batchKey);
-    if (pending != null) {
-      final ParseOutcome parsed = ResponseParser.parse(
-        pending.rawResponse,
-        schema: StageSupport.schema(bundle.fields),
-      );
-      if (parsed.ok) {
-        StageSupport.unwrap(await _responses.markParsed(pending.id));
-        await _writes.setProvider(
-          job.id,
-          provider: StageSupport.summaryValue(
-            pending.requestSummary,
-            'provider',
-          ),
-          model: StageSupport.summaryValue(pending.requestSummary, 'model'),
-        );
-        return;
-      }
-      if (StageSupport.summaryBool(pending.requestSummary, 'repair')) {
-        throw CorruptionFailure(
-          message: parsed.error ?? 'The provider response is malformed.',
-          recoveryAction: 'Inspect the stored response, then retry the job.',
-        );
-      }
-      repairs = 1;
-      repairError = parsed.error ?? 'The response is malformed.';
-    }
-    while (true) {
-      await _budget.require(job.id, bundle);
-      if (await _paths.privacyRevision(bundle) != privacyRevision) {
-        throw const ValidationFailure(
-          message: 'Photo protection changed. Try analysis again.',
-        );
-      }
-      final ExtractFieldsRequest serviceRequest = request.toService();
-      final Result<ExtractFieldsResult> result = await service.extractFields(
-        ExtractFieldsRequest(
-          templateLabel: serviceRequest.templateLabel,
-          fieldLabels: serviceRequest.fieldLabels,
-          ocrText: serviceRequest.ocrText,
-          transcripts: serviceRequest.transcripts,
-          captions: serviceRequest.captions,
-          imagePaths: serviceRequest.imagePaths,
-          context: serviceRequest.context,
-          fieldSchema: serviceRequest.fieldSchema,
-          predefinedRows: serviceRequest.predefinedRows,
-          rules: serviceRequest.rules,
-          repairError: repairError,
-        ),
-      );
-      final ExtractFieldsResult extracted = StageSupport.unwrap(result);
-      final String raw =
-          extracted.rawResponse ??
-          _canonicalResponse(extracted.fields, request);
-      final String summary = jsonEncode(<String, Object?>{
-        'kind': 'online',
-        'requestGeneration': job.requestGeneration,
-        'batchKey': batchKey,
-        'repair': repairError != null,
-        'imageCount': request.images.length,
-        'images': <String>[
-          for (final String path in request.images) StageSupport.basename(path),
-        ],
-        'fieldCount': request.fields.length,
-        'provider': providerId,
-        'model': modelId,
-        'promptVersion': extracted.promptVersion,
-      });
-      final ProcessingResult stored = StageSupport.unwrap(
-        await _responses.save(
-          jobId: job.id,
-          requestSummary: summary,
-          rawResponse: raw,
-          parsedOk: false,
-        ),
-      );
-      final ParseOutcome parsed = ResponseParser.parse(
-        raw,
-        schema: StageSupport.schema(bundle.fields),
-      );
-      if (parsed.ok) {
-        StageSupport.unwrap(await _responses.markParsed(stored.id));
-        await _writes.setProvider(job.id, provider: providerId, model: modelId);
-        return;
-      }
-      if (!ResponseRepair.mayRetry(repairsUsed: repairs)) {
-        throw CorruptionFailure(
-          message: parsed.error ?? 'The provider response is malformed.',
-          recoveryAction: 'Inspect the stored response, then retry the job.',
-        );
-      }
-      repairs++;
-      repairError = parsed.error;
-    }
-  }
-
-  Future<bool> _isBatchParsed(ProcessingJob job, String batchKey) async {
-    final List<ProcessingResult> responses = StageSupport.unwrap(
-      await _responses.forJob(job.id),
-    );
-    return responses.any(
-      (ProcessingResult response) =>
-          response.parsedOk &&
-          _sameGeneration(response, job) &&
-          StageSupport.summaryValue(response.requestSummary, 'batchKey') ==
-              batchKey,
-    );
-  }
-
-  Future<ProcessingResult?> _unparsedBatch(
-    ProcessingJob job,
-    String batchKey,
-  ) async {
-    final List<ProcessingResult> responses = StageSupport.unwrap(
-      await _responses.forJob(job.id),
-    );
-    for (final ProcessingResult response in responses.reversed) {
-      if (!response.parsedOk &&
-          _sameGeneration(response, job) &&
-          StageSupport.summaryValue(response.requestSummary, 'batchKey') ==
-              batchKey) {
-        return response;
-      }
-    }
-    return null;
-  }
-
-  bool _sameGeneration(ProcessingResult response, ProcessingJob job) {
-    final Object? decoded = StageSupport.json(response.requestSummary);
-    final Object? generation = decoded is Map
-        ? decoded['requestGeneration']
-        : null;
-    // Missing generation identifies the original run of a legacy job.
-    return (generation is int ? generation : 0) == job.requestGeneration;
-  }
-}
-
-String _canonicalResponse(
-  Map<String, String?> fields,
-  ExtractionRequest request,
-) {
-  return jsonEncode(<String, Object?>{
-    'fields': <String, Object?>{
-      for (final MapEntry<String, String?> entry in fields.entries)
-        entry.key: <String, Object?>{
-          'value': entry.value,
-          'confidence': 0,
-          'evidence': _fallbackEvidence(entry.value, request),
+        cancel: cancel,
+        approvedMaxCost: approvedMaxCost,
+        isCurrent: () async {
+          _check(cancel);
+          final RecordBundle current =
+              await _loader?.load(bundle.record.id) ?? bundle;
+          if (_settings.egressScope(current) != scope) return false;
+          final choice = _settings.selection(
+            current,
+            AiOperation.extractFields,
+          );
+          if (!choice.provider.service.isAvailable || choice.fellBack) {
+            return false;
+          }
+          final List<Map<String, Object?>> currentSources = await _sources(
+            job,
+            current,
+            allowOnline: false,
+            cancel: cancel,
+          );
+          return await _revision(
+                current,
+                currentSources,
+                await _paths.privacyRevision(current),
+                choice.provider.id,
+                choice.model.id,
+              ) ==
+              revision;
         },
-    },
-  });
+      );
+    }
+    _check(cancel);
+  }
+
+  Future<String> _revision(
+    RecordBundle bundle,
+    List<Map<String, Object?>> sources,
+    String privacy,
+    String provider,
+    String model, {
+    double? approvedMaxCost,
+  }) => ProcessingSnapshot.revision(
+    bundle,
+    privacyRevision: privacy,
+    sources: sources,
+    provider: provider,
+    model: model,
+    language: _settings.read(SettingKeys.voiceLanguage),
+    holdImages: _settings.project(bundle).doNotSendImages,
+    maxCost: approvedMaxCost ?? _settings.read(SettingKeys.aiRequestMaxCost),
+  );
+
+  Future<List<Map<String, Object?>>> _sources(
+    ProcessingJob job,
+    RecordBundle bundle, {
+    required bool allowOnline,
+    required CancellationToken cancel,
+    Future<void> Function()? beforeRequest,
+  }) async => <Map<String, Object?>>[
+    if (!_settings.project(bundle).doNotSendImages)
+      for (final Photo photo in bundle.photos)
+        <String, Object?>{
+          'id': 'photo:${photo.id}',
+          'kind': 'photo',
+          'photoId': photo.id,
+          'sha256': await _paths.ocrContentHash(bundle, photo, cancel: cancel),
+        },
+    ...await _onDevice.sources(bundle),
+    for (final Caption caption in bundle.captions)
+      <String, Object?>{
+        'id': 'caption:${caption.id}',
+        'kind': 'caption',
+        'ownerType': caption.ownerType.name,
+        'ownerId': caption.ownerId,
+        if (caption.ownerType == CaptionOwnerType.photo)
+          'photoId': caption.ownerId,
+        'text': caption.textRefined ?? caption.textRaw,
+      },
+    ...await _transcripts.sourcesForJob(
+      job,
+      bundle,
+      allowOnline: allowOnline,
+      cancel: cancel,
+      beforeRequest: beforeRequest,
+    ),
+  ];
 }
 
-List<String> _fallbackEvidence(String? value, ExtractionRequest request) {
-  if (value == null || value.trim().isEmpty) {
-    return const <String>[];
-  }
-  final String needle = value.trim().toLowerCase();
-  for (final UntrustedText text in <UntrustedText>[
-    request.ocrText,
-    request.caption,
-  ]) {
-    if (text.raw.toLowerCase().contains(needle)) {
-      return <String>[text.raw];
-    }
-  }
-  return const <String>[];
+void _check(CancellationToken cancel) {
+  if (cancel.isCancelled) throw const CancelledFailure();
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/features/projects/projects.dart'
     show ProjectSettings, ProjectSettingsResolved, appProjectSettingsDefaults;
@@ -14,8 +16,42 @@ final class StageSettings {
   final SettingsStore _settings;
   final ProviderRegistry _providers;
 
+  /// The shared settings store for durable usage accounting.
+  SettingsStore get store => _settings;
+
   /// The app-wide value stored for [key].
   T read<T>(SettingKey<T> key) => _settings.read(key);
+
+  /// Provider, account, model and limits covered by the current egress preview.
+  String egressScope(RecordBundle bundle) => jsonEncode(<String, Object?>{
+    'projectId': bundle.project.id,
+    'doNotSendImages': project(bundle).doNotSendImages,
+    'maxCost': read(SettingKeys.aiRequestMaxCost),
+    'selections': <Map<String, Object?>>[
+      for (final AiOperation operation in <AiOperation>[
+        AiOperation.extractFields,
+        AiOperation.transcribe,
+        AiOperation.refineText,
+      ])
+        _scopeSelection(bundle, operation),
+    ],
+  });
+
+  Map<String, Object?> _scopeSelection(
+    RecordBundle bundle,
+    AiOperation operation,
+  ) {
+    final choice = selection(bundle, operation);
+    return <String, Object?>{
+      'operation': operation.name,
+      'providerId': choice.provider.id,
+      'provider': choice.provider.label,
+      'modelId': choice.model.id,
+      'model': choice.model.label,
+      'personal': choice.provider.serverCredentialProvider != null,
+      'available': choice.provider.available,
+    };
+  }
 
   /// The bundle's project settings resolved against the app defaults.
   ProjectSettingsResolved project(RecordBundle bundle) {

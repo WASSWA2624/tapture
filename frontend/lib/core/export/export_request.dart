@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'export_output_template.dart';
 import 'export_record.dart';
 import 'pdf_photo_layout.dart';
 import 'value_formatter.dart';
@@ -21,6 +22,7 @@ final class ExportRequest {
     this.omittedRecordIds = const <String>[],
     this.photoFaceCounts = const <String, int>{},
     this.privacyFingerprint = '',
+    this.outputTemplates = const <ExportOutputTemplate>[],
   });
 
   /// Rebuilds a request written by [toJson].
@@ -46,6 +48,11 @@ final class ExportRequest {
           ? Map<String, int>.from(json['photoFaceCounts']! as Map)
           : const <String, int>{},
       privacyFingerprint: json['privacyFingerprint'] as String? ?? '',
+      outputTemplates: <ExportOutputTemplate>[
+        for (final Object? value in _list(json['outputTemplates']))
+          if (value is Map)
+            ExportOutputTemplate.fromJson(Map<String, Object?>.from(value)),
+      ],
       files: <ExportFile>[
         for (final Object? row in _list(json['files']))
           if (row is Map)
@@ -94,6 +101,9 @@ final class ExportRequest {
   /// Current protection state, checked again before sharing an old artifact.
   final String privacyFingerprint;
 
+  /// Captured source documents and mappings; later template edits cannot change replay.
+  final List<ExportOutputTemplate> outputTemplates;
+
   /// JSON covering every field, including [files] and [records].
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -126,6 +136,10 @@ final class ExportRequest {
       'omittedRecordIds': omittedRecordIds,
       'photoFaceCounts': photoFaceCounts,
       'privacyFingerprint': privacyFingerprint,
+      'outputTemplates': <Map<String, Object?>>[
+        for (final ExportOutputTemplate template in outputTemplates)
+          template.toJson(),
+      ],
       'files': <Map<String, Object?>>[
         for (final ExportFile file in files)
           <String, Object?>{'path': file.path, 'role': file.role},
@@ -167,6 +181,7 @@ final class ExportRequest {
     List<String>? omittedRecordIds,
     Map<String, int>? photoFaceCounts,
     String? privacyFingerprint,
+    List<ExportOutputTemplate>? outputTemplates,
   }) {
     return ExportRequest(
       projectId: projectId,
@@ -180,6 +195,7 @@ final class ExportRequest {
       omittedRecordIds: omittedRecordIds ?? this.omittedRecordIds,
       photoFaceCounts: photoFaceCounts ?? this.photoFaceCounts,
       privacyFingerprint: privacyFingerprint ?? this.privacyFingerprint,
+      outputTemplates: outputTemplates ?? this.outputTemplates,
     );
   }
 
@@ -197,6 +213,7 @@ final class ExportRequest {
       omittedRecordIds: omittedRecordIds,
       photoFaceCounts: photoFaceCounts,
       privacyFingerprint: privacyFingerprint,
+      outputTemplates: outputTemplates,
     );
   }
 
@@ -213,6 +230,7 @@ final class ExportRequest {
       omittedRecordIds: omittedRecordIds,
       photoFaceCounts: photoFaceCounts,
       privacyFingerprint: privacyFingerprint,
+      outputTemplates: outputTemplates,
       records: <ExportRecord>[
         for (final ExportRecord record in records)
           if (!excluded.contains(record.id)) record,

@@ -2,15 +2,20 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:tapture/core/concurrency/isolate_runner.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/export/csv_writer.dart';
+import 'package:tapture/core/export/export_output_template.dart';
 import 'package:tapture/core/export/export_record.dart';
 import 'package:tapture/core/export/export_request.dart';
 import 'package:tapture/core/export/json_writer.dart';
 import 'package:tapture/core/export/pdf/pdf_engine.dart';
 import 'package:tapture/core/export/pdf/transcript_report.dart';
+import 'package:tapture/core/export/plain_text_writer.dart';
+import 'package:tapture/core/export/template_deliverables.dart';
 import 'package:tapture/core/export/value_formatter.dart';
+import 'package:tapture/core/export/word_writer.dart';
 import 'package:tapture/core/export/xlsx_encoder.dart';
 import 'package:tapture/core/export/xlsx_writer.dart';
 import 'package:tapture/core/files/file_reader.dart';
@@ -44,6 +49,21 @@ final class DeliverableRenderer {
   }) async {
     try {
       final bool pdf = request.formats.contains(ExportFormat.pdf);
+      final Map<String, Uint8List> templates = <String, Uint8List>{};
+      for (final ExportOutputTemplate template in request.outputTemplates) {
+        if (!TemplateDeliverables.selected(request, template)) continue;
+        if (cancel.isCancelled) throw const CancelledFailure();
+        final int? length = (await _files.length(
+          template.sourcePath,
+        )).getOrThrow();
+        if (length == null ||
+            length > AppConstants.imports.spreadsheetMaxBytes) {
+          throw Failure.from(FileReader.unreadable(template.sourcePath));
+        }
+        templates[template.key] = (await _files.read(
+          template.sourcePath,
+        )).getOrThrow();
+      }
       final Map<String, Uint8List> images = pdf
           ? await _reducedPhotos(request, cancel, onStage)
           : const <String, Uint8List>{};
@@ -56,6 +76,7 @@ final class DeliverableRenderer {
           createdAt: createdAt,
           reports: reports ?? _recordsOnly(request),
           engine: _engine,
+          templates: templates,
         ),
         cancel: cancel,
         onProgress: (double fraction) =>
@@ -162,6 +183,7 @@ typedef _Job = ({
   DateTime createdAt,
   DeliverableReportInputs reports,
   PdfEngine engine,
+  Map<String, Uint8List> templates,
 });
 
 typedef _Rendered = ({
@@ -177,6 +199,15 @@ _Rendered _tables(_Job job) {
       XlsxWriter.build(request, createdUtc: job.createdAt),
     );
   }
+  if (request.formats.contains(ExportFormat.docx)) {
+    output['records.docx'] = WordWriter.write(request);
+  }
+  if (job.includeText && request.formats.contains(ExportFormat.txt)) {
+    output['records.txt'] = Uint8List.fromList(
+      utf8.encode(PlainTextWriter.chunks(request).join()),
+    );
+  }
+  output.addAll(TemplateDeliverables.render(request, job.templates));
   if (job.includeText && request.formats.contains(ExportFormat.csv)) {
     for (final MapEntry<String, String> file in CsvWriter.write(
       request,

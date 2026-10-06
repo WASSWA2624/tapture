@@ -144,6 +144,7 @@ abstract final class TemplateMapper {
   /// Reads one stored checklist row.
   static TemplateRow rowFromRow(sqlite.TemplateRow row) {
     return TemplateRow(
+      id: row.id,
       identifier: row.identifier,
       label: row.label,
       outputRowNumber: row.outputRowNumber,

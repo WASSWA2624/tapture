@@ -19,6 +19,12 @@ final class ExtractFieldsRequest {
     this.predefinedRows = const <String>[],
     this.rules = const <String>[],
     this.repairError,
+    this.sources = const <Map<String, Object?>>[],
+    this.projectRevision = '',
+    this.recordId = '',
+    this.idempotencyKey = '',
+    this.cancellationToken,
+    this.approvedMaxCost,
   });
 
   /// The template's display name, quoted as data.
@@ -53,4 +59,22 @@ final class ExtractFieldsRequest {
 
   /// Parse failure from the one permitted repair call, quoted as data.
   final String? repairError;
+
+  /// Stable evidence IDs and their caption, photo and audio relationships.
+  final List<Map<String, Object?>> sources;
+
+  /// SHA-256 of the exact local evidence and template snapshot.
+  final String projectRevision;
+
+  /// Local record identity; no local path or credential is included.
+  final String recordId;
+
+  /// Stable identity of one snapshot, batch and repair attempt.
+  final String idempotencyKey;
+
+  /// Stops preparation or additional calls after an operator cancels.
+  final CancellationToken? cancellationToken;
+
+  /// Frozen spending ceiling; zero uses the server's configured default limit.
+  final double? approvedMaxCost;
 }

@@ -63,7 +63,7 @@ final class _RemainingTranscription {
         // known, so it keeps the one it had.
         await _finish(
           complete: false,
-          length: _fromSample,
+          length: null,
           covered: _fromSample,
           modelId: null,
         );
@@ -211,16 +211,20 @@ final class _RemainingTranscription {
     );
   }
 
+  /// Finishes the sink over [length] samples of take, or without a length
+  /// when the take could not be read.
   Future<void> _finish({
     required bool complete,
-    required int length,
+    required int? length,
     required int covered,
     required String? modelId,
   }) async {
     final Result<void> finished = await _sink.finish(
       TranscriptOutcome(
         complete: complete,
-        captured: _LiveTranscriptionService._durationOf(length),
+        captured: length == null
+            ? null
+            : _LiveTranscriptionService._durationOf(length),
         coveredToSample: covered,
         languageTag: _languageTag,
         modelId: modelId,

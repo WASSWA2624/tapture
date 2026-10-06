@@ -6454,6 +6454,83 @@ abstract final class Copy {
   /// File choice: the PDF reports.
   static String get exportFormatPdf => _english.exportFormatPdf;
 
+  /// File choice: an editable Word report.
+  static String get exportFormatDocx => _english.exportFormatDocx;
+
+  /// File choice: a UTF-8 record report.
+  static String get exportFormatTxt => _english.exportFormatTxt;
+
+  /// Explicit processing consent selection.
+  static String processingEgressSelection(
+    String provider,
+    String model,
+    String account,
+    String limit,
+  ) => _english.processingEgressSelection(provider, model, account, limit);
+
+  /// Explicit processing consent selection.
+  static String get processingEgressManaged => _english.processingEgressManaged;
+
+  /// Explicit processing consent selection.
+  static String get processingEgressPersonal =>
+      _english.processingEgressPersonal;
+
+  /// Explicit processing consent selection.
+  static String get processingEgressLimitDefault =>
+      _english.processingEgressLimitDefault;
+
+  /// Reserved request ceiling in configured billing units.
+  static String processingReservedCost(String amount, String unit) =>
+      _english.processingReservedCost(amount, unit);
+
+  /// Provider-reported tokens, when supplied.
+  static String processingTokens(int count) => _english.processingTokens(count);
+
+  /// Processing review and retry control.
+  static String get processingFindingsTitle => _english.processingFindingsTitle;
+
+  /// Processing review and retry control.
+  static String get processingRetryChargeTitle =>
+      _english.processingRetryChargeTitle;
+
+  /// Processing review and retry control.
+  static String get processingRetryChargeBody =>
+      _english.processingRetryChargeBody;
+
+  /// Processing review and retry control.
+  static String get processingRetryChargeConfirm =>
+      _english.processingRetryChargeConfirm;
+
+  /// A saved server credential status; never shows the key.
+  static String get serverApiKeySaved => _english.serverApiKeySaved;
+
+  /// Explains encrypted personal credential custody.
+  static String get serverApiKeyCustody => _english.serverApiKeyCustody;
+
+  /// A provider request has an uncertain billing result.
+  static String get aiRequestUncertain => _english.aiRequestUncertain;
+
+  /// The selected managed billing account.
+  static String get aiManagedAccount => _english.aiManagedAccount;
+
+  /// The selected personal billing account.
+  static String aiPersonalAccount(String provider) =>
+      _english.aiPersonalAccount(provider);
+
+  /// Explicit AI request budget control.
+  static String get aiSpendingLimit => _english.aiSpendingLimit;
+
+  /// Configured model ceiling displayed before a spending approval.
+  static String aiModelCostCeiling(String amount, String unit) =>
+      _english.aiModelCostCeiling(amount, unit);
+
+  /// Explains request budgets and escalation approval.
+  static String get aiSpendingLimitHint => _english.aiSpendingLimitHint;
+
+  /// Confirmation when deleting a personal server credential.
+  static String get serverCredentialRemoveMessage =>
+      _english.serverCredentialRemoveMessage;
+
   /// The name of an export scope, by its stored kind.
   static String exportScopeName(String kind) => _english.exportScopeName(kind);
 

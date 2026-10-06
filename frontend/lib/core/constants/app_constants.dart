@@ -74,6 +74,14 @@ abstract final class AppConstants {
   /// `committedMinAudioContext` frames: whisper, trained on 30 s windows,
   /// loops, drops or invents words when its context ends soon after the
   /// speech (spec §30.4.2 rule 8).
+  /// A draft gives at most `interimMaxPieces` pieces. A final gives at most
+  /// `committedPiecesPerSecond` pieces per second of its audio plus
+  /// `committedMinPieces`, counted per whisper decode pass, which then seeks
+  /// on from its last timestamp: English speech runs at 3 to 4 a second, so
+  /// there only a decode that loops or invents text reaches it, and every
+  /// temperature fallback round stops there instead of at whisper's
+  /// 220-token window limit. Swahili and Arabic take about three pieces a
+  /// word, so their fast speech nears the bound (spec §30.4.2 rule 8).
   /// The three thresholds and `temperatureStep` are whisper's fallback
   /// rules. Native log lines are cut to `logLineChars`, at most
   /// `logLinesPerDrain` per command. A lane restarts at most
@@ -100,6 +108,8 @@ abstract final class AppConstants {
     int maxDecodeSamples,
     int minDecodeSamples,
     int interimMaxPieces,
+    int committedPiecesPerSecond,
+    int committedMinPieces,
     int interimAudioContextPad,
     int committedAudioContextPad,
     int committedMinAudioContext,
@@ -138,6 +148,8 @@ abstract final class AppConstants {
     maxDecodeSamples: 30 * 16000,
     minDecodeSamples: 16000,
     interimMaxPieces: 96,
+    committedPiecesPerSecond: 10,
+    committedMinPieces: 24,
     interimAudioContextPad: 64,
     committedAudioContextPad: 128,
     committedMinAudioContext: 896,
@@ -179,11 +191,15 @@ abstract final class AppConstants {
   /// stand as designed and are not loosened.
   ///
   /// A final's compute at p90 has a budget per model (2026-10-05, tasks
-  /// 117 and 118): with finals sized over `committedMinAudioContext`, tiny
-  /// meets the original 1000 ms, while base, which no context that keeps
-  /// every word brings under 1.1 s on this 4-core machine, gets 2000 ms
-  /// rather than `auto` falling back to the less accurate tiny (spec
-  /// §30.4.2 rule 8, §30.4.3).
+  /// 117 and 118): tiny keeps the original 1000 ms, while base, which no
+  /// context that keeps every word brings under 1.1 s on this 4-core
+  /// machine, gets 2000 ms rather than `auto` falling back to the less
+  /// accurate tiny (spec §30.4.2 rule 8, §30.4.3). With finals bounded by
+  /// `committedPiecesPerSecond` and `committedMinPieces` neither is met
+  /// reliably: over 25 runs tiny met 1000 ms in 4 and base 2000 ms in 14.
+  /// Tiny's p90 ranged 608–4187 ms even at 17–30% load, because one or two
+  /// finals per run still cost 1.5–8.2 s, so no evidence-backed tiny budget
+  /// exists yet; the choice awaits a decision (task 118, open).
   static const ({
     Duration tinyLoad,
     Duration baseLoad,
@@ -215,7 +231,7 @@ abstract final class AppConstants {
     pipelinePerAudioSecond: Duration(milliseconds: 15),
     firstPartialCompute: Duration(milliseconds: 1500),
     tinyFinalizeCompute: Duration(milliseconds: 1000),
-    baseFinalizeCompute: Duration(milliseconds: 2500),
+    baseFinalizeCompute: Duration(milliseconds: 2000),
     longSessionPeakRssBytes: 64 * _mib,
     longSessionRetainedRssBytes: 48 * _mib,
     uiDrift: Duration(milliseconds: 32),
@@ -660,6 +676,9 @@ abstract final class AppConstants {
     archiveUncompressedMaxBytes: 500 * _mib,
     incomingBridgeTimeout: Duration(seconds: 5),
   );
+
+  /// Preserve small reserved-cost amounts in localised spending displays.
+  static const int aiCostFractionDigits = 8;
 
   /// Caps, backoff and detection cutoffs for processing.
   ///

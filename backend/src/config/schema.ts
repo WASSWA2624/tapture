@@ -1,6 +1,7 @@
 import { RETENTION_HARD_MAX_DAYS } from '../domain/retention.js';
+import { parseAiConfiguration, type AiConfiguration } from './ai.js';
 
-export interface AppConfig {
+export interface AppConfig extends AiConfiguration {
   port: number;
   databaseUrl: string;
   tokenSecret: string;
@@ -160,6 +161,7 @@ export function parseConfig(env: NodeJS.ProcessEnv): AppConfig {
     throw new Error('AI_BODY_LIMIT_BYTES must be at least BODY_LIMIT_BYTES.');
   }
   return {
+    ...parseAiConfiguration(env, env['AI_PROVIDER_MODEL'] ?? 'default'),
     port: integer(env['PORT'], 8080, 0, 65535),
     databaseUrl: required(env, 'DATABASE_URL'),
     tokenSecret: required(env, 'TOKEN_SECRET'),

@@ -5070,7 +5070,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiSelectionFallback =>
-      'The saved choice is unavailable. The organisation backend is selected for now.';
+      'The saved provider or model is unavailable. Choose explicitly before analysis can continue.';
 
   @override
   String get aiProviderUnavailable =>
@@ -12105,6 +12105,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cloudSignInAgain => 'Sign in again.';
+
+  @override
+  String get exportFormatDocx => 'Word document (DOCX)';
+
+  @override
+  String get exportFormatTxt => 'Plain text (TXT)';
+
+  @override
+  String get serverApiKeySaved => 'Encrypted on the organisation server';
+
+  @override
+  String get serverApiKeyCustody =>
+      'Your key is encrypted on the organisation server. Requests use your provider account; no automatic billing-account switch.';
+
+  @override
+  String get aiRequestUncertain =>
+      'This request may have been charged. Its result is unavailable. Review before starting a new attempt.';
+
+  @override
+  String get aiManagedAccount => 'Organisation-managed account';
+
+  @override
+  String aiPersonalAccount(String provider) {
+    return 'Your $provider account';
+  }
+
+  @override
+  String get aiSpendingLimit => 'Maximum cost per request';
+
+  @override
+  String get aiSpendingLimitHint =>
+      'Budget units configured by your organisation. Higher-cost models require explicit approval.';
+
+  @override
+  String get serverCredentialRemoveMessage =>
+      'Delete your encrypted provider key from the organisation server. Analysis for this account stops until a key is saved again.';
+
+  @override
+  String get processingFindingsTitle => 'Analysis findings';
+
+  @override
+  String get processingRetryChargeTitle => 'Retry analysis?';
+
+  @override
+  String get processingRetryChargeBody =>
+      'The previous request may have been charged. Retrying starts a new request and may spend more.';
+
+  @override
+  String get processingRetryChargeConfirm => 'Approve retry';
+
+  @override
+  String processingReservedCost(String amount, String unit) {
+    return 'Reserved cost: $amount $unit (spending ceiling)';
+  }
+
+  @override
+  String processingTokens(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reported tokens',
+      one: '$count reported token',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String processingEgressSelection(
+    String provider,
+    String model,
+    String account,
+    String limit,
+  ) {
+    return 'Provider: $provider. Model: $model. Billing: $account. Approved request limit: $limit.';
+  }
+
+  @override
+  String get processingEgressManaged => 'Managed account';
+
+  @override
+  String get processingEgressPersonal => 'Your server-held key';
+
+  @override
+  String get processingEgressLimitDefault => 'configured server limit';
+
+  @override
+  String aiModelCostCeiling(String amount, String unit) {
+    return 'This model reserves up to $amount $unit per request.';
+  }
 }
 
 /// The translations for English (`en_XA`).
@@ -17244,7 +17333,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get aiSelectionFallback =>
-      'Thé sávéd chóícé ís únáváíláblé. Thé órgánísátíón báckénd ís séléctéd fór nów.····························';
+      'Thé sávéd próvídér ór módél ís únáváíláblé. Chóósé éxplícítly béfóré ánálysís cán cóntínúé.································';
 
   @override
   String get aiProviderUnavailable =>
@@ -24379,4 +24468,94 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get cloudSignInAgain => 'Sígn ín ágáín.·····';
+
+  @override
+  String get exportFormatDocx => 'Wórd dócúmént (DÓCX)·······';
+
+  @override
+  String get exportFormatTxt => 'Pláín téxt (TXT)······';
+
+  @override
+  String get serverApiKeySaved =>
+      'Éncryptéd ón thé órgánísátíón sérvér·············';
+
+  @override
+  String get serverApiKeyCustody =>
+      'Yóúr kéy ís éncryptéd ón thé órgánísátíón sérvér. Réqúésts úsé yóúr próvídér áccóúnt; nó áútómátíc bíllíng-áccóúnt swítch.···········································';
+
+  @override
+  String get aiRequestUncertain =>
+      'Thís réqúést máy hávé béén chárgéd. Íts résúlt ís únáváíláblé. Révíéw béfóré stártíng á néw áttémpt.···································';
+
+  @override
+  String get aiManagedAccount => 'Órgánísátíón-mánágéd áccóúnt··········';
+
+  @override
+  String aiPersonalAccount(String provider) {
+    return 'Yóúr ··$provider áccóúnt···';
+  }
+
+  @override
+  String get aiSpendingLimit => 'Máxímúm cóst pér réqúést·········';
+
+  @override
+  String get aiSpendingLimitHint =>
+      'Búdgét úníts cónfígúréd by yóúr órgánísátíón. Híghér-cóst módéls réqúíré éxplícít áppróvál.································';
+
+  @override
+  String get serverCredentialRemoveMessage =>
+      'Délété yóúr éncryptéd próvídér kéy fróm thé órgánísátíón sérvér. Ánálysís fór thís áccóúnt stóps úntíl á kéy ís sávéd ágáín.············································';
+
+  @override
+  String get processingFindingsTitle => 'Ánálysís fíndíngs······';
+
+  @override
+  String get processingRetryChargeTitle => 'Rétry ánálysís?······';
+
+  @override
+  String get processingRetryChargeBody =>
+      'Thé prévíóús réqúést máy hávé béén chárgéd. Rétryíng stárts á néw réqúést ánd máy spénd móré.·································';
+
+  @override
+  String get processingRetryChargeConfirm => 'Áppróvé rétry·····';
+
+  @override
+  String processingReservedCost(String amount, String unit) {
+    return 'Résérvéd cóst: ······$amount $unit (spéndíng céílíng)·······';
+  }
+
+  @override
+  String processingTokens(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count répórtéd tókéns······',
+      one: '$count répórtéd tókén······',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String processingEgressSelection(
+    String provider,
+    String model,
+    String account,
+    String limit,
+  ) {
+    return 'Próvídér: ····$provider. Módél: ····$model. Bíllíng: ····$account. Áppróvéd réqúést límít: ··········$limit.';
+  }
+
+  @override
+  String get processingEgressManaged => 'Mánágéd áccóúnt······';
+
+  @override
+  String get processingEgressPersonal => 'Yóúr sérvér-héld kéy·······';
+
+  @override
+  String get processingEgressLimitDefault => 'cónfígúréd sérvér límít·········';
+
+  @override
+  String aiModelCostCeiling(String amount, String unit) {
+    return 'Thís módél résérvés úp tó ··········$amount $unit pér réqúést.·····';
+  }
 }

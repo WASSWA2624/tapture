@@ -3124,6 +3124,58 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'exportFormatCsv' => exportFormatCsv,
     'exportFormatJson' => exportFormatJson,
     'exportFormatPdf' => exportFormatPdf,
+    'exportFormatDocx' => exportFormatDocx,
+    'exportFormatTxt' => exportFormatTxt,
+    'processingEgressSelection' => processingEgressSelection(
+      (message.argument('provider') is LocalizedMessage
+          ? resolve(message.argument('provider') as LocalizedMessage)
+          : message.argument('provider') as String),
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+      (message.argument('account') is LocalizedMessage
+          ? resolve(message.argument('account') as LocalizedMessage)
+          : message.argument('account') as String),
+      (message.argument('limit') is LocalizedMessage
+          ? resolve(message.argument('limit') as LocalizedMessage)
+          : message.argument('limit') as String),
+    ),
+    'processingEgressManaged' => processingEgressManaged,
+    'processingEgressPersonal' => processingEgressPersonal,
+    'processingEgressLimitDefault' => processingEgressLimitDefault,
+    'processingReservedCost' => processingReservedCost(
+      (message.argument('amount') is LocalizedMessage
+          ? resolve(message.argument('amount') as LocalizedMessage)
+          : message.argument('amount') as String),
+      (message.argument('unit') is LocalizedMessage
+          ? resolve(message.argument('unit') as LocalizedMessage)
+          : message.argument('unit') as String),
+    ),
+    'processingTokens' => processingTokens(message.argument('count') as int),
+    'processingFindingsTitle' => processingFindingsTitle,
+    'processingRetryChargeTitle' => processingRetryChargeTitle,
+    'processingRetryChargeBody' => processingRetryChargeBody,
+    'processingRetryChargeConfirm' => processingRetryChargeConfirm,
+    'serverApiKeySaved' => serverApiKeySaved,
+    'serverApiKeyCustody' => serverApiKeyCustody,
+    'aiRequestUncertain' => aiRequestUncertain,
+    'aiManagedAccount' => aiManagedAccount,
+    'aiPersonalAccount' => aiPersonalAccount(
+      (message.argument('provider') is LocalizedMessage
+          ? resolve(message.argument('provider') as LocalizedMessage)
+          : message.argument('provider') as String),
+    ),
+    'aiSpendingLimit' => aiSpendingLimit,
+    'aiModelCostCeiling' => aiModelCostCeiling(
+      (message.argument('amount') is LocalizedMessage
+          ? resolve(message.argument('amount') as LocalizedMessage)
+          : message.argument('amount') as String),
+      (message.argument('unit') is LocalizedMessage
+          ? resolve(message.argument('unit') as LocalizedMessage)
+          : message.argument('unit') as String),
+    ),
+    'aiSpendingLimitHint' => aiSpendingLimitHint,
+    'serverCredentialRemoveMessage' => serverCredentialRemoveMessage,
     'exportScopeName' => exportScopeName(
       (message.argument('kind') is LocalizedMessage
           ? resolve(message.argument('kind') as LocalizedMessage)

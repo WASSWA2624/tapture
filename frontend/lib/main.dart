@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +14,10 @@ import 'app/theme/settings_text_store.dart';
 import 'app/view_focus_coordinator.dart';
 import 'app/widgets/status_line.dart';
 import 'core/ai/ai_media_reader.dart';
-import 'core/ai/ai_service.dart';
 import 'core/ai/ocr_service.dart';
 import 'core/ai/provider_registry.dart';
+import 'core/ai/proxy_ai_service.dart';
+import 'core/ai/server_provider_registry.dart';
 import 'core/ai/stt_service.dart';
 import 'core/audio/audio_capture_service.dart';
 import 'core/audio/audio_recorder_plugin.dart';
@@ -26,6 +28,8 @@ import 'core/audio/staged_take_recovery.dart';
 import 'core/backend/backend_session.dart';
 import 'core/backend/relay_package.dart';
 import 'core/backend/relay_queue.dart';
+import 'core/backend/server_ai_catalogue.dart';
+import 'core/backend/server_credential_client.dart';
 import 'core/background/power_source.dart';
 import 'core/barcode/barcode_scanner_service.dart';
 import 'core/bundle/bundle_output.dart';
@@ -104,7 +108,14 @@ import 'features/processing/presentation/processing_batch_state.dart';
 import 'features/processing/presentation/processing_controller.dart';
 import 'features/processing/presentation/queue_providers.dart';
 import 'features/processing/presentation/unattended_processing.dart';
-import 'features/processing/processing.dart' show JobStage, ProcessingJob;
+import 'features/processing/processing.dart'
+    show
+        JobStage,
+        ProcessingJob,
+        ProcessingFindings,
+        ProcessingUsage,
+        processingFindingsStoreProvider,
+        processingUsageStoreProvider;
 import 'features/projects/data/project_openable_file_lookup_factory.dart';
 import 'features/projects/data/project_repository_impl.dart';
 import 'features/projects/presentation/current_project.dart';
@@ -468,21 +479,51 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
     final DeviceDescriptor device = await deviceRead;
     // AI goes through the organisation's proxy by default: no key is ever
     // entered on the device (task 024 step 26).
-    final AiService proxy = backendProxy(
+    final ProxyAiService proxy = backendProxy(
       backendSession,
       AiMediaReader(
         files: FileReader(storageRoot: storageRoot),
         storageRoot: storageRoot,
       ),
+      readMaxCost: () {
+        final double cost = offlineStore.read(SettingKeys.aiRequestMaxCost);
+        return cost > 0 ? cost : null;
+      },
+    );
+    Future<({int status, Map<String, Object?> body})> aiSend({
+      required String method,
+      required String path,
+      Map<String, Object?>? body,
+      String? token,
+    }) => backendSession.send(method: method, path: path, body: body);
+    final ServerAiCatalogue aiCatalogue = ServerAiCatalogue(
+      send: aiSend,
+      readSnapshot: () {
+        try {
+          return jsonDecode(offlineStore.read(SettingKeys.aiCatalogue));
+        } on FormatException {
+          return null;
+        }
+      },
+      writeSnapshot: (List<Map<String, Object?>> rows) async {
+        final Result<void> written = await offlineStore.write(
+          SettingKeys.aiCatalogue,
+          jsonEncode(rows),
+        );
+        if (written case FailureResult<void>(:final Failure failure)) {
+          throw failure;
+        }
+      },
     );
     // An operation switched off on the privacy page resolves to nothing, in
     // every registry the app builds (task 022).
     bool egressAllows(AiOperation operation) => EgressSwitches.decode(
       offlineStore.read(SettingKeys.egressOff),
     ).allows(EgressSwitches.ai(operation));
-    final ProviderRegistry providerRegistry = ProviderRegistry.keyless(
+    final ProviderRegistry providerRegistry = serverProviderRegistry(
       proxy: proxy,
       allows: egressAllows,
+      catalogue: aiCatalogue,
     );
     final ProcessingStageWorker processingWorker = ProcessingStageWorker(
       db: db,
@@ -529,16 +570,26 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
         return backendSession;
       }),
       feedbackClockProvider.overrideWith((Ref _) => clock),
+      serverCredentialClientProvider.overrideWithValue(
+        ServerCredentialClient(
+          send:
+              ({
+                required String method,
+                required String path,
+                Map<String, Object?>? body,
+                String? token,
+              }) => backendSession.send(method: method, path: path, body: body),
+        ),
+      ),
+      serverAiCatalogueProvider.overrideWithValue(aiCatalogue),
       providerRegistryProvider.overrideWith((Ref ref) {
         ref.watch(backendConfigProvider);
         // Bound to the open project, so Settings tests the proxy in the scope
         // the server authorises; with none open it reports unavailable.
-        return ProviderRegistry.keyless(
-          proxy: ProviderRegistry.keyless(proxy: proxy).resolve(
-            projectId: ref.watch(currentProjectProvider) ?? '',
-            operation: AiOperation.extractFields,
-          ),
+        return serverProviderRegistry(
+          proxy: proxy.forProject(ref.watch(currentProjectProvider) ?? ''),
           allows: egressAllows,
+          catalogue: aiCatalogue,
         );
       }),
       relayQueueProvider.overrideWith((Ref _) {
@@ -871,6 +922,12 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
         ref.onDispose(() => unawaited(service.dispose()));
         return service;
       }),
+      processingFindingsStoreProvider.overrideWithValue(
+        ProcessingFindings(db: db),
+      ),
+      processingUsageStoreProvider.overrideWithValue(
+        ProcessingUsage(db: db, settings: offlineStore),
+      ),
       processingRepositoryProvider.overrideWith((Ref ref) {
         return ProcessingRepositoryImpl(
           db: db,
@@ -897,10 +954,16 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
       processingEgressSummaryProvider.overrideWith(
         (Ref _) => processingWorker.egressSummary,
       ),
+      processingEgressIdentityProvider.overrideWith(
+        (Ref _) => processingWorker.egressIdentity,
+      ),
       processingTemplateChoiceProvider.overrideWith(
         (Ref _) => processingWorker.templateChoice,
       ),
       processingTemplateAssistProvider.overrideWith(
+        (Ref _) => processingWorker.templateAssist,
+      ),
+      processingCancellableTemplateAssistProvider.overrideWith(
         (Ref _) => processingWorker.templateAssist,
       ),
       unattendedProcessingProvider.overrideWith((Ref ref) {
@@ -1017,7 +1080,9 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
         _checkIntegrity(db, storageRoot),
         _pruneCache(storageRoot),
         _recordSpeechCrashes(),
-        backendSession.refresh().then<void>((_) {}),
+        backendSession.refresh().then<void>((_) async {
+          await aiCatalogue.refresh();
+        }),
       ];
       fixture?.maintenance.addAll(work);
       for (final Future<void> future in work) {

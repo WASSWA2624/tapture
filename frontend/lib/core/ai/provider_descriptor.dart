@@ -15,6 +15,8 @@ final class ProviderDescriptor {
     required bool available,
     required AiService service,
     required List<ModelDescriptor> models,
+    String? serverCredentialProvider,
+    List<ModelDescriptor> Function()? modelsLookup,
   }) {
     return ProviderDescriptor._(
       id: id,
@@ -25,6 +27,8 @@ final class ProviderDescriptor {
       available: available,
       service: service,
       models: List<ModelDescriptor>.unmodifiable(models),
+      serverCredentialProvider: serverCredentialProvider,
+      modelsLookup: modelsLookup,
     );
   }
 
@@ -36,7 +40,9 @@ final class ProviderDescriptor {
     required this.deviceKeyAllowed,
     required this.available,
     required this.service,
-    required this.models,
+    required this._models,
+    this.serverCredentialProvider,
+    this._modelsLookup,
   });
 
   /// Stable wire id.
@@ -61,5 +67,13 @@ final class ProviderDescriptor {
   final AiService service;
 
   /// Ordered model catalogue.
-  final List<ModelDescriptor> models;
+  final List<ModelDescriptor> _models;
+  final List<ModelDescriptor> Function()? _modelsLookup;
+
+  /// Current immutable server catalogue, or the descriptor's fixed models.
+  List<ModelDescriptor> get models =>
+      List<ModelDescriptor>.unmodifiable(_modelsLookup?.call() ?? _models);
+
+  /// Provider whose personal credential is encrypted by the backend.
+  final String? serverCredentialProvider;
 }

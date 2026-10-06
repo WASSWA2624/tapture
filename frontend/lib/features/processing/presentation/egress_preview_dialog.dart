@@ -9,16 +9,21 @@ Future<bool> showEgressPreview(
   BuildContext context, {
   required int imageCount,
   required int payloadBytes,
+  String? selectionDetails,
 }) {
   final LocalizedCopy localCopy = Copy.of(context);
 
   return showAppConfirm(
     context,
     title: localCopy.egressTitle,
-    message: localCopy.egressBody(
-      images: imageCount,
-      size: localCopy.fileSize(payloadBytes),
-    ),
+    message: <String>[
+      localCopy.egressBody(
+        images: imageCount,
+        size: localCopy.fileSize(payloadBytes),
+      ),
+      if (selectionDetails != null && selectionDetails.isNotEmpty)
+        selectionDetails,
+    ].join('\n\n'),
     confirmLabel: localCopy.egressSend,
   );
 }

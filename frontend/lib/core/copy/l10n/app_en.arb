@@ -4037,7 +4037,7 @@
   "@microphoneBusy": {
     "description": "Refusal when another recording already holds the microphone."
   },
-  "audioStartFailed":"Recording could not start.",
+  "audioStartFailed": "Recording could not start.",
   "@audioStartFailed": {
     "description": "The recorder refused to start a take."
   },
@@ -6608,7 +6608,7 @@
       }
     }
   },
-  "aiSelectionFallback": "The saved choice is unavailable. The organisation backend is selected for now.",
+  "aiSelectionFallback": "The saved provider or model is unavailable. Choose explicitly before analysis can continue.",
   "@aiSelectionFallback": {
     "description": "Saved choice fallback explanation."
   },
@@ -15277,5 +15277,139 @@
   "cloudSignInAgain": "Sign in again.",
   "@cloudSignInAgain": {
     "description": "Sign in again."
+  },
+  "exportFormatDocx": "Word document (DOCX)",
+  "@exportFormatDocx": {
+    "description": "File choice: an editable Word report."
+  },
+  "exportFormatTxt": "Plain text (TXT)",
+  "@exportFormatTxt": {
+    "description": "File choice: a UTF-8 record report."
+  },
+  "serverApiKeySaved": "Encrypted on the organisation server",
+  "@serverApiKeySaved": {
+    "description": "A saved server credential status; never shows the key."
+  },
+  "serverApiKeyCustody": "Your key is encrypted on the organisation server. Requests use your provider account; no automatic billing-account switch.",
+  "@serverApiKeyCustody": {
+    "description": "Explains encrypted personal credential custody."
+  },
+  "aiRequestUncertain": "This request may have been charged. Its result is unavailable. Review before starting a new attempt.",
+  "@aiRequestUncertain": {
+    "description": "A provider request has an uncertain billing result."
+  },
+  "aiManagedAccount": "Organisation-managed account",
+  "@aiManagedAccount": {
+    "description": "The selected managed billing account."
+  },
+  "aiPersonalAccount": "Your {provider} account",
+  "@aiPersonalAccount": {
+    "description": "The selected personal billing account.",
+    "placeholders": {
+      "provider": {
+        "type": "String",
+        "description": "The selected provider name."
+      }
+    }
+  },
+  "aiSpendingLimit": "Maximum cost per request",
+  "@aiSpendingLimit": {
+    "description": "Explicit AI request budget control."
+  },
+  "aiSpendingLimitHint": "Budget units configured by your organisation. Higher-cost models require explicit approval.",
+  "@aiSpendingLimitHint": {
+    "description": "Explains request budgets and escalation approval."
+  },
+  "serverCredentialRemoveMessage": "Delete your encrypted provider key from the organisation server. Analysis for this account stops until a key is saved again.",
+  "@serverCredentialRemoveMessage": {
+    "description": "Confirmation when deleting a personal server credential."
+  },
+  "processingFindingsTitle": "Analysis findings",
+  "@processingFindingsTitle": {
+    "description": "Processing review and retry control."
+  },
+  "processingRetryChargeTitle": "Retry analysis?",
+  "@processingRetryChargeTitle": {
+    "description": "Processing review and retry control."
+  },
+  "processingRetryChargeBody": "The previous request may have been charged. Retrying starts a new request and may spend more.",
+  "@processingRetryChargeBody": {
+    "description": "Processing review and retry control."
+  },
+  "processingRetryChargeConfirm": "Approve retry",
+  "@processingRetryChargeConfirm": {
+    "description": "Processing review and retry control."
+  },
+  "processingReservedCost": "Reserved cost: {amount} {unit} (spending ceiling)",
+  "@processingReservedCost": {
+    "description": "Processing usage and cost display.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "description": "The reserved numeric ceiling."
+      },
+      "unit": {
+        "type": "String",
+        "description": "The organisation-configured billing unit."
+      }
+    }
+  },
+  "processingTokens": "{count, plural, one{{count} reported token} other{{count} reported tokens}}",
+  "@processingTokens": {
+    "description": "Processing usage and cost display.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Provider-reported token count."
+      }
+    }
+  },
+  "processingEgressSelection": "Provider: {provider}. Model: {model}. Billing: {account}. Approved request limit: {limit}.",
+  "@processingEgressSelection": {
+    "description": "Explicit processing consent for the provider, model, billing account and spending ceiling.",
+    "placeholders": {
+      "provider": {
+        "type": "String",
+        "description": "Selected provider."
+      },
+      "model": {
+        "type": "String",
+        "description": "Selected model."
+      },
+      "account": {
+        "type": "String",
+        "description": "Selected account."
+      },
+      "limit": {
+        "type": "String",
+        "description": "Selected limit."
+      }
+    }
+  },
+  "processingEgressManaged": "Managed account",
+  "@processingEgressManaged": {
+    "description": "Explicit processing consent for the provider, model, billing account and spending ceiling."
+  },
+  "processingEgressPersonal": "Your server-held key",
+  "@processingEgressPersonal": {
+    "description": "Explicit processing consent for the provider, model, billing account and spending ceiling."
+  },
+  "processingEgressLimitDefault": "configured server limit",
+  "@processingEgressLimitDefault": {
+    "description": "Explicit processing consent for the provider, model, billing account and spending ceiling."
+  },
+  "aiModelCostCeiling": "This model reserves up to {amount} {unit} per request.",
+  "@aiModelCostCeiling": {
+    "description": "Visible configured spending ceiling for the selected provider model before approval.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "description": "Configured maximum model cost formatted for display."
+      },
+      "unit": {
+        "type": "String",
+        "description": "Budget unit label configured by the organisation."
+      }
+    }
   }
 }

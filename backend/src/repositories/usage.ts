@@ -1,4 +1,6 @@
-export interface UsageRow {
+import type { UsageMetadata } from './ai-state.js';
+
+export interface UsageRow extends UsageMetadata {
   projectId: string;
   userId: string;
   model: string;
