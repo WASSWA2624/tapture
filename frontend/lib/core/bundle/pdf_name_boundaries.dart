@@ -204,13 +204,13 @@ final class _PdfDictionary {
       _expectsLength = true;
       _lengthCandidate = false;
     } else if (_expectsLength) {
-      final int? value = int.tryParse(text);
+      final int? value = int.tryParse(text, radix: 10);
       length = value != null && value >= 0 ? value : null;
       _expectsLength = false;
       _lengthCandidate = true;
     } else if (_lengthCandidate) {
       // `/Length n 0 R` is an indirect object reference, not a byte count.
-      if (int.tryParse(text) != null || text == 'R') length = null;
+      if (int.tryParse(text, radix: 10) != null || text == 'R') length = null;
       _lengthCandidate = false;
     }
   }

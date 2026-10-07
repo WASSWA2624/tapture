@@ -139,6 +139,38 @@ void main() {
           throwsA(isA<ValidationFailure>()),
         );
       }
+      for (final String length in <String>['0x1', '+0x1']) {
+        for (final int chunkSize in <int>[1, 7, 65536]) {
+          expect(
+            () => scan(
+              latin1.encode(
+                '%PDF-1.7\n<</Length $length>>stream\nx\nendstream\n<<$names>>',
+              ),
+              chunkSize: chunkSize,
+            ),
+            throwsA(isA<ValidationFailure>()),
+          );
+        }
+      }
+      // Signed decimal integers are PDF syntax; stream lengths stay nonnegative.
+      for (final String length in <String>[
+        '1',
+        '+1',
+        '+0001',
+        '0',
+        '+0',
+        '-0',
+      ]) {
+        final String content = length.endsWith('1') ? 'x' : '';
+        for (final int chunkSize in <int>[1, 7, 65536]) {
+          scan(
+            latin1.encode(
+              '%PDF-1.7\n<</Length $length>>stream\n$content\nendstream\n<<$names>>',
+            ),
+            chunkSize: chunkSize,
+          );
+        }
+      }
       expect(
         () => scan(
           latin1.encode(

@@ -447,10 +447,10 @@ changes. Capture keeps its extension, size and signature validation after select
 
 ### Definition of done
 
-- [ ] The shared Android picker emits a valid primary MIME type and alternative-type extras, accepts Android's CSV MIME alias, and preserves other single-type and unrestricted requests.
-- [ ] Tests: the installed production APK offers PDF, CSV, JSON and XLSX through the native capture picker while an unsupported PNG remains disabled.
-- [ ] A selected PDF is copied without altering the source, renders through native PDFium, and can be retained as raw capture evidence.
-- [ ] Existing document-picker, validation and native-bootstrap regression tests pass; the fixed production APKs rebuild and the release guide records the native verification.
+- [x] The shared Android picker emits a valid primary MIME type and alternative-type extras, accepts Android's CSV MIME alias, and preserves other single-type and unrestricted requests.
+- [x] Tests: the installed production APK offers PDF, CSV, JSON and XLSX through the native capture picker while an unsupported PNG remains disabled.
+- [x] A selected PDF is copied without altering the source, renders through native PDFium, and can be retained as raw capture evidence.
+- [x] Existing document-picker, validation and native-bootstrap regression tests pass; the fixed production APKs rebuild and the release guide records the native verification.
 
 ### Discovery evidence — 2026-10-07
 
@@ -466,6 +466,20 @@ records MediaStore identifying `tapture-smoke.csv` as `text/comma-separated-valu
 `text/csv`. The follow-up uses [Android's platform MIME map](https://developer.android.com/reference/android/webkit/MimeTypeMap#getMimeTypeFromExtension(java.lang.String))
 to add its CSV alias only when CSV is accepted. All task criteria remain open until that version rebuilds and
 passes the native picker and PDF/capture checks; existing APKs and raw inspection evidence are retained.
+
+### Verification — 2026-10-07
+
+- The CSV-alias APKs rebuild successfully. The installed API 36 production APK enables PDF, CSV, JSON and XLSX
+  and disables PNG in `android-final-document-picker.xml`; its native intent uses the wildcard primary MIME
+  type. Code inspection preserves specific single-type and unrestricted requests without changing the channel.
+- The selected 13-page PDF renders pages 1 and 2 through native PDFium. Page 2 saves as raw capture; both records
+  remain visible after a forced app restart. The imported original and source retain the SHA-256
+  `1d69037ac85bdbe0ac3721687e85ded03aa57095f2fd847e273527f6a1e80061`.
+- All 27 existing picker, file-validation and native-bootstrap regressions pass. The release guide records the
+  Android evidence; task 136 retains final artifact inspection and device acceptance for the later PDF parser
+  rebuild. Earlier failed picker evidence is preserved beside these successful observations.
+- The delivery APK repeats all four enabled formats and the disabled PNG in
+  `android-delivery-document-picker.xml`; no picker regression appears after the PDF parser rebuild.
 
 ## 140 — Recognize PDF name boundaries during bundle secret scanning
 
@@ -517,13 +531,23 @@ matching pattern. The original document and failed-export UI evidence remain und
   including nested archives, with identical bytes and SHA-256. Canonical byte scanning still reproduces the old
   false positive, proving that the corrected payload path exercised it. Source evidence remains unchanged.
 - Every explicit credential pattern checks original bytes. Long base64 data remains rejected in strings, escaped
-  and nested strings, comments, hex strings, long names and direct-length streams at 1-, 7- and 65,536-byte chunk
-  sizes. Indirect/invalid stream lengths, malformed end markers and embedded `endstream` data retain strict scans.
+  and nested strings, comments, hex strings, long names and direct-length streams. Strings, comments and streams
+  are covered at 1-, 7- and 65,536-byte chunks; hex strings and long names use 7-byte chunks. Indirect/invalid
+  stream lengths, malformed end markers and embedded `endstream` data retain strict scans.
 - The focused PDF, redaction, protection, writer and atomic ZIP suites pass 34/34 tests. Changed source and test
   files analyze cleanly, formatting is clean and repository hygiene passes. Generated logs are
   `frontend/build/apk-validation/android-package-redaction-tests.txt` and `android-package-redaction-analysis.txt`.
 - The exact fixture and shipped regression's existing shared imports are available to Git. Actual installed-APK
   package export after rebuilding remains part of task 136's native device acceptance.
+- Final review reopened, then reverified, conservative stream-length handling: both numeric parses now use
+  explicit radix 10, matching [ISO 32000-1 §7.3.3](https://opensource.adobe.com/dc-acrobat-sdk-docs/standards/pdfstandards/pdf/PDF32000_2008.pdf).
+  Malformed hexadecimal lengths retain strict scanning of following dictionary names at 1-, 7- and 65,536-byte
+  chunks; valid `+1`, `+0001`, `0`, `+0` and `-0` retain decimal behavior, while negative lengths still fail closed.
+  The regression demonstrably fails against the previous parser (`android-package-hex-length-before-fix.txt`).
+  The updated full focused suite passes 34/34, changed files analyze cleanly, formatting and repository hygiene
+  pass. Final correction logs are `android-package-decimal-length-tests.txt`,
+  `android-package-decimal-length-analysis.txt` and `android-package-decimal-length-hygiene.txt` in the retained
+  `frontend/build/apk-validation/` evidence directory.
 
 ## 136 — Optimize and verify Android APK delivery
 
@@ -550,40 +574,69 @@ on 2026-10-07. Do not remove models or change their quality to reach it; report 
 
 ### Definition of done
 
-- [ ] Production APKs build for the supported ABIs with shrinking, lossless native compression and external Dart symbols.
-- [ ] Each APK retains the exact bundled model bytes and the expected native libraries for its ABI.
-- [ ] APK signatures and ZIP alignment verify; the native speech library checker passes every shipped ABI.
+- [x] Production APKs build for the supported ABIs with shrinking, lossless native compression and external Dart symbols.
+- [x] Each APK retains the exact bundled model bytes and the expected native libraries for its ABI.
+- [x] APK signatures and ZIP alignment verify; the native speech library checker passes every shipped ABI.
 - [x] Tests: analysis and existing release, speech, database, OCR, PDF and offline flow suites pass; skipped native checks are identified.
-- [ ] A device smoke test verifies installation, cold start, durable offline capture, speech, OCR, PDF import and export.
-- [ ] The documented build command, measured sizes and 50 MB feasibility result preserve all offline models and describe remaining acceptance limits.
+- [x] A device smoke test verifies installation, cold start, durable offline capture, speech, OCR, PDF import and export.
+- [x] The documented build command, measured sizes and 50 MB feasibility result preserve all offline models and describe remaining acceptance limits.
 
 ### Verification — 2026-10-07
 
-- Production split APKs built successfully with external symbols: ARM64 130,920,343 bytes, ARM32 127,846,801 bytes,
-  x86_64 132,119,362 bytes. ARM64 is 55.0% smaller than the previous 291,194,390-byte universal APK.
+- The delivery build includes tasks 139/140 and succeeds with external symbols in 475.1 seconds: ARM64
+  130,925,663 bytes, ARM32 127,852,477 bytes, x86_64 132,125,026 bytes. ARM64 is 55.0% smaller than the previous
+  291,194,390-byte universal APK. The earlier initial build measured ARM64 130,920,343 bytes, ARM32 127,846,801
+  bytes and x86_64 132,119,362 bytes; intermediate APKs and their raw reports are preserved in the dated
+  `before-document-picker-fix`, `before-csv-alias-fix` and `before-pdf-decimal-length-fix` validation snapshots.
 - APK v2 signatures, ZIP alignment and metadata verify for all three. Models match every expected byte length and
   SHA-256. All native libraries are compressed and native library names match the previous build for each ABI.
   Every ARM64/x86_64 library has 16 KiB-aligned load segments; `check_native_library` passes each speech library.
   ARM32 retains its existing speech stub and some 4 KiB third-party binaries.
-- All 30 non-Dart native binaries are byte-identical to the previous universal APK. A separate GNU RELRO
+- All 30 non-Dart native binaries are byte-identical to the previous universal APK and both later preserved
+  baselines. Only the three Dart `libapp.so` binaries change with task 140. A separate GNU RELRO
   endpoint check reports 13 pre-existing 64-bit advisories without a demonstrated crash. Pending task
   [138](27-hardening/32-verify-16-kib-runtime-protection-for-packaged-android-libraries.md) records the required
   16 KiB runtime memory-protection verification; load-segment and ZIP alignment do not close it.
 - Full `flutter analyze --no-pub` passes. The 141 focused checks pass, including real PDFium rendering; 14 current
-  offline flows pass; task 137's dedicated regression and focused analysis pass. The broad test run was replaced
+  offline flows pass; task 137's dedicated regression and focused analysis pass. Task 139's 27 picker/validation/
+  bootstrap checks and task 140's 34 real bundle/redaction/protection regressions pass; changed files analyze
+  and format cleanly. The broad test run was replaced
   by these focused suites; it is not claimed as completed. A capture fixture hit the default 30-second timeout
   during concurrent compilation, then passed alone and in the final suite with an explicit five-minute budget.
 - The 20 opt-in speech-engine tests pass against the built Windows release library and actual bundled tiny,
   base and Silero models, including native transcription, voice detection, cancellation, interleaved leases and
   20 load/unload cycles. Native smoke self-test, tiny/base transcription and abort/retry pass. These desktop
-  checks do not substitute for the open Android device acceptance.
+  checks complement the actual Android native and microphone evidence below.
 - Windows Java required a process-local temporary/socket-directory workaround; no global environment changed.
   Build-generated tracked CMake fingerprints were restored; the pre-existing deleted Kotlin session was preserved.
 - The APKs use the existing local Android debug signing identity. This verifies installable package signatures,
   not production store signing or the unfinished gates in 025/086/023.
-- The API 36 x86_64 emulator booted with WHPX and 4 KiB pages. Initial production APK installation, offline cold
-  start and project/template creation pass. Its exact native speech library passes SHA-256 self-test, tiny/base
-  transcription and cancellation/retry on Android, with all exits 0 and no leaked objects.
-- Partially complete: native UI verification found the pre-existing document-picker MIME defect recorded in
-  task 139. APK build/inventory/signature and size acceptance are reopened for its required rebuild. Raw capture,
-  microphone, OCR and PDF import/export verification continue. No physical Android phone is connected.
+- The API 36 x86_64 emulator boots with WHPX and 4 KiB pages. Installation, offline cold start and project/
+  template creation pass. Its exact native speech library passes SHA-256 self-test, tiny/base transcription and
+  cancellation/retry on Android, with all exits 0 and no leaked objects; the delivery APK retains that binary.
+- Actual APK screens verify two raw records surviving restart, native PDFium pages 1/2 and the unchanged original
+  PDF hash, durable offline OCR search, and microphone recording with a live offline transcript and retained WAV.
+  The report ZIP's five record pages and two summary pages pass independent parsing and raster inspection.
+- The corrected package export reaches Saved/Share and writes identical app/Downloads copies. Independent
+  inspection verifies CRC, all 18 entry hashes/sizes, checksum entries, table counts, photos, the original PDF
+  and exact typed source caption. Evidence is `android-project-package-before-decimal-fix-validation.json`.
+- The report omits record-owned captions (pending [141](27-hardening/33-verify-record-owned-captions-in-report-and-data-exports.md));
+  the project package omits standalone audio/transcripts because their attachment ownership is absent (pending
+  [142](27-hardening/34-verify-standalone-audio-ownership-in-project-packages.md)). Local source text/audio remain
+  intact. These existing contract gaps are recorded for whole-product hardening, not claimed as passed exports.
+- The delivery APK installs and cold-starts offline in 2,943 ms. Both raw records remain after the update; its
+  native picker repeats all four accepted formats, durable OCR search succeeds, and the crash buffer is empty.
+  Final package export reaches Saved/Share. Its 812,918-byte app/Downloads copies both hash to
+  `2a1d219390551e990668ef61575c3b4d7f2f4b40f520e77b3a65e99d66922858`.
+- `android-delivery-project-package-validation.json` independently verifies CRC, all 18 manifest entries and
+  17 checksum entries, unchanged PDF/PNG bytes, record fields and exact typed caption. Only two prior-export
+  audit rows/vectors, bundle identity/time/lineage and generated workbook timestamps change from the preserved
+  earlier package; workbook cells, shared strings and styles remain identical. The source microphone WAV still
+  has its original hash. Tasks 141/142 remain open for the existing outbound omissions described above.
+- The release guide records the reproducible command, final byte sizes and limits. All three models total
+  92,745,396 bytes; measured lossless DEFLATE still requires 87.33 MB before app code. Keeping every model bundled
+  makes the requested 50 MB APK infeasible with the current assets. No model or feature was removed for size.
+- Task 136's APK-delivery acceptance is complete. Whole-product release acceptance remains partially complete:
+  no physical Android phone is connected, and tasks 025/086/023/131/138/141/142 retain their respective signing,
+  integrated-product, physical-device, 16 KiB runtime and export-contract gates. The owned emulator is stopped;
+  its fixture data and all raw evidence remain available for follow-up verification.

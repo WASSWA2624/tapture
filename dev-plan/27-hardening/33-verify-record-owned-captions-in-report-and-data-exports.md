@@ -43,9 +43,10 @@ task 136's APK delivery or task 140's PDF secret-scanning repair.
 
 ## Discovery evidence — 2026-10-07
 
-The owned task 136 Android emulator fixture captured `APK smoke durable capture`; its record heading survived
-an app restart. The original capture evidence remains retained on that local test device. No source caption or
-raw attachment bytes were deleted or overwritten by export validation.
+The owned task 136 Android emulator fixture staged a caption in Capture; its saved record heading survived
+an app restart. Later independent project-package inspection verifies the retained record-owned `text_raw`
+value is exactly `APK smoke durable capt`. The original capture evidence remains retained on that local test
+device. No source caption or raw attachment bytes were deleted or overwritten by export validation.
 
 The actual delivered ZIP passed CRC, manifest/photo-reference and dictionary checks. Independent PDF parsing
 and raster inspection verified all five record-report pages and two summary pages. The record report preserves

@@ -43,13 +43,13 @@ Native libraries are losslessly compressed in the APK (`packaging.jniLibs.useLeg
 
 All three offline speech models stay bundled at their pinned bytes and hashes, with `.bin` assets uncompressed for streaming extraction. Together, tiny, base and Silero occupy **92,745,396 bytes (92.75 MB)**. The base model alone occupies 59,707,625 bytes. A 50 MB APK cannot contain these models, even before application code and native libraries. A measured lossless DEFLATE comparison still leaves the same three models at 87.33 MB. The product owner chose to preserve the bundled models and speech quality on 2026-10-07; this build changes packaging rather than model availability.
 
-The 2026-10-07 production rebuild includes the Android document-picker MIME fix (task 139) and produced these APKs. Sizes use decimal MB (`1 MB = 1,000,000 bytes`):
+The 2026-10-07 delivery build includes the Android document-picker MIME fixes (task 139) and PDF package-scanner changes, including decimal-only stream lengths (task 140). The release build completed successfully in 475.1 seconds. Sizes use decimal MB (`1 MB = 1,000,000 bytes`):
 
 | ABI | APK in `build/app/outputs/flutter-apk/` | Bytes | MB |
 | --- | --- | ---: | ---: |
-| ARM64 | `app-arm64-v8a-prod-release.apk` | 130,920,643 | 130.92 |
-| ARM32 | `app-armeabi-v7a-prod-release.apk` | 127,847,101 | 127.85 |
-| x86_64 | `app-x86_64-prod-release.apk` | 132,119,662 | 132.12 |
+| ARM64 | `app-arm64-v8a-prod-release.apk` | 130,925,663 | 130.93 |
+| ARM32 | `app-armeabi-v7a-prod-release.apk` | 127,852,477 | 127.85 |
+| x86_64 | `app-x86_64-prod-release.apk` | 132,125,026 | 132.13 |
 
 The previous universal production APK measured 291,194,390 bytes (291.19 MB). ARM64 is now 55.0% smaller. Each
 new APK has a `.sha256` sidecar. The existing `app-prod-release.apk` is the older universal artifact; use the new
@@ -57,28 +57,59 @@ ABI-specific filename above.
 
 ## Validation limits
 
-Task [136](../../dev-plan/25-testing-and-release.md#136--optimize-and-verify-android-apk-delivery) records build, signatures, ZIP alignment, native-library checks, model hashes and automated-suite evidence. Physical-device installation, cold start, durable offline capture, speech, OCR, PDF import and export acceptance remain pending until that smoke test runs. Successful builds and desktop tests do not close whole-product hardening (task 023) or physical-device speech acceptance (task 131).
+Task [136](../../dev-plan/25-testing-and-release.md#136--optimize-and-verify-android-apk-delivery) records build, artifact inspection and Android emulator smoke-test evidence. The delivery x86_64 APK installs successfully and cold-starts offline in 2,943 ms on Android 16/API 36 with 4 KiB pages. All three delivery APKs pass fresh artifact inspection. Physical-phone validation, physical-device speech acceptance (task 131), 16 KiB runtime acceptance and whole-product hardening (task 023) remain open.
 
 Recorded checks: full frontend analysis is clean; 141 release/speech/database/OCR/PDF/bootstrap tests pass,
 including real PDFium rendering; all 14 offline capture/export/failure/session scenarios pass. The shared
 malformed-response recovery regression passes separately and its changed files analyze cleanly. All three APKs
 verify with APK Signature Scheme v2 and ZIP alignment; all model SHA-256 hashes match their catalogue pins.
 After the picker fix, another targeted run passes all 27 document-picker, file-validation and native-bootstrap
-checks with test concurrency set to one; the installed native picker acceptance remains in task 139.
+checks with test concurrency set to one. Task 140's focused bundle scanner, protection and writer suite passes
+34 tests after the decimal-only PDF stream-length correction; its changed files analyze cleanly.
 Native library names match the previous artifact. Every ARM64 and x86_64 library has 16 KiB-aligned load segments,
 and the speech-library checker passes all three ABIs. Local reports live under `build/apk-validation/`.
-The final MIME-fixed APKs pass these inventory, model-hash, signature, ZIP-alignment and speech-library checks
-again; their SHA-256 sidecars identify the rebuilt artifacts. All 33 packaged native binaries, including Flutter's
-application library, are byte-identical to the preserved APKs from before the picker fix. Earlier raw evidence
-is retained under `build/apk-validation/before-document-picker-fix-20261007T071517/`.
+The delivery APKs pass the inventory, model-hash, signature, ZIP-alignment and speech-library checks again;
+their SHA-256 sidecars identify the artifacts. All 33 library names are preserved. All 30 non-Dart native
+binaries are byte-identical to the previous universal APK and both preserved baselines, before the CSV MIME
+alias and decimal PDF stream-length fixes. Each ABI's `libapp.so` changes with task 140's Dart implementation.
+The comparison is recorded in `build/apk-validation/native-binary-comparison-delivery.json`. Earlier raw evidence remains under
+`build/apk-validation/before-document-picker-fix-20261007T071517/` and
+`build/apk-validation/before-csv-alias-fix-20261007T073446/`. The pre-correction APKs and inspection reports remain
+under `build/apk-validation/before-pdf-decimal-length-fix-20261007T081043/`.
 
 Another 20 tests pass against the built Windows speech library with all three real bundled models enabled,
 covering transcription, Silero voice detection, cancellation, concurrent leases and handle cleanup. The native
 smoke program also transcribes the vendored audio with tiny and base and recovers after cancellation.
 The packaged x86_64 speech library also passes its SHA-256 self-test, tiny/base transcription and cancellation/retry
-on the Android 16/API 36 emulator with no leaked objects. Its byte-identical binary in the final APK preserves
-that evidence. The emulator uses 4 KiB pages; APK microphone/UI flows, physical-device speech and 16 KiB runtime
-acceptance remain separate checks.
+on the Android 16/API 36 emulator with no leaked objects. Its byte-identical binary in the inspected APK preserves
+that evidence.
+
+Recorded Android UI smoke verifies project creation and two raw records surviving an app restart. The
+native picker enables PDF, CSV, JSON and XLSX while keeping unsupported PNG disabled. PDFium renders pages 1
+and 2 of the selected PDF, and the durable original retains its source SHA-256. Offline OCR produces searchable
+text that survives restart. The microphone recorder receives the vendored JFK sample through the emulator's
+audio input and produces a live offline transcript; this exercises the APK recorder and speech engine together.
+After installing the delivery APK, both existing records remain, the native picker retains those enabled states
+(`build/apk-validation/android-delivery-document-picker.xml`), and searching `Verified export fixture` returns
+the first record. The recorded Android crash buffer is empty.
+
+Reports export succeeds and delivers a ZIP whose five record-report pages and two summary pages pass independent
+PDF parsing and raster inspection. The delivery APK's project-package export reaches Saved with Share available:
+the 812,918-byte ZIP in Downloads and the app export directory has the same SHA-256. Independent validation in
+`build/apk-validation/android-delivery-project-package-validation.json` passes ZIP CRC, all 18 manifest entry
+sizes/hashes, 17 checksum-file entries and table counts. The original 13-page PDF, both PNGs, two records, four
+fields and typed source caption match the preserved pre-correction package. All data JSON except the audit
+history is byte-identical; that history adds only the two preceding exports. Workbook cell, shared-string,
+style and relationship content is unchanged; its creation/modification timestamps differ.
+The package omits the locally persisted standalone microphone audio and transcript: its transcript/segment
+counts are zero and no WAV entry is present. Task
+[142](../../dev-plan/27-hardening/34-verify-standalone-audio-ownership-in-project-packages.md) records the project
+attachment-ownership/privacy-filter reconciliation and required Android restart/export/import checks. The
+omission does not imply local source loss; OCR cache is explicitly excluded by the package contract.
+Source captures and attachments remain durable. Report inspection found that a
+record-owned source caption is omitted from the delivered report although it remains stored on the device;
+task [141](../../dev-plan/27-hardening/33-verify-record-owned-captions-in-report-and-data-exports.md) records the
+caption/export contract gap.
 
 The additional GNU RELRO endpoint check reports advisories in 13 existing 64-bit libraries. All 30 non-Dart
 native binaries across the three ABIs are byte-identical to the previous universal APK. These advisories have
