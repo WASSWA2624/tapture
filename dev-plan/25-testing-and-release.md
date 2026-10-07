@@ -13,6 +13,12 @@ the completed product. Completing this step alone does not authorize shipping.
 
 Reopened release and app/proxy end-to-end criteria contradicted by the current source. frontend/tool/release_gate.dart creates skipped outcomes instead of executing its gates; ci.yml builds directly rather than through that gate. signin_proxy_offline_test.dart exercises separate fake components and ends with an explicit sign-in, so it does not establish the configured app proxy or silent-refresh acceptance. Existing harnesses, workflows and recorded unit-level checks remain checked; integrated release acceptance is Partially complete.
 
+### Local APK verification — 2026-10-07
+
+Reopened the missing-signing-key criterion: the current Gradle configuration and its test deliberately accept a
+debug-signing fallback for local release APKs. A local installable build does not establish production signing or
+close the remaining release gates. Size and artifact verification are recorded in task 136.
+
 ### Implement
 
 Build and validate the baseline test and release infrastructure before Documentation. Final production shipping
@@ -266,7 +272,7 @@ Future<int> main(List<String> args);
 - [x] Tests: one run per workflow against a branch with a single deliberately broken step, proving each gate fails and
       names the step.
 - [x] A release build is produced from one documented command, signed, shrunk and split by ABI.
-- [x] A missing signing key fails the build with a clear message rather than falling back to a debug key.
+- [ ] A missing signing key fails the build with a clear message rather than falling back to a debug key.
 - [x] Tests: `frontend/test/tool/release_build_config_test.dart` parses `build.gradle` and asserts shrinking, splits
       and an environment-sourced signing config, and asserts no keystore, password or key alias is committed anywhere.
 - [ ] A build cannot be produced while any gate fails, in either the app or the backend.
@@ -373,3 +379,211 @@ Future<int> main(List<String> args);
 - Open: the CI-run, Linux/macOS/iOS, APK and `release-build` items need a pushed GitHub Actions run, which this
   Windows machine cannot provide. Gradle/APK builds and Apple and Linux builds are not possible here. The
   `release-build` step is written before "Build the signed release" as a warning-only step, but no run proves it.
+
+## 137 — Verify malformed-response recovery with durable request checkpoints
+
+**Depends on** [132](24-product-refinements.md)
+
+**Implementation started:** Yes
+
+### Implement
+
+Reconcile the malformed-response integration acceptance with task 132's durable pre-dispatch checkpoints.
+Distinguish checkpoint rows from provider replies; assert both are retained with their request identities,
+one bounded repair, unchanged raw evidence and a successful explicit retry. Preserve application behavior.
+
+### Files
+
+- `frontend/integration_test/failure_paths_test.dart`
+- `frontend/test/support/malformed_response_recovery.dart`
+- `frontend/test/features/processing/data/malformed_response_recovery_test.dart`
+- `frontend/.gitignore` (exact regression-test import closure)
+
+### Contract
+
+`verifyMalformedResponseRecovery(FaultInjector)` is the shared executable acceptance scenario used by the local
+integration driver and the shipped regression test. It preserves the existing injected-failure and retry behavior.
+
+### Definition of done
+
+- [x] The scenario verifies two durable attempt checkpoints and two preserved malformed provider replies for the failed request and its single repair.
+- [x] Request identities and evidence snapshots remain durable; the original photo and failed replies survive a successful explicit retry.
+- [x] Tests: the existing malformed-response case and the full offline failure-recovery suite pass without weakening their recovery assertions.
+
+### Verification
+
+- 2026-10-07: The previous assertion failed at `failure_paths_test.dart:249`: four rows were stored where the test
+  expected two. Task 132 intentionally stores a checkpoint before each call and a reply after it; the fixture
+  must verify both. No application regression was demonstrated by this count mismatch.
+- 2026-10-07: The shipped shared scenario and its dedicated regression pass; the full current offline wrapper
+  passes 14/14 cases, including all ten failure/recovery scenarios. Changed files analyze cleanly and format
+  cleanly. Repository hygiene passes; the exact reusable fixture import closure is available to Git.
+
+## 139 — Fix Android document picker MIME filters
+
+**Depends on** [002](02-foundation.md)
+
+**Implementation started:** Yes
+
+### Implement
+
+Repair the shared Android document picker so a comma-separated list of accepted MIME types remains selectable.
+Use a single MIME type directly; for multiple types use Android's wildcard primary type and `EXTRA_MIME_TYPES`.
+Trim and deduplicate entries, retain unrestricted selection for empty input, and preserve the existing channel,
+cache-copy behavior, cancellation and original source bytes. When `text/csv` is accepted, also accept the CSV
+MIME type registered by Android's `MimeTypeMap`; keep all other single-type filters specific.
+
+### Files
+
+- `frontend/android/app/src/main/kotlin/com/tapture/app/MainActivity.kt`
+- `frontend/docs/release-build.md`
+- `frontend/build/apk-validation/` (generated Android regression fixtures and evidence, ignored)
+
+### Contract
+
+The existing `com.tapture.app/files` `pickDocument` method continues to accept `mimeType` and `extensions`;
+Android interprets a comma-separated MIME list as alternatives rather than one invalid type. No public Dart API
+changes. Capture keeps its extension, size and signature validation after selection.
+
+### Definition of done
+
+- [ ] The shared Android picker emits a valid primary MIME type and alternative-type extras, accepts Android's CSV MIME alias, and preserves other single-type and unrestricted requests.
+- [ ] Tests: the installed production APK offers PDF, CSV, JSON and XLSX through the native capture picker while an unsupported PNG remains disabled.
+- [ ] A selected PDF is copied without altering the source, renders through native PDFium, and can be retained as raw capture evidence.
+- [ ] Existing document-picker, validation and native-bootstrap regression tests pass; the fixed production APKs rebuild and the release guide records the native verification.
+
+### Discovery evidence — 2026-10-07
+
+The production APK installed and launched offline on Android 16/API 36. Its capture picker disabled the valid
+`tapture-smoke.pdf` fixture. The native intent dump showed the invalid primary type
+`application/pdf,text/csv,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`.
+The original screen and intent evidence are retained under `frontend/build/apk-validation/`.
+
+The first MIME-list fix rebuilt and passed all 27 existing picker, file-validation and native-bootstrap checks.
+The installed picker then enabled PDF, JSON and XLSX and kept PNG disabled, but CSV remained disabled.
+`android-fixed-picker-files-list.xml` records those actual enabled states; `android-fixture-mime-types.txt`
+records MediaStore identifying `tapture-smoke.csv` as `text/comma-separated-values`, rather than the requested
+`text/csv`. The follow-up uses [Android's platform MIME map](https://developer.android.com/reference/android/webkit/MimeTypeMap#getMimeTypeFromExtension(java.lang.String))
+to add its CSV alias only when CSV is accepted. All task criteria remain open until that version rebuilds and
+passes the native picker and PDF/capture checks; existing APKs and raw inspection evidence are retained.
+
+## 140 — Recognize PDF name boundaries during bundle secret scanning
+
+**Depends on** [076](24-product-refinements.md)
+
+**Implementation started:** Yes
+
+### Implement
+
+Prevent adjacent PDF dictionary names from being mistaken for one long base64 credential during project-package
+export. Keep the canonical patterns unchanged, scan explicit credential patterns against the original bytes, and
+apply PDF lexical boundaries only to the base64 heuristic. Preserve strings, comments and stream contents; use
+bounded state across native file chunks and the same scanner for browser and nested-archive attachments.
+Retain original document bytes and the existing atomic refusal of a package carrying an actual credential.
+
+### Files
+
+- `frontend/lib/core/bundle/bundle_redaction.dart`
+- `frontend/lib/core/bundle/bundle_payload_scanner.dart`
+- `frontend/lib/core/bundle/pdf_name_boundaries.dart`
+- `frontend/lib/core/bundle/bundle_redaction_io.dart`
+- `frontend/lib/core/bundle/bundle_zip_io.dart`
+- `frontend/test/core/bundle/bundle_pdf_redaction_test.dart`
+- `frontend/test/fixtures/bundle/pdf_dictionary_names.pdf`
+- `frontend/.gitignore` (exact regression-test import closure)
+
+### Contract
+
+`BundleRedaction.payloadScanner()` creates a bounded, incremental `BundlePayloadScanner`; callers pass every
+chunk through `add()` and call `finish()` at end of input. `assertCleanBytes()` retains the strict canonical
+byte scan. PDF syntax affects only payload scanning and never alters exported bytes or hashes.
+
+### Definition of done
+
+- [x] Native, browser and nested-archive payload scans recognize PDF dictionary-name boundaries without changing the canonical patterns or source bytes.
+- [x] Explicit credentials and long base64 values remain rejected in PDF names, strings, comments and stream contents, including split input chunks and uncertain stream boundaries.
+- [x] Tests: the exact native-smoke PDF exports through both real package writers, is restored byte-for-byte, and planted credentials prevent publication; focused bundle regressions and changed-file analysis pass.
+
+### Discovery evidence — 2026-10-07
+
+The production APK refused package export of the nonsensitive offline smoke project with the generic secret
+failure. Its retained 21,860-byte, 13-page PDF fixture matches only the `long_base64` heuristic at byte 18,533:
+adjacent image dictionary names join because `/` is also a base64 character. The AST-002 bundled template has no
+matching pattern. The original document and failed-export UI evidence remain under `frontend/build/`.
+
+### Verification — 2026-10-07
+
+- All 12 shipped PDF regressions pass: the exact fixture survives native/browser package export and inspection,
+  including nested archives, with identical bytes and SHA-256. Canonical byte scanning still reproduces the old
+  false positive, proving that the corrected payload path exercised it. Source evidence remains unchanged.
+- Every explicit credential pattern checks original bytes. Long base64 data remains rejected in strings, escaped
+  and nested strings, comments, hex strings, long names and direct-length streams at 1-, 7- and 65,536-byte chunk
+  sizes. Indirect/invalid stream lengths, malformed end markers and embedded `endstream` data retain strict scans.
+- The focused PDF, redaction, protection, writer and atomic ZIP suites pass 34/34 tests. Changed source and test
+  files analyze cleanly, formatting is clean and repository hygiene passes. Generated logs are
+  `frontend/build/apk-validation/android-package-redaction-tests.txt` and `android-package-redaction-analysis.txt`.
+- The exact fixture and shipped regression's existing shared imports are available to Git. Actual installed-APK
+  package export after rebuilding remains part of task 136's native device acceptance.
+
+## 136 — Optimize and verify Android APK delivery
+
+**Depends on** [002](02-foundation.md), [101](24-product-refinements.md), [103](24-product-refinements.md), [109](24-product-refinements.md), [137](25-testing-and-release.md), [139](25-testing-and-release.md), [140](25-testing-and-release.md)
+
+**Implementation started:** Yes
+
+### Implement
+
+Produce shrunk production APKs per ABI with losslessly compressed native libraries and external Dart debug
+symbols. Preserve every bundled speech model and existing feature. Measure actual APK bytes, inspect signatures,
+alignment, native libraries and model hashes, and run analysis and the existing relevant test suites. Record the
+remaining device and release-acceptance limitations without certifying the integrated product.
+
+The requested 50 MB ceiling is a feasibility check: the product owner chose to keep all offline models bundled
+on 2026-10-07. Do not remove models or change their quality to reach it; report the measured achievable size.
+
+### Files
+
+- `frontend/android/app/build.gradle.kts`
+- `frontend/docs/release-build.md`
+- `app-write-up.md` (§61 Android delivery contract)
+- `frontend/build/app/outputs/flutter-apk/` (generated, ignored)
+
+### Definition of done
+
+- [ ] Production APKs build for the supported ABIs with shrinking, lossless native compression and external Dart symbols.
+- [ ] Each APK retains the exact bundled model bytes and the expected native libraries for its ABI.
+- [ ] APK signatures and ZIP alignment verify; the native speech library checker passes every shipped ABI.
+- [x] Tests: analysis and existing release, speech, database, OCR, PDF and offline flow suites pass; skipped native checks are identified.
+- [ ] A device smoke test verifies installation, cold start, durable offline capture, speech, OCR, PDF import and export.
+- [ ] The documented build command, measured sizes and 50 MB feasibility result preserve all offline models and describe remaining acceptance limits.
+
+### Verification — 2026-10-07
+
+- Production split APKs built successfully with external symbols: ARM64 130,920,343 bytes, ARM32 127,846,801 bytes,
+  x86_64 132,119,362 bytes. ARM64 is 55.0% smaller than the previous 291,194,390-byte universal APK.
+- APK v2 signatures, ZIP alignment and metadata verify for all three. Models match every expected byte length and
+  SHA-256. All native libraries are compressed and native library names match the previous build for each ABI.
+  Every ARM64/x86_64 library has 16 KiB-aligned load segments; `check_native_library` passes each speech library.
+  ARM32 retains its existing speech stub and some 4 KiB third-party binaries.
+- All 30 non-Dart native binaries are byte-identical to the previous universal APK. A separate GNU RELRO
+  endpoint check reports 13 pre-existing 64-bit advisories without a demonstrated crash. Pending task
+  [138](27-hardening/32-verify-16-kib-runtime-protection-for-packaged-android-libraries.md) records the required
+  16 KiB runtime memory-protection verification; load-segment and ZIP alignment do not close it.
+- Full `flutter analyze --no-pub` passes. The 141 focused checks pass, including real PDFium rendering; 14 current
+  offline flows pass; task 137's dedicated regression and focused analysis pass. The broad test run was replaced
+  by these focused suites; it is not claimed as completed. A capture fixture hit the default 30-second timeout
+  during concurrent compilation, then passed alone and in the final suite with an explicit five-minute budget.
+- The 20 opt-in speech-engine tests pass against the built Windows release library and actual bundled tiny,
+  base and Silero models, including native transcription, voice detection, cancellation, interleaved leases and
+  20 load/unload cycles. Native smoke self-test, tiny/base transcription and abort/retry pass. These desktop
+  checks do not substitute for the open Android device acceptance.
+- Windows Java required a process-local temporary/socket-directory workaround; no global environment changed.
+  Build-generated tracked CMake fingerprints were restored; the pre-existing deleted Kotlin session was preserved.
+- The APKs use the existing local Android debug signing identity. This verifies installable package signatures,
+  not production store signing or the unfinished gates in 025/086/023.
+- The API 36 x86_64 emulator booted with WHPX and 4 KiB pages. Initial production APK installation, offline cold
+  start and project/template creation pass. Its exact native speech library passes SHA-256 self-test, tiny/base
+  transcription and cancellation/retry on Android, with all exits 0 and no leaked objects.
+- Partially complete: native UI verification found the pre-existing document-picker MIME defect recorded in
+  task 139. APK build/inventory/signature and size acceptance are reopened for its required rebuild. Raw capture,
+  microphone, OCR and PDF import/export verification continue. No physical Android phone is connected.

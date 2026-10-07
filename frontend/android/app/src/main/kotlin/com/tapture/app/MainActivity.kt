@@ -17,6 +17,7 @@ import android.provider.OpenableColumns
 import android.speech.SpeechRecognizer
 import android.system.ErrnoException
 import android.system.OsConstants
+import android.webkit.MimeTypeMap
 import io.flutter.FlutterInjector
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -307,7 +308,20 @@ class MainActivity : FlutterFragmentActivity() {
         pickDocResult = result
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = if (mimeType.isNullOrEmpty()) "*/*" else mimeType
+            val mimeTypes = mimeType.orEmpty()
+                .split(',')
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+                .toMutableSet()
+            // Android may register CSV under a MIME type other than text/csv.
+            if ("text/csv" in mimeTypes) {
+                val csvMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension("csv")
+                if (!csvMimeType.isNullOrBlank()) mimeTypes.add(csvMimeType)
+            }
+            type = mimeTypes.singleOrNull() ?: "*/*"
+            if (mimeTypes.size > 1) {
+                putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes.toTypedArray())
+            }
         }
         try {
             @Suppress("DEPRECATION")

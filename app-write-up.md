@@ -3417,6 +3417,11 @@ Every deployment requires the minimal Node.js/Express/PostgreSQL backend (Part X
 
 Use standard camera, storage, speech and secure-storage plugins without further Android-only dependencies, preserving iOS/desktop portability. Speech recognition uses the local whisper.cpp plugin (§30.4.1), the only native code the project builds itself.
 
+Android APK delivery retains every pinned bundled speech model (§30.4), with code/resource shrinking, one APK per
+processor ABI, lossless native-library compression and separate debug symbols. Bundled offline functionality takes
+priority over the requested 50 MB package target; build commands, measured sizes and feasibility are documented in
+[the release-build guide](frontend/docs/release-build.md). Acceptance status belongs in the tracker.
+
 ## 62. Project Structure
 
 Conceptual module map; the [frontend structure rules](frontend/.rules/01-structure.md) govern actual directory names and boundaries.

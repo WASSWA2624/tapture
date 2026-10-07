@@ -12,6 +12,8 @@ import 'package:tapture/core/logging/logging_stub.dart'
     if (dart.library.io) 'package:tapture/core/logging/logging_io.dart'
     as platform;
 
+import 'bundle_payload_scanner.dart';
+
 /// Keeps secrets out of a bundle (task 019, FE-SEC-02).
 ///
 /// [excluded] columns are never serialised. [assertClean] runs the same
@@ -50,7 +52,7 @@ final class BundleRedaction {
       .map((String key) => key.replaceAll(_keySeparators, ''))
       .toSet();
 
-  final List<RegExp> _patterns;
+  final List<({String name, RegExp pattern})> _patterns;
 
   /// Drops secret-bearing keys recursively, including JSON settings values.
   Map<String, Object?> strip(Map<String, Object?> row) => redact(row);
@@ -88,9 +90,13 @@ final class BundleRedaction {
   }
 
   /// Throws when [text] carries a secret-shaped value.
-  void assertClean(String text) {
-    for (final RegExp pattern in _patterns) {
-      if (pattern.hasMatch(text)) {
+  void assertClean(String text) => _assertClean(text, text);
+
+  void _assertClean(String raw, String base64View) {
+    for (final ({String name, RegExp pattern}) entry in _patterns) {
+      if (entry.pattern.hasMatch(
+        entry.name == 'long_base64' ? base64View : raw,
+      )) {
         throw ValidationFailure(
           localizedMessage: Copy.messages.failureTheBundleContainsASecretAndWas,
           localizedRecovery:
@@ -100,18 +106,23 @@ final class BundleRedaction {
     }
   }
 
-  /// Scans bounded file chunks with overlap so split tokens cannot escape.
+  /// Strictly scans bytes without PDF lexical adjustments.
   /// Binary payloads are decoded one byte per character, preserving ASCII
   /// secret shapes without mis-decoding arbitrary image bytes.
   void assertCleanBytes(List<int> bytes) => assertClean(latin1.decode(bytes));
 
-  /// Checks generated nested archives such as XLSX, before they are zipped.
+  /// Creates a bounded scan of one payload with PDF dictionary-name boundaries.
+  BundlePayloadScanner payloadScanner() => BundlePayloadScanner(_assertClean);
+
+  /// Checks payloads and generated nested archives such as XLSX before zipping.
   /// Bounded nesting and content limits fail closed on opaque or oversized data.
   void assertCleanPayload(List<int> bytes) =>
       _payload(bytes, 0, _PayloadBudget());
 
   void _payload(List<int> bytes, int depth, _PayloadBudget budget) {
-    assertCleanBytes(bytes);
+    payloadScanner()
+      ..add(bytes)
+      ..finish();
     if (bytes.length < 4 ||
         !looksLikeZip(Uint8List.fromList(bytes.take(4).toList()))) {
       return;
@@ -180,12 +191,23 @@ final class BundleRedaction {
     }
   }
 
-  static List<RegExp> _compile(String yaml) {
-    final RegExp line = RegExp(r"pattern:\s*'([^']*)'");
-    final List<RegExp> patterns = <RegExp>[
-      for (final RegExpMatch match in line.allMatches(yaml))
-        RegExp(match.group(1) ?? '', caseSensitive: false),
-    ];
+  static List<({String name, RegExp pattern})> _compile(String yaml) {
+    final RegExp nameLine = RegExp(r'^  ([a-z][a-z0-9_]*):\s*$');
+    final RegExp patternLine = RegExp(r"pattern:\s*'([^']*)'");
+    final List<({String name, RegExp pattern})> patterns =
+        <({String name, RegExp pattern})>[];
+    String name = '';
+    for (final String line in const LineSplitter().convert(yaml)) {
+      final RegExpMatch? named = nameLine.firstMatch(line);
+      if (named != null) name = named.group(1)!;
+      final RegExpMatch? pattern = patternLine.firstMatch(line);
+      if (pattern != null) {
+        patterns.add((
+          name: name,
+          pattern: RegExp(pattern.group(1)!, caseSensitive: false),
+        ));
+      }
+    }
     if (patterns.isEmpty) {
       throw const FormatException('No secret patterns are configured.');
     }

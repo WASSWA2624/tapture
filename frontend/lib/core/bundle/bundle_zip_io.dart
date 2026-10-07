@@ -18,6 +18,7 @@ import 'bundle_entry.dart';
 import 'bundle_format.dart';
 import 'bundle_manifest.dart';
 import 'bundle_output.dart';
+import 'bundle_payload_scanner.dart';
 import 'bundle_redaction.dart';
 import 'bundle_redaction_io.dart';
 import 'bundle_zip_job.dart';
@@ -217,22 +218,19 @@ Future<List<Object>> _zipToDisk(Map<String, Object?> job) async {
         check: cancellation.check,
         temporaryRoot: Directory(job['scratch']! as String),
       );
-      List<int> overlap = const <int>[];
+      final BundlePayloadScanner scanner = redaction.payloadScanner();
       int crc = 0;
       final crypto.Digest digest = await crypto.sha256
           .bind(
             file.openRead().map((List<int> chunk) {
               cancellation.check();
               crc = getCrc32(chunk, crc);
-              final List<int> checked = <int>[...overlap, ...chunk];
-              redaction.assertCleanBytes(checked);
-              overlap = checked.sublist(
-                (checked.length - 256).clamp(0, checked.length),
-              );
+              scanner.add(chunk);
               return chunk;
             }),
           )
           .first;
+      scanner.finish();
       final InputFileStream input = InputFileStream.withFileHandle(
         _CheckedFileHandle(file.path, cancellation.check),
         bufferSize: AppConstants.hashing.chunkBytes,

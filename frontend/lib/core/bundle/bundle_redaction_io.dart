@@ -7,6 +7,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/files/file_validation.dart';
 
+import 'bundle_payload_scanner.dart';
 import 'bundle_redaction.dart';
 
 /// Scans ZIP attachments through bounded temporary streams in a worker.
@@ -149,19 +150,16 @@ final class _ArchiveScanner {
   void _scanPlain(File file) {
     final RandomAccessFile input = file.openSync();
     try {
-      List<int> overlap = const <int>[];
+      final BundlePayloadScanner scanner = redaction.payloadScanner();
       while (true) {
         check();
         final Uint8List chunk = input.readSync(AppConstants.hashing.chunkBytes);
         if (chunk.isEmpty) {
           break;
         }
-        final List<int> checked = <int>[...overlap, ...chunk];
-        redaction.assertCleanBytes(checked);
-        overlap = checked.sublist(
-          (checked.length - 256).clamp(0, checked.length),
-        );
+        scanner.add(chunk);
       }
+      scanner.finish();
     } finally {
       input.closeSync();
     }

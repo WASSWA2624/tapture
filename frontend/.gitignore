@@ -149,3 +149,13 @@ TAPTURE-*.zip
 !/test/support/pdf_inspector.dart
 !/test/support/processing_fixture.dart
 !/test/support/secret_patterns.dart
+
+# Task137 ships malformed-response recovery and its exact shared dependencies.
+!/test/features/processing/data/malformed_response_recovery_test.dart
+!/test/support/malformed_response_recovery.dart
+!/test/support/fault_injection.dart
+!/test/support/matchers.dart
+
+# Task140 ships the exact PDF package regression and its source fixture.
+!/test/core/bundle/bundle_pdf_redaction_test.dart
+!/test/fixtures/bundle/pdf_dictionary_names.pdf

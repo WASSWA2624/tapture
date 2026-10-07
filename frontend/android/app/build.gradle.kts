@@ -52,6 +52,14 @@ android {
         noCompress += "bin"
     }
 
+    // Lossless native compression reduces APK downloads while retaining all
+    // offline engines; Android extracts the libraries at installation (task 136).
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     // AGP 9 turns resValues off by default. The flavour labels below use it.
     buildFeatures {
         resValues = true
