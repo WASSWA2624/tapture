@@ -1,0 +1,43 @@
+{
+  "buildFiles": [
+    "D:\\coding\\apps\\flutter\\tapture\\frontend\\packages\\tapture_whisper\\src\\CMakeLists.txt",
+    "D:\\coding\\apps\\flutter\\tapture\\frontend\\packages\\tapture_whisper\\src\\whisper_sources.cmake"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "C:\\Users\\WASSWA WILSON\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+      "-C",
+      "D:\\coding\\apps\\flutter\\tapture\\frontend\\packages\\tapture_whisper\\android\\.cxx\\RelWithDebInfo\\1c5p6371\\x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "C:\\Users\\WASSWA WILSON\\AppData\\Local\\Android\\sdk\\cmake\\3.22.1\\bin\\ninja.exe",
+    "-C",
+    "D:\\coding\\apps\\flutter\\tapture\\frontend\\packages\\tapture_whisper\\android\\.cxx\\RelWithDebInfo\\1c5p6371\\x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "tw_whisper::@6890427a1f51a3e7e1df": {
+      "artifactName": "tw_whisper",
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "tapture_whisper::@6890427a1f51a3e7e1df": {
+      "artifactName": "tapture_whisper",
+      "abi": "x86_64",
+      "output": "D:\\coding\\apps\\flutter\\tapture\\frontend\\build\\tapture_whisper\\intermediates\\cxx\\RelWithDebInfo\\1c5p6371\\obj\\x86_64\\libtapture_whisper.so",
+      "runtimeFiles": []
+    },
+    "tw_ggml_cpu::@6890427a1f51a3e7e1df": {
+      "artifactName": "tw_ggml_cpu",
+      "abi": "x86_64",
+      "runtimeFiles": []
+    },
+    "tw_ggml_base::@6890427a1f51a3e7e1df": {
+      "artifactName": "tw_ggml_base",
+      "abi": "x86_64",
+      "runtimeFiles": []
+    }
+  }
+}

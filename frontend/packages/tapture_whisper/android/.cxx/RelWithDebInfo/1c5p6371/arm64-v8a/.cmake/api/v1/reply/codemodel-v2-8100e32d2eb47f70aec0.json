@@ -1,0 +1,87 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-RelWithDebInfo-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "RelWithDebInfo",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "tapture_whisper_library",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "tapture_whisper::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tapture_whisper-RelWithDebInfo-2161c823a6c108356d72.json",
+					"name" : "tapture_whisper",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "tw_ggml_base::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tw_ggml_base-RelWithDebInfo-4f37e5bd3965c88d2887.json",
+					"name" : "tw_ggml_base",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "tw_ggml_cpu::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tw_ggml_cpu-RelWithDebInfo-5043011e18714608f9d9.json",
+					"name" : "tw_ggml_cpu",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "tw_whisper::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tw_whisper-RelWithDebInfo-6d27678c1d710ca629de.json",
+					"name" : "tw_whisper",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/RelWithDebInfo/1c5p6371/arm64-v8a",
+		"source" : "D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/src"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

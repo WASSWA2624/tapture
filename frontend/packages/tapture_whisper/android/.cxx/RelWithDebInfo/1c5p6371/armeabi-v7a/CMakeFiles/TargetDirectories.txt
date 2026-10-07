@@ -1,0 +1,3 @@
+D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/RelWithDebInfo/1c5p6371/armeabi-v7a/CMakeFiles/tapture_whisper.dir
+D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/RelWithDebInfo/1c5p6371/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/RelWithDebInfo/1c5p6371/armeabi-v7a/CMakeFiles/rebuild_cache.dir

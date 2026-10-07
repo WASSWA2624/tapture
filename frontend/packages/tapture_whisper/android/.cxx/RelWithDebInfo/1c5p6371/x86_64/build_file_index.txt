@@ -1,0 +1,2 @@
+D:\coding\apps\flutter\tapture\frontend\packages\tapture_whisper\src\CMakeLists.txt
+D:\coding\apps\flutter\tapture\frontend\packages\tapture_whisper\src\whisper_sources.cmake
