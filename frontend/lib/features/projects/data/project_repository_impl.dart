@@ -4,6 +4,8 @@ import 'package:drift/drift.dart' hide Uint8List;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart' as sqlite;
+import 'package:tapture/core/db/restore_deleted_row.dart';
+import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/context.dart'
     show liveContextDefinitions;
 import 'package:tapture/core/db/tables/photos.dart';
@@ -25,9 +27,11 @@ import 'package:tapture/core/files/project_tree_stub.dart'
     as project_tree;
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/lifecycle/deleted_entity.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
 
+import '../domain/project_name_validation.dart';
 import '../domain/project_repository.dart';
 import 'project_mapper.dart';
 
@@ -62,6 +66,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       required String folderName,
     })?
     recycleTree,
+    Future<Result<void>> Function({required String id, required String name, required String folderName})? restoreTree,
     StorageRoot? storageRoot,
     this._writer,
   }) : _createTree =
@@ -99,7 +104,8 @@ final class ProjectRepositoryImpl implements ProjectRepository {
              name: name,
              folderName: folderName,
              storageRoot: storageRoot,
-           ));
+           )),
+       _restoreTree = restoreTree ?? (({required String id, required String name, required String folderName}) => project_tree.restoreProjectTree(id: id, name: name, folderName: folderName, storageRoot: storageRoot));
 
   final sqlite.AppDatabase _db;
   final Clock _clock;
@@ -108,6 +114,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   final _ProjectTreeWrite _createTree;
   final _ProjectTreeWrite _discardTree;
   final _ProjectTreeWrite _recycleTree;
+  final _ProjectTreeWrite _restoreTree;
 
   /// Writes project photos. Null where no files are stored.
   final FileWriter? _writer;
@@ -663,6 +670,12 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     }
     final Project current = ProjectMapper.fromRow(existing);
     final Result<void> marked = await runInTransaction(_db, () async {
+      if (current.status != ProjectStatus.deleted) {
+        await appendAudit(_db, entityType: 'projects', entityId: id,
+          action: AuditAction.deleted, fieldKey: 'status',
+          previousValue: current.status.name, newValue: ProjectStatus.deleted.name,
+          reason: _deleteReason, clock: _clock, device: _deviceId);
+      }
       await _tombstoneOwned(id);
       final Result<Project> written = await _write(
         current.copyWith(status: ProjectStatus.deleted),
@@ -690,6 +703,52 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       name: current.name,
       folderName: current.folderName,
     );
+  }
+
+  @override
+  Stream<List<DeletedEntity>> watchDeleted() => _db.customSelect(
+    "SELECT p.id, p.name, t.deleted_at, t.reason FROM projects p JOIN tombstones t ON t.entity_type = 'projects' AND t.entity_id = p.id ORDER BY t.deleted_at DESC, p.id",
+    readsFrom: <TableInfo<dynamic, dynamic>>{_db.projects, _db.tombstones},
+  ).watch().map((List<QueryRow> rows) => <DeletedEntity>[
+    for (final QueryRow row in rows) DeletedEntity(id: row.read<String>('id'), kind: DeletedEntityKind.project,
+      name: row.read<String>('name'), projectId: row.read<String>('id'), projectName: row.read<String>('name'),
+      deletedAt: row.read<DateTime>('deleted_at'), reason: row.read<String>('reason')),
+  ]);
+
+  @override
+  Future<Result<void>> restore(String id) async {
+    final sqlite.Project? existing = await _byId(id);
+    if (existing == null) return FailureResult<void>(_missing);
+    final sqlite.Tombstone? tombstone = await (_db.select(_db.tombstones)..where(
+      (sqlite.$TombstonesTable row) => row.entityType.equals('projects') & row.entityId.equals(id),
+    )).getSingleOrNull();
+    if (existing.status != projects_db.ProjectStatus.deleted && tombstone == null) return const Success<void>(null);
+    final Result<void> recovered = await _restoreTree(id: id, name: existing.name, folderName: existing.folderName);
+    if (recovered is FailureResult<void>) return recovered;
+    return runInTransaction(_db, () async {
+      final QueryRow? status = await _db.customSelect(
+        "SELECT previous_value FROM audit_log WHERE entity_type = 'projects' AND entity_id = ? AND field_key = 'status' AND new_value = 'deleted' ORDER BY at DESC, id DESC LIMIT 1",
+        variables: <Variable<Object>>[Variable<String>(id)],
+      ).getSingleOrNull();
+      final ProjectStatus restoredStatus = status?.readNullable<String>('previous_value') == ProjectStatus.archived.name
+          ? ProjectStatus.archived : ProjectStatus.active;
+      for (final TableInfo<Table, Object?> table in _db.allTables) {
+        final String? ownership = _restoreOwnership[table.actualTableName];
+        if (ownership == null) continue;
+        final List<QueryRow> rows = await _db.customSelect(
+          'SELECT x.id FROM ${table.actualTableName} x JOIN tombstones t ON t.entity_id = x.id AND t.entity_type = ? WHERE t.reason = ? AND $ownership',
+          variables: <Variable<Object>>[Variable<String>(table.actualTableName), const Variable<String>(_deleteReason), Variable<String>(id)],
+        ).get();
+        for (final QueryRow row in rows) {
+          await restoreDeletedRow(_db, table: table, id: row.read<String>('id'), clock: _clock, deviceId: _deviceId, ids: _ids);
+        }
+      }
+      await removeTombstone(_db, entityType: 'projects', entityId: id);
+      (await _write(ProjectMapper.fromRow(existing).copyWith(status: restoredStatus))).getOrThrow();
+      await appendAudit(_db, entityType: 'projects', entityId: id, action: AuditAction.updated,
+        fieldKey: 'status', previousValue: ProjectStatus.deleted.name, newValue: restoredStatus.name,
+        reason: 'Restored from recycle bin', clock: _clock, device: _deviceId);
+    });
   }
 
   @override
@@ -1162,6 +1221,11 @@ List<ProjectRecordFieldValue> _recordFields(String? blob) {
 /// [ProjectRepositoryImpl].
 final class _EmptyProjectRepository implements ProjectRepository {
   @override
+  Stream<List<DeletedEntity>> watchDeleted() => Stream<List<DeletedEntity>>.value(const <DeletedEntity>[]);
+
+  @override
+  Future<Result<void>> restore(String id) async => FailureResult<void>(_missing);
+  @override
   Stream<List<Project>> watchAll({bool includeArchived = false}) {
     return Stream<List<Project>>.value(const <Project>[]);
   }
@@ -1309,6 +1373,27 @@ const String _archiveReason = 'archive';
 
 const String _deleteReason = 'Project deleted';
 
+/// Every ownership path the project delete traverses. Only that cascade's
+/// tombstones are lifted; earlier independent reasons remain untouched.
+const Map<String, String> _restoreOwnership = <String, String>{
+  'records': 'x.project_id = ?',
+  'photos': 'x.project_id = ?',
+  'attachments': 'x.project_id = ?',
+  'templates': 'x.project_id = ?',
+  'context_definitions': 'x.project_id = ?',
+  'context_state': 'x.project_id = ?',
+  'context_presets': 'x.project_id = ?',
+  'reference_datasets': 'x.project_id = ?',
+  'exports': 'x.project_id = ?',
+  'duplicates': 'x.project_id = ?',
+  'variances': 'x.project_id = ?',
+  'record_fields': 'x.record_id IN (SELECT id FROM records WHERE project_id = ?)',
+  'captions': "x.owner_id IN (SELECT id FROM records WHERE project_id = ? UNION ALL SELECT id FROM photos WHERE project_id = ?3)",
+  'template_fields': 'x.template_id IN (SELECT id FROM templates WHERE project_id = ?)',
+  'template_rows': 'x.template_id IN (SELECT id FROM templates WHERE project_id = ?)',
+  'reference_rows': 'x.dataset_id IN (SELECT id FROM reference_datasets WHERE project_id = ?)',
+};
+
 typedef _ProjectTreeWrite =
     Future<Result<void>> Function({
       required String id,
@@ -1338,7 +1423,7 @@ String? _optionalText(String? raw) {
 }
 
 ValidationFailure? _validateName(String name) {
-  if (name.trim().isEmpty) {
+  if (!ProjectNameValidation.isValid(name)) {
     return ValidationFailure(
       localizedMessage: Copy.messages.failureAProjectNeedsAName,
       localizedRecovery: Copy.messages.failureEnterANameAndSaveAgain,

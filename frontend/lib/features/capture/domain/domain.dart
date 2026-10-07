@@ -1,6 +1,7 @@
 /// The capture feature's domain layer: models, repository interfaces and pure logic.
 library;
 
+export 'attachment_repository.dart';
 export 'audio_draft.dart';
 export 'auto_fields.dart';
 export 'caption_apply.dart';

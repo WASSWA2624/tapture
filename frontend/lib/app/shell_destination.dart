@@ -110,18 +110,6 @@ final List<ShellDestination> moreDestinations = <ShellDestination>[
     selectedIcon: AppIcons.template,
   ),
   ShellDestination(
-    path: RoutePaths.queue,
-    label: Copy.navQueue,
-    icon: AppIcons.queued,
-    selectedIcon: AppIcons.queued,
-  ),
-  ShellDestination(
-    path: RoutePaths.transcripts,
-    label: Copy.navTranscripts,
-    icon: AppIcons.transcript,
-    selectedIcon: AppIcons.transcript,
-  ),
-  ShellDestination(
     path: RoutePaths.recycleBin,
     label: Copy.recycleBinTitle,
     icon: AppIcons.recycleBin,

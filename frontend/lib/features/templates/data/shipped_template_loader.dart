@@ -37,6 +37,12 @@ abstract interface class ShippedTemplateLoader {
     required String projectId,
     required String name,
   });
+
+  /// Writes an editable independent copy into the global custom library.
+  Future<Result<TemplateDef>> copyToLibrary({
+    required String templateKey,
+    required String name,
+  });
 }
 
 /// The library store. Defaults to a failing stand-in so suites never open
@@ -80,15 +86,6 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     required String projectId,
     required String name,
   }) async {
-    final String trimmed = name.trim();
-    if (trimmed.isEmpty) {
-      return FailureResult<TemplateDef>(
-        ValidationFailure(
-          localizedMessage: Copy.messages.failureATemplateNeedsAName,
-          localizedRecovery: Copy.messages.failureEnterANameAndSaveAgain,
-        ),
-      );
-    }
     if (projectId.isEmpty) {
       return FailureResult<TemplateDef>(
         ValidationFailure(
@@ -98,12 +95,35 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
         ),
       );
     }
+    return _copy(templateKey: templateKey, projectId: projectId, name: name);
+  }
+
+  @override
+  Future<Result<TemplateDef>> copyToLibrary({
+    required String templateKey,
+    required String name,
+  }) => _copy(templateKey: templateKey, projectId: null, name: name);
+
+  Future<Result<TemplateDef>> _copy({
+    required String templateKey,
+    required String? projectId,
+    required String name,
+  }) async {
+    final String trimmed = name.trim();
+    if (trimmed.isEmpty) {
+      return FailureResult<TemplateDef>(
+        ValidationFailure(
+          localizedMessage: Copy.messages.failureATemplateNeedsAName,
+          localizedRecovery: Copy.messages.failureEnterANameAndSaveAgain,
+        ),
+      );
+    }
     final Result<TemplateDef> loaded = await template(templateKey);
     switch (loaded) {
       case FailureResult<TemplateDef>(:final Failure failure):
         return FailureResult<TemplateDef>(failure);
       case Success<TemplateDef>(:final TemplateDef value):
-        return _templates.save(_projectCopy(value, projectId, trimmed));
+        return _templates.save(_savedCopy(value, projectId, trimmed));
     }
   }
 
@@ -434,7 +454,7 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
   }
 }
 
-TemplateDef _projectCopy(TemplateDef source, String projectId, String name) {
+TemplateDef _savedCopy(TemplateDef source, String? projectId, String name) {
   return TemplateDef(
     id: '',
     templateKey: source.templateKey,

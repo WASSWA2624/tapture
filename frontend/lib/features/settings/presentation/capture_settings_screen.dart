@@ -5,13 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_path_builder.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -23,14 +25,14 @@ import '../domain/setting_keys.dart';
 import '../settings.dart' show SettingsStore;
 import 'offline_switch.dart';
 import 'setting_choice.dart';
+import 'settings_disclosure.dart';
 
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
 
 /// Capture defaults: camera, dates, location, quality, folders and names.
 ///
-/// Every enumerated default shows all its choices through [SettingChoice];
-/// nothing cycles on tap. Each row says in one line what it changes.
+/// Primary controls stay visible; advanced groups keep their stored values.
 class CaptureSettingsScreen extends ConsumerWidget {
   /// Creates the capture defaults screen.
   const CaptureSettingsScreen({super.key});
@@ -77,7 +79,7 @@ class CaptureSettingsScreen extends ConsumerWidget {
                   Choice<String>('document', localCopy.settingsCameraDocument),
                 ],
                 onChanged: (String next) {
-                  unawaited(notifier.write(SettingKeys.cameraMode, next));
+                  unawaited(_writeSetting(context, notifier, SettingKeys.cameraMode, next));
                 },
               ),
               AppSwitchTile(
@@ -85,7 +87,7 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 description: localCopy.settingsAutoFillDatesEffect,
                 value: view.autoFillDates,
                 onChanged: (bool value) {
-                  unawaited(notifier.write(SettingKeys.autoFillDates, value));
+                  unawaited(_writeSetting(context, notifier, SettingKeys.autoFillDates, value));
                 },
               ),
               // The one location switch (FE-SIMP-10). Privacy links here.
@@ -95,11 +97,22 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 description: localCopy.settingsGpsWhyOff,
                 value: view.gpsEnabled,
                 onChanged: (bool value) {
-                  unawaited(notifier.write(SettingKeys.gpsEnabled, value));
+                  unawaited(_writeSetting(context, notifier, SettingKeys.gpsEnabled, value));
                 },
               ),
+              SettingsDisclosure(
+                id: 'capture-photo-files',
+                title: localCopy.settingsPhotoFiles,
+                summary: localCopy.settingsPhotoFilesSummary(
+                  view.photoQuality == AppConstants.images.thumbnailQuality
+                      ? localCopy.settingsQualitySmaller
+                      : localCopy.settingsQualityStandard,
+                  _strategyLabel(view.folderStrategy, localCopy),
+                ),
+                children: <Widget>[
               SettingChoice<int>(
                 key: const ValueKey<String>('capture-quality'),
+                alwaysSheet: true,
                 label: localCopy.settingsPhotoQuality,
                 effect: localCopy.settingsPhotoQualityEffect,
                 value: view.photoQuality,
@@ -114,11 +127,12 @@ class CaptureSettingsScreen extends ConsumerWidget {
                   ),
                 ],
                 onChanged: (int next) {
-                  unawaited(notifier.write(SettingKeys.photoQuality, next));
+                  unawaited(_writeSetting(context, notifier, SettingKeys.photoQuality, next));
                 },
               ),
               SettingChoice<String>(
                 key: const ValueKey<String>('capture-folders'),
+                alwaysSheet: true,
                 label: localCopy.settingsFolderStrategy,
                 effect: localCopy.settingsFolderStrategyNewFilesOnly,
                 value: view.folderStrategy,
@@ -131,7 +145,7 @@ class CaptureSettingsScreen extends ConsumerWidget {
                     ),
                 ],
                 onChanged: (String next) {
-                  unawaited(notifier.write(SettingKeys.folderStrategy, next));
+                  unawaited(_writeSetting(context, notifier, SettingKeys.folderStrategy, next));
                 },
               ),
               AppListTile(
@@ -142,19 +156,33 @@ class CaptureSettingsScreen extends ConsumerWidget {
                   unawaited(_editNaming(context, notifier, view.namingPattern));
                 },
               ),
-              AppSectionHeader(title: localCopy.contextHierarchyTitle),
+                ],
+              ),
+              SettingsDisclosure(
+                id: 'capture-project-contexts',
+                title: localCopy.settingsProjectContexts,
+                summary: localCopy.settingsProjectContextsSummary(
+                  view.autoClear
+                      ? localCopy.settingsContextIdleOption(view.idleSeconds ~/ 60)
+                      : localCopy.projectOff,
+                  view.movementPrompt
+                      ? localCopy.settingsContextDistanceOption(view.movementMetres)
+                      : localCopy.projectOff,
+                ),
+                children: <Widget>[
               AppSwitchTile(
                 title: localCopy.settingsContextAutoClear,
                 description: localCopy.settingsContextAutoClearEffect,
                 value: view.autoClear,
                 onChanged: (bool value) {
                   unawaited(
-                    notifier.write(SettingKeys.contextAutoClearEnabled, value),
+                    _writeSetting(context, notifier, SettingKeys.contextAutoClearEnabled, value),
                   );
                 },
               ),
-              SettingChoice<int>(
+              if (view.autoClear) SettingChoice<int>(
                 key: const ValueKey<String>('capture-idle'),
+                alwaysSheet: true,
                 label: localCopy.settingsContextIdle,
                 effect: localCopy.settingsContextIdleEffect,
                 value: view.idleSeconds,
@@ -167,7 +195,7 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 ],
                 onChanged: (int next) {
                   unawaited(
-                    notifier.write(SettingKeys.contextAutoClearSeconds, next),
+                    _writeSetting(context, notifier, SettingKeys.contextAutoClearSeconds, next),
                   );
                 },
               ),
@@ -177,15 +205,18 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 value: view.movementPrompt,
                 onChanged: (bool value) {
                   unawaited(
-                    notifier.write(
+                    _writeSetting(
+                      context,
+                      notifier,
                       SettingKeys.contextMovementPromptEnabled,
                       value,
                     ),
                   );
                 },
               ),
-              SettingChoice<int>(
+              if (view.movementPrompt) SettingChoice<int>(
                 key: const ValueKey<String>('capture-distance'),
+                alwaysSheet: true,
                 label: localCopy.settingsContextDistance,
                 effect: localCopy.settingsContextDistanceEffect,
                 value: view.movementMetres,
@@ -198,9 +229,11 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 ],
                 onChanged: (int next) {
                   unawaited(
-                    notifier.write(SettingKeys.contextMovementMetres, next),
+                    _writeSetting(context, notifier, SettingKeys.contextMovementMetres, next),
                   );
                 },
+              ),
+                ],
               ),
             ],
           );
@@ -297,10 +330,13 @@ class _CaptureSettings extends AsyncNotifier<_CaptureView> {
   }
 
   /// Persists [value] and rebuilds after the write commits.
-  Future<void> write<T>(SettingKey<T> key, T value) async {
+  Future<Result<void>> write<T>(SettingKey<T> key, T value) async {
     final SettingsStore store = await _store();
-    await store.write(key, value);
-    state = AsyncData<_CaptureView>(_snapshot(store));
+    final Result<void> result = await store.write(key, value);
+    if (ref.mounted && result is Success<void>) {
+      state = AsyncData<_CaptureView>(_snapshot(store));
+    }
+    return result;
   }
 
   Future<SettingsStore> _store() async {
@@ -335,6 +371,24 @@ Object _asError(Object error) {
   return Exception(error.toString());
 }
 
+Future<void> _writeSetting<T>(
+  BuildContext context,
+  _CaptureSettings notifier,
+  SettingKey<T> key,
+  T value,
+) async {
+  final Result<void> result = await notifier.write(key, value);
+  if (result case FailureResult<void>(:final Failure failure)
+      when context.mounted) {
+    showAppSnack(
+      context,
+      failure.message,
+      localizedMessage: failure.explanation,
+      tone: SnackTone.error,
+    );
+  }
+}
+
 Future<void> _editNaming(
   BuildContext context,
   _CaptureSettings notifier,
@@ -360,7 +414,21 @@ Future<void> _editNaming(
         ],
         submitLabel: localCopy.save,
         onSubmit: () async {
-          await notifier.write(SettingKeys.namingPattern, controller.text);
+          final Result<void> result = await notifier.write(
+            SettingKeys.namingPattern,
+            controller.text,
+          );
+          if (result case FailureResult<void>(:final Failure failure)) {
+            if (sheetContext.mounted) {
+              showAppSnack(
+                sheetContext,
+                failure.message,
+                localizedMessage: failure.explanation,
+                tone: SnackTone.error,
+              );
+            }
+            return false;
+          }
           if (sheetContext.mounted) {
             Navigator.of(sheetContext).pop();
           }

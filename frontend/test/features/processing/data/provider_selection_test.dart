@@ -107,6 +107,39 @@ void main() {
     expect(resolved.fellBack, isFalse);
   });
 
+  test(
+    'an existing worker resolves the refreshed registry without retargeting its stored choice',
+    () async {
+      ProviderRegistry current = ProviderRegistry.keyless();
+      final SettingsStore settings = SettingsStore.fake(
+        stored: <String, Object?>{
+          SettingKeys.aiProvider.name: 'vision',
+          SettingKeys.aiModel.name: 'accurate',
+        },
+      );
+      final ProviderSelection resolver = ProviderSelection(
+        settings: settings,
+        providers: current,
+        providersLookup: () => current,
+      );
+      final Project owned = await project('{}');
+      expect(
+        resolver
+            .resolve(owned, AiOperation.extractFields)
+            .provider
+            .service
+            .isAvailable,
+        isFalse,
+      );
+      current = registry;
+      final selection = resolver.resolve(owned, AiOperation.extractFields);
+      expect(selection.provider.id, 'vision');
+      expect(selection.model.id, 'accurate');
+      expect(selection.provider.service.isAvailable, isTrue);
+      expect(settings.read(SettingKeys.aiProvider), 'vision');
+    },
+  );
+
   test('then the app choice for the operation', () async {
     final resolved = selection(
       appSelection: '{"transcribe":{"provider":"vision","model":"fast"}}',

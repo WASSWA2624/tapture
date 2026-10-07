@@ -45,7 +45,7 @@ final class TemplateDef {
   /// Predefined checklist rows, with aliases.
   final List<TemplateRow> rows;
 
-  /// Owning project, or null when this is a shipped template.
+  /// Owning project, or null for a shipped asset or saved library template.
   final String? projectId;
 
   /// Kind of thing this template captures, stored as data.

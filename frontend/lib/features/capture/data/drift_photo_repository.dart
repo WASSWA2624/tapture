@@ -16,10 +16,13 @@ import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/files/thumbnail_cache.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/lifecycle/deleted_entity.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
+
+import 'deleted_capture_files.dart';
 
 /// Complete Drift photo repository. Bytes are published atomically before the
 /// row becomes visible, so the tray never announces evidence that lacks a
@@ -61,6 +64,14 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
   final IdService _ids;
   final StorageRoot? _storageRoot;
   final ThumbnailCache? _thumbs;
+
+  DeletedCaptureFiles get _deleted => DeletedCaptureFiles(db: _db, reader: _reader, clock: _clock, deviceId: _deviceId, ids: _ids);
+
+  @override
+  Stream<List<DeletedEntity>> watchDeleted() => _deleted.watchPhotos();
+
+  @override
+  Future<Result<void>> restore(String id) => _deleted.restorePhoto(id);
 
   @override
   Stream<List<PhotoAsset>> watchByRecord(String recordId) {
@@ -387,23 +398,8 @@ final class DriftPhotoRepository implements CapturePhotoRepository {
   @override
   Future<Result<void>> delete(String id, {required String reason}) async {
     try {
-      final DateTime now = _clock.nowUtc();
-      await _db
-          .into(_db.tombstones)
-          .insertOnConflictUpdate(
-            sqlite.TombstonesCompanion(
-              id: Value<String>(_ids.newId()),
-              entityType: const Value<String>('photos'),
-              entityId: Value<String>(id),
-              deletedAt: Value<DateTime>(now),
-              deletedByDevice: Value<String>(_deviceId),
-              reason: Value<String>(reason),
-              createdAt: Value<DateTime>(now),
-              updatedAt: Value<DateTime>(now),
-              updatedByDevice: Value<String>(_deviceId),
-              rev: const Value<int>(1),
-            ),
-          );
+      await writeTombstone(_db, entityType: 'photos', entityId: id,
+        reason: reason, clock: _clock, deviceId: _deviceId);
       return const Success<void>(null);
     } on Object catch (error) {
       return FailureResult<void>(storageFailureFrom(error));

@@ -18,7 +18,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show templateRepositoryProvider;
-import 'template_list_screen.dart' show templateListProvider;
+import 'template_editor_source.dart';
 import 'template_locations.dart';
 
 /// Template-level identity set for duplicate detection (§13.5).
@@ -34,7 +34,7 @@ class IdentityFieldsScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final AsyncValue<TemplateDef?> value = ref
-        .watch(templateListProvider)
+        .watch(templateEditorSourceProvider(templateId))
         .whenData(_pick);
     final _IdentityView view = ref.watch(_identityFieldsProvider(templateId));
     return AppPage(
@@ -63,7 +63,7 @@ class IdentityFieldsScreen extends ConsumerWidget {
                 : TemplateLocations.child(context, templateId, 'fields/new'),
           ),
         ),
-        onRetry: () => ref.invalidate(templateListProvider),
+        onRetry: () => ref.invalidate(templateEditorSourceProvider(templateId)),
         data: (TemplateDef? row) => _list(context, ref, row!, view),
       ),
     );
@@ -152,7 +152,8 @@ final class _IdentityFields extends Notifier<_IdentityView> {
   _IdentityView build() {
     ref.onDispose(() => _held = null);
     final List<TemplateDef> rows =
-        ref.watch(templateListProvider).asData?.value ?? const <TemplateDef>[];
+        ref.watch(templateEditorSourceProvider(templateId)).asData?.value ??
+        const <TemplateDef>[];
     final _IdentityView? held = _held;
     if (held != null && held.dirty) {
       return held;
@@ -228,7 +229,8 @@ final class _IdentityFields extends Notifier<_IdentityView> {
 
   TemplateDef? _source() {
     final List<TemplateDef> rows =
-        ref.read(templateListProvider).asData?.value ?? const <TemplateDef>[];
+        ref.read(templateEditorSourceProvider(templateId)).asData?.value ??
+        const <TemplateDef>[];
     for (final TemplateDef row in rows) {
       if (row.id == templateId) {
         return row;

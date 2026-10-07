@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/lifecycle/deleted_entity.dart';
 
 import 'project.dart';
 import 'project_settings.dart';
@@ -54,6 +55,12 @@ abstract interface class ProjectRepository {
   /// Soft-deletes [id] and its owned rows, writes one tombstone per
   /// entity, then moves the project folder into the recycle area.
   Future<Result<void>> delete(String id);
+
+  /// Deleted project headers, without their cascade children.
+  Stream<List<DeletedEntity>> watchDeleted();
+
+  /// Recovers storage before restoring only this project's cascade tombstones.
+  Future<Result<void>> restore(String id);
 
   /// How many records and files a delete of [id] would hide.
   Future<Result<ProjectOwnedCounts>> ownedCounts(String id);

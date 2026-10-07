@@ -13,6 +13,7 @@ import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
 
+import '../domain/project_name_validation.dart';
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 import 'current_project.dart';
@@ -93,6 +94,7 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen>
             errorText: Copy.of(
               context,
             ).stateText(view.localizedNameError, view.nameError),
+            onChanged: ref.read(_projectCreateProvider.notifier).changeName,
           ),
           AppTextField(
             label: localCopy.projectDescription,
@@ -161,10 +163,11 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen>
 }
 
 final NotifierProvider<_ProjectCreate, _ProjectCreateView>
-_projectCreateProvider = NotifierProvider<_ProjectCreate, _ProjectCreateView>(
-  _ProjectCreate.new,
-  retry: (int _, Object _) => null,
-);
+_projectCreateProvider =
+    NotifierProvider.autoDispose<_ProjectCreate, _ProjectCreateView>(
+      _ProjectCreate.new,
+      retry: (int _, Object _) => null,
+    );
 
 typedef _ProjectCreateView = ({
   String? nameError,
@@ -174,14 +177,35 @@ typedef _ProjectCreateView = ({
 });
 
 class _ProjectCreate extends Notifier<_ProjectCreateView> {
+  bool _nameTouched = false;
+
   @override
   _ProjectCreateView build() {
+    _nameTouched = false;
     return (
       nameError: null,
       localizedNameError: null,
       saveError: null,
       localizedSaveError: null,
     );
+  }
+
+  /// Typing and dictation share validation after the name is first touched.
+  void changeName(String name) {
+    _nameTouched = true;
+    _validateName(name);
+  }
+
+  bool _validateName(String name, {bool submitted = false}) {
+    final bool valid = ProjectNameValidation.isValid(name);
+    final bool showError = (_nameTouched || submitted) && !valid;
+    state = (
+      nameError: showError ? Copy.nameRequired : null,
+      localizedNameError: showError ? Copy.messages.nameRequired : null,
+      saveError: state.saveError,
+      localizedSaveError: state.localizedSaveError,
+    );
+    return valid;
   }
 
   /// Validates, writes through [createReady], and opens the new project.
@@ -191,24 +215,20 @@ class _ProjectCreate extends Notifier<_ProjectCreateView> {
     String? organisation,
     String? sourceId,
   }) async {
-    final String trimmed = name.trim();
-    if (trimmed.isEmpty) {
-      state = (
-        nameError: Copy.nameRequired,
-        localizedNameError: Copy.messages.nameRequired,
-        saveError: null,
-        localizedSaveError: null,
-      );
+    if (!_validateName(name, submitted: true)) {
       return null;
     }
     final Result<Project> result = await ref
         .read(projectRepositoryProvider)
         .createReady(
-          name: trimmed,
+          name: name.trim(),
           description: description,
           organisation: organisation,
           sourceId: sourceId,
         );
+    if (!ref.mounted) {
+      return result is Success<Project> ? result.value : null;
+    }
     switch (result) {
       case Success<Project>(:final Project value):
         ref.read(currentProjectProvider.notifier).open(value.id);
@@ -221,8 +241,8 @@ class _ProjectCreate extends Notifier<_ProjectCreateView> {
         return value;
       case FailureResult<Project>(:final Failure failure):
         state = (
-          nameError: null,
-          localizedNameError: null,
+          nameError: state.nameError,
+          localizedNameError: state.localizedNameError,
           saveError: failure.message,
           localizedSaveError: failure.explanation,
         );

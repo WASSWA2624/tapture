@@ -13,9 +13,10 @@ abstract interface class MeetingRepository {
   /// installed template [templateId]. Without one, the project's installed
   /// meeting template is used.
   ///
-  /// The first save writes [transcript]. A later save of the same id leaves
-  /// that transcript and every transcription version in place, and may
-  /// replace [notes] and refined [minutes].
+  /// The first save preserves [notes] as the original and writes [transcript].
+  /// Later saves keep both originals and every transcription version, while
+  /// auditing changes to working [notes] and refined [minutes]. Legacy meetings
+  /// snapshot their previous notes on the first write.
   Future<Result<MeetingRecord>> save(
     Meeting meeting, {
     required String recordId,
@@ -80,10 +81,11 @@ abstract interface class MeetingRepository {
   });
 }
 
-/// A stored meeting plus the raw material beside it: the notes, the refined
-/// minutes, the verbatim transcript, every transcription run and the files.
+/// A stored meeting with immutable original notes, editable working notes,
+/// refined minutes, the verbatim transcript, transcription runs and files.
 typedef MeetingRecord = ({
   Meeting meeting,
+  String originalNotes,
   String notes,
   String minutes,
   String transcript,

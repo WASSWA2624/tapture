@@ -10,6 +10,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/lifecycle/deleted_entity.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
@@ -29,14 +30,9 @@ import '../domain/record_summary.dart';
 import 'record_providers.dart';
 import 'recycle_bin_controller.dart';
 
-/// The recycle bin (task 014 step 7, D12): every deleted record across
-/// projects, newest deletion first, with its project, when it was deleted
-/// and the days it has left before the purge removes it for good.
-///
-/// One press restores a record whole, to the status it had. Empty recycle
-/// bin removes everything now behind a strong confirm that names the count
-/// and must be typed; a record a merge still needs is kept even then. Where
-/// no purge runs, as in previews, the action is off and says why.
+/// Deleted projects, records and managed files, newest deletion first.
+/// Parents suppress their children. Retention and permanent removal apply
+/// only to records; the destructive confirmation names their count.
 final class RecycleBinScreen extends ConsumerWidget {
   /// Creates the recycle bin page.
   const RecycleBinScreen({super.key});
@@ -45,28 +41,31 @@ final class RecycleBinScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final LocalizedCopy localCopy = Copy.of(context);
 
-    final AsyncValue<List<DeletedRecord>> bin = ref.watch(recycleBinProvider);
+    final AsyncValue<List<DeletedEntity>> bin = ref.watch(deletedEntitiesProvider);
     final int days = ref.watch(recordRetentionDaysProvider);
     final RecycleBinActivity activity = ref.watch(recycleBinControllerProvider);
     final bool canEmpty = ref.watch(recordPurgeJobProvider) != null;
-    final List<DeletedRecord> held =
-        bin.asData?.value ?? const <DeletedRecord>[];
+    final int recordCount = bin.asData?.value.where((DeletedEntity row) => row.kind == DeletedEntityKind.record).length ?? 0;
+    final Map<String, DeletedRecord> records = <String, DeletedRecord>{
+      for (final DeletedRecord record in ref.watch(recycleBinProvider).asData?.value ?? const <DeletedRecord>[]) record.id: record,
+    };
     return AppPage(
       key: const ValueKey<String>('route-recycle-bin'),
       title: localCopy.recycleBinTitle,
       scrollable: false,
       inset: false,
-      footer: held.isEmpty
+      footer: recordCount == 0
           ? null
           : _EmptyNowBar(
               available: canEmpty,
               emptying: activity.emptying,
-              onEmpty: () => unawaited(_emptyNow(context, ref, held.length)),
+              count: recordCount,
+              onEmpty: () => unawaited(_emptyNow(context, ref, recordCount)),
             ),
-      body: AsyncValueView<List<DeletedRecord>>(
+      body: AsyncValueView<List<DeletedEntity>>(
         value: bin,
-        onRetry: () => ref.invalidate(recycleBinProvider),
-        isEmpty: (List<DeletedRecord> rows) => rows.isEmpty,
+        onRetry: () => ref.read(recycleBinControllerProvider.notifier).refresh(),
+        isEmpty: (List<DeletedEntity> rows) => rows.isEmpty,
         empty: () => AppEmptyState(
           icon: AppIcons.restore,
           headline: Copy.of(context).recycleBinEmptyHeadline,
@@ -74,8 +73,8 @@ final class RecycleBinScreen extends ConsumerWidget {
           actionLabel: Copy.of(context).navRecords,
           onAction: () => context.go(RoutePaths.records),
         ),
-        data: (List<DeletedRecord> rows) =>
-            _BinList(rows: rows, days: days, activity: activity),
+        data: (List<DeletedEntity> rows) =>
+            _BinList(rows: rows, records: records, days: days, activity: activity),
       ),
     );
   }
@@ -137,9 +136,11 @@ class _BinList extends ConsumerWidget {
     required this.rows,
     required this.days,
     required this.activity,
+    required this.records,
   });
 
-  final List<DeletedRecord> rows;
+  final List<DeletedEntity> rows;
+  final Map<String, DeletedRecord> records;
   final int days;
   final RecycleBinActivity activity;
 
@@ -152,7 +153,7 @@ class _BinList extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Padding(
+        if (rows.any((DeletedEntity row) => row.kind == DeletedEntityKind.record)) Padding(
           padding: EdgeInsets.fromLTRB(gutter, Space.x2, gutter, Space.x2),
           child: Text(
             localCopy.recycleBinKeptFor(days),
@@ -164,7 +165,9 @@ class _BinList extends ConsumerWidget {
             key: const ValueKey<String>('recycle-bin-list'),
             itemCount: rows.length,
             itemBuilder: (BuildContext context, int index) {
-              final DeletedRecord record = rows[index];
+              final DeletedEntity entity = rows[index];
+              final DeletedRecord? record = entity.kind == DeletedEntityKind.record ? records[entity.id] : null;
+              if (record == null) return _EntityBinRow(entity: entity, restoring: activity.restoring.contains(entity.key));
               return _BinRow(
                 record: record,
                 daysLeft: record.daysLeft(now: now, retentionDays: days),
@@ -207,11 +210,11 @@ class _BinRow extends ConsumerWidget {
     return AppListTile(
       key: ValueKey<String>('recycle-bin-row-${record.id}'),
       title: title,
-      subtitle: localCopy.recycleBinRowSubtitle(
+      subtitle: localCopy.recycleEntitySubtitle(localCopy.recycleTypeRecord, localCopy.recycleBinRowSubtitle(
         number: named ? summary.number : null,
         projectName: record.projectName,
         deletedAt: record.deletedAt,
-      ),
+      )),
       leading: thumb == null
           ? null
           : RecordThumb(
@@ -261,18 +264,67 @@ class _BinRow extends ConsumerWidget {
   }
 }
 
-/// Empty recycle bin, pinned under the list. Off, with the reason above
+/// Projects and independently deleted files have restoration but no purge timer.
+class _EntityBinRow extends ConsumerWidget {
+  const _EntityBinRow({required this.entity, required this.restoring});
+  final DeletedEntity entity;
+  final bool restoring;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy copy = Copy.of(context);
+    final String type = switch (entity.kind) {
+      DeletedEntityKind.project => copy.recycleTypeProject,
+      DeletedEntityKind.record => copy.recycleTypeRecord,
+      DeletedEntityKind.photo => copy.recycleTypePhoto,
+      DeletedEntityKind.document => copy.recycleTypeDocument,
+      DeletedEntityKind.audio => copy.recycleTypeAudio,
+    };
+    return AppListTile(
+      key: ValueKey<String>('recycle-bin-row-${entity.key}'),
+      title: entity.name.isEmpty ? type : entity.name,
+      wrapText: true,
+      subtitle: copy.recycleEntitySubtitle(type, copy.recycleBinRowSubtitle(
+        number: null, projectName: entity.projectName, deletedAt: entity.deletedAt,
+      )),
+      trailing: AppIconButton(
+        key: ValueKey<String>('recycle-bin-restore-${entity.key}'),
+        icon: AppIcons.restore,
+        tooltip: copy.recycleBinRestore,
+        semanticLabel: copy.recycleBinRestoreLabel(entity.name),
+        onPressed: restoring ? null : () => unawaited(_restore(context, ref)),
+      ),
+    );
+  }
+
+  Future<void> _restore(BuildContext context, WidgetRef ref) async {
+    final BuildContext host = _snackHost(context);
+    final Result<void> result = await ref.read(recycleBinControllerProvider.notifier).restoreEntity(entity);
+    if (!host.mounted) return;
+    final LocalizedCopy copy = Copy.of(host);
+    switch (result) {
+      case Success<void>():
+        showAppSnack(host, copy.recycleRestored, tone: SnackTone.success);
+      case FailureResult<void>(:final Failure failure):
+        showAppSnack(host, copy.failureMessage(failure), tone: SnackTone.error);
+    }
+  }
+}
+
+/// Empty deleted records, pinned under the list. Off, with the reason above
 /// it, where no purge runs; busy while the bin is being emptied.
 class _EmptyNowBar extends StatelessWidget {
   const _EmptyNowBar({
     required this.available,
     required this.emptying,
     required this.onEmpty,
+    required this.count,
   });
 
   final bool available;
   final bool emptying;
   final VoidCallback onEmpty;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
@@ -292,7 +344,7 @@ class _EmptyNowBar extends StatelessWidget {
         ],
         AppButton(
           key: const ValueKey<String>('recycle-bin-empty'),
-          label: localCopy.recycleBinEmpty,
+          label: localCopy.recycleEmptyRecords(count),
           icon: AppIcons.delete,
           variant: AppButtonVariant.destructive,
           expand: true,

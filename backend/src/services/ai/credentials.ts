@@ -9,6 +9,7 @@ import type { CredentialRow, ProviderName } from '../../domain/ai.js';
 import { invalidRequest, notFound, unavailable } from '../../domain/errors.js';
 import { can, type Principal } from '../../domain/permissions.js';
 import type { Repository } from '../../repositories/repository.js';
+import { credentialProvider } from './catalogue.js';
 
 function encryptionKey(config: AppConfig): Buffer {
   if (config.aiCredentialEncryptionKey === '') throw unavailable();
@@ -32,8 +33,10 @@ export async function credentialStatus(
   store: Repository,
   principal: Principal,
   provider: ProviderName,
+  config: AppConfig,
 ) {
   scope(principal);
+  credentialProvider(config, provider);
   return {
     provider,
     configured:
@@ -49,6 +52,7 @@ export async function saveCredential(
   apiKey: string,
 ): Promise<void> {
   scope(principal);
+  credentialProvider(config, provider);
   if (
     apiKey.length === 0 ||
     apiKey.length > 4096 ||
@@ -97,8 +101,10 @@ export async function deleteCredential(
   store: Repository,
   principal: Principal,
   provider: ProviderName,
+  config: AppConfig,
 ): Promise<void> {
   scope(principal);
+  credentialProvider(config, provider);
   await store.withTransaction(async (tx) => {
     await tx.deleteAiCredential(principal.userId, provider);
     await tx.recordAudit({

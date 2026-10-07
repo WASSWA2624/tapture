@@ -1,4 +1,44 @@
 {
+  "aiServerAndAccount": "Server and account",
+  "@aiServerAndAccount": {
+    "description": "Secondary AI settings action opening optional backend setup."
+  },
+  "settingsPhotoFiles": "Photo files",
+  "@settingsPhotoFiles": {
+    "description": "Collapsed photo storage settings section."
+  },
+  "settingsProjectContexts": "Project contexts",
+  "@settingsProjectContexts": {
+    "description": "Collapsed project context defaults section."
+  },
+  "settingsPhotoFilesSummary": "{quality} · {folders}",
+  "@settingsPhotoFilesSummary": {
+    "description": "Current localized photo quality and folder selection.",
+    "placeholders": {
+      "quality": {
+        "type": "String",
+        "description": "Current quality setting."
+      },
+      "folders": {
+        "type": "String",
+        "description": "Current folders setting."
+      }
+    }
+  },
+  "settingsProjectContextsSummary": "Clear after: {autoClear} · Movement: {movement}",
+  "@settingsProjectContextsSummary": {
+    "description": "Current localized context clearing interval and movement distance, or localized Off.",
+    "placeholders": {
+      "autoClear": {
+        "type": "String",
+        "description": "Current autoClear setting."
+      },
+      "movement": {
+        "type": "String",
+        "description": "Current movement setting."
+      }
+    }
+  },
   "@@locale": "en",
   "ocrBrowserUnavailable": "On-device photo reading is unavailable in this browser. Review fields manually or enable online analysis.",
   "@ocrBrowserUnavailable": {
@@ -833,9 +873,9 @@
       }
     }
   },
-  "projectsImport": "Import a file",
+  "projectsImport": "Import a Project",
   "@projectsImport": {
-    "description": "The Projects list's one Import control (task 020): it opens the import\r\n   page, which takes a bundle, a spreadsheet, a dataset or a template."
+    "description": "Opens the project package file picker directly from Projects (task 143)."
   },
   "projectsDuplicate": "Duplicate",
   "@projectsDuplicate": {
@@ -1465,6 +1505,30 @@
     "description": "Primary action on the open-project home when a record already exists."
   },
   "captureStart": "Start capturing",
+  "projectAddTemplate": "Add template",
+  "@projectAddTemplate": {
+    "description": "Primary project-home action when the project has no templates."
+  },
+  "projectCaptureNow": "Capture now",
+  "@projectCaptureNow": {
+    "description": "Secondary project-home action to capture evidence before adding a template."
+  },
+  "projectMenuCaptureReview": "Capture and review",
+  "@projectMenuCaptureReview": {
+    "description": "Nonselectable project menu heading above transcription, meetings and quality summary."
+  },
+  "projectMenuSetup": "Project setup",
+  "@projectMenuSetup": {
+    "description": "Nonselectable project menu heading above templates, datasets and context configuration."
+  },
+  "projectMenuExchange": "Exchange",
+  "@projectMenuExchange": {
+    "description": "Nonselectable project menu heading above export, package merging and opening in another app."
+  },
+  "projectMenuManage": "Manage project",
+  "@projectMenuManage": {
+    "description": "Nonselectable project menu heading above project details, settings and lifecycle actions."
+  },
   "@captureStart": {
     "description": "Home primary action before the first record."
   },
@@ -15411,5 +15475,90 @@
         "description": "Budget unit label configured by the organisation."
       }
     }
+  },
+  "importSupportedFiles": "Supported files",
+  "@importSupportedFiles": {"description": "Collapsed help on the generic import page explaining supported file types."},
+  "templatesCustomizeCopy": "Customize a copy",
+  "@templatesCustomizeCopy": {"description": "Creates an editable saved library copy from an immutable shipped template."},
+  "templatesMyTemplates": "My templates",
+  "@templatesMyTemplates": {"description": "Heading for editable templates saved in the global custom library."},
+  "templatesDeleted": "Template deleted",
+  "@templatesDeleted": {"description": "Confirmation after a durable template tombstone, accompanied by Undo."},
+  "recycleEmptyRecords": "Empty deleted records ({count})",
+  "@recycleEmptyRecords": {
+    "description": "Field workflow recovery and compact settings control.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Displayed count."
+      }
+    }
+  },
+  "recycleTypeProject": "Project",
+  "@recycleTypeProject": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "recycleTypeRecord": "Record",
+  "@recycleTypeRecord": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "recycleTypePhoto": "Photo",
+  "@recycleTypePhoto": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "recycleTypeDocument": "Document",
+  "@recycleTypeDocument": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "recycleTypeAudio": "Audio",
+  "@recycleTypeAudio": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "recycleRestored": "Restored",
+  "@recycleRestored": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "recycleParentDeleted": "Restore the deleted parent first.",
+  "@recycleParentDeleted": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "recycleParentDeletedRecovery": "Restore the project or record from the Recycle bin, then try again.",
+  "@recycleParentDeletedRecovery": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "recycleEntitySubtitle": "{type} · {details}",
+  "@recycleEntitySubtitle": {
+    "description": "Field workflow recovery and compact settings control.",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "description": "Displayed type."
+      },
+      "details": {
+        "type": "String",
+        "description": "Displayed details."
+      }
+    }
+  },
+  "recycleFolderRestoreFailed": "The project folder could not be restored.",
+  "@recycleFolderRestoreFailed": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "recycleFolderRestoreRecovery": "Check storage access and resolve any existing folder with the same name, then try again.",
+  "@recycleFolderRestoreRecovery": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "aiSupportedProviders": "Supported providers",
+  "@aiSupportedProviders": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "aiCostControls": "Spending limit",
+  "@aiCostControls": {
+    "description": "Field workflow recovery and compact settings control."
+  },
+  "aiRequestLimitSummary": "Per request: {amount} configured",
+  "@aiRequestLimitSummary": {
+    "description": "Collapsed AI cost controls showing the saved explicit maximum per request.",
+    "placeholders": {"amount": {"type": "String", "description": "Saved numeric request ceiling."}}
   }
 }

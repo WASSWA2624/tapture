@@ -94,6 +94,7 @@ class MeetingLiveSection extends ConsumerWidget {
       recorder = LiveTranscriptPanel(
         target: target,
         startLabel: localCopy.meetingRecord,
+        showEmptyIdleTranscript: false,
         onOpenTranscript: (String transcriptId) => _open(context, transcriptId),
       );
     }

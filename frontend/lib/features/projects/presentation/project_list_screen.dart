@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +12,7 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/features/merge/merge.dart' show startPackageImport;
 import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/project_repository.dart';
@@ -20,7 +23,7 @@ import 'project_list_toolbar.dart';
 import 'project_list_view.dart';
 
 /// Landing list: every active project as one row with counts and
-/// last-worked time. Archived rows sit behind the status filter.
+/// last-worked time. Archived rows are available through Show archived.
 class ProjectListScreen extends ConsumerWidget {
   /// Creates the landing list.
   const ProjectListScreen({super.key});
@@ -72,7 +75,7 @@ class ProjectListScreen extends ConsumerWidget {
                   : localCopy.projectsCreate,
               onAction: () {
                 if (value.asData?.value.isNotEmpty == true) {
-                  context.go(RoutePaths.projectImport);
+                  unawaited(startPackageImport(context, ref));
                 } else {
                   ProjectListActions.create(context);
                 }

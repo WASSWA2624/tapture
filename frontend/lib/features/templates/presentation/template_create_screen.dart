@@ -11,7 +11,6 @@ import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
-import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/presentation/template_locations.dart';
 
 import '../domain/field_def.dart';
@@ -25,7 +24,10 @@ import 'template_field_rows.dart';
 /// opens for everything past the three questions (FBK0000144).
 class TemplateCreateScreen extends ConsumerStatefulWidget {
   /// Creates the new-template form.
-  const TemplateCreateScreen({super.key});
+  const TemplateCreateScreen({this.projectId, super.key});
+
+  /// The explicit owner. Null creates in the global custom library.
+  final String? projectId;
 
   @override
   ConsumerState<TemplateCreateScreen> createState() =>
@@ -106,6 +108,7 @@ class _TemplateCreateScreenState extends ConsumerState<TemplateCreateScreen> {
         submitLabel: localCopy.templatesCreate,
         onSubmit: () async {
           final TemplateDef? created = await notifier.submit(
+            projectId: widget.projectId,
             name: _name.text,
             labels: <int, String>{
               for (final TemplateFieldDraft row in view.rows)
@@ -216,6 +219,7 @@ class _TemplateCreate extends Notifier<_TemplateCreateView> {
   /// row order, and returns the stored template. A label that packs two
   /// facts warns once; Keep anyway lets the next Create save (FE-SIMP-08).
   Future<TemplateDef?> submit({
+    required String? projectId,
     required String name,
     required Map<int, String> labels,
   }) async {
@@ -225,15 +229,6 @@ class _TemplateCreate extends Notifier<_TemplateCreateView> {
         nameError: Copy.nameRequired,
         localizedNameError: Copy.messages.nameRequired,
         clearSaveError: true,
-      );
-      return null;
-    }
-    final String? projectId = ref.read(currentProjectProvider);
-    if (projectId == null || projectId.isEmpty) {
-      _update(
-        saveError: Copy.statusNoProject,
-        localizedSaveError: Copy.messages.statusNoProject,
-        clearNameError: true,
       );
       return null;
     }

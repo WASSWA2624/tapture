@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/shell_back_navigation.dart';
 import 'package:tapture/app/shell_destination.dart';
 import 'package:tapture/app/shell_title.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
@@ -22,8 +23,6 @@ import 'package:tapture/core/widgets/trial_report_action.dart';
 import 'package:tapture/features/processing/presentation/queue_providers.dart';
 import 'package:tapture/features/quality/presentation/verification_session.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
-
-import '../router.dart';
 
 /// Permanent one-line strip: the one visible status line (§56.13).
 ///
@@ -106,7 +105,8 @@ class StatusLine extends ConsumerWidget {
                         context,
                       ).backButtonTooltip,
                       outlined: false,
-                      onPressed: () => _back(context),
+                      onPressed: () =>
+                          unawaited(ShellBackNavigation.back(context)),
                     ),
                   if (!root) const SizedBox(width: Space.x2),
                   if (root && destination != null) ...<Widget>[
@@ -261,18 +261,4 @@ Override networkOnlineOverride() {
     ref.onDispose(service.dispose);
     return service;
   });
-}
-
-void _back(BuildContext context) {
-  final GoRouter router = GoRouter.of(context);
-  if (router.canPop()) {
-    router.pop();
-    return;
-  }
-  final Uri uri = GoRouterState.of(context).uri;
-  if (uri.queryParameters.containsKey(AppRoutes.filterQuery)) {
-    context.go(uri.path);
-    return;
-  }
-  context.go(ShellTitle.parentOf(uri.path));
 }

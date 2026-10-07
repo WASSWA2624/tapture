@@ -565,6 +565,26 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
       ),
     ];
     final Color fill = context.colors.surfaceVariant;
+    final List<AppOverflowAction> grouped = <AppOverflowAction>[
+      AppOverflowAction(
+        sectionLabel: localCopy.projectMenuCaptureReview,
+        icon: AppIcons.transcript,
+        label: localCopy.transcribeTitle,
+        onTap: _noop,
+      ),
+      AppOverflowAction(
+        sectionLabel: localCopy.projectMenuCaptureReview,
+        icon: AppIcons.recordAudio,
+        label: localCopy.meetingStartEntry,
+        onTap: _noop,
+      ),
+      AppOverflowAction(
+        sectionLabel: localCopy.projectMenuSetup,
+        icon: AppIcons.context,
+        label: localCopy.contextHierarchyTitle,
+        onTap: _noop,
+      ),
+    ];
     return <Widget>[
       Wrap(
         spacing: Space.x2,
@@ -619,6 +639,24 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
             key: ValueKey<String>('app-overflow-borderless-disabled'),
             outlined: false,
             items: <AppOverflowAction>[],
+          ),
+          AppOverflowMenu(
+            key: const ValueKey<String>('app-overflow-grouped'),
+            items: grouped,
+          ),
+          _overflowFill(
+            key: const ValueKey<String>('app-overflow-grouped-keyboard'),
+            fill: fill,
+            child: AppOverflowMenu(items: grouped),
+          ),
+          MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(2)),
+            child: AppOverflowMenu(
+              key: const ValueKey<String>('app-overflow-grouped-text2'),
+              items: grouped,
+            ),
           ),
         ],
       ),

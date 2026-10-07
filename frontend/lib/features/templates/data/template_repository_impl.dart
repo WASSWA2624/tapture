@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,6 +41,11 @@ final class TemplateRepositoryImpl implements TemplateRepository {
   @override
   Stream<List<TemplateDef>> watchByProject(String projectId) {
     return _changes().asyncMap((_) => _listOwned(projectId));
+  }
+
+  @override
+  Stream<List<TemplateDef>> watchLibrary() {
+    return _changes().asyncMap((_) => _listOwned(null));
   }
 
   @override
@@ -127,22 +133,132 @@ final class TemplateRepositoryImpl implements TemplateRepository {
           localizedRecovery: Copy.messages.failureRefreshTheListAndTryAgain,
         );
       }
+      final List<Map<String, String>> children = <Map<String, String>>[];
       for (final sqlite.TemplateField field in await _fieldsOf(id)) {
-        await _tombstone(_db.templateFields, field.id, reason);
+        await _deleteChild(_db.templateFields, field.id, reason, children);
       }
       for (final sqlite.TemplateRow row in await _rowsOf(id)) {
-        await _tombstone(_db.templateRows, row.id, reason);
+        await _deleteChild(_db.templateRows, row.id, reason, children);
       }
       await _tombstone(_db.templates, id, reason);
+      final sqlite.Tombstone deletion = (await _deletion(_db.templates, id))!;
+      await appendAudit(
+        _db,
+        entityType: _db.templates.actualTableName,
+        entityId: id,
+        action: AuditAction.deleted,
+        fieldKey: _cascadeField,
+        previousValue: deletion.id,
+        newValue: jsonEncode(children),
+        reason: reason,
+        clock: _clock,
+        device: _deviceId,
+      );
     });
   }
 
-  Future<List<TemplateDef>> _listOwned(String projectId) async {
+  @override
+  Future<Result<void>> restore(String id) {
+    return runInTransaction(_db, () async {
+      final sqlite.Template? header = await _header(id);
+      if (header == null) throw _missing;
+      final String? projectId = header.projectId;
+      if (projectId != null && await _isTombstoned(_db.projects, projectId)) {
+        throw _missing;
+      }
+      final sqlite.Tombstone? deletion = await _deletion(_db.templates, id);
+      if (deletion == null) return;
+      final sqlite.AuditLogData? audit =
+          await (_db.select(_db.auditLog)..where(
+                (row) =>
+                    row.entityType.equals(_db.templates.actualTableName) &
+                    row.entityId.equals(id) &
+                    row.fieldKey.equals(_cascadeField) &
+                    row.previousValue.equals(deletion.id),
+              ))
+              .getSingleOrNull();
+      // Legacy deletions have no cascade identity: leave their child
+      // tombstones intact rather than resurrect independently removed data.
+      if (audit?.newValue case final String snapshot) {
+        for (final Object? raw in jsonDecode(snapshot) as List<Object?>) {
+          final Map<String, Object?> child = Map<String, Object?>.from(
+            raw as Map,
+          );
+          final TableInfo<Table, Object?>? table = switch (child['table']) {
+            'template_fields' => _db.templateFields,
+            'template_rows' => _db.templateRows,
+            _ => null,
+          };
+          if (table == null) continue;
+          final String childId = child['id']! as String;
+          final QueryRow? owned = await _db
+              .customSelect(
+                'SELECT id FROM "${table.actualTableName}" WHERE id = ? AND template_id = ?',
+                variables: <Variable<Object>>[
+                  Variable<String>(childId),
+                  Variable<String>(id),
+                ],
+              )
+              .getSingleOrNull();
+          if (owned == null) continue;
+          if ((await _deletion(table, childId))?.id == child['tombstone']) {
+            await _restoreRow(table, childId);
+          }
+        }
+      }
+      await _restoreRow(_db.templates, id);
+      await appendAudit(
+        _db,
+        entityType: _db.templates.actualTableName,
+        entityId: id,
+        action: AuditAction.updated,
+        fieldKey: 'deleted',
+        previousValue: 'true',
+        newValue: 'false',
+        clock: _clock,
+        device: _deviceId,
+      );
+    });
+  }
+
+  Future<void> _deleteChild(
+    TableInfo<Table, Object?> table,
+    String id,
+    String reason,
+    List<Map<String, String>> children,
+  ) async {
+    if (await _isTombstoned(table, id)) return;
+    await _tombstone(table, id, reason);
+    children.add(<String, String>{
+      'table': table.actualTableName,
+      'id': id,
+      'tombstone': (await _deletion(table, id))!.id,
+    });
+  }
+
+  Future<void> _restoreRow(TableInfo<Table, Object?> table, String id) async {
+    await removeTombstone(_db, entityType: table.actualTableName, entityId: id);
+    await _db.customUpdate(
+      'UPDATE "${table.actualTableName}" SET updated_at = ?, '
+      'updated_by_device = ?, rev = rev + 1 WHERE id = ?',
+      variables: <Variable<Object>>[
+        Variable<DateTime>(_clock.nowUtc()),
+        Variable<String>(_deviceId),
+        Variable<String>(id),
+      ],
+      updates: <TableInfo<Table, Object?>>{table},
+    );
+  }
+
+  Future<List<TemplateDef>> _listOwned(String? projectId) async {
     final List<QueryRow> rows = await _db
         .customSelect(
-          'SELECT h.* FROM templates h WHERE h.project_id = ? '
+          'SELECT h.* FROM templates h WHERE '
+          '${projectId == null ? 'h.project_id IS NULL' : 'h.project_id = ?'} '
           "AND NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'templates' AND t.entity_id = h.id)",
-          variables: <Variable<Object>>[Variable<String>(projectId)],
+          variables: <Variable<Object>>[
+            if (projectId != null) Variable<String>(projectId),
+          ],
         )
         .get();
     final List<TemplateDef> list = <TemplateDef>[];
@@ -350,7 +466,7 @@ final class TemplateRepositoryImpl implements TemplateRepository {
   }
 
   Future<Set<String>> _tombstoned(
-    TableInfo<dynamic, dynamic> table,
+    TableInfo<Table, Object?> table,
     String templateId,
   ) async {
     final List<QueryRow> rows = await _db
@@ -369,21 +485,24 @@ final class TemplateRepositoryImpl implements TemplateRepository {
     };
   }
 
-  Future<bool> _isTombstoned(
-    TableInfo<dynamic, dynamic> table,
+  Future<bool> _isTombstoned(TableInfo<Table, Object?> table, String id) async {
+    return await _deletion(table, id) != null;
+  }
+
+  Future<sqlite.Tombstone?> _deletion(
+    TableInfo<Table, Object?> table,
     String id,
-  ) async {
-    return await (_db.select(_db.tombstones)..where(
-              (sqlite.$TombstonesTable row) =>
-                  row.entityType.equals(table.actualTableName) &
-                  row.entityId.equals(id),
-            ))
-            .getSingleOrNull() !=
-        null;
+  ) {
+    return (_db.select(_db.tombstones)..where(
+          (sqlite.$TombstonesTable row) =>
+              row.entityType.equals(table.actualTableName) &
+              row.entityId.equals(id),
+        ))
+        .getSingleOrNull();
   }
 
   Future<void> _tombstone(
-    TableInfo<dynamic, dynamic> table,
+    TableInfo<Table, Object?> table,
     String entityId,
     String reason,
   ) {
@@ -436,6 +555,14 @@ final Provider<TemplateRepository> templateRepositoryProvider =
 /// tests that need rows inject [FakeTemplateRepository] or an in-memory
 /// [TemplateRepositoryImpl].
 final class _EmptyTemplateRepository implements TemplateRepository {
+  @override
+  Stream<List<TemplateDef>> watchLibrary() =>
+      Stream<List<TemplateDef>>.value(const <TemplateDef>[]);
+
+  @override
+  Future<Result<void>> restore(String id) async =>
+      FailureResult<void>(_missing);
+
   @override
   Stream<List<TemplateDef>> watchByProject(String projectId) {
     return Stream<List<TemplateDef>>.value(const <TemplateDef>[]);
@@ -531,3 +658,4 @@ final StorageFailure _needsReason = StorageFailure(
 );
 
 const String _removedReason = 'Removed from the template.';
+const String _cascadeField = 'deletedChildren';

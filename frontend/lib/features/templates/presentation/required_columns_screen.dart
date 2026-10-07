@@ -21,7 +21,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import 'requiredness_controller.dart';
-import 'template_list_screen.dart' show templateListProvider;
+import 'template_editor_source.dart';
 import 'template_locations.dart';
 
 /// Bulk requiredness and visibility for one template (§12.3, §13.2).
@@ -37,7 +37,7 @@ class RequiredColumnsScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final AsyncValue<TemplateDef?> value = ref
-        .watch(templateListProvider)
+        .watch(templateEditorSourceProvider(templateId))
         .whenData(_pick);
     final RequirednessView view = ref.watch(
       requirednessControllerProvider(templateId),
@@ -68,7 +68,7 @@ class RequiredColumnsScreen extends ConsumerWidget {
                 : TemplateLocations.child(context, templateId, 'fields/new'),
           ),
         ),
-        onRetry: () => ref.invalidate(templateListProvider),
+        onRetry: () => ref.invalidate(templateEditorSourceProvider(templateId)),
         data: (TemplateDef? _) => _list(context, ref, view),
       ),
     );

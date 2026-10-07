@@ -13,7 +13,7 @@ function text(value: unknown, maximum = 256): string {
 }
 
 export function providerName(value: unknown): ProviderName {
-  if (value !== 'gemini' && value !== 'openai')
+  if (typeof value !== 'string' || !/^[a-z][a-z0-9-]{0,63}$/.test(value))
     throw invalidRequest('Unknown analysis provider.');
   return value;
 }

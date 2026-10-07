@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -24,13 +26,36 @@ final class ServerAiCatalogue {
   final Future<void> Function(List<Map<String, Object?>>)? writeSnapshot;
 
   List<Map<String, Object?>>? _rows;
+  final StreamController<void> _changes = StreamController<void>.broadcast();
+
+  /// Signals a durable validated catalogue refresh to Settings and other readers.
+  Stream<void> get changes => _changes.stream;
+
+  /// Releases catalogue listeners when the application scope closes.
+  Future<void> dispose() => _changes.close();
+
+  /// Display metadata for one exact configured provider.
+  Map<String, Object?>? row(String? provider) => rows
+      .where((Map<String, Object?> value) => value['provider'] == provider)
+      .firstOrNull;
+
+  /// Capabilities use the existing wire-to-domain operation mapping.
+  Set<AiOperation> operations(String? provider) => <AiOperation>{
+    for (final Object? operation
+        in row(provider)?['operations'] as List<Object?>? ?? const <Object?>[])
+      _operations[operation]!,
+  };
 
   /// Configured provider/model entries, including explicit base-model costs.
-  List<Map<String, Object?>> get rows => _rows ?? _parse(readSnapshot?.call());
+  List<Map<String, Object?>> get rows =>
+      _rows ??= _parse(readSnapshot?.call()) ?? const <Map<String, Object?>>[];
 
   /// The organisation's explicitly configured managed adapter.
   String? get managedProvider => rows
-      .where((Map<String, Object?> row) => row['managed'] == true)
+      .where(
+        (Map<String, Object?> row) =>
+            row['managed'] == true && row['authMode'] != 'none',
+      )
       .map((Map<String, Object?> row) => row['provider']! as String)
       .firstOrNull;
 
@@ -58,7 +83,7 @@ final class ServerAiCatalogue {
     final Map<String, Object?>? row = rows
         .where((Map<String, Object?> row) => row['provider'] == id)
         .firstOrNull;
-    final Set<AiOperation> operations = AiOperation.values.toSet();
+    final Set<AiOperation> operations = this.operations(id);
     final List<String> enabled = row == null
         ? const <String>[]
         : (row['models']! as List<Object?>).cast<String>();
@@ -79,12 +104,13 @@ final class ServerAiCatalogue {
     try {
       final response = await send(method: 'GET', path: '/api/v1/ai/providers');
       if (response.status != 200) throw const NetworkFailure();
-      final List<Map<String, Object?>> parsed = _parse(
+      final List<Map<String, Object?>>? parsed = _parse(
         response.body['providers'],
       );
-      if (parsed.isEmpty) throw const FormatException();
+      if (parsed == null) throw const FormatException();
       await writeSnapshot?.call(parsed);
       _rows = parsed;
+      _changes.add(null);
       return const Success<void>(null);
     } on Object catch (error) {
       return FailureResult<void>(
@@ -93,58 +119,120 @@ final class ServerAiCatalogue {
     }
   }
 
-  List<Map<String, Object?>> _parse(Object? raw) {
-    if (raw is! List<Object?>) return const <Map<String, Object?>>[];
+  List<Map<String, Object?>>? _parse(Object? raw) {
+    if (raw is! List<Object?>) return null;
     final List<Map<String, Object?>> parsed = <Map<String, Object?>>[];
+    final Set<String> ids = <String>{};
     for (final Object? value in raw) {
-      if (value is! Map<String, Object?> ||
-          value['provider'] is! String ||
-          value['model'] is! String ||
-          value['models'] is! List<Object?> ||
-          !(value['models']! as List<Object?>).every(
-            (Object? model) => model is String,
-          )) {
-        continue;
+      if (value is! Map<String, Object?>) return null;
+      final Object? id = value['provider'];
+      final Object? model = value['model'];
+      final Object? models = value['models'];
+      final bool builtin = id == 'gemini' || id == 'openai';
+      final bool legacy =
+          builtin &&
+          !value.containsKey('protocol') &&
+          !value.containsKey('authMode');
+      final Object? label = value['label'] ?? (legacy ? id : null);
+      final Object? protocol =
+          value['protocol'] ??
+          (legacy
+              ? id == 'gemini'
+                    ? 'gemini-generate-content'
+                    : 'openai-responses'
+              : null);
+      final Object? auth = value['authMode'] ?? (legacy ? 'required' : null);
+      final Object? operations =
+          value['operations'] ?? (legacy ? _operations.keys.toList() : null);
+      if (id is! String ||
+          !_providerId.hasMatch(id) ||
+          !ids.add(id) ||
+          label is! String ||
+          label.trim().isEmpty ||
+          !const [
+            'gemini-generate-content',
+            'openai-responses',
+          ].contains(protocol) ||
+          !const ['required', 'none'].contains(auth) ||
+          model is! String ||
+          model.isEmpty ||
+          models is! List<Object?> ||
+          models.isEmpty ||
+          !models.contains(model) ||
+          !models.every(
+            (Object? model) => model is String && model.isNotEmpty,
+          ) ||
+          models.toSet().length != models.length ||
+          operations is! List<Object?> ||
+          operations.isEmpty ||
+          operations.toSet().length != operations.length ||
+          !operations.every(_operations.containsKey) ||
+          (value['currency'] ?? (legacy ? 'configured' : null)) !=
+              'configured') {
+        return null;
       }
-      // Allowlisted display metadata prevents a response adding secrets to cache.
-      final List<Object?> models = value['models']! as List<Object?>;
       final Map<String, double> costs = <String, double>{};
       if (value['modelCostCeilings'] case final Map<String, Object?> rawCosts) {
-        for (final MapEntry<String, Object?> entry in rawCosts.entries) {
-          if (entry.value case final num amount
-              when models.contains(entry.key)) {
-            if (amount.isFinite && amount >= 0) {
-              costs[entry.key] = amount.toDouble();
-            }
+        for (final Object? entry in models) {
+          final Object? amount = rawCosts[entry];
+          if (amount is num &&
+              amount.isFinite &&
+              (amount > 0 || (builtin && amount == 0))) {
+            costs[entry! as String] = amount.toDouble();
           }
         }
       }
-      if (value['requestCostCeiling'] case final num amount) {
-        if (amount.isFinite && amount >= 0) {
-          costs.putIfAbsent(value['model']! as String, () => amount.toDouble());
+      if (value['requestCostCeiling'] case final num amount when legacy) {
+        if (amount.isFinite && amount > 0) {
+          costs.putIfAbsent(model, () => amount.toDouble());
         }
       }
+      if (!legacy && costs.length != models.length) return null;
+      // Only these nonsecret fields may enter the durable cache.
       parsed.add(
         Map<String, Object?>.unmodifiable(<String, Object?>{
-          'provider': value['provider'],
-          'model': value['model'],
-          'models': List<Object?>.unmodifiable(
-            value['models']! as List<Object?>,
-          ),
+          'provider': id,
+          'label': label,
+          'protocol': protocol,
+          'authMode': auth,
+          'operations': List<Object?>.unmodifiable(operations),
+          'model': model,
+          'models': List<Object?>.unmodifiable(models),
           'managed': value['managed'] == true,
-          'requestCostCeiling': value['requestCostCeiling'] is num
-              ? value['requestCostCeiling']
-              : null,
+          'personalConfigured':
+              auth == 'required' && value['personalConfigured'] == true,
+          'requestCostCeiling': costs[model],
           'modelCostCeilings': Map<String, double>.unmodifiable(costs),
-          'currency': value['currency'] is String
-              ? value['currency']
-              : 'configured',
+          'currency': 'configured',
         }),
       );
+    }
+    if (parsed
+            .where(
+              (Map<String, Object?> row) =>
+                  row['managed'] == true && row['authMode'] == 'required',
+            )
+            .length >
+        1) {
+      return null;
     }
     return List<Map<String, Object?>>.unmodifiable(parsed);
   }
 }
+
+final RegExp _providerId = RegExp(r'^[a-z][a-z0-9-]{0,63}$');
+const Map<String, AiOperation> _operations = <String, AiOperation>{
+  'ocr': AiOperation.readText,
+  'extract': AiOperation.extractFields,
+  'refine': AiOperation.refineText,
+  'transcribe': AiOperation.transcribe,
+};
+
+/// Invalidates registry consumers after metadata has been durably refreshed.
+final StreamProvider<void> serverAiCatalogueChangesProvider =
+    StreamProvider<void>(
+      (Ref ref) => ref.watch(serverAiCatalogueProvider).changes,
+    );
 
 /// Bootstrap injects the signed-in catalogue; the default has no network.
 final Provider<ServerAiCatalogue> serverAiCatalogueProvider =

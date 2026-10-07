@@ -533,6 +533,11 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
       storageRoot: storageRoot,
       ocr: OcrService(),
       providers: providerRegistry,
+      providersLookup: () => serverProviderRegistry(
+        proxy: proxy,
+        allows: egressAllows,
+        catalogue: aiCatalogue,
+      ),
       settings: offlineStore,
       transcripts: transcriptStore,
     );
@@ -581,9 +586,13 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
               }) => backendSession.send(method: method, path: path, body: body),
         ),
       ),
-      serverAiCatalogueProvider.overrideWithValue(aiCatalogue),
+      serverAiCatalogueProvider.overrideWith((Ref ref) {
+        ref.onDispose(() => unawaited(aiCatalogue.dispose()));
+        return aiCatalogue;
+      }),
       providerRegistryProvider.overrideWith((Ref ref) {
         ref.watch(backendConfigProvider);
+        ref.watch(serverAiCatalogueChangesProvider);
         // Bound to the open project, so Settings tests the proxy in the scope
         // the server authorises; with none open it reports unavailable.
         return serverProviderRegistry(
@@ -1027,7 +1036,7 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
           ids: ids,
         );
       }),
-      meetingRepositoryProvider.overrideWith((Ref _) {
+      meetingRepositoryProvider.overrideWith((Ref ref) {
         return MeetingRepositoryImpl(
           db: db,
           clock: clock,
@@ -1035,6 +1044,7 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
           ids: ids,
           storageRoot: storageRoot,
           writer: evidenceWriter,
+          operatorName: () => ref.read(currentOperatorProvider)?.name ?? '',
         );
       }),
       transcriptRepositoryProvider.overrideWith((Ref _) => transcriptStore),

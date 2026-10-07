@@ -17,7 +17,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show templateRepositoryProvider;
-import 'template_list_screen.dart' show templateListProvider;
+import 'template_editor_source.dart';
 import 'template_locations.dart';
 
 /// Spreadsheet column or generated header for each field (§18).
@@ -33,7 +33,7 @@ class OutputMappingScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final AsyncValue<TemplateDef?> value = ref
-        .watch(templateListProvider)
+        .watch(templateEditorSourceProvider(templateId))
         .whenData(_pick);
     final _OutputView view = ref.watch(_outputMappingProvider(templateId));
     return AppPage(
@@ -62,7 +62,7 @@ class OutputMappingScreen extends ConsumerWidget {
                 : TemplateLocations.child(context, templateId, 'fields/new'),
           ),
         ),
-        onRetry: () => ref.invalidate(templateListProvider),
+        onRetry: () => ref.invalidate(templateEditorSourceProvider(templateId)),
         data: (TemplateDef? row) => _list(context, ref, row!, view),
       ),
     );
@@ -168,7 +168,8 @@ final class _OutputMapping extends Notifier<_OutputView> {
   _OutputView build() {
     ref.onDispose(() => _held = null);
     final List<TemplateDef> rows =
-        ref.watch(templateListProvider).asData?.value ?? const <TemplateDef>[];
+        ref.watch(templateEditorSourceProvider(templateId)).asData?.value ??
+        const <TemplateDef>[];
     final _OutputView? held = _held;
     if (held != null && held.dirty) {
       return held;
@@ -261,7 +262,8 @@ final class _OutputMapping extends Notifier<_OutputView> {
 
   TemplateDef? _source() {
     final List<TemplateDef> rows =
-        ref.read(templateListProvider).asData?.value ?? const <TemplateDef>[];
+        ref.read(templateEditorSourceProvider(templateId)).asData?.value ??
+        const <TemplateDef>[];
     for (final TemplateDef row in rows) {
       if (row.id == templateId) {
         return row;

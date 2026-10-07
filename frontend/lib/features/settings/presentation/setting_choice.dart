@@ -20,6 +20,7 @@ class SettingChoice<T> extends StatelessWidget {
     required this.options,
     required this.value,
     required this.onChanged,
+    this.alwaysSheet = false,
   });
 
   /// The setting's name, also the control's semantic label.
@@ -37,6 +38,9 @@ class SettingChoice<T> extends StatelessWidget {
   /// Called with a newly picked value.
   final ValueChanged<T> onChanged;
 
+  /// Keeps a compact selected value and opens the searchable shared selector.
+  final bool alwaysSheet;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -51,6 +55,7 @@ class SettingChoice<T> extends StatelessWidget {
             label: label,
             value: value,
             options: options,
+            alwaysSheet: alwaysSheet,
             onChanged: (T? next) {
               if (next != null && next != value) {
                 onChanged(next);

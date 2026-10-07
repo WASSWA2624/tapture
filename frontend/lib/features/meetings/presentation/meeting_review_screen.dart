@@ -9,7 +9,9 @@ import 'package:tapture/core/security/untrusted_text.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -17,10 +19,10 @@ import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/review/review.dart' show ReviewApproval;
 
 import '../domain/meeting.dart';
-import '../domain/meeting_repository.dart';
 import '../domain/meeting_transcription.dart';
 import 'meeting_live_section.dart';
-import 'meeting_review_providers.dart';
+import 'meeting_review_controller.dart';
+import 'meeting_text_field.dart';
 
 /// Meeting summary in front of the same approve action as any other record.
 ///
@@ -55,7 +57,7 @@ final class MeetingReviewScreen extends ConsumerWidget {
   /// The project the meeting is filed on.
   final String? projectId;
 
-  /// Raw notes. Editable, and never replaced by refinement.
+  /// Working notes. Original source notes are preserved in the repository.
   final String notes;
 
   /// Refined minutes. Editable beside [notes].
@@ -92,7 +94,7 @@ final class MeetingReviewScreen extends ConsumerWidget {
     }
     final Meeting? given = meeting;
     final String? id = meetingId;
-    if (given != null) {
+    if (given != null && id == null) {
       return _review(
         context,
         ref,
@@ -107,19 +109,27 @@ final class MeetingReviewScreen extends ConsumerWidget {
       return _empty(localCopy);
     }
     return ref
-        .watch(meetingRecordProvider(id))
+        .watch(meetingReviewControllerProvider(id))
         .when(
-          data: (MeetingRecord? record) => record == null
-              ? _empty(localCopy)
-              : _review(
-                  context,
-                  ref,
-                  record.meeting,
-                  notes: record.notes,
-                  minutes: record.minutes,
-                  transcript: record.transcript,
-                  versions: record.transcripts,
-                ),
+          data: (MeetingReviewEdits? edits) {
+            if (edits == null) {
+              return _empty(localCopy);
+            }
+            final MeetingReviewController controller = ref.read(
+              meetingReviewControllerProvider(id).notifier,
+            );
+            return _review(
+              context,
+              ref,
+              edits.record.meeting,
+              notes: edits.notes,
+              minutes: edits.minutes,
+              transcript: edits.record.transcript,
+              versions: edits.record.transcripts,
+              edits: edits,
+              controller: controller,
+            );
+          },
           error: (Object error, StackTrace _) => AppPage(
             title: localCopy.meetingReviewTitle,
             body: AppErrorState(failure: Failure.from(error)),
@@ -150,6 +160,8 @@ final class MeetingReviewScreen extends ConsumerWidget {
     required String minutes,
     required String transcript,
     required List<TranscriptVersion> versions,
+    MeetingReviewEdits? edits,
+    MeetingReviewController? controller,
   }) {
     final LocalizedCopy localCopy = Copy.of(context);
     final String? recording = meetingId;
@@ -157,17 +169,21 @@ final class MeetingReviewScreen extends ConsumerWidget {
     final List<String> blocks = loaded.exportBlocks(
       requireOwner: requireActionDetails,
     );
-    final Widget notesPane = AppTextField(
+    final Widget notesPane = MeetingTextField(
       key: const ValueKey<String>('meeting-notes'),
       label: localCopy.meetingNotes,
-      controller: TextEditingController(text: notes),
-      onChanged: onNotes,
+      value: notes,
+      minLines: 4,
+      maxLines: null,
+      onChanged: controller?.editNotes ?? onNotes ?? _ignoreEdit,
     );
-    final Widget minutesPane = AppTextField(
+    final Widget minutesPane = MeetingTextField(
       key: const ValueKey<String>('meeting-minutes'),
       label: localCopy.meetingMinutes,
-      controller: TextEditingController(text: minutes),
-      onChanged: onMinutes,
+      value: minutes,
+      minLines: 4,
+      maxLines: null,
+      onChanged: controller?.editMinutes ?? onMinutes ?? _ignoreEdit,
     );
     final bool expanded = context.sizeClass == SizeClass.expanded;
     return AppPage(
@@ -177,7 +193,7 @@ final class MeetingReviewScreen extends ConsumerWidget {
         key: const ValueKey<String>('meeting-approve'),
         label: localCopy.meetingApprove,
         expand: true,
-        onPressed: blocks.isEmpty
+        onPressed: blocks.isEmpty && !(edits?.dirty ?? false)
             ? () {
                 final VoidCallback? approve = onApprove;
                 if (approve != null) {
@@ -202,20 +218,21 @@ final class MeetingReviewScreen extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          AppSectionHeader(title: localCopy.meetingSummary),
+          Text(
+            localCopy.meetingAttendanceCount(loaded.attendanceCount),
+            key: const ValueKey<String>('meeting-attendance-count'),
+          ),
+          Text(localCopy.meetingDecisionsCount(loaded.decisions.length)),
+          Text(localCopy.meetingActionsCount(loaded.actions.length)),
           if (recording != null && project.isNotEmpty) ...<Widget>[
+            const SizedBox(height: Space.x4),
             MeetingLiveSection(
               meetingId: recording,
               projectId: project,
               versions: versions,
             ),
-            const SizedBox(height: Space.x4),
           ],
-          Text(
-            localCopy.meetingAttendanceCount(loaded.attendanceCount),
-            key: const ValueKey<String>('meeting-attendance-count'),
-          ),
-          Text('${loaded.decisions.length}'),
-          Text('${loaded.actions.length}'),
           if (blocks.isNotEmpty)
             Text(
               localCopy.meetingActionBlocked(blocks.first),
@@ -227,17 +244,44 @@ final class MeetingReviewScreen extends ConsumerWidget {
               UntrustedText(transcript).forDisplay(),
               key: const ValueKey<String>('meeting-transcript'),
             ),
-          if (expanded)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(child: notesPane),
-                Expanded(child: minutesPane),
-              ],
-            )
-          else ...<Widget>[notesPane, minutesPane],
+          AppSectionHeader(title: localCopy.meetingNotesAndMinutes),
+          if (edits?.failure case final Failure failure) ...<Widget>[
+            AppBanner(
+              message: localCopy.failureMessage(failure),
+              icon: AppIcons.error,
+              tone: SnackTone.error,
+            ),
+            AppButton(
+              key: const ValueKey<String>('meeting-retry-save'),
+              label: localCopy.save,
+              variant: AppButtonVariant.secondary,
+              onPressed: edits!.saving
+                  ? null
+                  : () => unawaited(controller!.flush()),
+            ),
+          ],
+          if (edits?.saved ?? false)
+            Semantics(liveRegion: true, child: Text(localCopy.recordEditSaved)),
+          const SizedBox(height: Space.x2),
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final double width = expanded
+                  ? (constraints.maxWidth - Space.x4) / 2
+                  : constraints.maxWidth;
+              return Wrap(
+                spacing: Space.x4,
+                runSpacing: Space.x4,
+                children: <Widget>[
+                  SizedBox(width: width, child: notesPane),
+                  SizedBox(width: width, child: minutesPane),
+                ],
+              );
+            },
+          ),
         ],
       ),
     );
   }
 }
+
+void _ignoreEdit(String _) {}

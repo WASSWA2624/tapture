@@ -59,6 +59,7 @@ final class ProcessingStageWorker {
     required StorageRoot storageRoot,
     required OcrService ocr,
     required ProviderRegistry providers,
+    ProviderRegistry Function()? providersLookup,
     required SettingsStore settings,
     FileReader? files,
     FileWriter? writer,
@@ -69,6 +70,7 @@ final class ProcessingStageWorker {
     final StageSettings stageSettings = StageSettings(
       settings: settings,
       providers: providers,
+      providersLookup: providersLookup,
     );
     final RecordBundleLoader loader = RecordBundleLoader(db: db);
     final PhotoPaths paths = PhotoPaths(
@@ -184,6 +186,7 @@ final class ProcessingStageWorker {
           selection: ProviderSelection(
             settings: settings,
             providers: providers,
+            providersLookup: providersLookup,
           ),
         ),
         writes: writes,

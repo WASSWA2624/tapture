@@ -14,7 +14,7 @@ import 'account_session.dart';
 import 'backend_settings_screen.dart';
 import 'server_address_form.dart';
 
-/// Settings > Organisation: the server address once for a self-hosted
+/// Explicit Server and account setup: the server address once for a self-hosted
 /// install, then the cached account, sign-in and a confirmed sign-out.
 class AccountRoute extends ConsumerWidget {
   /// Creates the route.

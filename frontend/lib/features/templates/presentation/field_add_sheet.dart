@@ -29,7 +29,7 @@ import '../templates.dart' show templateRepositoryProvider;
 import 'field_advanced_section.dart';
 import 'field_options_editor.dart';
 import 'field_validation_editor.dart';
-import 'template_list_screen.dart' show templateListProvider;
+import 'template_editor_source.dart';
 import 'template_locations.dart';
 
 /// Three-question add and edit flow, with Advanced collapsed by default.
@@ -137,7 +137,7 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final AsyncValue<TemplateDef?> value = ref
-        .watch(templateListProvider)
+        .watch(templateEditorSourceProvider(widget.templateId))
         .whenData(_pick);
     final _FieldAddView view = ref.watch(_fieldAddProvider);
     final TemplateDef? template = value.asData?.value;
@@ -167,7 +167,8 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
           headline: Copy.of(context).fieldAddEmptyHeadline,
           message: Copy.of(context).fieldAddEmptyMessage,
         ),
-        onRetry: () => ref.invalidate(templateListProvider),
+        onRetry: () =>
+            ref.invalidate(templateEditorSourceProvider(widget.templateId)),
         data: (TemplateDef? row) => _form(row!, view),
       ),
     );

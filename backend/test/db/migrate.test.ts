@@ -31,11 +31,12 @@ describe('migrations', () => {
         '009_transient_retention.sql',
         '010_scoped_pagination.sql',
         '011_ai_processing.sql',
+        '012_ai_provider_catalogue.sql',
       ],
     );
     const store = new Store();
     const ran = await migrate(store, files);
-    assert.equal(ran.length, 11);
+    assert.equal(ran.length, 12);
     const again = await migrate(store, files);
     assert.equal(again.length, 0);
     const changed = files.map((file, index) =>

@@ -26,6 +26,7 @@ export interface PostgresFixture {
 /// after a failed assertion. A child CLI receives the same scoped database URL.
 export async function withPostgres<T>(
   work: (fixture: PostgresFixture) => Promise<T>,
+  options: { through?: string } = {},
 ): Promise<T> {
   assert.ok(
     postgresConfigured && databaseUrl,
@@ -43,8 +44,12 @@ export async function withPostgres<T>(
     const store = createPostgresRepository(pool);
     await migrate(
       store,
-      await readMigrations(
-        fileURLToPath(new URL('../migrations', import.meta.url)),
+      (
+        await readMigrations(
+          fileURLToPath(new URL('../migrations', import.meta.url)),
+        )
+      ).filter(
+        (file) => options.through === undefined || file.name <= options.through,
       ),
       pool,
     );

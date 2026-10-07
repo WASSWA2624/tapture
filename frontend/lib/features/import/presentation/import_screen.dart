@@ -8,9 +8,10 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_progress_steps.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
-import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/merge/merge.dart' show startPackageImport;
 import 'package:tapture/features/projects/projects.dart'
@@ -27,12 +28,19 @@ import 'import_controller.dart';
 /// importer, a template the template import, and a spreadsheet the purpose
 /// question. Each destination is explained in one line below. A refused
 /// file shows its reason here, before any flow starts.
-final class ImportScreen extends ConsumerWidget {
+final class ImportScreen extends ConsumerStatefulWidget {
   /// Creates the import page.
   const ImportScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ImportScreen> createState() => _ImportScreenState();
+}
+
+class _ImportScreenState extends ConsumerState<ImportScreen> with StateRefresh {
+  bool _showSupportedFiles = false;
+
+  @override
+  Widget build(BuildContext context) {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final ImportView view = ref.watch(importControllerProvider);
@@ -41,6 +49,11 @@ final class ImportScreen extends ConsumerWidget {
     return AppPage(
       key: const ValueKey<String>('route-import'),
       title: localCopy.importTitle,
+      footer: AppPrimaryAction(
+        label: localCopy.importChooseFile,
+        busy: view.busy,
+        onPressed: choose,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -55,23 +68,24 @@ final class ImportScreen extends ConsumerWidget {
               ],
             )
           else if (failure != null)
-            AppErrorState(failure: failure, onRetry: choose)
+            AppErrorState(failure: failure)
           else
-            AppEmptyState(
-              icon: AppIcons.import,
-              headline: localCopy.importEmptyHeadline,
-              message: localCopy.importEmptyMessage,
-              actionLabel: localCopy.importChooseFile,
-              onAction: choose,
-            ),
-          AppSectionHeader(title: localCopy.importKindsTitle),
-          for (final _Kind kind in _kinds(localCopy))
-            AppListTile(
-              key: ValueKey<String>('import-kind-${kind.flow.name}'),
-              leading: Icon(kind.icon),
-              title: kind.title,
-              subtitle: kind.line,
-            ),
+            Text(localCopy.importEmptyMessage),
+          AppSectionHeader(
+            title: localCopy.importSupportedFiles,
+            expanded: _showSupportedFiles,
+            onToggle: () =>
+                refresh(() => _showSupportedFiles = !_showSupportedFiles),
+          ),
+          if (_showSupportedFiles)
+            for (final _Kind kind in _kinds(localCopy))
+              AppListTile(
+                key: ValueKey<String>('import-kind-${kind.flow.name}'),
+                leading: Icon(kind.icon),
+                title: kind.title,
+                subtitle: kind.line,
+                wrapText: true,
+              ),
         ],
       ),
     );

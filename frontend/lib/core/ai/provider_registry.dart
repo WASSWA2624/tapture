@@ -188,12 +188,14 @@ final class ProviderRegistry {
         service: scoped,
         models: provider.models,
         serverCredentialProvider: provider.serverCredentialProvider,
+        serverProvider: provider.serverProvider,
       );
     }
     final bool invalid =
         saved == null ||
         selectedModel == null ||
         !provider.operations.contains(operation) ||
+        !provider.available ||
         !provider.service.isAvailable;
     if (!_allows(operation) || invalid) {
       // Switched off on the privacy page: the choice is kept, and nothing
@@ -209,6 +211,7 @@ final class ProviderRegistry {
           service: const AiService.unavailable(),
           models: provider.models,
           serverCredentialProvider: provider.serverCredentialProvider,
+          serverProvider: provider.serverProvider,
         ),
         model: model,
         fellBack: invalid,

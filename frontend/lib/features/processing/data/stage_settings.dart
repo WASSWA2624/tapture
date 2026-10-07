@@ -11,10 +11,15 @@ import 'record_bundle.dart';
 /// The app settings, project settings and provider choice a stage reads.
 final class StageSettings {
   /// Creates the reader over [settings] and [providers].
-  const StageSettings({required this._settings, required this._providers});
+  const StageSettings({
+    required this._settings,
+    required this._providers,
+    this._providersLookup,
+  });
 
   final SettingsStore _settings;
   final ProviderRegistry _providers;
+  final ProviderRegistry Function()? _providersLookup;
 
   /// The shared settings store for durable usage accounting.
   SettingsStore get store => _settings;
@@ -67,6 +72,7 @@ final class StageSettings {
     return ProviderSelection(
       settings: _settings,
       providers: _providers,
+      providersLookup: _providersLookup,
     ).resolve(bundle.project, operation);
   }
 }

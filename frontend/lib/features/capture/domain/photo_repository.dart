@@ -1,10 +1,17 @@
 import 'dart:async';
 
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/lifecycle/deleted_entity.dart';
 
 /// Persistence port for captured photographs. Drift types stop at the data
 /// layer.
 abstract interface class PhotoRepository {
+  /// Independently deleted photos under a live project and record.
+  Stream<List<DeletedEntity>> watchDeleted();
+
+  /// Lifts this photo's tombstone after checking its parent and durable bytes.
+  Future<Result<void>> restore(String id);
+
   /// Live photos filed on [recordId], in stored order.
   Stream<List<PhotoAsset>> watchByRecord(String recordId);
 

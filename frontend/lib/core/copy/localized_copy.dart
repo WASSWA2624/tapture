@@ -10,6 +10,23 @@ import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 /// never pass through here (FE-L10N-07).
 /// Copy resolved against one app's inherited locale. User data passes unchanged.
 final class LocalizedCopy {
+  /// Opens optional backend setup from AI settings.
+  String get aiServerAndAccount => _catalog.aiServerAndAccount;
+
+  /// Collapsed photo storage settings.
+  String get settingsPhotoFiles => _catalog.settingsPhotoFiles;
+
+  /// Collapsed project context defaults.
+  String get settingsProjectContexts => _catalog.settingsProjectContexts;
+
+  /// Current localized photo quality and folder selection.
+  String settingsPhotoFilesSummary(String quality, String folders) =>
+      _catalog.settingsPhotoFilesSummary(quality, folders);
+
+  /// Current localized context clearing interval and movement distance.
+  String settingsProjectContextsSummary(String autoClear, String movement) =>
+      _catalog.settingsProjectContextsSummary(autoClear, movement);
+
   /// Uses the generated catalogue selected by the enclosing app.
   const LocalizedCopy(this._catalog);
   final AppLocalizations _catalog;
@@ -981,6 +998,24 @@ final class LocalizedCopy {
 
   /// Home primary action before the first record.
   String get captureStart => _catalog.captureStart;
+
+  /// Project home action or command group label.
+  String get projectAddTemplate => _catalog.projectAddTemplate;
+
+  /// Project home action or command group label.
+  String get projectCaptureNow => _catalog.projectCaptureNow;
+
+  /// Project menu sections, presented as nonselectable headings.
+  String get projectMenuCaptureReview => _catalog.projectMenuCaptureReview;
+
+  /// Project home action or command group label.
+  String get projectMenuSetup => _catalog.projectMenuSetup;
+
+  /// Project home action or command group label.
+  String get projectMenuExchange => _catalog.projectMenuExchange;
+
+  /// Project home action or command group label.
+  String get projectMenuManage => _catalog.projectMenuManage;
 
   /// Home primary action after at least one record.
   String get captureMore => _catalog.captureMore;
@@ -2054,6 +2089,15 @@ final class LocalizedCopy {
 
   /// Title of the shipped-library picker.
   String get templatesLibraryTitle => _catalog.templatesLibraryTitle;
+
+  /// Creates an editable copy of a shipped asset.
+  String get templatesCustomizeCopy => _catalog.templatesCustomizeCopy;
+
+  /// Saved global custom templates.
+  String get templatesMyTemplates => _catalog.templatesMyTemplates;
+
+  /// Durable template deletion confirmation.
+  String get templatesDeleted => _catalog.templatesDeleted;
 
   /// Headline when the packed library could not be listed.
   String get templatesLibraryEmptyHeadline =>
@@ -7376,6 +7420,9 @@ final class LocalizedCopy {
   /// Shown while a chosen file is checked or read.
   String get importCheckingFile => _catalog.importCheckingFile;
 
+  /// Collapsible supported import formats.
+  String get importSupportedFiles => _catalog.importSupportedFiles;
+
   /// Heading over the four kinds of file the import page takes.
   String get importKindsTitle => _catalog.importKindsTitle;
 
@@ -10628,4 +10675,51 @@ final class LocalizedCopy {
 
   /// Sign in again.
   String get cloudSignInAgain => _catalog.cloudSignInAgain;
+
+  /// Empty deleted records ({count})
+  String recycleEmptyRecords(int count) => _catalog.recycleEmptyRecords(count);
+
+  /// Project
+  String get recycleTypeProject => _catalog.recycleTypeProject;
+
+  /// Record
+  String get recycleTypeRecord => _catalog.recycleTypeRecord;
+
+  /// Photo
+  String get recycleTypePhoto => _catalog.recycleTypePhoto;
+
+  /// Document
+  String get recycleTypeDocument => _catalog.recycleTypeDocument;
+
+  /// Audio
+  String get recycleTypeAudio => _catalog.recycleTypeAudio;
+
+  /// Restored
+  String get recycleRestored => _catalog.recycleRestored;
+
+  /// Restore the deleted parent first.
+  String get recycleParentDeleted => _catalog.recycleParentDeleted;
+
+  /// Restore the project or record from the Recycle bin, then try again.
+  String get recycleParentDeletedRecovery =>
+      _catalog.recycleParentDeletedRecovery;
+
+  /// {type} · {details}
+  String recycleEntitySubtitle(String type, String details) =>
+      _catalog.recycleEntitySubtitle(type, details);
+
+  /// The project folder could not be restored.
+  String get recycleFolderRestoreFailed => _catalog.recycleFolderRestoreFailed;
+
+  /// Check storage access and resolve any existing folder with the same name, then try again.
+  String get recycleFolderRestoreRecovery =>
+      _catalog.recycleFolderRestoreRecovery;
+
+  /// Supported providers
+  String get aiSupportedProviders => _catalog.aiSupportedProviders;
+
+  /// Spending limit
+  String get aiCostControls => _catalog.aiCostControls;
+  /// Saved maximum cost per request.
+  String aiRequestLimitSummary(String amount) => _catalog.aiRequestLimitSummary(amount);
 }

@@ -10,6 +10,7 @@ import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/database_provider.dart';
 import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/attachments.dart';
+import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/meetings.dart';
 import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/db/tables/tombstones.dart';
@@ -43,6 +44,7 @@ final class MeetingRepositoryImpl implements MeetingRepository {
     required Clock clock,
     required String deviceId,
     required IdService ids,
+    this._operatorName,
     StorageRoot? storageRoot,
     FileWriter? writer,
     FileReader? reader,
@@ -60,6 +62,7 @@ final class MeetingRepositoryImpl implements MeetingRepository {
   final Clock _time;
   final String _device;
   final IdService _idService;
+  final String Function()? _operatorName;
   final StorageRoot _root;
   final FileWriter? _writerOverride;
   final FileReader? _readerOverride;
@@ -107,6 +110,10 @@ final class MeetingRepositoryImpl implements MeetingRepository {
     final MeetingRow? existing = meeting.id.isEmpty
         ? null
         : await _row(meeting.id);
+    final Map<String, Object?> previous = existing == null
+        ? const <String, Object?>{}
+        : _documentOf(existing) ?? const <String, Object?>{};
+    final String previousNotes = previous['notes'] as String? ?? '';
     final String id = meeting.id.isEmpty ? _idService.newId() : meeting.id;
     // Rows keep one id from their first save, so a later save updates them.
     final Meeting stored = meeting.copyWith(
@@ -174,6 +181,10 @@ final class MeetingRepositoryImpl implements MeetingRepository {
           agenda: Value<String>(
             _document(
               stored,
+              previous: previous,
+              originalNotes: existing == null
+                  ? notes
+                  : previous['originalNotes'] as String? ?? previousNotes,
               notes: notes,
               minutes: minutes,
               transcripts: existing == null
@@ -188,9 +199,49 @@ final class MeetingRepositoryImpl implements MeetingRepository {
         ids: _idService,
       ),
     );
+    await _auditText(
+      id,
+      'notes',
+      existing == null ? null : previousNotes,
+      notes,
+    );
+    await _auditText(
+      id,
+      'minutes',
+      existing == null ? null : existing.minutesRefined ?? '',
+      minutes,
+    );
     await _writeAttendees(id, stored.attendees);
     await _writeActions(id, stored.actions);
     return id;
+  }
+
+  Future<void> _auditText(
+    String id,
+    String field,
+    String? previous,
+    String next,
+  ) async {
+    if (previous == next) {
+      return;
+    }
+    final String operator =
+        _operatorName?.call() ??
+        (await _database.select(_database.deviceProfile).getSingleOrNull())
+            ?.operatorName ??
+        '';
+    await appendAudit(
+      _database,
+      entityType: _meetingsEntity,
+      entityId: id,
+      action: previous == null ? AuditAction.created : AuditAction.updated,
+      fieldKey: field,
+      previousValue: previous,
+      newValue: next,
+      clock: _time,
+      device: _device,
+      operator: operator.trim(),
+    );
   }
 
   /// Every attendee row, and a tombstone for each one removed since.
@@ -299,6 +350,10 @@ final class MeetingRepositoryImpl implements MeetingRepository {
           );
       return Success<MeetingRecord?>((
         meeting: meeting,
+        originalNotes:
+            document['originalNotes'] as String? ??
+            document['notes'] as String? ??
+            '',
         notes: document['notes'] as String? ?? '',
         minutes: row.minutesRefined ?? '',
         transcript: row.transcriptRaw.isNotEmpty
@@ -465,27 +520,40 @@ final class MeetingRepositoryImpl implements MeetingRepository {
         });
         onProgress?.call(index + 1, clips.length);
       }
-      final MeetingRow row = owner.meeting;
-      final Map<String, Object?> document =
-          _documentOf(row) ?? <String, Object?>{};
-      final List<TranscriptVersion> versions = MeetingTranscription.fold(
-        existing: _versionsOf(row),
-        chunks: chunks,
+      return _unwrap(
+        await runInTransaction<List<TranscriptVersion>>(_database, () async {
+          // Transcription can finish after edits or another transcription run.
+          // Patch its field against the latest document inside the final write.
+          final MeetingRow? row = await _row(meetingId);
+          if (row == null) {
+            throw _missingFailure;
+          }
+          final Map<String, Object?> document =
+              _documentOf(row) ?? <String, Object?>{};
+          document.putIfAbsent(
+            'originalNotes',
+            () => document['notes'] as String? ?? '',
+          );
+          final List<TranscriptVersion> versions = MeetingTranscription.fold(
+            existing: _versionsOf(row),
+            chunks: chunks,
+          );
+          document[_transcriptsKey] = MeetingTranscription.toJson(versions);
+          _unwrap(
+            await insertMeeting(
+              _database,
+              row: MeetingsCompanion(
+                id: Value<String>(row.id),
+                agenda: Value<String>(jsonEncode(<Object?>[document])),
+              ),
+              clock: _time,
+              deviceId: _device,
+              ids: _idService,
+            ),
+          );
+          return versions;
+        }),
       );
-      document[_transcriptsKey] = MeetingTranscription.toJson(versions);
-      _unwrap(
-        await insertMeeting(
-          _database,
-          row: MeetingsCompanion(
-            id: Value<String>(row.id),
-            agenda: Value<String>(jsonEncode(<Object?>[document])),
-          ),
-          clock: _time,
-          deviceId: _device,
-          ids: _idService,
-        ),
-      );
-      return versions;
     });
   }
 
@@ -747,13 +815,17 @@ final class MeetingRepositoryImpl implements MeetingRepository {
 
   String _document(
     Meeting meeting, {
+    required Map<String, Object?> previous,
+    required String originalNotes,
     required String notes,
     required String minutes,
     required List<TranscriptVersion> transcripts,
   }) {
     return jsonEncode(<Object?>[
       <String, Object?>{
+        ...previous,
         'meeting': meeting.toJson(),
+        'originalNotes': originalNotes,
         'notes': notes,
         'minutes': minutes,
         _transcriptsKey: MeetingTranscription.toJson(transcripts),

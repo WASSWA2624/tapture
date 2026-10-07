@@ -6,7 +6,7 @@ import 'project_list_criteria.dart';
 final class ProjectListCriteriaController
     extends Notifier<ProjectListCriteria> {
   @override
-  ProjectListCriteria build() => ProjectListCriteria();
+  ProjectListCriteria build() => const ProjectListCriteria();
 
   /// Replaces all criteria atomically.
   void set(ProjectListCriteria value) => state = value;
@@ -15,10 +15,11 @@ final class ProjectListCriteriaController
   void setQuery(String value) => state = state.copyWith(query: value);
 
   /// Restores the standard active-project list.
-  void clear() => state = ProjectListCriteria();
+  void clear() => state = const ProjectListCriteria();
 
-  /// Restores the default filters and keeps the search text.
-  void clearFilters() => state = ProjectListCriteria(query: state.query);
+  /// Includes archived projects without changing search.
+  void setShowArchived(bool value) =>
+      state = state.copyWith(showArchived: value);
 }
 
 /// Shared project criteria.

@@ -73,7 +73,38 @@ Apply the next numbered migration forward only. A changed checksum or an out-of-
 
 Migration `006_account_token_purpose.sql` distinguishes invitations from password resets. Earlier tokens default to invitations: existing invitation links remain valid only for invited accounts; older reset links must be reissued. Acceptance rechecks purpose, expiry, account state and organisation inside the same transaction that consumes the token. Registration sends the same `200 { accepted: true }` response for new and existing addresses, without an account identifier or Location header.
 
-`007_refresh_family_scope.sql` isolates new sign-ins into distinct refresh chains. Legacy rows keep their previous user/device scope until they expire. `008_runtime_settings.sql` stores non-usable digests and safe deployment metadata to detect key/policy changes. `009_transient_retention.sql` makes lockout and acknowledgement expiry explicit. `010_scoped_pagination.sql` adds composite indexes for bounded account, project, device, relay and usage pages, replacing superseded single-column indexes without changing data. `011_ai_processing.sql` adds encrypted personal credentials, metadata-only processing receipts and nullable provider/token attribution beside existing usage; it preserves legacy rows. Apply through 011 before starting the current server. Startup warms Argon verification once; unknown and wrong-password logins each perform one verification, and a successful login upgrades old hash parameters.
+`007_refresh_family_scope.sql` isolates new sign-ins into distinct refresh chains. Legacy rows keep their previous user/device scope until they expire. `008_runtime_settings.sql` stores non-usable digests and safe deployment metadata to detect key/policy changes. `009_transient_retention.sql` makes lockout and acknowledgement expiry explicit. `010_scoped_pagination.sql` adds composite indexes for bounded account, project, device, relay and usage pages, replacing superseded single-column indexes without changing data. `011_ai_processing.sql` adds encrypted personal credentials, metadata-only processing receipts and nullable provider/token attribution beside existing usage; it preserves legacy rows. Startup warms Argon verification once; unknown and wrong-password logins each perform one verification, and a successful login upgrades old hash parameters.
+
+## Supported AI providers
+
+`AI_PROVIDER_CATALOGUE` is an optional JSON array of additional administrator-configured providers. Missing, empty or `[]` retains the existing Gemini/OpenAI configuration. Additional entries cannot use the retained `gemini` or `openai` IDs. This supports only the existing Gemini generateContent and OpenAI Responses wire protocols; an arbitrary API key does not define a protocol. No device may supply an endpoint.
+
+Each object requires `id` (lowercase letter followed by up to 63 lowercase letters, digits or hyphens), `label` (1–128 characters), `protocol` (`gemini-generate-content` or `openai-responses`), `baseUrl` (HTTPS with no credentials, query or fragment), `authMode` (`required` or `none`), `models` (unique nonempty model identifiers), `model` (one of those models), `operations` (unique values from `ocr`, `extract`, `refine`, `transcribe`), `currency` (exactly `configured`) and `modelCostCeilings` (one positive finite attempt ceiling for every model). Models use letters, digits, dot, underscore or hyphen. Unknown fields, IDs, protocols and incomplete costs fail boot. Operations must reflect the configured endpoint's existing protocol/media support; the Responses adapter retains its photo/text restriction.
+
+For example, a keyless deployment endpoint using the existing Responses protocol:
+
+```json
+[
+  {
+    "id": "field-ai",
+    "label": "Field AI",
+    "protocol": "openai-responses",
+    "baseUrl": "https://ai.example.com/v1",
+    "authMode": "none",
+    "model": "small",
+    "models": ["small", "large"],
+    "operations": ["ocr", "extract", "refine"],
+    "currency": "configured",
+    "modelCostCeilings": { "small": 0.01, "large": 0.2 }
+  }
+]
+```
+
+Set `authMode` to `required` for personal credentials held by the existing authenticated encrypted-custody service; never include a secret in this JSON. Keyless requests send `{ "kind": "managed", "provider": "field-ai" }` as billing, route to that exact configured provider, omit both authentication headers and never look up a credential. Positive configured costs, project/organisation quotas, explicit escalation approval and authorization still apply. Entering or searching the catalogue performs no model call. Redirects are refused; only the configured endpoint is contacted.
+
+The provider catalogue exposes labels, protocol/authentication mode, supported operations/models, cost ceilings and availability, never endpoint URLs or secrets. New processing receipts bind the provider/account/model to a fingerprint of the nonsecret configuration. Changing endpoint, protocol, models, capabilities or costs refuses reuse of that receipt identifier. Existing built-in receipt hashes are recognized only when an already-stored receipt exists and return its previous recovery state without redispatch. No response payload becomes durable.
+
+Migration `012_ai_provider_catalogue.sql` widens the credential provider-ID constraint without changing credential ciphertext, revisions, usage or receipts. Apply through 012 deliberately before starting this server; do not edit migration 011. The upgrade test seeds 011, verifies exact row preservation after 012, and checks transactional rollback on a failed migration. This development change does not authorize a production migration or deployment.
 
 ## API list pages
 

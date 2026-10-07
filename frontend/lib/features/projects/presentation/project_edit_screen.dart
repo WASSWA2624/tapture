@@ -21,6 +21,7 @@ import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 
+import '../domain/project_name_validation.dart';
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 import 'current_project.dart';
@@ -115,6 +116,7 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen>
             errorText: Copy.of(
               context,
             ).stateText(view.localizedNameError, view.nameError),
+            onChanged: ref.read(_projectEditProvider.notifier).changeName,
           ),
           AppTextField(
             label: localCopy.projectDescription,
@@ -257,7 +259,7 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen>
 }
 
 final NotifierProvider<_ProjectEdit, _ProjectEditView> _projectEditProvider =
-    NotifierProvider<_ProjectEdit, _ProjectEditView>(
+    NotifierProvider.autoDispose<_ProjectEdit, _ProjectEditView>(
       _ProjectEdit.new,
       retry: (int _, Object _) => null,
     );
@@ -275,9 +277,11 @@ typedef _ProjectEditView = ({
 
 class _ProjectEdit extends Notifier<_ProjectEditView> {
   Project? _source;
+  bool _nameTouched = false;
 
   @override
   _ProjectEditView build() {
+    _nameTouched = false;
     return (
       nameError: null,
       localizedNameError: null,
@@ -293,6 +297,7 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
   /// Loads dates and status from [project] without marking the form dirty.
   void hydrate(Project project) {
     _source = project;
+    _nameTouched = false;
     state = (
       nameError: null,
       localizedNameError: null,
@@ -309,6 +314,28 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
   /// touching the form's values.
   void follow(Project project) {
     _source = project;
+  }
+
+  /// Validate only an edited or submitted name, preserving storage failures.
+  void changeName(String name) {
+    _nameTouched = true;
+    _validateName(name);
+  }
+
+  bool _validateName(String name, {bool submitted = false}) {
+    final bool valid = ProjectNameValidation.isValid(name);
+    final bool showError = (_nameTouched || submitted) && !valid;
+    state = (
+      nameError: showError ? Copy.nameRequired : null,
+      localizedNameError: showError ? Copy.messages.nameRequired : null,
+      saveError: state.saveError,
+      localizedSaveError: state.localizedSaveError,
+      dirty: state.dirty,
+      startsOn: state.startsOn,
+      endsOn: state.endsOn,
+      status: state.status,
+    );
+    return valid;
   }
 
   /// Stores [bytes] as the project's photo. Save keeps it, because the
@@ -393,18 +420,7 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
     if (source == null) {
       return false;
     }
-    final String trimmed = name.trim();
-    if (trimmed.isEmpty) {
-      state = (
-        nameError: Copy.nameRequired,
-        localizedNameError: Copy.messages.nameRequired,
-        saveError: null,
-        localizedSaveError: null,
-        dirty: state.dirty,
-        startsOn: state.startsOn,
-        endsOn: state.endsOn,
-        status: state.status,
-      );
+    if (!_validateName(name, submitted: true)) {
       return false;
     }
     final Result<void> result = await ref
@@ -412,7 +428,7 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
         .update(
           Project(
             id: source.id,
-            name: trimmed,
+            name: name.trim(),
             status: state.status,
             folderName: source.folderName,
             settings: source.settings,
@@ -424,6 +440,9 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
             endsOn: state.endsOn,
           ),
         );
+    if (!ref.mounted) {
+      return result is Success<void>;
+    }
     switch (result) {
       case Success<void>():
         state = (
@@ -439,8 +458,8 @@ class _ProjectEdit extends Notifier<_ProjectEditView> {
         return true;
       case FailureResult<void>(:final Failure failure):
         state = (
-          nameError: null,
-          localizedNameError: null,
+          nameError: state.nameError,
+          localizedNameError: state.localizedNameError,
           saveError: failure.message,
           localizedSaveError: failure.explanation,
           dirty: state.dirty,

@@ -27,7 +27,7 @@ import 'field_delete_action.dart';
 import 'field_list_filter.dart';
 import 'field_list_query.dart';
 import 'field_reorder.dart';
-import 'template_list_screen.dart' show templateListProvider;
+import 'template_editor_source.dart';
 import 'template_locations.dart';
 
 export 'field_list_query.dart';
@@ -46,7 +46,7 @@ class FieldListScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final AsyncValue<TemplateDef?> value = ref
-        .watch(templateListProvider)
+        .watch(templateEditorSourceProvider(templateId))
         .whenData(_pick);
     final TemplateDef? template = value.asData?.value;
     return AppPage(
@@ -102,7 +102,7 @@ class FieldListScreen extends ConsumerWidget {
         value: value,
         isEmpty: (TemplateDef? row) => row == null || row.fields.isEmpty,
         empty: () => _empty(context, template?.id ?? templateId),
-        onRetry: () => ref.invalidate(templateListProvider),
+        onRetry: () => ref.invalidate(templateEditorSourceProvider(templateId)),
         data: (TemplateDef? row) {
           final LocalizedCopy localCopy = Copy.of(context);
 

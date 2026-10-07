@@ -14,6 +14,9 @@ abstract interface class TemplateRepository {
   /// new.
   Stream<List<TemplateDef>> watchByProject(String projectId);
 
+  /// Live saved templates in the global library, with no project owner.
+  Stream<List<TemplateDef>> watchLibrary();
+
   /// The template with [id], or null when it is not on this device.
   Future<Result<TemplateDef?>> byId(String id);
 
@@ -22,4 +25,7 @@ abstract interface class TemplateRepository {
 
   /// Tombstones [id]. [reason] is required so a later audit can say why.
   Future<Result<void>> delete(String id, {required String reason});
+
+  /// Restores a deletion and only the children removed by that deletion.
+  Future<Result<void>> restore(String id);
 }

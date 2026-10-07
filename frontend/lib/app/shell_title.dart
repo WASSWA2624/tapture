@@ -78,7 +78,23 @@ abstract final class ShellTitle {
         localCopy.navProjects;
   }
 
-  /// Path with the last segment removed. A single segment returns Projects.
+  /// Fallback after navigators and their guards decline to handle Back.
+  /// Projects is the native exit boundary; clearing a filter stays on its page.
+  static String? backLocation(Uri uri) {
+    if (uri.queryParameters.containsKey(RoutePaths.filterQuery)) {
+      final Map<String, List<String>> query = Map<String, List<String>>.of(
+        uri.queryParametersAll,
+      )..remove(RoutePaths.filterQuery);
+      return Uri(
+        path: uri.path,
+        queryParameters: query.isEmpty ? null : query,
+        fragment: uri.hasFragment ? uri.fragment : null,
+      ).toString();
+    }
+    return uri.path == RoutePaths.projects ? null : parentOf(uri.path);
+  }
+
+  /// The nearest declared parent, skipping grouping segments without a page.
   static String parentOf(String path) {
     final List<String> parts = path
         .split('/')
@@ -86,6 +102,31 @@ abstract final class ShellTitle {
         .toList();
     if (parts.length <= 1) {
       return AppRoutes.projects;
+    }
+    if (parts.first == 'projects' && parts.length > 2) {
+      final String projectId = Uri.decodeComponent(parts[1]);
+      if (parts[2] == 'meetings') {
+        return RoutePaths.project(projectId);
+      }
+      if (parts[2] == 'datasets' && parts.length == 6 && parts[4] == 'rows') {
+        return RoutePaths.projectDataset(
+          projectId,
+          Uri.decodeComponent(parts[3]),
+        );
+      }
+    }
+    // Template field routes are declared as fields/:id and fields/new,
+    // without an intermediate fields screen in either template branch.
+    final int templates = parts.indexOf('templates');
+    if (templates >= 0 &&
+        parts.length == templates + 4 &&
+        parts[templates + 2] == 'fields') {
+      return RoutePaths.templateDetail(
+        Uri.decodeComponent(parts[templates + 1]),
+        projectId: parts.first == 'projects'
+            ? Uri.decodeComponent(parts[1])
+            : null,
+      );
     }
     parts.removeLast();
     return '/${parts.join('/')}';
@@ -96,8 +137,6 @@ abstract final class ShellTitle {
 /// and every settings page.
 Map<String, String> _titles(LocalizedCopy localCopy) => <String, String>{
   RoutePaths.projects: localCopy.navProjects,
-  RoutePaths.projectFilters:
-      '${localCopy.navProjects} › ${localCopy.projectFiltersTitle}',
   RoutePaths.projectImport: localCopy.importTitle,
   RoutePaths.projectImportPurpose: localCopy.importPurposeTitle,
   RoutePaths.projectImportRecords: localCopy.importMappingTitle,
@@ -148,7 +187,10 @@ String _projectLeaf(List<String> segments, LocalizedCopy localCopy) {
     'exports' => localCopy.projectExportTitle,
     'datasets' => localCopy.navDatasets,
     'edit' => localCopy.projectEditTitle,
-    'settings' => localCopy.projectSettingsTitle,
+    'settings' =>
+      segments.length >= 2 && segments[1] == 'relay'
+          ? localCopy.relayTitle
+          : localCopy.projectSettingsTitle,
     'details' => localCopy.projectEditTitle,
     'merge' => localCopy.mergePackage,
     'duplicates' => localCopy.duplicatesTitle,

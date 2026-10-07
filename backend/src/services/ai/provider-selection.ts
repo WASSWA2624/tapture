@@ -7,11 +7,17 @@ import {
   unavailable,
 } from '../../domain/errors.js';
 import { can, type Principal } from '../../domain/permissions.js';
+import { notFound } from '../../domain/errors.js';
 import type { Repository } from '../../repositories/repository.js';
 import { credentialStatus, decryptCredential } from './credentials.js';
 import { httpProvider } from './http_provider.js';
 import { openaiProvider } from './openai-provider.js';
 import type { AiProvider } from './provider.js';
+import {
+  providerDefinition,
+  providerDefinitions,
+  providerFingerprint,
+} from './catalogue.js';
 
 export type ProviderFactory = (
   provider: ProviderName,
@@ -23,13 +29,10 @@ export function configuredProvider(
   provider: ProviderName,
   key: string,
 ): AiProvider {
-  return provider === 'gemini'
-    ? httpProvider(config, fetch, key)
-    : openaiProvider(config, key);
-}
-
-function baseModel(config: AppConfig, provider: ProviderName): string {
-  return provider === 'gemini' ? config.aiGeminiModel : config.aiOpenaiModel;
+  const definition = providerDefinition(config, provider);
+  return definition.protocol === 'gemini-generate-content'
+    ? httpProvider(config, fetch, key, definition)
+    : openaiProvider(config, key, fetch, definition);
 }
 
 export async function selectProvider(
@@ -45,16 +48,21 @@ export async function selectProvider(
     kind: 'managed',
     provider: config.aiProvider,
   };
-  if (billing.kind === 'managed' && billing.provider !== config.aiProvider)
+  const definition = providerDefinition(config, billing.provider);
+  const keyless = definition.authMode === 'none';
+  if (
+    (keyless && billing.kind !== 'managed') ||
+    (!keyless &&
+      billing.kind === 'managed' &&
+      billing.provider !== config.aiProvider)
+  )
     throw unavailable();
-  const base = baseModel(config, billing.provider);
+  const base = definition.model;
   if (base === '') throw unavailable();
   const model = input.model === 'default' ? base : input.model;
   const isBase = model === base;
-  const cost =
-    config.aiModelCostCeilings[`${billing.provider}:${model}`] ??
-    (isBase ? config.aiRequestCostCeiling : undefined);
-  if (cost === undefined || cost <= 0)
+  const cost = definition.modelCostCeilings[model];
+  if (!definition.models.includes(model) || cost === undefined || cost <= 0)
     throw isBase
       ? unavailable()
       : invalidRequest(
@@ -69,29 +77,44 @@ export async function selectProvider(
       "The approved maximum cost is below this model's configured attempt ceiling.",
       { ceiling: cost },
     );
-  if (billing.kind === 'managed')
+  const fingerprint = providerFingerprint(definition);
+  const legacy =
+    !keyless &&
+    (billing.provider === 'gemini' || billing.provider === 'openai');
+  if (billing.kind === 'managed') {
+    const previousAccountId = `managed:${billing.provider}:${createHash(
+      'sha256',
+    )
+      .update(keyless ? '' : config.aiProviderKey)
+      .digest('hex')}`;
     return {
       kind: billing.kind,
       model,
       cost,
-      provider: managed,
+      provider: keyless ? factory(billing.provider, '') : managed,
       providerName: billing.provider,
-      accountId: `managed:${billing.provider}:${createHash('sha256').update(config.aiProviderKey).digest('hex')}`,
+      operations: definition.operations,
+      accountId: `${previousAccountId}:configuration:${fingerprint}`,
+      ...(legacy ? { legacyAccountId: previousAccountId } : {}),
     };
+  }
   const credential = await store.aiCredential(
     principal.userId,
     billing.provider,
   );
   if (credential === undefined) throw unavailable();
   const key = decryptCredential(config, credential);
+  const previousAccountId = `personal:${billing.provider}:${principal.userId}:${credential.revision}`;
   return {
     kind: billing.kind,
     model,
     cost,
     provider: factory(billing.provider, key),
     providerName: billing.provider,
+    operations: definition.operations,
     credentialRevision: credential.revision,
-    accountId: `personal:${billing.provider}:${principal.userId}:${credential.revision}`,
+    accountId: `${previousAccountId}:configuration:${fingerprint}`,
+    ...(legacy ? { legacyAccountId: previousAccountId } : {}),
   };
 }
 
@@ -100,35 +123,38 @@ export async function providerCatalogue(
   config: AppConfig,
   principal: Principal,
 ) {
+  if (!can(principal, 'aiProxy')) throw notFound();
   const providers = [];
-  for (const provider of ['gemini', 'openai'] as const) {
-    const model = baseModel(config, provider);
-    if (model === '') continue;
-    const status = await credentialStatus(store, principal, provider);
-    const models = [
-      model,
-      ...Object.keys(config.aiModelCostCeilings)
-        .filter((entry) => entry.startsWith(`${provider}:`))
-        .map((entry) => entry.slice(provider.length + 1))
-        .filter((entry) => entry !== model),
-    ];
-    const modelCostCeilings = Object.fromEntries(
-      models.map((name) => [
-        name,
-        config.aiModelCostCeilings[`${provider}:${name}`] ??
-          config.aiRequestCostCeiling,
-      ]),
-    );
-    providers.push({
-      provider,
+  for (const definition of providerDefinitions(config)) {
+    const {
+      id: provider,
       model,
       models,
       modelCostCeilings,
-      requestCostCeiling:
-        config.aiModelCostCeilings[`${provider}:${model}`] ??
-        config.aiRequestCostCeiling,
+      authMode,
+      protocol,
+      label,
+      operations,
+    } = definition;
+    if (model === '') continue;
+    const status =
+      authMode === 'none'
+        ? { configured: false }
+        : await credentialStatus(store, principal, provider, config);
+    providers.push({
+      provider,
+      label,
+      protocol,
+      authMode,
+      operations,
+      model,
+      models,
+      modelCostCeilings,
+      requestCostCeiling: modelCostCeilings[model] ?? 0,
       currency: 'configured',
-      managed: provider === config.aiProvider && config.aiProviderKey !== '',
+      managed:
+        authMode === 'none' ||
+        (provider === config.aiProvider && config.aiProviderKey !== ''),
       personalConfigured: status.configured,
     });
   }

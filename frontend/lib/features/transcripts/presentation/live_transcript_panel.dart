@@ -33,6 +33,7 @@ import 'transcript_session_target.dart';
 /// in the background resumes only when the operator taps resume. Discard
 /// asks first. With [showIdleControls] false the panel shows nothing until
 /// a session starts, for a surface that starts it from its own control.
+/// With [showEmptyIdleTranscript] false only the empty idle pane is hidden.
 /// With [fill] the transcript takes the height left in a bounded parent.
 class LiveTranscriptPanel extends ConsumerWidget {
   /// A panel over [target]'s session, starting it with [startLabel].
@@ -42,6 +43,7 @@ class LiveTranscriptPanel extends ConsumerWidget {
     required this.target,
     this.startLabel,
     this.showIdleControls = true,
+    this.showEmptyIdleTranscript = true,
     this.fill = false,
     this.onOpenTranscript,
     super.key,
@@ -55,6 +57,9 @@ class LiveTranscriptPanel extends ConsumerWidget {
 
   /// Whether the start control shows before a session starts.
   final bool showIdleControls;
+
+  /// Whether an idle session with no transcript words shows its empty pane.
+  final bool showEmptyIdleTranscript;
 
   /// Whether the transcript fills the height of a bounded parent.
   final bool fill;
@@ -89,15 +94,25 @@ class LiveTranscriptPanel extends ConsumerWidget {
     final Widget transcript = ValueListenableBuilder<LiveTranscriptFrame>(
       valueListenable: controller.frames,
       builder: (BuildContext context, LiveTranscriptFrame frame, Widget? _) {
-        return AppTranscriptView(
-          paragraphs: frame.paragraphs,
-          tentative: frame.tentative,
-          live:
-              phase == TranscriptSessionPhase.recording ||
-              phase == TranscriptSessionPhase.paused ||
-              phase == TranscriptSessionPhase.finishing ||
-              status.draining,
+        if (!showEmptyIdleTranscript &&
+            phase == TranscriptSessionPhase.idle &&
+            frame.paragraphs.isEmpty &&
+            frame.tentative.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        final Widget pane = Padding(
+          padding: const EdgeInsets.only(top: Space.x3),
+          child: AppTranscriptView(
+            paragraphs: frame.paragraphs,
+            tentative: frame.tentative,
+            live:
+                phase == TranscriptSessionPhase.recording ||
+                phase == TranscriptSessionPhase.paused ||
+                phase == TranscriptSessionPhase.finishing ||
+                status.draining,
+          ),
         );
+        return fill ? Expanded(child: pane) : pane;
       },
     );
     return Column(
@@ -152,8 +167,7 @@ class LiveTranscriptPanel extends ConsumerWidget {
             ),
           ),
         ],
-        const SizedBox(height: Space.x3),
-        if (fill) Expanded(child: transcript) else transcript,
+        transcript,
         if (phase == TranscriptSessionPhase.saved &&
             transcriptId != null &&
             open != null) ...<Widget>[

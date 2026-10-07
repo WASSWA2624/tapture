@@ -9,6 +9,7 @@ import 'package:tapture/core/ai/server_provider_registry.dart';
 import 'package:tapture/core/backend/server_credential_client.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/security/secure_storage.dart';
+import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/features/settings/presentation/ai_provider_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
 
@@ -68,7 +69,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Your gemini account'));
+      await tester.tap(find.byType(AppChoiceField<String>).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Your gemini account').last);
       await tester.pumpAndSettle();
       expect(find.text(Copy.serverApiKeyCustody), findsOneWidget);
       await tester.enterText(find.byType(TextField), 'server-only-fixture');

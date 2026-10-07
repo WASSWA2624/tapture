@@ -5,7 +5,6 @@ import 'package:tapture/core/backend/relay_queue.dart';
 import 'package:tapture/core/backend/relay_snapshot.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/features/projects/projects.dart';
 
 import 'account_session.dart';
 
@@ -19,21 +18,25 @@ final relayPackageProvider =
     );
 
 /// Local relay state loads even without a network connection.
-final relaySnapshotProvider = FutureProvider.autoDispose<RelaySnapshot?>((
-  Ref ref,
-) async {
-  final String? projectId = ref.watch(currentProjectProvider);
-  final RelayQueue? queue = ref.watch(relayQueueProvider);
-  if (projectId == null || queue == null) return null;
-  final Result<RelaySnapshot> result = await queue.snapshot(projectId);
-  return switch (result) {
-    Success<RelaySnapshot>(:final value) => value,
-    FailureResult<RelaySnapshot>(:final failure) => throw failure,
-  };
-});
+final relaySnapshotProvider = FutureProvider.autoDispose
+    .family<RelaySnapshot?, String?>((Ref ref, String? projectId) async {
+      final RelayQueue? queue = ref.watch(relayQueueProvider);
+      if (projectId == null || queue == null) return null;
+      final Result<RelaySnapshot> result = await queue.snapshot(projectId);
+      return switch (result) {
+        Success<RelaySnapshot>(:final value) => value,
+        FailureResult<RelaySnapshot>(:final failure) => throw failure,
+      };
+    });
 
 /// Keeps the control state separate from the durable outbox.
 final class RelayController extends Notifier<RelayActionState> {
+  /// Commands stay bound to the project that opened these controls.
+  RelayController(this.projectId);
+
+  /// Immutable route identity; null is the legacy no-project recovery.
+  final String? projectId;
+
   @override
   RelayActionState build() => (busy: false, failure: null);
 
@@ -43,13 +46,13 @@ final class RelayController extends Notifier<RelayActionState> {
   ) async {
     if (state.busy) return;
     final RelayQueue? queue = ref.read(relayQueueProvider);
-    final String? id = ref.read(currentProjectProvider);
+    final String? id = projectId;
     if (queue == null || id == null) return;
     state = (busy: true, failure: null);
     try {
       final Result<void> result = await work(queue, id);
       if (!ref.mounted) return;
-      ref.invalidate(relaySnapshotProvider);
+      ref.invalidate(relaySnapshotProvider(id));
       state = (
         busy: false,
         failure: result is FailureResult<void> ? result.failure : null,
@@ -59,7 +62,7 @@ final class RelayController extends Notifier<RelayActionState> {
     }
   }
 
-  /// Turns relay on or off for the open project. Registering the project
+  /// Turns relay on or off for this project. Registering the project
   /// may give this account a new grant, so the session refreshes after it.
   Future<void> enable(bool enabled) => run((RelayQueue queue, String id) async {
     final Result<void> result = await queue.enable(id, enabled);
@@ -85,7 +88,5 @@ final class RelayController extends Notifier<RelayActionState> {
 typedef RelayActionState = ({bool busy, Failure? failure});
 
 /// Commands live only while the relay screen is open.
-final relayControllerProvider =
-    NotifierProvider.autoDispose<RelayController, RelayActionState>(
-      RelayController.new,
-    );
+final relayControllerProvider = NotifierProvider.autoDispose
+    .family<RelayController, RelayActionState, String?>(RelayController.new);

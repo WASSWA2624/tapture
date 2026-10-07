@@ -21,11 +21,7 @@ export 'presentation/current_project.dart'
 export 'presentation/project_list_actions.dart';
 export 'presentation/project_list_criteria.dart';
 export 'presentation/project_list_criteria_controller.dart';
-export 'presentation/project_list_filter.dart'
-    show
-        projectListFilteredProvider,
-        projectListSearchQueryProvider,
-        showProjectListFilters;
+export 'presentation/project_list_filter.dart' show projectListFilteredProvider;
 export 'presentation/project_list_view.dart';
 export 'presentation/project_open_externally_action.dart';
 export 'presentation/project_template_selection.dart';

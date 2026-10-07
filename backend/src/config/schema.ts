@@ -1,5 +1,6 @@
 import { RETENTION_HARD_MAX_DAYS } from '../domain/retention.js';
 import { parseAiConfiguration, type AiConfiguration } from './ai.js';
+import { providerUrl } from './provider-catalogue.js';
 
 export interface AppConfig extends AiConfiguration {
   port: number;
@@ -126,15 +127,10 @@ function origins(value: string | undefined): string[] {
 
 /// Reads one environment snapshot. An invalid snapshot throws before listen.
 export function parseConfig(env: NodeJS.ProcessEnv): AppConfig {
-  const aiProviderUrl =
+  const configuredUrl =
     env['AI_PROVIDER_URL'] ??
     'https://generativelanguage.googleapis.com/v1beta';
-  if (
-    aiProviderUrl.length > 0 &&
-    !/^https:\/\/[^\s/?#]+(?:\/[^\s?#]*)?$/.test(aiProviderUrl)
-  ) {
-    throw new Error('AI_PROVIDER_URL must be an HTTPS endpoint.');
-  }
+  const aiProviderUrl = providerUrl(configuredUrl, 'AI_PROVIDER_URL');
   const aiProviderKey = env['AI_PROVIDER_KEY'] ?? '';
   const aiRetryLimit = integer(env['AI_RETRY_LIMIT'], 2, 0);
   if (aiRetryLimit < 0 || aiRetryLimit > 5)

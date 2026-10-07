@@ -20,6 +20,7 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 
 import 'setting_choice.dart';
+import 'settings_disclosure.dart';
 import 'speech_models_view.dart';
 import 'speech_settings_providers.dart';
 
@@ -59,6 +60,7 @@ class SpeechSettingsSection extends ConsumerWidget {
           ),
         ),
         SettingChoice<SpeechQuality>(
+          alwaysSheet: true,
           label: localCopy.settingsSpeechQuality,
           effect: localCopy.settingsSpeechQualityEffect,
           value: SpeechQuality.parse(ref.watch(speechQualitySettingProvider)),
@@ -82,46 +84,69 @@ class SpeechSettingsSection extends ConsumerWidget {
             );
           },
         ),
-        AppSectionHeader(title: localCopy.settingsSpeechModels),
         AsyncValueView<SpeechModelsView>(
           value: models,
           onRetry: () => ref.invalidate(speechModelsProvider),
           data: (SpeechModelsView view) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              for (final SpeechModelStatus status in view.models)
-                _ModelRow(
-                  key: ValueKey<String>('speech-model-${status.entry.id}'),
-                  status: status,
-                  view: view,
-                  inUse: _inUse(readiness, status.entry),
-                ),
-              if (view.canImport)
+              if (view.working != null || view.importing)
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Space.x4,
-                    vertical: Space.x2,
-                  ),
-                  child: Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: AppButton(
-                      key: const ValueKey<String>('speech-model-import'),
-                      label: localCopy.settingsSpeechImport,
-                      icon: AppIcons.import,
-                      variant: AppButtonVariant.secondary,
-                      busy: view.importing,
-                      onPressed: view.working == null
-                          ? () => unawaited(_import(context, ref))
-                          : null,
-                    ),
+                  padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(localCopy.busy),
                   ),
                 ),
+              if (view.canImport &&
+                  readiness.verdict == SpeechVerdict.modelMissing)
+                _importButton(context, ref, view),
+              SettingsDisclosure(
+                id: 'speech-models',
+                title: localCopy.settingsSpeechModels,
+                children: <Widget>[
+                  for (final SpeechModelStatus status in view.models)
+                    _ModelRow(
+                      key: ValueKey<String>('speech-model-${status.entry.id}'),
+                      status: status,
+                      view: view,
+                      inUse: _inUse(readiness, status.entry),
+                    ),
+                  if (view.canImport &&
+                      readiness.verdict != SpeechVerdict.modelMissing)
+                    _importButton(context, ref, view),
+                ],
+              ),
             ],
           ),
         ),
       ],
     );
   }
+
+  static Widget _importButton(
+    BuildContext context,
+    WidgetRef ref,
+    SpeechModelsView view,
+  ) => Padding(
+    padding: const EdgeInsets.symmetric(
+      horizontal: Space.x4,
+      vertical: Space.x2,
+    ),
+    child: Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: AppButton(
+        key: const ValueKey<String>('speech-model-import'),
+        label: Copy.of(context).settingsSpeechImport,
+        icon: AppIcons.import,
+        variant: AppButtonVariant.secondary,
+        busy: view.importing,
+        onPressed: view.working == null
+            ? () => unawaited(_import(context, ref))
+            : null,
+      ),
+    ),
+  );
 
   /// The engine dictation uses now, and why Whisper is not ready when it
   /// has been checked and is not.
@@ -142,6 +167,9 @@ class SpeechSettingsSection extends ConsumerWidget {
         ? null
         : localCopy.settingsSpeechEngineNone;
     final Failure? failure = readiness.ready ? null : readiness.failure;
+    final String? recovery = failure == null
+        ? null
+        : localCopy.failureRecovery(failure);
     final TextStyle style = AppText.body.copyWith(
       color: context.colors.onSurface,
     );
@@ -156,6 +184,11 @@ class SpeechSettingsSection extends ConsumerWidget {
           localCopy.failureMessage(failure),
           style: AppText.caption.copyWith(color: context.colors.onSurface),
         ),
+        if (recovery != null)
+          Text(
+            recovery,
+            style: AppText.caption.copyWith(color: context.colors.onSurface),
+          ),
       ],
     ];
   }

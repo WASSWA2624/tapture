@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:tapture/app/theme/markup_ink.dart';
+
 import 'copy_messages.g.dart';
 import 'l10n/app_localizations.g.dart';
 import 'l10n/app_localizations_en.g.dart';
@@ -11,6 +12,25 @@ export 'localized_message.dart';
 /// Compatibility copy for services without a widget context, in English.
 /// Widgets resolve their own inherited locale through [of].
 abstract final class Copy {
+  /// Opens optional backend setup from AI settings.
+  static String get aiServerAndAccount => _english.aiServerAndAccount;
+
+  /// Collapsed photo storage settings.
+  static String get settingsPhotoFiles => _english.settingsPhotoFiles;
+
+  /// Collapsed project context defaults.
+  static String get settingsProjectContexts => _english.settingsProjectContexts;
+
+  /// Current localized photo quality and folder selection.
+  static String settingsPhotoFilesSummary(String quality, String folders) =>
+      _english.settingsPhotoFilesSummary(quality, folders);
+
+  /// Current localized context clearing interval and movement distance.
+  static String settingsProjectContextsSummary(
+    String autoClear,
+    String movement,
+  ) => _english.settingsProjectContextsSummary(autoClear, movement);
+
   /// Serializable messages for services and state without a widget context.
   static const CopyMessages messages = CopyMessages();
 
@@ -946,6 +966,25 @@ abstract final class Copy {
 
   /// Home primary action before the first record.
   static String get captureStart => _english.captureStart;
+
+  /// Project home action or command group label.
+  static String get projectAddTemplate => _english.projectAddTemplate;
+
+  /// Project home action or command group label.
+  static String get projectCaptureNow => _english.projectCaptureNow;
+
+  /// Project menu sections, presented as nonselectable headings.
+  static String get projectMenuCaptureReview =>
+      _english.projectMenuCaptureReview;
+
+  /// Project home action or command group label.
+  static String get projectMenuSetup => _english.projectMenuSetup;
+
+  /// Project home action or command group label.
+  static String get projectMenuExchange => _english.projectMenuExchange;
+
+  /// Project home action or command group label.
+  static String get projectMenuManage => _english.projectMenuManage;
 
   /// Home primary action after at least one record.
   static String get captureMore => _english.captureMore;
@@ -1949,6 +1988,15 @@ abstract final class Copy {
 
   /// Title of the shipped-library picker.
   static String get templatesLibraryTitle => _english.templatesLibraryTitle;
+
+  /// Creates an editable copy of a shipped asset.
+  static String get templatesCustomizeCopy => _english.templatesCustomizeCopy;
+
+  /// Saved global custom templates.
+  static String get templatesMyTemplates => _english.templatesMyTemplates;
+
+  /// Durable template deletion confirmation.
+  static String get templatesDeleted => _english.templatesDeleted;
 
   /// Headline when the packed library could not be listed.
   static String get templatesLibraryEmptyHeadline =>
@@ -6838,6 +6886,9 @@ abstract final class Copy {
   /// Shown while a chosen file is checked or read.
   static String get importCheckingFile => _english.importCheckingFile;
 
+  /// Collapsible supported import formats.
+  static String get importSupportedFiles => _english.importSupportedFiles;
+
   /// Heading over the four kinds of file the import page takes.
   static String get importKindsTitle => _english.importKindsTitle;
 
@@ -10123,4 +10174,53 @@ abstract final class Copy {
 
   /// Sign in again.
   static String get cloudSignInAgain => _english.cloudSignInAgain;
+
+  /// Empty deleted records ({count})
+  static String recycleEmptyRecords(int count) =>
+      _english.recycleEmptyRecords(count);
+
+  /// Project
+  static String get recycleTypeProject => _english.recycleTypeProject;
+
+  /// Record
+  static String get recycleTypeRecord => _english.recycleTypeRecord;
+
+  /// Photo
+  static String get recycleTypePhoto => _english.recycleTypePhoto;
+
+  /// Document
+  static String get recycleTypeDocument => _english.recycleTypeDocument;
+
+  /// Audio
+  static String get recycleTypeAudio => _english.recycleTypeAudio;
+
+  /// Restored
+  static String get recycleRestored => _english.recycleRestored;
+
+  /// Restore the deleted parent first.
+  static String get recycleParentDeleted => _english.recycleParentDeleted;
+
+  /// Restore the project or record from the Recycle bin, then try again.
+  static String get recycleParentDeletedRecovery =>
+      _english.recycleParentDeletedRecovery;
+
+  /// {type} · {details}
+  static String recycleEntitySubtitle(String type, String details) =>
+      _english.recycleEntitySubtitle(type, details);
+
+  /// The project folder could not be restored.
+  static String get recycleFolderRestoreFailed =>
+      _english.recycleFolderRestoreFailed;
+
+  /// Check storage access and resolve any existing folder with the same name, then try again.
+  static String get recycleFolderRestoreRecovery =>
+      _english.recycleFolderRestoreRecovery;
+
+  /// Supported providers
+  static String get aiSupportedProviders => _english.aiSupportedProviders;
+
+  /// Spending limit
+  static String get aiCostControls => _english.aiCostControls;
+  /// Saved maximum cost per request.
+  static String aiRequestLimitSummary(String amount) => _english.aiRequestLimitSummary(amount);
 }

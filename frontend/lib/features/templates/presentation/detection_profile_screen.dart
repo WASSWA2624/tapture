@@ -22,7 +22,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import '../templates.dart' show templateRepositoryProvider;
-import 'template_list_screen.dart' show templateListProvider;
+import 'template_editor_source.dart';
 import 'template_locations.dart';
 
 /// Per-template signals that decide how a photo is matched to a template.
@@ -38,7 +38,7 @@ class DetectionProfileScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final AsyncValue<TemplateDef?> value = ref
-        .watch(templateListProvider)
+        .watch(templateEditorSourceProvider(templateId))
         .whenData(_pick);
     final _ProfileView view = ref.watch(_detectionProfileProvider(templateId));
     return AppPage(
@@ -59,7 +59,7 @@ class DetectionProfileScreen extends ConsumerWidget {
           headline: Copy.of(context).detectionProfileEmptyHeadline,
           message: Copy.of(context).detectionProfileEmptyMessage,
         ),
-        onRetry: () => ref.invalidate(templateListProvider),
+        onRetry: () => ref.invalidate(templateEditorSourceProvider(templateId)),
         data: (TemplateDef? row) => _form(context, ref, row!, view),
       ),
     );
@@ -369,7 +369,8 @@ final class _DetectionProfile extends Notifier<_ProfileView> {
 
   TemplateDef? _source() {
     final List<TemplateDef> rows =
-        ref.read(templateListProvider).asData?.value ?? const <TemplateDef>[];
+        ref.read(templateEditorSourceProvider(templateId)).asData?.value ??
+        const <TemplateDef>[];
     for (final TemplateDef row in rows) {
       if (row.id == templateId) {
         return row;

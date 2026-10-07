@@ -204,7 +204,7 @@ final class DeliverableReports {
           (title: item.title, notes: item.notes),
       ],
       rawNotes: <String>[
-        meeting.notes,
+        meeting.originalNotes,
         if (!printed.contains(meeting.transcript.trim())) meeting.transcript,
       ].where((String part) => part.trim().isNotEmpty).join('\n'),
       transcripts: transcripts,

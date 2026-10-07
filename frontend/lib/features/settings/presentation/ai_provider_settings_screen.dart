@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/backend/server_ai_catalogue.dart';
@@ -21,12 +23,12 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
-import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/projects/projects.dart'
     show projectSettingsStoreProvider;
 import 'package:tapture/features/settings/settings.dart';
 
 import 'provider_test_action.dart';
+import 'settings_disclosure.dart';
 
 part 'ai_provider_settings_controller.dart';
 
@@ -80,7 +82,12 @@ class _AiProviderSettingsScreenState
     final List<ModelDescriptor> models = controller.models;
     final cost = ref
         .read(serverAiCatalogueProvider)
-        .cost(provider.serverCredentialProvider, controller.model.id);
+        .cost(
+          provider.serverProvider ?? provider.serverCredentialProvider,
+          controller.model.id,
+        );
+    final double savedLimit = ref.read(projectSettingsStoreProvider)
+        .read(SettingKeys.aiRequestMaxCost);
     return AppPage(
       title: localCopy.settingsAiTitle,
       footer: AppPrimaryAction(
@@ -93,7 +100,9 @@ class _AiProviderSettingsScreenState
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           AppChoiceField<String>(
-            label: localCopy.aiProvider,
+            label: localCopy.aiSupportedProviders,
+            alwaysSheet: true,
+            enabled: !view.busy,
             value: provider.id,
             options: <Choice<String>>[
               for (final ProviderDescriptor value in controller.providers)
@@ -107,41 +116,6 @@ class _AiProviderSettingsScreenState
             },
           ),
           const SizedBox(height: Space.x3),
-          AppChoiceField<String>(
-            label: localCopy.aiModel,
-            value: controller.model.id,
-            options: <Choice<String>>[
-              for (final ModelDescriptor value in models)
-                Choice<String>(value.id, value.label),
-            ],
-            onChanged: (String? value) {
-              if (value != null) controller.selectModel(value);
-            },
-          ),
-          const SizedBox(height: Space.x3),
-          if (cost != null) ...<Widget>[
-            AppBanner(
-              message: localCopy.aiModelCostCeiling(
-                cost.amount.toString(),
-                cost.unit,
-              ),
-              icon: AppIcons.info,
-              tone: SnackTone.info,
-            ),
-            const SizedBox(height: Space.x3),
-          ],
-          if (models.length > 1) ...<Widget>[
-            AppTextField(
-              label: localCopy.aiSpendingLimit,
-              helper: localCopy.aiSpendingLimitHint,
-              controller: _approvedCost,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              dictation: false,
-            ),
-            const SizedBox(height: Space.x3),
-          ],
           AppBanner(
             key: const ValueKey<String>('ai-custody'),
             message: provider.serverCredentialProvider != null
@@ -190,8 +164,62 @@ class _AiProviderSettingsScreenState
               ),
             ],
           ],
-          if (view.failure case final Failure failure)
-            AppErrorState(failure: failure, onRetry: () => unawaited(_save())),
+          const SizedBox(height: Space.x3),
+          AppChoiceField<String>(
+            label: localCopy.aiModel,
+            alwaysSheet: true,
+            enabled: !view.busy,
+            value: controller.model.id,
+            options: <Choice<String>>[
+              for (final ModelDescriptor value in models)
+                Choice<String>(value.id, value.label),
+            ],
+            onChanged: (String? value) {
+              if (value != null) controller.selectModel(value);
+            },
+          ),
+          const SizedBox(height: Space.x3),
+          SettingsDisclosure(
+            id: 'ai-cost',
+            title: localCopy.aiCostControls,
+            summary: savedLimit > 0
+                ? localCopy.aiRequestLimitSummary(savedLimit.toString())
+                : localCopy.processingEgressLimitDefault,
+            children: <Widget>[
+              if (cost != null) AppBanner(
+                message: localCopy.aiModelCostCeiling(cost.amount.toString(), cost.unit),
+                icon: AppIcons.info, tone: SnackTone.info,
+              ),
+              AppTextField(
+                label: localCopy.aiSpendingLimit,
+                helper: localCopy.aiSpendingLimitHint,
+                controller: _approvedCost,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                dictation: false,
+              ),
+            ],
+          ),
+          if (view.failure case final Failure failure) ...<Widget>[
+            AppBanner(
+              message: <String>[
+                localCopy.failureMessage(failure),
+                if (localCopy.failureRecovery(failure)
+                    case final String recovery)
+                  recovery,
+              ].join(' '),
+              icon: AppIcons.warning,
+              tone: SnackTone.warning,
+            ),
+            AppButton(
+              label: localCopy.tryAgain,
+              variant: AppButtonVariant.secondary,
+              onPressed: view.busy
+                  ? null
+                  : () => unawaited(controller.retryStatus()),
+            ),
+          ],
           const SizedBox(height: Space.x3),
           ProviderTestAction(
             view: provider.available ? view.test : ProviderTestView.unavailable,
@@ -199,12 +227,33 @@ class _AiProviderSettingsScreenState
                 ? () => unawaited(controller.testConnection())
                 : null,
           ),
+          const SizedBox(height: Space.x3),
+          AppButton(
+            key: const ValueKey<String>('ai-server-account'),
+            label: localCopy.aiServerAndAccount,
+            variant: AppButtonVariant.secondary,
+            onPressed: () =>
+                unawaited(context.push(RoutePaths.settingsAccount)),
+          ),
         ],
       ),
     );
   }
 
   Future<void> _save() async {
+    final SettingsStore settings = ref.read(projectSettingsStoreProvider);
+    final double previous = settings.read(SettingKeys.aiRequestMaxCost);
+    final double? proposed = double.tryParse(_approvedCost.text.trim());
+    if (proposed != null && proposed.isFinite && proposed > previous) {
+      final LocalizedCopy copy = Copy.of(context);
+      final bool approved = await showAppConfirm(
+        context,
+        title: copy.aiSpendingLimit,
+        message: copy.aiModelCostCeiling(proposed.toString(), 'configured'),
+        confirmLabel: copy.save,
+      );
+      if (!approved || !mounted) return;
+    }
     final bool saved = await ref
         .read(aiProviderSettingsProvider.notifier)
         .save(_credential.text, approvedCost: _approvedCost.text);

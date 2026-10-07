@@ -11,11 +11,13 @@ import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/hash/hashing_service.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/import/pdf_pages.dart';
+import 'package:tapture/core/lifecycle/deleted_entity.dart';
 import 'package:tapture/core/time/clock.dart';
 
 import '../domain/capture_document_format.dart';
 import '../domain/capture_document_repository.dart';
 import '../domain/document_draft.dart';
+import 'deleted_capture_files.dart';
 
 /// Stores untouched document originals; PDF pages are disposable derivatives.
 final class CaptureDocumentRepositoryImpl implements CaptureDocumentRepository {
@@ -37,6 +39,14 @@ final class CaptureDocumentRepositoryImpl implements CaptureDocumentRepository {
   final Clock _clock;
   final String _deviceId;
   Future<void> _pending = Future<void>.value();
+
+  DeletedCaptureFiles get _deleted => DeletedCaptureFiles(db: _db, reader: _reader, clock: _clock, deviceId: _deviceId, ids: _ids);
+
+  @override
+  Stream<List<DeletedEntity>> watchDeleted() => _deleted.watchAttachments();
+
+  @override
+  Future<Result<void>> restore(String id) => _deleted.restoreAttachment(id);
 
   @override
   Future<Result<DocumentDraft>> import({

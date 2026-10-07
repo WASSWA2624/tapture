@@ -475,6 +475,16 @@ final class RecordWrites {
       if (head.status != RecordStatus.deleted) {
         return FailureResult<void>(_notInBin);
       }
+      final QueryRow? parent = await _db.customSelect(
+        "SELECT id FROM projects WHERE id = ? AND (status = 'deleted' OR EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'projects' AND t.entity_id = projects.id))",
+        variables: <Variable<Object>>[Variable<String>(head.projectId)],
+      ).getSingleOrNull();
+      if (parent != null) {
+        return FailureResult<void>(ValidationFailure(
+          localizedMessage: Copy.messages.recycleParentDeleted,
+          localizedRecovery: Copy.messages.recycleParentDeletedRecovery,
+        ));
+      }
       final RecordStatus target = RecordLifecycle.restoreTarget(
         RecordStatus.deleted,
         await _statusBeforeDelete(id),

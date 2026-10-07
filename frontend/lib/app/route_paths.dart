@@ -103,6 +103,10 @@ abstract final class RoutePaths {
             '?conflict=${Uri.encodeQueryComponent(conflictId)}';
   static String projectSettings(String projectId) =>
       '${project(projectId)}/settings';
+
+  /// Optional encrypted exchange controls for one project.
+  static String projectRelay(String projectId) =>
+      '${projectSettings(projectId)}/relay';
   static String projectContext(String projectId) =>
       '${project(projectId)}/context';
   static String projectContextPresets(String projectId) =>

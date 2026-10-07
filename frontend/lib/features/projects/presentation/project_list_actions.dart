@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,9 +8,8 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/features/merge/merge.dart' show startPackageImport;
 
-import '../domain/project_status.dart';
-import 'project_list_criteria.dart';
 import 'project_list_criteria_controller.dart';
 
 /// Shared project-list commands for the title bar and the expanded pane.
@@ -26,42 +27,24 @@ abstract final class ProjectListActions {
     context.go(RoutePaths.projectCreate);
   }
 
-  /// The list's more menu: Import, the one import page, which takes a
-  /// bundle, a spreadsheet, a dataset or a template (task 020). Filters live
-  /// behind the search field's filter button, like every other list.
+  /// The list's import command and explicit archive visibility toggle.
   static List<AppOverflowAction> overflow(BuildContext context, WidgetRef ref) {
     final LocalizedCopy localCopy = Copy.of(context);
 
-    final bool archived = ref
-        .watch(projectListCriteriaProvider)
-        .statuses
-        .contains(ProjectStatus.archived);
+    final bool archived = ref.watch(projectListCriteriaProvider).showArchived;
     return <AppOverflowAction>[
       AppOverflowAction(
         key: importKey,
         label: localCopy.projectsImport,
         icon: AppIcons.import,
-        onTap: () => context.go(RoutePaths.projectImport),
+        onTap: () => unawaited(startPackageImport(context, ref)),
       ),
       AppOverflowAction(
         label: localCopy.projectShowArchived,
         icon: archived ? AppIcons.check : AppIcons.archive,
-        onTap: () {
-          final ProjectListCriteria criteria = ref.read(
-            projectListCriteriaProvider,
-          );
-          final Set<ProjectStatus> statuses = Set<ProjectStatus>.of(
-            criteria.statuses,
-          );
-          if (archived) {
-            statuses.remove(ProjectStatus.archived);
-          } else {
-            statuses.add(ProjectStatus.archived);
-          }
-          ref
-              .read(projectListCriteriaProvider.notifier)
-              .set(criteria.copyWith(statuses: statuses));
-        },
+        onTap: () => ref
+            .read(projectListCriteriaProvider.notifier)
+            .setShowArchived(!archived),
       ),
     ];
   }

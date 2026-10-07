@@ -116,15 +116,12 @@ final NotifierProvider<CurrentProject, String?> openProjectIdProvider =
 
 /// Active projects with counts for the landing list. Kept alive: the
 /// status line and the list both watch it (FE-STATE-09). Archived rows are
-/// read only when the list's status filter asks for them, or lists every
-/// status.
+/// read only when Show archived is selected.
 final StreamProvider<List<ProjectListRow>> projectListProvider =
     StreamProvider<List<ProjectListRow>>((Ref ref) {
       final bool includeArchived = ref.watch(
         projectListCriteriaProvider.select(
-          (ProjectListCriteria criteria) =>
-              criteria.statuses.isEmpty ||
-              criteria.statuses.contains(ProjectStatus.archived),
+          (ProjectListCriteria criteria) => criteria.showArchived,
         ),
       );
       return ref

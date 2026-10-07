@@ -8,7 +8,7 @@ import '../domain/field_def.dart';
 import '../domain/template_def.dart';
 import '../domain/template_version.dart';
 import '../templates.dart' show templateRepositoryProvider;
-import 'template_list_screen.dart' show templateListProvider;
+import 'template_editor_source.dart';
 
 /// One pass over a template's requiredness and visibility (§13.2, §12.3).
 final class RequirednessController extends Notifier<RequirednessView> {
@@ -38,7 +38,8 @@ final class RequirednessController extends Notifier<RequirednessView> {
   RequirednessView build() {
     ref.onDispose(() => _held = null);
     final List<TemplateDef> rows =
-        ref.watch(templateListProvider).asData?.value ?? const <TemplateDef>[];
+        ref.watch(templateEditorSourceProvider(templateId)).asData?.value ??
+        const <TemplateDef>[];
     final RequirednessView? held = _held;
     if (held != null && held.dirty && held.templateId == templateId) {
       return held;
@@ -162,7 +163,8 @@ final class RequirednessController extends Notifier<RequirednessView> {
 
   TemplateDef? _source() {
     final List<TemplateDef> rows =
-        ref.read(templateListProvider).asData?.value ?? const <TemplateDef>[];
+        ref.read(templateEditorSourceProvider(templateId)).asData?.value ??
+        const <TemplateDef>[];
     for (final TemplateDef row in rows) {
       if (row.id == templateId) {
         return row;

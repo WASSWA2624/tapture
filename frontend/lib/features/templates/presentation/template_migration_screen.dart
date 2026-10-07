@@ -20,7 +20,7 @@ import 'package:tapture/features/templates/presentation/template_locations.dart'
 import '../domain/template_def.dart';
 import '../domain/template_versioning.dart';
 import '../templates.dart' show templateMigrationRepositoryProvider;
-import 'template_list_screen.dart' show templateListProvider;
+import 'template_editor_source.dart';
 
 /// Shows added, removed and retyped fields before any record moves (§18).
 class TemplateMigrationScreen extends ConsumerWidget {
@@ -35,7 +35,7 @@ class TemplateMigrationScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final AsyncValue<TemplateDef?> value = ref
-        .watch(templateListProvider)
+        .watch(templateEditorSourceProvider(templateId))
         .whenData(_pick);
     final AsyncValue<List<CapturedTemplateRecord>> captured = ref.watch(
       templateCapturedRecordsProvider(templateId),
@@ -69,7 +69,7 @@ class TemplateMigrationScreen extends ConsumerWidget {
           actionLabel: Copy.of(context).navTemplates,
           onAction: () => context.go(TemplateLocations.root(context)),
         ),
-        onRetry: () => ref.invalidate(templateListProvider),
+        onRetry: () => ref.invalidate(templateEditorSourceProvider(templateId)),
         data: (TemplateDef? _) => AsyncValueView<List<CapturedTemplateRecord>>(
           value: captured,
           onRetry: () =>

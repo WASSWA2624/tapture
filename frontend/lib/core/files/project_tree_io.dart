@@ -47,6 +47,19 @@ Future<Result<void>> recycleProjectTree({
   return moved.map((Directory _) {});
 }
 
+/// Restores the tree before clearing its durable project tombstone.
+Future<Result<void>> restoreProjectTree({
+  required String id,
+  required String name,
+  required String folderName,
+  StorageRoot? storageRoot,
+}) async {
+  final Result<Directory> moved = await ProjectFolders(
+    storageRoot: storageRoot ?? StorageRoot(),
+  ).restore(_row(id: id, name: name, folderName: folderName));
+  return moved.map((Directory _) {});
+}
+
 Project _row({
   required String id,
   required String name,

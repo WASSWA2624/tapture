@@ -9,6 +9,7 @@ import 'package:tapture/features/templates/domain/template_versioning.dart';
 /// database (FE-STATE-10).
 final class FakeTemplateRepository implements TemplateRepository {
   final Map<String, TemplateDef> _rows = <String, TemplateDef>{};
+  final Map<String, TemplateDef> _deleted = <String, TemplateDef>{};
   final StreamController<void> _changes = StreamController<void>.broadcast();
   int _next = 0;
 
@@ -18,6 +19,9 @@ final class FakeTemplateRepository implements TemplateRepository {
   /// How many templates the fake currently holds.
   int get count => _rows.length;
 
+  /// Stored rows for widget assertions without awaiting a fake-async stream.
+  List<TemplateDef> get stored => List<TemplateDef>.unmodifiable(_rows.values);
+
   /// Releases the watch stream. Tests call this from `tearDown`.
   void dispose() {
     _changes.close();
@@ -26,6 +30,18 @@ final class FakeTemplateRepository implements TemplateRepository {
   @override
   Stream<List<TemplateDef>> watchByProject(String projectId) {
     return _watch(() => _ownedBy(projectId));
+  }
+
+  @override
+  Stream<List<TemplateDef>> watchLibrary() => _watch(() => _ownedBy(null));
+
+  @override
+  Future<Result<void>> restore(String id) async {
+    final TemplateDef? deleted = _deleted.remove(id);
+    if (deleted == null) return const FailureResult<void>(_missing);
+    _rows[id] = deleted;
+    _emit();
+    return const Success<void>(null);
   }
 
   @override
@@ -74,12 +90,12 @@ final class FakeTemplateRepository implements TemplateRepository {
     if (!_rows.containsKey(id)) {
       return const FailureResult<void>(_missing);
     }
-    _rows.remove(id);
+    _deleted[id] = _rows.remove(id)!;
     _emit();
     return const Success<void>(null);
   }
 
-  List<TemplateDef> _ownedBy(String projectId) {
+  List<TemplateDef> _ownedBy(String? projectId) {
     return _rows.values
         .where((TemplateDef row) => row.projectId == projectId)
         .toList();

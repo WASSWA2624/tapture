@@ -45,23 +45,44 @@ import 'relay_controller.dart';
 /// signed out. Relay stays off until a project manager turns it on; a
 /// never-relay project offers no way to send; a role the server would refuse
 /// is shown no control, and a lapsed sign-in says so in one line.
-class RelayRoute extends ConsumerWidget {
-  /// Opens the current project's relay controls.
-  const RelayRoute({super.key});
+class RelayRoute extends ConsumerStatefulWidget {
+  /// Opens [projectId], or captures the selected project for a legacy link.
+  const RelayRoute({this.projectId, super.key});
+
+  /// Project supplied by the route, independent of later selection changes.
+  final String? projectId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final LocalizedCopy localCopy = Copy.of(context);
+  ConsumerState<RelayRoute> createState() => _RelayRouteState();
+}
 
+class _RelayRouteState extends ConsumerState<RelayRoute> {
+  late final String? _legacyProjectId;
+
+  @override
+  void initState() {
+    super.initState();
+    _legacyProjectId = ref.read(currentProjectProvider);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final LocalizedCopy localCopy = Copy.of(context);
+    final String? projectId = widget.projectId ?? _legacyProjectId;
     final BackendSession? session = ref.watch(backendSessionProvider);
     final BackendConfig? config = ref
         .watch(backendConfigProvider)
         .asData
         ?.value;
-    final OfflineAuthority authority = ref.watch(offlineAuthorityProvider);
+    final OfflineAuthority authority = authorityFor(
+      session,
+      projectId: projectId,
+    );
     final bool online =
         !ref.watch(offlineNowProvider) && session?.canUseBackend == true;
-    final RelayActionState action = ref.watch(relayControllerProvider);
+    final RelayActionState action = ref.watch(
+      relayControllerProvider(projectId),
+    );
     // Registering a new project is the manager's, so the switch reads the
     // role rather than a project grant the registration has yet to give.
     final bool manages =
@@ -71,7 +92,7 @@ class RelayRoute extends ConsumerWidget {
     return AppPage(
       title: localCopy.relayTitle,
       body: AsyncValueView<RelaySnapshot?>(
-        value: ref.watch(relaySnapshotProvider),
+        value: ref.watch(relaySnapshotProvider(projectId)),
         isEmpty: (RelaySnapshot? value) => value == null,
         empty: () => AppEmptyState(
           icon: AppIcons.project,
@@ -80,8 +101,9 @@ class RelayRoute extends ConsumerWidget {
           actionLabel: Copy.of(context).recordsOpenProject,
           onAction: () => context.go(RoutePaths.projects),
         ),
-        onRetry: () => ref.invalidate(relaySnapshotProvider),
+        onRetry: () => ref.invalidate(relaySnapshotProvider(projectId)),
         data: (RelaySnapshot? loaded) => _RelayBody(
+          projectId: projectId!,
           view: loaded!,
           authority: authority,
           manages: manages,
@@ -96,6 +118,7 @@ class RelayRoute extends ConsumerWidget {
 
 class _RelayBody extends ConsumerWidget {
   const _RelayBody({
+    required this.projectId,
     required this.view,
     required this.authority,
     required this.manages,
@@ -104,6 +127,7 @@ class _RelayBody extends ConsumerWidget {
     required this.reachable,
   });
 
+  final String projectId;
   final RelaySnapshot view;
   final OfflineAuthority authority;
   final bool manages;
@@ -116,7 +140,7 @@ class _RelayBody extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final RelayController controller = ref.read(
-      relayControllerProvider.notifier,
+      relayControllerProvider(projectId).notifier,
     );
     final bool relays = !view.neverRelay && authority.may(RoleCapability.relay);
     final Failure? failure = action.failure;
@@ -237,7 +261,7 @@ class _RelayBody extends ConsumerWidget {
       context,
       title: localCopy.relaySharedKey,
       contentSized: true,
-      builder: (BuildContext _) => const _RelayKeyForm(),
+      builder: (BuildContext _) => _RelayKeyForm(projectId: projectId),
     );
   }
 
@@ -250,8 +274,7 @@ class _RelayBody extends ConsumerWidget {
     String packageId,
   ) async {
     final RelayQueue? queue = ref.read(relayQueueProvider);
-    final String? projectId = ref.read(currentProjectProvider);
-    if (queue == null || projectId == null) {
+    if (queue == null) {
       return;
     }
     final Result<Uint8List> result = await queue.receive(projectId, packageId);
@@ -279,7 +302,7 @@ class _RelayBody extends ConsumerWidget {
             if (!context.mounted) {
               return;
             }
-            ref.invalidate(relaySnapshotProvider);
+            ref.invalidate(relaySnapshotProvider(projectId));
             if (received case FailureResult<void>(:final Failure failure)) {
               showAppSnack(
                 context,
@@ -310,7 +333,9 @@ class _Line extends StatelessWidget {
 
 /// The shared project key, stored only in platform secure storage.
 class _RelayKeyForm extends ConsumerStatefulWidget {
-  const _RelayKeyForm();
+  const _RelayKeyForm({required this.projectId});
+
+  final String projectId;
 
   @override
   ConsumerState<_RelayKeyForm> createState() => _RelayKeyFormState();
@@ -329,8 +354,8 @@ class _RelayKeyFormState extends ConsumerState<_RelayKeyForm>
 
   Future<bool> _save() async {
     final RelayQueue? queue = ref.read(relayQueueProvider);
-    final String? projectId = ref.read(currentProjectProvider);
-    if (queue == null || projectId == null) {
+    final String projectId = widget.projectId;
+    if (queue == null) {
       return false;
     }
     final Result<void> saved = await queue.saveKey(projectId, _key.text);
@@ -341,7 +366,7 @@ class _RelayKeyFormState extends ConsumerState<_RelayKeyForm>
       refresh(() => _error = failure);
       return false;
     }
-    ref.invalidate(relaySnapshotProvider);
+    ref.invalidate(relaySnapshotProvider(projectId));
     Navigator.of(context).pop();
     return true;
   }

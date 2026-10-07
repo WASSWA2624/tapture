@@ -11,6 +11,7 @@ final class AppOverflowAction {
     required this.onTap,
     this.icon,
     this.key,
+    this.sectionLabel,
   });
 
   /// Optional leading glyph. Meaning still comes from [label].
@@ -18,6 +19,10 @@ final class AppOverflowAction {
 
   /// Visible text of the row (FE-A11Y-02).
   final String label;
+
+  /// Optional heading shared by consecutive actions in the same section.
+  /// Null keeps the existing ungrouped presentation.
+  final String? sectionLabel;
 
   /// Invoked when the row is chosen.
   final VoidCallback onTap;

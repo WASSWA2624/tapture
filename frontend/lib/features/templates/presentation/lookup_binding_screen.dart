@@ -20,7 +20,6 @@ import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
-import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/reference/reference.dart'
     show LookupBinding, NoMatchBehaviour, ReferenceDataset, datasetListProvider;
 import 'package:tapture/features/templates/domain/field_def.dart';
@@ -91,9 +90,7 @@ class LookupBindingScreen extends ConsumerWidget {
               ),
             );
           }
-          final String? projectId =
-              _present(template.projectId) ??
-              _present(ref.watch(currentProjectProvider));
+          final String? projectId = _present(template.projectId);
           final AsyncValue<List<ReferenceDataset>> datasets = projectId == null
               ? const AsyncValue<List<ReferenceDataset>>.data(
                   <ReferenceDataset>[],

@@ -52,6 +52,7 @@ export async function auditConfiguration(
     setting(
       'ai_policy',
       [
+        config.aiProviderCatalogue,
         config.aiProviderUrl,
         config.aiProvider,
         config.aiGeminiModel,
@@ -73,6 +74,9 @@ export async function auditConfiguration(
         config.aiOrganisationDailyBudget,
       ],
       {
+        providers: config.aiProviderCatalogue.map(
+          ({ id, protocol, authMode }) => ({ id, protocol, authMode }),
+        ),
         providerUrl: config.aiProviderUrl,
         provider: config.aiProvider,
         geminiModel: config.aiGeminiModel,

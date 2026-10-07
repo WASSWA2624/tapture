@@ -89,7 +89,8 @@ it(
       );
       const reopened = createPostgresRepository(pool);
       assert.equal(
-        (await credentialStatus(reopened, principal, 'gemini')).configured,
+        (await credentialStatus(reopened, principal, 'gemini', config))
+          .configured,
         true,
       );
       await assert.rejects(
@@ -155,7 +156,7 @@ it(
       assert.equal(exported.includes('private-provider-value'), false);
       assert.equal(exported.includes('encrypted_key'), false);
       assert.equal(exported.includes('private-source'), false);
-      await deleteCredential(reopened, principal, 'gemini');
+      await deleteCredential(reopened, principal, 'gemini', config);
       assert.equal(await store.aiCredential('user', 'gemini'), undefined);
     }),
 );

@@ -97,6 +97,36 @@ abstract class AppLocalizations {
     Locale('en', 'XA'),
   ];
 
+  /// Secondary AI settings action opening optional backend setup.
+  ///
+  /// In en, this message translates to:
+  /// **'Server and account'**
+  String get aiServerAndAccount;
+
+  /// Collapsed photo storage settings section.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo files'**
+  String get settingsPhotoFiles;
+
+  /// Collapsed project context defaults section.
+  ///
+  /// In en, this message translates to:
+  /// **'Project contexts'**
+  String get settingsProjectContexts;
+
+  /// Current localized photo quality and folder selection.
+  ///
+  /// In en, this message translates to:
+  /// **'{quality} · {folders}'**
+  String settingsPhotoFilesSummary(String quality, String folders);
+
+  /// Current localized context clearing interval and movement distance, or localized Off.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear after: {autoClear} · Movement: {movement}'**
+  String settingsProjectContextsSummary(String autoClear, String movement);
+
   /// Local image recognition has no browser implementation.
   ///
   /// In en, this message translates to:
@@ -1123,11 +1153,10 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{No templates attached} one{1 template attached} other{{count} templates attached}}'**
   String projectTemplateCount(int count);
 
-  /// The Projects list's one Import control (task 020): it opens the import
-  ///    page, which takes a bundle, a spreadsheet, a dataset or a template.
+  /// Opens the project package file picker directly from Projects (task 143).
   ///
   /// In en, this message translates to:
-  /// **'Import a file'**
+  /// **'Import a Project'**
   String get projectsImport;
 
   /// Duplicate action that opens the create form from an existing project.
@@ -1871,6 +1900,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start capturing'**
   String get captureStart;
+
+  /// Primary project-home action when the project has no templates.
+  ///
+  /// In en, this message translates to:
+  /// **'Add template'**
+  String get projectAddTemplate;
+
+  /// Secondary project-home action to capture evidence before adding a template.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture now'**
+  String get projectCaptureNow;
+
+  /// Nonselectable project menu heading above transcription, meetings and quality summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture and review'**
+  String get projectMenuCaptureReview;
+
+  /// Nonselectable project menu heading above templates, datasets and context configuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Project setup'**
+  String get projectMenuSetup;
+
+  /// Nonselectable project menu heading above export, package merging and opening in another app.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange'**
+  String get projectMenuExchange;
+
+  /// Nonselectable project menu heading above project details, settings and lifecycle actions.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage project'**
+  String get projectMenuManage;
 
   /// Home primary action after at least one record.
   ///
@@ -18276,6 +18341,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This model reserves up to {amount} {unit} per request.'**
   String aiModelCostCeiling(String amount, String unit);
+
+  /// Collapsed help on the generic import page explaining supported file types.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported files'**
+  String get importSupportedFiles;
+
+  /// Creates an editable saved library copy from an immutable shipped template.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize a copy'**
+  String get templatesCustomizeCopy;
+
+  /// Heading for editable templates saved in the global custom library.
+  ///
+  /// In en, this message translates to:
+  /// **'My templates'**
+  String get templatesMyTemplates;
+
+  /// Confirmation after a durable template tombstone, accompanied by Undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Template deleted'**
+  String get templatesDeleted;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty deleted records ({count})'**
+  String recycleEmptyRecords(int count);
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Project'**
+  String get recycleTypeProject;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get recycleTypeRecord;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get recycleTypePhoto;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get recycleTypeDocument;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get recycleTypeAudio;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored'**
+  String get recycleRestored;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore the deleted parent first.'**
+  String get recycleParentDeleted;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore the project or record from the Recycle bin, then try again.'**
+  String get recycleParentDeletedRecovery;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} · {details}'**
+  String recycleEntitySubtitle(String type, String details);
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'The project folder could not be restored.'**
+  String get recycleFolderRestoreFailed;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Check storage access and resolve any existing folder with the same name, then try again.'**
+  String get recycleFolderRestoreRecovery;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported providers'**
+  String get aiSupportedProviders;
+
+  /// Field workflow recovery and compact settings control.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending limit'**
+  String get aiCostControls;
+
+  /// Collapsed AI cost controls showing the saved explicit maximum per request.
+  ///
+  /// In en, this message translates to:
+  /// **'Per request: {amount} configured'**
+  String aiRequestLimitSummary(String amount);
 }
 
 class _AppLocalizationsDelegate

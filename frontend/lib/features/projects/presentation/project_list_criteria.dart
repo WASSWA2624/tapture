@@ -1,74 +1,21 @@
-import '../domain/project_status.dart';
-
-/// Immutable search and filter state shared by every responsive list branch.
+/// Search and archive visibility shared by every responsive project list.
 final class ProjectListCriteria {
-  /// Creates criteria. Active projects are the default landing view.
-  factory ProjectListCriteria({
-    String query = '',
-    Set<ProjectStatus> statuses = const <ProjectStatus>{ProjectStatus.active},
-    ProjectPinFilter pin = ProjectPinFilter.all,
-    Set<String> organisations = const <String>{},
-  }) {
-    return ProjectListCriteria._(
-      query: query,
-      statuses: Set<ProjectStatus>.unmodifiable(statuses),
-      pin: pin,
-      organisations: Set<String>.unmodifiable(organisations),
-    );
-  }
+  /// Active projects are the default landing view.
+  const ProjectListCriteria({this.query = '', this.showArchived = false});
 
-  const ProjectListCriteria._({
-    required this.query,
-    required this.statuses,
-    required this.pin,
-    required this.organisations,
-  });
-
-  /// Free-text query.
+  /// Free-text query across project name, description and organisation.
   final String query;
 
-  /// Included lifecycle states.
-  final Set<ProjectStatus> statuses;
+  /// Includes archived projects beside active projects when true.
+  final bool showArchived;
 
-  /// Pinned-state predicate.
-  final ProjectPinFilter pin;
-
-  /// Included organisation names. Empty means every organisation.
-  final Set<String> organisations;
-
-  /// Number displayed on the Filters action. Search is visible separately.
-  int get activeFilterCount {
-    var count = 0;
-    if (statuses.length != 1 || !statuses.contains(ProjectStatus.active)) {
-      count += 1;
-    }
-    if (pin != ProjectPinFilter.all) {
-      count += 1;
-    }
-    if (organisations.isNotEmpty) {
-      count += 1;
-    }
-    return count;
-  }
-
-  /// Whether any search or secondary predicate is active.
-  bool get isActive => query.trim().isNotEmpty || activeFilterCount > 0;
+  /// Whether the visible search narrows the list.
+  bool get isActive => query.trim().isNotEmpty;
 
   /// Returns a changed snapshot.
-  ProjectListCriteria copyWith({
-    String? query,
-    Set<ProjectStatus>? statuses,
-    ProjectPinFilter? pin,
-    Set<String>? organisations,
-  }) {
-    return ProjectListCriteria(
-      query: query ?? this.query,
-      statuses: statuses ?? this.statuses,
-      pin: pin ?? this.pin,
-      organisations: organisations ?? this.organisations,
-    );
-  }
+  ProjectListCriteria copyWith({String? query, bool? showArchived}) =>
+      ProjectListCriteria(
+        query: query ?? this.query,
+        showArchived: showArchived ?? this.showArchived,
+      );
 }
-
-/// Pinned-state predicate for the project landing list.
-enum ProjectPinFilter { all, pinned, unpinned }

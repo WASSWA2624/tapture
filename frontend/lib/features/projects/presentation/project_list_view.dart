@@ -14,6 +14,7 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/record_thumb.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/features/merge/merge.dart' show startPackageImport;
 
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
@@ -32,7 +33,7 @@ class ProjectListView extends ConsumerWidget {
   /// Creates the list. [filtered] applies the pane search query.
   const ProjectListView({this.filtered = false, super.key});
 
-  /// When true, rows are narrowed by [projectListSearchQueryProvider].
+  /// When true, rows are narrowed by [projectListCriteriaProvider].
   final bool filtered;
 
   @override
@@ -46,7 +47,7 @@ class ProjectListView extends ConsumerWidget {
       value: value,
       isEmpty: (List<ProjectListRow> rows) => rows.isEmpty,
       empty: () => SingleChildScrollView(
-        child: _empty(context, searching: filtered && criteria.isActive),
+        child: _empty(context, ref, searching: filtered && criteria.isActive),
       ),
       onRetry: () => ref.invalidate(projectListProvider),
       data: (List<ProjectListRow> rows) {
@@ -110,7 +111,7 @@ class ProjectListView extends ConsumerWidget {
   }
 }
 
-Widget _empty(BuildContext context, {required bool searching}) {
+Widget _empty(BuildContext context, WidgetRef ref, {required bool searching}) {
   final LocalizedCopy localCopy = Copy.of(context);
 
   final bool expanded = context.sizeClass == SizeClass.expanded;
@@ -133,7 +134,7 @@ Widget _empty(BuildContext context, {required bool searching}) {
         ? () => context.go(_createLocation)
         : searching
         ? null
-        : () => context.go(_importLocation),
+        : () => unawaited(startPackageImport(context, ref)),
   );
 }
 
@@ -203,7 +204,6 @@ String _projectHome(String id) => RoutePaths.project(id);
 /// Must match [AppRoutes.projects], [AppRoutes.projectCreate] and
 /// [AppRoutes.fromQuery].
 const String _createLocation = RoutePaths.projectCreate;
-const String _importLocation = RoutePaths.projectImport;
 const String _fromQuery = RoutePaths.fromQuery;
 
 /// A project's photo in the number circle when it has one (FBK0000154),

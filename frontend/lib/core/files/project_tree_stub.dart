@@ -1,6 +1,14 @@
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/storage_root.dart';
 
+/// Browser bytes remain in the managed store while rows are tombstoned.
+Future<Result<void>> restoreProjectTree({
+  required String id,
+  required String name,
+  required String folderName,
+  StorageRoot? storageRoot,
+}) async => const Success<void>(null);
+
 /// Web stand-in: the project folder tree is a native filesystem.
 Future<Result<void>> writeProjectTree({
   required String id,

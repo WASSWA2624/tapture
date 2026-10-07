@@ -8,6 +8,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -97,6 +98,13 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
                 ).stateText(view.localizedSaveError, view.saveError)!,
               ],
         fields: <Widget>[
+          AppListTile(
+            key: const ValueKey<String>('project-relay'),
+            title: localCopy.relayTitle,
+            trailing: const Icon(AppIcons.open),
+            onTap: () =>
+                unawaited(context.push(RoutePaths.projectRelay(project.id))),
+          ),
           AppChoiceField<bool?>(
             label:
                 '${localCopy.projectAiEnabled} · ${localCopy.projectAppDefault(_onOff(app.aiEnabled, localizedCopy: Copy.of(context)))}',

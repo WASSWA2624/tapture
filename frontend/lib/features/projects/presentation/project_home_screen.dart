@@ -7,6 +7,7 @@ import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -29,7 +30,9 @@ import 'project_duplicate_action.dart';
 import 'project_open_externally_action.dart';
 import 'project_record_filter.dart';
 
-/// Open-project home: what to do next, with one primary capture action.
+part 'project_home_menu.dart';
+
+/// Open-project home: template setup when empty, with capture always available.
 class ProjectHomeScreen extends ConsumerWidget {
   /// Creates the open-project home.
   const ProjectHomeScreen({super.key});
@@ -47,10 +50,7 @@ class ProjectHomeScreen extends ConsumerWidget {
     final AsyncValue<List<TemplateDef>> homeTemplates = ref.watch(
       projectHomeTemplatesProvider(openId ?? ''),
     );
-    final bool canCapture = homeTemplates.maybeWhen(
-      data: (List<TemplateDef> loaded) => loaded.isNotEmpty,
-      orElse: () => false,
-    );
+    final bool needsTemplate = homeTemplates.asData?.value.isEmpty ?? false;
     return AppPage(
       key: const ValueKey<String>('route-project'),
       title: details?.name ?? localCopy.navProjects,
@@ -61,16 +61,30 @@ class ProjectHomeScreen extends ConsumerWidget {
       scrollable: false,
       footer: project == null
           ? null
-          : AppPrimaryAction(
-              label: records == 0
-                  ? localCopy.captureStart
-                  : localCopy.captureMore,
-              caption: homeTemplates.hasValue && !canCapture
-                  ? localCopy.captureNeedsTemplate
-                  : null,
-              onPressed: canCapture
-                  ? () => context.go(_capture(project.id))
-                  : null,
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                AppPrimaryAction(
+                  label: needsTemplate
+                      ? localCopy.projectAddTemplate
+                      : records == 0
+                      ? localCopy.captureStart
+                      : localCopy.captureMore,
+                  onPressed: () => context.go(
+                    needsTemplate
+                        ? _templates(project.id)
+                        : _capture(project.id),
+                  ),
+                ),
+                if (needsTemplate) ...<Widget>[
+                  const SizedBox(height: Space.x1),
+                  AppButton(
+                    label: localCopy.projectCaptureNow,
+                    variant: AppButtonVariant.text,
+                    onPressed: () => context.go(_capture(project.id)),
+                  ),
+                ],
+              ],
             ),
       body: AsyncValueView<Project?>(
         value: value,
@@ -89,7 +103,7 @@ class ProjectHomeScreen extends ConsumerWidget {
   }
 }
 
-/// Templates of [projectId], for the footer's capture gate.
+/// Templates of [projectId], so adding one updates the footer immediately.
 final projectHomeTemplatesProvider =
     StreamProvider.family<List<TemplateDef>, String>((
       Ref ref,
@@ -183,147 +197,6 @@ class _HomeBody extends ConsumerWidget {
         ),
       ],
     );
-  }
-}
-
-List<AppOverflowAction> _projectHomeMenu(
-  BuildContext context,
-  WidgetRef ref,
-  Project project,
-) {
-  final LocalizedCopy localCopy = Copy.of(context);
-
-  final AppOverflowAction? open = projectOpenExternallyMenuItem(
-    context,
-    ref,
-    project,
-  );
-  return <AppOverflowAction>[
-    AppOverflowAction(
-      label: localCopy.navTemplates,
-      icon: AppIcons.template,
-      onTap: () => context.push(_templates(project.id)),
-    ),
-    AppOverflowAction(
-      key: const ValueKey<String>('project-datasets'),
-      label: localCopy.navDatasets,
-      icon: AppIcons.dataset,
-      onTap: () =>
-          unawaited(context.push(RoutePaths.projectDatasets(project.id))),
-    ),
-    AppOverflowAction(
-      label: localCopy.contextPinnedTitle,
-      icon: AppIcons.pin,
-      onTap: () => unawaited(
-        showPinnedFieldsSheet(context: context, projectId: project.id),
-      ),
-    ),
-    AppOverflowAction(
-      label: localCopy.contextHierarchyTitle,
-      icon: AppIcons.context,
-      onTap: () => unawaited(context.push(_context(project.id))),
-    ),
-    AppOverflowAction(
-      key: const ValueKey<String>('project-quality'),
-      label: localCopy.qualitySummaryTitle,
-      icon: AppIcons.verified,
-      onTap: () =>
-          unawaited(context.push(RoutePaths.projectQuality(project.id))),
-    ),
-    AppOverflowAction(
-      label: localCopy.projectExport,
-      icon: AppIcons.export,
-      onTap: () => context.push(RoutePaths.projectExports(project.id)),
-    ),
-    AppOverflowAction(
-      key: const ValueKey<String>('project-transcribe'),
-      label: localCopy.transcribeTitle,
-      icon: AppIcons.transcript,
-      onTap: () =>
-          unawaited(context.push(RoutePaths.projectTranscripts(project.id))),
-    ),
-    AppOverflowAction(
-      key: const ValueKey<String>('project-start-meeting'),
-      label: localCopy.meetingStartEntry,
-      icon: AppIcons.recordAudio,
-      onTap: () =>
-          unawaited(context.push(RoutePaths.projectMeetingCreate(project.id))),
-    ),
-    AppOverflowAction(
-      key: const ValueKey<String>('project-merge-package'),
-      label: localCopy.mergePackage,
-      icon: AppIcons.import,
-      onTap: () => unawaited(
-        startPackageImport(context, ref, intoProjectId: project.id),
-      ),
-    ),
-    AppOverflowAction(
-      key: const ValueKey<String>('project-merge-history'),
-      label: localCopy.mergeHistoryTitle,
-      icon: AppIcons.history,
-      onTap: () =>
-          unawaited(context.push(RoutePaths.projectMergeHistory(project.id))),
-    ),
-    AppOverflowAction(
-      label: localCopy.projectsDuplicate,
-      icon: AppIcons.duplicate,
-      onTap: () => ProjectDuplicateAction.open(
-        context,
-        sourceId: project.id,
-        sourceName: project.name,
-      ),
-    ),
-    AppOverflowAction(
-      label: localCopy.projectEditTitle,
-      icon: AppIcons.info,
-      onTap: () =>
-          unawaited(context.push(RoutePaths.projectDetails(project.id))),
-    ),
-    AppOverflowAction(
-      label: localCopy.projectSettingsTitle,
-      icon: AppIcons.settings,
-      onTap: () => context.go(_settings(project.id)),
-    ),
-    ?open,
-    AppOverflowAction(
-      label: project.status == ProjectStatus.archived
-          ? localCopy.projectUnarchive
-          : localCopy.projectArchive,
-      icon: project.status == ProjectStatus.archived
-          ? AppIcons.unarchive
-          : AppIcons.archive,
-      onTap: () => unawaited(_archiveThenList(context, ref, project)),
-    ),
-    AppOverflowAction(
-      label: localCopy.projectDeleteMenu,
-      icon: AppIcons.delete,
-      onTap: () => unawaited(_deleteThenList(context, ref, project)),
-    ),
-  ];
-}
-
-Future<void> _archiveThenList(
-  BuildContext context,
-  WidgetRef ref,
-  Project project,
-) async {
-  await ProjectArchiveAction.apply(ref, project);
-  if (context.mounted) {
-    context.go(RoutePaths.projects);
-  }
-}
-
-Future<void> _deleteThenList(
-  BuildContext context,
-  WidgetRef ref,
-  Project project,
-) async {
-  await ProjectDeleteAction.confirm(context, ref, project);
-  if (!context.mounted) {
-    return;
-  }
-  if (ref.read(currentProjectProvider) != project.id) {
-    context.go(RoutePaths.projects);
   }
 }
 

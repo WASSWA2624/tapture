@@ -1,4 +1,21 @@
-export type ProviderName = 'gemini' | 'openai';
+/** Administrator-configured identifier, validated at configuration and HTTP boundaries. */
+export type ProviderName = string;
+export type ProviderProtocol = 'gemini-generate-content' | 'openai-responses';
+export type ProviderAuthMode = 'required' | 'none';
+export type AiOperation = 'ocr' | 'extract' | 'refine' | 'transcribe';
+
+export interface ProviderDefinition {
+  readonly id: ProviderName;
+  readonly label: string;
+  readonly protocol: ProviderProtocol;
+  readonly baseUrl: string;
+  readonly authMode: ProviderAuthMode;
+  readonly models: readonly string[];
+  readonly operations: readonly AiOperation[];
+  readonly model: string;
+  readonly currency: 'configured';
+  readonly modelCostCeilings: Readonly<Record<string, number>>;
+}
 export type BillingKind = 'managed' | 'personal';
 
 export interface AiBilling {

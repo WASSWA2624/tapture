@@ -64,3 +64,12 @@ backend/test/**
 *.heif
 *.webp
 TAPTURE-*.zip
+
+# Task143 configured AI providers and exact security/migration regressions.
+!backend/test/config/provider_catalogue.test.ts
+!backend/test/services/provider_catalogue.test.ts
+!backend/test/services/configured_provider.test.ts
+!backend/test/services/provider_configuration_audit.test.ts
+!backend/test/routes/provider_catalogue.test.ts
+!backend/test/repositories/postgres_provider_upgrade.test.ts
+!backend/test/fakes/provider_catalogue.ts

@@ -55,6 +55,10 @@ class _AiSettings extends Notifier<_AiView> {
       _settings.read(SettingKeys.aiProvider),
       _settings.read(SettingKeys.aiModel),
     );
+    ref.listen(providerRegistryProvider, (_, _) {
+      final selection = _validate(state.providerId, state.modelId);
+      state = _with(fellBack: selection.fellBack);
+    });
     unawaited(_readKeyStored());
     unawaited(_refreshCatalogue());
     return (
@@ -69,29 +73,33 @@ class _AiSettings extends Notifier<_AiView> {
   }
 
   /// Every provider that can run the operation.
-  List<ProviderDescriptor> get providers => _registry.catalog
-      .where(
-        (ProviderDescriptor value) => value.operations.contains(_operation),
-      )
-      .toList(growable: false);
+  List<ProviderDescriptor> get providers => <ProviderDescriptor>[
+    if (!_registry.catalog.any(
+      (ProviderDescriptor value) => value.id == state.providerId,
+    ))
+      provider,
+    ..._registry.catalog.where(
+      (ProviderDescriptor value) => value.operations.contains(_operation),
+    ),
+  ];
 
   /// The chosen provider, valid for the operation.
   ProviderDescriptor get provider =>
       _validate(state.providerId, state.modelId).provider;
 
   /// The chosen provider's models for the operation.
-  List<ModelDescriptor> get models => provider.models
-      .where((ModelDescriptor value) => value.operations.contains(_operation))
-      .toList(growable: false);
+  List<ModelDescriptor> get models => <ModelDescriptor>[
+    if (!provider.models.any(
+      (ModelDescriptor value) => value.id == state.modelId,
+    ))
+      model,
+    ...provider.models.where(
+      (ModelDescriptor value) => value.operations.contains(_operation),
+    ),
+  ];
 
   /// The chosen model, or the provider's first when none is chosen.
-  ModelDescriptor get model {
-    final List<ModelDescriptor> available = models;
-    return available.firstWhere(
-      (ModelDescriptor value) => value.id == state.modelId,
-      orElse: () => available.first,
-    );
-  }
+  ModelDescriptor get model => _validate(state.providerId, state.modelId).model;
 
   /// Chooses [providerId] and its default model.
   void selectProvider(String providerId) {
@@ -107,7 +115,9 @@ class _AiSettings extends Notifier<_AiView> {
     state = _with(
       providerId: selection.provider.id,
       modelId: selection.model.id,
-      fellBack: false,
+      fellBack: selection.fellBack,
+      clearFailure: true,
+      test: ProviderTestView.empty,
       keyStored: false,
     );
     unawaited(_readKeyStored());
@@ -173,6 +183,9 @@ class _AiSettings extends Notifier<_AiView> {
   /// Removes the device key and returns the selection to the keyless
   /// organisation provider in one action.
   Future<void> removeCredential() async {
+    if (provider.serverCredentialProvider == null && !provider.deviceKeyAllowed) {
+      return;
+    }
     state = _with(busy: true, clearFailure: true);
     final String? serverProvider = provider.serverCredentialProvider;
     if (serverProvider != null) {
@@ -272,6 +285,7 @@ class _AiSettings extends Notifier<_AiView> {
       }
       return;
     }
+    if (!provider.deviceKeyAllowed) return;
     final Result<String?> stored = await _storage.readSecret(
       SecretKey.providerCredential,
     );
@@ -287,12 +301,20 @@ class _AiSettings extends Notifier<_AiView> {
     }
   }
 
+  Future<void> retryStatus() async {
+    state = _with(clearFailure: true);
+    await _readKeyStored();
+    await _refreshCatalogue();
+  }
+
   Future<void> _refreshCatalogue() async {
     final Result<void> refreshed = await ref
         .read(serverAiCatalogueProvider)
         .refresh();
     if (ref.mounted && refreshed is Success<void>) {
-      state = _with();
+      state = _with(
+        fellBack: _validate(state.providerId, state.modelId).fellBack,
+      );
     }
   }
 

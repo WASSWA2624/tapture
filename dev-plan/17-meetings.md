@@ -129,7 +129,8 @@ class Meeting {
 - [x] An interrupted recording is still attached to the meeting and playable.
 - [x] The raw transcript is never replaced, neither by refining the minutes nor by a later transcription run.
 - [x] A fabricated attendee, decision or action is rejected by the guard, and the rejection names the item.
-- [x] Raw notes and refined minutes are shown side by side and both are editable.
+- [x] Working notes and refined minutes are shown side by side and both are editable; immutable originals remain preserved (task143 W1).
+      Verified 2026-10-07 in task143 W1: host production-route/database tests save and reopen both fields; legacy/package/export/undo tests preserve originals. Broader device checks remain open.
 - [x] Actions are exportable as their own register, with owner, due date and status.
 - [x] A refined decision or action can be edited or deleted without altering the raw material it came from.
 - [x] A meeting cannot be exported while its actions have no owners, when the template requires them.

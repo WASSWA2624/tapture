@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
@@ -13,13 +12,12 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
-import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 // The notifier is private so this file holds one public class (FE-STR-06).
 // ignore_for_file: library_private_types_in_public_api
 
-/// Version, build, licences, and links to the plan and the specification.
+/// Version, build and licences for the installed application.
 class AboutScreen extends ConsumerWidget {
   /// Creates the About screen.
   const AboutScreen({super.key});
@@ -65,20 +63,6 @@ class AboutScreen extends ConsumerWidget {
                 trailing: const Icon(AppIcons.open),
                 onTap: () => context.go(RoutePaths.settingsLicences),
               ),
-              for (final ({String title, String url}) link in _links(localCopy))
-                AppListTile(
-                  key: ValueKey<String>('about-${link.url}'),
-                  title: link.title,
-                  subtitle: link.url,
-                  trailing: const Icon(AppIcons.open),
-                  onTap: () {
-                    unawaited(
-                      ref
-                          .read(aboutProvider.notifier)
-                          .openUrl(context, link.url),
-                    );
-                  },
-                ),
             ],
           );
         },
@@ -87,35 +71,14 @@ class AboutScreen extends ConsumerWidget {
   }
 }
 
-/// Where the plan and the specification are published.
-List<({String title, String url})> _links(LocalizedCopy copy) =>
-    <({String title, String url})>[
-      (title: copy.settingsPlanLink, url: _planUrl),
-      (title: copy.settingsSpecLink, url: _specUrl),
-    ];
-
-/// The development plan's tracker in the public repository.
-const String _planUrl =
-    'https://github.com/WASSWA2624/tapture/blob/main/dev-tracker.md';
-
-/// The product specification in the public repository.
-const String _specUrl =
-    'https://github.com/WASSWA2624/tapture/blob/main/app-write-up.md';
-
-/// Injects version, build and link opening so tests never read the platform.
+/// Injects version and build metadata so tests never read the platform.
 Override aboutOverride({
   Future<({String version, String build})> Function()? load,
-  Future<void> Function(String url)? openUrl,
   Object? failWith,
   bool pending = false,
 }) {
   return aboutProvider.overrideWith(
-    () => _About.withLoad(
-      load,
-      openUrl: openUrl,
-      failWith: failWith,
-      pending: pending,
-    ),
+    () => _About.withLoad(load, failWith: failWith, pending: pending),
   );
 }
 
@@ -130,17 +93,11 @@ final AsyncNotifierProvider<_About, _AboutView> aboutProvider =
 typedef _AboutView = ({String version, String build});
 
 class _About extends AsyncNotifier<_AboutView> {
-  _About() : _load = null, _openUrl = null, _failWith = null, _pending = false;
+  _About() : _load = null, _failWith = null, _pending = false;
 
-  _About.withLoad(
-    this._load, {
-    this._openUrl,
-    this._failWith,
-    this._pending = false,
-  });
+  _About.withLoad(this._load, {this._failWith, this._pending = false});
 
   final Future<({String version, String build})> Function()? _load;
-  final Future<void> Function(String url)? _openUrl;
   final Object? _failWith;
   final bool _pending;
 
@@ -159,27 +116,6 @@ class _About extends AsyncNotifier<_AboutView> {
     }
     final DeviceDescriptor descriptor = await deviceDescriptor();
     return (version: descriptor.appVersion, build: appBuildNumber);
-  }
-
-  /// Opens [url] through the injected opener. With none (no launcher is
-  /// on the allowlist), copies the link so it can be pasted into a browser,
-  /// and says so.
-  Future<void> openUrl(BuildContext context, String url) async {
-    final LocalizedCopy localCopy = Copy.of(context);
-
-    final Future<void> Function(String url)? opener = _openUrl;
-    if (opener != null) {
-      await opener(url);
-      return;
-    }
-    await Clipboard.setData(ClipboardData(text: url));
-    if (context.mounted) {
-      showAppSnack(
-        context,
-        localCopy.settingsLinkCopied,
-        tone: SnackTone.success,
-      );
-    }
   }
 }
 

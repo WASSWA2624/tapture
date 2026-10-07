@@ -1,4 +1,6 @@
 import type { AppConfig } from '../../config/schema.js';
+import type { ProviderDefinition } from '../../domain/ai.js';
+import { providerDefinition } from './catalogue.js';
 import {
   internalError,
   invalidRequest,
@@ -18,11 +20,11 @@ export function openaiProvider(
   config: AppConfig,
   key: string,
   request: typeof fetch = fetch,
+  definition: ProviderDefinition = providerDefinition(config, 'openai'),
 ): AiProvider {
   const call = async (input: AiRequest): Promise<AiResult> => {
-    if (key === '') throw unavailable();
-    const model =
-      input.model === 'default' ? config.aiOpenaiModel : input.model;
+    if (definition.authMode === 'required' && key === '') throw unavailable();
+    const model = input.model === 'default' ? definition.model : input.model;
     if (!/^[A-Za-z0-9._-]+$/.test(model)) throw unavailable();
     const envelope = providerEnvelope(input.payload);
     const content: unknown[] = [
@@ -39,12 +41,14 @@ export function openaiProvider(
         detail: 'auto',
       });
     }
-    const response = await request(`${config.aiOpenaiUrl}/responses`, {
+    const response = await request(`${definition.baseUrl}/responses`, {
       method: 'POST',
       redirect: 'error',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
+        ...(definition.authMode === 'required'
+          ? { Authorization: `Bearer ${key}` }
+          : {}),
       },
       body: JSON.stringify({
         model,
@@ -92,7 +96,8 @@ export function openaiProvider(
       }
     }
     const text = parts.join('');
-    if (text === '' || text.includes(key)) throw internalError();
+    if (text === '' || (key !== '' && text.includes(key)))
+      throw internalError();
     const usage = providerTokens(root['usage'], [
       'input_tokens',
       'output_tokens',

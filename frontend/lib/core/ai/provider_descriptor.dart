@@ -16,6 +16,7 @@ final class ProviderDescriptor {
     required AiService service,
     required List<ModelDescriptor> models,
     String? serverCredentialProvider,
+    String? serverProvider,
     List<ModelDescriptor> Function()? modelsLookup,
   }) {
     return ProviderDescriptor._(
@@ -28,6 +29,7 @@ final class ProviderDescriptor {
       service: service,
       models: List<ModelDescriptor>.unmodifiable(models),
       serverCredentialProvider: serverCredentialProvider,
+      serverProvider: serverProvider,
       modelsLookup: modelsLookup,
     );
   }
@@ -42,6 +44,7 @@ final class ProviderDescriptor {
     required this.service,
     required this._models,
     this.serverCredentialProvider,
+    this.serverProvider,
     this._modelsLookup,
   });
 
@@ -76,4 +79,7 @@ final class ProviderDescriptor {
 
   /// Provider whose personal credential is encrypted by the backend.
   final String? serverCredentialProvider;
+
+  /// Exact configured metadata identity, including accounts requiring no key.
+  final String? serverProvider;
 }

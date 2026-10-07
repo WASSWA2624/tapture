@@ -8,6 +8,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/feedback/haptics.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/lifecycle/deleted_entity.dart';
 import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/security/coordinate_removal_events.dart';
 import 'package:tapture/core/time/clock.dart';
@@ -1063,6 +1064,12 @@ final StorageFailure _noRecords = StorageFailure(
 );
 
 final class _MemoryPhotoRepository implements PhotoRepository {
+  @override
+  Stream<List<DeletedEntity>> watchDeleted() => Stream<List<DeletedEntity>>.value(const <DeletedEntity>[]);
+
+  @override
+  Future<Result<void>> restore(String id) async => const FailureResult<void>(CancelledFailure());
+
   final Map<String, PhotoAsset> _rows = <String, PhotoAsset>{};
 
   @override

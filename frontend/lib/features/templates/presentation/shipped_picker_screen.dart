@@ -12,6 +12,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
@@ -23,7 +24,6 @@ import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
-import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/presentation/template_locations.dart';
 
 import '../domain/field_def.dart';
@@ -31,10 +31,14 @@ import '../domain/shipped_search_document.dart';
 import '../domain/shipped_template_entry.dart';
 import '../domain/shipped_template_ranking.dart';
 import '../domain/template_def.dart';
-import '../templates.dart' show shippedTemplateLoaderProvider;
+import '../templates.dart'
+    show shippedTemplateLoaderProvider, templateRepositoryProvider;
 import 'shipped_library_expanded.dart';
 import 'shipped_library_filter.dart';
 import 'shipped_suggestions_controller.dart';
+import 'template_actions.dart';
+import 'template_duplicate_action.dart';
+import 'template_editor_source.dart';
 import 'template_list_screen.dart';
 
 /// Picker for the shipped library: areas and collapsible, counted
@@ -43,7 +47,13 @@ import 'template_list_screen.dart';
 /// template's fields, then copy it into the project.
 class ShippedPickerScreen extends ConsumerStatefulWidget {
   /// Creates the library picker.
-  const ShippedPickerScreen({super.key});
+  const ShippedPickerScreen({this.projectId, this.root = false, super.key});
+
+  /// Null browses and customizes the global library; otherwise attaches copies.
+  final String? projectId;
+
+  /// The global Templates branch already provides its page header.
+  final bool root;
 
   @override
   ConsumerState<ShippedPickerScreen> createState() =>
@@ -85,11 +95,19 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
       _name.text = preview.title;
     }
     return AppPage(
-      key: const ValueKey<String>('route-template-library'),
-      title: preview == null ? localCopy.templatesLibraryTitle : preview.title,
+      key: ValueKey<String>(
+        widget.root ? 'route-templates' : 'route-template-library',
+      ),
+      title: preview == null ? localCopy.navTemplates : preview.title,
+      showAppBar: !widget.root || preview != null,
       scrollable: false,
       footer: preview != null
           ? null
+          : widget.projectId == null
+          ? AppPrimaryAction(
+              label: localCopy.templatesCreate,
+              onPressed: () => context.go(TemplateLocations.create(context)),
+            )
           : value.maybeWhen(
               data: (List<ShippedTemplateEntry> rows) {
                 final LocalizedCopy localCopy = Copy.of(context);
@@ -119,22 +137,42 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
                 ref.read(_shippedPickerProvider.notifier).closePreview();
               },
             ),
-      body: AsyncValueView<List<ShippedTemplateEntry>>(
-        value: value,
-        isEmpty: (List<ShippedTemplateEntry> rows) => rows.isEmpty,
-        empty: () => _empty(context),
-        onRetry: () => ref.invalidate(shippedLibraryProvider),
-        data: (List<ShippedTemplateEntry> rows) {
-          final Set<String> attached = <String>{
-            for (final TemplateDef template
-                in ref.watch(templateListProvider).asData?.value ??
-                    const <TemplateDef>[])
-              template.templateKey,
-          };
-          return preview == null
-              ? _library(rows, attached)
-              : _preview(preview, view, attached.contains(preview.templateKey));
-        },
+      body: AsyncValueView<List<TemplateDef>>(
+        value: ref.watch(templateLibraryProvider),
+        isEmpty: (List<TemplateDef> _) => false,
+        onRetry: () => ref.invalidate(templateLibraryProvider),
+        data: (List<TemplateDef> library) =>
+            AsyncValueView<List<ShippedTemplateEntry>>(
+              value: value,
+              isEmpty: (List<ShippedTemplateEntry> rows) =>
+                  rows.isEmpty && library.isEmpty,
+              empty: () => _empty(context),
+              onRetry: () => ref.invalidate(shippedLibraryProvider),
+              data: (List<ShippedTemplateEntry> rows) {
+                final Set<String> attached = <String>{
+                  for (final TemplateDef template
+                      in (widget.projectId == null
+                              ? const <TemplateDef>[]
+                              : ref
+                                    .watch(
+                                      templateProjectListProvider(
+                                        widget.projectId!,
+                                      ),
+                                    )
+                                    .asData
+                                    ?.value) ??
+                          const <TemplateDef>[])
+                    template.templateKey,
+                };
+                return preview == null
+                    ? _library(rows, attached, library)
+                    : _preview(
+                        preview,
+                        view,
+                        attached.contains(preview.templateKey),
+                      );
+              },
+            ),
       ),
     );
   }
@@ -161,9 +199,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
     if (_saving || _picked.isEmpty) {
       return;
     }
-    final String? projectId =
-        ref.read(currentProjectProvider) ??
-        TemplateLocations.projectIdOf(context);
+    final String? projectId = widget.projectId;
     if (projectId == null || projectId.isEmpty) {
       showAppSnack(context, localCopy.statusNoProject, tone: SnackTone.error);
       return;
@@ -212,7 +248,11 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
     context.go(TemplateLocations.root(context));
   }
 
-  Widget _library(List<ShippedTemplateEntry> rows, Set<String> attached) {
+  Widget _library(
+    List<ShippedTemplateEntry> rows,
+    Set<String> attached,
+    List<TemplateDef> library,
+  ) {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final ShippedLibraryFilterState filter = ref.watch(
@@ -254,7 +294,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
       );
     }
     final int active = ShippedLibraryFilter.activeCount(filter);
-    final List<_Row> items = searching || active > 0
+    final List<_Row> shipped = searching || active > 0
         ? <_Row>[
             for (final ShippedTemplateEntry entry in shown) _Template(entry),
           ]
@@ -263,6 +303,19 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
             ref.watch(shippedLibraryExpandedProvider),
             localizedCopy: Copy.of(context),
           );
+    final String query = _query.trim().toLowerCase();
+    final List<TemplateDef> saved = <TemplateDef>[
+      if (active == 0)
+        for (final TemplateDef template in library)
+          if (query.isEmpty || template.name.toLowerCase().contains(query))
+            template,
+    ];
+    final List<_Row> items = <_Row>[
+      if (saved.isNotEmpty) _Heading(localCopy.templatesMyTemplates),
+      for (final TemplateDef template in saved) _Saved(template),
+      if (shipped.isNotEmpty) _Heading(localCopy.templatesLibraryTitle),
+      ...shipped,
+    ];
     final double gutter = AppPage.gutter(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -276,7 +329,9 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
             onFilter: () =>
                 unawaited(showShippedLibraryFilters(context, ref, rows)),
             activeFilterCount: active,
-            resultCount: !searching && active == 0 ? null : shown.length,
+            resultCount: !searching && active == 0
+                ? null
+                : shown.length + saved.length,
           ),
         ),
         if (searching &&
@@ -315,7 +370,7 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
             dense: true,
           ),
         Expanded(
-          child: shown.isEmpty
+          child: items.isEmpty
               ? AppEmptyState(
                   icon: AppIcons.searchEmpty,
                   headline: localCopy.shippedLibraryNoMatch(_query),
@@ -350,12 +405,60 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
                         ),
                       _Template(:final ShippedTemplateEntry entry) =>
                         _libraryRow(entry, attached),
+                      _Saved(:final TemplateDef template) => AppListTile(
+                        key: ValueKey<String>(
+                          'library-template-${template.id}',
+                        ),
+                        title: template.name,
+                        subtitle: localCopy.fieldsCount(template.fields.length),
+                        trailing: widget.projectId == null
+                            ? AppOverflowMenu(
+                                items: TemplateActions.items(
+                                  context,
+                                  ref,
+                                  template,
+                                  0,
+                                ),
+                              )
+                            : null,
+                        onTap: widget.projectId == null
+                            ? () => TemplateActions.open(context, template.id)
+                            : () => unawaited(_attachSaved(template)),
+                      ),
                     };
                   },
                 ),
         ),
       ],
     );
+  }
+
+  Future<void> _attachSaved(TemplateDef source) async {
+    final String? owner = widget.projectId;
+    if (owner == null || _saving) return;
+    refresh(() => _saving = true);
+    final Result<TemplateDef> result = await ref
+        .read(templateRepositoryProvider)
+        .save(
+          TemplateDuplicateAction.draftFrom(
+            source,
+          ).copyWith(projectId: owner, name: source.name),
+        );
+    if (!mounted) return;
+    refresh(() => _saving = false);
+    switch (result) {
+      case Success<TemplateDef>(:final value):
+        context.go(
+          TemplateLocations.detail(context, value.id, projectId: owner),
+        );
+      case FailureResult<TemplateDef>(:final failure):
+        showAppSnack(
+          context,
+          failure.message,
+          tone: SnackTone.error,
+          localizedMessage: failure.explanation,
+        );
+    }
   }
 
   /// Searchable words per template: its name, code, category, area, record
@@ -396,15 +499,21 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
               entry.fieldCount,
             ),
       selected: picked,
-      trailing: isAttached
+      trailing: widget.projectId == null
+          ? null
+          : isAttached
           ? const Icon(AppIcons.success)
           : Checkbox(
               value: picked,
               onChanged: (bool? value) => _togglePicked(entry, value ?? false),
             ),
-      onTap: () =>
-          ref.read(_shippedPickerProvider.notifier).preview(entry.templateKey),
-      onLongPress: isAttached ? null : () => _togglePicked(entry, !picked),
+      onTap: () {
+        _name.text = entry.title;
+        ref.read(_shippedPickerProvider.notifier).preview(entry.templateKey);
+      },
+      onLongPress: widget.projectId == null || isAttached
+          ? null
+          : () => _togglePicked(entry, !picked),
     );
   }
 
@@ -458,14 +567,20 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
           ],
         ),
       ],
-      submitLabel: attached
+      submitLabel: widget.projectId == null
+          ? localCopy.templatesCustomizeCopy
+          : attached
           ? localCopy.templatesCustomCopy
           : localCopy.templatesAddToProject,
       onSubmit: () async {
         final GoRouter? router = GoRouter.maybeOf(context);
         final TemplateDef? created = await ref
             .read(_shippedPickerProvider.notifier)
-            .add(name: _name.text, templateKey: entry.templateKey);
+            .add(
+              name: _name.text,
+              templateKey: entry.templateKey,
+              projectId: widget.projectId,
+            );
         if (created == null) {
           return false;
         }
@@ -564,6 +679,11 @@ String _requiredness(
 /// closes, or a template.
 sealed class _Row {
   const _Row();
+}
+
+final class _Saved extends _Row {
+  const _Saved(this.template);
+  final TemplateDef template;
 }
 
 final class _Heading extends _Row {
@@ -744,6 +864,7 @@ class _ShippedPicker extends Notifier<_ShippedPickerView> {
   Future<TemplateDef?> add({
     required String name,
     required String templateKey,
+    required String? projectId,
   }) async {
     final String trimmed = name.trim();
     if (trimmed.isEmpty) {
@@ -756,24 +877,14 @@ class _ShippedPicker extends Notifier<_ShippedPickerView> {
       );
       return null;
     }
-    final String? projectId = ref.read(currentProjectProvider);
-    if (projectId == null || projectId.isEmpty) {
-      state = (
-        previewKey: state.previewKey,
-        nameError: null,
-        localizedNameError: null,
-        saveError: Copy.statusNoProject,
-        localizedSaveError: Copy.messages.statusNoProject,
-      );
-      return null;
-    }
-    final Result<TemplateDef> result = await ref
-        .read(shippedTemplateLoaderProvider)
-        .copyToProject(
-          templateKey: templateKey,
-          projectId: projectId,
-          name: trimmed,
-        );
+    final loader = ref.read(shippedTemplateLoaderProvider);
+    final Result<TemplateDef> result = await (projectId == null
+        ? loader.copyToLibrary(templateKey: templateKey, name: trimmed)
+        : loader.copyToProject(
+            templateKey: templateKey,
+            projectId: projectId,
+            name: trimmed,
+          ));
     switch (result) {
       case Success<TemplateDef>(:final TemplateDef value):
         state = (

@@ -1,6 +1,8 @@
-import type { ProviderName } from '../domain/ai.js';
+import type { ProviderDefinition, ProviderName } from '../domain/ai.js';
+import { parseProviderCatalogue, providerUrl } from './provider-catalogue.js';
 
 export interface AiConfiguration {
+  readonly aiProviderCatalogue: readonly ProviderDefinition[];
   readonly aiProvider: ProviderName;
   readonly aiGeminiModel: string;
   readonly aiOpenaiModel: string;
@@ -31,9 +33,10 @@ export function parseAiConfiguration(
     throw new Error(
       'AI_CREDENTIAL_ENCRYPTION_KEY must contain 64 hexadecimal characters.',
     );
-  const aiOpenaiUrl = env['AI_OPENAI_URL'] ?? 'https://api.openai.com/v1';
-  if (!/^https:\/\/[^\s/?#]+(?:\/[^\s?#]*)?$/.test(aiOpenaiUrl))
-    throw new Error('AI_OPENAI_URL must be an HTTPS endpoint.');
+  const aiOpenaiUrl = providerUrl(
+    env['AI_OPENAI_URL'] ?? 'https://api.openai.com/v1',
+    'AI_OPENAI_URL',
+  );
   const aiMaxOutputTokens = Number(env['AI_MAX_OUTPUT_TOKENS'] ?? '4096');
   if (
     !Number.isSafeInteger(aiMaxOutputTokens) ||
@@ -63,6 +66,7 @@ export function parseAiConfiguration(
     aiModelCostCeilings[name] = value;
   }
   return {
+    aiProviderCatalogue: parseProviderCatalogue(env['AI_PROVIDER_CATALOGUE']),
     aiProvider,
     aiGeminiModel: model(
       env['AI_GEMINI_MODEL'] ||

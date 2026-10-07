@@ -6,7 +6,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/fields/app_radio_group.dart';
+import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 
 import '../domain/setting_key.dart';
@@ -54,12 +54,15 @@ class LanguageSettingsScreen extends ConsumerWidget {
               horizontal: Space.x4,
               vertical: Space.x2,
             ),
-            child: AppRadioGroup<String>(
+            child: AppChoiceField<String>(
+              alwaysSheet: true,
               label: localCopy.settingsVoiceLanguage,
               value: ref.watch(voiceLanguageProvider),
               options: _voiceLanguages(localCopy),
-              onChanged: (String tag) {
-                unawaited(ref.read(voiceLanguageProvider.notifier).set(tag));
+              onChanged: (String? tag) {
+                if (tag != null) {
+                  unawaited(ref.read(voiceLanguageProvider.notifier).set(tag));
+                }
               },
             ),
           ),

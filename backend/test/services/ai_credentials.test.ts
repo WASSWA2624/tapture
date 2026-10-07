@@ -43,10 +43,13 @@ describe('personal AI credential custody', () => {
     assert.ok(first);
     assert.equal(first.encryptedKey.includes('private-personal-value'), false);
     assert.equal(decryptCredential(settings, first), 'private-personal-value');
-    assert.deepEqual(await credentialStatus(store, principal, 'gemini'), {
-      provider: 'gemini',
-      configured: true,
-    });
+    assert.deepEqual(
+      await credentialStatus(store, principal, 'gemini', config()),
+      {
+        provider: 'gemini',
+        configured: true,
+      },
+    );
     const exported = JSON.stringify(store.exportMetadata());
     assert.equal(exported.includes('private-personal-value'), false);
     assert.equal(exported.includes(first.encryptedKey), false);
@@ -90,10 +93,10 @@ describe('personal AI credential custody', () => {
     );
     const other = { ...principal, userId: 'other' };
     assert.equal(
-      (await credentialStatus(store, other, 'openai')).configured,
+      (await credentialStatus(store, other, 'openai', config())).configured,
       false,
     );
-    await deleteCredential(store, other, 'openai');
+    await deleteCredential(store, other, 'openai', config());
     assert.ok(store.aiCredential('user', 'openai'));
     let selectedKey = '';
     const selected = await selectProvider(
@@ -109,8 +112,8 @@ describe('personal AI credential custody', () => {
     );
     assert.equal(selected.model, 'cheap-openai');
     assert.equal(selectedKey, 'private-openai-value');
-    await deleteCredential(store, principal, 'openai');
-    await deleteCredential(store, principal, 'openai');
+    await deleteCredential(store, principal, 'openai', config());
+    await deleteCredential(store, principal, 'openai', config());
     await assert.rejects(
       () =>
         selectProvider(store, settings, fakeProvider('ok'), principal, {
@@ -152,9 +155,19 @@ describe('personal AI credential custody', () => {
           'key',
         ),
       () =>
-        credentialStatus(store, { ...principal, role: 'reviewer' }, 'gemini'),
+        credentialStatus(
+          store,
+          { ...principal, role: 'reviewer' },
+          'gemini',
+          config(),
+        ),
       () =>
-        deleteCredential(store, { ...principal, role: 'reviewer' }, 'gemini'),
+        deleteCredential(
+          store,
+          { ...principal, role: 'reviewer' },
+          'gemini',
+          config(),
+        ),
     ])
       await assert.rejects(
         action,

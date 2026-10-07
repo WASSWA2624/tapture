@@ -625,8 +625,11 @@ radio columns and a **Hide** toggle per field (§13.2).
 
 ## 13. Shipped Template Library
 
-Shipped templates are ordinary data, treated like spreadsheet imports (§11.3). Use them as-is, copy, trim, modify
-or extend them.
+Shipped assets are immutable originals. Global **Templates** shows them beside saved **My templates** without
+requiring a project. **Customize a copy** creates a durable editable library template; blank templates may also be
+created in that library. Attaching either kind to a project makes an independent versioned copy with fresh template,
+field and row IDs. Editors follow the saved template's owner, never the currently selected project. Delete offers
+Undo for saved copies; restoration preserves earlier field/row tombstones and leaves shipped bytes unchanged.
 
 ### 13.1 Columns are atomic
 
@@ -1306,7 +1309,8 @@ requiredness (§13.2).
 **Refine minutes** sends raw notes/transcript to the text service for agenda items, discussion summaries, decisions
 and actions with owners/due dates.
 
-- Permanently retain raw notes/transcript and show them beside editable refined minutes.
+- Permanently retain original notes/transcript. Working notes and refined minutes remain editable beside one another; serialized local saves retain failed text for retry and guard navigation/exit until durable. Store immutable `originalNotes` beside working `notes` in agenda JSON; legacy reads fall back to existing notes and the first write snapshots the prior value transactionally. Audit edits without making audit order the content authority; raw-notes exports use the immutable original. Delayed transcription preserves the latest notes/minutes and all source files.
+- Review shows labelled summary counts, then recording/status, then multiline Notes and Minutes. Hide only the meeting recorder's empty idle transcript pane; live and saved transcripts remain available.
 - Refine only on request.
 - Match OCR attendee names to Staff reference data where available.
 - Never add attendees, decisions or actions absent from the raw evidence (§34).
@@ -2682,6 +2686,14 @@ All saved and approved content remains editable.
 | Approve after editing | Return to Needs review, then Approved; write audit entry |
 | Delete record | Tombstone; allow Recycle bin restoration for a configurable period, default 30 days |
 
+The Recycle bin lists managed deleted projects, records and independently deleted photos/documents/audio. A deleted
+project owns one entry for its cascade; records own their descendants. Restore clears only tombstones created by
+that deletion, preserves prior independent deletions, restores the previous project status when recorded (legacy
+rows use Active), and audits the change. A project folder moves back before database restoration, without overwriting
+a live path; a failed or interrupted restore remains retryable. Browser bytes remain in the managed local store.
+**Empty deleted records** retains the existing records-only retention/purge boundary. Templates use their own Undo;
+arbitrary disk files, projects and independent files gain no new permanent-removal action.
+
 ## 39. Validation Rules
 
 ### 39.1 Field validation
@@ -3213,9 +3225,15 @@ Route map:
 /settings
 ```
 
-This conceptual map uses the existing `RoutePaths` conventions: `/projects/:projectId/...` and secondary destinations under `/more`. Documentation follows these conventions without duplicate aliases; §83 specifies its routes and menu behaviour. Transcribe is a More entry and a project-home overflow action, keeping four bottom controls (§56 rule 2); meetings start from **Start a meeting** and open their review by id.
+This conceptual map uses the existing `RoutePaths` conventions: `/projects/:projectId/...` and secondary destinations under `/more`. Documentation follows these conventions without duplicate aliases; §83 specifies its routes and menu behaviour. Transcribe remains a project-home overflow action and a direct route, keeping four bottom controls (§56 rule 2); meetings start from **Start a meeting** and open their review by id.
 
 ### 55.1 Project home
+
+Projects keeps search and pinned-first ordering, with one **Show archived** command to include archived projects. There is no Projects facet button, sheet or filter page; legacy filter links return to Projects. **Import a Project** opens the ZIP package picker directly and retains the existing validation/preview/approval flow. The generic import route remains available for other formats, with **Choose file** and collapsed **Supported files** help (§46).
+
+A project with no attached template offers **Add template** as primary and **Capture now** as secondary. Raw capture also remains available while templates load or fail; attaching a template restores the usual capture primary action. No template is installed automatically. Create/Edit share trimmed-required project-name validation; touched errors clear as valid text is entered and save failures retain input.
+
+Project commands use shared, nonselectable headings: Capture and review; Project setup; Exchange; Manage. Existing actions remain available, with Delete last. Header Back and Android Back honor overlays and dirty child routes first, then project home, Projects and finally native exit. Browser history, iOS stack gestures and desktop close guards retain their platform behavior.
 
 ```text
 2026 Medical Equipment Inventory
@@ -3265,7 +3283,7 @@ Testable interface rules:
 ## 57. Settings
 
 ```text
-Account                                          (required, Part XI)
+Server and account                               (AI settings/setup, Part XI)
   Name, initials, contact
   Organisation and server address
   Sign in, sign out, change password
@@ -3273,7 +3291,7 @@ Account                                          (required, Part XI)
   Organisation role                              (read-only)
   Session and role-grant cache                   (last refreshed, expires)
 
-Relay                                            (optional, §72)
+Relay                                            (Project settings, optional, §72)
   Enable for this project                        off by default
   Schedule, Wi-Fi only
   Queued, sent and purged packages
@@ -3282,12 +3300,14 @@ Capture
   Default camera mode, flash, grid
   Auto-fill dates and times                      on
   GPS capture                                    off
-  Photo quality / compression
-  Folder strategy                                By context
-  File naming pattern
+  Photo files                                    collapsed; quality, folder strategy, naming
+  Project contexts                               collapsed; existing defaults and controls
 
 AI
-  Provider selection                             (keys held by the backend, §73)
+  Supported providers                            searchable; validated server catalogue (§73)
+  Required credential, then model                 searchable model choice; keyless hides credential
+  Spending limit                                 collapsed with current-limit summary
+  Test connection                                secondary; Save is the single primary action
   Device-held key                                (only where the administrator permits it)
   Use AI                                         on / off per project
   Do not send images                             off
@@ -3298,11 +3318,11 @@ AI
 
 Language
   App language
-  Voice language
+  Voice language                                 searchable choice
   Speech recognition                             (works offline, §30.4)
     Engine in use                                (read-only)
     Transcription quality                        Automatic / Fast / Accurate
-    Speech models                                bundled and imported; Verify; Remove imported
+    Speech models                                collapsed inventory; Verify; Remove imported
     Import a speech model                        (native only; verified before use)
 
 Storage
@@ -3321,8 +3341,14 @@ Security
   Encrypt exports by default                     off
 
 About
-  Version, licences, help
+  Version, build and licences                     repository links omitted
 ```
+
+Capture and speech disclosures change only the current screen's expansion state. Camera/date/location defaults,
+selected speech health and repair remain visible; expanding a section never writes settings, requests permissions
+or changes files. Global Settings omits Organisation and Relay: **Server and account** remains in AI settings and
+setup; Relay belongs to the explicit project's settings. Legacy links recover to the same project controls or
+Projects when no project is available. Opening those pages never enables relay or starts a transfer.
 
 ## 58. Accessibility & Field Usability
 
@@ -3863,7 +3889,13 @@ Encrypt packages on-device with a project key shared among member devices and di
 The organisation holds managed provider keys on the backend. Optional personal keys are encrypted there with
 AES-256-GCM and a deployment-held wrapping key, bound to the signed-in user and provider. Status/save/delete APIs
 never retrieve a key. Devices explicitly select the managed or personal account; failures never switch provider,
-model or billing account. Legacy administrator-permitted device adapters remain the exception (§30.2).
+model or billing account. Administrator configuration may add providers speaking the existing Gemini generate-content
+or OpenAI Responses protocols, with exact HTTPS endpoints, declared operations/models and positive configured cost
+ceilings. The device receives validated nonsecret metadata only and retains the last valid catalogue offline.
+Required-key descriptors keep `personal-<providerId>` identity; keyless descriptors use `keyless-<providerId>` and
+managed billing bound to that exact provider, with no credential lookup. Both use the same permissions and quotas.
+Catalogue refresh reaches Settings and processing; missing or removed accounts stay explicitly unavailable without
+blocking capture. Legacy administrator-permitted device adapters remain the exception (§30.2).
 
 ### 73.2 Why this is better than keys on devices
 
@@ -3884,7 +3916,7 @@ evidence must reference supplied source IDs; missing values, conflicting candida
 review findings. Only a person approves reusable records, and Excel/Word/text rendering uses those local records.
 
 The backend reserves configured cost ceilings atomically and stores metadata-only idempotency tombstones bound to
-the actor/device/project, source revision, exact payload hash, operation, model and billing account. A concurrent
+the actor/device/project, source revision, exact payload hash, operation, model, provider and billing account plus its configuration fingerprint. A concurrent
 duplicate may share an active request; a later replay never charges again. An interrupted or lost response requires
 explicit retry approval rather than a promise that the provider was not paid. Low-cost base models are configured
 per adapter; escalation requires a configured model and an explicit sufficient maximum cost. Usage exposes actual
@@ -4404,8 +4436,7 @@ Keep exactly **Projects**, **Capture**, **Records**, **More** in compact navigat
 icon and visible label, opening an anchored menu above the bar. Use shared square-corner menu/list styling,
 safe-area scrolling, icon/text entries, at least 48 dp targets and screen-reader labels.
 
-Initially expose working **Templates** (library/template), **Unprocessed** (queue), **Recycle bin** (restore) and
-**Settings** (cog). Add **Documentation** (document) when its route works. Other secondary tools also require usable
+Expose working **Templates** (library/template), **Recycle bin** (restore) and **Settings** (cog). Queue and transcript history remain reachable through project actions and existing deep links; they have no global More/Settings shortcut (task143 W7). Add **Documentation** (document) when its route works. Other secondary tools also require usable
 screens; no inert placeholders. Share destination labels/icons/routes across layouts.
 
 Opening/dismissing More preserves the primary branch and work; outside tap, Back and Escape dismiss it. Selecting

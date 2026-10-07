@@ -1577,6 +1577,10 @@ Photo derivation/revert, attached-template indicators, the compact project toolb
 
 Verification 2026-09-30: owned photo-derivation, capture-feedback, screen, edit/repository and shipped-picker tests passed. The project/processing audit reports passing home/list/toolbar and queue screen/controller tests, including states, responsive layouts and semantics; project-home expectations follow task 068's current records flow and eight project destinations. Database-upgrade and intended shared-theme golden verification remain open until the final repository gates.
 
+### Superseded requirement - 2026-10-07
+
+Task143 W6 supersedes the Projects facet/filter controls with search and explicit Show archived. Historical verification remains evidence; no other acceptance changes.
+
 ### Implement
 
 Close feedback archive 23092026-2222: dependable photo preview and editing, project-scoped template navigation, compact capture and project-list surfaces, explicit template-add state, unambiguous project-home destinations, and a recomposed processing queue.
@@ -2543,6 +2547,10 @@ survives a reload there too.
 ## 079 — Show a mobile More menu in the bottom navigation
 
 **Depends on** [006](06-app-shell.md), [032](24-product-refinements.md), [060](24-product-refinements.md)
+
+### Superseded requirement - 2026-10-07
+
+Task143 W7 supersedes the global Unprocessed entry. Compact More contains Templates, Recycle bin and Settings; queue routes and project access remain.
 
 ### Implement
 
@@ -5000,6 +5008,10 @@ LiveTranscriptController: start(TranscriptSessionTarget), pause(), resume(), sto
 
 **Depends on** [006](06-app-shell.md), [079](24-product-refinements.md), [122](24-product-refinements.md)
 
+### Superseded requirement - 2026-10-07
+
+Task143 W7 removes only the global More/Settings transcript shortcut. Existing transcript routes, project access and stored evidence remain.
+
 ### Implement
 
 **Routes:** `/more/transcripts`, `/more/transcripts/new` and `/more/transcripts/:transcriptId`, plus the project equivalents. Add the More entry, the shell titles and the project home overflow "Transcribe".
@@ -5536,3 +5548,191 @@ model, account kind, usage and reserved cost. An uncertain receipt requires a de
   standard-workbook embedded-photo/dictionary gaps are separately tracked as [134](27-hardening/30-purge-transcript-rows-with-their-deleted-audio-attachments.md)
   and [135](27-hardening/31-verify-embedded-photos-and-dictionary-in-xlsx-outputs.md); hardware and whole-product
   release acceptance remain open in their existing tasks.
+
+## 143 — Resolve October field workflow feedback
+
+**Depends on** [003](03-design-system.md), [006](06-app-shell.md), [007](07-account-and-settings.md), [017](17-meetings.md), [076](24-product-refinements.md), [079](24-product-refinements.md), [123](24-product-refinements.md), [126](24-product-refinements.md), [132](24-product-refinements.md)
+
+**Implementation started:** Yes
+
+### Implement
+
+Execute [feedback prompt 001](../prompts/feedback-07102026-2153/001-resolve-field-workflow-feedback.md) in W1–W16 order, using existing shared components and the simplest interaction that fulfills each contract.
+
+Decisions D1–D15: default (a), accepted by the execution request on 2026-10-07. The user explicitly approved proceeding with these feedback changes against existing interfaces while broader prerequisite checks stay open. This exception does not certify any upstream acceptance or release readiness. Do not add dependencies, deploy, run a production migration, or remove original evidence.
+
+- W1: Preserve and clarify meeting review edits.
+- W2: Offer template setup without blocking capture.
+- W3: Validate project names while editing.
+- W4: Return through home screens before exit.
+- W5: Group project commands in the shared menu.
+- W6: Remove Projects filter controls.
+- W7: Remove global queue and transcript shortcuts.
+- W8: Open project packages directly and compact import.
+- W9: Remove repository links from About.
+- W10: Remove the Organisation settings shortcut.
+- W11: Move relay access into project settings.
+- W12: Collapse advanced capture defaults.
+- W13: Compact language and speech controls.
+- W14: Expose shipped and custom templates globally.
+- W15: Include deleted projects and files in recycling.
+- W16: Configure supported AI providers in a compact flow.
+
+### Files
+
+The linked feedback prompt's per-item Scope and named tests are the exact inventory. This task changes those frontend meeting/project/template/recycle/settings/import/navigation/shared-service files, the W16 backend provider/configuration/contracts/migration files, and their tests. Copy/catalogue generators own generated localizations; narrow ignore exceptions ship changed tests and their exact dependencies. `app-write-up.md` records changed stable contracts, and `dev-tracker.md` is generated only.
+
+### Contract
+
+- Meeting JSON adds immutable `originalNotes` with legacy fallback and exposes it through `MeetingRecord.originalNotes`; working notes retain their current merge authority. Audit rows are history, never materialized content authority.
+- Shared overflow section labels and meeting-only empty-idle transcript suppression are additive with unchanged defaults for other callers.
+- Project-name validation preserves trimmed-required semantics; project search/explicit archived visibility and route-bound relay identity remain shared.
+- Global custom templates use existing nullable ownership, independent project copies and tombstone restoration; shipped assets stay immutable.
+- Typed deleted projections and owning watch/restore APIs recover managed evidence, including safe `ProjectFolders.restore`; permanent purge stays record-only.
+- Provider catalogue, operations, identities, metadata, keyless routing and forward migration follow W16 exactly; backend custody, quotas, request recovery and offline gates remain authoritative.
+
+### Definition of done
+
+#### W1 — Preserve and clarify meeting review edits
+
+- [x] Notes/minutes entered through the production route survive reopen, rotation and asynchronous updates; failed saves preserve text and expose retry.
+- [ ] Summary counts are labelled, idle space is compact, and live/stored transcripts remain reachable throughout the full matrix.
+- [x] Original notes, raw audio and transcript versions remain unchanged; legacy/package/merge/export and production-route integration tests pass.
+- [ ] FBK0000187 is resolved under the approved D1 interpretation.
+
+#### W2 — Offer template setup without blocking capture
+
+- [x] No-template projects offer Add template as primary and an enabled raw-capture entry as secondary.
+- [x] Attaching a template restores the normal capture primary action without manual refresh, preserving project selection.
+- [ ] Offline capture succeeds before template setup; all named states and matrix tests pass.
+- [ ] FBK0000185 is resolved without adding a capture prerequisite.
+
+#### W3 — Validate project names while editing
+
+- [x] A valid edit clears the pictured stale error before submission; clearing a touched name shows the correct inline error.
+- [x] Submit uses the same rule and never loses entered values on failure.
+- [ ] Create/Edit name tests and the matrix pass; FBK0000184 is resolved.
+
+#### W4 — Return through home screens before exit
+
+- [ ] Project detail → project home → Projects → native exit is deterministic; other branch roots first return to Projects.
+- [ ] Dirty input and capture guards take precedence; cancelling a discard keeps the route and content.
+- [ ] iOS/browser/desktop exclusions behave exactly as described; resize and matrix coverage pass.
+- [ ] FBK0000169 is resolved under D3.
+
+#### W5 — Group project commands in the shared menu
+
+- [ ] Every existing permitted project action appears once in the specified order and executes the unchanged callback.
+- [ ] Shared menu headings are not selectable; keyboard traversal, touch targets and wrapped labels pass the matrix.
+- [ ] Ungrouped callers retain their behavior; gallery and shared goldens pass.
+- [ ] FBK0000186 is resolved.
+
+#### W6 — Remove Projects filter controls
+
+- [x] Projects has no filter button, badge, filter sheet, and no filter page; stale filter state cannot silently hide projects.
+- [ ] Search, pin ordering and explicit archived-project access work across the matrix; legacy route redirects safely.
+- [ ] All five entries are resolved by this single shared Projects change.
+
+#### W7 — Remove global queue and transcript shortcuts
+
+- [ ] Both shortcuts are absent globally at every width while project entry points and existing deep links still work.
+- [ ] Four primary destinations and W4 Back behavior remain intact; jobs and transcripts are retained.
+- [ ] Both entries and all matrix/navigation tests are resolved.
+
+#### W8 — Open project packages directly and compact import
+
+- [x] Projects displays the exact requested label and opens the supported-package picker in one action, without the generic introduction.
+- [ ] The retained generic Import screen is compact, with expandable format help and all existing routes/formats working.
+- [ ] Unsupported selections never enter project storage; cancellations and failures preserve state.
+- [ ] Both feedback entries, picker-platform cases and the full matrix pass.
+
+#### W9 — Remove repository links from About
+
+- [ ] About contains no repository links; version/build/licences remain usable across all states and layouts.
+- [ ] No repository documentation is deleted; FBK0000183 is resolved.
+
+#### W10 — Remove the Organisation settings shortcut
+
+- [ ] Organisation is absent from Settings across the matrix; explicit setup and existing account links remain functional.
+- [ ] Sessions, cached grants and offline capture are preserved; FBK0000179 is resolved under D9.
+
+#### W11 — Move relay access into project settings
+
+- [ ] Global Settings no longer exposes relay; Project settings opens the correct existing controls at every width.
+- [ ] Existing links recover safely; encrypted queues/settings are unchanged and navigation triggers no transfer.
+- [ ] Independent access-wiring review and applicable platform/matrix tests pass; FBK0000180 is resolved.
+
+#### W12 — Collapse advanced capture defaults
+
+- [ ] The initial screen exposes only the specified primary controls plus two collapsed summaries; every existing setting remains reachable.
+- [ ] Disclosure/hidden controls leave settings, permissions and existing files unchanged.
+- [ ] Stored values survive reopen and failed writes; matrix tests pass and FBK0000181 is resolved.
+
+#### W13 — Compact language and speech controls
+
+- [ ] The six-row selector and permanently expanded inventory are replaced by the specified compact controls without losing an action.
+- [ ] Speech health/recovery remains visible; locale, quality and model state remain unchanged by disclosure.
+- [ ] Matrix, offline speech and platform-availability tests pass; FBK0000182 is resolved.
+
+#### W14 — Expose shipped and custom templates globally
+
+- [ ] Global Templates lists shipped assets and editable custom-library rows before a project exists.
+- [ ] Shipped originals expose no edit/delete action; customization creates a separate durable editable copy.
+- [ ] Project attachment creates an independent versioned copy; existing project templates and package formats are unchanged.
+- [ ] Repository/flow/matrix tests pass; FBK0000170 is resolved with no schema migration.
+
+#### W15 — Include deleted projects and files in recycling
+
+- [ ] Deleted projects, records and independently deleted managed files appear with the specified ownership/deduplication rules.
+- [ ] Restore is durable, audited, retryable and preserves prior descendant deletions and never overwrites a live file.
+- [ ] Raw bytes and retention remain unchanged; permanent removal is explicitly records-only.
+- [ ] Real repository/store and offline flow tests pass with the matrix; FBK0000176 is resolved.
+
+#### W16 — Configure supported AI providers in a compact flow
+
+- [ ] Configured providers for both existing protocols appear in the shared searchable catalogue with correct models/capabilities; unsupported protocols are rejected without a universal-compatibility claim.
+- [ ] Existing selections, ciphertext and receipts survive the real PostgreSQL migration; unknown/removed accounts never silently switch billing.
+- [ ] Keyless routing has no credential lookup, preserves exact provider/account identity and applies the same quotas/permissions; endpoints remain administrator-only and secrets never leave custody.
+- [ ] Provider selection/search never invokes an external model; existing authenticated metadata refresh remains offline-gated, and testing/credential writes require explicit actions.
+- [ ] Late catalogue updates reach processing and Settings, offline capture remains available, and compact UI/error/recovery behavior passes the full matrix.
+- [ ] Backend verification, frontend/contract/integration tests and independent security review pass; FBK0000177 and FBK0000178 are resolved under D14/D15.
+
+#### Integrated verification
+
+- [ ] Changed Dart is formatted and analyzed; all named unit/repository/widget/flow, responsive and accessibility checks pass.
+- [ ] Intended goldens are reviewed and required native/browser matrix evidence is recorded; unavailable checks remain open.
+- [ ] Localization generation/checks and plan integrity pass; changed tests and exact support files are shipped.
+- [ ] Backend verify, real PostgreSQL migration tests and explicit independent security/access review pass.
+- [ ] Stable specification contracts and superseded requirements are reconciled without changing unrelated progress.
+- [ ] Tracker generation and --check pass after the final verified acceptance update.
+
+### Evidence and remaining work
+
+- 2026-10-07: user explicitly accepted proceeding despite broader prerequisite checks. All acceptance above remains unverified at implementation start. Task017's claimed editable-notes behavior is contradicted by the missing production callbacks and is reopened until W1 verifies it.
+- Existing upstream work remains open: 004 migration preservation; 009 retired-field exports; 008 reference-device cold-start timing; 012 capture device/performance/restart cases; 013 offline OCR/device battery; 014 lifecycle/source verification; 019 package/undo/performance; 024 backend/release acceptance; 124 browser recording capability.
+- W2 copy correction: existing templatesAdd reads “Add to this project”; introduce projectAddTemplate = “Add template” rather than changing that shared key.
+
+- W1 host evidence: controller/screen 9 tests; production-router/real-database offline integration 2 tests; data/domain/export/package 20 tests plus actual merge-undo regression; live-panel/meeting-live/transcribe 24 cases. Typed working text, retry, serialized writes, source hashes, legacy originals and unchanged raw export verified. Full platform/visual checks remain open.
+- W2/W3 evidence: project-home/capture widget 94 tests; form suites 99 tests including 72 layout cells; shared predicate/repository tests and host offline capture integration pass. Native Windows integration stops before loading tests with mismatched C++/WinRT headers; device acceptance remains open.
+- W6 search/archive/list/legacy-route suites: 37 tests pass. W8 Projects/import/package suites: 27 executed tests pass; combined command also referenced one nonexistent import-gate path, to be corrected in the integrated run. No completion is inferred from that command's nonzero exit.
+
+- W15 storage boundary: 13 filesystem/adapter tests pass, including identical restored bytes, live file/folder
+  collision refusal, missing trees, path traversal, unwritable storage and retry after a completed move.
+- W16 backend gate: final `npm run verify` passes all stages; 179 tests pass, zero fail, one existing Docker-image
+  test skips because Docker is unavailable. All PostgreSQL tests execute on a disposable PostgreSQL 16 cluster.
+  The 011→012 regression compares every column in two credential rows, three usage rows and three receipts
+  (running/completed/uncertain), before/after migration and after a deliberately failed migration; all values match.
+  Migration 011 SHA-256 remains `12480e346c712f14ce51829e8632a508997fb34e8c8e3fb62f14f540a7bb4cfb` (unchanged from HEAD).
+  Migration 012 SHA-256 is `ed2151cfcfbc2936a5b9a6e5678d8b3c944141e407a8e465e2e77d3f1b87bd97`.
+- Recorded second-reader review, 2026-10-07: root reviewed the backend changes authored by settings_archive after
+  the final gate, including provider/custody/egress diff, OpenAPI, seeded migration preservation and fake-egress
+  tests. Approved under BE-SEC-11/BE-FLOW-04: exact configured HTTPS endpoints/protocols, no keyless credential
+  reads or auth headers, unchanged permission/quota checks, configuration-bound receipts and legacy recognition
+  only for an already stored receipt, with no redispatch. No production migration or deployment occurred.
+  project_detail_archive independently reviewed root's frontend catalogue/custody/refresh changes and approved
+  the metadata allowlist, keyless secret-path exclusion and selection preservation. Its compatibility finding
+  (disabled legacy zero-cost metadata hiding valid custom providers) was corrected and given a regression.
+- Independent root review of W11 access wiring found the immutable route project ID consistently used for
+  authority, queue, keys, receive and acknowledgements; navigation reads local state only and starts no transfer.
+  projects_archive reviewed root's W1 persistence/guards, W6 filtering and W8 package import with no findings.
+  Frontend tests and matrix verification remain in progress; these reviews alone do not close acceptance.

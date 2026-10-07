@@ -1,4 +1,6 @@
 import type { AppConfig } from '../../config/schema.js';
+import type { ProviderDefinition } from '../../domain/ai.js';
+import { providerDefinition } from './catalogue.js';
 import {
   internalError,
   invalidRequest,
@@ -18,15 +20,13 @@ export function httpProvider(
   config: AppConfig,
   request: typeof fetch = fetch,
   key = config.aiProviderKey,
+  definition: ProviderDefinition = providerDefinition(config, 'gemini'),
 ): AiProvider {
   async function call(input: AiRequest): Promise<AiResult> {
-    if (!key) throw unavailable();
+    if (definition.authMode === 'required' && !key) throw unavailable();
     const configuredModel =
-      input.model === 'default' ||
-      input.model === config.aiGeminiModel ||
-      config.aiModelCostCeilings[`gemini:${input.model}`] !== undefined;
-    const model =
-      input.model === 'default' ? config.aiGeminiModel : input.model;
+      input.model === 'default' || definition.models.includes(input.model);
+    const model = input.model === 'default' ? definition.model : input.model;
     if (!/^[A-Za-z0-9._-]+$/.test(model))
       throw invalidRequest('Invalid model.');
     const envelope = providerEnvelope(input.payload);
@@ -36,11 +36,16 @@ export function httpProvider(
         inlineData: { mimeType: media.mimeType, data: media.base64 },
       });
     const response = await request(
-      `${config.aiProviderUrl}/models/${model}:generateContent`,
+      `${definition.baseUrl}/models/${model}:generateContent`,
       {
         method: 'POST',
         redirect: 'error',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(definition.authMode === 'required'
+            ? { 'x-goog-api-key': key }
+            : {}),
+        },
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: envelope.instructions }] },
           contents: [{ role: 'user', parts }],
@@ -78,7 +83,8 @@ export function httpProvider(
             : '';
       })
       .join('');
-    if (text.length === 0 || text.includes(key)) throw internalError();
+    if (text.length === 0 || (key !== '' && text.includes(key)))
+      throw internalError();
     const usage = providerTokens(root['usageMetadata'], [
       'promptTokenCount',
       'candidatesTokenCount',

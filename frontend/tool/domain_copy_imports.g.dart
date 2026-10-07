@@ -3,37 +3,26 @@
 // Imports deliberately prove compilation of each domain dependency.
 // ignore_for_file: unused_import, type=lint
 
-import 'package:tapture/features/capture/domain/capture_document_format.dart'
-    as domain0;
+import 'package:tapture/features/capture/domain/capture_document_format.dart' as domain0;
 import 'package:tapture/features/capture/domain/image_quality.dart' as domain1;
-import 'package:tapture/features/capture/domain/photo_derivation.dart'
-    as domain2;
-import 'package:tapture/features/capture/domain/save_and_analyse.dart'
-    as domain3;
+import 'package:tapture/features/capture/domain/photo_derivation.dart' as domain2;
+import 'package:tapture/features/capture/domain/save_and_analyse.dart' as domain3;
 import 'package:tapture/features/capture/domain/save_raw.dart' as domain4;
 import 'package:tapture/features/cloud/domain/upload_runner.dart' as domain5;
-import 'package:tapture/features/context/domain/context_repository.dart'
-    as domain6;
+import 'package:tapture/features/context/domain/context_repository.dart' as domain6;
 import 'package:tapture/features/import/domain/record_import.dart' as domain7;
 import 'package:tapture/features/merge/domain/merge_undo.dart' as domain8;
 import 'package:tapture/features/processing/domain/confidence.dart' as domain9;
-import 'package:tapture/features/projects/domain/project_openable_file_lookup.dart'
-    as domain10;
-import 'package:tapture/features/records/domain/record_lifecycle.dart'
-    as domain11;
-import 'package:tapture/features/reference/domain/dataset_import_draft.dart'
-    as domain12;
-import 'package:tapture/features/reference/domain/lookup_binding.dart'
-    as domain13;
+import 'package:tapture/features/projects/domain/project_openable_file_lookup.dart' as domain10;
+import 'package:tapture/features/records/domain/record_lifecycle.dart' as domain11;
+import 'package:tapture/features/reference/domain/dataset_import_draft.dart' as domain12;
+import 'package:tapture/features/reference/domain/lookup_binding.dart' as domain13;
 import 'package:tapture/features/review/domain/approve_record.dart' as domain14;
 import 'package:tapture/features/settings/domain/friction_log.dart' as domain15;
-import 'package:tapture/features/templates/domain/field_type_registry.dart'
-    as domain16;
+import 'package:tapture/features/templates/domain/field_type_registry.dart' as domain16;
 import 'package:tapture/features/templates/domain/field_wire.dart' as domain17;
-import 'package:tapture/features/templates/domain/shipped_template_suggestions.dart'
-    as domain18;
-import 'package:tapture/features/templates/domain/template_json.dart'
-    as domain19;
+import 'package:tapture/features/templates/domain/shipped_template_suggestions.dart' as domain18;
+import 'package:tapture/features/templates/domain/template_json.dart' as domain19;
 
 /// Requires every migrated domain import to compile on the plain Dart VM.
 void verifyDomainImports() {}

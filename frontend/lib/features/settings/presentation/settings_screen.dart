@@ -29,7 +29,7 @@ import 'offline_switch.dart';
 ///
 /// From medium width up the rail's Settings replaces the compact More menu,
 /// so the root first lists that menu's secondary destinations (Templates,
-/// Unprocessed, Recycle bin). Compact reaches them from More instead, so
+/// Recycle bin). Compact reaches them from More instead, so
 /// they are not repeated here.
 class SettingsScreen extends ConsumerWidget {
   /// Creates the settings root.
@@ -191,21 +191,9 @@ List<_Section> _localizeSections(List<_Section> sections, LocalizedCopy copy) {
 
 List<_Section> _defaultSections(LocalizedCopy copy) => <_Section>[
   (
-    title: copy.backendSettingsTitle,
-    subtitle: copy.backendSettingsSubtitle,
-    route: RoutePaths.settingsAccount,
-    group: copy.settingsGroupProfileCapture,
-  ),
-  (
     title: copy.operatorProfileTitle,
     subtitle: copy.settingsOperatorSubtitle,
     route: RoutePaths.settingsOperator,
-    group: copy.settingsGroupProfileCapture,
-  ),
-  (
-    title: copy.relayTitle,
-    subtitle: copy.settingsRelaySubtitle,
-    route: RoutePaths.settingsRelay,
     group: copy.settingsGroupProfileCapture,
   ),
   (

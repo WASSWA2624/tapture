@@ -12,10 +12,15 @@ import 'package:tapture/features/settings/settings.dart';
 /// it. Callers get a service and ids, and never switch a billing account.
 final class ProviderSelection {
   /// Creates the resolver over the app [settings] and the [providers].
-  const ProviderSelection({required this._settings, required this._providers});
+  const ProviderSelection({
+    required this._settings,
+    required this._providers,
+    this._providersLookup,
+  });
 
   final SettingsStore _settings;
   final ProviderRegistry _providers;
+  final ProviderRegistry Function()? _providersLookup;
 
   /// The approved ceiling is part of every processing dispatch identity.
   double get maxCost => _settings.read(SettingKeys.aiRequestMaxCost);
@@ -32,7 +37,7 @@ final class ProviderSelection {
         OperationSelection.decode(
           _settings.read(SettingKeys.aiProviderSelection),
         )[operation.name];
-    return _providers.validateSelection(
+    return (_providersLookup?.call() ?? _providers).validateSelection(
       providerId: choice?.provider ?? _settings.read(SettingKeys.aiProvider),
       modelId: choice?.model ?? _settings.read(SettingKeys.aiModel),
       operation: operation,

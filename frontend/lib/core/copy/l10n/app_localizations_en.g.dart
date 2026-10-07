@@ -9,6 +9,25 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get aiServerAndAccount => 'Server and account';
+
+  @override
+  String get settingsPhotoFiles => 'Photo files';
+
+  @override
+  String get settingsProjectContexts => 'Project contexts';
+
+  @override
+  String settingsPhotoFilesSummary(String quality, String folders) {
+    return '$quality · $folders';
+  }
+
+  @override
+  String settingsProjectContextsSummary(String autoClear, String movement) {
+    return 'Clear after: $autoClear · Movement: $movement';
+  }
+
+  @override
   String get ocrBrowserUnavailable =>
       'On-device photo reading is unavailable in this browser. Review fields manually or enable online analysis.';
 
@@ -648,7 +667,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get projectsImport => 'Import a file';
+  String get projectsImport => 'Import a Project';
 
   @override
   String get projectsDuplicate => 'Duplicate';
@@ -1142,6 +1161,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get captureStart => 'Start capturing';
+
+  @override
+  String get projectAddTemplate => 'Add template';
+
+  @override
+  String get projectCaptureNow => 'Capture now';
+
+  @override
+  String get projectMenuCaptureReview => 'Capture and review';
+
+  @override
+  String get projectMenuSetup => 'Project setup';
+
+  @override
+  String get projectMenuExchange => 'Exchange';
+
+  @override
+  String get projectMenuManage => 'Manage project';
 
   @override
   String get captureMore => 'Capture more';
@@ -12194,11 +12231,96 @@ class AppLocalizationsEn extends AppLocalizations {
   String aiModelCostCeiling(String amount, String unit) {
     return 'This model reserves up to $amount $unit per request.';
   }
+
+  @override
+  String get importSupportedFiles => 'Supported files';
+
+  @override
+  String get templatesCustomizeCopy => 'Customize a copy';
+
+  @override
+  String get templatesMyTemplates => 'My templates';
+
+  @override
+  String get templatesDeleted => 'Template deleted';
+
+  @override
+  String recycleEmptyRecords(int count) {
+    return 'Empty deleted records ($count)';
+  }
+
+  @override
+  String get recycleTypeProject => 'Project';
+
+  @override
+  String get recycleTypeRecord => 'Record';
+
+  @override
+  String get recycleTypePhoto => 'Photo';
+
+  @override
+  String get recycleTypeDocument => 'Document';
+
+  @override
+  String get recycleTypeAudio => 'Audio';
+
+  @override
+  String get recycleRestored => 'Restored';
+
+  @override
+  String get recycleParentDeleted => 'Restore the deleted parent first.';
+
+  @override
+  String get recycleParentDeletedRecovery =>
+      'Restore the project or record from the Recycle bin, then try again.';
+
+  @override
+  String recycleEntitySubtitle(String type, String details) {
+    return '$type · $details';
+  }
+
+  @override
+  String get recycleFolderRestoreFailed =>
+      'The project folder could not be restored.';
+
+  @override
+  String get recycleFolderRestoreRecovery =>
+      'Check storage access and resolve any existing folder with the same name, then try again.';
+
+  @override
+  String get aiSupportedProviders => 'Supported providers';
+
+  @override
+  String get aiCostControls => 'Spending limit';
+
+  @override
+  String aiRequestLimitSummary(String amount) {
+    return 'Per request: $amount configured';
+  }
 }
 
 /// The translations for English (`en_XA`).
 class AppLocalizationsEnXa extends AppLocalizationsEn {
   AppLocalizationsEnXa() : super('en_XA');
+
+  @override
+  String get aiServerAndAccount => 'Sérvér ánd áccóúnt·······';
+
+  @override
+  String get settingsPhotoFiles => 'Phótó fílés····';
+
+  @override
+  String get settingsProjectContexts => 'Prójéct cóntéxts······';
+
+  @override
+  String settingsPhotoFilesSummary(String quality, String folders) {
+    return '$quality · $folders';
+  }
+
+  @override
+  String settingsProjectContextsSummary(String autoClear, String movement) {
+    return 'Cléár áftér: ·····$autoClear · Móvémént: ·····$movement';
+  }
 
   @override
   String get ocrBrowserUnavailable =>
@@ -12845,7 +12967,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get projectsImport => 'Ímpórt á fílé·····';
+  String get projectsImport => 'Ímpórt á Prójéct······';
 
   @override
   String get projectsDuplicate => 'Dúplícáté····';
@@ -13342,6 +13464,24 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get captureStart => 'Stárt cáptúríng······';
+
+  @override
+  String get projectAddTemplate => 'Ádd témpláté·····';
+
+  @override
+  String get projectCaptureNow => 'Cáptúré nów····';
+
+  @override
+  String get projectMenuCaptureReview => 'Cáptúré ánd révíéw·······';
+
+  @override
+  String get projectMenuSetup => 'Prójéct sétúp·····';
+
+  @override
+  String get projectMenuExchange => 'Éxchángé···';
+
+  @override
+  String get projectMenuManage => 'Mánágé prójéct·····';
 
   @override
   String get captureMore => 'Cáptúré móré·····';
@@ -24557,5 +24697,72 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   @override
   String aiModelCostCeiling(String amount, String unit) {
     return 'Thís módél résérvés úp tó ··········$amount $unit pér réqúést.·····';
+  }
+
+  @override
+  String get importSupportedFiles => 'Súppórtéd fílés······';
+
+  @override
+  String get templatesCustomizeCopy => 'Cústómízé á cópy······';
+
+  @override
+  String get templatesMyTemplates => 'My témplátés·····';
+
+  @override
+  String get templatesDeleted => 'Témpláté délétéd······';
+
+  @override
+  String recycleEmptyRecords(int count) {
+    return 'Émpty délétéd récórds (·········$count)';
+  }
+
+  @override
+  String get recycleTypeProject => 'Prójéct···';
+
+  @override
+  String get recycleTypeRecord => 'Récórd···';
+
+  @override
+  String get recycleTypePhoto => 'Phótó··';
+
+  @override
+  String get recycleTypeDocument => 'Dócúmént···';
+
+  @override
+  String get recycleTypeAudio => 'Áúdíó··';
+
+  @override
+  String get recycleRestored => 'Réstóréd···';
+
+  @override
+  String get recycleParentDeleted =>
+      'Réstóré thé délétéd párént fírst.············';
+
+  @override
+  String get recycleParentDeletedRecovery =>
+      'Réstóré thé prójéct ór récórd fróm thé Récyclé bín, thén try ágáín.························';
+
+  @override
+  String recycleEntitySubtitle(String type, String details) {
+    return '$type · $details';
+  }
+
+  @override
+  String get recycleFolderRestoreFailed =>
+      'Thé prójéct fóldér cóúld nót bé réstóréd.···············';
+
+  @override
+  String get recycleFolderRestoreRecovery =>
+      'Chéck stórágé áccéss ánd résólvé ány éxístíng fóldér wíth thé sámé námé, thén try ágáín.·······························';
+
+  @override
+  String get aiSupportedProviders => 'Súppórtéd próvídérs·······';
+
+  @override
+  String get aiCostControls => 'Spéndíng límít·····';
+
+  @override
+  String aiRequestLimitSummary(String amount) {
+    return 'Pér réqúést: ·····$amount cónfígúréd····';
   }
 }

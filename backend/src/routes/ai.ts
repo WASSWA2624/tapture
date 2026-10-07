@@ -65,6 +65,7 @@ export function registerAi(app: Express, deps: Deps): void {
           deps.store,
           req.principal,
           providerName(req.params['provider']),
+          deps.config,
         ),
       );
     }),
@@ -97,6 +98,7 @@ export function registerAi(app: Express, deps: Deps): void {
         deps.store,
         req.principal,
         providerName(req.params['provider']),
+        deps.config,
       );
       res.status(204).end();
     }),

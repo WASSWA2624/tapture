@@ -11,12 +11,11 @@ import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
-import 'package:tapture/features/projects/projects.dart';
 
 import '../domain/template_def.dart';
 import '../domain/template_row.dart';
 import '../templates.dart' show PredefinedRowsImport;
-import 'template_list_screen.dart' show templateListProvider;
+import 'template_editor_source.dart';
 import 'template_locations.dart';
 
 /// Capture checklist grouped by context, with found versus missing.
@@ -32,7 +31,7 @@ class ChecklistScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final AsyncValue<TemplateDef?> value = ref
-        .watch(templateListProvider)
+        .watch(templateEditorSourceProvider(templateId))
         .whenData(_pick);
     final TemplateDef? template = value.asData?.value;
     return AppPage(
@@ -69,7 +68,7 @@ class ChecklistScreen extends ConsumerWidget {
                 : _importRows(context, template.id),
           ),
         ),
-        onRetry: () => ref.invalidate(templateListProvider),
+        onRetry: () => ref.invalidate(templateEditorSourceProvider(templateId)),
         data: (TemplateDef? row) => _list(context, ref, row!),
       ),
     );
@@ -105,7 +104,9 @@ class ChecklistScreen extends ConsumerWidget {
             key: ValueKey<String>('checklist-${row.identifier}'),
             title: row.label,
             status: _pill(row, localizedCopy: Copy.of(context)),
-            onTap: () => _openCapture(context, ref, row),
+            onTap: template.projectId == null
+                ? null
+                : () => _openCapture(context, template.projectId!, row),
           ),
         };
       },
@@ -121,15 +122,12 @@ class ChecklistScreen extends ConsumerWidget {
     return null;
   }
 
-  void _openCapture(BuildContext context, WidgetRef ref, TemplateRow row) {
-    final String? projectId = ref.read(currentProjectProvider);
-    final String location = projectId == null || projectId.isEmpty
-        ? _captureTab(templateId: templateId, rowId: row.identifier)
-        : _capture(
-            projectId: projectId,
-            templateId: templateId,
-            rowId: row.identifier,
-          );
+  void _openCapture(BuildContext context, String projectId, TemplateRow row) {
+    final String location = _capture(
+      projectId: projectId,
+      templateId: templateId,
+      rowId: row.identifier,
+    );
     context.go(location);
   }
 }
@@ -216,20 +214,8 @@ String _capture({
   ).toString();
 }
 
-/// Must match the capture-tab path with the same query keys.
-String _captureTab({required String templateId, required String rowId}) {
-  return Uri(
-    path: _captureTabPath,
-    queryParameters: <String, String>{
-      _templateQuery: templateId,
-      _rowQuery: rowId,
-    },
-  ).toString();
-}
-
 const String _projectsRoot = '/projects';
 const String _captureSegment = 'capture';
-const String _captureTabPath = '/capture';
 const String _templateQuery = 'template';
 const String _rowQuery = 'row';
 const String _foundStatus = 'found';

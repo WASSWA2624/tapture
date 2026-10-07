@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 part 'app_overflow_action.dart';
@@ -136,14 +137,41 @@ ButtonStyle _borderlessStyle(AppColors colors) {
 
 List<PopupMenuEntry<int>> _menuItems(List<AppOverflowAction> items) {
   return <PopupMenuEntry<int>>[
-    for (int index = 0; index < items.length; index++)
+    for (int index = 0; index < items.length; index++) ...<PopupMenuEntry<int>>[
+      if (items[index].sectionLabel != null &&
+          (index == 0 ||
+              items[index - 1].sectionLabel != items[index].sectionLabel))
+        _OverflowHeading(items[index].sectionLabel!),
       PopupMenuItem<int>(
         key: items[index].key,
         value: index,
         height: Sizes.minTapTarget,
         child: _OverflowRow(action: items[index]),
       ),
+    ],
   ];
+}
+
+/// A heading participates in popup layout without menu-item semantics or focus.
+class _OverflowHeading extends PopupMenuEntry<int> {
+  const _OverflowHeading(this.label);
+
+  final String label;
+
+  @override
+  double get height => Sizes.minTapTarget;
+
+  @override
+  bool represents(int? value) => false;
+
+  @override
+  State<_OverflowHeading> createState() => _OverflowHeadingState();
+}
+
+class _OverflowHeadingState extends State<_OverflowHeading> {
+  @override
+  Widget build(BuildContext context) =>
+      ExcludeFocus(child: AppSectionHeader(title: widget.label, dense: true));
 }
 
 class _OverflowRow extends StatelessWidget {
@@ -156,21 +184,22 @@ class _OverflowRow extends StatelessWidget {
     final AppColors colors = context.colors;
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
-      child: Row(
-        children: <Widget>[
-          if (action.icon != null) ...<Widget>[
-            Icon(action.icon, size: Space.x6, color: colors.onSurface),
-            const SizedBox(width: Space.x3),
-          ],
-          Expanded(
-            child: Text(
-              action.label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppText.body.copyWith(color: colors.onSurface),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: Space.x1),
+        child: Row(
+          children: <Widget>[
+            if (action.icon != null) ...<Widget>[
+              Icon(action.icon, size: Space.x6, color: colors.onSurface),
+              const SizedBox(width: Space.x3),
+            ],
+            Expanded(
+              child: Text(
+                action.label,
+                style: AppText.body.copyWith(color: colors.onSurface),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

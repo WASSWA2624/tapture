@@ -5,6 +5,7 @@ import {
   notFound,
   unavailable,
   uncertainAiRequest,
+  invalidRequest,
 } from '../../domain/errors.js';
 import type {
   AiBilling,
@@ -71,6 +72,10 @@ export async function proxyAi(
     factory,
   );
   const identity = input.processing;
+  if (!selected.operations.includes(method))
+    throw invalidRequest(
+      'This analysis operation is not enabled for the selected provider.',
+    );
   const bindingHash =
     identity === undefined
       ? undefined
@@ -102,7 +107,23 @@ export async function proxyAi(
     if (identity !== undefined && bindingHash !== undefined) {
       const previous = await tx.aiReceipt(identity.idempotencyKey);
       if (previous !== undefined) {
-        assertReceiptBinding(bindingHash, previous.bindingHash);
+        // Old hashes can recover only an existing legacy receipt. They never
+        // authorise a new dispatch or replace a persisted configuration binding.
+        const legacyBinding =
+          selected.legacyAccountId === undefined
+            ? undefined
+            : receiptBinding(
+                identity,
+                principal,
+                method,
+                input.projectId,
+                selected.model,
+                selected.legacyAccountId,
+                input.payload,
+                input.maxCost,
+              );
+        if (previous.bindingHash !== legacyBinding)
+          assertReceiptBinding(bindingHash, previous.bindingHash);
         return { replay: previous };
       }
     }

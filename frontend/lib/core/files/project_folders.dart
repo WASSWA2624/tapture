@@ -32,12 +32,59 @@ abstract interface class ProjectFolders {
   /// Moves the project folder into the recycle area. Missing folders
   /// succeed. Never unlinks a file.
   Future<Result<Directory>> recycle(Project project);
+
+  /// Restores a managed tree without replacing a live path. A retry after a
+  /// successful move succeeds; a missing tree or path collision remains an error.
+  Future<Result<Directory>> restore(Project project);
 }
 
 final class _ProjectFolders implements ProjectFolders {
   _ProjectFolders(this._storageRoot);
 
   final StorageRoot _storageRoot;
+
+  @override
+  Future<Result<Directory>> restore(Project project) async {
+    try {
+      final Result<Directory> resolved = await _storageRoot.resolve();
+      if (resolved case FailureResult<Directory>(:final failure)) {
+        return FailureResult<Directory>(failure);
+      }
+      final Directory root = (resolved as Success<Directory>).value;
+      final String folder = project.folderName.trim();
+      if (folder.isEmpty) return Success<Directory>(root);
+      _assertSafeFolderName(folder);
+      final Directory recycled = Directory('${root.path}/$_recycle');
+      final Directory live = Directory('${root.path}/$_projects');
+      // Reject links before following a path, including either managed parent.
+      for (final Directory parent in <Directory>[recycled, live]) {
+        await _assertDirectoryOrAbsent(parent.path);
+      }
+      final Directory source = Directory('${recycled.path}/$folder');
+      final Directory destination = Directory('${live.path}/$folder');
+      final FileSystemEntityType sourceType = await _assertDirectoryOrAbsent(
+        source.path,
+      );
+      final FileSystemEntityType destinationType =
+          await _assertDirectoryOrAbsent(destination.path);
+      if (sourceType == FileSystemEntityType.notFound) {
+        if (destinationType == FileSystemEntityType.directory) {
+          return Success<Directory>(destination);
+        }
+        return FailureResult<Directory>(_missing(source.path));
+      }
+      if (destinationType != FileSystemEntityType.notFound) {
+        throw _restoreFailure();
+      }
+      await live.create();
+      await source.rename(destination.path);
+      return Success<Directory>(destination);
+    } on Failure catch (failure) {
+      return FailureResult<Directory>(failure);
+    } on Object {
+      return FailureResult<Directory>(_restoreFailure());
+    }
+  }
 
   @override
   Future<Result<Directory>> create(Project project) async {
@@ -192,6 +239,23 @@ final class _ProjectFolders implements ProjectFolders {
     return folderNameFor(name: project.name, id: project.id);
   }
 }
+
+Future<FileSystemEntityType> _assertDirectoryOrAbsent(String path) async {
+  final FileSystemEntityType type = await FileSystemEntity.type(
+    path,
+    followLinks: false,
+  );
+  if (type != FileSystemEntityType.directory &&
+      type != FileSystemEntityType.notFound) {
+    throw _restoreFailure();
+  }
+  return type;
+}
+
+StorageFailure _restoreFailure() => StorageFailure(
+  localizedMessage: Copy.messages.recycleFolderRestoreFailed,
+  localizedRecovery: Copy.messages.recycleFolderRestoreRecovery,
+);
 
 void _assertSafeFolderName(String folderName) {
   if (folderName.isEmpty ||

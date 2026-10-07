@@ -32,6 +32,7 @@ import 'package:tapture/features/import/import.dart'
         RecordMappingScreen;
 import 'package:tapture/features/meetings/domain/meeting.dart';
 import 'package:tapture/features/meetings/presentation/meeting_create_screen.dart';
+import 'package:tapture/features/meetings/presentation/meeting_review_controller.dart';
 import 'package:tapture/features/meetings/presentation/meeting_review_screen.dart';
 import 'package:tapture/features/merge/merge.dart';
 import 'package:tapture/features/processing/presentation/queue_screen.dart';
@@ -40,7 +41,6 @@ import 'package:tapture/features/projects/presentation/project_create_screen.dar
 import 'package:tapture/features/projects/presentation/project_details_screen.dart';
 import 'package:tapture/features/projects/presentation/project_edit_screen.dart';
 import 'package:tapture/features/projects/presentation/project_export_screen.dart';
-import 'package:tapture/features/projects/presentation/project_filters_screen.dart';
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/presentation/project_settings_screen.dart';
@@ -523,9 +523,8 @@ List<RouteBase> get _routes {
                 ),
                 GoRoute(
                   path: 'filters',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const ProjectFiltersScreen();
-                  },
+                  redirect: (BuildContext _, GoRouterState _) =>
+                      RoutePaths.projects,
                 ),
                 GoRoute(
                   path: ':projectId',
@@ -558,6 +557,20 @@ List<RouteBase> get _routes {
                       builder: (BuildContext _, GoRouterState _) {
                         return const ProjectSettingsScreen();
                       },
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'relay',
+                          metadata: _projectScoped,
+                          builder: (BuildContext _, GoRouterState state) {
+                            final String projectId =
+                                state.pathParameters['projectId']!;
+                            return RelayRoute(
+                              key: ValueKey<String>('project-relay-$projectId'),
+                              projectId: projectId,
+                            );
+                          },
+                        ),
+                      ],
                     ),
                     GoRoute(
                       path: 'records',
@@ -622,6 +635,14 @@ List<RouteBase> get _routes {
                     ),
                     GoRoute(
                       path: 'meetings/:meetingId/review',
+                      onExit: (BuildContext context, GoRouterState state) =>
+                          ProviderScope.containerOf(context, listen: false)
+                              .read(
+                                meetingReviewControllerProvider(
+                                  state.pathParameters['meetingId']!,
+                                ).notifier,
+                              )
+                              .flush(),
                       metadata: _projectScoped,
                       builder: (BuildContext _, GoRouterState state) {
                         final Object? extra = state.extra;
@@ -1015,14 +1036,18 @@ List<RouteBase> _templateChildRoutes() {
   return <RouteBase>[
     GoRoute(
       path: 'new',
-      builder: (BuildContext _, GoRouterState _) {
-        return const TemplateCreateScreen();
+      builder: (BuildContext _, GoRouterState state) {
+        return TemplateCreateScreen(
+          projectId: state.pathParameters['projectId'],
+        );
       },
     ),
     GoRoute(
       path: 'library',
-      builder: (BuildContext _, GoRouterState _) {
-        return const ShippedPickerScreen();
+      builder: (BuildContext _, GoRouterState state) {
+        return ShippedPickerScreen(
+          projectId: state.pathParameters['projectId'],
+        );
       },
     ),
     GoRoute(

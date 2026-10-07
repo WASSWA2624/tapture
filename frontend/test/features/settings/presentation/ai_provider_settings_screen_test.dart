@@ -1,16 +1,90 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
+import 'package:tapture/core/backend/backend_config.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/security/secure_storage.dart';
+import 'package:tapture/core/widgets/fields/app_choice_field.dart';
+import 'package:tapture/features/account/presentation/account_route.dart';
+import 'package:tapture/features/account/presentation/account_session.dart';
+import 'package:tapture/features/account/presentation/backend_settings_screen.dart';
+import 'package:tapture/features/account/presentation/server_address_form.dart';
 import 'package:tapture/features/settings/presentation/ai_provider_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 void main() {
+  for (final bool configured in <bool>[false, true]) {
+    testWidgets(
+      'Server and account opens ${configured ? 'cached account' : 'server setup'} without saving AI settings',
+      (WidgetTester tester) async {
+        final SettingsStore settings = SettingsStore.fake();
+        final Map<SecretKey, String> secrets = <SecretKey, String>{};
+        final GoRouter router = GoRouter(
+          initialLocation: RoutePaths.settingsAi,
+          routes: <RouteBase>[
+            GoRoute(
+              path: RoutePaths.settingsAi,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const AiProviderSettingsScreen(),
+            ),
+            GoRoute(
+              path: RoutePaths.settingsAccount,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const AccountRoute(),
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: <Override>[
+              ...aiProviderSettingsOverrides(
+                registry: _registry(
+                  _SuccessfulAiService(),
+                  _SuccessfulAiService(),
+                ),
+                settings: settings,
+                storage: SecureStorage.fake(backing: secrets),
+              ),
+              backendConfigProvider.overrideWith(
+                (Ref _) => Stream<BackendConfig>.value(
+                  BackendConfig(
+                    baseUrl: configured ? 'https://organisation.test' : '',
+                  ),
+                ),
+              ),
+            ],
+            child: MaterialApp.router(
+              theme: buildTheme(brightness: Brightness.light),
+              routerConfig: router,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text(Copy.aiServerAndAccount));
+        await tester.tap(find.text(Copy.aiServerAndAccount));
+        await tester.pumpAndSettle();
+        expect(router.state.uri.path, RoutePaths.settingsAccount);
+        expect(
+          find.byType(configured ? BackendSettingsScreen : ServerAddressForm),
+          findsOneWidget,
+        );
+        expect(
+          settings.read(SettingKeys.aiProvider),
+          SettingKeys.aiProvider.defaultValue,
+        );
+        expect(secrets, isEmpty);
+      },
+    );
+  }
+
   testWidgets('an injected device provider saves selection and secret', (
     WidgetTester tester,
   ) async {
@@ -35,10 +109,12 @@ void main() {
     );
 
     expect(find.text('Organisation backend'), findsOneWidget);
-    expect(find.text('Device provider'), findsOneWidget);
+    expect(find.text('Device provider'), findsNothing);
     expect(find.text(Copy.apiKeyLabel), findsNothing);
 
-    await tester.tap(find.text('Device provider'));
+    await tester.tap(find.byType(AppChoiceField<String>).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Device provider').last);
     await tester.pumpAndSettle();
     expect(find.text('Field model'), findsOneWidget);
     expect(find.text(Copy.apiKeyLabel), findsOneWidget);
@@ -77,7 +153,9 @@ void main() {
       storage: storage,
     );
 
-    await tester.tap(find.text('Device provider'));
+    await tester.tap(find.byType(AppChoiceField<String>).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Device provider').last);
     await tester.pumpAndSettle();
     // Nothing stored yet: nothing to remove.
     expect(find.byKey(const ValueKey<String>('ai-remove-key')), findsNothing);
@@ -139,7 +217,7 @@ void main() {
       storage: SecureStorage.fake(backing: <SecretKey, String>{}),
     );
 
-    expect(find.text('Organisation backend'), findsOneWidget);
+    expect(find.text('removed-provider'), findsOneWidget);
     expect(find.text(Copy.aiSelectionFallback), findsOneWidget);
     expect(settings.read(SettingKeys.aiProvider), 'removed-provider');
     expect(settings.read(SettingKeys.aiModel), 'removed-model');
