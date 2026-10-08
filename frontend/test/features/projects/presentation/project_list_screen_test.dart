@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/constants/app_constants.dart';
@@ -21,6 +22,7 @@ import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
+import 'package:tapture/features/projects/domain/project_repository.dart';
 import 'package:tapture/features/projects/presentation/project_export_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
@@ -28,9 +30,86 @@ import 'package:tapture/features/projects/projects.dart';
 import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
 import '../../../support/fakes/fake_stt_service.dart';
+import '../../../support/screen_fixture.dart';
+import '../../../support/screen_harness.dart';
+import '../../../support/screen_matrix.dart';
 import '../fakes/fake_project_repository.dart';
 
 void main() {
+  for (final ScreenMatrix cell in ScreenMatrix.cells) {
+    testWidgets('search, pins and archived access need no filters at '
+        '${cell.description}', (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = cell.size;
+      tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final ScreenHarness harness = await ScreenHarness.pump(
+        tester,
+        const ScreenFixture(
+          'ProjectListScreen',
+          RoutePaths.projects,
+          project: false,
+        ),
+        brightness: cell.brightness,
+        outdoor: cell.outdoor,
+        textScale: cell.textScale,
+      );
+      addTearDown(() => harness.close(tester));
+      final ProjectRepository repo = harness.container.read(
+        projectRepositoryProvider,
+      );
+      _ok(await repo.create(aProject(id: 'a', name: 'Alpha')));
+      _ok(
+        await repo.create(
+          aProject(id: 'b', name: 'Beta', status: ProjectStatus.archived),
+        ),
+      );
+      _ok(await repo.create(aProject(id: 'c', name: 'Gamma')));
+      _ok(await repo.setPinned('c', true));
+      await tester.pumpAndSettle();
+      final ProviderContainer container = harness.container;
+      List<String> visible() => container
+          .read(projectListFilteredProvider)
+          .requireValue
+          .map((ProjectListRow row) => row.project.name)
+          .toList();
+      expect(visible(), <String>['Gamma', 'Alpha']);
+      expect(find.byTooltip(Copy.searchFilters(0)), findsNothing);
+      expect(find.text('Beta'), findsNothing);
+      container
+          .read(projectListCriteriaProvider.notifier)
+          .setShowArchived(true);
+      await tester.pumpAndSettle();
+      expect(visible(), <String>['Gamma', 'Alpha', 'Beta']);
+      await tester.enterText(find.byType(TextField).first, 'Beta');
+      await tester.pumpAndSettle();
+      expect(visible(), <String>['Beta']);
+      final Finder archivedRow = find.byKey(
+        const ValueKey<String>('project-row-b'),
+      );
+      if (archivedRow.evaluate().isEmpty) {
+        await tester.scrollUntilVisible(
+          archivedRow,
+          100,
+          scrollable: find
+              .descendant(
+                of: find.byType(NestedScrollView).last,
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        );
+        await tester.pumpAndSettle();
+      }
+      expect(
+        find.descendant(of: archivedRow, matching: find.text('Beta')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    }, variant: TargetPlatformVariant.all());
+  }
+
   testWidgets('loading renders through AsyncValueView', (
     WidgetTester tester,
   ) async {
@@ -443,6 +522,7 @@ Future<void> _pump(
   List<Override> overrides = const <Override>[],
   bool rtl = false,
   bool speech = false,
+  ScreenMatrix? cell,
 }) async {
   final FakeSttService? stt = speech ? FakeSttService() : null;
   final GoRouter router = GoRouter(
@@ -506,7 +586,10 @@ Future<void> _pump(
         ...overrides,
       ],
       child: MaterialApp.router(
-        theme: buildTheme(brightness: Brightness.light),
+        theme: buildTheme(
+          brightness: cell?.brightness ?? Brightness.light,
+          outdoor: cell?.outdoor ?? false,
+        ),
         routerConfig: router,
         builder: (BuildContext _, Widget? child) {
           Widget wrapped = child ?? const SizedBox.shrink();

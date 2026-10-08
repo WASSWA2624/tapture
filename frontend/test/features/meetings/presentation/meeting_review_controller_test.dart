@@ -1,5 +1,5 @@
-import 'dart:ui' show AppExitResponse;
 import 'dart:async';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

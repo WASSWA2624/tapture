@@ -79,7 +79,14 @@ class CaptureSettingsScreen extends ConsumerWidget {
                   Choice<String>('document', localCopy.settingsCameraDocument),
                 ],
                 onChanged: (String next) {
-                  unawaited(_writeSetting(context, notifier, SettingKeys.cameraMode, next));
+                  unawaited(
+                    _writeSetting(
+                      context,
+                      notifier,
+                      SettingKeys.cameraMode,
+                      next,
+                    ),
+                  );
                 },
               ),
               AppSwitchTile(
@@ -87,7 +94,14 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 description: localCopy.settingsAutoFillDatesEffect,
                 value: view.autoFillDates,
                 onChanged: (bool value) {
-                  unawaited(_writeSetting(context, notifier, SettingKeys.autoFillDates, value));
+                  unawaited(
+                    _writeSetting(
+                      context,
+                      notifier,
+                      SettingKeys.autoFillDates,
+                      value,
+                    ),
+                  );
                 },
               ),
               // The one location switch (FE-SIMP-10). Privacy links here.
@@ -97,7 +111,14 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 description: localCopy.settingsGpsWhyOff,
                 value: view.gpsEnabled,
                 onChanged: (bool value) {
-                  unawaited(_writeSetting(context, notifier, SettingKeys.gpsEnabled, value));
+                  unawaited(
+                    _writeSetting(
+                      context,
+                      notifier,
+                      SettingKeys.gpsEnabled,
+                      value,
+                    ),
+                  );
                 },
               ),
               SettingsDisclosure(
@@ -110,52 +131,70 @@ class CaptureSettingsScreen extends ConsumerWidget {
                   _strategyLabel(view.folderStrategy, localCopy),
                 ),
                 children: <Widget>[
-              SettingChoice<int>(
-                key: const ValueKey<String>('capture-quality'),
-                alwaysSheet: true,
-                label: localCopy.settingsPhotoQuality,
-                effect: localCopy.settingsPhotoQualityEffect,
-                value: view.photoQuality,
-                options: <Choice<int>>[
-                  Choice<int>(
-                    AppConstants.images.quality,
-                    localCopy.settingsQualityStandard,
+                  SettingChoice<int>(
+                    key: const ValueKey<String>('capture-quality'),
+                    alwaysSheet: true,
+                    label: localCopy.settingsPhotoQuality,
+                    effect: localCopy.settingsPhotoQualityEffect,
+                    value: view.photoQuality,
+                    options: <Choice<int>>[
+                      Choice<int>(
+                        AppConstants.images.quality,
+                        localCopy.settingsQualityStandard,
+                      ),
+                      Choice<int>(
+                        AppConstants.images.thumbnailQuality,
+                        localCopy.settingsQualitySmaller,
+                      ),
+                    ],
+                    onChanged: (int next) {
+                      unawaited(
+                        _writeSetting(
+                          context,
+                          notifier,
+                          SettingKeys.photoQuality,
+                          next,
+                        ),
+                      );
+                    },
                   ),
-                  Choice<int>(
-                    AppConstants.images.thumbnailQuality,
-                    localCopy.settingsQualitySmaller,
+                  SettingChoice<String>(
+                    key: const ValueKey<String>('capture-folders'),
+                    alwaysSheet: true,
+                    label: localCopy.settingsFolderStrategy,
+                    effect: localCopy.settingsFolderStrategyNewFilesOnly,
+                    value: view.folderStrategy,
+                    options: <Choice<String>>[
+                      for (final PhotoFolderStrategy strategy
+                          in PhotoFolderStrategy.values)
+                        Choice<String>(
+                          strategy.name,
+                          _strategyLabel(strategy.name, localCopy),
+                        ),
+                    ],
+                    onChanged: (String next) {
+                      unawaited(
+                        _writeSetting(
+                          context,
+                          notifier,
+                          SettingKeys.folderStrategy,
+                          next,
+                        ),
+                      );
+                    },
                   ),
-                ],
-                onChanged: (int next) {
-                  unawaited(_writeSetting(context, notifier, SettingKeys.photoQuality, next));
-                },
-              ),
-              SettingChoice<String>(
-                key: const ValueKey<String>('capture-folders'),
-                alwaysSheet: true,
-                label: localCopy.settingsFolderStrategy,
-                effect: localCopy.settingsFolderStrategyNewFilesOnly,
-                value: view.folderStrategy,
-                options: <Choice<String>>[
-                  for (final PhotoFolderStrategy strategy
-                      in PhotoFolderStrategy.values)
-                    Choice<String>(
-                      strategy.name,
-                      _strategyLabel(strategy.name, localCopy),
+                  AppListTile(
+                    title: localCopy.settingsNamingPattern,
+                    subtitle: localCopy.settingsNamingSubtitle(
+                      view.namingPattern,
                     ),
-                ],
-                onChanged: (String next) {
-                  unawaited(_writeSetting(context, notifier, SettingKeys.folderStrategy, next));
-                },
-              ),
-              AppListTile(
-                title: localCopy.settingsNamingPattern,
-                subtitle: localCopy.settingsNamingSubtitle(view.namingPattern),
-                trailing: const Icon(AppIcons.edit),
-                onTap: () {
-                  unawaited(_editNaming(context, notifier, view.namingPattern));
-                },
-              ),
+                    trailing: const Icon(AppIcons.edit),
+                    onTap: () {
+                      unawaited(
+                        _editNaming(context, notifier, view.namingPattern),
+                      );
+                    },
+                  ),
                 ],
               ),
               SettingsDisclosure(
@@ -163,76 +202,99 @@ class CaptureSettingsScreen extends ConsumerWidget {
                 title: localCopy.settingsProjectContexts,
                 summary: localCopy.settingsProjectContextsSummary(
                   view.autoClear
-                      ? localCopy.settingsContextIdleOption(view.idleSeconds ~/ 60)
+                      ? localCopy.settingsContextIdleOption(
+                          view.idleSeconds ~/ 60,
+                        )
                       : localCopy.projectOff,
                   view.movementPrompt
-                      ? localCopy.settingsContextDistanceOption(view.movementMetres)
+                      ? localCopy.settingsContextDistanceOption(
+                          view.movementMetres,
+                        )
                       : localCopy.projectOff,
                 ),
                 children: <Widget>[
-              AppSwitchTile(
-                title: localCopy.settingsContextAutoClear,
-                description: localCopy.settingsContextAutoClearEffect,
-                value: view.autoClear,
-                onChanged: (bool value) {
-                  unawaited(
-                    _writeSetting(context, notifier, SettingKeys.contextAutoClearEnabled, value),
-                  );
-                },
-              ),
-              if (view.autoClear) SettingChoice<int>(
-                key: const ValueKey<String>('capture-idle'),
-                alwaysSheet: true,
-                label: localCopy.settingsContextIdle,
-                effect: localCopy.settingsContextIdleEffect,
-                value: view.idleSeconds,
-                options: <Choice<int>>[
-                  for (final int seconds in AppConstants.context.idleChoices)
-                    Choice<int>(
-                      seconds,
-                      localCopy.settingsContextIdleOption(seconds ~/ 60),
+                  AppSwitchTile(
+                    title: localCopy.settingsContextAutoClear,
+                    description: localCopy.settingsContextAutoClearEffect,
+                    value: view.autoClear,
+                    onChanged: (bool value) {
+                      unawaited(
+                        _writeSetting(
+                          context,
+                          notifier,
+                          SettingKeys.contextAutoClearEnabled,
+                          value,
+                        ),
+                      );
+                    },
+                  ),
+                  if (view.autoClear)
+                    SettingChoice<int>(
+                      key: const ValueKey<String>('capture-idle'),
+                      alwaysSheet: true,
+                      label: localCopy.settingsContextIdle,
+                      effect: localCopy.settingsContextIdleEffect,
+                      value: view.idleSeconds,
+                      options: <Choice<int>>[
+                        for (final int seconds
+                            in AppConstants.context.idleChoices)
+                          Choice<int>(
+                            seconds,
+                            localCopy.settingsContextIdleOption(seconds ~/ 60),
+                          ),
+                      ],
+                      onChanged: (int next) {
+                        unawaited(
+                          _writeSetting(
+                            context,
+                            notifier,
+                            SettingKeys.contextAutoClearSeconds,
+                            next,
+                          ),
+                        );
+                      },
                     ),
-                ],
-                onChanged: (int next) {
-                  unawaited(
-                    _writeSetting(context, notifier, SettingKeys.contextAutoClearSeconds, next),
-                  );
-                },
-              ),
-              AppSwitchTile(
-                title: localCopy.settingsContextMovement,
-                description: localCopy.settingsContextMovementEffect,
-                value: view.movementPrompt,
-                onChanged: (bool value) {
-                  unawaited(
-                    _writeSetting(
-                      context,
-                      notifier,
-                      SettingKeys.contextMovementPromptEnabled,
-                      value,
+                  AppSwitchTile(
+                    title: localCopy.settingsContextMovement,
+                    description: localCopy.settingsContextMovementEffect,
+                    value: view.movementPrompt,
+                    onChanged: (bool value) {
+                      unawaited(
+                        _writeSetting(
+                          context,
+                          notifier,
+                          SettingKeys.contextMovementPromptEnabled,
+                          value,
+                        ),
+                      );
+                    },
+                  ),
+                  if (view.movementPrompt)
+                    SettingChoice<int>(
+                      key: const ValueKey<String>('capture-distance'),
+                      alwaysSheet: true,
+                      label: localCopy.settingsContextDistance,
+                      effect: localCopy.settingsContextDistanceEffect,
+                      value: view.movementMetres,
+                      options: <Choice<int>>[
+                        for (final int metres
+                            in AppConstants.context.distanceChoices)
+                          Choice<int>(
+                            metres,
+                            localCopy.settingsContextDistanceOption(metres),
+                          ),
+                      ],
+                      onChanged: (int next) {
+                        unawaited(
+                          _writeSetting(
+                            context,
+                            notifier,
+                            SettingKeys.contextMovementMetres,
+                            next,
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-              if (view.movementPrompt) SettingChoice<int>(
-                key: const ValueKey<String>('capture-distance'),
-                alwaysSheet: true,
-                label: localCopy.settingsContextDistance,
-                effect: localCopy.settingsContextDistanceEffect,
-                value: view.movementMetres,
-                options: <Choice<int>>[
-                  for (final int metres in AppConstants.context.distanceChoices)
-                    Choice<int>(
-                      metres,
-                      localCopy.settingsContextDistanceOption(metres),
-                    ),
-                ],
-                onChanged: (int next) {
-                  unawaited(
-                    _writeSetting(context, notifier, SettingKeys.contextMovementMetres, next),
-                  );
-                },
-              ),
                 ],
               ),
             ],
@@ -378,8 +440,9 @@ Future<void> _writeSetting<T>(
   T value,
 ) async {
   final Result<void> result = await notifier.write(key, value);
-  if (result case FailureResult<void>(:final Failure failure)
-      when context.mounted) {
+  if (result case FailureResult<void>(
+    :final Failure failure,
+  ) when context.mounted) {
     showAppSnack(
       context,
       failure.message,

@@ -9,6 +9,7 @@ import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/files/files.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -17,7 +18,81 @@ import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
 
+import '../../../support/screen_fonts.dart';
+import '../../../support/screen_matrix.dart';
+
 void main() {
+  setUpAll(ScreenFonts.load);
+  for (final ScreenMatrix cell in ScreenMatrix.cells) {
+    testWidgets(
+      'Settings removes global shortcuts across ${cell.description}',
+      (WidgetTester tester) async {
+        await _pump(tester, cell: cell);
+        await tester.pumpAndSettle();
+        expect(find.text(Copy.navQueue), findsNothing);
+        expect(find.text(Copy.navTranscripts), findsNothing);
+        expect(find.text(Copy.backendSettingsTitle), findsNothing);
+        expect(find.text(Copy.relayTitle), findsNothing);
+        expect(
+          find.widgetWithText(AppListTile, Copy.settingsAiTitle),
+          findsOneWidget,
+        );
+        await tester.ensureVisible(
+          find.widgetWithText(AppListTile, Copy.settingsAboutTitle),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      },
+      variant: TargetPlatformVariant.all(),
+    );
+  }
+
+  for (final (String, Brightness, bool) mode in <(String, Brightness, bool)>[
+    ('light', Brightness.light, false),
+    ('dark', Brightness.dark, false),
+    ('outdoor', Brightness.light, true),
+  ]) {
+    for (final double scale in <double>[1, 2]) {
+      testWidgets('Settings index golden ${mode.$1} text$scale', (
+        WidgetTester tester,
+      ) async {
+        await _pump(
+          tester,
+          cell: ScreenMatrix(const Size(393, 852), scale, mode.$2, mode.$3),
+        );
+        await tester.pumpAndSettle();
+        await expectLater(
+          find.byType(MaterialApp),
+          matchesGoldenFile(
+            'goldens/settings_index_text${scale.toInt()}_${mode.$1}.png',
+          ),
+        );
+      });
+    }
+  }
+
+  testWidgets(
+    'Settings keeps the same destinations in pseudo-locale at text 2',
+    (WidgetTester tester) async {
+      await _pump(
+        tester,
+        locale: const Locale('en', 'XA'),
+        cell: const ScreenMatrix(Size(393, 320), 2, Brightness.light, false),
+      );
+      await tester.pumpAndSettle();
+      final LocalizedCopy copy = Copy.of(
+        tester.element(find.byType(SettingsScreen)),
+      );
+      expect(find.text(copy.backendSettingsTitle), findsNothing);
+      expect(find.text(copy.relayTitle), findsNothing);
+      await tester.ensureVisible(
+        find.widgetWithText(AppListTile, copy.settingsAboutTitle),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('the root lists every section in order in four groups', (
     WidgetTester tester,
   ) async {
@@ -228,7 +303,15 @@ Future<void> _pump(
   WidgetTester tester, {
   Future<List<({String title, String subtitle, String? route})>> Function()?
   load,
+  ScreenMatrix? cell,
+  Locale locale = const Locale('en'),
 }) {
+  if (cell != null) {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = cell.size;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+  }
   return tester.pumpWidget(
     ProviderScope(
       retry: (int _, Object _) => null,
@@ -236,7 +319,22 @@ Future<void> _pump(
         if (load != null) settingsScreenOverride(load: load),
       ],
       child: MaterialApp(
-        theme: buildTheme(brightness: Brightness.light),
+        debugShowCheckedModeBanner: false,
+        locale: locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: ScreenFonts.theme(
+          buildTheme(
+            brightness: cell?.brightness ?? Brightness.light,
+            outdoor: cell?.outdoor ?? false,
+          ),
+        ),
+        builder: (BuildContext context, Widget? child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(cell?.textScale ?? 1)),
+          child: child!,
+        ),
         home: const SettingsScreen(),
       ),
     ),

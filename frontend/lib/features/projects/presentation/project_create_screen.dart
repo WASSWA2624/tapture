@@ -88,6 +88,7 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen>
         fields: <Widget>[
           AppTextField(
             label: localCopy.projectName,
+            wrapLabel: true,
             controller: _name,
             requiredness: FieldRequiredness.required,
             textInputAction: TextInputAction.next,
@@ -98,6 +99,7 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen>
           ),
           AppTextField(
             label: localCopy.projectDescription,
+            wrapLabel: true,
             controller: _description,
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.next,
@@ -105,6 +107,7 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen>
           ),
           AppTextField(
             label: localCopy.projectOrganisation,
+            wrapLabel: true,
             controller: _organisation,
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.done,

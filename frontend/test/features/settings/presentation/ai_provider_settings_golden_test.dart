@@ -9,7 +9,11 @@ import 'package:tapture/core/security/secure_storage.dart';
 import 'package:tapture/features/settings/presentation/ai_provider_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
 
+import '../../../support/screen_fonts.dart';
+import '../../../support/screen_matrix.dart';
+
 void main() {
+  setUpAll(ScreenFonts.load);
   testWidgets('AI provider settings in every theme and at 200 percent text', (
     WidgetTester tester,
   ) async {
@@ -35,16 +39,44 @@ void main() {
       fail('golden moved:\n${failures.join('\n')} (FE-TEST-02)');
     }
   });
+
+  for (final ScreenMatrix cell in ScreenMatrix.cells.where(
+    (cell) => cell.goldenCorner != null,
+  )) {
+    testWidgets('AI provider corner ${cell.description}', (
+      WidgetTester tester,
+    ) async {
+      final AppThemeMode mode = cell.outdoor
+          ? AppThemeMode.outdoor
+          : cell.brightness == Brightness.dark
+          ? AppThemeMode.dark
+          : AppThemeMode.light;
+      await _pump(
+        tester,
+        mode: mode,
+        textScale: cell.textScale,
+        size: cell.size,
+      );
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile(
+          'goldens/ai_provider_settings_${cell.goldenCorner}_${mode.name}.png',
+        ),
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
 }
 
 Future<void> _pump(
   WidgetTester tester, {
   required AppThemeMode mode,
   required double textScale,
+  Size size = const Size(400, 800),
 }) async {
   debugDisableShadows = true;
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = const Size(400, 800);
+  tester.view.physicalSize = size;
   tester.platformDispatcher.textScaleFactorTestValue = textScale;
   tester.platformDispatcher.localeTestValue = const Locale('en', 'US');
   tester.platformDispatcher.accessibilityFeaturesTestValue =
@@ -66,11 +98,13 @@ Future<void> _pump(
       ),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: buildTheme(
-          brightness: mode == AppThemeMode.dark
-              ? Brightness.dark
-              : Brightness.light,
-          outdoor: mode == AppThemeMode.outdoor,
+        theme: ScreenFonts.theme(
+          buildTheme(
+            brightness: mode == AppThemeMode.dark
+                ? Brightness.dark
+                : Brightness.light,
+            outdoor: mode == AppThemeMode.outdoor,
+          ),
         ),
         home: const AiProviderSettingsScreen(),
       ),

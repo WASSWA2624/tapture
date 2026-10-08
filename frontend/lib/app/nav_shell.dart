@@ -9,7 +9,6 @@ import 'package:tapture/app/shell_destination.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
-import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/app/widgets/offline_banner.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -256,6 +255,7 @@ class _Rail extends StatelessWidget {
     final AppColors colors = context.colors;
     final Color railInk = inverted ? colors.surface : colors.onSurface;
     final Color selected = inverted ? AppColors.dark.primary : colors.primary;
+    final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall;
     return RepaintBoundary(
       key: const ValueKey<String>('nav-rail'),
       child: NavigationRail(
@@ -270,8 +270,8 @@ class _Rail extends StatelessWidget {
         // destinations; the rail scrolls rather than overflowing.
         scrollable: true,
         labelType: NavigationRailLabelType.all,
-        selectedLabelTextStyle: AppText.caption.copyWith(color: selected),
-        unselectedLabelTextStyle: AppText.caption.copyWith(color: railInk),
+        selectedLabelTextStyle: labelStyle?.copyWith(color: selected),
+        unselectedLabelTextStyle: labelStyle?.copyWith(color: railInk),
         destinations: <NavigationRailDestination>[
           for (int index = 0; index < shellDestinations.length; index++)
             NavigationRailDestination(

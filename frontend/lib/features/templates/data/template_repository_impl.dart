@@ -161,10 +161,14 @@ final class TemplateRepositoryImpl implements TemplateRepository {
   Future<Result<void>> restore(String id) {
     return runInTransaction(_db, () async {
       final sqlite.Template? header = await _header(id);
-      if (header == null) throw _missing;
+      if (header == null) {
+        final StorageFailure missingFailure = _missing;
+        throw missingFailure;
+      }
       final String? projectId = header.projectId;
       if (projectId != null && await _isTombstoned(_db.projects, projectId)) {
-        throw _missing;
+        final StorageFailure missingFailure = _missing;
+        throw missingFailure;
       }
       final sqlite.Tombstone? deletion = await _deletion(_db.templates, id);
       if (deletion == null) return;

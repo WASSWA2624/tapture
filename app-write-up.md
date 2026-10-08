@@ -2691,6 +2691,8 @@ project owns one entry for its cascade; records own their descendants. Restore c
 that deletion, preserves prior independent deletions, restores the previous project status when recorded (legacy
 rows use Active), and audits the change. A project folder moves back before database restoration, without overwriting
 a live path; a failed or interrupted restore remains retryable. Browser bytes remain in the managed local store.
+New project deletions bind cascade membership and prior status to the exact parent tombstone through append-only
+audit entries; repeated deletion unions membership without reviving older independent tombstones.
 **Empty deleted records** retains the existing records-only retention/purge boundary. Templates use their own Undo;
 arbitrary disk files, projects and independent files gain no new permanent-removal action.
 
@@ -3896,6 +3898,9 @@ Required-key descriptors keep `personal-<providerId>` identity; keyless descript
 managed billing bound to that exact provider, with no credential lookup. Both use the same permissions and quotas.
 Catalogue refresh reaches Settings and processing; missing or removed accounts stay explicitly unavailable without
 blocking capture. Legacy administrator-permitted device adapters remain the exception (§30.2).
+The wire model `default` always names the configured base model; configuration cannot assign it to a different
+model. Test connection probes a supported operation with empty evidence and the exact selected model/account.
+Removing a capability retains the saved selection visibly unavailable until the user chooses another.
 
 ### 73.2 Why this is better than keys on devices
 

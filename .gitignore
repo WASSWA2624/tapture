@@ -72,4 +72,5 @@ TAPTURE-*.zip
 !backend/test/services/provider_configuration_audit.test.ts
 !backend/test/routes/provider_catalogue.test.ts
 !backend/test/repositories/postgres_provider_upgrade.test.ts
+!backend/test/repositories/postgres_provider_catalogue.test.ts
 !backend/test/fakes/provider_catalogue.ts

@@ -15,6 +15,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -41,13 +42,22 @@ final class RecycleBinScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final LocalizedCopy localCopy = Copy.of(context);
 
-    final AsyncValue<List<DeletedEntity>> bin = ref.watch(deletedEntitiesProvider);
+    final AsyncValue<List<DeletedEntity>> bin = ref.watch(
+      deletedEntitiesProvider,
+    );
     final int days = ref.watch(recordRetentionDaysProvider);
     final RecycleBinActivity activity = ref.watch(recycleBinControllerProvider);
     final bool canEmpty = ref.watch(recordPurgeJobProvider) != null;
-    final int recordCount = bin.asData?.value.where((DeletedEntity row) => row.kind == DeletedEntityKind.record).length ?? 0;
+    final int recordCount =
+        bin.asData?.value
+            .where((DeletedEntity row) => row.kind == DeletedEntityKind.record)
+            .length ??
+        0;
     final Map<String, DeletedRecord> records = <String, DeletedRecord>{
-      for (final DeletedRecord record in ref.watch(recycleBinProvider).asData?.value ?? const <DeletedRecord>[]) record.id: record,
+      for (final DeletedRecord record
+          in ref.watch(recycleBinProvider).asData?.value ??
+              const <DeletedRecord>[])
+        record.id: record,
     };
     return AppPage(
       key: const ValueKey<String>('route-recycle-bin'),
@@ -64,7 +74,8 @@ final class RecycleBinScreen extends ConsumerWidget {
             ),
       body: AsyncValueView<List<DeletedEntity>>(
         value: bin,
-        onRetry: () => ref.read(recycleBinControllerProvider.notifier).refresh(),
+        onRetry: () =>
+            ref.read(recycleBinControllerProvider.notifier).refresh(),
         isEmpty: (List<DeletedEntity> rows) => rows.isEmpty,
         empty: () => AppEmptyState(
           icon: AppIcons.restore,
@@ -73,8 +84,12 @@ final class RecycleBinScreen extends ConsumerWidget {
           actionLabel: Copy.of(context).navRecords,
           onAction: () => context.go(RoutePaths.records),
         ),
-        data: (List<DeletedEntity> rows) =>
-            _BinList(rows: rows, records: records, days: days, activity: activity),
+        data: (List<DeletedEntity> rows) => _BinList(
+          rows: rows,
+          records: records,
+          days: days,
+          activity: activity,
+        ),
       ),
     );
   }
@@ -150,34 +165,45 @@ class _BinList extends ConsumerWidget {
 
     final DateTime now = ref.watch(recordClockProvider).nowUtc();
     final double gutter = AppPage.gutter(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (rows.any((DeletedEntity row) => row.kind == DeletedEntityKind.record)) Padding(
-          padding: EdgeInsets.fromLTRB(gutter, Space.x2, gutter, Space.x2),
-          child: Text(
-            localCopy.recycleBinKeptFor(days),
-            style: AppText.caption.copyWith(color: context.colors.onSurface),
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            key: const ValueKey<String>('recycle-bin-list'),
-            itemCount: rows.length,
-            itemBuilder: (BuildContext context, int index) {
-              final DeletedEntity entity = rows[index];
-              final DeletedRecord? record = entity.kind == DeletedEntityKind.record ? records[entity.id] : null;
-              if (record == null) return _EntityBinRow(entity: entity, restoring: activity.restoring.contains(entity.key));
-              return _BinRow(
-                record: record,
-                daysLeft: record.daysLeft(now: now, retentionDays: days),
-                restoring: activity.restoring.contains(record.id),
-                locked: activity.emptying,
-              );
-            },
-          ),
-        ),
-      ],
+    return AppListViewport(
+      header: Column(
+        children: <Widget>[
+          if (rows.any(
+            (DeletedEntity row) => row.kind == DeletedEntityKind.record,
+          ))
+            Padding(
+              padding: EdgeInsets.fromLTRB(gutter, Space.x2, gutter, Space.x2),
+              child: Text(
+                localCopy.recycleBinKeptFor(days),
+                style: AppText.caption.copyWith(
+                  color: context.colors.onSurface,
+                ),
+              ),
+            ),
+        ],
+      ),
+      body: ListView.builder(
+        key: const ValueKey<String>('recycle-bin-list'),
+        itemCount: rows.length,
+        itemBuilder: (BuildContext context, int index) {
+          final DeletedEntity entity = rows[index];
+          final DeletedRecord? record = entity.kind == DeletedEntityKind.record
+              ? records[entity.id]
+              : null;
+          if (record == null) {
+            return _EntityBinRow(
+              entity: entity,
+              restoring: activity.restoring.contains(entity.key),
+            );
+          }
+          return _BinRow(
+            record: record,
+            daysLeft: record.daysLeft(now: now, retentionDays: days),
+            restoring: activity.restoring.contains(record.id),
+            locked: activity.emptying,
+          );
+        },
+      ),
     );
   }
 }
@@ -210,11 +236,15 @@ class _BinRow extends ConsumerWidget {
     return AppListTile(
       key: ValueKey<String>('recycle-bin-row-${record.id}'),
       title: title,
-      subtitle: localCopy.recycleEntitySubtitle(localCopy.recycleTypeRecord, localCopy.recycleBinRowSubtitle(
-        number: named ? summary.number : null,
-        projectName: record.projectName,
-        deletedAt: record.deletedAt,
-      )),
+      wrapText: true,
+      subtitle: localCopy.recycleEntitySubtitle(
+        localCopy.recycleTypeRecord,
+        localCopy.recycleBinRowSubtitle(
+          number: named ? summary.number : null,
+          projectName: record.projectName,
+          deletedAt: record.deletedAt,
+        ),
+      ),
       leading: thumb == null
           ? null
           : RecordThumb(
@@ -284,9 +314,14 @@ class _EntityBinRow extends ConsumerWidget {
       key: ValueKey<String>('recycle-bin-row-${entity.key}'),
       title: entity.name.isEmpty ? type : entity.name,
       wrapText: true,
-      subtitle: copy.recycleEntitySubtitle(type, copy.recycleBinRowSubtitle(
-        number: null, projectName: entity.projectName, deletedAt: entity.deletedAt,
-      )),
+      subtitle: copy.recycleEntitySubtitle(
+        type,
+        copy.recycleBinRowSubtitle(
+          number: null,
+          projectName: entity.projectName,
+          deletedAt: entity.deletedAt,
+        ),
+      ),
       trailing: AppIconButton(
         key: ValueKey<String>('recycle-bin-restore-${entity.key}'),
         icon: AppIcons.restore,
@@ -299,7 +334,9 @@ class _EntityBinRow extends ConsumerWidget {
 
   Future<void> _restore(BuildContext context, WidgetRef ref) async {
     final BuildContext host = _snackHost(context);
-    final Result<void> result = await ref.read(recycleBinControllerProvider.notifier).restoreEntity(entity);
+    final Result<void> result = await ref
+        .read(recycleBinControllerProvider.notifier)
+        .restoreEntity(entity);
     if (!host.mounted) return;
     final LocalizedCopy copy = Copy.of(host);
     switch (result) {

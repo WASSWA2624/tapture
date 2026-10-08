@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_thumbnails.dart';
@@ -15,6 +16,7 @@ import 'package:tapture/core/lifecycle/deleted_entity.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/record_status.dart';
@@ -22,9 +24,14 @@ import 'package:tapture/core/widgets/record_thumb.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
+import 'package:tapture/features/capture/capture.dart'
+    show
+        photoRepositoryProvider,
+        captureDocumentRepositoryProvider,
+        CaptureDocumentRepository,
+        DocumentDraft;
 import 'package:tapture/features/projects/projects.dart'
     show projectSettingsStoreProvider, projectRepositoryProvider;
-import 'package:tapture/features/capture/capture.dart' show photoRepositoryProvider, captureDocumentRepositoryProvider, CaptureDocumentRepository, DocumentDraft;
 import 'package:tapture/features/records/domain/domain.dart';
 import 'package:tapture/features/records/presentation/record_providers.dart';
 import 'package:tapture/features/records/presentation/recycle_bin_screen.dart';
@@ -33,8 +40,10 @@ import 'package:tapture/features/records/records.dart'
 import 'package:tapture/features/settings/settings.dart';
 
 import '../../../support/a11y_matchers.dart';
+import '../../../support/browser_text_contrast_guideline.dart';
 import '../../../support/factories.dart';
 import '../../../support/fakes/fake_photo_repository.dart';
+import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
 import '../../projects/fakes/fake_project_repository.dart';
 import '../fakes/fake_purge_store.dart';
@@ -50,19 +59,35 @@ const StorageFailure _unreadable = StorageFailure(
   recoveryAction: 'Try again in a moment.',
 );
 
-/// The instant every clock in this file reads.
-final DateTime _now = DateTime.utc(2026, 9, 20, 8);
+/// Fixed local display time across host time zones, stored as a UTC instant.
+final DateTime _now = DateTime(2026, 9, 20, 11).toUtc();
 
 final class _DeletedAttachments implements CaptureDocumentRepository {
   @override
-  Stream<List<DeletedEntity>> watchDeleted() => Stream<List<DeletedEntity>>.value(<DeletedEntity>[
-    for (final DeletedEntityKind kind in <DeletedEntityKind>[DeletedEntityKind.audio, DeletedEntityKind.document])
-      DeletedEntity(id: kind.name, kind: kind, name: '${kind.name}.bin', projectId: 'project-1', projectName: 'North wing', deletedAt: _now),
-  ]);
+  Stream<List<DeletedEntity>> watchDeleted() =>
+      Stream<List<DeletedEntity>>.value(<DeletedEntity>[
+        for (final DeletedEntityKind kind in <DeletedEntityKind>[
+          DeletedEntityKind.audio,
+          DeletedEntityKind.document,
+        ])
+          DeletedEntity(
+            id: kind.name,
+            kind: kind,
+            name: '${kind.name}.bin',
+            projectId: 'project-1',
+            projectName: 'North wing',
+            deletedAt: _now,
+          ),
+      ]);
   @override
   Future<Result<void>> restore(String id) async => const Success<void>(null);
   @override
-  Future<Result<DocumentDraft>> import({required Uint8List bytes, required String filename, required String projectId, required String folder}) async => const FailureResult<DocumentDraft>(CancelledFailure());
+  Future<Result<DocumentDraft>> import({
+    required Uint8List bytes,
+    required String filename,
+    required String projectId,
+    required String folder,
+  }) async => const FailureResult<DocumentDraft>(CancelledFailure());
 }
 
 void main() {
@@ -110,20 +135,27 @@ void main() {
     FakePhotoRepository? photos,
     CaptureDocumentRepository? attachments,
     ScreenMatrix? cell,
+    Locale locale = const Locale('en'),
   }) async {
+    await tester.runAsync(ScreenFonts.load);
     if (cell != null) {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = cell.size;
       tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
-      addTearDown(() { tester.view.reset(); tester.platformDispatcher.clearTextScaleFactorTestValue(); });
+      addTearDown(() {
+        tester.view.reset();
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
+      });
     }
     await tester.pumpWidget(
       ProviderScope(
         retry: (int _, Object _) => null,
         overrides: <Override>[
-          if (projects != null) projectRepositoryProvider.overrideWithValue(projects),
+          if (projects != null)
+            projectRepositoryProvider.overrideWithValue(projects),
           if (photos != null) photoRepositoryProvider.overrideWithValue(photos),
-          if (attachments != null) captureDocumentRepositoryProvider.overrideWithValue(attachments),
+          if (attachments != null)
+            captureDocumentRepositoryProvider.overrideWithValue(attachments),
           recordRepositoryProvider.overrideWith(
             (Ref _) => repository ?? records,
           ),
@@ -141,7 +173,16 @@ void main() {
           ),
         ],
         child: MaterialApp(
-          theme: buildTheme(brightness: cell?.brightness ?? Brightness.light, outdoor: cell?.outdoor ?? false),
+          debugShowCheckedModeBanner: false,
+          locale: locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: ScreenFonts.theme(
+            buildTheme(
+              brightness: cell?.brightness ?? Brightness.light,
+              outdoor: cell?.outdoor ?? false,
+            ),
+          ),
           home: const RecycleBinScreen(),
         ),
       ),
@@ -167,43 +208,169 @@ void main() {
   Finder rowOf(String id) =>
       find.byKey(ValueKey<String>('recycle-bin-row-$id'));
 
-  testWidgets('a deleted project is shown once and restores through its owner', (WidgetTester tester) async {
+  testWidgets(
+    'a deleted project is shown once and restores through its owner',
+    (WidgetTester tester) async {
+      final FakeProjectRepository projects = FakeProjectRepository();
+      addTearDown(projects.dispose);
+      (await projects.create(aProject(name: 'Parent project'))).getOrThrow();
+      (await projects.delete('project-1')).getOrThrow();
+      binned('record-1');
+      await pump(tester, projects: projects);
+      expect(find.text('Parent project'), findsOneWidget);
+      expect(rowOf('record-1'), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('recycle-bin-empty')),
+        findsNothing,
+      );
+      await tester.tap(
+        find.byKey(
+          const ValueKey<String>('recycle-bin-restore-project:project-1'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey<String>('recycle-bin-row-project:project-1')),
+        findsNothing,
+      );
+      expect(rowOf('record-1'), findsOneWidget);
+      expect(find.text(Copy.recycleEmptyRecords(1)), findsOneWidget);
+    },
+  );
+
+  Future<void> pumpMixed(
+    WidgetTester tester,
+    ScreenMatrix cell, {
+    Locale locale = const Locale('en'),
+  }) async {
     final FakeProjectRepository projects = FakeProjectRepository();
+    final FakePhotoRepository photos = FakePhotoRepository(
+      clock: FixedClock(_now),
+    );
     addTearDown(projects.dispose);
-    (await projects.create(aProject(name: 'Parent project'))).getOrThrow();
-    (await projects.delete('project-1')).getOrThrow();
+    addTearDown(photos.dispose);
+    (await projects.create(
+      aProject(
+        id: 'deleted-project',
+        name: 'Deleted project',
+        updatedAt: DateTime(2026, 9, 17, 11).toUtc(),
+      ),
+    )).getOrThrow();
+    (await projects.delete('deleted-project')).getOrThrow();
+    (await photos.save((
+      id: 'photo',
+      projectId: 'project-1',
+      recordId: null,
+      relativePath: 'photos/evidence.jpg',
+      sha256: 'photo-hash',
+    ))).getOrThrow();
+    (await photos.delete('photo', reason: 'operator-delete')).getOrThrow();
     binned('record-1');
-    await pump(tester, projects: projects);
-    expect(find.text('Parent project'), findsOneWidget);
-    expect(rowOf('record-1'), findsNothing);
-    expect(find.byKey(const ValueKey<String>('recycle-bin-empty')), findsNothing);
-    await tester.tap(find.byKey(const ValueKey<String>('recycle-bin-restore-project:project-1')));
+    await pump(
+      tester,
+      projects: projects,
+      photos: photos,
+      attachments: _DeletedAttachments(),
+      cell: cell,
+      locale: locale,
+    );
+  }
+
+  Future<void> reachPhotoRestore(WidgetTester tester) async {
+    final Finder restore = find.byKey(
+      const ValueKey<String>('recycle-bin-restore-photo:photo'),
+    );
+    final Finder viewport = find.byType(AppListViewport).first;
+    if (tester.getRect(viewport).height < 300) {
+      await tester.drag(viewport, const Offset(0, -160));
+      await tester.pumpAndSettle();
+    }
+    Rect visible = Rect.zero;
+    for (int attempt = 0; attempt < 30; attempt++) {
+      final Rect bounds = tester.getRect(viewport);
+      double delta = -48;
+      if (restore.evaluate().isNotEmpty) {
+        final Rect control = tester.getRect(restore);
+        visible = control.intersect(bounds);
+        if (visible.height >= 48) break;
+        delta = (bounds.center.dy - control.center.dy).clamp(-80, 80);
+      }
+      await tester.drag(viewport, Offset(0, delta));
+      await tester.pumpAndSettle();
+    }
+    expect(restore, findsOneWidget);
+    expect(visible.height, greaterThanOrEqualTo(48));
+    expect(visible.width, greaterThanOrEqualTo(48));
+    await tester.tapAt(visible.center);
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey<String>('recycle-bin-row-project:project-1')), findsNothing);
-    expect(rowOf('record-1'), findsOneWidget);
-    expect(find.text(Copy.recycleEmptyRecords(1)), findsOneWidget);
-  });
+    expect(
+      find.byKey(const ValueKey<String>('recycle-bin-row-photo:photo')),
+      findsNothing,
+    );
+    final Finder empty = find.byKey(
+      const ValueKey<String>('recycle-bin-empty'),
+    );
+    // Let the successful-restore feedback clear before reaching the footer.
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(empty);
+    expect(empty.hitTestable(), findsOneWidget);
+  }
 
   for (final ScreenMatrix cell in ScreenMatrix.cells) {
-    testWidgets('mixed recycle bin fits ${cell.description}', (WidgetTester tester) async {
-      final FakeProjectRepository projects = FakeProjectRepository();
-      final FakePhotoRepository photos = FakePhotoRepository();
-      addTearDown(projects.dispose);
-      addTearDown(photos.dispose);
-      (await projects.create(aProject(id: 'deleted-project', name: 'Deleted project'))).getOrThrow();
-      (await projects.delete('deleted-project')).getOrThrow();
-      (await photos.save((id: 'photo', projectId: 'project-1', recordId: null, relativePath: 'photos/evidence.jpg', sha256: 'photo-hash'))).getOrThrow();
-      (await photos.delete('photo', reason: 'operator-delete')).getOrThrow();
-      binned('record-1');
-      await pump(tester, projects: projects, photos: photos, attachments: _DeletedAttachments(), cell: cell);
-      expect(tester.takeException(), isNull);
-      expect(find.text(Copy.recycleEmptyRecords(1)), findsOneWidget);
-      final Finder list = find.byKey(const ValueKey<String>('recycle-bin-list'));
-      await tester.drag(list, const Offset(0, -1200));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'mixed recycle bin fits ${cell.description}',
+      (WidgetTester tester) async {
+        await pumpMixed(tester, cell);
+        expect(tester.takeException(), isNull);
+        expect(find.text(Copy.recycleEmptyRecords(1)), findsOneWidget);
+        await reachPhotoRestore(tester);
+        expect(tester.takeException(), isNull);
+      },
+      variant: kIsWeb
+          ? TargetPlatformVariant.only(defaultTargetPlatform)
+          : TargetPlatformVariant.all(),
+    );
   }
+
+  for (final ({String name, ScreenMatrix cell}) corner
+      in ScreenMatrix.corners) {
+    testWidgets('mixed recycle bin golden ${corner.name}', (
+      WidgetTester tester,
+    ) async {
+      await pumpMixed(tester, corner.cell);
+      if (corner.cell.size.height == 320) {
+        await tester.drag(
+          find.byType(AppListViewport).first,
+          const Offset(0, -160),
+        );
+        await tester.pumpAndSettle();
+      }
+      expect(tester.takeException(), isNull);
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('goldens/recycle_bin_${corner.name}.png'),
+      );
+    }, skip: kIsWeb);
+  }
+
+  testWidgets(
+    'mixed recycling remains reachable with expanded pseudo-locale copy',
+    (WidgetTester tester) async {
+      await pumpMixed(
+        tester,
+        const ScreenMatrix(Size(393, 320), 2, Brightness.light, false),
+        locale: const Locale('en', 'XA'),
+      );
+      final LocalizedCopy copy = Copy.of(
+        tester.element(find.byType(RecycleBinScreen)),
+      );
+      expect(find.text(copy.recycleEmptyRecords(1)), findsOneWidget);
+      expect(copy.recycleEmptyRecords(1), isNot(Copy.recycleEmptyRecords(1)));
+      await reachPhotoRestore(tester);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   Finder emptyButton() =>
       find.byKey(const ValueKey<String>('recycle-bin-empty'));
@@ -282,11 +449,14 @@ void main() {
         find.descendant(
           of: rowOf(named),
           matching: find.text(
-            Copy.recycleEntitySubtitle(Copy.recycleTypeRecord, Copy.recycleBinRowSubtitle(
-              number: 12,
-              projectName: 'North wing',
-              deletedAt: deletedAt,
-            )),
+            Copy.recycleEntitySubtitle(
+              Copy.recycleTypeRecord,
+              Copy.recycleBinRowSubtitle(
+                number: 12,
+                projectName: 'North wing',
+                deletedAt: deletedAt,
+              ),
+            ),
           ),
         ),
         findsOneWidget,
@@ -304,10 +474,13 @@ void main() {
         find.descendant(
           of: rowOf(untitled),
           matching: find.text(
-            Copy.recycleEntitySubtitle(Copy.recycleTypeRecord, Copy.recycleBinRowSubtitle(
-              projectName: 'North wing',
-              deletedAt: deletedAt,
-            )),
+            Copy.recycleEntitySubtitle(
+              Copy.recycleTypeRecord,
+              Copy.recycleBinRowSubtitle(
+                projectName: 'North wing',
+                deletedAt: deletedAt,
+              ),
+            ),
           ),
         ),
         findsOneWidget,
@@ -720,9 +893,17 @@ void main() {
         binned('record-1', name: 'Autoclave with a long descriptive name');
         binned('record-2', daysAgo: 12);
         records.seedProjectName('project-1', 'North wing main plant room');
-        await pump(tester);
+        // Match the native logical viewport instead of Chrome's synthetic DPR 3.
+        await pump(
+          tester,
+          cell: const ScreenMatrix(Size(800, 600), 1, Brightness.light, false),
+        );
 
-        await expectNoA11yIssues(tester);
+        if (kIsWeb) {
+          await _expectBrowserAccessibility(tester);
+        } else {
+          await expectNoA11yIssues(tester);
+        }
       },
     );
 
@@ -747,6 +928,45 @@ void main() {
       });
     }
   });
+}
+
+/// Keeps the same guideline and 200-percent checks with a live CanvasKit image.
+Future<void> _expectBrowserAccessibility(WidgetTester tester) async {
+  final SemanticsHandle semantics = tester.ensureSemantics();
+  final Size originalSize = tester.view.physicalSize;
+  final double originalScale = tester.platformDispatcher.textScaleFactor;
+  final List<String> issues = <String>[];
+  try {
+    for (final AccessibilityGuideline guideline in <AccessibilityGuideline>[
+      androidTapTargetGuideline,
+      iOSTapTargetGuideline,
+      labeledTapTargetGuideline,
+      const BrowserTextContrastGuideline(),
+    ]) {
+      final Evaluation evaluation = await guideline.evaluate(tester);
+      if (!evaluation.passed) {
+        issues.add('${guideline.description}: ${evaluation.reason}');
+      }
+    }
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    for (final Size logical in <Size>[
+      const Size(400, 800),
+      const Size(800, 400),
+    ]) {
+      tester.view.physicalSize = logical * tester.view.devicePixelRatio;
+      await tester.pump();
+      final Object? exception = tester.takeException();
+      if (exception != null) {
+        issues.add('200 percent text at $logical: $exception');
+      }
+    }
+    expect(issues, isEmpty, reason: issues.join('\n'));
+  } finally {
+    tester.platformDispatcher.textScaleFactorTestValue = originalScale;
+    tester.view.physicalSize = originalSize;
+    semantics.dispose();
+    await tester.pump();
+  }
 }
 
 /// A store whose recycle bin never answers, so the page stays loading.

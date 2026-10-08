@@ -123,6 +123,10 @@ export function parseProviderCatalogue(
       );
     if (typeof model !== 'string' || !models.includes(model))
       throw new Error('AI_PROVIDER_CATALOGUE base model must be in models.');
+    if (models.includes('default') && model !== 'default')
+      throw new Error(
+        'AI_PROVIDER_CATALOGUE reserves default for the configured base model.',
+      );
     if (currency !== 'configured')
       throw new Error('AI_PROVIDER_CATALOGUE currency must be configured.');
     const costs = object(row['modelCostCeilings']);

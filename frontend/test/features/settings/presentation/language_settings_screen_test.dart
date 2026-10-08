@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/features/settings/data/settings_store.dart';
@@ -12,9 +13,11 @@ import 'package:tapture/features/settings/presentation/language_settings_screen.
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 import 'package:tapture/features/settings/presentation/speech_settings_section.dart';
 
+import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
 
 void main() {
+  setUpAll(ScreenFonts.load);
   testWidgets('Language names the app language and the voice language', (
     WidgetTester tester,
   ) async {
@@ -77,7 +80,9 @@ void main() {
     expect(container.read(voiceLanguageProvider), 'sw');
   });
 
-  testWidgets('cancelled search and failed save preserve the voice language', (WidgetTester tester) async {
+  testWidgets('cancelled search and failed save preserve the voice language', (
+    WidgetTester tester,
+  ) async {
     final SettingsStore store = SettingsStore.fake(failWrites: true);
     await _pump(tester, store);
     await tester.tap(find.text(Copy.languageEnglish));
@@ -93,33 +98,84 @@ void main() {
     await tester.pumpAndSettle();
     expect(store.read(SettingKeys.voiceLanguage), 'en');
     expect(find.text(Copy.languageEnglish), findsOneWidget);
+    expect(find.byType(SnackBar), findsOneWidget);
   });
 
   for (final ScreenMatrix cell in ScreenMatrix.cells) {
-    testWidgets('language controls fit ${cell.description}', (WidgetTester tester) async {
-      await _pump(tester, SettingsStore.fake(), cell: cell);
-      expect(tester.takeException(), isNull);
-      if (cell.size == const Size(393, 852)) {
-        await expectLater(find.byKey(_golden), matchesGoldenFile(
-          'goldens/language_collapsed_${cell.outdoor ? 'outdoor' : cell.brightness.name}_${cell.textScale.toInt()}x.png',
-        ));
-      }
-      await tester.ensureVisible(find.text(Copy.settingsSpeechModels));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(Copy.settingsSpeechModels));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'language controls fit ${cell.description}',
+      (WidgetTester tester) async {
+        await _pump(tester, SettingsStore.fake(), cell: cell);
+        expect(tester.takeException(), isNull);
+        if (cell.size == const Size(393, 852) &&
+            Theme.of(
+                  tester.element(find.byType(LanguageSettingsScreen)),
+                ).platform ==
+                TargetPlatform.android) {
+          await expectLater(
+            find.byKey(_golden),
+            matchesGoldenFile(
+              'goldens/language_collapsed_${cell.outdoor ? 'outdoor' : cell.brightness.name}_${cell.textScale.toInt()}x.png',
+            ),
+          );
+        }
+        if (cell.goldenCorner case final String corner
+            when Theme.of(
+                  tester.element(find.byType(LanguageSettingsScreen)),
+                ).platform ==
+                TargetPlatform.android) {
+          await expectLater(
+            find.byKey(_golden),
+            matchesGoldenFile(
+              'goldens/language_collapsed_${corner}_${cell.outdoor ? 'outdoor' : cell.brightness.name}.png',
+            ),
+          );
+        }
+        await tester.ensureVisible(find.text(Copy.settingsSpeechModels));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(Copy.settingsSpeechModels));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      },
+      variant: TargetPlatformVariant.all(),
+    );
   }
+
+  testWidgets(
+    'pseudo-locale language search and disclosures fit compact landscape at text 2',
+    (WidgetTester tester) async {
+      await _pump(
+        tester,
+        SettingsStore.fake(),
+        locale: const Locale('en', 'XA'),
+        cell: const ScreenMatrix(Size(393, 320), 2, Brightness.light, false),
+      );
+      final LocalizedCopy copy = Copy.of(
+        tester.element(find.byType(LanguageSettingsScreen)),
+      );
+      await tester.ensureVisible(find.text(copy.languageEnglish));
+      await tester.tap(find.text(copy.languageEnglish));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), copy.languageFrench);
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(AppListTile, copy.languageFrench));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(copy.settingsSpeechModels));
+      await tester.tap(find.text(copy.settingsSpeechModels));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    },
+  );
 }
 
 const ValueKey<String> _golden = ValueKey<String>('language-settings-golden');
 
 Future<ProviderContainer> _pump(
   WidgetTester tester,
-  SettingsStore store,
-  {ScreenMatrix? cell}
-) async {
+  SettingsStore store, {
+  ScreenMatrix? cell,
+  Locale locale = const Locale('en'),
+}) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = cell?.size ?? const Size(393, 852);
   tester.platformDispatcher.textScaleFactorTestValue = cell?.textScale ?? 1;
@@ -136,8 +192,19 @@ Future<ProviderContainer> _pump(
     UncontrolledProviderScope(
       container: container,
       child: MaterialApp(
-        theme: buildTheme(brightness: cell?.brightness ?? Brightness.light, outdoor: cell?.outdoor ?? false),
-        home: const RepaintBoundary(key: _golden, child: LanguageSettingsScreen()),
+        locale: locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: ScreenFonts.theme(
+          buildTheme(
+            brightness: cell?.brightness ?? Brightness.light,
+            outdoor: cell?.outdoor ?? false,
+          ),
+        ),
+        home: const RepaintBoundary(
+          key: _golden,
+          child: LanguageSettingsScreen(),
+        ),
       ),
     ),
   );

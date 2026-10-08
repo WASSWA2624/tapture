@@ -1,4 +1,3 @@
-import 'package:tapture/features/templates/presentation/template_editor_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -14,6 +13,7 @@ import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/presentation/required_columns_screen.dart';
 import 'package:tapture/features/templates/presentation/requiredness_controller.dart';
+import 'package:tapture/features/templates/presentation/template_editor_source.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import '../../../support/factories.dart';

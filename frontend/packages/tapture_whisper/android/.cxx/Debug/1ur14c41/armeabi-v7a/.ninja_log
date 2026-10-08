@@ -1,0 +1,4 @@
+# ninja log v5
+1	419	8131199629377953	CMakeFiles/tapture_whisper.dir/tw_sha256.c.o	2b0cb4f330886bc3
+33	5488	8131199680341306	CMakeFiles/tapture_whisper.dir/tapture_whisper.cpp.o	a1b2da2befb6b8c
+5501	5738	8131199682995995	D:/coding/apps/flutter/tapture/frontend/build/tapture_whisper/intermediates/cxx/Debug/1ur14c41/obj/armeabi-v7a/libtapture_whisper.so	d261dd0a57a915af

@@ -1,0 +1,87 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "tapture_whisper_library",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "tapture_whisper::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tapture_whisper-Debug-5bc679a9e91a1b8ba051.json",
+					"name" : "tapture_whisper",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "tw_ggml_base::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tw_ggml_base-Debug-838018fffcd7358d27ea.json",
+					"name" : "tw_ggml_base",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "tw_ggml_cpu::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tw_ggml_cpu-Debug-609fafb36008d082c024.json",
+					"name" : "tw_ggml_cpu",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "tw_whisper::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-tw_whisper-Debug-c373ae09396a18935db3.json",
+					"name" : "tw_whisper",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/Debug/1ur14c41/x86_64",
+		"source" : "D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/src"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

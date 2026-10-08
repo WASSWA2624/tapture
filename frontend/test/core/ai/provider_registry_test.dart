@@ -257,6 +257,52 @@ void main() {
     },
   );
 
+  test(
+    'extraction connection tests carry no captured evidence or OCR call',
+    () async {
+      final _TestAiService service = _TestAiService();
+      final ProviderRegistry registry = _registry(
+        backend: service,
+        device: service,
+      );
+      expect(
+        await registry.testConnection(
+          service,
+          operation: AiOperation.extractFields,
+        ),
+        ProviderTestOutcome.success,
+      );
+      expect(service.readCalls, 0);
+      expect(service.extractionRequests, hasLength(1));
+      final ExtractFieldsRequest request = service.extractionRequests.single;
+      expect(request.imagePaths, isEmpty);
+      expect(request.ocrText, isEmpty);
+      expect(request.transcripts, isEmpty);
+      expect(request.captions, isEmpty);
+      expect(request.fieldLabels, isEmpty);
+    },
+  );
+
+  test(
+    'privacy-disabled probes cannot dispatch through an available service',
+    () async {
+      final _TestAiService service = _TestAiService();
+      final ProviderRegistry registry = ProviderRegistry(
+        descriptors: <ProviderDescriptor>[_backend(service)],
+        allows: (AiOperation _) => false,
+      );
+      expect(
+        await registry.testConnection(
+          service,
+          operation: AiOperation.extractFields,
+        ),
+        ProviderTestOutcome.unavailable,
+      );
+      expect(service.readCalls, 0);
+      expect(service.extractionRequests, isEmpty);
+    },
+  );
+
   test('a provider error that is not about the key is not called a network '
       'fault, and the message is never read', () async {
     final ProviderRegistry registry = _registry(
@@ -345,12 +391,16 @@ final class _TestAiService implements AiService {
   _TestAiService({this.readFailure});
 
   final Failure? readFailure;
+  int readCalls = 0;
+  final List<ExtractFieldsRequest> extractionRequests =
+      <ExtractFieldsRequest>[];
 
   @override
   bool get isAvailable => true;
 
   @override
   Future<Result<ReadTextResult>> readText(ReadTextRequest request) async {
+    readCalls++;
     final Failure? failure = readFailure;
     return failure == null
         ? const Success<ReadTextResult>(ReadTextResult(text: 'ok'))
@@ -361,6 +411,7 @@ final class _TestAiService implements AiService {
   Future<Result<ExtractFieldsResult>> extractFields(
     ExtractFieldsRequest request,
   ) async {
+    extractionRequests.add(request);
     return const Success<ExtractFieldsResult>(
       ExtractFieldsResult(fields: <String, String?>{}),
     );

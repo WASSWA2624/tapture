@@ -79,9 +79,7 @@ class SpeechSettingsSection extends ConsumerWidget {
             ),
           ],
           onChanged: (SpeechQuality quality) {
-            unawaited(
-              ref.read(speechQualitySettingProvider.notifier).set(quality),
-            );
+            unawaited(_writeQuality(context, ref, quality));
           },
         ),
         AsyncValueView<SpeechModelsView>(
@@ -122,6 +120,25 @@ class SpeechSettingsSection extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  static Future<void> _writeQuality(
+    BuildContext context,
+    WidgetRef ref,
+    SpeechQuality quality,
+  ) async {
+    final Result<void> result = await ref
+        .read(speechQualitySettingProvider.notifier)
+        .set(quality);
+    if (result case FailureResult<void>(
+      :final Failure failure,
+    ) when context.mounted) {
+      showAppSnack(
+        context,
+        Copy.of(context).failureMessage(failure),
+        tone: SnackTone.error,
+      );
+    }
   }
 
   static Widget _importButton(

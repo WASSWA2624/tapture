@@ -259,6 +259,15 @@ final class _RefusedHttp extends HttpOverrides {
 
 /// Raw socket connections are refused through [_network].
 final class _RefusedSockets extends IOOverrides {
+  // Dart 3.12.2's base async override omits the path terminator and reports
+  // existing directories as absent. Keep real filesystem metadata while this
+  // harness refuses network access (task 143).
+  @override
+  Future<FileSystemEntityType> fseGetType(
+    String path,
+    bool followLinks,
+  ) async => fseGetTypeSync(path, followLinks);
+
   @override
   Future<Socket> socketConnect(
     Object? host,

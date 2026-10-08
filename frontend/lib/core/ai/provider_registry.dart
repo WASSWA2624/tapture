@@ -225,15 +225,32 @@ final class ProviderRegistry {
     return _entries[id]?.keyHeldByBackend ?? true;
   }
 
-  /// Smallest call the test action may make. The outcome is decided from the
-  /// failure's type and [ProviderFailure.kind], never from its message.
-  Future<ProviderTestOutcome> testConnection(AiService service) async {
-    if (!service.isAvailable) {
+  /// Evidence-free read-text or extraction probe. The outcome is decided from
+  /// the failure's type and [ProviderFailure.kind], never from its message.
+  Future<ProviderTestOutcome> testConnection(
+    AiService service, {
+    AiOperation operation = AiOperation.readText,
+  }) async {
+    if (!_allows(operation) || !service.isAvailable) {
       return ProviderTestOutcome.unavailable;
     }
-    final Result<ReadTextResult> result = await service.readText(
-      const ReadTextRequest(imagePaths: <String>[]),
-    );
+    final Result<Object?> result = switch (operation) {
+      AiOperation.readText => await service.readText(
+        const ReadTextRequest(imagePaths: <String>[]),
+      ),
+      AiOperation.extractFields => await service.extractFields(
+        const ExtractFieldsRequest(
+          templateLabel: '',
+          fieldLabels: <String>[],
+          ocrText: '',
+          transcripts: <String>[],
+          captions: <String>[],
+          imagePaths: <String>[],
+        ),
+      ),
+      AiOperation.refineText || AiOperation.transcribe =>
+        const FailureResult<Object?>(ValidationFailure()),
+    };
     return result.fold(_outcome, (_) => ProviderTestOutcome.success);
   }
 }

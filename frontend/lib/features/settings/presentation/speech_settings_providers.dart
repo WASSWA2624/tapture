@@ -67,12 +67,16 @@ class _QualitySetting extends Notifier<String> {
   }
 
   /// Persists [quality]; the state follows once the write has committed.
-  Future<void> set(SpeechQuality quality) async {
+  Future<Result<void>> set(SpeechQuality quality) async {
     final SettingsStore store = ref.read(offlineStoreProvider);
-    await store.write(SettingKeys.speechQuality, quality.name);
+    final Result<void> result = await store.write(
+      SettingKeys.speechQuality,
+      quality.name,
+    );
     if (ref.mounted) {
       state = store.read(SettingKeys.speechQuality);
     }
+    return result;
   }
 }
 

@@ -13,9 +13,11 @@ import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/settings/presentation/about_screen.dart';
 
+import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
 
 void main() {
+  setUpAll(ScreenFonts.load);
   testWidgets('version, build and licences are shown', (
     WidgetTester tester,
   ) async {
@@ -165,9 +167,11 @@ Future<void> _pump(
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        theme: cell?.outdoor == true
-            ? buildOutdoorTheme(Brightness.light)
-            : buildTheme(brightness: cell?.brightness ?? Brightness.light),
+        theme: ScreenFonts.theme(
+          cell?.outdoor == true
+              ? buildOutdoorTheme(Brightness.light)
+              : buildTheme(brightness: cell?.brightness ?? Brightness.light),
+        ),
         builder: (BuildContext context, Widget? child) => MediaQuery(
           data: MediaQuery.of(
             context,

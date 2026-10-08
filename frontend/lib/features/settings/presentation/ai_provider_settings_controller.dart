@@ -37,6 +37,9 @@ typedef _AiView = ({
 });
 
 class _AiSettings extends Notifier<_AiView> {
+  bool _isTesting = false;
+  int _credentialStatusEpoch = 0;
+
   /// Providers and models are chosen for extraction, the step every
   /// record goes through; the pipeline's other steps follow the same
   /// choice. No internal step picker is shown (FE-SIMP-10).
@@ -55,9 +58,17 @@ class _AiSettings extends Notifier<_AiView> {
       _settings.read(SettingKeys.aiProvider),
       _settings.read(SettingKeys.aiModel),
     );
-    ref.listen(providerRegistryProvider, (_, _) {
+    ref.listen(providerRegistryProvider, (previous, _) {
       final selection = _validate(state.providerId, state.modelId);
       state = _with(fellBack: selection.fellBack);
+      final String? priorCredential = previous?.catalog
+          .where((value) => value.id == state.providerId)
+          .firstOrNull
+          ?.serverCredentialProvider;
+      if (selection.provider.serverCredentialProvider != null &&
+          selection.provider.serverCredentialProvider != priorCredential) {
+        unawaited(_readKeyStored());
+      }
     });
     unawaited(_readKeyStored());
     unawaited(_refreshCatalogue());
@@ -75,7 +86,8 @@ class _AiSettings extends Notifier<_AiView> {
   /// Every provider that can run the operation.
   List<ProviderDescriptor> get providers => <ProviderDescriptor>[
     if (!_registry.catalog.any(
-      (ProviderDescriptor value) => value.id == state.providerId,
+      (ProviderDescriptor value) =>
+          value.id == state.providerId && value.operations.contains(_operation),
     ))
       provider,
     ..._registry.catalog.where(
@@ -90,7 +102,8 @@ class _AiSettings extends Notifier<_AiView> {
   /// The chosen provider's models for the operation.
   List<ModelDescriptor> get models => <ModelDescriptor>[
     if (!provider.models.any(
-      (ModelDescriptor value) => value.id == state.modelId,
+      (ModelDescriptor value) =>
+          value.id == state.modelId && value.operations.contains(_operation),
     ))
       model,
     ...provider.models.where(
@@ -107,9 +120,10 @@ class _AiSettings extends Notifier<_AiView> {
         .where((ProviderDescriptor provider) => provider.id == providerId)
         .firstOrNull;
     if (chosen == null) return;
-    final ModelDescriptor defaultModel = chosen.models.firstWhere(
-      (ModelDescriptor model) => model.operations.contains(_operation),
-    );
+    final ModelDescriptor? defaultModel = chosen.models
+        .where((ModelDescriptor model) => model.operations.contains(_operation))
+        .firstOrNull;
+    if (defaultModel == null) return;
     final ({ProviderDescriptor provider, ModelDescriptor model, bool fellBack})
     selection = _validate(providerId, defaultModel.id);
     state = _with(
@@ -125,12 +139,18 @@ class _AiSettings extends Notifier<_AiView> {
 
   /// Chooses [modelId] on the current provider.
   void selectModel(String modelId) {
-    state = _with(modelId: modelId);
+    final selection = _validate(state.providerId, modelId);
+    state = _with(
+      modelId: selection.model.id,
+      fellBack: selection.fellBack,
+      test: ProviderTestView.empty,
+    );
   }
 
   /// Saves the choice, and [credential] when the provider keeps a device
   /// key and one was typed. True when a key was saved.
   Future<bool> save(String credential, {String? approvedCost}) async {
+    _credentialStatusEpoch++;
     state = _with(busy: true, clearFailure: true);
     final ProviderDescriptor chosen = provider;
     final String key = credential.trim();
@@ -183,9 +203,11 @@ class _AiSettings extends Notifier<_AiView> {
   /// Removes the device key and returns the selection to the keyless
   /// organisation provider in one action.
   Future<void> removeCredential() async {
-    if (provider.serverCredentialProvider == null && !provider.deviceKeyAllowed) {
+    if (provider.serverCredentialProvider == null &&
+        !provider.deviceKeyAllowed) {
       return;
     }
+    _credentialStatusEpoch++;
     state = _with(busy: true, clearFailure: true);
     final String? serverProvider = provider.serverCredentialProvider;
     if (serverProvider != null) {
@@ -244,10 +266,27 @@ class _AiSettings extends Notifier<_AiView> {
 
   /// Runs the smallest request through the chosen provider.
   Future<void> testConnection() async {
-    final ProviderTestOutcome outcome = await _registry.testConnection(
-      provider.service,
-    );
-    if (!ref.mounted) {
+    if (_isTesting || state.busy) return;
+    _isTesting = true;
+    final ProviderRegistry registry = _registry;
+    final String providerId = state.providerId;
+    final String modelId = state.modelId;
+    final service = provider.service;
+    final ProviderTestOutcome outcome;
+    try {
+      outcome = await registry.testConnection(
+        service is ProxyAiService
+            ? service.forProject(service.projectId, model: modelId)
+            : service,
+        operation: _operation,
+      );
+    } finally {
+      _isTesting = false;
+    }
+    if (!ref.mounted ||
+        state.providerId != providerId ||
+        state.modelId != modelId ||
+        !identical(registry, _registry)) {
       return;
     }
     state = _with(
@@ -269,13 +308,16 @@ class _AiSettings extends Notifier<_AiView> {
     // change cannot apply an older account's status to the new selection.
     await Future<void>.value();
     if (!ref.mounted) return;
+    final int epoch = ++_credentialStatusEpoch;
     final String providerId = state.providerId;
     final String? serverProvider = provider.serverCredentialProvider;
     if (serverProvider != null) {
       final Result<bool> status = await ref
           .read(serverCredentialClientProvider)
           .configured(serverProvider);
-      if (ref.mounted && state.providerId == providerId) {
+      if (ref.mounted &&
+          epoch == _credentialStatusEpoch &&
+          state.providerId == providerId) {
         switch (status) {
           case Success<bool>(:final bool value):
             state = _with(keyStored: value);
@@ -295,6 +337,7 @@ class _AiSettings extends Notifier<_AiView> {
       FailureResult<String?>() => false,
     };
     if (ref.mounted &&
+        epoch == _credentialStatusEpoch &&
         state.providerId == providerId &&
         present != state.keyStored) {
       state = _with(keyStored: present);

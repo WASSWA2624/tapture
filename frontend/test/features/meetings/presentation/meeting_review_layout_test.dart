@@ -1,5 +1,3 @@
-import 'dart:ui' show SemanticsFlag;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -18,6 +16,7 @@ import 'package:tapture/features/meetings/domain/decision.dart';
 import 'package:tapture/features/meetings/domain/meeting.dart';
 import 'package:tapture/features/meetings/presentation/meeting_review_screen.dart';
 
+import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
 
 void main() {
@@ -81,7 +80,14 @@ void main() {
         in <({String name, Size size, double scale})>[
           (name: 'compact', size: const Size(393, 852), scale: 1),
           (name: 'compact_text2', size: const Size(393, 852), scale: 2),
+          (
+            name: 'compact_landscape_text2',
+            size: const Size(393, 320),
+            scale: 2,
+          ),
+          (name: 'medium', size: const Size(800, 1280), scale: 1),
           (name: 'expanded', size: const Size(1200, 800), scale: 1),
+          (name: 'expanded_text2', size: const Size(1200, 800), scale: 2),
         ]) {
       testWidgets('review golden ${corner.name} ${mode.$1}', (
         WidgetTester tester,
@@ -173,6 +179,7 @@ Future<void> _pump(
   Locale locale = const Locale('en'),
   VoidCallback? onApprove,
 }) async {
+  await tester.runAsync(ScreenFonts.load);
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = cell.size;
   addTearDown(tester.view.resetPhysicalSize);
@@ -184,9 +191,11 @@ Future<void> _pump(
         locale: locale,
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        theme: cell.outdoor
-            ? buildOutdoorTheme(Brightness.light)
-            : buildTheme(brightness: cell.brightness),
+        theme: ScreenFonts.theme(
+          cell.outdoor
+              ? buildOutdoorTheme(Brightness.light)
+              : buildTheme(brightness: cell.brightness),
+        ),
         builder: (BuildContext context, Widget? child) => MediaQuery(
           data: MediaQuery.of(
             context,

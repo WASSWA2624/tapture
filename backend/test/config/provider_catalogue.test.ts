@@ -25,6 +25,16 @@ it('retains built-ins and parses additional providers for both protocols', () =>
   const config = testConfig({ AI_PROVIDER_CATALOGUE: JSON.stringify(entries) });
   assert.deepEqual(config.aiProviderCatalogue, entries);
   assert.equal(providerDefinitions(config).length, 4);
+  const baseDefault = catalogueProvider({
+    model: 'default',
+    models: ['default'],
+    modelCostCeilings: { default: 0.01 },
+  });
+  assert.deepEqual(
+    testConfig({ AI_PROVIDER_CATALOGUE: JSON.stringify([baseDefault]) })
+      .aiProviderCatalogue,
+    [baseDefault],
+  );
 });
 
 it('rejects malformed catalogue entries at boot without echoing configuration', () => {
@@ -44,6 +54,11 @@ it('rejects malformed catalogue entries at boot without echoing configuration', 
     { ...valid, models: ['small', 'small'] },
     { ...valid, models: ['../small'] },
     { ...valid, model: 'missing' },
+    {
+      ...valid,
+      models: ['small', 'default'],
+      modelCostCeilings: { small: 0.01, default: 0.2 },
+    },
     { ...valid, currency: 'USD' },
     { ...valid, modelCostCeilings: { small: 0 } },
     { ...valid, modelCostCeilings: { small: 0.1, large: -1 } },

@@ -99,6 +99,7 @@ void main() {
       ));
       expect(catalogue.models('field-ai').map((model) => model.id), <String>[
         'default',
+        'standard',
         'accurate',
       ]);
       expect(

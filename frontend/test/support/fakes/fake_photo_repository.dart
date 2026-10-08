@@ -3,21 +3,35 @@ import 'dart:async';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/lifecycle/deleted_entity.dart';
+import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
 
 /// In-memory [PhotoRepository] for feature tests that must not open a database.
 final class FakePhotoRepository implements PhotoRepository {
+  /// Creates a store with an injectable deletion clock for stable fixtures.
+  FakePhotoRepository({Clock? clock}) : _clock = clock ?? const SystemClock();
+
+  final Clock _clock;
   final Map<String, PhotoAsset> _rows = <String, PhotoAsset>{};
   final StreamController<void> _changes = StreamController<void>.broadcast();
   int _next = 0;
   final Map<String, DateTime> _deleted = <String, DateTime>{};
 
   @override
-  Stream<List<DeletedEntity>> watchDeleted() => _watch(() => <DeletedEntity>[
-    for (final PhotoAsset row in _rows.values)
-      if (_deleted.containsKey(row.id)) DeletedEntity(id: row.id, kind: DeletedEntityKind.photo,
-        name: row.relativePath.split('/').last, projectId: row.projectId, projectName: row.projectId, deletedAt: _deleted[row.id]!),
-  ]);
+  Stream<List<DeletedEntity>> watchDeleted() => _watch(
+    () => <DeletedEntity>[
+      for (final PhotoAsset row in _rows.values)
+        if (_deleted.containsKey(row.id))
+          DeletedEntity(
+            id: row.id,
+            kind: DeletedEntityKind.photo,
+            name: row.relativePath.split('/').last,
+            projectId: row.projectId,
+            projectName: row.projectId,
+            deletedAt: _deleted[row.id]!,
+          ),
+    ],
+  );
 
   @override
   Future<Result<void>> restore(String id) async {
@@ -77,14 +91,17 @@ final class FakePhotoRepository implements PhotoRepository {
     if (!_rows.containsKey(id)) {
       return const FailureResult<void>(_missing);
     }
-    _deleted.putIfAbsent(id, DateTime.now);
+    _deleted.putIfAbsent(id, _clock.nowUtc);
     _emit();
     return const Success<void>(null);
   }
 
   List<PhotoAsset> _filedOn(String recordId) {
     return _rows.values
-        .where((PhotoAsset row) => row.recordId == recordId && !_deleted.containsKey(row.id))
+        .where(
+          (PhotoAsset row) =>
+              row.recordId == recordId && !_deleted.containsKey(row.id),
+        )
         .toList();
   }
 

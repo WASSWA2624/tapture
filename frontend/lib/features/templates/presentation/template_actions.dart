@@ -5,18 +5,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/forms/app_form.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
 
 import '../domain/template_def.dart';
-import '../templates.dart' show templateRepositoryProvider;
 import 'template_duplicate_action.dart';
+import 'template_library_controller.dart';
 import 'template_locations.dart';
 
 /// Shared commands for saved project and global-library templates.
@@ -110,11 +110,10 @@ Future<void> _delete(
   if (!confirmed || !context.mounted) {
     return;
   }
-  final repository = ref.read(templateRepositoryProvider);
-  final Result<void> result = await repository.delete(
-    template.id,
-    reason: _deleteReason,
+  final TemplateLibraryController controller = ref.read(
+    templateLibraryControllerProvider,
   );
+  final Result<void> result = await controller.delete(template.id);
   if (!context.mounted) return;
   switch (result) {
     case FailureResult<void>(:final failure):
@@ -130,7 +129,7 @@ Future<void> _delete(
         localCopy.templatesDeleted,
         undoLabel: localCopy.undo,
         onUndo: () => unawaited(() async {
-          final Result<void> restored = await repository.restore(template.id);
+          final Result<void> restored = await controller.restore(template.id);
           if (!context.mounted) return;
           if (restored case FailureResult<void>(:final failure)) {
             showAppSnack(
@@ -149,8 +148,6 @@ void _open(BuildContext context, String id) {
   context.go(TemplateLocations.detail(context, id));
 }
 
-const String _deleteReason = 'Removed from the template list.';
-
 Future<void> _rename(
   BuildContext context,
   WidgetRef ref,
@@ -158,35 +155,27 @@ Future<void> _rename(
 ) async {
   final LocalizedCopy localCopy = Copy.of(context);
 
-  final String? name = await showAppSheet<String>(
+  final TemplateLibraryController controller = ref.read(
+    templateLibraryControllerProvider,
+  );
+  await showAppSheet<void>(
     context,
     title: localCopy.templatesEdit,
     contentSized: true,
     builder: (BuildContext sheetContext) {
-      return _RenameTemplate(initial: template.name);
+      return _RenameTemplate(
+        initial: template.name,
+        onSave: (String name) => controller.rename(template.id, name),
+      );
     },
   );
-  if (name == null || !context.mounted) {
-    return;
-  }
-  final Result<TemplateDef> result = await ref
-      .read(templateRepositoryProvider)
-      .save(template.copyWith(name: name));
-  if (!context.mounted) return;
-  if (result case FailureResult<TemplateDef>(:final failure)) {
-    showAppSnack(
-      context,
-      failure.message,
-      tone: SnackTone.error,
-      localizedMessage: failure.explanation,
-    );
-  }
 }
 
 class _RenameTemplate extends StatefulWidget {
-  const _RenameTemplate({required this.initial});
+  const _RenameTemplate({required this.initial, required this.onSave});
 
   final String initial;
+  final Future<Result<void>> Function(String name) onSave;
 
   @override
   State<_RenameTemplate> createState() => _RenameTemplateState();
@@ -208,23 +197,36 @@ class _RenameTemplateState extends State<_RenameTemplate> with StateRefresh {
   Widget build(BuildContext context) {
     final LocalizedCopy localCopy = Copy.of(context);
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        AppTextField(label: localCopy.projectName, controller: _name),
-        if (_error != null) Text(_error!),
-        AppButton(
-          label: localCopy.save,
-          onPressed: () {
-            final String trimmed = _name.text.trim();
-            if (trimmed.isEmpty) {
-              refresh(() => _error = Copy.of(context).nameRequired);
-              return;
-            }
-            Navigator.of(context).pop(trimmed);
+    return AppForm(
+      compact: true,
+      fields: <Widget>[
+        AppTextField(
+          label: localCopy.projectName,
+          controller: _name,
+          errorText: _error,
+          onChanged: (_) {
+            if (_error != null) refresh(() => _error = null);
           },
         ),
       ],
+      submitLabel: localCopy.save,
+      onSubmit: () async {
+        final String trimmed = _name.text.trim();
+        if (trimmed.isEmpty) {
+          refresh(() => _error = localCopy.nameRequired);
+          return false;
+        }
+        final Result<void> result = await widget.onSave(trimmed);
+        if (!context.mounted) return false;
+        switch (result) {
+          case FailureResult<void>(:final failure):
+            refresh(() => _error = localCopy.failureMessage(failure));
+            return false;
+          case Success<void>():
+            Navigator.of(context).pop();
+            return true;
+        }
+      },
     );
   }
 }

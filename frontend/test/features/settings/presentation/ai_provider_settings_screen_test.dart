@@ -134,7 +134,8 @@ void main() {
     await tester.tap(find.text(Copy.apiKeyTest));
     await tester.pumpAndSettle();
     expect(find.text(Copy.apiKeySuccess), findsOneWidget);
-    expect(device.readCalls, 1);
+    expect(device.readCalls, 0);
+    expect(device.extractCalls, 1);
   });
 
   testWidgets('a saved key is never shown and one confirmed action removes '
@@ -291,6 +292,7 @@ ProviderRegistry _registry(AiService backend, AiService device) {
 
 final class _SuccessfulAiService implements AiService {
   int readCalls = 0;
+  int extractCalls = 0;
 
   @override
   bool get isAvailable => true;
@@ -305,6 +307,7 @@ final class _SuccessfulAiService implements AiService {
   Future<Result<ExtractFieldsResult>> extractFields(
     ExtractFieldsRequest request,
   ) async {
+    extractCalls += 1;
     return const Success<ExtractFieldsResult>(
       ExtractFieldsResult(fields: <String, String?>{}),
     );

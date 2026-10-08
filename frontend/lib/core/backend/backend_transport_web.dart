@@ -50,7 +50,9 @@ Future<({int status, Uint8List body})> sendBytes({
 }) async {
   if (cancellationToken?.isCancelled == true) throw const CancelledFailure();
   final _AbortController controller = _AbortController();
-  final void Function()? detach = cancellationToken?.register(controller.abort);
+  final void Function()? detach = cancellationToken?.register(
+    () => controller.abort(),
+  );
   try {
     final Future<({int status, Uint8List body})> pending = (() async {
       final _Response response = await _fetch(

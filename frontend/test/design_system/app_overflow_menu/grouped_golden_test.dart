@@ -6,7 +6,10 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 
+import '../../support/screen_fonts.dart';
+
 void main() {
+  setUpAll(ScreenFonts.load);
   for (final ({String name, ThemeData theme}) mode
       in <({String name, ThemeData theme})>[
         (name: 'light', theme: buildTheme(brightness: Brightness.light)),
@@ -26,7 +29,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: mode.theme,
+            theme: ScreenFonts.theme(mode.theme),
             builder: (BuildContext context, Widget? child) => MediaQuery(
               data: MediaQuery.of(
                 context,

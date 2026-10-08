@@ -1,0 +1,6 @@
+D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/Debug/1ur14c41/x86_64/CMakeFiles/tw_ggml_base.dir
+D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/Debug/1ur14c41/x86_64/CMakeFiles/tw_ggml_cpu.dir
+D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/Debug/1ur14c41/x86_64/CMakeFiles/tw_whisper.dir
+D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/Debug/1ur14c41/x86_64/CMakeFiles/tapture_whisper.dir
+D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/Debug/1ur14c41/x86_64/CMakeFiles/edit_cache.dir
+D:/coding/apps/flutter/tapture/frontend/packages/tapture_whisper/android/.cxx/Debug/1ur14c41/x86_64/CMakeFiles/rebuild_cache.dir

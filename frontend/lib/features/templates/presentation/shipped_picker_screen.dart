@@ -12,6 +12,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -317,119 +318,119 @@ class _ShippedPickerScreenState extends ConsumerState<ShippedPickerScreen>
       ...shipped,
     ];
     final double gutter = AppPage.gutter(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.fromLTRB(gutter, Space.x1, gutter, Space.x2),
-          child: AppSearchField(
-            hint: localCopy.shippedLibrarySearchHint,
-            text: _query,
-            onChanged: (String value) => refresh(() => _query = value),
-            onFilter: () =>
-                unawaited(showShippedLibraryFilters(context, ref, rows)),
-            activeFilterCount: active,
-            resultCount: !searching && active == 0
-                ? null
-                : shown.length + saved.length,
-          ),
-        ),
-        if (searching &&
-            shown.isNotEmpty &&
-            ref.watch(shippedSuggestionServiceProvider) != null)
+    return AppListViewport(
+      header: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
           Padding(
-            padding: EdgeInsets.fromLTRB(gutter, Space.x0, gutter, Space.x2),
-            child: AppButton(
-              label: localCopy.shippedSuggestWithAi,
-              variant: AppButtonVariant.secondary,
-              busy: suggestion.busy,
-              onPressed: () => unawaited(
-                ref
-                    .read(shippedSuggestionsProvider.notifier)
-                    .suggest(_query, shown),
+            padding: EdgeInsets.fromLTRB(gutter, Space.x1, gutter, Space.x2),
+            child: AppSearchField(
+              hint: localCopy.shippedLibrarySearchHint,
+              text: _query,
+              onChanged: (String value) => refresh(() => _query = value),
+              onFilter: () =>
+                  unawaited(showShippedLibraryFilters(context, ref, rows)),
+              activeFilterCount: active,
+              resultCount: !searching && active == 0
+                  ? null
+                  : shown.length + saved.length,
+            ),
+          ),
+          if (searching &&
+              shown.isNotEmpty &&
+              ref.watch(shippedSuggestionServiceProvider) != null)
+            Padding(
+              padding: EdgeInsets.fromLTRB(gutter, Space.x0, gutter, Space.x2),
+              child: AppButton(
+                label: localCopy.shippedSuggestWithAi,
+                variant: AppButtonVariant.secondary,
+                busy: suggestion.busy,
+                onPressed: () => unawaited(
+                  ref
+                      .read(shippedSuggestionsProvider.notifier)
+                      .suggest(_query, shown),
+                ),
               ),
             ),
-          ),
-        if (hasSuggestion)
-          AppListTile(
-            title: localCopy.shippedAiSuggestion,
-            subtitle: localCopy.shippedAiSuggestionHelp,
-            trailing: AppIconButton(
-              icon: AppIcons.close,
-              semanticLabel: localCopy.close,
-              tooltip: localCopy.close,
-              onPressed: () =>
-                  ref.read(shippedSuggestionsProvider.notifier).clear(),
+          if (hasSuggestion)
+            AppListTile(
+              title: localCopy.shippedAiSuggestion,
+              subtitle: localCopy.shippedAiSuggestionHelp,
+              trailing: AppIconButton(
+                icon: AppIcons.close,
+                semanticLabel: localCopy.close,
+                tooltip: localCopy.close,
+                onPressed: () =>
+                    ref.read(shippedSuggestionsProvider.notifier).clear(),
+              ),
+              dense: true,
             ),
-            dense: true,
-          ),
-        if (suggestion.query == _query && suggestion.failure != null)
-          AppListTile(
-            title: suggestion.failure!.message,
-            subtitle: suggestion.failure!.recoveryAction,
-            dense: true,
-          ),
-        Expanded(
-          child: items.isEmpty
-              ? AppEmptyState(
-                  icon: AppIcons.searchEmpty,
-                  headline: localCopy.shippedLibraryNoMatch(_query),
-                  message: localCopy.shippedLibraryNoMatchMessage,
-                  actionLabel: localCopy.searchClearFilters,
-                  onAction: () {
-                    refresh(() => _query = '');
-                    ref.read(shippedLibraryFilterProvider.notifier).clear();
-                    ref.read(shippedSuggestionsProvider.notifier).clear();
-                  },
-                )
-              : ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (BuildContext _, int index) {
-                    return switch (items[index]) {
-                      _Heading(:final String title) => AppSectionHeader(
-                        title: title,
-                      ),
-                      _Category(
-                        :final String code,
-                        :final String title,
-                        :final bool expanded,
-                      ) =>
-                        AppSectionHeader(
-                          key: ValueKey<String>('shipped-category-$code'),
-                          title: title,
-                          dense: true,
-                          expanded: expanded,
-                          onToggle: () => ref
-                              .read(shippedLibraryExpandedProvider.notifier)
-                              .toggle(code),
-                        ),
-                      _Template(:final ShippedTemplateEntry entry) =>
-                        _libraryRow(entry, attached),
-                      _Saved(:final TemplateDef template) => AppListTile(
-                        key: ValueKey<String>(
-                          'library-template-${template.id}',
-                        ),
-                        title: template.name,
-                        subtitle: localCopy.fieldsCount(template.fields.length),
-                        trailing: widget.projectId == null
-                            ? AppOverflowMenu(
-                                items: TemplateActions.items(
-                                  context,
-                                  ref,
-                                  template,
-                                  0,
-                                ),
-                              )
-                            : null,
-                        onTap: widget.projectId == null
-                            ? () => TemplateActions.open(context, template.id)
-                            : () => unawaited(_attachSaved(template)),
-                      ),
-                    };
-                  },
-                ),
-        ),
-      ],
+          if (suggestion.query == _query && suggestion.failure != null)
+            AppListTile(
+              title: suggestion.failure!.message,
+              subtitle: suggestion.failure!.recoveryAction,
+              dense: true,
+            ),
+        ],
+      ),
+      body: items.isEmpty
+          ? AppEmptyState(
+              icon: AppIcons.searchEmpty,
+              headline: localCopy.shippedLibraryNoMatch(_query),
+              message: localCopy.shippedLibraryNoMatchMessage,
+              actionLabel: localCopy.searchClearFilters,
+              onAction: () {
+                refresh(() => _query = '');
+                ref.read(shippedLibraryFilterProvider.notifier).clear();
+                ref.read(shippedSuggestionsProvider.notifier).clear();
+              },
+            )
+          : ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (BuildContext _, int index) {
+                return switch (items[index]) {
+                  _Heading(:final String title) => AppSectionHeader(
+                    title: title,
+                  ),
+                  _Category(
+                    :final String code,
+                    :final String title,
+                    :final bool expanded,
+                  ) =>
+                    AppSectionHeader(
+                      key: ValueKey<String>('shipped-category-$code'),
+                      title: title,
+                      dense: true,
+                      expanded: expanded,
+                      onToggle: () => ref
+                          .read(shippedLibraryExpandedProvider.notifier)
+                          .toggle(code),
+                    ),
+                  _Template(:final ShippedTemplateEntry entry) => _libraryRow(
+                    entry,
+                    attached,
+                  ),
+                  _Saved(:final TemplateDef template) => AppListTile(
+                    key: ValueKey<String>('library-template-${template.id}'),
+                    title: template.name,
+                    subtitle: localCopy.fieldsCount(template.fields.length),
+                    trailing: widget.projectId == null
+                        ? AppOverflowMenu(
+                            items: TemplateActions.items(
+                              context,
+                              ref,
+                              template,
+                              0,
+                            ),
+                          )
+                        : null,
+                    onTap: widget.projectId == null
+                        ? () => TemplateActions.open(context, template.id)
+                        : () => unawaited(_attachSaved(template)),
+                  ),
+                };
+              },
+            ),
     );
   }
 
@@ -606,11 +607,13 @@ List<Widget> _about(
       title: (localizedCopy ?? Copy.english).shippedCategoryLabel,
       subtitle: '${entry.code} · ${entry.category.title}',
       dense: true,
+      wrapText: true,
     ),
     AppListTile(
       title: (localizedCopy ?? Copy.english).shippedRecordTypeLabel,
       subtitle: type.title,
       dense: true,
+      wrapText: true,
     ),
     AppListTile(
       title: (localizedCopy ?? Copy.english).shippedPrivacyTierLabel,
@@ -619,6 +622,7 @@ List<Widget> _about(
         entry.rollout,
       ),
       dense: true,
+      wrapText: true,
     ),
     for (final (String label, String text) in <(String, String)>[
       ((localizedCopy ?? Copy.english).shippedCaptureLabel, type.capture),
@@ -630,7 +634,7 @@ List<Widget> _about(
       ((localizedCopy ?? Copy.english).shippedReviewLabel, type.review),
     ])
       if (text.isNotEmpty)
-        AppListTile(title: label, subtitle: text, dense: true),
+        AppListTile(title: label, subtitle: text, dense: true, wrapText: true),
   ];
 }
 
@@ -657,6 +661,7 @@ List<Widget> _fieldRows(TemplateDef template, {LocalizedCopy? localizedCopy}) {
           _requiredness(field.requiredness, localizedCopy: localizedCopy),
         ),
         dense: true,
+        wrapText: true,
       ),
     );
   }

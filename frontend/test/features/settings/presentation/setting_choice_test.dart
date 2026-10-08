@@ -6,29 +6,32 @@ import 'package:tapture/core/widgets/fields/choice.dart';
 import 'package:tapture/features/settings/presentation/setting_choice.dart';
 
 void main() {
-  testWidgets('alwaysSheet searches without changing on cancel or current choice', (WidgetTester tester) async {
-    final List<String> picked = <String>[];
-    await _pump(tester, value: 'a', onChanged: picked.add, alwaysSheet: true);
-    expect(find.text('Bravo'), findsNothing);
-    await tester.tap(find.text('Alpha'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Alpha').last);
-    await tester.pumpAndSettle();
-    expect(picked, isEmpty);
-    await tester.tap(find.text('Alpha'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'brav');
-    await tester.pumpAndSettle();
-    expect(find.text('Bravo'), findsOneWidget);
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(picked, isEmpty);
-    await tester.tap(find.text('Alpha'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Bravo'));
-    await tester.pumpAndSettle();
-    expect(picked, <String>['b']);
-  });
+  testWidgets(
+    'alwaysSheet searches without changing on cancel or current choice',
+    (WidgetTester tester) async {
+      final List<String> picked = <String>[];
+      await _pump(tester, value: 'a', onChanged: picked.add, alwaysSheet: true);
+      expect(find.text('Bravo'), findsNothing);
+      await tester.tap(find.text('Alpha'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Alpha').last);
+      await tester.pumpAndSettle();
+      expect(picked, isEmpty);
+      await tester.tap(find.text('Alpha'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'brav');
+      await tester.pumpAndSettle();
+      expect(find.text('Bravo'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(picked, isEmpty);
+      await tester.tap(find.text('Alpha'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Bravo'));
+      await tester.pumpAndSettle();
+      expect(picked, <String>['b']);
+    },
+  );
   testWidgets('shows its name, every choice and what it changes', (
     WidgetTester tester,
   ) async {

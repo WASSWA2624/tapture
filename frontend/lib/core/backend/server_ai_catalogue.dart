@@ -94,7 +94,7 @@ final class ServerAiCatalogue {
         operations: operations,
       ),
       for (final String model in enabled)
-        if (model != row?['model'])
+        if (model != 'default')
           ModelDescriptor(id: model, label: model, operations: operations),
     ];
   }

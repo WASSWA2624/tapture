@@ -110,6 +110,7 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen>
         fields: <Widget>[
           AppTextField(
             label: localCopy.projectName,
+            wrapLabel: true,
             controller: _name!,
             requiredness: FieldRequiredness.required,
             textInputAction: TextInputAction.next,
@@ -120,6 +121,7 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen>
           ),
           AppTextField(
             label: localCopy.projectDescription,
+            wrapLabel: true,
             controller: _description!,
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.next,
@@ -127,6 +129,7 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen>
           ),
           AppTextField(
             label: localCopy.projectOrganisation,
+            wrapLabel: true,
             controller: _organisation!,
             requiredness: FieldRequiredness.optional,
             textInputAction: TextInputAction.next,

@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 
@@ -61,7 +64,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
               options: _voiceLanguages(localCopy),
               onChanged: (String? tag) {
                 if (tag != null) {
-                  unawaited(ref.read(voiceLanguageProvider.notifier).set(tag));
+                  unawaited(_writeLanguage(context, ref, tag));
                 }
               },
             ),
@@ -99,11 +102,34 @@ class _VoiceLanguage extends Notifier<String> {
   }
 
   /// Persists [tag]; the state follows once the write has committed.
-  Future<void> set(String tag) async {
+  Future<Result<void>> set(String tag) async {
     final SettingsStore store = ref.read(offlineStoreProvider);
-    await store.write(SettingKeys.voiceLanguage, tag);
+    final Result<void> result = await store.write(
+      SettingKeys.voiceLanguage,
+      tag,
+    );
     if (ref.mounted) {
       state = store.read(SettingKeys.voiceLanguage);
     }
+    return result;
+  }
+}
+
+Future<void> _writeLanguage(
+  BuildContext context,
+  WidgetRef ref,
+  String tag,
+) async {
+  final Result<void> result = await ref
+      .read(voiceLanguageProvider.notifier)
+      .set(tag);
+  if (result case FailureResult<void>(
+    :final Failure failure,
+  ) when context.mounted) {
+    showAppSnack(
+      context,
+      Copy.of(context).failureMessage(failure),
+      tone: SnackTone.error,
+    );
   }
 }

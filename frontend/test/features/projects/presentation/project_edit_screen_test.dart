@@ -124,28 +124,30 @@ void main() {
   });
 
   for (final ScreenMatrix cell in ScreenMatrix.cells) {
-    testWidgets('live edit-name validation fits ${cell.description}', (
-      WidgetTester tester,
-    ) async {
-      tester.view.devicePixelRatio = 1;
-      tester.view.physicalSize = cell.size;
-      tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      final FakeProjectRepository repo = FakeProjectRepository();
-      addTearDown(repo.dispose);
-      _ok(await repo.create(aProject(name: 'Alpha')));
-      await _pump(tester, repo: repo, cell: cell);
-      await tester.pump();
-      await tester.enterText(find.byType(TextField).first, '');
-      await tester.tap(find.byType(AppPrimaryAction));
-      await tester.pump();
-      await tester.enterText(find.byType(TextField).first, 'Beta');
-      await tester.pumpAndSettle();
-      expect(find.text(Copy.nameRequired), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'live edit-name validation fits ${cell.description}',
+      (WidgetTester tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = cell.size;
+        tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        final FakeProjectRepository repo = FakeProjectRepository();
+        addTearDown(repo.dispose);
+        _ok(await repo.create(aProject(name: 'Alpha')));
+        await _pump(tester, repo: repo, cell: cell);
+        await tester.pump();
+        await tester.enterText(find.byType(TextField).first, '');
+        await tester.tap(find.byType(AppPrimaryAction));
+        await tester.pump();
+        await tester.enterText(find.byType(TextField).first, 'Beta');
+        await tester.pumpAndSettle();
+        expect(find.text(Copy.nameRequired), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+      variant: TargetPlatformVariant.all(),
+    );
   }
   testWidgets('a populated form shows the open project', (
     WidgetTester tester,

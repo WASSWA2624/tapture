@@ -128,6 +128,15 @@ void main() {
       expect(choice.provider.id, keyless.id);
       expect(choice.model.id, 'accurate');
       expect(choice.fellBack, isFalse);
+      final baseModel = registry.validateSelection(
+        providerId: keyless.id,
+        modelId: 'standard',
+        operation: AiOperation.extractFields,
+        projectId: 'project',
+      );
+      expect(baseModel.provider.id, keyless.id);
+      expect(baseModel.model.id, 'standard');
+      expect(baseModel.fellBack, isFalse);
       final unsupported = registry.validateSelection(
         providerId: keyless.id,
         modelId: 'accurate',

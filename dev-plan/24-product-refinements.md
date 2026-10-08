@@ -5596,143 +5596,374 @@ The linked feedback prompt's per-item Scope and named tests are the exact invent
 #### W1 — Preserve and clarify meeting review edits
 
 - [x] Notes/minutes entered through the production route survive reopen, rotation and asynchronous updates; failed saves preserve text and expose retry.
-- [ ] Summary counts are labelled, idle space is compact, and live/stored transcripts remain reachable throughout the full matrix.
+- [x] Summary counts are labelled, idle space is compact, and live/stored transcripts remain reachable throughout the full matrix.
 - [x] Original notes, raw audio and transcript versions remain unchanged; legacy/package/merge/export and production-route integration tests pass.
-- [ ] FBK0000187 is resolved under the approved D1 interpretation.
+- [x] FBK0000187 is resolved under the approved D1 interpretation.
 
 #### W2 — Offer template setup without blocking capture
 
 - [x] No-template projects offer Add template as primary and an enabled raw-capture entry as secondary.
 - [x] Attaching a template restores the normal capture primary action without manual refresh, preserving project selection.
-- [ ] Offline capture succeeds before template setup; all named states and matrix tests pass.
-- [ ] FBK0000185 is resolved without adding a capture prerequisite.
+- [x] Offline capture succeeds before template setup; all named states and matrix tests pass.
+- [x] FBK0000185 is resolved without adding a capture prerequisite.
 
 #### W3 — Validate project names while editing
 
 - [x] A valid edit clears the pictured stale error before submission; clearing a touched name shows the correct inline error.
 - [x] Submit uses the same rule and never loses entered values on failure.
-- [ ] Create/Edit name tests and the matrix pass; FBK0000184 is resolved.
+- [x] Create/Edit name tests and the matrix pass; FBK0000184 is resolved.
 
 #### W4 — Return through home screens before exit
 
-- [ ] Project detail → project home → Projects → native exit is deterministic; other branch roots first return to Projects.
-- [ ] Dirty input and capture guards take precedence; cancelling a discard keeps the route and content.
-- [ ] iOS/browser/desktop exclusions behave exactly as described; resize and matrix coverage pass.
-- [ ] FBK0000169 is resolved under D3.
+- [x] Project detail → project home → Projects → native exit is deterministic; other branch roots first return to Projects.
+- [x] Dirty input and capture guards take precedence; cancelling a discard keeps the route and content.
+- [x] iOS/browser/desktop exclusions behave exactly as described; resize and matrix coverage pass.
+- [x] FBK0000169 is resolved under D3.
 
 #### W5 — Group project commands in the shared menu
 
-- [ ] Every existing permitted project action appears once in the specified order and executes the unchanged callback.
-- [ ] Shared menu headings are not selectable; keyboard traversal, touch targets and wrapped labels pass the matrix.
-- [ ] Ungrouped callers retain their behavior; gallery and shared goldens pass.
-- [ ] FBK0000186 is resolved.
+- [x] Every existing permitted project action appears once in the specified order and executes the unchanged callback.
+- [x] Shared menu headings are not selectable; keyboard traversal, touch targets and wrapped labels pass the matrix.
+- [x] Ungrouped callers retain their behavior; gallery and shared goldens pass.
+- [x] FBK0000186 is resolved.
 
 #### W6 — Remove Projects filter controls
 
 - [x] Projects has no filter button, badge, filter sheet, and no filter page; stale filter state cannot silently hide projects.
-- [ ] Search, pin ordering and explicit archived-project access work across the matrix; legacy route redirects safely.
-- [ ] All five entries are resolved by this single shared Projects change.
+- [x] Search, pin ordering and explicit archived-project access work across the matrix; legacy route redirects safely.
+- [x] All five entries are resolved by this single shared Projects change.
 
 #### W7 — Remove global queue and transcript shortcuts
 
-- [ ] Both shortcuts are absent globally at every width while project entry points and existing deep links still work.
-- [ ] Four primary destinations and W4 Back behavior remain intact; jobs and transcripts are retained.
-- [ ] Both entries and all matrix/navigation tests are resolved.
+- [x] Both shortcuts are absent globally at every width while project entry points and existing deep links still work.
+- [x] Four primary destinations and W4 Back behavior remain intact; jobs and transcripts are retained.
+- [x] Both entries and all matrix/navigation tests are resolved.
 
 #### W8 — Open project packages directly and compact import
 
 - [x] Projects displays the exact requested label and opens the supported-package picker in one action, without the generic introduction.
-- [ ] The retained generic Import screen is compact, with expandable format help and all existing routes/formats working.
-- [ ] Unsupported selections never enter project storage; cancellations and failures preserve state.
-- [ ] Both feedback entries, picker-platform cases and the full matrix pass.
+- [x] The retained generic Import screen is compact, with expandable format help and all existing routes/formats working.
+- [x] Unsupported selections never enter project storage; cancellations and failures preserve state.
+- [x] Both feedback entries, picker-platform cases and the full matrix pass.
 
 #### W9 — Remove repository links from About
 
-- [ ] About contains no repository links; version/build/licences remain usable across all states and layouts.
-- [ ] No repository documentation is deleted; FBK0000183 is resolved.
+- [x] About contains no repository links; version/build/licences remain usable across all states and layouts.
+- [x] No repository documentation is deleted; FBK0000183 is resolved.
 
 #### W10 — Remove the Organisation settings shortcut
 
-- [ ] Organisation is absent from Settings across the matrix; explicit setup and existing account links remain functional.
-- [ ] Sessions, cached grants and offline capture are preserved; FBK0000179 is resolved under D9.
+- [x] Organisation is absent from Settings across the matrix; explicit setup and existing account links remain functional.
+- [x] Sessions, cached grants and offline capture are preserved; FBK0000179 is resolved under D9.
 
 #### W11 — Move relay access into project settings
 
-- [ ] Global Settings no longer exposes relay; Project settings opens the correct existing controls at every width.
-- [ ] Existing links recover safely; encrypted queues/settings are unchanged and navigation triggers no transfer.
-- [ ] Independent access-wiring review and applicable platform/matrix tests pass; FBK0000180 is resolved.
+- [x] Global Settings no longer exposes relay; Project settings opens the correct existing controls at every width.
+- [x] Existing links recover safely; encrypted queues/settings are unchanged and navigation triggers no transfer.
+- [x] Independent access-wiring review and applicable platform/matrix tests pass; FBK0000180 is resolved.
 
 #### W12 — Collapse advanced capture defaults
 
-- [ ] The initial screen exposes only the specified primary controls plus two collapsed summaries; every existing setting remains reachable.
-- [ ] Disclosure/hidden controls leave settings, permissions and existing files unchanged.
-- [ ] Stored values survive reopen and failed writes; matrix tests pass and FBK0000181 is resolved.
+- [x] The initial screen exposes only the specified primary controls plus two collapsed summaries; every existing setting remains reachable.
+- [x] Disclosure/hidden controls leave settings, permissions and existing files unchanged.
+- [x] Stored values survive reopen and failed writes; matrix tests pass and FBK0000181 is resolved.
 
 #### W13 — Compact language and speech controls
 
-- [ ] The six-row selector and permanently expanded inventory are replaced by the specified compact controls without losing an action.
-- [ ] Speech health/recovery remains visible; locale, quality and model state remain unchanged by disclosure.
-- [ ] Matrix, offline speech and platform-availability tests pass; FBK0000182 is resolved.
+- [x] The six-row selector and permanently expanded inventory are replaced by the specified compact controls without losing an action.
+- [x] Speech health/recovery remains visible; locale, quality and model state remain unchanged by disclosure.
+- [x] Matrix, offline speech and platform-availability tests pass; FBK0000182 is resolved.
 
 #### W14 — Expose shipped and custom templates globally
 
-- [ ] Global Templates lists shipped assets and editable custom-library rows before a project exists.
-- [ ] Shipped originals expose no edit/delete action; customization creates a separate durable editable copy.
-- [ ] Project attachment creates an independent versioned copy; existing project templates and package formats are unchanged.
-- [ ] Repository/flow/matrix tests pass; FBK0000170 is resolved with no schema migration.
+- [x] Global Templates lists shipped assets and editable custom-library rows before a project exists.
+- [x] Shipped originals expose no edit/delete action; customization creates a separate durable editable copy.
+- [x] Project attachment creates an independent versioned copy; existing project templates and package formats are unchanged.
+- [x] Repository/flow/matrix tests pass; FBK0000170 is resolved with no schema migration.
 
 #### W15 — Include deleted projects and files in recycling
 
-- [ ] Deleted projects, records and independently deleted managed files appear with the specified ownership/deduplication rules.
-- [ ] Restore is durable, audited, retryable and preserves prior descendant deletions and never overwrites a live file.
-- [ ] Raw bytes and retention remain unchanged; permanent removal is explicitly records-only.
-- [ ] Real repository/store and offline flow tests pass with the matrix; FBK0000176 is resolved.
+- [x] Deleted projects, records and independently deleted managed files appear with the specified ownership/deduplication rules.
+- [x] Restore is durable, audited, retryable and preserves prior descendant deletions and never overwrites a live file.
+- [x] Raw bytes and retention remain unchanged; permanent removal is explicitly records-only.
+- [x] Real repository/store and offline flow tests pass with the matrix; FBK0000176 is resolved.
 
 #### W16 — Configure supported AI providers in a compact flow
 
-- [ ] Configured providers for both existing protocols appear in the shared searchable catalogue with correct models/capabilities; unsupported protocols are rejected without a universal-compatibility claim.
-- [ ] Existing selections, ciphertext and receipts survive the real PostgreSQL migration; unknown/removed accounts never silently switch billing.
-- [ ] Keyless routing has no credential lookup, preserves exact provider/account identity and applies the same quotas/permissions; endpoints remain administrator-only and secrets never leave custody.
-- [ ] Provider selection/search never invokes an external model; existing authenticated metadata refresh remains offline-gated, and testing/credential writes require explicit actions.
-- [ ] Late catalogue updates reach processing and Settings, offline capture remains available, and compact UI/error/recovery behavior passes the full matrix.
-- [ ] Backend verification, frontend/contract/integration tests and independent security review pass; FBK0000177 and FBK0000178 are resolved under D14/D15.
+- [x] Configured providers for both existing protocols appear in the shared searchable catalogue with correct models/capabilities; unsupported protocols are rejected without a universal-compatibility claim.
+- [x] Existing selections, ciphertext and receipts survive the real PostgreSQL migration; unknown/removed accounts never silently switch billing.
+- [x] Keyless routing has no credential lookup, preserves exact provider/account identity and applies the same quotas/permissions; endpoints remain administrator-only and secrets never leave custody.
+- [x] Provider selection/search never invokes an external model; existing authenticated metadata refresh remains offline-gated, and testing/credential writes require explicit actions.
+- [x] Late catalogue updates reach processing and Settings, offline capture remains available, and compact UI/error/recovery behavior passes the full matrix.
+- [x] Backend verification, frontend/contract/integration tests and independent security review pass; FBK0000177 and FBK0000178 are resolved under D14/D15.
 
 #### Integrated verification
 
-- [ ] Changed Dart is formatted and analyzed; all named unit/repository/widget/flow, responsive and accessibility checks pass.
-- [ ] Intended goldens are reviewed and required native/browser matrix evidence is recorded; unavailable checks remain open.
-- [ ] Localization generation/checks and plan integrity pass; changed tests and exact support files are shipped.
-- [ ] Backend verify, real PostgreSQL migration tests and explicit independent security/access review pass.
-- [ ] Stable specification contracts and superseded requirements are reconciled without changing unrelated progress.
-- [ ] Tracker generation and --check pass after the final verified acceptance update.
+- [x] Changed Dart is formatted and analyzed; all named unit/repository/widget/flow, responsive and accessibility checks pass.
+- [x] Intended goldens are reviewed and required native/browser matrix evidence is recorded; unavailable checks remain open.
+- [x] Localization generation/checks and plan integrity pass; changed tests and exact support files are shipped.
+- [x] Backend verify, real PostgreSQL migration tests and explicit independent security/access review pass.
+- [x] Stable specification contracts and superseded requirements are reconciled without changing unrelated progress.
+- [x] Tracker generation and --check pass after the final verified acceptance update.
 
-### Evidence and remaining work
+### Evidence
 
-- 2026-10-07: user explicitly accepted proceeding despite broader prerequisite checks. All acceptance above remains unverified at implementation start. Task017's claimed editable-notes behavior is contradicted by the missing production callbacks and is reopened until W1 verifies it.
-- Existing upstream work remains open: 004 migration preservation; 009 retired-field exports; 008 reference-device cold-start timing; 012 capture device/performance/restart cases; 013 offline OCR/device battery; 014 lifecycle/source verification; 019 package/undo/performance; 024 backend/release acceptance; 124 browser recording capability.
-- W2 copy correction: existing templatesAdd reads “Add to this project”; introduce projectAddTemplate = “Add template” rather than changing that shared key.
+- Approved D1–D15 defaults and the explicit prerequisite exception remain recorded above. Broader owner acceptance stays open: 004 migration preservation; 009 retired-field exports; 008 reference-device cold-start timing; 012 capture device/performance/restart; 013 offline OCR/device battery; 014 lifecycle/source verification; 019 package/undo/performance; 024 backend/release acceptance; 124 browser recording capability. This task does not close them or certify final hardening task 023.
+- W1: production-route edit/save/reopen, retry and asynchronous-update tests preserve working text and immutable originals. Controller/screen, legacy, package, merge-undo, raw export, audio and transcript regressions passed; actual Windows and Android meeting integrations each passed 2/2. The fresh corrected project/package gate passed 238/238, exit 0 (`frontend/task143-project-package-clean-final.log`), including W3/W6/W8, real bundles and raw-note roundtrips.
+- W2/W3/W6/W8: no-template/loading/failure states keep raw capture enabled; template attachment updates the existing home action. Shared validation, project search/pin/archive, legacy redirects, supported package validation and generic import formats pass. The specific Add template key preserves the existing Add to this project copy. ProjectHome 256, Projects matrix 216, and the corrected 238-test gate verify these paths; required native/browser boundaries are recorded below.
+- W4/W5/W7/W9–W13/W16: the clean 36-suite run passed 1886/1886, exit 0 (`frontend/task143-settings-menu-navigation-clean-final.log`; exact paths in `frontend/task143-settings-menu-navigation-suites-final.log`). Per-item overlapping subsets: navigation 93; shared menu 28 and OpenExternally 2; More 9/Settings 231/router 19; About 228; sign-in 8/session 6; project settings 221/relay routes 18/relay storage 15; capture/choice/GPS 230 plus shared choice 12; language/speech 246; provider UI 252/catalogue 26/processing 5. Counts overlap and are not additive. W11's immutable route-ID access/key/receive/ack wiring passed independent review; entering the controls starts no transfer.
+- W14/W15: the clean template/recycling gate passed 282/282, exit 0 (`frontend/build/templates-recycling-final-comparators.log`), including normal golden comparisons. Further current-tree checks passed 276/276, 23/23 and 10/10 (`recycling-final-matrix-goldens.log`, `recycling-other-widgets-final.log`, `recycling-last-fixes.log` in `frontend/build/`). Each feature covers 216 widget platform/style cells. Durable custom-library creation, copy/edit/Undo, concurrent restore/delete, exact parent tombstone membership/status, independent descendant deletion, managed five-kind listings, collision refusal and byte/hash preservation are verified against real SQLite/filesystem stores.
+- The full responsive harness passed 2597/2597, exit 0 (`frontend/task143-responsive-final.log`): 36 screens ×36 layout/theme/text cells ×normal/pseudo locales, plus 5 harness proofs. Per-item variants exercise Android/iOS/Windows/macOS/Linux styling and additional Fuchsia styling. These are widget platform variants; they do not claim physical iOS/macOS/Linux device execution. Named actual Android, Windows and browser boundaries supplement this matrix.
+- All 195 intended PNG paths below were independently inspected and normal comparators passed. Root commands passed 114/114 (`frontend/build/task143-goldens-final-comparators.log`) and 3/3 (`frontend/build/task143-project-menus-pinned-final-comparators.log`), covering 132 images; the clean Settings/shared-menu gate covers the other 63. W14's 24 and W15's 12 are also in the clean 282-test comparator run. No unrelated baseline was updated.
+- Actual Android API 36 emulator, explicit dev flavor: navigation Back 1, meeting 2, offline raw capture 2 and recycling 1 passed 6/6, exit 0 (`frontend/build/task143-android-integrations-dev-final.log`). Actual Windows: meeting 2/2 passed (`frontend/task143-windows-integration.log`); capture 2 completed before a separate recycle-suite load failure, then recycling passed 1/1 in a clean standalone run (`frontend/build/recycling-windows-native-alone.log`). The earlier combined Windows capture/recycle command is not reported as green.
+- Actual Android API 36 emulator picker cancellation passed 1/1, exit 0 (`frontend/build/task143-native-picker-focused-final.log`). Raw `task143-native-picker-focused-{intent,displays,windows}-final.log` proves ACTION_OPEN_DOCUMENT, CATEGORY_OPENABLE, application/zip, focused/visible DocumentsUI; one real system Back returned to app.dev/MainActivity in `task143-native-picker-focused-resumed-activity-final.log`. Import state, every database table and existing import-cache entries/file metadata/SHA-256 remained identical, with zero outbound calls. All assertions and the 30-second timeout remained intact. The task-owned read-only AVD and Gradle daemon were closed afterward.
+- Actual Chrome: the fresh 335-case run is preserved as 334 passed/1 failed, exit 1 (`frontend/build/browser-matrix-335-final.log` and `.jsonl`): all 227 focused cases and 107/108 boundary cases passed. Its focused cases include 216 normal/pseudo-locale cases at 200 percent text in short layouts and 11 database-isolation, contrast and harness proofs; boundaries cover picker 4, real hash-history 1, real SQLite WASM/IndexedDB recovery 1, templates 42 and recycling 60. The final contrast proofs passed 9/9, exit 0 (`frontend/build/recycling-accessibility-browser-bannerless-final.log` and `.jsonl`), and the corrected W15 accessibility/reflow case passed 1/1, exit 0 (`frontend/build/recycling-accessibility-browser-screen-final.log` and `.jsonl`). Matching current-source native gates passed 9/9 and 1/1 (`frontend/build/recycling-contrast-native-banner-final.log`, `frontend/build/recycling-accessibility-native-verified-final.log`). This verifies 339 unique browser cases across runs: 334 earlier successes minus 5 superseded contrast proofs plus 9 final proofs plus the corrected W15 case; no single 339-case aggregate is claimed. Both final browser runs retained raw console evidence, exited normally and removed their owned transient assets and sidecars.
+- Browser test compatibility: the public font helper respects loaded Roboto while preserving every other test-environment flag; the unchanged MM/ii width and clipping proofs pass. The SDK CanvasKit contrast evaluator originally used disposed image dimensions and then mistook antialiasing for foreground color. Captured production-caption pixels (`frontend/build/w15-caption-full.png`, `w15-caption-crop.png`, `w15-caption-diagnostic.json`) show 28 exact opaque ink pixels, 7708 white pixels and 62 pale antialias pixels, with actual foreground/background contrast 17.46. Root and the independent reader inspected the captures. The test-only adapter evaluates the public SDK guideline first, preserving its thresholds/tolerance and eligibility; only individually failing plain opaque text can use exact observed ink inside fully visible line boxes against a majority opaque captured background. It rejects shader/filter/painter/opacity/ambiguous-decoration ancestors. The nine proofs include low contrast, large/bold thresholds, opacity, transparent ink, the production caption and a partly shaded negative case. Test fixtures suppress the debug banner, whose painter correctly prevents fallback; native accessibility matchers and application styles remain unchanged. The exact-module loopback proxy mocks no application/history/database boundary; its self-tests passed 8/8 in two independent runs. Earlier non-green browser runs remain preserved: optional sweep 555 passed/36 native-golden skips/36 failures, initial focused run 220/7, first correction 5/2, and banner-bearing final-guard run 9/1. Extra optional duplicate browser batches were not required or run.
+- Final static gates: full `flutter analyze --no-pub` passed with no issues in 491.4 seconds (`frontend/task143-analyze-last-helpers-final.log`); the final three-file test-adapter/fixture delta passed analysis with no issues in 21.2 seconds (`frontend/task143-analyze-complete-final.log`). All 100 changed Dart files formatted with 0 changes (`frontend/task143-format-complete-final.log`); architecture/security passed 119/119 with deliberate-violation fixtures (`frontend/task143-architecture-security-final.log`). Localization, pseudo generation and plan checks passed (`frontend/task143-l10n-close-final.log`, `frontend/task143-pseudo-close-final.log`, `frontend/task143-plan-close-final.log`). The independent transitive shipment audit covers 100 changed roots, 1553 local Dart files and 9782 import/export/part edges, every conditional branch and the local whisper package, with 0 missing and 0 ignored-untracked dependencies (`frontend/build/task143-dart-shipment-audit-final.log`). Existing rules, dependencies and repository guardrail commands remain unchanged.
+- W16 backend: fresh `npm run verify` exit 0, 180 passed/0 failed/1 existing Docker smoke skipped, 55 suites, all gates passed and 0 vulnerabilities (`C:/Users/WASSWA WILSON/AppData/Local/Temp/tapture-w16-final-verify.log`). Every PostgreSQL test ran on disposable PostgreSQL 17.11. Real 011→012 and deliberately failed migration rollback compare all columns of 2 ciphertext credentials, 3 usage rows and 3 running/completed/uncertain receipts; catalogue/custody/recreation/replay tests also pass. Migration 011 SHA-256 `12480e346c712f14ce51829e8632a508997fb34e8c8e3fb62f14f540a7bb4cfb` remains unchanged; 012 SHA-256 `ed2151cfcfbc2936a5b9a6e5678d8b3c944141e407a8e465e2e77d3f1b87bd97`.
+- Explicit BE-SEC-11/BE-FLOW-04 second-reader reviews were recorded on 2026-10-07 and refreshed on 2026-10-08. Root and backend_review independently reviewed each other's final changes: provider/custody/egress/OpenAPI, configured HTTPS/protocol/model identity, reserved default model, keyless secret-path exclusion, preserved quota/permission/cancellation gates, configuration-bound receipts and legacy stored-receipt recognition without redispatch. Final catalogue/selected-operation probes and W11 access wiring are approved. No live AI request, production migration or deployment occurred.
+- Stable specification§38 and§73 reflect exact recycling tombstone/status ownership and supported provider/model/test contracts; superseded 079/123 global shortcuts retain historical evidence. Task 017's production editing is now verified by W1, replacing the earlier missing-callback contradiction. Original failed/mixed commands and host diagnostics remain preserved: the initial 1151-pass/3-load-error command, stale no-flavor Android APK attempt, Windows C++/WinRT failure, picker Back-before-focus/SystemUI ANR attempts and optional browser sweep are not promoted into clean aggregate passes.
 
-- W1 host evidence: controller/screen 9 tests; production-router/real-database offline integration 2 tests; data/domain/export/package 20 tests plus actual merge-undo regression; live-panel/meeting-live/transcribe 24 cases. Typed working text, retry, serialized writes, source hashes, legacy originals and unchanged raw export verified. Full platform/visual checks remain open.
-- W2/W3 evidence: project-home/capture widget 94 tests; form suites 99 tests including 72 layout cells; shared predicate/repository tests and host offline capture integration pass. Native Windows integration stops before loading tests with mismatched C++/WinRT headers; device acceptance remains open.
-- W6 search/archive/list/legacy-route suites: 37 tests pass. W8 Projects/import/package suites: 27 executed tests pass; combined command also referenced one nonexistent import-gate path, to be corrected in the integrated run. No completion is inferred from that command's nonzero exit.
+<details>
+<summary>Exact task143 golden inventory — 195 intended baselines</summary>
 
-- W15 storage boundary: 13 filesystem/adapter tests pass, including identical restored bytes, live file/folder
-  collision refusal, missing trees, path traversal, unwritable storage and retry after a completed move.
-- W16 backend gate: final `npm run verify` passes all stages; 179 tests pass, zero fail, one existing Docker-image
-  test skips because Docker is unavailable. All PostgreSQL tests execute on a disposable PostgreSQL 16 cluster.
-  The 011→012 regression compares every column in two credential rows, three usage rows and three receipts
-  (running/completed/uncertain), before/after migration and after a deliberately failed migration; all values match.
-  Migration 011 SHA-256 remains `12480e346c712f14ce51829e8632a508997fb34e8c8e3fb62f14f540a7bb4cfb` (unchanged from HEAD).
-  Migration 012 SHA-256 is `ed2151cfcfbc2936a5b9a6e5678d8b3c944141e407a8e465e2e77d3f1b87bd97`.
-- Recorded second-reader review, 2026-10-07: root reviewed the backend changes authored by settings_archive after
-  the final gate, including provider/custody/egress diff, OpenAPI, seeded migration preservation and fake-egress
-  tests. Approved under BE-SEC-11/BE-FLOW-04: exact configured HTTPS endpoints/protocols, no keyless credential
-  reads or auth headers, unchanged permission/quota checks, configuration-bound receipts and legacy recognition
-  only for an already stored receipt, with no redispatch. No production migration or deployment occurred.
-  project_detail_archive independently reviewed root's frontend catalogue/custody/refresh changes and approved
-  the metadata allowlist, keyless secret-path exclusion and selection preservation. Its compatibility finding
-  (disabled legacy zero-cost metadata hiding valid custom providers) was corrected and given a regression.
-- Independent root review of W11 access wiring found the immutable route project ID consistently used for
-  authority, queue, keys, receive and acknowledgements; navigation reads local state only and starts no transfer.
-  projects_archive reviewed root's W1 persistence/guards, W6 filtering and W8 package import with no findings.
-  Frontend tests and matrix verification remain in progress; these reviews alone do not close acceptance.
+Readable SDK fonts/icons and the compact, medium, expanded, short-landscape and 200-percent corners were independently reviewed. Native-style tests cover platform variants; this inventory does not claim unavailable physical-device verification. Each path below is an intentional task baseline, with final comparator results recorded in the evidence above.
+
+**W5 — Shared grouped menu**
+
+- `frontend/test/design_system/app_overflow_menu/goldens/app_overflow_grouped_text1_dark.png`
+- `frontend/test/design_system/app_overflow_menu/goldens/app_overflow_grouped_text1_light.png`
+- `frontend/test/design_system/app_overflow_menu/goldens/app_overflow_grouped_text1_outdoor.png`
+- `frontend/test/design_system/app_overflow_menu/goldens/app_overflow_grouped_text2_dark.png`
+- `frontend/test/design_system/app_overflow_menu/goldens/app_overflow_grouped_text2_light.png`
+- `frontend/test/design_system/app_overflow_menu/goldens/app_overflow_grouped_text2_outdoor.png`
+
+**W1 — Meeting review**
+
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_compact_dark.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_compact_landscape_text2_dark.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_compact_landscape_text2_light.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_compact_light.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_compact_outdoor.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_compact_text2_dark.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_compact_text2_light.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_compact_text2_outdoor.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_expanded_dark.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_expanded_light.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_expanded_outdoor.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_expanded_text2_dark.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_expanded_text2_light.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_expanded_text2_outdoor.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_medium_dark.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_medium_light.png`
+- `frontend/test/features/meetings/presentation/goldens/meeting_review_medium_outdoor.png`
+
+**W8 — Import**
+
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_compact_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_compact_landscape_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_compact_landscape_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_compact_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_compact_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_expanded_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_expanded_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_expanded_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_medium_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_medium_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ImportScreen_medium_outdoor.png`
+
+**W3 — Project forms**
+
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_compact_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_compact_landscape_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_compact_landscape_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_compact_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_compact_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_expanded_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_expanded_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_expanded_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_medium_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_medium_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectCreateScreen_medium_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_compact_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_compact_landscape_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_compact_landscape_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_compact_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_compact_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_expanded_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_expanded_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_expanded_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_medium_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_medium_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectEditScreen_medium_outdoor.png`
+
+**W2 — Project home**
+
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_compact_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_compact_landscape_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_compact_landscape_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_compact_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_compact_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_expanded_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_expanded_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_expanded_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_medium_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_medium_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectHomeScreen_medium_outdoor.png`
+
+**W6 — Projects list**
+
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_compact_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_compact_landscape_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_compact_landscape_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_compact_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_compact_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_expanded_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_expanded_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_expanded_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_medium_dark.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_medium_light.png`
+- `frontend/test/features/projects/presentation/goldens/field_workflow_ProjectListScreen_medium_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_numbered_pinned_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_numbered_pinned_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_numbered_pinned_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_numbered_pinned_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_numbered_pinned_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_numbered_pinned_text2_outdoor.png`
+
+**W5 — Project menu consumers**
+
+- `frontend/test/features/projects/presentation/goldens/project_home_open_with_menu_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_home_open_with_menu_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_home_open_with_menu_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_home_open_with_menu_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_home_open_with_menu_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_home_open_with_menu_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_open_with_menu_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_open_with_menu_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_open_with_menu_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_open_with_menu_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_open_with_menu_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_list_open_with_menu_text2_outdoor.png`
+
+**W15 — Recycling**
+
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_dark.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_landscape_text2_dark.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_landscape_text2_light.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_light.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_outdoor.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_expanded_text2_dark.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_expanded_text2_light.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_expanded_text2_outdoor.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_medium_dark.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_medium_light.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_medium_outdoor.png`
+
+**W9 — About**
+
+- `frontend/test/features/settings/presentation/goldens/about_text1_dark.png`
+- `frontend/test/features/settings/presentation/goldens/about_text1_light.png`
+- `frontend/test/features/settings/presentation/goldens/about_text1_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/about_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/about_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/about_text2_outdoor.png`
+
+**W16 — AI settings**
+
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_compact_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_compact_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_expanded_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_expanded_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_expanded_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_medium_portrait_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_medium_portrait_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_medium_portrait_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_text2_outdoor.png`
+
+**W12 — Capture settings**
+
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_compact_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_compact_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_dark_1x.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_dark_2x.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_expanded_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_expanded_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_expanded_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_light_1x.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_light_2x.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_medium_portrait_dark.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_medium_portrait_light.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_medium_portrait_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_outdoor_1x.png`
+- `frontend/test/features/settings/presentation/goldens/capture_collapsed_outdoor_2x.png`
+
+**W13 — Language settings**
+
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_compact_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_compact_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_dark_1x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_dark_2x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_expanded_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_expanded_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_expanded_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_light_1x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_light_2x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_medium_portrait_dark.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_medium_portrait_light.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_medium_portrait_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_outdoor_1x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_outdoor_2x.png`
+
+**W7/W10/W11 — Global settings**
+
+- `frontend/test/features/settings/presentation/goldens/settings_index_text1_dark.png`
+- `frontend/test/features/settings/presentation/goldens/settings_index_text1_light.png`
+- `frontend/test/features/settings/presentation/goldens/settings_index_text1_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/settings_index_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/settings_index_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/settings_index_text2_outdoor.png`
+
+**W14 — Template library**
+
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_compact_landscape_text2_dark.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_compact_landscape_text2_light.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_medium_dark.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_medium_light.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_medium_outdoor.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_expanded_text2_dark.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_expanded_text2_light.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_expanded_text2_outdoor.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_compact_landscape_text2_dark.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_compact_landscape_text2_light.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_medium_dark.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_medium_light.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_medium_outdoor.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_expanded_text2_dark.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_expanded_text2_light.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_expanded_text2_outdoor.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_dark.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_light.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_catalogue_outdoor.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_text2_dark.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_text2_light.png`
+- `frontend/test/features/templates/presentation/goldens/template_library_preview_text2_outdoor.png`
+
+</details>

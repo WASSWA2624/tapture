@@ -9,11 +9,13 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/context/context.dart';
@@ -50,7 +52,12 @@ class ProjectHomeScreen extends ConsumerWidget {
     final AsyncValue<List<TemplateDef>> homeTemplates = ref.watch(
       projectHomeTemplatesProvider(openId ?? ''),
     );
-    final bool needsTemplate = homeTemplates.asData?.value.isEmpty ?? false;
+    final bool templatesReady =
+        homeTemplates.asData != null &&
+        !homeTemplates.isLoading &&
+        !homeTemplates.hasError;
+    final bool needsTemplate =
+        templatesReady && homeTemplates.asData!.value.isEmpty;
     return AppPage(
       key: const ValueKey<String>('route-project'),
       title: details?.name ?? localCopy.navProjects,
@@ -65,7 +72,9 @@ class ProjectHomeScreen extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 AppPrimaryAction(
-                  label: needsTemplate
+                  label: !templatesReady
+                      ? localCopy.projectCaptureNow
+                      : needsTemplate
                       ? localCopy.projectAddTemplate
                       : records == 0
                       ? localCopy.captureStart
@@ -155,7 +164,10 @@ class _HomeBody extends ConsumerWidget {
     final double gutter = AppPage.gutter(context);
     final String query = ref.watch(capturedItemsQueryProvider);
     final int activeFilters = ref.watch(projectRecordFilterProvider).length;
-    return Column(
+    final AsyncValue<List<TemplateDef>> templates = ref.watch(
+      projectHomeTemplatesProvider(project.id),
+    );
+    final Widget header = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (!shellOwns)
@@ -169,7 +181,7 @@ class _HomeBody extends ConsumerWidget {
               ],
             ),
           ),
-        // Pinned at the very top so a long home scrolls under it.
+        // The shared viewport keeps search reachable on a short landscape view.
         Padding(
           padding: EdgeInsets.fromLTRB(gutter, Space.x1, gutter, Space.x2),
           child: AppSearchField(
@@ -190,11 +202,30 @@ class _HomeBody extends ConsumerWidget {
             activeFilterCount: activeFilters,
           ),
         ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: CapturedRecords(projectId: project.id),
-          ),
-        ),
+      ],
+    );
+    final Widget body = SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          if (templates.hasError)
+            AsyncValueView<List<TemplateDef>>(
+              value: templates,
+              onRetry: () =>
+                  ref.invalidate(projectHomeTemplatesProvider(project.id)),
+              data: (_) => const SizedBox.shrink(),
+            ),
+          CapturedRecords(projectId: project.id),
+        ],
+      ),
+    );
+    if (context.isShortForText) {
+      return AppListViewport(header: header, body: body);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        header,
+        Expanded(child: body),
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:drift/drift.dart' hide Uint8List;
@@ -66,7 +67,12 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       required String folderName,
     })?
     recycleTree,
-    Future<Result<void>> Function({required String id, required String name, required String folderName})? restoreTree,
+    Future<Result<void>> Function({
+      required String id,
+      required String name,
+      required String folderName,
+    })?
+    restoreTree,
     StorageRoot? storageRoot,
     this._writer,
   }) : _createTree =
@@ -105,7 +111,18 @@ final class ProjectRepositoryImpl implements ProjectRepository {
              folderName: folderName,
              storageRoot: storageRoot,
            )),
-       _restoreTree = restoreTree ?? (({required String id, required String name, required String folderName}) => project_tree.restoreProjectTree(id: id, name: name, folderName: folderName, storageRoot: storageRoot));
+       _restoreTree =
+           restoreTree ??
+           (({
+             required String id,
+             required String name,
+             required String folderName,
+           }) => project_tree.restoreProjectTree(
+             id: id,
+             name: name,
+             folderName: folderName,
+             storageRoot: storageRoot,
+           ));
 
   final sqlite.AppDatabase _db;
   final Clock _clock;
@@ -670,15 +687,71 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     }
     final Project current = ProjectMapper.fromRow(existing);
     final Result<void> marked = await runInTransaction(_db, () async {
-      if (current.status != ProjectStatus.deleted) {
-        await appendAudit(_db, entityType: 'projects', entityId: id,
-          action: AuditAction.deleted, fieldKey: 'status',
-          previousValue: current.status.name, newValue: ProjectStatus.deleted.name,
-          reason: _deleteReason, clock: _clock, device: _deviceId);
+      final sqlite.Project? latest = await _byId(id);
+      if (latest == null) {
+        final StorageFailure missingFailure = _missing;
+        throw missingFailure;
       }
-      await _tombstoneOwned(id);
+      final Project deleting = ProjectMapper.fromRow(latest);
+      if (deleting.status != ProjectStatus.deleted) {
+        await appendAudit(
+          _db,
+          entityType: 'projects',
+          entityId: id,
+          action: AuditAction.deleted,
+          fieldKey: 'status',
+          previousValue: deleting.status.name,
+          newValue: ProjectStatus.deleted.name,
+          reason: _deleteReason,
+          clock: _clock,
+          device: _deviceId,
+        );
+      }
+      final List<sqlite.Tombstone> cascade = await _tombstoneOwned(id);
+      final sqlite.Tombstone deletion =
+          (await (_db.select(_db.tombstones)..where(
+                (sqlite.$TombstonesTable row) =>
+                    row.entityType.equals('projects') & row.entityId.equals(id),
+              ))
+              .getSingle());
+      if (deleting.status != ProjectStatus.deleted) {
+        await appendAudit(
+          _db,
+          entityType: 'projects',
+          entityId: id,
+          action: AuditAction.deleted,
+          fieldKey: _deletionStatusField,
+          previousValue: deletion.id,
+          newValue: deleting.status.name,
+          reason: _deleteReason,
+          clock: _clock,
+          device: _deviceId,
+        );
+      }
+      if (cascade.isNotEmpty) {
+        await appendAudit(
+          _db,
+          entityType: 'projects',
+          entityId: id,
+          action: AuditAction.deleted,
+          fieldKey: _cascadeField,
+          previousValue: deletion.id,
+          newValue: jsonEncode(<Map<String, String>>[
+            for (final sqlite.Tombstone row in cascade)
+              if (row.entityType != 'projects')
+                <String, String>{
+                  'table': row.entityType,
+                  'id': row.entityId,
+                  'tombstone': row.id,
+                },
+          ]),
+          reason: _deleteReason,
+          clock: _clock,
+          device: _deviceId,
+        );
+      }
       final Result<Project> written = await _write(
-        current.copyWith(status: ProjectStatus.deleted),
+        deleting.copyWith(status: ProjectStatus.deleted),
       );
       switch (written) {
         case FailureResult<Project>(:final Failure failure):
@@ -706,48 +779,151 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
-  Stream<List<DeletedEntity>> watchDeleted() => _db.customSelect(
-    "SELECT p.id, p.name, t.deleted_at, t.reason FROM projects p JOIN tombstones t ON t.entity_type = 'projects' AND t.entity_id = p.id ORDER BY t.deleted_at DESC, p.id",
-    readsFrom: <TableInfo<dynamic, dynamic>>{_db.projects, _db.tombstones},
-  ).watch().map((List<QueryRow> rows) => <DeletedEntity>[
-    for (final QueryRow row in rows) DeletedEntity(id: row.read<String>('id'), kind: DeletedEntityKind.project,
-      name: row.read<String>('name'), projectId: row.read<String>('id'), projectName: row.read<String>('name'),
-      deletedAt: row.read<DateTime>('deleted_at'), reason: row.read<String>('reason')),
-  ]);
+  Stream<List<DeletedEntity>> watchDeleted() => _db
+      .customSelect(
+        "SELECT p.id, p.name, t.deleted_at, t.reason FROM projects p JOIN tombstones t ON t.entity_type = 'projects' AND t.entity_id = p.id ORDER BY t.deleted_at DESC, p.id",
+        readsFrom: <TableInfo<dynamic, dynamic>>{_db.projects, _db.tombstones},
+      )
+      .watch()
+      .map(
+        (List<QueryRow> rows) => <DeletedEntity>[
+          for (final QueryRow row in rows)
+            DeletedEntity(
+              id: row.read<String>('id'),
+              kind: DeletedEntityKind.project,
+              name: row.read<String>('name'),
+              projectId: row.read<String>('id'),
+              projectName: row.read<String>('name'),
+              deletedAt: row.read<DateTime>('deleted_at'),
+              reason: row.read<String>('reason'),
+            ),
+        ],
+      );
 
   @override
   Future<Result<void>> restore(String id) async {
     final sqlite.Project? existing = await _byId(id);
     if (existing == null) return FailureResult<void>(_missing);
-    final sqlite.Tombstone? tombstone = await (_db.select(_db.tombstones)..where(
-      (sqlite.$TombstonesTable row) => row.entityType.equals('projects') & row.entityId.equals(id),
-    )).getSingleOrNull();
-    if (existing.status != projects_db.ProjectStatus.deleted && tombstone == null) return const Success<void>(null);
-    final Result<void> recovered = await _restoreTree(id: id, name: existing.name, folderName: existing.folderName);
+    final sqlite.Tombstone? tombstone =
+        await (_db.select(_db.tombstones)..where(
+              (sqlite.$TombstonesTable row) =>
+                  row.entityType.equals('projects') & row.entityId.equals(id),
+            ))
+            .getSingleOrNull();
+    if (existing.status != projects_db.ProjectStatus.deleted &&
+        tombstone == null) {
+      return const Success<void>(null);
+    }
+    final Result<void> recovered = await _restoreTree(
+      id: id,
+      name: existing.name,
+      folderName: existing.folderName,
+    );
     if (recovered is FailureResult<void>) return recovered;
     return runInTransaction(_db, () async {
-      final QueryRow? status = await _db.customSelect(
-        "SELECT previous_value FROM audit_log WHERE entity_type = 'projects' AND entity_id = ? AND field_key = 'status' AND new_value = 'deleted' ORDER BY at DESC, id DESC LIMIT 1",
-        variables: <Variable<Object>>[Variable<String>(id)],
-      ).getSingleOrNull();
-      final ProjectStatus restoredStatus = status?.readNullable<String>('previous_value') == ProjectStatus.archived.name
-          ? ProjectStatus.archived : ProjectStatus.active;
+      final List<QueryRow> cascadeAudits = tombstone == null
+          ? const <QueryRow>[]
+          : await _db
+                .customSelect(
+                  'SELECT new_value FROM audit_log WHERE entity_type = ? AND entity_id = ? AND field_key = ? AND previous_value = ?',
+                  variables: <Variable<Object>>[
+                    const Variable<String>('projects'),
+                    Variable<String>(id),
+                    const Variable<String>(_cascadeField),
+                    Variable<String>(tombstone.id),
+                  ],
+                )
+                .get();
+      final Set<String>? cascade = cascadeAudits.isEmpty
+          ? null
+          : <String>{
+              for (final QueryRow audit in cascadeAudits)
+                if (audit.readNullable<String>('new_value')
+                    case final String value)
+                  for (final Object? entry
+                      in jsonDecode(value) as List<Object?>)
+                    if (entry case <String, Object?>{
+                      'table': final String table,
+                      'id': final String childId,
+                      'tombstone': final String deletionId,
+                    })
+                      '$table:$childId:$deletionId',
+            };
+      final QueryRow? linkedStatus = tombstone == null
+          ? null
+          : await _db
+                .customSelect(
+                  'SELECT new_value FROM audit_log WHERE entity_type = ? AND entity_id = ? AND field_key = ? AND previous_value = ? ORDER BY at DESC, id DESC LIMIT 1',
+                  variables: <Variable<Object>>[
+                    const Variable<String>('projects'),
+                    Variable<String>(id),
+                    const Variable<String>(_deletionStatusField),
+                    Variable<String>(tombstone.id),
+                  ],
+                )
+                .getSingleOrNull();
+      final QueryRow? legacyStatus = linkedStatus != null
+          ? null
+          : await _db
+                .customSelect(
+                  "SELECT previous_value FROM audit_log WHERE entity_type = 'projects' AND entity_id = ? AND field_key = 'status' AND new_value = 'deleted' ORDER BY at DESC, id DESC LIMIT 1",
+                  variables: <Variable<Object>>[Variable<String>(id)],
+                )
+                .getSingleOrNull();
+      final ProjectStatus restoredStatus =
+          (linkedStatus?.readNullable<String>('new_value') ??
+                  legacyStatus?.readNullable<String>('previous_value')) ==
+              ProjectStatus.archived.name
+          ? ProjectStatus.archived
+          : ProjectStatus.active;
       for (final TableInfo<Table, Object?> table in _db.allTables) {
         final String? ownership = _restoreOwnership[table.actualTableName];
         if (ownership == null) continue;
-        final List<QueryRow> rows = await _db.customSelect(
-          'SELECT x.id FROM ${table.actualTableName} x JOIN tombstones t ON t.entity_id = x.id AND t.entity_type = ? WHERE t.reason = ? AND $ownership',
-          variables: <Variable<Object>>[Variable<String>(table.actualTableName), const Variable<String>(_deleteReason), Variable<String>(id)],
-        ).get();
+        final List<QueryRow> rows = await _db
+            .customSelect(
+              'SELECT x.id, t.id AS tombstone_id FROM ${table.actualTableName} x JOIN tombstones t ON t.entity_id = x.id AND t.entity_type = ? WHERE t.reason = ? AND $ownership',
+              variables: <Variable<Object>>[
+                Variable<String>(table.actualTableName),
+                const Variable<String>(_deleteReason),
+                Variable<String>(id),
+              ],
+            )
+            .get();
         for (final QueryRow row in rows) {
-          await restoreDeletedRow(_db, table: table, id: row.read<String>('id'), clock: _clock, deviceId: _deviceId, ids: _ids);
+          // The recorded deletion identity distinguishes this cascade from an
+          // older independent delete, even when its reason and time match.
+          if (cascade != null &&
+              !cascade.contains(
+                '${table.actualTableName}:${row.read<String>('id')}:${row.read<String>('tombstone_id')}',
+              )) {
+            continue;
+          }
+          await restoreDeletedRow(
+            _db,
+            table: table,
+            id: row.read<String>('id'),
+            clock: _clock,
+            deviceId: _deviceId,
+            ids: _ids,
+          );
         }
       }
       await removeTombstone(_db, entityType: 'projects', entityId: id);
-      (await _write(ProjectMapper.fromRow(existing).copyWith(status: restoredStatus))).getOrThrow();
-      await appendAudit(_db, entityType: 'projects', entityId: id, action: AuditAction.updated,
-        fieldKey: 'status', previousValue: ProjectStatus.deleted.name, newValue: restoredStatus.name,
-        reason: 'Restored from recycle bin', clock: _clock, device: _deviceId);
+      (await _write(
+        ProjectMapper.fromRow(existing).copyWith(status: restoredStatus),
+      )).getOrThrow();
+      await appendAudit(
+        _db,
+        entityType: 'projects',
+        entityId: id,
+        action: AuditAction.updated,
+        fieldKey: 'status',
+        previousValue: ProjectStatus.deleted.name,
+        newValue: restoredStatus.name,
+        reason: 'Restored from recycle bin',
+        clock: _clock,
+        device: _deviceId,
+      );
     });
   }
 
@@ -785,7 +961,8 @@ final class ProjectRepositoryImpl implements ProjectRepository {
     }
   }
 
-  Future<void> _tombstoneOwned(String projectId) async {
+  Future<List<sqlite.Tombstone>> _tombstoneOwned(String projectId) async {
+    final List<sqlite.Tombstone> cascade = <sqlite.Tombstone>[];
     final List<sqlite.RecordRow> records =
         await (_db.select(_db.records)..where(
               (sqlite.$RecordsTable tbl) => tbl.projectId.equals(projectId),
@@ -845,7 +1022,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
             .get();
 
     for (final sqlite.RecordRow record in records) {
-      await _mark(_db.records, record.id);
+      await _mark(cascade, _db.records, record.id);
       final List<sqlite.RecordField> fields =
           await (_db.select(_db.recordFields)..where(
                 (sqlite.$RecordFieldsTable tbl) =>
@@ -853,7 +1030,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
               ))
               .get();
       for (final sqlite.RecordField field in fields) {
-        await _mark(_db.recordFields, field.id);
+        await _mark(cascade, _db.recordFields, field.id);
       }
       final List<sqlite.Caption> captions =
           await (_db.select(_db.captions)..where(
@@ -861,25 +1038,25 @@ final class ProjectRepositoryImpl implements ProjectRepository {
               ))
               .get();
       for (final sqlite.Caption caption in captions) {
-        await _mark(_db.captions, caption.id);
+        await _mark(cascade, _db.captions, caption.id);
       }
     }
     for (final sqlite.Photo photo in photos) {
-      await _mark(_db.photos, photo.id);
+      await _mark(cascade, _db.photos, photo.id);
       final List<sqlite.Caption> captions =
           await (_db.select(_db.captions)..where(
                 (sqlite.$CaptionsTable tbl) => tbl.ownerId.equals(photo.id),
               ))
               .get();
       for (final sqlite.Caption caption in captions) {
-        await _mark(_db.captions, caption.id);
+        await _mark(cascade, _db.captions, caption.id);
       }
     }
     for (final sqlite.Attachment attachment in attachments) {
-      await _mark(_db.attachments, attachment.id);
+      await _mark(cascade, _db.attachments, attachment.id);
     }
     for (final sqlite.Template header in templates) {
-      await _mark(_db.templates, header.id);
+      await _mark(cascade, _db.templates, header.id);
       final List<sqlite.TemplateField> fields =
           await (_db.select(_db.templateFields)..where(
                 (sqlite.$TemplateFieldsTable tbl) =>
@@ -887,7 +1064,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
               ))
               .get();
       for (final sqlite.TemplateField field in fields) {
-        await _mark(_db.templateFields, field.id);
+        await _mark(cascade, _db.templateFields, field.id);
       }
       final List<sqlite.TemplateRow> rows =
           await (_db.select(_db.templateRows)..where(
@@ -896,20 +1073,20 @@ final class ProjectRepositoryImpl implements ProjectRepository {
               ))
               .get();
       for (final sqlite.TemplateRow row in rows) {
-        await _mark(_db.templateRows, row.id);
+        await _mark(cascade, _db.templateRows, row.id);
       }
     }
     for (final sqlite.ContextData row in contexts) {
-      await _mark(_db.context, row.id);
+      await _mark(cascade, _db.context, row.id);
     }
     for (final sqlite.ContextStateRow row in states) {
-      await _mark(_db.contextState, row.id);
+      await _mark(cascade, _db.contextState, row.id);
     }
     for (final sqlite.ContextPreset row in presets) {
-      await _mark(_db.contextPresets, row.id);
+      await _mark(cascade, _db.contextPresets, row.id);
     }
     for (final sqlite.ReferenceDatasetRow dataset in datasets) {
-      await _mark(_db.reference, dataset.id);
+      await _mark(cascade, _db.reference, dataset.id);
       final List<sqlite.ReferenceLookupRow> rows =
           await (_db.select(_db.referenceRows)..where(
                 (sqlite.$ReferenceRowsTable tbl) =>
@@ -917,23 +1094,35 @@ final class ProjectRepositoryImpl implements ProjectRepository {
               ))
               .get();
       for (final sqlite.ReferenceLookupRow row in rows) {
-        await _mark(_db.referenceRows, row.id);
+        await _mark(cascade, _db.referenceRows, row.id);
       }
     }
     for (final sqlite.ExportRow row in exports) {
-      await _mark(_db.exports, row.id);
+      await _mark(cascade, _db.exports, row.id);
     }
     for (final sqlite.DuplicatePair row in duplicates) {
-      await _mark(_db.duplicates, row.id);
+      await _mark(cascade, _db.duplicates, row.id);
     }
     for (final sqlite.Variance row in variances) {
-      await _mark(_db.variances, row.id);
+      await _mark(cascade, _db.variances, row.id);
     }
-    await _mark(_db.projects, projectId);
+    await _mark(cascade, _db.projects, projectId);
+    return cascade;
   }
 
-  Future<void> _mark(TableInfo<dynamic, dynamic> table, String entityId) {
-    return writeTombstone(
+  Future<void> _mark(
+    List<sqlite.Tombstone> cascade,
+    TableInfo<dynamic, dynamic> table,
+    String entityId,
+  ) async {
+    final query = _db.select(_db.tombstones)
+      ..where(
+        (sqlite.$TombstonesTable row) =>
+            row.entityType.equals(table.actualTableName) &
+            row.entityId.equals(entityId),
+      );
+    if (await query.getSingleOrNull() != null) return;
+    await writeTombstone(
       _db,
       entityType: table.actualTableName,
       entityId: entityId,
@@ -941,6 +1130,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
       clock: _clock,
       deviceId: _deviceId,
     );
+    cascade.add(await query.getSingle());
   }
 
   Future<Result<Project>> _write(Project project) async {
@@ -1221,10 +1411,12 @@ List<ProjectRecordFieldValue> _recordFields(String? blob) {
 /// [ProjectRepositoryImpl].
 final class _EmptyProjectRepository implements ProjectRepository {
   @override
-  Stream<List<DeletedEntity>> watchDeleted() => Stream<List<DeletedEntity>>.value(const <DeletedEntity>[]);
+  Stream<List<DeletedEntity>> watchDeleted() =>
+      Stream<List<DeletedEntity>>.value(const <DeletedEntity>[]);
 
   @override
-  Future<Result<void>> restore(String id) async => FailureResult<void>(_missing);
+  Future<Result<void>> restore(String id) async =>
+      FailureResult<void>(_missing);
   @override
   Stream<List<Project>> watchAll({bool includeArchived = false}) {
     return Stream<List<Project>>.value(const <Project>[]);
@@ -1373,6 +1565,10 @@ const String _archiveReason = 'archive';
 
 const String _deleteReason = 'Project deleted';
 
+const String _cascadeField = 'cascadeTombstones';
+
+const String _deletionStatusField = 'deletionStatus';
+
 /// Every ownership path the project delete traverses. Only that cascade's
 /// tombstones are lifted; earlier independent reasons remain untouched.
 const Map<String, String> _restoreOwnership = <String, String>{
@@ -1387,11 +1583,16 @@ const Map<String, String> _restoreOwnership = <String, String>{
   'exports': 'x.project_id = ?',
   'duplicates': 'x.project_id = ?',
   'variances': 'x.project_id = ?',
-  'record_fields': 'x.record_id IN (SELECT id FROM records WHERE project_id = ?)',
-  'captions': "x.owner_id IN (SELECT id FROM records WHERE project_id = ? UNION ALL SELECT id FROM photos WHERE project_id = ?3)",
-  'template_fields': 'x.template_id IN (SELECT id FROM templates WHERE project_id = ?)',
-  'template_rows': 'x.template_id IN (SELECT id FROM templates WHERE project_id = ?)',
-  'reference_rows': 'x.dataset_id IN (SELECT id FROM reference_datasets WHERE project_id = ?)',
+  'record_fields':
+      'x.record_id IN (SELECT id FROM records WHERE project_id = ?)',
+  'captions':
+      "x.owner_id IN (SELECT id FROM records WHERE project_id = ? UNION ALL SELECT id FROM photos WHERE project_id = ?3)",
+  'template_fields':
+      'x.template_id IN (SELECT id FROM templates WHERE project_id = ?)',
+  'template_rows':
+      'x.template_id IN (SELECT id FROM templates WHERE project_id = ?)',
+  'reference_rows':
+      'x.dataset_id IN (SELECT id FROM reference_datasets WHERE project_id = ?)',
 };
 
 typedef _ProjectTreeWrite =

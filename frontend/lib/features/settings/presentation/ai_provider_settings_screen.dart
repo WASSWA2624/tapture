@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
+import 'package:tapture/core/ai/proxy_ai_service.dart';
 import 'package:tapture/core/backend/server_ai_catalogue.dart';
 import 'package:tapture/core/backend/server_credential_client.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -86,7 +87,8 @@ class _AiProviderSettingsScreenState
           provider.serverProvider ?? provider.serverCredentialProvider,
           controller.model.id,
         );
-    final double savedLimit = ref.read(projectSettingsStoreProvider)
+    final double savedLimit = ref
+        .read(projectSettingsStoreProvider)
         .read(SettingKeys.aiRequestMaxCost);
     return AppPage(
       title: localCopy.settingsAiTitle,
@@ -186,10 +188,15 @@ class _AiProviderSettingsScreenState
                 ? localCopy.aiRequestLimitSummary(savedLimit.toString())
                 : localCopy.processingEgressLimitDefault,
             children: <Widget>[
-              if (cost != null) AppBanner(
-                message: localCopy.aiModelCostCeiling(cost.amount.toString(), cost.unit),
-                icon: AppIcons.info, tone: SnackTone.info,
-              ),
+              if (cost != null)
+                AppBanner(
+                  message: localCopy.aiModelCostCeiling(
+                    cost.amount.toString(),
+                    cost.unit,
+                  ),
+                  icon: AppIcons.info,
+                  tone: SnackTone.info,
+                ),
               AppTextField(
                 label: localCopy.aiSpendingLimit,
                 helper: localCopy.aiSpendingLimitHint,

@@ -1,4 +1,3 @@
-import 'package:tapture/features/templates/presentation/template_editor_source.dart';
 import 'dart:async';
 
 import 'package:drift/drift.dart' show Value;
@@ -32,6 +31,7 @@ import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/presentation/field_list_filter.dart';
 import 'package:tapture/features/templates/presentation/field_list_screen.dart';
+import 'package:tapture/features/templates/presentation/template_editor_source.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import '../../../support/factories.dart';

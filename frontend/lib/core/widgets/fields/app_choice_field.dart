@@ -325,44 +325,47 @@ class _ChoiceSheetState<T> extends State<_ChoiceSheet<T>> {
       for (final Choice<T> option in widget.options)
         if (_labelContains(option.label, _query)) option,
     ];
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Space.x3,
-            vertical: Space.x2,
-          ),
-          child: AppSearchField(
-            hint: localCopy.search,
-            debounce: Duration.zero,
-            onChanged: (String value) => setState(() => _query = value),
+    // The search control must scroll with the choices when landscape, large
+    // text or the keyboard leaves less than one control's height for the body.
+    return CustomScrollView(
+      semanticChildCount: visible.length,
+      slivers: <Widget>[
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Space.x3,
+              vertical: Space.x2,
+            ),
+            child: AppSearchField(
+              hint: localCopy.search,
+              debounce: Duration.zero,
+              onChanged: (String value) => setState(() => _query = value),
+            ),
           ),
         ),
-        Expanded(
-          child: visible.isEmpty
-              ? SingleChildScrollView(
-                  child: AppEmptyState(
-                    icon: AppIcons.searchEmpty,
-                    headline: localCopy.choiceNoMatch(_query),
-                    message: localCopy.searchNoMatchMessage,
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: visible.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final Choice<T> option = visible[index];
-                    final bool selected = option.value == widget.value;
-                    return AppListTile(
-                      title: option.label,
-                      selected: selected,
-                      leading: option.icon == null
-                          ? null
-                          : Icon(option.icon, color: colors.onSurface),
-                      onTap: () => widget.onPick(option.value),
-                    );
-                  },
-                ),
-        ),
+        if (visible.isEmpty)
+          SliverToBoxAdapter(
+            child: AppEmptyState(
+              icon: AppIcons.searchEmpty,
+              headline: localCopy.choiceNoMatch(_query),
+              message: localCopy.searchNoMatchMessage,
+            ),
+          )
+        else
+          SliverList.builder(
+            itemCount: visible.length,
+            itemBuilder: (BuildContext context, int index) {
+              final Choice<T> option = visible[index];
+              return AppListTile(
+                title: option.label,
+                selected: option.value == widget.value,
+                leading: option.icon == null
+                    ? null
+                    : Icon(option.icon, color: colors.onSurface),
+                onTap: () => widget.onPick(option.value),
+              );
+            },
+          ),
       ],
     );
   }

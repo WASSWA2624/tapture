@@ -199,45 +199,86 @@ void main() {
           );
           await tester.pumpAndSettle();
         }
-        await tester.tap(find.text(Copy.captureStart));
+        expect(
+          find.byType(AppErrorState),
+          fails ? findsOneWidget : findsNothing,
+        );
+        expect(find.text(Copy.projectAddTemplate), findsNothing);
+        await tester.tap(find.text(Copy.projectCaptureNow));
         await tester.pumpAndSettle();
         expect(router.state.uri.path, RoutePaths.projectCapture('project-1'));
       },
     );
   }
 
-  for (final ScreenMatrix cell in ScreenMatrix.cells) {
-    testWidgets('template-free home actions fit ${cell.description}', (
-      WidgetTester tester,
-    ) async {
-      _setSurface(tester, cell.size);
-      tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      await _pumpPopulated(
-        tester,
-        mode: cell.outdoor
-            ? AppThemeMode.outdoor
-            : cell.brightness == Brightness.dark
-            ? AppThemeMode.dark
-            : AppThemeMode.light,
-      );
-      await tester.pumpAndSettle();
+  testWidgets('failed template query retries without losing the project', (
+    WidgetTester tester,
+  ) async {
+    int queries = 0;
+    await _pumpPopulated(
+      tester,
+      overrides: <Override>[
+        projectHomeTemplatesProvider('project-1').overrideWith((Ref _) {
+          queries += 1;
+          return queries == 1
+              ? Stream<List<TemplateDef>>.error(
+                  const StorageFailure(message: 'Templates unavailable'),
+                )
+              : Stream<List<TemplateDef>>.value(const <TemplateDef>[]);
+        }),
+      ],
+    );
+    expect(find.byType(AppErrorState), findsOneWidget);
+    await tester.tap(find.text(Copy.tryAgain));
+    await tester.pumpAndSettle();
+    expect(queries, 2);
+    expect(find.byType(AppErrorState), findsNothing);
+    expect(find.text(Copy.projectAddTemplate), findsOneWidget);
+    expect(
+      ProviderScope.containerOf(
+        tester.element(find.byType(ProjectHomeScreen)),
+      ).read(currentProjectProvider),
+      'project-1',
+    );
+  });
 
-      expect(tester.takeException(), isNull);
-      final Finder setup = find.byType(AppPrimaryAction);
-      final Finder capture = find.widgetWithText(
-        AppButton,
-        Copy.projectCaptureNow,
-      );
-      expect(setup, findsOneWidget);
-      expect(setup, meetsTapTarget());
-      expect(capture, meetsTapTarget());
-      expect(tester.getRect(setup).bottom, lessThanOrEqualTo(cell.size.height));
-      expect(
-        tester.getRect(capture).bottom,
-        lessThanOrEqualTo(cell.size.height),
-      );
-    });
+  for (final ScreenMatrix cell in ScreenMatrix.cells) {
+    testWidgets(
+      'template-free home actions fit ${cell.description}',
+      (WidgetTester tester) async {
+        _setSurface(tester, cell.size);
+        tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await _pumpPopulated(
+          tester,
+          mode: cell.outdoor
+              ? AppThemeMode.outdoor
+              : cell.brightness == Brightness.dark
+              ? AppThemeMode.dark
+              : AppThemeMode.light,
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        final Finder setup = find.byType(AppPrimaryAction);
+        final Finder capture = find.widgetWithText(
+          AppButton,
+          Copy.projectCaptureNow,
+        );
+        expect(setup, findsOneWidget);
+        expect(setup, meetsTapTarget());
+        expect(capture, meetsTapTarget());
+        expect(
+          tester.getRect(setup).bottom,
+          lessThanOrEqualTo(cell.size.height),
+        );
+        expect(
+          tester.getRect(capture).bottom,
+          lessThanOrEqualTo(cell.size.height),
+        );
+      },
+      variant: TargetPlatformVariant.all(),
+    );
   }
 
   testWidgets('a failed load renders through AsyncValueView', (

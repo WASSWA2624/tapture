@@ -89,25 +89,27 @@ void main() {
   });
 
   for (final ScreenMatrix cell in ScreenMatrix.cells) {
-    testWidgets('live create-name validation fits ${cell.description}', (
-      WidgetTester tester,
-    ) async {
-      tester.view.devicePixelRatio = 1;
-      tester.view.physicalSize = cell.size;
-      tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      final FakeProjectRepository repo = FakeProjectRepository();
-      addTearDown(repo.dispose);
-      await _pump(tester, repo: repo, cell: cell);
-      await tester.tap(find.byType(AppPrimaryAction));
-      await tester.pump();
-      await tester.enterText(find.byType(TextField).first, 'Alpha');
-      await tester.pumpAndSettle();
-      expect(find.text(Copy.nameRequired), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'live create-name validation fits ${cell.description}',
+      (WidgetTester tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = cell.size;
+        tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        final FakeProjectRepository repo = FakeProjectRepository();
+        addTearDown(repo.dispose);
+        await _pump(tester, repo: repo, cell: cell);
+        await tester.tap(find.byType(AppPrimaryAction));
+        await tester.pump();
+        await tester.enterText(find.byType(TextField).first, 'Alpha');
+        await tester.pumpAndSettle();
+        expect(find.text(Copy.nameRequired), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+      variant: TargetPlatformVariant.all(),
+    );
   }
   testWidgets('an empty name fails validation and writes nothing', (
     WidgetTester tester,

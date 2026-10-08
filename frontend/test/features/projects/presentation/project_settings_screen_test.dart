@@ -14,14 +14,15 @@ import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import '../../../support/factories.dart';
+import '../../../support/screen_matrix.dart';
 import '../fakes/fake_project_repository.dart';
 
 void main() {
-  for (final double width in <double>[393, 800, 1200]) {
+  for (final ScreenMatrix cell in ScreenMatrix.cells) {
     testWidgets(
-      'project settings opens its relay at width $width without saving',
+      'project settings opens its relay at ${cell.description} without saving',
       (WidgetTester tester) async {
-        await tester.binding.setSurfaceSize(Size(width, 886));
+        await tester.binding.setSurfaceSize(cell.size);
         addTearDown(() => tester.binding.setSurfaceSize(null));
         final FakeProjectRepository repo = FakeProjectRepository();
         addTearDown(repo.dispose);
@@ -56,10 +57,23 @@ void main() {
               ),
             ],
             child: MaterialApp.router(
-              theme: buildTheme(brightness: Brightness.light),
+              theme: buildTheme(
+                brightness: cell.brightness,
+                outdoor: cell.outdoor,
+              ),
+              builder: (BuildContext context, Widget? child) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(cell.textScale)),
+                child: child!,
+              ),
               routerConfig: router,
             ),
           ),
+        );
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(
+          find.byKey(const ValueKey<String>('project-relay')),
         );
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey<String>('project-relay')));
@@ -67,6 +81,7 @@ void main() {
         expect(router.state.uri.path, RoutePaths.projectRelay('project-1'));
         expect(repo.stored.single.settings, same(before));
       },
+      variant: TargetPlatformVariant.all(),
     );
   }
 

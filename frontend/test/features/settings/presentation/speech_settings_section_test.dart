@@ -9,8 +9,8 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/ai/stt_service.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/document_picker.dart';
 import 'package:tapture/core/speech/routed_stt_service.dart';
 import 'package:tapture/core/speech/speech.dart';
@@ -138,11 +138,18 @@ void main() {
   String detail(SpeechModelEntry entry, String origin, String state) =>
       Copy.settingsSpeechModelDetail(origin, state, Copy.fileSize(entry.bytes));
 
-  testWidgets('inventory starts closed with engine health visible', (WidgetTester tester) async {
+  testWidgets('inventory starts closed with engine health visible', (
+    WidgetTester tester,
+  ) async {
     await pump(tester, expanded: false);
     expect(row(_tiny), findsNothing);
     expect(find.text(Copy.settingsSpeechImport), findsNothing);
-    expect(find.text(Copy.settingsSpeechEngineWhisper(Copy.settingsSpeechModelBalanced)), findsOneWidget);
+    expect(
+      find.text(
+        Copy.settingsSpeechEngineWhisper(Copy.settingsSpeechModelBalanced),
+      ),
+      findsOneWidget,
+    );
     await _tap(tester, find.text(Copy.settingsSpeechModels));
     await tester.pumpAndSettle();
     expect(row(_tiny), findsOneWidget);
@@ -155,37 +162,88 @@ void main() {
   });
 
   for (final bool damaged in <bool>[false, true]) {
-    testWidgets('required model recovery remains visible when closed: damaged=$damaged', (WidgetTester tester) async {
-      await pump(tester, expanded: false, store: SpeechModelStore.fake(<String, SpeechModelStatus>{
-        ...testInstalledModels(),
-        _tiny.id: SpeechModelStatus(entry: _tiny, present: damaged, damaged: damaged),
-      }));
-      expect(row(_tiny), findsNothing);
-      expect(find.text(damaged ? Copy.speechModelDamaged : Copy.speechModelMissing), findsOneWidget);
-      expect(find.text(damaged ? Copy.speechModelDamagedRecovery : Copy.speechModelMissingRecovery), findsOneWidget);
-      expect(find.text(Copy.settingsSpeechImport), findsOneWidget);
-    });
+    testWidgets(
+      'required model recovery remains visible when closed: damaged=$damaged',
+      (WidgetTester tester) async {
+        await pump(
+          tester,
+          expanded: false,
+          store: SpeechModelStore.fake(<String, SpeechModelStatus>{
+            ...testInstalledModels(),
+            _tiny.id: SpeechModelStatus(
+              entry: _tiny,
+              present: damaged,
+              damaged: damaged,
+            ),
+          }),
+        );
+        expect(row(_tiny), findsNothing);
+        expect(
+          find.text(
+            damaged ? Copy.speechModelDamaged : Copy.speechModelMissing,
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            damaged
+                ? Copy.speechModelDamagedRecovery
+                : Copy.speechModelMissingRecovery,
+          ),
+          findsOneWidget,
+        );
+        expect(find.text(Copy.settingsSpeechImport), findsOneWidget);
+      },
+    );
   }
 
-  testWidgets('an optional damaged model stays in the closed inventory', (WidgetTester tester) async {
-    await pump(tester, expanded: false, store: SpeechModelStore.fake(<String, SpeechModelStatus>{
-      ...testInstalledModels(),
-      _small.id: const SpeechModelStatus(entry: _small, present: true, imported: true, damaged: true),
-    }));
+  testWidgets('an optional damaged model stays in the closed inventory', (
+    WidgetTester tester,
+  ) async {
+    await pump(
+      tester,
+      expanded: false,
+      store: SpeechModelStore.fake(<String, SpeechModelStatus>{
+        ...testInstalledModels(),
+        _small.id: const SpeechModelStatus(
+          entry: _small,
+          present: true,
+          imported: true,
+          damaged: true,
+        ),
+      }),
+    );
     expect(find.text(Copy.speechModelDamaged), findsNothing);
     expect(find.text(Copy.speechModelDamagedRecovery), findsNothing);
     expect(row(_small), findsNothing);
   });
 
-  testWidgets('collapsing during removal keeps the operation and result', (WidgetTester tester) async {
-    final _HeldRemoveStore store = _HeldRemoveStore(SpeechModelStore.fake(<String, SpeechModelStatus>{
-      ...testInstalledModels(),
-      _base.id: const SpeechModelStatus(entry: _base, present: true, imported: true),
-    }));
+  testWidgets('collapsing during removal keeps the operation and result', (
+    WidgetTester tester,
+  ) async {
+    final _HeldRemoveStore store = _HeldRemoveStore(
+      SpeechModelStore.fake(<String, SpeechModelStatus>{
+        ...testInstalledModels(),
+        _base.id: const SpeechModelStatus(
+          entry: _base,
+          present: true,
+          imported: true,
+        ),
+      }),
+    );
     final ProviderContainer container = await pump(tester, store: store);
-    await _tap(tester, find.byKey(ValueKey<String>('speech-model-remove-${_base.id}')));
+    await _tap(
+      tester,
+      find.byKey(ValueKey<String>('speech-model-remove-${_base.id}')),
+    );
     await tester.pumpAndSettle();
-    await _tap(tester, find.descendant(of: find.byType(AppDialog), matching: find.text(Copy.settingsSpeechRemove)));
+    await _tap(
+      tester,
+      find.descendant(
+        of: find.byType(AppDialog),
+        matching: find.text(Copy.settingsSpeechRemove),
+      ),
+    );
     await tester.pump();
     await _tap(tester, find.text(Copy.settingsSpeechModels));
     await tester.pump();
@@ -194,17 +252,38 @@ void main() {
     store.release.complete();
     await tester.pumpAndSettle();
     expect(find.text(Copy.busy), findsNothing);
-    expect(container.read(speechReadinessProvider).selection!.model.id, _tiny.id);
+    expect(
+      container.read(speechReadinessProvider).selection!.model.id,
+      _tiny.id,
+    );
     await _tap(tester, find.text(Copy.settingsSpeechModels));
     await tester.pumpAndSettle();
-    expect(inRow(_base, detail(_base, Copy.settingsSpeechModelBundled, Copy.settingsSpeechModelMissing)), findsOneWidget);
+    expect(
+      inRow(
+        _base,
+        detail(
+          _base,
+          Copy.settingsSpeechModelBundled,
+          Copy.settingsSpeechModelMissing,
+        ),
+      ),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('collapsing during verification keeps its durable result', (WidgetTester tester) async {
+  testWidgets('collapsing during verification keeps its durable result', (
+    WidgetTester tester,
+  ) async {
     final Completer<void> gate = Completer<void>();
-    final _HeldRemoveStore store = _HeldRemoveStore(SpeechModelStore.fake(testInstalledModels()), verifyGate: gate);
+    final _HeldRemoveStore store = _HeldRemoveStore(
+      SpeechModelStore.fake(testInstalledModels()),
+      verifyGate: gate,
+    );
     final ProviderContainer container = await pump(tester, store: store);
-    await _tap(tester, find.byKey(ValueKey<String>('speech-model-verify-${_tiny.id}')));
+    await _tap(
+      tester,
+      find.byKey(ValueKey<String>('speech-model-verify-${_tiny.id}')),
+    );
     await tester.pump();
     await _tap(tester, find.text(Copy.settingsSpeechModels));
     await tester.pump();
@@ -212,21 +291,34 @@ void main() {
     expect(find.text(Copy.busy), findsOneWidget);
     gate.complete();
     await tester.pumpAndSettle();
-    expect(container.read(speechModelsProvider).requireValue.verified, contains(_tiny.id));
+    expect(
+      container.read(speechModelsProvider).requireValue.verified,
+      contains(_tiny.id),
+    );
     expect(find.text(Copy.busy), findsNothing);
   });
 
-  testWidgets('collapsing while the picker is open preserves cancellation', (WidgetTester tester) async {
+  testWidgets('collapsing while the picker is open preserves cancellation', (
+    WidgetTester tester,
+  ) async {
     final _HeldPicker picker = _HeldPicker();
     final ProviderContainer container = await pump(tester, picker: picker);
-    await _tap(tester, find.byKey(const ValueKey<String>('speech-model-import')));
+    await _tap(
+      tester,
+      find.byKey(const ValueKey<String>('speech-model-import')),
+    );
     await tester.pump();
     await _tap(tester, find.text(Copy.settingsSpeechModels));
     await tester.pump();
     expect(find.text(Copy.busy), findsOneWidget);
-    picker.result.complete(const FailureResult<PickedDocument>(CancelledFailure()));
+    picker.result.complete(
+      const FailureResult<PickedDocument>(CancelledFailure()),
+    );
     await tester.pumpAndSettle();
-    expect(container.read(speechModelsProvider).requireValue.importing, isFalse);
+    expect(
+      container.read(speechModelsProvider).requireValue.importing,
+      isFalse,
+    );
     expect(find.byType(SnackBar), findsNothing);
     expect(picker.calls, 1);
   });
@@ -334,6 +426,35 @@ void main() {
     });
   });
 
+  testWidgets(
+    'failed quality writes preserve the selected engine and report recovery',
+    (WidgetTester tester) async {
+      final SettingsStore settings = SettingsStore.fake(failWrites: true);
+      final ProviderContainer container = await pump(
+        tester,
+        settings: settings,
+        expanded: false,
+      );
+      final String originalModel = container
+          .read(speechReadinessProvider)
+          .selection!
+          .model
+          .id;
+      await _tap(tester, find.text(Copy.settingsSpeechQualityAuto));
+      await tester.pumpAndSettle();
+      await _tap(tester, find.text(Copy.settingsSpeechQualityFast));
+      await tester.pumpAndSettle();
+      expect(settings.read(SettingKeys.speechQuality), 'auto');
+      expect(container.read(speechQualityProvider), SpeechQuality.auto);
+      expect(
+        container.read(speechReadinessProvider).selection!.model.id,
+        originalModel,
+      );
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.text(Copy.settingsSpeechQualityAuto), findsOneWidget);
+    },
+  );
+
   group('model rows', () {
     testWidgets('show origin, state and size, and mark the models in use', (
       WidgetTester tester,
@@ -419,7 +540,8 @@ void main() {
     ) async {
       await pump(tester);
 
-      await _tap(tester, 
+      await _tap(
+        tester,
         find.byKey(ValueKey<String>('speech-model-verify-${_tiny.id}')),
       );
       await tester.pumpAndSettle();
@@ -454,7 +576,8 @@ void main() {
         }),
       );
 
-      await _tap(tester, 
+      await _tap(
+        tester,
         find.byKey(ValueKey<String>('speech-model-verify-${_tiny.id}')),
       );
       await tester.pumpAndSettle();
@@ -590,7 +713,8 @@ void main() {
       findsNothing,
     );
 
-    await _tap(tester, 
+    await _tap(
+      tester,
       find.byKey(ValueKey<String>('speech-model-remove-${_small.id}')),
     );
     await tester.pumpAndSettle();
@@ -602,7 +726,8 @@ void main() {
     );
     expect(find.text(Copy.settingsSpeechRemoveMessage), findsOneWidget);
 
-    await _tap(tester, 
+    await _tap(
+      tester,
       find.descendant(
         of: find.byType(AppDialog),
         matching: find.text(Copy.settingsSpeechRemove),
@@ -650,11 +775,13 @@ void main() {
       _base.id,
     );
 
-    await _tap(tester, 
+    await _tap(
+      tester,
       find.byKey(ValueKey<String>('speech-model-remove-${_base.id}')),
     );
     await tester.pumpAndSettle();
-    await _tap(tester, 
+    await _tap(
+      tester,
       find.descendant(
         of: find.byType(AppDialog),
         matching: find.text(Copy.settingsSpeechRemove),
@@ -740,14 +867,18 @@ final class _HeldRemoveStore implements SpeechModelStore {
 }
 
 final class _HeldPicker implements DocumentPicker {
-  final Completer<Result<PickedDocument>> result = Completer<Result<PickedDocument>>();
+  final Completer<Result<PickedDocument>> result =
+      Completer<Result<PickedDocument>>();
   int calls = 0;
   @override
   bool get canPick => true;
   @override
-  Future<Result<PickedDocument>> pick({required List<String> extensions, required String mimeType, int? maxBytes}) {
+  Future<Result<PickedDocument>> pick({
+    required List<String> extensions,
+    required String mimeType,
+    int? maxBytes,
+  }) {
     calls += 1;
     return result.future;
   }
 }
-
