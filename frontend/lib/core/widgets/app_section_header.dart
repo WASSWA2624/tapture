@@ -17,6 +17,7 @@ class AppSectionHeader extends StatelessWidget {
     required this.title,
     this.action,
     this.dense = false,
+    this.wrapText = false,
     this.expanded,
     this.onToggle,
   }) : assert(
@@ -33,6 +34,9 @@ class AppSectionHeader extends StatelessWidget {
   /// When true, vertical padding shrinks so the heading sits closer to the
   /// list it names.
   final bool dense;
+
+  /// Lets a long heading wrap without the default two-line limit.
+  final bool wrapText;
 
   /// Whether the section below shows. Null keeps a plain heading.
   final bool? expanded;
@@ -65,8 +69,10 @@ class AppSectionHeader extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: wrapText ? null : 2,
+                  overflow: wrapText
+                      ? TextOverflow.clip
+                      : TextOverflow.ellipsis,
                   style: AppText.section.copyWith(
                     color: context.colors.primary,
                   ),
@@ -109,8 +115,10 @@ class AppSectionHeader extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: wrapText ? null : 2,
+                    overflow: wrapText
+                        ? TextOverflow.clip
+                        : TextOverflow.ellipsis,
                     style: AppText.section.copyWith(color: ink),
                   ),
                 ),

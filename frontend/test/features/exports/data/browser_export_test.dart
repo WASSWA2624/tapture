@@ -23,6 +23,7 @@ import '../../../support/factories.dart';
 import '../../../support/screen_database.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   test(
     'browser package contains saved photos and downloads the same durable archive',
     () async {
@@ -35,9 +36,12 @@ void main() {
       final photo = await db.select(db.photos).getSingle();
       final FixedClock clock = FixedClock(DateTime.utc(2026, 9, 26, 8));
       final UuidV7Service ids = UuidV7Service.sequence(clock);
+      int nativeRootResolutions = 0;
       final StorageRoot storageRoot = StorageRoot(
-        documentsDirectory: () async =>
-            throw TestFailure('Browser exports must not resolve native files'),
+        documentsDirectory: () async {
+          nativeRootResolutions++;
+          throw TestFailure('Browser exports must not resolve native files');
+        },
         publicDocuments: () async => null,
       );
       final Map<String, Uint8List> backing = <String, Uint8List>{};
@@ -128,6 +132,7 @@ void main() {
       expect(downloaded, output.bytes);
       expect(publicDownloads, 1);
       expect((await db.select(db.exports).get()), hasLength(1));
+      expect(nativeRootResolutions, 0);
     },
   );
 }

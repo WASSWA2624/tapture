@@ -6085,6 +6085,7 @@ Follow [the bounded feedback prompt](../prompts/feedback-08102026-1045/001-strea
 - `frontend/lib/core/files/download_service_io.dart`
 - `frontend/lib/core/files/orphan_scanner.dart`
 - `frontend/lib/core/widgets/app_icons.dart`
+- `frontend/lib/core/widgets/app_section_header.dart`
 - `frontend/lib/core/widgets/fields/app_choice_field.dart`
 - `frontend/lib/core/widgets/fields/choice.dart`
 - `frontend/lib/core/widgets/gallery/widget_gallery_screen.dart`
@@ -6127,6 +6128,8 @@ Follow [the bounded feedback prompt](../prompts/feedback-08102026-1045/001-strea
 - `frontend/test/core/db/integrity_check_test.dart`
 - `frontend/test/core/files/orphan_scanner_test.dart`
 - `frontend/test/core/widgets/app_icons_test.dart`
+- `frontend/test/core/widgets/app_section_header_test.dart`
+- `frontend/test/support/factories.dart`
 - `frontend/test/core/widgets/fields/app_choice_field_branding_test.dart`
 - `frontend/test/core/widgets/fields/app_choice_field_test.dart`
 - `frontend/test/features/account/presentation/account_connection_panel_test.dart`
@@ -6179,7 +6182,8 @@ Follow [the bounded feedback prompt](../prompts/feedback-08102026-1045/001-strea
 
 ### Contract
 
-- Add optional `AppChoiceField<T>.leadingBuilder: Widget Function(BuildContext, Choice<T>)?`; absent preserves existing callers. Add `wrapLabel`, false by default, to opt sheet labels into the existing shared text-field wrapping convention.
+- Add optional `AppChoiceField<T>.leadingBuilder: Widget Function(BuildContext, Choice<T>)?`; absent preserves existing callers. Add `wrapLabel`, false by default, to show complete wrapped labels above sheet controls.
+- Add `AppSectionHeader.wrapText`, false by default, for complete wrapped disclosure headings; existing callers retain their two-line presentation. Settings disclosures opt in without changing their semantic toggle or state contract.
 - Add typed `AiProviderAssets` from `frontend/lib/core/assets/assets.dart`, mapping stable server-provider IDs and theme variants to bundled official artwork.
 - Export `AccountConnectionPanel` through account barrels; it composes existing setup/status controls without an `AppPage` or mount-triggered authentication work.
 - Add `SettingsDisclosure.initiallyExpanded` and `maintainState`, both false by default, retaining per-mounted-instance expansion and hidden input when requested.
@@ -6441,4 +6445,3 @@ Exact item-owned visual baselines regenerated and inspected in this continuation
 2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
 The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
 Application behavior and dated historical verification evidence are preserved.
-

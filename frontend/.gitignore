@@ -520,6 +520,7 @@ TAPTURE-*.zip
 !/test/core/db/integrity_check_test.dart
 !/test/core/files/orphan_scanner_test.dart
 !/test/core/widgets/app_icons_test.dart
+!/test/core/widgets/app_section_header_test.dart
 !/test/features/capture/presentation/capture_controller_test.dart
 !/test/features/capture/presentation/capture_guide_widgets_test.dart
 !/test/features/capture/presentation/capture_recovery_prompt_test.dart

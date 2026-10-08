@@ -50,6 +50,7 @@ class AppChoiceField<T> extends StatelessWidget {
   final bool alwaysSheet;
 
   /// Allows a sheet field's label to wrap at large text or narrow widths.
+  /// The label occupies its own row inside the trigger.
   /// The selected value and picker behaviour remain unchanged.
   final bool wrapLabel;
 
@@ -121,12 +122,7 @@ class _SegmentedChoice<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        ExcludeSemantics(
-          child: Text(
-            label,
-            style: AppText.label.copyWith(color: colors.onSurface),
-          ),
-        ),
+        _choiceLabel(label, colors),
         const SizedBox(height: Space.x2),
         DecoratedBox(
           decoration: BoxDecoration(
@@ -266,6 +262,33 @@ class _SheetChoice<T> extends StatelessWidget {
     final Choice<T>? selected = options
         .where((Choice<T> option) => option.value == value)
         .firstOrNull;
+    final Widget field = InputDecorator(
+      isEmpty: selectedLabel.isEmpty,
+      decoration: InputDecoration(
+        labelText: wrapLabel ? null : label,
+        enabled: enabled,
+        suffixIcon: ExcludeSemantics(
+          child: Icon(AppIcons.expand, color: colors.onSurface, size: Space.x6),
+        ),
+      ),
+      child: leadingBuilder == null || selected == null
+          ? Text(
+              selectedLabel.isEmpty ? ' ' : selectedLabel,
+              style: AppText.body.copyWith(color: colors.onSurface),
+            )
+          : Row(
+              children: <Widget>[
+                ExcludeSemantics(child: leadingBuilder!(context, selected)),
+                const SizedBox(width: Space.x2),
+                Expanded(
+                  child: Text(
+                    selectedLabel,
+                    style: AppText.body.copyWith(color: colors.onSurface),
+                  ),
+                ),
+              ],
+            ),
+    );
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
@@ -275,40 +298,16 @@ class _SheetChoice<T> extends StatelessWidget {
         // (FBK0000004).
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
-          child: InputDecorator(
-            isEmpty: selectedLabel.isEmpty,
-            decoration: InputDecoration(
-              labelText: wrapLabel ? null : label,
-              label: wrapLabel ? Text(label) : null,
-              enabled: enabled,
-              suffixIcon: ExcludeSemantics(
-                child: Icon(
-                  AppIcons.expand,
-                  color: colors.onSurface,
-                  size: Space.x6,
-                ),
-              ),
-            ),
-            child: leadingBuilder == null || selected == null
-                ? Text(
-                    selectedLabel.isEmpty ? ' ' : selectedLabel,
-                    style: AppText.body.copyWith(color: colors.onSurface),
-                  )
-                : Row(
-                    children: <Widget>[
-                      ExcludeSemantics(
-                        child: leadingBuilder!(context, selected),
-                      ),
-                      const SizedBox(width: Space.x2),
-                      Expanded(
-                        child: Text(
-                          selectedLabel,
-                          style: AppText.body.copyWith(color: colors.onSurface),
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
+          child: wrapLabel
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    _choiceLabel(label, colors),
+                    const SizedBox(height: Space.x2),
+                    field,
+                  ],
+                )
+              : field,
         ),
       ),
     );
@@ -342,6 +341,10 @@ class _SheetChoice<T> extends StatelessWidget {
     );
   }
 }
+
+Widget _choiceLabel(String label, AppColors colors) => ExcludeSemantics(
+  child: Text(label, style: AppText.label.copyWith(color: colors.onSurface)),
+);
 
 class _ChoiceSheet<T> extends StatefulWidget {
   const _ChoiceSheet({

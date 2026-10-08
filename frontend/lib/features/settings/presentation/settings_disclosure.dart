@@ -45,6 +45,7 @@ class _SettingsDisclosureState extends State<SettingsDisclosure>
       children: <Widget>[
         AppSectionHeader(
           title: widget.title,
+          wrapText: true,
           expanded: _expanded,
           onToggle: () => refresh(() => _expanded = !_expanded),
         ),

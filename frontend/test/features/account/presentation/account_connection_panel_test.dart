@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/backend/backend_config.dart';
 import 'package:tapture/core/backend/backend_session.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -19,6 +20,7 @@ import 'package:tapture/features/settings/presentation/settings_disclosure.dart'
 
 import '../../../support/a11y_matchers.dart';
 import '../../../support/pump_app.dart';
+import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
 import '../../../support/screen_probe.dart';
 
@@ -391,16 +393,25 @@ Future<void> _pump(
   ScreenMatrix? cell,
   BackendConfig? config,
 }) async {
+  await tester.runAsync(ScreenFonts.load);
   await pumpApp(
     tester,
-    Scaffold(
-      body: Builder(
-        builder: (BuildContext context) => SingleChildScrollView(
-          child: SettingsDisclosure(
-            id: 'ai-account',
-            title: Copy.of(context).aiServerAndAccount,
-            maintainState: true,
-            children: const <Widget>[AccountConnectionPanel()],
+    Theme(
+      data: ScreenFonts.theme(
+        buildTheme(
+          brightness: cell?.brightness ?? Brightness.light,
+          outdoor: cell?.outdoor ?? false,
+        ),
+      ),
+      child: Scaffold(
+        body: Builder(
+          builder: (BuildContext context) => SingleChildScrollView(
+            child: SettingsDisclosure(
+              id: 'ai-account',
+              title: Copy.of(context).aiServerAndAccount,
+              maintainState: true,
+              children: const <Widget>[AccountConnectionPanel()],
+            ),
           ),
         ),
       ),

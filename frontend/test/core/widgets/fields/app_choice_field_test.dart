@@ -121,15 +121,12 @@ void main() {
       String? picked;
       await _pump(
         tester,
-        Padding(
-          padding: const EdgeInsets.only(top: Space.x4),
-          child: AppChoiceField<String>(
-            label: label,
-            wrapLabel: true,
-            options: four,
-            value: value,
-            onChanged: (String? next) => picked = next,
-          ),
+        AppChoiceField<String>(
+          label: label,
+          wrapLabel: true,
+          options: four,
+          value: value,
+          onChanged: (String? next) => picked = next,
         ),
         size: const Size(393, 852),
       );
@@ -145,6 +142,9 @@ void main() {
       expect(painted.right, lessThanOrEqualTo(393));
       expect(painted.top, greaterThanOrEqualTo(0));
       expect(painted.bottom, lessThanOrEqualTo(852));
+      final Rect trigger = tester.getRect(find.byType(AppChoiceField<String>));
+      expect(painted.top, greaterThanOrEqualTo(trigger.top));
+      expect(painted.bottom, lessThanOrEqualTo(trigger.bottom));
       expect(find.byType(AppChoiceField<String>), meetsTapTarget());
       expect(find.byType(AppChoiceField<String>), hasSemanticLabel(label));
       expect(tester.takeException(), isNull);

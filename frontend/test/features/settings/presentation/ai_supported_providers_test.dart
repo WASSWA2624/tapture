@@ -34,6 +34,7 @@ import 'package:tapture/features/settings/settings.dart';
 
 import '../../../support/a11y_matchers.dart';
 import '../../../support/ai_catalogue_fixture.dart';
+import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
 import '../../../support/screen_probe.dart';
 
@@ -823,8 +824,9 @@ void main() {
                 await tester.pumpAndSettle();
                 expect(tester.widget<TextField>(key).obscureText, isTrue);
                 expect(
-                  tester
-                      .renderObject<RenderEditable>(find.byType(EditableText))
+                  tester.allRenderObjects
+                      .whereType<RenderEditable>()
+                      .singleWhere((RenderEditable value) => value.obscureText)
                       .text!
                       .toPlainText(),
                   isNot(contains('retained-matrix-key')),
@@ -889,6 +891,7 @@ void main() {
               await _reach(tester, spending);
               await tester.enterText(spending, '5');
               FocusScope.of(tester.element(spending)).unfocus();
+              await tester.pumpAndSettle();
               await _reach(tester, cost);
               await tester.tap(cost);
               await tester.pumpAndSettle();
@@ -1066,6 +1069,7 @@ Future<void> _pump(
     false,
   ),
 }) async {
+  await tester.runAsync(ScreenFonts.load);
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = cell.size;
   addTearDown(tester.view.resetPhysicalSize);
@@ -1129,9 +1133,11 @@ Future<void> _pump(
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: cell.outdoor
-            ? buildOutdoorTheme(Brightness.light)
-            : buildTheme(brightness: cell.brightness),
+        theme: ScreenFonts.theme(
+          cell.outdoor
+              ? buildOutdoorTheme(Brightness.light)
+              : buildTheme(brightness: cell.brightness),
+        ),
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -1151,46 +1157,95 @@ Future<void> _pump(
 Future<void> _reach(WidgetTester tester, Finder control) async {
   await Scrollable.ensureVisible(tester.element(control), alignment: .5);
   await tester.pumpAndSettle();
-  expect(control.hitTestable(), findsOneWidget);
+  Rect? labelBounds;
+  Rect? viewportBounds;
+  if (tester.widget(control) case final AppChoiceField<String> field
+      when field.wrapLabel) {
+    final Finder label = find.descendant(
+      of: control,
+      matching: find.text(field.label),
+    );
+    await Scrollable.ensureVisible(tester.element(label), alignment: 0);
+    await tester.pumpAndSettle();
+    final RenderParagraph paragraph = tester.renderObject<RenderParagraph>(
+      find.descendant(of: label, matching: find.byType(RichText)),
+    );
+    final RenderObject viewport =
+        RenderAbstractViewport.of(paragraph) as RenderObject;
+    labelBounds = MatrixUtils.transformRect(
+      paragraph.getTransformTo(null),
+      paragraph.paintBounds,
+    );
+    viewportBounds = MatrixUtils.transformRect(
+      viewport.getTransformTo(null),
+      viewport.paintBounds,
+    );
+  }
+  final bool reachable = control.hitTestable().evaluate().length == 1;
   final List<String> issues = ScreenProbe.layoutIssues(tester);
-  if (issues.isNotEmpty &&
-      const bool.fromEnvironment('TASK144_MATRIX_DIAGNOSTIC')) {
+  if (labelBounds != null && viewportBounds != null) {
+    if (labelBounds.top < viewportBounds.top ||
+        labelBounds.bottom > viewportBounds.bottom ||
+        labelBounds.left < viewportBounds.left ||
+        labelBounds.right > viewportBounds.right) {
+      issues.add(
+        'Choice label paint $labelBounds is clipped by $viewportBounds',
+      );
+    }
+  }
+  if (const bool.fromEnvironment('TASK144_MATRIX_DIAGNOSTIC') &&
+      (!reachable ||
+          issues.isNotEmpty ||
+          !File('build/task144-ai-label-wrap-first.png').existsSync())) {
     final RenderView view = tester.binding.renderViews.first;
     final List<Map<String, Object?>> labels = <Map<String, Object?>>[
       for (final RenderParagraph paragraph in ScreenProbe.visibleParagraphs(
         tester,
       ))
-        if (paragraph.didExceedMaxLines)
-          <String, Object?>{
-            'text': paragraph.text.toPlainText(),
-            'layoutSize': paragraph.size.toString(),
-            'constraints': paragraph.constraints.toString(),
-            'paintedBounds': MatrixUtils.transformRect(
-              paragraph.getTransformTo(null),
-              paragraph.paintBounds,
-            ).toString(),
-            'paintTransform': paragraph.getTransformTo(null).storage.toList(),
-            'ellipsis': paragraph.overflow.name,
-          },
+        <String, Object?>{
+          'text': paragraph.text.toPlainText(),
+          'layoutSize': paragraph.size.toString(),
+          'constraints': paragraph.constraints.toString(),
+          'paintedBounds': MatrixUtils.transformRect(
+            paragraph.getTransformTo(null),
+            paragraph.paintBounds,
+          ).toString(),
+          'paintTransform': paragraph.getTransformTo(null).storage.toList(),
+          'overflow': paragraph.overflow.name,
+          'didExceedMaxLines': paragraph.didExceedMaxLines,
+        },
     ];
     await tester.runAsync(() async {
+      final String stem = !reachable || issues.isNotEmpty
+          ? 'build/task144-ai-label-wrap-${DateTime.now().microsecondsSinceEpoch}'
+          : 'build/task144-ai-label-wrap-first';
       final ui.Image image = await (view.debugLayer! as OffsetLayer).toImage(
         view.paintBounds,
         pixelRatio: 1 / view.flutterView.devicePixelRatio,
       );
       try {
         final data = await image.toByteData(format: ui.ImageByteFormat.png);
-        await File(
-          'build/task144-ai-label-diagnostic.png',
-        ).writeAsBytes(data!.buffer.asUint8List());
-        await File(
-          'build/task144-ai-label-diagnostic.json',
-        ).writeAsString(const JsonEncoder.withIndent('  ').convert(labels));
+        await File('$stem.png').writeAsBytes(data!.buffer.asUint8List());
+        await File('$stem.json').writeAsString(
+          const JsonEncoder.withIndent('  ').convert(<String, Object?>{
+            'control': control.description,
+            'controlBounds': tester.getRect(control).toString(),
+            'reachable': reachable,
+            'viewInsets': MediaQuery.viewInsetsOf(
+              tester.element(control),
+            ).toString(),
+            'scrollOffset': Scrollable.of(
+              tester.element(control),
+            ).position.pixels,
+            'paragraphs': labels,
+          }),
+        );
       } finally {
         image.dispose();
       }
     });
   }
+  expect(control.hitTestable(), findsOneWidget);
   expect(issues, isEmpty);
 }
 
