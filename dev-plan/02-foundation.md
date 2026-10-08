@@ -593,7 +593,7 @@ use Dart's supported verbosity setting in child CLI checks while retaining all c
 - `frontend/lib/core/db/`, `frontend/lib/core/export/`, `frontend/lib/core/import/`, `frontend/lib/core/bundle/`, `frontend/lib/core/security/`, `frontend/lib/core/files/`
 - `frontend/lib/features/feedback/domain/feedback_archive.dart`
 - `frontend/lib/features/processing/data/notifications.dart`
-- `frontend/android/settings.gradle.kts` and regenerated platform plugin registrants
+- `frontend/android/settings.gradle.kts`, `frontend/android/.gitignore` and regenerated platform plugin registrants
 - `frontend/web/sqlite3.wasm`, `frontend/web/drift_worker.js`, `frontend/tool/drift_worker.dart`
 - Existing dependency-affected tests under `frontend/test/` and generated Dart sources
 - `app-write-up.md`, `dev-plan/02-foundation.md`, `dev-tracker.md` (generated)
@@ -602,51 +602,79 @@ use Dart's supported verbosity setting in child CLI checks while retaining all c
 
 - [x] Manifest, lockfile and allowlist agree on upgraded compatible direct dependencies, with licences and reasons for retained versions recorded.
 - [x] Native SQLite and browser SQLite/Drift assets use the supported resolved runtime; retired plugin imports and workaround calls are removed.
-- [ ] Notification, archive, PDF and other changed APIs compile; generated database/JSON output is current and existing schema/data contracts are preserved.
+- [x] Notification, archive, PDF and other changed APIs compile; generated database/JSON output is current and existing schema/data contracts are preserved.
 - [ ] Tests: dependency and naming checker positive/negative fixtures, architecture/security guardrails and affected CLI suites pass without weakening their assertions.
 - [ ] Tests: existing database migration, encryption, export/import, notification, permission, routing and startup regression suites pass for affected boundaries.
-- [ ] Tests: real Windows offline capture/export integration and browser SQLite/export regressions pass with the upgraded runtime.
-- [ ] Flutter analysis and changed-source formatting pass.
-- [ ] Production Android APK and web release builds succeed with the resolved packages.
-- [ ] Remaining outdated packages and verification limitations are documented; task 146's delivered test-image cleanup is preserved.
-- [ ] `dart run tool/sync_dev_tracker.dart` and `dart run tool/sync_dev_tracker.dart --check` pass after recording verified progress.
+- [x] Tests: real Windows offline capture/export integration and browser SQLite/export regressions pass with the upgraded runtime.
+- [x] Flutter analysis and changed-source formatting pass.
+- [x] Production Android APK and web release builds succeed with the resolved packages.
+- [x] Remaining outdated packages and verification limitations are documented; task 146's delivered test-image cleanup is preserved.
+- [x] `dart run tool/sync_dev_tracker.dart` and `dart run tool/sync_dev_tracker.dart --check` pass after recording verified progress.
 
 ### Evidence
 
 2026-10-08: implementation began with a fresh `flutter pub outdated --json` report and publisher changelog/API
 audits. The user's previous APK build completed before runtime inputs changed. `flutter pub upgrade` resolves 69
 dependency graph changes; manifest/allowlist validation passes. Android's retired SQLite-plugin Gradle override is
-removed. Source migrations and generated output are being verified against this resolved graph.
+removed. Source migrations and generated output are verified against this resolved graph as detailed below.
 
 Current verification: generator build completes with 5,284 outputs; the initial notification/PDF adapter suites
 pass 8 tests, and independent cipher, secure storage, permission and connectivity suites pass 31 tests. The
-native regression run passes 631 tests; its new declared-size test passes all three cases after correcting the
-localized-message assertion. The other failure is the pre-existing transcript search/vector test-contract
-mismatch recorded in task 151. Real Chrome SQLite export/download and SQLite/IndexedDB recovery each pass,
-and the real PDF renderer passes on native and Chrome using the bundled PDFium assets. Browser cipher parity,
-Windows integration, final analysis and release builds are still being verified.
+native regression run reports 631 passes and two failures. Its new declared-size test passes all three cases on
+rerun after correcting the localized-message assertion; the other failure is the pre-existing transcript
+search/vector test-contract mismatch recorded in task 151. Real Chrome SQLite export/download and
+SQLite/IndexedDB recovery each pass, and the real PDF renderer passes on native and Chrome using the bundled
+PDFium assets. The final native cipher suite passes eight cases and the unchanged Chrome cipher suite passes
+four, including independent legacy-byte parity, cancellation and authentication failures. Real Windows
+capture/export passes two cases and durable raw/offline capture passes three, including forty sequential
+offline records. Database schema, migration, vector/search sources and generated database output have no diff
+from the pre-upgrade tree.
 
-The tool/architecture/security run passes 562 tests. Its current-tree failures include existing naming, mirrored
-test-presence and actual-route coverage gaps (task 150), stale Whisper web build provenance (task 111), and nine
-remaining package-migration analysis diagnostics. Those diagnostics have been fixed; final analysis is pending.
+2026-10-09: all eleven remaining recovery/data cases pass through native `flutter_tester` importers which call
+the original test entrypoints unchanged. This includes real SQLite locks and killing a writer during an open
+transaction, followed by rollback, raw-evidence preservation and successful retry. These data cases do not
+certify physical camera/microphone behavior or actual bundle re-import. Changed-source formatting passes for
+107 Dart files; final whole-frontend `flutter analyze --no-pub` exits 0 with no issues.
+
+The production APK build succeeds after retrying the earlier GitHub DNS failure. Its merged SQLite inputs
+match the resolved package's published hashes; the final APK bundles SQLite and PDFium for arm, arm64 and x64.
+The normal JavaScript web release build succeeds and includes the matching SQLite WASM, custom Drift worker
+and real PDFium WASM. Its optional WebAssembly dry run exits 252; an isolated direct-SDK reproduction captures
+an internal frontend null-check crash while lowering a `for-in` statement. Task 152 records the unresolved
+compiler limitation; no WebAssembly release is claimed. Raw logs and artifact/input hashes are retained under
+`frontend/build/task147-*`.
+
+The tool/architecture/security run reports 562 passes and eight failures. Its current-tree failures include
+existing naming, mirrored test-presence and actual-route coverage gaps (task 150), stale Whisper web build
+provenance (task 111), and nine remaining package-migration analysis diagnostics. Those diagnostics have been
+fixed; final analysis passes.
 The existing guardrail and transcript-schema assertions remain intact, so their acceptance items stay open.
 
 The iOS notification-center delegate gap predates these package updates and is recorded separately in task 148;
-task 147 does not claim physical iOS notification verification. No test PNGs have been restored as delivered files.
+task 147 does not claim physical iOS notification verification. The pre-existing nested-ZIP privacy-validation
+gap is separately pending in task 149. No test PNGs have been restored as delivered files. The final shipping
+audit covers 1,345 tracked source/fixture paths with zero missing/ignored dependencies and zero test PNGs;
+the imported local Whisper package's thirty Dart sources also ship. Task 147 remains Partially complete because
+the guardrail and transcript-schema acceptance items are still open. Tracker synchronization, `--check` and
+plan integrity checks pass with 27 steps and 152 tasks after recording this verified progress.
 
 ### Retained versions
+
+The final outdated report contains 39 installed packages with newer releases and two uninstalled Material/
+Cupertino UI candidates. The following constraints explain the retained versions; no SDK/package override is
+used to bypass them.
 
 | Packages | Verified constraint |
 | --- | --- |
 | `analyzer` 13.0.0, `build_runner` 2.15.1; `_fe_analyzer_shared`, `build`, `dart_style`, `source_gen`, `package_config` | Newer analyzer releases require `meta >=1.18.3`; Flutter 3.44.6 pins 1.18.0. The generator group resolves together without SDK overrides. |
 | `sqlite3` 3.5.2; `hooks`, `code_assets`, `record_use`, `native_toolchain_c`, `objective_c` | Newer hook dependencies require `meta` 1.19.0 through `record_use`; the installed Flutter SDK fixes 1.18.0. |
-| `pdfrx` 2.4.8; `pdfrx_engine`, `pdfium_dart`, `pdfium_flutter` | Newer PDF releases require Flutter 3.47 / Dart 3.13; resolved engines and native bindings match the supported adapter. |
+| `pdfrx` 2.4.8; `pdfrx_engine`, `pdfium_dart`, `pdfium_flutter` | `pdfrx >=2.5` requires Flutter 3.47; the latest releases also require Dart 3.13. Resolved engines and native bindings match the supported adapter. |
 | `xml` 7.0.1, `petitparser` 7.0.2 | Newer XML/parser releases require Dart 3.13. |
 | `clock`, `intl`, `matcher`, `material_color_utilities`, `meta`, `stack_trace`, `test_api`, `vector_math` | Exact pins in the installed Flutter framework, localization and test SDK packages. |
-| `connectivity_plus` 7.3.1; `nm`, `dbus`, `gsettings` | Connectivity 7.3.2 needs `dbus ^0.8.0`; notifications 22.3.1's Linux implementation requires `dbus ^0.7.8`. |
+| `connectivity_plus` 7.3.1; `nm`, `dbus`, `gsettings` | Connectivity 7.3.2 needs `nm ^0.6`, which requires `dbus ^0.8.0`; notifications 22.3.1's Linux implementation requires `dbus ^0.7.8`. |
 | `flutter_secure_storage` 10.3.4, its Darwin implementation | The existing v10 production migration bridge protects legacy stored secrets/database keys; v11 removes that migration. |
 | `go_router` 17.5.0 | The v18 Material/Cupertino dependencies use `@awaitNotRequired`, absent from Dart 3.12.2. These UI packages are not currently installed. |
-| `permission_handler` 12.0.3 and Android implementation | v13 requires Android SDK37 / AGP9.1.1 / Gradle9.3.1; the current installed toolchain uses SDK36 / AGP9.0.1 / Gradle9.1.0. |
+| `permission_handler` 12.0.3 and Android implementation | v13's Android implementation compiles against SDK37. Google's supported SDK37 toolchain requires AGP9.1.1 / Gradle9.3.1; the current installed toolchain uses SDK36 / AGP9.0.1 / Gradle9.1.0. |
 | `camera_avfoundation`, `cross_file`, `qr` | Approved parent packages constrain their current major APIs; no speculative transitive override is introduced. |
 
 Primary references: [package resolver metadata](https://pub.dev/api/packages/analyzer),
@@ -656,6 +684,6 @@ Primary references: [package resolver metadata](https://pub.dev/api/packages/ana
 [PDF release requirements](https://pub.dev/packages/pdfrx/changelog),
 [Android API/toolchain compatibility](https://developer.android.com/build/releases/about-agp).
 
-The replacement PointyCastle 4.0.0 package's distributed `LICENSE` is MIT; only its public AES block primitive is
-imported. The existing independent Node AES counter fixture and historical encrypted database/bundle fixtures
-must pass before the cipher change is accepted. Flutter license registration includes the package's licence.
+The replacement PointyCastle 4.0.0 package's distributed `LICENSE` is MIT; the adapter imports its public AES
+block primitive and key-parameter API. The existing independent Node AES counter fixture and historical
+encrypted database/bundle fixtures pass. Flutter license registration includes the package's licence.
