@@ -89,6 +89,12 @@ final class FakeExportRepository implements ExportRepository {
   /// otherwise a stored one under `projects/fake/exports/`.
   bool inMemory = false;
 
+  /// Generation attempts, including cancelled or failed writes.
+  int exportCalls = 0;
+
+  /// Optional deterministic generation failure.
+  Failure? exportFailure;
+
   @override
   Future<Result<int>> estimatePackage(
     String projectId, {
@@ -108,6 +114,10 @@ final class FakeExportRepository implements ExportRepository {
     void Function(double)? onProgress,
     void Function(({String stage, double fraction}))? onStageProgress,
   }) async {
+    exportCalls++;
+    if (exportFailure case final Failure failure) {
+      return FailureResult<ExportedPackage>(failure);
+    }
     if (projectId.isEmpty) {
       return const FailureResult<ExportedPackage>(
         ValidationFailure(

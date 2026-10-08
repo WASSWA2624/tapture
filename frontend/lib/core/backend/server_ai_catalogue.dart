@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -229,10 +230,18 @@ const Map<String, AiOperation> _operations = <String, AiOperation>{
 };
 
 /// Invalidates registry consumers after metadata has been durably refreshed.
-final StreamProvider<void> serverAiCatalogueChangesProvider =
-    StreamProvider<void>(
-      (Ref ref) => ref.watch(serverAiCatalogueProvider).changes,
-    );
+final ProviderListenable<AsyncValue<void>> serverAiCatalogueChangesProvider =
+    StreamNotifierProvider<_CatalogueChanges, void>(_CatalogueChanges.new);
+
+final class _CatalogueChanges extends StreamNotifier<void> {
+  @override
+  Stream<void> build() => ref.watch(serverAiCatalogueProvider).changes;
+
+  // Every event signals a newly persisted snapshot, even though its value is void.
+  @override
+  bool updateShouldNotify(AsyncValue<void> previous, AsyncValue<void> next) =>
+      true;
+}
 
 /// Bootstrap injects the signed-in catalogue; the default has no network.
 final Provider<ServerAiCatalogue> serverAiCatalogueProvider =

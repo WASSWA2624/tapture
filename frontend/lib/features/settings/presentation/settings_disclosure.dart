@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 
 /// Advanced settings revealed for this screen session, without saving a setting.
-class SettingsDisclosure extends ConsumerWidget {
+class SettingsDisclosure extends StatefulWidget {
   /// [id] is stable across locale, theme and width changes.
   const SettingsDisclosure({
     super.key,
@@ -14,6 +14,8 @@ class SettingsDisclosure extends ConsumerWidget {
     required this.title,
     required this.children,
     this.summary,
+    this.initiallyExpanded = false,
+    this.maintainState = false,
   });
 
   final String id;
@@ -21,39 +23,54 @@ class SettingsDisclosure extends ConsumerWidget {
   final String? summary;
   final List<Widget> children;
 
+  /// Opens this instance on first mount, for an explicit deep link.
+  final bool initiallyExpanded;
+
+  /// Retains editable children while hiding them from traversal and semantics.
+  final bool maintainState;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bool expanded = ref.watch(_disclosureProvider(id));
+  State<SettingsDisclosure> createState() => _SettingsDisclosureState();
+}
+
+class _SettingsDisclosureState extends State<SettingsDisclosure>
+    with StateRefresh<SettingsDisclosure> {
+  late bool _expanded = widget.initiallyExpanded;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
+      key: ValueKey<String>(widget.id),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         AppSectionHeader(
-          title: title,
-          expanded: expanded,
-          onToggle: ref.read(_disclosureProvider(id).notifier).toggle,
+          title: widget.title,
+          expanded: _expanded,
+          onToggle: () => refresh(() => _expanded = !_expanded),
         ),
-        if (!expanded && summary != null)
+        if (!_expanded && widget.summary != null)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: Space.x4),
             child: Text(
-              summary!,
+              widget.summary!,
               style: AppText.caption.copyWith(color: context.colors.onSurface),
             ),
           ),
-        if (expanded) ...children,
+        if (widget.maintainState)
+          ExcludeFocus(
+            excluding: !_expanded,
+            child: Visibility(
+              visible: _expanded,
+              maintainState: true,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: widget.children,
+              ),
+            ),
+          )
+        else if (_expanded)
+          ...widget.children,
       ],
     );
   }
-}
-
-final _disclosureProvider = NotifierProvider.autoDispose
-    .family<_Disclosure, bool, String>(_Disclosure.new);
-
-class _Disclosure extends Notifier<bool> {
-  _Disclosure(String _);
-
-  @override
-  bool build() => false;
-
-  void toggle() => state = !state;
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -9,12 +10,14 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/ai/stt_service.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/document_picker.dart';
 import 'package:tapture/core/speech/routed_stt_service.dart';
 import 'package:tapture/core/speech/speech.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/features/settings/data/settings_store.dart';
 import 'package:tapture/features/settings/domain/setting_keys.dart';
@@ -23,9 +26,11 @@ import 'package:tapture/features/settings/presentation/speech_settings_providers
 import 'package:tapture/features/settings/presentation/speech_settings_section.dart';
 import 'package:tapture/main.dart' show speechQualityOverride;
 
+import '../../../support/a11y_matchers.dart';
 import '../../../support/fakes/fake_speech_engine.dart';
 import '../../../support/fakes/fake_stt_service.dart';
 import '../../../support/live_transcription_rig.dart';
+import '../../../support/screen_matrix.dart';
 
 const SpeechModelEntry _tiny = SpeechModelCatalogue.tiny;
 const SpeechModelEntry _base = SpeechModelCatalogue.base;
@@ -72,10 +77,19 @@ void main() {
     DocumentPicker picker = const DocumentPicker.fake(),
     SttService? platform,
     bool expanded = true,
+    ScreenMatrix cell = const ScreenMatrix(
+      Size(393, 852),
+      1,
+      Brightness.light,
+      false,
+    ),
+    Locale locale = const Locale('en'),
   }) async {
-    tester.view.physicalSize = const Size(393, 852);
+    tester.view.physicalSize = cell.size;
     tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
     addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final ProviderContainer container = ProviderContainer(
       retry: (int _, Object _) => null,
       overrides: <Override>[
@@ -112,7 +126,10 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp(
-          theme: buildTheme(brightness: Brightness.light),
+          locale: locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildTheme(brightness: cell.brightness, outdoor: cell.outdoor),
           home: const Scaffold(
             body: SingleChildScrollView(child: SpeechSettingsSection()),
           ),
@@ -121,9 +138,12 @@ void main() {
     );
     await tester.pumpAndSettle();
     if (expanded) {
-      await tester.ensureVisible(find.text(Copy.settingsSpeechModels));
+      final LocalizedCopy copy = Copy.of(
+        tester.element(find.byType(SpeechSettingsSection)),
+      );
+      await tester.ensureVisible(find.text(copy.settingsSpeechModels));
       await tester.pumpAndSettle();
-      await _tap(tester, find.text(Copy.settingsSpeechModels));
+      await _tap(tester, find.text(copy.settingsSpeechModels));
       await tester.pumpAndSettle();
     }
     return container;
@@ -133,10 +153,10 @@ void main() {
       find.byKey(ValueKey<String>('speech-model-${entry.id}'));
 
   Finder inRow(SpeechModelEntry entry, String text) =>
-      find.descendant(of: row(entry), matching: find.text(text));
+      find.descendant(of: row(entry), matching: find.textContaining(text));
 
   String detail(SpeechModelEntry entry, String origin, String state) =>
-      Copy.settingsSpeechModelDetail(origin, state, Copy.fileSize(entry.bytes));
+      Copy.settingsSpeechModelSummary(state, Copy.fileSize(entry.bytes));
 
   testWidgets('inventory starts closed with engine health visible', (
     WidgetTester tester,
@@ -160,6 +180,40 @@ void main() {
     await tester.pumpAndSettle();
     expect(row(_tiny), findsNothing);
   });
+
+  testWidgets(
+    'a compact model row keeps origin in details and Verify works with the keyboard',
+    (WidgetTester tester) async {
+      await pump(tester);
+      expect(find.text(Copy.settingsSpeechModelBundled), findsNothing);
+      final Finder details = find.byKey(
+        ValueKey<String>('speech-model-details-${_tiny.id}'),
+      );
+      await _tap(
+        tester,
+        find.descendant(
+          of: details,
+          matching: find.text(Copy.settingsSpeechModelDetails),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.settingsSpeechModelBundled), findsOneWidget);
+      final Finder menu = find.byKey(
+        ValueKey<String>('speech-model-menu-${_tiny.id}'),
+      );
+      await _tap(tester, menu);
+      await tester.pumpAndSettle();
+      expect(menu, meetsTapTarget());
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(
+        find.text(Copy.settingsSpeechVerified(Copy.settingsSpeechModelFast)),
+        findsOneWidget,
+      );
+      expect(inRow(_tiny, Copy.settingsSpeechModelVerified), findsOneWidget);
+    },
+  );
 
   for (final bool damaged in <bool>[false, true]) {
     testWidgets(
@@ -232,10 +286,7 @@ void main() {
       }),
     );
     final ProviderContainer container = await pump(tester, store: store);
-    await _tap(
-      tester,
-      find.byKey(ValueKey<String>('speech-model-remove-${_base.id}')),
-    );
+    await _modelAction(tester, _base, 'remove');
     await tester.pumpAndSettle();
     await _tap(
       tester,
@@ -280,10 +331,7 @@ void main() {
       verifyGate: gate,
     );
     final ProviderContainer container = await pump(tester, store: store);
-    await _tap(
-      tester,
-      find.byKey(ValueKey<String>('speech-model-verify-${_tiny.id}')),
-    );
+    await _modelAction(tester, _tiny, 'verify');
     await tester.pump();
     await _tap(tester, find.text(Copy.settingsSpeechModels));
     await tester.pump();
@@ -456,7 +504,7 @@ void main() {
   );
 
   group('model rows', () {
-    testWidgets('show origin, state and size, and mark the models in use', (
+    testWidgets('summarize state and size, and mark the models in use', (
       WidgetTester tester,
     ) async {
       await pump(
@@ -499,6 +547,10 @@ void main() {
       expect(inRow(_vad, Copy.settingsSpeechModelInUse), findsOneWidget);
       expect(inRow(_tiny, Copy.settingsSpeechModelInUse), findsNothing);
       expect(find.text(Copy.settingsSpeechTooLarge), findsNothing);
+      expect(inRow(_small, Copy.settingsSpeechModelImported), findsNothing);
+      await _tap(tester, inRow(_small, Copy.settingsSpeechModelDetails));
+      await tester.pumpAndSettle();
+      expect(inRow(_small, Copy.settingsSpeechModelImported), findsOneWidget);
     });
 
     testWidgets('a model missing here reads as missing, import only', (
@@ -540,10 +592,7 @@ void main() {
     ) async {
       await pump(tester);
 
-      await _tap(
-        tester,
-        find.byKey(ValueKey<String>('speech-model-verify-${_tiny.id}')),
-      );
+      await _modelAction(tester, _tiny, 'verify');
       await tester.pumpAndSettle();
 
       expect(
@@ -576,10 +625,7 @@ void main() {
         }),
       );
 
-      await _tap(
-        tester,
-        find.byKey(ValueKey<String>('speech-model-verify-${_tiny.id}')),
-      );
+      await _modelAction(tester, _tiny, 'verify');
       await tester.pumpAndSettle();
 
       expect(
@@ -707,16 +753,15 @@ void main() {
         ),
       }),
     );
-    // Bundled models offer no removal.
-    expect(
-      find.byKey(ValueKey<String>('speech-model-remove-${_tiny.id}')),
-      findsNothing,
+    // Bundled models offer verification without removal.
+    final AppOverflowMenu bundled = tester.widget<AppOverflowMenu>(
+      find.byKey(ValueKey<String>('speech-model-menu-${_tiny.id}')),
     );
+    expect(bundled.items.map((AppOverflowAction item) => item.label), <String>[
+      Copy.settingsSpeechVerify,
+    ]);
 
-    await _tap(
-      tester,
-      find.byKey(ValueKey<String>('speech-model-remove-${_small.id}')),
-    );
+    await _modelAction(tester, _small, 'remove');
     await tester.pumpAndSettle();
     expect(
       find.text(
@@ -775,10 +820,7 @@ void main() {
       _base.id,
     );
 
-    await _tap(
-      tester,
-      find.byKey(ValueKey<String>('speech-model-remove-${_base.id}')),
-    );
+    await _modelAction(tester, _base, 'remove');
     await tester.pumpAndSettle();
     await _tap(
       tester,
@@ -805,6 +847,160 @@ void main() {
       _tiny.id,
     );
   });
+
+  testWidgets(
+    'cancelled and failed removal preserve an imported model and its recovery action',
+    (WidgetTester tester) async {
+      final SpeechModelStore store = _HeldRemoveStore(
+        SpeechModelStore.fake(<String, SpeechModelStatus>{
+          ...testInstalledModels(),
+          _small.id: const SpeechModelStatus(
+            entry: _small,
+            present: true,
+            imported: true,
+          ),
+        }),
+        removeFailure: const StorageFailure(
+          message: 'The fixture removal failed.',
+        ),
+      );
+      await pump(tester, store: store);
+      await _modelAction(tester, _small, 'remove');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(Copy.cancel));
+      await tester.pumpAndSettle();
+      expect(inRow(_small, Copy.settingsSpeechModelPresent), findsOneWidget);
+      await _modelAction(tester, _small, 'remove');
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AppDialog),
+          matching: find.text(Copy.settingsSpeechRemove),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('The fixture removal failed.'), findsOneWidget);
+      expect(inRow(_small, Copy.settingsSpeechModelPresent), findsOneWidget);
+      await _tap(
+        tester,
+        find.byKey(ValueKey<String>('speech-model-menu-${_small.id}')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(ValueKey<String>('speech-model-remove-${_small.id}')),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'failed import preserves installed models and keeps Import available',
+    (WidgetTester tester) async {
+      await pump(
+        tester,
+        store: SpeechModelStore.fake(
+          testInstalledModels(),
+          importFailure: const StorageFailure(
+            message: 'The fixture import failed.',
+          ),
+        ),
+        picker: DocumentPicker.fake(
+          document: PickedFile(
+            File('picked/ggml-small-q5_1.bin'),
+            'model.bin',
+            _small.bytes,
+          ),
+        ),
+      );
+      await _tap(
+        tester,
+        find.byKey(const ValueKey<String>('speech-model-import')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('The fixture import failed.'), findsOneWidget);
+      expect(inRow(_base, Copy.settingsSpeechModelInUse), findsOneWidget);
+      expect(
+        tester
+            .widget<AppButton>(
+              find.byKey(const ValueKey<String>('speech-model-import')),
+            )
+            .onPressed,
+        isNotNull,
+      );
+    },
+  );
+
+  for (final ScreenMatrix cell in ScreenMatrix.cells) {
+    for (final Locale locale in <Locale>[
+      const Locale('en'),
+      const Locale('en', 'XA'),
+    ]) {
+      testWidgets(
+        'mixed speech-model states and action menus fit ${cell.description} $locale',
+        (WidgetTester tester) async {
+          await pump(
+            tester,
+            cell: cell,
+            locale: locale,
+            device: _tightDevice,
+            store: SpeechModelStore.fake(<String, SpeechModelStatus>{
+              _vad.id: const SpeechModelStatus(entry: _vad, present: true),
+              _tiny.id: const SpeechModelStatus(entry: _tiny, present: true),
+              _base.id: const SpeechModelStatus(
+                entry: _base,
+                present: true,
+                damaged: true,
+              ),
+              _small.id: const SpeechModelStatus(
+                entry: _small,
+                present: true,
+                imported: true,
+              ),
+            }),
+          );
+          final LocalizedCopy copy = Copy.of(
+            tester.element(find.byType(SpeechSettingsSection)),
+          );
+          expect(inRow(_tiny, copy.settingsSpeechModelInUse), findsOneWidget);
+          expect(inRow(_base, copy.settingsSpeechModelDamaged), findsOneWidget);
+          expect(inRow(_small, copy.settingsSpeechTooLarge), findsOneWidget);
+          final Finder menu = find.byKey(
+            ValueKey<String>('speech-model-menu-${_small.id}'),
+          );
+          await _tap(tester, menu);
+          await tester.pumpAndSettle();
+          final Finder verify = find.byKey(
+            ValueKey<String>('speech-model-verify-${_small.id}'),
+          );
+          final Finder remove = find.byKey(
+            ValueKey<String>('speech-model-remove-${_small.id}'),
+          );
+          expect(verify, meetsTapTarget());
+          expect(remove, meetsTapTarget());
+          expect(verify, hasSemanticLabel(copy.settingsSpeechVerify));
+          expect(remove, hasSemanticLabel(copy.settingsSpeechRemove));
+          expect(tester.takeException(), isNull);
+        },
+        variant: TargetPlatformVariant.all(),
+      );
+    }
+  }
+}
+
+Future<void> _modelAction(
+  WidgetTester tester,
+  SpeechModelEntry entry,
+  String action,
+) async {
+  await _tap(
+    tester,
+    find.byKey(ValueKey<String>('speech-model-menu-${entry.id}')),
+  );
+  await tester.pumpAndSettle();
+  await _tap(
+    tester,
+    find.byKey(ValueKey<String>('speech-model-$action-${entry.id}')),
+  );
 }
 
 Future<void> _tap(WidgetTester tester, Finder target) async {
@@ -815,10 +1011,11 @@ Future<void> _tap(WidgetTester tester, Finder target) async {
 
 /// A store whose removal waits until [release] completes.
 final class _HeldRemoveStore implements SpeechModelStore {
-  _HeldRemoveStore(this._inner, {this.verifyGate});
+  _HeldRemoveStore(this._inner, {this.verifyGate, this.removeFailure});
 
   final SpeechModelStore _inner;
   final Completer<void>? verifyGate;
+  final Failure? removeFailure;
 
   /// Completes to let the held removal land.
   final Completer<void> release = Completer<void>();
@@ -858,6 +1055,9 @@ final class _HeldRemoveStore implements SpeechModelStore {
 
   @override
   Future<Result<void>> remove(SpeechModelEntry entry) async {
+    if (removeFailure case final Failure failure) {
+      return FailureResult<void>(failure);
+    }
     await release.future;
     return _inner.remove(entry);
   }

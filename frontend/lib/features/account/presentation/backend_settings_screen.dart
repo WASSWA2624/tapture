@@ -21,6 +21,7 @@ class BackendSettingsScreen extends StatelessWidget {
     this.authority = AuthorityState.cachedValid,
     this.onSignIn,
     this.onSignOut,
+    this.inline = false,
   });
 
   /// Enrolment cached on the device.
@@ -35,6 +36,9 @@ class BackendSettingsScreen extends StatelessWidget {
   /// Asks to sign out. Offered only while the device is signed in.
   final VoidCallback? onSignOut;
 
+  /// Presents cached account controls inside an existing page.
+  final bool inline;
+
   @override
   Widget build(BuildContext context) {
     final LocalizedCopy localCopy = Copy.of(context);
@@ -44,6 +48,72 @@ class BackendSettingsScreen extends StatelessWidget {
     final String? organisation = config.organisationId;
     final String? role = config.role;
     final VoidCallback? onSignOut = this.onSignOut;
+    final Widget body = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ..._banners(localCopy),
+        AppListTile(
+          title: localCopy.backendServerAddress,
+          subtitle: config.baseUrl,
+          wrapText: true,
+        ),
+        if (organisation != null && organisation.isNotEmpty)
+          AppListTile(
+            title: localCopy.signInOrganisation,
+            subtitle: organisation,
+            wrapText: true,
+          ),
+        AppListTile(
+          title: localCopy.signInEmail,
+          wrapText: true,
+          subtitle:
+              config.accountEmail ??
+              (signedIn
+                  ? localCopy.backendSignedIn
+                  : localCopy.backendNotSignedIn),
+        ),
+        if (role != null)
+          AppListTile(
+            title: localCopy.backendRole,
+            subtitle: localCopy.backendRoleName(role),
+            wrapText: true,
+          ),
+        AppListTile(
+          title: localCopy.backendEnrolment,
+          wrapText: true,
+          subtitle: switch (config.state) {
+            EnrolmentState.notEnrolled => localCopy.backendNotEnrolled,
+            EnrolmentState.enrolling => localCopy.backendEnrolling,
+            EnrolmentState.enrolled => localCopy.backendEnrolled,
+            EnrolmentState.revoked => localCopy.backendRevokedState,
+          },
+        ),
+        if (until != null)
+          AppListTile(
+            title: localCopy.backendGrantUntil,
+            subtitle: DateFormat.yMMMd().format(until.toLocal()),
+            wrapText: true,
+          ),
+        if (signedIn && onSignOut != null) ...<Widget>[
+          const SizedBox(height: Space.x4),
+          AppButton(
+            label: localCopy.signOutAction,
+            variant: AppButtonVariant.destructive,
+            expand: true,
+            onPressed: onSignOut,
+          ),
+        ],
+        if (inline && !signedIn) ...<Widget>[
+          const SizedBox(height: Space.x4),
+          AppButton(
+            label: localCopy.signInAction,
+            variant: AppButtonVariant.secondary,
+            onPressed: onSignIn,
+          ),
+        ],
+      ],
+    );
+    if (inline) return body;
     return AppPage(
       title: localCopy.backendSettingsTitle,
       footer: signedIn
@@ -52,57 +122,7 @@ class BackendSettingsScreen extends StatelessWidget {
               label: localCopy.signInAction,
               onPressed: onSignIn,
             ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          ..._banners(localCopy),
-          AppListTile(
-            title: localCopy.backendServerAddress,
-            subtitle: config.baseUrl,
-          ),
-          if (organisation != null && organisation.isNotEmpty)
-            AppListTile(
-              title: localCopy.signInOrganisation,
-              subtitle: organisation,
-            ),
-          AppListTile(
-            title: localCopy.signInEmail,
-            subtitle:
-                config.accountEmail ??
-                (signedIn
-                    ? localCopy.backendSignedIn
-                    : localCopy.backendNotSignedIn),
-          ),
-          if (role != null)
-            AppListTile(
-              title: localCopy.backendRole,
-              subtitle: localCopy.backendRoleName(role),
-            ),
-          AppListTile(
-            title: localCopy.backendEnrolment,
-            subtitle: switch (config.state) {
-              EnrolmentState.notEnrolled => localCopy.backendNotEnrolled,
-              EnrolmentState.enrolling => localCopy.backendEnrolling,
-              EnrolmentState.enrolled => localCopy.backendEnrolled,
-              EnrolmentState.revoked => localCopy.backendRevokedState,
-            },
-          ),
-          if (until != null)
-            AppListTile(
-              title: localCopy.backendGrantUntil,
-              subtitle: DateFormat.yMMMd().format(until.toLocal()),
-            ),
-          if (signedIn && onSignOut != null) ...<Widget>[
-            const SizedBox(height: Space.x4),
-            AppButton(
-              label: localCopy.signOutAction,
-              variant: AppButtonVariant.destructive,
-              expand: true,
-              onPressed: onSignOut,
-            ),
-          ],
-        ],
-      ),
+      body: body,
     );
   }
 

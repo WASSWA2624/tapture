@@ -17,3 +17,12 @@ Map<String, Object?> aiProviderMetadata({
   'modelCostCeilings': <String, Object?>{'standard': 1.0, 'accurate': 3.0},
   'currency': 'configured',
 };
+
+/// Dated documentation model and synthetic ceilings, never provider pricing.
+Map<String, Object?> xaiProviderMetadata() => <String, Object?>{
+  ...aiProviderMetadata(id: 'xai', label: 'xAI', managed: false),
+  'operations': <Object?>['ocr', 'extract', 'refine'],
+  'model': 'grok-4.7',
+  'models': <Object?>['grok-4.7'],
+  'modelCostCeilings': <String, Object?>{'grok-4.7': 1.0},
+};

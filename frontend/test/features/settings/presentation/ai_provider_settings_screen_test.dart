@@ -9,8 +9,11 @@ import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/backend/backend_config.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/security/secure_storage.dart';
+import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/features/account/presentation/account_route.dart';
 import 'package:tapture/features/account/presentation/account_session.dart';
@@ -71,7 +74,7 @@ void main() {
         await tester.ensureVisible(find.text(Copy.aiServerAndAccount));
         await tester.tap(find.text(Copy.aiServerAndAccount));
         await tester.pumpAndSettle();
-        expect(router.state.uri.path, RoutePaths.settingsAccount);
+        expect(router.state.uri.path, RoutePaths.settingsAi);
         expect(
           find.byType(configured ? BackendSettingsScreen : ServerAddressForm),
           findsOneWidget,
@@ -219,10 +222,181 @@ void main() {
     );
 
     expect(find.text('removed-provider'), findsOneWidget);
-    expect(find.text(Copy.aiSelectionFallback), findsOneWidget);
+    expect(find.text(Copy.aiSelectionInvalid), findsOneWidget);
     expect(settings.read(SettingKeys.aiProvider), 'removed-provider');
     expect(settings.read(SettingKeys.aiModel), 'removed-model');
   });
+
+  for (final ({
+        String name,
+        String provider,
+        String model,
+        bool available,
+        Set<AiOperation> operations,
+      })
+      selected
+      in <
+        ({
+          String name,
+          String provider,
+          String model,
+          bool available,
+          Set<AiOperation> operations,
+        })
+      >[
+        (
+          name: 'missing provider',
+          provider: 'missing',
+          model: 'field-model',
+          available: false,
+          operations: const <AiOperation>{AiOperation.extractFields},
+        ),
+        (
+          name: 'missing model',
+          provider: 'device',
+          model: 'missing',
+          available: false,
+          operations: const <AiOperation>{AiOperation.extractFields},
+        ),
+        (
+          name: 'unsupported capability',
+          provider: 'device',
+          model: 'field-model',
+          available: true,
+          operations: const <AiOperation>{AiOperation.refineText},
+        ),
+        (
+          name: 'temporary unavailability',
+          provider: 'device',
+          model: 'field-model',
+          available: false,
+          operations: const <AiOperation>{AiOperation.extractFields},
+        ),
+      ]) {
+    testWidgets(
+      '${selected.name} has one identity-aware status and preserves saved selection',
+      (WidgetTester tester) async {
+        final SettingsStore settings = SettingsStore.fake(
+          failWrites: true,
+          stored: <String, Object?>{
+            SettingKeys.aiProvider.name: selected.provider,
+            SettingKeys.aiModel.name: selected.model,
+          },
+        );
+        await _pump(
+          tester,
+          registry: _registry(
+            _SuccessfulAiService(),
+            _SuccessfulAiService(),
+            deviceAvailable: selected.available,
+            deviceOperations: selected.operations,
+          ),
+          settings: settings,
+          storage: SecureStorage.fake(backing: <SecretKey, String>{}),
+        );
+        expect(find.byType(AppBanner), findsOneWidget);
+        final bool invalid = selected.name != 'temporary unavailability';
+        expect(
+          find.text(
+            invalid ? Copy.aiSelectionInvalid : Copy.aiProviderUnavailable,
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            invalid ? Copy.aiProviderUnavailable : Copy.aiSelectionInvalid,
+          ),
+          findsNothing,
+        );
+        final AppButton test = tester.widget<AppButton>(
+          find.widgetWithText(AppButton, Copy.apiKeyTest),
+        );
+        expect(test.onPressed, isNull);
+        expect(settings.read(SettingKeys.aiProvider), selected.provider);
+        expect(settings.read(SettingKeys.aiModel), selected.model);
+        await tester.tap(find.text(Copy.save));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey<String>('ai-current-status')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            invalid ? Copy.aiSelectionInvalid : Copy.aiProviderUnavailable,
+          ),
+          findsNothing,
+        );
+        await tester.ensureVisible(find.text(Copy.aiConnectionDetails));
+        await tester.tap(find.text(Copy.aiConnectionDetails));
+        await tester.pumpAndSettle();
+        expect(
+          find.text(
+            invalid ? Copy.aiSelectionInvalid : Copy.aiProviderUnavailable,
+          ),
+          findsOneWidget,
+        );
+        expect(find.text(Copy.tryAgain), findsOneWidget);
+        expect(settings.read(SettingKeys.aiProvider), selected.provider);
+        expect(settings.read(SettingKeys.aiModel), selected.model);
+      },
+    );
+  }
+
+  testWidgets(
+    'a failed credential save keeps input and retries that write without a model call',
+    (WidgetTester tester) async {
+      final _ControlledStorage storage = _ControlledStorage();
+      final _SuccessfulAiService device = _SuccessfulAiService();
+      final SettingsStore settings = SettingsStore.fake(
+        stored: <String, Object?>{
+          SettingKeys.aiProvider.name: 'device',
+          SettingKeys.aiModel.name: 'field-model',
+        },
+      );
+      await _pump(
+        tester,
+        registry: _registry(_SuccessfulAiService(), device),
+        settings: settings,
+        storage: storage,
+      );
+      await tester.ensureVisible(find.text(Copy.apiKeyTest));
+      await tester.tap(find.text(Copy.apiKeyTest));
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.apiKeySuccess), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'retained-secret');
+      await tester.tap(find.text(Copy.save));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('The fixture write failed.'), findsOneWidget);
+      expect(find.text(Copy.apiKeySuccess), findsNothing);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        'retained-secret',
+      );
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).obscureText,
+        isTrue,
+      );
+      await tester.ensureVisible(find.text(Copy.aiConnectionDetails));
+      await tester.tap(find.text(Copy.aiConnectionDetails));
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.apiKeySuccess), findsOneWidget);
+      expect(find.text(Copy.aiCustody('device', true)), findsOneWidget);
+      expect(device.extractCalls, 1);
+      storage.failWrites = false;
+      await tester.ensureVisible(find.text(Copy.tryAgain));
+      await tester.tap(find.text(Copy.tryAgain));
+      await tester.pumpAndSettle();
+      expect(storage.writes, 2);
+      expect(storage.secret, 'retained-secret');
+      expect(find.textContaining('The fixture write failed.'), findsNothing);
+      expect(find.text(Copy.apiKeySuccess), findsOneWidget);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+      );
+      expect(device.extractCalls, 1);
+    },
+  );
 }
 
 Future<void> _pump(
@@ -251,7 +425,14 @@ Future<void> _pump(
   await tester.pumpAndSettle();
 }
 
-ProviderRegistry _registry(AiService backend, AiService device) {
+ProviderRegistry _registry(
+  AiService backend,
+  AiService device, {
+  bool deviceAvailable = true,
+  Set<AiOperation> deviceOperations = const <AiOperation>{
+    AiOperation.extractFields,
+  },
+}) {
   return ProviderRegistry(
     descriptors: <ProviderDescriptor>[
       ProviderDescriptor(
@@ -273,21 +454,52 @@ ProviderRegistry _registry(AiService backend, AiService device) {
       ProviderDescriptor(
         id: 'device',
         label: 'Device provider',
-        operations: const <AiOperation>{AiOperation.extractFields},
+        operations: deviceOperations,
         keyCustody: ProviderKeyCustody.device,
         deviceKeyAllowed: true,
-        available: true,
+        available: deviceAvailable,
         service: device,
         models: <ModelDescriptor>[
           ModelDescriptor(
             id: 'field-model',
             label: 'Field model',
-            operations: const <AiOperation>{AiOperation.extractFields},
+            operations: deviceOperations,
           ),
         ],
       ),
     ],
   );
+}
+
+final class _ControlledStorage implements SecureStorage {
+  bool failWrites = true;
+  int writes = 0;
+  String? secret;
+  @override
+  Future<Result<void>> putSecret(SecretKey key, String value) async {
+    writes++;
+    if (failWrites) {
+      return const FailureResult<void>(
+        StorageFailure(message: 'The fixture write failed.'),
+      );
+    }
+    secret = value;
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<String?>> readSecret(SecretKey key) async =>
+      Success<String?>(secret);
+  @override
+  Future<Result<void>> deleteSecret(SecretKey key) async {
+    secret = null;
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    secret = null;
+  }
 }
 
 final class _SuccessfulAiService implements AiService {

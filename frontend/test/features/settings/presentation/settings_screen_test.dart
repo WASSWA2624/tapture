@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/app.dart' show TaptureApp;
 import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
@@ -17,11 +18,48 @@ import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
+import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 
 import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
 
 void main() {
+  testWidgets('the actual Settings Storage tile opens the production route', (
+    WidgetTester tester,
+  ) async {
+    _compact(tester);
+    await tester.pumpWidget(
+      ProviderScope(
+        retry: (int _, Object _) => null,
+        overrides: <Override>[
+          storageSettingsOverride(cacheBytes: 0),
+          themeModeProvider.overrideWith(
+            () => ThemeModeController.withStore(TextStore.memory()),
+          ),
+        ],
+        child: const TaptureApp(receiveIncomingBundles: false),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final ProviderContainer container = ProviderScope.containerOf(
+      tester.element(find.byType(TaptureApp)),
+    );
+    final GoRouter router = container.read(routerProvider);
+    router.go(AppRoutes.more);
+    await tester.pumpAndSettle();
+    final Finder storage = find.widgetWithText(
+      AppListTile,
+      Copy.settingsStorageTitle,
+    );
+    await tester.ensureVisible(storage);
+    await tester.tap(storage);
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, AppRoutes.settingsStorage);
+    expect(find.byType(StorageSettingsScreen), findsOneWidget);
+    expect(find.text(Copy.storageCheckTitle), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   setUpAll(ScreenFonts.load);
   for (final ScreenMatrix cell in ScreenMatrix.cells) {
     testWidgets(

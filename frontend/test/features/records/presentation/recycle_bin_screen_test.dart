@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -15,7 +16,8 @@ import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/lifecycle/deleted_entity.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
@@ -63,6 +65,10 @@ const StorageFailure _unreadable = StorageFailure(
 final DateTime _now = DateTime(2026, 9, 20, 11).toUtc();
 
 final class _DeletedAttachments implements CaptureDocumentRepository {
+  _DeletedAttachments({this.release});
+
+  final Completer<Result<void>>? release;
+  final List<String> restoreCalls = <String>[];
   @override
   Stream<List<DeletedEntity>> watchDeleted() =>
       Stream<List<DeletedEntity>>.value(<DeletedEntity>[
@@ -80,7 +86,11 @@ final class _DeletedAttachments implements CaptureDocumentRepository {
           ),
       ]);
   @override
-  Future<Result<void>> restore(String id) async => const Success<void>(null);
+  Future<Result<void>> restore(String id) async {
+    restoreCalls.add(id);
+    return release == null ? const Success<void>(null) : release!.future;
+  }
+
   @override
   Future<Result<DocumentDraft>> import({
     required Uint8List bytes,
@@ -281,6 +291,16 @@ void main() {
       const ValueKey<String>('recycle-bin-restore-photo:photo'),
     );
     final Finder viewport = find.byType(AppListViewport).first;
+    tester
+        .state<ScrollableState>(
+          find.descendant(
+            of: find.byKey(const ValueKey<String>('recycle-bin-list')),
+            matching: find.byType(Scrollable),
+          ),
+        )
+        .position
+        .jumpTo(0);
+    await tester.pumpAndSettle();
     if (tester.getRect(viewport).height < 300) {
       await tester.drag(viewport, const Offset(0, -160));
       await tester.pumpAndSettle();
@@ -318,19 +338,67 @@ void main() {
   }
 
   for (final ScreenMatrix cell in ScreenMatrix.cells) {
-    testWidgets(
-      'mixed recycle bin fits ${cell.description}',
-      (WidgetTester tester) async {
-        await pumpMixed(tester, cell);
-        expect(tester.takeException(), isNull);
-        expect(find.text(Copy.recycleEmptyRecords(1)), findsOneWidget);
-        await reachPhotoRestore(tester);
-        expect(tester.takeException(), isNull);
-      },
-      variant: kIsWeb
-          ? TargetPlatformVariant.only(defaultTargetPlatform)
-          : TargetPlatformVariant.all(),
-    );
+    for (final Locale locale in <Locale>[
+      const Locale('en'),
+      const Locale('en', 'XA'),
+    ]) {
+      testWidgets(
+        'mixed recycle bin labels every action in ${locale.toLanguageTag()} ${cell.description}',
+        (WidgetTester tester) async {
+          await pumpMixed(tester, cell, locale: locale);
+          final SemanticsHandle semantics = tester.ensureSemantics();
+          final LocalizedCopy copy = Copy.of(
+            tester.element(find.byType(RecycleBinScreen)),
+          );
+          final Finder scrollable = find.descendant(
+            of: find.byKey(const ValueKey<String>('recycle-bin-list')),
+            matching: find.byType(Scrollable),
+          );
+          expect(tester.takeException(), isNull);
+          expect(find.text(copy.recycleEmptyRecords(1)), findsOneWidget);
+          for (final String id in <String>[
+            'project:deleted-project',
+            'record-1',
+            'document:document',
+            'audio:audio',
+            'photo:photo',
+          ]) {
+            final Finder action = find.byKey(
+              ValueKey<String>('recycle-bin-restore-$id'),
+            );
+            tester.state<ScrollableState>(scrollable).position.jumpTo(0);
+            await tester.pumpAndSettle();
+            await tester.scrollUntilVisible(
+              action,
+              100,
+              scrollable: scrollable,
+            );
+            await tester.pumpAndSettle();
+            final AppButton button = tester.widget<AppButton>(action);
+            expect(button.label, copy.recycleBinRestore);
+            expect(button.icon, AppIcons.restore);
+            expect(button.variant, AppButtonVariant.secondary);
+            expect(action, meetsTapTarget());
+            final Finder row = rowOf(id);
+            final String title = tester.widget<AppListTile>(row).title;
+            expect(
+              action,
+              hasSemanticLabel(copy.recycleBinRestoreLabel(title)),
+            );
+            expect(
+              tester.getTopLeft(action).dy,
+              greaterThanOrEqualTo(tester.getBottomLeft(row).dy),
+            );
+          }
+          await reachPhotoRestore(tester);
+          expect(tester.takeException(), isNull);
+          semantics.dispose();
+        },
+        variant: kIsWeb
+            ? TargetPlatformVariant.only(defaultTargetPlatform)
+            : TargetPlatformVariant.all(),
+      );
+    }
   }
 
   for (final ({String name, ScreenMatrix cell}) corner
@@ -573,6 +641,88 @@ void main() {
   });
 
   group('restore', () {
+    testWidgets(
+      'record restore is announced only after durable success and rejects repeated taps',
+      (WidgetTester tester) async {
+        final String id = binned('record-1');
+        final _HeldRestoreRepository held = _HeldRestoreRepository(records);
+        await pump(tester, repository: held);
+        final Finder action = find.byKey(
+          ValueKey<String>('recycle-bin-restore-$id'),
+        );
+        await tester.tap(action);
+        await tester.pump();
+        expect(tester.widget<AppButton>(action).busy, isTrue);
+        expect(records.isTombstoned(id), isTrue);
+        expect(find.text(Copy.recordsRestored(1)), findsNothing);
+        await tester.tap(action);
+        await tester.pump();
+        expect(held.restoreCalls, 1);
+        held.release.complete();
+        await tester.pumpAndSettle();
+        expect(records.isTombstoned(id), isFalse);
+        expect(rowOf(id), findsNothing);
+        expect(find.text(Copy.recordsRestored(1)), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'keyboard focus reaches Restore and Enter restores its record',
+      (WidgetTester tester) async {
+        final String id = binned('record-1', name: 'Autoclave');
+        await pump(tester);
+        final Key actionKey = ValueKey<String>('recycle-bin-restore-$id');
+        bool focused = false;
+        for (int attempt = 0; attempt < 8 && !focused; attempt++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump();
+          focused =
+              FocusManager.instance.primaryFocus?.context
+                  ?.findAncestorWidgetOfExactType<AppButton>()
+                  ?.key ==
+              actionKey;
+        }
+        expect(focused, isTrue);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.pumpAndSettle();
+        expect(rowOf(id), findsNothing);
+        expect(records.isTombstoned(id), isFalse);
+      },
+    );
+
+    for (final DeletedEntityKind kind in <DeletedEntityKind>[
+      DeletedEntityKind.document,
+      DeletedEntityKind.audio,
+    ]) {
+      testWidgets(
+        '${kind.name} restore stays busy and rejects duplicate taps',
+        (WidgetTester tester) async {
+          final Completer<Result<void>> release = Completer<Result<void>>();
+          final _DeletedAttachments attachments = _DeletedAttachments(
+            release: release,
+          );
+          await pump(tester, attachments: attachments);
+          final Finder action = find.byKey(
+            ValueKey<String>('recycle-bin-restore-${kind.name}:${kind.name}'),
+          );
+          await tester.ensureVisible(action);
+          await tester.tap(action);
+          await tester.pump();
+          expect(tester.widget<AppButton>(action).busy, isTrue);
+          expect(tester.widget<AppButton>(action).onPressed, isNull);
+          await tester.tap(action);
+          await tester.pump();
+          expect(attachments.restoreCalls, <String>[kind.name]);
+          expect(find.text(Copy.recycleRestored), findsNothing);
+          release.complete(const FailureResult<void>(_locked));
+          await tester.pumpAndSettle();
+          expect(tester.widget<AppButton>(action).busy, isFalse);
+          expect(rowOf('${kind.name}:${kind.name}'), findsOneWidget);
+          expect(find.text(_locked.message), findsOneWidget);
+        },
+      );
+    }
+
     testWidgets(
       'one press returns the record to its previous status and out of the bin',
       (WidgetTester tester) async {
@@ -848,7 +998,7 @@ void main() {
       expect(tester.widget<AppButton>(emptyButton()).onPressed, isNull);
       expect(
         tester
-            .widget<AppIconButton>(
+            .widget<AppButton>(
               find.byKey(ValueKey<String>('recycle-bin-restore-$id')),
             )
             .onPressed,
@@ -967,6 +1117,28 @@ Future<void> _expectBrowserAccessibility(WidgetTester tester) async {
     semantics.dispose();
     await tester.pump();
   }
+}
+
+/// Holds the durable restore until the test permits the repository to commit.
+final class _HeldRestoreRepository implements RecordRepository {
+  _HeldRestoreRepository(this.records);
+
+  final FakeRecordRepository records;
+  final Completer<void> release = Completer<void>();
+  int restoreCalls = 0;
+
+  @override
+  Stream<List<DeletedRecord>> watchBin() => records.watchBin();
+
+  @override
+  Future<Result<void>> restore(String id) async {
+    restoreCalls++;
+    await release.future;
+    return records.restore(id);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A store whose recycle bin never answers, so the page stays loading.

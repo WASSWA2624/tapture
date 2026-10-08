@@ -162,7 +162,7 @@ class ContextPreset {
 - [x] Tests: repository test against an in-memory database asserting the context reloads after a simulated restart.
 - [x] Tests: widget test of `context_hierarchy_screen.dart` covering zero levels, a three-level hierarchy, reorder
       persistence and a repository write failure.
-- [x] Tests: golden of `context_bar.dart` at three widths with long values and at 200 percent text scale.
+- [ ] Tests: golden of `context_bar.dart` at three widths with long values and at 200 percent text scale.
 - [x] Tests: widget tests of `context_picker_sheet.dart` and `pinned_fields_sheet.dart` covering no recents, dataset
       search, free-text entry and a repository failure.
 - [x] Tests: unit tests of `context_cascade.dart` over zero-, one- and three-level hierarchies and over a change to
@@ -174,3 +174,10 @@ class ContextPreset {
       duplicate name, applying a preset that omits a level, and a repository failure.
 - [x] Tests: unit tests of `context_auto_clear.dart` and `context_movement_prompt.dart` with a fake clock and a fake
       location source, covering off, fired, undone and permission-denied, with no Flutter binding.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
+

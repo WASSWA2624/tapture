@@ -11,4 +11,3 @@ export 'presentation/capture_controller.dart'
         captureDocumentRepositoryProvider,
         photoRepositoryProvider;
 export 'presentation/capture_screen.dart';
-export 'presentation/rapid_mode_screen.dart';

@@ -14,7 +14,6 @@ import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
-import 'package:tapture/features/account/presentation/account_route.dart';
 import 'package:tapture/features/account/presentation/account_session.dart';
 import 'package:tapture/features/account/presentation/relay_route.dart';
 import 'package:tapture/features/account/presentation/sign_in_route.dart';
@@ -71,7 +70,6 @@ import 'package:tapture/features/settings/presentation/files_settings_screen.dar
 import 'package:tapture/features/settings/presentation/language_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/privacy_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/settings_screen.dart';
-import 'package:tapture/features/settings/presentation/storage_check_screen.dart';
 import 'package:tapture/features/settings/presentation/storage_settings_screen.dart';
 import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/presentation/checklist_screen.dart';
@@ -278,8 +276,7 @@ abstract final class AppRoutes {
     ).toString();
   }
 
-  /// Unprocessed-queue destination the status line opens. Nested under
-  /// [more] so Settings stays in the branch stack. Task 159 owns the screen.
+  /// Legacy global processing address, redirected to Projects (task 144).
   static const String queue = RoutePaths.queue;
 
   /// Legacy global export-history path. Exports belong to a project, so
@@ -353,7 +350,7 @@ abstract final class AppRoutes {
   /// Open-source licences under About.
   static const String settingsLicences = RoutePaths.settingsLicences;
 
-  /// Backend account and session under Settings.
+  /// Legacy account address, redirected to AI's expanded account section.
   static const String settingsAccount = RoutePaths.settingsAccount;
 
   /// The one sign-in, outside the shell like [lock].
@@ -700,7 +697,11 @@ List<RouteBase> get _routes {
                       metadata: _projectScoped,
                       builder: (BuildContext _, GoRouterState state) {
                         return ProjectExportScreen(
+                          key: ValueKey<String>(
+                            state.pathParameters['projectId']!,
+                          ),
                           projectId: state.pathParameters['projectId']!,
+                          startExport: state.extra == true,
                         );
                       },
                       routes: <RouteBase>[
@@ -843,15 +844,17 @@ List<RouteBase> get _routes {
                 );
               },
               routes: <RouteBase>[
-                // Rapid mode, opened from capture's menu (task 012 step 20).
+                // Retired mode keeps old draft links on ordinary Capture.
                 GoRoute(
                   path: 'rapid',
                   metadata: _projectScoped,
-                  builder: (BuildContext _, GoRouterState state) {
-                    return RapidModeScreen(
-                      projectId: state.pathParameters['projectId'] ?? '',
-                    );
-                  },
+                  redirect: (BuildContext _, GoRouterState state) => Uri(
+                    path: RoutePaths.projectCapture(
+                      state.pathParameters['projectId']!,
+                    ),
+                    query: state.uri.hasQuery ? state.uri.query : null,
+                    fragment: state.uri.hasFragment ? state.uri.fragment : null,
+                  ).toString(),
                 ),
               ],
             ),
@@ -908,9 +911,8 @@ List<RouteBase> get _routes {
                   routes: <RouteBase>[
                     GoRoute(
                       path: 'check',
-                      builder: (BuildContext _, GoRouterState _) {
-                        return const StorageCheckScreen();
-                      },
+                      redirect: (BuildContext _, GoRouterState _) =>
+                          RoutePaths.settingsStorage,
                     ),
                   ],
                 ),
@@ -946,9 +948,8 @@ List<RouteBase> get _routes {
                 ),
                 GoRoute(
                   path: 'account',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const AccountRoute();
-                  },
+                  redirect: (BuildContext _, GoRouterState _) =>
+                      '${AppRoutes.settingsAi}?section=account',
                 ),
                 GoRoute(
                   path: 'relay',
@@ -958,8 +959,13 @@ List<RouteBase> get _routes {
                 ),
                 GoRoute(
                   path: 'ai',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const AiProviderSettingsScreen();
+                  builder: (BuildContext _, GoRouterState state) {
+                    final bool showAccount =
+                        state.uri.queryParameters['section'] == 'account';
+                    return AiProviderSettingsScreen(
+                      key: ValueKey<bool>(showAccount),
+                      initiallyShowAccount: showAccount,
+                    );
                   },
                 ),
                 GoRoute(
@@ -1003,9 +1009,8 @@ List<RouteBase> get _routes {
                 ),
                 GoRoute(
                   path: 'queue',
-                  builder: (BuildContext _, GoRouterState _) {
-                    return const QueueScreen();
-                  },
+                  redirect: (BuildContext _, GoRouterState _) =>
+                      RoutePaths.projects,
                 ),
                 GoRoute(
                   path: 'exports',
@@ -1165,6 +1170,7 @@ List<RouteBase> _templateChildRoutes() {
 
 String? _legacyLocation(GoRouterState state) {
   final String path = state.uri.path;
+  if (path == '/queue') return RoutePaths.projects;
   for (final ({String from, String to}) prefix in _legacyPrefixes) {
     if (path == prefix.from || path.startsWith('${prefix.from}/')) {
       return Uri(
@@ -1180,7 +1186,6 @@ String? _legacyLocation(GoRouterState state) {
 
 const List<({String from, String to})> _legacyPrefixes =
     <({String from, String to})>[
-      (from: '/queue', to: AppRoutes.queue),
       (from: '/exports', to: AppRoutes.exports),
       (from: '/templates', to: AppRoutes.templates),
     ];

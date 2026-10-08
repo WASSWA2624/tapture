@@ -12,6 +12,7 @@ import 'package:tapture/core/backend/backend_session.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/security/secure_storage.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/account/presentation/account_route.dart';
@@ -114,9 +115,7 @@ void main() {
       );
       expect(find.text(Copy.backendNotSignedIn), findsOneWidget);
 
-      await tester.tap(
-        find.widgetWithText(AppPrimaryAction, Copy.signInAction),
-      );
+      await tester.tap(find.widgetWithText(AppButton, Copy.signInAction));
       await tester.pumpAndSettle();
       expect(router.state.uri.path, RoutePaths.signIn);
       expect(find.text(Copy.signInLater), findsNothing);

@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import { it } from 'node:test';
 import { providerDefinitions } from '../../src/services/ai/catalogue.js';
 import { testConfig } from '../helpers.js';
-import { catalogueProvider } from '../fakes/provider_catalogue.js';
+import {
+  catalogueProvider,
+  xaiCatalogueProvider,
+} from '../fakes/provider_catalogue.js';
 
 it('retains built-ins and parses additional providers for both protocols', () => {
   for (const raw of [undefined, '', '[]']) {
@@ -35,6 +38,28 @@ it('retains built-ins and parses additional providers for both protocols', () =>
       .aiProviderCatalogue,
     [baseDefault],
   );
+});
+
+it('enables xAI only through an explicit reviewed Responses catalogue', () => {
+  const definition = xaiCatalogueProvider();
+  const config = testConfig({
+    AI_PROVIDER_CATALOGUE: JSON.stringify([definition]),
+  });
+  assert.deepEqual(config.aiProviderCatalogue, [definition]);
+  assert.equal(
+    providerDefinitions(config).filter((entry) => entry.id === 'xai').length,
+    1,
+  );
+  assert.deepEqual(definition.operations, ['ocr', 'extract', 'refine']);
+  assert.equal(definition.authMode, 'required');
+  for (const ceiling of ['REVIEWED_POSITIVE_CEILING', 0, -1])
+    assert.throws(() =>
+      testConfig({
+        AI_PROVIDER_CATALOGUE: JSON.stringify([
+          { ...definition, modelCostCeilings: { 'grok-4.7': ceiling } },
+        ]),
+      }),
+    );
 });
 
 it('rejects malformed catalogue entries at boot without echoing configuration', () => {

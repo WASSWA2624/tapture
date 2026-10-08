@@ -173,11 +173,6 @@ abstract final class ScreenFixtures {
       action: Copy.importChooseFile,
     ),
     ScreenFixture(
-      'RapidModeScreen',
-      '${RoutePaths.projectCapture(project)}/rapid',
-      action: Copy.captureTakePhoto,
-    ),
-    ScreenFixture(
       'CaptureScreen',
       RoutePaths.projectCapture(project),
       action: Copy.captureAddPhoto,

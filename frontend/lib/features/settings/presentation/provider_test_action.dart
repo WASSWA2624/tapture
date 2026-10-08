@@ -18,6 +18,8 @@ class ProviderTestAction extends StatelessWidget {
     this.view = ProviderTestView.empty,
     this.failure,
     this.onTest,
+    this.showAction = true,
+    this.showOutcome = true,
   });
 
   /// The last outcome.
@@ -29,6 +31,12 @@ class ProviderTestAction extends StatelessWidget {
   /// Runs the smallest request through the registry.
   final VoidCallback? onTest;
 
+  /// Allows the page to place its action separately from its one status region.
+  final bool showAction;
+
+  /// Whether this composition includes the last outcome.
+  final bool showOutcome;
+
   @override
   Widget build(BuildContext context) {
     final LocalizedCopy localCopy = Copy.of(context);
@@ -37,7 +45,7 @@ class ProviderTestAction extends StatelessWidget {
     if (failure != null) {
       return AppErrorState(failure: failure, onRetry: onTest);
     }
-    if (view == ProviderTestView.empty && onTest == null) {
+    if (showOutcome && view == ProviderTestView.empty && onTest == null) {
       return AppEmptyState(
         icon: AppIcons.key,
         headline: localCopy.apiKeyTest,
@@ -58,12 +66,13 @@ class ProviderTestAction extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppButton(
-          label: localCopy.apiKeyTest,
-          variant: AppButtonVariant.secondary,
-          onPressed: onTest,
-        ),
-        if (message != null) ...<Widget>[
+        if (showAction)
+          AppButton(
+            label: localCopy.apiKeyTest,
+            variant: AppButtonVariant.secondary,
+            onPressed: onTest,
+          ),
+        if (showOutcome && message != null) ...<Widget>[
           const SizedBox(height: Space.x2),
           AppBanner(
             key: const ValueKey<String>('provider-test-outcome'),

@@ -43,6 +43,10 @@ persisted `TextStore` flag the first guard reads. `GlobalErrorPage` is the `Erro
 Later field-feedback work is included: Capture-tab icon state, count-card navigation, the expanded Projects list
 pane, the Projects destination count, the shell back button and title, and the remaining projects-shell feedback.
 
+Task [144 W6](24-product-refinements.md#144--resolve-feedback-archive-08102026-1045) supersedes the global Process
+entry and header composition: title-bar controls stay on one row, Process opens from the selected project's menu,
+and legacy global addresses return to project navigation. Processing ownership and its pipeline remain in task 013.
+
 ### Files
 
 Routing and guards:
@@ -342,7 +346,7 @@ Keys: `nav-bar`, `nav-rail`, `nav-pane`, `nav-body-slot`, `nav-icon-$index`; `st
 - [x] Tests: `frontend/test/app/widgets/offline_banner_test.dart` drives online → offline → online.
 - [x] Tests: `frontend/test/app/widgets/global_error_page_test.dart` pumps a deliberately throwing subtree, asserts
       the three actions, asserts restart preserves unsaved state, and asserts no destructive action is present.
-- [x] Tests: light, dark and outdoor goldens cover the overflow menu, the gallery carries
+- [ ] Tests: light, dark and outdoor goldens cover the overflow menu, the gallery carries
       `_sample('app_overflow_menu')`, and `copy_test.dart`'s `_values` holds `Copy.overflowMenu`.
 
 #### Follow-up work
@@ -380,7 +384,7 @@ Keys: `nav-bar`, `nav-rail`, `nav-pane`, `nav-body-slot`, `nav-icon-$index`; `st
 - [x] At 1200 dp with no projects, the body shows "Create a project".
 - [x] At 400 and 800 dp the list and "Create a project" stay in the body.
 - [x] Changing width between 400 and 1200 dp loses neither the typed search nor the open project.
-- [x] Tests: pane list, search, clear, no-match, heading gone, Records empty; body create-button
+- [ ] Tests: pane list, search, clear, no-match, heading gone, Records empty; body create-button
       widths; search and open project across 400↔1200; pane goldens in light, dark and outdoor,
       empty and with three projects.
 
@@ -606,3 +610,10 @@ Constraints:
   013 · Processing and the recycle bin to 014 · Records.
 - The real project, context, pinned-template and unprocessed watches behind the status line's stub providers, which
   008 · Projects, 011 · Context, 012 · Capture and 013 · Processing supply.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
+

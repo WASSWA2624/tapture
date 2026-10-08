@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/backend/server_ai_catalogue.dart';
@@ -8,6 +9,82 @@ import 'package:tapture/core/errors/result.dart';
 import '../../support/ai_catalogue_fixture.dart';
 
 void main() {
+  test('every durable refresh invalidates catalogue consumers', () async {
+    List<Object?> response = <Object?>[];
+    final ServerAiCatalogue catalogue = ServerAiCatalogue(
+      send:
+          ({
+            required String method,
+            required String path,
+            Map<String, Object?>? body,
+            String? token,
+          }) async =>
+              (status: 200, body: <String, Object?>{'providers': response}),
+    );
+    final ProviderContainer container = ProviderContainer(
+      overrides: [serverAiCatalogueProvider.overrideWithValue(catalogue)],
+    );
+    addTearDown(catalogue.dispose);
+    addTearDown(container.dispose);
+    final Provider<List<String>> identities = Provider<List<String>>((ref) {
+      ref.watch(serverAiCatalogueChangesProvider);
+      return catalogue.rows.map((row) => row['provider']! as String).toList();
+    });
+    final subscription = container.listen(identities, (_, _) {});
+    addTearDown(subscription.close);
+    for (final bool configured in [false, true, false, true]) {
+      response = configured ? <Object?>[xaiProviderMetadata()] : <Object?>[];
+      expect(await catalogue.refresh(), isA<Success<void>>());
+      await container.pump();
+      expect(container.read(identities), configured ? ['xai'] : isEmpty);
+    }
+  });
+
+  test(
+    'xAI photo text metadata persists only public identity and approved models',
+    () async {
+      List<Map<String, Object?>>? stored;
+      final ServerAiCatalogue catalogue = ServerAiCatalogue(
+        writeSnapshot: (rows) async => stored = rows,
+        send:
+            ({
+              required String method,
+              required String path,
+              Map<String, Object?>? body,
+              String? token,
+            }) async => (
+              status: 200,
+              body: <String, Object?>{
+                'providers': <Object?>[
+                  <String, Object?>{
+                    ...xaiProviderMetadata(),
+                    'endpoint': 'https://api.x.ai/v1',
+                    'apiKey': 'fixture-secret',
+                  },
+                ],
+              },
+            ),
+      );
+      addTearDown(catalogue.dispose);
+      expect(await catalogue.refresh(), isA<Success<void>>());
+      expect(stored!.single['provider'], 'xai');
+      expect(stored!.single.keys, isNot(contains('apiKey')));
+      expect(stored!.single.keys, isNot(contains('endpoint')));
+      expect(
+        catalogue.models('xai').map((model) => model.id),
+        contains('grok-4.7'),
+      );
+      expect(catalogue.operations('xai'), <AiOperation>{
+        AiOperation.readText,
+        AiOperation.extractFields,
+        AiOperation.refineText,
+      });
+      expect(catalogue.cost('xai', 'grok-4.7'), (
+        amount: 1.0,
+        unit: 'configured',
+      ));
+    },
+  );
   test(
     'a valid empty refresh removes all configured adapters durably',
     () async {

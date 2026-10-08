@@ -25,6 +25,8 @@ class AppChoiceField<T> extends StatelessWidget {
     this.value,
     this.enabled = true,
     this.alwaysSheet = false,
+    this.wrapLabel = false,
+    this.leadingBuilder,
   });
 
   /// Visible name of the control (FE-A11Y-02).
@@ -47,6 +49,14 @@ class AppChoiceField<T> extends StatelessWidget {
   /// must read as a control even with one option.
   final bool alwaysSheet;
 
+  /// Allows a sheet field's label to wrap at large text or narrow widths.
+  /// The selected value and picker behaviour remain unchanged.
+  final bool wrapLabel;
+
+  /// Builds decorative artwork beside each option's readable label.
+  /// The selected tick remains visible when a builder is supplied.
+  final Widget Function(BuildContext, Choice<T>)? leadingBuilder;
+
   @override
   Widget build(BuildContext context) {
     return Semantics(
@@ -60,13 +70,16 @@ class AppChoiceField<T> extends StatelessWidget {
               value: value,
               enabled: enabled,
               onChanged: onChanged,
+              leadingBuilder: leadingBuilder,
             )
           : _SheetChoice<T>(
               label: label,
+              wrapLabel: wrapLabel,
               options: options,
               value: value,
               enabled: enabled,
               onChanged: onChanged,
+              leadingBuilder: leadingBuilder,
             ),
     );
   }
@@ -91,6 +104,7 @@ class _SegmentedChoice<T> extends StatelessWidget {
     required this.value,
     required this.enabled,
     required this.onChanged,
+    required this.leadingBuilder,
   });
 
   final String label;
@@ -98,6 +112,7 @@ class _SegmentedChoice<T> extends StatelessWidget {
   final T? value;
   final bool enabled;
   final ValueChanged<T?> onChanged;
+  final Widget Function(BuildContext, Choice<T>)? leadingBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +152,7 @@ class _SegmentedChoice<T> extends StatelessWidget {
                         selected: options[i].value == value,
                         enabled: enabled,
                         onChanged: onChanged,
+                        leadingBuilder: leadingBuilder,
                       ),
                     ),
                   ],
@@ -156,12 +172,14 @@ class _Segment<T> extends StatelessWidget {
     required this.selected,
     required this.enabled,
     required this.onChanged,
+    required this.leadingBuilder,
   });
 
   final Choice<T> option;
   final bool selected;
   final bool enabled;
   final ValueChanged<T?> onChanged;
+  final Widget Function(BuildContext, Choice<T>)? leadingBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -191,10 +209,15 @@ class _Segment<T> extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  if (leadingBuilder != null) ...<Widget>[
+                    ExcludeSemantics(child: leadingBuilder!(context, option)),
+                    const SizedBox(width: Space.x1),
+                  ],
                   if (selected) ...<Widget>[
                     Icon(AppIcons.check, color: foreground, size: Space.x4),
                     const SizedBox(width: Space.x1),
-                  ] else if (option.icon != null) ...<Widget>[
+                  ] else if (leadingBuilder == null &&
+                      option.icon != null) ...<Widget>[
                     Icon(option.icon, color: foreground, size: Space.x4),
                     const SizedBox(width: Space.x1),
                   ],
@@ -220,22 +243,29 @@ class _Segment<T> extends StatelessWidget {
 class _SheetChoice<T> extends StatelessWidget {
   const _SheetChoice({
     required this.label,
+    required this.wrapLabel,
     required this.options,
     required this.value,
     required this.enabled,
     required this.onChanged,
+    required this.leadingBuilder,
   });
 
   final String label;
+  final bool wrapLabel;
   final List<Choice<T>> options;
   final T? value;
   final bool enabled;
   final ValueChanged<T?> onChanged;
+  final Widget Function(BuildContext, Choice<T>)? leadingBuilder;
 
   @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
     final String selectedLabel = _labelFor(value);
+    final Choice<T>? selected = options
+        .where((Choice<T> option) => option.value == value)
+        .firstOrNull;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
@@ -248,7 +278,8 @@ class _SheetChoice<T> extends StatelessWidget {
           child: InputDecorator(
             isEmpty: selectedLabel.isEmpty,
             decoration: InputDecoration(
-              labelText: label,
+              labelText: wrapLabel ? null : label,
+              label: wrapLabel ? Text(label) : null,
               enabled: enabled,
               suffixIcon: ExcludeSemantics(
                 child: Icon(
@@ -258,10 +289,25 @@ class _SheetChoice<T> extends StatelessWidget {
                 ),
               ),
             ),
-            child: Text(
-              selectedLabel.isEmpty ? ' ' : selectedLabel,
-              style: AppText.body.copyWith(color: colors.onSurface),
-            ),
+            child: leadingBuilder == null || selected == null
+                ? Text(
+                    selectedLabel.isEmpty ? ' ' : selectedLabel,
+                    style: AppText.body.copyWith(color: colors.onSurface),
+                  )
+                : Row(
+                    children: <Widget>[
+                      ExcludeSemantics(
+                        child: leadingBuilder!(context, selected),
+                      ),
+                      const SizedBox(width: Space.x2),
+                      Expanded(
+                        child: Text(
+                          selectedLabel,
+                          style: AppText.body.copyWith(color: colors.onSurface),
+                        ),
+                      ),
+                    ],
+                  ),
           ),
         ),
       ),
@@ -286,6 +332,7 @@ class _SheetChoice<T> extends StatelessWidget {
           label: label,
           options: options,
           value: value,
+          leadingBuilder: leadingBuilder,
           onPick: (T picked) {
             Navigator.of(sheetContext).pop();
             onChanged(picked);
@@ -302,12 +349,14 @@ class _ChoiceSheet<T> extends StatefulWidget {
     required this.options,
     required this.value,
     required this.onPick,
+    required this.leadingBuilder,
   });
 
   final String label;
   final List<Choice<T>> options;
   final T? value;
   final ValueChanged<T> onPick;
+  final Widget Function(BuildContext, Choice<T>)? leadingBuilder;
 
   @override
   State<_ChoiceSheet<T>> createState() => _ChoiceSheetState<T>();
@@ -359,7 +408,12 @@ class _ChoiceSheetState<T> extends State<_ChoiceSheet<T>> {
               return AppListTile(
                 title: option.label,
                 selected: option.value == widget.value,
-                leading: option.icon == null
+                wrapText: widget.leadingBuilder != null,
+                leading: widget.leadingBuilder != null
+                    ? ExcludeSemantics(
+                        child: widget.leadingBuilder!(context, option),
+                      )
+                    : option.icon == null
                     ? null
                     : Icon(option.icon, color: colors.onSurface),
                 onTap: () => widget.onPick(option.value),

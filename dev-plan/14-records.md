@@ -28,6 +28,10 @@ The 2026-10-01 screen audit adds a reachable Records action to an empty recycle 
 and a canonical record destination when empty history is opened directly. New real-router navigation regressions
 are awaiting the coordinated frontend gate; existing empty-render assertions alone do not prove those actions.
 
+Task [144 W2](24-product-refinements.md#144--resolve-feedback-archive-08102026-1045) adds a visible Restore label
+and shared glyph to each recycle-bin entity, retaining its entity-specific accessible name and existing local
+restore, retention and purge contracts. Its presentation verification is recorded in task 144.
+
 Everything a person does with a record once capture is over. A record read in one call with its values, photos, status
 flags and context snapshot, behind a repository interface, over the one canonical status set and the transitions the
 app allows between its members; a paged, virtualised list showing number, name, identifier, context and status,

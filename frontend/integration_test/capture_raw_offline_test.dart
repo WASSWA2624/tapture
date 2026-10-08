@@ -1,6 +1,8 @@
+import 'package:drift/drift.dart' show BooleanExpressionOperators;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/app_database.dart' hide CaptureSession;
 import 'package:tapture/core/widgets/record_status.dart';
+import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 
 import '../test/support/matchers.dart';
@@ -8,6 +10,51 @@ import 'support/capture_rig.dart';
 import 'support/harness.dart';
 
 void main() {
+  test(
+    'durable manual values survive controller restart and save raw offline',
+    () async {
+      final TestApp app = await bootTestApp();
+      addTearDown(app.dispose);
+      app.backend.markUnreachable();
+      final CaptureRig capture = await CaptureRig.open(app);
+      valueOf(await capture.controller.setTemplate(CaptureRig.templateId));
+      valueOf(await capture.controller.setValue('serial', 'SN-recovered'));
+      valueOf(
+        await capture.controller.setCaption(null, 'Caption after recovery'),
+      );
+      await capture.shoot();
+      final CaptureSession before = capture.session;
+      capture.container.invalidate(
+        captureControllerProvider(CaptureRig.projectId),
+      );
+      await capture.container.pump();
+      final CaptureSession recovered = (await capture.controller
+          .interrupted())!;
+      expect(recovered.id, before.id);
+      expect(recovered.values['serial'], 'SN-recovered');
+      expect(recovered.photos.single.sha256, before.photos.single.sha256);
+      valueOf(await capture.controller.replaceSession(recovered));
+      final String id = valueOf(
+        await capture.controller.saveRaw(
+          capture.container.read(captureRecordWriterProvider)!.persist,
+        ),
+      );
+      final RecordField field =
+          await (app.db.select(app.db.recordFields)..where(
+                ($RecordFieldsTable row) =>
+                    row.recordId.equals(id) & row.fieldKey.equals('serial'),
+              ))
+              .getSingle();
+      expect(field.valueRaw, 'SN-recovered');
+      final Photo photo = await app.db.select(app.db.photos).getSingle();
+      expect(photo.sha256, before.photos.single.sha256);
+      expect(capture.file(photo.relativePath).existsSync(), isTrue);
+      expect(await app.db.select(app.db.processing).get(), isEmpty);
+      expect(app.ai.calls, 0);
+      expect(app.outboundCallCount, 0);
+    },
+  );
+
   test('a project without templates saves evidence offline', () async {
     final TestApp app = await bootTestApp();
     addTearDown(app.dispose);

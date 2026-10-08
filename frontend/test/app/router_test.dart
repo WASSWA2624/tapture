@@ -11,19 +11,24 @@ import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/backend/backend_session.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/security/secure_storage.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/account/presentation/account_session.dart';
 import 'package:tapture/features/account/presentation/relay_route.dart';
+import 'package:tapture/features/account/presentation/server_address_form.dart';
 import 'package:tapture/features/account/presentation/sign_in_route.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
+import 'package:tapture/features/exports/exports.dart';
 import 'package:tapture/features/meetings/meetings.dart'
     show MeetingReviewScreen, meetingRepositoryProvider;
 import 'package:tapture/features/merge/merge.dart';
+import 'package:tapture/features/projects/presentation/project_export_screen.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/records/presentation/record_detail_screen.dart';
+import 'package:tapture/features/settings/presentation/ai_provider_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/appearance_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/files_settings_screen.dart';
 import 'package:tapture/features/settings/presentation/language_settings_screen.dart';
@@ -34,9 +39,100 @@ import 'package:tapture/features/transcripts/transcripts.dart'
 
 import '../features/meetings/fakes/fake_meeting_repository.dart';
 import '../features/transcripts/fakes/fake_transcript_repository.dart';
+import '../support/fakes/fake_export_repository.dart';
 import '../support/fakes/fake_merge_repository.dart';
 
 void main() {
+  testWidgets(
+    'export start survives Back and another project has isolated state',
+    (WidgetTester tester) async {
+      final FakeExportRepository exports = FakeExportRepository()
+        ..summary = (
+          projectName: 'Export fixture',
+          records: 1,
+          photos: 0,
+          audioClips: 0,
+          unprocessed: 1,
+          needsReview: 0,
+          approved: 0,
+          templates: const <ExportTemplateCount>[],
+          firstCapturedAt: null,
+          lastCapturedAt: null,
+        );
+      addTearDown(exports.dispose);
+      final GoRouter router = await _pump(
+        tester,
+        projectId: 'p1',
+        overrides: <Override>[
+          exportRepositoryProvider.overrideWithValue(exports),
+          downloadServiceProvider.overrideWithValue(DownloadService.fake()),
+        ],
+      );
+      router.go(AppRoutes.projectExports('p1'), extra: true);
+      await tester.pumpAndSettle();
+      expect(exports.exportCalls, 1);
+      expect(
+        find.text(Copy.projectExportSaved('export-0.zip')),
+        findsOneWidget,
+      );
+      final Future<Object?> child = router.push(
+        RoutePaths.projectRecords('p1'),
+      );
+      await tester.pumpAndSettle();
+      router.pop();
+      await child;
+      await tester.pumpAndSettle();
+      expect(exports.exportCalls, 1);
+      router.go(AppRoutes.projectExports('p2'));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<ProjectExportScreen>(find.byType(ProjectExportScreen))
+            .projectId,
+        'p2',
+      );
+      expect(find.text(Copy.projectExportSaved('export-0.zip')), findsNothing);
+      expect(exports.exportCalls, 1);
+      expect(find.text(Copy.projectExport), findsOneWidget);
+    },
+  );
+
+  testWidgets('legacy Check files opens Storage', (WidgetTester tester) async {
+    final GoRouter router = await _pump(tester);
+    await _go(tester, router, RoutePaths.settingsStorageCheck);
+    expect(router.state.uri.path, RoutePaths.settingsStorage);
+    expect(find.byType(StorageSettingsScreen), findsOneWidget);
+    expect(find.text(Copy.storageCheckTitle), findsNothing);
+  });
+
+  testWidgets('legacy account reveals AI controls and ordinary AI collapses', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = await _pump(tester);
+    await _go(tester, router, RoutePaths.settingsAccount);
+    expect(router.state.uri.path, RoutePaths.settingsAi);
+    expect(router.state.uri.queryParameters['section'], 'account');
+    expect(
+      tester
+          .widget<AiProviderSettingsScreen>(
+            find.byType(AiProviderSettingsScreen),
+          )
+          .initiallyShowAccount,
+      isTrue,
+    );
+    expect(find.byType(ServerAddressForm), findsOneWidget);
+    await _go(tester, router, RoutePaths.settingsAi);
+    expect(
+      tester
+          .widget<AiProviderSettingsScreen>(
+            find.byType(AiProviderSettingsScreen),
+          )
+          .initiallyShowAccount,
+      isFalse,
+    );
+    expect(find.byType(ServerAddressForm), findsNothing);
+  });
+
   testWidgets('restored project detail returns through home before Projects', (
     WidgetTester tester,
   ) async {
@@ -237,7 +333,8 @@ void main() {
     );
 
     await _go(tester, router, AppRoutes.queue);
-    expect(find.byKey(const ValueKey<String>('route-queue')), findsOneWidget);
+    expect(router.state.uri.path, AppRoutes.projects);
+    expect(find.byKey(const ValueKey<String>('route-queue')), findsNothing);
 
     // Exports belong to a project: the old global path opens Projects.
     await _go(tester, router, AppRoutes.exports);
@@ -341,9 +438,12 @@ void main() {
     final GoRouter router = await _pump(tester, projectId: 'p1');
 
     await _go(tester, router, '/queue?filter=queued');
-    expect(router.state.uri.path, AppRoutes.queue);
-    expect(router.state.uri.queryParameters[AppRoutes.filterQuery], 'queued');
-    expect(find.byKey(const ValueKey<String>('route-queue')), findsOneWidget);
+    expect(router.state.uri.path, AppRoutes.projects);
+    expect(router.state.uri.queryParameters, isEmpty);
+    expect(find.byKey(const ValueKey<String>('route-queue')), findsNothing);
+    await _go(tester, router, '${AppRoutes.queue}?filter=failed');
+    expect(router.state.uri.path, AppRoutes.projects);
+    expect(router.state.uri.queryParameters, isEmpty);
 
     await _go(tester, router, '/exports?filter=share');
     expect(router.state.uri.path, AppRoutes.projects);
@@ -363,29 +463,26 @@ void main() {
     );
   });
 
-  testWidgets('queue and templates keep Settings beneath them', (
-    WidgetTester tester,
-  ) async {
-    final GoRouter router = await _pump(tester);
+  testWidgets(
+    'retired queue opens Projects and templates keep Settings beneath',
+    (WidgetTester tester) async {
+      final GoRouter router = await _pump(tester);
 
-    await _go(tester, router, AppRoutes.queue);
-    expect(find.byKey(const ValueKey<String>('route-queue')), findsOneWidget);
-    expect(router.canPop(), isTrue);
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(router.state.uri.path, AppRoutes.more);
-    expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
+      await _go(tester, router, AppRoutes.queue);
+      expect(router.state.uri.path, AppRoutes.projects);
+      expect(find.byKey(const ValueKey<String>('route-queue')), findsNothing);
 
-    await _go(tester, router, AppRoutes.templates);
-    expect(
-      find.byKey(const ValueKey<String>('route-templates')),
-      findsOneWidget,
-    );
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(router.state.uri.path, AppRoutes.more);
-    expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
-  });
+      await _go(tester, router, AppRoutes.templates);
+      expect(
+        find.byKey(const ValueKey<String>('route-templates')),
+        findsOneWidget,
+      );
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, AppRoutes.more);
+      expect(find.text(Copy.operatorProfileTitle), findsOneWidget);
+    },
+  );
 
   testWidgets('project template detail returns to that project', (
     WidgetTester tester,

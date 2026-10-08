@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,8 +16,10 @@ import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/network/offline_now.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -28,16 +30,21 @@ import 'package:tapture/features/exports/exports.dart';
 
 import 'export_summary_view.dart';
 
-/// Summarises what an export of [projectId] holds and how big its package
-/// will be, writes one new project package, and shares it only on request
-/// (task 076, D13). On a device the stored package is copied in chunks; a
-/// browser hands over the bytes it built (D6).
+/// Writes one canonical project package; native handoff is explicit and
+/// browser handoff retries the completed bytes without generating again.
 final class ProjectExportScreen extends ConsumerStatefulWidget {
   /// Creates the export page for [projectId].
-  const ProjectExportScreen({required this.projectId, super.key});
+  const ProjectExportScreen({
+    required this.projectId,
+    this.startExport = false,
+    super.key,
+  });
 
   /// Project whose records are written.
   final String projectId;
+
+  /// Menu intent consumed once by this mounted route, including Back revisits.
+  final bool startExport;
 
   @override
   ConsumerState<ProjectExportScreen> createState() =>
@@ -50,6 +57,25 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
   bool _busy = false;
   Failure? _failure;
   ExportedPackage? _saved;
+  bool _summaryExpanded = false;
+  bool _handoffBusy = false;
+  Failure? _handoffFailure;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.startExport) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(_export());
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _cancel?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +94,17 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
     return AppPage(
       key: const ValueKey<String>('route-project-export'),
       title: localCopy.projectExportTitle,
-      footer: _failure == null && (hasRecords || _saved != null)
+      overflow: <AppOverflowAction>[
+        if (!_busy && !_handoffBusy)
+          AppOverflowAction(
+            key: const ValueKey<String>('project-export-deliverables'),
+            label: localCopy.exportOutputFiles,
+            icon: AppIcons.export,
+            onTap: () =>
+                context.go(RoutePaths.projectDeliverables(widget.projectId)),
+          ),
+      ],
+      footer: _failure == null && (hasRecords || _saved != null || _busy)
           ? _footer(downloads)
           : null,
       body: AsyncValueView<ExportSummary>(
@@ -91,7 +127,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
           if (failure != null) {
             return AppErrorState(
               failure: failure,
-              onRetry: () => refresh(() => _failure = null),
+              onRetry: () => unawaited(_export()),
             );
           }
           final ExportedPackage? saved = _saved;
@@ -115,22 +151,28 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
                 const SizedBox(height: Space.x3),
                 ExportPrivacySummaryView(exportId: saved.id, package: true),
               ],
-              ExportSummaryView(
-                summary: loaded,
-                destination: downloads.destination,
-                estimatedBytes: saved == null ? estimate : null,
+              if (_handoffFailure case final Failure failure)
+                AppErrorState(
+                  failure: failure,
+                  onRetry: _handoffBusy || saved == null
+                      ? null
+                      : () => unawaited(_download(saved)),
+                ),
+              AppSectionHeader(
+                key: const ValueKey<String>('project-export-summary'),
+                title: localCopy.projectExportDetails,
+                expanded: _summaryExpanded,
+                onToggle: () =>
+                    refresh(() => _summaryExpanded = !_summaryExpanded),
               ),
-              const SizedBox(height: Space.x3),
-              AppButton(
-                key: const ValueKey<String>('project-export-deliverables'),
-                label: localCopy.exportOutputFiles,
-                variant: AppButtonVariant.secondary,
-                onPressed: _busy
-                    ? null
-                    : () => context.go(
-                        RoutePaths.projectDeliverables(widget.projectId),
-                      ),
-              ),
+              if (_summaryExpanded)
+                ExportSummaryView(
+                  summary: loaded,
+                  destination: kIsWeb || saved?.package is InMemoryBundle
+                      ? localCopy.projectExportBrowserDestination
+                      : localCopy.projectExportDestination,
+                  estimatedBytes: saved == null ? estimate : null,
+                ),
             ],
           );
         },
@@ -140,17 +182,21 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
 
   /// Export before a save, Cancel while writing, and Share afterwards: the
   /// page's one primary action sits in reach (FE-SIMP-01).
-  Widget _footer(DownloadService downloads) {
+  Widget? _footer(DownloadService downloads) {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final ExportedPackage? saved = _saved;
     if (saved != null) {
+      if (saved.package is InMemoryBundle) return null;
       return AppPrimaryAction(
-        label: localCopy.projectExportShare,
+        label: downloads.canShareToApps
+            ? localCopy.projectExportShare
+            : localCopy.projectExportOpen,
+        busy: _handoffBusy,
         caption: downloads.canShareToApps
             ? localCopy.projectExportShareHint
             : null,
-        onPressed: () => unawaited(_share(saved)),
+        onPressed: _handoffBusy ? null : () => unawaited(_share(saved)),
       );
     }
     return Column(
@@ -176,6 +222,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
   }
 
   Future<void> _export() async {
+    if (_busy || _saved != null) return;
     final ExportRepository? store = ref.read(exportRepositoryProvider);
     if (store == null) {
       refresh(() => _failure = _filesUnavailable);
@@ -207,39 +254,57 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
           _cancel = null;
           _saved = value;
         });
-        final DownloadService downloads = ref.read(downloadServiceProvider);
-        final Result<String?> copy = switch (value.package) {
-          StoredBundle(:final String relativePath) =>
-            await downloads.saveStored(
-              relativePath: relativePath,
-              fileName: value.fileName,
-              mimeType: BundleFormat.mimeType,
-              subfolder: 'Exports',
-            ),
-          InMemoryBundle(:final Uint8List bytes) => await downloads.save(
-            fileName: value.fileName,
-            bytes: bytes,
-            mimeType: BundleFormat.mimeType,
-            subfolder: 'Exports',
-          ),
-        };
-        if (!mounted) {
-          return;
-        }
-        if (copy is FailureResult<String?>) {
-          showAppSnack(
-            context,
-            copy.failure.message,
-            tone: SnackTone.error,
-            localizedMessage: copy.failure.explanation,
-          );
-        }
+        if (value.package is InMemoryBundle) await _download(value);
     }
   }
 
   /// Opens the share sheet. A dismissed sheet says nothing; any other
   /// failure says why (FE-CONS-11).
   Future<void> _share(ExportedPackage saved) async {
+    if (_handoffBusy) return;
+    refresh(() => _handoffBusy = true);
+    try {
+      await _shareSaved(saved);
+    } finally {
+      if (mounted) refresh(() => _handoffBusy = false);
+    }
+  }
+
+  Future<void> _download(ExportedPackage saved) async {
+    if (_handoffBusy) return;
+    final BundleOutput package = saved.package;
+    if (package is! InMemoryBundle) return;
+    refresh(() => _handoffBusy = true);
+    try {
+      final ExportRepository? store = ref.read(exportRepositoryProvider);
+      if (store case final ExportSharingPolicy policy) {
+        final Result<void> allowed = await policy.allowShare(saved.id);
+        if (!mounted) return;
+        if (allowed case FailureResult<void>(:final Failure failure)) {
+          refresh(() => _handoffFailure = failure);
+          return;
+        }
+      }
+      final Result<String?> copied = await ref
+          .read(downloadServiceProvider)
+          .save(
+            fileName: saved.fileName,
+            bytes: package.bytes,
+            mimeType: BundleFormat.mimeType,
+          );
+      if (!mounted) return;
+      refresh(
+        () => _handoffFailure = switch (copied) {
+          FailureResult<String?>(:final Failure failure) => failure,
+          Success<String?>() => null,
+        },
+      );
+    } finally {
+      if (mounted) refresh(() => _handoffBusy = false);
+    }
+  }
+
+  Future<void> _shareSaved(ExportedPackage saved) async {
     final ExportRepository? store = ref.read(exportRepositoryProvider);
     if (store case final ExportSharingPolicy policy) {
       final Result<void> allowed = await policy.allowShare(saved.id);

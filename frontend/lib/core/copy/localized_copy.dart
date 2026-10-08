@@ -10,6 +10,41 @@ import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 /// never pass through here (FE-L10N-07).
 /// Copy resolved against one app's inherited locale. User data passes unchanged.
 final class LocalizedCopy {
+  /// Optional template fields opened from Capture.
+  String get captureManualForm => _catalog.captureManualForm;
+
+  /// Details about the completed or planned package.
+  String get projectExportDetails => _catalog.projectExportDetails;
+
+  /// Canonical archive location on a native device.
+  String get projectExportDestination => _catalog.projectExportDestination;
+
+  /// Browser-controlled archive destination.
+  String get projectExportBrowserDestination =>
+      _catalog.projectExportBrowserDestination;
+
+  /// Explicit desktop handoff of the stored archive.
+  String get projectExportOpen => _catalog.projectExportOpen;
+
+  /// Optional speech-model source and integrity detail.
+  String get settingsSpeechModelDetails => _catalog.settingsSpeechModelDetails;
+
+  /// Concise state and localized size for one speech model.
+  String settingsSpeechModelSummary(String state, String size) =>
+      _catalog.settingsSpeechModelSummary(state, size);
+
+  /// Explicit inline account configuration action.
+  String get backendConfigure => _catalog.backendConfigure;
+
+  /// Complete AI connection and custody explanations.
+  String get aiConnectionDetails => _catalog.aiConnectionDetails;
+
+  /// Concise neutral custody helper beside provider selection.
+  String get aiCustodySummary => _catalog.aiCustodySummary;
+
+  /// Legal attribution for the bundled provider marks.
+  String get aiProviderAttribution => _catalog.aiProviderAttribution;
+
   /// Opens optional backend setup from AI settings.
   String get aiServerAndAccount => _catalog.aiServerAndAccount;
 
@@ -10720,6 +10755,8 @@ final class LocalizedCopy {
 
   /// Spending limit
   String get aiCostControls => _catalog.aiCostControls;
+
   /// Saved maximum cost per request.
-  String aiRequestLimitSummary(String amount) => _catalog.aiRequestLimitSummary(amount);
+  String aiRequestLimitSummary(String amount) =>
+      _catalog.aiRequestLimitSummary(amount);
 }

@@ -11,29 +11,89 @@ import 'localized_message.dart';
 extension LocalizedCopyResolver on LocalizedCopy {
   /// Renders a semantic member; invalid arguments retain the audit fallback.
   String resolve(LocalizedMessage message) {
-    try { return _resolve(message); } on FormatException { return message.fallback; } on TypeError { return message.fallback; } on ArgumentError { return message.fallback; }
+    try {
+      return _resolve(message);
+    } on FormatException {
+      return message.fallback;
+    } on TypeError {
+      return message.fallback;
+    } on ArgumentError {
+      return message.fallback;
+    }
   }
 
-  String _resolve(LocalizedMessage message) => switch(message.key) {
+  String _resolve(LocalizedMessage message) => switch (message.key) {
+    'captureManualForm' => captureManualForm,
+    'projectExportDetails' => projectExportDetails,
+    'projectExportDestination' => projectExportDestination,
+    'projectExportBrowserDestination' => projectExportBrowserDestination,
+    'projectExportOpen' => projectExportOpen,
+    'settingsSpeechModelDetails' => settingsSpeechModelDetails,
+    'settingsSpeechModelSummary' => settingsSpeechModelSummary(
+      (message.argument('state') is LocalizedMessage
+          ? resolve(message.argument('state') as LocalizedMessage)
+          : message.argument('state') as String),
+      (message.argument('size') is LocalizedMessage
+          ? resolve(message.argument('size') as LocalizedMessage)
+          : message.argument('size') as String),
+    ),
+    'backendConfigure' => backendConfigure,
+    'aiConnectionDetails' => aiConnectionDetails,
+    'aiCustodySummary' => aiCustodySummary,
+    'aiProviderAttribution' => aiProviderAttribution,
     'aiServerAndAccount' => aiServerAndAccount,
     'settingsPhotoFiles' => settingsPhotoFiles,
     'settingsProjectContexts' => settingsProjectContexts,
-    'settingsPhotoFilesSummary' => settingsPhotoFilesSummary((message.argument('quality') is LocalizedMessage ? resolve(message.argument('quality') as LocalizedMessage) : message.argument('quality') as String),(message.argument('folders') is LocalizedMessage ? resolve(message.argument('folders') as LocalizedMessage) : message.argument('folders') as String)),
-    'settingsProjectContextsSummary' => settingsProjectContextsSummary((message.argument('autoClear') is LocalizedMessage ? resolve(message.argument('autoClear') as LocalizedMessage) : message.argument('autoClear') as String),(message.argument('movement') is LocalizedMessage ? resolve(message.argument('movement') as LocalizedMessage) : message.argument('movement') as String)),
+    'settingsPhotoFilesSummary' => settingsPhotoFilesSummary(
+      (message.argument('quality') is LocalizedMessage
+          ? resolve(message.argument('quality') as LocalizedMessage)
+          : message.argument('quality') as String),
+      (message.argument('folders') is LocalizedMessage
+          ? resolve(message.argument('folders') as LocalizedMessage)
+          : message.argument('folders') as String),
+    ),
+    'settingsProjectContextsSummary' => settingsProjectContextsSummary(
+      (message.argument('autoClear') is LocalizedMessage
+          ? resolve(message.argument('autoClear') as LocalizedMessage)
+          : message.argument('autoClear') as String),
+      (message.argument('movement') is LocalizedMessage
+          ? resolve(message.argument('movement') as LocalizedMessage)
+          : message.argument('movement') as String),
+    ),
     'ocrBrowserUnavailable' => ocrBrowserUnavailable,
     'notDetected' => notDetected,
     'recordsCount' => recordsCount(message.argument('n') as int),
     'fieldsCount' => fieldsCount(message.argument('n') as int),
-    'clearField' => clearField((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'showField' => showField((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'hideField' => hideField((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'clearField' => clearField(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'showField' => showField(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'hideField' => hideField(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'photoNoAccess' => photoNoAccess,
     'displayNoAccess' => displayNoAccess,
     'photoNoCamera' => photoNoCamera,
     'photoPickFailed' => photoPickFailed,
     'displayCaptureFailed' => displayCaptureFailed,
-    'dictateInto' => dictateInto((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'stopDictating' => stopDictating((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'dictateInto' => dictateInto(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'stopDictating' => stopDictating(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'dictationUnavailable' => dictationUnavailable,
     'dictationNoMicrophone' => dictationNoMicrophone,
     'dictationNothingHeard' => dictationNothingHeard,
@@ -60,7 +120,11 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'outOfRange' => outOfRange,
     'selectAll' => selectAll,
     'clear' => clear,
-    'dismissChip' => dismissChip((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'dismissChip' => dismissChip(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'dismiss' => dismiss,
     'cancel' => cancel,
     'ok' => ok,
@@ -68,15 +132,39 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'unsavedChanges' => unsavedChanges,
     'discard' => discard,
     'fixFields' => fixFields(message.argument('n') as int),
-    'fieldError' => fieldError((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String),(message.argument('error') is LocalizedMessage ? resolve(message.argument('error') as LocalizedMessage) : message.argument('error') as String)),
-    'fieldLabelRequired' => fieldLabelRequired((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'fieldLabelOptional' => fieldLabelOptional((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'validationAnnouncement' => validationAnnouncement((message.argument('heading') is LocalizedMessage ? resolve(message.argument('heading') as LocalizedMessage) : message.argument('heading') as String),(message.argument('errors') as List<Object?>).cast<String>()),
+    'fieldError' => fieldError(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+      (message.argument('error') is LocalizedMessage
+          ? resolve(message.argument('error') as LocalizedMessage)
+          : message.argument('error') as String),
+    ),
+    'fieldLabelRequired' => fieldLabelRequired(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'fieldLabelOptional' => fieldLabelOptional(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'validationAnnouncement' => validationAnnouncement(
+      (message.argument('heading') is LocalizedMessage
+          ? resolve(message.argument('heading') as LocalizedMessage)
+          : message.argument('heading') as String),
+      (message.argument('errors') as List<Object?>).cast<String>(),
+    ),
     'missingPhoto' => missingPhoto,
     'photoSelect' => photoSelect,
     'photoUnreadable' => photoUnreadable,
     'photoUnreadableRecovery' => photoUnreadableRecovery,
-    'missingPhotoNamed' => missingPhotoNamed((message.argument('type') is LocalizedMessage ? resolve(message.argument('type') as LocalizedMessage) : message.argument('type') as String)),
+    'missingPhotoNamed' => missingPhotoNamed(
+      (message.argument('type') is LocalizedMessage
+          ? resolve(message.argument('type') as LocalizedMessage)
+          : message.argument('type') as String),
+    ),
     'photo' => photo,
     'photoCrop' => photoCrop,
     'photoCropCorner' => photoCropCorner,
@@ -85,7 +173,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'photoDraw' => photoDraw,
     'photoUndoDraw' => photoUndoDraw,
     'photoClearDraw' => photoClearDraw,
-    'markupInk' => markupInk(MarkupInk.values.byName(message.argument('ink') as String)),
+    'markupInk' => markupInk(
+      MarkupInk.values.byName(message.argument('ink') as String),
+    ),
     'markupInkLabel' => markupInkLabel,
     'markupSize' => markupSize,
     'markupBacking' => markupBacking,
@@ -103,7 +193,14 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'photoCaptionDeleteMessage' => photoCaptionDeleteMessage,
     'photoCaptionDeleted' => photoCaptionDeleted,
     'photoTypeOn' => photoTypeOn,
-    'photoThumbLabel' => photoThumbLabel(type: (message.argument('type') is LocalizedMessage ? resolve(message.argument('type') as LocalizedMessage) : message.argument('type') as String),missing: message.argument('missing') as bool,captioned: message.argument('captioned') as bool,selected: message.argument('selected') as bool),
+    'photoThumbLabel' => photoThumbLabel(
+      type: (message.argument('type') is LocalizedMessage
+          ? resolve(message.argument('type') as LocalizedMessage)
+          : message.argument('type') as String),
+      missing: message.argument('missing') as bool,
+      captioned: message.argument('captioned') as bool,
+      selected: message.argument('selected') as bool,
+    ),
     'photoFront' => photoFront,
     'photoBack' => photoBack,
     'photoSerial' => photoSerial,
@@ -121,7 +218,19 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'stepRunning' => stepRunning,
     'stepWaiting' => stepWaiting,
     'failed' => failed,
-    'progressAnnouncement' => progressAnnouncement(label: (message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String),state: (message.argument('state') is LocalizedMessage ? resolve(message.argument('state') as LocalizedMessage) : message.argument('state') as String),detail: message.argument('detail') == null ? null : (message.argument('detail') is LocalizedMessage ? resolve(message.argument('detail') as LocalizedMessage) : message.argument('detail') as String)),
+    'progressAnnouncement' => progressAnnouncement(
+      label: (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+      state: (message.argument('state') is LocalizedMessage
+          ? resolve(message.argument('state') as LocalizedMessage)
+          : message.argument('state') as String),
+      detail: message.argument('detail') == null
+          ? null
+          : (message.argument('detail') is LocalizedMessage
+                ? resolve(message.argument('detail') as LocalizedMessage)
+                : message.argument('detail') as String),
+    ),
     'statusDraft' => statusDraft,
     'statusCaptured' => statusCaptured,
     'statusQueued' => statusQueued,
@@ -135,7 +244,11 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'emptyMessage' => emptyMessage,
     'loading' => loading,
     'busy' => busy,
-    'busyAction' => busyAction((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'busyAction' => busyAction(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'tryAgain' => tryAgain,
     'save' => save,
     'undo' => undo,
@@ -177,10 +290,16 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'projectFiltersTitle' => projectFiltersTitle,
     'projectStatusFilter' => projectStatusFilter,
     'projectPinFilter' => projectPinFilter,
-    'projectPinFilterLabel' => projectPinFilterLabel((message.argument('value') is LocalizedMessage ? resolve(message.argument('value') as LocalizedMessage) : message.argument('value') as String)),
+    'projectPinFilterLabel' => projectPinFilterLabel(
+      (message.argument('value') is LocalizedMessage
+          ? resolve(message.argument('value') as LocalizedMessage)
+          : message.argument('value') as String),
+    ),
     'projectApplyFilters' => projectApplyFilters,
     'pinnedProject' => pinnedProject,
-    'projectTemplateCount' => projectTemplateCount(message.argument('count') as int),
+    'projectTemplateCount' => projectTemplateCount(
+      message.argument('count') as int,
+    ),
     'projectsImport' => projectsImport,
     'projectsDuplicate' => projectsDuplicate,
     'projectAllProjects' => projectAllProjects,
@@ -189,8 +308,16 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'projectUnarchive' => projectUnarchive,
     'projectDelete' => projectDelete,
     'projectDeleteMenu' => projectDeleteMenu,
-    'projectDeleteTitle' => projectDeleteTitle((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
-    'projectDeleteMessage' => projectDeleteMessage(records: message.argument('records') as int,files: message.argument('files') as int,days: message.argument('days') as int),
+    'projectDeleteTitle' => projectDeleteTitle(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'projectDeleteMessage' => projectDeleteMessage(
+      records: message.argument('records') as int,
+      files: message.argument('files') as int,
+      days: message.argument('days') as int,
+    ),
     'filesCount' => filesCount(message.argument('n') as int),
     'projectDeleteTypeName' => projectDeleteTypeName,
     'projectExportFirst' => projectExportFirst,
@@ -206,7 +333,11 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'projectNothingToOpenRecovery' => projectNothingToOpenRecovery,
     'projectOpenFailedTitle' => projectOpenFailedTitle,
     'projectOpenFailed' => projectOpenFailed,
-    'projectOpenFailedNamed' => projectOpenFailedNamed((message.argument('fileName') is LocalizedMessage ? resolve(message.argument('fileName') as LocalizedMessage) : message.argument('fileName') as String)),
+    'projectOpenFailedNamed' => projectOpenFailedNamed(
+      (message.argument('fileName') is LocalizedMessage
+          ? resolve(message.argument('fileName') as LocalizedMessage)
+          : message.argument('fileName') as String),
+    ),
     'projectOpenFailedRecovery' => projectOpenFailedRecovery,
     'projectOpenNoApp' => projectOpenNoApp,
     'projectOpenNoAppRecovery' => projectOpenNoAppRecovery,
@@ -243,41 +374,81 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'projectUseAppDefault' => projectUseAppDefault,
     'projectOn' => projectOn,
     'projectOff' => projectOff,
-    'projectAppDefault' => projectAppDefault((message.argument('value') is LocalizedMessage ? resolve(message.argument('value') as LocalizedMessage) : message.argument('value') as String)),
+    'projectAppDefault' => projectAppDefault(
+      (message.argument('value') is LocalizedMessage
+          ? resolve(message.argument('value') as LocalizedMessage)
+          : message.argument('value') as String),
+    ),
     'projectEditEmptyHeadline' => projectEditEmptyHeadline,
     'projectEditEmptyMessage' => projectEditEmptyMessage,
     'projectSettingsEmptyHeadline' => projectSettingsEmptyHeadline,
     'projectSettingsEmptyMessage' => projectSettingsEmptyMessage,
-    'projectCopyName' => projectCopyName((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
-    'projectListSubtitle' => projectListSubtitle(records: message.argument('records') as int,unprocessed: message.argument('unprocessed') as int),
-    'projectRecordPosition' => projectRecordPosition(message.argument('position') as int),
+    'projectCopyName' => projectCopyName(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'projectListSubtitle' => projectListSubtitle(
+      records: message.argument('records') as int,
+      unprocessed: message.argument('unprocessed') as int,
+    ),
+    'projectRecordPosition' => projectRecordPosition(
+      message.argument('position') as int,
+    ),
     'projectRecordsEmptyHeadline' => projectRecordsEmptyHeadline,
     'projectRecordsEmptyMessage' => projectRecordsEmptyMessage,
     'projectRecordsSearchHint' => projectRecordsSearchHint,
     'projectRecordFiltersTitle' => projectRecordFiltersTitle,
     'projectRecordStatusFilter' => projectRecordStatusFilter,
-    'projectRecordsNoMatch' => projectRecordsNoMatch((message.argument('query') is LocalizedMessage ? resolve(message.argument('query') as LocalizedMessage) : message.argument('query') as String)),
-    'choiceNoMatch' => choiceNoMatch((message.argument('query') is LocalizedMessage ? resolve(message.argument('query') as LocalizedMessage) : message.argument('query') as String)),
+    'projectRecordsNoMatch' => projectRecordsNoMatch(
+      (message.argument('query') is LocalizedMessage
+          ? resolve(message.argument('query') as LocalizedMessage)
+          : message.argument('query') as String),
+    ),
+    'choiceNoMatch' => choiceNoMatch(
+      (message.argument('query') is LocalizedMessage
+          ? resolve(message.argument('query') as LocalizedMessage)
+          : message.argument('query') as String),
+    ),
     'projectExport' => projectExport,
     'projectExportTitle' => projectExportTitle,
     'projectExportEmptyHeadline' => projectExportEmptyHeadline,
     'projectExportEmptyMessage' => projectExportEmptyMessage,
     'projectExportShare' => projectExportShare,
-    'projectExportSaved' => projectExportSaved((message.argument('fileName') is LocalizedMessage ? resolve(message.argument('fileName') as LocalizedMessage) : message.argument('fileName') as String)),
+    'projectExportSaved' => projectExportSaved(
+      (message.argument('fileName') is LocalizedMessage
+          ? resolve(message.argument('fileName') as LocalizedMessage)
+          : message.argument('fileName') as String),
+    ),
     'projectExportShareHint' => projectExportShareHint,
     'exportSectionProject' => exportSectionProject,
     'exportSectionRecords' => exportSectionRecords,
     'exportSectionTemplates' => exportSectionTemplates,
     'exportSectionFile' => exportSectionFile,
     'exportAudioClips' => exportAudioClips(message.argument('n') as int),
-    'exportCapturedBetween' => exportCapturedBetween((message.argument('first') is LocalizedMessage ? resolve(message.argument('first') as LocalizedMessage) : message.argument('first') as String),(message.argument('last') is LocalizedMessage ? resolve(message.argument('last') as LocalizedMessage) : message.argument('last') as String)),
-    'exportUnprocessedCount' => exportUnprocessedCount(message.argument('n') as int),
-    'exportNeedsReviewCount' => exportNeedsReviewCount(message.argument('n') as int),
+    'exportCapturedBetween' => exportCapturedBetween(
+      (message.argument('first') is LocalizedMessage
+          ? resolve(message.argument('first') as LocalizedMessage)
+          : message.argument('first') as String),
+      (message.argument('last') is LocalizedMessage
+          ? resolve(message.argument('last') as LocalizedMessage)
+          : message.argument('last') as String),
+    ),
+    'exportUnprocessedCount' => exportUnprocessedCount(
+      message.argument('n') as int,
+    ),
+    'exportNeedsReviewCount' => exportNeedsReviewCount(
+      message.argument('n') as int,
+    ),
     'exportApprovedCount' => exportApprovedCount(message.argument('n') as int),
     'exportFileFormat' => exportFileFormat,
     'exportFileColumns' => exportFileColumns,
     'exportPackageSize' => exportPackageSize(message.argument('bytes') as int),
-    'exportSavedTo' => exportSavedTo((message.argument('place') is LocalizedMessage ? resolve(message.argument('place') as LocalizedMessage) : message.argument('place') as String)),
+    'exportSavedTo' => exportSavedTo(
+      (message.argument('place') is LocalizedMessage
+          ? resolve(message.argument('place') as LocalizedMessage)
+          : message.argument('place') as String),
+    ),
     'projectExportProgress' => projectExportProgress,
     'projectExportCancel' => projectExportCancel,
     'recordEdit' => recordEdit,
@@ -297,7 +468,11 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'recordFieldEmpty' => recordFieldEmpty,
     'recordSectionFields' => recordSectionFields,
     'recordEditFields' => recordEditFields,
-    'recordCapturedAt' => recordCapturedAt((message.argument('when') is LocalizedMessage ? resolve(message.argument('when') as LocalizedMessage) : message.argument('when') as String)),
+    'recordCapturedAt' => recordCapturedAt(
+      (message.argument('when') is LocalizedMessage
+          ? resolve(message.argument('when') as LocalizedMessage)
+          : message.argument('when') as String),
+    ),
     'recordGoneHeadline' => recordGoneHeadline,
     'recordGoneMessage' => recordGoneMessage,
     'continueCapturing' => continueCapturing,
@@ -325,11 +500,25 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'datasetsKeyMessage' => datasetsKeyMessage,
     'datasetsAllowDuplicates' => datasetsAllowDuplicates,
     'datasetsSaveImport' => datasetsSaveImport,
-    'datasetsDuplicateCount' => datasetsDuplicateCount(message.argument('n') as int),
-    'datasetsCollidingValues' => datasetsCollidingValues((message.argument('values') as List<Object?>).cast<String>()),
-    'datasetListSubtitle' => datasetListSubtitle(rows: message.argument('rows') as int,source: (message.argument('source') is LocalizedMessage ? resolve(message.argument('source') as LocalizedMessage) : message.argument('source') as String),importedAt: message.argument('importedAt') as DateTime),
+    'datasetsDuplicateCount' => datasetsDuplicateCount(
+      message.argument('n') as int,
+    ),
+    'datasetsCollidingValues' => datasetsCollidingValues(
+      (message.argument('values') as List<Object?>).cast<String>(),
+    ),
+    'datasetListSubtitle' => datasetListSubtitle(
+      rows: message.argument('rows') as int,
+      source: (message.argument('source') is LocalizedMessage
+          ? resolve(message.argument('source') as LocalizedMessage)
+          : message.argument('source') as String),
+      importedAt: message.argument('importedAt') as DateTime,
+    ),
     'datasetsRowCount' => datasetsRowCount(message.argument('n') as int),
-    'datasetSourceLabel' => datasetSourceLabel((message.argument('source') is LocalizedMessage ? resolve(message.argument('source') as LocalizedMessage) : message.argument('source') as String)),
+    'datasetSourceLabel' => datasetSourceLabel(
+      (message.argument('source') is LocalizedMessage
+          ? resolve(message.argument('source') as LocalizedMessage)
+          : message.argument('source') as String),
+    ),
     'datasetsSearchHint' => datasetsSearchHint,
     'datasetsColumns' => datasetsColumns,
     'datasetsEditRow' => datasetsEditRow,
@@ -349,7 +538,10 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'datasetsNoMatchHeadline' => datasetsNoMatchHeadline,
     'datasetsNoMatchMessage' => datasetsNoMatchMessage,
     'datasetsPickNoMatchMessage' => datasetsPickNoMatchMessage,
-    'datasetsPickerSubtitle' => datasetsPickerSubtitle((message.argument('cells') as Map<Object?,Object?>).cast<String, String>()),
+    'datasetsPickerSubtitle' => datasetsPickerSubtitle(
+      (message.argument('cells') as Map<Object?, Object?>)
+          .cast<String, String>(),
+    ),
     'datasetsClearSearch' => datasetsClearSearch,
     'datasetsNoProjectHeadline' => datasetsNoProjectHeadline,
     'datasetsNoProjectMessage' => datasetsNoProjectMessage,
@@ -357,16 +549,32 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'datasetsPickMessage' => datasetsPickMessage,
     'datasetsPickFile' => datasetsPickFile,
     'datasetsReading' => datasetsReading,
-    'datasetsReadProgress' => datasetsReadProgress(message.argument('percent') as int),
-    'datasetsColumnSummary' => datasetsColumnSummary(message.argument('duplicates') as int,(message.argument('samples') as List<Object?>).cast<String>()),
-    'datasetsDuplicateWarning' => datasetsDuplicateWarning(message.argument('n') as int,(message.argument('colliding') as List<Object?>).cast<String>()),
+    'datasetsReadProgress' => datasetsReadProgress(
+      message.argument('percent') as int,
+    ),
+    'datasetsColumnSummary' => datasetsColumnSummary(
+      message.argument('duplicates') as int,
+      (message.argument('samples') as List<Object?>).cast<String>(),
+    ),
+    'datasetsDuplicateWarning' => datasetsDuplicateWarning(
+      message.argument('n') as int,
+      (message.argument('colliding') as List<Object?>).cast<String>(),
+    ),
     'datasetsDuplicatesConfirmTitle' => datasetsDuplicatesConfirmTitle,
-    'datasetsDuplicatesConfirm' => datasetsDuplicatesConfirm((message.argument('column') is LocalizedMessage ? resolve(message.argument('column') as LocalizedMessage) : message.argument('column') as String),message.argument('n') as int),
+    'datasetsDuplicatesConfirm' => datasetsDuplicatesConfirm(
+      (message.argument('column') is LocalizedMessage
+          ? resolve(message.argument('column') as LocalizedMessage)
+          : message.argument('column') as String),
+      message.argument('n') as int,
+    ),
     'datasetsExportCsv' => datasetsExportCsv,
     'datasetsExportJson' => datasetsExportJson,
     'datasetsExporting' => datasetsExporting,
     'datasetsVisibleColumns' => datasetsVisibleColumns,
-    'datasetRowSubtitle' => datasetRowSubtitle((message.argument('values') as List<Object?>).cast<String>(),addedOnDevice: message.argument('addedOnDevice') as bool),
+    'datasetRowSubtitle' => datasetRowSubtitle(
+      (message.argument('values') as List<Object?>).cast<String>(),
+      addedOnDevice: message.argument('addedOnDevice') as bool,
+    ),
     'datasetsMissingHeadline' => datasetsMissingHeadline,
     'datasetsMissingMessage' => datasetsMissingMessage,
     'datasetsExportNoProject' => datasetsExportNoProject,
@@ -375,15 +583,31 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'datasetsRowMissingMessage' => datasetsRowMissingMessage,
     'datasetsAddRowNoDatasetHeadline' => datasetsAddRowNoDatasetHeadline,
     'datasetsAddRowNoDatasetMessage' => datasetsAddRowNoDatasetMessage,
-    'lookupUnknownTarget' => lookupUnknownTarget((message.argument('target') is LocalizedMessage ? resolve(message.argument('target') as LocalizedMessage) : message.argument('target') as String)),
-    'lookupTargetTwice' => lookupTargetTwice((message.argument('target') is LocalizedMessage ? resolve(message.argument('target') as LocalizedMessage) : message.argument('target') as String)),
+    'lookupUnknownTarget' => lookupUnknownTarget(
+      (message.argument('target') is LocalizedMessage
+          ? resolve(message.argument('target') as LocalizedMessage)
+          : message.argument('target') as String),
+    ),
+    'lookupTargetTwice' => lookupTargetTwice(
+      (message.argument('target') is LocalizedMessage
+          ? resolve(message.argument('target') as LocalizedMessage)
+          : message.argument('target') as String),
+    ),
     'lookupPickDataset' => lookupPickDataset,
     'lookupImportRecovery' => lookupImportRecovery,
-    'lookupColumnTwice' => lookupColumnTwice((message.argument('column') is LocalizedMessage ? resolve(message.argument('column') as LocalizedMessage) : message.argument('column') as String)),
-    'lookupThresholdLabel' => lookupThresholdLabel(message.argument('percent') as int),
+    'lookupColumnTwice' => lookupColumnTwice(
+      (message.argument('column') is LocalizedMessage
+          ? resolve(message.argument('column') as LocalizedMessage)
+          : message.argument('column') as String),
+    ),
+    'lookupThresholdLabel' => lookupThresholdLabel(
+      message.argument('percent') as int,
+    ),
     'lookupKeyColumn' => lookupKeyColumn,
     'lookupMatchColumns' => lookupMatchColumns,
-    'lookupMatchOrder' => lookupMatchOrder((message.argument('columns') as List<Object?>).cast<String>()),
+    'lookupMatchOrder' => lookupMatchOrder(
+      (message.argument('columns') as List<Object?>).cast<String>(),
+    ),
     'lookupNotFilled' => lookupNotFilled,
     'lookupFills' => lookupFills,
     'lookupFuzzyThreshold' => lookupFuzzyThreshold,
@@ -422,11 +646,13 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'templatesImportEmptyHeadline' => templatesImportEmptyHeadline,
     'templatesImportEmptyMessage' => templatesImportEmptyMessage,
     'templatesImportUnknownSchema' => templatesImportUnknownSchema,
-    'templatesImportUnknownSchemaRecovery' => templatesImportUnknownSchemaRecovery,
+    'templatesImportUnknownSchemaRecovery' =>
+      templatesImportUnknownSchemaRecovery,
     'templatesImportInvalid' => templatesImportInvalid,
     'templatesImportInvalidRecovery' => templatesImportInvalidRecovery,
     'templatesImportDuplicateField' => templatesImportDuplicateField,
-    'templatesImportDuplicateFieldRecovery' => templatesImportDuplicateFieldRecovery,
+    'templatesImportDuplicateFieldRecovery' =>
+      templatesImportDuplicateFieldRecovery,
     'workbookPassword' => workbookPassword,
     'workbookPasswordRecovery' => workbookPasswordRecovery,
     'workbookCorrupt' => workbookCorrupt,
@@ -438,8 +664,22 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'xlsxMappingSkip' => xlsxMappingSkip,
     'xlsxMappingInclude' => xlsxMappingInclude,
     'xlsxMappingSkipped' => xlsxMappingSkipped,
-    'xlsxMappingProposal' => xlsxMappingProposal(field: (message.argument('field') is LocalizedMessage ? resolve(message.argument('field') as LocalizedMessage) : message.argument('field') as String),type: (message.argument('type') is LocalizedMessage ? resolve(message.argument('type') as LocalizedMessage) : message.argument('type') as String),rule: (message.argument('rule') is LocalizedMessage ? resolve(message.argument('rule') as LocalizedMessage) : message.argument('rule') as String)),
-    'xlsxMappingUntitled' => xlsxMappingUntitled((message.argument('column') is LocalizedMessage ? resolve(message.argument('column') as LocalizedMessage) : message.argument('column') as String)),
+    'xlsxMappingProposal' => xlsxMappingProposal(
+      field: (message.argument('field') is LocalizedMessage
+          ? resolve(message.argument('field') as LocalizedMessage)
+          : message.argument('field') as String),
+      type: (message.argument('type') is LocalizedMessage
+          ? resolve(message.argument('type') as LocalizedMessage)
+          : message.argument('type') as String),
+      rule: (message.argument('rule') is LocalizedMessage
+          ? resolve(message.argument('rule') as LocalizedMessage)
+          : message.argument('rule') as String),
+    ),
+    'xlsxMappingUntitled' => xlsxMappingUntitled(
+      (message.argument('column') is LocalizedMessage
+          ? resolve(message.argument('column') as LocalizedMessage)
+          : message.argument('column') as String),
+    ),
     'xlsxMappingDefaultName' => xlsxMappingDefaultName,
     'xlsxMappingMissing' => xlsxMappingMissing,
     'xlsxMappingMissingRecovery' => xlsxMappingMissingRecovery,
@@ -455,7 +695,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'rowAliasesInvalidColumn' => rowAliasesInvalidColumn,
     'rowAliasesInvalidColumnRecovery' => rowAliasesInvalidColumnRecovery,
     'rowAliasesNone' => rowAliasesNone,
-    'rowAliasesList' => rowAliasesList((message.argument('aliases') as List<Object?>).cast<String>()),
+    'rowAliasesList' => rowAliasesList(
+      (message.argument('aliases') as List<Object?>).cast<String>(),
+    ),
     'checklistTitle' => checklistTitle,
     'checklistIdentifierColumn' => checklistIdentifierColumn,
     'checklistLabelColumn' => checklistLabelColumn,
@@ -468,7 +710,13 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'checklistFound' => checklistFound,
     'checklistMissing' => checklistMissing,
     'checklistUngrouped' => checklistUngrouped,
-    'checklistProgress' => checklistProgress(group: (message.argument('group') is LocalizedMessage ? resolve(message.argument('group') as LocalizedMessage) : message.argument('group') as String),found: message.argument('found') as int,total: message.argument('total') as int),
+    'checklistProgress' => checklistProgress(
+      group: (message.argument('group') is LocalizedMessage
+          ? resolve(message.argument('group') as LocalizedMessage)
+          : message.argument('group') as String),
+      found: message.argument('found') as int,
+      total: message.argument('total') as int,
+    ),
     'detectionProfileTitle' => detectionProfileTitle,
     'detectionProfileExplain' => detectionProfileExplain,
     'detectionProfileEmptyHeadline' => detectionProfileEmptyHeadline,
@@ -484,29 +732,80 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'detectionProfileMissing' => detectionProfileMissing,
     'detectionProfileMissingRecovery' => detectionProfileMissingRecovery,
     'templatesDelete' => templatesDelete,
-    'templatesDeleteTitle' => templatesDeleteTitle((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
-    'templatesDeleteMessage' => templatesDeleteMessage(fields: message.argument('fields') as int,records: message.argument('records') as int),
+    'templatesDeleteTitle' => templatesDeleteTitle(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'templatesDeleteMessage' => templatesDeleteMessage(
+      fields: message.argument('fields') as int,
+      records: message.argument('records') as int,
+    ),
     'templateFieldsTitle' => templateFieldsTitle,
     'templatesAddField' => templatesAddField,
-    'templateFieldRowTitle' => templateFieldRowTitle(message.argument('n') as int),
+    'templateFieldRowTitle' => templateFieldRowTitle(
+      message.argument('n') as int,
+    ),
     'templateFieldRowRemove' => templateFieldRowRemove,
     'templatesEditField' => templatesEditField,
     'templatesDeleteField' => templatesDeleteField,
-    'templatesDeleteFieldTitle' => templatesDeleteFieldTitle((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'templatesDeleteFieldMessage' => templatesDeleteFieldMessage(values: message.argument('values') as int),
+    'templatesDeleteFieldTitle' => templatesDeleteFieldTitle(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'templatesDeleteFieldMessage' => templatesDeleteFieldMessage(
+      values: message.argument('values') as int,
+    ),
     'templatesFieldsEmptyHeadline' => templatesFieldsEmptyHeadline,
     'templatesFieldsEmptyMessage' => templatesFieldsEmptyMessage,
     'fieldRequired' => fieldRequired,
     'fieldCalculated' => fieldCalculated,
     'fieldFromPhotos' => fieldFromPhotos,
-    'fieldRowSubtitle' => fieldRowSubtitle(typeLabel: (message.argument('typeLabel') is LocalizedMessage ? resolve(message.argument('typeLabel') as LocalizedMessage) : message.argument('typeLabel') as String),requiredField: message.argument('requiredField') as bool,calculated: message.argument('calculated') as bool,fromPhotos: message.argument('fromPhotos') as bool,pinnedContext: message.argument('pinnedContext') as bool,contextLevel: message.argument('contextLevel') == null ? null : message.argument('contextLevel') as int,defaultValue: message.argument('defaultValue') == null ? null : (message.argument('defaultValue') is LocalizedMessage ? resolve(message.argument('defaultValue') as LocalizedMessage) : message.argument('defaultValue') as String)),
-    'fieldRowDefault' => fieldRowDefault((message.argument('value') is LocalizedMessage ? resolve(message.argument('value') as LocalizedMessage) : message.argument('value') as String)),
+    'fieldRowSubtitle' => fieldRowSubtitle(
+      typeLabel: (message.argument('typeLabel') is LocalizedMessage
+          ? resolve(message.argument('typeLabel') as LocalizedMessage)
+          : message.argument('typeLabel') as String),
+      requiredField: message.argument('requiredField') as bool,
+      calculated: message.argument('calculated') as bool,
+      fromPhotos: message.argument('fromPhotos') as bool,
+      pinnedContext: message.argument('pinnedContext') as bool,
+      contextLevel: message.argument('contextLevel') == null
+          ? null
+          : message.argument('contextLevel') as int,
+      defaultValue: message.argument('defaultValue') == null
+          ? null
+          : (message.argument('defaultValue') is LocalizedMessage
+                ? resolve(message.argument('defaultValue') as LocalizedMessage)
+                : message.argument('defaultValue') as String),
+    ),
+    'fieldRowDefault' => fieldRowDefault(
+      (message.argument('value') is LocalizedMessage
+          ? resolve(message.argument('value') as LocalizedMessage)
+          : message.argument('value') as String),
+    ),
     'fieldRecommended' => fieldRecommended,
     'fieldOptional' => fieldOptional,
-    'fieldMoveUp' => fieldMoveUp((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'fieldMoveDown' => fieldMoveDown((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'fieldReorder' => fieldReorder((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'fieldTypeLabel' => fieldTypeLabel((message.argument('type') is LocalizedMessage ? resolve(message.argument('type') as LocalizedMessage) : message.argument('type') as String)),
+    'fieldMoveUp' => fieldMoveUp(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'fieldMoveDown' => fieldMoveDown(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'fieldReorder' => fieldReorder(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'fieldTypeLabel' => fieldTypeLabel(
+      (message.argument('type') is LocalizedMessage
+          ? resolve(message.argument('type') as LocalizedMessage)
+          : message.argument('type') as String),
+    ),
     'fieldLabel' => fieldLabel,
     'fieldType' => fieldType,
     'fieldRequiredness' => fieldRequiredness,
@@ -527,11 +826,19 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'fieldContextLevel' => fieldContextLevel,
     'fieldAutoFill' => fieldAutoFill,
     'fieldAutoFillNone' => fieldAutoFillNone,
-    'fieldAutoFillLabel' => fieldAutoFillLabel((message.argument('source') is LocalizedMessage ? resolve(message.argument('source') as LocalizedMessage) : message.argument('source') as String)),
+    'fieldAutoFillLabel' => fieldAutoFillLabel(
+      (message.argument('source') is LocalizedMessage
+          ? resolve(message.argument('source') as LocalizedMessage)
+          : message.argument('source') as String),
+    ),
     'fieldRefine' => fieldRefine,
     'fieldIdentity' => fieldIdentity,
     'fieldRequiredWhen' => fieldRequiredWhen,
-    'fieldRequiredWhenPreview' => fieldRequiredWhenPreview((message.argument('reading') is LocalizedMessage ? resolve(message.argument('reading') as LocalizedMessage) : message.argument('reading') as String)),
+    'fieldRequiredWhenPreview' => fieldRequiredWhenPreview(
+      (message.argument('reading') is LocalizedMessage
+          ? resolve(message.argument('reading') as LocalizedMessage)
+          : message.argument('reading') as String),
+    ),
     'fieldHidden' => fieldHidden,
     'fieldHiddenHelp' => fieldHiddenHelp,
     'fieldValidationTitle' => fieldValidationTitle,
@@ -566,10 +873,29 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'requiredColumnShowGroup' => requiredColumnShowGroup,
     'requiredColumnHideGroup' => requiredColumnHideGroup,
     'requiredColumnUngrouped' => requiredColumnUngrouped,
-    'requiredColumnRadios' => requiredColumnRadios((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'requiredColumnCell' => requiredColumnCell((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String),(message.argument('mark') is LocalizedMessage ? resolve(message.argument('mark') as LocalizedMessage) : message.argument('mark') as String)),
-    'requiredColumnShipped' => requiredColumnShipped((message.argument('mark') is LocalizedMessage ? resolve(message.argument('mark') as LocalizedMessage) : message.argument('mark') as String)),
-    'requiredColumnGroup' => requiredColumnGroup((message.argument('group') is LocalizedMessage ? resolve(message.argument('group') as LocalizedMessage) : message.argument('group') as String)),
+    'requiredColumnRadios' => requiredColumnRadios(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'requiredColumnCell' => requiredColumnCell(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+      (message.argument('mark') is LocalizedMessage
+          ? resolve(message.argument('mark') as LocalizedMessage)
+          : message.argument('mark') as String),
+    ),
+    'requiredColumnShipped' => requiredColumnShipped(
+      (message.argument('mark') is LocalizedMessage
+          ? resolve(message.argument('mark') as LocalizedMessage)
+          : message.argument('mark') as String),
+    ),
+    'requiredColumnGroup' => requiredColumnGroup(
+      (message.argument('group') is LocalizedMessage
+          ? resolve(message.argument('group') as LocalizedMessage)
+          : message.argument('group') as String),
+    ),
     'identityFieldsTitle' => identityFieldsTitle,
     'identityFieldsExplain' => identityFieldsExplain,
     'identityFieldsEmptyHeadline' => identityFieldsEmptyHeadline,
@@ -589,13 +915,26 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'templateMigrationRemoved' => templateMigrationRemoved,
     'templateMigrationRetyped' => templateMigrationRetyped,
     'templateMigrationConfirmTitle' => templateMigrationConfirmTitle,
-    'templateMigrationConfirm' => templateMigrationConfirm(message.argument('records') as int),
-    'templateMigrationBehind' => templateMigrationBehind(message.argument('records') as int),
-    'templateMigrationUnresolved' => templateMigrationUnresolved(message.argument('records') as int),
+    'templateMigrationConfirm' => templateMigrationConfirm(
+      message.argument('records') as int,
+    ),
+    'templateMigrationBehind' => templateMigrationBehind(
+      message.argument('records') as int,
+    ),
+    'templateMigrationUnresolved' => templateMigrationUnresolved(
+      message.argument('records') as int,
+    ),
     'templateMigrationRetiring' => templateMigrationRetiring,
     'templateMigrationAction' => templateMigrationAction,
-    'templateCopyName' => templateCopyName((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
-    'templateListSubtitle' => templateListSubtitle(fields: message.argument('fields') as int,records: message.argument('records') as int),
+    'templateCopyName' => templateCopyName(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'templateListSubtitle' => templateListSubtitle(
+      fields: message.argument('fields') as int,
+      records: message.argument('records') as int,
+    ),
     'templatesLibraryTitle' => templatesLibraryTitle,
     'templatesCustomizeCopy' => templatesCustomizeCopy,
     'templatesMyTemplates' => templatesMyTemplates,
@@ -607,28 +946,88 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'templatesCustomCopy' => templatesCustomCopy,
     'shippedAddedToProject' => shippedAddedToProject,
     'shippedLibrarySearchHint' => shippedLibrarySearchHint,
-    'shippedAreaTitle' => shippedAreaTitle((message.argument('code') is LocalizedMessage ? resolve(message.argument('code') as LocalizedMessage) : message.argument('code') as String),(message.argument('title') is LocalizedMessage ? resolve(message.argument('title') as LocalizedMessage) : message.argument('title') as String)),
-    'shippedCatalogueCategoryTitle' => shippedCatalogueCategoryTitle((message.argument('code') is LocalizedMessage ? resolve(message.argument('code') as LocalizedMessage) : message.argument('code') as String),(message.argument('title') is LocalizedMessage ? resolve(message.argument('title') as LocalizedMessage) : message.argument('title') as String)),
-    'shippedCategoryHeading' => shippedCategoryHeading((message.argument('code') is LocalizedMessage ? resolve(message.argument('code') as LocalizedMessage) : message.argument('code') as String),(message.argument('title') is LocalizedMessage ? resolve(message.argument('title') as LocalizedMessage) : message.argument('title') as String),message.argument('count') as int),
-    'shippedCatalogueSubtitle' => shippedCatalogueSubtitle((message.argument('code') is LocalizedMessage ? resolve(message.argument('code') as LocalizedMessage) : message.argument('code') as String),(message.argument('recordType') is LocalizedMessage ? resolve(message.argument('recordType') as LocalizedMessage) : message.argument('recordType') as String),message.argument('fields') as int),
+    'shippedAreaTitle' => shippedAreaTitle(
+      (message.argument('code') is LocalizedMessage
+          ? resolve(message.argument('code') as LocalizedMessage)
+          : message.argument('code') as String),
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+    ),
+    'shippedCatalogueCategoryTitle' => shippedCatalogueCategoryTitle(
+      (message.argument('code') is LocalizedMessage
+          ? resolve(message.argument('code') as LocalizedMessage)
+          : message.argument('code') as String),
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+    ),
+    'shippedCategoryHeading' => shippedCategoryHeading(
+      (message.argument('code') is LocalizedMessage
+          ? resolve(message.argument('code') as LocalizedMessage)
+          : message.argument('code') as String),
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+      message.argument('count') as int,
+    ),
+    'shippedCatalogueSubtitle' => shippedCatalogueSubtitle(
+      (message.argument('code') is LocalizedMessage
+          ? resolve(message.argument('code') as LocalizedMessage)
+          : message.argument('code') as String),
+      (message.argument('recordType') is LocalizedMessage
+          ? resolve(message.argument('recordType') as LocalizedMessage)
+          : message.argument('recordType') as String),
+      message.argument('fields') as int,
+    ),
     'shippedFiltersTitle' => shippedFiltersTitle,
     'shippedAreaFilter' => shippedAreaFilter,
     'shippedRecordTypeFilter' => shippedRecordTypeFilter,
     'shippedTierFilter' => shippedTierFilter,
-    'shippedTierLabel' => shippedTierLabel((message.argument('rollout') is LocalizedMessage ? resolve(message.argument('rollout') as LocalizedMessage) : message.argument('rollout') as String)),
-    'shippedPrivacyLabel' => shippedPrivacyLabel((message.argument('privacy') is LocalizedMessage ? resolve(message.argument('privacy') as LocalizedMessage) : message.argument('privacy') as String)),
+    'shippedTierLabel' => shippedTierLabel(
+      (message.argument('rollout') is LocalizedMessage
+          ? resolve(message.argument('rollout') as LocalizedMessage)
+          : message.argument('rollout') as String),
+    ),
+    'shippedPrivacyLabel' => shippedPrivacyLabel(
+      (message.argument('privacy') is LocalizedMessage
+          ? resolve(message.argument('privacy') as LocalizedMessage)
+          : message.argument('privacy') as String),
+    ),
     'shippedCategoryLabel' => shippedCategoryLabel,
     'shippedRecordTypeLabel' => shippedRecordTypeLabel,
     'shippedPrivacyTierLabel' => shippedPrivacyTierLabel,
-    'shippedPrivacyTier' => shippedPrivacyTier((message.argument('privacy') is LocalizedMessage ? resolve(message.argument('privacy') as LocalizedMessage) : message.argument('privacy') as String),(message.argument('rollout') is LocalizedMessage ? resolve(message.argument('rollout') as LocalizedMessage) : message.argument('rollout') as String)),
+    'shippedPrivacyTier' => shippedPrivacyTier(
+      (message.argument('privacy') is LocalizedMessage
+          ? resolve(message.argument('privacy') as LocalizedMessage)
+          : message.argument('privacy') as String),
+      (message.argument('rollout') is LocalizedMessage
+          ? resolve(message.argument('rollout') as LocalizedMessage)
+          : message.argument('rollout') as String),
+    ),
     'shippedCaptureLabel' => shippedCaptureLabel,
     'shippedAiAssistanceLabel' => shippedAiAssistanceLabel,
     'shippedOutputsLabel' => shippedOutputsLabel,
     'shippedReviewLabel' => shippedReviewLabel,
-    'shippedFieldSubtitle' => shippedFieldSubtitle((message.argument('type') is LocalizedMessage ? resolve(message.argument('type') as LocalizedMessage) : message.argument('type') as String),(message.argument('requiredness') is LocalizedMessage ? resolve(message.argument('requiredness') as LocalizedMessage) : message.argument('requiredness') as String)),
-    'shippedLibraryNoMatch' => shippedLibraryNoMatch((message.argument('query') is LocalizedMessage ? resolve(message.argument('query') as LocalizedMessage) : message.argument('query') as String)),
+    'shippedFieldSubtitle' => shippedFieldSubtitle(
+      (message.argument('type') is LocalizedMessage
+          ? resolve(message.argument('type') as LocalizedMessage)
+          : message.argument('type') as String),
+      (message.argument('requiredness') is LocalizedMessage
+          ? resolve(message.argument('requiredness') as LocalizedMessage)
+          : message.argument('requiredness') as String),
+    ),
+    'shippedLibraryNoMatch' => shippedLibraryNoMatch(
+      (message.argument('query') is LocalizedMessage
+          ? resolve(message.argument('query') as LocalizedMessage)
+          : message.argument('query') as String),
+    ),
     'shippedLibraryNoMatchMessage' => shippedLibraryNoMatchMessage,
-    'shippedLabel' => shippedLabel((message.argument('key') is LocalizedMessage ? resolve(message.argument('key') as LocalizedMessage) : message.argument('key') as String)),
+    'shippedLabel' => shippedLabel(
+      (message.argument('key') is LocalizedMessage
+          ? resolve(message.argument('key') as LocalizedMessage)
+          : message.argument('key') as String),
+    ),
     'navQueue' => navQueue,
     'navExports' => navExports,
     'operatorNameUse' => operatorNameUse,
@@ -647,7 +1046,12 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'contextHierarchyEmptyHeadline' => contextHierarchyEmptyHeadline,
     'contextHierarchyEmptyMessage' => contextHierarchyEmptyMessage,
     'contextAddLevel' => contextAddLevel,
-    'contextLevelRow' => contextLevelRow(message.argument('level') as int,(message.argument('fieldKey') is LocalizedMessage ? resolve(message.argument('fieldKey') as LocalizedMessage) : message.argument('fieldKey') as String)),
+    'contextLevelRow' => contextLevelRow(
+      message.argument('level') as int,
+      (message.argument('fieldKey') is LocalizedMessage
+          ? resolve(message.argument('fieldKey') as LocalizedMessage)
+          : message.argument('fieldKey') as String),
+    ),
     'contextUseTemplateLevels' => contextUseTemplateLevels,
     'contextTemplateFailureHeadline' => contextTemplateFailureHeadline,
     'contextTemplateFailureMessage' => contextTemplateFailureMessage,
@@ -659,24 +1063,49 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'contextNoEligibleFieldsHeadline' => contextNoEligibleFieldsHeadline,
     'contextNoEligibleFieldsMessage' => contextNoEligibleFieldsMessage,
     'contextTemplateConflictHeadline' => contextTemplateConflictHeadline,
-    'contextTemplateConflictMessage' => contextTemplateConflictMessage((message.argument('conflicts') is LocalizedMessage ? resolve(message.argument('conflicts') as LocalizedMessage) : message.argument('conflicts') as String)),
+    'contextTemplateConflictMessage' => contextTemplateConflictMessage(
+      (message.argument('conflicts') is LocalizedMessage
+          ? resolve(message.argument('conflicts') as LocalizedMessage)
+          : message.argument('conflicts') as String),
+    ),
     'contextSaveHierarchy' => contextSaveHierarchy,
-    'contextPickerTitle' => contextPickerTitle((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'contextPickerTitle' => contextPickerTitle(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'contextRecents' => contextRecents,
     'contextDatasetSearch' => contextDatasetSearch,
     'contextUseValue' => contextUseValue,
     'contextTypeValue' => contextTypeValue,
     'contextValueNotSet' => contextValueNotSet,
     'contextClearPin' => contextClearPin,
-    'contextBreadcrumb' => contextBreadcrumb((message.argument('values') as List<Object?>).cast<String>()),
-    'contextPinnedValue' => contextPinnedValue((message.argument('field') is LocalizedMessage ? resolve(message.argument('field') as LocalizedMessage) : message.argument('field') as String),(message.argument('value') is LocalizedMessage ? resolve(message.argument('value') as LocalizedMessage) : message.argument('value') as String)),
+    'contextBreadcrumb' => contextBreadcrumb(
+      (message.argument('values') as List<Object?>).cast<String>(),
+    ),
+    'contextPinnedValue' => contextPinnedValue(
+      (message.argument('field') is LocalizedMessage
+          ? resolve(message.argument('field') as LocalizedMessage)
+          : message.argument('field') as String),
+      (message.argument('value') is LocalizedMessage
+          ? resolve(message.argument('value') as LocalizedMessage)
+          : message.argument('value') as String),
+    ),
     'contextPinnedTitle' => contextPinnedTitle,
     'contextPinnedEmptyHeadline' => contextPinnedEmptyHeadline,
     'contextPinnedEmptyMessage' => contextPinnedEmptyMessage,
     'contextMarkPinnable' => contextMarkPinnable,
     'contextPinnedRelevance' => contextPinnedRelevance,
     'contextCascadeTitle' => contextCascadeTitle,
-    'contextCascadeMessage' => contextCascadeMessage(levelLabel: (message.argument('levelLabel') is LocalizedMessage ? resolve(message.argument('levelLabel') as LocalizedMessage) : message.argument('levelLabel') as String),newValue: (message.argument('newValue') is LocalizedMessage ? resolve(message.argument('newValue') as LocalizedMessage) : message.argument('newValue') as String),named: (message.argument('named') as List<Object?>).cast<String>()),
+    'contextCascadeMessage' => contextCascadeMessage(
+      levelLabel: (message.argument('levelLabel') is LocalizedMessage
+          ? resolve(message.argument('levelLabel') as LocalizedMessage)
+          : message.argument('levelLabel') as String),
+      newValue: (message.argument('newValue') is LocalizedMessage
+          ? resolve(message.argument('newValue') as LocalizedMessage)
+          : message.argument('newValue') as String),
+      named: (message.argument('named') as List<Object?>).cast<String>(),
+    ),
     'contextCascadeConfirm' => contextCascadeConfirm,
     'contextPresetsTitle' => contextPresetsTitle,
     'contextPresetsEmptyHeadline' => contextPresetsEmptyHeadline,
@@ -686,38 +1115,77 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'contextPresetsChip' => contextPresetsChip,
     'contextPresetsHint' => contextPresetsHint,
     'contextPresetName' => contextPresetName,
-    'contextPresetApplied' => contextPresetApplied((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
-    'contextPresetSaved' => contextPresetSaved((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
+    'contextPresetApplied' => contextPresetApplied(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'contextPresetSaved' => contextPresetSaved(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
     'contextPresetDelete' => contextPresetDelete,
-    'contextPresetDeleteMessage' => contextPresetDeleteMessage((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
+    'contextPresetDeleteMessage' => contextPresetDeleteMessage(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
     'contextPresetDeleteReason' => contextPresetDeleteReason,
     'contextPresetOverwriteTitle' => contextPresetOverwriteTitle,
     'contextPresetOverwriteMessage' => contextPresetOverwriteMessage,
     'contextPresetReplace' => contextPresetReplace,
     'contextAutoClearUndo' => contextAutoClearUndo,
-    'contextAutoClearMessage' => contextAutoClearMessage((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'contextAutoClearMessage' => contextAutoClearMessage(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'contextMovementTitle' => contextMovementTitle,
     'contextMovementMessage' => contextMovementMessage,
     'contextMovementChange' => contextMovementChange,
     'contextPinMarker' => contextPinMarker,
-    'contextSetLevel' => contextSetLevel((message.argument('level') is LocalizedMessage ? resolve(message.argument('level') as LocalizedMessage) : message.argument('level') as String)),
-    'contextLevelValue' => contextLevelValue((message.argument('level') is LocalizedMessage ? resolve(message.argument('level') as LocalizedMessage) : message.argument('level') as String),(message.argument('value') is LocalizedMessage ? resolve(message.argument('value') as LocalizedMessage) : message.argument('value') as String)),
+    'contextSetLevel' => contextSetLevel(
+      (message.argument('level') is LocalizedMessage
+          ? resolve(message.argument('level') as LocalizedMessage)
+          : message.argument('level') as String),
+    ),
+    'contextLevelValue' => contextLevelValue(
+      (message.argument('level') is LocalizedMessage
+          ? resolve(message.argument('level') as LocalizedMessage)
+          : message.argument('level') as String),
+      (message.argument('value') is LocalizedMessage
+          ? resolve(message.argument('value') as LocalizedMessage)
+          : message.argument('value') as String),
+    ),
     'contextManage' => contextManage,
     'contextSetUp' => contextSetUp,
     'contextRemoveLevel' => contextRemoveLevel,
-    'contextDragLevel' => contextDragLevel((message.argument('level') is LocalizedMessage ? resolve(message.argument('level') as LocalizedMessage) : message.argument('level') as String)),
+    'contextDragLevel' => contextDragLevel(
+      (message.argument('level') is LocalizedMessage
+          ? resolve(message.argument('level') as LocalizedMessage)
+          : message.argument('level') as String),
+    ),
     'settingsContextAutoClear' => settingsContextAutoClear,
     'settingsContextAutoClearEffect' => settingsContextAutoClearEffect,
-    'settingsContextIdleSubtitle' => settingsContextIdleSubtitle(message.argument('minutes') as int),
+    'settingsContextIdleSubtitle' => settingsContextIdleSubtitle(
+      message.argument('minutes') as int,
+    ),
     'settingsContextMovement' => settingsContextMovement,
     'settingsContextMovementEffect' => settingsContextMovementEffect,
-    'settingsContextDistanceSubtitle' => settingsContextDistanceSubtitle(message.argument('metres') as int),
+    'settingsContextDistanceSubtitle' => settingsContextDistanceSubtitle(
+      message.argument('metres') as int,
+    ),
     'settingsContextIdle' => settingsContextIdle,
     'settingsContextIdleEffect' => settingsContextIdleEffect,
-    'settingsContextIdleOption' => settingsContextIdleOption(message.argument('minutes') as int),
+    'settingsContextIdleOption' => settingsContextIdleOption(
+      message.argument('minutes') as int,
+    ),
     'settingsContextDistance' => settingsContextDistance,
     'settingsContextDistanceEffect' => settingsContextDistanceEffect,
-    'settingsContextDistanceOption' => settingsContextDistanceOption(message.argument('metres') as int),
+    'settingsContextDistanceOption' => settingsContextDistanceOption(
+      message.argument('metres') as int,
+    ),
     'captureTitle' => captureTitle,
     'captureSaveAndAnalyse' => captureSaveAndAnalyse,
     'captureProcessNeedsNetwork' => captureProcessNeedsNetwork,
@@ -751,11 +1219,20 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'captureImportGallery' => captureImportGallery,
     'captureImportDocument' => captureImportDocument,
     'captureDocumentsUnavailable' => captureDocumentsUnavailable,
-    'captureDocumentsUnavailableRecovery' => captureDocumentsUnavailableRecovery,
-    'captureImportRejected' => captureImportRejected((message.argument('reason') is LocalizedMessage ? resolve(message.argument('reason') as LocalizedMessage) : message.argument('reason') as String)),
+    'captureDocumentsUnavailableRecovery' =>
+      captureDocumentsUnavailableRecovery,
+    'captureImportRejected' => captureImportRejected(
+      (message.argument('reason') is LocalizedMessage
+          ? resolve(message.argument('reason') as LocalizedMessage)
+          : message.argument('reason') as String),
+    ),
     'tryAnotherFile' => tryAnotherFile,
     'pdfInvalid' => pdfInvalid,
-    'captureDocumentInvalid' => captureDocumentInvalid((message.argument('filename') is LocalizedMessage ? resolve(message.argument('filename') as LocalizedMessage) : message.argument('filename') as String)),
+    'captureDocumentInvalid' => captureDocumentInvalid(
+      (message.argument('filename') is LocalizedMessage
+          ? resolve(message.argument('filename') as LocalizedMessage)
+          : message.argument('filename') as String),
+    ),
     'pdfPageMissing' => pdfPageMissing,
     'pdfPreviousPage' => pdfPreviousPage,
     'pdfNextPage' => pdfNextPage,
@@ -768,7 +1245,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'barcodeTorch' => barcodeTorch,
     'barcodeUnreadable' => barcodeUnreadable,
     'barcodeScanCount' => barcodeScanCount(message.argument('n') as int),
-    'barcodeCountPosition' => barcodeCountPosition(message.argument('n') as int),
+    'barcodeCountPosition' => barcodeCountPosition(
+      message.argument('n') as int,
+    ),
     'barcodeCountMode' => barcodeCountMode,
     'barcodeUndoLast' => barcodeUndoLast,
     'identifierMatchRecord' => identifierMatchRecord,
@@ -799,7 +1278,11 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'audioPathOutsideStorage' => audioPathOutsideStorage,
     'audioPermissionDenied' => audioPermissionDenied,
     'audioPermissionRecovery' => audioPermissionRecovery,
-    'audioRecorderStatus' => audioRecorderStatus((message.argument('phase') is LocalizedMessage ? resolve(message.argument('phase') as LocalizedMessage) : message.argument('phase') as String)),
+    'audioRecorderStatus' => audioRecorderStatus(
+      (message.argument('phase') is LocalizedMessage
+          ? resolve(message.argument('phase') as LocalizedMessage)
+          : message.argument('phase') as String),
+    ),
     'liveTranscriptStart' => liveTranscriptStart,
     'liveTranscriptCancel' => liveTranscriptCancel,
     'liveTranscriptStatusStarting' => liveTranscriptStatusStarting,
@@ -811,8 +1294,10 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'transcriptViewLabel' => transcriptViewLabel,
     'liveTranscriptStatusDraining' => liveTranscriptStatusDraining,
     'liveTranscriptStatusSaved' => liveTranscriptStatusSaved,
-    'liveTranscriptStatusPausedBackground' => liveTranscriptStatusPausedBackground,
-    'liveTranscriptStatusPausedInterruption' => liveTranscriptStatusPausedInterruption,
+    'liveTranscriptStatusPausedBackground' =>
+      liveTranscriptStatusPausedBackground,
+    'liveTranscriptStatusPausedInterruption' =>
+      liveTranscriptStatusPausedInterruption,
     'liveTranscriptMicLost' => liveTranscriptMicLost,
     'liveTranscriptPermissionRevoked' => liveTranscriptPermissionRevoked,
     'liveTranscriptRetrySave' => liveTranscriptRetrySave,
@@ -820,7 +1305,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'liveTranscriptCancelTitle' => liveTranscriptCancelTitle,
     'liveTranscriptCancelMessage' => liveTranscriptCancelMessage,
     'liveTranscriptAudioOnly' => liveTranscriptAudioOnly,
-    'liveTranscriptBehind' => liveTranscriptBehind(message.argument('minutes') as int),
+    'liveTranscriptBehind' => liveTranscriptBehind(
+      message.argument('minutes') as int,
+    ),
     'liveTranscriptUtteranceSkipped' => liveTranscriptUtteranceSkipped,
     'liveTranscriptUnsaved' => liveTranscriptUnsaved,
     'liveTranscriptSessionLimit' => liveTranscriptSessionLimit,
@@ -828,7 +1315,12 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'liveTranscriptStorageLow' => liveTranscriptStorageLow,
     'liveTranscriptListTitle' => liveTranscriptListTitle,
     'liveTranscriptUntitled' => liveTranscriptUntitled,
-    'liveTranscriptRow' => liveTranscriptRow(message.argument('at') as DateTime,(message.argument('preview') is LocalizedMessage ? resolve(message.argument('preview') as LocalizedMessage) : message.argument('preview') as String)),
+    'liveTranscriptRow' => liveTranscriptRow(
+      message.argument('at') as DateTime,
+      (message.argument('preview') is LocalizedMessage
+          ? resolve(message.argument('preview') as LocalizedMessage)
+          : message.argument('preview') as String),
+    ),
     'liveTranscriptEdited' => liveTranscriptEdited,
     'liveTranscriptInterrupted' => liveTranscriptInterrupted,
     'liveTranscriptRecording' => liveTranscriptRecording,
@@ -863,9 +1355,19 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'transcriptReverted' => transcriptReverted,
     'transcriptRename' => transcriptRename,
     'transcriptTitleLabel' => transcriptTitleLabel,
-    'transcriptLanguage' => transcriptLanguage((message.argument('language') is LocalizedMessage ? resolve(message.argument('language') as LocalizedMessage) : message.argument('language') as String)),
-    'transcriptModel' => transcriptModel((message.argument('model') is LocalizedMessage ? resolve(message.argument('model') as LocalizedMessage) : message.argument('model') as String)),
-    'transcriptAudioLength' => transcriptAudioLength(message.argument('length') as Duration),
+    'transcriptLanguage' => transcriptLanguage(
+      (message.argument('language') is LocalizedMessage
+          ? resolve(message.argument('language') as LocalizedMessage)
+          : message.argument('language') as String),
+    ),
+    'transcriptModel' => transcriptModel(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
+    'transcriptAudioLength' => transcriptAudioLength(
+      message.argument('length') as Duration,
+    ),
     'transcriptNoAudio' => transcriptNoAudio,
     'transcriptGaps' => transcriptGaps(message.argument('count') as int),
     'transcriptFinish' => transcriptFinish,
@@ -873,8 +1375,12 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'transcriptTranscribeOnDevice' => transcriptTranscribeOnDevice,
     'captureAudioScopeTitle' => captureAudioScopeTitle,
     'captureAudioCurrentPhoto' => captureAudioCurrentPhoto,
-    'captureAudioSelectedPhotos' => captureAudioSelectedPhotos(message.argument('count') as int),
-    'captureAudioAllPhotos' => captureAudioAllPhotos(message.argument('count') as int),
+    'captureAudioSelectedPhotos' => captureAudioSelectedPhotos(
+      message.argument('count') as int,
+    ),
+    'captureAudioAllPhotos' => captureAudioAllPhotos(
+      message.argument('count') as int,
+    ),
     'captureAudioCount' => captureAudioCount(message.argument('count') as int),
     'captureDeletePhotoTitle' => captureDeletePhotoTitle,
     'captureDeletePhotoMessage' => captureDeletePhotoMessage,
@@ -882,28 +1388,51 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'capturePhotoDeleted' => capturePhotoDeleted,
     'captureMovePhotos' => captureMovePhotos,
     'captureRecoveryTitle' => captureRecoveryTitle,
-    'captureRecoveryMessage' => captureRecoveryMessage(message.argument('photos') as int),
+    'captureRecoveryMessage' => captureRecoveryMessage(
+      message.argument('photos') as int,
+    ),
     'captureResume' => captureResume,
     'captureDiscard' => captureDiscard,
     'captureSessionDiscarded' => captureSessionDiscarded,
     'captureRapidMode' => captureRapidMode,
     'captureRapidItem' => captureRapidItem(message.argument('number') as int),
-    'captureRapidSummary' => captureRapidSummary(message.argument('photos') as int,(message.argument('caption') is LocalizedMessage ? resolve(message.argument('caption') as LocalizedMessage) : message.argument('caption') as String)),
+    'captureRapidSummary' => captureRapidSummary(
+      message.argument('photos') as int,
+      (message.argument('caption') is LocalizedMessage
+          ? resolve(message.argument('caption') as LocalizedMessage)
+          : message.argument('caption') as String),
+    ),
     'captureRapidNext' => captureRapidNext,
-    'captureRapidProcessAll' => captureRapidProcessAll(message.argument('count') as int),
-    'captureRapidQueued' => captureRapidQueued(message.argument('count') as int),
+    'captureRapidProcessAll' => captureRapidProcessAll(
+      message.argument('count') as int,
+    ),
+    'captureRapidQueued' => captureRapidQueued(
+      message.argument('count') as int,
+    ),
     'captureRapidEmptyHeadline' => captureRapidEmptyHeadline,
     'captureRapidEmptyMessage' => captureRapidEmptyMessage,
-    'captureRapidCurrent' => captureRapidCurrent(message.argument('photos') as int),
-    'captureStorageLow' => captureStorageLow((message.argument('free') is LocalizedMessage ? resolve(message.argument('free') as LocalizedMessage) : message.argument('free') as String)),
-    'captureStorageFull' => captureStorageFull((message.argument('free') is LocalizedMessage ? resolve(message.argument('free') as LocalizedMessage) : message.argument('free') as String)),
+    'captureRapidCurrent' => captureRapidCurrent(
+      message.argument('photos') as int,
+    ),
+    'captureStorageLow' => captureStorageLow(
+      (message.argument('free') is LocalizedMessage
+          ? resolve(message.argument('free') as LocalizedMessage)
+          : message.argument('free') as String),
+    ),
+    'captureStorageFull' => captureStorageFull(
+      (message.argument('free') is LocalizedMessage
+          ? resolve(message.argument('free') as LocalizedMessage)
+          : message.argument('free') as String),
+    ),
     'captureStorageExport' => captureStorageExport,
     'captureNoTemplates' => captureNoTemplates,
     'capturePickTemplate' => capturePickTemplate,
     'capturePinSession' => capturePinSession,
     'captureTemplatePinned' => captureTemplatePinned,
     'capturePinContext' => capturePinContext,
-    'captureSelectedCount' => captureSelectedCount(message.argument('n') as int),
+    'captureSelectedCount' => captureSelectedCount(
+      message.argument('n') as int,
+    ),
     'captureSelectAll' => captureSelectAll,
     'captureClearSelection' => captureClearSelection,
     'captureAddPhoto' => captureAddPhoto,
@@ -927,7 +1456,14 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'captureRecordsUnavailable' => captureRecordsUnavailable,
     'captureRecordsUnavailableRecovery' => captureRecordsUnavailableRecovery,
     'statusNoTemplate' => statusNoTemplate,
-    'statusWhere' => statusWhere((message.argument('project') is LocalizedMessage ? resolve(message.argument('project') as LocalizedMessage) : message.argument('project') as String),(message.argument('context') is LocalizedMessage ? resolve(message.argument('context') as LocalizedMessage) : message.argument('context') as String)),
+    'statusWhere' => statusWhere(
+      (message.argument('project') is LocalizedMessage
+          ? resolve(message.argument('project') as LocalizedMessage)
+          : message.argument('project') as String),
+      (message.argument('context') is LocalizedMessage
+          ? resolve(message.argument('context') as LocalizedMessage)
+          : message.argument('context') as String),
+    ),
     'networkOnline' => networkOnline,
     'networkMetered' => networkMetered,
     'networkOffline' => networkOffline,
@@ -943,12 +1479,17 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'exportLog' => exportLog,
     'openRecycleBin' => openRecycleBin,
     'notFoundTitle' => notFoundTitle,
-    'notFoundMessage' => notFoundMessage((message.argument('path') is LocalizedMessage ? resolve(message.argument('path') as LocalizedMessage) : message.argument('path') as String)),
+    'notFoundMessage' => notFoundMessage(
+      (message.argument('path') is LocalizedMessage
+          ? resolve(message.argument('path') as LocalizedMessage)
+          : message.argument('path') as String),
+    ),
     'notFoundRecovery' => notFoundRecovery,
     'appNameDev' => appNameDev,
     'settingsTitle' => settingsTitle,
     'settingsGroupProfileCapture' => settingsGroupProfileCapture,
-    'settingsGroupIntelligenceAppearance' => settingsGroupIntelligenceAppearance,
+    'settingsGroupIntelligenceAppearance' =>
+      settingsGroupIntelligenceAppearance,
     'settingsGroupStorageSecurity' => settingsGroupStorageSecurity,
     'settingsGroupAbout' => settingsGroupAbout,
     'settingsOperatorSubtitle' => settingsOperatorSubtitle,
@@ -963,7 +1504,11 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'settingsAppLanguageEffect' => settingsAppLanguageEffect,
     'settingsVoiceLanguage' => settingsVoiceLanguage,
     'settingsSpeechSection' => settingsSpeechSection,
-    'settingsSpeechEngineWhisper' => settingsSpeechEngineWhisper((message.argument('model') is LocalizedMessage ? resolve(message.argument('model') as LocalizedMessage) : message.argument('model') as String)),
+    'settingsSpeechEngineWhisper' => settingsSpeechEngineWhisper(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
     'settingsSpeechEnginePlatform' => settingsSpeechEnginePlatform,
     'settingsSpeechEngineNone' => settingsSpeechEngineNone,
     'settingsSpeechQuality' => settingsSpeechQuality,
@@ -984,17 +1529,47 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'settingsSpeechModelMissing' => settingsSpeechModelMissing,
     'settingsSpeechModelDamaged' => settingsSpeechModelDamaged,
     'settingsSpeechModelInUse' => settingsSpeechModelInUse,
-    'settingsSpeechModelDetail' => settingsSpeechModelDetail((message.argument('origin') is LocalizedMessage ? resolve(message.argument('origin') as LocalizedMessage) : message.argument('origin') as String),(message.argument('state') is LocalizedMessage ? resolve(message.argument('state') as LocalizedMessage) : message.argument('state') as String),(message.argument('size') is LocalizedMessage ? resolve(message.argument('size') as LocalizedMessage) : message.argument('size') as String)),
+    'settingsSpeechModelDetail' => settingsSpeechModelDetail(
+      (message.argument('origin') is LocalizedMessage
+          ? resolve(message.argument('origin') as LocalizedMessage)
+          : message.argument('origin') as String),
+      (message.argument('state') is LocalizedMessage
+          ? resolve(message.argument('state') as LocalizedMessage)
+          : message.argument('state') as String),
+      (message.argument('size') is LocalizedMessage
+          ? resolve(message.argument('size') as LocalizedMessage)
+          : message.argument('size') as String),
+    ),
     'settingsSpeechTooLarge' => settingsSpeechTooLarge,
     'settingsSpeechVerify' => settingsSpeechVerify,
-    'settingsSpeechVerified' => settingsSpeechVerified((message.argument('model') is LocalizedMessage ? resolve(message.argument('model') as LocalizedMessage) : message.argument('model') as String)),
-    'settingsSpeechVerifyMismatch' => settingsSpeechVerifyMismatch((message.argument('model') is LocalizedMessage ? resolve(message.argument('model') as LocalizedMessage) : message.argument('model') as String)),
+    'settingsSpeechVerified' => settingsSpeechVerified(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
+    'settingsSpeechVerifyMismatch' => settingsSpeechVerifyMismatch(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
     'settingsSpeechImport' => settingsSpeechImport,
-    'settingsSpeechImported' => settingsSpeechImported((message.argument('model') is LocalizedMessage ? resolve(message.argument('model') as LocalizedMessage) : message.argument('model') as String)),
+    'settingsSpeechImported' => settingsSpeechImported(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
     'settingsSpeechRemove' => settingsSpeechRemove,
-    'settingsSpeechRemoveTitle' => settingsSpeechRemoveTitle((message.argument('model') is LocalizedMessage ? resolve(message.argument('model') as LocalizedMessage) : message.argument('model') as String)),
+    'settingsSpeechRemoveTitle' => settingsSpeechRemoveTitle(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
     'settingsSpeechRemoveMessage' => settingsSpeechRemoveMessage,
-    'settingsSpeechRemoved' => settingsSpeechRemoved((message.argument('model') is LocalizedMessage ? resolve(message.argument('model') as LocalizedMessage) : message.argument('model') as String)),
+    'settingsSpeechRemoved' => settingsSpeechRemoved(
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
     'languageEnglish' => languageEnglish,
     'languageFrench' => languageFrench,
     'languageSwahili' => languageSwahili,
@@ -1043,10 +1618,26 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'settingsNamingPattern' => settingsNamingPattern,
     'settingsNamingEdit' => settingsNamingEdit,
     'settingsNamingPatternEffect' => settingsNamingPatternEffect,
-    'settingsCameraSubtitle' => settingsCameraSubtitle((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'settingsPhotoQualitySubtitle' => settingsPhotoQualitySubtitle((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'settingsNamingSubtitle' => settingsNamingSubtitle((message.argument('pattern') is LocalizedMessage ? resolve(message.argument('pattern') as LocalizedMessage) : message.argument('pattern') as String)),
-    'settingsFolderStrategySubtitle' => settingsFolderStrategySubtitle((message.argument('strategy') is LocalizedMessage ? resolve(message.argument('strategy') as LocalizedMessage) : message.argument('strategy') as String)),
+    'settingsCameraSubtitle' => settingsCameraSubtitle(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'settingsPhotoQualitySubtitle' => settingsPhotoQualitySubtitle(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'settingsNamingSubtitle' => settingsNamingSubtitle(
+      (message.argument('pattern') is LocalizedMessage
+          ? resolve(message.argument('pattern') as LocalizedMessage)
+          : message.argument('pattern') as String),
+    ),
+    'settingsFolderStrategySubtitle' => settingsFolderStrategySubtitle(
+      (message.argument('strategy') is LocalizedMessage
+          ? resolve(message.argument('strategy') as LocalizedMessage)
+          : message.argument('strategy') as String),
+    ),
     'settingsProjectsHeader' => settingsProjectsHeader,
     'settingsHeadroomHeader' => settingsHeadroomHeader,
     'settingsRetentionHeader' => settingsRetentionHeader,
@@ -1055,28 +1646,59 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'settingsVolumeTotal' => settingsVolumeTotal,
     'settingsVolumeUsed' => settingsVolumeUsed,
     'settingsVolumeAvailable' => settingsVolumeAvailable,
-    'settingsVolumeFigures' => settingsVolumeFigures(total: (message.argument('total') is LocalizedMessage ? resolve(message.argument('total') as LocalizedMessage) : message.argument('total') as String),used: (message.argument('used') is LocalizedMessage ? resolve(message.argument('used') as LocalizedMessage) : message.argument('used') as String),available: (message.argument('available') is LocalizedMessage ? resolve(message.argument('available') as LocalizedMessage) : message.argument('available') as String)),
+    'settingsVolumeFigures' => settingsVolumeFigures(
+      total: (message.argument('total') is LocalizedMessage
+          ? resolve(message.argument('total') as LocalizedMessage)
+          : message.argument('total') as String),
+      used: (message.argument('used') is LocalizedMessage
+          ? resolve(message.argument('used') as LocalizedMessage)
+          : message.argument('used') as String),
+      available: (message.argument('available') is LocalizedMessage
+          ? resolve(message.argument('available') as LocalizedMessage)
+          : message.argument('available') as String),
+    ),
     'settingsHeadroomAmple' => settingsHeadroomAmple,
     'settingsHeadroomLow' => settingsHeadroomLow,
     'settingsHeadroomCritical' => settingsHeadroomCritical,
     'settingsClearCache' => settingsClearCache,
     'settingsClearCacheEffect' => settingsClearCacheEffect,
-    'settingsCacheSize' => settingsCacheSize((message.argument('size') is LocalizedMessage ? resolve(message.argument('size') as LocalizedMessage) : message.argument('size') as String)),
-    'settingsRetentionSubtitle' => settingsRetentionSubtitle(message.argument('days') as int),
+    'settingsCacheSize' => settingsCacheSize(
+      (message.argument('size') is LocalizedMessage
+          ? resolve(message.argument('size') as LocalizedMessage)
+          : message.argument('size') as String),
+    ),
+    'settingsRetentionSubtitle' => settingsRetentionSubtitle(
+      message.argument('days') as int,
+    ),
     'settingsClearCacheTitle' => settingsClearCacheTitle,
     'settingsClearCacheMessage' => settingsClearCacheMessage,
     'storageCheckTitle' => storageCheckTitle,
     'storageCheckSubtitle' => storageCheckSubtitle,
     'storageCheckDatabaseHeader' => storageCheckDatabaseHeader,
     'storageCheckDatabaseClean' => storageCheckDatabaseClean,
-    'storageCheckFindingRow' => storageCheckFindingRow((message.argument('table') is LocalizedMessage ? resolve(message.argument('table') as LocalizedMessage) : message.argument('table') as String),(message.argument('id') is LocalizedMessage ? resolve(message.argument('id') as LocalizedMessage) : message.argument('id') as String)),
-    'storageCheckProjectHeader' => storageCheckProjectHeader((message.argument('project') is LocalizedMessage ? resolve(message.argument('project') as LocalizedMessage) : message.argument('project') as String)),
+    'storageCheckFindingRow' => storageCheckFindingRow(
+      (message.argument('table') is LocalizedMessage
+          ? resolve(message.argument('table') as LocalizedMessage)
+          : message.argument('table') as String),
+      (message.argument('id') is LocalizedMessage
+          ? resolve(message.argument('id') as LocalizedMessage)
+          : message.argument('id') as String),
+    ),
+    'storageCheckProjectHeader' => storageCheckProjectHeader(
+      (message.argument('project') is LocalizedMessage
+          ? resolve(message.argument('project') as LocalizedMessage)
+          : message.argument('project') as String),
+    ),
     'storageCheckNoProject' => storageCheckNoProject,
     'storageCheckFilesClean' => storageCheckFilesClean,
     'storageCheckFilesUnavailable' => storageCheckFilesUnavailable,
     'storageCheckFilesUnavailableAction' => storageCheckFilesUnavailableAction,
     'storageCheckStrayHeader' => storageCheckStrayHeader,
-    'storageCheckStraySubtitle' => storageCheckStraySubtitle((message.argument('size') is LocalizedMessage ? resolve(message.argument('size') as LocalizedMessage) : message.argument('size') as String)),
+    'storageCheckStraySubtitle' => storageCheckStraySubtitle(
+      (message.argument('size') is LocalizedMessage
+          ? resolve(message.argument('size') as LocalizedMessage)
+          : message.argument('size') as String),
+    ),
     'storageCheckMissingHeader' => storageCheckMissingHeader,
     'storageCheckMissingSubtitle' => storageCheckMissingSubtitle,
     'storageCheckFlagTitle' => storageCheckFlagTitle,
@@ -1089,7 +1711,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'storageCheckNoRecordsMessage' => storageCheckNoRecordsMessage,
     'settingsRetention' => settingsRetention,
     'settingsRetentionEffect' => settingsRetentionEffect,
-    'settingsRetentionDays' => settingsRetentionDays(message.argument('n') as int),
+    'settingsRetentionDays' => settingsRetentionDays(
+      message.argument('n') as int,
+    ),
     'settingsDocuments' => settingsDocuments,
     'settingsAudio' => settingsAudio,
     'settingsExports' => settingsExports,
@@ -1097,7 +1721,20 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'settingsStorageEmptyHeadline' => settingsStorageEmptyHeadline,
     'settingsStorageEmptyMessage' => settingsStorageEmptyMessage,
     'fileSize' => fileSize(message.argument('bytes') as int),
-    'settingsProjectUse' => settingsProjectUse(photos: (message.argument('photos') is LocalizedMessage ? resolve(message.argument('photos') as LocalizedMessage) : message.argument('photos') as String),documents: (message.argument('documents') is LocalizedMessage ? resolve(message.argument('documents') as LocalizedMessage) : message.argument('documents') as String),audio: (message.argument('audio') is LocalizedMessage ? resolve(message.argument('audio') as LocalizedMessage) : message.argument('audio') as String),exports: (message.argument('exports') is LocalizedMessage ? resolve(message.argument('exports') as LocalizedMessage) : message.argument('exports') as String)),
+    'settingsProjectUse' => settingsProjectUse(
+      photos: (message.argument('photos') is LocalizedMessage
+          ? resolve(message.argument('photos') as LocalizedMessage)
+          : message.argument('photos') as String),
+      documents: (message.argument('documents') is LocalizedMessage
+          ? resolve(message.argument('documents') as LocalizedMessage)
+          : message.argument('documents') as String),
+      audio: (message.argument('audio') is LocalizedMessage
+          ? resolve(message.argument('audio') as LocalizedMessage)
+          : message.argument('audio') as String),
+      exports: (message.argument('exports') is LocalizedMessage
+          ? resolve(message.argument('exports') as LocalizedMessage)
+          : message.argument('exports') as String),
+    ),
     'settingsVersion' => settingsVersion,
     'settingsBuild' => settingsBuild,
     'settingsLicences' => settingsLicences,
@@ -1169,17 +1806,29 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'feedbackChoosePhoto' => feedbackChoosePhoto,
     'feedbackShotTipScreens' => feedbackShotTipScreens,
     'feedbackShotTipApps' => feedbackShotTipApps,
-    'feedbackAttachImages' => feedbackAttachImages(message.argument('n') as int),
+    'feedbackAttachImages' => feedbackAttachImages(
+      message.argument('n') as int,
+    ),
     'feedbackImageCount' => feedbackImageCount(message.argument('n') as int),
     'feedbackShotPreview' => feedbackShotPreview,
     'feedbackDiscardDraft' => feedbackDiscardDraft,
     'feedbackDiscardDraftTitle' => feedbackDiscardDraftTitle,
-    'feedbackDiscardDraftMessage' => feedbackDiscardDraftMessage(message.argument('images') as int),
+    'feedbackDiscardDraftMessage' => feedbackDiscardDraftMessage(
+      message.argument('images') as int,
+    ),
     'feedbackContinueLater' => feedbackContinueLater,
     'feedbackDraftBarHint' => feedbackDraftBarHint,
-    'feedbackShotAdded' => feedbackShotAdded((message.argument('screen') is LocalizedMessage ? resolve(message.argument('screen') as LocalizedMessage) : message.argument('screen') as String)),
+    'feedbackShotAdded' => feedbackShotAdded(
+      (message.argument('screen') is LocalizedMessage
+          ? resolve(message.argument('screen') as LocalizedMessage)
+          : message.argument('screen') as String),
+    ),
     'feedbackShotsFull' => feedbackShotsFull,
-    'feedbackScreenshotOf' => feedbackScreenshotOf((message.argument('screen') is LocalizedMessage ? resolve(message.argument('screen') as LocalizedMessage) : message.argument('screen') as String)),
+    'feedbackScreenshotOf' => feedbackScreenshotOf(
+      (message.argument('screen') is LocalizedMessage
+          ? resolve(message.argument('screen') as LocalizedMessage)
+          : message.argument('screen') as String),
+    ),
     'feedbackNoScreenshot' => feedbackNoScreenshot,
     'feedbackScreenshotPreview' => feedbackScreenshotPreview,
     'feedbackSave' => feedbackSave,
@@ -1198,15 +1847,32 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'feedbackScreenshotWithout' => feedbackScreenshotWithout,
     'feedbackSearch' => feedbackSearch,
     'feedbackClearFilters' => feedbackClearFilters,
-    'feedbackMatching' => feedbackMatching(message.argument('matching') as int,message.argument('total') as int),
-    'feedbackDownloadCount' => feedbackDownloadCount(message.argument('n') as int),
+    'feedbackMatching' => feedbackMatching(
+      message.argument('matching') as int,
+      message.argument('total') as int,
+    ),
+    'feedbackDownloadCount' => feedbackDownloadCount(
+      message.argument('n') as int,
+    ),
     'feedbackDownloadStarted' => feedbackDownloadStarted,
-    'feedbackDownloadedTo' => feedbackDownloadedTo((message.argument('location') is LocalizedMessage ? resolve(message.argument('location') as LocalizedMessage) : message.argument('location') as String)),
+    'feedbackDownloadedTo' => feedbackDownloadedTo(
+      (message.argument('location') is LocalizedMessage
+          ? resolve(message.argument('location') as LocalizedMessage)
+          : message.argument('location') as String),
+    ),
     'downloadsTaptureFolder' => downloadsTaptureFolder,
-    'feedbackDownloadsGoTo' => feedbackDownloadsGoTo((message.argument('place') is LocalizedMessage ? resolve(message.argument('place') as LocalizedMessage) : message.argument('place') as String)),
+    'feedbackDownloadsGoTo' => feedbackDownloadsGoTo(
+      (message.argument('place') is LocalizedMessage
+          ? resolve(message.argument('place') as LocalizedMessage)
+          : message.argument('place') as String),
+    ),
     'feedbackOpenFolder' => feedbackOpenFolder,
     'feedbackSaveToFolder' => feedbackSaveToFolder,
-    'feedbackOpenFolderFailed' => feedbackOpenFolderFailed((message.argument('place') is LocalizedMessage ? resolve(message.argument('place') as LocalizedMessage) : message.argument('place') as String)),
+    'feedbackOpenFolderFailed' => feedbackOpenFolderFailed(
+      (message.argument('place') is LocalizedMessage
+          ? resolve(message.argument('place') as LocalizedMessage)
+          : message.argument('place') as String),
+    ),
     'feedbackEmptyHeadline' => feedbackEmptyHeadline,
     'feedbackEmptyMessage' => feedbackEmptyMessage,
     'feedbackNoMatchHeadline' => feedbackNoMatchHeadline,
@@ -1214,18 +1880,46 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'feedbackSelected' => feedbackSelected(message.argument('n') as int),
     'feedbackDeleteCount' => feedbackDeleteCount(message.argument('n') as int),
     'feedbackDeleteTitle' => feedbackDeleteTitle(message.argument('n') as int),
-    'feedbackDeleteMessage' => feedbackDeleteMessage(message.argument('n') as int),
+    'feedbackDeleteMessage' => feedbackDeleteMessage(
+      message.argument('n') as int,
+    ),
     'feedbackDeleted' => feedbackDeleted(message.argument('n') as int),
     'feedbackShowMore' => feedbackShowMore,
-    'feedbackEntryFacts' => feedbackEntryFacts((message.argument('type') is LocalizedMessage ? resolve(message.argument('type') as LocalizedMessage) : message.argument('type') as String),(message.argument('when') is LocalizedMessage ? resolve(message.argument('when') as LocalizedMessage) : message.argument('when') as String),(message.argument('screen') is LocalizedMessage ? resolve(message.argument('screen') as LocalizedMessage) : message.argument('screen') as String)),
-    'feedbackEntryTitle' => feedbackEntryTitle((message.argument('number') is LocalizedMessage ? resolve(message.argument('number') as LocalizedMessage) : message.argument('number') as String),(message.argument('reference') is LocalizedMessage ? resolve(message.argument('reference') as LocalizedMessage) : message.argument('reference') as String),(message.argument('message') is LocalizedMessage ? resolve(message.argument('message') as LocalizedMessage) : message.argument('message') as String)),
+    'feedbackEntryFacts' => feedbackEntryFacts(
+      (message.argument('type') is LocalizedMessage
+          ? resolve(message.argument('type') as LocalizedMessage)
+          : message.argument('type') as String),
+      (message.argument('when') is LocalizedMessage
+          ? resolve(message.argument('when') as LocalizedMessage)
+          : message.argument('when') as String),
+      (message.argument('screen') is LocalizedMessage
+          ? resolve(message.argument('screen') as LocalizedMessage)
+          : message.argument('screen') as String),
+    ),
+    'feedbackEntryTitle' => feedbackEntryTitle(
+      (message.argument('number') is LocalizedMessage
+          ? resolve(message.argument('number') as LocalizedMessage)
+          : message.argument('number') as String),
+      (message.argument('reference') is LocalizedMessage
+          ? resolve(message.argument('reference') as LocalizedMessage)
+          : message.argument('reference') as String),
+      (message.argument('message') is LocalizedMessage
+          ? resolve(message.argument('message') as LocalizedMessage)
+          : message.argument('message') as String),
+    ),
     'appLockWait' => appLockWait(message.argument('remaining') as Duration),
     'queueTitle' => queueTitle,
     'queueUnprocessed' => queueUnprocessed,
     'queueQueued' => queueQueued,
     'queueFailed' => queueFailed,
-    'queueUsage' => queueUsage(message.argument('requests') as int,message.argument('images') as int,message.argument('cap') as int),
-    'queueUnprocessedCount' => queueUnprocessedCount(message.argument('count') as int),
+    'queueUsage' => queueUsage(
+      message.argument('requests') as int,
+      message.argument('images') as int,
+      message.argument('cap') as int,
+    ),
+    'queueUnprocessedCount' => queueUnprocessedCount(
+      message.argument('count') as int,
+    ),
     'queueQueuedCount' => queueQueuedCount(message.argument('count') as int),
     'queueFailedCount' => queueFailedCount(message.argument('count') as int),
     'queueGroupsTitle' => queueGroupsTitle,
@@ -1235,15 +1929,40 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'queueEmptyMessage' => queueEmptyMessage,
     'queueFailedTitle' => queueFailedTitle,
     'queueRetry' => queueRetry,
-    'queueRetryLabel' => queueRetryLabel((message.argument('record') is LocalizedMessage ? resolve(message.argument('record') as LocalizedMessage) : message.argument('record') as String)),
+    'queueRetryLabel' => queueRetryLabel(
+      (message.argument('record') is LocalizedMessage
+          ? resolve(message.argument('record') as LocalizedMessage)
+          : message.argument('record') as String),
+    ),
     'queueCancel' => queueCancel,
     'queueCancelled' => queueCancelled,
-    'queueSummary' => queueSummary(message.argument('succeeded') as int,message.argument('failed') as int,detail: message.argument('detail') == null ? null : (message.argument('detail') is LocalizedMessage ? resolve(message.argument('detail') as LocalizedMessage) : message.argument('detail') as String)),
-    'queueProgress' => queueProgress(message.argument('done') as int,message.argument('failed') as int,stage: message.argument('stage') == null ? null : (message.argument('stage') is LocalizedMessage ? resolve(message.argument('stage') as LocalizedMessage) : message.argument('stage') as String)),
+    'queueSummary' => queueSummary(
+      message.argument('succeeded') as int,
+      message.argument('failed') as int,
+      detail: message.argument('detail') == null
+          ? null
+          : (message.argument('detail') is LocalizedMessage
+                ? resolve(message.argument('detail') as LocalizedMessage)
+                : message.argument('detail') as String),
+    ),
+    'queueProgress' => queueProgress(
+      message.argument('done') as int,
+      message.argument('failed') as int,
+      stage: message.argument('stage') == null
+          ? null
+          : (message.argument('stage') is LocalizedMessage
+                ? resolve(message.argument('stage') as LocalizedMessage)
+                : message.argument('stage') as String),
+    ),
     'egressTitle' => egressTitle,
     'egressSend' => egressSend,
     'egressDecline' => egressDecline,
-    'egressBody' => egressBody(images: message.argument('images') as int,size: (message.argument('size') is LocalizedMessage ? resolve(message.argument('size') as LocalizedMessage) : message.argument('size') as String)),
+    'egressBody' => egressBody(
+      images: message.argument('images') as int,
+      size: (message.argument('size') is LocalizedMessage
+          ? resolve(message.argument('size') as LocalizedMessage)
+          : message.argument('size') as String),
+    ),
     'apiKeyTitle' => apiKeyTitle,
     'apiKeyCustody' => apiKeyCustody,
     'apiKeyLabel' => apiKeyLabel,
@@ -1260,8 +1979,17 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'aiOperation' => aiOperation,
     'aiProvider' => aiProvider,
     'aiModel' => aiModel,
-    'aiOperationLabel' => aiOperationLabel((message.argument('value') is LocalizedMessage ? resolve(message.argument('value') as LocalizedMessage) : message.argument('value') as String)),
-    'aiCustody' => aiCustody((message.argument('custody') is LocalizedMessage ? resolve(message.argument('custody') as LocalizedMessage) : message.argument('custody') as String),message.argument('available') as bool),
+    'aiOperationLabel' => aiOperationLabel(
+      (message.argument('value') is LocalizedMessage
+          ? resolve(message.argument('value') as LocalizedMessage)
+          : message.argument('value') as String),
+    ),
+    'aiCustody' => aiCustody(
+      (message.argument('custody') is LocalizedMessage
+          ? resolve(message.argument('custody') as LocalizedMessage)
+          : message.argument('custody') as String),
+      message.argument('available') as bool,
+    ),
     'aiSelectionFallback' => aiSelectionFallback,
     'aiProviderUnavailable' => aiProviderUnavailable,
     'aiSelectionInvalid' => aiSelectionInvalid,
@@ -1281,26 +2009,50 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'processExtracting' => processExtracting,
     'processChecking' => processChecking,
     'processingNotificationTitle' => processingNotificationTitle,
-    'processingNotificationBody' => processingNotificationBody(message.argument('succeeded') as int,message.argument('failed') as int),
+    'processingNotificationBody' => processingNotificationBody(
+      message.argument('succeeded') as int,
+      message.argument('failed') as int,
+    ),
     'documentPickFailed' => documentPickFailed,
-    'documentTooLarge' => documentTooLarge(message.argument('bytes') as int,message.argument('ceiling') as int),
+    'documentTooLarge' => documentTooLarge(
+      message.argument('bytes') as int,
+      message.argument('ceiling') as int,
+    ),
     'documentTooLargeRecovery' => documentTooLargeRecovery,
     'storedFileMissing' => storedFileMissing,
     'packageProjectMissing' => packageProjectMissing,
-    'packageTooLarge' => packageTooLarge(message.argument('bytes') as int,message.argument('ceiling') as int),
+    'packageTooLarge' => packageTooLarge(
+      message.argument('bytes') as int,
+      message.argument('ceiling') as int,
+    ),
     'packageTooLargeRecovery' => packageTooLargeRecovery,
     'packageWriteFailed' => packageWriteFailed,
-    'packageRejected' => packageRejected((message.argument('check') is LocalizedMessage ? resolve(message.argument('check') as LocalizedMessage) : message.argument('check') as String)),
+    'packageRejected' => packageRejected(
+      (message.argument('check') is LocalizedMessage
+          ? resolve(message.argument('check') as LocalizedMessage)
+          : message.argument('check') as String),
+    ),
     'packageRejectedRecovery' => packageRejectedRecovery,
     'captureGuideTitle' => captureGuideTitle,
     'captureGuidePhotos' => captureGuidePhotos,
     'captureGuideCaption' => captureGuideCaption,
-    'captureGuideItems' => captureGuideItems((message.argument('labels') as List<Object?>).cast<String>()),
+    'captureGuideItems' => captureGuideItems(
+      (message.argument('labels') as List<Object?>).cast<String>(),
+    ),
     'captureGuideClose' => captureGuideClose,
     'importChecking' => importChecking,
     'importSheetTitle' => importSheetTitle,
-    'importFrom' => importFrom((message.argument('device') is LocalizedMessage ? resolve(message.argument('device') as LocalizedMessage) : message.argument('device') as String),message.argument('exportedAt') as DateTime),
-    'importHolds' => importHolds(message.argument('records') as int,message.argument('photos') as int,message.argument('bytes') as int),
+    'importFrom' => importFrom(
+      (message.argument('device') is LocalizedMessage
+          ? resolve(message.argument('device') as LocalizedMessage)
+          : message.argument('device') as String),
+      message.argument('exportedAt') as DateTime,
+    ),
+    'importHolds' => importHolds(
+      message.argument('records') as int,
+      message.argument('photos') as int,
+      message.argument('bytes') as int,
+    ),
     'photosCount' => photosCount(message.argument('n') as int),
     'importAsNewProject' => importAsNewProject,
     'importMergeInto' => importMergeInto,
@@ -1317,11 +2069,36 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'mergePackage' => mergePackage,
     'mergeTargetTitle' => mergeTargetTitle,
     'mergeTargetNone' => mergeTargetNone,
-    'compatibilityStatus' => compatibilityStatus((message.argument('status') is LocalizedMessage ? resolve(message.argument('status') as LocalizedMessage) : message.argument('status') as String)),
-    'compatibilityIssue' => compatibilityIssue((message.argument('issue') is LocalizedMessage ? resolve(message.argument('issue') as LocalizedMessage) : message.argument('issue') as String),(message.argument('field') is LocalizedMessage ? resolve(message.argument('field') as LocalizedMessage) : message.argument('field') as String)),
-    'compatibilityTemplate' => compatibilityTemplate((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String),(message.argument('status') is LocalizedMessage ? resolve(message.argument('status') as LocalizedMessage) : message.argument('status') as String)),
-    'mergeCount' => mergeCount((message.argument('count') is LocalizedMessage ? resolve(message.argument('count') as LocalizedMessage) : message.argument('count') as String),message.argument('n') as int),
-    'mergeSettleConflicts' => mergeSettleConflicts(message.argument('n') as int),
+    'compatibilityStatus' => compatibilityStatus(
+      (message.argument('status') is LocalizedMessage
+          ? resolve(message.argument('status') as LocalizedMessage)
+          : message.argument('status') as String),
+    ),
+    'compatibilityIssue' => compatibilityIssue(
+      (message.argument('issue') is LocalizedMessage
+          ? resolve(message.argument('issue') as LocalizedMessage)
+          : message.argument('issue') as String),
+      (message.argument('field') is LocalizedMessage
+          ? resolve(message.argument('field') as LocalizedMessage)
+          : message.argument('field') as String),
+    ),
+    'compatibilityTemplate' => compatibilityTemplate(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+      (message.argument('status') is LocalizedMessage
+          ? resolve(message.argument('status') as LocalizedMessage)
+          : message.argument('status') as String),
+    ),
+    'mergeCount' => mergeCount(
+      (message.argument('count') is LocalizedMessage
+          ? resolve(message.argument('count') as LocalizedMessage)
+          : message.argument('count') as String),
+      message.argument('n') as int,
+    ),
+    'mergeSettleConflicts' => mergeSettleConflicts(
+      message.argument('n') as int,
+    ),
     'mergeApply' => mergeApply,
     'mergeApplying' => mergeApplying,
     'mergeDone' => mergeDone,
@@ -1329,21 +2106,51 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'mergeCheckDuplicates' => mergeCheckDuplicates,
     'mergeCheckDuplicatesHelper' => mergeCheckDuplicatesHelper,
     'mergeCheckingDuplicates' => mergeCheckingDuplicates,
-    'conflictProgress' => conflictProgress(message.argument('index') as int,message.argument('total') as int),
-    'conflictKind' => conflictKind((message.argument('kind') is LocalizedMessage ? resolve(message.argument('kind') as LocalizedMessage) : message.argument('kind') as String),(message.argument('field') is LocalizedMessage ? resolve(message.argument('field') as LocalizedMessage) : message.argument('field') as String)),
-    'conflictDeletion' => conflictDeletion((message.argument('kind') is LocalizedMessage ? resolve(message.argument('kind') as LocalizedMessage) : message.argument('kind') as String)),
+    'conflictProgress' => conflictProgress(
+      message.argument('index') as int,
+      message.argument('total') as int,
+    ),
+    'conflictKind' => conflictKind(
+      (message.argument('kind') is LocalizedMessage
+          ? resolve(message.argument('kind') as LocalizedMessage)
+          : message.argument('kind') as String),
+      (message.argument('field') is LocalizedMessage
+          ? resolve(message.argument('field') as LocalizedMessage)
+          : message.argument('field') as String),
+    ),
+    'conflictDeletion' => conflictDeletion(
+      (message.argument('kind') is LocalizedMessage
+          ? resolve(message.argument('kind') as LocalizedMessage)
+          : message.argument('kind') as String),
+    ),
     'conflictThisDevice' => conflictThisDevice,
     'conflictIncoming' => conflictIncoming,
-    'conflictWrittenBy' => conflictWrittenBy((message.argument('device') is LocalizedMessage ? resolve(message.argument('device') as LocalizedMessage) : message.argument('device') as String),message.argument('at') == null ? null : message.argument('at') as DateTime),
+    'conflictWrittenBy' => conflictWrittenBy(
+      (message.argument('device') is LocalizedMessage
+          ? resolve(message.argument('device') as LocalizedMessage)
+          : message.argument('device') as String),
+      message.argument('at') == null
+          ? null
+          : message.argument('at') as DateTime,
+    ),
     'conflictDeleted' => conflictDeleted,
     'conflictEmpty' => conflictEmpty,
     'conflictKeepMine' => conflictKeepMine,
     'conflictTakeIncoming' => conflictTakeIncoming,
     'mergeKeepAllMine' => mergeKeepAllMine(message.argument('n') as int),
-    'mergeTakeAllIncoming' => mergeTakeAllIncoming(message.argument('n') as int),
-    'mergeBulkConfirm' => mergeBulkConfirm(message.argument('n') as int,incoming: message.argument('incoming') as bool),
+    'mergeTakeAllIncoming' => mergeTakeAllIncoming(
+      message.argument('n') as int,
+    ),
+    'mergeBulkConfirm' => mergeBulkConfirm(
+      message.argument('n') as int,
+      incoming: message.argument('incoming') as bool,
+    ),
     'duplicateTitle' => duplicateTitle,
-    'duplicateSignal' => duplicateSignal((message.argument('signal') is LocalizedMessage ? resolve(message.argument('signal') as LocalizedMessage) : message.argument('signal') as String)),
+    'duplicateSignal' => duplicateSignal(
+      (message.argument('signal') is LocalizedMessage
+          ? resolve(message.argument('signal') as LocalizedMessage)
+          : message.argument('signal') as String),
+    ),
     'duplicateKeepBoth' => duplicateKeepBoth,
     'duplicateSkipIncoming' => duplicateSkipIncoming,
     'duplicateSkipped' => duplicateSkipped,
@@ -1354,20 +2161,60 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'mergeTemplatesHeading' => mergeTemplatesHeading,
     'mergeCountsHeading' => mergeCountsHeading,
     'mergeBlocked' => mergeBlocked,
-    'mergeRecordUnnamed' => mergeRecordUnnamed((message.argument('id') is LocalizedMessage ? resolve(message.argument('id') as LocalizedMessage) : message.argument('id') as String)),
-    'mergeConflictLine' => mergeConflictLine((message.argument('record') is LocalizedMessage ? resolve(message.argument('record') as LocalizedMessage) : message.argument('record') as String),(message.argument('about') is LocalizedMessage ? resolve(message.argument('about') as LocalizedMessage) : message.argument('about') as String)),
-    'mergeConflictChosen' => mergeConflictChosen(incoming: message.argument('incoming') as bool),
+    'mergeRecordUnnamed' => mergeRecordUnnamed(
+      (message.argument('id') is LocalizedMessage
+          ? resolve(message.argument('id') as LocalizedMessage)
+          : message.argument('id') as String),
+    ),
+    'mergeConflictLine' => mergeConflictLine(
+      (message.argument('record') is LocalizedMessage
+          ? resolve(message.argument('record') as LocalizedMessage)
+          : message.argument('record') as String),
+      (message.argument('about') is LocalizedMessage
+          ? resolve(message.argument('about') as LocalizedMessage)
+          : message.argument('about') as String),
+    ),
+    'mergeConflictChosen' => mergeConflictChosen(
+      incoming: message.argument('incoming') as bool,
+    ),
     'mergeConflictOpen' => mergeConflictOpen,
-    'mergeProjectKept' => mergeProjectKept((message.argument('columns') as List<Object?>).cast<String>()),
+    'mergeProjectKept' => mergeProjectKept(
+      (message.argument('columns') as List<Object?>).cast<String>(),
+    ),
     'conflictChanged' => conflictChanged,
-    'duplicateField' => duplicateField((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String),(message.argument('value') is LocalizedMessage ? resolve(message.argument('value') as LocalizedMessage) : message.argument('value') as String)),
+    'duplicateField' => duplicateField(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+      (message.argument('value') is LocalizedMessage
+          ? resolve(message.argument('value') as LocalizedMessage)
+          : message.argument('value') as String),
+    ),
     'recordsSearchHint' => recordsSearchHint,
-    'recordsUntitled' => recordsUntitled(message.argument('number') == null ? null : message.argument('number') as int),
-    'recordsRowSubtitle' => recordsRowSubtitle(number: message.argument('number') == null ? null : message.argument('number') as int,identifier: (message.argument('identifier') is LocalizedMessage ? resolve(message.argument('identifier') as LocalizedMessage) : message.argument('identifier') as String),context: (message.argument('context') is LocalizedMessage ? resolve(message.argument('context') as LocalizedMessage) : message.argument('context') as String)),
+    'recordsUntitled' => recordsUntitled(
+      message.argument('number') == null
+          ? null
+          : message.argument('number') as int,
+    ),
+    'recordsRowSubtitle' => recordsRowSubtitle(
+      number: message.argument('number') == null
+          ? null
+          : message.argument('number') as int,
+      identifier: (message.argument('identifier') is LocalizedMessage
+          ? resolve(message.argument('identifier') as LocalizedMessage)
+          : message.argument('identifier') as String),
+      context: (message.argument('context') is LocalizedMessage
+          ? resolve(message.argument('context') as LocalizedMessage)
+          : message.argument('context') as String),
+    ),
     'recordsEmptyHeadline' => recordsEmptyHeadline,
     'recordsEmptyMessage' => recordsEmptyMessage,
     'recordsEmptyAction' => recordsEmptyAction,
-    'recordsNoMatch' => recordsNoMatch((message.argument('query') is LocalizedMessage ? resolve(message.argument('query') as LocalizedMessage) : message.argument('query') as String)),
+    'recordsNoMatch' => recordsNoMatch(
+      (message.argument('query') is LocalizedMessage
+          ? resolve(message.argument('query') as LocalizedMessage)
+          : message.argument('query') as String),
+    ),
     'recordsClearSearch' => recordsClearSearch,
     'recordsClearAll' => recordsClearAll,
     'recordsNoProjectHeadline' => recordsNoProjectHeadline,
@@ -1390,13 +2237,46 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'recordsFiltersEmptyHeadline' => recordsFiltersEmptyHeadline,
     'recordsFiltersEmptyMessage' => recordsFiltersEmptyMessage,
     'recordsTemplateUnnamed' => recordsTemplateUnnamed,
-    'recordsChipTemplate' => recordsChipTemplate((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
-    'recordsChipOperator' => recordsChipOperator((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
-    'recordsChipCondition' => recordsChipCondition((message.argument('code') is LocalizedMessage ? resolve(message.argument('code') as LocalizedMessage) : message.argument('code') as String)),
-    'recordsChipContext' => recordsChipContext((message.argument('level') is LocalizedMessage ? resolve(message.argument('level') as LocalizedMessage) : message.argument('level') as String),(message.argument('value') is LocalizedMessage ? resolve(message.argument('value') as LocalizedMessage) : message.argument('value') as String)),
-    'recordsChipDates' => recordsChipDates(from: message.argument('from') == null ? null : message.argument('from') as DateTime,to: message.argument('to') == null ? null : message.argument('to') as DateTime,locale: (message.argument('locale') is LocalizedMessage ? resolve(message.argument('locale') as LocalizedMessage) : message.argument('locale') as String)),
+    'recordsChipTemplate' => recordsChipTemplate(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'recordsChipOperator' => recordsChipOperator(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'recordsChipCondition' => recordsChipCondition(
+      (message.argument('code') is LocalizedMessage
+          ? resolve(message.argument('code') as LocalizedMessage)
+          : message.argument('code') as String),
+    ),
+    'recordsChipContext' => recordsChipContext(
+      (message.argument('level') is LocalizedMessage
+          ? resolve(message.argument('level') as LocalizedMessage)
+          : message.argument('level') as String),
+      (message.argument('value') is LocalizedMessage
+          ? resolve(message.argument('value') as LocalizedMessage)
+          : message.argument('value') as String),
+    ),
+    'recordsChipDates' => recordsChipDates(
+      from: message.argument('from') == null
+          ? null
+          : message.argument('from') as DateTime,
+      to: message.argument('to') == null
+          ? null
+          : message.argument('to') as DateTime,
+      locale: (message.argument('locale') is LocalizedMessage
+          ? resolve(message.argument('locale') as LocalizedMessage)
+          : message.argument('locale') as String),
+    ),
     'recordsSortTitle' => recordsSortTitle,
-    'recordsSortLabel' => recordsSortLabel((message.argument('current') is LocalizedMessage ? resolve(message.argument('current') as LocalizedMessage) : message.argument('current') as String)),
+    'recordsSortLabel' => recordsSortLabel(
+      (message.argument('current') is LocalizedMessage
+          ? resolve(message.argument('current') as LocalizedMessage)
+          : message.argument('current') as String),
+    ),
     'recordsSortNumberDescending' => recordsSortNumberDescending,
     'recordsSortNumberAscending' => recordsSortNumberAscending,
     'recordsSortCapturedDescending' => recordsSortCapturedDescending,
@@ -1416,7 +2296,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'recordDetailContextTitle' => recordDetailContextTitle,
     'recordDetailContextEmpty' => recordDetailContextEmpty,
     'recordDetailProvenanceTitle' => recordDetailProvenanceTitle,
-    'recordDetailValuesCount' => recordDetailValuesCount(message.argument('n') as int),
+    'recordDetailValuesCount' => recordDetailValuesCount(
+      message.argument('n') as int,
+    ),
     'recordDetailVerified' => recordDetailVerified,
     'recordDetailReadBy' => recordDetailReadBy,
     'recordDetailDatesTitle' => recordDetailDatesTitle,
@@ -1425,8 +2307,16 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'recordDetailApproved' => recordDetailApproved,
     'recordDetailExported' => recordDetailExported,
     'recordDetailNotExported' => recordDetailNotExported,
-    'recordDetailWhen' => recordDetailWhen(message.argument('at') as DateTime,by: (message.argument('by') is LocalizedMessage ? resolve(message.argument('by') as LocalizedMessage) : message.argument('by') as String)),
-    'recordPhotoPosition' => recordPhotoPosition(message.argument('position') as int,message.argument('total') as int),
+    'recordDetailWhen' => recordDetailWhen(
+      message.argument('at') as DateTime,
+      by: (message.argument('by') is LocalizedMessage
+          ? resolve(message.argument('by') as LocalizedMessage)
+          : message.argument('by') as String),
+    ),
+    'recordPhotoPosition' => recordPhotoPosition(
+      message.argument('position') as int,
+      message.argument('total') as int,
+    ),
     'recordSourceTyped' => recordSourceTyped,
     'recordSourceOcr' => recordSourceOcr,
     'recordSourceAiPhoto' => recordSourceAiPhoto,
@@ -1441,33 +2331,123 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'recordBandMedium' => recordBandMedium,
     'recordBandLow' => recordBandLow,
     'recordBandScore' => recordBandScore(message.argument('score') as double),
-    'recordBandWithScore' => recordBandWithScore((message.argument('band') is LocalizedMessage ? resolve(message.argument('band') as LocalizedMessage) : message.argument('band') as String),message.argument('score') as double),
-    'recordValueMarks' => recordValueMarks(source: (message.argument('source') is LocalizedMessage ? resolve(message.argument('source') as LocalizedMessage) : message.argument('source') as String),band: (message.argument('band') is LocalizedMessage ? resolve(message.argument('band') as LocalizedMessage) : message.argument('band') as String),evidenceRemoved: message.argument('evidenceRemoved') as bool,retired: message.argument('retired') as bool),
+    'recordBandWithScore' => recordBandWithScore(
+      (message.argument('band') is LocalizedMessage
+          ? resolve(message.argument('band') as LocalizedMessage)
+          : message.argument('band') as String),
+      message.argument('score') as double,
+    ),
+    'recordValueMarks' => recordValueMarks(
+      source: (message.argument('source') is LocalizedMessage
+          ? resolve(message.argument('source') as LocalizedMessage)
+          : message.argument('source') as String),
+      band: (message.argument('band') is LocalizedMessage
+          ? resolve(message.argument('band') as LocalizedMessage)
+          : message.argument('band') as String),
+      evidenceRemoved: message.argument('evidenceRemoved') as bool,
+      retired: message.argument('retired') as bool,
+    ),
     'recordHistoryTitle' => recordHistoryTitle,
-    'recordHistorySubject' => recordHistorySubject(number: message.argument('number') == null ? null : message.argument('number') as int,name: (message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
+    'recordHistorySubject' => recordHistorySubject(
+      number: message.argument('number') == null
+          ? null
+          : message.argument('number') as int,
+      name: (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
     'recordHistoryEmptyHeadline' => recordHistoryEmptyHeadline,
     'recordHistoryEmptyMessage' => recordHistoryEmptyMessage,
     'recordHistoryBackToRecord' => recordHistoryBackToRecord,
     'recordHistoryDay' => recordHistoryDay(message.argument('day') as DateTime),
-    'recordHistoryByline' => recordHistoryByline(at: message.argument('at') as DateTime,operator: (message.argument('operator') is LocalizedMessage ? resolve(message.argument('operator') as LocalizedMessage) : message.argument('operator') as String),device: (message.argument('device') is LocalizedMessage ? resolve(message.argument('device') as LocalizedMessage) : message.argument('device') as String)),
+    'recordHistoryByline' => recordHistoryByline(
+      at: message.argument('at') as DateTime,
+      operator: (message.argument('operator') is LocalizedMessage
+          ? resolve(message.argument('operator') as LocalizedMessage)
+          : message.argument('operator') as String),
+      device: (message.argument('device') is LocalizedMessage
+          ? resolve(message.argument('device') as LocalizedMessage)
+          : message.argument('device') as String),
+    ),
     'recordHistoryCaptured' => recordHistoryCaptured,
     'recordHistoryCreatedByHand' => recordHistoryCreatedByHand,
-    'recordHistoryValue' => recordHistoryValue((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String),previous: (message.argument('previous') is LocalizedMessage ? resolve(message.argument('previous') as LocalizedMessage) : message.argument('previous') as String),next: (message.argument('next') is LocalizedMessage ? resolve(message.argument('next') as LocalizedMessage) : message.argument('next') as String)),
+    'recordHistoryValue' => recordHistoryValue(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+      previous: (message.argument('previous') is LocalizedMessage
+          ? resolve(message.argument('previous') as LocalizedMessage)
+          : message.argument('previous') as String),
+      next: (message.argument('next') is LocalizedMessage
+          ? resolve(message.argument('next') as LocalizedMessage)
+          : message.argument('next') as String),
+    ),
     'recordHistoryCaption' => recordHistoryCaption,
-    'recordHistoryStatus' => recordHistoryStatus(previous: (message.argument('previous') is LocalizedMessage ? resolve(message.argument('previous') as LocalizedMessage) : message.argument('previous') as String),next: (message.argument('next') is LocalizedMessage ? resolve(message.argument('next') as LocalizedMessage) : message.argument('next') as String)),
+    'recordHistoryStatus' => recordHistoryStatus(
+      previous: (message.argument('previous') is LocalizedMessage
+          ? resolve(message.argument('previous') as LocalizedMessage)
+          : message.argument('previous') as String),
+      next: (message.argument('next') is LocalizedMessage
+          ? resolve(message.argument('next') as LocalizedMessage)
+          : message.argument('next') as String),
+    ),
     'recordHistoryPhotoAdded' => recordHistoryPhotoAdded,
     'recordHistoryPhotoRemoved' => recordHistoryPhotoRemoved,
-    'recordHistoryTemplate' => recordHistoryTemplate(previous: (message.argument('previous') is LocalizedMessage ? resolve(message.argument('previous') as LocalizedMessage) : message.argument('previous') as String),next: (message.argument('next') is LocalizedMessage ? resolve(message.argument('next') as LocalizedMessage) : message.argument('next') as String)),
+    'recordHistoryTemplate' => recordHistoryTemplate(
+      previous: (message.argument('previous') is LocalizedMessage
+          ? resolve(message.argument('previous') as LocalizedMessage)
+          : message.argument('previous') as String),
+      next: (message.argument('next') is LocalizedMessage
+          ? resolve(message.argument('next') as LocalizedMessage)
+          : message.argument('next') as String),
+    ),
     'recordHistoryTemplateGone' => recordHistoryTemplateGone,
-    'recordHistoryProcessed' => recordHistoryProcessed(provider: (message.argument('provider') is LocalizedMessage ? resolve(message.argument('provider') as LocalizedMessage) : message.argument('provider') as String),model: (message.argument('model') is LocalizedMessage ? resolve(message.argument('model') as LocalizedMessage) : message.argument('model') as String)),
-    'recordHistoryProcessingFailed' => recordHistoryProcessingFailed(message.argument('attempts') as int),
-    'recordHistoryImported' => recordHistoryImported((message.argument('package') is LocalizedMessage ? resolve(message.argument('package') as LocalizedMessage) : message.argument('package') as String)),
-    'recordHistoryMerged' => recordHistoryMerged((message.argument('package') is LocalizedMessage ? resolve(message.argument('package') as LocalizedMessage) : message.argument('package') as String)),
-    'recordHistoryExported' => recordHistoryExported((message.argument('version') is LocalizedMessage ? resolve(message.argument('version') as LocalizedMessage) : message.argument('version') as String)),
-    'recordHistoryEvidenceRemoved' => recordHistoryEvidenceRemoved((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'recordHistoryEvidenceRestored' => recordHistoryEvidenceRestored((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'recordHistoryRetired' => recordHistoryRetired((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'recordHistoryMappedAgain' => recordHistoryMappedAgain((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'recordHistoryProcessed' => recordHistoryProcessed(
+      provider: (message.argument('provider') is LocalizedMessage
+          ? resolve(message.argument('provider') as LocalizedMessage)
+          : message.argument('provider') as String),
+      model: (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+    ),
+    'recordHistoryProcessingFailed' => recordHistoryProcessingFailed(
+      message.argument('attempts') as int,
+    ),
+    'recordHistoryImported' => recordHistoryImported(
+      (message.argument('package') is LocalizedMessage
+          ? resolve(message.argument('package') as LocalizedMessage)
+          : message.argument('package') as String),
+    ),
+    'recordHistoryMerged' => recordHistoryMerged(
+      (message.argument('package') is LocalizedMessage
+          ? resolve(message.argument('package') as LocalizedMessage)
+          : message.argument('package') as String),
+    ),
+    'recordHistoryExported' => recordHistoryExported(
+      (message.argument('version') is LocalizedMessage
+          ? resolve(message.argument('version') as LocalizedMessage)
+          : message.argument('version') as String),
+    ),
+    'recordHistoryEvidenceRemoved' => recordHistoryEvidenceRemoved(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'recordHistoryEvidenceRestored' => recordHistoryEvidenceRestored(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'recordHistoryRetired' => recordHistoryRetired(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'recordHistoryMappedAgain' => recordHistoryMappedAgain(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'recordHistoryRowMatched' => recordHistoryRowMatched,
     'recordHistoryFileMissing' => recordHistoryFileMissing,
     'recordHistoryOther' => recordHistoryOther,
@@ -1494,24 +2474,43 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'recordFieldMissingHeadline' => recordFieldMissingHeadline,
     'recordFieldMissingMessage' => recordFieldMissingMessage,
     'recordValueCannotEmpty' => recordValueCannotEmpty,
-    'recordValuesSaved' => recordValuesSaved(message.argument('n') as int,backToReview: message.argument('backToReview') as bool),
+    'recordValuesSaved' => recordValuesSaved(
+      message.argument('n') as int,
+      backToReview: message.argument('backToReview') as bool,
+    ),
     'recordPhotosProcessTitle' => recordPhotosProcessTitle,
-    'recordPhotosProcessMessage' => recordPhotosProcessMessage(message.argument('n') as int),
+    'recordPhotosProcessMessage' => recordPhotosProcessMessage(
+      message.argument('n') as int,
+    ),
     'recordPhotosProcessConfirm' => recordPhotosProcessConfirm,
     'recordPhotosProcessQueued' => recordPhotosProcessQueued,
     'recordTemplateChangeTitle' => recordTemplateChangeTitle,
-    'recordTemplateChangeCurrent' => recordTemplateChangeCurrent((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
+    'recordTemplateChangeCurrent' => recordTemplateChangeCurrent(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
     'recordTemplateChangeChoose' => recordTemplateChangeChoose,
     'recordTemplateChangeHint' => recordTemplateChangeHint,
-    'recordTemplateChangeMapped' => recordTemplateChangeMapped(message.argument('n') as int),
-    'recordTemplateChangeRetired' => recordTemplateChangeRetired(message.argument('n') as int),
-    'recordTemplateChangeAdded' => recordTemplateChangeAdded(message.argument('n') as int),
-    'recordTemplateChangeRestored' => recordTemplateChangeRestored(message.argument('n') as int),
+    'recordTemplateChangeMapped' => recordTemplateChangeMapped(
+      message.argument('n') as int,
+    ),
+    'recordTemplateChangeRetired' => recordTemplateChangeRetired(
+      message.argument('n') as int,
+    ),
+    'recordTemplateChangeAdded' => recordTemplateChangeAdded(
+      message.argument('n') as int,
+    ),
+    'recordTemplateChangeRestored' => recordTemplateChangeRestored(
+      message.argument('n') as int,
+    ),
     'recordTemplateChangeRetiredNotice' => recordTemplateChangeRetiredNotice,
     'recordTemplateChangeNoValues' => recordTemplateChangeNoValues,
     'recordTemplateChangeApprovedNotice' => recordTemplateChangeApprovedNotice,
     'recordTemplateChangeApply' => recordTemplateChangeApply,
-    'recordTemplateChanged' => recordTemplateChanged(backToReview: message.argument('backToReview') as bool),
+    'recordTemplateChanged' => recordTemplateChanged(
+      backToReview: message.argument('backToReview') as bool,
+    ),
     'recordTemplateChangeEmptyHeadline' => recordTemplateChangeEmptyHeadline,
     'recordTemplateChangeEmptyMessage' => recordTemplateChangeEmptyMessage,
     'recordTemplateChangeEmptyAction' => recordTemplateChangeEmptyAction,
@@ -1522,49 +2521,91 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'recordTemplateChangeApplyingAction' => recordTemplateChangeApplyingAction,
     'recordsDeleteLabel' => recordsDeleteLabel(message.argument('n') as int),
     'recordsDeleteTitle' => recordsDeleteTitle(message.argument('n') as int),
-    'recordsDeleteMessage' => recordsDeleteMessage(records: message.argument('records') as int,days: message.argument('days') as int),
+    'recordsDeleteMessage' => recordsDeleteMessage(
+      records: message.argument('records') as int,
+      days: message.argument('days') as int,
+    ),
     'recordsDeleteConfirm' => recordsDeleteConfirm,
     'recordsDeleted' => recordsDeleted(message.argument('n') as int),
     'recordsNotDeleted' => recordsNotDeleted(message.argument('n') as int),
-    'recordsDeletedPartly' => recordsDeletedPartly(deleted: message.argument('deleted') as int,failed: message.argument('failed') as int),
+    'recordsDeletedPartly' => recordsDeletedPartly(
+      deleted: message.argument('deleted') as int,
+      failed: message.argument('failed') as int,
+    ),
     'recordsRestored' => recordsRestored(message.argument('n') as int),
     'recordsNotRestored' => recordsNotRestored(message.argument('n') as int),
     'recycleBinTitle' => recycleBinTitle,
     'recycleBinSettingsSubtitle' => recycleBinSettingsSubtitle,
     'recycleBinKeptFor' => recycleBinKeptFor(message.argument('days') as int),
     'recycleBinEmptyHeadline' => recycleBinEmptyHeadline,
-    'recycleBinEmptyMessage' => recycleBinEmptyMessage(message.argument('days') as int),
-    'recycleBinRowSubtitle' => recycleBinRowSubtitle(projectName: (message.argument('projectName') is LocalizedMessage ? resolve(message.argument('projectName') as LocalizedMessage) : message.argument('projectName') as String),deletedAt: message.argument('deletedAt') as DateTime,number: message.argument('number') == null ? null : message.argument('number') as int),
+    'recycleBinEmptyMessage' => recycleBinEmptyMessage(
+      message.argument('days') as int,
+    ),
+    'recycleBinRowSubtitle' => recycleBinRowSubtitle(
+      projectName: (message.argument('projectName') is LocalizedMessage
+          ? resolve(message.argument('projectName') as LocalizedMessage)
+          : message.argument('projectName') as String),
+      deletedAt: message.argument('deletedAt') as DateTime,
+      number: message.argument('number') == null
+          ? null
+          : message.argument('number') as int,
+    ),
     'recycleBinDaysLeft' => recycleBinDaysLeft(message.argument('days') as int),
     'recycleBinRestore' => recycleBinRestore,
-    'recycleBinRestoreLabel' => recycleBinRestoreLabel((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
+    'recycleBinRestoreLabel' => recycleBinRestoreLabel(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
     'recycleBinRestoring' => recycleBinRestoring,
     'recycleBinRestoringAction' => recycleBinRestoringAction,
     'recycleBinEmpty' => recycleBinEmpty,
-    'recycleBinEmptyTitle' => recycleBinEmptyTitle(message.argument('n') as int),
-    'recycleBinEmptyWarning' => recycleBinEmptyWarning(message.argument('n') as int),
-    'recycleBinEmptyTypeCount' => recycleBinEmptyTypeCount(message.argument('n') as int),
+    'recycleBinEmptyTitle' => recycleBinEmptyTitle(
+      message.argument('n') as int,
+    ),
+    'recycleBinEmptyWarning' => recycleBinEmptyWarning(
+      message.argument('n') as int,
+    ),
+    'recycleBinEmptyTypeCount' => recycleBinEmptyTypeCount(
+      message.argument('n') as int,
+    ),
     'recycleBinEmptyConfirm' => recycleBinEmptyConfirm,
     'recycleBinEmptyUnavailable' => recycleBinEmptyUnavailable,
     'recycleBinEmptyUnavailableAction' => recycleBinEmptyUnavailableAction,
     'recycleBinEmptying' => recycleBinEmptying,
     'recycleBinEmptyingAction' => recycleBinEmptyingAction,
-    'recycleBinEmptied' => recycleBinEmptied(purged: message.argument('purged') as int,kept: message.argument('kept') as int,failed: message.argument('failed') as int),
-    'recordsSelectedCount' => recordsSelectedCount(message.argument('n') as int),
+    'recycleBinEmptied' => recycleBinEmptied(
+      purged: message.argument('purged') as int,
+      kept: message.argument('kept') as int,
+      failed: message.argument('failed') as int,
+    ),
+    'recordsSelectedCount' => recordsSelectedCount(
+      message.argument('n') as int,
+    ),
     'recordsClearSelection' => recordsClearSelection,
     'recordsSelectAllShown' => recordsSelectAllShown,
     'recordsApproveLabel' => recordsApproveLabel(message.argument('n') as int),
     'recordsArchiveLabel' => recordsArchiveLabel(message.argument('n') as int),
-    'recordsReprocessLabel' => recordsReprocessLabel(message.argument('n') as int),
+    'recordsReprocessLabel' => recordsReprocessLabel(
+      message.argument('n') as int,
+    ),
     'recordsExportLabel' => recordsExportLabel(message.argument('n') as int),
     'recordsArchiveTitle' => recordsArchiveTitle(message.argument('n') as int),
-    'recordsArchiveMessage' => recordsArchiveMessage(message.argument('n') as int),
+    'recordsArchiveMessage' => recordsArchiveMessage(
+      message.argument('n') as int,
+    ),
     'recordsArchiveConfirm' => recordsArchiveConfirm,
-    'recordsReprocessTitle' => recordsReprocessTitle(message.argument('n') as int),
-    'recordsReprocessMessage' => recordsReprocessMessage(message.argument('n') as int),
+    'recordsReprocessTitle' => recordsReprocessTitle(
+      message.argument('n') as int,
+    ),
+    'recordsReprocessMessage' => recordsReprocessMessage(
+      message.argument('n') as int,
+    ),
     'recordsReprocessConfirm' => recordsReprocessConfirm,
     'recordsExportTitle' => recordsExportTitle(message.argument('n') as int),
-    'recordsExportMessage' => recordsExportMessage(message.argument('n') as int),
+    'recordsExportMessage' => recordsExportMessage(
+      message.argument('n') as int,
+    ),
     'recordsExportConfirm' => recordsExportConfirm,
     'recordsApproved' => recordsApproved(message.argument('n') as int),
     'recordsNotApproved' => recordsNotApproved(message.argument('n') as int),
@@ -1572,29 +2613,85 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'recordsNotArchived' => recordsNotArchived(message.argument('n') as int),
     'recordsRequeued' => recordsRequeued(message.argument('n') as int),
     'recordsNotRequeued' => recordsNotRequeued(message.argument('n') as int),
-    'recordsRequeuedOffline' => recordsRequeuedOffline(message.argument('n') as int),
-    'recordsBulkOutcome' => recordsBulkOutcome(done: (message.argument('done') is LocalizedMessage ? resolve(message.argument('done') as LocalizedMessage) : message.argument('done') as String),notDone: (message.argument('notDone') is LocalizedMessage ? resolve(message.argument('notDone') as LocalizedMessage) : message.argument('notDone') as String)),
+    'recordsRequeuedOffline' => recordsRequeuedOffline(
+      message.argument('n') as int,
+    ),
+    'recordsBulkOutcome' => recordsBulkOutcome(
+      done: (message.argument('done') is LocalizedMessage
+          ? resolve(message.argument('done') as LocalizedMessage)
+          : message.argument('done') as String),
+      notDone: (message.argument('notDone') is LocalizedMessage
+          ? resolve(message.argument('notDone') as LocalizedMessage)
+          : message.argument('notDone') as String),
+    ),
     'recordsBulkBusy' => recordsBulkBusy,
     'recordsBulkBusyAction' => recordsBulkBusyAction,
-    'validationIssueCount' => validationIssueCount(message.argument('errors') as int,message.argument('warnings') as int),
-    'validationErrorCount' => validationErrorCount(message.argument('n') as int),
-    'validationWarningCount' => validationWarningCount(message.argument('n') as int),
+    'validationIssueCount' => validationIssueCount(
+      message.argument('errors') as int,
+      message.argument('warnings') as int,
+    ),
+    'validationErrorCount' => validationErrorCount(
+      message.argument('n') as int,
+    ),
+    'validationWarningCount' => validationWarningCount(
+      message.argument('n') as int,
+    ),
     'validationGoToFirstError' => validationGoToFirstError,
     'validationErrorLabel' => validationErrorLabel,
     'validationWarningLabel' => validationWarningLabel,
-    'validationRequired' => validationRequired((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'validationType' => validationType((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'validationTooShort' => validationTooShort((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'validationTooLong' => validationTooLong((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'validationRange' => validationRange((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'validationPattern' => validationPattern((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'validationOption' => validationOption((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'validationUnit' => validationUnit((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'validationIdentity' => validationIdentity((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'validationRequired' => validationRequired(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'validationType' => validationType(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'validationTooShort' => validationTooShort(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'validationTooLong' => validationTooLong(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'validationRange' => validationRange(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'validationPattern' => validationPattern(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'validationOption' => validationOption(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'validationUnit' => validationUnit(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'validationIdentity' => validationIdentity(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'validationEvidence' => validationEvidence,
     'validationExpression' => validationExpression,
     'validationExpressionAction' => validationExpressionAction,
-    'validationUnknownField' => validationUnknownField((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
+    'validationUnknownField' => validationUnknownField(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
     'duplicatePromptTitle' => duplicatePromptTitle,
     'duplicateOverride' => duplicateOverride,
     'duplicateLinkBoth' => duplicateLinkBoth,
@@ -1614,22 +2711,74 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'duplicateNewRecord' => duplicateNewRecord,
     'duplicateDifferingFields' => duplicateDifferingFields,
     'duplicateBackToList' => duplicateBackToList,
-    'duplicatePairTitle' => duplicatePairTitle((message.argument('existing') is LocalizedMessage ? resolve(message.argument('existing') as LocalizedMessage) : message.argument('existing') as String),(message.argument('incoming') is LocalizedMessage ? resolve(message.argument('incoming') as LocalizedMessage) : message.argument('incoming') as String)),
-    'duplicatesGroup' => duplicatesGroup((message.argument('signal') is LocalizedMessage ? resolve(message.argument('signal') as LocalizedMessage) : message.argument('signal') as String),(message.argument('template') is LocalizedMessage ? resolve(message.argument('template') as LocalizedMessage) : message.argument('template') as String)),
-    'duplicateValueChange' => duplicateValueChange((message.argument('existing') is LocalizedMessage ? resolve(message.argument('existing') as LocalizedMessage) : message.argument('existing') as String),(message.argument('incoming') is LocalizedMessage ? resolve(message.argument('incoming') as LocalizedMessage) : message.argument('incoming') as String)),
-    'duplicateDifferenceLine' => duplicateDifferenceLine((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String),(message.argument('existing') is LocalizedMessage ? resolve(message.argument('existing') as LocalizedMessage) : message.argument('existing') as String),(message.argument('incoming') is LocalizedMessage ? resolve(message.argument('incoming') as LocalizedMessage) : message.argument('incoming') as String)),
-    'duplicateCaptureDetail' => duplicateCaptureDetail(message.argument('at') as DateTime,(message.argument('by') is LocalizedMessage ? resolve(message.argument('by') as LocalizedMessage) : message.argument('by') as String),(message.argument('place') is LocalizedMessage ? resolve(message.argument('place') as LocalizedMessage) : message.argument('place') as String)),
+    'duplicatePairTitle' => duplicatePairTitle(
+      (message.argument('existing') is LocalizedMessage
+          ? resolve(message.argument('existing') as LocalizedMessage)
+          : message.argument('existing') as String),
+      (message.argument('incoming') is LocalizedMessage
+          ? resolve(message.argument('incoming') as LocalizedMessage)
+          : message.argument('incoming') as String),
+    ),
+    'duplicatesGroup' => duplicatesGroup(
+      (message.argument('signal') is LocalizedMessage
+          ? resolve(message.argument('signal') as LocalizedMessage)
+          : message.argument('signal') as String),
+      (message.argument('template') is LocalizedMessage
+          ? resolve(message.argument('template') as LocalizedMessage)
+          : message.argument('template') as String),
+    ),
+    'duplicateValueChange' => duplicateValueChange(
+      (message.argument('existing') is LocalizedMessage
+          ? resolve(message.argument('existing') as LocalizedMessage)
+          : message.argument('existing') as String),
+      (message.argument('incoming') is LocalizedMessage
+          ? resolve(message.argument('incoming') as LocalizedMessage)
+          : message.argument('incoming') as String),
+    ),
+    'duplicateDifferenceLine' => duplicateDifferenceLine(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+      (message.argument('existing') is LocalizedMessage
+          ? resolve(message.argument('existing') as LocalizedMessage)
+          : message.argument('existing') as String),
+      (message.argument('incoming') is LocalizedMessage
+          ? resolve(message.argument('incoming') as LocalizedMessage)
+          : message.argument('incoming') as String),
+    ),
+    'duplicateCaptureDetail' => duplicateCaptureDetail(
+      message.argument('at') as DateTime,
+      (message.argument('by') is LocalizedMessage
+          ? resolve(message.argument('by') as LocalizedMessage)
+          : message.argument('by') as String),
+      (message.argument('place') is LocalizedMessage
+          ? resolve(message.argument('place') as LocalizedMessage)
+          : message.argument('place') as String),
+    ),
     'duplicateOverrideConfirmTitle' => duplicateOverrideConfirmTitle,
     'duplicateOverrideConfirmMessage' => duplicateOverrideConfirmMessage,
     'duplicateCarryPhotos' => duplicateCarryPhotos,
-    'duplicateCarryPhotosHelp' => duplicateCarryPhotosHelp(message.argument('n') as int),
+    'duplicateCarryPhotosHelp' => duplicateCarryPhotosHelp(
+      message.argument('n') as int,
+    ),
     'duplicateMergeApply' => duplicateMergeApply,
-    'duplicateMergeKeep' => duplicateMergeKeep((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'duplicateMergeKeep' => duplicateMergeKeep(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'duplicateMergeExisting' => duplicateMergeExisting,
     'duplicateMergeNew' => duplicateMergeNew,
     'duplicateMergeBoth' => duplicateMergeBoth,
     'duplicateMergeChooseAll' => duplicateMergeChooseAll,
-    'duplicateBothValues' => duplicateBothValues((message.argument('existing') is LocalizedMessage ? resolve(message.argument('existing') as LocalizedMessage) : message.argument('existing') as String),(message.argument('incoming') is LocalizedMessage ? resolve(message.argument('incoming') as LocalizedMessage) : message.argument('incoming') as String)),
+    'duplicateBothValues' => duplicateBothValues(
+      (message.argument('existing') is LocalizedMessage
+          ? resolve(message.argument('existing') as LocalizedMessage)
+          : message.argument('existing') as String),
+      (message.argument('incoming') is LocalizedMessage
+          ? resolve(message.argument('incoming') as LocalizedMessage)
+          : message.argument('incoming') as String),
+    ),
     'duplicateResolvedKeepBoth' => duplicateResolvedKeepBoth,
     'duplicateResolvedDiscard' => duplicateResolvedDiscard,
     'duplicateResolvedOverride' => duplicateResolvedOverride,
@@ -1643,20 +2792,39 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'duplicatesScanned' => duplicatesScanned(message.argument('n') as int),
     'duplicatesBulkChoose' => duplicatesBulkChoose,
     'duplicatesBulkDone' => duplicatesBulkDone(message.argument('n') as int),
-    'duplicateLinkedTo' => duplicateLinkedTo((message.argument('title') is LocalizedMessage ? resolve(message.argument('title') as LocalizedMessage) : message.argument('title') as String)),
-    'duplicatePossibleOf' => duplicatePossibleOf((message.argument('title') is LocalizedMessage ? resolve(message.argument('title') as LocalizedMessage) : message.argument('title') as String)),
+    'duplicateLinkedTo' => duplicateLinkedTo(
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+    ),
+    'duplicatePossibleOf' => duplicatePossibleOf(
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+    ),
     'duplicatesTitle' => duplicatesTitle,
     'duplicatesEmptyHeadline' => duplicatesEmptyHeadline,
     'duplicatesEmptyMessage' => duplicatesEmptyMessage,
     'duplicatesResolveGroup' => duplicatesResolveGroup,
-    'duplicatesBulkTitle' => duplicatesBulkTitle(message.argument('n') as int,(message.argument('choice') is LocalizedMessage ? resolve(message.argument('choice') as LocalizedMessage) : message.argument('choice') as String)),
-    'duplicatesBulkMessage' => duplicatesBulkMessage(message.argument('n') as int),
+    'duplicatesBulkTitle' => duplicatesBulkTitle(
+      message.argument('n') as int,
+      (message.argument('choice') is LocalizedMessage
+          ? resolve(message.argument('choice') as LocalizedMessage)
+          : message.argument('choice') as String),
+    ),
+    'duplicatesBulkMessage' => duplicatesBulkMessage(
+      message.argument('n') as int,
+    ),
     'conflictTypeOwn' => conflictTypeOwn,
     'conflictUseTyped' => conflictUseTyped,
     'conflictReason' => conflictReason,
     'conflictEmptyHeadline' => conflictEmptyHeadline,
     'conflictEmptyMessage' => conflictEmptyMessage,
-    'conflictBlocksApproval' => conflictBlocksApproval((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'conflictBlocksApproval' => conflictBlocksApproval(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'verificationModeTitle' => verificationModeTitle,
     'verificationModeOn' => verificationModeOn,
     'verificationModeOff' => verificationModeOff,
@@ -1668,7 +2836,17 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'varianceMatch' => varianceMatch,
     'varianceChanged' => varianceChanged,
     'varianceMissing' => varianceMissing,
-    'varianceDetail' => varianceDetail((message.argument('status') is LocalizedMessage ? resolve(message.argument('status') as LocalizedMessage) : message.argument('status') as String),(message.argument('recorded') is LocalizedMessage ? resolve(message.argument('recorded') as LocalizedMessage) : message.argument('recorded') as String),(message.argument('found') is LocalizedMessage ? resolve(message.argument('found') as LocalizedMessage) : message.argument('found') as String)),
+    'varianceDetail' => varianceDetail(
+      (message.argument('status') is LocalizedMessage
+          ? resolve(message.argument('status') as LocalizedMessage)
+          : message.argument('status') as String),
+      (message.argument('recorded') is LocalizedMessage
+          ? resolve(message.argument('recorded') as LocalizedMessage)
+          : message.argument('recorded') as String),
+      (message.argument('found') is LocalizedMessage
+          ? resolve(message.argument('found') as LocalizedMessage)
+          : message.argument('found') as String),
+    ),
     'varianceRegisterNotFound' => varianceRegisterNotFound,
     'varianceChecklistNotCaptured' => varianceChecklistNotCaptured,
     'varianceOpenRecords' => varianceOpenRecords,
@@ -1682,7 +2860,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'reviewTitle' => reviewTitle,
     'reviewNeedsAttention' => reviewNeedsAttention,
     'reviewConfident' => reviewConfident,
-    'reviewConfidentGroup' => reviewConfidentGroup(message.argument('count') as int),
+    'reviewConfidentGroup' => reviewConfidentGroup(
+      message.argument('count') as int,
+    ),
     'reviewApproveNext' => reviewApproveNext,
     'reviewEmptyHeadline' => reviewEmptyHeadline,
     'reviewEmptyMessage' => reviewEmptyMessage,
@@ -1699,9 +2879,16 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'reviewEvidenceEmpty' => reviewEvidenceEmpty,
     'reviewVerify' => reviewVerify,
     'reviewVerifyConfident' => reviewVerifyConfident,
-    'reviewVerifiedBy' => reviewVerifiedBy((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
+    'reviewVerifiedBy' => reviewVerifiedBy(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
     'reviewVerifyEmpty' => reviewVerifyEmpty,
-    'reviewPosition' => reviewPosition(message.argument('index') as int,message.argument('total') as int),
+    'reviewPosition' => reviewPosition(
+      message.argument('index') as int,
+      message.argument('total') as int,
+    ),
     'reviewSkip' => reviewSkip,
     'reviewBack' => reviewBack,
     'reviewQueueDone' => reviewQueueDone,
@@ -1728,18 +2915,31 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'reviewFinalSide' => reviewFinalSide,
     'reviewPreviousRecord' => reviewPreviousRecord,
     'reviewBackToRecords' => reviewBackToRecords,
-    'reviewVerifiedCount' => reviewVerifiedCount(message.argument('count') as int),
+    'reviewVerifiedCount' => reviewVerifiedCount(
+      message.argument('count') as int,
+    ),
     'reviewVerified' => reviewVerified,
     'reviewEvidenceTitle' => reviewEvidenceTitle,
     'reviewEvidencePhoto' => reviewEvidencePhoto,
-    'reviewEvidenceDocument' => reviewEvidenceDocument(message.argument('page') == null ? null : message.argument('page') as int),
+    'reviewEvidenceDocument' => reviewEvidenceDocument(
+      message.argument('page') == null ? null : message.argument('page') as int,
+    ),
     'reviewEvidenceTranscript' => reviewEvidenceTranscript,
     'reviewEvidenceRegion' => reviewEvidenceRegion,
     'reviewReanalyseQueued' => reviewReanalyseQueued,
     'reviewReanalysing' => reviewReanalysing,
     'reviewProposalsTitle' => reviewProposalsTitle,
-    'reviewProposalLine' => reviewProposalLine((message.argument('current') is LocalizedMessage ? resolve(message.argument('current') as LocalizedMessage) : message.argument('current') as String),(message.argument('proposed') is LocalizedMessage ? resolve(message.argument('proposed') as LocalizedMessage) : message.argument('proposed') as String)),
-    'reviewProposalsApplied' => reviewProposalsApplied(message.argument('count') as int),
+    'reviewProposalLine' => reviewProposalLine(
+      (message.argument('current') is LocalizedMessage
+          ? resolve(message.argument('current') as LocalizedMessage)
+          : message.argument('current') as String),
+      (message.argument('proposed') is LocalizedMessage
+          ? resolve(message.argument('proposed') as LocalizedMessage)
+          : message.argument('proposed') as String),
+    ),
+    'reviewProposalsApplied' => reviewProposalsApplied(
+      message.argument('count') as int,
+    ),
     'meetingTitle' => meetingTitle,
     'meetingStart' => meetingStart,
     'meetingEmptyHeadline' => meetingEmptyHeadline,
@@ -1748,7 +2948,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'meetingStartTime' => meetingStartTime,
     'meetingLocation' => meetingLocation,
     'meetingSecretary' => meetingSecretary,
-    'meetingStartedTitle' => meetingStartedTitle(message.argument('when') as DateTime),
+    'meetingStartedTitle' => meetingStartedTitle(
+      message.argument('when') as DateTime,
+    ),
     'meetingAttachments' => meetingAttachments,
     'meetingAddAttachment' => meetingAddAttachment,
     'meetingAttachmentsEmpty' => meetingAttachmentsEmpty,
@@ -1773,7 +2975,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'meetingContact' => meetingContact,
     'meetingPresent' => meetingPresent,
     'meetingApology' => meetingApology,
-    'meetingAttendanceCount' => meetingAttendanceCount(message.argument('count') as int),
+    'meetingAttendanceCount' => meetingAttendanceCount(
+      message.argument('count') as int,
+    ),
     'meetingAcceptStaff' => meetingAcceptStaff,
     'meetingAttendeesEmpty' => meetingAttendeesEmpty,
     'meetingAttendeesEmptyMessage' => meetingAttendeesEmptyMessage,
@@ -1787,8 +2991,16 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'meetingRecording' => meetingRecording,
     'meetingRecord' => meetingRecord,
     'meetingStop' => meetingStop,
-    'meetingElapsed' => meetingElapsed((message.argument('clock') is LocalizedMessage ? resolve(message.argument('clock') as LocalizedMessage) : message.argument('clock') as String)),
-    'meetingRemaining' => meetingRemaining((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'meetingElapsed' => meetingElapsed(
+      (message.argument('clock') is LocalizedMessage
+          ? resolve(message.argument('clock') as LocalizedMessage)
+          : message.argument('clock') as String),
+    ),
+    'meetingRemaining' => meetingRemaining(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'meetingInterrupted' => meetingInterrupted,
     'meetingRecordingEmpty' => meetingRecordingEmpty,
     'meetingRecordingEmptyMessage' => meetingRecordingEmptyMessage,
@@ -1811,7 +3023,11 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'meetingNotes' => meetingNotes,
     'meetingMinutes' => meetingMinutes,
     'meetingTranscript' => meetingTranscript,
-    'meetingActionBlocked' => meetingActionBlocked((message.argument('action') is LocalizedMessage ? resolve(message.argument('action') as LocalizedMessage) : message.argument('action') as String)),
+    'meetingActionBlocked' => meetingActionBlocked(
+      (message.argument('action') is LocalizedMessage
+          ? resolve(message.argument('action') as LocalizedMessage)
+          : message.argument('action') as String),
+    ),
     'meetingApprove' => meetingApprove,
     'meetingReviewTitle' => meetingReviewTitle,
     'meetingReviewEmpty' => meetingReviewEmpty,
@@ -1827,38 +3043,88 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'meetingNoProjectMessage' => meetingNoProjectMessage,
     'meetingBackToProjects' => meetingBackToProjects,
     'meetingSummary' => meetingSummary,
-    'meetingDecisionsCount' => meetingDecisionsCount(message.argument('count') as int),
-    'meetingActionsCount' => meetingActionsCount(message.argument('count') as int),
+    'meetingDecisionsCount' => meetingDecisionsCount(
+      message.argument('count') as int,
+    ),
+    'meetingActionsCount' => meetingActionsCount(
+      message.argument('count') as int,
+    ),
     'meetingNotesAndMinutes' => meetingNotesAndMinutes,
     'meetingRefine' => meetingRefine,
     'meetingRefineNeedsAgenda' => meetingRefineNeedsAgenda,
-    'meetingUnsupported' => meetingUnsupported((message.argument('names') as List<Object?>).cast<String>()),
-    'meetingMinutesLine' => meetingMinutesLine((message.argument('title') is LocalizedMessage ? resolve(message.argument('title') as LocalizedMessage) : message.argument('title') as String),(message.argument('summary') is LocalizedMessage ? resolve(message.argument('summary') as LocalizedMessage) : message.argument('summary') as String)),
-    'meetingTranscriptVersion' => meetingTranscriptVersion(message.argument('version') as int),
+    'meetingUnsupported' => meetingUnsupported(
+      (message.argument('names') as List<Object?>).cast<String>(),
+    ),
+    'meetingMinutesLine' => meetingMinutesLine(
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+      (message.argument('summary') is LocalizedMessage
+          ? resolve(message.argument('summary') as LocalizedMessage)
+          : message.argument('summary') as String),
+    ),
+    'meetingTranscriptVersion' => meetingTranscriptVersion(
+      message.argument('version') as int,
+    ),
     'meetingTranscriptCloudVersion' => meetingTranscriptCloudVersion,
-    'meetingTranscriptGaps' => meetingTranscriptGaps(message.argument('count') as int),
+    'meetingTranscriptGaps' => meetingTranscriptGaps(
+      message.argument('count') as int,
+    ),
     'meetingTranscribe' => meetingTranscribe,
-    'meetingTranscribing' => meetingTranscribing(message.argument('done') as int,message.argument('total') as int),
+    'meetingTranscribing' => meetingTranscribing(
+      message.argument('done') as int,
+      message.argument('total') as int,
+    ),
     'meetingTranscribeUnavailable' => meetingTranscribeUnavailable,
     'meetingPlay' => meetingPlay,
     'meetingInterruptedKept' => meetingInterruptedKept,
     'meetingPhotographHandout' => meetingPhotographHandout,
     'meetingDocument' => meetingDocument,
     'meetingPhoto' => meetingPhoto,
-    'meetingFileDetail' => meetingFileDetail((message.argument('kind') is LocalizedMessage ? resolve(message.argument('kind') as LocalizedMessage) : message.argument('kind') as String),message.argument('bytes') as int),
-    'meetingRecordingDetail' => meetingRecordingDetail(message.argument('length') as Duration,message.argument('bytes') as int),
+    'meetingFileDetail' => meetingFileDetail(
+      (message.argument('kind') is LocalizedMessage
+          ? resolve(message.argument('kind') as LocalizedMessage)
+          : message.argument('kind') as String),
+      message.argument('bytes') as int,
+    ),
+    'meetingRecordingDetail' => meetingRecordingDetail(
+      message.argument('length') as Duration,
+      message.argument('bytes') as int,
+    ),
     'meetingCheckReading' => meetingCheckReading,
     'meetingSigned' => meetingSigned,
     'meetingAttendance' => meetingAttendance,
-    'meetingStaffSuggestion' => meetingStaffSuggestion((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String),message.argument('score') as double),
-    'meetingStaffLinked' => meetingStaffLinked((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
+    'meetingStaffSuggestion' => meetingStaffSuggestion(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+      message.argument('score') as double,
+    ),
+    'meetingStaffLinked' => meetingStaffLinked(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
     'meetingUnlinkStaff' => meetingUnlinkStaff,
-    'meetingOwnerOption' => meetingOwnerOption((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String),staff: message.argument('staff') as bool),
+    'meetingOwnerOption' => meetingOwnerOption(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+      staff: message.argument('staff') as bool,
+    ),
     'meetingStatusOpen' => meetingStatusOpen,
     'meetingStatusInProgress' => meetingStatusInProgress,
     'meetingStatusDone' => meetingStatusDone,
-    'meetingSourceLine' => meetingSourceLine((message.argument('source') is LocalizedMessage ? resolve(message.argument('source') as LocalizedMessage) : message.argument('source') as String)),
-    'meetingDrag' => meetingDrag((message.argument('title') is LocalizedMessage ? resolve(message.argument('title') as LocalizedMessage) : message.argument('title') as String)),
+    'meetingSourceLine' => meetingSourceLine(
+      (message.argument('source') is LocalizedMessage
+          ? resolve(message.argument('source') as LocalizedMessage)
+          : message.argument('source') as String),
+    ),
+    'meetingDrag' => meetingDrag(
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+    ),
     'meetingMoveUp' => meetingMoveUp,
     'exportTitle' => exportTitle,
     'exportRun' => exportRun,
@@ -1906,11 +3172,31 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'exportFormatPdf' => exportFormatPdf,
     'exportFormatDocx' => exportFormatDocx,
     'exportFormatTxt' => exportFormatTxt,
-    'processingEgressSelection' => processingEgressSelection((message.argument('provider') is LocalizedMessage ? resolve(message.argument('provider') as LocalizedMessage) : message.argument('provider') as String),(message.argument('model') is LocalizedMessage ? resolve(message.argument('model') as LocalizedMessage) : message.argument('model') as String),(message.argument('account') is LocalizedMessage ? resolve(message.argument('account') as LocalizedMessage) : message.argument('account') as String),(message.argument('limit') is LocalizedMessage ? resolve(message.argument('limit') as LocalizedMessage) : message.argument('limit') as String)),
+    'processingEgressSelection' => processingEgressSelection(
+      (message.argument('provider') is LocalizedMessage
+          ? resolve(message.argument('provider') as LocalizedMessage)
+          : message.argument('provider') as String),
+      (message.argument('model') is LocalizedMessage
+          ? resolve(message.argument('model') as LocalizedMessage)
+          : message.argument('model') as String),
+      (message.argument('account') is LocalizedMessage
+          ? resolve(message.argument('account') as LocalizedMessage)
+          : message.argument('account') as String),
+      (message.argument('limit') is LocalizedMessage
+          ? resolve(message.argument('limit') as LocalizedMessage)
+          : message.argument('limit') as String),
+    ),
     'processingEgressManaged' => processingEgressManaged,
     'processingEgressPersonal' => processingEgressPersonal,
     'processingEgressLimitDefault' => processingEgressLimitDefault,
-    'processingReservedCost' => processingReservedCost((message.argument('amount') is LocalizedMessage ? resolve(message.argument('amount') as LocalizedMessage) : message.argument('amount') as String),(message.argument('unit') is LocalizedMessage ? resolve(message.argument('unit') as LocalizedMessage) : message.argument('unit') as String)),
+    'processingReservedCost' => processingReservedCost(
+      (message.argument('amount') is LocalizedMessage
+          ? resolve(message.argument('amount') as LocalizedMessage)
+          : message.argument('amount') as String),
+      (message.argument('unit') is LocalizedMessage
+          ? resolve(message.argument('unit') as LocalizedMessage)
+          : message.argument('unit') as String),
+    ),
     'processingTokens' => processingTokens(message.argument('count') as int),
     'processingFindingsTitle' => processingFindingsTitle,
     'processingRetryChargeTitle' => processingRetryChargeTitle,
@@ -1920,12 +3206,27 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'serverApiKeyCustody' => serverApiKeyCustody,
     'aiRequestUncertain' => aiRequestUncertain,
     'aiManagedAccount' => aiManagedAccount,
-    'aiPersonalAccount' => aiPersonalAccount((message.argument('provider') is LocalizedMessage ? resolve(message.argument('provider') as LocalizedMessage) : message.argument('provider') as String)),
+    'aiPersonalAccount' => aiPersonalAccount(
+      (message.argument('provider') is LocalizedMessage
+          ? resolve(message.argument('provider') as LocalizedMessage)
+          : message.argument('provider') as String),
+    ),
     'aiSpendingLimit' => aiSpendingLimit,
-    'aiModelCostCeiling' => aiModelCostCeiling((message.argument('amount') is LocalizedMessage ? resolve(message.argument('amount') as LocalizedMessage) : message.argument('amount') as String),(message.argument('unit') is LocalizedMessage ? resolve(message.argument('unit') as LocalizedMessage) : message.argument('unit') as String)),
+    'aiModelCostCeiling' => aiModelCostCeiling(
+      (message.argument('amount') is LocalizedMessage
+          ? resolve(message.argument('amount') as LocalizedMessage)
+          : message.argument('amount') as String),
+      (message.argument('unit') is LocalizedMessage
+          ? resolve(message.argument('unit') as LocalizedMessage)
+          : message.argument('unit') as String),
+    ),
     'aiSpendingLimitHint' => aiSpendingLimitHint,
     'serverCredentialRemoveMessage' => serverCredentialRemoveMessage,
-    'exportScopeName' => exportScopeName((message.argument('kind') is LocalizedMessage ? resolve(message.argument('kind') as LocalizedMessage) : message.argument('kind') as String)),
+    'exportScopeName' => exportScopeName(
+      (message.argument('kind') is LocalizedMessage
+          ? resolve(message.argument('kind') as LocalizedMessage)
+          : message.argument('kind') as String),
+    ),
     'exportScopeFrom' => exportScopeFrom,
     'exportScopeTo' => exportScopeTo,
     'exportDictionary' => exportDictionary,
@@ -1939,22 +3240,48 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'exportDelimiterSemicolon' => exportDelimiterSemicolon,
     'exportDelimiterTab' => exportDelimiterTab,
     'exportGateTitle' => exportGateTitle(message.argument('n') as int),
-    'exportGateMessage' => exportGateMessage(incomplete: message.argument('incomplete') as int,unapproved: message.argument('unapproved') as int,blocked: message.argument('blocked') as int),
+    'exportGateMessage' => exportGateMessage(
+      incomplete: message.argument('incomplete') as int,
+      unapproved: message.argument('unapproved') as int,
+      blocked: message.argument('blocked') as int,
+    ),
     'exportFixNowHint' => exportFixNowHint,
     'exportExcludeHint' => exportExcludeHint(message.argument('n') as int),
     'exportAnywayHint' => exportAnywayHint,
-    'exportHistoryDetail' => exportHistoryDetail((message.argument('when') is LocalizedMessage ? resolve(message.argument('when') as LocalizedMessage) : message.argument('when') as String),(message.argument('operator') is LocalizedMessage ? resolve(message.argument('operator') as LocalizedMessage) : message.argument('operator') as String),message.argument('n') as int),
-    'pdfPageOf' => pdfPageOf(message.argument('page') as int,message.argument('pages') as int),
+    'exportHistoryDetail' => exportHistoryDetail(
+      (message.argument('when') is LocalizedMessage
+          ? resolve(message.argument('when') as LocalizedMessage)
+          : message.argument('when') as String),
+      (message.argument('operator') is LocalizedMessage
+          ? resolve(message.argument('operator') as LocalizedMessage)
+          : message.argument('operator') as String),
+      message.argument('n') as int,
+    ),
+    'pdfPageOf' => pdfPageOf(
+      message.argument('page') as int,
+      message.argument('pages') as int,
+    ),
     'pdfMissingPhoto' => pdfMissingPhoto,
     'pdfRecordReport' => pdfRecordReport,
     'pdfCaptured' => pdfCaptured,
-    'pdfRaw' => pdfRaw((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'pdfRefined' => pdfRefined((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'pdfRaw' => pdfRaw(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'pdfRefined' => pdfRefined(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'pdfInspectionReport' => pdfInspectionReport,
     'pdfNotFound' => pdfNotFound,
     'pdfChecklistRows' => pdfChecklistRows(message.argument('n') as int),
     'pdfNotFoundCount' => pdfNotFoundCount(message.argument('n') as int),
-    'pdfCompliance' => pdfCompliance(message.argument('compliant') as int,message.argument('total') as int),
+    'pdfCompliance' => pdfCompliance(
+      message.argument('compliant') as int,
+      message.argument('total') as int,
+    ),
     'pdfSummaryReport' => pdfSummaryReport,
     'pdfByContext' => pdfByContext,
     'pdfByTemplate' => pdfByTemplate,
@@ -1970,17 +3297,58 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'pdfNotInRegister' => pdfNotInRegister,
     'pdfMinutesReport' => pdfMinutesReport,
     'pdfTranscriptReport' => pdfTranscriptReport,
-    'pdfTranscriptHeard' => pdfTranscriptHeard((message.argument('title') is LocalizedMessage ? resolve(message.argument('title') as LocalizedMessage) : message.argument('title') as String)),
-    'pdfTranscriptEdited' => pdfTranscriptEdited((message.argument('title') is LocalizedMessage ? resolve(message.argument('title') as LocalizedMessage) : message.argument('title') as String)),
+    'pdfTranscriptHeard' => pdfTranscriptHeard(
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+    ),
+    'pdfTranscriptEdited' => pdfTranscriptEdited(
+      (message.argument('title') is LocalizedMessage
+          ? resolve(message.argument('title') as LocalizedMessage)
+          : message.argument('title') as String),
+    ),
     'pdfDue' => pdfDue,
-    'pdfActionStatus' => pdfActionStatus((message.argument('stored') is LocalizedMessage ? resolve(message.argument('stored') as LocalizedMessage) : message.argument('stored') as String)),
-    'pdfVarianceChanged' => pdfVarianceChanged((message.argument('field') is LocalizedMessage ? resolve(message.argument('field') as LocalizedMessage) : message.argument('field') as String),(message.argument('recorded') is LocalizedMessage ? resolve(message.argument('recorded') as LocalizedMessage) : message.argument('recorded') as String),(message.argument('found') is LocalizedMessage ? resolve(message.argument('found') as LocalizedMessage) : message.argument('found') as String)),
-    'pdfVarianceEmpty' => pdfVarianceEmpty((message.argument('field') is LocalizedMessage ? resolve(message.argument('field') as LocalizedMessage) : message.argument('field') as String),(message.argument('recorded') is LocalizedMessage ? resolve(message.argument('recorded') as LocalizedMessage) : message.argument('recorded') as String)),
+    'pdfActionStatus' => pdfActionStatus(
+      (message.argument('stored') is LocalizedMessage
+          ? resolve(message.argument('stored') as LocalizedMessage)
+          : message.argument('stored') as String),
+    ),
+    'pdfVarianceChanged' => pdfVarianceChanged(
+      (message.argument('field') is LocalizedMessage
+          ? resolve(message.argument('field') as LocalizedMessage)
+          : message.argument('field') as String),
+      (message.argument('recorded') is LocalizedMessage
+          ? resolve(message.argument('recorded') as LocalizedMessage)
+          : message.argument('recorded') as String),
+      (message.argument('found') is LocalizedMessage
+          ? resolve(message.argument('found') as LocalizedMessage)
+          : message.argument('found') as String),
+    ),
+    'pdfVarianceEmpty' => pdfVarianceEmpty(
+      (message.argument('field') is LocalizedMessage
+          ? resolve(message.argument('field') as LocalizedMessage)
+          : message.argument('field') as String),
+      (message.argument('recorded') is LocalizedMessage
+          ? resolve(message.argument('recorded') as LocalizedMessage)
+          : message.argument('recorded') as String),
+    ),
     'pdfPhotoAppendix' => pdfPhotoAppendix,
     'pdfPhotoReference' => pdfPhotoReference(message.argument('n') as int),
-    'pdfExportedAt' => pdfExportedAt((message.argument('when') is LocalizedMessage ? resolve(message.argument('when') as LocalizedMessage) : message.argument('when') as String)),
-    'pdfExportedBy' => pdfExportedBy((message.argument('operator') is LocalizedMessage ? resolve(message.argument('operator') as LocalizedMessage) : message.argument('operator') as String)),
-    'pdfScope' => pdfScope((message.argument('scope') is LocalizedMessage ? resolve(message.argument('scope') as LocalizedMessage) : message.argument('scope') as String)),
+    'pdfExportedAt' => pdfExportedAt(
+      (message.argument('when') is LocalizedMessage
+          ? resolve(message.argument('when') as LocalizedMessage)
+          : message.argument('when') as String),
+    ),
+    'pdfExportedBy' => pdfExportedBy(
+      (message.argument('operator') is LocalizedMessage
+          ? resolve(message.argument('operator') as LocalizedMessage)
+          : message.argument('operator') as String),
+    ),
+    'pdfScope' => pdfScope(
+      (message.argument('scope') is LocalizedMessage
+          ? resolve(message.argument('scope') as LocalizedMessage)
+          : message.argument('scope') as String),
+    ),
     'conflictTypeValue' => conflictTypeValue,
     'conflictDecideLater' => conflictDecideLater,
     'conflictCaptionLabel' => conflictCaptionLabel,
@@ -1995,17 +3363,48 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'bundleScopeContext' => bundleScopeContext,
     'bundleScopeApproved' => bundleScopeApproved,
     'bundleScopeData' => bundleScopeData,
-    'bundleSize' => bundleSize((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
+    'bundleSize' => bundleSize(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
     'bundleShare' => bundleShare,
     'bundleOpen' => bundleOpen,
     'mergeHistoryTitle' => mergeHistoryTitle,
     'mergeHistoryEmpty' => mergeHistoryEmpty,
     'mergeHistoryEmptyMessage' => mergeHistoryEmptyMessage,
-    'mergeUndoUntil' => mergeUndoUntil((message.argument('when') is LocalizedMessage ? resolve(message.argument('when') as LocalizedMessage) : message.argument('when') as String)),
-    'mergeUndoDeadline' => mergeUndoDeadline(message.argument('until') as DateTime),
-    'mergeHistoryFacts' => mergeHistoryFacts((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String),(message.argument('id') is LocalizedMessage ? resolve(message.argument('id') as LocalizedMessage) : message.argument('id') as String),message.argument('at') as DateTime,(message.argument('status') is LocalizedMessage ? resolve(message.argument('status') as LocalizedMessage) : message.argument('status') as String)),
-    'mergeHistoryCount' => mergeHistoryCount((message.argument('key') is LocalizedMessage ? resolve(message.argument('key') as LocalizedMessage) : message.argument('key') as String),message.argument('n') as int),
-    'mergeHistoryResolution' => mergeHistoryResolution((message.argument('choice') is LocalizedMessage ? resolve(message.argument('choice') as LocalizedMessage) : message.argument('choice') as String),message.argument('n') as int),
+    'mergeUndoUntil' => mergeUndoUntil(
+      (message.argument('when') is LocalizedMessage
+          ? resolve(message.argument('when') as LocalizedMessage)
+          : message.argument('when') as String),
+    ),
+    'mergeUndoDeadline' => mergeUndoDeadline(
+      message.argument('until') as DateTime,
+    ),
+    'mergeHistoryFacts' => mergeHistoryFacts(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+      (message.argument('id') is LocalizedMessage
+          ? resolve(message.argument('id') as LocalizedMessage)
+          : message.argument('id') as String),
+      message.argument('at') as DateTime,
+      (message.argument('status') is LocalizedMessage
+          ? resolve(message.argument('status') as LocalizedMessage)
+          : message.argument('status') as String),
+    ),
+    'mergeHistoryCount' => mergeHistoryCount(
+      (message.argument('key') is LocalizedMessage
+          ? resolve(message.argument('key') as LocalizedMessage)
+          : message.argument('key') as String),
+      message.argument('n') as int,
+    ),
+    'mergeHistoryResolution' => mergeHistoryResolution(
+      (message.argument('choice') is LocalizedMessage
+          ? resolve(message.argument('choice') as LocalizedMessage)
+          : message.argument('choice') as String),
+      message.argument('n') as int,
+    ),
     'mergeUndoChanged' => mergeUndoChanged,
     'mergeUndoChangedRecovery' => mergeUndoChangedRecovery,
     'mergeUndoUnavailable' => mergeUndoUnavailable,
@@ -2046,9 +3445,16 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'importPreviewTitle' => importPreviewTitle,
     'importRow' => importRow(message.argument('row') as int),
     'importRun' => importRun(message.argument('rows') as int),
-    'importIdentityMissing' => importIdentityMissing((message.argument('field') is LocalizedMessage ? resolve(message.argument('field') as LocalizedMessage) : message.argument('field') as String)),
+    'importIdentityMissing' => importIdentityMissing(
+      (message.argument('field') is LocalizedMessage
+          ? resolve(message.argument('field') as LocalizedMessage)
+          : message.argument('field') as String),
+    ),
     'importWriting' => importWriting,
-    'importProgress' => importProgress(message.argument('done') as int,message.argument('total') as int),
+    'importProgress' => importProgress(
+      message.argument('done') as int,
+      message.argument('total') as int,
+    ),
     'importKeptExisting' => importKeptExisting,
     'importMatchUnsettled' => importMatchUnsettled,
     'importRepeatsRow' => importRepeatsRow(message.argument('row') as int),
@@ -2118,7 +3524,11 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'destinationToken' => destinationToken,
     'destinationKeepSignIn' => destinationKeepSignIn,
     'destinationSignInAgain' => destinationSignInAgain,
-    'destinationSignInNote' => destinationSignInNote((message.argument('provider') is LocalizedMessage ? resolve(message.argument('provider') as LocalizedMessage) : message.argument('provider') as String)),
+    'destinationSignInNote' => destinationSignInNote(
+      (message.argument('provider') is LocalizedMessage
+          ? resolve(message.argument('provider') as LocalizedMessage)
+          : message.argument('provider') as String),
+    ),
     'destinationSignInUnavailable' => destinationSignInUnavailable,
     'destinationSignInMismatch' => destinationSignInMismatch,
     'destinationFolderRoot' => destinationFolderRoot,
@@ -2129,18 +3539,53 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'destinationAddAgain' => destinationAddAgain,
     'destinationKept' => destinationKept,
     'destinationKeptRecovery' => destinationKeptRecovery,
-    'destinationRemoved' => destinationRemoved((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'destinationRestored' => destinationRestored((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'destinationSaved' => destinationSaved((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'destinationCheckPassed' => destinationCheckPassed((message.argument('label') is LocalizedMessage ? resolve(message.argument('label') as LocalizedMessage) : message.argument('label') as String)),
-    'destinationCheckedAt' => destinationCheckedAt(message.argument('at') as DateTime),
-    'destinationCheckFailedAt' => destinationCheckFailedAt((message.argument('reason') is LocalizedMessage ? resolve(message.argument('reason') as LocalizedMessage) : message.argument('reason') as String)),
+    'destinationRemoved' => destinationRemoved(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'destinationRestored' => destinationRestored(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'destinationSaved' => destinationSaved(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'destinationCheckPassed' => destinationCheckPassed(
+      (message.argument('label') is LocalizedMessage
+          ? resolve(message.argument('label') as LocalizedMessage)
+          : message.argument('label') as String),
+    ),
+    'destinationCheckedAt' => destinationCheckedAt(
+      message.argument('at') as DateTime,
+    ),
+    'destinationCheckFailedAt' => destinationCheckFailedAt(
+      (message.argument('reason') is LocalizedMessage
+          ? resolve(message.argument('reason') as LocalizedMessage)
+          : message.argument('reason') as String),
+    ),
     'destinationChecking' => destinationChecking,
     'destinationUnavailableHeadline' => destinationUnavailableHeadline,
     'destinationUnavailableMessage' => destinationUnavailableMessage,
     'uploadConfirmTitle' => uploadConfirmTitle,
     'uploadConfirm' => uploadConfirm,
-    'uploadConfirmMessage' => uploadConfirmMessage(name: (message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String),size: (message.argument('size') is LocalizedMessage ? resolve(message.argument('size') as LocalizedMessage) : message.argument('size') as String),destination: (message.argument('destination') is LocalizedMessage ? resolve(message.argument('destination') as LocalizedMessage) : message.argument('destination') as String),folder: (message.argument('folder') is LocalizedMessage ? resolve(message.argument('folder') as LocalizedMessage) : message.argument('folder') as String)),
+    'uploadConfirmMessage' => uploadConfirmMessage(
+      name: (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+      size: (message.argument('size') is LocalizedMessage
+          ? resolve(message.argument('size') as LocalizedMessage)
+          : message.argument('size') as String),
+      destination: (message.argument('destination') is LocalizedMessage
+          ? resolve(message.argument('destination') as LocalizedMessage)
+          : message.argument('destination') as String),
+      folder: (message.argument('folder') is LocalizedMessage
+          ? resolve(message.argument('folder') as LocalizedMessage)
+          : message.argument('folder') as String),
+    ),
     'uploadHistoryTitle' => uploadHistoryTitle,
     'uploadHistoryEmptyHeadline' => uploadHistoryEmptyHeadline,
     'uploadHistoryEmptyMessage' => uploadHistoryEmptyMessage,
@@ -2150,10 +3595,25 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'uploadHistoryEmptyAction' => uploadHistoryEmptyAction,
     'uploadToDestination' => uploadToDestination,
     'uploadPickTitle' => uploadPickTitle,
-    'uploadStarted' => uploadStarted((message.argument('destination') is LocalizedMessage ? resolve(message.argument('destination') as LocalizedMessage) : message.argument('destination') as String)),
+    'uploadStarted' => uploadStarted(
+      (message.argument('destination') is LocalizedMessage
+          ? resolve(message.argument('destination') as LocalizedMessage)
+          : message.argument('destination') as String),
+    ),
     'uploadView' => uploadView,
-    'uploadSent' => uploadSent((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String),(message.argument('destination') is LocalizedMessage ? resolve(message.argument('destination') as LocalizedMessage) : message.argument('destination') as String)),
-    'uploadNotSent' => uploadNotSent((message.argument('reason') is LocalizedMessage ? resolve(message.argument('reason') as LocalizedMessage) : message.argument('reason') as String)),
+    'uploadSent' => uploadSent(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+      (message.argument('destination') is LocalizedMessage
+          ? resolve(message.argument('destination') as LocalizedMessage)
+          : message.argument('destination') as String),
+    ),
+    'uploadNotSent' => uploadNotSent(
+      (message.argument('reason') is LocalizedMessage
+          ? resolve(message.argument('reason') as LocalizedMessage)
+          : message.argument('reason') as String),
+    ),
     'uploadStopped' => uploadStopped,
     'uploadFileMissing' => uploadFileMissing,
     'uploadFileMissingRecovery' => uploadFileMissingRecovery,
@@ -2163,11 +3623,52 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'uploadOutcomeFailed' => uploadOutcomeFailed,
     'uploadOutcomeInterrupted' => uploadOutcomeInterrupted,
     'uploadOutcomeStopped' => uploadOutcomeStopped,
-    'uploadAttemptLine' => uploadAttemptLine(outcome: (message.argument('outcome') is LocalizedMessage ? resolve(message.argument('outcome') as LocalizedMessage) : message.argument('outcome') as String),destination: (message.argument('destination') is LocalizedMessage ? resolve(message.argument('destination') as LocalizedMessage) : message.argument('destination') as String),size: (message.argument('size') is LocalizedMessage ? resolve(message.argument('size') as LocalizedMessage) : message.argument('size') as String),startedAt: message.argument('startedAt') as DateTime),
-    'uploadSendingLine' => uploadSendingLine(destination: (message.argument('destination') is LocalizedMessage ? resolve(message.argument('destination') as LocalizedMessage) : message.argument('destination') as String),percent: message.argument('percent') as int),
+    'uploadAttemptLine' => uploadAttemptLine(
+      outcome: (message.argument('outcome') is LocalizedMessage
+          ? resolve(message.argument('outcome') as LocalizedMessage)
+          : message.argument('outcome') as String),
+      destination: (message.argument('destination') is LocalizedMessage
+          ? resolve(message.argument('destination') as LocalizedMessage)
+          : message.argument('destination') as String),
+      size: (message.argument('size') is LocalizedMessage
+          ? resolve(message.argument('size') as LocalizedMessage)
+          : message.argument('size') as String),
+      startedAt: message.argument('startedAt') as DateTime,
+    ),
+    'uploadSendingLine' => uploadSendingLine(
+      destination: (message.argument('destination') is LocalizedMessage
+          ? resolve(message.argument('destination') as LocalizedMessage)
+          : message.argument('destination') as String),
+      percent: message.argument('percent') as int,
+    ),
     'uploadStop' => uploadStop,
     'uploadDetails' => uploadDetails,
-    'uploadDetailsMessage' => uploadDetailsMessage(file: (message.argument('file') is LocalizedMessage ? resolve(message.argument('file') as LocalizedMessage) : message.argument('file') as String),destination: (message.argument('destination') is LocalizedMessage ? resolve(message.argument('destination') as LocalizedMessage) : message.argument('destination') as String),folder: (message.argument('folder') is LocalizedMessage ? resolve(message.argument('folder') as LocalizedMessage) : message.argument('folder') as String),size: (message.argument('size') is LocalizedMessage ? resolve(message.argument('size') as LocalizedMessage) : message.argument('size') as String),startedAt: message.argument('startedAt') as DateTime,endedAt: message.argument('endedAt') == null ? null : message.argument('endedAt') as DateTime,outcome: (message.argument('outcome') is LocalizedMessage ? resolve(message.argument('outcome') as LocalizedMessage) : message.argument('outcome') as String),reason: message.argument('reason') == null ? null : (message.argument('reason') is LocalizedMessage ? resolve(message.argument('reason') as LocalizedMessage) : message.argument('reason') as String)),
+    'uploadDetailsMessage' => uploadDetailsMessage(
+      file: (message.argument('file') is LocalizedMessage
+          ? resolve(message.argument('file') as LocalizedMessage)
+          : message.argument('file') as String),
+      destination: (message.argument('destination') is LocalizedMessage
+          ? resolve(message.argument('destination') as LocalizedMessage)
+          : message.argument('destination') as String),
+      folder: (message.argument('folder') is LocalizedMessage
+          ? resolve(message.argument('folder') as LocalizedMessage)
+          : message.argument('folder') as String),
+      size: (message.argument('size') is LocalizedMessage
+          ? resolve(message.argument('size') as LocalizedMessage)
+          : message.argument('size') as String),
+      startedAt: message.argument('startedAt') as DateTime,
+      endedAt: message.argument('endedAt') == null
+          ? null
+          : message.argument('endedAt') as DateTime,
+      outcome: (message.argument('outcome') is LocalizedMessage
+          ? resolve(message.argument('outcome') as LocalizedMessage)
+          : message.argument('outcome') as String),
+      reason: message.argument('reason') == null
+          ? null
+          : (message.argument('reason') is LocalizedMessage
+                ? resolve(message.argument('reason') as LocalizedMessage)
+                : message.argument('reason') as String),
+    ),
     'privacyScreenTitle' => privacyScreenTitle,
     'privacyEmptyHeadline' => privacyEmptyHeadline,
     'privacyEmptyMessage' => privacyEmptyMessage,
@@ -2178,7 +3679,14 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'egressExtractFields' => egressExtractFields,
     'egressRefineText' => egressRefineText,
     'egressTranscribe' => egressTranscribe,
-    'egressRow' => egressRow((message.argument('sends') is LocalizedMessage ? resolve(message.argument('sends') as LocalizedMessage) : message.argument('sends') as String),(message.argument('destination') is LocalizedMessage ? resolve(message.argument('destination') as LocalizedMessage) : message.argument('destination') as String)),
+    'egressRow' => egressRow(
+      (message.argument('sends') is LocalizedMessage
+          ? resolve(message.argument('sends') as LocalizedMessage)
+          : message.argument('sends') as String),
+      (message.argument('destination') is LocalizedMessage
+          ? resolve(message.argument('destination') as LocalizedMessage)
+          : message.argument('destination') as String),
+    ),
     'egressSendsText' => egressSendsText,
     'egressSendsImage' => egressSendsImage,
     'egressSendsAudio' => egressSendsAudio,
@@ -2189,20 +3697,30 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'egressTextOnly' => egressTextOnly,
     'gpsPrivacyTitle' => gpsPrivacyTitle,
     'gpsPrivacyCapture' => gpsPrivacyCapture,
-    'gpsPrivacyCaptureState' => gpsPrivacyCaptureState(message.argument('on') as bool),
+    'gpsPrivacyCaptureState' => gpsPrivacyCaptureState(
+      message.argument('on') as bool,
+    ),
     'gpsPrivacyExclude' => gpsPrivacyExclude,
     'gpsPrivacyExcludeEffect' => gpsPrivacyExcludeEffect,
     'gpsPrivacyRemove' => gpsPrivacyRemove,
     'gpsPrivacyRemoveTitle' => gpsPrivacyRemoveTitle,
-    'gpsPrivacyRemoveMessage' => gpsPrivacyRemoveMessage((message.argument('project') is LocalizedMessage ? resolve(message.argument('project') as LocalizedMessage) : message.argument('project') as String)),
+    'gpsPrivacyRemoveMessage' => gpsPrivacyRemoveMessage(
+      (message.argument('project') is LocalizedMessage
+          ? resolve(message.argument('project') as LocalizedMessage)
+          : message.argument('project') as String),
+    ),
     'gpsPrivacyRemoveConfirm' => gpsPrivacyRemoveConfirm,
     'gpsPrivacyRemoved' => gpsPrivacyRemoved(message.argument('count') as int),
     'gpsPrivacyNoProject' => gpsPrivacyNoProject,
     'faceBlurTitle' => faceBlurTitle,
     'faceBlurEffect' => faceBlurEffect,
     'redactionTitle' => redactionTitle,
-    'exportConsentOmitted' => exportConsentOmitted((message.argument('ids') as List<Object?>).cast<String>()),
-    'exportFaceCounts' => exportFaceCounts((message.argument('counts') as Map<Object?,Object?>).cast<String, int>()),
+    'exportConsentOmitted' => exportConsentOmitted(
+      (message.argument('ids') as List<Object?>).cast<String>(),
+    ),
+    'exportFaceCounts' => exportFaceCounts(
+      (message.argument('counts') as Map<Object?, Object?>).cast<String, int>(),
+    ),
     'exportPrivacyChanged' => exportPrivacyChanged,
     'redactionHint' => redactionHint,
     'redactionSave' => redactionSave,
@@ -2233,7 +3751,11 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'backendSignedIn' => backendSignedIn,
     'backendGrantUntil' => backendGrantUntil,
     'backendRole' => backendRole,
-    'backendRoleName' => backendRoleName((message.argument('role') is LocalizedMessage ? resolve(message.argument('role') as LocalizedMessage) : message.argument('role') as String)),
+    'backendRoleName' => backendRoleName(
+      (message.argument('role') is LocalizedMessage
+          ? resolve(message.argument('role') as LocalizedMessage)
+          : message.argument('role') as String),
+    ),
     'backendEnrolment' => backendEnrolment,
     'backendNotEnrolled' => backendNotEnrolled,
     'backendEnrolling' => backendEnrolling,
@@ -2295,9 +3817,18 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'gallerySampleFilter' => gallerySampleFilter,
     'gallerySampleListTile' => gallerySampleListTile,
     'gallerySampleSecondaryLine' => gallerySampleSecondaryLine,
-    'surfacePreviewLevel' => surfacePreviewLevel(message.argument('level') as int),
-    'typeRampSample' => typeRampSample((message.argument('name') is LocalizedMessage ? resolve(message.argument('name') as LocalizedMessage) : message.argument('name') as String)),
-    'relayPackageTooLarge' => relayPackageTooLarge(message.argument('bytes') as int,message.argument('ceiling') as int),
+    'surfacePreviewLevel' => surfacePreviewLevel(
+      message.argument('level') as int,
+    ),
+    'typeRampSample' => typeRampSample(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'relayPackageTooLarge' => relayPackageTooLarge(
+      message.argument('bytes') as int,
+      message.argument('ceiling') as int,
+    ),
     'relayPackageTooLargeRecovery' => relayPackageTooLargeRecovery,
     'permissionBiometrics' => permissionBiometrics,
     'packageMetadataTooLargeRecovery' => packageMetadataTooLargeRecovery,
@@ -2319,444 +3850,791 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'processingMalformedResponse' => processingMalformedResponse,
     'processingStopped' => processingStopped,
     'failureAIIsNotAvailable' => failureAIIsNotAvailable,
-    'failureContinueCapturingAnalysisCanWait' => failureContinueCapturingAnalysisCanWait,
+    'failureContinueCapturingAnalysisCanWait' =>
+      failureContinueCapturingAnalysisCanWait,
     'failureThatPhotoIsNotOnThisDevice' => failureThatPhotoIsNotOnThisDevice,
-    'failureCaptureThePhotoAgainThenTryAgain' => failureCaptureThePhotoAgainThenTryAgain,
+    'failureCaptureThePhotoAgainThenTryAgain' =>
+      failureCaptureThePhotoAgainThenTryAgain,
     'failureThatPhotoCouldNotBeReadOn' => failureThatPhotoCouldNotBeReadOn,
-    'failureUseAnotherPhotoOrEnterTheValue' => failureUseAnotherPhotoOrEnterTheValue,
+    'failureUseAnotherPhotoOrEnterTheValue' =>
+      failureUseAnotherPhotoOrEnterTheValue,
     'failureThatPhotoCouldNotBeReadAs' => failureThatPhotoCouldNotBeReadAs,
-    'failureTheAnalysisCopyCouldNotBeRead' => failureTheAnalysisCopyCouldNotBeRead,
+    'failureTheAnalysisCopyCouldNotBeRead' =>
+      failureTheAnalysisCopyCouldNotBeRead,
     'failureKeepTheRecordAndTryAgain' => failureKeepTheRecordAndTryAgain,
-    'failureTheAnalysisResponseCouldNotBeRead' => failureTheAnalysisResponseCouldNotBeRead,
+    'failureTheAnalysisResponseCouldNotBeRead' =>
+      failureTheAnalysisResponseCouldNotBeRead,
     'failureAnalysisCanWait' => failureAnalysisCanWait,
     'failureTheAnalysisQuotaIsUsedUp' => failureTheAnalysisQuotaIsUsedUp,
-    'failureAnalysisIsPausedOnTheServerFor' => failureAnalysisIsPausedOnTheServerFor,
-    'failureContinueCapturingAnalysisTriesAgainLater' => failureContinueCapturingAnalysisTriesAgainLater,
-    'failureAnalysisAccessIsUnavailableForThisProject' => failureAnalysisAccessIsUnavailableForThisProject,
-    'failureContinueCapturingAndCheckOrganisationAccess' => failureContinueCapturingAndCheckOrganisationAccess,
-    'failureTheAnalysisMediaIsTooLargeTo' => failureTheAnalysisMediaIsTooLargeTo,
-    'failureKeepTheRecordAndCompleteItWithout' => failureKeepTheRecordAndCompleteItWithout,
+    'failureAnalysisIsPausedOnTheServerFor' =>
+      failureAnalysisIsPausedOnTheServerFor,
+    'failureContinueCapturingAnalysisTriesAgainLater' =>
+      failureContinueCapturingAnalysisTriesAgainLater,
+    'failureAnalysisAccessIsUnavailableForThisProject' =>
+      failureAnalysisAccessIsUnavailableForThisProject,
+    'failureContinueCapturingAndCheckOrganisationAccess' =>
+      failureContinueCapturingAndCheckOrganisationAccess,
+    'failureTheAnalysisMediaIsTooLargeTo' =>
+      failureTheAnalysisMediaIsTooLargeTo,
+    'failureKeepTheRecordAndCompleteItWithout' =>
+      failureKeepTheRecordAndCompleteItWithout,
     'failureSignInWasNotAccepted' => failureSignInWasNotAccepted,
-    'failureCheckYourEmailPasswordAndOrganisation' => failureCheckYourEmailPasswordAndOrganisation,
-    'failureTheOrganisationEndedThisDeviceSSign' => failureTheOrganisationEndedThisDeviceSSign,
+    'failureCheckYourEmailPasswordAndOrganisation' =>
+      failureCheckYourEmailPasswordAndOrganisation,
+    'failureTheOrganisationEndedThisDeviceSSign' =>
+      failureTheOrganisationEndedThisDeviceSSign,
     'failureSignInAgainWhenTheServerIs' => failureSignInAgainWhenTheServerIs,
-    'failureTheServerCouldNotCompleteSignIn' => failureTheServerCouldNotCompleteSignIn,
-    'failureTryAgainWhenTheServerIsReachable' => failureTryAgainWhenTheServerIsReachable,
+    'failureTheServerCouldNotCompleteSignIn' =>
+      failureTheServerCouldNotCompleteSignIn,
+    'failureTryAgainWhenTheServerIsReachable' =>
+      failureTryAgainWhenTheServerIsReachable,
     'failureTheSavedSignInCouldNotBe' => failureTheSavedSignInCouldNotBe,
-    'failureCheckTheAccountSettingsYourLocalWork' => failureCheckTheAccountSettingsYourLocalWork,
-    'failureEnterTheOrganisationSHTTPSServerAddress' => failureEnterTheOrganisationSHTTPSServerAddress,
-    'failureCheckTheAddressWithYourAdministrator' => failureCheckTheAddressWithYourAdministrator,
-    'failureSignOutBeforeChangingOrganisation' => failureSignOutBeforeChangingOrganisation,
-    'failureKeepTheCurrentAccountOrSignOut' => failureKeepTheCurrentAccountOrSignOut,
-    'failureTheOrganisationServerCouldNotBeReached' => failureTheOrganisationServerCouldNotBeReached,
-    'failureContinueWorkingOfflineAndTryAgainLater' => failureContinueWorkingOfflineAndTryAgainLater,
+    'failureCheckTheAccountSettingsYourLocalWork' =>
+      failureCheckTheAccountSettingsYourLocalWork,
+    'failureEnterTheOrganisationSHTTPSServerAddress' =>
+      failureEnterTheOrganisationSHTTPSServerAddress,
+    'failureCheckTheAddressWithYourAdministrator' =>
+      failureCheckTheAddressWithYourAdministrator,
+    'failureSignOutBeforeChangingOrganisation' =>
+      failureSignOutBeforeChangingOrganisation,
+    'failureKeepTheCurrentAccountOrSignOut' =>
+      failureKeepTheCurrentAccountOrSignOut,
+    'failureTheOrganisationServerCouldNotBeReached' =>
+      failureTheOrganisationServerCouldNotBeReached,
+    'failureContinueWorkingOfflineAndTryAgainLater' =>
+      failureContinueWorkingOfflineAndTryAgainLater,
     'failureUseASharedKeyOfAtLeast' => failureUseASharedKeyOfAtLeast,
-    'failureAskTheProjectManagerForTheSame' => failureAskTheProjectManagerForTheSame,
-    'failureThisProjectIsRegisteredOnTheServer' => failureThisProjectIsRegisteredOnTheServer,
-    'failureAskAnAdministratorToAddYouTo' => failureAskAnAdministratorToAddYouTo,
+    'failureAskTheProjectManagerForTheSame' =>
+      failureAskTheProjectManagerForTheSame,
+    'failureThisProjectIsRegisteredOnTheServer' =>
+      failureThisProjectIsRegisteredOnTheServer,
+    'failureAskAnAdministratorToAddYouTo' =>
+      failureAskAnAdministratorToAddYouTo,
     'failureAddTheSharedProjectKeyFirst' => failureAddTheSharedProjectKeyFirst,
-    'failureAskTheProjectManagerForTheKey' => failureAskTheProjectManagerForTheKey,
-    'failureRelayCouldNotCompleteThisRequest' => failureRelayCouldNotCompleteThisRequest,
-    'failureKeepWorkingLocallyAndTrySyncAgain' => failureKeepWorkingLocallyAndTrySyncAgain,
-    'failureThatPasswordDidNotOpenTheBundle' => failureThatPasswordDidNotOpenTheBundle,
-    'failureTryThePasswordAgainNothingWasExtracted' => failureTryThePasswordAgainNothingWasExtracted,
-    'failureTheProjectMetadataIsTooLargeFor' => failureTheProjectMetadataIsTooLargeFor,
+    'failureAskTheProjectManagerForTheKey' =>
+      failureAskTheProjectManagerForTheKey,
+    'failureRelayCouldNotCompleteThisRequest' =>
+      failureRelayCouldNotCompleteThisRequest,
+    'failureKeepWorkingLocallyAndTrySyncAgain' =>
+      failureKeepWorkingLocallyAndTrySyncAgain,
+    'failureThatPasswordDidNotOpenTheBundle' =>
+      failureThatPasswordDidNotOpenTheBundle,
+    'failureTryThePasswordAgainNothingWasExtracted' =>
+      failureTryThePasswordAgainNothingWasExtracted,
+    'failureTheProjectMetadataIsTooLargeFor' =>
+      failureTheProjectMetadataIsTooLargeFor,
     'failureChooseASmallerPackageScope' => failureChooseASmallerPackageScope,
-    'failurePasswordProtectionIsUnavailableOnThisDevice' => failurePasswordProtectionIsUnavailableOnThisDevice,
-    'failureOpenThisPackageOnASupportedDevice' => failureOpenThisPackageOnASupportedDevice,
-    'failurePasswordProtectionNeedsBrowserCryptography' => failurePasswordProtectionNeedsBrowserCryptography,
-    'failureOpenTheAppThroughASecureConnection' => failureOpenTheAppThroughASecureConnection,
+    'failurePasswordProtectionIsUnavailableOnThisDevice' =>
+      failurePasswordProtectionIsUnavailableOnThisDevice,
+    'failureOpenThisPackageOnASupportedDevice' =>
+      failureOpenThisPackageOnASupportedDevice,
+    'failurePasswordProtectionNeedsBrowserCryptography' =>
+      failurePasswordProtectionNeedsBrowserCryptography,
+    'failureOpenTheAppThroughASecureConnection' =>
+      failureOpenTheAppThroughASecureConnection,
     'failureThisBundleNeedsAPassword' => failureThisBundleNeedsAPassword,
     'failureEnterItsPasswordToOpenIt' => failureEnterItsPasswordToOpenIt,
-    'failureTheBundleContainsASecretAndWas' => failureTheBundleContainsASecretAndWas,
-    'failureRemoveTheSecretAndExportTheBundle' => failureRemoveTheSecretAndExportTheBundle,
-    'failureTheBundleHasTooManyNestedArchives' => failureTheBundleHasTooManyNestedArchives,
-    'failureANestedBundleArchiveCouldNotBe' => failureANestedBundleArchiveCouldNotBe,
-    'failureAnEncryptedOrUnsupportedAttachmentCouldNot' => failureAnEncryptedOrUnsupportedAttachmentCouldNot,
-    'failureANestedBundleArchiveIsTooLarge' => failureANestedBundleArchiveIsTooLarge,
-    'failureANestedBundleEntryHasAnInvalid' => failureANestedBundleEntryHasAnInvalid,
-    'failureANestedBundleEntryExceedsItsDeclared' => failureANestedBundleEntryExceedsItsDeclared,
-    'failureFinishReadingTheCurrentPackageEntryFirst' => failureFinishReadingTheCurrentPackageEntryFirst,
+    'failureTheBundleContainsASecretAndWas' =>
+      failureTheBundleContainsASecretAndWas,
+    'failureRemoveTheSecretAndExportTheBundle' =>
+      failureRemoveTheSecretAndExportTheBundle,
+    'failureTheBundleHasTooManyNestedArchives' =>
+      failureTheBundleHasTooManyNestedArchives,
+    'failureANestedBundleArchiveCouldNotBe' =>
+      failureANestedBundleArchiveCouldNotBe,
+    'failureAnEncryptedOrUnsupportedAttachmentCouldNot' =>
+      failureAnEncryptedOrUnsupportedAttachmentCouldNot,
+    'failureANestedBundleArchiveIsTooLarge' =>
+      failureANestedBundleArchiveIsTooLarge,
+    'failureANestedBundleEntryHasAnInvalid' =>
+      failureANestedBundleEntryHasAnInvalid,
+    'failureANestedBundleEntryExceedsItsDeclared' =>
+      failureANestedBundleEntryExceedsItsDeclared,
+    'failureFinishReadingTheCurrentPackageEntryFirst' =>
+      failureFinishReadingTheCurrentPackageEntryFirst,
     'failureThePackageEntryIsMissing' => failureThePackageEntryIsMissing,
-    'failureReadThisLargePackageEntryAsA' => failureReadThisLargePackageEntryAsA,
+    'failureReadThisLargePackageEntryAsA' =>
+      failureReadThisLargePackageEntryAsA,
     'failureThePackageEntryChanged' => failureThePackageEntryChanged,
-    'failureThePackageEntryChecksumChanged' => failureThePackageEntryChecksumChanged,
-    'failureNoUploadDestinationIsRegisteredForValue' => failureNoUploadDestinationIsRegisteredForValue((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
+    'failureThePackageEntryChecksumChanged' =>
+      failureThePackageEntryChecksumChanged,
+    'failureNoUploadDestinationIsRegisteredForValue' =>
+      failureNoUploadDestinationIsRegisteredForValue(
+        (message.argument('value0') is LocalizedMessage
+            ? resolve(message.argument('value0') as LocalizedMessage)
+            : message.argument('value0') as String),
+      ),
     'failureChooseAnotherDestination' => failureChooseAnotherDestination,
-    'failureTheDestinationRefusedTheSignIn' => failureTheDestinationRefusedTheSignIn,
+    'failureTheDestinationRefusedTheSignIn' =>
+      failureTheDestinationRefusedTheSignIn,
     'failureCheckTheKeyOrSignInAgain' => failureCheckTheKeyOrSignInAgain,
-    'failureThatBucketOrFolderWasNotFound' => failureThatBucketOrFolderWasNotFound,
-    'failureCheckTheNameAndTryTheConnection' => failureCheckTheNameAndTryTheConnection,
-    'failureTheDestinationDidNotFinishTheUpload' => failureTheDestinationDidNotFinishTheUpload,
+    'failureThatBucketOrFolderWasNotFound' =>
+      failureThatBucketOrFolderWasNotFound,
+    'failureCheckTheNameAndTryTheConnection' =>
+      failureCheckTheNameAndTryTheConnection,
+    'failureTheDestinationDidNotFinishTheUpload' =>
+      failureTheDestinationDidNotFinishTheUpload,
     'failureTryAgain' => failureTryAgain,
-    'failureTheServerRedirectedTheUploadToAnother' => failureTheServerRedirectedTheUploadToAnother,
+    'failureTheServerRedirectedTheUploadToAnother' =>
+      failureTheServerRedirectedTheUploadToAnother,
     'failureCheckTheAddressAndTryAgain' => failureCheckTheAddressAndTryAgain,
-    'failureTheDestinationRejectedTheUpload' => failureTheDestinationRejectedTheUpload,
+    'failureTheDestinationRejectedTheUpload' =>
+      failureTheDestinationRejectedTheUpload,
     'failureCheckTheSettingsAndTryAgain' => failureCheckTheSettingsAndTryAgain,
     'failureTheFileCouldNotBeReadWhile' => failureTheFileCouldNotBeReadWhile,
     'failureCheckThatTheFileIsStillOn' => failureCheckThatTheFileIsStillOn,
-    'failureUploadsArePausedWhileTheAppIs' => failureUploadsArePausedWhileTheAppIs,
-    'failureGoOnlineThenConfirmTheUploadAgain' => failureGoOnlineThenConfirmTheUploadAgain,
-    'failureUploadsToThisDestinationAreTurnedOff' => failureUploadsToThisDestinationAreTurnedOff,
-    'failureEnableTheDestinationOnThePrivacyPage' => failureEnableTheDestinationOnThePrivacyPage,
+    'failureUploadsArePausedWhileTheAppIs' =>
+      failureUploadsArePausedWhileTheAppIs,
+    'failureGoOnlineThenConfirmTheUploadAgain' =>
+      failureGoOnlineThenConfirmTheUploadAgain,
+    'failureUploadsToThisDestinationAreTurnedOff' =>
+      failureUploadsToThisDestinationAreTurnedOff,
+    'failureEnableTheDestinationOnThePrivacyPage' =>
+      failureEnableTheDestinationOnThePrivacyPage,
     'failureCloudSignInCouldNotFinish' => failureCloudSignInCouldNotFinish,
     'failureTrySigningInAgain' => failureTrySigningInAgain,
-    'failureTheDestinationReturnedTooMuchData' => failureTheDestinationReturnedTooMuchData,
-    'failureCheckTheDestinationAddressAndTryAgain' => failureCheckTheDestinationAddressAndTryAgain,
-    'failureTheDestinationCouldNotBeReached' => failureTheDestinationCouldNotBeReached,
+    'failureTheDestinationReturnedTooMuchData' =>
+      failureTheDestinationReturnedTooMuchData,
+    'failureCheckTheDestinationAddressAndTryAgain' =>
+      failureCheckTheDestinationAddressAndTryAgain,
+    'failureTheDestinationCouldNotBeReached' =>
+      failureTheDestinationCouldNotBeReached,
     'failureTryAgainWhenYouAreOnline' => failureTryAgainWhenYouAreOnline,
-    'failureRemoveTheDestinationAndAddItAgain' => failureRemoveTheDestinationAndAddItAgain,
-    'failureThisDestinationSignInChangedDuringThe' => failureThisDestinationSignInChangedDuringThe,
-    'failureReviewTheDestinationAndConfirmANew' => failureReviewTheDestinationAndConfirmANew,
-    'failureTheDestinationDidNotAcceptTheTest' => failureTheDestinationDidNotAcceptTheTest,
+    'failureRemoveTheDestinationAndAddItAgain' =>
+      failureRemoveTheDestinationAndAddItAgain,
+    'failureThisDestinationSignInChangedDuringThe' =>
+      failureThisDestinationSignInChangedDuringThe,
+    'failureReviewTheDestinationAndConfirmANew' =>
+      failureReviewTheDestinationAndConfirmANew,
+    'failureTheDestinationDidNotAcceptTheTest' =>
+      failureTheDestinationDidNotAcceptTheTest,
     'failureSignInAgainAndRetryTheTest' => failureSignInAgainAndRetryTheTest,
-    'failureTheDestinationHasNotFinishedTheUpload' => failureTheDestinationHasNotFinishedTheUpload,
+    'failureTheDestinationHasNotFinishedTheUpload' =>
+      failureTheDestinationHasNotFinishedTheUpload,
     'failureRetryTheUpload' => failureRetryTheUpload,
     'failureThatFolderCannotBeWritten' => failureThatFolderCannotBeWritten,
     'failureChooseTheFolderAgain' => failureChooseTheFolderAgain,
     'failureTheFileCouldNotBeWrittenTo' => failureTheFileCouldNotBeWrittenTo,
-    'failureFreeSomeSpaceOrChooseTheFolder' => failureFreeSomeSpaceOrChooseTheFolder,
-    'failureThisFolderRequiresASupportedSystemFolder' => failureThisFolderRequiresASupportedSystemFolder,
-    'failureChooseAnAccessibleFolderOrAnotherDestination' => failureChooseAnAccessibleFolderOrAnotherDestination,
+    'failureFreeSomeSpaceOrChooseTheFolder' =>
+      failureFreeSomeSpaceOrChooseTheFolder,
+    'failureThisFolderRequiresASupportedSystemFolder' =>
+      failureThisFolderRequiresASupportedSystemFolder,
+    'failureChooseAnAccessibleFolderOrAnotherDestination' =>
+      failureChooseAnAccessibleFolderOrAnotherDestination,
     'failureThatFolderPathIsNotUsable' => failureThatFolderPathIsNotUsable,
-    'failureTheTaptureFolderOnThisDeviceIs' => failureTheTaptureFolderOnThisDeviceIs,
-    'failureCheckTheStorageLocationInSettings' => failureCheckTheStorageLocationInSettings,
+    'failureTheTaptureFolderOnThisDeviceIs' =>
+      failureTheTaptureFolderOnThisDeviceIs,
+    'failureCheckTheStorageLocationInSettings' =>
+      failureCheckTheStorageLocationInSettings,
     'failureThisGoogleDriveSignInIsNo' => failureThisGoogleDriveSignInIsNo,
-    'failureSignInToThisDestinationAgain' => failureSignInToThisDestinationAgain,
-    'failureGoogleDriveNeedsACurrentSignIn' => failureGoogleDriveNeedsACurrentSignIn,
-    'failureSignInAgainToAllowFileAccess' => failureSignInAgainToAllowFileAccess,
-    'failureNativeGoogleDriveSignInIsUnavailable' => failureNativeGoogleDriveSignInIsUnavailable,
-    'failureTheDestinationIsStillSavedSignIn' => failureTheDestinationIsStillSavedSignIn,
-    'failureTheUploadChunkSizeIsNotUsable' => failureTheUploadChunkSizeIsNotUsable,
-    'failureUseTheStandardUploadSettings' => failureUseTheStandardUploadSettings,
-    'failureTheDestinationReturnedAnUnusableUploadResponse' => failureTheDestinationReturnedAnUnusableUploadResponse,
-    'failureTestTheDestinationThenTryTheUpload' => failureTestTheDestinationThenTryTheUpload,
-    'failureTheBucketDidNotAcknowledgeTheUploaded' => failureTheBucketDidNotAcknowledgeTheUploaded,
-    'failureTestTheDestinationAndTryAgain' => failureTestTheDestinationAndTryAgain,
-    'failureTheBucketDidNotFinishTheUpload' => failureTheBucketDidNotFinishTheUpload,
-    'failureTheBucketRefusedToFinishTheUpload' => failureTheBucketRefusedToFinishTheUpload,
-    'failureTheBucketDidNotConfirmTheCompleted' => failureTheBucketDidNotConfirmTheCompleted,
-    'failureTheDestinationDidNotStartTheUpload' => failureTheDestinationDidNotStartTheUpload,
+    'failureSignInToThisDestinationAgain' =>
+      failureSignInToThisDestinationAgain,
+    'failureGoogleDriveNeedsACurrentSignIn' =>
+      failureGoogleDriveNeedsACurrentSignIn,
+    'failureSignInAgainToAllowFileAccess' =>
+      failureSignInAgainToAllowFileAccess,
+    'failureNativeGoogleDriveSignInIsUnavailable' =>
+      failureNativeGoogleDriveSignInIsUnavailable,
+    'failureTheDestinationIsStillSavedSignIn' =>
+      failureTheDestinationIsStillSavedSignIn,
+    'failureTheUploadChunkSizeIsNotUsable' =>
+      failureTheUploadChunkSizeIsNotUsable,
+    'failureUseTheStandardUploadSettings' =>
+      failureUseTheStandardUploadSettings,
+    'failureTheDestinationReturnedAnUnusableUploadResponse' =>
+      failureTheDestinationReturnedAnUnusableUploadResponse,
+    'failureTestTheDestinationThenTryTheUpload' =>
+      failureTestTheDestinationThenTryTheUpload,
+    'failureTheBucketDidNotAcknowledgeTheUploaded' =>
+      failureTheBucketDidNotAcknowledgeTheUploaded,
+    'failureTestTheDestinationAndTryAgain' =>
+      failureTestTheDestinationAndTryAgain,
+    'failureTheBucketDidNotFinishTheUpload' =>
+      failureTheBucketDidNotFinishTheUpload,
+    'failureTheBucketRefusedToFinishTheUpload' =>
+      failureTheBucketRefusedToFinishTheUpload,
+    'failureTheBucketDidNotConfirmTheCompleted' =>
+      failureTheBucketDidNotConfirmTheCompleted,
+    'failureTheDestinationDidNotStartTheUpload' =>
+      failureTheDestinationDidNotStartTheUpload,
     'failureTryTheConnectionAgain' => failureTryTheConnectionAgain,
-    'failureThisDestinationHasNoSavedSignIn' => failureThisDestinationHasNoSavedSignIn,
-    'failureEnterTheKeysAndTestTheConnection' => failureEnterTheKeysAndTestTheConnection,
+    'failureThisDestinationHasNoSavedSignIn' =>
+      failureThisDestinationHasNoSavedSignIn,
+    'failureEnterTheKeysAndTestTheConnection' =>
+      failureEnterTheKeysAndTestTheConnection,
     'failureTheSavedSignInIsNotUsable' => failureTheSavedSignInIsNotUsable,
     'failureEnterTheKeysAgain' => failureEnterTheKeysAgain,
-    'failureTheBucketSettingsAreIncomplete' => failureTheBucketSettingsAreIncomplete,
+    'failureTheBucketSettingsAreIncomplete' =>
+      failureTheBucketSettingsAreIncomplete,
     'failureEnterTheKeyRegionAndBucket' => failureEnterTheKeyRegionAndBucket,
-    'failureChooseAFilenameWithoutFolderSeparators' => failureChooseAFilenameWithoutFolderSeparators,
+    'failureChooseAFilenameWithoutFolderSeparators' =>
+      failureChooseAFilenameWithoutFolderSeparators,
     'failureTheFolderCouldNotOpenANew' => failureTheFolderCouldNotOpenANew,
-    'failureTheFolderCouldNotPublishTheFile' => failureTheFolderCouldNotPublishTheFile,
-    'failureAccessToTheChosenFolderWasLost' => failureAccessToTheChosenFolderWasLost,
-    'failureChooseAnAccessibleFolderAndTryAgain' => failureChooseAnAccessibleFolderAndTryAgain,
-    'failureTheUploadFilenameIsNotUsable' => failureTheUploadFilenameIsNotUsable,
-    'failureEnterTheAddressAndSignInThen' => failureEnterTheAddressAndSignInThen,
-    'failureTheDestinationAddressOrSignInIs' => failureTheDestinationAddressOrSignInIs,
-    'failureEnterAFullHTTPSAddressAndSign' => failureEnterAFullHTTPSAddressAndSign,
-    'failureGoogleDriveSignInCouldNotFinish' => failureGoogleDriveSignInCouldNotFinish,
-    'failureThisDestinationNeedsAFreshSignIn' => failureThisDestinationNeedsAFreshSignIn,
-    'failureTheUploadCheckpointCouldNotBeSaved' => failureTheUploadCheckpointCouldNotBeSaved,
-    'failureCheckSecureStorageThenTryAgain' => failureCheckSecureStorageThenTryAgain,
+    'failureTheFolderCouldNotPublishTheFile' =>
+      failureTheFolderCouldNotPublishTheFile,
+    'failureAccessToTheChosenFolderWasLost' =>
+      failureAccessToTheChosenFolderWasLost,
+    'failureChooseAnAccessibleFolderAndTryAgain' =>
+      failureChooseAnAccessibleFolderAndTryAgain,
+    'failureTheUploadFilenameIsNotUsable' =>
+      failureTheUploadFilenameIsNotUsable,
+    'failureEnterTheAddressAndSignInThen' =>
+      failureEnterTheAddressAndSignInThen,
+    'failureTheDestinationAddressOrSignInIs' =>
+      failureTheDestinationAddressOrSignInIs,
+    'failureEnterAFullHTTPSAddressAndSign' =>
+      failureEnterAFullHTTPSAddressAndSign,
+    'failureGoogleDriveSignInCouldNotFinish' =>
+      failureGoogleDriveSignInCouldNotFinish,
+    'failureThisDestinationNeedsAFreshSignIn' =>
+      failureThisDestinationNeedsAFreshSignIn,
+    'failureTheUploadCheckpointCouldNotBeSaved' =>
+      failureTheUploadCheckpointCouldNotBeSaved,
+    'failureCheckSecureStorageThenTryAgain' =>
+      failureCheckSecureStorageThenTryAgain,
     'failureThatRowIsNoLongerOnThis' => failureThatRowIsNoLongerOnThis,
     'failureRefreshTheListAndTryAgain' => failureRefreshTheListAndTryAgain,
     'failureADeleteNeedsAReason' => failureADeleteNeedsAReason,
-    'failureSayWhyThisRowShouldBeRemoved' => failureSayWhyThisRowShouldBeRemoved,
-    'failureTheDatabaseCouldNotCompleteThatWrite' => failureTheDatabaseCouldNotCompleteThatWrite,
+    'failureSayWhyThisRowShouldBeRemoved' =>
+      failureSayWhyThisRowShouldBeRemoved,
+    'failureTheDatabaseCouldNotCompleteThatWrite' =>
+      failureTheDatabaseCouldNotCompleteThatWrite,
     'failureFreeUpSpaceOrExportAProject' => failureFreeUpSpaceOrExportAProject,
-    'failureTheDatabaseIsEncryptedAndTheKey' => failureTheDatabaseIsEncryptedAndTheKey,
-    'failureRestoreTheKeyFromABackupThen' => failureRestoreTheKeyFromABackupThen,
-    'failureTheDatabaseKeyIsMissingOrUnreadable' => failureTheDatabaseKeyIsMissingOrUnreadable,
-    'failureTypeDISABLEENCRYPTIONToTurnEncryptionOff' => failureTypeDISABLEENCRYPTIONToTurnEncryptionOff,
-    'failureEnterTheConfirmationExactlyThenTryAgain' => failureEnterTheConfirmationExactlyThenTryAgain,
+    'failureTheDatabaseIsEncryptedAndTheKey' =>
+      failureTheDatabaseIsEncryptedAndTheKey,
+    'failureRestoreTheKeyFromABackupThen' =>
+      failureRestoreTheKeyFromABackupThen,
+    'failureTheDatabaseKeyIsMissingOrUnreadable' =>
+      failureTheDatabaseKeyIsMissingOrUnreadable,
+    'failureTypeDISABLEENCRYPTIONToTurnEncryptionOff' =>
+      failureTypeDISABLEENCRYPTIONToTurnEncryptionOff,
+    'failureEnterTheConfirmationExactlyThenTryAgain' =>
+      failureEnterTheConfirmationExactlyThenTryAgain,
     'failureThereIsNoDatabaseToEncrypt' => failureThereIsNoDatabaseToEncrypt,
     'failureOpenTheAppOnceSoADatabase' => failureOpenTheAppOnceSoADatabase,
-    'failureTheDatabaseCouldNotBeEncrypted' => failureTheDatabaseCouldNotBeEncrypted,
+    'failureTheDatabaseCouldNotBeEncrypted' =>
+      failureTheDatabaseCouldNotBeEncrypted,
     'failureFreeUpSpaceThenTryAgain' => failureFreeUpSpaceThenTryAgain,
-    'failureTheEncryptedCopyDidNotMatchThe' => failureTheEncryptedCopyDidNotMatchThe,
-    'failureTryEncryptingAgainTheOriginalDatabaseWas' => failureTryEncryptingAgainTheOriginalDatabaseWas,
-    'failureKeepTheWorkingDatabaseFreeUpSpace' => failureKeepTheWorkingDatabaseFreeUpSpace,
+    'failureTheEncryptedCopyDidNotMatchThe' =>
+      failureTheEncryptedCopyDidNotMatchThe,
+    'failureTryEncryptingAgainTheOriginalDatabaseWas' =>
+      failureTryEncryptingAgainTheOriginalDatabaseWas,
+    'failureKeepTheWorkingDatabaseFreeUpSpace' =>
+      failureKeepTheWorkingDatabaseFreeUpSpace,
     'failureRestoreTheKeyFromABackupThe' => failureRestoreTheKeyFromABackupThe,
-    'failureThisUpdateWouldDropOrRewriteA' => failureThisUpdateWouldDropOrRewriteA,
-    'failureExportYourProjectsThenConfirmTheUpdate' => failureExportYourProjectsThenConfirmTheUpdate,
-    'failureThisDeviceCannotBuildTheRecordSearch' => failureThisDeviceCannotBuildTheRecordSearch,
+    'failureThisUpdateWouldDropOrRewriteA' =>
+      failureThisUpdateWouldDropOrRewriteA,
+    'failureExportYourProjectsThenConfirmTheUpdate' =>
+      failureExportYourProjectsThenConfirmTheUpdate,
+    'failureThisDeviceCannotBuildTheRecordSearch' =>
+      failureThisDeviceCannotBuildTheRecordSearch,
     'failureUpdateTheAppThenOpenItAgain' => failureUpdateTheAppThenOpenItAgain,
-    'failureTheFilePathMustStayInsideThe' => failureTheFilePathMustStayInsideThe,
-    'failureSaveTheFileUnderTheProjectFolder' => failureSaveTheFileUnderTheProjectFolder,
-    'failureTheOriginalCaptionCannotBeChanged' => failureTheOriginalCaptionCannotBeChanged,
-    'failureLeaveTheCapturedTextAndWriteA' => failureLeaveTheCapturedTextAndWriteA,
-    'failureADuplicatePairNeedsTwoRecords' => failureADuplicatePairNeedsTwoRecords,
-    'failureChooseBothRecordsAndTryAgain' => failureChooseBothRecordsAndTryAgain,
+    'failureTheFilePathMustStayInsideThe' =>
+      failureTheFilePathMustStayInsideThe,
+    'failureSaveTheFileUnderTheProjectFolder' =>
+      failureSaveTheFileUnderTheProjectFolder,
+    'failureTheOriginalCaptionCannotBeChanged' =>
+      failureTheOriginalCaptionCannotBeChanged,
+    'failureLeaveTheCapturedTextAndWriteA' =>
+      failureLeaveTheCapturedTextAndWriteA,
+    'failureADuplicatePairNeedsTwoRecords' =>
+      failureADuplicatePairNeedsTwoRecords,
+    'failureChooseBothRecordsAndTryAgain' =>
+      failureChooseBothRecordsAndTryAgain,
     'failureARecordCannotBeADuplicateOf' => failureARecordCannotBeADuplicateOf,
-    'failureChooseTwoDifferentRecordsAndTryAgain' => failureChooseTwoDifferentRecordsAndTryAgain,
-    'failureADuplicatePairNeedsAProjectA' => failureADuplicatePairNeedsAProjectA,
-    'failureRunDetectionAgainThenTryAgain' => failureRunDetectionAgainThenTryAgain,
-    'failureAResolutionNeedsAChoiceAndAn' => failureAResolutionNeedsAChoiceAndAn,
-    'failureChooseHowToResolveThePairThen' => failureChooseHowToResolveThePairThen,
+    'failureChooseTwoDifferentRecordsAndTryAgain' =>
+      failureChooseTwoDifferentRecordsAndTryAgain,
+    'failureADuplicatePairNeedsAProjectA' =>
+      failureADuplicatePairNeedsAProjectA,
+    'failureRunDetectionAgainThenTryAgain' =>
+      failureRunDetectionAgainThenTryAgain,
+    'failureAResolutionNeedsAChoiceAndAn' =>
+      failureAResolutionNeedsAChoiceAndAn,
+    'failureChooseHowToResolveThePairThen' =>
+      failureChooseHowToResolveThePairThen,
     'failureThatPairIsNoLongerOnThis' => failureThatPairIsNoLongerOnThis,
-    'failureACompletedExportCannotBeChanged' => failureACompletedExportCannotBeChanged,
-    'failureRunANewExportInsteadOfRewriting' => failureRunANewExportInsteadOfRewriting,
-    'failureAnExportIsRecordedOnlyWhenThe' => failureAnExportIsRecordedOnlyWhenThe,
-    'failureFinishWritingTheFileThenRecordThe' => failureFinishWritingTheFileThenRecordThe,
+    'failureACompletedExportCannotBeChanged' =>
+      failureACompletedExportCannotBeChanged,
+    'failureRunANewExportInsteadOfRewriting' =>
+      failureRunANewExportInsteadOfRewriting,
+    'failureAnExportIsRecordedOnlyWhenThe' =>
+      failureAnExportIsRecordedOnlyWhenThe,
+    'failureFinishWritingTheFileThenRecordThe' =>
+      failureFinishWritingTheFileThenRecordThe,
     'failureTheExportFormatsAreNotInA' => failureTheExportFormatsAreNotInA,
-    'failureFixTheFormatsListAndSaveAgain' => failureFixTheFormatsListAndSaveAgain,
+    'failureFixTheFormatsListAndSaveAgain' =>
+      failureFixTheFormatsListAndSaveAgain,
     'failureTheExportFiltersAreNotInA' => failureTheExportFiltersAreNotInA,
-    'failureStoreTheQueryNotTheExportedValues' => failureStoreTheQueryNotTheExportedValues,
+    'failureStoreTheQueryNotTheExportedValues' =>
+      failureStoreTheQueryNotTheExportedValues,
     'failureThatEntryCouldNotBeRead' => failureThatEntryCouldNotBeRead,
     'failureChangeItThenSaveAgain' => failureChangeItThenSaveAgain,
-    'failureTheMarkedAreaOnThePhotoCould' => failureTheMarkedAreaOnThePhotoCould,
-    'failureFixTheRegionObjectAndSaveAgain' => failureFixTheRegionObjectAndSaveAgain,
+    'failureTheMarkedAreaOnThePhotoCould' =>
+      failureTheMarkedAreaOnThePhotoCould,
+    'failureFixTheRegionObjectAndSaveAgain' =>
+      failureFixTheRegionObjectAndSaveAgain,
     'failureTheMarkedAreaOnThePhotoIs' => failureTheMarkedAreaOnThePhotoIs,
     'failureThatMeetingIsNoLongerOnThis' => failureThatMeetingIsNoLongerOnThis,
-    'failureTheOriginalTranscriptCannotBeChanged' => failureTheOriginalTranscriptCannotBeChanged,
-    'failureLeaveTheCapturedTextAndWriteRefined' => failureLeaveTheCapturedTextAndWriteRefined,
-    'failureTheMeetingAgendaCouldNotBeRead' => failureTheMeetingAgendaCouldNotBeRead,
-    'failureFixTheAgendaListAndSaveAgain' => failureFixTheAgendaListAndSaveAgain,
+    'failureTheOriginalTranscriptCannotBeChanged' =>
+      failureTheOriginalTranscriptCannotBeChanged,
+    'failureLeaveTheCapturedTextAndWriteRefined' =>
+      failureLeaveTheCapturedTextAndWriteRefined,
+    'failureTheMeetingAgendaCouldNotBeRead' =>
+      failureTheMeetingAgendaCouldNotBeRead,
+    'failureFixTheAgendaListAndSaveAgain' =>
+      failureFixTheAgendaListAndSaveAgain,
     'failureTheMeetingAgendaIsNotInA' => failureTheMeetingAgendaIsNotInA,
-    'failureTheMergeSummaryCouldNotBeRead' => failureTheMergeSummaryCouldNotBeRead,
-    'failureFixTheCountsObjectAndSaveAgain' => failureFixTheCountsObjectAndSaveAgain,
+    'failureTheMergeSummaryCouldNotBeRead' =>
+      failureTheMergeSummaryCouldNotBeRead,
+    'failureFixTheCountsObjectAndSaveAgain' =>
+      failureFixTheCountsObjectAndSaveAgain,
     'failureTheMergeSummaryIsNotInA' => failureTheMergeSummaryIsNotInA,
     'failureAConflictNeedsAChoiceAndAn' => failureAConflictNeedsAChoiceAndAn,
     'failureChooseASideThenResolveAgain' => failureChooseASideThenResolveAgain,
-    'failureThatConflictIsNoLongerOnThis' => failureThatConflictIsNoLongerOnThis,
+    'failureThatConflictIsNoLongerOnThis' =>
+      failureThatConflictIsNoLongerOnThis,
     'failureThatJobIsNoLongerOnThis' => failureThatJobIsNoLongerOnThis,
     'failureRefreshTheQueueAndTryAgain' => failureRefreshTheQueueAndTryAgain,
-    'failureAStoredProviderResponseCannotBeChanged' => failureAStoredProviderResponseCannotBeChanged,
-    'failureLeaveTheOriginalResultAndWriteA' => failureLeaveTheOriginalResultAndWriteA,
-    'failureARequestSummaryCannotIncludeASecret' => failureARequestSummaryCannotIncludeASecret,
-    'failureStoreShapeAndSizeOnlyThenSave' => failureStoreShapeAndSizeOnlyThenSave,
-    'failureTheProjectSettingsCouldNotBeRead' => failureTheProjectSettingsCouldNotBeRead,
-    'failureChangeTheSettingsAgainThenSave' => failureChangeTheSettingsAgainThenSave,
+    'failureAStoredProviderResponseCannotBeChanged' =>
+      failureAStoredProviderResponseCannotBeChanged,
+    'failureLeaveTheOriginalResultAndWriteA' =>
+      failureLeaveTheOriginalResultAndWriteA,
+    'failureARequestSummaryCannotIncludeASecret' =>
+      failureARequestSummaryCannotIncludeASecret,
+    'failureStoreShapeAndSizeOnlyThenSave' =>
+      failureStoreShapeAndSizeOnlyThenSave,
+    'failureTheProjectSettingsCouldNotBeRead' =>
+      failureTheProjectSettingsCouldNotBeRead,
+    'failureChangeTheSettingsAgainThenSave' =>
+      failureChangeTheSettingsAgainThenSave,
     'failureTheProjectSettingsAreNotInA' => failureTheProjectSettingsAreNotInA,
     'failureThatRecordIsNoLongerOnThis' => failureThatRecordIsNoLongerOnThis,
     'failureTheRecordSContextCouldNotBe' => failureTheRecordSContextCouldNotBe,
-    'failureFixTheContextObjectAndSaveAgain' => failureFixTheContextObjectAndSaveAgain,
+    'failureFixTheContextObjectAndSaveAgain' =>
+      failureFixTheContextObjectAndSaveAgain,
     'failureTheRecordSContextIsNotIn' => failureTheRecordSContextIsNotIn,
     'failureThatValueIsNoLongerOnThis' => failureThatValueIsNoLongerOnThis,
     'failureRefreshTheRecordAndTryAgain' => failureRefreshTheRecordAndTryAgain,
-    'failureTheOriginalValueCannotBeChanged' => failureTheOriginalValueCannotBeChanged,
-    'failureLeaveTheCapturedValueAndWriteA' => failureLeaveTheCapturedValueAndWriteA,
-    'failureADatasetImportNeedsASourceFile' => failureADatasetImportNeedsASourceFile,
-    'failureChooseTheFileAndWhereItBelongs' => failureChooseTheFileAndWhereItBelongs,
-    'failureAProjectDatasetNeedsAProject' => failureAProjectDatasetNeedsAProject,
-    'failureChooseTheProjectThenImportAgain' => failureChooseTheProjectThenImportAgain,
-    'failureAGlobalDatasetCannotBelongToOne' => failureAGlobalDatasetCannotBelongToOne,
-    'failureClearTheProjectThenImportAgain' => failureClearTheProjectThenImportAgain,
+    'failureTheOriginalValueCannotBeChanged' =>
+      failureTheOriginalValueCannotBeChanged,
+    'failureLeaveTheCapturedValueAndWriteA' =>
+      failureLeaveTheCapturedValueAndWriteA,
+    'failureADatasetImportNeedsASourceFile' =>
+      failureADatasetImportNeedsASourceFile,
+    'failureChooseTheFileAndWhereItBelongs' =>
+      failureChooseTheFileAndWhereItBelongs,
+    'failureAProjectDatasetNeedsAProject' =>
+      failureAProjectDatasetNeedsAProject,
+    'failureChooseTheProjectThenImportAgain' =>
+      failureChooseTheProjectThenImportAgain,
+    'failureAGlobalDatasetCannotBelongToOne' =>
+      failureAGlobalDatasetCannotBelongToOne,
+    'failureClearTheProjectThenImportAgain' =>
+      failureClearTheProjectThenImportAgain,
     'failureTheDatasetColumnsAreNotInA' => failureTheDatasetColumnsAreNotInA,
-    'failureFixTheColumnListAndSaveAgain' => failureFixTheColumnListAndSaveAgain,
+    'failureFixTheColumnListAndSaveAgain' =>
+      failureFixTheColumnListAndSaveAgain,
     'failureAReferenceRowIsNotInA' => failureAReferenceRowIsNotInA,
     'failureFixTheRowValuesAndSaveAgain' => failureFixTheRowValuesAndSaveAgain,
     'failureThatEntryIsNotInAForm' => failureThatEntryIsNotInAForm,
     'failureAResolutionNeedsAnOperator' => failureAResolutionNeedsAnOperator,
-    'failureSignInThenResolveTheVarianceAgain' => failureSignInThenResolveTheVarianceAgain,
-    'failureThatVarianceIsNoLongerOnThis' => failureThatVarianceIsNoLongerOnThis,
+    'failureSignInThenResolveTheVarianceAgain' =>
+      failureSignInThenResolveTheVarianceAgain,
+    'failureThatVarianceIsNoLongerOnThis' =>
+      failureThatVarianceIsNoLongerOnThis,
     'failureTheDatabaseIsBusy' => failureTheDatabaseIsBusy,
     'failureWaitAMomentThenTryTheSave' => failureWaitAMomentThenTryTheSave,
-    'failureARecordWithThatIdentityAlreadyExists' => failureARecordWithThatIdentityAlreadyExists,
-    'failureOpenTheExistingRecordOrChangeThe' => failureOpenTheExistingRecordOrChangeThe,
+    'failureARecordWithThatIdentityAlreadyExists' =>
+      failureARecordWithThatIdentityAlreadyExists,
+    'failureOpenTheExistingRecordOrChangeThe' =>
+      failureOpenTheExistingRecordOrChangeThe,
     'failureThatPhotoCouldNotBeBlurred' => failureThatPhotoCouldNotBeBlurred,
-    'failureADetectedFaceIsOutsideThatPhoto' => failureADetectedFaceIsOutsideThatPhoto,
-    'failureFaceDetectionIsUnavailableOnThisDevice' => failureFaceDetectionIsUnavailableOnThisDevice,
+    'failureADetectedFaceIsOutsideThatPhoto' =>
+      failureADetectedFaceIsOutsideThatPhoto,
+    'failureFaceDetectionIsUnavailableOnThisDevice' =>
+      failureFaceDetectionIsUnavailableOnThisDevice,
     'failureUseAnAndroidOrIOSDeviceTo' => failureUseAnAndroidOrIOSDeviceTo,
-    'failureThisPhotoCannotBeCheckedForFaces' => failureThisPhotoCannotBeCheckedForFaces,
+    'failureThisPhotoCannotBeCheckedForFaces' =>
+      failureThisPhotoCannotBeCheckedForFaces,
     'failureThisPhotoCannotBeProtected' => failureThisPhotoCannotBeProtected,
     'failureAHiddenAreaIsInvalid' => failureAHiddenAreaIsInvalid,
-    'failureThisExportFolderAlreadyContainsCompletedFiles' => failureThisExportFolderAlreadyContainsCompletedFiles,
-    'failureCreateTheExportInANewVersion' => failureCreateTheExportInANewVersion,
-    'failureStreamingTextExportNeedsNativeStorage' => failureStreamingTextExportNeedsNativeStorage,
-    'failureTaptureCannotCopyAFileFromThis' => failureTaptureCannotCopyAFileFromThis,
-    'failureAddTheFileAgainFromTaptureThen' => failureAddTheFileAgainFromTaptureThen,
-    'failureTaptureCouldNotWriteToValue' => failureTaptureCouldNotWriteToValue((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureTaptureCouldNotNameThatStoredFile' => failureTaptureCouldNotNameThatStoredFile,
-    'failureTryAgainIfItKeepsHappeningExport' => failureTryAgainIfItKeepsHappeningExport,
-    'failureTaptureCouldNotSaveThatOnThis' => failureTaptureCouldNotSaveThatOnThis,
+    'failureThisExportFolderAlreadyContainsCompletedFiles' =>
+      failureThisExportFolderAlreadyContainsCompletedFiles,
+    'failureCreateTheExportInANewVersion' =>
+      failureCreateTheExportInANewVersion,
+    'failureStreamingTextExportNeedsNativeStorage' =>
+      failureStreamingTextExportNeedsNativeStorage,
+    'failureTaptureCannotCopyAFileFromThis' =>
+      failureTaptureCannotCopyAFileFromThis,
+    'failureAddTheFileAgainFromTaptureThen' =>
+      failureAddTheFileAgainFromTaptureThen,
+    'failureTaptureCouldNotWriteToValue' => failureTaptureCouldNotWriteToValue(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureTaptureCouldNotNameThatStoredFile' =>
+      failureTaptureCouldNotNameThatStoredFile,
+    'failureTryAgainIfItKeepsHappeningExport' =>
+      failureTryAgainIfItKeepsHappeningExport,
+    'failureTaptureCouldNotSaveThatOnThis' =>
+      failureTaptureCouldNotSaveThatOnThis,
     'failureFreeSomeSpaceThenTryAgain' => failureFreeSomeSpaceThenTryAgain,
     'failureTheCacheCouldNotBeCleanedOn' => failureTheCacheCouldNotBeCleanedOn,
-    'failureFreeSpaceOrAllowStorageAccessThen' => failureFreeSpaceOrAllowStorageAccessThen,
+    'failureFreeSpaceOrAllowStorageAccessThen' =>
+      failureFreeSpaceOrAllowStorageAccessThen,
     'failureThatImageSizeIsNotValid' => failureThatImageSizeIsNotValid,
     'failureUseTheAppUploadSizeAndTry' => failureUseTheAppUploadSizeAndTry,
-    'failureTheReducedCopyCouldNotBeCreated' => failureTheReducedCopyCouldNotBeCreated,
-    'failureTaptureCouldNotFindValue' => failureTaptureCouldNotFindValue((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureTaptureCouldNotSaveValue' => failureTaptureCouldNotSaveValue((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureFreeSomeSpaceThenDownloadAgain' => failureFreeSomeSpaceThenDownloadAgain,
-    'failureOpenDownloadsOnThisDeviceAndLook' => failureOpenDownloadsOnThisDeviceAndLook,
-    'failureOnlyFilesInsideAProjectFolderCan' => failureOnlyFilesInsideAProjectFolderCan,
+    'failureTheReducedCopyCouldNotBeCreated' =>
+      failureTheReducedCopyCouldNotBeCreated,
+    'failureTaptureCouldNotFindValue' => failureTaptureCouldNotFindValue(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureTaptureCouldNotSaveValue' => failureTaptureCouldNotSaveValue(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureFreeSomeSpaceThenDownloadAgain' =>
+      failureFreeSomeSpaceThenDownloadAgain,
+    'failureOpenDownloadsOnThisDeviceAndLook' =>
+      failureOpenDownloadsOnThisDeviceAndLook,
+    'failureOnlyFilesInsideAProjectFolderCan' =>
+      failureOnlyFilesInsideAProjectFolderCan,
     'failureLeaveTheFileInPlaceThePurge' => failureLeaveTheFileInPlaceThePurge,
     'failureThatPhotoHasNoUsableNameFor' => failureThatPhotoHasNoUsableNameFor,
-    'failureLeaveThePhotoInPlaceThePurge' => failureLeaveThePhotoInPlaceThePurge,
-    'failureADeletedRecordSFilesCouldNot' => failureADeletedRecordSFilesCouldNot,
-    'failureAllowStorageAccessThePurgeTriesAgain' => failureAllowStorageAccessThePurgeTriesAgain,
+    'failureLeaveThePhotoInPlaceThePurge' =>
+      failureLeaveThePhotoInPlaceThePurge,
+    'failureADeletedRecordSFilesCouldNot' =>
+      failureADeletedRecordSFilesCouldNot,
+    'failureAllowStorageAccessThePurgeTriesAgain' =>
+      failureAllowStorageAccessThePurgeTriesAgain,
     'failureThisExportIsTooLargeForThis' => failureThisExportIsTooLargeForThis,
-    'failureExportFewerRecordsOrUseADesktop' => failureExportFewerRecordsOrUseADesktop,
-    'failureAnExportSourceIsMissingValue' => failureAnExportSourceIsMissingValue((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureANativeFileSystemIsUnavailable' => failureANativeFileSystemIsUnavailable,
-    'failureTaptureCouldNotReadValue' => failureTaptureCouldNotReadValue((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureCaptureOrAddTheFileAgainThen' => failureCaptureOrAddTheFileAgainThen,
+    'failureExportFewerRecordsOrUseADesktop' =>
+      failureExportFewerRecordsOrUseADesktop,
+    'failureAnExportSourceIsMissingValue' =>
+      failureAnExportSourceIsMissingValue(
+        (message.argument('value0') is LocalizedMessage
+            ? resolve(message.argument('value0') as LocalizedMessage)
+            : message.argument('value0') as String),
+      ),
+    'failureANativeFileSystemIsUnavailable' =>
+      failureANativeFileSystemIsUnavailable,
+    'failureTaptureCouldNotReadValue' => failureTaptureCouldNotReadValue(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureCaptureOrAddTheFileAgainThen' =>
+      failureCaptureOrAddTheFileAgainThen,
     'failureThatProjectIsNoLongerOnThis' => failureThatProjectIsNoLongerOnThis,
     'failureOpenAProjectThenTryAgain' => failureOpenAProjectThenTryAgain,
-    'failureRecreateTheProjectFolderThenTryAgain' => failureRecreateTheProjectFolderThenTryAgain,
-    'failureTheFileValueIsEmpty' => failureTheFileValueIsEmpty((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureChooseAFileThatHasContentsAnd' => failureChooseAFileThatHasContentsAnd,
-    'failureTheFileValueIsNotASupported' => failureTheFileValueIsNotASupported((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureChooseAnImageDocumentSpreadsheetAudioFile' => failureChooseAnImageDocumentSpreadsheetAudioFile,
-    'failureTheFileValueDoesNotMatchIts' => failureTheFileValueDoesNotMatchIts((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureChooseAFileOfTheExpectedType' => failureChooseAFileOfTheExpectedType,
-    'failureTheFileValueIsLargerThanThe' => failureTheFileValueIsLargerThanThe((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String),(message.argument('value1') is LocalizedMessage ? resolve(message.argument('value1') as LocalizedMessage) : message.argument('value1') as String)),
-    'failureChooseASmallerFileAndTryAgain' => failureChooseASmallerFileAndTryAgain,
-    'failureTheArchiveValueContainsAPathThat' => failureTheArchiveValueContainsAPathThat((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureChooseADifferentFileAndTryAgain' => failureChooseADifferentFileAndTryAgain,
-    'failureTheArchiveValueContainsALinkInstead' => failureTheArchiveValueContainsALinkInstead((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureTheArchiveValueDeclaresMoreUncompressedData' => failureTheArchiveValueDeclaresMoreUncompressedData((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureTheFileValueIsNotAnArchive' => failureTheFileValueIsNotAnArchive((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureChooseAZIPBundleOrSpreadsheetAnd' => failureChooseAZIPBundleOrSpreadsheetAnd,
-    'failureChooseTheFileAgainThenTryAgain' => failureChooseTheFileAgainThenTryAgain,
+    'failureRecreateTheProjectFolderThenTryAgain' =>
+      failureRecreateTheProjectFolderThenTryAgain,
+    'failureTheFileValueIsEmpty' => failureTheFileValueIsEmpty(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureChooseAFileThatHasContentsAnd' =>
+      failureChooseAFileThatHasContentsAnd,
+    'failureTheFileValueIsNotASupported' => failureTheFileValueIsNotASupported(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureChooseAnImageDocumentSpreadsheetAudioFile' =>
+      failureChooseAnImageDocumentSpreadsheetAudioFile,
+    'failureTheFileValueDoesNotMatchIts' => failureTheFileValueDoesNotMatchIts(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureChooseAFileOfTheExpectedType' =>
+      failureChooseAFileOfTheExpectedType,
+    'failureTheFileValueIsLargerThanThe' => failureTheFileValueIsLargerThanThe(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+      (message.argument('value1') is LocalizedMessage
+          ? resolve(message.argument('value1') as LocalizedMessage)
+          : message.argument('value1') as String),
+    ),
+    'failureChooseASmallerFileAndTryAgain' =>
+      failureChooseASmallerFileAndTryAgain,
+    'failureTheArchiveValueContainsAPathThat' =>
+      failureTheArchiveValueContainsAPathThat(
+        (message.argument('value0') is LocalizedMessage
+            ? resolve(message.argument('value0') as LocalizedMessage)
+            : message.argument('value0') as String),
+      ),
+    'failureChooseADifferentFileAndTryAgain' =>
+      failureChooseADifferentFileAndTryAgain,
+    'failureTheArchiveValueContainsALinkInstead' =>
+      failureTheArchiveValueContainsALinkInstead(
+        (message.argument('value0') is LocalizedMessage
+            ? resolve(message.argument('value0') as LocalizedMessage)
+            : message.argument('value0') as String),
+      ),
+    'failureTheArchiveValueDeclaresMoreUncompressedData' =>
+      failureTheArchiveValueDeclaresMoreUncompressedData(
+        (message.argument('value0') is LocalizedMessage
+            ? resolve(message.argument('value0') as LocalizedMessage)
+            : message.argument('value0') as String),
+      ),
+    'failureTheFileValueIsNotAnArchive' => failureTheFileValueIsNotAnArchive(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureChooseAZIPBundleOrSpreadsheetAnd' =>
+      failureChooseAZIPBundleOrSpreadsheetAnd,
+    'failureChooseTheFileAgainThenTryAgain' =>
+      failureChooseTheFileAgainThenTryAgain,
     'failureThePhotoCouldNotBeSavedOn' => failureThePhotoCouldNotBeSavedOn,
-    'failureThereIsNotEnoughSpaceToSave' => failureThereIsNotEnoughSpaceToSave((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureAllowStorageAccessThenTryAgain' => failureAllowStorageAccessThenTryAgain,
+    'failureThereIsNotEnoughSpaceToSave' => failureThereIsNotEnoughSpaceToSave(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureAllowStorageAccessThenTryAgain' =>
+      failureAllowStorageAccessThenTryAgain,
     'failureThisPhotoCannotBeMarked' => failureThisPhotoCannotBeMarked,
-    'failureThisPackageIsTooLargeOrIncomplete' => failureThisPackageIsTooLargeOrIncomplete,
-    'failureFinishTheCurrentPackageBeforeOpeningAnother' => failureFinishTheCurrentPackageBeforeOpeningAnother,
+    'failureThisPackageIsTooLargeOrIncomplete' =>
+      failureThisPackageIsTooLargeOrIncomplete,
+    'failureFinishTheCurrentPackageBeforeOpeningAnother' =>
+      failureFinishTheCurrentPackageBeforeOpeningAnother,
     'failureThisPackageIsTooLargeToOpen' => failureThisPackageIsTooLargeToOpen,
     'failureThisPackageCouldNotBeOpened' => failureThisPackageCouldNotBeOpened,
-    'failureOpenTheFileAgainFromItsOriginal' => failureOpenTheFileAgainFromItsOriginal,
-    'failureThatProjectCouldNotBeScanned' => failureThatProjectCouldNotBeScanned,
+    'failureOpenTheFileAgainFromItsOriginal' =>
+      failureOpenTheFileAgainFromItsOriginal,
+    'failureThatProjectCouldNotBeScanned' =>
+      failureThatProjectCouldNotBeScanned,
     'failureOpenTheProjectAndTryAgain' => failureOpenTheProjectAndTryAgain,
-    'failureTheProjectFolderCouldNotBeScanned' => failureTheProjectFolderCouldNotBeScanned,
+    'failureTheProjectFolderCouldNotBeScanned' =>
+      failureTheProjectFolderCouldNotBeScanned,
     'failurePutTheFileBackInTheProject' => failurePutTheFileBackInTheProject,
     'failureTheFileCouldNotBeAdoptedOn' => failureTheFileCouldNotBeAdoptedOn,
-    'failureTheMissingFileCouldNotBeFlagged' => failureTheMissingFileCouldNotBeFlagged,
+    'failureTheMissingFileCouldNotBeFlagged' =>
+      failureTheMissingFileCouldNotBeFlagged,
     'failureThatFileRowIsNoLongerOn' => failureThatFileRowIsNoLongerOn,
     'failureThatNameIsNotAValidFolder' => failureThatNameIsNotAValidFolder,
-    'failureChooseANameWithoutSlashesThatPoint' => failureChooseANameWithoutSlashesThatPoint,
-    'failureChooseANameWithLettersOrDigits' => failureChooseANameWithLettersOrDigits,
-    'failureTheFilePathMustStayInsideThe2' => failureTheFilePathMustStayInsideThe2,
-    'failureThatPhotoIsNoLongerAvailable' => failureThatPhotoIsNoLongerAvailable,
-    'failureHiddenAreasChangedTrySendingAgain' => failureHiddenAreasChangedTrySendingAgain,
-    'failureCheckTheHiddenAreasOnThisEdited' => failureCheckTheHiddenAreasOnThisEdited,
-    'failureOpenHidePartsBeforeSendingAndSave' => failureOpenHidePartsBeforeSendingAndSave,
-    'failureTheProjectFolderCouldNotBeRemoved' => failureTheProjectFolderCouldNotBeRemoved,
-    'failureDeleteTheLeftoverFolderThenTryAgain' => failureDeleteTheLeftoverFolderThenTryAgain,
-    'failureThatProjectIsAlreadyInTheRecycle' => failureThatProjectIsAlreadyInTheRecycle,
-    'failureRestoreItFromTheRecycleAreaThen' => failureRestoreItFromTheRecycleAreaThen,
-    'failureTheProjectFolderCouldNotBeMoved' => failureTheProjectFolderCouldNotBeMoved,
-    'failureThisProjectHasNoFolderOnDisk' => failureThisProjectHasNoFolderOnDisk,
-    'failureCreateTheProjectFolderThenTryAgain' => failureCreateTheProjectFolderThenTryAgain,
-    'failureTheProjectFolderCouldNotBeCreated' => failureTheProjectFolderCouldNotBeCreated,
+    'failureChooseANameWithoutSlashesThatPoint' =>
+      failureChooseANameWithoutSlashesThatPoint,
+    'failureChooseANameWithLettersOrDigits' =>
+      failureChooseANameWithLettersOrDigits,
+    'failureTheFilePathMustStayInsideThe2' =>
+      failureTheFilePathMustStayInsideThe2,
+    'failureThatPhotoIsNoLongerAvailable' =>
+      failureThatPhotoIsNoLongerAvailable,
+    'failureHiddenAreasChangedTrySendingAgain' =>
+      failureHiddenAreasChangedTrySendingAgain,
+    'failureCheckTheHiddenAreasOnThisEdited' =>
+      failureCheckTheHiddenAreasOnThisEdited,
+    'failureOpenHidePartsBeforeSendingAndSave' =>
+      failureOpenHidePartsBeforeSendingAndSave,
+    'failureTheProjectFolderCouldNotBeRemoved' =>
+      failureTheProjectFolderCouldNotBeRemoved,
+    'failureDeleteTheLeftoverFolderThenTryAgain' =>
+      failureDeleteTheLeftoverFolderThenTryAgain,
+    'failureThatProjectIsAlreadyInTheRecycle' =>
+      failureThatProjectIsAlreadyInTheRecycle,
+    'failureRestoreItFromTheRecycleAreaThen' =>
+      failureRestoreItFromTheRecycleAreaThen,
+    'failureTheProjectFolderCouldNotBeMoved' =>
+      failureTheProjectFolderCouldNotBeMoved,
+    'failureThisProjectHasNoFolderOnDisk' =>
+      failureThisProjectHasNoFolderOnDisk,
+    'failureCreateTheProjectFolderThenTryAgain' =>
+      failureCreateTheProjectFolderThenTryAgain,
+    'failureTheProjectFolderCouldNotBeCreated' =>
+      failureTheProjectFolderCouldNotBeCreated,
     'failureThatProjectFolderNameIsNotA' => failureThatProjectFolderNameIsNotA,
-    'failureRecreateTheProjectSoItsFolderCan' => failureRecreateTheProjectSoItsFolderCan,
+    'failureRecreateTheProjectSoItsFolderCan' =>
+      failureRecreateTheProjectSoItsFolderCan,
     'failureThereIsNotEnoughFreeSpaceTo' => failureThereIsNotEnoughFreeSpaceTo,
-    'failureExportAProjectOrCleanTheCache' => failureExportAProjectOrCleanTheCache,
-    'failureTaptureCouldNotReadFreeSpaceOn' => failureTaptureCouldNotReadFreeSpaceOn,
-    'failureThisDeviceHasNoFolderTaptureCan' => failureThisDeviceHasNoFolderTaptureCan,
+    'failureExportAProjectOrCleanTheCache' =>
+      failureExportAProjectOrCleanTheCache,
+    'failureTaptureCouldNotReadFreeSpaceOn' =>
+      failureTaptureCouldNotReadFreeSpaceOn,
+    'failureThisDeviceHasNoFolderTaptureCan' =>
+      failureThisDeviceHasNoFolderTaptureCan,
     'failureUseTaptureOnAPhoneTabletOr' => failureUseTaptureOnAPhoneTabletOr,
-    'failureTheThumbnailCouldNotBeCreatedOn' => failureTheThumbnailCouldNotBeCreatedOn,
+    'failureTheThumbnailCouldNotBeCreatedOn' =>
+      failureTheThumbnailCouldNotBeCreatedOn,
     'failureThatThumbnailSizeIsNotValid' => failureThatThumbnailSizeIsNotValid,
-    'failureUseTheAppThumbnailSizeAndTry' => failureUseTheAppThumbnailSizeAndTry,
+    'failureUseTheAppThumbnailSizeAndTry' =>
+      failureUseTheAppThumbnailSizeAndTry,
     'failureThatPhotoCouldNotBeCached' => failureThatPhotoCouldNotBeCached,
     'failureLocationIsOffForThisProject' => failureLocationIsOffForThisProject,
     'failureTurnGPSOnThenTryAgain' => failureTurnGPSOnThenTryAgain,
-    'failureBiometricAuthenticationIsUnavailable' => failureBiometricAuthenticationIsUnavailable,
+    'failureBiometricAuthenticationIsUnavailable' =>
+      failureBiometricAuthenticationIsUnavailable,
     'failureUnlockWithYourAppPIN' => failureUnlockWithYourAppPIN,
     'failureTheSecretCouldNotBeSavedOn' => failureTheSecretCouldNotBeSavedOn,
     'failureTheSecretCouldNotBeReadOn' => failureTheSecretCouldNotBeReadOn,
-    'failureTheSecretCouldNotBeRemovedFrom' => failureTheSecretCouldNotBeRemovedFrom,
+    'failureTheSecretCouldNotBeRemovedFrom' =>
+      failureTheSecretCouldNotBeRemovedFrom,
     'failureTypeTheWordsToPlaceOnThis' => failureTypeTheWordsToPlaceOnThis,
     'failureEnterTextThenSaveThePhoto' => failureEnterTextThenSaveThePhoto,
-    'failureDiscardTheInterruptedSessionAndStartAgain' => failureDiscardTheInterruptedSessionAndStartAgain,
+    'failureDiscardTheInterruptedSessionAndStartAgain' =>
+      failureDiscardTheInterruptedSessionAndStartAgain,
     'failureOnlyARecordEditCanBeSaved' => failureOnlyARecordEditCanBeSaved,
     'failureGoBackToTheProjectAndPick' => failureGoBackToTheProjectAndPick,
     'failureTheCaptureSessionIsNotValid' => failureTheCaptureSessionIsNotValid,
-    'failureCompletePhotoMetadataIsRequiredForA' => failureCompletePhotoMetadataIsRequiredForA,
+    'failureCompletePhotoMetadataIsRequiredForA' =>
+      failureCompletePhotoMetadataIsRequiredForA,
     'failureThePhotoProjectWasNotFound' => failureThePhotoProjectWasNotFound,
     'failureThatPhotoCouldNotBeReadFrom' => failureThatPhotoCouldNotBeReadFrom,
-    'failureTheOriginalPhotoStaysInPlace' => failureTheOriginalPhotoStaysInPlace,
+    'failureTheOriginalPhotoStaysInPlace' =>
+      failureTheOriginalPhotoStaysInPlace,
     'failureRevertAnEditedPhotoInstead' => failureRevertAnEditedPhotoInstead,
-    'failureThisPhotoAppearsMoreThanOnce' => failureThisPhotoAppearsMoreThanOnce,
+    'failureThisPhotoAppearsMoreThanOnce' =>
+      failureThisPhotoAppearsMoreThanOnce,
     'failureReloadTheCaptureAndTryAgain' => failureReloadTheCaptureAndTryAgain,
-    'failureAnEditedPhotoIsMissingItsOriginal' => failureAnEditedPhotoIsMissingItsOriginal,
-    'failureKeepThisCaptureAndRestoreTheOriginal' => failureKeepThisCaptureAndRestoreTheOriginal,
-    'failureThesePhotoEditsLoopBackOnThemselves' => failureThesePhotoEditsLoopBackOnThemselves,
+    'failureAnEditedPhotoIsMissingItsOriginal' =>
+      failureAnEditedPhotoIsMissingItsOriginal,
+    'failureKeepThisCaptureAndRestoreTheOriginal' =>
+      failureKeepThisCaptureAndRestoreTheOriginal,
+    'failureThesePhotoEditsLoopBackOnThemselves' =>
+      failureThesePhotoEditsLoopBackOnThemselves,
     'failureThatFieldIsNotOnThisRecord' => failureThatFieldIsNotOnThisRecord,
     'failureOpenTheRecordAndTryAgain' => failureOpenTheRecordAndTryAgain,
     'failureThatFieldIsNotAContextLevel' => failureThatFieldIsNotAContextLevel,
-    'failurePickALevelFromTheHierarchyAnd' => failurePickALevelFromTheHierarchyAnd,
+    'failurePickALevelFromTheHierarchyAnd' =>
+      failurePickALevelFromTheHierarchyAnd,
     'failureAPresetNeedsAName' => failureAPresetNeedsAName,
     'failureEnterANameAndTryAgain' => failureEnterANameAndTryAgain,
     'failureADeleteNeedsAnIdAndA' => failureADeleteNeedsAnIdAndA,
     'failureContextIsNotAvailableYet' => failureContextIsNotAvailableYet,
     'failureRestartTheAppAndTryAgain' => failureRestartTheAppAndTryAgain,
-    'failureAPresetWithThatNameAlreadyExists' => failureAPresetWithThatNameAlreadyExists,
-    'failureChooseAnotherNameOrConfirmOverwrite' => failureChooseAnotherNameOrConfirmOverwrite,
+    'failureAPresetWithThatNameAlreadyExists' =>
+      failureAPresetWithThatNameAlreadyExists,
+    'failureChooseAnotherNameOrConfirmOverwrite' =>
+      failureChooseAnotherNameOrConfirmOverwrite,
     'failureTheProjectWasNotFound' => failureTheProjectWasNotFound,
-    'failureAnExportedRecordIsNoLongerAvailable' => failureAnExportedRecordIsNoLongerAvailable,
-    'failureAnExportedPhotoIsNoLongerAvailable' => failureAnExportedPhotoIsNoLongerAvailable,
-    'failureASelectedRecordIsMissingRefreshThe' => failureASelectedRecordIsMissingRefreshThe,
+    'failureAnExportedRecordIsNoLongerAvailable' =>
+      failureAnExportedRecordIsNoLongerAvailable,
+    'failureAnExportedPhotoIsNoLongerAvailable' =>
+      failureAnExportedPhotoIsNoLongerAvailable,
+    'failureASelectedRecordIsMissingRefreshThe' =>
+      failureASelectedRecordIsMissingRefreshThe,
     'failureAnExportNeedsAProject' => failureAnExportNeedsAProject,
     'failureOpenAProjectAndExportAgain' => failureOpenAProjectAndExportAgain,
-    'failureThisExportedPhotoCannotBeRead' => failureThisExportedPhotoCannotBeRead,
-    'failureThisPhotoFormatCannotBePackagedSafely' => failureThisPhotoFormatCannotBePackagedSafely,
-    'failureProjectFilesAreUnavailableOnThisDevice' => failureProjectFilesAreUnavailableOnThisDevice,
-    'failureOpenAProjectStoredOnThisDevice' => failureOpenAProjectStoredOnThisDevice,
-    'failureWriteYourFeedbackThenSaveAgain' => failureWriteYourFeedbackThenSaveAgain,
+    'failureThisExportedPhotoCannotBeRead' =>
+      failureThisExportedPhotoCannotBeRead,
+    'failureThisPhotoFormatCannotBePackagedSafely' =>
+      failureThisPhotoFormatCannotBePackagedSafely,
+    'failureProjectFilesAreUnavailableOnThisDevice' =>
+      failureProjectFilesAreUnavailableOnThisDevice,
+    'failureOpenAProjectStoredOnThisDevice' =>
+      failureOpenAProjectStoredOnThisDevice,
+    'failureWriteYourFeedbackThenSaveAgain' =>
+      failureWriteYourFeedbackThenSaveAgain,
     'failureNameTheTypeThenSaveAgain' => failureNameTheTypeThenSaveAgain,
-    'failureChangeOrClearTheFiltersThenTry' => failureChangeOrClearTheFiltersThenTry,
-    'failureCloseThisTapFeedbackThenTryAgain' => failureCloseThisTapFeedbackThenTryAgain,
-    'failureCorrectTheHighlightedFieldAndSaveAgain' => failureCorrectTheHighlightedFieldAndSaveAgain,
-    'failureTheTemplateTheseRowsWereMatchedTo' => failureTheTemplateTheseRowsWereMatchedTo,
-    'failureChooseAnotherTemplateAndImportAgain' => failureChooseAnotherTemplateAndImportAgain,
+    'failureChangeOrClearTheFiltersThenTry' =>
+      failureChangeOrClearTheFiltersThenTry,
+    'failureCloseThisTapFeedbackThenTryAgain' =>
+      failureCloseThisTapFeedbackThenTryAgain,
+    'failureCorrectTheHighlightedFieldAndSaveAgain' =>
+      failureCorrectTheHighlightedFieldAndSaveAgain,
+    'failureTheTemplateTheseRowsWereMatchedTo' =>
+      failureTheTemplateTheseRowsWereMatchedTo,
+    'failureChooseAnotherTemplateAndImportAgain' =>
+      failureChooseAnotherTemplateAndImportAgain,
     'failureARecordARowMatchedIsNo' => failureARecordARowMatchedIsNo,
     'failureImportTheFileAgainToMatchIt' => failureImportTheFileAgainToMatchIt,
-    'failureRecordsCannotBeImportedRightNow' => failureRecordsCannotBeImportedRightNow,
-    'failureRestartTaptureThenImportAgain' => failureRestartTaptureThenImportAgain,
+    'failureRecordsCannotBeImportedRightNow' =>
+      failureRecordsCannotBeImportedRightNow,
+    'failureRestartTaptureThenImportAgain' =>
+      failureRestartTaptureThenImportAgain,
     'failureThatFileIsNotInThisMeeting' => failureThatFileIsNotInThisMeeting,
     'failureAddTheFileToTheMeetingAgain' => failureAddTheFileToTheMeetingAgain,
     'failureStartTheMeetingAgain' => failureStartTheMeetingAgain,
     'failureTheSnapshotHasBeenPurged' => failureTheSnapshotHasBeenPurged,
     'failureTheMergeCanNoLongerBeUndone' => failureTheMergeCanNoLongerBeUndone,
     'failureTaptureCouldNotLookUpAFile' => failureTaptureCouldNotLookUpAFile,
-    'failureAProjectWithThatIdAlreadyExists' => failureAProjectWithThatIdAlreadyExists,
-    'failureOpenTheExistingProjectOrUseA' => failureOpenTheExistingProjectOrUseA,
-    'failureProjectPhotosCannotBeStoredOnThis' => failureProjectPhotosCannotBeStoredOnThis,
+    'failureAProjectWithThatIdAlreadyExists' =>
+      failureAProjectWithThatIdAlreadyExists,
+    'failureOpenTheExistingProjectOrUseA' =>
+      failureOpenTheExistingProjectOrUseA,
+    'failureProjectPhotosCannotBeStoredOnThis' =>
+      failureProjectPhotosCannotBeStoredOnThis,
     'failureAddThePhotoOnADeviceThat' => failureAddThePhotoOnADeviceThat,
     'failureAProjectNeedsAName' => failureAProjectNeedsAName,
     'failureEnterANameAndSaveAgain' => failureEnterANameAndSaveAgain,
-    'failureProjectFilesAreNotAvailableOnThis' => failureProjectFilesAreNotAvailableOnThis,
-    'failureExportFromADeviceThatStoresThis' => failureExportFromADeviceThatStoresThis,
+    'failureProjectFilesAreNotAvailableOnThis' =>
+      failureProjectFilesAreNotAvailableOnThis,
+    'failureExportFromADeviceThatStoresThis' =>
+      failureExportFromADeviceThatStoresThis,
     'failureThatRecordIsNoLongerInThe' => failureThatRecordIsNoLongerInThe,
-    'failureNothingToRemoveItWasRestoredOr' => failureNothingToRemoveItWasRestoredOr,
-    'failureThatRecordWasDeletedAgainSoIts' => failureThatRecordWasDeletedAgainSoIts,
+    'failureNothingToRemoveItWasRestoredOr' =>
+      failureNothingToRemoveItWasRestoredOr,
+    'failureThatRecordWasDeletedAgainSoIts' =>
+      failureThatRecordWasDeletedAgainSoIts,
     'failureLeaveItThePurgeTakesItOnce' => failureLeaveItThePurgeTakesItOnce,
-    'failureAMergeStillNeedsThatDeletedRecord' => failureAMergeStillNeedsThatDeletedRecord,
+    'failureAMergeStillNeedsThatDeletedRecord' =>
+      failureAMergeStillNeedsThatDeletedRecord,
     'failureSendABundleOrSettleTheMerge' => failureSendABundleOrSettleTheMerge,
     'failureRecordsAreNotAvailableYet' => failureRecordsAreNotAvailableYet,
-    'failureTheRecordWasSavedButCouldNot' => failureTheRecordWasSavedButCouldNot,
+    'failureTheRecordWasSavedButCouldNot' =>
+      failureTheRecordWasSavedButCouldNot,
     'failureOpenItFromTheRecordsList' => failureOpenItFromTheRecordsList,
-    'failureThatTemplateIsNoLongerOnThis' => failureThatTemplateIsNoLongerOnThis,
-    'failureChooseAnotherTemplateAndTryAgain' => failureChooseAnotherTemplateAndTryAgain,
-    'failureThisRecordAlreadyUsesThatTemplate' => failureThisRecordAlreadyUsesThatTemplate,
+    'failureThatTemplateIsNoLongerOnThis' =>
+      failureThatTemplateIsNoLongerOnThis,
+    'failureChooseAnotherTemplateAndTryAgain' =>
+      failureChooseAnotherTemplateAndTryAgain,
+    'failureThisRecordAlreadyUsesThatTemplate' =>
+      failureThisRecordAlreadyUsesThatTemplate,
     'failureChooseADifferentTemplate' => failureChooseADifferentTemplate,
-    'failureThatTemplateBelongsToAnotherProject' => failureThatTemplateBelongsToAnotherProject,
-    'failureChooseATemplateFromThisProject' => failureChooseATemplateFromThisProject,
+    'failureThatTemplateBelongsToAnotherProject' =>
+      failureThatTemplateBelongsToAnotherProject,
+    'failureChooseATemplateFromThisProject' =>
+      failureChooseATemplateFromThisProject,
     'failureARecordNeedsAProjectAndA' => failureARecordNeedsAProjectAndA,
-    'failureChooseAProjectAndATemplateThen' => failureChooseAProjectAndATemplateThen,
+    'failureChooseAProjectAndATemplateThen' =>
+      failureChooseAProjectAndATemplateThen,
     'failureSayWhyTheRecordShouldGoThen' => failureSayWhyTheRecordShouldGoThen,
-    'failureAnEditNeedsTheFieldItChanges' => failureAnEditNeedsTheFieldItChanges,
+    'failureAnEditNeedsTheFieldItChanges' =>
+      failureAnEditNeedsTheFieldItChanges,
     'failureChooseAFieldThenSaveAgain' => failureChooseAFieldThenSaveAgain,
     'failureARecordGoesToTheRecycleBin' => failureARecordGoesToTheRecycleBin,
     'failureUseDeleteWhichLetsYouUndoIt' => failureUseDeleteWhichLetsYouUndoIt,
     'failureThisRecordIsInTheRecycleBin' => failureThisRecordIsInTheRecycleBin,
-    'failureRestoreItFromTheRecycleBinFirst' => failureRestoreItFromTheRecycleBinFirst,
+    'failureRestoreItFromTheRecycleBinFirst' =>
+      failureRestoreItFromTheRecycleBinFirst,
     'failureThisRecordIsNotInTheRecycle' => failureThisRecordIsNotInTheRecycle,
-    'failureRefreshTheListItMayAlreadyBe' => failureRefreshTheListItMayAlreadyBe,
-    'failureThisRecordHasAStatusThisVersion' => failureThisRecordHasAStatusThisVersion,
+    'failureRefreshTheListItMayAlreadyBe' =>
+      failureRefreshTheListItMayAlreadyBe,
+    'failureThisRecordHasAStatusThisVersion' =>
+      failureThisRecordHasAStatusThisVersion,
     'failureUpdateTheAppThenTryAgain' => failureUpdateTheAppThenTryAgain,
-    'failureThisRecordIsAlreadyValue' => failureThisRecordIsAlreadyValue((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureChooseADifferentStatusOrLeaveIt' => failureChooseADifferentStatusOrLeaveIt,
-    'failureARecordThatIsValueCannotBe' => failureARecordThatIsValueCannotBe((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String),(message.argument('value1') is LocalizedMessage ? resolve(message.argument('value1') as LocalizedMessage) : message.argument('value1') as String)),
-    'failureRestoreItFromTheRecycleBinBefore' => failureRestoreItFromTheRecycleBinBefore,
-    'failureTheCapturedTemplateVersionIsUnavailable' => failureTheCapturedTemplateVersionIsUnavailable,
-    'failureRestoreTheOriginalProjectPackageBeforeEditing' => failureRestoreTheOriginalProjectPackageBeforeEditing,
+    'failureThisRecordIsAlreadyValue' => failureThisRecordIsAlreadyValue(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureChooseADifferentStatusOrLeaveIt' =>
+      failureChooseADifferentStatusOrLeaveIt,
+    'failureARecordThatIsValueCannotBe' => failureARecordThatIsValueCannotBe(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+      (message.argument('value1') is LocalizedMessage
+          ? resolve(message.argument('value1') as LocalizedMessage)
+          : message.argument('value1') as String),
+    ),
+    'failureRestoreItFromTheRecycleBinBefore' =>
+      failureRestoreItFromTheRecycleBinBefore,
+    'failureTheCapturedTemplateVersionIsUnavailable' =>
+      failureTheCapturedTemplateVersionIsUnavailable,
+    'failureRestoreTheOriginalProjectPackageBeforeEditing' =>
+      failureRestoreTheOriginalProjectPackageBeforeEditing,
     'failureAQuotedCSVValueIsUnfinished' => failureAQuotedCSVValueIsUnfinished,
-    'failureCloseTheQuotedValueAndImportThe' => failureCloseTheQuotedValueAndImportThe,
+    'failureCloseTheQuotedValueAndImportThe' =>
+      failureCloseTheQuotedValueAndImportThe,
     'failureThatFileIsEmpty' => failureThatFileIsEmpty,
     'failureChooseACSVWithAHeaderAnd' => failureChooseACSVWithAHeaderAnd,
     'failureThatTableCouldNotBeReadAs' => failureThatTableCouldNotBeReadAs,
@@ -2764,12 +4642,14 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'failureThatCSVCouldNotBeRead' => failureThatCSVCouldNotBeRead,
     'failureCheckTheFileAndTryAgain' => failureCheckTheFileAndTryAgain,
     'failureChooseACSVJSONOrXLSXTable' => failureChooseACSVJSONOrXLSXTable,
-    'failureChooseAnotherFileOrSplitThisTable' => failureChooseAnotherFileOrSplitThisTable,
+    'failureChooseAnotherFileOrSplitThisTable' =>
+      failureChooseAnotherFileOrSplitThisTable,
     'failureSaveItAsUTFCSVOrA' => failureSaveItAsUTFCSVOrA,
     'failureJSONDatasetsMustBeAnArrayOf' => failureJSONDatasetsMustBeAnArrayOf,
     'failureWrapTheRowsInAnArrayAnd' => failureWrapTheRowsInAnArrayAnd,
     'failureEveryJSONRowMustBeAnObject' => failureEveryJSONRowMustBeAnObject,
-    'failureRemoveNonObjectRowsAndImportThe' => failureRemoveNonObjectRowsAndImportThe,
+    'failureRemoveNonObjectRowsAndImportThe' =>
+      failureRemoveNonObjectRowsAndImportThe,
     'failureThatFileHasNoColumns' => failureThatFileHasNoColumns,
     'failureAddKeysToTheObjectsAndTry' => failureAddKeysToTheObjectsAndTry,
     'failureThatJSONIsNotValid' => failureThatJSONIsNotValid,
@@ -2779,58 +4659,96 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'failureChooseAWorkbookWithASheetOf' => failureChooseAWorkbookWithASheetOf,
     'failureThatSheetHasNoHeaderRow' => failureThatSheetHasNoHeaderRow,
     'failureAddAHeaderRowAndTryAgain' => failureAddAHeaderRowAndTryAgain,
-    'failureThatKeyColumnHasDuplicateValues' => failureThatKeyColumnHasDuplicateValues,
-    'failurePickAnotherKeyColumnOrConfirmDuplicates' => failurePickAnotherKeyColumnOrConfirmDuplicates,
+    'failureThatKeyColumnHasDuplicateValues' =>
+      failureThatKeyColumnHasDuplicateValues,
+    'failurePickAnotherKeyColumnOrConfirmDuplicates' =>
+      failurePickAnotherKeyColumnOrConfirmDuplicates,
     'failureARowNeedsADatasetAndA' => failureARowNeedsADatasetAndA,
     'failureFillThoseFieldsAndSaveAgain' => failureFillThoseFieldsAndSaveAgain,
     'failureADatasetNeedsANameAndA' => failureADatasetNeedsANameAndA,
     'failureTheKeyColumnMustBeOneOf' => failureTheKeyColumnMustBeOneOf,
     'failurePickAKeyFromTheColumnList' => failurePickAKeyFromTheColumnList,
-    'failureReferenceDataIsNotAvailableYet' => failureReferenceDataIsNotAvailableYet,
+    'failureReferenceDataIsNotAvailableYet' =>
+      failureReferenceDataIsNotAvailableYet,
     'failureThatTableHasNoDataColumns' => failureThatTableHasNoDataColumns,
     'failureATemplateNeedsAName' => failureATemplateNeedsAName,
-    'failureOpenAProjectThenAddTheTemplate' => failureOpenAProjectThenAddTheTemplate,
-    'failureTheShippedTemplatesCouldNotBeRead' => failureTheShippedTemplatesCouldNotBeRead,
-    'failureThatShippedTemplateIsNotOnThis' => failureThatShippedTemplateIsNotOnThis,
-    'failurePickAnotherTemplateFromTheLibrary' => failurePickAnotherTemplateFromTheLibrary,
-    'failureTheInheritedFieldGroupsCouldNotBe' => failureTheInheritedFieldGroupsCouldNotBe,
-    'failureAShippedTemplateIsMissingValue' => failureAShippedTemplateIsMissingValue((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
+    'failureOpenAProjectThenAddTheTemplate' =>
+      failureOpenAProjectThenAddTheTemplate,
+    'failureTheShippedTemplatesCouldNotBeRead' =>
+      failureTheShippedTemplatesCouldNotBeRead,
+    'failureThatShippedTemplateIsNotOnThis' =>
+      failureThatShippedTemplateIsNotOnThis,
+    'failurePickAnotherTemplateFromTheLibrary' =>
+      failurePickAnotherTemplateFromTheLibrary,
+    'failureTheInheritedFieldGroupsCouldNotBe' =>
+      failureTheInheritedFieldGroupsCouldNotBe,
+    'failureAShippedTemplateIsMissingValue' =>
+      failureAShippedTemplateIsMissingValue(
+        (message.argument('value0') is LocalizedMessage
+            ? resolve(message.argument('value0') as LocalizedMessage)
+            : message.argument('value0') as String),
+      ),
     'failureReinstallTheAppThenTryAgain' => failureReinstallTheAppThenTryAgain,
-    'failureAShippedTemplateUsesAnUnknownSchema' => failureAShippedTemplateUsesAnUnknownSchema,
-    'failureAShippedTemplateHasAnInvalidKey' => failureAShippedTemplateHasAnInvalidKey,
+    'failureAShippedTemplateUsesAnUnknownSchema' =>
+      failureAShippedTemplateUsesAnUnknownSchema,
+    'failureAShippedTemplateHasAnInvalidKey' =>
+      failureAShippedTemplateHasAnInvalidKey,
     'failureAShippedTemplateNameIsNotA' => failureAShippedTemplateNameIsNotA,
-    'failureAShippedTemplateNamesAnUnknownIdentity' => failureAShippedTemplateNamesAnUnknownIdentity,
-    'failureAShippedTemplateNamesAnUnknownParent' => failureAShippedTemplateNamesAnUnknownParent,
-    'failureAShippedTemplateNamesAnUnknownField' => failureAShippedTemplateNamesAnUnknownField,
-    'failureAShippedFieldIsMissingValue' => failureAShippedFieldIsMissingValue((message.argument('value0') is LocalizedMessage ? resolve(message.argument('value0') as LocalizedMessage) : message.argument('value0') as String)),
-    'failureAShippedFieldUsesAnUnknownType' => failureAShippedFieldUsesAnUnknownType,
+    'failureAShippedTemplateNamesAnUnknownIdentity' =>
+      failureAShippedTemplateNamesAnUnknownIdentity,
+    'failureAShippedTemplateNamesAnUnknownParent' =>
+      failureAShippedTemplateNamesAnUnknownParent,
+    'failureAShippedTemplateNamesAnUnknownField' =>
+      failureAShippedTemplateNamesAnUnknownField,
+    'failureAShippedFieldIsMissingValue' => failureAShippedFieldIsMissingValue(
+      (message.argument('value0') is LocalizedMessage
+          ? resolve(message.argument('value0') as LocalizedMessage)
+          : message.argument('value0') as String),
+    ),
+    'failureAShippedFieldUsesAnUnknownType' =>
+      failureAShippedFieldUsesAnUnknownType,
     'failureAShippedFieldLabelIsNotA' => failureAShippedFieldLabelIsNotA,
-    'failureAShippedTemplateCouldNotBeRead' => failureAShippedTemplateCouldNotBeRead,
-    'failureAShippedTemplateNamesAnUnknownRecord' => failureAShippedTemplateNamesAnUnknownRecord,
-    'failureTheTemplateOrItsRecordsChangedWhile' => failureTheTemplateOrItsRecordsChangedWhile,
-    'failureReviewTheUpdatedChangesAndTryAgain' => failureReviewTheUpdatedChangesAndTryAgain,
+    'failureAShippedTemplateCouldNotBeRead' =>
+      failureAShippedTemplateCouldNotBeRead,
+    'failureAShippedTemplateNamesAnUnknownRecord' =>
+      failureAShippedTemplateNamesAnUnknownRecord,
+    'failureTheTemplateOrItsRecordsChangedWhile' =>
+      failureTheTemplateOrItsRecordsChangedWhile,
+    'failureReviewTheUpdatedChangesAndTryAgain' =>
+      failureReviewTheUpdatedChangesAndTryAgain,
     'failureAFieldNeedsAKey' => failureAFieldNeedsAKey,
     'failureGiveEveryFieldAKeyAndSave' => failureGiveEveryFieldAKeyAndSave,
     'failureEachFieldKeyMustBeUniqueOn' => failureEachFieldKeyMustBeUniqueOn,
-    'failureRenameTheDuplicateKeyAndSaveAgain' => failureRenameTheDuplicateKeyAndSaveAgain,
+    'failureRenameTheDuplicateKeyAndSaveAgain' =>
+      failureRenameTheDuplicateKeyAndSaveAgain,
     'failureThatValueIsNotText' => failureThatValueIsNotText,
-    'failureEnterTextOrLeaveTheFieldEmpty' => failureEnterTextOrLeaveTheFieldEmpty,
+    'failureEnterTextOrLeaveTheFieldEmpty' =>
+      failureEnterTextOrLeaveTheFieldEmpty,
     'failureThatValueIsNotAWholeNumber' => failureThatValueIsNotAWholeNumber,
     'failureEnterAWholeNumberOrLeaveThe' => failureEnterAWholeNumberOrLeaveThe,
     'failureThatValueIsNotANumber' => failureThatValueIsNotANumber,
     'failureEnterANumberOrLeaveTheField' => failureEnterANumberOrLeaveTheField,
-    'failureThatNumberIsOutsideTheAllowedRange' => failureThatNumberIsOutsideTheAllowedRange,
-    'failureEnterANumberInsideTheRangeOr' => failureEnterANumberInsideTheRangeOr,
-    'failureThatValueIsShorterThanThisField' => failureThatValueIsShorterThanThisField,
+    'failureThatNumberIsOutsideTheAllowedRange' =>
+      failureThatNumberIsOutsideTheAllowedRange,
+    'failureEnterANumberInsideTheRangeOr' =>
+      failureEnterANumberInsideTheRangeOr,
+    'failureThatValueIsShorterThanThisField' =>
+      failureThatValueIsShorterThanThisField,
     'failureEnterALongerValueOrLeaveThe' => failureEnterALongerValueOrLeaveThe,
-    'failureThatValueIsLongerThanThisField' => failureThatValueIsLongerThanThisField,
-    'failureShortenTheValueOrLeaveTheField' => failureShortenTheValueOrLeaveTheField,
-    'failureThatValueDoesNotMatchTheExpected' => failureThatValueDoesNotMatchTheExpected,
-    'failureEnterAValueInTheExpectedForm' => failureEnterAValueInTheExpectedForm,
+    'failureThatValueIsLongerThanThisField' =>
+      failureThatValueIsLongerThanThisField,
+    'failureShortenTheValueOrLeaveTheField' =>
+      failureShortenTheValueOrLeaveTheField,
+    'failureThatValueDoesNotMatchTheExpected' =>
+      failureThatValueDoesNotMatchTheExpected,
+    'failureEnterAValueInTheExpectedForm' =>
+      failureEnterAValueInTheExpectedForm,
     'failureThisFieldSPatternIsNotValid' => failureThisFieldSPatternIsNotValid,
-    'failureOpenTheTemplateAndCorrectTheField' => failureOpenTheTemplateAndCorrectTheField,
+    'failureOpenTheTemplateAndCorrectTheField' =>
+      failureOpenTheTemplateAndCorrectTheField,
     'failureThatValueIsNotADate' => failureThatValueIsNotADate,
-    'failureEnterACalendarDateOrLeaveThe' => failureEnterACalendarDateOrLeaveThe,
+    'failureEnterACalendarDateOrLeaveThe' =>
+      failureEnterACalendarDateOrLeaveThe,
     'failureThatValueIsNotATimeOf' => failureThatValueIsNotATimeOf,
     'failureEnterATimeOrLeaveTheField' => failureEnterATimeOrLeaveTheField,
     'failureThatValueIsNotADateAnd' => failureThatValueIsNotADateAnd,
@@ -2844,22 +4762,36 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'failureAttachAFileOrLeaveTheField' => failureAttachAFileOrLeaveTheField,
     'failureThatValueIsNotALocation' => failureThatValueIsNotALocation,
     'failureCaptureAGPSFixOrLeaveThe' => failureCaptureAGPSFixOrLeaveThe,
-    'failureThatLocationIsOutsideTheEarth' => failureThatLocationIsOutsideTheEarth,
+    'failureThatLocationIsOutsideTheEarth' =>
+      failureThatLocationIsOutsideTheEarth,
     'failureCaptureAGPSFixAgainOrLeave' => failureCaptureAGPSFixAgainOrLeave,
     'failureThisFieldTypeHasNoEditorOn' => failureThisFieldTypeHasNoEditorOn,
     'failureOpenTheTemplateAndPickAType' => failureOpenTheTemplateAndPickAType,
-    'failureConfirmConsentWithTheNamedOperator' => failureConfirmConsentWithTheNamedOperator,
-    'failureThatFieldTypeIsNotRecognised' => failureThatFieldTypeIsNotRecognised,
+    'failureConfirmConsentWithTheNamedOperator' =>
+      failureConfirmConsentWithTheNamedOperator,
+    'failureThatFieldTypeIsNotRecognised' =>
+      failureThatFieldTypeIsNotRecognised,
     'failurePickATypeFromTheListAnd' => failurePickATypeFromTheListAnd,
-    'failureThatInputModeIsNotRecognised' => failureThatInputModeIsNotRecognised,
+    'failureThatInputModeIsNotRecognised' =>
+      failureThatInputModeIsNotRecognised,
     'failurePickAnInputModeFromTheList' => failurePickAnInputModeFromTheList,
-    'failureTheSuggestedOrderCouldNotBeRead' => failureTheSuggestedOrderCouldNotBeRead,
+    'failureTheSuggestedOrderCouldNotBeRead' =>
+      failureTheSuggestedOrderCouldNotBeRead,
     'failureUseTheOnDeviceResultsOrTry' => failureUseTheOnDeviceResultsOrTry,
-    'failureOpenTheTemplateListAndTryAgain' => failureOpenTheTemplateListAndTryAgain,
-    'failureTheDailyAnalysisLimitIsReached' => failureTheDailyAnalysisLimitIsReached,
-    'failureUseTheOnDeviceSuggestionsOrTry' => failureUseTheOnDeviceSuggestionsOrTry,
-    'failureExportProtectionsAreUnavailableOnThisDevice' => failureExportProtectionsAreUnavailableOnThisDevice,
-    'processingDailyCap' => processingDailyCap(message.argument('cap') as int,(message.argument('resetDay') is LocalizedMessage ? resolve(message.argument('resetDay') as LocalizedMessage) : message.argument('resetDay') as String)),
+    'failureOpenTheTemplateListAndTryAgain' =>
+      failureOpenTheTemplateListAndTryAgain,
+    'failureTheDailyAnalysisLimitIsReached' =>
+      failureTheDailyAnalysisLimitIsReached,
+    'failureUseTheOnDeviceSuggestionsOrTry' =>
+      failureUseTheOnDeviceSuggestionsOrTry,
+    'failureExportProtectionsAreUnavailableOnThisDevice' =>
+      failureExportProtectionsAreUnavailableOnThisDevice,
+    'processingDailyCap' => processingDailyCap(
+      message.argument('cap') as int,
+      (message.argument('resetDay') is LocalizedMessage
+          ? resolve(message.argument('resetDay') as LocalizedMessage)
+          : message.argument('resetDay') as String),
+    ),
     'processingDailyResetRecovery' => processingDailyResetRecovery,
     'bundlePasswordInvalid' => bundlePasswordInvalid,
     'bundlePasswordInvalidRecovery' => bundlePasswordInvalidRecovery,
@@ -2883,7 +4815,8 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'cloudUploadHistoryMissing' => cloudUploadHistoryMissing,
     'cloudUploadRestartRecovery' => cloudUploadRestartRecovery,
     'settingsPreferenceUnsupported' => settingsPreferenceUnsupported,
-    'settingsPreferenceUnsupportedRecovery' => settingsPreferenceUnsupportedRecovery,
+    'settingsPreferenceUnsupportedRecovery' =>
+      settingsPreferenceUnsupportedRecovery,
     'settingsPreferenceSaveFailed' => settingsPreferenceSaveFailed,
     'settingsPreferenceSaveRecovery' => settingsPreferenceSaveRecovery,
     'privacyCaptureUnreadable' => privacyCaptureUnreadable,
@@ -2893,7 +4826,9 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'cloudSignInChanged' => cloudSignInChanged,
     'cloudGoogleSignInRenewal' => cloudGoogleSignInRenewal,
     'cloudSignInAgain' => cloudSignInAgain,
-    'recycleEmptyRecords' => recycleEmptyRecords(message.argument('count') as int),
+    'recycleEmptyRecords' => recycleEmptyRecords(
+      message.argument('count') as int,
+    ),
     'recycleTypeProject' => recycleTypeProject,
     'recycleTypeRecord' => recycleTypeRecord,
     'recycleTypePhoto' => recycleTypePhoto,
@@ -2902,22 +4837,35 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'recycleRestored' => recycleRestored,
     'recycleParentDeleted' => recycleParentDeleted,
     'recycleParentDeletedRecovery' => recycleParentDeletedRecovery,
-    'recycleEntitySubtitle' => recycleEntitySubtitle((message.argument('type') is LocalizedMessage ? resolve(message.argument('type') as LocalizedMessage) : message.argument('type') as String),(message.argument('details') is LocalizedMessage ? resolve(message.argument('details') as LocalizedMessage) : message.argument('details') as String)),
+    'recycleEntitySubtitle' => recycleEntitySubtitle(
+      (message.argument('type') is LocalizedMessage
+          ? resolve(message.argument('type') as LocalizedMessage)
+          : message.argument('type') as String),
+      (message.argument('details') is LocalizedMessage
+          ? resolve(message.argument('details') as LocalizedMessage)
+          : message.argument('details') as String),
+    ),
     'recycleFolderRestoreFailed' => recycleFolderRestoreFailed,
     'recycleFolderRestoreRecovery' => recycleFolderRestoreRecovery,
     'aiSupportedProviders' => aiSupportedProviders,
     'aiCostControls' => aiCostControls,
-    'aiRequestLimitSummary' => aiRequestLimitSummary((message.argument('amount') is LocalizedMessage ? resolve(message.argument('amount') as LocalizedMessage) : message.argument('amount') as String)),
+    'aiRequestLimitSummary' => aiRequestLimitSummary(
+      (message.argument('amount') is LocalizedMessage
+          ? resolve(message.argument('amount') as LocalizedMessage)
+          : message.argument('amount') as String),
+    ),
     _ => message.fallback,
   };
 
   /// Localizes a typed failure while its .message stays English for audit.
   String failureMessage(Failure failure) => failure.localizedMessage == null
-      ? failure.message : resolve(failure.localizedMessage!);
+      ? failure.message
+      : resolve(failure.localizedMessage!);
 
   /// Localizes the recovery without changing the failure's stored value.
   String? failureRecovery(Failure failure) => failure.localizedRecovery == null
-      ? failure.recoveryAction : resolve(failure.localizedRecovery!);
+      ? failure.recoveryAction
+      : resolve(failure.localizedRecovery!);
 
   /// Renders optional state metadata without interpreting the fallback text.
   String? stateText(LocalizedMessage? semantic, String? fallback) =>

@@ -239,7 +239,7 @@ class MissingItems {
 - [x] Every screen reports problems the same way; no feature builds its own error text style (FE-CONS-11).
 - [x] The summary names how many issues there are and links to the first field with an error.
 - [x] A change in the issue list is announced to a screen reader (FE-A11Y-07).
-- [x] Tests: golden tests of `validation_display.dart` in light, dark and outdoor themes, plus a widget test of each
+- [ ] Tests: golden tests of `validation_display.dart` in light, dark and outdoor themes, plus a widget test of each
       state it renders — none, warnings only, errors only, and mixed.
 - [x] Two records with the same serial collide whatever their spacing, casing or punctuation.
 - [x] Editing an identity value recomputes the stored hash.
@@ -294,3 +294,10 @@ class MissingItems {
 - The review screen and the approval gate that enforce these blocks: this task supplies the reasons, 111 · Review acts
   on them.
 - Writing missing items and variances into a file: this task exposes both sets, 113 · Export produces the output.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
+

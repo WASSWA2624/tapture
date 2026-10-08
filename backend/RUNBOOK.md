@@ -164,6 +164,33 @@ Configure exact model identifiers. When a provider reports its model (`modelVers
 
 Provider contract references: [generateContent REST](https://ai.google.dev/api/generate-content), [inline audio](https://ai.google.dev/gemini-api/docs/audio), [Responses API](https://developers.openai.com/api/docs/guides/migrate-to-responses), [OpenAI photo input](https://developers.openai.com/api/docs/guides/images-vision), [OpenAI data controls](https://developers.openai.com/api/docs/guides/your-data). Contract tests inject fetch and make no billable requests. Live extraction acceptance requires the organisation's configured model/key and a reviewed cost bound.
 
+### Supported AI providers
+
+Gemini and OpenAI retain their existing configuration. Additional administrator-configured providers must implement `gemini-generate-content` or `openai-responses`; a matching protocol does not certify every provider feature. xAI uses the existing stateless Responses adapter for `ocr`, `extract` and `refine` with text or inline photos. Its unconfigured personal identity remains unavailable until authenticated server metadata supplies the approved catalogue. No server endpoint or catalogue configuration field is exposed in the mobile UI, and selection never changes billing automatically.
+
+The following `AI_PROVIDER_CATALOGUE` template is **non-deployable**: its cost placeholder deliberately fails boot validation. An administrator must review the exact available model identifiers, default model, provider/account terms, egress destination and positive per-attempt ceilings before replacing the placeholder with a number in the deployment's configured accounting unit. Include a ceiling for every model. `grok-4.7` is only a dated documentation/test example checked on 2026-10-08; it is neither a default deployment change nor a pricing recommendation.
+
+```json
+[
+  {
+    "id": "xai",
+    "label": "xAI",
+    "protocol": "openai-responses",
+    "baseUrl": "https://api.x.ai/v1",
+    "authMode": "required",
+    "operations": ["ocr", "extract", "refine"],
+    "models": ["grok-4.7"],
+    "model": "grok-4.7",
+    "currency": "configured",
+    "modelCostCeilings": { "grok-4.7": "REVIEWED_POSITIVE_CEILING" }
+  }
+]
+```
+
+Allow outbound HTTPS to the reviewed `api.x.ai` destination when the operator explicitly enables this catalogue. Personal credentials stay in the existing server-held encrypted custody; clients receive status only. The adapter uses `Authorization: Bearer`, inline `input_text`/`input_image`, `store:false`, `background:false`, the configured timeout and `AI_MAX_OUTPUT_TOKENS`. xAI's documented image scope is JPEG/PNG, up to 20 MiB per image; fit existing request/media limits to the selected model and provider. Saved local transcripts remain text input; raw-audio `transcribe` is excluded by this catalogue and refused before upstream dispatch. No new protocol, automatic provider/account fallback, deployed configuration or live test traffic is introduced.
+
+References checked on 2026-10-08: [xAI Responses](https://docs.x.ai/developers/rest-api-reference/inference/responses), [image understanding](https://docs.x.ai/developers/model-capabilities/images/understanding), [text generation and request-storage opt-out](https://docs.x.ai/developers/model-capabilities/text/generate-text), [Grok 4.7 example](https://docs.x.ai/developers/grok-4-7). Request-store opt-out controls retrieval of request/response history; it does not certify xAI's complete external retention policy. Repository fixtures inject every HTTP response and use positive **synthetic test ceilings**, never provider pricing.
+
 `GET /api/v1/ai/providers` returns configured base/allowlisted models, per-model cost ceilings and account availability without credentials. `GET /api/v1/ai/credentials/:provider` reports only this authenticated user's configured state. `PUT` saves `{apiKey}` as ciphertext; `DELETE` removes that user's key and is repeatable. Saving a key never changes the selected account. Removal prevents future personal dispatch and never selects managed billing; an already reserved request is in flight and may finish. Cancel its client request to abort the provider call. Append-only audit events retain only credential presence/removal metadata. The confirmed deployment destroy removes credentials, receipts and usage; ordinary record/project deletion stays local because no server project content exists.
 
 Versioned calls carry `processing:{version:1,projectRevision,recordId,requestHash,idempotencyKey}`. Compute lowercase SHA-256 over exact UTF-8 envelope bytes, base64-encode those same bytes as `payload`, and persist the identifier/snapshot locally before sending. The server hashes actor/device/project/operation/model/provider/billing account/revision/explicit maximum approved cost with that identity. It commits the metadata-only receipt and quota reservation atomically under the deployment advisory lock before provider dispatch. A different binding under the same key is refused with 409; simultaneous active requests share one operation, and a replica without that active request returns recovery information rather than dispatching twice.

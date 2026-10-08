@@ -1,4 +1,32 @@
 {
+  "captureManualForm": "Manual form",
+  "@captureManualForm": {"description": "Capture overflow action opening optional template fields."},
+  "projectExportDetails": "Package details",
+  "@projectExportDetails": {"description": "Collapsed local export summary heading."},
+  "projectExportDestination": "Project export folder",
+  "@projectExportDestination": {"description": "Canonical native project archive destination; never claims Downloads."},
+  "projectExportBrowserDestination": "Browser downloads",
+  "@projectExportBrowserDestination": {"description": "Browser-controlled public archive destination."},
+  "projectExportOpen": "Open",
+  "@projectExportOpen": {"description": "Explicit desktop action opening the stored project archive."},
+  "settingsSpeechModelDetails": "Model details",
+  "settingsSpeechModelSummary": "{state} · {size}",
+  "@settingsSpeechModelSummary": {
+    "description": "Concise state and localized size for one speech model.",
+    "placeholders": {
+      "state": {"type": "String", "description": "Localized model readiness."},
+      "size": {"type": "String", "description": "Localized file size."}
+    }
+  },
+  "@settingsSpeechModelDetails": {"description": "Collapsed source and integrity details for one speech model."},
+  "backendConfigure": "Configure",
+  "@backendConfigure": {"description": "Explicit secondary action saving inline server/account configuration."},
+  "aiConnectionDetails": "Connection details",
+  "@aiConnectionDetails": {"description": "Collapsed complete AI custody, billing and secondary status details."},
+  "aiCustodySummary": "Your server handles AI access and keys.",
+  "aiProviderAttribution": "Gemini is a trademark of Google LLC. OpenAI and xAI marks belong to their respective owners.",
+  "@aiProviderAttribution": {"description": "Provider trademark attribution, shown inside Connection details."},
+  "@aiCustodySummary": {"description": "Neutral helper; complete custody and billing explanations remain in Connection details."},
   "aiServerAndAccount": "Server and account",
   "@aiServerAndAccount": {
     "description": "Secondary AI settings action opening optional backend setup."
@@ -4968,7 +4996,7 @@
   "@settingsSpeechSection": {
     "description": "Heading of the on-device speech settings on the Language screen."
   },
-  "settingsSpeechEngineWhisper": "Speech is turned into text on this device by the {model}.",
+  "settingsSpeechEngineWhisper": "On this device: {model}.",
   "@settingsSpeechEngineWhisper": {
     "description": "Which engine turns speech into text: the app's own on-device model.",
     "placeholders": {
@@ -4990,7 +5018,7 @@
   "@settingsSpeechQuality": {
     "description": "Name of the speed-or-accuracy speech setting."
   },
-  "settingsSpeechQualityEffect": "Automatic picks the best model this device can run smoothly.",
+  "settingsSpeechQualityEffect": "Automatic chooses a model that fits this device.",
   "@settingsSpeechQualityEffect": {
     "description": "What the transcription quality setting changes."
   },

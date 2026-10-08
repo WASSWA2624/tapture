@@ -1,6 +1,7 @@
 /// The account feature's presentation layer: screens, controllers and widgets.
 library;
 
+export 'account_connection_panel.dart';
 export 'account_route.dart';
 export 'account_session.dart';
 export 'backend_settings_screen.dart';

@@ -97,6 +97,72 @@ abstract class AppLocalizations {
     Locale('en', 'XA'),
   ];
 
+  /// Capture overflow action opening optional template fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual form'**
+  String get captureManualForm;
+
+  /// Collapsed local export summary heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Package details'**
+  String get projectExportDetails;
+
+  /// Canonical native project archive destination; never claims Downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Project export folder'**
+  String get projectExportDestination;
+
+  /// Browser-controlled public archive destination.
+  ///
+  /// In en, this message translates to:
+  /// **'Browser downloads'**
+  String get projectExportBrowserDestination;
+
+  /// Explicit desktop action opening the stored project archive.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get projectExportOpen;
+
+  /// Collapsed source and integrity details for one speech model.
+  ///
+  /// In en, this message translates to:
+  /// **'Model details'**
+  String get settingsSpeechModelDetails;
+
+  /// Concise state and localized size for one speech model.
+  ///
+  /// In en, this message translates to:
+  /// **'{state} · {size}'**
+  String settingsSpeechModelSummary(String state, String size);
+
+  /// Explicit secondary action saving inline server/account configuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure'**
+  String get backendConfigure;
+
+  /// Collapsed complete AI custody, billing and secondary status details.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection details'**
+  String get aiConnectionDetails;
+
+  /// Neutral helper; complete custody and billing explanations remain in Connection details.
+  ///
+  /// In en, this message translates to:
+  /// **'Your server handles AI access and keys.'**
+  String get aiCustodySummary;
+
+  /// Provider trademark attribution, shown inside Connection details.
+  ///
+  /// In en, this message translates to:
+  /// **'Gemini is a trademark of Google LLC. OpenAI and xAI marks belong to their respective owners.'**
+  String get aiProviderAttribution;
+
   /// Secondary AI settings action opening optional backend setup.
   ///
   /// In en, this message translates to:
@@ -6112,7 +6178,7 @@ abstract class AppLocalizations {
   /// Which engine turns speech into text: the app's own on-device model.
   ///
   /// In en, this message translates to:
-  /// **'Speech is turned into text on this device by the {model}.'**
+  /// **'On this device: {model}.'**
   String settingsSpeechEngineWhisper(Object model);
 
   /// Which engine turns speech into text: the operating system's recogniser, kept on the device.
@@ -6136,7 +6202,7 @@ abstract class AppLocalizations {
   /// What the transcription quality setting changes.
   ///
   /// In en, this message translates to:
-  /// **'Automatic picks the best model this device can run smoothly.'**
+  /// **'Automatic chooses a model that fits this device.'**
   String get settingsSpeechQualityEffect;
 
   /// Quality choice: the device decides.

@@ -372,9 +372,13 @@ final Uint8List aFeedbackPng = Uint8List.fromList(<int>[
 ]);
 
 /// An in-memory database holding one project, one template, [records] rows and
-/// one photo per record.
-Future<sqlite.AppDatabase> seededDatabase({int records = 0}) async {
-  final sqlite.AppDatabase db = sqlite.AppDatabase.memory();
+/// one photo per record. [database] supplies an isolated platform connection;
+/// successful callers close the returned database, while failed seeds close it.
+Future<sqlite.AppDatabase> seededDatabase({
+  int records = 0,
+  sqlite.AppDatabase? database,
+}) async {
+  final sqlite.AppDatabase db = database ?? sqlite.AppDatabase.memory();
   final DateTime capturedAt = DateTime.utc(2026, 9, 17, 8);
   final FixedClock clock = FixedClock(capturedAt);
   final UuidV7Service ids = UuidV7Service.sequence(clock);

@@ -21,6 +21,11 @@ and the one switch that stops every outbound call while capture, editing, review
 writing a single stored flag the connectivity service folds in so no feature learns about the switch itself.
 Authentication belongs to the backend (§70.1) and no part of it appears here.
 
+Task [144 W3 and W7–W9](24-product-refinements.md#144--resolve-feedback-archive-08102026-1045) supersedes Storage,
+speech and AI settings presentation through page retirement and progressive disclosures. Both language selectors,
+stored preferences and offline behavior remain; account controls are composed inline under task 024's app-side
+contract. Acceptance and verification for the changed presentation are recorded in task 144.
+
 ### Files
 
 Operator identity:

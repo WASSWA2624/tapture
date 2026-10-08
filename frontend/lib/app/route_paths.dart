@@ -44,13 +44,15 @@ abstract final class RoutePaths {
   static const String settingsAppearance = '$more/appearance';
   static const String settingsStorage = '$more/storage';
 
-  /// Files checked against their records, under Storage (tasks 004, 005).
+  /// Legacy diagnostic address, redirected to Storage (task 144).
   static const String settingsStorageCheck = '$settingsStorage/check';
   static const String settingsDestinations = '$more/destinations';
   static const String settingsUploads = '$more/uploads';
   static const String settingsFiles = '$more/files';
   static const String settingsSecurity = '$more/security';
   static const String settingsPrivacy = '$more/privacy';
+
+  /// Legacy account address, redirected to AI's expanded account section.
   static const String settingsAccount = '$more/account';
   static const String settingsRelay = '$more/relay';
 
@@ -78,8 +80,8 @@ abstract final class RoutePaths {
   static String projectCapture(String projectId) =>
       '${project(projectId)}/capture';
 
-  /// Rapid mode for [projectId]: one tap saves an item raw and starts the
-  /// next (task 012 step 20).
+  /// Legacy Rapid address, redirected to ordinary Capture without changing
+  /// the project's durable session (task 144).
   static String projectCaptureRapid(String projectId) =>
       '${projectCapture(projectId)}/rapid';
   static String projectEdit(String projectId) => '${project(projectId)}/edit';

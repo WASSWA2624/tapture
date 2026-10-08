@@ -4,9 +4,10 @@ extension _CaptureDocuments on _CaptureScreenState {
   Future<void> _documentImported(
     Project project,
     Uint8List bytes,
-    String name,
-  ) async {
-    final String key = _sessionKey();
+    String name, {
+    String? sessionKey,
+  }) async {
+    final String key = sessionKey ?? _sessionKey();
     final Result<void> stored = await ref
         .read(captureControllerProvider(key).notifier)
         .importDocument(
@@ -22,6 +23,28 @@ extension _CaptureDocuments on _CaptureScreenState {
         failure.message,
         tone: SnackTone.error,
         localizedMessage: failure.explanation,
+      );
+    }
+  }
+
+  Future<void> _importDocument(Project project, String key) async {
+    final Result<void> imported = await ImportCaptureDocument.run(
+      picker: ref.read(platform.documentPickerProvider),
+      onImported: (Uint8List bytes, String name) async {
+        if (mounted) {
+          await _documentImported(project, bytes, name, sessionKey: key);
+        }
+      },
+    );
+    if (!mounted) return;
+    if (imported case FailureResult<void>(
+      :final Failure failure,
+    ) when failure is! CancelledFailure) {
+      final LocalizedCopy localCopy = Copy.of(context);
+      showAppSnack(
+        context,
+        localCopy.captureImportRejected(localCopy.resolve(failure.explanation)),
+        tone: SnackTone.warning,
       );
     }
   }

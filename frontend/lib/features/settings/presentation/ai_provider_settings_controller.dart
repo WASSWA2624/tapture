@@ -39,6 +39,7 @@ typedef _AiView = ({
 class _AiSettings extends Notifier<_AiView> {
   bool _isTesting = false;
   int _credentialStatusEpoch = 0;
+  _AiFailureAction failureAction = _AiFailureAction.status;
 
   /// Providers and models are chosen for extraction, the step every
   /// record goes through; the pipeline's other steps follow the same
@@ -65,6 +66,13 @@ class _AiSettings extends Notifier<_AiView> {
           .where((value) => value.id == state.providerId)
           .firstOrNull
           ?.serverCredentialProvider;
+      if (priorCredential != null &&
+          selection.provider.serverCredentialProvider == null) {
+        // Catalogue removal revokes the field without losing its typed input.
+        // Discard any status read that began under the removed configuration.
+        _credentialStatusEpoch++;
+        state = _with(keyStored: false);
+      }
       if (selection.provider.serverCredentialProvider != null &&
           selection.provider.serverCredentialProvider != priorCredential) {
         unawaited(_readKeyStored());
@@ -113,6 +121,21 @@ class _AiSettings extends Notifier<_AiView> {
 
   /// The chosen model, or the provider's first when none is chosen.
   ModelDescriptor get model => _validate(state.providerId, state.modelId).model;
+
+  /// Identity or capability invalidity, independent of temporary availability.
+  bool get selectionInvalid {
+    final ProviderDescriptor? selected = _registry.catalog
+        .where((ProviderDescriptor value) => value.id == state.providerId)
+        .firstOrNull;
+    if (selected == null || !selected.operations.contains(_operation)) {
+      return true;
+    }
+    final ModelDescriptor? selectedModel = selected.models
+        .where((ModelDescriptor value) => value.id == state.modelId)
+        .firstOrNull;
+    return selectedModel == null ||
+        !selectedModel.operations.contains(_operation);
+  }
 
   /// Chooses [providerId] and its default model.
   void selectProvider(String providerId) {
@@ -164,6 +187,7 @@ class _AiSettings extends Notifier<_AiView> {
         const ValidationFailure(
           message: 'Enter a non-negative spending limit.',
         ),
+        action: _AiFailureAction.save,
       );
       return false;
     }
@@ -177,7 +201,7 @@ class _AiSettings extends Notifier<_AiView> {
                 .save(serverProvider, key)
           : await _storage.putSecret(SecretKey.providerCredential, key);
       if (secret case FailureResult<void>(:final Failure failure)) {
-        _fail(failure);
+        _fail(failure, action: _AiFailureAction.save);
         return false;
       }
     }
@@ -189,7 +213,7 @@ class _AiSettings extends Notifier<_AiView> {
         ]) {
       final Result<void> written = await write();
       if (written case FailureResult<void>(:final Failure failure)) {
-        _fail(failure);
+        _fail(failure, action: _AiFailureAction.save);
         return false;
       }
     }
@@ -215,7 +239,7 @@ class _AiSettings extends Notifier<_AiView> {
           .read(serverCredentialClientProvider)
           .remove(serverProvider);
       if (removed case FailureResult<void>(:final Failure failure)) {
-        _fail(failure);
+        _fail(failure, action: _AiFailureAction.remove);
       } else if (ref.mounted) {
         state = _with(busy: false, keyStored: false);
       }
@@ -225,7 +249,7 @@ class _AiSettings extends Notifier<_AiView> {
       SecretKey.providerCredential,
     );
     if (removed case FailureResult<void>(:final Failure failure)) {
-      _fail(failure);
+      _fail(failure, action: _AiFailureAction.remove);
       return;
     }
     // The whole selection goes with the key: the provider, its model and
@@ -247,7 +271,7 @@ class _AiSettings extends Notifier<_AiView> {
         ]) {
       final Result<void> reset = await write();
       if (reset case FailureResult<void>(:final Failure failure)) {
-        _fail(failure);
+        _fail(failure, action: _AiFailureAction.remove);
         return;
       }
     }
@@ -322,7 +346,7 @@ class _AiSettings extends Notifier<_AiView> {
           case Success<bool>(:final bool value):
             state = _with(keyStored: value);
           case FailureResult<bool>(:final Failure failure):
-            state = _with(failure: failure);
+            _fail(failure);
         }
       }
       return;
@@ -370,8 +394,12 @@ class _AiSettings extends Notifier<_AiView> {
     );
   }
 
-  void _fail(Failure failure) {
+  void _fail(
+    Failure failure, {
+    _AiFailureAction action = _AiFailureAction.status,
+  }) {
     if (ref.mounted) {
+      failureAction = action;
       state = _with(busy: false, failure: failure);
     }
   }
@@ -397,3 +425,5 @@ class _AiSettings extends Notifier<_AiView> {
     );
   }
 }
+
+enum _AiFailureAction { status, save, remove }

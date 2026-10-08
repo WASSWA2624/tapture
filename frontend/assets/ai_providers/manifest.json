@@ -1,0 +1,31 @@
+{
+  "renderer": "@resvg/resvg-js@2.6.2",
+  "alphaMask": "SVG 2 presentation attribute",
+  "assets": {
+    "gemini": {
+      "source": "gemini.png",
+      "sourceSha256": "55ff4f4a4f449731d37f3071511545a678f101e560d1d65ac18372403bbc6c5a",
+      "pngSha256": "55ff4f4a4f449731d37f3071511545a678f101e560d1d65ac18372403bbc6c5a"
+    },
+    "openai": {
+      "source": "openai.svg",
+      "sourceSha256": "7be72f1fea831d3ba81a545cee79b7e0ae69449d5d7837c9571ccbfb4aa1e00b",
+      "pngSha256": "664d678ef28b4a44e4d8b2f5426ad34bc1603c1b062a74ecc6e79b6d28430950"
+    },
+    "openai_inverse": {
+      "source": "openai_inverse.svg",
+      "sourceSha256": "b94ea61d860fae6f82f43571f36f17111fcf5d348e8e9cc22ae4b441c7560011",
+      "pngSha256": "7d1bcb5f6c0332d507ad536a469b4b65da674918e616c0ec1e4b85ac01da7422"
+    },
+    "xai": {
+      "source": "xai.svg",
+      "sourceSha256": "f441eef32955dabf2ded0bb66bf5674a53afb81557d9281c00735dd245dfdc86",
+      "pngSha256": "7b0bc5eca3df360719bdf875bc7c83acab2e9db2ba74fdfbb597170e07101c6a"
+    },
+    "xai_inverse": {
+      "source": "xai_inverse.svg",
+      "sourceSha256": "986c5af775f7b550d41cf44e20d981407b30e7f24fa231e8434c5ec3db9c5307",
+      "pngSha256": "9f8f9b6d5477fb692bb60bbea414f3882bde45d867e260f6610eeaae7c1a1736"
+    }
+  }
+}

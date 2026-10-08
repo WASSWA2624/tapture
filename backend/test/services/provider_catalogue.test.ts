@@ -18,7 +18,10 @@ import { fakeProvider } from '../../src/services/ai/provider.js';
 import { proxyAi } from '../../src/services/ai/proxy.js';
 import { receiptBinding } from '../../src/services/ai/receipts.js';
 import { testConfig } from '../helpers.js';
-import { catalogueProvider } from '../fakes/provider_catalogue.js';
+import {
+  catalogueProvider,
+  xaiCatalogueProvider,
+} from '../fakes/provider_catalogue.js';
 
 const principal = {
   userId: 'user',
@@ -280,6 +283,87 @@ it('new provider credentials remain encrypted and scoped to a required-auth acco
       selectProvider(store, config, fakeProvider('fail'), principal, input()),
     failure('unavailable'),
   );
+});
+
+it('publishes configured xAI metadata without its endpoint or credential and preserves account custody', async () => {
+  const { store, config } = fixture(xaiCatalogueProvider());
+  const catalogue = () => providerCatalogue(store, config, principal);
+  const selectedRow = async () =>
+    (await catalogue()).providers.filter((row) => row.provider === 'xai');
+  assert.equal((await selectedRow()).length, 1);
+  assert.deepEqual((await selectedRow())[0], {
+    provider: 'xai',
+    label: 'xAI',
+    protocol: 'openai-responses',
+    authMode: 'required',
+    operations: ['ocr', 'extract', 'refine'],
+    model: 'grok-4.7',
+    models: ['grok-4.7'],
+    modelCostCeilings: { 'grok-4.7': 0.025 },
+    requestCostCeiling: 0.025,
+    currency: 'configured',
+    managed: false,
+    personalConfigured: false,
+  });
+  await saveCredential(store, config, principal, 'xai', 'private-xai-fixture');
+  assert.equal((await selectedRow())[0]?.personalConfigured, true);
+  const serialized = JSON.stringify(await catalogue());
+  for (const forbidden of [
+    'api.x.ai',
+    'baseUrl',
+    'private-xai-fixture',
+    'encryptedKey',
+  ])
+    assert.equal(serialized.includes(forbidden), false);
+  assert.equal(
+    store
+      .aiCredential('user', 'xai')
+      ?.encryptedKey.includes('private-xai-fixture'),
+    false,
+  );
+  const selected = await selectProvider(
+    store,
+    config,
+    fakeProvider('fail'),
+    principal,
+    input({ kind: 'personal', provider: 'xai' }),
+    (id, key) => {
+      assert.equal(id, 'xai');
+      assert.equal(key, 'private-xai-fixture');
+      return fakeProvider('ok');
+    },
+  );
+  assert.equal(selected.model, 'grok-4.7');
+  assert.deepEqual(selected.operations, ['ocr', 'extract', 'refine']);
+  await assert.rejects(
+    () =>
+      selectProvider(
+        store,
+        config,
+        fakeProvider('fail'),
+        principal,
+        input({ kind: 'managed', provider: 'xai' }),
+      ),
+    failure('unavailable'),
+  );
+  await assert.rejects(
+    () =>
+      selectProvider(
+        store,
+        config,
+        fakeProvider('fail'),
+        { ...principal, userId: 'other' },
+        input({ kind: 'personal', provider: 'xai' }),
+      ),
+    failure('unavailable'),
+  );
+  await assert.rejects(
+    () => providerCatalogue(store, config, { ...principal, role: 'reviewer' }),
+    failure('not_found'),
+  );
+  await deleteCredential(store, principal, 'xai', config);
+  assert.equal((await selectedRow())[0]?.personalConfigured, false);
+  assert.equal(store.usage().length, 0);
 });
 
 it('configuration changes reject reused receipt identities before another dispatch', async () => {

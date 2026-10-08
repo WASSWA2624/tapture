@@ -12,6 +12,43 @@ export 'localized_message.dart';
 /// Compatibility copy for services without a widget context, in English.
 /// Widgets resolve their own inherited locale through [of].
 abstract final class Copy {
+  /// Optional template fields opened from Capture.
+  static String get captureManualForm => _english.captureManualForm;
+
+  /// Details about the completed or planned package.
+  static String get projectExportDetails => _english.projectExportDetails;
+
+  /// Canonical archive location on a native device.
+  static String get projectExportDestination =>
+      _english.projectExportDestination;
+
+  /// Browser-controlled archive destination.
+  static String get projectExportBrowserDestination =>
+      _english.projectExportBrowserDestination;
+
+  /// Explicit desktop handoff of the stored archive.
+  static String get projectExportOpen => _english.projectExportOpen;
+
+  /// Optional speech-model source and integrity detail.
+  static String get settingsSpeechModelDetails =>
+      _english.settingsSpeechModelDetails;
+
+  /// Concise state and localized size for one speech model.
+  static String settingsSpeechModelSummary(String state, String size) =>
+      _english.settingsSpeechModelSummary(state, size);
+
+  /// Explicit inline account configuration action.
+  static String get backendConfigure => _english.backendConfigure;
+
+  /// Complete AI connection and custody explanations.
+  static String get aiConnectionDetails => _english.aiConnectionDetails;
+
+  /// Concise neutral custody helper beside provider selection.
+  static String get aiCustodySummary => _english.aiCustodySummary;
+
+  /// Legal attribution for the bundled provider marks.
+  static String get aiProviderAttribution => _english.aiProviderAttribution;
+
   /// Opens optional backend setup from AI settings.
   static String get aiServerAndAccount => _english.aiServerAndAccount;
 
@@ -10221,6 +10258,8 @@ abstract final class Copy {
 
   /// Spending limit
   static String get aiCostControls => _english.aiCostControls;
+
   /// Saved maximum cost per request.
-  static String aiRequestLimitSummary(String amount) => _english.aiRequestLimitSummary(amount);
+  static String aiRequestLimitSummary(String amount) =>
+      _english.aiRequestLimitSummary(amount);
 }

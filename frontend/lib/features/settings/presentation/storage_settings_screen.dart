@@ -183,13 +183,6 @@ class StorageSettingsScreen extends ConsumerWidget {
                 trailing: const Icon(AppIcons.open),
                 onTap: () => context.go(RoutePaths.recycleBin),
               ),
-              AppListTile(
-                key: const ValueKey<String>('storage-check-files'),
-                title: localCopy.storageCheckTitle,
-                subtitle: localCopy.storageCheckSubtitle,
-                trailing: const Icon(AppIcons.open),
-                onTap: () => context.go(RoutePaths.settingsStorageCheck),
-              ),
             ],
           );
         },

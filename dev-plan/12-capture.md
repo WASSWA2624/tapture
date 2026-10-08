@@ -30,15 +30,15 @@ Partially complete: real-device process kills, preview/orientation and shutter t
 
 The whole capture surface, and the rule underneath it that evidence is durable before the interface confirms anything:
 the session model and the controller that write every photo, caption and typed value through to disk and the database
-as it is added; the capture screen with its context bar, photo tray, caption, identifier, inline template fields and
-two save actions; the camera permission gate, the preview, the shutter with its quality scoring, the four controls and
-document mode; import of images, of documents and of lazily rendered PDF pages; the tray with ordering, photo types
+as it is added; the capture screen with its context bar, photo tray, caption, identifier, optional template fields in
+overflow and two save actions; the camera permission gate, the preview, the shutter with its quality scoring, the four
+controls and document mode; import of images, of documents and of lazily rendered PDF pages; the tray with ordering, photo types
 and multi-select; the full-screen viewer with rotation and cropping; delete, retake and move; the record caption and
 per-photo captions with an explicit scope selector; voice input from microphone permission through on-device dictation
 to a verbatim transcript, with long-form audio recording beside it; the barcode scanner with its continuous mode and
 the identifier-first lookup it feeds; automatic date, time, operator, device, record number and optional coordinates;
-both save paths; the reset that readies the next item; crash recovery for an interrupted session; rapid mode; the
-storage guard inside capture; and the template picker with session and context-level pinning.
+both save paths; the reset that readies the next item; crash recovery for an interrupted session; sequential raw
+capture; the storage guard inside capture; and the template picker with session and context-level pinning.
 
 ### Files
 
@@ -280,8 +280,10 @@ class SttResult {
 19. Detect an unfinished session at launch, before the capture screen is reachable, and offer resume or discard with
     the photo count named on the prompt. Resume restores photos, captions and typed values; discard asks for
     confirmation and tombstones, so the evidence remains recoverable.
-20. Run the high-speed loop: one tap saves the current item raw, resets and returns to a live preview, with a running
-    item list showing photo counts and the last item reopenable for correction. Analyse nothing until the operator asks.
+20. Ordinary sequential Capture saves the current item raw and starts the next with context/template defaults retained;
+    reopen saved records through the project. Task [144](24-product-refinements.md#144--resolve-feedback-archive-08102026-1045)
+    supersedes the standalone Rapid run list/page, retains its legacy shared-session route as a redirect, and moves
+    optional manual fields/document import into Capture overflow. Analyse nothing until the operator asks.
 21. Read both thresholds from the storage guard (069); never hardcode a size here. Warn once per session, dismissibly,
     and keep capture fully working. At the stop threshold refuse new writes only — a write already in flight completes
     rather than truncating — with a message that names the free space left and offers export as the way out.

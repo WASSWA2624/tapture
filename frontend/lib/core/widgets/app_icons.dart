@@ -102,7 +102,7 @@ abstract final class AppIcons {
   static const IconData unarchive = Icons.unarchive_outlined;
 
   /// Brings a deleted record back from the recycle bin, whole.
-  static const IconData restore = Icons.restore_from_trash_outlined;
+  static const IconData restore = Icons.restore_outlined;
 
   /// The recycle bin as a place. [restore] stays the action inside it.
   static const IconData recycleBin = Icons.delete_sweep_outlined;

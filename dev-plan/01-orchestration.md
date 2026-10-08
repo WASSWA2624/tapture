@@ -680,3 +680,118 @@ There is no Flutter review command. `frontend/tool/verify.dart` is not part of t
 
 - [x] `frontend/tool/verify.dart` is absent, and nothing in CI, rules, or prompts requires it.
 
+## 145 — Remove generated frontend test comparison artifacts
+
+**Implementation started:** Yes
+
+### Implement
+
+Remove only ignored generated golden-comparison PNGs from `frontend/test/`. Preserve a verified compressed
+archive outside the repository before removal, and leave every retained test, helper, fixture and baseline unchanged.
+
+### Files
+
+- `frontend/test/**/failures/*_isolatedDiff.png`
+- `frontend/test/**/failures/*_maskedDiff.png`
+- `frontend/test/**/failures/*_masterImage.png`
+- `frontend/test/**/failures/*_testImage.png`
+- `dev-plan/01-orchestration.md`
+- `dev-tracker.md` (generated)
+
+### Constraints
+
+Limit removal to resolved paths beneath `frontend/test/`; select no tracked files, fixtures or golden baselines.
+Remove a `failures/` directory only after it is empty. Do not change application code, ignore rules or existing task progress.
+
+### Definition of done
+
+- [x] Generated comparison PNGs are archived outside the repository and every archived file matches its source SHA-256.
+- [x] Only the verified ignored comparison PNGs and their empty `failures/` directories are removed.
+- [ ] Tests: before/after inventory and SHA-256 checks prove every retained file under `frontend/test/` is unchanged;
+  Git confirms no tracked test changes were introduced and no generated comparison PNGs remain.
+- [x] `dart run tool/sync_dev_tracker.dart` and `dart run tool/sync_dev_tracker.dart --check` pass after recording verified progress.
+
+### Evidence
+
+2026-10-08: removed 1,018 ignored comparison PNGs (4,430,000 bytes) and 13 empty `failures/` directories.
+The outside-repository archive and manifest are at
+`C:/Users/WASSWA WILSON/AppData/Local/Temp/tapture-test-cleanup-00bc3a6392b140519d740cacd8bd5170/`;
+all 1,018 archived entries match their source SHA-256. Cleanup selected no test, helper, fixture or golden baseline.
+The final retained-file comparison found 1,981 unchanged files and five concurrent changes to
+`frontend/test/features/projects/presentation/goldens/export_summary_{dark,light,outdoor}.png`,
+`frontend/test/features/account/presentation/account_connection_panel_test.dart` and
+`frontend/test/features/settings/presentation/ai_supported_providers_test.dart`.
+Those files were outside every removal command and were preserved; the unchanged-retained-files criterion remains
+open rather than claiming that this shared tree stayed unchanged. Final inventory contains all 1,986 retained files,
+no comparison PNGs or `failures/` directories, and unchanged Git test status. No application test suite was run
+for generated-output removal.
+
+## 146 — Remove frontend test images without changing app runtime
+
+**Implementation started:** Yes
+
+### Implement
+
+Remove raster/vector image files from `frontend/test/`, including golden baselines and capture fixtures, after
+archiving their original bytes outside the repository. Verify that production assets and runtime dependencies do
+not include these test images, and that the application still builds and passes its existing startup checks.
+
+The user explicitly approved image removal provided the app continues to work normally. This removes inputs needed
+by image-dependent tests; retain those tests and record that the archive must be restored to run them. Do not skip,
+weaken or remove tests to conceal missing baselines or fixtures.
+
+### Files
+
+- `frontend/test/**/*.png` and any other image extensions present in the verified inventory
+- `dev-plan/01-orchestration.md`
+- `dev-plan/02-foundation.md`
+- `dev-plan/03-design-system.md`
+- `dev-plan/06-app-shell.md`
+- `dev-plan/11-context.md`
+- `dev-plan/15-data-quality.md`
+- `dev-plan/24-product-refinements.md`
+- `dev-tracker.md` (generated)
+
+### Constraints
+
+Remove only verified image paths beneath `frontend/test/`. Preserve production code, application assets, test source,
+non-image fixtures and unrelated user edits. No new dependencies, application changes or replacement test infrastructure.
+
+### Definition of done
+
+- [x] Runtime dependency and asset checks confirm the removed images are not production application inputs.
+- [x] Every removed image is archived outside the repository with a manifest, and archive SHA-256 checks match the originals.
+- [x] No image files remain under `frontend/test/`; the retained non-image inventory contains no additional removals.
+- [x] Tests: existing smoke, bootstrap and native-bootstrap-binding tests pass after image removal.
+- [x] The web release build succeeds after image removal.
+- [ ] The development Android debug APK builds successfully after image removal.
+- [x] Image-dependent test limitations and any unrelated concurrent edits are recorded without claiming a green full suite.
+- [x] `dart run tool/sync_dev_tracker.dart` and `dart run tool/sync_dev_tracker.dart --check` pass after recording verified progress.
+
+### Evidence
+
+2026-10-08: the user approved removing all test images provided app runtime stays functional. Removed 660 PNGs
+(10,286,629 bytes): 654 golden baselines and six capture image fixtures. Every image is preserved byte-for-byte in
+`C:/Users/WASSWA WILSON/AppData/Local/TaptureTestArchives/2026-10-08-0be07c664cbc4f62a46a9d6648d58fe8/test-images.zip`,
+with a SHA-256 manifest alongside it and inside the archive. The removal inventory reports zero remaining images and
+all 1,326 original non-image files still present. Cleanup changed no application source, production assets or test source;
+unrelated shared-tree edits remain preserved.
+
+Production/native source checks found no runtime references to these images; `frontend/pubspec.yaml` bundles only
+production `assets/` directories and `tool/secret_patterns.yaml`. The existing smoke, bootstrap and native-bootstrap
+binding checks all pass (3 tests, exit 0), including production-root launch, real SQLite record rendering and export
+preparation; output is in `frontend/build/task146-startup-tests.log`. This verifies startup and exercised bindings,
+not every physical-device flow.
+
+`flutter build web --release --no-pub` passes (exit 0, `frontend/build/web`), with output in
+`frontend/build/task146-web-build.log`. No test images were restored or regenerated for either verification.
+
+Both Android debug-build attempts stop in Gradle with `java.io.IOException: Unable to establish loopback connection`.
+The process-only IPv4 retry failed the same way; no project configuration was changed. Android build acceptance remains
+open; logs are `frontend/build/task146-android-build.log` and `frontend/build/task146-android-build-ipv4.log`.
+
+Golden suites and the image-quality, document-correction and live-camera fixture tests need their archived images
+restored before normal execution. Their source remains intact, and no checks were disabled or weakened. Missing PNG
+acceptance criteria are reopened where previously checked; historical successful-run evidence remains historical.
+Specifically, 33 affected acceptance items across 14 tasks were reopened; JSON request goldens, PDF-text goldens
+and unrelated verified application behavior were preserved. The generated tracker was refreshed and checked.

@@ -13,6 +13,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
@@ -285,34 +286,44 @@ class _ModelRow extends ConsumerWidget {
         : checked
         ? localCopy.settingsSpeechModelVerified
         : localCopy.settingsSpeechModelPresent;
-    final IconData icon = !status.present
-        ? AppIcons.info
-        : status.damaged
-        ? AppIcons.warning
-        : checked
-        ? AppIcons.verified
-        : AppIcons.success;
     final bool tooLarge =
         entry.kind == SpeechModelKind.whisper &&
         !SpeechModelSelector.fits(entry, view.device);
     final bool idle = view.working == null && !view.importing;
-    final bool working = view.working == entry.id;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         AppListTile(
-          leading: Icon(icon),
+          dense: true,
           title: _modelName(localCopy, entry),
-          subtitle: localCopy.settingsSpeechModelDetail(
-            origin,
-            state,
-            localCopy.fileSize(entry.bytes),
-          ),
+          subtitle: <String>[
+            localCopy.settingsSpeechModelSummary(
+              state,
+              localCopy.fileSize(entry.bytes),
+            ),
+            if (inUse) localCopy.settingsSpeechModelInUse,
+          ].join('\n'),
           wrapText: true,
-          trailing: inUse
-              ? AppChip(label: localCopy.settingsSpeechModelInUse)
-              : null,
+          trailing: AppOverflowMenu(
+            key: ValueKey<String>('speech-model-menu-${entry.id}'),
+            items: <AppOverflowAction>[
+              if (idle && status.present)
+                AppOverflowAction(
+                  key: ValueKey<String>('speech-model-verify-${entry.id}'),
+                  label: localCopy.settingsSpeechVerify,
+                  icon: AppIcons.verified,
+                  onTap: () => unawaited(_verify(context, ref)),
+                ),
+              if (idle && status.imported)
+                AppOverflowAction(
+                  key: ValueKey<String>('speech-model-remove-${entry.id}'),
+                  label: localCopy.settingsSpeechRemove,
+                  icon: AppIcons.delete,
+                  onTap: () => unawaited(_remove(context, ref)),
+                ),
+            ],
+          ),
         ),
         if (tooLarge)
           Padding(
@@ -333,40 +344,21 @@ class _ModelRow extends ConsumerWidget {
               ],
             ),
           ),
-        if (status.present || status.imported)
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: Space.x4,
-              vertical: Space.x1,
+        SettingsDisclosure(
+          id: 'speech-model-details-${entry.id}',
+          title: localCopy.settingsSpeechModelDetails,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+              child: Text(
+                origin,
+                style: AppText.caption.copyWith(
+                  color: context.colors.onSurface,
+                ),
+              ),
             ),
-            child: Wrap(
-              spacing: Space.x2,
-              runSpacing: Space.x2,
-              children: <Widget>[
-                if (status.present)
-                  AppButton(
-                    key: ValueKey<String>('speech-model-verify-${entry.id}'),
-                    label: localCopy.settingsSpeechVerify,
-                    icon: AppIcons.verified,
-                    variant: AppButtonVariant.text,
-                    busy: working,
-                    onPressed: idle
-                        ? () => unawaited(_verify(context, ref))
-                        : null,
-                  ),
-                if (status.imported)
-                  AppButton(
-                    key: ValueKey<String>('speech-model-remove-${entry.id}'),
-                    label: localCopy.settingsSpeechRemove,
-                    icon: AppIcons.delete,
-                    variant: AppButtonVariant.text,
-                    onPressed: idle
-                        ? () => unawaited(_remove(context, ref))
-                        : null,
-                  ),
-              ],
-            ),
-          ),
+          ],
+        ),
       ],
     );
   }

@@ -53,18 +53,53 @@ void main() {
     expect(tester.widget<AppButton>(find.byType(AppButton)).onPressed, isNull);
     expect(find.text(Copy.aiProviderUnavailable), findsOneWidget);
   });
+
+  testWidgets('the explicit action and outcome can be placed independently', (
+    WidgetTester tester,
+  ) async {
+    int requests = 0;
+    await _pump(
+      tester,
+      view: ProviderTestView.success,
+      onTest: () => requests++,
+      showAction: false,
+    );
+    expect(find.byType(AppButton), findsNothing);
+    expect(find.text(Copy.apiKeySuccess), findsOneWidget);
+    await _pump(
+      tester,
+      view: ProviderTestView.success,
+      onTest: () => requests++,
+      showOutcome: false,
+    );
+    expect(find.byType(AppButton), findsOneWidget);
+    expect(find.text(Copy.apiKeySuccess), findsNothing);
+    await tester.tap(find.text(Copy.apiKeyTest));
+    await tester.pumpAndSettle();
+    expect(requests, 1);
+    await _pump(tester, showAction: false, showOutcome: false);
+    expect(find.text(Copy.apiKeyTest), findsNothing);
+    expect(find.text(Copy.apiKeyCustody), findsNothing);
+  });
 }
 
 Future<void> _pump(
   WidgetTester tester, {
   ProviderTestView view = ProviderTestView.empty,
   VoidCallback? onTest,
+  bool showAction = true,
+  bool showOutcome = true,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
       theme: buildTheme(brightness: Brightness.light),
       home: Scaffold(
-        body: ProviderTestAction(view: view, onTest: onTest),
+        body: ProviderTestAction(
+          view: view,
+          onTest: onTest,
+          showAction: showAction,
+          showOutcome: showOutcome,
+        ),
       ),
     ),
   );

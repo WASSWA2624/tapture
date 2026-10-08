@@ -222,7 +222,7 @@ Approve -> export/share final files (or save and resume at any point)
 | Medical equipment inventory across districts | Context: District › Facility › Department. Templates: Equipment, Building. |
 | Building / facility condition assessment | Photo-heavy, condition scales, risk notes. |
 | Verification audit of a known asset register | Reference dataset imported; verification mode; variance report. |
-| Stock-taking and warehouse counting | Barcode-first capture, quantity fields, rapid mode. |
+| Stock-taking and warehouse counting | Barcode-first capture, quantity fields, ordinary sequential capture (§27). |
 | Infrastructure and utility surveys | GPS enabled, map-ready export. |
 | Document digitisation | PDF/scan input, OCR, field extraction. |
 | Compliance and safety inspection | Predefined checklist rows, compliance and risk fields. |
@@ -1251,23 +1251,18 @@ processing delay.
 
 ## 27. Rapid & Batch Capture
 
-For large surveys where speed dominates.
+Use ordinary sequential Capture for large surveys: save an item raw, retain context and the pinned template, and
+continue with the next. The standalone Rapid menu/page/run list is retired by task 144; legacy Rapid links redirect
+to that project's Capture with query, fragment and the same durable draft intact. No session migration occurs.
 
-```text
-RAPID MODE - Kasubi HC IV / Theatre
+New Capture keeps target controls, collapsed guide, evidence tray, caption/dictation/audio and raw Save immediately
+available. Optional template fields open from **Manual form** in overflow using the same durable session and adaptive
+sheet; **Import document** uses the existing validation/intake path from overflow. Required-field warnings remain
+advisory. Record editing retains its existing form and visible import control. Reopen saved items through the project.
 
-  Item 1   3 photos   "autoclave"          saved
-  Item 2   2 photos   "microscope"         saved
-  Item 3   4 photos   -                    saved
-  Item 4   1 photo    "ECG machine"        saved
-
-  [ New item ]                [ Process all (4) ]
-```
-
-- One tap ends an item and starts the next; the camera never closes.
-- The context and pinned template carry across items.
-- Nothing is analysed until **Process all**.
-- Review then happens as a list, one record after another, with **Approve and next** as the primary action.
+Processing starts only by explicit existing actions; **Process** in each project's Capture/review menu opens that
+project's queue (§26.2). Global Process badges/pages are retired; `/queue` and `/more/queue` return to Projects and
+discard obsolete queue filters. Unassigned evidence remains in Records. Batch review retains **Approve and next**.
 
 ## 28. Meeting Mode
 
@@ -2879,12 +2874,18 @@ This base manifest needs a new format version and explicit capability marker for
 ### 46.1 Export
 
 ```text
-Project > Share > Export project bundle
+Project > Export
       |
-Choose scope, photos, password
+Generate one local project ZIP (records.xlsx remains nested)
       |
-Bundle written to projects/<project>/exports/  and offered to the share sheet
+Native: projects/<project>/exports/ > explicit Share (mobile) / Open (desktop)
+Web: one browser download; retry uses the completed package
 ```
+
+The menu selection starts generation once per route. Direct/history entry does not generate automatically. Package
+details are initially collapsed; Reports and data files is in overflow. Native generation makes no automatic Downloads
+copy and never shares automatically. Progress/cancellation, consent revalidation and versioned no-overwrite history
+remain unchanged. Existing archives stay in place; optional report/scope/privacy controls remain in their owning flows.
 
 ### 46.2 Import
 
@@ -3279,13 +3280,13 @@ Testable interface rules:
 10. **Plain language:** "Not detected", not `null`; "Analyse", not "invoke extraction pipeline".
 11. **Touch targets ≥ 48 dp**; primary actions within one-thumb reach.
 12. **Undo destructive actions**; keep deletions in a recycle bin.
-13. **One visible status line:** context, template, online/offline, unprocessed count.
+13. **One visible status line:** context, template and online/offline; processing is project-scoped (§26.2, §27).
 14. **Reusable components:** use existing design-system controls and the minimal corner radius (`Radii`, never zero). Menus, resource rows and document panels share controls; icons have readable labels.
 
 ## 57. Settings
 
 ```text
-Server and account                               (AI settings/setup, Part XI)
+Server and account                               (collapsed within AI; initial setup retained, Part XI)
   Name, initials, contact
   Organisation and server address
   Sign in, sign out, change password
@@ -3310,6 +3311,8 @@ AI
   Required credential, then model                 searchable model choice; keyless hides credential
   Spending limit                                 collapsed with current-limit summary
   Test connection                                secondary; Save is the single primary action
+  Connection details                             collapsed; complete custody/billing explanations
+  Server and account                             collapsed; separate explicit Configure/sign-in controls
   Device-held key                                (only where the administrator permits it)
   Use AI                                         on / off per project
   Do not send images                             off
@@ -3324,7 +3327,8 @@ Language
   Speech recognition                             (works offline, §30.4)
     Engine in use                                (read-only)
     Transcription quality                        Automatic / Fast / Accurate
-    Speech models                                collapsed inventory; Verify; Remove imported
+    Speech models                                collapsed; compact rows; Verify/Remove in each row menu
+    Model details                                nested source/integrity disclosure
     Import a speech model                        (native only; verified before use)
 
 Storage
@@ -3351,6 +3355,20 @@ selected speech health and repair remain visible; expanding a section never writ
 or changes files. Global Settings omits Organisation and Relay: **Server and account** remains in AI settings and
 setup; Relay belongs to the explicit project's settings. Legacy links recover to the same project controls or
 Projects when no project is available. Opening those pages never enables relay or starts a transfer.
+
+Task 144 retires the standalone account settings page: `/more/account` reveals AI's **Server and account** section.
+Ordinary AI entry starts collapsed. Collapse hides focus/semantics while retaining typed connection fields for the
+mounted route; Configure and sign-in are explicit secondary actions, separate from AI Save. Mounting or opening the
+cached account panel initiates no authentication/provider request; initial self-hosted sign-in setup remains intact.
+AI shows one current status with actionable recovery, with complete custody/billing and simultaneous secondary detail
+in **Connection details**. Provider marks are bundled local artwork beside readable names; unknown providers retain
+their actual names and a generic account glyph. Configured xAI photo/text operations reuse the Responses backend
+protocol (§73), with administrator-supplied models/cost ceilings and no automatic identity/billing fallback.
+
+Storage has no **Check files** tile/page; its legacy address opens Storage without scanning or writing. Integrity and
+orphan-scanning services, immutable raw files and recycle-bin recovery remain intact. Every deleted project, record,
+photo, document and audio row offers a visible **Restore** label with the shared restore glyph and entity-specific
+semantics; completion follows durable recovery.
 
 ## 58. Accessibility & Field Usability
 
@@ -3486,7 +3504,6 @@ lib/
 │   │   ├── documents/
 │   │   ├── voice/
 │   │   ├── barcode/
-│   │   └── rapid/
 │   ├── processing/       queue, jobs, progress
 │   ├── review/
 │   ├── records/
@@ -3634,7 +3651,7 @@ Prove this flow end to end before expanding it. Grow the backend only as needed 
 
 ```text
 Deferred processing queue and batch review
-Rapid capture mode
+Ordinary sequential raw capture (§27)
 Reference datasets, lookups and prefill
 Barcode / QR and identifier-first capture
 Verification mode and variance
@@ -3902,6 +3919,14 @@ The wire model `default` always names the configured base model; configuration c
 model. Test connection probes a supported operation with empty evidence and the exact selected model/account.
 Removing a capability retains the saved selection visibly unavailable until the user chooses another.
 
+The retained `personal-xai` identity binds to server provider `xai`. Administrator configuration enables only
+photo/text `ocr`, `extract` and `refine` through the existing `openai-responses` protocol, with required authentication,
+explicit model/default identifiers and reviewed positive cost ceilings. Without that authenticated catalogue entry,
+the identity stays unavailable and cannot read/save/remove a credential; typed input and saved selection remain intact.
+Provider endpoints/configuration belong to the administrator, not mobile settings. The non-deployable xAI template in
+`backend/RUNBOOK.md` requires reviewed HTTPS egress and cost configuration; its dated model example and synthetic test
+ceilings are not deployed defaults or provider pricing. Raw audio is excluded; saved local transcripts remain text.
+
 ### 73.2 Why this is better than keys on devices
 
 - Lost/stolen devices expose no backend-managed key.
@@ -3939,6 +3964,10 @@ erasure. Deleting a personal key prevents future reservations; a previously disp
 Confirmed deployment destruction removes credentials and receipt metadata. Output templates stay local; imported
 Office packages are filled at confirmed mappings/placeholders while untouched package entries and original bytes
 are retained.
+
+Responses adapters request `store:false` and `background:false` without a provider file store or persistent
+conversation. This request-history opt-out does not certify an external provider's complete retention policy;
+provider/account terms still govern that boundary.
 
 ## 74. Deployment and API Surface
 

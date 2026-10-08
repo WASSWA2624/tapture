@@ -375,7 +375,13 @@ which are optional before Save. Unmarked fields look as they do today.
 
 - [x] On Operator, Name and Initials read as required and Contact as optional before Save, in light, dark and outdoor, at 100 and 200 percent text, without clipping.
 - [x] Unmarked fields elsewhere look as they do today.
-- [x] Tests: gallery + goldens include both marks; Operator shows the marks before Save; a11y matcher on the field; `copy_test.dart` lists the new keys.
+- [ ] Tests: gallery + goldens include both marks; Operator shows the marks before Save; a11y matcher on the field; `copy_test.dart` lists the new keys.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
 
 ## 036 — Add email phone fields
 
@@ -414,7 +420,13 @@ appear in the widget gallery. Operator still uses a single Contact field.
 - [x] Gallery shows email and phone in empty, filled, error and disabled, light, dark and outdoor, at 100 and 200 percent text without clipping.
 - [x] Neither field offers a microphone.
 - [x] Operator Contact is unchanged.
-- [x] Tests: keyboard type, no microphone under `DictationScope`, 48dp, semantic label; goldens in light, dark and outdoor.
+- [ ] Tests: keyboard type, no microphone under `DictationScope`, 48dp, semantic label; goldens in light, dark and outdoor.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
 
 ## 037 — Add feedback close control
 
@@ -1503,7 +1515,7 @@ The executable prompt is `prompts/feedback-23092026-1635/001-resolve-capture-pro
 - [x] Settings contains only active settings destinations; legacy routes remain valid.
 - [x] Audio is stored as raw evidence and linked to its record and selected photos.
 - [x] AI provider and model selection is registry-driven and keeps credentials in secure storage.
-- [x] Tests: migrations, repositories, controllers, routes, widgets, failures, semantics and intended goldens.
+- [ ] Tests: migrations, repositories, controllers, routes, widgets, failures, semantics and intended goldens.
 
 ### Verification
 
@@ -1564,6 +1576,12 @@ The executable prompt is `prompts/feedback-23092026-1635/001-resolve-capture-pro
 - `frontend/test/features/context/presentation/goldens/context_hierarchy_text2_light.png`
 - `frontend/test/features/context/presentation/goldens/context_hierarchy_text2_outdoor.png`
 - `frontend/test/features/context/presentation/goldens/context_hierarchy_text2_system.png`
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
 
 ## 063 — Resolve projects, capture and template feedback
 
@@ -1999,7 +2017,7 @@ in flight losing the resumed photos is task [073](24-product-refinements.md#073-
       the viewer; native trays keep their cached thumbnail files.
 - [x] W3 — A sheet choice field is as tall as a labelled single-line text field and at least 48dp, unclipped at 200
       percent text.
-- [x] W4 — `ResponsivePair` stacks on compact and shares a row in its flex ratio from medium up, start first in
+- [ ] W4 — `ResponsivePair` stacks on compact and shares a row in its flex ratio from medium up, start first in
       reading order, with a gallery entry and goldens at three widths in three themes.
 - [x] W5 — `AppEmptyState` with `onIconTap` and `iconLabel` makes its icon a named 48dp button; every existing
       empty state renders as before.
@@ -2061,6 +2079,12 @@ raw saves the record; after a reload the record's Edit reads the photo back into
 it, and a resumed draft does the same; the projects, records, templates and field searches carry the filter
 button, and the field list opens on its Required section. The record row's thumbnail on web still shows the
 missing-photo placeholder, which is task 071.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
 
 ## 071 — Enable processing, export and list thumbnails on web
 
@@ -2584,7 +2608,7 @@ do not add a dead Documentation or export placeholder to this change.
 - [x] Each menu choice navigates to its existing destination and secondary screens select the fourth branch.
 - [x] Dismissal preserves the active primary branch, project and search state; an open popup remains usable across
       a width change, and the existing desktop Settings rail is retained.
-- [x] Focused widget/golden tests cover all four routes, icon/copy consistency, shared overflow behaviour, narrow
+- [ ] Focused widget/golden tests cover all four routes, icon/copy consistency, shared overflow behaviour, narrow
       phone layout at 200 percent text and light/dark/outdoor themes: 21 passed.
 
 ### Verification status
@@ -2605,6 +2629,12 @@ assertion and processing tests. No unrelated files were changed to silence these
 
 This task and its index entry remain open until the standard gate is satisfied; the 21 passing focused tests and
 clean targeted analysis verify the menu change without claiming that the whole repository passes.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
 
 ## 093 — Audit implementation and efficiency against the full plan
 
@@ -4833,7 +4863,7 @@ abstract interface class PlatformRecogniserPolicy { factory PlatformRecogniserPo
   - with the policy false (Android SDK < 31 or no on-device recogniser, Windows, web), `platform.listen` is never called and `dictationOfflineOnly` is emitted.
 - [x] `platform_recogniser_policy_test` covers each platform with a mocked channel.
 - [x] `dictationSttProvider` returns a new instance only when "any engine usable" flips.
-- [x] Existing `stt_service`, `dictation_session`, `app_text_field_dictation` and dictation golden tests pass unchanged.
+- [ ] Existing `stt_service`, `dictation_session`, `app_text_field_dictation` and dictation golden tests pass unchanged.
 - [x] FE-SEC-04 carries the clause, with `routed_stt_service_test` and `network_test` named as its enforcement and recorded for the commit body.
 - [x] Task 012 item 12's text matches PO decision 2, and no box changes.
 - [ ] On this machine, the Windows app dictates into a free-text field with Whisper while the network adapter is disabled. A WAV-fed fake recorder is acceptable if no microphone is present; record which was used.
@@ -4864,6 +4894,12 @@ abstract interface class PlatformRecogniserPolicy { factory PlatformRecogniserPo
   (20–65% load) and 5 by the independent review (16–27%): Stop to final 274–620 ms, 0 inserted, 0 deleted, 1
   substituted, `outboundCalls` 0. Evidence `frontend/build/stt-bound/dict-r10f24/` and
   `frontend/build/stt-bound-review/dict5/`. The network-adapter item stays open.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
 
 ## 121 — Add the recording bar and transcript view to the catalogue
 
@@ -4903,7 +4939,7 @@ AppTranscriptView({required List<String> paragraphs, String? tentative, bool liv
 - [x] Each control has a semantic label, a tooltip and a ≥ 48-dp target, with a live-region status.
 - [x] `AppTranscriptView` separates stable from tentative text, follows the latest line, offers "Jump to latest" after the reader scrolls up, and rebuilds only the last row.
 - [x] Both widgets wrap without overflow at compact width and 200% text scale.
-- [x] Light, dark and outdoor goldens pass.
+- [ ] Light, dark and outdoor goldens pass.
 - [x] Perf: appending to 2000 paragraphs keeps p90 ≤ `AppConstants.scrolling.frame`.
 - [x] `check_tests --strict` passes, and the existing `audio_recorder` tests pass.
 
@@ -4915,6 +4951,12 @@ AppTranscriptView({required List<String> paragraphs, String? tentative, bool liv
 - 2026-10-04: The capture widget, feedback, audio recovery and guide tests pass without changes, and so do the gallery screen and gallery golden tests (including 200% text) and the architecture tokens, icons, naming, layering, responsive, state, errors and data-safety suites. `check_tests --strict`, `check_l10n`, `check_naming`, `check_structure` and `check_logging` all exit 0. `dart analyze` and `dart format` report nothing on the changed files.
 - 2026-10-04: Review fix: the stop handler in `AudioRecorder` again hands a finished take to `onStopped`/`onCompleted` when the bar has left the screen, as it did before the refactor. Only the error snack is now guarded by `mounted`.
 - 2026-10-04: Follow-up resolved: `AudioRecorder` passed its per-second status ("Recording · 12s") as the bar's live-region status, so a screen reader would have read it out every second. `LocalizedCopy.audioRecorderStatus` and `Copy.audioRecorderStatus` now take only the phase, and the unused `audioRecorderStatusS` catalogue message is removed (copy pipeline regenerated and `--check`ed). `capture_widgets_test` asserts that the status text stays the same while the clock ticks. The capture widget and feedback tests and `app_recording_bar_test` pass (77 tests), and `dart analyze` on `lib/core/copy`, `lib/features/capture` and `test/features/capture` reports no issues.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
 
 ## 122 — Run live transcription sessions for any surface
 
@@ -5624,7 +5666,7 @@ The linked feedback prompt's per-item Scope and named tests are the exact invent
 
 - [x] Every existing permitted project action appears once in the specified order and executes the unchanged callback.
 - [x] Shared menu headings are not selectable; keyboard traversal, touch targets and wrapped labels pass the matrix.
-- [x] Ungrouped callers retain their behavior; gallery and shared goldens pass.
+- [ ] Ungrouped callers retain their behavior; gallery and shared goldens pass.
 - [x] FBK0000186 is resolved.
 
 #### W6 — Remove Projects filter controls
@@ -5967,3 +6009,436 @@ Readable SDK fonts/icons and the compact, medium, expanded, short-landscape and 
 - `frontend/test/features/templates/presentation/goldens/template_library_preview_text2_outdoor.png`
 
 </details>
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
+
+## 144 — Resolve feedback archive 08102026-1045
+
+**Depends on** [003](03-design-system.md), [006](06-app-shell.md), [007](07-account-and-settings.md), [132](24-product-refinements.md#132--integrate-versioned-project-ai-processing-and-approved-template-outputs), [143](24-product-refinements.md#143--resolve-october-field-workflow-feedback)
+
+### Implement
+
+**Implementation started:** Yes
+
+Follow [the bounded feedback prompt](../prompts/feedback-08102026-1045/001-streamline-field-workflow-feedback.md) in W1–W11 order. Shorten local project export; label Restore; retire Check files and Rapid presentation; move manual capture and import to overflow; scope Process to projects; compact speech and AI settings; retain inline account setup; bundle official provider marks; expose explicitly configured xAI through the existing Responses protocol. Preserve all unchanged contracts and raw evidence.
+
+**Approved decisions:** The user answered “Proceed” on 2026-10-08, approving D1a–D10a. D10 grants an execution-order exception only for this archive. Prerequisite acceptance is fully checked: 003, 006, 007, 132 and 143. Historical completion remains evidence rather than fresh whole-product verification. FBK0000196 remains Needs clarification; no language setting is removed in its name.
+
+**Baseline:** `1efe1204ff55baf63fa1a011c65a6be5963208a7`. The initial index contains the user's staged replacement of the 07102026 feedback assets/prompts with the 08102026 archive; preserve those changes and stage nothing automatically.
+
+**Resumption:** Continued the existing related working tree at `32a9d4b0a5abecb8554d1e1bcf2886de6f210d88` on 2026-10-08. The baseline/index description above is historical evidence; this continuation stages nothing.
+
+### Files
+
+- `app-write-up.md`
+- `backend/RUNBOOK.md`
+- `backend/src/config/provider-catalogue.ts`
+- `backend/src/services/ai/openai-provider.ts`
+- `backend/test/config/provider_catalogue.test.ts`
+- `backend/test/fakes/provider_catalogue.ts`
+- `backend/test/routes/provider_catalogue.test.ts`
+- `backend/test/services/ai_processing.test.ts`
+- `backend/test/services/openai_provider.test.ts`
+- `backend/test/services/provider_catalogue.test.ts`
+- `dev-plan/06-app-shell.md`
+- `dev-plan/07-account-and-settings.md`
+- `dev-plan/12-capture.md`
+- `dev-plan/14-records.md`
+- `dev-plan/18-export.md`
+- `dev-plan/23-backend.md`
+- `dev-plan/24-product-refinements.md`
+- `dev-tracker.md`
+- `frontend/.gitignore`
+- `frontend/android/app/src/main/kotlin/com/tapture/app/MainActivity.kt`
+- `frontend/assets/ai_providers/SOURCES.md`
+- `frontend/assets/ai_providers/gemini.png`
+- `frontend/assets/ai_providers/manifest.json`
+- `frontend/assets/ai_providers/openai.png`
+- `frontend/assets/ai_providers/openai_inverse.png`
+- `frontend/assets/ai_providers/xai.png`
+- `frontend/assets/ai_providers/xai_inverse.png`
+- `frontend/integration_test/capture_raw_offline_test.dart`
+- `frontend/integration_test/capture_to_export_test.dart`
+- `frontend/integration_test/rapid_mode_test.dart`
+- `frontend/integration_test/recycle_bin_offline_test.dart`
+- `frontend/lib/app/route_paths.dart`
+- `frontend/lib/app/router.dart`
+- `frontend/lib/app/shell_title.dart`
+- `frontend/lib/app/widgets/status_line.dart`
+- `frontend/lib/core/ai/server_provider_registry.dart`
+- `frontend/lib/core/assets/ai_provider_assets.dart`
+- `frontend/lib/core/assets/assets.dart`
+- `frontend/lib/core/backend/server_ai_catalogue.dart`
+- `frontend/lib/core/copy/copy.dart`
+- `frontend/lib/core/copy/copy_messages.g.dart`
+- `frontend/lib/core/copy/l10n/app_en.arb`
+- `frontend/lib/core/copy/l10n/app_en_XA.arb`
+- `frontend/lib/core/copy/l10n/app_localizations.g.dart`
+- `frontend/lib/core/copy/l10n/app_localizations_en.g.dart`
+- `frontend/lib/core/copy/localized_copy.dart`
+- `frontend/lib/core/copy/localized_copy_resolver.g.dart`
+- `frontend/lib/core/db/integrity_check.dart`
+- `frontend/lib/core/files/download_service_io.dart`
+- `frontend/lib/core/files/orphan_scanner.dart`
+- `frontend/lib/core/widgets/app_icons.dart`
+- `frontend/lib/core/widgets/fields/app_choice_field.dart`
+- `frontend/lib/core/widgets/fields/choice.dart`
+- `frontend/lib/core/widgets/gallery/widget_gallery_screen.dart`
+- `frontend/lib/features/account/account.dart`
+- `frontend/lib/features/account/presentation/account_connection_panel.dart`
+- `frontend/lib/features/account/presentation/account_route.dart`
+- `frontend/lib/features/account/presentation/backend_settings_screen.dart`
+- `frontend/lib/features/account/presentation/presentation.dart`
+- `frontend/lib/features/account/presentation/server_address_form.dart`
+- `frontend/lib/features/capture/capture.dart`
+- `frontend/lib/features/capture/domain/capture_session_key.dart`
+- `frontend/lib/features/capture/presentation/capture_screen.dart`
+- `frontend/lib/features/capture/presentation/capture_screen_documents.dart`
+- `frontend/lib/features/capture/presentation/capture_screen_form.dart`
+- `frontend/lib/features/capture/presentation/document_picker.dart`
+- `frontend/lib/features/capture/presentation/import_capture_document.dart`
+- `frontend/lib/features/capture/presentation/presentation.dart`
+- `frontend/lib/features/capture/presentation/rapid_mode_screen.dart`
+- `frontend/lib/features/capture/presentation/rapid_run.dart`
+- `frontend/lib/features/exports/data/export_repository_impl.dart`
+- `frontend/lib/features/projects/presentation/export_summary_view.dart`
+- `frontend/lib/features/projects/presentation/project_export_screen.dart`
+- `frontend/lib/features/projects/presentation/project_home_menu.dart`
+- `frontend/lib/features/projects/presentation/project_list_view.dart`
+- `frontend/lib/features/records/presentation/recycle_bin_screen.dart`
+- `frontend/lib/features/settings/presentation/ai_provider_settings_controller.dart`
+- `frontend/lib/features/settings/presentation/ai_provider_settings_screen.dart`
+- `frontend/lib/features/settings/presentation/provider_test_action.dart`
+- `frontend/lib/features/settings/presentation/settings_disclosure.dart`
+- `frontend/lib/features/settings/presentation/speech_settings_section.dart`
+- `frontend/lib/features/settings/presentation/storage_check_screen.dart`
+- `frontend/lib/features/settings/presentation/storage_settings_screen.dart`
+- `frontend/pubspec.yaml`
+- `frontend/test/app/router_test.dart`
+- `frontend/test/app/widgets/status_line_test.dart`
+- `frontend/test/core/ai/server_provider_registry_test.dart`
+- `frontend/test/core/assets/ai_provider_assets_test.dart`
+- `frontend/test/core/backend/server_ai_catalogue_test.dart`
+- `frontend/test/core/bundle/bundle_round_trip_test.dart`
+- `frontend/test/core/db/integrity_check_test.dart`
+- `frontend/test/core/files/orphan_scanner_test.dart`
+- `frontend/test/core/widgets/app_icons_test.dart`
+- `frontend/test/core/widgets/fields/app_choice_field_branding_test.dart`
+- `frontend/test/core/widgets/fields/app_choice_field_test.dart`
+- `frontend/test/features/account/presentation/account_connection_panel_test.dart`
+- `frontend/test/features/account/sign_in_test.dart`
+- `frontend/test/features/capture/presentation/capture_controller_test.dart`
+- `frontend/test/features/capture/presentation/capture_document_intent_test.dart`
+- `frontend/test/features/capture/presentation/capture_guide_widgets_test.dart`
+- `frontend/test/features/capture/presentation/capture_recovery_prompt_test.dart`
+- `frontend/test/features/capture/presentation/capture_screen_test.dart`
+- `frontend/test/features/capture/presentation/capture_widgets_test.dart`
+- `frontend/test/features/capture/presentation/import_capture_document_test.dart`
+- `frontend/test/features/capture/presentation/rapid_mode_screen_test.dart`
+- `frontend/test/features/exports/data/browser_export_test.dart`
+- `frontend/test/features/exports/data/export_repository_impl_test.dart`
+- `frontend/test/features/processing/presentation/queue_screen_test.dart`
+- `frontend/test/features/projects/presentation/export_summary_golden_test.dart`
+- `frontend/test/features/projects/presentation/project_export_screen_test.dart`
+- `frontend/test/features/projects/presentation/project_home_screen_test.dart`
+- `frontend/test/features/projects/presentation/project_list_view_test.dart`
+- `frontend/test/features/records/presentation/recycle_bin_screen_test.dart`
+- `frontend/test/features/settings/presentation/ai_provider_settings_golden_test.dart`
+- `frontend/test/features/settings/presentation/ai_provider_settings_screen_test.dart`
+- `frontend/test/features/settings/presentation/ai_supported_providers_test.dart`
+- `frontend/test/features/settings/presentation/language_settings_screen_test.dart`
+- `frontend/test/features/settings/presentation/provider_test_action_test.dart`
+- `frontend/test/features/settings/presentation/server_ai_settings_test.dart`
+- `frontend/test/features/settings/presentation/settings_screen_test.dart`
+- `frontend/test/features/settings/presentation/speech_settings_section_test.dart`
+- `frontend/test/features/settings/presentation/storage_check_screen_test.dart`
+- `frontend/test/features/settings/presentation/storage_navigation_test.dart`
+- `frontend/test/hardening/recycle_bin_offline_host_test.dart`
+- `frontend/test/responsive/primary_screens_test.dart`
+- `frontend/test/states/export_routes_test.dart`
+- `frontend/test/support/ai_catalogue_fixture.dart`
+- `frontend/test/support/capture_documents.dart`
+- `frontend/test/support/fakes/fake_barcode_scanner_service.dart`
+- `frontend/test/support/fakes/fake_capture_record_persistence.dart`
+- `frontend/test/support/fakes/fake_export_repository.dart`
+- `frontend/test/support/fakes/fake_processing_repository.dart`
+- `frontend/test/support/screen_fixtures.dart`
+- `frontend/test/support/screen_matrix.dart`
+- `frontend/test/support/tracked_photo_file.dart`
+- `frontend/tool/branding/`
+- `frontend/tool/branding/generate_ai_providers.mjs`
+- `frontend/tool/branding/source/ai_providers/gemini.png`
+- `frontend/tool/branding/source/ai_providers/openai.svg`
+- `frontend/tool/branding/source/ai_providers/openai_inverse.svg`
+- `frontend/tool/branding/source/ai_providers/xai.svg`
+- `frontend/tool/branding/source/ai_providers/xai_inverse.svg`
+
+### Contract
+
+- Add optional `AppChoiceField<T>.leadingBuilder: Widget Function(BuildContext, Choice<T>)?`; absent preserves existing callers. Add `wrapLabel`, false by default, to opt sheet labels into the existing shared text-field wrapping convention.
+- Add typed `AiProviderAssets` from `frontend/lib/core/assets/assets.dart`, mapping stable server-provider IDs and theme variants to bundled official artwork.
+- Export `AccountConnectionPanel` through account barrels; it composes existing setup/status controls without an `AppPage` or mount-triggered authentication work.
+- Add `SettingsDisclosure.initiallyExpanded` and `maintainState`, both false by default, retaining per-mounted-instance expansion and hidden input when requested.
+- Add optional `inline` presentation to the existing server setup/account wrappers, default false; inline mode shares the existing body with secondary actions. Add `AiProviderSettingsScreen.initiallyShowAccount`, default false, for the explicit legacy-link disclosure.
+- Add optional `ProviderTestAction.showAction` and `showOutcome`, both true by default, so AI settings can place one outcome in its primary status region while reusing the existing explicit test action.
+- `ImportCaptureDocument.run` reuses existing byte/type/structure gates and typed cancellation through the feature action; the adaptive Manual form edits the existing capture session directly.
+- Keep legacy Storage-check/Rapid/global-queue/account addresses as redirects under D3a/D4a/D6a/D7a. Rapid preserves query/fragment; global queue discards obsolete filters; account reveals AI's account section.
+- Project Export menu supplies explicit route-scoped start intent consumed once; direct/history entry does not generate. Native keeps one canonical archive, explicit Share/Open; web downloads once and retries the same bytes.
+- Retain `personal-xai`/`xai` with exactly photo/text `ocr`, `extract`, `refine` capabilities until administrator configuration exists. Unconfigured identity makes no credential read/write/remove request; no automatic billing/provider switch.
+- xAI reuses the existing `openai-responses` adapter and unchanged API through an explicit required-auth administrator catalogue. The non-deployable runbook template requires reviewed model IDs/default, HTTPS egress and positive configured-unit cost ceilings; fixtures inject HTTP and use synthetic ceilings. No production adapter, parser, route, OpenAPI, package or deployment configuration changes are required, and response-store opt-out makes no external retention guarantee.
+
+- `serverAiCatalogueChangesProvider` retains a watched `AsyncValue<void>` signal and now notifies every durable snapshot refresh; its private notifier adds no network, endpoint or credential contract. Existing administrator-defined keyless `xai` metadata retains `keyless-xai` and exact managed billing without a credential identity.
+
+### Steps
+
+Execute W1 through W11 in the linked prompt's run order; read each scope, constraints and named tests. Reuse shared services/UI; preserve platform and offline behavior. Record evidence below and check only verified acceptance. Required physical/platform checks remain open when unavailable.
+
+### Definition of done
+
+#### W1 — Publish one project archive through a shorter export flow
+
+- [x] One project-menu Export selection starts one local generation; no mandatory preflight Export tap remains under D1a.
+- [ ] A completed native export produces one new canonical user-visible ZIP and no automatic Downloads duplicate; a web export produces one browser download under D2a.
+- [x] Share/Open and browser handoff retry use the saved package; rebuild, rotation, revisit and double activation produce no extra package.
+- [x] Cancellation/failure preserves source evidence and existing export history; explicit consent and no-overwrite behavior remain covered by passing tests.
+- [ ] The full layout matrix and real archive/platform publication checks pass; FBK0000188 and FBK0000189 are resolved under the approved policy.
+
+#### W2 — Label every recycle-bin Restore action
+
+- [x] Every supported recycle-bin entity exposes a visible Restore label and the shared restore glyph.
+- [x] The full layout matrix preserves readable row content, accessible entity-specific action names and keyboard/touch activation.
+- [x] Restore remains local-first, repeat-safe and failure-safe; retention and purge behavior remain verified.
+- [ ] FBK0000197 is resolved with passing behavior, golden and offline-flow checks.
+
+#### W3 — Retire the Check files page
+
+- [x] Storage exposes no Check files tile on any matrix cell.
+- [x] Under D3a, the old address opens Storage and renders no Check files page; navigation performs no diagnostic mutation.
+- [x] Integrity, orphan scanning and recovery tests remain green with unchanged evidence fixtures.
+- [x] FBK0000198 is resolved under D3a; a retained directly addressable page is recorded as unfinished under D3b.
+
+#### W4 — Retire the standalone Rapid mode
+
+- [x] Under D4a, no Rapid mode entry/page/run surface appears on any supported platform and matrix cell.
+- [x] Legacy Rapid addresses reach the matching project's normal Capture with query/fragment and durable draft preserved.
+- [x] Repeated ordinary raw captures remain offline, fast to access and durable; no capture session and no saved evidence is deleted/migrated.
+- [x] The mode-removal part of FBK0000190 is resolved; W5 owns its remaining composition feedback.
+
+#### W5 — Move manual capture fields into the menu
+
+- [x] New Capture has no inline manual template form at any width; one menu selection opens the existing form/session using the established adaptive sheet.
+- [x] Caption/dictation/audio and raw Save remain immediately available; under D5a document import appears in overflow and imported evidence remains reachable.
+- [ ] Required/hidden fields never block raw capture; field edits, import failures, rotation, resize and restart preserve durable evidence and values.
+- [ ] All affected widget/repository/offline-flow checks and the full matrix pass; FBK0000191 and the remaining congestion part of FBK0000190 are resolved.
+
+#### W6 — Access processing from each project
+
+- [x] Each project exposes Process through its shared menu, opening only that project's existing pipeline on the full matrix.
+- [x] Under D6a, global navigation and legacy URLs never render an unscoped Process page and never silently select/process another project.
+- [x] Processing, retry and failure navigation are project-bounded; raw capture and unassigned evidence remain usable and intact.
+- [x] FBK0000199 is resolved under the selected policy, with any retained global page recorded as unfinished.
+
+#### W7 — Compact the expanded speech-model list
+
+- [x] Expanded model rows expose one compact presentation and one labelled action menu, with no repeated standalone Verify/Remove rows.
+- [x] Every existing language/quality/model action and actionable readiness failure remains available with unchanged persistence/defaults.
+- [x] All model states pass behavior/accessibility tests and the full layout matrix in collapsed and expanded views.
+- [x] FBK0000195 is resolved; FBK0000196 remains a reporter question rather than an invented removal.
+
+#### W8 — Relocate standalone account setup into AI settings
+
+- [ ] Under D7a, no standalone Organisation/account settings page renders; the legacy address reveals the inline account section.
+- [ ] Initial self-hosted setup, cached account status, sign-in and confirmed sign-out remain reachable with unchanged security and durable state.
+- [ ] Failed configuration retains typed fields; opening/collapsing/resizing the section causes no network operation and preserves input.
+- [ ] The full matrix, account/router regressions and second-reader review pass; FBK0000194 is resolved under D7a.
+
+#### W9 — Consolidate AI explanations and status
+
+- [ ] Each current status appears once in the defined primary region, with an actionable retry; simultaneous detail remains discoverable.
+- [ ] Complete custody/billing/permission explanations and all existing controls remain accessible through collapsed disclosures.
+- [ ] Saved identity, secrets, limits and failed input remain protected; opening details starts no provider work.
+- [ ] The full layout/pseudo-locale/accessibility matrix and intended goldens pass; FBK0000193 is resolved.
+
+#### W10 — Add reusable provider branding to the choice field
+
+- [ ] Official Gemini/OpenAI/xAI marks render locally beside readable provider names in the selected trigger and sheet; approved variants fit all themes.
+- [x] Existing shared choice callers, value identity, search, focus and selection ticks remain verified with unchanged defaults.
+- [ ] The full matrix, asset provenance and shared-widget goldens pass without new dependencies and runtime image requests.
+- [ ] The branding part of FBK0000192 is resolved; W11 owns its additional-provider capability.
+
+#### W11 — Expose configured xAI accounts through Responses
+
+- [ ] Configured xAI appears once with W10's mark and administrator-approved models; unconfigured xAI stays unavailable, initiates no credential reads/writes/removals, retains typed keys and preserves saved account identity.
+- [x] Fake real-protocol fixtures prove photo/text Responses integration and reject raw-audio transcription, mismatched models, denied authority and missing budget approval.
+- [x] The stateless adapter's request-store opt-out, key custody, metadata privacy, existing quotas and no automatic account/provider switching remain verified; no external retention guarantee is asserted.
+- [ ] Backend verification, frontend matrix/registry tests and second-reader review pass; FBK0000192 is fully resolved under D8a/D9a.
+
+#### Integrated verification
+
+- [ ] Exact changed Dart format/check and `flutter analyze --no-pub` pass.
+- [ ] Named suites, architecture/security and primary-screen matrix tests pass; intended goldens are inspected and normal comparators pass.
+- [ ] Localization generation, pseudo locale and catalogue checks pass.
+- [ ] Named available native/browser integration flows and real archive publication checks pass; unavailable required platform verification is explicitly recorded.
+- [ ] Backend `npm run verify` and W8/W11 explicit second-reader reviews pass.
+- [ ] Changed tests, intended goldens and transitive fixtures/imports have exact shipping exceptions and tracked-deliverable evidence.
+- [ ] Superseded specification/task notes are reconciled; plan integrity, tracker generation and `--check` pass after the final acceptance update.
+
+### Evidence and remaining work
+
+Preparation: required frontend rules and affected dependencies/acceptance read; declared prerequisites have no unchecked criteria. No upstream acceptance changed. The approved W1–W11 implementation is present; remaining acceptance is limited by the checks and artwork approval recorded below.
+
+W2 evidence (2026-10-08): the updated recycle-bin suite passes 472 cases, covering five entity kinds, entity-specific semantics, keyboard/touch actions, duplicate activation and failure. All 12 intended normal golden comparisons pass and were inspected; offline host recovery tests preserve restored evidence after repository recreation. Native integration remains to be run. W3's production compatibility test passes against seeded field/photo/tombstone/audit snapshots and raw-file hashes; neither diagnostic provider is read. Remaining named matrix/service checks are still running.
+
+W8 independent source review (restore_storage, 2026-10-08): cached config/authority access adds no transport work; inline configuration and confirmed sign-out preserve the existing security contract; retained hidden controls are excluded from focus and semantics; query-keyed legacy expansion resets on ordinary AI entry. No actionable finding. Required behavior tests remain pending.
+
+W11 backend evidence (2026-10-08): the five named config/service/adapter/HTTP suites and shared xAI fixture exercise the existing Responses protocol with photo/text envelopes, exact administrator-supplied models, server-owned bearer custody, inline evidence, redirect refusal, `store:false`, `background:false`, output bounds, deadlines and refusals. Authority, project scope, excluded transcription and unapproved models/budgets reject before upstream dispatch; metadata contains no endpoint, key or ciphertext. Timeout/replay retains one conservative reservation and uncertain receipt without another dispatch; no payload/output/plaintext credential is persisted. The positive 0.025 ceiling is synthetic test data, never provider pricing. Production source, API, packages and deployed configuration remain unchanged; no real AI request occurred.
+
+`npm run verify` exited 0 with format, lint, types, tests, dependency audit and source-secret scan all passing: 191 tests total, 179 passed, zero failed and 12 explicitly skipped; audit found zero vulnerabilities. Exact local evidence is `frontend/build/task144-backend-verify.log`. Eleven real PostgreSQL/admin/migration/repository cases and one Docker smoke test remain unexecuted: `DATABASE_URL` is absent and `RUN_DOCKER_SMOKE` is unset; Docker/PostgreSQL executables are absent from PATH and standard install locations, with no corresponding processes/services. No local database/container runtime can supply isolated verification without installation. The integrated W11/backend gate stays open; these results do not certify database/image deployment acceptance.
+
+W11 independent source/fixture review (verify_settings, 2026-10-08) passed with no actionable finding. It covered the seven changed backend documentation/fixture/test files and current parser, catalogue, provider selection/credentials, Responses adapter/envelope, proxy/quotas and AI routes. Reviewed identity, HTTPS/model/cost configuration, encrypted per-user custody, metadata privacy, authority/capability/quota gates, opt-outs and no-fallback/timeout accounting remain intact. This is independent review evidence; execution results are the separate runner evidence above.
+
+Native runner diagnosis (xai_backend, 2026-10-08): the multi-file Windows run passed both `capture_to_export_test.dart` bodies, then built `recycle_bin_offline_test.dart` and `rapid_mode_test.dart` but failed VM discovery before either test body; `capture_raw_offline_test.dart` separately failed compilation on the missing Drift `BooleanExpressionOperators` import, now corrected. Installed Flutter 3.44.6 (`ee80f08bbf97172ec030b8751ceab557177a34a6`) already initializes the integration binding in `packages/flutter_tools/lib/src/test/flutter_platform.dart:209` and reuses the same device at line 487. Its `desktop_device.dart:46` owns one final `DesktopLogReader`; line 138 attaches each app process, while lines 342/359 retain then close the reader's controller when the first process exits. `protocol_discovery.dart:69–78` returns no VM URI from that closed reader, matching `desktop_device.dart:190–191` and the recorded launch error. This strongly supports a multi-file SDK lifecycle failure rather than missing test binding; isolated execution is still required to confirm recovery. Run each of the four named files in its own fresh `flutter test --no-pub -d windows -r expanded integration_test/<file>.dart` invocation, serialized after other Flutter work. Add no redundant binding, combined entrypoint, runner, package or production change; preserve the necessary raw-capture compilation fix. Native acceptance stays open until the isolated bodies pass.
+
+Continuation evidence (2026-10-08): production export-route and actual archive repository reruns pass 15 tests; new project-menu/revisit tests exercise the current router and saved canonical archive. Focused Capture/legacy-route reruns pass four tests including project-isolated barcode intake, unchanged record-edit document intake and recovered ordinary draft. The six W2/W3 suites pass 495 cases, including scanner/integrity fixtures and 12 inspected normal Restore goldens. Earlier W4/W5 named suites passed all action/controller/recovery/guide cases; their shader-startup and missing-baseline failures are recorded separately and require final normal comparators.
+
+W10 execution/visual evidence: default shared choice, local asset decoding and full normal/pseudo/platform choice matrix pass 460 tests. All 24 new trigger/sheet goldens were regenerated, independently inspected and compared normally. The renderer now maps alpha-mask CSS syntax to the equivalent SVG 2 presentation attribute, preserving source bytes/geometry; both xAI variants have fully opaque artwork. The asset test rejects invisible PNGs, and visual fixtures preload bundled artwork before comparison. The generator's current provenance check passes with no new package or runtime fetch. Download-only approval under current xAI brand terms is still unverified: the current brand ZIP was blocked from this host; supplied official docs marks and original bytes are retained, with exact sources/hashes in `frontend/assets/ai_providers/SOURCES.md` and `manifest.json`. W10 branding approval/resolution remains open.
+
+W8/W11 independent current source reviews (verify_settings and audit_progress, 2026-10-08) pass with no actionable finding after correcting repeated catalogue notifications, isolating late credential status and preserving keyless xAI compatibility. No catalogue refresh writes preferences or automatically switches billing. Visual QA inspected all 17 AI, 24 Language, 12 Capture and 12 project Process-menu images; compact short views use existing scroll boundaries and pinned actions. Final screen/account/status matrices and native/browser checks remain separate execution gates.
+
+Shipping audit (audit_progress, 2026-10-08): 55 named roots (46 suites and nine helpers) reach 1,527 source/import/export/part files; zero missing or ignored untracked dependencies, and all 122 named-suite comparison PNGs exist. Sixty-two precise ignore exceptions were added; 31 intended source/test files and 74 new goldens remain untracked but eligible to ship. No blanket ignore exception, index write or dependency addition was made. The audit includes the later account/AI matrix imports; eligible files must still be included in the eventual Git deliverable, so tracked-deliverable acceptance stays open.
+
+Final layout reruns: the W6 project-menu/legacy-route matrix passes 433 tests after fixtures explicitly scroll short-height footer controls into view and use actual painted colors for contrast. No assertion threshold was lowered. Capture and legacy ordinary-draft suites pass all 472 tests with 12 inspected normal goldens. The primary-screen suite passed 1,272 cells and exposed 24 clipped export-detail cells; summary fact/template rows now opt into existing `AppListTile.wrapText`. All 36 affected primary cells and three regenerated summary comparators pass (39 tests). Independent source review and visual inspection of all three current light/dark/outdoor images pass; the scrolling body absorbs their extra height and retains separate footer actions. Architecture/security tests pass all 119 cases.
+
+Isolated Windows native evidence: `flutter test --no-pub -d windows -r expanded integration_test/recycle_bin_offline_test.dart` passes the offline recycle/recovery body after a 155.5-second build. The corresponding isolated `rapid_mode_test.dart` invocation passes four sequential ordinary raw/photo saves, no queued processing, and reopening/editing only the final record after a 140.9-second build. These confirm recovery from the diagnosed multi-file reader lifecycle issue; the raw-capture restart flow and browser checks remain separate pending gates.
+
+### Regenerated golden inventory
+
+Exact item-owned visual baselines regenerated and inspected in this continuation or its recorded earlier run; required final normal comparisons are tracked above. The six unchanged Settings-index baselines were compared without regeneration; the existing default-choice suite uses behavior assertions.
+
+- `frontend/test/core/widgets/fields/goldens/choice_branded_compact_dark.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_compact_landscape_text2_dark.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_compact_landscape_text2_light.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_compact_landscape_text2_outdoor.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_compact_light.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_compact_outdoor.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_expanded_text2_dark.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_expanded_text2_light.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_expanded_text2_outdoor.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_medium_dark.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_medium_light.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_medium_outdoor.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_compact_dark.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_compact_landscape_text2_dark.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_compact_landscape_text2_light.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_compact_landscape_text2_outdoor.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_compact_light.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_compact_outdoor.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_expanded_text2_dark.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_expanded_text2_light.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_expanded_text2_outdoor.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_medium_dark.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_medium_light.png`
+- `frontend/test/core/widgets/fields/goldens/choice_branded_sheet_medium_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_medium_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_medium_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_medium_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/export_summary_dark.png`
+- `frontend/test/features/projects/presentation/goldens/export_summary_light.png`
+- `frontend/test/features/projects/presentation/goldens/export_summary_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_compact_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_compact_landscape_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_compact_landscape_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_compact_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_compact_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_expanded_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_expanded_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_expanded_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_medium_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_medium_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_export_completed_medium_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_compact_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_compact_landscape_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_compact_landscape_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_compact_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_compact_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_expanded_text2_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_expanded_text2_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_expanded_text2_outdoor.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_medium_dark.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_medium_light.png`
+- `frontend/test/features/projects/presentation/goldens/project_process_menu_medium_outdoor.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_dark.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_landscape_text2_dark.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_landscape_text2_light.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_light.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_compact_outdoor.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_expanded_text2_dark.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_expanded_text2_light.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_expanded_text2_outdoor.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_medium_dark.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_medium_light.png`
+- `frontend/test/features/records/presentation/goldens/recycle_bin_medium_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_compact_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_compact_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_expanded_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_expanded_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_expanded_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_medium_portrait_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_medium_portrait_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_medium_portrait_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_system.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/ai_provider_settings_text2_system.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_compact_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_compact_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_dark_1x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_dark_2x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_expanded_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_expanded_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_expanded_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_light_1x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_light_2x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_medium_portrait_dark.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_medium_portrait_light.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_medium_portrait_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_outdoor_1x.png`
+- `frontend/test/features/settings/presentation/goldens/language_collapsed_outdoor_2x.png`
+- `frontend/test/features/settings/presentation/goldens/language_expanded_compact_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/language_expanded_compact_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/language_expanded_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/language_expanded_expanded_landscape_text2_dark.png`
+- `frontend/test/features/settings/presentation/goldens/language_expanded_expanded_landscape_text2_light.png`
+- `frontend/test/features/settings/presentation/goldens/language_expanded_expanded_landscape_text2_outdoor.png`
+- `frontend/test/features/settings/presentation/goldens/language_expanded_medium_portrait_dark.png`
+- `frontend/test/features/settings/presentation/goldens/language_expanded_medium_portrait_light.png`
+- `frontend/test/features/settings/presentation/goldens/language_expanded_medium_portrait_outdoor.png`
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
+

@@ -52,10 +52,10 @@ final class FakeProcessingRepository implements ProcessingRepository {
     return Stream<QueueSnapshot>.multi((
       MultiStreamController<QueueSnapshot> listener,
     ) {
-      listener.add(_snapshot());
+      listener.add(_snapshot(projectId: projectId));
       final StreamSubscription<void> sub = _changes.stream.listen((_) {
         if (!listener.isClosed) {
-          listener.add(_snapshot());
+          listener.add(_snapshot(projectId: projectId));
         }
       });
       listener.onCancel = sub.cancel;
@@ -241,6 +241,9 @@ final class FakeProcessingRepository implements ProcessingRepository {
     }
     final List<ProcessingJob> ready =
         _rows.values.where((ProcessingJob job) {
+          if (projectId != null && recordProjects[job.recordId] != projectId) {
+            return false;
+          }
           if (job.status != JobStatus.queued || skip.contains(job.id)) {
             return false;
           }
@@ -377,11 +380,14 @@ final class FakeProcessingRepository implements ProcessingRepository {
     ));
   }
 
-  QueueSnapshot _snapshot() {
+  QueueSnapshot _snapshot({String? projectId}) {
     final Map<String, int> groups = <String, int>{};
     var queued = 0;
     var failed = 0;
     for (final ProcessingJob job in _rows.values) {
+      if (projectId != null && recordProjects[job.recordId] != projectId) {
+        continue;
+      }
       if (job.status == JobStatus.failed) {
         failed++;
       } else if (job.status == JobStatus.queued ||

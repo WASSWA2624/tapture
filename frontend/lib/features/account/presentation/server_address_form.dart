@@ -1,13 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/backend/backend_config.dart';
 import 'package:tapture/core/backend/backend_session.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/feedback/app_banner.dart';
+import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
 
@@ -18,7 +25,10 @@ import 'sign_in_controller.dart';
 /// A build that names its server never shows it.
 class ServerAddressForm extends ConsumerStatefulWidget {
   /// Creates the form over the session's cached configuration.
-  const ServerAddressForm({super.key});
+  const ServerAddressForm({super.key, this.inline = false});
+
+  /// Presents secondary setup controls inside an existing page.
+  final bool inline;
 
   @override
   ConsumerState<ServerAddressForm> createState() => _ServerAddressFormState();
@@ -67,28 +77,57 @@ class _ServerAddressFormState extends ConsumerState<ServerAddressForm> {
     final String? error = view.errorMessage == null
         ? view.error
         : localCopy.resolve(view.errorMessage!);
+    final List<Widget> fields = <Widget>[
+      Text(
+        localCopy.backendConfigurationHelp,
+        style: AppText.body.copyWith(color: context.colors.onSurfaceMuted),
+      ),
+      AppTextField(
+        label: localCopy.backendServerAddress,
+        wrapLabel: true,
+        controller: _server,
+        keyboardType: TextInputType.url,
+        requiredness: FieldRequiredness.required,
+      ),
+      AppTextField(
+        label: localCopy.signInOrganisation,
+        wrapLabel: true,
+        controller: _organisation,
+        requiredness: FieldRequiredness.optional,
+      ),
+    ];
+    if (widget.inline) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (error != null) ...<Widget>[
+            AppBanner(
+              message: error,
+              icon: AppIcons.warning,
+              tone: SnackTone.warning,
+            ),
+            const SizedBox(height: Space.x3),
+          ],
+          for (int index = 0; index < fields.length; index++) ...<Widget>[
+            if (index > 0) const SizedBox(height: Space.x3),
+            fields[index],
+          ],
+          const SizedBox(height: Space.x3),
+          AppButton(
+            label: localCopy.backendConfigure,
+            variant: AppButtonVariant.secondary,
+            busy: view.busy,
+            onPressed: view.busy ? null : () => unawaited(_save()),
+          ),
+        ],
+      );
+    }
     return AppPage(
       title: localCopy.backendSettingsTitle,
       scrollable: false,
       body: AppForm(
         errors: <String>[?error],
-        fields: <Widget>[
-          Text(
-            localCopy.backendConfigurationHelp,
-            style: AppText.body.copyWith(color: context.colors.onSurfaceMuted),
-          ),
-          AppTextField(
-            label: localCopy.backendServerAddress,
-            controller: _server,
-            keyboardType: TextInputType.url,
-            requiredness: FieldRequiredness.required,
-          ),
-          AppTextField(
-            label: localCopy.signInOrganisation,
-            controller: _organisation,
-            requiredness: FieldRequiredness.optional,
-          ),
-        ],
+        fields: fields,
         submitLabel: localCopy.save,
         onSubmit: _save,
       ),

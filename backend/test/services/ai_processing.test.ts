@@ -11,6 +11,8 @@ import type {
   AiResult,
 } from '../../src/services/ai/provider.js';
 import { saveCredential } from '../../src/services/ai/credentials.js';
+import { openaiProvider } from '../../src/services/ai/openai-provider.js';
+import { xaiCatalogueProvider } from '../fakes/provider_catalogue.js';
 import { testConfig } from '../helpers.js';
 
 const principal = {
@@ -397,6 +399,238 @@ describe('versioned processing receipts', () => {
     assert.throws(
       () => store.saveAiReceipt({ ...receipt, status: 'running' }),
       failure('conflict'),
+    );
+  });
+});
+
+describe('configured xAI photo/text processing', () => {
+  it('enforces authority, capability, exact models and approved budgets before real-protocol dispatch', async () => {
+    const store = seeded();
+    const definition = xaiCatalogueProvider({
+      models: ['grok-4.7', 'reviewed-text'],
+      modelCostCeilings: { 'grok-4.7': 0.025, 'reviewed-text': 0.2 },
+    });
+    const config = testConfig({
+      AI_PROVIDER_CATALOGUE: JSON.stringify([definition]),
+      AI_CREDENTIAL_ENCRYPTION_KEY: 'ab'.repeat(32),
+    });
+    await saveCredential(
+      store,
+      config,
+      principal,
+      'xai',
+      'private-xai-fixture',
+    );
+    const raw = JSON.stringify({
+      instructions: 'Use only evidence-backed fields.',
+      data: { caption: 'untrusted xAI caption' },
+      media: [{ mimeType: 'image/png', base64: 'AQID' }],
+      responseMimeType: 'application/json',
+    });
+    const attempt = {
+      ...input(raw),
+      billing: { kind: 'personal' as const, provider: 'xai' },
+    };
+    let calls = 0;
+    const factory = (id: string, key: string) => {
+      assert.equal(id, 'xai');
+      assert.equal(key, 'private-xai-fixture');
+      return openaiProvider(
+        config,
+        key,
+        async () => {
+          calls++;
+          return new Response(
+            JSON.stringify({
+              model: 'grok-4.7',
+              status: 'completed',
+              output: [
+                {
+                  type: 'message',
+                  content: [
+                    { type: 'output_text', text: 'private-xai-proposal' },
+                  ],
+                },
+              ],
+            }),
+          );
+        },
+        definition,
+      );
+    };
+    const managed = adapter(async () => {
+      assert.fail('The explicitly selected xAI account must never fall back.');
+    });
+    for (const [actor, method, value, settings, code] of [
+      [
+        { ...principal, role: 'reviewer' as const },
+        'extract',
+        attempt,
+        config,
+        'not_found',
+      ],
+      [
+        { ...principal, userId: 'outsider' },
+        'extract',
+        attempt,
+        config,
+        'not_found',
+      ],
+      [principal, 'transcribe', attempt, config, 'invalid_request'],
+      [
+        principal,
+        'extract',
+        { ...attempt, model: 'unapproved' },
+        config,
+        'invalid_request',
+      ],
+      [
+        principal,
+        'extract',
+        { ...attempt, model: 'reviewed-text' },
+        config,
+        'invalid_request',
+      ],
+      [
+        principal,
+        'extract',
+        { ...attempt, model: 'reviewed-text', maxCost: 0.1 },
+        config,
+        'quota_exceeded',
+      ],
+      [
+        principal,
+        'extract',
+        attempt,
+        { ...config, aiProjectBudget: 0 },
+        'quota_exceeded',
+      ],
+      [
+        principal,
+        'extract',
+        { ...attempt, billing: { kind: 'managed' as const, provider: 'xai' } },
+        config,
+        'unavailable',
+      ],
+    ] as const)
+      await assert.rejects(
+        () =>
+          proxyAi(
+            store,
+            settings,
+            managed,
+            actor,
+            method,
+            value,
+            undefined,
+            factory,
+          ),
+        failure(code),
+      );
+    assert.equal(calls, 0);
+    assert.equal(store.usage().length, 0);
+    assert.equal(store.aiReceipt('a'.repeat(64)), undefined);
+    for (const [index, method] of (
+      ['ocr', 'extract', 'refine'] as const
+    ).entries()) {
+      const result = await proxyAi(
+        store,
+        config,
+        managed,
+        principal,
+        method,
+        {
+          ...attempt,
+          processing: {
+            ...attempt.processing,
+            idempotencyKey: String(index).repeat(64),
+          },
+        },
+        undefined,
+        factory,
+      );
+      assert.equal(result.provider, 'xai');
+      assert.equal(result.model, 'grok-4.7');
+      assert.equal(result.billingKind, 'personal');
+      assert.equal(result.usage.reservedCost, 0.025);
+    }
+    assert.equal(calls, 3);
+    const metadata = JSON.stringify(store.exportMetadata());
+    for (const forbidden of [
+      'untrusted xAI caption',
+      'private-xai-proposal',
+      'private-xai-fixture',
+      'AQID',
+    ])
+      assert.equal(metadata.includes(forbidden), false);
+  });
+
+  it('retains one conservative charge after an xAI timeout and never retries or switches accounts', async () => {
+    const store = seeded();
+    const definition = xaiCatalogueProvider();
+    const config = testConfig({
+      AI_PROVIDER_CATALOGUE: JSON.stringify([definition]),
+      AI_CREDENTIAL_ENCRYPTION_KEY: 'ab'.repeat(32),
+      AI_TIMEOUT_MS: '10',
+      AI_RETRY_LIMIT: '3',
+    });
+    await saveCredential(
+      store,
+      config,
+      principal,
+      'xai',
+      'private-xai-fixture',
+    );
+    const attempt = {
+      ...input(
+        JSON.stringify({
+          instructions: 'Evidence only',
+          data: {},
+          media: [],
+          responseMimeType: 'text/plain',
+        }),
+      ),
+      billing: { kind: 'personal' as const, provider: 'xai' },
+    };
+    let calls = 0;
+    const factory = (_id: string, key: string) =>
+      openaiProvider(
+        config,
+        key,
+        async (_url, init) => {
+          calls++;
+          const signal = init?.signal;
+          assert.ok(signal);
+          return new Promise<Response>((_resolve, reject) => {
+            signal.addEventListener('abort', () => reject(signal.reason), {
+              once: true,
+            });
+          });
+        },
+        definition,
+      );
+    const managed = adapter(async () => assert.fail('No account fallback.'));
+    for (let replay = 0; replay < 2; replay++)
+      await assert.rejects(
+        () =>
+          proxyAi(
+            store,
+            config,
+            managed,
+            principal,
+            'extract',
+            attempt,
+            undefined,
+            factory,
+          ),
+        failure('ai_request_uncertain'),
+      );
+    assert.equal(calls, 1);
+    assert.equal(store.usage().length, 1);
+    assert.equal(store.usage()[0]?.cost, 0.025);
+    assert.equal(
+      store.aiReceipt(attempt.processing.idempotencyKey)?.status,
+      'uncertain',
     );
   });
 });

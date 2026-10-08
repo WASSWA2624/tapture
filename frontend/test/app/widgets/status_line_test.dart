@@ -17,55 +17,63 @@ import 'package:tapture/features/processing/processing.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
-import '../../support/a11y_matchers.dart';
 import '../../support/factories.dart';
 
 void main() {
-  testWidgets('global queue and transcript links survive shortcut removal', (
-    WidgetTester tester,
-  ) async {
-    final StreamController<NetworkState> radio = StreamController<NetworkState>(
-      sync: true,
-    );
-    addTearDown(radio.close);
-    radio.add(NetworkState.online);
+  testWidgets(
+    'legacy queue links return to Projects and transcripts remain reachable',
+    (WidgetTester tester) async {
+      final StreamController<NetworkState> radio =
+          StreamController<NetworkState>(sync: true);
+      addTearDown(radio.close);
+      radio.add(NetworkState.online);
 
-    final ProviderContainer container = await _pump(tester, radio: radio);
-    await tester.pumpAndSettle();
+      final ProviderContainer container = await _pump(tester, radio: radio);
+      await tester.pumpAndSettle();
 
-    expect(find.byType(StatusLine), findsOneWidget);
-    expect(find.text(Copy.navProjects), findsWidgets);
-    expect(find.byType(AppBrandLockup), findsNothing);
-    expect(find.byKey(const ValueKey<String>('status-overflow')), findsNothing);
+      expect(find.byType(StatusLine), findsOneWidget);
+      expect(find.text(Copy.navProjects), findsWidgets);
+      expect(find.byType(AppBrandLockup), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('status-overflow')),
+        findsNothing,
+      );
 
-    // From medium width up the rail's Settings lists what the compact More
-    // menu offers, so nothing is reachable only on a phone.
-    container.read(routerProvider).go(AppRoutes.more);
-    await tester.pumpAndSettle();
-    expect(find.text(Copy.navTemplates), findsOneWidget);
-    expect(find.text(Copy.navQueue), findsNothing);
-    expect(find.text(Copy.recycleBinTitle), findsOneWidget);
-    expect(find.text(Copy.navTranscripts), findsNothing);
-    container.read(routerProvider).go(RoutePaths.transcripts);
-    await tester.pumpAndSettle();
-    expect(
-      container.read(routerProvider).state.uri.path,
-      RoutePaths.transcripts,
-    );
-    container.read(routerProvider).go(AppRoutes.more);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(Copy.navTemplates));
-    await tester.pumpAndSettle();
-    expect(container.read(routerProvider).state.uri.path, AppRoutes.templates);
+      // From medium width up the rail's Settings lists what the compact More
+      // menu offers, so nothing is reachable only on a phone.
+      container.read(routerProvider).go(AppRoutes.more);
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.navTemplates), findsOneWidget);
+      expect(find.text(Copy.navQueue), findsNothing);
+      expect(find.text(Copy.recycleBinTitle), findsOneWidget);
+      expect(find.text(Copy.navTranscripts), findsNothing);
+      container.read(routerProvider).go(RoutePaths.transcripts);
+      await tester.pumpAndSettle();
+      expect(
+        container.read(routerProvider).state.uri.path,
+        RoutePaths.transcripts,
+      );
+      container.read(routerProvider).go(AppRoutes.more);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(Copy.navTemplates));
+      await tester.pumpAndSettle();
+      expect(
+        container.read(routerProvider).state.uri.path,
+        AppRoutes.templates,
+      );
 
-    container.read(routerProvider).go(AppRoutes.templates);
-    await tester.pumpAndSettle();
-    expect(container.read(routerProvider).state.uri.path, AppRoutes.templates);
+      container.read(routerProvider).go(AppRoutes.templates);
+      await tester.pumpAndSettle();
+      expect(
+        container.read(routerProvider).state.uri.path,
+        AppRoutes.templates,
+      );
 
-    container.read(routerProvider).go(AppRoutes.queue);
-    await tester.pumpAndSettle();
-    expect(container.read(routerProvider).state.uri.path, AppRoutes.queue);
-  });
+      container.read(routerProvider).go(AppRoutes.queue);
+      await tester.pumpAndSettle();
+      expect(container.read(routerProvider).state.uri.path, AppRoutes.projects);
+    },
+  );
 
   testWidgets('roots name the screen and nested routes show one back row', (
     WidgetTester tester,
@@ -282,7 +290,7 @@ void main() {
     expect(find.text(Copy.settingsOfflineTitle), findsOneWidget);
   });
 
-  testWidgets('the unprocessed count shows on the line and opens the queue', (
+  testWidgets('pending records never add a global Process badge', (
     WidgetTester tester,
   ) async {
     final StreamController<NetworkState> radio = StreamController<NetworkState>(
@@ -296,25 +304,12 @@ void main() {
       findsNothing,
     );
 
-    final ProviderContainer container = await _pump(
-      tester,
-      radio: radio,
-      unprocessed: 3,
-    );
+    await _pump(tester, radio: radio, unprocessed: 3);
     final Finder count = find.byKey(
       const ValueKey<String>('status-unprocessed'),
     );
-    expect(count, findsOneWidget);
-    expect(
-      find.descendant(of: count, matching: find.text(Copy.badgeCount(3))),
-      findsOneWidget,
-    );
-    expect(find.byTooltip(Copy.unprocessedCount(3)), findsOneWidget);
-    expect(count, meetsTapTarget());
-
-    await tester.tap(find.byTooltip(Copy.unprocessedCount(3)));
-    await tester.pumpAndSettle();
-    expect(container.read(routerProvider).state.uri.path, AppRoutes.queue);
+    expect(count, findsNothing);
+    expect(find.byTooltip(Copy.unprocessedCount(3)), findsNothing);
   });
 
   test('the unprocessed count is the queue watch, not a stub', () async {
@@ -356,7 +351,6 @@ void main() {
     for (final ({String path, String title}) route
         in <({String path, String title})>[
           (path: AppRoutes.templates, title: Copy.navTemplates),
-          (path: AppRoutes.queue, title: Copy.navQueue),
           (path: AppRoutes.recycleBin, title: Copy.recycleBinTitle),
           (
             path: AppRoutes.settingsAppearance,
@@ -431,7 +425,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(
         find.byKey(const ValueKey<String>('status-unprocessed')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(find.byKey(const ValueKey<String>('shell-back')), findsOneWidget);
       expect(

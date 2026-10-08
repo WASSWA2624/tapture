@@ -12,7 +12,6 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/lifecycle/deleted_entity.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_list_viewport.dart';
@@ -233,39 +232,43 @@ class _BinRow extends ConsumerWidget {
         ? summary.name
         : localCopy.recordsUntitled(summary.number);
     final RecordPhoto? thumb = summary.thumb;
-    return AppListTile(
-      key: ValueKey<String>('recycle-bin-row-${record.id}'),
-      title: title,
-      wrapText: true,
-      subtitle: localCopy.recycleEntitySubtitle(
-        localCopy.recycleTypeRecord,
-        localCopy.recycleBinRowSubtitle(
-          number: named ? summary.number : null,
-          projectName: record.projectName,
-          deletedAt: record.deletedAt,
-        ),
-      ),
-      leading: thumb == null
-          ? null
-          : RecordThumb(
-              sha256: thumb.sha256,
-              storagePath: thumb.storagePath,
-              quarterTurns: thumb.quarterTurns,
-              hasCaption: thumb.hasCaption,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        AppListTile(
+          key: ValueKey<String>('recycle-bin-row-${record.id}'),
+          title: title,
+          wrapText: true,
+          subtitle: localCopy.recycleEntitySubtitle(
+            localCopy.recycleTypeRecord,
+            localCopy.recycleBinRowSubtitle(
+              number: named ? summary.number : null,
+              projectName: record.projectName,
+              deletedAt: record.deletedAt,
             ),
-      status: AppStatusPill.badge(
-        status: RecordStatus.deleted,
-        label: localCopy.recycleBinDaysLeft(daysLeft),
-      ),
-      trailing: AppIconButton(
-        key: ValueKey<String>('recycle-bin-restore-${record.id}'),
-        icon: AppIcons.restore,
-        semanticLabel: localCopy.recycleBinRestoreLabel(title),
-        tooltip: localCopy.recycleBinRestore,
-        onPressed: restoring || locked
-            ? null
-            : () => unawaited(_restore(context, ref)),
-      ),
+          ),
+          leading: thumb == null
+              ? null
+              : RecordThumb(
+                  sha256: thumb.sha256,
+                  storagePath: thumb.storagePath,
+                  quarterTurns: thumb.quarterTurns,
+                  hasCaption: thumb.hasCaption,
+                ),
+          status: AppStatusPill.badge(
+            status: RecordStatus.deleted,
+            label: localCopy.recycleBinDaysLeft(daysLeft),
+          ),
+        ),
+        _RestoreAction(
+          actionKey: ValueKey<String>('recycle-bin-restore-${record.id}'),
+          title: title,
+          busy: restoring,
+          onPressed: restoring || locked
+              ? null
+              : () => unawaited(_restore(context, ref)),
+        ),
+      ],
     );
   }
 
@@ -310,25 +313,30 @@ class _EntityBinRow extends ConsumerWidget {
       DeletedEntityKind.document => copy.recycleTypeDocument,
       DeletedEntityKind.audio => copy.recycleTypeAudio,
     };
-    return AppListTile(
-      key: ValueKey<String>('recycle-bin-row-${entity.key}'),
-      title: entity.name.isEmpty ? type : entity.name,
-      wrapText: true,
-      subtitle: copy.recycleEntitySubtitle(
-        type,
-        copy.recycleBinRowSubtitle(
-          number: null,
-          projectName: entity.projectName,
-          deletedAt: entity.deletedAt,
+    final String title = entity.name.isEmpty ? type : entity.name;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        AppListTile(
+          key: ValueKey<String>('recycle-bin-row-${entity.key}'),
+          title: title,
+          wrapText: true,
+          subtitle: copy.recycleEntitySubtitle(
+            type,
+            copy.recycleBinRowSubtitle(
+              number: null,
+              projectName: entity.projectName,
+              deletedAt: entity.deletedAt,
+            ),
+          ),
         ),
-      ),
-      trailing: AppIconButton(
-        key: ValueKey<String>('recycle-bin-restore-${entity.key}'),
-        icon: AppIcons.restore,
-        tooltip: copy.recycleBinRestore,
-        semanticLabel: copy.recycleBinRestoreLabel(entity.name),
-        onPressed: restoring ? null : () => unawaited(_restore(context, ref)),
-      ),
+        _RestoreAction(
+          actionKey: ValueKey<String>('recycle-bin-restore-${entity.key}'),
+          title: title,
+          busy: restoring,
+          onPressed: restoring ? null : () => unawaited(_restore(context, ref)),
+        ),
+      ],
     );
   }
 
@@ -345,6 +353,54 @@ class _EntityBinRow extends ConsumerWidget {
       case FailureResult<void>(:final Failure failure):
         showAppSnack(host, copy.failureMessage(failure), tone: SnackTone.error);
     }
+  }
+}
+
+/// Labels the same secondary action below every kind of deleted evidence.
+class _RestoreAction extends StatelessWidget {
+  const _RestoreAction({
+    required this.actionKey,
+    required this.title,
+    required this.busy,
+    required this.onPressed,
+  });
+
+  final Key actionKey;
+  final String title;
+  final bool busy;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final LocalizedCopy copy = Copy.of(context);
+    final String label = copy.recycleBinRestoreLabel(title);
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        Space.x4,
+        Space.x2,
+        Space.x4,
+        Space.x3,
+      ),
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Semantics(
+          label: busy ? copy.busyAction(label) : label,
+          button: true,
+          enabled: onPressed != null && !busy,
+          liveRegion: busy,
+          excludeSemantics: true,
+          onTap: busy ? null : onPressed,
+          child: AppButton(
+            key: actionKey,
+            label: copy.recycleBinRestore,
+            variant: AppButtonVariant.secondary,
+            icon: AppIcons.restore,
+            busy: busy,
+            onPressed: onPressed,
+          ),
+        ),
+      ),
+    );
   }
 }
 

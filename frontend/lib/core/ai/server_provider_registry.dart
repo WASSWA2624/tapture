@@ -27,6 +27,12 @@ ProviderRegistry serverProviderRegistry({
         false;
     final Set<AiOperation> operations = configured
         ? catalogue!.operations(provider)
+        : provider == 'xai'
+        ? const <AiOperation>{
+            AiOperation.readText,
+            AiOperation.extractFields,
+            AiOperation.refineText,
+          }
         : all;
     final List<ModelDescriptor> models = configured
         ? catalogue!.models(provider)
@@ -50,7 +56,11 @@ ProviderRegistry serverProviderRegistry({
       service: configured && funded ? service : const AiService.unavailable(),
       models: models,
       serverProvider: provider,
-      serverCredentialProvider: credentials ? provider : null,
+      // xAI is opt-in catalogue configuration. Its retained unavailable
+      // identity must never initiate credential traffic before that exists.
+      serverCredentialProvider: credentials && (provider != 'xai' || configured)
+          ? provider
+          : null,
     );
   }
 
@@ -65,17 +75,20 @@ ProviderRegistry serverProviderRegistry({
         credentials: false,
       ),
       // Legacy identities remain visible, even before the first metadata refresh.
-      for (final String provider in <String>['gemini', 'openai'])
-        descriptor(
-          id: 'personal-$provider',
-          label:
-              'Your ${catalogue?.row(provider)?['label'] ?? provider} account',
-          provider: provider,
-          kind: 'personal',
-          credentials: true,
-        ),
+      for (final String provider in <String>['gemini', 'openai', 'xai'])
+        if (provider != 'xai' ||
+            catalogue?.row(provider)?['authMode'] != 'none')
+          descriptor(
+            id: 'personal-$provider',
+            label:
+                'Your ${catalogue?.row(provider)?['label'] ?? (provider == 'xai' ? 'xAI' : provider)} account',
+            provider: provider,
+            kind: 'personal',
+            credentials: true,
+          ),
       for (final Map<String, Object?> row in catalogue?.rows ?? const [])
-        if (row['provider'] != 'gemini' && row['provider'] != 'openai')
+        if (!const <String>['gemini', 'openai'].contains(row['provider']) &&
+            (row['provider'] != 'xai' || row['authMode'] == 'none'))
           descriptor(
             id: '${row['authMode'] == 'none' ? 'keyless' : 'personal'}-${row['provider']}',
             label: row['label']! as String,

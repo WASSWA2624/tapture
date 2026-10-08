@@ -166,7 +166,8 @@ List<AppOverflowAction> _rowActions(
     AppOverflowAction(
       label: localCopy.projectExport,
       icon: AppIcons.export,
-      onTap: () => context.push(RoutePaths.projectExports(project.id)),
+      onTap: () =>
+          context.push(RoutePaths.projectExports(project.id), extra: true),
     ),
     AppOverflowAction(
       label: localCopy.projectRename,

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -88,6 +90,85 @@ void main() {
       await tester.tap(find.text(three[count - 1].label).last);
       await tester.pumpAndSettle();
       expect(latest, three[count - 1].value);
+    });
+  }
+
+  testWidgets('sheet labels retain their default decoration', (
+    WidgetTester tester,
+  ) async {
+    await _pump(
+      tester,
+      AppChoiceField<String>(
+        label: 'Project',
+        options: four,
+        value: 'a',
+        onChanged: (_) {},
+      ),
+    );
+    final InputDecorator field = tester.widget<InputDecorator>(
+      find.byType(InputDecorator),
+    );
+    expect(field.decoration.labelText, 'Project');
+    expect(field.decoration.label, isNull);
+  });
+
+  for (final String? value in <String?>[null, 'a']) {
+    testWidgets('a wrapped sheet label stays readable at text 2 with '
+        'selection $value', (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      const String label = 'Supported providers with a longer field label';
+      String? picked;
+      await _pump(
+        tester,
+        Padding(
+          padding: const EdgeInsets.only(top: Space.x4),
+          child: AppChoiceField<String>(
+            label: label,
+            wrapLabel: true,
+            options: four,
+            value: value,
+            onChanged: (String? next) => picked = next,
+          ),
+        ),
+        size: const Size(393, 852),
+      );
+      final RenderParagraph paragraph = tester.renderObject<RenderParagraph>(
+        find.descendant(of: find.text(label), matching: find.byType(RichText)),
+      );
+      expect(paragraph.didExceedMaxLines, isFalse);
+      final Rect painted = MatrixUtils.transformRect(
+        paragraph.getTransformTo(null),
+        paragraph.paintBounds,
+      );
+      expect(painted.left, greaterThanOrEqualTo(0));
+      expect(painted.right, lessThanOrEqualTo(393));
+      expect(painted.top, greaterThanOrEqualTo(0));
+      expect(painted.bottom, lessThanOrEqualTo(852));
+      expect(find.byType(AppChoiceField<String>), meetsTapTarget());
+      expect(find.byType(AppChoiceField<String>), hasSemanticLabel(label));
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.byType(AppChoiceField<String>));
+      await tester.pumpAndSettle();
+      final Finder choice = find.widgetWithText(AppListTile, 'Delta');
+      await tester.scrollUntilVisible(
+        choice,
+        48,
+        scrollable: find.descendant(
+          of: find.byType(AppBottomSheet),
+          matching: find.byWidgetPredicate(
+            (Widget widget) =>
+                widget is Scrollable &&
+                widget.axisDirection == AxisDirection.down,
+          ),
+        ),
+      );
+      await Scrollable.ensureVisible(tester.element(choice), alignment: .5);
+      await tester.pumpAndSettle();
+      expect(choice.hitTestable(), findsOneWidget);
+      await tester.tap(choice);
+      await tester.pumpAndSettle();
+      expect(picked, 'd');
     });
   }
 

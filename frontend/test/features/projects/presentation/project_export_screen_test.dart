@@ -1,0 +1,602 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/core/files/download_service.dart';
+import 'package:tapture/core/network/offline_now.dart';
+import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/exports/exports.dart';
+import 'package:tapture/features/projects/presentation/export_summary_view.dart';
+import 'package:tapture/features/projects/presentation/project_export_screen.dart';
+
+import '../../../support/fakes/fake_export_repository.dart';
+import '../../../support/screen_fonts.dart';
+import '../../../support/screen_matrix.dart';
+
+void main() {
+  for (final ({String name, ScreenMatrix cell}) corner
+      in ScreenMatrix.corners) {
+    testWidgets('completed export corner ${corner.name}', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = corner.cell.size;
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      await tester.runAsync(ScreenFonts.load);
+      final FakeExportRepository exports = FakeExportRepository(
+        displayName: 'Testing.zip',
+      )..summary = _summary;
+      addTearDown(exports.dispose);
+      await _pump(
+        tester,
+        exports: exports,
+        startExport: true,
+        cell: corner.cell,
+      );
+      await expectLater(
+        find.byType(ProjectExportScreen),
+        matchesGoldenFile(
+          'goldens/project_export_completed_${corner.name}.png',
+        ),
+      );
+    });
+  }
+  for (final ScreenMatrix cell in ScreenMatrix.cells) {
+    for (final Locale locale in <Locale>[
+      const Locale('en'),
+      const Locale('en', 'XA'),
+    ]) {
+      testWidgets(
+        'export stays local and readable ${cell.description} $locale',
+        (WidgetTester tester) async {
+          tester.view.devicePixelRatio = 1;
+          tester.view.physicalSize = cell.size;
+          addTearDown(() => debugDefaultTargetPlatformOverride = null);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          addTearDown(tester.view.resetPhysicalSize);
+          for (final TargetPlatform? platform in <TargetPlatform?>[
+            TargetPlatform.android,
+            TargetPlatform.iOS,
+            TargetPlatform.windows,
+            TargetPlatform.macOS,
+            TargetPlatform.linux,
+            null,
+          ]) {
+            debugDefaultTargetPlatformOverride = platform;
+            final FakeExportRepository exports = FakeExportRepository()
+              ..summary = _summary
+              ..inMemory = platform == null;
+            addTearDown(exports.dispose);
+            await _pump(
+              tester,
+              exports: exports,
+              startExport: true,
+              cell: cell,
+              locale: locale,
+            );
+            expect(exports.exportCalls, 1);
+            expect(find.byType(ExportSummaryView), findsNothing);
+            await _expand(tester);
+            expect(find.byType(ExportSummaryView), findsOneWidget);
+            expect(tester.takeException(), isNull, reason: '$platform');
+            expect(exports.exportCalls, 1);
+            await tester.pumpWidget(const SizedBox.shrink());
+          }
+          debugDefaultTargetPlatformOverride = null;
+        },
+      );
+    }
+  }
+  testWidgets('an empty project explains that there is nothing to export', (
+    WidgetTester tester,
+  ) async {
+    final FakeExportRepository exports = FakeExportRepository();
+    addTearDown(exports.dispose);
+    await _pump(tester, exports: exports);
+    expect(find.text(Copy.projectExportEmptyHeadline), findsOneWidget);
+    expect(find.byType(AppPrimaryAction), findsNothing);
+  });
+
+  testWidgets('with no export store the page says the files are not here', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester);
+    expect(find.byType(AppErrorState), findsOneWidget);
+    expect(
+      find.text('Project files are not available on this device.'),
+      findsOneWidget,
+    );
+  });
+
+  for (final ({String name, Size size, double scale}) layout
+      in <({String name, Size size, double scale})>[
+        (name: '393 dp', size: const Size(393, 886), scale: 1),
+        (name: '800 dp', size: const Size(800, 1000), scale: 1),
+        (name: '1200 dp', size: const Size(1200, 800), scale: 1),
+        (name: 'landscape', size: const Size(886, 393), scale: 1),
+        (name: '200 percent text', size: const Size(393, 886), scale: 2),
+      ]) {
+    testWidgets('at ${layout.name} the summary lists what the file holds', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = layout.size;
+      tester.platformDispatcher.textScaleFactorTestValue = layout.scale;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final FakeExportRepository exports = FakeExportRepository()
+        ..summary = _summary;
+      addTearDown(exports.dispose);
+      await _pump(
+        tester,
+        exports: exports,
+        downloads: DownloadService.fake(destination: 'Downloads › Tapture'),
+      );
+
+      await _expand(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.text('Testing'), findsOneWidget);
+      expect(find.text(Copy.recordsCount(3)), findsOneWidget);
+      expect(find.text(Copy.capturePhotoCount(3)), findsNothing);
+      expect(find.text(Copy.capturePhotoCount(5)), findsOneWidget);
+      expect(find.text(Copy.exportAudioClips(1)), findsOneWidget);
+      expect(find.text(Copy.exportUnprocessedCount(1)), findsOneWidget);
+      expect(find.text(Copy.exportNeedsReviewCount(1)), findsOneWidget);
+      expect(find.text(Copy.exportApprovedCount(1)), findsOneWidget);
+      expect(find.text('Assets'), findsOneWidget);
+      expect(find.text('Rooms'), findsOneWidget);
+      expect(find.text(Copy.exportFileFormat), findsOneWidget);
+      expect(find.text(Copy.exportFileColumns), findsOneWidget);
+      expect(
+        find.text(Copy.exportSavedTo(Copy.projectExportDestination)),
+        findsOneWidget,
+      );
+      final Rect action = tester.getRect(find.byType(AppPrimaryAction));
+      expect(action.bottom, lessThanOrEqualTo(layout.size.height));
+      expect(
+        tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).label,
+        Copy.projectExport,
+      );
+    });
+  }
+
+  testWidgets('offline shows a banner and share runs only from Share', (
+    WidgetTester tester,
+  ) async {
+    final FakeExportRepository exports = FakeExportRepository(
+      displayName: 'Testing-250926-190542.zip',
+    )..summary = _summary;
+    addTearDown(exports.dispose);
+    var shared = 0;
+    await _pump(
+      tester,
+      exports: exports,
+      overrides: <Override>[offlineNowProvider.overrideWith((Ref _) => true)],
+      downloads: DownloadService.fake(
+        canOpenExternally: true,
+        onOpenStoredExternally: (String _, String _, String _) => shared++,
+      ),
+    );
+    expect(find.text(Copy.offlineWorking), findsOneWidget);
+
+    await tester.tap(find.text(Copy.projectExport));
+    await tester.pumpAndSettle();
+    expect(
+      find.text(Copy.projectExportSaved('Testing-250926-190542.zip')),
+      findsOneWidget,
+    );
+    expect(find.text('Testing'), findsNothing);
+    expect(shared, 0);
+
+    await tester.tap(find.text(Copy.projectExportOpen));
+    await tester.pumpAndSettle();
+    expect(shared, 1);
+  });
+
+  testWidgets('the page names the package and its size before writing', (
+    WidgetTester tester,
+  ) async {
+    final FakeExportRepository exports = FakeExportRepository()
+      ..summary = _summary
+      ..estimate = 3 * 1024 * 1024;
+    addTearDown(exports.dispose);
+    await _pump(tester, exports: exports);
+    await _expand(tester);
+
+    expect(find.text(Copy.exportFileFormat), findsOneWidget);
+    expect(find.text(Copy.exportFileColumns), findsOneWidget);
+    expect(find.text(Copy.exportPackageSize(3 * 1024 * 1024)), findsOneWidget);
+  });
+
+  testWidgets('native keeps one canonical package; browser downloads once', (
+    WidgetTester tester,
+  ) async {
+    for (final bool browser in <bool>[false, true]) {
+      final FakeExportRepository exports = FakeExportRepository()
+        ..summary = _summary
+        ..inMemory = browser;
+      addTearDown(exports.dispose);
+      final List<String> stored = <String>[];
+      final List<String> bytes = <String>[];
+      await _pump(
+        tester,
+        exports: exports,
+        downloads: DownloadService.fake(
+          onSaveStored: (String path, String _, String mime) {
+            expect(mime, 'application/zip');
+            stored.add(path);
+          },
+          onSave: (String name, Uint8List _, String mime) {
+            expect(mime, 'application/zip');
+            bytes.add(name);
+          },
+        ),
+      );
+      await tester.tap(find.text(Copy.projectExport));
+      await tester.pumpAndSettle();
+
+      expect(stored, isEmpty);
+      expect(bytes, browser ? hasLength(1) : isEmpty);
+      expect(exports.exportCalls, 1);
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+  });
+
+  testWidgets('cancel leaves the export unwritten', (
+    WidgetTester tester,
+  ) async {
+    await _pump(tester, exports: _HoldExport());
+    await tester.tap(find.text(Copy.projectExport));
+    await tester.pump();
+    expect(find.text(Copy.projectExportProgress), findsOneWidget);
+    await tester.tap(find.widgetWithText(AppButton, Copy.projectExportCancel));
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.projectExportShare), findsNothing);
+    expect(
+      tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,
+      isNotNull,
+    );
+  });
+
+  testWidgets('a saved export keeps its name when the copy fails', (
+    WidgetTester tester,
+  ) async {
+    final FakeExportRepository exports =
+        FakeExportRepository(displayName: 'Test-project-240926-110000.zip')
+          ..summary = _summary
+          ..inMemory = true;
+    addTearDown(exports.dispose);
+    await _pump(
+      tester,
+      exports: exports,
+      downloads: DownloadService.fake(fail: true),
+    );
+    await tester.tap(find.text(Copy.projectExport));
+    await tester.pumpAndSettle();
+    expect(
+      find.text(Copy.projectExportSaved('Test-project-240926-110000.zip')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('could not save'), findsOneWidget);
+    expect(exports.exportCalls, 1);
+  });
+
+  testWidgets('a failed share says why, and a dismissed one says nothing', (
+    WidgetTester tester,
+  ) async {
+    for (final ({DownloadService downloads, bool snack}) run
+        in <({DownloadService downloads, bool snack})>[
+          (
+            downloads: DownloadService.fake(
+              canOpenExternally: true,
+              openPermissionDenied: true,
+            ),
+            snack: true,
+          ),
+          (
+            downloads: DownloadService.fake(
+              canOpenExternally: true,
+              openCancel: true,
+            ),
+            snack: false,
+          ),
+          (
+            downloads: DownloadService.fake(canOpenExternally: true),
+            snack: false,
+          ),
+        ]) {
+      final FakeExportRepository exports = FakeExportRepository()
+        ..summary = _summary;
+      addTearDown(exports.dispose);
+      await _pump(tester, exports: exports, downloads: run.downloads);
+      await tester.tap(find.text(Copy.projectExport));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(Copy.projectExportOpen));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(Copy.projectOpenPermission),
+        run.snack ? findsOneWidget : findsNothing,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+  });
+
+  testWidgets('the share hint shows only where the sheet reaches other apps', (
+    WidgetTester tester,
+  ) async {
+    for (final bool sheet in <bool>[true, false]) {
+      final FakeExportRepository exports = FakeExportRepository()
+        ..summary = _summary;
+      addTearDown(exports.dispose);
+      await _pump(
+        tester,
+        exports: exports,
+        downloads: DownloadService.fake(
+          canOpenExternally: true,
+          canShareToApps: sheet,
+        ),
+      );
+      await tester.tap(find.text(Copy.projectExport));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(Copy.projectExportShareHint),
+        sheet ? findsOneWidget : findsNothing,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+  });
+  testWidgets('Reports and data files opens the selected project workflow', (
+    WidgetTester tester,
+  ) async {
+    final FakeExportRepository exports = FakeExportRepository()
+      ..summary = _summary;
+    addTearDown(exports.dispose);
+    final GoRouter router = GoRouter(
+      initialLocation: RoutePaths.projectExports('project-1'),
+      routes: <RouteBase>[
+        GoRoute(
+          path: RoutePaths.projectExports('project-1'),
+          builder: (_, _) => const ProjectExportScreen(projectId: 'project-1'),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'deliverable',
+              builder: (_, _) => const Text('Report workflow'),
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          exportRepositoryProvider.overrideWithValue(exports),
+        ],
+        child: MaterialApp.router(
+          theme: buildTheme(brightness: Brightness.light),
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey<String>('app-page-overflow')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(
+      find.byKey(const ValueKey<String>('project-export-deliverables')),
+    );
+    await tester.tap(
+      find.byKey(const ValueKey<String>('project-export-deliverables')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Report workflow'), findsOneWidget);
+    expect(
+      router.routeInformationProvider.value.uri.path,
+      RoutePaths.projectDeliverables('project-1'),
+    );
+  });
+
+  testWidgets('menu intent starts once and resize cannot generate again', (
+    WidgetTester tester,
+  ) async {
+    final FakeExportRepository exports = FakeExportRepository()
+      ..summary = _summary;
+    addTearDown(exports.dispose);
+    await _pump(tester, exports: exports, startExport: true);
+    expect(exports.exportCalls, 1);
+    expect(find.text(Copy.projectExport), findsNothing);
+    expect(find.byType(ExportSummaryView), findsNothing);
+    tester.view.physicalSize = const Size(1200, 700);
+    addTearDown(tester.view.resetPhysicalSize);
+    await tester.pumpAndSettle();
+    await _expand(tester);
+    expect(exports.exportCalls, 1);
+  });
+
+  testWidgets(
+    'direct entry waits and disk-full retry makes one fresh attempt',
+    (WidgetTester tester) async {
+      final FakeExportRepository exports = FakeExportRepository()
+        ..summary = _summary
+        ..exportFailure = const StorageFailure(
+          message: 'Disk full',
+          recoveryAction: 'Free space and retry.',
+        );
+      addTearDown(exports.dispose);
+      await _pump(tester, exports: exports);
+      expect(exports.exportCalls, 0);
+      await tester.tap(find.text(Copy.projectExport));
+      await tester.pumpAndSettle();
+      expect(exports.exportCalls, 1);
+      expect(find.byType(AppErrorState), findsOneWidget);
+      exports.exportFailure = null;
+      tester.widget<AppErrorState>(find.byType(AppErrorState)).onRetry!();
+      await tester.pumpAndSettle();
+      expect(exports.exportCalls, 2);
+      expect(find.text(Copy.projectExportOpen), findsOneWidget);
+    },
+  );
+
+  testWidgets('failed browser handoff retries saved bytes without rebuilding', (
+    WidgetTester tester,
+  ) async {
+    final FakeExportRepository exports = FakeExportRepository()
+      ..summary = _summary
+      ..inMemory = true;
+    addTearDown(exports.dispose);
+    DownloadService current = DownloadService.fake(fail: true);
+    await _pump(
+      tester,
+      exports: exports,
+      overrides: <Override>[
+        downloadServiceProvider.overrideWith((Ref _) => current),
+      ],
+      startExport: true,
+    );
+    expect(exports.exportCalls, 1);
+    final ProviderContainer container = ProviderScope.containerOf(
+      tester.element(find.byType(ProjectExportScreen)),
+    );
+    final List<Uint8List> downloaded = <Uint8List>[];
+    current = DownloadService.fake(
+      onSave: (_, Uint8List bytes, _) => downloaded.add(bytes),
+    );
+    container.invalidate(downloadServiceProvider);
+    await tester.pump();
+    tester.widget<AppErrorState>(find.byType(AppErrorState)).onRetry!();
+    await tester.pumpAndSettle();
+    expect(exports.exportCalls, 1);
+    expect(downloaded, hasLength(1));
+    expect(find.byType(AppErrorState), findsNothing);
+  });
+}
+
+final ExportSummary _summary = (
+  projectName: 'Testing',
+  records: 3,
+  photos: 5,
+  audioClips: 1,
+  unprocessed: 1,
+  needsReview: 1,
+  approved: 1,
+  templates: const <ExportTemplateCount>[
+    (name: 'Assets', records: 2),
+    (name: 'Rooms', records: 1),
+  ],
+  firstCapturedAt: DateTime.utc(2026, 9, 24, 9),
+  lastCapturedAt: DateTime.utc(2026, 9, 25, 16),
+);
+
+Future<void> _pump(
+  WidgetTester tester, {
+  ExportRepository? exports,
+  DownloadService? downloads,
+  List<Override> overrides = const <Override>[],
+  bool startExport = false,
+  ScreenMatrix? cell,
+  Locale locale = const Locale('en'),
+}) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      key: UniqueKey(),
+      retry: (int _, Object _) => null,
+      overrides: <Override>[
+        if (exports != null)
+          exportRepositoryProvider.overrideWith((Ref _) => exports),
+        if (downloads != null)
+          downloadServiceProvider.overrideWith((Ref _) => downloads),
+        ...overrides,
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        themeAnimationDuration: Duration.zero,
+        locale: locale,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        theme: ScreenFonts.theme(
+          buildTheme(
+            brightness: cell?.brightness ?? Brightness.light,
+            outdoor: cell?.outdoor ?? false,
+          ),
+        ),
+        builder: (BuildContext context, Widget? child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(cell?.textScale ?? 1)),
+          child: child!,
+        ),
+        home: ProjectExportScreen(
+          projectId: 'project-1',
+          startExport: startExport,
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+Future<void> _expand(WidgetTester tester) async {
+  final Finder summary = find.byKey(
+    const ValueKey<String>('project-export-summary'),
+  );
+  await tester.ensureVisible(summary);
+  tester.widget<AppSectionHeader>(summary).onToggle!();
+  await tester.pumpAndSettle();
+}
+
+final class _HoldExport implements ExportRepository {
+  @override
+  Future<Result<ExportEntry?>> byId(String id) async =>
+      const Success<ExportEntry?>(null);
+
+  @override
+  Future<Result<void>> delete(String id, {required String reason}) async =>
+      const Success<void>(null);
+
+  @override
+  Future<Result<int>> estimatePackage(
+    String projectId, {
+    ExportScope? scope,
+    bool withoutPhotos = false,
+  }) async => const Success<int>(0);
+
+  @override
+  Future<Result<ExportedPackage>> exportProject(
+    String projectId, {
+    required CancellationToken cancel,
+    ExportScope? scope,
+    bool withoutPhotos = false,
+    String? password,
+    void Function(double)? onProgress,
+    void Function(({String stage, double fraction}))? onStageProgress,
+  }) {
+    return cancel.whenCancelled.then(
+      (_) => const FailureResult<ExportedPackage>(CancelledFailure()),
+    );
+  }
+
+  @override
+  Future<Result<ExportEntry>> save(ExportEntry entry) async =>
+      const FailureResult<ExportEntry>(ValidationFailure());
+
+  @override
+  Stream<List<ExportEntry>> watchByProject(String projectId) =>
+      const Stream<List<ExportEntry>>.empty();
+
+  @override
+  Stream<ExportSummary> watchSummary(String projectId) =>
+      Stream<ExportSummary>.value(_summary);
+}

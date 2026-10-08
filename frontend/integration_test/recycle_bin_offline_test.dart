@@ -68,7 +68,18 @@ void main() {
             .first,
         isEmpty,
       );
-      valueOf(await projects.restore(CaptureRig.projectId));
+      final ProjectRepositoryImpl reopened = ProjectRepositoryImpl(
+        db: app.db,
+        clock: app.clock,
+        deviceId: 'test',
+        ids: UuidV7Service.sequence(app.clock),
+        storageRoot: capture.storage,
+      );
+      expect(
+        (await reopened.watchDeleted().first).single.id,
+        CaptureRig.projectId,
+      );
+      valueOf(await reopened.restore(CaptureRig.projectId));
       expect(
         (await capture.container
                 .read(photoRepositoryProvider)

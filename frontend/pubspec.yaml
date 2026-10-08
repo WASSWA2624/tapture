@@ -83,6 +83,7 @@ flutter:
   assets:
     - tool/secret_patterns.yaml
     - assets/branding/
+    - assets/ai_providers/
     - assets/feedback/
     - assets/fonts/
     - assets/speech/

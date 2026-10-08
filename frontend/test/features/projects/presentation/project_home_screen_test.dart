@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -13,6 +13,7 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/download_service.dart';
@@ -40,7 +41,9 @@ import 'package:tapture/features/templates/templates.dart';
 import '../../../support/a11y_matchers.dart';
 import '../../../support/factories.dart';
 import '../../../support/pump_external_work.dart';
+import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
+import '../../../support/screen_probe.dart';
 import '../../templates/fakes/fake_template_repository.dart';
 import '../fakes/fake_project_repository.dart';
 
@@ -242,43 +245,125 @@ void main() {
     );
   });
 
-  for (final ScreenMatrix cell in ScreenMatrix.cells) {
-    testWidgets(
-      'template-free home actions fit ${cell.description}',
-      (WidgetTester tester) async {
-        _setSurface(tester, cell.size);
-        tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
-        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-        await _pumpPopulated(
-          tester,
-          mode: cell.outdoor
-              ? AppThemeMode.outdoor
-              : cell.brightness == Brightness.dark
-              ? AppThemeMode.dark
-              : AppThemeMode.light,
-        );
-        await tester.pumpAndSettle();
+  for (final Locale locale in const <Locale>[
+    Locale('en'),
+    Locale('en', 'XA'),
+  ]) {
+    for (final ScreenMatrix cell in ScreenMatrix.cells) {
+      testWidgets(
+        'template-free home and Process fit ${cell.description} $locale',
+        (WidgetTester tester) async {
+          await tester.runAsync(ScreenFonts.load);
+          _setSurface(tester, cell.size);
+          tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
+          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+          final GoRouter router = await _pumpPopulated(
+            tester,
+            locale: locale,
+            mode: cell.outdoor
+                ? AppThemeMode.outdoor
+                : cell.brightness == Brightness.dark
+                ? AppThemeMode.dark
+                : AppThemeMode.light,
+          );
+          await tester.pumpAndSettle();
 
-        expect(tester.takeException(), isNull);
-        final Finder setup = find.byType(AppPrimaryAction);
-        final Finder capture = find.widgetWithText(
-          AppButton,
-          Copy.projectCaptureNow,
-        );
-        expect(setup, findsOneWidget);
-        expect(setup, meetsTapTarget());
-        expect(capture, meetsTapTarget());
-        expect(
-          tester.getRect(setup).bottom,
-          lessThanOrEqualTo(cell.size.height),
-        );
-        expect(
-          tester.getRect(capture).bottom,
-          lessThanOrEqualTo(cell.size.height),
-        );
-      },
-      variant: TargetPlatformVariant.all(),
+          expect(tester.takeException(), isNull);
+          final LocalizedCopy copy = Copy.of(
+            tester.element(find.byType(ProjectHomeScreen)),
+          );
+          final Finder setup = find.byType(AppPrimaryAction);
+          final Finder capture = find.widgetWithText(
+            AppButton,
+            copy.projectCaptureNow,
+          );
+          expect(setup, findsOneWidget);
+          // AppPage keeps tall footer groups reachable by scrolling within
+          // half the viewport. Measure each whole control after revealing it.
+          await _expectWholeActionVisible(tester, setup);
+          await _expectWholeActionVisible(tester, capture);
+          await tester.tap(find.byType(AppOverflowMenu));
+          await tester.pumpAndSettle();
+          final Finder process = find.byKey(
+            const ValueKey<String>('project-process'),
+          );
+          await _expectWholeActionVisible(tester, process);
+          await tester.tap(process);
+          await tester.pumpAndSettle();
+          expect(router.state.uri.path, RoutePaths.projectQueue('project-1'));
+          router.pop();
+          await tester.pumpAndSettle();
+          expect(find.byType(ProjectHomeScreen), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+        variant: TargetPlatformVariant.all(),
+      );
+    }
+  }
+
+  testWidgets('keyboard opens Process for each explicitly selected project', (
+    WidgetTester tester,
+  ) async {
+    final FakeProjectRepository repository = FakeProjectRepository();
+    addTearDown(repository.dispose);
+    _ok(await repository.create(aProject(id: 'project-a', name: 'Alpha')));
+    _ok(await repository.create(aProject(id: 'project-b', name: 'Beta')));
+    final GoRouter router = await _pump(
+      tester,
+      repo: repository,
+      openProjectId: 'project-a',
     );
+    await tester.pumpAndSettle();
+    final ProviderContainer container = ProviderScope.containerOf(
+      tester.element(find.byType(ProjectHomeScreen)),
+    );
+    for (final String projectId in <String>['project-a', 'project-b']) {
+      container.read(openProjectIdProvider.notifier).open(projectId);
+      router.go(RoutePaths.project(projectId));
+      await tester.pumpAndSettle();
+      final AppOverflowMenu menu = tester.widget<AppOverflowMenu>(
+        find.byType(AppOverflowMenu),
+      );
+      expect(menu.items.first.key, const ValueKey<String>('project-process'));
+      await tester.tap(find.byType(AppOverflowMenu));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, RoutePaths.projectQueue(projectId));
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, RoutePaths.project(projectId));
+    }
+  });
+
+  for (final corner in ScreenMatrix.corners) {
+    testWidgets('project Process menu composition ${corner.name}', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(ScreenFonts.load);
+      _setSurface(tester, corner.cell.size);
+      tester.platformDispatcher.textScaleFactorTestValue =
+          corner.cell.textScale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _pumpPopulated(
+        tester,
+        mode: corner.cell.outdoor
+            ? AppThemeMode.outdoor
+            : corner.cell.brightness == Brightness.dark
+            ? AppThemeMode.dark
+            : AppThemeMode.light,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(AppOverflowMenu));
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.queueTitle), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('goldens/project_process_menu_${corner.name}.png'),
+      );
+    });
   }
 
   testWidgets('a failed load renders through AsyncValueView', (
@@ -364,6 +449,10 @@ void main() {
     await expectOpens(
       label: Copy.navDatasets,
       path: AppRoutes.projectDatasets('project-1'),
+    );
+    await expectOpens(
+      label: Copy.queueTitle,
+      path: RoutePaths.projectQueue('project-1'),
     );
     await expectOpens(
       label: Copy.transcribeTitle,
@@ -789,6 +878,7 @@ void main() {
     final GoRouter router = await _pumpPopulated(tester);
     await _chooseOverflow(tester, Copy.projectExport);
     expect(router.state.uri.path, AppRoutes.projectExports('project-1'));
+    expect(router.state.extra, isTrue);
     expect(
       tester
           .widget<ProjectExportScreen>(find.byType(ProjectExportScreen))
@@ -840,6 +930,7 @@ void main() {
         expect(
           actions.map((AppOverflowAction action) => action.label),
           <String>[
+            Copy.queueTitle,
             Copy.transcribeTitle,
             Copy.meetingStartEntry,
             Copy.qualitySummaryTitle,
@@ -861,7 +952,7 @@ void main() {
         expect(
           actions.map((AppOverflowAction action) => action.sectionLabel),
           <String>[
-            ...List<String>.filled(3, Copy.projectMenuCaptureReview),
+            ...List<String>.filled(4, Copy.projectMenuCaptureReview),
             ...List<String>.filled(4, Copy.projectMenuSetup),
             ...List<String>.filled(external ? 4 : 3, Copy.projectMenuExchange),
             ...List<String>.filled(5, Copy.projectMenuManage),
@@ -917,8 +1008,11 @@ void main() {
   testWidgets(
     'home Open with meets tap target, label and tooltip matchers at each width',
     (WidgetTester tester) async {
+      await tester.runAsync(ScreenFonts.load);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       for (final Size size in <Size>[
         const Size(400, 800),
+        const Size(800, 400),
         const Size(800, 1200),
         const Size(1200, 800),
       ]) {
@@ -927,30 +1021,52 @@ void main() {
           AppThemeMode.dark,
           AppThemeMode.outdoor,
         ]) {
-          _setSurface(tester, size);
-          await _pumpPopulated(
-            tester,
-            overrides: _openableOverrides(),
-            mode: mode,
-          );
-          await tester.pumpAndSettle();
-          await tester.tap(find.byType(AppOverflowMenu));
-          await tester.pumpAndSettle();
-          expect(
-            find.byKey(const ValueKey<String>('project-open-project-1')),
-            meetsTapTarget(),
-          );
-          expect(
-            find.byType(AppOverflowMenu),
-            hasSemanticLabel(Copy.overflowMenu),
-          );
-          expect(find.byTooltip(Copy.overflowMenu), findsWidgets);
-          await expectNoA11yIssues(tester);
-          await tester.pumpWidget(const SizedBox.shrink());
+          for (final double scale in <double>[1, 2]) {
+            _setSurface(tester, size);
+            tester.platformDispatcher.textScaleFactorTestValue = scale;
+            await _pumpPopulated(
+              tester,
+              overrides: _openableOverrides(),
+              mode: mode,
+            );
+            await tester.pumpAndSettle();
+            await tester.tap(find.byType(AppOverflowMenu));
+            await tester.pumpAndSettle();
+            final Finder open = find.byKey(
+              const ValueKey<String>('project-open-project-1'),
+            );
+            await _expectWholeActionVisible(tester, open);
+            expect(
+              find.byType(AppOverflowMenu),
+              hasSemanticLabel(Copy.overflowMenu),
+            );
+            expect(find.byTooltip(Copy.overflowMenu), findsWidgets);
+            // Resolved paints retain WCAG thresholds without sampling a
+            // smoothed Roboto edge as the text's foreground colour.
+            expect(await ScreenProbe.accessibilityIssues(tester), isEmpty);
+            await tester.pumpWidget(const SizedBox.shrink());
+          }
         }
       }
     },
   );
+}
+
+Future<void> _expectWholeActionVisible(
+  WidgetTester tester,
+  Finder action,
+) async {
+  await Scrollable.ensureVisible(tester.element(action), alignment: 0.5);
+  await tester.pumpAndSettle();
+  expect(action, meetsTapTarget());
+  final ScrollableState scrollable = Scrollable.of(tester.element(action));
+  final Rect viewport = tester.getRect(
+    find.byWidget(scrollable.context.widget),
+  );
+  final Rect bounds = tester.getRect(action);
+  expect(bounds.intersect(viewport), bounds);
+  final Size surface = tester.view.physicalSize / tester.view.devicePixelRatio;
+  expect(bounds.intersect(Offset.zero & surface), bounds);
 }
 
 List<Override> _openableOverrides({DownloadService? downloads}) {
@@ -977,6 +1093,7 @@ Future<GoRouter> _pump(
   String? openProjectId,
   List<Override> overrides = const <Override>[],
   AppThemeMode mode = AppThemeMode.light,
+  Locale locale = const Locale('en'),
 }) async {
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.project(openProjectId ?? 'project-1'),
@@ -1103,11 +1220,16 @@ Future<GoRouter> _pump(
         ...overrides,
       ],
       child: MaterialApp.router(
-        theme: buildTheme(
-          brightness: mode == AppThemeMode.dark
-              ? Brightness.dark
-              : Brightness.light,
-          outdoor: mode == AppThemeMode.outdoor,
+        locale: locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: ScreenFonts.theme(
+          buildTheme(
+            brightness: mode == AppThemeMode.dark
+                ? Brightness.dark
+                : Brightness.light,
+            outdoor: mode == AppThemeMode.outdoor,
+          ),
         ),
         routerConfig: router,
       ),
@@ -1120,6 +1242,7 @@ Future<GoRouter> _pumpPopulated(
   WidgetTester tester, {
   List<Override> overrides = const <Override>[],
   AppThemeMode mode = AppThemeMode.light,
+  Locale locale = const Locale('en'),
 }) async {
   final FakeProjectRepository repo = FakeProjectRepository();
   addTearDown(repo.dispose);
@@ -1130,6 +1253,7 @@ Future<GoRouter> _pumpPopulated(
     openProjectId: 'project-1',
     overrides: overrides,
     mode: mode,
+    locale: locale,
   );
   await tester.pump();
   await tester.pump();

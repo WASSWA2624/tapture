@@ -823,6 +823,11 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         label: Copy.of(context).gallerySampleGrade,
         options: _grades,
         value: 'a',
+        leadingBuilder: (BuildContext context, Choice<String> choice) => Icon(
+          AppIcons.category,
+          color: context.colors.onSurface,
+          size: Space.x4,
+        ),
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),
@@ -844,6 +849,11 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         options: _grades.take(1).toList(),
         value: 'a',
         alwaysSheet: true,
+        leadingBuilder: (BuildContext context, Choice<String> choice) => Icon(
+          AppIcons.category,
+          color: context.colors.onSurface,
+          size: Space.x4,
+        ),
         onChanged: (_) {},
       ),
       const SizedBox(height: Space.x4),

@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
-import 'package:go_router/go_router.dart';
-import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
+import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/ai/proxy_ai_service.dart';
+import 'package:tapture/core/assets/assets.dart';
 import 'package:tapture/core/backend/server_ai_catalogue.dart';
 import 'package:tapture/core/backend/server_credential_client.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -24,6 +25,8 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/features/account/account.dart'
+    show AccountConnectionPanel;
 import 'package:tapture/features/projects/projects.dart'
     show projectSettingsStoreProvider;
 import 'package:tapture/features/settings/settings.dart';
@@ -43,7 +46,13 @@ part 'ai_provider_settings_controller.dart';
 /// flag and every outcome live in [aiProviderSettingsProvider].
 final class AiProviderSettingsScreen extends ConsumerStatefulWidget {
   /// Creates the screen.
-  const AiProviderSettingsScreen({super.key});
+  const AiProviderSettingsScreen({
+    super.key,
+    this.initiallyShowAccount = false,
+  });
+
+  /// Reveals cached account controls on an explicit legacy deep link.
+  final bool initiallyShowAccount;
 
   @override
   ConsumerState<AiProviderSettingsScreen> createState() =>
@@ -81,6 +90,13 @@ class _AiProviderSettingsScreenState
     );
     final ProviderDescriptor provider = controller.provider;
     final List<ModelDescriptor> models = controller.models;
+    final Map<String, ProviderDescriptor> providerChoices =
+        Map<String, ProviderDescriptor>.unmodifiable(
+          <String, ProviderDescriptor>{
+            for (final ProviderDescriptor value in controller.providers)
+              value.id: value,
+          },
+        );
     final cost = ref
         .read(serverAiCatalogueProvider)
         .cost(
@@ -104,10 +120,34 @@ class _AiProviderSettingsScreenState
           AppChoiceField<String>(
             label: localCopy.aiSupportedProviders,
             alwaysSheet: true,
+            wrapLabel: true,
             enabled: !view.busy,
             value: provider.id,
+            leadingBuilder: (BuildContext context, Choice<String> choice) {
+              final ProviderDescriptor? descriptor =
+                  providerChoices[choice.value];
+              final String? asset = choice.value == ProviderRegistry.backendId
+                  ? null
+                  : AiProviderAssets.forProvider(
+                      descriptor?.serverProvider,
+                      inverse: Theme.of(context).brightness == Brightness.dark,
+                    );
+              return asset == null
+                  ? Icon(
+                      AppIcons.context,
+                      size: Space.x6,
+                      color: context.colors.onSurface,
+                    )
+                  : Image.asset(
+                      asset,
+                      width: Space.x6,
+                      height: Space.x6,
+                      fit: BoxFit.contain,
+                      excludeFromSemantics: true,
+                    );
+            },
             options: <Choice<String>>[
-              for (final ProviderDescriptor value in controller.providers)
+              for (final ProviderDescriptor value in providerChoices.values)
                 Choice<String>(value.id, value.label),
             ],
             onChanged: (String? value) {
@@ -118,26 +158,21 @@ class _AiProviderSettingsScreenState
             },
           ),
           const SizedBox(height: Space.x3),
-          AppBanner(
-            key: const ValueKey<String>('ai-custody'),
-            message: provider.serverCredentialProvider != null
-                ? localCopy.serverApiKeyCustody
-                : localCopy.aiCustody(
-                    provider.keyCustody.name,
-                    provider.available,
-                  ),
-            icon: provider.available ? AppIcons.key : AppIcons.warning,
-            tone: provider.available ? SnackTone.info : SnackTone.warning,
+          AppChoiceField<String>(
+            label: localCopy.aiModel,
+            alwaysSheet: true,
+            wrapLabel: true,
+            enabled: !view.busy,
+            value: controller.model.id,
+            options: <Choice<String>>[
+              for (final ModelDescriptor value in models)
+                Choice<String>(value.id, value.label),
+            ],
+            onChanged: (String? value) {
+              if (value != null) controller.selectModel(value);
+            },
           ),
-          if (view.fellBack) ...<Widget>[
-            const SizedBox(height: Space.x2),
-            AppBanner(
-              key: const ValueKey<String>('ai-fell-back'),
-              message: localCopy.aiSelectionFallback,
-              icon: AppIcons.warning,
-              tone: SnackTone.warning,
-            ),
-          ],
+          const SizedBox(height: Space.x3),
           if (provider.serverCredentialProvider != null ||
               (provider.deviceKeyAllowed &&
                   provider.keyCustody ==
@@ -145,16 +180,21 @@ class _AiProviderSettingsScreenState
             const SizedBox(height: Space.x3),
             AppTextField(
               label: localCopy.apiKeyLabel,
-              helper: view.keyStored
-                  ? provider.serverCredentialProvider != null
-                        ? localCopy.serverApiKeySaved
-                        : localCopy.apiKeySaved
-                  : null,
+              wrapLabel: true,
               controller: _credential,
               obscureText: true,
               dictation: false,
             ),
             if (view.keyStored) ...<Widget>[
+              const SizedBox(height: Space.x2),
+              Text(
+                provider.serverCredentialProvider != null
+                    ? localCopy.serverApiKeySaved
+                    : localCopy.apiKeySaved,
+                style: AppText.caption.copyWith(
+                  color: context.colors.onSurfaceMuted,
+                ),
+              ),
               const SizedBox(height: Space.x2),
               AppButton(
                 key: const ValueKey<String>('ai-remove-key'),
@@ -167,19 +207,11 @@ class _AiProviderSettingsScreenState
             ],
           ],
           const SizedBox(height: Space.x3),
-          AppChoiceField<String>(
-            label: localCopy.aiModel,
-            alwaysSheet: true,
-            enabled: !view.busy,
-            value: controller.model.id,
-            options: <Choice<String>>[
-              for (final ModelDescriptor value in models)
-                Choice<String>(value.id, value.label),
-            ],
-            onChanged: (String? value) {
-              if (value != null) controller.selectModel(value);
-            },
+          Text(
+            localCopy.aiCustodySummary,
+            style: AppText.caption.copyWith(color: context.colors.onSurface),
           ),
+          ..._status(localCopy, view, controller, provider),
           const SizedBox(height: Space.x3),
           SettingsDisclosure(
             id: 'ai-cost',
@@ -199,52 +231,130 @@ class _AiProviderSettingsScreenState
                 ),
               AppTextField(
                 label: localCopy.aiSpendingLimit,
-                helper: localCopy.aiSpendingLimitHint,
+                wrapLabel: true,
                 controller: _approvedCost,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
                 dictation: false,
               ),
+              const SizedBox(height: Space.x2),
+              Text(
+                localCopy.aiSpendingLimitHint,
+                style: AppText.caption.copyWith(
+                  color: context.colors.onSurfaceMuted,
+                ),
+              ),
             ],
           ),
-          if (view.failure case final Failure failure) ...<Widget>[
-            AppBanner(
-              message: <String>[
-                localCopy.failureMessage(failure),
-                if (localCopy.failureRecovery(failure)
-                    case final String recovery)
-                  recovery,
-              ].join(' '),
-              icon: AppIcons.warning,
-              tone: SnackTone.warning,
-            ),
-            AppButton(
-              label: localCopy.tryAgain,
-              variant: AppButtonVariant.secondary,
-              onPressed: view.busy
-                  ? null
-                  : () => unawaited(controller.retryStatus()),
-            ),
-          ],
+          const SizedBox(height: Space.x3),
+          SettingsDisclosure(
+            id: 'ai-connection',
+            title: localCopy.aiConnectionDetails,
+            children: <Widget>[
+              AppBanner(
+                key: const ValueKey<String>('ai-custody'),
+                message: provider.serverCredentialProvider != null
+                    ? localCopy.serverApiKeyCustody
+                    : localCopy.aiCustody(
+                        provider.keyCustody.name,
+                        provider.available,
+                      ),
+                icon: AppIcons.key,
+                tone: SnackTone.info,
+              ),
+              Text(localCopy.aiProviderAttribution, style: AppText.caption),
+              if (view.failure != null && controller.selectionInvalid)
+                AppBanner(
+                  message: localCopy.aiSelectionInvalid,
+                  icon: AppIcons.warning,
+                  tone: SnackTone.warning,
+                ),
+              if (view.failure != null &&
+                  !controller.selectionInvalid &&
+                  !provider.available)
+                AppBanner(
+                  message: localCopy.aiProviderUnavailable,
+                  icon: AppIcons.warning,
+                  tone: SnackTone.warning,
+                ),
+              if ((view.failure != null ||
+                      controller.selectionInvalid ||
+                      !provider.available) &&
+                  view.test != ProviderTestView.empty)
+                ProviderTestAction(view: view.test, showAction: false),
+            ],
+          ),
+          const SizedBox(height: Space.x3),
+          SettingsDisclosure(
+            id: 'ai-account',
+            title: localCopy.aiServerAndAccount,
+            initiallyExpanded: widget.initiallyShowAccount,
+            maintainState: true,
+            children: const <Widget>[AccountConnectionPanel()],
+          ),
           const SizedBox(height: Space.x3),
           ProviderTestAction(
             view: provider.available ? view.test : ProviderTestView.unavailable,
-            onTest: provider.available
+            showOutcome: false,
+            onTest: provider.available && !view.busy
                 ? () => unawaited(controller.testConnection())
                 : null,
-          ),
-          const SizedBox(height: Space.x3),
-          AppButton(
-            key: const ValueKey<String>('ai-server-account'),
-            label: localCopy.aiServerAndAccount,
-            variant: AppButtonVariant.secondary,
-            onPressed: () =>
-                unawaited(context.push(RoutePaths.settingsAccount)),
           ),
         ],
       ),
     );
+  }
+
+  List<Widget> _status(
+    LocalizedCopy copy,
+    _AiView view,
+    _AiSettings controller,
+    ProviderDescriptor provider,
+  ) {
+    if (view.failure case final Failure failure) {
+      return <Widget>[
+        AppBanner(
+          key: const ValueKey<String>('ai-current-status'),
+          message: <String>[
+            copy.failureMessage(failure),
+            if (copy.failureRecovery(failure) case final String recovery)
+              recovery,
+          ].join(' '),
+          icon: AppIcons.warning,
+          tone: SnackTone.warning,
+        ),
+        AppButton(
+          label: copy.tryAgain,
+          variant: AppButtonVariant.secondary,
+          onPressed: view.busy
+              ? null
+              : () => unawaited(switch (controller.failureAction) {
+                  _AiFailureAction.status => controller.retryStatus(),
+                  _AiFailureAction.save => _save(),
+                  _AiFailureAction.remove => _confirmRemoveCredential(),
+                }),
+        ),
+      ];
+    }
+    if (controller.selectionInvalid || !provider.available) {
+      return <Widget>[
+        AppBanner(
+          key: ValueKey<String>(
+            controller.selectionInvalid ? 'ai-fell-back' : 'ai-current-status',
+          ),
+          message: controller.selectionInvalid
+              ? copy.aiSelectionInvalid
+              : copy.aiProviderUnavailable,
+          icon: AppIcons.warning,
+          tone: SnackTone.warning,
+        ),
+      ];
+    }
+    return <Widget>[
+      if (view.test != ProviderTestView.empty)
+        ProviderTestAction(view: view.test, showAction: false),
+    ];
   }
 
   Future<void> _save() async {

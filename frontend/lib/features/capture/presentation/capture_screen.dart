@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/markup_ink.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -17,6 +15,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/export/image_redaction.dart';
+import 'package:tapture/core/files/document_picker.dart' as platform;
 import 'package:tapture/core/files/image_resize.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/photo_privacy_service.dart';
@@ -32,10 +31,9 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/photo_source_sheet.dart';
-import 'package:tapture/core/widgets/responsive/breakpoints.dart';
-import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
@@ -67,6 +65,7 @@ import 'package:tapture/features/capture/presentation/capture_target_fields.dart
 import 'package:tapture/features/capture/presentation/capture_transcribe_button.dart';
 import 'package:tapture/features/capture/presentation/document_picker.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
+import 'package:tapture/features/capture/presentation/import_capture_document.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
 import 'package:tapture/features/capture/presentation/live_camera_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
@@ -94,6 +93,7 @@ import 'package:tapture/features/transcripts/transcripts.dart'
 export 'capture_target_fields.dart' show captureProjectTemplatesProvider;
 
 part 'capture_screen_documents.dart';
+part 'capture_screen_form.dart';
 part 'capture_screen_sessions.dart';
 
 /// Templates for the open project, read through the templates barrel.
@@ -390,30 +390,27 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     // With no project there is nothing to file under: the target fields say
     // so and offer the next step, and nothing else is drawn.
     final bool noProject = !_editing && projectId.isEmpty;
-    // On a wide window the photo column and the field column each scroll,
-    // so a long template does not drag the photos with it.
-    // Columns that scroll apart need room under the fixed header; a short
-    // window at large text scrolls as one page instead.
-    final bool splitColumns =
-        !noProject &&
-        context.sizeClass != SizeClass.compact &&
-        !context.isShortForText;
     return AppPage(
       key: const ValueKey<String>('route-capture'),
       title: title,
       showAppBar: false,
-      scrollable: !splitColumns,
       overflow: _editing || projectId.isEmpty
           ? const <AppOverflowAction>[]
           : <AppOverflowAction>[
-              AppOverflowAction(
-                key: const ValueKey<String>('capture-rapid-mode'),
-                label: localCopy.captureRapidMode,
-                icon: AppIcons.camera,
-                onTap: () => unawaited(
-                  context.push(RoutePaths.projectCaptureRapid(projectId)),
+              if (ready && fields.isNotEmpty)
+                AppOverflowAction(
+                  key: const ValueKey<String>('capture-manual-form'),
+                  label: localCopy.captureManualForm,
+                  icon: AppIcons.edit,
+                  onTap: () => unawaited(_manualForm(key, projectId)),
                 ),
-              ),
+              if (ready && project != null)
+                AppOverflowAction(
+                  key: const ValueKey<String>('capture-import-document'),
+                  label: localCopy.captureImportDocument,
+                  icon: AppIcons.import,
+                  onTap: () => unawaited(_importDocument(project, key)),
+                ),
               // The session pin is the template field; this one outlives
               // the session, for this place only.
               if (project != null &&
@@ -478,66 +475,36 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
                 ],
               ],
             ),
-      body: _framed(
-        context,
-        split: splitColumns,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            // Free space: nothing while ample; a warning, or the stop with
-            // Export, below the thresholds (task 012 step 21).
-            CaptureStorageGuard(projectId: projectId),
-            // An edit keeps the record's project and template.
-            if (!_editing) ...<Widget>[
-              CaptureTargetFields(
-                selectedProjectId: projectId,
-                templates: templates,
-                templatesLoaded: templateState.hasValue,
-                templateId: templateId,
-                onProjectSelected: _chooseProject,
-              ),
-              if (!noProject) _blockGap,
-            ],
-            if (!noProject)
-              _fill(
-                splitColumns,
-                _EvidenceAndFields(
-                  fill: splitColumns,
-                  evidence: _evidence(
-                    session: session,
-                    controller: controller,
-                    uiState: uiState,
-                    project: project,
-                    ready: ready,
-                    templateId: templateId,
-                    guide: guide,
-                    guideView: guideView,
-                    captionTargets: captionTargets,
-                  ),
-                  // Field values are edited from the record page (FBK0000148).
-                  fields: _editing || fields.isEmpty
-                      ? null
-                      : InlineFieldsSection(
-                          key: ValueKey<String>(
-                            'inline-${session.id}-$templateId',
-                          ),
-                          fields: fields,
-                          values: <String, Object?>{
-                            ...session.contextSnapshot,
-                            ...session.values,
-                          },
-                          onChanged: (String key, Object? value) {
-                            unawaited(controller.setValue(key, value));
-                          },
-                          onLookup: (FieldDef field) =>
-                              unawaited(_lookup(field)),
-                          onScan: (FieldDef field) => unawaited(_scan(field)),
-                          linkedFields: session.lookupRows.keys.toSet(),
-                        ),
-                ),
-              ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // Free space: nothing while ample; a warning, or the stop with
+          // Export, below the thresholds (task 012 step 21).
+          CaptureStorageGuard(projectId: projectId),
+          // An edit keeps the record's project and template.
+          if (!_editing) ...<Widget>[
+            CaptureTargetFields(
+              selectedProjectId: projectId,
+              templates: templates,
+              templatesLoaded: templateState.hasValue,
+              templateId: templateId,
+              onProjectSelected: _chooseProject,
+            ),
+            if (!noProject) _blockGap,
           ],
-        ),
+          if (!noProject)
+            ..._evidence(
+              session: session,
+              controller: controller,
+              uiState: uiState,
+              project: project,
+              ready: ready,
+              templateId: templateId,
+              guide: guide,
+              guideView: guideView,
+              captionTargets: captionTargets,
+            ),
+        ],
       ),
     );
   }
@@ -633,10 +600,11 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
       ),
       _blockGap,
       if (project != null && ready) ...<Widget>[
-        DocumentPicker(
-          onImported: (Uint8List bytes, String name) =>
-              _documentImported(project, bytes, name),
-        ),
+        if (_editing)
+          DocumentPicker(
+            onImported: (Uint8List bytes, String name) =>
+                _documentImported(project, bytes, name),
+          ),
         for (final DocumentDraft document in session.documents)
           AppButton(
             label: document.originalFilename,
@@ -645,7 +613,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
                 ? () => _openDocument(project, document)
                 : null,
           ),
-        _blockGap,
+        if (_editing || session.documents.isNotEmpty) _blockGap,
       ],
       RecordCaptionField(
         enabled: ready,
@@ -778,7 +746,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     }
   }
 
-  Future<void> _scan(FieldDef field) async {
+  Future<void> _scan(FieldDef field, {String? sessionKey}) async {
+    final String key = sessionKey ?? _sessionKey();
     final String? code = await Navigator.of(context, rootNavigator: true)
         .push<String>(
           MaterialPageRoute<String>(
@@ -790,21 +759,23 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
         );
     if (!mounted || code == null) return;
     await ref
-        .read(captureControllerProvider(_sessionKey()).notifier)
+        .read(captureControllerProvider(key).notifier)
         .setValue(field.fieldKey, code, source: 'BARCODE');
-    if (mounted && field.lookup.isNotEmpty) await _lookup(field);
+    if (mounted && field.lookup.isNotEmpty) {
+      await _lookup(field, sessionKey: key);
+    }
   }
 
-  Future<void> _lookup(FieldDef field) async {
+  Future<void> _lookup(FieldDef field, {String? sessionKey}) async {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final LookupBinding? binding = LookupBinding.fromMap(field.lookup);
     if (binding == null) return;
     final CaptureController controller = ref.read(
-      captureControllerProvider(_sessionKey()).notifier,
+      captureControllerProvider(sessionKey ?? _sessionKey()).notifier,
     );
     final CaptureSession session = ref.read(
-      captureControllerProvider(_sessionKey()),
+      captureControllerProvider(sessionKey ?? _sessionKey()),
     );
     final String query =
         '${session.values[field.fieldKey] ?? session.contextSnapshot[field.fieldKey] ?? ''}';
@@ -1669,113 +1640,6 @@ bool _holdsLiveTake(LiveTranscriptStatus status, CaptureSession session) {
     return false;
   }
   return _showsLiveTake(status, session);
-}
-
-/// Expands [child] only when the capture page is giving the columns a height.
-Widget _fill(bool fill, Widget child) {
-  return fill ? Expanded(child: child) : child;
-}
-
-/// On a wide window the page does not scroll, so the columns need the same
-/// side inset and readable width the scrolling page would have given them.
-Widget _framed(
-  BuildContext context, {
-  required bool split,
-  required Widget child,
-}) {
-  if (!split) {
-    return child;
-  }
-  return Padding(
-    padding: EdgeInsets.symmetric(
-      horizontal: AppPage.gutter(context),
-      vertical: Space.x2,
-    ),
-    child: ContentConstraint(child: child),
-  );
-}
-
-/// The evidence column and the template's inline fields: stacked on a
-/// phone, side by side from medium width up (task 012 step 2). [fill] gives
-/// each column its own scroll view. Without fields the evidence takes the
-/// whole width.
-final class _EvidenceAndFields extends StatelessWidget {
-  const _EvidenceAndFields({
-    required this.evidence,
-    required this.fields,
-    this.fill = false,
-  });
-
-  final List<Widget> evidence;
-  final Widget? fields;
-
-  /// When true, each side scrolls inside the space the page leaves it.
-  final bool fill;
-
-  @override
-  Widget build(BuildContext context) {
-    final Widget column = Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: evidence,
-    );
-    final Widget? fields = this.fields;
-    if (fields == null) {
-      return fill ? SingleChildScrollView(child: column) : column;
-    }
-    if (!fill) {
-      return ResponsivePair(
-        key: const ValueKey<String>('capture-evidence-and-fields'),
-        gap: Space.x4,
-        start: column,
-        end: fields,
-      );
-    }
-    return Row(
-      key: const ValueKey<String>('capture-evidence-and-fields'),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Expanded(child: _ColumnScroll(child: column)),
-        const SizedBox(width: Space.x4),
-        Expanded(child: _ColumnScroll(child: fields)),
-      ],
-    );
-  }
-}
-
-/// One capture column: its own scrollbar and scroll position.
-class _ColumnScroll extends StatefulWidget {
-  const _ColumnScroll({required this.child});
-
-  final Widget child;
-
-  @override
-  State<_ColumnScroll> createState() => _ColumnScrollState();
-}
-
-class _ColumnScrollState extends State<_ColumnScroll> {
-  final ScrollController _controller = ScrollController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scrollbar(
-      controller: _controller,
-      thumbVisibility: true,
-      child: SingleChildScrollView(
-        controller: _controller,
-        primary: false,
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: const EdgeInsets.only(bottom: Space.x2),
-        child: widget.child,
-      ),
-    );
-  }
 }
 
 /// Space between the capture page's blocks (FBK0000128).

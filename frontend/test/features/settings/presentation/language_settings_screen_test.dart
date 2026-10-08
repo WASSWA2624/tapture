@@ -136,6 +136,44 @@ void main() {
         await tester.tap(find.text(Copy.settingsSpeechModels));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+        if (cell.goldenCorner case final String corner
+            when Theme.of(
+                  tester.element(find.byType(LanguageSettingsScreen)),
+                ).platform ==
+                TargetPlatform.android) {
+          await tester.ensureVisible(
+            find.byKey(const ValueKey<String>('speech-model-tiny-q5_1')),
+          );
+          await tester.pumpAndSettle();
+          await expectLater(
+            find.byKey(_golden),
+            matchesGoldenFile(
+              'goldens/language_expanded_${corner}_${cell.outdoor ? 'outdoor' : cell.brightness.name}.png',
+            ),
+          );
+        }
+      },
+      variant: TargetPlatformVariant.all(),
+    );
+  }
+
+  for (final ScreenMatrix cell in ScreenMatrix.cells) {
+    testWidgets(
+      'pseudo-locale language controls fit ${cell.description}',
+      (WidgetTester tester) async {
+        await _pump(
+          tester,
+          SettingsStore.fake(),
+          cell: cell,
+          locale: const Locale('en', 'XA'),
+        );
+        final LocalizedCopy copy = Copy.of(
+          tester.element(find.byType(LanguageSettingsScreen)),
+        );
+        await tester.ensureVisible(find.text(copy.settingsSpeechModels));
+        await tester.tap(find.text(copy.settingsSpeechModels));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
       },
       variant: TargetPlatformVariant.all(),
     );

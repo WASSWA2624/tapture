@@ -9,6 +9,42 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get captureManualForm => 'Manual form';
+
+  @override
+  String get projectExportDetails => 'Package details';
+
+  @override
+  String get projectExportDestination => 'Project export folder';
+
+  @override
+  String get projectExportBrowserDestination => 'Browser downloads';
+
+  @override
+  String get projectExportOpen => 'Open';
+
+  @override
+  String get settingsSpeechModelDetails => 'Model details';
+
+  @override
+  String settingsSpeechModelSummary(String state, String size) {
+    return '$state · $size';
+  }
+
+  @override
+  String get backendConfigure => 'Configure';
+
+  @override
+  String get aiConnectionDetails => 'Connection details';
+
+  @override
+  String get aiCustodySummary => 'Your server handles AI access and keys.';
+
+  @override
+  String get aiProviderAttribution =>
+      'Gemini is a trademark of Google LLC. OpenAI and xAI marks belong to their respective owners.';
+
+  @override
   String get aiServerAndAccount => 'Server and account';
 
   @override
@@ -3799,7 +3835,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsSpeechEngineWhisper(Object model) {
-    return 'Speech is turned into text on this device by the $model.';
+    return 'On this device: $model.';
   }
 
   @override
@@ -3815,7 +3851,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsSpeechQualityEffect =>
-      'Automatic picks the best model this device can run smoothly.';
+      'Automatic chooses a model that fits this device.';
 
   @override
   String get settingsSpeechQualityAuto => 'Automatic';
@@ -12304,6 +12340,43 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   AppLocalizationsEnXa() : super('en_XA');
 
   @override
+  String get captureManualForm => 'Mánúál fórm····';
+
+  @override
+  String get projectExportDetails => 'Páckágé détáíls······';
+
+  @override
+  String get projectExportDestination => 'Prójéct éxpórt fóldér········';
+
+  @override
+  String get projectExportBrowserDestination => 'Brówsér dównlóáds······';
+
+  @override
+  String get projectExportOpen => 'Ópén··';
+
+  @override
+  String get settingsSpeechModelDetails => 'Módél détáíls·····';
+
+  @override
+  String settingsSpeechModelSummary(String state, String size) {
+    return '$state · $size';
+  }
+
+  @override
+  String get backendConfigure => 'Cónfígúré····';
+
+  @override
+  String get aiConnectionDetails => 'Cónnéctíón détáíls·······';
+
+  @override
+  String get aiCustodySummary =>
+      'Yóúr sérvér hándlés ÁÍ áccéss ánd kéys.··············';
+
+  @override
+  String get aiProviderAttribution =>
+      'Gémíní ís á trádémárk óf Góóglé LLC. ÓpénÁÍ ánd xÁÍ márks bélóng tó théír réspéctívé ównérs.·································';
+
+  @override
   String get aiServerAndAccount => 'Sérvér ánd áccóúnt·······';
 
   @override
@@ -16147,7 +16220,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String settingsSpeechEngineWhisper(Object model) {
-    return 'Spééch ís túrnéd íntó téxt ón thís dévícé by thé ··················$model.';
+    return 'Ón thís dévícé: ······$model.';
   }
 
   @override
@@ -16163,7 +16236,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get settingsSpeechQualityEffect =>
-      'Áútómátíc pícks thé bést módél thís dévícé cán rún smóóthly.·····················';
+      'Áútómátíc chóósés á módél thát fíts thís dévícé.·················';
 
   @override
   String get settingsSpeechQualityAuto => 'Áútómátíc····';

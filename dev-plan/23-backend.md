@@ -34,6 +34,14 @@ Rate-limit state is isolated per application, prunes expired addresses and is bo
 
 The final coverage sweep added a shared freshly migrated PostgreSQL schema fixture and five real-database cases: organisation-scoped user lookup and email uniqueness, globally unique device identifiers with typed constraint failures; scoped/unscoped memberships and cross-organisation refusal; in-flight two-table commit while the pool drains; relay expiry at an injected boundary removing unfetched and partially acknowledged ciphertext while preserving future packages and durable vectors; and separate administration processes exporting seeded operational metadata, refusing missing/mismatched destruction confirmations without changes, then deleting organisation state while retaining migration history. These cases require PostgreSQL and never fall back to the memory repository. The final local `npm run verify` passes all six stages with 136 tests passed and nine explicit PostgreSQL/Docker skips; `npm run build` passes and the dependency audit reports zero vulnerabilities. Real-database, image and protected-pipeline acceptance remains unchecked until those cases run in the configured environment.
 
+### Provider compatibility evidence — task 144, 2026-10-08
+
+[Task 144 W11](24-product-refinements.md#144--resolve-feedback-archive-08102026-1045) documents and tests explicitly
+configured xAI photo/text processing through the existing Responses protocol, encrypted personal custody and quotas;
+it adds no production source/API/package/deployment change. Its runner and independent-review evidence are recorded
+there. Real PostgreSQL, administration/migration, container/image and protected-pipeline acceptance remains open;
+the local gate's explicit infrastructure skips do not complete this task.
+
 ### Implement
 
 The required minimal backend of specification Part XI, and the client work that makes the app run on it. A Node and
@@ -463,6 +471,11 @@ abstract class OfflineAuthority {
     than re-implementing it (BE-FLOW-02).
 
 #### The app side
+
+Task [144 W8](24-product-refinements.md#144--resolve-feedback-archive-08102026-1045) composes the existing account
+connection panel inline within AI Settings. Legacy Backend and Sign-in addresses reveal those same controls;
+authentication, enrolment, secure custody and offline authority remain owned by this task. Changed-presentation
+acceptance and verification are recorded in task 144.
 
 23. Build the client side of a backend every deployment has. There is no switch that turns the backend off (§70) — a
     connection is enrolled, enrolling, revoked or not yet enrolled. Read the server address from build configuration,

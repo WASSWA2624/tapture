@@ -29,9 +29,8 @@ import 'package:tapture/features/settings/presentation/offline_switch.dart';
 /// Every route shows the screen name. A branch root has no back control.
 /// Nested routes add back, then that page's actions (FE-CONS-10). While
 /// the app is offline a network control says whether that is the
-/// operator's choice or a lost radio, and while records wait for
-/// processing a counted control opens them. Context sits in the context
-/// bar below this line. Counts are derived, never cached (FE-STATE-06).
+/// operator's choice or a lost radio. Processing is reached through the
+/// project menu. Context sits in the context bar below this line.
 class StatusLine extends ConsumerWidget {
   /// Creates the status line.
   const StatusLine({super.key});
@@ -137,7 +136,6 @@ class StatusLine extends ConsumerWidget {
                     ),
                   ),
                   const _NetworkStatus(),
-                  const _UnprocessedStatus(),
                   ...actions,
                   if (actions.isNotEmpty && overflow.isNotEmpty)
                     const SizedBox(width: Space.x2),
@@ -189,8 +187,7 @@ final StreamProvider<NetworkState> networkStateProvider =
     });
 
 /// Records still waiting for processing, across projects. Derived from the
-/// queue's watch query, never cached. Not autoDispose: the shell reads it
-/// every frame (FE-STATE-09).
+/// queue's watch query, never cached. Retained for existing count consumers.
 final Provider<int> unprocessedCountProvider = Provider<int>((Ref ref) {
   return ref.watch(queueSnapshotProvider).value?.unprocessed ?? 0;
 });
@@ -219,34 +216,6 @@ class _NetworkStatus extends ConsumerWidget {
       outlined: false,
       // The switch that ends offline-by-choice lives on the settings root.
       onPressed: () => context.go(RoutePaths.more),
-    );
-  }
-}
-
-/// How many records wait for processing. Hidden at zero.
-class _UnprocessedStatus extends ConsumerWidget {
-  const _UnprocessedStatus();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final LocalizedCopy localCopy = Copy.of(context);
-
-    final int count = ref.watch(unprocessedCountProvider);
-    if (count <= 0) {
-      return const SizedBox.shrink();
-    }
-    final String label = localCopy.unprocessedCount(count);
-    return Badge(
-      key: const ValueKey<String>('status-unprocessed'),
-      label: ExcludeSemantics(child: Text(localCopy.badgeCount(count))),
-      alignment: AlignmentDirectional.topEnd,
-      child: AppIconButton(
-        icon: AppIcons.queued,
-        semanticLabel: label,
-        tooltip: label,
-        outlined: false,
-        onPressed: () => context.go(RoutePaths.queue),
-      ),
     );
   }
 }

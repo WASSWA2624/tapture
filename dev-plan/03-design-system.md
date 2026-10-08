@@ -462,9 +462,9 @@ Future<void> expectGolden(WidgetTester t, Widget w, String name, {List<AppThemeM
 - [x] Tests: unit tests under `frontend/test/design_system/tokens/` asserting the colour, dimension and elevation token
       sets are identical across light, dark and outdoor.
 - [x] Tests: a contrast test asserting 4.5:1 body text and 3:1 large text and interactive outlines in all three modes.
-- [x] Tests: golden of the type ramp at default and 200 percent text scale, plus swatch and surface-level goldens in
+- [ ] Tests: golden of the type ramp at default and 200 percent text scale, plus swatch and surface-level goldens in
       light, dark and outdoor.
-- [x] Tests: unit test that `AppThemeMode` round-trips through storage, widget test comparing light and outdoor layout
+- [ ] Tests: unit test that `AppThemeMode` round-trips through storage, widget test comparing light and outdoor layout
       geometry, and a golden of a sample screen in light, dark and outdoor.
 
 #### Layout and the page
@@ -477,8 +477,8 @@ Future<void> expectGolden(WidgetTester t, Widget w, String name, {List<AppThemeM
 - [x] Tests: unit test of size-class resolution at 599, 600, 1023 and 1024dp; widget tests of `ResponsiveBuilder` and
       `context.responsive` falling back at three widths, of a two-pane layout, and that a resize keeps in-progress
       input.
-- [x] Tests: goldens of `ContentConstraint` in light, dark and outdoor.
-- [x] Tests: nine `AppPage` goldens — light, dark and outdoor at compact, medium and expanded — plus widget tests that
+- [ ] Tests: goldens of `ContentConstraint` in light, dark and outdoor.
+- [ ] Tests: nine `AppPage` goldens — light, dark and outdoor at compact, medium and expanded — plus widget tests that
       the body scrolls without overflow at 200 percent text scale in both orientations and that rotation loses nothing.
 
 #### Inputs
@@ -492,16 +492,16 @@ Future<void> expectGolden(WidgetTester t, Widget w, String name, {List<AppThemeM
 - [x] Search fires once per debounce window, not once per keystroke; records, datasets and template pickers all use it.
 - [x] A 200-option list stays usable on a compact screen, and selected values are readable without opening the sheet.
 - [x] Settings screens and boolean template fields share one control.
-- [x] Tests: goldens per button variant and state in light, dark and outdoor; widget test that a busy button swallows
+- [ ] Tests: goldens per button variant and state in light, dark and outdoor; widget test that a busy button swallows
       taps; widget test asserting all three button controls satisfy the 48dp accessibility matcher.
 - [x] Tests: widget tests for error display, clearing, non-numeric rejection and range violation.
 - [x] Tests: widget test of the date field against a frozen clock covering all three `DateFieldMode` values, and widget
       test of the debounce window under fake async.
-- [x] Tests: twelve goldens covering the four text-entry controls empty, filled, error, disabled and multi-line in
+- [ ] Tests: twelve goldens covering the four text-entry controls empty, filled, error, disabled and multi-line in
       light, dark and outdoor.
 - [x] Tests: widget tests of the presentation switch either side of the four-option boundary, of search over a
       200-option list, of select-all and clear, and that tapping anywhere on a switch tile toggles it.
-- [x] Tests: nine goldens of the three selection controls across the segmented and sheet presentations and empty,
+- [ ] Tests: nine goldens of the three selection controls across the segmented and sheet presentations and empty,
       partial and full selection, in light, dark and outdoor.
 
 #### Surfaces and status
@@ -512,12 +512,12 @@ Future<void> expectGolden(WidgetTester t, Widget w, String name, {List<AppThemeM
 - [x] Selection and status are readable without relying on colour.
 - [x] A colour-blind user in direct sunlight can still read the status, and every status in the app renders through
       `AppStatusPill`; no screen maps status to colour itself.
-- [x] Tests: widget tests that tap selects and dismiss removes, and that a row wraps or scrolls without clipping a
+- [ ] Tests: widget tests that tap selects and dismiss removes, and that a row wraps or scrolls without clipping a
       label; three chip goldens covering plain, selected, dismissible and an overflowing row in light, dark and
       outdoor.
-- [x] Tests: widget test that long-press selects and tap opens; nine goldens of the card, of the row dense,
+- [ ] Tests: widget test that long-press selects and tap opens; nine goldens of the card, of the row dense,
       comfortable, selected, with status and with trailing, and of the section header, in light, dark and outdoor.
-- [x] Tests: unit test that `StatusStyle.of` is exhaustive over `RecordStatus`; widget tests that icon and label
+- [ ] Tests: unit test that `StatusStyle.of` is exhaustive over `RecordStatus`; widget tests that icon and label
       accompany the colour; three goldens of every status in light, dark and outdoor.
 
 #### Non-data states and interrupts
@@ -530,10 +530,10 @@ Future<void> expectGolden(WidgetTester t, Widget w, String name, {List<AppThemeM
       call.
 - [x] Pickers and option sheets share one presentation and become a side panel on expanded layouts.
 - [x] Offline state is visible through the banner without stealing focus from the field being edited.
-- [x] Tests: widget test per `Failure` subtype asserting its message and that retry fires; widget test of
+- [ ] Tests: widget test per `Failure` subtype asserting its message and that retry fires; widget test of
       `AsyncValueView` across loading, error, empty and data; three goldens of the four states in light, dark and
       outdoor.
-- [x] Tests: widget tests of the confirm and cancel paths, of undo invoking its callback, of two snacks queueing rather
+- [ ] Tests: widget tests of the confirm and cancel paths, of undo invoking its callback, of two snacks queueing rather
       than overlapping, and of the sheet at compact and expanded widths; three goldens of dialog, sheet, snack and
       banner in light, dark and outdoor.
 
@@ -549,11 +549,11 @@ Future<void> expectGolden(WidgetTester t, Widget w, String name, {List<AppThemeM
 - [x] Shutter and save feel distinct in the hand, and every pattern is silent when the system setting is off.
 - [x] No inline user-facing string remains in any `core/widgets/` file, and a count reads correctly at zero, one and
       many.
-- [x] Tests: widget test that a state change announces itself and shifts no other step's position; three goldens of
+- [ ] Tests: widget test that a state change announces itself and shifts no other step's position; three goldens of
       every `StepState` and of a mixed list in light, dark and outdoor.
-- [x] Tests: widget test asserting the full-size image is never decoded and one covering the missing-file path; three
+- [ ] Tests: widget test asserting the full-size image is never decoded and one covering the missing-file path; three
       goldens of badge, caption, selected, unselected and error in light, dark and outdoor.
-- [x] Tests: widget tests of the unsaved-changes guard, of a double submission running `onSubmit` once, and that focus
+- [ ] Tests: widget tests of the unsaved-changes guard, of a double submission running `onSubmit` once, and that focus
       advances in visual order with the focused field staying visible under a simulated keyboard inset; three goldens
       of the form with and without the error summary in light, dark and outdoor.
 - [x] Tests: unit tests against the recording fake asserting each named pattern fires once, that all five are
@@ -567,10 +567,10 @@ Future<void> expectGolden(WidgetTester t, Widget w, String name, {List<AppThemeM
 - [x] A developer can compare light, dark and outdoor side by side at three widths without restarting the app, and the
       route stays off the production navigation surface while remaining reachable in debug builds.
 - [x] An unintended styling change fails the suite and names the widget and mode that moved.
-- [x] Regenerating baselines on a clean tree produces no diff.
-- [x] Tests: widget test enumerating `core/widgets/` and failing when a public catalogue widget has no gallery entry;
+- [ ] Regenerating baselines on a clean tree produces no diff.
+- [ ] Tests: widget test enumerating `core/widgets/` and failing when a public catalogue widget has no gallery entry;
       goldens of the gallery index in light, dark and outdoor.
-- [x] Tests: the golden suite covers every widget built in this phase in all three modes and runs in continuous
+- [ ] Tests: the golden suite covers every widget built in this phase in all three modes and runs in continuous
       integration, with a fixture proving a deliberate one-pixel change is caught.
 
 #### Follow-up work
@@ -606,7 +606,7 @@ Future<void> expectGolden(WidgetTester t, Widget w, String name, {List<AppThemeM
 - [x] Hover, focus and press use `surfaceVariant` in light, dark and outdoor.
 - [x] At rest the borderless glyph is full `onSurface` ink and meets contrast in all three themes.
 - [x] Both variants appear in the widget gallery in every state.
-- [x] Tests: default still paints a border; borderless paints none; both keep the target, label
+- [ ] Tests: default still paints a border; borderless paints none; both keep the target, label
       and tooltip; both open and select; focus-traversal shows a visible indicator on the
       borderless variant; goldens for both variants in light, dark and outdoor at default and
       200 percent text.
@@ -704,3 +704,10 @@ Constraints:
 - Adaptive navigation — bottom bar, rail, rail plus pane — which belongs to 006 · Application shell.
 - Sound feedback; no audible confirmation is part of this phase.
 - Screen-level goldens for feature phases; each feature phase commits its own.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
+

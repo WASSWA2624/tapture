@@ -40,6 +40,11 @@ Task [076](24-product-refinements.md#076--resolve-project-capture-and-template-f
 Export write the project package of task 019's format (`core/bundle/`), with the workbook inside as `records.xlsx`,
 so one ZIP both reads outside the app and imports into another Tapture app.
 
+Task [144 W1](24-product-refinements.md#144--resolve-feedback-archive-08102026-1045), decisions D1a and D2a,
+shortens this project-package entry: one Export selection starts generation, publication produces one canonical
+native ZIP or one browser handoff, and Share/Open reuse the saved package. Deliverable scope/options, consent and
+writer contracts remain here; changed-flow acceptance and platform evidence are recorded in task 144.
+
 Everything that turns captured work into files a reader can open without the app, every one of them written on the
 device. One serialisable `ExportRequest` — formats, scope, column options, extras and the resolved file list — so a
 stored request replays the same export exactly, and the pre-export gate that reports the incomplete and unapproved

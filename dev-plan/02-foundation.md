@@ -529,9 +529,15 @@ Tests:
       permission and no-camera failures, and flash and zoom fallbacks.
 - [x] Tests: `frontend/test/core/barcode/device_barcode_scanner_test.dart` covering permission mapping, empty values
       ignored, torch support and stop releasing the controller.
-- [x] Tests: widget test `frontend/test/features/capture/presentation/live_camera_screen_test.dart` covering the
+- [ ] Tests: widget test `frontend/test/features/capture/presentation/live_camera_screen_test.dart` covering the
       preview states, a shot written before the next is enabled, a failed shot and a failed write; unit test
       `live_camera_controller_test.dart`; camera view and scanner screen cases in `capture_widgets_test.dart`.
+
+### Test image removal — task 146
+
+2026-10-08: [146](01-orchestration.md) archived and removed the PNG inputs from `frontend/test/` at the user's request.
+The affected baseline/fixture acceptance items are reopened; restore the archived images before running these image-dependent checks.
+Application behavior and dated historical verification evidence are preserved.
 
 ## 133 — Approve the XML parser for preserving Office templates
 

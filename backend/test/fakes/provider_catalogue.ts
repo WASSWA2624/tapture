@@ -18,3 +18,19 @@ export function catalogueProvider(
     ...overrides,
   };
 }
+
+/** Dated xAI model example; ceilings are synthetic test units, never pricing. */
+export function xaiCatalogueProvider(
+  overrides: Partial<ProviderDefinition> = {},
+): ProviderDefinition {
+  return catalogueProvider({
+    id: 'xai',
+    label: 'xAI',
+    baseUrl: 'https://api.x.ai/v1',
+    authMode: 'required',
+    model: 'grok-4.7',
+    models: ['grok-4.7'],
+    modelCostCeilings: { 'grok-4.7': 0.025 },
+    ...overrides,
+  });
+}

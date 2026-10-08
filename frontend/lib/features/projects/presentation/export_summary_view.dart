@@ -14,7 +14,7 @@ import 'package:tapture/features/exports/exports.dart';
 class ExportSummaryView extends StatelessWidget {
   /// Creates the summary. [estimatedBytes] is the package's expected size,
   /// when known. [destination] is the short folder label where
-  /// the file is copied, or null where the platform decides.
+  /// the package is published, or null where the platform decides.
   const ExportSummaryView({
     required this.summary,
     required this.destination,
@@ -25,7 +25,7 @@ class ExportSummaryView extends StatelessWidget {
   /// Counts and names from the export repository.
   final ExportSummary summary;
 
-  /// Downloads folder label, without the Exports subfolder.
+  /// Canonical project-export folder or browser-download label.
   final String? destination;
 
   /// The package's expected size, shown before it is written.
@@ -89,6 +89,7 @@ class ExportSummaryView extends StatelessWidget {
               subtitle: localCopy.recordsCount(template.records),
               leading: const Icon(AppIcons.template),
               dense: true,
+              wrapText: true,
             ),
         ],
         const SizedBox(height: Space.x4),
@@ -104,6 +105,11 @@ class ExportSummaryView extends StatelessWidget {
   }
 
   Widget _row(IconData icon, String text) {
-    return AppListTile(title: text, leading: Icon(icon), dense: true);
+    return AppListTile(
+      title: text,
+      leading: Icon(icon),
+      dense: true,
+      wrapText: true,
+    );
   }
 }
