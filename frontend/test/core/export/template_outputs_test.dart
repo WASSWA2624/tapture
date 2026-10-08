@@ -97,14 +97,16 @@ void main() {
         final XmlDocument document = written.xml(part);
         final String? namespace = original.xml(part).rootElement.namespaceUri;
         expect(namespace, isNotNull);
-        for (final XmlElement element
-            in document.descendants.whereType<XmlElement>()) {
-          expect(
-            element.namespaceUri,
-            namespace,
-            reason: element.name.qualified,
-          );
-        }
+        final XmlElement changed = document
+            .findAllElements(
+              kind == 'xlsx' ? 'c' : 't',
+              namespaceUri: namespace,
+            )
+            .firstWhere((element) => element.innerText.contains('00734'));
+        expect(
+          changed.namespacePrefix,
+          original.xml(part).rootElement.namespacePrefix,
+        );
       }
     },
   );

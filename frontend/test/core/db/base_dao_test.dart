@@ -126,7 +126,7 @@ void main() {
   test('a busy timeout maps to StorageFailure', () {
     final StorageFailure failure = storageFailureFrom(
       SqliteException(
-        resultCode: SqlError.SQLITE_BUSY,
+        extendedResultCode: SqlError.SQLITE_BUSY,
         message: 'database is locked',
       ),
     );
@@ -137,7 +137,7 @@ void main() {
   test('a generic sqlite error maps to StorageFailure', () {
     final StorageFailure failure = storageFailureFrom(
       SqliteException(
-        resultCode: SqlError.SQLITE_IOERR,
+        extendedResultCode: SqlError.SQLITE_IOERR,
         message: 'disk I/O error',
       ),
     );

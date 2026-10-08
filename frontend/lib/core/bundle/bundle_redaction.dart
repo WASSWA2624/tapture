@@ -176,7 +176,14 @@ final class BundleRedaction {
         );
       }
       final _LimitedMemoryOutput output = _LimitedMemoryOutput(entry.size);
-      entry.rawContent!.decompress(output);
+      final InputStream input = entry.rawContent!
+          .getStream(decompress: false)
+          .subset();
+      if (entry.compression == CompressionType.deflate) {
+        Inflate.stream(input, output: output);
+      } else {
+        output.writeStream(input);
+      }
       if (output.length != entry.size) {
         throw ValidationFailure(
           localizedMessage: Copy.messages.failureANestedBundleEntryHasAnInvalid,

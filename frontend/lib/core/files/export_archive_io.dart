@@ -100,16 +100,16 @@ Future<WrittenFile> _write(_ArchiveJob job) async {
           ),
         );
       }
-      await encoder.addFile(file, entry.key, ZipFileEncoder.store);
+      await _addStoredFile(encoder, file, entry.key);
       await cancellation.checkpoint();
       IsolateRunner.reportProgress(++done / (job.sources.length + 1));
     }
     await cancellation.checkpoint();
     if (job.manifestSource case final String source) {
-      await encoder.addFile(
+      await _addStoredFile(
+        encoder,
         File('${job.root}/$source'),
         'manifest.json',
-        ZipFileEncoder.store,
       );
     } else {
       encoder.addArchiveFile(
@@ -144,5 +144,26 @@ Future<WrittenFile> _write(_ArchiveJob job) async {
     rethrow;
   } finally {
     cancellation.close();
+  }
+}
+
+Future<void> _addStoredFile(
+  ZipFileEncoder encoder,
+  File file,
+  String name,
+) async {
+  final InputFileStream input = InputFileStream(file.path);
+  try {
+    final FileStat stat = await file.stat();
+    // Archive 4 treats its store constant as a DEFLATE level. Select the ZIP
+    // method explicitly so an already-compressed file never expands in memory.
+    encoder.addArchiveFile(
+      ArchiveFile.stream(name, input)
+        ..compression = CompressionType.none
+        ..lastModTime = stat.modified.millisecondsSinceEpoch ~/ 1000
+        ..mode = stat.mode,
+    );
+  } finally {
+    await input.close();
   }
 }

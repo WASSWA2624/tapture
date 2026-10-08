@@ -112,7 +112,14 @@ final class _ArchiveScanner {
           try {
             // Reuse the compressed stream, bypassing ArchiveFile.content, which
             // would inflate the entire attachment in memory.
-            entry.rawContent!.decompress(output);
+            final InputStream content = entry.rawContent!
+                .getStream(decompress: false)
+                .subset();
+            if (entry.compression == CompressionType.deflate) {
+              Inflate.stream(content, output: output);
+            } else {
+              output.writeStream(content);
+            }
             if (output.length != entry.size) {
               throw ValidationFailure(
                 localizedMessage:

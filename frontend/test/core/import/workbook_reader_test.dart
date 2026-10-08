@@ -216,8 +216,7 @@ Uint8List _withMerge(Uint8List bytes, String ref) {
       next.addFile(file);
       continue;
     }
-    final Object? raw = file.content;
-    final String xml = raw is List<int> ? utf8.decode(raw) : '';
+    final String xml = utf8.decode(file.content);
     final String patched = xml.replaceFirst(
       '</worksheet>',
       '<mergeCells count="1"><mergeCell ref="$ref"/></mergeCells></worksheet>',

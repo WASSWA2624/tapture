@@ -600,8 +600,8 @@ use Dart's supported verbosity setting in child CLI checks while retaining all c
 
 ### Definition of done
 
-- [ ] Manifest, lockfile and allowlist agree on upgraded compatible direct dependencies, with licences and reasons for retained versions recorded.
-- [ ] Native SQLite and browser SQLite/Drift assets use the supported resolved runtime; retired plugin imports and workaround calls are removed.
+- [x] Manifest, lockfile and allowlist agree on upgraded compatible direct dependencies, with licences and reasons for retained versions recorded.
+- [x] Native SQLite and browser SQLite/Drift assets use the supported resolved runtime; retired plugin imports and workaround calls are removed.
 - [ ] Notification, archive, PDF and other changed APIs compile; generated database/JSON output is current and existing schema/data contracts are preserved.
 - [ ] Tests: dependency and naming checker positive/negative fixtures, architecture/security guardrails and affected CLI suites pass without weakening their assertions.
 - [ ] Tests: existing database migration, encryption, export/import, notification, permission, routing and startup regression suites pass for affected boundaries.
@@ -617,6 +617,19 @@ use Dart's supported verbosity setting in child CLI checks while retaining all c
 audits. The user's previous APK build completed before runtime inputs changed. `flutter pub upgrade` resolves 69
 dependency graph changes; manifest/allowlist validation passes. Android's retired SQLite-plugin Gradle override is
 removed. Source migrations and generated output are being verified against this resolved graph.
+
+Current verification: generator build completes with 5,284 outputs; the initial notification/PDF adapter suites
+pass 8 tests, and independent cipher, secure storage, permission and connectivity suites pass 31 tests. The
+native regression run passes 631 tests; its new declared-size test passes all three cases after correcting the
+localized-message assertion. The other failure is the pre-existing transcript search/vector test-contract
+mismatch recorded in task 151. Real Chrome SQLite export/download and SQLite/IndexedDB recovery each pass,
+and the real PDF renderer passes on native and Chrome using the bundled PDFium assets. Browser cipher parity,
+Windows integration, final analysis and release builds are still being verified.
+
+The tool/architecture/security run passes 562 tests. Its current-tree failures include existing naming, mirrored
+test-presence and actual-route coverage gaps (task 150), stale Whisper web build provenance (task 111), and nine
+remaining package-migration analysis diagnostics. Those diagnostics have been fixed; final analysis is pending.
+The existing guardrail and transcript-schema assertions remain intact, so their acceptance items stay open.
 
 The iOS notification-center delegate gap predates these package updates and is recorded separately in task 148;
 task 147 does not claim physical iOS notification verification. No test PNGs have been restored as delivered files.

@@ -56,6 +56,44 @@ void main() {
     },
   );
 
+  test(
+    'two-word lengths preserve empty envelopes and reject malformed bounds',
+    () async {
+      final Uint8List empty = await cipher.sealAsync(Uint8List(0), key);
+      expect(empty.sublist(24, 32), orderedEquals(List<int>.filled(8, 0)));
+      expect(cipher.open(empty, key), isEmpty);
+      expect(await cipher.openAsync(empty, key), isEmpty);
+
+      final Uint8List original = cipher.seal(Uint8List(20), key);
+      final Matcher invalidLength = throwsA(
+        isA<FormatException>().having(
+          (FormatException error) => error.message,
+          'message',
+          'length',
+        ),
+      );
+      for (final ({int high, int low}) declared in <({int high, int low})>[
+        (high: 0, low: 0xffffffff),
+        (high: 1, low: 20),
+        (high: 15, low: 0xffffffef),
+        (high: 15, low: 0xfffffff0),
+        (high: 15, low: 0xfffffff1),
+        (high: 16, low: 20),
+        (high: 0x40000000, low: 20),
+        (high: 0xffffffff, low: 0xffffffff),
+      ]) {
+        final Uint8List changed = Uint8List.fromList(original);
+        final ByteData header = ByteData.sublistView(changed);
+        header.setUint32(24, declared.high, Endian.big);
+        header.setUint32(28, declared.low, Endian.big);
+        final Uint8List retained = Uint8List.fromList(changed);
+        expect(() => cipher.open(changed, key), invalidLength);
+        await expectLater(cipher.openAsync(changed, key), invalidLength);
+        expect(changed, orderedEquals(retained));
+      }
+    },
+  );
+
   test('byte and bounded file APIs agree across an unaligned final chunk', () {
     final Directory directory = Directory.systemTemp.createTempSync(
       'tapture-cipher-',

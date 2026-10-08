@@ -1,4 +1,5 @@
 $taskRepoRoot = $PSScriptRoot
+$taskHead = (& git -C $taskRepoRoot rev-parse HEAD)
 $taskSeeds = @(
   'frontend/test/tool/check_dependencies_test.dart',
   'frontend/test/tool/check_naming_test.dart',
@@ -12,6 +13,9 @@ $taskSeeds = @(
   'frontend/test/tool/check_native_library_test.dart',
   'frontend/test/tool/whisper_vendor_test.dart',
   'frontend/test/tool/whisper_wasm_test.dart',
+  'frontend/integration_test/failure_paths_test.dart',
+  'frontend/integration_test/merge_test.dart',
+  'frontend/test/support/crash_capture_child.dart',
   'frontend/test/tool/support/plan_fixture.dart',
   'frontend/test/tool/sync_dev_tracker_test.dart',
   'frontend/test/core/import/pdf_pages_renderer_test.dart',
@@ -19,6 +23,7 @@ $taskSeeds = @(
   'frontend/test/core/security/authenticated_file_cipher_test.dart',
   'frontend/test/core/export/xlsx_encoder_test.dart',
   'frontend/test/core/bundle/bundle_zip_io_test.dart',
+  'frontend/test/core/bundle/bundle_redaction_test.dart',
   'frontend/test/tool/check_l10n_test.dart',
   'frontend/test/tool/generated_source_check_test.dart',
   'frontend/test/tool/localization_generation_test.dart',
@@ -28,7 +33,7 @@ $taskSeeds = @(
   'frontend/test/architecture/support/owned_file_cleanup.dart',
   'frontend/test/architecture/support/owned_resource_flow.dart'
 )
-$taskSeeds += @(Get-Content -LiteralPath (Join-Path $taskRepoRoot 'frontend/build/task147/migration-files.txt') | Where-Object { $_ -match '^frontend/test/.+\.dart$' })
+$taskSeeds += @(Get-Content -LiteralPath (Join-Path $taskRepoRoot 'frontend/build/task147/migration-files.txt') | Where-Object { $_ -match '^frontend/(?:test|integration_test)/.+\.dart$' })
 $taskSeeds = @($taskSeeds | Sort-Object -Unique)
 $taskQueue = [System.Collections.Generic.Queue[string]]::new()
 foreach ($taskPath in $taskSeeds) { $taskQueue.Enqueue($taskPath) }
@@ -60,7 +65,7 @@ while ($taskQueue.Count -gt 0) {
   }
 }
 $taskTracked = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
-foreach ($taskPath in (& git -C $taskRepoRoot ls-files -- frontend)) { [void]$taskTracked.Add($taskPath) }
+foreach ($taskPath in (& git -C $taskRepoRoot ls-tree -r --name-only $taskHead -- frontend)) { [void]$taskTracked.Add($taskPath) }
 $taskFixtures = @()
 foreach ($taskFixtureName in @('catalogue','dependencies','naming','native_library','secrets','templates','whisper_vendor','whisper_wasm')) {
   foreach ($taskFile in (Get-ChildItem -LiteralPath (Join-Path $taskRepoRoot ('frontend/test/tool/fixtures/' + $taskFixtureName)) -Recurse -File)) {
@@ -72,15 +77,21 @@ foreach ($taskFile in (Get-ChildItem -LiteralPath (Join-Path $taskRepoRoot 'fron
 }
 $taskCandidates = @(@($taskClosure) + $taskFixtures | Sort-Object -Unique)
 $taskUntracked = @($taskCandidates | Where-Object { -not $taskTracked.Contains($_) })
-$taskIgnored = @(& git -C $taskRepoRoot check-ignore -- $taskUntracked)
+$taskIgnored = @()
+if ($taskUntracked.Count -gt 0) {
+  $taskIgnored = @(& git -C $taskRepoRoot check-ignore --no-index -- $taskUntracked)
+}
 $taskResult = [ordered]@{
-  Head = (& git -C $taskRepoRoot rev-parse HEAD)
+  Head = $taskHead
   Roots = $taskSeeds
   SuiteCount = @($taskSeeds | Where-Object { $_.EndsWith('_test.dart') }).Count
   ClosureCount = $taskClosure.Count
   TrackedClosureCount = @($taskClosure | Where-Object { $taskTracked.Contains($_) }).Count
   Missing = @($taskMissing | Sort-Object)
   FixtureCount = $taskFixtures.Count
+  ShippingCount = $taskCandidates.Count
+  TrackedShippingCount = @($taskCandidates | Where-Object { $taskTracked.Contains($_) }).Count
+  NewShippingCount = $taskUntracked.Count
   Ignored = $taskIgnored
   UntrackedNotIgnored = @($taskUntracked | Where-Object { $_ -notin $taskIgnored })
 }

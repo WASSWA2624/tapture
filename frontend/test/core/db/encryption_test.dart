@@ -36,7 +36,7 @@ void main() {
       try {
         directory.deleteSync(recursive: true);
       } on FileSystemException {
-        // Windows can keep a handle for a moment after sqlite3.dispose.
+        // Windows can keep a handle for a moment after the SQLite connection closes.
       }
     }
   });

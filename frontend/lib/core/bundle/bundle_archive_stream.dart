@@ -97,7 +97,9 @@ String _decode(
   try {
     final InputStream source = raw.getStream(decompress: false).subset();
     if (entry.compression == CompressionType.deflate) {
-      const ZLibDecoder().decodeStream(source, output, raw: true);
+      // Archive's native ZLibDecoder collects expanded bytes before dispatch.
+      // The maintained Dart inflater writes directly into our bounded output.
+      Inflate.stream(source, output: output);
     } else {
       output.writeStream(source);
     }

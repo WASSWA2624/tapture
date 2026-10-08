@@ -97,15 +97,15 @@ packages:
     task: "072"
   json_annotation:
     version: ^4.12.0
-    purpose: JsonConverter and @JsonKey so models declare wire names explicitly (FE-CODE-13). Replaces hand-rolled codecs that would follow Dart identifiers.
+    purpose: JsonConverter and @JsonKey so models declare wire names explicitly (FE-CODE-13). BSD-3-Clause. Replaces hand-rolled codecs that would follow Dart identifiers.
     task: "002"
   build_runner:
     version: ^2.15.1
-    purpose: Runs json_serializable (and later Drift) so generated output is committed (FE-CODE-13). Replaces invoking the generator by hand.
+    purpose: Runs json_serializable (and later Drift) so generated output is committed (FE-CODE-13). BSD-3-Clause. Replaces invoking the generator by hand.
     task: "002"
   json_serializable:
     version: ^6.14.1
-    purpose: Generates fromJson/toJson using @JsonKey names from build.yaml. Replaces deriving wire keys from Dart field names.
+    purpose: Generates fromJson/toJson using @JsonKey names from build.yaml. BSD-3-Clause. Replaces deriving wire keys from Dart field names.
     task: "002"
   drift:
     version: ^2.35.2
@@ -113,7 +113,7 @@ packages:
     task: "004"
   drift_dev:
     version: ^2.35.1
-    purpose: Generates AppDatabase and companions so Drift output is committed (FE-CODE-13). Replaces writing the .g.dart by hand.
+    purpose: Generates AppDatabase and companions so Drift output is committed (FE-CODE-13). MIT. Replaces writing the .g.dart by hand.
     task: "004"
   path_provider:
     version: ^2.1.5

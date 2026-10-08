@@ -3848,7 +3848,7 @@ abstract interface class SpeechAbortCell { int get address; void abortThrough(in
 
 ### Definition of done
 
-- [x] On this machine, `--build` produces both variants with the pinned emsdk and refuses any other version. `--check` passes.
+- [ ] On this machine, `--build` produces both variants with the pinned emsdk and refuses any other version. `--check` passes.
 - [x] `whisper_wasm_test` proves that a changed shim input, a tampered `.wasm` and a worker struct-table drift are each reported with exit 1.
 - [x] On this machine, `--smoke` passes under Node:
   - st: jfk with tiny, VAD `floor(n/512)`, struct sizes, and a wrong sha giving `MODEL_MISMATCH`;
@@ -3859,6 +3859,11 @@ abstract interface class SpeechAbortCell { int get address; void abortThrough(in
 
 ### Verification
 
+- 2026-10-08: task 147's current-tree guardrail run rejects the shim/header hashes against `BUILD_INFO.json`
+  (`frontend/build/task147-tool-guardrail-tests.log`, shipped `whisper_wasm_test` and two release-gate assertions).
+  The source changed on 2026-10-06 while the recorded web build inputs date from 2026-10-04. Rebuild both variants
+  with the pinned toolchain and verify their provenance before the first criterion closes; prior build/smoke
+  evidence below remains historical.
 - 2026-10-04 (review): `dart run tool/whisper_wasm.dart --build` with emsdk 6.0.11 (`EMSDK_PYTHON` set, because
   `emsdk_env.sh` otherwise hits the Windows Store `python3` alias) rebuilt st and mt from empty `build/tw-wasm-*`
   directories: exit 0, `whisper wasm: clean`, and all four artifacts, `BUILD_INFO.json` and `LICENSES.txt` came out
@@ -4772,7 +4777,7 @@ The full signatures are in spec §30.4.6.
 - [x] `appendUtterance` writes segments, `coveredMs` and `skippedRanges` atomically.
 - [x] `saveEdit` writes `text_edited`, `edited_at` and one audit row while the raw rows stay byte-identical. `clearEdit` writes null. `rename` writes an audit row with field `title`. Editing a live row gives `ValidationFailure`.
 - [x] `sinkFor(id).finish` completes or interrupts the row. `reopenForRemaining` allows `transcribeRemaining` on complete or interrupted rows and restores the status on finish.
-- [x] Record search:
+- [ ] Record search:
   - finds raw and edited words through the attachment link;
   - excludes live and tombstoned rows;
   - segment inserts never rebuild documents;
@@ -4790,6 +4795,7 @@ The full signatures are in spec §30.4.6.
 - 2026-10-04: added the test "an interrupted meeting take is repaired and filed on its meeting" to `transcript_recovery_test.dart`. It runs a real StagedTakeRecovery and `MeetingRepositoryImpl.attachStored`, which is the meeting branch of the boot wiring in main.dart. The staged file stays byte-identical, no file is removed, and the transcript is linked to the attachment row filed on the meeting's record. Recovery tests: +8. The device-level take after a process kill belongs to task 131.
 - 2026-10-04: `dart run tool/check_tests.dart --strict` reported that every owed file has a test. check_structure, check_naming, check_logging, check_l10n (exit 0) and check_secrets all pass. The architecture suites passed (+107): data_safety, errors, layering, naming, state, network, plugin_imports, tokens and check_structure_test. Neighbouring suites passed (+129 and +87): bootstrap, app_database, integrity_check, version_vector_schema, record_queries, record_search, meeting_repository_impl, structural_merge, core/copy, bundle_writer, bundle_reader, encryption and package_import_repository_impl.
 - Deviation kept: `sinkFor` returns `Future<Result<TranscriptSink>>`, because FE-CODE-06 (`errors_test`) rejects a repository method that returns neither Result nor Stream. Spec §30.4.6 and the Contract above still show `TranscriptSink sinkFor(String id)`. Tasks 118 and 122 to 125 must await and unwrap it.
+- 2026-10-08: the current native regression run fails `record_schema_test.dart:966`, where the no-rebuild fixture still assumes no triggers on `transcript_segments`. Task 127's October 4 schema 33 change intentionally added vector insert/update triggers; its current vector tests pass. The later global `total_changes()` assertions also do not distinguish the required vector write from search-document writes. Only this record-search acceptance is reopened for fixture reconciliation in [151](27-hardening/36-align-transcript-search-schema-tests-with-revision-vector-tracking.md). The October 4 verification remains historical evidence; this does not establish a production search/vector defect, and task 127's demonstrated vector criteria remain checked.
 
 ## 120 — Route field dictation through on-device Whisper
 
@@ -5559,12 +5565,18 @@ model, account kind, usage and reserved cost. An uncertain receipt requires a de
       and attributable provider/model/token/cost metadata.
 - [x] Approved reusable records produce template-preserving Excel, Word and text outputs with original evidence
       untouched; existing export formats remain usable.
-- [x] Tests cover real transport shapes, source/caching/review/restart/cancel failures, credential isolation,
+- [ ] Tests cover real transport shapes, source/caching/review/restart/cancel failures, credential isolation,
       quotas/idempotency and output package preservation; frontend analysis and backend `npm run verify` pass.
 - [x] Setup, credential/deletion controls and recovery limitations are documented; tracker sync and `--check` pass.
 
 ### Verification
 
+- 2026-10-08: task 147's strict test-presence assertion reports seven missing mirrored processing suites for
+  `extraction_responses`, `online_extraction`, `processing_evidence`, `processing_findings`, `processing_usage`
+  and the findings/usage domain ports (`frontend/build/task147-tool-guardrail-tests.log`). Existing grounded-online
+  tests supply partial behavioral evidence but do not satisfy every new domain/data file's required companion
+  suite. [150](27-hardening/35-restore-current-tree-frontend-guardrail-compliance.md) owns this bounded acceptance
+  repair; the composite test criterion is reopened and the dated verification below is preserved.
 - 2026-10-06: Backend `npm run verify` passes against an isolated PostgreSQL 18.4 instance: 165 passed, zero failed,
   one Docker image smoke skip. The real database tests verify receipt/ciphertext persistence after repository
   recreation, one dispatch for concurrent requests from independent repositories, guarded receipt bindings,
@@ -5741,7 +5753,7 @@ The linked feedback prompt's per-item Scope and named tests are the exact invent
 
 #### Integrated verification
 
-- [x] Changed Dart is formatted and analyzed; all named unit/repository/widget/flow, responsive and accessibility checks pass.
+- [ ] Changed Dart is formatted and analyzed; all named unit/repository/widget/flow, responsive and accessibility checks pass.
 - [x] Intended goldens are reviewed and required native/browser matrix evidence is recorded; unavailable checks remain open.
 - [x] Localization generation/checks and plan integrity pass; changed tests and exact support files are shipped.
 - [x] Backend verify, real PostgreSQL migration tests and explicit independent security/access review pass.
@@ -5750,6 +5762,11 @@ The linked feedback prompt's per-item Scope and named tests are the exact invent
 
 ### Evidence
 
+- 2026-10-08: task 147's current-tree naming check reports the public `MeetingReviewEdits` typedef before the
+  controller in `meeting_review_controller.dart`; strict test presence reports missing companion suites for
+  `DeletedCaptureFiles` and `AttachmentRepository` (`frontend/build/task147-tool-guardrail-tests.log`).
+  [150](27-hardening/35-restore-current-tree-frontend-guardrail-compliance.md) owns these existing standards gaps.
+  The integrated verification criterion is reopened; passing W1/W15 behavior and dated evidence remain intact.
 - Approved D1–D15 defaults and the explicit prerequisite exception remain recorded above. Broader owner acceptance stays open: 004 migration preservation; 009 retired-field exports; 008 reference-device cold-start timing; 012 capture device/performance/restart; 013 offline OCR/device battery; 014 lifecycle/source verification; 019 package/undo/performance; 024 backend/release acceptance; 124 browser recording capability. This task does not close them or certify final hardening task 023.
 - W1: production-route edit/save/reopen, retry and asynchronous-update tests preserve working text and immutable originals. Controller/screen, legacy, package, merge-undo, raw export, audio and transcript regressions passed; actual Windows and Android meeting integrations each passed 2/2. The fresh corrected project/package gate passed 238/238, exit 0 (`frontend/task143-project-package-clean-final.log`), including W3/W6/W8, real bundles and raw-note roundtrips.
 - W2/W3/W6/W8: no-template/loading/failure states keep raw capture enabled; template attachment updates the existing home action. Shared validation, project search/pin/archive, legacy redirects, supported package validation and generic import formats pass. The specific Add template key preserves the existing Add to this project copy. ProjectHome 256, Projects matrix 216, and the corrected 238-test gate verify these paths; required native/browser boundaries are recorded below.

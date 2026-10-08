@@ -720,6 +720,7 @@ TAPTURE-*.zip
 !/test/tool/whisper_wasm_test.dart
 
 # Task 147: migrated archive/database regressions and AST guardrail closure.
+!/test/core/bundle/bundle_redaction_test.dart
 !/test/architecture/data_safety_test.dart
 !/test/architecture/fixtures/data_safety/allowed/lib/core/files/disposable_cleanup.dart
 !/test/architecture/fixtures/data_safety/allowed/lib/features/records/data/records_repository.dart
@@ -782,3 +783,6 @@ TAPTURE-*.zip
 !/test/tool/check_l10n_test.dart
 !/test/tool/generated_source_check_test.dart
 !/test/tool/localization_generation_test.dart
+!/integration_test/failure_paths_test.dart
+!/integration_test/merge_test.dart
+!/test/support/crash_capture_child.dart

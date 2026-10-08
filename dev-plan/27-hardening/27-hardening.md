@@ -318,8 +318,14 @@ Future<Result<void>> logFriction({required String screen, String? note, bool wit
 
 - [x] A new collection screen without an empty state fails the suite.
 - [ ] Every empty state names its next action, and none renders a bare message.
-- [x] Tests: `empty_state_coverage_test.dart` itself, one case per collection screen, plus a fixture screen proving
+- [ ] Tests: `empty_state_coverage_test.dart` itself, one case per collection screen, plus a fixture screen proving
       the matcher fails when the empty state is missing.
+
+2026-10-08: task 147's current-tree `screen_inventory_test` finds `ProjectHomeScreen` and `ReviewScreen` absent
+from the actual-route collection fixtures (`frontend/build/task147-tool-guardrail-tests.log`). Existing async-list
+components trigger automatic discovery; the migrated AST discovery fixtures pass. The per-collection test criterion
+is reopened pending the bounded fixture reconciliation in [150](35-restore-current-tree-frontend-guardrail-compliance.md),
+without changing the empty-state, accessibility or automatic-discovery contracts.
 
 ### Performance and background work
 

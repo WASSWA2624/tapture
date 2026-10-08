@@ -198,3 +198,43 @@ class PermissionRationale {
       entry, and on any entry without a declaration, naming file and line for every one it finds.
 - [x] Tests: a fixture pair for that test, one manifest carrying an unjustified declaration and one rationale entry
       with nothing declared, proving the review fails on each and passes on the shipped pair.
+
+## 149 — Reject inconsistent compression metadata in nested privacy scans
+
+**Depends on** [019](19-bundles-and-merge.md), [022](22-privacy-and-security.md), [147](02-foundation.md)
+
+### Implement
+
+Make both nested ZIP privacy scanners refuse an entry whose central-directory and local-header compression methods
+disagree, before choosing how its payload is decoded. Task 147's dependency review found this existing gap: a supported
+central DEFLATE declaration can accompany an unsupported local method, which the decoder or scanner treats as STORE;
+opaque compressed bytes can then pass the size check without their expanded contents reaching the secret scan.
+
+Reuse task 019's checked ZIP metadata and entry validation instead of introducing another local-header parser. Compare
+the original method values, not an enum that has already fallen back to STORE. Accept only consistent STORE or DEFLATE
+entries in both the browser memory path and the native temporary-file path. Keep their bounded incremental inflation,
+canonical secret patterns, cancellation, source integrity and unpublished-output cleanup. This task changes no bundle
+format, supported compression method, encryption envelope, dependency or public application API.
+
+### Files
+
+- `frontend/lib/core/bundle/bundle_redaction.dart`
+- `frontend/lib/core/bundle/bundle_redaction_io.dart`
+- `frontend/lib/core/bundle/bundle_zip_entry.dart` (reuse the existing metadata validation; adapt only if shared use requires it)
+- `frontend/test/core/bundle/bundle_redaction_test.dart`
+- `frontend/test/core/bundle/bundle_protection_test.dart`
+- `frontend/test/core/bundle/bundle_zip_entry_test.dart`
+- `frontend/test/features/exports/data/browser_export_test.dart` (existing real browser export harness)
+
+### Definition of done
+
+- [ ] Both nested privacy scanners reject central/local compression disagreement and unsupported local methods before
+      accepting or publishing the nested payload; decoder fallback to STORE cannot bypass the check.
+- [ ] Consistent STORE and DEFLATE entries retain canonical secret scanning, bounded output, cancellation and unchanged
+      original bytes; failed native scans remove their owned temporary files and preserve an earlier completed export.
+- [ ] Tests: positive consistent STORE/DEFLATE fixtures and negative STORE/DEFLATE disagreements in both directions,
+      unsupported local BZIP2 and unknown methods, and opaque compressed secret payloads whose declared sizes otherwise
+      pass, exercise the real browser and native scanner/writer paths and assert refusal and cleanup.
+- [ ] Tests: existing legitimate nested-archive, secret-refusal, declared-size, dictionary-copy, cancellation and native
+      memory-budget regressions remain green, including actual browser export verification.
+- [ ] Flutter analysis and changed-source formatting pass.

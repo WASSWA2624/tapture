@@ -30,6 +30,7 @@ final class AuthenticatedFileCipher {
   static const int _nonceLength = 16;
   static const int _headerLength = 32;
   static const int _tagLength = 32;
+  static const int _lengthWordBase = 0x100000000;
 
   /// Envelope size without allocating or encrypting the content.
   static int sealedLength(int plainLength) =>
@@ -446,7 +447,9 @@ final class AuthenticatedFileCipher {
     bytes.setAll(8, <int>[
       for (var i = 0; i < _nonceLength; i++) random.nextInt(256),
     ]);
-    ByteData.sublistView(bytes).setUint64(24, length, Endian.big);
+    final ByteData data = ByteData.sublistView(bytes);
+    data.setUint32(24, length ~/ _lengthWordBase, Endian.big);
+    data.setUint32(28, length % _lengthWordBase, Endian.big);
     return bytes;
   }
 
@@ -455,7 +458,13 @@ final class AuthenticatedFileCipher {
         !_same(header.sublist(0, 8), ascii.encode(magic))) {
       throw const FormatException('magic');
     }
-    final int length = ByteData.sublistView(header).getUint64(24, Endian.big);
+    final ByteData data = ByteData.sublistView(header);
+    final int high = data.getUint32(24, Endian.big);
+    // Reject oversized words before combining them on JavaScript's number range.
+    if (high > 15) {
+      throw const FormatException('length');
+    }
+    final int length = high * _lengthWordBase + data.getUint32(28, Endian.big);
     // The maintained AES-CTR implementation uses a 32-bit block counter.
     if (length > 16 * 0xffffffff) {
       throw const FormatException('length');

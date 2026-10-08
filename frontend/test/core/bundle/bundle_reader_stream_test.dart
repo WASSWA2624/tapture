@@ -4,8 +4,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:archive/archive.dart' as archive show ZLibDecoder;
-import 'package:archive/archive_io.dart' hide ZLibDecoder, ZLibEncoder;
+import 'package:archive/archive_io.dart' hide ZLibEncoder;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/bundle/bundle.dart';
@@ -380,8 +379,9 @@ final class _CompressedFixtureContent extends FileContent {
   }
 
   @override
-  void decompress(OutputStream output) => const archive.ZLibDecoder()
-      .decodeStream(_source.subset(), output, raw: true);
+  void decompress(OutputStream output) {
+    Inflate.stream(_source.subset(), output: output);
+  }
 
   @override
   void write(OutputStream output) => decompress(output);

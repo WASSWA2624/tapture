@@ -565,10 +565,7 @@ String? _part(Archive archive, String path) {
   final String wanted = path.replaceAll(r'\', '/').toLowerCase();
   for (final ArchiveFile file in archive.files) {
     if (file.name.replaceAll(r'\', '/').toLowerCase() == wanted) {
-      final Object? raw = file.content;
-      if (raw is List<int>) {
-        return utf8.decode(raw, allowMalformed: true);
-      }
+      return utf8.decode(file.content, allowMalformed: true);
     }
   }
   return null;

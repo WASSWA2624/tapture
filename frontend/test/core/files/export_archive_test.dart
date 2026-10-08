@@ -100,6 +100,10 @@ void main() {
         utf8.decode(decoded.findFile('evidence.jpg')!.content),
         'photo evidence',
       );
+      expect(
+        decoded.findFile('evidence.jpg')!.compression,
+        CompressionType.none,
+      );
     },
   );
 
