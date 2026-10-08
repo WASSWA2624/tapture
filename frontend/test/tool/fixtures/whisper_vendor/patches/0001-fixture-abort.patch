@@ -1,0 +1,16 @@
+Subject: [PATCH 0001] Pass an abort flag through the fixture helper
+
+--- a/src/whisper.cpp
++++ b/src/whisper.cpp
+@@ -2,5 +2,5 @@
+ 
+-static bool compute(int n_threads) {
+-    return n_threads > 0;
++static bool compute(int n_threads, bool aborted = false) {
++    return n_threads > 0 && !aborted;
+ }
+ 
+@@ -8,2 +8,2 @@
+-    return compute(4) ? 0 : 1;
++    return compute(4, false) ? 0 : 1;
+ }

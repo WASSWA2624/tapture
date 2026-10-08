@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "template_key": "broken_code",
+  "name": "templates.fixture.name",
+  "kind": "fixture",
+  "identity_fields": ["serial_number"],
+  "inherits_groups": [],
+  "fields": [
+    {
+      "field_key": "serial_number",
+      "label": "templates.fixture.serial_number",
+      "type": "text",
+      "required": "REQUIRED"
+    },
+    {
+      "field_key": "supplier_code",
+      "label": "templates.fixture.supplier_code",
+      "type": "lookup",
+      "required": "OPTIONAL"
+    }
+  ],
+  "child_rows": []
+}

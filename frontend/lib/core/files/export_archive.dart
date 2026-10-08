@@ -119,5 +119,5 @@ Uint8List _encode(Map<String, Uint8List> entries) {
   for (final MapEntry<String, Uint8List> entry in entries.entries) {
     archive.addFile(ArchiveFile(entry.key, entry.value.length, entry.value));
   }
-  return Uint8List.fromList(ZipEncoder().encode(archive)!);
+  return ZipEncoder().encodeBytes(archive);
 }

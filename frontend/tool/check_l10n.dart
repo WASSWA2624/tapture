@@ -161,14 +161,14 @@ final class _Literals extends RecursiveAstVisitor<void> {
         type == 'InputDecoration' ||
         type == 'NavigationDestination' ||
         type == 'NavigationRailDestination') {
-      for (final Expression argument in arguments.arguments) {
+      for (final Argument argument in arguments.arguments) {
         final Expression value;
-        if (argument is NamedExpression) {
-          if (!visibleArguments.contains(argument.name.label.name)) continue;
-          value = argument.expression;
+        if (argument is NamedArgument) {
+          if (!visibleArguments.contains(argument.name.lexeme)) continue;
+          value = argument.argumentExpression;
         } else {
           if (type != 'Text' && type != 'SelectableText') continue;
-          value = argument;
+          value = argument.argumentExpression;
         }
         final _TextSegments segments = _TextSegments();
         value.accept(segments);

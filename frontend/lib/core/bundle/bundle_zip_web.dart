@@ -34,7 +34,9 @@ Future<Result<BundleOutput>> zipBundle(BundleZipJob job) async {
       redaction.assertClean(name);
       redaction.assertCleanPayload(bytes);
       final ArchiveFile file = ArchiveFile(name, bytes.length, bytes)
-        ..compress = compress;
+        ..compression = compress
+            ? CompressionType.deflate
+            : CompressionType.none;
       archive.addFile(file);
       written.add(
         BundleEntry(
@@ -96,18 +98,7 @@ Future<Result<BundleOutput>> zipBundle(BundleZipJob job) async {
           Uint8List.fromList(last.manifest),
         ),
       );
-    final List<int>? encoded = ZipEncoder().encode(archive);
-    if (encoded == null) {
-      return FailureResult<BundleOutput>(
-        StorageFailure(
-          localizedMessage: Copy.messages.packageWriteFailed,
-          localizedRecovery: Copy.messages.tryAgain,
-        ),
-      );
-    }
-    final Uint8List plain = encoded is Uint8List
-        ? encoded
-        : Uint8List.fromList(encoded);
+    final Uint8List plain = ZipEncoder().encodeBytes(archive);
     final Uint8List bytes = job.password == null
         ? plain
         : await BundleEncryption().sealAsync(

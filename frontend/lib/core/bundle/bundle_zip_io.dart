@@ -168,18 +168,18 @@ Future<List<Object>> _zipToDisk(Map<String, Object?> job) async {
     job['cancellation']! as SendPort,
     lease: File(job['lease']! as String),
   );
-  final ZipFileEncoder zip = ZipFileEncoder();
+  final _ChecksummedZipEncoder zip = _ChecksummedZipEncoder();
   FileHandle? outputHandle;
+  OutputFileStream? outputStream;
   var closed = false;
   var created = false;
   try {
-    outputHandle = FileHandle(part.path, openMode: AbstractFileOpenMode.write);
-    zip.createWithBuffer(
-      OutputFileStream.withFileHandle(
-        outputHandle,
-        bufferSize: AppConstants.hashing.chunkBytes,
-      ),
+    outputHandle = FileHandle(part.path, mode: FileAccess.write);
+    outputStream = OutputFileStream.withFileHandle(
+      outputHandle,
+      bufferSize: AppConstants.hashing.chunkBytes,
     );
+    zip.startEncode(outputStream, level: null);
     created = true;
     final List<BundleEntry> written = <BundleEntry>[];
     final List<String> missing = <String>[];
@@ -191,7 +191,7 @@ Future<List<Object>> _zipToDisk(Map<String, Object?> job) async {
       final Uint8List bytes = Uint8List.fromList(entries[name]!);
       redaction.assertClean(name);
       redaction.assertCleanPayload(bytes);
-      zip.addArchiveFile(ArchiveFile(name, bytes.length, bytes));
+      zip.add(ArchiveFile(name, bytes.length, bytes));
       written.add(
         BundleEntry(
           path: name,
@@ -231,17 +231,19 @@ Future<List<Object>> _zipToDisk(Map<String, Object?> job) async {
           )
           .first;
       scanner.finish();
-      final InputFileStream input = InputFileStream.withFileHandle(
-        _CheckedFileHandle(file.path, cancellation.check),
-        bufferSize: AppConstants.hashing.chunkBytes,
+      final InputFileStream input = InputFileStream.withFileBuffer(
+        FileBuffer(
+          _CheckedFileHandle(file.path, cancellation.check),
+          bufferSize: AppConstants.hashing.chunkBytes,
+        ),
       );
       try {
         // SHA/redaction and CRC share the first bounded pass. STORE then streams
         // the second pass without another complete CRC read, with cancellation
         // at each native input refill and deterministic handle closure.
-        zip.addArchiveFile(
-          ArchiveFile.stream(path, file.lengthSync(), input)
-            ..compress = false
+        zip.add(
+          ArchiveFile.stream(path, input)
+            ..compression = CompressionType.none
             ..crc32 = crc,
         );
       } finally {
@@ -265,21 +267,22 @@ Future<List<Object>> _zipToDisk(Map<String, Object?> job) async {
     );
     redaction.assertCleanBytes(last.manifest);
     redaction.assertCleanBytes(last.checksums);
-    zip.addArchiveFile(
+    zip.add(
       ArchiveFile(
         BundleFormat.checksums,
         last.checksums.length,
         Uint8List.fromList(last.checksums),
       ),
     );
-    zip.addArchiveFile(
+    zip.add(
       ArchiveFile(
         BundleFormat.manifest,
         last.manifest.length,
         Uint8List.fromList(last.manifest),
       ),
     );
-    await zip.close();
+    zip.endEncode();
+    await outputStream.close();
     closed = true;
     File output = part;
     final String? password = job['password'] as String?;
@@ -305,7 +308,7 @@ Future<List<Object>> _zipToDisk(Map<String, Object?> job) async {
   } on Object {
     if (created && !closed) {
       try {
-        zip.closeSync();
+        outputStream?.closeSync();
       } on Object {
         // The encoder may already be broken; the file is removed below.
       }
@@ -314,10 +317,17 @@ Future<List<Object>> _zipToDisk(Map<String, Object?> job) async {
     rethrow;
   } finally {
     // Closing the raw owned handle also covers an encoder/flush failure that
-    // interrupts ZipFileEncoder.closeSync before it reaches its output close.
+    // interrupts OutputFileStream.closeSync before it reaches its handle close.
     outputHandle?.closeSync();
     cancellation.close();
   }
+}
+
+// Archive 4 recomputes uncompressed entry CRCs by default. Attachment CRCs were
+// already checked with SHA/redaction, so reuse them instead of a third file pass.
+final class _ChecksummedZipEncoder extends ZipEncoder {
+  @override
+  int getFileCrc32(ArchiveFile file) => file.crc32 ?? super.getFileCrc32(file);
 }
 
 final class _CheckedFileHandle extends FileHandle {

@@ -80,10 +80,17 @@ foreach ($path in (& git -C $taskAuditRoot ls-files -- frontend)) { [void]$taskA
 $taskAuditUntracked = @($taskAuditPaths | Where-Object { -not $taskAuditTracked.Contains($_) })
 $taskAuditIgnored = @(& git -C $taskAuditRoot check-ignore -- $taskAuditUntracked)
 $taskAuditResult = [ordered]@{
+  auditHead = (& git -C $taskAuditRoot rev-parse HEAD)
   roots = @($taskAuditSeeds | Sort-Object)
+  suiteCount = @($taskAuditSeeds | Where-Object { $_.EndsWith('_test.dart') }).Count
+  helperCount = @($taskAuditSeeds | Where-Object { -not $_.EndsWith('_test.dart') }).Count
   closureCount = $taskAuditClosure.Count
+  trackedClosureCount = @($taskAuditClosure | Where-Object { $taskAuditTracked.Contains($_) }).Count
   missing = @($taskAuditMissing | Sort-Object)
   goldenCount = $taskAuditGoldenPaths.Count
+  existingGoldenCount = @($taskAuditGoldenPaths | Where-Object { Test-Path -LiteralPath (Join-Path $taskAuditRoot $_) }).Count
+  trackedGoldenCount = @($taskAuditGoldenPaths | Where-Object { $taskAuditTracked.Contains($_) }).Count
+  existingUntrackedGoldenCount = @($taskAuditGoldenPaths | Where-Object { (Test-Path -LiteralPath (Join-Path $taskAuditRoot $_)) -and -not $taskAuditTracked.Contains($_) }).Count
   expectedGoldensNotYetCreated = @($taskAuditGoldenPaths | Where-Object { -not (Test-Path -LiteralPath (Join-Path $taskAuditRoot $_)) } | Sort-Object)
   untrackedClosure = @($taskAuditClosure | Where-Object { -not $taskAuditTracked.Contains($_) } | Sort-Object)
   untrackedGoldenCount = @($taskAuditGoldenPaths | Where-Object { -not $taskAuditTracked.Contains($_) }).Count

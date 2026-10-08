@@ -88,11 +88,7 @@ abstract final class XlsxEncoder {
     );
     _addText(archive, 'xl/styles.xml', _stylesXml(book.dateTimeFormat));
     _addText(archive, 'xl/sharedStrings.xml', strings.toXml());
-    final List<int>? zipped = ZipEncoder().encode(
-      archive,
-      modified: book.createdUtc,
-    );
-    return Uint8List.fromList(zipped ?? const <int>[]);
+    return ZipEncoder().encodeBytes(archive, modified: book.createdUtc);
   }
 }
 

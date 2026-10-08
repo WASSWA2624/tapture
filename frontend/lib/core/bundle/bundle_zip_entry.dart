@@ -57,10 +57,10 @@ final class BundleZipEntry {
   /// Captures consistent local and central metadata without inflating bytes.
   static BundleZipEntry capture(
     ZipFileHeader header,
-    InputStreamBase input,
+    InputStream input,
     int sourceLength,
   ) {
-    final int offset = header.localHeaderOffset!;
+    final int offset = header.localHeaderOffset;
     final ByteData local = ByteData.sublistView(
       _slice(input, offset, 30, sourceLength),
     );
@@ -85,9 +85,9 @@ final class BundleZipEntry {
             header.filename) {
       throw const FormatException('Inconsistent package ZIP headers.');
     }
-    final int compressed = header.compressedSize!;
-    final int size = header.uncompressedSize!;
-    final int crc = header.crc32!;
+    final int compressed = header.compressedSize;
+    final int size = header.uncompressedSize;
+    final int crc = header.crc32;
     if (compressed < 0 || size < 0 || dataOffset + compressed > sourceLength) {
       throw const FormatException('Invalid package ZIP entry bounds.');
     }
@@ -97,7 +97,7 @@ final class BundleZipEntry {
     int localSize64 = localSize;
     int localCompressed64 = localCompressed;
     if (localSize == 0xffffffff || localCompressed == 0xffffffff) {
-      final InputStream extra = InputStream(
+      final InputStream extra = InputMemoryStream(
         Uint8List.sublistView(localHeader, 30 + nameLength),
       );
       bool found = false;
@@ -107,7 +107,7 @@ final class BundleZipEntry {
         if (count > extra.length) {
           throw const FormatException('Truncated ZIP64 entry size.');
         }
-        final InputStreamBase field = extra.readBytes(count);
+        final InputStream field = extra.readBytes(count);
         if (id == 1) {
           final int needed =
               (localSize == 0xffffffff ? 8 : 0) +
@@ -180,7 +180,7 @@ final class BundleZipEntry {
 
   /// Opens only this checked range, rejecting changed local metadata or bounds.
   /// Actual decoded length, CRC and manifest SHA are still checked separately.
-  ArchiveFile open(InputStreamBase input) {
+  ArchiveFile open(InputStream input) {
     if (input.length != sourceLength ||
         crypto.sha256
                 .convert(
@@ -207,20 +207,34 @@ final class BundleZipEntry {
                 descriptorDigest)) {
       throw const FormatException('The package ZIP entry changed.');
     }
-    return ArchiveFile(
-      path,
-      size,
-      input.subset(dataOffset, compressedSize),
-      compression,
-    )..crc32 = crc32;
+    final ZipFileHeader header = ZipFileHeader()
+      ..filename = path
+      ..compressedSize = compressedSize
+      ..uncompressedSize = size
+      ..compressionMethod = compression
+      ..crc32 = crc32;
+    final ZipFile content = ZipFile(header)
+      ..read(
+        input.subset(
+          position: headerOffset,
+          length: dataOffset - headerOffset + compressedSize + descriptorLength,
+        ),
+      );
+    return ArchiveFile.file(path, size, content)
+      ..compression = compression == ZipFile.zipCompressionStore
+          ? CompressionType.none
+          : CompressionType.deflate
+      ..crc32 = crc32;
   }
 }
 
-Uint8List _slice(InputStreamBase input, int offset, int count, int length) {
+Uint8List _slice(InputStream input, int offset, int count, int length) {
   if (offset < 0 || count < 0 || offset + count > length) {
     throw const FormatException('Truncated package ZIP entry.');
   }
-  final Uint8List bytes = input.subset(offset, count).toUint8List();
+  final Uint8List bytes = input
+      .subset(position: offset, length: count)
+      .toUint8List();
   if (bytes.length != count) {
     throw const FormatException('Truncated package ZIP entry.');
   }

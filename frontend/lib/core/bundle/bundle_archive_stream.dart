@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' show File, FileMode, RandomAccessFile;
 import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
@@ -16,23 +16,26 @@ abstract final class BundleArchiveStream {
   /// Opens only ordinary stored/DEFLATE ZIP entries. Password protection uses
   /// the authenticated bundle envelope, never opaque entry-level encryption.
   static Archive decode(
-    InputStreamBase input, {
+    InputStream input, {
     Map<String, BundleZipEntry>? inventory,
     void Function()? checkpoint,
   }) {
     checkpoint?.call();
     final int sourceLength = input.length;
     final ZipDecoder decoder = ZipDecoder();
-    final Archive archive = decoder.decodeBuffer(input);
+    final Archive archive = decoder.decodeStream(input);
     final Set<String> names = <String>{};
     for (final ZipFileHeader header in decoder.directory.fileHeaders) {
       checkpoint?.call();
       if (!names.add(header.filename) ||
           header.generalPurposeBitFlag & 1 != 0 ||
           header.file!.flags & 1 != 0 ||
-          (header.compressionMethod != ArchiveFile.STORE &&
-              header.compressionMethod != ArchiveFile.DEFLATE) ||
-          header.file!.compressionMethod != header.compressionMethod) {
+          (header.compressionMethod != ZipFile.zipCompressionStore &&
+              header.compressionMethod != ZipFile.zipCompressionDeflate) ||
+          header.file!.compressionMethod !=
+              (header.compressionMethod == ZipFile.zipCompressionStore
+                  ? CompressionType.none
+                  : CompressionType.deflate)) {
         throw const FormatException('Unsupported protected ZIP entry.');
       }
       final BundleZipEntry entry = BundleZipEntry.capture(
@@ -77,11 +80,11 @@ String _decode(
   void Function()? checkpoint,
 ) {
   checkpoint?.call();
-  if (entry.compressionType != ArchiveFile.STORE &&
-      entry.compressionType != ArchiveFile.DEFLATE) {
+  if (entry.compression != CompressionType.none &&
+      entry.compression != CompressionType.deflate) {
     throw const FormatException('Unsupported package compression.');
   }
-  final InputStreamBase? raw = entry.rawContent;
+  final FileContent? raw = entry.rawContent;
   if (raw == null) {
     throw const FormatException('Missing compressed entry.');
   }
@@ -92,12 +95,12 @@ String _decode(
     checkpoint,
   );
   try {
-    ArchiveFile(
-      entry.name,
-      entry.size,
-      raw.subset(),
-      entry.compressionType,
-    ).decompress(output);
+    final InputStream source = raw.getStream(decompress: false).subset();
+    if (entry.compression == CompressionType.deflate) {
+      const ZLibDecoder().decodeStream(source, output, raw: true);
+    } else {
+      output.writeStream(source);
+    }
     if (output.length != entry.size) {
       throw const FormatException('Invalid package entry length.');
     }
@@ -107,14 +110,15 @@ String _decode(
     }
     return digest;
   } finally {
-    output.close();
+    output.closeSync();
   }
 }
 
-final class _EntryOutput extends OutputStreamBase {
+final class _EntryOutput extends OutputStream {
   _EntryOutput(this.maximum, File? target, this.bytes, this.checkpoint)
     : file = target?.openSync(mode: FileMode.write),
-      buffer = Uint8List(AppConstants.hashing.chunkBytes) {
+      buffer = Uint8List(AppConstants.hashing.chunkBytes),
+      super(byteOrder: ByteOrder.littleEndian) {
     sink = crypto.sha256.startChunkedConversion(digest);
   }
   final int maximum;
@@ -156,8 +160,8 @@ final class _EntryOutput extends OutputStreamBase {
   }
 
   @override
-  void writeBytes(List<int> value, [int? len]) {
-    final int count = len ?? value.length;
+  void writeBytes(List<int> value, {int? length}) {
+    final int count = length ?? value.length;
     _reserve(count);
     _remember(value, count);
     int offset = 0;
@@ -185,7 +189,8 @@ final class _EntryOutput extends OutputStreamBase {
   }
 
   /// Archive's Inflate.stream resolves dictionary ranges through this method.
-  List<int> subset(int start, [int? end]) {
+  @override
+  Uint8List subset(int start, [int? end]) {
     final int first = start < 0 ? _length + start : start;
     final int last = end == null
         ? _length
@@ -210,7 +215,7 @@ final class _EntryOutput extends OutputStreamBase {
   }
 
   @override
-  void writeInputStream(InputStreamBase input) {
+  void writeStream(InputStream input) {
     while (!input.isEOS) {
       final int count = input.length < buffer.length
           ? input.length
@@ -256,7 +261,14 @@ final class _EntryOutput extends OutputStreamBase {
     return digest.value.toString();
   }
 
-  void close() {
+  @override
+  void clear() => throw UnsupportedError('Package streams cannot be reset.');
+
+  @override
+  Future<void> close() async => closeSync();
+
+  @override
+  void closeSync() {
     if (!_finished) {
       sink.close();
     }

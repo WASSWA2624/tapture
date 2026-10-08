@@ -20,7 +20,8 @@ final class OoxmlPackage {
     }
     final Archive archive;
     try {
-      final ZipDirectory directory = ZipDirectory.read(InputStream(bytes));
+      final ZipDirectory directory = ZipDirectory()
+        ..read(InputMemoryStream(bytes));
       var total = 0;
       final Set<String> names = <String>{};
       for (final ZipFileHeader header in directory.fileHeaders) {
@@ -28,9 +29,9 @@ final class OoxmlPackage {
         safeRelativePath(
           name.endsWith('/') ? name.substring(0, name.length - 1) : name,
         );
-        final int size = header.uncompressedSize ?? -1;
+        final int size = header.uncompressedSize;
         total += size;
-        final int mode = (header.externalFileAttributes ?? 0) >> 16;
+        final int mode = header.externalFileAttributes >> 16;
         if (name.contains('\u0000') ||
             !names.add(name) ||
             size < 0 ||
@@ -65,7 +66,7 @@ final class OoxmlPackage {
       throw invalid();
     }
     try {
-      return Uint8List.fromList(file.content as List<int>);
+      return Uint8List.fromList(file.content);
     } on Object {
       throw invalid();
     }
@@ -108,7 +109,7 @@ final class OoxmlPackage {
         );
       }
     }
-    return Uint8List.fromList(ZipEncoder().encode(result)!);
+    return ZipEncoder().encodeBytes(result);
   }
 
   /// Shared typed refusal for corrupt or unsupported source templates.

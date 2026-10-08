@@ -128,12 +128,12 @@ abstract final class TemplateOutputFixture {
       final List<int> bytes = utf8.encode(part.value);
       archive.addFile(ArchiveFile(part.key, bytes.length, bytes));
     }
-    return Uint8List.fromList(ZipEncoder().encode(archive)!);
+    return Uint8List.fromList(ZipEncoder().encodeBytes(archive));
   }
 
   static Map<String, String> parts(Uint8List bytes) => <String, String>{
     for (final ArchiveFile file
         in ZipDecoder().decodeBytes(bytes, verify: true).files)
-      file.name: utf8.decode(file.content as List<int>),
+      file.name: utf8.decode(file.content),
   };
 }

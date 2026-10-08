@@ -84,11 +84,7 @@ void main() {
     );
     final Archive archive = ZipDecoder().decodeBytes(_written!);
     final Map<String, Object?> entry =
-        jsonDecode(
-              utf8.decode(
-                archive.findFile('transcripts.json')!.content as List<int>,
-              ),
-            )
+        jsonDecode(utf8.decode(archive.findFile('transcripts.json')!.content))
             as Map<String, Object?>;
     expect(entry.keys, <String>['transcripts', 'transcript_segments']);
 
@@ -438,17 +434,13 @@ Uint8List _withoutEntry(Uint8List package, String path) {
   final Archive source = ZipDecoder().decodeBytes(package);
   final List<int> checksums = utf8.encode(
     utf8
-        .decode(source.findFile(BundleFormat.checksums)!.content as List<int>)
+        .decode(source.findFile(BundleFormat.checksums)!.content)
         .split('\n')
         .where((String line) => !line.endsWith('  $path'))
         .join('\n'),
   );
   final Map<String, Object?> manifest =
-      jsonDecode(
-            utf8.decode(
-              source.findFile(BundleFormat.manifest)!.content as List<int>,
-            ),
-          )
+      jsonDecode(utf8.decode(source.findFile(BundleFormat.manifest)!.content))
           as Map<String, Object?>;
   manifest['entries'] = <Object?>[
     for (final Map<String, Object?> entry
@@ -468,11 +460,11 @@ Uint8List _withoutEntry(Uint8List package, String path) {
     final List<int> bytes = switch (file.name) {
       BundleFormat.checksums => checksums,
       BundleFormat.manifest => utf8.encode(jsonEncode(manifest)),
-      _ => file.content as List<int>,
+      _ => file.content,
     };
     rebuilt.addFile(ArchiveFile(file.name, bytes.length, bytes));
   }
-  return Uint8List.fromList(ZipEncoder().encode(rebuilt)!);
+  return Uint8List.fromList(ZipEncoder().encodeBytes(rebuilt));
 }
 
 T _ok<T>(Result<T> result) {

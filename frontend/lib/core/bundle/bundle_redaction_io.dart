@@ -76,12 +76,12 @@ final class _ArchiveScanner {
     final InputFileStream input = InputFileStream(file.path);
     try {
       final ZipDecoder decoder = ZipDecoder();
-      final Archive archive = decoder.decodeBuffer(input);
+      final Archive archive = decoder.decodeStream(input);
       for (final ZipFileHeader header in decoder.directory.fileHeaders) {
         if (header.generalPurposeBitFlag & 1 != 0 ||
             header.file!.flags & 1 != 0 ||
-            (header.compressionMethod != ArchiveFile.STORE &&
-                header.compressionMethod != ArchiveFile.DEFLATE)) {
+            (header.compressionMethod != ZipFile.zipCompressionStore &&
+                header.compressionMethod != ZipFile.zipCompressionDeflate)) {
           throw ValidationFailure(
             localizedMessage:
                 Copy.messages.failureAnEncryptedOrUnsupportedAttachmentCouldNot,
@@ -112,12 +112,7 @@ final class _ArchiveScanner {
           try {
             // Reuse the compressed stream, bypassing ArchiveFile.content, which
             // would inflate the entire attachment in memory.
-            ArchiveFile(
-              entry.name,
-              entry.size,
-              entry.rawContent!,
-              entry.compressionType,
-            ).decompress(output);
+            entry.rawContent!.decompress(output);
             if (output.length != entry.size) {
               throw ValidationFailure(
                 localizedMessage:
@@ -169,7 +164,7 @@ final class _ArchiveScanner {
 final class _LimitedOutput extends OutputFileStream {
   _LimitedOutput(String path, this.maximum, this.check)
     : super.withFileHandle(
-        FileHandle(path, openMode: AbstractFileOpenMode.write),
+        FileHandle(path, mode: FileAccess.write),
         bufferSize: AppConstants.hashing.chunkBytes,
       );
   final int maximum;
@@ -195,13 +190,13 @@ final class _LimitedOutput extends OutputFileStream {
   }
 
   @override
-  void writeBytes(List<int> bytes, [int? len]) {
-    _reserve(len ?? bytes.length);
-    super.writeBytes(bytes, len);
+  void writeBytes(List<int> bytes, {int? length}) {
+    _reserve(length ?? bytes.length);
+    super.writeBytes(bytes, length: length);
   }
 
   @override
-  void writeInputStream(InputStreamBase stream) {
+  void writeStream(InputStream stream) {
     while (!stream.isEOS) {
       check();
       writeBytes(

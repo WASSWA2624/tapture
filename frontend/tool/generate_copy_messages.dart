@@ -50,16 +50,14 @@ void main(List<String> args) {
         typed = <String>[],
         arguments = <String>[];
     for (final FormalParameter parameter in member.parameters!.parameters) {
-      final FormalParameter base = parameter is DefaultFormalParameter
-          ? parameter.parameter
-          : parameter;
-      if (base is! SimpleFormalParameter ||
-          base.name == null ||
-          base.type == null) {
-        throw StateError('Unsupported parameter $name/$base');
+      if (parameter is! RegularFormalParameter ||
+          parameter.functionTypedSuffix != null ||
+          parameter.name == null ||
+          parameter.type == null) {
+        throw StateError('Unsupported parameter $name/$parameter');
       }
-      final String parameterName = base.name!.lexeme,
-          type = base.type!.toSource();
+      final String parameterName = parameter.name!.lexeme,
+          type = parameter.type!.toSource();
       call.add('${parameter.isNamed ? '$parameterName: ' : ''}$parameterName');
       typed.add(
         '${parameter.isNamed ? '$parameterName: ' : ''}${_read(type, parameterName)}',

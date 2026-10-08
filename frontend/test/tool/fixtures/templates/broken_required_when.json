@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "template_key": "broken_required_when",
+  "name": "templates.fixture.name",
+  "kind": "fixture",
+  "identity_fields": ["serial_number"],
+  "inherits_groups": [],
+  "fields": [
+    {
+      "field_key": "serial_number",
+      "label": "templates.fixture.serial_number",
+      "type": "text",
+      "required": "REQUIRED"
+    },
+    {
+      "field_key": "fault_note_raw",
+      "label": "templates.fixture.fault_note_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "required_when": "unknown_field == true"
+    }
+  ],
+  "child_rows": []
+}

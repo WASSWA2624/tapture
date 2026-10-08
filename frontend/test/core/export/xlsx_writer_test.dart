@@ -180,7 +180,7 @@ String _xml(Uint8List bytes) {
   final StringBuffer buffer = StringBuffer();
   for (final ArchiveFile file in archive.files) {
     if (file.name.endsWith('.xml')) {
-      buffer.write(utf8.decode(file.content as List<int>));
+      buffer.write(utf8.decode(file.content));
     }
   }
   return buffer.toString();

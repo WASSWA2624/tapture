@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "template_key": "atomic_fixture",
+  "name": "templates.fixture.name",
+  "kind": "fixture",
+  "identity_fields": ["serial_number"],
+  "inherits_groups": ["record_admin"],
+  "fields": [
+    {
+      "field_key": "serial_number",
+      "label": "templates.fixture.serial_number",
+      "type": "text",
+      "required": "REQUIRED",
+      "help": "templates.fixture.serial_number.help"
+    },
+    {
+      "field_key": "length_mm",
+      "label": "templates.fixture.length_mm",
+      "type": "number",
+      "required": "OPTIONAL",
+      "unit": "mm"
+    },
+    {
+      "field_key": "cost_amount",
+      "label": "templates.fixture.cost_amount",
+      "type": "currency",
+      "required": "OPTIONAL"
+    },
+    {
+      "field_key": "cost_currency",
+      "label": "templates.fixture.cost_currency",
+      "type": "text",
+      "required": "OPTIONAL"
+    },
+    {
+      "field_key": "caption_raw",
+      "label": "templates.fixture.caption_raw",
+      "type": "long_text",
+      "required": "OPTIONAL"
+    },
+    {
+      "field_key": "caption_refined",
+      "label": "templates.fixture.caption_refined",
+      "type": "long_text",
+      "required": "OPTIONAL"
+    },
+    {
+      "field_key": "supplier_code",
+      "label": "templates.fixture.supplier_code",
+      "type": "lookup",
+      "required": "OPTIONAL"
+    },
+    {
+      "field_key": "supplier_name",
+      "label": "templates.fixture.supplier_name",
+      "type": "text",
+      "required": "OPTIONAL"
+    },
+    {
+      "field_key": "acquired_date",
+      "label": "templates.fixture.acquired_date",
+      "type": "date",
+      "required": "OPTIONAL"
+    },
+    {
+      "field_key": "fault_present",
+      "label": "templates.fixture.fault_present",
+      "type": "boolean",
+      "required": "OPTIONAL"
+    },
+    {
+      "field_key": "fault_note_raw",
+      "label": "templates.fixture.fault_note_raw",
+      "type": "long_text",
+      "required": "OPTIONAL",
+      "required_when": "fault_present == true"
+    }
+  ],
+  "child_rows": []
+}

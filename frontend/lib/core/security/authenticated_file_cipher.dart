@@ -3,13 +3,16 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:archive/archive.dart' show Aes;
 import 'package:crypto/crypto.dart';
+import 'package:pointycastle/api.dart' show KeyParameter;
+import 'package:pointycastle/block/aes.dart' show AESEngine;
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/errors/failure.dart';
 
 import 'authenticated_hmac.dart';
+
+part 'authenticated_file_counter.dart';
 
 /// Bounded AES-256-CTR encryption with an authenticated header and ciphertext.
 /// Every file has independent encryption/authentication keys and a random nonce.
@@ -35,7 +38,10 @@ final class AuthenticatedFileCipher {
   /// Encrypts bounded browser content; neither input nor key is changed.
   Uint8List seal(Uint8List plain, Uint8List key) {
     final Uint8List header = _header(plain.length);
-    final ({Aes aes, Uint8List mac}) cipher = _cipher(key, header);
+    final ({_AuthenticatedFileCounter aes, Uint8List mac}) cipher = _cipher(
+      key,
+      header,
+    );
     final Uint8List sealed = Uint8List(sealedLength(plain.length))
       ..setAll(0, header)
       ..setAll(_headerLength, plain);
@@ -64,7 +70,10 @@ final class AuthenticatedFileCipher {
     if (sealed.length != _headerLength + length + _tagLength) {
       throw const FormatException('length');
     }
-    final ({Aes aes, Uint8List mac}) cipher = _cipher(key, header);
+    final ({_AuthenticatedFileCounter aes, Uint8List mac}) cipher = _cipher(
+      key,
+      header,
+    );
     final Uint8List authenticated = Uint8List.sublistView(
       sealed,
       0,
@@ -94,7 +103,10 @@ final class AuthenticatedFileCipher {
   }) async {
     _check(cancel);
     final Uint8List header = _header(plain.length);
-    final ({Aes aes, Uint8List mac}) cipher = _cipher(key, header);
+    final ({_AuthenticatedFileCounter aes, Uint8List mac}) cipher = _cipher(
+      key,
+      header,
+    );
     final Uint8List sealed = Uint8List(sealedLength(plain.length))
       ..setAll(0, header)
       ..setAll(_headerLength, plain);
@@ -131,7 +143,10 @@ final class AuthenticatedFileCipher {
     if (sealed.length != tagOffset + _tagLength) {
       throw const FormatException('length');
     }
-    final ({Aes aes, Uint8List mac}) cipher = _cipher(key, header);
+    final ({_AuthenticatedFileCounter aes, Uint8List mac}) cipher = _cipher(
+      key,
+      header,
+    );
     final Uint8List expected = sealed.sublist(tagOffset);
     final Uint8List actual = await authenticatedHmac(
       cipher.mac,
@@ -158,7 +173,7 @@ final class AuthenticatedFileCipher {
   }
 
   Future<void> _transform(
-    Aes cipher,
+    _AuthenticatedFileCounter cipher,
     Uint8List bytes,
     CancellationToken? cancel,
   ) async {
@@ -196,7 +211,10 @@ final class AuthenticatedFileCipher {
     var created = false;
     try {
       final Uint8List header = _header(input.lengthSync());
-      final ({Aes aes, Uint8List mac}) cipher = _cipher(key, header);
+      final ({_AuthenticatedFileCounter aes, Uint8List mac}) cipher = _cipher(
+        key,
+        header,
+      );
       final _DigestSink digest = _DigestSink();
       final ByteConversionSink mac = Hmac(
         sha256,
@@ -262,7 +280,7 @@ final class AuthenticatedFileCipher {
         Uint8List header,
         int length,
         Uint8List tag,
-        Aes aes,
+        _AuthenticatedFileCounter aes,
         Uint8List mac,
       })
       verified = _authenticate(
@@ -274,7 +292,7 @@ final class AuthenticatedFileCipher {
       final Uint8List header = verified.header;
       final int length = verified.length;
       final Uint8List tag = verified.tag;
-      final ({Aes aes, Uint8List mac}) cipher = (
+      final ({_AuthenticatedFileCounter aes, Uint8List mac}) cipher = (
         aes: verified.aes,
         mac: verified.mac,
       );
@@ -341,7 +359,13 @@ final class AuthenticatedFileCipher {
     }
   }
 
-  ({Uint8List header, int length, Uint8List tag, Aes aes, Uint8List mac})
+  ({
+    Uint8List header,
+    int length,
+    Uint8List tag,
+    _AuthenticatedFileCounter aes,
+    Uint8List mac,
+  })
   _authenticate(
     RandomAccessFile input,
     Uint8List key, {
@@ -353,7 +377,10 @@ final class AuthenticatedFileCipher {
     if (input.lengthSync() != _headerLength + length + _tagLength) {
       throw const FormatException('length');
     }
-    final ({Aes aes, Uint8List mac}) cipher = _cipher(key, header);
+    final ({_AuthenticatedFileCounter aes, Uint8List mac}) cipher = _cipher(
+      key,
+      header,
+    );
     final Uint8List buffer = Uint8List(AppConstants.hashing.chunkBytes & ~15);
     final _DigestSink authentication = _DigestSink();
     final ByteConversionSink verify = Hmac(
@@ -436,7 +463,10 @@ final class AuthenticatedFileCipher {
     return length;
   }
 
-  ({Aes aes, Uint8List mac}) _cipher(Uint8List key, Uint8List header) {
+  ({_AuthenticatedFileCounter aes, Uint8List mac}) _cipher(
+    Uint8List key,
+    Uint8List header,
+  ) {
     if (key.length != 32) {
       throw const FormatException('key length');
     }
@@ -455,7 +485,7 @@ final class AuthenticatedFileCipher {
     );
     // The random nonce is incorporated into the AES key, so fixed CTR counter
     // 1 cannot repeat for two files sealed with the same master key.
-    return (aes: Aes(encryption, mac, 32, encrypt: true), mac: mac);
+    return (aes: _AuthenticatedFileCounter(encryption), mac: mac);
   }
 
   bool _same(List<int> left, List<int> right) {

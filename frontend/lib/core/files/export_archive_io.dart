@@ -100,7 +100,7 @@ Future<WrittenFile> _write(_ArchiveJob job) async {
           ),
         );
       }
-      await encoder.addFile(file, entry.key, ZipFileEncoder.STORE);
+      await encoder.addFile(file, entry.key, ZipFileEncoder.store);
       await cancellation.checkpoint();
       IsolateRunner.reportProgress(++done / (job.sources.length + 1));
     }
@@ -109,7 +109,7 @@ Future<WrittenFile> _write(_ArchiveJob job) async {
       await encoder.addFile(
         File('${job.root}/$source'),
         'manifest.json',
-        ZipFileEncoder.STORE,
+        ZipFileEncoder.store,
       );
     } else {
       encoder.addArchiveFile(

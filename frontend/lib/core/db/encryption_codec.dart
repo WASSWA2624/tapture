@@ -306,7 +306,7 @@ void _checkpoint(File file) {
   try {
     database.execute('PRAGMA wal_checkpoint(TRUNCATE);');
   } finally {
-    database.dispose();
+    database.close();
   }
 }
 
@@ -327,7 +327,7 @@ Map<String, int> _rowCounts(File file) {
     }
     return counts;
   } finally {
-    database.dispose();
+    database.close();
   }
 }
 

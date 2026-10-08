@@ -28,7 +28,6 @@ final class ZipPackage {
     }
     final List<int> manifestBytes = utf8.encode(manifest.encode());
     add('manifest.json', manifestBytes);
-    final List<int>? zipped = ZipEncoder().encode(archive);
-    return Uint8List.fromList(zipped ?? <int>[]);
+    return ZipEncoder().encodeBytes(archive);
   }
 }

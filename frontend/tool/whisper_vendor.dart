@@ -629,7 +629,7 @@ String _slash(String path) => path.replaceAll(r'\', '/');
 /// tarball's single top folder.
 Map<String, Uint8List> _untar(Uint8List packed) {
   final Archive archive = TarDecoder().decodeBytes(
-    GZipDecoder().decodeBytes(packed),
+    const GZipDecoder().decodeBytes(packed),
   );
   final Map<String, Uint8List> files = <String, Uint8List>{};
   for (final ArchiveFile file in archive.files) {
@@ -641,7 +641,7 @@ Map<String, Uint8List> _untar(Uint8List packed) {
     if (slash == -1) {
       continue;
     }
-    final Object? content = file.content;
+    final Object content = file.content;
     if (content is List<int>) {
       files[name.substring(slash + 1)] = Uint8List.fromList(content);
     }

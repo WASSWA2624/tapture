@@ -12,11 +12,11 @@
 # that ships with the Flutter SDK rather than from pub.dev.
 packages:
   xml:
-    version: 6.6.1
+    version: 7.0.1
     purpose: Pure-Dart namespace-aware XML parsing and editing behind core/export for template-preserving XLSX and DOCX. MIT. Replaces ad hoc Office XML rewriting; promotes the already resolved transitive version and reuses the existing ZIP package.
     task: "133"
   url_launcher:
-    version: 6.3.2
+    version: 6.3.3
     purpose: Flutter-maintained external browser launch for configured desktop OAuth PKCE through core/cloud. BSD-3-Clause. Replaces the unavailable desktop authorization hand-off without shell commands or embedded credential browsers.
     task: "098"
   local_auth:
@@ -48,11 +48,11 @@ packages:
     purpose: Barcode and QR capture on Android, iOS, macOS and web behind core/barcode. BSD-3-Clause. Replaces the unavailable decoder with bundled native ML Kit and platform scanning.
     task: "092"
   geolocator:
-    version: 14.0.2
+    version: 14.1.1
     purpose: Time-boxed device location with accuracy on Android, iOS, macOS, Windows, Linux (GeoClue, through geolocator_linux) and web behind core/location. MIT, Baseflow. Replaces the unavailable location stub without custom platform channels.
     task: "091"
   pdf:
-    version: 3.11.3
+    version: 3.13.1
     purpose: Standard pure-Dart PDF layout, pagination, fonts and image embedding. Apache-2.0. Replaces the hand-written single-line PDF byte stub; reuses the approved archive and image versions.
     task: "090"
   flutter:
@@ -68,7 +68,7 @@ packages:
     purpose: Incremental SHA-256 for file identity and duplicate detection (FE-PERF-07). Replaces a hand-rolled digest.
     task: "002"
   cupertino_icons:
-    version: ^1.0.9
+    version: ^2.0.0
     purpose: The CupertinoIcons font the Flutter framework itself names. No Tapture code imports Cupertino, but Material pulls the adaptive text-selection and magnifier widgets in, so the compiled app carries IconData pointing at a font that was not bundled and the APK build warned about every one of them. MIT, flutter.dev. Replaces shipping a build that names glyphs it does not carry; icon tree-shaking keeps only the few the framework reaches.
     task: "332"
   connectivity_plus:
@@ -84,7 +84,7 @@ packages:
     purpose: Streams microphone evidence through AudioRecorderService into the atomic project FileWriter. BSD-3-Clause. Replaces the unavailable production recorder stand-in.
     task: "062"
   share_plus:
-    version: ^13.3.0
+    version: ^13.3.1
     purpose: System share/open chooser for a file copy on Android and iOS, reached only through DownloadService.openExternally (FE-STR-11). BSD-3-Clause. Replaces adding open_file or url_launcher for the same hand-off.
     task: "330"
   flutter_secure_storage:
@@ -96,23 +96,23 @@ packages:
     purpose: One declared route table, typed helpers and a single redirect chain (FE-STR-02). Replaces the MaterialApp.router placeholder in task 002. BSD-3-Clause. Capped below 18 because 18 pulls material_ui that needs @awaitNotRequired, which Dart 3.12.2 does not have.
     task: "072"
   json_annotation:
-    version: ^4.9.0
+    version: ^4.12.0
     purpose: JsonConverter and @JsonKey so models declare wire names explicitly (FE-CODE-13). Replaces hand-rolled codecs that would follow Dart identifiers.
     task: "002"
   build_runner:
-    version: ^2.4.13
+    version: ^2.15.1
     purpose: Runs json_serializable (and later Drift) so generated output is committed (FE-CODE-13). Replaces invoking the generator by hand.
     task: "002"
   json_serializable:
-    version: ^6.9.0
+    version: ^6.14.1
     purpose: Generates fromJson/toJson using @JsonKey names from build.yaml. Replaces deriving wire keys from Dart field names.
     task: "002"
   drift:
-    version: ">=2.31.0 <2.32.0"
-    purpose: Typed SQLite access, lazy WAL connections and the MigrationStrategy later table tasks extend (FE-CODE-13). Replaces raw sqlite3 and an unversioned schema. Capped below 2.32 because 2.32+ needs sqlite3 3.x native assets that prefix dart run stdout, and newer drift_dev conflicts with json_serializable 6.9.0.
+    version: ^2.35.2
+    purpose: Typed SQLite access, lazy WAL connections and the MigrationStrategy later table tasks extend (FE-CODE-13). Replaces raw sqlite3 and an unversioned schema. MIT. Task 147 upgrades the matching sqlite3 native assets and generator; CLI fixtures use supported Dart verbosity to keep deterministic output.
     task: "004"
   drift_dev:
-    version: ">=2.31.0 <2.32.0"
+    version: ^2.35.1
     purpose: Generates AppDatabase and companions so Drift output is committed (FE-CODE-13). Replaces writing the .g.dart by hand.
     task: "004"
   path_provider:
@@ -120,20 +120,16 @@ packages:
     purpose: Application support directory for the database file. Replaces a hardcoded platform path.
     task: "004"
   sqlite3:
-    version: ^2.9.4
-    purpose: Typed setup callback that turns WAL and foreign keys on for each native connection. Replaces an untyped pragma runner.
-    task: "004"
-  sqlite3_flutter_libs:
-    version: ^0.5.42
-    purpose: Bundles SQLite with the Flutter app so NativeDatabase opens on device. Replaces depending on a system sqlite3.
+    version: ^3.5.2
+    purpose: Typed setup callback and bundled native SQLite assets; enables WAL and foreign keys on every connection. MIT. Task 147 replaces the retired sqlite3_flutter_libs plugin without changing schema or persisted data.
     task: "004"
   intl:
     version: ^0.20.2
     purpose: Locale-aware date, time and number formatting for catalogue fields (FE-L10N-04, FE-CONS-09). Replaces hand-built day/month/year strings.
     task: "035"
   archive:
-    version: ^3.6.1
-    purpose: Pure-Dart ZIP writing (and reading, in tests) behind core/export's XLSX encoder, so a workbook builds on the web as well as on device. MIT. Replaces a hand-rolled ZIP container and CRC. Capped at 3.x because that is the release already in the offline cache this build runs from; task 205 reuses it for the data package.
+    version: ^4.3.0
+    purpose: Pure-Dart ZIP writing (and reading, in tests) behind core/export's XLSX encoder, so a workbook builds on the web as well as on device. MIT. Replaces a hand-rolled ZIP container and CRC. Task 147 migrates the public streaming APIs; task 205 reuses it for data packages.
     task: "282"
   speech_to_text:
     version: ^7.5.0
@@ -148,7 +144,7 @@ packages:
     purpose: Dart-maintained native memory helpers (calloc, Utf8 strings) used only inside tapture_whisper; no app code imports it. BSD-3-Clause. Replaces hand-written allocation over dart:ffi; already the resolved transitive version.
     task: "102"
   image_picker:
-    version: ^1.2.3
+    version: ^1.2.4
     purpose: Camera and photo-library picks behind core/files/photo_picker (FE-STR-11), so feedback can attach device photos on Android, iOS, web and desktop. BSD-3-Clause, flutter.dev. Replaces a hand-rolled browser file input that left native builds with no camera or library.
     task: "283"
   flutter_test:
@@ -164,11 +160,11 @@ packages:
     purpose: The shared lint set analysis_options.yaml layers its rules onto.
     task: "001"
   analyzer:
-    version: 10.2.0
-    purpose: Dart AST parsing for the router-derived production screen inventory and deliberate missing-coverage fixtures. BSD-3-Clause. Replaces regex-only constructor discovery; pinned to the already resolved toolchain version.
+    version: 13.0.0
+    purpose: Dart AST parsing for the router-derived production screen inventory and deliberate missing-coverage fixtures. BSD-3-Clause. Replaces regex-only constructor discovery; Task 147 pins the newest release compatible with Flutter's exact meta 1.18.0 SDK dependency.
     task: "023"
   image:
-    version: ^4.3.0
+    version: ^4.10.1
     purpose: Pure-Dart decode, resize, orientation and contrast for off-thread preparation and the deterministic desktop/test OCR fallback (FE-PERF-02). MIT. Replaces a native image pipeline the test VM cannot run.
     task: "013"
   google_mlkit_text_recognition:
@@ -180,14 +176,19 @@ packages:
     purpose: On-device ML Kit face bounding boxes behind core/export/face_detector, required for privacy photo derivatives. MIT. Replaces the missing detector; Android/iOS only, other platforms fail closed when blurring is requested.
     task: "022"
   battery_plus:
-    version: ^7.1.1
+    version: ^7.1.2
     purpose: Whether the device is charging, so opportunistic on-device reading runs only on mains power. Reached only through core/background/power_source (FE-STR-11). BSD-3-Clause, fluttercommunity.dev. Replaces a hand-rolled platform channel on each OS.
     task: "013"
   pdfrx:
-    version: 1.3.5
-    purpose: Real lazy PDF page rasterization behind core/import/pdf_pages on native and browser platforms. MIT. Replaces invalid placeholder PNGs; pinned to the compatible Flutter and archive 3.x release.
+    version: 2.4.8
+    purpose: Real lazy PDF page rasterization behind core/import/pdf_pages on native and browser platforms. MIT. Replaces invalid placeholder PNGs; task 147 pins the highest compatible Flutter 3.44.6 / Dart 3.12.2 release and initializes its bundled PDFium lazily.
     task: "012"
   flutter_local_notifications:
-    version: ^18.0.1
+    version: ^22.3.1
     purpose: One local notification when a processing batch finishes. BSD-3-Clause. Replaces a hand-rolled notification channel. No push and no remote service.
     task: "013"
+
+  pointycastle:
+    version: ^4.0.0
+    purpose: Maintained public AES-256 block primitive behind core/security for the existing authenticated file cipher. MIT, bcgit. Task 147 replaces the removed archive 3 Aes API while preserving the legacy little-endian counter, header, key derivation and HMAC wire format.
+    task: "147"

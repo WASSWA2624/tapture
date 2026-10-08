@@ -1,0 +1,4 @@
+# The fixture's export list.
+_tw_abi_version
+_tw_version
+_tw_context_open_js

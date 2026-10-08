@@ -1,0 +1,12 @@
+# Fixture local package for check_dependencies_test (dev-plan task 102).
+name: local_plugin
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  ffi: 2.2.0
+  flutter:
+    sdk: flutter

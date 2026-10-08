@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:tapture/core/bundle/bundle.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/constants/document_assets.dart';
 import 'package:tapture/core/device/device_identity.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/blob_file_reader.dart';
@@ -21,12 +25,16 @@ import 'package:tapture/features/templates/data/template_repository_impl.dart';
 
 import '../../../support/factories.dart';
 import '../../../support/screen_database.dart';
+import '../../../support/screen_font_fetch_stub.dart'
+    if (dart.library.js_interop) '../../../support/screen_font_fetch_web.dart'
+    show fetchScreenFont;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   test(
     'browser package contains saved photos and downloads the same durable archive',
     () async {
+      if (kIsWeb) _serveCanonicalPatternAsset();
       final db = await seededDatabase(
         records: 1,
         database: createScreenDatabase(),
@@ -135,4 +143,27 @@ void main() {
       expect(nativeRootResolutions, 0);
     },
   );
+}
+
+void _serveCanonicalPatternAsset() {
+  final TestDefaultBinaryMessenger messenger =
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+  expect(messenger.checkMockMessageHandler('flutter/assets', null), isTrue);
+  rootBundle.evict(DocumentAssets.secretPatterns);
+  messenger.setMockMessageHandler('flutter/assets', (ByteData? message) async {
+    if (message == null) throw TestFailure('The pattern asset key is missing.');
+    final String key = utf8.decode(
+      message.buffer.asUint8List(message.offsetInBytes, message.lengthInBytes),
+    );
+    if (key != DocumentAssets.secretPatterns) {
+      throw TestFailure('Unexpected browser export asset: $key');
+    }
+    // The web test engine ignores platform messages. Serve the actual canonical
+    // bytes staged by the browser runner so the production scanner still runs.
+    return fetchScreenFont(Uri.base.resolve('/task144-secret-patterns.yaml'));
+  });
+  addTearDown(() {
+    messenger.setMockMessageHandler('flutter/assets', null);
+    rootBundle.evict(DocumentAssets.secretPatterns);
+  });
 }

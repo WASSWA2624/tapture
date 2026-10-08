@@ -36,7 +36,7 @@ final class Notifications {
         }
         if (!ready) {
           await plugin.initialize(
-            const InitializationSettings(
+            settings: const InitializationSettings(
               android: AndroidInitializationSettings('@mipmap/ic_launcher'),
               iOS: DarwinInitializationSettings(
                 requestAlertPermission: false,
@@ -83,10 +83,10 @@ final class Notifications {
             required String route,
           }) {
             return plugin.show(
-              1,
-              title,
-              body,
-              const NotificationDetails(
+              id: 1,
+              title: title,
+              body: body,
+              notificationDetails: const NotificationDetails(
                 android: AndroidNotificationDetails(
                   'processing',
                   'Processing',

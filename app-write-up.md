@@ -3565,9 +3565,10 @@ mobile_scanner                               barcode / QR
 tapture_whisper (local) + ffi                whisper.cpp on-device speech engine (§30.4)
 speech_to_text                               platform dictation fallback, on device only (§24)
 record + just_audio                          audio recording, microphone streaming and playback
-drift + sqlite3_flutter_libs                 database (sqlcipher_flutter_libs when encryption is on)
+drift + sqlite3                              database; bundled native assets and matching browser WASM
 path_provider                                storage roots
 crypto                                       SHA-256
+pointycastle                                 maintained AES block primitive for existing authenticated file envelopes
 uuid                                         UUIDv7 identifiers
 archive                                      ZIP bundles
 excel / syncfusion_flutter_xlsio             XLSX read and write
@@ -3582,6 +3583,12 @@ flutter_local_notifications                  processing and export notifications
 ```
 
 Library choice for XLSX must be validated early against a real client template; see §50.1 rule 7.
+
+Task 147 upgrades the shared dependency adapters against the pinned Flutter/Dart SDK. SQLite uses sqlite3's
+native assets; its browser WASM and Drift worker are versioned together. Database and bundle encryption retain
+their existing authenticated envelope and key custody contracts (§60, §77.3); changing a crypto package must not
+change saved ciphertext compatibility. Secure storage retains the v10 legacy-cipher migration bridge for at least
+one production cycle before adopting v11.
 
 The speech plugin and the web build ship licence blocks for the shim, whisper.cpp/ggml, the OpenAI Whisper weights
 and Silero VAD (all MIT), shown under Settings → About → Licences.

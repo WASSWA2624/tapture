@@ -1,0 +1,14 @@
+# Fixture allowlist for check_dependencies_test (dev-plan task 102).
+packages:
+  flutter:
+    version: sdk
+    purpose: Fixture entry for the Flutter SDK.
+    task: "102"
+  local_plugin:
+    version: 1.0.0+1
+    purpose: Fixture local plugin package under packages/.
+    task: "102"
+  ffi:
+    version: 2.2.0
+    purpose: Fixture dependency declared only by the local package.
+    task: "102"

@@ -1,0 +1,1 @@
+A Dart build hook would live here; its folder alone breaks FE-STR-01.

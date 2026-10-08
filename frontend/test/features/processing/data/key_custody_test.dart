@@ -96,7 +96,7 @@ void main() {
         if (!entry.isFile) {
           continue;
         }
-        final List<int> content = entry.content as List<int>;
+        final List<int> content = entry.content;
         expect(_text(content), isNot(contains(secret)), reason: entry.name);
         if (entry.name.endsWith('.xlsx')) {
           expectNoSecretIn(content);

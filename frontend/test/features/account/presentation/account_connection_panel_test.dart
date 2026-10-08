@@ -363,7 +363,11 @@ void main() {
                       : findsOneWidget,
                 );
               }
-              await expectNoA11yIssues(tester);
+              expect(
+                await ScreenProbe.accessibilityIssues(tester),
+                isEmpty,
+                reason: '${status.name} account accessibility',
+              );
               expect(tester.takeException(), isNull, reason: status.name);
               await Scrollable.ensureVisible(
                 tester.element(find.text(copy.aiServerAndAccount)),

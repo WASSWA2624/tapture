@@ -225,8 +225,7 @@ void main() {
       );
       final String sheets = <String>[
         for (final ArchiveFile part in workbook.files)
-          if (part.name.endsWith('.xml'))
-            utf8.decode(part.content as List<int>),
+          if (part.name.endsWith('.xml')) utf8.decode(part.content),
       ].join();
       expect(sheets, contains('template-1'));
       expect(sheets, contains('Removed template'));

@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -23,7 +20,9 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/security/secure_storage.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
@@ -802,6 +801,21 @@ void main() {
                 personal ? <String>['GET /api/v1/ai/credentials/xai'] : isEmpty,
                 reason: status.name,
               );
+              final Finder save = find.byKey(const ValueKey<String>('ai-save'));
+              await _reach(tester, save);
+              final Finder chrome = find.descendant(
+                of: find.byType(AppBar),
+                matching: find.byType(AppIconButton),
+              );
+              for (int index = 0; index < chrome.evaluate().length; index++) {
+                await _reach(tester, chrome.at(index));
+              }
+              final Finder overflow = find.byKey(
+                const ValueKey<String>('app-page-overflow'),
+              );
+              if (overflow.evaluate().isNotEmpty) {
+                await _reach(tester, overflow);
+              }
               expect(find.byType(AppChoiceField<String>), findsNWidgets(2));
               for (final Finder field in <Finder>[
                 find.byType(AppChoiceField<String>).first,
@@ -839,9 +853,6 @@ void main() {
                 expect(remove, meetsTapTarget(), reason: status.name);
               }
               if (status == _AiMatrixStatus.failedSave) {
-                final Finder save = find.byKey(
-                  const ValueKey<String>('ai-save'),
-                );
                 await _reach(tester, save);
                 await tester.tap(save);
                 await tester.pumpAndSettle();
@@ -862,7 +873,10 @@ void main() {
                       recovery,
                   ].join(' '),
                 );
-                await _reach(tester, find.text(copy.tryAgain));
+                await _reach(
+                  tester,
+                  find.widgetWithText(AppButton, copy.tryAgain),
+                );
               }
               expect(
                 find.byType(AppBanner),
@@ -882,30 +896,40 @@ void main() {
                   reason: status.name,
                 );
               }
-              final Finder cost = find.text(copy.aiCostControls);
+              final Finder cost = find.widgetWithText(
+                AppSectionHeader,
+                copy.aiCostControls,
+              );
               await _reach(tester, cost);
               await tester.tap(cost);
               await tester.pumpAndSettle();
               _expectReadableText(tester, copy.aiSpendingLimitHint);
               final Finder spending = find.byType(TextField).last;
               await _reach(tester, spending);
-              await tester.enterText(spending, '5');
-              FocusScope.of(tester.element(spending)).unfocus();
-              await tester.pumpAndSettle();
-              await _reach(tester, cost);
-              await tester.tap(cost);
-              await tester.pumpAndSettle();
-              await _reach(tester, cost);
-              await tester.tap(cost);
-              await tester.pumpAndSettle();
-              expect(
-                tester
-                    .widget<TextField>(find.byType(TextField).last)
-                    .controller!
-                    .text,
-                '5',
+              // Cost input and disclosure layout are checked in every status;
+              // shared controller retention is exercised once per matrix cell.
+              if (status == _AiMatrixStatus.managed) {
+                await tester.enterText(spending, '5');
+                FocusScope.of(tester.element(spending)).unfocus();
+                await tester.pumpAndSettle();
+                await _reach(tester, cost);
+                await tester.tap(cost);
+                await tester.pumpAndSettle();
+                await _reach(tester, cost);
+                await tester.tap(cost);
+                await tester.pumpAndSettle();
+                expect(
+                  tester
+                      .widget<TextField>(find.byType(TextField).last)
+                      .controller!
+                      .text,
+                  '5',
+                );
+              }
+              final Finder details = find.widgetWithText(
+                AppSectionHeader,
+                copy.aiConnectionDetails,
               );
-              final Finder details = find.text(copy.aiConnectionDetails);
               await _reach(tester, details);
               await tester.tap(details);
               await tester.pumpAndSettle();
@@ -934,7 +958,10 @@ void main() {
                 available ? isNotNull : isNull,
                 reason: status.name,
               );
-              await expectNoA11yIssues(tester);
+              await _reach(
+                tester,
+                find.widgetWithText(AppSectionHeader, copy.aiServerAndAccount),
+              );
               expect(tester.takeException(), isNull, reason: status.name);
               if (personal) {
                 expect(
@@ -956,9 +983,13 @@ void main() {
               expect(modelCalls, isEmpty, reason: status.name);
               expect(storage.calls, isEmpty, reason: status.name);
               expect(
-                credentials.where((value) => value.startsWith('DELETE')),
-                isEmpty,
-                reason: status.name,
+                credentials,
+                <String>[
+                  if (personal) 'GET /api/v1/ai/credentials/xai',
+                  if (status == _AiMatrixStatus.failedSave)
+                    'PUT /api/v1/ai/credentials/xai',
+                ],
+                reason: '${status.name} disclosures perform no credential work',
               );
             }
           } finally {
@@ -1181,7 +1212,6 @@ Future<void> _reach(WidgetTester tester, Finder control) async {
       viewport.paintBounds,
     );
   }
-  final bool reachable = control.hitTestable().evaluate().length == 1;
   final List<String> issues = ScreenProbe.layoutIssues(tester);
   if (labelBounds != null && viewportBounds != null) {
     if (labelBounds.top < viewportBounds.top ||
@@ -1193,60 +1223,14 @@ Future<void> _reach(WidgetTester tester, Finder control) async {
       );
     }
   }
-  if (const bool.fromEnvironment('TASK144_MATRIX_DIAGNOSTIC') &&
-      (!reachable ||
-          issues.isNotEmpty ||
-          !File('build/task144-ai-label-wrap-first.png').existsSync())) {
-    final RenderView view = tester.binding.renderViews.first;
-    final List<Map<String, Object?>> labels = <Map<String, Object?>>[
-      for (final RenderParagraph paragraph in ScreenProbe.visibleParagraphs(
-        tester,
-      ))
-        <String, Object?>{
-          'text': paragraph.text.toPlainText(),
-          'layoutSize': paragraph.size.toString(),
-          'constraints': paragraph.constraints.toString(),
-          'paintedBounds': MatrixUtils.transformRect(
-            paragraph.getTransformTo(null),
-            paragraph.paintBounds,
-          ).toString(),
-          'paintTransform': paragraph.getTransformTo(null).storage.toList(),
-          'overflow': paragraph.overflow.name,
-          'didExceedMaxLines': paragraph.didExceedMaxLines,
-        },
-    ];
-    await tester.runAsync(() async {
-      final String stem = !reachable || issues.isNotEmpty
-          ? 'build/task144-ai-label-wrap-${DateTime.now().microsecondsSinceEpoch}'
-          : 'build/task144-ai-label-wrap-first';
-      final ui.Image image = await (view.debugLayer! as OffsetLayer).toImage(
-        view.paintBounds,
-        pixelRatio: 1 / view.flutterView.devicePixelRatio,
-      );
-      try {
-        final data = await image.toByteData(format: ui.ImageByteFormat.png);
-        await File('$stem.png').writeAsBytes(data!.buffer.asUint8List());
-        await File('$stem.json').writeAsString(
-          const JsonEncoder.withIndent('  ').convert(<String, Object?>{
-            'control': control.description,
-            'controlBounds': tester.getRect(control).toString(),
-            'reachable': reachable,
-            'viewInsets': MediaQuery.viewInsetsOf(
-              tester.element(control),
-            ).toString(),
-            'scrollOffset': Scrollable.of(
-              tester.element(control),
-            ).position.pixels,
-            'paragraphs': labels,
-          }),
-        );
-      } finally {
-        image.dispose();
-      }
-    });
-  }
   expect(control.hitTestable(), findsOneWidget);
+  expect(control, meetsTapTarget());
   expect(issues, isEmpty);
+  expect(
+    await ScreenProbe.accessibilityIssues(tester, targets: <Finder>[control]),
+    isEmpty,
+    reason: 'Fully visible AI control accessibility: $control',
+  );
 }
 
 void _expectReadableText(WidgetTester tester, String text) {

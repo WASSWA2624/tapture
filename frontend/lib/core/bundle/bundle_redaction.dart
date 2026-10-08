@@ -156,8 +156,8 @@ final class BundleRedaction {
     for (final ZipFileHeader header in decoder.directory.fileHeaders) {
       if (header.generalPurposeBitFlag & 1 != 0 ||
           header.file!.flags & 1 != 0 ||
-          (header.compressionMethod != ArchiveFile.STORE &&
-              header.compressionMethod != ArchiveFile.DEFLATE)) {
+          (header.compressionMethod != ZipFile.zipCompressionStore &&
+              header.compressionMethod != ZipFile.zipCompressionDeflate)) {
         throw ValidationFailure(
           localizedMessage:
               Copy.messages.failureAnEncryptedOrUnsupportedAttachmentCouldNot,
@@ -176,12 +176,7 @@ final class BundleRedaction {
         );
       }
       final _LimitedMemoryOutput output = _LimitedMemoryOutput(entry.size);
-      ArchiveFile(
-        entry.name,
-        entry.size,
-        entry.rawContent!,
-        entry.compressionType,
-      ).decompress(output);
+      entry.rawContent!.decompress(output);
       if (output.length != entry.size) {
         throw ValidationFailure(
           localizedMessage: Copy.messages.failureANestedBundleEntryHasAnInvalid,
@@ -221,7 +216,7 @@ final class _PayloadBudget {
   int expanded = 0;
 }
 
-final class _LimitedMemoryOutput extends OutputStream {
+final class _LimitedMemoryOutput extends OutputMemoryStream {
   _LimitedMemoryOutput(this.maximum);
   final int maximum;
 
@@ -241,14 +236,21 @@ final class _LimitedMemoryOutput extends OutputStream {
   }
 
   @override
-  void writeBytes(List<int> bytes, [int? len]) {
-    _reserve(len ?? bytes.length);
-    super.writeBytes(bytes, len);
+  void writeBytes(List<int> bytes, {int? length}) {
+    _reserve(length ?? bytes.length);
+    super.writeBytes(bytes, length: length);
   }
 
   @override
-  void writeInputStream(InputStreamBase stream) {
+  void writeStream(InputStream stream) {
     _reserve(stream.length);
-    super.writeInputStream(stream);
+    super.writeStream(stream);
+  }
+
+  @override
+  void writeBackReference(int distance, int count) {
+    // Archive 4 copies dictionary bytes directly into its memory buffer.
+    _reserve(count);
+    super.writeBackReference(distance, count);
   }
 }

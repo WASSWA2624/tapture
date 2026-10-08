@@ -17,6 +17,7 @@ final class _RenderedPdfPages implements PdfPages {
     _source = null;
     _document = null;
     try {
+      await pdf.pdfrxFlutterInitialize();
       final pdf.PdfDocument document = await pdf.PdfDocument.openData(bytes);
       if (document.pages.isEmpty) {
         await document.dispose();
@@ -72,7 +73,7 @@ final class _RenderedPdfPages implements PdfPages {
           height: height,
           fullWidth: width.toDouble(),
           fullHeight: height.toDouble(),
-          backgroundColor: AppColors.light.surface,
+          backgroundColor: AppColors.light.surface.toARGB32(),
         );
         if (raster == null) throw _invalid();
         try {
@@ -80,7 +81,6 @@ final class _RenderedPdfPages implements PdfPages {
             pixels: raster.pixels,
             width: raster.width,
             height: raster.height,
-            bgra: raster.format == ui.PixelFormat.bgra8888,
           ));
           final Uint8List png = encoded.fold(
             (Failure failure) => throw failure,
@@ -120,16 +120,14 @@ final class _RenderedPdfPages implements PdfPages {
   );
 }
 
-Uint8List _encodePdfPage(
-  ({Uint8List pixels, int width, int height, bool bgra}) data,
-) {
+Uint8List _encodePdfPage(({Uint8List pixels, int width, int height}) data) {
   final image.Image decoded = image.Image.fromBytes(
     width: data.width,
     height: data.height,
     bytes: data.pixels.buffer,
     bytesOffset: data.pixels.offsetInBytes,
     numChannels: 4,
-    order: data.bgra ? image.ChannelOrder.bgra : image.ChannelOrder.rgba,
+    order: image.ChannelOrder.bgra,
   );
   return image.encodePng(decoded);
 }

@@ -20,16 +20,16 @@ abstract final class XlsxTemplateWriter {
     final OoxmlPackage package = OoxmlPackage.open(source);
     final XmlDocument workbook = package.xml('xl/workbook.xml');
     final XmlElement? sheet = workbook
-        .findAllElements('sheet', namespace: '*')
+        .findAllElements('sheet', namespaceUri: '*')
         .where((node) => node.getAttribute('name') == template.sheetName)
         .firstOrNull;
     if (sheet == null || template.headerRow < 1 || template.columns.isEmpty) {
       throw OoxmlPackage.invalid();
     }
-    final String? id = sheet.getAttribute('id', namespace: _relationships);
+    final String? id = sheet.getAttribute('id', namespaceUri: _relationships);
     final XmlDocument relationships = package.xml('xl/_rels/workbook.xml.rels');
     final XmlElement? link = relationships
-        .findAllElements('Relationship', namespace: '*')
+        .findAllElements('Relationship', namespaceUri: '*')
         .where((node) => node.getAttribute('Id') == id)
         .firstOrNull;
     final String? target = link?.getAttribute('Target');
@@ -42,7 +42,7 @@ abstract final class XlsxTemplateWriter {
     final XmlDocument document = package.xml(path);
     final XmlElement root = document.rootElement;
     final XmlElement? grid = root
-        .findElements('sheetData', namespace: root.name.namespaceUri)
+        .findElements('sheetData', namespaceUri: root.name.namespaceUri)
         .firstOrNull;
     if (root.name.local != 'worksheet' || grid == null) {
       throw OoxmlPackage.invalid();
@@ -68,8 +68,12 @@ abstract final class XlsxTemplateWriter {
       }
       final XmlElement row = rows.putIfAbsent(number, () {
         final XmlElement added = XmlElement(
-          XmlName('row', root.name.prefix),
-          <XmlAttribute>[XmlAttribute(XmlName('r'), '$number')],
+          XmlName.parts(
+            'row',
+            prefix: root.name.prefix,
+            namespaceUri: root.name.namespaceUri,
+          ),
+          <XmlAttribute>[XmlAttribute(const XmlName.parts('r'), '$number')],
         );
         final XmlElement? next = grid.childElements
             .where(
@@ -98,9 +102,14 @@ abstract final class XlsxTemplateWriter {
             )
             .firstOrNull;
         if (cell == null) {
-          cell = XmlElement(XmlName('c', root.name.prefix), <XmlAttribute>[
-            XmlAttribute(XmlName('r'), reference),
-          ]);
+          cell = XmlElement(
+            XmlName.parts(
+              'c',
+              prefix: root.name.prefix,
+              namespaceUri: root.name.namespaceUri,
+            ),
+            <XmlAttribute>[XmlAttribute(const XmlName.parts('r'), reference)],
+          );
           final XmlElement? next = row.childElements
               .where(
                 (node) =>
@@ -132,19 +141,29 @@ abstract final class XlsxTemplateWriter {
           0,
           value is num
               ? XmlElement(
-                  XmlName('v', root.name.prefix),
+                  XmlName.parts(
+                    'v',
+                    prefix: root.name.prefix,
+                    namespaceUri: root.name.namespaceUri,
+                  ),
                   const <XmlAttribute>[],
                   <XmlNode>[XmlText(value.toString())],
                 )
               : XmlElement(
-                  XmlName('is', root.name.prefix),
+                  XmlName.parts(
+                    'is',
+                    prefix: root.name.prefix,
+                    namespaceUri: root.name.namespaceUri,
+                  ),
                   const <XmlAttribute>[],
                   <XmlNode>[
                     XmlElement(
-                      XmlName('t', root.name.prefix),
-                      <XmlAttribute>[
-                        XmlAttribute(XmlName('space', 'xml'), 'preserve'),
-                      ],
+                      XmlName.parts(
+                        't',
+                        prefix: root.name.prefix,
+                        namespaceUri: root.name.namespaceUri,
+                      ),
+                      <XmlAttribute>[XmlAttribute(_spaceName, 'preserve')],
                       <XmlNode>[XmlText(values[field.key] ?? '')],
                     ),
                   ],
@@ -162,22 +181,38 @@ abstract final class XlsxTemplateWriter {
       if (number > _maxRow) throw OoxmlPackage.invalid();
       grid.children.add(
         XmlElement(
-          XmlName('row', root.name.prefix),
-          <XmlAttribute>[XmlAttribute(XmlName('r'), '$number')],
+          XmlName.parts(
+            'row',
+            prefix: root.name.prefix,
+            namespaceUri: root.name.namespaceUri,
+          ),
+          <XmlAttribute>[XmlAttribute(const XmlName.parts('r'), '$number')],
           <XmlNode>[
             XmlElement(
-              XmlName('c', root.name.prefix),
+              XmlName.parts(
+                'c',
+                prefix: root.name.prefix,
+                namespaceUri: root.name.namespaceUri,
+              ),
               <XmlAttribute>[
-                XmlAttribute(XmlName('r'), 'A$number'),
-                XmlAttribute(XmlName('t'), 'inlineStr'),
+                XmlAttribute(const XmlName.parts('r'), 'A$number'),
+                XmlAttribute(const XmlName.parts('t'), 'inlineStr'),
               ],
               <XmlNode>[
                 XmlElement(
-                  XmlName('is', root.name.prefix),
+                  XmlName.parts(
+                    'is',
+                    prefix: root.name.prefix,
+                    namespaceUri: root.name.namespaceUri,
+                  ),
                   const <XmlAttribute>[],
                   <XmlNode>[
                     XmlElement(
-                      XmlName('t', root.name.prefix),
+                      XmlName.parts(
+                        't',
+                        prefix: root.name.prefix,
+                        namespaceUri: root.name.namespaceUri,
+                      ),
                       const <XmlAttribute>[],
                       <XmlNode>[XmlText(XlsxWriter.incompleteStamp)],
                     ),
@@ -192,7 +227,7 @@ abstract final class XlsxTemplateWriter {
     }
     // A stale dimension must not hide appended records in spreadsheet readers.
     final XmlElement? dimension = root
-        .findElements('dimension', namespace: root.name.namespaceUri)
+        .findElements('dimension', namespaceUri: root.name.namespaceUri)
         .firstOrNull;
     if (dimension != null && assigned.isNotEmpty) {
       final String original = dimension.getAttribute('ref') ?? 'A1';
@@ -238,3 +273,9 @@ const int _maxColumn = 16384;
 const String _relationships =
     'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
 final RegExp _column = RegExp(r'^[A-Z]{1,3}$');
+
+const XmlName _spaceName = XmlName.parts(
+  'space',
+  prefix: 'xml',
+  namespaceUri: 'http://www.w3.org/XML/1998/namespace',
+);

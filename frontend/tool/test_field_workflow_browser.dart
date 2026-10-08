@@ -17,11 +17,14 @@ Future<void> main(List<String> arguments) async {
       : arguments;
   final File source = File('web/sqlite3.wasm');
   final File workerSource = File('web/drift_worker.js');
+  final File patternsSource = File('tool/secret_patterns.yaml');
   final Directory canvas = Directory('test/canvaskit');
   final Directory fonts = Directory('test/task143-fonts');
-  if (!await source.exists() || !await workerSource.exists()) {
+  if (!await source.exists() ||
+      !await workerSource.exists() ||
+      !await patternsSource.exists()) {
     stderr.writeln(
-      'Run this command from frontend with the web database assets present.',
+      'Run this command from frontend with the browser assets present.',
     );
     exitCode = 1;
     return;
@@ -46,14 +49,16 @@ Future<void> main(List<String> arguments) async {
   }
   // The test iframe has its suite's directory as its document base, so the
   // production database's relative asset URLs need the same files beside it.
-  final Map<File, File> databaseAssets = <File, File>{
+  // Canonical export patterns use the shared document root for web asset fetches.
+  final Map<File, File> bundledAssets = <File, File>{
+    File('$testRoot/task144-secret-patterns.yaml'): patternsSource,
     for (final String parent in parents) ...<File, File>{
       File('$parent/sqlite3.wasm'): source,
       File('$parent/drift_worker.js'): workerSource,
     },
   };
   final List<FileSystemEntity> targets = <FileSystemEntity>[
-    ...databaseAssets.keys,
+    ...bundledAssets.keys,
     canvas,
     fonts,
   ];
@@ -86,7 +91,7 @@ Future<void> main(List<String> arguments) async {
   }
   final List<FileSystemEntity> owned = <FileSystemEntity>[];
   try {
-    for (final MapEntry<File, File> entry in databaseAssets.entries) {
+    for (final MapEntry<File, File> entry in bundledAssets.entries) {
       owned.add(entry.key);
       await entry.value.copy(entry.key.path);
     }

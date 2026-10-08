@@ -65,7 +65,7 @@ final class _RecordShapeVisitor extends RecursiveAstVisitor<void> {
   void visitRecordLiteral(RecordLiteral node) {
     shapes.add(
       '${node.fields.length}:'
-      '${node.fields.whereType<NamedExpression>().map((NamedExpression field) => field.name.label.name).join(',')}',
+      '${node.fields.whereType<RecordLiteralNamedField>().map((RecordLiteralNamedField field) => field.name.lexeme).join(',')}',
     );
     super.visitRecordLiteral(node);
   }

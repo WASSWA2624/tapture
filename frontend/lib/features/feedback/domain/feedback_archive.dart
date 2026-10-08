@@ -66,11 +66,7 @@ final class FeedbackArchive {
         zip.addFile(ArchiveFile.noCompress(name, extra.length, extra));
       }
     }
-    final List<int>? bytes = ZipEncoder().encode(
-      zip,
-      modified: workbook.generatedAtUtc,
-    );
-    return Uint8List.fromList(bytes ?? const <int>[]);
+    return ZipEncoder().encodeBytes(zip, modified: workbook.generatedAtUtc);
   }
 }
 

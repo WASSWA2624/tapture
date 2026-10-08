@@ -92,7 +92,7 @@ final class SecretScan {
         ),
       );
       if (entry.isFile) {
-        final List<int> content = entry.content as List<int>;
+        final List<int> content = entry.content;
         if (_looksLikeZip(content)) {
           hits.addAll(_scanZip('$artefact!${entry.name}', content, patterns));
         } else {

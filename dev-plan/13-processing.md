@@ -407,3 +407,30 @@ abstract interface class OcrService {
   here; the proxy, and the key custody behind it, belong to 119 · The minimal backend.
 - The standing egress report and the per-project AI switch. The preview before the first online call of a session is
   here; the summary screen and the switch are 117 · Privacy and security.
+
+## 148 — Configure and verify iOS local processing notifications
+
+**Depends on** [013](13-processing.md), [147](02-foundation.md)
+
+### Implement
+
+Configure the notification-center delegate in the existing iOS AppDelegate and verify real foreground delivery,
+background/warm notification taps and app-launch notification handling against the existing counts-only review
+route. Preserve implicit-engine registration, file/cloud channels, first-use permissions and the rule that refused
+or failing notifications cannot delay capture or batch completion. This is a pre-existing native setup gap found
+during task 147's package audit; its original notification release required the same delegate assignment.
+
+### Files
+
+- `frontend/ios/Runner/AppDelegate.swift`
+- Existing processing notification/controller tests and a real iOS integration fixture
+- `dev-plan/13-processing.md`, `dev-tracker.md` (generated)
+
+### Definition of done
+
+- [ ] The native notification delegate preserves the existing Flutter engine/channel lifecycle and permission timing.
+- [ ] Tests: real iOS foreground delivery and background/warm taps open the existing review route; cold launch is handled according to verified platform launch details.
+- [ ] Tests: denied/revoked permissions and platform failures preserve capture and completed batches; title/body contain counts only and no outbound traffic occurs.
+- [ ] Existing native regressions and Dart fake/platform notification bridge tests pass.
+- [ ] iOS debug and release builds succeed; physical/simulator evidence names the exercised platform and lifecycle states.
+- [ ] The progress tracker is regenerated and its drift check passes after verified acceptance updates.

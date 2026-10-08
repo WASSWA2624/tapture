@@ -203,7 +203,7 @@ Future<Result<InspectedBundle>> _inspectBytes(
     ),
     maxBytes: maxBytes ?? AppConstants.imports.bundleMaxBytes,
     maxUncompressed: AppConstants.imports.archiveUncompressedMaxBytes,
-    open: () => BundleArchiveStream.decode(InputStream(bytes)),
+    open: () => BundleArchiveStream.decode(InputMemoryStream(bytes)),
   );
   if (checked is BundleRejection) {
     return FailureResult<InspectedBundle>(BundleReader.rejection(checked));

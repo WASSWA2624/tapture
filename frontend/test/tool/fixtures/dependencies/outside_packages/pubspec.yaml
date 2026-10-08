@@ -1,0 +1,13 @@
+# Fixture project for check_dependencies_test (dev-plan task 102).
+name: fixture_app
+publish_to: none
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  local_plugin:
+    path: shared/local_plugin
+    version: 1.0.0+1

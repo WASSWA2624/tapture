@@ -18,7 +18,7 @@ abstract final class WordWriter {
     builder.processing('xml', 'version="1.0" encoding="UTF-8"');
     builder.element(
       'w:document',
-      namespaces: <String, String>{_word: 'w'},
+      namespaceUris: <String, String>{'w': _word},
       nest: () {
         builder.element(
           'w:body',
@@ -55,7 +55,7 @@ abstract final class WordWriter {
     add('[Content_Types].xml', _contentTypes);
     add('_rels/.rels', _relationships);
     add('word/document.xml', builder.buildDocument().toXmlString());
-    return Uint8List.fromList(ZipEncoder().encode(archive)!);
+    return ZipEncoder().encodeBytes(archive);
   }
 
   /// Explicit placeholders across Word text runs, including headers and footers.
@@ -66,10 +66,10 @@ abstract final class WordWriter {
       final XmlDocument document = package.xml(name);
       for (final XmlElement paragraph in document.findAllElements(
         'p',
-        namespace: _word,
+        namespaceUri: _word,
       )) {
         final String text = paragraph
-            .findAllElements('t', namespace: _word)
+            .findAllElements('t', namespaceUri: _word)
             .map((node) => node.innerText)
             .join();
         fields.addAll(
@@ -95,10 +95,10 @@ abstract final class WordWriter {
       var changed = false;
       for (final XmlElement paragraph in document.findAllElements(
         'p',
-        namespace: _word,
+        namespaceUri: _word,
       )) {
         final List<XmlElement> runs = paragraph
-            .findAllElements('t', namespace: _word)
+            .findAllElements('t', namespaceUri: _word)
             .toList();
         final List<int> offsets = <int>[];
         final StringBuffer text = StringBuffer();
@@ -138,7 +138,7 @@ abstract final class WordWriter {
       }
       if (name == 'word/document.xml' && markedIncomplete) {
         final XmlElement body = document.rootElement
-            .findElements('body', namespace: _word)
+            .findElements('body', namespaceUri: _word)
             .single;
         final XmlBuilder stamp = XmlBuilder();
         final String? prefix = body.name.prefix;
@@ -146,6 +146,7 @@ abstract final class WordWriter {
             prefix == null ? name : '$prefix:$name';
         stamp.element(
           qualified('p'),
+          namespaceUris: <String?, String?>{prefix: _word},
           nest: () {
             stamp.element(
               qualified('r'),
@@ -156,7 +157,7 @@ abstract final class WordWriter {
           },
         );
         final XmlElement? section = body
-            .findElements('sectPr', namespace: _word)
+            .findElements('sectPr', namespaceUri: _word)
             .firstOrNull;
         body.children.insert(
           section == null
@@ -196,7 +197,7 @@ void _text(XmlElement node, String value) {
         attribute.name.local == 'space' &&
         (attribute.name.prefix == 'xml' || attribute.name.prefix == null),
   );
-  node.attributes.add(XmlAttribute(XmlName('space', 'xml'), 'preserve'));
+  node.attributes.add(XmlAttribute(_spaceName, 'preserve'));
 }
 
 void _breaks(XmlElement node) {
@@ -210,13 +211,23 @@ void _breaks(XmlElement node) {
     if (line > 0) {
       parent.children.insert(
         index++,
-        XmlElement(XmlName('br', node.name.prefix)),
+        XmlElement(
+          XmlName.parts(
+            'br',
+            prefix: node.name.prefix,
+            namespaceUri: node.name.namespaceUri,
+          ),
+        ),
       );
     }
     parent.children.insert(
       index++,
       XmlElement(
-        XmlName(node.name.local, node.name.prefix),
+        XmlName.parts(
+          node.name.local,
+          prefix: node.name.prefix,
+          namespaceUri: node.name.namespaceUri,
+        ),
         node.attributes.map((attribute) => attribute.copy()).toList(),
         <XmlNode>[XmlText(lines[line])],
       ),
@@ -238,3 +249,9 @@ const String _relationships =
     '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
     '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>'
     '</Relationships>';
+
+const XmlName _spaceName = XmlName.parts(
+  'space',
+  prefix: 'xml',
+  namespaceUri: 'http://www.w3.org/XML/1998/namespace',
+);

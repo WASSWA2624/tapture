@@ -91,6 +91,20 @@ void main() {
           ),
           contains('00734'),
         );
+        final String part = kind == 'xlsx'
+            ? 'xl/worksheets/sheet2.xml'
+            : 'word/document.xml';
+        final XmlDocument document = written.xml(part);
+        final String? namespace = original.xml(part).rootElement.namespaceUri;
+        expect(namespace, isNotNull);
+        for (final XmlElement element
+            in document.descendants.whereType<XmlElement>()) {
+          expect(
+            element.namespaceUri,
+            namespace,
+            reason: element.name.qualified,
+          );
+        }
       }
     },
   );
@@ -115,10 +129,16 @@ void main() {
         ),
       );
       final XmlDocument document = word.xml('word/document.xml');
-      expect(document.findAllElements('br', namespace: '*').length, 1);
+      final XmlElement lineBreak = document
+          .findAllElements(
+            'br',
+            namespaceUri: document.rootElement.namespaceUri,
+          )
+          .single;
+      expect(lineBreak.namespacePrefix, document.rootElement.namespacePrefix);
       expect(
         document
-            .findAllElements('t', namespace: '*')
+            .findAllElements('t', namespaceUri: '*')
             .map((node) => node.innerText),
         contains('Second line'),
       );
@@ -249,7 +269,7 @@ void main() {
       final XmlDocument body = XmlDocument.parse(output['word/document.xml']!);
       expect(
         body
-            .findAllElements('t', namespace: '*')
+            .findAllElements('t', namespaceUri: '*')
             .map((node) => node.innerText)
             .join(),
         'Asset 00734: Pump & motor <west>Missing ',
@@ -263,7 +283,10 @@ void main() {
         contains('<w:pgSz w:w="11906" w:h="16838"/>'),
       );
       expect(output['word/header1.xml'], contains('Reference 00734'));
-      for (final XmlElement text in body.findAllElements('t', namespace: '*')) {
+      for (final XmlElement text in body.findAllElements(
+        't',
+        namespaceUri: '*',
+      )) {
         expect(
           text.attributes
               .where((attribute) => attribute.name.local == 'space')
@@ -276,6 +299,12 @@ void main() {
               .name
               .prefix,
           'xml',
+        );
+        expect(
+          text.attributes
+              .singleWhere((attribute) => attribute.name.local == 'space')
+              .namespaceUri,
+          'http://www.w3.org/XML/1998/namespace',
         );
       }
       expect(TemplateOutputFixture.parts(source), original);

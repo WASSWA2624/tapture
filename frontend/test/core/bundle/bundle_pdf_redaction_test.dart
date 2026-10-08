@@ -305,9 +305,9 @@ void main() {
 }
 
 Uint8List _archivePdf(Uint8List pdf) => Uint8List.fromList(
-  ZipEncoder().encode(
+  ZipEncoder().encodeBytes(
     Archive()..addFile(ArchiveFile('original.pdf', pdf.length, pdf)),
-  )!,
+  ),
 );
 
 Future<File> _attach(
