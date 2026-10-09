@@ -6808,3 +6808,41 @@ This is a runtime finding outside task 153's field-source/layout implementation.
 ### Evidence
 
 2026-10-09: Android 16/API 36 production APK `127927dd` initially shows “Save failed” during rapid ADB caption entry (`frontend/build/task153-apk-ui-07.xml` and `task153-apk-ui-08.xml`). A subsequent raw save confirms “Saved”; after force-stop/cold restart, Records contains the full `Task153AndroidCaption20261009` caption as record #1 (`frontend/build/task153-apk-ui-12.xml`). The crash buffer is empty. Chrome's caption-only save/reload succeeds with no console errors. No cause, production correction or clean draft-entry result is inferred from these observations.
+
+## 157 — Reduce shared component internal padding
+
+**Depends on** [003](03-design-system.md#003--design-system-tokens-themes-and-the-whole-widget-vocabulary)
+
+**Implementation started:** Yes
+
+### Implement
+
+Reduce the padding inside the existing shared buttons, cards, list rows and selection controls, as requested on 2026-10-09. Preserve spacing between components, typography, content, actions and minimum nonzero radii. Reduce obsolete minimum-height reservations where necessary for tighter padding to produce shorter components. Apply the defaults centrally, preserving natural text growth and 48dp interaction targets.
+
+### Files
+
+- `frontend/lib/app/theme/app_theme.dart`
+- `frontend/lib/app/theme/sizes.dart`
+- `frontend/lib/core/widgets/app_card.dart`
+- `frontend/lib/core/widgets/app_list_tile.dart`
+- `frontend/lib/core/widgets/fields/app_choice_field.dart`
+- `frontend/lib/core/widgets/fields/app_multi_choice_field.dart`
+- Existing component behavior tests and design-system gallery goldens for these controls
+- `frontend/test/core/widgets/app_component_padding_test.dart`
+- `prompts/feedback-09102026-padding/157-acceptance-sources.patch` and `.json` (explicit source delivery while local tests remain ignored)
+- `app-write-up.md`, this task and generated `dev-tracker.md`
+
+### Contract
+
+The requested compact defaults supersede task 003's 52dp control token and earlier container padding: standard/expanded buttons have a 48dp minimum, cards use 12dp horizontal and 8dp vertical padding, and list-row content has a 48dp minimum with 4dp text padding (2dp in dense rows). Leading/trailing 48dp slots are not padded vertically again. Single-choice segments use 4dp vertical padding; multiple-choice fields avoid nested minimum-height and chip-padding reservations. All controls grow for wrapped text and retain their existing callbacks, states and semantics.
+
+### Definition of done
+
+- [x] Shared components use the tighter internal padding with no changes to external gaps, typography or data behavior; measured standard geometry is smaller and interaction targets stay at least 48dp.
+- [x] Existing focused component behavior tests and meaningful geometry/large-text/RTL/theme regressions pass for rows, actions, cards and selection controls.
+- [x] Intended light/dark/outdoor component gallery outputs are regenerated and visually reviewed; images and relative-path/hash manifests are preserved externally, with zero PNGs left in `frontend/test/`.
+- [x] Changed-source formatting and frontend analysis pass; owning contracts, runtime web inspection, tracker synchronization, `--check` and plan integrity are current.
+
+### Evidence
+
+2026-10-09: clean starting tree at `f85517a2`. Existing shared rows reserve 72dp plus their divider, leading/trailing 48dp slots receive 12dp padding above and below, cards use 16dp padding on every edge, and expanded actions reserve 52dp. Multiple-choice triggers nest a 48dp content reservation inside field padding and add another 8dp around selected chips. The focused eight-root gate passes all 59 tests, including 12 new light/dark/outdoor × LTR/RTL geometry and 200-percent wrapping cases with unchanged accessibility checks. Standard rows measure 50dp including their 2dp divider; cards add 16dp total vertical padding; normal and expanded buttons use a 48dp minimum. Existing disabled/busy actions, separate trailing actions, sheet search/selection and 200-option multiple selection remain green. All 69 intended component golden generations and all 69 normal comparisons pass; all 18 three-theme gallery outputs were visually reviewed. Archive `2026-10-09-task157-310d9516f7504db3839d6b15a2da309d` under `%LOCALAPPDATA%/TaptureTestArchives/` preserves every image and relative-path/hash manifest (SHA-256 `41b9406e62e1625abff84c447722aa7dc6496839fb7f532bfdb846bc8495abc0`); every entry was reopened and verified before exact cleanup, leaving zero test PNGs. The explicit acceptance-source patch contains 14 roots and their 18-source helper closure; its temporary-index apply check passes without changing the repository index or ignore rules. Changed-source formatting and full frontend analysis pass (`No issues found`, 522.0s). Chrome at `http://localhost:5173/#/_gallery` measures a 50dp row, 48dp button and 48dp tappable card at normal text; at 200 percent, row/card height grows to 87dp/59dp. Both screenshots were visually reviewed. The running Cursor terminal server was preserved. Its external Roboto request failed with `ERR_CONNECTION_CLOSED`; readable fallback text renders, with no padding/layout exception. `python run-tools/build-or-update-deploys/android.py` succeeds (751.9s Gradle build); the canonical 177.7MB APK has SHA-256 `5ce660f3c782c6c446f2ab0a2983f2146cf8085c7e93b6e3dd6b24ef9d5bc116`. Installation, cold launch, project creation and cold restart pass on the owned read-only Android 16/API 36 emulator, with an empty crash buffer; its action measures 48dp and project row 49.9dp after pixel rounding. Runtime evidence is retained in `frontend/build/task157-web-runtime-evidence.json` and `task157-apk-runtime-evidence.json`. Generated native build metadata was archived and hash-verified before exact restoration. Tracker synchronization, `--check` and plan integrity pass; no whole-repository gate claim is made.

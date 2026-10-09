@@ -205,7 +205,7 @@ class _Segment<T> extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: Space.x2,
-                vertical: Space.x2,
+                vertical: Space.x1,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

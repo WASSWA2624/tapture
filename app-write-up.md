@@ -3394,6 +3394,10 @@ semantics; completion follows durable recovery.
 
 ## 58. Accessibility & Field Usability
 
+- Shared components use compact internal padding: 48dp minimum buttons, cards with 12dp horizontal/8dp vertical
+  insets, and 48dp list-row content with 4dp text insets (2dp when dense). Leading/trailing action targets retain
+  their full 48dp without extra vertical padding. Option controls avoid nested padding/minimum-height reservations.
+  Components grow for wrapped or 200 percent text; external gaps, text sizes and minimal nonzero radii stay uniform.
 - Support large text and a high-contrast sunlight theme.
 - Label every control for screen readers; make capture fully voice- and switch-operable.
 - Use glove-friendly camera controls and haptic capture/save confirmation.

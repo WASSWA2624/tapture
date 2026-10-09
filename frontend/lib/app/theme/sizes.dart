@@ -5,8 +5,8 @@ abstract final class Sizes {
   /// Minimum width and height of any interactive target (FE-A11Y-01).
   static const double minTapTarget = 48;
 
-  /// Default height of buttons and text fields.
-  static const double controlHeight = 52;
+  /// Minimum control height; content can grow for large or wrapped text.
+  static const double controlHeight = minTapTarget;
 
   /// Master-detail list column on expanded windows. Below the readable
   /// column cap so the detail pane keeps most of the width (FE-RESP-04).

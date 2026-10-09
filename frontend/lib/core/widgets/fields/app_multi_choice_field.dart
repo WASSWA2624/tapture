@@ -59,32 +59,29 @@ class AppMultiChoiceField<T> extends StatelessWidget {
         type: MaterialType.transparency,
         child: InkWell(
           onTap: enabled ? () => unawaited(_open(context)) : null,
-          child: InputDecorator(
-            isEmpty: selected.isEmpty,
-            decoration: InputDecoration(
-              labelText: label,
-              enabled: enabled,
-              suffixIcon: ExcludeSemantics(
-                child: Icon(
-                  AppIcons.expand,
-                  color: colors.onSurface,
-                  size: Space.x6,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
+            child: InputDecorator(
+              isEmpty: selected.isEmpty,
+              decoration: InputDecoration(
+                labelText: label,
+                enabled: enabled,
+                suffixIcon: ExcludeSemantics(
+                  child: Icon(
+                    AppIcons.expand,
+                    color: colors.onSurface,
+                    size: Space.x6,
+                  ),
                 ),
               ),
-            ),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
               child: selected.isEmpty
                   ? const SizedBox.shrink()
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(vertical: Space.x2),
-                      child: ExcludeSemantics(
-                        child: AppChipRow(
-                          chips: <AppChip>[
-                            for (final Choice<T> option in selected)
-                              AppChip(label: option.label, selected: true),
-                          ],
-                        ),
+                  : ExcludeSemantics(
+                      child: AppChipRow(
+                        chips: <AppChip>[
+                          for (final Choice<T> option in selected)
+                            AppChip(label: option.label, selected: true),
+                        ],
                       ),
                     ),
             ),

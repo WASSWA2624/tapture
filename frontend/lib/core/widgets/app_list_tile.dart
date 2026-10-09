@@ -78,18 +78,13 @@ class AppListTile extends StatelessWidget {
     final bool interactive = onTap != null || onLongPress != null;
     final Color foreground = colors.onSurface;
     final double dividerIndent =
-        Space.x4 +
+        Space.x3 +
         (selected ? Space.x6 + Space.x3 : 0) +
         (leading != null ? Sizes.minTapTarget + Space.x3 : 0);
     final Widget content = ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: dense ? Sizes.minTapTarget : Sizes.minTapTarget + Space.x6,
-      ),
+      constraints: const BoxConstraints(minHeight: Sizes.minTapTarget),
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: Space.x4,
-          vertical: dense ? Space.x1 : Space.x3,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: Space.x3),
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) => Row(
             children: <Widget>[
@@ -105,32 +100,39 @@ class AppListTile extends StatelessWidget {
                 // The row already announces these lines. Keep other slots
                 // outside this exclusion so their meaning and actions survive.
                 child: ExcludeSemantics(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        title,
-                        maxLines: wrapText ? null : 1,
-                        overflow: wrapText
-                            ? TextOverflow.visible
-                            : TextOverflow.ellipsis,
-                        style: (dense ? AppText.label : AppText.bodyStrong)
-                            .copyWith(
-                              color: current ? colors.primary : foreground,
-                            ),
-                      ),
-                      if (subtitle != null) ...<Widget>[
-                        const SizedBox(height: Space.x0),
+                  // Insets belong to the text, so 48dp action slots do not
+                  // gain another layer of vertical padding around them.
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: dense ? Space.x0 : Space.x1,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
                         Text(
-                          subtitle!,
+                          title,
                           maxLines: wrapText ? null : 1,
                           overflow: wrapText
                               ? TextOverflow.visible
                               : TextOverflow.ellipsis,
-                          style: AppText.caption.copyWith(color: foreground),
+                          style: (dense ? AppText.label : AppText.bodyStrong)
+                              .copyWith(
+                                color: current ? colors.primary : foreground,
+                              ),
                         ),
+                        if (subtitle != null) ...<Widget>[
+                          const SizedBox(height: Space.x0),
+                          Text(
+                            subtitle!,
+                            maxLines: wrapText ? null : 1,
+                            overflow: wrapText
+                                ? TextOverflow.visible
+                                : TextOverflow.ellipsis,
+                            style: AppText.caption.copyWith(color: foreground),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),
