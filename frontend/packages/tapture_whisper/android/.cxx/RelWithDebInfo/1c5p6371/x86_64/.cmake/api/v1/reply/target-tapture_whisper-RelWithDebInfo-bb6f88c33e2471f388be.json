@@ -305,13 +305,13 @@
 	"dependencies" : 
 	[
 		{
-			"id" : "tw_whisper::@6890427a1f51a3e7e1df"
-		},
-		{
 			"id" : "tw_ggml_cpu::@6890427a1f51a3e7e1df"
 		},
 		{
 			"id" : "tw_ggml_base::@6890427a1f51a3e7e1df"
+		},
+		{
+			"id" : "tw_whisper::@6890427a1f51a3e7e1df"
 		}
 	],
 	"id" : "tapture_whisper::@6890427a1f51a3e7e1df",
