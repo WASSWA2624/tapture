@@ -213,7 +213,22 @@ class _FieldValidationEditorState extends State<FieldValidationEditor> {
 
   void _emit({String? kind}) {
     final String chosen = kind ?? _kind;
-    final Map<String, Object?> next = <String, Object?>{};
+    final Map<String, Object?> next = Map<String, Object?>.of(
+      widget.validation,
+    );
+    for (final String key in <String>[
+      _patternKey,
+      _minLengthKey,
+      _maxLengthKey,
+      _minKey,
+      _maxKey,
+      _requiredWithKey,
+      'min_length',
+      'max_length',
+      'required_with',
+    ]) {
+      next.remove(key);
+    }
     final String? pattern = switch (chosen) {
       _none => null,
       _customKind => _custom.text.trim().isEmpty ? null : _custom.text.trim(),

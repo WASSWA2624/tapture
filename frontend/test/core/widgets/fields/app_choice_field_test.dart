@@ -24,6 +24,205 @@ void main() {
     const Choice<String>('d', 'Delta'),
   ];
 
+  group('compact sheet trigger', () {
+    testWidgets('is opt-in and keeps the labelled selected value', (
+      WidgetTester tester,
+    ) async {
+      await _pump(
+        tester,
+        Column(
+          children: <Widget>[
+            AppChoiceField<String>(
+              key: const ValueKey<String>('default-choice'),
+              label: 'Project',
+              options: four,
+              value: 'a',
+              onChanged: (_) {},
+            ),
+            AppChoiceField<String>(
+              key: const ValueKey<String>('compact-choice'),
+              label: 'Project',
+              options: four,
+              value: 'a',
+              compact: true,
+              onChanged: (_) {},
+            ),
+          ],
+        ),
+      );
+      final Finder standard = find.byKey(
+        const ValueKey<String>('default-choice'),
+      );
+      final Finder compact = find.byKey(
+        const ValueKey<String>('compact-choice'),
+      );
+      expect(
+        find.descendant(of: standard, matching: find.byType(InputDecorator)),
+        findsOneWidget,
+      );
+      final AppListTile row = tester.widget<AppListTile>(
+        find.descendant(of: compact, matching: find.byType(AppListTile)),
+      );
+      expect(row.title, 'Alpha');
+      expect(row.subtitle, 'Project');
+      expect(row.wrapText, isTrue);
+      expect(row.dense, isTrue);
+      expect(compact, meetsTapTarget());
+      expect(compact, hasSemanticLabel('Project'));
+      expect(
+        find.descendant(of: compact, matching: find.text('Alpha')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    for (final int count in <int>[1, 3, 4]) {
+      testWidgets('retains searchable selection with $count options', (
+        WidgetTester tester,
+      ) async {
+        String? picked;
+        await _pump(
+          tester,
+          AppChoiceField<String>(
+            label: 'Project',
+            options: four.take(count).toList(),
+            value: 'a',
+            compact: true,
+            alwaysSheet: true,
+            onChanged: (String? value) => picked = value,
+          ),
+        );
+        final Finder trigger = find.byType(AppChoiceField<String>);
+        expect(trigger, meetsTapTarget());
+        await tester.tap(trigger);
+        await tester.pumpAndSettle();
+        final String label = four[count - 1].label;
+        await tester.enterText(find.byType(TextField), label.toUpperCase());
+        await tester.pump();
+        final Finder choice = find.descendant(
+          of: find.byType(AppBottomSheet),
+          matching: find.widgetWithText(AppListTile, label),
+        );
+        expect(choice, findsOneWidget);
+        expect(choice, meetsTapTarget());
+        await tester.tap(choice);
+        await tester.pumpAndSettle();
+        expect(picked, four[count - 1].value);
+        expect(find.byType(AppBottomSheet), findsNothing);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('disabled selection remains readable and cannot open', (
+      WidgetTester tester,
+    ) async {
+      int changes = 0;
+      await _pump(
+        tester,
+        AppChoiceField<String>(
+          label: 'Project',
+          options: four,
+          value: 'b',
+          compact: true,
+          enabled: false,
+          onChanged: (_) => changes++,
+        ),
+      );
+      expect(find.text('Project'), findsOneWidget);
+      expect(find.text('Bravo'), findsOneWidget);
+      final AppListTile row = tester.widget<AppListTile>(
+        find.byType(AppListTile),
+      );
+      expect(row.onTap, isNull);
+      expect(
+        tester
+            .getSemantics(find.byType(AppListTile))
+            .getSemanticsData()
+            .hasAction(SemanticsAction.tap),
+        isFalse,
+      );
+      await tester.tap(find.byType(AppChoiceField<String>));
+      await tester.pumpAndSettle();
+      expect(find.byType(AppBottomSheet), findsNothing);
+      expect(changes, 0);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('complete labels grow naturally at 200 percent text', (
+      WidgetTester tester,
+    ) async {
+      const String label = 'Project with a complete field label';
+      const String selected =
+          'Selected project with its complete descriptive name';
+      final List<double> heights = <double>[];
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      for (final double scale in <double>[1, 2]) {
+        tester.platformDispatcher.textScaleFactorTestValue = scale;
+        await _pump(
+          tester,
+          AppChoiceField<String>(
+            label: label,
+            options: const <Choice<String>>[Choice<String>('a', selected)],
+            value: 'a',
+            compact: true,
+            alwaysSheet: true,
+            onChanged: (_) {},
+          ),
+          size: const Size(320, 740),
+        );
+        final Finder trigger = find.byType(AppChoiceField<String>);
+        final Rect bounds = tester.getRect(trigger);
+        heights.add(bounds.height);
+        expect(trigger, meetsTapTarget());
+        for (final String text in <String>[label, selected]) {
+          final RenderParagraph paragraph = tester
+              .renderObject<RenderParagraph>(
+                find.descendant(
+                  of: find.text(text),
+                  matching: find.byType(RichText),
+                ),
+              );
+          expect(paragraph.didExceedMaxLines, isFalse, reason: text);
+          final Rect painted = MatrixUtils.transformRect(
+            paragraph.getTransformTo(null),
+            paragraph.paintBounds,
+          );
+          expect(painted.left, greaterThanOrEqualTo(bounds.left));
+          expect(painted.right, lessThanOrEqualTo(bounds.right));
+          expect(painted.top, greaterThanOrEqualTo(bounds.top));
+          expect(painted.bottom, lessThanOrEqualTo(bounds.bottom));
+        }
+        expect(trigger, hasSemanticLabel(label));
+        expect(tester.takeException(), isNull);
+      }
+      expect(heights.last, greaterThan(heights.first));
+    });
+
+    testWidgets('compact uses the same sheet without alwaysSheet', (
+      WidgetTester tester,
+    ) async {
+      String? picked;
+      await _pump(
+        tester,
+        AppChoiceField<String>(
+          label: 'Grade',
+          options: three,
+          compact: true,
+          onChanged: (String? value) => picked = value,
+        ),
+      );
+      expect(find.byType(AppListTile), findsOneWidget);
+      expect(find.text('Alpha'), findsNothing);
+      await tester.tap(find.byType(AppChoiceField<String>));
+      await tester.pumpAndSettle();
+      expect(find.byType(TextField), findsOneWidget);
+      await tester.tap(find.widgetWithText(AppListTile, 'Charlie'));
+      await tester.pumpAndSettle();
+      expect(picked, 'c');
+      expect(find.byType(AppBottomSheet), findsNothing);
+    });
+  });
+
   testWidgets('three options render as a segmented control', (
     WidgetTester tester,
   ) async {

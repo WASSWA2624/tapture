@@ -23,6 +23,26 @@ extension LocalizedCopyResolver on LocalizedCopy {
   }
 
   String _resolve(LocalizedMessage message) => switch (message.key) {
+    'recordFieldReadOnly' => recordFieldReadOnly,
+    'processingProtectedField' => processingProtectedField(
+      (message.argument('fieldKey') is LocalizedMessage
+          ? resolve(message.argument('fieldKey') as LocalizedMessage)
+          : message.argument('fieldKey') as String),
+    ),
+    'processingCapturedTemplateUnavailable' =>
+      processingCapturedTemplateUnavailable,
+    'recordCorrectAutomaticValue' => recordCorrectAutomaticValue,
+    'captureSearchFields' => captureSearchFields,
+    'captureFieldManual' => captureFieldManual,
+    'captureFieldAutomatic' => captureFieldAutomatic,
+    'captureFieldContext' => captureFieldContext,
+    'captureFieldProcessing' => captureFieldProcessing,
+    'captureFieldFilledAtSave' => captureFieldFilledAtSave,
+    'captureFieldUnavailable' => captureFieldUnavailable,
+    'fieldSourceHelp' => fieldSourceHelp,
+    'captureTemperatureUnavailable' => captureTemperatureUnavailable,
+    'fieldAutoFillLocalAddress' => fieldAutoFillLocalAddress,
+    'fieldSourceAddressNeedsText' => fieldSourceAddressNeedsText,
     'captureManualForm' => captureManualForm,
     'projectExportDetails' => projectExportDetails,
     'projectExportDestination' => projectExportDestination,

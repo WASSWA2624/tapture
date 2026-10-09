@@ -121,6 +121,9 @@ final class ProposalCollector {
     );
     final String? currentRequest = await _currentRevision?.call(job, bundle);
     for (final ProcessingResult response in responses.reversed) {
+      rejections.addAll(
+        StageSupport.rejectedFields(response.rawResponse, bundle),
+      );
       final Object? summary = StageSupport.json(response.requestSummary);
       if (!response.parsedOk ||
           (summary is Map &&
@@ -145,7 +148,7 @@ final class ProposalCollector {
       }
       final ParseOutcome parsed = ResponseParser.parse(
         response.rawResponse,
-        schema: StageSupport.schema(bundle.fields),
+        schema: StageSupport.schema(StageSupport.extractionFields(bundle)),
       );
       if (!parsed.ok) {
         continue;

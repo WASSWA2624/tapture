@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -9,14 +10,20 @@ import 'package:tapture/core/ai/stt_service.dart';
 import 'package:tapture/core/audio/audio_recorder_service.dart';
 import 'package:tapture/core/barcode/barcode_scanner_service.dart';
 import 'package:tapture/core/camera/camera.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/permissions/permissions_service.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/fields/field_editor.dart';
+import 'package:tapture/core/widgets/fields/field_value.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
@@ -29,6 +36,7 @@ import 'package:tapture/features/capture/presentation/camera_controls.dart';
 import 'package:tapture/features/capture/presentation/camera_permission_gate.dart';
 import 'package:tapture/features/capture/presentation/camera_view.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
+import 'package:tapture/features/capture/presentation/capture_manual_form.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
 import 'package:tapture/features/capture/presentation/document_mode.dart';
 import 'package:tapture/features/capture/presentation/document_picker.dart';
@@ -87,6 +95,504 @@ PhotoDraft draft(String id, {String type = 'other', int order = 0}) {
 }
 
 void main() {
+  group('Capture field sources and corrections', () {
+    const FieldDef automatic = FieldDef(
+      fieldKey: 'business',
+      label: 'Business',
+      type: FieldType.text,
+      inputMode: InputMode.auto,
+      requiredness: Requiredness.required,
+    );
+    Widget sourceForm({
+      Map<String, Object?> values = const <String, Object?>{},
+      Map<String, String> sources = const <String, String>{},
+      Map<String, Object?> preview = const <String, Object?>{},
+      List<FieldDef> fields = const <FieldDef>[automatic],
+      Future<Result<void>> Function(String, Object?)? write,
+    }) => wrap(
+      CaptureManualForm(
+        key: const ValueKey<String>('source-owner'),
+        fields: fields,
+        values: values,
+        valueSources: sources,
+        automaticValues: preview,
+        onChanged: write ?? (_, _) async => const Success<void>(null),
+      ),
+    );
+    testWidgets(
+      'automatic business source reveals an explicit correction and keeps pending source through filtering',
+      (WidgetTester tester) async {
+        final List<Object?> writes = <Object?>[];
+        await tester.pumpWidget(
+          sourceForm(
+            values: const <String, Object?>{'business': 'Original'},
+            sources: const <String, String>{'business': 'AUTO'},
+            write: (_, Object? value) async {
+              writes.add(value);
+              return const Success<void>(null);
+            },
+          ),
+        );
+        expect(find.byType(FieldEditor), findsNothing);
+        expect(
+          find.widgetWithText(AppListTile, Copy.captureFieldAutomatic),
+          findsOneWidget,
+        );
+        final Finder correct = find.byKey(
+          const ValueKey<String>('capture-field-correct-business'),
+        );
+        expect(correct, meetsTapTarget());
+        await tester.tap(correct);
+        await tester.pumpAndSettle();
+        final FieldEditor editor = tester.widget<FieldEditor>(
+          find.byType(FieldEditor),
+        );
+        expect(editor.value.source, ValueSource.auto);
+        expect(writes, isEmpty);
+        await tester.enterText(
+          find.descendant(
+            of: find.byType(FieldEditor),
+            matching: find.byType(TextField),
+          ),
+          'Corrected',
+        );
+        await tester.pumpAndSettle();
+        expect(writes, <Object?>['Corrected']);
+        expect(
+          tester.widget<FieldEditor>(find.byType(FieldEditor)).value.source,
+          ValueSource.manual,
+        );
+        final Finder search = find.descendant(
+          of: find.byType(AppSearchField),
+          matching: find.byType(TextField),
+        );
+        await tester.enterText(search, 'none');
+        await tester.pumpAndSettle(AppConstants.interaction.debounce);
+        await tester.enterText(search, 'business');
+        await tester.pumpAndSettle(AppConstants.interaction.debounce);
+        expect(
+          tester.widget<FieldEditor>(find.byType(FieldEditor)).value.value,
+          'Corrected',
+        );
+        expect(
+          find.widgetWithText(AppListTile, Copy.captureFieldManual),
+          findsOneWidget,
+        );
+      },
+    );
+    testWidgets(
+      'an explicit typed null suppresses automatic defaults without losing its source',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          sourceForm(
+            values: const <String, Object?>{'business': null},
+            sources: const <String, String>{'business': 'TYPED'},
+            preview: const <String, Object?>{'business': 'Automatic fallback'},
+          ),
+        );
+        final FieldEditor editor = tester.widget<FieldEditor>(
+          find.byType(FieldEditor),
+        );
+        expect(editor.value.value, isNull);
+        expect(editor.value.source, ValueSource.manual);
+        expect(find.text('Automatic fallback'), findsNothing);
+        expect(
+          find.widgetWithText(AppListTile, Copy.captureFieldManual),
+          findsOneWidget,
+        );
+      },
+    );
+    testWidgets(
+      'reserved metadata and GPS cannot reveal an editor even with a manual source',
+      (WidgetTester tester) async {
+        final List<FieldDef> fields = <FieldDef>[
+          for (final String key in <String>[
+            'device_id',
+            'record_uid',
+            'record_number',
+            'captured_by_name',
+            'created_at',
+            'updated_at',
+            'sync_state',
+            'gps_latitude',
+          ])
+            FieldDef(fieldKey: key, label: key, type: FieldType.text),
+          const FieldDef(
+            fieldKey: 'computed',
+            label: 'Computed',
+            type: FieldType.computed,
+          ),
+        ];
+        await tester.pumpWidget(
+          wrap(
+            SingleChildScrollView(
+              child: InlineFieldsSection(
+                fields: fields,
+                showAll: true,
+                values: <String, Object?>{
+                  for (final FieldDef field in fields)
+                    field.fieldKey: 'Original',
+                },
+                valueSources: <String, String>{
+                  for (final FieldDef field in fields) field.fieldKey: 'TYPED',
+                },
+                onChanged: (_, _) => fail('Immutable value was editable'),
+              ),
+            ),
+          ),
+        );
+        expect(find.byType(FieldEditor), findsNothing);
+        expect(
+          find.byWidgetPredicate(
+            (Widget widget) =>
+                widget.key.toString().contains('capture-field-correct-'),
+          ),
+          findsNothing,
+        );
+      },
+    );
+    for (final FieldType type in <FieldType>[FieldType.date, FieldType.time]) {
+      testWidgets(
+        '${type.name} pending acknowledgment uses the field codec and releases the acknowledged value',
+        (WidgetTester tester) async {
+          final FieldDef field = FieldDef(
+            fieldKey: 'business',
+            label: 'Business',
+            type: type,
+            autoFill: type == FieldType.date ? AutoFill.today : AutoFill.time,
+            requiredness: Requiredness.required,
+          );
+          final String initial = type == FieldType.date
+              ? '2026-10-09'
+              : '09:30:00';
+          final DateTime edited = DateTime(2026, 10, 10, 11, 45);
+          final String acknowledged = storedTextOf(type, edited);
+          await tester.pumpWidget(
+            sourceForm(
+              fields: <FieldDef>[field],
+              preview: <String, Object?>{'business': initial},
+            ),
+          );
+          await tester.tap(
+            find.byKey(
+              const ValueKey<String>('capture-field-correct-business'),
+            ),
+          );
+          await tester.pumpAndSettle();
+          tester
+              .widget<FieldEditor>(find.byType(FieldEditor))
+              .onChanged(FieldValue(fieldKey: 'business', value: edited));
+          await tester.pumpAndSettle();
+          await tester.pumpWidget(
+            sourceForm(
+              fields: <FieldDef>[field],
+              values: <String, Object?>{'business': acknowledged},
+              sources: const <String, String>{'business': 'TYPED'},
+            ),
+          );
+          await tester.pumpAndSettle();
+          final String later = type == FieldType.date
+              ? '2026-10-11'
+              : '12:15:00';
+          await tester.pumpWidget(
+            sourceForm(
+              fields: <FieldDef>[field],
+              values: <String, Object?>{'business': later},
+              sources: const <String, String>{'business': 'TYPED'},
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(
+            tester.widget<FieldEditor>(find.byType(FieldEditor)).value.value,
+            editorValueOf(type, later),
+          );
+        },
+      );
+    }
+    testWidgets(
+      'disposing the owner drops queued edits before invoking callbacks',
+      (WidgetTester tester) async {
+        final Completer<Result<void>> first = Completer<Result<void>>();
+        final List<Object?> writes = <Object?>[];
+        await tester.pumpWidget(
+          sourceForm(
+            values: const <String, Object?>{'business': 'Old'},
+            sources: const <String, String>{'business': 'TYPED'},
+            write: (_, Object? value) {
+              writes.add(value);
+              return first.future;
+            },
+          ),
+        );
+        final Finder input = find.descendant(
+          of: find.byType(FieldEditor),
+          matching: find.byType(TextField),
+        );
+        await tester.enterText(input, 'First');
+        await tester.pump();
+        await tester.enterText(input, 'Queued');
+        await tester.pump();
+        await tester.pumpWidget(wrap(const Text('New owner')));
+        first.complete(const Success<void>(null));
+        await tester.pumpAndSettle();
+        expect(writes, <Object?>['First']);
+      },
+    );
+  });
+  group('searchable Manual form', () {
+    const List<FieldDef> fields = <FieldDef>[
+      FieldDef(
+        fieldKey: 'asset_key',
+        label: 'Équipement',
+        type: FieldType.text,
+        requiredness: Requiredness.required,
+      ),
+      FieldDef(
+        fieldKey: 'note_key',
+        label: 'Équipement note',
+        type: FieldType.text,
+      ),
+      FieldDef(
+        fieldKey: 'hidden_key',
+        label: 'Équipement hidden',
+        type: FieldType.text,
+        hidden: true,
+      ),
+    ];
+    Finder input(String key) => find.descendant(
+      of: find.byKey(
+        ValueKey<String>('field-$key-${FieldEditorKind.appTextField}'),
+      ),
+      matching: find.byType(TextField),
+    );
+    Finder getSearch() => find.descendant(
+      of: find.byType(AppSearchField),
+      matching: find.byType(TextField),
+    );
+    Future<void> search(WidgetTester tester, String query) async {
+      await tester.ensureVisible(getSearch());
+      await tester.enterText(getSearch(), query);
+      await tester.pumpAndSettle(AppConstants.interaction.debounce);
+    }
+
+    Widget form({
+      Future<Result<void>> Function(String, Object?)? write,
+      Map<String, Object?> values = const <String, Object?>{},
+      Key key = const ValueKey<String>('owner-p1-t1-v1'),
+      List<FieldDef> shown = fields,
+      TextDirection direction = TextDirection.ltr,
+    }) => wrap(
+      Directionality(
+        textDirection: direction,
+        child: CaptureManualForm(
+          key: key,
+          fields: shown,
+          values: values,
+          onChanged: write ?? (_, _) async => const Success<void>(null),
+        ),
+      ),
+    );
+
+    testWidgets(
+      'folded labels and stable keys reveal optional rows in original order',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(form());
+        expect(input('asset_key'), findsOneWidget);
+        expect(input('note_key'), findsNothing);
+        await search(tester, '  EQUIPEMENT  ');
+        expect(input('asset_key'), findsOneWidget);
+        expect(input('note_key'), findsOneWidget);
+        expect(input('hidden_key'), findsNothing);
+        expect(find.text('Équipement'), findsOneWidget);
+        expect(
+          tester.getTopLeft(input('asset_key')).dy,
+          lessThan(tester.getTopLeft(input('note_key')).dy),
+        );
+        await search(tester, 'NOTE_KEY');
+        expect(input('asset_key'), findsNothing);
+        expect(input('note_key'), findsOneWidget);
+        await search(tester, 'hidden_key');
+        expect(find.text(Copy.fieldsNoMatch), findsOneWidget);
+        expect(find.text(Copy.searchNoMatchMessage), findsOneWidget);
+        expect(input('hidden_key'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'RTL search preserves original user labels and stable field keys',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(form(direction: TextDirection.rtl));
+        await search(tester, 'EQUIPEMENT');
+        expect(input('asset_key'), findsOneWidget);
+        expect(input('note_key'), findsOneWidget);
+        expect(find.text('Équipement'), findsOneWidget);
+        expect(
+          Directionality.of(tester.element(input('note_key'))),
+          TextDirection.rtl,
+        );
+        await tester.enterText(input('note_key'), 'RTL value');
+        await tester.pumpAndSettle();
+        await search(tester, 'asset_key');
+        await search(tester, 'note_key');
+        expect(
+          tester.widget<TextField>(input('note_key')).controller?.text,
+          'RTL value',
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets('Clear restores the prior More state and search is ephemeral', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(form());
+      await search(tester, 'note');
+      await tester.tap(
+        find.byTooltip(Copy.clearField(Copy.captureSearchFields)),
+      );
+      await tester.pumpAndSettle(AppConstants.interaction.debounce);
+      expect(input('note_key'), findsNothing);
+      await tester.tap(find.text(Copy.captureMoreFields));
+      await tester.pumpAndSettle();
+      expect(input('note_key'), findsOneWidget);
+      await search(tester, 'asset');
+      await tester.tap(
+        find.byTooltip(Copy.clearField(Copy.captureSearchFields)),
+      );
+      await tester.pumpAndSettle(AppConstants.interaction.debounce);
+      expect(input('note_key'), findsOneWidget);
+      await search(tester, 'note');
+      await tester.pumpWidget(
+        form(key: const ValueKey<String>('owner-p2-t1-v1')),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(getSearch()).controller?.text, isEmpty);
+      expect(input('note_key'), findsNothing);
+    });
+
+    testWidgets(
+      'rapid edits serialize and retain newest input through delayed durable updates',
+      (WidgetTester tester) async {
+        final List<Completer<Result<void>>> completions =
+            <Completer<Result<void>>>[];
+        final List<Object?> writes = <Object?>[];
+        Future<Result<void>> write(String _, Object? value) {
+          writes.add(value);
+          final Completer<Result<void>> completion = Completer<Result<void>>();
+          completions.add(completion);
+          return completion.future;
+        }
+
+        await tester.pumpWidget(
+          form(
+            write: write,
+            values: const <String, Object?>{'asset_key': 'old'},
+          ),
+        );
+        await tester.enterText(input('asset_key'), 'first');
+        await tester.pump();
+        await tester.enterText(input('asset_key'), 'latest');
+        await tester.pump();
+        expect(writes, <Object?>['first']);
+        await search(tester, 'note');
+        completions.first.complete(const Success<void>(null));
+        await tester.pump();
+        expect(writes, <Object?>['first', 'latest']);
+        await tester.pumpWidget(
+          form(
+            write: write,
+            values: const <String, Object?>{'asset_key': 'first'},
+          ),
+        );
+        await search(tester, 'asset');
+        expect(
+          tester.widget<TextField>(input('asset_key')).controller?.text,
+          'latest',
+        );
+        completions.last.complete(const Success<void>(null));
+        await tester.pumpAndSettle();
+        expect(
+          tester.widget<TextField>(input('asset_key')).controller?.text,
+          'latest',
+        );
+        await tester.pumpWidget(
+          form(
+            write: write,
+            values: const <String, Object?>{'asset_key': 'latest'},
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          tester.widget<TextField>(input('asset_key')).controller?.text,
+          'latest',
+        );
+      },
+    );
+
+    testWidgets(
+      'failure survives filtering with exact retry input and never confirms saved',
+      (WidgetTester tester) async {
+        bool failing = true;
+        final List<Object?> writes = <Object?>[];
+        Future<Result<void>> write(String _, Object? value) async {
+          writes.add(value);
+          return failing
+              ? const FailureResult<void>(
+                  StorageFailure(message: 'Session write failed'),
+                )
+              : const Success<void>(null);
+        }
+
+        await tester.pumpWidget(form(write: write));
+        await tester.enterText(input('asset_key'), 'retained input');
+        await tester.pumpAndSettle();
+        expect(find.byType(AppErrorState), findsOneWidget);
+        await search(tester, 'note');
+        await search(tester, 'asset');
+        expect(
+          tester.widget<TextField>(input('asset_key')).controller?.text,
+          'retained input',
+        );
+        expect(find.byType(AppErrorState), findsOneWidget);
+        expect(find.text(Copy.captureSaved), findsNothing);
+        failing = false;
+        await tester.ensureVisible(find.text(Copy.tryAgain));
+        await tester.tap(find.text(Copy.tryAgain));
+        await tester.pumpAndSettle();
+        expect(writes, <Object?>['retained input', 'retained input']);
+        expect(find.byType(AppErrorState), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'large shapes render bounded rows and pinned owner changes discard only ephemeral edits',
+      (WidgetTester tester) async {
+        final List<FieldDef> large = <FieldDef>[
+          for (int index = 0; index < 500; index++)
+            FieldDef(
+              fieldKey: 'f$index',
+              label: 'Field $index',
+              type: FieldType.text,
+              requiredness: Requiredness.required,
+            ),
+        ];
+        await tester.pumpWidget(form(shown: large));
+        expect(find.byType(FieldEditor).evaluate().length, lessThan(30));
+        await search(tester, 'f499');
+        expect(input('f499'), findsOneWidget);
+        expect(find.text('Field 499'), findsOneWidget);
+        await tester.pumpWidget(
+          form(key: const ValueKey<String>('owner-p1-t1-v2')),
+        );
+        await tester.pumpAndSettle();
+        expect(getSearch(), findsOneWidget);
+        expect(tester.widget<TextField>(getSearch()).controller?.text, isEmpty);
+        expect(input('asset_key'), findsOneWidget);
+        expect(input('f499'), findsNothing);
+      },
+    );
+  });
+
   testWidgets('recording pauses when the app is interrupted', (
     WidgetTester tester,
   ) async {
@@ -174,8 +680,8 @@ void main() {
 
     const List<({String name, Size size, bool paired})> layouts =
         <({String name, Size size, bool paired})>[
-          (name: 'compact portrait', size: Size(360, 740), paired: false),
-          (name: 'compact landscape', size: Size(560, 360), paired: false),
+          (name: 'compact portrait', size: Size(360, 740), paired: true),
+          (name: 'compact landscape', size: Size(560, 360), paired: true),
           (name: 'medium portrait', size: Size(800, 1200), paired: true),
           (name: 'medium landscape', size: Size(1000, 700), paired: true),
           (name: 'expanded portrait', size: Size(1024, 1366), paired: true),
@@ -195,7 +701,8 @@ void main() {
         if (layout.paired) {
           expect(project.top, template.top);
           expect(project.right, lessThan(template.left));
-          expect(project.height, template.height);
+          expect(project.height, greaterThanOrEqualTo(48));
+          expect(template.height, greaterThanOrEqualTo(48));
         } else {
           expect(project.bottom, lessThan(template.top));
           expect(project.left, template.left);

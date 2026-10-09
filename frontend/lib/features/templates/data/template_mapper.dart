@@ -80,13 +80,20 @@ abstract final class TemplateMapper {
     final Requiredness requiredness =
         _requirednessFromWire(attrs[_requirednessKey]) ??
         (row.isRequired ? Requiredness.required : Requiredness.optional);
-    final AutoFill? autoFill =
-        _autoFillFromWire(attrs[_autoFillKey]) ??
-        (row.autoFill ? AutoFill.context : null);
+    final FieldType type = fieldTypeFromWire(row.type);
+    final Object? declaration = attrs[_autoFillKey];
+    final AutoFill? known = _autoFillFromWire(declaration);
+    final bool unavailable =
+        declaration != null &&
+        (known == null ||
+            (known == AutoFill.localAddress && type != FieldType.text));
+    final AutoFill? autoFill = unavailable
+        ? null
+        : known ?? (row.autoFill ? AutoFill.context : null);
     return FieldDef(
       fieldKey: row.fieldKey,
       label: row.label,
-      type: fieldTypeFromWire(row.type),
+      type: type,
       requiredness: requiredness,
       defaultValue: _optionalText(row.defaultValue),
       unit: _optionalText(row.unit),
@@ -103,7 +110,11 @@ abstract final class TemplateMapper {
       hidden: attrs[_hiddenKey] == true,
       identity:
           attrs[_identityKey] == true || identityKeys.contains(row.fieldKey),
-      validation: stored.validation,
+      validation: <String, Object?>{
+        ...stored.validation,
+        if (unavailable)
+          _attrsKey: <String, Object?>{_autoFillKey: declaration},
+      },
       lookup: _objectMap(row.lookup),
       sortOrder: row.sortOrder,
     );
@@ -130,7 +141,9 @@ abstract final class TemplateMapper {
       inputMode: Value<String>(inputModeToWire(field.inputMode)),
       stickable: Value<bool>(field.stickable),
       contextLevel: Value<int?>(field.contextLevel),
-      autoFill: Value<bool>(field.autoFill != null),
+      autoFill: Value<bool>(
+        field.autoFill != null || _carriedSource(field) != null,
+      ),
       defaultValue: Value<String?>(field.defaultValue),
       options: Value<String>(jsonEncode(field.options)),
       unit: Value<String?>(field.unit),
@@ -258,6 +271,8 @@ String _encodeValidation(FieldDef field) {
   }
   if (field.autoFill != null) {
     attrs[_autoFillKey] = _autoFillToWire(field.autoFill!);
+  } else if (_carriedSource(field) case final Object declaration) {
+    attrs[_autoFillKey] = declaration;
   }
   if (attrs.isEmpty) {
     json.remove(_attrsKey);
@@ -265,6 +280,11 @@ String _encodeValidation(FieldDef field) {
     json[_attrsKey] = attrs;
   }
   return jsonEncode(json);
+}
+
+Object? _carriedSource(FieldDef field) {
+  final Object? attrs = field.validation[_attrsKey];
+  return attrs is Map ? attrs[_autoFillKey] : null;
 }
 
 String _requirednessToWire(Requiredness value) {
@@ -297,6 +317,7 @@ String _autoFillToWire(AutoFill value) {
     AutoFill.device => 'DEVICE',
     AutoFill.gps => 'GPS',
     AutoFill.context => 'CONTEXT',
+    AutoFill.localAddress => 'LOCAL_ADDRESS',
   };
 }
 
@@ -313,6 +334,7 @@ AutoFill? _autoFillFromWire(Object? raw) {
     'DEVICE' => AutoFill.device,
     'GPS' => AutoFill.gps,
     'CONTEXT' => AutoFill.context,
+    'LOCAL_ADDRESS' => AutoFill.localAddress,
     _ => null,
   };
 }

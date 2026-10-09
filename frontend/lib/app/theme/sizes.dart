@@ -20,4 +20,7 @@ abstract final class Sizes {
   /// confirmation stays a readable column on tablets and desktops
   /// (FE-RESP-04).
   static const double dialogMaxWidth = 560;
+
+  /// Readable context chip body cap, clamped to the owning trail's width.
+  static const double contextChipMaxWidth = 280;
 }

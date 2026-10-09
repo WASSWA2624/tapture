@@ -10,6 +10,56 @@ import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 /// never pass through here (FE-L10N-07).
 /// Copy resolved against one app's inherited locale. User data passes unchanged.
 final class LocalizedCopy {
+  /// Why a protected record value cannot be corrected.
+  String get recordFieldReadOnly => _catalog.recordFieldReadOnly;
+
+  /// Explains rejection of a field protected by its source or stored value.
+  String processingProtectedField(String fieldKey) =>
+      _catalog.processingProtectedField(fieldKey);
+
+  /// Processing review reason when the owning captured shape cannot be resolved.
+  String get processingCapturedTemplateUnavailable =>
+      _catalog.processingCapturedTemplateUnavailable;
+
+  /// Explicit audited correction of an eligible automatically populated field.
+  String get recordCorrectAutomaticValue =>
+      _catalog.recordCorrectAutomaticValue;
+
+  /// Searches Manual form field labels and stable keys.
+  String get captureSearchFields => _catalog.captureSearchFields;
+
+  /// Field source/status for operator entry.
+  String get captureFieldManual => _catalog.captureFieldManual;
+
+  /// Field source/status for system filling.
+  String get captureFieldAutomatic => _catalog.captureFieldAutomatic;
+
+  /// Field source/status for inherited context values.
+  String get captureFieldContext => _catalog.captureFieldContext;
+
+  /// Field source/status for evidence extraction eligibility.
+  String get captureFieldProcessing => _catalog.captureFieldProcessing;
+
+  /// Pending field source that requires the authoritative first-save instant or sequence.
+  String get captureFieldFilledAtSave => _catalog.captureFieldFilledAtSave;
+
+  /// Unavailable automatic source without a fabricated value.
+  String get captureFieldUnavailable => _catalog.captureFieldUnavailable;
+
+  /// Explains existing template-owned source and input-mode controls.
+  String get fieldSourceHelp => _catalog.fieldSourceHelp;
+
+  /// Honest availability helper without a weather or hardware fallback.
+  String get captureTemperatureUnavailable =>
+      _catalog.captureTemperatureUnavailable;
+
+  /// Template-opted-in native local interface address source.
+  String get fieldAutoFillLocalAddress => _catalog.fieldAutoFillLocalAddress;
+
+  /// Validation recovery for a non-text local-address source.
+  String get fieldSourceAddressNeedsText =>
+      _catalog.fieldSourceAddressNeedsText;
+
   /// Optional template fields opened from Capture.
   String get captureManualForm => _catalog.captureManualForm;
 
@@ -1886,6 +1936,7 @@ final class LocalizedCopy {
       'device' => _catalog.fieldAutoFillLabelThisDevice,
       'gps' => _catalog.fieldAutoFillLabelCurrentLocation,
       'context' => _catalog.fieldAutoFillLabelPinnedContext,
+      'localAddress' => _catalog.fieldAutoFillLocalAddress,
       _ => fieldAutoFillNone,
     };
   }

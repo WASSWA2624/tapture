@@ -7,6 +7,64 @@ import '../../../support/factories.dart';
 import '../fakes/fake_template_repository.dart';
 
 void main() {
+  for (final Object declaration in <Object>[
+    'FUTURE_SOURCE', false, <String, Object?>{'provider': 'future'}, 'LOCAL_ADDRESS',
+  ]) {
+    test('a captured shape retains opaque $declaration and valid sibling policies through later versions', () {
+      final TemplateDef first = aTemplate(version: 1, fields: <FieldDef>[
+        FieldDef(fieldKey: 'address', label: 'Address', type: FieldType.number,
+            validation: <String, Object?>{'_tapture': <String, Object?>{'autoFill': declaration}}),
+        const FieldDef(fieldKey: 'instant', label: 'Instant', type: FieldType.text,
+            autoFill: AutoFill.now),
+      ]).copyWith(identityFieldKeys: const <String>['address']);
+      final TemplateDef second = TemplateVersioning.remember(from: first,
+          to: first.copyWith(version: 2, name: 'Renamed'));
+      final TemplateDef third = TemplateVersioning.remember(from: second,
+          to: second.copyWith(version: 3, name: 'Renamed again'));
+      final TemplateDef captured = TemplateVersioning.shapeFor(third, 1)!;
+      expect(captured.fields.first.autoFill, isNull);
+      expect(captured.fields.first.validation, first.fields.first.validation);
+      expect(captured.fields.last.autoFill, AutoFill.now);
+      expect(captured.identityFieldKeys, <String>['address']);
+      expect(TemplateVersioning.shapeFor(third, 2)!.fields.first.validation,
+          first.fields.first.validation);
+    });
+  }
+  test('unreadable full history is retained verbatim across remember and never reinterpreted as legacy fields', () {
+    final Map<String, Object?> invalid = <String, Object?>{
+      'schema_version': 1, 'name': 42,
+      'fields': <Map<String, Object?>>[
+        <String, Object?>{'fieldKey': 'serial', 'type': 'text', 'label': 'Legacy-looking'},
+      ],
+    };
+    final TemplateDef current = aTemplate(version: 3).copyWith(detection: <String, Object?>{
+      '_tapture_versions': <String, Object?>{'1': invalid, '2': 'unreadable raw', 'other': <String, Object?>{'raw': true}},
+    });
+    expect(TemplateVersioning.shapeFor(current, 1), isNull);
+    final TemplateDef next = TemplateVersioning.remember(from: current,
+        to: current.copyWith(version: 4, name: 'Edited'));
+    final Map versions = next.detection['_tapture_versions']! as Map;
+    expect(versions['1'], invalid);
+    expect(versions['2'], 'unreadable raw');
+    expect(versions['other'], <String, Object?>{'raw': true});
+    expect(TemplateVersioning.shapeFor(next, 1), isNull);
+    expect(TemplateVersioning.shapeFor(next, 2), isNull);
+    expect(TemplateVersioning.shapeFor(next, 3)!.name, current.name);
+  });
+  test('malformed stored row identifiers leave full history unavailable without dropping raw metadata', () {
+    final TemplateDef current = aTemplate(version: 2);
+    final Map<String, Object?> invalid = <String, Object?>{
+      ...TemplateJson.encode(current), '_tapture_row_ids': <String, Object?>{'serial': 42},
+    };
+    final TemplateDef stored = current.copyWith(detection: <String, Object?>{
+      '_tapture_versions': <String, Object?>{'1': invalid},
+    });
+    expect(TemplateVersioning.shapeFor(stored, 1), isNull);
+    final TemplateDef next = TemplateVersioning.remember(from: stored,
+        to: stored.copyWith(version: 3));
+    expect((next.detection['_tapture_versions']! as Map)['1'], invalid);
+    expect(TemplateVersioning.shapeFor(next, 1), isNull);
+  });
   test('nonpositive captured versions never resolve an imported shape', () {
     final TemplateDef current = aTemplate(version: 0);
     expect(TemplateVersioning.shapeFor(current, 0), isNull);

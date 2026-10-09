@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart' hide TemplateRow;
 import 'package:tapture/core/errors/failure.dart';
@@ -34,6 +37,99 @@ void main() {
   });
 
   runTemplateRepositoryContract(() => repo);
+
+  test('a configured local address survives SQL restart and immutable version history', () async {
+    final TemplateDef first = _ok(await repo.save(aTemplate(fields: const <FieldDef>[
+      FieldDef(fieldKey: 'address', label: 'Address', type: FieldType.text,
+          autoFill: AutoFill.localAddress),
+    ])));
+    final TemplateDef second = _ok(await repo.save(first.copyWith(name: 'Renamed')));
+    final TemplateRepositoryImpl reopened = TemplateRepositoryImpl(db: db,
+        clock: clock, deviceId: 'device-test', ids: UuidV7Service.sequence(clock));
+    final TemplateDef loaded = _ok(await reopened.byId(first.id))!;
+    expect(loaded, second);
+    expect(loaded.fields.single.autoFill, AutoFill.localAddress);
+    expect(TemplateVersioning.shapeFor(loaded, first.version)!.fields.single.autoFill,
+        AutoFill.localAddress);
+    final TemplateField row = await db.select(db.templateFields).getSingle();
+    expect(jsonDecode(row.validation), <String, Object?>{'_tapture': <String, Object?>{'autoFill': 'LOCAL_ADDRESS'}});
+  });
+
+  for (final Object declaration in <Object>[
+    'FUTURE_SOURCE', false, <String, Object?>{'provider': 'future'}, 'LOCAL_ADDRESS',
+  ]) {
+    test('unrelated saves retain stored opaque $declaration through restart and captured versions', () async {
+      final TemplateDef initial = _ok(await repo.save(aTemplate(fields: const <FieldDef>[
+        FieldDef(fieldKey: 'address', label: 'Address', type: FieldType.number),
+        FieldDef(fieldKey: 'instant', label: 'Instant', type: FieldType.text, autoFill: AutoFill.now),
+      ]).copyWith(identityFieldKeys: const <String>['address'])));
+      await (db.update(db.templateFields)..where((row) => row.fieldKey.equals('address'))).write(
+        TemplateFieldsCompanion(autoFill: const Value<bool>(true), validation: Value<String>(jsonEncode(
+          <String, Object?>{'_tapture': <String, Object?>{'autoFill': declaration}},
+        ))),
+      );
+      final TemplateDef stored = _ok(await repo.byId(initial.id))!;
+      final TemplateDef edited = _ok(await repo.save(stored.copyWith(name: 'Renamed', fields: <FieldDef>[
+        stored.fields.last, stored.fields.first.copyWith(label: 'Renamed address',
+            validation: <String, Object?>{...stored.fields.first.validation, 'min': 2}),
+      ])));
+      final TemplateRepositoryImpl reopened = TemplateRepositoryImpl(db: db,
+          clock: clock, deviceId: 'device-test', ids: UuidV7Service.sequence(clock));
+      final TemplateDef loaded = _ok(await reopened.byId(edited.id))!;
+      final FieldDef address = loaded.fields.singleWhere((field) => field.fieldKey == 'address');
+      expect(address.autoFill, isNull);
+      expect(address.validation, <String, Object?>{'min': 2, '_tapture': <String, Object?>{'autoFill': declaration}});
+      expect(loaded.fields.first.autoFill, AutoFill.now);
+      expect(loaded.identityFieldKeys, <String>['address']);
+      final TemplateDef original = TemplateVersioning.shapeFor(loaded, initial.version)!;
+      expect(original.fields.first.autoFill, isNull);
+      expect(original.fields.first.validation['_tapture'], <String, Object?>{'autoFill': declaration});
+      expect(original.fields.last.autoFill, AutoFill.now);
+    });
+  }
+
+  for (final FieldDef invalid in <FieldDef>[
+    const FieldDef(fieldKey: 'bad', label: 'Bad', type: FieldType.number, autoFill: AutoFill.localAddress),
+    const FieldDef(fieldKey: 'bad', label: 'Bad', type: FieldType.text,
+        validation: <String, Object?>{'_tapture': <String, Object?>{'autoFill': 'FUTURE_SOURCE'}}),
+  ]) {
+    test('a new invalid source ${invalid.autoFill ?? invalid.validation} changes no SQL rows or history', () async {
+      final before = await db.select(db.templates).get();
+      final audit = await db.select(db.auditLog).get();
+      expect(await repo.save(aTemplate(fields: <FieldDef>[invalid])), isA<FailureResult<TemplateDef>>());
+      expect(await db.select(db.templates).get(), before);
+      expect(await db.select(db.templateFields).get(), isEmpty);
+      expect(await db.select(db.auditLog).get(), audit);
+    });
+  }
+
+  test('replacing a source with a new opaque declaration is refused atomically', () async {
+    final TemplateDef initial = _ok(await repo.save(aTemplate()));
+    final TemplateDef changed = initial.copyWith(fields: <FieldDef>[
+      initial.fields.first.copyWith(validation: const <String, Object?>{
+        '_tapture': <String, Object?>{'autoFill': 'FUTURE_SOURCE'},
+      }),
+    ]);
+    final before = await db.select(db.templates).get();
+    final fields = await db.select(db.templateFields).get();
+    final audit = await db.select(db.auditLog).get();
+    expect(await repo.save(changed), isA<FailureResult<TemplateDef>>());
+    expect(await db.select(db.templates).get(), before);
+    expect(await db.select(db.templateFields).get(), fields);
+    expect(await db.select(db.auditLog).get(), audit);
+  });
+
+  test('malformed immutable history remains raw and unresolved after a name edit', () async {
+    final TemplateDef first = _ok(await repo.save(aTemplate()));
+    final Map<String, Object?> invalid = <String, Object?>{'schema_version': 1, 'name': 42, 'fields': <Object>[]};
+    await db.update(db.templates).write(TemplatesCompanion(detection: Value<String>(jsonEncode(
+      <String, Object?>{'_tapture_versions': <String, Object?>{'77': invalid}},
+    ))));
+    final TemplateDef stored = _ok(await repo.byId(first.id))!;
+    final TemplateDef edited = _ok(await repo.save(stored.copyWith(name: 'Edited')));
+    expect((edited.detection['_tapture_versions']! as Map)['77'], invalid);
+    expect(TemplateVersioning.shapeFor(edited, 77), isNull);
+  });
 
   test('failed restore rolls back every lifted child tombstone', () async {
     final TemplateDef stored = _ok(

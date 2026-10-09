@@ -277,7 +277,16 @@ class _AppTextFieldState extends State<AppTextField> {
               label: field.wrapLabel
                   ? Text(_labelText(field, Copy.of(context)))
                   : null,
-              hintText: field.hint,
+              hintText: field.wrapLabel ? null : field.hint,
+              hint: field.wrapLabel && field.hint != null
+                  ? Text(
+                      field.hint!,
+                      style: AppText.body.merge(
+                        InputDecorationTheme.of(context).hintStyle ??
+                            TextStyle(color: context.colors.onSurfaceMuted),
+                      ),
+                    )
+                  : null,
               helperText: support.text,
               helper: support.widget,
               helperStyle: support.style,

@@ -431,7 +431,7 @@ TemplateField
   input_mode        ANY | MANUAL_ONLY | AI_ALLOWED | AUTO
   stickable         bool
   context_level     null, or 1..n when the field is a context level
-  auto_fill         null | NOW | TODAY | TIME | SEQUENCE | OPERATOR | DEVICE | GPS | CONTEXT
+  auto_fill         null | NOW | TODAY | TIME | SEQUENCE | OPERATOR | DEVICE | GPS | CONTEXT | LOCAL_ADDRESS
   default_value
   options_json      choice list
   unit
@@ -605,10 +605,10 @@ hidden          kept out of capture and export; existing values are preserved (�
 input_mode      ANY         - typing, AI, lookup or context may fill it
                 MANUAL_ONLY - AI may never write it (for example financial value)
                 AI_ALLOWED  - AI may propose, human confirms
-                AUTO        - filled by the system, read-only unless unlocked
+                AUTO        - system preview/fill; explicit audited corrections follow §21
 stickable       may be pinned as context (§20)
 context_level   1..n when this field is a level of the project context hierarchy
-auto_fill       NOW | TODAY | TIME | SEQUENCE | OPERATOR | DEVICE | GPS | CONTEXT
+auto_fill       NOW | TODAY | TIME | SEQUENCE | OPERATOR | DEVICE | GPS | CONTEXT | LOCAL_ADDRESS
 refine          store an AI-refined companion value beside the raw one (§32)
 identity        participates in duplicate detection (§40)
 options         choice list, optionally with codes for export
@@ -616,6 +616,8 @@ validation      pattern, length, range, custom message
 unit            displayed and exported (for example L, kg, V)
 help            one short line of guidance shown under the field
 ```
+
+Extraction eligibility follows the captured field policy (§31). A declared automatic source protects a field even if its value is empty; requiredness never grants AI permission. Automatic source configuration stays in the template Advanced controls, with manual/automatic/photo-and-caption extraction help. Supported sources and correction exclusions are defined once in §21.
 
 ### 12.3 Field editor
 
@@ -1015,6 +1017,9 @@ One screen, one primary button.
 - Require only a photo, caption or typed identifier.
 - Both buttons save locally immediately; only AI timing differs (§26).
 - Reset after save, retaining **context, pinned template and capture settings**.
+- Project/template selectors share a compact row with searchable pickers and naturally wrapping labels. The guide trigger sits beside them on wider screens and wraps onto the next action line on compact screens; explicit and automatic guidance retain complete template labels.
+- Empty photos use a compact Add photo row; populated photos retain the cached horizontal strip and 48dp actions. The caption editor starts at six lines and grows with text. At 393×886 with normal text and no keyboard, the editor and primary save action are visible; short/large-text layouts keep every control reachable by scrolling.
+- Manual form searches original field labels and stable keys offline, reveals matching optional fields, and restores More fields state on Clear. Filtering and resizing retain pending failed-write input without reporting it saved. Its source/status presentation follows §21.
 
 ## 20. Context Fields (Sticky Values)
 
@@ -1034,6 +1039,8 @@ Level 5  Room          Recovery Room 2
 
 Choose any levels (Site › Block › Floor; Farm › Field › Plot; Warehouse › Aisle › Shelf), or none.
 
+The first bar trail shows root-to-leaf hierarchy with separators at every width, followed by Setup/Manage and preset commands outside the separators. Comfortable chip bodies are at least 48dp; labels wrap and grow with text. Compact trails scroll horizontally; medium/expanded trails wrap. Full field-label/value semantics remain available, including long values at 320dp and 200 percent text.
+
 ### 20.2 Behaviour
 
 1. A chip opens recent values, reference-data values (e.g. Facilities), or free text.
@@ -1047,6 +1054,8 @@ Choose any levels (Site › Block › Floor; Farm › Field › Plot; Warehouse 
 
 Pin any `stickable` field as a context chip with the same behaviour: surveyor, funder, ownership, survey round,
 currency or condition scale; no hierarchy level is required.
+
+Pins occupy a separate second bar trail with their existing glyphs and one-tap pickers; omit that trail when empty. This presentation changes no context values, snapshots or cascading behavior.
 
 ### 20.4 Context presets
 
@@ -1085,14 +1094,21 @@ System-filled fields:
 | App / template version | System | No |
 | GPS latitude / longitude / accuracy | Device GPS, when enabled | Cleared, not edited |
 | Context values | Context bar (§20) | Yes, per record |
+| Local network address | Opted-in local interface reading, native only | Yes, as an audited business-field correction |
 | Photo count | Derived | No |
 
 Rules:
 
-- Date/Time/DateTime fields support `auto_fill`; recognised capture dates default to `TODAY`.
-- Show automatic values greyed with a clock icon.
+- Explicit `auto_fill` sources and defaults remain authoritative. Only source-less/default-less automatic `record_admin` fields named `captured_date`, `captured_time` and `device_id` fall back to `TODAY`, `TIME` and the app device identifier. Date filling still obeys its setting; resolve the owning pinned shape at first save, leaving stored templates and saved raw records unchanged.
+- Manual form reuses save-time fill logic for previews, with typed values ahead of context and automatic values. Previews never allocate a sequence number or change authoritative capture timestamps; pending sequence and unavailable sources are stated explicitly.
+- Show textual Manual entry, Automatic, Context or From photos and caption status, with filled/pending/unavailable state and an additional icon. Status never depends on color alone. Unsupported automatic sources and automatic temperature remain unavailable, with manual entry where correction policy allows. The device source is an app identifier, not a hardware model.
+- Explicit corrections to visible automatic business fields and capture date/time use the audited manual-refinement writer. Preserve raw, clear superseded final approval, and recheck the owning captured policy inside the transaction. Reserved record/template/device/attribution/timestamp/status metadata, computed/hidden/retired fields and GPS evidence remain protected; GPS retains its existing removal path. Corrected values stay protected during reprocessing (§35.3).
 - Store ISO-8601 UTC and device offset; display/export the project format, default `dd MMM yyyy`.
 - Pin a differing survey date for backdated work until changed (§20.3).
+
+`LOCAL_ADDRESS` is valid only for text fields. Read local interfaces in the background only for an explicitly configured owning draft; choose the first eligible IPv4 address in lexical order, then IPv6. At first-save start, snapshot a completed reading no older than five seconds. Pending, empty, stale, failed and unsupported readings remain unavailable and never delay saving. Reset, resume or a changed session/template invalidates the previous reading. Typed/context values take precedence; committed retries retain their original sample. Web provides no automatic interface address, and temperature has no automatic adapter. Neither source starts outbound traffic or requests permissions.
+
+Template JSON, validation metadata, version history and project packages retain the `LOCAL_ADDRESS` token without a SQL migration. Its minimum compatible reader implements task 153's source codec; schema version 1 alone does not establish compatibility with older binaries. Current import/edit boundaries reject unsupported sources. Already stored unsupported metadata stays opaque and unavailable, survives unrelated template edits and is excluded from extraction; it must never be reinterpreted as `CONTEXT`. Full stored snapshots retain structural validation. Transfer to an older reader requires removing the unsupported configuration explicitly before export; this work cannot change an older binary's behavior.
 
 ## 22. Photos & Photo Editing
 
@@ -2482,7 +2498,9 @@ Chromium (st and mt alike), the floor of whisper.cpp's per-state allocations; th
 
 ## 31. Structured Output & Validation
 
-Send the template field list; require JSON matching its derived schema.
+Send only eligible extraction fields from the record's captured template version; require JSON matching their derived schema (§12.2). Automatic/source-bound, manual-only, hierarchy-bound, hidden, computed and consent fields never become extraction targets, including when empty. A merely stickable unbound field remains eligible. Verified/manual/typed values and populated automatic/context values remain protected independently of the template policy.
+
+Apply the same policy to local candidates, online targets and response schemas. Remove protected keys from structured AI context; approved raw photos/captions remain unchanged. Missing required protected values can require review without becoming AI targets. An empty eligible target set completes extraction without an AI request.
 
 Request (abridged):
 
@@ -2495,7 +2513,7 @@ Request (abridged):
     {"key": "serial_number",  "type": "text",   "pattern": "^SN[0-9A-Z]{6,}$"},
     {"key": "condition",      "type": "choice", "options": ["Good","Fair","Poor","Faulty","Not Working","Missing","Unknown"]}
   ],
-  "context": {"district": "Kampala", "facility": "Kasubi HC IV", "department": "Theatre"},
+  "context": {},
   "predefined_rows": ["Autoclave", "Microscope", "ECG Machine"],
   "caption": "13 litre autoclave, pressure gauge appears faulty",
   "ocr_text": "ABC MEDICAL  MED-1300  SN458923  13L  220V",
@@ -2541,7 +2559,7 @@ Drop unknown keys, coerce types, reject malformed values
 Apply to the record as proposals (never as approved values)
 ```
 
-Store raw responses in `processing_results` for audit and reprocessing without re-uploading.
+Store raw responses in `processing_results` for audit and reprocessing without re-uploading. Record rejected protected-key proposals before parser filtering; recheck captured policy and current value/provenance protection before cached replay and inside the application transaction. Changed ownership, policy, source values or provider selection invalidate an in-flight extraction snapshot. Validation retains the complete captured field list, including protected fields, so requiredness remains accurate.
 
 Documentation's separate, versioned schema (§80.3) carries sections/table cells, stable output keys, evidence references, unresolved requirements and conflicts. Never force narrative documents into record fields. Responses remain local proposals; validation and rendering do not grant approval.
 
@@ -2637,7 +2655,7 @@ Blood Pressure Machine  <-  "BP machine", "blood pressure monitor", "sphygmomano
 7. Context and defaults
 ```
 
-Reprocessing proposes changes to verified values; it never overwrites them.
+Reprocessing proposes changes only to eligible unprotected values (§31). Verified/manual/typed values and captured automatic/context values remain protected; rejected attempts remain visible in processing evidence without replacing their originals.
 
 ## 36. Queue, Cost & Batching Control
 

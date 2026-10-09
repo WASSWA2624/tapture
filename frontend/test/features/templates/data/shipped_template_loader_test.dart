@@ -39,6 +39,42 @@ void main() {
     await db.close();
   });
 
+  for (final String token in <String>['LOCAL_ADDRESS', 'local_address']) {
+    test('a shipped $token declaration keeps its configured source when copied', () async {
+      final ShippedTemplateLoader configured = ShippedTemplateLoader(templates: repo,
+          readAsset: (String path) async {
+        final String text = await File(path).readAsString();
+        if (!path.endsWith('_uni_universal_capture_and_records.json')) return text;
+        final Map<String, Object?> raw = jsonDecode(text) as Map<String, Object?>;
+        final Map first = (raw['templates']! as List).first as Map;
+        ((first['fields']! as List).first as Map)['auto_fill'] = token;
+        return jsonEncode(raw);
+      });
+      final TemplateDef copied = _ok(await configured.copyToProject(
+          templateKey: 'uni_general_observation', projectId: 'project-1', name: 'Address capture'));
+      expect(_field(copied, 'observation_category').autoFill, AutoFill.localAddress);
+      expect(_field(_ok(await repo.byId(copied.id))!, 'observation_category').autoFill,
+          AutoFill.localAddress);
+    });
+  }
+
+  test('a shipped local address on a non-text field is refused before a copy is stored', () async {
+    final ShippedTemplateLoader configured = ShippedTemplateLoader(templates: repo,
+        readAsset: (String path) async {
+      final String text = await File(path).readAsString();
+      if (!path.endsWith('_uni_universal_capture_and_records.json')) return text;
+      final Map<String, Object?> raw = jsonDecode(text) as Map<String, Object?>;
+      final Map first = (raw['templates']! as List).first as Map;
+      ((first['fields']! as List).first as Map).addAll(<String, Object?>{
+        'auto_fill': 'LOCAL_ADDRESS', 'type': 'number',
+      });
+      return jsonEncode(raw);
+    });
+    expect(await configured.copyToProject(templateKey: 'uni_general_observation',
+        projectId: 'project-1', name: 'Invalid'), isA<FailureResult<TemplateDef>>());
+    expect(await db.select(db.templates).get(), isEmpty);
+  });
+
   test(
     'a global copy is durable, editable and independent of shipped bytes',
     () async {

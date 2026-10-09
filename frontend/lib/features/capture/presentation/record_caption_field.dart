@@ -172,8 +172,8 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
           child: AppTextField(
             controller: _controller,
             label: localCopy.captureRecordCaption,
-            minLines: 3,
-            maxLines: 6,
+            minLines: 6,
+            maxLines: null,
             enabled: widget.enabled,
             textInputAction: TextInputAction.newline,
             onChanged: (String text) => _persist(text),
@@ -222,18 +222,9 @@ class _CaptionGuidePanel extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        localCopy.captureGuideCaption,
-                        style: AppText.label.copyWith(color: colors.onSurface),
-                      ),
-                      Text(
-                        localCopy.captureGuideItems(labels),
-                        style: AppText.body.copyWith(color: colors.onSurface),
-                      ),
-                    ],
+                  child: Text(
+                    localCopy.captureGuideItems(labels),
+                    style: AppText.caption.copyWith(color: colors.onSurface),
                   ),
                 ),
                 if (close != null)

@@ -37,6 +37,7 @@ import 'package:tapture/core/widgets/photo_source_sheet.dart';
 import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
+import 'package:tapture/features/capture/domain/auto_fields.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/capture_record_persistence.dart';
@@ -54,9 +55,12 @@ import 'package:tapture/features/capture/domain/save_and_analyse.dart';
 import 'package:tapture/features/capture/presentation/audio_recorder.dart';
 import 'package:tapture/features/capture/presentation/barcode_scanner_screen.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
+import 'package:tapture/features/capture/presentation/capture_device_providers.dart';
 import 'package:tapture/features/capture/presentation/capture_document_viewer.dart';
+import 'package:tapture/features/capture/presentation/capture_field_providers.dart';
 import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
 import 'package:tapture/features/capture/presentation/capture_guide_state.dart';
+import 'package:tapture/features/capture/presentation/capture_manual_form.dart';
 import 'package:tapture/features/capture/presentation/capture_photo_intake.dart';
 import 'package:tapture/features/capture/presentation/capture_providers.dart';
 import 'package:tapture/features/capture/presentation/capture_recovery_prompt.dart';
@@ -66,7 +70,6 @@ import 'package:tapture/features/capture/presentation/capture_transcribe_button.
 import 'package:tapture/features/capture/presentation/document_picker.dart';
 import 'package:tapture/features/capture/presentation/gallery_picker.dart';
 import 'package:tapture/features/capture/presentation/import_capture_document.dart';
-import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
 import 'package:tapture/features/capture/presentation/live_camera_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_crop_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_delete_action.dart';
@@ -80,6 +83,8 @@ import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/processing/processing.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/reference/reference.dart';
+import 'package:tapture/features/settings/settings.dart'
+    show currentOperatorProvider;
 import 'package:tapture/features/templates/templates.dart';
 import 'package:tapture/features/transcripts/transcripts.dart'
     show
@@ -390,6 +395,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     // With no project there is nothing to file under: the target fields say
     // so and offer the next step, and nothing else is drawn.
     final bool noProject = !_editing && projectId.isEmpty;
+    final Widget? targets = _editing
+        ? null
+        : CaptureTargetFields(
+            selectedProjectId: projectId,
+            templates: templates,
+            templatesLoaded: templateState.hasValue,
+            templateId: templateId,
+            onProjectSelected: _chooseProject,
+          );
     return AppPage(
       key: const ValueKey<String>('route-capture'),
       title: title,
@@ -481,17 +495,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
           // Free space: nothing while ample; a warning, or the stop with
           // Export, below the thresholds (task 012 step 21).
           CaptureStorageGuard(projectId: projectId),
-          // An edit keeps the record's project and template.
-          if (!_editing) ...<Widget>[
-            CaptureTargetFields(
-              selectedProjectId: projectId,
-              templates: templates,
-              templatesLoaded: templateState.hasValue,
-              templateId: templateId,
-              onProjectSelected: _chooseProject,
-            ),
-            if (!noProject) _blockGap,
-          ],
+          // An edit keeps its targets; new Capture shares selectors and guide.
+          if (!noProject && !guide.isEmpty)
+            CaptureGuideCard(guide: guide, targets: targets)
+          else
+            ?targets,
+          if (!noProject) _blockGap,
           if (!noProject)
             ..._evidence(
               session: session,
@@ -541,10 +550,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
             _holdsLiveTake(liveStatus, session));
 
     return <Widget>[
-      if (!guide.isEmpty) ...<Widget>[
-        CaptureGuideCard(guide: guide),
-        _blockGap,
-      ],
       PhotoTray(
         photos: _activePhotos(session),
         captions: session.captions,

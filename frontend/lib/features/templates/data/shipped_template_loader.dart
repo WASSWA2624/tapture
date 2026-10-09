@@ -420,6 +420,13 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
         localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
       );
     }
+    final AutoFill? source = _autoFillOf(_string(raw['auto_fill']));
+    if (source == AutoFill.localAddress && type != FieldType.text) {
+      throw ValidationFailure(
+        localizedMessage: Copy.messages.fieldSourceAddressNeedsText,
+        localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
+      );
+    }
     return FieldDef(
       fieldKey: _string(raw['field_key']),
       label: label,
@@ -433,7 +440,7 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
       requiredWhen: _optional(raw['required_when']),
       stickable: raw['stickable'] == true,
       refine: raw['refine'] == true,
-      autoFill: _autoFillOf(_string(raw['auto_fill'])),
+      autoFill: source,
       identity: false,
     );
   }
@@ -541,7 +548,7 @@ Requiredness _requirednessOf(String raw) {
 }
 
 AutoFill? _autoFillOf(String raw) {
-  return switch (raw) {
+  return switch (raw.trim().toLowerCase()) {
     'now' => AutoFill.now,
     'today' => AutoFill.today,
     'time' => AutoFill.time,
@@ -550,6 +557,7 @@ AutoFill? _autoFillOf(String raw) {
     'device' => AutoFill.device,
     'gps' => AutoFill.gps,
     'context' => AutoFill.context,
+    'local_address' => AutoFill.localAddress,
     _ => null,
   };
 }

@@ -192,10 +192,12 @@ final class OnlineStage {
       final ExtractionRequest request = ExtractionRequest(
         template: bundle.template.name,
         fields: <ExtractionField>[
-          for (final TemplateField field in bundle.fields)
-            if (field.type != 'consent') StageSupport.extractionField(field),
+          for (final TemplateField field in StageSupport.extractionFields(
+            bundle,
+          ))
+            StageSupport.extractionField(field),
         ],
-        context: StageSupport.stringMap(bundle.record.contextJson),
+        context: StageSupport.extractionContext(bundle),
         predefinedRows: <String>[
           for (final TemplateRow row in bundle.rows) row.label,
         ],

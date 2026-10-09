@@ -349,6 +349,8 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
             offlineStore.read(SettingKeys.storageRootPath),
       );
   final List<Override> overrides = <Override>[
+    captureClockProvider.overrideWithValue(clock),
+    captureDeviceIdProvider.overrideWithValue(profileId),
     appLockProvider.overrideWith((Ref ref) => lock),
     offlineStoreProvider.overrideWith((Ref _) => offlineStore),
     projectSettingsStoreProvider.overrideWith((Ref _) => offlineStore),
@@ -871,6 +873,15 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
                 ids: ids,
               );
       }),
+      if (!kIsWeb)
+        captureDeviceSourceProvider.overrideWith((Ref ref, String key) {
+          final CaptureDeviceSource source = CaptureDeviceSources(
+            clock: clock,
+            readFacts: () => platformFacts(clock: clock),
+          );
+          ref.onDispose(source.dispose);
+          return source;
+        }),
       captureRecordWriterProvider.overrideWith((Ref ref) {
         return CaptureRecordWriter(
           db: db,
@@ -879,6 +890,9 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
           ids: ids,
           operatorName: () => ref.read(currentOperatorProvider)?.name ?? '',
           autoFillDates: () => offlineStore.read(SettingKeys.autoFillDates),
+          localAddress: (CaptureSession session) => ref
+              .read(captureDeviceSourceProvider(session.storageKey))
+              .snapshot(session),
           relocation: ref.watch(fileRelocationProvider),
         );
       }),

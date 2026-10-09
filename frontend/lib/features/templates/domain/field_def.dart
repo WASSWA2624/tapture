@@ -317,6 +317,9 @@ enum AutoFill {
 
   /// Pinned context value.
   context,
+
+  /// An opted-in local network address, available only on native devices.
+  localAddress,
 }
 
 bool _listEquals(List<Object> left, List<Object> right) {

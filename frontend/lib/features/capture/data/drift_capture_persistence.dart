@@ -11,14 +11,14 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
-import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
+import 'package:tapture/features/capture/domain/owned_capture_persistence.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
 
 /// Drift and project-tree backed capture persistence used by production.
-final class DriftCapturePersistence implements CapturePersistence {
+final class DriftCapturePersistence implements OwnedCapturePersistence {
   /// Creates a durable capture store.
   DriftCapturePersistence({
     required sqlite.AppDatabase db,
@@ -52,7 +52,20 @@ final class DriftCapturePersistence implements CapturePersistence {
   }
 
   @override
-  Future<Result<void>> saveSession(CaptureSession session) async {
+  Future<Result<void>> saveSession(CaptureSession session) =>
+      _saveSession(session);
+
+  @override
+  Future<Result<void>> saveOwnedSession(
+    CaptureSession session, {
+    required ({String sessionId, String templateId, int? templateVersion})
+    owner,
+  }) => _saveSession(session, owner: owner);
+
+  Future<Result<void>> _saveSession(
+    CaptureSession session, {
+    ({String sessionId, String templateId, int? templateVersion})? owner,
+  }) async {
     try {
       final String payload = jsonEncode(session.toJson());
       if (!isCaptureSessionJson(payload) || session.projectId.isEmpty) {
@@ -65,30 +78,63 @@ final class DriftCapturePersistence implements CapturePersistence {
       // The project_id column holds the storage key: the project for a new
       // capture, `edit:<recordId>` for an edit (D6).
       final String key = session.storageKey;
-      final sqlite.CaptureSession? existing =
-          await (_db.select(_db.captureSessions)..where(
-                (sqlite.$CaptureSessionsTable row) => row.projectId.equals(key),
-              ))
-              .getSingleOrNull();
-      final DateTime now = _clock.nowUtc();
-      await _db
-          .into(_db.captureSessions)
-          .insertOnConflictUpdate(
-            sqlite.CaptureSessionsCompanion(
-              id: Value<String>(existing?.id ?? _ids.newId()),
-              projectId: Value<String>(key),
-              payloadJson: Value<String>(payload),
-              createdAt: Value<DateTime>(existing?.createdAt ?? now),
-              updatedAt: Value<DateTime>(now),
-              updatedByDevice: Value<String>(_deviceId),
-              rev: Value<int>((existing?.rev ?? 0) + 1),
-            ),
-          );
-      return const Success<void>(null);
+      return await _db.transaction(() async {
+        final sqlite.CaptureSession? existing =
+            await (_db.select(_db.captureSessions)..where(
+                  (sqlite.$CaptureSessionsTable row) =>
+                      row.projectId.equals(key),
+                ))
+                .getSingleOrNull();
+        if (owner != null) {
+          final CaptureSession? current =
+              existing != null && isCaptureSessionJson(existing.payloadJson)
+              ? CaptureSession.fromJson(
+                  Map<String, Object?>.from(
+                    jsonDecode(existing.payloadJson) as Map,
+                  ),
+                )
+              : null;
+          if (current == null ||
+              current.projectId != session.projectId ||
+              current.storageKey != session.storageKey ||
+              !_owns(current, owner) ||
+              !_owns(session, owner)) {
+            return FailureResult<void>(
+              StorageFailure(
+                localizedMessage: Copy.messages.captureChangeNotSaved,
+                localizedRecovery: Copy.messages.captureChangeNotSavedRecovery,
+              ),
+            );
+          }
+        }
+        final DateTime now = _clock.nowUtc();
+        await _db
+            .into(_db.captureSessions)
+            .insertOnConflictUpdate(
+              sqlite.CaptureSessionsCompanion(
+                id: Value<String>(existing?.id ?? _ids.newId()),
+                projectId: Value<String>(key),
+                payloadJson: Value<String>(payload),
+                createdAt: Value<DateTime>(existing?.createdAt ?? now),
+                updatedAt: Value<DateTime>(now),
+                updatedByDevice: Value<String>(_deviceId),
+                rev: Value<int>((existing?.rev ?? 0) + 1),
+              ),
+            );
+        return const Success<void>(null);
+      });
     } on Object catch (error) {
       return FailureResult<void>(storageFailureFrom(error));
     }
   }
+
+  bool _owns(
+    CaptureSession session,
+    ({String sessionId, String templateId, int? templateVersion}) owner,
+  ) =>
+      session.id == owner.sessionId &&
+      session.templateId == owner.templateId &&
+      session.templateVersion == owner.templateVersion;
 
   @override
   Future<Result<CaptureSession?>> loadSession(String key) async {

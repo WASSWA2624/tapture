@@ -14,6 +14,7 @@ import 'package:tapture/core/security/coordinate_removal_events.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
+import 'package:tapture/features/capture/domain/capture_device_source.dart';
 import 'package:tapture/features/capture/domain/capture_document_repository.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_photo_repository.dart';
@@ -22,6 +23,7 @@ import 'package:tapture/features/capture/domain/capture_reset.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/capture_session_key.dart';
 import 'package:tapture/features/capture/domain/document_draft.dart';
+import 'package:tapture/features/capture/domain/owned_capture_persistence.dart';
 import 'package:tapture/features/capture/domain/pending_audio_draft.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
@@ -33,12 +35,17 @@ import 'package:tapture/features/projects/projects.dart'
     show Project, ProjectSettings, projectRepositoryProvider;
 import 'package:tapture/features/quality/quality.dart'
     show qualityRepositoryProvider;
+import 'package:tapture/features/templates/templates.dart'
+    show FieldDef, TemplateDef, TemplateVersioning;
 import 'package:tapture/features/transcripts/transcripts.dart'
     show
         LiveTranscriptKey,
         LiveTranscriptStatus,
         TranscriptSessionPhase,
         liveTranscriptControllerProvider;
+
+import 'capture_device_providers.dart';
+import 'capture_template_providers.dart';
 
 /// Default photo repository stub — [main] / tests override.
 final Provider<PhotoRepository> photoRepositoryProvider =
@@ -64,6 +71,11 @@ final Provider<CaptureDocumentRepository?> captureDocumentRepositoryProvider =
 /// The clock capture stamps photos and session ids with. Tests freeze it.
 final Provider<Clock> captureClockProvider = Provider<Clock>(
   (Ref _) => const SystemClock(),
+);
+
+/// The app profile identifier supplied to the writer; absent before bootstrap.
+final Provider<String?> captureDeviceIdProvider = Provider<String?>(
+  (Ref _) => null,
 );
 
 /// Ids for new sessions, photos and audio, read from [captureClockProvider].
@@ -117,6 +129,19 @@ final class CaptureController extends Notifier<CaptureSession> {
 
   @override
   CaptureSession build() {
+    final CaptureDeviceSource source = ref.watch(
+      captureDeviceSourceProvider(key),
+    );
+    final StreamSubscription<void> readings = source.changes.listen((_) {
+      if (ref.mounted) ref.notifyListeners();
+    });
+    ref.onDispose(() => unawaited(readings.cancel()));
+    if (!CaptureSessionKey.isEdit(key)) {
+      ref.listen<AsyncValue<List<TemplateDef>>>(
+        captureProjectTemplatesProvider(key),
+        (_, _) => _bindDeviceSource(state),
+      );
+    }
     ref.listen<CoordinateRemoval?>(coordinateRemovalEventsProvider, (
       CoordinateRemoval? _,
       CoordinateRemoval? event,
@@ -153,15 +178,45 @@ final class CaptureController extends Notifier<CaptureSession> {
       ? photo.copyWith(clearCoordinates: true)
       : photo;
 
-  void _emit(CaptureSession session) =>
-      state = _withoutRemovedCoordinates(session);
+  void _emit(CaptureSession session) {
+    state = _withoutRemovedCoordinates(session);
+    _bindDeviceSource(state);
+  }
 
-  Future<Result<void>> _saveSession(CaptureSession session) async {
+  void _bindDeviceSource(CaptureSession session) {
+    final CaptureDeviceSource source = ref.read(
+      captureDeviceSourceProvider(key),
+    );
+    final List<TemplateDef>? templates = session.editing
+        ? null
+        : ref.read(captureProjectTemplatesProvider(key)).asData?.value;
+    final TemplateDef? template = templates
+        ?.where((TemplateDef candidate) => candidate.id == session.templateId)
+        .firstOrNull;
+    final TemplateDef? shape = template == null
+        ? null
+        : session.templateVersion == null
+        ? template
+        : TemplateVersioning.shapeFor(template, session.templateVersion!);
+    source.bind(session, shape?.fields ?? const <FieldDef>[]);
+  }
+
+  Future<Result<void>> _saveSession(
+    CaptureSession session, {
+    ({String sessionId, String templateId, int? templateVersion})? owner,
+  }) async {
     while (true) {
       final int revision = _coordinateRemovalRevision;
-      final Result<void> saved = await _persistence.saveSession(
-        _withoutRemovedCoordinates(session),
-      );
+      final CapturePersistence persistence = _persistence;
+      final CaptureSession clean = _withoutRemovedCoordinates(session);
+      final Result<void> saved;
+      if (owner == null) {
+        saved = await persistence.saveSession(clean);
+      } else if (persistence is OwnedCapturePersistence) {
+        saved = await persistence.saveOwnedSession(clean, owner: owner);
+      } else {
+        return _changeNotSaved();
+      }
       if (saved is FailureResult<void> ||
           revision == _coordinateRemovalRevision) {
         return saved;
@@ -735,6 +790,7 @@ final class CaptureController extends Notifier<CaptureSession> {
     String fieldKey,
     Object? value, {
     String source = 'TYPED',
+    ({String sessionId, String templateId, int? templateVersion})? owner,
   }) {
     return _store((CaptureSession current) {
       final Map<String, Object?> values = Map<String, Object?>.of(
@@ -750,7 +806,7 @@ final class CaptureController extends Notifier<CaptureSession> {
         lookupRows: Map<String, String>.of(current.lookupRows)
           ..remove(fieldKey),
       );
-    });
+    }, owner: owner);
   }
 
   /// Fills only unverified values and remembers each field's own source row.
@@ -889,27 +945,41 @@ final class CaptureController extends Notifier<CaptureSession> {
   /// A resume or another edit that lands first is kept; this change is
   /// applied on top of it instead of restoring a stale copy.
   Future<Result<void>> _store(
-    CaptureSession Function(CaptureSession current) build,
-  ) async {
+    CaptureSession Function(CaptureSession current) build, {
+    ({String sessionId, String templateId, int? templateVersion})? owner,
+  }) async {
     for (var attempt = 0; attempt < 8; attempt++) {
       final CaptureSession base = state;
+      if (!_owns(base, owner)) return _changeNotSaved();
       final CaptureSession next = build(base);
-      final Result<void> saved = await _saveSession(next);
+      final Result<void> saved = await _saveSession(next, owner: owner);
       if (saved is FailureResult<void>) {
         return saved;
       }
+      if (!_owns(state, owner)) return _changeNotSaved();
       if (identical(state, base)) {
         _emit(next);
         return const Success<void>(null);
       }
     }
-    return FailureResult<void>(
-      StorageFailure(
-        localizedMessage: Copy.messages.captureChangeNotSaved,
-        localizedRecovery: Copy.messages.captureChangeNotSavedRecovery,
-      ),
-    );
+    return _changeNotSaved();
   }
+
+  bool _owns(
+    CaptureSession session,
+    ({String sessionId, String templateId, int? templateVersion})? owner,
+  ) =>
+      owner == null ||
+      (session.id == owner.sessionId &&
+          session.templateId == owner.templateId &&
+          session.templateVersion == owner.templateVersion);
+
+  Result<void> _changeNotSaved() => FailureResult<void>(
+    StorageFailure(
+      localizedMessage: Copy.messages.captureChangeNotSaved,
+      localizedRecovery: Copy.messages.captureChangeNotSavedRecovery,
+    ),
+  );
 
   /// Raw save path.
   Future<Result<String>> saveRaw(
@@ -1065,10 +1135,12 @@ final StorageFailure _noRecords = StorageFailure(
 
 final class _MemoryPhotoRepository implements PhotoRepository {
   @override
-  Stream<List<DeletedEntity>> watchDeleted() => Stream<List<DeletedEntity>>.value(const <DeletedEntity>[]);
+  Stream<List<DeletedEntity>> watchDeleted() =>
+      Stream<List<DeletedEntity>>.value(const <DeletedEntity>[]);
 
   @override
-  Future<Result<void>> restore(String id) async => const FailureResult<void>(CancelledFailure());
+  Future<Result<void>> restore(String id) async =>
+      const FailureResult<void>(CancelledFailure());
 
   final Map<String, PhotoAsset> _rows = <String, PhotoAsset>{};
 
@@ -1099,7 +1171,7 @@ final class _MemoryPhotoRepository implements PhotoRepository {
   }
 }
 
-final class _MemoryCapturePersistence implements CapturePersistence {
+final class _MemoryCapturePersistence implements OwnedCapturePersistence {
   _MemoryCapturePersistence(this._photos);
 
   final PhotoRepository _photos;
@@ -1132,6 +1204,40 @@ final class _MemoryCapturePersistence implements CapturePersistence {
 
   @override
   Future<Result<void>> saveSession(CaptureSession session) async {
+    _sessions[session.storageKey] = session;
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<void>> saveOwnedSession(
+    CaptureSession session, {
+    required ({String sessionId, String templateId, int? templateVersion})
+    owner,
+  }) async {
+    final CaptureSession? current = _sessions[session.storageKey];
+    if (session.projectId.isEmpty ||
+        current == null ||
+        current.projectId != session.projectId ||
+        current.storageKey != session.storageKey ||
+        (
+              sessionId: current.id,
+              templateId: current.templateId,
+              templateVersion: current.templateVersion,
+            ) !=
+            owner ||
+        (
+              sessionId: session.id,
+              templateId: session.templateId,
+              templateVersion: session.templateVersion,
+            ) !=
+            owner) {
+      return FailureResult<void>(
+        StorageFailure(
+          localizedMessage: Copy.messages.captureChangeNotSaved,
+          localizedRecovery: Copy.messages.captureChangeNotSavedRecovery,
+        ),
+      );
+    }
     _sessions[session.storageKey] = session;
     return const Success<void>(null);
   }

@@ -9,25 +9,32 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/barcode/barcode_scanner_service.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/location/location_service.dart';
+import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
+import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/fields/app_date_field.dart';
 import 'package:tapture/core/widgets/fields/field_editor.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/capture_session_key.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
+import 'package:tapture/features/capture/presentation/capture_manual_form.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
 import 'package:tapture/features/capture/presentation/document_picker.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
@@ -36,6 +43,7 @@ import 'package:tapture/features/context/context.dart'
     show contextRepositoryProvider;
 import 'package:tapture/features/context/domain/context_state.dart';
 import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/settings/settings.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import '../../../support/a11y_matchers.dart';
@@ -51,6 +59,172 @@ import '../../../support/tracked_photo_file.dart';
 import '../../projects/fakes/fake_project_repository.dart';
 
 void main() {
+  testWidgets(
+    'Manual previews use injected app identity clock operator and committed date settings without location reads',
+    (WidgetTester tester) async {
+      final DateTime now = DateTime.utc(2026, 10, 9, 9, 30);
+      final SettingsStore preferences = SettingsStore.fake();
+      final List<String> locationCalls = <String>[];
+      final _Capture capture = await _Capture.open(
+        tester,
+        templates: <TemplateDef>[
+          aTemplate(
+            id: 't1',
+            projectId: 'p1',
+            fields: const <FieldDef>[
+              FieldDef(
+                fieldKey: 'captured_date',
+                label: 'Capture date',
+                type: FieldType.date,
+                group: 'record_admin',
+                inputMode: InputMode.auto,
+                requiredness: Requiredness.required,
+              ),
+              FieldDef(
+                fieldKey: 'device_id',
+                label: 'App device ID',
+                type: FieldType.text,
+                group: 'record_admin',
+                inputMode: InputMode.auto,
+                requiredness: Requiredness.required,
+              ),
+              FieldDef(
+                fieldKey: 'operator_business',
+                label: 'Operator',
+                type: FieldType.text,
+                autoFill: AutoFill.operator,
+                requiredness: Requiredness.required,
+              ),
+              FieldDef(
+                fieldKey: 'gps_latitude',
+                label: 'Latitude',
+                type: FieldType.gpsLocation,
+                autoFill: AutoFill.gps,
+                requiredness: Requiredness.required,
+              ),
+            ],
+          ),
+        ],
+        location: LocationService.fake(calls: locationCalls),
+        extraOverrides: <Override>[
+          captureClockProvider.overrideWithValue(FixedClock(now)),
+          captureDeviceIdProvider.overrideWithValue('profile-app-id'),
+          currentOperatorProvider.overrideWithValue(
+            const OperatorProfile(name: '  Field worker  ', initials: 'FW'),
+          ),
+          projectSettingsStoreProvider.overrideWithValue(preferences),
+        ],
+      );
+      final List<String> before = List<String>.of(locationCalls);
+      await capture.openManualForm();
+      await _searchForm(tester, 'captured_date');
+      final AppDateField date = tester.widget<AppDateField>(
+        find.byType(AppDateField),
+      );
+      final DateTime local = now.toLocal();
+      expect(date.value, DateTime(local.year, local.month, local.day));
+      expect(date.enabled, isFalse);
+      expect(
+        find.widgetWithText(AppListTile, Copy.captureFieldFilledAtSave),
+        findsOneWidget,
+      );
+      (await preferences.write(SettingKeys.autoFillDates, false)).getOrThrow();
+      await tester.pumpAndSettle();
+      expect(find.byType(AppDateField), findsNothing);
+      expect(
+        find.widgetWithText(AppListTile, Copy.captureFieldUnavailable),
+        findsOneWidget,
+      );
+      await _searchForm(tester, 'device_id');
+      expect(find.text('profile-app-id'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('capture-field-correct-device_id')),
+        findsNothing,
+      );
+      await _searchForm(tester, 'operator_business');
+      expect(find.text('Field worker'), findsOneWidget);
+      await _searchForm(tester, 'gps_latitude');
+      expect(
+        find.widgetWithText(AppListTile, Copy.captureFieldUnavailable),
+        findsOneWidget,
+      );
+      expect(find.byType(FieldEditor), findsNothing);
+      expect(locationCalls, before);
+      expect(capture.session.values, isEmpty);
+      expect(capture.records.persisted, isEmpty);
+    },
+  );
+
+  testWidgets(
+    'Manual source preview resolves the pinned older shape and unknown history remains empty',
+    (WidgetTester tester) async {
+      final TemplateDef older = aTemplate(
+        id: 't1',
+        projectId: 'p1',
+        fields: const <FieldDef>[
+          FieldDef(
+            fieldKey: 'captured_date',
+            label: 'Pinned capture date',
+            type: FieldType.date,
+            group: 'record_admin',
+            inputMode: InputMode.auto,
+            requiredness: Requiredness.required,
+          ),
+        ],
+      );
+      final TemplateDef current = TemplateVersioning.remember(
+        from: older,
+        to: older.copyWith(
+          version: 2,
+          fields: const <FieldDef>[
+            FieldDef(
+              fieldKey: 'captured_date',
+              label: 'Current manual value',
+              type: FieldType.text,
+              inputMode: InputMode.manualOnly,
+              requiredness: Requiredness.required,
+            ),
+          ],
+        ),
+      );
+      final _Capture capture = await _Capture.open(
+        tester,
+        templates: <TemplateDef>[current],
+      );
+      final CaptureController controller = capture._container.read(
+        captureControllerProvider('p1').notifier,
+      );
+      (await controller.setTemplate('t1', version: 1)).getOrThrow();
+      await tester.pumpAndSettle();
+      await capture.openManualForm();
+      expect(find.text('Current manual value'), findsNothing);
+      expect(
+        tester.widget<AppDateField>(find.byType(AppDateField)).label,
+        'Pinned capture date',
+      );
+      expect(
+        find.widgetWithText(AppListTile, Copy.captureFieldFilledAtSave),
+        findsOneWidget,
+      );
+      await capture.dismissManualForm();
+      (await controller.setTemplate('t1', version: 0)).getOrThrow();
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<AppPage>(find.byType(AppPage))
+            .overflow
+            .where(
+              (AppOverflowAction action) =>
+                  action.key == const ValueKey<String>('capture-manual-form'),
+            ),
+        isEmpty,
+      );
+      expect(find.byType(CaptureManualForm), findsNothing);
+      expect(find.byType(FieldEditor), findsNothing);
+      expect(find.byType(AppDateField), findsNothing);
+      expect(find.byType(InlineFieldsSection), findsNothing);
+    },
+  );
   group('nothing is mandatory but one piece of evidence', () {
     testWidgets('a project with no templates can add a photo and save raw', (
       WidgetTester tester,
@@ -141,6 +315,53 @@ void main() {
   });
 
   group('manual form', () {
+    testWidgets(
+      'search uses the owning draft pinned version and preserves its keys',
+      (WidgetTester tester) async {
+        final TemplateDef original = aTemplate(
+          id: 't1',
+          projectId: 'p1',
+          fields: const <FieldDef>[_requiredSerial],
+        );
+        final TemplateDef latest = TemplateVersioning.remember(
+          from: original,
+          to: original.copyWith(
+            version: 2,
+            fields: const <FieldDef>[
+              FieldDef(
+                fieldKey: 'new_key',
+                label: 'New field',
+                type: FieldType.text,
+                requiredness: Requiredness.required,
+              ),
+            ],
+          ),
+        );
+        final _Capture capture = await _Capture.open(
+          tester,
+          templates: <TemplateDef>[latest],
+        );
+        await capture._container
+            .read(captureControllerProvider('p1').notifier)
+            .setTemplate('t1', version: 1);
+        await tester.pumpAndSettle();
+        await capture.openManualForm();
+        final Finder search = find.descendant(
+          of: find.byType(AppSearchField),
+          matching: find.byType(TextField),
+        );
+        await tester.enterText(search, 'serial');
+        await tester.pumpAndSettle(AppConstants.interaction.debounce);
+        expect(_fieldInput('serial'), findsOneWidget);
+        expect(_fieldInput('new_key'), findsNothing);
+        await tester.enterText(_fieldInput('serial'), 'Pinned value');
+        await tester.pumpAndSettle();
+        expect(capture.session.templateVersion, 1);
+        expect((await capture.stored())?.values['serial'], 'Pinned value');
+        expect((await capture.stored())?.valueSources['serial'], 'TYPED');
+      },
+    );
+
     testWidgets('required-only template shows no More fields', (
       WidgetTester tester,
     ) async {
@@ -577,7 +798,18 @@ void main() {
 
     expect(find.byType(InlineFieldsSection), findsNothing);
     await capture.openManualForm();
-    await tester.ensureVisible(_fieldInput('f11'));
+    await tester.scrollUntilVisible(
+      _fieldInput('f11'),
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byKey(
+              const ValueKey<String>('capture-manual-form-scroll'),
+            ),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
     await tester.enterText(_fieldInput('f11'), 'Last field');
     await tester.pumpAndSettle();
     expect((await capture.stored())?.values['f11'], 'Last field');
@@ -716,10 +948,26 @@ void main() {
       'SN-2',
     );
     expect((await capture.stored())?.values['serial'], 'SN-1');
-    expect(find.textContaining('Session write failed'), findsOneWidget);
+    expect(find.byType(AppErrorState), findsOneWidget);
+    expect(find.textContaining('Session write failed'), findsWidgets);
+    final Finder searchInput = find.descendant(
+      of: find.byType(AppSearchField),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(searchInput, 'no match');
+    await tester.pumpAndSettle(AppConstants.interaction.debounce);
+    expect(_fieldInput('serial'), findsNothing);
+    expect(find.text(Copy.fieldsNoMatch), findsOneWidget);
+    await tester.enterText(searchInput, 'serial');
+    await tester.pumpAndSettle(AppConstants.interaction.debounce);
+    expect(
+      tester.widget<TextField>(_fieldInput('serial')).controller?.text,
+      'SN-2',
+    );
+    expect(find.byType(AppErrorState), findsOneWidget);
     store.refusesWrites = false;
-    await tester.enterText(_fieldInput('serial'), 'SN-2 ');
-    await tester.enterText(_fieldInput('serial'), 'SN-2');
+    await tester.ensureVisible(find.text(Copy.tryAgain));
+    await tester.tap(find.text(Copy.tryAgain));
     await tester.pumpAndSettle();
     expect((await capture.stored())?.values['serial'], 'SN-2');
   });
@@ -796,7 +1044,69 @@ void main() {
         expect(find.byType(PhotoTray), findsOneWidget);
         await capture.openManualForm();
         expect(find.byType(AppBottomSheet), findsOneWidget);
-        await tester.ensureVisible(_fieldInput('serial'));
+        final Finder searchInput = find.descendant(
+          of: find.byType(AppSearchField),
+          matching: find.byType(TextField),
+        );
+        await tester.ensureVisible(searchInput);
+        await tester.enterText(searchInput, ' SERIAL ');
+        await tester.pumpAndSettle(AppConstants.interaction.debounce);
+        final LocalizedCopy localCopy = Copy.of(
+          tester.element(find.byType(CaptureManualForm)),
+        );
+        expect(
+          find.byWidgetPredicate(
+            (Widget widget) =>
+                widget is Semantics &&
+                widget.properties.liveRegion == true &&
+                widget.properties.label == localCopy.fieldsCount(1),
+          ),
+          findsOneWidget,
+        );
+        await tester.enterText(searchInput, 'unknown field');
+        await tester.pumpAndSettle(AppConstants.interaction.debounce);
+        final Finder formScroll = find
+            .descendant(
+              of: find.byKey(
+                const ValueKey<String>('capture-manual-form-scroll'),
+              ),
+              matching: find.byWidgetPredicate(
+                (Widget widget) =>
+                    widget is Scrollable &&
+                    widget.axisDirection == AxisDirection.down,
+              ),
+            )
+            .first;
+        await tester.scrollUntilVisible(
+          find.text(localCopy.fieldsNoMatch),
+          tester.getSize(formScroll).height / 2,
+          scrollable: formScroll,
+        );
+        expect(find.text(localCopy.fieldsNoMatch), findsOneWidget);
+        expect(find.text(localCopy.searchNoMatchMessage), findsOneWidget);
+        expect(
+          find.byWidgetPredicate(
+            (Widget widget) =>
+                widget is Semantics &&
+                widget.properties.liveRegion == true &&
+                widget.properties.label == localCopy.fieldsCount(0),
+          ),
+          findsOneWidget,
+        );
+        await tester.scrollUntilVisible(
+          searchInput,
+          -tester.getSize(formScroll).height / 2,
+          scrollable: formScroll,
+        );
+        await tester.tap(
+          find.byTooltip(localCopy.clearField(localCopy.captureSearchFields)),
+        );
+        await tester.pumpAndSettle(AppConstants.interaction.debounce);
+        await tester.scrollUntilVisible(
+          _fieldInput('serial'),
+          tester.getSize(formScroll).height / 2,
+          scrollable: formScroll,
+        );
         await tester.enterText(_fieldInput('serial'), 'SN-42');
         await tester.pumpAndSettle();
         expect((await capture.stored())?.values['serial'], 'SN-42');
@@ -870,6 +1180,16 @@ final class _Navigation extends NavigatorObserver {
 }
 
 /// A capture page over in-memory stores.
+Future<void> _searchForm(WidgetTester tester, String query) async {
+  final Finder input = find.descendant(
+    of: find.byType(AppSearchField),
+    matching: find.byType(TextField),
+  );
+  await tester.ensureVisible(input);
+  await tester.enterText(input, query);
+  await tester.pumpAndSettle(AppConstants.interaction.debounce);
+}
+
 final class _Capture {
   _Capture._(this._tester, this.photos, this.records, this.navigation);
 
@@ -1038,7 +1358,7 @@ final class _Capture {
   }
 
   Future<void> dismissManualForm() async {
-    Navigator.of(_tester.element(find.byType(InlineFieldsSection))).pop();
+    Navigator.of(_tester.element(find.byType(CaptureManualForm))).pop();
     await _tester.pumpAndSettle();
   }
 }

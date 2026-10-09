@@ -117,7 +117,13 @@ final class TemplateVersioning {
       ..._historyOf(from),
     };
     history.putIfAbsent(from.version, () => from);
-    return to.copyWith(detection: _writeHistory(to.detection, history));
+    return to.copyWith(
+      detection: _writeHistory(
+        to.detection,
+        history,
+        original: <String, Object?>{..._rawHistory(to), ..._rawHistory(from)},
+      ),
+    );
   }
 
   /// The field list as it was at [capturedVersion], or null when unknown.
@@ -315,17 +321,24 @@ Map<int, TemplateDef> _historyOf(TemplateDef template) {
     if (version == null || value is! Map) {
       return;
     }
-    history[version] = _shapeFrom(template, version, value);
+    try {
+      final TemplateDef? shape = _shapeFrom(template, version, value);
+      if (shape != null) history[version] = shape;
+    } on Object {
+      // Unreadable history remains stored, but cannot authorize a field write.
+    }
   });
   return history;
 }
 
 Map<String, Object?> _writeHistory(
   Map<String, Object?> detection,
-  Map<int, TemplateDef> history,
-) {
+  Map<int, TemplateDef> history, {
+  required Map<String, Object?> original,
+}) {
   final Map<String, Object?> next = Map<String, Object?>.of(detection);
   next[_versionsKey] = <String, Object?>{
+    ...original,
     for (final MapEntry<int, TemplateDef> entry in history.entries)
       '${entry.key}': <String, Object?>{
         ...TemplateJson.encode(entry.value),
@@ -338,13 +351,23 @@ Map<String, Object?> _writeHistory(
   return next;
 }
 
-TemplateDef _shapeFrom(
+Map<String, Object?> _rawHistory(TemplateDef template) {
+  final Object? raw = template.detection[_versionsKey];
+  return raw is Map
+      ? <String, Object?>{
+          for (final MapEntry<Object?, Object?> entry in raw.entries)
+            if (entry.key is String) entry.key! as String: entry.value,
+        }
+      : <String, Object?>{};
+}
+
+TemplateDef? _shapeFrom(
   TemplateDef current,
   int version,
   Map<Object?, Object?> raw,
 ) {
   if (raw.containsKey('schema_version')) {
-    final Result<TemplateDef> decoded = TemplateJson.decode(
+    final Result<TemplateDef> decoded = TemplateJson.decodeStoredShape(
       raw,
       projectId: current.projectId ?? '',
     );
@@ -367,6 +390,7 @@ TemplateDef _shapeFrom(
         ],
       );
     }
+    return null;
   }
   // Read the compact snapshots written before task 009's durable migration.
   final Object? fields = raw['fields'];

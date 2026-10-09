@@ -10,6 +10,7 @@ import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/captions.dart';
+import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/processing/data/processing_findings.dart';
@@ -60,6 +61,125 @@ void main() {
         deviceId: 'device-a',
         ids: fixture.ids,
       )).getOrThrow();
+
+  test(
+    'source policy filters targets and structured context without rewriting approved evidence',
+    () async {
+      await fixture.addField('captured_date', inputMode: 'AUTO');
+      await fixture.addField('operator_name', inputMode: 'MANUAL_ONLY');
+      await fixture.addField('room', contextLevel: 1);
+      await fixture.addField('pin', stickable: true, order: 4);
+      await fixture.setContext(
+        '{"captured_date":"2026-10-09","operator_name":"Operator",'
+        '"room":"Workshop","pin":"Bench"}',
+      );
+      final Photo photo = await fixture.db
+          .select(fixture.db.photos)
+          .getSingle();
+      await caption(photo.id, 'Operator Workshop 2026-10-09');
+      final _ObservedService service = _ObservedService(
+        () async {},
+        raw: reply,
+      );
+      final ProcessingStageWorker worker = fixture.worker(
+        provider: service,
+        ocr: CountingOcr('Operator Workshop 2026-10-09'),
+      );
+      await prepare(worker);
+      await worker.perform(JobStage.online, job);
+      final ExtractFieldsRequest request = service.requests.single;
+      expect(request.fieldLabels, <String>['serial', 'pin']);
+      expect(request.fieldSchema.map((field) => field['key']), <String>[
+        'serial',
+        'pin',
+      ]);
+      expect(request.context, <String, String>{'pin': 'Bench'});
+      expect(
+        request.sources
+            .where((source) => source['kind'] == 'caption')
+            .single['text'],
+        'Operator Workshop 2026-10-09',
+      );
+      expect(request.imagePaths, hasLength(1));
+      expect(
+        (await fixture.db.select(fixture.db.captions).getSingle()).textRaw,
+        'Operator Workshop 2026-10-09',
+      );
+    },
+  );
+
+  test(
+    'a source-policy change during the request retains the response and rejects application',
+    () async {
+      final _ObservedService service = _ObservedService(() async {
+        await fixture.db
+            .update(fixture.db.templateFields)
+            .write(
+              const TemplateFieldsCompanion(inputMode: Value<String>('AUTO')),
+            );
+      }, raw: reply);
+      final ProcessingStageWorker worker = fixture.worker(
+        provider: service,
+        ocr: CountingOcr('GRUNDFOS'),
+      );
+      await prepare(worker);
+      await expectLater(
+        worker.perform(JobStage.online, job),
+        throwsA(isA<CancelledFailure>()),
+      );
+      final ProcessingResult response =
+          (await fixture.db.select(fixture.db.processingResults).get())
+              .singleWhere((row) => row.rawResponse == reply);
+      expect(response.parsedOk, isFalse);
+      await worker.perform(JobStage.validate, job);
+      expect(await fixture.db.select(fixture.db.recordFields).get(), isEmpty);
+      expect(
+        (await fixture.db.select(fixture.db.processing).getSingle()).rejections,
+        contains('serial is protected from extraction'),
+      );
+    },
+  );
+
+  test(
+    'an automatic value completed during the request closes its target',
+    () async {
+      final _ObservedService service = _ObservedService(() async {
+        (await insertRecordField(
+          fixture.db,
+          row: RecordFieldsCompanion(
+            recordId: Value<String>(fixture.record.id),
+            fieldKey: const Value<String>('serial'),
+            valueRaw: const Value<String>('SN-local'),
+            source: const Value<String>('AUTO'),
+          ),
+          clock: fixture.clock,
+          deviceId: 'device-a',
+          ids: fixture.ids,
+        )).getOrThrow();
+      }, raw: reply);
+      final ProcessingStageWorker worker = fixture.worker(
+        provider: service,
+        ocr: CountingOcr('GRUNDFOS'),
+      );
+      await prepare(worker);
+      await expectLater(
+        worker.perform(JobStage.online, job),
+        throwsA(isA<CancelledFailure>()),
+      );
+      await worker.perform(JobStage.validate, job);
+      final RecordField stored = await fixture.db
+          .select(fixture.db.recordFields)
+          .getSingle();
+      expect(stored.valueRaw, 'SN-local');
+      expect(stored.source, 'AUTO');
+      expect(
+        (await fixture.db.select(fixture.db.processingResults).get()).any(
+          (row) => row.rawResponse == reply,
+        ),
+        isTrue,
+      );
+    },
+  );
 
   test(
     'real proxy malformed output is saved before one bounded repair',

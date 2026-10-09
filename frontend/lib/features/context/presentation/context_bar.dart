@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
-import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
@@ -22,11 +21,11 @@ import 'pinned_fields_sheet.dart';
 
 /// Always-visible breadcrumb of the current context (spec §20.1).
 ///
-/// Levels read as a path. A wider window wraps them and puts a chevron
-/// between levels. A phone keeps every chip on one scrolling line.
+/// Levels read as a path with a chevron between them at every width.
+/// Each trail wraps on a wider window and scrolls horizontally on a phone.
 ///
-/// Levels come first, then pins, then the project's presets, each applied
-/// in one tap. Elsewhere the bar shows only what is set and is hidden while
+/// Hierarchy and its commands come first; pins have their own second trail.
+/// Presets apply in one tap. Elsewhere the bar shows only what is set and is hidden while
 /// nothing is. On Capture, [showsEmptyLevels] also lists every unset level
 /// and pinnable field so a first value can be set in place (FBK0000160, D10).
 class ContextBar extends ConsumerWidget {
@@ -55,75 +54,129 @@ class ContextBar extends ConsumerWidget {
     final List<TemplateDef> templates =
         ref.watch(contextTemplatesProvider(projectId)).asData?.value ??
         const <TemplateDef>[];
-    final List<AppChip> levels = _levelChips(context, projectId, state);
-    final List<AppChip> pins = _pinChips(context, projectId, state, templates);
-    if (levels.isEmpty && pins.isEmpty && !showsEmptyLevels) {
-      return const SizedBox.shrink();
-    }
     final List<ContextPreset> presets = state.levels.isEmpty
         ? const <ContextPreset>[]
         : ref.watch(contextPresetsProvider(projectId)).asData?.value ??
               const <ContextPreset>[];
     void open(String path) => unawaited(GoRouter.of(context).push(path));
     final bool compact = context.sizeClass == SizeClass.compact;
-    final List<Widget> trail = <Widget>[
-      for (int i = 0; i < levels.length; i++) ...<Widget>[
-        if (i > 0 && !compact) const _ContextCrumb(),
-        levels[i],
-      ],
-      ...pins,
-      for (final ContextPreset preset in presets)
-        AppChip(
-          key: ValueKey<String>('context-bar-preset-${preset.id}'),
-          label: preset.name,
-          icon: AppIcons.preset,
-          selected: preset.isAppliedTo(state),
-          onTap: () => unawaited(
-            applyContextPreset(
-              context,
-              ref,
-              projectId: projectId,
-              preset: preset,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final double available = constraints.maxWidth - Space.x3 * 2;
+        final double width = available.clamp(
+          Sizes.minTapTarget,
+          Sizes.contextChipMaxWidth,
+        );
+        final List<AppChip> levels = _levelChips(
+          context,
+          projectId,
+          state,
+          width,
+        );
+        final List<AppChip> pins = _pinChips(
+          context,
+          projectId,
+          state,
+          templates,
+          width,
+        );
+        if (levels.isEmpty && pins.isEmpty && !showsEmptyLevels) {
+          return const SizedBox.shrink();
+        }
+        final List<Widget> commands = <Widget>[
+          if (showsEmptyLevels)
+            AppChip(
+              key: ValueKey<String>(
+                state.levels.isEmpty
+                    ? 'context-bar-set-up'
+                    : 'context-bar-manage',
+              ),
+              label: state.levels.isEmpty
+                  ? localCopy.contextSetUp
+                  : localCopy.contextManage,
+              icon: AppIcons.context,
+              comfortable: true,
+              wrapLabel: true,
+              maxLabelWidth: width,
+              onTap: () => open(RoutePaths.projectContext(projectId)),
+            ),
+          for (final ContextPreset preset in presets)
+            AppChip(
+              key: ValueKey<String>('context-bar-preset-${preset.id}'),
+              label: preset.name,
+              icon: AppIcons.preset,
+              selected: preset.isAppliedTo(state),
+              comfortable: true,
+              wrapLabel: true,
+              maxLabelWidth: width,
+              onTap: () => unawaited(
+                applyContextPreset(
+                  context,
+                  ref,
+                  projectId: projectId,
+                  preset: preset,
+                ),
+              ),
+            ),
+          if (state.levels.isNotEmpty)
+            AppChip(
+              key: const ValueKey<String>('context-bar-presets'),
+              label: localCopy.contextPresetsChip,
+              icon: AppIcons.preset,
+              comfortable: true,
+              wrapLabel: true,
+              maxLabelWidth: width,
+              onTap: () => open(RoutePaths.projectContextPresets(projectId)),
+            ),
+        ];
+        final List<Widget> trail = <Widget>[
+          for (int i = 0; i < levels.length; i++) ...<Widget>[
+            if (i > 0) const _ContextCrumb(),
+            levels[i],
+          ],
+          if (levels.isNotEmpty && commands.isNotEmpty)
+            const SizedBox(width: Space.x4),
+          ...commands,
+        ];
+        return DecoratedBox(
+          key: const ValueKey<String>('context-bar'),
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            border: Border(
+              bottom: BorderSide(
+                color: context.colors.outline,
+                width: Space.x0 / 2,
+              ),
             ),
           ),
-        ),
-      if (state.levels.isNotEmpty)
-        AppChip(
-          key: const ValueKey<String>('context-bar-presets'),
-          label: localCopy.contextPresetsChip,
-          icon: AppIcons.preset,
-          onTap: () => open(RoutePaths.projectContextPresets(projectId)),
-        ),
-      if (showsEmptyLevels)
-        AppChip(
-          key: ValueKey<String>(
-            state.levels.isEmpty ? 'context-bar-set-up' : 'context-bar-manage',
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Space.x3,
+              vertical: Space.x1,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                if (trail.isNotEmpty)
+                  _ContextTrail(
+                    key: const ValueKey<String>('context-bar-hierarchy'),
+                    scrollable: compact,
+                    children: trail,
+                  ),
+                if (pins.isNotEmpty) ...<Widget>[
+                  if (trail.isNotEmpty) const SizedBox(height: Space.x1),
+                  _ContextTrail(
+                    key: const ValueKey<String>('context-bar-pins'),
+                    scrollable: compact,
+                    children: pins,
+                  ),
+                ],
+              ],
+            ),
           ),
-          label: state.levels.isEmpty
-              ? localCopy.contextSetUp
-              : localCopy.contextManage,
-          icon: AppIcons.context,
-          onTap: () => open(RoutePaths.projectContext(projectId)),
-        ),
-    ];
-    return DecoratedBox(
-      key: const ValueKey<String>('context-bar'),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: context.colors.outline,
-            width: Space.x0 / 2,
-          ),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Space.x3,
-          vertical: Space.x1,
-        ),
-        child: _ContextTrail(scrollable: compact, children: trail),
-      ),
+        );
+      },
     );
   }
 
@@ -133,14 +186,15 @@ class ContextBar extends ConsumerWidget {
     BuildContext context,
     String projectId,
     ContextState state,
+    double maxWidth,
   ) {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final List<ContextLevel> levels = orderedLevels(state);
-    final List<String> shown = _truncateMiddle(<String>[
+    final List<String> shown = <String>[
       for (final ContextLevel level in levels)
         state.values[level.fieldKey] ?? '',
-    ], narrow: context.sizeClass == SizeClass.compact);
+    ];
     return <AppChip>[
       for (int i = 0; i < levels.length; i++)
         if (showsEmptyLevels || shown[i].isNotEmpty)
@@ -153,6 +207,15 @@ class ContextBar extends ConsumerWidget {
                     shown[i],
                   ),
             selected: shown[i].isNotEmpty,
+            comfortable: true,
+            wrapLabel: true,
+            maxLabelWidth: maxWidth,
+            semanticLabel: shown[i].isEmpty
+                ? localCopy.contextSetLevel(contextLevelName(levels[i]))
+                : localCopy.contextLevelValue(
+                    contextLevelName(levels[i]),
+                    shown[i],
+                  ),
             onTap: () => unawaited(
               showContextPickerSheet(
                 context: context,
@@ -172,6 +235,7 @@ class ContextBar extends ConsumerWidget {
     String projectId,
     ContextState state,
     List<TemplateDef> templates,
+    double maxWidth,
   ) {
     final LocalizedCopy localCopy = Copy.of(context);
 
@@ -197,6 +261,15 @@ class ContextBar extends ConsumerWidget {
           key: ValueKey<String>('context-bar-pin-$key'),
           icon: AppIcons.pin,
           selected: (state.pinned[key] ?? '').isNotEmpty,
+          comfortable: true,
+          wrapLabel: true,
+          maxLabelWidth: maxWidth,
+          semanticLabel: (state.pinned[key] ?? '').isEmpty
+              ? localCopy.contextSetLevel(pinnedFieldLabel(templates, key))
+              : localCopy.contextPinnedValue(
+                  pinnedFieldLabel(templates, key),
+                  state.pinned[key]!,
+                ),
           label: (state.pinned[key] ?? '').isEmpty
               ? localCopy.contextSetLevel(pinnedFieldLabel(templates, key))
               : localCopy.contextPinnedValue(
@@ -224,10 +297,13 @@ class ContextBar extends ConsumerWidget {
   }
 }
 
-/// Levels, pins and actions: one scrolling line on a phone, wrapped when
-/// there is room. A chevron sits between hierarchy levels only.
+/// One natural-height context trail, horizontally scrollable on a phone.
 class _ContextTrail extends StatelessWidget {
-  const _ContextTrail({required this.scrollable, required this.children});
+  const _ContextTrail({
+    required this.scrollable,
+    required this.children,
+    super.key,
+  });
 
   final bool scrollable;
   final List<Widget> children;
@@ -272,23 +348,4 @@ class _ContextCrumb extends StatelessWidget {
     }
     return mark;
   }
-}
-
-/// Shortens the longest middle value first on a narrow window.
-List<String> _truncateMiddle(List<String> values, {required bool narrow}) {
-  if (!narrow || values.length < 3) {
-    return values;
-  }
-  final List<String> next = List<String>.of(values);
-  int longest = 1;
-  for (int i = 2; i < next.length - 1; i++) {
-    if (next[i].length > next[longest].length) {
-      longest = i;
-    }
-  }
-  final int cap = AppConstants.context.valuePreview;
-  if (next[longest].length > cap) {
-    next[longest] = '${next[longest].substring(0, cap - 1)}…';
-  }
-  return next;
 }

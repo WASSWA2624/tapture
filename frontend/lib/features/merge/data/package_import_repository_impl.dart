@@ -32,7 +32,12 @@ import 'package:tapture/features/merge/domain/package_presence.dart';
 import 'package:tapture/features/quality/quality.dart'
     hide ConflictChoice, FieldConflict;
 import 'package:tapture/features/templates/templates.dart'
-    show FieldDef, TemplateDef, TemplateMapper, TemplateVersioning;
+    show
+        FieldDef,
+        TemplateDef,
+        TemplateJson,
+        TemplateMapper,
+        TemplateVersioning;
 
 import 'merge_repository_impl.dart';
 import 'merge_snapshot_store.dart';
@@ -296,6 +301,10 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     InspectedBundle bundle, {
     void Function(double progress)? onProgress,
   }) async {
+    final Failure? sourceProblem = _packageSourceProblem(bundle.tables);
+    if (sourceProblem != null) {
+      return FailureResult<ImportedProject>(sourceProblem);
+    }
     final List<Map<String, Object?>> projects = bundle.rowsOf('projects');
     if (projects.length != 1) {
       return FailureResult<ImportedProject>(
@@ -432,6 +441,17 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     Map<String, String> typedValues = const <String, String>{},
     void Function(double progress)? onProgress,
   }) async {
+    for (final tables in <Map<String, List<Map<String, Object?>>>>[
+      bundle.tables,
+      plan.inserts,
+    ]) {
+      final Failure? sourceProblem = _packageSourceProblem(tables);
+      if (sourceProblem != null)
+        return FailureResult<MergeOutcome>(sourceProblem);
+    }
+    final Failure? updateProblem = await _updateSourceProblem(plan.updates);
+    if (updateProblem != null)
+      return FailureResult<MergeOutcome>(updateProblem);
     for (final FieldConflict conflict in plan.conflicts) {
       if (!choices.containsKey(conflict.id)) {
         return FailureResult<MergeOutcome>(
@@ -1392,6 +1412,43 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
     }
   }
 
+  Future<Failure?> _updateSourceProblem(
+    Map<String, List<Map<String, Object?>>> updates,
+  ) async {
+    try {
+      final Map<String, List<Map<String, Object?>>> effective =
+          <String, List<Map<String, Object?>>>{};
+      for (final String table in const <String>[
+        'templates',
+        'template_fields',
+      ]) {
+        for (final Map<String, Object?> row
+            in updates[table] ?? const <Map<String, Object?>>[]) {
+          if (table == 'templates' && !row.containsKey('detection')) continue;
+          if (table == 'template_fields' &&
+              !row.containsKey('validation') &&
+              !row.containsKey('type'))
+            continue;
+          final Object? id = row['id'];
+          if (id is! String) return const CorruptionFailure();
+          final QueryRow? stored = await _db
+              .customSelect(
+                'SELECT * FROM $table WHERE id = ?',
+                variables: <Variable<Object>>[Variable<String>(id)],
+              )
+              .getSingleOrNull();
+          (effective[table] ??= <Map<String, Object?>>[]).add(<String, Object?>{
+            ...?stored?.data,
+            ...row,
+          });
+        }
+      }
+      return _packageSourceProblem(effective);
+    } on Object catch (error) {
+      return _failureOf(error);
+    }
+  }
+
   Future<void> _advanceRows(
     Map<String, List<Map<String, Object?>>> updates, {
     required String chooser,
@@ -1814,6 +1871,83 @@ Failure _failureOf(Object error) {
     localizedRecovery: Copy.messages.importFailedRecovery,
   );
 }
+
+Failure? _packageSourceProblem(Map<String, List<Map<String, Object?>>> tables) {
+  try {
+    for (final Map<String, Object?> field
+        in tables['template_fields'] ?? const <Map<String, Object?>>[]) {
+      final Failure? problem = _sourceFieldProblem(field, sql: true);
+      if (problem != null) return problem;
+    }
+    for (final Map<String, Object?> header
+        in tables['templates'] ?? const <Map<String, Object?>>[]) {
+      final Object? raw = _jsonObject(header['detection']);
+      final Object? versions = raw is Map ? raw['_tapture_versions'] : null;
+      if (versions is! Map) continue;
+      for (final Object? snapshot in versions.values) {
+        if (snapshot is! Map) continue;
+        if (snapshot.containsKey('schema_version')) {
+          final Result<TemplateDef> checked = TemplateJson.decode(
+            snapshot,
+            projectId: header['project_id'] as String? ?? '',
+          );
+          if (checked case FailureResult<TemplateDef>(:final Failure failure)) {
+            return failure;
+          }
+        } else if (snapshot['fields'] case final List fields) {
+          for (final Object? rawField in fields) {
+            if (rawField is! Map) continue;
+            final Failure? problem = _sourceFieldProblem(
+              Map<String, Object?>.from(rawField),
+              sql: false,
+            );
+            if (problem != null) return problem;
+          }
+        }
+      }
+    }
+    return null;
+  } on Object catch (error) {
+    return _failureOf(error);
+  }
+}
+
+Failure? _sourceFieldProblem(Map<String, Object?> field, {required bool sql}) {
+  final Object? flag = field['auto_fill'];
+  if (sql &&
+      flag != null &&
+      flag is! bool &&
+      !(flag is int && (flag == 0 || flag == 1))) {
+    return const CorruptionFailure();
+  }
+  final Object? decoded = _jsonObject(field['validation']);
+  final Map<String, Object?> validation = decoded is Map
+      ? Map<String, Object?>.from(decoded)
+      : const <String, Object?>{};
+  final Object? attrs = validation['_tapture'];
+  final Object? carried = attrs is Map ? attrs['autoFill'] : null;
+  final Object? declared = sql ? null : field['auto_fill'] ?? field['autoFill'];
+  if (declared == null && carried == null) return null;
+  final Result<TemplateDef> checked = TemplateJson.decode(<String, Object?>{
+    'schema_version': TemplateJson.schemaVersion,
+    'name': 'Source validation',
+    'fields': <Map<String, Object?>>[
+      <String, Object?>{
+        'field_key': field['field_key'] ?? field['fieldKey'],
+        'type': field['type'],
+        'auto_fill': declared,
+        'validation': validation,
+      },
+    ],
+  }, projectId: '');
+  return switch (checked) {
+    FailureResult<TemplateDef>(:final Failure failure) => failure,
+    Success<TemplateDef>() => null,
+  };
+}
+
+Object? _jsonObject(Object? raw) =>
+    raw is String ? (raw.trim().isEmpty ? null : jsonDecode(raw)) : raw;
 
 /// The device's package import. Tests leave this empty and pass a fake.
 final Provider<PackageImportRepository?> packageImportRepositoryProvider =

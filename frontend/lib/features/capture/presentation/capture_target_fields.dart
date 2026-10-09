@@ -15,17 +15,7 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
 
-/// Templates owned by one project. Empty until that project has a template.
-final captureProjectTemplatesProvider =
-    StreamProvider.family<List<TemplateDef>, String>((
-      Ref ref,
-      String projectId,
-    ) {
-      if (projectId.isEmpty) {
-        return Stream<List<TemplateDef>>.value(const <TemplateDef>[]);
-      }
-      return ref.watch(templateRepositoryProvider).watchByProject(projectId);
-    });
+export 'capture_template_providers.dart' show captureProjectTemplatesProvider;
 
 /// What a capture is filed under: the project, then the template. Both are
 /// fields that open a searchable list, so they read as switches even with
@@ -85,6 +75,7 @@ final class CaptureTargetFields extends ConsumerWidget {
             label: localCopy.captureProjectLabel,
             options: projects,
             alwaysSheet: true,
+            compact: true,
             value: selectedListed ? selectedProjectId : null,
             onChanged: (String? id) {
               if (id != null && id.isNotEmpty) {
@@ -102,6 +93,7 @@ final class CaptureTargetFields extends ConsumerWidget {
                 Choice<String>(template.id, template.name),
             ],
             alwaysSheet: true,
+            compact: true,
             value: templateId,
             onChanged: (String? id) {
               if (id != null && id.isNotEmpty) {
@@ -115,10 +107,14 @@ final class CaptureTargetFields extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // Side by side from medium width up; one field alone stays full
-        // width (FBK0000004).
+        // Compact selectors share one row; labels keep their natural height.
         if (project != null && template != null)
-          ResponsivePair(start: project, end: template)
+          ResponsivePair(
+            start: project,
+            end: template,
+            stacksOnCompact: false,
+            gap: Space.x2,
+          )
         else
           ?(project ?? template),
         if (noProject) ...<Widget>[

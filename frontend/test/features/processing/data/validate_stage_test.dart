@@ -2,15 +2,25 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/record_status.dart';
+import 'package:tapture/features/processing/data/job_writes.dart';
+import 'package:tapture/features/processing/data/ocr_cache.dart';
 import 'package:tapture/features/processing/data/processing_repository_impl.dart';
 import 'package:tapture/features/processing/data/processing_snapshot.dart';
+import 'package:tapture/features/processing/data/proposal_collector.dart';
+import 'package:tapture/features/processing/data/record_bundle_loader.dart';
+import 'package:tapture/features/processing/data/validate_stage.dart';
+import 'package:tapture/features/processing/domain/job_runner.dart';
 import 'package:tapture/features/processing/domain/processing_job.dart';
+import 'package:tapture/features/records/data/record_writes.dart';
+import 'package:tapture/features/records/domain/domain.dart'
+    show RecordValueEdit;
 import 'package:tapture/features/settings/settings.dart';
 
 import '../../../support/processing_fixture.dart';
@@ -298,6 +308,378 @@ void main() {
       RecordStatus.needsReview.stored,
     );
   });
+
+  test(
+    'hostile automatic and manual-only proposals cannot create empty values',
+    () async {
+      final seeded = await record();
+      await seeded.fixture.addField('serial', required: true);
+      await seeded.fixture.addField(
+        'captured_date',
+        inputMode: 'AUTO',
+        required: true,
+      );
+      await seeded.fixture.addField('operator_name', inputMode: 'MANUAL_ONLY');
+      await seeded.fixture.addField('room', contextLevel: 1);
+      await seeded.fixture.addField(
+        'future_source',
+        validation: '{"_tapture":{"autoFill":"FUTURE_SOURCE"}}',
+      );
+      final ScriptedExtraction provider =
+          await process(seeded.fixture, seeded.job, <String, Object?>{
+            'serial': value('SN458923'),
+            'captured_date': value('2026-10-09'),
+            'operator_name': value('Operator'),
+            'room': value('Workshop'),
+            'future_source': value('Unsupported'),
+            'unexpected': value('Injected'),
+          });
+      expect(provider.requests.single.fieldLabels, <String>['serial']);
+      final List<RecordField> stored = await fields(seeded.fixture);
+      expect(stored.single.fieldKey, 'serial');
+      expect(stored.single.valueRaw, 'SN458923');
+      final ProcessingJobRow job = await seeded.fixture.db
+          .select(seeded.fixture.db.processing)
+          .getSingle();
+      for (final String key in <String>[
+        'captured_date',
+        'operator_name',
+        'room',
+        'future_source',
+        'unexpected',
+      ]) {
+        expect(job.rejections, contains('$key is protected from extraction'));
+      }
+      expect(job.rejections, contains('captured_date is missing'));
+      expect((await seeded.fixture.storedRecord()).status, 'needsReview');
+    },
+  );
+
+  test(
+    'declared source-protected defaults remain local while unavailable required sources need review',
+    () async {
+      final seeded = await record();
+      await seeded.fixture.addField(
+        'operator_note',
+        inputMode: 'MANUAL_ONLY',
+        required: true,
+        defaultValue: 'Local default',
+      );
+      await seeded.fixture.addField(
+        'automatic_default',
+        inputMode: 'AUTO',
+        required: true,
+        defaultValue: 'Configured value',
+      );
+      await seeded.fixture.addField(
+        'unavailable_source',
+        inputMode: 'AUTO',
+        required: true,
+        validation: '{"_tapture":{"autoFill":"FUTURE_SOURCE"}}',
+      );
+      final provider = await process(
+        seeded.fixture,
+        seeded.job,
+        <String, Object?>{},
+      );
+      expect(provider.requests, isEmpty);
+      final Map<String, RecordField> stored = <String, RecordField>{
+        for (final field in await fields(seeded.fixture)) field.fieldKey: field,
+      };
+      expect(
+        stored.keys,
+        unorderedEquals(<String>['operator_note', 'automatic_default']),
+      );
+      expect(stored['operator_note']!.valueRaw, 'Local default');
+      expect(stored['automatic_default']!.valueRaw, 'Configured value');
+      expect(
+        stored.values.map((field) => field.source),
+        everyElement('default'),
+      );
+      expect((await seeded.fixture.storedRecord()).status, 'needsReview');
+      expect(
+        (await seeded.fixture.db
+                .select(seeded.fixture.db.processing)
+                .getSingle())
+            .rejections,
+        contains('unavailable_source is missing'),
+      );
+    },
+  );
+
+  test(
+    'raw automatic context and corrected values survive processing and reprocessing',
+    () async {
+      final seeded = await record();
+      await seeded.fixture.addField('serial', required: true);
+      await seeded.fixture.addField('captured_date', inputMode: 'AUTO');
+      await seeded.fixture.addField('room', stickable: true);
+      await seedField(
+        seeded.fixture,
+        'captured_date',
+        '2026-10-08',
+        source: 'AUTO',
+      );
+      await seedField(seeded.fixture, 'room', 'Workshop', source: 'CONTEXT');
+      final Result<void> corrected =
+          await RecordWrites(
+            db: seeded.fixture.db,
+            clock: seeded.fixture.clock,
+            deviceId: 'device-a',
+            ids: seeded.fixture.ids,
+            operatorName: () => 'Operator',
+          ).editValues(seeded.fixture.record.id, const <RecordValueEdit>[
+            (fieldKey: 'captured_date', value: '2026-10-09'),
+          ]);
+      expect(corrected, isA<Success<void>>());
+      final List<AuditLogData> history = await seeded.fixture.db
+          .select(seeded.fixture.db.auditLog)
+          .get();
+      final ScriptedExtraction provider =
+          await process(seeded.fixture, seeded.job, <String, Object?>{
+            'serial': value('SN458923'),
+            'captured_date': value('2000-01-01'),
+            'room': value('Other'),
+          });
+      expect(provider.requests.single.fieldLabels, <String>['serial']);
+      final ScriptedExtraction replay = await process(
+        seeded.fixture,
+        seeded.job,
+        <String, Object?>{},
+      );
+      expect(replay.requests, isEmpty);
+      final Map<String, RecordField> stored = <String, RecordField>{
+        for (final RecordField field in await fields(seeded.fixture))
+          field.fieldKey: field,
+      };
+      expect(stored['captured_date']!.valueRaw, '2026-10-08');
+      expect(stored['captured_date']!.valueRefined, '2026-10-09');
+      expect(stored['captured_date']!.source, 'manual');
+      expect(stored['captured_date']!.verified, isTrue);
+      expect(stored['room']!.valueRaw, 'Workshop');
+      expect(stored['room']!.source, 'CONTEXT');
+      final List<AuditLogData> after = await seeded.fixture.db
+          .select(seeded.fixture.db.auditLog)
+          .get();
+      expect(
+        after.map((entry) => entry.id),
+        containsAll(history.map((entry) => entry.id)),
+      );
+      expect(
+        after.where(
+          (entry) =>
+              entry.fieldKey == 'captured_date' &&
+              entry.action == AuditAction.updated,
+        ),
+        hasLength(1),
+      );
+    },
+  );
+
+  test(
+    'a source policy changed before application cancels every queued write',
+    () async {
+      final seeded = await record();
+      final fixture = seeded.fixture;
+      await fixture.addField('serial', required: true);
+      await seedField(fixture, 'operator_note', 'Keep this', source: 'manual');
+      final Photo photo = await fixture.db
+          .select(fixture.db.photos)
+          .getSingle();
+      final String raw = jsonEncode(<String, Object?>{
+        'fields': <String, Object?>{
+          'serial': <String, Object?>{
+            ...value('SN458923'),
+            'evidence': <String>['photo:${photo.id}'],
+          },
+        },
+      });
+      (await fixture.responses.save(
+        jobId: seeded.job.id,
+        requestSummary: '{"kind":"online"}',
+        rawResponse: raw,
+        parsedOk: true,
+      )).getOrThrow();
+      final bundle = await fixture.bundle();
+      final collector = ProposalCollector(
+        cache: OcrCache(
+          db: fixture.db,
+          clock: fixture.clock,
+          deviceId: 'device-a',
+          ids: fixture.ids,
+        ),
+        responses: fixture.responses,
+      );
+      expect(
+        (await collector.collect(seeded.job, bundle)).proposals.single.fieldKey,
+        'serial',
+      );
+      await (fixture.db.update(fixture.db.templateFields)..where(
+            ($TemplateFieldsTable field) => field.fieldKey.equals('serial'),
+          ))
+          .write(
+            const TemplateFieldsCompanion(inputMode: Value<String>('AUTO')),
+          );
+      final List<AuditLogData> before = await fixture.db
+          .select(fixture.db.auditLog)
+          .get();
+      final stage = ValidateStage(
+        db: fixture.db,
+        clock: fixture.clock,
+        deviceId: 'device-a',
+        ids: fixture.ids,
+        settings: fixture.stageSettings(),
+        collector: collector,
+        writes: JobWrites(db: fixture.db),
+        loader: RecordBundleLoader(db: fixture.db),
+      );
+
+      await expectLater(
+        stage.run(seeded.job, bundle, CancellationToken()),
+        throwsA(isA<CancelledFailure>()),
+      );
+
+      expect((await fields(fixture)).single.valueRaw, 'Keep this');
+      expect(await fixture.db.select(fixture.db.fieldEvidence).get(), isEmpty);
+      expect(
+        (await fixture.db.select(fixture.db.auditLog).get()).map(
+          (entry) => entry.id,
+        ),
+        before.map((entry) => entry.id),
+      );
+      expect(
+        (await fixture.storedRecord()).status,
+        RecordStatus.captured.stored,
+      );
+      expect(
+        (await fixture.responses.forJob(
+          seeded.job.id,
+        )).getOrThrow().single.rawResponse,
+        raw,
+      );
+    },
+  );
+
+  test(
+    'a failed second proposal rolls back the first value evidence provenance and audit',
+    () async {
+      final seeded = await record();
+      final fixture = seeded.fixture;
+      await fixture.addField('serial', required: true, order: 0);
+      await fixture.addField('model', required: true, order: 1);
+      await fixture.addField('captured_date', inputMode: 'AUTO');
+      await seedField(fixture, 'captured_date', '2026-10-08', source: 'AUTO');
+      final Photo photo = await fixture.db
+          .select(fixture.db.photos)
+          .getSingle();
+      final String raw = jsonEncode(<String, Object?>{
+        'fields': <String, Object?>{
+          for (final String key in <String>['serial', 'model'])
+            key: <String, Object?>{
+              ...value(key == 'serial' ? 'SN458923' : 'CR-10'),
+              'evidence': <String>['photo:${photo.id}'],
+            },
+        },
+      });
+      final worker = fixture.worker(
+        provider: ScriptedExtraction(<String>[raw]),
+      );
+      for (final JobStage stage in JobStage.values.where(
+        (stage) => stage != JobStage.validate,
+      )) {
+        await worker.perform(stage, seeded.job);
+      }
+      final List<AuditLogData> before = await fixture.db
+          .select(fixture.db.auditLog)
+          .get();
+      // The trigger raises only after the first accepted proposal has been written.
+      await fixture.db.customStatement('''
+      CREATE TEMP TRIGGER fail_second_proposal BEFORE INSERT ON record_fields
+      WHEN NEW.field_key = 'model' AND EXISTS (
+        SELECT 1 FROM record_fields WHERE record_id = NEW.record_id AND field_key = 'serial'
+      )
+      BEGIN SELECT RAISE(ABORT, 'fixture second proposal failure'); END
+    ''');
+
+      await expectLater(
+        worker.perform(JobStage.validate, seeded.job),
+        throwsA(isA<StorageFailure>()),
+      );
+
+      final RecordField kept = (await fields(fixture)).single;
+      expect(kept.fieldKey, 'captured_date');
+      expect(kept.valueRaw, '2026-10-08');
+      expect(kept.source, 'AUTO');
+      expect(await fixture.db.select(fixture.db.fieldEvidence).get(), isEmpty);
+      expect(
+        (await fixture.db.select(fixture.db.auditLog).get()).map(
+          (entry) => entry.id,
+        ),
+        before.map((entry) => entry.id),
+      );
+      expect(
+        (await fixture.storedRecord()).status,
+        RecordStatus.captured.stored,
+      );
+      expect(
+        (await fixture.responses.forJob(
+          seeded.job.id,
+        )).getOrThrow().where((response) => response.rawResponse == raw),
+        hasLength(1),
+      );
+    },
+  );
+
+  test(
+    'the real queue completes and resumes after validate writes change the snapshot',
+    () async {
+      final seeded = await record();
+      await seeded.fixture.addField(
+        'serial',
+        required: true,
+        pattern: r'SN\d{6}',
+      );
+      await seeded.fixture.setIdentityFields(<String>['serial']);
+      await seeded.fixture.writePlate(
+        'photos/${seeded.fixture.record.id}/img-0.jpg',
+        'SN458923',
+      );
+      final repository = ProcessingRepositoryImpl(
+        db: seeded.fixture.db,
+        clock: seeded.fixture.clock,
+        deviceId: 'device-a',
+        ids: seeded.fixture.ids,
+        settings: SettingsStore.fake(),
+      );
+      final worker = seeded.fixture.worker();
+      final JobRunner runner = JobRunner(
+        perform: (stage, job, token) async {
+          await worker.perform(stage, job, token);
+        },
+        persist: (job, stage) async =>
+            (await repository.markStage(job.id, stage)).getOrThrow(),
+        release: (job) async {
+          (await repository.release(job.id)).getOrThrow();
+          return job;
+        },
+      );
+      final outcome = await runner.run(seeded.job, token: CancellationToken());
+      expect(outcome.cancelled, isFalse);
+      expect(outcome.job.completedStages, containsAll(JobStage.values));
+      (await repository.complete(outcome.job.id)).getOrThrow();
+      final again = await runner.run(outcome.job, token: CancellationToken());
+      expect(again.cancelled, isFalse);
+      expect((await fields(seeded.fixture)).single.valueRaw, 'SN458923');
+      expect(
+        (await seeded.fixture.db
+                .select(seeded.fixture.db.processing)
+                .getSingle())
+            .status
+            .name,
+        'completed',
+      );
+    },
+  );
 
   test(
     'verified and hand-entered values are kept, and the skip recorded',

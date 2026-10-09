@@ -88,7 +88,6 @@ void main() {
 
     expect(fields, <SkipField>[
       (requiredField: true, value: 'SN1', band: ConfidenceBand.reviewRequired),
-      (requiredField: false, value: 'CR-10', band: ConfidenceBand.high),
       (requiredField: true, value: '240 V', band: ConfidenceBand.high),
       (requiredField: false, value: null, band: null),
     ]);
@@ -109,4 +108,21 @@ void main() {
     ]);
     expect(OnlineSkipRule.reason(fields), isNull);
   });
+
+  test(
+    'missing required source-protected fields do not request online extraction',
+    () async {
+      await fixture.db
+          .update(fixture.db.templateFields)
+          .write(
+            const TemplateFieldsCompanion(inputMode: Value<String>('AUTO')),
+          );
+      final List<SkipField> fields = await completion().forOnline(
+        job,
+        await fixture.bundle(),
+      );
+      expect(fields, isEmpty);
+      expect(OnlineSkipRule.reason(fields), contains('No required fields'));
+    },
+  );
 }

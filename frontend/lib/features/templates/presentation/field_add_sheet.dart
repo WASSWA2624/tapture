@@ -278,6 +278,7 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
             contextLevel: _contextLevel,
             inputMode: view.inputMode,
             autoFill: view.autoFill,
+            autoFillUnavailable: _carriedSource(view.validation) != null,
             stickable: view.stickable,
             refine: view.refine,
             identity: view.identity,
@@ -518,6 +519,7 @@ class _FieldAdd extends Notifier<_FieldAddView> {
   void setAutoFill(AutoFill? value) => state = state.copyWith(
     autoFill: value,
     clearAutoFill: value == null,
+    validation: _withoutCarriedSource(state.validation),
     dirty: true,
   );
   void setStickable(bool value) =>
@@ -528,8 +530,14 @@ class _FieldAdd extends Notifier<_FieldAddView> {
       state = state.copyWith(identity: value, dirty: true);
   void setHidden(bool value) =>
       state = state.copyWith(hidden: value, dirty: true);
-  void setValidation(Map<String, Object?> value) =>
-      state = state.copyWith(validation: value, dirty: true);
+  void setValidation(Map<String, Object?> value) => state = state.copyWith(
+    validation: <String, Object?>{
+      ...value,
+      if (_carriedSource(state.validation) != null)
+        '_tapture': state.validation['_tapture'],
+    },
+    dirty: true,
+  );
   void setOptions(List<Object> value) =>
       state = state.copyWith(options: value, dirty: true);
 
@@ -685,6 +693,26 @@ final NotifierProvider<_FieldAdd, _FieldAddView> _fieldAddProvider =
 String? _emptyToNull(String raw) {
   final String trimmed = raw.trim();
   return trimmed.isEmpty ? null : trimmed;
+}
+
+Object? _carriedSource(Map<String, Object?> validation) {
+  final Object? attrs = validation['_tapture'];
+  return attrs is Map ? attrs['autoFill'] : null;
+}
+
+Map<String, Object?> _withoutCarriedSource(Map<String, Object?> validation) {
+  final Map<String, Object?> next = Map<String, Object?>.of(validation);
+  final Object? raw = next['_tapture'];
+  if (raw is Map) {
+    final Map<String, Object?> attrs = Map<String, Object?>.from(raw)
+      ..remove('autoFill');
+    if (attrs.isEmpty) {
+      next.remove('_tapture');
+    } else {
+      next['_tapture'] = attrs;
+    }
+  }
+  return next;
 }
 
 final RegExp _startsLetter = RegExp(r'^[a-z]');

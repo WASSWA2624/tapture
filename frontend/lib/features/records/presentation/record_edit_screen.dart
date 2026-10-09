@@ -203,6 +203,7 @@ class _RecordValuesForm extends ConsumerWidget {
           ),
         for (final RecordEditEntry entry in entries)
           RecordFieldInput(
+            key: ValueKey<String>('record-edit-${entry.fieldKey}'),
             entry: entry,
             text: draft[entry.fieldKey] ?? entry.initial,
             onChanged: (String text) {

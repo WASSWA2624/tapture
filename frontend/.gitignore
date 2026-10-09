@@ -786,3 +786,6 @@ TAPTURE-*.zip
 !/integration_test/failure_paths_test.dart
 !/integration_test/merge_test.dart
 !/test/support/crash_capture_child.dart
+
+# Ignore all local test content, overriding the historical exceptions above.
+/test/

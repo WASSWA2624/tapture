@@ -9,6 +9,57 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get recordFieldReadOnly => 'This field is read-only.';
+
+  @override
+  String processingProtectedField(String fieldKey) {
+    return '$fieldKey is protected from extraction.';
+  }
+
+  @override
+  String get processingCapturedTemplateUnavailable =>
+      'The captured template version is unavailable. Review the saved evidence.';
+
+  @override
+  String get recordCorrectAutomaticValue => 'Correct value';
+
+  @override
+  String get captureSearchFields => 'Search fields';
+
+  @override
+  String get captureFieldManual => 'Manual entry';
+
+  @override
+  String get captureFieldAutomatic => 'Automatic';
+
+  @override
+  String get captureFieldContext => 'Context';
+
+  @override
+  String get captureFieldProcessing => 'From photos and caption';
+
+  @override
+  String get captureFieldFilledAtSave => 'Filled when saved';
+
+  @override
+  String get captureFieldUnavailable => 'Unavailable on this device';
+
+  @override
+  String get fieldSourceHelp =>
+      'Choose automatic filling, manual entry or extraction from photos and captions. Automatic and manual-only fields stay out of processing.';
+
+  @override
+  String get captureTemperatureUnavailable =>
+      'Automatic temperature is unavailable; enter it manually.';
+
+  @override
+  String get fieldAutoFillLocalAddress => 'Local network address';
+
+  @override
+  String get fieldSourceAddressNeedsText =>
+      'Use a text field for a local network address.';
+
+  @override
   String get captureManualForm => 'Manual form';
 
   @override
@@ -12338,6 +12389,57 @@ class AppLocalizationsEn extends AppLocalizations {
 /// The translations for English (`en_XA`).
 class AppLocalizationsEnXa extends AppLocalizationsEn {
   AppLocalizationsEnXa() : super('en_XA');
+
+  @override
+  String get recordFieldReadOnly => 'Thís fíéld ís réád-ónly.·········';
+
+  @override
+  String processingProtectedField(String fieldKey) {
+    return '$fieldKey ís prótéctéd fróm éxtráctíón.···········';
+  }
+
+  @override
+  String get processingCapturedTemplateUnavailable =>
+      'Thé cáptúréd témpláté vérsíón ís únáváíláblé. Révíéw thé sávéd évídéncé.··························';
+
+  @override
+  String get recordCorrectAutomaticValue => 'Córréct válúé·····';
+
+  @override
+  String get captureSearchFields => 'Séárch fíélds·····';
+
+  @override
+  String get captureFieldManual => 'Mánúál éntry·····';
+
+  @override
+  String get captureFieldAutomatic => 'Áútómátíc····';
+
+  @override
+  String get captureFieldContext => 'Cóntéxt···';
+
+  @override
+  String get captureFieldProcessing => 'Fróm phótós ánd cáptíón·········';
+
+  @override
+  String get captureFieldFilledAtSave => 'Fílléd whén sávéd······';
+
+  @override
+  String get captureFieldUnavailable => 'Únáváíláblé ón thís dévícé··········';
+
+  @override
+  String get fieldSourceHelp =>
+      'Chóósé áútómátíc fíllíng, mánúál éntry ór éxtráctíón fróm phótós ánd cáptíóns. Áútómátíc ánd mánúál-ónly fíélds stáy óút óf prócéssíng.················································';
+
+  @override
+  String get captureTemperatureUnavailable =>
+      'Áútómátíc témpérátúré ís únáváíláblé; éntér ít mánúálly.····················';
+
+  @override
+  String get fieldAutoFillLocalAddress => 'Lócál nétwórk áddréss········';
+
+  @override
+  String get fieldSourceAddressNeedsText =>
+      'Úsé á téxt fíéld fór á lócál nétwórk áddréss.················';
 
   @override
   String get captureManualForm => 'Mánúál fórm····';

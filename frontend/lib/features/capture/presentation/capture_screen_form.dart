@@ -2,7 +2,7 @@ part of 'capture_screen.dart';
 
 extension _CaptureForm on _CaptureScreenState {
   Future<void> _manualForm(String key, String projectId) => showAppSheet<void>(
-    context,
+    Navigator.of(context, rootNavigator: true).context,
     title: Copy.of(context).captureManualForm,
     builder: (BuildContext sheetContext) => Consumer(
       builder: (BuildContext context, WidgetRef formRef, Widget? _) {
@@ -27,38 +27,79 @@ extension _CaptureForm on _CaptureScreenState {
         final CaptureController controller = formRef.read(
           captureControllerProvider(key).notifier,
         );
-        return SingleChildScrollView(
-          key: const ValueKey<String>('capture-manual-form-scroll'),
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: const EdgeInsets.all(Space.x3),
-          child: InlineFieldsSection(
-            key: ValueKey<String>('manual-${session.id}-${session.templateId}'),
-            fields: fields,
-            values: <String, Object?>{
-              ...session.contextSnapshot,
-              ...session.values,
-            },
-            onChanged: (String fieldKey, Object? value) =>
-                unawaited(_manualValue(context, controller, fieldKey, value)),
-            onLookup: (FieldDef field) =>
-                unawaited(_lookup(field, sessionKey: key)),
-            onScan: (FieldDef field) =>
-                unawaited(_scan(field, sessionKey: key)),
-            linkedFields: session.lookupRows.keys.toSet(),
+        final String deviceId = formRef.watch(captureDeviceIdProvider) ?? '';
+        final String operator =
+            formRef.watch(currentOperatorProvider)?.name.trim() ?? '';
+        final Map<String, Object?> automatic = AutoFields.forTemplate(
+          fields: fields,
+          nowUtc: formRef.read(captureClockProvider).nowUtc(),
+          operatorName: operator.isEmpty ? deviceId : operator,
+          deviceId: deviceId,
+          sequence: null,
+          context: session.contextSnapshot,
+          location: session.location,
+          autoFillDates: formRef.watch(captureDateFillProvider),
+          localAddress: formRef
+              .read(captureDeviceSourceProvider(key))
+              .snapshot(session),
+        );
+        return CaptureManualForm(
+          key: ValueKey<String>(
+            'manual-${session.id}-${session.templateId}-${session.templateVersion}',
           ),
+          fields: fields,
+          values: <String, Object?>{
+            ...session.contextSnapshot,
+            ...session.values,
+          },
+          automaticValues: automatic,
+          valueSources: <String, String>{
+            for (final String fieldKey in session.contextSnapshot.keys)
+              fieldKey: 'CONTEXT',
+            for (final String fieldKey in session.values.keys)
+              fieldKey: session.valueSources[fieldKey] ?? 'TYPED',
+          },
+          onChanged: (String fieldKey, Object? value) => _manualValue(
+            context,
+            controller,
+            session,
+            fields,
+            fieldKey,
+            value,
+          ),
+          onLookup: (FieldDef field) =>
+              unawaited(_lookup(field, sessionKey: key)),
+          onScan: (FieldDef field) => unawaited(_scan(field, sessionKey: key)),
+          linkedFields: session.lookupRows.keys.toSet(),
         );
       },
     ),
   );
 
-  Future<void> _manualValue(
+  Future<Result<void>> _manualValue(
     BuildContext formContext,
     CaptureController controller,
+    CaptureSession session,
+    List<FieldDef> fields,
     String fieldKey,
     Object? value,
   ) async {
-    final Result<void> written = await controller.setValue(fieldKey, value);
-    if (!formContext.mounted) return;
+    final FieldDef? field = fields
+        .where((FieldDef field) => field.fieldKey == fieldKey)
+        .firstOrNull;
+    final Object? stored = value is DateTime && field != null
+        ? storedTextOf(field.type, value)
+        : value;
+    final Result<void> written = await controller.setValue(
+      fieldKey,
+      stored,
+      owner: (
+        sessionId: session.id,
+        templateId: session.templateId,
+        templateVersion: session.templateVersion,
+      ),
+    );
+    if (!formContext.mounted) return written;
     if (written case FailureResult<void>(:final Failure failure)) {
       showAppSnack(
         formContext,
@@ -67,5 +108,6 @@ extension _CaptureForm on _CaptureScreenState {
         tone: SnackTone.error,
       );
     }
+    return written;
   }
 }

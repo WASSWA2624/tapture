@@ -1,4 +1,70 @@
 {
+  "recordFieldReadOnly": "Thís fíéld ís réád-ónly.·········",
+  "@recordFieldReadOnly": {
+    "description": "Why a protected record value cannot be corrected."
+  },
+  "processingProtectedField": "{fieldKey} ís prótéctéd fróm éxtráctíón.···········",
+  "@processingProtectedField": {
+    "description": "Explains rejection of a field protected by its source or stored value.",
+    "placeholders": {
+      "fieldKey": {
+        "type": "String",
+        "description": "Stable user field key, preserved without translation."
+      }
+    }
+  },
+  "processingCapturedTemplateUnavailable": "Thé cáptúréd témpláté vérsíón ís únáváíláblé. Révíéw thé sávéd évídéncé.··························",
+  "@processingCapturedTemplateUnavailable": {
+    "description": "Processing review reason when the owning captured shape cannot be resolved."
+  },
+  "recordCorrectAutomaticValue": "Córréct válúé·····",
+  "@recordCorrectAutomaticValue": {
+    "description": "Explicit audited correction of an eligible automatically populated field."
+  },
+  "captureSearchFields": "Séárch fíélds·····",
+  "@captureSearchFields": {
+    "description": "Searches Manual form field labels and stable keys."
+  },
+  "captureFieldManual": "Mánúál éntry·····",
+  "@captureFieldManual": {
+    "description": "Field source/status for operator entry."
+  },
+  "captureFieldAutomatic": "Áútómátíc····",
+  "@captureFieldAutomatic": {
+    "description": "Field source/status for system filling."
+  },
+  "captureFieldContext": "Cóntéxt···",
+  "@captureFieldContext": {
+    "description": "Field source/status for inherited context values."
+  },
+  "captureFieldProcessing": "Fróm phótós ánd cáptíón·········",
+  "@captureFieldProcessing": {
+    "description": "Field source/status for evidence extraction eligibility."
+  },
+  "captureFieldFilledAtSave": "Fílléd whén sávéd······",
+  "@captureFieldFilledAtSave": {
+    "description": "Pending field source that requires the authoritative first-save instant or sequence."
+  },
+  "captureFieldUnavailable": "Únáváíláblé ón thís dévícé··········",
+  "@captureFieldUnavailable": {
+    "description": "Unavailable automatic source without a fabricated value."
+  },
+  "fieldSourceHelp": "Chóósé áútómátíc fíllíng, mánúál éntry ór éxtráctíón fróm phótós ánd cáptíóns. Áútómátíc ánd mánúál-ónly fíélds stáy óút óf prócéssíng.················································",
+  "@fieldSourceHelp": {
+    "description": "Explains existing template-owned source and input-mode controls."
+  },
+  "captureTemperatureUnavailable": "Áútómátíc témpérátúré ís únáváíláblé; éntér ít mánúálly.····················",
+  "@captureTemperatureUnavailable": {
+    "description": "Honest availability helper without a weather or hardware fallback."
+  },
+  "fieldAutoFillLocalAddress": "Lócál nétwórk áddréss········",
+  "@fieldAutoFillLocalAddress": {
+    "description": "Template-opted-in native local interface address source."
+  },
+  "fieldSourceAddressNeedsText": "Úsé á téxt fíéld fór á lócál nétwórk áddréss.················",
+  "@fieldSourceAddressNeedsText": {
+    "description": "Validation recovery for a non-text local-address source."
+  },
   "captureManualForm": "Mánúál fórm····",
   "@captureManualForm": {
     "description": "Capture overflow action opening optional template fields."

@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:tapture/core/ai/ocr_block.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/normalise/choices.dart';
+import 'package:tapture/features/templates/templates.dart'
+    show FieldInputPolicy, TemplateMapper;
 
 import '../domain/extraction_request.dart';
 import '../domain/identifier_extraction.dart';
@@ -41,13 +44,14 @@ abstract final class StageSupport {
   static List<FieldSchema> schema(List<TemplateField> fields) {
     return <FieldSchema>[
       for (final TemplateField field in fields)
-        (
-          key: field.fieldKey,
-          type: field.type,
-          requiredField: field.isRequired,
-          pattern: pattern(field),
-          options: optionLabels(field.options),
-        ),
+        if (canExtract(field))
+          (
+            key: field.fieldKey,
+            type: field.type,
+            requiredField: field.isRequired,
+            pattern: pattern(field),
+            options: optionLabels(field.options),
+          ),
     ];
   }
 
@@ -55,12 +59,90 @@ abstract final class StageSupport {
   static List<IdentityField> identityFields(RecordBundle bundle) {
     final Set<String> keys = strings(bundle.template.identityFields).toSet();
     return <IdentityField>[
-      for (final TemplateField field in bundle.fields)
-        if (field.type != 'consent' &&
-            keys.contains(field.fieldKey) &&
-            pattern(field) != null)
+      for (final TemplateField field in extractionFields(bundle))
+        if (keys.contains(field.fieldKey) && pattern(field) != null)
           (fieldKey: field.fieldKey, pattern: pattern(field)!),
     ];
+  }
+
+  /// Stored source declarations fail closed without breaking raw Capture.
+  static bool canExtract(TemplateField field) {
+    final Object? validation = json(field.validation);
+    if (field.autoFill || validation is! Map) return false;
+    final Object? attrs = validation['_tapture'];
+    if (attrs != null && attrs is! Map) return false;
+    if (attrs is Map && attrs['autoFill'] != null) return false;
+    try {
+      return FieldInputPolicy.canExtract(TemplateMapper.fieldFromRow(field));
+    } on Failure {
+      return false;
+    }
+  }
+
+  /// Keys protected by source policy and the current operator/capture values.
+  static Set<String> protectedKeys(RecordBundle bundle) => <String>{
+    for (final TemplateField field in bundle.fields)
+      if (!bundle.templateResolved || !canExtract(field)) field.fieldKey,
+    for (final RecordField field in bundle.existing)
+      if (field.verified ||
+          isManual(field.source) ||
+          field.retiredAt != null ||
+          ((field.source.toLowerCase() == 'auto' ||
+                  field.source.toLowerCase() == 'context') &&
+              <String?>[
+                field.valueRaw,
+                field.valueRefined,
+                field.valueFinal,
+              ].any((String? value) => (value ?? '').trim().isNotEmpty)))
+        field.fieldKey,
+  };
+
+  /// Purpose-specific targets; all fields remain available to validation.
+  static List<TemplateField> extractionFields(RecordBundle bundle) {
+    if (!bundle.templateResolved) return const <TemplateField>[];
+    final Set<String> protected = protectedKeys(bundle);
+    return <TemplateField>[
+      for (final TemplateField field in bundle.fields)
+        if (!protected.contains(field.fieldKey)) field,
+    ];
+  }
+
+  /// D1(a): protected structured context stays on the device.
+  static Map<String, String> extractionContext(RecordBundle bundle) {
+    if (!bundle.templateResolved) return const <String, String>{};
+    final Set<String> protected = protectedKeys(bundle);
+    return <String, String>{
+      for (final MapEntry<String, String> entry in stringMap(
+        bundle.record.contextJson,
+      ).entries)
+        if (!protected.contains(entry.key)) entry.key: entry.value,
+    };
+  }
+
+  /// Reads hostile keys before the parser drops them, without logging values.
+  static List<String> rejectedFields(String raw, RecordBundle bundle) {
+    final Object? decoded = json(raw);
+    if (decoded is! Map || decoded['fields'] is! Map) {
+      return const <String>[];
+    }
+    final Set<String> allowed = <String>{
+      for (final TemplateField field in extractionFields(bundle))
+        field.fieldKey,
+    };
+    return <String>[
+      for (final Object? key in (decoded['fields']! as Map).keys)
+        if (key is String && !allowed.contains(key)) rejection(bundle, key),
+    ];
+  }
+
+  /// Existing manual/verified reasons remain stable in the job history.
+  static String rejection(RecordBundle bundle, String key) {
+    final RecordField? prior = bundle.existing
+        .where((RecordField field) => field.fieldKey == key)
+        .firstOrNull;
+    if (prior?.verified ?? false) return '$key is already verified.';
+    if (isManual(prior?.source)) return '$key was entered by hand.';
+    return Copy.processingProtectedField(key);
   }
 
   /// The validation pattern on [field], or null when it has none.

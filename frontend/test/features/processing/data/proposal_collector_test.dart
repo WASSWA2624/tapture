@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/ai/ocr_block.dart';
 import 'package:tapture/core/ai/ocr_result.dart';
@@ -96,6 +97,43 @@ void main() {
     expect(serial.evidence.single.regionJson, isNotNull);
     expect(serial.evidence.single.snippet, 'SN458923');
   });
+
+  test(
+    'protected identity patterns stay local and cached hostile keys are rejected',
+    () async {
+      await fixture.db
+          .update(fixture.db.templateFields)
+          .write(
+            const TemplateFieldsCompanion(
+              inputMode: Value<String>('MANUAL_ONLY'),
+            ),
+          );
+      await plate('SN458923 model CR-10');
+      await respond(
+        '{"fields":{"serial":{"value":"SN458923","confidence":0.99,'
+        '"evidence":["SN458923"]},"model":{"value":"CR-10",'
+        '"confidence":0.99,"evidence":["CR-10"]}}}',
+      );
+      final ProposalSelection selection = await collector().collect(
+        job,
+        await fixture.bundle(),
+      );
+      expect(selection.proposals, isEmpty);
+      expect(
+        selection.rejections,
+        containsAll(<String>[
+          'serial is protected from extraction.',
+          'model is protected from extraction.',
+        ]),
+      );
+      expect(
+        (await fixture.responses.forJob(
+          job.id,
+        )).getOrThrow().single.rawResponse,
+        contains('SN458923'),
+      );
+    },
+  );
 
   test('a stored response fills the rest from retained text', () async {
     await plate('SN458923 model CR-10');

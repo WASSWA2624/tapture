@@ -1,7 +1,11 @@
+import 'dart:convert';
+
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/processing/data/processing_repository_impl.dart';
@@ -115,6 +119,132 @@ void main() {
       isNull,
     );
   });
+
+  test(
+    'assisted template selection keeps protected context local and preserves eligible context',
+    () async {
+      final ProcessingFixture fixture = await ProcessingFixture.open();
+      await fixture.addField('automatic', inputMode: 'AUTO');
+      await fixture.addField('operator_only', inputMode: 'MANUAL_ONLY');
+      await fixture.addField('declared_source', autoFill: true);
+      await fixture.addField('hierarchy', contextLevel: 1);
+      await fixture.addField(
+        'hidden',
+        validation: '{"_tapture":{"hidden":true}}',
+      );
+      await fixture.addField('computed', type: 'computed');
+      await fixture.addField('consent', type: 'consent');
+      await fixture.addField('ordinary');
+      await fixture.addField(
+        'unbound_pin',
+        inputMode: 'AI_ALLOWED',
+        stickable: true,
+      );
+      for (final ({String key, String source, bool verified, bool retired})
+          value
+          in <({String key, String source, bool verified, bool retired})>[
+            (
+              key: 'manual_value',
+              source: 'manual',
+              verified: false,
+              retired: false,
+            ),
+            (
+              key: 'typed_value',
+              source: 'TYPED',
+              verified: false,
+              retired: false,
+            ),
+            (
+              key: 'verified_value',
+              source: 'extraction',
+              verified: true,
+              retired: false,
+            ),
+            (
+              key: 'auto_value',
+              source: 'AUTO',
+              verified: false,
+              retired: false,
+            ),
+            (
+              key: 'context_value',
+              source: 'CONTEXT',
+              verified: false,
+              retired: false,
+            ),
+            (
+              key: 'retired_value',
+              source: 'extraction',
+              verified: false,
+              retired: true,
+            ),
+          ]) {
+        await fixture.addField(value.key);
+        (await insertRecordField(
+          fixture.db,
+          row: RecordFieldsCompanion(
+            recordId: Value<String>(fixture.record.id),
+            fieldKey: Value<String>(value.key),
+            valueRaw: Value<String>('Captured ${value.key}'),
+            source: Value<String>(value.source),
+            verified: Value<bool>(value.verified),
+            retiredAt: Value<DateTime?>(
+              value.retired ? fixture.clock.nowUtc() : null,
+            ),
+          ),
+          clock: fixture.clock,
+          deviceId: 'device-a',
+          ids: fixture.ids,
+        )).getOrThrow();
+      }
+      const Map<String, String> context = <String, String>{
+        'automatic': 'Captured date',
+        'operator_only': 'Operator note',
+        'declared_source': 'Device value',
+        'hierarchy': 'Work site',
+        'hidden': 'Hidden value',
+        'computed': 'Derived value',
+        'consent': 'Private consent',
+        'manual_value': 'Manual context',
+        'typed_value': 'Typed context',
+        'verified_value': 'Verified context',
+        'auto_value': 'Automatic context',
+        'context_value': 'Inherited context',
+        'retired_value': 'Retired context',
+        'ordinary': 'Pump room',
+        'unbound_pin': 'Bench',
+      };
+      await fixture.setContext(jsonEncode(context));
+      final List<RecordField> originals = await fixture.db
+          .select(fixture.db.recordFields)
+          .get();
+      final ScriptedExtraction provider = ScriptedExtraction(<String>[
+        '{"fields":{"template":{"value":"Motor","confidence":0.8}}}',
+      ]);
+
+      expect(
+        await fixture
+            .worker(provider: provider)
+            .templateAssist(await job(fixture), needed(fixture)),
+        'motor',
+      );
+
+      final ExtractFieldsRequest request = provider.requests.single;
+      expect(request.context, const <String, String>{
+        'ordinary': 'Pump room',
+        'unbound_pin': 'Bench',
+      });
+      expect(request.fieldSchema.single['key'], 'template');
+      expect((await fixture.storedRecord()).contextJson, jsonEncode(context));
+      expect(
+        await fixture.db.select(fixture.db.recordFields).get(),
+        originals,
+        reason:
+            'Template assistance cannot rewrite captured values or provenance.',
+      );
+    },
+  );
 
   test('a failed call leaves it to the operator', () async {
     final ProcessingFixture fixture = await ProcessingFixture.open();

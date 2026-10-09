@@ -15,6 +15,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/projects/projects.dart';
@@ -30,6 +31,121 @@ import '../../projects/fakes/fake_project_repository.dart';
 import '../fakes/fake_template_repository.dart';
 
 void main() {
+  for (final AutoFill? selected in <AutoFill?>[null, AutoFill.localAddress]) {
+    testWidgets('an explicit ${selected?.name ?? 'None'} replaces opaque source metadata durably', (WidgetTester tester) async {
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      final FixedClock clock = FixedClock(DateTime.utc(2026, 10, 9));
+      final TemplateRepositoryImpl repository = TemplateRepositoryImpl(db: db,
+          clock: clock, deviceId: 'app-id', ids: UuidV7Service.sequence(clock));
+      final TemplateDef initial = _ok(await repository.save(aTemplate(fields: const <FieldDef>[
+        FieldDef(fieldKey: 'address', label: 'Address', type: FieldType.text),
+      ])));
+      await db.update(db.templateFields).write(const TemplateFieldsCompanion(
+        autoFill: Value<bool>(true), validation: Value<String>('{"_tapture":{"autoFill":"FUTURE_SOURCE"}}'),
+      ));
+      await _pump(tester, templateId: initial.id, fieldKey: 'address',
+          overrides: <Override>[templateRepositoryProvider.overrideWithValue(repository)]);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(Copy.fieldAdvanced));
+      await tester.tap(find.text(Copy.fieldAdvanced));
+      await tester.pumpAndSettle();
+      final Finder source = find.byWidgetPredicate((Widget widget) => widget is AppChoiceField<String> && widget.label == Copy.fieldAutoFill);
+      expect(tester.widget<AppChoiceField<String>>(source).value, 'unavailable');
+      await tester.ensureVisible(source);
+      await tester.tap(source);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(selected == null ? Copy.fieldAutoFillNone : Copy.fieldAutoFillLocalAddress));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byType(AppPrimaryAction));
+      await tester.tap(find.byType(AppPrimaryAction));
+      await tester.pumpAndSettle();
+      final TemplateDef loaded = _ok(await repository.byId(initial.id))!;
+      expect(loaded.fields.single.autoFill, selected);
+      expect(loaded.fields.single.validation.containsKey('_tapture'), isFalse);
+      final TemplateField row = await db.select(db.templateFields).getSingle();
+      expect(row.autoFill, selected != null);
+      expect(jsonDecode(row.validation), selected == null ? <String, Object?>{} : <String, Object?>{'_tapture': <String, Object?>{'autoFill': 'LOCAL_ADDRESS'}});
+      expect(TemplateVersioning.shapeFor(loaded, initial.version)!.fields.single.validation['_tapture'],
+          <String, Object?>{'autoFill': 'FUTURE_SOURCE'});
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
+  testWidgets(
+    'Advanced explains source choices and clearing a configured source persists None in a new version',
+    (WidgetTester tester) async {
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      final FixedClock clock = FixedClock(DateTime.utc(2026, 10, 9));
+      final TemplateRepositoryImpl repository = TemplateRepositoryImpl(
+        db: db,
+        clock: clock,
+        deviceId: 'app-id',
+        ids: UuidV7Service.sequence(clock),
+      );
+      final TemplateDef initial = _ok(
+        await repository.save(
+          aTemplate(
+            fields: const <FieldDef>[
+              FieldDef(
+                fieldKey: 'service_date',
+                label: 'Service date',
+                type: FieldType.date,
+                autoFill: AutoFill.today,
+              ),
+            ],
+          ),
+        ),
+      );
+      await _pump(
+        tester,
+        templateId: initial.id,
+        fieldKey: 'service_date',
+        overrides: <Override>[
+          templateRepositoryProvider.overrideWithValue(repository),
+        ],
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(Copy.fieldAdvanced));
+      await tester.tap(find.text(Copy.fieldAdvanced));
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.fieldSourceHelp), findsOneWidget);
+      expect(find.text(Copy.captureTemperatureUnavailable), findsOneWidget);
+      final Finder source = find.byWidgetPredicate(
+        (Widget widget) =>
+            widget is AppChoiceField<String> &&
+            widget.label == Copy.fieldAutoFill,
+      );
+      await tester.ensureVisible(source);
+      await tester.tap(source);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(Copy.fieldAutoFillNone));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byType(AppPrimaryAction));
+      await tester.tap(find.byType(AppPrimaryAction));
+      await tester.pumpAndSettle();
+      final TemplateDef reloaded = _ok(await repository.byId(initial.id))!;
+      expect(reloaded.fields.single.autoFill, isNull);
+      expect(reloaded.version, initial.version + 1);
+      expect(
+        TemplateVersioning.shapeFor(
+          reloaded,
+          initial.version,
+        )?.fields.single.autoFill,
+        AutoFill.today,
+      );
+      expect(
+        (await db.select(db.templateFields).get()).single.autoFill,
+        isFalse,
+      );
+      final Future<void> closed = db.close();
+      await tester.pumpAndSettle();
+      await closed;
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    },
+  );
   test('keyFrom writes snake_case and appends a unit', () {
     expect(FieldAddSheet.keyFrom('Serial number'), 'serial_number');
     expect(FieldAddSheet.keyFrom('Length', unit: 'mm'), 'length_mm');
@@ -377,6 +493,7 @@ Future<void> _pump(
   WidgetTester tester, {
   List<Override> overrides = const <Override>[],
   String templateId = 'template-1',
+  String? fieldKey,
   bool openProject = false,
 }) async {
   final FakeProjectRepository projects = FakeProjectRepository();
@@ -399,7 +516,7 @@ Future<void> _pump(
       ],
       child: MaterialApp(
         theme: buildTheme(brightness: Brightness.light),
-        home: FieldAddSheet(templateId: templateId),
+        home: FieldAddSheet(templateId: templateId, fieldKey: fieldKey),
       ),
     ),
   );
@@ -413,3 +530,4 @@ T _ok<T>(Result<T> result) {
     ),
   };
 }
+import 'dart:convert';

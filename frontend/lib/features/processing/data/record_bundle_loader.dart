@@ -5,6 +5,14 @@ import 'package:tapture/core/db/tables/attachments.dart';
 import 'package:tapture/core/db/tables/photos.dart';
 import 'package:tapture/core/db/transactions.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
+import 'package:tapture/features/templates/templates.dart'
+    show
+        FieldDef,
+        TemplateDef,
+        TemplateJson,
+        TemplateMapper,
+        TemplateVersioning;
 
 import 'record_bundle.dart';
 
@@ -65,6 +73,35 @@ final class RecordBundleLoader {
         recoveryAction: 'Restore it, then retry processing.',
       );
     }
+    final List<TemplateField> currentFields =
+        await (_db.select(_db.templateFields)
+              ..where(
+                ($TemplateFieldsTable table) =>
+                    table.templateId.equals(template.id) &
+                    const CustomExpression<bool>(
+                      "NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'template_fields' AND t.entity_id = template_fields.id)",
+                    ),
+              )
+              ..orderBy(<OrderClauseGenerator<$TemplateFieldsTable>>[
+                ($TemplateFieldsTable table) =>
+                    OrderingTerm.asc(table.sortOrder),
+              ]))
+            .get();
+    final List<TemplateRow> currentRows =
+        await (_db.select(_db.templateRows)..where(
+              ($TemplateRowsTable table) =>
+                  table.templateId.equals(template.id) &
+                  const CustomExpression<bool>(
+                    "NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'template_rows' AND t.entity_id = template_rows.id)",
+                  ),
+            ))
+            .get();
+    final captured = _capturedShape(
+      record,
+      template,
+      currentFields,
+      currentRows,
+    );
     final List<AttachmentOwner> audioOwners =
         await (_db.select(_db.attachmentOwners)..where(
               ($AttachmentOwnersTable table) =>
@@ -104,24 +141,11 @@ final class RecordBundleLoader {
     return RecordBundle(
       record: record,
       project: project,
-      template: template,
-      fields:
-          await (_db.select(_db.templateFields)
-                ..where(
-                  ($TemplateFieldsTable table) =>
-                      table.templateId.equals(template.id),
-                )
-                ..orderBy(<OrderClauseGenerator<$TemplateFieldsTable>>[
-                  ($TemplateFieldsTable table) =>
-                      OrderingTerm.asc(table.sortOrder),
-                ]))
-              .get(),
-      rows:
-          await (_db.select(_db.templateRows)..where(
-                ($TemplateRowsTable table) =>
-                    table.templateId.equals(template.id),
-              ))
-              .get(),
+      template: captured.template,
+      currentTemplate: template,
+      templateResolved: captured.resolved,
+      fields: captured.fields,
+      rows: captured.rows,
       photos:
           await (_db.select(live)
                 ..where(($PhotosTable _) => shown)
@@ -172,4 +196,108 @@ final class RecordBundleLoader {
               .get(),
     );
   }
+}
+
+({
+  Template template,
+  List<TemplateField> fields,
+  List<TemplateRow> rows,
+  bool resolved,
+})
+_capturedShape(
+  RecordRow record,
+  Template header,
+  List<TemplateField> fields,
+  List<TemplateRow> rows,
+) {
+  if (record.templateVersion > 0 && record.templateVersion == header.version) {
+    return (template: header, fields: fields, rows: rows, resolved: true);
+  }
+  final unresolved = (
+    template: header,
+    fields: fields,
+    rows: const <TemplateRow>[],
+    resolved: false,
+  );
+  if (record.templateVersion <= 0) return unresolved;
+  try {
+    final TemplateDef current = TemplateMapper.fromRows(
+      header: header,
+      fields: fields,
+      rows: rows,
+    );
+    final Object? versions = current.detection['_tapture_versions'];
+    final Object? raw = versions is Map
+        ? versions['${record.templateVersion}']
+        : null;
+    // Compact legacy snapshots lack the source policies needed for extraction.
+    // Invalid full snapshots must not fall through to the legacy reader.
+    if (raw is! Map ||
+        raw['schema_version'] == null ||
+        TemplateJson.decodeStoredShape(raw, projectId: record.projectId)
+            is FailureResult<TemplateDef>) {
+      return unresolved;
+    }
+    final TemplateDef? shape = TemplateVersioning.shapeFor(
+      current,
+      record.templateVersion,
+    );
+    if (shape == null) return unresolved;
+    return (
+      template: header.copyWithCompanion(TemplateMapper.headerToRow(shape)),
+      fields: <TemplateField>[
+        for (final FieldDef field in shape.fields)
+          _fieldAtShape(header, field, fields),
+      ],
+      rows: <TemplateRow>[
+        for (final row in shape.rows)
+          for (final TemplateRow stored in rows)
+            if (stored.id == row.id)
+              stored.copyWithCompanion(
+                TemplateMapper.rowToRow(
+                  row,
+                  templateId: header.id,
+                  id: stored.id,
+                ),
+              ),
+      ],
+      resolved: true,
+    );
+  } on Failure {
+    return unresolved;
+  }
+}
+
+TemplateField _fieldAtShape(
+  Template header,
+  FieldDef field,
+  List<TemplateField> current,
+) {
+  final TemplateField seed =
+      current
+          .where((TemplateField row) => row.fieldKey == field.fieldKey)
+          .firstOrNull ??
+      TemplateField(
+        id: field.fieldKey,
+        createdAt: header.createdAt,
+        updatedAt: header.updatedAt,
+        updatedByDevice: header.updatedByDevice,
+        rev: header.rev,
+        templateId: header.id,
+        fieldKey: field.fieldKey,
+        label: field.label,
+        type: TemplateMapper.fieldTypeToWire(field.type),
+        isRequired: false,
+        inputMode: '',
+        stickable: false,
+        autoFill: false,
+        options: '[]',
+        validation: '{}',
+        lookup: '{}',
+        refine: false,
+        sortOrder: field.sortOrder,
+      );
+  return seed.copyWithCompanion(
+    TemplateMapper.fieldToRow(field, templateId: header.id, id: seed.id),
+  );
 }

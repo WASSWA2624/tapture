@@ -15,6 +15,8 @@ final class RecordBundle {
     required this.captions,
     required this.audio,
     required this.existing,
+    this.templateResolved = true,
+    this.currentTemplate,
     this.audioPhotoIds = const <String, List<String>>{},
     this.deviceTranscripts = const <TranscriptRow>[],
     this.transcriptSegments = const <TranscriptSegmentRow>[],
@@ -28,6 +30,12 @@ final class RecordBundle {
 
   /// The template the record was captured against.
   final Template template;
+
+  /// Live header retained for invalidation when processing a captured shape.
+  final Template? currentTemplate;
+
+  /// False when the captured shape is unknown; raw evidence remains usable.
+  final bool templateResolved;
 
   /// The template's fields, in sort order.
   final List<TemplateField> fields;

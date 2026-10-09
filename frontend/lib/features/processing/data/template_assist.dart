@@ -161,7 +161,7 @@ final class TemplateAssist {
                 if (caption.textRaw.trim().isNotEmpty) caption.textRaw,
             ],
             imagePaths: const <String>[],
-            context: StageSupport.stringMap(bundle.record.contextJson),
+            context: StageSupport.extractionContext(bundle),
             fieldSchema: <Map<String, Object?>>[
               <String, Object?>{
                 'key': _field,

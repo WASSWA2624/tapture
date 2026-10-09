@@ -1,26 +1,29 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/security/consent_stamp.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/fields/field_editor.dart';
 import 'package:tapture/core/widgets/fields/field_value.dart';
+import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/record_entry.dart';
 import '../domain/record_value.dart';
 
-/// One record value typed by hand, through the shared inline [FieldEditor]
+export 'package:tapture/features/templates/templates.dart'
+    show editorValueOf, storedTextOf;
+
+/// One record value corrected through the shared inline [FieldEditor]
 /// (task 097), so the input, validation and formatting are the ones capture
 /// uses (FE-CONS-01). The value travels as the text a record value stores.
 ///
 /// Only a field the record's template declares is edited here; a retired
 /// value is shown read-only by its page and never reaches this input.
-class RecordFieldInput extends StatelessWidget {
+/// Automatic values reveal the editor only after an explicit correction action.
+class RecordFieldInput extends StatefulWidget {
   /// Creates the input for [entry], showing [text].
   const RecordFieldInput({
     required this.entry,
@@ -39,11 +42,58 @@ class RecordFieldInput extends StatelessWidget {
   final ValueChanged<String> onChanged;
 
   @override
+  State<RecordFieldInput> createState() => _RecordFieldInputState();
+}
+
+class _RecordFieldInputState extends State<RecordFieldInput>
+    with StateRefresh<RecordFieldInput> {
+  bool _correcting = false;
+
+  @override
+  void didUpdateWidget(RecordFieldInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.entry.fieldKey != widget.entry.fieldKey) _correcting = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final LocalizedCopy localCopy = Copy.of(context);
-
+    final RecordEditEntry entry = widget.entry;
+    final String text = widget.text;
     final FieldDef field = entry.field;
     final RecordValue? stored = entry.value;
+    final bool correctable =
+        FieldInputPolicy.canCorrect(field) && !(stored?.retired ?? false);
+    final bool automatic =
+        field.inputMode == InputMode.auto ||
+        field.autoFill != null ||
+        stored?.valueSource == ValueSource.auto ||
+        stored?.valueSource == ValueSource.context;
+    if (!correctable || (automatic && !_correcting)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          AppListTile(
+            key: ValueKey<String>('record-field-original-${entry.fieldKey}'),
+            title: entry.label,
+            subtitle: text.isEmpty
+                ? localCopy.recordFieldEmpty
+                : _preview(context, field.type, text),
+            dense: true,
+          ),
+          if (correctable)
+            AppButton(
+              key: ValueKey<String>('record-field-correct-${entry.fieldKey}'),
+              label: localCopy.recordCorrectAutomaticValue,
+              variant: AppButtonVariant.secondary,
+              expand: true,
+              // Revealing the editor is UI-only. Its callback changes the
+              // draft, which becomes durable only when the person saves.
+              onPressed: () => refresh(() => _correcting = true),
+            ),
+        ],
+      );
+    }
     final bool untouched = text == entry.initial;
     final Widget editor = FieldEditor(
       key: ValueKey<String>('record-field-input-${entry.fieldKey}'),
@@ -58,7 +108,7 @@ class RecordFieldInput extends StatelessWidget {
         verified: untouched && (stored?.verified ?? false),
       ),
       onChanged: (FieldValue next) =>
-          onChanged(storedTextOf(field.type, next.value)),
+          widget.onChanged(storedTextOf(field.type, next.value)),
     );
     if (!(stored?.evidenceRemoved ?? false)) {
       return editor;
@@ -126,7 +176,7 @@ typedef RecordEditEntry = ({
 });
 
 /// The fields of [record] a person can edit, in [template]'s order: every
-/// live field that is not hidden, filled automatically or computed. A field
+/// live field permitted by the shared correction policy. A field
 /// whose value was retired is left out; its value stays read-only. Each
 /// starts from what the record displays for it (approved, else refined,
 /// else raw). No template, no editable field.
@@ -139,7 +189,7 @@ List<RecordEditEntry> recordEditEntries({
   }
   final List<FieldDef> fields = <FieldDef>[
     for (final FieldDef field in template.fields)
-      if (_editable(field)) field,
+      if (FieldInputPolicy.canCorrect(field)) field,
   ];
   final List<int> order = List<int>.generate(fields.length, (int i) => i)
     ..sort((int a, int b) {
@@ -179,54 +229,6 @@ bool recordFieldChanged(RecordEditEntry entry, String text) {
   return text != entry.initial;
 }
 
-/// The value [FieldEditor] shows for the stored [text] of a [type] field.
-Object? editorValueOf(FieldType type, String text) {
-  if (text.isEmpty) {
-    return null;
-  }
-  return switch (type) {
-    FieldType.number ||
-    FieldType.decimal ||
-    FieldType.currency ||
-    FieldType.percentage => num.tryParse(text) ?? text,
-    FieldType.time => _timeOf(text) ?? text,
-    FieldType.date || FieldType.dateTime => DateTime.tryParse(text) ?? text,
-    FieldType.boolean => text == 'true',
-    FieldType.consent => ConsentStamp.parse(text)?.toJson(),
-    FieldType.multiChoice => <String>[
-      for (final String part in text.split(_listSeparator))
-        if (part.trim().isNotEmpty) part.trim(),
-    ],
-    _ => text,
-  };
-}
-
-/// The text a record value stores for [value] from a [type] field's editor:
-/// dates as ISO-8601, times as `HH:mm`, several choices joined by commas.
-String storedTextOf(FieldType type, Object? value) {
-  if (value == null) {
-    return '';
-  }
-  if (type == FieldType.consent) {
-    final ConsentStamp? stamp = ConsentStamp.parse(value);
-    return stamp == null ? '' : jsonEncode(stamp.toJson());
-  }
-  if (value is DateTime) {
-    return switch (type) {
-      FieldType.date => DateFormat('yyyy-MM-dd').format(value),
-      FieldType.time => DateFormat('HH:mm').format(value),
-      _ => value.toIso8601String(),
-    };
-  }
-  if (value is Iterable<Object?>) {
-    return value
-        .whereType<Object>()
-        .map((Object choice) => choice.toString())
-        .join(_listSeparator);
-  }
-  return value.toString();
-}
-
 RecordEditEntry _entryFor(FieldDef field, RecordValue? value) {
   return (
     fieldKey: field.fieldKey,
@@ -240,25 +242,14 @@ RecordEditEntry _entryFor(FieldDef field, RecordValue? value) {
   );
 }
 
-/// Person-entered fields: shown, typed or picked, never computed.
-bool _editable(FieldDef field) {
-  return !field.hidden &&
-      field.inputMode != InputMode.auto &&
-      field.type != FieldType.computed;
-}
-
-const String _listSeparator = ', ';
-
-/// A stored `HH:mm` time as a [DateTime] on an arbitrary day.
-DateTime? _timeOf(String text) {
-  final List<String> parts = text.split(':');
-  if (parts.length < 2) {
-    return DateTime.tryParse(text);
-  }
-  final int? hour = int.tryParse(parts[0]);
-  final int? minute = int.tryParse(parts[1]);
-  if (hour == null || minute == null) {
-    return null;
-  }
-  return DateTime(2000, 1, 1, hour, minute);
+String _preview(BuildContext context, FieldType type, String text) {
+  final Object? value = editorValueOf(type, text);
+  if (value is! DateTime) return text;
+  final String locale = Localizations.localeOf(context).toString();
+  return switch (type) {
+    FieldType.date => DateFormat.yMd(locale).format(value),
+    FieldType.time => DateFormat.Hm(locale).format(value),
+    FieldType.dateTime => DateFormat.yMd(locale).add_Hm().format(value),
+    _ => text,
+  };
 }

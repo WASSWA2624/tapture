@@ -61,7 +61,7 @@ final class OnlineExtraction {
     if (pending != null) {
       final ParseOutcome parsed = ResponseParser.parse(
         pending.rawResponse,
-        schema: StageSupport.schema(bundle.fields),
+        schema: StageSupport.schema(StageSupport.extractionFields(bundle)),
       );
       if (parsed.ok) {
         if (cancel.isCancelled) throw const CancelledFailure();
@@ -171,12 +171,16 @@ final class OnlineExtraction {
           parsedOk: false,
         ),
       );
+      await _writes.appendRejections(
+        job.id,
+        StageSupport.rejectedFields(raw, bundle),
+      );
       // Store the original reply even when cancellation or an edit raced it.
       if (cancel.isCancelled) throw const CancelledFailure();
       if (!await isCurrent()) throw Failure.from(_changed);
       final ParseOutcome parsed = ResponseParser.parse(
         raw,
-        schema: StageSupport.schema(bundle.fields),
+        schema: StageSupport.schema(StageSupport.extractionFields(bundle)),
       );
       if (parsed.ok) {
         StageSupport.unwrap(await _responses.markParsed(stored.id));

@@ -3,6 +3,8 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/validation/field_expression.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
@@ -25,6 +27,7 @@ class FieldAdvancedSection extends StatelessWidget {
     required this.contextLevel,
     required this.inputMode,
     required this.autoFill,
+    this.autoFillUnavailable = false,
     required this.stickable,
     required this.refine,
     required this.identity,
@@ -49,6 +52,9 @@ class FieldAdvancedSection extends StatelessWidget {
   final TextEditingController contextLevel;
   final InputMode inputMode;
   final AutoFill? autoFill;
+
+  /// An existing source declaration this reader cannot safely activate.
+  final bool autoFillUnavailable;
   final bool stickable;
   final bool refine;
   final bool identity;
@@ -122,6 +128,13 @@ class FieldAdvancedSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         AppSectionHeader(title: localCopy.fieldAdvanced, dense: true),
+        AppListTile(
+          title: localCopy.fieldSourceHelp,
+          subtitle: localCopy.captureTemperatureUnavailable,
+          leading: const Icon(AppIcons.info),
+          dense: true,
+          wrapText: true,
+        ),
         AppTextField(
           label: localCopy.fieldDefaultValue,
           controller: defaultValue,
@@ -145,8 +158,10 @@ class FieldAdvancedSection extends StatelessWidget {
         ),
         AppChoiceField<String>(
           label: localCopy.fieldAutoFill,
-          value: autoFill?.name ?? _none,
+          value: autoFillUnavailable ? _unavailable : autoFill?.name ?? _none,
           options: <Choice<String>>[
+            if (autoFillUnavailable)
+              Choice<String>(_unavailable, localCopy.captureFieldUnavailable),
             Choice<String>(_none, localCopy.fieldAutoFillNone),
             for (final AutoFill source in AutoFill.values)
               Choice<String>(
@@ -155,6 +170,7 @@ class FieldAdvancedSection extends StatelessWidget {
               ),
           ],
           onChanged: (String? value) {
+            if (value == _unavailable) return;
             if (value == null || value == _none) {
               onAutoFill(null);
               return;
@@ -215,3 +231,4 @@ class FieldAdvancedSection extends StatelessWidget {
 }
 
 const String _none = 'none';
+const String _unavailable = 'unavailable';

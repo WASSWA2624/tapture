@@ -22,6 +22,10 @@ class AppChip extends StatelessWidget {
     this.selected = false,
     this.onTap,
     this.onDismiss,
+    this.comfortable = false,
+    this.wrapLabel = false,
+    this.semanticLabel,
+    this.maxLabelWidth,
   });
 
   /// Visible text; also the semantic name of an interactive chip
@@ -40,6 +44,19 @@ class AppChip extends StatelessWidget {
   /// Removes the chip. Null means it cannot be dismissed.
   final VoidCallback? onDismiss;
 
+  /// Paints a full-height body with readable body text and token padding.
+  final bool comfortable;
+
+  /// Lets the complete label wrap and grow inside its available width.
+  final bool wrapLabel;
+
+  /// Complete accessible value when the visible label is a shortened preview.
+  final String? semanticLabel;
+
+  /// Maximum width of the labelled body, including its padding and controls.
+  /// Bounds a wrapping chip before it enters a horizontal scroller.
+  final double? maxLabelWidth;
+
   bool get _interactive => onTap != null || onDismiss != null;
 
   @override
@@ -47,34 +64,43 @@ class AppChip extends StatelessWidget {
     final AppColors colors = context.colors;
     final Color background = selected ? colors.primary : colors.surfaceVariant;
     final Color foreground = selected ? colors.onPrimary : colors.onSurface;
-    final Widget pill = Material(
-      color: background,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Radii.sm),
-        side: BorderSide(
-          color: selected ? background : colors.outline,
-          width: Space.x0 / 2,
-          strokeAlign: BorderSide.strokeAlignInside,
-        ),
+    final Widget pill = ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: comfortable ? Sizes.minTapTarget : 0,
+        minWidth: comfortable ? Sizes.minTapTarget : 0,
+        maxWidth: maxLabelWidth ?? double.infinity,
       ),
-      child: Padding(
-        padding: EdgeInsetsDirectional.only(
-          start: Space.x2,
-          end: onDismiss == null ? Space.x2 : Space.x0,
-          top: Space.x0,
-          bottom: Space.x0,
+      child: Material(
+        color: background,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.sm),
+          side: BorderSide(
+            color: selected ? background : colors.outline,
+            width: Space.x0 / 2,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
         ),
-        child: _labelRow(foreground),
+        child: Padding(
+          padding: EdgeInsetsDirectional.only(
+            start: Space.x2,
+            end: onDismiss == null ? Space.x2 : Space.x0,
+            top: comfortable ? Space.x2 : Space.x0,
+            bottom: comfortable ? Space.x2 : Space.x0,
+          ),
+          child: _labelRow(foreground),
+        ),
       ),
     );
     if (!_interactive) {
-      return pill;
+      return semanticLabel == null
+          ? pill
+          : Semantics(label: semanticLabel, child: pill);
     }
     return Semantics(
       button: onTap != null,
       selected: selected,
       enabled: onTap != null || onDismiss != null,
-      label: label,
+      label: semanticLabel ?? label,
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
@@ -101,11 +127,16 @@ class AppChip extends StatelessWidget {
         final LocalizedCopy localCopy = Copy.of(context);
 
         final bool bounded = constraints.maxWidth.isFinite;
-        final Widget text = Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: AppText.label.copyWith(color: foreground),
+        final Widget text = ExcludeSemantics(
+          excluding: semanticLabel != null,
+          child: Text(
+            label,
+            maxLines: wrapLabel ? null : 1,
+            overflow: wrapLabel ? TextOverflow.visible : TextOverflow.ellipsis,
+            style: (comfortable ? AppText.body : AppText.label).copyWith(
+              color: foreground,
+            ),
+          ),
         );
         return Row(
           mainAxisSize: MainAxisSize.min,
@@ -113,6 +144,10 @@ class AppChip extends StatelessWidget {
             if (selected) ...<Widget>[
               Icon(AppIcons.check, color: foreground, size: Space.x4),
               const SizedBox(width: Space.x1),
+              if (comfortable && icon != null) ...<Widget>[
+                Icon(icon, color: foreground, size: Space.x4),
+                const SizedBox(width: Space.x1),
+              ],
             ] else if (icon != null) ...<Widget>[
               Icon(icon, color: foreground, size: Space.x4),
               const SizedBox(width: Space.x1),

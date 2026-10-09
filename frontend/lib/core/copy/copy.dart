@@ -12,6 +12,58 @@ export 'localized_message.dart';
 /// Compatibility copy for services without a widget context, in English.
 /// Widgets resolve their own inherited locale through [of].
 abstract final class Copy {
+  /// Why a protected record value cannot be corrected.
+  static String get recordFieldReadOnly => _english.recordFieldReadOnly;
+
+  /// Explains rejection of a field protected by its source or stored value.
+  static String processingProtectedField(String fieldKey) =>
+      _english.processingProtectedField(fieldKey);
+
+  /// Processing review reason when the owning captured shape cannot be resolved.
+  static String get processingCapturedTemplateUnavailable =>
+      _english.processingCapturedTemplateUnavailable;
+
+  /// Explicit audited correction of an eligible automatically populated field.
+  static String get recordCorrectAutomaticValue =>
+      _english.recordCorrectAutomaticValue;
+
+  /// Searches Manual form field labels and stable keys.
+  static String get captureSearchFields => _english.captureSearchFields;
+
+  /// Field source/status for operator entry.
+  static String get captureFieldManual => _english.captureFieldManual;
+
+  /// Field source/status for system filling.
+  static String get captureFieldAutomatic => _english.captureFieldAutomatic;
+
+  /// Field source/status for inherited context values.
+  static String get captureFieldContext => _english.captureFieldContext;
+
+  /// Field source/status for evidence extraction eligibility.
+  static String get captureFieldProcessing => _english.captureFieldProcessing;
+
+  /// Pending field source that requires the authoritative first-save instant or sequence.
+  static String get captureFieldFilledAtSave =>
+      _english.captureFieldFilledAtSave;
+
+  /// Unavailable automatic source without a fabricated value.
+  static String get captureFieldUnavailable => _english.captureFieldUnavailable;
+
+  /// Explains existing template-owned source and input-mode controls.
+  static String get fieldSourceHelp => _english.fieldSourceHelp;
+
+  /// Honest availability helper without a weather or hardware fallback.
+  static String get captureTemperatureUnavailable =>
+      _english.captureTemperatureUnavailable;
+
+  /// Template-opted-in native local interface address source.
+  static String get fieldAutoFillLocalAddress =>
+      _english.fieldAutoFillLocalAddress;
+
+  /// Validation recovery for a non-text local-address source.
+  static String get fieldSourceAddressNeedsText =>
+      _english.fieldSourceAddressNeedsText;
+
   /// Optional template fields opened from Capture.
   static String get captureManualForm => _english.captureManualForm;
 

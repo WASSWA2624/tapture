@@ -1,6 +1,7 @@
 /// The capture feature's data layer: repository implementations and persistence.
 library;
 
+export 'capture_device_sources.dart';
 export 'capture_document_repository_impl.dart';
 export 'capture_persistence_impl.dart';
 export 'capture_record_writer.dart';

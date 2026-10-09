@@ -47,6 +47,7 @@ final class CaptureRecordWriter
     required IdService ids,
     String Function()? operatorName,
     bool Function()? autoFillDates,
+    String? Function(CaptureSession)? localAddress,
     FileRelocation? relocation,
   }) : _db = db,
        _clock = clock,
@@ -54,6 +55,7 @@ final class CaptureRecordWriter
        _ids = ids,
        _operatorName = operatorName,
        _autoFillDates = autoFillDates,
+       _localAddress = localAddress,
        _relocation = relocation;
 
   final sqlite.AppDatabase _db;
@@ -62,6 +64,7 @@ final class CaptureRecordWriter
   final IdService _ids;
   final String Function()? _operatorName;
   final bool Function()? _autoFillDates;
+  final String? Function(CaptureSession)? _localAddress;
   final FileRelocation? _relocation;
 
   /// Persists one complete captured record or rolls every row back, then
@@ -119,6 +122,14 @@ final class CaptureRecordWriter
   /// Create-path implementation kept distinct so raw-column guardrails can
   /// prove these values are inserted once and are never refinement updates.
   Future<Result<String>> createRecord(CaptureSession session) {
+    // Snapshot before any await: a pending or later read cannot change this
+    // record's first-save evidence, and the idempotent path keeps its raw value.
+    String? address;
+    try {
+      address = _localAddress?.call(session);
+    } on Object {
+      address = null;
+    }
     return runInTransaction(_db, () async {
       // A capture session owns exactly one raw record. Using its stable id
       // makes a retry safe even when the record transaction committed but the
@@ -338,6 +349,7 @@ final class CaptureRecordWriter
         context: session.contextSnapshot,
         location: session.location,
         autoFillDates: _autoFillDates?.call() ?? true,
+        localAddress: address,
       );
       final Map<String, ({Object? value, String source})> fields =
           <String, ({Object? value, String source})>{

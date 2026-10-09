@@ -4,6 +4,29 @@ import 'package:tapture/features/templates/domain/domain.dart';
 
 /// Automatic field values applied on first save with source `AUTO`.
 abstract final class AutoFields {
+  /// Uses declared configuration, with the three inherited capture bindings
+  /// missing from older `record_admin` shapes resolved at first save.
+  static AutoFill? effectiveSource(FieldDef field) {
+    if (_opaque(field) ||
+        (field.autoFill == AutoFill.localAddress &&
+            field.type != FieldType.text)) {
+      return null;
+    }
+    final AutoFill? declared = field.autoFill;
+    if (declared != null ||
+        field.defaultValue != null ||
+        field.group != _recordAdminGroup ||
+        field.inputMode != InputMode.auto) {
+      return declared;
+    }
+    return switch (field.fieldKey) {
+      'captured_date' => AutoFill.today,
+      'captured_time' => AutoFill.time,
+      'device_id' => AutoFill.device,
+      _ => null,
+    };
+  }
+
   /// Resolves declared defaults and automatic sources at the save instant.
   /// Existing typed and context values take precedence when the writer merges.
   ///
@@ -19,16 +42,23 @@ abstract final class AutoFields {
     required Map<String, String> context,
     required GeoFix? location,
     bool autoFillDates = true,
+    String? localAddress,
   }) {
     final DateTime local = nowUtc.toLocal();
     final Map<String, Object?> values = <String, Object?>{};
     for (final FieldDef field in fields) {
-      final Object? value = switch (field.autoFill) {
+      if (_opaque(field) ||
+          (field.autoFill == AutoFill.localAddress &&
+              field.type != FieldType.text)) {
+        continue;
+      }
+      final Object? value = switch (effectiveSource(field)) {
         AutoFill.now => autoFillDates ? nowUtc.toIso8601String() : null,
         AutoFill.today => autoFillDates ? _date.format(local) : null,
         AutoFill.time => autoFillDates ? _time.format(local) : null,
         AutoFill.operator => operatorName,
         AutoFill.device => deviceId,
+        AutoFill.localAddress => localAddress,
         AutoFill.sequence => sequence,
         AutoFill.context => context[field.fieldKey],
         AutoFill.gps => _gpsValue(field.fieldKey, location),
@@ -61,6 +91,11 @@ abstract final class AutoFields {
   }
 }
 
+bool _opaque(FieldDef field) => switch (field.validation['_tapture']) {
+  final Map<Object?, Object?> metadata => metadata['autoFill'] != null,
+  _ => false,
+};
+
 /// The stored date shape: ISO 8601 calendar date, in ASCII digits whatever
 /// the device language.
 final DateFormat _date = DateFormat('yyyy-MM-dd', _storedLocale);
@@ -70,3 +105,6 @@ final DateFormat _time = DateFormat('HH:mm:ss', _storedLocale);
 
 /// The locale stored values are written in; its symbols ship with `intl`.
 const String _storedLocale = 'en_US';
+
+/// The inherited group whose capture metadata is resolved without asset edits.
+const String _recordAdminGroup = 'record_admin';

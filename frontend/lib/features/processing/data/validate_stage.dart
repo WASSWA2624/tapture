@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/field_evidence.dart';
 import 'package:tapture/core/db/tables/records.dart';
@@ -99,6 +100,10 @@ final class ValidateStage {
       },
     );
     final List<String> priorRejections = await _writes.rejections(job.id);
+    final List<String> rejections = <String>[
+      ...selection.rejections,
+      if (!bundle.templateResolved) Copy.processingCapturedTemplateUnavailable,
+    ];
     final List<String> missing = <String>[
       for (final TemplateField field in bundle.fields)
         if (field.isRequired &&
@@ -132,7 +137,14 @@ final class ValidateStage {
         );
       }
       if (cancel.isCancelled) throw const CancelledFailure();
+      final Set<String> protected = StageSupport.protectedKeys(currentBundle);
       for (final ProposalWrite write in plan.writes) {
+        if (!currentBundle.templateResolved ||
+            (write.source != ProposalApplication.defaultSource &&
+                protected.contains(write.fieldKey))) {
+          rejections.add(StageSupport.rejection(currentBundle, write.fieldKey));
+          continue;
+        }
         final TemplateField field = bundle.fields.firstWhere(
           (TemplateField value) => value.fieldKey == write.fieldKey,
         );
@@ -190,7 +202,7 @@ final class ValidateStage {
       await writeRecordStatus(
         _db,
         recordId: bundle.record.id,
-        status: selection.rejections.isNotEmpty || missing.isNotEmpty
+        status: rejections.isNotEmpty || missing.isNotEmpty
             ? ProposalApplication.needsReviewStatus
             : plan.status,
         previousStatus: current?.status ?? bundle.record.status,
@@ -204,14 +216,14 @@ final class ValidateStage {
         ProcessingCompanion(
           rejections: Value<String?>(
             priorRejections.isEmpty &&
-                    selection.rejections.isEmpty &&
+                    rejections.isEmpty &&
                     missing.isEmpty &&
                     plan.skips.isEmpty
                 ? null
                 : jsonEncode(
                     <String>{
                       ...priorRejections,
-                      ...selection.rejections,
+                      ...rejections,
                       ...missing,
                       ...plan.skips,
                     }.toList(),

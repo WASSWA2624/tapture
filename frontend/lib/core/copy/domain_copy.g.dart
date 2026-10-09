@@ -13,1486 +13,570 @@ export 'localized_message.dart';
 /// English audit copy and semantic messages for pure Dart domain boundaries.
 abstract final class DomainCopy {
   static const _DomainFormatter _english = _DomainFormatter();
-
   /// Serializable semantic factories without a Flutter dependency.
   static const _DomainMessages messages = _DomainMessages();
-  static String get projectNothingToOpen => _english.projectNothingToOpen;
-  static String get projectNothingToOpenRecovery =>
-      _english.projectNothingToOpenRecovery;
-  static String lookupUnknownTarget(String target) =>
-      _english.lookupUnknownTarget(target);
-  static String lookupTargetTwice(String target) =>
-      _english.lookupTargetTwice(target);
-  static String get lookupImportRecovery => _english.lookupImportRecovery;
-  static String get templatesImportUnknownSchema =>
-      _english.templatesImportUnknownSchema;
-  static String get templatesImportUnknownSchemaRecovery =>
-      _english.templatesImportUnknownSchemaRecovery;
-  static String get templatesImportInvalid => _english.templatesImportInvalid;
-  static String get templatesImportInvalidRecovery =>
-      _english.templatesImportInvalidRecovery;
-  static String get templatesImportDuplicateField =>
-      _english.templatesImportDuplicateField;
-  static String get templatesImportDuplicateFieldRecovery =>
-      _english.templatesImportDuplicateFieldRecovery;
-  static String get tryAnotherFile => _english.tryAnotherFile;
-  static String captureDocumentInvalid(String filename) =>
-      _english.captureDocumentInvalid(filename);
-  static String get captureQualityBlur => _english.captureQualityBlur;
-  static String get captureQualityDark => _english.captureQualityDark;
-  static String get captureQualityBright => _english.captureQualityBright;
-  static String get captureQualitySmallText => _english.captureQualitySmallText;
-  static String get captureNeedsEvidence => _english.captureNeedsEvidence;
-  static String get captureNeedsEvidenceRecovery =>
-      _english.captureNeedsEvidenceRecovery;
-  static String get recordBandHigh => _english.recordBandHigh;
-  static String get recordBandMedium => _english.recordBandMedium;
-  static String get recordBandLow => _english.recordBandLow;
-  static String validationRequired(String label) =>
-      _english.validationRequired(label);
-  static String validationTooShort(String label) =>
-      _english.validationTooShort(label);
-  static String validationTooLong(String label) =>
-      _english.validationTooLong(label);
-  static String validationRange(String label) =>
-      _english.validationRange(label);
-  static String validationPattern(String label) =>
-      _english.validationPattern(label);
-  static String validationOption(String label) =>
-      _english.validationOption(label);
-  static String validationUnit(String label) => _english.validationUnit(label);
-  static String validationIdentity(String label) =>
-      _english.validationIdentity(label);
-  static String get validationEvidence => _english.validationEvidence;
-  static String get validationExpression => _english.validationExpression;
-  static String get validationExpressionAction =>
-      _english.validationExpressionAction;
-  static String validationUnknownField(String name) =>
-      _english.validationUnknownField(name);
-  static String conflictBlocksApproval(String label) =>
-      _english.conflictBlocksApproval(label);
-  static String get reviewBlockedDuplicate => _english.reviewBlockedDuplicate;
-  static String get importKeptExisting => _english.importKeptExisting;
-  static String get importMatchUnsettled => _english.importMatchUnsettled;
-  static String importRepeatsRow(int row) => _english.importRepeatsRow(row);
-  static String get importFixRowColumn => _english.importFixRowColumn;
-  static String get importFixReasonColumn => _english.importFixReasonColumn;
-  static String get uploadStopped => _english.uploadStopped;
-  static String get frictionLogAction => _english.frictionLogAction;
-  static String get failureAIIsNotAvailable => _english.failureAIIsNotAvailable;
-  static String get failureContinueCapturingAnalysisCanWait =>
-      _english.failureContinueCapturingAnalysisCanWait;
-  static String failureNoUploadDestinationIsRegisteredForValue(String value0) =>
-      _english.failureNoUploadDestinationIsRegisteredForValue(value0);
-  static String get failureChooseAnotherDestination =>
-      _english.failureChooseAnotherDestination;
-  static String get failureTheDestinationRefusedTheSignIn =>
-      _english.failureTheDestinationRefusedTheSignIn;
-  static String get failureCheckTheKeyOrSignInAgain =>
-      _english.failureCheckTheKeyOrSignInAgain;
-  static String get failureThatBucketOrFolderWasNotFound =>
-      _english.failureThatBucketOrFolderWasNotFound;
-  static String get failureCheckTheNameAndTryTheConnection =>
-      _english.failureCheckTheNameAndTryTheConnection;
-  static String get failureTheDestinationDidNotFinishTheUpload =>
-      _english.failureTheDestinationDidNotFinishTheUpload;
-  static String get failureTryAgain => _english.failureTryAgain;
-  static String get failureTheServerRedirectedTheUploadToAnother =>
-      _english.failureTheServerRedirectedTheUploadToAnother;
-  static String get failureCheckTheAddressAndTryAgain =>
-      _english.failureCheckTheAddressAndTryAgain;
-  static String get failureTheDestinationRejectedTheUpload =>
-      _english.failureTheDestinationRejectedTheUpload;
-  static String get failureCheckTheSettingsAndTryAgain =>
-      _english.failureCheckTheSettingsAndTryAgain;
-  static String get failureTheFileCouldNotBeReadWhile =>
-      _english.failureTheFileCouldNotBeReadWhile;
-  static String get failureCheckThatTheFileIsStillOn =>
-      _english.failureCheckThatTheFileIsStillOn;
-  static String failureTaptureCouldNotFindValue(String value0) =>
-      _english.failureTaptureCouldNotFindValue(value0);
-  static String failureTheFileValueIsEmpty(String value0) =>
-      _english.failureTheFileValueIsEmpty(value0);
-  static String get failureChooseAFileThatHasContentsAnd =>
-      _english.failureChooseAFileThatHasContentsAnd;
-  static String failureTheFileValueIsNotASupported(String value0) =>
-      _english.failureTheFileValueIsNotASupported(value0);
-  static String get failureChooseAnImageDocumentSpreadsheetAudioFile =>
-      _english.failureChooseAnImageDocumentSpreadsheetAudioFile;
-  static String failureTheFileValueDoesNotMatchIts(String value0) =>
-      _english.failureTheFileValueDoesNotMatchIts(value0);
-  static String get failureChooseAFileOfTheExpectedType =>
-      _english.failureChooseAFileOfTheExpectedType;
-  static String failureTheFileValueIsLargerThanThe(
-    String value0,
-    String value1,
-  ) => _english.failureTheFileValueIsLargerThanThe(value0, value1);
-  static String get failureChooseASmallerFileAndTryAgain =>
-      _english.failureChooseASmallerFileAndTryAgain;
-  static String failureTheArchiveValueContainsAPathThat(String value0) =>
-      _english.failureTheArchiveValueContainsAPathThat(value0);
-  static String get failureChooseADifferentFileAndTryAgain =>
-      _english.failureChooseADifferentFileAndTryAgain;
-  static String failureTheArchiveValueContainsALinkInstead(String value0) =>
-      _english.failureTheArchiveValueContainsALinkInstead(value0);
-  static String failureTheArchiveValueDeclaresMoreUncompressedData(
-    String value0,
-  ) => _english.failureTheArchiveValueDeclaresMoreUncompressedData(value0);
-  static String failureTheFileValueIsNotAnArchive(String value0) =>
-      _english.failureTheFileValueIsNotAnArchive(value0);
-  static String get failureChooseAZIPBundleOrSpreadsheetAnd =>
-      _english.failureChooseAZIPBundleOrSpreadsheetAnd;
-  static String get failureChooseTheFileAgainThenTryAgain =>
-      _english.failureChooseTheFileAgainThenTryAgain;
-  static String get failureThisPhotoAppearsMoreThanOnce =>
-      _english.failureThisPhotoAppearsMoreThanOnce;
-  static String get failureReloadTheCaptureAndTryAgain =>
-      _english.failureReloadTheCaptureAndTryAgain;
-  static String get failureAnEditedPhotoIsMissingItsOriginal =>
-      _english.failureAnEditedPhotoIsMissingItsOriginal;
-  static String get failureKeepThisCaptureAndRestoreTheOriginal =>
-      _english.failureKeepThisCaptureAndRestoreTheOriginal;
-  static String get failureThesePhotoEditsLoopBackOnThemselves =>
-      _english.failureThesePhotoEditsLoopBackOnThemselves;
-  static String get failureAPresetWithThatNameAlreadyExists =>
-      _english.failureAPresetWithThatNameAlreadyExists;
-  static String get failureChooseAnotherNameOrConfirmOverwrite =>
-      _english.failureChooseAnotherNameOrConfirmOverwrite;
-  static String get failureTheSnapshotHasBeenPurged =>
-      _english.failureTheSnapshotHasBeenPurged;
-  static String get failureTheMergeCanNoLongerBeUndone =>
-      _english.failureTheMergeCanNoLongerBeUndone;
-  static String get failureThisRecordIsInTheRecycleBin =>
-      _english.failureThisRecordIsInTheRecycleBin;
-  static String failureThisRecordIsAlreadyValue(String value0) =>
-      _english.failureThisRecordIsAlreadyValue(value0);
-  static String get failureChooseADifferentStatusOrLeaveIt =>
-      _english.failureChooseADifferentStatusOrLeaveIt;
-  static String failureARecordThatIsValueCannotBe(
-    String value0,
-    String value1,
-  ) => _english.failureARecordThatIsValueCannotBe(value0, value1);
-  static String get failureRestoreItFromTheRecycleBinBefore =>
-      _english.failureRestoreItFromTheRecycleBinBefore;
-  static String get failureAddAHeaderRowAndTryAgain =>
-      _english.failureAddAHeaderRowAndTryAgain;
-  static String get failureThatTableHasNoDataColumns =>
-      _english.failureThatTableHasNoDataColumns;
-  static String get failureThatValueIsNotText =>
-      _english.failureThatValueIsNotText;
-  static String get failureEnterTextOrLeaveTheFieldEmpty =>
-      _english.failureEnterTextOrLeaveTheFieldEmpty;
-  static String get failureThatValueIsNotAWholeNumber =>
-      _english.failureThatValueIsNotAWholeNumber;
-  static String get failureEnterAWholeNumberOrLeaveThe =>
-      _english.failureEnterAWholeNumberOrLeaveThe;
-  static String get failureThatValueIsNotANumber =>
-      _english.failureThatValueIsNotANumber;
-  static String get failureEnterANumberOrLeaveTheField =>
-      _english.failureEnterANumberOrLeaveTheField;
-  static String get failureThatNumberIsOutsideTheAllowedRange =>
-      _english.failureThatNumberIsOutsideTheAllowedRange;
-  static String get failureEnterANumberInsideTheRangeOr =>
-      _english.failureEnterANumberInsideTheRangeOr;
-  static String get failureThatValueIsShorterThanThisField =>
-      _english.failureThatValueIsShorterThanThisField;
-  static String get failureEnterALongerValueOrLeaveThe =>
-      _english.failureEnterALongerValueOrLeaveThe;
-  static String get failureThatValueIsLongerThanThisField =>
-      _english.failureThatValueIsLongerThanThisField;
-  static String get failureShortenTheValueOrLeaveTheField =>
-      _english.failureShortenTheValueOrLeaveTheField;
-  static String get failureThatValueDoesNotMatchTheExpected =>
-      _english.failureThatValueDoesNotMatchTheExpected;
-  static String get failureEnterAValueInTheExpectedForm =>
-      _english.failureEnterAValueInTheExpectedForm;
-  static String get failureThisFieldSPatternIsNotValid =>
-      _english.failureThisFieldSPatternIsNotValid;
-  static String get failureOpenTheTemplateAndCorrectTheField =>
-      _english.failureOpenTheTemplateAndCorrectTheField;
-  static String get failureThatValueIsNotADate =>
-      _english.failureThatValueIsNotADate;
-  static String get failureEnterACalendarDateOrLeaveThe =>
-      _english.failureEnterACalendarDateOrLeaveThe;
-  static String get failureThatValueIsNotATimeOf =>
-      _english.failureThatValueIsNotATimeOf;
-  static String get failureEnterATimeOrLeaveTheField =>
-      _english.failureEnterATimeOrLeaveTheField;
-  static String get failureThatValueIsNotADateAnd =>
-      _english.failureThatValueIsNotADateAnd;
-  static String get failureEnterADateAndTimeOrLeave =>
-      _english.failureEnterADateAndTimeOrLeave;
-  static String get failureThatValueIsNotAYesOr =>
-      _english.failureThatValueIsNotAYesOr;
-  static String get failureSwitchTheFieldOnOrOffOr =>
-      _english.failureSwitchTheFieldOnOrOffOr;
-  static String get failureThatValueIsNotAChoice =>
-      _english.failureThatValueIsNotAChoice;
-  static String get failurePickAnOptionFromTheListOr =>
-      _english.failurePickAnOptionFromTheListOr;
-  static String get failureThatChoiceIsNotOnTheList =>
-      _english.failureThatChoiceIsNotOnTheList;
-  static String get failureThatValueIsNotAFilePath =>
-      _english.failureThatValueIsNotAFilePath;
-  static String get failureAttachAFileOrLeaveTheField =>
-      _english.failureAttachAFileOrLeaveTheField;
-  static String get failureThatValueIsNotALocation =>
-      _english.failureThatValueIsNotALocation;
-  static String get failureCaptureAGPSFixOrLeaveThe =>
-      _english.failureCaptureAGPSFixOrLeaveThe;
-  static String get failureThatLocationIsOutsideTheEarth =>
-      _english.failureThatLocationIsOutsideTheEarth;
-  static String get failureCaptureAGPSFixAgainOrLeave =>
-      _english.failureCaptureAGPSFixAgainOrLeave;
-  static String get failureThisFieldTypeHasNoEditorOn =>
-      _english.failureThisFieldTypeHasNoEditorOn;
-  static String get failureOpenTheTemplateAndPickAType =>
-      _english.failureOpenTheTemplateAndPickAType;
-  static String get failureConfirmConsentWithTheNamedOperator =>
-      _english.failureConfirmConsentWithTheNamedOperator;
-  static String get failureThatFieldTypeIsNotRecognised =>
-      _english.failureThatFieldTypeIsNotRecognised;
-  static String get failurePickATypeFromTheListAnd =>
-      _english.failurePickATypeFromTheListAnd;
-  static String get failureThatInputModeIsNotRecognised =>
-      _english.failureThatInputModeIsNotRecognised;
-  static String get failurePickAnInputModeFromTheList =>
-      _english.failurePickAnInputModeFromTheList;
-  static String get failureTheSuggestedOrderCouldNotBeRead =>
-      _english.failureTheSuggestedOrderCouldNotBeRead;
-  static String get failureUseTheOnDeviceResultsOrTry =>
-      _english.failureUseTheOnDeviceResultsOrTry;
-  static String get cloudUploadConfirmationRequired =>
-      _english.cloudUploadConfirmationRequired;
-  static String get cloudUploadConfirmationRecovery =>
-      _english.cloudUploadConfirmationRecovery;
-  static String get cloudUploadHistoryMissing =>
-      _english.cloudUploadHistoryMissing;
-  static String get cloudUploadRestartRecovery =>
-      _english.cloudUploadRestartRecovery;
+static String get fieldSourceAddressNeedsText => _english.fieldSourceAddressNeedsText;
+static String get projectNothingToOpen => _english.projectNothingToOpen;
+static String get projectNothingToOpenRecovery => _english.projectNothingToOpenRecovery;
+static String lookupUnknownTarget(String target) => _english.lookupUnknownTarget(target);
+static String lookupTargetTwice(String target) => _english.lookupTargetTwice(target);
+static String get lookupImportRecovery => _english.lookupImportRecovery;
+static String get templatesImportUnknownSchema => _english.templatesImportUnknownSchema;
+static String get templatesImportUnknownSchemaRecovery => _english.templatesImportUnknownSchemaRecovery;
+static String get templatesImportInvalid => _english.templatesImportInvalid;
+static String get templatesImportInvalidRecovery => _english.templatesImportInvalidRecovery;
+static String get templatesImportDuplicateField => _english.templatesImportDuplicateField;
+static String get templatesImportDuplicateFieldRecovery => _english.templatesImportDuplicateFieldRecovery;
+static String get tryAnotherFile => _english.tryAnotherFile;
+static String captureDocumentInvalid(String filename) => _english.captureDocumentInvalid(filename);
+static String get captureQualityBlur => _english.captureQualityBlur;
+static String get captureQualityDark => _english.captureQualityDark;
+static String get captureQualityBright => _english.captureQualityBright;
+static String get captureQualitySmallText => _english.captureQualitySmallText;
+static String get captureNeedsEvidence => _english.captureNeedsEvidence;
+static String get captureNeedsEvidenceRecovery => _english.captureNeedsEvidenceRecovery;
+static String get recordBandHigh => _english.recordBandHigh;
+static String get recordBandMedium => _english.recordBandMedium;
+static String get recordBandLow => _english.recordBandLow;
+static String validationRequired(String label) => _english.validationRequired(label);
+static String validationTooShort(String label) => _english.validationTooShort(label);
+static String validationTooLong(String label) => _english.validationTooLong(label);
+static String validationRange(String label) => _english.validationRange(label);
+static String validationPattern(String label) => _english.validationPattern(label);
+static String validationOption(String label) => _english.validationOption(label);
+static String validationUnit(String label) => _english.validationUnit(label);
+static String validationIdentity(String label) => _english.validationIdentity(label);
+static String get validationEvidence => _english.validationEvidence;
+static String get validationExpression => _english.validationExpression;
+static String get validationExpressionAction => _english.validationExpressionAction;
+static String validationUnknownField(String name) => _english.validationUnknownField(name);
+static String conflictBlocksApproval(String label) => _english.conflictBlocksApproval(label);
+static String get reviewBlockedDuplicate => _english.reviewBlockedDuplicate;
+static String get importKeptExisting => _english.importKeptExisting;
+static String get importMatchUnsettled => _english.importMatchUnsettled;
+static String importRepeatsRow(int row) => _english.importRepeatsRow(row);
+static String get importFixRowColumn => _english.importFixRowColumn;
+static String get importFixReasonColumn => _english.importFixReasonColumn;
+static String get uploadStopped => _english.uploadStopped;
+static String get frictionLogAction => _english.frictionLogAction;
+static String get failureAIIsNotAvailable => _english.failureAIIsNotAvailable;
+static String get failureContinueCapturingAnalysisCanWait => _english.failureContinueCapturingAnalysisCanWait;
+static String failureNoUploadDestinationIsRegisteredForValue(String value0) => _english.failureNoUploadDestinationIsRegisteredForValue(value0);
+static String get failureChooseAnotherDestination => _english.failureChooseAnotherDestination;
+static String get failureTheDestinationRefusedTheSignIn => _english.failureTheDestinationRefusedTheSignIn;
+static String get failureCheckTheKeyOrSignInAgain => _english.failureCheckTheKeyOrSignInAgain;
+static String get failureThatBucketOrFolderWasNotFound => _english.failureThatBucketOrFolderWasNotFound;
+static String get failureCheckTheNameAndTryTheConnection => _english.failureCheckTheNameAndTryTheConnection;
+static String get failureTheDestinationDidNotFinishTheUpload => _english.failureTheDestinationDidNotFinishTheUpload;
+static String get failureTryAgain => _english.failureTryAgain;
+static String get failureTheServerRedirectedTheUploadToAnother => _english.failureTheServerRedirectedTheUploadToAnother;
+static String get failureCheckTheAddressAndTryAgain => _english.failureCheckTheAddressAndTryAgain;
+static String get failureTheDestinationRejectedTheUpload => _english.failureTheDestinationRejectedTheUpload;
+static String get failureCheckTheSettingsAndTryAgain => _english.failureCheckTheSettingsAndTryAgain;
+static String get failureTheFileCouldNotBeReadWhile => _english.failureTheFileCouldNotBeReadWhile;
+static String get failureCheckThatTheFileIsStillOn => _english.failureCheckThatTheFileIsStillOn;
+static String failureTaptureCouldNotFindValue(String value0) => _english.failureTaptureCouldNotFindValue(value0);
+static String failureTheFileValueIsEmpty(String value0) => _english.failureTheFileValueIsEmpty(value0);
+static String get failureChooseAFileThatHasContentsAnd => _english.failureChooseAFileThatHasContentsAnd;
+static String failureTheFileValueIsNotASupported(String value0) => _english.failureTheFileValueIsNotASupported(value0);
+static String get failureChooseAnImageDocumentSpreadsheetAudioFile => _english.failureChooseAnImageDocumentSpreadsheetAudioFile;
+static String failureTheFileValueDoesNotMatchIts(String value0) => _english.failureTheFileValueDoesNotMatchIts(value0);
+static String get failureChooseAFileOfTheExpectedType => _english.failureChooseAFileOfTheExpectedType;
+static String failureTheFileValueIsLargerThanThe(String value0, String value1) => _english.failureTheFileValueIsLargerThanThe(value0, value1);
+static String get failureChooseASmallerFileAndTryAgain => _english.failureChooseASmallerFileAndTryAgain;
+static String failureTheArchiveValueContainsAPathThat(String value0) => _english.failureTheArchiveValueContainsAPathThat(value0);
+static String get failureChooseADifferentFileAndTryAgain => _english.failureChooseADifferentFileAndTryAgain;
+static String failureTheArchiveValueContainsALinkInstead(String value0) => _english.failureTheArchiveValueContainsALinkInstead(value0);
+static String failureTheArchiveValueDeclaresMoreUncompressedData(String value0) => _english.failureTheArchiveValueDeclaresMoreUncompressedData(value0);
+static String failureTheFileValueIsNotAnArchive(String value0) => _english.failureTheFileValueIsNotAnArchive(value0);
+static String get failureChooseAZIPBundleOrSpreadsheetAnd => _english.failureChooseAZIPBundleOrSpreadsheetAnd;
+static String get failureChooseTheFileAgainThenTryAgain => _english.failureChooseTheFileAgainThenTryAgain;
+static String get failureThisPhotoAppearsMoreThanOnce => _english.failureThisPhotoAppearsMoreThanOnce;
+static String get failureReloadTheCaptureAndTryAgain => _english.failureReloadTheCaptureAndTryAgain;
+static String get failureAnEditedPhotoIsMissingItsOriginal => _english.failureAnEditedPhotoIsMissingItsOriginal;
+static String get failureKeepThisCaptureAndRestoreTheOriginal => _english.failureKeepThisCaptureAndRestoreTheOriginal;
+static String get failureThesePhotoEditsLoopBackOnThemselves => _english.failureThesePhotoEditsLoopBackOnThemselves;
+static String get failureAPresetWithThatNameAlreadyExists => _english.failureAPresetWithThatNameAlreadyExists;
+static String get failureChooseAnotherNameOrConfirmOverwrite => _english.failureChooseAnotherNameOrConfirmOverwrite;
+static String get failureTheSnapshotHasBeenPurged => _english.failureTheSnapshotHasBeenPurged;
+static String get failureTheMergeCanNoLongerBeUndone => _english.failureTheMergeCanNoLongerBeUndone;
+static String get failureThisRecordIsInTheRecycleBin => _english.failureThisRecordIsInTheRecycleBin;
+static String failureThisRecordIsAlreadyValue(String value0) => _english.failureThisRecordIsAlreadyValue(value0);
+static String get failureChooseADifferentStatusOrLeaveIt => _english.failureChooseADifferentStatusOrLeaveIt;
+static String failureARecordThatIsValueCannotBe(String value0, String value1) => _english.failureARecordThatIsValueCannotBe(value0, value1);
+static String get failureRestoreItFromTheRecycleBinBefore => _english.failureRestoreItFromTheRecycleBinBefore;
+static String get failureAddAHeaderRowAndTryAgain => _english.failureAddAHeaderRowAndTryAgain;
+static String get failureThatTableHasNoDataColumns => _english.failureThatTableHasNoDataColumns;
+static String get failureThatValueIsNotText => _english.failureThatValueIsNotText;
+static String get failureEnterTextOrLeaveTheFieldEmpty => _english.failureEnterTextOrLeaveTheFieldEmpty;
+static String get failureThatValueIsNotAWholeNumber => _english.failureThatValueIsNotAWholeNumber;
+static String get failureEnterAWholeNumberOrLeaveThe => _english.failureEnterAWholeNumberOrLeaveThe;
+static String get failureThatValueIsNotANumber => _english.failureThatValueIsNotANumber;
+static String get failureEnterANumberOrLeaveTheField => _english.failureEnterANumberOrLeaveTheField;
+static String get failureThatNumberIsOutsideTheAllowedRange => _english.failureThatNumberIsOutsideTheAllowedRange;
+static String get failureEnterANumberInsideTheRangeOr => _english.failureEnterANumberInsideTheRangeOr;
+static String get failureThatValueIsShorterThanThisField => _english.failureThatValueIsShorterThanThisField;
+static String get failureEnterALongerValueOrLeaveThe => _english.failureEnterALongerValueOrLeaveThe;
+static String get failureThatValueIsLongerThanThisField => _english.failureThatValueIsLongerThanThisField;
+static String get failureShortenTheValueOrLeaveTheField => _english.failureShortenTheValueOrLeaveTheField;
+static String get failureThatValueDoesNotMatchTheExpected => _english.failureThatValueDoesNotMatchTheExpected;
+static String get failureEnterAValueInTheExpectedForm => _english.failureEnterAValueInTheExpectedForm;
+static String get failureThisFieldSPatternIsNotValid => _english.failureThisFieldSPatternIsNotValid;
+static String get failureOpenTheTemplateAndCorrectTheField => _english.failureOpenTheTemplateAndCorrectTheField;
+static String get failureThatValueIsNotADate => _english.failureThatValueIsNotADate;
+static String get failureEnterACalendarDateOrLeaveThe => _english.failureEnterACalendarDateOrLeaveThe;
+static String get failureThatValueIsNotATimeOf => _english.failureThatValueIsNotATimeOf;
+static String get failureEnterATimeOrLeaveTheField => _english.failureEnterATimeOrLeaveTheField;
+static String get failureThatValueIsNotADateAnd => _english.failureThatValueIsNotADateAnd;
+static String get failureEnterADateAndTimeOrLeave => _english.failureEnterADateAndTimeOrLeave;
+static String get failureThatValueIsNotAYesOr => _english.failureThatValueIsNotAYesOr;
+static String get failureSwitchTheFieldOnOrOffOr => _english.failureSwitchTheFieldOnOrOffOr;
+static String get failureThatValueIsNotAChoice => _english.failureThatValueIsNotAChoice;
+static String get failurePickAnOptionFromTheListOr => _english.failurePickAnOptionFromTheListOr;
+static String get failureThatChoiceIsNotOnTheList => _english.failureThatChoiceIsNotOnTheList;
+static String get failureThatValueIsNotAFilePath => _english.failureThatValueIsNotAFilePath;
+static String get failureAttachAFileOrLeaveTheField => _english.failureAttachAFileOrLeaveTheField;
+static String get failureThatValueIsNotALocation => _english.failureThatValueIsNotALocation;
+static String get failureCaptureAGPSFixOrLeaveThe => _english.failureCaptureAGPSFixOrLeaveThe;
+static String get failureThatLocationIsOutsideTheEarth => _english.failureThatLocationIsOutsideTheEarth;
+static String get failureCaptureAGPSFixAgainOrLeave => _english.failureCaptureAGPSFixAgainOrLeave;
+static String get failureThisFieldTypeHasNoEditorOn => _english.failureThisFieldTypeHasNoEditorOn;
+static String get failureOpenTheTemplateAndPickAType => _english.failureOpenTheTemplateAndPickAType;
+static String get failureConfirmConsentWithTheNamedOperator => _english.failureConfirmConsentWithTheNamedOperator;
+static String get failureThatFieldTypeIsNotRecognised => _english.failureThatFieldTypeIsNotRecognised;
+static String get failurePickATypeFromTheListAnd => _english.failurePickATypeFromTheListAnd;
+static String get failureThatInputModeIsNotRecognised => _english.failureThatInputModeIsNotRecognised;
+static String get failurePickAnInputModeFromTheList => _english.failurePickAnInputModeFromTheList;
+static String get failureTheSuggestedOrderCouldNotBeRead => _english.failureTheSuggestedOrderCouldNotBeRead;
+static String get failureUseTheOnDeviceResultsOrTry => _english.failureUseTheOnDeviceResultsOrTry;
+static String get cloudUploadConfirmationRequired => _english.cloudUploadConfirmationRequired;
+static String get cloudUploadConfirmationRecovery => _english.cloudUploadConfirmationRecovery;
+static String get cloudUploadHistoryMissing => _english.cloudUploadHistoryMissing;
+static String get cloudUploadRestartRecovery => _english.cloudUploadRestartRecovery;
 }
-
 class _DomainMessages {
   const _DomainMessages();
-  LocalizedMessage get projectNothingToOpen => LocalizedMessage(
-    key: 'projectNothingToOpen',
-    fallback: DomainCopy.projectNothingToOpen,
-  );
-  LocalizedMessage get projectNothingToOpenRecovery => LocalizedMessage(
-    key: 'projectNothingToOpenRecovery',
-    fallback: DomainCopy.projectNothingToOpenRecovery,
-  );
-  LocalizedMessage lookupUnknownTarget(String target) => LocalizedMessage(
-    key: 'lookupUnknownTarget',
-    fallback: DomainCopy.lookupUnknownTarget(target),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'target': LocalizedMessage.encodeArgument(target),
-    }),
-  );
-  LocalizedMessage lookupTargetTwice(String target) => LocalizedMessage(
-    key: 'lookupTargetTwice',
-    fallback: DomainCopy.lookupTargetTwice(target),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'target': LocalizedMessage.encodeArgument(target),
-    }),
-  );
-  LocalizedMessage get lookupImportRecovery => LocalizedMessage(
-    key: 'lookupImportRecovery',
-    fallback: DomainCopy.lookupImportRecovery,
-  );
-  LocalizedMessage get templatesImportUnknownSchema => LocalizedMessage(
-    key: 'templatesImportUnknownSchema',
-    fallback: DomainCopy.templatesImportUnknownSchema,
-  );
-  LocalizedMessage get templatesImportUnknownSchemaRecovery => LocalizedMessage(
-    key: 'templatesImportUnknownSchemaRecovery',
-    fallback: DomainCopy.templatesImportUnknownSchemaRecovery,
-  );
-  LocalizedMessage get templatesImportInvalid => LocalizedMessage(
-    key: 'templatesImportInvalid',
-    fallback: DomainCopy.templatesImportInvalid,
-  );
-  LocalizedMessage get templatesImportInvalidRecovery => LocalizedMessage(
-    key: 'templatesImportInvalidRecovery',
-    fallback: DomainCopy.templatesImportInvalidRecovery,
-  );
-  LocalizedMessage get templatesImportDuplicateField => LocalizedMessage(
-    key: 'templatesImportDuplicateField',
-    fallback: DomainCopy.templatesImportDuplicateField,
-  );
-  LocalizedMessage get templatesImportDuplicateFieldRecovery =>
-      LocalizedMessage(
-        key: 'templatesImportDuplicateFieldRecovery',
-        fallback: DomainCopy.templatesImportDuplicateFieldRecovery,
-      );
-  LocalizedMessage get tryAnotherFile => LocalizedMessage(
-    key: 'tryAnotherFile',
-    fallback: DomainCopy.tryAnotherFile,
-  );
-  LocalizedMessage captureDocumentInvalid(String filename) => LocalizedMessage(
-    key: 'captureDocumentInvalid',
-    fallback: DomainCopy.captureDocumentInvalid(filename),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'filename': LocalizedMessage.encodeArgument(filename),
-    }),
-  );
-  LocalizedMessage get captureQualityBlur => LocalizedMessage(
-    key: 'captureQualityBlur',
-    fallback: DomainCopy.captureQualityBlur,
-  );
-  LocalizedMessage get captureQualityDark => LocalizedMessage(
-    key: 'captureQualityDark',
-    fallback: DomainCopy.captureQualityDark,
-  );
-  LocalizedMessage get captureQualityBright => LocalizedMessage(
-    key: 'captureQualityBright',
-    fallback: DomainCopy.captureQualityBright,
-  );
-  LocalizedMessage get captureQualitySmallText => LocalizedMessage(
-    key: 'captureQualitySmallText',
-    fallback: DomainCopy.captureQualitySmallText,
-  );
-  LocalizedMessage get captureNeedsEvidence => LocalizedMessage(
-    key: 'captureNeedsEvidence',
-    fallback: DomainCopy.captureNeedsEvidence,
-  );
-  LocalizedMessage get captureNeedsEvidenceRecovery => LocalizedMessage(
-    key: 'captureNeedsEvidenceRecovery',
-    fallback: DomainCopy.captureNeedsEvidenceRecovery,
-  );
-  LocalizedMessage get recordBandHigh => LocalizedMessage(
-    key: 'recordBandHigh',
-    fallback: DomainCopy.recordBandHigh,
-  );
-  LocalizedMessage get recordBandMedium => LocalizedMessage(
-    key: 'recordBandMedium',
-    fallback: DomainCopy.recordBandMedium,
-  );
-  LocalizedMessage get recordBandLow => LocalizedMessage(
-    key: 'recordBandLow',
-    fallback: DomainCopy.recordBandLow,
-  );
-  LocalizedMessage validationRequired(String label) => LocalizedMessage(
-    key: 'validationRequired',
-    fallback: DomainCopy.validationRequired(label),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'label': LocalizedMessage.encodeArgument(label),
-    }),
-  );
-  LocalizedMessage validationTooShort(String label) => LocalizedMessage(
-    key: 'validationTooShort',
-    fallback: DomainCopy.validationTooShort(label),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'label': LocalizedMessage.encodeArgument(label),
-    }),
-  );
-  LocalizedMessage validationTooLong(String label) => LocalizedMessage(
-    key: 'validationTooLong',
-    fallback: DomainCopy.validationTooLong(label),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'label': LocalizedMessage.encodeArgument(label),
-    }),
-  );
-  LocalizedMessage validationRange(String label) => LocalizedMessage(
-    key: 'validationRange',
-    fallback: DomainCopy.validationRange(label),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'label': LocalizedMessage.encodeArgument(label),
-    }),
-  );
-  LocalizedMessage validationPattern(String label) => LocalizedMessage(
-    key: 'validationPattern',
-    fallback: DomainCopy.validationPattern(label),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'label': LocalizedMessage.encodeArgument(label),
-    }),
-  );
-  LocalizedMessage validationOption(String label) => LocalizedMessage(
-    key: 'validationOption',
-    fallback: DomainCopy.validationOption(label),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'label': LocalizedMessage.encodeArgument(label),
-    }),
-  );
-  LocalizedMessage validationUnit(String label) => LocalizedMessage(
-    key: 'validationUnit',
-    fallback: DomainCopy.validationUnit(label),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'label': LocalizedMessage.encodeArgument(label),
-    }),
-  );
-  LocalizedMessage validationIdentity(String label) => LocalizedMessage(
-    key: 'validationIdentity',
-    fallback: DomainCopy.validationIdentity(label),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'label': LocalizedMessage.encodeArgument(label),
-    }),
-  );
-  LocalizedMessage get validationEvidence => LocalizedMessage(
-    key: 'validationEvidence',
-    fallback: DomainCopy.validationEvidence,
-  );
-  LocalizedMessage get validationExpression => LocalizedMessage(
-    key: 'validationExpression',
-    fallback: DomainCopy.validationExpression,
-  );
-  LocalizedMessage get validationExpressionAction => LocalizedMessage(
-    key: 'validationExpressionAction',
-    fallback: DomainCopy.validationExpressionAction,
-  );
-  LocalizedMessage validationUnknownField(String name) => LocalizedMessage(
-    key: 'validationUnknownField',
-    fallback: DomainCopy.validationUnknownField(name),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'name': LocalizedMessage.encodeArgument(name),
-    }),
-  );
-  LocalizedMessage conflictBlocksApproval(String label) => LocalizedMessage(
-    key: 'conflictBlocksApproval',
-    fallback: DomainCopy.conflictBlocksApproval(label),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'label': LocalizedMessage.encodeArgument(label),
-    }),
-  );
-  LocalizedMessage get reviewBlockedDuplicate => LocalizedMessage(
-    key: 'reviewBlockedDuplicate',
-    fallback: DomainCopy.reviewBlockedDuplicate,
-  );
-  LocalizedMessage get importKeptExisting => LocalizedMessage(
-    key: 'importKeptExisting',
-    fallback: DomainCopy.importKeptExisting,
-  );
-  LocalizedMessage get importMatchUnsettled => LocalizedMessage(
-    key: 'importMatchUnsettled',
-    fallback: DomainCopy.importMatchUnsettled,
-  );
-  LocalizedMessage importRepeatsRow(int row) => LocalizedMessage(
-    key: 'importRepeatsRow',
-    fallback: DomainCopy.importRepeatsRow(row),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'row': LocalizedMessage.encodeArgument(row),
-    }),
-  );
-  LocalizedMessage get importFixRowColumn => LocalizedMessage(
-    key: 'importFixRowColumn',
-    fallback: DomainCopy.importFixRowColumn,
-  );
-  LocalizedMessage get importFixReasonColumn => LocalizedMessage(
-    key: 'importFixReasonColumn',
-    fallback: DomainCopy.importFixReasonColumn,
-  );
-  LocalizedMessage get uploadStopped => LocalizedMessage(
-    key: 'uploadStopped',
-    fallback: DomainCopy.uploadStopped,
-  );
-  LocalizedMessage get frictionLogAction => LocalizedMessage(
-    key: 'frictionLogAction',
-    fallback: DomainCopy.frictionLogAction,
-  );
-  LocalizedMessage get failureAIIsNotAvailable => LocalizedMessage(
-    key: 'failureAIIsNotAvailable',
-    fallback: DomainCopy.failureAIIsNotAvailable,
-  );
-  LocalizedMessage get failureContinueCapturingAnalysisCanWait =>
-      LocalizedMessage(
-        key: 'failureContinueCapturingAnalysisCanWait',
-        fallback: DomainCopy.failureContinueCapturingAnalysisCanWait,
-      );
-  LocalizedMessage failureNoUploadDestinationIsRegisteredForValue(
-    String value0,
-  ) => LocalizedMessage(
-    key: 'failureNoUploadDestinationIsRegisteredForValue',
-    fallback: DomainCopy.failureNoUploadDestinationIsRegisteredForValue(value0),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'value0': LocalizedMessage.encodeArgument(value0),
-    }),
-  );
-  LocalizedMessage get failureChooseAnotherDestination => LocalizedMessage(
-    key: 'failureChooseAnotherDestination',
-    fallback: DomainCopy.failureChooseAnotherDestination,
-  );
-  LocalizedMessage get failureTheDestinationRefusedTheSignIn =>
-      LocalizedMessage(
-        key: 'failureTheDestinationRefusedTheSignIn',
-        fallback: DomainCopy.failureTheDestinationRefusedTheSignIn,
-      );
-  LocalizedMessage get failureCheckTheKeyOrSignInAgain => LocalizedMessage(
-    key: 'failureCheckTheKeyOrSignInAgain',
-    fallback: DomainCopy.failureCheckTheKeyOrSignInAgain,
-  );
-  LocalizedMessage get failureThatBucketOrFolderWasNotFound => LocalizedMessage(
-    key: 'failureThatBucketOrFolderWasNotFound',
-    fallback: DomainCopy.failureThatBucketOrFolderWasNotFound,
-  );
-  LocalizedMessage get failureCheckTheNameAndTryTheConnection =>
-      LocalizedMessage(
-        key: 'failureCheckTheNameAndTryTheConnection',
-        fallback: DomainCopy.failureCheckTheNameAndTryTheConnection,
-      );
-  LocalizedMessage get failureTheDestinationDidNotFinishTheUpload =>
-      LocalizedMessage(
-        key: 'failureTheDestinationDidNotFinishTheUpload',
-        fallback: DomainCopy.failureTheDestinationDidNotFinishTheUpload,
-      );
-  LocalizedMessage get failureTryAgain => LocalizedMessage(
-    key: 'failureTryAgain',
-    fallback: DomainCopy.failureTryAgain,
-  );
-  LocalizedMessage get failureTheServerRedirectedTheUploadToAnother =>
-      LocalizedMessage(
-        key: 'failureTheServerRedirectedTheUploadToAnother',
-        fallback: DomainCopy.failureTheServerRedirectedTheUploadToAnother,
-      );
-  LocalizedMessage get failureCheckTheAddressAndTryAgain => LocalizedMessage(
-    key: 'failureCheckTheAddressAndTryAgain',
-    fallback: DomainCopy.failureCheckTheAddressAndTryAgain,
-  );
-  LocalizedMessage get failureTheDestinationRejectedTheUpload =>
-      LocalizedMessage(
-        key: 'failureTheDestinationRejectedTheUpload',
-        fallback: DomainCopy.failureTheDestinationRejectedTheUpload,
-      );
-  LocalizedMessage get failureCheckTheSettingsAndTryAgain => LocalizedMessage(
-    key: 'failureCheckTheSettingsAndTryAgain',
-    fallback: DomainCopy.failureCheckTheSettingsAndTryAgain,
-  );
-  LocalizedMessage get failureTheFileCouldNotBeReadWhile => LocalizedMessage(
-    key: 'failureTheFileCouldNotBeReadWhile',
-    fallback: DomainCopy.failureTheFileCouldNotBeReadWhile,
-  );
-  LocalizedMessage get failureCheckThatTheFileIsStillOn => LocalizedMessage(
-    key: 'failureCheckThatTheFileIsStillOn',
-    fallback: DomainCopy.failureCheckThatTheFileIsStillOn,
-  );
-  LocalizedMessage failureTaptureCouldNotFindValue(String value0) =>
-      LocalizedMessage(
-        key: 'failureTaptureCouldNotFindValue',
-        fallback: DomainCopy.failureTaptureCouldNotFindValue(value0),
-        arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-          'value0': LocalizedMessage.encodeArgument(value0),
-        }),
-      );
-  LocalizedMessage failureTheFileValueIsEmpty(String value0) =>
-      LocalizedMessage(
-        key: 'failureTheFileValueIsEmpty',
-        fallback: DomainCopy.failureTheFileValueIsEmpty(value0),
-        arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-          'value0': LocalizedMessage.encodeArgument(value0),
-        }),
-      );
-  LocalizedMessage get failureChooseAFileThatHasContentsAnd => LocalizedMessage(
-    key: 'failureChooseAFileThatHasContentsAnd',
-    fallback: DomainCopy.failureChooseAFileThatHasContentsAnd,
-  );
-  LocalizedMessage failureTheFileValueIsNotASupported(String value0) =>
-      LocalizedMessage(
-        key: 'failureTheFileValueIsNotASupported',
-        fallback: DomainCopy.failureTheFileValueIsNotASupported(value0),
-        arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-          'value0': LocalizedMessage.encodeArgument(value0),
-        }),
-      );
-  LocalizedMessage get failureChooseAnImageDocumentSpreadsheetAudioFile =>
-      LocalizedMessage(
-        key: 'failureChooseAnImageDocumentSpreadsheetAudioFile',
-        fallback: DomainCopy.failureChooseAnImageDocumentSpreadsheetAudioFile,
-      );
-  LocalizedMessage failureTheFileValueDoesNotMatchIts(String value0) =>
-      LocalizedMessage(
-        key: 'failureTheFileValueDoesNotMatchIts',
-        fallback: DomainCopy.failureTheFileValueDoesNotMatchIts(value0),
-        arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-          'value0': LocalizedMessage.encodeArgument(value0),
-        }),
-      );
-  LocalizedMessage get failureChooseAFileOfTheExpectedType => LocalizedMessage(
-    key: 'failureChooseAFileOfTheExpectedType',
-    fallback: DomainCopy.failureChooseAFileOfTheExpectedType,
-  );
-  LocalizedMessage failureTheFileValueIsLargerThanThe(
-    String value0,
-    String value1,
-  ) => LocalizedMessage(
-    key: 'failureTheFileValueIsLargerThanThe',
-    fallback: DomainCopy.failureTheFileValueIsLargerThanThe(value0, value1),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'value0': LocalizedMessage.encodeArgument(value0),
-      'value1': LocalizedMessage.encodeArgument(value1),
-    }),
-  );
-  LocalizedMessage get failureChooseASmallerFileAndTryAgain => LocalizedMessage(
-    key: 'failureChooseASmallerFileAndTryAgain',
-    fallback: DomainCopy.failureChooseASmallerFileAndTryAgain,
-  );
-  LocalizedMessage failureTheArchiveValueContainsAPathThat(String value0) =>
-      LocalizedMessage(
-        key: 'failureTheArchiveValueContainsAPathThat',
-        fallback: DomainCopy.failureTheArchiveValueContainsAPathThat(value0),
-        arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-          'value0': LocalizedMessage.encodeArgument(value0),
-        }),
-      );
-  LocalizedMessage get failureChooseADifferentFileAndTryAgain =>
-      LocalizedMessage(
-        key: 'failureChooseADifferentFileAndTryAgain',
-        fallback: DomainCopy.failureChooseADifferentFileAndTryAgain,
-      );
-  LocalizedMessage failureTheArchiveValueContainsALinkInstead(String value0) =>
-      LocalizedMessage(
-        key: 'failureTheArchiveValueContainsALinkInstead',
-        fallback: DomainCopy.failureTheArchiveValueContainsALinkInstead(value0),
-        arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-          'value0': LocalizedMessage.encodeArgument(value0),
-        }),
-      );
-  LocalizedMessage failureTheArchiveValueDeclaresMoreUncompressedData(
-    String value0,
-  ) => LocalizedMessage(
-    key: 'failureTheArchiveValueDeclaresMoreUncompressedData',
-    fallback: DomainCopy.failureTheArchiveValueDeclaresMoreUncompressedData(
-      value0,
-    ),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'value0': LocalizedMessage.encodeArgument(value0),
-    }),
-  );
-  LocalizedMessage failureTheFileValueIsNotAnArchive(String value0) =>
-      LocalizedMessage(
-        key: 'failureTheFileValueIsNotAnArchive',
-        fallback: DomainCopy.failureTheFileValueIsNotAnArchive(value0),
-        arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-          'value0': LocalizedMessage.encodeArgument(value0),
-        }),
-      );
-  LocalizedMessage get failureChooseAZIPBundleOrSpreadsheetAnd =>
-      LocalizedMessage(
-        key: 'failureChooseAZIPBundleOrSpreadsheetAnd',
-        fallback: DomainCopy.failureChooseAZIPBundleOrSpreadsheetAnd,
-      );
-  LocalizedMessage get failureChooseTheFileAgainThenTryAgain =>
-      LocalizedMessage(
-        key: 'failureChooseTheFileAgainThenTryAgain',
-        fallback: DomainCopy.failureChooseTheFileAgainThenTryAgain,
-      );
-  LocalizedMessage get failureThisPhotoAppearsMoreThanOnce => LocalizedMessage(
-    key: 'failureThisPhotoAppearsMoreThanOnce',
-    fallback: DomainCopy.failureThisPhotoAppearsMoreThanOnce,
-  );
-  LocalizedMessage get failureReloadTheCaptureAndTryAgain => LocalizedMessage(
-    key: 'failureReloadTheCaptureAndTryAgain',
-    fallback: DomainCopy.failureReloadTheCaptureAndTryAgain,
-  );
-  LocalizedMessage get failureAnEditedPhotoIsMissingItsOriginal =>
-      LocalizedMessage(
-        key: 'failureAnEditedPhotoIsMissingItsOriginal',
-        fallback: DomainCopy.failureAnEditedPhotoIsMissingItsOriginal,
-      );
-  LocalizedMessage get failureKeepThisCaptureAndRestoreTheOriginal =>
-      LocalizedMessage(
-        key: 'failureKeepThisCaptureAndRestoreTheOriginal',
-        fallback: DomainCopy.failureKeepThisCaptureAndRestoreTheOriginal,
-      );
-  LocalizedMessage get failureThesePhotoEditsLoopBackOnThemselves =>
-      LocalizedMessage(
-        key: 'failureThesePhotoEditsLoopBackOnThemselves',
-        fallback: DomainCopy.failureThesePhotoEditsLoopBackOnThemselves,
-      );
-  LocalizedMessage get failureAPresetWithThatNameAlreadyExists =>
-      LocalizedMessage(
-        key: 'failureAPresetWithThatNameAlreadyExists',
-        fallback: DomainCopy.failureAPresetWithThatNameAlreadyExists,
-      );
-  LocalizedMessage get failureChooseAnotherNameOrConfirmOverwrite =>
-      LocalizedMessage(
-        key: 'failureChooseAnotherNameOrConfirmOverwrite',
-        fallback: DomainCopy.failureChooseAnotherNameOrConfirmOverwrite,
-      );
-  LocalizedMessage get failureTheSnapshotHasBeenPurged => LocalizedMessage(
-    key: 'failureTheSnapshotHasBeenPurged',
-    fallback: DomainCopy.failureTheSnapshotHasBeenPurged,
-  );
-  LocalizedMessage get failureTheMergeCanNoLongerBeUndone => LocalizedMessage(
-    key: 'failureTheMergeCanNoLongerBeUndone',
-    fallback: DomainCopy.failureTheMergeCanNoLongerBeUndone,
-  );
-  LocalizedMessage get failureThisRecordIsInTheRecycleBin => LocalizedMessage(
-    key: 'failureThisRecordIsInTheRecycleBin',
-    fallback: DomainCopy.failureThisRecordIsInTheRecycleBin,
-  );
-  LocalizedMessage failureThisRecordIsAlreadyValue(String value0) =>
-      LocalizedMessage(
-        key: 'failureThisRecordIsAlreadyValue',
-        fallback: DomainCopy.failureThisRecordIsAlreadyValue(value0),
-        arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-          'value0': LocalizedMessage.encodeArgument(value0),
-        }),
-      );
-  LocalizedMessage get failureChooseADifferentStatusOrLeaveIt =>
-      LocalizedMessage(
-        key: 'failureChooseADifferentStatusOrLeaveIt',
-        fallback: DomainCopy.failureChooseADifferentStatusOrLeaveIt,
-      );
-  LocalizedMessage failureARecordThatIsValueCannotBe(
-    String value0,
-    String value1,
-  ) => LocalizedMessage(
-    key: 'failureARecordThatIsValueCannotBe',
-    fallback: DomainCopy.failureARecordThatIsValueCannotBe(value0, value1),
-    arguments: Map<String, Object?>.unmodifiable(<String, Object?>{
-      'value0': LocalizedMessage.encodeArgument(value0),
-      'value1': LocalizedMessage.encodeArgument(value1),
-    }),
-  );
-  LocalizedMessage get failureRestoreItFromTheRecycleBinBefore =>
-      LocalizedMessage(
-        key: 'failureRestoreItFromTheRecycleBinBefore',
-        fallback: DomainCopy.failureRestoreItFromTheRecycleBinBefore,
-      );
-  LocalizedMessage get failureAddAHeaderRowAndTryAgain => LocalizedMessage(
-    key: 'failureAddAHeaderRowAndTryAgain',
-    fallback: DomainCopy.failureAddAHeaderRowAndTryAgain,
-  );
-  LocalizedMessage get failureThatTableHasNoDataColumns => LocalizedMessage(
-    key: 'failureThatTableHasNoDataColumns',
-    fallback: DomainCopy.failureThatTableHasNoDataColumns,
-  );
-  LocalizedMessage get failureThatValueIsNotText => LocalizedMessage(
-    key: 'failureThatValueIsNotText',
-    fallback: DomainCopy.failureThatValueIsNotText,
-  );
-  LocalizedMessage get failureEnterTextOrLeaveTheFieldEmpty => LocalizedMessage(
-    key: 'failureEnterTextOrLeaveTheFieldEmpty',
-    fallback: DomainCopy.failureEnterTextOrLeaveTheFieldEmpty,
-  );
-  LocalizedMessage get failureThatValueIsNotAWholeNumber => LocalizedMessage(
-    key: 'failureThatValueIsNotAWholeNumber',
-    fallback: DomainCopy.failureThatValueIsNotAWholeNumber,
-  );
-  LocalizedMessage get failureEnterAWholeNumberOrLeaveThe => LocalizedMessage(
-    key: 'failureEnterAWholeNumberOrLeaveThe',
-    fallback: DomainCopy.failureEnterAWholeNumberOrLeaveThe,
-  );
-  LocalizedMessage get failureThatValueIsNotANumber => LocalizedMessage(
-    key: 'failureThatValueIsNotANumber',
-    fallback: DomainCopy.failureThatValueIsNotANumber,
-  );
-  LocalizedMessage get failureEnterANumberOrLeaveTheField => LocalizedMessage(
-    key: 'failureEnterANumberOrLeaveTheField',
-    fallback: DomainCopy.failureEnterANumberOrLeaveTheField,
-  );
-  LocalizedMessage get failureThatNumberIsOutsideTheAllowedRange =>
-      LocalizedMessage(
-        key: 'failureThatNumberIsOutsideTheAllowedRange',
-        fallback: DomainCopy.failureThatNumberIsOutsideTheAllowedRange,
-      );
-  LocalizedMessage get failureEnterANumberInsideTheRangeOr => LocalizedMessage(
-    key: 'failureEnterANumberInsideTheRangeOr',
-    fallback: DomainCopy.failureEnterANumberInsideTheRangeOr,
-  );
-  LocalizedMessage get failureThatValueIsShorterThanThisField =>
-      LocalizedMessage(
-        key: 'failureThatValueIsShorterThanThisField',
-        fallback: DomainCopy.failureThatValueIsShorterThanThisField,
-      );
-  LocalizedMessage get failureEnterALongerValueOrLeaveThe => LocalizedMessage(
-    key: 'failureEnterALongerValueOrLeaveThe',
-    fallback: DomainCopy.failureEnterALongerValueOrLeaveThe,
-  );
-  LocalizedMessage get failureThatValueIsLongerThanThisField =>
-      LocalizedMessage(
-        key: 'failureThatValueIsLongerThanThisField',
-        fallback: DomainCopy.failureThatValueIsLongerThanThisField,
-      );
-  LocalizedMessage get failureShortenTheValueOrLeaveTheField =>
-      LocalizedMessage(
-        key: 'failureShortenTheValueOrLeaveTheField',
-        fallback: DomainCopy.failureShortenTheValueOrLeaveTheField,
-      );
-  LocalizedMessage get failureThatValueDoesNotMatchTheExpected =>
-      LocalizedMessage(
-        key: 'failureThatValueDoesNotMatchTheExpected',
-        fallback: DomainCopy.failureThatValueDoesNotMatchTheExpected,
-      );
-  LocalizedMessage get failureEnterAValueInTheExpectedForm => LocalizedMessage(
-    key: 'failureEnterAValueInTheExpectedForm',
-    fallback: DomainCopy.failureEnterAValueInTheExpectedForm,
-  );
-  LocalizedMessage get failureThisFieldSPatternIsNotValid => LocalizedMessage(
-    key: 'failureThisFieldSPatternIsNotValid',
-    fallback: DomainCopy.failureThisFieldSPatternIsNotValid,
-  );
-  LocalizedMessage get failureOpenTheTemplateAndCorrectTheField =>
-      LocalizedMessage(
-        key: 'failureOpenTheTemplateAndCorrectTheField',
-        fallback: DomainCopy.failureOpenTheTemplateAndCorrectTheField,
-      );
-  LocalizedMessage get failureThatValueIsNotADate => LocalizedMessage(
-    key: 'failureThatValueIsNotADate',
-    fallback: DomainCopy.failureThatValueIsNotADate,
-  );
-  LocalizedMessage get failureEnterACalendarDateOrLeaveThe => LocalizedMessage(
-    key: 'failureEnterACalendarDateOrLeaveThe',
-    fallback: DomainCopy.failureEnterACalendarDateOrLeaveThe,
-  );
-  LocalizedMessage get failureThatValueIsNotATimeOf => LocalizedMessage(
-    key: 'failureThatValueIsNotATimeOf',
-    fallback: DomainCopy.failureThatValueIsNotATimeOf,
-  );
-  LocalizedMessage get failureEnterATimeOrLeaveTheField => LocalizedMessage(
-    key: 'failureEnterATimeOrLeaveTheField',
-    fallback: DomainCopy.failureEnterATimeOrLeaveTheField,
-  );
-  LocalizedMessage get failureThatValueIsNotADateAnd => LocalizedMessage(
-    key: 'failureThatValueIsNotADateAnd',
-    fallback: DomainCopy.failureThatValueIsNotADateAnd,
-  );
-  LocalizedMessage get failureEnterADateAndTimeOrLeave => LocalizedMessage(
-    key: 'failureEnterADateAndTimeOrLeave',
-    fallback: DomainCopy.failureEnterADateAndTimeOrLeave,
-  );
-  LocalizedMessage get failureThatValueIsNotAYesOr => LocalizedMessage(
-    key: 'failureThatValueIsNotAYesOr',
-    fallback: DomainCopy.failureThatValueIsNotAYesOr,
-  );
-  LocalizedMessage get failureSwitchTheFieldOnOrOffOr => LocalizedMessage(
-    key: 'failureSwitchTheFieldOnOrOffOr',
-    fallback: DomainCopy.failureSwitchTheFieldOnOrOffOr,
-  );
-  LocalizedMessage get failureThatValueIsNotAChoice => LocalizedMessage(
-    key: 'failureThatValueIsNotAChoice',
-    fallback: DomainCopy.failureThatValueIsNotAChoice,
-  );
-  LocalizedMessage get failurePickAnOptionFromTheListOr => LocalizedMessage(
-    key: 'failurePickAnOptionFromTheListOr',
-    fallback: DomainCopy.failurePickAnOptionFromTheListOr,
-  );
-  LocalizedMessage get failureThatChoiceIsNotOnTheList => LocalizedMessage(
-    key: 'failureThatChoiceIsNotOnTheList',
-    fallback: DomainCopy.failureThatChoiceIsNotOnTheList,
-  );
-  LocalizedMessage get failureThatValueIsNotAFilePath => LocalizedMessage(
-    key: 'failureThatValueIsNotAFilePath',
-    fallback: DomainCopy.failureThatValueIsNotAFilePath,
-  );
-  LocalizedMessage get failureAttachAFileOrLeaveTheField => LocalizedMessage(
-    key: 'failureAttachAFileOrLeaveTheField',
-    fallback: DomainCopy.failureAttachAFileOrLeaveTheField,
-  );
-  LocalizedMessage get failureThatValueIsNotALocation => LocalizedMessage(
-    key: 'failureThatValueIsNotALocation',
-    fallback: DomainCopy.failureThatValueIsNotALocation,
-  );
-  LocalizedMessage get failureCaptureAGPSFixOrLeaveThe => LocalizedMessage(
-    key: 'failureCaptureAGPSFixOrLeaveThe',
-    fallback: DomainCopy.failureCaptureAGPSFixOrLeaveThe,
-  );
-  LocalizedMessage get failureThatLocationIsOutsideTheEarth => LocalizedMessage(
-    key: 'failureThatLocationIsOutsideTheEarth',
-    fallback: DomainCopy.failureThatLocationIsOutsideTheEarth,
-  );
-  LocalizedMessage get failureCaptureAGPSFixAgainOrLeave => LocalizedMessage(
-    key: 'failureCaptureAGPSFixAgainOrLeave',
-    fallback: DomainCopy.failureCaptureAGPSFixAgainOrLeave,
-  );
-  LocalizedMessage get failureThisFieldTypeHasNoEditorOn => LocalizedMessage(
-    key: 'failureThisFieldTypeHasNoEditorOn',
-    fallback: DomainCopy.failureThisFieldTypeHasNoEditorOn,
-  );
-  LocalizedMessage get failureOpenTheTemplateAndPickAType => LocalizedMessage(
-    key: 'failureOpenTheTemplateAndPickAType',
-    fallback: DomainCopy.failureOpenTheTemplateAndPickAType,
-  );
-  LocalizedMessage get failureConfirmConsentWithTheNamedOperator =>
-      LocalizedMessage(
-        key: 'failureConfirmConsentWithTheNamedOperator',
-        fallback: DomainCopy.failureConfirmConsentWithTheNamedOperator,
-      );
-  LocalizedMessage get failureThatFieldTypeIsNotRecognised => LocalizedMessage(
-    key: 'failureThatFieldTypeIsNotRecognised',
-    fallback: DomainCopy.failureThatFieldTypeIsNotRecognised,
-  );
-  LocalizedMessage get failurePickATypeFromTheListAnd => LocalizedMessage(
-    key: 'failurePickATypeFromTheListAnd',
-    fallback: DomainCopy.failurePickATypeFromTheListAnd,
-  );
-  LocalizedMessage get failureThatInputModeIsNotRecognised => LocalizedMessage(
-    key: 'failureThatInputModeIsNotRecognised',
-    fallback: DomainCopy.failureThatInputModeIsNotRecognised,
-  );
-  LocalizedMessage get failurePickAnInputModeFromTheList => LocalizedMessage(
-    key: 'failurePickAnInputModeFromTheList',
-    fallback: DomainCopy.failurePickAnInputModeFromTheList,
-  );
-  LocalizedMessage get failureTheSuggestedOrderCouldNotBeRead =>
-      LocalizedMessage(
-        key: 'failureTheSuggestedOrderCouldNotBeRead',
-        fallback: DomainCopy.failureTheSuggestedOrderCouldNotBeRead,
-      );
-  LocalizedMessage get failureUseTheOnDeviceResultsOrTry => LocalizedMessage(
-    key: 'failureUseTheOnDeviceResultsOrTry',
-    fallback: DomainCopy.failureUseTheOnDeviceResultsOrTry,
-  );
-  LocalizedMessage get cloudUploadConfirmationRequired => LocalizedMessage(
-    key: 'cloudUploadConfirmationRequired',
-    fallback: DomainCopy.cloudUploadConfirmationRequired,
-  );
-  LocalizedMessage get cloudUploadConfirmationRecovery => LocalizedMessage(
-    key: 'cloudUploadConfirmationRecovery',
-    fallback: DomainCopy.cloudUploadConfirmationRecovery,
-  );
-  LocalizedMessage get cloudUploadHistoryMissing => LocalizedMessage(
-    key: 'cloudUploadHistoryMissing',
-    fallback: DomainCopy.cloudUploadHistoryMissing,
-  );
-  LocalizedMessage get cloudUploadRestartRecovery => LocalizedMessage(
-    key: 'cloudUploadRestartRecovery',
-    fallback: DomainCopy.cloudUploadRestartRecovery,
-  );
+LocalizedMessage get fieldSourceAddressNeedsText => LocalizedMessage(key:'fieldSourceAddressNeedsText',fallback:DomainCopy.fieldSourceAddressNeedsText);
+LocalizedMessage get projectNothingToOpen => LocalizedMessage(key:'projectNothingToOpen',fallback:DomainCopy.projectNothingToOpen);
+LocalizedMessage get projectNothingToOpenRecovery => LocalizedMessage(key:'projectNothingToOpenRecovery',fallback:DomainCopy.projectNothingToOpenRecovery);
+LocalizedMessage lookupUnknownTarget(String target) => LocalizedMessage(key:'lookupUnknownTarget',fallback:DomainCopy.lookupUnknownTarget(target),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'target': LocalizedMessage.encodeArgument(target)}));
+LocalizedMessage lookupTargetTwice(String target) => LocalizedMessage(key:'lookupTargetTwice',fallback:DomainCopy.lookupTargetTwice(target),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'target': LocalizedMessage.encodeArgument(target)}));
+LocalizedMessage get lookupImportRecovery => LocalizedMessage(key:'lookupImportRecovery',fallback:DomainCopy.lookupImportRecovery);
+LocalizedMessage get templatesImportUnknownSchema => LocalizedMessage(key:'templatesImportUnknownSchema',fallback:DomainCopy.templatesImportUnknownSchema);
+LocalizedMessage get templatesImportUnknownSchemaRecovery => LocalizedMessage(key:'templatesImportUnknownSchemaRecovery',fallback:DomainCopy.templatesImportUnknownSchemaRecovery);
+LocalizedMessage get templatesImportInvalid => LocalizedMessage(key:'templatesImportInvalid',fallback:DomainCopy.templatesImportInvalid);
+LocalizedMessage get templatesImportInvalidRecovery => LocalizedMessage(key:'templatesImportInvalidRecovery',fallback:DomainCopy.templatesImportInvalidRecovery);
+LocalizedMessage get templatesImportDuplicateField => LocalizedMessage(key:'templatesImportDuplicateField',fallback:DomainCopy.templatesImportDuplicateField);
+LocalizedMessage get templatesImportDuplicateFieldRecovery => LocalizedMessage(key:'templatesImportDuplicateFieldRecovery',fallback:DomainCopy.templatesImportDuplicateFieldRecovery);
+LocalizedMessage get tryAnotherFile => LocalizedMessage(key:'tryAnotherFile',fallback:DomainCopy.tryAnotherFile);
+LocalizedMessage captureDocumentInvalid(String filename) => LocalizedMessage(key:'captureDocumentInvalid',fallback:DomainCopy.captureDocumentInvalid(filename),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'filename': LocalizedMessage.encodeArgument(filename)}));
+LocalizedMessage get captureQualityBlur => LocalizedMessage(key:'captureQualityBlur',fallback:DomainCopy.captureQualityBlur);
+LocalizedMessage get captureQualityDark => LocalizedMessage(key:'captureQualityDark',fallback:DomainCopy.captureQualityDark);
+LocalizedMessage get captureQualityBright => LocalizedMessage(key:'captureQualityBright',fallback:DomainCopy.captureQualityBright);
+LocalizedMessage get captureQualitySmallText => LocalizedMessage(key:'captureQualitySmallText',fallback:DomainCopy.captureQualitySmallText);
+LocalizedMessage get captureNeedsEvidence => LocalizedMessage(key:'captureNeedsEvidence',fallback:DomainCopy.captureNeedsEvidence);
+LocalizedMessage get captureNeedsEvidenceRecovery => LocalizedMessage(key:'captureNeedsEvidenceRecovery',fallback:DomainCopy.captureNeedsEvidenceRecovery);
+LocalizedMessage get recordBandHigh => LocalizedMessage(key:'recordBandHigh',fallback:DomainCopy.recordBandHigh);
+LocalizedMessage get recordBandMedium => LocalizedMessage(key:'recordBandMedium',fallback:DomainCopy.recordBandMedium);
+LocalizedMessage get recordBandLow => LocalizedMessage(key:'recordBandLow',fallback:DomainCopy.recordBandLow);
+LocalizedMessage validationRequired(String label) => LocalizedMessage(key:'validationRequired',fallback:DomainCopy.validationRequired(label),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'label': LocalizedMessage.encodeArgument(label)}));
+LocalizedMessage validationTooShort(String label) => LocalizedMessage(key:'validationTooShort',fallback:DomainCopy.validationTooShort(label),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'label': LocalizedMessage.encodeArgument(label)}));
+LocalizedMessage validationTooLong(String label) => LocalizedMessage(key:'validationTooLong',fallback:DomainCopy.validationTooLong(label),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'label': LocalizedMessage.encodeArgument(label)}));
+LocalizedMessage validationRange(String label) => LocalizedMessage(key:'validationRange',fallback:DomainCopy.validationRange(label),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'label': LocalizedMessage.encodeArgument(label)}));
+LocalizedMessage validationPattern(String label) => LocalizedMessage(key:'validationPattern',fallback:DomainCopy.validationPattern(label),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'label': LocalizedMessage.encodeArgument(label)}));
+LocalizedMessage validationOption(String label) => LocalizedMessage(key:'validationOption',fallback:DomainCopy.validationOption(label),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'label': LocalizedMessage.encodeArgument(label)}));
+LocalizedMessage validationUnit(String label) => LocalizedMessage(key:'validationUnit',fallback:DomainCopy.validationUnit(label),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'label': LocalizedMessage.encodeArgument(label)}));
+LocalizedMessage validationIdentity(String label) => LocalizedMessage(key:'validationIdentity',fallback:DomainCopy.validationIdentity(label),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'label': LocalizedMessage.encodeArgument(label)}));
+LocalizedMessage get validationEvidence => LocalizedMessage(key:'validationEvidence',fallback:DomainCopy.validationEvidence);
+LocalizedMessage get validationExpression => LocalizedMessage(key:'validationExpression',fallback:DomainCopy.validationExpression);
+LocalizedMessage get validationExpressionAction => LocalizedMessage(key:'validationExpressionAction',fallback:DomainCopy.validationExpressionAction);
+LocalizedMessage validationUnknownField(String name) => LocalizedMessage(key:'validationUnknownField',fallback:DomainCopy.validationUnknownField(name),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'name': LocalizedMessage.encodeArgument(name)}));
+LocalizedMessage conflictBlocksApproval(String label) => LocalizedMessage(key:'conflictBlocksApproval',fallback:DomainCopy.conflictBlocksApproval(label),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'label': LocalizedMessage.encodeArgument(label)}));
+LocalizedMessage get reviewBlockedDuplicate => LocalizedMessage(key:'reviewBlockedDuplicate',fallback:DomainCopy.reviewBlockedDuplicate);
+LocalizedMessage get importKeptExisting => LocalizedMessage(key:'importKeptExisting',fallback:DomainCopy.importKeptExisting);
+LocalizedMessage get importMatchUnsettled => LocalizedMessage(key:'importMatchUnsettled',fallback:DomainCopy.importMatchUnsettled);
+LocalizedMessage importRepeatsRow(int row) => LocalizedMessage(key:'importRepeatsRow',fallback:DomainCopy.importRepeatsRow(row),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'row': LocalizedMessage.encodeArgument(row)}));
+LocalizedMessage get importFixRowColumn => LocalizedMessage(key:'importFixRowColumn',fallback:DomainCopy.importFixRowColumn);
+LocalizedMessage get importFixReasonColumn => LocalizedMessage(key:'importFixReasonColumn',fallback:DomainCopy.importFixReasonColumn);
+LocalizedMessage get uploadStopped => LocalizedMessage(key:'uploadStopped',fallback:DomainCopy.uploadStopped);
+LocalizedMessage get frictionLogAction => LocalizedMessage(key:'frictionLogAction',fallback:DomainCopy.frictionLogAction);
+LocalizedMessage get failureAIIsNotAvailable => LocalizedMessage(key:'failureAIIsNotAvailable',fallback:DomainCopy.failureAIIsNotAvailable);
+LocalizedMessage get failureContinueCapturingAnalysisCanWait => LocalizedMessage(key:'failureContinueCapturingAnalysisCanWait',fallback:DomainCopy.failureContinueCapturingAnalysisCanWait);
+LocalizedMessage failureNoUploadDestinationIsRegisteredForValue(String value0) => LocalizedMessage(key:'failureNoUploadDestinationIsRegisteredForValue',fallback:DomainCopy.failureNoUploadDestinationIsRegisteredForValue(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage get failureChooseAnotherDestination => LocalizedMessage(key:'failureChooseAnotherDestination',fallback:DomainCopy.failureChooseAnotherDestination);
+LocalizedMessage get failureTheDestinationRefusedTheSignIn => LocalizedMessage(key:'failureTheDestinationRefusedTheSignIn',fallback:DomainCopy.failureTheDestinationRefusedTheSignIn);
+LocalizedMessage get failureCheckTheKeyOrSignInAgain => LocalizedMessage(key:'failureCheckTheKeyOrSignInAgain',fallback:DomainCopy.failureCheckTheKeyOrSignInAgain);
+LocalizedMessage get failureThatBucketOrFolderWasNotFound => LocalizedMessage(key:'failureThatBucketOrFolderWasNotFound',fallback:DomainCopy.failureThatBucketOrFolderWasNotFound);
+LocalizedMessage get failureCheckTheNameAndTryTheConnection => LocalizedMessage(key:'failureCheckTheNameAndTryTheConnection',fallback:DomainCopy.failureCheckTheNameAndTryTheConnection);
+LocalizedMessage get failureTheDestinationDidNotFinishTheUpload => LocalizedMessage(key:'failureTheDestinationDidNotFinishTheUpload',fallback:DomainCopy.failureTheDestinationDidNotFinishTheUpload);
+LocalizedMessage get failureTryAgain => LocalizedMessage(key:'failureTryAgain',fallback:DomainCopy.failureTryAgain);
+LocalizedMessage get failureTheServerRedirectedTheUploadToAnother => LocalizedMessage(key:'failureTheServerRedirectedTheUploadToAnother',fallback:DomainCopy.failureTheServerRedirectedTheUploadToAnother);
+LocalizedMessage get failureCheckTheAddressAndTryAgain => LocalizedMessage(key:'failureCheckTheAddressAndTryAgain',fallback:DomainCopy.failureCheckTheAddressAndTryAgain);
+LocalizedMessage get failureTheDestinationRejectedTheUpload => LocalizedMessage(key:'failureTheDestinationRejectedTheUpload',fallback:DomainCopy.failureTheDestinationRejectedTheUpload);
+LocalizedMessage get failureCheckTheSettingsAndTryAgain => LocalizedMessage(key:'failureCheckTheSettingsAndTryAgain',fallback:DomainCopy.failureCheckTheSettingsAndTryAgain);
+LocalizedMessage get failureTheFileCouldNotBeReadWhile => LocalizedMessage(key:'failureTheFileCouldNotBeReadWhile',fallback:DomainCopy.failureTheFileCouldNotBeReadWhile);
+LocalizedMessage get failureCheckThatTheFileIsStillOn => LocalizedMessage(key:'failureCheckThatTheFileIsStillOn',fallback:DomainCopy.failureCheckThatTheFileIsStillOn);
+LocalizedMessage failureTaptureCouldNotFindValue(String value0) => LocalizedMessage(key:'failureTaptureCouldNotFindValue',fallback:DomainCopy.failureTaptureCouldNotFindValue(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage failureTheFileValueIsEmpty(String value0) => LocalizedMessage(key:'failureTheFileValueIsEmpty',fallback:DomainCopy.failureTheFileValueIsEmpty(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage get failureChooseAFileThatHasContentsAnd => LocalizedMessage(key:'failureChooseAFileThatHasContentsAnd',fallback:DomainCopy.failureChooseAFileThatHasContentsAnd);
+LocalizedMessage failureTheFileValueIsNotASupported(String value0) => LocalizedMessage(key:'failureTheFileValueIsNotASupported',fallback:DomainCopy.failureTheFileValueIsNotASupported(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage get failureChooseAnImageDocumentSpreadsheetAudioFile => LocalizedMessage(key:'failureChooseAnImageDocumentSpreadsheetAudioFile',fallback:DomainCopy.failureChooseAnImageDocumentSpreadsheetAudioFile);
+LocalizedMessage failureTheFileValueDoesNotMatchIts(String value0) => LocalizedMessage(key:'failureTheFileValueDoesNotMatchIts',fallback:DomainCopy.failureTheFileValueDoesNotMatchIts(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage get failureChooseAFileOfTheExpectedType => LocalizedMessage(key:'failureChooseAFileOfTheExpectedType',fallback:DomainCopy.failureChooseAFileOfTheExpectedType);
+LocalizedMessage failureTheFileValueIsLargerThanThe(String value0, String value1) => LocalizedMessage(key:'failureTheFileValueIsLargerThanThe',fallback:DomainCopy.failureTheFileValueIsLargerThanThe(value0,value1),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0),'value1': LocalizedMessage.encodeArgument(value1)}));
+LocalizedMessage get failureChooseASmallerFileAndTryAgain => LocalizedMessage(key:'failureChooseASmallerFileAndTryAgain',fallback:DomainCopy.failureChooseASmallerFileAndTryAgain);
+LocalizedMessage failureTheArchiveValueContainsAPathThat(String value0) => LocalizedMessage(key:'failureTheArchiveValueContainsAPathThat',fallback:DomainCopy.failureTheArchiveValueContainsAPathThat(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage get failureChooseADifferentFileAndTryAgain => LocalizedMessage(key:'failureChooseADifferentFileAndTryAgain',fallback:DomainCopy.failureChooseADifferentFileAndTryAgain);
+LocalizedMessage failureTheArchiveValueContainsALinkInstead(String value0) => LocalizedMessage(key:'failureTheArchiveValueContainsALinkInstead',fallback:DomainCopy.failureTheArchiveValueContainsALinkInstead(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage failureTheArchiveValueDeclaresMoreUncompressedData(String value0) => LocalizedMessage(key:'failureTheArchiveValueDeclaresMoreUncompressedData',fallback:DomainCopy.failureTheArchiveValueDeclaresMoreUncompressedData(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage failureTheFileValueIsNotAnArchive(String value0) => LocalizedMessage(key:'failureTheFileValueIsNotAnArchive',fallback:DomainCopy.failureTheFileValueIsNotAnArchive(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage get failureChooseAZIPBundleOrSpreadsheetAnd => LocalizedMessage(key:'failureChooseAZIPBundleOrSpreadsheetAnd',fallback:DomainCopy.failureChooseAZIPBundleOrSpreadsheetAnd);
+LocalizedMessage get failureChooseTheFileAgainThenTryAgain => LocalizedMessage(key:'failureChooseTheFileAgainThenTryAgain',fallback:DomainCopy.failureChooseTheFileAgainThenTryAgain);
+LocalizedMessage get failureThisPhotoAppearsMoreThanOnce => LocalizedMessage(key:'failureThisPhotoAppearsMoreThanOnce',fallback:DomainCopy.failureThisPhotoAppearsMoreThanOnce);
+LocalizedMessage get failureReloadTheCaptureAndTryAgain => LocalizedMessage(key:'failureReloadTheCaptureAndTryAgain',fallback:DomainCopy.failureReloadTheCaptureAndTryAgain);
+LocalizedMessage get failureAnEditedPhotoIsMissingItsOriginal => LocalizedMessage(key:'failureAnEditedPhotoIsMissingItsOriginal',fallback:DomainCopy.failureAnEditedPhotoIsMissingItsOriginal);
+LocalizedMessage get failureKeepThisCaptureAndRestoreTheOriginal => LocalizedMessage(key:'failureKeepThisCaptureAndRestoreTheOriginal',fallback:DomainCopy.failureKeepThisCaptureAndRestoreTheOriginal);
+LocalizedMessage get failureThesePhotoEditsLoopBackOnThemselves => LocalizedMessage(key:'failureThesePhotoEditsLoopBackOnThemselves',fallback:DomainCopy.failureThesePhotoEditsLoopBackOnThemselves);
+LocalizedMessage get failureAPresetWithThatNameAlreadyExists => LocalizedMessage(key:'failureAPresetWithThatNameAlreadyExists',fallback:DomainCopy.failureAPresetWithThatNameAlreadyExists);
+LocalizedMessage get failureChooseAnotherNameOrConfirmOverwrite => LocalizedMessage(key:'failureChooseAnotherNameOrConfirmOverwrite',fallback:DomainCopy.failureChooseAnotherNameOrConfirmOverwrite);
+LocalizedMessage get failureTheSnapshotHasBeenPurged => LocalizedMessage(key:'failureTheSnapshotHasBeenPurged',fallback:DomainCopy.failureTheSnapshotHasBeenPurged);
+LocalizedMessage get failureTheMergeCanNoLongerBeUndone => LocalizedMessage(key:'failureTheMergeCanNoLongerBeUndone',fallback:DomainCopy.failureTheMergeCanNoLongerBeUndone);
+LocalizedMessage get failureThisRecordIsInTheRecycleBin => LocalizedMessage(key:'failureThisRecordIsInTheRecycleBin',fallback:DomainCopy.failureThisRecordIsInTheRecycleBin);
+LocalizedMessage failureThisRecordIsAlreadyValue(String value0) => LocalizedMessage(key:'failureThisRecordIsAlreadyValue',fallback:DomainCopy.failureThisRecordIsAlreadyValue(value0),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0)}));
+LocalizedMessage get failureChooseADifferentStatusOrLeaveIt => LocalizedMessage(key:'failureChooseADifferentStatusOrLeaveIt',fallback:DomainCopy.failureChooseADifferentStatusOrLeaveIt);
+LocalizedMessage failureARecordThatIsValueCannotBe(String value0, String value1) => LocalizedMessage(key:'failureARecordThatIsValueCannotBe',fallback:DomainCopy.failureARecordThatIsValueCannotBe(value0,value1),arguments:Map<String,Object?>.unmodifiable(<String,Object?>{'value0': LocalizedMessage.encodeArgument(value0),'value1': LocalizedMessage.encodeArgument(value1)}));
+LocalizedMessage get failureRestoreItFromTheRecycleBinBefore => LocalizedMessage(key:'failureRestoreItFromTheRecycleBinBefore',fallback:DomainCopy.failureRestoreItFromTheRecycleBinBefore);
+LocalizedMessage get failureAddAHeaderRowAndTryAgain => LocalizedMessage(key:'failureAddAHeaderRowAndTryAgain',fallback:DomainCopy.failureAddAHeaderRowAndTryAgain);
+LocalizedMessage get failureThatTableHasNoDataColumns => LocalizedMessage(key:'failureThatTableHasNoDataColumns',fallback:DomainCopy.failureThatTableHasNoDataColumns);
+LocalizedMessage get failureThatValueIsNotText => LocalizedMessage(key:'failureThatValueIsNotText',fallback:DomainCopy.failureThatValueIsNotText);
+LocalizedMessage get failureEnterTextOrLeaveTheFieldEmpty => LocalizedMessage(key:'failureEnterTextOrLeaveTheFieldEmpty',fallback:DomainCopy.failureEnterTextOrLeaveTheFieldEmpty);
+LocalizedMessage get failureThatValueIsNotAWholeNumber => LocalizedMessage(key:'failureThatValueIsNotAWholeNumber',fallback:DomainCopy.failureThatValueIsNotAWholeNumber);
+LocalizedMessage get failureEnterAWholeNumberOrLeaveThe => LocalizedMessage(key:'failureEnterAWholeNumberOrLeaveThe',fallback:DomainCopy.failureEnterAWholeNumberOrLeaveThe);
+LocalizedMessage get failureThatValueIsNotANumber => LocalizedMessage(key:'failureThatValueIsNotANumber',fallback:DomainCopy.failureThatValueIsNotANumber);
+LocalizedMessage get failureEnterANumberOrLeaveTheField => LocalizedMessage(key:'failureEnterANumberOrLeaveTheField',fallback:DomainCopy.failureEnterANumberOrLeaveTheField);
+LocalizedMessage get failureThatNumberIsOutsideTheAllowedRange => LocalizedMessage(key:'failureThatNumberIsOutsideTheAllowedRange',fallback:DomainCopy.failureThatNumberIsOutsideTheAllowedRange);
+LocalizedMessage get failureEnterANumberInsideTheRangeOr => LocalizedMessage(key:'failureEnterANumberInsideTheRangeOr',fallback:DomainCopy.failureEnterANumberInsideTheRangeOr);
+LocalizedMessage get failureThatValueIsShorterThanThisField => LocalizedMessage(key:'failureThatValueIsShorterThanThisField',fallback:DomainCopy.failureThatValueIsShorterThanThisField);
+LocalizedMessage get failureEnterALongerValueOrLeaveThe => LocalizedMessage(key:'failureEnterALongerValueOrLeaveThe',fallback:DomainCopy.failureEnterALongerValueOrLeaveThe);
+LocalizedMessage get failureThatValueIsLongerThanThisField => LocalizedMessage(key:'failureThatValueIsLongerThanThisField',fallback:DomainCopy.failureThatValueIsLongerThanThisField);
+LocalizedMessage get failureShortenTheValueOrLeaveTheField => LocalizedMessage(key:'failureShortenTheValueOrLeaveTheField',fallback:DomainCopy.failureShortenTheValueOrLeaveTheField);
+LocalizedMessage get failureThatValueDoesNotMatchTheExpected => LocalizedMessage(key:'failureThatValueDoesNotMatchTheExpected',fallback:DomainCopy.failureThatValueDoesNotMatchTheExpected);
+LocalizedMessage get failureEnterAValueInTheExpectedForm => LocalizedMessage(key:'failureEnterAValueInTheExpectedForm',fallback:DomainCopy.failureEnterAValueInTheExpectedForm);
+LocalizedMessage get failureThisFieldSPatternIsNotValid => LocalizedMessage(key:'failureThisFieldSPatternIsNotValid',fallback:DomainCopy.failureThisFieldSPatternIsNotValid);
+LocalizedMessage get failureOpenTheTemplateAndCorrectTheField => LocalizedMessage(key:'failureOpenTheTemplateAndCorrectTheField',fallback:DomainCopy.failureOpenTheTemplateAndCorrectTheField);
+LocalizedMessage get failureThatValueIsNotADate => LocalizedMessage(key:'failureThatValueIsNotADate',fallback:DomainCopy.failureThatValueIsNotADate);
+LocalizedMessage get failureEnterACalendarDateOrLeaveThe => LocalizedMessage(key:'failureEnterACalendarDateOrLeaveThe',fallback:DomainCopy.failureEnterACalendarDateOrLeaveThe);
+LocalizedMessage get failureThatValueIsNotATimeOf => LocalizedMessage(key:'failureThatValueIsNotATimeOf',fallback:DomainCopy.failureThatValueIsNotATimeOf);
+LocalizedMessage get failureEnterATimeOrLeaveTheField => LocalizedMessage(key:'failureEnterATimeOrLeaveTheField',fallback:DomainCopy.failureEnterATimeOrLeaveTheField);
+LocalizedMessage get failureThatValueIsNotADateAnd => LocalizedMessage(key:'failureThatValueIsNotADateAnd',fallback:DomainCopy.failureThatValueIsNotADateAnd);
+LocalizedMessage get failureEnterADateAndTimeOrLeave => LocalizedMessage(key:'failureEnterADateAndTimeOrLeave',fallback:DomainCopy.failureEnterADateAndTimeOrLeave);
+LocalizedMessage get failureThatValueIsNotAYesOr => LocalizedMessage(key:'failureThatValueIsNotAYesOr',fallback:DomainCopy.failureThatValueIsNotAYesOr);
+LocalizedMessage get failureSwitchTheFieldOnOrOffOr => LocalizedMessage(key:'failureSwitchTheFieldOnOrOffOr',fallback:DomainCopy.failureSwitchTheFieldOnOrOffOr);
+LocalizedMessage get failureThatValueIsNotAChoice => LocalizedMessage(key:'failureThatValueIsNotAChoice',fallback:DomainCopy.failureThatValueIsNotAChoice);
+LocalizedMessage get failurePickAnOptionFromTheListOr => LocalizedMessage(key:'failurePickAnOptionFromTheListOr',fallback:DomainCopy.failurePickAnOptionFromTheListOr);
+LocalizedMessage get failureThatChoiceIsNotOnTheList => LocalizedMessage(key:'failureThatChoiceIsNotOnTheList',fallback:DomainCopy.failureThatChoiceIsNotOnTheList);
+LocalizedMessage get failureThatValueIsNotAFilePath => LocalizedMessage(key:'failureThatValueIsNotAFilePath',fallback:DomainCopy.failureThatValueIsNotAFilePath);
+LocalizedMessage get failureAttachAFileOrLeaveTheField => LocalizedMessage(key:'failureAttachAFileOrLeaveTheField',fallback:DomainCopy.failureAttachAFileOrLeaveTheField);
+LocalizedMessage get failureThatValueIsNotALocation => LocalizedMessage(key:'failureThatValueIsNotALocation',fallback:DomainCopy.failureThatValueIsNotALocation);
+LocalizedMessage get failureCaptureAGPSFixOrLeaveThe => LocalizedMessage(key:'failureCaptureAGPSFixOrLeaveThe',fallback:DomainCopy.failureCaptureAGPSFixOrLeaveThe);
+LocalizedMessage get failureThatLocationIsOutsideTheEarth => LocalizedMessage(key:'failureThatLocationIsOutsideTheEarth',fallback:DomainCopy.failureThatLocationIsOutsideTheEarth);
+LocalizedMessage get failureCaptureAGPSFixAgainOrLeave => LocalizedMessage(key:'failureCaptureAGPSFixAgainOrLeave',fallback:DomainCopy.failureCaptureAGPSFixAgainOrLeave);
+LocalizedMessage get failureThisFieldTypeHasNoEditorOn => LocalizedMessage(key:'failureThisFieldTypeHasNoEditorOn',fallback:DomainCopy.failureThisFieldTypeHasNoEditorOn);
+LocalizedMessage get failureOpenTheTemplateAndPickAType => LocalizedMessage(key:'failureOpenTheTemplateAndPickAType',fallback:DomainCopy.failureOpenTheTemplateAndPickAType);
+LocalizedMessage get failureConfirmConsentWithTheNamedOperator => LocalizedMessage(key:'failureConfirmConsentWithTheNamedOperator',fallback:DomainCopy.failureConfirmConsentWithTheNamedOperator);
+LocalizedMessage get failureThatFieldTypeIsNotRecognised => LocalizedMessage(key:'failureThatFieldTypeIsNotRecognised',fallback:DomainCopy.failureThatFieldTypeIsNotRecognised);
+LocalizedMessage get failurePickATypeFromTheListAnd => LocalizedMessage(key:'failurePickATypeFromTheListAnd',fallback:DomainCopy.failurePickATypeFromTheListAnd);
+LocalizedMessage get failureThatInputModeIsNotRecognised => LocalizedMessage(key:'failureThatInputModeIsNotRecognised',fallback:DomainCopy.failureThatInputModeIsNotRecognised);
+LocalizedMessage get failurePickAnInputModeFromTheList => LocalizedMessage(key:'failurePickAnInputModeFromTheList',fallback:DomainCopy.failurePickAnInputModeFromTheList);
+LocalizedMessage get failureTheSuggestedOrderCouldNotBeRead => LocalizedMessage(key:'failureTheSuggestedOrderCouldNotBeRead',fallback:DomainCopy.failureTheSuggestedOrderCouldNotBeRead);
+LocalizedMessage get failureUseTheOnDeviceResultsOrTry => LocalizedMessage(key:'failureUseTheOnDeviceResultsOrTry',fallback:DomainCopy.failureUseTheOnDeviceResultsOrTry);
+LocalizedMessage get cloudUploadConfirmationRequired => LocalizedMessage(key:'cloudUploadConfirmationRequired',fallback:DomainCopy.cloudUploadConfirmationRequired);
+LocalizedMessage get cloudUploadConfirmationRecovery => LocalizedMessage(key:'cloudUploadConfirmationRecovery',fallback:DomainCopy.cloudUploadConfirmationRecovery);
+LocalizedMessage get cloudUploadHistoryMissing => LocalizedMessage(key:'cloudUploadHistoryMissing',fallback:DomainCopy.cloudUploadHistoryMissing);
+LocalizedMessage get cloudUploadRestartRecovery => LocalizedMessage(key:'cloudUploadRestartRecovery',fallback:DomainCopy.cloudUploadRestartRecovery);
 }
 
 class _DomainFormatter {
-  const _DomainFormatter();
-  final _DomainCatalog _catalog = const _DomainCatalog();
-  String captureDocumentInvalid(String filename) =>
-      _catalog.captureDocumentInvalid(filename);
-  String get captureNeedsEvidence => _catalog.captureNeedsEvidence;
-  String get captureNeedsEvidenceRecovery =>
-      _catalog.captureNeedsEvidenceRecovery;
-  String get captureQualityBlur => _catalog.captureQualityBlur;
-  String get captureQualityBright => _catalog.captureQualityBright;
-  String get captureQualityDark => _catalog.captureQualityDark;
-  String get captureQualitySmallText => _catalog.captureQualitySmallText;
-  String get cloudUploadConfirmationRecovery =>
-      _catalog.cloudUploadConfirmationRecovery;
-  String get cloudUploadConfirmationRequired =>
-      _catalog.cloudUploadConfirmationRequired;
-  String get cloudUploadHistoryMissing => _catalog.cloudUploadHistoryMissing;
-  String get cloudUploadRestartRecovery => _catalog.cloudUploadRestartRecovery;
-  String conflictBlocksApproval(String label) =>
-      _catalog.conflictBlocksApproval(label);
-  String get failureAIIsNotAvailable => _catalog.failureAIIsNotAvailable;
-  String get failureAPresetWithThatNameAlreadyExists =>
-      _catalog.failureAPresetWithThatNameAlreadyExists;
-  String failureARecordThatIsValueCannotBe(String value0, String value1) =>
-      _catalog.failureARecordThatIsValueCannotBe(value0, value1);
-  String get failureAddAHeaderRowAndTryAgain =>
-      _catalog.failureAddAHeaderRowAndTryAgain;
-  String get failureAnEditedPhotoIsMissingItsOriginal =>
-      _catalog.failureAnEditedPhotoIsMissingItsOriginal;
-  String get failureAttachAFileOrLeaveTheField =>
-      _catalog.failureAttachAFileOrLeaveTheField;
-  String get failureCaptureAGPSFixAgainOrLeave =>
-      _catalog.failureCaptureAGPSFixAgainOrLeave;
-  String get failureCaptureAGPSFixOrLeaveThe =>
-      _catalog.failureCaptureAGPSFixOrLeaveThe;
-  String get failureCheckThatTheFileIsStillOn =>
-      _catalog.failureCheckThatTheFileIsStillOn;
-  String get failureCheckTheAddressAndTryAgain =>
-      _catalog.failureCheckTheAddressAndTryAgain;
-  String get failureCheckTheKeyOrSignInAgain =>
-      _catalog.failureCheckTheKeyOrSignInAgain;
-  String get failureCheckTheNameAndTryTheConnection =>
-      _catalog.failureCheckTheNameAndTryTheConnection;
-  String get failureCheckTheSettingsAndTryAgain =>
-      _catalog.failureCheckTheSettingsAndTryAgain;
-  String get failureChooseADifferentFileAndTryAgain =>
-      _catalog.failureChooseADifferentFileAndTryAgain;
-  String get failureChooseADifferentStatusOrLeaveIt =>
-      _catalog.failureChooseADifferentStatusOrLeaveIt;
-  String get failureChooseAFileOfTheExpectedType =>
-      _catalog.failureChooseAFileOfTheExpectedType;
-  String get failureChooseAFileThatHasContentsAnd =>
-      _catalog.failureChooseAFileThatHasContentsAnd;
-  String get failureChooseASmallerFileAndTryAgain =>
-      _catalog.failureChooseASmallerFileAndTryAgain;
-  String get failureChooseAZIPBundleOrSpreadsheetAnd =>
-      _catalog.failureChooseAZIPBundleOrSpreadsheetAnd;
-  String get failureChooseAnImageDocumentSpreadsheetAudioFile =>
-      _catalog.failureChooseAnImageDocumentSpreadsheetAudioFile;
-  String get failureChooseAnotherDestination =>
-      _catalog.failureChooseAnotherDestination;
-  String get failureChooseAnotherNameOrConfirmOverwrite =>
-      _catalog.failureChooseAnotherNameOrConfirmOverwrite;
-  String get failureChooseTheFileAgainThenTryAgain =>
-      _catalog.failureChooseTheFileAgainThenTryAgain;
-  String get failureConfirmConsentWithTheNamedOperator =>
-      _catalog.failureConfirmConsentWithTheNamedOperator;
-  String get failureContinueCapturingAnalysisCanWait =>
-      _catalog.failureContinueCapturingAnalysisCanWait;
-  String get failureEnterACalendarDateOrLeaveThe =>
-      _catalog.failureEnterACalendarDateOrLeaveThe;
-  String get failureEnterADateAndTimeOrLeave =>
-      _catalog.failureEnterADateAndTimeOrLeave;
-  String get failureEnterALongerValueOrLeaveThe =>
-      _catalog.failureEnterALongerValueOrLeaveThe;
-  String get failureEnterANumberInsideTheRangeOr =>
-      _catalog.failureEnterANumberInsideTheRangeOr;
-  String get failureEnterANumberOrLeaveTheField =>
-      _catalog.failureEnterANumberOrLeaveTheField;
-  String get failureEnterATimeOrLeaveTheField =>
-      _catalog.failureEnterATimeOrLeaveTheField;
-  String get failureEnterAValueInTheExpectedForm =>
-      _catalog.failureEnterAValueInTheExpectedForm;
-  String get failureEnterAWholeNumberOrLeaveThe =>
-      _catalog.failureEnterAWholeNumberOrLeaveThe;
-  String get failureEnterTextOrLeaveTheFieldEmpty =>
-      _catalog.failureEnterTextOrLeaveTheFieldEmpty;
-  String get failureKeepThisCaptureAndRestoreTheOriginal =>
-      _catalog.failureKeepThisCaptureAndRestoreTheOriginal;
-  String failureNoUploadDestinationIsRegisteredForValue(String value0) =>
-      _catalog.failureNoUploadDestinationIsRegisteredForValue(value0);
-  String get failureOpenTheTemplateAndCorrectTheField =>
-      _catalog.failureOpenTheTemplateAndCorrectTheField;
-  String get failureOpenTheTemplateAndPickAType =>
-      _catalog.failureOpenTheTemplateAndPickAType;
-  String get failurePickATypeFromTheListAnd =>
-      _catalog.failurePickATypeFromTheListAnd;
-  String get failurePickAnInputModeFromTheList =>
-      _catalog.failurePickAnInputModeFromTheList;
-  String get failurePickAnOptionFromTheListOr =>
-      _catalog.failurePickAnOptionFromTheListOr;
-  String get failureReloadTheCaptureAndTryAgain =>
-      _catalog.failureReloadTheCaptureAndTryAgain;
-  String get failureRestoreItFromTheRecycleBinBefore =>
-      _catalog.failureRestoreItFromTheRecycleBinBefore;
-  String get failureShortenTheValueOrLeaveTheField =>
-      _catalog.failureShortenTheValueOrLeaveTheField;
-  String get failureSwitchTheFieldOnOrOffOr =>
-      _catalog.failureSwitchTheFieldOnOrOffOr;
-  String failureTaptureCouldNotFindValue(String value0) =>
-      _catalog.failureTaptureCouldNotFindValue(value0);
-  String get failureThatBucketOrFolderWasNotFound =>
-      _catalog.failureThatBucketOrFolderWasNotFound;
-  String get failureThatChoiceIsNotOnTheList =>
-      _catalog.failureThatChoiceIsNotOnTheList;
-  String get failureThatFieldTypeIsNotRecognised =>
-      _catalog.failureThatFieldTypeIsNotRecognised;
-  String get failureThatInputModeIsNotRecognised =>
-      _catalog.failureThatInputModeIsNotRecognised;
-  String get failureThatLocationIsOutsideTheEarth =>
-      _catalog.failureThatLocationIsOutsideTheEarth;
-  String get failureThatNumberIsOutsideTheAllowedRange =>
-      _catalog.failureThatNumberIsOutsideTheAllowedRange;
-  String get failureThatTableHasNoDataColumns =>
-      _catalog.failureThatTableHasNoDataColumns;
-  String get failureThatValueDoesNotMatchTheExpected =>
-      _catalog.failureThatValueDoesNotMatchTheExpected;
-  String get failureThatValueIsLongerThanThisField =>
-      _catalog.failureThatValueIsLongerThanThisField;
-  String get failureThatValueIsNotAChoice =>
-      _catalog.failureThatValueIsNotAChoice;
-  String get failureThatValueIsNotADate => _catalog.failureThatValueIsNotADate;
-  String get failureThatValueIsNotADateAnd =>
-      _catalog.failureThatValueIsNotADateAnd;
-  String get failureThatValueIsNotAFilePath =>
-      _catalog.failureThatValueIsNotAFilePath;
-  String get failureThatValueIsNotALocation =>
-      _catalog.failureThatValueIsNotALocation;
-  String get failureThatValueIsNotANumber =>
-      _catalog.failureThatValueIsNotANumber;
-  String get failureThatValueIsNotATimeOf =>
-      _catalog.failureThatValueIsNotATimeOf;
-  String get failureThatValueIsNotAWholeNumber =>
-      _catalog.failureThatValueIsNotAWholeNumber;
-  String get failureThatValueIsNotAYesOr =>
-      _catalog.failureThatValueIsNotAYesOr;
-  String get failureThatValueIsNotText => _catalog.failureThatValueIsNotText;
-  String get failureThatValueIsShorterThanThisField =>
-      _catalog.failureThatValueIsShorterThanThisField;
-  String failureTheArchiveValueContainsALinkInstead(String value0) =>
-      _catalog.failureTheArchiveValueContainsALinkInstead(value0);
-  String failureTheArchiveValueContainsAPathThat(String value0) =>
-      _catalog.failureTheArchiveValueContainsAPathThat(value0);
-  String failureTheArchiveValueDeclaresMoreUncompressedData(String value0) =>
-      _catalog.failureTheArchiveValueDeclaresMoreUncompressedData(value0);
-  String get failureTheDestinationDidNotFinishTheUpload =>
-      _catalog.failureTheDestinationDidNotFinishTheUpload;
-  String get failureTheDestinationRefusedTheSignIn =>
-      _catalog.failureTheDestinationRefusedTheSignIn;
-  String get failureTheDestinationRejectedTheUpload =>
-      _catalog.failureTheDestinationRejectedTheUpload;
-  String get failureTheFileCouldNotBeReadWhile =>
-      _catalog.failureTheFileCouldNotBeReadWhile;
-  String failureTheFileValueDoesNotMatchIts(String value0) =>
-      _catalog.failureTheFileValueDoesNotMatchIts(value0);
-  String failureTheFileValueIsEmpty(String value0) =>
-      _catalog.failureTheFileValueIsEmpty(value0);
-  String failureTheFileValueIsLargerThanThe(String value0, String value1) =>
-      _catalog.failureTheFileValueIsLargerThanThe(value0, value1);
-  String failureTheFileValueIsNotASupported(String value0) =>
-      _catalog.failureTheFileValueIsNotASupported(value0);
-  String failureTheFileValueIsNotAnArchive(String value0) =>
-      _catalog.failureTheFileValueIsNotAnArchive(value0);
-  String get failureTheMergeCanNoLongerBeUndone =>
-      _catalog.failureTheMergeCanNoLongerBeUndone;
-  String get failureTheServerRedirectedTheUploadToAnother =>
-      _catalog.failureTheServerRedirectedTheUploadToAnother;
-  String get failureTheSnapshotHasBeenPurged =>
-      _catalog.failureTheSnapshotHasBeenPurged;
-  String get failureTheSuggestedOrderCouldNotBeRead =>
-      _catalog.failureTheSuggestedOrderCouldNotBeRead;
-  String get failureThesePhotoEditsLoopBackOnThemselves =>
-      _catalog.failureThesePhotoEditsLoopBackOnThemselves;
-  String get failureThisFieldSPatternIsNotValid =>
-      _catalog.failureThisFieldSPatternIsNotValid;
-  String get failureThisFieldTypeHasNoEditorOn =>
-      _catalog.failureThisFieldTypeHasNoEditorOn;
-  String get failureThisPhotoAppearsMoreThanOnce =>
-      _catalog.failureThisPhotoAppearsMoreThanOnce;
-  String failureThisRecordIsAlreadyValue(String value0) =>
-      _catalog.failureThisRecordIsAlreadyValue(value0);
-  String get failureThisRecordIsInTheRecycleBin =>
-      _catalog.failureThisRecordIsInTheRecycleBin;
-  String get failureTryAgain => _catalog.failureTryAgain;
-  String get failureUseTheOnDeviceResultsOrTry =>
-      _catalog.failureUseTheOnDeviceResultsOrTry;
-  String get frictionLogAction => _catalog.frictionLogAction;
-  String get importFixReasonColumn => _catalog.importFixReasonColumn;
-  String get importFixRowColumn => _catalog.importFixRowColumn;
-  String get importKeptExisting => _catalog.importKeptExisting;
-  String get importMatchUnsettled => _catalog.importMatchUnsettled;
-  String importRepeatsRow(int row) => _catalog.importRepeatsRow(row);
-  String get lookupImportRecovery => _catalog.lookupImportRecovery;
-  String lookupTargetTwice(String target) => _catalog.lookupTargetTwice(target);
-  String lookupUnknownTarget(String target) =>
-      _catalog.lookupUnknownTarget(target);
-  String get projectNothingToOpen => _catalog.projectNothingToOpen;
-  String get projectNothingToOpenRecovery =>
-      _catalog.projectNothingToOpenRecovery;
-  String get recordBandHigh => _catalog.recordBandHigh;
-  String get recordBandLow => _catalog.recordBandLow;
-  String get recordBandMedium => _catalog.recordBandMedium;
-  String get reviewBlockedDuplicate => _catalog.reviewBlockedDuplicate;
-  String get templatesImportDuplicateField =>
-      _catalog.templatesImportDuplicateField;
-  String get templatesImportDuplicateFieldRecovery =>
-      _catalog.templatesImportDuplicateFieldRecovery;
-  String get templatesImportInvalid => _catalog.templatesImportInvalid;
-  String get templatesImportInvalidRecovery =>
-      _catalog.templatesImportInvalidRecovery;
-  String get templatesImportUnknownSchema =>
-      _catalog.templatesImportUnknownSchema;
-  String get templatesImportUnknownSchemaRecovery =>
-      _catalog.templatesImportUnknownSchemaRecovery;
-  String get tryAnotherFile => _catalog.tryAnotherFile;
-  String get uploadStopped => _catalog.uploadStopped;
-  String get validationEvidence => _catalog.validationEvidence;
-  String get validationExpression => _catalog.validationExpression;
-  String get validationExpressionAction => _catalog.validationExpressionAction;
-  String validationIdentity(String label) => _catalog.validationIdentity(label);
-  String validationOption(String label) => _catalog.validationOption(label);
-  String validationPattern(String label) => _catalog.validationPattern(label);
-  String validationRange(String label) => _catalog.validationRange(label);
-  String validationRequired(String label) => _catalog.validationRequired(label);
-  String validationTooLong(String label) => _catalog.validationTooLong(label);
-  String validationTooShort(String label) => _catalog.validationTooShort(label);
-  String validationUnit(String label) => _catalog.validationUnit(label);
-  String validationUnknownField(String name) =>
-      _catalog.validationUnknownField(name);
+ const _DomainFormatter();
+ final _DomainCatalog _catalog = const _DomainCatalog();
+String captureDocumentInvalid(String filename) => _catalog.captureDocumentInvalid(filename);
+String get captureNeedsEvidence => _catalog.captureNeedsEvidence;
+String get captureNeedsEvidenceRecovery => _catalog.captureNeedsEvidenceRecovery;
+String get captureQualityBlur => _catalog.captureQualityBlur;
+String get captureQualityBright => _catalog.captureQualityBright;
+String get captureQualityDark => _catalog.captureQualityDark;
+String get captureQualitySmallText => _catalog.captureQualitySmallText;
+String get cloudUploadConfirmationRecovery => _catalog.cloudUploadConfirmationRecovery;
+String get cloudUploadConfirmationRequired => _catalog.cloudUploadConfirmationRequired;
+String get cloudUploadHistoryMissing => _catalog.cloudUploadHistoryMissing;
+String get cloudUploadRestartRecovery => _catalog.cloudUploadRestartRecovery;
+String conflictBlocksApproval(String label) => _catalog.conflictBlocksApproval(label);
+String get failureAIIsNotAvailable => _catalog.failureAIIsNotAvailable;
+String get failureAPresetWithThatNameAlreadyExists => _catalog.failureAPresetWithThatNameAlreadyExists;
+String failureARecordThatIsValueCannotBe(String value0, String value1) => _catalog.failureARecordThatIsValueCannotBe(value0, value1);
+String get failureAddAHeaderRowAndTryAgain => _catalog.failureAddAHeaderRowAndTryAgain;
+String get failureAnEditedPhotoIsMissingItsOriginal => _catalog.failureAnEditedPhotoIsMissingItsOriginal;
+String get failureAttachAFileOrLeaveTheField => _catalog.failureAttachAFileOrLeaveTheField;
+String get failureCaptureAGPSFixAgainOrLeave => _catalog.failureCaptureAGPSFixAgainOrLeave;
+String get failureCaptureAGPSFixOrLeaveThe => _catalog.failureCaptureAGPSFixOrLeaveThe;
+String get failureCheckThatTheFileIsStillOn => _catalog.failureCheckThatTheFileIsStillOn;
+String get failureCheckTheAddressAndTryAgain => _catalog.failureCheckTheAddressAndTryAgain;
+String get failureCheckTheKeyOrSignInAgain => _catalog.failureCheckTheKeyOrSignInAgain;
+String get failureCheckTheNameAndTryTheConnection => _catalog.failureCheckTheNameAndTryTheConnection;
+String get failureCheckTheSettingsAndTryAgain => _catalog.failureCheckTheSettingsAndTryAgain;
+String get failureChooseADifferentFileAndTryAgain => _catalog.failureChooseADifferentFileAndTryAgain;
+String get failureChooseADifferentStatusOrLeaveIt => _catalog.failureChooseADifferentStatusOrLeaveIt;
+String get failureChooseAFileOfTheExpectedType => _catalog.failureChooseAFileOfTheExpectedType;
+String get failureChooseAFileThatHasContentsAnd => _catalog.failureChooseAFileThatHasContentsAnd;
+String get failureChooseASmallerFileAndTryAgain => _catalog.failureChooseASmallerFileAndTryAgain;
+String get failureChooseAZIPBundleOrSpreadsheetAnd => _catalog.failureChooseAZIPBundleOrSpreadsheetAnd;
+String get failureChooseAnImageDocumentSpreadsheetAudioFile => _catalog.failureChooseAnImageDocumentSpreadsheetAudioFile;
+String get failureChooseAnotherDestination => _catalog.failureChooseAnotherDestination;
+String get failureChooseAnotherNameOrConfirmOverwrite => _catalog.failureChooseAnotherNameOrConfirmOverwrite;
+String get failureChooseTheFileAgainThenTryAgain => _catalog.failureChooseTheFileAgainThenTryAgain;
+String get failureConfirmConsentWithTheNamedOperator => _catalog.failureConfirmConsentWithTheNamedOperator;
+String get failureContinueCapturingAnalysisCanWait => _catalog.failureContinueCapturingAnalysisCanWait;
+String get failureEnterACalendarDateOrLeaveThe => _catalog.failureEnterACalendarDateOrLeaveThe;
+String get failureEnterADateAndTimeOrLeave => _catalog.failureEnterADateAndTimeOrLeave;
+String get failureEnterALongerValueOrLeaveThe => _catalog.failureEnterALongerValueOrLeaveThe;
+String get failureEnterANumberInsideTheRangeOr => _catalog.failureEnterANumberInsideTheRangeOr;
+String get failureEnterANumberOrLeaveTheField => _catalog.failureEnterANumberOrLeaveTheField;
+String get failureEnterATimeOrLeaveTheField => _catalog.failureEnterATimeOrLeaveTheField;
+String get failureEnterAValueInTheExpectedForm => _catalog.failureEnterAValueInTheExpectedForm;
+String get failureEnterAWholeNumberOrLeaveThe => _catalog.failureEnterAWholeNumberOrLeaveThe;
+String get failureEnterTextOrLeaveTheFieldEmpty => _catalog.failureEnterTextOrLeaveTheFieldEmpty;
+String get failureKeepThisCaptureAndRestoreTheOriginal => _catalog.failureKeepThisCaptureAndRestoreTheOriginal;
+String failureNoUploadDestinationIsRegisteredForValue(String value0) => _catalog.failureNoUploadDestinationIsRegisteredForValue(value0);
+String get failureOpenTheTemplateAndCorrectTheField => _catalog.failureOpenTheTemplateAndCorrectTheField;
+String get failureOpenTheTemplateAndPickAType => _catalog.failureOpenTheTemplateAndPickAType;
+String get failurePickATypeFromTheListAnd => _catalog.failurePickATypeFromTheListAnd;
+String get failurePickAnInputModeFromTheList => _catalog.failurePickAnInputModeFromTheList;
+String get failurePickAnOptionFromTheListOr => _catalog.failurePickAnOptionFromTheListOr;
+String get failureReloadTheCaptureAndTryAgain => _catalog.failureReloadTheCaptureAndTryAgain;
+String get failureRestoreItFromTheRecycleBinBefore => _catalog.failureRestoreItFromTheRecycleBinBefore;
+String get failureShortenTheValueOrLeaveTheField => _catalog.failureShortenTheValueOrLeaveTheField;
+String get failureSwitchTheFieldOnOrOffOr => _catalog.failureSwitchTheFieldOnOrOffOr;
+String failureTaptureCouldNotFindValue(String value0) => _catalog.failureTaptureCouldNotFindValue(value0);
+String get failureThatBucketOrFolderWasNotFound => _catalog.failureThatBucketOrFolderWasNotFound;
+String get failureThatChoiceIsNotOnTheList => _catalog.failureThatChoiceIsNotOnTheList;
+String get failureThatFieldTypeIsNotRecognised => _catalog.failureThatFieldTypeIsNotRecognised;
+String get failureThatInputModeIsNotRecognised => _catalog.failureThatInputModeIsNotRecognised;
+String get failureThatLocationIsOutsideTheEarth => _catalog.failureThatLocationIsOutsideTheEarth;
+String get failureThatNumberIsOutsideTheAllowedRange => _catalog.failureThatNumberIsOutsideTheAllowedRange;
+String get failureThatTableHasNoDataColumns => _catalog.failureThatTableHasNoDataColumns;
+String get failureThatValueDoesNotMatchTheExpected => _catalog.failureThatValueDoesNotMatchTheExpected;
+String get failureThatValueIsLongerThanThisField => _catalog.failureThatValueIsLongerThanThisField;
+String get failureThatValueIsNotAChoice => _catalog.failureThatValueIsNotAChoice;
+String get failureThatValueIsNotADate => _catalog.failureThatValueIsNotADate;
+String get failureThatValueIsNotADateAnd => _catalog.failureThatValueIsNotADateAnd;
+String get failureThatValueIsNotAFilePath => _catalog.failureThatValueIsNotAFilePath;
+String get failureThatValueIsNotALocation => _catalog.failureThatValueIsNotALocation;
+String get failureThatValueIsNotANumber => _catalog.failureThatValueIsNotANumber;
+String get failureThatValueIsNotATimeOf => _catalog.failureThatValueIsNotATimeOf;
+String get failureThatValueIsNotAWholeNumber => _catalog.failureThatValueIsNotAWholeNumber;
+String get failureThatValueIsNotAYesOr => _catalog.failureThatValueIsNotAYesOr;
+String get failureThatValueIsNotText => _catalog.failureThatValueIsNotText;
+String get failureThatValueIsShorterThanThisField => _catalog.failureThatValueIsShorterThanThisField;
+String failureTheArchiveValueContainsALinkInstead(String value0) => _catalog.failureTheArchiveValueContainsALinkInstead(value0);
+String failureTheArchiveValueContainsAPathThat(String value0) => _catalog.failureTheArchiveValueContainsAPathThat(value0);
+String failureTheArchiveValueDeclaresMoreUncompressedData(String value0) => _catalog.failureTheArchiveValueDeclaresMoreUncompressedData(value0);
+String get failureTheDestinationDidNotFinishTheUpload => _catalog.failureTheDestinationDidNotFinishTheUpload;
+String get failureTheDestinationRefusedTheSignIn => _catalog.failureTheDestinationRefusedTheSignIn;
+String get failureTheDestinationRejectedTheUpload => _catalog.failureTheDestinationRejectedTheUpload;
+String get failureTheFileCouldNotBeReadWhile => _catalog.failureTheFileCouldNotBeReadWhile;
+String failureTheFileValueDoesNotMatchIts(String value0) => _catalog.failureTheFileValueDoesNotMatchIts(value0);
+String failureTheFileValueIsEmpty(String value0) => _catalog.failureTheFileValueIsEmpty(value0);
+String failureTheFileValueIsLargerThanThe(String value0, String value1) => _catalog.failureTheFileValueIsLargerThanThe(value0, value1);
+String failureTheFileValueIsNotASupported(String value0) => _catalog.failureTheFileValueIsNotASupported(value0);
+String failureTheFileValueIsNotAnArchive(String value0) => _catalog.failureTheFileValueIsNotAnArchive(value0);
+String get failureTheMergeCanNoLongerBeUndone => _catalog.failureTheMergeCanNoLongerBeUndone;
+String get failureTheServerRedirectedTheUploadToAnother => _catalog.failureTheServerRedirectedTheUploadToAnother;
+String get failureTheSnapshotHasBeenPurged => _catalog.failureTheSnapshotHasBeenPurged;
+String get failureTheSuggestedOrderCouldNotBeRead => _catalog.failureTheSuggestedOrderCouldNotBeRead;
+String get failureThesePhotoEditsLoopBackOnThemselves => _catalog.failureThesePhotoEditsLoopBackOnThemselves;
+String get failureThisFieldSPatternIsNotValid => _catalog.failureThisFieldSPatternIsNotValid;
+String get failureThisFieldTypeHasNoEditorOn => _catalog.failureThisFieldTypeHasNoEditorOn;
+String get failureThisPhotoAppearsMoreThanOnce => _catalog.failureThisPhotoAppearsMoreThanOnce;
+String failureThisRecordIsAlreadyValue(String value0) => _catalog.failureThisRecordIsAlreadyValue(value0);
+String get failureThisRecordIsInTheRecycleBin => _catalog.failureThisRecordIsInTheRecycleBin;
+String get failureTryAgain => _catalog.failureTryAgain;
+String get failureUseTheOnDeviceResultsOrTry => _catalog.failureUseTheOnDeviceResultsOrTry;
+String get fieldSourceAddressNeedsText => _catalog.fieldSourceAddressNeedsText;
+String get frictionLogAction => _catalog.frictionLogAction;
+String get importFixReasonColumn => _catalog.importFixReasonColumn;
+String get importFixRowColumn => _catalog.importFixRowColumn;
+String get importKeptExisting => _catalog.importKeptExisting;
+String get importMatchUnsettled => _catalog.importMatchUnsettled;
+String importRepeatsRow(int row) => _catalog.importRepeatsRow(row);
+String get lookupImportRecovery => _catalog.lookupImportRecovery;
+String lookupTargetTwice(String target) => _catalog.lookupTargetTwice(target);
+String lookupUnknownTarget(String target) => _catalog.lookupUnknownTarget(target);
+String get projectNothingToOpen => _catalog.projectNothingToOpen;
+String get projectNothingToOpenRecovery => _catalog.projectNothingToOpenRecovery;
+String get recordBandHigh => _catalog.recordBandHigh;
+String get recordBandLow => _catalog.recordBandLow;
+String get recordBandMedium => _catalog.recordBandMedium;
+String get reviewBlockedDuplicate => _catalog.reviewBlockedDuplicate;
+String get templatesImportDuplicateField => _catalog.templatesImportDuplicateField;
+String get templatesImportDuplicateFieldRecovery => _catalog.templatesImportDuplicateFieldRecovery;
+String get templatesImportInvalid => _catalog.templatesImportInvalid;
+String get templatesImportInvalidRecovery => _catalog.templatesImportInvalidRecovery;
+String get templatesImportUnknownSchema => _catalog.templatesImportUnknownSchema;
+String get templatesImportUnknownSchemaRecovery => _catalog.templatesImportUnknownSchemaRecovery;
+String get tryAnotherFile => _catalog.tryAnotherFile;
+String get uploadStopped => _catalog.uploadStopped;
+String get validationEvidence => _catalog.validationEvidence;
+String get validationExpression => _catalog.validationExpression;
+String get validationExpressionAction => _catalog.validationExpressionAction;
+String validationIdentity(String label) => _catalog.validationIdentity(label);
+String validationOption(String label) => _catalog.validationOption(label);
+String validationPattern(String label) => _catalog.validationPattern(label);
+String validationRange(String label) => _catalog.validationRange(label);
+String validationRequired(String label) => _catalog.validationRequired(label);
+String validationTooLong(String label) => _catalog.validationTooLong(label);
+String validationTooShort(String label) => _catalog.validationTooShort(label);
+String validationUnit(String label) => _catalog.validationUnit(label);
+String validationUnknownField(String name) => _catalog.validationUnknownField(name);
 }
-
 class _DomainCatalog {
-  const _DomainCatalog();
-  final String localeName = 'en';
-  String captureDocumentInvalid(Object filename) {
-    return 'The contents of $filename could not be read.';
-  }
-
-  String get captureNeedsEvidence =>
-      'Add at least one photo or a caption before saving.';
-  String get captureNeedsEvidenceRecovery => 'Add evidence, then try again.';
-  String get captureQualityBlur => 'This photo looks blurry.';
-  String get captureQualityBright => 'This photo looks overexposed.';
-  String get captureQualityDark => 'This photo looks dark.';
-  String get captureQualitySmallText => 'Small text may be hard to read.';
-  String get cloudUploadConfirmationRecovery =>
-      'Review the file and confirm it.';
-  String get cloudUploadConfirmationRequired =>
-      'Confirm this upload before it can start.';
-  String get cloudUploadHistoryMissing =>
-      'That upload is no longer in the history.';
-  String get cloudUploadRestartRecovery => 'Start the upload again.';
-  String conflictBlocksApproval(Object label) {
-    return '$label still has a conflict. Resolve it before approving.';
-  }
-
-  String get failureAIIsNotAvailable => 'AI is not available.';
-  String get failureAPresetWithThatNameAlreadyExists =>
-      'A preset with that name already exists.';
-  String failureARecordThatIsValueCannotBe(String value0, String value1) {
-    return 'A record that is $value0 cannot be $value1.';
-  }
-
-  String get failureAddAHeaderRowAndTryAgain =>
-      'Add a header row and try again.';
-  String get failureAnEditedPhotoIsMissingItsOriginal =>
-      'An edited photo is missing its original.';
-  String get failureAttachAFileOrLeaveTheField =>
-      'Attach a file, or leave the field empty.';
-  String get failureCaptureAGPSFixAgainOrLeave =>
-      'Capture a GPS fix again, or leave the field empty.';
-  String get failureCaptureAGPSFixOrLeaveThe =>
-      'Capture a GPS fix, or leave the field empty.';
-  String get failureCheckThatTheFileIsStillOn =>
-      'Check that the file is still on this device, then retry.';
-  String get failureCheckTheAddressAndTryAgain =>
-      'Check the address and try again.';
-  String get failureCheckTheKeyOrSignInAgain =>
-      'Check the key or sign in again.';
-  String get failureCheckTheNameAndTryTheConnection =>
-      'Check the name and try the connection again.';
-  String get failureCheckTheSettingsAndTryAgain =>
-      'Check the settings and try again.';
-  String get failureChooseADifferentFileAndTryAgain =>
-      'Choose a different file and try again.';
-  String get failureChooseADifferentStatusOrLeaveIt =>
-      'Choose a different status, or leave it as it is.';
-  String get failureChooseAFileOfTheExpectedType =>
-      'Choose a file of the expected type and try again.';
-  String get failureChooseAFileThatHasContentsAnd =>
-      'Choose a file that has contents and try again.';
-  String get failureChooseASmallerFileAndTryAgain =>
-      'Choose a smaller file and try again.';
-  String get failureChooseAZIPBundleOrSpreadsheetAnd =>
-      'Choose a ZIP bundle or spreadsheet and try again.';
-  String get failureChooseAnImageDocumentSpreadsheetAudioFile =>
-      'Choose an image, document, spreadsheet, audio file or bundle and try again.';
-  String get failureChooseAnotherDestination => 'Choose another destination.';
-  String get failureChooseAnotherNameOrConfirmOverwrite =>
-      'Choose another name, or confirm overwrite.';
-  String get failureChooseTheFileAgainThenTryAgain =>
-      'Choose the file again, then try again.';
-  String get failureConfirmConsentWithTheNamedOperator =>
-      'Confirm consent with the named operator.';
-  String get failureContinueCapturingAnalysisCanWait =>
-      'Continue capturing. Analysis can wait.';
-  String get failureEnterACalendarDateOrLeaveThe =>
-      'Enter a calendar date, or leave the field empty.';
-  String get failureEnterADateAndTimeOrLeave =>
-      'Enter a date and time, or leave the field empty.';
-  String get failureEnterALongerValueOrLeaveThe =>
-      'Enter a longer value, or leave the field empty.';
-  String get failureEnterANumberInsideTheRangeOr =>
-      'Enter a number inside the range, or leave the field empty.';
-  String get failureEnterANumberOrLeaveTheField =>
-      'Enter a number, or leave the field empty.';
-  String get failureEnterATimeOrLeaveTheField =>
-      'Enter a time, or leave the field empty.';
-  String get failureEnterAValueInTheExpectedForm =>
-      'Enter a value in the expected form, or leave the field empty.';
-  String get failureEnterAWholeNumberOrLeaveThe =>
-      'Enter a whole number, or leave the field empty.';
-  String get failureEnterTextOrLeaveTheFieldEmpty =>
-      'Enter text, or leave the field empty.';
-  String get failureKeepThisCaptureAndRestoreTheOriginal =>
-      'Keep this capture and restore the original photo.';
-  String failureNoUploadDestinationIsRegisteredForValue(String value0) {
-    return 'No upload destination is registered for $value0.';
-  }
-
-  String get failureOpenTheTemplateAndCorrectTheField =>
-      'Open the template and correct the field\'s pattern.';
-  String get failureOpenTheTemplateAndPickAType =>
-      'Open the template and pick a type this screen supports.';
-  String get failurePickATypeFromTheListAnd =>
-      'Pick a type from the list and save again.';
-  String get failurePickAnInputModeFromTheList =>
-      'Pick an input mode from the list and save again.';
-  String get failurePickAnOptionFromTheListOr =>
-      'Pick an option from the list, or leave the field empty.';
-  String get failureReloadTheCaptureAndTryAgain =>
-      'Reload the capture and try again.';
-  String get failureRestoreItFromTheRecycleBinBefore =>
-      'Restore it from the recycle bin before changing it.';
-  String get failureShortenTheValueOrLeaveTheField =>
-      'Shorten the value, or leave the field empty.';
-  String get failureSwitchTheFieldOnOrOffOr =>
-      'Switch the field on or off, or leave it unset.';
-  String failureTaptureCouldNotFindValue(String value0) {
-    return 'Tapture could not find $value0.';
-  }
-
-  String get failureThatBucketOrFolderWasNotFound =>
-      'That bucket or folder was not found.';
-  String get failureThatChoiceIsNotOnTheList =>
-      'That choice is not on the list.';
-  String get failureThatFieldTypeIsNotRecognised =>
-      'That field type is not recognised.';
-  String get failureThatInputModeIsNotRecognised =>
-      'That input mode is not recognised.';
-  String get failureThatLocationIsOutsideTheEarth =>
-      'That location is outside the earth.';
-  String get failureThatNumberIsOutsideTheAllowedRange =>
-      'That number is outside the allowed range.';
-  String get failureThatTableHasNoDataColumns =>
-      'That table has no data columns.';
-  String get failureThatValueDoesNotMatchTheExpected =>
-      'That value does not match the expected pattern.';
-  String get failureThatValueIsLongerThanThisField =>
-      'That value is longer than this field allows.';
-  String get failureThatValueIsNotAChoice => 'That value is not a choice.';
-  String get failureThatValueIsNotADate => 'That value is not a date.';
-  String get failureThatValueIsNotADateAnd =>
-      'That value is not a date and time.';
-  String get failureThatValueIsNotAFilePath => 'That value is not a file path.';
-  String get failureThatValueIsNotALocation => 'That value is not a location.';
-  String get failureThatValueIsNotANumber => 'That value is not a number.';
-  String get failureThatValueIsNotATimeOf => 'That value is not a time of day.';
-  String get failureThatValueIsNotAWholeNumber =>
-      'That value is not a whole number.';
-  String get failureThatValueIsNotAYesOr => 'That value is not a yes or no.';
-  String get failureThatValueIsNotText => 'That value is not text.';
-  String get failureThatValueIsShorterThanThisField =>
-      'That value is shorter than this field allows.';
-  String failureTheArchiveValueContainsALinkInstead(String value0) {
-    return 'The archive $value0 contains a link instead of a file.';
-  }
-
-  String failureTheArchiveValueContainsAPathThat(String value0) {
-    return 'The archive $value0 contains a path that leaves the folder.';
-  }
-
-  String failureTheArchiveValueDeclaresMoreUncompressedData(String value0) {
-    return 'The archive $value0 declares more uncompressed data than is allowed.';
-  }
-
-  String get failureTheDestinationDidNotFinishTheUpload =>
-      'The destination did not finish the upload.';
-  String get failureTheDestinationRefusedTheSignIn =>
-      'The destination refused the sign-in.';
-  String get failureTheDestinationRejectedTheUpload =>
-      'The destination rejected the upload.';
-  String get failureTheFileCouldNotBeReadWhile =>
-      'The file could not be read while it was being sent.';
-  String failureTheFileValueDoesNotMatchIts(String value0) {
-    return 'The file $value0 does not match its type.';
-  }
-
-  String failureTheFileValueIsEmpty(String value0) {
-    return 'The file $value0 is empty.';
-  }
-
-  String failureTheFileValueIsLargerThanThe(String value0, String value1) {
-    return 'The file $value0 is larger than the allowed size for a $value1.';
-  }
-
-  String failureTheFileValueIsNotASupported(String value0) {
-    return 'The file $value0 is not a supported type.';
-  }
-
-  String failureTheFileValueIsNotAnArchive(String value0) {
-    return 'The file $value0 is not an archive.';
-  }
-
-  String get failureTheMergeCanNoLongerBeUndone =>
-      'The merge can no longer be undone.';
-  String get failureTheServerRedirectedTheUploadToAnother =>
-      'The server redirected the upload to another host.';
-  String get failureTheSnapshotHasBeenPurged => 'The snapshot has been purged.';
-  String get failureTheSuggestedOrderCouldNotBeRead =>
-      'The suggested order could not be read.';
-  String get failureThesePhotoEditsLoopBackOnThemselves =>
-      'These photo edits loop back on themselves.';
-  String get failureThisFieldSPatternIsNotValid =>
-      'This field\'s pattern is not valid.';
-  String get failureThisFieldTypeHasNoEditorOn =>
-      'This field type has no editor on this screen.';
-  String get failureThisPhotoAppearsMoreThanOnce =>
-      'This photo appears more than once.';
-  String failureThisRecordIsAlreadyValue(String value0) {
-    return 'This record is already $value0.';
-  }
-
-  String get failureThisRecordIsInTheRecycleBin =>
-      'This record is in the recycle bin.';
-  String get failureTryAgain => 'Try again.';
-  String get failureUseTheOnDeviceResultsOrTry =>
-      'Use the on-device results or try again.';
-  String get frictionLogAction => 'Something went wrong here';
-  String get importFixReasonColumn => 'Why it was not imported';
-  String get importFixRowColumn => 'Row in sheet';
-  String get importKeptExisting => 'Kept the record already here.';
-  String get importMatchUnsettled =>
-      'Matches a record already here, and no choice was made.';
-  String importRepeatsRow(int row) {
-    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
-    final String rowString = rowNumberFormat.format(row);
-    return 'Repeats the identity of row $rowString in this file.';
-  }
-
-  String get lookupImportRecovery =>
-      'Fix the lookup fills in the template file and import it again.';
-  String lookupTargetTwice(Object target) {
-    return 'Fill target \"$target\" is mapped more than once.';
-  }
-
-  String lookupUnknownTarget(Object target) {
-    return 'Unknown fill target \"$target\".';
-  }
-
-  String get projectNothingToOpen =>
-      'This project has no spreadsheet, document or PDF to open yet.';
-  String get projectNothingToOpenRecovery =>
-      'Import a template workbook or export the project, then try again.';
-  String get recordBandHigh => 'High confidence';
-  String get recordBandLow => 'Low confidence';
-  String get recordBandMedium => 'Medium confidence';
-  String get reviewBlockedDuplicate =>
-      'This record is part of an unresolved duplicate.';
-  String get templatesImportDuplicateField =>
-      'Each field key must be unique on a template.';
-  String get templatesImportDuplicateFieldRecovery =>
-      'Rename the duplicate key and export again.';
-  String get templatesImportInvalid => 'That file is not a template.';
-  String get templatesImportInvalidRecovery =>
-      'Choose a template file and try again.';
-  String get templatesImportUnknownSchema =>
-      'That template file uses a schema this app does not read.';
-  String get templatesImportUnknownSchemaRecovery =>
-      'Export the template again from this version of Tapture.';
-  String get tryAnotherFile => 'Try another file';
-  String get uploadStopped =>
-      'The upload was stopped. The file on this device is unchanged.';
-  String get validationEvidence =>
-      'This record needs its evidence before it can be approved.';
-  String get validationExpression => 'That expression could not be read.';
-  String get validationExpressionAction =>
-      'Use fields on this template, comparisons and arithmetic only.';
-  String validationIdentity(Object label) {
-    return '$label identifies the record and is required.';
-  }
-
-  String validationOption(Object label) {
-    return '$label is not one of the allowed choices.';
-  }
-
-  String validationPattern(Object label) {
-    return '$label does not match the expected pattern.';
-  }
-
-  String validationRange(Object label) {
-    return '$label is outside the allowed range.';
-  }
-
-  String validationRequired(Object label) {
-    return '$label is required.';
-  }
-
-  String validationTooLong(Object label) {
-    return '$label is too long.';
-  }
-
-  String validationTooShort(Object label) {
-    return '$label is too short.';
-  }
-
-  String validationUnit(Object label) {
-    return '$label is not in a unit this field can store.';
-  }
-
-  String validationUnknownField(Object name) {
-    return 'Required when names \"$name\", which this template does not have.';
-  }
+ const _DomainCatalog();
+ final String localeName = 'en';
+ String captureDocumentInvalid(Object filename) {return 'The contents of $filename could not be read.';}
+ String get captureNeedsEvidence => 'Add at least one photo or a caption before saving.';
+ String get captureNeedsEvidenceRecovery => 'Add evidence, then try again.';
+ String get captureQualityBlur => 'This photo looks blurry.';
+ String get captureQualityBright => 'This photo looks overexposed.';
+ String get captureQualityDark => 'This photo looks dark.';
+ String get captureQualitySmallText => 'Small text may be hard to read.';
+ String get cloudUploadConfirmationRecovery => 'Review the file and confirm it.';
+ String get cloudUploadConfirmationRequired => 'Confirm this upload before it can start.';
+ String get cloudUploadHistoryMissing => 'That upload is no longer in the history.';
+ String get cloudUploadRestartRecovery => 'Start the upload again.';
+ String conflictBlocksApproval(Object label) {return '$label still has a conflict. Resolve it before approving.';}
+ String get failureAIIsNotAvailable => 'AI is not available.';
+ String get failureAPresetWithThatNameAlreadyExists => 'A preset with that name already exists.';
+ String failureARecordThatIsValueCannotBe(String value0, String value1) {return 'A record that is $value0 cannot be $value1.';}
+ String get failureAddAHeaderRowAndTryAgain => 'Add a header row and try again.';
+ String get failureAnEditedPhotoIsMissingItsOriginal => 'An edited photo is missing its original.';
+ String get failureAttachAFileOrLeaveTheField => 'Attach a file, or leave the field empty.';
+ String get failureCaptureAGPSFixAgainOrLeave => 'Capture a GPS fix again, or leave the field empty.';
+ String get failureCaptureAGPSFixOrLeaveThe => 'Capture a GPS fix, or leave the field empty.';
+ String get failureCheckThatTheFileIsStillOn => 'Check that the file is still on this device, then retry.';
+ String get failureCheckTheAddressAndTryAgain => 'Check the address and try again.';
+ String get failureCheckTheKeyOrSignInAgain => 'Check the key or sign in again.';
+ String get failureCheckTheNameAndTryTheConnection => 'Check the name and try the connection again.';
+ String get failureCheckTheSettingsAndTryAgain => 'Check the settings and try again.';
+ String get failureChooseADifferentFileAndTryAgain => 'Choose a different file and try again.';
+ String get failureChooseADifferentStatusOrLeaveIt => 'Choose a different status, or leave it as it is.';
+ String get failureChooseAFileOfTheExpectedType => 'Choose a file of the expected type and try again.';
+ String get failureChooseAFileThatHasContentsAnd => 'Choose a file that has contents and try again.';
+ String get failureChooseASmallerFileAndTryAgain => 'Choose a smaller file and try again.';
+ String get failureChooseAZIPBundleOrSpreadsheetAnd => 'Choose a ZIP bundle or spreadsheet and try again.';
+ String get failureChooseAnImageDocumentSpreadsheetAudioFile => 'Choose an image, document, spreadsheet, audio file or bundle and try again.';
+ String get failureChooseAnotherDestination => 'Choose another destination.';
+ String get failureChooseAnotherNameOrConfirmOverwrite => 'Choose another name, or confirm overwrite.';
+ String get failureChooseTheFileAgainThenTryAgain => 'Choose the file again, then try again.';
+ String get failureConfirmConsentWithTheNamedOperator => 'Confirm consent with the named operator.';
+ String get failureContinueCapturingAnalysisCanWait => 'Continue capturing. Analysis can wait.';
+ String get failureEnterACalendarDateOrLeaveThe => 'Enter a calendar date, or leave the field empty.';
+ String get failureEnterADateAndTimeOrLeave => 'Enter a date and time, or leave the field empty.';
+ String get failureEnterALongerValueOrLeaveThe => 'Enter a longer value, or leave the field empty.';
+ String get failureEnterANumberInsideTheRangeOr => 'Enter a number inside the range, or leave the field empty.';
+ String get failureEnterANumberOrLeaveTheField => 'Enter a number, or leave the field empty.';
+ String get failureEnterATimeOrLeaveTheField => 'Enter a time, or leave the field empty.';
+ String get failureEnterAValueInTheExpectedForm => 'Enter a value in the expected form, or leave the field empty.';
+ String get failureEnterAWholeNumberOrLeaveThe => 'Enter a whole number, or leave the field empty.';
+ String get failureEnterTextOrLeaveTheFieldEmpty => 'Enter text, or leave the field empty.';
+ String get failureKeepThisCaptureAndRestoreTheOriginal => 'Keep this capture and restore the original photo.';
+ String failureNoUploadDestinationIsRegisteredForValue(String value0) {return 'No upload destination is registered for $value0.';}
+ String get failureOpenTheTemplateAndCorrectTheField => 'Open the template and correct the field\'s pattern.';
+ String get failureOpenTheTemplateAndPickAType => 'Open the template and pick a type this screen supports.';
+ String get failurePickATypeFromTheListAnd => 'Pick a type from the list and save again.';
+ String get failurePickAnInputModeFromTheList => 'Pick an input mode from the list and save again.';
+ String get failurePickAnOptionFromTheListOr => 'Pick an option from the list, or leave the field empty.';
+ String get failureReloadTheCaptureAndTryAgain => 'Reload the capture and try again.';
+ String get failureRestoreItFromTheRecycleBinBefore => 'Restore it from the recycle bin before changing it.';
+ String get failureShortenTheValueOrLeaveTheField => 'Shorten the value, or leave the field empty.';
+ String get failureSwitchTheFieldOnOrOffOr => 'Switch the field on or off, or leave it unset.';
+ String failureTaptureCouldNotFindValue(String value0) {return 'Tapture could not find $value0.';}
+ String get failureThatBucketOrFolderWasNotFound => 'That bucket or folder was not found.';
+ String get failureThatChoiceIsNotOnTheList => 'That choice is not on the list.';
+ String get failureThatFieldTypeIsNotRecognised => 'That field type is not recognised.';
+ String get failureThatInputModeIsNotRecognised => 'That input mode is not recognised.';
+ String get failureThatLocationIsOutsideTheEarth => 'That location is outside the earth.';
+ String get failureThatNumberIsOutsideTheAllowedRange => 'That number is outside the allowed range.';
+ String get failureThatTableHasNoDataColumns => 'That table has no data columns.';
+ String get failureThatValueDoesNotMatchTheExpected => 'That value does not match the expected pattern.';
+ String get failureThatValueIsLongerThanThisField => 'That value is longer than this field allows.';
+ String get failureThatValueIsNotAChoice => 'That value is not a choice.';
+ String get failureThatValueIsNotADate => 'That value is not a date.';
+ String get failureThatValueIsNotADateAnd => 'That value is not a date and time.';
+ String get failureThatValueIsNotAFilePath => 'That value is not a file path.';
+ String get failureThatValueIsNotALocation => 'That value is not a location.';
+ String get failureThatValueIsNotANumber => 'That value is not a number.';
+ String get failureThatValueIsNotATimeOf => 'That value is not a time of day.';
+ String get failureThatValueIsNotAWholeNumber => 'That value is not a whole number.';
+ String get failureThatValueIsNotAYesOr => 'That value is not a yes or no.';
+ String get failureThatValueIsNotText => 'That value is not text.';
+ String get failureThatValueIsShorterThanThisField => 'That value is shorter than this field allows.';
+ String failureTheArchiveValueContainsALinkInstead(String value0) {return 'The archive $value0 contains a link instead of a file.';}
+ String failureTheArchiveValueContainsAPathThat(String value0) {return 'The archive $value0 contains a path that leaves the folder.';}
+ String failureTheArchiveValueDeclaresMoreUncompressedData(String value0) {return 'The archive $value0 declares more uncompressed data than is allowed.';}
+ String get failureTheDestinationDidNotFinishTheUpload => 'The destination did not finish the upload.';
+ String get failureTheDestinationRefusedTheSignIn => 'The destination refused the sign-in.';
+ String get failureTheDestinationRejectedTheUpload => 'The destination rejected the upload.';
+ String get failureTheFileCouldNotBeReadWhile => 'The file could not be read while it was being sent.';
+ String failureTheFileValueDoesNotMatchIts(String value0) {return 'The file $value0 does not match its type.';}
+ String failureTheFileValueIsEmpty(String value0) {return 'The file $value0 is empty.';}
+ String failureTheFileValueIsLargerThanThe(String value0, String value1) {return 'The file $value0 is larger than the allowed size for a $value1.';}
+ String failureTheFileValueIsNotASupported(String value0) {return 'The file $value0 is not a supported type.';}
+ String failureTheFileValueIsNotAnArchive(String value0) {return 'The file $value0 is not an archive.';}
+ String get failureTheMergeCanNoLongerBeUndone => 'The merge can no longer be undone.';
+ String get failureTheServerRedirectedTheUploadToAnother => 'The server redirected the upload to another host.';
+ String get failureTheSnapshotHasBeenPurged => 'The snapshot has been purged.';
+ String get failureTheSuggestedOrderCouldNotBeRead => 'The suggested order could not be read.';
+ String get failureThesePhotoEditsLoopBackOnThemselves => 'These photo edits loop back on themselves.';
+ String get failureThisFieldSPatternIsNotValid => 'This field\'s pattern is not valid.';
+ String get failureThisFieldTypeHasNoEditorOn => 'This field type has no editor on this screen.';
+ String get failureThisPhotoAppearsMoreThanOnce => 'This photo appears more than once.';
+ String failureThisRecordIsAlreadyValue(String value0) {return 'This record is already $value0.';}
+ String get failureThisRecordIsInTheRecycleBin => 'This record is in the recycle bin.';
+ String get failureTryAgain => 'Try again.';
+ String get failureUseTheOnDeviceResultsOrTry => 'Use the on-device results or try again.';
+ String get fieldSourceAddressNeedsText => 'Use a text field for a local network address.';
+ String get frictionLogAction => 'Something went wrong here';
+ String get importFixReasonColumn => 'Why it was not imported';
+ String get importFixRowColumn => 'Row in sheet';
+ String get importKeptExisting => 'Kept the record already here.';
+ String get importMatchUnsettled => 'Matches a record already here, and no choice was made.';
+ String importRepeatsRow(int row) {final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(localeName); final String rowString = rowNumberFormat.format(row); return 'Repeats the identity of row $rowString in this file.';}
+ String get lookupImportRecovery => 'Fix the lookup fills in the template file and import it again.';
+ String lookupTargetTwice(Object target) {return 'Fill target \"$target\" is mapped more than once.';}
+ String lookupUnknownTarget(Object target) {return 'Unknown fill target \"$target\".';}
+ String get projectNothingToOpen => 'This project has no spreadsheet, document or PDF to open yet.';
+ String get projectNothingToOpenRecovery => 'Import a template workbook or export the project, then try again.';
+ String get recordBandHigh => 'High confidence';
+ String get recordBandLow => 'Low confidence';
+ String get recordBandMedium => 'Medium confidence';
+ String get reviewBlockedDuplicate => 'This record is part of an unresolved duplicate.';
+ String get templatesImportDuplicateField => 'Each field key must be unique on a template.';
+ String get templatesImportDuplicateFieldRecovery => 'Rename the duplicate key and export again.';
+ String get templatesImportInvalid => 'That file is not a template.';
+ String get templatesImportInvalidRecovery => 'Choose a template file and try again.';
+ String get templatesImportUnknownSchema => 'That template file uses a schema this app does not read.';
+ String get templatesImportUnknownSchemaRecovery => 'Export the template again from this version of Tapture.';
+ String get tryAnotherFile => 'Try another file';
+ String get uploadStopped => 'The upload was stopped. The file on this device is unchanged.';
+ String get validationEvidence => 'This record needs its evidence before it can be approved.';
+ String get validationExpression => 'That expression could not be read.';
+ String get validationExpressionAction => 'Use fields on this template, comparisons and arithmetic only.';
+ String validationIdentity(Object label) {return '$label identifies the record and is required.';}
+ String validationOption(Object label) {return '$label is not one of the allowed choices.';}
+ String validationPattern(Object label) {return '$label does not match the expected pattern.';}
+ String validationRange(Object label) {return '$label is outside the allowed range.';}
+ String validationRequired(Object label) {return '$label is required.';}
+ String validationTooLong(Object label) {return '$label is too long.';}
+ String validationTooShort(Object label) {return '$label is too short.';}
+ String validationUnit(Object label) {return '$label is not in a unit this field can store.';}
+ String validationUnknownField(Object name) {return 'Required when names \"$name\", which this template does not have.';}
 }

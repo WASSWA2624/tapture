@@ -26,13 +26,14 @@ class AppChoiceField<T> extends StatelessWidget {
     this.enabled = true,
     this.alwaysSheet = false,
     this.wrapLabel = false,
+    this.compact = false,
     this.leadingBuilder,
   });
 
   /// Visible name of the control (FE-A11Y-02).
   final String label;
 
-  /// Options to offer. Length decides segmented versus sheet.
+  /// Options to offer. Length decides segmented versus sheet unless compact.
   final List<Choice<T>> options;
 
   /// The current selection, or null when empty.
@@ -54,6 +55,9 @@ class AppChoiceField<T> extends StatelessWidget {
   /// The selected value and picker behaviour remain unchanged.
   final bool wrapLabel;
 
+  /// Uses a naturally wrapping dense list-tile trigger for the same sheet.
+  final bool compact;
+
   /// Builds decorative artwork beside each option's readable label.
   /// The selected tick remains visible when a builder is supplied.
   final Widget Function(BuildContext, Choice<T>)? leadingBuilder;
@@ -64,7 +68,7 @@ class AppChoiceField<T> extends StatelessWidget {
       container: true,
       label: label,
       value: _selected?.label,
-      child: !alwaysSheet && options.length < _sheetThreshold
+      child: !compact && !alwaysSheet && options.length < _sheetThreshold
           ? _SegmentedChoice<T>(
               label: label,
               options: options,
@@ -76,6 +80,7 @@ class AppChoiceField<T> extends StatelessWidget {
           : _SheetChoice<T>(
               label: label,
               wrapLabel: wrapLabel,
+              compact: compact,
               options: options,
               value: value,
               enabled: enabled,
@@ -240,6 +245,7 @@ class _SheetChoice<T> extends StatelessWidget {
   const _SheetChoice({
     required this.label,
     required this.wrapLabel,
+    required this.compact,
     required this.options,
     required this.value,
     required this.enabled,
@@ -249,6 +255,7 @@ class _SheetChoice<T> extends StatelessWidget {
 
   final String label;
   final bool wrapLabel;
+  final bool compact;
   final List<Choice<T>> options;
   final T? value;
   final bool enabled;
@@ -262,6 +269,29 @@ class _SheetChoice<T> extends StatelessWidget {
     final Choice<T>? selected = options
         .where((Choice<T> option) => option.value == value)
         .firstOrNull;
+    if (compact) {
+      return Semantics(
+        button: true,
+        enabled: enabled,
+        child: AppListTile(
+          dense: true,
+          wrapText: true,
+          title: selectedLabel.isEmpty ? label : selectedLabel,
+          subtitle: selectedLabel.isEmpty ? null : label,
+          leading: leadingBuilder == null || selected == null
+              ? null
+              : ExcludeSemantics(child: leadingBuilder!(context, selected)),
+          trailing: ExcludeSemantics(
+            child: Icon(
+              AppIcons.expand,
+              color: colors.onSurface,
+              size: Space.x6,
+            ),
+          ),
+          onTap: enabled ? () => unawaited(_open(context)) : null,
+        ),
+      );
+    }
     final Widget field = InputDecorator(
       isEmpty: selectedLabel.isEmpty,
       decoration: InputDecoration(

@@ -16,6 +16,14 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/quality/quality.dart'
     show VarianceWriter, identityKeysOf, storedIdentityHash;
+import 'package:tapture/features/templates/templates.dart'
+    show
+        FieldDef,
+        FieldInputPolicy,
+        TemplateDef,
+        TemplateJson,
+        TemplateMapper,
+        TemplateVersioning;
 
 import '../domain/record_lifecycle.dart';
 import '../domain/record_repository.dart';
@@ -271,6 +279,49 @@ final class RecordWrites {
           return FailureResult<void>(_needsField);
         }
       }
+      if (edits.isEmpty) return const Success<void>(null);
+      final TemplateDef? current = await _currentTemplate(head.templateId);
+      final TemplateDef? shape = _correctionShape(
+        current,
+        head.templateVersion,
+      );
+      if (shape == null) {
+        return FailureResult<void>(
+          StorageFailure(
+            localizedMessage:
+                Copy.messages.failureTheCapturedTemplateVersionIsUnavailable,
+            localizedRecovery: Copy
+                .messages
+                .failureRestoreTheOriginalProjectPackageBeforeEditing,
+          ),
+        );
+      }
+      final Set<String> retired = <String>{
+        for (final sqlite.RecordField field
+            in await (_db.select(_db.recordFields)..where(
+                  (row) => row.recordId.equals(id) & row.retiredAt.isNotNull(),
+                ))
+                .get())
+          field.fieldKey,
+      };
+      final Map<String, FieldDef> fields = <String, FieldDef>{
+        for (final FieldDef field in shape.fields) field.fieldKey: field,
+      };
+      // Returning a FailureResult commits a transaction, so refuse the entire
+      // batch before the first value, audit, status or index write.
+      for (final RecordValueEdit edit in edits) {
+        final FieldDef? field = fields[edit.fieldKey];
+        if (field == null ||
+            retired.contains(edit.fieldKey) ||
+            !FieldInputPolicy.canCorrect(field)) {
+          return FailureResult<void>(
+            ValidationFailure(
+              localizedMessage: Copy.messages.recordFieldReadOnly,
+              localizedRecovery: Copy.messages.failureChooseAFieldThenSaveAgain,
+            ),
+          );
+        }
+      }
       return RecordSchema.deferIndexing(_db, () async {
         bool changed = false;
         for (final RecordValueEdit edit in edits) {
@@ -475,15 +526,19 @@ final class RecordWrites {
       if (head.status != RecordStatus.deleted) {
         return FailureResult<void>(_notInBin);
       }
-      final QueryRow? parent = await _db.customSelect(
-        "SELECT id FROM projects WHERE id = ? AND (status = 'deleted' OR EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'projects' AND t.entity_id = projects.id))",
-        variables: <Variable<Object>>[Variable<String>(head.projectId)],
-      ).getSingleOrNull();
+      final QueryRow? parent = await _db
+          .customSelect(
+            "SELECT id FROM projects WHERE id = ? AND (status = 'deleted' OR EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'projects' AND t.entity_id = projects.id))",
+            variables: <Variable<Object>>[Variable<String>(head.projectId)],
+          )
+          .getSingleOrNull();
       if (parent != null) {
-        return FailureResult<void>(ValidationFailure(
-          localizedMessage: Copy.messages.recycleParentDeleted,
-          localizedRecovery: Copy.messages.recycleParentDeletedRecovery,
-        ));
+        return FailureResult<void>(
+          ValidationFailure(
+            localizedMessage: Copy.messages.recycleParentDeleted,
+            localizedRecovery: Copy.messages.recycleParentDeletedRecovery,
+          ),
+        );
       }
       final RecordStatus target = RecordLifecycle.restoreTarget(
         RecordStatus.deleted,
@@ -547,12 +602,47 @@ final class RecordWrites {
     return trimmed.isEmpty ? null : trimmed;
   }
 
-  /// Record [id]'s project, template, checklist row and status, or null when
-  /// it is not on this device. An unknown stored status reads as null.
+  /// Reads live template policy inside the same transaction as its correction.
+  Future<TemplateDef?> _currentTemplate(String id) async {
+    final sqlite.Template? header =
+        await (_db.select(_db.templates)..where(
+              (row) =>
+                  row.id.equals(id) &
+                  const CustomExpression<bool>(
+                    "NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'templates' AND t.entity_id = templates.id)",
+                  ),
+            ))
+            .getSingleOrNull();
+    if (header == null) return null;
+    return TemplateMapper.fromRows(
+      header: header,
+      fields:
+          await (_db.select(_db.templateFields)..where(
+                (row) =>
+                    row.templateId.equals(id) &
+                    const CustomExpression<bool>(
+                      "NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'template_fields' AND t.entity_id = template_fields.id)",
+                    ),
+              ))
+              .get(),
+      rows:
+          await (_db.select(_db.templateRows)..where(
+                (row) =>
+                    row.templateId.equals(id) &
+                    const CustomExpression<bool>(
+                      "NOT EXISTS (SELECT 1 FROM tombstones t WHERE t.entity_type = 'template_rows' AND t.entity_id = template_rows.id)",
+                    ),
+              ))
+              .get(),
+    );
+  }
+
+  /// Record [id]'s captured shape and status, or null when it is not on this
+  /// device. An unknown stored status reads as null.
   Future<_Head?> _head(String id) async {
     final QueryRow? row = await _db
         .customSelect(
-          'SELECT project_id, template_id, template_row_id, status '
+          'SELECT project_id, template_id, template_version, template_row_id, status '
           'FROM records WHERE id = ?',
           variables: <Variable<Object>>[Variable<String>(id)],
         )
@@ -564,6 +654,7 @@ final class RecordWrites {
       id: id,
       projectId: row.read<String>('project_id'),
       templateId: row.read<String>('template_id'),
+      templateVersion: row.read<int>('template_version'),
       templateRowId: row.read<String?>('template_row_id'),
       status: RecordStatus.fromStored(row.read<String>('status')),
     );
@@ -881,9 +972,28 @@ typedef _Head = ({
   String id,
   String projectId,
   String templateId,
+  int templateVersion,
   String? templateRowId,
   RecordStatus? status,
 });
+
+TemplateDef? _correctionShape(TemplateDef? current, int version) {
+  if (current == null || version <= 0) return null;
+  if (version != current.version) {
+    final Object? versions = current.detection['_tapture_versions'];
+    final Object? snapshot = versions is Map ? versions['$version'] : null;
+    if (snapshot is! Map ||
+        snapshot['schema_version'] == null ||
+        TemplateJson.decodeStoredShape(
+              snapshot,
+              projectId: current.projectId ?? '',
+            )
+            is FailureResult<TemplateDef>) {
+      return null;
+    }
+  }
+  return TemplateVersioning.shapeFor(current, version);
+}
 
 /// A template change plan with the value id behind each field key.
 typedef _Remap = ({TemplateChangePlan plan, Map<String, String> valueIds});

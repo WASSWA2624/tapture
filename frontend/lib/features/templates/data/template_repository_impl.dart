@@ -18,6 +18,7 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 
 import '../domain/template_repository.dart';
+import '../domain/template_json.dart';
 import '../domain/template_versioning.dart';
 import 'template_mapper.dart';
 
@@ -72,6 +73,8 @@ final class TemplateRepositoryImpl implements TemplateRepository {
       final TemplateDef? existing = template.id.isEmpty
           ? null
           : await _load(template.id);
+      final Failure? sourceProblem = _validateSources(template, existing);
+      if (sourceProblem != null) throw sourceProblem;
       final TemplateDef stamped = existing == null
           ? template
           : TemplateVersioning.remember(from: existing, to: template);
@@ -613,6 +616,57 @@ ValidationFailure? _validate(TemplateDef template) {
   }
   return null;
 }
+
+Failure? _validateSources(TemplateDef template, TemplateDef? existing) {
+  final Map<String, FieldDef> previous = <String, FieldDef>{
+    for (final FieldDef field in existing?.fields ?? const <FieldDef>[])
+      field.fieldKey: field,
+  };
+  for (final FieldDef field in template.fields) {
+    final Object? attrs = field.validation['_tapture'];
+    final Object? carried = attrs is Map ? attrs['autoFill'] : null;
+    if (field.autoFill == null && carried == null) continue;
+    final FieldDef? before = previous[field.fieldKey];
+    final Object? oldAttrs = before?.validation['_tapture'];
+    final Object? oldCarry = oldAttrs is Map ? oldAttrs['autoFill'] : null;
+    if (field.autoFill == null &&
+        before?.autoFill == null &&
+        before?.type == field.type &&
+        carried != null &&
+        oldCarry != null &&
+        _sameSourcePayload(carried, oldCarry)) {
+      continue;
+    }
+    final Result<TemplateDef> checked = TemplateJson.decode(
+      TemplateJson.encode(
+        template.copyWith(
+          fields: <FieldDef>[field.copyWith(lookup: const <String, Object?>{})],
+          identityFieldKeys: const <String>[],
+          rows: const <TemplateRow>[],
+        ),
+      ),
+      projectId: template.projectId ?? '',
+    );
+    if (checked case FailureResult<TemplateDef>(:final Failure failure)) {
+      return failure;
+    }
+  }
+  return null;
+}
+
+bool _sameSourcePayload(Object left, Object right) =>
+    FieldDef(
+      fieldKey: '',
+      label: '',
+      type: FieldType.text,
+      validation: <String, Object?>{'source': left},
+    ) ==
+    FieldDef(
+      fieldKey: '',
+      label: '',
+      type: FieldType.text,
+      validation: <String, Object?>{'source': right},
+    );
 
 int _byName(TemplateDef left, TemplateDef right) {
   final int byName = left.name.toLowerCase().compareTo(

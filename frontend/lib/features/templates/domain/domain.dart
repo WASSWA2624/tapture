@@ -2,6 +2,7 @@
 library;
 
 export 'field_def.dart';
+export 'field_input_policy.dart';
 export 'field_type_registry.dart';
 export 'template_def.dart';
 export 'template_repository.dart';

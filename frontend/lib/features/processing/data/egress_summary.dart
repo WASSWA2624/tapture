@@ -71,14 +71,14 @@ final class EgressSummary {
         : await _paths.compressed(bundle);
     var bytes = utf8.encode(await _onDevice.text(bundle)).length;
     bytes += utf8.encode(bundle.template.name).length;
-    for (final TemplateField field in bundle.fields) {
+    for (final TemplateField field in StageSupport.extractionFields(bundle)) {
       bytes += utf8.encode(field.label).length;
     }
     for (final Caption caption in bundle.captions) {
       bytes += utf8.encode(caption.textRefined ?? caption.textRaw).length;
     }
-    for (final MapEntry<String, String> entry in StageSupport.stringMap(
-      bundle.record.contextJson,
+    for (final MapEntry<String, String> entry in StageSupport.extractionContext(
+      bundle,
     ).entries) {
       bytes += utf8.encode(entry.key).length;
       bytes += utf8.encode(entry.value).length;

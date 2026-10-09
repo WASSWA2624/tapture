@@ -4,41 +4,63 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import 'capture_guide_state.dart';
 
-/// "What to capture", under the Template select: one line, collapsed at
-/// first, that opens to what the photos should show and what to say in the
-/// caption, both built from the template (FBK0000157, D14).
+/// The guide action after paired compact targets, or beside them on wider
+/// windows, opening the template's complete photo and caption field labels.
 class CaptureGuideCard extends ConsumerWidget {
   /// Creates the row for [guide].
-  const CaptureGuideCard({required this.guide, super.key});
+  const CaptureGuideCard({required this.guide, this.targets, super.key});
 
   /// What the chosen template asks for.
   final CaptureGuide guide;
+
+  /// Existing paired selectors before, or beside, the guide action.
+  final Widget? targets;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final LocalizedCopy localCopy = Copy.of(context);
 
     if (guide.isEmpty) {
-      return const SizedBox.shrink();
+      return targets ?? const SizedBox.shrink();
     }
     final bool open = ref.watch(captureGuideStateProvider).open;
+    final Widget action = Wrap(
+      spacing: Space.x2,
+      runSpacing: Space.x1,
+      children: <Widget>[
+        Semantics(
+          expanded: open,
+          child: AppButton(
+            key: const ValueKey<String>('capture-guide-toggle'),
+            label: localCopy.captureGuideTitle,
+            icon: AppIcons.info,
+            variant: AppButtonVariant.text,
+            onPressed: ref.read(captureGuideStateProvider.notifier).toggle,
+          ),
+        ),
+      ],
+    );
     return Column(
       key: const ValueKey<String>('capture-guide'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppSectionHeader(
-          key: const ValueKey<String>('capture-guide-toggle'),
-          title: localCopy.captureGuideTitle,
-          dense: true,
-          expanded: open,
-          onToggle: ref.read(captureGuideStateProvider.notifier).toggle,
-        ),
+        if (targets case final Widget selectors)
+          ResponsivePair(
+            start: selectors,
+            end: action,
+            startFlex: 2,
+            stacksOnCompact: true,
+            gap: Space.x2,
+          )
+        else
+          action,
         if (open) ...<Widget>[
           if (guide.photoFields.isNotEmpty)
             _GuideList(
@@ -97,7 +119,7 @@ class _GuideList extends StatelessWidget {
                 Text(title, style: AppText.label.copyWith(color: ink)),
                 Text(
                   localCopy.captureGuideItems(labels),
-                  style: AppText.body.copyWith(color: ink),
+                  style: AppText.caption.copyWith(color: ink),
                 ),
               ],
             ),

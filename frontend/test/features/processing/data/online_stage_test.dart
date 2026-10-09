@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
@@ -85,6 +86,38 @@ void main() {
       contains('Use null when a value is not present. Never guess.'),
     );
   });
+
+  test(
+    'no eligible targets skip AI while required automatic values still need review',
+    () async {
+      final seeded = await record();
+      await seeded.fixture.db
+          .update(seeded.fixture.db.templateFields)
+          .write(
+            const TemplateFieldsCompanion(inputMode: Value<String>('AUTO')),
+          );
+      final ScriptedExtraction provider = ScriptedExtraction(<String>[_valid]);
+      final ProcessingStageWorker worker = seeded.fixture.worker(
+        provider: provider,
+        settings: SettingsStore.fake(
+          stored: <String, Object?>{SettingKeys.offlineByChoice.name: true},
+        ),
+      );
+      await throughOnline(worker, seeded.job);
+      await worker.perform(JobStage.normalise, seeded.job);
+      await worker.perform(JobStage.validate, seeded.job);
+      expect(provider.requests, isEmpty);
+      expect(
+        await seeded.fixture.db.select(seeded.fixture.db.recordFields).get(),
+        isEmpty,
+      );
+      expect((await seeded.fixture.storedRecord()).status, 'needsReview');
+      expect(
+        (await stored(seeded.fixture, seeded.job.id)).rejections,
+        contains('serial is missing'),
+      );
+    },
+  );
 
   test('the raw response is stored before it is parsed, with no key', () async {
     final seeded = await record();

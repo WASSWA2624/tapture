@@ -36,9 +36,13 @@ final class OnlineCompletion {
         value.fieldKey: value,
     };
     final ProjectSettingsResolved settings = _settings.project(bundle);
+    final Set<String> targets = <String>{
+      for (final TemplateField field in StageSupport.extractionFields(bundle))
+        field.fieldKey,
+    };
     return <SkipField>[
       for (var index = 0; index < bundle.fields.length; index++)
-        if (bundle.fields[index].type != 'consent')
+        if (targets.contains(bundle.fields[index].fieldKey))
           if (stored[index].value != null &&
               stored[index].value!.trim().isNotEmpty)
             stored[index]

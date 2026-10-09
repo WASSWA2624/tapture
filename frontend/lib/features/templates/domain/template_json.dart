@@ -40,12 +40,27 @@ abstract final class TemplateJson {
   ///
   /// [raw] is a JSON object or JSON text. Nothing is persisted here.
   static Result<TemplateDef> decode(Object? raw, {required String projectId}) {
-    final Object? json = _parsed(raw);
-    if (json is! Map) {
-      return FailureResult<TemplateDef>(_invalid);
-    }
-    return _decodeMap(_stringMap(json), projectId: projectId);
+    return _decode(raw, projectId: projectId, stored: false);
   }
+
+  /// Reads an existing shape without activating unsupported source metadata.
+  /// Structural validation remains identical to strict import decoding.
+  static Result<TemplateDef> decodeStoredShape(
+    Object? raw, {
+    required String projectId,
+  }) => _decode(raw, projectId: projectId, stored: true);
+}
+
+Result<TemplateDef> _decode(
+  Object? raw, {
+  required String projectId,
+  required bool stored,
+}) {
+  final Object? json = _parsed(raw);
+  if (json is! Map) {
+    return FailureResult<TemplateDef>(_invalid);
+  }
+  return _decodeMap(_stringMap(json), projectId: projectId, stored: stored);
 }
 
 Map<String, Object?> _encodeField(FieldDef field) {
@@ -61,7 +76,7 @@ Map<String, Object?> _encodeField(FieldDef field) {
     _stickableKey: field.stickable,
     _contextLevelKey: field.contextLevel,
     _autoFillKey: field.autoFill == null
-        ? null
+        ? _carriedSource(field.validation)
         : _autoFillToWire(field.autoFill!),
     _refineKey: field.refine,
     _optionsKey: field.options,
@@ -90,6 +105,7 @@ Map<String, Object?> _encodeRow(TemplateRow row) {
 Result<TemplateDef> _decodeMap(
   Map<String, Object?> map, {
   required String projectId,
+  required bool stored,
 }) {
   final Object? version = map[_schemaVersionKey];
   if (version is! int || version != TemplateJson.schemaVersion) {
@@ -99,7 +115,10 @@ Result<TemplateDef> _decodeMap(
   if (name == null) {
     return FailureResult<TemplateDef>(_invalid);
   }
-  final Result<List<FieldDef>> fields = _fieldsOf(map[_fieldsKey]);
+  final Result<List<FieldDef>> fields = _fieldsOf(
+    map[_fieldsKey],
+    stored: stored,
+  );
   if (fields is FailureResult<List<FieldDef>>) {
     return FailureResult<TemplateDef>(fields.failure);
   }
@@ -187,7 +206,7 @@ String? _lookupProblem(List<FieldDef> fields) {
   return null;
 }
 
-Result<List<FieldDef>> _fieldsOf(Object? raw) {
+Result<List<FieldDef>> _fieldsOf(Object? raw, {required bool stored}) {
   if (raw == null) {
     return const Success<List<FieldDef>>(<FieldDef>[]);
   }
@@ -201,6 +220,7 @@ Result<List<FieldDef>> _fieldsOf(Object? raw) {
       raw[index],
       index: index,
       seen: seen,
+      stored: stored,
     );
     switch (field) {
       case FailureResult<FieldDef>(:final Failure failure):
@@ -217,6 +237,7 @@ Result<FieldDef> _fieldOf(
   Object? raw, {
   required int index,
   required Set<String> seen,
+  required bool stored,
 }) {
   if (raw is! Map) {
     return FailureResult<FieldDef>(_invalid);
@@ -241,10 +262,6 @@ Result<FieldDef> _fieldOf(
   final InputMode? inputMode = _inputModeOf(map[_inputModeKey]);
   if (inputMode == null) {
     return FailureResult<FieldDef>(_invalid);
-  }
-  final Result<AutoFill?> autoFill = _autoFillOf(map[_autoFillKey]);
-  if (autoFill is FailureResult<AutoFill?>) {
-    return FailureResult<FieldDef>(autoFill.failure);
   }
   final bool? stickable = _flag(map[_stickableKey], fallback: false);
   final bool? refine = _flag(map[_refineKey], fallback: false);
@@ -274,6 +291,43 @@ Result<FieldDef> _fieldOf(
   if (validation is FailureResult<Map<String, Object?>>) {
     return FailureResult<FieldDef>(validation.failure);
   }
+  final Map<String, Object?> rules = Map<String, Object?>.of(
+    validation.getOrElse(() => const <String, Object?>{}),
+  );
+  final Object? carried = _carriedSource(rules);
+  AutoFill? source;
+  Object? unavailable;
+  for (final Object? declaration in <Object?>[map[_autoFillKey], carried]) {
+    if (declaration == null) continue;
+    final Result<AutoFill?> parsed = _autoFillOf(declaration);
+    final AutoFill? known = parsed.getOrElse(() => null);
+    final bool needsText =
+        known == AutoFill.localAddress && type != FieldType.text;
+    if (parsed is FailureResult<AutoFill?> || needsText) {
+      if (!stored) {
+        return FailureResult<FieldDef>(
+          needsText ? _addressNeedsText : _invalid,
+        );
+      }
+      unavailable ??= declaration;
+    } else {
+      source ??= known;
+    }
+  }
+  final Object? oldAttrs = rules[_attrsKey];
+  final Map<String, Object?> attrs = oldAttrs is Map
+      ? _stringMap(oldAttrs)
+      : <String, Object?>{};
+  attrs.remove(_storedAutoFillKey);
+  if (unavailable != null) {
+    attrs[_storedAutoFillKey] = unavailable;
+    source = null;
+  }
+  if (attrs.isEmpty) {
+    rules.remove(_attrsKey);
+  } else {
+    rules[_attrsKey] = attrs;
+  }
   final Result<Map<String, Object?>> lookup = _objectMapOf(map[_lookupKey]);
   if (lookup is FailureResult<Map<String, Object?>>) {
     return FailureResult<FieldDef>(lookup.failure);
@@ -290,7 +344,7 @@ Result<FieldDef> _fieldOf(
       inputMode: inputMode,
       stickable: stickable,
       contextLevel: contextLevel.getOrElse(() => null),
-      autoFill: autoFill.getOrElse(() => null),
+      autoFill: source,
       refine: refine,
       options: options.getOrElse(() => const <Object>[]),
       group: _text(map[_groupKey]),
@@ -298,7 +352,7 @@ Result<FieldDef> _fieldOf(
       requiredWhen: _text(map[_requiredWhenKey]),
       hidden: hidden,
       identity: identity,
-      validation: validation.getOrElse(() => const <String, Object?>{}),
+      validation: rules,
       lookup: lookup.getOrElse(() => const <String, Object?>{}),
       sortOrder: sortOrder.getOrElse(() => null) ?? index,
     ),
@@ -423,6 +477,11 @@ Result<AutoFill?> _autoFillOf(Object? raw) {
     return FailureResult<AutoFill?>(_invalid);
   }
   return Success<AutoFill?>(value);
+}
+
+Object? _carriedSource(Map<String, Object?> validation) {
+  final Object? attrs = validation[_attrsKey];
+  return attrs is Map ? attrs[_storedAutoFillKey] : null;
 }
 
 Object? _parsed(Object? raw) {
@@ -553,6 +612,7 @@ String _autoFillToWire(AutoFill value) {
     AutoFill.device => 'DEVICE',
     AutoFill.gps => 'GPS',
     AutoFill.context => 'CONTEXT',
+    AutoFill.localAddress => 'LOCAL_ADDRESS',
   };
 }
 
@@ -566,6 +626,7 @@ AutoFill? _autoFillFromWire(String raw) {
     'DEVICE' => AutoFill.device,
     'GPS' => AutoFill.gps,
     'CONTEXT' => AutoFill.context,
+    'LOCAL_ADDRESS' => AutoFill.localAddress,
     _ => null,
   };
 }
@@ -608,6 +669,13 @@ const String _aliasesKey = 'aliases';
 const String _metadataKey = 'metadata';
 const String _foundStatusKey = 'found_status';
 const String _versionsKey = '_tapture_versions';
+const String _attrsKey = '_tapture';
+const String _storedAutoFillKey = 'autoFill';
+
+final ValidationFailure _addressNeedsText = ValidationFailure(
+  localizedMessage: DomainCopy.messages.fieldSourceAddressNeedsText,
+  localizedRecovery: DomainCopy.messages.templatesImportInvalidRecovery,
+);
 
 final ValidationFailure _unknownSchema = ValidationFailure(
   localizedMessage: DomainCopy.messages.templatesImportUnknownSchema,

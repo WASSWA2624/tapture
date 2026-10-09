@@ -97,6 +97,96 @@ abstract class AppLocalizations {
     Locale('en', 'XA'),
   ];
 
+  /// Why a protected record value cannot be corrected.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is read-only.'**
+  String get recordFieldReadOnly;
+
+  /// Explains rejection of a field protected by its source or stored value.
+  ///
+  /// In en, this message translates to:
+  /// **'{fieldKey} is protected from extraction.'**
+  String processingProtectedField(String fieldKey);
+
+  /// Processing review reason when the owning captured shape cannot be resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'The captured template version is unavailable. Review the saved evidence.'**
+  String get processingCapturedTemplateUnavailable;
+
+  /// Explicit audited correction of an eligible automatically populated field.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct value'**
+  String get recordCorrectAutomaticValue;
+
+  /// Searches Manual form field labels and stable keys.
+  ///
+  /// In en, this message translates to:
+  /// **'Search fields'**
+  String get captureSearchFields;
+
+  /// Field source/status for operator entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual entry'**
+  String get captureFieldManual;
+
+  /// Field source/status for system filling.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic'**
+  String get captureFieldAutomatic;
+
+  /// Field source/status for inherited context values.
+  ///
+  /// In en, this message translates to:
+  /// **'Context'**
+  String get captureFieldContext;
+
+  /// Field source/status for evidence extraction eligibility.
+  ///
+  /// In en, this message translates to:
+  /// **'From photos and caption'**
+  String get captureFieldProcessing;
+
+  /// Pending field source that requires the authoritative first-save instant or sequence.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled when saved'**
+  String get captureFieldFilledAtSave;
+
+  /// Unavailable automatic source without a fabricated value.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable on this device'**
+  String get captureFieldUnavailable;
+
+  /// Explains existing template-owned source and input-mode controls.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose automatic filling, manual entry or extraction from photos and captions. Automatic and manual-only fields stay out of processing.'**
+  String get fieldSourceHelp;
+
+  /// Honest availability helper without a weather or hardware fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic temperature is unavailable; enter it manually.'**
+  String get captureTemperatureUnavailable;
+
+  /// Template-opted-in native local interface address source.
+  ///
+  /// In en, this message translates to:
+  /// **'Local network address'**
+  String get fieldAutoFillLocalAddress;
+
+  /// Validation recovery for a non-text local-address source.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a text field for a local network address.'**
+  String get fieldSourceAddressNeedsText;
+
   /// Capture overflow action opening optional template fields.
   ///
   /// In en, this message translates to:

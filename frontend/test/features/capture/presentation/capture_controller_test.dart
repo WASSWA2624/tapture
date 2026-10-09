@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/camera/camera_service.dart';
 import 'package:tapture/core/db/app_database.dart' hide CaptureSession;
+import 'package:tapture/core/device/platform_facts.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_reader.dart';
@@ -18,6 +19,7 @@ import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
+import 'package:tapture/features/capture/data/capture_device_sources.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/data/capture_record_writer.dart';
 import 'package:tapture/features/capture/data/drift_capture_persistence.dart';
@@ -27,23 +29,153 @@ import 'package:tapture/features/capture/domain/caption_apply.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/capture_session_key.dart';
+import 'package:tapture/features/capture/domain/owned_capture_persistence.dart';
 import 'package:tapture/features/capture/domain/pending_audio_draft.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/domain/photo_repository.dart';
 import 'package:tapture/features/capture/domain/save_and_analyse.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
+import 'package:tapture/features/capture/presentation/capture_device_providers.dart';
+import 'package:tapture/features/capture/presentation/capture_template_providers.dart';
 import 'package:tapture/features/processing/data/processing_repository_impl.dart';
 import 'package:tapture/features/processing/domain/processing_job.dart';
 import 'package:tapture/features/projects/presentation/project_template_selection.dart';
 import 'package:tapture/features/settings/data/settings_store.dart';
 import 'package:tapture/features/settings/domain/setting_keys.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
+import 'package:tapture/features/templates/templates.dart';
 
 import '../../../support/factories.dart';
 import '../../../support/fakes/fake_capture_record_persistence.dart';
 import '../../../support/fakes/fake_photo_repository.dart';
 
 void main() {
+  test(
+    'device reads follow loaded pinned shape and invalidate late reset and history-zero results',
+    () async {
+      final StreamController<List<TemplateDef>> templates =
+          StreamController<List<TemplateDef>>();
+      final List<Completer<PlatformFacts>> reads = <Completer<PlatformFacts>>[];
+      final FakePhotoRepository photos = FakePhotoRepository();
+      CaptureDeviceSources? source;
+      final ProviderContainer scoped = ProviderContainer(
+        overrides: <Override>[
+          photoRepositoryProvider.overrideWithValue(photos),
+          capturePersistenceProvider.overrideWith(
+            (Ref _) => CapturePersistenceImpl(
+              photos: photos,
+              store: TextStore.memory(),
+            ),
+          ),
+          captureProjectTemplatesProvider.overrideWith(
+            (Ref _, String key) => templates.stream,
+          ),
+          captureDeviceSourceProvider.overrideWith((Ref ref, String key) {
+            source = CaptureDeviceSources(
+              clock: FixedClock(DateTime.utc(2026, 10, 9)),
+              readFacts: () {
+                final Completer<PlatformFacts> pending =
+                    Completer<PlatformFacts>();
+                reads.add(pending);
+                return pending.future;
+              },
+            );
+            ref.onDispose(source!.dispose);
+            return source!;
+          }),
+        ],
+      );
+      addTearDown(() async {
+        scoped.dispose();
+        photos.dispose();
+        await templates.close();
+      });
+      final CaptureController controller = scoped.read(
+        captureControllerProvider('p1').notifier,
+      );
+      _ok(await controller.setTemplate('t1', version: 1));
+      expect(reads, isEmpty, reason: 'Loading is not an opted-in shape.');
+      final TemplateDef old = aTemplate(
+        id: 't1',
+        projectId: 'p1',
+        fields: const <FieldDef>[
+          FieldDef(
+            fieldKey: 'business',
+            label: 'Business',
+            type: FieldType.text,
+          ),
+        ],
+      );
+      final TemplateDef current = TemplateVersioning.remember(
+        from: old,
+        to: old.copyWith(
+          version: 2,
+          fields: const <FieldDef>[
+            FieldDef(
+              fieldKey: 'network_address',
+              label: 'Local address',
+              type: FieldType.text,
+              autoFill: AutoFill.localAddress,
+            ),
+          ],
+        ),
+      );
+      templates.add(<TemplateDef>[current]);
+      await scoped.pump();
+      expect(
+        reads,
+        isEmpty,
+        reason:
+            'The current header cannot override a pinned source-less shape.',
+      );
+      _ok(await controller.setTemplate('t1', version: 2));
+      expect(reads.length, 1);
+      final CaptureSession previous = controller.state;
+      _ok(await controller.discardSession());
+      expect(controller.state.id, isNot(previous.id));
+      expect(reads.length, 2);
+      reads.first.complete(
+        const PlatformFacts.fake(addresses: <String>['10.0.0.1']),
+      );
+      await reads.first.future;
+      expect(source!.snapshot(previous), isNull);
+      expect(source!.snapshot(controller.state), isNull);
+      final Future<void> completed = source!.changes.firstWhere(
+        (_) => source!.snapshot(controller.state) != null,
+      );
+      reads[1].complete(
+        const PlatformFacts.fake(addresses: <String>['10.0.0.2']),
+      );
+      await completed;
+      expect(source!.snapshot(controller.state), '10.0.0.2');
+      _ok(await controller.setTemplate('t1', version: 0));
+      expect(reads.length, 2);
+      expect(source!.snapshot(controller.state), isNull);
+      _ok(await controller.setTemplate('missing', version: 1));
+      expect(reads.length, 2);
+      _ok(await controller.setTemplate('t1', version: 1));
+      expect(reads.length, 2);
+      _ok(await controller.setTemplate('t1', version: 2));
+      expect(reads.length, 3);
+      final CaptureSession resumed = controller.state.copyWith(id: 'resumed');
+      _ok(await controller.replaceSession(resumed));
+      expect(reads.length, 4);
+      reads[2].complete(
+        const PlatformFacts.fake(addresses: <String>['10.0.0.3']),
+      );
+      await reads[2].future;
+      expect(source!.snapshot(resumed), isNull);
+      final Future<void> refreshed = source!.changes.firstWhere(
+        (_) => source!.snapshot(resumed) != null,
+      );
+      reads[3].complete(
+        const PlatformFacts.fake(addresses: <String>['10.0.0.4']),
+      );
+      await refreshed;
+      expect(source!.snapshot(resumed), '10.0.0.4');
+    },
+  );
+
   late FakePhotoRepository photos;
   late ProviderContainer container;
 
@@ -64,6 +196,58 @@ void main() {
     photos.dispose();
     container.dispose();
   });
+
+  test(
+    'default owned persistence refuses inconsistent edit projects',
+    () async {
+      for (final (String storedProject, String candidateProject) projects
+          in const <(String, String)>[('', 'p1'), ('p2', 'p1'), ('', '')]) {
+        final ProviderContainer scoped = ProviderContainer(
+          overrides: <Override>[
+            photoRepositoryProvider.overrideWith((Ref _) => photos),
+          ],
+        );
+        try {
+          final OwnedCapturePersistence persistence =
+              scoped.read(capturePersistenceProvider)
+                  as OwnedCapturePersistence;
+          final CaptureSession stored = CaptureSession(
+            id: 'session-1',
+            projectId: projects.$1,
+            recordId: 'record-1',
+            editing: true,
+            templateId: 'template-1',
+            templateVersion: 7,
+            contextSnapshot: const <String, String>{},
+            values: const <String, Object?>{'serial': 'CURRENT'},
+          );
+          (await persistence.saveSession(stored)).getOrThrow();
+          expect(
+            await persistence.saveOwnedSession(
+              stored.copyWith(
+                projectId: projects.$2,
+                values: const <String, Object?>{'serial': 'OLD'},
+              ),
+              owner: (
+                sessionId: stored.id,
+                templateId: stored.templateId,
+                templateVersion: stored.templateVersion,
+              ),
+            ),
+            isA<FailureResult<void>>(),
+          );
+          expect(
+            (await persistence.loadSession(
+              stored.storageKey,
+            )).getOrThrow()?.toJson(),
+            stored.toJson(),
+          );
+        } finally {
+          scoped.dispose();
+        }
+      }
+    },
+  );
 
   test('addPhoto persists before next state', () async {
     final CaptureController controller = container.read(
@@ -321,6 +505,155 @@ void main() {
       await expectStored(controller);
     });
   });
+
+  for (final bool reset in <bool>[true, false]) {
+    test(
+      'owned field write finishing after ${reset ? 'reset' : 'template change'} preserves the current durable owner',
+      () async {
+        final _DelayedFieldWrite persistence = _DelayedFieldWrite();
+        final ProviderContainer scoped = ProviderContainer(
+          overrides: <Override>[
+            capturePersistenceProvider.overrideWithValue(persistence),
+          ],
+        );
+        addTearDown(scoped.dispose);
+        final CaptureController controller = scoped.read(
+          captureControllerProvider('p1').notifier,
+        );
+        _ok(await controller.setTemplate('t1', version: 1));
+        final CaptureSession original = controller.state;
+        final Future<Result<void>> stale = controller.setValue(
+          'serial',
+          'OLD',
+          owner: (
+            sessionId: original.id,
+            templateId: original.templateId,
+            templateVersion: original.templateVersion,
+          ),
+        );
+        if (reset) {
+          _ok(await controller.discardSession());
+        } else {
+          _ok(await controller.setTemplate('t2', version: 2));
+        }
+        final CaptureSession current = controller.state;
+        persistence.release.complete();
+        expect(await stale, isA<FailureResult<void>>());
+        expect(controller.state.toJson(), current.toJson());
+        expect(persistence.stored?.toJson(), current.toJson());
+        expect(controller.state.values.containsKey('serial'), isFalse);
+      },
+    );
+  }
+
+  test('an already stale origin never starts a field write', () async {
+    final _DelayedFieldWrite persistence = _DelayedFieldWrite();
+    final ProviderContainer scoped = ProviderContainer(
+      overrides: <Override>[
+        capturePersistenceProvider.overrideWithValue(persistence),
+      ],
+    );
+    addTearDown(scoped.dispose);
+    final CaptureController controller = scoped.read(
+      captureControllerProvider('p1').notifier,
+    );
+    final CaptureSession original = controller.state;
+    _ok(await controller.setTemplate('t2', version: 2));
+    final int before = persistence.writes;
+    expect(
+      await controller.setValue(
+        'serial',
+        'OLD',
+        owner: (
+          sessionId: original.id,
+          templateId: original.templateId,
+          templateVersion: original.templateVersion,
+        ),
+      ),
+      isA<FailureResult<void>>(),
+    );
+    expect(persistence.writes, before);
+    expect(controller.state.values, isEmpty);
+  });
+
+  test(
+    'failed late owned write preserves the confirmed durable reset without repair',
+    () async {
+      final _DelayedFieldWrite persistence = _DelayedFieldWrite();
+      final ProviderContainer scoped = ProviderContainer(
+        overrides: <Override>[
+          capturePersistenceProvider.overrideWithValue(persistence),
+        ],
+      );
+      addTearDown(scoped.dispose);
+      final CaptureController controller = scoped.read(
+        captureControllerProvider('p1').notifier,
+      );
+      _ok(await controller.setTemplate('t1', version: 1));
+      final CaptureSession original = controller.state;
+      final Future<Result<void>> stale = controller.setValue(
+        'serial',
+        'OLD',
+        owner: (
+          sessionId: original.id,
+          templateId: original.templateId,
+          templateVersion: original.templateVersion,
+        ),
+      );
+      _ok(await controller.discardSession());
+      final CaptureSession current = controller.state;
+      persistence.failOwned = true;
+      persistence.release.complete();
+      final FailureResult<void> failed = await stale as FailureResult<void>;
+      expect(failed.failure.message, 'Owned write refused');
+      expect(controller.state.toJson(), current.toJson());
+      expect(persistence.stored?.toJson(), current.toJson());
+      expect(controller.state.values.containsKey('serial'), isFalse);
+    },
+  );
+
+  test(
+    'owned writes fail closed on a legacy persistence while omitted origins still work',
+    () async {
+      final CapturePersistence persistence = _FailingSaves(
+        CapturePersistenceImpl(photos: photos, store: TextStore.memory()),
+      );
+      final ProviderContainer scoped = ProviderContainer(
+        overrides: <Override>[
+          capturePersistenceProvider.overrideWithValue(persistence),
+        ],
+      );
+      addTearDown(scoped.dispose);
+      final CaptureController controller = scoped.read(
+        captureControllerProvider('p1').notifier,
+      );
+      _ok(await controller.setTemplate('t1', version: 1));
+      final CaptureSession original = controller.state;
+      expect(
+        await controller.setValue(
+          'serial',
+          'REFUSED',
+          owner: (
+            sessionId: original.id,
+            templateId: original.templateId,
+            templateVersion: original.templateVersion,
+          ),
+        ),
+        isA<FailureResult<void>>(),
+      );
+      expect(controller.state.toJson(), original.toJson());
+      expect(
+        _ok(await persistence.loadSession('p1'))?.toJson(),
+        original.toJson(),
+      );
+      _ok(await controller.setValue('serial', 'Legacy caller'));
+      expect(controller.state.values['serial'], 'Legacy caller');
+      expect(
+        _ok(await persistence.loadSession('p1'))?.values['serial'],
+        'Legacy caller',
+      );
+    },
+  );
 
   group('an interrupted session', () {
     CapturePersistence store() => container.read(capturePersistenceProvider);
@@ -837,9 +1170,73 @@ T _ok<T>(Result<T> result) {
   };
 }
 
-/// A session store whose writes are held, then land last-started first;
-/// later writes land at once. The stored copy is the last write to land,
-/// as in a database.
+/// Delays the originating form before checking its current durable owner.
+final class _DelayedFieldWrite implements OwnedCapturePersistence {
+  final Completer<void> release = Completer<void>();
+  CaptureSession? stored;
+  bool failOwned = false;
+  int writes = 0;
+
+  @override
+  PhotoRepository get photos => throw UnimplementedError();
+  @override
+  Future<Result<void>> saveSession(CaptureSession session) async {
+    writes += 1;
+    stored = session;
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<void>> saveOwnedSession(
+    CaptureSession session, {
+    required ({String sessionId, String templateId, int? templateVersion})
+    owner,
+  }) async {
+    writes += 1;
+    await release.future;
+    if (failOwned) {
+      return const FailureResult<void>(
+        StorageFailure(message: 'Owned write refused'),
+      );
+    }
+    final CaptureSession? current = stored;
+    if (current == null ||
+        current.id != owner.sessionId ||
+        current.templateId != owner.templateId ||
+        current.templateVersion != owner.templateVersion ||
+        session.id != owner.sessionId ||
+        session.templateId != owner.templateId ||
+        session.templateVersion != owner.templateVersion) {
+      return const FailureResult<void>(
+        StorageFailure(message: 'Owner changed'),
+      );
+    }
+    stored = session;
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<CaptureSession?>> loadSession(String key) async =>
+      Success<CaptureSession?>(stored);
+  @override
+  Future<Result<void>> clearSession(String key) async {
+    stored = null;
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<PhotoDraft>> savePhoto(
+    PhotoDraft photo, {
+    Uint8List? bytes,
+  }) async => Success<PhotoDraft>(photo);
+  @override
+  Future<Result<void>> deletePhoto(
+    String photoId, {
+    required String reason,
+  }) async => const Success<void>(null);
+}
+
+/// Holds writes and releases them last-started first to exercise rebasing.
 final class _OutOfOrder implements CapturePersistence {
   final List<({CaptureSession session, Completer<void> done})> _held =
       <({CaptureSession session, Completer<void> done})>[];

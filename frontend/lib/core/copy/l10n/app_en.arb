@@ -1,32 +1,124 @@
 {
+  "recordFieldReadOnly": "This field is read-only.",
+  "@recordFieldReadOnly": {
+    "description": "Why a protected record value cannot be corrected."
+  },
+  "processingProtectedField": "{fieldKey} is protected from extraction.",
+  "@processingProtectedField": {
+    "description": "Explains rejection of a field protected by its source or stored value.",
+    "placeholders": {
+      "fieldKey": {
+        "type": "String",
+        "description": "Stable user field key, preserved without translation."
+      }
+    }
+  },
+  "processingCapturedTemplateUnavailable": "The captured template version is unavailable. Review the saved evidence.",
+  "@processingCapturedTemplateUnavailable": {
+    "description": "Processing review reason when the owning captured shape cannot be resolved."
+  },
+  "recordCorrectAutomaticValue": "Correct value",
+  "@recordCorrectAutomaticValue": {
+    "description": "Explicit audited correction of an eligible automatically populated field."
+  },
+  "captureSearchFields": "Search fields",
+  "@captureSearchFields": {
+    "description": "Searches Manual form field labels and stable keys."
+  },
+  "captureFieldManual": "Manual entry",
+  "@captureFieldManual": {
+    "description": "Field source/status for operator entry."
+  },
+  "captureFieldAutomatic": "Automatic",
+  "@captureFieldAutomatic": {
+    "description": "Field source/status for system filling."
+  },
+  "captureFieldContext": "Context",
+  "@captureFieldContext": {
+    "description": "Field source/status for inherited context values."
+  },
+  "captureFieldProcessing": "From photos and caption",
+  "@captureFieldProcessing": {
+    "description": "Field source/status for evidence extraction eligibility."
+  },
+  "captureFieldFilledAtSave": "Filled when saved",
+  "@captureFieldFilledAtSave": {
+    "description": "Pending field source that requires the authoritative first-save instant or sequence."
+  },
+  "captureFieldUnavailable": "Unavailable on this device",
+  "@captureFieldUnavailable": {
+    "description": "Unavailable automatic source without a fabricated value."
+  },
+  "fieldSourceHelp": "Choose automatic filling, manual entry or extraction from photos and captions. Automatic and manual-only fields stay out of processing.",
+  "@fieldSourceHelp": {
+    "description": "Explains existing template-owned source and input-mode controls."
+  },
+  "captureTemperatureUnavailable": "Automatic temperature is unavailable; enter it manually.",
+  "@captureTemperatureUnavailable": {
+    "description": "Honest availability helper without a weather or hardware fallback."
+  },
+  "fieldAutoFillLocalAddress": "Local network address",
+  "@fieldAutoFillLocalAddress": {
+    "description": "Template-opted-in native local interface address source."
+  },
+  "fieldSourceAddressNeedsText": "Use a text field for a local network address.",
+  "@fieldSourceAddressNeedsText": {
+    "description": "Validation recovery for a non-text local-address source."
+  },
   "captureManualForm": "Manual form",
-  "@captureManualForm": {"description": "Capture overflow action opening optional template fields."},
+  "@captureManualForm": {
+    "description": "Capture overflow action opening optional template fields."
+  },
   "projectExportDetails": "Package details",
-  "@projectExportDetails": {"description": "Collapsed local export summary heading."},
+  "@projectExportDetails": {
+    "description": "Collapsed local export summary heading."
+  },
   "projectExportDestination": "Project export folder",
-  "@projectExportDestination": {"description": "Canonical native project archive destination; never claims Downloads."},
+  "@projectExportDestination": {
+    "description": "Canonical native project archive destination; never claims Downloads."
+  },
   "projectExportBrowserDestination": "Browser downloads",
-  "@projectExportBrowserDestination": {"description": "Browser-controlled public archive destination."},
+  "@projectExportBrowserDestination": {
+    "description": "Browser-controlled public archive destination."
+  },
   "projectExportOpen": "Open",
-  "@projectExportOpen": {"description": "Explicit desktop action opening the stored project archive."},
+  "@projectExportOpen": {
+    "description": "Explicit desktop action opening the stored project archive."
+  },
   "settingsSpeechModelDetails": "Model details",
   "settingsSpeechModelSummary": "{state} · {size}",
   "@settingsSpeechModelSummary": {
     "description": "Concise state and localized size for one speech model.",
     "placeholders": {
-      "state": {"type": "String", "description": "Localized model readiness."},
-      "size": {"type": "String", "description": "Localized file size."}
+      "state": {
+        "type": "String",
+        "description": "Localized model readiness."
+      },
+      "size": {
+        "type": "String",
+        "description": "Localized file size."
+      }
     }
   },
-  "@settingsSpeechModelDetails": {"description": "Collapsed source and integrity details for one speech model."},
+  "@settingsSpeechModelDetails": {
+    "description": "Collapsed source and integrity details for one speech model."
+  },
   "backendConfigure": "Configure",
-  "@backendConfigure": {"description": "Explicit secondary action saving inline server/account configuration."},
+  "@backendConfigure": {
+    "description": "Explicit secondary action saving inline server/account configuration."
+  },
   "aiConnectionDetails": "Connection details",
-  "@aiConnectionDetails": {"description": "Collapsed complete AI custody, billing and secondary status details."},
+  "@aiConnectionDetails": {
+    "description": "Collapsed complete AI custody, billing and secondary status details."
+  },
   "aiCustodySummary": "Your server handles AI access and keys.",
   "aiProviderAttribution": "Gemini is a trademark of Google LLC. OpenAI and xAI marks belong to their respective owners.",
-  "@aiProviderAttribution": {"description": "Provider trademark attribution, shown inside Connection details."},
-  "@aiCustodySummary": {"description": "Neutral helper; complete custody and billing explanations remain in Connection details."},
+  "@aiProviderAttribution": {
+    "description": "Provider trademark attribution, shown inside Connection details."
+  },
+  "@aiCustodySummary": {
+    "description": "Neutral helper; complete custody and billing explanations remain in Connection details."
+  },
   "aiServerAndAccount": "Server and account",
   "@aiServerAndAccount": {
     "description": "Secondary AI settings action opening optional backend setup."
@@ -15505,13 +15597,21 @@
     }
   },
   "importSupportedFiles": "Supported files",
-  "@importSupportedFiles": {"description": "Collapsed help on the generic import page explaining supported file types."},
+  "@importSupportedFiles": {
+    "description": "Collapsed help on the generic import page explaining supported file types."
+  },
   "templatesCustomizeCopy": "Customize a copy",
-  "@templatesCustomizeCopy": {"description": "Creates an editable saved library copy from an immutable shipped template."},
+  "@templatesCustomizeCopy": {
+    "description": "Creates an editable saved library copy from an immutable shipped template."
+  },
   "templatesMyTemplates": "My templates",
-  "@templatesMyTemplates": {"description": "Heading for editable templates saved in the global custom library."},
+  "@templatesMyTemplates": {
+    "description": "Heading for editable templates saved in the global custom library."
+  },
   "templatesDeleted": "Template deleted",
-  "@templatesDeleted": {"description": "Confirmation after a durable template tombstone, accompanied by Undo."},
+  "@templatesDeleted": {
+    "description": "Confirmation after a durable template tombstone, accompanied by Undo."
+  },
   "recycleEmptyRecords": "Empty deleted records ({count})",
   "@recycleEmptyRecords": {
     "description": "Field workflow recovery and compact settings control.",
@@ -15587,6 +15687,11 @@
   "aiRequestLimitSummary": "Per request: {amount} configured",
   "@aiRequestLimitSummary": {
     "description": "Collapsed AI cost controls showing the saved explicit maximum per request.",
-    "placeholders": {"amount": {"type": "String", "description": "Saved numeric request ceiling."}}
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "description": "Saved numeric request ceiling."
+      }
+    }
   }
 }

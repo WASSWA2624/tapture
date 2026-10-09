@@ -16,6 +16,10 @@ Historical completion was recorded on 2026-09-22 in the old tracker and index. T
 
 Context mapper/repository/persistence, cascade, record override, presets and optional maintenance suites passed in the focused audit. The native database/file integration passed both context cases, including `photos/Kampala/Kasubi-HC-IV/Theatre` and an override isolated to one record. The 320dp bar now keeps its 48dp targets inside its height budget. The reviewed baseline comparison passed all 267 golden cases, including the long-value context bar at three widths and 200 percent text scale. The no-hierarchy display requirement below follows task 076's later Setup affordance; empty hierarchy still stores no value rows.
 
+### Presentation supersession — 2026-10-09
+
+Task [153 W4](24-product-refinements.md#153--resolve-feedback-archive-08102026-2215), Decision D4(a), replaces only the former two-line height cap and middle-value truncation contract with natural scaled height and complete-label/control reachability. The 2026-09-30 comparison remains historical evidence; the replacement criterion is verified by task 153's 387 real-font behavior cases and seven reviewed normal visual comparisons. Hierarchy, pins, presets, paths and persistence contracts remain unchanged.
+
 ### Implement
 
 The whole context feature: immutable models for the hierarchy definition, the current values and named presets, with
@@ -93,9 +97,11 @@ class ContextPreset {
    [009](09-templates.md#009--templates-record-shapes-with-atomic-columns-and-requiredness-the-user-owns); a key already used as a level is not offered twice. Drag to
    order, each level binding exactly one field key, and persist through `ContextRepository` on each change, including
    the removal of every level.
-3. Build the bar. Render levels as `AppChip` with separators, pins after them and visibly marked as pins; tapping a
-   chip opens the picker for that level or pin. Truncate the longest middle value first on narrow widths; the bar
-   never grows past two lines and is hidden entirely when the context is empty.
+3. Build the bar. Render root-to-leaf levels as comfortable, wrapping `AppChip` bodies with separators at every
+   width; tapping a chip opens its existing picker. Keep hierarchy commands after the trail and visibly marked
+   non-hierarchical pins on a separate second trail. Compact trails scroll horizontally; wider trails wrap.
+   Natural scaled height preserves complete accessible labels and reachable controls; empty hierarchy retains
+   the Setup affordance required by task 076.
 4. Build the two sheets. The picker lists recent values for that level first, then dataset search where the level is
    bound to a reference dataset — the lookup path of [010](10-reference-data.md#010--reference-data-datasets-lookups-and-prefill) — then an
    explicit "use this value" for free text. Offer pinning only for the fields the template marks stickable
@@ -146,7 +152,7 @@ class ContextPreset {
 - [x] A project with no hierarchy stores no context values and capture offers Setup, as required by task 076's later context flow.
 - [x] Reopening the app resumes the same district, facility and department for the open project.
 - [x] Reordering or removing a level persists immediately and survives leaving the screen.
-- [x] The bar fits a 320dp-wide phone with long facility names without wrapping to a third line.
+- [x] At 320dp and 200 percent text, long hierarchy and pinned values retain complete accessible labels and reachable 48dp controls, growing naturally instead of enforcing a line cap.
 - [x] Setting a facility takes two taps on the second visit to it.
 - [x] A survey date pinned once applies to every record afterwards without being retyped.
 - [x] Changing district never leaves a stale facility or department attached to new records.

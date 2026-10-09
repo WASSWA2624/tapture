@@ -224,6 +224,11 @@ final class ProcessingFixture {
     String? unit,
     int order = 0,
     String? defaultValue,
+    String inputMode = 'ANY',
+    bool autoFill = false,
+    bool stickable = false,
+    int? contextLevel,
+    String? validation,
   }) async {
     return _ok(
       await upsertTemplateField(
@@ -234,11 +239,16 @@ final class ProcessingFixture {
           label: Value<String>(key),
           type: Value<String>(type),
           isRequired: Value<bool>(required),
+          inputMode: Value<String>(inputMode),
+          autoFill: Value<bool>(autoFill),
+          stickable: Value<bool>(stickable),
+          contextLevel: Value<int?>(contextLevel),
           options: Value<String>(options),
           unit: Value<String?>(unit),
           defaultValue: Value<String?>(defaultValue),
           validation: Value<String>(
-            pattern == null ? '{}' : '{"pattern":"${_json(pattern)}"}',
+            validation ??
+                (pattern == null ? '{}' : '{"pattern":"${_json(pattern)}"}'),
           ),
           sortOrder: Value<int>(order),
         ),

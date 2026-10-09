@@ -68,6 +68,7 @@ final class PhotoTray extends StatelessWidget {
       // FE-SIMP-11). While capture is not ready [onAdd] is null, the icon
       // is plain and the gate message above says why.
       return AppEmptyState(
+        compact: true,
         icon: AppIcons.addPhoto,
         headline: localCopy.captureNoPhotosHeadline,
         message: localCopy.captureNoPhotosMessage,

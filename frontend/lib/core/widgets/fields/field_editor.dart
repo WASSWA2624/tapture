@@ -28,6 +28,7 @@ class FieldEditor extends ConsumerWidget {
     required this.field,
     required this.value,
     required this.onChanged,
+    this.wrapLabel = false,
   });
 
   /// Column being edited. Core cannot import the template field type
@@ -39,6 +40,9 @@ class FieldEditor extends ConsumerWidget {
 
   /// Receives the edited value: source MANUAL, verified, previous in audit.
   final ValueChanged<FieldValue> onChanged;
+
+  /// Lets text-editor labels wrap for narrow or scaled Capture rows.
+  final bool wrapLabel;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -61,6 +65,7 @@ class FieldEditor extends ConsumerWidget {
       field: field,
       value: value.value,
       errorText: errorText,
+      wrapLabel: wrapLabel,
       onChanged: (Object? next) {
         onChanged(
           _corrected(
@@ -122,6 +127,7 @@ typedef _EditorBuilder =
       required FieldEditorField field,
       required Object? value,
       required String? errorText,
+      required bool wrapLabel,
       required ValueChanged<Object?> onChanged,
     });
 
@@ -139,6 +145,7 @@ Widget _text({
   required FieldEditorField field,
   required Object? value,
   required String? errorText,
+  required bool wrapLabel,
   required ValueChanged<Object?> onChanged,
 }) {
   return _BoundTextField(
@@ -146,6 +153,7 @@ Widget _text({
     label: field.label,
     helper: field.helpText,
     errorText: errorText,
+    wrapLabel: wrapLabel,
     maxLines: field.type == 'longText' ? _longTextLines : 1,
     text: _asText(value),
     onChanged: onChanged,
@@ -156,6 +164,7 @@ Widget _number({
   required FieldEditorField field,
   required Object? value,
   required String? errorText,
+  required bool wrapLabel,
   required ValueChanged<Object?> onChanged,
 }) {
   return AppNumberField(
@@ -174,6 +183,7 @@ Widget _date({
   required FieldEditorField field,
   required Object? value,
   required String? errorText,
+  required bool wrapLabel,
   required ValueChanged<Object?> onChanged,
 }) {
   return AppDateField(
@@ -193,6 +203,7 @@ Widget _toggle({
   required FieldEditorField field,
   required Object? value,
   required String? errorText,
+  required bool wrapLabel,
   required ValueChanged<Object?> onChanged,
 }) {
   return AppSwitchTile(
@@ -208,6 +219,7 @@ Widget _consent({
   required FieldEditorField field,
   required Object? value,
   required String? errorText,
+  required bool wrapLabel,
   required ValueChanged<Object?> onChanged,
 }) {
   return AppConsentField(
@@ -223,6 +235,7 @@ Widget _choice({
   required FieldEditorField field,
   required Object? value,
   required String? errorText,
+  required bool wrapLabel,
   required ValueChanged<Object?> onChanged,
 }) {
   return AppChoiceField<String>(
@@ -238,6 +251,7 @@ Widget _multi({
   required FieldEditorField field,
   required Object? value,
   required String? errorText,
+  required bool wrapLabel,
   required ValueChanged<Object?> onChanged,
 }) {
   return AppMultiChoiceField<String>(
@@ -253,6 +267,7 @@ Widget _readOnly({
   required FieldEditorField field,
   required Object? value,
   required String? errorText,
+  required bool wrapLabel,
   required ValueChanged<Object?> onChanged,
 }) {
   return AppListTile(
@@ -284,12 +299,14 @@ class _BoundTextField extends StatefulWidget {
     required this.onChanged,
     this.helper,
     this.errorText,
+    this.wrapLabel = false,
     this.maxLines = 1,
   });
 
   final String label;
   final String? helper;
   final String? errorText;
+  final bool wrapLabel;
   final int maxLines;
   final String text;
   final ValueChanged<Object?> onChanged;
@@ -324,6 +341,7 @@ class _BoundTextFieldState extends State<_BoundTextField> {
       controller: _controller,
       helper: widget.helper,
       errorText: widget.errorText,
+      wrapLabel: widget.wrapLabel,
       maxLines: widget.maxLines,
       onChanged: widget.onChanged,
     );

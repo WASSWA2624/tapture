@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
@@ -31,27 +32,69 @@ void main() {
     );
 
     expect(find.text(Copy.captureGuideTitle), findsOneWidget);
-    expect(find.text(Copy.captureGuidePhotos), findsNothing);
-    expect(
-      find.byKey(const ValueKey<String>('capture-guide-toggle')),
-      meetsTapTarget(),
-    );
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    try {
+      final Finder toggle = find.byKey(
+        const ValueKey<String>('capture-guide-toggle'),
+      );
+      expect(
+        tester
+            .getSemantics(toggle)
+            .getSemanticsData()
+            .flagsCollection
+            .isExpanded
+            .toBoolOrNull(),
+        isFalse,
+      );
+      expect(find.text(Copy.captureGuidePhotos), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('capture-guide-toggle')),
+        meetsTapTarget(),
+      );
 
-    await tester.tap(
-      find.byKey(const ValueKey<String>('capture-guide-toggle')),
-    );
-    await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('capture-guide-toggle')),
+      );
+      await tester.pump();
 
-    expect(find.text(Copy.captureGuidePhotos), findsOneWidget);
-    expect(
-      find.text(Copy.captureGuideItems(_guide.photoFields)),
-      findsOneWidget,
-    );
-    expect(find.text(Copy.captureGuideCaption), findsOneWidget);
-    expect(
-      find.text(Copy.captureGuideItems(_guide.captionFields)),
-      findsOneWidget,
-    );
+      expect(
+        tester
+            .getSemantics(toggle)
+            .getSemanticsData()
+            .flagsCollection
+            .isExpanded
+            .toBoolOrNull(),
+        isTrue,
+      );
+
+      expect(find.text(Copy.captureGuidePhotos), findsOneWidget);
+      expect(
+        find.text(Copy.captureGuideItems(_guide.photoFields)),
+        findsOneWidget,
+      );
+      expect(find.text(Copy.captureGuideCaption), findsOneWidget);
+      expect(
+        find.text(Copy.captureGuideItems(_guide.captionFields)),
+        findsOneWidget,
+      );
+      await tester.tap(toggle);
+      await tester.pump();
+      expect(
+        tester
+            .getSemantics(toggle)
+            .getSemanticsData()
+            .flagsCollection
+            .isExpanded
+            .toBoolOrNull(),
+        isFalse,
+      );
+      expect(
+        find.text(Copy.captureGuideItems(_guide.captionFields)),
+        findsNothing,
+      );
+    } finally {
+      semantics.dispose();
+    }
   });
 
   testWidgets('an empty guide draws nothing', (WidgetTester tester) async {
@@ -81,6 +124,13 @@ void main() {
     await tester.tap(find.byType(TextField));
     await tester.pump();
     expect(_panel, findsOneWidget);
+    expect(
+      find.text(Copy.captureGuideItems(_guide.captionFields)),
+      findsOneWidget,
+    );
+    final TextField caption = tester.widget<TextField>(find.byType(TextField));
+    expect(caption.minLines, 6);
+    expect(caption.maxLines, isNull);
     expect(
       tester.getBottomLeft(_panel).dy,
       lessThanOrEqualTo(tester.getTopLeft(find.byType(TextField)).dy),

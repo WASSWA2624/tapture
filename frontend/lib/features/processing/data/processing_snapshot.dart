@@ -76,6 +76,8 @@ abstract final class ProcessingSnapshot {
     'projectSettings': bundle.project.settings,
     'recordId': bundle.record.id,
     'templateVersion': bundle.record.templateVersion,
+    'templateResolved': bundle.templateResolved,
+    'currentTemplate': (bundle.currentTemplate ?? bundle.template).toJson(),
     'context': bundle.record.contextJson,
     'template': bundle.template.toJson(),
     'fields': <Map<String, Object?>>[
@@ -83,6 +85,20 @@ abstract final class ProcessingSnapshot {
     ],
     'rows': <Map<String, Object?>>[
       for (final TemplateRow row in bundle.rows) row.toJson(),
+    ],
+    // Value/provenance changes can close an extraction target mid-request.
+    // Only their local hash leaves this reader; no field values are sent.
+    'protectedValues': <Map<String, Object?>>[
+      for (final RecordField field in _orderedValues(bundle))
+        <String, Object?>{
+          'key': field.fieldKey,
+          'source': field.source,
+          'raw': field.valueRaw,
+          'refined': field.valueRefined,
+          'final': field.valueFinal,
+          'verified': field.verified,
+          'retired': field.retiredAt?.toIso8601String(),
+        },
     ],
     'photos': <Map<String, Object?>>[
       for (final Photo photo in bundle.photos)
@@ -134,6 +150,10 @@ abstract final class ProcessingSnapshot {
     'privacy': privacyRevision,
   };
 }
+
+List<RecordField> _orderedValues(RecordBundle bundle) => List<RecordField>.of(
+  bundle.existing,
+)..sort((RecordField a, RecordField b) => a.fieldKey.compareTo(b.fieldKey));
 
 String _hashContent(Map<String, Object?> content) =>
     HashingService.sha256OfString(jsonEncode(_canonical(content)));

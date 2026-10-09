@@ -10,6 +10,99 @@ final class CopyMessages {
   /// Creates the shared stateless factory.
   const CopyMessages();
 
+  /// Why a protected record value cannot be corrected.
+  LocalizedMessage get recordFieldReadOnly => LocalizedMessage(
+    key: 'recordFieldReadOnly',
+    fallback: Copy.recordFieldReadOnly,
+  );
+
+  /// Explains rejection of a field protected by its source or stored value.
+  LocalizedMessage processingProtectedField(String fieldKey) =>
+      LocalizedMessage(
+        key: 'processingProtectedField',
+        fallback: Copy.processingProtectedField(fieldKey),
+        arguments: <String, Object?>{
+          'fieldKey': LocalizedMessage.encodeArgument(fieldKey),
+        },
+      );
+
+  /// Processing review reason when the owning captured shape cannot be resolved.
+  LocalizedMessage get processingCapturedTemplateUnavailable =>
+      LocalizedMessage(
+        key: 'processingCapturedTemplateUnavailable',
+        fallback: Copy.processingCapturedTemplateUnavailable,
+      );
+
+  /// Explicit audited correction of an eligible automatically populated field.
+  LocalizedMessage get recordCorrectAutomaticValue => LocalizedMessage(
+    key: 'recordCorrectAutomaticValue',
+    fallback: Copy.recordCorrectAutomaticValue,
+  );
+
+  /// Searches Manual form field labels and stable keys.
+  LocalizedMessage get captureSearchFields => LocalizedMessage(
+    key: 'captureSearchFields',
+    fallback: Copy.captureSearchFields,
+  );
+
+  /// Field source/status for operator entry.
+  LocalizedMessage get captureFieldManual => LocalizedMessage(
+    key: 'captureFieldManual',
+    fallback: Copy.captureFieldManual,
+  );
+
+  /// Field source/status for system filling.
+  LocalizedMessage get captureFieldAutomatic => LocalizedMessage(
+    key: 'captureFieldAutomatic',
+    fallback: Copy.captureFieldAutomatic,
+  );
+
+  /// Field source/status for inherited context values.
+  LocalizedMessage get captureFieldContext => LocalizedMessage(
+    key: 'captureFieldContext',
+    fallback: Copy.captureFieldContext,
+  );
+
+  /// Field source/status for evidence extraction eligibility.
+  LocalizedMessage get captureFieldProcessing => LocalizedMessage(
+    key: 'captureFieldProcessing',
+    fallback: Copy.captureFieldProcessing,
+  );
+
+  /// Pending field source that requires the authoritative first-save instant or sequence.
+  LocalizedMessage get captureFieldFilledAtSave => LocalizedMessage(
+    key: 'captureFieldFilledAtSave',
+    fallback: Copy.captureFieldFilledAtSave,
+  );
+
+  /// Unavailable automatic source without a fabricated value.
+  LocalizedMessage get captureFieldUnavailable => LocalizedMessage(
+    key: 'captureFieldUnavailable',
+    fallback: Copy.captureFieldUnavailable,
+  );
+
+  /// Explains existing template-owned source and input-mode controls.
+  LocalizedMessage get fieldSourceHelp =>
+      LocalizedMessage(key: 'fieldSourceHelp', fallback: Copy.fieldSourceHelp);
+
+  /// Honest availability helper without a weather or hardware fallback.
+  LocalizedMessage get captureTemperatureUnavailable => LocalizedMessage(
+    key: 'captureTemperatureUnavailable',
+    fallback: Copy.captureTemperatureUnavailable,
+  );
+
+  /// Template-opted-in native local interface address source.
+  LocalizedMessage get fieldAutoFillLocalAddress => LocalizedMessage(
+    key: 'fieldAutoFillLocalAddress',
+    fallback: Copy.fieldAutoFillLocalAddress,
+  );
+
+  /// Validation recovery for a non-text local-address source.
+  LocalizedMessage get fieldSourceAddressNeedsText => LocalizedMessage(
+    key: 'fieldSourceAddressNeedsText',
+    fallback: Copy.fieldSourceAddressNeedsText,
+  );
+
   /// Optional template fields opened from Capture.
   LocalizedMessage get captureManualForm => LocalizedMessage(
     key: 'captureManualForm',

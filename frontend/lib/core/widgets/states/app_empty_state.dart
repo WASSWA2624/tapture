@@ -3,6 +3,8 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 
 /// Helpful empty view: icon, headline, one-line explanation, optional
 /// next action (FE-SIMP-11). Screens do not leave blank space.
@@ -23,6 +25,7 @@ class AppEmptyState extends StatelessWidget {
     this.onAction,
     this.onIconTap,
     this.iconLabel,
+    this.compact = false,
   }) : assert(
          onIconTap == null || actionLabel == null,
          'the next action is the icon or a button, not both',
@@ -40,16 +43,20 @@ class AppEmptyState extends StatelessWidget {
   /// Label of the optional primary action. Null hides the button.
   final String? actionLabel;
 
-  /// Invoked by the optional primary action. Null hides the button.
+  /// Invoked by the optional primary action. Null hides the default button;
+  /// a labelled compact icon action remains visible and disabled.
   final VoidCallback? onAction;
 
   /// Makes the icon the next action, a labelled button with focus and hover
   /// feedback and at least a 48dp target (FE-A11Y-01). Null leaves a plain
-  /// icon, as does a null [iconLabel].
+  /// icon in the default view, or disables a labelled compact icon action.
   final VoidCallback? onIconTap;
 
   /// Name and tooltip of the icon when it is the action (FE-A11Y-02).
   final String? iconLabel;
+
+  /// Uses a wrapped dense row and a named icon action with natural height.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +65,34 @@ class AppEmptyState extends StatelessWidget {
     final VoidCallback? onAction = this.onAction;
     final VoidCallback? onIconTap = this.onIconTap;
     final String? iconLabel = this.iconLabel;
+    if (compact) {
+      final String? actionName = iconLabel ?? actionLabel;
+      return Semantics(
+        container: true,
+        label: headline,
+        child: SingleChildScrollView(
+          primary: false,
+          child: AppListTile(
+            dense: true,
+            wrapText: true,
+            title: headline,
+            subtitle: message,
+            leading: actionName == null
+                ? ExcludeSemantics(child: Icon(icon, color: colors.secondary))
+                : null,
+            trailing: actionName == null
+                ? null
+                : AppIconButton(
+                    key: const ValueKey<String>('empty-state-icon-action'),
+                    icon: icon,
+                    semanticLabel: actionName,
+                    tooltip: actionName,
+                    onPressed: onIconTap ?? onAction,
+                  ),
+          ),
+        ),
+      );
+    }
     return Semantics(
       container: true,
       label: headline,

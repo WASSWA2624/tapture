@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/captions.dart';
+import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/features/processing/data/processing_snapshot.dart';
 import 'package:tapture/features/processing/data/record_bundle.dart';
 
@@ -45,6 +46,39 @@ void main() {
       await fixture.job();
       expect(await revision(), before);
       expect(before, matches(RegExp(r'^[a-f0-9]{64}$')));
+    },
+  );
+
+  test(
+    'operator value and provenance changes invalidate an in-flight snapshot',
+    () async {
+      final String empty = await revision();
+      final RecordField field = (await insertRecordField(
+        fixture.db,
+        row: RecordFieldsCompanion(
+          recordId: Value<String>(fixture.record.id),
+          fieldKey: const Value<String>('serial'),
+          valueRaw: const Value<String>('SN1'),
+          source: const Value<String>('AUTO'),
+        ),
+        clock: fixture.clock,
+        deviceId: 'device-a',
+        ids: fixture.ids,
+      )).getOrThrow();
+      final String automatic = await revision();
+      expect(automatic, isNot(empty));
+      await writeRecordFieldEdit(
+        fixture.db,
+        id: field.id,
+        value: 'SN2',
+        clock: fixture.clock,
+        deviceId: 'device-a',
+      );
+      expect(await revision(), isNot(automatic));
+      expect(
+        (await fixture.db.select(fixture.db.recordFields).getSingle()).valueRaw,
+        'SN1',
+      );
     },
   );
 

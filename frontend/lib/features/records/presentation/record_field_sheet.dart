@@ -77,7 +77,12 @@ class RecordFieldSheet extends ConsumerWidget {
     final RecordEntry? entry = record.value;
     final AsyncValue<TemplateDef?> template = entry == null
         ? const AsyncLoading<TemplateDef?>()
-        : ref.watch(recordEditTemplateProvider(entry.templateId));
+        : ref.watch(
+            recordCapturedTemplateProvider((
+              id: entry.templateId,
+              version: entry.templateVersion,
+            )),
+          );
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         Space.x3,
