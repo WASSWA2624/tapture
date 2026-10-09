@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 
+import 'app_header_title.dart';
 import 'app_icon_button.dart';
 import 'app_overflow_menu.dart';
 import 'app_toolbar_scope.dart';
@@ -24,6 +25,8 @@ class AppPage extends StatelessWidget {
     required this.title,
     required this.body,
     this.subtitle,
+    this.headerTitle,
+    this.headerDetail,
     this.actions = const <Widget>[],
     this.overflow = const <AppOverflowAction>[],
     this.footer,
@@ -37,6 +40,12 @@ class AppPage extends StatelessWidget {
 
   /// App bar title.
   final String title;
+
+  /// Optional visible toolbar title; [title] remains the screen identity.
+  final String? headerTitle;
+
+  /// Optional secondary toolbar line, separate from the body [subtitle].
+  final String? headerDetail;
 
   /// Optional line under the title, inside the scrolling column so 200
   /// percent text scale cannot clip the bar (FE-A11Y-03).
@@ -143,10 +152,12 @@ class AppPage extends StatelessWidget {
                   : Space.x2,
               title: MediaQuery(
                 data: MediaQuery.of(context),
-                child: Text(
-                  title,
-                  softWrap: true,
-                  overflow: TextOverflow.visible,
+                child: AppHeaderTitle(
+                  title: headerTitle ?? title,
+                  detail: headerDetail,
+                  foregroundColor: Theme.of(
+                    context,
+                  ).appBarTheme.foregroundColor,
                 ),
               ),
               actions: <Widget>[
@@ -192,6 +203,8 @@ class AppPage extends StatelessWidget {
     }
     return _PageHeaderRegistration(
       title: title,
+      headerTitle: headerTitle,
+      headerDetail: headerDetail,
       actions: actions,
       overflow: overflow,
       child: page,
@@ -227,14 +240,24 @@ extension on AppPage {
             .toDouble();
     final TextPainter painter = TextPainter(
       text: TextSpan(
-        text: title,
+        text: headerTitle ?? title,
         style: Theme.of(context).appBarTheme.titleTextStyle ?? AppText.title,
       ),
       textDirection: Directionality.of(context),
       textScaler: MediaQuery.textScalerOf(context),
     )..layout(maxWidth: width);
-    final double height = painter.height + Space.x2;
+    double height = painter.height + Space.x2;
     painter.dispose();
+    final String? detail = headerDetail;
+    if (detail != null && detail.isNotEmpty) {
+      final TextPainter detailPainter = TextPainter(
+        text: TextSpan(text: detail, style: AppText.caption),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout(maxWidth: width);
+      height += detailPainter.height;
+      detailPainter.dispose();
+    }
     return height < minimum ? minimum : height;
   }
 
@@ -323,12 +346,16 @@ EdgeInsets _paddingFor(BuildContext context, {required bool inset}) {
 class _PageHeaderRegistration extends StatefulWidget {
   const _PageHeaderRegistration({
     required this.title,
+    required this.headerTitle,
+    required this.headerDetail,
     required this.actions,
     required this.overflow,
     required this.child,
   });
 
   final String title;
+  final String? headerTitle;
+  final String? headerDetail;
   final List<Widget> actions;
   final List<AppOverflowAction> overflow;
   final Widget child;
@@ -340,6 +367,7 @@ class _PageHeaderRegistration extends StatefulWidget {
 
 class _PageHeaderRegistrationState extends State<_PageHeaderRegistration> {
   ModalRoute<Object?>? _route;
+  State<ShellHeaderScope>? _headerScope;
 
   @override
   void initState() {
@@ -350,6 +378,7 @@ class _PageHeaderRegistrationState extends State<_PageHeaderRegistration> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _headerScope = context.findAncestorStateOfType<State<ShellHeaderScope>>();
     final ModalRoute<Object?>? next = ModalRoute.of(context);
     if (!identical(next, _route)) {
       _route?.animation?.removeStatusListener(_onStatus);
@@ -363,6 +392,8 @@ class _PageHeaderRegistrationState extends State<_PageHeaderRegistration> {
   void didUpdateWidget(_PageHeaderRegistration oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.title != widget.title ||
+        oldWidget.headerTitle != widget.headerTitle ||
+        oldWidget.headerDetail != widget.headerDetail ||
         !identical(oldWidget.actions, widget.actions) ||
         !identical(oldWidget.overflow, widget.overflow)) {
       _schedule();
@@ -395,6 +426,8 @@ class _PageHeaderRegistrationState extends State<_PageHeaderRegistration> {
         context,
         owner: this,
         title: widget.title,
+        headerTitle: widget.headerTitle,
+        headerDetail: widget.headerDetail,
         actions: widget.actions,
         overflow: widget.overflow,
       );
@@ -403,7 +436,10 @@ class _PageHeaderRegistrationState extends State<_PageHeaderRegistration> {
 
   @override
   void deactivate() {
-    ShellHeaderScope.release(context, this);
+    final State<ShellHeaderScope>? scope = _headerScope;
+    if (scope != null && scope.mounted) {
+      ShellHeaderScope.release(scope.context, this);
+    }
     super.deactivate();
   }
 

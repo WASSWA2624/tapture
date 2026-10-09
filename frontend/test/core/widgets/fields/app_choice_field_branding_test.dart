@@ -23,6 +23,38 @@ const List<Choice<String>> _providers = <Choice<String>>[
 void main() {
   setUpAll(ScreenFonts.load);
 
+  for (final (String, Brightness, bool) theme in <(String, Brightness, bool)>[
+    ('light', Brightness.light, false),
+    ('dark', Brightness.dark, false),
+    ('outdoor', Brightness.light, true),
+  ]) {
+    testWidgets('direct choice gallery ${theme.$1}', (tester) async {
+      await _pump(
+        tester,
+        ScreenMatrix(const Size(393, 852), 1, theme.$2, theme.$3),
+        sheet: true,
+      );
+      final Future<void> sheet = showAppChoiceSheet<String>(
+        tester.element(find.byType(AppChoiceField<String>)),
+        label: 'Provider',
+        options: _providers,
+        value: 'openai',
+        leadingBuilder: _leading,
+        onChanged: (_) {},
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(AppListTile), findsNWidgets(4));
+      await expectNoA11yIssues(tester);
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('goldens/task158_choice_direct_${theme.$1}.png'),
+      );
+      Navigator.of(tester.element(find.byType(AppListTile).first)).pop();
+      await tester.pumpAndSettle();
+      await sheet;
+    });
+  }
+
   testWidgets(
     'custom segment leading keeps artwork beside the selection tick',
     (tester) async {

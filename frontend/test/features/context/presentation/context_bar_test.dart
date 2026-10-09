@@ -12,8 +12,10 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/context/presentation/context_bar.dart';
+import 'package:tapture/features/context/presentation/context_picker_sheet.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/domain/setting_keys.dart';
 import 'package:tapture/features/settings/settings.dart' show SettingsStore;
@@ -30,6 +32,41 @@ import '../../projects/fakes/fake_project_repository.dart';
 
 void main() {
   setUpAll(ScreenFonts.load);
+  testWidgets(
+    'an explicit context overview retains its owner when the global project differs',
+    (tester) async {
+      final _Harness harness = await _pump(
+        tester,
+        showsEmptyLevels: false,
+        height: 800,
+      );
+      final BuildContext caller = tester.element(find.byType(ContextBar));
+      final ProviderContainer container = ProviderScope.containerOf(caller);
+      container.read(currentProjectProvider.notifier).open('p2');
+      await tester.pumpAndSettle();
+      final Future<void> flow = showContextValuesSheet(
+        context: caller,
+        projectId: 'p1',
+      );
+      await tester.pumpAndSettle();
+      final Finder row = find.byKey(
+        const ValueKey<String>('context-values-level-district'),
+      );
+      expect(tester.widget<AppListTile>(row).subtitle, 'Kampala');
+      await tester.tap(row);
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<ContextPickerSheet>(find.byType(ContextPickerSheet))
+            .projectId,
+        'p1',
+      );
+      Navigator.of(tester.element(find.byType(ContextPickerSheet))).pop();
+      await tester.pumpAndSettle();
+      await flow;
+      expect(_ok(await harness.repo.load('p2')).isEmpty, isTrue);
+    },
+  );
   testWidgets('on Capture every level shows, set or not, with Manage', (
     WidgetTester tester,
   ) async {

@@ -11,8 +11,8 @@ import 'package:tapture/features/templates/templates.dart';
 
 import 'capture_guide_state.dart';
 
-/// The guide action after paired compact targets, or beside them on wider
-/// windows, opening the template's complete photo and caption field labels.
+/// Opens the template's complete photo and caption guidance; new Capture
+/// uses the standalone action with its target choices in overflow.
 class CaptureGuideCard extends ConsumerWidget {
   /// Creates the row for [guide].
   const CaptureGuideCard({required this.guide, this.targets, super.key});

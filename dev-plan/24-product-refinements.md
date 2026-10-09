@@ -6602,6 +6602,8 @@ Follow `AGENTS.md`, every frontend rule and 001's Rules. No dependency, permissi
 
 For W6, `CaptureGuideCard.targets` is an optional existing selector widget. It uses the existing `ResponsivePair` to keep the project/template selectors paired and the guide beside them on medium/expanded widths; compact widths wrap the guide onto the next action line so scaled labels retain useful width. Standalone guide behavior and complete expanded content remain intact. This bounded feature composition implements the requested wrapping action row without another shared component or custom breakpoint.
 
+Task 158's approved D1 supersedes that W6 selector/guide composition on new Capture only: target and context commands move into overflow, the project/template become toolbar title/detail, and the guide uses its standalone action. The optional composition API and historical W6 evidence are retained; no unrelated acceptance or outstanding native/Chrome verification is closed by this supersession.
+
 The existing `AppDialog` scrolls its complete content when the viewport cannot contain it, retaining natural height for short content and its existing labels, actions and callbacks. This keeps Capture photo-removal decisions reachable at 200 percent text on short landscape viewports without a feature-specific dialog.
 
 The existing Records side pane shown beside saved Capture uses `AppListTile.wrapText` and natural row heights so complete titles/subtitles remain readable at 200 percent text. Its lazy builder, paging, selection, status and open behavior remain intact; the full Records list retains its fixed prototype and existing text behavior.
@@ -6846,3 +6848,114 @@ The requested compact defaults supersede task 003's 52dp control token and earli
 ### Evidence
 
 2026-10-09: clean starting tree at `f85517a2`. Existing shared rows reserve 72dp plus their divider, leading/trailing 48dp slots receive 12dp padding above and below, cards use 16dp padding on every edge, and expanded actions reserve 52dp. Multiple-choice triggers nest a 48dp content reservation inside field padding and add another 8dp around selected chips. The focused eight-root gate passes all 59 tests, including 12 new light/dark/outdoor × LTR/RTL geometry and 200-percent wrapping cases with unchanged accessibility checks. Standard rows measure 50dp including their 2dp divider; cards add 16dp total vertical padding; normal and expanded buttons use a 48dp minimum. Existing disabled/busy actions, separate trailing actions, sheet search/selection and 200-option multiple selection remain green. All 69 intended component golden generations and all 69 normal comparisons pass; all 18 three-theme gallery outputs were visually reviewed. Archive `2026-10-09-task157-310d9516f7504db3839d6b15a2da309d` under `%LOCALAPPDATA%/TaptureTestArchives/` preserves every image and relative-path/hash manifest (SHA-256 `41b9406e62e1625abff84c447722aa7dc6496839fb7f532bfdb846bc8495abc0`); every entry was reopened and verified before exact cleanup, leaving zero test PNGs. The explicit acceptance-source patch contains 14 roots and their 18-source helper closure; its temporary-index apply check passes without changing the repository index or ignore rules. Changed-source formatting and full frontend analysis pass (`No issues found`, 522.0s). Chrome at `http://localhost:5173/#/_gallery` measures a 50dp row, 48dp button and 48dp tappable card at normal text; at 200 percent, row/card height grows to 87dp/59dp. Both screenshots were visually reviewed. The running Cursor terminal server was preserved. Its external Roboto request failed with `ERR_CONNECTION_CLOSED`; readable fallback text renders, with no padding/layout exception. `python run-tools/build-or-update-deploys/android.py` succeeds (751.9s Gradle build); the canonical 177.7MB APK has SHA-256 `5ce660f3c782c6c446f2ab0a2983f2146cf8085c7e93b6e3dd6b24ef9d5bc116`. Installation, cold launch, project creation and cold restart pass on the owned read-only Android 16/API 36 emulator, with an empty crash buffer; its action measures 48dp and project row 49.9dp after pixel rounding. Runtime evidence is retained in `frontend/build/task157-web-runtime-evidence.json` and `task157-apk-runtime-evidence.json`. Generated native build metadata was archived and hash-verified before exact restoration. Tracker synchronization, `--check` and plan integrity pass; no whole-repository gate claim is made.
+
+## 158 — Resolve feedback archive 09102026-1524
+
+**Depends on** [001](01-orchestration.md), [002](02-foundation.md)
+
+**Implementation started:** Yes
+
+### Implement
+
+Follow [the approved archive prompt](../prompts/feedback-09102026-1524/001-resolve-capture-setup-feedback.md), W1–W4 in order. On 2026-10-09 the user answered “Proceed”, approving D1a (Capture setup in overflow, project/template header, bounded presentation supersession) and D2a (additive shared picker/header APIs). Extend the existing components and persistence paths; do not close the unfinished verification of tasks 003/006/011/012/153.
+
+### Files
+
+- `frontend/lib/core/widgets/fields/app_choice_field.dart`, `app_header_title.dart`, `app_page.dart`, `shell_header_scope.dart` and `gallery/widget_gallery_screen.dart`
+- `frontend/lib/app/widgets/status_line.dart`, `frontend/lib/app/nav_shell.dart`
+- `frontend/lib/features/capture/presentation/capture_screen.dart`, `capture_target_fields.dart`, `capture_guide_card.dart`
+- `frontend/lib/features/context/context.dart`, `presentation/context_values_sheet.dart`
+- `frontend/lib/core/copy/copy.dart`, localization catalogues and generated output
+- Affected choice/header/page/shell/Capture/context tests and offline integration tests named in the archive prompt
+- `prompts/feedback-09102026-1524/158-acceptance-sources.patch` and relative-path/SHA-256 manifest
+- `app-write-up.md`, owning plan contracts, this task and generated `dev-tracker.md`
+
+### Contract
+
+D2 adds `showAppChoiceSheet<T>` with the existing choice body/callback semantics, optional `headerTitle`/`headerDetail` on `AppPage` and shell chrome, and `AppHeaderTitle`. W4 exports only `showContextValuesSheet({required BuildContext context, required String projectId})` through the context barrel. D1 supersedes only new-Capture selector-row/context-bar placement and its two-tap context-change budget; other bars, record-edit locking, feedback screen identity, local-first writes, saved snapshots and raw evidence retain their contracts.
+
+### Definition of done
+
+- [x] W1: triggers/direct commands share searchable choices with unchanged matching, ordering, marking and geometry.
+- [x] W1: selection calls back once after dismissal; cancellation calls back zero times, including nullable values.
+- [x] W1: behavior/accessibility and intended three-theme gallery comparisons pass across the required reach.
+- [x] W2: root/nested header overrides work; null defaults and scrolling body subtitles retain existing behavior.
+- [x] W2: secondary detail remains readable, accessible and unclipped across the layout/text/theme matrix.
+- [x] W2: branch changes, rotation, offstage publication and disposal preserve header ownership, back/menu/offline controls.
+- [x] W2: shared behavior and intended header gallery comparisons pass.
+- [x] W3: project/template selectors appear only in overflow on ordinary new Capture; recovery controls remain available.
+- [x] W3: effective project/resolved template names update without stale names, IDs or feedback identity changes.
+- [x] W3: no-project/no-template recovery and offline raw capture work.
+- [x] W3: picker cancellation preserves drafts; switching projects retains durable separate drafts and template precedence/pins.
+- [x] W3: guidance, media/caption/audio, Manual form, import, saves and locked saved-record edits retain behavior.
+- [ ] W3: native/Chrome production-shell matrix and intended Capture comparisons pass; FBK0000208 and target part of FBK0000207 resolve.
+- [x] W4: new Capture omits context trails; overflow reaches current context/pin/setup/preset actions.
+- [x] W4: project-bound overview shows complete ordered labels/values, explicit pins and empty/loading/failure states.
+- [x] W4: existing recent/search/free-text/no-op/pin-clear/cascade accept/decline behavior passes.
+- [x] W4: stale selection cannot edit another project; failed writes retain input; committed context reloads after restart.
+- [x] W4: draft/subsequent-capture inheritance updates while saved raw evidence, snapshots, audit and media paths remain intact.
+- [x] W4: other context bars, record edits, maintenance and offline capture retain behavior; shutter/save gains no taps.
+- [ ] W4: presentation, repository-backed offline flow and intended comparisons pass; owning documentation agrees and FBK0000207 resolves.
+- [x] Localization generation/checks, changed-source formatting, frontend analysis and affected architecture tests pass.
+- [x] Exact ignored acceptance sources/helper closure and manifest are delivered and apply to the recorded Git baseline; image evidence is hash-preserved externally with zero test PNGs at delivery.
+- [x] Tracker synchronization, `--check` and plan integrity pass; outstanding verification is accurately recorded.
+
+### Evidence
+
+2026-10-09 baseline: clean `d921abb0`; 41 focused choice/page/context tests pass, while `context_screens_test.dart`'s three-level drag reorder expects `[c, a, b]` and produces `[a, c, b]`, also when isolated. Tracker and plan integrity checks pass. Full baseline analysis passes (`No issues found`, 394.1s). No test PNGs are present. The baseline failure is retained as a failure, not an acceptance waiver.
+
+Implementation evidence: the affected choice/header/Capture/controller/guidance/offline/architecture run passes 1,179 tests and retains twelve archived branded-choice comparison failures. The shared shell/header suite passes all 134 tests. The final context presentation run passes 413 tests and retains only the baseline hierarchy drag failure. Additional page/scope/record-edit/context contracts pass 51 tests and retain the legacy protected-field override failure. The new draft/media cancellation and stale-template regressions pass; four real-database offline flows verify committed context reload, cascade/pin changes, preserved earlier records/photos/audit rows and zero outbound/AI calls. Full frontend analysis passes (`No issues found`, 672.0s); final changed-test analysis also passes (312.2s), and all 25 changed non-generated Dart sources pass formatting.
+
+The full native production-shell run passes 1,370 cases and initially fails thirty new keyboard-helper cases. Correcting popup arrow-key traversal and retaining the modal focus scope makes all thirty pass on rerun. A final mounted-context guard is separately verified by ten production setup-flow cases. These are combined coverage, not a claim that the original full run was green. Chrome compilation succeeds, but tests cannot initialize: the installed Windows Flutter 3.44.6 server returns 404 for existing CanvasKit assets; supplying only the unchanged SDK renderer files reveals a speech-readiness module-initialization error. The unchanged baseline production-shell fixture reproduces the same renderer 404 and speech module-initialization error; a minimal application-import probe passes with the renderer workaround. No Chrome acceptance is claimed. An isolated `d921abb0` checkout proves all twelve branded-choice mismatches have identical actual-image hashes and reproduces the read-only override failure. Tasks 159–162 retain the drag, archived-choice, protected-field and browser-bootstrap findings. The required Chrome pass and affected baseline failures keep this task **Partially complete**.
+
+Delivery evidence: the acceptance artifact covers 20 roots, 54 source files and all seven ignored sources with recursive relative-import helpers. Applying its patch to `d921abb03826d2e9f08217013f753330d6289ef5` in a temporary index reconstructs every ignored source exactly and leaves the real index unchanged. Source and patch hashes are verified. The final external archive `2026-10-09-task158-verification-dffa31b32de44feaaa3e21a0e4dd1f81/images.zip` contains 125 images with verified relative paths, lengths and SHA-256 hashes (ZIP SHA-256 `511bee6b8af405bf7d3ff7ff2fac100d1c55609b4d45fcbad367f15aa42f7229`). After reopening and verifying the archive, 118 exact test-image paths were removed; zero PNGs remain under `frontend/test`. Originals, intermediate images and failure evidence remain preserved externally. The source manifest records both final and intermediate archives. Tracker synchronization, `--check` and plan integrity pass for all 27 steps and 162 tasks; the required Chrome and affected baseline checks remain open.
+
+### Intended image updates
+
+All 34 outputs below were regenerated only for the approved presentation changes and visually inspected. Normal comparisons pass for all 34 images: 21 focused gallery/composition outputs and 13 production-shell outputs. Originals/intermediate outputs are hash-preserved externally; the delivery tree contains no test PNGs.
+
+**W1**
+
+- `frontend/test/core/widgets/fields/goldens/task158_choice_direct_dark.png`
+- `frontend/test/core/widgets/fields/goldens/task158_choice_direct_light.png`
+- `frontend/test/core/widgets/fields/goldens/task158_choice_direct_outdoor.png`
+
+**W2**
+
+- `frontend/test/core/widgets/goldens/task158_header_dark.png`
+- `frontend/test/core/widgets/goldens/task158_header_light.png`
+- `frontend/test/core/widgets/goldens/task158_header_outdoor.png`
+
+**W3**
+
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_compact_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_medium_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_medium_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_composition_medium_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_compact_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_compact_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_compact_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_medium_dark.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_medium_light.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_medium_outdoor.png`
+- `frontend/test/features/capture/presentation/goldens/capture_workflow_reported_light.png`
+
+**W4**
+
+- `frontend/test/features/context/presentation/goldens/task158_context_overview_dark.png`
+- `frontend/test/features/context/presentation/goldens/task158_context_overview_light.png`
+- `frontend/test/features/context/presentation/goldens/task158_context_overview_outdoor.png`

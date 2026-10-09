@@ -3913,6 +3913,18 @@
     "description": "Empty tray body — evidence is the only requirement."
   },
   "captureProjectLabel": "Prójéct···",
+  "captureChangeProject": "Chángé prójéct·····",
+  "@captureChangeProject": {
+    "description": "Capture overflow command opening the current project selector."
+  },
+  "captureChangeTemplate": "Chángé témpláté······",
+  "@captureChangeTemplate": {
+    "description": "Capture overflow command opening the selected project's template selector."
+  },
+  "captureContextValues": "Cóntéxt válúés·····",
+  "@captureContextValues": {
+    "description": "Capture overflow command opening the current project's editable context values and pins."
+  },
   "@captureProjectLabel": {
     "description": "Project selector on the capture surface."
   },
@@ -12726,6 +12738,14 @@
     }
   },
   "gallerySampleName": "Námé··",
+  "galleryHeaderLongTitle": "Cómmúníty fíéld mónítóríng prójéct············",
+  "@galleryHeaderLongTitle": {
+    "description": "Fictional long primary header sample in the developer widget gallery."
+  },
+  "galleryHeaderLongDetail": "Wátér ínspéctíón ánd máínténáncé témpláté···············",
+  "@galleryHeaderLongDetail": {
+    "description": "Fictional long secondary header sample in the developer widget gallery."
+  },
   "@gallerySampleName": {
     "description": "Sample interface name in the component gallery, not actual user data."
   },

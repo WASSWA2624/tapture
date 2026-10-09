@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -26,6 +27,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
+import 'package:tapture/core/widgets/app_header_title.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_ink_picker.dart';
@@ -535,6 +537,26 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         child: Text(localCopy.settingsStorageTitle, style: AppText.bodyStrong),
       ),
       const SizedBox(height: Space.x3),
+      AppHeaderTitle(
+        title: localCopy.gallerySampleName,
+        titleStyle: AppText.title,
+        foregroundColor: context.colors.onSurface,
+      ),
+      const SizedBox(height: Space.x3),
+      AppHeaderTitle(
+        title: localCopy.gallerySampleName,
+        detail: localCopy.gallerySampleCaption,
+        titleStyle: AppText.title,
+        foregroundColor: context.colors.onSurface,
+      ),
+      const SizedBox(height: Space.x3),
+      AppHeaderTitle(
+        title: localCopy.galleryHeaderLongTitle,
+        detail: localCopy.galleryHeaderLongDetail,
+        titleStyle: AppText.title,
+        foregroundColor: context.colors.onSurface,
+      ),
+      const SizedBox(height: Space.x3),
       // The recording controls in every phase.
       for (final AppRecordingPhase phase
           in AppRecordingPhase.values) ...<Widget>[
@@ -842,6 +864,22 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         options: _tags,
         value: 'water',
         onChanged: (_) {},
+      ),
+      const SizedBox(height: Space.x4),
+      Builder(
+        builder: (BuildContext context) => AppButton(
+          label: localCopy.gallerySampleFuel,
+          variant: AppButtonVariant.secondary,
+          onPressed: () => unawaited(
+            showAppChoiceSheet<String>(
+              context,
+              label: localCopy.gallerySampleFuel,
+              options: _tags,
+              value: 'water',
+              onChanged: (_) {},
+            ),
+          ),
+        ),
       ),
       const SizedBox(height: Space.x4),
       AppChoiceField<String>(

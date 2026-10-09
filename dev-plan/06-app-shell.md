@@ -163,6 +163,7 @@ class AppOverflowMenu extends StatelessWidget {
 }
 
 class AppPage {
+  final String? headerTitle, headerDetail; // task 158: optional visible override/detail
   final List<Widget> actions;          // icon-only; no visible text label
   final List<AppOverflowAction> overflow; // trailing ⋮, omitted when empty
 }
@@ -176,6 +177,8 @@ connectivityServiceProvider, networkStateProvider, offlineByChoiceProvider,
 statusProjectLabelProvider, statusContextProvider, statusTemplateLabelProvider,
 unprocessedCountProvider, networkOnlineOverride();
 ```
+
+Task 158's approved D2 carries nullable `headerTitle`/`headerDetail` through `ShellHeaderScope.publish` and `chromeOf`, comparison and release. Explicit title overrides apply on root and nested routes; null fields preserve existing title precedence. `AppHeaderTitle({required String title, String? detail, TextStyle? titleStyle, Color? foregroundColor, Key? key})` renders both standalone and shell titles with wrapping secondary `AppText.caption`. `AppPage.title` remains screen identity and `subtitle` remains scrolling body content. This extends the contract without closing this task's outstanding acceptance.
 
 `appGuards` takes `Ref`, not `WidgetRef` — `WidgetRef` is sealed and needs a widget.
 

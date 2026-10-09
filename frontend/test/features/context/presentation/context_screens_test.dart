@@ -12,6 +12,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
+import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/context/presentation/context_bar.dart';
@@ -113,6 +114,77 @@ void main() {
     expect(find.textContaining('hier-write'), findsWidgets);
     expect((await repo.load('p1')).valueOrNull?.levels, hasLength(1));
   });
+
+  testWidgets(
+    'context overview opens the prefilled editor and retains failed input',
+    (tester) async {
+      final FakeTemplateRepository templates = FakeTemplateRepository();
+      addTearDown(templates.dispose);
+      await repo.saveHierarchy('p1', const <ContextLevel>[
+        ContextLevel(fieldKey: 'site', order: 0, label: 'Site'),
+      ]);
+      await repo.setLevelValue(
+        projectId: 'p1',
+        fieldKey: 'site',
+        value: 'North',
+      );
+      await tester.pumpWidget(
+        wrap(
+          Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () =>
+                    showContextValuesSheet(context: context, projectId: 'p1'),
+                child: const Text('Open values'),
+              ),
+            ),
+          ),
+          extra: <Override>[
+            templateRepositoryProvider.overrideWithValue(templates),
+            projectSettingsStoreProvider.overrideWithValue(
+              SettingsStore.fake(),
+            ),
+          ],
+        ),
+      );
+      await tester.tap(find.text('Open values'));
+      await tester.pumpAndSettle();
+      expect(find.text('North'), findsOneWidget);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('context-values-level-site')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(AppBottomSheet), findsOneWidget);
+      expect(
+        tester
+            .widget<ContextPickerSheet>(find.byType(ContextPickerSheet))
+            .currentValue,
+        'North',
+      );
+      repo.valueFailure = const StorageFailure(
+        message: 'Context write refused',
+        recoveryAction: 'retry',
+      );
+      await tester.enterText(find.byType(TextField), 'South');
+      await tester.tap(
+        find.widgetWithText(AppPrimaryAction, Copy.contextUseValue),
+      );
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Context write refused'), findsWidgets);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        'South',
+      );
+      expect((await repo.load('p1')).valueOrNull!.values['site'], 'North');
+      repo.valueFailure = null;
+      await tester.tap(
+        find.widgetWithText(AppPrimaryAction, Copy.contextUseValue),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(ContextPickerSheet), findsNothing);
+      expect((await repo.load('p1')).valueOrNull!.values['site'], 'South');
+    },
+  );
 
   testWidgets('a three-level hierarchy reorder persists', (
     WidgetTester tester,

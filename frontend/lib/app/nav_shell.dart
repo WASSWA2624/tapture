@@ -104,11 +104,9 @@ class _Chrome extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
-                            ContextBar(
-                              showsEmptyLevels:
-                                  shellDestinations[index].path ==
-                                  RoutePaths.captureRoot,
-                            ),
+                            if (shellDestinations[index].path !=
+                                RoutePaths.captureRoot)
+                              const ContextBar(),
                             const OfflineBanner(),
                           ],
                         ),

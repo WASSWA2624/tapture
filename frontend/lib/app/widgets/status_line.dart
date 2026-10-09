@@ -13,6 +13,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
+import 'package:tapture/core/widgets/app_header_title.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
@@ -24,13 +25,14 @@ import 'package:tapture/features/processing/presentation/queue_providers.dart';
 import 'package:tapture/features/quality/presentation/verification_session.dart';
 import 'package:tapture/features/settings/presentation/offline_switch.dart';
 
-/// Permanent one-line strip: the one visible status line (§56.13).
+/// Permanent toolbar: the one visible status line (§56.13).
 ///
 /// Every route shows the screen name. A branch root has no back control.
 /// Nested routes add back, then that page's actions (FE-CONS-10). While
 /// the app is offline a network control says whether that is the
 /// operator's choice or a lost radio. Processing is reached through the
-/// project menu. Context sits in the context bar below this line.
+/// project menu. Capture opens context from overflow; other branches retain
+/// the context bar below this line.
 class StatusLine extends ConsumerWidget {
   /// Creates the status line.
   const StatusLine({super.key});
@@ -57,13 +59,17 @@ class StatusLine extends ConsumerWidget {
     );
     final ({
       String title,
+      String? headerTitle,
+      String? headerDetail,
       List<Widget> actions,
       List<AppOverflowAction> overflow,
     })?
     chrome = ShellHeaderScope.chromeOf(context);
-    final String title = !root && chrome != null && chrome.title.isNotEmpty
-        ? chrome.title
-        : fallback;
+    final String title =
+        chrome?.headerTitle ??
+        (!root && chrome != null && chrome.title.isNotEmpty
+            ? chrome.title
+            : fallback);
     final AppOverflowAction? trial = trialReportAction(context);
     final List<AppOverflowAction> overflow = <AppOverflowAction>[
       ...?chrome?.overflow,
@@ -130,9 +136,11 @@ class StatusLine extends ConsumerWidget {
                   ],
                   Expanded(
                     flex: 2,
-                    child: Text(
-                      title,
-                      style: AppText.bodyStrong.copyWith(color: ink),
+                    child: AppHeaderTitle(
+                      title: title,
+                      detail: chrome?.headerDetail,
+                      titleStyle: AppText.bodyStrong,
+                      foregroundColor: ink,
                     ),
                   ),
                   const _NetworkStatus(),

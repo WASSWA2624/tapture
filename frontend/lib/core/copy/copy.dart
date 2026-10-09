@@ -2533,6 +2533,15 @@ abstract final class Copy {
   /// Project selector on the capture surface.
   static String get captureProjectLabel => _english.captureProjectLabel;
 
+  /// Opens the project selector from Capture's overflow menu.
+  static String get captureChangeProject => _english.captureChangeProject;
+
+  /// Opens the template selector from Capture's overflow menu.
+  static String get captureChangeTemplate => _english.captureChangeTemplate;
+
+  /// Opens the current project's editable context overview.
+  static String get captureContextValues => _english.captureContextValues;
+
   /// Capture is open and projects exist, but none is selected.
   static String get captureChooseProject => _english.captureChooseProject;
 
@@ -7833,6 +7842,12 @@ abstract final class Copy {
 
   /// Component-gallery sample Name.
   static String get gallerySampleName => _english.gallerySampleName;
+
+  /// Long sample primary header text for the widget gallery.
+  static String get galleryHeaderLongTitle => _english.galleryHeaderLongTitle;
+
+  /// Long sample secondary header text for the widget gallery.
+  static String get galleryHeaderLongDetail => _english.galleryHeaderLongDetail;
 
   /// Component-gallery sample Caption.
   static String get gallerySampleCaption => _english.gallerySampleCaption;

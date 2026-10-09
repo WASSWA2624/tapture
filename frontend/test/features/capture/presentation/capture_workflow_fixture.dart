@@ -13,7 +13,6 @@ import 'package:tapture/app/feedback_host.dart';
 import 'package:tapture/app/locale_controller.dart';
 import 'package:tapture/app/nav_shell.dart';
 import 'package:tapture/app/route_paths.dart';
-import 'package:tapture/app/theme/dimensions.dart' show Space;
 import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -24,7 +23,9 @@ import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/network/network.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_chip.dart';
+import 'package:tapture/core/widgets/app_header_title.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
@@ -32,7 +33,6 @@ import 'package:tapture/core/widgets/error_boundary.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/fields/field_editor.dart';
-import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/capture_session_key.dart';
@@ -83,6 +83,55 @@ void registerCaptureWorkflowTests({required bool browser}) {
             TargetPlatform.linux,
           },
   );
+  testWidgets(
+    'nested Capture binds its header to the route and releases it between branches',
+    (tester) async {
+      await CaptureWorkflowFixture.open(
+        tester,
+        cell: const ScreenMatrix(Size(393, 886), 1, Brightness.light, false),
+        nestedCapture: true,
+      );
+      final ProviderContainer container = ProviderScope.containerOf(
+        tester.element(find.byType(CaptureScreen)),
+      );
+      container.read(currentProjectProvider.notifier).open('different-project');
+      await tester.pumpAndSettle();
+      AppHeaderTitle header() => tester.widget<AppHeaderTitle>(
+        find.descendant(
+          of: find.byType(StatusLine),
+          matching: find.byType(AppHeaderTitle),
+        ),
+      );
+      expect(header().title, 'Field project');
+      expect(header().detail, 'Assets');
+      expect(
+        tester
+            .widget<AppPage>(
+              find.byKey(const ValueKey<String>('route-capture')),
+            )
+            .title,
+        Copy.navCapture,
+      );
+      final GoRouter router = container.read(routerProvider);
+      router.go(RoutePaths.projects);
+      await tester.pumpAndSettle();
+      await revealScrollableBody(
+        tester,
+        find.byKey(const ValueKey<String>('route-projects')),
+      );
+      await tester.pumpAndSettle();
+      expect(header().title, Copy.navProjects);
+      expect(header().detail, isNull);
+      container.read(currentProjectProvider.notifier).open('p1');
+      router.go(RoutePaths.captureRoot);
+      await tester.pumpAndSettle();
+      expect(header().title, 'Field project');
+      expect(header().detail, 'Assets');
+      expect(find.byType(ContextBar), findsNothing);
+    },
+    variant: platforms,
+  );
+
   testWidgets(
     'RTL adapter preserves router configuration and builder subtree',
     (WidgetTester tester) async {
@@ -240,87 +289,14 @@ void registerCaptureWorkflowTests({required bool browser}) {
                     ? TextDirection.rtl
                     : null,
               );
-          final Finder project = find.byKey(
-            const ValueKey<String>('capture-project-field'),
-          );
-          final Finder template = find.byKey(
-            const ValueKey<String>('capture-template-field'),
-          );
           final Finder guide = find.byKey(
             const ValueKey<String>('capture-guide-toggle'),
           );
-          await revealScrollableBody(tester, project);
-          final Rect projectRect = tester.getRect(project);
-          final Rect templateRect = tester.getRect(template);
-          final Rect guideRect = tester.getRect(guide);
-          final Rect groupRect = tester.getRect(find.byType(CaptureGuideCard));
-          expect(
-            templateRect.top,
-            closeTo(projectRect.top, precisionErrorTolerance),
-          );
-          final bool compact =
-              SizeClass.fromWidth(cell.size.width) == SizeClass.compact;
-          if (compact) {
-            expect(
-              guideRect.top,
-              closeTo(
-                (projectRect.bottom > templateRect.bottom
-                        ? projectRect.bottom
-                        : templateRect.bottom) +
-                    Space.x2,
-                precisionErrorTolerance,
-              ),
-            );
-            expect(
-              projectRect.width + Space.x2 + templateRect.width,
-              closeTo(groupRect.width, precisionErrorTolerance),
-            );
-          } else {
-            expect(
-              guideRect.top,
-              closeTo(projectRect.top, precisionErrorTolerance),
-            );
-          }
-          if (locale.countryCode == 'XA') {
-            expect(projectRect.left, greaterThanOrEqualTo(templateRect.right));
-            if (compact) {
-              expect(
-                projectRect.right,
-                closeTo(groupRect.right, precisionErrorTolerance),
-              );
-              expect(
-                templateRect.left,
-                closeTo(groupRect.left, precisionErrorTolerance),
-              );
-              expect(
-                guideRect.right,
-                closeTo(groupRect.right, precisionErrorTolerance),
-              );
-            } else {
-              expect(templateRect.left, greaterThanOrEqualTo(guideRect.right));
-            }
-          } else {
-            expect(projectRect.right, lessThanOrEqualTo(templateRect.left));
-            if (compact) {
-              expect(
-                projectRect.left,
-                closeTo(groupRect.left, precisionErrorTolerance),
-              );
-              expect(
-                templateRect.right,
-                closeTo(groupRect.right, precisionErrorTolerance),
-              );
-              expect(
-                guideRect.left,
-                closeTo(groupRect.left, precisionErrorTolerance),
-              );
-            } else {
-              expect(templateRect.right, lessThanOrEqualTo(guideRect.left));
-            }
-          }
           final LocalizedCopy copy = Copy.of(
             tester.element(find.byType(CaptureScreen)),
           );
+          await _verifySetupCommands(tester, fixture, copy);
+          await revealScrollableBody(tester, guide);
           _expectProportionalLabel(tester, guide, copy.captureGuideTitle);
           final SemanticsHandle semantics = tester.ensureSemantics();
           try {
@@ -368,11 +344,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
           );
           expect(find.byType(NavShell), findsOneWidget);
           expect(find.byType(StatusLine), findsOneWidget);
-          expect(find.byType(ContextBar), findsOneWidget);
-          final Finder pins = find.byKey(
-            const ValueKey<String>('context-bar-pins'),
-          );
-          expect(pins, findsOneWidget);
+          expect(find.byType(ContextBar), findsNothing);
           await revealScrollableBody(tester, find.byType(PhotoTray));
           expect(find.byType(PhotoTray), findsOneWidget);
           final LocalizedCopy localCopy = Copy.of(
@@ -381,32 +353,8 @@ void registerCaptureWorkflowTests({required bool browser}) {
           _expectAppDirection(tester, locale);
           final SemanticsHandle semantics = tester.ensureSemantics();
           try {
+            await _verifySetupCommands(tester, fixture, localCopy);
             for (final (Finder control, bool header) in <(Finder, bool)>[
-              (
-                find.byKey(
-                  const ValueKey<String>('context-bar-level-district'),
-                ),
-                true,
-              ),
-              (
-                find.byKey(
-                  const ValueKey<String>('context-bar-level-facility'),
-                ),
-                true,
-              ),
-              (find.widgetWithText(AppChip, localCopy.contextManage), true),
-              (
-                find.byKey(const ValueKey<String>('context-bar-pin-operator')),
-                true,
-              ),
-              (
-                find.byKey(const ValueKey<String>('capture-project-field')),
-                false,
-              ),
-              (
-                find.byKey(const ValueKey<String>('capture-template-field')),
-                false,
-              ),
               (
                 find.byKey(const ValueKey<String>('capture-guide-toggle')),
                 false,
@@ -683,32 +631,13 @@ void registerCaptureWorkflowTests({required bool browser}) {
           final String owner = fixture.session(tester).id;
           final SemanticsHandle semantics = tester.ensureSemantics();
           try {
+            await _verifySetupCommands(
+              tester,
+              fixture,
+              localCopy,
+              keyboard: true,
+            );
             for (final (Finder control, bool header) in <(Finder, bool)>[
-              (
-                find.byKey(
-                  const ValueKey<String>('context-bar-level-district'),
-                ),
-                true,
-              ),
-              (
-                find.byKey(
-                  const ValueKey<String>('context-bar-level-facility'),
-                ),
-                true,
-              ),
-              (find.widgetWithText(AppChip, localCopy.contextManage), true),
-              (
-                find.byKey(const ValueKey<String>('context-bar-pin-operator')),
-                true,
-              ),
-              (
-                find.byKey(const ValueKey<String>('capture-project-field')),
-                false,
-              ),
-              (
-                find.byKey(const ValueKey<String>('capture-template-field')),
-                false,
-              ),
               (
                 find.byKey(const ValueKey<String>('capture-guide-toggle')),
                 false,
@@ -1174,7 +1103,9 @@ Future<void> _verifyReachableControl(
     tester,
     targets: tall ? null : <Finder>[control],
     reachableTargets: tall ? <Finder>[control] : null,
-    within: find.byType(NavShell),
+    within: find.byType(AppBottomSheet).evaluate().isNotEmpty
+        ? find.byType(AppBottomSheet)
+        : find.byType(NavShell),
   );
   expect(
     issues,
@@ -1198,9 +1129,184 @@ bool _focusIsInside(Finder control) {
   return inside;
 }
 
-Future<void> _focusUsingTab(WidgetTester tester, Finder control) async {
-  FocusManager.instance.primaryFocus?.unfocus();
-  await tester.pumpAndSettle();
+Future<void> _verifySetupCommands(
+  WidgetTester tester,
+  CaptureWorkflowFixture fixture,
+  LocalizedCopy copy, {
+  bool keyboard = false,
+}) async {
+  expect(find.byType(ContextBar), findsNothing);
+  expect(
+    find.byKey(const ValueKey<String>('capture-project-field')),
+    findsNothing,
+  );
+  expect(
+    find.byKey(const ValueKey<String>('capture-template-field')),
+    findsNothing,
+  );
+  final AppPage page = tester.widget<AppPage>(
+    find.byKey(const ValueKey<String>('route-capture')),
+  );
+  expect(page.title, copy.navCapture);
+  expect(page.headerTitle, 'Field project');
+  expect(page.headerDetail, 'Assets');
+  final AppHeaderTitle header = tester.widget<AppHeaderTitle>(
+    find.descendant(
+      of: find.byType(StatusLine),
+      matching: find.byType(AppHeaderTitle),
+    ),
+  );
+  expect(header.title, 'Field project');
+  expect(header.detail, 'Assets');
+  final CaptureSession before = fixture.session(tester);
+  final Finder menu = find.descendant(
+    of: find.byType(StatusLine),
+    matching: find.byKey(const ValueKey<String>('app-page-overflow')),
+  );
+  expect(menu, meetsTapTarget());
+  final List<(String, String)> commands = <(String, String)>[
+    ('capture-change-project', copy.captureChangeProject),
+    ('capture-change-template', copy.captureChangeTemplate),
+    ('capture-context-values', copy.captureContextValues),
+  ];
+  for (final (String key, String label) in commands) {
+    if (keyboard) {
+      await _focusUsingTab(tester, menu);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+    } else {
+      await _tapPainted(tester, menu);
+    }
+    final AppOverflowMenu overflow = tester.widget<AppOverflowMenu>(menu);
+    expect(
+      overflow.items.take(3).map((AppOverflowAction action) => action.key),
+      commands.map(((String, String) command) => ValueKey<String>(command.$1)),
+    );
+    final Finder command = find.byKey(ValueKey<String>(key));
+    await tester.ensureVisible(command);
+    await tester.pumpAndSettle();
+    await _verifyReachableControl(tester, command);
+    expect(
+      find.descendant(of: command, matching: find.text(label)),
+      findsOneWidget,
+    );
+    await _verifyReadableEnds(tester, command);
+    _expectProportionalLabel(tester, command, label);
+    final SemanticsNode node = tester.getSemantics(command);
+    expect(node.label, contains(label));
+    expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+    if (keyboard) {
+      // Native popup menus traverse commands with arrow keys.
+      final int entries = tester
+          .widgetList(find.byType(PopupMenuItem<int>))
+          .length;
+      for (
+        int index = 0;
+        index <= entries && !_focusIsInside(command);
+        index++
+      ) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+        await tester.pumpAndSettle();
+      }
+      expect(
+        _focusIsInside(command),
+        isTrue,
+        reason: 'Arrow keys must reach $command',
+      );
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+    } else {
+      await _tapPainted(tester, command);
+    }
+    expect(find.byType(AppBottomSheet), findsOneWidget);
+    if (key == 'capture-context-values') {
+      for (final String fieldKey in <String>['district', 'facility']) {
+        final Finder row = find.byKey(
+          ValueKey<String>('context-values-level-$fieldKey'),
+        );
+        await tester.ensureVisible(row);
+        await tester.pumpAndSettle();
+        await _verifyReachableControl(tester, row);
+        await _verifyReadableEnds(tester, row);
+      }
+      final Finder pin = find.byKey(
+        const ValueKey<String>('context-values-pin-operator'),
+      );
+      await tester.ensureVisible(pin);
+      await tester.pumpAndSettle();
+      await _verifyReachableControl(tester, pin);
+      expect(tester.widget<AppListTile>(pin).leading, isA<Icon>());
+      for (final String action in <String>['manage', 'presets', 'pins']) {
+        final Finder row = find.byKey(
+          ValueKey<String>('context-values-$action'),
+        );
+        await tester.ensureVisible(row);
+        await tester.pumpAndSettle();
+        await _verifyReachableControl(tester, row);
+        if (keyboard) await _focusUsingTab(tester, row, reset: false);
+      }
+    } else {
+      expect(find.byType(AppSearchField), findsOneWidget);
+      expect(
+        Directionality.of(tester.element(find.byType(AppSearchField))),
+        Directionality.of(tester.element(find.byType(CaptureScreen))),
+      );
+      await tester.enterText(
+        find.descendant(
+          of: find.byType(AppSearchField),
+          matching: find.byType(TextField),
+        ),
+        key == 'capture-change-project' ? 'Field' : 'Assets',
+      );
+      await tester.pump(AppConstants.interaction.debounce);
+      await tester.pumpAndSettle();
+      // The choice ListView's index owns this row's semantic node.
+      final Finder option = find.widgetWithText(
+        AppListTile,
+        key == 'capture-change-project' ? 'Field project' : 'Assets',
+      );
+      await tester.scrollUntilVisible(
+        option,
+        80,
+        scrollable: find
+            .descendant(
+              of: find.byType(AppBottomSheet),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.pumpAndSettle();
+      expect(option, findsOneWidget);
+      final Finder row = find.ancestor(
+        of: option,
+        matching: find.byType(IndexedSemantics),
+      );
+      expect(row, findsOneWidget);
+      await tester.ensureVisible(row);
+      await _verifyReachableControl(tester, row);
+    }
+    expect(ScreenProbe.layoutIssues(tester), isEmpty);
+    Navigator.of(tester.element(find.byType(AppBottomSheet))).pop();
+    await tester.pumpAndSettle();
+    final CaptureSession after = fixture.session(tester);
+    expect(after.id, before.id);
+    expect(after.projectId, before.projectId);
+    expect(after.templateId, before.templateId);
+    expect(after.photos, before.photos);
+    expect(after.captions, before.captions);
+    expect(after.contextSnapshot, before.contextSnapshot);
+  }
+}
+
+Future<void> _focusUsingTab(
+  WidgetTester tester,
+  Finder control, {
+  bool reset = true,
+}) async {
+  if (reset) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+  }
   final int available = FocusManager.instance.rootScope.descendants
       .where((FocusNode node) => node.canRequestFocus && !node.skipTraversal)
       .length;
@@ -1426,7 +1532,12 @@ Future<void> _verifyCompleteActionLabel(
           widget.text.toPlainText(includeSemanticsLabels: false) == label,
     ),
   );
-  expect(text, findsOneWidget, reason: 'The painted label must be complete');
+  expect(
+    text,
+    findsOneWidget,
+    reason:
+        'The painted label $label must be complete: ${tester.widgetList<RichText>(find.descendant(of: control, matching: find.byType(RichText))).map((RichText text) => text.text.toPlainText()).toList()}',
+  );
   final RenderParagraph paragraph = tester.renderObject<RenderParagraph>(text);
   expect(paragraph.didExceedMaxLines, isFalse);
   _expectProportionalLabel(tester, control, label);
@@ -1744,6 +1855,7 @@ final class CaptureWorkflowFixture {
     TextStore? store,
     List<TemplateDef>? shownTemplates,
     CaptureSession? savedRecord,
+    bool nestedCapture = false,
     List<Override> extraOverrides = const <Override>[],
   }) async {
     tester.view.devicePixelRatio = 1;
@@ -1893,7 +2005,9 @@ final class CaptureWorkflowFixture {
     final GoRouter router = container.read(routerProvider);
     router.go(
       savedRecord == null
-          ? RoutePaths.captureRoot
+          ? nestedCapture
+                ? RoutePaths.projectCapture('p1')
+                : RoutePaths.captureRoot
           : RoutePaths.projectRecordEdit(
               savedRecord.projectId,
               savedRecord.recordId!,

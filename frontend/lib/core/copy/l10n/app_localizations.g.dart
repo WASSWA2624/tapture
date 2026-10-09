@@ -4806,6 +4806,24 @@ abstract class AppLocalizations {
   /// **'Project'**
   String get captureProjectLabel;
 
+  /// Capture overflow command opening the current project selector.
+  ///
+  /// In en, this message translates to:
+  /// **'Change project'**
+  String get captureChangeProject;
+
+  /// Capture overflow command opening the selected project's template selector.
+  ///
+  /// In en, this message translates to:
+  /// **'Change template'**
+  String get captureChangeTemplate;
+
+  /// Capture overflow command opening the current project's editable context values and pins.
+  ///
+  /// In en, this message translates to:
+  /// **'Context values'**
+  String get captureContextValues;
+
   /// Capture is open and projects exist, but none is selected.
   ///
   /// In en, this message translates to:
@@ -14592,6 +14610,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name'**
   String get gallerySampleName;
+
+  /// Fictional long primary header sample in the developer widget gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Community field monitoring project'**
+  String get galleryHeaderLongTitle;
+
+  /// Fictional long secondary header sample in the developer widget gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Water inspection and maintenance template'**
+  String get galleryHeaderLongDetail;
 
   /// Sample interface caption in the component gallery, not actual user data.
   ///

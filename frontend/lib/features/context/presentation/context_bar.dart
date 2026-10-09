@@ -26,8 +26,9 @@ import 'pinned_fields_sheet.dart';
 ///
 /// Hierarchy and its commands come first; pins have their own second trail.
 /// Presets apply in one tap. Elsewhere the bar shows only what is set and is hidden while
-/// nothing is. On Capture, [showsEmptyLevels] also lists every unset level
-/// and pinnable field so a first value can be set in place (FBK0000160, D10).
+/// nothing is. [showsEmptyLevels] also lists every unset level and pinnable
+/// field for callers that opt into setup controls. New Capture uses the
+/// project-bound context overview instead (task 158).
 class ContextBar extends ConsumerWidget {
   /// Creates the bar.
   const ContextBar({this.showsEmptyLevels = false, super.key});

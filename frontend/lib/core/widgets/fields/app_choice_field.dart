@@ -352,24 +352,42 @@ class _SheetChoice<T> extends StatelessWidget {
     return '';
   }
 
-  Future<void> _open(BuildContext context) async {
-    await showAppSheet<void>(
-      context,
-      title: label,
-      builder: (BuildContext sheetContext) {
-        return _ChoiceSheet<T>(
-          label: label,
-          options: options,
-          value: value,
-          leadingBuilder: leadingBuilder,
-          onPick: (T picked) {
-            Navigator.of(sheetContext).pop();
-            onChanged(picked);
-          },
-        );
+  Future<void> _open(BuildContext context) => showAppChoiceSheet<T>(
+    context,
+    label: label,
+    options: options,
+    value: value,
+    leadingBuilder: leadingBuilder,
+    onChanged: onChanged,
+  );
+}
+
+/// Opens the field's searchable choices directly from a command.
+Future<void> showAppChoiceSheet<T>(
+  BuildContext context, {
+  required String label,
+  required List<Choice<T>> options,
+  required ValueChanged<T> onChanged,
+  T? value,
+  Widget Function(BuildContext, Choice<T>)? leadingBuilder,
+}) {
+  bool picked = false;
+  return showAppSheet<void>(
+    context,
+    title: label,
+    builder: (BuildContext sheetContext) => _ChoiceSheet<T>(
+      label: label,
+      options: options,
+      value: value,
+      leadingBuilder: leadingBuilder,
+      onPick: (T selection) {
+        if (picked) return;
+        picked = true;
+        Navigator.of(sheetContext).pop();
+        onChanged(selection);
       },
-    );
-  }
+    ),
+  );
 }
 
 Widget _choiceLabel(String label, AppColors colors) => ExcludeSemantics(

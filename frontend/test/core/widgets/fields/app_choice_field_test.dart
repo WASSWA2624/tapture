@@ -14,6 +14,102 @@ import 'package:tapture/core/widgets/fields/choice.dart';
 import '../../../support/a11y_matchers.dart';
 
 void main() {
+  testWidgets('direct nullable choices distinguish selection from dismissal', (
+    WidgetTester tester,
+  ) async {
+    final List<String?> changes = <String?>[];
+    late BuildContext caller;
+    await _pump(
+      tester,
+      Builder(
+        builder: (BuildContext context) {
+          caller = context;
+          return const Text('Caller');
+        },
+      ),
+    );
+    final Future<void> selected = showAppChoiceSheet<String?>(
+      caller,
+      label: 'Optional choice',
+      options: const <Choice<String?>>[
+        Choice<String?>(null, 'No value'),
+        Choice<String?>('a', 'Alpha'),
+      ],
+      onChanged: (String? value) {
+        expect(ModalRoute.of(caller)!.isCurrent, isTrue);
+        changes.add(value);
+      },
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<AppListTile>(find.widgetWithText(AppListTile, 'No value'))
+          .selected,
+      isTrue,
+    );
+    await tester.tap(find.text('No value'));
+    await tester.pumpAndSettle();
+    await selected;
+    expect(changes, <String?>[null]);
+    final Future<void> cancelled = showAppChoiceSheet<String?>(
+      caller,
+      label: 'Optional choice',
+      options: const <Choice<String?>>[Choice<String?>(null, 'No value')],
+      onChanged: changes.add,
+    );
+    await tester.pumpAndSettle();
+    Navigator.of(caller).pop();
+    await tester.pumpAndSettle();
+    await cancelled;
+    expect(changes, <String?>[null]);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('direct choices retain decoration search and keyboard access', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext caller;
+    String? selected;
+    await _pump(
+      tester,
+      Builder(
+        builder: (BuildContext context) {
+          caller = context;
+          return const Text('Caller');
+        },
+      ),
+      size: const Size(320, 400),
+    );
+    tester.view.viewInsets = const FakeViewPadding(bottom: 120);
+    addTearDown(tester.view.resetViewInsets);
+    final Future<void> sheet = showAppChoiceSheet<String>(
+      caller,
+      label: 'Project',
+      options: const <Choice<String>>[
+        Choice<String>('a', 'Alpha'),
+        Choice<String>('b', 'Bravo'),
+      ],
+      value: 'a',
+      leadingBuilder: (_, _) => const Text('Artwork'),
+      onChanged: (String value) => selected = value,
+    );
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'missing');
+    await tester.pumpAndSettle();
+    expect(find.text(Copy.choiceNoMatch('missing')), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'brA');
+    await tester.pumpAndSettle();
+    final Finder row = find.widgetWithText(AppListTile, 'Bravo');
+    await tester.ensureVisible(row);
+    expect(row, meetsTapTarget());
+    expect(find.text('Artwork'), findsOneWidget);
+    await tester.tap(row);
+    await tester.pumpAndSettle();
+    await sheet;
+    expect(selected, 'b');
+    expect(tester.takeException(), isNull);
+  });
+
   final List<Choice<String>> three = <Choice<String>>[
     const Choice<String>('a', 'Alpha'),
     const Choice<String>('b', 'Bravo'),

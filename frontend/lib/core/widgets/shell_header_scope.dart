@@ -35,17 +35,26 @@ class ShellHeaderScope extends StatefulWidget {
   /// The page's title and actions, when the shell owns the header.
   static ({
     String title,
+    String? headerTitle,
+    String? headerDetail,
     List<Widget> actions,
     List<AppOverflowAction> overflow,
   })?
   chromeOf(BuildContext context) {
     final _ShellHeader? scope = context
         .dependOnInheritedWidgetOfExactType<_ShellHeader>();
-    if (scope == null || !scope.ownsHeader || scope.owner == null) {
+    if (scope == null ||
+        !scope.ownsHeader ||
+        scope.owner == null ||
+        scope.ownerContext == null ||
+        !scope.ownerContext!.mounted ||
+        !_onStage(scope.ownerContext!)) {
       return null;
     }
     return (
       title: scope.title,
+      headerTitle: scope.headerTitle,
+      headerDetail: scope.headerDetail,
       actions: scope.actions,
       overflow: scope.overflow,
     );
@@ -59,13 +68,18 @@ class ShellHeaderScope extends StatefulWidget {
     required String title,
     required List<Widget> actions,
     required List<AppOverflowAction> overflow,
+    String? headerTitle,
+    String? headerDetail,
   }) {
     if (!_onStage(context)) {
       return;
     }
     context.findAncestorStateOfType<_ShellHeaderScopeState>()?.publish(
+      ownerContext: context,
       owner: owner,
       title: title,
+      headerTitle: headerTitle,
+      headerDetail: headerDetail,
       actions: actions,
       overflow: overflow,
     );
@@ -73,7 +87,13 @@ class ShellHeaderScope extends StatefulWidget {
 
   /// Drops [owner]'s chrome when that page leaves the tree.
   static void release(BuildContext context, Object owner) {
-    context.findAncestorStateOfType<_ShellHeaderScopeState>()?.release(owner);
+    final _ShellHeaderScopeState? scope =
+        context is StatefulElement && context.state is _ShellHeaderScopeState
+        ? context.state as _ShellHeaderScopeState
+        : context.findAncestorStateOfType<_ShellHeaderScopeState>();
+    // Deactivation can occur while the ancestor is rebuilding. Publish its
+    // cleared state on the next frame instead of losing that notification.
+    WidgetsBinding.instance.addPostFrameCallback((_) => scope?.release(owner));
   }
 
   @override
@@ -82,28 +102,39 @@ class ShellHeaderScope extends StatefulWidget {
 
 class _ShellHeaderScopeState extends State<ShellHeaderScope> {
   Object? _owner;
+  BuildContext? _ownerContext;
   String _title = '';
+  String? _headerTitle;
+  String? _headerDetail;
   List<Widget> _actions = const <Widget>[];
   List<AppOverflowAction> _overflow = const <AppOverflowAction>[];
 
   void publish({
+    required BuildContext ownerContext,
     required Object owner,
     required String title,
     required List<Widget> actions,
     required List<AppOverflowAction> overflow,
+    String? headerTitle,
+    String? headerDetail,
   }) {
     if (!mounted) {
       return;
     }
     if (_owner == owner &&
         _title == title &&
+        _headerTitle == headerTitle &&
+        _headerDetail == headerDetail &&
         identical(_actions, actions) &&
         identical(_overflow, overflow)) {
       return;
     }
     setState(() {
       _owner = owner;
+      _ownerContext = ownerContext;
       _title = title;
+      _headerTitle = headerTitle;
+      _headerDetail = headerDetail;
       _actions = actions;
       _overflow = overflow;
     });
@@ -115,7 +146,10 @@ class _ShellHeaderScopeState extends State<ShellHeaderScope> {
     }
     setState(() {
       _owner = null;
+      _ownerContext = null;
       _title = '';
+      _headerTitle = null;
+      _headerDetail = null;
       _actions = const <Widget>[];
       _overflow = const <AppOverflowAction>[];
     });
@@ -126,7 +160,10 @@ class _ShellHeaderScopeState extends State<ShellHeaderScope> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.ownsHeader && !widget.ownsHeader) {
       _owner = null;
+      _ownerContext = null;
       _title = '';
+      _headerTitle = null;
+      _headerDetail = null;
       _actions = const <Widget>[];
       _overflow = const <AppOverflowAction>[];
     }
@@ -137,7 +174,10 @@ class _ShellHeaderScopeState extends State<ShellHeaderScope> {
     return _ShellHeader(
       ownsHeader: widget.ownsHeader,
       owner: _owner,
+      ownerContext: _ownerContext,
       title: _title,
+      headerTitle: _headerTitle,
+      headerDetail: _headerDetail,
       actions: _actions,
       overflow: _overflow,
       child: widget.child,
@@ -149,7 +189,10 @@ class _ShellHeader extends InheritedWidget {
   const _ShellHeader({
     required this.ownsHeader,
     required this.owner,
+    required this.ownerContext,
     required this.title,
+    required this.headerTitle,
+    required this.headerDetail,
     required this.actions,
     required this.overflow,
     required super.child,
@@ -157,7 +200,10 @@ class _ShellHeader extends InheritedWidget {
 
   final bool ownsHeader;
   final Object? owner;
+  final BuildContext? ownerContext;
   final String title;
+  final String? headerTitle;
+  final String? headerDetail;
   final List<Widget> actions;
   final List<AppOverflowAction> overflow;
 
@@ -166,6 +212,8 @@ class _ShellHeader extends InheritedWidget {
     return ownsHeader != oldWidget.ownsHeader ||
         owner != oldWidget.owner ||
         title != oldWidget.title ||
+        headerTitle != oldWidget.headerTitle ||
+        headerDetail != oldWidget.headerDetail ||
         !identical(actions, oldWidget.actions) ||
         !identical(overflow, oldWidget.overflow);
   }

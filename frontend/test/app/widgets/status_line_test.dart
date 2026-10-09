@@ -12,6 +12,9 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/network.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/features/processing/presentation/queue_providers.dart';
 import 'package:tapture/features/processing/processing.dart';
 import 'package:tapture/features/projects/projects.dart';
@@ -20,6 +23,67 @@ import 'package:tapture/features/settings/presentation/offline_switch.dart';
 import '../../support/factories.dart';
 
 void main() {
+  testWidgets('explicit header pairs override roots and nested defaults', (
+    tester,
+  ) async {
+    final StreamController<NetworkState> radio = StreamController<NetworkState>(
+      sync: true,
+    );
+    addTearDown(radio.close);
+    final ProviderContainer container = await _pump(tester, radio: radio);
+    for (final String path in <String>[
+      AppRoutes.projects,
+      AppRoutes.settingsStorage,
+    ]) {
+      container.read(routerProvider).go(path);
+      await tester.pumpAndSettle();
+      final BuildContext pageContext = tester.element(
+        find.byType(AppPage).last,
+      );
+      final Object owner = Object();
+      ShellHeaderScope.publish(
+        pageContext,
+        owner: owner,
+        title: 'Screen identity',
+        headerTitle: 'Field project',
+        headerDetail: 'Survey template',
+        actions: const <Widget>[],
+        overflow: const <AppOverflowAction>[],
+      );
+      await tester.pumpAndSettle();
+      final Finder header = find.byType(StatusLine);
+      expect(
+        find.descendant(of: header, matching: find.text('Field project')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: header, matching: find.text('Survey template')),
+        findsOneWidget,
+      );
+      ShellHeaderScope.publish(
+        pageContext,
+        owner: owner,
+        title: 'Screen identity',
+        actions: const <Widget>[],
+        overflow: const <AppOverflowAction>[],
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Survey template'), findsNothing);
+      expect(
+        find.descendant(
+          of: header,
+          matching: find.text(
+            path == AppRoutes.projects ? Copy.navProjects : 'Screen identity',
+          ),
+        ),
+        findsOneWidget,
+      );
+      ShellHeaderScope.release(pageContext, owner);
+      await tester.pumpAndSettle();
+      expect(find.text('Field project'), findsNothing);
+      expect(tester.takeException(), isNull);
+    }
+  });
   testWidgets(
     'legacy queue links return to Projects and transcripts remain reachable',
     (WidgetTester tester) async {

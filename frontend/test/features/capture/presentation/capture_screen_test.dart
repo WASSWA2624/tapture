@@ -60,6 +60,130 @@ import '../../projects/fakes/fake_project_repository.dart';
 
 void main() {
   testWidgets(
+    'setup cancellation and project switching preserve separate durable drafts',
+    (tester) async {
+      final FakeProjectRepository projects = FakeProjectRepository();
+      addTearDown(projects.dispose);
+      await projects.create(aProject(id: 'p1', name: 'Alpha'));
+      await projects.create(aProject(id: 'p2', name: 'Beta'));
+      final _Capture capture = await _Capture.open(
+        tester,
+        projectId: '',
+        projects: projects,
+        projectTemplates: <String, List<TemplateDef>>{
+          for (final String id in <String>['p1', 'p2'])
+            id: <TemplateDef>[
+              aTemplate(
+                id: '$id-template',
+                projectId: id,
+                name: '$id equipment',
+              ),
+            ],
+        },
+      );
+      await capture.openCommand('capture-change-project');
+      await tester.tap(find.text('Alpha'));
+      await tester.pumpAndSettle();
+      final ProviderContainer container = capture._container;
+      await container
+          .read(captureControllerProvider('p1').notifier)
+          .setCaption(null, 'Alpha evidence');
+      await tester.pumpAndSettle();
+      await capture.addLibraryPhoto();
+      final CaptureSession before = capture.session;
+      expect(before.photos, hasLength(1));
+      final AppPage page = tester.widget<AppPage>(find.byType(AppPage));
+      expect(page.title, Copy.navCapture);
+      expect(page.headerTitle, 'Alpha');
+      expect(page.headerDetail, 'p1 equipment');
+      expect(page.overflow.take(3).map((action) => action.key), <Key>[
+        const ValueKey<String>('capture-change-project'),
+        const ValueKey<String>('capture-change-template'),
+        const ValueKey<String>('capture-context-values'),
+      ]);
+      for (final String key in <String>[
+        'capture-change-project',
+        'capture-change-template',
+      ]) {
+        await capture.openCommand(key);
+        Navigator.of(tester.element(find.byType(AppBottomSheet))).pop();
+        await tester.pumpAndSettle();
+        expect(capture.session.toJson(), before.toJson());
+        expect((await capture.stored())!.toJson(), before.toJson());
+      }
+      await capture.openCommand('capture-change-project');
+      await tester.tap(find.text('Beta'));
+      await tester.pumpAndSettle();
+      expect(tester.widget<AppPage>(find.byType(AppPage)).headerTitle, 'Beta');
+      await container
+          .read(captureControllerProvider('p2').notifier)
+          .setCaption(null, 'Beta evidence');
+      await tester.pumpAndSettle();
+      final CapturePersistence persistence = container.read(
+        capturePersistenceProvider,
+      );
+      expect(
+        (await persistence.loadSession(
+          'p1',
+        )).getOrElse(() => null)!.recordCaption,
+        'Alpha evidence',
+      );
+      expect(
+        (await persistence.loadSession(
+          'p2',
+        )).getOrElse(() => null)!.recordCaption,
+        'Beta evidence',
+      );
+      await capture.openCommand('capture-change-project');
+      await tester.tap(find.text('Alpha'));
+      await tester.pumpAndSettle();
+      expect(capture.session.recordCaption, 'Alpha evidence');
+      expect(capture.session.id, before.id);
+      expect(
+        capture.session.photos.single.toJson(),
+        before.photos.single.toJson(),
+      );
+      expect(capture.session.photos.single.projectId, 'p1');
+      expect(
+        (await persistence.loadSession('p2')).getOrElse(() => null)!.photos,
+        isEmpty,
+      );
+    },
+  );
+
+  testWidgets(
+    'a template choice opened before a project change cannot apply late',
+    (tester) async {
+      final _Capture capture = await _Capture.open(
+        tester,
+        projectId: '',
+        templates: <TemplateDef>[
+          aTemplate(id: 't1', projectId: 'p1', name: 'Assets'),
+          aTemplate(id: 't2', projectId: 'p1', name: 'Furniture'),
+        ],
+      );
+      capture._container.read(currentProjectProvider.notifier).open('p1');
+      await tester.pumpAndSettle();
+      await capture.openCommand('capture-change-template');
+      capture._container.read(currentProjectProvider.notifier).open('p2');
+      await tester.pumpAndSettle();
+      final CaptureSession before = capture._container.read(
+        captureControllerProvider('p2'),
+      );
+      await tester.tap(find.text('Furniture'));
+      await tester.pumpAndSettle();
+      expect(
+        capture._container.read(captureControllerProvider('p2')).toJson(),
+        before.toJson(),
+      );
+      expect(
+        capture._container.read(projectTemplateSelectionProvider),
+        isEmpty,
+      );
+    },
+  );
+
+  testWidgets(
     'Manual previews use injected app identity clock operator and committed date settings without location reads',
     (WidgetTester tester) async {
       final DateTime now = DateTime.utc(2026, 10, 9, 9, 30);
@@ -286,10 +410,7 @@ void main() {
         ],
         settings: const ProjectSettings(templateChoice: 'manual'),
       );
-      await tester.tap(
-        find.byKey(const ValueKey<String>('capture-template-field')),
-      );
-      await tester.pumpAndSettle();
+      await capture.openCommand('capture-change-template');
       await tester.tap(find.text('Test template').last);
       await tester.pumpAndSettle();
       await capture.openManualForm();
@@ -548,7 +669,10 @@ void main() {
         ],
       );
 
-      expect(find.text('Assets'), findsOneWidget);
+      expect(
+        tester.widget<AppPage>(find.byType(AppPage)).headerDetail,
+        'Assets',
+      );
       expect(capture.session.templateId, 't1');
     });
 
@@ -567,10 +691,7 @@ void main() {
       // The last used is the default.
       expect(capture.session.templateId, 't3');
 
-      await tester.tap(
-        find.byKey(const ValueKey<String>('capture-template-field')),
-      );
-      await tester.pumpAndSettle();
+      await capture.openCommand('capture-change-template');
       final List<double> rows = <double>[
         for (final String name in <String>['Gamma', 'Beta', 'Alpha', 'Delta'])
           tester.getTopLeft(find.text(name).last).dy,
@@ -592,10 +713,7 @@ void main() {
         settings: manual,
         store: store,
       );
-      await tester.tap(
-        find.byKey(const ValueKey<String>('capture-template-field')),
-      );
-      await tester.pumpAndSettle();
+      await first.openCommand('capture-change-template');
       await tester.tap(find.text('Furniture').last);
       await tester.pumpAndSettle();
       await first.addLibraryPhoto();
@@ -614,7 +732,10 @@ void main() {
         store: store,
       );
       expect(restarted.session.templateId, 't2');
-      expect(find.text('Furniture'), findsOneWidget);
+      expect(
+        tester.widget<AppPage>(find.byType(AppPage)).headerDetail,
+        'Furniture',
+      );
     });
   });
 
@@ -733,12 +854,9 @@ void main() {
         projects: projects,
         templates: const <TemplateDef>[],
       );
-      expect(find.text(Copy.captureChooseProject), findsOneWidget);
+      expect(find.text(Copy.captureChooseProject), findsWidgets);
 
-      await tester.tap(
-        find.byKey(const ValueKey<String>('capture-project-field')),
-      );
-      await tester.pumpAndSettle();
+      await capture.openCommand('capture-change-project');
       expect(find.text('Alpha'), findsOneWidget);
       expect(find.text('Beta'), findsOneWidget);
       await tester.tap(find.text('Beta'));
@@ -1208,6 +1326,7 @@ final class _Capture {
     WidgetTester tester, {
     String projectId = 'p1',
     List<TemplateDef>? templates,
+    Map<String, List<TemplateDef>>? projectTemplates,
     List<String> recent = const <String>[],
     ProjectSettings settings = const ProjectSettings(),
     TextStore? store,
@@ -1243,7 +1362,8 @@ final class _Capture {
       ),
       captureProjectTemplatesProvider.overrideWith(
         (Ref _, String id) => Stream<List<TemplateDef>>.value(
-          id == 'p1' || id == 'p2' ? shown : const <TemplateDef>[],
+          projectTemplates?[id] ??
+              (id == 'p1' || id == 'p2' ? shown : const <TemplateDef>[]),
         ),
       ),
       captureRecentTemplatesProvider.overrideWith(
@@ -1347,11 +1467,14 @@ final class _Capture {
   }
 
   Future<void> openManualForm() async {
+    await openCommand('capture-manual-form');
+  }
+
+  Future<void> openCommand(String key) async {
     final AppPage page = _tester.widget<AppPage>(find.byType(AppPage));
     page.overflow
         .singleWhere(
-          (AppOverflowAction action) =>
-              action.key == const ValueKey<String>('capture-manual-form'),
+          (AppOverflowAction action) => action.key == ValueKey<String>(key),
         )
         .onTap();
     await _tester.pumpAndSettle();

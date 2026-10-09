@@ -10,6 +10,21 @@ import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 /// never pass through here (FE-L10N-07).
 /// Copy resolved against one app's inherited locale. User data passes unchanged.
 final class LocalizedCopy {
+  /// Opens Capture's project selector.
+  String get captureChangeProject => _catalog.captureChangeProject;
+
+  /// Opens Capture's template selector.
+  String get captureChangeTemplate => _catalog.captureChangeTemplate;
+
+  /// Opens the effective Capture project's editable context overview.
+  String get captureContextValues => _catalog.captureContextValues;
+
+  /// Long primary header example in the developer gallery.
+  String get galleryHeaderLongTitle => _catalog.galleryHeaderLongTitle;
+
+  /// Long secondary header example in the developer gallery.
+  String get galleryHeaderLongDetail => _catalog.galleryHeaderLongDetail;
+
   /// Why a protected record value cannot be corrected.
   String get recordFieldReadOnly => _catalog.recordFieldReadOnly;
 

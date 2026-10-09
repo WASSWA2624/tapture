@@ -28,6 +28,8 @@ Partially complete: real-device process kills, preview/orientation and shutter t
 
 ### Implement
 
+Task 158's approved D1 supersedes new-Capture inline target selectors and context-bar placement with overflow setup, project primary title and template secondary text (§19/20.1). The standalone guide, evidence and save path retain their behavior; record edits retain locked targets and their existing title. The context-change two-tap budget now applies to bars outside new Capture. Historical evidence and this task's unfinished acceptance remain intact.
+
 The whole capture surface, and the rule underneath it that evidence is durable before the interface confirms anything:
 the session model and the controller that write every photo, caption and typed value through to disk and the database
 as it is added; the capture screen with its context bar, photo tray, caption, identifier, optional template fields in

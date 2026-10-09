@@ -147,10 +147,20 @@ class ContentConstraint extends StatelessWidget { final Widget child; final doub
 class AppPage extends StatelessWidget {
   final String title;
   final String? subtitle;
+  final String? headerTitle, headerDetail; // task 158: optional toolbar overrides
   final List<Widget> actions;
   final Widget body;
   final Widget? footer;
   final Future<void> Function()? onRefresh;
+}
+// Task 158: toolbar presentation; AppPage.title retains screen identity.
+class AppHeaderTitle extends StatelessWidget {
+  const AppHeaderTitle({required this.title, this.detail, this.titleStyle,
+    this.foregroundColor, super.key});
+  final String title;
+  final String? detail;
+  final TextStyle? titleStyle;
+  final Color? foregroundColor;
 }
 ```
 
@@ -193,6 +203,12 @@ class Choice<T> {
 class AppChoiceField<T> extends StatelessWidget {
   final String label; final List<Choice<T>> options; final T? value; final ValueChanged<T?> onChanged;
 }
+// Task 158 adds this presenter without changing field defaults or choice bodies.
+Future<void> showAppChoiceSheet<T>(BuildContext context, {
+  required String label, required List<Choice<T>> options,
+  required ValueChanged<T> onChanged, T? value,
+  Widget Function(BuildContext, Choice<T>)? leadingBuilder,
+});
 class AppMultiChoiceField<T> extends StatelessWidget {
   final String label; final List<Choice<T>> options; final Set<T> value; final ValueChanged<Set<T>> onChanged;
 }

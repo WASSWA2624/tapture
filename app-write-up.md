@@ -996,8 +996,7 @@ One screen, one primary button.
 ```text
 +--------------------------------------------------+
 |  Medical Equipment Inventory            [ ... ]  |
-|  Kampala  >  Kasubi HC IV  >  Theatre     [edit] |   <- context bar (§20)
-|  Equipment  (pinned)                             |   <- template chip (§14)
+|  Equipment                                      |   <- quieter template name (§14)
 +--------------------------------------------------+
 |                                                  |
 |   [ photo ] [ photo ] [ photo ]        + Add     |   <- photo tray (§22)
@@ -1017,7 +1016,8 @@ One screen, one primary button.
 - Require only a photo, caption or typed identifier.
 - Both buttons save locally immediately; only AI timing differs (§26).
 - Reset after save, retaining **context, pinned template and capture settings**.
-- Project/template selectors share a compact row with searchable pickers and naturally wrapping labels. The guide trigger sits beside them on wider screens and wraps onto the next action line on compact screens; explicit and automatic guidance retain complete template labels.
+- On every new-Capture surface, the toolbar shows the effective project's original name with the resolved template in a quieter second line. Its overflow begins with **Change project**, **Change template** (when templates are loaded), and **Context values** (when a project is selected). Shared searchable pickers retain the existing selection and durable per-project drafts; no project/template selectors or context trails occupy the ordinary Capture body. Loading and empty targets retain create/choose-project and Add templates recovery. Record editing keeps its saved targets locked and its existing title.
+- The standalone collapsed guide remains in the body; explicit and automatic guidance retain complete template labels. Task 158's approved D1 supersedes the earlier paired selector/guide row, including task 153 W6. Shutter and save require no additional taps.
 - Empty photos use a compact Add photo row; populated photos retain the cached horizontal strip and 48dp actions. The caption editor starts at six lines and grows with text. At 393×886 with normal text and no keyboard, the editor and primary save action are visible; short/large-text layouts keep every control reachable by scrolling.
 - Manual form searches original field labels and stable keys offline, reveals matching optional fields, and restores More fields state on Clear. Filtering and resizing retain pending failed-write input without reporting it saved. Its source/status presentation follows §21.
 
@@ -1039,11 +1039,13 @@ Level 5  Room          Recovery Room 2
 
 Choose any levels (Site › Block › Floor; Farm › Field › Plot; Warehouse › Aisle › Shelf), or none.
 
-The first bar trail shows root-to-leaf hierarchy with separators at every width, followed by Setup/Manage and preset commands outside the separators. Comfortable chip bodies are at least 48dp; labels wrap and grow with text. Compact trails scroll horizontally; medium/expanded trails wrap. Full field-label/value semantics remain available, including long values at 320dp and 200 percent text.
+On screens displaying the context bar, its first trail shows root-to-leaf hierarchy with separators at every width, followed by Setup/Manage and preset commands outside the separators. Comfortable chip bodies are at least 48dp; labels wrap and grow with text. Compact trails scroll horizontally; medium/expanded trails wrap. Full field-label/value semantics remain available, including long values at 320dp and 200 percent text.
+
+New Capture uses **Context values** in overflow instead (§19): a project-bound, vertically scrollable overview lists hierarchy levels in order, then explicitly labelled pins/stickable fields, including unset values. A row dismisses the overview before opening the existing prefilled recent/dataset/free-text picker. Setup/Manage, presets and pinned-field fallback remain available. Task 158's approved D1 supersedes bar placement and the two-tap context-change budget on new Capture only; other bars retain their two-tap flow and saved-record edits retain their current context scope.
 
 ### 20.2 Behaviour
 
-1. A chip opens recent values, reference-data values (e.g. Facilities), or free text.
+1. A chip, or a new-Capture overview row, opens recent values, reference-data values (e.g. Facilities), or free text.
 2. Values persist across records, screens and restarts until changed/cleared.
 3. Changing a parent clears descendants after confirmation: *"Change district to Wakiso? Facility and Department will be cleared."*
 4. Prefill new records as `source = CONTEXT`. Per-record edits **do not change project context**.
@@ -1273,8 +1275,8 @@ Use ordinary sequential Capture for large surveys: save an item raw, retain cont
 continue with the next. The standalone Rapid menu/page/run list is retired by task 144; legacy Rapid links redirect
 to that project's Capture with query, fragment and the same durable draft intact. No session migration occurs.
 
-New Capture keeps target controls, collapsed guide, evidence tray, caption/dictation/audio and raw Save immediately
-available. Optional template fields open from **Manual form** in overflow using the same durable session and adaptive
+New Capture keeps the collapsed guide, evidence tray, caption/dictation/audio and raw Save immediately
+available; project, template and context setup use the existing overflow menu (§19). Optional template fields open from **Manual form** in overflow using the same durable session and adaptive
 sheet; **Import document** uses the existing validation/intake path from overflow. Required-field warnings remain
 advisory. Record editing retains its existing form and visible import control. Reopen saved items through the project.
 
@@ -3302,7 +3304,7 @@ Testable interface rules:
 10. **Plain language:** "Not detected", not `null`; "Analyse", not "invoke extraction pipeline".
 11. **Touch targets ≥ 48 dp**; primary actions within one-thumb reach.
 12. **Undo destructive actions**; keep deletions in a recycle bin.
-13. **One visible status line:** context, template and online/offline; processing is project-scoped (§26.2, §27).
+13. **One visible status line:** screen identity and online/offline. New Capture displays project/template names through the shared toolbar override and context setup in overflow (§19); other context bars retain §20.1. Processing is project-scoped (§26.2, §27).
 14. **Reusable components:** use existing design-system controls and the minimal corner radius (`Radii`, never zero). Menus, resource rows and document panels share controls; icons have readable labels.
 
 ## 57. Settings

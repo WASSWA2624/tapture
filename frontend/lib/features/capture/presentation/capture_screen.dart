@@ -392,6 +392,22 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     final String title = _editing
         ? localCopy.recordEditTitle
         : localCopy.navCapture;
+    final Project? headerProject = _editing || projectId.isEmpty
+        ? null
+        : ref.watch(projectByIdProvider(projectId)).asData?.value;
+    String? templateName;
+    for (final TemplateDef template in templates) {
+      if (template.id == templateId) templateName = template.name;
+    }
+    void chooseProject() => unawaited(
+      CaptureTargetFields.chooseProject(
+        context: context,
+        ref: ref,
+        selectedProjectId: projectId,
+        isCurrent: () => mounted && _projectId() == projectId,
+        onChanged: _chooseProject,
+      ),
+    );
     // With no project there is nothing to file under: the target fields say
     // so and offer the next step, and nothing else is drawn.
     final bool noProject = !_editing && projectId.isEmpty;
@@ -399,18 +415,53 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
         ? null
         : CaptureTargetFields(
             selectedProjectId: projectId,
-            templates: templates,
-            templatesLoaded: templateState.hasValue,
-            templateId: templateId,
-            onProjectSelected: _chooseProject,
+            templateState: templateState,
+            onChooseProject: chooseProject,
           );
     return AppPage(
       key: const ValueKey<String>('route-capture'),
       title: title,
+      headerTitle: _editing
+          ? null
+          : headerProject?.name ?? localCopy.navCapture,
+      headerDetail: _editing ? null : templateName,
       showAppBar: false,
-      overflow: _editing || projectId.isEmpty
+      overflow: _editing
           ? const <AppOverflowAction>[]
           : <AppOverflowAction>[
+              AppOverflowAction(
+                key: const ValueKey<String>('capture-change-project'),
+                label: localCopy.captureChangeProject,
+                icon: AppIcons.project,
+                onTap: chooseProject,
+              ),
+              if (projectId.isNotEmpty && templates.isNotEmpty)
+                AppOverflowAction(
+                  key: const ValueKey<String>('capture-change-template'),
+                  label: localCopy.captureChangeTemplate,
+                  icon: AppIcons.template,
+                  onTap: () => unawaited(
+                    CaptureTargetFields.chooseTemplate(
+                      context: context,
+                      ref: ref,
+                      projectId: projectId,
+                      templateId: templateId,
+                      isCurrent: () => mounted && _projectId() == projectId,
+                    ),
+                  ),
+                ),
+              if (projectId.isNotEmpty)
+                AppOverflowAction(
+                  key: const ValueKey<String>('capture-context-values'),
+                  label: localCopy.captureContextValues,
+                  icon: AppIcons.context,
+                  onTap: () => unawaited(
+                    showContextValuesSheet(
+                      context: context,
+                      projectId: projectId,
+                    ),
+                  ),
+                ),
               if (ready && fields.isNotEmpty)
                 AppOverflowAction(
                   key: const ValueKey<String>('capture-manual-form'),
@@ -495,11 +546,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
           // Free space: nothing while ample; a warning, or the stop with
           // Export, below the thresholds (task 012 step 21).
           CaptureStorageGuard(projectId: projectId),
-          // An edit keeps its targets; new Capture shares selectors and guide.
-          if (!noProject && !guide.isEmpty)
-            CaptureGuideCard(guide: guide, targets: targets)
-          else
-            ?targets,
+          ?targets,
+          if (!noProject && !guide.isEmpty) CaptureGuideCard(guide: guide),
           if (!noProject) _blockGap,
           if (!noProject)
             ..._evidence(

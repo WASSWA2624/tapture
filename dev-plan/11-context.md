@@ -22,6 +22,8 @@ Task [153 W4](24-product-refinements.md#153--resolve-feedback-archive-08102026-2
 
 ### Implement
 
+Task 158's approved D1 supersedes only new-Capture context-bar placement and its two-tap context-change budget: overflow opens the project-bound context overview, which dismisses before opening the existing editor. Other bars, saved-record edits, hierarchy/pin semantics, cascade policy, snapshots and all historical verification below retain their contracts. Setup/Manage, presets and pinned-field access remain available there. This does not close any unfinished acceptance in task 011.
+
 The whole context feature: immutable models for the hierarchy definition, the current values and named presets, with
 the repository and the persistence that restore the active context when a project is opened, so it survives screen
 changes, backgrounding and app restarts; a screen that chooses a project's levels from the template's field keys and
@@ -63,6 +65,8 @@ Presentation — the hierarchy editor, the bar, its sheets and the presets:
 - `frontend/lib/features/context/presentation/context_preset_list.dart` (new)
 
 ### Contract
+
+Task 158 adds only `Future<void> showContextValuesSheet({required BuildContext context, required String projectId})` to the context barrel. It presents ordered hierarchy and explicitly marked pinned values with shared rows, then fully dismisses before opening an existing editor. It rechecks project ownership and live field/value snapshots; Setup/Manage and Presets use existing routes, and unavailable pin definitions retain the existing pinned-fields fallback. Repository writes and saved-record snapshots retain their existing contracts.
 
 ```dart
 class ContextLevel {
