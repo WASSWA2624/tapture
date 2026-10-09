@@ -25,9 +25,9 @@ Real migration audits preserve the prior captured schema for retained raw values
 drafts; exports and removal include that lineage without classifying unrelated newer ordinary captures as GPS.
 Migration lineage also participates in saved artifact invalidation. The final combined privacy/merge run passed
 89 tests, covering real SQLite migration, bounded audit pagination, live/recovered drafts, rollback, idempotent
-counts, JSON/ZIP policy and artifact invalidation. Permission/face detector
-behavior on a fresh native install and the merged platform manifest have not been verified on this host; those
-acceptance items remain open.
+counts, JSON/ZIP policy and artifact invalidation. On 2026-10-04 the prodRelease packaged
+manifest and the iOS plist matched every rationale, and the review names file and line for a
+deliberate mismatch. A fresh native install and a real face detector still need verification.
 
 Everything that governs what leaves this device. One settings screen naming every outbound path — AI extraction, OCR,
 speech, refinement and cloud upload — each row stating what it sends, where it goes and whether it is on, with the
@@ -194,7 +194,7 @@ class PermissionRationale {
 - [ ] A fresh install requests no permission until the user starts capture, recording, import or a folder upload.
 - [x] Every declared platform permission maps to exactly one rationale entry and one shipped feature.
 - [x] Tests: unit tests of `permission_rationale.dart` against the permissions fake.
-- [ ] Tests: a test parsing the merged manifest and the plist that fails on any declaration without a rationale
+- [x] Tests: a test parsing the merged manifest and the plist that fails on any declaration without a rationale
       entry, and on any entry without a declaration, naming file and line for every one it finds.
 - [x] Tests: a fixture pair for that test, one manifest carrying an unjustified declaration and one rationale entry
       with nothing declared, proving the review fails on each and passes on the shipped pair.
