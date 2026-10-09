@@ -13,9 +13,9 @@ Find, read and change what has been captured, at any time after capture.
 The 2026-10-01 production bootstrap audit found `recordRepositoryProvider` still bound to its empty test
 implementation despite opening the app database. Records detail/edit/history and deliverable loading therefore
 could not read real saved records. Bootstrap now supplies `RecordRepositoryImpl` over the shared database and
-operator identity; the actual root-provider/native-owned-database regression remains pending verification.
-The affected user-facing criteria are reopened below; isolated repository and screen fixtures do not prove
-production wiring.
+operator identity. On 2026-10-04 the production-root regression passed: a real SQLite record
+moves draft, needs review, then approved with no processing rows, and its value source is on
+the detail screen without another tap.
 
 The 2026-10-01 efficiency review found that the shared capture/edit photo inspector loaded every original at once,
 although the read-only saved-record viewer already has lazy auto-disposed page providers. The inspector now caches
@@ -130,7 +130,7 @@ enum RecordStatus {
 
 ### Definition of done
 
-- [ ] Manual records go DRAFT to NEEDS_REVIEW to APPROVED without touching processing states.
+- [x] Manual records go DRAFT to NEEDS_REVIEW to APPROVED without touching processing states.
 - [x] An illegal transition fails validation instead of being applied.
 - [x] Tests: unit tests over the full transition table; repository tests against an in-memory database covering the
       round-trip mapper, plus the fake later tests use.
@@ -144,7 +144,7 @@ enum RecordStatus {
 - [x] Editing, adding or deleting a record updates its search entry in the same transaction.
 - [x] Tests: performance test with a seeded database asserting the search budget.
 - [x] Tests: repository tests over index maintenance on insert, edit and delete.
-- [ ] Every value shows its source without extra taps.
+- [x] Every value shows its source without extra taps.
 - [x] Tests: widget test of `record_detail_screen.dart`, including its empty and failure states.
 - [x] Nothing about a record is permanently frozen.
 - [x] Values are never silently deleted when their evidence is removed, and unmapped values are retained as retired.
