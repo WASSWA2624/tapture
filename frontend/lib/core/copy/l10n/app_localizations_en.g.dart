@@ -17,8 +17,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get processingCapturedTemplateUnavailable =>
-      'The captured template version is unavailable. Review the saved evidence.';
+  String get processingCapturedTemplateUnavailable => 'The captured template version is unavailable. Review the saved evidence.';
 
   @override
   String get recordCorrectAutomaticValue => 'Correct value';
@@ -45,19 +44,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureFieldUnavailable => 'Unavailable on this device';
 
   @override
-  String get fieldSourceHelp =>
-      'Choose automatic filling, manual entry or extraction from photos and captions. Automatic and manual-only fields stay out of processing.';
+  String get fieldSourceHelp => 'Choose automatic filling, manual entry or extraction from photos and captions. Automatic and manual-only fields stay out of processing.';
 
   @override
-  String get captureTemperatureUnavailable =>
-      'Automatic temperature is unavailable; enter it manually.';
+  String get captureTemperatureUnavailable => 'Automatic temperature is unavailable; enter it manually.';
 
   @override
   String get fieldAutoFillLocalAddress => 'Local network address';
 
   @override
-  String get fieldSourceAddressNeedsText =>
-      'Use a text field for a local network address.';
+  String get fieldSourceAddressNeedsText => 'Use a text field for a local network address.';
 
   @override
   String get captureManualForm => 'Manual form';
@@ -92,8 +88,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiCustodySummary => 'Your server handles AI access and keys.';
 
   @override
-  String get aiProviderAttribution =>
-      'Gemini is a trademark of Google LLC. OpenAI and xAI marks belong to their respective owners.';
+  String get aiProviderAttribution => 'Gemini is a trademark of Google LLC. OpenAI and xAI marks belong to their respective owners.';
 
   @override
   String get aiServerAndAccount => 'Server and account';
@@ -115,16 +110,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get ocrBrowserUnavailable =>
-      'On-device photo reading is unavailable in this browser. Review fields manually or enable online analysis.';
+  String get ocrBrowserUnavailable => 'On-device photo reading is unavailable in this browser. Review fields manually or enable online analysis.';
 
   @override
   String get notDetected => 'Not detected';
 
   @override
   String recordsCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -139,8 +132,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String fieldsCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -169,12 +161,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get photoNoAccess =>
-      'Allow the camera or photos to attach one. Everything else still works.';
+  String get photoNoAccess => 'Allow the camera or photos to attach one. Everything else still works.';
 
   @override
-  String get displayNoAccess =>
-      'Allow screen capture to attach another window. Everything else still works.';
+  String get displayNoAccess => 'Allow screen capture to attach another window. Everything else still works.';
 
   @override
   String get photoNoCamera => 'No camera is available on this device.';
@@ -183,8 +173,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoPickFailed => 'That photo could not be added. Try another.';
 
   @override
-  String get displayCaptureFailed =>
-      'That window could not be captured. Try another.';
+  String get displayCaptureFailed => 'That window could not be captured. Try another.';
 
   @override
   String dictateInto(Object label) {
@@ -197,91 +186,70 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get dictationUnavailable =>
-      'Voice input is not available here. Type instead.';
+  String get dictationUnavailable => 'Voice input is not available here. Type instead.';
 
   @override
-  String get dictationNoMicrophone =>
-      'Allow the microphone to speak into a field. Typing still works.';
+  String get dictationNoMicrophone => 'Allow the microphone to speak into a field. Typing still works.';
 
   @override
-  String get dictationNothingHeard =>
-      'Nothing was heard. Tap the microphone and speak again.';
+  String get dictationNothingHeard => 'Nothing was heard. Tap the microphone and speak again.';
 
   @override
-  String get dictationNeedsConnection =>
-      'Voice input needs a connection on this device. Type instead.';
+  String get dictationNeedsConnection => 'Voice input needs a connection on this device. Type instead.';
 
   @override
-  String get dictationOfflineOnly =>
-      'You are working offline, and this device cannot recognise speech without a connection. Type instead.';
+  String get dictationOfflineOnly => 'You are working offline, and this device cannot recognise speech without a connection. Type instead.';
 
   @override
-  String get dictationFailed =>
-      'Voice input stopped. Try again, or type instead.';
+  String get dictationFailed => 'Voice input stopped. Try again, or type instead.';
 
   @override
-  String get speechUnavailable =>
-      'Speech recognition is not available in this version of the app.';
+  String get speechUnavailable => 'Speech recognition is not available in this version of the app.';
 
   @override
-  String get speechModelMissing =>
-      'The speech model is not installed on this device.';
+  String get speechModelMissing => 'The speech model is not installed on this device.';
 
   @override
-  String get speechModelMissingRecovery =>
-      'Reinstall the app, or import the model in Settings.';
+  String get speechModelMissingRecovery => 'Reinstall the app, or import the model in Settings.';
 
   @override
-  String get speechModelDamaged =>
-      'The speech model file is damaged, so it was not used.';
+  String get speechModelDamaged => 'The speech model file is damaged, so it was not used.';
 
   @override
-  String get speechModelDamagedRecovery =>
-      'Reinstall the app, or import the model again in Settings.';
+  String get speechModelDamagedRecovery => 'Reinstall the app, or import the model again in Settings.';
 
   @override
-  String get speechDeviceUnsupported =>
-      'This device cannot run speech recognition.';
+  String get speechDeviceUnsupported => 'This device cannot run speech recognition.';
 
   @override
-  String get speechLowMemory =>
-      'There is not enough free memory to load the speech model.';
+  String get speechLowMemory => 'There is not enough free memory to load the speech model.';
 
   @override
   String get speechLowMemoryRecovery => 'Close other apps, then try again.';
 
   @override
-  String get speechTranscriptionFailed =>
-      'Part of the speech could not be turned into text. The audio is kept.';
+  String get speechTranscriptionFailed => 'Part of the speech could not be turned into text. The audio is kept.';
 
   @override
-  String get speechLanguageUnsupported =>
-      'Speech recognition on this device does not support the chosen voice language.';
+  String get speechLanguageUnsupported => 'Speech recognition on this device does not support the chosen voice language.';
 
   @override
-  String get speechEngineStopped =>
-      'Speech recognition stopped unexpectedly. Try again.';
+  String get speechEngineStopped => 'Speech recognition stopped unexpectedly. Try again.';
 
   @override
-  String get speechImportUnknown =>
-      'This file is not a speech model the app recognises.';
+  String get speechImportUnknown => 'This file is not a speech model the app recognises.';
 
   @override
-  String get speechImportUnknownRecovery =>
-      'Choose one of the model files named in Settings.';
+  String get speechImportUnknownRecovery => 'Choose one of the model files named in Settings.';
 
   @override
-  String get transcriptSaveFailed =>
-      'The transcript could not be saved on this device.';
+  String get transcriptSaveFailed => 'The transcript could not be saved on this device.';
 
   @override
-  String get transcriptSegmentOutOfOrder =>
-      'Part of the transcript arrived out of order and was not saved.';
+  String get transcriptSegmentOutOfOrder => 'Part of the transcript arrived out of order and was not saved.';
 
   @override
-  String get transcriptStillRecording =>
-      'This transcript is still being recorded. Edit it once the recording has finished.';
+  String get transcriptStillRecording => 'This transcript is still being recorded. Edit it once the recording has finished.';
 
   @override
   String get autoFilled => 'Auto-filled';
@@ -356,12 +324,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoSelect => 'Select photo';
 
   @override
-  String get photoUnreadable =>
-      'That photo could not be read from this device.';
+  String get photoUnreadable => 'That photo could not be read from this device.';
 
   @override
-  String get photoUnreadableRecovery =>
-      'Capture the photo again, then try again.';
+  String get photoUnreadableRecovery => 'Capture the photo again, then try again.';
 
   @override
   String missingPhotoNamed(Object type) {
@@ -420,8 +386,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markupBacking => 'Dark backing';
 
   @override
-  String get markupBackingDescription =>
-      'Keeps the words readable on a busy photo.';
+  String get markupBackingDescription => 'Keeps the words readable on a busy photo.';
 
   @override
   String get markupTypeHint => 'Drag the photo to move the words.';
@@ -437,8 +402,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String capturePhotoCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -467,8 +431,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoCaptionDelete => 'Delete caption';
 
   @override
-  String get photoCaptionDeleteMessage =>
-      'The caption is removed from this photo. You can undo it.';
+  String get photoCaptionDeleteMessage => 'The caption is removed from this photo. You can undo it.';
 
   @override
   String get photoCaptionDeleted => 'Caption deleted.';
@@ -574,8 +537,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyHeadline => 'Nothing here yet';
 
   @override
-  String get emptyMessage =>
-      'When there is something to show, it will appear here.';
+  String get emptyMessage => 'When there is something to show, it will appear here.';
 
   @override
   String get loading => 'Loading';
@@ -668,8 +630,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String searchFiltersFilters(int active) {
-    final intl.NumberFormat activeNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat activeNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String activeString = activeNumberFormat.format(active);
 
     return 'Filters ($activeString)';
@@ -679,8 +640,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchClearFilters => 'Clear filters';
 
   @override
-  String get searchFilterNoMatchMessage =>
-      'Change the search or clear the filters.';
+  String get searchFilterNoMatchMessage => 'Change the search or clear the filters.';
 
   @override
   String get overflowMenu => 'More options';
@@ -707,8 +667,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectsNoMatchHeadline => 'No matching projects';
 
   @override
-  String get projectsNoMatchMessage =>
-      'Try a different name, or create a project.';
+  String get projectsNoMatchMessage => 'Try a different name, or create a project.';
 
   @override
   String get projectSearchHint => 'Search projects';
@@ -739,8 +698,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String projectTemplateCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -783,14 +741,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String projectDeleteMessage(
-    Object recordsCountrecords,
-    Object filesCountfiles,
-    int days,
-  ) {
-    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+  String projectDeleteMessage(Object recordsCountrecords, Object filesCountfiles, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String daysString = daysNumberFormat.format(days);
 
     return 'This hides $recordsCountrecords and $filesCountfiles. You can restore them for $daysString days. Nothing is removed yet.';
@@ -798,8 +750,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String filesCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -843,19 +794,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectDownloadCopy => 'Download a copy';
 
   @override
-  String get projectNothingToOpen =>
-      'This project has no spreadsheet, document or PDF to open yet.';
+  String get projectNothingToOpen => 'This project has no spreadsheet, document or PDF to open yet.';
 
   @override
-  String get projectNothingToOpenRecovery =>
-      'Import a template workbook or export the project, then try again.';
+  String get projectNothingToOpenRecovery => 'Import a template workbook or export the project, then try again.';
 
   @override
   String get projectOpenFailedTitle => 'Could not open the file';
 
   @override
-  String get projectOpenFailed =>
-      'Tapture could not hand the file to another app.';
+  String get projectOpenFailed => 'Tapture could not hand the file to another app.';
 
   @override
   String projectOpenFailedNamed(Object fileName) {
@@ -869,16 +817,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectOpenNoApp => 'No app on this device can open that file.';
 
   @override
-  String get projectOpenNoAppRecovery =>
-      'Install a reader for this file type, then try again.';
+  String get projectOpenNoAppRecovery => 'Install a reader for this file type, then try again.';
 
   @override
-  String get projectOpenPermission =>
-      'Tapture needs storage access to open a copy of this file.';
+  String get projectOpenPermission => 'Tapture needs storage access to open a copy of this file.';
 
   @override
-  String get projectOpenPermissionRecovery =>
-      'Allow storage access, then try again.';
+  String get projectOpenPermissionRecovery => 'Allow storage access, then try again.';
 
   @override
   String get projectCreateTitle => 'Create project';
@@ -944,15 +889,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectAiEnabled => 'AI';
 
   @override
-  String get projectAiEnabledEffect =>
-      'Turn off to keep this project fully manual.';
+  String get projectAiEnabledEffect => 'Turn off to keep this project fully manual.';
 
   @override
   String get projectDoNotSendImages => 'Do not send images';
 
   @override
-  String get projectDoNotSendImagesEffect =>
-      'Providers never see photo bytes from this project.';
+  String get projectDoNotSendImagesEffect => 'Providers never see photo bytes from this project.';
 
   @override
   String get projectRefineColumns => 'Refined columns';
@@ -987,8 +930,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectSettingsEmptyHeadline => 'No project open';
 
   @override
-  String get projectSettingsEmptyMessage =>
-      'Open a project to change its settings.';
+  String get projectSettingsEmptyMessage => 'Open a project to change its settings.';
 
   @override
   String projectCopyName(Object name) {
@@ -996,17 +938,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String projectListSubtitle(
-    Object recordsCountrecords,
-    Object unprocessedCountunprocessed,
-  ) {
+  String projectListSubtitle(Object recordsCountrecords, Object unprocessedCountunprocessed) {
     return '$recordsCountrecords · $unprocessedCountunprocessed';
   }
 
   @override
   String projectRecordPosition(int position) {
-    final intl.NumberFormat positionNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat positionNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String positionString = positionNumberFormat.format(position);
 
     return 'Record $positionString';
@@ -1016,8 +954,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectRecordsEmptyHeadline => 'No records here';
 
   @override
-  String get projectRecordsEmptyMessage =>
-      'Captured records for this filter appear here.';
+  String get projectRecordsEmptyMessage => 'Captured records for this filter appear here.';
 
   @override
   String get projectRecordsSearchHint => 'Search records';
@@ -1054,8 +991,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectExportEmptyHeadline => 'Nothing to export';
 
   @override
-  String get projectExportEmptyMessage =>
-      'Capture a record before exporting this project.';
+  String get projectExportEmptyMessage => 'Capture a record before exporting this project.';
 
   @override
   String get projectExportShare => 'Share';
@@ -1066,8 +1002,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get projectExportShareHint =>
-      'Send the file to email, chat and other apps on this device.';
+  String get projectExportShareHint => 'Send the file to email, chat and other apps on this device.';
 
   @override
   String get exportSectionProject => 'Project';
@@ -1083,8 +1018,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportAudioClips(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -1109,8 +1043,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportUnprocessedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -1125,8 +1058,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportNeedsReviewCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -1141,8 +1073,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportApprovedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -1159,8 +1090,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportFileFormat => 'Project package (.zip)';
 
   @override
-  String get exportFileColumns =>
-      'Everything another Tapture app needs to open this project: records, photos, audio, templates, context, reference data and project settings, with a workbook of the records. Unsaved capture drafts stay on this device.';
+  String get exportFileColumns => 'Everything another Tapture app needs to open this project: records, photos, audio, templates, context, reference data and project settings, with a workbook of the records. Unsaved capture drafts stay on this device.';
 
   @override
   String exportPackageSize(Object fileSizebytes) {
@@ -1206,15 +1136,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordEditNoFieldsHeadline => 'No fields to edit';
 
   @override
-  String get recordEditNoFieldsMessage =>
-      'Add fields to this record\'s template, then edit the record here.';
+  String get recordEditNoFieldsMessage => 'Add fields to this record\'s template, then edit the record here.';
 
   @override
   String get recordDelete => 'Delete';
 
   @override
-  String get recordArchiveMessage =>
-      'The photos stay on this device. The record leaves this list.';
+  String get recordArchiveMessage => 'The photos stay on this device. The record leaves this list.';
 
   @override
   String get recordDetailTitle => 'Record';
@@ -1240,8 +1168,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordGoneHeadline => 'This record is no longer here';
 
   @override
-  String get recordGoneMessage =>
-      'It was deleted or is not on this device. Go back to the list.';
+  String get recordGoneMessage => 'It was deleted or is not on this device. Go back to the list.';
 
   @override
   String get continueCapturing => 'Continue capturing';
@@ -1301,8 +1228,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get datasetsEmptyHeadline => 'No datasets yet';
 
   @override
-  String get datasetsEmptyMessage =>
-      'Import a CSV, spreadsheet or JSON table to prefill capture fields.';
+  String get datasetsEmptyMessage => 'Import a CSV, spreadsheet or JSON table to prefill capture fields.';
 
   @override
   String get datasetsImport => 'Import dataset';
@@ -1311,8 +1237,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get datasetsKeyTitle => 'Choose the key column';
 
   @override
-  String get datasetsKeyMessage =>
-      'The key uniquely identifies each row for lookup.';
+  String get datasetsKeyMessage => 'The key uniquely identifies each row for lookup.';
 
   @override
   String get datasetsAllowDuplicates => 'Save with duplicates';
@@ -1322,8 +1247,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String datasetsDuplicateCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -1341,18 +1265,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String datasetListSubtitle(
-    Object datasetsRowCountrows,
-    Object source,
-    Object dateFormatyMMMdformat,
-  ) {
+  String datasetListSubtitle(Object datasetsRowCountrows, Object source, Object dateFormatyMMMdformat) {
     return '$datasetsRowCountrows · $source · $dateFormatyMMMdformat';
   }
 
   @override
   String datasetsRowCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -1404,8 +1323,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get datasetsBindingEmptyHeadline => 'No datasets in this project';
 
   @override
-  String get datasetsBindingEmptyMessage =>
-      'Import a dataset before binding this field.';
+  String get datasetsBindingEmptyMessage => 'Import a dataset before binding this field.';
 
   @override
   String get datasetsFuzzyEnabled => 'Allow fuzzy matches';
@@ -1429,12 +1347,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get datasetsNoMatchHeadline => 'No matching rows';
 
   @override
-  String get datasetsNoMatchMessage =>
-      'No row matches that search. Clear it to see every row.';
+  String get datasetsNoMatchMessage => 'No row matches that search. Clear it to see every row.';
 
   @override
-  String get datasetsPickNoMatchMessage =>
-      'Nothing in this dataset matches. The typed value stays as it is.';
+  String get datasetsPickNoMatchMessage => 'Nothing in this dataset matches. The typed value stays as it is.';
 
   @override
   String get datasetsClearSearch => 'Clear search';
@@ -1443,15 +1359,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get datasetsNoProjectHeadline => 'Open a project first';
 
   @override
-  String get datasetsNoProjectMessage =>
-      'Datasets belong to a project. Open one to import or browse its tables.';
+  String get datasetsNoProjectMessage => 'Datasets belong to a project. Open one to import or browse its tables.';
 
   @override
   String get datasetsPickHeadline => 'Choose a table to import';
 
   @override
-  String get datasetsPickMessage =>
-      'Pick a CSV, spreadsheet or JSON file. You choose its key column next.';
+  String get datasetsPickMessage => 'Pick a CSV, spreadsheet or JSON file. You choose its key column next.';
 
   @override
   String get datasetsPickFile => 'Choose a file';
@@ -1461,8 +1375,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String datasetsReadProgress(int percent) {
-    final intl.NumberFormat percentNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat percentNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String percentString = percentNumberFormat.format(percent);
 
     return '$percentString% read';
@@ -1479,10 +1392,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String datasetsDuplicateWarningPickAnotherKeyColumn(
-    Object datasetsDuplicateCountn,
-    Object values,
-  ) {
+  String datasetsDuplicateWarningPickAnotherKeyColumn(Object datasetsDuplicateCountn, Object values) {
     return '$datasetsDuplicateCountn.$values Pick another key column, or save the dataset with duplicates.';
   }
 
@@ -1490,10 +1400,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get datasetsDuplicatesConfirmTitle => 'Save with duplicate keys?';
 
   @override
-  String datasetsDuplicatesConfirm(
-    Object column,
-    Object datasetsDuplicateCountn,
-  ) {
+  String datasetsDuplicatesConfirm(Object column, Object datasetsDuplicateCountn) {
     return 'The key column $column has $datasetsDuplicateCountn. A lookup on a repeated key asks which row to use.';
   }
 
@@ -1513,30 +1420,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get datasetsMissingHeadline => 'Dataset not found';
 
   @override
-  String get datasetsMissingMessage =>
-      'This dataset is no longer on this device.';
+  String get datasetsMissingMessage => 'This dataset is no longer on this device.';
 
   @override
-  String get datasetsExportNoProject =>
-      'Open a project before exporting this dataset.';
+  String get datasetsExportNoProject => 'Open a project before exporting this dataset.';
 
   @override
-  String get datasetsExportNoProjectRecovery =>
-      'Open the project and try again.';
+  String get datasetsExportNoProjectRecovery => 'Open the project and try again.';
 
   @override
   String get datasetsRowMissingHeadline => 'Row not found';
 
   @override
-  String get datasetsRowMissingMessage =>
-      'This row is no longer in the dataset.';
+  String get datasetsRowMissingMessage => 'This row is no longer in the dataset.';
 
   @override
   String get datasetsAddRowNoDatasetHeadline => 'No dataset bound';
 
   @override
-  String get datasetsAddRowNoDatasetMessage =>
-      'Bind this field to a dataset before adding rows from capture.';
+  String get datasetsAddRowNoDatasetMessage => 'Bind this field to a dataset before adding rows from capture.';
 
   @override
   String lookupUnknownTarget(Object target) {
@@ -1552,8 +1454,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lookupPickDataset => 'Pick a dataset before saving the binding.';
 
   @override
-  String get lookupImportRecovery =>
-      'Fix the lookup fills in the template file and import it again.';
+  String get lookupImportRecovery => 'Fix the lookup fills in the template file and import it again.';
 
   @override
   String lookupColumnTwice(Object column) {
@@ -1562,8 +1463,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String lookupThresholdLabel(int percent) {
-    final intl.NumberFormat percentNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat percentNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String percentString = percentNumberFormat.format(percent);
 
     return '$percentString%';
@@ -1594,8 +1494,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lookupFieldMissingHeadline => 'Field not found';
 
   @override
-  String get lookupFieldMissingMessage =>
-      'This field is no longer on the template.';
+  String get lookupFieldMissingMessage => 'This field is no longer on the template.';
 
   @override
   String get lookupNoMatchLeaveEmpty => 'Leave empty';
@@ -1613,8 +1512,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templatesEmptyHeadline => 'No templates yet';
 
   @override
-  String get templatesEmptyMessage =>
-      'Pick a shipped template to start capturing, or create a blank template.';
+  String get templatesEmptyMessage => 'Pick a shipped template to start capturing, or create a blank template.';
 
   @override
   String get templatesPickLibrary => 'Pick a shipped template';
@@ -1632,8 +1530,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templatesAddMore => 'Add more templates';
 
   @override
-  String get templatesAddEmptyMessage =>
-      'Add templates to start capturing. Create a blank template when none fits.';
+  String get templatesAddEmptyMessage => 'Add templates to start capturing. Create a blank template when none fits.';
 
   @override
   String get templatesUpload => 'Upload a template';
@@ -1690,45 +1587,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templatesImportEmptyHeadline => 'No template file';
 
   @override
-  String get templatesImportEmptyMessage =>
-      'Choose a template file to add it to this project.';
+  String get templatesImportEmptyMessage => 'Choose a template file to add it to this project.';
 
   @override
-  String get templatesImportUnknownSchema =>
-      'That template file uses a schema this app does not read.';
+  String get templatesImportUnknownSchema => 'That template file uses a schema this app does not read.';
 
   @override
-  String get templatesImportUnknownSchemaRecovery =>
-      'Export the template again from this version of Tapture.';
+  String get templatesImportUnknownSchemaRecovery => 'Export the template again from this version of Tapture.';
 
   @override
   String get templatesImportInvalid => 'That file is not a template.';
 
   @override
-  String get templatesImportInvalidRecovery =>
-      'Choose a template file and try again.';
+  String get templatesImportInvalidRecovery => 'Choose a template file and try again.';
 
   @override
-  String get templatesImportDuplicateField =>
-      'Each field key must be unique on a template.';
+  String get templatesImportDuplicateField => 'Each field key must be unique on a template.';
 
   @override
-  String get templatesImportDuplicateFieldRecovery =>
-      'Rename the duplicate key and export again.';
+  String get templatesImportDuplicateFieldRecovery => 'Rename the duplicate key and export again.';
 
   @override
   String get workbookPassword => 'That spreadsheet is locked with a password.';
 
   @override
-  String get workbookPasswordRecovery =>
-      'Unlock it, save a copy, and choose the copy.';
+  String get workbookPasswordRecovery => 'Unlock it, save a copy, and choose the copy.';
 
   @override
   String get workbookCorrupt => 'That spreadsheet could not be read.';
 
   @override
-  String get workbookCorruptRecovery =>
-      'Keep the original. Export a copy and try again.';
+  String get workbookCorruptRecovery => 'Keep the original. Export a copy and try again.';
 
   @override
   String get xlsxMappingTitle => 'Map columns';
@@ -1737,8 +1626,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get xlsxMappingEmptyHeadline => 'No spreadsheet';
 
   @override
-  String get xlsxMappingEmptyMessage =>
-      'Choose a spreadsheet to map its columns onto a template.';
+  String get xlsxMappingEmptyMessage => 'Choose a spreadsheet to map its columns onto a template.';
 
   @override
   String get xlsxMappingConfirm => 'Create template';
@@ -1766,20 +1654,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get xlsxMappingDefaultName => 'Spreadsheet';
 
   @override
-  String get xlsxMappingMissing =>
-      'That spreadsheet is no longer on this device.';
+  String get xlsxMappingMissing => 'That spreadsheet is no longer on this device.';
 
   @override
-  String get xlsxMappingMissingRecovery =>
-      'Choose the spreadsheet again, then try again.';
+  String get xlsxMappingMissingRecovery => 'Choose the spreadsheet again, then try again.';
 
   @override
-  String get xlsxMappingExists =>
-      'A copy of that spreadsheet is already in this project.';
+  String get xlsxMappingExists => 'A copy of that spreadsheet is already in this project.';
 
   @override
-  String get xlsxMappingExistsRecovery =>
-      'Rename the spreadsheet, then try again.';
+  String get xlsxMappingExistsRecovery => 'Rename the spreadsheet, then try again.';
 
   @override
   String get rowAliasesTitle => 'Row aliases';
@@ -1788,8 +1672,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rowAliasesEmptyHeadline => 'No rows to name';
 
   @override
-  String get rowAliasesEmptyMessage =>
-      'Import spreadsheet rows first, then add the local names that should match them.';
+  String get rowAliasesEmptyMessage => 'Import spreadsheet rows first, then add the local names that should match them.';
 
   @override
   String get rowAliasesField => 'Aliases';
@@ -1804,12 +1687,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rowAliasesColumn => 'Alias column';
 
   @override
-  String get rowAliasesInvalidColumn =>
-      'That column is not in the spreadsheet.';
+  String get rowAliasesInvalidColumn => 'That column is not in the spreadsheet.';
 
   @override
-  String get rowAliasesInvalidColumnRecovery =>
-      'Enter a column letter shown in the spreadsheet.';
+  String get rowAliasesInvalidColumnRecovery => 'Enter a column letter shown in the spreadsheet.';
 
   @override
   String get rowAliasesNone => 'No aliases yet';
@@ -1830,19 +1711,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checklistImportRows => 'Import rows';
 
   @override
-  String get checklistMappingIncomplete =>
-      'Choose an identifier and a label column.';
+  String get checklistMappingIncomplete => 'Choose an identifier and a label column.';
 
   @override
-  String get checklistMappingRecovery =>
-      'Confirm both columns before importing the rows.';
+  String get checklistMappingRecovery => 'Confirm both columns before importing the rows.';
 
   @override
   String get checklistEmptyHeadline => 'Nothing on the checklist';
 
   @override
-  String get checklistEmptyMessage =>
-      'Import spreadsheet rows to see what is still missing.';
+  String get checklistEmptyMessage => 'Import spreadsheet rows to see what is still missing.';
 
   @override
   String get checklistFound => 'Found';
@@ -1855,11 +1733,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String checklistProgress(Object group, int found, int total) {
-    final intl.NumberFormat foundNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat foundNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String foundString = foundNumberFormat.format(found);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return '$group · Found $foundString of $totalString';
@@ -1869,15 +1745,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detectionProfileTitle => 'Detection';
 
   @override
-  String get detectionProfileExplain =>
-      'A photo is matched to this template from these signals. A negative keyword rules it out.';
+  String get detectionProfileExplain => 'A photo is matched to this template from these signals. A negative keyword rules it out.';
 
   @override
   String get detectionProfileEmptyHeadline => 'No template to configure';
 
   @override
-  String get detectionProfileEmptyMessage =>
-      'Open a template first, then set how a photo is matched to it.';
+  String get detectionProfileEmptyMessage => 'Open a template first, then set how a photo is matched to it.';
 
   @override
   String get detectionProfileClasses => 'Object classes';
@@ -1898,20 +1772,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detectionProfileHint => 'Separate with a comma';
 
   @override
-  String get detectionProfileNoPatterns =>
-      'Identifier patterns come from field validation. Add a pattern on a field first.';
+  String get detectionProfileNoPatterns => 'Identifier patterns come from field validation. Add a pattern on a field first.';
 
   @override
-  String get detectionProfileNoDatasets =>
-      'Linked datasets come from lookup fields. Bind a lookup first.';
+  String get detectionProfileNoDatasets => 'Linked datasets come from lookup fields. Bind a lookup first.';
 
   @override
-  String get detectionProfileMissing =>
-      'That template is no longer on this device.';
+  String get detectionProfileMissing => 'That template is no longer on this device.';
 
   @override
-  String get detectionProfileMissingRecovery =>
-      'Open the template list and try again.';
+  String get detectionProfileMissingRecovery => 'Open the template list and try again.';
 
   @override
   String get templatesDelete => 'Delete template';
@@ -1922,10 +1792,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String templatesDeleteMessage(
-    Object fieldsCountfields,
-    Object recordsCountrecords,
-  ) {
+  String templatesDeleteMessage(Object fieldsCountfields, Object recordsCountrecords) {
     return 'This hides $fieldsCountfields. $recordsCountrecords stay on this template.';
   }
 
@@ -1937,9 +1804,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String templateFieldRowTitle(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Field $nString';
@@ -1961,18 +1826,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String templatesDeleteFieldMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$countString records hold a value. Those values stay and export as retired.',
+      other: '$countString records hold a value. Those values stay and export as retired.',
       one: '1 record holds a value. That value stays and exports as retired.',
-      zero:
-          'No records hold a value. The field leaves this template. Existing values stay and export as retired.',
+      zero: 'No records hold a value. The field leaves this template. Existing values stay and export as retired.',
     );
     return '$_temp0';
   }
@@ -1981,8 +1843,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templatesFieldsEmptyHeadline => 'No fields yet';
 
   @override
-  String get templatesFieldsEmptyMessage =>
-      'Add a field so this template can capture.';
+  String get templatesFieldsEmptyMessage => 'Add a field so this template can capture.';
 
   @override
   String get fieldRequired => 'Required';
@@ -2106,8 +1967,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldKeepAnyway => 'Keep anyway';
 
   @override
-  String get fieldTwoFactsWarning =>
-      'This label packs two facts. Split it into two fields, or keep this one anyway.';
+  String get fieldTwoFactsWarning => 'This label packs two facts. Split it into two fields, or keep this one anyway.';
 
   @override
   String get fieldDefaultValue => 'Default value';
@@ -2196,8 +2056,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldValidationEmptyHeadline => 'No validation yet';
 
   @override
-  String get fieldValidationEmptyMessage =>
-      'Add a pattern, length, range or required-with rule.';
+  String get fieldValidationEmptyMessage => 'Add a pattern, length, range or required-with rule.';
 
   @override
   String get fieldPattern => 'Pattern';
@@ -2245,8 +2104,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldOptionsEmptyHeadline => 'No choices yet';
 
   @override
-  String get fieldOptionsEmptyMessage =>
-      'Add a choice so capture has something to pick.';
+  String get fieldOptionsEmptyMessage => 'Add a choice so capture has something to pick.';
 
   @override
   String get fieldOptionLabel => 'Choice name';
@@ -2264,8 +2122,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldAddEmptyHeadline => 'No template to edit';
 
   @override
-  String get fieldAddEmptyMessage =>
-      'Open the template list and pick a template first.';
+  String get fieldAddEmptyMessage => 'Open the template list and pick a template first.';
 
   @override
   String get requiredColumnsTitle => 'Required columns';
@@ -2274,8 +2131,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requiredColumnsEmptyHeadline => 'No columns to set';
 
   @override
-  String get requiredColumnsEmptyMessage =>
-      'Add a field first, then choose what this project insists on.';
+  String get requiredColumnsEmptyMessage => 'Add a field first, then choose what this project insists on.';
 
   @override
   String get requiredColumnHide => 'Hide';
@@ -2313,15 +2169,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get identityFieldsTitle => 'Identity fields';
 
   @override
-  String get identityFieldsExplain =>
-      'These fields decide whether two records are the same thing.';
+  String get identityFieldsExplain => 'These fields decide whether two records are the same thing.';
 
   @override
   String get identityFieldsEmptyHeadline => 'No fields to mark';
 
   @override
-  String get identityFieldsEmptyMessage =>
-      'Add a field first, then choose which ones identify a record.';
+  String get identityFieldsEmptyMessage => 'Add a field first, then choose which ones identify a record.';
 
   @override
   String get outputMappingTitle => 'Output columns';
@@ -2330,38 +2184,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get outputMappingEmptyHeadline => 'No columns to map';
 
   @override
-  String get outputMappingEmptyMessage =>
-      'Add a field first, then choose where each one writes.';
+  String get outputMappingEmptyMessage => 'Add a field first, then choose where each one writes.';
 
   @override
-  String get outputMappingDuplicate =>
-      'Two fields cannot write to the same column.';
+  String get outputMappingDuplicate => 'Two fields cannot write to the same column.';
 
   @override
-  String get outputMappingDuplicateRecovery =>
-      'Give each field its own column, then save.';
+  String get outputMappingDuplicateRecovery => 'Give each field its own column, then save.';
 
   @override
-  String get outputMappingBuiltHint =>
-      'Headers are generated from the field labels. You can change them.';
+  String get outputMappingBuiltHint => 'Headers are generated from the field labels. You can change them.';
 
   @override
-  String get outputMappingImportedHint =>
-      'These letters came from the workbook. You can change them.';
+  String get outputMappingImportedHint => 'These letters came from the workbook. You can change them.';
 
   @override
   String get templateMigrationTitle => 'Move records';
 
   @override
-  String get templateMigrationExplain =>
-      'Records stay on the version they were captured under until you move them.';
+  String get templateMigrationExplain => 'Records stay on the version they were captured under until you move them.';
 
   @override
   String get templateMigrationEmptyHeadline => 'Nothing to move';
 
   @override
-  String get templateMigrationEmptyMessage =>
-      'Every record is already on this template version.';
+  String get templateMigrationEmptyMessage => 'Every record is already on this template version.';
 
   @override
   String get templateMigrationAdded => 'Added fields';
@@ -2402,10 +2249,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String templateListSubtitle(
-    Object fieldsCountfields,
-    Object recordsCountrecords,
-  ) {
+  String templateListSubtitle(Object fieldsCountfields, Object recordsCountrecords) {
     return '$fieldsCountfields · $recordsCountrecords';
   }
 
@@ -2416,8 +2260,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templatesLibraryEmptyHeadline => 'No shipped templates';
 
   @override
-  String get templatesLibraryEmptyMessage =>
-      'Create a blank template to start capturing.';
+  String get templatesLibraryEmptyMessage => 'Create a blank template to start capturing.';
 
   @override
   String get templatesAdd => 'Add to this project';
@@ -2445,23 +2288,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String shippedCategoryHeading(
-    Object shippedCatalogueCategoryTitlecodetitle,
-    int count,
-  ) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+  String shippedCategoryHeading(Object shippedCatalogueCategoryTitlecodetitle, int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$shippedCatalogueCategoryTitlecodetitle · $countString';
   }
 
   @override
-  String shippedCatalogueSubtitle(
-    Object code,
-    Object recordType,
-    Object fieldsCountfields,
-  ) {
+  String shippedCatalogueSubtitle(Object code, Object recordType, Object fieldsCountfields) {
     return '$code · $recordType · $fieldsCountfields';
   }
 
@@ -2505,10 +2340,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shippedPrivacyTierLabel => 'Suggested privacy and tier';
 
   @override
-  String shippedPrivacyTier(
-    Object shippedPrivacyLabelprivacy,
-    Object shippedTierLabelrollout,
-  ) {
+  String shippedPrivacyTier(Object shippedPrivacyLabelprivacy, Object shippedTierLabelrollout) {
     return '$shippedPrivacyLabelprivacy · $shippedTierLabelrollout';
   }
 
@@ -2557,8 +2389,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navExports => 'Exports';
 
   @override
-  String get operatorNameUse =>
-      'Used on every record you capture from this device.';
+  String get operatorNameUse => 'Used on every record you capture from this device.';
 
   @override
   String get operatorName => 'Name';
@@ -2600,16 +2431,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contextHierarchyEmptyHeadline => 'No context levels';
 
   @override
-  String get contextHierarchyEmptyMessage =>
-      'Add field keys from a template to build a hierarchy, or leave none.';
+  String get contextHierarchyEmptyMessage => 'Add field keys from a template to build a hierarchy, or leave none.';
 
   @override
   String get contextAddLevel => 'Add level';
 
   @override
   String contextLevelRow(int level, Object fieldKey) {
-    final intl.NumberFormat levelNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat levelNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String levelString = levelNumberFormat.format(level);
 
     return 'Level $levelString · $fieldKey';
@@ -2622,15 +2451,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contextTemplateFailureHeadline => 'Template levels could not load';
 
   @override
-  String get contextTemplateFailureMessage =>
-      'Try again. Your saved context has not changed.';
+  String get contextTemplateFailureMessage => 'Try again. Your saved context has not changed.';
 
   @override
   String get contextNoTemplatesHeadline => 'No project templates';
 
   @override
-  String get contextNoTemplatesMessage =>
-      'Attach or create a template before choosing context fields.';
+  String get contextNoTemplatesMessage => 'Attach or create a template before choosing context fields.';
 
   @override
   String get contextOpenTemplates => 'Add templates';
@@ -2639,15 +2466,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contextNoDeclaredLevelsHeadline => 'No template levels declared';
 
   @override
-  String get contextNoDeclaredLevelsMessage =>
-      'Set a positive context level on template fields, or add levels manually.';
+  String get contextNoDeclaredLevelsMessage => 'Set a positive context level on template fields, or add levels manually.';
 
   @override
   String get contextNoEligibleFieldsHeadline => 'No fields available';
 
   @override
-  String get contextNoEligibleFieldsMessage =>
-      'Every template field is already used as a context level.';
+  String get contextNoEligibleFieldsMessage => 'Every template field is already used as a context level.';
 
   @override
   String get contextTemplateConflictHeadline => 'Template levels conflict';
@@ -2695,25 +2520,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contextPinnedEmptyHeadline => 'No pinnable context fields';
 
   @override
-  String get contextPinnedEmptyMessage =>
-      'Mark fields as pinned context on a template to reuse them during capture.';
+  String get contextPinnedEmptyMessage => 'Mark fields as pinned context on a template to reuse them during capture.';
 
   @override
   String get contextMarkPinnable => 'Mark a field as pinnable';
 
   @override
-  String get contextPinnedRelevance =>
-      'Pinned context is reused on each new record until you change it.';
+  String get contextPinnedRelevance => 'Pinned context is reused on each new record until you change it.';
 
   @override
   String get contextCascadeTitle => 'Clear lower levels?';
 
   @override
-  String contextCascadeMessage(
-    Object levelLabel,
-    Object newValue,
-    Object andnamed,
-  ) {
+  String contextCascadeMessage(Object levelLabel, Object newValue, Object andnamed) {
     return 'Change $levelLabel to $newValue? $andnamed will be cleared.';
   }
 
@@ -2727,8 +2546,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contextPresetsEmptyHeadline => 'No presets yet';
 
   @override
-  String get contextPresetsEmptyMessage =>
-      'Save the current context, then apply the preset in one tap.';
+  String get contextPresetsEmptyMessage => 'Save the current context, then apply the preset in one tap.';
 
   @override
   String get contextPresetSave => 'Save preset';
@@ -2740,8 +2558,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contextPresetsChip => 'Presets';
 
   @override
-  String get contextPresetsHint =>
-      'Save the current values, or switch rooms in one tap.';
+  String get contextPresetsHint => 'Save the current values, or switch rooms in one tap.';
 
   @override
   String get contextPresetName => 'Preset name';
@@ -2771,8 +2588,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contextPresetOverwriteTitle => 'Replace preset?';
 
   @override
-  String get contextPresetOverwriteMessage =>
-      'A preset with that name already exists. Replace it?';
+  String get contextPresetOverwriteMessage => 'A preset with that name already exists. Replace it?';
 
   @override
   String get contextPresetReplace => 'Replace';
@@ -2789,8 +2605,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contextMovementTitle => 'Confirm context';
 
   @override
-  String get contextMovementMessage =>
-      'You have moved. Is the current context still correct?';
+  String get contextMovementMessage => 'You have moved. Is the current context still correct?';
 
   @override
   String get contextMovementChange => 'Change context';
@@ -2826,13 +2641,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsContextAutoClear => 'Clear the lowest level when idle';
 
   @override
-  String get settingsContextAutoClearEffect =>
-      'Off until you turn it on. Clears only the lowest level, and you can undo.';
+  String get settingsContextAutoClearEffect => 'Off until you turn it on. Clears only the lowest level, and you can undo.';
 
   @override
   String settingsContextIdleSubtitle(int minutes) {
-    final intl.NumberFormat minutesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat minutesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String minutesString = minutesNumberFormat.format(minutes);
 
     return 'After $minutesString minutes with no change.';
@@ -2842,13 +2655,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsContextMovement => 'Confirm context after movement';
 
   @override
-  String get settingsContextMovementEffect =>
-      'Off until you turn it on. Asks you to confirm. It does not change context. Needs GPS and location already allowed.';
+  String get settingsContextMovementEffect => 'Off until you turn it on. Asks you to confirm. It does not change context. Needs GPS and location already allowed.';
 
   @override
   String settingsContextDistanceSubtitle(int metres) {
-    final intl.NumberFormat metresNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat metresNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String metresString = metresNumberFormat.format(metres);
 
     return 'After $metresString metres.';
@@ -2858,13 +2669,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsContextIdle => 'Clear context after';
 
   @override
-  String get settingsContextIdleEffect =>
-      'How long with no change before the lowest level clears.';
+  String get settingsContextIdleEffect => 'How long with no change before the lowest level clears.';
 
   @override
   String settingsContextIdleOption(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -2880,13 +2689,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsContextDistance => 'Ask when I move';
 
   @override
-  String get settingsContextDistanceEffect =>
-      'How far you move before Tapture asks you to confirm the context.';
+  String get settingsContextDistanceEffect => 'How far you move before Tapture asks you to confirm the context.';
 
   @override
   String settingsContextDistanceOption(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -2905,8 +2712,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureSaveAndAnalyse => 'Save and process';
 
   @override
-  String get captureProcessNeedsNetwork =>
-      'Save raw now. Process it once this device is online.';
+  String get captureProcessNeedsNetwork => 'Save raw now. Process it once this device is online.';
 
   @override
   String get captureSaveRaw => 'Save raw';
@@ -2915,8 +2721,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureNoPhotosHeadline => 'No photos yet';
 
   @override
-  String get captureNoPhotosMessage =>
-      'Add a photo, import a file, or type a caption to start.';
+  String get captureNoPhotosMessage => 'Add a photo, import a file, or type a caption to start.';
 
   @override
   String get captureProjectLabel => 'Project';
@@ -2928,8 +2733,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureCreateProjectFirst => 'Create a project before capturing.';
 
   @override
-  String get captureNoProjectMessage =>
-      'Every photo and record is filed under a project.';
+  String get captureNoProjectMessage => 'Every photo and record is filed under a project.';
 
   @override
   String get captureNeedsTemplate => 'Add a template before capturing.';
@@ -2938,8 +2742,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureMoreFields => 'More fields';
 
   @override
-  String get captureCameraReason =>
-      'Tapture needs the camera to photograph equipment and documents.';
+  String get captureCameraReason => 'Tapture needs the camera to photograph equipment and documents.';
 
   @override
   String get captureOpenCameraSettings => 'Open settings';
@@ -2960,19 +2763,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureDocumentMode => 'Document mode';
 
   @override
-  String get capturePageBoundaryFound =>
-      'Page edge found. A straightened copy is ready.';
+  String get capturePageBoundaryFound => 'Page edge found. A straightened copy is ready.';
 
   @override
   String get captureUseCorrected => 'Use corrected';
 
   @override
-  String get captureCorrectionFailed =>
-      'The page could not be straightened. The original is kept.';
+  String get captureCorrectionFailed => 'The page could not be straightened. The original is kept.';
 
   @override
-  String get captureNoPageBoundary =>
-      'No page edge found. Captured as a normal photo.';
+  String get captureNoPageBoundary => 'No page edge found. Captured as a normal photo.';
 
   @override
   String get captureFlashOff => 'Flash off';
@@ -3002,12 +2802,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureImportDocument => 'Import document';
 
   @override
-  String get captureDocumentsUnavailable =>
-      'Documents are not available on this device.';
+  String get captureDocumentsUnavailable => 'Documents are not available on this device.';
 
   @override
-  String get captureDocumentsUnavailableRecovery =>
-      'Try again after reopening the app.';
+  String get captureDocumentsUnavailableRecovery => 'Try again after reopening the app.';
 
   @override
   String get tryAnotherFile => 'Try another file';
@@ -3030,12 +2828,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdfNextPage => 'Next page';
 
   @override
-  String get barcodeUnavailable =>
-      'Barcode scanning is not available on this device.';
+  String get barcodeUnavailable => 'Barcode scanning is not available on this device.';
 
   @override
-  String get barcodeAllowCamera =>
-      'Allow the camera in settings to scan, or type the code.';
+  String get barcodeAllowCamera => 'Allow the camera in settings to scan, or type the code.';
 
   @override
   String get barcodeConfirm => 'Use this code';
@@ -3057,9 +2853,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String barcodeScanCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Scanned $nString';
@@ -3067,9 +2861,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String barcodeCountPosition(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Scan $nString';
@@ -3107,8 +2899,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captionAddToAll(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -3122,8 +2913,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captionAddToTicked(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -3137,8 +2927,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captionAdded(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -3157,8 +2946,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captionReplace => 'Replace';
 
   @override
-  String get captureMicReason =>
-      'Tapture needs the microphone for spoken notes on an explicit tap.';
+  String get captureMicReason => 'Tapture needs the microphone for spoken notes on an explicit tap.';
 
   @override
   String get captureListening => 'Listening…';
@@ -3176,38 +2964,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureStopAudio => 'Stop';
 
   @override
-  String get audioRecorderUnavailable =>
-      'Audio recording is not available on this device.';
+  String get audioRecorderUnavailable => 'Audio recording is not available on this device.';
 
   @override
-  String get microphoneBusy =>
-      'The microphone is in use by another recording. Stop it first, then try again.';
+  String get microphoneBusy => 'The microphone is in use by another recording. Stop it first, then try again.';
 
   @override
   String get audioStartFailed => 'Recording could not start.';
 
   @override
-  String get audioStartFailedRecovery =>
-      'Try again. Nothing already captured was lost.';
+  String get audioStartFailedRecovery => 'Try again. Nothing already captured was lost.';
 
   @override
-  String get audioTakeLimitReached =>
-      'This recording reached the longest take this browser can keep. Everything captured so far is kept.';
+  String get audioTakeLimitReached => 'This recording reached the longest take this browser can keep. Everything captured so far is kept.';
 
   @override
-  String get audioTakeLimitReachedRecovery =>
-      'Stop this recording, then start a new one to continue.';
+  String get audioTakeLimitReachedRecovery => 'Stop this recording, then start a new one to continue.';
 
   @override
-  String get audioPathOutsideStorage =>
-      'The recording must be saved inside the project folder.';
+  String get audioPathOutsideStorage => 'The recording must be saved inside the project folder.';
 
   @override
   String get audioPermissionDenied => 'Microphone permission was not granted.';
 
   @override
-  String get audioPermissionRecovery =>
-      'Allow microphone access in system settings, then try again.';
+  String get audioPermissionRecovery => 'Allow microphone access in system settings, then try again.';
 
   @override
   String get audioRecorderStatus => 'Requesting microphone permission';
@@ -3264,20 +3045,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get liveTranscriptStatusSaved => 'Saved on this device';
 
   @override
-  String get liveTranscriptStatusPausedBackground =>
-      'Paused while Tapture was in the background. Everything so far is saved.';
+  String get liveTranscriptStatusPausedBackground => 'Paused while Tapture was in the background. Everything so far is saved.';
 
   @override
-  String get liveTranscriptStatusPausedInterruption =>
-      'Paused by another app or a call.';
+  String get liveTranscriptStatusPausedInterruption => 'Paused by another app or a call.';
 
   @override
-  String get liveTranscriptMicLost =>
-      'The microphone was turned off. What was recorded is saved.';
+  String get liveTranscriptMicLost => 'The microphone was turned off. What was recorded is saved.';
 
   @override
-  String get liveTranscriptPermissionRevoked =>
-      'Microphone access was turned off. What was recorded is saved. Allow access to go on, or stop to keep it.';
+  String get liveTranscriptPermissionRevoked => 'Microphone access was turned off. What was recorded is saved. Allow access to go on, or stop to keep it.';
 
   @override
   String get liveTranscriptRetrySave => 'Try saving again';
@@ -3289,24 +3066,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get liveTranscriptCancelTitle => 'Discard this recording?';
 
   @override
-  String get liveTranscriptCancelMessage =>
-      'It is not added here. The audio file stays in the project folder.';
+  String get liveTranscriptCancelMessage => 'It is not added here. The audio file stays in the project folder.';
 
   @override
-  String get liveTranscriptAudioOnly =>
-      'Recording without a live transcript: no speech model is available.';
+  String get liveTranscriptAudioOnly => 'Recording without a live transcript: no speech model is available.';
 
   @override
   String liveTranscriptBehind(int minutes) {
-    final intl.NumberFormat minutesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat minutesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String minutesString = minutesNumberFormat.format(minutes);
 
     String _temp0 = intl.Intl.pluralLogic(
       minutes,
       locale: localeName,
-      other:
-          'The transcript is $minutesString minutes behind. Recording goes on.',
+      other: 'The transcript is $minutesString minutes behind. Recording goes on.',
       one: 'The transcript is 1 minute behind. Recording goes on.',
       zero: 'The transcript is catching up. Recording goes on.',
     );
@@ -3314,24 +3087,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get liveTranscriptUtteranceSkipped =>
-      'A part could not be transcribed. Its audio is kept.';
+  String get liveTranscriptUtteranceSkipped => 'A part could not be transcribed. Its audio is kept.';
 
   @override
-  String get liveTranscriptUnsaved =>
-      'The transcript could not be saved yet. The recording is kept, and saving is tried again.';
+  String get liveTranscriptUnsaved => 'The transcript could not be saved yet. The recording is kept, and saving is tried again.';
 
   @override
-  String get liveTranscriptSessionLimit =>
-      'The recording reached the longest length allowed and was saved.';
+  String get liveTranscriptSessionLimit => 'The recording reached the longest length allowed and was saved.';
 
   @override
-  String get liveTranscriptStorageStop =>
-      'Storage is full, so recording stopped. What was recorded is saved.';
+  String get liveTranscriptStorageStop => 'Storage is full, so recording stopped. What was recorded is saved.';
 
   @override
-  String get liveTranscriptStorageLow =>
-      'Storage is running low. Recording goes on.';
+  String get liveTranscriptStorageLow => 'Storage is running low. Recording goes on.';
 
   @override
   String get liveTranscriptListTitle => 'Transcripts';
@@ -3362,12 +3130,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get speechOfflineBadge => 'On this device';
 
   @override
-  String get liveTranscriptUnavailable =>
-      'Live transcription needs a speech model on this device.';
+  String get liveTranscriptUnavailable => 'Live transcription needs a speech model on this device.';
 
   @override
-  String get liveTranscriptUnavailableRecovery =>
-      'Open Settings, Language, to check the speech model.';
+  String get liveTranscriptUnavailableRecovery => 'Open Settings, Language, to check the speech model.';
 
   @override
   String get navTranscripts => 'Transcripts';
@@ -3382,8 +3148,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcriptsEmptyHeadline => 'No transcripts yet';
 
   @override
-  String get transcriptsEmptyMessage =>
-      'Record speech and Tapture writes it down on this device. No connection is needed.';
+  String get transcriptsEmptyMessage => 'Record speech and Tapture writes it down on this device. No connection is needed.';
 
   @override
   String get transcriptsNoMatchHeadline => 'No matching transcripts';
@@ -3395,8 +3160,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcriptsNoProject => 'Open a project to transcribe';
 
   @override
-  String get transcriptsNoProjectMessage =>
-      'Recordings and transcripts are saved in the project folder.';
+  String get transcriptsNoProjectMessage => 'Recordings and transcripts are saved in the project folder.';
 
   @override
   String get transcribeTitle => 'Transcribe';
@@ -3408,8 +3172,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcriptMissing => 'This transcript is not on this device';
 
   @override
-  String get transcriptMissingMessage =>
-      'It was discarded, or it belongs to a project that is not here.';
+  String get transcriptMissingMessage => 'It was discarded, or it belongs to a project that is not here.';
 
   @override
   String get transcriptOriginCapture => 'From a capture';
@@ -3421,8 +3184,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcriptOriginStandalone => 'Transcription';
 
   @override
-  String get transcriptStatusInterrupted =>
-      'Interrupted. What was heard is kept.';
+  String get transcriptStatusInterrupted => 'Interrupted. What was heard is kept.';
 
   @override
   String get transcriptEditedLabel => 'Edited text';
@@ -3434,8 +3196,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcriptSaveEdit => 'Save changes';
 
   @override
-  String get transcriptEditSaved =>
-      'Changes saved. The original transcript is kept.';
+  String get transcriptEditSaved => 'Changes saved. The original transcript is kept.';
 
   @override
   String get transcriptRevert => 'Go back to the original';
@@ -3444,8 +3205,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcriptRevertTitle => 'Go back to the original transcript?';
 
   @override
-  String get transcriptRevertMessage =>
-      'Your changes are removed. The original stays as it was recorded.';
+  String get transcriptRevertMessage => 'Your changes are removed. The original stays as it was recorded.';
 
   @override
   String get transcriptRevertConfirm => 'Use original';
@@ -3479,8 +3239,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String transcriptGaps(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -3510,8 +3269,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captureAudioSelectedPhotos(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return 'Selected photos ($countString)';
@@ -3519,8 +3277,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captureAudioAllPhotos(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return 'All photos ($countString)';
@@ -3528,8 +3285,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captureAudioCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -3545,8 +3301,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureDeletePhotoTitle => 'Delete this photo?';
 
   @override
-  String get captureDeletePhotoMessage =>
-      'It leaves the tray now. The file stays until the retention purge so you can undo.';
+  String get captureDeletePhotoMessage => 'It leaves the tray now. The file stays until the retention purge so you can undo.';
 
   @override
   String get captureUndoDelete => 'Undo';
@@ -3562,8 +3317,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captureRecoveryMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -3583,16 +3337,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureDiscard => 'Discard';
 
   @override
-  String get captureSessionDiscarded =>
-      'Session discarded. Its photos stay recoverable.';
+  String get captureSessionDiscarded => 'Session discarded. Its photos stay recoverable.';
 
   @override
   String get captureRapidMode => 'Rapid mode';
 
   @override
   String captureRapidItem(int number) {
-    final intl.NumberFormat numberNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat numberNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String numberString = numberNumberFormat.format(number);
 
     return 'Item $numberString';
@@ -3608,8 +3360,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captureRapidProcessAll(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return 'Process all ($countString)';
@@ -3617,8 +3368,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String captureRapidQueued(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -3634,8 +3384,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureRapidEmptyHeadline => 'No items yet';
 
   @override
-  String get captureRapidEmptyMessage =>
-      'Take photos of the first item, then save it to start the next.';
+  String get captureRapidEmptyMessage => 'Take photos of the first item, then save it to start the next.';
 
   @override
   String captureRapidCurrent(Object photosCountphotos) {
@@ -3656,8 +3405,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureStorageExport => 'Export';
 
   @override
-  String get captureNoTemplates =>
-      'This project has no templates yet. You can capture now and add one later.';
+  String get captureNoTemplates => 'This project has no templates yet. You can capture now and add one later.';
 
   @override
   String get capturePickTemplate => 'Template';
@@ -3666,17 +3414,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get capturePinSession => 'Pin for session';
 
   @override
-  String get captureTemplatePinned =>
-      'This template is now used here every time.';
+  String get captureTemplatePinned => 'This template is now used here every time.';
 
   @override
   String get capturePinContext => 'Pin for context';
 
   @override
   String captureSelectedCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Selected $nString';
@@ -3722,12 +3467,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureSaveFailed => 'Save failed';
 
   @override
-  String get captureEnqueueFailed =>
-      'The capture was saved, but processing could not be queued.';
+  String get captureEnqueueFailed => 'The capture was saved, but processing could not be queued.';
 
   @override
-  String get captureNeedsEvidence =>
-      'Add at least one photo or a caption before saving.';
+  String get captureNeedsEvidence => 'Add at least one photo or a caption before saving.';
 
   @override
   String get captureNeedsEvidenceRecovery => 'Add evidence, then try again.';
@@ -3736,23 +3479,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureOrderIncomplete => 'The photo order is incomplete.';
 
   @override
-  String get captureOrderIncompleteRecovery =>
-      'Keep every photo in the tray and try again.';
+  String get captureOrderIncompleteRecovery => 'Keep every photo in the tray and try again.';
 
   @override
   String get captureChangeNotSaved => 'That change could not be saved.';
 
   @override
-  String get captureChangeNotSavedRecovery =>
-      'Try again. Nothing already captured was lost.';
+  String get captureChangeNotSavedRecovery => 'Try again. Nothing already captured was lost.';
 
   @override
-  String get captureRecordsUnavailable =>
-      'Saved records cannot be edited on this device.';
+  String get captureRecordsUnavailable => 'Saved records cannot be edited on this device.';
 
   @override
-  String get captureRecordsUnavailableRecovery =>
-      'Open the record on a device that stores records.';
+  String get captureRecordsUnavailableRecovery => 'Open the record on a device that stores records.';
 
   @override
   String get statusNoTemplate => 'No template';
@@ -3782,8 +3521,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String unprocessedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -3835,8 +3573,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsGroupProfileCapture => 'Profile and capture';
 
   @override
-  String get settingsGroupIntelligenceAppearance =>
-      'Intelligence and appearance';
+  String get settingsGroupIntelligenceAppearance => 'Intelligence and appearance';
 
   @override
   String get settingsGroupStorageSecurity => 'Storage and security';
@@ -3845,19 +3582,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsGroupAbout => 'About';
 
   @override
-  String get settingsOperatorSubtitle =>
-      'Name, initials and contact on this device.';
+  String get settingsOperatorSubtitle => 'Name, initials and contact on this device.';
 
   @override
-  String get settingsCaptureSubtitle =>
-      'Camera, dates, location and how new files are named.';
+  String get settingsCaptureSubtitle => 'Camera, dates, location and how new files are named.';
 
   @override
   String get settingsCaptureTitle => 'Capture defaults';
 
   @override
-  String get settingsRelaySubtitle =>
-      'Send changes between this project\'s devices.';
+  String get settingsRelaySubtitle => 'Send changes between this project\'s devices.';
 
   @override
   String get settingsAiTitle => 'AI';
@@ -3875,8 +3609,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAppLanguage => 'App language';
 
   @override
-  String get settingsAppLanguageEffect =>
-      'English. Screens and messages use this language.';
+  String get settingsAppLanguageEffect => 'English. Screens and messages use this language.';
 
   @override
   String get settingsVoiceLanguage => 'Voice language';
@@ -3890,19 +3623,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsSpeechEnginePlatform =>
-      'Speech is turned into text by this device’s own speech service, on the device only.';
+  String get settingsSpeechEnginePlatform => 'Speech is turned into text by this device’s own speech service, on the device only.';
 
   @override
-  String get settingsSpeechEngineNone =>
-      'Voice input is not available on this device yet.';
+  String get settingsSpeechEngineNone => 'Voice input is not available on this device yet.';
 
   @override
   String get settingsSpeechQuality => 'Transcription quality';
 
   @override
-  String get settingsSpeechQualityEffect =>
-      'Automatic chooses a model that fits this device.';
+  String get settingsSpeechQualityEffect => 'Automatic chooses a model that fits this device.';
 
   @override
   String get settingsSpeechQualityAuto => 'Automatic';
@@ -3911,8 +3641,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSpeechQualityFast => 'Faster, uses less battery';
 
   @override
-  String get settingsSpeechQualityAccurate =>
-      'More accurate, needs a stronger device';
+  String get settingsSpeechQualityAccurate => 'More accurate, needs a stronger device';
 
   @override
   String get settingsSpeechModels => 'Speech models';
@@ -3959,8 +3688,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsSpeechTooLarge =>
-      'Too large for the memory this device has free. A smaller model is used.';
+  String get settingsSpeechTooLarge => 'Too large for the memory this device has free. A smaller model is used.';
 
   @override
   String get settingsSpeechVerify => 'Verify';
@@ -3992,8 +3720,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsSpeechRemoveMessage =>
-      'Its file is deleted from this device. Speech uses a smaller model until you import it again.';
+  String get settingsSpeechRemoveMessage => 'Its file is deleted from this device. Speech uses a smaller model until you import it again.';
 
   @override
   String settingsSpeechRemoved(Object model) {
@@ -4040,8 +3767,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsStorageTitle => 'Storage';
 
   @override
-  String get settingsStorageSubtitle =>
-      'Space used, cache and how long files stay.';
+  String get settingsStorageSubtitle => 'Space used, cache and how long files stay.';
 
   @override
   String get settingsFilesTitle => 'Files';
@@ -4050,24 +3776,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsFilesSubtitle => 'Import, export, uploads and merges.';
 
   @override
-  String get settingsFilesExportSubtitle =>
-      'Save the open project as a package or spreadsheet.';
+  String get settingsFilesExportSubtitle => 'Save the open project as a package or spreadsheet.';
 
   @override
-  String get settingsFilesImportSubtitle =>
-      'Bring in a project package or a spreadsheet.';
+  String get settingsFilesImportSubtitle => 'Bring in a project package or a spreadsheet.';
 
   @override
-  String get settingsFilesMergeSubtitle =>
-      'Combine a package from another device into the open project.';
+  String get settingsFilesMergeSubtitle => 'Combine a package from another device into the open project.';
 
   @override
-  String get settingsFilesNoProject =>
-      'Open a project to export it or merge into it.';
+  String get settingsFilesNoProject => 'Open a project to export it or merge into it.';
 
   @override
-  String get settingsFilesUploadsSubtitle =>
-      'What was sent to each destination.';
+  String get settingsFilesUploadsSubtitle => 'What was sent to each destination.';
 
   @override
   String get settingsSecurityTitle => 'Security';
@@ -4082,8 +3803,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAboutSubtitle => 'Version and licences.';
 
   @override
-  String get settingsTemplatesSubtitle =>
-      'Create, import and edit this project\'s templates.';
+  String get settingsTemplatesSubtitle => 'Create, import and edit this project\'s templates.';
 
   @override
   String get settingsQueueSubtitle => 'Records waiting to be processed.';
@@ -4104,15 +3824,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAutoFillDates => 'Fill dates automatically';
 
   @override
-  String get settingsAutoFillDatesEffect =>
-      'New captures get today without asking.';
+  String get settingsAutoFillDatesEffect => 'New captures get today without asking.';
 
   @override
   String get settingsGps => 'GPS';
 
   @override
-  String get settingsGpsWhyOff =>
-      'Off until you turn it on, so a location is never stored by accident.';
+  String get settingsGpsWhyOff => 'Off until you turn it on, so a location is never stored by accident.';
 
   @override
   String get settingsPhotoQuality => 'Photo quality';
@@ -4130,8 +3848,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsFolderStrategy => 'Photo folders';
 
   @override
-  String get settingsFolderStrategyNewFilesOnly =>
-      'Applies to new files only. Existing files stay put.';
+  String get settingsFolderStrategyNewFilesOnly => 'Applies to new files only. Existing files stay put.';
 
   @override
   String get settingsFolderByContext => 'By context';
@@ -4160,26 +3877,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String settingsPhotoQualitySubtitle(
-    Object label,
-    Object settingsPhotoQualityEffect,
-  ) {
+  String settingsPhotoQualitySubtitle(Object label, Object settingsPhotoQualityEffect) {
     return '$label. $settingsPhotoQualityEffect';
   }
 
   @override
-  String settingsNamingSubtitle(
-    Object pattern,
-    Object settingsNamingPatternEffect,
-  ) {
+  String settingsNamingSubtitle(Object pattern, Object settingsNamingPatternEffect) {
     return '$pattern. $settingsNamingPatternEffect';
   }
 
   @override
-  String settingsFolderStrategySubtitle(
-    Object strategy,
-    Object settingsFolderStrategyNewFilesOnly,
-  ) {
+  String settingsFolderStrategySubtitle(Object strategy, Object settingsFolderStrategyNewFilesOnly) {
     return '$strategy. $settingsFolderStrategyNewFilesOnly';
   }
 
@@ -4196,8 +3904,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsStorageRoot => 'Storage folder';
 
   @override
-  String get settingsStorageRootAfterRestart =>
-      'Saved. Tapture uses the new folder the next time it opens.';
+  String get settingsStorageRootAfterRestart => 'Saved. Tapture uses the new folder the next time it opens.';
 
   @override
   String get settingsVolumeTotal => 'Total';
@@ -4209,14 +3916,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsVolumeAvailable => 'Available';
 
   @override
-  String settingsVolumeFigures(
-    Object settingsVolumeTotal,
-    Object total,
-    Object settingsVolumeUsed,
-    Object used,
-    Object settingsVolumeAvailable,
-    Object available,
-  ) {
+  String settingsVolumeFigures(Object settingsVolumeTotal, Object total, Object settingsVolumeUsed, Object used, Object settingsVolumeAvailable, Object available) {
     return '$settingsVolumeTotal $total · $settingsVolumeUsed $used · $settingsVolumeAvailable $available';
   }
 
@@ -4233,23 +3933,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsClearCache => 'Clear cache';
 
   @override
-  String get settingsClearCacheEffect =>
-      'Removes derived copies only. Originals stay.';
+  String get settingsClearCacheEffect => 'Removes derived copies only. Originals stay.';
 
   @override
-  String settingsCacheSize(
-    Object settingsCache,
-    Object size,
-    Object settingsClearCacheEffect,
-  ) {
+  String settingsCacheSize(Object settingsCache, Object size, Object settingsClearCacheEffect) {
     return '$settingsCache · $size. $settingsClearCacheEffect';
   }
 
   @override
-  String settingsRetentionSubtitle(
-    Object settingsRetentionDaysdays,
-    Object settingsRetentionEffect,
-  ) {
+  String settingsRetentionSubtitle(Object settingsRetentionDaysdays, Object settingsRetentionEffect) {
     return '$settingsRetentionDaysdays. $settingsRetentionEffect';
   }
 
@@ -4257,22 +3949,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsClearCacheTitle => 'Clear the cache?';
 
   @override
-  String get settingsClearCacheMessage =>
-      'Thumbnails and upload copies will be removed. Original photos stay.';
+  String get settingsClearCacheMessage => 'Thumbnails and upload copies will be removed. Original photos stay.';
 
   @override
   String get storageCheckTitle => 'Check files';
 
   @override
-  String get storageCheckSubtitle =>
-      'Find files with no record and records whose file is gone. Nothing is deleted.';
+  String get storageCheckSubtitle => 'Find files with no record and records whose file is gone. Nothing is deleted.';
 
   @override
   String get storageCheckDatabaseHeader => 'Records and references';
 
   @override
-  String get storageCheckDatabaseClean =>
-      'Every record, value and file reference is whole.';
+  String get storageCheckDatabaseClean => 'Every record, value and file reference is whole.';
 
   @override
   String storageCheckFindingRow(Object table, Object id) {
@@ -4288,16 +3977,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storageCheckNoProject => 'Open a project to check its files.';
 
   @override
-  String get storageCheckFilesClean =>
-      'Every file has its record, and every record has its file.';
+  String get storageCheckFilesClean => 'Every file has its record, and every record has its file.';
 
   @override
-  String get storageCheckFilesUnavailable =>
-      'This device keeps no project folder, so its files can\'t be checked.';
+  String get storageCheckFilesUnavailable => 'This device keeps no project folder, so its files can\'t be checked.';
 
   @override
-  String get storageCheckFilesUnavailableAction =>
-      'Check the files on the phone, tablet or computer that took them.';
+  String get storageCheckFilesUnavailableAction => 'Check the files on the phone, tablet or computer that took them.';
 
   @override
   String get storageCheckStrayHeader => 'Files with no record';
@@ -4311,15 +3997,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storageCheckMissingHeader => 'Records whose file is gone';
 
   @override
-  String get storageCheckMissingSubtitle =>
-      'Tap to mark the file as missing. The record stays.';
+  String get storageCheckMissingSubtitle => 'Tap to mark the file as missing. The record stays.';
 
   @override
   String get storageCheckFlagTitle => 'Mark the file as missing?';
 
   @override
-  String get storageCheckFlagMessage =>
-      'The record and its other evidence stay. Its history notes that this file is gone.';
+  String get storageCheckFlagMessage => 'The record and its other evidence stay. Its history notes that this file is gone.';
 
   @override
   String get storageCheckFlagConfirm => 'Mark as missing';
@@ -4337,20 +4021,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storageCheckNoRecords => 'No records yet';
 
   @override
-  String get storageCheckNoRecordsMessage =>
-      'Capture a record in this project, then attach the file to it.';
+  String get storageCheckNoRecordsMessage => 'Capture a record in this project, then attach the file to it.';
 
   @override
   String get settingsRetention => 'Keep deleted files';
 
   @override
-  String get settingsRetentionEffect =>
-      'How long a deleted file can be restored.';
+  String get settingsRetentionEffect => 'How long a deleted file can be restored.';
 
   @override
   String settingsRetentionDays(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4379,13 +4060,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsStorageEmptyHeadline => 'No project folders yet';
 
   @override
-  String get settingsStorageEmptyMessage =>
-      'Space used appears here once a project has files.';
+  String get settingsStorageEmptyMessage => 'Space used appears here once a project has files.';
 
   @override
   String fileSize(int bytes) {
-    final intl.NumberFormat bytesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat bytesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String bytesString = bytesNumberFormat.format(bytes);
 
     return '$bytesString B';
@@ -4407,15 +4086,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String settingsProjectUse(
-    Object photos,
-    Object settingsDocuments,
-    Object documents,
-    Object settingsAudio,
-    Object audio,
-    Object settingsExports,
-    Object exports,
-  ) {
+  String settingsProjectUse(Object photos, Object settingsDocuments, Object documents, Object settingsAudio, Object audio, Object settingsExports, Object exports) {
     return 'Photos $photos · $settingsDocuments $documents · $settingsAudio $audio · $settingsExports $exports';
   }
 
@@ -4438,29 +4109,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSpecLink => 'Specification';
 
   @override
-  String get settingsLinkCopied =>
-      'Link copied. Paste it into a browser to open it.';
+  String get settingsLinkCopied => 'Link copied. Paste it into a browser to open it.';
 
   @override
   String get settingsEmptyHeadline => 'No settings yet';
 
   @override
-  String get settingsEmptyMessage =>
-      'Settings for this device will appear here.';
+  String get settingsEmptyMessage => 'Settings for this device will appear here.';
 
   @override
   String get settingsCaptureEmptyHeadline => 'No capture defaults yet';
 
   @override
-  String get settingsCaptureEmptyMessage =>
-      'Camera, dates and GPS will appear here.';
+  String get settingsCaptureEmptyMessage => 'Camera, dates and GPS will appear here.';
 
   @override
   String get settingsAboutEmptyHeadline => 'No version yet';
 
   @override
-  String get settingsAboutEmptyMessage =>
-      'The version and licences will appear here.';
+  String get settingsAboutEmptyMessage => 'The version and licences will appear here.';
 
   @override
   String get appLockUnlockTitle => 'Unlock Tapture';
@@ -4496,8 +4163,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appLockBiometrics => 'Unlock with this device';
 
   @override
-  String get appLockSetEffect =>
-      'Required the next time the app opens or returns.';
+  String get appLockSetEffect => 'Required the next time the app opens or returns.';
 
   @override
   String get appLockRemoveEffect => 'The next open will not ask for a PIN.';
@@ -4515,8 +4181,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appLockOn => 'App lock is on.';
 
   @override
-  String get appLockOff =>
-      'App lock is off. Set a PIN to require it on launch and resume.';
+  String get appLockOff => 'App lock is off. Set a PIN to require it on launch and resume.';
 
   @override
   String get appLockPinLength => 'Use 4 to 8 digits.';
@@ -4528,8 +4193,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appLockWrongPin => 'That PIN does not match.';
 
   @override
-  String get appLockRecovery =>
-      'Nobody can reset this PIN. Your files stay on this device. Nothing here deletes them.';
+  String get appLockRecovery => 'Nobody can reset this PIN. Your files stay on this device. Nothing here deletes them.';
 
   @override
   String get close => 'Close';
@@ -4538,8 +4202,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedback => 'Feedback';
 
   @override
-  String get feedbackButtonHint =>
-      'Opens the feedback options. Drag to move it.';
+  String get feedbackButtonHint => 'Opens the feedback options. Drag to move it.';
 
   @override
   String get feedbackGive => 'Give us feedback';
@@ -4551,8 +4214,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackDelete => 'Delete feedback';
 
   @override
-  String get feedbackStaysOnDevice =>
-      'Saved on this device only. Nothing is sent anywhere.';
+  String get feedbackStaysOnDevice => 'Saved on this device only. Nothing is sent anywhere.';
 
   @override
   String get feedbackCategoryGeneral => 'General';
@@ -4600,8 +4262,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackMessage => 'Your feedback';
 
   @override
-  String get feedbackMessageHint =>
-      'What happened, or what would make this better?';
+  String get feedbackMessageHint => 'What happened, or what would make this better?';
 
   @override
   String get feedbackMessageRequired => 'Write your feedback';
@@ -4625,8 +4286,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackStopSharing => 'Stop sharing window';
 
   @override
-  String get feedbackSharingWindow =>
-      'Sharing a window. Each tap adds a screenshot.';
+  String get feedbackSharingWindow => 'Sharing a window. Each tap adds a screenshot.';
 
   @override
   String get feedbackOtherWindow => 'External window';
@@ -4638,17 +4298,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackChoosePhoto => 'Choose photos';
 
   @override
-  String get feedbackShotTipScreens =>
-      'Another screen: tap Continue later, open it, then tap Screenshot current screen in the bar.';
+  String get feedbackShotTipScreens => 'Another screen: tap Continue later, open it, then tap Screenshot current screen in the bar.';
 
   @override
-  String get feedbackShotTipApps =>
-      'Another app: take a screenshot with your device, then add it with Choose photos.';
+  String get feedbackShotTipApps => 'Another app: take a screenshot with your device, then add it with Choose photos.';
 
   @override
   String feedbackAttachImages(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4662,8 +4319,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String feedbackImageCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4686,8 +4342,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String feedbackDiscardDraftMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4704,8 +4359,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackContinueLater => 'Continue later';
 
   @override
-  String get feedbackDraftBarHint =>
-      'Opens the feedback you started. Keep typing or speaking here.';
+  String get feedbackDraftBarHint => 'Opens the feedback you started. Keep typing or speaking here.';
 
   @override
   String feedbackShotAdded(Object screen) {
@@ -4742,8 +4396,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackTo => 'Submitted to';
 
   @override
-  String get feedbackRangeBackwards =>
-      'The start is after the end. Swap them or clear one.';
+  String get feedbackRangeBackwards => 'The start is after the end. Swap them or clear one.';
 
   @override
   String get feedbackScreens => 'Screens';
@@ -4777,11 +4430,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String feedbackMatching(int count, int matching) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
-    final intl.NumberFormat matchingNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat matchingNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String matchingString = matchingNumberFormat.format(matching);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4795,8 +4446,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String feedbackDownloadCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4840,20 +4490,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackEmptyHeadline => 'No feedback yet';
 
   @override
-  String get feedbackEmptyMessage =>
-      'Tap Feedback on any screen to write the first entry.';
+  String get feedbackEmptyMessage => 'Tap Feedback on any screen to write the first entry.';
 
   @override
   String get feedbackNoMatchHeadline => 'No feedback matches';
 
   @override
-  String get feedbackNoMatchMessage =>
-      'Change or clear the filters to see more.';
+  String get feedbackNoMatchMessage => 'Change or clear the filters to see more.';
 
   @override
   String feedbackSelected(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4868,8 +4515,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String feedbackDeleteCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4884,8 +4530,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String feedbackDeleteTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4902,18 +4547,15 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'They and their screenshots are removed from this device for good. You can undo straight after.',
-      one:
-          'It and its screenshot are removed from this device for good. You can undo straight after.',
+      other: 'They and their screenshots are removed from this device for good. You can undo straight after.',
+      one: 'It and its screenshot are removed from this device for good. You can undo straight after.',
     );
     return '$_temp0';
   }
 
   @override
   String feedbackDeleted(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4940,8 +4582,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String appLockWait(num count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4967,15 +4608,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String queueUsage(int requests, int cap, int images) {
-    final intl.NumberFormat requestsNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat requestsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String requestsString = requestsNumberFormat.format(requests);
-    final intl.NumberFormat capNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat capNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String capString = capNumberFormat.format(cap);
-    final intl.NumberFormat imagesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat imagesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String imagesString = imagesNumberFormat.format(images);
 
     return '$requestsString of $capString online requests today, $imagesString images sent';
@@ -4983,8 +4620,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String queueUnprocessedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -4999,8 +4635,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String queueQueuedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -5015,8 +4650,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String queueFailedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -5042,8 +4676,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get queueEmptyHeadline => 'Nothing waiting';
 
   @override
-  String get queueEmptyMessage =>
-      'Captured records appear here when they are ready to process.';
+  String get queueEmptyMessage => 'Captured records appear here when they are ready to process.';
 
   @override
   String get queueFailedTitle => 'Failed jobs';
@@ -5064,11 +4697,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String queueSummary(int succeeded, int failed) {
-    final intl.NumberFormat succeededNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat succeededNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String succeededString = succeededNumberFormat.format(succeeded);
-    final intl.NumberFormat failedNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat failedNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String failedString = failedNumberFormat.format(failed);
 
     return '$succeededString succeeded, $failedString failed';
@@ -5081,12 +4712,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String queueProgress(int done, int failed) {
-    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String doneString = doneNumberFormat.format(done);
-    final intl.NumberFormat failedNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat failedNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String failedString = failedNumberFormat.format(failed);
 
     return 'Processing: $doneString done, $failedString failed';
@@ -5104,13 +4732,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get egressSend => 'Send';
 
   @override
-  String get egressDecline =>
-      'Nothing was sent. The records stay in the queue.';
+  String get egressDecline => 'Nothing was sent. The records stay in the queue.';
 
   @override
   String egressBody(int images, Object size) {
-    final intl.NumberFormat imagesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat imagesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String imagesString = imagesNumberFormat.format(images);
 
     return '$imagesString compressed images, about $size. Captions, field names, on-device text, context and predefined row labels are included.';
@@ -5120,8 +4746,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apiKeyTitle => 'Provider key';
 
   @override
-  String get apiKeyCustody =>
-      'This key lives on this device only. The usual arrangement is for the organisation\'s backend to hold it.';
+  String get apiKeyCustody => 'This key lives on this device only. The usual arrangement is for the organisation\'s backend to hold it.';
 
   @override
   String get apiKeyLabel => 'Provider key';
@@ -5142,8 +4767,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apiKeyRemoveTitle => 'Remove the provider key?';
 
   @override
-  String get apiKeyRemoveMessage =>
-      'The key is deleted from this device, and AI goes back to your organisation\'s provider.';
+  String get apiKeyRemoveMessage => 'The key is deleted from this device, and AI goes back to your organisation\'s provider.';
 
   @override
   String get apiKeySuccess => 'Connection succeeded.';
@@ -5155,8 +4779,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get apiKeyNetworkFailed => 'The network is not available.';
 
   @override
-  String get apiKeyTestFailed =>
-      'The provider answered with an error. Try again later.';
+  String get apiKeyTestFailed => 'The provider answered with an error. Try again later.';
 
   @override
   String get aiOperation => 'Operation';
@@ -5180,12 +4803,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiOperationLabelTranscribeAudio => 'Transcribe audio';
 
   @override
-  String get aiCustodyTheOrganisationBackendHolds =>
-      'The organisation backend holds the provider key.';
+  String get aiCustodyTheOrganisationBackendHolds => 'The organisation backend holds the provider key.';
 
   @override
-  String get aiCustodyThisProviderUsesA =>
-      'This provider uses a device-held credential when enabled by an administrator.';
+  String get aiCustodyThisProviderUsesA => 'This provider uses a device-held credential when enabled by an administrator.';
 
   @override
   String aiCustodyThisProviderIsCurrently(Object owner) {
@@ -5193,48 +4814,40 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get aiSelectionFallback =>
-      'The saved provider or model is unavailable. Choose explicitly before analysis can continue.';
+  String get aiSelectionFallback => 'The saved provider or model is unavailable. Choose explicitly before analysis can continue.';
 
   @override
-  String get aiProviderUnavailable =>
-      'This provider is not available. Processing will remain queued.';
+  String get aiProviderUnavailable => 'This provider is not available. Processing will remain queued.';
 
   @override
-  String get aiSelectionInvalid =>
-      'Choose a provider and model that support this operation.';
+  String get aiSelectionInvalid => 'Choose a provider and model that support this operation.';
 
   @override
   String get templateChoiceTitle => 'What is this?';
 
   @override
-  String get templateChoicePin =>
-      'Use this template for the rest of this location';
+  String get templateChoicePin => 'Use this template for the rest of this location';
 
   @override
   String get templateChoiceEmptyHeadline => 'No templates';
 
   @override
-  String get templateChoiceEmptyMessage =>
-      'Add a template before choosing one.';
+  String get templateChoiceEmptyMessage => 'Add a template before choosing one.';
 
   @override
   String get templateChoiceOther => 'Something else';
 
   @override
-  String get templateChoiceSkipped =>
-      'No template chosen. The record stays in the queue.';
+  String get templateChoiceSkipped => 'No template chosen. The record stays in the queue.';
 
   @override
   String get templateChoiceApplyFailed => 'That template could not be applied.';
 
   @override
-  String get templateChoiceApplyRecovery =>
-      'Process the record again and choose once more.';
+  String get templateChoiceApplyRecovery => 'Process the record again and choose once more.';
 
   @override
-  String get templateChoiceWaiting =>
-      'Waiting for someone to choose its template.';
+  String get templateChoiceWaiting => 'Waiting for someone to choose its template.';
 
   @override
   String get processReadOnDevice => 'Read on this device';
@@ -5259,11 +4872,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String processingNotificationBody(int succeeded, int failed) {
-    final intl.NumberFormat succeededNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat succeededNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String succeededString = succeededNumberFormat.format(succeeded);
-    final intl.NumberFormat failedNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat failedNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String failedString = failedNumberFormat.format(failed);
 
     return '$succeededString succeeded, $failedString failed';
@@ -5278,15 +4889,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get documentTooLargeRecovery =>
-      'Open it in the Tapture app on a phone or computer instead.';
+  String get documentTooLargeRecovery => 'Open it in the Tapture app on a phone or computer instead.';
 
   @override
   String get storedFileMissing => 'That export is no longer on this device.';
 
   @override
-  String get packageProjectMissing =>
-      'That project is no longer on this device.';
+  String get packageProjectMissing => 'That project is no longer on this device.';
 
   @override
   String packageTooLarge(Object fileSizebytes, Object fileSizeceiling) {
@@ -5294,47 +4903,37 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get packageTooLargeRecovery =>
-      'Export from the Tapture app on a phone or computer, which handles larger packages.';
+  String get packageTooLargeRecovery => 'Export from the Tapture app on a phone or computer, which handles larger packages.';
 
   @override
   String get packageWriteFailed => 'The project package could not be written.';
 
   @override
-  String get packageRejected =>
-      'This package is larger than this device can open.';
+  String get packageRejected => 'This package is larger than this device can open.';
 
   @override
-  String get packageRejectedThisFileIsNot =>
-      'This file is not a Tapture project package.';
+  String get packageRejectedThisFileIsNot => 'This file is not a Tapture project package.';
 
   @override
-  String get packageRejectedThisPackageHoldsA =>
-      'This package holds a file that would land outside its project.';
+  String get packageRejectedThisPackageHoldsA => 'This package holds a file that would land outside its project.';
 
   @override
-  String get packageRejectedThisPackageIsMissing =>
-      'This package is missing a file it lists.';
+  String get packageRejectedThisPackageIsMissing => 'This package is missing a file it lists.';
 
   @override
-  String get packageRejectedPartOfThisPackage =>
-      'Part of this package could not be read.';
+  String get packageRejectedPartOfThisPackage => 'Part of this package could not be read.';
 
   @override
-  String get packageRejectedThisPackageWasMade =>
-      'This package was made by a newer version of Tapture.';
+  String get packageRejectedThisPackageWasMade => 'This package was made by a newer version of Tapture.';
 
   @override
-  String get packageRejectedThisPackageWasChanged =>
-      'This package was changed after it was made: a file does not match its checksum.';
+  String get packageRejectedThisPackageWasChanged => 'This package was changed after it was made: a file does not match its checksum.';
 
   @override
-  String get packageRejectedThisPackageCouldNot =>
-      'This package could not be opened.';
+  String get packageRejectedThisPackageCouldNot => 'This package could not be opened.';
 
   @override
-  String get packageRejectedRecovery =>
-      'Nothing was imported. Export the project again on the other device, or update Tapture for a newer package.';
+  String get packageRejectedRecovery => 'Nothing was imported. Export the project again on the other device, or update Tapture for a newer package.';
 
   @override
   String get captureGuideTitle => 'What to capture';
@@ -5360,18 +4959,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String importHolds(
-    Object recordsCountrecords,
-    Object photosCountphotos,
-    Object fileSizebytes,
-  ) {
+  String importHolds(Object recordsCountrecords, Object photosCountphotos, Object fileSizebytes) {
     return '$recordsCountrecords · $photosCountphotos · $fileSizebytes';
   }
 
   @override
   String photosCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -5399,35 +4993,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get importProjectDeletedHere =>
-      'This project was deleted on this device. A merge never brings back what was deleted.';
+  String get importProjectDeletedHere => 'This project was deleted on this device. A merge never brings back what was deleted.';
 
   @override
-  String get importProjectDeletedHereRecovery =>
-      'Restore the project from the recycle bin, or import on another device.';
+  String get importProjectDeletedHereRecovery => 'Restore the project from the recycle bin, or import on another device.';
 
   @override
-  String get importProjectAlreadyHere =>
-      'This project is already on this device.';
+  String get importProjectAlreadyHere => 'This project is already on this device.';
 
   @override
-  String get importProjectAlreadyHereRecovery =>
-      'Merge the package into it instead.';
+  String get importProjectAlreadyHereRecovery => 'Merge the package into it instead.';
 
   @override
-  String get importNoRoom =>
-      'There is not enough free space on this device for this package.';
+  String get importNoRoom => 'There is not enough free space on this device for this package.';
 
   @override
   String get importNoRoomRecovery => 'Free some space, then import again.';
 
   @override
-  String get importFileChanged =>
-      'A file in this package did not copy correctly.';
+  String get importFileChanged => 'A file in this package did not copy correctly.';
 
   @override
-  String get importFailedRecovery =>
-      'Nothing was changed. Try again, or export the package again.';
+  String get importFailedRecovery => 'Nothing was changed. Try again, or export the package again.';
 
   @override
   String get mergePackage => 'Merge a package';
@@ -5436,15 +5023,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergeTargetTitle => 'Merge into which project?';
 
   @override
-  String get mergeTargetNone =>
-      'No project on this device uses the templates this package needs.';
+  String get mergeTargetNone => 'No project on this device uses the templates this package needs.';
 
   @override
   String get compatibilityStatus => 'Compatible';
 
   @override
-  String get compatibilityStatusCompatibleWithDifferences =>
-      'Compatible, with differences';
+  String get compatibilityStatusCompatibleWithDifferences => 'Compatible, with differences';
 
   @override
   String get compatibilityStatusNotCompatible => 'Not compatible';
@@ -5463,8 +5048,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get compatibilityIssueAnotherVersionOfThe =>
-      'Another version of the template';
+  String get compatibilityIssueAnotherVersionOfThe => 'Another version of the template';
 
   @override
   String compatibilityIssueOnlyHere(Object field) {
@@ -5526,14 +5110,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergeCountValuesKeptAsOn => 'Values kept as on this device';
 
   @override
-  String get mergeCountAlreadyInAnotherProject =>
-      'Already in another project here';
+  String get mergeCountAlreadyInAnotherProject => 'Already in another project here';
 
   @override
   String mergeCountValue(Object label, int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$label: $nString';
@@ -5541,8 +5122,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String mergeSettleConflicts(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -5564,26 +5144,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergeDone => 'Merged';
 
   @override
-  String get mergeNothing =>
-      'Nothing to merge: this project already holds everything in the package.';
+  String get mergeNothing => 'Nothing to merge: this project already holds everything in the package.';
 
   @override
   String get mergeCheckDuplicates => 'Check for possible duplicates';
 
   @override
-  String get mergeCheckDuplicatesHelper =>
-      'Lists incoming records that look like ones already here. You decide for each.';
+  String get mergeCheckDuplicatesHelper => 'Lists incoming records that look like ones already here. You decide for each.';
 
   @override
   String get mergeCheckingDuplicates => 'Looking for duplicates…';
 
   @override
   String conflictProgress(int index, int total) {
-    final intl.NumberFormat indexNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat indexNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String indexString = indexNumberFormat.format(index);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Conflict $indexString of $totalString';
@@ -5602,12 +5178,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get conflictKindDeletedOnThisDevice => 'Deleted on this device';
 
   @override
-  String get conflictDeletionTheOtherDeviceDeleted =>
-      'The other device deleted this, but it was changed here since.';
+  String get conflictDeletionTheOtherDeviceDeleted => 'The other device deleted this, but it was changed here since.';
 
   @override
-  String get conflictDeletionThisDeviceDeletedThis =>
-      'This device deleted this, but the other device changed it since.';
+  String get conflictDeletionThisDeviceDeletedThis => 'This device deleted this, but the other device changed it since.';
 
   @override
   String get conflictThisDevice => 'This device';
@@ -5639,9 +5213,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String mergeKeepAllMine(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Keep this device\'s for all $nString';
@@ -5649,9 +5221,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String mergeTakeAllIncoming(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Take incoming for all $nString';
@@ -5665,8 +5235,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String mergeBulkConfirmForConflictOtherFor(int count, Object side) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -5700,8 +5269,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get duplicateSignalSameNamePlaceAnd => 'Same name, place and time';
 
   @override
-  String get duplicateSignalSamePlaceCloseIn =>
-      'Same place, close in time, similar caption';
+  String get duplicateSignalSamePlaceCloseIn => 'Same place, close in time, similar caption';
 
   @override
   String get duplicateKeepBoth => 'Keep both';
@@ -5722,8 +5290,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergeNoPackageHeadline => 'No package open';
 
   @override
-  String get mergeNoPackageMessage =>
-      'Choose Merge a package from the project menu to pick one.';
+  String get mergeNoPackageMessage => 'Choose Merge a package from the project menu to pick one.';
 
   @override
   String get mergeTemplatesHeading => 'Templates';
@@ -5732,8 +5299,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergeCountsHeading => 'What the merge does';
 
   @override
-  String get mergeBlocked =>
-      'This package cannot merge into this project until its templates match.';
+  String get mergeBlocked => 'This package cannot merge into this project until its templates match.';
 
   @override
   String mergeRecordUnnamed(Object short) {
@@ -5782,8 +5348,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordsEmptyHeadline => 'No records yet';
 
   @override
-  String get recordsEmptyMessage =>
-      'Records you capture in this project appear here.';
+  String get recordsEmptyMessage => 'Records you capture in this project appear here.';
 
   @override
   String get recordsEmptyAction => 'Capture a record';
@@ -5806,8 +5371,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordsNoProjectHeadline => 'No project open';
 
   @override
-  String get recordsNoProjectMessage =>
-      'Records belong to a project. Open one to see its records.';
+  String get recordsNoProjectMessage => 'Records belong to a project. Open one to see its records.';
 
   @override
   String get recordsOpenProject => 'Open a project';
@@ -5858,8 +5422,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordsFiltersEmptyHeadline => 'Nothing to filter yet';
 
   @override
-  String get recordsFiltersEmptyMessage =>
-      'Capture records in this project, then narrow them down here.';
+  String get recordsFiltersEmptyMessage => 'Capture records in this project, then narrow them down here.';
 
   @override
   String get recordsTemplateUnnamed => 'Unnamed template';
@@ -5929,8 +5492,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordDetailBackToList => 'Back to the list';
 
   @override
-  String get recordDetailDeletedNotice =>
-      'This record is in the recycle bin. Restore it to change it again.';
+  String get recordDetailDeletedNotice => 'This record is in the recycle bin. Restore it to change it again.';
 
   @override
   String get recordDetailSendToReview => 'Send to review';
@@ -5948,8 +5510,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordDetailEditPhotos => 'Edit photos and captions';
 
   @override
-  String get recordDetailBusy =>
-      'A change to this record is still being saved.';
+  String get recordDetailBusy => 'A change to this record is still being saved.';
 
   @override
   String get recordDetailBusyAction => 'Wait for it to finish, then try again.';
@@ -5961,16 +5522,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordDetailContextTitle => 'Context';
 
   @override
-  String get recordDetailContextEmpty =>
-      'No context was set when this record was captured.';
+  String get recordDetailContextEmpty => 'No context was set when this record was captured.';
 
   @override
   String get recordDetailProvenanceTitle => 'Where the values came from';
 
   @override
   String recordDetailValuesCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6014,11 +5573,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordPhotoPosition(int position, int total) {
-    final intl.NumberFormat positionNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat positionNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String positionString = positionNumberFormat.format(position);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Photo $positionString of $totalString';
@@ -6069,10 +5626,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String recordBandWithScore(
-    Object band,
-    Object numberFormatpercentPatternformat,
-  ) {
+  String recordBandWithScore(Object band, Object numberFormatpercentPatternformat) {
     return '$band, $numberFormatpercentPatternformat';
   }
 
@@ -6083,8 +5637,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordHistoryEmptyHeadline => 'No history yet';
 
   @override
-  String get recordHistoryEmptyMessage =>
-      'Captures, processing runs, edits, approvals, merges and exports of this record appear here. Go back to the record to change it.';
+  String get recordHistoryEmptyMessage => 'Captures, processing runs, edits, approvals, merges and exports of this record appear here. Go back to the record to change it.';
 
   @override
   String get recordHistoryBackToRecord => 'Back to the record';
@@ -6185,8 +5738,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordHistoryProcessingFailedOtherAttempts(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6285,8 +5837,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordValueEditTitle => 'Edit value';
 
   @override
-  String get recordEditApprovedNotice =>
-      'This record is approved. Saving a change sends it back to review.';
+  String get recordEditApprovedNotice => 'This record is approved. Saving a change sends it back to review.';
 
   @override
   String get recordValueRetired => 'Retired';
@@ -6295,38 +5846,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordRetiredValuesTitle => 'Retired values';
 
   @override
-  String get recordRetiredValuesMessage =>
-      'This record\'s template no longer has these fields. Their values are kept as they were and can\'t be edited.';
+  String get recordRetiredValuesMessage => 'This record\'s template no longer has these fields. Their values are kept as they were and can\'t be edited.';
 
   @override
   String get recordValueEvidenceRemoved => 'Evidence removed';
 
   @override
-  String get recordTemplateMissingNotice =>
-      'This record\'s template is no longer on this device. Its values are kept; change its template to edit them.';
+  String get recordTemplateMissingNotice => 'This record\'s template is no longer on this device. Its values are kept; change its template to edit them.';
 
   @override
   String get recordEditDeletedHeadline => 'This record is in the recycle bin';
 
   @override
-  String get recordEditDeletedMessage =>
-      'Restore it from the recycle bin, then change its values.';
+  String get recordEditDeletedMessage => 'Restore it from the recycle bin, then change its values.';
 
   @override
   String get recordFieldMissingHeadline => 'This field is not on the record';
 
   @override
-  String get recordFieldMissingMessage =>
-      'The record\'s template no longer has this field. Go back to the record.';
+  String get recordFieldMissingMessage => 'The record\'s template no longer has this field. Go back to the record.';
 
   @override
-  String get recordValueCannotEmpty =>
-      'A saved value cannot be emptied. Type the corrected value instead.';
+  String get recordValueCannotEmpty => 'A saved value cannot be emptied. Type the corrected value instead.';
 
   @override
   String recordValuesSaved(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6353,17 +5898,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordPhotosProcessMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'You added $countString photos. Processing again reads them and fills fields that are still empty. Values already on the record stay as they are.',
-      one:
-          'You added 1 photo. Processing again reads it and fills fields that are still empty. Values already on the record stay as they are.',
+      other: 'You added $countString photos. Processing again reads them and fills fields that are still empty. Values already on the record stay as they are.',
+      one: 'You added 1 photo. Processing again reads it and fills fields that are still empty. Values already on the record stay as they are.',
     );
     return '$_temp0';
   }
@@ -6386,13 +5928,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordTemplateChangeChoose => 'Move to';
 
   @override
-  String get recordTemplateChangeHint =>
-      'Choose a template to see what happens to each value before anything changes.';
+  String get recordTemplateChangeHint => 'Choose a template to see what happens to each value before anything changes.';
 
   @override
   String recordTemplateChangeMapped(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6406,8 +5946,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordTemplateChangeRetired(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6421,8 +5960,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordTemplateChangeAdded(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6436,8 +5974,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordTemplateChangeRestored(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6450,23 +5987,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get recordTemplateChangeRetiredNotice =>
-      'Retired values stay on the record and are never deleted. They come back if the record moves to a template with their field.';
+  String get recordTemplateChangeRetiredNotice => 'Retired values stay on the record and are never deleted. They come back if the record moves to a template with their field.';
 
   @override
-  String get recordTemplateChangeNoValues =>
-      'No value changes: the record has no values for this template to take over, and the template has no fields.';
+  String get recordTemplateChangeNoValues => 'No value changes: the record has no values for this template to take over, and the template has no fields.';
 
   @override
-  String get recordTemplateChangeApprovedNotice =>
-      'This record is approved. Changing its template sends it back to review.';
+  String get recordTemplateChangeApprovedNotice => 'This record is approved. Changing its template sends it back to review.';
 
   @override
   String get recordTemplateChangeApply => 'Change template';
 
   @override
-  String get recordTemplateChanged =>
-      'Template changed. The record is back in review.';
+  String get recordTemplateChanged => 'Template changed. The record is back in review.';
 
   @override
   String get recordTemplateChangedTemplateChanged => 'Template changed.';
@@ -6475,36 +6008,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordTemplateChangeEmptyHeadline => 'No other template';
 
   @override
-  String get recordTemplateChangeEmptyMessage =>
-      'This project has only the template this record uses. Add another template to the project, then move the record to it.';
+  String get recordTemplateChangeEmptyMessage => 'This project has only the template this record uses. Add another template to the project, then move the record to it.';
 
   @override
   String get recordTemplateChangeEmptyAction => 'Open templates';
 
   @override
-  String get recordTemplateChangeGoneHeadline =>
-      'This record is no longer on this device';
+  String get recordTemplateChangeGoneHeadline => 'This record is no longer on this device';
 
   @override
-  String get recordTemplateChangeGoneMessage =>
-      'Close this sheet and pick another record.';
+  String get recordTemplateChangeGoneMessage => 'Close this sheet and pick another record.';
 
   @override
-  String get recordTemplateChangeChooseAction =>
-      'Choose a template under Move to, then apply.';
+  String get recordTemplateChangeChooseAction => 'Choose a template under Move to, then apply.';
 
   @override
-  String get recordTemplateChangeApplying =>
-      'This record is already moving to that template.';
+  String get recordTemplateChangeApplying => 'This record is already moving to that template.';
 
   @override
-  String get recordTemplateChangeApplyingAction =>
-      'Wait a moment, then check the record.';
+  String get recordTemplateChangeApplyingAction => 'Wait a moment, then check the record.';
 
   @override
   String recordsDeleteLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6518,8 +6044,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsDeleteTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6536,10 +6061,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'They move to the recycle bin, where you can restore them for $window. Their photos stay on this device until then.',
-      one:
-          'It moves to the recycle bin, where you can restore it for $window. Its photos stay on this device until then.',
+      other: 'They move to the recycle bin, where you can restore them for $window. Their photos stay on this device until then.',
+      one: 'It moves to the recycle bin, where you can restore it for $window. Its photos stay on this device until then.',
     );
     return '$_temp0';
   }
@@ -6549,8 +6072,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsDeleted(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6564,8 +6086,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsNotDeleted(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6578,17 +6099,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String recordsDeletedPartly(
-    Object recordsDeleteddeleted,
-    Object recordsNotDeletedfailed,
-  ) {
+  String recordsDeletedPartly(Object recordsDeleteddeleted, Object recordsNotDeletedfailed) {
     return '$recordsDeleteddeleted. $recordsNotDeletedfailed.';
   }
 
   @override
   String recordsRestored(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6602,8 +6119,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsNotRestored(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6619,8 +6135,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recycleBinTitle => 'Recycle bin';
 
   @override
-  String get recycleBinSettingsSubtitle =>
-      'Restore a deleted record before it is removed for good.';
+  String get recycleBinSettingsSubtitle => 'Restore a deleted record before it is removed for good.';
 
   @override
   String recycleBinKeptFor(Object settingsRetentionDaysdays) {
@@ -6637,8 +6152,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recycleBinDaysLeft(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6663,16 +6177,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recycleBinRestoring => 'This record is already being restored.';
 
   @override
-  String get recycleBinRestoringAction =>
-      'Wait a moment, then look for it in its list.';
+  String get recycleBinRestoringAction => 'Wait a moment, then look for it in its list.';
 
   @override
   String get recycleBinEmpty => 'Empty recycle bin';
 
   @override
   String recycleBinEmptyTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6686,26 +6198,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recycleBinEmptyWarning(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'All $countString records in the recycle bin and their photos are removed from this device now. This cannot be undone. Records a merge still needs stay until they have been shared.',
-      one:
-          'The record in the recycle bin and its photos are removed from this device now. This cannot be undone. A record a merge still needs stays until it has been shared.',
+      other: 'All $countString records in the recycle bin and their photos are removed from this device now. This cannot be undone. Records a merge still needs stay until they have been shared.',
+      one: 'The record in the recycle bin and its photos are removed from this device now. This cannot be undone. A record a merge still needs stays until it has been shared.',
     );
     return '$_temp0';
   }
 
   @override
   String recycleBinEmptyTypeCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Type $nString to confirm';
@@ -6715,12 +6222,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recycleBinEmptyConfirm => 'Remove for good';
 
   @override
-  String get recycleBinEmptyUnavailable =>
-      'Emptying is not available on this device. Each record is removed for good once its days run out.';
+  String get recycleBinEmptyUnavailable => 'Emptying is not available on this device. Each record is removed for good once its days run out.';
 
   @override
-  String get recycleBinEmptyUnavailableAction =>
-      'Restore what you need before its days run out.';
+  String get recycleBinEmptyUnavailableAction => 'Restore what you need before its days run out.';
 
   @override
   String get recycleBinEmptying => 'The recycle bin is already being emptied.';
@@ -6730,8 +6235,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recycleBinEmptied(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6746,8 +6250,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recycleBinEmptiedOtherKeptBecauseA(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6761,8 +6264,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recycleBinEmptiedOtherCouldNotBe(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6776,8 +6278,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsSelectedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6797,8 +6298,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsApproveLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6812,8 +6312,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsArchiveLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6827,8 +6326,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsReprocessLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6842,8 +6340,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsExportLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6857,8 +6354,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsArchiveTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6875,10 +6371,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'They leave the records list and default exports, and keep their values and photos. Filter by Archived to find them again.',
-      one:
-          'It leaves the records list and default exports, and keeps its values and photos. Filter by Archived to find it again.',
+      other: 'They leave the records list and default exports, and keep their values and photos. Filter by Archived to find them again.',
+      one: 'It leaves the records list and default exports, and keeps its values and photos. Filter by Archived to find it again.',
     );
     return '$_temp0';
   }
@@ -6888,8 +6382,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsReprocessTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6906,10 +6399,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'They go back to the processing queue and are read again from the first step, with the other records waiting in this project. Values they already have are kept. Approved ones need review again.',
-      one:
-          'It goes back to the processing queue and is read again from the first step, with the other records waiting in this project. Values it already has are kept. If it was approved, it needs review again.',
+      other: 'They go back to the processing queue and are read again from the first step, with the other records waiting in this project. Values they already have are kept. Approved ones need review again.',
+      one: 'It goes back to the processing queue and is read again from the first step, with the other records waiting in this project. Values it already has are kept. If it was approved, it needs review again.',
     );
     return '$_temp0';
   }
@@ -6919,8 +6410,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsExportTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6934,17 +6424,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsExportMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'An export is one package of the whole project: every record in it, the $countString selected included, with their photos. You choose where it goes once it is written.',
-      one:
-          'An export is one package of the whole project: every record in it, this one included, with their photos. You choose where it goes once it is written.',
+      other: 'An export is one package of the whole project: every record in it, the $countString selected included, with their photos. You choose where it goes once it is written.',
+      one: 'An export is one package of the whole project: every record in it, this one included, with their photos. You choose where it goes once it is written.',
     );
     return '$_temp0';
   }
@@ -6954,8 +6441,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsApproved(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6969,8 +6455,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsNotApproved(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6984,8 +6469,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsArchived(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -6999,8 +6483,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsNotArchived(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -7014,8 +6497,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsRequeued(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -7029,8 +6511,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String recordsNotRequeued(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -7047,10 +6528,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'They wait in the processing queue; process them from there once you are online.',
-      one:
-          'It waits in the processing queue; process it from there once you are online.',
+      other: 'They wait in the processing queue; process them from there once you are online.',
+      one: 'It waits in the processing queue; process it from there once you are online.',
     );
     return '$_temp0';
   }
@@ -7067,17 +6546,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordsBulkBusyAction => 'Wait for it to finish, then try again.';
 
   @override
-  String validationIssueCount(
-    Object validationErrorCounterrors,
-    Object validationWarningCountwarnings,
-  ) {
+  String validationIssueCount(Object validationErrorCounterrors, Object validationWarningCountwarnings) {
     return '$validationErrorCounterrors, $validationWarningCountwarnings';
   }
 
   @override
   String validationErrorCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -7091,8 +6566,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String validationWarningCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -7159,15 +6633,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get validationEvidence =>
-      'This record needs its evidence before it can be approved.';
+  String get validationEvidence => 'This record needs its evidence before it can be approved.';
 
   @override
   String get validationExpression => 'That expression could not be read.';
 
   @override
-  String get validationExpressionAction =>
-      'Use fields on this template, comparisons and arithmetic only.';
+  String get validationExpressionAction => 'Use fields on this template, comparisons and arithmetic only.';
 
   @override
   String validationUnknownField(Object name) {
@@ -7193,8 +6665,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get duplicateNoDifferenceHeadline => 'Nothing differs';
 
   @override
-  String get duplicateNoDifferenceMessage =>
-      'These records hold the same values.';
+  String get duplicateNoDifferenceMessage => 'These records hold the same values.';
 
   @override
   String get duplicateCompareTitle => 'Compare records';
@@ -7212,12 +6683,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get duplicateKeepBothNote => 'Keep both as a note';
 
   @override
-  String get duplicatePromptQuestion =>
-      'What should happen to these two records?';
+  String get duplicatePromptQuestion => 'What should happen to these two records?';
 
   @override
-  String get duplicateCompareThenUpdate =>
-      'Compare, then update the existing record';
+  String get duplicateCompareThenUpdate => 'Compare, then update the existing record';
 
   @override
   String get duplicatePromptContinue => 'Continue';
@@ -7245,18 +6714,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String duplicateValueChange(
-    Object existingisEmptyconflictEmpty,
-    Object incomingisEmptyconflictEmpty,
-  ) {
+  String duplicateValueChange(Object existingisEmptyconflictEmpty, Object incomingisEmptyconflictEmpty) {
     return '$existingisEmptyconflictEmpty → $incomingisEmptyconflictEmpty';
   }
 
   @override
-  String duplicateDifferenceLine(
-    Object label,
-    Object duplicateValueChangeexistingincoming,
-  ) {
+  String duplicateDifferenceLine(Object label, Object duplicateValueChangeexistingincoming) {
     return '$label: $duplicateValueChangeexistingincoming';
   }
 
@@ -7264,8 +6727,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get duplicateOverrideConfirmTitle => 'Update the existing record?';
 
   @override
-  String get duplicateOverrideConfirmMessage =>
-      'The existing record takes the new values and photos. The values it replaces stay in its history, and the new record goes to the recycle bin.';
+  String get duplicateOverrideConfirmMessage => 'The existing record takes the new values and photos. The values it replaces stay in its history, and the new record goes to the recycle bin.';
 
   @override
   String get duplicateCarryPhotos => 'Keep the new record\'s photos';
@@ -7316,19 +6778,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get duplicateDiscardedReason => 'Discarded as a duplicate';
 
   @override
-  String get duplicateOverriddenReason =>
-      'Its values updated an existing record';
+  String get duplicateOverriddenReason => 'Its values updated an existing record';
 
   @override
   String get duplicateMergedReason => 'Merged into an existing record';
 
   @override
-  String get duplicatePairGone =>
-      'That pair is no longer waiting for a choice.';
+  String get duplicatePairGone => 'That pair is no longer waiting for a choice.';
 
   @override
-  String get duplicatePairGoneRecovery =>
-      'Go back to the duplicates list; it shows what is left.';
+  String get duplicatePairGoneRecovery => 'Go back to the duplicates list; it shows what is left.';
 
   @override
   String get duplicatesScan => 'Check for duplicates';
@@ -7341,9 +6800,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String duplicatesScannedNewDuplicatePairs(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$nString new duplicate pairs';
@@ -7357,9 +6814,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String duplicatesBulkDonePairsResolved(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$nString pairs resolved';
@@ -7382,17 +6837,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get duplicatesEmptyHeadline => 'No duplicate pairs';
 
   @override
-  String get duplicatesEmptyMessage =>
-      'Pairs appear here when two records look like the same thing.';
+  String get duplicatesEmptyMessage => 'Pairs appear here when two records look like the same thing.';
 
   @override
   String get duplicatesResolveGroup => 'Resolve this group';
 
   @override
   String duplicatesBulkTitle(Object choice, int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$choice for $nString records?';
@@ -7400,9 +6852,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String duplicatesBulkMessage(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'This changes $nString records. The other groups stay as they are.';
@@ -7432,8 +6882,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verificationModeTitle => 'Verification mode';
 
   @override
-  String get verificationModeOn =>
-      'Capture confirms the register instead of starting a blank record.';
+  String get verificationModeOn => 'Capture confirms the register instead of starting a blank record.';
 
   @override
   String get verificationModeOff => 'Capture starts a new record.';
@@ -7451,8 +6900,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get varianceEmptyHeadline => 'No variances';
 
   @override
-  String get varianceEmptyMessage =>
-      'Differences between the register and what was found appear here.';
+  String get varianceEmptyMessage => 'Differences between the register and what was found appear here.';
 
   @override
   String get varianceMatch => 'Match';
@@ -7464,11 +6912,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get varianceMissing => 'Missing';
 
   @override
-  String varianceDetail(
-    Object status,
-    Object recordedisEmptyconflictEmpty,
-    Object foundisEmptyconflictEmpty,
-  ) {
+  String varianceDetail(Object status, Object recordedisEmptyconflictEmpty, Object foundisEmptyconflictEmpty) {
     return '$status · $recordedisEmptyconflictEmpty → $foundisEmptyconflictEmpty';
   }
 
@@ -7513,8 +6957,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String reviewConfidentGroup(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return 'Confident ($countString)';
@@ -7539,8 +6982,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewNoSidesHeadline => 'No values yet';
 
   @override
-  String get reviewNoSidesMessage =>
-      'This field has neither a captured nor a refined value.';
+  String get reviewNoSidesMessage => 'This field has neither a captured nor a refined value.';
 
   @override
   String get reviewNotDetected => 'Not detected';
@@ -7579,11 +7021,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String reviewPosition(int index, int total) {
-    final intl.NumberFormat indexNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat indexNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String indexString = indexNumberFormat.format(index);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return '$indexString of $totalString';
@@ -7599,8 +7039,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewQueueDone => 'Review is finished';
 
   @override
-  String get reviewQueueDoneMessage =>
-      'Every record in this set has been seen.';
+  String get reviewQueueDoneMessage => 'Every record in this set has been seen.';
 
   @override
   String get reviewQueueEmpty => 'No records in this review';
@@ -7627,8 +7066,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewReanalyseEmpty => 'No new proposals';
 
   @override
-  String get reviewBlockedDuplicate =>
-      'This record is part of an unresolved duplicate.';
+  String get reviewBlockedDuplicate => 'This record is part of an unresolved duplicate.';
 
   @override
   String get reviewBlockedAction => 'Fix the named field, then approve again.';
@@ -7637,8 +7075,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewNoConfidence => 'No confidence';
 
   @override
-  String get reviewNoConfidenceMessage =>
-      'This value has no confidence band yet.';
+  String get reviewNoConfidenceMessage => 'This value has no confidence band yet.';
 
   @override
   String get reviewApprovedReason => 'Approved in review.';
@@ -7650,19 +7087,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewSideReason => 'Final side chosen in review.';
 
   @override
-  String get reviewRecordSettled =>
-      'This record is approved or in the recycle bin.';
+  String get reviewRecordSettled => 'This record is approved or in the recycle bin.';
 
   @override
-  String get reviewRecordSettledAction =>
-      'Send it back to review from its record page, then try again.';
+  String get reviewRecordSettledAction => 'Send it back to review from its record page, then try again.';
 
   @override
   String get reviewRecordGone => 'That record is no longer on this device.';
 
   @override
-  String get reviewRecordGoneAction =>
-      'Go back to the records list and open another record.';
+  String get reviewRecordGoneAction => 'Go back to the records list and open another record.';
 
   @override
   String get reviewFinalSide => 'Final value';
@@ -7675,8 +7109,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String reviewVerifiedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -7712,28 +7145,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewEvidenceRegion => 'Where the value was read';
 
   @override
-  String get reviewReanalyseQueued =>
-      'Queued for re-analysis. New values are offered here when it finishes.';
+  String get reviewReanalyseQueued => 'Queued for re-analysis. New values are offered here when it finishes.';
 
   @override
-  String get reviewReanalysing =>
-      'Re-analysing. Nothing changes until you accept a proposal.';
+  String get reviewReanalysing => 'Re-analysing. Nothing changes until you accept a proposal.';
 
   @override
   String get reviewProposalsTitle => 'Proposed values';
 
   @override
-  String reviewProposalLine(
-    Object currentisEmptyrecordFieldEmpty,
-    Object proposed,
-  ) {
+  String reviewProposalLine(Object currentisEmptyrecordFieldEmpty, Object proposed) {
     return 'Now: $currentisEmptyrecordFieldEmpty · Proposed: $proposed';
   }
 
   @override
   String reviewProposalsApplied(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -7755,8 +7182,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingEmptyHeadline => 'No meeting yet';
 
   @override
-  String get meetingEmptyMessage =>
-      'Date, time, location and secretary fill in from this project.';
+  String get meetingEmptyMessage => 'Date, time, location and secretary fill in from this project.';
 
   @override
   String get meetingDate => 'Date';
@@ -7785,8 +7211,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingAttachmentsEmpty => 'No attachments';
 
   @override
-  String get meetingAttachmentsEmptyMessage =>
-      'Agendas, reports, handouts and whiteboard photos land here.';
+  String get meetingAttachmentsEmptyMessage => 'Agendas, reports, handouts and whiteboard photos land here.';
 
   @override
   String get meetingOpenAttachment => 'Open';
@@ -7822,8 +7247,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingAgendaEmpty => 'No agenda yet';
 
   @override
-  String get meetingAgendaEmptyMessage =>
-      'Add the items you will discuss, in the order you want them.';
+  String get meetingAgendaEmptyMessage => 'Add the items you will discuss, in the order you want them.';
 
   @override
   String get meetingAttendees => 'Attendees';
@@ -7851,8 +7275,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String meetingAttendanceCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -7871,8 +7294,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingAttendeesEmpty => 'No attendees yet';
 
   @override
-  String get meetingAttendeesEmptyMessage =>
-      'Add who is present, and record apologies separately.';
+  String get meetingAttendeesEmptyMessage => 'Add who is present, and record apologies separately.';
 
   @override
   String get meetingAttendanceSheet => 'Attendance sheet';
@@ -7884,15 +7306,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingAcceptRows => 'Add these attendees';
 
   @override
-  String get meetingSheetKept =>
-      'The photo stays attached. Type the names if the reading is wrong.';
+  String get meetingSheetKept => 'The photo stays attached. Type the names if the reading is wrong.';
 
   @override
   String get meetingSheetEmpty => 'No attendance sheet';
 
   @override
-  String get meetingSheetEmptyMessage =>
-      'Photograph the signed sheet, then check each name before adding it.';
+  String get meetingSheetEmptyMessage => 'Photograph the signed sheet, then check each name before adding it.';
 
   @override
   String get meetingSignature => 'Signature';
@@ -7923,8 +7343,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingRecordingEmpty => 'No recording';
 
   @override
-  String get meetingRecordingEmptyMessage =>
-      'A recording stays on the meeting, including one that was interrupted.';
+  String get meetingRecordingEmptyMessage => 'A recording stays on the meeting, including one that was interrupted.';
 
   @override
   String get meetingDecisions => 'Decisions';
@@ -7942,8 +7361,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingDecisionsEmpty => 'No decisions yet';
 
   @override
-  String get meetingDecisionsEmptyMessage =>
-      'Decisions from the minutes or typed here are listed together.';
+  String get meetingDecisionsEmptyMessage => 'Decisions from the minutes or typed here are listed together.';
 
   @override
   String get meetingActions => 'Actions';
@@ -7973,8 +7391,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingActionsEmpty => 'No actions yet';
 
   @override
-  String get meetingActionsEmptyMessage =>
-      'Actions keep an owner, a due date and a status.';
+  String get meetingActionsEmptyMessage => 'Actions keep an owner, a due date and a status.';
 
   @override
   String get meetingNotes => 'Raw notes';
@@ -8000,8 +7417,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingReviewEmpty => 'No meeting to review';
 
   @override
-  String get meetingReviewEmptyMessage =>
-      'Open a meeting to see attendance, decisions and actions.';
+  String get meetingReviewEmptyMessage => 'Open a meeting to see attendance, decisions and actions.';
 
   @override
   String get meetingApprovedReason => 'Approved in review.';
@@ -8022,8 +7438,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingNoProject => 'This project is no longer here';
 
   @override
-  String get meetingNoProjectMessage =>
-      'Open a project, then start the meeting from it.';
+  String get meetingNoProjectMessage => 'Open a project, then start the meeting from it.';
 
   @override
   String get meetingBackToProjects => 'Back to projects';
@@ -8033,8 +7448,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String meetingDecisionsCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -8049,8 +7463,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String meetingActionsCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -8070,8 +7483,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingRefine => 'Refine minutes';
 
   @override
-  String get meetingRefineNeedsAgenda =>
-      'Add the agenda first, so each point gets its own summary.';
+  String get meetingRefineNeedsAgenda => 'Add the agenda first, so each point gets its own summary.';
 
   @override
   String meetingUnsupported(Object namesjoin) {
@@ -8085,8 +7497,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String meetingTranscriptVersion(int version) {
-    final intl.NumberFormat versionNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat versionNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String versionString = versionNumberFormat.format(version);
 
     return 'Transcript, run $versionString';
@@ -8097,8 +7508,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String meetingTranscriptGaps(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -8115,27 +7525,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String meetingTranscribing(int done, int total) {
-    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String doneString = doneNumberFormat.format(done);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Transcribing part $doneString of $totalString';
   }
 
   @override
-  String get meetingTranscribeUnavailable =>
-      'Transcription is not available right now. The recording stays on the meeting.';
+  String get meetingTranscribeUnavailable => 'Transcription is not available right now. The recording stays on the meeting.';
 
   @override
   String get meetingPlay => 'Play';
 
   @override
-  String get meetingInterruptedKept =>
-      'Recording interrupted. What was recorded is kept on the meeting.';
+  String get meetingInterruptedKept => 'Recording interrupted. What was recorded is kept on the meeting.';
 
   @override
   String get meetingPhotographHandout => 'Photograph a handout';
@@ -8152,17 +7557,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String meetingRecordingDetail(
-    Object minutes,
-    Object seconds,
-    Object fileSizebytes,
-  ) {
+  String meetingRecordingDetail(Object minutes, Object seconds, Object fileSizebytes) {
     return '$minutes:$seconds · $fileSizebytes';
   }
 
   @override
-  String get meetingCheckReading =>
-      'Check this: the sheet was hard to read here.';
+  String get meetingCheckReading => 'Check this: the sheet was hard to read here.';
 
   @override
   String get meetingSigned => 'Signed on the sheet';
@@ -8241,8 +7641,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString records';
@@ -8300,8 +7699,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportHistoryEmpty => 'No exports yet';
 
   @override
-  String get exportHistoryEmptyMessage =>
-      'A finished export is kept here, with who made it and what it held.';
+  String get exportHistoryEmptyMessage => 'A finished export is kept here, with who made it and what it held.';
 
   @override
   String get exportShare => 'Share';
@@ -8392,8 +7790,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportGateTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -8406,8 +7803,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get exportFixNowHint =>
-      'Open the records that need attention. Nothing is exported.';
+  String get exportFixNowHint => 'Open the records that need attention. Nothing is exported.';
 
   @override
   String exportExcludeHint(Object recordsCountntoLowerCase) {
@@ -8419,12 +7815,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pdfPageOf(int page, int pages) {
-    final intl.NumberFormat pageNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat pageNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String pageString = pageNumberFormat.format(page);
-    final intl.NumberFormat pagesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat pagesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String pagesString = pagesNumberFormat.format(pages);
 
     return '$pageString of $pagesString';
@@ -8457,8 +7850,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pdfChecklistRows(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -8472,9 +7864,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pdfNotFoundCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$nString not found';
@@ -8482,11 +7872,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pdfCompliance(int compliant, int total) {
-    final intl.NumberFormat compliantNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat compliantNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String compliantString = compliantNumberFormat.format(compliant);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Compliant: $compliantString of $totalString';
@@ -8574,8 +7962,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pdfPhotoReference(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -8662,8 +8049,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergeHistoryEmpty => 'No merges yet';
 
   @override
-  String get mergeHistoryEmptyMessage =>
-      'A merge is kept here with its source, counts and how long undo lasts.';
+  String get mergeHistoryEmptyMessage => 'A merge is kept here with its source, counts and how long undo lasts.';
 
   @override
   String mergeUndoUntil(Object when) {
@@ -8671,20 +8057,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String mergeHistoryFacts(
-    Object name,
-    Object id,
-    Object dateFormatyMMMdadd,
-    Object switchstatusapplied,
-  ) {
+  String mergeHistoryFacts(Object name, Object id, Object dateFormatyMMMdadd, Object switchstatusapplied) {
     return '$name · $id · $dateFormatyMMMdadd · $switchstatusapplied';
   }
 
   @override
   String mergeHistoryCount(Object switchkeyrecords, int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$switchkeyrecords: $nString';
@@ -8692,9 +8071,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String mergeHistoryResolution(Object switchchoicemine, int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$switchchoicemine: $nString';
@@ -8704,8 +8081,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergeUndoChanged => 'This merge has later changes.';
 
   @override
-  String get mergeUndoChangedRecovery =>
-      'Keep the later changes, or undo the newer merge first.';
+  String get mergeUndoChangedRecovery => 'Keep the later changes, or undo the newer merge first.';
 
   @override
   String get mergeUndoUnavailable => 'This merge can no longer be undone.';
@@ -8714,8 +8090,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mergeUndoDone => 'Merge undone';
 
   @override
-  String get mergeUndoConfirm =>
-      'Restore the values from before this merge. Incoming evidence stays in the recycle area.';
+  String get mergeUndoConfirm => 'Restore the values from before this merge. Incoming evidence stays in the recycle area.';
 
   @override
   String get importTitle => 'Import';
@@ -8724,8 +8099,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importEmptyHeadline => 'No file yet';
 
   @override
-  String get importEmptyMessage =>
-      'Choose a bundle, a spreadsheet, a dataset or a template. Tapture checks it and opens the step that fits.';
+  String get importEmptyMessage => 'Choose a bundle, a spreadsheet, a dataset or a template. Tapture checks it and opens the step that fits.';
 
   @override
   String get importChooseFile => 'Choose a file';
@@ -8740,40 +8114,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importKindBundle => 'Bundle (.zip)';
 
   @override
-  String get importBundleLine =>
-      'Checked, then added as a project or merged into one.';
+  String get importBundleLine => 'Checked, then added as a project or merged into one.';
 
   @override
   String get importKindDataset => 'Reference dataset (.json)';
 
   @override
-  String get importDatasetLine =>
-      'A table of reference rows opens the dataset importer.';
+  String get importDatasetLine => 'A table of reference rows opens the dataset importer.';
 
   @override
   String get importKindTemplate => 'Template (.json)';
 
   @override
-  String get importTemplateLine =>
-      'A template file is checked, then added to the open project.';
+  String get importTemplateLine => 'A template file is checked, then added to the open project.';
 
   @override
   String get importKindSheet => 'Spreadsheet (.xlsx or .csv)';
 
   @override
-  String get importSheetLine =>
-      'Asks whether its rows are records or a register to check against.';
+  String get importSheetLine => 'Asks whether its rows are records or a register to check against.';
 
   @override
   String get importUnsupported => 'Tapture cannot import this kind of file.';
 
   @override
-  String get importNeedsProject =>
-      'Open a project first. A spreadsheet, dataset or template is added to the open project.';
+  String get importNeedsProject => 'Open a project first. A spreadsheet, dataset or template is added to the open project.';
 
   @override
-  String get importNeedsProjectRecovery =>
-      'Open the project from the list, then import the file again.';
+  String get importNeedsProjectRecovery => 'Open the project from the list, then import the file again.';
 
   @override
   String get importPurposeTitle => 'What is this sheet?';
@@ -8782,22 +8150,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importPurposeRecords => 'Records to hold';
 
   @override
-  String get importPurposeRecordsLine =>
-      'Each row becomes a record on one of this project’s templates.';
+  String get importPurposeRecordsLine => 'Each row becomes a record on one of this project’s templates.';
 
   @override
   String get importPurposeRegister => 'Register to verify against';
 
   @override
-  String get importPurposeRegisterLine =>
-      'The rows become a reference dataset that verification checks what you find against. No records are made.';
+  String get importPurposeRegisterLine => 'The rows become a reference dataset that verification checks what you find against. No records are made.';
 
   @override
   String get importNoSheetHeadline => 'No sheet chosen';
 
   @override
-  String get importNoSheetMessage =>
-      'Choose a spreadsheet on the import page first.';
+  String get importNoSheetMessage => 'Choose a spreadsheet on the import page first.';
 
   @override
   String get importMappingTitle => 'Match columns';
@@ -8815,8 +8180,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importNoTemplateHeadline => 'No template to match';
 
   @override
-  String get importNoTemplateMessage =>
-      'This project has no template yet. Make one from this sheet’s columns, then import its rows.';
+  String get importNoTemplateMessage => 'This project has no template yet. Make one from this sheet’s columns, then import its rows.';
 
   @override
   String get importMakeTemplate => 'Make a template from this sheet';
@@ -8826,9 +8190,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importRow(int row) {
-    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String rowString = rowNumberFormat.format(row);
 
     return 'Row $rowString';
@@ -8836,8 +8198,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importRun(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -8859,12 +8220,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importProgress(int done, int total) {
-    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String doneString = doneNumberFormat.format(done);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return '$doneString of $totalString rows';
@@ -8874,14 +8232,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importKeptExisting => 'Kept the record already here.';
 
   @override
-  String get importMatchUnsettled =>
-      'Matches a record already here, and no choice was made.';
+  String get importMatchUnsettled => 'Matches a record already here, and no choice was made.';
 
   @override
   String importRepeatsRow(int row) {
-    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String rowString = rowNumberFormat.format(row);
 
     return 'Repeats the identity of row $rowString in this file.';
@@ -8910,8 +8265,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importCreated(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString created';
@@ -8919,8 +8273,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importUpdated(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString updated';
@@ -8928,8 +8281,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importSkipped(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString skipped';
@@ -8937,8 +8289,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importFailed(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString failed';
@@ -8955,9 +8306,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importMatchMessage(int row) {
-    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String rowString = rowNumberFormat.format(row);
 
     return 'Row $rowString has the same identity as a record already in this project.';
@@ -8985,8 +8334,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cloudDestinationsTitle => 'Upload destinations';
 
   @override
-  String get cloudDestinationsSubtitle =>
-      'Where a finished file can be sent, when you confirm it.';
+  String get cloudDestinationsSubtitle => 'Where a finished file can be sent, when you confirm it.';
 
   @override
   String get destinationTitle => 'Upload destinations';
@@ -8995,8 +8343,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get destinationEmptyHeadline => 'No destinations yet';
 
   @override
-  String get destinationEmptyMessage =>
-      'Add a bucket, a folder or a drive you sign in to. Nothing is sent until you confirm it.';
+  String get destinationEmptyMessage => 'Add a bucket, a folder or a drive you sign in to. Nothing is sent until you confirm it.';
 
   @override
   String get destinationAdd => 'Add a destination';
@@ -9014,12 +8361,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get destinationRemoveTitle => 'Remove this destination?';
 
   @override
-  String get destinationRemoveMessage =>
-      'The destination and its saved sign-in are both deleted.';
+  String get destinationRemoveMessage => 'The destination and its saved sign-in are both deleted.';
 
   @override
-  String get destinationCheckFailed =>
-      'The connection test did not succeed, so this destination was not saved.';
+  String get destinationCheckFailed => 'The connection test did not succeed, so this destination was not saved.';
 
   @override
   String get destinationLabel => 'Name';
@@ -9067,8 +8412,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get destinationOptional => 'Optional';
 
   @override
-  String get destinationLocalFolderHint =>
-      'A folder inside the Tapture folder, or choose one';
+  String get destinationLocalFolderHint => 'A folder inside the Tapture folder, or choose one';
 
   @override
   String get destinationChooseFolder => 'Choose a folder';
@@ -9116,8 +8460,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get destinationToken => 'Token';
 
   @override
-  String get destinationKeepSignIn =>
-      'Leave the sign-in fields empty to keep the saved sign-in.';
+  String get destinationKeepSignIn => 'Leave the sign-in fields empty to keep the saved sign-in.';
 
   @override
   String get destinationSignInAgain => 'Sign in again';
@@ -9128,30 +8471,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get destinationSignInUnavailable =>
-      'Signing in to this provider is not available on this device.';
+  String get destinationSignInUnavailable => 'Signing in to this provider is not available on this device.';
 
   @override
-  String get destinationSignInMismatch =>
-      'The sign-in did not finish. Try saving again.';
+  String get destinationSignInMismatch => 'The sign-in did not finish. Try saving again.';
 
   @override
   String get destinationFolderRoot => 'the top folder';
 
   @override
-  String get destinationRemoveNothing =>
-      'The destination and its sign-in are both still saved.';
+  String get destinationRemoveNothing => 'The destination and its sign-in are both still saved.';
 
   @override
-  String get destinationRemoveHalf =>
-      'The sign-in was removed, but the destination is still listed.';
+  String get destinationRemoveHalf => 'The sign-in was removed, but the destination is still listed.';
 
   @override
   String get destinationRemoveAgain => 'Try removing it again.';
 
   @override
-  String get destinationRestoreFailed =>
-      'The destination could not be put back.';
+  String get destinationRestoreFailed => 'The destination could not be put back.';
 
   @override
   String get destinationAddAgain => 'Add it again.';
@@ -9199,8 +8537,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get destinationUnavailableHeadline => 'Uploads are sent from a device';
 
   @override
-  String get destinationUnavailableMessage =>
-      'Open Tapture on a phone or computer to add a destination.';
+  String get destinationUnavailableMessage => 'Open Tapture on a phone or computer to add a destination.';
 
   @override
   String get uploadConfirmTitle => 'Send this file?';
@@ -9209,12 +8546,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadConfirm => 'Send';
 
   @override
-  String uploadConfirmMessage(
-    Object name,
-    Object size,
-    Object destination,
-    Object folder,
-  ) {
+  String uploadConfirmMessage(Object name, Object size, Object destination, Object folder) {
     return '$name ($size) will be sent to $destination, in $folder.';
   }
 
@@ -9225,8 +8557,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadHistoryEmptyHeadline => 'No uploads yet';
 
   @override
-  String get uploadHistoryEmptyMessage =>
-      'A file appears here after you confirm sending it.';
+  String get uploadHistoryEmptyMessage => 'A file appears here after you confirm sending it.';
 
   @override
   String get uploadRetry => 'Retry';
@@ -9265,12 +8596,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get uploadStopped =>
-      'The upload was stopped. The file on this device is unchanged.';
+  String get uploadStopped => 'The upload was stopped. The file on this device is unchanged.';
 
   @override
-  String get uploadFileMissing =>
-      'The file is no longer on this device as it was exported.';
+  String get uploadFileMissing => 'The file is no longer on this device as it was exported.';
 
   @override
   String get uploadFileMissingRecovery => 'Export it again, then send it.';
@@ -9279,8 +8608,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadDestinationGone => 'That destination was removed.';
 
   @override
-  String get uploadDestinationGoneRecovery =>
-      'Send the file again from its export.';
+  String get uploadDestinationGoneRecovery => 'Send the file again from its export.';
 
   @override
   String get uploadOutcomeSent => 'Sent';
@@ -9295,19 +8623,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadOutcomeStopped => 'Stopped';
 
   @override
-  String uploadAttemptLine(
-    Object outcome,
-    Object destination,
-    Object size,
-    Object when,
-  ) {
+  String uploadAttemptLine(Object outcome, Object destination, Object size, Object when) {
     return '$outcome · $destination · $size · $when';
   }
 
   @override
   String uploadSendingLine(Object destination, int percent) {
-    final intl.NumberFormat percentNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat percentNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String percentString = percentNumberFormat.format(percent);
 
     return 'Sending to $destination · $percentString%';
@@ -9325,16 +8647,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String uploadDetailsMessageFileDestinationFolderSize(
-    Object file,
-    Object destination,
-    Object folder,
-    Object size,
-    Object whenstartedAt,
-    Object ended,
-    Object outcome,
-    Object because,
-  ) {
+  String uploadDetailsMessageFileDestinationFolderSize(Object file, Object destination, Object folder, Object size, Object whenstartedAt, Object ended, Object outcome, Object because) {
     return 'File: $file\nDestination: $destination\nFolder: $folder\nSize: $size\nStarted: $whenstartedAt\nEnded: $ended\nOutcome: $outcome$because';
   }
 
@@ -9345,8 +8658,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyEmptyHeadline => 'Nothing is set up to send';
 
   @override
-  String get privacyEmptyMessage =>
-      'Analysis providers and upload destinations appear here when they are added.';
+  String get privacyEmptyMessage => 'Analysis providers and upload destinations appear here when they are added.';
 
   @override
   String get egressAnalysisSection => 'Analysis';
@@ -9355,8 +8667,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get egressUploadsSection => 'Uploads';
 
   @override
-  String get egressOfflineNotice =>
-      'Offline mode is on, so nothing leaves this device.';
+  String get egressOfflineNotice => 'Offline mode is on, so nothing leaves this device.';
 
   @override
   String get egressReadText => 'Reading text from photos';
@@ -9409,15 +8720,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gpsPrivacyCaptureState => 'On. Change it in capture settings.';
 
   @override
-  String get gpsPrivacyCaptureStateOffChangeItIn =>
-      'Off. Change it in capture settings.';
+  String get gpsPrivacyCaptureStateOffChangeItIn => 'Off. Change it in capture settings.';
 
   @override
   String get gpsPrivacyExclude => 'Leave coordinates out of exports';
 
   @override
-  String get gpsPrivacyExcludeEffect =>
-      'Exports carry no location fields and no location in photo details.';
+  String get gpsPrivacyExcludeEffect => 'Exports carry no location fields and no location in photo details.';
 
   @override
   String get gpsPrivacyRemove => 'Remove saved coordinates';
@@ -9439,15 +8748,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get gpsPrivacyNoProject =>
-      'Open a project to remove its saved coordinates.';
+  String get gpsPrivacyNoProject => 'Open a project to remove its saved coordinates.';
 
   @override
   String get faceBlurTitle => 'Blur faces in exported photos';
 
   @override
-  String get faceBlurEffect =>
-      'A photo whose faces cannot be checked on this device stays out of the export.';
+  String get faceBlurEffect => 'A photo whose faces cannot be checked on this device stays out of the export.';
 
   @override
   String get redactionTitle => 'Hide parts before sending';
@@ -9458,20 +8765,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get exportPrivacyChanged =>
-      'Privacy settings changed. Export a new file before sharing.';
+  String get exportPrivacyChanged => 'Privacy settings changed. Export a new file before sharing.';
 
   @override
-  String get redactionHint =>
-      'Drag across anything that must not be sent. The photo itself does not change.';
+  String get redactionHint => 'Drag across anything that must not be sent. The photo itself does not change.';
 
   @override
   String get redactionSave => 'Save hidden areas';
 
   @override
   String redactionCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -9485,55 +8789,46 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get redactionSaved =>
-      'Saved. These areas are covered in every copy sent for analysis.';
+  String get redactionSaved => 'Saved. These areas are covered in every copy sent for analysis.';
 
   @override
   String get redactionEmptyHeadline => 'No photo to mark';
 
   @override
-  String get redactionEmptyMessage =>
-      'Open a photo from a record, then mark what to hide.';
+  String get redactionEmptyMessage => 'Open a photo from a record, then mark what to hide.';
 
   @override
-  String get permissionLocation =>
-      'Tapture saves a location only when you turn location on for a project.';
+  String get permissionLocation => 'Tapture saves a location only when you turn location on for a project.';
 
   @override
-  String get permissionStorage =>
-      'Tapture opens photos and files you choose to import.';
+  String get permissionStorage => 'Tapture opens photos and files you choose to import.';
 
   @override
-  String get permissionNotifications =>
-      'Tapture tells you when a batch of analysis finishes.';
+  String get permissionNotifications => 'Tapture tells you when a batch of analysis finishes.';
 
   @override
   String get privacyTitle => 'Privacy';
 
   @override
-  String get privacySubtitle =>
-      'What can leave this device, and what never does.';
+  String get privacySubtitle => 'What can leave this device, and what never does.';
 
   @override
   String get backendSettingsTitle => 'Organisation';
 
   @override
-  String get relayChooseProject =>
-      'Open a project to exchange changes with its other devices.';
+  String get relayChooseProject => 'Open a project to exchange changes with its other devices.';
 
   @override
   String get relayEnable => 'Enable relay';
 
   @override
-  String get relayEnableHelp =>
-      'Encrypted packages pass through the organisation server temporarily.';
+  String get relayEnableHelp => 'Encrypted packages pass through the organisation server temporarily.';
 
   @override
   String get relaySharedKey => 'Shared project key';
 
   @override
-  String get relayKeyHelp =>
-      'Use the same key of at least 16 characters on each device. Exchange it separately; it never goes to the server.';
+  String get relayKeyHelp => 'Use the same key of at least 16 characters on each device. Exchange it separately; it never goes to the server.';
 
   @override
   String get relayQueueProject => 'Queue project package';
@@ -9551,15 +8846,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shippedAiSuggestion => 'AI suggestion';
 
   @override
-  String get shippedAiSuggestionHelp =>
-      'Suggested order only. Preview and choose the templates you want.';
+  String get shippedAiSuggestionHelp => 'Suggested order only. Preview and choose the templates you want.';
 
   @override
   String get backendServerAddress => 'Server address';
 
   @override
-  String get backendConfigurationHelp =>
-      'Use the HTTPS address supplied by your administrator. Leave Organisation empty when this server hosts one organisation.';
+  String get backendConfigurationHelp => 'Use the HTTPS address supplied by your administrator. Leave Organisation empty when this server hosts one organisation.';
 
   @override
   String get backendNotSignedIn => 'Not signed in';
@@ -9601,8 +8894,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backendRevokedState => 'Ended by the organisation';
 
   @override
-  String get backendRevoked =>
-      'The organisation ended this device’s sign-in. Sign in again when the server is reachable. Work on this device continues.';
+  String get backendRevoked => 'The organisation ended this device’s sign-in. Sign in again when the server is reachable. Work on this device continues.';
 
   @override
   String get signInLater => 'Continue without signing in';
@@ -9611,8 +8903,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOutAction => 'Sign out';
 
   @override
-  String get backendSettingsSubtitle =>
-      'The server this device is enrolled with.';
+  String get backendSettingsSubtitle => 'The server this device is enrolled with.';
 
   @override
   String get signInTitle => 'Sign in';
@@ -9630,19 +8921,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInOrganisation => 'Organisation';
 
   @override
-  String get backendUnreachable =>
-      'The server cannot be reached. Work on this device continues.';
+  String get backendUnreachable => 'The server cannot be reached. Work on this device continues.';
 
   @override
-  String get backendGrantExpired =>
-      'The saved sign-in has expired for relay, analysis and role changes.';
+  String get backendGrantExpired => 'The saved sign-in has expired for relay, analysis and role changes.';
 
   @override
   String get signOutTitle => 'Sign out';
 
   @override
-  String get signOutMessage =>
-      'Signing back in needs a connection to the server.';
+  String get signOutMessage => 'Signing back in needs a connection to the server.';
 
   @override
   String get relayTitle => 'Change relay';
@@ -9651,8 +8939,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get relayOff => 'Relay is off until a project manager enables it.';
 
   @override
-  String get relaySignInNeeded =>
-      'Sign in to use the relay. Work on this device continues.';
+  String get relaySignInNeeded => 'Sign in to use the relay. Work on this device continues.';
 
   @override
   String get relayAddKey => 'Add shared key';
@@ -9694,26 +8981,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get frictionSaving => 'Your report is being saved.';
 
   @override
-  String get frictionScreenshotFailed =>
-      'The screenshot could not be captured.';
+  String get frictionScreenshotFailed => 'The screenshot could not be captured.';
 
   @override
-  String get frictionScreenshotRecovery =>
-      'Try again or turn off the screenshot and save the report.';
+  String get frictionScreenshotRecovery => 'Try again or turn off the screenshot and save the report.';
 
   @override
   String get feedbackJournalInvalid => 'Your saved feedback could not be read.';
 
   @override
-  String get feedbackJournalRecovery =>
-      'Try again. Keep the saved files so they can be recovered.';
+  String get feedbackJournalRecovery => 'Try again. Keep the saved files so they can be recovered.';
 
   @override
   String get feedbackImageMissing => 'A saved feedback image is missing.';
 
   @override
-  String get feedbackImageRecovery =>
-      'Restore the saved image, then export the feedback again.';
+  String get feedbackImageRecovery => 'Restore the saved image, then export the feedback again.';
 
   @override
   String copyAnd(Object named0, Object named1) {
@@ -9790,8 +9073,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String surfacePreviewLevel(int level) {
-    final intl.NumberFormat levelNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat levelNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String levelString = levelNumberFormat.format(level);
 
     return 'Level $levelString';
@@ -9820,8 +9102,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportIncompleteCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString incomplete';
@@ -9829,8 +9110,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportUnapprovedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString not approved';
@@ -9838,8 +9118,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportBlockedMeetingCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString with meeting actions missing an owner or due date, which stay out';
@@ -9847,8 +9126,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exportFaceCount(String id, int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$id: $countString faces';
@@ -9856,43 +9134,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String mergeHistoryStatus(String status) {
-    String _temp0 = intl.Intl.selectLogic(status, {
-      'applied': 'Merged',
-      'undone': 'Undone',
-      'imported': 'Imported',
-      'other': 'Failed',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      status,
+      {
+        'applied': 'Merged',
+        'undone': 'Undone',
+        'imported': 'Imported',
+        'other': 'Failed',
+      },
+    );
     return '$_temp0';
   }
 
   @override
   String mergeHistoryCategory(String category) {
-    String _temp0 = intl.Intl.selectLogic(category, {
-      'records': 'New records',
-      'updated_records': 'Updated records',
-      'photos': 'New photos',
-      'photos_here': 'Photos already here',
-      'files': 'Files',
-      'deletions': 'Deletions',
-      'conflicts': 'Conflicts',
-      'kept': 'Values kept',
-      'elsewhere': 'Already in another project',
-      'duplicates': 'Possible duplicates',
-      'skipped': 'Skipped records',
-      'other': '$category',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      category,
+      {
+        'records': 'New records',
+        'updated_records': 'Updated records',
+        'photos': 'New photos',
+        'photos_here': 'Photos already here',
+        'files': 'Files',
+        'deletions': 'Deletions',
+        'conflicts': 'Conflicts',
+        'kept': 'Values kept',
+        'elsewhere': 'Already in another project',
+        'duplicates': 'Possible duplicates',
+        'skipped': 'Skipped records',
+        'other': '$category',
+      },
+    );
     return '$_temp0';
   }
 
   @override
   String mergeHistoryChoice(String choice) {
-    String _temp0 = intl.Intl.selectLogic(choice, {
-      'mine': 'Kept this device’s value',
-      'theirs': 'Used incoming value',
-      'typed': 'Entered a replacement',
-      'keepBoth': 'Kept both templates',
-      'other': 'Waiting for a decision',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      choice,
+      {
+        'mine': 'Kept this device’s value',
+        'theirs': 'Used incoming value',
+        'typed': 'Entered a replacement',
+        'keepBoth': 'Kept both templates',
+        'other': 'Waiting for a decision',
+      },
+    );
     return '$_temp0';
   }
 
@@ -9902,75 +9189,61 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get relayPackageTooLargeRecovery =>
-      'Share the exported package directly or export a smaller selection.';
+  String get relayPackageTooLargeRecovery => 'Share the exported package directly or export a smaller selection.';
 
   @override
-  String get permissionBiometrics =>
-      'Tapture uses biometrics only when you choose biometric app unlock.';
+  String get permissionBiometrics => 'Tapture uses biometrics only when you choose biometric app unlock.';
 
   @override
-  String get packageMetadataTooLargeRecovery =>
-      'Choose a smaller package scope on the exporting device, then open the new package.';
+  String get packageMetadataTooLargeRecovery => 'Choose a smaller package scope on the exporting device, then open the new package.';
 
   @override
   String get failureCancelledMessage => 'The action was cancelled.';
 
   @override
-  String get failureCancelledRecovery =>
-      'Start the action again if you still need it.';
+  String get failureCancelledRecovery => 'Start the action again if you still need it.';
 
   @override
   String get failureCorruptionMessage => 'This file or row could not be read.';
 
   @override
-  String get failureCorruptionRecovery =>
-      'Keep the original. Export a copy and try opening it again.';
+  String get failureCorruptionRecovery => 'Keep the original. Export a copy and try opening it again.';
 
   @override
-  String get failureNetworkMessage =>
-      'The network is not available. Work on this device is saved.';
+  String get failureNetworkMessage => 'The network is not available. Work on this device is saved.';
 
   @override
-  String get failureNetworkRecovery =>
-      'Keep capturing. Processing will retry when you are back online.';
+  String get failureNetworkRecovery => 'Keep capturing. Processing will retry when you are back online.';
 
   @override
-  String get failurePermissionMessage =>
-      'Tapture does not have permission to do that.';
+  String get failurePermissionMessage => 'Tapture does not have permission to do that.';
 
   @override
-  String get failurePermissionRecovery =>
-      'Allow the permission in settings, then try again.';
+  String get failurePermissionRecovery => 'Allow the permission in settings, then try again.';
 
   @override
   String get failureProviderMessage => 'A service this screen uses failed.';
 
   @override
-  String get failureProviderRecovery =>
-      'Try again. Nothing already captured was lost.';
+  String get failureProviderRecovery => 'Try again. Nothing already captured was lost.';
 
   @override
-  String get failureStorageMessage =>
-      'The photo could not be saved on this device.';
+  String get failureStorageMessage => 'The photo could not be saved on this device.';
 
   @override
-  String get failureStorageRecovery =>
-      'Free up space or export a project, then try again.';
+  String get failureStorageRecovery => 'Free up space or export a project, then try again.';
 
   @override
   String get failureValidationMessage => 'That value is not valid.';
 
   @override
-  String get failureValidationRecovery =>
-      'Correct the highlighted field and save again.';
+  String get failureValidationRecovery => 'Correct the highlighted field and save again.';
 
   @override
   String get processingTimeout => 'The provider did not answer in time.';
 
   @override
-  String get processingMalformedResponse =>
-      'The provider response could not be read.';
+  String get processingMalformedResponse => 'The provider response could not be read.';
 
   @override
   String get processingStopped => 'Processing stopped.';
@@ -9979,247 +9252,190 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureAIIsNotAvailable => 'AI is not available.';
 
   @override
-  String get failureContinueCapturingAnalysisCanWait =>
-      'Continue capturing. Analysis can wait.';
+  String get failureContinueCapturingAnalysisCanWait => 'Continue capturing. Analysis can wait.';
 
   @override
-  String get failureThatPhotoIsNotOnThisDevice =>
-      'That photo is not on this device.';
+  String get failureThatPhotoIsNotOnThisDevice => 'That photo is not on this device.';
 
   @override
-  String get failureCaptureThePhotoAgainThenTryAgain =>
-      'Capture the photo again, then try again.';
+  String get failureCaptureThePhotoAgainThenTryAgain => 'Capture the photo again, then try again.';
 
   @override
-  String get failureThatPhotoCouldNotBeReadOn =>
-      'That photo could not be read on this device.';
+  String get failureThatPhotoCouldNotBeReadOn => 'That photo could not be read on this device.';
 
   @override
-  String get failureUseAnotherPhotoOrEnterTheValue =>
-      'Use another photo or enter the value by hand.';
+  String get failureUseAnotherPhotoOrEnterTheValue => 'Use another photo or enter the value by hand.';
 
   @override
-  String get failureThatPhotoCouldNotBeReadAs =>
-      'That photo could not be read as an image.';
+  String get failureThatPhotoCouldNotBeReadAs => 'That photo could not be read as an image.';
 
   @override
-  String get failureTheAnalysisCopyCouldNotBeRead =>
-      'The analysis copy could not be read.';
+  String get failureTheAnalysisCopyCouldNotBeRead => 'The analysis copy could not be read.';
 
   @override
-  String get failureKeepTheRecordAndTryAgain =>
-      'Keep the record and try again.';
+  String get failureKeepTheRecordAndTryAgain => 'Keep the record and try again.';
 
   @override
-  String get failureTheAnalysisResponseCouldNotBeRead =>
-      'The analysis response could not be read.';
+  String get failureTheAnalysisResponseCouldNotBeRead => 'The analysis response could not be read.';
 
   @override
   String get failureAnalysisCanWait => 'Analysis can wait.';
 
   @override
-  String get failureTheAnalysisQuotaIsUsedUp =>
-      'The analysis quota is used up.';
+  String get failureTheAnalysisQuotaIsUsedUp => 'The analysis quota is used up.';
 
   @override
-  String get failureAnalysisIsPausedOnTheServerFor =>
-      'Analysis is paused on the server for a moment.';
+  String get failureAnalysisIsPausedOnTheServerFor => 'Analysis is paused on the server for a moment.';
 
   @override
-  String get failureContinueCapturingAnalysisTriesAgainLater =>
-      'Continue capturing. Analysis tries again later.';
+  String get failureContinueCapturingAnalysisTriesAgainLater => 'Continue capturing. Analysis tries again later.';
 
   @override
-  String get failureAnalysisAccessIsUnavailableForThisProject =>
-      'Analysis access is unavailable for this project.';
+  String get failureAnalysisAccessIsUnavailableForThisProject => 'Analysis access is unavailable for this project.';
 
   @override
-  String get failureContinueCapturingAndCheckOrganisationAccess =>
-      'Continue capturing and check organisation access.';
+  String get failureContinueCapturingAndCheckOrganisationAccess => 'Continue capturing and check organisation access.';
 
   @override
-  String get failureTheAnalysisMediaIsTooLargeTo =>
-      'The analysis media is too large to send.';
+  String get failureTheAnalysisMediaIsTooLargeTo => 'The analysis media is too large to send.';
 
   @override
-  String get failureKeepTheRecordAndCompleteItWithout =>
-      'Keep the record and complete it without analysis.';
+  String get failureKeepTheRecordAndCompleteItWithout => 'Keep the record and complete it without analysis.';
 
   @override
   String get failureSignInWasNotAccepted => 'Sign-in was not accepted.';
 
   @override
-  String get failureCheckYourEmailPasswordAndOrganisation =>
-      'Check your email, password and organisation.';
+  String get failureCheckYourEmailPasswordAndOrganisation => 'Check your email, password and organisation.';
 
   @override
-  String get failureTheOrganisationEndedThisDeviceSSign =>
-      'The organisation ended this device’s sign-in.';
+  String get failureTheOrganisationEndedThisDeviceSSign => 'The organisation ended this device’s sign-in.';
 
   @override
-  String get failureSignInAgainWhenTheServerIs =>
-      'Sign in again when the server is reachable. Work on this device continues.';
+  String get failureSignInAgainWhenTheServerIs => 'Sign in again when the server is reachable. Work on this device continues.';
 
   @override
-  String get failureTheServerCouldNotCompleteSignIn =>
-      'The server could not complete sign-in.';
+  String get failureTheServerCouldNotCompleteSignIn => 'The server could not complete sign-in.';
 
   @override
-  String get failureTryAgainWhenTheServerIsReachable =>
-      'Try again when the server is reachable. Work on this device continues.';
+  String get failureTryAgainWhenTheServerIsReachable => 'Try again when the server is reachable. Work on this device continues.';
 
   @override
-  String get failureTheSavedSignInCouldNotBe =>
-      'The saved sign-in could not be read.';
+  String get failureTheSavedSignInCouldNotBe => 'The saved sign-in could not be read.';
 
   @override
-  String get failureCheckTheAccountSettingsYourLocalWork =>
-      'Check the account settings. Your local work is unchanged.';
+  String get failureCheckTheAccountSettingsYourLocalWork => 'Check the account settings. Your local work is unchanged.';
 
   @override
-  String get failureEnterTheOrganisationSHTTPSServerAddress =>
-      'Enter the organisation’s HTTPS server address.';
+  String get failureEnterTheOrganisationSHTTPSServerAddress => 'Enter the organisation’s HTTPS server address.';
 
   @override
-  String get failureCheckTheAddressWithYourAdministrator =>
-      'Check the address with your administrator.';
+  String get failureCheckTheAddressWithYourAdministrator => 'Check the address with your administrator.';
 
   @override
-  String get failureSignOutBeforeChangingOrganisation =>
-      'Sign out before changing organisation.';
+  String get failureSignOutBeforeChangingOrganisation => 'Sign out before changing organisation.';
 
   @override
-  String get failureKeepTheCurrentAccountOrSignOut =>
-      'Keep the current account or sign out first.';
+  String get failureKeepTheCurrentAccountOrSignOut => 'Keep the current account or sign out first.';
 
   @override
-  String get failureTheOrganisationServerCouldNotBeReached =>
-      'The organisation server could not be reached.';
+  String get failureTheOrganisationServerCouldNotBeReached => 'The organisation server could not be reached.';
 
   @override
-  String get failureContinueWorkingOfflineAndTryAgainLater =>
-      'Continue working offline and try again later.';
+  String get failureContinueWorkingOfflineAndTryAgainLater => 'Continue working offline and try again later.';
 
   @override
-  String get failureUseASharedKeyOfAtLeast =>
-      'Use a shared key of at least 16 characters.';
+  String get failureUseASharedKeyOfAtLeast => 'Use a shared key of at least 16 characters.';
 
   @override
-  String get failureAskTheProjectManagerForTheSame =>
-      'Ask the project manager for the same key used on the other devices.';
+  String get failureAskTheProjectManagerForTheSame => 'Ask the project manager for the same key used on the other devices.';
 
   @override
-  String get failureThisProjectIsRegisteredOnTheServer =>
-      'This project is registered on the server to others.';
+  String get failureThisProjectIsRegisteredOnTheServer => 'This project is registered on the server to others.';
 
   @override
-  String get failureAskAnAdministratorToAddYouTo =>
-      'Ask an administrator to add you to it. Work on this device continues.';
+  String get failureAskAnAdministratorToAddYouTo => 'Ask an administrator to add you to it. Work on this device continues.';
 
   @override
-  String get failureAddTheSharedProjectKeyFirst =>
-      'Add the shared project key first.';
+  String get failureAddTheSharedProjectKeyFirst => 'Add the shared project key first.';
 
   @override
-  String get failureAskTheProjectManagerForTheKey =>
-      'Ask the project manager for the key.';
+  String get failureAskTheProjectManagerForTheKey => 'Ask the project manager for the key.';
 
   @override
-  String get failureRelayCouldNotCompleteThisRequest =>
-      'Relay could not complete this request.';
+  String get failureRelayCouldNotCompleteThisRequest => 'Relay could not complete this request.';
 
   @override
-  String get failureKeepWorkingLocallyAndTrySyncAgain =>
-      'Keep working locally and try Sync again.';
+  String get failureKeepWorkingLocallyAndTrySyncAgain => 'Keep working locally and try Sync again.';
 
   @override
-  String get failureThatPasswordDidNotOpenTheBundle =>
-      'That password did not open the bundle.';
+  String get failureThatPasswordDidNotOpenTheBundle => 'That password did not open the bundle.';
 
   @override
-  String get failureTryThePasswordAgainNothingWasExtracted =>
-      'Try the password again. Nothing was extracted.';
+  String get failureTryThePasswordAgainNothingWasExtracted => 'Try the password again. Nothing was extracted.';
 
   @override
-  String get failureTheProjectMetadataIsTooLargeFor =>
-      'The project metadata is too large for one package.';
+  String get failureTheProjectMetadataIsTooLargeFor => 'The project metadata is too large for one package.';
 
   @override
-  String get failureChooseASmallerPackageScope =>
-      'Choose a smaller package scope.';
+  String get failureChooseASmallerPackageScope => 'Choose a smaller package scope.';
 
   @override
-  String get failurePasswordProtectionIsUnavailableOnThisDevice =>
-      'Password protection is unavailable on this device.';
+  String get failurePasswordProtectionIsUnavailableOnThisDevice => 'Password protection is unavailable on this device.';
 
   @override
-  String get failureOpenThisPackageOnASupportedDevice =>
-      'Open this package on a supported device.';
+  String get failureOpenThisPackageOnASupportedDevice => 'Open this package on a supported device.';
 
   @override
-  String get failurePasswordProtectionNeedsBrowserCryptography =>
-      'Password protection needs browser cryptography.';
+  String get failurePasswordProtectionNeedsBrowserCryptography => 'Password protection needs browser cryptography.';
 
   @override
-  String get failureOpenTheAppThroughASecureConnection =>
-      'Open the app through a secure connection.';
+  String get failureOpenTheAppThroughASecureConnection => 'Open the app through a secure connection.';
 
   @override
   String get failureThisBundleNeedsAPassword => 'This bundle needs a password.';
 
   @override
-  String get failureEnterItsPasswordToOpenIt =>
-      'Enter its password to open it.';
+  String get failureEnterItsPasswordToOpenIt => 'Enter its password to open it.';
 
   @override
-  String get failureTheBundleContainsASecretAndWas =>
-      'The bundle contains a secret and was not written.';
+  String get failureTheBundleContainsASecretAndWas => 'The bundle contains a secret and was not written.';
 
   @override
-  String get failureRemoveTheSecretAndExportTheBundle =>
-      'Remove the secret and export the bundle again.';
+  String get failureRemoveTheSecretAndExportTheBundle => 'Remove the secret and export the bundle again.';
 
   @override
-  String get failureTheBundleHasTooManyNestedArchives =>
-      'The bundle has too many nested archives.';
+  String get failureTheBundleHasTooManyNestedArchives => 'The bundle has too many nested archives.';
 
   @override
-  String get failureANestedBundleArchiveCouldNotBe =>
-      'A nested bundle archive could not be safely checked.';
+  String get failureANestedBundleArchiveCouldNotBe => 'A nested bundle archive could not be safely checked.';
 
   @override
-  String get failureAnEncryptedOrUnsupportedAttachmentCouldNot =>
-      'An encrypted or unsupported attachment could not be checked.';
+  String get failureAnEncryptedOrUnsupportedAttachmentCouldNot => 'An encrypted or unsupported attachment could not be checked.';
 
   @override
-  String get failureANestedBundleArchiveIsTooLarge =>
-      'A nested bundle archive is too large.';
+  String get failureANestedBundleArchiveIsTooLarge => 'A nested bundle archive is too large.';
 
   @override
-  String get failureANestedBundleEntryHasAnInvalid =>
-      'A nested bundle entry has an invalid size.';
+  String get failureANestedBundleEntryHasAnInvalid => 'A nested bundle entry has an invalid size.';
 
   @override
-  String get failureANestedBundleEntryExceedsItsDeclared =>
-      'A nested bundle entry exceeds its declared size.';
+  String get failureANestedBundleEntryExceedsItsDeclared => 'A nested bundle entry exceeds its declared size.';
 
   @override
-  String get failureFinishReadingTheCurrentPackageEntryFirst =>
-      'Finish reading the current package entry first.';
+  String get failureFinishReadingTheCurrentPackageEntryFirst => 'Finish reading the current package entry first.';
 
   @override
   String get failureThePackageEntryIsMissing => 'The package entry is missing.';
 
   @override
-  String get failureReadThisLargePackageEntryAsA =>
-      'Read this large package entry as a stream.';
+  String get failureReadThisLargePackageEntryAsA => 'Read this large package entry as a stream.';
 
   @override
   String get failureThePackageEntryChanged => 'The package entry changed.';
 
   @override
-  String get failureThePackageEntryChecksumChanged =>
-      'The package entry checksum changed.';
+  String get failureThePackageEntryChecksumChanged => 'The package entry checksum changed.';
 
   @override
   String failureNoUploadDestinationIsRegisteredForValue(String value0) {
@@ -10230,468 +9446,358 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureChooseAnotherDestination => 'Choose another destination.';
 
   @override
-  String get failureTheDestinationRefusedTheSignIn =>
-      'The destination refused the sign-in.';
+  String get failureTheDestinationRefusedTheSignIn => 'The destination refused the sign-in.';
 
   @override
-  String get failureCheckTheKeyOrSignInAgain =>
-      'Check the key or sign in again.';
+  String get failureCheckTheKeyOrSignInAgain => 'Check the key or sign in again.';
 
   @override
-  String get failureThatBucketOrFolderWasNotFound =>
-      'That bucket or folder was not found.';
+  String get failureThatBucketOrFolderWasNotFound => 'That bucket or folder was not found.';
 
   @override
-  String get failureCheckTheNameAndTryTheConnection =>
-      'Check the name and try the connection again.';
+  String get failureCheckTheNameAndTryTheConnection => 'Check the name and try the connection again.';
 
   @override
-  String get failureTheDestinationDidNotFinishTheUpload =>
-      'The destination did not finish the upload.';
+  String get failureTheDestinationDidNotFinishTheUpload => 'The destination did not finish the upload.';
 
   @override
   String get failureTryAgain => 'Try again.';
 
   @override
-  String get failureTheServerRedirectedTheUploadToAnother =>
-      'The server redirected the upload to another host.';
+  String get failureTheServerRedirectedTheUploadToAnother => 'The server redirected the upload to another host.';
 
   @override
-  String get failureCheckTheAddressAndTryAgain =>
-      'Check the address and try again.';
+  String get failureCheckTheAddressAndTryAgain => 'Check the address and try again.';
 
   @override
-  String get failureTheDestinationRejectedTheUpload =>
-      'The destination rejected the upload.';
+  String get failureTheDestinationRejectedTheUpload => 'The destination rejected the upload.';
 
   @override
-  String get failureCheckTheSettingsAndTryAgain =>
-      'Check the settings and try again.';
+  String get failureCheckTheSettingsAndTryAgain => 'Check the settings and try again.';
 
   @override
-  String get failureTheFileCouldNotBeReadWhile =>
-      'The file could not be read while it was being sent.';
+  String get failureTheFileCouldNotBeReadWhile => 'The file could not be read while it was being sent.';
 
   @override
-  String get failureCheckThatTheFileIsStillOn =>
-      'Check that the file is still on this device, then retry.';
+  String get failureCheckThatTheFileIsStillOn => 'Check that the file is still on this device, then retry.';
 
   @override
-  String get failureUploadsArePausedWhileTheAppIs =>
-      'Uploads are paused while the app is offline.';
+  String get failureUploadsArePausedWhileTheAppIs => 'Uploads are paused while the app is offline.';
 
   @override
-  String get failureGoOnlineThenConfirmTheUploadAgain =>
-      'Go online, then confirm the upload again.';
+  String get failureGoOnlineThenConfirmTheUploadAgain => 'Go online, then confirm the upload again.';
 
   @override
-  String get failureUploadsToThisDestinationAreTurnedOff =>
-      'Uploads to this destination are turned off.';
+  String get failureUploadsToThisDestinationAreTurnedOff => 'Uploads to this destination are turned off.';
 
   @override
-  String get failureEnableTheDestinationOnThePrivacyPage =>
-      'Enable the destination on the privacy page first.';
+  String get failureEnableTheDestinationOnThePrivacyPage => 'Enable the destination on the privacy page first.';
 
   @override
-  String get failureCloudSignInCouldNotFinish =>
-      'Cloud sign-in could not finish.';
+  String get failureCloudSignInCouldNotFinish => 'Cloud sign-in could not finish.';
 
   @override
   String get failureTrySigningInAgain => 'Try signing in again.';
 
   @override
-  String get failureTheDestinationReturnedTooMuchData =>
-      'The destination returned too much data.';
+  String get failureTheDestinationReturnedTooMuchData => 'The destination returned too much data.';
 
   @override
-  String get failureCheckTheDestinationAddressAndTryAgain =>
-      'Check the destination address and try again.';
+  String get failureCheckTheDestinationAddressAndTryAgain => 'Check the destination address and try again.';
 
   @override
-  String get failureTheDestinationCouldNotBeReached =>
-      'The destination could not be reached.';
+  String get failureTheDestinationCouldNotBeReached => 'The destination could not be reached.';
 
   @override
-  String get failureTryAgainWhenYouAreOnline =>
-      'Try again when you are online.';
+  String get failureTryAgainWhenYouAreOnline => 'Try again when you are online.';
 
   @override
-  String get failureRemoveTheDestinationAndAddItAgain =>
-      'Remove the destination and add it again.';
+  String get failureRemoveTheDestinationAndAddItAgain => 'Remove the destination and add it again.';
 
   @override
-  String get failureThisDestinationSignInChangedDuringThe =>
-      'This destination sign-in changed during the upload.';
+  String get failureThisDestinationSignInChangedDuringThe => 'This destination sign-in changed during the upload.';
 
   @override
-  String get failureReviewTheDestinationAndConfirmANew =>
-      'Review the destination and confirm a new upload.';
+  String get failureReviewTheDestinationAndConfirmANew => 'Review the destination and confirm a new upload.';
 
   @override
-  String get failureTheDestinationDidNotAcceptTheTest =>
-      'The destination did not accept the test file.';
+  String get failureTheDestinationDidNotAcceptTheTest => 'The destination did not accept the test file.';
 
   @override
-  String get failureSignInAgainAndRetryTheTest =>
-      'Sign in again and retry the test.';
+  String get failureSignInAgainAndRetryTheTest => 'Sign in again and retry the test.';
 
   @override
-  String get failureTheDestinationHasNotFinishedTheUpload =>
-      'The destination has not finished the upload.';
+  String get failureTheDestinationHasNotFinishedTheUpload => 'The destination has not finished the upload.';
 
   @override
   String get failureRetryTheUpload => 'Retry the upload.';
 
   @override
-  String get failureThatFolderCannotBeWritten =>
-      'That folder cannot be written.';
+  String get failureThatFolderCannotBeWritten => 'That folder cannot be written.';
 
   @override
   String get failureChooseTheFolderAgain => 'Choose the folder again.';
 
   @override
-  String get failureTheFileCouldNotBeWrittenTo =>
-      'The file could not be written to that folder.';
+  String get failureTheFileCouldNotBeWrittenTo => 'The file could not be written to that folder.';
 
   @override
-  String get failureFreeSomeSpaceOrChooseTheFolder =>
-      'Free some space or choose the folder again.';
+  String get failureFreeSomeSpaceOrChooseTheFolder => 'Free some space or choose the folder again.';
 
   @override
-  String get failureThisFolderRequiresASupportedSystemFolder =>
-      'This folder requires a supported system folder grant.';
+  String get failureThisFolderRequiresASupportedSystemFolder => 'This folder requires a supported system folder grant.';
 
   @override
-  String get failureChooseAnAccessibleFolderOrAnotherDestination =>
-      'Choose an accessible folder or another destination.';
+  String get failureChooseAnAccessibleFolderOrAnotherDestination => 'Choose an accessible folder or another destination.';
 
   @override
-  String get failureThatFolderPathIsNotUsable =>
-      'That folder path is not usable.';
+  String get failureThatFolderPathIsNotUsable => 'That folder path is not usable.';
 
   @override
-  String get failureTheTaptureFolderOnThisDeviceIs =>
-      'The Tapture folder on this device is not available.';
+  String get failureTheTaptureFolderOnThisDeviceIs => 'The Tapture folder on this device is not available.';
 
   @override
-  String get failureCheckTheStorageLocationInSettings =>
-      'Check the storage location in Settings.';
+  String get failureCheckTheStorageLocationInSettings => 'Check the storage location in Settings.';
 
   @override
-  String get failureThisGoogleDriveSignInIsNo =>
-      'This Google Drive sign-in is no longer available.';
+  String get failureThisGoogleDriveSignInIsNo => 'This Google Drive sign-in is no longer available.';
 
   @override
-  String get failureSignInToThisDestinationAgain =>
-      'Sign in to this destination again.';
+  String get failureSignInToThisDestinationAgain => 'Sign in to this destination again.';
 
   @override
-  String get failureGoogleDriveNeedsACurrentSignIn =>
-      'Google Drive needs a current sign-in for this account.';
+  String get failureGoogleDriveNeedsACurrentSignIn => 'Google Drive needs a current sign-in for this account.';
 
   @override
-  String get failureSignInAgainToAllowFileAccess =>
-      'Sign in again to allow file access.';
+  String get failureSignInAgainToAllowFileAccess => 'Sign in again to allow file access.';
 
   @override
-  String get failureNativeGoogleDriveSignInIsUnavailable =>
-      'Native Google Drive sign-in is unavailable.';
+  String get failureNativeGoogleDriveSignInIsUnavailable => 'Native Google Drive sign-in is unavailable.';
 
   @override
-  String get failureTheDestinationIsStillSavedSignIn =>
-      'The destination is still saved. Sign in, then try the upload.';
+  String get failureTheDestinationIsStillSavedSignIn => 'The destination is still saved. Sign in, then try the upload.';
 
   @override
-  String get failureTheUploadChunkSizeIsNotUsable =>
-      'The upload chunk size is not usable.';
+  String get failureTheUploadChunkSizeIsNotUsable => 'The upload chunk size is not usable.';
 
   @override
-  String get failureUseTheStandardUploadSettings =>
-      'Use the standard upload settings.';
+  String get failureUseTheStandardUploadSettings => 'Use the standard upload settings.';
 
   @override
-  String get failureTheDestinationReturnedAnUnusableUploadResponse =>
-      'The destination returned an unusable upload response.';
+  String get failureTheDestinationReturnedAnUnusableUploadResponse => 'The destination returned an unusable upload response.';
 
   @override
-  String get failureTestTheDestinationThenTryTheUpload =>
-      'Test the destination, then try the upload again.';
+  String get failureTestTheDestinationThenTryTheUpload => 'Test the destination, then try the upload again.';
 
   @override
-  String get failureTheBucketDidNotAcknowledgeTheUploaded =>
-      'The bucket did not acknowledge the uploaded part.';
+  String get failureTheBucketDidNotAcknowledgeTheUploaded => 'The bucket did not acknowledge the uploaded part.';
 
   @override
-  String get failureTestTheDestinationAndTryAgain =>
-      'Test the destination and try again.';
+  String get failureTestTheDestinationAndTryAgain => 'Test the destination and try again.';
 
   @override
-  String get failureTheBucketDidNotFinishTheUpload =>
-      'The bucket did not finish the upload.';
+  String get failureTheBucketDidNotFinishTheUpload => 'The bucket did not finish the upload.';
 
   @override
-  String get failureTheBucketRefusedToFinishTheUpload =>
-      'The bucket refused to finish the upload.';
+  String get failureTheBucketRefusedToFinishTheUpload => 'The bucket refused to finish the upload.';
 
   @override
-  String get failureTheBucketDidNotConfirmTheCompleted =>
-      'The bucket did not confirm the completed upload.';
+  String get failureTheBucketDidNotConfirmTheCompleted => 'The bucket did not confirm the completed upload.';
 
   @override
-  String get failureTheDestinationDidNotStartTheUpload =>
-      'The destination did not start the upload.';
+  String get failureTheDestinationDidNotStartTheUpload => 'The destination did not start the upload.';
 
   @override
   String get failureTryTheConnectionAgain => 'Try the connection again.';
 
   @override
-  String get failureThisDestinationHasNoSavedSignIn =>
-      'This destination has no saved sign-in.';
+  String get failureThisDestinationHasNoSavedSignIn => 'This destination has no saved sign-in.';
 
   @override
-  String get failureEnterTheKeysAndTestTheConnection =>
-      'Enter the keys and test the connection.';
+  String get failureEnterTheKeysAndTestTheConnection => 'Enter the keys and test the connection.';
 
   @override
-  String get failureTheSavedSignInIsNotUsable =>
-      'The saved sign-in is not usable.';
+  String get failureTheSavedSignInIsNotUsable => 'The saved sign-in is not usable.';
 
   @override
   String get failureEnterTheKeysAgain => 'Enter the keys again.';
 
   @override
-  String get failureTheBucketSettingsAreIncomplete =>
-      'The bucket settings are incomplete.';
+  String get failureTheBucketSettingsAreIncomplete => 'The bucket settings are incomplete.';
 
   @override
-  String get failureEnterTheKeyRegionAndBucket =>
-      'Enter the key, region and bucket.';
+  String get failureEnterTheKeyRegionAndBucket => 'Enter the key, region and bucket.';
 
   @override
-  String get failureChooseAFilenameWithoutFolderSeparators =>
-      'Choose a filename without folder separators.';
+  String get failureChooseAFilenameWithoutFolderSeparators => 'Choose a filename without folder separators.';
 
   @override
-  String get failureTheFolderCouldNotOpenANew =>
-      'The folder could not open a new file.';
+  String get failureTheFolderCouldNotOpenANew => 'The folder could not open a new file.';
 
   @override
-  String get failureTheFolderCouldNotPublishTheFile =>
-      'The folder could not publish the file.';
+  String get failureTheFolderCouldNotPublishTheFile => 'The folder could not publish the file.';
 
   @override
-  String get failureAccessToTheChosenFolderWasLost =>
-      'Access to the chosen folder was lost.';
+  String get failureAccessToTheChosenFolderWasLost => 'Access to the chosen folder was lost.';
 
   @override
-  String get failureChooseAnAccessibleFolderAndTryAgain =>
-      'Choose an accessible folder and try again.';
+  String get failureChooseAnAccessibleFolderAndTryAgain => 'Choose an accessible folder and try again.';
 
   @override
-  String get failureTheUploadFilenameIsNotUsable =>
-      'The upload filename is not usable.';
+  String get failureTheUploadFilenameIsNotUsable => 'The upload filename is not usable.';
 
   @override
-  String get failureEnterTheAddressAndSignInThen =>
-      'Enter the address and sign-in, then test it.';
+  String get failureEnterTheAddressAndSignInThen => 'Enter the address and sign-in, then test it.';
 
   @override
-  String get failureTheDestinationAddressOrSignInIs =>
-      'The destination address or sign-in is not usable.';
+  String get failureTheDestinationAddressOrSignInIs => 'The destination address or sign-in is not usable.';
 
   @override
-  String get failureEnterAFullHTTPSAddressAndSign =>
-      'Enter a full HTTPS address and sign-in again.';
+  String get failureEnterAFullHTTPSAddressAndSign => 'Enter a full HTTPS address and sign-in again.';
 
   @override
-  String get failureGoogleDriveSignInCouldNotFinish =>
-      'Google Drive sign-in could not finish.';
+  String get failureGoogleDriveSignInCouldNotFinish => 'Google Drive sign-in could not finish.';
 
   @override
-  String get failureThisDestinationNeedsAFreshSignIn =>
-      'This destination needs a fresh sign-in.';
+  String get failureThisDestinationNeedsAFreshSignIn => 'This destination needs a fresh sign-in.';
 
   @override
-  String get failureTheUploadCheckpointCouldNotBeSaved =>
-      'The upload checkpoint could not be saved in time.';
+  String get failureTheUploadCheckpointCouldNotBeSaved => 'The upload checkpoint could not be saved in time.';
 
   @override
-  String get failureCheckSecureStorageThenTryAgain =>
-      'Check secure storage, then try again.';
+  String get failureCheckSecureStorageThenTryAgain => 'Check secure storage, then try again.';
 
   @override
-  String get failureThatRowIsNoLongerOnThis =>
-      'That row is no longer on this device.';
+  String get failureThatRowIsNoLongerOnThis => 'That row is no longer on this device.';
 
   @override
-  String get failureRefreshTheListAndTryAgain =>
-      'Refresh the list and try again.';
+  String get failureRefreshTheListAndTryAgain => 'Refresh the list and try again.';
 
   @override
   String get failureADeleteNeedsAReason => 'A delete needs a reason.';
 
   @override
-  String get failureSayWhyThisRowShouldBeRemoved =>
-      'Say why this row should be removed, then try again.';
+  String get failureSayWhyThisRowShouldBeRemoved => 'Say why this row should be removed, then try again.';
 
   @override
-  String get failureTheDatabaseCouldNotCompleteThatWrite =>
-      'The database could not complete that write.';
+  String get failureTheDatabaseCouldNotCompleteThatWrite => 'The database could not complete that write.';
 
   @override
-  String get failureFreeUpSpaceOrExportAProject =>
-      'Free up space or export a project, then try again.';
+  String get failureFreeUpSpaceOrExportAProject => 'Free up space or export a project, then try again.';
 
   @override
-  String get failureTheDatabaseIsEncryptedAndTheKey =>
-      'The database is encrypted and the key is missing.';
+  String get failureTheDatabaseIsEncryptedAndTheKey => 'The database is encrypted and the key is missing.';
 
   @override
-  String get failureRestoreTheKeyFromABackupThen =>
-      'Restore the key from a backup, then open the app again.';
+  String get failureRestoreTheKeyFromABackupThen => 'Restore the key from a backup, then open the app again.';
 
   @override
-  String get failureTheDatabaseKeyIsMissingOrUnreadable =>
-      'The database key is missing or unreadable.';
+  String get failureTheDatabaseKeyIsMissingOrUnreadable => 'The database key is missing or unreadable.';
 
   @override
-  String get failureTypeDISABLEENCRYPTIONToTurnEncryptionOff =>
-      'Type DISABLE ENCRYPTION to turn encryption off.';
+  String get failureTypeDISABLEENCRYPTIONToTurnEncryptionOff => 'Type DISABLE ENCRYPTION to turn encryption off.';
 
   @override
-  String get failureEnterTheConfirmationExactlyThenTryAgain =>
-      'Enter the confirmation exactly, then try again.';
+  String get failureEnterTheConfirmationExactlyThenTryAgain => 'Enter the confirmation exactly, then try again.';
 
   @override
-  String get failureThereIsNoDatabaseToEncrypt =>
-      'There is no database to encrypt.';
+  String get failureThereIsNoDatabaseToEncrypt => 'There is no database to encrypt.';
 
   @override
-  String get failureOpenTheAppOnceSoADatabase =>
-      'Open the app once so a database is created, then try again.';
+  String get failureOpenTheAppOnceSoADatabase => 'Open the app once so a database is created, then try again.';
 
   @override
-  String get failureTheDatabaseCouldNotBeEncrypted =>
-      'The database could not be encrypted.';
+  String get failureTheDatabaseCouldNotBeEncrypted => 'The database could not be encrypted.';
 
   @override
   String get failureFreeUpSpaceThenTryAgain => 'Free up space, then try again.';
 
   @override
-  String get failureTheEncryptedCopyDidNotMatchThe =>
-      'The encrypted copy did not match the original.';
+  String get failureTheEncryptedCopyDidNotMatchThe => 'The encrypted copy did not match the original.';
 
   @override
-  String get failureTryEncryptingAgainTheOriginalDatabaseWas =>
-      'Try encrypting again. The original database was not changed.';
+  String get failureTryEncryptingAgainTheOriginalDatabaseWas => 'Try encrypting again. The original database was not changed.';
 
   @override
-  String get failureKeepTheWorkingDatabaseFreeUpSpace =>
-      'Keep the working database. Free up space, then close again.';
+  String get failureKeepTheWorkingDatabaseFreeUpSpace => 'Keep the working database. Free up space, then close again.';
 
   @override
-  String get failureRestoreTheKeyFromABackupThe =>
-      'Restore the key from a backup. The encrypted database was not changed.';
+  String get failureRestoreTheKeyFromABackupThe => 'Restore the key from a backup. The encrypted database was not changed.';
 
   @override
-  String get failureThisUpdateWouldDropOrRewriteA =>
-      'This update would drop or rewrite a column.';
+  String get failureThisUpdateWouldDropOrRewriteA => 'This update would drop or rewrite a column.';
 
   @override
-  String get failureExportYourProjectsThenConfirmTheUpdate =>
-      'Export your projects, then confirm the update.';
+  String get failureExportYourProjectsThenConfirmTheUpdate => 'Export your projects, then confirm the update.';
 
   @override
-  String get failureThisDeviceCannotBuildTheRecordSearch =>
-      'This device cannot build the record search index.';
+  String get failureThisDeviceCannotBuildTheRecordSearch => 'This device cannot build the record search index.';
 
   @override
-  String get failureUpdateTheAppThenOpenItAgain =>
-      'Update the app, then open it again.';
+  String get failureUpdateTheAppThenOpenItAgain => 'Update the app, then open it again.';
 
   @override
-  String get failureTheFilePathMustStayInsideThe =>
-      'The file path must stay inside the project folder.';
+  String get failureTheFilePathMustStayInsideThe => 'The file path must stay inside the project folder.';
 
   @override
-  String get failureSaveTheFileUnderTheProjectFolder =>
-      'Save the file under the project folder and try again.';
+  String get failureSaveTheFileUnderTheProjectFolder => 'Save the file under the project folder and try again.';
 
   @override
-  String get failureTheOriginalCaptionCannotBeChanged =>
-      'The original caption cannot be changed.';
+  String get failureTheOriginalCaptionCannotBeChanged => 'The original caption cannot be changed.';
 
   @override
-  String get failureLeaveTheCapturedTextAndWriteA =>
-      'Leave the captured text and write a refined one.';
+  String get failureLeaveTheCapturedTextAndWriteA => 'Leave the captured text and write a refined one.';
 
   @override
-  String get failureADuplicatePairNeedsTwoRecords =>
-      'A duplicate pair needs two records.';
+  String get failureADuplicatePairNeedsTwoRecords => 'A duplicate pair needs two records.';
 
   @override
-  String get failureChooseBothRecordsAndTryAgain =>
-      'Choose both records and try again.';
+  String get failureChooseBothRecordsAndTryAgain => 'Choose both records and try again.';
 
   @override
-  String get failureARecordCannotBeADuplicateOf =>
-      'A record cannot be a duplicate of itself.';
+  String get failureARecordCannotBeADuplicateOf => 'A record cannot be a duplicate of itself.';
 
   @override
-  String get failureChooseTwoDifferentRecordsAndTryAgain =>
-      'Choose two different records and try again.';
+  String get failureChooseTwoDifferentRecordsAndTryAgain => 'Choose two different records and try again.';
 
   @override
-  String get failureADuplicatePairNeedsAProjectA =>
-      'A duplicate pair needs a project, a signal and a score.';
+  String get failureADuplicatePairNeedsAProjectA => 'A duplicate pair needs a project, a signal and a score.';
 
   @override
-  String get failureRunDetectionAgainThenTryAgain =>
-      'Run detection again, then try again.';
+  String get failureRunDetectionAgainThenTryAgain => 'Run detection again, then try again.';
 
   @override
-  String get failureAResolutionNeedsAChoiceAndAn =>
-      'A resolution needs a choice and an operator.';
+  String get failureAResolutionNeedsAChoiceAndAn => 'A resolution needs a choice and an operator.';
 
   @override
-  String get failureChooseHowToResolveThePairThen =>
-      'Choose how to resolve the pair, then try again.';
+  String get failureChooseHowToResolveThePairThen => 'Choose how to resolve the pair, then try again.';
 
   @override
-  String get failureThatPairIsNoLongerOnThis =>
-      'That pair is no longer on this device.';
+  String get failureThatPairIsNoLongerOnThis => 'That pair is no longer on this device.';
 
   @override
-  String get failureACompletedExportCannotBeChanged =>
-      'A completed export cannot be changed.';
+  String get failureACompletedExportCannotBeChanged => 'A completed export cannot be changed.';
 
   @override
-  String get failureRunANewExportInsteadOfRewriting =>
-      'Run a new export instead of rewriting this one.';
+  String get failureRunANewExportInsteadOfRewriting => 'Run a new export instead of rewriting this one.';
 
   @override
-  String get failureAnExportIsRecordedOnlyWhenThe =>
-      'An export is recorded only when the file is finished.';
+  String get failureAnExportIsRecordedOnlyWhenThe => 'An export is recorded only when the file is finished.';
 
   @override
-  String get failureFinishWritingTheFileThenRecordThe =>
-      'Finish writing the file, then record the export.';
+  String get failureFinishWritingTheFileThenRecordThe => 'Finish writing the file, then record the export.';
 
   @override
-  String get failureTheExportFormatsAreNotInA =>
-      'The export formats are not in a form Tapture can store.';
+  String get failureTheExportFormatsAreNotInA => 'The export formats are not in a form Tapture can store.';
 
   @override
-  String get failureFixTheFormatsListAndSaveAgain =>
-      'Fix the formats list and save again.';
+  String get failureFixTheFormatsListAndSaveAgain => 'Fix the formats list and save again.';
 
   @override
-  String get failureTheExportFiltersAreNotInA =>
-      'The export filters are not in a form Tapture can store.';
+  String get failureTheExportFiltersAreNotInA => 'The export filters are not in a form Tapture can store.';
 
   @override
-  String get failureStoreTheQueryNotTheExportedValues =>
-      'Store the query, not the exported values.';
+  String get failureStoreTheQueryNotTheExportedValues => 'Store the query, not the exported values.';
 
   @override
   String get failureThatEntryCouldNotBeRead => 'That entry could not be read.';
@@ -10700,250 +9806,190 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureChangeItThenSaveAgain => 'Change it, then save again.';
 
   @override
-  String get failureTheMarkedAreaOnThePhotoCould =>
-      'The marked area on the photo could not be read.';
+  String get failureTheMarkedAreaOnThePhotoCould => 'The marked area on the photo could not be read.';
 
   @override
-  String get failureFixTheRegionObjectAndSaveAgain =>
-      'Fix the region object and save again.';
+  String get failureFixTheRegionObjectAndSaveAgain => 'Fix the region object and save again.';
 
   @override
-  String get failureTheMarkedAreaOnThePhotoIs =>
-      'The marked area on the photo is not in a form Tapture can store.';
+  String get failureTheMarkedAreaOnThePhotoIs => 'The marked area on the photo is not in a form Tapture can store.';
 
   @override
-  String get failureThatMeetingIsNoLongerOnThis =>
-      'That meeting is no longer on this device.';
+  String get failureThatMeetingIsNoLongerOnThis => 'That meeting is no longer on this device.';
 
   @override
-  String get failureTheOriginalTranscriptCannotBeChanged =>
-      'The original transcript cannot be changed.';
+  String get failureTheOriginalTranscriptCannotBeChanged => 'The original transcript cannot be changed.';
 
   @override
-  String get failureLeaveTheCapturedTextAndWriteRefined =>
-      'Leave the captured text and write refined minutes.';
+  String get failureLeaveTheCapturedTextAndWriteRefined => 'Leave the captured text and write refined minutes.';
 
   @override
-  String get failureTheMeetingAgendaCouldNotBeRead =>
-      'The meeting agenda could not be read.';
+  String get failureTheMeetingAgendaCouldNotBeRead => 'The meeting agenda could not be read.';
 
   @override
-  String get failureFixTheAgendaListAndSaveAgain =>
-      'Fix the agenda list and save again.';
+  String get failureFixTheAgendaListAndSaveAgain => 'Fix the agenda list and save again.';
 
   @override
-  String get failureTheMeetingAgendaIsNotInA =>
-      'The meeting agenda is not in a form Tapture can store.';
+  String get failureTheMeetingAgendaIsNotInA => 'The meeting agenda is not in a form Tapture can store.';
 
   @override
-  String get failureTheMergeSummaryCouldNotBeRead =>
-      'The merge summary could not be read.';
+  String get failureTheMergeSummaryCouldNotBeRead => 'The merge summary could not be read.';
 
   @override
-  String get failureFixTheCountsObjectAndSaveAgain =>
-      'Fix the counts object and save again.';
+  String get failureFixTheCountsObjectAndSaveAgain => 'Fix the counts object and save again.';
 
   @override
-  String get failureTheMergeSummaryIsNotInA =>
-      'The merge summary is not in a form Tapture can store.';
+  String get failureTheMergeSummaryIsNotInA => 'The merge summary is not in a form Tapture can store.';
 
   @override
-  String get failureAConflictNeedsAChoiceAndAn =>
-      'A conflict needs a choice and an operator.';
+  String get failureAConflictNeedsAChoiceAndAn => 'A conflict needs a choice and an operator.';
 
   @override
-  String get failureChooseASideThenResolveAgain =>
-      'Choose a side, then resolve again.';
+  String get failureChooseASideThenResolveAgain => 'Choose a side, then resolve again.';
 
   @override
-  String get failureThatConflictIsNoLongerOnThis =>
-      'That conflict is no longer on this device.';
+  String get failureThatConflictIsNoLongerOnThis => 'That conflict is no longer on this device.';
 
   @override
-  String get failureThatJobIsNoLongerOnThis =>
-      'That job is no longer on this device.';
+  String get failureThatJobIsNoLongerOnThis => 'That job is no longer on this device.';
 
   @override
-  String get failureRefreshTheQueueAndTryAgain =>
-      'Refresh the queue and try again.';
+  String get failureRefreshTheQueueAndTryAgain => 'Refresh the queue and try again.';
 
   @override
-  String get failureAStoredProviderResponseCannotBeChanged =>
-      'A stored provider response cannot be changed.';
+  String get failureAStoredProviderResponseCannotBeChanged => 'A stored provider response cannot be changed.';
 
   @override
-  String get failureLeaveTheOriginalResultAndWriteA =>
-      'Leave the original result and write a new one.';
+  String get failureLeaveTheOriginalResultAndWriteA => 'Leave the original result and write a new one.';
 
   @override
-  String get failureARequestSummaryCannotIncludeASecret =>
-      'A request summary cannot include a secret.';
+  String get failureARequestSummaryCannotIncludeASecret => 'A request summary cannot include a secret.';
 
   @override
-  String get failureStoreShapeAndSizeOnlyThenSave =>
-      'Store shape and size only, then save again.';
+  String get failureStoreShapeAndSizeOnlyThenSave => 'Store shape and size only, then save again.';
 
   @override
-  String get failureTheProjectSettingsCouldNotBeRead =>
-      'The project settings could not be read.';
+  String get failureTheProjectSettingsCouldNotBeRead => 'The project settings could not be read.';
 
   @override
-  String get failureChangeTheSettingsAgainThenSave =>
-      'Change the settings again, then save.';
+  String get failureChangeTheSettingsAgainThenSave => 'Change the settings again, then save.';
 
   @override
-  String get failureTheProjectSettingsAreNotInA =>
-      'The project settings are not in a form Tapture can store.';
+  String get failureTheProjectSettingsAreNotInA => 'The project settings are not in a form Tapture can store.';
 
   @override
-  String get failureThatRecordIsNoLongerOnThis =>
-      'That record is no longer on this device.';
+  String get failureThatRecordIsNoLongerOnThis => 'That record is no longer on this device.';
 
   @override
-  String get failureTheRecordSContextCouldNotBe =>
-      'The record\'s context could not be read.';
+  String get failureTheRecordSContextCouldNotBe => 'The record\'s context could not be read.';
 
   @override
-  String get failureFixTheContextObjectAndSaveAgain =>
-      'Fix the context object and save again.';
+  String get failureFixTheContextObjectAndSaveAgain => 'Fix the context object and save again.';
 
   @override
-  String get failureTheRecordSContextIsNotIn =>
-      'The record\'s context is not in a form Tapture can store.';
+  String get failureTheRecordSContextIsNotIn => 'The record\'s context is not in a form Tapture can store.';
 
   @override
-  String get failureThatValueIsNoLongerOnThis =>
-      'That value is no longer on this device.';
+  String get failureThatValueIsNoLongerOnThis => 'That value is no longer on this device.';
 
   @override
-  String get failureRefreshTheRecordAndTryAgain =>
-      'Refresh the record and try again.';
+  String get failureRefreshTheRecordAndTryAgain => 'Refresh the record and try again.';
 
   @override
-  String get failureTheOriginalValueCannotBeChanged =>
-      'The original value cannot be changed.';
+  String get failureTheOriginalValueCannotBeChanged => 'The original value cannot be changed.';
 
   @override
-  String get failureLeaveTheCapturedValueAndWriteA =>
-      'Leave the captured value and write a refined one.';
+  String get failureLeaveTheCapturedValueAndWriteA => 'Leave the captured value and write a refined one.';
 
   @override
-  String get failureADatasetImportNeedsASourceFile =>
-      'A dataset import needs a source file and a scope.';
+  String get failureADatasetImportNeedsASourceFile => 'A dataset import needs a source file and a scope.';
 
   @override
-  String get failureChooseTheFileAndWhereItBelongs =>
-      'Choose the file and where it belongs, then import again.';
+  String get failureChooseTheFileAndWhereItBelongs => 'Choose the file and where it belongs, then import again.';
 
   @override
-  String get failureAProjectDatasetNeedsAProject =>
-      'A project dataset needs a project.';
+  String get failureAProjectDatasetNeedsAProject => 'A project dataset needs a project.';
 
   @override
-  String get failureChooseTheProjectThenImportAgain =>
-      'Choose the project, then import again.';
+  String get failureChooseTheProjectThenImportAgain => 'Choose the project, then import again.';
 
   @override
-  String get failureAGlobalDatasetCannotBelongToOne =>
-      'A global dataset cannot belong to one project.';
+  String get failureAGlobalDatasetCannotBelongToOne => 'A global dataset cannot belong to one project.';
 
   @override
-  String get failureClearTheProjectThenImportAgain =>
-      'Clear the project, then import again.';
+  String get failureClearTheProjectThenImportAgain => 'Clear the project, then import again.';
 
   @override
-  String get failureTheDatasetColumnsAreNotInA =>
-      'The dataset columns are not in a form Tapture can store.';
+  String get failureTheDatasetColumnsAreNotInA => 'The dataset columns are not in a form Tapture can store.';
 
   @override
-  String get failureFixTheColumnListAndSaveAgain =>
-      'Fix the column list and save again.';
+  String get failureFixTheColumnListAndSaveAgain => 'Fix the column list and save again.';
 
   @override
-  String get failureAReferenceRowIsNotInA =>
-      'A reference row is not in a form Tapture can store.';
+  String get failureAReferenceRowIsNotInA => 'A reference row is not in a form Tapture can store.';
 
   @override
-  String get failureFixTheRowValuesAndSaveAgain =>
-      'Fix the row values and save again.';
+  String get failureFixTheRowValuesAndSaveAgain => 'Fix the row values and save again.';
 
   @override
-  String get failureThatEntryIsNotInAForm =>
-      'That entry is not in a form Tapture can store.';
+  String get failureThatEntryIsNotInAForm => 'That entry is not in a form Tapture can store.';
 
   @override
-  String get failureAResolutionNeedsAnOperator =>
-      'A resolution needs an operator.';
+  String get failureAResolutionNeedsAnOperator => 'A resolution needs an operator.';
 
   @override
-  String get failureSignInThenResolveTheVarianceAgain =>
-      'Sign in, then resolve the variance again.';
+  String get failureSignInThenResolveTheVarianceAgain => 'Sign in, then resolve the variance again.';
 
   @override
-  String get failureThatVarianceIsNoLongerOnThis =>
-      'That variance is no longer on this device.';
+  String get failureThatVarianceIsNoLongerOnThis => 'That variance is no longer on this device.';
 
   @override
   String get failureTheDatabaseIsBusy => 'The database is busy.';
 
   @override
-  String get failureWaitAMomentThenTryTheSave =>
-      'Wait a moment, then try the save again.';
+  String get failureWaitAMomentThenTryTheSave => 'Wait a moment, then try the save again.';
 
   @override
-  String get failureARecordWithThatIdentityAlreadyExists =>
-      'A record with that identity already exists.';
+  String get failureARecordWithThatIdentityAlreadyExists => 'A record with that identity already exists.';
 
   @override
-  String get failureOpenTheExistingRecordOrChangeThe =>
-      'Open the existing record, or change the identity.';
+  String get failureOpenTheExistingRecordOrChangeThe => 'Open the existing record, or change the identity.';
 
   @override
-  String get failureThatPhotoCouldNotBeBlurred =>
-      'That photo could not be blurred.';
+  String get failureThatPhotoCouldNotBeBlurred => 'That photo could not be blurred.';
 
   @override
-  String get failureADetectedFaceIsOutsideThatPhoto =>
-      'A detected face is outside that photo.';
+  String get failureADetectedFaceIsOutsideThatPhoto => 'A detected face is outside that photo.';
 
   @override
-  String get failureFaceDetectionIsUnavailableOnThisDevice =>
-      'Face detection is unavailable on this device.';
+  String get failureFaceDetectionIsUnavailableOnThisDevice => 'Face detection is unavailable on this device.';
 
   @override
-  String get failureUseAnAndroidOrIOSDeviceTo =>
-      'Use an Android or iOS device to blur faces.';
+  String get failureUseAnAndroidOrIOSDeviceTo => 'Use an Android or iOS device to blur faces.';
 
   @override
-  String get failureThisPhotoCannotBeCheckedForFaces =>
-      'This photo cannot be checked for faces.';
+  String get failureThisPhotoCannotBeCheckedForFaces => 'This photo cannot be checked for faces.';
 
   @override
-  String get failureThisPhotoCannotBeProtected =>
-      'This photo cannot be protected.';
+  String get failureThisPhotoCannotBeProtected => 'This photo cannot be protected.';
 
   @override
   String get failureAHiddenAreaIsInvalid => 'A hidden area is invalid.';
 
   @override
-  String get failureThisExportFolderAlreadyContainsCompletedFiles =>
-      'This export folder already contains completed files.';
+  String get failureThisExportFolderAlreadyContainsCompletedFiles => 'This export folder already contains completed files.';
 
   @override
-  String get failureCreateTheExportInANewVersion =>
-      'Create the export in a new version folder.';
+  String get failureCreateTheExportInANewVersion => 'Create the export in a new version folder.';
 
   @override
-  String get failureStreamingTextExportNeedsNativeStorage =>
-      'Streaming text export needs native storage.';
+  String get failureStreamingTextExportNeedsNativeStorage => 'Streaming text export needs native storage.';
 
   @override
-  String get failureTaptureCannotCopyAFileFromThis =>
-      'Tapture cannot copy a file from this device here.';
+  String get failureTaptureCannotCopyAFileFromThis => 'Tapture cannot copy a file from this device here.';
 
   @override
-  String get failureAddTheFileAgainFromTaptureThen =>
-      'Add the file again from Tapture, then try again.';
+  String get failureAddTheFileAgainFromTaptureThen => 'Add the file again from Tapture, then try again.';
 
   @override
   String failureTaptureCouldNotWriteToValue(String value0) {
@@ -10951,39 +9997,31 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureTaptureCouldNotNameThatStoredFile =>
-      'Tapture could not name that stored file.';
+  String get failureTaptureCouldNotNameThatStoredFile => 'Tapture could not name that stored file.';
 
   @override
-  String get failureTryAgainIfItKeepsHappeningExport =>
-      'Try again. If it keeps happening, export the log.';
+  String get failureTryAgainIfItKeepsHappeningExport => 'Try again. If it keeps happening, export the log.';
 
   @override
-  String get failureTaptureCouldNotSaveThatOnThis =>
-      'Tapture could not save that on this device.';
+  String get failureTaptureCouldNotSaveThatOnThis => 'Tapture could not save that on this device.';
 
   @override
-  String get failureFreeSomeSpaceThenTryAgain =>
-      'Free some space, then try again.';
+  String get failureFreeSomeSpaceThenTryAgain => 'Free some space, then try again.';
 
   @override
-  String get failureTheCacheCouldNotBeCleanedOn =>
-      'The cache could not be cleaned on this device.';
+  String get failureTheCacheCouldNotBeCleanedOn => 'The cache could not be cleaned on this device.';
 
   @override
-  String get failureFreeSpaceOrAllowStorageAccessThen =>
-      'Free space or allow storage access, then try again.';
+  String get failureFreeSpaceOrAllowStorageAccessThen => 'Free space or allow storage access, then try again.';
 
   @override
   String get failureThatImageSizeIsNotValid => 'That image size is not valid.';
 
   @override
-  String get failureUseTheAppUploadSizeAndTry =>
-      'Use the app upload size and try again.';
+  String get failureUseTheAppUploadSizeAndTry => 'Use the app upload size and try again.';
 
   @override
-  String get failureTheReducedCopyCouldNotBeCreated =>
-      'The reduced copy could not be created on this device.';
+  String get failureTheReducedCopyCouldNotBeCreated => 'The reduced copy could not be created on this device.';
 
   @override
   String failureTaptureCouldNotFindValue(String value0) {
@@ -10996,44 +10034,34 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureFreeSomeSpaceThenDownloadAgain =>
-      'Free some space, then download again.';
+  String get failureFreeSomeSpaceThenDownloadAgain => 'Free some space, then download again.';
 
   @override
-  String get failureOpenDownloadsOnThisDeviceAndLook =>
-      'Open Downloads on this device and look in Tapture.';
+  String get failureOpenDownloadsOnThisDeviceAndLook => 'Open Downloads on this device and look in Tapture.';
 
   @override
-  String get failureOnlyFilesInsideAProjectFolderCan =>
-      'Only files inside a project folder can be removed for good.';
+  String get failureOnlyFilesInsideAProjectFolderCan => 'Only files inside a project folder can be removed for good.';
 
   @override
-  String get failureLeaveTheFileInPlaceThePurge =>
-      'Leave the file in place; the purge will skip it.';
+  String get failureLeaveTheFileInPlaceThePurge => 'Leave the file in place; the purge will skip it.';
 
   @override
-  String get failureThatPhotoHasNoUsableNameFor =>
-      'That photo has no usable name for its cached copies.';
+  String get failureThatPhotoHasNoUsableNameFor => 'That photo has no usable name for its cached copies.';
 
   @override
-  String get failureLeaveThePhotoInPlaceThePurge =>
-      'Leave the photo in place; the purge will skip it.';
+  String get failureLeaveThePhotoInPlaceThePurge => 'Leave the photo in place; the purge will skip it.';
 
   @override
-  String get failureADeletedRecordSFilesCouldNot =>
-      'A deleted record’s files could not be removed from this device.';
+  String get failureADeletedRecordSFilesCouldNot => 'A deleted record’s files could not be removed from this device.';
 
   @override
-  String get failureAllowStorageAccessThePurgeTriesAgain =>
-      'Allow storage access; the purge tries again next launch.';
+  String get failureAllowStorageAccessThePurgeTriesAgain => 'Allow storage access; the purge tries again next launch.';
 
   @override
-  String get failureThisExportIsTooLargeForThis =>
-      'This export is too large for this browser.';
+  String get failureThisExportIsTooLargeForThis => 'This export is too large for this browser.';
 
   @override
-  String get failureExportFewerRecordsOrUseADesktop =>
-      'Export fewer records or use a desktop device.';
+  String get failureExportFewerRecordsOrUseADesktop => 'Export fewer records or use a desktop device.';
 
   @override
   String failureAnExportSourceIsMissingValue(String value0) {
@@ -11041,8 +10069,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureANativeFileSystemIsUnavailable =>
-      'A native file system is unavailable.';
+  String get failureANativeFileSystemIsUnavailable => 'A native file system is unavailable.';
 
   @override
   String failureTaptureCouldNotReadValue(String value0) {
@@ -11050,20 +10077,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureCaptureOrAddTheFileAgainThen =>
-      'Capture or add the file again, then try again.';
+  String get failureCaptureOrAddTheFileAgainThen => 'Capture or add the file again, then try again.';
 
   @override
-  String get failureThatProjectIsNoLongerOnThis =>
-      'That project is no longer on this device.';
+  String get failureThatProjectIsNoLongerOnThis => 'That project is no longer on this device.';
 
   @override
-  String get failureOpenAProjectThenTryAgain =>
-      'Open a project, then try again.';
+  String get failureOpenAProjectThenTryAgain => 'Open a project, then try again.';
 
   @override
-  String get failureRecreateTheProjectFolderThenTryAgain =>
-      'Recreate the project folder, then try again.';
+  String get failureRecreateTheProjectFolderThenTryAgain => 'Recreate the project folder, then try again.';
 
   @override
   String failureTheFileValueIsEmpty(String value0) {
@@ -11071,8 +10094,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureChooseAFileThatHasContentsAnd =>
-      'Choose a file that has contents and try again.';
+  String get failureChooseAFileThatHasContentsAnd => 'Choose a file that has contents and try again.';
 
   @override
   String failureTheFileValueIsNotASupported(String value0) {
@@ -11080,8 +10102,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureChooseAnImageDocumentSpreadsheetAudioFile =>
-      'Choose an image, document, spreadsheet, audio file or bundle and try again.';
+  String get failureChooseAnImageDocumentSpreadsheetAudioFile => 'Choose an image, document, spreadsheet, audio file or bundle and try again.';
 
   @override
   String failureTheFileValueDoesNotMatchIts(String value0) {
@@ -11089,8 +10110,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureChooseAFileOfTheExpectedType =>
-      'Choose a file of the expected type and try again.';
+  String get failureChooseAFileOfTheExpectedType => 'Choose a file of the expected type and try again.';
 
   @override
   String failureTheFileValueIsLargerThanThe(String value0, String value1) {
@@ -11098,8 +10118,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureChooseASmallerFileAndTryAgain =>
-      'Choose a smaller file and try again.';
+  String get failureChooseASmallerFileAndTryAgain => 'Choose a smaller file and try again.';
 
   @override
   String failureTheArchiveValueContainsAPathThat(String value0) {
@@ -11107,8 +10126,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureChooseADifferentFileAndTryAgain =>
-      'Choose a different file and try again.';
+  String get failureChooseADifferentFileAndTryAgain => 'Choose a different file and try again.';
 
   @override
   String failureTheArchiveValueContainsALinkInstead(String value0) {
@@ -11126,16 +10144,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureChooseAZIPBundleOrSpreadsheetAnd =>
-      'Choose a ZIP bundle or spreadsheet and try again.';
+  String get failureChooseAZIPBundleOrSpreadsheetAnd => 'Choose a ZIP bundle or spreadsheet and try again.';
 
   @override
-  String get failureChooseTheFileAgainThenTryAgain =>
-      'Choose the file again, then try again.';
+  String get failureChooseTheFileAgainThenTryAgain => 'Choose the file again, then try again.';
 
   @override
-  String get failureThePhotoCouldNotBeSavedOn =>
-      'The photo could not be saved on this device.';
+  String get failureThePhotoCouldNotBeSavedOn => 'The photo could not be saved on this device.';
 
   @override
   String failureThereIsNotEnoughSpaceToSave(String value0) {
@@ -11143,273 +10158,208 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureAllowStorageAccessThenTryAgain =>
-      'Allow storage access, then try again.';
+  String get failureAllowStorageAccessThenTryAgain => 'Allow storage access, then try again.';
 
   @override
   String get failureThisPhotoCannotBeMarked => 'This photo cannot be marked.';
 
   @override
-  String get failureThisPackageIsTooLargeOrIncomplete =>
-      'This package is too large or incomplete.';
+  String get failureThisPackageIsTooLargeOrIncomplete => 'This package is too large or incomplete.';
 
   @override
-  String get failureFinishTheCurrentPackageBeforeOpeningAnother =>
-      'Finish the current package before opening another.';
+  String get failureFinishTheCurrentPackageBeforeOpeningAnother => 'Finish the current package before opening another.';
 
   @override
-  String get failureThisPackageIsTooLargeToOpen =>
-      'This package is too large to open.';
+  String get failureThisPackageIsTooLargeToOpen => 'This package is too large to open.';
 
   @override
-  String get failureThisPackageCouldNotBeOpened =>
-      'This package could not be opened.';
+  String get failureThisPackageCouldNotBeOpened => 'This package could not be opened.';
 
   @override
-  String get failureOpenTheFileAgainFromItsOriginal =>
-      'Open the file again from its original location.';
+  String get failureOpenTheFileAgainFromItsOriginal => 'Open the file again from its original location.';
 
   @override
-  String get failureThatProjectCouldNotBeScanned =>
-      'That project could not be scanned.';
+  String get failureThatProjectCouldNotBeScanned => 'That project could not be scanned.';
 
   @override
-  String get failureOpenTheProjectAndTryAgain =>
-      'Open the project and try again.';
+  String get failureOpenTheProjectAndTryAgain => 'Open the project and try again.';
 
   @override
-  String get failureTheProjectFolderCouldNotBeScanned =>
-      'The project folder could not be scanned on this device.';
+  String get failureTheProjectFolderCouldNotBeScanned => 'The project folder could not be scanned on this device.';
 
   @override
-  String get failurePutTheFileBackInTheProject =>
-      'Put the file back in the project folder, then try again.';
+  String get failurePutTheFileBackInTheProject => 'Put the file back in the project folder, then try again.';
 
   @override
-  String get failureTheFileCouldNotBeAdoptedOn =>
-      'The file could not be adopted on this device.';
+  String get failureTheFileCouldNotBeAdoptedOn => 'The file could not be adopted on this device.';
 
   @override
-  String get failureTheMissingFileCouldNotBeFlagged =>
-      'The missing file could not be flagged on this device.';
+  String get failureTheMissingFileCouldNotBeFlagged => 'The missing file could not be flagged on this device.';
 
   @override
-  String get failureThatFileRowIsNoLongerOn =>
-      'That file row is no longer on this device.';
+  String get failureThatFileRowIsNoLongerOn => 'That file row is no longer on this device.';
 
   @override
-  String get failureThatNameIsNotAValidFolder =>
-      'That name is not a valid folder.';
+  String get failureThatNameIsNotAValidFolder => 'That name is not a valid folder.';
 
   @override
-  String get failureChooseANameWithoutSlashesThatPoint =>
-      'Choose a name without slashes that point elsewhere.';
+  String get failureChooseANameWithoutSlashesThatPoint => 'Choose a name without slashes that point elsewhere.';
 
   @override
-  String get failureChooseANameWithLettersOrDigits =>
-      'Choose a name with letters or digits.';
+  String get failureChooseANameWithLettersOrDigits => 'Choose a name with letters or digits.';
 
   @override
-  String get failureTheFilePathMustStayInsideThe2 =>
-      'The file path must stay inside the storage folder.';
+  String get failureTheFilePathMustStayInsideThe2 => 'The file path must stay inside the storage folder.';
 
   @override
-  String get failureThatPhotoIsNoLongerAvailable =>
-      'That photo is no longer available.';
+  String get failureThatPhotoIsNoLongerAvailable => 'That photo is no longer available.';
 
   @override
-  String get failureHiddenAreasChangedTrySendingAgain =>
-      'Hidden areas changed. Try sending again.';
+  String get failureHiddenAreasChangedTrySendingAgain => 'Hidden areas changed. Try sending again.';
 
   @override
-  String get failureCheckTheHiddenAreasOnThisEdited =>
-      'Check the hidden areas on this edited photo before sending it.';
+  String get failureCheckTheHiddenAreasOnThisEdited => 'Check the hidden areas on this edited photo before sending it.';
 
   @override
-  String get failureOpenHidePartsBeforeSendingAndSave =>
-      'Open Hide parts before sending and save the areas for this version.';
+  String get failureOpenHidePartsBeforeSendingAndSave => 'Open Hide parts before sending and save the areas for this version.';
 
   @override
-  String get failureTheProjectFolderCouldNotBeRemoved =>
-      'The project folder could not be removed from this device.';
+  String get failureTheProjectFolderCouldNotBeRemoved => 'The project folder could not be removed from this device.';
 
   @override
-  String get failureDeleteTheLeftoverFolderThenTryAgain =>
-      'Delete the leftover folder, then try again.';
+  String get failureDeleteTheLeftoverFolderThenTryAgain => 'Delete the leftover folder, then try again.';
 
   @override
-  String get failureThatProjectIsAlreadyInTheRecycle =>
-      'That project is already in the recycle area on this device.';
+  String get failureThatProjectIsAlreadyInTheRecycle => 'That project is already in the recycle area on this device.';
 
   @override
-  String get failureRestoreItFromTheRecycleAreaThen =>
-      'Restore it from the recycle area, then try again.';
+  String get failureRestoreItFromTheRecycleAreaThen => 'Restore it from the recycle area, then try again.';
 
   @override
-  String get failureTheProjectFolderCouldNotBeMoved =>
-      'The project folder could not be moved to the recycle area.';
+  String get failureTheProjectFolderCouldNotBeMoved => 'The project folder could not be moved to the recycle area.';
 
   @override
-  String get failureThisProjectHasNoFolderOnDisk =>
-      'This project has no folder on disk yet.';
+  String get failureThisProjectHasNoFolderOnDisk => 'This project has no folder on disk yet.';
 
   @override
-  String get failureCreateTheProjectFolderThenTryAgain =>
-      'Create the project folder, then try again.';
+  String get failureCreateTheProjectFolderThenTryAgain => 'Create the project folder, then try again.';
 
   @override
-  String get failureTheProjectFolderCouldNotBeCreated =>
-      'The project folder could not be created on this device.';
+  String get failureTheProjectFolderCouldNotBeCreated => 'The project folder could not be created on this device.';
 
   @override
-  String get failureThatProjectFolderNameIsNotA =>
-      'That project folder name is not a valid folder.';
+  String get failureThatProjectFolderNameIsNotA => 'That project folder name is not a valid folder.';
 
   @override
-  String get failureRecreateTheProjectSoItsFolderCan =>
-      'Recreate the project so its folder can be rebuilt.';
+  String get failureRecreateTheProjectSoItsFolderCan => 'Recreate the project so its folder can be rebuilt.';
 
   @override
-  String get failureThereIsNotEnoughFreeSpaceTo =>
-      'There is not enough free space to take another photo.';
+  String get failureThereIsNotEnoughFreeSpaceTo => 'There is not enough free space to take another photo.';
 
   @override
-  String get failureExportAProjectOrCleanTheCache =>
-      'Export a project or clean the cache, then try again.';
+  String get failureExportAProjectOrCleanTheCache => 'Export a project or clean the cache, then try again.';
 
   @override
-  String get failureTaptureCouldNotReadFreeSpaceOn =>
-      'Tapture could not read free space on this device.';
+  String get failureTaptureCouldNotReadFreeSpaceOn => 'Tapture could not read free space on this device.';
 
   @override
-  String get failureThisDeviceHasNoFolderTaptureCan =>
-      'This device has no folder Tapture can keep project files in.';
+  String get failureThisDeviceHasNoFolderTaptureCan => 'This device has no folder Tapture can keep project files in.';
 
   @override
-  String get failureUseTaptureOnAPhoneTabletOr =>
-      'Use Tapture on a phone, tablet or computer to keep files.';
+  String get failureUseTaptureOnAPhoneTabletOr => 'Use Tapture on a phone, tablet or computer to keep files.';
 
   @override
-  String get failureTheThumbnailCouldNotBeCreatedOn =>
-      'The thumbnail could not be created on this device.';
+  String get failureTheThumbnailCouldNotBeCreatedOn => 'The thumbnail could not be created on this device.';
 
   @override
-  String get failureThatThumbnailSizeIsNotValid =>
-      'That thumbnail size is not valid.';
+  String get failureThatThumbnailSizeIsNotValid => 'That thumbnail size is not valid.';
 
   @override
-  String get failureUseTheAppThumbnailSizeAndTry =>
-      'Use the app thumbnail size and try again.';
+  String get failureUseTheAppThumbnailSizeAndTry => 'Use the app thumbnail size and try again.';
 
   @override
-  String get failureThatPhotoCouldNotBeCached =>
-      'That photo could not be cached.';
+  String get failureThatPhotoCouldNotBeCached => 'That photo could not be cached.';
 
   @override
-  String get failureLocationIsOffForThisProject =>
-      'Location is off for this project.';
+  String get failureLocationIsOffForThisProject => 'Location is off for this project.';
 
   @override
   String get failureTurnGPSOnThenTryAgain => 'Turn GPS on, then try again.';
 
   @override
-  String get failureBiometricAuthenticationIsUnavailable =>
-      'Biometric authentication is unavailable.';
+  String get failureBiometricAuthenticationIsUnavailable => 'Biometric authentication is unavailable.';
 
   @override
   String get failureUnlockWithYourAppPIN => 'Unlock with your app PIN.';
 
   @override
-  String get failureTheSecretCouldNotBeSavedOn =>
-      'The secret could not be saved on this device.';
+  String get failureTheSecretCouldNotBeSavedOn => 'The secret could not be saved on this device.';
 
   @override
-  String get failureTheSecretCouldNotBeReadOn =>
-      'The secret could not be read on this device.';
+  String get failureTheSecretCouldNotBeReadOn => 'The secret could not be read on this device.';
 
   @override
-  String get failureTheSecretCouldNotBeRemovedFrom =>
-      'The secret could not be removed from this device.';
+  String get failureTheSecretCouldNotBeRemovedFrom => 'The secret could not be removed from this device.';
 
   @override
-  String get failureTypeTheWordsToPlaceOnThis =>
-      'Type the words to place on this photo.';
+  String get failureTypeTheWordsToPlaceOnThis => 'Type the words to place on this photo.';
 
   @override
-  String get failureEnterTextThenSaveThePhoto =>
-      'Enter text, then save the photo.';
+  String get failureEnterTextThenSaveThePhoto => 'Enter text, then save the photo.';
 
   @override
-  String get failureDiscardTheInterruptedSessionAndStartAgain =>
-      'Discard the interrupted session and start again.';
+  String get failureDiscardTheInterruptedSessionAndStartAgain => 'Discard the interrupted session and start again.';
 
   @override
-  String get failureOnlyARecordEditCanBeSaved =>
-      'Only a record edit can be saved here.';
+  String get failureOnlyARecordEditCanBeSaved => 'Only a record edit can be saved here.';
 
   @override
-  String get failureGoBackToTheProjectAndPick =>
-      'Go back to the project and pick another record.';
+  String get failureGoBackToTheProjectAndPick => 'Go back to the project and pick another record.';
 
   @override
-  String get failureTheCaptureSessionIsNotValid =>
-      'The capture session is not valid.';
+  String get failureTheCaptureSessionIsNotValid => 'The capture session is not valid.';
 
   @override
-  String get failureCompletePhotoMetadataIsRequiredForA =>
-      'Complete photo metadata is required for a new capture.';
+  String get failureCompletePhotoMetadataIsRequiredForA => 'Complete photo metadata is required for a new capture.';
 
   @override
-  String get failureThePhotoProjectWasNotFound =>
-      'The photo project was not found.';
+  String get failureThePhotoProjectWasNotFound => 'The photo project was not found.';
 
   @override
-  String get failureThatPhotoCouldNotBeReadFrom =>
-      'That photo could not be read from this device.';
+  String get failureThatPhotoCouldNotBeReadFrom => 'That photo could not be read from this device.';
 
   @override
-  String get failureTheOriginalPhotoStaysInPlace =>
-      'The original photo stays in place.';
+  String get failureTheOriginalPhotoStaysInPlace => 'The original photo stays in place.';
 
   @override
-  String get failureRevertAnEditedPhotoInstead =>
-      'Revert an edited photo instead.';
+  String get failureRevertAnEditedPhotoInstead => 'Revert an edited photo instead.';
 
   @override
-  String get failureThisPhotoAppearsMoreThanOnce =>
-      'This photo appears more than once.';
+  String get failureThisPhotoAppearsMoreThanOnce => 'This photo appears more than once.';
 
   @override
-  String get failureReloadTheCaptureAndTryAgain =>
-      'Reload the capture and try again.';
+  String get failureReloadTheCaptureAndTryAgain => 'Reload the capture and try again.';
 
   @override
-  String get failureAnEditedPhotoIsMissingItsOriginal =>
-      'An edited photo is missing its original.';
+  String get failureAnEditedPhotoIsMissingItsOriginal => 'An edited photo is missing its original.';
 
   @override
-  String get failureKeepThisCaptureAndRestoreTheOriginal =>
-      'Keep this capture and restore the original photo.';
+  String get failureKeepThisCaptureAndRestoreTheOriginal => 'Keep this capture and restore the original photo.';
 
   @override
-  String get failureThesePhotoEditsLoopBackOnThemselves =>
-      'These photo edits loop back on themselves.';
+  String get failureThesePhotoEditsLoopBackOnThemselves => 'These photo edits loop back on themselves.';
 
   @override
-  String get failureThatFieldIsNotOnThisRecord =>
-      'That field is not on this record.';
+  String get failureThatFieldIsNotOnThisRecord => 'That field is not on this record.';
 
   @override
-  String get failureOpenTheRecordAndTryAgain =>
-      'Open the record and try again.';
+  String get failureOpenTheRecordAndTryAgain => 'Open the record and try again.';
 
   @override
-  String get failureThatFieldIsNotAContextLevel =>
-      'That field is not a context level.';
+  String get failureThatFieldIsNotAContextLevel => 'That field is not a context level.';
 
   @override
-  String get failurePickALevelFromTheHierarchyAnd =>
-      'Pick a level from the hierarchy and try again.';
+  String get failurePickALevelFromTheHierarchyAnd => 'Pick a level from the hierarchy and try again.';
 
   @override
   String get failureAPresetNeedsAName => 'A preset needs a name.';
@@ -11418,113 +10368,88 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureEnterANameAndTryAgain => 'Enter a name and try again.';
 
   @override
-  String get failureADeleteNeedsAnIdAndA =>
-      'A delete needs an id and a reason.';
+  String get failureADeleteNeedsAnIdAndA => 'A delete needs an id and a reason.';
 
   @override
   String get failureContextIsNotAvailableYet => 'Context is not available yet.';
 
   @override
-  String get failureRestartTheAppAndTryAgain =>
-      'Restart the app and try again.';
+  String get failureRestartTheAppAndTryAgain => 'Restart the app and try again.';
 
   @override
-  String get failureAPresetWithThatNameAlreadyExists =>
-      'A preset with that name already exists.';
+  String get failureAPresetWithThatNameAlreadyExists => 'A preset with that name already exists.';
 
   @override
-  String get failureChooseAnotherNameOrConfirmOverwrite =>
-      'Choose another name, or confirm overwrite.';
+  String get failureChooseAnotherNameOrConfirmOverwrite => 'Choose another name, or confirm overwrite.';
 
   @override
   String get failureTheProjectWasNotFound => 'The project was not found.';
 
   @override
-  String get failureAnExportedRecordIsNoLongerAvailable =>
-      'An exported record is no longer available.';
+  String get failureAnExportedRecordIsNoLongerAvailable => 'An exported record is no longer available.';
 
   @override
-  String get failureAnExportedPhotoIsNoLongerAvailable =>
-      'An exported photo is no longer available.';
+  String get failureAnExportedPhotoIsNoLongerAvailable => 'An exported photo is no longer available.';
 
   @override
-  String get failureASelectedRecordIsMissingRefreshThe =>
-      'A selected record is missing. Refresh the export.';
+  String get failureASelectedRecordIsMissingRefreshThe => 'A selected record is missing. Refresh the export.';
 
   @override
   String get failureAnExportNeedsAProject => 'An export needs a project.';
 
   @override
-  String get failureOpenAProjectAndExportAgain =>
-      'Open a project and export again.';
+  String get failureOpenAProjectAndExportAgain => 'Open a project and export again.';
 
   @override
-  String get failureThisExportedPhotoCannotBeRead =>
-      'This exported photo cannot be read.';
+  String get failureThisExportedPhotoCannotBeRead => 'This exported photo cannot be read.';
 
   @override
-  String get failureThisPhotoFormatCannotBePackagedSafely =>
-      'This photo format cannot be packaged safely.';
+  String get failureThisPhotoFormatCannotBePackagedSafely => 'This photo format cannot be packaged safely.';
 
   @override
-  String get failureProjectFilesAreUnavailableOnThisDevice =>
-      'Project files are unavailable on this device.';
+  String get failureProjectFilesAreUnavailableOnThisDevice => 'Project files are unavailable on this device.';
 
   @override
-  String get failureOpenAProjectStoredOnThisDevice =>
-      'Open a project stored on this device and try again.';
+  String get failureOpenAProjectStoredOnThisDevice => 'Open a project stored on this device and try again.';
 
   @override
-  String get failureWriteYourFeedbackThenSaveAgain =>
-      'Write your feedback, then save again.';
+  String get failureWriteYourFeedbackThenSaveAgain => 'Write your feedback, then save again.';
 
   @override
-  String get failureNameTheTypeThenSaveAgain =>
-      'Name the type, then save again.';
+  String get failureNameTheTypeThenSaveAgain => 'Name the type, then save again.';
 
   @override
-  String get failureChangeOrClearTheFiltersThenTry =>
-      'Change or clear the filters, then try again.';
+  String get failureChangeOrClearTheFiltersThenTry => 'Change or clear the filters, then try again.';
 
   @override
-  String get failureCloseThisTapFeedbackThenTryAgain =>
-      'Close this, tap Feedback, then try again.';
+  String get failureCloseThisTapFeedbackThenTryAgain => 'Close this, tap Feedback, then try again.';
 
   @override
-  String get failureCorrectTheHighlightedFieldAndSaveAgain =>
-      'Correct the highlighted field and save again.';
+  String get failureCorrectTheHighlightedFieldAndSaveAgain => 'Correct the highlighted field and save again.';
 
   @override
-  String get failureTheTemplateTheseRowsWereMatchedTo =>
-      'The template these rows were matched to is no longer here.';
+  String get failureTheTemplateTheseRowsWereMatchedTo => 'The template these rows were matched to is no longer here.';
 
   @override
-  String get failureChooseAnotherTemplateAndImportAgain =>
-      'Choose another template and import again.';
+  String get failureChooseAnotherTemplateAndImportAgain => 'Choose another template and import again.';
 
   @override
-  String get failureARecordARowMatchedIsNo =>
-      'A record a row matched is no longer on this device.';
+  String get failureARecordARowMatchedIsNo => 'A record a row matched is no longer on this device.';
 
   @override
-  String get failureImportTheFileAgainToMatchIt =>
-      'Import the file again to match it afresh.';
+  String get failureImportTheFileAgainToMatchIt => 'Import the file again to match it afresh.';
 
   @override
-  String get failureRecordsCannotBeImportedRightNow =>
-      'Records cannot be imported right now.';
+  String get failureRecordsCannotBeImportedRightNow => 'Records cannot be imported right now.';
 
   @override
-  String get failureRestartTaptureThenImportAgain =>
-      'Restart Tapture, then import again.';
+  String get failureRestartTaptureThenImportAgain => 'Restart Tapture, then import again.';
 
   @override
-  String get failureThatFileIsNotInThisMeeting =>
-      'That file is not in this meeting’s project folder.';
+  String get failureThatFileIsNotInThisMeeting => 'That file is not in this meeting’s project folder.';
 
   @override
-  String get failureAddTheFileToTheMeetingAgain =>
-      'Add the file to the meeting again.';
+  String get failureAddTheFileToTheMeetingAgain => 'Add the file to the meeting again.';
 
   @override
   String get failureStartTheMeetingAgain => 'Start the meeting again.';
@@ -11533,28 +10458,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureTheSnapshotHasBeenPurged => 'The snapshot has been purged.';
 
   @override
-  String get failureTheMergeCanNoLongerBeUndone =>
-      'The merge can no longer be undone.';
+  String get failureTheMergeCanNoLongerBeUndone => 'The merge can no longer be undone.';
 
   @override
-  String get failureTaptureCouldNotLookUpAFile =>
-      'Tapture could not look up a file for this project.';
+  String get failureTaptureCouldNotLookUpAFile => 'Tapture could not look up a file for this project.';
 
   @override
-  String get failureAProjectWithThatIdAlreadyExists =>
-      'A project with that id already exists.';
+  String get failureAProjectWithThatIdAlreadyExists => 'A project with that id already exists.';
 
   @override
-  String get failureOpenTheExistingProjectOrUseA =>
-      'Open the existing project or use a new id.';
+  String get failureOpenTheExistingProjectOrUseA => 'Open the existing project or use a new id.';
 
   @override
-  String get failureProjectPhotosCannotBeStoredOnThis =>
-      'Project photos cannot be stored on this device.';
+  String get failureProjectPhotosCannotBeStoredOnThis => 'Project photos cannot be stored on this device.';
 
   @override
-  String get failureAddThePhotoOnADeviceThat =>
-      'Add the photo on a device that stores files.';
+  String get failureAddThePhotoOnADeviceThat => 'Add the photo on a device that stores files.';
 
   @override
   String get failureAProjectNeedsAName => 'A project needs a name.';
@@ -11563,123 +10482,94 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureEnterANameAndSaveAgain => 'Enter a name and save again.';
 
   @override
-  String get failureProjectFilesAreNotAvailableOnThis =>
-      'Project files are not available on this device.';
+  String get failureProjectFilesAreNotAvailableOnThis => 'Project files are not available on this device.';
 
   @override
-  String get failureExportFromADeviceThatStoresThis =>
-      'Export from a device that stores this project.';
+  String get failureExportFromADeviceThatStoresThis => 'Export from a device that stores this project.';
 
   @override
-  String get failureThatRecordIsNoLongerInThe =>
-      'That record is no longer in the recycle bin.';
+  String get failureThatRecordIsNoLongerInThe => 'That record is no longer in the recycle bin.';
 
   @override
-  String get failureNothingToRemoveItWasRestoredOr =>
-      'Nothing to remove; it was restored or already removed.';
+  String get failureNothingToRemoveItWasRestoredOr => 'Nothing to remove; it was restored or already removed.';
 
   @override
-  String get failureThatRecordWasDeletedAgainSoIts =>
-      'That record was deleted again, so its retention starts over.';
+  String get failureThatRecordWasDeletedAgainSoIts => 'That record was deleted again, so its retention starts over.';
 
   @override
-  String get failureLeaveItThePurgeTakesItOnce =>
-      'Leave it; the purge takes it once its new window passes.';
+  String get failureLeaveItThePurgeTakesItOnce => 'Leave it; the purge takes it once its new window passes.';
 
   @override
-  String get failureAMergeStillNeedsThatDeletedRecord =>
-      'A merge still needs that deleted record.';
+  String get failureAMergeStillNeedsThatDeletedRecord => 'A merge still needs that deleted record.';
 
   @override
-  String get failureSendABundleOrSettleTheMerge =>
-      'Send a bundle or settle the merge, then try again.';
+  String get failureSendABundleOrSettleTheMerge => 'Send a bundle or settle the merge, then try again.';
 
   @override
-  String get failureRecordsAreNotAvailableYet =>
-      'Records are not available yet.';
+  String get failureRecordsAreNotAvailableYet => 'Records are not available yet.';
 
   @override
-  String get failureTheRecordWasSavedButCouldNot =>
-      'The record was saved but could not be opened.';
+  String get failureTheRecordWasSavedButCouldNot => 'The record was saved but could not be opened.';
 
   @override
-  String get failureOpenItFromTheRecordsList =>
-      'Open it from the records list.';
+  String get failureOpenItFromTheRecordsList => 'Open it from the records list.';
 
   @override
-  String get failureThatTemplateIsNoLongerOnThis =>
-      'That template is no longer on this device.';
+  String get failureThatTemplateIsNoLongerOnThis => 'That template is no longer on this device.';
 
   @override
-  String get failureChooseAnotherTemplateAndTryAgain =>
-      'Choose another template and try again.';
+  String get failureChooseAnotherTemplateAndTryAgain => 'Choose another template and try again.';
 
   @override
-  String get failureThisRecordAlreadyUsesThatTemplate =>
-      'This record already uses that template.';
+  String get failureThisRecordAlreadyUsesThatTemplate => 'This record already uses that template.';
 
   @override
   String get failureChooseADifferentTemplate => 'Choose a different template.';
 
   @override
-  String get failureThatTemplateBelongsToAnotherProject =>
-      'That template belongs to another project.';
+  String get failureThatTemplateBelongsToAnotherProject => 'That template belongs to another project.';
 
   @override
-  String get failureChooseATemplateFromThisProject =>
-      'Choose a template from this project.';
+  String get failureChooseATemplateFromThisProject => 'Choose a template from this project.';
 
   @override
-  String get failureARecordNeedsAProjectAndA =>
-      'A record needs a project and a template.';
+  String get failureARecordNeedsAProjectAndA => 'A record needs a project and a template.';
 
   @override
-  String get failureChooseAProjectAndATemplateThen =>
-      'Choose a project and a template, then save again.';
+  String get failureChooseAProjectAndATemplateThen => 'Choose a project and a template, then save again.';
 
   @override
-  String get failureSayWhyTheRecordShouldGoThen =>
-      'Say why the record should go, then try again.';
+  String get failureSayWhyTheRecordShouldGoThen => 'Say why the record should go, then try again.';
 
   @override
-  String get failureAnEditNeedsTheFieldItChanges =>
-      'An edit needs the field it changes.';
+  String get failureAnEditNeedsTheFieldItChanges => 'An edit needs the field it changes.';
 
   @override
-  String get failureChooseAFieldThenSaveAgain =>
-      'Choose a field, then save again.';
+  String get failureChooseAFieldThenSaveAgain => 'Choose a field, then save again.';
 
   @override
-  String get failureARecordGoesToTheRecycleBin =>
-      'A record goes to the recycle bin only through delete.';
+  String get failureARecordGoesToTheRecycleBin => 'A record goes to the recycle bin only through delete.';
 
   @override
-  String get failureUseDeleteWhichLetsYouUndoIt =>
-      'Use Delete, which lets you undo it.';
+  String get failureUseDeleteWhichLetsYouUndoIt => 'Use Delete, which lets you undo it.';
 
   @override
-  String get failureThisRecordIsInTheRecycleBin =>
-      'This record is in the recycle bin.';
+  String get failureThisRecordIsInTheRecycleBin => 'This record is in the recycle bin.';
 
   @override
-  String get failureRestoreItFromTheRecycleBinFirst =>
-      'Restore it from the recycle bin first.';
+  String get failureRestoreItFromTheRecycleBinFirst => 'Restore it from the recycle bin first.';
 
   @override
-  String get failureThisRecordIsNotInTheRecycle =>
-      'This record is not in the recycle bin.';
+  String get failureThisRecordIsNotInTheRecycle => 'This record is not in the recycle bin.';
 
   @override
-  String get failureRefreshTheListItMayAlreadyBe =>
-      'Refresh the list; it may already be restored.';
+  String get failureRefreshTheListItMayAlreadyBe => 'Refresh the list; it may already be restored.';
 
   @override
-  String get failureThisRecordHasAStatusThisVersion =>
-      'This record has a status this version of the app does not know.';
+  String get failureThisRecordHasAStatusThisVersion => 'This record has a status this version of the app does not know.';
 
   @override
-  String get failureUpdateTheAppThenTryAgain =>
-      'Update the app, then try again.';
+  String get failureUpdateTheAppThenTryAgain => 'Update the app, then try again.';
 
   @override
   String failureThisRecordIsAlreadyValue(String value0) {
@@ -11687,8 +10577,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureChooseADifferentStatusOrLeaveIt =>
-      'Choose a different status, or leave it as it is.';
+  String get failureChooseADifferentStatusOrLeaveIt => 'Choose a different status, or leave it as it is.';
 
   @override
   String failureARecordThatIsValueCannotBe(String value0, String value1) {
@@ -11696,39 +10585,31 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureRestoreItFromTheRecycleBinBefore =>
-      'Restore it from the recycle bin before changing it.';
+  String get failureRestoreItFromTheRecycleBinBefore => 'Restore it from the recycle bin before changing it.';
 
   @override
-  String get failureTheCapturedTemplateVersionIsUnavailable =>
-      'The captured template version is unavailable.';
+  String get failureTheCapturedTemplateVersionIsUnavailable => 'The captured template version is unavailable.';
 
   @override
-  String get failureRestoreTheOriginalProjectPackageBeforeEditing =>
-      'Restore the original project package before editing these values.';
+  String get failureRestoreTheOriginalProjectPackageBeforeEditing => 'Restore the original project package before editing these values.';
 
   @override
-  String get failureAQuotedCSVValueIsUnfinished =>
-      'A quoted CSV value is unfinished.';
+  String get failureAQuotedCSVValueIsUnfinished => 'A quoted CSV value is unfinished.';
 
   @override
-  String get failureCloseTheQuotedValueAndImportThe =>
-      'Close the quoted value and import the file again.';
+  String get failureCloseTheQuotedValueAndImportThe => 'Close the quoted value and import the file again.';
 
   @override
   String get failureThatFileIsEmpty => 'That file is empty.';
 
   @override
-  String get failureChooseACSVWithAHeaderAnd =>
-      'Choose a CSV with a header and rows.';
+  String get failureChooseACSVWithAHeaderAnd => 'Choose a CSV with a header and rows.';
 
   @override
-  String get failureThatTableCouldNotBeReadAs =>
-      'That table could not be read as text.';
+  String get failureThatTableCouldNotBeReadAs => 'That table could not be read as text.';
 
   @override
-  String get failureSaveItAsUTFCSVAndTry =>
-      'Save it as UTF-8 CSV and try again.';
+  String get failureSaveItAsUTFCSVAndTry => 'Save it as UTF-8 CSV and try again.';
 
   @override
   String get failureThatCSVCouldNotBeRead => 'That CSV could not be read.';
@@ -11737,46 +10618,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureCheckTheFileAndTryAgain => 'Check the file and try again.';
 
   @override
-  String get failureChooseACSVJSONOrXLSXTable =>
-      'Choose a CSV, JSON or XLSX table within the import size limit.';
+  String get failureChooseACSVJSONOrXLSXTable => 'Choose a CSV, JSON or XLSX table within the import size limit.';
 
   @override
-  String get failureChooseAnotherFileOrSplitThisTable =>
-      'Choose another file or split this table into smaller files.';
+  String get failureChooseAnotherFileOrSplitThisTable => 'Choose another file or split this table into smaller files.';
 
   @override
-  String get failureSaveItAsUTFCSVOrA =>
-      'Save it as UTF-8 CSV or a JSON array and try again.';
+  String get failureSaveItAsUTFCSVOrA => 'Save it as UTF-8 CSV or a JSON array and try again.';
 
   @override
-  String get failureJSONDatasetsMustBeAnArrayOf =>
-      'JSON datasets must be an array of objects.';
+  String get failureJSONDatasetsMustBeAnArrayOf => 'JSON datasets must be an array of objects.';
 
   @override
-  String get failureWrapTheRowsInAnArrayAnd =>
-      'Wrap the rows in an array and try again.';
+  String get failureWrapTheRowsInAnArrayAnd => 'Wrap the rows in an array and try again.';
 
   @override
-  String get failureEveryJSONRowMustBeAnObject =>
-      'Every JSON row must be an object.';
+  String get failureEveryJSONRowMustBeAnObject => 'Every JSON row must be an object.';
 
   @override
-  String get failureRemoveNonObjectRowsAndImportThe =>
-      'Remove non-object rows and import the file again.';
+  String get failureRemoveNonObjectRowsAndImportThe => 'Remove non-object rows and import the file again.';
 
   @override
   String get failureThatFileHasNoColumns => 'That file has no columns.';
 
   @override
-  String get failureAddKeysToTheObjectsAndTry =>
-      'Add keys to the objects and try again.';
+  String get failureAddKeysToTheObjectsAndTry => 'Add keys to the objects and try again.';
 
   @override
   String get failureThatJSONIsNotValid => 'That JSON is not valid.';
 
   @override
-  String get failureFixTheJSONArrayAndImportIt =>
-      'Fix the JSON array and import it again.';
+  String get failureFixTheJSONArrayAndImportIt => 'Fix the JSON array and import it again.';
 
   @override
   String get failureThatJSONCouldNotBeRead => 'That JSON could not be read.';
@@ -11785,73 +10657,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failureThatWorkbookHasNoSheets => 'That workbook has no sheets.';
 
   @override
-  String get failureChooseAWorkbookWithASheetOf =>
-      'Choose a workbook with a sheet of data.';
+  String get failureChooseAWorkbookWithASheetOf => 'Choose a workbook with a sheet of data.';
 
   @override
   String get failureThatSheetHasNoHeaderRow => 'That sheet has no header row.';
 
   @override
-  String get failureAddAHeaderRowAndTryAgain =>
-      'Add a header row and try again.';
+  String get failureAddAHeaderRowAndTryAgain => 'Add a header row and try again.';
 
   @override
-  String get failureThatKeyColumnHasDuplicateValues =>
-      'That key column has duplicate values.';
+  String get failureThatKeyColumnHasDuplicateValues => 'That key column has duplicate values.';
 
   @override
-  String get failurePickAnotherKeyColumnOrConfirmDuplicates =>
-      'Pick another key column, or confirm duplicates are expected.';
+  String get failurePickAnotherKeyColumnOrConfirmDuplicates => 'Pick another key column, or confirm duplicates are expected.';
 
   @override
   String get failureARowNeedsADatasetAndA => 'A row needs a dataset and a key.';
 
   @override
-  String get failureFillThoseFieldsAndSaveAgain =>
-      'Fill those fields and save again.';
+  String get failureFillThoseFieldsAndSaveAgain => 'Fill those fields and save again.';
 
   @override
-  String get failureADatasetNeedsANameAndA =>
-      'A dataset needs a name and a key column.';
+  String get failureADatasetNeedsANameAndA => 'A dataset needs a name and a key column.';
 
   @override
-  String get failureTheKeyColumnMustBeOneOf =>
-      'The key column must be one of the dataset columns.';
+  String get failureTheKeyColumnMustBeOneOf => 'The key column must be one of the dataset columns.';
 
   @override
-  String get failurePickAKeyFromTheColumnList =>
-      'Pick a key from the column list.';
+  String get failurePickAKeyFromTheColumnList => 'Pick a key from the column list.';
 
   @override
-  String get failureReferenceDataIsNotAvailableYet =>
-      'Reference data is not available yet.';
+  String get failureReferenceDataIsNotAvailableYet => 'Reference data is not available yet.';
 
   @override
-  String get failureThatTableHasNoDataColumns =>
-      'That table has no data columns.';
+  String get failureThatTableHasNoDataColumns => 'That table has no data columns.';
 
   @override
   String get failureATemplateNeedsAName => 'A template needs a name.';
 
   @override
-  String get failureOpenAProjectThenAddTheTemplate =>
-      'Open a project, then add the template.';
+  String get failureOpenAProjectThenAddTheTemplate => 'Open a project, then add the template.';
 
   @override
-  String get failureTheShippedTemplatesCouldNotBeRead =>
-      'The shipped templates could not be read.';
+  String get failureTheShippedTemplatesCouldNotBeRead => 'The shipped templates could not be read.';
 
   @override
-  String get failureThatShippedTemplateIsNotOnThis =>
-      'That shipped template is not on this device.';
+  String get failureThatShippedTemplateIsNotOnThis => 'That shipped template is not on this device.';
 
   @override
-  String get failurePickAnotherTemplateFromTheLibrary =>
-      'Pick another template from the library.';
+  String get failurePickAnotherTemplateFromTheLibrary => 'Pick another template from the library.';
 
   @override
-  String get failureTheInheritedFieldGroupsCouldNotBe =>
-      'The inherited field groups could not be read.';
+  String get failureTheInheritedFieldGroupsCouldNotBe => 'The inherited field groups could not be read.';
 
   @override
   String failureAShippedTemplateIsMissingValue(String value0) {
@@ -11859,32 +10716,25 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureReinstallTheAppThenTryAgain =>
-      'Reinstall the app, then try again.';
+  String get failureReinstallTheAppThenTryAgain => 'Reinstall the app, then try again.';
 
   @override
-  String get failureAShippedTemplateUsesAnUnknownSchema =>
-      'A shipped template uses an unknown schema.';
+  String get failureAShippedTemplateUsesAnUnknownSchema => 'A shipped template uses an unknown schema.';
 
   @override
-  String get failureAShippedTemplateHasAnInvalidKey =>
-      'A shipped template has an invalid key.';
+  String get failureAShippedTemplateHasAnInvalidKey => 'A shipped template has an invalid key.';
 
   @override
-  String get failureAShippedTemplateNameIsNotA =>
-      'A shipped template name is not a localisation key.';
+  String get failureAShippedTemplateNameIsNotA => 'A shipped template name is not a localisation key.';
 
   @override
-  String get failureAShippedTemplateNamesAnUnknownIdentity =>
-      'A shipped template names an unknown identity field.';
+  String get failureAShippedTemplateNamesAnUnknownIdentity => 'A shipped template names an unknown identity field.';
 
   @override
-  String get failureAShippedTemplateNamesAnUnknownParent =>
-      'A shipped template names an unknown parent.';
+  String get failureAShippedTemplateNamesAnUnknownParent => 'A shipped template names an unknown parent.';
 
   @override
-  String get failureAShippedTemplateNamesAnUnknownField =>
-      'A shipped template names an unknown field group.';
+  String get failureAShippedTemplateNamesAnUnknownField => 'A shipped template names an unknown field group.';
 
   @override
   String failureAShippedFieldIsMissingValue(String value0) {
@@ -11892,219 +10742,172 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failureAShippedFieldUsesAnUnknownType =>
-      'A shipped field uses an unknown type.';
+  String get failureAShippedFieldUsesAnUnknownType => 'A shipped field uses an unknown type.';
 
   @override
-  String get failureAShippedFieldLabelIsNotA =>
-      'A shipped field label is not a localisation key.';
+  String get failureAShippedFieldLabelIsNotA => 'A shipped field label is not a localisation key.';
 
   @override
-  String get failureAShippedTemplateCouldNotBeRead =>
-      'A shipped template could not be read.';
+  String get failureAShippedTemplateCouldNotBeRead => 'A shipped template could not be read.';
 
   @override
-  String get failureAShippedTemplateNamesAnUnknownRecord =>
-      'A shipped template names an unknown record type.';
+  String get failureAShippedTemplateNamesAnUnknownRecord => 'A shipped template names an unknown record type.';
 
   @override
-  String get failureTheTemplateOrItsRecordsChangedWhile =>
-      'The template or its records changed while you reviewed the migration.';
+  String get failureTheTemplateOrItsRecordsChangedWhile => 'The template or its records changed while you reviewed the migration.';
 
   @override
-  String get failureReviewTheUpdatedChangesAndTryAgain =>
-      'Review the updated changes and try again.';
+  String get failureReviewTheUpdatedChangesAndTryAgain => 'Review the updated changes and try again.';
 
   @override
   String get failureAFieldNeedsAKey => 'A field needs a key.';
 
   @override
-  String get failureGiveEveryFieldAKeyAndSave =>
-      'Give every field a key and save again.';
+  String get failureGiveEveryFieldAKeyAndSave => 'Give every field a key and save again.';
 
   @override
-  String get failureEachFieldKeyMustBeUniqueOn =>
-      'Each field key must be unique on a template.';
+  String get failureEachFieldKeyMustBeUniqueOn => 'Each field key must be unique on a template.';
 
   @override
-  String get failureRenameTheDuplicateKeyAndSaveAgain =>
-      'Rename the duplicate key and save again.';
+  String get failureRenameTheDuplicateKeyAndSaveAgain => 'Rename the duplicate key and save again.';
 
   @override
   String get failureThatValueIsNotText => 'That value is not text.';
 
   @override
-  String get failureEnterTextOrLeaveTheFieldEmpty =>
-      'Enter text, or leave the field empty.';
+  String get failureEnterTextOrLeaveTheFieldEmpty => 'Enter text, or leave the field empty.';
 
   @override
-  String get failureThatValueIsNotAWholeNumber =>
-      'That value is not a whole number.';
+  String get failureThatValueIsNotAWholeNumber => 'That value is not a whole number.';
 
   @override
-  String get failureEnterAWholeNumberOrLeaveThe =>
-      'Enter a whole number, or leave the field empty.';
+  String get failureEnterAWholeNumberOrLeaveThe => 'Enter a whole number, or leave the field empty.';
 
   @override
   String get failureThatValueIsNotANumber => 'That value is not a number.';
 
   @override
-  String get failureEnterANumberOrLeaveTheField =>
-      'Enter a number, or leave the field empty.';
+  String get failureEnterANumberOrLeaveTheField => 'Enter a number, or leave the field empty.';
 
   @override
-  String get failureThatNumberIsOutsideTheAllowedRange =>
-      'That number is outside the allowed range.';
+  String get failureThatNumberIsOutsideTheAllowedRange => 'That number is outside the allowed range.';
 
   @override
-  String get failureEnterANumberInsideTheRangeOr =>
-      'Enter a number inside the range, or leave the field empty.';
+  String get failureEnterANumberInsideTheRangeOr => 'Enter a number inside the range, or leave the field empty.';
 
   @override
-  String get failureThatValueIsShorterThanThisField =>
-      'That value is shorter than this field allows.';
+  String get failureThatValueIsShorterThanThisField => 'That value is shorter than this field allows.';
 
   @override
-  String get failureEnterALongerValueOrLeaveThe =>
-      'Enter a longer value, or leave the field empty.';
+  String get failureEnterALongerValueOrLeaveThe => 'Enter a longer value, or leave the field empty.';
 
   @override
-  String get failureThatValueIsLongerThanThisField =>
-      'That value is longer than this field allows.';
+  String get failureThatValueIsLongerThanThisField => 'That value is longer than this field allows.';
 
   @override
-  String get failureShortenTheValueOrLeaveTheField =>
-      'Shorten the value, or leave the field empty.';
+  String get failureShortenTheValueOrLeaveTheField => 'Shorten the value, or leave the field empty.';
 
   @override
-  String get failureThatValueDoesNotMatchTheExpected =>
-      'That value does not match the expected pattern.';
+  String get failureThatValueDoesNotMatchTheExpected => 'That value does not match the expected pattern.';
 
   @override
-  String get failureEnterAValueInTheExpectedForm =>
-      'Enter a value in the expected form, or leave the field empty.';
+  String get failureEnterAValueInTheExpectedForm => 'Enter a value in the expected form, or leave the field empty.';
 
   @override
-  String get failureThisFieldSPatternIsNotValid =>
-      'This field\'s pattern is not valid.';
+  String get failureThisFieldSPatternIsNotValid => 'This field\'s pattern is not valid.';
 
   @override
-  String get failureOpenTheTemplateAndCorrectTheField =>
-      'Open the template and correct the field\'s pattern.';
+  String get failureOpenTheTemplateAndCorrectTheField => 'Open the template and correct the field\'s pattern.';
 
   @override
   String get failureThatValueIsNotADate => 'That value is not a date.';
 
   @override
-  String get failureEnterACalendarDateOrLeaveThe =>
-      'Enter a calendar date, or leave the field empty.';
+  String get failureEnterACalendarDateOrLeaveThe => 'Enter a calendar date, or leave the field empty.';
 
   @override
   String get failureThatValueIsNotATimeOf => 'That value is not a time of day.';
 
   @override
-  String get failureEnterATimeOrLeaveTheField =>
-      'Enter a time, or leave the field empty.';
+  String get failureEnterATimeOrLeaveTheField => 'Enter a time, or leave the field empty.';
 
   @override
-  String get failureThatValueIsNotADateAnd =>
-      'That value is not a date and time.';
+  String get failureThatValueIsNotADateAnd => 'That value is not a date and time.';
 
   @override
-  String get failureEnterADateAndTimeOrLeave =>
-      'Enter a date and time, or leave the field empty.';
+  String get failureEnterADateAndTimeOrLeave => 'Enter a date and time, or leave the field empty.';
 
   @override
   String get failureThatValueIsNotAYesOr => 'That value is not a yes or no.';
 
   @override
-  String get failureSwitchTheFieldOnOrOffOr =>
-      'Switch the field on or off, or leave it unset.';
+  String get failureSwitchTheFieldOnOrOffOr => 'Switch the field on or off, or leave it unset.';
 
   @override
   String get failureThatValueIsNotAChoice => 'That value is not a choice.';
 
   @override
-  String get failurePickAnOptionFromTheListOr =>
-      'Pick an option from the list, or leave the field empty.';
+  String get failurePickAnOptionFromTheListOr => 'Pick an option from the list, or leave the field empty.';
 
   @override
-  String get failureThatChoiceIsNotOnTheList =>
-      'That choice is not on the list.';
+  String get failureThatChoiceIsNotOnTheList => 'That choice is not on the list.';
 
   @override
   String get failureThatValueIsNotAFilePath => 'That value is not a file path.';
 
   @override
-  String get failureAttachAFileOrLeaveTheField =>
-      'Attach a file, or leave the field empty.';
+  String get failureAttachAFileOrLeaveTheField => 'Attach a file, or leave the field empty.';
 
   @override
   String get failureThatValueIsNotALocation => 'That value is not a location.';
 
   @override
-  String get failureCaptureAGPSFixOrLeaveThe =>
-      'Capture a GPS fix, or leave the field empty.';
+  String get failureCaptureAGPSFixOrLeaveThe => 'Capture a GPS fix, or leave the field empty.';
 
   @override
-  String get failureThatLocationIsOutsideTheEarth =>
-      'That location is outside the earth.';
+  String get failureThatLocationIsOutsideTheEarth => 'That location is outside the earth.';
 
   @override
-  String get failureCaptureAGPSFixAgainOrLeave =>
-      'Capture a GPS fix again, or leave the field empty.';
+  String get failureCaptureAGPSFixAgainOrLeave => 'Capture a GPS fix again, or leave the field empty.';
 
   @override
-  String get failureThisFieldTypeHasNoEditorOn =>
-      'This field type has no editor on this screen.';
+  String get failureThisFieldTypeHasNoEditorOn => 'This field type has no editor on this screen.';
 
   @override
-  String get failureOpenTheTemplateAndPickAType =>
-      'Open the template and pick a type this screen supports.';
+  String get failureOpenTheTemplateAndPickAType => 'Open the template and pick a type this screen supports.';
 
   @override
-  String get failureConfirmConsentWithTheNamedOperator =>
-      'Confirm consent with the named operator.';
+  String get failureConfirmConsentWithTheNamedOperator => 'Confirm consent with the named operator.';
 
   @override
-  String get failureThatFieldTypeIsNotRecognised =>
-      'That field type is not recognised.';
+  String get failureThatFieldTypeIsNotRecognised => 'That field type is not recognised.';
 
   @override
-  String get failurePickATypeFromTheListAnd =>
-      'Pick a type from the list and save again.';
+  String get failurePickATypeFromTheListAnd => 'Pick a type from the list and save again.';
 
   @override
-  String get failureThatInputModeIsNotRecognised =>
-      'That input mode is not recognised.';
+  String get failureThatInputModeIsNotRecognised => 'That input mode is not recognised.';
 
   @override
-  String get failurePickAnInputModeFromTheList =>
-      'Pick an input mode from the list and save again.';
+  String get failurePickAnInputModeFromTheList => 'Pick an input mode from the list and save again.';
 
   @override
-  String get failureTheSuggestedOrderCouldNotBeRead =>
-      'The suggested order could not be read.';
+  String get failureTheSuggestedOrderCouldNotBeRead => 'The suggested order could not be read.';
 
   @override
-  String get failureUseTheOnDeviceResultsOrTry =>
-      'Use the on-device results or try again.';
+  String get failureUseTheOnDeviceResultsOrTry => 'Use the on-device results or try again.';
 
   @override
-  String get failureOpenTheTemplateListAndTryAgain =>
-      'Open the template list and try again.';
+  String get failureOpenTheTemplateListAndTryAgain => 'Open the template list and try again.';
 
   @override
-  String get failureTheDailyAnalysisLimitIsReached =>
-      'The daily analysis limit is reached.';
+  String get failureTheDailyAnalysisLimitIsReached => 'The daily analysis limit is reached.';
 
   @override
-  String get failureUseTheOnDeviceSuggestionsOrTry =>
-      'Use the on-device suggestions or try tomorrow.';
+  String get failureUseTheOnDeviceSuggestionsOrTry => 'Use the on-device suggestions or try tomorrow.';
 
   @override
-  String get failureExportProtectionsAreUnavailableOnThisDevice =>
-      'Export protections are unavailable on this device.';
+  String get failureExportProtectionsAreUnavailableOnThisDevice => 'Export protections are unavailable on this device.';
 
   @override
   String processingDailyCap(int cap, String resetDay) {
@@ -12112,33 +10915,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get processingDailyResetRecovery =>
-      'Processing will be available after the daily reset.';
+  String get processingDailyResetRecovery => 'Processing will be available after the daily reset.';
 
   @override
   String get bundlePasswordInvalid => 'That password did not open the bundle.';
 
   @override
-  String get bundlePasswordInvalidRecovery =>
-      'Try the password again. Nothing was extracted.';
+  String get bundlePasswordInvalidRecovery => 'Try the password again. Nothing was extracted.';
 
   @override
-  String get incomingBundleBusy =>
-      'Finish the current package before opening another.';
+  String get incomingBundleBusy => 'Finish the current package before opening another.';
 
   @override
   String get incomingBundleTooLarge => 'This package is too large to open.';
 
   @override
-  String get incomingBundleIncomplete =>
-      'This package is too large or incomplete.';
+  String get incomingBundleIncomplete => 'This package is too large or incomplete.';
 
   @override
   String get incomingBundleUnreadable => 'This package could not be opened.';
 
   @override
-  String get incomingBundleUnreadableRecovery =>
-      'Open the file again from its original location.';
+  String get incomingBundleUnreadableRecovery => 'Open the file again from its original location.';
 
   @override
   String get biometricUnavailable => 'Biometric authentication is unavailable.';
@@ -12147,16 +10945,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get biometricPinRecovery => 'Unlock with your app PIN.';
 
   @override
-  String get appLockStorageUnavailable =>
-      'The app lock could not be read on this device.';
+  String get appLockStorageUnavailable => 'The app lock could not be read on this device.';
 
   @override
-  String get appLockStorageRecovery =>
-      'Try unlocking again when secure storage is available.';
+  String get appLockStorageRecovery => 'Try unlocking again when secure storage is available.';
 
   @override
-  String get cloudDestinationSaveFailed =>
-      'The destination could not be saved.';
+  String get cloudDestinationSaveFailed => 'The destination could not be saved.';
 
   @override
   String get cloudDestinationMissing => 'That destination is no longer listed.';
@@ -12168,43 +10963,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cloudUploadRecordFailed => 'The upload could not be recorded.';
 
   @override
-  String get cloudUploadHistoryUpdateFailed =>
-      'The upload history could not be updated.';
+  String get cloudUploadHistoryUpdateFailed => 'The upload history could not be updated.';
 
   @override
-  String get cloudUploadHistoryUpdateRecovery =>
-      'The file on this device was not changed.';
+  String get cloudUploadHistoryUpdateRecovery => 'The file on this device was not changed.';
 
   @override
-  String get cloudUploadConfirmationRequired =>
-      'Confirm this upload before it can start.';
+  String get cloudUploadConfirmationRequired => 'Confirm this upload before it can start.';
 
   @override
-  String get cloudUploadConfirmationRecovery =>
-      'Review the file and confirm it.';
+  String get cloudUploadConfirmationRecovery => 'Review the file and confirm it.';
 
   @override
-  String get cloudUploadHistoryMissing =>
-      'That upload is no longer in the history.';
+  String get cloudUploadHistoryMissing => 'That upload is no longer in the history.';
 
   @override
   String get cloudUploadRestartRecovery => 'Start the upload again.';
 
   @override
-  String get settingsPreferenceUnsupported =>
-      'That preference cannot be stored.';
+  String get settingsPreferenceUnsupported => 'That preference cannot be stored.';
 
   @override
-  String get settingsPreferenceUnsupportedRecovery =>
-      'Choose a supported value and save again.';
+  String get settingsPreferenceUnsupportedRecovery => 'Choose a supported value and save again.';
 
   @override
-  String get settingsPreferenceSaveFailed =>
-      'The preference could not be saved on this device.';
+  String get settingsPreferenceSaveFailed => 'The preference could not be saved on this device.';
 
   @override
-  String get settingsPreferenceSaveRecovery =>
-      'Try again. Your last change was not stored.';
+  String get settingsPreferenceSaveRecovery => 'Try again. Your last change was not stored.';
 
   @override
   String get privacyCaptureUnreadable => 'The saved capture could not be read.';
@@ -12213,19 +10999,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyCaptureRecover => 'Recover the capture and try again.';
 
   @override
-  String get privacyProjectRequired =>
-      'Open a project before removing its location data.';
+  String get privacyProjectRequired => 'Open a project before removing its location data.';
 
   @override
-  String get privacyProjectRequiredRecovery =>
-      'Choose a project, then try again.';
+  String get privacyProjectRequiredRecovery => 'Choose a project, then try again.';
 
   @override
   String get cloudSignInChanged => 'This destination sign-in changed.';
 
   @override
-  String get cloudGoogleSignInRenewal =>
-      'This Google Drive sign-in needs renewal.';
+  String get cloudGoogleSignInRenewal => 'This Google Drive sign-in needs renewal.';
 
   @override
   String get cloudSignInAgain => 'Sign in again.';
@@ -12240,12 +11023,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serverApiKeySaved => 'Encrypted on the organisation server';
 
   @override
-  String get serverApiKeyCustody =>
-      'Your key is encrypted on the organisation server. Requests use your provider account; no automatic billing-account switch.';
+  String get serverApiKeyCustody => 'Your key is encrypted on the organisation server. Requests use your provider account; no automatic billing-account switch.';
 
   @override
-  String get aiRequestUncertain =>
-      'This request may have been charged. Its result is unavailable. Review before starting a new attempt.';
+  String get aiRequestUncertain => 'This request may have been charged. Its result is unavailable. Review before starting a new attempt.';
 
   @override
   String get aiManagedAccount => 'Organisation-managed account';
@@ -12259,12 +11040,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiSpendingLimit => 'Maximum cost per request';
 
   @override
-  String get aiSpendingLimitHint =>
-      'Budget units configured by your organisation. Higher-cost models require explicit approval.';
+  String get aiSpendingLimitHint => 'Budget units configured by your organisation. Higher-cost models require explicit approval.';
 
   @override
-  String get serverCredentialRemoveMessage =>
-      'Delete your encrypted provider key from the organisation server. Analysis for this account stops until a key is saved again.';
+  String get serverCredentialRemoveMessage => 'Delete your encrypted provider key from the organisation server. Analysis for this account stops until a key is saved again.';
 
   @override
   String get processingFindingsTitle => 'Analysis findings';
@@ -12273,8 +11052,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get processingRetryChargeTitle => 'Retry analysis?';
 
   @override
-  String get processingRetryChargeBody =>
-      'The previous request may have been charged. Retrying starts a new request and may spend more.';
+  String get processingRetryChargeBody => 'The previous request may have been charged. Retrying starts a new request and may spend more.';
 
   @override
   String get processingRetryChargeConfirm => 'Approve retry';
@@ -12296,12 +11074,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String processingEgressSelection(
-    String provider,
-    String model,
-    String account,
-    String limit,
-  ) {
+  String processingEgressSelection(String provider, String model, String account, String limit) {
     return 'Provider: $provider. Model: $model. Billing: $account. Approved request limit: $limit.';
   }
 
@@ -12358,8 +11131,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recycleParentDeleted => 'Restore the deleted parent first.';
 
   @override
-  String get recycleParentDeletedRecovery =>
-      'Restore the project or record from the Recycle bin, then try again.';
+  String get recycleParentDeletedRecovery => 'Restore the project or record from the Recycle bin, then try again.';
 
   @override
   String recycleEntitySubtitle(String type, String details) {
@@ -12367,12 +11139,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get recycleFolderRestoreFailed =>
-      'The project folder could not be restored.';
+  String get recycleFolderRestoreFailed => 'The project folder could not be restored.';
 
   @override
-  String get recycleFolderRestoreRecovery =>
-      'Check storage access and resolve any existing folder with the same name, then try again.';
+  String get recycleFolderRestoreRecovery => 'Check storage access and resolve any existing folder with the same name, then try again.';
 
   @override
   String get aiSupportedProviders => 'Supported providers';
@@ -12388,7 +11158,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
 /// The translations for English (`en_XA`).
 class AppLocalizationsEnXa extends AppLocalizationsEn {
-  AppLocalizationsEnXa() : super('en_XA');
+  AppLocalizationsEnXa(): super('en_XA');
 
   @override
   String get recordFieldReadOnly => 'Thís fíéld ís réád-ónly.·········';
@@ -12399,8 +11169,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get processingCapturedTemplateUnavailable =>
-      'Thé cáptúréd témpláté vérsíón ís únáváíláblé. Révíéw thé sávéd évídéncé.··························';
+  String get processingCapturedTemplateUnavailable => 'Thé cáptúréd témpláté vérsíón ís únáváíláblé. Révíéw thé sávéd évídéncé.··························';
 
   @override
   String get recordCorrectAutomaticValue => 'Córréct válúé·····';
@@ -12427,19 +11196,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureFieldUnavailable => 'Únáváíláblé ón thís dévícé··········';
 
   @override
-  String get fieldSourceHelp =>
-      'Chóósé áútómátíc fíllíng, mánúál éntry ór éxtráctíón fróm phótós ánd cáptíóns. Áútómátíc ánd mánúál-ónly fíélds stáy óút óf prócéssíng.················································';
+  String get fieldSourceHelp => 'Chóósé áútómátíc fíllíng, mánúál éntry ór éxtráctíón fróm phótós ánd cáptíóns. Áútómátíc ánd mánúál-ónly fíélds stáy óút óf prócéssíng.················································';
 
   @override
-  String get captureTemperatureUnavailable =>
-      'Áútómátíc témpérátúré ís únáváíláblé; éntér ít mánúálly.····················';
+  String get captureTemperatureUnavailable => 'Áútómátíc témpérátúré ís únáváíláblé; éntér ít mánúálly.····················';
 
   @override
   String get fieldAutoFillLocalAddress => 'Lócál nétwórk áddréss········';
 
   @override
-  String get fieldSourceAddressNeedsText =>
-      'Úsé á téxt fíéld fór á lócál nétwórk áddréss.················';
+  String get fieldSourceAddressNeedsText => 'Úsé á téxt fíéld fór á lócál nétwórk áddréss.················';
 
   @override
   String get captureManualForm => 'Mánúál fórm····';
@@ -12471,12 +11237,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get aiConnectionDetails => 'Cónnéctíón détáíls·······';
 
   @override
-  String get aiCustodySummary =>
-      'Yóúr sérvér hándlés ÁÍ áccéss ánd kéys.··············';
+  String get aiCustodySummary => 'Yóúr sérvér hándlés ÁÍ áccéss ánd kéys.··············';
 
   @override
-  String get aiProviderAttribution =>
-      'Gémíní ís á trádémárk óf Góóglé LLC. ÓpénÁÍ ánd xÁÍ márks bélóng tó théír réspéctívé ównérs.·································';
+  String get aiProviderAttribution => 'Gémíní ís á trádémárk óf Góóglé LLC. ÓpénÁÍ ánd xÁÍ márks bélóng tó théír réspéctívé ównérs.·································';
 
   @override
   String get aiServerAndAccount => 'Sérvér ánd áccóúnt·······';
@@ -12498,16 +11262,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get ocrBrowserUnavailable =>
-      'Ón-dévícé phótó réádíng ís únáváíláblé ín thís brówsér. Révíéw fíélds mánúálly ór énáblé ónlíné ánálysís.·····································';
+  String get ocrBrowserUnavailable => 'Ón-dévícé phótó réádíng ís únáváíláblé ín thís brówsér. Révíéw fíélds mánúálly ór énáblé ónlíné ánálysís.·····································';
 
   @override
   String get notDetected => 'Nót détéctéd·····';
 
   @override
   String recordsCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -12522,8 +11284,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String fieldsCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -12552,24 +11313,19 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get photoNoAccess =>
-      'Állów thé cámérá ór phótós tó áttách óné. Évérythíng élsé stíll wórks.·························';
+  String get photoNoAccess => 'Állów thé cámérá ór phótós tó áttách óné. Évérythíng élsé stíll wórks.·························';
 
   @override
-  String get displayNoAccess =>
-      'Állów scréén cáptúré tó áttách ánóthér wíndów. Évérythíng élsé stíll wórks.···························';
+  String get displayNoAccess => 'Állów scréén cáptúré tó áttách ánóthér wíndów. Évérythíng élsé stíll wórks.···························';
 
   @override
-  String get photoNoCamera =>
-      'Nó cámérá ís áváíláblé ón thís dévícé.··············';
+  String get photoNoCamera => 'Nó cámérá ís áváíláblé ón thís dévícé.··············';
 
   @override
-  String get photoPickFailed =>
-      'Thát phótó cóúld nót bé áddéd. Try ánóthér.················';
+  String get photoPickFailed => 'Thát phótó cóúld nót bé áddéd. Try ánóthér.················';
 
   @override
-  String get displayCaptureFailed =>
-      'Thát wíndów cóúld nót bé cáptúréd. Try ánóthér.·················';
+  String get displayCaptureFailed => 'Thát wíndów cóúld nót bé cáptúréd. Try ánóthér.·················';
 
   @override
   String dictateInto(Object label) {
@@ -12582,92 +11338,70 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get dictationUnavailable =>
-      'Vóícé ínpút ís nót áváíláblé héré. Typé ínstéád.·················';
+  String get dictationUnavailable => 'Vóícé ínpút ís nót áváíláblé héré. Typé ínstéád.·················';
 
   @override
-  String get dictationNoMicrophone =>
-      'Állów thé mícróphóné tó spéák íntó á fíéld. Typíng stíll wórks.·······················';
+  String get dictationNoMicrophone => 'Állów thé mícróphóné tó spéák íntó á fíéld. Typíng stíll wórks.·······················';
 
   @override
-  String get dictationNothingHeard =>
-      'Nóthíng wás héárd. Táp thé mícróphóné ánd spéák ágáín.···················';
+  String get dictationNothingHeard => 'Nóthíng wás héárd. Táp thé mícróphóné ánd spéák ágáín.···················';
 
   @override
-  String get dictationNeedsConnection =>
-      'Vóícé ínpút nééds á cónnéctíón ón thís dévícé. Typé ínstéád.·····················';
+  String get dictationNeedsConnection => 'Vóícé ínpút nééds á cónnéctíón ón thís dévícé. Typé ínstéád.·····················';
 
   @override
-  String get dictationOfflineOnly =>
-      'Yóú áré wórkíng ófflíné, ánd thís dévícé cánnót récógnísé spééch wíthóút á cónnéctíón. Typé ínstéád.···································';
+  String get dictationOfflineOnly => 'Yóú áré wórkíng ófflíné, ánd thís dévícé cánnót récógnísé spééch wíthóút á cónnéctíón. Typé ínstéád.···································';
 
   @override
-  String get dictationFailed =>
-      'Vóícé ínpút stóppéd. Try ágáín, ór typé ínstéád.·················';
+  String get dictationFailed => 'Vóícé ínpút stóppéd. Try ágáín, ór typé ínstéád.·················';
 
   @override
-  String get speechUnavailable =>
-      'Spééch récógnítíón ís nót áváíláblé ín thís vérsíón óf thé ápp.·······················';
+  String get speechUnavailable => 'Spééch récógnítíón ís nót áváíláblé ín thís vérsíón óf thé ápp.·······················';
 
   @override
-  String get speechModelMissing =>
-      'Thé spééch módél ís nót ínstálléd ón thís dévícé.··················';
+  String get speechModelMissing => 'Thé spééch módél ís nót ínstálléd ón thís dévícé.··················';
 
   @override
-  String get speechModelMissingRecovery =>
-      'Réínstáll thé ápp, ór ímpórt thé módél ín Séttíngs.··················';
+  String get speechModelMissingRecovery => 'Réínstáll thé ápp, ór ímpórt thé módél ín Séttíngs.··················';
 
   @override
-  String get speechModelDamaged =>
-      'Thé spééch módél fílé ís dámágéd, só ít wás nót úséd.···················';
+  String get speechModelDamaged => 'Thé spééch módél fílé ís dámágéd, só ít wás nót úséd.···················';
 
   @override
-  String get speechModelDamagedRecovery =>
-      'Réínstáll thé ápp, ór ímpórt thé módél ágáín ín Séttíngs.····················';
+  String get speechModelDamagedRecovery => 'Réínstáll thé ápp, ór ímpórt thé módél ágáín ín Séttíngs.····················';
 
   @override
-  String get speechDeviceUnsupported =>
-      'Thís dévícé cánnót rún spééch récógnítíón.···············';
+  String get speechDeviceUnsupported => 'Thís dévícé cánnót rún spééch récógnítíón.···············';
 
   @override
-  String get speechLowMemory =>
-      'Théré ís nót énóúgh fréé mémóry tó lóád thé spééch módél.····················';
+  String get speechLowMemory => 'Théré ís nót énóúgh fréé mémóry tó lóád thé spééch módél.····················';
 
   @override
-  String get speechLowMemoryRecovery =>
-      'Clósé óthér ápps, thén try ágáín.············';
+  String get speechLowMemoryRecovery => 'Clósé óthér ápps, thén try ágáín.············';
 
   @override
-  String get speechTranscriptionFailed =>
-      'Párt óf thé spééch cóúld nót bé túrnéd íntó téxt. Thé áúdíó ís képt.························';
+  String get speechTranscriptionFailed => 'Párt óf thé spééch cóúld nót bé túrnéd íntó téxt. Thé áúdíó ís képt.························';
 
   @override
-  String get speechLanguageUnsupported =>
-      'Spééch récógnítíón ón thís dévícé dóés nót súppórt thé chósén vóícé lángúágé.···························';
+  String get speechLanguageUnsupported => 'Spééch récógnítíón ón thís dévícé dóés nót súppórt thé chósén vóícé lángúágé.···························';
 
   @override
-  String get speechEngineStopped =>
-      'Spééch récógnítíón stóppéd únéxpéctédly. Try ágáín.··················';
+  String get speechEngineStopped => 'Spééch récógnítíón stóppéd únéxpéctédly. Try ágáín.··················';
 
   @override
-  String get speechImportUnknown =>
-      'Thís fílé ís nót á spééch módél thé ápp récógnísés.··················';
+  String get speechImportUnknown => 'Thís fílé ís nót á spééch módél thé ápp récógnísés.··················';
 
   @override
-  String get speechImportUnknownRecovery =>
-      'Chóósé óné óf thé módél fílés náméd ín Séttíngs.·················';
+  String get speechImportUnknownRecovery => 'Chóósé óné óf thé módél fílés náméd ín Séttíngs.·················';
 
   @override
-  String get transcriptSaveFailed =>
-      'Thé tránscrípt cóúld nót bé sávéd ón thís dévícé.··················';
+  String get transcriptSaveFailed => 'Thé tránscrípt cóúld nót bé sávéd ón thís dévícé.··················';
 
   @override
-  String get transcriptSegmentOutOfOrder =>
-      'Párt óf thé tránscrípt árrívéd óút óf órdér ánd wás nót sávéd.······················';
+  String get transcriptSegmentOutOfOrder => 'Párt óf thé tránscrípt árrívéd óút óf órdér ánd wás nót sávéd.······················';
 
   @override
-  String get transcriptStillRecording =>
-      'Thís tránscrípt ís stíll béíng récórdéd. Édít ít óncé thé récórdíng hás fíníshéd.·····························';
+  String get transcriptStillRecording => 'Thís tránscrípt ís stíll béíng récórdéd. Édít ít óncé thé récórdíng hás fíníshéd.·····························';
 
   @override
   String get autoFilled => 'Áútó-fílléd····';
@@ -12742,12 +11476,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get photoSelect => 'Séléct phótó·····';
 
   @override
-  String get photoUnreadable =>
-      'Thát phótó cóúld nót bé réád fróm thís dévícé.·················';
+  String get photoUnreadable => 'Thát phótó cóúld nót bé réád fróm thís dévícé.·················';
 
   @override
-  String get photoUnreadableRecovery =>
-      'Cáptúré thé phótó ágáín, thén try ágáín.··············';
+  String get photoUnreadableRecovery => 'Cáptúré thé phótó ágáín, thén try ágáín.··············';
 
   @override
   String missingPhotoNamed(Object type) {
@@ -12806,8 +11538,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get markupBacking => 'Dárk báckíng·····';
 
   @override
-  String get markupBackingDescription =>
-      'Kééps thé wórds réádáblé ón á búsy phótó.···············';
+  String get markupBackingDescription => 'Kééps thé wórds réádáblé ón á búsy phótó.···············';
 
   @override
   String get markupTypeHint => 'Drág thé phótó tó móvé thé wórds.············';
@@ -12823,8 +11554,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String capturePhotoCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -12853,8 +11583,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get photoCaptionDelete => 'Délété cáptíón·····';
 
   @override
-  String get photoCaptionDeleteMessage =>
-      'Thé cáptíón ís rémóvéd fróm thís phótó. Yóú cán úndó ít.····················';
+  String get photoCaptionDeleteMessage => 'Thé cáptíón ís rémóvéd fróm thís phótó. Yóú cán úndó ít.····················';
 
   @override
   String get photoCaptionDeleted => 'Cáptíón délétéd.······';
@@ -12960,8 +11689,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get emptyHeadline => 'Nóthíng héré yét······';
 
   @override
-  String get emptyMessage =>
-      'Whén théré ís sóméthíng tó shów, ít wíll áppéár héré.···················';
+  String get emptyMessage => 'Whén théré ís sóméthíng tó shów, ít wíll áppéár héré.···················';
 
   @override
   String get loading => 'Lóádíng···';
@@ -13054,8 +11782,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String searchFiltersFilters(int active) {
-    final intl.NumberFormat activeNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat activeNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String activeString = activeNumberFormat.format(active);
 
     return 'Fíltérs (····$activeString)';
@@ -13065,8 +11792,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get searchClearFilters => 'Cléár fíltérs·····';
 
   @override
-  String get searchFilterNoMatchMessage =>
-      'Chángé thé séárch ór cléár thé fíltérs.··············';
+  String get searchFilterNoMatchMessage => 'Chángé thé séárch ór cléár thé fíltérs.··············';
 
   @override
   String get overflowMenu => 'Móré óptíóns·····';
@@ -13078,8 +11804,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get projectsEmptyHeadline => 'Nó prójécts yét······';
 
   @override
-  String get projectsEmptyMessage =>
-      'Créáté á prójéct tó stárt cáptúríng.·············';
+  String get projectsEmptyMessage => 'Créáté á prójéct tó stárt cáptúríng.·············';
 
   @override
   String get projectsCreate => 'Créáté á prójéct······';
@@ -13088,15 +11813,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get projectsPickHeadline => 'Chóósé á prójéct······';
 
   @override
-  String get projectsPickMessage =>
-      'Séléct á prójéct fróm thé líst.···········';
+  String get projectsPickMessage => 'Séléct á prójéct fróm thé líst.···········';
 
   @override
   String get projectsNoMatchHeadline => 'Nó mátchíng prójécts·······';
 
   @override
-  String get projectsNoMatchMessage =>
-      'Try á dífférént námé, ór créáté á prójéct.···············';
+  String get projectsNoMatchMessage => 'Try á dífférént námé, ór créáté á prójéct.···············';
 
   @override
   String get projectSearchHint => 'Séárch prójécts······';
@@ -13127,8 +11850,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String projectTemplateCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -13171,14 +11893,8 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String projectDeleteMessage(
-    Object recordsCountrecords,
-    Object filesCountfiles,
-    int days,
-  ) {
-    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+  String projectDeleteMessage(Object recordsCountrecords, Object filesCountfiles, int days) {
+    final intl.NumberFormat daysNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String daysString = daysNumberFormat.format(days);
 
     return 'Thís hídés ····$recordsCountrecords ánd ··$filesCountfiles. Yóú cán réstóré thém fór ··········$daysString dáys. Nóthíng ís rémóvéd yét.···········';
@@ -13186,8 +11902,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String filesCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -13231,19 +11946,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get projectDownloadCopy => 'Dównlóád á cópy······';
 
   @override
-  String get projectNothingToOpen =>
-      'Thís prójéct hás nó spréádshéét, dócúmént ór PDF tó ópén yét.······················';
+  String get projectNothingToOpen => 'Thís prójéct hás nó spréádshéét, dócúmént ór PDF tó ópén yét.······················';
 
   @override
-  String get projectNothingToOpenRecovery =>
-      'Ímpórt á témpláté wórkbóók ór éxpórt thé prójéct, thén try ágáín.·······················';
+  String get projectNothingToOpenRecovery => 'Ímpórt á témpláté wórkbóók ór éxpórt thé prójéct, thén try ágáín.·······················';
 
   @override
   String get projectOpenFailedTitle => 'Cóúld nót ópén thé fílé·········';
 
   @override
-  String get projectOpenFailed =>
-      'Táptúré cóúld nót hánd thé fílé tó ánóthér ápp.·················';
+  String get projectOpenFailed => 'Táptúré cóúld nót hánd thé fílé tó ánóthér ápp.·················';
 
   @override
   String projectOpenFailedNamed(Object fileName) {
@@ -13251,24 +11963,19 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get projectOpenFailedRecovery =>
-      'Fréé sómé spácé, thén try ágáín.············';
+  String get projectOpenFailedRecovery => 'Fréé sómé spácé, thén try ágáín.············';
 
   @override
-  String get projectOpenNoApp =>
-      'Nó ápp ón thís dévícé cán ópén thát fílé.···············';
+  String get projectOpenNoApp => 'Nó ápp ón thís dévícé cán ópén thát fílé.···············';
 
   @override
-  String get projectOpenNoAppRecovery =>
-      'Ínstáll á réádér fór thís fílé typé, thén try ágáín.···················';
+  String get projectOpenNoAppRecovery => 'Ínstáll á réádér fór thís fílé typé, thén try ágáín.···················';
 
   @override
-  String get projectOpenPermission =>
-      'Táptúré nééds stórágé áccéss tó ópén á cópy óf thís fílé.····················';
+  String get projectOpenPermission => 'Táptúré nééds stórágé áccéss tó ópén á cópy óf thís fílé.····················';
 
   @override
-  String get projectOpenPermissionRecovery =>
-      'Állów stórágé áccéss, thén try ágáín.·············';
+  String get projectOpenPermissionRecovery => 'Állów stórágé áccéss, thén try ágáín.·············';
 
   @override
   String get projectCreateTitle => 'Créáté prójéct·····';
@@ -13334,15 +12041,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get projectAiEnabled => 'ÁÍ·';
 
   @override
-  String get projectAiEnabledEffect =>
-      'Túrn óff tó kéép thís prójéct fúlly mánúál.················';
+  String get projectAiEnabledEffect => 'Túrn óff tó kéép thís prójéct fúlly mánúál.················';
 
   @override
   String get projectDoNotSendImages => 'Dó nót sénd ímágés·······';
 
   @override
-  String get projectDoNotSendImagesEffect =>
-      'Próvídérs névér séé phótó bytés fróm thís prójéct.··················';
+  String get projectDoNotSendImagesEffect => 'Próvídérs névér séé phótó bytés fróm thís prójéct.··················';
 
   @override
   String get projectRefineColumns => 'Réfínéd cólúmns······';
@@ -13371,15 +12076,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get projectEditEmptyHeadline => 'Nó prójéct ópén······';
 
   @override
-  String get projectEditEmptyMessage =>
-      'Ópén á prójéct tó édít íts détáíls.·············';
+  String get projectEditEmptyMessage => 'Ópén á prójéct tó édít íts détáíls.·············';
 
   @override
   String get projectSettingsEmptyHeadline => 'Nó prójéct ópén······';
 
   @override
-  String get projectSettingsEmptyMessage =>
-      'Ópén á prójéct tó chángé íts séttíngs.··············';
+  String get projectSettingsEmptyMessage => 'Ópén á prójéct tó chángé íts séttíngs.··············';
 
   @override
   String projectCopyName(Object name) {
@@ -13387,17 +12090,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String projectListSubtitle(
-    Object recordsCountrecords,
-    Object unprocessedCountunprocessed,
-  ) {
+  String projectListSubtitle(Object recordsCountrecords, Object unprocessedCountunprocessed) {
     return '$recordsCountrecords · $unprocessedCountunprocessed';
   }
 
   @override
   String projectRecordPosition(int position) {
-    final intl.NumberFormat positionNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat positionNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String positionString = positionNumberFormat.format(position);
 
     return 'Récórd ···$positionString';
@@ -13407,8 +12106,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get projectRecordsEmptyHeadline => 'Nó récórds héré······';
 
   @override
-  String get projectRecordsEmptyMessage =>
-      'Cáptúréd récórds fór thís fíltér áppéár héré.················';
+  String get projectRecordsEmptyMessage => 'Cáptúréd récórds fór thís fíltér áppéár héré.················';
 
   @override
   String get projectRecordsSearchHint => 'Séárch récórds·····';
@@ -13445,8 +12143,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get projectExportEmptyHeadline => 'Nóthíng tó éxpórt······';
 
   @override
-  String get projectExportEmptyMessage =>
-      'Cáptúré á récórd béfóré éxpórtíng thís prójéct.·················';
+  String get projectExportEmptyMessage => 'Cáptúré á récórd béfóré éxpórtíng thís prójéct.·················';
 
   @override
   String get projectExportShare => 'Sháré··';
@@ -13457,8 +12154,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get projectExportShareHint =>
-      'Sénd thé fílé tó émáíl, chát ánd óthér ápps ón thís dévícé.·····················';
+  String get projectExportShareHint => 'Sénd thé fílé tó émáíl, chát ánd óthér ápps ón thís dévícé.·····················';
 
   @override
   String get exportSectionProject => 'Prójéct···';
@@ -13474,8 +12170,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportAudioClips(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -13500,8 +12195,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportUnprocessedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -13516,8 +12210,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportNeedsReviewCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -13532,8 +12225,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportApprovedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -13550,8 +12242,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get exportFileFormat => 'Prójéct páckágé (.zíp)········';
 
   @override
-  String get exportFileColumns =>
-      'Évérythíng ánóthér Táptúré ápp nééds tó ópén thís prójéct: récórds, phótós, áúdíó, témplátés, cóntéxt, référéncé dátá ánd prójéct séttíngs, wíth á wórkbóók óf thé récórds. Únsávéd cáptúré dráfts stáy ón thís dévícé.············································································';
+  String get exportFileColumns => 'Évérythíng ánóthér Táptúré ápp nééds tó ópén thís prójéct: récórds, phótós, áúdíó, témplátés, cóntéxt, référéncé dátá ánd prójéct séttíngs, wíth á wórkbóók óf thé récórds. Únsávéd cáptúré dráfts stáy ón thís dévícé.············································································';
 
   @override
   String exportPackageSize(Object fileSizebytes) {
@@ -13597,15 +12288,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordEditNoFieldsHeadline => 'Nó fíélds tó édít······';
 
   @override
-  String get recordEditNoFieldsMessage =>
-      'Ádd fíélds tó thís récórd\'s témpláté, thén édít thé récórd héré.·······················';
+  String get recordEditNoFieldsMessage => 'Ádd fíélds tó thís récórd\'s témpláté, thén édít thé récórd héré.·······················';
 
   @override
   String get recordDelete => 'Délété···';
 
   @override
-  String get recordArchiveMessage =>
-      'Thé phótós stáy ón thís dévícé. Thé récórd léávés thís líst.·····················';
+  String get recordArchiveMessage => 'Thé phótós stáy ón thís dévícé. Thé récórd léávés thís líst.·····················';
 
   @override
   String get recordDetailTitle => 'Récórd···';
@@ -13631,8 +12320,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordGoneHeadline => 'Thís récórd ís nó lóngér héré···········';
 
   @override
-  String get recordGoneMessage =>
-      'Ít wás délétéd ór ís nót ón thís dévícé. Gó báck tó thé líst.······················';
+  String get recordGoneMessage => 'Ít wás délétéd ór ís nót ón thís dévícé. Gó báck tó thé líst.······················';
 
   @override
   String get continueCapturing => 'Cóntínúé cáptúríng·······';
@@ -13665,8 +12353,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get homeEmptyHeadline => 'Nó prójéct ópén······';
 
   @override
-  String get homeEmptyMessage =>
-      'Ópén á prójéct tó séé whát tó dó néxt.··············';
+  String get homeEmptyMessage => 'Ópén á prójéct tó séé whát tó dó néxt.··············';
 
   @override
   String get navCapture => 'Cáptúré···';
@@ -13693,8 +12380,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get datasetsEmptyHeadline => 'Nó dátáséts yét······';
 
   @override
-  String get datasetsEmptyMessage =>
-      'Ímpórt á CSV, spréádshéét ór JSÓN táblé tó préfíll cáptúré fíélds.························';
+  String get datasetsEmptyMessage => 'Ímpórt á CSV, spréádshéét ór JSÓN táblé tó préfíll cáptúré fíélds.························';
 
   @override
   String get datasetsImport => 'Ímpórt dátásét·····';
@@ -13703,8 +12389,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get datasetsKeyTitle => 'Chóósé thé kéy cólúmn········';
 
   @override
-  String get datasetsKeyMessage =>
-      'Thé kéy úníqúély ídéntífíés éách rów fór lóókúp.·················';
+  String get datasetsKeyMessage => 'Thé kéy úníqúély ídéntífíés éách rów fór lóókúp.·················';
 
   @override
   String get datasetsAllowDuplicates => 'Sávé wíth dúplícátés·······';
@@ -13714,8 +12399,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String datasetsDuplicateCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -13733,18 +12417,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String datasetListSubtitle(
-    Object datasetsRowCountrows,
-    Object source,
-    Object dateFormatyMMMdformat,
-  ) {
+  String datasetListSubtitle(Object datasetsRowCountrows, Object source, Object dateFormatyMMMdformat) {
     return '$datasetsRowCountrows · $source · $dateFormatyMMMdformat';
   }
 
   @override
   String datasetsRowCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -13793,12 +12472,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get datasetsSaveBinding => 'Sávé bíndíng·····';
 
   @override
-  String get datasetsBindingEmptyHeadline =>
-      'Nó dátáséts ín thís prójéct··········';
+  String get datasetsBindingEmptyHeadline => 'Nó dátáséts ín thís prójéct··········';
 
   @override
-  String get datasetsBindingEmptyMessage =>
-      'Ímpórt á dátásét béfóré bíndíng thís fíéld.················';
+  String get datasetsBindingEmptyMessage => 'Ímpórt á dátásét béfóré bíndíng thís fíéld.················';
 
   @override
   String get datasetsFuzzyEnabled => 'Állów fúzzy mátchés·······';
@@ -13816,19 +12493,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get datasetsBrowserEmptyHeadline => 'Nó róws···';
 
   @override
-  String get datasetsBrowserEmptyMessage =>
-      'Thís dátásét hás nó róws tó shów.············';
+  String get datasetsBrowserEmptyMessage => 'Thís dátásét hás nó róws tó shów.············';
 
   @override
   String get datasetsNoMatchHeadline => 'Nó mátchíng róws······';
 
   @override
-  String get datasetsNoMatchMessage =>
-      'Nó rów mátchés thát séárch. Cléár ít tó séé évéry rów.···················';
+  String get datasetsNoMatchMessage => 'Nó rów mátchés thát séárch. Cléár ít tó séé évéry rów.···················';
 
   @override
-  String get datasetsPickNoMatchMessage =>
-      'Nóthíng ín thís dátásét mátchés. Thé typéd válúé stáys ás ít ís.·······················';
+  String get datasetsPickNoMatchMessage => 'Nóthíng ín thís dátásét mátchés. Thé typéd válúé stáys ás ít ís.·······················';
 
   @override
   String get datasetsClearSearch => 'Cléár séárch·····';
@@ -13837,15 +12511,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get datasetsNoProjectHeadline => 'Ópén á prójéct fírst·······';
 
   @override
-  String get datasetsNoProjectMessage =>
-      'Dátáséts bélóng tó á prójéct. Ópén óné tó ímpórt ór brówsé íts táblés.·························';
+  String get datasetsNoProjectMessage => 'Dátáséts bélóng tó á prójéct. Ópén óné tó ímpórt ór brówsé íts táblés.·························';
 
   @override
   String get datasetsPickHeadline => 'Chóósé á táblé tó ímpórt·········';
 
   @override
-  String get datasetsPickMessage =>
-      'Píck á CSV, spréádshéét ór JSÓN fílé. Yóú chóósé íts kéy cólúmn néxt.·························';
+  String get datasetsPickMessage => 'Píck á CSV, spréádshéét ór JSÓN fílé. Yóú chóósé íts kéy cólúmn néxt.·························';
 
   @override
   String get datasetsPickFile => 'Chóósé á fílé·····';
@@ -13855,8 +12527,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String datasetsReadProgress(int percent) {
-    final intl.NumberFormat percentNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat percentNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String percentString = percentNumberFormat.format(percent);
 
     return '$percentString% réád···';
@@ -13873,22 +12544,15 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String datasetsDuplicateWarningPickAnotherKeyColumn(
-    Object datasetsDuplicateCountn,
-    Object values,
-  ) {
+  String datasetsDuplicateWarningPickAnotherKeyColumn(Object datasetsDuplicateCountn, Object values) {
     return '$datasetsDuplicateCountn.$values Píck ánóthér kéy cólúmn, ór sávé thé dátásét wíth dúplícátés.······················';
   }
 
   @override
-  String get datasetsDuplicatesConfirmTitle =>
-      'Sávé wíth dúplícáté kéys?·········';
+  String get datasetsDuplicatesConfirmTitle => 'Sávé wíth dúplícáté kéys?·········';
 
   @override
-  String datasetsDuplicatesConfirm(
-    Object column,
-    Object datasetsDuplicateCountn,
-  ) {
+  String datasetsDuplicatesConfirm(Object column, Object datasetsDuplicateCountn) {
     return 'Thé kéy cólúmn ······$column hás ··$datasetsDuplicateCountn. Á lóókúp ón á répéátéd kéy ásks whích rów tó úsé.··················';
   }
 
@@ -13908,30 +12572,25 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get datasetsMissingHeadline => 'Dátásét nót fóúnd······';
 
   @override
-  String get datasetsMissingMessage =>
-      'Thís dátásét ís nó lóngér ón thís dévícé.···············';
+  String get datasetsMissingMessage => 'Thís dátásét ís nó lóngér ón thís dévícé.···············';
 
   @override
-  String get datasetsExportNoProject =>
-      'Ópén á prójéct béfóré éxpórtíng thís dátásét.················';
+  String get datasetsExportNoProject => 'Ópén á prójéct béfóré éxpórtíng thís dátásét.················';
 
   @override
-  String get datasetsExportNoProjectRecovery =>
-      'Ópén thé prójéct ánd try ágáín.···········';
+  String get datasetsExportNoProjectRecovery => 'Ópén thé prójéct ánd try ágáín.···········';
 
   @override
   String get datasetsRowMissingHeadline => 'Rów nót fóúnd·····';
 
   @override
-  String get datasetsRowMissingMessage =>
-      'Thís rów ís nó lóngér ín thé dátásét.·············';
+  String get datasetsRowMissingMessage => 'Thís rów ís nó lóngér ín thé dátásét.·············';
 
   @override
   String get datasetsAddRowNoDatasetHeadline => 'Nó dátásét bóúnd······';
 
   @override
-  String get datasetsAddRowNoDatasetMessage =>
-      'Bínd thís fíéld tó á dátásét béfóré áddíng róws fróm cáptúré.······················';
+  String get datasetsAddRowNoDatasetMessage => 'Bínd thís fíéld tó á dátásét béfóré áddíng róws fróm cáptúré.······················';
 
   @override
   String lookupUnknownTarget(Object target) {
@@ -13944,12 +12603,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get lookupPickDataset =>
-      'Píck á dátásét béfóré sávíng thé bíndíng.···············';
+  String get lookupPickDataset => 'Píck á dátásét béfóré sávíng thé bíndíng.···············';
 
   @override
-  String get lookupImportRecovery =>
-      'Fíx thé lóókúp fílls ín thé témpláté fílé ánd ímpórt ít ágáín.······················';
+  String get lookupImportRecovery => 'Fíx thé lóókúp fílls ín thé témpláté fílé ánd ímpórt ít ágáín.······················';
 
   @override
   String lookupColumnTwice(Object column) {
@@ -13958,8 +12615,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String lookupThresholdLabel(int percent) {
-    final intl.NumberFormat percentNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat percentNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String percentString = percentNumberFormat.format(percent);
 
     return '$percentString%';
@@ -13981,19 +12637,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get lookupFills => 'Fíll thésé fíélds······';
 
   @override
-  String get lookupFuzzyThreshold =>
-      'Súggést mátchés scóríng át léást············';
+  String get lookupFuzzyThreshold => 'Súggést mátchés scóríng át léást············';
 
   @override
-  String get lookupBecomesLookup =>
-      'Sávíng mákés thís fíéld á lóókúp fíéld.··············';
+  String get lookupBecomesLookup => 'Sávíng mákés thís fíéld á lóókúp fíéld.··············';
 
   @override
   String get lookupFieldMissingHeadline => 'Fíéld nót fóúnd······';
 
   @override
-  String get lookupFieldMissingMessage =>
-      'Thís fíéld ís nó lóngér ón thé témpláté.··············';
+  String get lookupFieldMissingMessage => 'Thís fíéld ís nó lóngér ón thé témpláté.··············';
 
   @override
   String get lookupNoMatchLeaveEmpty => 'Léávé émpty····';
@@ -14011,8 +12664,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get templatesEmptyHeadline => 'Nó témplátés yét······';
 
   @override
-  String get templatesEmptyMessage =>
-      'Píck á shíppéd témpláté tó stárt cáptúríng, ór créáté á blánk témpláté.·························';
+  String get templatesEmptyMessage => 'Píck á shíppéd témpláté tó stárt cáptúríng, ór créáté á blánk témpláté.·························';
 
   @override
   String get templatesPickLibrary => 'Píck á shíppéd témpláté·········';
@@ -14030,8 +12682,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get templatesAddMore => 'Ádd móré témplátés·······';
 
   @override
-  String get templatesAddEmptyMessage =>
-      'Ádd témplátés tó stárt cáptúríng. Créáté á blánk témpláté whén nóné fíts.··························';
+  String get templatesAddEmptyMessage => 'Ádd témplátés tó stárt cáptúríng. Créáté á blánk témpláté whén nóné fíts.··························';
 
   @override
   String get templatesUpload => 'Úplóád á témpláté······';
@@ -14088,47 +12739,37 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get templatesImportEmptyHeadline => 'Nó témpláté fílé······';
 
   @override
-  String get templatesImportEmptyMessage =>
-      'Chóósé á témpláté fílé tó ádd ít tó thís prójéct.··················';
+  String get templatesImportEmptyMessage => 'Chóósé á témpláté fílé tó ádd ít tó thís prójéct.··················';
 
   @override
-  String get templatesImportUnknownSchema =>
-      'Thát témpláté fílé úsés á schémá thís ápp dóés nót réád.····················';
+  String get templatesImportUnknownSchema => 'Thát témpláté fílé úsés á schémá thís ápp dóés nót réád.····················';
 
   @override
-  String get templatesImportUnknownSchemaRecovery =>
-      'Éxpórt thé témpláté ágáín fróm thís vérsíón óf Táptúré.····················';
+  String get templatesImportUnknownSchemaRecovery => 'Éxpórt thé témpláté ágáín fróm thís vérsíón óf Táptúré.····················';
 
   @override
   String get templatesImportInvalid => 'Thát fílé ís nót á témpláté.··········';
 
   @override
-  String get templatesImportInvalidRecovery =>
-      'Chóósé á témpláté fílé ánd try ágáín.·············';
+  String get templatesImportInvalidRecovery => 'Chóósé á témpláté fílé ánd try ágáín.·············';
 
   @override
-  String get templatesImportDuplicateField =>
-      'Éách fíéld kéy múst bé úníqúé ón á témpláté.················';
+  String get templatesImportDuplicateField => 'Éách fíéld kéy múst bé úníqúé ón á témpláté.················';
 
   @override
-  String get templatesImportDuplicateFieldRecovery =>
-      'Rénámé thé dúplícáté kéy ánd éxpórt ágáín.···············';
+  String get templatesImportDuplicateFieldRecovery => 'Rénámé thé dúplícáté kéy ánd éxpórt ágáín.···············';
 
   @override
-  String get workbookPassword =>
-      'Thát spréádshéét ís lóckéd wíth á pásswórd.················';
+  String get workbookPassword => 'Thát spréádshéét ís lóckéd wíth á pásswórd.················';
 
   @override
-  String get workbookPasswordRecovery =>
-      'Únlóck ít, sávé á cópy, ánd chóósé thé cópy.················';
+  String get workbookPasswordRecovery => 'Únlóck ít, sávé á cópy, ánd chóósé thé cópy.················';
 
   @override
-  String get workbookCorrupt =>
-      'Thát spréádshéét cóúld nót bé réád.·············';
+  String get workbookCorrupt => 'Thát spréádshéét cóúld nót bé réád.·············';
 
   @override
-  String get workbookCorruptRecovery =>
-      'Kéép thé órígínál. Éxpórt á cópy ánd try ágáín.·················';
+  String get workbookCorruptRecovery => 'Kéép thé órígínál. Éxpórt á cópy ánd try ágáín.·················';
 
   @override
   String get xlsxMappingTitle => 'Máp cólúmns····';
@@ -14137,8 +12778,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get xlsxMappingEmptyHeadline => 'Nó spréádshéét·····';
 
   @override
-  String get xlsxMappingEmptyMessage =>
-      'Chóósé á spréádshéét tó máp íts cólúmns óntó á témpláté.····················';
+  String get xlsxMappingEmptyMessage => 'Chóósé á spréádshéét tó máp íts cólúmns óntó á témpláté.····················';
 
   @override
   String get xlsxMappingConfirm => 'Créáté témpláté······';
@@ -14166,20 +12806,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get xlsxMappingDefaultName => 'Spréádshéét····';
 
   @override
-  String get xlsxMappingMissing =>
-      'Thát spréádshéét ís nó lóngér ón thís dévícé.················';
+  String get xlsxMappingMissing => 'Thát spréádshéét ís nó lóngér ón thís dévícé.················';
 
   @override
-  String get xlsxMappingMissingRecovery =>
-      'Chóósé thé spréádshéét ágáín, thén try ágáín.················';
+  String get xlsxMappingMissingRecovery => 'Chóósé thé spréádshéét ágáín, thén try ágáín.················';
 
   @override
-  String get xlsxMappingExists =>
-      'Á cópy óf thát spréádshéét ís álréády ín thís prójéct.···················';
+  String get xlsxMappingExists => 'Á cópy óf thát spréádshéét ís álréády ín thís prójéct.···················';
 
   @override
-  String get xlsxMappingExistsRecovery =>
-      'Rénámé thé spréádshéét, thén try ágáín.··············';
+  String get xlsxMappingExistsRecovery => 'Rénámé thé spréádshéét, thén try ágáín.··············';
 
   @override
   String get rowAliasesTitle => 'Rów álíásés····';
@@ -14188,8 +12824,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get rowAliasesEmptyHeadline => 'Nó róws tó námé······';
 
   @override
-  String get rowAliasesEmptyMessage =>
-      'Ímpórt spréádshéét róws fírst, thén ádd thé lócál námés thát shóúld mátch thém.····························';
+  String get rowAliasesEmptyMessage => 'Ímpórt spréádshéét róws fírst, thén ádd thé lócál námés thát shóúld mátch thém.····························';
 
   @override
   String get rowAliasesField => 'Álíásés···';
@@ -14204,12 +12839,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get rowAliasesColumn => 'Álíás cólúmn·····';
 
   @override
-  String get rowAliasesInvalidColumn =>
-      'Thát cólúmn ís nót ín thé spréádshéét.··············';
+  String get rowAliasesInvalidColumn => 'Thát cólúmn ís nót ín thé spréádshéét.··············';
 
   @override
-  String get rowAliasesInvalidColumnRecovery =>
-      'Éntér á cólúmn léttér shówn ín thé spréádshéét.·················';
+  String get rowAliasesInvalidColumnRecovery => 'Éntér á cólúmn léttér shówn ín thé spréádshéét.·················';
 
   @override
   String get rowAliasesNone => 'Nó álíásés yét·····';
@@ -14230,19 +12863,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get checklistImportRows => 'Ímpórt róws····';
 
   @override
-  String get checklistMappingIncomplete =>
-      'Chóósé án ídéntífíér ánd á lábél cólúmn.··············';
+  String get checklistMappingIncomplete => 'Chóósé án ídéntífíér ánd á lábél cólúmn.··············';
 
   @override
-  String get checklistMappingRecovery =>
-      'Cónfírm bóth cólúmns béfóré ímpórtíng thé róws.·················';
+  String get checklistMappingRecovery => 'Cónfírm bóth cólúmns béfóré ímpórtíng thé róws.·················';
 
   @override
   String get checklistEmptyHeadline => 'Nóthíng ón thé chécklíst·········';
 
   @override
-  String get checklistEmptyMessage =>
-      'Ímpórt spréádshéét róws tó séé whát ís stíll míssíng.···················';
+  String get checklistEmptyMessage => 'Ímpórt spréádshéét róws tó séé whát ís stíll míssíng.···················';
 
   @override
   String get checklistFound => 'Fóúnd··';
@@ -14255,11 +12885,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String checklistProgress(Object group, int found, int total) {
-    final intl.NumberFormat foundNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat foundNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String foundString = foundNumberFormat.format(found);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return '$group · Fóúnd ····$foundString óf ··$totalString';
@@ -14269,16 +12897,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get detectionProfileTitle => 'Détéctíón····';
 
   @override
-  String get detectionProfileExplain =>
-      'Á phótó ís mátchéd tó thís témpláté fróm thésé sígnáls. Á négátívé kéywórd rúlés ít óút.·······························';
+  String get detectionProfileExplain => 'Á phótó ís mátchéd tó thís témpláté fróm thésé sígnáls. Á négátívé kéywórd rúlés ít óút.·······························';
 
   @override
-  String get detectionProfileEmptyHeadline =>
-      'Nó témpláté tó cónfígúré·········';
+  String get detectionProfileEmptyHeadline => 'Nó témpláté tó cónfígúré·········';
 
   @override
-  String get detectionProfileEmptyMessage =>
-      'Ópén á témpláté fírst, thén sét hów á phótó ís mátchéd tó ít.······················';
+  String get detectionProfileEmptyMessage => 'Ópén á témpláté fírst, thén sét hów á phótó ís mátchéd tó ít.······················';
 
   @override
   String get detectionProfileClasses => 'Óbjéct clássés·····';
@@ -14299,20 +12924,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get detectionProfileHint => 'Sépáráté wíth á cómmá········';
 
   @override
-  String get detectionProfileNoPatterns =>
-      'Ídéntífíér páttérns cómé fróm fíéld válídátíón. Ádd á páttérn ón á fíéld fírst.····························';
+  String get detectionProfileNoPatterns => 'Ídéntífíér páttérns cómé fróm fíéld válídátíón. Ádd á páttérn ón á fíéld fírst.····························';
 
   @override
-  String get detectionProfileNoDatasets =>
-      'Línkéd dátáséts cómé fróm lóókúp fíélds. Bínd á lóókúp fírst.······················';
+  String get detectionProfileNoDatasets => 'Línkéd dátáséts cómé fróm lóókúp fíélds. Bínd á lóókúp fírst.······················';
 
   @override
-  String get detectionProfileMissing =>
-      'Thát témpláté ís nó lóngér ón thís dévícé.···············';
+  String get detectionProfileMissing => 'Thát témpláté ís nó lóngér ón thís dévícé.···············';
 
   @override
-  String get detectionProfileMissingRecovery =>
-      'Ópén thé témpláté líst ánd try ágáín.·············';
+  String get detectionProfileMissingRecovery => 'Ópén thé témpláté líst ánd try ágáín.·············';
 
   @override
   String get templatesDelete => 'Délété témpláté······';
@@ -14323,10 +12944,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String templatesDeleteMessage(
-    Object fieldsCountfields,
-    Object recordsCountrecords,
-  ) {
+  String templatesDeleteMessage(Object fieldsCountfields, Object recordsCountrecords) {
     return 'Thís hídés ····$fieldsCountfields. $recordsCountrecords stáy ón thís témpláté.·········';
   }
 
@@ -14338,9 +12956,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String templateFieldRowTitle(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Fíéld ···$nString';
@@ -14362,19 +12978,15 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String templatesDeleteFieldMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$countString récórds hóld á válúé. Thósé válúés stáy ánd éxpórt ás rétíréd.·······················',
-      one:
-          '1 récórd hólds á válúé. Thát válúé stáys ánd éxpórts ás rétíréd.·······················',
-      zero:
-          'Nó récórds hóld á válúé. Thé fíéld léávés thís témpláté. Éxístíng válúés stáy ánd éxpórt ás rétíréd.···································',
+      other: '$countString récórds hóld á válúé. Thósé válúés stáy ánd éxpórt ás rétíréd.·······················',
+      one: '1 récórd hólds á válúé. Thát válúé stáys ánd éxpórts ás rétíréd.·······················',
+      zero: 'Nó récórds hóld á válúé. Thé fíéld léávés thís témpláté. Éxístíng válúés stáy ánd éxpórt ás rétíréd.···································',
     );
     return '$_temp0';
   }
@@ -14383,8 +12995,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get templatesFieldsEmptyHeadline => 'Nó fíélds yét·····';
 
   @override
-  String get templatesFieldsEmptyMessage =>
-      'Ádd á fíéld só thís témpláté cán cáptúré.···············';
+  String get templatesFieldsEmptyMessage => 'Ádd á fíéld só thís témpláté cán cáptúré.···············';
 
   @override
   String get fieldRequired => 'Réqúíréd···';
@@ -14508,8 +13119,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get fieldKeepAnyway => 'Kéép ánywáy····';
 
   @override
-  String get fieldTwoFactsWarning =>
-      'Thís lábél pácks twó fácts. Splít ít íntó twó fíélds, ór kéép thís óné ánywáy.····························';
+  String get fieldTwoFactsWarning => 'Thís lábél pácks twó fácts. Splít ít íntó twó fíélds, ór kéép thís óné ánywáy.····························';
 
   @override
   String get fieldDefaultValue => 'Défáúlt válúé·····';
@@ -14589,8 +13199,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get fieldHidden => 'Hídé fróm cáptúré ánd éxpórt··········';
 
   @override
-  String get fieldHiddenHelp =>
-      'Válúés álréády cáptúréd stáy ón thé récórd.················';
+  String get fieldHiddenHelp => 'Válúés álréády cáptúréd stáy ón thé récórd.················';
 
   @override
   String get fieldValidationTitle => 'Válídátíón····';
@@ -14599,8 +13208,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get fieldValidationEmptyHeadline => 'Nó válídátíón yét······';
 
   @override
-  String get fieldValidationEmptyMessage =>
-      'Ádd á páttérn, léngth, rángé ór réqúíréd-wíth rúlé.··················';
+  String get fieldValidationEmptyMessage => 'Ádd á páttérn, léngth, rángé ór réqúíréd-wíth rúlé.··················';
 
   @override
   String get fieldPattern => 'Páttérn···';
@@ -14648,8 +13256,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get fieldOptionsEmptyHeadline => 'Nó chóícés yét·····';
 
   @override
-  String get fieldOptionsEmptyMessage =>
-      'Ádd á chóícé só cáptúré hás sóméthíng tó píck.·················';
+  String get fieldOptionsEmptyMessage => 'Ádd á chóícé só cáptúré hás sóméthíng tó píck.·················';
 
   @override
   String get fieldOptionLabel => 'Chóícé námé····';
@@ -14667,8 +13274,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get fieldAddEmptyHeadline => 'Nó témpláté tó édít·······';
 
   @override
-  String get fieldAddEmptyMessage =>
-      'Ópén thé témpláté líst ánd píck á témpláté fírst.··················';
+  String get fieldAddEmptyMessage => 'Ópén thé témpláté líst ánd píck á témpláté fírst.··················';
 
   @override
   String get requiredColumnsTitle => 'Réqúíréd cólúmns······';
@@ -14677,8 +13283,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get requiredColumnsEmptyHeadline => 'Nó cólúmns tó sét······';
 
   @override
-  String get requiredColumnsEmptyMessage =>
-      'Ádd á fíéld fírst, thén chóósé whát thís prójéct ínsísts ón.·····················';
+  String get requiredColumnsEmptyMessage => 'Ádd á fíéld fírst, thén chóósé whát thís prójéct ínsísts ón.·····················';
 
   @override
   String get requiredColumnHide => 'Hídé··';
@@ -14716,15 +13321,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get identityFieldsTitle => 'Ídéntíty fíélds······';
 
   @override
-  String get identityFieldsExplain =>
-      'Thésé fíélds décídé whéthér twó récórds áré thé sámé thíng.·····················';
+  String get identityFieldsExplain => 'Thésé fíélds décídé whéthér twó récórds áré thé sámé thíng.·····················';
 
   @override
   String get identityFieldsEmptyHeadline => 'Nó fíélds tó márk······';
 
   @override
-  String get identityFieldsEmptyMessage =>
-      'Ádd á fíéld fírst, thén chóósé whích ónés ídéntífy á récórd.·····················';
+  String get identityFieldsEmptyMessage => 'Ádd á fíéld fírst, thén chóósé whích ónés ídéntífy á récórd.·····················';
 
   @override
   String get outputMappingTitle => 'Óútpút cólúmns·····';
@@ -14733,38 +13336,31 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get outputMappingEmptyHeadline => 'Nó cólúmns tó máp······';
 
   @override
-  String get outputMappingEmptyMessage =>
-      'Ádd á fíéld fírst, thén chóósé whéré éách óné wrítés.···················';
+  String get outputMappingEmptyMessage => 'Ádd á fíéld fírst, thén chóósé whéré éách óné wrítés.···················';
 
   @override
-  String get outputMappingDuplicate =>
-      'Twó fíélds cánnót wríté tó thé sámé cólúmn.················';
+  String get outputMappingDuplicate => 'Twó fíélds cánnót wríté tó thé sámé cólúmn.················';
 
   @override
-  String get outputMappingDuplicateRecovery =>
-      'Gívé éách fíéld íts ówn cólúmn, thén sávé.···············';
+  String get outputMappingDuplicateRecovery => 'Gívé éách fíéld íts ówn cólúmn, thén sávé.···············';
 
   @override
-  String get outputMappingBuiltHint =>
-      'Héádérs áré générátéd fróm thé fíéld lábéls. Yóú cán chángé thém.·······················';
+  String get outputMappingBuiltHint => 'Héádérs áré générátéd fróm thé fíéld lábéls. Yóú cán chángé thém.·······················';
 
   @override
-  String get outputMappingImportedHint =>
-      'Thésé léttérs cámé fróm thé wórkbóók. Yóú cán chángé thém.·····················';
+  String get outputMappingImportedHint => 'Thésé léttérs cámé fróm thé wórkbóók. Yóú cán chángé thém.·····················';
 
   @override
   String get templateMigrationTitle => 'Móvé récórds·····';
 
   @override
-  String get templateMigrationExplain =>
-      'Récórds stáy ón thé vérsíón théy wéré cáptúréd úndér úntíl yóú móvé thém.··························';
+  String get templateMigrationExplain => 'Récórds stáy ón thé vérsíón théy wéré cáptúréd úndér úntíl yóú móvé thém.··························';
 
   @override
   String get templateMigrationEmptyHeadline => 'Nóthíng tó móvé······';
 
   @override
-  String get templateMigrationEmptyMessage =>
-      'Évéry récórd ís álréády ón thís témpláté vérsíón.··················';
+  String get templateMigrationEmptyMessage => 'Évéry récórd ís álréády ón thís témpláté vérsíón.··················';
 
   @override
   String get templateMigrationAdded => 'Áddéd fíélds·····';
@@ -14805,10 +13401,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String templateListSubtitle(
-    Object fieldsCountfields,
-    Object recordsCountrecords,
-  ) {
+  String templateListSubtitle(Object fieldsCountfields, Object recordsCountrecords) {
     return '$fieldsCountfields · $recordsCountrecords';
   }
 
@@ -14819,8 +13412,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get templatesLibraryEmptyHeadline => 'Nó shíppéd témplátés·······';
 
   @override
-  String get templatesLibraryEmptyMessage =>
-      'Créáté á blánk témpláté tó stárt cáptúríng.················';
+  String get templatesLibraryEmptyMessage => 'Créáté á blánk témpláté tó stárt cáptúríng.················';
 
   @override
   String get templatesAdd => 'Ádd tó thís prójéct·······';
@@ -14835,8 +13427,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get shippedAddedToProject => 'Áddéd tó thís prójéct········';
 
   @override
-  String get shippedLibrarySearchHint =>
-      'Séárch ór déscríbé yóúr wórk··········';
+  String get shippedLibrarySearchHint => 'Séárch ór déscríbé yóúr wórk··········';
 
   @override
   String shippedAreaTitle(Object code, Object title) {
@@ -14849,23 +13440,15 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String shippedCategoryHeading(
-    Object shippedCatalogueCategoryTitlecodetitle,
-    int count,
-  ) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+  String shippedCategoryHeading(Object shippedCatalogueCategoryTitlecodetitle, int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$shippedCatalogueCategoryTitlecodetitle · $countString';
   }
 
   @override
-  String shippedCatalogueSubtitle(
-    Object code,
-    Object recordType,
-    Object fieldsCountfields,
-  ) {
+  String shippedCatalogueSubtitle(Object code, Object recordType, Object fieldsCountfields) {
     return '$code · $recordType · $fieldsCountfields';
   }
 
@@ -14909,10 +13492,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get shippedPrivacyTierLabel => 'Súggéstéd prívácy ánd tíér··········';
 
   @override
-  String shippedPrivacyTier(
-    Object shippedPrivacyLabelprivacy,
-    Object shippedTierLabelrollout,
-  ) {
+  String shippedPrivacyTier(Object shippedPrivacyLabelprivacy, Object shippedTierLabelrollout) {
     return '$shippedPrivacyLabelprivacy · $shippedTierLabelrollout';
   }
 
@@ -14961,8 +13541,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get navExports => 'Éxpórts···';
 
   @override
-  String get operatorNameUse =>
-      'Úséd ón évéry récórd yóú cáptúré fróm thís dévícé.··················';
+  String get operatorNameUse => 'Úséd ón évéry récórd yóú cáptúré fróm thís dévícé.··················';
 
   @override
   String get operatorName => 'Námé··';
@@ -15004,16 +13583,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get contextHierarchyEmptyHeadline => 'Nó cóntéxt lévéls······';
 
   @override
-  String get contextHierarchyEmptyMessage =>
-      'Ádd fíéld kéys fróm á témpláté tó búíld á híérárchy, ór léávé nóné.························';
+  String get contextHierarchyEmptyMessage => 'Ádd fíéld kéys fróm á témpláté tó búíld á híérárchy, ór léávé nóné.························';
 
   @override
   String get contextAddLevel => 'Ádd lévél····';
 
   @override
   String contextLevelRow(int level, Object fieldKey) {
-    final intl.NumberFormat levelNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat levelNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String levelString = levelNumberFormat.format(level);
 
     return 'Lévél ···$levelString · $fieldKey';
@@ -15023,41 +13600,34 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get contextUseTemplateLevels => 'Úsé témpláté lévéls·······';
 
   @override
-  String get contextTemplateFailureHeadline =>
-      'Témpláté lévéls cóúld nót lóád···········';
+  String get contextTemplateFailureHeadline => 'Témpláté lévéls cóúld nót lóád···········';
 
   @override
-  String get contextTemplateFailureMessage =>
-      'Try ágáín. Yóúr sávéd cóntéxt hás nót chángéd.·················';
+  String get contextTemplateFailureMessage => 'Try ágáín. Yóúr sávéd cóntéxt hás nót chángéd.·················';
 
   @override
   String get contextNoTemplatesHeadline => 'Nó prójéct témplátés·······';
 
   @override
-  String get contextNoTemplatesMessage =>
-      'Áttách ór créáté á témpláté béfóré chóósíng cóntéxt fíélds.·····················';
+  String get contextNoTemplatesMessage => 'Áttách ór créáté á témpláté béfóré chóósíng cóntéxt fíélds.·····················';
 
   @override
   String get contextOpenTemplates => 'Ádd témplátés·····';
 
   @override
-  String get contextNoDeclaredLevelsHeadline =>
-      'Nó témpláté lévéls décláréd··········';
+  String get contextNoDeclaredLevelsHeadline => 'Nó témpláté lévéls décláréd··········';
 
   @override
-  String get contextNoDeclaredLevelsMessage =>
-      'Sét á pósítívé cóntéxt lévél ón témpláté fíélds, ór ádd lévéls mánúálly.··························';
+  String get contextNoDeclaredLevelsMessage => 'Sét á pósítívé cóntéxt lévél ón témpláté fíélds, ór ádd lévéls mánúálly.··························';
 
   @override
   String get contextNoEligibleFieldsHeadline => 'Nó fíélds áváíláblé·······';
 
   @override
-  String get contextNoEligibleFieldsMessage =>
-      'Évéry témpláté fíéld ís álréády úséd ás á cóntéxt lévél.····················';
+  String get contextNoEligibleFieldsMessage => 'Évéry témpláté fíéld ís álréády úséd ás á cóntéxt lévél.····················';
 
   @override
-  String get contextTemplateConflictHeadline =>
-      'Témpláté lévéls cónflíct·········';
+  String get contextTemplateConflictHeadline => 'Témpláté lévéls cónflíct·········';
 
   @override
   String contextTemplateConflictMessage(Object conflicts) {
@@ -15099,29 +13669,22 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get contextPinnedTitle => 'Pínnéd fíélds·····';
 
   @override
-  String get contextPinnedEmptyHeadline =>
-      'Nó pínnáblé cóntéxt fíélds··········';
+  String get contextPinnedEmptyHeadline => 'Nó pínnáblé cóntéxt fíélds··········';
 
   @override
-  String get contextPinnedEmptyMessage =>
-      'Márk fíélds ás pínnéd cóntéxt ón á témpláté tó réúsé thém dúríng cáptúré.··························';
+  String get contextPinnedEmptyMessage => 'Márk fíélds ás pínnéd cóntéxt ón á témpláté tó réúsé thém dúríng cáptúré.··························';
 
   @override
   String get contextMarkPinnable => 'Márk á fíéld ás pínnáblé·········';
 
   @override
-  String get contextPinnedRelevance =>
-      'Pínnéd cóntéxt ís réúséd ón éách néw récórd úntíl yóú chángé ít.·······················';
+  String get contextPinnedRelevance => 'Pínnéd cóntéxt ís réúséd ón éách néw récórd úntíl yóú chángé ít.·······················';
 
   @override
   String get contextCascadeTitle => 'Cléár lówér lévéls?·······';
 
   @override
-  String contextCascadeMessage(
-    Object levelLabel,
-    Object newValue,
-    Object andnamed,
-  ) {
+  String contextCascadeMessage(Object levelLabel, Object newValue, Object andnamed) {
     return 'Chángé ···$levelLabel tó ··$newValue? $andnamed wíll bé cléáréd.······';
   }
 
@@ -15135,8 +13698,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get contextPresetsEmptyHeadline => 'Nó préséts yét·····';
 
   @override
-  String get contextPresetsEmptyMessage =>
-      'Sávé thé cúrrént cóntéxt, thén ápply thé prését ín óné táp.·····················';
+  String get contextPresetsEmptyMessage => 'Sávé thé cúrrént cóntéxt, thén ápply thé prését ín óné táp.·····················';
 
   @override
   String get contextPresetSave => 'Sávé prését····';
@@ -15148,8 +13710,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get contextPresetsChip => 'Préséts···';
 
   @override
-  String get contextPresetsHint =>
-      'Sávé thé cúrrént válúés, ór swítch róóms ín óné táp.···················';
+  String get contextPresetsHint => 'Sávé thé cúrrént válúés, ór swítch róóms ín óné táp.···················';
 
   @override
   String get contextPresetName => 'Prését námé····';
@@ -15179,8 +13740,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get contextPresetOverwriteTitle => 'Réplácé prését?······';
 
   @override
-  String get contextPresetOverwriteMessage =>
-      'Á prését wíth thát námé álréády éxísts. Réplácé ít?··················';
+  String get contextPresetOverwriteMessage => 'Á prését wíth thát námé álréády éxísts. Réplácé ít?··················';
 
   @override
   String get contextPresetReplace => 'Réplácé···';
@@ -15197,8 +13757,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get contextMovementTitle => 'Cónfírm cóntéxt······';
 
   @override
-  String get contextMovementMessage =>
-      'Yóú hávé móvéd. Ís thé cúrrént cóntéxt stíll córréct?···················';
+  String get contextMovementMessage => 'Yóú hávé móvéd. Ís thé cúrrént cóntéxt stíll córréct?···················';
 
   @override
   String get contextMovementChange => 'Chángé cóntéxt·····';
@@ -15231,34 +13790,28 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get settingsContextAutoClear =>
-      'Cléár thé lówést lévél whén ídlé············';
+  String get settingsContextAutoClear => 'Cléár thé lówést lévél whén ídlé············';
 
   @override
-  String get settingsContextAutoClearEffect =>
-      'Óff úntíl yóú túrn ít ón. Cléárs ónly thé lówést lévél, ánd yóú cán úndó.··························';
+  String get settingsContextAutoClearEffect => 'Óff úntíl yóú túrn ít ón. Cléárs ónly thé lówést lévél, ánd yóú cán úndó.··························';
 
   @override
   String settingsContextIdleSubtitle(int minutes) {
-    final intl.NumberFormat minutesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat minutesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String minutesString = minutesNumberFormat.format(minutes);
 
     return 'Áftér ···$minutesString mínútés wíth nó chángé.·········';
   }
 
   @override
-  String get settingsContextMovement =>
-      'Cónfírm cóntéxt áftér móvémént···········';
+  String get settingsContextMovement => 'Cónfírm cóntéxt áftér móvémént···········';
 
   @override
-  String get settingsContextMovementEffect =>
-      'Óff úntíl yóú túrn ít ón. Ásks yóú tó cónfírm. Ít dóés nót chángé cóntéxt. Nééds GPS ánd lócátíón álréády állówéd.········································';
+  String get settingsContextMovementEffect => 'Óff úntíl yóú túrn ít ón. Ásks yóú tó cónfírm. Ít dóés nót chángé cóntéxt. Nééds GPS ánd lócátíón álréády állówéd.········································';
 
   @override
   String settingsContextDistanceSubtitle(int metres) {
-    final intl.NumberFormat metresNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat metresNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String metresString = metresNumberFormat.format(metres);
 
     return 'Áftér ···$metresString métrés.···';
@@ -15268,13 +13821,11 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsContextIdle => 'Cléár cóntéxt áftér·······';
 
   @override
-  String get settingsContextIdleEffect =>
-      'Hów lóng wíth nó chángé béfóré thé lówést lévél cléárs.····················';
+  String get settingsContextIdleEffect => 'Hów lóng wíth nó chángé béfóré thé lówést lévél cléárs.····················';
 
   @override
   String settingsContextIdleOption(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -15290,13 +13841,11 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsContextDistance => 'Ásk whén Í móvé······';
 
   @override
-  String get settingsContextDistanceEffect =>
-      'Hów fár yóú móvé béfóré Táptúré ásks yóú tó cónfírm thé cóntéxt.·······················';
+  String get settingsContextDistanceEffect => 'Hów fár yóú móvé béfóré Táptúré ásks yóú tó cónfírm thé cóntéxt.·······················';
 
   @override
   String settingsContextDistanceOption(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -15315,8 +13864,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureSaveAndAnalyse => 'Sávé ánd prócéss······';
 
   @override
-  String get captureProcessNeedsNetwork =>
-      'Sávé ráw nów. Prócéss ít óncé thís dévícé ís ónlíné.···················';
+  String get captureProcessNeedsNetwork => 'Sávé ráw nów. Prócéss ít óncé thís dévícé ís ónlíné.···················';
 
   @override
   String get captureSaveRaw => 'Sávé ráw···';
@@ -15325,34 +13873,28 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureNoPhotosHeadline => 'Nó phótós yét·····';
 
   @override
-  String get captureNoPhotosMessage =>
-      'Ádd á phótó, ímpórt á fílé, ór typé á cáptíón tó stárt.····················';
+  String get captureNoPhotosMessage => 'Ádd á phótó, ímpórt á fílé, ór typé á cáptíón tó stárt.····················';
 
   @override
   String get captureProjectLabel => 'Prójéct···';
 
   @override
-  String get captureChooseProject =>
-      'Chóósé á prójéct tó stárt cáptúríng.·············';
+  String get captureChooseProject => 'Chóósé á prójéct tó stárt cáptúríng.·············';
 
   @override
-  String get captureCreateProjectFirst =>
-      'Créáté á prójéct béfóré cáptúríng.············';
+  String get captureCreateProjectFirst => 'Créáté á prójéct béfóré cáptúríng.············';
 
   @override
-  String get captureNoProjectMessage =>
-      'Évéry phótó ánd récórd ís fíléd úndér á prójéct.·················';
+  String get captureNoProjectMessage => 'Évéry phótó ánd récórd ís fíléd úndér á prójéct.·················';
 
   @override
-  String get captureNeedsTemplate =>
-      'Ádd á témpláté béfóré cáptúríng.············';
+  String get captureNeedsTemplate => 'Ádd á témpláté béfóré cáptúríng.············';
 
   @override
   String get captureMoreFields => 'Móré fíélds····';
 
   @override
-  String get captureCameraReason =>
-      'Táptúré nééds thé cámérá tó phótógráph éqúípmént ánd dócúménts.·······················';
+  String get captureCameraReason => 'Táptúré nééds thé cámérá tó phótógráph éqúípmént ánd dócúménts.·······················';
 
   @override
   String get captureOpenCameraSettings => 'Ópén séttíngs·····';
@@ -15373,19 +13915,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureDocumentMode => 'Dócúmént módé·····';
 
   @override
-  String get capturePageBoundaryFound =>
-      'Págé édgé fóúnd. Á stráíghténéd cópy ís réády.·················';
+  String get capturePageBoundaryFound => 'Págé édgé fóúnd. Á stráíghténéd cópy ís réády.·················';
 
   @override
   String get captureUseCorrected => 'Úsé córréctéd·····';
 
   @override
-  String get captureCorrectionFailed =>
-      'Thé págé cóúld nót bé stráíghténéd. Thé órígínál ís képt.····················';
+  String get captureCorrectionFailed => 'Thé págé cóúld nót bé stráíghténéd. Thé órígínál ís képt.····················';
 
   @override
-  String get captureNoPageBoundary =>
-      'Nó págé édgé fóúnd. Cáptúréd ás á nórmál phótó.·················';
+  String get captureNoPageBoundary => 'Nó págé édgé fóúnd. Cáptúréd ás á nórmál phótó.·················';
 
   @override
   String get captureFlashOff => 'Flásh óff····';
@@ -15415,12 +13954,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureImportDocument => 'Ímpórt dócúmént······';
 
   @override
-  String get captureDocumentsUnavailable =>
-      'Dócúménts áré nót áváíláblé ón thís dévícé.················';
+  String get captureDocumentsUnavailable => 'Dócúménts áré nót áváíláblé ón thís dévícé.················';
 
   @override
-  String get captureDocumentsUnavailableRecovery =>
-      'Try ágáín áftér réópéníng thé ápp.············';
+  String get captureDocumentsUnavailableRecovery => 'Try ágáín áftér réópéníng thé ápp.············';
 
   @override
   String get tryAnotherFile => 'Try ánóthér fílé······';
@@ -15443,12 +13980,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get pdfNextPage => 'Néxt págé····';
 
   @override
-  String get barcodeUnavailable =>
-      'Bárcódé scánníng ís nót áváíláblé ón thís dévícé.··················';
+  String get barcodeUnavailable => 'Bárcódé scánníng ís nót áváíláblé ón thís dévícé.··················';
 
   @override
-  String get barcodeAllowCamera =>
-      'Állów thé cámérá ín séttíngs tó scán, ór typé thé códé.····················';
+  String get barcodeAllowCamera => 'Állów thé cámérá ín séttíngs tó scán, ór typé thé códé.····················';
 
   @override
   String get barcodeConfirm => 'Úsé thís códé·····';
@@ -15470,9 +14005,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String barcodeScanCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Scánnéd ···$nString';
@@ -15480,9 +14013,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String barcodeCountPosition(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Scán ··$nString';
@@ -15520,8 +14051,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String captionAddToAll(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -15535,8 +14065,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String captionAddToTicked(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -15550,8 +14079,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String captionAdded(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -15570,8 +14098,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captionReplace => 'Réplácé···';
 
   @override
-  String get captureMicReason =>
-      'Táptúré nééds thé mícróphóné fór spókén nótés ón án éxplícít táp.·······················';
+  String get captureMicReason => 'Táptúré nééds thé mícróphóné fór spókén nótés ón án éxplícít táp.·······················';
 
   @override
   String get captureListening => 'Lísténíng…····';
@@ -15589,43 +14116,34 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureStopAudio => 'Stóp··';
 
   @override
-  String get audioRecorderUnavailable =>
-      'Áúdíó récórdíng ís nót áváíláblé ón thís dévícé.·················';
+  String get audioRecorderUnavailable => 'Áúdíó récórdíng ís nót áváíláblé ón thís dévícé.·················';
 
   @override
-  String get microphoneBusy =>
-      'Thé mícróphóné ís ín úsé by ánóthér récórdíng. Stóp ít fírst, thén try ágáín.···························';
+  String get microphoneBusy => 'Thé mícróphóné ís ín úsé by ánóthér récórdíng. Stóp ít fírst, thén try ágáín.···························';
 
   @override
   String get audioStartFailed => 'Récórdíng cóúld nót stárt.··········';
 
   @override
-  String get audioStartFailedRecovery =>
-      'Try ágáín. Nóthíng álréády cáptúréd wás lóst.················';
+  String get audioStartFailedRecovery => 'Try ágáín. Nóthíng álréády cáptúréd wás lóst.················';
 
   @override
-  String get audioTakeLimitReached =>
-      'Thís récórdíng réáchéd thé lóngést táké thís brówsér cán kéép. Évérythíng cáptúréd só fár ís képt.···································';
+  String get audioTakeLimitReached => 'Thís récórdíng réáchéd thé lóngést táké thís brówsér cán kéép. Évérythíng cáptúréd só fár ís képt.···································';
 
   @override
-  String get audioTakeLimitReachedRecovery =>
-      'Stóp thís récórdíng, thén stárt á néw óné tó cóntínúé.···················';
+  String get audioTakeLimitReachedRecovery => 'Stóp thís récórdíng, thén stárt á néw óné tó cóntínúé.···················';
 
   @override
-  String get audioPathOutsideStorage =>
-      'Thé récórdíng múst bé sávéd ínsídé thé prójéct fóldér.···················';
+  String get audioPathOutsideStorage => 'Thé récórdíng múst bé sávéd ínsídé thé prójéct fóldér.···················';
 
   @override
-  String get audioPermissionDenied =>
-      'Mícróphóné pérmíssíón wás nót grántéd.··············';
+  String get audioPermissionDenied => 'Mícróphóné pérmíssíón wás nót grántéd.··············';
 
   @override
-  String get audioPermissionRecovery =>
-      'Állów mícróphóné áccéss ín systém séttíngs, thén try ágáín.·····················';
+  String get audioPermissionRecovery => 'Állów mícróphóné áccéss ín systém séttíngs, thén try ágáín.·····················';
 
   @override
-  String get audioRecorderStatus =>
-      'Réqúéstíng mícróphóné pérmíssíón············';
+  String get audioRecorderStatus => 'Réqúéstíng mícróphóné pérmíssíón············';
 
   @override
   String get audioRecorderStatusRecording => 'Récórdíng····';
@@ -15655,19 +14173,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get liveTranscriptStatusStarting => 'Ópéníng thé mícróphóné········';
 
   @override
-  String get liveTranscriptStatusListening =>
-      'Récórdíng ánd tránscríbíng··········';
+  String get liveTranscriptStatusListening => 'Récórdíng ánd tránscríbíng··········';
 
   @override
   String get liveTranscriptStatusPaused => 'Páúséd···';
 
   @override
-  String get liveTranscriptStatusFinishing =>
-      'Fíníshíng thé tránscrípt·········';
+  String get liveTranscriptStatusFinishing => 'Fíníshíng thé tránscrípt·········';
 
   @override
-  String get liveTranscriptEmpty =>
-      'Spéák, ánd thé wórds áppéár héré.············';
+  String get liveTranscriptEmpty => 'Spéák, ánd thé wórds áppéár héré.············';
 
   @override
   String get liveTranscriptJumpToLatest => 'Júmp tó látést·····';
@@ -15676,27 +14191,22 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get transcriptViewLabel => 'Tránscrípt····';
 
   @override
-  String get liveTranscriptStatusDraining =>
-      'Sávéd. Fíníshíng thé tránscrípt.············';
+  String get liveTranscriptStatusDraining => 'Sávéd. Fíníshíng thé tránscrípt.············';
 
   @override
   String get liveTranscriptStatusSaved => 'Sávéd ón thís dévícé·······';
 
   @override
-  String get liveTranscriptStatusPausedBackground =>
-      'Páúséd whílé Táptúré wás ín thé báckgróúnd. Évérythíng só fár ís sávéd.·························';
+  String get liveTranscriptStatusPausedBackground => 'Páúséd whílé Táptúré wás ín thé báckgróúnd. Évérythíng só fár ís sávéd.·························';
 
   @override
-  String get liveTranscriptStatusPausedInterruption =>
-      'Páúséd by ánóthér ápp ór á cáll.············';
+  String get liveTranscriptStatusPausedInterruption => 'Páúséd by ánóthér ápp ór á cáll.············';
 
   @override
-  String get liveTranscriptMicLost =>
-      'Thé mícróphóné wás túrnéd óff. Whát wás récórdéd ís sávéd.·····················';
+  String get liveTranscriptMicLost => 'Thé mícróphóné wás túrnéd óff. Whát wás récórdéd ís sávéd.·····················';
 
   @override
-  String get liveTranscriptPermissionRevoked =>
-      'Mícróphóné áccéss wás túrnéd óff. Whát wás récórdéd ís sávéd. Állów áccéss tó gó ón, ór stóp tó kéép ít.·····································';
+  String get liveTranscriptPermissionRevoked => 'Mícróphóné áccéss wás túrnéd óff. Whát wás récórdéd ís sávéd. Állów áccéss tó gó ón, ór stóp tó kéép ít.·····································';
 
   @override
   String get liveTranscriptRetrySave => 'Try sávíng ágáín······';
@@ -15708,51 +14218,40 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get liveTranscriptCancelTitle => 'Díscárd thís récórdíng?·········';
 
   @override
-  String get liveTranscriptCancelMessage =>
-      'Ít ís nót áddéd héré. Thé áúdíó fílé stáys ín thé prójéct fóldér.·······················';
+  String get liveTranscriptCancelMessage => 'Ít ís nót áddéd héré. Thé áúdíó fílé stáys ín thé prójéct fóldér.·······················';
 
   @override
-  String get liveTranscriptAudioOnly =>
-      'Récórdíng wíthóút á lívé tránscrípt: nó spééch módél ís áváíláblé.························';
+  String get liveTranscriptAudioOnly => 'Récórdíng wíthóút á lívé tránscrípt: nó spééch módél ís áváíláblé.························';
 
   @override
   String liveTranscriptBehind(int minutes) {
-    final intl.NumberFormat minutesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat minutesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String minutesString = minutesNumberFormat.format(minutes);
 
     String _temp0 = intl.Intl.pluralLogic(
       minutes,
       locale: localeName,
-      other:
-          'Thé tránscrípt ís ·······$minutesString mínútés béhínd. Récórdíng góés ón.·············',
-      one:
-          'Thé tránscrípt ís 1 mínúté béhínd. Récórdíng góés ón.···················',
-      zero:
-          'Thé tránscrípt ís cátchíng úp. Récórdíng góés ón.··················',
+      other: 'Thé tránscrípt ís ·······$minutesString mínútés béhínd. Récórdíng góés ón.·············',
+      one: 'Thé tránscrípt ís 1 mínúté béhínd. Récórdíng góés ón.···················',
+      zero: 'Thé tránscrípt ís cátchíng úp. Récórdíng góés ón.··················',
     );
     return '$_temp0';
   }
 
   @override
-  String get liveTranscriptUtteranceSkipped =>
-      'Á párt cóúld nót bé tránscríbéd. Íts áúdíó ís képt.··················';
+  String get liveTranscriptUtteranceSkipped => 'Á párt cóúld nót bé tránscríbéd. Íts áúdíó ís képt.··················';
 
   @override
-  String get liveTranscriptUnsaved =>
-      'Thé tránscrípt cóúld nót bé sávéd yét. Thé récórdíng ís képt, ánd sávíng ís tríéd ágáín.·······························';
+  String get liveTranscriptUnsaved => 'Thé tránscrípt cóúld nót bé sávéd yét. Thé récórdíng ís képt, ánd sávíng ís tríéd ágáín.·······························';
 
   @override
-  String get liveTranscriptSessionLimit =>
-      'Thé récórdíng réáchéd thé lóngést léngth állówéd ánd wás sávéd.·······················';
+  String get liveTranscriptSessionLimit => 'Thé récórdíng réáchéd thé lóngést léngth állówéd ánd wás sávéd.·······················';
 
   @override
-  String get liveTranscriptStorageStop =>
-      'Stórágé ís fúll, só récórdíng stóppéd. Whát wás récórdéd ís sávéd.························';
+  String get liveTranscriptStorageStop => 'Stórágé ís fúll, só récórdíng stóppéd. Whát wás récórdéd ís sávéd.························';
 
   @override
-  String get liveTranscriptStorageLow =>
-      'Stórágé ís rúnníng lów. Récórdíng góés ón.···············';
+  String get liveTranscriptStorageLow => 'Stórágé ís rúnníng lów. Récórdíng góés ón.···············';
 
   @override
   String get liveTranscriptListTitle => 'Tránscrípts····';
@@ -15783,12 +14282,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get speechOfflineBadge => 'Ón thís dévícé·····';
 
   @override
-  String get liveTranscriptUnavailable =>
-      'Lívé tránscríptíón nééds á spééch módél ón thís dévícé.····················';
+  String get liveTranscriptUnavailable => 'Lívé tránscríptíón nééds á spééch módél ón thís dévícé.····················';
 
   @override
-  String get liveTranscriptUnavailableRecovery =>
-      'Ópén Séttíngs, Lángúágé, tó chéck thé spééch módél.··················';
+  String get liveTranscriptUnavailableRecovery => 'Ópén Séttíngs, Lángúágé, tó chéck thé spééch módél.··················';
 
   @override
   String get navTranscripts => 'Tránscrípts····';
@@ -15803,8 +14300,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get transcriptsEmptyHeadline => 'Nó tránscrípts yét·······';
 
   @override
-  String get transcriptsEmptyMessage =>
-      'Récórd spééch ánd Táptúré wrítés ít dówn ón thís dévícé. Nó cónnéctíón ís néédéd.·····························';
+  String get transcriptsEmptyMessage => 'Récórd spééch ánd Táptúré wrítés ít dówn ón thís dévícé. Nó cónnéctíón ís néédéd.·····························';
 
   @override
   String get transcriptsNoMatchHeadline => 'Nó mátchíng tránscrípts·········';
@@ -15816,8 +14312,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get transcriptsNoProject => 'Ópén á prójéct tó tránscríbé··········';
 
   @override
-  String get transcriptsNoProjectMessage =>
-      'Récórdíngs ánd tránscrípts áré sávéd ín thé prójéct fóldér.·····················';
+  String get transcriptsNoProjectMessage => 'Récórdíngs ánd tránscrípts áré sávéd ín thé prójéct fóldér.·····················';
 
   @override
   String get transcribeTitle => 'Tránscríbé····';
@@ -15826,12 +14321,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get transcriptDetailTitle => 'Tránscrípt····';
 
   @override
-  String get transcriptMissing =>
-      'Thís tránscrípt ís nót ón thís dévícé·············';
+  String get transcriptMissing => 'Thís tránscrípt ís nót ón thís dévícé·············';
 
   @override
-  String get transcriptMissingMessage =>
-      'Ít wás díscárdéd, ór ít bélóngs tó á prójéct thát ís nót héré.······················';
+  String get transcriptMissingMessage => 'Ít wás díscárdéd, ór ít bélóngs tó á prójéct thát ís nót héré.······················';
 
   @override
   String get transcriptOriginCapture => 'Fróm á cáptúré·····';
@@ -15843,8 +14336,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get transcriptOriginStandalone => 'Tránscríptíón·····';
 
   @override
-  String get transcriptStatusInterrupted =>
-      'Íntérrúptéd. Whát wás héárd ís képt.·············';
+  String get transcriptStatusInterrupted => 'Íntérrúptéd. Whát wás héárd ís képt.·············';
 
   @override
   String get transcriptEditedLabel => 'Édítéd téxt····';
@@ -15856,26 +14348,22 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get transcriptSaveEdit => 'Sávé chángés·····';
 
   @override
-  String get transcriptEditSaved =>
-      'Chángés sávéd. Thé órígínál tránscrípt ís képt.·················';
+  String get transcriptEditSaved => 'Chángés sávéd. Thé órígínál tránscrípt ís képt.·················';
 
   @override
   String get transcriptRevert => 'Gó báck tó thé órígínál·········';
 
   @override
-  String get transcriptRevertTitle =>
-      'Gó báck tó thé órígínál tránscrípt?·············';
+  String get transcriptRevertTitle => 'Gó báck tó thé órígínál tránscrípt?·············';
 
   @override
-  String get transcriptRevertMessage =>
-      'Yóúr chángés áré rémóvéd. Thé órígínál stáys ás ít wás récórdéd.·······················';
+  String get transcriptRevertMessage => 'Yóúr chángés áré rémóvéd. Thé órígínál stáys ás ít wás récórdéd.·······················';
 
   @override
   String get transcriptRevertConfirm => 'Úsé órígínál·····';
 
   @override
-  String get transcriptReverted =>
-      'Thé órígínál tránscrípt ís báck.············';
+  String get transcriptReverted => 'Thé órígínál tránscrípt ís báck.············';
 
   @override
   String get transcriptRename => 'Rénámé···';
@@ -15899,22 +14387,18 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get transcriptNoAudio =>
-      'Thé récórdíng wás nót képt ón thís dévícé.···············';
+  String get transcriptNoAudio => 'Thé récórdíng wás nót képt ón thís dévícé.···············';
 
   @override
   String transcriptGaps(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          '$countString párts óf thé récórdíng áré nót tránscríbéd yét.·················',
-      one:
-          'Óné párt óf thé récórdíng ís nót tránscríbéd yét.··················',
+      other: '$countString párts óf thé récórdíng áré nót tránscríbéd yét.·················',
+      one: 'Óné párt óf thé récórdíng ís nót tránscríbéd yét.··················',
       zero: 'Áll óf thé récórdíng ís tránscríbéd.·············',
     );
     return '$_temp0';
@@ -15927,8 +14411,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get transcriptFinished => 'Thé tránscrípt ís fíníshéd.··········';
 
   @override
-  String get transcriptTranscribeOnDevice =>
-      'Tránscríbé ón thís dévícé·········';
+  String get transcriptTranscribeOnDevice => 'Tránscríbé ón thís dévícé·········';
 
   @override
   String get captureAudioScopeTitle => 'Úsé áúdíó wíth·····';
@@ -15938,8 +14421,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String captureAudioSelectedPhotos(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return 'Séléctéd phótós (······$countString)';
@@ -15947,8 +14429,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String captureAudioAllPhotos(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return 'Áll phótós (·····$countString)';
@@ -15956,8 +14437,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String captureAudioCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -15973,8 +14453,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureDeletePhotoTitle => 'Délété thís phótó?·······';
 
   @override
-  String get captureDeletePhotoMessage =>
-      'Ít léávés thé tráy nów. Thé fílé stáys úntíl thé réténtíón púrgé só yóú cán úndó.·····························';
+  String get captureDeletePhotoMessage => 'Ít léávés thé tráy nów. Thé fílé stáys úntíl thé réténtíón púrgé só yóú cán úndó.·····························';
 
   @override
   String get captureUndoDelete => 'Úndó··';
@@ -15990,8 +14469,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String captureRecoveryMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -16011,16 +14489,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureDiscard => 'Díscárd···';
 
   @override
-  String get captureSessionDiscarded =>
-      'Séssíón díscárdéd. Íts phótós stáy récóvéráblé.·················';
+  String get captureSessionDiscarded => 'Séssíón díscárdéd. Íts phótós stáy récóvéráblé.·················';
 
   @override
   String get captureRapidMode => 'Rápíd módé····';
 
   @override
   String captureRapidItem(int number) {
-    final intl.NumberFormat numberNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat numberNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String numberString = numberNumberFormat.format(number);
 
     return 'Ítém ··$numberString';
@@ -16036,8 +14512,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String captureRapidProcessAll(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return 'Prócéss áll (·····$countString)';
@@ -16045,8 +14520,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String captureRapidQueued(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -16062,8 +14536,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureRapidEmptyHeadline => 'Nó ítéms yét·····';
 
   @override
-  String get captureRapidEmptyMessage =>
-      'Táké phótós óf thé fírst ítém, thén sávé ít tó stárt thé néxt.······················';
+  String get captureRapidEmptyMessage => 'Táké phótós óf thé fírst ítém, thén sávé ít tó stárt thé néxt.······················';
 
   @override
   String captureRapidCurrent(Object photosCountphotos) {
@@ -16084,8 +14557,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureStorageExport => 'Éxpórt···';
 
   @override
-  String get captureNoTemplates =>
-      'Thís prójéct hás nó témplátés yét. Yóú cán cáptúré nów ánd ádd óné látér.··························';
+  String get captureNoTemplates => 'Thís prójéct hás nó témplátés yét. Yóú cán cáptúré nów ánd ádd óné látér.··························';
 
   @override
   String get capturePickTemplate => 'Témpláté···';
@@ -16094,17 +14566,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get capturePinSession => 'Pín fór séssíón······';
 
   @override
-  String get captureTemplatePinned =>
-      'Thís témpláté ís nów úséd héré évéry tímé.···············';
+  String get captureTemplatePinned => 'Thís témpláté ís nów úséd héré évéry tímé.···············';
 
   @override
   String get capturePinContext => 'Pín fór cóntéxt······';
 
   @override
   String captureSelectedCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Séléctéd ····$nString';
@@ -16138,8 +14607,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureQualityBright => 'Thís phótó lóóks óvéréxpóséd.···········';
 
   @override
-  String get captureQualitySmallText =>
-      'Smáll téxt máy bé hárd tó réád.···········';
+  String get captureQualitySmallText => 'Smáll téxt máy bé hárd tó réád.···········';
 
   @override
   String get captureSaved => 'Sávéd··';
@@ -16151,40 +14619,31 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureSaveFailed => 'Sávé fáíléd····';
 
   @override
-  String get captureEnqueueFailed =>
-      'Thé cáptúré wás sávéd, bút prócéssíng cóúld nót bé qúéúéd.·····················';
+  String get captureEnqueueFailed => 'Thé cáptúré wás sávéd, bút prócéssíng cóúld nót bé qúéúéd.·····················';
 
   @override
-  String get captureNeedsEvidence =>
-      'Ádd át léást óné phótó ór á cáptíón béfóré sávíng.··················';
+  String get captureNeedsEvidence => 'Ádd át léást óné phótó ór á cáptíón béfóré sávíng.··················';
 
   @override
-  String get captureNeedsEvidenceRecovery =>
-      'Ádd évídéncé, thén try ágáín.···········';
+  String get captureNeedsEvidenceRecovery => 'Ádd évídéncé, thén try ágáín.···········';
 
   @override
-  String get captureOrderIncomplete =>
-      'Thé phótó órdér ís íncómplété.···········';
+  String get captureOrderIncomplete => 'Thé phótó órdér ís íncómplété.···········';
 
   @override
-  String get captureOrderIncompleteRecovery =>
-      'Kéép évéry phótó ín thé tráy ánd try ágáín.················';
+  String get captureOrderIncompleteRecovery => 'Kéép évéry phótó ín thé tráy ánd try ágáín.················';
 
   @override
-  String get captureChangeNotSaved =>
-      'Thát chángé cóúld nót bé sávéd.···········';
+  String get captureChangeNotSaved => 'Thát chángé cóúld nót bé sávéd.···········';
 
   @override
-  String get captureChangeNotSavedRecovery =>
-      'Try ágáín. Nóthíng álréády cáptúréd wás lóst.················';
+  String get captureChangeNotSavedRecovery => 'Try ágáín. Nóthíng álréády cáptúréd wás lóst.················';
 
   @override
-  String get captureRecordsUnavailable =>
-      'Sávéd récórds cánnót bé édítéd ón thís dévícé.·················';
+  String get captureRecordsUnavailable => 'Sávéd récórds cánnót bé édítéd ón thís dévícé.·················';
 
   @override
-  String get captureRecordsUnavailableRecovery =>
-      'Ópén thé récórd ón á dévícé thát stórés récórds.·················';
+  String get captureRecordsUnavailableRecovery => 'Ópén thé récórd ón á dévícé thát stórés récórds.·················';
 
   @override
   String get statusNoTemplate => 'Nó témpláté····';
@@ -16210,13 +14669,11 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsOfflineTitle => 'Stáy ófflíné·····';
 
   @override
-  String get settingsOfflineEffect =>
-      'Évérythíng stíll wórks éxcépt séndíng.··············';
+  String get settingsOfflineEffect => 'Évérythíng stíll wórks éxcépt séndíng.··············';
 
   @override
   String unprocessedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -16230,15 +14687,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get offlineWorking =>
-      'Yóú áré ófflíné. Cáptúrés stáy ón thís dévícé.·················';
+  String get offlineWorking => 'Yóú áré ófflíné. Cáptúrés stáy ón thís dévícé.·················';
 
   @override
   String get somethingWentWrong => 'Sóméthíng wént wróng·······';
 
   @override
-  String get workStillOnDevice =>
-      'Yóúr wórk ís stíll ón thís dévícé.············';
+  String get workStillOnDevice => 'Yóúr wórk ís stíll ón thís dévícé.············';
 
   @override
   String get restart => 'Réstárt···';
@@ -16258,8 +14713,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get notFoundRecovery =>
-      'Try ágáín tó gó báck tó Prójécts.············';
+  String get notFoundRecovery => 'Try ágáín tó gó báck tó Prójécts.············';
 
   @override
   String get appNameDev => 'Táptúré Dév····';
@@ -16271,8 +14725,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsGroupProfileCapture => 'Prófílé ánd cáptúré·······';
 
   @override
-  String get settingsGroupIntelligenceAppearance =>
-      'Íntéllígéncé ánd áppéáráncé··········';
+  String get settingsGroupIntelligenceAppearance => 'Íntéllígéncé ánd áppéáráncé··········';
 
   @override
   String get settingsGroupStorageSecurity => 'Stórágé ánd sécúríty·······';
@@ -16281,19 +14734,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsGroupAbout => 'Ábóút··';
 
   @override
-  String get settingsOperatorSubtitle =>
-      'Námé, ínítíáls ánd cóntáct ón thís dévícé.···············';
+  String get settingsOperatorSubtitle => 'Námé, ínítíáls ánd cóntáct ón thís dévícé.···············';
 
   @override
-  String get settingsCaptureSubtitle =>
-      'Cámérá, dátés, lócátíón ánd hów néw fílés áré náméd.···················';
+  String get settingsCaptureSubtitle => 'Cámérá, dátés, lócátíón ánd hów néw fílés áré náméd.···················';
 
   @override
   String get settingsCaptureTitle => 'Cáptúré défáúlts······';
 
   @override
-  String get settingsRelaySubtitle =>
-      'Sénd chángés bétwéén thís prójéct\'s dévícés.················';
+  String get settingsRelaySubtitle => 'Sénd chángés bétwéén thís prójéct\'s dévícés.················';
 
   @override
   String get settingsAiTitle => 'ÁÍ·';
@@ -16311,8 +14761,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsAppLanguage => 'Ápp lángúágé·····';
 
   @override
-  String get settingsAppLanguageEffect =>
-      'Énglísh. Scrééns ánd mésságés úsé thís lángúágé.·················';
+  String get settingsAppLanguageEffect => 'Énglísh. Scrééns ánd mésságés úsé thís lángúágé.·················';
 
   @override
   String get settingsVoiceLanguage => 'Vóícé lángúágé·····';
@@ -16326,19 +14775,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get settingsSpeechEnginePlatform =>
-      'Spééch ís túrnéd íntó téxt by thís dévícé’s ówn spééch sérvícé, ón thé dévícé ónly.······························';
+  String get settingsSpeechEnginePlatform => 'Spééch ís túrnéd íntó téxt by thís dévícé’s ówn spééch sérvícé, ón thé dévícé ónly.······························';
 
   @override
-  String get settingsSpeechEngineNone =>
-      'Vóícé ínpút ís nót áváíláblé ón thís dévícé yét.·················';
+  String get settingsSpeechEngineNone => 'Vóícé ínpút ís nót áváíláblé ón thís dévícé yét.·················';
 
   @override
   String get settingsSpeechQuality => 'Tránscríptíón qúálíty········';
 
   @override
-  String get settingsSpeechQualityEffect =>
-      'Áútómátíc chóósés á módél thát fíts thís dévícé.·················';
+  String get settingsSpeechQualityEffect => 'Áútómátíc chóósés á módél thát fíts thís dévícé.·················';
 
   @override
   String get settingsSpeechQualityAuto => 'Áútómátíc····';
@@ -16347,8 +14793,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsSpeechQualityFast => 'Fástér, úsés léss báttéry·········';
 
   @override
-  String get settingsSpeechQualityAccurate =>
-      'Móré áccúráté, nééds á stróngér dévícé··············';
+  String get settingsSpeechQualityAccurate => 'Móré áccúráté, nééds á stróngér dévícé··············';
 
   @override
   String get settingsSpeechModels => 'Spééch módéls·····';
@@ -16395,8 +14840,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get settingsSpeechTooLarge =>
-      'Tóó lárgé fór thé mémóry thís dévícé hás fréé. Á smállér módél ís úséd.·························';
+  String get settingsSpeechTooLarge => 'Tóó lárgé fór thé mémóry thís dévícé hás fréé. Á smállér módél ís úséd.·························';
 
   @override
   String get settingsSpeechVerify => 'Vérífy···';
@@ -16428,8 +14872,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get settingsSpeechRemoveMessage =>
-      'Íts fílé ís délétéd fróm thís dévícé. Spééch úsés á smállér módél úntíl yóú ímpórt ít ágáín.·································';
+  String get settingsSpeechRemoveMessage => 'Íts fílé ís délétéd fróm thís dévícé. Spééch úsés á smállér módél úntíl yóú ímpórt ít ágáín.·································';
 
   @override
   String settingsSpeechRemoved(Object model) {
@@ -16458,8 +14901,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsAppearanceTitle => 'Áppéáráncé····';
 
   @override
-  String get settingsAppearanceSubtitle =>
-      'Systém, líght, dárk ór óútdóór.···········';
+  String get settingsAppearanceSubtitle => 'Systém, líght, dárk ór óútdóór.···········';
 
   @override
   String get themeModeSystem => 'Systém···';
@@ -16477,42 +14919,34 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsStorageTitle => 'Stórágé···';
 
   @override
-  String get settingsStorageSubtitle =>
-      'Spácé úséd, cáché ánd hów lóng fílés stáy.···············';
+  String get settingsStorageSubtitle => 'Spácé úséd, cáché ánd hów lóng fílés stáy.···············';
 
   @override
   String get settingsFilesTitle => 'Fílés··';
 
   @override
-  String get settingsFilesSubtitle =>
-      'Ímpórt, éxpórt, úplóáds ánd mérgés.·············';
+  String get settingsFilesSubtitle => 'Ímpórt, éxpórt, úplóáds ánd mérgés.·············';
 
   @override
-  String get settingsFilesExportSubtitle =>
-      'Sávé thé ópén prójéct ás á páckágé ór spréádshéét.··················';
+  String get settingsFilesExportSubtitle => 'Sávé thé ópén prójéct ás á páckágé ór spréádshéét.··················';
 
   @override
-  String get settingsFilesImportSubtitle =>
-      'Bríng ín á prójéct páckágé ór á spréádshéét.················';
+  String get settingsFilesImportSubtitle => 'Bríng ín á prójéct páckágé ór á spréádshéét.················';
 
   @override
-  String get settingsFilesMergeSubtitle =>
-      'Cómbíné á páckágé fróm ánóthér dévícé íntó thé ópén prójéct.·····················';
+  String get settingsFilesMergeSubtitle => 'Cómbíné á páckágé fróm ánóthér dévícé íntó thé ópén prójéct.·····················';
 
   @override
-  String get settingsFilesNoProject =>
-      'Ópén á prójéct tó éxpórt ít ór mérgé íntó ít.················';
+  String get settingsFilesNoProject => 'Ópén á prójéct tó éxpórt ít ór mérgé íntó ít.················';
 
   @override
-  String get settingsFilesUploadsSubtitle =>
-      'Whát wás sént tó éách déstínátíón.············';
+  String get settingsFilesUploadsSubtitle => 'Whát wás sént tó éách déstínátíón.············';
 
   @override
   String get settingsSecurityTitle => 'Sécúríty···';
 
   @override
-  String get settingsSecuritySubtitle =>
-      'Ápp lóck ánd éxpórt éncryptíón.···········';
+  String get settingsSecuritySubtitle => 'Ápp lóck ánd éxpórt éncryptíón.···········';
 
   @override
   String get settingsAboutTitle => 'Ábóút··';
@@ -16521,19 +14955,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsAboutSubtitle => 'Vérsíón ánd lícéncés.········';
 
   @override
-  String get settingsTemplatesSubtitle =>
-      'Créáté, ímpórt ánd édít thís prójéct\'s témplátés.··················';
+  String get settingsTemplatesSubtitle => 'Créáté, ímpórt ánd édít thís prójéct\'s témplátés.··················';
 
   @override
-  String get settingsQueueSubtitle =>
-      'Récórds wáítíng tó bé prócésséd.············';
+  String get settingsQueueSubtitle => 'Récórds wáítíng tó bé prócésséd.············';
 
   @override
   String get settingsCamera => 'Cámérá···';
 
   @override
-  String get settingsCameraEffect =>
-      'Úséd át thé stárt óf thé néxt séssíón.··············';
+  String get settingsCameraEffect => 'Úséd át thé stárt óf thé néxt séssíón.··············';
 
   @override
   String get settingsCameraPhoto => 'Phótó··';
@@ -16545,22 +14976,19 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsAutoFillDates => 'Fíll dátés áútómátícálly·········';
 
   @override
-  String get settingsAutoFillDatesEffect =>
-      'Néw cáptúrés gét tódáy wíthóút áskíng.··············';
+  String get settingsAutoFillDatesEffect => 'Néw cáptúrés gét tódáy wíthóút áskíng.··············';
 
   @override
   String get settingsGps => 'GPS··';
 
   @override
-  String get settingsGpsWhyOff =>
-      'Óff úntíl yóú túrn ít ón, só á lócátíón ís névér stóréd by áccídént.························';
+  String get settingsGpsWhyOff => 'Óff úntíl yóú túrn ít ón, só á lócátíón ís névér stóréd by áccídént.························';
 
   @override
   String get settingsPhotoQuality => 'Phótó qúálíty·····';
 
   @override
-  String get settingsPhotoQualityEffect =>
-      'Híghér qúálíty mákés lárgér fílés.············';
+  String get settingsPhotoQualityEffect => 'Híghér qúálíty mákés lárgér fílés.············';
 
   @override
   String get settingsQualityStandard => 'Stándárd···';
@@ -16572,8 +15000,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsFolderStrategy => 'Phótó fóldérs·····';
 
   @override
-  String get settingsFolderStrategyNewFilesOnly =>
-      'Ápplíés tó néw fílés ónly. Éxístíng fílés stáy pút.··················';
+  String get settingsFolderStrategyNewFilesOnly => 'Ápplíés tó néw fílés ónly. Éxístíng fílés stáy pút.··················';
 
   @override
   String get settingsFolderByContext => 'By cóntéxt····';
@@ -16594,8 +15021,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsNamingEdit => 'Fílé námé páttérn······';
 
   @override
-  String get settingsNamingPatternEffect =>
-      'Hów á néw phótó fílé ís náméd.···········';
+  String get settingsNamingPatternEffect => 'Hów á néw phótó fílé ís náméd.···········';
 
   @override
   String settingsCameraSubtitle(Object label, Object settingsCameraEffect) {
@@ -16603,26 +15029,17 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String settingsPhotoQualitySubtitle(
-    Object label,
-    Object settingsPhotoQualityEffect,
-  ) {
+  String settingsPhotoQualitySubtitle(Object label, Object settingsPhotoQualityEffect) {
     return '$label. $settingsPhotoQualityEffect';
   }
 
   @override
-  String settingsNamingSubtitle(
-    Object pattern,
-    Object settingsNamingPatternEffect,
-  ) {
+  String settingsNamingSubtitle(Object pattern, Object settingsNamingPatternEffect) {
     return '$pattern. $settingsNamingPatternEffect';
   }
 
   @override
-  String settingsFolderStrategySubtitle(
-    Object strategy,
-    Object settingsFolderStrategyNewFilesOnly,
-  ) {
+  String settingsFolderStrategySubtitle(Object strategy, Object settingsFolderStrategyNewFilesOnly) {
     return '$strategy. $settingsFolderStrategyNewFilesOnly';
   }
 
@@ -16639,8 +15056,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsStorageRoot => 'Stórágé fóldér·····';
 
   @override
-  String get settingsStorageRootAfterRestart =>
-      'Sávéd. Táptúré úsés thé néw fóldér thé néxt tímé ít ópéns.·····················';
+  String get settingsStorageRootAfterRestart => 'Sávéd. Táptúré úsés thé néw fóldér thé néxt tímé ít ópéns.·····················';
 
   @override
   String get settingsVolumeTotal => 'Tótál··';
@@ -16652,14 +15068,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsVolumeAvailable => 'Áváíláblé····';
 
   @override
-  String settingsVolumeFigures(
-    Object settingsVolumeTotal,
-    Object total,
-    Object settingsVolumeUsed,
-    Object used,
-    Object settingsVolumeAvailable,
-    Object available,
-  ) {
+  String settingsVolumeFigures(Object settingsVolumeTotal, Object total, Object settingsVolumeUsed, Object used, Object settingsVolumeAvailable, Object available) {
     return '$settingsVolumeTotal $total · $settingsVolumeUsed $used · $settingsVolumeAvailable $available';
   }
 
@@ -16670,30 +15079,21 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsHeadroomLow => 'Spácé ís géttíng lów·······';
 
   @override
-  String get settingsHeadroomCritical =>
-      'Nót énóúgh spácé fór á néw phótó············';
+  String get settingsHeadroomCritical => 'Nót énóúgh spácé fór á néw phótó············';
 
   @override
   String get settingsClearCache => 'Cléár cáché····';
 
   @override
-  String get settingsClearCacheEffect =>
-      'Rémóvés dérívéd cópíés ónly. Órígínáls stáy.················';
+  String get settingsClearCacheEffect => 'Rémóvés dérívéd cópíés ónly. Órígínáls stáy.················';
 
   @override
-  String settingsCacheSize(
-    Object settingsCache,
-    Object size,
-    Object settingsClearCacheEffect,
-  ) {
+  String settingsCacheSize(Object settingsCache, Object size, Object settingsClearCacheEffect) {
     return '$settingsCache · $size. $settingsClearCacheEffect';
   }
 
   @override
-  String settingsRetentionSubtitle(
-    Object settingsRetentionDaysdays,
-    Object settingsRetentionEffect,
-  ) {
+  String settingsRetentionSubtitle(Object settingsRetentionDaysdays, Object settingsRetentionEffect) {
     return '$settingsRetentionDaysdays. $settingsRetentionEffect';
   }
 
@@ -16701,22 +15101,19 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsClearCacheTitle => 'Cléár thé cáché?······';
 
   @override
-  String get settingsClearCacheMessage =>
-      'Thúmbnáíls ánd úplóád cópíés wíll bé rémóvéd. Órígínál phótós stáy.························';
+  String get settingsClearCacheMessage => 'Thúmbnáíls ánd úplóád cópíés wíll bé rémóvéd. Órígínál phótós stáy.························';
 
   @override
   String get storageCheckTitle => 'Chéck fílés····';
 
   @override
-  String get storageCheckSubtitle =>
-      'Fínd fílés wíth nó récórd ánd récórds whósé fílé ís góné. Nóthíng ís délétéd.···························';
+  String get storageCheckSubtitle => 'Fínd fílés wíth nó récórd ánd récórds whósé fílé ís góné. Nóthíng ís délétéd.···························';
 
   @override
   String get storageCheckDatabaseHeader => 'Récórds ánd référéncés········';
 
   @override
-  String get storageCheckDatabaseClean =>
-      'Évéry récórd, válúé ánd fílé référéncé ís whólé.·················';
+  String get storageCheckDatabaseClean => 'Évéry récórd, válúé ánd fílé référéncé ís whólé.·················';
 
   @override
   String storageCheckFindingRow(Object table, Object id) {
@@ -16729,20 +15126,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get storageCheckNoProject =>
-      'Ópén á prójéct tó chéck íts fílés.············';
+  String get storageCheckNoProject => 'Ópén á prójéct tó chéck íts fílés.············';
 
   @override
-  String get storageCheckFilesClean =>
-      'Évéry fílé hás íts récórd, ánd évéry récórd hás íts fílé.····················';
+  String get storageCheckFilesClean => 'Évéry fílé hás íts récórd, ánd évéry récórd hás íts fílé.····················';
 
   @override
-  String get storageCheckFilesUnavailable =>
-      'Thís dévícé kééps nó prójéct fóldér, só íts fílés cán\'t bé chéckéd.························';
+  String get storageCheckFilesUnavailable => 'Thís dévícé kééps nó prójéct fóldér, só íts fílés cán\'t bé chéckéd.························';
 
   @override
-  String get storageCheckFilesUnavailableAction =>
-      'Chéck thé fílés ón thé phóné, táblét ór cómpútér thát tóók thém.·······················';
+  String get storageCheckFilesUnavailableAction => 'Chéck thé fílés ón thé phóné, táblét ór cómpútér thát tóók thém.·······················';
 
   @override
   String get storageCheckStrayHeader => 'Fílés wíth nó récórd·······';
@@ -16753,19 +15146,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get storageCheckMissingHeader =>
-      'Récórds whósé fílé ís góné··········';
+  String get storageCheckMissingHeader => 'Récórds whósé fílé ís góné··········';
 
   @override
-  String get storageCheckMissingSubtitle =>
-      'Táp tó márk thé fílé ás míssíng. Thé récórd stáys.··················';
+  String get storageCheckMissingSubtitle => 'Táp tó márk thé fílé ás míssíng. Thé récórd stáys.··················';
 
   @override
   String get storageCheckFlagTitle => 'Márk thé fílé ás míssíng?·········';
 
   @override
-  String get storageCheckFlagMessage =>
-      'Thé récórd ánd íts óthér évídéncé stáy. Íts hístóry nótés thát thís fílé ís góné.·····························';
+  String get storageCheckFlagMessage => 'Thé récórd ánd íts óthér évídéncé stáy. Íts hístóry nótés thát thís fílé ís góné.·····························';
 
   @override
   String get storageCheckFlagConfirm => 'Márk ás míssíng······';
@@ -16783,20 +15173,17 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get storageCheckNoRecords => 'Nó récórds yét·····';
 
   @override
-  String get storageCheckNoRecordsMessage =>
-      'Cáptúré á récórd ín thís prójéct, thén áttách thé fílé tó ít.······················';
+  String get storageCheckNoRecordsMessage => 'Cáptúré á récórd ín thís prójéct, thén áttách thé fílé tó ít.······················';
 
   @override
   String get settingsRetention => 'Kéép délétéd fílés·······';
 
   @override
-  String get settingsRetentionEffect =>
-      'Hów lóng á délétéd fílé cán bé réstóréd.··············';
+  String get settingsRetentionEffect => 'Hów lóng á délétéd fílé cán bé réstóréd.··············';
 
   @override
   String settingsRetentionDays(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -16825,13 +15212,11 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsStorageEmptyHeadline => 'Nó prójéct fóldérs yét········';
 
   @override
-  String get settingsStorageEmptyMessage =>
-      'Spácé úséd áppéárs héré óncé á prójéct hás fílés.··················';
+  String get settingsStorageEmptyMessage => 'Spácé úséd áppéárs héré óncé á prójéct hás fílés.··················';
 
   @override
   String fileSize(int bytes) {
-    final intl.NumberFormat bytesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat bytesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String bytesString = bytesNumberFormat.format(bytes);
 
     return '$bytesString B·';
@@ -16853,15 +15238,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String settingsProjectUse(
-    Object photos,
-    Object settingsDocuments,
-    Object documents,
-    Object settingsAudio,
-    Object audio,
-    Object settingsExports,
-    Object exports,
-  ) {
+  String settingsProjectUse(Object photos, Object settingsDocuments, Object documents, Object settingsAudio, Object audio, Object settingsExports, Object exports) {
     return 'Phótós ···$photos · $settingsDocuments $documents · $settingsAudio $audio · $settingsExports $exports';
   }
 
@@ -16875,8 +15252,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsLicences => 'Lícéncés···';
 
   @override
-  String get settingsLicencesEffect =>
-      'Ópén-sóúrcé lícéncés úséd ín thís ápp.··············';
+  String get settingsLicencesEffect => 'Ópén-sóúrcé lícéncés úséd ín thís ápp.··············';
 
   @override
   String get settingsPlanLink => 'Dévélópmént plán······';
@@ -16885,29 +15261,25 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get settingsSpecLink => 'Spécífícátíón·····';
 
   @override
-  String get settingsLinkCopied =>
-      'Línk cópíéd. Pásté ít íntó á brówsér tó ópén ít.·················';
+  String get settingsLinkCopied => 'Línk cópíéd. Pásté ít íntó á brówsér tó ópén ít.·················';
 
   @override
   String get settingsEmptyHeadline => 'Nó séttíngs yét······';
 
   @override
-  String get settingsEmptyMessage =>
-      'Séttíngs fór thís dévícé wíll áppéár héré.···············';
+  String get settingsEmptyMessage => 'Séttíngs fór thís dévícé wíll áppéár héré.···············';
 
   @override
   String get settingsCaptureEmptyHeadline => 'Nó cáptúré défáúlts yét·········';
 
   @override
-  String get settingsCaptureEmptyMessage =>
-      'Cámérá, dátés ánd GPS wíll áppéár héré.··············';
+  String get settingsCaptureEmptyMessage => 'Cámérá, dátés ánd GPS wíll áppéár héré.··············';
 
   @override
   String get settingsAboutEmptyHeadline => 'Nó vérsíón yét·····';
 
   @override
-  String get settingsAboutEmptyMessage =>
-      'Thé vérsíón ánd lícéncés wíll áppéár héré.···············';
+  String get settingsAboutEmptyMessage => 'Thé vérsíón ánd lícéncés wíll áppéár héré.···············';
 
   @override
   String get appLockUnlockTitle => 'Únlóck Táptúré·····';
@@ -16943,30 +15315,25 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get appLockBiometrics => 'Únlóck wíth thís dévícé·········';
 
   @override
-  String get appLockSetEffect =>
-      'Réqúíréd thé néxt tímé thé ápp ópéns ór rétúrns.·················';
+  String get appLockSetEffect => 'Réqúíréd thé néxt tímé thé ápp ópéns ór rétúrns.·················';
 
   @override
-  String get appLockRemoveEffect =>
-      'Thé néxt ópén wíll nót ásk fór á PÍN.·············';
+  String get appLockRemoveEffect => 'Thé néxt ópén wíll nót ásk fór á PÍN.·············';
 
   @override
   String get appLockRemoveConfirmTitle => 'Rémóvé thé PÍN?······';
 
   @override
-  String get appLockCurrentPinHelper =>
-      'Néédéd tó chángé ór rémóvé thé PÍN.·············';
+  String get appLockCurrentPinHelper => 'Néédéd tó chángé ór rémóvé thé PÍN.·············';
 
   @override
-  String get appLockRemoveNeedsPin =>
-      'Éntér yóúr cúrrént PÍN, thén rémóvé ít.··············';
+  String get appLockRemoveNeedsPin => 'Éntér yóúr cúrrént PÍN, thén rémóvé ít.··············';
 
   @override
   String get appLockOn => 'Ápp lóck ís ón.······';
 
   @override
-  String get appLockOff =>
-      'Ápp lóck ís óff. Sét á PÍN tó réqúíré ít ón láúnch ánd résúmé.······················';
+  String get appLockOff => 'Ápp lóck ís óff. Sét á PÍN tó réqúíré ít ón láúnch ánd résúmé.······················';
 
   @override
   String get appLockPinLength => 'Úsé 4 tó 8 dígíts.·······';
@@ -16978,8 +15345,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get appLockWrongPin => 'Thát PÍN dóés nót mátch.·········';
 
   @override
-  String get appLockRecovery =>
-      'Nóbódy cán rését thís PÍN. Yóúr fílés stáy ón thís dévícé. Nóthíng héré délétés thém.······························';
+  String get appLockRecovery => 'Nóbódy cán rését thís PÍN. Yóúr fílés stáy ón thís dévícé. Nóthíng héré délétés thém.······························';
 
   @override
   String get close => 'Clósé··';
@@ -16988,8 +15354,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get feedback => 'Féédbáck···';
 
   @override
-  String get feedbackButtonHint =>
-      'Ópéns thé féédbáck óptíóns. Drág tó móvé ít.················';
+  String get feedbackButtonHint => 'Ópéns thé féédbáck óptíóns. Drág tó móvé ít.················';
 
   @override
   String get feedbackGive => 'Gívé ús féédbáck······';
@@ -17001,8 +15366,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get feedbackDelete => 'Délété féédbáck······';
 
   @override
-  String get feedbackStaysOnDevice =>
-      'Sávéd ón thís dévícé ónly. Nóthíng ís sént ánywhéré.···················';
+  String get feedbackStaysOnDevice => 'Sávéd ón thís dévícé ónly. Nóthíng ís sént ánywhéré.···················';
 
   @override
   String get feedbackCategoryGeneral => 'Générál···';
@@ -17044,15 +15408,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get feedbackOtherType => 'Whát kínd óf féédbáck ís ít?··········';
 
   @override
-  String get feedbackOtherRequired =>
-      'Sáy whát kínd óf féédbáck ít ís···········';
+  String get feedbackOtherRequired => 'Sáy whát kínd óf féédbáck ít ís···········';
 
   @override
   String get feedbackMessage => 'Yóúr féédbáck·····';
 
   @override
-  String get feedbackMessageHint =>
-      'Whát háppénéd, ór whát wóúld máké thís béttér?·················';
+  String get feedbackMessageHint => 'Whát háppénéd, ór whát wóúld máké thís béttér?·················';
 
   @override
   String get feedbackMessageRequired => 'Wríté yóúr féédbáck·······';
@@ -17076,8 +15438,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get feedbackStopSharing => 'Stóp sháríng wíndów·······';
 
   @override
-  String get feedbackSharingWindow =>
-      'Sháríng á wíndów. Éách táp ádds á scréénshót.················';
+  String get feedbackSharingWindow => 'Sháríng á wíndów. Éách táp ádds á scréénshót.················';
 
   @override
   String get feedbackOtherWindow => 'Éxtérnál wíndów······';
@@ -17089,17 +15450,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get feedbackChoosePhoto => 'Chóósé phótós·····';
 
   @override
-  String get feedbackShotTipScreens =>
-      'Ánóthér scréén: táp Cóntínúé látér, ópén ít, thén táp Scréénshót cúrrént scréén ín thé bár.································';
+  String get feedbackShotTipScreens => 'Ánóthér scréén: táp Cóntínúé látér, ópén ít, thén táp Scréénshót cúrrént scréén ín thé bár.································';
 
   @override
-  String get feedbackShotTipApps =>
-      'Ánóthér ápp: táké á scréénshót wíth yóúr dévícé, thén ádd ít wíth Chóósé phótós.····························';
+  String get feedbackShotTipApps => 'Ánóthér ápp: táké á scréénshót wíth yóúr dévícé, thén ádd ít wíth Chóósé phótós.····························';
 
   @override
   String feedbackAttachImages(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17113,8 +15471,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String feedbackImageCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17137,15 +15494,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String feedbackDiscardDraftMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Thís féédbáck ánd íts ········$countString ímágés wíll bé cléáréd.·········',
+      other: 'Thís féédbáck ánd íts ········$countString ímágés wíll bé cléáréd.·········',
       one: 'Thís féédbáck ánd íts 1 ímágé wíll bé cléáréd.·················',
       zero: 'Thís féédbáck wíll bé cléáréd.···········',
     );
@@ -17156,8 +15511,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get feedbackContinueLater => 'Cóntínúé látér·····';
 
   @override
-  String get feedbackDraftBarHint =>
-      'Ópéns thé féédbáck yóú stártéd. Kéép typíng ór spéákíng héré.······················';
+  String get feedbackDraftBarHint => 'Ópéns thé féédbáck yóú stártéd. Kéép typíng ór spéákíng héré.······················';
 
   @override
   String feedbackShotAdded(Object screen) {
@@ -17165,8 +15519,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get feedbackShotsFull =>
-      'Rémóvé á phótó béfóré áddíng ánóthér.·············';
+  String get feedbackShotsFull => 'Rémóvé á phótó béfóré áddíng ánóthér.·············';
 
   @override
   String feedbackScreenshotOf(Object screen) {
@@ -17195,8 +15548,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get feedbackTo => 'Súbmíttéd tó·····';
 
   @override
-  String get feedbackRangeBackwards =>
-      'Thé stárt ís áftér thé énd. Swáp thém ór cléár óné.··················';
+  String get feedbackRangeBackwards => 'Thé stárt ís áftér thé énd. Swáp thém ór cléár óné.··················';
 
   @override
   String get feedbackScreens => 'Scrééns···';
@@ -17230,11 +15582,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String feedbackMatching(int count, int matching) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
-    final intl.NumberFormat matchingNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat matchingNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String matchingString = matchingNumberFormat.format(matching);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17248,8 +15598,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String feedbackDownloadCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17293,20 +15642,17 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get feedbackEmptyHeadline => 'Nó féédbáck yét······';
 
   @override
-  String get feedbackEmptyMessage =>
-      'Táp Féédbáck ón ány scréén tó wríté thé fírst éntry.···················';
+  String get feedbackEmptyMessage => 'Táp Féédbáck ón ány scréén tó wríté thé fírst éntry.···················';
 
   @override
   String get feedbackNoMatchHeadline => 'Nó féédbáck mátchés·······';
 
   @override
-  String get feedbackNoMatchMessage =>
-      'Chángé ór cléár thé fíltérs tó séé móré.··············';
+  String get feedbackNoMatchMessage => 'Chángé ór cléár thé fíltérs tó séé móré.··············';
 
   @override
   String feedbackSelected(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17321,8 +15667,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String feedbackDeleteCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17337,8 +15682,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String feedbackDeleteTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17355,18 +15699,15 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Théy ánd théír scréénshóts áré rémóvéd fróm thís dévícé fór góód. Yóú cán úndó stráíght áftér.·································',
-      one:
-          'Ít ánd íts scréénshót áré rémóvéd fróm thís dévícé fór góód. Yóú cán úndó stráíght áftér.································',
+      other: 'Théy ánd théír scréénshóts áré rémóvéd fróm thís dévícé fór góód. Yóú cán úndó stráíght áftér.·································',
+      one: 'Ít ánd íts scréénshót áré rémóvéd fróm thís dévícé fór góód. Yóú cán úndó stráíght áftér.································',
     );
     return '$_temp0';
   }
 
   @override
   String feedbackDeleted(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17393,8 +15734,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String appLockWait(num count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17420,15 +15760,11 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String queueUsage(int requests, int cap, int images) {
-    final intl.NumberFormat requestsNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat requestsNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String requestsString = requestsNumberFormat.format(requests);
-    final intl.NumberFormat capNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat capNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String capString = capNumberFormat.format(cap);
-    final intl.NumberFormat imagesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat imagesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String imagesString = imagesNumberFormat.format(images);
 
     return '$requestsString óf ··$capString ónlíné réqúésts tódáy, ·········$imagesString ímágés sént·····';
@@ -17436,8 +15772,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String queueUnprocessedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17452,8 +15787,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String queueQueuedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17468,8 +15802,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String queueFailedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17495,8 +15828,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get queueEmptyHeadline => 'Nóthíng wáítíng······';
 
   @override
-  String get queueEmptyMessage =>
-      'Cáptúréd récórds áppéár héré whén théy áré réády tó prócéss.·····················';
+  String get queueEmptyMessage => 'Cáptúréd récórds áppéár héré whén théy áré réády tó prócéss.·····················';
 
   @override
   String get queueFailedTitle => 'Fáíléd jóbs····';
@@ -17513,16 +15845,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get queueCancel => 'Cáncél···';
 
   @override
-  String get queueCancelled =>
-      'Stóppéd. Thé rést stáy ín thé qúéúé.·············';
+  String get queueCancelled => 'Stóppéd. Thé rést stáy ín thé qúéúé.·············';
 
   @override
   String queueSummary(int succeeded, int failed) {
-    final intl.NumberFormat succeededNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat succeededNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String succeededString = succeededNumberFormat.format(succeeded);
-    final intl.NumberFormat failedNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat failedNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String failedString = failedNumberFormat.format(failed);
 
     return '$succeededString súccéédéd, ·····$failedString fáíléd···';
@@ -17535,12 +15864,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String queueProgress(int done, int failed) {
-    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String doneString = doneNumberFormat.format(done);
-    final intl.NumberFormat failedNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat failedNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String failedString = failedNumberFormat.format(failed);
 
     return 'Prócéssíng: ·····$doneString dóné, ···$failedString fáíléd···';
@@ -17558,13 +15884,11 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get egressSend => 'Sénd··';
 
   @override
-  String get egressDecline =>
-      'Nóthíng wás sént. Thé récórds stáy ín thé qúéúé.·················';
+  String get egressDecline => 'Nóthíng wás sént. Thé récórds stáy ín thé qúéúé.·················';
 
   @override
   String egressBody(int images, Object size) {
-    final intl.NumberFormat imagesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat imagesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String imagesString = imagesNumberFormat.format(images);
 
     return '$imagesString cómprésséd ímágés, ábóút ··········$size. Cáptíóns, fíéld námés, ón-dévícé téxt, cóntéxt ánd prédéfínéd rów lábéls áré ínclúdéd.·······························';
@@ -17574,8 +15898,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get apiKeyTitle => 'Próvídér kéy·····';
 
   @override
-  String get apiKeyCustody =>
-      'Thís kéy lívés ón thís dévícé ónly. Thé úsúál árrángémént ís fór thé órgánísátíón\'s báckénd tó hóld ít.·····································';
+  String get apiKeyCustody => 'Thís kéy lívés ón thís dévícé ónly. Thé úsúál árrángémént ís fór thé órgánísátíón\'s báckénd tó hóld ít.·····································';
 
   @override
   String get apiKeyLabel => 'Próvídér kéy·····';
@@ -17596,8 +15919,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get apiKeyRemoveTitle => 'Rémóvé thé próvídér kéy?·········';
 
   @override
-  String get apiKeyRemoveMessage =>
-      'Thé kéy ís délétéd fróm thís dévícé, ánd ÁÍ góés báck tó yóúr órgánísátíón\'s próvídér.·······························';
+  String get apiKeyRemoveMessage => 'Thé kéy ís délétéd fróm thís dévícé, ánd ÁÍ góés báck tó yóúr órgánísátíón\'s próvídér.·······························';
 
   @override
   String get apiKeySuccess => 'Cónnéctíón súccéédéd.········';
@@ -17609,8 +15931,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get apiKeyNetworkFailed => 'Thé nétwórk ís nót áváíláblé.···········';
 
   @override
-  String get apiKeyTestFailed =>
-      'Thé próvídér ánswéréd wíth án érrór. Try ágáín látér.···················';
+  String get apiKeyTestFailed => 'Thé próvídér ánswéréd wíth án érrór. Try ágáín látér.···················';
 
   @override
   String get aiOperation => 'Ópérátíón····';
@@ -17634,12 +15955,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get aiOperationLabelTranscribeAudio => 'Tránscríbé áúdíó······';
 
   @override
-  String get aiCustodyTheOrganisationBackendHolds =>
-      'Thé órgánísátíón báckénd hólds thé próvídér kéy.·················';
+  String get aiCustodyTheOrganisationBackendHolds => 'Thé órgánísátíón báckénd hólds thé próvídér kéy.·················';
 
   @override
-  String get aiCustodyThisProviderUsesA =>
-      'Thís próvídér úsés á dévícé-héld crédéntíál whén énábléd by án ádmínístrátór.···························';
+  String get aiCustodyThisProviderUsesA => 'Thís próvídér úsés á dévícé-héld crédéntíál whén énábléd by án ádmínístrátór.···························';
 
   @override
   String aiCustodyThisProviderIsCurrently(Object owner) {
@@ -17647,49 +15966,40 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get aiSelectionFallback =>
-      'Thé sávéd próvídér ór módél ís únáváíláblé. Chóósé éxplícítly béfóré ánálysís cán cóntínúé.································';
+  String get aiSelectionFallback => 'Thé sávéd próvídér ór módél ís únáváíláblé. Chóósé éxplícítly béfóré ánálysís cán cóntínúé.································';
 
   @override
-  String get aiProviderUnavailable =>
-      'Thís próvídér ís nót áváíláblé. Prócéssíng wíll rémáín qúéúéd.······················';
+  String get aiProviderUnavailable => 'Thís próvídér ís nót áváíláblé. Prócéssíng wíll rémáín qúéúéd.······················';
 
   @override
-  String get aiSelectionInvalid =>
-      'Chóósé á próvídér ánd módél thát súppórt thís ópérátíón.····················';
+  String get aiSelectionInvalid => 'Chóósé á próvídér ánd módél thát súppórt thís ópérátíón.····················';
 
   @override
   String get templateChoiceTitle => 'Whát ís thís?·····';
 
   @override
-  String get templateChoicePin =>
-      'Úsé thís témpláté fór thé rést óf thís lócátíón·················';
+  String get templateChoicePin => 'Úsé thís témpláté fór thé rést óf thís lócátíón·················';
 
   @override
   String get templateChoiceEmptyHeadline => 'Nó témplátés·····';
 
   @override
-  String get templateChoiceEmptyMessage =>
-      'Ádd á témpláté béfóré chóósíng óné.·············';
+  String get templateChoiceEmptyMessage => 'Ádd á témpláté béfóré chóósíng óné.·············';
 
   @override
   String get templateChoiceOther => 'Sóméthíng élsé·····';
 
   @override
-  String get templateChoiceSkipped =>
-      'Nó témpláté chósén. Thé récórd stáys ín thé qúéúé.··················';
+  String get templateChoiceSkipped => 'Nó témpláté chósén. Thé récórd stáys ín thé qúéúé.··················';
 
   @override
-  String get templateChoiceApplyFailed =>
-      'Thát témpláté cóúld nót bé ápplíéd.·············';
+  String get templateChoiceApplyFailed => 'Thát témpláté cóúld nót bé ápplíéd.·············';
 
   @override
-  String get templateChoiceApplyRecovery =>
-      'Prócéss thé récórd ágáín ánd chóósé óncé móré.·················';
+  String get templateChoiceApplyRecovery => 'Prócéss thé récórd ágáín ánd chóósé óncé móré.·················';
 
   @override
-  String get templateChoiceWaiting =>
-      'Wáítíng fór sóméóné tó chóósé íts témpláté.················';
+  String get templateChoiceWaiting => 'Wáítíng fór sóméóné tó chóósé íts témpláté.················';
 
   @override
   String get processReadOnDevice => 'Réád ón thís dévícé·······';
@@ -17714,11 +16024,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String processingNotificationBody(int succeeded, int failed) {
-    final intl.NumberFormat succeededNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat succeededNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String succeededString = succeededNumberFormat.format(succeeded);
-    final intl.NumberFormat failedNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat failedNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String failedString = failedNumberFormat.format(failed);
 
     return '$succeededString súccéédéd, ·····$failedString fáíléd···';
@@ -17733,16 +16041,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get documentTooLargeRecovery =>
-      'Ópén ít ín thé Táptúré ápp ón á phóné ór cómpútér ínstéád.·····················';
+  String get documentTooLargeRecovery => 'Ópén ít ín thé Táptúré ápp ón á phóné ór cómpútér ínstéád.·····················';
 
   @override
-  String get storedFileMissing =>
-      'Thát éxpórt ís nó lóngér ón thís dévícé.··············';
+  String get storedFileMissing => 'Thát éxpórt ís nó lóngér ón thís dévícé.··············';
 
   @override
-  String get packageProjectMissing =>
-      'Thát prójéct ís nó lóngér ón thís dévícé.···············';
+  String get packageProjectMissing => 'Thát prójéct ís nó lóngér ón thís dévícé.···············';
 
   @override
   String packageTooLarge(Object fileSizebytes, Object fileSizeceiling) {
@@ -17750,48 +16055,37 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get packageTooLargeRecovery =>
-      'Éxpórt fróm thé Táptúré ápp ón á phóné ór cómpútér, whích hándlés lárgér páckágés.·····························';
+  String get packageTooLargeRecovery => 'Éxpórt fróm thé Táptúré ápp ón á phóné ór cómpútér, whích hándlés lárgér páckágés.·····························';
 
   @override
-  String get packageWriteFailed =>
-      'Thé prójéct páckágé cóúld nót bé wríttén.···············';
+  String get packageWriteFailed => 'Thé prójéct páckágé cóúld nót bé wríttén.···············';
 
   @override
-  String get packageRejected =>
-      'Thís páckágé ís lárgér thán thís dévícé cán ópén.··················';
+  String get packageRejected => 'Thís páckágé ís lárgér thán thís dévícé cán ópén.··················';
 
   @override
-  String get packageRejectedThisFileIsNot =>
-      'Thís fílé ís nót á Táptúré prójéct páckágé.················';
+  String get packageRejectedThisFileIsNot => 'Thís fílé ís nót á Táptúré prójéct páckágé.················';
 
   @override
-  String get packageRejectedThisPackageHoldsA =>
-      'Thís páckágé hólds á fílé thát wóúld lánd óútsídé íts prójéct.······················';
+  String get packageRejectedThisPackageHoldsA => 'Thís páckágé hólds á fílé thát wóúld lánd óútsídé íts prójéct.······················';
 
   @override
-  String get packageRejectedThisPackageIsMissing =>
-      'Thís páckágé ís míssíng á fílé ít lísts.··············';
+  String get packageRejectedThisPackageIsMissing => 'Thís páckágé ís míssíng á fílé ít lísts.··············';
 
   @override
-  String get packageRejectedPartOfThisPackage =>
-      'Párt óf thís páckágé cóúld nót bé réád.··············';
+  String get packageRejectedPartOfThisPackage => 'Párt óf thís páckágé cóúld nót bé réád.··············';
 
   @override
-  String get packageRejectedThisPackageWasMade =>
-      'Thís páckágé wás mádé by á néwér vérsíón óf Táptúré.···················';
+  String get packageRejectedThisPackageWasMade => 'Thís páckágé wás mádé by á néwér vérsíón óf Táptúré.···················';
 
   @override
-  String get packageRejectedThisPackageWasChanged =>
-      'Thís páckágé wás chángéd áftér ít wás mádé: á fílé dóés nót mátch íts chécksúm.····························';
+  String get packageRejectedThisPackageWasChanged => 'Thís páckágé wás chángéd áftér ít wás mádé: á fílé dóés nót mátch íts chécksúm.····························';
 
   @override
-  String get packageRejectedThisPackageCouldNot =>
-      'Thís páckágé cóúld nót bé ópénéd.············';
+  String get packageRejectedThisPackageCouldNot => 'Thís páckágé cóúld nót bé ópénéd.············';
 
   @override
-  String get packageRejectedRecovery =>
-      'Nóthíng wás ímpórtéd. Éxpórt thé prójéct ágáín ón thé óthér dévícé, ór úpdáté Táptúré fór á néwér páckágé.······································';
+  String get packageRejectedRecovery => 'Nóthíng wás ímpórtéd. Éxpórt thé prójéct ágáín ón thé óthér dévícé, ór úpdáté Táptúré fór á néwér páckágé.······································';
 
   @override
   String get captureGuideTitle => 'Whát tó cáptúré······';
@@ -17817,18 +16111,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String importHolds(
-    Object recordsCountrecords,
-    Object photosCountphotos,
-    Object fileSizebytes,
-  ) {
+  String importHolds(Object recordsCountrecords, Object photosCountphotos, Object fileSizebytes) {
     return '$recordsCountrecords · $photosCountphotos · $fileSizebytes';
   }
 
   @override
   String photosCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -17856,36 +16145,28 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get importProjectDeletedHere =>
-      'Thís prójéct wás délétéd ón thís dévícé. Á mérgé névér bríngs báck whát wás délétéd.······························';
+  String get importProjectDeletedHere => 'Thís prójéct wás délétéd ón thís dévícé. Á mérgé névér bríngs báck whát wás délétéd.······························';
 
   @override
-  String get importProjectDeletedHereRecovery =>
-      'Réstóré thé prójéct fróm thé récyclé bín, ór ímpórt ón ánóthér dévícé.·························';
+  String get importProjectDeletedHereRecovery => 'Réstóré thé prójéct fróm thé récyclé bín, ór ímpórt ón ánóthér dévícé.·························';
 
   @override
-  String get importProjectAlreadyHere =>
-      'Thís prójéct ís álréády ón thís dévícé.··············';
+  String get importProjectAlreadyHere => 'Thís prójéct ís álréády ón thís dévícé.··············';
 
   @override
-  String get importProjectAlreadyHereRecovery =>
-      'Mérgé thé páckágé íntó ít ínstéád.············';
+  String get importProjectAlreadyHereRecovery => 'Mérgé thé páckágé íntó ít ínstéád.············';
 
   @override
-  String get importNoRoom =>
-      'Théré ís nót énóúgh fréé spácé ón thís dévícé fór thís páckágé.·······················';
+  String get importNoRoom => 'Théré ís nót énóúgh fréé spácé ón thís dévícé fór thís páckágé.·······················';
 
   @override
-  String get importNoRoomRecovery =>
-      'Fréé sómé spácé, thén ímpórt ágáín.·············';
+  String get importNoRoomRecovery => 'Fréé sómé spácé, thén ímpórt ágáín.·············';
 
   @override
-  String get importFileChanged =>
-      'Á fílé ín thís páckágé díd nót cópy córréctly.·················';
+  String get importFileChanged => 'Á fílé ín thís páckágé díd nót cópy córréctly.·················';
 
   @override
-  String get importFailedRecovery =>
-      'Nóthíng wás chángéd. Try ágáín, ór éxpórt thé páckágé ágáín.·····················';
+  String get importFailedRecovery => 'Nóthíng wás chángéd. Try ágáín, ór éxpórt thé páckágé ágáín.·····················';
 
   @override
   String get mergePackage => 'Mérgé á páckágé······';
@@ -17894,15 +16175,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get mergeTargetTitle => 'Mérgé íntó whích prójéct?·········';
 
   @override
-  String get mergeTargetNone =>
-      'Nó prójéct ón thís dévícé úsés thé témplátés thís páckágé nééds.·······················';
+  String get mergeTargetNone => 'Nó prójéct ón thís dévícé úsés thé témplátés thís páckágé nééds.·······················';
 
   @override
   String get compatibilityStatus => 'Cómpátíblé····';
 
   @override
-  String get compatibilityStatusCompatibleWithDifferences =>
-      'Cómpátíblé, wíth dífféréncés··········';
+  String get compatibilityStatusCompatibleWithDifferences => 'Cómpátíblé, wíth dífféréncés··········';
 
   @override
   String get compatibilityStatusNotCompatible => 'Nót cómpátíblé·····';
@@ -17921,8 +16200,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get compatibilityIssueAnotherVersionOfThe =>
-      'Ánóthér vérsíón óf thé témpláté···········';
+  String get compatibilityIssueAnotherVersionOfThe => 'Ánóthér vérsíón óf thé témpláté···········';
 
   @override
   String compatibilityIssueOnlyHere(Object field) {
@@ -17963,15 +16241,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get mergeCount => 'Néw récórds····';
 
   @override
-  String get mergeCountRecordsThisMergeChanges =>
-      'Récórds thís mérgé chángés··········';
+  String get mergeCountRecordsThisMergeChanges => 'Récórds thís mérgé chángés··········';
 
   @override
   String get mergeCountNewPhotos => 'Néw phótós····';
 
   @override
-  String get mergeCountPhotosAlreadyOnThis =>
-      'Phótós álréády ón thís dévícé···········';
+  String get mergeCountPhotosAlreadyOnThis => 'Phótós álréády ón thís dévícé···········';
 
   @override
   String get mergeCountDeletionsToApply => 'Délétíóns tó ápply·······';
@@ -17983,18 +16259,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get mergeCountPossibleDuplicates => 'Póssíblé dúplícátés·······';
 
   @override
-  String get mergeCountValuesKeptAsOn =>
-      'Válúés képt ás ón thís dévícé···········';
+  String get mergeCountValuesKeptAsOn => 'Válúés képt ás ón thís dévícé···········';
 
   @override
-  String get mergeCountAlreadyInAnotherProject =>
-      'Álréády ín ánóthér prójéct héré···········';
+  String get mergeCountAlreadyInAnotherProject => 'Álréády ín ánóthér prójéct héré···········';
 
   @override
   String mergeCountValue(Object label, int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$label: $nString';
@@ -18002,8 +16274,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String mergeSettleConflicts(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18025,26 +16296,22 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get mergeDone => 'Mérgéd···';
 
   @override
-  String get mergeNothing =>
-      'Nóthíng tó mérgé: thís prójéct álréády hólds évérythíng ín thé páckágé.·························';
+  String get mergeNothing => 'Nóthíng tó mérgé: thís prójéct álréády hólds évérythíng ín thé páckágé.·························';
 
   @override
   String get mergeCheckDuplicates => 'Chéck fór póssíblé dúplícátés···········';
 
   @override
-  String get mergeCheckDuplicatesHelper =>
-      'Lísts íncómíng récórds thát lóók líké ónés álréády héré. Yóú décídé fór éách.···························';
+  String get mergeCheckDuplicatesHelper => 'Lísts íncómíng récórds thát lóók líké ónés álréády héré. Yóú décídé fór éách.···························';
 
   @override
   String get mergeCheckingDuplicates => 'Lóókíng fór dúplícátés…·········';
 
   @override
   String conflictProgress(int index, int total) {
-    final intl.NumberFormat indexNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat indexNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String indexString = indexNumberFormat.format(index);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Cónflíct ····$indexString óf ··$totalString';
@@ -18057,20 +16324,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get conflictKindStatus => 'Státús···';
 
   @override
-  String get conflictKindDeletedOnTheOther =>
-      'Délétéd ón thé óthér dévícé··········';
+  String get conflictKindDeletedOnTheOther => 'Délétéd ón thé óthér dévícé··········';
 
   @override
-  String get conflictKindDeletedOnThisDevice =>
-      'Délétéd ón thís dévícé········';
+  String get conflictKindDeletedOnThisDevice => 'Délétéd ón thís dévícé········';
 
   @override
-  String get conflictDeletionTheOtherDeviceDeleted =>
-      'Thé óthér dévícé délétéd thís, bút ít wás chángéd héré síncé.······················';
+  String get conflictDeletionTheOtherDeviceDeleted => 'Thé óthér dévícé délétéd thís, bút ít wás chángéd héré síncé.······················';
 
   @override
-  String get conflictDeletionThisDeviceDeletedThis =>
-      'Thís dévícé délétéd thís, bút thé óthér dévícé chángéd ít síncé.·······················';
+  String get conflictDeletionThisDeviceDeletedThis => 'Thís dévícé délétéd thís, bút thé óthér dévícé chángéd ít síncé.·······················';
 
   @override
   String get conflictThisDevice => 'Thís dévícé····';
@@ -18102,9 +16365,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String mergeKeepAllMine(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Kéép thís dévícé\'s fór áll ··········$nString';
@@ -18112,9 +16373,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String mergeTakeAllIncoming(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Táké íncómíng fór áll ········$nString';
@@ -18128,8 +16387,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String mergeBulkConfirmForConflictOtherFor(int count, Object side) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18154,19 +16412,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get duplicateSignalIdenticalPhoto => 'Ídéntícál phótó······';
 
   @override
-  String get duplicateSignalNearlyTheSamePhoto =>
-      'Néárly thé sámé phótó········';
+  String get duplicateSignalNearlyTheSamePhoto => 'Néárly thé sámé phótó········';
 
   @override
   String get duplicateSignalSameChecklistRow => 'Sámé chécklíst rów·······';
 
   @override
-  String get duplicateSignalSameNamePlaceAnd =>
-      'Sámé námé, plácé ánd tímé·········';
+  String get duplicateSignalSameNamePlaceAnd => 'Sámé námé, plácé ánd tímé·········';
 
   @override
-  String get duplicateSignalSamePlaceCloseIn =>
-      'Sámé plácé, clósé ín tímé, símílár cáptíón···············';
+  String get duplicateSignalSamePlaceCloseIn => 'Sámé plácé, clósé ín tímé, símílár cáptíón···············';
 
   @override
   String get duplicateKeepBoth => 'Kéép bóth····';
@@ -18187,8 +16442,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get mergeNoPackageHeadline => 'Nó páckágé ópén······';
 
   @override
-  String get mergeNoPackageMessage =>
-      'Chóósé Mérgé á páckágé fróm thé prójéct ménú tó píck óné.····················';
+  String get mergeNoPackageMessage => 'Chóósé Mérgé á páckágé fróm thé prójéct ménú tó píck óné.····················';
 
   @override
   String get mergeTemplatesHeading => 'Témplátés····';
@@ -18197,8 +16451,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get mergeCountsHeading => 'Whát thé mérgé dóés·······';
 
   @override
-  String get mergeBlocked =>
-      'Thís páckágé cánnót mérgé íntó thís prójéct úntíl íts témplátés mátch.·························';
+  String get mergeBlocked => 'Thís páckágé cánnót mérgé íntó thís prójéct úntíl íts témplátés mátch.·························';
 
   @override
   String mergeRecordUnnamed(Object short) {
@@ -18214,8 +16467,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get mergeConflictChosen => 'Tákíng íncómíng······';
 
   @override
-  String get mergeConflictChosenKeepingThisDeviceS =>
-      'Kéépíng thís dévícé\'s········';
+  String get mergeConflictChosenKeepingThisDeviceS => 'Kéépíng thís dévícé\'s········';
 
   @override
   String get mergeConflictOpen => 'Nót séttléd yét······';
@@ -18248,8 +16500,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordsEmptyHeadline => 'Nó récórds yét·····';
 
   @override
-  String get recordsEmptyMessage =>
-      'Récórds yóú cáptúré ín thís prójéct áppéár héré.·················';
+  String get recordsEmptyMessage => 'Récórds yóú cáptúré ín thís prójéct áppéár héré.·················';
 
   @override
   String get recordsEmptyAction => 'Cáptúré á récórd······';
@@ -18272,8 +16523,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordsNoProjectHeadline => 'Nó prójéct ópén······';
 
   @override
-  String get recordsNoProjectMessage =>
-      'Récórds bélóng tó á prójéct. Ópén óné tó séé íts récórds.····················';
+  String get recordsNoProjectMessage => 'Récórds bélóng tó á prójéct. Ópén óné tó séé íts récórds.····················';
 
   @override
   String get recordsOpenProject => 'Ópén á prójéct·····';
@@ -18324,8 +16574,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordsFiltersEmptyHeadline => 'Nóthíng tó fíltér yét········';
 
   @override
-  String get recordsFiltersEmptyMessage =>
-      'Cáptúré récórds ín thís prójéct, thén nárrów thém dówn héré.·····················';
+  String get recordsFiltersEmptyMessage => 'Cáptúré récórds ín thís prójéct, thén nárrów thém dówn héré.·····················';
 
   @override
   String get recordsTemplateUnnamed => 'Únnáméd témpláté······';
@@ -18395,8 +16644,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordDetailBackToList => 'Báck tó thé líst······';
 
   @override
-  String get recordDetailDeletedNotice =>
-      'Thís récórd ís ín thé récyclé bín. Réstóré ít tó chángé ít ágáín.·······················';
+  String get recordDetailDeletedNotice => 'Thís récórd ís ín thé récyclé bín. Réstóré ít tó chángé ít ágáín.·······················';
 
   @override
   String get recordDetailSendToReview => 'Sénd tó révíéw·····';
@@ -18414,32 +16662,26 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordDetailEditPhotos => 'Édít phótós ánd cáptíóns·········';
 
   @override
-  String get recordDetailBusy =>
-      'Á chángé tó thís récórd ís stíll béíng sávéd.················';
+  String get recordDetailBusy => 'Á chángé tó thís récórd ís stíll béíng sávéd.················';
 
   @override
-  String get recordDetailBusyAction =>
-      'Wáít fór ít tó fínísh, thén try ágáín.··············';
+  String get recordDetailBusyAction => 'Wáít fór ít tó fínísh, thén try ágáín.··············';
 
   @override
-  String get recordDetailNoValues =>
-      'Thís récórd hás nó válúés yét.···········';
+  String get recordDetailNoValues => 'Thís récórd hás nó válúés yét.···········';
 
   @override
   String get recordDetailContextTitle => 'Cóntéxt···';
 
   @override
-  String get recordDetailContextEmpty =>
-      'Nó cóntéxt wás sét whén thís récórd wás cáptúréd.··················';
+  String get recordDetailContextEmpty => 'Nó cóntéxt wás sét whén thís récórd wás cáptúréd.··················';
 
   @override
-  String get recordDetailProvenanceTitle =>
-      'Whéré thé válúés cámé fróm··········';
+  String get recordDetailProvenanceTitle => 'Whéré thé válúés cámé fróm··········';
 
   @override
   String recordDetailValuesCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18483,11 +16725,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordPhotoPosition(int position, int total) {
-    final intl.NumberFormat positionNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat positionNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String positionString = positionNumberFormat.format(position);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Phótó ···$positionString óf ··$totalString';
@@ -18538,10 +16778,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String recordBandWithScore(
-    Object band,
-    Object numberFormatpercentPatternformat,
-  ) {
+  String recordBandWithScore(Object band, Object numberFormatpercentPatternformat) {
     return '$band, $numberFormatpercentPatternformat';
   }
 
@@ -18552,8 +16789,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordHistoryEmptyHeadline => 'Nó hístóry yét·····';
 
   @override
-  String get recordHistoryEmptyMessage =>
-      'Cáptúrés, prócéssíng rúns, édíts, áppróváls, mérgés ánd éxpórts óf thís récórd áppéár héré. Gó báck tó thé récórd tó chángé ít.·············································';
+  String get recordHistoryEmptyMessage => 'Cáptúrés, prócéssíng rúns, édíts, áppróváls, mérgés ánd éxpórts óf thís récórd áppéár héré. Gó báck tó thé récórd tó chángé ít.·············································';
 
   @override
   String get recordHistoryBackToRecord => 'Báck tó thé récórd·······';
@@ -18632,8 +16868,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get recordHistoryTemplateGone =>
-      'Á témpláté nót ón thís dévícé···········';
+  String get recordHistoryTemplateGone => 'Á témpláté nót ón thís dévícé···········';
 
   @override
   String recordHistoryProcessed(Object provider) {
@@ -18655,8 +16890,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordHistoryProcessingFailedOtherAttempts(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18755,8 +16989,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordValueEditTitle => 'Édít válúé····';
 
   @override
-  String get recordEditApprovedNotice =>
-      'Thís récórd ís áppróvéd. Sávíng á chángé sénds ít báck tó révíéw.·······················';
+  String get recordEditApprovedNotice => 'Thís récórd ís áppróvéd. Sávíng á chángé sénds ít báck tó révíéw.·······················';
 
   @override
   String get recordValueRetired => 'Rétíréd···';
@@ -18765,40 +16998,32 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordRetiredValuesTitle => 'Rétíréd válúés·····';
 
   @override
-  String get recordRetiredValuesMessage =>
-      'Thís récórd\'s témpláté nó lóngér hás thésé fíélds. Théír válúés áré képt ás théy wéré ánd cán\'t bé édítéd.······································';
+  String get recordRetiredValuesMessage => 'Thís récórd\'s témpláté nó lóngér hás thésé fíélds. Théír válúés áré képt ás théy wéré ánd cán\'t bé édítéd.······································';
 
   @override
   String get recordValueEvidenceRemoved => 'Évídéncé rémóvéd······';
 
   @override
-  String get recordTemplateMissingNotice =>
-      'Thís récórd\'s témpláté ís nó lóngér ón thís dévícé. Íts válúés áré képt; chángé íts témpláté tó édít thém.······································';
+  String get recordTemplateMissingNotice => 'Thís récórd\'s témpláté ís nó lóngér ón thís dévícé. Íts válúés áré képt; chángé íts témpláté tó édít thém.······································';
 
   @override
-  String get recordEditDeletedHeadline =>
-      'Thís récórd ís ín thé récyclé bín············';
+  String get recordEditDeletedHeadline => 'Thís récórd ís ín thé récyclé bín············';
 
   @override
-  String get recordEditDeletedMessage =>
-      'Réstóré ít fróm thé récyclé bín, thén chángé íts válúés.····················';
+  String get recordEditDeletedMessage => 'Réstóré ít fróm thé récyclé bín, thén chángé íts válúés.····················';
 
   @override
-  String get recordFieldMissingHeadline =>
-      'Thís fíéld ís nót ón thé récórd···········';
+  String get recordFieldMissingHeadline => 'Thís fíéld ís nót ón thé récórd···········';
 
   @override
-  String get recordFieldMissingMessage =>
-      'Thé récórd\'s témpláté nó lóngér hás thís fíéld. Gó báck tó thé récórd.·························';
+  String get recordFieldMissingMessage => 'Thé récórd\'s témpláté nó lóngér hás thís fíéld. Gó báck tó thé récórd.·························';
 
   @override
-  String get recordValueCannotEmpty =>
-      'Á sávéd válúé cánnót bé émptíéd. Typé thé córréctéd válúé ínstéád.························';
+  String get recordValueCannotEmpty => 'Á sávéd válúé cánnót bé émptíéd. Typé thé córréctéd válúé ínstéád.························';
 
   @override
   String recordValuesSaved(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18825,17 +17050,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordPhotosProcessMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Yóú áddéd ····$countString phótós. Prócéssíng ágáín réáds thém ánd fílls fíélds thát áré stíll émpty. Válúés álréády ón thé récórd stáy ás théy áré.···········································',
-      one:
-          'Yóú áddéd 1 phótó. Prócéssíng ágáín réáds ít ánd fílls fíélds thát áré stíll émpty. Válúés álréády ón thé récórd stáy ás théy áré.··············································',
+      other: 'Yóú áddéd ····$countString phótós. Prócéssíng ágáín réáds thém ánd fílls fíélds thát áré stíll émpty. Válúés álréády ón thé récórd stáy ás théy áré.···········································',
+      one: 'Yóú áddéd 1 phótó. Prócéssíng ágáín réáds ít ánd fílls fíélds thát áré stíll émpty. Válúés álréády ón thé récórd stáy ás théy áré.··············································',
     );
     return '$_temp0';
   }
@@ -18844,8 +17066,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordPhotosProcessConfirm => 'Prócéss ágáín·····';
 
   @override
-  String get recordPhotosProcessQueued =>
-      'Récórd qúéúéd fór prócéssíng.···········';
+  String get recordPhotosProcessQueued => 'Récórd qúéúéd fór prócéssíng.···········';
 
   @override
   String get recordTemplateChangeTitle => 'Chángé témpláté······';
@@ -18859,13 +17080,11 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordTemplateChangeChoose => 'Móvé tó···';
 
   @override
-  String get recordTemplateChangeHint =>
-      'Chóósé á témpláté tó séé whát háppéns tó éách válúé béfóré ánythíng chángés.···························';
+  String get recordTemplateChangeHint => 'Chóósé á témpláté tó séé whát háppéns tó éách válúé béfóré ánythíng chángés.···························';
 
   @override
   String recordTemplateChangeMapped(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18879,8 +17098,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordTemplateChangeRetired(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18894,8 +17112,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordTemplateChangeAdded(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18909,8 +17126,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordTemplateChangeRestored(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18923,23 +17139,19 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get recordTemplateChangeRetiredNotice =>
-      'Rétíréd válúés stáy ón thé récórd ánd áré névér délétéd. Théy cómé báck íf thé récórd móvés tó á témpláté wíth théír fíéld.············································';
+  String get recordTemplateChangeRetiredNotice => 'Rétíréd válúés stáy ón thé récórd ánd áré névér délétéd. Théy cómé báck íf thé récórd móvés tó á témpláté wíth théír fíéld.············································';
 
   @override
-  String get recordTemplateChangeNoValues =>
-      'Nó válúé chángés: thé récórd hás nó válúés fór thís témpláté tó táké óvér, ánd thé témpláté hás nó fíélds.······································';
+  String get recordTemplateChangeNoValues => 'Nó válúé chángés: thé récórd hás nó válúés fór thís témpláté tó táké óvér, ánd thé témpláté hás nó fíélds.······································';
 
   @override
-  String get recordTemplateChangeApprovedNotice =>
-      'Thís récórd ís áppróvéd. Chángíng íts témpláté sénds ít báck tó révíéw.·························';
+  String get recordTemplateChangeApprovedNotice => 'Thís récórd ís áppróvéd. Chángíng íts témpláté sénds ít báck tó révíéw.·························';
 
   @override
   String get recordTemplateChangeApply => 'Chángé témpláté······';
 
   @override
-  String get recordTemplateChanged =>
-      'Témpláté chángéd. Thé récórd ís báck ín révíéw.·················';
+  String get recordTemplateChanged => 'Témpláté chángéd. Thé récórd ís báck ín révíéw.·················';
 
   @override
   String get recordTemplateChangedTemplateChanged => 'Témpláté chángéd.······';
@@ -18948,36 +17160,29 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordTemplateChangeEmptyHeadline => 'Nó óthér témpláté······';
 
   @override
-  String get recordTemplateChangeEmptyMessage =>
-      'Thís prójéct hás ónly thé témpláté thís récórd úsés. Ádd ánóthér témpláté tó thé prójéct, thén móvé thé récórd tó ít.·········································';
+  String get recordTemplateChangeEmptyMessage => 'Thís prójéct hás ónly thé témpláté thís récórd úsés. Ádd ánóthér témpláté tó thé prójéct, thén móvé thé récórd tó ít.·········································';
 
   @override
   String get recordTemplateChangeEmptyAction => 'Ópén témplátés·····';
 
   @override
-  String get recordTemplateChangeGoneHeadline =>
-      'Thís récórd ís nó lóngér ón thís dévícé··············';
+  String get recordTemplateChangeGoneHeadline => 'Thís récórd ís nó lóngér ón thís dévícé··············';
 
   @override
-  String get recordTemplateChangeGoneMessage =>
-      'Clósé thís shéét ánd píck ánóthér récórd.···············';
+  String get recordTemplateChangeGoneMessage => 'Clósé thís shéét ánd píck ánóthér récórd.···············';
 
   @override
-  String get recordTemplateChangeChooseAction =>
-      'Chóósé á témpláté úndér Móvé tó, thén ápply.················';
+  String get recordTemplateChangeChooseAction => 'Chóósé á témpláté úndér Móvé tó, thén ápply.················';
 
   @override
-  String get recordTemplateChangeApplying =>
-      'Thís récórd ís álréády móvíng tó thát témpláté.·················';
+  String get recordTemplateChangeApplying => 'Thís récórd ís álréády móvíng tó thát témpláté.·················';
 
   @override
-  String get recordTemplateChangeApplyingAction =>
-      'Wáít á mómént, thén chéck thé récórd.·············';
+  String get recordTemplateChangeApplyingAction => 'Wáít á mómént, thén chéck thé récórd.·············';
 
   @override
   String recordsDeleteLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -18991,8 +17196,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsDeleteTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19009,10 +17213,8 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Théy móvé tó thé récyclé bín, whéré yóú cán réstóré thém fór ······················$window. Théír phótós stáy ón thís dévícé úntíl thén.·················',
-      one:
-          'Ít móvés tó thé récyclé bín, whéré yóú cán réstóré ít fór ·····················$window. Íts phótós stáy ón thís dévícé úntíl thén.················',
+      other: 'Théy móvé tó thé récyclé bín, whéré yóú cán réstóré thém fór ······················$window. Théír phótós stáy ón thís dévícé úntíl thén.·················',
+      one: 'Ít móvés tó thé récyclé bín, whéré yóú cán réstóré ít fór ·····················$window. Íts phótós stáy ón thís dévícé úntíl thén.················',
     );
     return '$_temp0';
   }
@@ -19022,8 +17224,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsDeleted(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19037,8 +17238,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsNotDeleted(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19051,17 +17251,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String recordsDeletedPartly(
-    Object recordsDeleteddeleted,
-    Object recordsNotDeletedfailed,
-  ) {
+  String recordsDeletedPartly(Object recordsDeleteddeleted, Object recordsNotDeletedfailed) {
     return '$recordsDeleteddeleted. $recordsNotDeletedfailed.';
   }
 
   @override
   String recordsRestored(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19075,8 +17271,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsNotRestored(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19092,8 +17287,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recycleBinTitle => 'Récyclé bín····';
 
   @override
-  String get recycleBinSettingsSubtitle =>
-      'Réstóré á délétéd récórd béfóré ít ís rémóvéd fór góód.····················';
+  String get recycleBinSettingsSubtitle => 'Réstóré á délétéd récórd béfóré ít ís rémóvéd fór góód.····················';
 
   @override
   String recycleBinKeptFor(Object settingsRetentionDaysdays) {
@@ -19110,8 +17304,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recycleBinDaysLeft(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19133,20 +17326,17 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get recycleBinRestoring =>
-      'Thís récórd ís álréády béíng réstóréd.··············';
+  String get recycleBinRestoring => 'Thís récórd ís álréády béíng réstóréd.··············';
 
   @override
-  String get recycleBinRestoringAction =>
-      'Wáít á mómént, thén lóók fór ít ín íts líst.················';
+  String get recycleBinRestoringAction => 'Wáít á mómént, thén lóók fór ít ín íts líst.················';
 
   @override
   String get recycleBinEmpty => 'Émpty récyclé bín······';
 
   @override
   String recycleBinEmptyTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19160,26 +17350,21 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recycleBinEmptyWarning(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Áll ··$countString récórds ín thé récyclé bín ánd théír phótós áré rémóvéd fróm thís dévícé nów. Thís cánnót bé úndóné. Récórds á mérgé stíll nééds stáy úntíl théy hávé béén sháréd.··························································',
-      one:
-          'Thé récórd ín thé récyclé bín ánd íts phótós áré rémóvéd fróm thís dévícé nów. Thís cánnót bé úndóné. Á récórd á mérgé stíll nééds stáys úntíl ít hás béén sháréd.·························································',
+      other: 'Áll ··$countString récórds ín thé récyclé bín ánd théír phótós áré rémóvéd fróm thís dévícé nów. Thís cánnót bé úndóné. Récórds á mérgé stíll nééds stáy úntíl théy hávé béén sháréd.··························································',
+      one: 'Thé récórd ín thé récyclé bín ánd íts phótós áré rémóvéd fróm thís dévícé nów. Thís cánnót bé úndóné. Á récórd á mérgé stíll nééds stáys úntíl ít hás béén sháréd.·························································',
     );
     return '$_temp0';
   }
 
   @override
   String recycleBinEmptyTypeCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Typé ··$nString tó cónfírm····';
@@ -19189,24 +17374,20 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recycleBinEmptyConfirm => 'Rémóvé fór góód······';
 
   @override
-  String get recycleBinEmptyUnavailable =>
-      'Émptyíng ís nót áváíláblé ón thís dévícé. Éách récórd ís rémóvéd fór góód óncé íts dáys rún óút.··································';
+  String get recycleBinEmptyUnavailable => 'Émptyíng ís nót áváíláblé ón thís dévícé. Éách récórd ís rémóvéd fór góód óncé íts dáys rún óút.··································';
 
   @override
-  String get recycleBinEmptyUnavailableAction =>
-      'Réstóré whát yóú nééd béfóré íts dáys rún óút.·················';
+  String get recycleBinEmptyUnavailableAction => 'Réstóré whát yóú nééd béfóré íts dáys rún óút.·················';
 
   @override
-  String get recycleBinEmptying =>
-      'Thé récyclé bín ís álréády béíng émptíéd.···············';
+  String get recycleBinEmptying => 'Thé récyclé bín ís álréády béíng émptíéd.···············';
 
   @override
   String get recycleBinEmptyingAction => 'Wáít fór ít tó fínísh.········';
 
   @override
   String recycleBinEmptied(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19221,8 +17402,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recycleBinEmptiedOtherKeptBecauseA(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19236,8 +17416,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recycleBinEmptiedOtherCouldNotBe(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19251,8 +17430,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsSelectedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19272,8 +17450,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsApproveLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19287,8 +17464,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsArchiveLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19302,8 +17478,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsReprocessLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19317,8 +17492,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsExportLabel(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19332,8 +17506,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsArchiveTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19350,10 +17523,8 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Théy léávé thé récórds líst ánd défáúlt éxpórts, ánd kéép théír válúés ánd phótós. Fíltér by Árchívéd tó fínd thém ágáín.···········································',
-      one:
-          'Ít léávés thé récórds líst ánd défáúlt éxpórts, ánd kééps íts válúés ánd phótós. Fíltér by Árchívéd tó fínd ít ágáín.·········································',
+      other: 'Théy léávé thé récórds líst ánd défáúlt éxpórts, ánd kéép théír válúés ánd phótós. Fíltér by Árchívéd tó fínd thém ágáín.···········································',
+      one: 'Ít léávés thé récórds líst ánd défáúlt éxpórts, ánd kééps íts válúés ánd phótós. Fíltér by Árchívéd tó fínd ít ágáín.·········································',
     );
     return '$_temp0';
   }
@@ -19363,8 +17534,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsReprocessTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19381,10 +17551,8 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Théy gó báck tó thé prócéssíng qúéúé ánd áré réád ágáín fróm thé fírst stép, wíth thé óthér récórds wáítíng ín thís prójéct. Válúés théy álréády hávé áré képt. Áppróvéd ónés nééd révíéw ágáín.····································································',
-      one:
-          'Ít góés báck tó thé prócéssíng qúéúé ánd ís réád ágáín fróm thé fírst stép, wíth thé óthér récórds wáítíng ín thís prójéct. Válúés ít álréády hás áré képt. Íf ít wás áppróvéd, ít nééds révíéw ágáín.······································································',
+      other: 'Théy gó báck tó thé prócéssíng qúéúé ánd áré réád ágáín fróm thé fírst stép, wíth thé óthér récórds wáítíng ín thís prójéct. Válúés théy álréády hávé áré képt. Áppróvéd ónés nééd révíéw ágáín.····································································',
+      one: 'Ít góés báck tó thé prócéssíng qúéúé ánd ís réád ágáín fróm thé fírst stép, wíth thé óthér récórds wáítíng ín thís prójéct. Válúés ít álréády hás áré képt. Íf ít wás áppróvéd, ít nééds révíéw ágáín.······································································',
     );
     return '$_temp0';
   }
@@ -19394,15 +17562,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsExportTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Éxpórt thé prójéct wíth thésé ···········$countString récórds?····',
+      other: 'Éxpórt thé prójéct wíth thésé ···········$countString récórds?····',
       one: 'Éxpórt thé prójéct wíth thís récórd?·············',
     );
     return '$_temp0';
@@ -19410,17 +17576,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsExportMessage(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Án éxpórt ís óné páckágé óf thé whólé prójéct: évéry récórd ín ít, thé ·························$countString séléctéd ínclúdéd, wíth théír phótós. Yóú chóósé whéré ít góés óncé ít ís wríttén.······························',
-      one:
-          'Án éxpórt ís óné páckágé óf thé whólé prójéct: évéry récórd ín ít, thís óné ínclúdéd, wíth théír phótós. Yóú chóósé whéré ít góés óncé ít ís wríttén.·····················································',
+      other: 'Án éxpórt ís óné páckágé óf thé whólé prójéct: évéry récórd ín ít, thé ·························$countString séléctéd ínclúdéd, wíth théír phótós. Yóú chóósé whéré ít góés óncé ít ís wríttén.······························',
+      one: 'Án éxpórt ís óné páckágé óf thé whólé prójéct: évéry récórd ín ít, thís óné ínclúdéd, wíth théír phótós. Yóú chóósé whéré ít góés óncé ít ís wríttén.·····················································',
     );
     return '$_temp0';
   }
@@ -19430,8 +17593,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsApproved(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19445,8 +17607,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsNotApproved(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19460,8 +17621,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsArchived(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19475,8 +17635,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsNotArchived(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19490,8 +17649,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsRequeued(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19505,8 +17663,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String recordsNotRequeued(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19523,10 +17680,8 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other:
-          'Théy wáít ín thé prócéssíng qúéúé; prócéss thém fróm théré óncé yóú áré ónlíné.····························',
-      one:
-          'Ít wáíts ín thé prócéssíng qúéúé; prócéss ít fróm théré óncé yóú áré ónlíné.···························',
+      other: 'Théy wáít ín thé prócéssíng qúéúé; prócéss thém fróm théré óncé yóú áré ónlíné.····························',
+      one: 'Ít wáíts ín thé prócéssíng qúéúé; prócéss ít fróm théré óncé yóú áré ónlíné.···························',
     );
     return '$_temp0';
   }
@@ -19540,21 +17695,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recordsBulkBusy => 'Ánóthér búlk áctíón ís rúnníng.···········';
 
   @override
-  String get recordsBulkBusyAction =>
-      'Wáít fór ít tó fínísh, thén try ágáín.··············';
+  String get recordsBulkBusyAction => 'Wáít fór ít tó fínísh, thén try ágáín.··············';
 
   @override
-  String validationIssueCount(
-    Object validationErrorCounterrors,
-    Object validationWarningCountwarnings,
-  ) {
+  String validationIssueCount(Object validationErrorCounterrors, Object validationWarningCountwarnings) {
     return '$validationErrorCounterrors, $validationWarningCountwarnings';
   }
 
   @override
   String validationErrorCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19568,8 +17718,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String validationWarningCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -19636,16 +17785,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get validationEvidence =>
-      'Thís récórd nééds íts évídéncé béfóré ít cán bé áppróvéd.····················';
+  String get validationEvidence => 'Thís récórd nééds íts évídéncé béfóré ít cán bé áppróvéd.····················';
 
   @override
-  String get validationExpression =>
-      'Thát éxpréssíón cóúld nót bé réád.············';
+  String get validationExpression => 'Thát éxpréssíón cóúld nót bé réád.············';
 
   @override
-  String get validationExpressionAction =>
-      'Úsé fíélds ón thís témpláté, cómpárísóns ánd áríthmétíc ónly.······················';
+  String get validationExpressionAction => 'Úsé fíélds ón thís témpláté, cómpárísóns ánd áríthmétíc ónly.······················';
 
   @override
   String validationUnknownField(Object name) {
@@ -19671,8 +17817,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get duplicateNoDifferenceHeadline => 'Nóthíng dífférs······';
 
   @override
-  String get duplicateNoDifferenceMessage =>
-      'Thésé récórds hóld thé sámé válúés.·············';
+  String get duplicateNoDifferenceMessage => 'Thésé récórds hóld thé sámé válúés.·············';
 
   @override
   String get duplicateCompareTitle => 'Cómpáré récórds······';
@@ -19690,12 +17835,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get duplicateKeepBothNote => 'Kéép bóth ás á nóté·······';
 
   @override
-  String get duplicatePromptQuestion =>
-      'Whát shóúld háppén tó thésé twó récórds?··············';
+  String get duplicatePromptQuestion => 'Whát shóúld háppén tó thésé twó récórds?··············';
 
   @override
-  String get duplicateCompareThenUpdate =>
-      'Cómpáré, thén úpdáté thé éxístíng récórd··············';
+  String get duplicateCompareThenUpdate => 'Cómpáré, thén úpdáté thé éxístíng récórd··············';
 
   @override
   String get duplicatePromptContinue => 'Cóntínúé···';
@@ -19723,28 +17866,20 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String duplicateValueChange(
-    Object existingisEmptyconflictEmpty,
-    Object incomingisEmptyconflictEmpty,
-  ) {
+  String duplicateValueChange(Object existingisEmptyconflictEmpty, Object incomingisEmptyconflictEmpty) {
     return '$existingisEmptyconflictEmpty → $incomingisEmptyconflictEmpty';
   }
 
   @override
-  String duplicateDifferenceLine(
-    Object label,
-    Object duplicateValueChangeexistingincoming,
-  ) {
+  String duplicateDifferenceLine(Object label, Object duplicateValueChangeexistingincoming) {
     return '$label: $duplicateValueChangeexistingincoming';
   }
 
   @override
-  String get duplicateOverrideConfirmTitle =>
-      'Úpdáté thé éxístíng récórd?··········';
+  String get duplicateOverrideConfirmTitle => 'Úpdáté thé éxístíng récórd?··········';
 
   @override
-  String get duplicateOverrideConfirmMessage =>
-      'Thé éxístíng récórd tákés thé néw válúés ánd phótós. Thé válúés ít réplácés stáy ín íts hístóry, ánd thé néw récórd góés tó thé récyclé bín.·················································';
+  String get duplicateOverrideConfirmMessage => 'Thé éxístíng récórd tákés thé néw válúés ánd phótós. Thé válúés ít réplácés stáy ín íts hístóry, ánd thé néw récórd góés tó thé récyclé bín.·················································';
 
   @override
   String get duplicateCarryPhotos => 'Kéép thé néw récórd\'s phótós···········';
@@ -19772,8 +17907,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get duplicateMergeBoth => 'Bóth··';
 
   @override
-  String get duplicateMergeChooseAll =>
-      'Chóósé á válúé fór éách fíéld.···········';
+  String get duplicateMergeChooseAll => 'Chóósé á válúé fór éách fíéld.···········';
 
   @override
   String duplicateBothValues(Object existing, Object incoming) {
@@ -19781,12 +17915,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get duplicateResolvedKeepBoth =>
-      'Bóth récórds képt ánd línkéd··········';
+  String get duplicateResolvedKeepBoth => 'Bóth récórds képt ánd línkéd··········';
 
   @override
-  String get duplicateResolvedDiscard =>
-      'Néw récórd móvéd tó thé récyclé bín·············';
+  String get duplicateResolvedDiscard => 'Néw récórd móvéd tó thé récyclé bín·············';
 
   @override
   String get duplicateResolvedOverride => 'Éxístíng récórd úpdátéd·········';
@@ -19798,20 +17930,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get duplicateDiscardedReason => 'Díscárdéd ás á dúplícáté·········';
 
   @override
-  String get duplicateOverriddenReason =>
-      'Íts válúés úpdátéd án éxístíng récórd·············';
+  String get duplicateOverriddenReason => 'Íts válúés úpdátéd án éxístíng récórd·············';
 
   @override
-  String get duplicateMergedReason =>
-      'Mérgéd íntó án éxístíng récórd···········';
+  String get duplicateMergedReason => 'Mérgéd íntó án éxístíng récórd···········';
 
   @override
-  String get duplicatePairGone =>
-      'Thát páír ís nó lóngér wáítíng fór á chóícé.················';
+  String get duplicatePairGone => 'Thát páír ís nó lóngér wáítíng fór á chóícé.················';
 
   @override
-  String get duplicatePairGoneRecovery =>
-      'Gó báck tó thé dúplícátés líst; ít shóws whát ís léft.···················';
+  String get duplicatePairGoneRecovery => 'Gó báck tó thé dúplícátés líst; ít shóws whát ís léft.···················';
 
   @override
   String get duplicatesScan => 'Chéck fór dúplícátés·······';
@@ -19824,26 +17952,21 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String duplicatesScannedNewDuplicatePairs(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$nString néw dúplícáté páírs·······';
   }
 
   @override
-  String get duplicatesBulkChoose =>
-      'Chóósé óné óútcómé fór thé gróúp············';
+  String get duplicatesBulkChoose => 'Chóósé óné óútcómé fór thé gróúp············';
 
   @override
   String get duplicatesBulkDone => '1 páír résólvéd······';
 
   @override
   String duplicatesBulkDonePairsResolved(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$nString páírs résólvéd······';
@@ -19866,17 +17989,14 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get duplicatesEmptyHeadline => 'Nó dúplícáté páírs·······';
 
   @override
-  String get duplicatesEmptyMessage =>
-      'Páírs áppéár héré whén twó récórds lóók líké thé sámé thíng.·····················';
+  String get duplicatesEmptyMessage => 'Páírs áppéár héré whén twó récórds lóók líké thé sámé thíng.·····················';
 
   @override
   String get duplicatesResolveGroup => 'Résólvé thís gróúp·······';
 
   @override
   String duplicatesBulkTitle(Object choice, int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$choice fór ··$nString récórds?····';
@@ -19884,9 +18004,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String duplicatesBulkMessage(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return 'Thís chángés ·····$nString récórds. Thé óthér gróúps stáy ás théy áré.················';
@@ -19905,8 +18023,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get conflictEmptyHeadline => 'Nó cándídátés·····';
 
   @override
-  String get conflictEmptyMessage =>
-      'Nóthíng wás própóséd fór thís fíéld.·············';
+  String get conflictEmptyMessage => 'Nóthíng wás própóséd fór thís fíéld.·············';
 
   @override
   String conflictBlocksApproval(Object label) {
@@ -19917,8 +18034,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get verificationModeTitle => 'Vérífícátíón módé······';
 
   @override
-  String get verificationModeOn =>
-      'Cáptúré cónfírms thé régístér ínstéád óf stártíng á blánk récórd.·······················';
+  String get verificationModeOn => 'Cáptúré cónfírms thé régístér ínstéád óf stártíng á blánk récórd.·······················';
 
   @override
   String get verificationModeOff => 'Cáptúré stárts á néw récórd.··········';
@@ -19936,8 +18052,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get varianceEmptyHeadline => 'Nó váríáncés·····';
 
   @override
-  String get varianceEmptyMessage =>
-      'Dífféréncés bétwéén thé régístér ánd whát wás fóúnd áppéár héré.·······················';
+  String get varianceEmptyMessage => 'Dífféréncés bétwéén thé régístér ánd whát wás fóúnd áppéár héré.·······················';
 
   @override
   String get varianceMatch => 'Mátch··';
@@ -19949,11 +18064,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get varianceMissing => 'Míssíng···';
 
   @override
-  String varianceDetail(
-    Object status,
-    Object recordedisEmptyconflictEmpty,
-    Object foundisEmptyconflictEmpty,
-  ) {
+  String varianceDetail(Object status, Object recordedisEmptyconflictEmpty, Object foundisEmptyconflictEmpty) {
     return '$status · $recordedisEmptyconflictEmpty → $foundisEmptyconflictEmpty';
   }
 
@@ -19961,8 +18072,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get varianceRegisterNotFound => 'Régístér róws nót fóúnd·········';
 
   @override
-  String get varianceChecklistNotCaptured =>
-      'Chécklíst róws nót cáptúréd··········';
+  String get varianceChecklistNotCaptured => 'Chécklíst róws nót cáptúréd··········';
 
   @override
   String get varianceOpenRecords => 'Ópén récórds·····';
@@ -19986,8 +18096,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get qualityCleanHeadline => 'Réády tó éxpórt······';
 
   @override
-  String get qualityCleanMessage =>
-      'Nóthíng héré stíll blócks á cléán éxpórt.···············';
+  String get qualityCleanMessage => 'Nóthíng héré stíll blócks á cléán éxpórt.···············';
 
   @override
   String get reviewTitle => 'Révíéw···';
@@ -20000,8 +18109,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String reviewConfidentGroup(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return 'Cónfídént (····$countString)';
@@ -20014,8 +18122,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get reviewEmptyHeadline => 'Nóthíng tó révíéw······';
 
   @override
-  String get reviewEmptyMessage =>
-      'Récórds thát nééd á pérsón áppéár héré.··············';
+  String get reviewEmptyMessage => 'Récórds thát nééd á pérsón áppéár héré.··············';
 
   @override
   String get reviewUseRaw => 'Úsé cáptúréd·····';
@@ -20027,8 +18134,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get reviewNoSidesHeadline => 'Nó válúés yét·····';
 
   @override
-  String get reviewNoSidesMessage =>
-      'Thís fíéld hás néíthér á cáptúréd nór á réfínéd válúé.···················';
+  String get reviewNoSidesMessage => 'Thís fíéld hás néíthér á cáptúréd nór á réfínéd válúé.···················';
 
   @override
   String get reviewNotDetected => 'Nót détéctéd·····';
@@ -20067,11 +18173,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String reviewPosition(int index, int total) {
-    final intl.NumberFormat indexNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat indexNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String indexString = indexNumberFormat.format(index);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return '$indexString óf ··$totalString';
@@ -20087,8 +18191,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get reviewQueueDone => 'Révíéw ís fíníshéd·······';
 
   @override
-  String get reviewQueueDoneMessage =>
-      'Évéry récórd ín thís sét hás béén séén.··············';
+  String get reviewQueueDoneMessage => 'Évéry récórd ín thís sét hás béén séén.··············';
 
   @override
   String get reviewQueueEmpty => 'Nó récórds ín thís révíéw·········';
@@ -20115,19 +18218,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get reviewReanalyseEmpty => 'Nó néw própósáls······';
 
   @override
-  String get reviewBlockedDuplicate =>
-      'Thís récórd ís párt óf án únrésólvéd dúplícáté.·················';
+  String get reviewBlockedDuplicate => 'Thís récórd ís párt óf án únrésólvéd dúplícáté.·················';
 
   @override
-  String get reviewBlockedAction =>
-      'Fíx thé náméd fíéld, thén áppróvé ágáín.··············';
+  String get reviewBlockedAction => 'Fíx thé náméd fíéld, thén áppróvé ágáín.··············';
 
   @override
   String get reviewNoConfidence => 'Nó cónfídéncé·····';
 
   @override
-  String get reviewNoConfidenceMessage =>
-      'Thís válúé hás nó cónfídéncé bánd yét.··············';
+  String get reviewNoConfidenceMessage => 'Thís válúé hás nó cónfídéncé bánd yét.··············';
 
   @override
   String get reviewApprovedReason => 'Áppróvéd ín révíéw.·······';
@@ -20139,20 +18239,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get reviewSideReason => 'Fínál sídé chósén ín révíéw.··········';
 
   @override
-  String get reviewRecordSettled =>
-      'Thís récórd ís áppróvéd ór ín thé récyclé bín.·················';
+  String get reviewRecordSettled => 'Thís récórd ís áppróvéd ór ín thé récyclé bín.·················';
 
   @override
-  String get reviewRecordSettledAction =>
-      'Sénd ít báck tó révíéw fróm íts récórd págé, thén try ágáín.·····················';
+  String get reviewRecordSettledAction => 'Sénd ít báck tó révíéw fróm íts récórd págé, thén try ágáín.·····················';
 
   @override
-  String get reviewRecordGone =>
-      'Thát récórd ís nó lóngér ón thís dévícé.··············';
+  String get reviewRecordGone => 'Thát récórd ís nó lóngér ón thís dévícé.··············';
 
   @override
-  String get reviewRecordGoneAction =>
-      'Gó báck tó thé récórds líst ánd ópén ánóthér récórd.···················';
+  String get reviewRecordGoneAction => 'Gó báck tó thé récórds líst ánd ópén ánóthér récórd.···················';
 
   @override
   String get reviewFinalSide => 'Fínál válúé····';
@@ -20165,8 +18261,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String reviewVerifiedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -20202,28 +18297,22 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get reviewEvidenceRegion => 'Whéré thé válúé wás réád·········';
 
   @override
-  String get reviewReanalyseQueued =>
-      'Qúéúéd fór ré-ánálysís. Néw válúés áré ófféréd héré whén ít fíníshés.·························';
+  String get reviewReanalyseQueued => 'Qúéúéd fór ré-ánálysís. Néw válúés áré ófféréd héré whén ít fíníshés.·························';
 
   @override
-  String get reviewReanalysing =>
-      'Ré-ánálysíng. Nóthíng chángés úntíl yóú áccépt á própósál.·····················';
+  String get reviewReanalysing => 'Ré-ánálysíng. Nóthíng chángés úntíl yóú áccépt á própósál.·····················';
 
   @override
   String get reviewProposalsTitle => 'Própóséd válúés······';
 
   @override
-  String reviewProposalLine(
-    Object currentisEmptyrecordFieldEmpty,
-    Object proposed,
-  ) {
+  String reviewProposalLine(Object currentisEmptyrecordFieldEmpty, Object proposed) {
     return 'Nów: ··$currentisEmptyrecordFieldEmpty · Própóséd: ·····$proposed';
   }
 
   @override
   String reviewProposalsApplied(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -20245,8 +18334,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingEmptyHeadline => 'Nó méétíng yét·····';
 
   @override
-  String get meetingEmptyMessage =>
-      'Dáté, tímé, lócátíón ánd sécrétáry fíll ín fróm thís prójéct.······················';
+  String get meetingEmptyMessage => 'Dáté, tímé, lócátíón ánd sécrétáry fíll ín fróm thís prójéct.······················';
 
   @override
   String get meetingDate => 'Dáté··';
@@ -20275,8 +18363,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingAttachmentsEmpty => 'Nó áttáchménts·····';
 
   @override
-  String get meetingAttachmentsEmptyMessage =>
-      'Ágéndás, répórts, hándóúts ánd whítébóárd phótós lánd héré.·····················';
+  String get meetingAttachmentsEmptyMessage => 'Ágéndás, répórts, hándóúts ánd whítébóárd phótós lánd héré.·····················';
 
   @override
   String get meetingOpenAttachment => 'Ópén··';
@@ -20312,8 +18399,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingAgendaEmpty => 'Nó ágéndá yét·····';
 
   @override
-  String get meetingAgendaEmptyMessage =>
-      'Ádd thé ítéms yóú wíll díscúss, ín thé órdér yóú wánt thém.·····················';
+  String get meetingAgendaEmptyMessage => 'Ádd thé ítéms yóú wíll díscúss, ín thé órdér yóú wánt thém.·····················';
 
   @override
   String get meetingAttendees => 'Átténdéés····';
@@ -20341,8 +18427,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String meetingAttendanceCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -20361,8 +18446,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingAttendeesEmpty => 'Nó átténdéés yét······';
 
   @override
-  String get meetingAttendeesEmptyMessage =>
-      'Ádd whó ís présént, ánd récórd ápólógíés sépárátély.···················';
+  String get meetingAttendeesEmptyMessage => 'Ádd whó ís présént, ánd récórd ápólógíés sépárátély.···················';
 
   @override
   String get meetingAttendanceSheet => 'Átténdáncé shéét······';
@@ -20374,15 +18458,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingAcceptRows => 'Ádd thésé átténdéés·······';
 
   @override
-  String get meetingSheetKept =>
-      'Thé phótó stáys áttáchéd. Typé thé námés íf thé réádíng ís wróng.·······················';
+  String get meetingSheetKept => 'Thé phótó stáys áttáchéd. Typé thé námés íf thé réádíng ís wróng.·······················';
 
   @override
   String get meetingSheetEmpty => 'Nó átténdáncé shéét·······';
 
   @override
-  String get meetingSheetEmptyMessage =>
-      'Phótógráph thé sígnéd shéét, thén chéck éách námé béfóré áddíng ít.························';
+  String get meetingSheetEmptyMessage => 'Phótógráph thé sígnéd shéét, thén chéck éách námé béfóré áddíng ít.························';
 
   @override
   String get meetingSignature => 'Sígnátúré····';
@@ -20413,8 +18495,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingRecordingEmpty => 'Nó récórdíng·····';
 
   @override
-  String get meetingRecordingEmptyMessage =>
-      'Á récórdíng stáys ón thé méétíng, ínclúdíng óné thát wás íntérrúptéd.·························';
+  String get meetingRecordingEmptyMessage => 'Á récórdíng stáys ón thé méétíng, ínclúdíng óné thát wás íntérrúptéd.·························';
 
   @override
   String get meetingDecisions => 'Décísíóns····';
@@ -20432,8 +18513,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingDecisionsEmpty => 'Nó décísíóns yét······';
 
   @override
-  String get meetingDecisionsEmptyMessage =>
-      'Décísíóns fróm thé mínútés ór typéd héré áré lístéd tógéthér.······················';
+  String get meetingDecisionsEmptyMessage => 'Décísíóns fróm thé mínútés ór typéd héré áré lístéd tógéthér.······················';
 
   @override
   String get meetingActions => 'Áctíóns···';
@@ -20463,8 +18543,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingActionsEmpty => 'Nó áctíóns yét·····';
 
   @override
-  String get meetingActionsEmptyMessage =>
-      'Áctíóns kéép án ównér, á dúé dáté ánd á státús.·················';
+  String get meetingActionsEmptyMessage => 'Áctíóns kéép án ównér, á dúé dáté ánd á státús.·················';
 
   @override
   String get meetingNotes => 'Ráw nótés····';
@@ -20490,8 +18569,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingReviewEmpty => 'Nó méétíng tó révíéw·······';
 
   @override
-  String get meetingReviewEmptyMessage =>
-      'Ópén á méétíng tó séé átténdáncé, décísíóns ánd áctíóns.····················';
+  String get meetingReviewEmptyMessage => 'Ópén á méétíng tó séé átténdáncé, décísíóns ánd áctíóns.····················';
 
   @override
   String get meetingApprovedReason => 'Áppróvéd ín révíéw.·······';
@@ -20512,8 +18590,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingNoProject => 'Thís prójéct ís nó lóngér héré···········';
 
   @override
-  String get meetingNoProjectMessage =>
-      'Ópén á prójéct, thén stárt thé méétíng fróm ít.·················';
+  String get meetingNoProjectMessage => 'Ópén á prójéct, thén stárt thé méétíng fróm ít.·················';
 
   @override
   String get meetingBackToProjects => 'Báck tó prójécts······';
@@ -20523,8 +18600,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String meetingDecisionsCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -20539,8 +18615,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String meetingActionsCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -20560,8 +18635,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get meetingRefine => 'Réfíné mínútés·····';
 
   @override
-  String get meetingRefineNeedsAgenda =>
-      'Ádd thé ágéndá fírst, só éách póínt géts íts ówn súmmáry.····················';
+  String get meetingRefineNeedsAgenda => 'Ádd thé ágéndá fírst, só éách póínt géts íts ówn súmmáry.····················';
 
   @override
   String meetingUnsupported(Object namesjoin) {
@@ -20575,8 +18649,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String meetingTranscriptVersion(int version) {
-    final intl.NumberFormat versionNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat versionNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String versionString = versionNumberFormat.format(version);
 
     return 'Tránscrípt, rún ······$versionString';
@@ -20587,8 +18660,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String meetingTranscriptGaps(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -20605,27 +18677,22 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String meetingTranscribing(int done, int total) {
-    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String doneString = doneNumberFormat.format(done);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Tránscríbíng párt ·······$doneString óf ··$totalString';
   }
 
   @override
-  String get meetingTranscribeUnavailable =>
-      'Tránscríptíón ís nót áváíláblé ríght nów. Thé récórdíng stáys ón thé méétíng.···························';
+  String get meetingTranscribeUnavailable => 'Tránscríptíón ís nót áváíláblé ríght nów. Thé récórdíng stáys ón thé méétíng.···························';
 
   @override
   String get meetingPlay => 'Pláy··';
 
   @override
-  String get meetingInterruptedKept =>
-      'Récórdíng íntérrúptéd. Whát wás récórdéd ís képt ón thé méétíng.·······················';
+  String get meetingInterruptedKept => 'Récórdíng íntérrúptéd. Whát wás récórdéd ís képt ón thé méétíng.·······················';
 
   @override
   String get meetingPhotographHandout => 'Phótógráph á hándóút·······';
@@ -20642,17 +18709,12 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String meetingRecordingDetail(
-    Object minutes,
-    Object seconds,
-    Object fileSizebytes,
-  ) {
+  String meetingRecordingDetail(Object minutes, Object seconds, Object fileSizebytes) {
     return '$minutes:$seconds · $fileSizebytes';
   }
 
   @override
-  String get meetingCheckReading =>
-      'Chéck thís: thé shéét wás hárd tó réád héré.················';
+  String get meetingCheckReading => 'Chéck thís: thé shéét wás hárd tó réád héré.················';
 
   @override
   String get meetingSigned => 'Sígnéd ón thé shéét·······';
@@ -20731,8 +18793,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString récórds···';
@@ -20790,15 +18851,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get exportHistoryEmpty => 'Nó éxpórts yét·····';
 
   @override
-  String get exportHistoryEmptyMessage =>
-      'Á fíníshéd éxpórt ís képt héré, wíth whó mádé ít ánd whát ít héld.························';
+  String get exportHistoryEmptyMessage => 'Á fíníshéd éxpórt ís képt héré, wíth whó mádé ít ánd whát ít héld.························';
 
   @override
   String get exportShare => 'Sháré··';
 
   @override
-  String get exportMissing =>
-      'Thát fílé ís nó lóngér ón thís dévícé.··············';
+  String get exportMissing => 'Thát fílé ís nó lóngér ón thís dévícé.··············';
 
   @override
   String get exportRerun => 'Rún thís éxpórt ágáín········';
@@ -20822,8 +18881,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get exportNoFormat => 'Chóósé án óútpút fórmát.·········';
 
   @override
-  String get exportReplayMissing =>
-      'Thís éxpórt ís nó lóngér áváíláblé.·············';
+  String get exportReplayMissing => 'Thís éxpórt ís nó lóngér áváíláblé.·············';
 
   @override
   String get exportOutput => 'Óútpút···';
@@ -20884,8 +18942,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportGateTitle(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -20898,8 +18955,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get exportFixNowHint =>
-      'Ópén thé récórds thát nééd átténtíón. Nóthíng ís éxpórtéd.·····················';
+  String get exportFixNowHint => 'Ópén thé récórds thát nééd átténtíón. Nóthíng ís éxpórtéd.·····················';
 
   @override
   String exportExcludeHint(Object recordsCountntoLowerCase) {
@@ -20907,17 +18963,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get exportAnywayHint =>
-      'Évéry fílé sáys ít ís íncómplété.············';
+  String get exportAnywayHint => 'Évéry fílé sáys ít ís íncómplété.············';
 
   @override
   String pdfPageOf(int page, int pages) {
-    final intl.NumberFormat pageNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat pageNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String pageString = pageNumberFormat.format(page);
-    final intl.NumberFormat pagesNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat pagesNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String pagesString = pagesNumberFormat.format(pages);
 
     return '$pageString óf ··$pagesString';
@@ -20950,8 +19002,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String pdfChecklistRows(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -20965,9 +19016,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String pdfNotFoundCount(int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$nString nót fóúnd····';
@@ -20975,11 +19024,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String pdfCompliance(int compliant, int total) {
-    final intl.NumberFormat compliantNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat compliantNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String compliantString = compliantNumberFormat.format(compliant);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Cómplíánt: ····$compliantString óf ··$totalString';
@@ -21067,8 +19114,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String pdfPhotoReference(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -21114,8 +19160,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get bundlePasswordRequired => 'Éntér thé búndlé pásswórd.··········';
 
   @override
-  String get bundlePasswordOptional =>
-      'Sét á búndlé pásswórd (óptíónál)············';
+  String get bundlePasswordOptional => 'Sét á búndlé pásswórd (óptíónál)············';
 
   @override
   String get bundlePasswordSet => 'Búndlé pásswórd sét·······';
@@ -21156,8 +19201,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get mergeHistoryEmpty => 'Nó mérgés yét·····';
 
   @override
-  String get mergeHistoryEmptyMessage =>
-      'Á mérgé ís képt héré wíth íts sóúrcé, cóúnts ánd hów lóng úndó lásts.·························';
+  String get mergeHistoryEmptyMessage => 'Á mérgé ís képt héré wíth íts sóúrcé, cóúnts ánd hów lóng úndó lásts.·························';
 
   @override
   String mergeUndoUntil(Object when) {
@@ -21165,20 +19209,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String mergeHistoryFacts(
-    Object name,
-    Object id,
-    Object dateFormatyMMMdadd,
-    Object switchstatusapplied,
-  ) {
+  String mergeHistoryFacts(Object name, Object id, Object dateFormatyMMMdadd, Object switchstatusapplied) {
     return '$name · $id · $dateFormatyMMMdadd · $switchstatusapplied';
   }
 
   @override
   String mergeHistoryCount(Object switchkeyrecords, int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$switchkeyrecords: $nString';
@@ -21186,9 +19223,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String mergeHistoryResolution(Object switchchoicemine, int n) {
-    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat nNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String nString = nNumberFormat.format(n);
 
     return '$switchchoicemine: $nString';
@@ -21198,19 +19233,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get mergeUndoChanged => 'Thís mérgé hás látér chángés.···········';
 
   @override
-  String get mergeUndoChangedRecovery =>
-      'Kéép thé látér chángés, ór úndó thé néwér mérgé fírst.···················';
+  String get mergeUndoChangedRecovery => 'Kéép thé látér chángés, ór úndó thé néwér mérgé fírst.···················';
 
   @override
-  String get mergeUndoUnavailable =>
-      'Thís mérgé cán nó lóngér bé úndóné.·············';
+  String get mergeUndoUnavailable => 'Thís mérgé cán nó lóngér bé úndóné.·············';
 
   @override
   String get mergeUndoDone => 'Mérgé úndóné·····';
 
   @override
-  String get mergeUndoConfirm =>
-      'Réstóré thé válúés fróm béfóré thís mérgé. Íncómíng évídéncé stáys ín thé récyclé áréá.·······························';
+  String get mergeUndoConfirm => 'Réstóré thé válúés fróm béfóré thís mérgé. Íncómíng évídéncé stáys ín thé récyclé áréá.·······························';
 
   @override
   String get importTitle => 'Ímpórt···';
@@ -21219,8 +19251,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get importEmptyHeadline => 'Nó fílé yét····';
 
   @override
-  String get importEmptyMessage =>
-      'Chóósé á búndlé, á spréádshéét, á dátásét ór á témpláté. Táptúré chécks ít ánd ópéns thé stép thát fíts.·····································';
+  String get importEmptyMessage => 'Chóósé á búndlé, á spréádshéét, á dátásét ór á témpláté. Táptúré chécks ít ánd ópéns thé stép thát fíts.·····································';
 
   @override
   String get importChooseFile => 'Chóósé á fílé·····';
@@ -21235,41 +19266,34 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get importKindBundle => 'Búndlé (.zíp)·····';
 
   @override
-  String get importBundleLine =>
-      'Chéckéd, thén áddéd ás á prójéct ór mérgéd íntó óné.···················';
+  String get importBundleLine => 'Chéckéd, thén áddéd ás á prójéct ór mérgéd íntó óné.···················';
 
   @override
   String get importKindDataset => 'Référéncé dátásét (.jsón)·········';
 
   @override
-  String get importDatasetLine =>
-      'Á táblé óf référéncé róws ópéns thé dátásét ímpórtér.···················';
+  String get importDatasetLine => 'Á táblé óf référéncé róws ópéns thé dátásét ímpórtér.···················';
 
   @override
   String get importKindTemplate => 'Témpláté (.jsón)······';
 
   @override
-  String get importTemplateLine =>
-      'Á témpláté fílé ís chéckéd, thén áddéd tó thé ópén prójéct.·····················';
+  String get importTemplateLine => 'Á témpláté fílé ís chéckéd, thén áddéd tó thé ópén prójéct.·····················';
 
   @override
   String get importKindSheet => 'Spréádshéét (.xlsx ór .csv)··········';
 
   @override
-  String get importSheetLine =>
-      'Ásks whéthér íts róws áré récórds ór á régístér tó chéck ágáínst.·······················';
+  String get importSheetLine => 'Ásks whéthér íts róws áré récórds ór á régístér tó chéck ágáínst.·······················';
 
   @override
-  String get importUnsupported =>
-      'Táptúré cánnót ímpórt thís kínd óf fílé.··············';
+  String get importUnsupported => 'Táptúré cánnót ímpórt thís kínd óf fílé.··············';
 
   @override
-  String get importNeedsProject =>
-      'Ópén á prójéct fírst. Á spréádshéét, dátásét ór témpláté ís áddéd tó thé ópén prójéct.·······························';
+  String get importNeedsProject => 'Ópén á prójéct fírst. Á spréádshéét, dátásét ór témpláté ís áddéd tó thé ópén prójéct.·······························';
 
   @override
-  String get importNeedsProjectRecovery =>
-      'Ópén thé prójéct fróm thé líst, thén ímpórt thé fílé ágáín.·····················';
+  String get importNeedsProjectRecovery => 'Ópén thé prójéct fróm thé líst, thén ímpórt thé fílé ágáín.·····················';
 
   @override
   String get importPurposeTitle => 'Whát ís thís shéét?·······';
@@ -21278,22 +19302,19 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get importPurposeRecords => 'Récórds tó hóld······';
 
   @override
-  String get importPurposeRecordsLine =>
-      'Éách rów bécómés á récórd ón óné óf thís prójéct’s témplátés.······················';
+  String get importPurposeRecordsLine => 'Éách rów bécómés á récórd ón óné óf thís prójéct’s témplátés.······················';
 
   @override
   String get importPurposeRegister => 'Régístér tó vérífy ágáínst··········';
 
   @override
-  String get importPurposeRegisterLine =>
-      'Thé róws bécómé á référéncé dátásét thát vérífícátíón chécks whát yóú fínd ágáínst. Nó récórds áré mádé.·····································';
+  String get importPurposeRegisterLine => 'Thé róws bécómé á référéncé dátásét thát vérífícátíón chécks whát yóú fínd ágáínst. Nó récórds áré mádé.·····································';
 
   @override
   String get importNoSheetHeadline => 'Nó shéét chósén······';
 
   @override
-  String get importNoSheetMessage =>
-      'Chóósé á spréádshéét ón thé ímpórt págé fírst.·················';
+  String get importNoSheetMessage => 'Chóósé á spréádshéét ón thé ímpórt págé fírst.·················';
 
   @override
   String get importMappingTitle => 'Mátch cólúmns·····';
@@ -21311,21 +19332,17 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get importNoTemplateHeadline => 'Nó témpláté tó mátch·······';
 
   @override
-  String get importNoTemplateMessage =>
-      'Thís prójéct hás nó témpláté yét. Máké óné fróm thís shéét’s cólúmns, thén ímpórt íts róws.································';
+  String get importNoTemplateMessage => 'Thís prójéct hás nó témpláté yét. Máké óné fróm thís shéét’s cólúmns, thén ímpórt íts róws.································';
 
   @override
   String get importMakeTemplate => 'Máké á témpláté fróm thís shéét···········';
 
   @override
-  String get importPreviewTitle =>
-      'Fírst róws, ás théy wíll bé réád············';
+  String get importPreviewTitle => 'Fírst róws, ás théy wíll bé réád············';
 
   @override
   String importRow(int row) {
-    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String rowString = rowNumberFormat.format(row);
 
     return 'Rów ··$rowString';
@@ -21333,8 +19350,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String importRun(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -21356,12 +19372,9 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String importProgress(int done, int total) {
-    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat doneNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String doneString = doneNumberFormat.format(done);
-    final intl.NumberFormat totalNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return '$doneString óf ··$totalString róws··';
@@ -21371,14 +19384,11 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get importKeptExisting => 'Képt thé récórd álréády héré.···········';
 
   @override
-  String get importMatchUnsettled =>
-      'Mátchés á récórd álréády héré, ánd nó chóícé wás mádé.···················';
+  String get importMatchUnsettled => 'Mátchés á récórd álréády héré, ánd nó chóícé wás mádé.···················';
 
   @override
   String importRepeatsRow(int row) {
-    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String rowString = rowNumberFormat.format(row);
 
     return 'Répéáts thé ídéntíty óf rów ··········$rowString ín thís fílé.·····';
@@ -21407,8 +19417,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String importCreated(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString créátéd···';
@@ -21416,8 +19425,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String importUpdated(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString úpdátéd···';
@@ -21425,8 +19433,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String importSkipped(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString skíppéd···';
@@ -21434,8 +19441,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String importFailed(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString fáíléd···';
@@ -21452,9 +19458,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String importMatchMessage(int row) {
-    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(
-      localeName,
-    );
+    final intl.NumberFormat rowNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String rowString = rowNumberFormat.format(row);
 
     return 'Rów ··$rowString hás thé sámé ídéntíty ás á récórd álréády ín thís prójéct.·····················';
@@ -21473,8 +19477,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get importMerge => 'Mérgé··';
 
   @override
-  String get importApplyToAll =>
-      'Úsé thís chóícé fór évéry látér mátch·············';
+  String get importApplyToAll => 'Úsé thís chóícé fór évéry látér mátch·············';
 
   @override
   String get importMatchConfirm => 'Ápply··';
@@ -21483,8 +19486,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get cloudDestinationsTitle => 'Úplóád déstínátíóns·······';
 
   @override
-  String get cloudDestinationsSubtitle =>
-      'Whéré á fíníshéd fílé cán bé sént, whén yóú cónfírm ít.····················';
+  String get cloudDestinationsSubtitle => 'Whéré á fíníshéd fílé cán bé sént, whén yóú cónfírm ít.····················';
 
   @override
   String get destinationTitle => 'Úplóád déstínátíóns·······';
@@ -21493,8 +19495,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get destinationEmptyHeadline => 'Nó déstínátíóns yét·······';
 
   @override
-  String get destinationEmptyMessage =>
-      'Ádd á búckét, á fóldér ór á drívé yóú sígn ín tó. Nóthíng ís sént úntíl yóú cónfírm ít.·······························';
+  String get destinationEmptyMessage => 'Ádd á búckét, á fóldér ór á drívé yóú sígn ín tó. Nóthíng ís sént úntíl yóú cónfírm ít.·······························';
 
   @override
   String get destinationAdd => 'Ádd á déstínátíón······';
@@ -21512,12 +19513,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get destinationRemoveTitle => 'Rémóvé thís déstínátíón?·········';
 
   @override
-  String get destinationRemoveMessage =>
-      'Thé déstínátíón ánd íts sávéd sígn-ín áré bóth délétéd.····················';
+  String get destinationRemoveMessage => 'Thé déstínátíón ánd íts sávéd sígn-ín áré bóth délétéd.····················';
 
   @override
-  String get destinationCheckFailed =>
-      'Thé cónnéctíón tést díd nót súccééd, só thís déstínátíón wás nót sávéd.·························';
+  String get destinationCheckFailed => 'Thé cónnéctíón tést díd nót súccééd, só thís déstínátíón wás nót sávéd.·························';
 
   @override
   String get destinationLabel => 'Námé··';
@@ -21565,8 +19564,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get destinationOptional => 'Óptíónál···';
 
   @override
-  String get destinationLocalFolderHint =>
-      'Á fóldér ínsídé thé Táptúré fóldér, ór chóósé óné··················';
+  String get destinationLocalFolderHint => 'Á fóldér ínsídé thé Táptúré fóldér, ór chóósé óné··················';
 
   @override
   String get destinationChooseFolder => 'Chóósé á fóldér······';
@@ -21593,8 +19591,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get destinationAddress => 'Sérvér áddréss·····';
 
   @override
-  String get destinationAddressHint =>
-      'https://fílés.éxámplé.órg/dáv/···········';
+  String get destinationAddressHint => 'https://fílés.éxámplé.órg/dáv/···········';
 
   @override
   String get destinationSignInMethod => 'Sígn-ín méthód·····';
@@ -21615,8 +19612,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get destinationToken => 'Tókén··';
 
   @override
-  String get destinationKeepSignIn =>
-      'Léávé thé sígn-ín fíélds émpty tó kéép thé sávéd sígn-ín.····················';
+  String get destinationKeepSignIn => 'Léávé thé sígn-ín fíélds émpty tó kéép thé sávéd sígn-ín.····················';
 
   @override
   String get destinationSignInAgain => 'Sígn ín ágáín·····';
@@ -21627,30 +19623,25 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get destinationSignInUnavailable =>
-      'Sígníng ín tó thís próvídér ís nót áváíláblé ón thís dévícé.·····················';
+  String get destinationSignInUnavailable => 'Sígníng ín tó thís próvídér ís nót áváíláblé ón thís dévícé.·····················';
 
   @override
-  String get destinationSignInMismatch =>
-      'Thé sígn-ín díd nót fínísh. Try sávíng ágáín.················';
+  String get destinationSignInMismatch => 'Thé sígn-ín díd nót fínísh. Try sávíng ágáín.················';
 
   @override
   String get destinationFolderRoot => 'thé tóp fóldér·····';
 
   @override
-  String get destinationRemoveNothing =>
-      'Thé déstínátíón ánd íts sígn-ín áré bóth stíll sávéd.···················';
+  String get destinationRemoveNothing => 'Thé déstínátíón ánd íts sígn-ín áré bóth stíll sávéd.···················';
 
   @override
-  String get destinationRemoveHalf =>
-      'Thé sígn-ín wás rémóvéd, bút thé déstínátíón ís stíll lístéd.······················';
+  String get destinationRemoveHalf => 'Thé sígn-ín wás rémóvéd, bút thé déstínátíón ís stíll lístéd.······················';
 
   @override
   String get destinationRemoveAgain => 'Try rémóvíng ít ágáín.········';
 
   @override
-  String get destinationRestoreFailed =>
-      'Thé déstínátíón cóúld nót bé pút báck.··············';
+  String get destinationRestoreFailed => 'Thé déstínátíón cóúld nót bé pút báck.··············';
 
   @override
   String get destinationAddAgain => 'Ádd ít ágáín.·····';
@@ -21659,8 +19650,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get destinationKept => 'Thé déstínátíón wás képt.·········';
 
   @override
-  String get destinationKeptRecovery =>
-      'Rémóvé ít látér íf yóú stíll wánt tó.·············';
+  String get destinationKeptRecovery => 'Rémóvé ít látér íf yóú stíll wánt tó.·············';
 
   @override
   String destinationRemoved(Object label) {
@@ -21696,12 +19686,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get destinationChecking => 'Chéckíng thé cónnéctíón…·········';
 
   @override
-  String get destinationUnavailableHeadline =>
-      'Úplóáds áré sént fróm á dévícé···········';
+  String get destinationUnavailableHeadline => 'Úplóáds áré sént fróm á dévícé···········';
 
   @override
-  String get destinationUnavailableMessage =>
-      'Ópén Táptúré ón á phóné ór cómpútér tó ádd á déstínátíón.····················';
+  String get destinationUnavailableMessage => 'Ópén Táptúré ón á phóné ór cómpútér tó ádd á déstínátíón.····················';
 
   @override
   String get uploadConfirmTitle => 'Sénd thís fílé?······';
@@ -21710,12 +19698,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get uploadConfirm => 'Sénd··';
 
   @override
-  String uploadConfirmMessage(
-    Object name,
-    Object size,
-    Object destination,
-    Object folder,
-  ) {
+  String uploadConfirmMessage(Object name, Object size, Object destination, Object folder) {
     return '$name ($size) wíll bé sént tó ·······$destination, ín ··$folder.';
   }
 
@@ -21726,8 +19709,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get uploadHistoryEmptyHeadline => 'Nó úplóáds yét·····';
 
   @override
-  String get uploadHistoryEmptyMessage =>
-      'Á fílé áppéárs héré áftér yóú cónfírm séndíng ít.··················';
+  String get uploadHistoryEmptyMessage => 'Á fílé áppéárs héré áftér yóú cónfírm séndíng ít.··················';
 
   @override
   String get uploadRetry => 'Rétry··';
@@ -21766,24 +19748,19 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get uploadStopped =>
-      'Thé úplóád wás stóppéd. Thé fílé ón thís dévícé ís únchángéd.······················';
+  String get uploadStopped => 'Thé úplóád wás stóppéd. Thé fílé ón thís dévícé ís únchángéd.······················';
 
   @override
-  String get uploadFileMissing =>
-      'Thé fílé ís nó lóngér ón thís dévícé ás ít wás éxpórtéd.····················';
+  String get uploadFileMissing => 'Thé fílé ís nó lóngér ón thís dévícé ás ít wás éxpórtéd.····················';
 
   @override
-  String get uploadFileMissingRecovery =>
-      'Éxpórt ít ágáín, thén sénd ít.···········';
+  String get uploadFileMissingRecovery => 'Éxpórt ít ágáín, thén sénd ít.···········';
 
   @override
-  String get uploadDestinationGone =>
-      'Thát déstínátíón wás rémóvéd.···········';
+  String get uploadDestinationGone => 'Thát déstínátíón wás rémóvéd.···········';
 
   @override
-  String get uploadDestinationGoneRecovery =>
-      'Sénd thé fílé ágáín fróm íts éxpórt.·············';
+  String get uploadDestinationGoneRecovery => 'Sénd thé fílé ágáín fróm íts éxpórt.·············';
 
   @override
   String get uploadOutcomeSent => 'Sént··';
@@ -21798,19 +19775,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get uploadOutcomeStopped => 'Stóppéd···';
 
   @override
-  String uploadAttemptLine(
-    Object outcome,
-    Object destination,
-    Object size,
-    Object when,
-  ) {
+  String uploadAttemptLine(Object outcome, Object destination, Object size, Object when) {
     return '$outcome · $destination · $size · $when';
   }
 
   @override
   String uploadSendingLine(Object destination, int percent) {
-    final intl.NumberFormat percentNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat percentNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String percentString = percentNumberFormat.format(percent);
 
     return 'Séndíng tó ····$destination · $percentString%';
@@ -21828,16 +19799,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String uploadDetailsMessageFileDestinationFolderSize(
-    Object file,
-    Object destination,
-    Object folder,
-    Object size,
-    Object whenstartedAt,
-    Object ended,
-    Object outcome,
-    Object because,
-  ) {
+  String uploadDetailsMessageFileDestinationFolderSize(Object file, Object destination, Object folder, Object size, Object whenstartedAt, Object ended, Object outcome, Object because) {
     return 'Fílé: ···$file\nDéstínátíón: ·····$destination\nFóldér: ····$folder\nSízé: ···$size\nStártéd: ····$whenstartedAt\nÉndéd: ···$ended\nÓútcómé: ····$outcome$because';
   }
 
@@ -21848,8 +19810,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get privacyEmptyHeadline => 'Nóthíng ís sét úp tó sénd·········';
 
   @override
-  String get privacyEmptyMessage =>
-      'Ánálysís próvídérs ánd úplóád déstínátíóns áppéár héré whén théy áré áddéd.···························';
+  String get privacyEmptyMessage => 'Ánálysís próvídérs ánd úplóád déstínátíóns áppéár héré whén théy áré áddéd.···························';
 
   @override
   String get egressAnalysisSection => 'Ánálysís···';
@@ -21858,8 +19819,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get egressUploadsSection => 'Úplóáds···';
 
   @override
-  String get egressOfflineNotice =>
-      'Ófflíné módé ís ón, só nóthíng léávés thís dévícé.··················';
+  String get egressOfflineNotice => 'Ófflíné módé ís ón, só nóthíng léávés thís dévícé.··················';
 
   @override
   String get egressReadText => 'Réádíng téxt fróm phótós·········';
@@ -21909,20 +19869,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get gpsPrivacyCapture => 'Sávé lócátíón wíth cáptúrés··········';
 
   @override
-  String get gpsPrivacyCaptureState =>
-      'Ón. Chángé ít ín cáptúré séttíngs.············';
+  String get gpsPrivacyCaptureState => 'Ón. Chángé ít ín cáptúré séttíngs.············';
 
   @override
-  String get gpsPrivacyCaptureStateOffChangeItIn =>
-      'Óff. Chángé ít ín cáptúré séttíngs.·············';
+  String get gpsPrivacyCaptureStateOffChangeItIn => 'Óff. Chángé ít ín cáptúré séttíngs.·············';
 
   @override
-  String get gpsPrivacyExclude =>
-      'Léávé cóórdínátés óút óf éxpórts············';
+  String get gpsPrivacyExclude => 'Léávé cóórdínátés óút óf éxpórts············';
 
   @override
-  String get gpsPrivacyExcludeEffect =>
-      'Éxpórts cárry nó lócátíón fíélds ánd nó lócátíón ín phótó détáíls.························';
+  String get gpsPrivacyExcludeEffect => 'Éxpórts cárry nó lócátíón fíélds ánd nó lócátíón ín phótó détáíls.························';
 
   @override
   String get gpsPrivacyRemove => 'Rémóvé sávéd cóórdínátés·········';
@@ -21944,15 +19900,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get gpsPrivacyNoProject =>
-      'Ópén á prójéct tó rémóvé íts sávéd cóórdínátés.·················';
+  String get gpsPrivacyNoProject => 'Ópén á prójéct tó rémóvé íts sávéd cóórdínátés.·················';
 
   @override
   String get faceBlurTitle => 'Blúr fácés ín éxpórtéd phótós···········';
 
   @override
-  String get faceBlurEffect =>
-      'Á phótó whósé fácés cánnót bé chéckéd ón thís dévícé stáys óút óf thé éxpórt.···························';
+  String get faceBlurEffect => 'Á phótó whósé fácés cánnót bé chéckéd ón thís dévícé stáys óút óf thé éxpórt.···························';
 
   @override
   String get redactionTitle => 'Hídé párts béfóré séndíng·········';
@@ -21963,20 +19917,17 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get exportPrivacyChanged =>
-      'Prívácy séttíngs chángéd. Éxpórt á néw fílé béfóré sháríng.·····················';
+  String get exportPrivacyChanged => 'Prívácy séttíngs chángéd. Éxpórt á néw fílé béfóré sháríng.·····················';
 
   @override
-  String get redactionHint =>
-      'Drág ácróss ánythíng thát múst nót bé sént. Thé phótó ítsélf dóés nót chángé.···························';
+  String get redactionHint => 'Drág ácróss ánythíng thát múst nót bé sént. Thé phótó ítsélf dóés nót chángé.···························';
 
   @override
   String get redactionSave => 'Sávé híddén áréás······';
 
   @override
   String redactionCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     String _temp0 = intl.Intl.pluralLogic(
@@ -21990,55 +19941,46 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get redactionSaved =>
-      'Sávéd. Thésé áréás áré cóvéréd ín évéry cópy sént fór ánálysís.·······················';
+  String get redactionSaved => 'Sávéd. Thésé áréás áré cóvéréd ín évéry cópy sént fór ánálysís.·······················';
 
   @override
   String get redactionEmptyHeadline => 'Nó phótó tó márk······';
 
   @override
-  String get redactionEmptyMessage =>
-      'Ópén á phótó fróm á récórd, thén márk whát tó hídé.··················';
+  String get redactionEmptyMessage => 'Ópén á phótó fróm á récórd, thén márk whát tó hídé.··················';
 
   @override
-  String get permissionLocation =>
-      'Táptúré sávés á lócátíón ónly whén yóú túrn lócátíón ón fór á prójéct.·························';
+  String get permissionLocation => 'Táptúré sávés á lócátíón ónly whén yóú túrn lócátíón ón fór á prójéct.·························';
 
   @override
-  String get permissionStorage =>
-      'Táptúré ópéns phótós ánd fílés yóú chóósé tó ímpórt.···················';
+  String get permissionStorage => 'Táptúré ópéns phótós ánd fílés yóú chóósé tó ímpórt.···················';
 
   @override
-  String get permissionNotifications =>
-      'Táptúré télls yóú whén á bátch óf ánálysís fíníshés.···················';
+  String get permissionNotifications => 'Táptúré télls yóú whén á bátch óf ánálysís fíníshés.···················';
 
   @override
   String get privacyTitle => 'Prívácy···';
 
   @override
-  String get privacySubtitle =>
-      'Whát cán léávé thís dévícé, ánd whát névér dóés.·················';
+  String get privacySubtitle => 'Whát cán léávé thís dévícé, ánd whát névér dóés.·················';
 
   @override
   String get backendSettingsTitle => 'Órgánísátíón·····';
 
   @override
-  String get relayChooseProject =>
-      'Ópén á prójéct tó éxchángé chángés wíth íts óthér dévícés.·····················';
+  String get relayChooseProject => 'Ópén á prójéct tó éxchángé chángés wíth íts óthér dévícés.·····················';
 
   @override
   String get relayEnable => 'Énáblé réláy·····';
 
   @override
-  String get relayEnableHelp =>
-      'Éncryptéd páckágés páss thróúgh thé órgánísátíón sérvér témpóráríly.························';
+  String get relayEnableHelp => 'Éncryptéd páckágés páss thróúgh thé órgánísátíón sérvér témpóráríly.························';
 
   @override
   String get relaySharedKey => 'Sháréd prójéct kéy·······';
 
   @override
-  String get relayKeyHelp =>
-      'Úsé thé sámé kéy óf át léást 16 cháráctérs ón éách dévícé. Éxchángé ít sépárátély; ít névér góés tó thé sérvér.·······································';
+  String get relayKeyHelp => 'Úsé thé sámé kéy óf át léást 16 cháráctérs ón éách dévícé. Éxchángé ít sépárátély; ít névér góés tó thé sérvér.·······································';
 
   @override
   String get relayQueueProject => 'Qúéúé prójéct páckágé········';
@@ -22056,15 +19998,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get shippedAiSuggestion => 'ÁÍ súggéstíón·····';
 
   @override
-  String get shippedAiSuggestionHelp =>
-      'Súggéstéd órdér ónly. Prévíéw ánd chóósé thé témplátés yóú wánt.·······················';
+  String get shippedAiSuggestionHelp => 'Súggéstéd órdér ónly. Prévíéw ánd chóósé thé témplátés yóú wánt.·······················';
 
   @override
   String get backendServerAddress => 'Sérvér áddréss·····';
 
   @override
-  String get backendConfigurationHelp =>
-      'Úsé thé HTTPS áddréss súpplíéd by yóúr ádmínístrátór. Léávé Órgánísátíón émpty whén thís sérvér hósts óné órgánísátíón.··········································';
+  String get backendConfigurationHelp => 'Úsé thé HTTPS áddréss súpplíéd by yóúr ádmínístrátór. Léávé Órgánísátíón émpty whén thís sérvér hósts óné órgánísátíón.··········································';
 
   @override
   String get backendNotSignedIn => 'Nót sígnéd ín·····';
@@ -22106,8 +20046,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get backendRevokedState => 'Éndéd by thé órgánísátíón·········';
 
   @override
-  String get backendRevoked =>
-      'Thé órgánísátíón éndéd thís dévícé’s sígn-ín. Sígn ín ágáín whén thé sérvér ís réácháblé. Wórk ón thís dévícé cóntínúés.··········································';
+  String get backendRevoked => 'Thé órgánísátíón éndéd thís dévícé’s sígn-ín. Sígn ín ágáín whén thé sérvér ís réácháblé. Wórk ón thís dévícé cóntínúés.··········································';
 
   @override
   String get signInLater => 'Cóntínúé wíthóút sígníng ín··········';
@@ -22116,8 +20055,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get signOutAction => 'Sígn óút···';
 
   @override
-  String get backendSettingsSubtitle =>
-      'Thé sérvér thís dévícé ís énrólléd wíth.··············';
+  String get backendSettingsSubtitle => 'Thé sérvér thís dévícé ís énrólléd wíth.··············';
 
   @override
   String get signInTitle => 'Sígn ín···';
@@ -22135,30 +20073,25 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get signInOrganisation => 'Órgánísátíón·····';
 
   @override
-  String get backendUnreachable =>
-      'Thé sérvér cánnót bé réáchéd. Wórk ón thís dévícé cóntínúés.·····················';
+  String get backendUnreachable => 'Thé sérvér cánnót bé réáchéd. Wórk ón thís dévícé cóntínúés.·····················';
 
   @override
-  String get backendGrantExpired =>
-      'Thé sávéd sígn-ín hás éxpíréd fór réláy, ánálysís ánd rólé chángés.························';
+  String get backendGrantExpired => 'Thé sávéd sígn-ín hás éxpíréd fór réláy, ánálysís ánd rólé chángés.························';
 
   @override
   String get signOutTitle => 'Sígn óút···';
 
   @override
-  String get signOutMessage =>
-      'Sígníng báck ín nééds á cónnéctíón tó thé sérvér.··················';
+  String get signOutMessage => 'Sígníng báck ín nééds á cónnéctíón tó thé sérvér.··················';
 
   @override
   String get relayTitle => 'Chángé réláy·····';
 
   @override
-  String get relayOff =>
-      'Réláy ís óff úntíl á prójéct mánágér énáblés ít.·················';
+  String get relayOff => 'Réláy ís óff úntíl á prójéct mánágér énáblés ít.·················';
 
   @override
-  String get relaySignInNeeded =>
-      'Sígn ín tó úsé thé réláy. Wórk ón thís dévícé cóntínúés.····················';
+  String get relaySignInNeeded => 'Sígn ín tó úsé thé réláy. Wórk ón thís dévícé cóntínúés.····················';
 
   @override
   String get relayAddKey => 'Ádd sháréd kéy·····';
@@ -22200,28 +20133,22 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get frictionSaving => 'Yóúr répórt ís béíng sávéd.··········';
 
   @override
-  String get frictionScreenshotFailed =>
-      'Thé scréénshót cóúld nót bé cáptúréd.·············';
+  String get frictionScreenshotFailed => 'Thé scréénshót cóúld nót bé cáptúréd.·············';
 
   @override
-  String get frictionScreenshotRecovery =>
-      'Try ágáín ór túrn óff thé scréénshót ánd sávé thé répórt.····················';
+  String get frictionScreenshotRecovery => 'Try ágáín ór túrn óff thé scréénshót ánd sávé thé répórt.····················';
 
   @override
-  String get feedbackJournalInvalid =>
-      'Yóúr sávéd féédbáck cóúld nót bé réád.··············';
+  String get feedbackJournalInvalid => 'Yóúr sávéd féédbáck cóúld nót bé réád.··············';
 
   @override
-  String get feedbackJournalRecovery =>
-      'Try ágáín. Kéép thé sávéd fílés só théy cán bé récóvéréd.····················';
+  String get feedbackJournalRecovery => 'Try ágáín. Kéép thé sávéd fílés só théy cán bé récóvéréd.····················';
 
   @override
-  String get feedbackImageMissing =>
-      'Á sávéd féédbáck ímágé ís míssíng.············';
+  String get feedbackImageMissing => 'Á sávéd féédbáck ímágé ís míssíng.············';
 
   @override
-  String get feedbackImageRecovery =>
-      'Réstóré thé sávéd ímágé, thén éxpórt thé féédbáck ágáín.····················';
+  String get feedbackImageRecovery => 'Réstóré thé sávéd ímágé, thén éxpórt thé féédbáck ágáín.····················';
 
   @override
   String copyAnd(Object named0, Object named1) {
@@ -22298,8 +20225,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String surfacePreviewLevel(int level) {
-    final intl.NumberFormat levelNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat levelNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String levelString = levelNumberFormat.format(level);
 
     return 'Lévél ···$levelString';
@@ -22328,8 +20254,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportIncompleteCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString íncómplété····';
@@ -22337,8 +20262,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportUnapprovedCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString nót áppróvéd·····';
@@ -22346,8 +20270,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportBlockedMeetingCount(int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$countString wíth méétíng áctíóns míssíng án ównér ór dúé dáté, whích stáy óút························';
@@ -22355,8 +20278,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String exportFaceCount(String id, int count) {
-    final intl.NumberFormat countNumberFormat =
-        intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
     final String countString = countNumberFormat.format(count);
 
     return '$id: $countString fácés···';
@@ -22364,43 +20286,52 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String mergeHistoryStatus(String status) {
-    String _temp0 = intl.Intl.selectLogic(status, {
-      'applied': 'Mérgéd···',
-      'undone': 'Úndóné···',
-      'imported': 'Ímpórtéd···',
-      'other': 'Fáíléd···',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      status,
+      {
+        'applied': 'Mérgéd···',
+        'undone': 'Úndóné···',
+        'imported': 'Ímpórtéd···',
+        'other': 'Fáíléd···',
+      },
+    );
     return '$_temp0';
   }
 
   @override
   String mergeHistoryCategory(String category) {
-    String _temp0 = intl.Intl.selectLogic(category, {
-      'records': 'Néw récórds····',
-      'updated_records': 'Úpdátéd récórds······',
-      'photos': 'Néw phótós····',
-      'photos_here': 'Phótós álréády héré·······',
-      'files': 'Fílés··',
-      'deletions': 'Délétíóns····',
-      'conflicts': 'Cónflícts····',
-      'kept': 'Válúés képt····',
-      'elsewhere': 'Álréády ín ánóthér prójéct··········',
-      'duplicates': 'Póssíblé dúplícátés·······',
-      'skipped': 'Skíppéd récórds······',
-      'other': '$category',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      category,
+      {
+        'records': 'Néw récórds····',
+        'updated_records': 'Úpdátéd récórds······',
+        'photos': 'Néw phótós····',
+        'photos_here': 'Phótós álréády héré·······',
+        'files': 'Fílés··',
+        'deletions': 'Délétíóns····',
+        'conflicts': 'Cónflícts····',
+        'kept': 'Válúés képt····',
+        'elsewhere': 'Álréády ín ánóthér prójéct··········',
+        'duplicates': 'Póssíblé dúplícátés·······',
+        'skipped': 'Skíppéd récórds······',
+        'other': '$category',
+      },
+    );
     return '$_temp0';
   }
 
   @override
   String mergeHistoryChoice(String choice) {
-    String _temp0 = intl.Intl.selectLogic(choice, {
-      'mine': 'Képt thís dévícé’s válúé·········',
-      'theirs': 'Úséd íncómíng válúé·······',
-      'typed': 'Éntéréd á réplácémént········',
-      'keepBoth': 'Képt bóth témplátés·······',
-      'other': 'Wáítíng fór á décísíón········',
-    });
+    String _temp0 = intl.Intl.selectLogic(
+      choice,
+      {
+        'mine': 'Képt thís dévícé’s válúé·········',
+        'theirs': 'Úséd íncómíng válúé·······',
+        'typed': 'Éntéréd á réplácémént········',
+        'keepBoth': 'Képt bóth témplátés·······',
+        'other': 'Wáítíng fór á décísíón········',
+      },
+    );
     return '$_temp0';
   }
 
@@ -22410,78 +20341,61 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get relayPackageTooLargeRecovery =>
-      'Sháré thé éxpórtéd páckágé díréctly ór éxpórt á smállér séléctíón.························';
+  String get relayPackageTooLargeRecovery => 'Sháré thé éxpórtéd páckágé díréctly ór éxpórt á smállér séléctíón.························';
 
   @override
-  String get permissionBiometrics =>
-      'Táptúré úsés bíómétrícs ónly whén yóú chóósé bíómétríc ápp únlóck.························';
+  String get permissionBiometrics => 'Táptúré úsés bíómétrícs ónly whén yóú chóósé bíómétríc ápp únlóck.························';
 
   @override
-  String get packageMetadataTooLargeRecovery =>
-      'Chóósé á smállér páckágé scópé ón thé éxpórtíng dévícé, thén ópén thé néw páckágé.·····························';
+  String get packageMetadataTooLargeRecovery => 'Chóósé á smállér páckágé scópé ón thé éxpórtíng dévícé, thén ópén thé néw páckágé.·····························';
 
   @override
   String get failureCancelledMessage => 'Thé áctíón wás cáncélléd.·········';
 
   @override
-  String get failureCancelledRecovery =>
-      'Stárt thé áctíón ágáín íf yóú stíll nééd ít.················';
+  String get failureCancelledRecovery => 'Stárt thé áctíón ágáín íf yóú stíll nééd ít.················';
 
   @override
-  String get failureCorruptionMessage =>
-      'Thís fílé ór rów cóúld nót bé réád.·············';
+  String get failureCorruptionMessage => 'Thís fílé ór rów cóúld nót bé réád.·············';
 
   @override
-  String get failureCorruptionRecovery =>
-      'Kéép thé órígínál. Éxpórt á cópy ánd try ópéníng ít ágáín.·····················';
+  String get failureCorruptionRecovery => 'Kéép thé órígínál. Éxpórt á cópy ánd try ópéníng ít ágáín.·····················';
 
   @override
-  String get failureNetworkMessage =>
-      'Thé nétwórk ís nót áváíláblé. Wórk ón thís dévícé ís sávéd.·····················';
+  String get failureNetworkMessage => 'Thé nétwórk ís nót áváíláblé. Wórk ón thís dévícé ís sávéd.·····················';
 
   @override
-  String get failureNetworkRecovery =>
-      'Kéép cáptúríng. Prócéssíng wíll rétry whén yóú áré báck ónlíné.·······················';
+  String get failureNetworkRecovery => 'Kéép cáptúríng. Prócéssíng wíll rétry whén yóú áré báck ónlíné.·······················';
 
   @override
-  String get failurePermissionMessage =>
-      'Táptúré dóés nót hávé pérmíssíón tó dó thát.················';
+  String get failurePermissionMessage => 'Táptúré dóés nót hávé pérmíssíón tó dó thát.················';
 
   @override
-  String get failurePermissionRecovery =>
-      'Állów thé pérmíssíón ín séttíngs, thén try ágáín.··················';
+  String get failurePermissionRecovery => 'Állów thé pérmíssíón ín séttíngs, thén try ágáín.··················';
 
   @override
-  String get failureProviderMessage =>
-      'Á sérvícé thís scréén úsés fáíléd.············';
+  String get failureProviderMessage => 'Á sérvícé thís scréén úsés fáíléd.············';
 
   @override
-  String get failureProviderRecovery =>
-      'Try ágáín. Nóthíng álréády cáptúréd wás lóst.················';
+  String get failureProviderRecovery => 'Try ágáín. Nóthíng álréády cáptúréd wás lóst.················';
 
   @override
-  String get failureStorageMessage =>
-      'Thé phótó cóúld nót bé sávéd ón thís dévícé.················';
+  String get failureStorageMessage => 'Thé phótó cóúld nót bé sávéd ón thís dévícé.················';
 
   @override
-  String get failureStorageRecovery =>
-      'Fréé úp spácé ór éxpórt á prójéct, thén try ágáín.··················';
+  String get failureStorageRecovery => 'Fréé úp spácé ór éxpórt á prójéct, thén try ágáín.··················';
 
   @override
   String get failureValidationMessage => 'Thát válúé ís nót válíd.·········';
 
   @override
-  String get failureValidationRecovery =>
-      'Córréct thé híghlíghtéd fíéld ánd sávé ágáín.················';
+  String get failureValidationRecovery => 'Córréct thé híghlíghtéd fíéld ánd sávé ágáín.················';
 
   @override
-  String get processingTimeout =>
-      'Thé próvídér díd nót ánswér ín tímé.·············';
+  String get processingTimeout => 'Thé próvídér díd nót ánswér ín tímé.·············';
 
   @override
-  String get processingMalformedResponse =>
-      'Thé próvídér réspónsé cóúld nót bé réád.··············';
+  String get processingMalformedResponse => 'Thé próvídér réspónsé cóúld nót bé réád.··············';
 
   @override
   String get processingStopped => 'Prócéssíng stóppéd.·······';
@@ -22490,251 +20404,190 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get failureAIIsNotAvailable => 'ÁÍ ís nót áváíláblé.·······';
 
   @override
-  String get failureContinueCapturingAnalysisCanWait =>
-      'Cóntínúé cáptúríng. Ánálysís cán wáít.··············';
+  String get failureContinueCapturingAnalysisCanWait => 'Cóntínúé cáptúríng. Ánálysís cán wáít.··············';
 
   @override
-  String get failureThatPhotoIsNotOnThisDevice =>
-      'Thát phótó ís nót ón thís dévícé.············';
+  String get failureThatPhotoIsNotOnThisDevice => 'Thát phótó ís nót ón thís dévícé.············';
 
   @override
-  String get failureCaptureThePhotoAgainThenTryAgain =>
-      'Cáptúré thé phótó ágáín, thén try ágáín.··············';
+  String get failureCaptureThePhotoAgainThenTryAgain => 'Cáptúré thé phótó ágáín, thén try ágáín.··············';
 
   @override
-  String get failureThatPhotoCouldNotBeReadOn =>
-      'Thát phótó cóúld nót bé réád ón thís dévícé.················';
+  String get failureThatPhotoCouldNotBeReadOn => 'Thát phótó cóúld nót bé réád ón thís dévícé.················';
 
   @override
-  String get failureUseAnotherPhotoOrEnterTheValue =>
-      'Úsé ánóthér phótó ór éntér thé válúé by hánd.················';
+  String get failureUseAnotherPhotoOrEnterTheValue => 'Úsé ánóthér phótó ór éntér thé válúé by hánd.················';
 
   @override
-  String get failureThatPhotoCouldNotBeReadAs =>
-      'Thát phótó cóúld nót bé réád ás án ímágé.···············';
+  String get failureThatPhotoCouldNotBeReadAs => 'Thát phótó cóúld nót bé réád ás án ímágé.···············';
 
   @override
-  String get failureTheAnalysisCopyCouldNotBeRead =>
-      'Thé ánálysís cópy cóúld nót bé réád.·············';
+  String get failureTheAnalysisCopyCouldNotBeRead => 'Thé ánálysís cópy cóúld nót bé réád.·············';
 
   @override
-  String get failureKeepTheRecordAndTryAgain =>
-      'Kéép thé récórd ánd try ágáín.···········';
+  String get failureKeepTheRecordAndTryAgain => 'Kéép thé récórd ánd try ágáín.···········';
 
   @override
-  String get failureTheAnalysisResponseCouldNotBeRead =>
-      'Thé ánálysís réspónsé cóúld nót bé réád.··············';
+  String get failureTheAnalysisResponseCouldNotBeRead => 'Thé ánálysís réspónsé cóúld nót bé réád.··············';
 
   @override
   String get failureAnalysisCanWait => 'Ánálysís cán wáít.·······';
 
   @override
-  String get failureTheAnalysisQuotaIsUsedUp =>
-      'Thé ánálysís qúótá ís úséd úp.···········';
+  String get failureTheAnalysisQuotaIsUsedUp => 'Thé ánálysís qúótá ís úséd úp.···········';
 
   @override
-  String get failureAnalysisIsPausedOnTheServerFor =>
-      'Ánálysís ís páúséd ón thé sérvér fór á mómént.·················';
+  String get failureAnalysisIsPausedOnTheServerFor => 'Ánálysís ís páúséd ón thé sérvér fór á mómént.·················';
 
   @override
-  String get failureContinueCapturingAnalysisTriesAgainLater =>
-      'Cóntínúé cáptúríng. Ánálysís tríés ágáín látér.·················';
+  String get failureContinueCapturingAnalysisTriesAgainLater => 'Cóntínúé cáptúríng. Ánálysís tríés ágáín látér.·················';
 
   @override
-  String get failureAnalysisAccessIsUnavailableForThisProject =>
-      'Ánálysís áccéss ís únáváíláblé fór thís prójéct.·················';
+  String get failureAnalysisAccessIsUnavailableForThisProject => 'Ánálysís áccéss ís únáváíláblé fór thís prójéct.·················';
 
   @override
-  String get failureContinueCapturingAndCheckOrganisationAccess =>
-      'Cóntínúé cáptúríng ánd chéck órgánísátíón áccéss.··················';
+  String get failureContinueCapturingAndCheckOrganisationAccess => 'Cóntínúé cáptúríng ánd chéck órgánísátíón áccéss.··················';
 
   @override
-  String get failureTheAnalysisMediaIsTooLargeTo =>
-      'Thé ánálysís médíá ís tóó lárgé tó sénd.··············';
+  String get failureTheAnalysisMediaIsTooLargeTo => 'Thé ánálysís médíá ís tóó lárgé tó sénd.··············';
 
   @override
-  String get failureKeepTheRecordAndCompleteItWithout =>
-      'Kéép thé récórd ánd cómplété ít wíthóút ánálysís.··················';
+  String get failureKeepTheRecordAndCompleteItWithout => 'Kéép thé récórd ánd cómplété ít wíthóút ánálysís.··················';
 
   @override
-  String get failureSignInWasNotAccepted =>
-      'Sígn-ín wás nót áccéptéd.·········';
+  String get failureSignInWasNotAccepted => 'Sígn-ín wás nót áccéptéd.·········';
 
   @override
-  String get failureCheckYourEmailPasswordAndOrganisation =>
-      'Chéck yóúr émáíl, pásswórd ánd órgánísátíón.················';
+  String get failureCheckYourEmailPasswordAndOrganisation => 'Chéck yóúr émáíl, pásswórd ánd órgánísátíón.················';
 
   @override
-  String get failureTheOrganisationEndedThisDeviceSSign =>
-      'Thé órgánísátíón éndéd thís dévícé’s sígn-ín.················';
+  String get failureTheOrganisationEndedThisDeviceSSign => 'Thé órgánísátíón éndéd thís dévícé’s sígn-ín.················';
 
   @override
-  String get failureSignInAgainWhenTheServerIs =>
-      'Sígn ín ágáín whén thé sérvér ís réácháblé. Wórk ón thís dévícé cóntínúés.··························';
+  String get failureSignInAgainWhenTheServerIs => 'Sígn ín ágáín whén thé sérvér ís réácháblé. Wórk ón thís dévícé cóntínúés.··························';
 
   @override
-  String get failureTheServerCouldNotCompleteSignIn =>
-      'Thé sérvér cóúld nót cómplété sígn-ín.··············';
+  String get failureTheServerCouldNotCompleteSignIn => 'Thé sérvér cóúld nót cómplété sígn-ín.··············';
 
   @override
-  String get failureTryAgainWhenTheServerIsReachable =>
-      'Try ágáín whén thé sérvér ís réácháblé. Wórk ón thís dévícé cóntínúés.·························';
+  String get failureTryAgainWhenTheServerIsReachable => 'Try ágáín whén thé sérvér ís réácháblé. Wórk ón thís dévícé cóntínúés.·························';
 
   @override
-  String get failureTheSavedSignInCouldNotBe =>
-      'Thé sávéd sígn-ín cóúld nót bé réád.·············';
+  String get failureTheSavedSignInCouldNotBe => 'Thé sávéd sígn-ín cóúld nót bé réád.·············';
 
   @override
-  String get failureCheckTheAccountSettingsYourLocalWork =>
-      'Chéck thé áccóúnt séttíngs. Yóúr lócál wórk ís únchángéd.····················';
+  String get failureCheckTheAccountSettingsYourLocalWork => 'Chéck thé áccóúnt séttíngs. Yóúr lócál wórk ís únchángéd.····················';
 
   @override
-  String get failureEnterTheOrganisationSHTTPSServerAddress =>
-      'Éntér thé órgánísátíón’s HTTPS sérvér áddréss.·················';
+  String get failureEnterTheOrganisationSHTTPSServerAddress => 'Éntér thé órgánísátíón’s HTTPS sérvér áddréss.·················';
 
   @override
-  String get failureCheckTheAddressWithYourAdministrator =>
-      'Chéck thé áddréss wíth yóúr ádmínístrátór.···············';
+  String get failureCheckTheAddressWithYourAdministrator => 'Chéck thé áddréss wíth yóúr ádmínístrátór.···············';
 
   @override
-  String get failureSignOutBeforeChangingOrganisation =>
-      'Sígn óút béfóré chángíng órgánísátíón.··············';
+  String get failureSignOutBeforeChangingOrganisation => 'Sígn óút béfóré chángíng órgánísátíón.··············';
 
   @override
-  String get failureKeepTheCurrentAccountOrSignOut =>
-      'Kéép thé cúrrént áccóúnt ór sígn óút fírst.················';
+  String get failureKeepTheCurrentAccountOrSignOut => 'Kéép thé cúrrént áccóúnt ór sígn óút fírst.················';
 
   @override
-  String get failureTheOrganisationServerCouldNotBeReached =>
-      'Thé órgánísátíón sérvér cóúld nót bé réáchéd.················';
+  String get failureTheOrganisationServerCouldNotBeReached => 'Thé órgánísátíón sérvér cóúld nót bé réáchéd.················';
 
   @override
-  String get failureContinueWorkingOfflineAndTryAgainLater =>
-      'Cóntínúé wórkíng ófflíné ánd try ágáín látér.················';
+  String get failureContinueWorkingOfflineAndTryAgainLater => 'Cóntínúé wórkíng ófflíné ánd try ágáín látér.················';
 
   @override
-  String get failureUseASharedKeyOfAtLeast =>
-      'Úsé á sháréd kéy óf át léást 16 cháráctérs.················';
+  String get failureUseASharedKeyOfAtLeast => 'Úsé á sháréd kéy óf át léást 16 cháráctérs.················';
 
   @override
-  String get failureAskTheProjectManagerForTheSame =>
-      'Ásk thé prójéct mánágér fór thé sámé kéy úséd ón thé óthér dévícés.························';
+  String get failureAskTheProjectManagerForTheSame => 'Ásk thé prójéct mánágér fór thé sámé kéy úséd ón thé óthér dévícés.························';
 
   @override
-  String get failureThisProjectIsRegisteredOnTheServer =>
-      'Thís prójéct ís régístéréd ón thé sérvér tó óthérs.··················';
+  String get failureThisProjectIsRegisteredOnTheServer => 'Thís prójéct ís régístéréd ón thé sérvér tó óthérs.··················';
 
   @override
-  String get failureAskAnAdministratorToAddYouTo =>
-      'Ásk án ádmínístrátór tó ádd yóú tó ít. Wórk ón thís dévícé cóntínúés.·························';
+  String get failureAskAnAdministratorToAddYouTo => 'Ásk án ádmínístrátór tó ádd yóú tó ít. Wórk ón thís dévícé cóntínúés.·························';
 
   @override
-  String get failureAddTheSharedProjectKeyFirst =>
-      'Ádd thé sháréd prójéct kéy fírst.············';
+  String get failureAddTheSharedProjectKeyFirst => 'Ádd thé sháréd prójéct kéy fírst.············';
 
   @override
-  String get failureAskTheProjectManagerForTheKey =>
-      'Ásk thé prójéct mánágér fór thé kéy.·············';
+  String get failureAskTheProjectManagerForTheKey => 'Ásk thé prójéct mánágér fór thé kéy.·············';
 
   @override
-  String get failureRelayCouldNotCompleteThisRequest =>
-      'Réláy cóúld nót cómplété thís réqúést.··············';
+  String get failureRelayCouldNotCompleteThisRequest => 'Réláy cóúld nót cómplété thís réqúést.··············';
 
   @override
-  String get failureKeepWorkingLocallyAndTrySyncAgain =>
-      'Kéép wórkíng lócálly ánd try Sync ágáín.··············';
+  String get failureKeepWorkingLocallyAndTrySyncAgain => 'Kéép wórkíng lócálly ánd try Sync ágáín.··············';
 
   @override
-  String get failureThatPasswordDidNotOpenTheBundle =>
-      'Thát pásswórd díd nót ópén thé búndlé.··············';
+  String get failureThatPasswordDidNotOpenTheBundle => 'Thát pásswórd díd nót ópén thé búndlé.··············';
 
   @override
-  String get failureTryThePasswordAgainNothingWasExtracted =>
-      'Try thé pásswórd ágáín. Nóthíng wás éxtráctéd.·················';
+  String get failureTryThePasswordAgainNothingWasExtracted => 'Try thé pásswórd ágáín. Nóthíng wás éxtráctéd.·················';
 
   @override
-  String get failureTheProjectMetadataIsTooLargeFor =>
-      'Thé prójéct métádátá ís tóó lárgé fór óné páckágé.··················';
+  String get failureTheProjectMetadataIsTooLargeFor => 'Thé prójéct métádátá ís tóó lárgé fór óné páckágé.··················';
 
   @override
-  String get failureChooseASmallerPackageScope =>
-      'Chóósé á smállér páckágé scópé.···········';
+  String get failureChooseASmallerPackageScope => 'Chóósé á smállér páckágé scópé.···········';
 
   @override
-  String get failurePasswordProtectionIsUnavailableOnThisDevice =>
-      'Pásswórd prótéctíón ís únáváíláblé ón thís dévícé.··················';
+  String get failurePasswordProtectionIsUnavailableOnThisDevice => 'Pásswórd prótéctíón ís únáváíláblé ón thís dévícé.··················';
 
   @override
-  String get failureOpenThisPackageOnASupportedDevice =>
-      'Ópén thís páckágé ón á súppórtéd dévícé.··············';
+  String get failureOpenThisPackageOnASupportedDevice => 'Ópén thís páckágé ón á súppórtéd dévícé.··············';
 
   @override
-  String get failurePasswordProtectionNeedsBrowserCryptography =>
-      'Pásswórd prótéctíón nééds brówsér cryptógráphy.·················';
+  String get failurePasswordProtectionNeedsBrowserCryptography => 'Pásswórd prótéctíón nééds brówsér cryptógráphy.·················';
 
   @override
-  String get failureOpenTheAppThroughASecureConnection =>
-      'Ópén thé ápp thróúgh á sécúré cónnéctíón.···············';
+  String get failureOpenTheAppThroughASecureConnection => 'Ópén thé ápp thróúgh á sécúré cónnéctíón.···············';
 
   @override
-  String get failureThisBundleNeedsAPassword =>
-      'Thís búndlé nééds á pásswórd.···········';
+  String get failureThisBundleNeedsAPassword => 'Thís búndlé nééds á pásswórd.···········';
 
   @override
-  String get failureEnterItsPasswordToOpenIt =>
-      'Éntér íts pásswórd tó ópén ít.···········';
+  String get failureEnterItsPasswordToOpenIt => 'Éntér íts pásswórd tó ópén ít.···········';
 
   @override
-  String get failureTheBundleContainsASecretAndWas =>
-      'Thé búndlé cóntáíns á sécrét ánd wás nót wríttén.··················';
+  String get failureTheBundleContainsASecretAndWas => 'Thé búndlé cóntáíns á sécrét ánd wás nót wríttén.··················';
 
   @override
-  String get failureRemoveTheSecretAndExportTheBundle =>
-      'Rémóvé thé sécrét ánd éxpórt thé búndlé ágáín.·················';
+  String get failureRemoveTheSecretAndExportTheBundle => 'Rémóvé thé sécrét ánd éxpórt thé búndlé ágáín.·················';
 
   @override
-  String get failureTheBundleHasTooManyNestedArchives =>
-      'Thé búndlé hás tóó mány néstéd árchívés.··············';
+  String get failureTheBundleHasTooManyNestedArchives => 'Thé búndlé hás tóó mány néstéd árchívés.··············';
 
   @override
-  String get failureANestedBundleArchiveCouldNotBe =>
-      'Á néstéd búndlé árchívé cóúld nót bé sáfély chéckéd.···················';
+  String get failureANestedBundleArchiveCouldNotBe => 'Á néstéd búndlé árchívé cóúld nót bé sáfély chéckéd.···················';
 
   @override
-  String get failureAnEncryptedOrUnsupportedAttachmentCouldNot =>
-      'Án éncryptéd ór únsúppórtéd áttáchmént cóúld nót bé chéckéd.·····················';
+  String get failureAnEncryptedOrUnsupportedAttachmentCouldNot => 'Án éncryptéd ór únsúppórtéd áttáchmént cóúld nót bé chéckéd.·····················';
 
   @override
-  String get failureANestedBundleArchiveIsTooLarge =>
-      'Á néstéd búndlé árchívé ís tóó lárgé.·············';
+  String get failureANestedBundleArchiveIsTooLarge => 'Á néstéd búndlé árchívé ís tóó lárgé.·············';
 
   @override
-  String get failureANestedBundleEntryHasAnInvalid =>
-      'Á néstéd búndlé éntry hás án ínválíd sízé.···············';
+  String get failureANestedBundleEntryHasAnInvalid => 'Á néstéd búndlé éntry hás án ínválíd sízé.···············';
 
   @override
-  String get failureANestedBundleEntryExceedsItsDeclared =>
-      'Á néstéd búndlé éntry éxcééds íts décláréd sízé.·················';
+  String get failureANestedBundleEntryExceedsItsDeclared => 'Á néstéd búndlé éntry éxcééds íts décláréd sízé.·················';
 
   @override
-  String get failureFinishReadingTheCurrentPackageEntryFirst =>
-      'Fínísh réádíng thé cúrrént páckágé éntry fírst.·················';
+  String get failureFinishReadingTheCurrentPackageEntryFirst => 'Fínísh réádíng thé cúrrént páckágé éntry fírst.·················';
 
   @override
-  String get failureThePackageEntryIsMissing =>
-      'Thé páckágé éntry ís míssíng.···········';
+  String get failureThePackageEntryIsMissing => 'Thé páckágé éntry ís míssíng.···········';
 
   @override
-  String get failureReadThisLargePackageEntryAsA =>
-      'Réád thís lárgé páckágé éntry ás á stréám.···············';
+  String get failureReadThisLargePackageEntryAsA => 'Réád thís lárgé páckágé éntry ás á stréám.···············';
 
   @override
-  String get failureThePackageEntryChanged =>
-      'Thé páckágé éntry chángéd.··········';
+  String get failureThePackageEntryChanged => 'Thé páckágé éntry chángéd.··········';
 
   @override
-  String get failureThePackageEntryChecksumChanged =>
-      'Thé páckágé éntry chécksúm chángéd.·············';
+  String get failureThePackageEntryChecksumChanged => 'Thé páckágé éntry chécksúm chángéd.·············';
 
   @override
   String failureNoUploadDestinationIsRegisteredForValue(String value0) {
@@ -22742,729 +20595,553 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureChooseAnotherDestination =>
-      'Chóósé ánóthér déstínátíón.··········';
+  String get failureChooseAnotherDestination => 'Chóósé ánóthér déstínátíón.··········';
 
   @override
-  String get failureTheDestinationRefusedTheSignIn =>
-      'Thé déstínátíón réfúséd thé sígn-ín.·············';
+  String get failureTheDestinationRefusedTheSignIn => 'Thé déstínátíón réfúséd thé sígn-ín.·············';
 
   @override
-  String get failureCheckTheKeyOrSignInAgain =>
-      'Chéck thé kéy ór sígn ín ágáín.···········';
+  String get failureCheckTheKeyOrSignInAgain => 'Chéck thé kéy ór sígn ín ágáín.···········';
 
   @override
-  String get failureThatBucketOrFolderWasNotFound =>
-      'Thát búckét ór fóldér wás nót fóúnd.·············';
+  String get failureThatBucketOrFolderWasNotFound => 'Thát búckét ór fóldér wás nót fóúnd.·············';
 
   @override
-  String get failureCheckTheNameAndTryTheConnection =>
-      'Chéck thé námé ánd try thé cónnéctíón ágáín.················';
+  String get failureCheckTheNameAndTryTheConnection => 'Chéck thé námé ánd try thé cónnéctíón ágáín.················';
 
   @override
-  String get failureTheDestinationDidNotFinishTheUpload =>
-      'Thé déstínátíón díd nót fínísh thé úplóád.···············';
+  String get failureTheDestinationDidNotFinishTheUpload => 'Thé déstínátíón díd nót fínísh thé úplóád.···············';
 
   @override
   String get failureTryAgain => 'Try ágáín.····';
 
   @override
-  String get failureTheServerRedirectedTheUploadToAnother =>
-      'Thé sérvér rédíréctéd thé úplóád tó ánóthér hóst.··················';
+  String get failureTheServerRedirectedTheUploadToAnother => 'Thé sérvér rédíréctéd thé úplóád tó ánóthér hóst.··················';
 
   @override
-  String get failureCheckTheAddressAndTryAgain =>
-      'Chéck thé áddréss ánd try ágáín.············';
+  String get failureCheckTheAddressAndTryAgain => 'Chéck thé áddréss ánd try ágáín.············';
 
   @override
-  String get failureTheDestinationRejectedTheUpload =>
-      'Thé déstínátíón réjéctéd thé úplóád.·············';
+  String get failureTheDestinationRejectedTheUpload => 'Thé déstínátíón réjéctéd thé úplóád.·············';
 
   @override
-  String get failureCheckTheSettingsAndTryAgain =>
-      'Chéck thé séttíngs ánd try ágáín.············';
+  String get failureCheckTheSettingsAndTryAgain => 'Chéck thé séttíngs ánd try ágáín.············';
 
   @override
-  String get failureTheFileCouldNotBeReadWhile =>
-      'Thé fílé cóúld nót bé réád whílé ít wás béíng sént.··················';
+  String get failureTheFileCouldNotBeReadWhile => 'Thé fílé cóúld nót bé réád whílé ít wás béíng sént.··················';
 
   @override
-  String get failureCheckThatTheFileIsStillOn =>
-      'Chéck thát thé fílé ís stíll ón thís dévícé, thén rétry.····················';
+  String get failureCheckThatTheFileIsStillOn => 'Chéck thát thé fílé ís stíll ón thís dévícé, thén rétry.····················';
 
   @override
-  String get failureUploadsArePausedWhileTheAppIs =>
-      'Úplóáds áré páúséd whílé thé ápp ís ófflíné.················';
+  String get failureUploadsArePausedWhileTheAppIs => 'Úplóáds áré páúséd whílé thé ápp ís ófflíné.················';
 
   @override
-  String get failureGoOnlineThenConfirmTheUploadAgain =>
-      'Gó ónlíné, thén cónfírm thé úplóád ágáín.···············';
+  String get failureGoOnlineThenConfirmTheUploadAgain => 'Gó ónlíné, thén cónfírm thé úplóád ágáín.···············';
 
   @override
-  String get failureUploadsToThisDestinationAreTurnedOff =>
-      'Úplóáds tó thís déstínátíón áré túrnéd óff.················';
+  String get failureUploadsToThisDestinationAreTurnedOff => 'Úplóáds tó thís déstínátíón áré túrnéd óff.················';
 
   @override
-  String get failureEnableTheDestinationOnThePrivacyPage =>
-      'Énáblé thé déstínátíón ón thé prívácy págé fírst.··················';
+  String get failureEnableTheDestinationOnThePrivacyPage => 'Énáblé thé déstínátíón ón thé prívácy págé fírst.··················';
 
   @override
-  String get failureCloudSignInCouldNotFinish =>
-      'Clóúd sígn-ín cóúld nót fínísh.···········';
+  String get failureCloudSignInCouldNotFinish => 'Clóúd sígn-ín cóúld nót fínísh.···········';
 
   @override
   String get failureTrySigningInAgain => 'Try sígníng ín ágáín.········';
 
   @override
-  String get failureTheDestinationReturnedTooMuchData =>
-      'Thé déstínátíón rétúrnéd tóó múch dátá.··············';
+  String get failureTheDestinationReturnedTooMuchData => 'Thé déstínátíón rétúrnéd tóó múch dátá.··············';
 
   @override
-  String get failureCheckTheDestinationAddressAndTryAgain =>
-      'Chéck thé déstínátíón áddréss ánd try ágáín.················';
+  String get failureCheckTheDestinationAddressAndTryAgain => 'Chéck thé déstínátíón áddréss ánd try ágáín.················';
 
   @override
-  String get failureTheDestinationCouldNotBeReached =>
-      'Thé déstínátíón cóúld nót bé réáchéd.·············';
+  String get failureTheDestinationCouldNotBeReached => 'Thé déstínátíón cóúld nót bé réáchéd.·············';
 
   @override
-  String get failureTryAgainWhenYouAreOnline =>
-      'Try ágáín whén yóú áré ónlíné.···········';
+  String get failureTryAgainWhenYouAreOnline => 'Try ágáín whén yóú áré ónlíné.···········';
 
   @override
-  String get failureRemoveTheDestinationAndAddItAgain =>
-      'Rémóvé thé déstínátíón ánd ádd ít ágáín.··············';
+  String get failureRemoveTheDestinationAndAddItAgain => 'Rémóvé thé déstínátíón ánd ádd ít ágáín.··············';
 
   @override
-  String get failureThisDestinationSignInChangedDuringThe =>
-      'Thís déstínátíón sígn-ín chángéd dúríng thé úplóád.··················';
+  String get failureThisDestinationSignInChangedDuringThe => 'Thís déstínátíón sígn-ín chángéd dúríng thé úplóád.··················';
 
   @override
-  String get failureReviewTheDestinationAndConfirmANew =>
-      'Révíéw thé déstínátíón ánd cónfírm á néw úplóád.·················';
+  String get failureReviewTheDestinationAndConfirmANew => 'Révíéw thé déstínátíón ánd cónfírm á néw úplóád.·················';
 
   @override
-  String get failureTheDestinationDidNotAcceptTheTest =>
-      'Thé déstínátíón díd nót áccépt thé tést fílé.················';
+  String get failureTheDestinationDidNotAcceptTheTest => 'Thé déstínátíón díd nót áccépt thé tést fílé.················';
 
   @override
-  String get failureSignInAgainAndRetryTheTest =>
-      'Sígn ín ágáín ánd rétry thé tést.············';
+  String get failureSignInAgainAndRetryTheTest => 'Sígn ín ágáín ánd rétry thé tést.············';
 
   @override
-  String get failureTheDestinationHasNotFinishedTheUpload =>
-      'Thé déstínátíón hás nót fíníshéd thé úplóád.················';
+  String get failureTheDestinationHasNotFinishedTheUpload => 'Thé déstínátíón hás nót fíníshéd thé úplóád.················';
 
   @override
   String get failureRetryTheUpload => 'Rétry thé úplóád.······';
 
   @override
-  String get failureThatFolderCannotBeWritten =>
-      'Thát fóldér cánnót bé wríttén.···········';
+  String get failureThatFolderCannotBeWritten => 'Thát fóldér cánnót bé wríttén.···········';
 
   @override
   String get failureChooseTheFolderAgain => 'Chóósé thé fóldér ágáín.·········';
 
   @override
-  String get failureTheFileCouldNotBeWrittenTo =>
-      'Thé fílé cóúld nót bé wríttén tó thát fóldér.················';
+  String get failureTheFileCouldNotBeWrittenTo => 'Thé fílé cóúld nót bé wríttén tó thát fóldér.················';
 
   @override
-  String get failureFreeSomeSpaceOrChooseTheFolder =>
-      'Fréé sómé spácé ór chóósé thé fóldér ágáín.················';
+  String get failureFreeSomeSpaceOrChooseTheFolder => 'Fréé sómé spácé ór chóósé thé fóldér ágáín.················';
 
   @override
-  String get failureThisFolderRequiresASupportedSystemFolder =>
-      'Thís fóldér réqúírés á súppórtéd systém fóldér gránt.···················';
+  String get failureThisFolderRequiresASupportedSystemFolder => 'Thís fóldér réqúírés á súppórtéd systém fóldér gránt.···················';
 
   @override
-  String get failureChooseAnAccessibleFolderOrAnotherDestination =>
-      'Chóósé án áccéssíblé fóldér ór ánóthér déstínátíón.··················';
+  String get failureChooseAnAccessibleFolderOrAnotherDestination => 'Chóósé án áccéssíblé fóldér ór ánóthér déstínátíón.··················';
 
   @override
-  String get failureThatFolderPathIsNotUsable =>
-      'Thát fóldér páth ís nót úsáblé.···········';
+  String get failureThatFolderPathIsNotUsable => 'Thát fóldér páth ís nót úsáblé.···········';
 
   @override
-  String get failureTheTaptureFolderOnThisDeviceIs =>
-      'Thé Táptúré fóldér ón thís dévícé ís nót áváíláblé.··················';
+  String get failureTheTaptureFolderOnThisDeviceIs => 'Thé Táptúré fóldér ón thís dévícé ís nót áváíláblé.··················';
 
   @override
-  String get failureCheckTheStorageLocationInSettings =>
-      'Chéck thé stórágé lócátíón ín Séttíngs.··············';
+  String get failureCheckTheStorageLocationInSettings => 'Chéck thé stórágé lócátíón ín Séttíngs.··············';
 
   @override
-  String get failureThisGoogleDriveSignInIsNo =>
-      'Thís Góóglé Drívé sígn-ín ís nó lóngér áváíláblé.··················';
+  String get failureThisGoogleDriveSignInIsNo => 'Thís Góóglé Drívé sígn-ín ís nó lóngér áváíláblé.··················';
 
   @override
-  String get failureSignInToThisDestinationAgain =>
-      'Sígn ín tó thís déstínátíón ágáín.············';
+  String get failureSignInToThisDestinationAgain => 'Sígn ín tó thís déstínátíón ágáín.············';
 
   @override
-  String get failureGoogleDriveNeedsACurrentSignIn =>
-      'Góóglé Drívé nééds á cúrrént sígn-ín fór thís áccóúnt.···················';
+  String get failureGoogleDriveNeedsACurrentSignIn => 'Góóglé Drívé nééds á cúrrént sígn-ín fór thís áccóúnt.···················';
 
   @override
-  String get failureSignInAgainToAllowFileAccess =>
-      'Sígn ín ágáín tó állów fílé áccéss.·············';
+  String get failureSignInAgainToAllowFileAccess => 'Sígn ín ágáín tó állów fílé áccéss.·············';
 
   @override
-  String get failureNativeGoogleDriveSignInIsUnavailable =>
-      'Nátívé Góóglé Drívé sígn-ín ís únáváíláblé.················';
+  String get failureNativeGoogleDriveSignInIsUnavailable => 'Nátívé Góóglé Drívé sígn-ín ís únáváíláblé.················';
 
   @override
-  String get failureTheDestinationIsStillSavedSignIn =>
-      'Thé déstínátíón ís stíll sávéd. Sígn ín, thén try thé úplóád.······················';
+  String get failureTheDestinationIsStillSavedSignIn => 'Thé déstínátíón ís stíll sávéd. Sígn ín, thén try thé úplóád.······················';
 
   @override
-  String get failureTheUploadChunkSizeIsNotUsable =>
-      'Thé úplóád chúnk sízé ís nót úsáblé.·············';
+  String get failureTheUploadChunkSizeIsNotUsable => 'Thé úplóád chúnk sízé ís nót úsáblé.·············';
 
   @override
-  String get failureUseTheStandardUploadSettings =>
-      'Úsé thé stándárd úplóád séttíngs.············';
+  String get failureUseTheStandardUploadSettings => 'Úsé thé stándárd úplóád séttíngs.············';
 
   @override
-  String get failureTheDestinationReturnedAnUnusableUploadResponse =>
-      'Thé déstínátíón rétúrnéd án únúsáblé úplóád réspónsé.···················';
+  String get failureTheDestinationReturnedAnUnusableUploadResponse => 'Thé déstínátíón rétúrnéd án únúsáblé úplóád réspónsé.···················';
 
   @override
-  String get failureTestTheDestinationThenTryTheUpload =>
-      'Tést thé déstínátíón, thén try thé úplóád ágáín.·················';
+  String get failureTestTheDestinationThenTryTheUpload => 'Tést thé déstínátíón, thén try thé úplóád ágáín.·················';
 
   @override
-  String get failureTheBucketDidNotAcknowledgeTheUploaded =>
-      'Thé búckét díd nót ácknówlédgé thé úplóádéd párt.··················';
+  String get failureTheBucketDidNotAcknowledgeTheUploaded => 'Thé búckét díd nót ácknówlédgé thé úplóádéd párt.··················';
 
   @override
-  String get failureTestTheDestinationAndTryAgain =>
-      'Tést thé déstínátíón ánd try ágáín.·············';
+  String get failureTestTheDestinationAndTryAgain => 'Tést thé déstínátíón ánd try ágáín.·············';
 
   @override
-  String get failureTheBucketDidNotFinishTheUpload =>
-      'Thé búckét díd nót fínísh thé úplóád.·············';
+  String get failureTheBucketDidNotFinishTheUpload => 'Thé búckét díd nót fínísh thé úplóád.·············';
 
   @override
-  String get failureTheBucketRefusedToFinishTheUpload =>
-      'Thé búckét réfúséd tó fínísh thé úplóád.··············';
+  String get failureTheBucketRefusedToFinishTheUpload => 'Thé búckét réfúséd tó fínísh thé úplóád.··············';
 
   @override
-  String get failureTheBucketDidNotConfirmTheCompleted =>
-      'Thé búckét díd nót cónfírm thé cómplétéd úplóád.·················';
+  String get failureTheBucketDidNotConfirmTheCompleted => 'Thé búckét díd nót cónfírm thé cómplétéd úplóád.·················';
 
   @override
-  String get failureTheDestinationDidNotStartTheUpload =>
-      'Thé déstínátíón díd nót stárt thé úplóád.···············';
+  String get failureTheDestinationDidNotStartTheUpload => 'Thé déstínátíón díd nót stárt thé úplóád.···············';
 
   @override
-  String get failureTryTheConnectionAgain =>
-      'Try thé cónnéctíón ágáín.·········';
+  String get failureTryTheConnectionAgain => 'Try thé cónnéctíón ágáín.·········';
 
   @override
-  String get failureThisDestinationHasNoSavedSignIn =>
-      'Thís déstínátíón hás nó sávéd sígn-ín.··············';
+  String get failureThisDestinationHasNoSavedSignIn => 'Thís déstínátíón hás nó sávéd sígn-ín.··············';
 
   @override
-  String get failureEnterTheKeysAndTestTheConnection =>
-      'Éntér thé kéys ánd tést thé cónnéctíón.··············';
+  String get failureEnterTheKeysAndTestTheConnection => 'Éntér thé kéys ánd tést thé cónnéctíón.··············';
 
   @override
-  String get failureTheSavedSignInIsNotUsable =>
-      'Thé sávéd sígn-ín ís nót úsáblé.············';
+  String get failureTheSavedSignInIsNotUsable => 'Thé sávéd sígn-ín ís nót úsáblé.············';
 
   @override
   String get failureEnterTheKeysAgain => 'Éntér thé kéys ágáín.········';
 
   @override
-  String get failureTheBucketSettingsAreIncomplete =>
-      'Thé búckét séttíngs áré íncómplété.·············';
+  String get failureTheBucketSettingsAreIncomplete => 'Thé búckét séttíngs áré íncómplété.·············';
 
   @override
-  String get failureEnterTheKeyRegionAndBucket =>
-      'Éntér thé kéy, régíón ánd búckét.············';
+  String get failureEnterTheKeyRegionAndBucket => 'Éntér thé kéy, régíón ánd búckét.············';
 
   @override
-  String get failureChooseAFilenameWithoutFolderSeparators =>
-      'Chóósé á fílénámé wíthóút fóldér sépárátórs.················';
+  String get failureChooseAFilenameWithoutFolderSeparators => 'Chóósé á fílénámé wíthóút fóldér sépárátórs.················';
 
   @override
-  String get failureTheFolderCouldNotOpenANew =>
-      'Thé fóldér cóúld nót ópén á néw fílé.·············';
+  String get failureTheFolderCouldNotOpenANew => 'Thé fóldér cóúld nót ópén á néw fílé.·············';
 
   @override
-  String get failureTheFolderCouldNotPublishTheFile =>
-      'Thé fóldér cóúld nót públísh thé fílé.··············';
+  String get failureTheFolderCouldNotPublishTheFile => 'Thé fóldér cóúld nót públísh thé fílé.··············';
 
   @override
-  String get failureAccessToTheChosenFolderWasLost =>
-      'Áccéss tó thé chósén fóldér wás lóst.·············';
+  String get failureAccessToTheChosenFolderWasLost => 'Áccéss tó thé chósén fóldér wás lóst.·············';
 
   @override
-  String get failureChooseAnAccessibleFolderAndTryAgain =>
-      'Chóósé án áccéssíblé fóldér ánd try ágáín.···············';
+  String get failureChooseAnAccessibleFolderAndTryAgain => 'Chóósé án áccéssíblé fóldér ánd try ágáín.···············';
 
   @override
-  String get failureTheUploadFilenameIsNotUsable =>
-      'Thé úplóád fílénámé ís nót úsáblé.············';
+  String get failureTheUploadFilenameIsNotUsable => 'Thé úplóád fílénámé ís nót úsáblé.············';
 
   @override
-  String get failureEnterTheAddressAndSignInThen =>
-      'Éntér thé áddréss ánd sígn-ín, thén tést ít.················';
+  String get failureEnterTheAddressAndSignInThen => 'Éntér thé áddréss ánd sígn-ín, thén tést ít.················';
 
   @override
-  String get failureTheDestinationAddressOrSignInIs =>
-      'Thé déstínátíón áddréss ór sígn-ín ís nót úsáblé.··················';
+  String get failureTheDestinationAddressOrSignInIs => 'Thé déstínátíón áddréss ór sígn-ín ís nót úsáblé.··················';
 
   @override
-  String get failureEnterAFullHTTPSAddressAndSign =>
-      'Éntér á fúll HTTPS áddréss ánd sígn-ín ágáín.················';
+  String get failureEnterAFullHTTPSAddressAndSign => 'Éntér á fúll HTTPS áddréss ánd sígn-ín ágáín.················';
 
   @override
-  String get failureGoogleDriveSignInCouldNotFinish =>
-      'Góóglé Drívé sígn-ín cóúld nót fínísh.··············';
+  String get failureGoogleDriveSignInCouldNotFinish => 'Góóglé Drívé sígn-ín cóúld nót fínísh.··············';
 
   @override
-  String get failureThisDestinationNeedsAFreshSignIn =>
-      'Thís déstínátíón nééds á frésh sígn-ín.··············';
+  String get failureThisDestinationNeedsAFreshSignIn => 'Thís déstínátíón nééds á frésh sígn-ín.··············';
 
   @override
-  String get failureTheUploadCheckpointCouldNotBeSaved =>
-      'Thé úplóád chéckpóínt cóúld nót bé sávéd ín tímé.··················';
+  String get failureTheUploadCheckpointCouldNotBeSaved => 'Thé úplóád chéckpóínt cóúld nót bé sávéd ín tímé.··················';
 
   @override
-  String get failureCheckSecureStorageThenTryAgain =>
-      'Chéck sécúré stórágé, thén try ágáín.·············';
+  String get failureCheckSecureStorageThenTryAgain => 'Chéck sécúré stórágé, thén try ágáín.·············';
 
   @override
-  String get failureThatRowIsNoLongerOnThis =>
-      'Thát rów ís nó lóngér ón thís dévícé.·············';
+  String get failureThatRowIsNoLongerOnThis => 'Thát rów ís nó lóngér ón thís dévícé.·············';
 
   @override
-  String get failureRefreshTheListAndTryAgain =>
-      'Réfrésh thé líst ánd try ágáín.···········';
+  String get failureRefreshTheListAndTryAgain => 'Réfrésh thé líst ánd try ágáín.···········';
 
   @override
   String get failureADeleteNeedsAReason => 'Á délété nééds á réásón.·········';
 
   @override
-  String get failureSayWhyThisRowShouldBeRemoved =>
-      'Sáy why thís rów shóúld bé rémóvéd, thén try ágáín.··················';
+  String get failureSayWhyThisRowShouldBeRemoved => 'Sáy why thís rów shóúld bé rémóvéd, thén try ágáín.··················';
 
   @override
-  String get failureTheDatabaseCouldNotCompleteThatWrite =>
-      'Thé dátábásé cóúld nót cómplété thát wríté.················';
+  String get failureTheDatabaseCouldNotCompleteThatWrite => 'Thé dátábásé cóúld nót cómplété thát wríté.················';
 
   @override
-  String get failureFreeUpSpaceOrExportAProject =>
-      'Fréé úp spácé ór éxpórt á prójéct, thén try ágáín.··················';
+  String get failureFreeUpSpaceOrExportAProject => 'Fréé úp spácé ór éxpórt á prójéct, thén try ágáín.··················';
 
   @override
-  String get failureTheDatabaseIsEncryptedAndTheKey =>
-      'Thé dátábásé ís éncryptéd ánd thé kéy ís míssíng.··················';
+  String get failureTheDatabaseIsEncryptedAndTheKey => 'Thé dátábásé ís éncryptéd ánd thé kéy ís míssíng.··················';
 
   @override
-  String get failureRestoreTheKeyFromABackupThen =>
-      'Réstóré thé kéy fróm á báckúp, thén ópén thé ápp ágáín.····················';
+  String get failureRestoreTheKeyFromABackupThen => 'Réstóré thé kéy fróm á báckúp, thén ópén thé ápp ágáín.····················';
 
   @override
-  String get failureTheDatabaseKeyIsMissingOrUnreadable =>
-      'Thé dátábásé kéy ís míssíng ór únréádáblé.···············';
+  String get failureTheDatabaseKeyIsMissingOrUnreadable => 'Thé dátábásé kéy ís míssíng ór únréádáblé.···············';
 
   @override
-  String get failureTypeDISABLEENCRYPTIONToTurnEncryptionOff =>
-      'Typé DÍSÁBLÉ ÉNCRYPTÍÓN tó túrn éncryptíón óff.·················';
+  String get failureTypeDISABLEENCRYPTIONToTurnEncryptionOff => 'Typé DÍSÁBLÉ ÉNCRYPTÍÓN tó túrn éncryptíón óff.·················';
 
   @override
-  String get failureEnterTheConfirmationExactlyThenTryAgain =>
-      'Éntér thé cónfírmátíón éxáctly, thén try ágáín.·················';
+  String get failureEnterTheConfirmationExactlyThenTryAgain => 'Éntér thé cónfírmátíón éxáctly, thén try ágáín.·················';
 
   @override
-  String get failureThereIsNoDatabaseToEncrypt =>
-      'Théré ís nó dátábásé tó éncrypt.············';
+  String get failureThereIsNoDatabaseToEncrypt => 'Théré ís nó dátábásé tó éncrypt.············';
 
   @override
-  String get failureOpenTheAppOnceSoADatabase =>
-      'Ópén thé ápp óncé só á dátábásé ís créátéd, thén try ágáín.·····················';
+  String get failureOpenTheAppOnceSoADatabase => 'Ópén thé ápp óncé só á dátábásé ís créátéd, thén try ágáín.·····················';
 
   @override
-  String get failureTheDatabaseCouldNotBeEncrypted =>
-      'Thé dátábásé cóúld nót bé éncryptéd.·············';
+  String get failureTheDatabaseCouldNotBeEncrypted => 'Thé dátábásé cóúld nót bé éncryptéd.·············';
 
   @override
-  String get failureFreeUpSpaceThenTryAgain =>
-      'Fréé úp spácé, thén try ágáín.···········';
+  String get failureFreeUpSpaceThenTryAgain => 'Fréé úp spácé, thén try ágáín.···········';
 
   @override
-  String get failureTheEncryptedCopyDidNotMatchThe =>
-      'Thé éncryptéd cópy díd nót mátch thé órígínál.·················';
+  String get failureTheEncryptedCopyDidNotMatchThe => 'Thé éncryptéd cópy díd nót mátch thé órígínál.·················';
 
   @override
-  String get failureTryEncryptingAgainTheOriginalDatabaseWas =>
-      'Try éncryptíng ágáín. Thé órígínál dátábásé wás nót chángéd.·····················';
+  String get failureTryEncryptingAgainTheOriginalDatabaseWas => 'Try éncryptíng ágáín. Thé órígínál dátábásé wás nót chángéd.·····················';
 
   @override
-  String get failureKeepTheWorkingDatabaseFreeUpSpace =>
-      'Kéép thé wórkíng dátábásé. Fréé úp spácé, thén clósé ágáín.·····················';
+  String get failureKeepTheWorkingDatabaseFreeUpSpace => 'Kéép thé wórkíng dátábásé. Fréé úp spácé, thén clósé ágáín.·····················';
 
   @override
-  String get failureRestoreTheKeyFromABackupThe =>
-      'Réstóré thé kéy fróm á báckúp. Thé éncryptéd dátábásé wás nót chángéd.·························';
+  String get failureRestoreTheKeyFromABackupThe => 'Réstóré thé kéy fróm á báckúp. Thé éncryptéd dátábásé wás nót chángéd.·························';
 
   @override
-  String get failureThisUpdateWouldDropOrRewriteA =>
-      'Thís úpdáté wóúld dróp ór réwríté á cólúmn.················';
+  String get failureThisUpdateWouldDropOrRewriteA => 'Thís úpdáté wóúld dróp ór réwríté á cólúmn.················';
 
   @override
-  String get failureExportYourProjectsThenConfirmTheUpdate =>
-      'Éxpórt yóúr prójécts, thén cónfírm thé úpdáté.·················';
+  String get failureExportYourProjectsThenConfirmTheUpdate => 'Éxpórt yóúr prójécts, thén cónfírm thé úpdáté.·················';
 
   @override
-  String get failureThisDeviceCannotBuildTheRecordSearch =>
-      'Thís dévícé cánnót búíld thé récórd séárch índéx.··················';
+  String get failureThisDeviceCannotBuildTheRecordSearch => 'Thís dévícé cánnót búíld thé récórd séárch índéx.··················';
 
   @override
-  String get failureUpdateTheAppThenOpenItAgain =>
-      'Úpdáté thé ápp, thén ópén ít ágáín.·············';
+  String get failureUpdateTheAppThenOpenItAgain => 'Úpdáté thé ápp, thén ópén ít ágáín.·············';
 
   @override
-  String get failureTheFilePathMustStayInsideThe =>
-      'Thé fílé páth múst stáy ínsídé thé prójéct fóldér.··················';
+  String get failureTheFilePathMustStayInsideThe => 'Thé fílé páth múst stáy ínsídé thé prójéct fóldér.··················';
 
   @override
-  String get failureSaveTheFileUnderTheProjectFolder =>
-      'Sávé thé fílé úndér thé prójéct fóldér ánd try ágáín.···················';
+  String get failureSaveTheFileUnderTheProjectFolder => 'Sávé thé fílé úndér thé prójéct fóldér ánd try ágáín.···················';
 
   @override
-  String get failureTheOriginalCaptionCannotBeChanged =>
-      'Thé órígínál cáptíón cánnót bé chángéd.··············';
+  String get failureTheOriginalCaptionCannotBeChanged => 'Thé órígínál cáptíón cánnót bé chángéd.··············';
 
   @override
-  String get failureLeaveTheCapturedTextAndWriteA =>
-      'Léávé thé cáptúréd téxt ánd wríté á réfínéd óné.·················';
+  String get failureLeaveTheCapturedTextAndWriteA => 'Léávé thé cáptúréd téxt ánd wríté á réfínéd óné.·················';
 
   @override
-  String get failureADuplicatePairNeedsTwoRecords =>
-      'Á dúplícáté páír nééds twó récórds.·············';
+  String get failureADuplicatePairNeedsTwoRecords => 'Á dúplícáté páír nééds twó récórds.·············';
 
   @override
-  String get failureChooseBothRecordsAndTryAgain =>
-      'Chóósé bóth récórds ánd try ágáín.············';
+  String get failureChooseBothRecordsAndTryAgain => 'Chóósé bóth récórds ánd try ágáín.············';
 
   @override
-  String get failureARecordCannotBeADuplicateOf =>
-      'Á récórd cánnót bé á dúplícáté óf ítsélf.···············';
+  String get failureARecordCannotBeADuplicateOf => 'Á récórd cánnót bé á dúplícáté óf ítsélf.···············';
 
   @override
-  String get failureChooseTwoDifferentRecordsAndTryAgain =>
-      'Chóósé twó dífférént récórds ánd try ágáín.················';
+  String get failureChooseTwoDifferentRecordsAndTryAgain => 'Chóósé twó dífférént récórds ánd try ágáín.················';
 
   @override
-  String get failureADuplicatePairNeedsAProjectA =>
-      'Á dúplícáté páír nééds á prójéct, á sígnál ánd á scóré.····················';
+  String get failureADuplicatePairNeedsAProjectA => 'Á dúplícáté páír nééds á prójéct, á sígnál ánd á scóré.····················';
 
   @override
-  String get failureRunDetectionAgainThenTryAgain =>
-      'Rún détéctíón ágáín, thén try ágáín.·············';
+  String get failureRunDetectionAgainThenTryAgain => 'Rún détéctíón ágáín, thén try ágáín.·············';
 
   @override
-  String get failureAResolutionNeedsAChoiceAndAn =>
-      'Á résólútíón nééds á chóícé ánd án ópérátór.················';
+  String get failureAResolutionNeedsAChoiceAndAn => 'Á résólútíón nééds á chóícé ánd án ópérátór.················';
 
   @override
-  String get failureChooseHowToResolveThePairThen =>
-      'Chóósé hów tó résólvé thé páír, thén try ágáín.·················';
+  String get failureChooseHowToResolveThePairThen => 'Chóósé hów tó résólvé thé páír, thén try ágáín.·················';
 
   @override
-  String get failureThatPairIsNoLongerOnThis =>
-      'Thát páír ís nó lóngér ón thís dévícé.··············';
+  String get failureThatPairIsNoLongerOnThis => 'Thát páír ís nó lóngér ón thís dévícé.··············';
 
   @override
-  String get failureACompletedExportCannotBeChanged =>
-      'Á cómplétéd éxpórt cánnót bé chángéd.·············';
+  String get failureACompletedExportCannotBeChanged => 'Á cómplétéd éxpórt cánnót bé chángéd.·············';
 
   @override
-  String get failureRunANewExportInsteadOfRewriting =>
-      'Rún á néw éxpórt ínstéád óf réwrítíng thís óné.·················';
+  String get failureRunANewExportInsteadOfRewriting => 'Rún á néw éxpórt ínstéád óf réwrítíng thís óné.·················';
 
   @override
-  String get failureAnExportIsRecordedOnlyWhenThe =>
-      'Án éxpórt ís récórdéd ónly whén thé fílé ís fíníshéd.···················';
+  String get failureAnExportIsRecordedOnlyWhenThe => 'Án éxpórt ís récórdéd ónly whén thé fílé ís fíníshéd.···················';
 
   @override
-  String get failureFinishWritingTheFileThenRecordThe =>
-      'Fínísh wrítíng thé fílé, thén récórd thé éxpórt.·················';
+  String get failureFinishWritingTheFileThenRecordThe => 'Fínísh wrítíng thé fílé, thén récórd thé éxpórt.·················';
 
   @override
-  String get failureTheExportFormatsAreNotInA =>
-      'Thé éxpórt fórmáts áré nót ín á fórm Táptúré cán stóré.····················';
+  String get failureTheExportFormatsAreNotInA => 'Thé éxpórt fórmáts áré nót ín á fórm Táptúré cán stóré.····················';
 
   @override
-  String get failureFixTheFormatsListAndSaveAgain =>
-      'Fíx thé fórmáts líst ánd sávé ágáín.·············';
+  String get failureFixTheFormatsListAndSaveAgain => 'Fíx thé fórmáts líst ánd sávé ágáín.·············';
 
   @override
-  String get failureTheExportFiltersAreNotInA =>
-      'Thé éxpórt fíltérs áré nót ín á fórm Táptúré cán stóré.····················';
+  String get failureTheExportFiltersAreNotInA => 'Thé éxpórt fíltérs áré nót ín á fórm Táptúré cán stóré.····················';
 
   @override
-  String get failureStoreTheQueryNotTheExportedValues =>
-      'Stóré thé qúéry, nót thé éxpórtéd válúés.···············';
+  String get failureStoreTheQueryNotTheExportedValues => 'Stóré thé qúéry, nót thé éxpórtéd válúés.···············';
 
   @override
-  String get failureThatEntryCouldNotBeRead =>
-      'Thát éntry cóúld nót bé réád.···········';
+  String get failureThatEntryCouldNotBeRead => 'Thát éntry cóúld nót bé réád.···········';
 
   @override
-  String get failureChangeItThenSaveAgain =>
-      'Chángé ít, thén sávé ágáín.··········';
+  String get failureChangeItThenSaveAgain => 'Chángé ít, thén sávé ágáín.··········';
 
   @override
-  String get failureTheMarkedAreaOnThePhotoCould =>
-      'Thé márkéd áréá ón thé phótó cóúld nót bé réád.·················';
+  String get failureTheMarkedAreaOnThePhotoCould => 'Thé márkéd áréá ón thé phótó cóúld nót bé réád.·················';
 
   @override
-  String get failureFixTheRegionObjectAndSaveAgain =>
-      'Fíx thé régíón óbjéct ánd sávé ágáín.·············';
+  String get failureFixTheRegionObjectAndSaveAgain => 'Fíx thé régíón óbjéct ánd sávé ágáín.·············';
 
   @override
-  String get failureTheMarkedAreaOnThePhotoIs =>
-      'Thé márkéd áréá ón thé phótó ís nót ín á fórm Táptúré cán stóré.·······················';
+  String get failureTheMarkedAreaOnThePhotoIs => 'Thé márkéd áréá ón thé phótó ís nót ín á fórm Táptúré cán stóré.·······················';
 
   @override
-  String get failureThatMeetingIsNoLongerOnThis =>
-      'Thát méétíng ís nó lóngér ón thís dévícé.···············';
+  String get failureThatMeetingIsNoLongerOnThis => 'Thát méétíng ís nó lóngér ón thís dévícé.···············';
 
   @override
-  String get failureTheOriginalTranscriptCannotBeChanged =>
-      'Thé órígínál tránscrípt cánnót bé chángéd.···············';
+  String get failureTheOriginalTranscriptCannotBeChanged => 'Thé órígínál tránscrípt cánnót bé chángéd.···············';
 
   @override
-  String get failureLeaveTheCapturedTextAndWriteRefined =>
-      'Léávé thé cáptúréd téxt ánd wríté réfínéd mínútés.··················';
+  String get failureLeaveTheCapturedTextAndWriteRefined => 'Léávé thé cáptúréd téxt ánd wríté réfínéd mínútés.··················';
 
   @override
-  String get failureTheMeetingAgendaCouldNotBeRead =>
-      'Thé méétíng ágéndá cóúld nót bé réád.·············';
+  String get failureTheMeetingAgendaCouldNotBeRead => 'Thé méétíng ágéndá cóúld nót bé réád.·············';
 
   @override
-  String get failureFixTheAgendaListAndSaveAgain =>
-      'Fíx thé ágéndá líst ánd sávé ágáín.·············';
+  String get failureFixTheAgendaListAndSaveAgain => 'Fíx thé ágéndá líst ánd sávé ágáín.·············';
 
   @override
-  String get failureTheMeetingAgendaIsNotInA =>
-      'Thé méétíng ágéndá ís nót ín á fórm Táptúré cán stóré.···················';
+  String get failureTheMeetingAgendaIsNotInA => 'Thé méétíng ágéndá ís nót ín á fórm Táptúré cán stóré.···················';
 
   @override
-  String get failureTheMergeSummaryCouldNotBeRead =>
-      'Thé mérgé súmmáry cóúld nót bé réád.·············';
+  String get failureTheMergeSummaryCouldNotBeRead => 'Thé mérgé súmmáry cóúld nót bé réád.·············';
 
   @override
-  String get failureFixTheCountsObjectAndSaveAgain =>
-      'Fíx thé cóúnts óbjéct ánd sávé ágáín.·············';
+  String get failureFixTheCountsObjectAndSaveAgain => 'Fíx thé cóúnts óbjéct ánd sávé ágáín.·············';
 
   @override
-  String get failureTheMergeSummaryIsNotInA =>
-      'Thé mérgé súmmáry ís nót ín á fórm Táptúré cán stóré.···················';
+  String get failureTheMergeSummaryIsNotInA => 'Thé mérgé súmmáry ís nót ín á fórm Táptúré cán stóré.···················';
 
   @override
-  String get failureAConflictNeedsAChoiceAndAn =>
-      'Á cónflíct nééds á chóícé ánd án ópérátór.···············';
+  String get failureAConflictNeedsAChoiceAndAn => 'Á cónflíct nééds á chóícé ánd án ópérátór.···············';
 
   @override
-  String get failureChooseASideThenResolveAgain =>
-      'Chóósé á sídé, thén résólvé ágáín.············';
+  String get failureChooseASideThenResolveAgain => 'Chóósé á sídé, thén résólvé ágáín.············';
 
   @override
-  String get failureThatConflictIsNoLongerOnThis =>
-      'Thát cónflíct ís nó lóngér ón thís dévícé.···············';
+  String get failureThatConflictIsNoLongerOnThis => 'Thát cónflíct ís nó lóngér ón thís dévícé.···············';
 
   @override
-  String get failureThatJobIsNoLongerOnThis =>
-      'Thát jób ís nó lóngér ón thís dévícé.·············';
+  String get failureThatJobIsNoLongerOnThis => 'Thát jób ís nó lóngér ón thís dévícé.·············';
 
   @override
-  String get failureRefreshTheQueueAndTryAgain =>
-      'Réfrésh thé qúéúé ánd try ágáín.············';
+  String get failureRefreshTheQueueAndTryAgain => 'Réfrésh thé qúéúé ánd try ágáín.············';
 
   @override
-  String get failureAStoredProviderResponseCannotBeChanged =>
-      'Á stóréd próvídér réspónsé cánnót bé chángéd.················';
+  String get failureAStoredProviderResponseCannotBeChanged => 'Á stóréd próvídér réspónsé cánnót bé chángéd.················';
 
   @override
-  String get failureLeaveTheOriginalResultAndWriteA =>
-      'Léávé thé órígínál résúlt ánd wríté á néw óné.·················';
+  String get failureLeaveTheOriginalResultAndWriteA => 'Léávé thé órígínál résúlt ánd wríté á néw óné.·················';
 
   @override
-  String get failureARequestSummaryCannotIncludeASecret =>
-      'Á réqúést súmmáry cánnót ínclúdé á sécrét.···············';
+  String get failureARequestSummaryCannotIncludeASecret => 'Á réqúést súmmáry cánnót ínclúdé á sécrét.···············';
 
   @override
-  String get failureStoreShapeAndSizeOnlyThenSave =>
-      'Stóré shápé ánd sízé ónly, thén sávé ágáín.················';
+  String get failureStoreShapeAndSizeOnlyThenSave => 'Stóré shápé ánd sízé ónly, thén sávé ágáín.················';
 
   @override
-  String get failureTheProjectSettingsCouldNotBeRead =>
-      'Thé prójéct séttíngs cóúld nót bé réád.··············';
+  String get failureTheProjectSettingsCouldNotBeRead => 'Thé prójéct séttíngs cóúld nót bé réád.··············';
 
   @override
-  String get failureChangeTheSettingsAgainThenSave =>
-      'Chángé thé séttíngs ágáín, thén sávé.·············';
+  String get failureChangeTheSettingsAgainThenSave => 'Chángé thé séttíngs ágáín, thén sávé.·············';
 
   @override
-  String get failureTheProjectSettingsAreNotInA =>
-      'Thé prójéct séttíngs áré nót ín á fórm Táptúré cán stóré.····················';
+  String get failureTheProjectSettingsAreNotInA => 'Thé prójéct séttíngs áré nót ín á fórm Táptúré cán stóré.····················';
 
   @override
-  String get failureThatRecordIsNoLongerOnThis =>
-      'Thát récórd ís nó lóngér ón thís dévícé.··············';
+  String get failureThatRecordIsNoLongerOnThis => 'Thát récórd ís nó lóngér ón thís dévícé.··············';
 
   @override
-  String get failureTheRecordSContextCouldNotBe =>
-      'Thé récórd\'s cóntéxt cóúld nót bé réád.··············';
+  String get failureTheRecordSContextCouldNotBe => 'Thé récórd\'s cóntéxt cóúld nót bé réád.··············';
 
   @override
-  String get failureFixTheContextObjectAndSaveAgain =>
-      'Fíx thé cóntéxt óbjéct ánd sávé ágáín.··············';
+  String get failureFixTheContextObjectAndSaveAgain => 'Fíx thé cóntéxt óbjéct ánd sávé ágáín.··············';
 
   @override
-  String get failureTheRecordSContextIsNotIn =>
-      'Thé récórd\'s cóntéxt ís nót ín á fórm Táptúré cán stóré.····················';
+  String get failureTheRecordSContextIsNotIn => 'Thé récórd\'s cóntéxt ís nót ín á fórm Táptúré cán stóré.····················';
 
   @override
-  String get failureThatValueIsNoLongerOnThis =>
-      'Thát válúé ís nó lóngér ón thís dévícé.··············';
+  String get failureThatValueIsNoLongerOnThis => 'Thát válúé ís nó lóngér ón thís dévícé.··············';
 
   @override
-  String get failureRefreshTheRecordAndTryAgain =>
-      'Réfrésh thé récórd ánd try ágáín.············';
+  String get failureRefreshTheRecordAndTryAgain => 'Réfrésh thé récórd ánd try ágáín.············';
 
   @override
-  String get failureTheOriginalValueCannotBeChanged =>
-      'Thé órígínál válúé cánnót bé chángéd.·············';
+  String get failureTheOriginalValueCannotBeChanged => 'Thé órígínál válúé cánnót bé chángéd.·············';
 
   @override
-  String get failureLeaveTheCapturedValueAndWriteA =>
-      'Léávé thé cáptúréd válúé ánd wríté á réfínéd óné.··················';
+  String get failureLeaveTheCapturedValueAndWriteA => 'Léávé thé cáptúréd válúé ánd wríté á réfínéd óné.··················';
 
   @override
-  String get failureADatasetImportNeedsASourceFile =>
-      'Á dátásét ímpórt nééds á sóúrcé fílé ánd á scópé.··················';
+  String get failureADatasetImportNeedsASourceFile => 'Á dátásét ímpórt nééds á sóúrcé fílé ánd á scópé.··················';
 
   @override
-  String get failureChooseTheFileAndWhereItBelongs =>
-      'Chóósé thé fílé ánd whéré ít bélóngs, thén ímpórt ágáín.····················';
+  String get failureChooseTheFileAndWhereItBelongs => 'Chóósé thé fílé ánd whéré ít bélóngs, thén ímpórt ágáín.····················';
 
   @override
-  String get failureAProjectDatasetNeedsAProject =>
-      'Á prójéct dátásét nééds á prójéct.············';
+  String get failureAProjectDatasetNeedsAProject => 'Á prójéct dátásét nééds á prójéct.············';
 
   @override
-  String get failureChooseTheProjectThenImportAgain =>
-      'Chóósé thé prójéct, thén ímpórt ágáín.··············';
+  String get failureChooseTheProjectThenImportAgain => 'Chóósé thé prójéct, thén ímpórt ágáín.··············';
 
   @override
-  String get failureAGlobalDatasetCannotBelongToOne =>
-      'Á glóbál dátásét cánnót bélóng tó óné prójéct.·················';
+  String get failureAGlobalDatasetCannotBelongToOne => 'Á glóbál dátásét cánnót bélóng tó óné prójéct.·················';
 
   @override
-  String get failureClearTheProjectThenImportAgain =>
-      'Cléár thé prójéct, thén ímpórt ágáín.·············';
+  String get failureClearTheProjectThenImportAgain => 'Cléár thé prójéct, thén ímpórt ágáín.·············';
 
   @override
-  String get failureTheDatasetColumnsAreNotInA =>
-      'Thé dátásét cólúmns áré nót ín á fórm Táptúré cán stóré.····················';
+  String get failureTheDatasetColumnsAreNotInA => 'Thé dátásét cólúmns áré nót ín á fórm Táptúré cán stóré.····················';
 
   @override
-  String get failureFixTheColumnListAndSaveAgain =>
-      'Fíx thé cólúmn líst ánd sávé ágáín.·············';
+  String get failureFixTheColumnListAndSaveAgain => 'Fíx thé cólúmn líst ánd sávé ágáín.·············';
 
   @override
-  String get failureAReferenceRowIsNotInA =>
-      'Á référéncé rów ís nót ín á fórm Táptúré cán stóré.··················';
+  String get failureAReferenceRowIsNotInA => 'Á référéncé rów ís nót ín á fórm Táptúré cán stóré.··················';
 
   @override
-  String get failureFixTheRowValuesAndSaveAgain =>
-      'Fíx thé rów válúés ánd sávé ágáín.············';
+  String get failureFixTheRowValuesAndSaveAgain => 'Fíx thé rów válúés ánd sávé ágáín.············';
 
   @override
-  String get failureThatEntryIsNotInAForm =>
-      'Thát éntry ís nót ín á fórm Táptúré cán stóré.·················';
+  String get failureThatEntryIsNotInAForm => 'Thát éntry ís nót ín á fórm Táptúré cán stóré.·················';
 
   @override
-  String get failureAResolutionNeedsAnOperator =>
-      'Á résólútíón nééds án ópérátór.···········';
+  String get failureAResolutionNeedsAnOperator => 'Á résólútíón nééds án ópérátór.···········';
 
   @override
-  String get failureSignInThenResolveTheVarianceAgain =>
-      'Sígn ín, thén résólvé thé váríáncé ágáín.···············';
+  String get failureSignInThenResolveTheVarianceAgain => 'Sígn ín, thén résólvé thé váríáncé ágáín.···············';
 
   @override
-  String get failureThatVarianceIsNoLongerOnThis =>
-      'Thát váríáncé ís nó lóngér ón thís dévícé.···············';
+  String get failureThatVarianceIsNoLongerOnThis => 'Thát váríáncé ís nó lóngér ón thís dévícé.···············';
 
   @override
   String get failureTheDatabaseIsBusy => 'Thé dátábásé ís búsy.········';
 
   @override
-  String get failureWaitAMomentThenTryTheSave =>
-      'Wáít á mómént, thén try thé sávé ágáín.··············';
+  String get failureWaitAMomentThenTryTheSave => 'Wáít á mómént, thén try thé sávé ágáín.··············';
 
   @override
-  String get failureARecordWithThatIdentityAlreadyExists =>
-      'Á récórd wíth thát ídéntíty álréády éxísts.················';
+  String get failureARecordWithThatIdentityAlreadyExists => 'Á récórd wíth thát ídéntíty álréády éxísts.················';
 
   @override
-  String get failureOpenTheExistingRecordOrChangeThe =>
-      'Ópén thé éxístíng récórd, ór chángé thé ídéntíty.··················';
+  String get failureOpenTheExistingRecordOrChangeThe => 'Ópén thé éxístíng récórd, ór chángé thé ídéntíty.··················';
 
   @override
-  String get failureThatPhotoCouldNotBeBlurred =>
-      'Thát phótó cóúld nót bé blúrréd.············';
+  String get failureThatPhotoCouldNotBeBlurred => 'Thát phótó cóúld nót bé blúrréd.············';
 
   @override
-  String get failureADetectedFaceIsOutsideThatPhoto =>
-      'Á détéctéd fácé ís óútsídé thát phótó.··············';
+  String get failureADetectedFaceIsOutsideThatPhoto => 'Á détéctéd fácé ís óútsídé thát phótó.··············';
 
   @override
-  String get failureFaceDetectionIsUnavailableOnThisDevice =>
-      'Fácé détéctíón ís únáváíláblé ón thís dévícé.················';
+  String get failureFaceDetectionIsUnavailableOnThisDevice => 'Fácé détéctíón ís únáváíláblé ón thís dévícé.················';
 
   @override
-  String get failureUseAnAndroidOrIOSDeviceTo =>
-      'Úsé án Ándróíd ór íÓS dévícé tó blúr fácés.················';
+  String get failureUseAnAndroidOrIOSDeviceTo => 'Úsé án Ándróíd ór íÓS dévícé tó blúr fácés.················';
 
   @override
-  String get failureThisPhotoCannotBeCheckedForFaces =>
-      'Thís phótó cánnót bé chéckéd fór fácés.··············';
+  String get failureThisPhotoCannotBeCheckedForFaces => 'Thís phótó cánnót bé chéckéd fór fácés.··············';
 
   @override
-  String get failureThisPhotoCannotBeProtected =>
-      'Thís phótó cánnót bé prótéctéd.···········';
+  String get failureThisPhotoCannotBeProtected => 'Thís phótó cánnót bé prótéctéd.···········';
 
   @override
-  String get failureAHiddenAreaIsInvalid =>
-      'Á híddén áréá ís ínválíd.·········';
+  String get failureAHiddenAreaIsInvalid => 'Á híddén áréá ís ínválíd.·········';
 
   @override
-  String get failureThisExportFolderAlreadyContainsCompletedFiles =>
-      'Thís éxpórt fóldér álréády cóntáíns cómplétéd fílés.···················';
+  String get failureThisExportFolderAlreadyContainsCompletedFiles => 'Thís éxpórt fóldér álréády cóntáíns cómplétéd fílés.···················';
 
   @override
-  String get failureCreateTheExportInANewVersion =>
-      'Créáté thé éxpórt ín á néw vérsíón fóldér.···············';
+  String get failureCreateTheExportInANewVersion => 'Créáté thé éxpórt ín á néw vérsíón fóldér.···············';
 
   @override
-  String get failureStreamingTextExportNeedsNativeStorage =>
-      'Stréámíng téxt éxpórt nééds nátívé stórágé.················';
+  String get failureStreamingTextExportNeedsNativeStorage => 'Stréámíng téxt éxpórt nééds nátívé stórágé.················';
 
   @override
-  String get failureTaptureCannotCopyAFileFromThis =>
-      'Táptúré cánnót cópy á fílé fróm thís dévícé héré.··················';
+  String get failureTaptureCannotCopyAFileFromThis => 'Táptúré cánnót cópy á fílé fróm thís dévícé héré.··················';
 
   @override
-  String get failureAddTheFileAgainFromTaptureThen =>
-      'Ádd thé fílé ágáín fróm Táptúré, thén try ágáín.·················';
+  String get failureAddTheFileAgainFromTaptureThen => 'Ádd thé fílé ágáín fróm Táptúré, thén try ágáín.·················';
 
   @override
   String failureTaptureCouldNotWriteToValue(String value0) {
@@ -23472,40 +21149,31 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureTaptureCouldNotNameThatStoredFile =>
-      'Táptúré cóúld nót námé thát stóréd fílé.··············';
+  String get failureTaptureCouldNotNameThatStoredFile => 'Táptúré cóúld nót námé thát stóréd fílé.··············';
 
   @override
-  String get failureTryAgainIfItKeepsHappeningExport =>
-      'Try ágáín. Íf ít kééps háppéníng, éxpórt thé lóg.··················';
+  String get failureTryAgainIfItKeepsHappeningExport => 'Try ágáín. Íf ít kééps háppéníng, éxpórt thé lóg.··················';
 
   @override
-  String get failureTaptureCouldNotSaveThatOnThis =>
-      'Táptúré cóúld nót sávé thát ón thís dévícé.················';
+  String get failureTaptureCouldNotSaveThatOnThis => 'Táptúré cóúld nót sávé thát ón thís dévícé.················';
 
   @override
-  String get failureFreeSomeSpaceThenTryAgain =>
-      'Fréé sómé spácé, thén try ágáín.············';
+  String get failureFreeSomeSpaceThenTryAgain => 'Fréé sómé spácé, thén try ágáín.············';
 
   @override
-  String get failureTheCacheCouldNotBeCleanedOn =>
-      'Thé cáché cóúld nót bé cléánéd ón thís dévícé.·················';
+  String get failureTheCacheCouldNotBeCleanedOn => 'Thé cáché cóúld nót bé cléánéd ón thís dévícé.·················';
 
   @override
-  String get failureFreeSpaceOrAllowStorageAccessThen =>
-      'Fréé spácé ór állów stórágé áccéss, thén try ágáín.··················';
+  String get failureFreeSpaceOrAllowStorageAccessThen => 'Fréé spácé ór állów stórágé áccéss, thén try ágáín.··················';
 
   @override
-  String get failureThatImageSizeIsNotValid =>
-      'Thát ímágé sízé ís nót válíd.···········';
+  String get failureThatImageSizeIsNotValid => 'Thát ímágé sízé ís nót válíd.···········';
 
   @override
-  String get failureUseTheAppUploadSizeAndTry =>
-      'Úsé thé ápp úplóád sízé ánd try ágáín.··············';
+  String get failureUseTheAppUploadSizeAndTry => 'Úsé thé ápp úplóád sízé ánd try ágáín.··············';
 
   @override
-  String get failureTheReducedCopyCouldNotBeCreated =>
-      'Thé rédúcéd cópy cóúld nót bé créátéd ón thís dévícé.···················';
+  String get failureTheReducedCopyCouldNotBeCreated => 'Thé rédúcéd cópy cóúld nót bé créátéd ón thís dévícé.···················';
 
   @override
   String failureTaptureCouldNotFindValue(String value0) {
@@ -23518,44 +21186,34 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureFreeSomeSpaceThenDownloadAgain =>
-      'Fréé sómé spácé, thén dównlóád ágáín.·············';
+  String get failureFreeSomeSpaceThenDownloadAgain => 'Fréé sómé spácé, thén dównlóád ágáín.·············';
 
   @override
-  String get failureOpenDownloadsOnThisDeviceAndLook =>
-      'Ópén Dównlóáds ón thís dévícé ánd lóók ín Táptúré.··················';
+  String get failureOpenDownloadsOnThisDeviceAndLook => 'Ópén Dównlóáds ón thís dévícé ánd lóók ín Táptúré.··················';
 
   @override
-  String get failureOnlyFilesInsideAProjectFolderCan =>
-      'Ónly fílés ínsídé á prójéct fóldér cán bé rémóvéd fór góód.·····················';
+  String get failureOnlyFilesInsideAProjectFolderCan => 'Ónly fílés ínsídé á prójéct fóldér cán bé rémóvéd fór góód.·····················';
 
   @override
-  String get failureLeaveTheFileInPlaceThePurge =>
-      'Léávé thé fílé ín plácé; thé púrgé wíll skíp ít.·················';
+  String get failureLeaveTheFileInPlaceThePurge => 'Léávé thé fílé ín plácé; thé púrgé wíll skíp ít.·················';
 
   @override
-  String get failureThatPhotoHasNoUsableNameFor =>
-      'Thát phótó hás nó úsáblé námé fór íts cáchéd cópíés.···················';
+  String get failureThatPhotoHasNoUsableNameFor => 'Thát phótó hás nó úsáblé námé fór íts cáchéd cópíés.···················';
 
   @override
-  String get failureLeaveThePhotoInPlaceThePurge =>
-      'Léávé thé phótó ín plácé; thé púrgé wíll skíp ít.··················';
+  String get failureLeaveThePhotoInPlaceThePurge => 'Léávé thé phótó ín plácé; thé púrgé wíll skíp ít.··················';
 
   @override
-  String get failureADeletedRecordSFilesCouldNot =>
-      'Á délétéd récórd’s fílés cóúld nót bé rémóvéd fróm thís dévícé.·······················';
+  String get failureADeletedRecordSFilesCouldNot => 'Á délétéd récórd’s fílés cóúld nót bé rémóvéd fróm thís dévícé.·······················';
 
   @override
-  String get failureAllowStorageAccessThePurgeTriesAgain =>
-      'Állów stórágé áccéss; thé púrgé tríés ágáín néxt láúnch.····················';
+  String get failureAllowStorageAccessThePurgeTriesAgain => 'Állów stórágé áccéss; thé púrgé tríés ágáín néxt láúnch.····················';
 
   @override
-  String get failureThisExportIsTooLargeForThis =>
-      'Thís éxpórt ís tóó lárgé fór thís brówsér.···············';
+  String get failureThisExportIsTooLargeForThis => 'Thís éxpórt ís tóó lárgé fór thís brówsér.···············';
 
   @override
-  String get failureExportFewerRecordsOrUseADesktop =>
-      'Éxpórt féwér récórds ór úsé á désktóp dévícé.················';
+  String get failureExportFewerRecordsOrUseADesktop => 'Éxpórt féwér récórds ór úsé á désktóp dévícé.················';
 
   @override
   String failureAnExportSourceIsMissingValue(String value0) {
@@ -23563,8 +21221,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureANativeFileSystemIsUnavailable =>
-      'Á nátívé fílé systém ís únáváíláblé.·············';
+  String get failureANativeFileSystemIsUnavailable => 'Á nátívé fílé systém ís únáváíláblé.·············';
 
   @override
   String failureTaptureCouldNotReadValue(String value0) {
@@ -23572,20 +21229,16 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureCaptureOrAddTheFileAgainThen =>
-      'Cáptúré ór ádd thé fílé ágáín, thén try ágáín.·················';
+  String get failureCaptureOrAddTheFileAgainThen => 'Cáptúré ór ádd thé fílé ágáín, thén try ágáín.·················';
 
   @override
-  String get failureThatProjectIsNoLongerOnThis =>
-      'Thát prójéct ís nó lóngér ón thís dévícé.···············';
+  String get failureThatProjectIsNoLongerOnThis => 'Thát prójéct ís nó lóngér ón thís dévícé.···············';
 
   @override
-  String get failureOpenAProjectThenTryAgain =>
-      'Ópén á prójéct, thén try ágáín.···········';
+  String get failureOpenAProjectThenTryAgain => 'Ópén á prójéct, thén try ágáín.···········';
 
   @override
-  String get failureRecreateTheProjectFolderThenTryAgain =>
-      'Récréáté thé prójéct fóldér, thén try ágáín.················';
+  String get failureRecreateTheProjectFolderThenTryAgain => 'Récréáté thé prójéct fóldér, thén try ágáín.················';
 
   @override
   String failureTheFileValueIsEmpty(String value0) {
@@ -23593,8 +21246,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureChooseAFileThatHasContentsAnd =>
-      'Chóósé á fílé thát hás cónténts ánd try ágáín.·················';
+  String get failureChooseAFileThatHasContentsAnd => 'Chóósé á fílé thát hás cónténts ánd try ágáín.·················';
 
   @override
   String failureTheFileValueIsNotASupported(String value0) {
@@ -23602,8 +21254,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureChooseAnImageDocumentSpreadsheetAudioFile =>
-      'Chóósé án ímágé, dócúmént, spréádshéét, áúdíó fílé ór búndlé ánd try ágáín.···························';
+  String get failureChooseAnImageDocumentSpreadsheetAudioFile => 'Chóósé án ímágé, dócúmént, spréádshéét, áúdíó fílé ór búndlé ánd try ágáín.···························';
 
   @override
   String failureTheFileValueDoesNotMatchIts(String value0) {
@@ -23611,8 +21262,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureChooseAFileOfTheExpectedType =>
-      'Chóósé á fílé óf thé éxpéctéd typé ánd try ágáín.··················';
+  String get failureChooseAFileOfTheExpectedType => 'Chóósé á fílé óf thé éxpéctéd typé ánd try ágáín.··················';
 
   @override
   String failureTheFileValueIsLargerThanThe(String value0, String value1) {
@@ -23620,8 +21270,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureChooseASmallerFileAndTryAgain =>
-      'Chóósé á smállér fílé ánd try ágáín.·············';
+  String get failureChooseASmallerFileAndTryAgain => 'Chóósé á smállér fílé ánd try ágáín.·············';
 
   @override
   String failureTheArchiveValueContainsAPathThat(String value0) {
@@ -23629,8 +21278,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureChooseADifferentFileAndTryAgain =>
-      'Chóósé á dífférént fílé ánd try ágáín.··············';
+  String get failureChooseADifferentFileAndTryAgain => 'Chóósé á dífférént fílé ánd try ágáín.··············';
 
   @override
   String failureTheArchiveValueContainsALinkInstead(String value0) {
@@ -23648,16 +21296,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureChooseAZIPBundleOrSpreadsheetAnd =>
-      'Chóósé á ZÍP búndlé ór spréádshéét ánd try ágáín.··················';
+  String get failureChooseAZIPBundleOrSpreadsheetAnd => 'Chóósé á ZÍP búndlé ór spréádshéét ánd try ágáín.··················';
 
   @override
-  String get failureChooseTheFileAgainThenTryAgain =>
-      'Chóósé thé fílé ágáín, thén try ágáín.··············';
+  String get failureChooseTheFileAgainThenTryAgain => 'Chóósé thé fílé ágáín, thén try ágáín.··············';
 
   @override
-  String get failureThePhotoCouldNotBeSavedOn =>
-      'Thé phótó cóúld nót bé sávéd ón thís dévícé.················';
+  String get failureThePhotoCouldNotBeSavedOn => 'Thé phótó cóúld nót bé sávéd ón thís dévícé.················';
 
   @override
   String failureThereIsNotEnoughSpaceToSave(String value0) {
@@ -23665,553 +21310,418 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureAllowStorageAccessThenTryAgain =>
-      'Állów stórágé áccéss, thén try ágáín.·············';
+  String get failureAllowStorageAccessThenTryAgain => 'Állów stórágé áccéss, thén try ágáín.·············';
 
   @override
-  String get failureThisPhotoCannotBeMarked =>
-      'Thís phótó cánnót bé márkéd.··········';
+  String get failureThisPhotoCannotBeMarked => 'Thís phótó cánnót bé márkéd.··········';
 
   @override
-  String get failureThisPackageIsTooLargeOrIncomplete =>
-      'Thís páckágé ís tóó lárgé ór íncómplété.··············';
+  String get failureThisPackageIsTooLargeOrIncomplete => 'Thís páckágé ís tóó lárgé ór íncómplété.··············';
 
   @override
-  String get failureFinishTheCurrentPackageBeforeOpeningAnother =>
-      'Fínísh thé cúrrént páckágé béfóré ópéníng ánóthér.··················';
+  String get failureFinishTheCurrentPackageBeforeOpeningAnother => 'Fínísh thé cúrrént páckágé béfóré ópéníng ánóthér.··················';
 
   @override
-  String get failureThisPackageIsTooLargeToOpen =>
-      'Thís páckágé ís tóó lárgé tó ópén.············';
+  String get failureThisPackageIsTooLargeToOpen => 'Thís páckágé ís tóó lárgé tó ópén.············';
 
   @override
-  String get failureThisPackageCouldNotBeOpened =>
-      'Thís páckágé cóúld nót bé ópénéd.············';
+  String get failureThisPackageCouldNotBeOpened => 'Thís páckágé cóúld nót bé ópénéd.············';
 
   @override
-  String get failureOpenTheFileAgainFromItsOriginal =>
-      'Ópén thé fílé ágáín fróm íts órígínál lócátíón.·················';
+  String get failureOpenTheFileAgainFromItsOriginal => 'Ópén thé fílé ágáín fróm íts órígínál lócátíón.·················';
 
   @override
-  String get failureThatProjectCouldNotBeScanned =>
-      'Thát prójéct cóúld nót bé scánnéd.············';
+  String get failureThatProjectCouldNotBeScanned => 'Thát prójéct cóúld nót bé scánnéd.············';
 
   @override
-  String get failureOpenTheProjectAndTryAgain =>
-      'Ópén thé prójéct ánd try ágáín.···········';
+  String get failureOpenTheProjectAndTryAgain => 'Ópén thé prójéct ánd try ágáín.···········';
 
   @override
-  String get failureTheProjectFolderCouldNotBeScanned =>
-      'Thé prójéct fóldér cóúld nót bé scánnéd ón thís dévícé.····················';
+  String get failureTheProjectFolderCouldNotBeScanned => 'Thé prójéct fóldér cóúld nót bé scánnéd ón thís dévícé.····················';
 
   @override
-  String get failurePutTheFileBackInTheProject =>
-      'Pút thé fílé báck ín thé prójéct fóldér, thén try ágáín.····················';
+  String get failurePutTheFileBackInTheProject => 'Pút thé fílé báck ín thé prójéct fóldér, thén try ágáín.····················';
 
   @override
-  String get failureTheFileCouldNotBeAdoptedOn =>
-      'Thé fílé cóúld nót bé ádóptéd ón thís dévícé.················';
+  String get failureTheFileCouldNotBeAdoptedOn => 'Thé fílé cóúld nót bé ádóptéd ón thís dévícé.················';
 
   @override
-  String get failureTheMissingFileCouldNotBeFlagged =>
-      'Thé míssíng fílé cóúld nót bé flággéd ón thís dévícé.···················';
+  String get failureTheMissingFileCouldNotBeFlagged => 'Thé míssíng fílé cóúld nót bé flággéd ón thís dévícé.···················';
 
   @override
-  String get failureThatFileRowIsNoLongerOn =>
-      'Thát fílé rów ís nó lóngér ón thís dévícé.···············';
+  String get failureThatFileRowIsNoLongerOn => 'Thát fílé rów ís nó lóngér ón thís dévícé.···············';
 
   @override
-  String get failureThatNameIsNotAValidFolder =>
-      'Thát námé ís nót á válíd fóldér.············';
+  String get failureThatNameIsNotAValidFolder => 'Thát námé ís nót á válíd fóldér.············';
 
   @override
-  String get failureChooseANameWithoutSlashesThatPoint =>
-      'Chóósé á námé wíthóút sláshés thát póínt élséwhéré.··················';
+  String get failureChooseANameWithoutSlashesThatPoint => 'Chóósé á námé wíthóút sláshés thát póínt élséwhéré.··················';
 
   @override
-  String get failureChooseANameWithLettersOrDigits =>
-      'Chóósé á námé wíth léttérs ór dígíts.·············';
+  String get failureChooseANameWithLettersOrDigits => 'Chóósé á námé wíth léttérs ór dígíts.·············';
 
   @override
-  String get failureTheFilePathMustStayInsideThe2 =>
-      'Thé fílé páth múst stáy ínsídé thé stórágé fóldér.··················';
+  String get failureTheFilePathMustStayInsideThe2 => 'Thé fílé páth múst stáy ínsídé thé stórágé fóldér.··················';
 
   @override
-  String get failureThatPhotoIsNoLongerAvailable =>
-      'Thát phótó ís nó lóngér áváíláblé.············';
+  String get failureThatPhotoIsNoLongerAvailable => 'Thát phótó ís nó lóngér áváíláblé.············';
 
   @override
-  String get failureHiddenAreasChangedTrySendingAgain =>
-      'Híddén áréás chángéd. Try séndíng ágáín.··············';
+  String get failureHiddenAreasChangedTrySendingAgain => 'Híddén áréás chángéd. Try séndíng ágáín.··············';
 
   @override
-  String get failureCheckTheHiddenAreasOnThisEdited =>
-      'Chéck thé híddén áréás ón thís édítéd phótó béfóré séndíng ít.······················';
+  String get failureCheckTheHiddenAreasOnThisEdited => 'Chéck thé híddén áréás ón thís édítéd phótó béfóré séndíng ít.······················';
 
   @override
-  String get failureOpenHidePartsBeforeSendingAndSave =>
-      'Ópén Hídé párts béfóré séndíng ánd sávé thé áréás fór thís vérsíón.························';
+  String get failureOpenHidePartsBeforeSendingAndSave => 'Ópén Hídé párts béfóré séndíng ánd sávé thé áréás fór thís vérsíón.························';
 
   @override
-  String get failureTheProjectFolderCouldNotBeRemoved =>
-      'Thé prójéct fóldér cóúld nót bé rémóvéd fróm thís dévícé.····················';
+  String get failureTheProjectFolderCouldNotBeRemoved => 'Thé prójéct fóldér cóúld nót bé rémóvéd fróm thís dévícé.····················';
 
   @override
-  String get failureDeleteTheLeftoverFolderThenTryAgain =>
-      'Délété thé léftóvér fóldér, thén try ágáín.················';
+  String get failureDeleteTheLeftoverFolderThenTryAgain => 'Délété thé léftóvér fóldér, thén try ágáín.················';
 
   @override
-  String get failureThatProjectIsAlreadyInTheRecycle =>
-      'Thát prójéct ís álréády ín thé récyclé áréá ón thís dévícé.·····················';
+  String get failureThatProjectIsAlreadyInTheRecycle => 'Thát prójéct ís álréády ín thé récyclé áréá ón thís dévícé.·····················';
 
   @override
-  String get failureRestoreItFromTheRecycleAreaThen =>
-      'Réstóré ít fróm thé récyclé áréá, thén try ágáín.··················';
+  String get failureRestoreItFromTheRecycleAreaThen => 'Réstóré ít fróm thé récyclé áréá, thén try ágáín.··················';
 
   @override
-  String get failureTheProjectFolderCouldNotBeMoved =>
-      'Thé prójéct fóldér cóúld nót bé móvéd tó thé récyclé áréá.·····················';
+  String get failureTheProjectFolderCouldNotBeMoved => 'Thé prójéct fóldér cóúld nót bé móvéd tó thé récyclé áréá.·····················';
 
   @override
-  String get failureThisProjectHasNoFolderOnDisk =>
-      'Thís prójéct hás nó fóldér ón dísk yét.··············';
+  String get failureThisProjectHasNoFolderOnDisk => 'Thís prójéct hás nó fóldér ón dísk yét.··············';
 
   @override
-  String get failureCreateTheProjectFolderThenTryAgain =>
-      'Créáté thé prójéct fóldér, thén try ágáín.···············';
+  String get failureCreateTheProjectFolderThenTryAgain => 'Créáté thé prójéct fóldér, thén try ágáín.···············';
 
   @override
-  String get failureTheProjectFolderCouldNotBeCreated =>
-      'Thé prójéct fóldér cóúld nót bé créátéd ón thís dévícé.····················';
+  String get failureTheProjectFolderCouldNotBeCreated => 'Thé prójéct fóldér cóúld nót bé créátéd ón thís dévícé.····················';
 
   @override
-  String get failureThatProjectFolderNameIsNotA =>
-      'Thát prójéct fóldér námé ís nót á válíd fóldér.·················';
+  String get failureThatProjectFolderNameIsNotA => 'Thát prójéct fóldér námé ís nót á válíd fóldér.·················';
 
   @override
-  String get failureRecreateTheProjectSoItsFolderCan =>
-      'Récréáté thé prójéct só íts fóldér cán bé rébúílt.··················';
+  String get failureRecreateTheProjectSoItsFolderCan => 'Récréáté thé prójéct só íts fóldér cán bé rébúílt.··················';
 
   @override
-  String get failureThereIsNotEnoughFreeSpaceTo =>
-      'Théré ís nót énóúgh fréé spácé tó táké ánóthér phótó.···················';
+  String get failureThereIsNotEnoughFreeSpaceTo => 'Théré ís nót énóúgh fréé spácé tó táké ánóthér phótó.···················';
 
   @override
-  String get failureExportAProjectOrCleanTheCache =>
-      'Éxpórt á prójéct ór cléán thé cáché, thén try ágáín.···················';
+  String get failureExportAProjectOrCleanTheCache => 'Éxpórt á prójéct ór cléán thé cáché, thén try ágáín.···················';
 
   @override
-  String get failureTaptureCouldNotReadFreeSpaceOn =>
-      'Táptúré cóúld nót réád fréé spácé ón thís dévícé.··················';
+  String get failureTaptureCouldNotReadFreeSpaceOn => 'Táptúré cóúld nót réád fréé spácé ón thís dévícé.··················';
 
   @override
-  String get failureThisDeviceHasNoFolderTaptureCan =>
-      'Thís dévícé hás nó fóldér Táptúré cán kéép prójéct fílés ín.·····················';
+  String get failureThisDeviceHasNoFolderTaptureCan => 'Thís dévícé hás nó fóldér Táptúré cán kéép prójéct fílés ín.·····················';
 
   @override
-  String get failureUseTaptureOnAPhoneTabletOr =>
-      'Úsé Táptúré ón á phóné, táblét ór cómpútér tó kéép fílés.····················';
+  String get failureUseTaptureOnAPhoneTabletOr => 'Úsé Táptúré ón á phóné, táblét ór cómpútér tó kéép fílés.····················';
 
   @override
-  String get failureTheThumbnailCouldNotBeCreatedOn =>
-      'Thé thúmbnáíl cóúld nót bé créátéd ón thís dévícé.··················';
+  String get failureTheThumbnailCouldNotBeCreatedOn => 'Thé thúmbnáíl cóúld nót bé créátéd ón thís dévícé.··················';
 
   @override
-  String get failureThatThumbnailSizeIsNotValid =>
-      'Thát thúmbnáíl sízé ís nót válíd.············';
+  String get failureThatThumbnailSizeIsNotValid => 'Thát thúmbnáíl sízé ís nót válíd.············';
 
   @override
-  String get failureUseTheAppThumbnailSizeAndTry =>
-      'Úsé thé ápp thúmbnáíl sízé ánd try ágáín.···············';
+  String get failureUseTheAppThumbnailSizeAndTry => 'Úsé thé ápp thúmbnáíl sízé ánd try ágáín.···············';
 
   @override
-  String get failureThatPhotoCouldNotBeCached =>
-      'Thát phótó cóúld nót bé cáchéd.···········';
+  String get failureThatPhotoCouldNotBeCached => 'Thát phótó cóúld nót bé cáchéd.···········';
 
   @override
-  String get failureLocationIsOffForThisProject =>
-      'Lócátíón ís óff fór thís prójéct.············';
+  String get failureLocationIsOffForThisProject => 'Lócátíón ís óff fór thís prójéct.············';
 
   @override
-  String get failureTurnGPSOnThenTryAgain =>
-      'Túrn GPS ón, thén try ágáín.··········';
+  String get failureTurnGPSOnThenTryAgain => 'Túrn GPS ón, thén try ágáín.··········';
 
   @override
-  String get failureBiometricAuthenticationIsUnavailable =>
-      'Bíómétríc áúthéntícátíón ís únáváíláblé.··············';
+  String get failureBiometricAuthenticationIsUnavailable => 'Bíómétríc áúthéntícátíón ís únáváíláblé.··············';
 
   @override
-  String get failureUnlockWithYourAppPIN =>
-      'Únlóck wíth yóúr ápp PÍN.·········';
+  String get failureUnlockWithYourAppPIN => 'Únlóck wíth yóúr ápp PÍN.·········';
 
   @override
-  String get failureTheSecretCouldNotBeSavedOn =>
-      'Thé sécrét cóúld nót bé sávéd ón thís dévícé.················';
+  String get failureTheSecretCouldNotBeSavedOn => 'Thé sécrét cóúld nót bé sávéd ón thís dévícé.················';
 
   @override
-  String get failureTheSecretCouldNotBeReadOn =>
-      'Thé sécrét cóúld nót bé réád ón thís dévícé.················';
+  String get failureTheSecretCouldNotBeReadOn => 'Thé sécrét cóúld nót bé réád ón thís dévícé.················';
 
   @override
-  String get failureTheSecretCouldNotBeRemovedFrom =>
-      'Thé sécrét cóúld nót bé rémóvéd fróm thís dévícé.··················';
+  String get failureTheSecretCouldNotBeRemovedFrom => 'Thé sécrét cóúld nót bé rémóvéd fróm thís dévícé.··················';
 
   @override
-  String get failureTypeTheWordsToPlaceOnThis =>
-      'Typé thé wórds tó plácé ón thís phótó.··············';
+  String get failureTypeTheWordsToPlaceOnThis => 'Typé thé wórds tó plácé ón thís phótó.··············';
 
   @override
-  String get failureEnterTextThenSaveThePhoto =>
-      'Éntér téxt, thén sávé thé phótó.············';
+  String get failureEnterTextThenSaveThePhoto => 'Éntér téxt, thén sávé thé phótó.············';
 
   @override
-  String get failureDiscardTheInterruptedSessionAndStartAgain =>
-      'Díscárd thé íntérrúptéd séssíón ánd stárt ágáín.·················';
+  String get failureDiscardTheInterruptedSessionAndStartAgain => 'Díscárd thé íntérrúptéd séssíón ánd stárt ágáín.·················';
 
   @override
-  String get failureOnlyARecordEditCanBeSaved =>
-      'Ónly á récórd édít cán bé sávéd héré.·············';
+  String get failureOnlyARecordEditCanBeSaved => 'Ónly á récórd édít cán bé sávéd héré.·············';
 
   @override
-  String get failureGoBackToTheProjectAndPick =>
-      'Gó báck tó thé prójéct ánd píck ánóthér récórd.·················';
+  String get failureGoBackToTheProjectAndPick => 'Gó báck tó thé prójéct ánd píck ánóthér récórd.·················';
 
   @override
-  String get failureTheCaptureSessionIsNotValid =>
-      'Thé cáptúré séssíón ís nót válíd.············';
+  String get failureTheCaptureSessionIsNotValid => 'Thé cáptúré séssíón ís nót válíd.············';
 
   @override
-  String get failureCompletePhotoMetadataIsRequiredForA =>
-      'Cómplété phótó métádátá ís réqúíréd fór á néw cáptúré.···················';
+  String get failureCompletePhotoMetadataIsRequiredForA => 'Cómplété phótó métádátá ís réqúíréd fór á néw cáptúré.···················';
 
   @override
-  String get failureThePhotoProjectWasNotFound =>
-      'Thé phótó prójéct wás nót fóúnd.············';
+  String get failureThePhotoProjectWasNotFound => 'Thé phótó prójéct wás nót fóúnd.············';
 
   @override
-  String get failureThatPhotoCouldNotBeReadFrom =>
-      'Thát phótó cóúld nót bé réád fróm thís dévícé.·················';
+  String get failureThatPhotoCouldNotBeReadFrom => 'Thát phótó cóúld nót bé réád fróm thís dévícé.·················';
 
   @override
-  String get failureTheOriginalPhotoStaysInPlace =>
-      'Thé órígínál phótó stáys ín plácé.············';
+  String get failureTheOriginalPhotoStaysInPlace => 'Thé órígínál phótó stáys ín plácé.············';
 
   @override
-  String get failureRevertAnEditedPhotoInstead =>
-      'Révért án édítéd phótó ínstéád.···········';
+  String get failureRevertAnEditedPhotoInstead => 'Révért án édítéd phótó ínstéád.···········';
 
   @override
-  String get failureThisPhotoAppearsMoreThanOnce =>
-      'Thís phótó áppéárs móré thán óncé.············';
+  String get failureThisPhotoAppearsMoreThanOnce => 'Thís phótó áppéárs móré thán óncé.············';
 
   @override
-  String get failureReloadTheCaptureAndTryAgain =>
-      'Rélóád thé cáptúré ánd try ágáín.············';
+  String get failureReloadTheCaptureAndTryAgain => 'Rélóád thé cáptúré ánd try ágáín.············';
 
   @override
-  String get failureAnEditedPhotoIsMissingItsOriginal =>
-      'Án édítéd phótó ís míssíng íts órígínál.··············';
+  String get failureAnEditedPhotoIsMissingItsOriginal => 'Án édítéd phótó ís míssíng íts órígínál.··············';
 
   @override
-  String get failureKeepThisCaptureAndRestoreTheOriginal =>
-      'Kéép thís cáptúré ánd réstóré thé órígínál phótó.··················';
+  String get failureKeepThisCaptureAndRestoreTheOriginal => 'Kéép thís cáptúré ánd réstóré thé órígínál phótó.··················';
 
   @override
-  String get failureThesePhotoEditsLoopBackOnThemselves =>
-      'Thésé phótó édíts lóóp báck ón thémsélvés.···············';
+  String get failureThesePhotoEditsLoopBackOnThemselves => 'Thésé phótó édíts lóóp báck ón thémsélvés.···············';
 
   @override
-  String get failureThatFieldIsNotOnThisRecord =>
-      'Thát fíéld ís nót ón thís récórd.············';
+  String get failureThatFieldIsNotOnThisRecord => 'Thát fíéld ís nót ón thís récórd.············';
 
   @override
-  String get failureOpenTheRecordAndTryAgain =>
-      'Ópén thé récórd ánd try ágáín.···········';
+  String get failureOpenTheRecordAndTryAgain => 'Ópén thé récórd ánd try ágáín.···········';
 
   @override
-  String get failureThatFieldIsNotAContextLevel =>
-      'Thát fíéld ís nót á cóntéxt lévél.············';
+  String get failureThatFieldIsNotAContextLevel => 'Thát fíéld ís nót á cóntéxt lévél.············';
 
   @override
-  String get failurePickALevelFromTheHierarchyAnd =>
-      'Píck á lévél fróm thé híérárchy ánd try ágáín.·················';
+  String get failurePickALevelFromTheHierarchyAnd => 'Píck á lévél fróm thé híérárchy ánd try ágáín.·················';
 
   @override
   String get failureAPresetNeedsAName => 'Á prését nééds á námé.········';
 
   @override
-  String get failureEnterANameAndTryAgain =>
-      'Éntér á námé ánd try ágáín.··········';
+  String get failureEnterANameAndTryAgain => 'Éntér á námé ánd try ágáín.··········';
 
   @override
-  String get failureADeleteNeedsAnIdAndA =>
-      'Á délété nééds án íd ánd á réásón.············';
+  String get failureADeleteNeedsAnIdAndA => 'Á délété nééds án íd ánd á réásón.············';
 
   @override
-  String get failureContextIsNotAvailableYet =>
-      'Cóntéxt ís nót áváíláblé yét.···········';
+  String get failureContextIsNotAvailableYet => 'Cóntéxt ís nót áváíláblé yét.···········';
 
   @override
-  String get failureRestartTheAppAndTryAgain =>
-      'Réstárt thé ápp ánd try ágáín.···········';
+  String get failureRestartTheAppAndTryAgain => 'Réstárt thé ápp ánd try ágáín.···········';
 
   @override
-  String get failureAPresetWithThatNameAlreadyExists =>
-      'Á prését wíth thát námé álréády éxísts.··············';
+  String get failureAPresetWithThatNameAlreadyExists => 'Á prését wíth thát námé álréády éxísts.··············';
 
   @override
-  String get failureChooseAnotherNameOrConfirmOverwrite =>
-      'Chóósé ánóthér námé, ór cónfírm óvérwríté.···············';
+  String get failureChooseAnotherNameOrConfirmOverwrite => 'Chóósé ánóthér námé, ór cónfírm óvérwríté.···············';
 
   @override
-  String get failureTheProjectWasNotFound =>
-      'Thé prójéct wás nót fóúnd.··········';
+  String get failureTheProjectWasNotFound => 'Thé prójéct wás nót fóúnd.··········';
 
   @override
-  String get failureAnExportedRecordIsNoLongerAvailable =>
-      'Án éxpórtéd récórd ís nó lóngér áváíláblé.···············';
+  String get failureAnExportedRecordIsNoLongerAvailable => 'Án éxpórtéd récórd ís nó lóngér áváíláblé.···············';
 
   @override
-  String get failureAnExportedPhotoIsNoLongerAvailable =>
-      'Án éxpórtéd phótó ís nó lóngér áváíláblé.···············';
+  String get failureAnExportedPhotoIsNoLongerAvailable => 'Án éxpórtéd phótó ís nó lóngér áváíláblé.···············';
 
   @override
-  String get failureASelectedRecordIsMissingRefreshThe =>
-      'Á séléctéd récórd ís míssíng. Réfrésh thé éxpórt.··················';
+  String get failureASelectedRecordIsMissingRefreshThe => 'Á séléctéd récórd ís míssíng. Réfrésh thé éxpórt.··················';
 
   @override
-  String get failureAnExportNeedsAProject =>
-      'Án éxpórt nééds á prójéct.··········';
+  String get failureAnExportNeedsAProject => 'Án éxpórt nééds á prójéct.··········';
 
   @override
-  String get failureOpenAProjectAndExportAgain =>
-      'Ópén á prójéct ánd éxpórt ágáín.············';
+  String get failureOpenAProjectAndExportAgain => 'Ópén á prójéct ánd éxpórt ágáín.············';
 
   @override
-  String get failureThisExportedPhotoCannotBeRead =>
-      'Thís éxpórtéd phótó cánnót bé réád.·············';
+  String get failureThisExportedPhotoCannotBeRead => 'Thís éxpórtéd phótó cánnót bé réád.·············';
 
   @override
-  String get failureThisPhotoFormatCannotBePackagedSafely =>
-      'Thís phótó fórmát cánnót bé páckágéd sáfély.················';
+  String get failureThisPhotoFormatCannotBePackagedSafely => 'Thís phótó fórmát cánnót bé páckágéd sáfély.················';
 
   @override
-  String get failureProjectFilesAreUnavailableOnThisDevice =>
-      'Prójéct fílés áré únáváíláblé ón thís dévícé.················';
+  String get failureProjectFilesAreUnavailableOnThisDevice => 'Prójéct fílés áré únáváíláblé ón thís dévícé.················';
 
   @override
-  String get failureOpenAProjectStoredOnThisDevice =>
-      'Ópén á prójéct stóréd ón thís dévícé ánd try ágáín.··················';
+  String get failureOpenAProjectStoredOnThisDevice => 'Ópén á prójéct stóréd ón thís dévícé ánd try ágáín.··················';
 
   @override
-  String get failureWriteYourFeedbackThenSaveAgain =>
-      'Wríté yóúr féédbáck, thén sávé ágáín.·············';
+  String get failureWriteYourFeedbackThenSaveAgain => 'Wríté yóúr féédbáck, thén sávé ágáín.·············';
 
   @override
-  String get failureNameTheTypeThenSaveAgain =>
-      'Námé thé typé, thén sávé ágáín.···········';
+  String get failureNameTheTypeThenSaveAgain => 'Námé thé typé, thén sávé ágáín.···········';
 
   @override
-  String get failureChangeOrClearTheFiltersThenTry =>
-      'Chángé ór cléár thé fíltérs, thén try ágáín.················';
+  String get failureChangeOrClearTheFiltersThenTry => 'Chángé ór cléár thé fíltérs, thén try ágáín.················';
 
   @override
-  String get failureCloseThisTapFeedbackThenTryAgain =>
-      'Clósé thís, táp Féédbáck, thén try ágáín.···············';
+  String get failureCloseThisTapFeedbackThenTryAgain => 'Clósé thís, táp Féédbáck, thén try ágáín.···············';
 
   @override
-  String get failureCorrectTheHighlightedFieldAndSaveAgain =>
-      'Córréct thé híghlíghtéd fíéld ánd sávé ágáín.················';
+  String get failureCorrectTheHighlightedFieldAndSaveAgain => 'Córréct thé híghlíghtéd fíéld ánd sávé ágáín.················';
 
   @override
-  String get failureTheTemplateTheseRowsWereMatchedTo =>
-      'Thé témpláté thésé róws wéré mátchéd tó ís nó lóngér héré.·····················';
+  String get failureTheTemplateTheseRowsWereMatchedTo => 'Thé témpláté thésé róws wéré mátchéd tó ís nó lóngér héré.·····················';
 
   @override
-  String get failureChooseAnotherTemplateAndImportAgain =>
-      'Chóósé ánóthér témpláté ánd ímpórt ágáín.···············';
+  String get failureChooseAnotherTemplateAndImportAgain => 'Chóósé ánóthér témpláté ánd ímpórt ágáín.···············';
 
   @override
-  String get failureARecordARowMatchedIsNo =>
-      'Á récórd á rów mátchéd ís nó lóngér ón thís dévícé.··················';
+  String get failureARecordARowMatchedIsNo => 'Á récórd á rów mátchéd ís nó lóngér ón thís dévícé.··················';
 
   @override
-  String get failureImportTheFileAgainToMatchIt =>
-      'Ímpórt thé fílé ágáín tó mátch ít áfrésh.···············';
+  String get failureImportTheFileAgainToMatchIt => 'Ímpórt thé fílé ágáín tó mátch ít áfrésh.···············';
 
   @override
-  String get failureRecordsCannotBeImportedRightNow =>
-      'Récórds cánnót bé ímpórtéd ríght nów.·············';
+  String get failureRecordsCannotBeImportedRightNow => 'Récórds cánnót bé ímpórtéd ríght nów.·············';
 
   @override
-  String get failureRestartTaptureThenImportAgain =>
-      'Réstárt Táptúré, thén ímpórt ágáín.·············';
+  String get failureRestartTaptureThenImportAgain => 'Réstárt Táptúré, thén ímpórt ágáín.·············';
 
   @override
-  String get failureThatFileIsNotInThisMeeting =>
-      'Thát fílé ís nót ín thís méétíng’s prójéct fóldér.··················';
+  String get failureThatFileIsNotInThisMeeting => 'Thát fílé ís nót ín thís méétíng’s prójéct fóldér.··················';
 
   @override
-  String get failureAddTheFileToTheMeetingAgain =>
-      'Ádd thé fílé tó thé méétíng ágáín.············';
+  String get failureAddTheFileToTheMeetingAgain => 'Ádd thé fílé tó thé méétíng ágáín.············';
 
   @override
   String get failureStartTheMeetingAgain => 'Stárt thé méétíng ágáín.·········';
 
   @override
-  String get failureTheSnapshotHasBeenPurged =>
-      'Thé snápshót hás béén púrgéd.···········';
+  String get failureTheSnapshotHasBeenPurged => 'Thé snápshót hás béén púrgéd.···········';
 
   @override
-  String get failureTheMergeCanNoLongerBeUndone =>
-      'Thé mérgé cán nó lóngér bé úndóné.············';
+  String get failureTheMergeCanNoLongerBeUndone => 'Thé mérgé cán nó lóngér bé úndóné.············';
 
   @override
-  String get failureTaptureCouldNotLookUpAFile =>
-      'Táptúré cóúld nót lóók úp á fílé fór thís prójéct.··················';
+  String get failureTaptureCouldNotLookUpAFile => 'Táptúré cóúld nót lóók úp á fílé fór thís prójéct.··················';
 
   @override
-  String get failureAProjectWithThatIdAlreadyExists =>
-      'Á prójéct wíth thát íd álréády éxísts.··············';
+  String get failureAProjectWithThatIdAlreadyExists => 'Á prójéct wíth thát íd álréády éxísts.··············';
 
   @override
-  String get failureOpenTheExistingProjectOrUseA =>
-      'Ópén thé éxístíng prójéct ór úsé á néw íd.···············';
+  String get failureOpenTheExistingProjectOrUseA => 'Ópén thé éxístíng prójéct ór úsé á néw íd.···············';
 
   @override
-  String get failureProjectPhotosCannotBeStoredOnThis =>
-      'Prójéct phótós cánnót bé stóréd ón thís dévícé.·················';
+  String get failureProjectPhotosCannotBeStoredOnThis => 'Prójéct phótós cánnót bé stóréd ón thís dévícé.·················';
 
   @override
-  String get failureAddThePhotoOnADeviceThat =>
-      'Ádd thé phótó ón á dévícé thát stórés fílés.················';
+  String get failureAddThePhotoOnADeviceThat => 'Ádd thé phótó ón á dévícé thát stórés fílés.················';
 
   @override
   String get failureAProjectNeedsAName => 'Á prójéct nééds á námé.·········';
 
   @override
-  String get failureEnterANameAndSaveAgain =>
-      'Éntér á námé ánd sávé ágáín.··········';
+  String get failureEnterANameAndSaveAgain => 'Éntér á námé ánd sávé ágáín.··········';
 
   @override
-  String get failureProjectFilesAreNotAvailableOnThis =>
-      'Prójéct fílés áré nót áváíláblé ón thís dévícé.·················';
+  String get failureProjectFilesAreNotAvailableOnThis => 'Prójéct fílés áré nót áváíláblé ón thís dévícé.·················';
 
   @override
-  String get failureExportFromADeviceThatStoresThis =>
-      'Éxpórt fróm á dévícé thát stórés thís prójéct.·················';
+  String get failureExportFromADeviceThatStoresThis => 'Éxpórt fróm á dévícé thát stórés thís prójéct.·················';
 
   @override
-  String get failureThatRecordIsNoLongerInThe =>
-      'Thát récórd ís nó lóngér ín thé récyclé bín.················';
+  String get failureThatRecordIsNoLongerInThe => 'Thát récórd ís nó lóngér ín thé récyclé bín.················';
 
   @override
-  String get failureNothingToRemoveItWasRestoredOr =>
-      'Nóthíng tó rémóvé; ít wás réstóréd ór álréády rémóvéd.···················';
+  String get failureNothingToRemoveItWasRestoredOr => 'Nóthíng tó rémóvé; ít wás réstóréd ór álréády rémóvéd.···················';
 
   @override
-  String get failureThatRecordWasDeletedAgainSoIts =>
-      'Thát récórd wás délétéd ágáín, só íts réténtíón stárts óvér.·····················';
+  String get failureThatRecordWasDeletedAgainSoIts => 'Thát récórd wás délétéd ágáín, só íts réténtíón stárts óvér.·····················';
 
   @override
-  String get failureLeaveItThePurgeTakesItOnce =>
-      'Léávé ít; thé púrgé tákés ít óncé íts néw wíndów pássés.····················';
+  String get failureLeaveItThePurgeTakesItOnce => 'Léávé ít; thé púrgé tákés ít óncé íts néw wíndów pássés.····················';
 
   @override
-  String get failureAMergeStillNeedsThatDeletedRecord =>
-      'Á mérgé stíll nééds thát délétéd récórd.··············';
+  String get failureAMergeStillNeedsThatDeletedRecord => 'Á mérgé stíll nééds thát délétéd récórd.··············';
 
   @override
-  String get failureSendABundleOrSettleTheMerge =>
-      'Sénd á búndlé ór séttlé thé mérgé, thén try ágáín.··················';
+  String get failureSendABundleOrSettleTheMerge => 'Sénd á búndlé ór séttlé thé mérgé, thén try ágáín.··················';
 
   @override
-  String get failureRecordsAreNotAvailableYet =>
-      'Récórds áré nót áváíláblé yét.···········';
+  String get failureRecordsAreNotAvailableYet => 'Récórds áré nót áváíláblé yét.···········';
 
   @override
-  String get failureTheRecordWasSavedButCouldNot =>
-      'Thé récórd wás sávéd bút cóúld nót bé ópénéd.················';
+  String get failureTheRecordWasSavedButCouldNot => 'Thé récórd wás sávéd bút cóúld nót bé ópénéd.················';
 
   @override
-  String get failureOpenItFromTheRecordsList =>
-      'Ópén ít fróm thé récórds líst.···········';
+  String get failureOpenItFromTheRecordsList => 'Ópén ít fróm thé récórds líst.···········';
 
   @override
-  String get failureThatTemplateIsNoLongerOnThis =>
-      'Thát témpláté ís nó lóngér ón thís dévícé.···············';
+  String get failureThatTemplateIsNoLongerOnThis => 'Thát témpláté ís nó lóngér ón thís dévícé.···············';
 
   @override
-  String get failureChooseAnotherTemplateAndTryAgain =>
-      'Chóósé ánóthér témpláté ánd try ágáín.··············';
+  String get failureChooseAnotherTemplateAndTryAgain => 'Chóósé ánóthér témpláté ánd try ágáín.··············';
 
   @override
-  String get failureThisRecordAlreadyUsesThatTemplate =>
-      'Thís récórd álréády úsés thát témpláté.··············';
+  String get failureThisRecordAlreadyUsesThatTemplate => 'Thís récórd álréády úsés thát témpláté.··············';
 
   @override
-  String get failureChooseADifferentTemplate =>
-      'Chóósé á dífférént témpláté.··········';
+  String get failureChooseADifferentTemplate => 'Chóósé á dífférént témpláté.··········';
 
   @override
-  String get failureThatTemplateBelongsToAnotherProject =>
-      'Thát témpláté bélóngs tó ánóthér prójéct.···············';
+  String get failureThatTemplateBelongsToAnotherProject => 'Thát témpláté bélóngs tó ánóthér prójéct.···············';
 
   @override
-  String get failureChooseATemplateFromThisProject =>
-      'Chóósé á témpláté fróm thís prójéct.·············';
+  String get failureChooseATemplateFromThisProject => 'Chóósé á témpláté fróm thís prójéct.·············';
 
   @override
-  String get failureARecordNeedsAProjectAndA =>
-      'Á récórd nééds á prójéct ánd á témpláté.··············';
+  String get failureARecordNeedsAProjectAndA => 'Á récórd nééds á prójéct ánd á témpláté.··············';
 
   @override
-  String get failureChooseAProjectAndATemplateThen =>
-      'Chóósé á prójéct ánd á témpláté, thén sávé ágáín.··················';
+  String get failureChooseAProjectAndATemplateThen => 'Chóósé á prójéct ánd á témpláté, thén sávé ágáín.··················';
 
   @override
-  String get failureSayWhyTheRecordShouldGoThen =>
-      'Sáy why thé récórd shóúld gó, thén try ágáín.················';
+  String get failureSayWhyTheRecordShouldGoThen => 'Sáy why thé récórd shóúld gó, thén try ágáín.················';
 
   @override
-  String get failureAnEditNeedsTheFieldItChanges =>
-      'Án édít nééds thé fíéld ít chángés.·············';
+  String get failureAnEditNeedsTheFieldItChanges => 'Án édít nééds thé fíéld ít chángés.·············';
 
   @override
-  String get failureChooseAFieldThenSaveAgain =>
-      'Chóósé á fíéld, thén sávé ágáín.············';
+  String get failureChooseAFieldThenSaveAgain => 'Chóósé á fíéld, thén sávé ágáín.············';
 
   @override
-  String get failureARecordGoesToTheRecycleBin =>
-      'Á récórd góés tó thé récyclé bín ónly thróúgh délété.···················';
+  String get failureARecordGoesToTheRecycleBin => 'Á récórd góés tó thé récyclé bín ónly thróúgh délété.···················';
 
   @override
-  String get failureUseDeleteWhichLetsYouUndoIt =>
-      'Úsé Délété, whích léts yóú úndó ít.·············';
+  String get failureUseDeleteWhichLetsYouUndoIt => 'Úsé Délété, whích léts yóú úndó ít.·············';
 
   @override
-  String get failureThisRecordIsInTheRecycleBin =>
-      'Thís récórd ís ín thé récyclé bín.············';
+  String get failureThisRecordIsInTheRecycleBin => 'Thís récórd ís ín thé récyclé bín.············';
 
   @override
-  String get failureRestoreItFromTheRecycleBinFirst =>
-      'Réstóré ít fróm thé récyclé bín fírst.··············';
+  String get failureRestoreItFromTheRecycleBinFirst => 'Réstóré ít fróm thé récyclé bín fírst.··············';
 
   @override
-  String get failureThisRecordIsNotInTheRecycle =>
-      'Thís récórd ís nót ín thé récyclé bín.··············';
+  String get failureThisRecordIsNotInTheRecycle => 'Thís récórd ís nót ín thé récyclé bín.··············';
 
   @override
-  String get failureRefreshTheListItMayAlreadyBe =>
-      'Réfrésh thé líst; ít máy álréády bé réstóréd.················';
+  String get failureRefreshTheListItMayAlreadyBe => 'Réfrésh thé líst; ít máy álréády bé réstóréd.················';
 
   @override
-  String get failureThisRecordHasAStatusThisVersion =>
-      'Thís récórd hás á státús thís vérsíón óf thé ápp dóés nót knów.·······················';
+  String get failureThisRecordHasAStatusThisVersion => 'Thís récórd hás á státús thís vérsíón óf thé ápp dóés nót knów.·······················';
 
   @override
-  String get failureUpdateTheAppThenTryAgain =>
-      'Úpdáté thé ápp, thén try ágáín.···········';
+  String get failureUpdateTheAppThenTryAgain => 'Úpdáté thé ápp, thén try ágáín.···········';
 
   @override
   String failureThisRecordIsAlreadyValue(String value0) {
@@ -24219,8 +21729,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureChooseADifferentStatusOrLeaveIt =>
-      'Chóósé á dífférént státús, ór léávé ít ás ít ís.·················';
+  String get failureChooseADifferentStatusOrLeaveIt => 'Chóósé á dífférént státús, ór léávé ít ás ít ís.·················';
 
   @override
   String failureARecordThatIsValueCannotBe(String value0, String value1) {
@@ -24228,169 +21737,130 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureRestoreItFromTheRecycleBinBefore =>
-      'Réstóré ít fróm thé récyclé bín béfóré chángíng ít.··················';
+  String get failureRestoreItFromTheRecycleBinBefore => 'Réstóré ít fróm thé récyclé bín béfóré chángíng ít.··················';
 
   @override
-  String get failureTheCapturedTemplateVersionIsUnavailable =>
-      'Thé cáptúréd témpláté vérsíón ís únáváíláblé.················';
+  String get failureTheCapturedTemplateVersionIsUnavailable => 'Thé cáptúréd témpláté vérsíón ís únáváíláblé.················';
 
   @override
-  String get failureRestoreTheOriginalProjectPackageBeforeEditing =>
-      'Réstóré thé órígínál prójéct páckágé béfóré édítíng thésé válúés.·······················';
+  String get failureRestoreTheOriginalProjectPackageBeforeEditing => 'Réstóré thé órígínál prójéct páckágé béfóré édítíng thésé válúés.·······················';
 
   @override
-  String get failureAQuotedCSVValueIsUnfinished =>
-      'Á qúótéd CSV válúé ís únfíníshéd.············';
+  String get failureAQuotedCSVValueIsUnfinished => 'Á qúótéd CSV válúé ís únfíníshéd.············';
 
   @override
-  String get failureCloseTheQuotedValueAndImportThe =>
-      'Clósé thé qúótéd válúé ánd ímpórt thé fílé ágáín.··················';
+  String get failureCloseTheQuotedValueAndImportThe => 'Clósé thé qúótéd válúé ánd ímpórt thé fílé ágáín.··················';
 
   @override
   String get failureThatFileIsEmpty => 'Thát fílé ís émpty.·······';
 
   @override
-  String get failureChooseACSVWithAHeaderAnd =>
-      'Chóósé á CSV wíth á héádér ánd róws.·············';
+  String get failureChooseACSVWithAHeaderAnd => 'Chóósé á CSV wíth á héádér ánd róws.·············';
 
   @override
-  String get failureThatTableCouldNotBeReadAs =>
-      'Thát táblé cóúld nót bé réád ás téxt.·············';
+  String get failureThatTableCouldNotBeReadAs => 'Thát táblé cóúld nót bé réád ás téxt.·············';
 
   @override
-  String get failureSaveItAsUTFCSVAndTry =>
-      'Sávé ít ás ÚTF-8 CSV ánd try ágáín.·············';
+  String get failureSaveItAsUTFCSVAndTry => 'Sávé ít ás ÚTF-8 CSV ánd try ágáín.·············';
 
   @override
-  String get failureThatCSVCouldNotBeRead =>
-      'Thát CSV cóúld nót bé réád.··········';
+  String get failureThatCSVCouldNotBeRead => 'Thát CSV cóúld nót bé réád.··········';
 
   @override
-  String get failureCheckTheFileAndTryAgain =>
-      'Chéck thé fílé ánd try ágáín.···········';
+  String get failureCheckTheFileAndTryAgain => 'Chéck thé fílé ánd try ágáín.···········';
 
   @override
-  String get failureChooseACSVJSONOrXLSXTable =>
-      'Chóósé á CSV, JSÓN ór XLSX táblé wíthín thé ímpórt sízé límít.······················';
+  String get failureChooseACSVJSONOrXLSXTable => 'Chóósé á CSV, JSÓN ór XLSX táblé wíthín thé ímpórt sízé límít.······················';
 
   @override
-  String get failureChooseAnotherFileOrSplitThisTable =>
-      'Chóósé ánóthér fílé ór splít thís táblé íntó smállér fílés.·····················';
+  String get failureChooseAnotherFileOrSplitThisTable => 'Chóósé ánóthér fílé ór splít thís táblé íntó smállér fílés.·····················';
 
   @override
-  String get failureSaveItAsUTFCSVOrA =>
-      'Sávé ít ás ÚTF-8 CSV ór á JSÓN árráy ánd try ágáín.··················';
+  String get failureSaveItAsUTFCSVOrA => 'Sávé ít ás ÚTF-8 CSV ór á JSÓN árráy ánd try ágáín.··················';
 
   @override
-  String get failureJSONDatasetsMustBeAnArrayOf =>
-      'JSÓN dátáséts múst bé án árráy óf óbjécts.···············';
+  String get failureJSONDatasetsMustBeAnArrayOf => 'JSÓN dátáséts múst bé án árráy óf óbjécts.···············';
 
   @override
-  String get failureWrapTheRowsInAnArrayAnd =>
-      'Wráp thé róws ín án árráy ánd try ágáín.··············';
+  String get failureWrapTheRowsInAnArrayAnd => 'Wráp thé róws ín án árráy ánd try ágáín.··············';
 
   @override
-  String get failureEveryJSONRowMustBeAnObject =>
-      'Évéry JSÓN rów múst bé án óbjéct.············';
+  String get failureEveryJSONRowMustBeAnObject => 'Évéry JSÓN rów múst bé án óbjéct.············';
 
   @override
-  String get failureRemoveNonObjectRowsAndImportThe =>
-      'Rémóvé nón-óbjéct róws ánd ímpórt thé fílé ágáín.··················';
+  String get failureRemoveNonObjectRowsAndImportThe => 'Rémóvé nón-óbjéct róws ánd ímpórt thé fílé ágáín.··················';
 
   @override
-  String get failureThatFileHasNoColumns =>
-      'Thát fílé hás nó cólúmns.·········';
+  String get failureThatFileHasNoColumns => 'Thát fílé hás nó cólúmns.·········';
 
   @override
-  String get failureAddKeysToTheObjectsAndTry =>
-      'Ádd kéys tó thé óbjécts ánd try ágáín.··············';
+  String get failureAddKeysToTheObjectsAndTry => 'Ádd kéys tó thé óbjécts ánd try ágáín.··············';
 
   @override
   String get failureThatJSONIsNotValid => 'Thát JSÓN ís nót válíd.·········';
 
   @override
-  String get failureFixTheJSONArrayAndImportIt =>
-      'Fíx thé JSÓN árráy ánd ímpórt ít ágáín.··············';
+  String get failureFixTheJSONArrayAndImportIt => 'Fíx thé JSÓN árráy ánd ímpórt ít ágáín.··············';
 
   @override
-  String get failureThatJSONCouldNotBeRead =>
-      'Thát JSÓN cóúld nót bé réád.··········';
+  String get failureThatJSONCouldNotBeRead => 'Thát JSÓN cóúld nót bé réád.··········';
 
   @override
-  String get failureThatWorkbookHasNoSheets =>
-      'Thát wórkbóók hás nó shééts.··········';
+  String get failureThatWorkbookHasNoSheets => 'Thát wórkbóók hás nó shééts.··········';
 
   @override
-  String get failureChooseAWorkbookWithASheetOf =>
-      'Chóósé á wórkbóók wíth á shéét óf dátá.··············';
+  String get failureChooseAWorkbookWithASheetOf => 'Chóósé á wórkbóók wíth á shéét óf dátá.··············';
 
   @override
-  String get failureThatSheetHasNoHeaderRow =>
-      'Thát shéét hás nó héádér rów.···········';
+  String get failureThatSheetHasNoHeaderRow => 'Thát shéét hás nó héádér rów.···········';
 
   @override
-  String get failureAddAHeaderRowAndTryAgain =>
-      'Ádd á héádér rów ánd try ágáín.···········';
+  String get failureAddAHeaderRowAndTryAgain => 'Ádd á héádér rów ánd try ágáín.···········';
 
   @override
-  String get failureThatKeyColumnHasDuplicateValues =>
-      'Thát kéy cólúmn hás dúplícáté válúés.·············';
+  String get failureThatKeyColumnHasDuplicateValues => 'Thát kéy cólúmn hás dúplícáté válúés.·············';
 
   @override
-  String get failurePickAnotherKeyColumnOrConfirmDuplicates =>
-      'Píck ánóthér kéy cólúmn, ór cónfírm dúplícátés áré éxpéctéd.·····················';
+  String get failurePickAnotherKeyColumnOrConfirmDuplicates => 'Píck ánóthér kéy cólúmn, ór cónfírm dúplícátés áré éxpéctéd.·····················';
 
   @override
-  String get failureARowNeedsADatasetAndA =>
-      'Á rów nééds á dátásét ánd á kéy.············';
+  String get failureARowNeedsADatasetAndA => 'Á rów nééds á dátásét ánd á kéy.············';
 
   @override
-  String get failureFillThoseFieldsAndSaveAgain =>
-      'Fíll thósé fíélds ánd sávé ágáín.············';
+  String get failureFillThoseFieldsAndSaveAgain => 'Fíll thósé fíélds ánd sávé ágáín.············';
 
   @override
-  String get failureADatasetNeedsANameAndA =>
-      'Á dátásét nééds á námé ánd á kéy cólúmn.··············';
+  String get failureADatasetNeedsANameAndA => 'Á dátásét nééds á námé ánd á kéy cólúmn.··············';
 
   @override
-  String get failureTheKeyColumnMustBeOneOf =>
-      'Thé kéy cólúmn múst bé óné óf thé dátásét cólúmns.··················';
+  String get failureTheKeyColumnMustBeOneOf => 'Thé kéy cólúmn múst bé óné óf thé dátásét cólúmns.··················';
 
   @override
-  String get failurePickAKeyFromTheColumnList =>
-      'Píck á kéy fróm thé cólúmn líst.············';
+  String get failurePickAKeyFromTheColumnList => 'Píck á kéy fróm thé cólúmn líst.············';
 
   @override
-  String get failureReferenceDataIsNotAvailableYet =>
-      'Référéncé dátá ís nót áváíláblé yét.·············';
+  String get failureReferenceDataIsNotAvailableYet => 'Référéncé dátá ís nót áváíláblé yét.·············';
 
   @override
-  String get failureThatTableHasNoDataColumns =>
-      'Thát táblé hás nó dátá cólúmns.···········';
+  String get failureThatTableHasNoDataColumns => 'Thát táblé hás nó dátá cólúmns.···········';
 
   @override
   String get failureATemplateNeedsAName => 'Á témpláté nééds á námé.·········';
 
   @override
-  String get failureOpenAProjectThenAddTheTemplate =>
-      'Ópén á prójéct, thén ádd thé témpláté.··············';
+  String get failureOpenAProjectThenAddTheTemplate => 'Ópén á prójéct, thén ádd thé témpláté.··············';
 
   @override
-  String get failureTheShippedTemplatesCouldNotBeRead =>
-      'Thé shíppéd témplátés cóúld nót bé réád.··············';
+  String get failureTheShippedTemplatesCouldNotBeRead => 'Thé shíppéd témplátés cóúld nót bé réád.··············';
 
   @override
-  String get failureThatShippedTemplateIsNotOnThis =>
-      'Thát shíppéd témpláté ís nót ón thís dévícé.················';
+  String get failureThatShippedTemplateIsNotOnThis => 'Thát shíppéd témpláté ís nót ón thís dévícé.················';
 
   @override
-  String get failurePickAnotherTemplateFromTheLibrary =>
-      'Píck ánóthér témpláté fróm thé líbráry.··············';
+  String get failurePickAnotherTemplateFromTheLibrary => 'Píck ánóthér témpláté fróm thé líbráry.··············';
 
   @override
-  String get failureTheInheritedFieldGroupsCouldNotBe =>
-      'Thé ínhérítéd fíéld gróúps cóúld nót bé réád.················';
+  String get failureTheInheritedFieldGroupsCouldNotBe => 'Thé ínhérítéd fíéld gróúps cóúld nót bé réád.················';
 
   @override
   String failureAShippedTemplateIsMissingValue(String value0) {
@@ -24398,32 +21868,25 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureReinstallTheAppThenTryAgain =>
-      'Réínstáll thé ápp, thén try ágáín.············';
+  String get failureReinstallTheAppThenTryAgain => 'Réínstáll thé ápp, thén try ágáín.············';
 
   @override
-  String get failureAShippedTemplateUsesAnUnknownSchema =>
-      'Á shíppéd témpláté úsés án únknówn schémá.···············';
+  String get failureAShippedTemplateUsesAnUnknownSchema => 'Á shíppéd témpláté úsés án únknówn schémá.···············';
 
   @override
-  String get failureAShippedTemplateHasAnInvalidKey =>
-      'Á shíppéd témpláté hás án ínválíd kéy.··············';
+  String get failureAShippedTemplateHasAnInvalidKey => 'Á shíppéd témpláté hás án ínválíd kéy.··············';
 
   @override
-  String get failureAShippedTemplateNameIsNotA =>
-      'Á shíppéd témpláté námé ís nót á lócálísátíón kéy.··················';
+  String get failureAShippedTemplateNameIsNotA => 'Á shíppéd témpláté námé ís nót á lócálísátíón kéy.··················';
 
   @override
-  String get failureAShippedTemplateNamesAnUnknownIdentity =>
-      'Á shíppéd témpláté námés án únknówn ídéntíty fíéld.··················';
+  String get failureAShippedTemplateNamesAnUnknownIdentity => 'Á shíppéd témpláté námés án únknówn ídéntíty fíéld.··················';
 
   @override
-  String get failureAShippedTemplateNamesAnUnknownParent =>
-      'Á shíppéd témpláté námés án únknówn párént.················';
+  String get failureAShippedTemplateNamesAnUnknownParent => 'Á shíppéd témpláté námés án únknówn párént.················';
 
   @override
-  String get failureAShippedTemplateNamesAnUnknownField =>
-      'Á shíppéd témpláté námés án únknówn fíéld gróúp.·················';
+  String get failureAShippedTemplateNamesAnUnknownField => 'Á shíppéd témpláté námés án únknówn fíéld gróúp.·················';
 
   @override
   String failureAShippedFieldIsMissingValue(String value0) {
@@ -24431,225 +21894,172 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get failureAShippedFieldUsesAnUnknownType =>
-      'Á shíppéd fíéld úsés án únknówn typé.·············';
+  String get failureAShippedFieldUsesAnUnknownType => 'Á shíppéd fíéld úsés án únknówn typé.·············';
 
   @override
-  String get failureAShippedFieldLabelIsNotA =>
-      'Á shíppéd fíéld lábél ís nót á lócálísátíón kéy.·················';
+  String get failureAShippedFieldLabelIsNotA => 'Á shíppéd fíéld lábél ís nót á lócálísátíón kéy.·················';
 
   @override
-  String get failureAShippedTemplateCouldNotBeRead =>
-      'Á shíppéd témpláté cóúld nót bé réád.·············';
+  String get failureAShippedTemplateCouldNotBeRead => 'Á shíppéd témpláté cóúld nót bé réád.·············';
 
   @override
-  String get failureAShippedTemplateNamesAnUnknownRecord =>
-      'Á shíppéd témpláté námés án únknówn récórd typé.·················';
+  String get failureAShippedTemplateNamesAnUnknownRecord => 'Á shíppéd témpláté námés án únknówn récórd typé.·················';
 
   @override
-  String get failureTheTemplateOrItsRecordsChangedWhile =>
-      'Thé témpláté ór íts récórds chángéd whílé yóú révíéwéd thé mígrátíón.·························';
+  String get failureTheTemplateOrItsRecordsChangedWhile => 'Thé témpláté ór íts récórds chángéd whílé yóú révíéwéd thé mígrátíón.·························';
 
   @override
-  String get failureReviewTheUpdatedChangesAndTryAgain =>
-      'Révíéw thé úpdátéd chángés ánd try ágáín.···············';
+  String get failureReviewTheUpdatedChangesAndTryAgain => 'Révíéw thé úpdátéd chángés ánd try ágáín.···············';
 
   @override
   String get failureAFieldNeedsAKey => 'Á fíéld nééds á kéy.·······';
 
   @override
-  String get failureGiveEveryFieldAKeyAndSave =>
-      'Gívé évéry fíéld á kéy ánd sávé ágáín.··············';
+  String get failureGiveEveryFieldAKeyAndSave => 'Gívé évéry fíéld á kéy ánd sávé ágáín.··············';
 
   @override
-  String get failureEachFieldKeyMustBeUniqueOn =>
-      'Éách fíéld kéy múst bé úníqúé ón á témpláté.················';
+  String get failureEachFieldKeyMustBeUniqueOn => 'Éách fíéld kéy múst bé úníqúé ón á témpláté.················';
 
   @override
-  String get failureRenameTheDuplicateKeyAndSaveAgain =>
-      'Rénámé thé dúplícáté kéy ánd sávé ágáín.··············';
+  String get failureRenameTheDuplicateKeyAndSaveAgain => 'Rénámé thé dúplícáté kéy ánd sávé ágáín.··············';
 
   @override
   String get failureThatValueIsNotText => 'Thát válúé ís nót téxt.·········';
 
   @override
-  String get failureEnterTextOrLeaveTheFieldEmpty =>
-      'Éntér téxt, ór léávé thé fíéld émpty.·············';
+  String get failureEnterTextOrLeaveTheFieldEmpty => 'Éntér téxt, ór léávé thé fíéld émpty.·············';
 
   @override
-  String get failureThatValueIsNotAWholeNumber =>
-      'Thát válúé ís nót á whólé númbér.············';
+  String get failureThatValueIsNotAWholeNumber => 'Thát válúé ís nót á whólé númbér.············';
 
   @override
-  String get failureEnterAWholeNumberOrLeaveThe =>
-      'Éntér á whólé númbér, ór léávé thé fíéld émpty.·················';
+  String get failureEnterAWholeNumberOrLeaveThe => 'Éntér á whólé númbér, ór léávé thé fíéld émpty.·················';
 
   @override
-  String get failureThatValueIsNotANumber =>
-      'Thát válúé ís nót á númbér.··········';
+  String get failureThatValueIsNotANumber => 'Thát válúé ís nót á númbér.··········';
 
   @override
-  String get failureEnterANumberOrLeaveTheField =>
-      'Éntér á númbér, ór léávé thé fíéld émpty.···············';
+  String get failureEnterANumberOrLeaveTheField => 'Éntér á númbér, ór léávé thé fíéld émpty.···············';
 
   @override
-  String get failureThatNumberIsOutsideTheAllowedRange =>
-      'Thát númbér ís óútsídé thé állówéd rángé.···············';
+  String get failureThatNumberIsOutsideTheAllowedRange => 'Thát númbér ís óútsídé thé állówéd rángé.···············';
 
   @override
-  String get failureEnterANumberInsideTheRangeOr =>
-      'Éntér á númbér ínsídé thé rángé, ór léávé thé fíéld émpty.·····················';
+  String get failureEnterANumberInsideTheRangeOr => 'Éntér á númbér ínsídé thé rángé, ór léávé thé fíéld émpty.·····················';
 
   @override
-  String get failureThatValueIsShorterThanThisField =>
-      'Thát válúé ís shórtér thán thís fíéld állóws.················';
+  String get failureThatValueIsShorterThanThisField => 'Thát válúé ís shórtér thán thís fíéld állóws.················';
 
   @override
-  String get failureEnterALongerValueOrLeaveThe =>
-      'Éntér á lóngér válúé, ór léávé thé fíéld émpty.·················';
+  String get failureEnterALongerValueOrLeaveThe => 'Éntér á lóngér válúé, ór léávé thé fíéld émpty.·················';
 
   @override
-  String get failureThatValueIsLongerThanThisField =>
-      'Thát válúé ís lóngér thán thís fíéld állóws.················';
+  String get failureThatValueIsLongerThanThisField => 'Thát válúé ís lóngér thán thís fíéld állóws.················';
 
   @override
-  String get failureShortenTheValueOrLeaveTheField =>
-      'Shórtén thé válúé, ór léávé thé fíéld émpty.················';
+  String get failureShortenTheValueOrLeaveTheField => 'Shórtén thé válúé, ór léávé thé fíéld émpty.················';
 
   @override
-  String get failureThatValueDoesNotMatchTheExpected =>
-      'Thát válúé dóés nót mátch thé éxpéctéd páttérn.·················';
+  String get failureThatValueDoesNotMatchTheExpected => 'Thát válúé dóés nót mátch thé éxpéctéd páttérn.·················';
 
   @override
-  String get failureEnterAValueInTheExpectedForm =>
-      'Éntér á válúé ín thé éxpéctéd fórm, ór léávé thé fíéld émpty.······················';
+  String get failureEnterAValueInTheExpectedForm => 'Éntér á válúé ín thé éxpéctéd fórm, ór léávé thé fíéld émpty.······················';
 
   @override
-  String get failureThisFieldSPatternIsNotValid =>
-      'Thís fíéld\'s páttérn ís nót válíd.·············';
+  String get failureThisFieldSPatternIsNotValid => 'Thís fíéld\'s páttérn ís nót válíd.·············';
 
   @override
-  String get failureOpenTheTemplateAndCorrectTheField =>
-      'Ópén thé témpláté ánd córréct thé fíéld\'s páttérn.··················';
+  String get failureOpenTheTemplateAndCorrectTheField => 'Ópén thé témpláté ánd córréct thé fíéld\'s páttérn.··················';
 
   @override
   String get failureThatValueIsNotADate => 'Thát válúé ís nót á dáté.·········';
 
   @override
-  String get failureEnterACalendarDateOrLeaveThe =>
-      'Éntér á cáléndár dáté, ór léávé thé fíéld émpty.·················';
+  String get failureEnterACalendarDateOrLeaveThe => 'Éntér á cáléndár dáté, ór léávé thé fíéld émpty.·················';
 
   @override
-  String get failureThatValueIsNotATimeOf =>
-      'Thát válúé ís nót á tímé óf dáy.············';
+  String get failureThatValueIsNotATimeOf => 'Thát válúé ís nót á tímé óf dáy.············';
 
   @override
-  String get failureEnterATimeOrLeaveTheField =>
-      'Éntér á tímé, ór léávé thé fíéld émpty.··············';
+  String get failureEnterATimeOrLeaveTheField => 'Éntér á tímé, ór léávé thé fíéld émpty.··············';
 
   @override
-  String get failureThatValueIsNotADateAnd =>
-      'Thát válúé ís nót á dáté ánd tímé.············';
+  String get failureThatValueIsNotADateAnd => 'Thát válúé ís nót á dáté ánd tímé.············';
 
   @override
-  String get failureEnterADateAndTimeOrLeave =>
-      'Éntér á dáté ánd tímé, ór léávé thé fíéld émpty.·················';
+  String get failureEnterADateAndTimeOrLeave => 'Éntér á dáté ánd tímé, ór léávé thé fíéld émpty.·················';
 
   @override
-  String get failureThatValueIsNotAYesOr =>
-      'Thát válúé ís nót á yés ór nó.···········';
+  String get failureThatValueIsNotAYesOr => 'Thát válúé ís nót á yés ór nó.···········';
 
   @override
-  String get failureSwitchTheFieldOnOrOffOr =>
-      'Swítch thé fíéld ón ór óff, ór léávé ít únsét.·················';
+  String get failureSwitchTheFieldOnOrOffOr => 'Swítch thé fíéld ón ór óff, ór léávé ít únsét.·················';
 
   @override
-  String get failureThatValueIsNotAChoice =>
-      'Thát válúé ís nót á chóícé.··········';
+  String get failureThatValueIsNotAChoice => 'Thát válúé ís nót á chóícé.··········';
 
   @override
-  String get failurePickAnOptionFromTheListOr =>
-      'Píck án óptíón fróm thé líst, ór léávé thé fíéld émpty.····················';
+  String get failurePickAnOptionFromTheListOr => 'Píck án óptíón fróm thé líst, ór léávé thé fíéld émpty.····················';
 
   @override
-  String get failureThatChoiceIsNotOnTheList =>
-      'Thát chóícé ís nót ón thé líst.···········';
+  String get failureThatChoiceIsNotOnTheList => 'Thát chóícé ís nót ón thé líst.···········';
 
   @override
-  String get failureThatValueIsNotAFilePath =>
-      'Thát válúé ís nót á fílé páth.···········';
+  String get failureThatValueIsNotAFilePath => 'Thát válúé ís nót á fílé páth.···········';
 
   @override
-  String get failureAttachAFileOrLeaveTheField =>
-      'Áttách á fílé, ór léávé thé fíéld émpty.··············';
+  String get failureAttachAFileOrLeaveTheField => 'Áttách á fílé, ór léávé thé fíéld émpty.··············';
 
   @override
-  String get failureThatValueIsNotALocation =>
-      'Thát válúé ís nót á lócátíón.···········';
+  String get failureThatValueIsNotALocation => 'Thát válúé ís nót á lócátíón.···········';
 
   @override
-  String get failureCaptureAGPSFixOrLeaveThe =>
-      'Cáptúré á GPS fíx, ór léávé thé fíéld émpty.················';
+  String get failureCaptureAGPSFixOrLeaveThe => 'Cáptúré á GPS fíx, ór léávé thé fíéld émpty.················';
 
   @override
-  String get failureThatLocationIsOutsideTheEarth =>
-      'Thát lócátíón ís óútsídé thé éárth.·············';
+  String get failureThatLocationIsOutsideTheEarth => 'Thát lócátíón ís óútsídé thé éárth.·············';
 
   @override
-  String get failureCaptureAGPSFixAgainOrLeave =>
-      'Cáptúré á GPS fíx ágáín, ór léávé thé fíéld émpty.··················';
+  String get failureCaptureAGPSFixAgainOrLeave => 'Cáptúré á GPS fíx ágáín, ór léávé thé fíéld émpty.··················';
 
   @override
-  String get failureThisFieldTypeHasNoEditorOn =>
-      'Thís fíéld typé hás nó édítór ón thís scréén.················';
+  String get failureThisFieldTypeHasNoEditorOn => 'Thís fíéld typé hás nó édítór ón thís scréén.················';
 
   @override
-  String get failureOpenTheTemplateAndPickAType =>
-      'Ópén thé témpláté ánd píck á typé thís scréén súppórts.····················';
+  String get failureOpenTheTemplateAndPickAType => 'Ópén thé témpláté ánd píck á typé thís scréén súppórts.····················';
 
   @override
-  String get failureConfirmConsentWithTheNamedOperator =>
-      'Cónfírm cónsént wíth thé náméd ópérátór.··············';
+  String get failureConfirmConsentWithTheNamedOperator => 'Cónfírm cónsént wíth thé náméd ópérátór.··············';
 
   @override
-  String get failureThatFieldTypeIsNotRecognised =>
-      'Thát fíéld typé ís nót récógníséd.············';
+  String get failureThatFieldTypeIsNotRecognised => 'Thát fíéld typé ís nót récógníséd.············';
 
   @override
-  String get failurePickATypeFromTheListAnd =>
-      'Píck á typé fróm thé líst ánd sávé ágáín.···············';
+  String get failurePickATypeFromTheListAnd => 'Píck á typé fróm thé líst ánd sávé ágáín.···············';
 
   @override
-  String get failureThatInputModeIsNotRecognised =>
-      'Thát ínpút módé ís nót récógníséd.············';
+  String get failureThatInputModeIsNotRecognised => 'Thát ínpút módé ís nót récógníséd.············';
 
   @override
-  String get failurePickAnInputModeFromTheList =>
-      'Píck án ínpút módé fróm thé líst ánd sávé ágáín.·················';
+  String get failurePickAnInputModeFromTheList => 'Píck án ínpút módé fróm thé líst ánd sávé ágáín.·················';
 
   @override
-  String get failureTheSuggestedOrderCouldNotBeRead =>
-      'Thé súggéstéd órdér cóúld nót bé réád.··············';
+  String get failureTheSuggestedOrderCouldNotBeRead => 'Thé súggéstéd órdér cóúld nót bé réád.··············';
 
   @override
-  String get failureUseTheOnDeviceResultsOrTry =>
-      'Úsé thé ón-dévícé résúlts ór try ágáín.··············';
+  String get failureUseTheOnDeviceResultsOrTry => 'Úsé thé ón-dévícé résúlts ór try ágáín.··············';
 
   @override
-  String get failureOpenTheTemplateListAndTryAgain =>
-      'Ópén thé témpláté líst ánd try ágáín.·············';
+  String get failureOpenTheTemplateListAndTryAgain => 'Ópén thé témpláté líst ánd try ágáín.·············';
 
   @override
-  String get failureTheDailyAnalysisLimitIsReached =>
-      'Thé dáíly ánálysís límít ís réáchéd.·············';
+  String get failureTheDailyAnalysisLimitIsReached => 'Thé dáíly ánálysís límít ís réáchéd.·············';
 
   @override
-  String get failureUseTheOnDeviceSuggestionsOrTry =>
-      'Úsé thé ón-dévícé súggéstíóns ór try tómórrów.·················';
+  String get failureUseTheOnDeviceSuggestionsOrTry => 'Úsé thé ón-dévícé súggéstíóns ór try tómórrów.·················';
 
   @override
-  String get failureExportProtectionsAreUnavailableOnThisDevice =>
-      'Éxpórt prótéctíóns áré únáváíláblé ón thís dévícé.··················';
+  String get failureExportProtectionsAreUnavailableOnThisDevice => 'Éxpórt prótéctíóns áré únáváíláblé ón thís dévícé.··················';
 
   @override
   String processingDailyCap(int cap, String resetDay) {
@@ -24657,129 +22067,100 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get processingDailyResetRecovery =>
-      'Prócéssíng wíll bé áváíláblé áftér thé dáíly rését.··················';
+  String get processingDailyResetRecovery => 'Prócéssíng wíll bé áváíláblé áftér thé dáíly rését.··················';
 
   @override
-  String get bundlePasswordInvalid =>
-      'Thát pásswórd díd nót ópén thé búndlé.··············';
+  String get bundlePasswordInvalid => 'Thát pásswórd díd nót ópén thé búndlé.··············';
 
   @override
-  String get bundlePasswordInvalidRecovery =>
-      'Try thé pásswórd ágáín. Nóthíng wás éxtráctéd.·················';
+  String get bundlePasswordInvalidRecovery => 'Try thé pásswórd ágáín. Nóthíng wás éxtráctéd.·················';
 
   @override
-  String get incomingBundleBusy =>
-      'Fínísh thé cúrrént páckágé béfóré ópéníng ánóthér.··················';
+  String get incomingBundleBusy => 'Fínísh thé cúrrént páckágé béfóré ópéníng ánóthér.··················';
 
   @override
-  String get incomingBundleTooLarge =>
-      'Thís páckágé ís tóó lárgé tó ópén.············';
+  String get incomingBundleTooLarge => 'Thís páckágé ís tóó lárgé tó ópén.············';
 
   @override
-  String get incomingBundleIncomplete =>
-      'Thís páckágé ís tóó lárgé ór íncómplété.··············';
+  String get incomingBundleIncomplete => 'Thís páckágé ís tóó lárgé ór íncómplété.··············';
 
   @override
-  String get incomingBundleUnreadable =>
-      'Thís páckágé cóúld nót bé ópénéd.············';
+  String get incomingBundleUnreadable => 'Thís páckágé cóúld nót bé ópénéd.············';
 
   @override
-  String get incomingBundleUnreadableRecovery =>
-      'Ópén thé fílé ágáín fróm íts órígínál lócátíón.·················';
+  String get incomingBundleUnreadableRecovery => 'Ópén thé fílé ágáín fróm íts órígínál lócátíón.·················';
 
   @override
-  String get biometricUnavailable =>
-      'Bíómétríc áúthéntícátíón ís únáváíláblé.··············';
+  String get biometricUnavailable => 'Bíómétríc áúthéntícátíón ís únáváíláblé.··············';
 
   @override
   String get biometricPinRecovery => 'Únlóck wíth yóúr ápp PÍN.·········';
 
   @override
-  String get appLockStorageUnavailable =>
-      'Thé ápp lóck cóúld nót bé réád ón thís dévícé.·················';
+  String get appLockStorageUnavailable => 'Thé ápp lóck cóúld nót bé réád ón thís dévícé.·················';
 
   @override
-  String get appLockStorageRecovery =>
-      'Try únlóckíng ágáín whén sécúré stórágé ís áváíláblé.···················';
+  String get appLockStorageRecovery => 'Try únlóckíng ágáín whén sécúré stórágé ís áváíláblé.···················';
 
   @override
-  String get cloudDestinationSaveFailed =>
-      'Thé déstínátíón cóúld nót bé sávéd.·············';
+  String get cloudDestinationSaveFailed => 'Thé déstínátíón cóúld nót bé sávéd.·············';
 
   @override
-  String get cloudDestinationMissing =>
-      'Thát déstínátíón ís nó lóngér lístéd.·············';
+  String get cloudDestinationMissing => 'Thát déstínátíón ís nó lóngér lístéd.·············';
 
   @override
   String get cloudRefreshDestinations => 'Réfrésh thé líst.······';
 
   @override
-  String get cloudUploadRecordFailed =>
-      'Thé úplóád cóúld nót bé récórdéd.············';
+  String get cloudUploadRecordFailed => 'Thé úplóád cóúld nót bé récórdéd.············';
 
   @override
-  String get cloudUploadHistoryUpdateFailed =>
-      'Thé úplóád hístóry cóúld nót bé úpdátéd.··············';
+  String get cloudUploadHistoryUpdateFailed => 'Thé úplóád hístóry cóúld nót bé úpdátéd.··············';
 
   @override
-  String get cloudUploadHistoryUpdateRecovery =>
-      'Thé fílé ón thís dévícé wás nót chángéd.··············';
+  String get cloudUploadHistoryUpdateRecovery => 'Thé fílé ón thís dévícé wás nót chángéd.··············';
 
   @override
-  String get cloudUploadConfirmationRequired =>
-      'Cónfírm thís úplóád béfóré ít cán stárt.··············';
+  String get cloudUploadConfirmationRequired => 'Cónfírm thís úplóád béfóré ít cán stárt.··············';
 
   @override
-  String get cloudUploadConfirmationRecovery =>
-      'Révíéw thé fílé ánd cónfírm ít.···········';
+  String get cloudUploadConfirmationRecovery => 'Révíéw thé fílé ánd cónfírm ít.···········';
 
   @override
-  String get cloudUploadHistoryMissing =>
-      'Thát úplóád ís nó lóngér ín thé hístóry.··············';
+  String get cloudUploadHistoryMissing => 'Thát úplóád ís nó lóngér ín thé hístóry.··············';
 
   @override
   String get cloudUploadRestartRecovery => 'Stárt thé úplóád ágáín.·········';
 
   @override
-  String get settingsPreferenceUnsupported =>
-      'Thát préféréncé cánnót bé stóréd.············';
+  String get settingsPreferenceUnsupported => 'Thát préféréncé cánnót bé stóréd.············';
 
   @override
-  String get settingsPreferenceUnsupportedRecovery =>
-      'Chóósé á súppórtéd válúé ánd sávé ágáín.··············';
+  String get settingsPreferenceUnsupportedRecovery => 'Chóósé á súppórtéd válúé ánd sávé ágáín.··············';
 
   @override
-  String get settingsPreferenceSaveFailed =>
-      'Thé préféréncé cóúld nót bé sávéd ón thís dévícé.··················';
+  String get settingsPreferenceSaveFailed => 'Thé préféréncé cóúld nót bé sávéd ón thís dévícé.··················';
 
   @override
-  String get settingsPreferenceSaveRecovery =>
-      'Try ágáín. Yóúr lást chángé wás nót stóréd.················';
+  String get settingsPreferenceSaveRecovery => 'Try ágáín. Yóúr lást chángé wás nót stóréd.················';
 
   @override
-  String get privacyCaptureUnreadable =>
-      'Thé sávéd cáptúré cóúld nót bé réád.·············';
+  String get privacyCaptureUnreadable => 'Thé sávéd cáptúré cóúld nót bé réád.·············';
 
   @override
-  String get privacyCaptureRecover =>
-      'Récóvér thé cáptúré ánd try ágáín.············';
+  String get privacyCaptureRecover => 'Récóvér thé cáptúré ánd try ágáín.············';
 
   @override
-  String get privacyProjectRequired =>
-      'Ópén á prójéct béfóré rémóvíng íts lócátíón dátá.··················';
+  String get privacyProjectRequired => 'Ópén á prójéct béfóré rémóvíng íts lócátíón dátá.··················';
 
   @override
-  String get privacyProjectRequiredRecovery =>
-      'Chóósé á prójéct, thén try ágáín.············';
+  String get privacyProjectRequiredRecovery => 'Chóósé á prójéct, thén try ágáín.············';
 
   @override
-  String get cloudSignInChanged =>
-      'Thís déstínátíón sígn-ín chángéd.············';
+  String get cloudSignInChanged => 'Thís déstínátíón sígn-ín chángéd.············';
 
   @override
-  String get cloudGoogleSignInRenewal =>
-      'Thís Góóglé Drívé sígn-ín nééds rénéwál.··············';
+  String get cloudGoogleSignInRenewal => 'Thís Góóglé Drívé sígn-ín nééds rénéwál.··············';
 
   @override
   String get cloudSignInAgain => 'Sígn ín ágáín.·····';
@@ -24791,16 +22172,13 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get exportFormatTxt => 'Pláín téxt (TXT)······';
 
   @override
-  String get serverApiKeySaved =>
-      'Éncryptéd ón thé órgánísátíón sérvér·············';
+  String get serverApiKeySaved => 'Éncryptéd ón thé órgánísátíón sérvér·············';
 
   @override
-  String get serverApiKeyCustody =>
-      'Yóúr kéy ís éncryptéd ón thé órgánísátíón sérvér. Réqúésts úsé yóúr próvídér áccóúnt; nó áútómátíc bíllíng-áccóúnt swítch.···········································';
+  String get serverApiKeyCustody => 'Yóúr kéy ís éncryptéd ón thé órgánísátíón sérvér. Réqúésts úsé yóúr próvídér áccóúnt; nó áútómátíc bíllíng-áccóúnt swítch.···········································';
 
   @override
-  String get aiRequestUncertain =>
-      'Thís réqúést máy hávé béén chárgéd. Íts résúlt ís únáváíláblé. Révíéw béfóré stártíng á néw áttémpt.···································';
+  String get aiRequestUncertain => 'Thís réqúést máy hávé béén chárgéd. Íts résúlt ís únáváíláblé. Révíéw béfóré stártíng á néw áttémpt.···································';
 
   @override
   String get aiManagedAccount => 'Órgánísátíón-mánágéd áccóúnt··········';
@@ -24814,12 +22192,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get aiSpendingLimit => 'Máxímúm cóst pér réqúést·········';
 
   @override
-  String get aiSpendingLimitHint =>
-      'Búdgét úníts cónfígúréd by yóúr órgánísátíón. Híghér-cóst módéls réqúíré éxplícít áppróvál.································';
+  String get aiSpendingLimitHint => 'Búdgét úníts cónfígúréd by yóúr órgánísátíón. Híghér-cóst módéls réqúíré éxplícít áppróvál.································';
 
   @override
-  String get serverCredentialRemoveMessage =>
-      'Délété yóúr éncryptéd próvídér kéy fróm thé órgánísátíón sérvér. Ánálysís fór thís áccóúnt stóps úntíl á kéy ís sávéd ágáín.············································';
+  String get serverCredentialRemoveMessage => 'Délété yóúr éncryptéd próvídér kéy fróm thé órgánísátíón sérvér. Ánálysís fór thís áccóúnt stóps úntíl á kéy ís sávéd ágáín.············································';
 
   @override
   String get processingFindingsTitle => 'Ánálysís fíndíngs······';
@@ -24828,8 +22204,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get processingRetryChargeTitle => 'Rétry ánálysís?······';
 
   @override
-  String get processingRetryChargeBody =>
-      'Thé prévíóús réqúést máy hávé béén chárgéd. Rétryíng stárts á néw réqúést ánd máy spénd móré.·································';
+  String get processingRetryChargeBody => 'Thé prévíóús réqúést máy hávé béén chárgéd. Rétryíng stárts á néw réqúést ánd máy spénd móré.·································';
 
   @override
   String get processingRetryChargeConfirm => 'Áppróvé rétry·····';
@@ -24851,12 +22226,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String processingEgressSelection(
-    String provider,
-    String model,
-    String account,
-    String limit,
-  ) {
+  String processingEgressSelection(String provider, String model, String account, String limit) {
     return 'Próvídér: ····$provider. Módél: ····$model. Bíllíng: ····$account. Áppróvéd réqúést límít: ··········$limit.';
   }
 
@@ -24910,12 +22280,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get recycleRestored => 'Réstóréd···';
 
   @override
-  String get recycleParentDeleted =>
-      'Réstóré thé délétéd párént fírst.············';
+  String get recycleParentDeleted => 'Réstóré thé délétéd párént fírst.············';
 
   @override
-  String get recycleParentDeletedRecovery =>
-      'Réstóré thé prójéct ór récórd fróm thé Récyclé bín, thén try ágáín.························';
+  String get recycleParentDeletedRecovery => 'Réstóré thé prójéct ór récórd fróm thé Récyclé bín, thén try ágáín.························';
 
   @override
   String recycleEntitySubtitle(String type, String details) {
@@ -24923,12 +22291,10 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   }
 
   @override
-  String get recycleFolderRestoreFailed =>
-      'Thé prójéct fóldér cóúld nót bé réstóréd.···············';
+  String get recycleFolderRestoreFailed => 'Thé prójéct fóldér cóúld nót bé réstóréd.···············';
 
   @override
-  String get recycleFolderRestoreRecovery =>
-      'Chéck stórágé áccéss ánd résólvé ány éxístíng fóldér wíth thé sámé námé, thén try ágáín.·······························';
+  String get recycleFolderRestoreRecovery => 'Chéck stórágé áccéss ánd résólvé ány éxístíng fóldér wíth thé sámé námé, thén try ágáín.·······························';
 
   @override
   String get aiSupportedProviders => 'Súppórtéd próvídérs·······';
