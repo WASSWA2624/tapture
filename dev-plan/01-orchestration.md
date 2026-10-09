@@ -504,6 +504,11 @@ At this task's verification, the plan had 27 ordered folders and 87 unique tasks
 All live plan links resolve. The historical snapshot's SHA-256 matches its recorded original value.
 The managed pre-commit and commit-message hooks were installed in this checkout and compared with their sources.
 
+Historical verification on 2026-10-03 passed formatting (1,290 application/tool and 1,088 test files), analysis,
+plan/tracker/dependency/structure/template/localization/copy/test-presence checks, 503 guardrail tests,
+8,993 unit/widget tests (13 skips) and four host performance tests. This predates removal of the Flutter review
+command and does not certify the current tree; the current AGENTS.md verification contract remains authoritative.
+
 ## 088 — Keep the product specification complete and concise
 
 **Depends on** [001](01-orchestration.md)
