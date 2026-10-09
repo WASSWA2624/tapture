@@ -37,12 +37,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(
-        find.text(
-          Copy.settingsProjectContextsSummary(Copy.projectOff, Copy.projectOff),
-        ),
-        findsOneWidget,
-      );
+      expect(find.text(Copy.projectOff), findsOneWidget);
       await _tap(tester, find.text(Copy.gpsPrivacyCapture));
       expect(store.read(SettingKeys.gpsEnabled), isTrue);
       await _tap(tester, find.text(Copy.settingsPhotoFiles));
@@ -74,13 +69,14 @@ void main() {
     },
   );
 
-  testWidgets('conditional context selectors preserve hidden values', (
+  testWidgets('idle controls preserve retired movement values', (
     WidgetTester tester,
   ) async {
     final SettingsStore store = SettingsStore.fake(
       stored: <String, Object?>{
         SettingKeys.contextAutoClearSeconds.name: 900,
         SettingKeys.contextMovementMetres.name: 250,
+        SettingKeys.contextMovementPromptEnabled.name: true,
       },
     );
     await _pump(tester, store: store);
@@ -89,10 +85,10 @@ void main() {
     expect(find.text(Copy.settingsContextDistance), findsNothing);
     await _tap(tester, find.text(Copy.settingsContextAutoClear));
     expect(find.text(Copy.settingsContextIdleOption(15)), findsOneWidget);
-    await _tap(tester, find.text(Copy.settingsContextMovement));
-    expect(find.text(Copy.settingsContextDistanceOption(250)), findsOneWidget);
+    expect(find.text(Copy.settingsContextMovement), findsNothing);
+    expect(find.text(Copy.settingsContextDistanceOption(250)), findsNothing);
+    expect(store.read(SettingKeys.contextMovementPromptEnabled), isTrue);
     await _tap(tester, find.text(Copy.settingsContextAutoClear));
-    await _tap(tester, find.text(Copy.settingsContextMovement));
     expect(find.text(Copy.settingsContextIdle), findsNothing);
     expect(find.text(Copy.settingsContextDistance), findsNothing);
     expect(store.read(SettingKeys.contextAutoClearSeconds), 900);
@@ -206,9 +202,8 @@ void main() {
         await _tap(tester, find.text(Copy.settingsPhotoFiles));
         await _tap(tester, find.text(Copy.settingsProjectContexts));
         await _tap(tester, find.text(Copy.settingsContextAutoClear));
-        await _tap(tester, find.text(Copy.settingsContextMovement));
         expect(find.text(Copy.settingsContextIdle), findsOneWidget);
-        expect(find.text(Copy.settingsContextDistance), findsOneWidget);
+        expect(find.text(Copy.settingsContextDistance), findsNothing);
         expect(tester.takeException(), isNull);
       },
       variant: TargetPlatformVariant.all(),

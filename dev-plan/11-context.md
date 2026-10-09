@@ -4,6 +4,10 @@ Set a value once, and it applies to every record until changed.
 
 ## 011 — Context: hierarchy, bar and inheritance
 
+### Presentation supersession — task 164 (2026-10-09)
+
+Task 164 retires movement reminders and their settings globally, retaining persisted keys/values and the pure legacy helper. Idle clear/Undo, manual cascade safety and snapshots keep their contracts. Fresh verification lives in task 164; historical evidence below remains intact.
+
 **Depends on** [003](03-design-system.md), [004](04-data-layer.md), [005](05-file-storage.md), [006](06-app-shell.md), [007](07-account-and-settings.md), [009](09-templates.md), [010](10-reference-data.md)
 
 **Implementation started:** Yes

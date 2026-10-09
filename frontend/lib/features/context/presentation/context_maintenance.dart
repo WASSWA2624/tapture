@@ -6,27 +6,18 @@ import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
-import 'package:tapture/core/location/location_service.dart';
-import 'package:tapture/core/permissions/permissions_service.dart';
 import 'package:tapture/core/time/clock.dart';
-import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/settings/settings.dart';
 
 import '../context.dart' show contextRepositoryProvider;
 import '../domain/context_auto_clear.dart';
-import '../domain/context_movement_prompt.dart';
 import '../domain/context_state.dart';
-import 'context_picker_sheet.dart';
 import 'context_providers.dart';
 
-/// Runs the two optional context settings. Both stay inert while off.
-///
-/// Auto-clear removes only the lowest level and offers one undo.
-/// The movement prompt asks whether the context still holds and, if not,
-/// opens the lowest level's picker; it never writes context itself.
-/// No location read and no permission request happen while it is off.
+/// Runs optional idle clearing, removing only the lowest level with undo.
+/// Movement preferences are retained as inert compatibility data (task 164).
 class ContextMaintenance extends ConsumerStatefulWidget {
   /// Creates the host. It paints nothing.
   const ContextMaintenance({super.key, this.child = const SizedBox.shrink()});
@@ -43,10 +34,7 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
   StreamSubscription<SettingKey<Object?>>? _settings;
   DateTime? _lastActivity;
   bool _fired = false;
-  // Separate, so a slow location fix never holds up an auto-clear tick.
   bool _clearing = false;
-  bool _moving = false;
-  ({double latitude, double longitude})? _origin;
   String _signature = '';
 
   @override
@@ -71,7 +59,6 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
     ref.listen<String?>(currentProjectProvider, (String? _, String? next) {
       _signature = '';
       _fired = false;
-      _origin = null;
       _lastActivity = ref.read(contextClockProvider).nowUtc();
       if (next != null && next.isNotEmpty) {
         unawaited(ref.read(contextRepositoryProvider).load(next));
@@ -108,13 +95,10 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
       return;
     }
     final SettingsStore store = ref.read(projectSettingsStoreProvider);
-    final bool on =
-        store.read(SettingKeys.contextAutoClearEnabled) ||
-        store.read(SettingKeys.contextMovementPromptEnabled);
+    final bool on = store.read(SettingKeys.contextAutoClearEnabled);
     if (!on) {
       _timer?.cancel();
       _timer = null;
-      _origin = null;
       return;
     }
     _timer ??= Timer.periodic(AppConstants.context.checkEvery, (_) {
@@ -145,15 +129,6 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
       } finally {
         _clearing = false;
       }
-    }
-    if (!mounted || _moving) {
-      return;
-    }
-    _moving = true;
-    try {
-      await _movement(projectId, state);
-    } finally {
-      _moving = false;
     }
   }
 
@@ -246,72 +221,6 @@ class _ContextMaintenanceState extends ConsumerState<ContextMaintenance> {
         localizedMessage: failure.explanation,
       );
     }
-  }
-
-  Future<void> _movement(String projectId, ContextState state) async {
-    final LocalizedCopy localCopy = Copy.of(context);
-
-    final SettingsStore store = ref.read(projectSettingsStoreProvider);
-    final bool enabled = store.read(SettingKeys.contextMovementPromptEnabled);
-    final bool gps =
-        ref.read(currentProjectDetailsProvider)?.settings.gpsEnabled ??
-        store.read(SettingKeys.gpsEnabled);
-    if (!enabled || !gps) {
-      return;
-    }
-    final PermissionState status = await ref
-        .read(contextPermissionsProvider)
-        .status(AppPermission.location);
-    if (status != PermissionState.granted || !mounted) {
-      return;
-    }
-    final Result<GeoFix?> fix = await ref
-        .read(locationServiceProvider)
-        .currentFix();
-    if (!mounted || fix is! Success<GeoFix?>) {
-      return;
-    }
-    final GeoFix? here = fix.value;
-    if (here == null) {
-      return;
-    }
-    final ({double latitude, double longitude}) current = (
-      latitude: here.latitude,
-      longitude: here.longitude,
-    );
-    final ({double latitude, double longitude})? origin = _origin;
-    if (origin == null) {
-      _origin = current;
-      return;
-    }
-    final double metres = ContextMovementPrompt.metresBetween(origin, current);
-    final bool ask = ContextMovementPrompt.shouldPrompt(
-      enabled: enabled,
-      gpsEnabled: gps,
-      locationGranted: true,
-      distanceMetres: metres,
-      thresholdMetres: store.read(SettingKeys.contextMovementMetres).toDouble(),
-    );
-    if (!ask || !mounted || state.levels.isEmpty) {
-      return;
-    }
-    _origin = current;
-    final bool change = await showAppConfirm(
-      context,
-      title: localCopy.contextMovementTitle,
-      message: localCopy.contextMovementMessage,
-      confirmLabel: localCopy.contextMovementChange,
-    );
-    if (!change || !mounted) {
-      return;
-    }
-    final ContextLevel lowest = orderedLevels(state).last;
-    await showContextPickerSheet(
-      context: context,
-      projectId: projectId,
-      level: lowest,
-      currentValue: state.values[lowest.fieldKey] ?? '',
-    );
   }
 
   String _label(ContextState state, String fieldKey) {

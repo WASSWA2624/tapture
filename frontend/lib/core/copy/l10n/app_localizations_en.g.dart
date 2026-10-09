@@ -3123,8 +3123,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Add to all $countString photos',
-      one: 'Add to the photo',
+      other: 'Save caption to all $countString photos',
+      one: 'Save caption to 1 photo',
     );
     return '$_temp0';
   }
@@ -3138,8 +3138,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Add to $countString ticked photos',
-      one: 'Add to 1 ticked photo',
+      other: 'Save caption to $countString ticked photos',
+      one: 'Save caption to 1 ticked photo',
     );
     return '$_temp0';
   }
@@ -5349,7 +5349,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureGuideTitle => 'What to capture';
 
   @override
-  String get captureGuidePhotos => 'Photos should show';
+  String get captureGuidePhotos => 'Photos to show';
 
   @override
   String get captureGuideCaption => 'Say or type in the caption';
@@ -15552,8 +15552,8 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Ádd tó áll ····$countString phótós···',
-      one: 'Ádd tó thé phótó······',
+      other: 'Sávé cáptíón tó áll ·······$countString phótós···',
+      one: 'Sávé cáptíón tó 1 phótó·········',
     );
     return '$_temp0';
   }
@@ -15567,8 +15567,8 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Ádd tó ···$countString tíckéd phótós·····',
-      one: 'Ádd tó 1 tíckéd phótó········',
+      other: 'Sávé cáptíón tó ······$countString tíckéd phótós·····',
+      one: 'Sávé cáptíón tó 1 tíckéd phótó···········',
     );
     return '$_temp0';
   }
@@ -17822,7 +17822,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureGuideTitle => 'Whát tó cáptúré······';
 
   @override
-  String get captureGuidePhotos => 'Phótós shóúld shów·······';
+  String get captureGuidePhotos => 'Phótós tó shów·····';
 
   @override
   String get captureGuideCaption => 'Sáy ór typé ín thé cáptíón··········';

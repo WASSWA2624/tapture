@@ -4515,6 +4515,24 @@ final class CopyMessages {
     fallback: Copy.captureProjectLabel,
   );
 
+  /// Opens the project selector from Capture's overflow menu.
+  LocalizedMessage get captureChangeProject => LocalizedMessage(
+    key: 'captureChangeProject',
+    fallback: Copy.captureChangeProject,
+  );
+
+  /// Opens the template selector from Capture's overflow menu.
+  LocalizedMessage get captureChangeTemplate => LocalizedMessage(
+    key: 'captureChangeTemplate',
+    fallback: Copy.captureChangeTemplate,
+  );
+
+  /// Opens the current project's editable context overview.
+  LocalizedMessage get captureContextValues => LocalizedMessage(
+    key: 'captureContextValues',
+    fallback: Copy.captureContextValues,
+  );
+
   /// Capture is open and projects exist, but none is selected.
   LocalizedMessage get captureChooseProject => LocalizedMessage(
     key: 'captureChooseProject',
@@ -14337,6 +14355,18 @@ final class CopyMessages {
   LocalizedMessage get gallerySampleName => LocalizedMessage(
     key: 'gallerySampleName',
     fallback: Copy.gallerySampleName,
+  );
+
+  /// Long sample primary header text for the widget gallery.
+  LocalizedMessage get galleryHeaderLongTitle => LocalizedMessage(
+    key: 'galleryHeaderLongTitle',
+    fallback: Copy.galleryHeaderLongTitle,
+  );
+
+  /// Long sample secondary header text for the widget gallery.
+  LocalizedMessage get galleryHeaderLongDetail => LocalizedMessage(
+    key: 'galleryHeaderLongDetail',
+    fallback: Copy.galleryHeaderLongDetail,
   );
 
   /// Component-gallery sample Caption.

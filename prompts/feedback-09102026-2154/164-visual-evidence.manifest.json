@@ -1,0 +1,397 @@
+{
+  "task": "164",
+  "run": "20261009T200321Z-9fd64bbb",
+  "generatedImages": 73,
+  "preExistingTestImages": 0,
+  "files": [
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_light.png",
+      "sha256": "53e37b65bc742d6289d53ed1ef2838eb95d75517716882b927553c2a3aafc9fb",
+      "bytes": 14947
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_dark.png",
+      "sha256": "dd3f27d94a774dcc5f71b02510da6f536ebd67eceb219ac859d8c287c101cd5e",
+      "bytes": 15082
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_outdoor.png",
+      "sha256": "5168b65aaaa617bbc389bd18a1f486731b2b5f91f709046f6f07f313a41cfaec",
+      "bytes": 14627
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_landscape_text2_light.png",
+      "sha256": "824350f916c37431c1992a0316598748ba741c57d5e058b0e71b137705a33210",
+      "bytes": 13853
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_landscape_text2_dark.png",
+      "sha256": "50c688cc7eee513f6518f6f7e99a82ac8261f47e712d130ce79b3a118469f59b",
+      "bytes": 13596
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_landscape_text2_outdoor.png",
+      "sha256": "d4887c73f9b463cbac9d11e0b33bddb546f364efd0c5163f1b00f8e682d6ee2f",
+      "bytes": 13850
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_medium_light.png",
+      "sha256": "f1d21743bfc0341606a693433dcbab69020cf7fb989b5d53aeec482f339a5dc9",
+      "bytes": 19209
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_medium_dark.png",
+      "sha256": "4a2c1e3ce9c08eff971d338d61d0fc9340ca045f685c9c4b37814a16ff230a66",
+      "bytes": 19201
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_medium_outdoor.png",
+      "sha256": "d501bb5ceacb760c80e7f33543747b46b1fd4bb169a1d21679903ab7db39acdf",
+      "bytes": 18917
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_expanded_text2_light.png",
+      "sha256": "c3aea64d7f35264e936b4b942b5b8d8ab82f2d8043009112c78118c03340d7dd",
+      "bytes": 26782
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_expanded_text2_dark.png",
+      "sha256": "68cad8d93f051bc9072e7c0bbfda65d436e0d8948770174f55f8c5c12259787f",
+      "bytes": 26385
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_expanded_text2_outdoor.png",
+      "sha256": "de839a103000dc8a73fe2121045757f79b93b0145dfd5081baffd577c844fb23",
+      "bytes": 26053
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_light.png",
+      "sha256": "eaec3180ceaa5019fea19321e4f04c984cfcb77c10727573bd18f34415f69a2c",
+      "bytes": 15403
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_dark.png",
+      "sha256": "38142595c4af835ea8d7cd032b3b7989567695bdeda65b3bb9a1e922f5da4293",
+      "bytes": 15574
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_outdoor.png",
+      "sha256": "b1da80faea2972961f8b50ddf343683a2e0cc24e2b624aefddee397a14179c19",
+      "bytes": 14989
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_landscape_text2_light.png",
+      "sha256": "56108954a0b4637de57bb5017facb5079b85741939205b690f45ddfcd4015728",
+      "bytes": 15139
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_landscape_text2_dark.png",
+      "sha256": "9f4cf6520378184895eb0102f6d1c2f3e31551bd08716401b8a1193e959e8600",
+      "bytes": 14814
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_landscape_text2_outdoor.png",
+      "sha256": "d61462950de3cff23d2742833027e71b9a4346014c8bf61ae9ee63f64c5467b9",
+      "bytes": 15022
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_medium_light.png",
+      "sha256": "6c3400d3c9f81000171c645cb2b82fe28f064dec3bcbcb354c42f9b68ccccf2b",
+      "bytes": 19949
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_medium_dark.png",
+      "sha256": "9c585f1093128dd0875c70bf7c9175c4993c7c6b3809af104cf23333dfd04ad4",
+      "bytes": 19999
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_medium_outdoor.png",
+      "sha256": "099291e761d4c88b80064bb0187f9db3cebff2d4a1a7d05b6a9cea811b0c9084",
+      "bytes": 19609
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_expanded_text2_light.png",
+      "sha256": "e736ef82d0370f3609c1259647836bff464aa974f9aba83a296a3e290eb355bc",
+      "bytes": 28779
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_expanded_text2_dark.png",
+      "sha256": "ed25aec214f4f406fc2226116f8c2ea8b52bd2bea9bf7173dc655dcb1f3503f9",
+      "bytes": 28627
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_expanded_text2_outdoor.png",
+      "sha256": "611493dd8b396c6cf0cff2ff9e6a7c40d5398762efe821169642be0683157dd6",
+      "bytes": 28033
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_light.png",
+      "sha256": "898b1c8cc27a9ffd361bf27492b6d9217c42ec65504a9acfe6a0ae0182ae93ed",
+      "bytes": 16110
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_dark.png",
+      "sha256": "cbb0153571b96d528c56b1719f4770465d68134793a0133cb2d266b695b72b69",
+      "bytes": 16238
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_outdoor.png",
+      "sha256": "8c5fa6bce6cec699a6d4e5d2f0ac25bd73bb6629376c087c5638bc280266d75a",
+      "bytes": 15654
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_landscape_text2_light.png",
+      "sha256": "69cdcec5354e662b0c7d593ccb589efcc34c74bb1c0c4b4ef23b53481f5e2408",
+      "bytes": 15288
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_landscape_text2_dark.png",
+      "sha256": "acc7cdfd6f65a4c04b2d841cf2ee0e52dbe15fd548c78214bd5f3dc31da178fb",
+      "bytes": 15392
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_landscape_text2_outdoor.png",
+      "sha256": "6d66337c89f088c50e1c4018a8b565280d9df21c988976d00507ae7b46ecf7d2",
+      "bytes": 15248
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_medium_light.png",
+      "sha256": "2a062faa2705304b007feecb527464468a3ee5e777c94c347b59af12f3c3ee1a",
+      "bytes": 20688
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_medium_dark.png",
+      "sha256": "ae9f70c5a0b7e3820ef87b81c91a86d4f10b4608af2017d4f81555a3072ac4f8",
+      "bytes": 20876
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_medium_outdoor.png",
+      "sha256": "028763cc1a49a168da2e9d176f4761870b134e0286f69d2298446f50f50f03ef",
+      "bytes": 20242
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_expanded_text2_light.png",
+      "sha256": "771b2d8f19e61a731f5336c0803d5b249699e884462ab3b5627961bf868498b8",
+      "bytes": 29199
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_expanded_text2_dark.png",
+      "sha256": "87a61dceec12869060d2762e061000a2e7b6b88144b0b61da44ae5515e46a776",
+      "bytes": 29045
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_expanded_text2_outdoor.png",
+      "sha256": "dabd7404409d996c7b65f8b36828c0946debb16acf20c2035f16218b24ed72a4",
+      "bytes": 28405
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_light.png",
+      "sha256": "77d5a0b923735be24c40aafcb6b003c367b5636982d717f5a66206374a1bf168",
+      "bytes": 16405
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_dark.png",
+      "sha256": "49777aada94e1673ac561b93ea49bc37d2cb6ff028669226ea843490f7a0d846",
+      "bytes": 16634
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_outdoor.png",
+      "sha256": "b47cfadea46688f02bc425924bf96e4821a68d87967e67835de7326b42c1ad48",
+      "bytes": 15954
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_landscape_text2_light.png",
+      "sha256": "dbaf232e1f68092dc420d973fe7c2fd6773973df8511016e685df534b7232749",
+      "bytes": 15807
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_landscape_text2_dark.png",
+      "sha256": "da87c495ab45839a799ffa96d012b3d7f8f5b7c87514e0c030658c3d92bdc968",
+      "bytes": 15932
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_landscape_text2_outdoor.png",
+      "sha256": "8c26de9b6834ffd261b2ad0040a150a722e0f3229ce50d15a4e7b09eb55d39d3",
+      "bytes": 15738
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_medium_light.png",
+      "sha256": "0328d9ca34178a5d4c73993448117d5aaf6d3d49207d4ec5b2ddac983104c473",
+      "bytes": 20914
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_medium_dark.png",
+      "sha256": "7e1472173b16ee3d13d1dcdc3a858e4087a490daf7a776d76b0b99e34bbbfe61",
+      "bytes": 21140
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_medium_outdoor.png",
+      "sha256": "4406084a8cc3d23ecd0d4a065cadd5963401b5f420e86150a9afb4d08b58c530",
+      "bytes": 20509
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_expanded_text2_light.png",
+      "sha256": "5e63038375ebd3dc6bbfbbabd2c5a5d8950ce724c8ce08658ca6fef31a267c11",
+      "bytes": 29681
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_expanded_text2_dark.png",
+      "sha256": "bddc4876ac362180af0d09b904e97a0fbbef905dc06b200d03a7ea4bd972483a",
+      "bytes": 29760
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_expanded_text2_outdoor.png",
+      "sha256": "9f8f9d02be76cadcfbefc9e64d99a6a90dcffb5374a2822008b831488d410400",
+      "bytes": 28923
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_light.png",
+      "sha256": "9dee404f19619339edaa4e5e74bc35d03e5a2c376f0861205a7617eb4b8b15b9",
+      "bytes": 7860
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_dark.png",
+      "sha256": "517a8ad6dd4449dc4e96e5adc4ab5860d415bcb571107b5716720843bbe8231c",
+      "bytes": 7768
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_outdoor.png",
+      "sha256": "9762ccaa12ee3c7dca0531b6df00e8c4a0a6ddd33d4d5e92213f07e1bafd6927",
+      "bytes": 7613
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_landscape_text2_light.png",
+      "sha256": "a937e819104a9115b7b3e7abbeebc8cf01b9640ec3de7529cb8ede37d86db3e3",
+      "bytes": 9432
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_landscape_text2_dark.png",
+      "sha256": "d5b29ecea19f5faefd6513f7837955a26ea8f5556304843885684d514eb39847",
+      "bytes": 9617
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_landscape_text2_outdoor.png",
+      "sha256": "27d37f77bc71e0976c871294c5fffc8b28cdee6f11ed7781b62f6641afbb81ea",
+      "bytes": 7962
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_medium_light.png",
+      "sha256": "9a9c34cea848782d6b083202cefaffdbf668c50653fdbe6a1fea4b2cbb9ab7f4",
+      "bytes": 11957
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_medium_dark.png",
+      "sha256": "a673bfe5730c9ad623e4c990c20c6f30cfe16eca69895eba6bd6eaf6cdc653e6",
+      "bytes": 11864
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_medium_outdoor.png",
+      "sha256": "4ee255a744210c013e13aa67dcae355607d64f2b435f078780deeae1ba0fc7d3",
+      "bytes": 11675
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_expanded_text2_light.png",
+      "sha256": "5d8f0d571a2195881576bd6de9f381dda0e10536c63a4a915d622954db488e09",
+      "bytes": 14752
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_expanded_text2_dark.png",
+      "sha256": "7f02cf377609ba4d0296db285965fb936586e43dac098089067f856fdf9bd48d",
+      "bytes": 14870
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_expanded_text2_outdoor.png",
+      "sha256": "d121c8a3c16a4eacc7a8a22062c1b74768f3c40d409bca99a17856f656c78e33",
+      "bytes": 13488
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_light.png",
+      "sha256": "0ec8b85d3721e7e39f2c7ebe9be7288f0d1048e67f6fd36ff49a45d4c6957910",
+      "bytes": 22715
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_dark.png",
+      "sha256": "7baa012c748a220a9348b1881b07730bc92b7e1f3d6cb9aff37fd26751ae1594",
+      "bytes": 23078
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_outdoor.png",
+      "sha256": "f9c91cc3a26bf9ab0d1a273c1d814dabf9b6622e96a64626f90afd0b77f79796",
+      "bytes": 22267
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_light.png",
+      "sha256": "7ef45d6ba1c0bdd91b816ebb27766bb95a88a75ab16efe04075e95b606f5dbbe",
+      "bytes": 21537
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_dark.png",
+      "sha256": "a6a032f5f5c8452c788a09edb4352febaa5c0cf6c182b615b801fdd1bafdf7ce",
+      "bytes": 21763
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_outdoor.png",
+      "sha256": "11261197d20e82335132476ea0f55b383a187b6678f5b24d772387a910362942",
+      "bytes": 20432
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_light.png",
+      "sha256": "ea4fdefe3d640fee292296df8ba8942ba1a7a921c10809460d36c1c91b04ced9",
+      "bytes": 29208
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_dark.png",
+      "sha256": "a5008c4021352db847b2df59e3206fba8bba2af7dd76c4474fceeae584480a02",
+      "bytes": 29434
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_outdoor.png",
+      "sha256": "69e1bcc4a22d433428d97121ede9c847a65c0611515484fe4d782a41f92ab575",
+      "bytes": 28145
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_light.png",
+      "sha256": "835fc03ea484aa615dd6b0789b884277614d4f7c0e517b3bc1e44a85c28de9d3",
+      "bytes": 47680
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_dark.png",
+      "sha256": "616a99d8dfe86f7d8aa1d4d2cf0360544a9c3beaf3c70c20a50ede3ade10ef23",
+      "bytes": 48275
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_outdoor.png",
+      "sha256": "b2588afa99ec339161f824a79f81c803685cfdbca71c5e01bd1a6f74ad3a54ee",
+      "bytes": 44652
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_reported_light.png",
+      "sha256": "85cef0933f5f2862f1e7be04c748977281d70eb80881a068d33f20010f9e08be",
+      "bytes": 22861
+    }
+  ],
+  "comparison": {
+    "caption": {
+      "count": 48,
+      "log": "frontend/build/task164-affected-final.log",
+      "passed": true
+    },
+    "guide": {
+      "count": 12,
+      "log": "frontend/build/task164-affected-final.log",
+      "passed": true
+    },
+    "production": {
+      "count": 13,
+      "log": "frontend/build/task164-native-capture.jsonl",
+      "passed": true
+    }
+  },
+  "inspection": "All 73 images inspected in contact sheets; caption sets re-inspected after replacing Ahem with ScreenFonts.theme; full-size compact caption, landscape 200% caption and reported production Capture inspected.",
+  "archive": {
+    "path": "%LOCALAPPDATA%/TaptureTestArchives/feedback-09102026-2154/20261009T200321Z-9fd64bbb/task164-visual-evidence.zip",
+    "sha256": "2d4d693e751661ad4bb45e509f00c9ae66ce77788d9c7f7a1ba4f634a174a767",
+    "reopenedCrcPathsHashesAndPngDecode": "passed",
+    "exactGeneratedSourceCleanup": "passed"
+  }
+}

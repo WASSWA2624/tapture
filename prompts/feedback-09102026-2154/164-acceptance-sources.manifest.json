@@ -1,0 +1,358 @@
+{
+  "task": "164",
+  "baseCommit": "5b289cc2effd916260d09c7759425249f292348b",
+  "patch": "164-acceptance-sources.patch",
+  "patchSha256": "796bc3358a268e38a494b77ddbb2c214e6cf7e69ce707fdcc3e332910a57edb9",
+  "roots": [
+    "frontend/test/features/context/presentation/context_maintenance_test.dart",
+    "frontend/test/features/settings/presentation/capture_settings_screen_test.dart",
+    "frontend/test/core/copy/copy_test.dart",
+    "frontend/test/features/capture/presentation/capture_feedback_test.dart",
+    "frontend/test/features/capture/presentation/capture_edit_screen_test.dart",
+    "frontend/test/features/capture/presentation/capture_guide_widgets_test.dart",
+    "frontend/test/features/capture/presentation/capture_workflow_layout_test.dart",
+    "frontend/test/features/capture/presentation/capture_workflow_layout_browser_test.dart",
+    "frontend/test/features/capture/presentation/capture_live_transcript_test.dart",
+    "frontend/test/features/templates/domain/capture_guide_test.dart",
+    "frontend/test/features/context/presentation/context_values_sheet_test.dart",
+    "frontend/test/features/context/domain/context_cascade_test.dart",
+    "frontend/test/features/context/domain/context_movement_prompt_test.dart",
+    "frontend/test/features/capture/domain/gps_capture_test.dart",
+    "frontend/test/features/capture/presentation/capture_controller_test.dart",
+    "frontend/integration_test/capture_raw_offline_test.dart",
+    "frontend/test/architecture/tokens_test.dart",
+    "frontend/test/architecture/responsive_test.dart",
+    "frontend/test/architecture/state_test.dart",
+    "frontend/test/architecture/layering_test.dart",
+    "frontend/test/architecture/network_test.dart",
+    "frontend/test/architecture/data_safety_test.dart",
+    "frontend/test/architecture/icons_test.dart"
+  ],
+  "files": [
+    {
+      "path": "frontend/integration_test/capture_raw_offline_test.dart",
+      "sha256": "9b1b54c258b758603045ffba907136c42cd82c3659c21ca01db2bee0db347604",
+      "gitContentSha256": "698b89cd32ccc7050018df1d21236eef0efd646afbf2e37f140b0a7f959853be"
+    },
+    {
+      "path": "frontend/integration_test/support/capture_rig.dart",
+      "sha256": "b56f1615cda99302b5e64221d58ecc0c2e13a8c843d5de8f98091b0cfcd1e8bb",
+      "gitContentSha256": "96c9b88bbf21fc2eaab3ec24ad3575e32090072fd307ba06e3dac8d42d500fd6"
+    },
+    {
+      "path": "frontend/integration_test/support/harness.dart",
+      "sha256": "f04d5d8714a2d242efa619bfae6be67ca5ed04b8e23d183781d91e4717150a1c",
+      "gitContentSha256": "5face1fb80cf5a712d1ffec31b72659d954bd2a3b829ea3d45583c523068d8db"
+    },
+    {
+      "path": "frontend/test/architecture/data_safety_test.dart",
+      "sha256": "2bb264c9a2103d070d8b9848d87533c04ea4780a29c8afb92ea8f0bd2b93a283",
+      "gitContentSha256": "1651c1950567c7f331772143e1851167f05916e98c186cf8e5305e6f5510cf59"
+    },
+    {
+      "path": "frontend/test/architecture/icons_test.dart",
+      "sha256": "f73740d9c8441945481a8708be59dfef45bcfa2869e35a38959bc932606bcd7c",
+      "gitContentSha256": "f73740d9c8441945481a8708be59dfef45bcfa2869e35a38959bc932606bcd7c"
+    },
+    {
+      "path": "frontend/test/architecture/import_graph.dart",
+      "sha256": "0176280063c2a4efe3557143a8f71bbe528d12855b6aeed58ff11ff0c6465527",
+      "gitContentSha256": "0176280063c2a4efe3557143a8f71bbe528d12855b6aeed58ff11ff0c6465527"
+    },
+    {
+      "path": "frontend/test/architecture/layering_test.dart",
+      "sha256": "27face762c1fdbd33dd68e6a158a56b23951ac1ddfc4b5a3dc1395fde9415627",
+      "gitContentSha256": "27face762c1fdbd33dd68e6a158a56b23951ac1ddfc4b5a3dc1395fde9415627"
+    },
+    {
+      "path": "frontend/test/architecture/network_test.dart",
+      "sha256": "be081e8796c1c717532e2b132b3c12fdaafa44ca17a8e81bea655cf1116a137c",
+      "gitContentSha256": "6ca7fd3c07733e72ad93643548e43a1c6a1bf291d89f13ef29595f6ea2a03d4c"
+    },
+    {
+      "path": "frontend/test/architecture/responsive_test.dart",
+      "sha256": "d39baefffefc9e1cfb81b0557f755958d8a8ba82965e65606eb4c7f953657f99",
+      "gitContentSha256": "d39baefffefc9e1cfb81b0557f755958d8a8ba82965e65606eb4c7f953657f99"
+    },
+    {
+      "path": "frontend/test/architecture/state_test.dart",
+      "sha256": "9e9907dcab91ca64afaf7441b10f2d79509546bf377953545b66a9572231388d",
+      "gitContentSha256": "9e9907dcab91ca64afaf7441b10f2d79509546bf377953545b66a9572231388d"
+    },
+    {
+      "path": "frontend/test/architecture/support/owned_file_cleanup.dart",
+      "sha256": "a1fc139134d7177610736cdde3453cd21a9f23d0f982140724ee63f2939cb3d2",
+      "gitContentSha256": "e8c68132ebb297209470a6c608d28598f6bab9575136bd6832f183b0e0fc7039"
+    },
+    {
+      "path": "frontend/test/architecture/tokens_test.dart",
+      "sha256": "0ec420a4960a3ba00903774e0b56f9529a13ef7e07c0ed68ea1eb5b0bf5fd820",
+      "gitContentSha256": "0ec420a4960a3ba00903774e0b56f9529a13ef7e07c0ed68ea1eb5b0bf5fd820"
+    },
+    {
+      "path": "frontend/test/core/copy/copy_test.dart",
+      "sha256": "df8c1d051a8f766b428b15b1d36fc6a3959410e85a03ab4a36b421e32ed45754",
+      "gitContentSha256": "df8c1d051a8f766b428b15b1d36fc6a3959410e85a03ab4a36b421e32ed45754"
+    },
+    {
+      "path": "frontend/test/core/db/record_rows.dart",
+      "sha256": "24b062cf8502442fe958252edaf54a7cc0f4d6f0989cdc3efb0cd5352fd3e8cd",
+      "gitContentSha256": "741d1a09e20dc25b4e4b69cff91229ab4074489b20b87c0846ff11151d121739"
+    },
+    {
+      "path": "frontend/test/features/capture/domain/gps_capture_test.dart",
+      "sha256": "e61ec6a25285e53ee2cb5a58309f09f2e68e668c4560431d39ec1664dc93b5d4",
+      "gitContentSha256": "e61ec6a25285e53ee2cb5a58309f09f2e68e668c4560431d39ec1664dc93b5d4"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_controller_test.dart",
+      "sha256": "a231c23799782e3bc67fdba3a4fb8da33d0fb9e3eb38e415c7f8627067023ddd",
+      "gitContentSha256": "e7f5201bdcaeceef69db324f20ee8e277bc9e34f0ecf75cd2305d5600008a0db"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_edit_screen_test.dart",
+      "sha256": "ce76471c47098d5181dc37d2b66a351d012eef138630474830d7ccff686e438d",
+      "gitContentSha256": "ce76471c47098d5181dc37d2b66a351d012eef138630474830d7ccff686e438d"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_feedback_test.dart",
+      "sha256": "d1c2fbbe012400f4b20aa602eda90422a5f46c5053a9ebf967b43f01bc56023c",
+      "gitContentSha256": "d1c2fbbe012400f4b20aa602eda90422a5f46c5053a9ebf967b43f01bc56023c"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_guide_widgets_test.dart",
+      "sha256": "ade6f016eeccf1d5c2ef2da132734d3ff475b9fed7b7cce8265dcc916a5827b4",
+      "gitContentSha256": "ade6f016eeccf1d5c2ef2da132734d3ff475b9fed7b7cce8265dcc916a5827b4"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_live_transcript_test.dart",
+      "sha256": "76dd905b26b2a55fe70dcdeed2b7f7137c05dda384ad5d0a62dcf8ef9086fbd3",
+      "gitContentSha256": "ccc3811e6d3a297eb12ff7f443b318071d767d7957ed9886e4d99dd0d95f15b6"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_workflow_fixture.dart",
+      "sha256": "57282c424b2e4cabb1cee204448817ba1af7518b78505867d10bf3f59564dd4e",
+      "gitContentSha256": "57282c424b2e4cabb1cee204448817ba1af7518b78505867d10bf3f59564dd4e"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_workflow_layout_browser_test.dart",
+      "sha256": "a4de0b262b5814a25390b1bba47ffc17c786366f7e11fdcc07b030b52893acd5",
+      "gitContentSha256": "a4de0b262b5814a25390b1bba47ffc17c786366f7e11fdcc07b030b52893acd5"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_workflow_layout_test.dart",
+      "sha256": "9782910b8323b561c61a27dfdb33ad8e6f00da0ceb58e1181eda95040c7e750d",
+      "gitContentSha256": "9782910b8323b561c61a27dfdb33ad8e6f00da0ceb58e1181eda95040c7e750d"
+    },
+    {
+      "path": "frontend/test/features/context/domain/context_cascade_test.dart",
+      "sha256": "8dada4ccffae945151e757b5f72c44202e2ebab4a2a394f30f9def2b2270a7b9",
+      "gitContentSha256": "8dada4ccffae945151e757b5f72c44202e2ebab4a2a394f30f9def2b2270a7b9"
+    },
+    {
+      "path": "frontend/test/features/context/domain/context_movement_prompt_test.dart",
+      "sha256": "92cfeb296eb76b3c41f4aa344076b9a5bd3a9a941319a980b18b2facf621df70",
+      "gitContentSha256": "92cfeb296eb76b3c41f4aa344076b9a5bd3a9a941319a980b18b2facf621df70"
+    },
+    {
+      "path": "frontend/test/features/context/presentation/context_maintenance_test.dart",
+      "sha256": "125c2ddbdf1e3beb3df36144d9a718bd032440d91d243c791ab3c8952e2c3232",
+      "gitContentSha256": "125c2ddbdf1e3beb3df36144d9a718bd032440d91d243c791ab3c8952e2c3232"
+    },
+    {
+      "path": "frontend/test/features/context/presentation/context_values_sheet_test.dart",
+      "sha256": "8afee27f92b40922f5985bf32a1ecbedd46b18b4da800d93c756b75e958a39e5",
+      "gitContentSha256": "7077e00a3961a41b4cbea6c1bfc75dfb74d61ebfde95642d0bb97eb5ea742879"
+    },
+    {
+      "path": "frontend/test/features/projects/fakes/fake_project_repository.dart",
+      "sha256": "6a12bf8994caa4666beee1ceb761b1ef002449525dd74a67be9b62e7d39feae1",
+      "gitContentSha256": "0834d6dbfc3348f11877d322569ec1ada14205d8edf44732e1c348052078ffab"
+    },
+    {
+      "path": "frontend/test/features/records/data/record_read_seeds.dart",
+      "sha256": "9b90c8d12e6aed40ad46dc1f9f78f6a5063327b98f21fdee7e8bcf2299480540",
+      "gitContentSha256": "453c34319a9c43a38878148fb5a1ccee577f89d438840f4b3ae7f653a0ab60df"
+    },
+    {
+      "path": "frontend/test/features/records/fakes/fake_record_repository.dart",
+      "sha256": "7af32b14cc9bb3d8b95cefbc214de568e4d6d85700c2fe449f88ae2bcadb5c02",
+      "gitContentSha256": "261e5701959901b60d7f59503b64166bd79bba9eca56f4ae90d8458edc7b882a"
+    },
+    {
+      "path": "frontend/test/features/settings/presentation/capture_settings_screen_test.dart",
+      "sha256": "c3df6e8b874ab86b7652970c9af828bd1a5b6baf50e88186ad9a2755b7132294",
+      "gitContentSha256": "c3df6e8b874ab86b7652970c9af828bd1a5b6baf50e88186ad9a2755b7132294"
+    },
+    {
+      "path": "frontend/test/features/templates/domain/capture_guide_test.dart",
+      "sha256": "a22b3047695a9edc8a267b283dcc1c184d1ea7a7cddfb49131e97d4dd16e6a1f",
+      "gitContentSha256": "a22b3047695a9edc8a267b283dcc1c184d1ea7a7cddfb49131e97d4dd16e6a1f"
+    },
+    {
+      "path": "frontend/test/features/templates/fakes/fake_template_repository.dart",
+      "sha256": "350ef2a1a9a441c0f1aa3d014e6b1e9eeed5d678ceed478a03f0b89c01fce3b3",
+      "gitContentSha256": "a9bf1fe139e52b8f93236c6b1396cea416b234284cabd3d5a49ff0ceab00dd3b"
+    },
+    {
+      "path": "frontend/test/features/transcripts/fakes/fake_transcript_repository.dart",
+      "sha256": "8c13742a89b86189f7e20084c2ad7b13a3cb0702c35ff0fd70161c7515e1396c",
+      "gitContentSha256": "b51ccc95aaebef7282b4bffbd2e12cc1f2f31172a75786b463bbdfae2550811f"
+    },
+    {
+      "path": "frontend/test/features/transcripts/presentation/transcript_screens.dart",
+      "sha256": "4e1c58f56012f12ebd878a1830f07d7091c49ce56a9e78c660fa8acf188d8d5c",
+      "gitContentSha256": "66fed7e0c9686f870e8cf3c6e43d97f350e3b49a0023f9900533ebc3bc28f8e1"
+    },
+    {
+      "path": "frontend/test/support/a11y_matchers.dart",
+      "sha256": "389a0cdc92a00833a55798fa8ba2e2dd6e9cbdeb5c934d489ec73a486103ba38",
+      "gitContentSha256": "31ba792c971229a6ae0a09aa846bf2e4bc3ce5d66f3b20b6a6f3a8df2af1dc34"
+    },
+    {
+      "path": "frontend/test/support/empty_state_matchers.dart",
+      "sha256": "e84fd91922fe68c8818599ee31f949030601e50d2aeb24624394910ae1f879b3",
+      "gitContentSha256": "a1c2bde604f97dadc0ecb8d72d643eb733fea1cfe6269b15aff390ce27321fe2"
+    },
+    {
+      "path": "frontend/test/support/factories.dart",
+      "sha256": "c763409f70e319cca8587f329e1495f9eb68273315c1104992197a826a07c9f4",
+      "gitContentSha256": "f1aed7990f5cf284580712df19e7bc8aeb5538762d8db2a665f0925bed1d713f"
+    },
+    {
+      "path": "frontend/test/support/fakes.dart",
+      "sha256": "7bac017a156a1c0788db1714cece55921b500f86f986f59db4f5fb3f55a47112",
+      "gitContentSha256": "8064da6ff8822bdb950df9a133366a7ed27b54dccf05772710ebe01bda352cf0"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_audio_capture_service.dart",
+      "sha256": "37521b8d8ae4209389e1e2b62d42a825e7a537049194f358767f2278a8f01e1c",
+      "gitContentSha256": "37521b8d8ae4209389e1e2b62d42a825e7a537049194f358767f2278a8f01e1c"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_capture_record_persistence.dart",
+      "sha256": "6863aa1af99ab41e5792431619e860a3c7a84ff2bfae22f7bb75a474313519ef",
+      "gitContentSha256": "08e0948c028a149a286385b849c8d828a63ed5e3109a0e54577a12783e088a3c"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_capture_storage_guard.dart",
+      "sha256": "3628e749a5b893bddd46c3ef20032194e62b082c9c415714cca1e9e2ce223062",
+      "gitContentSha256": "3628e749a5b893bddd46c3ef20032194e62b082c9c415714cca1e9e2ce223062"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_context_repository.dart",
+      "sha256": "0ac2b3b3706d7aaaa5137e0e2e2e857db5e376f6f89b22ba729faeccd31413a6",
+      "gitContentSha256": "51dc01c726eeb453837f80ff86fc7ee92b0241b028d4327552b288baf25d057f"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_location_service.dart",
+      "sha256": "5964e7918072619534c4f2a4515e7025bee20a5ba1f2dd2f8414e16e386ec2bb",
+      "gitContentSha256": "5964e7918072619534c4f2a4515e7025bee20a5ba1f2dd2f8414e16e386ec2bb"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_photo_repository.dart",
+      "sha256": "2fdfd379f28e0f475aca3fa553c3fce4570d588631771faef906dad49471ae77",
+      "gitContentSha256": "52faf0efab4d30259426893bdee3d3195bebe0283dbd6482cc88f9756021787b"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_processing_repository.dart",
+      "sha256": "92bd8665733789884ca8d99265f6668331f6694e7f2ae7c118d2c9773edf870f",
+      "gitContentSha256": "64f37dc420a6e93c89c9c8e678f9649600b1e736243f5020f57a5e3ebbf9bdef"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_record_repository.dart",
+      "sha256": "7bcd475b42247e35e558b40f881922b45b3bf942519b0b6e1e3848bec8d230f4",
+      "gitContentSha256": "c7a2a208c47cf038103182fedb6beefe7d054e2dd24c7a7c07016ef591537661"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_speech_engine.dart",
+      "sha256": "358643149a9162dee27e5deb38243c42246b18c09bd05eb3e125c1659c7d161c",
+      "gitContentSha256": "ccb47a411c17ad13a626d533fef8562ef386d744ffe685e303d627fb83d152d7"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_stt_service.dart",
+      "sha256": "1409dc54673da7121cdbbca10e1d5886adfb46958760f290172a08f4b1a0c51f",
+      "gitContentSha256": "42e82072f531a49ffb9e213dc693fc32e1c79e564fb23fe8f17ae605884bd8f1"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_template_repository.dart",
+      "sha256": "72e47370a75bf6e2ccbfbc3ce5b75e99cd267248abebfa4de92d869eee17a872",
+      "gitContentSha256": "cfcf22bdb66100181826e6048d893e1390d65b3fb666c1fadbaeebeed8eb9e87"
+    },
+    {
+      "path": "frontend/test/support/live_transcription_rig.dart",
+      "sha256": "5a934aea7d24486cfb28d2946ea397b73cd6d97b28b4c8bbd66f14646c0fa252",
+      "gitContentSha256": "bda12576927735d05d033a6f16e7141d3f7e3aeb3475e86b04aae65f1de6a8e7"
+    },
+    {
+      "path": "frontend/test/support/matchers.dart",
+      "sha256": "2f027a8031aacd2a42804fb303d31c93b07e64c241c6434252daf26cdc8b2be5",
+      "gitContentSha256": "40830bdb6644ec549e5fedcebb142c92215ebcc82752a5645737a2a6696d7a0b"
+    },
+    {
+      "path": "frontend/test/support/pcm_fixtures.dart",
+      "sha256": "e88df7be53d442383f32dce80a9763636b6d8494ba0dfec3915a82f89b978ff9",
+      "gitContentSha256": "1b66d3db8483ca90695bfaa9897285e963ee38a10e33bdc0755636f3aea33333"
+    },
+    {
+      "path": "frontend/test/support/pump_app.dart",
+      "sha256": "78baf36d4fe0d8d48a38ee78abb655fb6977bcf6be00a034a79e2e03acec20fa",
+      "gitContentSha256": "5560bc650b36a85d4064862e400306aa2b540f67ba9b87fd48a4a15568a5444f"
+    },
+    {
+      "path": "frontend/test/support/pump_external_work.dart",
+      "sha256": "b136c4cc4c2503d565b804e4ba8d09948c4f8ef74a4ef4413b14d0e6322d3d65",
+      "gitContentSha256": "8f664192b9f259802de99c5b21436d33882fced50a881e50ccccb3f157886cf0"
+    },
+    {
+      "path": "frontend/test/support/rtl_tapture_app.dart",
+      "sha256": "2e9667eb771055217fc813404853eda5e4dd7b31dfaad2958edbd1e3d10f0b50",
+      "gitContentSha256": "2e9667eb771055217fc813404853eda5e4dd7b31dfaad2958edbd1e3d10f0b50"
+    },
+    {
+      "path": "frontend/test/support/screen_font_fetch_stub.dart",
+      "sha256": "5c64c24f719071a0934bed3bd86b5852c77e61372281b2f615f6111fdd0b1a04",
+      "gitContentSha256": "25bd1c57efb301dc1173398d2e04df82838790453ab2ac48e1c6ae603621e901"
+    },
+    {
+      "path": "frontend/test/support/screen_font_fetch_web.dart",
+      "sha256": "e4d980a8b9892b1ddca390df2cdb9f05778b8926fe42aba1ed2ece46fe41f45b",
+      "gitContentSha256": "86ef2fda359950bf3a1b15ba1e463817b8c2d373aa5ae57edb4164b315458c58"
+    },
+    {
+      "path": "frontend/test/support/screen_fonts.dart",
+      "sha256": "74a9e29285faa0c43603dcfb96cdfd88ccf67245bf8126e434e87f710a6d03c0",
+      "gitContentSha256": "9f17dfe4b527d9c65c1b432e1a16043c6a80d39db3923f846acf844ffdd42514"
+    },
+    {
+      "path": "frontend/test/support/screen_matrix.dart",
+      "sha256": "34e180dec2756a1d946780fb9f919a3d8893738d44bdce987189626e3363e72d",
+      "gitContentSha256": "741ed130658d7c26e7e673ce89b93715f0691ac8dcd301b9742530a94007e0b3"
+    },
+    {
+      "path": "frontend/test/support/screen_probe.dart",
+      "sha256": "b5d8ac7ea908e616fe00fbdf4bf651d217ad9789be9c4133592bb82d455defe9",
+      "gitContentSha256": "183e7dd2c7c38e05f0b6146921d966c54bd13753ca3a3a2d3470188d9f03d2f0"
+    },
+    {
+      "path": "frontend/test/support/spoken_script.dart",
+      "sha256": "5a4549af46ed48fe9f81e4cab9b96c4a54bc6ea427f6bfa56cebe33f49946a60",
+      "gitContentSha256": "38edf0cd9584631a2e880e747765f35614cbe8b902c12c1476fb10796806e71d"
+    },
+    {
+      "path": "frontend/test/support/text_contrast_probe.dart",
+      "sha256": "0171f10efe07c45aaa62576470445b0da21318af53833e064a491526ab848c26",
+      "gitContentSha256": "b28e1f94ad8e6fc6f6c51a720beb797c0a054f28f8701b9dd0ce3bc90aab776a"
+    },
+    {
+      "path": "frontend/test/support/tracked_photo_file.dart",
+      "sha256": "3304d12f727c6883cc73a6fd434ed6352f7b719633e2b626480f15fc8e4d2c32",
+      "gitContentSha256": "7c1e1145edb0ada4203c8a17602f6cb593741e153475e76b9dc4f33d543ccaf8"
+    }
+  ],
+  "verification": {
+    "temporaryIndexApply": "passed",
+    "allIndexedSourceHashes": "passed",
+    "realIndexUnchanged": true
+  }
+}

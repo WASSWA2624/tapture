@@ -4,6 +4,10 @@ The heart of the app: evidence in, with as little typing as possible, always sav
 
 ## 012 — Capture: evidence in, saved before anything else
 
+### Presentation supersession — task 164 (2026-10-09)
+
+Task 164 replaces the guide toggle and caption-help panels with passive photo guidance, and labels the existing photo-caption action Save caption with its target count/scope. Caption persistence, voice/audio and saves retain their contracts. Task 164 owns fresh verification; unrelated acceptance below remains unchanged.
+
 **Depends on** [002](02-foundation.md), [004](04-data-layer.md), [005](05-file-storage.md), [009](09-templates.md), [010](10-reference-data.md), [011](11-context.md)
 
 **Implementation started:** Yes

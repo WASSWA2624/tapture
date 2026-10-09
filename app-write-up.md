@@ -1017,7 +1017,7 @@ One screen, one primary button.
 - Both buttons save locally immediately; only AI timing differs (§26).
 - Reset after save, retaining **context, pinned template and capture settings**.
 - On every new-Capture surface, the toolbar shows the effective project's original name with the resolved template in a quieter second line. Its overflow begins with **Change project**, **Change template** (when templates are loaded), and **Context values** (when a project is selected). Shared searchable pickers retain the existing selection and durable per-project drafts; no project/template selectors or context trails occupy the ordinary Capture body. Loading and empty targets retain create/choose-project and Add templates recovery. Record editing keeps its saved targets locked and its existing title.
-- The standalone collapsed guide remains in the body; explicit and automatic guidance retain complete template labels. Task 158's approved D1 supersedes the earlier paired selector/guide row, including task 153 W6. Shutter and save require no additional taps.
+- The body immediately shows one passive **Photos to show** guideline with complete original photo-field labels. Empty photo guidance reserves no space; there is no guide toggle or caption-help panel (task 164). Project/template choices remain in overflow (task 158 D1). Shutter and save require no additional taps.
 - Empty photos use a compact Add photo row; populated photos retain the cached horizontal strip and 48dp actions. The caption editor starts at six lines and grows with text. At 393×886 with normal text and no keyboard, the editor and primary save action are visible; short/large-text layouts keep every control reachable by scrolling.
 - Manual form searches original field labels and stable keys offline, reveals matching optional fields, and restores More fields state on Clear. Filtering and resizing retain pending failed-write input without reporting it saved. Its source/status presentation follows §21.
 
@@ -1075,9 +1075,9 @@ Project-owned presets support revisits/resumption and travel in bundles.
 ### 20.5 Auto-clear rules (optional, off by default)
 
 - Clear the lowest context level after N minutes of inactivity.
-- Prompt to confirm the context when the device has moved more than X metres (requires GPS).
+- Movement confirmation and its settings controls are retired throughout the application (task 164). Legacy movement keys/values remain readable and inert, with no reminder location activity. Manual context changes, snapshots and independent capture GPS keep their contracts.
 
-Default: retain context; both rules require opt-in.
+Default: retain context; idle clearing requires opt-in and retains Undo.
 
 ## 21. Automatic Fields
 
@@ -1184,7 +1184,7 @@ Mode:       (o) Replace     ( ) Append to existing
 - **All photos** includes every current-record photo, including earlier session additions.
 - **Append** adds a new line; **Replace** overwrites with the prior caption recoverable from history.
 
-Bulk application writes independent caption rows for later individual edits.
+Bulk application writes independent caption rows for later individual edits. In Capture and saved-record editing, the explicit action reads **Save caption to 1 photo**, **Save caption to all N photos**, or **Save caption to N ticked photos** (singular for one ticked photo). It appends through the existing durable path before clearing the input; typing alone autosaves only the record caption. Empty text disables the action and zero photo targets omit it (§19, task 164).
 
 ## 24. Voice Input
 
@@ -1275,7 +1275,7 @@ Use ordinary sequential Capture for large surveys: save an item raw, retain cont
 continue with the next. The standalone Rapid menu/page/run list is retired by task 144; legacy Rapid links redirect
 to that project's Capture with query, fragment and the same durable draft intact. No session migration occurs.
 
-New Capture keeps the collapsed guide, evidence tray, caption/dictation/audio and raw Save immediately
+New Capture keeps passive photo guidance (§19), the evidence tray, caption/dictation/audio and raw Save immediately
 available; project, template and context setup use the existing overflow menu (§19). Optional template fields open from **Manual form** in overflow using the same durable session and adaptive
 sheet; **Import document** uses the existing validation/intake path from overflow. Required-field warnings remain
 advisory. Record editing retains its existing form and visible import control. Reopen saved items through the project.

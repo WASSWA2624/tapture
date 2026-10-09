@@ -22,12 +22,55 @@ import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
 import 'package:tapture/features/capture/presentation/capture_target_fields.dart';
+import 'package:tapture/features/templates/domain/field_def.dart';
 import 'package:tapture/features/templates/domain/template_def.dart';
+import 'package:tapture/features/templates/domain/template_versioning.dart';
 
 import '../../../support/factories.dart';
 import '../../../support/fakes/fake_photo_repository.dart';
 
 void main() {
+  testWidgets('saved-record guidance uses the captured template version', (
+    tester,
+  ) async {
+    final TemplateDef original = aTemplate(
+      id: 't1',
+      fields: const <FieldDef>[
+        FieldDef(
+          fieldKey: 'serial',
+          label: 'Original rating plate',
+          type: FieldType.text,
+          identity: true,
+        ),
+      ],
+    );
+    final TemplateDef current = TemplateVersioning.remember(
+      from: original,
+      to: original.copyWith(
+        version: 2,
+        fields: const <FieldDef>[
+          FieldDef(
+            fieldKey: 'serial',
+            label: 'Changed rating plate',
+            type: FieldType.text,
+            identity: true,
+          ),
+        ],
+      ),
+    );
+    final _Harness harness = await _open(
+      tester,
+      template: current,
+      templateVersion: 1,
+    );
+    expect(find.text('Original rating plate'), findsOneWidget);
+    expect(find.text('Changed rating plate'), findsNothing);
+    expect(harness.session(tester).templateVersion, 1);
+    expect(harness.session(tester).captions['f1'], 'Valve');
+    expect(current.version, 2);
+    expect(current.fields.single.label, 'Changed rating plate');
+  });
+
   testWidgets('Edit opens the record with its photos and captions', (
     WidgetTester tester,
   ) async {
@@ -39,7 +82,13 @@ void main() {
     expect(find.text(Copy.recordEditSave), findsOneWidget);
     expect(find.text(Copy.captureSaveRaw), findsNothing);
     expect(find.byType(CaptureTargetFields), findsNothing);
-    expect(find.text(Copy.captionAddToAll(2)), findsOneWidget);
+    expect(find.text('Save caption to all 2 photos'), findsOneWidget);
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    expect(
+      find.bySemanticsLabel('Save caption to all 2 photos'),
+      findsOneWidget,
+    );
+    semantics.dispose();
     expect(harness.session(tester).captions['f1'], 'Valve');
     expect(harness.session(tester).recordCaption, 'Boiler');
     // The field holds the record's own caption, not a photo's.
@@ -48,6 +97,51 @@ void main() {
     expect(caption.minLines, 6);
     expect(caption.maxLines, isNull);
   });
+
+  testWidgets(
+    'editing names singular ticked and all scopes and omits zero targets',
+    (tester) async {
+      final _Harness harness = await _open(tester);
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      final Finder action = find.byKey(
+        const ValueKey<String>('capture-caption-add'),
+      );
+      final Finder selects = find.byKey(
+        const ValueKey<String>('photo-corner-select-target'),
+      );
+      expect(
+        find.bySemanticsLabel('Save caption to all 2 photos'),
+        findsOneWidget,
+      );
+      await tester.tap(selects.first);
+      await tester.pumpAndSettle();
+      expect(
+        find.bySemanticsLabel('Save caption to 1 ticked photo'),
+        findsOneWidget,
+      );
+      await tester.tap(selects.last);
+      await tester.pumpAndSettle();
+      expect(
+        find.bySemanticsLabel('Save caption to 2 ticked photos'),
+        findsOneWidget,
+      );
+      await tester.enterText(_captionField, '   ');
+      await tester.pumpAndSettle();
+      expect(tester.widget<AppButton>(action).onPressed, isNull);
+      await tester.enterText(_captionField, 'Retain typed caption');
+      await tester.pumpAndSettle();
+      await _remove(tester, 'f2');
+      await tester.tap(selects.first);
+      await tester.pumpAndSettle();
+      expect(find.bySemanticsLabel('Save caption to 1 photo'), findsOneWidget);
+      expect(_captionText(tester), 'Retain typed caption');
+      expect(harness.session(tester).captions['f1'], 'Valve');
+      await _remove(tester, 'f1');
+      expect(action, findsNothing);
+      expect(_captionText(tester), 'Retain typed caption');
+      semantics.dispose();
+    },
+  );
 
   testWidgets('typing on the edit page changes no photo caption, and Add '
       'appends it to the photos', (WidgetTester tester) async {
@@ -327,6 +421,8 @@ typedef _Harness = ({
 Future<_Harness> _open(
   WidgetTester tester, {
   bool failUpdate = false,
+  TemplateDef? template,
+  int? templateVersion,
   Future<void> Function(CapturePersistence sessions)? before,
 }) async {
   final FakePhotoRepository photos = FakePhotoRepository();
@@ -336,7 +432,9 @@ Future<_Harness> _open(
     store: TextStore.memory(),
   );
   await before?.call(sessions);
-  final _Records records = _Records()..failUpdate = failUpdate;
+  final _Records records = _Records()
+    ..failUpdate = failUpdate
+    ..templateVersion = templateVersion;
   final GoRouter router = GoRouter(
     initialLocation: RoutePaths.projectRecord('p1', 'r1'),
     routes: <RouteBase>[
@@ -366,8 +464,9 @@ Future<_Harness> _open(
         capturePersistenceProvider.overrideWith((Ref _) => sessions),
         captureRecordWriterProvider.overrideWith((Ref _) => records),
         captureProjectTemplatesProvider.overrideWith(
-          (Ref ref, String id) =>
-              Stream<List<TemplateDef>>.value(<TemplateDef>[aTemplate()]),
+          (Ref ref, String id) => Stream<List<TemplateDef>>.value(<TemplateDef>[
+            template ?? aTemplate(),
+          ]),
         ),
       ],
       child: MaterialApp.router(
@@ -396,6 +495,7 @@ Future<_Harness> _open(
 final class _Records implements CaptureRecordPersistence {
   final List<CaptureSession> updates = <CaptureSession>[];
   bool failUpdate = false;
+  int? templateVersion;
 
   @override
   Future<Result<String>> persist(CaptureSession session) async {
@@ -409,6 +509,7 @@ final class _Records implements CaptureRecordPersistence {
         id: recordId,
         projectId: 'p1',
         templateId: 't1',
+        templateVersion: templateVersion,
         contextSnapshot: const <String, String>{},
         recordId: recordId,
         editing: true,

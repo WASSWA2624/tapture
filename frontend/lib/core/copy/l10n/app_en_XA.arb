@@ -4160,9 +4160,9 @@
   "@captureRemovePhoto": {
     "description": "Removes one draft photo from the capture tray."
   },
-  "captionAddToAll": "{count, plural, one{Ádd tó thé phótó······} other{Ádd tó áll ····{count} phótós···}}",
+  "captionAddToAll": "{count, plural, one{Sávé cáptíón tó 1 phótó·········} other{Sávé cáptíón tó áll ·······{count} phótós···}}",
   "@captionAddToAll": {
-    "description": "Adds the typed caption to every photo, when none is ticked.",
+    "description": "Saves the typed caption to every target photo when none is ticked; this does not save the whole record.",
     "placeholders": {
       "count": {
         "type": "int",
@@ -4171,9 +4171,9 @@
       }
     }
   },
-  "captionAddToTicked": "{count, plural, one{Ádd tó 1 tíckéd phótó········} other{Ádd tó ···{count} tíckéd phótós·····}}",
+  "captionAddToTicked": "{count, plural, one{Sávé cáptíón tó 1 tíckéd phótó···········} other{Sávé cáptíón tó ······{count} tíckéd phótós·····}}",
   "@captionAddToTicked": {
-    "description": "Adds the typed caption to the ticked photos only.",
+    "description": "Saves the typed caption to ticked target photos only; this does not save the whole record.",
     "placeholders": {
       "count": {
         "type": "int",
@@ -6988,7 +6988,7 @@
   "@captureGuideTitle": {
     "description": "The row under the Template select that opens the guide."
   },
-  "captureGuidePhotos": "Phótós shóúld shów·······",
+  "captureGuidePhotos": "Phótós tó shów·····",
   "@captureGuidePhotos": {
     "description": "What the photos should show; the template's fields follow."
   },

@@ -59,7 +59,6 @@ import 'package:tapture/features/capture/presentation/capture_device_providers.d
 import 'package:tapture/features/capture/presentation/capture_document_viewer.dart';
 import 'package:tapture/features/capture/presentation/capture_field_providers.dart';
 import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
-import 'package:tapture/features/capture/presentation/capture_guide_state.dart';
 import 'package:tapture/features/capture/presentation/capture_manual_form.dart';
 import 'package:tapture/features/capture/presentation/capture_photo_intake.dart';
 import 'package:tapture/features/capture/presentation/capture_providers.dart';
@@ -387,7 +386,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
         fields = shape.fields.where((FieldDef field) => !field.hidden).toList();
       }
     }
-    final CaptureGuideView guideView = ref.watch(captureGuideStateProvider);
     final List<String> captionTargets = _captionTargets(session);
     final String title = _editing
         ? localCopy.recordEditTitle
@@ -547,7 +545,8 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
           // Export, below the thresholds (task 012 step 21).
           CaptureStorageGuard(projectId: projectId),
           ?targets,
-          if (!noProject && !guide.isEmpty) CaptureGuideCard(guide: guide),
+          if (!noProject && guide.photoFields.isNotEmpty)
+            CaptureGuideCard(guide: guide),
           if (!noProject) _blockGap,
           if (!noProject)
             ..._evidence(
@@ -556,9 +555,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
               uiState: uiState,
               project: project,
               ready: ready,
-              templateId: templateId,
-              guide: guide,
-              guideView: guideView,
               captionTargets: captionTargets,
             ),
         ],
@@ -574,9 +570,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     required _CaptureUiState uiState,
     required Project? project,
     required bool ready,
-    required String? templateId,
-    required CaptureGuide guide,
-    required CaptureGuideView guideView,
     required List<String> captionTargets,
   }) {
     final LocalizedCopy localCopy = Copy.of(context);
@@ -674,19 +667,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
         // photo gets the text from the add button below (FBK0000155).
         value: session.recordCaption,
         resetKey: uiState.captionAdds,
-        guide: templateId == null || guideView.closedFor == templateId
-            ? const <String>[]
-            : guide.captionFields,
-        onCloseGuide: templateId == null
-            ? null
-            : () => ref
-                  .read(captureGuideStateProvider.notifier)
-                  .closePanelFor(templateId),
-        recorder: ref.watch(audioRecorderServiceProvider),
-        liveRecording:
-            live &&
-            (liveStatus.phase == TranscriptSessionPhase.recording ||
-                liveStatus.phase == TranscriptSessionPhase.paused),
         onChanged: (String text) async {
           final Result<void> result = await controller.setCaption(null, text);
           return result is Success<void>;

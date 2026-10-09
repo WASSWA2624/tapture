@@ -5142,16 +5142,16 @@ abstract class AppLocalizations {
   /// **'Remove photo'**
   String get captureRemovePhoto;
 
-  /// Adds the typed caption to every photo, when none is ticked.
+  /// Saves the typed caption to every target photo when none is ticked; this does not save the whole record.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Add to the photo} other{Add to all {count} photos}}'**
+  /// **'{count, plural, one{Save caption to 1 photo} other{Save caption to all {count} photos}}'**
   String captionAddToAll(int count);
 
-  /// Adds the typed caption to the ticked photos only.
+  /// Saves the typed caption to ticked target photos only; this does not save the whole record.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Add to 1 ticked photo} other{Add to {count} ticked photos}}'**
+  /// **'{count, plural, one{Save caption to 1 ticked photo} other{Save caption to {count} ticked photos}}'**
   String captionAddToTicked(int count);
 
   /// Says how many photos a caption was just added to.
@@ -8405,7 +8405,7 @@ abstract class AppLocalizations {
   /// What the photos should show; the template's fields follow.
   ///
   /// In en, this message translates to:
-  /// **'Photos should show'**
+  /// **'Photos to show'**
   String get captureGuidePhotos;
 
   /// What to say or type in the caption; the template's fields follow.

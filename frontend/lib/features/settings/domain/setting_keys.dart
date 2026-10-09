@@ -58,13 +58,13 @@ abstract final class SettingKeys {
     AppConstants.context.idleSeconds,
   );
 
-  /// Ask to confirm context after movement. Off by default.
+  /// Legacy movement preference, retained but inert since task 164.
   static const SettingKey<bool> contextMovementPromptEnabled = SettingKey<bool>(
     'context.movementPromptEnabled',
     false,
   );
 
-  /// Metres travelled before the movement prompt. Ignored while off.
+  /// Legacy movement distance, retained unchanged for compatibility.
   static final SettingKey<int> contextMovementMetres = SettingKey<int>(
     'context.movementMetres',
     AppConstants.context.movementMetres,

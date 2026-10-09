@@ -1,5 +1,3 @@
-import 'dart:ui' show SemanticsAction, Tristate;
-
 import 'package:flutter/foundation.dart' show kIsWeb, precisionErrorTolerance;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -17,10 +15,13 @@ import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/files/storage_guard.dart';
 import 'package:tapture/core/files/text_store.dart';
+import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/network/network.dart';
+import 'package:tapture/core/permissions/permissions_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_header_title.dart';
@@ -45,11 +46,13 @@ import 'package:tapture/features/capture/presentation/photo_tray.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
 import 'package:tapture/features/context/context.dart';
 import 'package:tapture/features/context/presentation/context_bar.dart';
+import 'package:tapture/features/context/presentation/context_providers.dart';
 import 'package:tapture/features/processing/processing.dart'
     show JobStatus, processingRepositoryProvider;
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/records/records.dart'
     show recordRepositoryProvider;
+import 'package:tapture/features/settings/domain/setting_keys.dart';
 import 'package:tapture/features/settings/settings.dart' show SettingsStore;
 import 'package:tapture/features/templates/templates.dart';
 
@@ -83,6 +86,81 @@ void registerCaptureWorkflowTests({required bool browser}) {
             TargetPlatform.linux,
           },
   );
+  testWidgets(
+    'retired movement stays inert through shell entry edit resize and branch return',
+    (tester) async {
+      final SettingsStore settings = SettingsStore.fake(
+        stored: <String, Object?>{
+          SettingKeys.contextMovementPromptEnabled.name: true,
+          SettingKeys.contextMovementMetres.name: 100,
+          SettingKeys.gpsEnabled.name: true,
+        },
+      );
+      final _ReminderLocation location = _ReminderLocation();
+      final CaptureWorkflowFixture fixture = await CaptureWorkflowFixture.open(
+        tester,
+        cell: const ScreenMatrix(Size(393, 886), 1, Brightness.light, false),
+        savedRecord: _savedRecord,
+        settings: settings,
+        extraOverrides: <Override>[
+          locationServiceProvider.overrideWithValue(location),
+          contextPermissionsProvider.overrideWithValue(
+            PermissionsService.fake(
+              states: const <AppPermission, PermissionState>{
+                AppPermission.location: PermissionState.granted,
+              },
+              gpsEnabled: () => true,
+            ),
+          ),
+        ],
+      );
+      final ProviderContainer container = ProviderScope.containerOf(
+        tester.element(find.byType(CaptureScreen)),
+      );
+      final ContextRepository contexts = container.read(
+        contextRepositoryProvider,
+      );
+      final Result<ContextState> before = await contexts.load('p1');
+      final Map<String, String> snapshot = Map<String, String>.of(
+        fixture.session(tester).contextSnapshot,
+      );
+      final GoRouter router = container.read(routerProvider);
+      for (final String route in <String>[
+        RoutePaths.projects,
+        RoutePaths.captureRoot,
+        RoutePaths.projectCapture('p1'),
+        RoutePaths.projectRecordEdit('p1', 'r1'),
+      ]) {
+        router.go(route);
+        await tester.pumpAndSettle();
+        final int captureReads = location.calls;
+        location.latitude += 1;
+        await tester.pump(AppConstants.context.checkEvery * 3);
+        tester.view.physicalSize = const Size(800, 600);
+        await tester.pumpAndSettle();
+        expect(find.text(Copy.contextMovementTitle), findsNothing);
+        expect(find.text(Copy.contextPickerTitle('Facility')), findsNothing);
+        expect(
+          location.calls,
+          captureReads,
+          reason:
+              'movement ticks do not add reminder reads to independent capture GPS',
+        );
+        expect(
+          (await contexts.load(
+            'p1',
+          )).getOrElse(() => throw TestFailure('Context load failed')),
+          before.getOrElse(() => throw TestFailure('Context load failed')),
+        );
+      }
+      expect(fixture.session(tester).contextSnapshot, snapshot);
+      expect(settings.read(SettingKeys.contextMovementPromptEnabled), isTrue);
+      expect(settings.read(SettingKeys.contextMovementMetres), 100);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+    variant: platforms,
+  );
+
   testWidgets(
     'nested Capture binds its header to the route and releases it between branches',
     (tester) async {
@@ -290,19 +368,18 @@ void registerCaptureWorkflowTests({required bool browser}) {
                     : null,
               );
           final Finder guide = find.byKey(
-            const ValueKey<String>('capture-guide-toggle'),
+            const ValueKey<String>('capture-guide'),
           );
           final LocalizedCopy copy = Copy.of(
             tester.element(find.byType(CaptureScreen)),
           );
           await _verifySetupCommands(tester, fixture, copy);
           await revealScrollableBody(tester, guide);
-          _expectProportionalLabel(tester, guide, copy.captureGuideTitle);
+
           final SemanticsHandle semantics = tester.ensureSemantics();
           try {
             await _revealControl(tester, guide, header: false);
-            await _verifyReachableControl(tester, guide);
-            await _verifyInteraction(tester, guide, fixture, copy);
+            await _verifyPassiveGuide(tester, copy);
             expect(ScreenProbe.layoutIssues(tester), isEmpty);
           } finally {
             semantics.dispose();
@@ -354,11 +431,8 @@ void registerCaptureWorkflowTests({required bool browser}) {
           final SemanticsHandle semantics = tester.ensureSemantics();
           try {
             await _verifySetupCommands(tester, fixture, localCopy);
+            await _verifyPassiveGuide(tester, localCopy);
             for (final (Finder control, bool header) in <(Finder, bool)>[
-              (
-                find.byKey(const ValueKey<String>('capture-guide-toggle')),
-                false,
-              ),
               (
                 find.byKey(const ValueKey<String>('empty-state-icon-action')),
                 false,
@@ -547,9 +621,9 @@ void registerCaptureWorkflowTests({required bool browser}) {
                 }
               }
             }
+            await _verifyPassiveGuide(tester, localCopy);
             for (final Finder control in <Finder>[
               _populatedPhotoAdd(localCopy),
-              find.byKey(const ValueKey<String>('capture-guide-toggle')),
               _caption,
               find.byKey(const ValueKey<String>('record-edit-save')),
             ]) {
@@ -560,9 +634,6 @@ void registerCaptureWorkflowTests({required bool browser}) {
                   tester.widget<TextField>(_caption).controller?.text,
                   'Original record caption',
                 );
-                await _verifyInteraction(tester, control, fixture, localCopy);
-              } else if (tester.widget(control).key ==
-                  const ValueKey<String>('capture-guide-toggle')) {
                 await _verifyInteraction(tester, control, fixture, localCopy);
               } else if (tester.widget(control) is IndexedSemantics) {
                 final SemanticsNode node = tester.getSemantics(control);
@@ -637,11 +708,8 @@ void registerCaptureWorkflowTests({required bool browser}) {
               localCopy,
               keyboard: true,
             );
+            await _verifyPassiveGuide(tester, localCopy);
             for (final (Finder control, bool header) in <(Finder, bool)>[
-              (
-                find.byKey(const ValueKey<String>('capture-guide-toggle')),
-                false,
-              ),
               (
                 find.byKey(const ValueKey<String>('empty-state-icon-action')),
                 false,
@@ -1034,15 +1102,38 @@ final Finder _caption = find.descendant(
   matching: find.byType(TextField),
 );
 
+Future<void> _verifyPassiveGuide(
+  WidgetTester tester,
+  LocalizedCopy copy,
+) async {
+  final Finder guide = find.byType(CaptureGuideCard);
+  expect(guide, findsOneWidget);
+  expect(
+    find.byKey(const ValueKey<String>('capture-guide-toggle')),
+    findsNothing,
+  );
+  expect(find.text(copy.captureGuideTitle), findsNothing);
+  expect(
+    find.descendant(of: guide, matching: find.text(copy.captureGuidePhotos)),
+    findsOneWidget,
+  );
+  expect(
+    find.descendant(of: guide, matching: find.text('Serial number')),
+    findsOneWidget,
+  );
+  expect(
+    find.descendant(of: guide, matching: find.text(copy.captureGuideCaption)),
+    findsNothing,
+  );
+  await revealScrollableBody(tester, guide);
+  await _verifyReadableEnds(tester, guide);
+}
+
 void _expectProportionalActions(WidgetTester tester) {
   final LocalizedCopy copy = Copy.of(
     tester.element(find.byType(CaptureScreen)),
   );
   for (final (Finder control, String label) in <(Finder, String)>[
-    (
-      find.byKey(const ValueKey<String>('capture-guide-toggle')),
-      copy.captureGuideTitle,
-    ),
     (find.widgetWithText(AppButton, copy.captureSaveRaw), copy.captureSaveRaw),
     (find.byType(AppPrimaryAction), copy.captureSaveAndAnalyse),
   ]) {
@@ -1342,25 +1433,6 @@ Future<void> _verifyKeyboardAction(
     expect(ScreenProbe.layoutIssues(tester), isEmpty);
     Navigator.of(tester.element(find.byType(AppBottomSheet))).pop();
     await tester.pumpAndSettle();
-  } else if (key == const ValueKey<String>('capture-guide-toggle')) {
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(
-      find.descendant(
-        of: find.byType(CaptureGuideCard),
-        matching: find.text('Condition'),
-      ),
-      findsOneWidget,
-    );
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(
-      find.descendant(
-        of: find.byType(CaptureGuideCard),
-        matching: find.text('Condition'),
-      ),
-      findsNothing,
-    );
   } else if (control == _caption) {
     final EditableText editor = tester.widget<EditableText>(
       find.descendant(of: control, matching: find.byType(EditableText)),
@@ -1605,40 +1677,6 @@ Future<void> _verifyInteraction(
     expect(ScreenProbe.layoutIssues(tester), isEmpty);
     Navigator.of(tester.element(find.byType(AppSearchField))).pop();
     await tester.pumpAndSettle();
-  } else if (widget.key == const ValueKey<String>('capture-guide-toggle')) {
-    final Finder expanded = find
-        .ancestor(
-          of: control,
-          matching: find.byWidgetPredicate(
-            (Widget widget) =>
-                widget is Semantics && widget.properties.expanded != null,
-          ),
-        )
-        .first;
-    expect(
-      tester.getSemantics(expanded).flagsCollection.isExpanded,
-      Tristate.isFalse,
-    );
-    await _tapPainted(tester, control);
-    expect(
-      tester.getSemantics(expanded).flagsCollection.isExpanded,
-      Tristate.isTrue,
-    );
-    final Finder guide = find.byType(CaptureGuideCard);
-    expect(
-      find.descendant(of: guide, matching: find.text('Serial number')),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(of: guide, matching: find.text('Condition')),
-      findsOneWidget,
-    );
-    await _verifyReadableEnds(tester, guide);
-    await _tapPainted(tester, control);
-    expect(
-      tester.getSemantics(expanded).flagsCollection.isExpanded,
-      Tristate.isFalse,
-    );
   } else if (widget.key == const ValueKey<String>('empty-state-icon-action')) {
     await _tapPainted(tester, control);
     expect(find.text(localCopy.captureAddSheetTitle), findsOneWidget);
@@ -1687,23 +1725,11 @@ Future<void> _verifyInteraction(
     final Finder panel = find.byKey(
       const ValueKey<String>('capture-caption-guide'),
     );
-    expect(panel, findsOneWidget);
-    expect(
-      find.descendant(
-        of: panel,
-        matching: find.text(
-          localCopy.captureGuideItems(const <String>['Condition']),
-        ),
-      ),
-      findsOneWidget,
-    );
-    await _revealControl(tester, panel, header: false);
-    await _verifyReadableEnds(tester, panel);
-    final Finder close = find.byKey(
-      const ValueKey<String>('capture-caption-guide-close'),
-    );
-    await _tapPainted(tester, close);
     expect(panel, findsNothing);
+    expect(
+      find.byKey(const ValueKey<String>('capture-caption-guide-close')),
+      findsNothing,
+    );
     FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
   }
@@ -1853,6 +1879,7 @@ final class CaptureWorkflowFixture {
     TextDirection? direction,
     bool offline = false,
     TextStore? store,
+    SettingsStore? settings,
     List<TemplateDef>? shownTemplates,
     CaptureSession? savedRecord,
     bool nestedCapture = false,
@@ -1957,7 +1984,9 @@ final class CaptureWorkflowFixture {
             ),
           ),
           offlineNowProvider.overrideWithValue(offline),
-          projectSettingsStoreProvider.overrideWithValue(SettingsStore.fake()),
+          projectSettingsStoreProvider.overrideWithValue(
+            settings ?? SettingsStore.fake(),
+          ),
           projectRepositoryProvider.overrideWith((Ref _) => projects),
           templateRepositoryProvider.overrideWith((Ref _) => templates),
           contextRepositoryProvider.overrideWith((Ref _) => contexts),
@@ -2040,5 +2069,25 @@ final class _SessionStore implements TextStore {
       throw const StorageFailure(message: 'Session write failed');
     }
     await _backing.write(contents);
+  }
+}
+
+/// Granted, moving GPS which would have activated the retired reminder.
+final class _ReminderLocation implements LocationService {
+  int calls = 0;
+  double latitude = 0;
+  @override
+  Future<Result<GeoFix?>> currentFix({
+    Duration timeout = AppConstants.locationTimeout,
+  }) async {
+    calls++;
+    return Success<GeoFix?>(
+      GeoFix(
+        latitude: latitude,
+        longitude: 0,
+        accuracyMetres: 5,
+        capturedAt: DateTime.utc(2026, 10, 9),
+      ),
+    );
   }
 }

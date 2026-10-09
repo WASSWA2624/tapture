@@ -1,223 +1,309 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
-import 'package:tapture/core/audio/audio_recorder_service.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
 import 'package:tapture/features/templates/templates.dart';
 
-import '../../../support/a11y_matchers.dart';
 import '../../../support/fakes/fake_stt_service.dart';
+import '../../../support/screen_fonts.dart';
+import '../../../support/screen_matrix.dart';
 
 const CaptureGuide _guide = CaptureGuide(
   photoFields: <String>['Serial number', 'Asset tag'],
   captionFields: <String>['Condition', 'Accessories'],
 );
-
-void main() {
-  testWidgets('the guide row starts collapsed and opens to both lists', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        child: MaterialApp(
-          theme: buildTheme(brightness: Brightness.light),
-          home: const Scaffold(body: CaptureGuideCard(guide: _guide)),
-        ),
-      ),
-    );
-
-    expect(find.text(Copy.captureGuideTitle), findsOneWidget);
-    final SemanticsHandle semantics = tester.ensureSemantics();
-    try {
-      final Finder toggle = find.byKey(
-        const ValueKey<String>('capture-guide-toggle'),
-      );
-      expect(
-        tester
-            .getSemantics(toggle)
-            .getSemanticsData()
-            .flagsCollection
-            .isExpanded
-            .toBoolOrNull(),
-        isFalse,
-      );
-      expect(find.text(Copy.captureGuidePhotos), findsNothing);
-      expect(
-        find.byKey(const ValueKey<String>('capture-guide-toggle')),
-        meetsTapTarget(),
-      );
-
-      await tester.tap(
-        find.byKey(const ValueKey<String>('capture-guide-toggle')),
-      );
-      await tester.pump();
-
-      expect(
-        tester
-            .getSemantics(toggle)
-            .getSemanticsData()
-            .flagsCollection
-            .isExpanded
-            .toBoolOrNull(),
-        isTrue,
-      );
-
-      expect(find.text(Copy.captureGuidePhotos), findsOneWidget);
-      expect(
-        find.text(Copy.captureGuideItems(_guide.photoFields)),
-        findsOneWidget,
-      );
-      expect(find.text(Copy.captureGuideCaption), findsOneWidget);
-      expect(
-        find.text(Copy.captureGuideItems(_guide.captionFields)),
-        findsOneWidget,
-      );
-      await tester.tap(toggle);
-      await tester.pump();
-      expect(
-        tester
-            .getSemantics(toggle)
-            .getSemanticsData()
-            .flagsCollection
-            .isExpanded
-            .toBoolOrNull(),
-        isFalse,
-      );
-      expect(
-        find.text(Copy.captureGuideItems(_guide.captionFields)),
-        findsNothing,
-      );
-    } finally {
-      semantics.dispose();
-    }
-  });
-
-  testWidgets('an empty guide draws nothing', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(
-          home: Scaffold(
-            body: CaptureGuideCard(
-              guide: CaptureGuide(
-                photoFields: <String>[],
-                captionFields: <String>[],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    expect(find.text(Copy.captureGuideTitle), findsNothing);
-  });
-
-  testWidgets('typing shows the caption points above the field', (
-    WidgetTester tester,
-  ) async {
-    await _pumpField(tester);
-    expect(_panel, findsNothing);
-
-    await tester.tap(find.byType(TextField));
-    await tester.pump();
-    expect(_panel, findsOneWidget);
-    expect(
-      find.text(Copy.captureGuideItems(_guide.captionFields)),
-      findsOneWidget,
-    );
-    final TextField caption = tester.widget<TextField>(find.byType(TextField));
-    expect(caption.minLines, 6);
-    expect(caption.maxLines, isNull);
-    expect(
-      tester.getBottomLeft(_panel).dy,
-      lessThanOrEqualTo(tester.getTopLeft(find.byType(TextField)).dy),
-    );
-
-    FocusManager.instance.primaryFocus?.unfocus();
-    await tester.pump();
-    expect(_panel, findsNothing);
-  });
-
-  testWidgets('recording shows the caption points, and stopping hides them', (
-    WidgetTester tester,
-  ) async {
-    final AudioRecorderService recorder = AudioRecorderService.fake();
-    await _pumpField(tester, recorder: recorder);
-
-    await tester.runAsync(() => recorder.start('projects/p/audio/a.wav'));
-    await tester.pump();
-    expect(_panel, findsOneWidget);
-
-    await tester.runAsync(() => recorder.stop());
-    await tester.pump();
-    expect(_panel, findsNothing);
-  });
-
-  testWidgets('dictating shows the caption points', (
-    WidgetTester tester,
-  ) async {
-    final FakeSttService speech = FakeSttService();
-    await _pumpField(tester, speech: speech);
-
-    await tester.tap(
-      find.byKey(const ValueKey<String>('app-text-field-dictate')),
-    );
-    await tester.pump();
-    expect(_panel, findsOneWidget);
-  });
-
-  testWidgets('close hides the panel through its callback', (
-    WidgetTester tester,
-  ) async {
-    var closed = 0;
-    await _pumpField(tester, onClose: () => closed++);
-    await tester.tap(find.byType(TextField));
-    await tester.pump();
-
-    await tester.tap(
-      find.byKey(const ValueKey<String>('capture-caption-guide-close')),
-    );
-    await tester.pump();
-    expect(closed, 1);
-  });
-
-  testWidgets('at 200 percent text the panel wraps rather than clips', (
-    WidgetTester tester,
-  ) async {
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(360, 780);
-    tester.platformDispatcher.textScaleFactorTestValue = 2;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    await _pumpField(tester);
-    await tester.tap(find.byType(TextField));
-    await tester.pump();
-
-    expect(tester.takeException(), isNull);
-    expect(_panel, findsOneWidget);
-  });
-}
-
+const ScreenMatrix _reported = ScreenMatrix(
+  Size(393, 886),
+  1,
+  Brightness.light,
+  false,
+);
 final Finder _panel = find.byKey(
   const ValueKey<String>('capture-caption-guide'),
 );
 
+void main() {
+  setUpAll(ScreenFonts.load);
+  testWidgets('photo guidance is immediate, passive and accessible', (
+    tester,
+  ) async {
+    await _pumpGuide(tester);
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    expect(find.text('Photos to show'), findsOneWidget);
+    expect(
+      find.text(Copy.captureGuideItems(_guide.photoFields)),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel(RegExp('Serial number.*Asset tag')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey<String>('capture-guide-toggle')),
+      findsNothing,
+    );
+    expect(find.text(Copy.captureGuideTitle), findsNothing);
+    expect(find.text(Copy.captureGuideCaption), findsNothing);
+    expect(
+      find.text(Copy.captureGuideItems(_guide.captionFields)),
+      findsNothing,
+    );
+    semantics.dispose();
+  });
+
+  for (final List<String> captions in <List<String>>[
+    <String>[],
+    <String>['Condition'],
+  ]) {
+    testWidgets('no photo guidance reserves no space: $captions', (
+      tester,
+    ) async {
+      await _pumpGuide(
+        tester,
+        guide: CaptureGuide(
+          photoFields: const <String>[],
+          captionFields: captions,
+        ),
+      );
+      expect(find.byKey(const ValueKey<String>('capture-guide')), findsNothing);
+      expect(find.text(Copy.captureGuidePhotos), findsNothing);
+      expect(tester.getSize(find.byType(CaptureGuideCard)).height, 0);
+      await _pumpGuide(
+        tester,
+        guide: CaptureGuide(
+          photoFields: const <String>[],
+          captionFields: captions,
+        ),
+        targets: const Text('Existing targets'),
+      );
+      expect(find.text('Existing targets'), findsOneWidget);
+      expect(find.text(Copy.captureGuidePhotos), findsNothing);
+    });
+  }
+
+  testWidgets(
+    'template changes replace original photo labels without stale state',
+    (tester) async {
+      await _pumpGuide(tester);
+      await _pumpGuide(
+        tester,
+        guide: const CaptureGuide(
+          photoFields: <String>['Rear rating plate'],
+          captionFields: <String>['Condition'],
+        ),
+      );
+      expect(find.text('Rear rating plate'), findsOneWidget);
+      expect(
+        find.text(Copy.captureGuideItems(_guide.photoFields)),
+        findsNothing,
+      );
+      expect(_panel, findsNothing);
+    },
+  );
+
+  testWidgets(
+    'typing and pause persist without caption help or close controls',
+    (tester) async {
+      final List<String> writes = <String>[];
+      await _pumpField(
+        tester,
+        onChanged: (text) async {
+          writes.add(text);
+          return true;
+        },
+      );
+      await tester.enterText(find.byType(TextField), 'Preserved caption');
+      await tester.pump();
+      final TextField field = tester.widget<TextField>(find.byType(TextField));
+      expect(field.minLines, 6);
+      expect(field.maxLines, isNull);
+      expect(writes, <String>['Preserved caption']);
+      expect(_panel, findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('capture-caption-guide-close')),
+        findsNothing,
+      );
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      await tester.pump();
+      expect(writes.last, 'Preserved caption');
+      expect(writes.length, 2);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    },
+  );
+
+  testWidgets(
+    'late persisted value preserves focus and reset replaces the text',
+    (tester) async {
+      await _pumpField(tester, value: 'Initial');
+      await tester.enterText(find.byType(TextField), 'Still typing');
+      await tester.pump();
+      await _pumpField(tester, value: 'Late save');
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        'Still typing',
+      );
+      await _pumpField(tester, value: '', resetKey: 1);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+      );
+      expect(_panel, findsNothing);
+    },
+  );
+
+  testWidgets('dictation persists words without a caption-help panel', (
+    tester,
+  ) async {
+    final FakeSttService speech = FakeSttService();
+    final List<String> writes = <String>[];
+    await _pumpField(
+      tester,
+      speech: speech,
+      onChanged: (text) async {
+        writes.add(text);
+        return true;
+      },
+    );
+    await tester.tap(
+      find.byKey(const ValueKey<String>('app-text-field-dictate')),
+    );
+    await tester.pump();
+    expect(speech.isListening, isTrue);
+    speech.hear('Dictated caption');
+    await tester.pump();
+    expect(writes.last, 'Dictated caption');
+    expect(_panel, findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets(
+    'failed caption persistence retains the editor and reports failure',
+    (tester) async {
+      final List<String> failures = <String>[];
+      await _pumpField(
+        tester,
+        onChanged: (_) async => false,
+        onWriteFailed: failures.add,
+      );
+      await tester.enterText(find.byType(TextField), 'Retain on failure');
+      await tester.pump();
+      expect(failures.single, 'Retain on failure');
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        'Retain on failure',
+      );
+    },
+  );
+
+  for (final Locale locale in const <Locale>[
+    Locale('en'),
+    Locale('en', 'XA'),
+  ]) {
+    for (final ScreenMatrix cell in <ScreenMatrix>[
+      ...ScreenMatrix.cells,
+      _reported,
+    ]) {
+      testWidgets(
+        'passive guidance wraps ${cell.description} ${locale.toLanguageTag()}',
+        (tester) async {
+          const CaptureGuide longGuide = CaptureGuide(
+            photoFields: <String>[
+              'Complete original serial number and manufacturer rating plate',
+              'All original asset identification labels and surrounding equipment',
+            ],
+            captionFields: <String>['Condition'],
+          );
+          await _pumpGuide(
+            tester,
+            cell: cell,
+            locale: locale,
+            guide: longGuide,
+          );
+          expect(
+            find.text(
+              Copy.of(
+                tester.element(find.byType(CaptureGuideCard)),
+              ).captureGuideItems(longGuide.photoFields),
+            ),
+            findsOneWidget,
+          );
+          for (final RenderParagraph paragraph
+              in tester.allRenderObjects.whereType<RenderParagraph>()) {
+            expect(paragraph.didExceedMaxLines, isFalse);
+          }
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+  for (final ({String name, ScreenMatrix cell}) corner
+      in ScreenMatrix.corners) {
+    testWidgets('feedback 2154 guide visual ${corner.name}', (tester) async {
+      await _pumpGuide(tester, cell: corner.cell);
+      await expectLater(
+        find.byType(MaterialApp),
+        matchesGoldenFile('goldens/feedback_2154_guide_${corner.name}.png'),
+      );
+    });
+  }
+}
+
+Future<void> _pumpGuide(
+  WidgetTester tester, {
+  CaptureGuide guide = _guide,
+  ScreenMatrix cell = _reported,
+  Locale locale = const Locale('en'),
+  Widget? targets,
+}) async {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = cell.size;
+  tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+  addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: ScreenFonts.theme(
+        buildTheme(brightness: cell.brightness, outdoor: cell.outdoor),
+      ),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: locale,
+      home: Directionality(
+        textDirection: locale.countryCode == 'XA'
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+        child: Scaffold(
+          body: SingleChildScrollView(
+            child: CaptureGuideCard(guide: guide, targets: targets),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
 Future<void> _pumpField(
   WidgetTester tester, {
-  AudioRecorderService? recorder,
+  String value = '',
+  Object? resetKey,
   FakeSttService? speech,
-  VoidCallback? onClose,
+  Future<bool> Function(String)? onChanged,
+  ValueChanged<String>? onWriteFailed,
 }) async {
   final Widget field = RecordCaptionField(
-    value: '',
-    onChanged: (String _) async => true,
-    guide: _guide.captionFields,
-    onCloseGuide: onClose ?? () {},
-    recorder: recorder,
+    value: value,
+    resetKey: resetKey,
+    onChanged: onChanged ?? (_) async => true,
+    onWriteFailed: onWriteFailed,
   );
   await tester.pumpWidget(
     MaterialApp(
@@ -235,4 +321,5 @@ Future<void> _pumpField(
       ),
     ),
   );
+  await tester.pump();
 }

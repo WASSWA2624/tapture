@@ -200,18 +200,11 @@ class CaptureSettingsScreen extends ConsumerWidget {
               SettingsDisclosure(
                 id: 'capture-project-contexts',
                 title: localCopy.settingsProjectContexts,
-                summary: localCopy.settingsProjectContextsSummary(
-                  view.autoClear
-                      ? localCopy.settingsContextIdleOption(
-                          view.idleSeconds ~/ 60,
-                        )
-                      : localCopy.projectOff,
-                  view.movementPrompt
-                      ? localCopy.settingsContextDistanceOption(
-                          view.movementMetres,
-                        )
-                      : localCopy.projectOff,
-                ),
+                summary: view.autoClear
+                    ? localCopy.settingsContextIdleOption(
+                        view.idleSeconds ~/ 60,
+                      )
+                    : localCopy.projectOff,
                 children: <Widget>[
                   AppSwitchTile(
                     title: localCopy.settingsContextAutoClear,
@@ -249,47 +242,6 @@ class CaptureSettingsScreen extends ConsumerWidget {
                             context,
                             notifier,
                             SettingKeys.contextAutoClearSeconds,
-                            next,
-                          ),
-                        );
-                      },
-                    ),
-                  AppSwitchTile(
-                    title: localCopy.settingsContextMovement,
-                    description: localCopy.settingsContextMovementEffect,
-                    value: view.movementPrompt,
-                    onChanged: (bool value) {
-                      unawaited(
-                        _writeSetting(
-                          context,
-                          notifier,
-                          SettingKeys.contextMovementPromptEnabled,
-                          value,
-                        ),
-                      );
-                    },
-                  ),
-                  if (view.movementPrompt)
-                    SettingChoice<int>(
-                      key: const ValueKey<String>('capture-distance'),
-                      alwaysSheet: true,
-                      label: localCopy.settingsContextDistance,
-                      effect: localCopy.settingsContextDistanceEffect,
-                      value: view.movementMetres,
-                      options: <Choice<int>>[
-                        for (final int metres
-                            in AppConstants.context.distanceChoices)
-                          Choice<int>(
-                            metres,
-                            localCopy.settingsContextDistanceOption(metres),
-                          ),
-                      ],
-                      onChanged: (int next) {
-                        unawaited(
-                          _writeSetting(
-                            context,
-                            notifier,
-                            SettingKeys.contextMovementMetres,
                             next,
                           ),
                         );
@@ -341,8 +293,6 @@ typedef _CaptureView = ({
   String namingPattern,
   bool autoClear,
   int idleSeconds,
-  bool movementPrompt,
-  int movementMetres,
 });
 
 class _CaptureSettings extends AsyncNotifier<_CaptureView> {
@@ -384,8 +334,6 @@ class _CaptureSettings extends AsyncNotifier<_CaptureView> {
         namingPattern: SettingKeys.namingPattern.defaultValue,
         autoClear: SettingKeys.contextAutoClearEnabled.defaultValue,
         idleSeconds: SettingKeys.contextAutoClearSeconds.defaultValue,
-        movementPrompt: SettingKeys.contextMovementPromptEnabled.defaultValue,
-        movementMetres: SettingKeys.contextMovementMetres.defaultValue,
       );
     }
     return _snapshot(await _store());
@@ -420,8 +368,6 @@ class _CaptureSettings extends AsyncNotifier<_CaptureView> {
       namingPattern: store.read(SettingKeys.namingPattern),
       autoClear: store.read(SettingKeys.contextAutoClearEnabled),
       idleSeconds: store.read(SettingKeys.contextAutoClearSeconds),
-      movementPrompt: store.read(SettingKeys.contextMovementPromptEnabled),
-      movementMetres: store.read(SettingKeys.contextMovementMetres),
     );
   }
 }

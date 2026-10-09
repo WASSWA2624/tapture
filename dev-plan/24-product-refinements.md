@@ -2360,6 +2360,10 @@ Decisions:
 
 ## 076 — Resolve project, capture and template feedback, and add project packages
 
+### Presentation supersession — task 164 (2026-10-09)
+
+Task 164 supersedes D14 with passive photo guidance only: no toggle, top caption row or focused caption-help panel. The existing photo-caption action names saving to its targets. Dated evidence below remains historical; task 164 owns fresh verification.
+
 ### Implement
 
 Close FBK0000006 and FBK0000007 from the 27 September 2026 08:43 archive, FBK0000156 to FBK0000162 from the 08:45
@@ -6997,3 +7001,137 @@ The Feedback sheet has 36 columns, with Screen immediately after User Name and O
 2026-10-09 baseline: clean `b730bc4b` on `main`. The single feedback projection currently contains 48 columns, including eleven empty organisation placeholders and the stored account ID. Both headers and row values derive from that projection; all download platforms reuse the workbook encoder.
 
 The four new export cases fail against the original projection, then pass after removing the twelve columns and unused placeholder builder. All 38 feedback-domain/download-controller tests pass, including empty/populated layouts, encoded workbooks with/without screenshots, account-ID exclusion, `A1:AJ2` dimensions/filters and the `AE2` screenshot hyperlink. ZIP workbook bytes match direct encoding. All six changed Dart sources pass formatting and analysis (`No issues found`). Specification §55.3 and task 026 record the narrowed export contract. Tracker regeneration, `--check` and plan integrity pass. The previously ignored column test is included in the reviewable diff without changing ignore rules.
+
+## 164 — Resolve feedback archive 09102026-2154
+
+**Depends on** [001](01-orchestration.md#001--project-setup-and-guardrails), [002](02-foundation.md#002--foundation-services)
+
+**Implementation started:** Yes
+
+### Implement
+
+Apply the three work items in [the archive prompt](../prompts/feedback-09102026-2154/001-resolve-capture-guidance-feedback.md) in order: retire movement confirmation, clarify photo-caption saving, then show passive photo guidance. Preserve local-first persistence, template derivation, context snapshots, idle clear/undo and capture GPS.
+
+2026-10-09 user approved **proceed**: D1(a) retires the reminder and controls globally with inert persisted keys; D2(a) removes both caption guidance presentations and their unused state; D3(a) permits only the specified temporary visual sets, externally verified and archived before exact-file cleanup.
+
+### Files
+
+- `frontend/lib/features/context/presentation/context_maintenance.dart`
+- `frontend/lib/features/settings/presentation/capture_settings_screen.dart`, `frontend/lib/features/settings/domain/setting_keys.dart`
+- `frontend/lib/features/capture/presentation/capture_screen.dart`, `capture_guide_card.dart`, `capture_guide_state.dart`, `record_caption_field.dart`
+- `frontend/lib/core/copy/l10n/app_en.arb`, pseudo catalogue and generated localization/copy output
+- Affected acceptance tests and their recursive relative-import closure in `prompts/feedback-09102026-2154/164-acceptance-sources.patch` and its hash manifest
+- `app-write-up.md`, tasks 011/012/076, this task and generated `dev-tracker.md`
+
+### Definition of done
+
+#### W1 — Remove the movement confirmation
+**Feedback:** FBK0000213 · **Type:** Improvement · **Priority:** P2 · **Effort:** M · **After:** —
+
+##### Evidence
+- FBK0000213 asks to remove the context confirmation. `prompts/TAPTURE-09102026-2154/screenshots/FBK0000213.png` shows a modal titled "Confirm context", a movement message, Cancel and Change context, overlaying the Capture editor and save controls. Seen on Android mobile, compact portrait, light, text scale 1, app 1.0.0.
+- Current cause: `frontend/lib/features/context/presentation/context_maintenance.dart:251` reads location and presents `showAppConfirm` at line 299. `frontend/lib/app/nav_shell.dart:82` hosts `ContextMaintenance` across branches; this is not a Capture-local dialog.
+- `frontend/lib/features/settings/presentation/capture_settings_screen.dart:203` includes movement in its summary, with the switch at line 257 and distance chooser at line 272.
+
+##### Scope
+- Reach: every shell route under D1(a); every `CaptureScreen` entry/edit route under D1(b), across all six platforms, three widths, both orientations, all three themes and text scales 1/2. GPS-capable and unavailable platforms share the same outcome.
+- Change: `frontend/lib/features/context/presentation/context_maintenance.dart`; D1(a)'s movement controls, view fields and disclosure summary in `frontend/lib/features/settings/presentation/capture_settings_screen.dart`; compatibility comments in `frontend/lib/features/settings/domain/setting_keys.dart`. D1(b)'s route visibility comes from the existing router/shell in `frontend/lib/app/router.dart` and `frontend/lib/app/nav_shell.dart`.
+- Do not change: cascade confirmations, preset overwrite confirmations, context repository writes, idle auto-clear/undo, public context/location services, capture GPS and stored movement-key names/defaults. The pure legacy `ContextMovementPrompt` API and its existing unit tests remain compatible; no storage migration is authorized.
+- Exclusions: camera, barcode and rapid-capture screens receive no new route-specific UI; under D1(a) they inherit removal through the same shell. Backend and exports have no reminder presentation. Under D1(b), non-Capture routes deliberately retain their existing reminder.
+
+##### Rules
+- FE-SIMP-03, FE-SIMP-05, FE-SIMP-07: remove the unwanted interruption without replacing it with another question.
+- FE-STATE-06, FE-STATE-09, FE-STR-11, FE-SEC-07: keep one context source, dispose timers, and eliminate only the reminder's location activity under D1(a).
+
+##### Steps
+1. Apply D1 at `ContextMaintenance`. Under D1(a), remove `_movement`, `_moving`, `_origin` and their unused imports; let only `contextAutoClearEnabled` activate the timer. Under D1(b), implement the route suppression and origin reset specified in D1 before any permission/fix/dialog work.
+2. Apply D1 to Capture settings. Under D1(a), remove the movement switch, distance chooser and `movementPrompt`/`movementMetres` view fields. Set the contexts disclosure summary to the existing localized idle interval when enabled and `projectOff` when disabled. Keep the old movement settings readable and unchanged, including an existing true value.
+3. Update `frontend/test/features/context/presentation/context_maintenance_test.dart` with a pre-existing enabled movement setting, granted permission and a moving fake location. Assert the approved route reach, absence of the modal and picker, unchanged context/snapshots, and zero reminder location reads under D1(a). Retain idle auto-clear, undo and failure coverage.
+4. Update `frontend/test/features/settings/presentation/capture_settings_screen_test.dart` and the affected context-section assertions in `frontend/test/features/capture/presentation/capture_feedback_test.dart`. Under D1(a), prove the retired controls and movement summary are absent while existing stored values are unchanged and idle controls still work. Exercise a mounted shell while Capture entry, editing and branch navigation occur.
+
+##### Acceptance criteria
+- [x] The reported confirmation never appears on Capture entry, typing, photo intake, saving, editing, movement ticks, rotation and branch return; scope outside Capture matches D1.
+- [x] D1(a) makes the legacy movement preference inert and removes its controls; D1(b) preserves non-Capture controls and suppresses queued Capture reminders.
+- [x] Manual context editing, cascade safety, idle clearing/undo and independent GPS capture retain their contracts; stored context, setting values and evidence remain unchanged.
+- [ ] The meaningful maintenance/settings regressions pass across the declared route/platform reach. FBK0000213 is resolved.
+
+#### W2 — Label the photo-caption save action
+**Feedback:** FBK0000215 · **Type:** Improvement · **Priority:** P3 · **Effort:** S · **After:** —
+
+##### Evidence
+- FBK0000215 asks for wording that explains saving the caption. `prompts/TAPTURE-09102026-2154/screenshots/FBK0000215.png` shows one photo, the Caption text field and a button actually labelled "Add to the photo". The field label is not the action to rename. Seen on Android mobile, compact portrait, light, text scale 1, app 1.0.0.
+- `frontend/lib/features/capture/presentation/capture_screen.dart:721` binds `capture-caption-add` to `captionAddToTicked`/`captionAddToAll`. The current English plurals are in `frontend/lib/core/copy/l10n/app_en.arb:4163` and line 4174. `_addCaption` at screen line 1000 durably appends to the target photos, then clears the record-caption input.
+
+##### Scope
+- Reach: new Capture and saved-record editing, Android/iOS/Windows/macOS/Linux/web, all three widths, both orientations, light/dark/outdoor, 100/200 percent text, English and the expanded pseudo-locale with RTL.
+- Change: the existing `captionAddToAll` and `captionAddToTicked` catalogue values/descriptions; regenerate `frontend/lib/core/copy/l10n/app_en_XA.arb` and generated localization output. Keep the stable `Copy`/`LocalizedCopy` method names and `capture-caption-add` key.
+- Do not change: the Caption field label, footer save actions, target selection, append behavior, persistence, success toast, failure recovery, record-only caption autosave and input-clear timing. No fresh caption-writing operation is introduced.
+- Exclusions: the separate photo-viewer caption editor has its own action and does not use these two copy keys. Legacy Rapid links redirect to ordinary Capture and receive this change; the retired Rapid widget gets no new UI. Backend, exports and stored caption data contain no affected action label.
+
+##### Rules
+- FE-L10N-01 to FE-L10N-03, FE-L10N-06: retain semantic keys and ICU plurals; never build the phrase with concatenation.
+- FE-SIMP-09, FE-SIMP-10, FE-A11Y-02, FE-A11Y-07, FE-STATE-07: name the action plainly and preserve durable success/failure behavior.
+
+##### Steps
+1. Set `captionAddToAll` to `{count, plural, one{Save caption to 1 photo} other{Save caption to all {count} photos}}`. Set `captionAddToTicked` to `{count, plural, one{Save caption to 1 ticked photo} other{Save caption to {count} ticked photos}}`. Update translator descriptions to distinguish saving to target photos from saving the whole record.
+2. Run `dart run tool/generate_pseudo_locale.dart`, `flutter gen-l10n` and `dart run tool/generate_copy_messages.dart` from `frontend/`. Preserve method signatures and untouched catalogue messages.
+3. Update `frontend/test/core/copy/copy_test.dart`, `frontend/test/features/capture/presentation/capture_feedback_test.dart` and `frontend/test/features/capture/presentation/capture_edit_screen_test.dart`. Assert exact singular/plural wording, counts and semantics for one photo, all photos, one ticked photo, several ticked photos, empty text and zero targets. Preserve the append/clear/failure/record-only caption assertions.
+4. Add tests named with prefix `feedback 2154 caption visual` to the existing feedback suite. Reuse its caption harness and `ScreenMatrix.corners`; name outputs `frontend/test/features/capture/presentation/goldens/feedback_2154_caption_<one|all|ticked_one|ticked_many>_<corner>.png`. Under D3(a), generate only this set, compare normally and inspect it before the final archive/cleanup.
+
+##### Acceptance criteria
+- [x] The visible and accessible action begins "Save caption" and names the exact target count/scope in every singular/plural case; old "Add to..." action wording is absent on both affected surfaces.
+- [x] Empty/whitespace captions stay disabled, zero targets show no photo-caption action, and selecting photos does not rewrite the typed text.
+- [x] Successful activation still appends independent photo captions and clears the input only through the existing durable path; failure retains the text and existing photo captions.
+- [ ] Behavior, copy, accessibility and D3 visual checks pass across the declared matrix. FBK0000215 is resolved.
+
+#### W3 — Show photo guidance without a toggle
+**Feedback:** FBK0000214 · **Type:** Improvement · **Priority:** P3 · **Effort:** M · **After:** W2
+
+##### Evidence
+- FBK0000214 asks to remove "What to capture" and retain an elegant photo-content guideline titled "Photos to show". `prompts/TAPTURE-09102026-2154/screenshots/FBK0000214.png` shows the toggle, a "Photos should show" list, a separate caption-guidance row and another caption-help panel above the editor. Seen on Android mobile, compact portrait, light, text scale 1, app 1.0.0.
+- `frontend/lib/features/capture/presentation/capture_guide_card.dart:33` reads toggle state, creates the button at line 40 and gates both lists at line 64. `frontend/lib/features/capture/presentation/capture_screen.dart:550` mounts it, while lines 677–684 separately supply the caption panel. `frontend/lib/features/capture/presentation/record_caption_field.dart:159` shows that panel during active input.
+- Guidance comes from `CaptureGuide.of` in `frontend/lib/features/templates/domain/capture_guide.dart:23`, including captured-version resolution in Capture. W2 has changed only the photo-caption action copy; its key and persistence still have their original contracts.
+
+##### Scope
+- Reach: every new/edit `CaptureScreen` using these widgets on all six platforms, three widths, both orientations, light/dark/outdoor, text scales 1/2, English and the expanded RTL pseudo-locale.
+- Change: `frontend/lib/features/capture/presentation/capture_guide_card.dart`, `frontend/lib/features/capture/presentation/capture_screen.dart`, and D2's `frontend/lib/features/capture/presentation/capture_guide_state.dart`/`frontend/lib/features/capture/presentation/record_caption_field.dart` plumbing; `captureGuidePhotos` in `frontend/lib/core/copy/l10n/app_en.arb`, its pseudo catalogue and generated output.
+- Do not change: template data, `CaptureGuide.of` field selection/order/cap, historical version resolution, project/template overflow, manual fields, evidence tray, caption autosave, dictation, microphone permissions, audio, processing and both footer saves.
+- Exclusions: camera and photo-viewer screens have no `CaptureGuideCard`; do not add a guideline there. Legacy Rapid links redirect to ordinary Capture and receive the guideline; the retired Rapid widget gets no new UI. Backend and exports have no corresponding presentation.
+
+##### Rules
+- FE-CONS-01, FE-THEME-01, FE-L10N-07: reuse the existing `_GuideList`, `AppIcons.camera`, `Space` and `AppText`; original template labels remain data.
+- FE-SIMP-01, FE-SIMP-03, FE-RESP-04, FE-RESP-06, FE-A11Y-03, FE-A11Y-06: guidance takes no tap, has natural height, and preserves reachable caption/save controls.
+
+##### Steps
+1. Set `captureGuidePhotos` to "Photos to show". Convert `CaptureGuideCard`'s top guidance into one passive, immediately visible `_GuideList` with camera icon, that heading and `captureGuideItems(guide.photoFields)`. Remove the toggle, expansion semantics and top caption list. With no photo fields, render no guideline heading/container; retain the existing optional `targets` constructor contract.
+2. Gate the guide in `CaptureScreen` using `guide.photoFields.isNotEmpty`. Apply D2's exact caption-panel/state policy. Preserve `RecordCaptionField`'s focused-input protection, controller synchronization and lifecycle writes while removing approved panel-only state/listeners. Keep the six-line editor, voice/audio controls and W2's save-caption action.
+3. Regenerate pseudo/localization output with W2's commands. Update `frontend/test/features/capture/presentation/capture_guide_widgets_test.dart`: guidance is visible without interaction, no toggle/top caption row exists, empty/photo-empty/caption-only guides create no orphan heading, and long original labels remain complete. Assert D2's panel behavior during typing, dictation, recording, close and template change, alongside unchanged caption persistence.
+4. Update `frontend/test/features/capture/presentation/capture_workflow_fixture.dart` wherever it assumes `capture-guide-toggle`, expansion semantics and the caption panel. Replace only superseded guide interaction assertions with passive-guidance readability/semantics assertions. Preserve all target-picker, focus/caret, accessibility, failed-write, draft, resize, save and route tests used by the native/browser entrypoints.
+5. Exercise `ScreenMatrix.cells` with production fonts plus 393×886 at normal text and open keyboard. Assert immediate readable guidance, no overflow, six-line caption availability and reachable save actions; rotate/resize with a photo and caption present and assert neither is lost.
+6. Add tests named with prefix `feedback 2154 guide visual` in the guide suite using the existing theme/font/matrix support. Name outputs `frontend/test/features/capture/presentation/goldens/feedback_2154_guide_<corner>.png`, with `<corner>` from `ScreenMatrix.corners`. Under D3(a), also regenerate the existing `frontend/test/features/capture/presentation/goldens/capture_workflow_<corner>.png` set and `frontend/test/features/capture/presentation/goldens/capture_workflow_reported_light.png` through the native workflow entrypoint's `production Capture visual` tests. These 13 full-shell visuals intentionally lose the old guide button; update no unrelated visual baseline.
+
+##### Acceptance criteria
+- [x] Capture shows one immediate "Photos to show" guideline with original photo-field labels, no "What to capture" button and no top caption-guidance row; the focused caption-help panel follows D2.
+- [x] An empty photo-guidance list renders no guideline content and reserves no guideline space, including templates containing caption guidance alone.
+- [x] Template changes and captured-version edits display the correct photo guidance without stale state; template metadata and stored evidence are unchanged.
+- [ ] Guide, caption, voice/audio, photo intake and both saves remain readable/reachable across every declared width/orientation/theme/text/locale case; rotation and resizing retain draft evidence.
+- [ ] Updated widget, production-shell and D3 visual checks pass. FBK0000214 is resolved; W2's caption-save behavior remains verified.
+
+#### Integrated verification
+
+- [ ] Required analysis, localization, formatting, native/browser production workflow, preserved-contract, Windows offline and unchanged guardrail checks pass.
+- [x] Exactly the approved visual files are normally compared, inspected, externally archived with verified path/hash manifest and removed from the delivered tree.
+- [x] Changed ignored acceptance sources and recursive helper closure are delivered in a patch/hash manifest verified through a temporary index; the real index is unchanged.
+- [x] Documentation, tracker synchronization, tracker drift check and plan integrity are current.
+
+### Evidence
+
+Baseline at `5b289cc2`: preserved seven user-deleted earlier-archive paths and both new untracked archive directories. Dependencies 001/002 have fully checked acceptance. Pre-change focused run (`frontend/build/feedback2154-baseline.log`, exit 1): 229 passed, 16 failed (one unrelated project-import copy expectation and 15 absent Capture-settings golden baselines). No test PNGs existed before this run. Task 162 owns the known Chrome production bootstrap failure; task 150 owns unrelated guardrail gaps. Their acceptance remains separate.
+
+Implemented D1(a), D2(a) and the exact ICU photo-save labels in shared Dart. Idle clearing/undo and failure retry, original template guidance, captured-version editing, six-line caption synchronization, dictation/audio and durable photo-caption append/clear behavior remain covered. All 72 English/RTL caption matrix cases and all five native shell movement regressions pass. The latter distinguish independent capture GPS reads from retired reminder activity.
+
+Fresh verification: affected suites 426 passed / 17 failed; preserved-contract suites 107 passed / 4 failed. Failures: one existing project-import copy expectation, 15 absent Capture-settings baselines, a stale inline template-selector expectation, three absent context-overview baselines and one microphone-lease teardown assertion. The selector and lease failures also reproduce against original Capture widgets/parts from `5b289cc2` in isolated temporary acceptance copies, removed afterward. No unrelated baseline was generated or assertion weakened. Windows offline integration passes all four cases; the seven unchanged architecture guardrails pass all 78 checks, including deliberate-violation fixtures. Formatting, pseudo/copy generation checks and localization validation pass.
+
+D3 evidence: all 48 caption, 12 guide and 13 production Capture images passed normal comparisons and visual inspection. The unique external archive was reopened and every member path, SHA-256 and PNG decode verified before removing exactly those 73 generated sources. No test PNG remains. See [the portable visual manifest](../prompts/feedback-09102026-2154/164-visual-evidence.manifest.json). The [acceptance patch](../prompts/feedback-09102026-2154/164-acceptance-sources.patch) and [source manifest](../prompts/feedback-09102026-2154/164-acceptance-sources.manifest.json) deliver 64 sources in the recursive helper closure; temporary-index apply and all indexed content hashes pass, with the real index unchanged.
+
+Browser acceptance remains open: the Chrome production entrypoint exits 1 before loading any tests. Fresh requests for `/canvaskit/chromium/canvaskit.js` and `.wasm` both return 404 (`frontend/build/task164-chrome-renderer-status.json`), matching task 162's owned renderer-serving blocker. No SDK or speech-module workaround was applied. Full-project `flutter analyze --no-pub` passes with no issues. All 1,405 native workflow cases pass in four disjoint, exhaustive groups: Capture 433 (including 13 visuals), Manual 420, saved Capture 420 and other shell assertions 132; each group exits 0. Logs: `frontend/build/task164-native-capture.jsonl`, `task164-native-manual-final.log`, `task164-native-saved-final.log` and `task164-native-remaining-final.log`. Tracker synchronization, drift check and plan integrity pass. This task remains **Partially complete** because Chrome cannot load and the required broader suites retain the unrelated failures above.
