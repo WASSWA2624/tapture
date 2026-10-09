@@ -9,6 +9,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import '../domain/shipped_template_entry.dart';
+import '../domain/template_json.dart';
 import '../domain/template_repository.dart';
 import 'template_repository_impl.dart' show templateRepositoryProvider;
 
@@ -420,13 +421,22 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
         localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
       );
     }
-    final AutoFill? source = _autoFillOf(_string(raw['auto_fill']));
-    if (source == AutoFill.localAddress && type != FieldType.text) {
-      throw ValidationFailure(
-        localizedMessage: Copy.messages.fieldSourceAddressNeedsText,
-        localizedRecovery: Copy.messages.failureReinstallTheAppThenTryAgain,
-      );
-    }
+    final Result<TemplateDef> configured = TemplateJson.decode(
+      <String, Object?>{
+        'schema_version': TemplateJson.schemaVersion,
+        'name': 'Shipped source validation',
+        'fields': <Map<String, Object?>>[
+          <String, Object?>{
+            'field_key': raw['field_key'],
+            'type': typeName,
+            'auto_fill': raw['auto_fill'],
+            'validation': raw['validation'],
+          },
+        ],
+      },
+      projectId: '',
+    );
+    final FieldDef sourceField = configured.getOrThrow().fields.single;
     return FieldDef(
       fieldKey: _string(raw['field_key']),
       label: label,
@@ -440,7 +450,8 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
       requiredWhen: _optional(raw['required_when']),
       stickable: raw['stickable'] == true,
       refine: raw['refine'] == true,
-      autoFill: source,
+      autoFill: sourceField.autoFill,
+      validation: sourceField.validation,
       identity: false,
     );
   }
@@ -544,21 +555,6 @@ Requiredness _requirednessOf(String raw) {
     'REQUIRED' => Requiredness.required,
     'RECOMMENDED' => Requiredness.recommended,
     _ => Requiredness.optional,
-  };
-}
-
-AutoFill? _autoFillOf(String raw) {
-  return switch (raw.trim().toLowerCase()) {
-    'now' => AutoFill.now,
-    'today' => AutoFill.today,
-    'time' => AutoFill.time,
-    'sequence' => AutoFill.sequence,
-    'operator' => AutoFill.operator,
-    'device' => AutoFill.device,
-    'gps' => AutoFill.gps,
-    'context' => AutoFill.context,
-    'local_address' => AutoFill.localAddress,
-    _ => null,
   };
 }
 

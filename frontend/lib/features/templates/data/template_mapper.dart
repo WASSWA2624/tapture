@@ -83,10 +83,15 @@ abstract final class TemplateMapper {
     final FieldType type = fieldTypeFromWire(row.type);
     final Object? declaration = attrs[_autoFillKey];
     final AutoFill? known = _autoFillFromWire(declaration);
+    final Object? top = attrs[_autoFillTopKey];
+    final AutoFill? knownTop = _autoFillFromWire(top);
     final bool unavailable =
-        declaration != null &&
-        (known == null ||
-            (known == AutoFill.localAddress && type != FieldType.text));
+        (declaration != null &&
+            (known == null ||
+                (known == AutoFill.localAddress && type != FieldType.text))) ||
+        (top != null &&
+            (knownTop == null ||
+                (knownTop == AutoFill.localAddress && type != FieldType.text)));
     final AutoFill? autoFill = unavailable
         ? null
         : known ?? (row.autoFill ? AutoFill.context : null);
@@ -113,7 +118,10 @@ abstract final class TemplateMapper {
       validation: <String, Object?>{
         ...stored.validation,
         if (unavailable)
-          _attrsKey: <String, Object?>{_autoFillKey: declaration},
+          _attrsKey: <String, Object?>{
+            _autoFillKey: declaration ?? top,
+            if (attrs.containsKey(_autoFillTopKey)) _autoFillTopKey: top,
+          },
       },
       lookup: _objectMap(row.lookup),
       sortOrder: row.sortOrder,
@@ -213,6 +221,7 @@ const String _groupKey = 'group';
 const String _identityKey = 'identity';
 const String _requirednessKey = 'requiredness';
 const String _autoFillKey = 'autoFill';
+const String _autoFillTopKey = 'autoFillTop';
 
 ({String templateKey, Map<String, Object?> detection}) _detectionOf(
   String raw,
@@ -273,6 +282,10 @@ String _encodeValidation(FieldDef field) {
     attrs[_autoFillKey] = _autoFillToWire(field.autoFill!);
   } else if (_carriedSource(field) case final Object declaration) {
     attrs[_autoFillKey] = declaration;
+    final Object? carried = field.validation[_attrsKey];
+    if (carried is Map && carried.containsKey(_autoFillTopKey)) {
+      attrs[_autoFillTopKey] = carried[_autoFillTopKey];
+    }
   }
   if (attrs.isEmpty) {
     json.remove(_attrsKey);
@@ -376,7 +389,10 @@ Map<String, Object?> _asStringMap(Map<dynamic, dynamic> raw) {
   return <String, Object?>{
     for (final MapEntry<dynamic, dynamic> entry in raw.entries)
       if (entry.key is String)
-        entry.key as String: _canonicalNullable(entry.value),
+        entry.key
+            as String: entry.key == _autoFillKey || entry.key == _autoFillTopKey
+            ? entry.value
+            : _canonicalNullable(entry.value),
   };
 }
 

@@ -14,11 +14,19 @@ import 'package:tapture/features/capture/domain/photo_repository.dart';
 /// `AppPhotoThumb` draws it (FE-TEST-03).
 final class FakeCapturePhotoRepository implements CapturePhotoRepository {
   @override
-  Stream<List<DeletedEntity>> watchDeleted() => Stream<List<DeletedEntity>>.value(<DeletedEntity>[
-    for (final PhotoDraft draft in drafts.values)
-      if (tombstoned.contains(draft.id)) DeletedEntity(id: draft.id, kind: DeletedEntityKind.photo,
-        name: draft.originalFilename, projectId: draft.projectId, projectName: draft.projectId, deletedAt: DateTime.utc(2026)),
-  ]);
+  Stream<List<DeletedEntity>> watchDeleted() =>
+      Stream<List<DeletedEntity>>.value(<DeletedEntity>[
+        for (final PhotoDraft draft in drafts.values)
+          if (tombstoned.contains(draft.id))
+            DeletedEntity(
+              id: draft.id,
+              kind: DeletedEntityKind.photo,
+              name: draft.originalFilename,
+              projectId: draft.projectId,
+              projectName: draft.projectId,
+              deletedAt: DateTime.utc(2026),
+            ),
+      ]);
 
   @override
   Future<Result<void>> restore(String id) async {

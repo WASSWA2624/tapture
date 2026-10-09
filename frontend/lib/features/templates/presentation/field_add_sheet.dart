@@ -705,7 +705,8 @@ Map<String, Object?> _withoutCarriedSource(Map<String, Object?> validation) {
   final Object? raw = next['_tapture'];
   if (raw is Map) {
     final Map<String, Object?> attrs = Map<String, Object?>.from(raw)
-      ..remove('autoFill');
+      ..remove('autoFill')
+      ..remove('autoFillTop');
     if (attrs.isEmpty) {
       next.remove('_tapture');
     } else {

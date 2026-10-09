@@ -99,52 +99,54 @@ class AppDialog extends StatelessWidget {
         child: ConstrainedBox(
           key: const ValueKey<String>('app-dialog-surface'),
           constraints: const BoxConstraints(maxWidth: Sizes.dialogMaxWidth),
-          child: Padding(
-            padding: const EdgeInsets.all(Space.x4),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                _title(colors),
-                const SizedBox(height: Space.x3),
-                Text(
-                  message,
-                  style: AppText.body.copyWith(color: colors.onSurface),
-                ),
-                if (extra != null) ...<Widget>[
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(Space.x4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  _title(colors),
                   const SizedBox(height: Space.x3),
-                  extra!,
-                ],
-                const SizedBox(height: Space.x4),
-                Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: Space.x2,
-                  runSpacing: Space.x2,
-                  children: <Widget>[
-                    if (cancellable)
-                      AppButton(
-                        label: localCopy.cancel,
-                        variant: AppButtonVariant.text,
-                        onPressed: () => _cancel(context),
-                      ),
-                    if (alternativeLabel != null)
-                      AppButton(
-                        label: alternativeLabel!,
-                        variant: AppButtonVariant.secondary,
-                        onPressed: () => _alternative(context),
-                      ),
-                    AppButton(
-                      label: _alert ? localCopy.ok : confirmLabel,
-                      variant: destructive
-                          ? AppButtonVariant.destructive
-                          : AppButtonVariant.primary,
-                      onPressed: confirmEnabled
-                          ? () => _confirm(context)
-                          : null,
-                    ),
+                  Text(
+                    message,
+                    style: AppText.body.copyWith(color: colors.onSurface),
+                  ),
+                  if (extra != null) ...<Widget>[
+                    const SizedBox(height: Space.x3),
+                    extra!,
                   ],
-                ),
-              ],
+                  const SizedBox(height: Space.x4),
+                  Wrap(
+                    alignment: WrapAlignment.end,
+                    spacing: Space.x2,
+                    runSpacing: Space.x2,
+                    children: <Widget>[
+                      if (cancellable)
+                        AppButton(
+                          label: localCopy.cancel,
+                          variant: AppButtonVariant.text,
+                          onPressed: () => _cancel(context),
+                        ),
+                      if (alternativeLabel != null)
+                        AppButton(
+                          label: alternativeLabel!,
+                          variant: AppButtonVariant.secondary,
+                          onPressed: () => _alternative(context),
+                        ),
+                      AppButton(
+                        label: _alert ? localCopy.ok : confirmLabel,
+                        variant: destructive
+                            ? AppButtonVariant.destructive
+                            : AppButtonVariant.primary,
+                        onPressed: confirmEnabled
+                            ? () => _confirm(context)
+                            : null,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

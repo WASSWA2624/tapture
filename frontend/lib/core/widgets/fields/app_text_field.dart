@@ -231,6 +231,7 @@ class _AppTextFieldState extends State<AppTextField> {
       listenable: Listenable.merge(<Listenable>[field.controller, _dictation]),
       builder: (BuildContext context, Widget? _) {
         final Color onSurface = context.colors.onSurface;
+        final ThemeData theme = Theme.of(context);
         final ({String? text, Widget? widget, TextStyle? style}) support =
             _supportingCopy(field);
         Widget child = ConstrainedBox(
@@ -281,10 +282,17 @@ class _AppTextFieldState extends State<AppTextField> {
               hint: field.wrapLabel && field.hint != null
                   ? Text(
                       field.hint!,
-                      style: AppText.body.merge(
-                        InputDecorationTheme.of(context).hintStyle ??
-                            TextStyle(color: context.colors.onSurfaceMuted),
-                      ),
+                      style:
+                          (theme.useMaterial3
+                                  ? theme.textTheme.bodyLarge!
+                                  : theme.textTheme.titleMedium!)
+                              .merge(AppText.body)
+                              .merge(
+                                InputDecorationTheme.of(context).hintStyle ??
+                                    TextStyle(
+                                      color: context.colors.onSurfaceMuted,
+                                    ),
+                              ),
                     )
                   : null,
               helperText: support.text,

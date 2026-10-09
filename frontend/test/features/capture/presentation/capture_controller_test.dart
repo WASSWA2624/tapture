@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:drift/drift.dart' hide isNotNull, isNull;
+import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -16,6 +17,7 @@ import 'package:tapture/core/files/file_writer.dart';
 import 'package:tapture/core/files/storage_root.dart';
 import 'package:tapture/core/files/text_store.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
+import 'package:tapture/core/lifecycle/lifecycle_observer.dart';
 import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
@@ -26,6 +28,7 @@ import 'package:tapture/features/capture/data/drift_capture_persistence.dart';
 import 'package:tapture/features/capture/data/drift_photo_repository.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/caption_apply.dart';
+import 'package:tapture/features/capture/domain/capture_device_source.dart';
 import 'package:tapture/features/capture/domain/capture_persistence.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/capture_session_key.dart';
@@ -50,6 +53,193 @@ import '../../../support/fakes/fake_capture_record_persistence.dart';
 import '../../../support/fakes/fake_photo_repository.dart';
 
 void main() {
+  for (final (int header, bool hasContent, int reads) scenario
+      in <(int, bool, int)>[(2, true, 0), (2, false, 1), (1, true, 1)]) {
+    test(
+      'null-version recovery header${scenario.$1} content${scenario.$2} follows first-save source eligibility',
+      () async {
+        final CaptureSession recovered = CaptureSession(
+          id: 'legacy-owner',
+          projectId: 'p1',
+          templateId: 'address',
+          contextSnapshot: const <String, String>{},
+          values: scenario.$2
+              ? const <String, Object?>{'business': 'Retained original'}
+              : const <String, Object?>{},
+          valueSources: scenario.$2
+              ? const <String, String>{'business': 'TYPED'}
+              : const <String, String>{},
+        );
+        final _DeviceCaptureRig rig = await _DeviceCaptureRig.open(
+          headerVersion: scenario.$1,
+          initial: recovered,
+        );
+        addTearDown(rig.dispose);
+        expect(rig.controller.state.templateVersion, isNull);
+        expect(rig.reads.length, scenario.$3);
+        expect(
+          (await rig.persistence.loadSession('p1')).getOrThrow()?.toJson(),
+          recovered.toJson(),
+        );
+        if (scenario.$3 == 0) {
+          await rig.lifecycle.handle(AppLifecycleState.resumed);
+          await rig.container.pump();
+          expect(
+            rig.reads,
+            isEmpty,
+            reason: 'Resume cannot opt into an unknown captured shape.',
+          );
+          expect(rig.source.snapshot(recovered), isNull);
+        } else {
+          await rig.complete(0, '10.0.0.2');
+          expect(rig.source.snapshot(recovered), '10.0.0.2');
+          expect(rig.reads.length, 1);
+        }
+      },
+    );
+  }
+
+  test(
+    'same-owner recovery refreshes only after durability and rejects a late previous read',
+    () async {
+      final _DeviceCaptureRig rig = await _DeviceCaptureRig.open();
+      addTearDown(rig.dispose);
+      final CaptureSession initial = rig.controller.state;
+      expect(rig.reads.length, 1);
+      rig.persistence.fail = true;
+      expect(
+        await rig.controller.replaceSession(
+          initial.copyWith(
+            values: const <String, Object?>{'business': 'Failed'},
+          ),
+        ),
+        isA<FailureResult<void>>(),
+      );
+      expect(rig.reads.length, 1);
+      expect(rig.controller.state.toJson(), initial.toJson());
+      await rig.complete(0, '10.0.0.1');
+      expect(rig.source.snapshot(initial), '10.0.0.1');
+      expect(
+        (await rig.persistence.loadSession('p1')).getOrThrow()?.toJson(),
+        initial.toJson(),
+      );
+      rig.persistence.fail = false;
+      final CaptureSession recovered = initial.copyWith(
+        values: const <String, Object?>{'business': 'Recovered'},
+      );
+      _ok(await rig.controller.replaceSession(recovered));
+      expect(rig.reads.length, 2);
+      expect(
+        rig.reads[1].isCompleted,
+        isFalse,
+        reason: 'Recovery commits without waiting for enumeration.',
+      );
+      expect(rig.source.snapshot(recovered), isNull);
+      expect(
+        (await rig.persistence.loadSession('p1')).getOrThrow()?.toJson(),
+        recovered.toJson(),
+      );
+      _ok(await rig.controller.replaceSession(recovered));
+      expect(
+        rig.reads.length,
+        3,
+        reason: 'Each same-owner recovery starts exactly one new reading.',
+      );
+      rig.reads[1].complete(
+        const PlatformFacts.fake(addresses: <String>['10.0.0.2']),
+      );
+      await rig.reads[1].future;
+      expect(rig.source.snapshot(recovered), isNull);
+      await rig.complete(2, '10.0.0.3');
+      expect(rig.source.snapshot(recovered), '10.0.0.3');
+      expect(rig.controller.state.toJson(), recovered.toJson());
+    },
+  );
+
+  test(
+    'lifecycle resume refreshes the eligible owner once and leaves excluded owners unread',
+    () async {
+      final _DeviceCaptureRig rig = await _DeviceCaptureRig.open();
+      addTearDown(rig.dispose);
+      final CaptureSession initial = rig.controller.state;
+      final Map<String, Object?> durable = initial.toJson();
+      await rig.lifecycle.handle(AppLifecycleState.inactive);
+      await rig.lifecycle.handle(AppLifecycleState.paused);
+      expect(rig.reads.length, 1);
+      await rig.lifecycle.handle(AppLifecycleState.resumed);
+      await rig.container.pump();
+      expect(rig.reads.length, 2);
+      expect(rig.reads[1].isCompleted, isFalse);
+      expect(rig.source.snapshot(initial), isNull);
+      expect(
+        (await rig.persistence.loadSession('p1')).getOrThrow()?.toJson(),
+        durable,
+        reason: 'A source refresh has no session write.',
+      );
+      rig.reads[0].complete(
+        const PlatformFacts.fake(addresses: <String>['10.0.0.1']),
+      );
+      await rig.reads[0].future;
+      expect(rig.source.snapshot(initial), isNull);
+      await rig.complete(1, '10.0.0.2');
+      expect(rig.source.snapshot(initial), '10.0.0.2');
+      for (final (String templateId, int version) target in <(String, int)>[
+        ('no-source', 1),
+        ('malformed-source', 1),
+        ('address', 0),
+        ('missing', 1),
+      ]) {
+        _ok(await rig.controller.setTemplate(target.$1, version: target.$2));
+        await rig.lifecycle.handle(AppLifecycleState.resumed);
+        await rig.container.pump();
+        expect(rig.reads.length, 2, reason: target.toString());
+        expect(rig.source.snapshot(rig.controller.state), isNull);
+      }
+      _ok(
+        await rig.controller.replaceSession(
+          initial.copyWith(recordId: 'committed'),
+        ),
+      );
+      await rig.lifecycle.handle(AppLifecycleState.resumed);
+      await rig.container.pump();
+      expect(rig.reads.length, 2);
+      expect(rig.source.snapshot(rig.controller.state), isNull);
+      _ok(
+        await rig.controller.replaceSession(
+          initial.copyWith(recordId: 'committed', editing: true),
+        ),
+      );
+      await rig.lifecycle.handle(AppLifecycleState.resumed);
+      await rig.container.pump();
+      expect(rig.reads.length, 2);
+      rig.disposeContainer();
+      await rig.lifecycle.handle(AppLifecycleState.resumed);
+      expect(
+        rig.reads.length,
+        2,
+        reason: 'Disposal cancels the owned lifecycle subscription.',
+      );
+    },
+  );
+
+  test(
+    'lifecycle and same-owner recovery preserve the default unavailable device port',
+    () async {
+      final _DeviceCaptureRig rig = await _DeviceCaptureRig.open(native: false);
+      addTearDown(rig.dispose);
+      final CaptureSession initial = rig.controller.state;
+      _ok(await rig.controller.replaceSession(initial));
+      await rig.lifecycle.handle(AppLifecycleState.resumed);
+      await rig.container.pump();
+      expect(rig.reads, isEmpty);
+      expect(rig.source.snapshot(initial), isNull);
+      expect(
+        (await rig.persistence.loadSession('p1')).getOrThrow()?.toJson(),
+        initial.toJson(),
+      );
+    },
+  );
+
   test(
     'device reads follow loaded pinned shape and invalidate late reset and history-zero results',
     () async {
@@ -90,6 +280,13 @@ void main() {
         photos.dispose();
         await templates.close();
       });
+      // Match Capture's Consumer lifetime: Riverpod pauses dependency streams
+      // for a controller that is only read imperatively and has no listener.
+      final ProviderSubscription<CaptureSession> capture = scoped.listen(
+        captureControllerProvider('p1'),
+        (_, _) {},
+      );
+      addTearDown(capture.close);
       final CaptureController controller = scoped.read(
         captureControllerProvider('p1').notifier,
       );
@@ -121,6 +318,10 @@ void main() {
         ),
       );
       templates.add(<TemplateDef>[current]);
+      expect(
+        await scoped.read(captureProjectTemplatesProvider('p1').future),
+        <TemplateDef>[current],
+      );
       await scoped.pump();
       expect(
         reads,
@@ -1095,6 +1296,152 @@ void main() {
     _ok(await controller.saveRaw(records.persist));
     expect(records.persisted.single.audio.single.id, _clip.id);
   });
+}
+
+/// Owned controller, durable store and pending device reads for resume tests.
+final class _DeviceCaptureRig {
+  _DeviceCaptureRig({
+    required this.container,
+    required this.controller,
+    required this.source,
+    required this.persistence,
+    required this.lifecycle,
+    required this.reads,
+    required this._photos,
+    required this._subscription,
+  });
+
+  final ProviderContainer container;
+  final CaptureController controller;
+  final CaptureDeviceSource source;
+  final _FailingSaves persistence;
+  final LifecycleObserver lifecycle;
+  final List<Completer<PlatformFacts>> reads;
+  final FakePhotoRepository _photos;
+  final ProviderSubscription<CaptureSession> _subscription;
+  bool _disposed = false;
+
+  static Future<_DeviceCaptureRig> open({
+    bool native = true,
+    int headerVersion = 1,
+    CaptureSession? initial,
+  }) async {
+    final FakePhotoRepository photos = FakePhotoRepository();
+    final _FailingSaves persistence = _FailingSaves(
+      CapturePersistenceImpl(photos: photos, store: TextStore.memory()),
+    );
+    final LifecycleObserver lifecycle = LifecycleObserver.fake();
+    final List<Completer<PlatformFacts>> reads = <Completer<PlatformFacts>>[];
+    final List<TemplateDef> templates = <TemplateDef>[
+      aTemplate(
+        id: 'address',
+        projectId: 'p1',
+        fields: const <FieldDef>[
+          FieldDef(
+            fieldKey: 'network_address',
+            label: 'Address',
+            type: FieldType.text,
+            autoFill: AutoFill.localAddress,
+          ),
+        ],
+      ).copyWith(version: headerVersion),
+      aTemplate(
+        id: 'no-source',
+        projectId: 'p1',
+        fields: const <FieldDef>[
+          FieldDef(
+            fieldKey: 'business',
+            label: 'Business',
+            type: FieldType.text,
+          ),
+        ],
+      ),
+      aTemplate(
+        id: 'malformed-source',
+        projectId: 'p1',
+        fields: const <FieldDef>[
+          FieldDef(
+            fieldKey: 'network_address',
+            label: 'Address',
+            type: FieldType.number,
+            autoFill: AutoFill.localAddress,
+          ),
+        ],
+      ),
+    ];
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        photoRepositoryProvider.overrideWithValue(photos),
+        capturePersistenceProvider.overrideWithValue(persistence),
+        lifecycleObserverProvider.overrideWithValue(lifecycle),
+        captureProjectTemplatesProvider.overrideWith(
+          (Ref _, String key) => Stream<List<TemplateDef>>.value(templates),
+        ),
+        if (native)
+          captureDeviceSourceProvider.overrideWith((Ref ref, String key) {
+            final CaptureDeviceSources source = CaptureDeviceSources(
+              clock: FixedClock(DateTime.utc(2026, 10, 9)),
+              readFacts: () {
+                final Completer<PlatformFacts> pending =
+                    Completer<PlatformFacts>();
+                reads.add(pending);
+                return pending.future;
+              },
+            );
+            ref.onDispose(source.dispose);
+            return source;
+          }),
+      ],
+    );
+    final ProviderSubscription<CaptureSession> subscription = container.listen(
+      captureControllerProvider('p1'),
+      (_, _) {},
+    );
+    final CaptureController controller = container.read(
+      captureControllerProvider('p1').notifier,
+    );
+    if (initial == null) {
+      _ok(await controller.setTemplate('address', version: 1));
+    } else {
+      _ok(await controller.replaceSession(initial));
+    }
+    expect(
+      await container.read(captureProjectTemplatesProvider('p1').future),
+      templates,
+    );
+    await container.pump();
+    return _DeviceCaptureRig(
+      container: container,
+      controller: controller,
+      source: container.read(captureDeviceSourceProvider('p1')),
+      persistence: persistence,
+      lifecycle: lifecycle,
+      reads: reads,
+      photos: photos,
+      subscription: subscription,
+    );
+  }
+
+  Future<void> complete(int index, String address) async {
+    final Future<void> ready = source.changes.firstWhere(
+      (_) => source.snapshot(controller.state) == address,
+    );
+    reads[index].complete(PlatformFacts.fake(addresses: <String>[address]));
+    await ready;
+  }
+
+  void disposeContainer() {
+    if (_disposed) return;
+    _disposed = true;
+    _subscription.close();
+    container.dispose();
+  }
+
+  void dispose() {
+    disposeContainer();
+    _photos.dispose();
+    lifecycle.dispose();
+  }
 }
 
 /// Session storage whose saves fail while [fail] is set.

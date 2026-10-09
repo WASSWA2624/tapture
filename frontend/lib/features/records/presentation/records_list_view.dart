@@ -192,8 +192,8 @@ int _rowsThatFit(double height) {
   return (height / (Sizes.minTapTarget + Space.x6)).floor().clamp(0, 12);
 }
 
-/// The virtualised rows. Every row has the prototype's height, so the list
-/// jumps to any of thousands of rows without building the ones between.
+/// Lazy rows. Full lists use a prototype extent for direct jumps; narrow
+/// panes measure each row so complete text can wrap at larger scales.
 class _RecordRows extends StatelessWidget {
   const _RecordRows({
     required this.projectId,
@@ -220,7 +220,7 @@ class _RecordRows extends StatelessWidget {
       child: ListView.builder(
         key: const ValueKey<String>('records-list'),
         itemCount: total,
-        prototypeItem: RecordsListRow.prototype(pane: pane),
+        prototypeItem: pane ? null : RecordsListRow.prototype(pane: false),
         itemBuilder: (BuildContext context, int index) {
           return RecordsListRow(
             projectId: projectId,

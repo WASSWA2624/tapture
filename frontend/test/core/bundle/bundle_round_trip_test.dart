@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/bundle/bundle.dart';
 import 'package:tapture/core/bundle/bundle_privacy.dart';
@@ -23,9 +23,9 @@ import 'package:tapture/features/meetings/domain/meeting_repository.dart';
 import 'package:tapture/features/merge/data/package_files.dart';
 import 'package:tapture/features/merge/data/package_import_repository_impl.dart';
 import 'package:tapture/features/merge/domain/domain.dart';
+import 'package:tapture/features/templates/data/template_repository_impl.dart';
 import 'package:tapture/features/templates/templates.dart'
     show AutoFill, FieldDef, TemplateDef, TemplateVersioning;
-import 'package:tapture/features/templates/data/template_repository_impl.dart';
 import 'package:tapture/features/transcripts/transcripts.dart'
     show Transcript, TranscriptRepositoryImpl;
 
@@ -63,32 +63,74 @@ void main() {
     }
   });
 
-  test('LOCAL_ADDRESS and captured versions survive real package writing, inspection and SQL import', () async {
-    final FixedClock clock = FixedClock(DateTime.utc(2026, 10, 9));
-    TemplateRepositoryImpl templates(sqlite.AppDatabase db) => TemplateRepositoryImpl(
-        db: db, clock: clock, deviceId: 'device-test', ids: UuidV7Service.sequence(clock));
-    final String templateId = (await source.db.select(source.db.templates).getSingle()).id;
-    final TemplateDef original = _ok(await templates(source.db).byId(templateId))!;
-    final TemplateDef configured = _ok(await templates(source.db).save(original.copyWith(
-      fields: <FieldDef>[for (final FieldDef field in original.fields)
-        field.copyWith(autoFill: AutoFill.localAddress)],
-    )));
-    final TemplateDef renamed = _ok(await templates(source.db).save(configured.copyWith(name: 'Address template')));
-    final List<Map<String, Object?>> raw = await _rows(source.db, 'record_fields');
-    final InspectedBundle bundle = await _package(source);
-    _ok(await PackageImportRepositoryImpl(db: target,
-      files: PackageFiles(storageRoot: StorageRoot.fake(documentsDirectory: targetDocuments)),
-      clock: clock, deviceId: 'device-b', ids: UuidV7Service.sequence(clock),
-    ).importAsNew(bundle));
-    final TemplateDef loaded = _ok(await templates(target).byId(templateId))!;
-    expect(loaded.version, renamed.version);
-    expect(loaded.fields.single.autoFill, AutoFill.localAddress);
-    expect(TemplateVersioning.shapeFor(loaded, configured.version)!.fields.single.autoFill,
-        AutoFill.localAddress);
-    expect(TemplateVersioning.shapeFor(loaded, original.version)!.fields.single.autoFill, isNull);
-    expect(await _rows(target, 'record_fields'), raw);
-    expect(await _rows(source.db, 'record_fields'), raw);
-  });
+  test(
+    'LOCAL_ADDRESS and captured versions survive real package writing, inspection and SQL import',
+    () async {
+      final FixedClock clock = FixedClock(DateTime.utc(2026, 10, 9));
+      TemplateRepositoryImpl templates(sqlite.AppDatabase db) =>
+          TemplateRepositoryImpl(
+            db: db,
+            clock: clock,
+            deviceId: 'device-test',
+            ids: UuidV7Service.sequence(clock),
+          );
+      final String templateId =
+          (await source.db.select(source.db.templates).getSingle()).id;
+      final TemplateDef original = _ok(
+        await templates(source.db).byId(templateId),
+      )!;
+      final TemplateDef configured = _ok(
+        await templates(source.db).save(
+          original.copyWith(
+            fields: <FieldDef>[
+              for (final FieldDef field in original.fields)
+                field.copyWith(autoFill: AutoFill.localAddress),
+            ],
+          ),
+        ),
+      );
+      final TemplateDef renamed = _ok(
+        await templates(
+          source.db,
+        ).save(configured.copyWith(name: 'Address template')),
+      );
+      final List<Map<String, Object?>> raw = await _rows(
+        source.db,
+        'record_fields',
+      );
+      final InspectedBundle bundle = await _package(source);
+      _ok(
+        await PackageImportRepositoryImpl(
+          db: target,
+          files: PackageFiles(
+            storageRoot: StorageRoot.fake(documentsDirectory: targetDocuments),
+          ),
+          clock: clock,
+          deviceId: 'device-b',
+          ids: UuidV7Service.sequence(clock),
+        ).importAsNew(bundle),
+      );
+      final TemplateDef loaded = _ok(await templates(target).byId(templateId))!;
+      expect(loaded.version, renamed.version);
+      expect(loaded.fields.single.autoFill, AutoFill.localAddress);
+      expect(
+        TemplateVersioning.shapeFor(
+          loaded,
+          configured.version,
+        )!.fields.single.autoFill,
+        AutoFill.localAddress,
+      );
+      expect(
+        TemplateVersioning.shapeFor(
+          loaded,
+          original.version,
+        )!.fields.single.autoFill,
+        isNull,
+      );
+      expect(await _rows(target, 'record_fields'), raw);
+      expect(await _rows(source.db, 'record_fields'), raw);
+    },
+  );
 
   test('a package carries finished transcripts and their segments with the '
       'raw text unchanged, and imports them row for row', () async {

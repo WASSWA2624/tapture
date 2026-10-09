@@ -73,84 +73,284 @@ void main() {
       File('${targetDocuments.path}/Tapture/projects/$folder/$path');
 
   for (final Object declaration in <Object>[
-    'FUTURE_SOURCE', false, 42, <String, Object?>{'provider': 'future'}, 'LOCAL_ADDRESS',
+    'FUTURE_SOURCE',
+    false,
+    42,
+    <String, Object?>{'provider': 'future'},
+    'LOCAL_ADDRESS',
   ]) {
-    test('an imported SQL source $declaration is refused before files or database rows change', () async {
-      final InspectedBundle checked = await _package(source);
-      final InspectedBundle invalid = _sourceVariant(checked, declaration);
-      final before = await _storageRows(target);
-      final files = _storedFiles(targetDocuments);
-      expect(await repository().importAsNew(invalid), isA<FailureResult<ImportedProject>>());
-      expect(await _storageRows(target), before);
-      expect(_storedFiles(targetDocuments), files);
-    });
+    test(
+      'an imported SQL source $declaration is refused before files or database rows change',
+      () async {
+        final InspectedBundle checked = await _package(source);
+        final InspectedBundle invalid = _sourceVariant(checked, declaration);
+        final before = await _storageRows(target);
+        final files = _storedFiles(targetDocuments);
+        expect(
+          await repository().importAsNew(invalid),
+          isA<FailureResult<ImportedProject>>(),
+        );
+        expect(await _storageRows(target), before);
+        expect(_storedFiles(targetDocuments), files);
+      },
+    );
   }
   for (final bool nested in <bool>[false, true]) {
-    test('an unsupported ${nested ? 'nested' : 'top-level'} history source cannot import or merge', () async {
-      final InspectedBundle checked = await _package(source);
-      final InspectedBundle invalid = _sourceVariant(checked, 'FUTURE_SOURCE', history: true, nested: nested);
-      expect(await repository().importAsNew(invalid), isA<FailureResult<ImportedProject>>());
-      expect(await target.select(target.projects).get(), isEmpty);
-      expect(_storedFiles(targetDocuments), isEmpty);
-      _ok(await repository().importAsNew(checked));
-      final MergePlan plan = await _plan(repository(), checked, source);
-      final before = await _storageRows(target);
-      final files = _storedFiles(targetDocuments);
-      expect(await repository().merge(bundle: invalid, projectId: source.projectId, plan: plan,
-        choices: const <String, ConflictChoice>{}, duplicates: const <PossibleDuplicate>[],
-        skipped: const <String>{}, chooser: 'Ben'), isA<FailureResult<MergeOutcome>>());
-      expect(await _storageRows(target), before);
-      expect(_storedFiles(targetDocuments), files);
-    });
+    test(
+      'an unsupported ${nested ? 'nested' : 'top-level'} history source cannot import or merge',
+      () async {
+        final InspectedBundle checked = await _package(source);
+        final InspectedBundle invalid = _sourceVariant(
+          checked,
+          'FUTURE_SOURCE',
+          history: true,
+          nested: nested,
+        );
+        expect(
+          await repository().importAsNew(invalid),
+          isA<FailureResult<ImportedProject>>(),
+        );
+        expect(await target.select(target.projects).get(), isEmpty);
+        expect(_storedFiles(targetDocuments), isEmpty);
+        _ok(await repository().importAsNew(checked));
+        final MergePlan plan = await _plan(repository(), checked, source);
+        final before = await _storageRows(target);
+        final files = _storedFiles(targetDocuments);
+        expect(
+          await repository().merge(
+            bundle: invalid,
+            projectId: source.projectId,
+            plan: plan,
+            choices: const <String, ConflictChoice>{},
+            duplicates: const <PossibleDuplicate>[],
+            skipped: const <String>{},
+            chooser: 'Ben',
+          ),
+          isA<FailureResult<MergeOutcome>>(),
+        );
+        expect(await _storageRows(target), before);
+        expect(_storedFiles(targetDocuments), files);
+      },
+    );
+  }
+  for (final bool primary in <bool>[false, true]) {
+    test(
+      'an unsupported SQL companion with ${primary ? 'known primary' : 'no primary'} cannot pass package preflight',
+      () async {
+        final InspectedBundle checked = await _package(source);
+        final InspectedBundle invalid = _sourceVariant(checked, 'NOW');
+        invalid.rowsOf('template_fields').first['validation'] = jsonEncode(
+          <String, Object?>{
+            '_tapture': <String, Object?>{
+              if (primary) 'autoFill': 'NOW',
+              'autoFillTop': <Object?>['future', null],
+            },
+          },
+        );
+        expect(
+          await repository().importAsNew(invalid),
+          isA<FailureResult<ImportedProject>>(),
+        );
+        expect(await target.select(target.projects).get(), isEmpty);
+        expect(_storedFiles(targetDocuments), isEmpty);
+        _ok(await repository().importAsNew(checked));
+        final MergePlan plan = await _plan(repository(), checked, source);
+        final before = await _storageRows(target);
+        final files = _storedFiles(targetDocuments);
+        expect(
+          await repository().merge(
+            bundle: invalid,
+            projectId: source.projectId,
+            plan: plan,
+            choices: const <String, ConflictChoice>{},
+            duplicates: const <PossibleDuplicate>[],
+            skipped: const <String>{},
+            chooser: 'Ben',
+          ),
+          isA<FailureResult<MergeOutcome>>(),
+        );
+        expect(await _storageRows(target), before);
+        expect(_storedFiles(targetDocuments), files);
+      },
+    );
   }
   for (final bool update in <bool>[false, true]) {
-    test('direct merge ${update ? 'updates' : 'inserts'} cannot bypass source validation or copy files', () async {
+    test(
+      'direct merge ${update ? 'updates' : 'inserts'} cannot bypass source validation or copy files',
+      () async {
+        final InspectedBundle checked = await _package(source);
+        _ok(await repository().importAsNew(checked));
+        final MergePlan empty = await _plan(repository(), checked, source);
+        final Map<String, Object?> field = checked
+            .rowsOf('template_fields')
+            .first;
+        final Map<String, Object?> invalid = <String, Object?>{
+          if (!update) ...field,
+          'id': update ? field['id'] : 'field-invalid',
+          'validation': '{"_tapture":{"autoFill":"FUTURE_SOURCE"}}',
+        };
+        final BundleEntry file = checked.manifest.entries.firstWhere(
+          (entry) => entry.path.startsWith('photos/'),
+        );
+        final MergePlan plan = MergePlan(
+          inserts: update
+              ? const <String, List<Map<String, Object?>>>{}
+              : <String, List<Map<String, Object?>>>{
+                  'template_fields': <Map<String, Object?>>[invalid],
+                },
+          updates: update
+              ? <String, List<Map<String, Object?>>>{
+                  'template_fields': <Map<String, Object?>>[invalid],
+                }
+              : const <String, List<Map<String, Object?>>>{},
+          files: <({String entry, String target})>[
+            (entry: file.path, target: 'photos/should-not-copy.jpg'),
+          ],
+          settled: empty.settled,
+          conflicts: empty.conflicts,
+          counts: empty.counts,
+          insertedRecords: empty.insertedRecords,
+        );
+        final before = await _storageRows(target);
+        final files = _storedFiles(targetDocuments);
+        expect(
+          await repository().merge(
+            bundle: checked,
+            projectId: source.projectId,
+            plan: plan,
+            choices: const <String, ConflictChoice>{},
+            duplicates: const <PossibleDuplicate>[],
+            skipped: const <String>{},
+            chooser: 'Ben',
+          ),
+          isA<FailureResult<MergeOutcome>>(),
+        );
+        expect(await _storageRows(target), before);
+        expect(_storedFiles(targetDocuments), files);
+      },
+    );
+  }
+
+  for (final bool history in <bool>[false, true]) {
+    test(
+      'a partial merge ${history ? 'history' : 'raw flag'} update is checked before file writes',
+      () async {
+        final InspectedBundle checked = await _package(source);
+        _ok(await repository().importAsNew(checked));
+        final MergePlan empty = await _plan(repository(), checked, source);
+        final InspectedBundle invalid = _sourceVariant(
+          checked,
+          'FUTURE_SOURCE',
+          history: history,
+        );
+        final String table = history ? 'templates' : 'template_fields';
+        final Map<String, Object?> row = checked.rowsOf(table).first;
+        final Map<String, Object?> update = <String, Object?>{
+          'id': row['id'],
+          if (history)
+            'detection': invalid.rowsOf(table).first['detection']
+          else
+            'auto_fill': 'FUTURE_SOURCE',
+        };
+        final BundleEntry file = checked.manifest.entries.firstWhere(
+          (entry) => entry.path.startsWith('photos/'),
+        );
+        final MergePlan plan = MergePlan(
+          inserts: const {},
+          updates: <String, List<Map<String, Object?>>>{
+            table: <Map<String, Object?>>[update],
+          },
+          files: <({String entry, String target})>[
+            (entry: file.path, target: 'photos/should-not-copy.jpg'),
+          ],
+          settled: empty.settled,
+          conflicts: empty.conflicts,
+          counts: empty.counts,
+          insertedRecords: empty.insertedRecords,
+        );
+        final before = await _storageRows(target);
+        final files = _storedFiles(targetDocuments);
+        expect(
+          await repository().merge(
+            bundle: checked,
+            projectId: source.projectId,
+            plan: plan,
+            choices: const <String, ConflictChoice>{},
+            duplicates: const <PossibleDuplicate>[],
+            skipped: const <String>{},
+            chooser: 'Ben',
+          ),
+          isA<FailureResult<MergeOutcome>>(),
+        );
+        expect(await _storageRows(target), before);
+        expect(_storedFiles(targetDocuments), files);
+      },
+    );
+  }
+
+  for (final int flag in <int>[0, 1]) {
+    test(
+      'legacy boolean source flag $flag and validation arrays remain valid package data',
+      () async {
+        await source.db.customStatement(
+          'UPDATE template_fields SET auto_fill = ?, validation = ?',
+          <Object?>[flag, '["legacy-rule"]'],
+        );
+        final InspectedBundle checked = await _package(source);
+        _ok(await repository().importAsNew(checked));
+        final List<QueryRow> fields = await target
+            .customSelect('SELECT auto_fill, validation FROM template_fields')
+            .get();
+        expect(fields, isNotEmpty);
+        for (final QueryRow row in fields) {
+          expect(row.data['auto_fill'], flag);
+          expect(row.data['validation'], '["legacy-rule"]');
+        }
+      },
+    );
+  }
+
+  test(
+    'a partial merge type update cannot make an existing local address non-text',
+    () async {
       final InspectedBundle checked = await _package(source);
       _ok(await repository().importAsNew(checked));
       final MergePlan empty = await _plan(repository(), checked, source);
-      final Map<String, Object?> field = checked.rowsOf('template_fields').first;
-      final Map<String, Object?> invalid = <String, Object?>{
-        if (!update) ...field,
-        'id': update ? field['id'] : 'field-invalid',
-        'validation': '{"_tapture":{"autoFill":"FUTURE_SOURCE"}}',
-      };
-      final BundleEntry file = checked.manifest.entries.firstWhere((entry) => entry.path.startsWith('photos/'));
+      await target.customStatement(
+        "UPDATE template_fields SET auto_fill = 1, validation = ? WHERE id = 'field-serial'",
+        <Object?>['{"_tapture":{"autoFill":"LOCAL_ADDRESS"}}'],
+      );
       final MergePlan plan = MergePlan(
-        inserts: update ? const <String, List<Map<String, Object?>>>{} : <String, List<Map<String, Object?>>>{'template_fields': <Map<String, Object?>>[invalid]},
-        updates: update ? <String, List<Map<String, Object?>>>{'template_fields': <Map<String, Object?>>[invalid]} : const <String, List<Map<String, Object?>>>{},
-        files: <({String entry, String target})>[(entry: file.path, target: 'photos/should-not-copy.jpg')],
-        settled: empty.settled, conflicts: empty.conflicts, counts: empty.counts, insertedRecords: empty.insertedRecords,
+        inserts: const {},
+        files: empty.files,
+        settled: empty.settled,
+        conflicts: const [],
+        counts: empty.counts,
+        insertedRecords: const [],
+        updates: const <String, List<Map<String, Object?>>>{
+          'template_fields': <Map<String, Object?>>[
+            <String, Object?>{'id': 'field-serial', 'type': 'number'},
+          ],
+        },
       );
       final before = await _storageRows(target);
       final files = _storedFiles(targetDocuments);
-      expect(await repository().merge(bundle: checked, projectId: source.projectId, plan: plan,
-        choices: const <String, ConflictChoice>{}, duplicates: const <PossibleDuplicate>[],
-        skipped: const <String>{}, chooser: 'Ben'), isA<FailureResult<MergeOutcome>>());
+      expect(
+        await repository().merge(
+          bundle: checked,
+          projectId: source.projectId,
+          plan: plan,
+          choices: const <String, ConflictChoice>{},
+          duplicates: const <PossibleDuplicate>[],
+          skipped: const <String>{},
+          chooser: 'Ben',
+        ),
+        isA<FailureResult<MergeOutcome>>(),
+      );
       expect(await _storageRows(target), before);
       expect(_storedFiles(targetDocuments), files);
-    });
-  }
-
-  test('a partial merge type update cannot make an existing local address non-text', () async {
-    final InspectedBundle checked = await _package(source);
-    _ok(await repository().importAsNew(checked));
-    final MergePlan empty = await _plan(repository(), checked, source);
-    await target.customStatement("UPDATE template_fields SET auto_fill = 1, validation = ? WHERE id = 'field-serial'",
-        <Object?>['{"_tapture":{"autoFill":"LOCAL_ADDRESS"}}']);
-    final MergePlan plan = MergePlan(inserts: const {}, files: empty.files,
-      settled: empty.settled, conflicts: const [], counts: empty.counts, insertedRecords: const [],
-      updates: const <String, List<Map<String, Object?>>>{'template_fields': <Map<String, Object?>>[
-        <String, Object?>{'id': 'field-serial', 'type': 'number'},
-      ]},
-    );
-    final before = await _storageRows(target);
-    final files = _storedFiles(targetDocuments);
-    expect(await repository().merge(bundle: checked, projectId: source.projectId, plan: plan,
-      choices: const <String, ConflictChoice>{}, duplicates: const <PossibleDuplicate>[],
-      skipped: const <String>{}, chooser: 'Ben'), isA<FailureResult<MergeOutcome>>());
-    expect(await _storageRows(target), before);
-    expect(_storedFiles(targetDocuments), files);
-  });
+    },
+  );
 
   test(
     'import copies entries through the stream boundary without reading whole originals',
@@ -1327,23 +1527,44 @@ Future<List<String>> _segmentTexts(sqlite.AppDatabase db) async {
   ];
 }
 
-InspectedBundle _sourceVariant(InspectedBundle bundle, Object declaration, {
-  bool history = false, bool nested = false,
+InspectedBundle _sourceVariant(
+  InspectedBundle bundle,
+  Object declaration, {
+  bool history = false,
+  bool nested = false,
 }) {
-  final Map<String, List<Map<String, Object?>>> tables = <String, List<Map<String, Object?>>>{
-    for (final table in bundle.tables.entries)
-      table.key: <Map<String, Object?>>[for (final row in table.value) Map<String, Object?>.of(row)],
-  };
+  final Map<String, List<Map<String, Object?>>> tables =
+      <String, List<Map<String, Object?>>>{
+        for (final table in bundle.tables.entries)
+          table.key: <Map<String, Object?>>[
+            for (final row in table.value) Map<String, Object?>.of(row),
+          ],
+      };
   if (history) {
-    final Map<String, Object?> snapshot = TemplateJson.encode(TemplateDef(
-      id: '', templateKey: 'history', name: 'History', version: 1,
-      fields: const <FieldDef>[FieldDef(fieldKey: 'serial_number', label: 'Serial', type: FieldType.text)],
-      identityFieldKeys: const <String>[], rows: const [],
-    ));
-    final Map<String, Object?> field = (snapshot['fields']! as List).first as Map<String, Object?>;
+    final Map<String, Object?> snapshot = TemplateJson.encode(
+      const TemplateDef(
+        id: '',
+        templateKey: 'history',
+        name: 'History',
+        version: 1,
+        fields: <FieldDef>[
+          FieldDef(
+            fieldKey: 'serial_number',
+            label: 'Serial',
+            type: FieldType.text,
+          ),
+        ],
+        identityFieldKeys: <String>[],
+        rows: [],
+      ),
+    );
+    final Map<String, Object?> field =
+        (snapshot['fields']! as List).first as Map<String, Object?>;
     if (nested) {
       field['auto_fill'] = 'NOW';
-      field['validation'] = <String, Object?>{'_tapture': <String, Object?>{'autoFill': declaration}};
+      field['validation'] = <String, Object?>{
+        '_tapture': <String, Object?>{'autoFill': declaration},
+      };
     } else {
       field['auto_fill'] = declaration;
     }
@@ -1354,18 +1575,36 @@ InspectedBundle _sourceVariant(InspectedBundle bundle, Object declaration, {
     tables['template_fields']!.first.addAll(<String, Object?>{
       'type': declaration == 'LOCAL_ADDRESS' ? 'number' : 'text',
       'auto_fill': 1,
-      'validation': jsonEncode(<String, Object?>{'_tapture': <String, Object?>{'autoFill': declaration}}),
+      'validation': jsonEncode(<String, Object?>{
+        '_tapture': <String, Object?>{'autoFill': declaration},
+      }),
     });
   }
-  return InspectedBundle(manifest: bundle.manifest, tables: tables, name: bundle.name,
-      readEntry: bundle.readEntry, openEntry: bundle.openEntry, close: bundle.close);
+  return InspectedBundle(
+    manifest: bundle.manifest,
+    tables: tables,
+    name: bundle.name,
+    readEntry: bundle.readEntry,
+    openEntry: bundle.openEntry,
+    close: bundle.close,
+  );
 }
 
-Future<Map<String, List<Map<String, Object?>>>> _storageRows(sqlite.AppDatabase db) async {
-  final Map<String, List<Map<String, Object?>>> rows = <String, List<Map<String, Object?>>>{};
-  for (final String table in <String>{...BundleFormat.insertOrder, 'merge_sessions', 'merge_conflicts', 'version_vectors'}) {
+Future<Map<String, List<Map<String, Object?>>>> _storageRows(
+  sqlite.AppDatabase db,
+) async {
+  final Map<String, List<Map<String, Object?>>> rows =
+      <String, List<Map<String, Object?>>>{};
+  for (final String table in <String>{
+    ...BundleFormat.insertOrder,
+    'merge_sessions',
+    'merge_conflicts',
+    'version_vectors',
+  }) {
     rows[table] = <Map<String, Object?>>[
-      for (final QueryRow row in await db.customSelect('SELECT * FROM $table ORDER BY id').get()) row.data,
+      for (final QueryRow row
+          in await db.customSelect('SELECT * FROM $table ORDER BY id').get())
+        row.data,
     ];
   }
   return rows;
@@ -1373,7 +1612,9 @@ Future<Map<String, List<Map<String, Object?>>>> _storageRows(sqlite.AppDatabase 
 
 Map<String, String> _storedFiles(Directory root) => <String, String>{
   for (final File file in root.listSync(recursive: true).whereType<File>())
-    file.path.substring(root.path.length): crypto.sha256.convert(file.readAsBytesSync()).toString(),
+    file.path.substring(root.path.length): crypto.sha256
+        .convert(file.readAsBytesSync())
+        .toString(),
 };
 
 /// Packages written so far, so each gets its own id and file.

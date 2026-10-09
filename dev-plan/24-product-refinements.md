@@ -6488,6 +6488,7 @@ Extend existing contracts in tasks 003, 009, 011, 012, 013, 014, 019 and 143/144
 - `frontend/lib/core/widgets/fields/field_editor.dart`
 - `frontend/lib/core/widgets/gallery/widget_gallery_screen.dart`
 - `frontend/lib/core/widgets/states/app_empty_state.dart`
+- `frontend/lib/core/widgets/feedback/app_dialog.dart` (existing scrollable dialog content)
 - `frontend/lib/features/capture/data/capture_device_sources.dart`
 - `frontend/lib/features/capture/data/capture_persistence_impl.dart`
 - `frontend/lib/features/capture/data/capture_record_writer.dart`
@@ -6522,6 +6523,8 @@ Extend existing contracts in tasks 003, 009, 011, 012, 013, 014, 019 and 143/144
 - `frontend/lib/features/records/presentation/record_edit_screen.dart`
 - `frontend/lib/features/records/presentation/record_field_input.dart`
 - `frontend/lib/features/records/presentation/record_field_sheet.dart`
+- `frontend/lib/features/records/presentation/records_list_row.dart` (expanded Capture side pane)
+- `frontend/lib/features/records/presentation/records_list_view.dart` (natural pane row heights)
 - `frontend/lib/features/templates/data/shipped_template_loader.dart`
 - `frontend/lib/features/templates/data/template_mapper.dart`
 - `frontend/lib/features/templates/data/template_repository_impl.dart`
@@ -6541,6 +6544,7 @@ Extend existing contracts in tasks 003, 009, 011, 012, 013, 014, 019 and 143/144
 - `frontend/test/core/widgets/fields/app_choice_field_test.dart`
 - `frontend/test/core/widgets/fields/field_editor_test.dart`
 - `frontend/test/core/widgets/states/app_empty_state_test.dart`
+- `frontend/test/core/widgets/feedback/app_dialog_test.dart`
 - `frontend/test/design_system/app_chip/gallery_golden_test.dart`
 - `frontend/test/design_system/app_choice_field/gallery_golden_test.dart`
 - `frontend/test/features/capture/data/capture_device_sources_test.dart`
@@ -6598,15 +6602,25 @@ Follow `AGENTS.md`, every frontend rule and 001's Rules. No dependency, permissi
 
 For W6, `CaptureGuideCard.targets` is an optional existing selector widget. It uses the existing `ResponsivePair` to keep the project/template selectors paired and the guide beside them on medium/expanded widths; compact widths wrap the guide onto the next action line so scaled labels retain useful width. Standalone guide behavior and complete expanded content remain intact. This bounded feature composition implements the requested wrapping action row without another shared component or custom breakpoint.
 
+The existing `AppDialog` scrolls its complete content when the viewport cannot contain it, retaining natural height for short content and its existing labels, actions and callbacks. This keeps Capture photo-removal decisions reachable at 200 percent text on short landscape viewports without a feature-specific dialog.
+
+The existing Records side pane shown beside saved Capture uses `AppListTile.wrapText` and natural row heights so complete titles/subtitles remain readable at 200 percent text. Its lazy builder, paging, selection, status and open behavior remain intact; the full Records list retains its fixed prototype and existing text behavior.
+
 For W7, `FieldEditor.wrapLabel` defaults to false and forwards the existing `AppTextField.wrapLabel` behavior for text inputs; Capture opts in so complete field labels remain readable at large text sizes. Other callers keep their existing label behavior. The shared template editor adapter exports the existing `editorValueOf(FieldType, String) → Object?` and `storedTextOf(FieldType, Object?) → String` codecs; Records retains its original exports. `captureDeviceIdProvider` and the existing `captureClockProvider` receive the same bootstrap identity/clock as the Capture writer, enabling truthful previews without another identity lookup. `captureDateFillProvider` is an auto-disposed `Notifier<bool>` observing only the committed `autoFillDates` setting, so previews follow the writer's date-fill contract without subscribing to privacy or location state.
 
 `CaptureController.setValue` accepts an optional named `owner` origin tuple `({String sessionId, String templateId, int? templateVersion})?` for Manual form edits. `OwnedCapturePersistence` extends the existing persistence capability with `saveOwnedSession(CaptureSession, {required owner}) → Future<Result<void>>`, atomically updating only an existing durable session whose complete owner matches the candidate and supplied tuple, with the same nonempty project and storage key. Missing, corrupt, cleared and changed owners refuse the edit. Explicit-owner writes fail closed when that capability is absent; callers omitting the origin retain their existing concurrent mutation/rebase behavior. Drift checks and writes inside one existing database transaction; JSON persistence serializes mutations sharing the identical `TextStore` instance. Separate stores targeting the same external file are outside that abstraction's atomicity contract.
 
 For W8, `AutoFill.localAddress` uses `LOCAL_ADDRESS`. `TemplateJson.decodeStoredShape(Object?, {required String projectId}) → Result<TemplateDef>` shares structural validation with strict import decoding while retaining opaque source metadata from already stored shapes; `TemplateJson.decode` continues rejecting unsupported imported sources. This stored reader supports version history and the existing captured-shape prechecks without a schema migration. `FieldAdvancedSection.autoFillUnavailable` defaults to false and distinguishes a stored opaque source from an explicit None selection without another model member.
 
+If an already stored top-level source differs from its nested `_tapture.autoFill` declaration, the private `_tapture.autoFillTop` companion preserves the original top-level value alongside the unchanged nested payload, including nulls inside opaque arrays. Encoding restores both declarations. Unsupported declarations remain unavailable; strict import/edit/package boundaries validate both, and explicit known-source or None selections clear both preservation keys. Valid version snapshots retain original extra metadata beneath canonical overlays; unreadable snapshots remain preserved and cannot authorize a field write.
+
 An already stored `LOCAL_ADDRESS` on a non-text field is preserved as an unavailable field configuration in the same opaque metadata slot, with typed `autoFill` unset. This keeps the owning shape, unrelated bindings and original payload intact; strict imports, package entry points and new edits reject it. Device binding and fill logic also independently require a text field, including directly supplied malformed definitions. Unsupported stored metadata never becomes the legacy `CONTEXT` fallback or an extraction target.
 
 `CaptureDeviceSource` is a pure domain port with `bind(CaptureSession, Iterable<FieldDef>)`, `refresh()`, synchronous `snapshot(CaptureSession) → String?`, `changes → Stream<void>` and `dispose()`. `CaptureDeviceSources({required Clock clock, required Future<PlatformFacts> Function() readFacts})` implements that port through the existing core platform callback. The session-key `captureDeviceSourceProvider` family defaults to a private unavailable/no-read port and is overridden at bootstrap. Controller ownership and pinned-shape loading govern reads; widgets do not perform platform work. `AutoFields.forTemplate` gains optional `String? localAddress`, and `CaptureRecordWriter` gains an optional synchronous `String? Function(CaptureSession)? localAddress` callback sampled before its first await at first-save start. `AppConstants.capture.deviceReadingFreshness` is five seconds. Existing template-provider and Records codec exports remain compatible when moved to shared owning files.
+
+The controller uses the existing lifecycle observer to invalidate a reading on application resume and after successful recovery, including recovery of the same owner. Each eligible refresh starts one detached read; failed recovery retains its previous state and reading. Committed, editing, missing-shape and unconfigured sessions remain unread, and disposal cancels the lifecycle subscription.
+
+Binding uses the writer's captured-version resolution: a contentful legacy draft without a version against a template header newer than version one has unknown shape and performs no read. Empty unversioned drafts and version-one legacy drafts retain their existing valid shape resolution.
 
 ### Definition of done
 
@@ -6616,7 +6630,7 @@ An already stored `LOCAL_ADDRESS` on a non-text field is preserved as an unavail
 - [x] Structured AI-context treatment matches D1; existing approved media and consent/Offline behavior remain intact.
 - [x] Unexpected and stale proposals cannot write protected fields; requiredness and review remain accurate.
 - [x] Existing raw/manual/context values and their history survive real database processing tests.
-- [ ] FBK0000203's processing-exclusion ask is resolved; presentation, corrections and device sourcing are covered by W3/W7/W8.
+- [x] FBK0000203's processing-exclusion ask is resolved; presentation, corrections and device sourcing are covered by W3/W7/W8.
 
 #### W2 — Fill inherited capture metadata at first save
 
@@ -6653,10 +6667,10 @@ An already stored `LOCAL_ADDRESS` on a non-text field is preserved as an unavail
 #### W6 — Compact Capture controls around caption entry
 
 - [x] Target and empty-photo controls use the shared compact variants; existing default variants and searchable pickers remain correct.
-- [ ] The reported viewport exposes the larger caption editor and primary save action; all short/large-text matrix controls remain reachable.
+- [x] The reported viewport exposes the larger caption editor and primary save action; all short/large-text matrix controls remain reachable.
 - [x] Guidance retains complete labels and existing explicit/automatic activation and Close behavior.
 - [x] Populated photos remain horizontal, ordered, cached and usable with 48dp select/remove/add actions.
-- [ ] Capture/save, no-template/offline operation, audio and failed-write persistence remain correct; FBK0000205's remaining layout asks are resolved.
+- [x] Capture/save, no-template/offline operation, audio and failed-write persistence remain correct; FBK0000205's remaining layout asks are resolved.
 
 #### W7 — Explain automatic and processing field sources
 
@@ -6668,19 +6682,19 @@ An already stored `LOCAL_ADDRESS` on a non-text field is preserved as an unavail
 
 #### W8 — Fill opted-in local network address fields
 
-- [ ] The selected D5/D6 contract passes the native/browser/unavailable matrix with unchanged dependencies/permissions and no outbound calls.
-- [ ] Enabled local address collection requires explicit template opt-in, records a fresh deterministic scalar and cannot delay Capture/save.
-- [ ] Empty/stale/late/error results never invent values, alter committed records and become processing candidates.
-- [ ] Existing tokens and stored originals survive; enabled `LOCAL_ADDRESS` configuration persists through restart, version history, import and package transfer with documented reader compatibility.
-- [ ] Manual overrides remain authoritative; web/temperature availability is explained honestly. FBK0000203's remaining device-source ask is resolved within the approved D5 contract.
+- [x] The selected D5/D6 contract passes the native/browser/unavailable matrix with unchanged dependencies/permissions and no outbound calls.
+- [x] Enabled local address collection requires explicit template opt-in, records a fresh deterministic scalar and cannot delay Capture/save.
+- [x] Empty/stale/late/error results never invent values, alter committed records and become processing candidates.
+- [x] Existing tokens and stored originals survive; enabled `LOCAL_ADDRESS` configuration persists through restart, version history, import and package transfer with documented reader compatibility.
+- [x] Manual overrides remain authoritative; web/temperature availability is explained honestly. FBK0000203's remaining device-source ask is resolved within the approved D5 contract.
 
 #### Verification and delivery
 
-- [ ] Meaningful affected domain/DAO/widget/flow tests pass, including current/pinned policy, hostile/stale results, mixed-batch rollback, failed writes, source/transfer compatibility and Offline mode.
+- [x] Meaningful affected domain/DAO/widget/flow tests pass, including current/pinned policy, hostile/stale results, mixed-batch rollback, failed writes, source/transfer compatibility and Offline mode.
 - [ ] All required UI matrix, normal/pseudo/RTL, keyboard/resize, production-shell native/browser and intended golden comparisons pass without weakened assertions; unavailable required native smoke evidence stays open.
-- [ ] Exact non-image acceptance tests and recursive relative helper closure are delivered as an explicit reviewable source patch with the index unchanged; final `frontend/test/` contains zero PNGs and reviewed images/manifests are preserved externally.
+- [x] Exact non-image acceptance tests and recursive relative helper closure are delivered as an explicit reviewable source patch with the index unchanged; final `frontend/test/` contains zero PNGs and reviewed images/manifests are preserved externally.
 - [ ] Changed-source formatting, localization generation and whole-frontend analysis pass; required architecture/guardrails are unchanged and pass, with prior/new failures distinguished.
-- [ ] Approved specification/owning presentation contracts and verified task evidence are current; tracker synchronization, `--check` and plan integrity pass.
+- [x] Approved specification/owning presentation contracts and verified task evidence are current; tracker synchronization, `--check` and plan integrity pass.
 
 ### Evidence and remaining work
 
@@ -6695,6 +6709,12 @@ The fresh architecture/tooling/database audit finishes with 663 passes and eight
 W6's revised compact wrapping and native test-font corrections pass all 47 focused production-shell font/geometry cases, including the reported six-line caption/primary-save visibility; seven retained standalone-guide cases also pass. Native fixtures use a font-only `TaptureApp` adapter that preserves the production router, builder and theme properties; browser fixtures use the production application directly. Root visually reviewed all 25 intended Capture images, then the 13 revised compact/reported outputs; the 12 wider images retain their reviewed hashes. All 25 normal comparisons pass (`frontend/build/task153-w6-capture-golden-comparison-v1.log`). The full short-window scrolling/keyboard, save/restart and native/browser composition gates remain open. Intermediate raw image sets are externally archived before regeneration and are not accepted final visual evidence.
 
 W7 review found that compensating after a stale durable field write could fail after a confirmed reset. The bounded conditional persistence capability above replaces that repair path. The complete unfiltered native gate passes 1,019 tests, including 60 real transactional/queued-storage cases, the full 370-case source/picker/restart matrix, retained controller/screens/core/None regressions and 25 normal Capture image comparisons (`frontend/build/task153-w7-capture-native-v3.log`). Actual Chrome passes all 74 source/picker/restart cases (`frontend/build/task153-w7-sources-browser-v1.log`). Complete labels wrap through the opt-in shared editor contract; lazy-shell test setup and real repository disposal were corrected without changing assertions or timeouts. All six installed/copied browser-tool hashes and seven owned staged-asset cleanup states match preflight/postflight. Analysis of 25 owned files and formatting of 28 files pass. W7 is verified and W8 implementation has begun; W6's remaining composition/save/keyboard gates and whole-tree/platform verification remain open.
+
+W8's complete 18-root domain/DAO/editor/import/package/processing gate passes 392 tests (`frontend/build/task153-w8-storage-capture-unfiltered-v2.log`). It proves opt-in native capability fakes, deterministic IPv4/IPv6 selection, fresh-only synchronous save sampling, pending/error/stale/late refusal, frozen retries, manual precedence, opaque policy exclusion, legacy and `LOCAL_ADDRESS` persistence, original dual payloads/null arrays, version history metadata, explicit source clearing and package preflight rollback before file/row changes. Both real Capture → processing → audited correction → reprocessing cases include local addresses and opaque fields, with Offline and online queues. The new controller test owns an active subscription matching the screen; sheet tests exercise the existing compound-field acknowledgment, real searchable picker, actual durable version and SQL/reload assertions with the existing external-work helper. No production assertion, checker or timeout was weakened. Full W6/W8 native/browser presentation, final analysis/guardrails and available-host startup verification remain open.
+
+2026-10-09 resumed verification: all local and remote branches are contained in `main`. The full native presentation gate passes 1,817 tests; a fresh final-source keyboard/save/golden gate passes 83. The broad affected regression run passes 2,415 cases; its three strengthened source-validation assertions are cleared by the fresh 385-test storage/import gate, which also passes the unchanged error-handling guardrail. Formatting (112 files), localization/domain-copy generation and checks, whole-frontend analysis and backend `npm run verify` pass. The guardrail audit retains seven existing failing bodies: naming/test coverage (150), speech release assets/provenance (111) and transcript schema expectations (151). Fifteen transient audit failures are cleared by final code or canonical LF fixture restoration; no checker or assertion changed. Actual Chrome Capture composition passes all 278 tests through the existing isolated harness after the standard runner reproduced its pre-registration host-module routing fault. Actual Chrome source-status verification passes all 75 tests, including local-address capability, null clearing and durable manual correction/restart. Chrome navigation history passes its retained test. All six installed/copied browser-tool hashes match postflight and all seven owned staged assets are removed. Installed-APK/web startup verification follows the implementation push; Windows/iOS/macOS/Linux native startup smoke remains unrun. Task 153 remains Partially complete because its broad native-smoke and repository-guardrail criteria are open; no broader green-repository claim is made.
+
+D7/D9 delivery: the index-unchanged patch and manifest enumerate 65 acceptance roots and 98 source/helper files (48 newly delivered), with portable UTF-8/LF source hashes and original working-tree hashes. Archive `2026-10-09-task153-verification-4adbd2c1063b464e895eabe8f9f28484` under `%LOCALAPPDATA%/TaptureTestArchives/` preserves all 673 inputs/outputs and 38 reviewed outputs; SHA-256 `b5c4a3d968747616d6c467649db2869820d968c6c4be6b915027d66f0dc26e7b`. Every entry was reopened and hash-verified before exact owned-path cleanup; final test PNG count is zero. The 12 raw failed-comparison images are separately preserved in archive `2026-10-09-task153-failed-comparisons-fd7380f1dda44b89bb77cd936d127db4` (SHA-256 `8fdcb0785f43d408e7a5c474163374e2fa2742aa520a2fc3a0d0793a046d8385`).
 
 ## 154 — Preserve accessible floating feedback actions
 

@@ -38,7 +38,7 @@ import 'core/cloud/cloud_operation_policy.dart';
 import 'core/cloud/destination_secrets.dart';
 import 'core/concurrency/cancellation_token.dart';
 import 'core/constants/app_constants.dart';
-import 'core/db/app_database.dart';
+import 'core/db/app_database.dart' show AppDatabase;
 import 'core/db/checkpoint.dart';
 import 'core/db/database_provider.dart';
 import 'core/db/integrity_check.dart';

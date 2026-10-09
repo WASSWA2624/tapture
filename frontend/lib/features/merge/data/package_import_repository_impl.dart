@@ -446,12 +446,14 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
       plan.inserts,
     ]) {
       final Failure? sourceProblem = _packageSourceProblem(tables);
-      if (sourceProblem != null)
+      if (sourceProblem != null) {
         return FailureResult<MergeOutcome>(sourceProblem);
+      }
     }
     final Failure? updateProblem = await _updateSourceProblem(plan.updates);
-    if (updateProblem != null)
+    if (updateProblem != null) {
       return FailureResult<MergeOutcome>(updateProblem);
+    }
     for (final FieldConflict conflict in plan.conflicts) {
       if (!choices.containsKey(conflict.id)) {
         return FailureResult<MergeOutcome>(
@@ -1427,8 +1429,11 @@ final class PackageImportRepositoryImpl implements PackageImportRepository {
           if (table == 'templates' && !row.containsKey('detection')) continue;
           if (table == 'template_fields' &&
               !row.containsKey('validation') &&
-              !row.containsKey('type'))
+              !row.containsKey('type') &&
+              !row.containsKey('auto_fill') &&
+              !row.containsKey('autoFill')) {
             continue;
+          }
           final Object? id = row['id'];
           if (id is! String) return const CorruptionFailure();
           final QueryRow? stored = await _db
@@ -1894,7 +1899,7 @@ Failure? _packageSourceProblem(Map<String, List<Map<String, Object?>>> tables) {
           if (checked case FailureResult<TemplateDef>(:final Failure failure)) {
             return failure;
           }
-        } else if (snapshot['fields'] case final List fields) {
+        } else if (snapshot['fields'] case final List<Object?> fields) {
           for (final Object? rawField in fields) {
             if (rawField is! Map) continue;
             final Failure? problem = _sourceFieldProblem(
@@ -1915,9 +1920,10 @@ Failure? _packageSourceProblem(Map<String, List<Map<String, Object?>>> tables) {
 Failure? _sourceFieldProblem(Map<String, Object?> field, {required bool sql}) {
   final Object? flag = field['auto_fill'];
   if (sql &&
-      flag != null &&
-      flag is! bool &&
-      !(flag is int && (flag == 0 || flag == 1))) {
+      ((flag != null &&
+              flag is! bool &&
+              !(flag is int && (flag == 0 || flag == 1))) ||
+          field['autoFill'] != null)) {
     return const CorruptionFailure();
   }
   final Object? decoded = _jsonObject(field['validation']);
@@ -1927,7 +1933,11 @@ Failure? _sourceFieldProblem(Map<String, Object?> field, {required bool sql}) {
   final Object? attrs = validation['_tapture'];
   final Object? carried = attrs is Map ? attrs['autoFill'] : null;
   final Object? declared = sql ? null : field['auto_fill'] ?? field['autoFill'];
-  if (declared == null && carried == null) return null;
+  if (declared == null &&
+      carried == null &&
+      !(attrs is Map && attrs.containsKey('autoFillTop'))) {
+    return null;
+  }
   final Result<TemplateDef> checked = TemplateJson.decode(<String, Object?>{
     'schema_version': TemplateJson.schemaVersion,
     'name': 'Source validation',

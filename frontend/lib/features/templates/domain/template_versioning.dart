@@ -341,6 +341,9 @@ Map<String, Object?> _writeHistory(
     ...original,
     for (final MapEntry<int, TemplateDef> entry in history.entries)
       '${entry.key}': <String, Object?>{
+        if (original['${entry.key}'] case final Map<Object?, Object?> stored)
+          for (final MapEntry<Object?, Object?> raw in stored.entries)
+            if (raw.key is String) raw.key! as String: raw.value,
         ...TemplateJson.encode(entry.value),
         '_tapture_source_file_path': entry.value.sourceFilePath,
         '_tapture_row_ids': <String, String>{

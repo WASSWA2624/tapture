@@ -1106,9 +1106,11 @@ Rules:
 - Store ISO-8601 UTC and device offset; display/export the project format, default `dd MMM yyyy`.
 - Pin a differing survey date for backdated work until changed (§20.3).
 
-`LOCAL_ADDRESS` is valid only for text fields. Read local interfaces in the background only for an explicitly configured owning draft; choose the first eligible IPv4 address in lexical order, then IPv6. At first-save start, snapshot a completed reading no older than five seconds. Pending, empty, stale, failed and unsupported readings remain unavailable and never delay saving. Reset, resume or a changed session/template invalidates the previous reading. Typed/context values take precedence; committed retries retain their original sample. Web provides no automatic interface address, and temperature has no automatic adapter. Neither source starts outbound traffic or requests permissions.
+`LOCAL_ADDRESS` is valid only for text fields. Read local interfaces in the background only for an explicitly configured owning draft; choose the first eligible IPv4 address in lexical order, then IPv6. At first-save start, snapshot a completed reading no older than five seconds. Pending, empty, stale, failed and unsupported readings remain unavailable and never delay saving. Reset, application resume, successful draft recovery (including the same owner) or a changed session/template invalidates the previous reading and starts one eligible background read. Failed recovery retains its previous reading. Typed/context values take precedence; committed retries retain their original sample. Web provides no automatic interface address, and temperature has no automatic adapter. Neither source starts outbound traffic or requests permissions.
 
 Template JSON, validation metadata, version history and project packages retain the `LOCAL_ADDRESS` token without a SQL migration. Its minimum compatible reader implements task 153's source codec; schema version 1 alone does not establish compatibility with older binaries. Current import/edit boundaries reject unsupported sources. Already stored unsupported metadata stays opaque and unavailable, survives unrelated template edits and is excluded from extraction; it must never be reinterpreted as `CONTEXT`. Full stored snapshots retain structural validation. Transfer to an older reader requires removing the unsupported configuration explicitly before export; this work cannot change an older binary's behavior.
+
+Distinct stored top-level and nested source declarations retain both original payloads through private preservation metadata. Import/edit/package validation checks both; an explicit source change or None clears both. Version snapshots preserve extra original metadata, including unreadable entries that cannot authorize field writes.
 
 ## 22. Photos & Photo Editing
 
@@ -3282,6 +3284,8 @@ Search: SN4589                        [ filters ]
 
 Filters: context, template, status, date, operator, condition, has photos, has duplicate, has conflict, not in register. Sorting by number, date or name. Search covers field values, captions, transcripts and OCR text.
 
+The narrow Records pane beside an expanded saved Capture wraps complete row titles/subtitles at scaled text and uses natural row heights. Both views remain lazy and paged; the full list retains its existing fixed-row optimization.
+
 ## 56. Simplicity Rules
 
 Testable interface rules:
@@ -3293,7 +3297,7 @@ Testable interface rules:
 5. **No repeat login for local field work.** Cache the required account session and role grant (§70.4); no onboarding tour or dashboard.
 6. **Advanced options** stay under Advanced or More; defaults show only field essentials.
 7. **Sensible defaults:** today's date, current context, last template and camera settings.
-8. **No dialog chains:** one decision at a time, with a safe default.
+8. **No dialog chains:** one decision at a time, with a safe default. Shared dialogs retain natural height for short content and scroll complete content and actions when large text or a short viewport requires it.
 9. **Nothing blocks work:** warnings offer "Keep anyway"; errors never discard input.
 10. **Plain language:** "Not detected", not `null`; "Analyse", not "invoke extraction pipeline".
 11. **Touch targets ≥ 48 dp**; primary actions within one-thumb reach.

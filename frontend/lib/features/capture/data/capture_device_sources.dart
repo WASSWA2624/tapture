@@ -11,11 +11,7 @@ import '../domain/capture_session.dart';
 /// Opted-in local interface readings through the existing core platform port.
 final class CaptureDeviceSources implements CaptureDeviceSource {
   /// Creates a source without reading the platform until an eligible bind.
-  CaptureDeviceSources({
-    required Clock clock,
-    required Future<PlatformFacts> Function() readFacts,
-  }) : _clock = clock,
-       _readFacts = readFacts;
+  CaptureDeviceSources({required this._clock, required this._readFacts});
 
   final Clock _clock;
   final Future<PlatformFacts> Function() _readFacts;

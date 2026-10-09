@@ -17,8 +17,8 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 
-import '../domain/template_repository.dart';
 import '../domain/template_json.dart';
+import '../domain/template_repository.dart';
 import '../domain/template_versioning.dart';
 import 'template_mapper.dart';
 
@@ -69,55 +69,61 @@ final class TemplateRepositoryImpl implements TemplateRepository {
     if (invalid != null) {
       return FailureResult<TemplateDef>(invalid);
     }
-    return runInTransaction(_db, () async {
-      final TemplateDef? existing = template.id.isEmpty
-          ? null
-          : await _load(template.id);
-      final Failure? sourceProblem = _validateSources(template, existing);
-      if (sourceProblem != null) throw sourceProblem;
-      final TemplateDef stamped = existing == null
-          ? template
-          : TemplateVersioning.remember(from: existing, to: template);
-      final Result<sqlite.Template> written = await upsertTemplate(
-        _db,
-        row: TemplateMapper.headerToRow(stamped),
-        clock: _clock,
-        deviceId: _deviceId,
-        ids: _ids,
-      );
-      switch (written) {
-        case FailureResult<sqlite.Template>(:final Failure failure):
-          throw StorageFailure(
-            message: failure.message,
-            localizedMessage: failure.localizedMessage,
-            recoveryAction: failure.recoveryAction ?? 'Try again.',
-            localizedRecovery: failure.localizedRecovery,
-          );
-        case Success<sqlite.Template>(:final sqlite.Template value):
-          await _replaceFields(templateId: value.id, fields: stamped.fields);
-          if (existing != null) {
-            final Set<String> active = stamped.fields
-                .map((field) => field.fieldKey)
-                .toSet();
-            for (final FieldDef field in existing.fields) {
-              if (!active.contains(field.fieldKey)) {
-                await _retireFieldValues(value.id, field.fieldKey);
+    final Result<Result<TemplateDef>> outcome = await runInTransaction(
+      _db,
+      () async {
+        final TemplateDef? existing = template.id.isEmpty
+            ? null
+            : await _load(template.id);
+        final Failure? sourceProblem = _validateSources(template, existing);
+        if (sourceProblem != null) {
+          return FailureResult<TemplateDef>(sourceProblem);
+        }
+        final TemplateDef stamped = existing == null
+            ? template
+            : TemplateVersioning.remember(from: existing, to: template);
+        final Result<sqlite.Template> written = await upsertTemplate(
+          _db,
+          row: TemplateMapper.headerToRow(stamped),
+          clock: _clock,
+          deviceId: _deviceId,
+          ids: _ids,
+        );
+        switch (written) {
+          case FailureResult<sqlite.Template>(:final Failure failure):
+            throw StorageFailure(
+              message: failure.message,
+              localizedMessage: failure.localizedMessage,
+              recoveryAction: failure.recoveryAction ?? 'Try again.',
+              localizedRecovery: failure.localizedRecovery,
+            );
+          case Success<sqlite.Template>(:final sqlite.Template value):
+            await _replaceFields(templateId: value.id, fields: stamped.fields);
+            if (existing != null) {
+              final Set<String> active = stamped.fields
+                  .map((field) => field.fieldKey)
+                  .toSet();
+              for (final FieldDef field in existing.fields) {
+                if (!active.contains(field.fieldKey)) {
+                  await _retireFieldValues(value.id, field.fieldKey);
+                }
               }
             }
-          }
-          await _replaceRows(templateId: value.id, rows: stamped.rows);
-          final TemplateDef? loaded = await _load(value.id);
-          if (loaded == null) {
-            throw StorageFailure(
-              localizedMessage:
-                  Copy.messages.failureTheDatabaseCouldNotCompleteThatWrite,
-              localizedRecovery:
-                  Copy.messages.failureFreeUpSpaceOrExportAProject,
-            );
-          }
-          return loaded;
-      }
-    });
+            await _replaceRows(templateId: value.id, rows: stamped.rows);
+            final TemplateDef? loaded = await _load(value.id);
+            if (loaded == null) {
+              throw StorageFailure(
+                localizedMessage:
+                    Copy.messages.failureTheDatabaseCouldNotCompleteThatWrite,
+                localizedRecovery:
+                    Copy.messages.failureFreeUpSpaceOrExportAProject,
+              );
+            }
+            return Success<TemplateDef>(loaded);
+        }
+      },
+    );
+    return outcome.flatMap((Result<TemplateDef> result) => result);
   }
 
   @override
@@ -625,7 +631,11 @@ Failure? _validateSources(TemplateDef template, TemplateDef? existing) {
   for (final FieldDef field in template.fields) {
     final Object? attrs = field.validation['_tapture'];
     final Object? carried = attrs is Map ? attrs['autoFill'] : null;
-    if (field.autoFill == null && carried == null) continue;
+    if (field.autoFill == null &&
+        carried == null &&
+        !(attrs is Map && attrs.containsKey('autoFillTop'))) {
+      continue;
+    }
     final FieldDef? before = previous[field.fieldKey];
     final Object? oldAttrs = before?.validation['_tapture'];
     final Object? oldCarry = oldAttrs is Map ? oldAttrs['autoFill'] : null;
@@ -634,7 +644,8 @@ Failure? _validateSources(TemplateDef template, TemplateDef? existing) {
         before?.type == field.type &&
         carried != null &&
         oldCarry != null &&
-        _sameSourcePayload(carried, oldCarry)) {
+        _sameSourcePayload(carried, oldCarry) &&
+        _sameSourcePayload(attrs!, oldAttrs!)) {
       continue;
     }
     final Result<TemplateDef> checked = TemplateJson.decode(

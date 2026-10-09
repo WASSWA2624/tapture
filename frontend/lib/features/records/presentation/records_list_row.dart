@@ -200,6 +200,7 @@ class _SummaryRow extends ConsumerWidget {
             ),
       status: AppStatusPill.badge(status: summary.status),
       dense: pane,
+      wrapText: pane,
       selected: selected,
       current: current,
       onTap: selecting ? toggle : () => _open(context, id),

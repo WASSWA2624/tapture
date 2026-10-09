@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/audio/audio_recorder_service.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -9,6 +10,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/feedback/haptics.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/lifecycle/deleted_entity.dart';
+import 'package:tapture/core/lifecycle/lifecycle_observer.dart';
 import 'package:tapture/core/location/location_service.dart';
 import 'package:tapture/core/security/coordinate_removal_events.dart';
 import 'package:tapture/core/time/clock.dart';
@@ -136,6 +138,15 @@ final class CaptureController extends Notifier<CaptureSession> {
       if (ref.mounted) ref.notifyListeners();
     });
     ref.onDispose(() => unawaited(readings.cancel()));
+    final StreamSubscription<AppLifecycleState> lifecycle = ref
+        .read(lifecycleObserverProvider)
+        .states
+        .listen((AppLifecycleState event) {
+          if (ref.mounted && event == AppLifecycleState.resumed) {
+            _refreshDeviceSource(state);
+          }
+        });
+    ref.onDispose(() => unawaited(lifecycle.cancel()));
     if (!CaptureSessionKey.isEdit(key)) {
       ref.listen<AsyncValue<List<TemplateDef>>>(
         captureProjectTemplatesProvider(key),
@@ -193,12 +204,26 @@ final class CaptureController extends Notifier<CaptureSession> {
     final TemplateDef? template = templates
         ?.where((TemplateDef candidate) => candidate.id == session.templateId)
         .firstOrNull;
+    // Match first-save attribution: a recovered contentful draft without a
+    // pin cannot opt into sources introduced by a newer current header.
+    final int? version =
+        session.templateVersion ??
+        (template != null && template.version > 1 && session.hasContent
+            ? 0
+            : template?.version);
     final TemplateDef? shape = template == null
         ? null
-        : session.templateVersion == null
-        ? template
-        : TemplateVersioning.shapeFor(template, session.templateVersion!);
+        : TemplateVersioning.shapeFor(template, version!);
     source.bind(session, shape?.fields ?? const <FieldDef>[]);
+  }
+
+  void _refreshDeviceSource(CaptureSession session) {
+    // An empty binding invalidates even a recovery of the identical owner.
+    // The current pinned shape then starts exactly one eligible background read.
+    ref
+        .read(captureDeviceSourceProvider(key))
+        .bind(session, const <FieldDef>[]);
+    _bindDeviceSource(session);
   }
 
   Future<Result<void>> _saveSession(
@@ -319,6 +344,9 @@ final class CaptureController extends Notifier<CaptureSession> {
   Future<Result<void>> replaceSession(CaptureSession session) async {
     final Result<void> saved = await _saveSession(session);
     return saved.fold(FailureResult<void>.new, (_) {
+      ref
+          .read(captureDeviceSourceProvider(key))
+          .bind(session, const <FieldDef>[]);
       _emit(session);
       return const Success<void>(null);
     });

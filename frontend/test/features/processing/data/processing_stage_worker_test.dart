@@ -688,8 +688,8 @@ void main() {
         hasLength(4),
       );
       final ProcessingJob stored = _ok(await repository.byId(jobId))!;
-    expect(stored.provider, 'test-provider');
-    expect(stored.model, 'test-model');
+      expect(stored.provider, 'test-provider');
+      expect(stored.model, 'test-model');
     },
   );
 }

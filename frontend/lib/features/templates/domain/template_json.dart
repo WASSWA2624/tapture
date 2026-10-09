@@ -76,7 +76,7 @@ Map<String, Object?> _encodeField(FieldDef field) {
     _stickableKey: field.stickable,
     _contextLevelKey: field.contextLevel,
     _autoFillKey: field.autoFill == null
-        ? _carriedSource(field.validation)
+        ? _storedTopSource(field.validation)
         : _autoFillToWire(field.autoFill!),
     _refineKey: field.refine,
     _optionsKey: field.options,
@@ -294,10 +294,22 @@ Result<FieldDef> _fieldOf(
   final Map<String, Object?> rules = Map<String, Object?>.of(
     validation.getOrElse(() => const <String, Object?>{}),
   );
-  final Object? carried = _carriedSource(rules);
+  final Object? oldAttrs = rules[_attrsKey];
+  final Map<String, Object?> attrs = oldAttrs is Map
+      ? _stringMap(oldAttrs)
+      : <String, Object?>{};
+  final Object? carried = attrs[_storedAutoFillKey];
+  final bool hadTop = attrs.containsKey(_storedAutoFillTopKey);
+  final Object? originalTop = hadTop
+      ? attrs[_storedAutoFillTopKey]
+      : map[_autoFillKey];
   AutoFill? source;
   Object? unavailable;
-  for (final Object? declaration in <Object?>[map[_autoFillKey], carried]) {
+  for (final Object? declaration in <Object?>[
+    map[_autoFillKey],
+    carried,
+    if (hadTop) originalTop,
+  ]) {
     if (declaration == null) continue;
     final Result<AutoFill?> parsed = _autoFillOf(declaration);
     final AutoFill? known = parsed.getOrElse(() => null);
@@ -314,13 +326,15 @@ Result<FieldDef> _fieldOf(
       source ??= known;
     }
   }
-  final Object? oldAttrs = rules[_attrsKey];
-  final Map<String, Object?> attrs = oldAttrs is Map
-      ? _stringMap(oldAttrs)
-      : <String, Object?>{};
   attrs.remove(_storedAutoFillKey);
+  attrs.remove(_storedAutoFillTopKey);
   if (unavailable != null) {
-    attrs[_storedAutoFillKey] = unavailable;
+    final Object primary = carried ?? originalTop ?? unavailable;
+    attrs[_storedAutoFillKey] = primary;
+    if ((hadTop || map.containsKey(_autoFillKey)) &&
+        !_sameSource(primary, originalTop)) {
+      attrs[_storedAutoFillTopKey] = originalTop;
+    }
     source = null;
   }
   if (attrs.isEmpty) {
@@ -479,10 +493,27 @@ Result<AutoFill?> _autoFillOf(Object? raw) {
   return Success<AutoFill?>(value);
 }
 
-Object? _carriedSource(Map<String, Object?> validation) {
+Object? _storedTopSource(Map<String, Object?> validation) {
   final Object? attrs = validation[_attrsKey];
-  return attrs is Map ? attrs[_storedAutoFillKey] : null;
+  if (attrs is! Map) return null;
+  return attrs.containsKey(_storedAutoFillTopKey)
+      ? attrs[_storedAutoFillTopKey]
+      : attrs[_storedAutoFillKey];
 }
+
+bool _sameSource(Object? left, Object? right) =>
+    FieldDef(
+      fieldKey: '',
+      label: '',
+      type: FieldType.text,
+      validation: <String, Object?>{'source': left},
+    ) ==
+    FieldDef(
+      fieldKey: '',
+      label: '',
+      type: FieldType.text,
+      validation: <String, Object?>{'source': right},
+    );
 
 Object? _parsed(Object? raw) {
   if (raw is String) {
@@ -499,7 +530,12 @@ Map<String, Object?> _stringMap(Map<dynamic, dynamic> raw) {
   return <String, Object?>{
     for (final MapEntry<dynamic, dynamic> entry in raw.entries)
       if (entry.key is String)
-        entry.key as String: _canonicalNullable(entry.value),
+        entry.key as String:
+            entry.key == _autoFillKey ||
+                entry.key == _storedAutoFillKey ||
+                entry.key == _storedAutoFillTopKey
+            ? entry.value
+            : _canonicalNullable(entry.value),
   };
 }
 
@@ -671,6 +707,7 @@ const String _foundStatusKey = 'found_status';
 const String _versionsKey = '_tapture_versions';
 const String _attrsKey = '_tapture';
 const String _storedAutoFillKey = 'autoFill';
+const String _storedAutoFillTopKey = 'autoFillTop';
 
 final ValidationFailure _addressNeedsText = ValidationFailure(
   localizedMessage: DomainCopy.messages.fieldSourceAddressNeedsText,

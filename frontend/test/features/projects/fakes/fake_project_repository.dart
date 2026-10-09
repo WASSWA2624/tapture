@@ -16,18 +16,32 @@ final class FakeProjectRepository implements ProjectRepository {
   final Map<String, ProjectStatus> _beforeDelete = <String, ProjectStatus>{};
 
   @override
-  Stream<List<DeletedEntity>> watchDeleted() => _watch(() => <DeletedEntity>[
-    for (final Project row in _rows.values)
-      if (row.status == ProjectStatus.deleted) DeletedEntity(id: row.id, kind: DeletedEntityKind.project,
-        name: row.name, projectId: row.id, projectName: row.name, deletedAt: row.updatedAt),
-  ]);
+  Stream<List<DeletedEntity>> watchDeleted() => _watch(
+    () => <DeletedEntity>[
+      for (final Project row in _rows.values)
+        if (row.status == ProjectStatus.deleted)
+          DeletedEntity(
+            id: row.id,
+            kind: DeletedEntityKind.project,
+            name: row.name,
+            projectId: row.id,
+            projectName: row.name,
+            deletedAt: row.updatedAt,
+          ),
+    ],
+  );
 
   @override
   Future<Result<void>> restore(String id) async {
     final Project? row = _rows[id];
     if (row == null) return const FailureResult<void>(_missing);
-    _rows[id] = row.copyWith(status: _beforeDelete.remove(id) ?? ProjectStatus.active);
-    tombstones.removeWhere((({String entityType, String entityId}) entry) => entry.entityType == 'projects' && entry.entityId == id);
+    _rows[id] = row.copyWith(
+      status: _beforeDelete.remove(id) ?? ProjectStatus.active,
+    );
+    tombstones.removeWhere(
+      (({String entityType, String entityId}) entry) =>
+          entry.entityType == 'projects' && entry.entityId == id,
+    );
     recycled.remove(row.folderName);
     _emit();
     return const Success<void>(null);
