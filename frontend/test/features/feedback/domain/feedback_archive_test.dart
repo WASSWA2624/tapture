@@ -28,14 +28,16 @@ void main() {
       hasScreenshot: false,
       message: 'No picture',
     );
-    final FeedbackArchive pack = FeedbackArchive(
-      workbook: _book(
-        entries: <FeedbackEntry>[pictured, plain],
-        screenshots: <String, Uint8List>{pictured.id: aFeedbackPng},
-      ),
+    final FeedbackWorkbook workbook = _book(
+      entries: <FeedbackEntry>[pictured, plain],
+      screenshots: <String, Uint8List>{pictured.id: aFeedbackPng},
     );
+    final FeedbackArchive pack = FeedbackArchive(workbook: workbook);
     final Archive zip = ZipDecoder().decodeBytes(FeedbackArchive.encode(pack));
-    expect(zip.findFile('TAPTURE-18092026-1002.xlsx'), isNotNull);
+    expect(
+      zip.findFile(workbook.fileName)!.content,
+      FeedbackWorkbook.encode(workbook),
+    );
     expect(
       Uint8List.fromList(
         zip.findFile('screenshots/${pictured.reference}.png')!.content

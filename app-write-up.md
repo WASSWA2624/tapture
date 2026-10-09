@@ -3288,6 +3288,10 @@ Filters: context, template, status, date, operator, condition, has photos, has d
 
 The narrow Records pane beside an expanded saved Capture wraps complete row titles/subtitles at scaled text and uses natural row heights. Both views remain lazy and paged; the full list retains its existing fixed-row optimization.
 
+### 55.3 Feedback downloads
+
+Feedback downloads package the `.xlsx` workbook and matching screenshots in `TAPTURE-DDMMYYYY-HHMM.zip`. The Feedback sheet has 36 columns and excludes User ID, Position Title, Roles, Permissions, Tenant, Tenant ID, Facility, Facility ID, Subscription Plan, Plan Code, Plan Tier and Subscription Status. Screen follows User Name; the remaining columns retain their order, typed values and screenshot links. Screenshot and Export Details sheets retain their existing contents, and stored feedback context is preserved. Implementation and acceptance are recorded in [task 163](dev-plan/24-product-refinements.md#163--exclude-account-and-organisation-columns-from-feedback-workbooks).
+
 ## 56. Simplicity Rules
 
 Testable interface rules:

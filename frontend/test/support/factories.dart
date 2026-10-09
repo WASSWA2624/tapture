@@ -253,6 +253,7 @@ FeedbackEntry aFeedbackEntry({
   String platform = 'windows',
   FeedbackDeviceType deviceType = FeedbackDeviceType.desktop,
   FeedbackSubmitter submitter = FeedbackSubmitter.localOperator,
+  String? accountId,
 }) {
   return FeedbackEntry(
     id: id,
@@ -268,7 +269,7 @@ FeedbackEntry aFeedbackEntry({
       operatorName: 'Ada',
       operatorInitials: 'A',
       operatorContact: 'ada@x',
-      accountId: null,
+      accountId: accountId,
       screen: screen,
       route: '/projects',
       routeName: 'projects',

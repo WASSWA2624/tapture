@@ -14,10 +14,8 @@ import 'feedback_submitter.dart';
 
 part 'feedback_workbook_columns.dart';
 
-/// A feedback download: the entries a filter kept, laid out the way the
-/// organisation's feedback exports already are — one row per entry on
-/// `Feedback`, the screenshots on `Screenshots`, and what was asked for on
-/// `Export Details`.
+/// A feedback download: one row per entry on `Feedback`, the screenshots on
+/// `Screenshots`, and what was asked for on `Export Details`.
 ///
 /// Headers and export values are a file format, not interface copy: they
 /// stay the same whatever language the app is shown in, so exports from

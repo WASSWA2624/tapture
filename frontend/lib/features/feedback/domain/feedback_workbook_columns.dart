@@ -31,18 +31,7 @@ _Column _text(
   );
 }
 
-/// A column the organisation's other exports carry that this device has no
-/// value for yet: account details the backend holds (specification Part XI).
-/// Kept, empty, so every export has the same columns in the same place.
-_Column _blank(String header, double width, {bool wrap = false}) {
-  return _Column(
-    XlsxColumn(header, width: width, wrap: wrap),
-    (FeedbackEntry _, _Row _) => XlsxCell.empty,
-  );
-}
-
-/// The feedback sheet's columns: the shared layout first, in its order, then
-/// the context only Tapture records.
+/// The feedback sheet's columns, excluding account and organisation metadata.
 List<_Column> _columns({required String localHeader}) {
   return <_Column>[
     _text(_idHeader, XlsxColumn.defaultWidth, (FeedbackEntry e) => e.reference),
@@ -64,22 +53,6 @@ List<_Column> _columns({required String localHeader}) {
     ),
     _text('User Email', 30, (FeedbackEntry e) => _email(e)),
     _text('User Name', 24, (FeedbackEntry e) => e.context.operatorName),
-    _text(
-      'User ID',
-      XlsxColumn.defaultWidth,
-      (FeedbackEntry e) => e.context.accountId,
-    ),
-    _blank('Position Title', 20),
-    _blank('Roles', 30, wrap: true),
-    _blank('Permissions', 60, wrap: true),
-    _blank('Tenant', 24),
-    _blank('Tenant ID', XlsxColumn.defaultWidth),
-    _blank('Facility', 24),
-    _blank('Facility ID', XlsxColumn.defaultWidth),
-    _blank('Subscription Plan', 22),
-    _blank('Plan Code', XlsxColumn.defaultWidth),
-    _blank('Plan Tier', 14),
-    _blank('Subscription Status', 20),
     _text(_screenHeader, _screenWidth, (FeedbackEntry e) => e.context.screen),
     _text(
       'Last Action',

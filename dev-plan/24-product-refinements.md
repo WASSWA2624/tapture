@@ -37,6 +37,10 @@ their screenshots are gone.
 - Default repository and downloads are in-memory / fake so tests never open a folder (FE-TEST-03).
 - Presentation does not call `setState` (FE-STATE-01). Tokens only (FE-CONS-02).
 
+### Contract
+
+Task [163](#163--exclude-account-and-organisation-columns-from-feedback-workbooks) supersedes the original organisation-column layout. The Feedback sheet exports 36 columns: Screen follows User Name, and the twelve account/organisation columns named there are excluded. Stored feedback context, screenshot and export-detail sheets retain their contracts.
+
 ### Definition of done
 
 - [x] The floating control is draggable. Desktop shows the label on hover; phone and tablet do not.
@@ -6959,3 +6963,37 @@ All 34 outputs below were regenerated only for the approved presentation changes
 - `frontend/test/features/context/presentation/goldens/task158_context_overview_dark.png`
 - `frontend/test/features/context/presentation/goldens/task158_context_overview_light.png`
 - `frontend/test/features/context/presentation/goldens/task158_context_overview_outdoor.png`
+
+## 163 — Exclude account and organisation columns from feedback workbooks
+
+**Depends on** [001](01-orchestration.md), [026](24-product-refinements.md#026--in-app-feedback-floating-button-capture-download-and-delete)
+
+**Implementation started:** Yes
+
+### Implement
+
+Remove the twelve columns identified in the user's 2026-10-09 screenshot from the feedback `.xlsx` projection: User ID, Position Title, Roles, Permissions, Tenant, Tenant ID, Facility, Facility ID, Subscription Plan, Plan Code, Plan Tier and Subscription Status. Use the existing shared column definition for headers and values, including workbooks inside feedback ZIP downloads. Preserve the relative order and types of the remaining columns, screenshot links, export details and stored feedback context.
+
+### Files
+
+- `frontend/lib/features/feedback/domain/feedback_workbook.dart`, `feedback_workbook_columns.dart`
+- `frontend/test/features/feedback/domain/feedback_workbook_test.dart`, `feedback_workbook_columns_test.dart`, `feedback_archive_test.dart`
+- `frontend/test/support/factories.dart`
+- `app-write-up.md`, this task, task 026's export contract and generated `dev-tracker.md`
+
+### Contract
+
+The Feedback sheet has 36 columns, with Screen immediately after User Name and OS Version last. The twelve excluded headers and their projected values are absent from exported workbooks. This supersedes only task 026's earlier organisation-column layout; feedback persistence and the other workbook sheets keep their existing contracts.
+
+### Definition of done
+
+- [x] Populated and empty feedback workbooks exclude all twelve columns and retain the exact order of the remaining 36 columns.
+- [x] Encoded XLSX regression tests verify aligned values, dates, numeric cells, filters and screenshot links; a populated account ID is absent. ZIP downloads carry the same workbook bytes.
+- [x] Feedback domain and download-controller tests, changed-source analysis and formatting pass.
+- [x] Owning export documentation, tracker synchronization, `--check` and plan integrity are current.
+
+### Evidence
+
+2026-10-09 baseline: clean `b730bc4b` on `main`. The single feedback projection currently contains 48 columns, including eleven empty organisation placeholders and the stored account ID. Both headers and row values derive from that projection; all download platforms reuse the workbook encoder.
+
+The four new export cases fail against the original projection, then pass after removing the twelve columns and unused placeholder builder. All 38 feedback-domain/download-controller tests pass, including empty/populated layouts, encoded workbooks with/without screenshots, account-ID exclusion, `A1:AJ2` dimensions/filters and the `AE2` screenshot hyperlink. ZIP workbook bytes match direct encoding. All six changed Dart sources pass formatting and analysis (`No issues found`). Specification §55.3 and task 026 record the narrowed export contract. Tracker regeneration, `--check` and plan integrity pass. The previously ignored column test is included in the reviewable diff without changing ignore rules.
