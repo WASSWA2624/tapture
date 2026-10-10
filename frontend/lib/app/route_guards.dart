@@ -8,7 +8,7 @@ typedef RouteGuards = List<RouteGuard>;
 ///
 /// Takes [Ref] rather than [WidgetRef]: [WidgetRef] is sealed and needs a
 /// widget, and guards must stay unit-testable without one (FE-STATE-04).
-typedef RouteGuard = String? Function(GoRouterState state, Ref ref);
+typedef RouteGuard = FutureOr<String?> Function(GoRouterState state, Ref ref);
 
 /// Ordered redirect chain. Later tasks append a gate — sign-in, app lock —
 /// as one entry rather than a second redirect.
@@ -38,21 +38,47 @@ String? _appLock(GoRouterState state, Ref ref) {
 /// project this device holds opens that project, so `/projects/<B>` never
 /// renders the project that happened to be open. A link naming no known
 /// project, with none open, diverts to the picker carrying the location.
-String? _projectScope(GoRouterState state, Ref ref) {
+Future<String?> _projectScope(GoRouterState state, Ref ref) async {
   if (state.metadata[_projectScopedKey] != true) {
     return null;
   }
   final String? open = ref.read(openProjectIdProvider);
   final String? named = state.pathParameters['projectId'];
-  if (named != null && named != open && _isKnownProject(ref, named)) {
-    // Deferred: a redirect can run while the router is building, and a
-    // provider must not change mid-build. The router refreshes on the
-    // change and the named project's pages then read it.
-    unawaited(
-      Future<void>.microtask(() {
-        ref.read(openProjectIdProvider.notifier).open(named);
-      }),
-    );
+  if (named != null) {
+    final subscription = ref.listen(projectByIdProvider(named), (_, _) {});
+    final Project? project;
+    try {
+      project = await ref.read(projectByIdProvider(named).future);
+    } on Object {
+      return AppRoutes.projects;
+    } finally {
+      subscription.close();
+    }
+    if (!ref.mounted) {
+      return AppRoutes.projects;
+    }
+    if (project == null) {
+      return AppRoutes.projects;
+    }
+    final String? recordId = state.pathParameters['recordId'];
+    if (recordId != null) {
+      final RecordEntry? record;
+      try {
+        record = (await ref.read(recordRepositoryProvider).byId(recordId))
+            .getOrThrow();
+      } on Object {
+        return RoutePaths.projectRecords(named);
+      }
+      if (record == null ||
+          record.status == RecordStatus.deleted ||
+          record.projectId != named) {
+        return RoutePaths.projectRecords(named);
+      }
+    }
+  }
+  if (named != null) {
+    // The committed-route listener opens the project. Updating it during an
+    // asynchronous redirect would refresh the previous route and cancel this one.
     return null;
   }
   if (open != null) {
@@ -62,21 +88,6 @@ String? _projectScope(GoRouterState state, Ref ref) {
     path: AppRoutes.projects,
     queryParameters: <String, String>{AppRoutes.fromQuery: _destination(state)},
   ).toString();
-}
-
-/// Whether [projectId] is a project on this device, as far as the
-/// project list has loaded.
-bool _isKnownProject(Ref ref, String projectId) {
-  final List<ProjectListRow>? rows = ref.read(projectListProvider).value;
-  if (rows == null) {
-    return false;
-  }
-  for (final ProjectListRow row in rows) {
-    if (row.project.id == projectId) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /// Returns to a diverted location once a project is open. The picker's
@@ -132,8 +143,8 @@ String _destination(GoRouterState state) {
 }
 
 bool _isInternalLocation(String location) {
-  final Uri uri = Uri.parse(location);
-  if (uri.hasScheme || uri.host.isNotEmpty) {
+  final Uri? uri = Uri.tryParse(location);
+  if (uri == null || uri.hasScheme || uri.host.isNotEmpty) {
     return false;
   }
   return uri.path.startsWith('/') && !uri.path.startsWith('//');

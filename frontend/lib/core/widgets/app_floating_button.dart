@@ -85,7 +85,6 @@ class _AppFloatingButtonState extends State<AppFloatingButton> {
               onPanUpdate: _onPanUpdate,
               onTap: () => widget.onPressed(_anchor()),
               child: Semantics(
-                container: true,
                 button: true,
                 label: widget.label,
                 hint: widget.hint,

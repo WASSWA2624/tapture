@@ -10,6 +10,99 @@ final class CopyMessages {
   /// Creates the shared stateless factory.
   const CopyMessages();
 
+  /// Delete permanently
+  LocalizedMessage get recycleDeletePermanent => LocalizedMessage(
+    key: 'recycleDeletePermanent',
+    fallback: Copy.recycleDeletePermanent,
+  );
+
+  /// Delete name permanently
+  LocalizedMessage recycleDeleteLabel(String name) => LocalizedMessage(
+    key: 'recycleDeleteLabel',
+    fallback: Copy.recycleDeleteLabel(name),
+    arguments: <String, Object?>{'name': LocalizedMessage.encodeArgument(name)},
+  );
+
+  /// Select name
+  LocalizedMessage recycleSelectLabel(String name) => LocalizedMessage(
+    key: 'recycleSelectLabel',
+    fallback: Copy.recycleSelectLabel(name),
+    arguments: <String, Object?>{'name': LocalizedMessage.encodeArgument(name)},
+  );
+
+  /// Restore all
+  LocalizedMessage get recycleRestoreAll => LocalizedMessage(
+    key: 'recycleRestoreAll',
+    fallback: Copy.recycleRestoreAll,
+  );
+
+  /// Restore selected
+  LocalizedMessage get recycleRestoreSelected => LocalizedMessage(
+    key: 'recycleRestoreSelected',
+    fallback: Copy.recycleRestoreSelected,
+  );
+
+  /// Delete all permanently
+  LocalizedMessage get recycleDeleteAll => LocalizedMessage(
+    key: 'recycleDeleteAll',
+    fallback: Copy.recycleDeleteAll,
+  );
+
+  /// Delete selected permanently
+  LocalizedMessage get recycleDeleteSelected => LocalizedMessage(
+    key: 'recycleDeleteSelected',
+    fallback: Copy.recycleDeleteSelected,
+  );
+
+  /// Delete permanently?
+  LocalizedMessage get recycleDeleteTitle => LocalizedMessage(
+    key: 'recycleDeleteTitle',
+    fallback: Copy.recycleDeleteTitle,
+  );
+
+  /// Permanently delete count items? Projects include their records, templates and files. This cannot be undone.
+  LocalizedMessage recycleDeleteWarning(int count) => LocalizedMessage(
+    key: 'recycleDeleteWarning',
+    fallback: Copy.recycleDeleteWarning(count),
+    arguments: <String, Object?>{
+      'count': LocalizedMessage.encodeArgument(count),
+    },
+  );
+
+  /// count restored. failed could not be restored.
+  LocalizedMessage recycleRestoreResult(int count, int failed) =>
+      LocalizedMessage(
+        key: 'recycleRestoreResult',
+        fallback: Copy.recycleRestoreResult(count, failed),
+        arguments: <String, Object?>{
+          'count': LocalizedMessage.encodeArgument(count),
+          'failed': LocalizedMessage.encodeArgument(failed),
+        },
+      );
+
+  /// count permanently deleted. failed could not be deleted.
+  LocalizedMessage recycleDeleteResult(int count, int failed) =>
+      LocalizedMessage(
+        key: 'recycleDeleteResult',
+        fallback: Copy.recycleDeleteResult(count, failed),
+        arguments: <String, Object?>{
+          'count': LocalizedMessage.encodeArgument(count),
+          'failed': LocalizedMessage.encodeArgument(failed),
+        },
+      );
+
+  /// Another project still uses this data.
+  LocalizedMessage get recycleSharedData => LocalizedMessage(
+    key: 'recycleSharedData',
+    fallback: Copy.recycleSharedData,
+  );
+
+  /// Remove the shared reference before deleting permanently.
+  LocalizedMessage get recycleSharedDataRecovery => LocalizedMessage(
+    key: 'recycleSharedDataRecovery',
+    fallback: Copy.recycleSharedDataRecovery,
+  );
+
   /// Why a protected record value cannot be corrected.
   LocalizedMessage get recordFieldReadOnly => LocalizedMessage(
     key: 'recordFieldReadOnly',

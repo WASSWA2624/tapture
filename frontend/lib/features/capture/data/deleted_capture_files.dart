@@ -32,7 +32,7 @@ final class DeletedCaptureFiles {
     final String table = photos ? 'photos' : 'attachments';
     return db
         .customSelect(
-          "SELECT f.id, f.project_id, p.name AS project_name, f.relative_path, ${photos ? 'f.original_filename AS name' : "f.kind AS kind"}, t.deleted_at, t.reason FROM $table f JOIN projects p ON p.id = f.project_id JOIN tombstones t ON t.entity_type = '$table' AND t.entity_id = f.id WHERE $_liveProject AND ${photos ? _livePhotoParent : _liveAttachmentParent} ORDER BY t.deleted_at DESC, f.id",
+          "SELECT f.id, f.project_id, p.name AS project_name, f.relative_path, ${photos ? 'f.original_filename AS name' : "f.kind AS kind"}, t.id AS deletion_id, t.deleted_at, t.reason FROM $table f JOIN projects p ON p.id = f.project_id JOIN tombstones t ON t.entity_type = '$table' AND t.entity_id = f.id WHERE $_liveProject AND ${photos ? _livePhotoParent : _liveAttachmentParent} ORDER BY t.deleted_at DESC, f.id",
           readsFrom: <TableInfo<dynamic, dynamic>>{
             db.projects,
             db.photos,
@@ -59,6 +59,7 @@ final class DeletedCaptureFiles {
                 projectId: row.read<String>('project_id'),
                 projectName: row.read<String>('project_name'),
                 deletedAt: row.read<DateTime>('deleted_at'),
+                deletionId: row.read<String>('deletion_id'),
                 reason: row.read<String>('reason'),
               ),
           ],

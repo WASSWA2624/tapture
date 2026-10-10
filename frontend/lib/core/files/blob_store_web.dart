@@ -65,6 +65,27 @@ final class _IndexedDbBlobStore implements BlobStore {
     });
   }
 
+  @override
+  Future<Result<void>> removeTree(String prefix) async {
+    final Failure? invalid = keyFailure(prefix);
+    if (invalid != null) {
+      return FailureResult<void>(invalid);
+    }
+    return _change((_IdbObjectStore store) {
+      final _IdbRequest keys = store.getAllKeys();
+      keys.onsuccess = ((JSAny _) {
+        for (final JSAny? value in (keys.result! as JSArray<JSAny?>).toDart) {
+          if (value != null && value.isA<JSString>()) {
+            final String key = (value as JSString).toDart;
+            if (key == prefix || key.startsWith('$prefix/')) {
+              store.delete(value);
+            }
+          }
+        }
+      }).toJS;
+    });
+  }
+
   /// Runs [body] in a read-write transaction and completes once the browser
   /// reports the transaction durable (FE-STATE-07).
   Future<Result<void>> _change(void Function(_IdbObjectStore) body) async {
@@ -160,6 +181,7 @@ extension type _IdbTransaction._(JSObject _) implements JSObject {
 }
 
 extension type _IdbObjectStore._(JSObject _) implements JSObject {
+  external _IdbRequest getAllKeys();
   external _IdbRequest get(JSString key);
   external _IdbRequest put(JSAny value, JSString key);
   external _IdbRequest delete(JSString key);

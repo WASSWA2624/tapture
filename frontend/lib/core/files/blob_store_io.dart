@@ -6,6 +6,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 
 import 'blob_store.dart';
+import 'blob_tree_purge_io.dart';
 
 /// A folder named [name] under the application support directory.
 BlobStore openBlobStore(String name) {
@@ -78,6 +79,21 @@ final class _FolderBlobStore implements BlobStore {
         // is not the purge job's delete (FE-SEC-08).
         await target.delete();
       }
+      return const Success<void>(null);
+    } on Object {
+      return FailureResult<void>(storeFailure());
+    }
+  }
+
+  @override
+  Future<Result<void>> removeTree(String prefix) async {
+    final Failure? invalid = keyFailure(prefix);
+    if (invalid != null) {
+      return FailureResult<void>(invalid);
+    }
+    try {
+      final Directory root = _resolved ??= await _folder();
+      await purgeBlobTree(root, prefix);
       return const Success<void>(null);
     } on Object {
       return FailureResult<void>(storeFailure());

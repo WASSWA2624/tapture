@@ -79,7 +79,7 @@ import 'record_template_change.dart';
 /// instead.
 ///
 /// [projectId] keeps navigation inside the project the page was opened
-/// from; without it, the Records destination's routes are used.
+/// from; legacy addresses resolve to the record's owning project.
 class RecordDetailScreen extends ConsumerWidget {
   /// Creates the page of record [recordId], opened from [projectId] when
   /// one is given.

@@ -7207,3 +7207,71 @@ Chrome acceptance remains open. The required browser command stalled before load
 D3(a): exactly **73 approved baselines** passed normal comparisons and visual inspection. W1 regenerated the 12 `frontend/test/features/capture/presentation/goldens/feedback_2154_guide_<corner>.png` files. W2 regenerated the 12 `capture_workflow_<corner>.png` files plus `capture_workflow_reported_light.png` in that directory and added 48 `feedback_0457_composer_<empty|multiline|audio|photos>_<corner>.png` files. The [portable visual manifest](../prompts/feedback-10102026-0457/visual-evidence.manifest.json) lists every exact path and hash. The unique external archive contains **421 images**: 73 approved baselines, 60 byte-identical unrelated restored baselines and 288 comparison artifacts. Every member path, SHA-256 and decoded image was verified after reopening; all cleanup paths/hashes were checked beneath `frontend/test/` before exact-file removal. Original archives are preserved, no pre-existing test image was present and no test image remains.
 
 The [acceptance patch](../prompts/feedback-10102026-0457/acceptance-sources.patch) and [source manifest](../prompts/feedback-10102026-0457/acceptance-sources.manifest.json) deliver **58 current sources** in the recursive relative-import closure, including conditional browser helpers. Applying the patch through a separate temporary index reconstructs every canonical-LF source/hash and preserves the real index and ignore policy. Capture requirements and task 012's supersession note are current. Tracker synchronization, drift checking and plan integrity pass. This task remains **Partially complete** because the required broader suites and Chrome acceptance remain open; tasks 003/012/164 retain their independent unfinished criteria.
+
+## 166 — Simplify project navigation and recycle-bin management
+
+**Depends on** [001](01-orchestration.md), [002](02-foundation.md)
+
+**Implementation started:** Yes
+
+### Implement
+
+Keep Projects and More as the only shell destinations. Capture and record CRUD belong to the opened project;
+legacy links resolve to that project's canonical routes. Synchronize navigation, empty states and back behavior.
+Provide compact, accessible recycle-bin icon actions and selection/all restore and permanent deletion. Permanent
+project deletion removes its owned records, templates, files and dependent rows while preserving other projects.
+Resume the last valid work screen after restart, preserving lock and deep-link precedence.
+
+### Files
+
+- `frontend/lib/app/` — routes, shell and resume handling.
+- `frontend/lib/features/records/` — project-only record navigation, recycle actions and purge.
+- `frontend/lib/features/projects/` and `frontend/lib/core/files/` — cascade ownership and managed storage.
+- `frontend/lib/features/settings/` — durable preferences.
+- `frontend/lib/core/widgets/` — shared shell icon semantics.
+- `frontend/test/` — navigation, resume, recycle and real-database/file acceptance.
+- `frontend/.rules/06-simplicity.md` and `app-write-up.md` — current product contracts.
+
+### Contract
+
+Project-scoped capture and record routes remain public. Legacy standalone URLs redirect without exposing a global
+record list. Explicit permanent deletion requires confirmation and rechecks deletion identity before mutation.
+Bulk actions operate on a captured selection, report failures and keep failed entries available for retry.
+`BlobStore.removeTree(prefix)` durably removes an exact validated prefix and its descendants on each platform;
+project and retained-merge purge adapters validate ownership before invoking that boundary.
+
+### Definition of done
+
+- [x] Projects and More are the only shell destinations at all widths; Capture and record CRUD stay inside the current project, including legacy links and back navigation.
+- [x] Recycle rows expose labelled icon restore/delete actions; selected and all projects/records can be restored or permanently deleted with confirmation and failure feedback.
+- [x] Real database/file tests prove project cascade, record purge, independent restoration, retry behavior and preservation of unrelated/shared data.
+- [x] Restart resumes the previous valid screen; stale routes, explicit deep links and locked startup have safe tested behavior.
+- [x] Affected behavior/accessibility tests, analysis, formatting, localization and architecture checks pass; documentation and generated tracker are current.
+
+### Evidence
+
+Task 166 implements the user's project-only workflow on `task/166-simplify-project-workflow`. The focused native
+acceptance run passes **192 tests**, including project navigation and ownership, legacy links, back behavior,
+restart/deep-link/lock precedence, accessible compact recycle actions, selection/all operations, confirmation,
+partial failures, real SQLite cascades and filesystem safeguards. All architecture and secret-scan fixtures in
+that run pass on the current tree. The separate **15-case managed restoration suite** passes, including independent
+child tombstones, shared timestamps, interrupted recovery and preserved source bytes.
+
+All **3 browser storage checks** pass, including actual IndexedDB deletion/reopening and adjacent-prefix preservation.
+The installed Windows Flutter test runner returns 404 for local CanvasKit and misformats test selectors; the existing
+ignored task-144 isolated runner supplies its documented URL/bootstrap corrections without changing the SDK or app.
+Application-library and new-test analysis both exit successfully with no diagnostics; changed-source formatting,
+pseudo/copy generation checks and localization validation pass. The repository naming checker retains two pre-existing findings in unchanged
+meeting/processing controllers; this task introduces none. This evidence does not certify unrelated historical suites.
+
+The [acceptance patch](../prompts/task-166-project-workflow/acceptance-sources.patch) and
+[source manifest](../prompts/task-166-project-workflow/acceptance-sources.manifest.json) preserve the five new test roots
+and their nine-source relative-import closure. Temporary-index application reconstructs every canonical-LF hash and
+leaves the real index unchanged; the repository's test ignore policy is preserved.
+
+The production APK rebuild succeeds (`frontend/build/task166-build-apk-final.log`). The final kernel contains the
+current router, purge adapter, recycle screen and controller sources. APK signature/certificate continuity,
+16 KiB alignment, ZIP CRC, all three native ABI inventories and bundled speech-model hashes pass
+(`frontend/build/task166-apk-verification.json`). The updated APK is **186,341,726 bytes**, SHA-256
+`e01e54e4c43e3a601ea9860abc0338f633d1c72b09e267479fe6f2302a19e3d0`. Generated native fingerprints were archived,
+reopened and verified before restoring their exact pre-build bytes. Tracker drift and plan integrity checks pass.

@@ -43,6 +43,10 @@ abstract interface class BlobStore {
   /// Removes [key]. Removing a key that is not there succeeds.
   Future<Result<void>> remove(String key);
 
+  /// Removes a validated key and its descendants, without matching siblings
+  /// such as `projects/ab` when the prefix is `projects/a`. Durable on return.
+  Future<Result<void>> removeTree(String prefix);
+
   /// Whether [key] is a relative name this store accepts: letters, digits,
   /// `.`, `_`, `-` and `/`, with no empty, `.` or `..` segment.
   static bool isValidKey(String key) {
@@ -98,6 +102,18 @@ final class _MemoryBlobStore implements BlobStore {
   }
 
   Failure? get _writeFailure => _failWrites ? storeFailure() : null;
+
+  @override
+  Future<Result<void>> removeTree(String prefix) async {
+    final Failure? invalid = keyFailure(prefix) ?? _writeFailure;
+    if (invalid != null) {
+      return FailureResult<void>(invalid);
+    }
+    _backing.removeWhere(
+      (String key, Uint8List _) => key == prefix || key.startsWith('$prefix/'),
+    );
+    return const Success<void>(null);
+  }
 }
 
 /// The failure every backend returns for a key [BlobStore.isValidKey]

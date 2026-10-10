@@ -64,8 +64,16 @@ final class CurrentProject extends Notifier<String?> {
   }
 
   void _resolve(SettingsStore store, List<Project> rows) {
-    final String? stored = store.read(SettingKeys.openProjectId);
     _resolved = true;
+    if (_openedThisSession) {
+      final String? open = state;
+      if (open != null && !_exists(open, rows)) {
+        state = null;
+        unawaited(_persist(null));
+      }
+      return;
+    }
+    final String? stored = store.read(SettingKeys.openProjectId);
     if (stored == null) {
       return;
     }

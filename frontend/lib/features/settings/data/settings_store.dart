@@ -177,6 +177,7 @@ final class _DeviceSettingsStore implements SettingsStore {
   final Clock _clock;
   final Map<String, Object?> _values;
   final Map<String, Object?> _reserved;
+  Future<void> _writeTail = Future<void>.value();
   final StreamController<SettingKey<Object?>> _changes =
       StreamController<SettingKey<Object?>>.broadcast();
 
@@ -184,7 +185,15 @@ final class _DeviceSettingsStore implements SettingsStore {
   T read<T>(SettingKey<T> key) => _readValue(_values, key);
 
   @override
-  Future<Result<void>> write<T>(SettingKey<T> key, T value) async {
+  Future<Result<void>> write<T>(SettingKey<T> key, T value) {
+    final Future<Result<void>> next = _writeTail.then(
+      (_) => _write(key, value),
+    );
+    _writeTail = next.then((_) {});
+    return next;
+  }
+
+  Future<Result<void>> _write<T>(SettingKey<T> key, T value) async {
     if (!_isEncodable(value)) {
       return FailureResult<void>(
         ValidationFailure(

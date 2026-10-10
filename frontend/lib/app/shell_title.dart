@@ -8,7 +8,7 @@ import 'shell_destination.dart';
 
 /// Route titles for the shell header and for feedback's screen name.
 ///
-/// Every route names the screen, including the four branch roots. A page
+/// Every route names the screen, including both branch roots. A page
 /// is titled by its own name, the same `Copy` key as the row that opens
 /// it, so Templates reads Templates wherever it was opened from. The status
 /// line draws a back control only when [isRoot] is false (FE-CONS-02).
@@ -16,14 +16,10 @@ abstract final class ShellTitle {
   /// Capture branch. Matches the private path on the router.
   static const String capture = RoutePaths.captureRoot;
 
-  /// True for the four destinations, unless a filter has drilled in.
+  /// True for both destinations, unless a filter has drilled in.
   static bool isRoot(Uri uri) {
     final String path = uri.path;
-    final bool root =
-        path == AppRoutes.projects ||
-        path == capture ||
-        path == AppRoutes.records ||
-        path == AppRoutes.more;
+    final bool root = path == AppRoutes.projects || path == AppRoutes.more;
     if (!root) {
       return false;
     }

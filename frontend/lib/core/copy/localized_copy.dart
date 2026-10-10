@@ -10,6 +10,48 @@ import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 /// never pass through here (FE-L10N-07).
 /// Copy resolved against one app's inherited locale. User data passes unchanged.
 final class LocalizedCopy {
+  /// Delete permanently
+  String get recycleDeletePermanent => _catalog.recycleDeletePermanent;
+
+  /// Delete name permanently
+  String recycleDeleteLabel(String name) => _catalog.recycleDeleteLabel(name);
+
+  /// Select name
+  String recycleSelectLabel(String name) => _catalog.recycleSelectLabel(name);
+
+  /// Restore all
+  String get recycleRestoreAll => _catalog.recycleRestoreAll;
+
+  /// Restore selected
+  String get recycleRestoreSelected => _catalog.recycleRestoreSelected;
+
+  /// Delete all permanently
+  String get recycleDeleteAll => _catalog.recycleDeleteAll;
+
+  /// Delete selected permanently
+  String get recycleDeleteSelected => _catalog.recycleDeleteSelected;
+
+  /// Delete permanently?
+  String get recycleDeleteTitle => _catalog.recycleDeleteTitle;
+
+  /// Permanently delete count items? Projects include their records, templates and files. This cannot be undone.
+  String recycleDeleteWarning(int count) =>
+      _catalog.recycleDeleteWarning(count);
+
+  /// count restored. failed could not be restored.
+  String recycleRestoreResult(int count, int failed) =>
+      _catalog.recycleRestoreResult(count, failed);
+
+  /// count permanently deleted. failed could not be deleted.
+  String recycleDeleteResult(int count, int failed) =>
+      _catalog.recycleDeleteResult(count, failed);
+
+  /// Another project still uses this data.
+  String get recycleSharedData => _catalog.recycleSharedData;
+
+  /// Remove the shared reference before deleting permanently.
+  String get recycleSharedDataRecovery => _catalog.recycleSharedDataRecovery;
+
   /// Opens Capture's project selector.
   String get captureChangeProject => _catalog.captureChangeProject;
 

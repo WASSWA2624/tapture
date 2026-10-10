@@ -111,7 +111,7 @@ final class ImportSummaryScreen extends ConsumerWidget {
               final String? projectId = ref.read(currentProjectProvider);
               context.go(
                 projectId == null
-                    ? RoutePaths.records
+                    ? RoutePaths.projects
                     : RoutePaths.projectRecords(projectId),
               );
             },

@@ -22,7 +22,7 @@ import 'package:tapture/features/projects/presentation/project_list_toolbar.dart
 import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/records/presentation/records_list_view.dart';
 
-/// The four-destination frame: bar on compact, rail on medium, rail plus a
+/// The project frame: bar on compact, rail on medium, rail plus a
 /// list pane on expanded. [shell] keeps each branch's stack (FE-RESP-03).
 /// The pane lists projects on Projects, and a record's siblings beside an
 /// open record.
@@ -61,17 +61,13 @@ class _Chrome extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int index = shell.currentIndex;
-    // Records keeps its list in the body; the pane holds the list only
-    // beside an open record, so it never shows an empty column.
+    final Uri location = GoRouterState.of(context).uri;
+    // Keep capture focused. The records pane appears only beside a record.
     final bool showPane =
         pane &&
         shellDestinations[index].hasList &&
-        (shellDestinations[index].path != RoutePaths.records ||
-            _openRecord(
-                  GoRouterState.of(context).uri,
-                  ref.watch(currentProjectProvider),
-                ) !=
-                null);
+        !RoutePaths.isProjectCapture(location.path) &&
+        (!location.path.contains('/records') || _openRecord(location) != null);
     final BorderSide hairline = BorderSide(
       color: context.colors.outline,
       width: Space.x0 / 2,
@@ -104,8 +100,10 @@ class _Chrome extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
-                            if (shellDestinations[index].path !=
-                                RoutePaths.captureRoot)
+                            if (GoRouterState.of(
+                                  context,
+                                ).pathParameters.containsKey('projectId') &&
+                                !RoutePaths.isProjectCapture(location.path))
                               const ContextBar(),
                             const OfflineBanner(),
                           ],
@@ -125,9 +123,9 @@ class _Chrome extends ConsumerWidget {
                                 ),
                               ),
                             if (showPane)
-                              SizedBox(
+                              const SizedBox(
                                 width: Sizes.listPane,
-                                child: _Pane(index: index),
+                                child: _Pane(),
                               ),
                             Expanded(
                               key: const ValueKey<String>('nav-body-slot'),
@@ -182,7 +180,7 @@ class _BarState extends State<_Bar> {
               // the current branch or discard the page under the menu.
               unawaited(_showMore());
             } else {
-              shell.goBranch(index, initialLocation: true);
+              shell.goBranch(index);
             }
           },
           destinations: <NavigationDestination>[
@@ -262,9 +260,9 @@ class _Rail extends StatelessWidget {
             : colors.surfaceVariant,
         selectedIndex: shell.currentIndex,
         onDestinationSelected: (int index) {
-          shell.goBranch(index, initialLocation: true);
+          shell.goBranch(index);
         },
-        // A landscape phone with the keyboard open is shorter than the four
+        // A landscape phone with the keyboard open can be shorter than the
         // destinations; the rail scrolls rather than overflowing.
         scrollable: true,
         labelType: NavigationRailLabelType.all,
@@ -288,16 +286,11 @@ class _Rail extends StatelessWidget {
 }
 
 class _Pane extends ConsumerWidget {
-  const _Pane({required this.index});
-
-  final int index;
+  const _Pane();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _OpenRecord? open = _openRecord(
-      GoRouterState.of(context).uri,
-      ref.watch(currentProjectProvider),
-    );
+    final _OpenRecord? open = _openRecord(GoRouterState.of(context).uri);
     return RepaintBoundary(
       key: const ValueKey<String>('nav-pane'),
       child: Material(
@@ -353,47 +346,24 @@ class _Pane extends ConsumerWidget {
 /// A record open in the body, so the pane lists its project's records
 /// beside it (FE-RESP-05).
 class _OpenRecord {
-  const _OpenRecord({
-    required this.projectId,
-    required this.recordId,
-    required this.inProject,
-  });
+  const _OpenRecord({required this.projectId, required this.recordId});
 
   final String projectId;
   final String recordId;
-  final bool inProject;
 }
 
-/// The record [uri] is showing, with the project it belongs to. The Records
-/// destination uses the open project. A list with no record open returns
-/// null, so the pane keeps the destination's own list.
-_OpenRecord? _openRecord(Uri uri, String? currentProject) {
+/// The record [uri] is showing inside its owning project.
+_OpenRecord? _openRecord(Uri uri) {
   final List<String> parts = uri.pathSegments;
-  if (parts.length >= 2 && parts.first == 'records') {
-    if (currentProject == null || currentProject.isEmpty) {
-      return null;
-    }
-    return _OpenRecord(
-      projectId: currentProject,
-      recordId: parts[1],
-      inProject: false,
-    );
-  }
   if (parts.length >= 4 && parts[0] == 'projects' && parts[2] == 'records') {
-    return _OpenRecord(
-      projectId: parts[1],
-      recordId: parts[3],
-      inProject: true,
-    );
+    return _OpenRecord(projectId: parts[1], recordId: parts[3]);
   }
   return null;
 }
 
 /// Opens [id] in the same branch the pane was opened from.
 void _openBeside(BuildContext context, _OpenRecord open, String id) {
-  final String location = open.inProject
-      ? RoutePaths.projectRecord(open.projectId, id)
-      : RoutePaths.record(id);
+  final String location = RoutePaths.projectRecord(open.projectId, id);
   if (GoRouterState.of(context).uri.path == location) {
     return;
   }

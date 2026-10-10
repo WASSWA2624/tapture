@@ -192,6 +192,7 @@ abstract final class RecordMapper {
     return DeletedRecord(
       summary: summary(row),
       deletedAt: row.read<DateTime>('deleted_at').toUtc(),
+      deletionId: row.read<String>('deletion_id'),
       reason: row.read<String?>('bin_reason') ?? '',
       projectName: row.read<String?>('project_name') ?? '',
     );

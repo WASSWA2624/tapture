@@ -17,8 +17,8 @@ import 'evidence_purge_stub.dart'
 /// attachment file is ever deleted (FE-SEC-08).
 ///
 /// Deletion everywhere else is a tombstone and the file stays, so a restore
-/// is always complete. Only the retention purge calls this, once a record's
-/// window has passed, and it decides beforehand which files another row
+/// is always complete. Retention and explicitly confirmed permanent deletion
+/// call this, after deciding which files another row
 /// still holds: this service removes exactly what it is told to and never
 /// reaches outside a project folder or the per-photo caches.
 ///

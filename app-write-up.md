@@ -2710,8 +2710,12 @@ rows use Active), and audits the change. A project folder moves back before data
 a live path; a failed or interrupted restore remains retryable. Browser bytes remain in the managed local store.
 New project deletions bind cascade membership and prior status to the exact parent tombstone through append-only
 audit entries; repeated deletion unions membership without reviving older independent tombstones.
-**Empty deleted records** retains the existing records-only retention/purge boundary. Templates use their own Undo;
-arbitrary disk files, projects and independent files gain no new permanent-removal action.
+Recycle rows use labelled restore and permanent-delete icon buttons. Tap a row to select it; the compact bulk controls
+restore/delete the selection, or all entries when none are selected. Permanent removal requires confirmation and
+rechecks the deletion identity. A project purge cascades its records, templates, context, managed files, transcripts,
+processing, references, exports and merge history. Global templates and other projects' data/cache references survive;
+invalid cross-project ownership prevents removal and reports recovery. Failures retain entries for retry. Automatic
+record retention keeps its merge-safety policy; explicitly confirmed permanent deletion can remove local merge history.
 
 ## 39. Validation Rules
 
@@ -3217,17 +3221,17 @@ After export, show filename, size and **Share**, **Upload to cloud**, **Done**. 
 
 ## 55. Navigation & Screens
 
-Compact/mobile screens have four controls, no intervening dashboard, and no repeat sign-in for local field work (§70.4).
+Compact/mobile screens have two controls. Opening a project reveals its capture and record actions; local field work requires no repeat sign-in (§70.4).
 
 ```text
-[ Projects ]      [ CAPTURE ]      [ Records ]      [ ... More ]
+[ Projects ]                       [ ... More ]
 ```
 
 | Screen | Purpose |
 | --- | --- |
 | **Projects** | Project counts and last-worked timestamps; create, open, import, export, archive. |
-| **Capture** | Current-project capture (§19); visually dominant centre button. |
-| **Records** | Search, filter, open for review or editing. |
+| **Project Capture** | Capture inside the opened project (§19). |
+| **Project Records** | Search, filter and manage records inside their owning project. |
 | **More** | Three-dot button; anchored, scrollable menu with labelled icons. Add Documentation when released (§83). |
 
 Route map:
@@ -3235,22 +3239,22 @@ Route map:
 ```text
 /projects
 /projects/new
-/p/:projectId                     project home (counts, continue where you left off)
-/p/:projectId/capture
-/p/:projectId/records
-/p/:projectId/records/:recordId
-/p/:projectId/process              deferred queue
-/p/:projectId/duplicates
-/p/:projectId/templates
-/p/:projectId/reference
-/p/:projectId/export
-/p/:projectId/merge
-/p/:projectId/transcripts          transcript history; /new Transcribe; /:transcriptId detail (§24)
+/projects/:projectId                     project home (counts, continue where you left off)
+/projects/:projectId/capture
+/projects/:projectId/records
+/projects/:projectId/records/:recordId
+/projects/:projectId/queue              deferred queue
+/projects/:projectId/duplicates
+/projects/:projectId/templates
+/projects/:projectId/datasets
+/projects/:projectId/exports
+/projects/:projectId/merge
+/projects/:projectId/transcripts          transcript history; /new Transcribe; /:transcriptId detail (§24)
 /more/transcripts                  the same across projects
-/settings
+/more
 ```
 
-This conceptual map uses the existing `RoutePaths` conventions: `/projects/:projectId/...` and secondary destinations under `/more`. Documentation follows these conventions without duplicate aliases; §83 specifies its routes and menu behaviour. Transcribe remains a project-home overflow action and a direct route, keeping four bottom controls (§56 rule 2); meetings start from **Start a meeting** and open their review by id.
+This conceptual map uses the existing `RoutePaths` conventions: `/projects/:projectId/...` and secondary destinations under `/more`. Documentation follows these conventions without duplicate aliases; §83 specifies its routes and menu behaviour. Transcribe remains a project-home overflow action and a direct route, keeping two bottom controls (§56 rule 2); meetings start from **Start a meeting** and open their review by id.
 
 ### 55.1 Project home
 
@@ -3297,7 +3301,9 @@ Feedback downloads package the `.xlsx` workbook and matching screenshots in `TAP
 Testable interface rules:
 
 1. **One primary action per screen**, using the largest control.
-2. **Exactly four mobile bottom controls:** Projects, Capture, Records, More. New modules go in More.
+2. **Exactly two mobile bottom controls:** Projects and More. Capture and record CRUD are reached inside the opened
+   project. New secondary tools go in More. Closing and reopening resumes the last valid screen; a missing/deleted
+   project falls back to Projects, and explicit deep links and the app lock retain precedence.
 3. **Three taps to create a record:** Capture → shutter → Save.
 4. **Only sign-in is mandatory setup.** Capture within 30 seconds of first sign-in using a shipped template; General observation (UNI-001) is the universal fallback.
 5. **No repeat login for local field work.** Cache the required account session and role grant (§70.4); no onboarding tour or dashboard.
@@ -4505,7 +4511,7 @@ data as ciphertext, with no new durable document-storage responsibility.
 
 ### 83.1 Mobile More menu
 
-Keep exactly **Projects**, **Capture**, **Records**, **More** in compact navigation. More has a horizontal three-dot
+Keep exactly **Projects** and **More** in compact navigation. Capture and Records are project children. More has a horizontal three-dot
 icon and visible label, opening an anchored menu above the bar. Use shared square-corner menu/list styling,
 safe-area scrolling, icon/text entries, at least 48 dp targets and screen-reader labels.
 
@@ -4515,7 +4521,7 @@ screens; no inert placeholders. Share destination labels/icons/routes across lay
 Opening/dismissing More preserves the primary branch and work; outside tap, Back and Escape dismiss it. Selecting
 an entry closes and navigates, marking More selected on secondary branches. Retain draft/navigation protections,
 avoid duplicate routes on reopening and safely close/reposition on resize. Medium/expanded rails keep their
-existing controls; add Documentation through the secondary hub and project-home action, never a fifth mobile tab.
+two destinations; add Documentation through the secondary hub and project-home action without adding a mobile tab.
 
 ### 83.2 Documentation screens
 

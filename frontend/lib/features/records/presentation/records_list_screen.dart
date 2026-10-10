@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,8 +15,7 @@ import 'records_list_controller.dart';
 import 'records_list_view.dart';
 
 /// The records list page (task 014 step 2): one project's records with
-/// search, filters and sort, for the project branch (`/projects/:id/records`)
-/// and the Records destination (`/records`).
+/// search, filters and sort, inside the project branch (`/projects/:id/records`).
 ///
 /// Without [projectId] it lists the open project's records, and with no
 /// project open it says so and offers to open one (FE-SIMP-11).
@@ -71,12 +68,7 @@ class _RecordsListScreenState extends ConsumerState<RecordsListScreen> {
       title: localCopy.navRecords,
       scrollable: false,
       inset: false,
-      body: RecordsListView(
-        projectId: projectId,
-        onOpen: widget.projectId == null
-            ? (String id) => unawaited(context.push(RoutePaths.record(id)))
-            : null,
-      ),
+      body: RecordsListView(projectId: projectId),
     );
   }
 

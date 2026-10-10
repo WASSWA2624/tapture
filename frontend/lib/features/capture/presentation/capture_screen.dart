@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/markup_ink.dart';
 import 'package:tapture/app/theme/typography.dart';
@@ -174,7 +176,7 @@ final class CaptureScreen extends ConsumerStatefulWidget {
   /// Creates the screen for [projectId].
   const CaptureScreen({required this.projectId, this.recordId, super.key});
 
-  /// Open project. Empty on the Capture tab root.
+  /// Project named by the route; recovery previews may use the open project.
   final String projectId;
 
   /// The saved record to edit. Null captures a new record.
@@ -193,7 +195,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
   final Set<String> _missing = <String>{};
   String? _derivationNotice;
   bool _onStage = true;
-  String? _chosen;
   String? _locationSession;
 
   /// The session key whose stored copy is being checked, so one check runs
@@ -242,22 +243,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     );
   }
 
-  /// Project this capture is filed under. A route id stands until the
-  /// operator picks another. Empty means none is selected.
+  /// Capture always belongs to its opened project. Empty is a recovery state.
   String _projectId() {
-    final String? chosen = _chosen;
-    if (chosen != null && chosen.isNotEmpty) {
-      return chosen;
-    }
     if (widget.projectId.isNotEmpty) {
       return widget.projectId;
     }
     return ref.read(currentProjectProvider) ?? '';
-  }
-
-  void _chooseProject(String id) {
-    refresh(() => _chosen = id);
-    ref.read(currentProjectProvider.notifier).open(id);
   }
 
   @override
@@ -397,15 +388,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     for (final TemplateDef template in templates) {
       if (template.id == templateId) templateName = template.name;
     }
-    void chooseProject() => unawaited(
-      CaptureTargetFields.chooseProject(
-        context: context,
-        ref: ref,
-        selectedProjectId: projectId,
-        isCurrent: () => mounted && _projectId() == projectId,
-        onChanged: _chooseProject,
-      ),
-    );
+    void chooseProject() => context.go(RoutePaths.projects);
     // With no project there is nothing to file under: the target fields say
     // so and offer the next step, and nothing else is drawn.
     final bool noProject = !_editing && projectId.isEmpty;
@@ -427,12 +410,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
       overflow: _editing
           ? const <AppOverflowAction>[]
           : <AppOverflowAction>[
-              AppOverflowAction(
-                key: const ValueKey<String>('capture-change-project'),
-                label: localCopy.captureChangeProject,
-                icon: AppIcons.project,
-                onTap: chooseProject,
-              ),
               if (projectId.isNotEmpty && templates.isNotEmpty)
                 AppOverflowAction(
                   key: const ValueKey<String>('capture-change-template'),

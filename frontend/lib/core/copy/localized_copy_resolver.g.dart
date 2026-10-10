@@ -23,6 +23,35 @@ extension LocalizedCopyResolver on LocalizedCopy {
   }
 
   String _resolve(LocalizedMessage message) => switch (message.key) {
+    'recycleDeletePermanent' => recycleDeletePermanent,
+    'recycleDeleteLabel' => recycleDeleteLabel(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'recycleSelectLabel' => recycleSelectLabel(
+      (message.argument('name') is LocalizedMessage
+          ? resolve(message.argument('name') as LocalizedMessage)
+          : message.argument('name') as String),
+    ),
+    'recycleRestoreAll' => recycleRestoreAll,
+    'recycleRestoreSelected' => recycleRestoreSelected,
+    'recycleDeleteAll' => recycleDeleteAll,
+    'recycleDeleteSelected' => recycleDeleteSelected,
+    'recycleDeleteTitle' => recycleDeleteTitle,
+    'recycleDeleteWarning' => recycleDeleteWarning(
+      message.argument('count') as int,
+    ),
+    'recycleRestoreResult' => recycleRestoreResult(
+      message.argument('count') as int,
+      message.argument('failed') as int,
+    ),
+    'recycleDeleteResult' => recycleDeleteResult(
+      message.argument('count') as int,
+      message.argument('failed') as int,
+    ),
+    'recycleSharedData' => recycleSharedData,
+    'recycleSharedDataRecovery' => recycleSharedDataRecovery,
     'recordFieldReadOnly' => recordFieldReadOnly,
     'processingProtectedField' => processingProtectedField(
       (message.argument('fieldKey') is LocalizedMessage

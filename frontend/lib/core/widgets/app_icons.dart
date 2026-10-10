@@ -52,7 +52,7 @@ abstract final class AppIcons {
   /// Collapses a full-size panel.
   static const IconData collapsePanel = Icons.close_fullscreen;
 
-  // The four destinations.
+  // Navigation and project actions.
 
   /// A project, and the Projects destination.
   static const IconData project = Icons.folder_outlined;
@@ -66,10 +66,10 @@ abstract final class AppIcons {
   /// The selected Capture destination.
   static const IconData cameraSelected = Icons.photo_camera;
 
-  /// Records, and the Records destination.
+  /// Project records.
   static const IconData records = Icons.list_alt_outlined;
 
-  /// The selected Records destination.
+  /// Selected records.
   static const IconData recordsSelected = Icons.list_alt;
 
   /// Settings, and the Settings destination.

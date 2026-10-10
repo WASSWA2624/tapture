@@ -781,7 +781,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
   @override
   Stream<List<DeletedEntity>> watchDeleted() => _db
       .customSelect(
-        "SELECT p.id, p.name, t.deleted_at, t.reason FROM projects p JOIN tombstones t ON t.entity_type = 'projects' AND t.entity_id = p.id ORDER BY t.deleted_at DESC, p.id",
+        "SELECT p.id, p.name, t.id AS deletion_id, t.deleted_at, t.reason FROM projects p JOIN tombstones t ON t.entity_type = 'projects' AND t.entity_id = p.id ORDER BY t.deleted_at DESC, p.id",
         readsFrom: <TableInfo<dynamic, dynamic>>{_db.projects, _db.tombstones},
       )
       .watch()
@@ -795,6 +795,7 @@ final class ProjectRepositoryImpl implements ProjectRepository {
               projectId: row.read<String>('id'),
               projectName: row.read<String>('name'),
               deletedAt: row.read<DateTime>('deleted_at'),
+              deletionId: row.read<String>('deletion_id'),
               reason: row.read<String>('reason'),
             ),
         ],

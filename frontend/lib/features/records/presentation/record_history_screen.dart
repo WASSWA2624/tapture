@@ -96,8 +96,8 @@ class RecordHistoryScreen extends ConsumerWidget {
         icon: AppIcons.records,
         headline: localCopy.recordGoneHeadline,
         message: localCopy.recordGoneMessage,
-        actionLabel: localCopy.navRecords,
-        onAction: () => context.go(RoutePaths.records),
+        actionLabel: localCopy.navProjects,
+        onAction: () => context.go(RoutePaths.projects),
       );
     }
     final bool canGoBack = ModalRoute.of(context)?.canPop ?? false;
@@ -110,7 +110,12 @@ class RecordHistoryScreen extends ConsumerWidget {
         if (canGoBack) {
           Navigator.of(context).pop();
         } else {
-          context.go(RoutePaths.record(recordId));
+          final RecordEntry? entry = record.value;
+          context.go(
+            entry == null
+                ? RoutePaths.projects
+                : RoutePaths.projectRecord(entry.projectId, recordId),
+          );
         }
       },
     );

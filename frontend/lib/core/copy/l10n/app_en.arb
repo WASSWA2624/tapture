@@ -15713,5 +15713,95 @@
         "description": "Saved numeric request ceiling."
       }
     }
+  },
+  "recycleDeletePermanent": "Delete permanently",
+  "@recycleDeletePermanent": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteLabel": "Delete {name} permanently",
+  "@recycleDeleteLabel": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Name of the deleted item."
+      }
+    }
+  },
+  "recycleSelectLabel": "Select {name}",
+  "@recycleSelectLabel": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Name of the deleted item."
+      }
+    }
+  },
+  "recycleRestoreAll": "Restore all",
+  "@recycleRestoreAll": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleRestoreSelected": "Restore selected",
+  "@recycleRestoreSelected": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteAll": "Delete all permanently",
+  "@recycleDeleteAll": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteSelected": "Delete selected permanently",
+  "@recycleDeleteSelected": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteTitle": "Delete permanently?",
+  "@recycleDeleteTitle": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteWarning": "Permanently delete {count} items? Projects include their records, templates and files. This cannot be undone.",
+  "@recycleDeleteWarning": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of affected items."
+      }
+    }
+  },
+  "recycleRestoreResult": "{count} restored. {failed} could not be restored.",
+  "@recycleRestoreResult": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of affected items."
+      },
+      "failed": {
+        "type": "int",
+        "description": "Number of items that could not be processed."
+      }
+    }
+  },
+  "recycleDeleteResult": "{count} permanently deleted. {failed} could not be deleted.",
+  "@recycleDeleteResult": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of affected items."
+      },
+      "failed": {
+        "type": "int",
+        "description": "Number of items that could not be processed."
+      }
+    }
+  },
+  "recycleSharedData": "Another project still uses this data.",
+  "@recycleSharedData": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleSharedDataRecovery": "Remove the shared reference before deleting permanently.",
+  "@recycleSharedDataRecovery": {
+    "description": "Project recycle-bin action or feedback."
   }
 }

@@ -15713,5 +15713,95 @@
         "description": "Saved numeric request ceiling."
       }
     }
+  },
+  "recycleDeletePermanent": "Délété pérmánéntly·······",
+  "@recycleDeletePermanent": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteLabel": "Délété ···{name} pérmánéntly·····",
+  "@recycleDeleteLabel": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Name of the deleted item."
+      }
+    }
+  },
+  "recycleSelectLabel": "Séléct ···{name}",
+  "@recycleSelectLabel": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "description": "Name of the deleted item."
+      }
+    }
+  },
+  "recycleRestoreAll": "Réstóré áll····",
+  "@recycleRestoreAll": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleRestoreSelected": "Réstóré séléctéd······",
+  "@recycleRestoreSelected": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteAll": "Délété áll pérmánéntly········",
+  "@recycleDeleteAll": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteSelected": "Délété séléctéd pérmánéntly··········",
+  "@recycleDeleteSelected": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteTitle": "Délété pérmánéntly?·······",
+  "@recycleDeleteTitle": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleDeleteWarning": "Pérmánéntly délété ·······{count} ítéms? Prójécts ínclúdé théír récórds, témplátés ánd fílés. Thís cánnót bé úndóné.······························",
+  "@recycleDeleteWarning": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of affected items."
+      }
+    }
+  },
+  "recycleRestoreResult": "{count} réstóréd. ····{failed} cóúld nót bé réstóréd.·········",
+  "@recycleRestoreResult": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of affected items."
+      },
+      "failed": {
+        "type": "int",
+        "description": "Number of items that could not be processed."
+      }
+    }
+  },
+  "recycleDeleteResult": "{count} pérmánéntly délétéd. ········{failed} cóúld nót bé délétéd.········",
+  "@recycleDeleteResult": {
+    "description": "Project recycle-bin action or feedback.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of affected items."
+      },
+      "failed": {
+        "type": "int",
+        "description": "Number of items that could not be processed."
+      }
+    }
+  },
+  "recycleSharedData": "Ánóthér prójéct stíll úsés thís dátá.·············",
+  "@recycleSharedData": {
+    "description": "Project recycle-bin action or feedback."
+  },
+  "recycleSharedDataRecovery": "Rémóvé thé sháréd référéncé béfóré délétíng pérmánéntly.····················",
+  "@recycleSharedDataRecovery": {
+    "description": "Project recycle-bin action or feedback."
   }
 }

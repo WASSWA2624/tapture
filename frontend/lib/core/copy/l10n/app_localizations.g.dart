@@ -18641,6 +18641,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Per request: {amount} configured'**
   String aiRequestLimitSummary(String amount);
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete permanently'**
+  String get recycleDeletePermanent;
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name} permanently'**
+  String recycleDeleteLabel(String name);
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Select {name}'**
+  String recycleSelectLabel(String name);
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore all'**
+  String get recycleRestoreAll;
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore selected'**
+  String get recycleRestoreSelected;
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all permanently'**
+  String get recycleDeleteAll;
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete selected permanently'**
+  String get recycleDeleteSelected;
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete permanently?'**
+  String get recycleDeleteTitle;
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete {count} items? Projects include their records, templates and files. This cannot be undone.'**
+  String recycleDeleteWarning(int count);
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} restored. {failed} could not be restored.'**
+  String recycleRestoreResult(int count, int failed);
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} permanently deleted. {failed} could not be deleted.'**
+  String recycleDeleteResult(int count, int failed);
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Another project still uses this data.'**
+  String get recycleSharedData;
+
+  /// Project recycle-bin action or feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the shared reference before deleting permanently.'**
+  String get recycleSharedDataRecovery;
 }
 
 class _AppLocalizationsDelegate

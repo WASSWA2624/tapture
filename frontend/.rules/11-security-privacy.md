@@ -40,7 +40,8 @@ before any image is sent.
 
 ## FE-SEC-08 — Raw evidence is append-only
 Raw values, captions, transcripts and original photos are written once. Refinement writes a separate column. Deletion
-is a tombstone; files are removed only by the purge job after the retention window.
+is a tombstone; files are removed only by a purge after the retention window or an explicit, confirmed
+permanent-deletion action in the recycle bin (task 166). Selection and deletion identity are rechecked before removal.
 
 ## FE-SEC-09 — The audit trail is not optional
 Every value change records who, when, from what, to what. It travels in bundles and merges like any other data.

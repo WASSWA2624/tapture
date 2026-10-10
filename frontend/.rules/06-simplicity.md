@@ -9,14 +9,16 @@ The product's central claim is that a field worker can use it. These rules are h
 No other control is larger, it sits in the lower third, and it is reachable with one thumb. If a screen has two
 equally important actions, the screen has not been designed yet.
 
-## FE-SIMP-02 — Four navigation destinations
-Projects, Capture, Records, More. A fifth destination requires deleting one. On compact screens, the three-dot
+## FE-SIMP-02 — Two navigation destinations
+Projects and More. Capture and record CRUD are children of the opened project, never separate shell destinations
+(task 166, explicit product simplification). On compact screens, the three-dot
 More control opens an icon-labelled menu of secondary destinations, including Settings; opening or dismissing the
 menu preserves the current route. The rail retains direct access to the existing More/Settings root. Secondary
-destinations share the fourth branch, so an added module never adds a fifth bottom-bar control (task 079).
+destinations share the More branch, so an added module never adds a bottom-bar control.
 
 ## FE-SIMP-03 — Three taps to a record
-Capture, shutter, save. Anything that adds a tap to that path needs a written justification.
+Within the opened project: Capture, shutter, save. Opening a project establishes the owner before capture;
+restart resumes the previous valid screen (task 166). Anything else that adds a tap needs a written justification.
 
 ## FE-SIMP-04 — One sign-in, and nothing else, at the start
 Signing in once is the only thing a new install asks for (§71.1). No onboarding tour, no setup wizard, no second

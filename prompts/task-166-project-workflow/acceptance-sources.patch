@@ -1,0 +1,1319 @@
+diff --git a/frontend/test/app/project_workflow_test.dart b/frontend/test/app/project_workflow_test.dart
+new file mode 100644
+index 00000000..b3da6483
+--- /dev/null
++++ b/frontend/test/app/project_workflow_test.dart
+@@ -0,0 +1,340 @@
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_riverpod/misc.dart' show Override;
++import 'package:flutter_test/flutter_test.dart';
++import 'package:go_router/go_router.dart';
++import 'package:tapture/app/app.dart';
++import 'package:tapture/app/shell_back_navigation.dart';
++import 'package:tapture/app/shell_destination.dart';
++import 'package:tapture/app/widgets/status_line.dart';
++import 'package:tapture/core/lifecycle/lifecycle_observer.dart';
++import 'package:tapture/core/widgets/app_overflow_menu.dart';
++import 'package:tapture/core/widgets/record_status.dart';
++import 'package:tapture/features/capture/presentation/capture_screen.dart';
++import 'package:tapture/features/projects/projects.dart';
++import 'package:tapture/features/records/presentation/record_detail_screen.dart';
++import 'package:tapture/features/records/presentation/records_list_screen.dart';
++import 'package:tapture/features/records/records.dart'
++    show recordRepositoryProvider;
++import 'package:tapture/features/settings/presentation/app_lock_screen.dart';
++import 'package:tapture/features/settings/settings.dart';
++
++import '../features/projects/fakes/fake_project_repository.dart';
++import '../features/records/fakes/fake_record_repository.dart';
++import '../support/a11y_matchers.dart';
++import '../support/factories.dart';
++
++void main() {
++  test(
++    'only Projects and More own shell destinations, including capture and record routes',
++    () {
++      expect(
++        shellDestinations.map(
++          (ShellDestination destination) => destination.path,
++        ),
++        <String>['/projects', '/more'],
++      );
++      for (final String path in <String>[
++        '/projects/p1',
++        '/projects/p1/capture',
++        '/projects/p1/records/r1/values',
++      ]) {
++        expect(shellDestinationFor(Uri.parse(path))!.path, '/projects');
++      }
++      expect(shellDestinationFor(Uri.parse('/capture')), isNull);
++      expect(shellDestinationFor(Uri.parse('/records')), isNull);
++    },
++  );
++
++  for (final double width in <double>[393, 800, 1200]) {
++    for (final double scale in <double>[1, 2]) {
++      testWidgets(
++        'two navigation controls and project Capture at $width/$scale',
++        (WidgetTester tester) async {
++          tester.view.devicePixelRatio = 1;
++          tester.view.physicalSize = Size(width, 850);
++          tester.platformDispatcher.textScaleFactorTestValue = scale;
++          addTearDown(() {
++            tester.view.resetPhysicalSize();
++            tester.view.resetDevicePixelRatio();
++            tester.platformDispatcher.clearTextScaleFactorTestValue();
++          });
++          final _Fixture fixture = await _pump(tester);
++          await _go(tester, fixture.router, '/projects/p1/capture');
++          final Finder navigation = find.byKey(
++            ValueKey<String>(width < 600 ? 'nav-bar' : 'nav-rail'),
++          );
++          expect(navigation, findsOneWidget);
++          if (width < 600) {
++            expect(
++              tester
++                  .widget<NavigationBar>(find.byType(NavigationBar))
++                  .destinations,
++              hasLength(2),
++            );
++          } else {
++            expect(
++              tester
++                  .widget<NavigationRail>(find.byType(NavigationRail))
++                  .destinations,
++              hasLength(2),
++            );
++          }
++          expect(
++            fixture.router.state.uri.path,
++            '/projects/p1/capture',
++            reason:
++                '${fixture.router.state.error} params=${fixture.router.state.pathParameters}',
++          );
++          expect(fixture.container.read(currentProjectProvider), 'p1');
++          expect(find.byType(CaptureScreen), findsOneWidget);
++          expect(find.byKey(const ValueKey<String>('nav-pane')), findsNothing);
++          final AppOverflowMenu menu = tester.widget<AppOverflowMenu>(
++            find.byType(AppOverflowMenu).first,
++          );
++          expect(
++            menu.items.any(
++              (AppOverflowAction action) =>
++                  action.key ==
++                  const ValueKey<String>('capture-change-project'),
++            ),
++            isFalse,
++          );
++          expect(tester.takeException(), isNull);
++          await expectNoA11yIssues(tester);
++        },
++      );
++    }
++  }
++
++  testWidgets(
++    'legacy capture/record URLs resolve inside their owner, never exposing another project record',
++    (WidgetTester tester) async {
++      final _Fixture fixture = await _pump(tester);
++      fixture.container.read(currentProjectProvider.notifier).open('p1');
++      await _go(tester, fixture.router, '/capture');
++      expect(fixture.router.state.uri.path, '/projects/p1/capture');
++      await _go(tester, fixture.router, '/records?filter=needsReview');
++      expect(
++        fixture.router.state.uri.toString(),
++        '/projects/p1/records?filter=needsReview',
++      );
++      await _go(tester, fixture.router, '/records/r2');
++      expect(fixture.router.state.uri.path, '/projects/p2/records/r2');
++      expect(fixture.container.read(currentProjectProvider), 'p2');
++      expect(
++        tester
++            .widget<RecordDetailScreen>(find.byType(RecordDetailScreen))
++            .projectId,
++        'p2',
++      );
++      await _go(tester, fixture.router, '/projects/p1/records/r2/values');
++      expect(fixture.router.state.uri.path, '/projects/p1/records');
++      expect(find.byType(RecordDetailScreen), findsNothing);
++      expect(
++        tester
++            .widget<RecordsListScreen>(find.byType(RecordsListScreen))
++            .projectId,
++        'p1',
++      );
++      expect(tester.takeException(), isNull);
++    },
++  );
++
++  testWidgets('no opened project sends legacy entry points to Projects', (
++    WidgetTester tester,
++  ) async {
++    final _Fixture fixture = await _pump(tester);
++    for (final String path in <String>[
++      '/capture',
++      '/records',
++      '/records/missing',
++    ]) {
++      await _go(tester, fixture.router, path);
++      expect(fixture.router.state.uri.path, '/projects');
++    }
++  });
++
++  testWidgets(
++    'Back from capture returns through the project home to Projects',
++    (WidgetTester tester) async {
++      final _Fixture fixture = await _pump(tester);
++      await _go(tester, fixture.router, '/projects/p1/capture');
++      await ShellBackNavigation.back(
++        tester.element(find.byType(CaptureScreen)),
++      );
++      await tester.pumpAndSettle();
++      expect(fixture.router.state.uri.path, '/projects/p1');
++      await ShellBackNavigation.back(
++        tester.element(find.byKey(const ValueKey<String>('route-project'))),
++      );
++      await tester.pumpAndSettle();
++      expect(fixture.router.state.uri.path, '/projects');
++    },
++  );
++
++  testWidgets(
++    'restart resumes the previous project record, capture, list or settings screen',
++    (WidgetTester tester) async {
++      final SettingsStore store = SettingsStore.fake();
++      for (final String path in <String>[
++        '/projects/p2/records/r2',
++        '/projects/p1/capture',
++        '/projects/p2/records?filter=needsReview',
++        '/more/appearance',
++        '/projects',
++      ]) {
++        final _Fixture first = await _pump(tester, store: store);
++        await _go(tester, first.router, path);
++        await first.container
++            .read(lifecycleObserverProvider)
++            .handle(AppLifecycleState.paused);
++        expect(store.read(SettingKeys.lastLocation), path);
++        await tester.pumpWidget(const SizedBox.shrink());
++        final _Fixture restarted = await _pump(tester, store: store);
++        expect(restarted.router.state.uri.toString(), path);
++        expect(tester.takeException(), isNull);
++        await tester.pumpWidget(const SizedBox.shrink());
++      }
++    },
++  );
++
++  testWidgets(
++    'stale/deleted project and mismatched record routes fall back safely',
++    (WidgetTester tester) async {
++      for (final String path in <String>[
++        '/projects/missing/capture',
++        '/projects/deleted/records/r1',
++        '/projects/p1/records/missing',
++      ]) {
++        final _Fixture fixture = await _pump(
++          tester,
++          store: SettingsStore.fake(
++            stored: <String, Object?>{
++              SettingKeys.openProjectId.name: 'p2',
++              SettingKeys.lastLocation.name: path,
++            },
++          ),
++        );
++        expect(
++          fixture.router.state.uri.path,
++          path.contains('/p1/') ? '/projects/p1/records' : '/projects',
++        );
++        await tester.pumpWidget(const SizedBox.shrink());
++      }
++    },
++  );
++
++  testWidgets('explicit platform deep link wins over stored screen', (
++    WidgetTester tester,
++  ) async {
++    tester.binding.platformDispatcher.defaultRouteNameTestValue =
++        '/projects/p2/records/r2';
++    addTearDown(
++      tester.binding.platformDispatcher.clearDefaultRouteNameTestValue,
++    );
++    final _Fixture fixture = await _pump(
++      tester,
++      store: SettingsStore.fake(
++        stored: <String, Object?>{
++          SettingKeys.lastLocation.name: '/projects/p1/capture',
++        },
++      ),
++    );
++    expect(fixture.router.state.uri.path, '/projects/p2/records/r2');
++  });
++
++  testWidgets('an unknown route never replaces the last valid work screen', (
++    WidgetTester tester,
++  ) async {
++    final SettingsStore store = SettingsStore.fake();
++    final _Fixture fixture = await _pump(tester, store: store);
++    await _go(tester, fixture.router, '/projects/p1/capture');
++    await fixture.container
++        .read(lifecycleObserverProvider)
++        .handle(AppLifecycleState.paused);
++    await _go(tester, fixture.router, '/unknown');
++    await fixture.container
++        .read(lifecycleObserverProvider)
++        .handle(AppLifecycleState.paused);
++    expect(store.read(SettingKeys.lastLocation), '/projects/p1/capture');
++  });
++
++  testWidgets(
++    'lock retains intended previous screen and does not replace saved route',
++    (WidgetTester tester) async {
++      const String path = '/projects/p2/records/r2';
++      final SettingsStore store = SettingsStore.fake(
++        stored: <String, Object?>{SettingKeys.lastLocation.name: path},
++      );
++      final _Fixture fixture = await _pump(
++        tester,
++        store: store,
++        overrides: <Override>[
++          appLockSessionOverride(enabled: true, unlocked: false),
++        ],
++      );
++      expect(fixture.router.state.uri.path, '/lock');
++      expect(fixture.router.state.uri.queryParameters['from'], path);
++      expect(store.read(SettingKeys.lastLocation), path);
++    },
++  );
++}
++
++typedef _Fixture = ({GoRouter router, ProviderContainer container});
++Future<_Fixture> _pump(
++  WidgetTester tester, {
++  SettingsStore? store,
++  List<Override> overrides = const <Override>[],
++}) async {
++  final FakeProjectRepository projects = FakeProjectRepository();
++  for (final String id in <String>['p1', 'p2', 'deleted']) {
++    (await projects.create(
++      aProject(
++        id: id,
++        name: id,
++        status: id == 'deleted' ? ProjectStatus.deleted : ProjectStatus.active,
++      ),
++    )).getOrThrow();
++  }
++  final FakeRecordRepository records = FakeRecordRepository();
++  records.seedEntry(
++    aRecordEntry(id: 'r1', projectId: 'p1', status: RecordStatus.captured),
++  );
++  records.seedEntry(
++    aRecordEntry(id: 'r2', projectId: 'p2', status: RecordStatus.captured),
++  );
++  addTearDown(projects.dispose);
++  addTearDown(records.dispose);
++  await tester.pumpWidget(
++    ProviderScope(
++      key: UniqueKey(),
++      overrides: <Override>[
++        networkOnlineOverride(),
++        projectRepositoryProvider.overrideWithValue(projects),
++        recordRepositoryProvider.overrideWithValue(records),
++        projectSettingsStoreProvider.overrideWithValue(
++          store ?? SettingsStore.fake(),
++        ),
++        ...overrides,
++      ],
++      child: const TaptureApp(),
++    ),
++  );
++  await tester.runAsync(
++    () => Future<void>.delayed(const Duration(milliseconds: 25)),
++  );
++  await tester.pumpAndSettle();
++  final ProviderContainer container = ProviderScope.containerOf(
++    tester.element(find.byType(TaptureApp)),
++  );
++  return (router: container.read(routerProvider), container: container);
++}
++
++Future<void> _go(WidgetTester tester, GoRouter router, String path) async {
++  router.go(path);
++  await tester.runAsync(
++    () => Future<void>.delayed(const Duration(milliseconds: 25)),
++  );
++  await tester.pumpAndSettle();
++}
+diff --git a/frontend/test/core/files/blob_tree_purge_test.dart b/frontend/test/core/files/blob_tree_purge_test.dart
+new file mode 100644
+index 00000000..426d73c4
+--- /dev/null
++++ b/frontend/test/core/files/blob_tree_purge_test.dart
+@@ -0,0 +1,57 @@
++import 'dart:typed_data';
++
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/core/errors/result.dart';
++import 'package:tapture/core/files/blob_store.dart';
++
++void main() {
++  test('tree removal is durable, bounded and retryable', () async {
++    final Map<String, Uint8List> backing = <String, Uint8List>{};
++    final BlobStore store = BlobStore.memory(backing: backing);
++    for (final String key in <String>[
++      'projects/p1',
++      'projects/p1/raw/photo.jpg',
++      'projects/p1/templates/source.xlsx',
++      'projects/p10/raw/keep.jpg',
++      'projects/p2/raw/keep.jpg',
++    ]) {
++      (await store.write(key, Uint8List.fromList(<int>[1]))).getOrThrow();
++    }
++    (await store.removeTree('projects/p1')).getOrThrow();
++    final BlobStore reopened = BlobStore.memory(backing: backing);
++    expect(
++      (await reopened.read('projects/p1/raw/photo.jpg')).getOrThrow(),
++      isNull,
++    );
++    expect(
++      (await reopened.read('projects/p1/templates/source.xlsx')).getOrThrow(),
++      isNull,
++    );
++    expect(
++      (await reopened.read('projects/p10/raw/keep.jpg')).getOrThrow(),
++      isNotNull,
++    );
++    expect(
++      (await reopened.read('projects/p2/raw/keep.jpg')).getOrThrow(),
++      isNotNull,
++    );
++    expect(await reopened.removeTree('projects/p1'), isA<Success<void>>());
++    expect(
++      await reopened.removeTree('../projects'),
++      isA<FailureResult<void>>(),
++    );
++    expect(await reopened.removeTree(''), isA<FailureResult<void>>());
++  });
++
++  test('failed tree deletion preserves the entire selection', () async {
++    final Map<String, Uint8List> backing = <String, Uint8List>{
++      'projects/p1/raw/photo.jpg': Uint8List.fromList(<int>[1]),
++    };
++    final BlobStore store = BlobStore.memory(
++      backing: backing,
++      failWrites: true,
++    );
++    expect(await store.removeTree('projects/p1'), isA<FailureResult<void>>());
++    expect(backing, hasLength(1));
++  });
++}
+diff --git a/frontend/test/core/files/project_tree_purge_browser_test.dart b/frontend/test/core/files/project_tree_purge_browser_test.dart
+new file mode 100644
+index 00000000..1ecb8e69
+--- /dev/null
++++ b/frontend/test/core/files/project_tree_purge_browser_test.dart
+@@ -0,0 +1,40 @@
++@TestOn('browser')
++library;
++
++import 'dart:typed_data';
++
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/core/files/blob_store.dart';
++import 'package:tapture/core/files/file_writer_web.dart';
++import 'package:tapture/core/files/project_tree_purge_web.dart';
++import 'package:tapture/core/files/storage_root.dart';
++
++void main() {
++  test(
++    'IndexedDB project and merge cascades preserve adjacent prefixes after reopening',
++    () async {
++      final String id = 'task166-${DateTime.now().microsecondsSinceEpoch}';
++      final BlobStore files = projectFileStore();
++      final String raw = 'projects/$id/raw/evidence.jpg';
++      final String template = 'projects/$id/templates/source.xlsx';
++      final String adjacent = 'projects/${id}0/keep';
++      final String retained =
++          '.recycle/merge-$id/projects/$id/raw/evidence.jpg';
++      for (final String path in <String>[raw, template, adjacent, retained]) {
++        (await files.write(path, Uint8List.fromList(<int>[1]))).getOrThrow();
++      }
++      addTearDown(() async {
++        (await files.removeTree('projects/$id')).getOrThrow();
++        (await files.removeTree('projects/${id}0')).getOrThrow();
++        (await files.removeTree('.recycle/merge-$id')).getOrThrow();
++      });
++      (await purgeProjectTree(StorageRoot(), id)).getOrThrow();
++      (await purgeMergeTree(StorageRoot(), id)).getOrThrow();
++      final BlobStore reopened = BlobStore.platform('project-files');
++      expect((await reopened.read(raw)).getOrThrow(), isNull);
++      expect((await reopened.read(template)).getOrThrow(), isNull);
++      expect((await reopened.read(retained)).getOrThrow(), isNull);
++      expect((await reopened.read(adjacent)).getOrThrow(), isNotNull);
++    },
++  );
++}
+diff --git a/frontend/test/features/records/data/recycle_purge_store_test.dart b/frontend/test/features/records/data/recycle_purge_store_test.dart
+new file mode 100644
+index 00000000..772829a3
+--- /dev/null
++++ b/frontend/test/features/records/data/recycle_purge_store_test.dart
+@@ -0,0 +1,548 @@
++import 'dart:io';
++
++import 'package:drift/drift.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/core/db/app_database.dart';
++import 'package:tapture/core/errors/failure.dart';
++import 'package:tapture/core/errors/result.dart';
++import 'package:tapture/core/files/blob_store.dart';
++import 'package:tapture/core/files/blob_store_io.dart';
++import 'package:tapture/core/files/evidence_purge.dart';
++import 'package:tapture/core/files/project_tree_purge_io.dart';
++import 'package:tapture/core/files/storage_root.dart';
++import 'package:tapture/core/lifecycle/deleted_entity.dart';
++import 'package:tapture/features/records/data/recycle_purge_store.dart';
++import 'package:tapture/features/settings/settings.dart';
++
++void main() {
++  late AppDatabase db;
++  late Directory temporary;
++  late StorageRoot root;
++  late RecyclePurgeStore store;
++  final DateTime at = DateTime.utc(2026, 10, 10);
++
++  setUp(() async {
++    db = AppDatabase.memory();
++    temporary = await Directory.systemTemp.createTemp('tapture-purge-166-');
++    root = StorageRoot.fake(documentsDirectory: temporary);
++    store = RecyclePurgeStore(
++      db: db,
++      files: EvidencePurge(storageRoot: root),
++      storageRoot: root,
++    );
++    await _seed(db, 'projects', 'p1', <String, Object?>{
++      'folder_name': 'p1',
++      'status': 'deleted',
++      'settings': '{}',
++    });
++    await _seed(db, 'projects', 'p2', <String, Object?>{
++      'folder_name': 'p2',
++      'status': 'active',
++      'settings': '{}',
++    });
++    await _seed(db, 'tombstones', 'deleted-p1', <String, Object?>{
++      'entity_type': 'projects',
++      'entity_id': 'p1',
++      'deleted_at': at.millisecondsSinceEpoch ~/ 1000,
++    });
++  });
++  tearDown(() async {
++    await db.close();
++    await temporary.delete(recursive: true);
++  });
++
++  DeletedEntity project({DateTime? deletedAt, String? deletionId}) =>
++      DeletedEntity(
++        id: 'p1',
++        kind: DeletedEntityKind.project,
++        name: 'First',
++        projectId: 'p1',
++        projectName: 'First',
++        deletedAt: deletedAt ?? at,
++        deletionId: deletionId,
++      );
++
++  test(
++    'project purge removes owned tables, metadata and recycled files, preserving another project and shipped templates',
++    () async {
++      final Map<String, Map<String, Object?>>
++      children = <String, Map<String, Object?>>{
++        'templates': <String, Object?>{
++          'project_id': 'p1',
++          'kind': 'generic',
++          'source': 'built',
++        },
++        'records': <String, Object?>{
++          'project_id': 'p1',
++          'template_id': 'templates-1',
++          'status': 'captured',
++          'context_json': '{}',
++        },
++        'photos': <String, Object?>{
++          'project_id': 'p1',
++          'record_id': 'records-1',
++          'relative_path': 'photos/raw.jpg',
++          'sha256': 'shared-hash',
++        },
++        'attachments': <String, Object?>{
++          'project_id': 'p1',
++          'relative_path': 'audio/raw.wav',
++          'kind': 'audio',
++        },
++        'capture_sessions': <String, Object?>{
++          'project_id': 'p1',
++          'payload': '{}',
++        },
++        'record_fields': <String, Object?>{
++          'record_id': 'records-1',
++          'field_key': 'name',
++          'value_raw': 'Evidence',
++        },
++        'field_evidence': <String, Object?>{
++          'record_field_id': 'record_fields-1',
++          'source_type': 'photo',
++          'photo_id': 'photos-1',
++        },
++        'captions': <String, Object?>{
++          'owner_type': 'record',
++          'owner_id': 'records-1',
++        },
++        'attachment_owners': <String, Object?>{
++          'attachment_id': 'attachments-1',
++          'owner_type': 'record',
++          'owner_id': 'records-1',
++        },
++        'template_fields': <String, Object?>{
++          'template_id': 'templates-1',
++          'field_key': 'name',
++        },
++        'template_rows': <String, Object?>{
++          'template_id': 'templates-1',
++          'values_json': '{}',
++        },
++        'reference_datasets': <String, Object?>{'project_id': 'p1'},
++        'reference_rows': <String, Object?>{
++          'dataset_id': 'reference_datasets-1',
++          'values_json': '{}',
++        },
++        'context_definitions': <String, Object?>{'project_id': 'p1'},
++        'context_state': <String, Object?>{'project_id': 'p1'},
++        'context_presets': <String, Object?>{'project_id': 'p1'},
++        'processing_jobs': <String, Object?>{'record_id': 'records-1'},
++        'processing_results': <String, Object?>{'job_id': 'processing_jobs-1'},
++        'duplicates': <String, Object?>{
++          'project_id': 'p1',
++          'left_record_id': 'records-1',
++          'right_record_id': 'records-2',
++        },
++        'variances': <String, Object?>{
++          'project_id': 'p1',
++          'record_id': 'records-1',
++        },
++        'meetings': <String, Object?>{'record_id': 'records-1'},
++        'attendees': <String, Object?>{'meeting_id': 'meetings-1'},
++        'meeting_actions': <String, Object?>{'meeting_id': 'meetings-1'},
++        'transcripts': <String, Object?>{
++          'project_id': 'p1',
++          'owner_kind': 'meeting',
++          'owner_id': 'meetings-1',
++          'attachment_id': 'attachments-1',
++          'audio_path': 'projects/p1/audio/raw.wav',
++        },
++        'transcript_segments': <String, Object?>{
++          'transcript_id': 'transcripts-1',
++        },
++        'exports': <String, Object?>{'project_id': 'p1', 'formats': '[]'},
++        'merge_sessions': <String, Object?>{'counts': '{"project_id":"p1"}'},
++        'merge_conflicts': <String, Object?>{
++          'session_id': 'merge_sessions-1',
++          'entity_type': 'record_fields',
++          'entity_id': 'record_fields-1',
++        },
++      };
++      for (final MapEntry<String, Map<String, Object?>> child
++          in children.entries) {
++        await _seed(db, child.key, '${child.key}-1', child.value);
++        await _seed(db, 'audit_log', 'audit-${child.key}', <String, Object?>{
++          'entity_type': child.key,
++          'entity_id': '${child.key}-1',
++        });
++        await _seed(
++          db,
++          'version_vectors',
++          'vector-${child.key}',
++          <String, Object?>{
++            'entity_type': child.key,
++            'entity_id': '${child.key}-1',
++          },
++        );
++      }
++      await _seed(db, 'templates', 'shipped', <String, Object?>{
++        'project_id': null,
++        'source': 'shipped',
++      });
++      await _seed(db, 'records', 'other', <String, Object?>{
++        'project_id': 'p2',
++        'template_id': 'shipped',
++        'status': 'captured',
++        'context_json': '{}',
++      });
++      await _seed(db, 'photos', 'other-photo', <String, Object?>{
++        'project_id': 'p2',
++        'record_id': 'other',
++        'relative_path': 'photos/other.jpg',
++        'sha256': 'shared-hash',
++      });
++      final Directory storage = (await root.resolve()).getOrThrow();
++      final File raw = File('${storage.path}/.recycle/p1/photos/raw.jpg');
++      await raw.parent.create(recursive: true);
++      await raw.writeAsBytes(<int>[1, 2, 3]);
++      final File other = File('${storage.path}/projects/p2/photos/other.jpg');
++      await other.parent.create(recursive: true);
++      await other.writeAsBytes(<int>[4, 5]);
++      final File cache = File(
++        '${storage.path}/.cache/thumbs/shared-hash_256.jpg',
++      );
++      await cache.parent.create(recursive: true);
++      await cache.writeAsBytes(<int>[6]);
++      (await store.purge(project())).getOrThrow();
++      for (final String table in children.keys) {
++        expect(await _has(db, table, '$table-1'), isFalse, reason: table);
++      }
++      expect(await _has(db, 'projects', 'p1'), isFalse);
++      expect(await _has(db, 'projects', 'p2'), isTrue);
++      expect(await _has(db, 'records', 'other'), isTrue);
++      expect(await _has(db, 'templates', 'shipped'), isTrue);
++      expect(await db.select(db.tombstones).get(), isEmpty);
++      expect(await db.select(db.auditLog).get(), isEmpty);
++      expect(await db.select(db.syncState).get(), isEmpty);
++      expect(await raw.exists(), isFalse);
++      expect(await other.readAsBytes(), <int>[4, 5]);
++      expect(await cache.exists(), isTrue);
++    },
++  );
++
++  test('file failure keeps project and children; retry completes', () async {
++    await _seed(db, 'records', 'r1', <String, Object?>{
++      'project_id': 'p1',
++      'context_json': '{}',
++    });
++    final RecyclePurgeStore failing = RecyclePurgeStore(
++      db: db,
++      files: EvidencePurge.store(BlobStore.memory()),
++      storageRoot: root,
++      purgeTree: (String _) async =>
++          const FailureResult<void>(StorageFailure(message: 'Read only')),
++    );
++    expect(await failing.purge(project()), isA<FailureResult<void>>());
++    expect(await _has(db, 'projects', 'p1'), isTrue);
++    expect(await _has(db, 'records', 'r1'), isTrue);
++    (await store.purge(project())).getOrThrow();
++    expect(await _has(db, 'records', 'r1'), isFalse);
++  });
++
++  test('stale deletion and active entity cannot be purged', () async {
++    expect(
++      await store.purge(
++        project(deletedAt: at.subtract(const Duration(seconds: 1))),
++      ),
++      isA<FailureResult<void>>(),
++    );
++    expect(await _has(db, 'projects', 'p1'), isTrue);
++    final DeletedEntity active = DeletedEntity(
++      id: 'p2',
++      kind: DeletedEntityKind.project,
++      name: 'Second',
++      projectId: 'p2',
++      projectName: 'Second',
++      deletedAt: at,
++    );
++    expect(await store.purge(active), isA<FailureResult<void>>());
++    expect(await _has(db, 'projects', 'p2'), isTrue);
++  });
++
++  test(
++    'a new tombstone at the same timestamp invalidates confirmation',
++    () async {
++      final DeletedEntity shown = project(deletionId: 'deleted-p1');
++      await db.customStatement(
++        "UPDATE tombstones SET id = 'deleted-again' WHERE id = 'deleted-p1'",
++      );
++      expect(await store.purge(shown), isA<FailureResult<void>>());
++      expect(await _has(db, 'projects', 'p1'), isTrue);
++      expect(
++        await store.purge(project(deletionId: 'deleted-again')),
++        isA<Success<void>>(),
++      );
++    },
++  );
++
++  test(
++    'record confirmation rejects a replaced tombstone at the same time',
++    () async {
++      await _seed(db, 'records', 'gone', <String, Object?>{
++        'project_id': 'p2',
++        'status': 'deleted',
++        'context_json': '{}',
++      });
++      await _seed(db, 'tombstones', 'new-deletion', <String, Object?>{
++        'entity_type': 'records',
++        'entity_id': 'gone',
++        'deleted_at': at.millisecondsSinceEpoch ~/ 1000,
++        'reason': 'Deleted',
++      });
++      expect(
++        await store.purge(
++          DeletedEntity(
++            id: 'gone',
++            kind: DeletedEntityKind.record,
++            name: 'Gone',
++            projectId: 'p2',
++            projectName: 'Second',
++            deletedAt: at,
++            deletionId: 'previous-deletion',
++          ),
++        ),
++        isA<FailureResult<void>>(),
++      );
++      expect(await _has(db, 'records', 'gone'), isTrue);
++    },
++  );
++
++  test(
++    'cross-project child ownership fails before evidence deletion',
++    () async {
++      await _seed(db, 'records', 'r1', <String, Object?>{
++        'project_id': 'p1',
++        'context_json': '{}',
++      });
++      await _seed(db, 'photos', 'foreign', <String, Object?>{
++        'project_id': 'p2',
++        'record_id': 'r1',
++        'relative_path': 'photos/foreign.jpg',
++      });
++      expect(await store.purge(project()), isA<FailureResult<void>>());
++      expect(await _has(db, 'photos', 'foreign'), isTrue);
++      expect(await _has(db, 'records', 'r1'), isTrue);
++    },
++  );
++
++  test('project purge also removes retained merge undo evidence', () async {
++    await _seed(db, 'merge_sessions', 'session', <String, Object?>{
++      'counts': '{"project_id":"p1"}',
++    });
++    final Directory storage = (await root.resolve()).getOrThrow();
++    final File retained = File(
++      '${storage.path}/.recycle/merge-session/projects/p1/photo.jpg',
++    );
++    await retained.parent.create(recursive: true);
++    await retained.writeAsString('Evidence');
++    final File unrelated = File(
++      '${storage.path}/.recycle/merge-session-other/keep',
++    );
++    await unrelated.parent.create(recursive: true);
++    await unrelated.writeAsString('Keep');
++    (await store.purge(project())).getOrThrow();
++    expect(await retained.exists(), isFalse);
++    expect(await unrelated.exists(), isTrue);
++  });
++
++  test(
++    'cross-project template reference refuses deletion before files change',
++    () async {
++      await _seed(db, 'templates', 'shared', <String, Object?>{
++        'project_id': 'p1',
++      });
++      await _seed(db, 'records', 'other', <String, Object?>{
++        'project_id': 'p2',
++        'template_id': 'shared',
++        'context_json': '{}',
++      });
++      int fileCalls = 0;
++      final RecyclePurgeStore guarded = RecyclePurgeStore(
++        db: db,
++        files: EvidencePurge.store(BlobStore.memory()),
++        storageRoot: root,
++        purgeTree: (String _) async {
++          fileCalls++;
++          return const Success<void>(null);
++        },
++      );
++      expect(await guarded.purge(project()), isA<FailureResult<void>>());
++      expect(fileCalls, 0);
++      expect(await _has(db, 'templates', 'shared'), isTrue);
++      expect(await _has(db, 'records', 'other'), isTrue);
++    },
++  );
++
++  test(
++    'explicit record purge ignores retention and merge wait, keeping siblings',
++    () async {
++      await _seed(db, 'records', 'gone', <String, Object?>{
++        'project_id': 'p2',
++        'status': 'deleted',
++        'context_json': '{}',
++      });
++      await _seed(db, 'records', 'keep', <String, Object?>{
++        'project_id': 'p2',
++        'status': 'captured',
++        'context_json': '{}',
++      });
++      await _seed(db, 'tombstones', 'deleted-record', <String, Object?>{
++        'entity_type': 'records',
++        'entity_id': 'gone',
++        'deleted_at': at.millisecondsSinceEpoch ~/ 1000,
++        'reason': 'Deleted',
++      });
++      await _seed(db, 'merge_conflicts', 'conflict', <String, Object?>{
++        'session_id': 'session',
++        'entity_type': 'records',
++        'entity_id': 'gone',
++      });
++      await _seed(db, 'meetings', 'meeting', <String, Object?>{
++        'project_id': 'p2',
++        'record_id': 'gone',
++      });
++      await _seed(db, 'transcripts', 'transcript', <String, Object?>{
++        'project_id': 'p2',
++        'owner_kind': 'meeting',
++        'owner_id': 'meeting',
++        'audio_path': 'projects/p2/audio/gone.wav',
++      });
++      await _seed(db, 'transcript_segments', 'segment', <String, Object?>{
++        'transcript_id': 'transcript',
++      });
++      final Directory storage = (await root.resolve()).getOrThrow();
++      final File audio = File('${storage.path}/projects/p2/audio/gone.wav');
++      await audio.parent.create(recursive: true);
++      await audio.writeAsString('Audio evidence');
++      final DeletedEntity record = DeletedEntity(
++        id: 'gone',
++        kind: DeletedEntityKind.record,
++        name: 'Gone',
++        projectId: 'p2',
++        projectName: 'Second',
++        deletedAt: at,
++      );
++      expect(await store.purge(record), isA<Success<void>>());
++      expect(await _has(db, 'records', 'gone'), isFalse);
++      expect(await _has(db, 'records', 'keep'), isTrue);
++      expect(await _has(db, 'merge_conflicts', 'conflict'), isFalse);
++      expect(await _has(db, 'transcripts', 'transcript'), isFalse);
++      expect(await _has(db, 'transcript_segments', 'segment'), isFalse);
++      expect(await audio.exists(), isFalse);
++    },
++  );
++
++  test(
++    'managed project tree rejects traversal and links before removal',
++    () async {
++      final Directory storage = (await root.resolve()).getOrThrow();
++      final Directory outside = Directory('${temporary.path}/outside');
++      await outside.create();
++      await File('${outside.path}/keep').writeAsString('Evidence');
++      expect(
++        await purgeProjectTree(root, '../outside'),
++        isA<FailureResult<void>>(),
++      );
++      await Directory('${storage.path}/projects/p1').create(recursive: true);
++      await File('${storage.path}/projects/p1/keep').writeAsString('Evidence');
++      await Directory('${storage.path}/.recycle').create();
++      // A file in place of a managed directory is rejected, before live deletion.
++      await File('${storage.path}/.recycle/p1').writeAsString('Collision');
++      expect(await purgeProjectTree(root, 'p1'), isA<FailureResult<void>>());
++      expect(await File('${storage.path}/projects/p1/keep').exists(), isTrue);
++      expect(await File('${outside.path}/keep').exists(), isTrue);
++    },
++  );
++
++  test(
++    'native blob subtree deletion preserves sibling folders and rejects traversal',
++    () async {
++      final Directory blobs = Directory('${temporary.path}/blobs');
++      final BlobStore files = folderBlobStore(() async => blobs);
++      await Directory(
++        '${blobs.path}/projects/p1/nested',
++      ).create(recursive: true);
++      await File('${blobs.path}/projects/p1/nested/gone').writeAsString('Gone');
++      await Directory('${blobs.path}/projects/p10').create(recursive: true);
++      await File('${blobs.path}/projects/p10/keep').writeAsString('Keep');
++      (await files.removeTree('projects/p1')).getOrThrow();
++      expect(await Directory('${blobs.path}/projects/p1').exists(), isFalse);
++      expect(await File('${blobs.path}/projects/p10/keep').exists(), isTrue);
++      expect(await files.removeTree('../blobs'), isA<FailureResult<void>>());
++      expect(await files.removeTree('projects/p1'), isA<Success<void>>());
++    },
++  );
++
++  test(
++    'overlapping durable preference writes retain route and unrelated settings after reopen',
++    () async {
++      final SettingsStore settings = await SettingsStore.open(
++        db: db,
++        deviceId: 'device',
++      );
++      final List<Future<Result<void>>> writes = <Future<Result<void>>>[
++        settings.write(SettingKeys.lastLocation, '/projects/p2/capture'),
++        settings.write(SettingKeys.openProjectId, 'p2'),
++        settings.write(SettingKeys.lastLocation, '/projects/p2/records/keep'),
++      ];
++      for (final Result<void> result in await Future.wait(writes)) {
++        expect(result, isA<Success<void>>());
++      }
++      final SettingsStore reopened = await SettingsStore.open(
++        db: db,
++        deviceId: 'device',
++      );
++      expect(
++        reopened.read(SettingKeys.lastLocation),
++        '/projects/p2/records/keep',
++      );
++      expect(reopened.read(SettingKeys.openProjectId), 'p2');
++    },
++  );
++}
++
++// Populate required unrelated payload columns from schema defaults; ownership,
++// identities, evidence and the values asserted above are supplied explicitly.
++Future<void> _seed(
++  AppDatabase db,
++  String table,
++  String id,
++  Map<String, Object?> values,
++) async {
++  final List<QueryRow> columns = await db
++      .customSelect('PRAGMA table_info($table)')
++      .get();
++  final Map<String, Object?> data = <String, Object?>{'id': id};
++  for (final QueryRow column in columns) {
++    final String name = column.read<String>('name');
++    if (column.read<int>('notnull') == 0 ||
++        column.data['dflt_value'] != null ||
++        name == 'id') {
++      continue;
++    }
++    final String type = column.read<String>('type');
++    data[name] = type.contains('INT') || type.contains('REAL') ? 0 : '';
++  }
++  data.addAll(values);
++  data.removeWhere(
++    (String name, Object? _) =>
++        !columns.any((QueryRow column) => column.read<String>('name') == name),
++  );
++  await db.customInsert(
++    'INSERT INTO $table (${data.keys.map((String key) => '"$key"').join(',')}) VALUES (${List<String>.filled(data.length, '?').join(',')})',
++    variables: data.values
++        .map((Object? value) => Variable<Object>(value))
++        .toList(),
++  );
++}
++
++Future<bool> _has(AppDatabase db, String table, String id) async =>
++    (await db
++            .customSelect(
++              'SELECT id FROM $table WHERE id = ?',
++              variables: <Variable<Object>>[Variable<String>(id)],
++            )
++            .get())
++        .isNotEmpty;
+diff --git a/frontend/test/features/records/presentation/recycle_bin_actions_test.dart b/frontend/test/features/records/presentation/recycle_bin_actions_test.dart
+new file mode 100644
+index 00000000..0864ffa4
+--- /dev/null
++++ b/frontend/test/features/records/presentation/recycle_bin_actions_test.dart
+@@ -0,0 +1,304 @@
++import 'dart:async';
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/app/theme/app_theme.dart';
++import 'package:tapture/core/copy/copy.dart';
++import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
++import 'package:tapture/core/errors/failure.dart';
++import 'package:tapture/core/errors/result.dart';
++import 'package:tapture/core/lifecycle/deleted_entity.dart';
++import 'package:tapture/core/widgets/app_icon_button.dart';
++import 'package:tapture/core/widgets/app_list_tile.dart';
++import 'package:tapture/core/widgets/record_status.dart';
++import 'package:tapture/features/projects/projects.dart';
++import 'package:tapture/features/records/presentation/recycle_bin_controller.dart';
++import 'package:tapture/features/records/presentation/recycle_bin_screen.dart';
++import 'package:tapture/features/records/records.dart'
++    show recordRepositoryProvider;
++
++import '../../../support/a11y_matchers.dart';
++import '../../../support/factories.dart';
++import '../../projects/fakes/fake_project_repository.dart';
++import '../fakes/fake_record_repository.dart';
++
++void main() {
++  for (final double width in <double>[320, 393, 800, 1200]) {
++    for (final double scale in <double>[1, 2]) {
++      testWidgets(
++        'minimal recycle icon actions and selection at $width/$scale',
++        (WidgetTester tester) async {
++          final _Fixture fixture = await _pump(
++            tester,
++            width: width,
++            scale: scale,
++          );
++          final Finder restore = find.byKey(
++            const ValueKey<String>('recycle-bin-restore-project:p1'),
++          );
++          final Finder remove = find.byKey(
++            const ValueKey<String>('recycle-bin-delete-project:p1'),
++          );
++          expect(restore, meetsTapTarget());
++          expect(remove, meetsTapTarget());
++          expect(
++            tester.widget<AppIconButton>(restore).semanticLabel,
++            'Restore First',
++          );
++          expect(
++            tester.widget<AppIconButton>(remove).semanticLabel,
++            'Delete First permanently',
++          );
++          await tester.tap(
++            find.byKey(const ValueKey<String>('recycle-bin-row-project:p1')),
++          );
++          await tester.pumpAndSettle();
++          expect(
++            tester
++                .widget<AppListTile>(
++                  find.byKey(
++                    const ValueKey<String>('recycle-bin-row-project:p1'),
++                  ),
++                )
++                .selected,
++            isTrue,
++          );
++          expect(
++            tester
++                .widget<AppIconButton>(
++                  find.byKey(
++                    const ValueKey<String>('recycle-bin-restore-selected'),
++                  ),
++                )
++                .tooltip,
++            Copy.english.recycleRestoreSelected,
++          );
++          await expectNoA11yIssues(tester);
++          expect(tester.takeException(), isNull);
++          expect(fixture.calls, isEmpty);
++        },
++      );
++    }
++  }
++
++  testWidgets(
++    'restore selected project leaves an independent record deleted, then restore all completes',
++    (WidgetTester tester) async {
++      final _Fixture fixture = await _pump(tester);
++      await tester.tap(
++        find.byKey(const ValueKey<String>('recycle-bin-row-project:p1')),
++      );
++      await tester.pumpAndSettle();
++      await tester.tap(
++        find.byKey(const ValueKey<String>('recycle-bin-restore-selected')),
++      );
++      await tester.pumpAndSettle();
++      expect(
++        fixture.projects.stored
++            .firstWhere((project) => project.id == 'p1')
++            .status,
++        ProjectStatus.active,
++      );
++      expect(fixture.records.entryOf('r2')!.status, RecordStatus.deleted);
++      ScaffoldMessenger.of(
++        tester.element(find.byType(RecycleBinScreen)),
++      ).clearSnackBars();
++      await tester.pumpAndSettle();
++      expect(
++        find.byKey(const ValueKey<String>('recycle-bin-row-project:p1')),
++        findsNothing,
++      );
++      expect(
++        tester
++            .widget<AppIconButton>(
++              find.byKey(
++                const ValueKey<String>('recycle-bin-restore-selected'),
++              ),
++            )
++            .tooltip,
++        Copy.english.recycleRestoreAll,
++      );
++      await tester.tap(
++        find.byKey(const ValueKey<String>('recycle-bin-restore-selected')),
++      );
++      await tester.pumpAndSettle();
++      expect(fixture.records.entryOf('r2')!.status, RecordStatus.captured);
++      expect(find.text(Copy.recycleBinEmptyHeadline), findsOneWidget);
++    },
++  );
++
++  testWidgets(
++    'permanent removal requires confirmation and captures only selected identities',
++    (WidgetTester tester) async {
++      final _Fixture fixture = await _pump(tester);
++      await tester.tap(
++        find.byKey(const ValueKey<String>('recycle-bin-delete-project:p1')),
++      );
++      await tester.pumpAndSettle();
++      expect(find.text(Copy.english.recycleDeleteWarning(1)), findsOneWidget);
++      expect(fixture.calls, isEmpty);
++      await tester.tap(find.text(Copy.cancel));
++      await tester.pumpAndSettle();
++      expect(fixture.calls, isEmpty);
++      await tester.tap(
++        find.byKey(const ValueKey<String>('recycle-bin-row-record:r2')),
++      );
++      await tester.pumpAndSettle();
++      await tester.tap(
++        find.byKey(const ValueKey<String>('recycle-bin-delete-selected')),
++      );
++      await tester.pumpAndSettle();
++      await tester.tap(find.text(Copy.english.recycleDeletePermanent));
++      await tester.pumpAndSettle();
++      expect(fixture.calls.map((DeletedEntity entity) => entity.key), <String>[
++        'record:r2',
++      ]);
++    },
++  );
++
++  testWidgets(
++    'select all/clear toggles and permanent all includes projects and records',
++    (WidgetTester tester) async {
++      final _Fixture fixture = await _pump(tester);
++      final Finder selectAll = find.byKey(
++        const ValueKey<String>('recycle-bin-select-all'),
++      );
++      await tester.tap(selectAll);
++      await tester.pumpAndSettle();
++      expect(
++        tester
++            .widgetList<AppListTile>(find.byType(AppListTile))
++            .every((AppListTile row) => row.selected),
++        isTrue,
++      );
++      await tester.tap(selectAll);
++      await tester.pumpAndSettle();
++      expect(
++        tester
++            .widgetList<AppListTile>(find.byType(AppListTile))
++            .every((AppListTile row) => !row.selected),
++        isTrue,
++      );
++      await tester.tap(
++        find.byKey(const ValueKey<String>('recycle-bin-delete-selected')),
++      );
++      await tester.pumpAndSettle();
++      expect(find.text(Copy.english.recycleDeleteWarning(2)), findsOneWidget);
++      await tester.tap(find.text(Copy.english.recycleDeletePermanent));
++      await tester.pumpAndSettle();
++      expect(
++        fixture.calls.map((DeletedEntity entity) => entity.key),
++        containsAll(<String>['project:p1', 'record:r2']),
++      );
++    },
++  );
++
++  testWidgets(
++    'bulk failure continues, preserves failed selection and blocks duplicate actions until durable completion',
++    (WidgetTester tester) async {
++      final Completer<Result<void>> blocked = Completer<Result<void>>();
++      final _Fixture fixture = await _pump(
++        tester,
++        purge: (DeletedEntity entity) async {
++          if (entity.kind == DeletedEntityKind.project) return blocked.future;
++          return const FailureResult<void>(
++            StorageFailure(message: 'Read only'),
++          );
++        },
++      );
++      await tester.tap(
++        find.byKey(const ValueKey<String>('recycle-bin-select-all')),
++      );
++      await tester.pumpAndSettle();
++      await tester.tap(
++        find.byKey(const ValueKey<String>('recycle-bin-delete-selected')),
++      );
++      await tester.pumpAndSettle();
++      await tester.tap(find.text(Copy.english.recycleDeletePermanent));
++      await tester.pumpAndSettle();
++      expect(
++        tester
++            .widget<AppIconButton>(
++              find.byKey(
++                const ValueKey<String>('recycle-bin-restore-selected'),
++              ),
++            )
++            .onPressed,
++        isNull,
++      );
++      blocked.complete(const Success<void>(null));
++      await tester.pumpAndSettle();
++      expect(fixture.calls, hasLength(2));
++      expect(
++        tester
++            .widget<AppListTile>(
++              find.byKey(const ValueKey<String>('recycle-bin-row-record:r2')),
++            )
++            .selected,
++        isTrue,
++      );
++      expect(
++        tester
++            .widget<AppListTile>(
++              find.byKey(const ValueKey<String>('recycle-bin-row-project:p1')),
++            )
++            .selected,
++        isFalse,
++      );
++      expect(find.textContaining('Read only'), findsOneWidget);
++      expect(tester.takeException(), isNull);
++    },
++  );
++}
++
++typedef _Fixture = ({
++  FakeProjectRepository projects,
++  FakeRecordRepository records,
++  List<DeletedEntity> calls,
++});
++Future<_Fixture> _pump(
++  WidgetTester tester, {
++  double width = 393,
++  double scale = 1,
++  RecyclePurge? purge,
++}) async {
++  tester.view.devicePixelRatio = 1;
++  tester.view.physicalSize = Size(width, 850);
++  tester.platformDispatcher.textScaleFactorTestValue = scale;
++  addTearDown(() {
++    tester.view.resetPhysicalSize();
++    tester.view.resetDevicePixelRatio();
++    tester.platformDispatcher.clearTextScaleFactorTestValue();
++  });
++  final FakeProjectRepository projects = FakeProjectRepository();
++  (await projects.create(aProject(id: 'p1', name: 'First'))).getOrThrow();
++  (await projects.delete('p1')).getOrThrow();
++  final FakeRecordRepository records = FakeRecordRepository();
++  records.seedEntry(aRecordEntry(id: 'r2', projectId: 'p2', name: 'Second'));
++  (await records.delete('r2', reason: 'Deleted')).getOrThrow();
++  addTearDown(projects.dispose);
++  addTearDown(records.dispose);
++  final List<DeletedEntity> calls = <DeletedEntity>[];
++  await tester.pumpWidget(
++    ProviderScope(
++      key: UniqueKey(),
++      overrides: [
++        projectRepositoryProvider.overrideWithValue(projects),
++        recordRepositoryProvider.overrideWithValue(records),
++        recyclePurgeProvider.overrideWithValue((DeletedEntity entity) async {
++          calls.add(entity);
++          return purge == null ? const Success<void>(null) : purge(entity);
++        }),
++      ],
++      child: MaterialApp(
++        theme: buildTheme(brightness: Brightness.light),
++        localizationsDelegates: AppLocalizations.localizationsDelegates,
++        supportedLocales: AppLocalizations.supportedLocales,
++        home: const RecycleBinScreen(),
++      ),
++    ),
++  );
++  await tester.pumpAndSettle();
++  return (projects: projects, records: records, calls: calls);
++}

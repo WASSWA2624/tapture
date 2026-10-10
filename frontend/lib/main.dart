@@ -124,6 +124,9 @@ import 'features/projects/presentation/project_open_externally_action.dart'
 import 'features/quality/quality.dart'
     show QualityRepositoryImpl, qualityRepositoryProvider;
 import 'features/records/data/record_purge_store.dart';
+import 'features/records/data/recycle_purge_store.dart';
+import 'features/records/presentation/recycle_bin_controller.dart'
+    show recyclePurgeProvider;
 import 'features/records/records.dart'
     show
         PurgeJob,
@@ -1094,6 +1097,15 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
       retentionDays: offlineStore.read(SettingKeys.retentionDays),
     );
     overrides.add(recordPurgeJobProvider.overrideWithValue(purgeJob));
+    overrides.add(
+      recyclePurgeProvider.overrideWithValue(
+        RecyclePurgeStore(
+          db: db,
+          files: EvidencePurge(storageRoot: storageRoot),
+          storageRoot: storageRoot,
+        ).purge,
+      ),
+    );
     // The startup integrity check (task 004) and the launch prune of `.cache`
     // (task 005 step 4) run after the first frame too, so cold start never
     // waits on them.

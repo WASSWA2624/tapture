@@ -5,6 +5,7 @@ final class PurgeCandidate {
     required this.recordId,
     required this.projectId,
     required this.deletedAt,
+    this.deletionId,
     this.mergeNeeded = false,
   });
 
@@ -17,9 +18,12 @@ final class PurgeCandidate {
   /// When the record's tombstone was written.
   final DateTime deletedAt;
 
+  /// The tombstone this candidate authorizes; null only for legacy fixtures.
+  final String? deletionId;
+
   /// Whether a merge still needs the record's tombstone: an unresolved
   /// conflict names it, or its project exchanges bundles and no bundle has
-  /// left since the deletion. Such a record is never purged, window or not.
+  /// left since the deletion. Automatic retention never purges such a record.
   final bool mergeNeeded;
 
   /// Returns a copy with the provided fields replaced.
@@ -27,18 +31,21 @@ final class PurgeCandidate {
     String? recordId,
     String? projectId,
     DateTime? deletedAt,
+    String? deletionId,
     bool? mergeNeeded,
   }) {
     return PurgeCandidate(
       recordId: recordId ?? this.recordId,
       projectId: projectId ?? this.projectId,
       deletedAt: deletedAt ?? this.deletedAt,
+      deletionId: deletionId ?? this.deletionId,
       mergeNeeded: mergeNeeded ?? this.mergeNeeded,
     );
   }
 
   @override
-  int get hashCode => Object.hash(recordId, projectId, deletedAt, mergeNeeded);
+  int get hashCode =>
+      Object.hash(recordId, projectId, deletedAt, deletionId, mergeNeeded);
 
   @override
   bool operator ==(Object other) {
@@ -47,6 +54,7 @@ final class PurgeCandidate {
             other.recordId == recordId &&
             other.projectId == projectId &&
             other.deletedAt == deletedAt &&
+            other.deletionId == deletionId &&
             other.mergeNeeded == mergeNeeded);
   }
 

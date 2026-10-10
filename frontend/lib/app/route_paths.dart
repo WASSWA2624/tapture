@@ -2,7 +2,7 @@
 /// feature screens. The router adds declarations and query semantics; path
 /// segments stay centralised here to avoid feature-to-router import cycles.
 abstract final class RoutePaths {
-  /// Root shell paths.
+  /// Projects and More shell roots; Capture and Records are legacy redirects.
   static const String projects = '/projects';
   static const String captureRoot = '/capture';
   static const String records = '/records';
@@ -259,11 +259,10 @@ abstract final class RoutePaths {
   /// One record.
   static String record(String id) => '$records/${Uri.encodeComponent(id)}';
 
-  /// The page that edits one record's values, from the Records destination
-  /// (task 014).
+  /// Legacy value editor address, redirected to the record's owning project.
   static String recordValuesEdit(String id) => '${record(id)}/values';
 
-  /// One record's history, from the Records destination (task 014).
+  /// Legacy history address, redirected to the record's owning project.
   static String recordHistory(String id) => '${record(id)}/history';
 
   /// Dataset paths within a project.

@@ -12400,6 +12400,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String aiRequestLimitSummary(String amount) {
     return 'Per request: $amount configured';
   }
+
+  @override
+  String get recycleDeletePermanent => 'Delete permanently';
+
+  @override
+  String recycleDeleteLabel(String name) {
+    return 'Delete $name permanently';
+  }
+
+  @override
+  String recycleSelectLabel(String name) {
+    return 'Select $name';
+  }
+
+  @override
+  String get recycleRestoreAll => 'Restore all';
+
+  @override
+  String get recycleRestoreSelected => 'Restore selected';
+
+  @override
+  String get recycleDeleteAll => 'Delete all permanently';
+
+  @override
+  String get recycleDeleteSelected => 'Delete selected permanently';
+
+  @override
+  String get recycleDeleteTitle => 'Delete permanently?';
+
+  @override
+  String recycleDeleteWarning(int count) {
+    return 'Permanently delete $count items? Projects include their records, templates and files. This cannot be undone.';
+  }
+
+  @override
+  String recycleRestoreResult(int count, int failed) {
+    return '$count restored. $failed could not be restored.';
+  }
+
+  @override
+  String recycleDeleteResult(int count, int failed) {
+    return '$count permanently deleted. $failed could not be deleted.';
+  }
+
+  @override
+  String get recycleSharedData => 'Another project still uses this data.';
+
+  @override
+  String get recycleSharedDataRecovery =>
+      'Remove the shared reference before deleting permanently.';
 }
 
 /// The translations for English (`en_XA`).
@@ -24973,4 +25023,55 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String aiRequestLimitSummary(String amount) {
     return 'Pér réqúést: ·····$amount cónfígúréd····';
   }
+
+  @override
+  String get recycleDeletePermanent => 'Délété pérmánéntly·······';
+
+  @override
+  String recycleDeleteLabel(String name) {
+    return 'Délété ···$name pérmánéntly·····';
+  }
+
+  @override
+  String recycleSelectLabel(String name) {
+    return 'Séléct ···$name';
+  }
+
+  @override
+  String get recycleRestoreAll => 'Réstóré áll····';
+
+  @override
+  String get recycleRestoreSelected => 'Réstóré séléctéd······';
+
+  @override
+  String get recycleDeleteAll => 'Délété áll pérmánéntly········';
+
+  @override
+  String get recycleDeleteSelected => 'Délété séléctéd pérmánéntly··········';
+
+  @override
+  String get recycleDeleteTitle => 'Délété pérmánéntly?·······';
+
+  @override
+  String recycleDeleteWarning(int count) {
+    return 'Pérmánéntly délété ·······$count ítéms? Prójécts ínclúdé théír récórds, témplátés ánd fílés. Thís cánnót bé úndóné.······························';
+  }
+
+  @override
+  String recycleRestoreResult(int count, int failed) {
+    return '$count réstóréd. ····$failed cóúld nót bé réstóréd.·········';
+  }
+
+  @override
+  String recycleDeleteResult(int count, int failed) {
+    return '$count pérmánéntly délétéd. ········$failed cóúld nót bé délétéd.········';
+  }
+
+  @override
+  String get recycleSharedData =>
+      'Ánóthér prójéct stíll úsés thís dátá.·············';
+
+  @override
+  String get recycleSharedDataRecovery =>
+      'Rémóvé thé sháréd référéncé béfóré délétíng pérmánéntly.····················';
 }

@@ -10,6 +10,7 @@ import 'package:tapture/core/backend/backend_config.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/files/picked_document.dart';
+import 'package:tapture/core/lifecycle/lifecycle_observer.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
 import 'package:tapture/core/widgets/record_status.dart';
@@ -43,7 +44,8 @@ import 'package:tapture/features/projects/presentation/project_export_screen.dar
 import 'package:tapture/features/projects/presentation/project_home_screen.dart';
 import 'package:tapture/features/projects/presentation/project_list_screen.dart';
 import 'package:tapture/features/projects/presentation/project_settings_screen.dart';
-import 'package:tapture/features/projects/projects.dart' show ProjectListRow;
+import 'package:tapture/features/projects/projects.dart'
+    show Project, projectByIdProvider;
 import 'package:tapture/features/quality/presentation/duplicate_compare_screen.dart';
 import 'package:tapture/features/quality/presentation/duplicates_screen.dart';
 import 'package:tapture/features/quality/presentation/quality_summary_screen.dart';
@@ -53,6 +55,8 @@ import 'package:tapture/features/records/presentation/record_edit_screen.dart';
 import 'package:tapture/features/records/presentation/record_history_screen.dart';
 import 'package:tapture/features/records/presentation/records_list_screen.dart';
 import 'package:tapture/features/records/presentation/recycle_bin_screen.dart';
+import 'package:tapture/features/records/records.dart'
+    show RecordEntry, recordRepositoryProvider;
 import 'package:tapture/features/reference/reference.dart'
     show
         DatasetBrowserScreen,
@@ -171,10 +175,10 @@ abstract final class AppRoutes {
   /// screen.
   static const String recycleBin = RoutePaths.recycleBin;
 
-  /// The records list.
+  /// Legacy records address, redirected into the opened project.
   static const String records = RoutePaths.records;
 
-  /// Settings tab of the four-destination shell.
+  /// Settings destination of the project shell.
   static const String more = RoutePaths.more;
 
   /// Pinned-template destination the status line opens. Nested under
@@ -383,13 +387,21 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
           backend != null && backend.baseUrl.isNotEmpty && backend.needsSignIn,
     ),
     refreshListenable: refresh,
-    redirect: (BuildContext _, GoRouterState state) {
+    redirect: (BuildContext _, GoRouterState state) async {
+      final String? locked = _appLock(state, ref);
+      if (locked != null) {
+        return locked;
+      }
+      final String? scoped = await _legacyProjectLocation(state, ref);
+      if (scoped != null) {
+        return scoped;
+      }
       final String? legacy = _legacyLocation(state);
       if (legacy != null) {
         return legacy;
       }
       for (final RouteGuard guard in appGuards()) {
-        final String? to = guard(state, ref);
+        final String? to = await guard(state, ref);
         if (to != null) {
           return to;
         }
@@ -399,10 +411,38 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
     routes: _routes,
     errorBuilder: _notFound,
   );
-  void persist() => _persistLastLocation(store, router);
+  Future<void> pending = Future<void>.value();
+  void persist() {
+    final configuration = router.routerDelegate.currentConfiguration;
+    if (configuration.error != null || configuration.matches.isEmpty) {
+      return;
+    }
+    final String? projectId = router.state.pathParameters['projectId'];
+    if (projectId != null && ref.read(openProjectIdProvider) != projectId) {
+      unawaited(
+        Future<void>.microtask(() {
+          if (ref.mounted &&
+              router
+                      .routerDelegate
+                      .currentConfiguration
+                      .pathParameters['projectId'] ==
+                  projectId) {
+            ref.read(openProjectIdProvider.notifier).open(projectId);
+          }
+        }),
+      );
+    }
+    final String location = router.state.uri.toString();
+    pending = pending.then((_) => _persistLastLocation(store, location));
+  }
+
+  final LifecycleObserver lifecycle = ref.read(lifecycleObserverProvider);
+  Future<void> flush() async => pending;
+  lifecycle.addPauseFlush(flush);
   router.routerDelegate.addListener(persist);
   ref.onDispose(() {
     router.routerDelegate.removeListener(persist);
+    lifecycle.removePauseFlush(flush);
     router.dispose();
   });
   return router;
@@ -417,9 +457,10 @@ String _initialLocation(SettingsStore store, {required bool signInFirst}) {
   if (stored.isEmpty && signInFirst) {
     return AppRoutes.signIn;
   }
+  final Uri? uri = Uri.tryParse(stored);
   if (stored.isEmpty ||
-      stored == AppRoutes.lock ||
-      stored == AppRoutes.signIn) {
+      uri?.path == AppRoutes.lock ||
+      uri?.path == AppRoutes.signIn) {
     return AppRoutes.projects;
   }
   if (!_isInternalLocation(stored)) {
@@ -428,25 +469,19 @@ String _initialLocation(SettingsStore store, {required bool signInFirst}) {
   return stored;
 }
 
-void _persistLastLocation(SettingsStore store, GoRouter router) {
-  final Uri uri;
-  try {
-    uri = router.state.uri;
-  } on StateError {
-    return;
-  }
+Future<void> _persistLastLocation(SettingsStore store, String location) async {
+  final Uri uri = Uri.parse(location);
   // The lock and the sign-in gate are never where work resumes.
   if (uri.path == AppRoutes.lock || uri.path == AppRoutes.signIn) {
     return;
   }
-  final String location = uri.toString();
   if (!_isInternalLocation(location)) {
     return;
   }
   if (store.read(SettingKeys.lastLocation) == location) {
     return;
   }
-  unawaited(store.write(SettingKeys.lastLocation, location));
+  await store.write(SettingKeys.lastLocation, location);
 }
 
 List<RouteBase> get _routes {
@@ -530,6 +565,27 @@ List<RouteBase> get _routes {
                     return const ProjectHomeScreen();
                   },
                   routes: <RouteBase>[
+                    GoRoute(
+                      path: 'capture',
+                      metadata: _projectScoped,
+                      builder: (BuildContext _, GoRouterState state) =>
+                          CaptureScreen(
+                            projectId: state.pathParameters['projectId']!,
+                          ),
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'rapid',
+                          redirect: (BuildContext _, GoRouterState state) =>
+                              state.uri
+                                  .replace(
+                                    path: RoutePaths.projectCapture(
+                                      state.pathParameters['projectId']!,
+                                    ),
+                                  )
+                                  .toString(),
+                        ),
+                      ],
+                    ),
                     GoRoute(
                       path: 'details',
                       metadata: _projectScoped,
@@ -823,51 +879,6 @@ List<RouteBase> get _routes {
                   ],
                 ),
               ],
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(
-              path: _captureTab,
-              builder: (BuildContext _, GoRouterState state) {
-                final String? projectId = state.pathParameters['projectId'];
-                return CaptureScreen(projectId: projectId ?? '');
-              },
-            ),
-            GoRoute(
-              path: '${AppRoutes.projects}/:projectId/capture',
-              metadata: _projectScoped,
-              builder: (BuildContext _, GoRouterState state) {
-                return CaptureScreen(
-                  projectId: state.pathParameters['projectId'] ?? '',
-                );
-              },
-              routes: <RouteBase>[
-                // Retired mode keeps old draft links on ordinary Capture.
-                GoRoute(
-                  path: 'rapid',
-                  metadata: _projectScoped,
-                  redirect: (BuildContext _, GoRouterState state) => Uri(
-                    path: RoutePaths.projectCapture(
-                      state.pathParameters['projectId']!,
-                    ),
-                    query: state.uri.hasQuery ? state.uri.query : null,
-                    fragment: state.uri.hasFragment ? state.uri.fragment : null,
-                  ).toString(),
-                ),
-              ],
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: <RouteBase>[
-            GoRoute(
-              path: AppRoutes.records,
-              builder: (BuildContext _, GoRouterState state) {
-                return RecordsListScreen(initialStatus: _statusQuery(state));
-              },
-              routes: _recordRoutes(inProject: false),
             ),
           ],
         ),
@@ -1168,9 +1179,42 @@ List<RouteBase> _templateChildRoutes() {
   ];
 }
 
+Future<String?> _legacyProjectLocation(GoRouterState state, Ref ref) async {
+  final Uri uri = state.uri;
+  if (uri.path != RoutePaths.captureRoot &&
+      uri.path != RoutePaths.records &&
+      !uri.path.startsWith('${RoutePaths.records}/')) {
+    return null;
+  }
+  String? projectId = ref.read(openProjectIdProvider);
+  String suffix = uri.path == RoutePaths.captureRoot ? '/capture' : '/records';
+  if (uri.pathSegments.length > 1) {
+    try {
+      final RecordEntry? record =
+          (await ref.read(recordRepositoryProvider).byId(uri.pathSegments[1]))
+              .getOrThrow();
+      if (record == null || record.status == RecordStatus.deleted) {
+        return RoutePaths.projects;
+      }
+      projectId = record.projectId;
+      suffix = uri.path;
+    } on Object {
+      return RoutePaths.projects;
+    }
+  }
+  if (projectId == null || projectId.isEmpty) {
+    return RoutePaths.projects;
+  }
+  return uri
+      .replace(path: '${RoutePaths.project(projectId)}$suffix')
+      .toString();
+}
+
 String? _legacyLocation(GoRouterState state) {
   final String path = state.uri.path;
-  if (path == '/queue') return RoutePaths.projects;
+  if (path == '/queue') {
+    return RoutePaths.projects;
+  }
   for (final ({String from, String to}) prefix in _legacyPrefixes) {
     if (path == prefix.from || path.startsWith('${prefix.from}/')) {
       return Uri(
@@ -1305,8 +1349,6 @@ RecordStatus? _statusQuery(GoRouterState state) {
 }
 
 const String _projectScopedKey = 'projectScoped';
-
-const String _captureTab = '/capture';
 
 const Map<String, dynamic> _projectScoped = <String, dynamic>{
   _projectScopedKey: true,

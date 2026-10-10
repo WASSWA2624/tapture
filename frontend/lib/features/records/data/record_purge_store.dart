@@ -72,11 +72,16 @@ final class RecordPurgeStore implements PurgeStore {
   }
 
   @override
-  Future<Result<int>> purge(PurgeCandidate candidate) async {
+  Future<Result<int>> purge(
+    PurgeCandidate candidate, {
+    bool explicit = false,
+  }) async {
     final Result<Result<int>> outcome = await runInTransaction<Result<int>>(
       _db,
-      () =>
-          RecordSchema.deferIndexing(_db, () => _purgeInTransaction(candidate)),
+      () => RecordSchema.deferIndexing(
+        _db,
+        () => _purgeInTransaction(candidate, explicit: explicit),
+      ),
     );
     return switch (outcome) {
       Success<Result<int>>(:final Result<int> value) => value,
@@ -88,7 +93,10 @@ final class RecordPurgeStore implements PurgeStore {
   /// The body of [purge], inside its transaction. A refusal before anything
   /// is deleted comes back as a value; a failed delete throws, so the
   /// transaction keeps every row.
-  Future<Result<int>> _purgeInTransaction(PurgeCandidate candidate) async {
+  Future<Result<int>> _purgeInTransaction(
+    PurgeCandidate candidate, {
+    required bool explicit,
+  }) async {
     final String recordId = candidate.recordId;
     final QueryRow? listed = await _db
         .customSelect(
@@ -103,12 +111,14 @@ final class RecordPurgeStore implements PurgeStore {
       return FailureResult<int>(_notInBin);
     }
     final PurgeCandidate current = _candidateOf(listed);
-    if (current.deletedAt.isAfter(candidate.deletedAt)) {
+    if (!current.deletedAt.isAtSameMomentAs(candidate.deletedAt) ||
+        (candidate.deletionId != null &&
+            current.deletionId != candidate.deletionId)) {
       // Restored and deleted again since it was listed: its window starts
       // over, so the job's decision no longer holds.
       return FailureResult<int>(_deletedAgain);
     }
-    if (current.mergeNeeded) {
+    if (current.mergeNeeded && !explicit) {
       return FailureResult<int>(_mergeStillNeeded);
     }
     final _Owned owned = await _ownedRows(recordId);
@@ -145,6 +155,15 @@ final class RecordPurgeStore implements PurgeStore {
     final List<QueryRow> attachmentRows = await _db
         .customSelect(_attachmentsSql, variables: record)
         .get();
+    final List<QueryRow> transcriptFiles = await _db
+        .customSelect(
+          'SELECT DISTINCT t.audio_path FROM transcripts t '
+          'WHERE t.id IN ($_transcriptsSql) AND NOT EXISTS '
+          '(SELECT 1 FROM transcripts other WHERE other.audio_path = t.audio_path '
+          'AND other.id NOT IN ($_transcriptsSql))',
+          variables: record,
+        )
+        .get();
     Future<List<String>> ids(String sql) async {
       final List<QueryRow> rows = await _db
           .customSelect(sql, variables: record)
@@ -167,6 +186,9 @@ final class RecordPurgeStore implements PurgeStore {
       files: <String>[
         for (final QueryRow row in attachmentRows)
           if (row.read<int>('keep_file') == 0) row.read<String>('storage_path'),
+        for (final QueryRow row in transcriptFiles)
+          if (row.read<String>('audio_path').startsWith('projects/'))
+            row.read<String>('audio_path'),
       ],
       attachmentIds: <String>[
         for (final QueryRow row in attachmentRows) row.read<String>('id'),
@@ -182,6 +204,10 @@ final class RecordPurgeStore implements PurgeStore {
       meetingIds: await ids(_meetingsSql),
       attendeeIds: await ids(_attendeesSql),
       actionIds: await ids(_actionsSql),
+      transcriptIds: await ids(_transcriptsSql),
+      segmentIds: await ids(
+        'SELECT id FROM transcript_segments WHERE transcript_id IN ($_transcriptsSql)',
+      ),
       ocrIds: await ids(_ocrSql),
     );
   }
@@ -205,6 +231,8 @@ final class RecordPurgeStore implements PurgeStore {
     await _deleteIds(_db.attendees, owned.attendeeIds);
     await _deleteIds(_db.meetingActions, owned.actionIds);
     await _deleteIds(_db.meetings, owned.meetingIds);
+    await _deleteIds(_db.transcriptSegments, owned.segmentIds);
+    await _deleteIds(_db.transcripts, owned.transcriptIds);
     await _deleteIds(_db.ocrCacheEntries, owned.ocrIds);
     final List<String> every = owned.everyId;
     // Tombstone and audit rows carry version vectors of their own, so their
@@ -292,6 +320,8 @@ final class _Owned {
     required this.meetingIds,
     required this.attendeeIds,
     required this.actionIds,
+    required this.transcriptIds,
+    required this.segmentIds,
     required this.ocrIds,
   });
 
@@ -316,6 +346,8 @@ final class _Owned {
   final List<String> meetingIds;
   final List<String> attendeeIds;
   final List<String> actionIds;
+  final List<String> transcriptIds;
+  final List<String> segmentIds;
   final List<String> ocrIds;
 
   /// Every deleted row's id: what tombstones, version vectors, conflicts and
@@ -335,6 +367,8 @@ final class _Owned {
     ...meetingIds,
     ...attendeeIds,
     ...actionIds,
+    ...transcriptIds,
+    ...segmentIds,
     ...ocrIds,
   ];
 }
@@ -344,6 +378,7 @@ PurgeCandidate _candidateOf(QueryRow row) {
     recordId: row.read<String>('record_id'),
     projectId: row.read<String>('project_id'),
     deletedAt: row.read<DateTime>('deleted_at').toUtc(),
+    deletionId: row.read<String>('deletion_id'),
     mergeNeeded: row.read<int>('merge_needed') != 0,
   );
 }
@@ -400,7 +435,7 @@ const String _mergeNeeded =
 /// Columns [_candidateOf] reads.
 const String _candidateColumns =
     'r.id AS record_id, r.project_id AS project_id, '
-    't.deleted_at AS deleted_at, $_mergeNeeded AS merge_needed';
+    't.id AS deletion_id, t.deleted_at AS deleted_at, $_mergeNeeded AS merge_needed';
 
 /// Every record in the bin, oldest deletion first.
 const String _candidatesSql =
@@ -497,6 +532,13 @@ const String _attendeesSql =
 const String _actionsSql =
     'SELECT id FROM meeting_actions WHERE meeting_id IN '
     '(SELECT id FROM meetings WHERE record_id = ?1)';
+
+final String _transcriptsSql =
+    'SELECT t.id FROM transcripts t WHERE '
+    "(t.owner_kind = 'meeting' AND t.owner_id IN ($_meetingsSql)) OR "
+    't.attachment_id IN (SELECT a.id FROM attachments a WHERE '
+    'EXISTS (SELECT 1 FROM attachment_owners o WHERE o.attachment_id = a.id '
+    'AND ${_ownedByRecord('o')}) AND ${_attachmentGoes('a')})';
 
 /// OCR text of the record's photos whose content hash no surviving photo
 /// shares.

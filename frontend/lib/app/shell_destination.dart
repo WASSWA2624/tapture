@@ -66,27 +66,13 @@ final class ShellDestination {
       path == RoutePaths.more ? copy.navMoreMenu : compactLabel;
 }
 
-/// The one ordered source for the four application destinations.
+/// The one ordered source for the two application destinations.
 final List<ShellDestination> shellDestinations = <ShellDestination>[
   ShellDestination(
     path: RoutePaths.projects,
     icon: AppIcons.project,
     selectedIcon: AppIcons.projectSelected,
     label: Copy.navProjects,
-    hasList: true,
-  ),
-  ShellDestination(
-    path: RoutePaths.captureRoot,
-    icon: AppIcons.camera,
-    selectedIcon: AppIcons.cameraSelected,
-    label: Copy.navCapture,
-    dominant: true,
-  ),
-  ShellDestination(
-    path: RoutePaths.records,
-    icon: AppIcons.records,
-    selectedIcon: AppIcons.recordsSelected,
-    label: Copy.navRecords,
     hasList: true,
   ),
   ShellDestination(
@@ -127,9 +113,6 @@ final List<ShellDestination> moreDestinations = <ShellDestination>[
 /// Destination owning [uri], including project-scoped capture routes.
 ShellDestination? shellDestinationFor(Uri uri) {
   final String path = uri.path;
-  if (RoutePaths.isProjectCapture(path)) {
-    return shellDestinations[1];
-  }
   for (final ShellDestination destination in shellDestinations) {
     if (path == destination.path || path.startsWith('${destination.path}/')) {
       return destination;

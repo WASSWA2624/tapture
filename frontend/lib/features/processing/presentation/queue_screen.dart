@@ -311,7 +311,7 @@ class _QueueScreenState extends ConsumerState<QueueScreen> with StateRefresh {
   void _capture() {
     final String? projectId = widget.projectId;
     if (projectId == null) {
-      context.go(RoutePaths.captureRoot);
+      context.go(RoutePaths.projects);
       return;
     }
     context.push(RoutePaths.projectCapture(projectId));

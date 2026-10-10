@@ -12,6 +12,51 @@ export 'localized_message.dart';
 /// Compatibility copy for services without a widget context, in English.
 /// Widgets resolve their own inherited locale through [of].
 abstract final class Copy {
+  /// Delete permanently
+  static String get recycleDeletePermanent => _english.recycleDeletePermanent;
+
+  /// Delete name permanently
+  static String recycleDeleteLabel(String name) =>
+      _english.recycleDeleteLabel(name);
+
+  /// Select name
+  static String recycleSelectLabel(String name) =>
+      _english.recycleSelectLabel(name);
+
+  /// Restore all
+  static String get recycleRestoreAll => _english.recycleRestoreAll;
+
+  /// Restore selected
+  static String get recycleRestoreSelected => _english.recycleRestoreSelected;
+
+  /// Delete all permanently
+  static String get recycleDeleteAll => _english.recycleDeleteAll;
+
+  /// Delete selected permanently
+  static String get recycleDeleteSelected => _english.recycleDeleteSelected;
+
+  /// Delete permanently?
+  static String get recycleDeleteTitle => _english.recycleDeleteTitle;
+
+  /// Permanently delete count items? Projects include their records, templates and files. This cannot be undone.
+  static String recycleDeleteWarning(int count) =>
+      _english.recycleDeleteWarning(count);
+
+  /// count restored. failed could not be restored.
+  static String recycleRestoreResult(int count, int failed) =>
+      _english.recycleRestoreResult(count, failed);
+
+  /// count permanently deleted. failed could not be deleted.
+  static String recycleDeleteResult(int count, int failed) =>
+      _english.recycleDeleteResult(count, failed);
+
+  /// Another project still uses this data.
+  static String get recycleSharedData => _english.recycleSharedData;
+
+  /// Remove the shared reference before deleting permanently.
+  static String get recycleSharedDataRecovery =>
+      _english.recycleSharedDataRecovery;
+
   /// Why a protected record value cannot be corrected.
   static String get recordFieldReadOnly => _english.recordFieldReadOnly;
 

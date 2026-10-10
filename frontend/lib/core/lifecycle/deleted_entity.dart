@@ -12,6 +12,7 @@ final class DeletedEntity {
     required this.projectId,
     required this.projectName,
     required this.deletedAt,
+    this.deletionId,
     this.reason = '',
   });
 
@@ -32,6 +33,9 @@ final class DeletedEntity {
 
   /// Time at which the original tombstone was written.
   final DateTime deletedAt;
+
+  /// Identity of this deletion, distinguishing restore/redelete at the same time.
+  final String? deletionId;
 
   /// Original deletion reason retained by the repository.
   final String reason;

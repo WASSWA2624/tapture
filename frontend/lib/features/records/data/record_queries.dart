@@ -678,7 +678,7 @@ const String _historySql =
 /// The recycle bin: deleted records with their tombstone and project name.
 /// Binds the deleted status and the project-delete reason.
 final String _binSql =
-    'SELECT $_summaryColumns, bt.deleted_at AS deleted_at, '
+    'SELECT $_summaryColumns, bt.id AS deletion_id, bt.deleted_at AS deleted_at, '
     "bt.reason AS bin_reason, COALESCE(bp.name, '') AS project_name "
     'FROM tombstones bt JOIN records r ON r.id = bt.entity_id '
     'LEFT JOIN projects bp ON bp.id = r.project_id '

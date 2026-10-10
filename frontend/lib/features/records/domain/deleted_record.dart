@@ -9,6 +9,7 @@ final class DeletedRecord {
   const DeletedRecord({
     required this.summary,
     required this.deletedAt,
+    this.deletionId,
     this.projectName = '',
     this.reason = '',
   });
@@ -21,6 +22,9 @@ final class DeletedRecord {
 
   /// When the record was deleted.
   final DateTime deletedAt;
+
+  /// Tombstone identity retained across the selection/confirmation boundary.
+  final String? deletionId;
 
   /// Why it was deleted, as the tombstone recorded it.
   final String reason;
@@ -43,18 +47,21 @@ final class DeletedRecord {
     RecordSummary? summary,
     String? projectName,
     DateTime? deletedAt,
+    String? deletionId,
     String? reason,
   }) {
     return DeletedRecord(
       summary: summary ?? this.summary,
       projectName: projectName ?? this.projectName,
       deletedAt: deletedAt ?? this.deletedAt,
+      deletionId: deletionId ?? this.deletionId,
       reason: reason ?? this.reason,
     );
   }
 
   @override
-  int get hashCode => Object.hash(summary, projectName, deletedAt, reason);
+  int get hashCode =>
+      Object.hash(summary, projectName, deletedAt, deletionId, reason);
 
   @override
   bool operator ==(Object other) {
@@ -63,6 +70,7 @@ final class DeletedRecord {
             other.summary == summary &&
             other.projectName == projectName &&
             other.deletedAt == deletedAt &&
+            other.deletionId == deletionId &&
             other.reason == reason);
   }
 
