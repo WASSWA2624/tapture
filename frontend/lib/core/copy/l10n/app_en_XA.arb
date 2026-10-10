@@ -6988,9 +6988,9 @@
   "@captureGuideTitle": {
     "description": "The row under the Template select that opens the guide."
   },
-  "captureGuidePhotos": "Phótós tó shów·····",
+  "captureGuidePhotos": "Phótós shóúld shów·······",
   "@captureGuidePhotos": {
-    "description": "What the photos should show; the template's fields follow."
+    "description": "Passive guidance about photo contents; the original template field labels follow."
   },
   "captureGuideCaption": "Sáy ór typé ín thé cáptíón··········",
   "@captureGuideCaption": {

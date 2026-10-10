@@ -6988,9 +6988,9 @@
   "@captureGuideTitle": {
     "description": "The row under the Template select that opens the guide."
   },
-  "captureGuidePhotos": "Photos to show",
+  "captureGuidePhotos": "Photos should show",
   "@captureGuidePhotos": {
-    "description": "What the photos should show; the template's fields follow."
+    "description": "Passive guidance about photo contents; the original template field labels follow."
   },
   "captureGuideCaption": "Say or type in the caption",
   "@captureGuideCaption": {

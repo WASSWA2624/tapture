@@ -8402,10 +8402,10 @@ abstract class AppLocalizations {
   /// **'What to capture'**
   String get captureGuideTitle;
 
-  /// What the photos should show; the template's fields follow.
+  /// Passive guidance about photo contents; the original template field labels follow.
   ///
   /// In en, this message translates to:
-  /// **'Photos to show'**
+  /// **'Photos should show'**
   String get captureGuidePhotos;
 
   /// What to say or type in the caption; the template's fields follow.

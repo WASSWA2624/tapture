@@ -592,6 +592,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
 
     return <Widget>[
       PhotoTray(
+        showAddAction: false,
         photos: _activePhotos(session),
         captions: session.captions,
         selectedIds: _selected,
@@ -663,6 +664,14 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
       ],
       RecordCaptionField(
         enabled: ready,
+        leading: AppIconButton(
+          key: const ValueKey<String>('capture-composer-add-photo'),
+          icon: AppIcons.addPhoto,
+          semanticLabel: localCopy.captureAddPhoto,
+          tooltip: localCopy.captureAddPhoto,
+          outlined: false,
+          onPressed: ready ? _add : null,
+        ),
         // Typing and dictation write the record's own caption only; a
         // photo gets the text from the add button below (FBK0000155).
         value: session.recordCaption,

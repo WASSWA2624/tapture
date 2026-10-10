@@ -15,6 +15,7 @@ final class PhotoTray extends StatelessWidget {
   const PhotoTray({
     required this.photos,
     required this.onAdd,
+    this.showAddAction = true,
     this.onTap,
     this.onLongPress,
     this.onRemove,
@@ -31,6 +32,9 @@ final class PhotoTray extends StatelessWidget {
 
   /// Add affordance. Null disables the control.
   final VoidCallback? onAdd;
+
+  /// Hides duplicate intake controls when the composer provides the action.
+  final bool showAddAction;
 
   /// Opens viewer / type sheet.
   final ValueChanged<PhotoDraft>? onTap;
@@ -63,17 +67,14 @@ final class PhotoTray extends StatelessWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     if (photos.isEmpty) {
-      // The catalogue empty state names the next step, and its add-photo
-      // icon is the action, with no button under it (FBK0000004,
-      // FE-SIMP-11). While capture is not ready [onAdd] is null, the icon
-      // is plain and the gate message above says why.
+      // Keep the catalogue's guidance passive when intake is in the composer.
       return AppEmptyState(
         compact: true,
         icon: AppIcons.addPhoto,
         headline: localCopy.captureNoPhotosHeadline,
         message: localCopy.captureNoPhotosMessage,
-        onIconTap: onAdd,
-        iconLabel: localCopy.captureAddPhoto,
+        onIconTap: showAddAction ? onAdd : null,
+        iconLabel: showAddAction ? localCopy.captureAddPhoto : null,
       );
     }
     return Column(
@@ -84,7 +85,7 @@ final class PhotoTray extends StatelessWidget {
           height: Space.x12 * 2,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: photos.length + 1,
+            itemCount: photos.length + (showAddAction ? 1 : 0),
             itemBuilder: (BuildContext context, int index) {
               final LocalizedCopy localCopy = Copy.of(context);
 

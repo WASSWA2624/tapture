@@ -3,10 +3,11 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/features/templates/templates.dart';
 
-/// Immediately shows the template's original photo guidance (task 164).
+/// Immediately shows the template's original photo guidance (task 165).
 class CaptureGuideCard extends StatelessWidget {
   /// Creates the row for [guide].
   const CaptureGuideCard({required this.guide, this.targets, super.key});
@@ -59,11 +60,7 @@ class _GuideList extends StatelessWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final Color ink = context.colors.onSurface;
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: Space.x4,
-        vertical: Space.x1,
-      ),
+    return AppCard(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -78,7 +75,7 @@ class _GuideList extends StatelessWidget {
                 Text(title, style: AppText.label.copyWith(color: ink)),
                 Text(
                   localCopy.captureGuideItems(labels),
-                  style: AppText.caption.copyWith(color: ink),
+                  style: AppText.body.copyWith(color: ink),
                 ),
               ],
             ),

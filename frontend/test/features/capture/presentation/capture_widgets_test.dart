@@ -95,6 +95,40 @@ PhotoDraft draft(String id, {String type = 'other', int order = 0}) {
 }
 
 void main() {
+  for (final bool populated in <bool>[false, true]) {
+    testWidgets('composer tray hides only duplicate intake: $populated', (
+      tester,
+    ) async {
+      int added = 0;
+      String? selected;
+      String? opened;
+      await tester.pumpWidget(
+        wrap(
+          PhotoTray(
+            photos: populated ? <PhotoDraft>[draft('a')] : const <PhotoDraft>[],
+            showAddAction: false,
+            onAdd: () => added++,
+            onTap: (photo) => opened = photo.id,
+            onLongPress: (photo) => selected = photo.id,
+          ),
+        ),
+      );
+      expect(find.byTooltip(Copy.captureAddPhoto), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('empty-state-icon-action')),
+        findsNothing,
+      );
+      if (populated) {
+        await tester.tap(find.byKey(const ValueKey<String>('photo-thumb-a')));
+        await tester.tap(_selectTarget);
+        expect(opened, 'a');
+        expect(selected, 'a');
+      } else {
+        expect(find.text(Copy.captureNoPhotosHeadline), findsOneWidget);
+      }
+      expect(added, 0);
+    });
+  }
   group('Capture field sources and corrections', () {
     const FieldDef automatic = FieldDef(
       fieldKey: 'business',
@@ -733,7 +767,7 @@ void main() {
       });
     }
 
-    testWidgets('the empty tray has no Add photo button and its icon adds', (
+    testWidgets('the empty tray is passive and the composer icon adds', (
       WidgetTester tester,
     ) async {
       await pumpReady(tester, size: const Size(360, 740));
@@ -1413,7 +1447,7 @@ final Finder _removeTarget = find.byKey(
 
 /// The empty tray's add-photo icon, which is its add action (FBK0000004).
 final Finder _addPhotoIcon = find.byKey(
-  const ValueKey<String>('empty-state-icon-action'),
+  const ValueKey<String>('capture-composer-add-photo'),
 );
 
 /// The camera permission in [state]; a settings request lands in

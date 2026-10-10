@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 
@@ -9,6 +10,7 @@ final class RecordCaptionField extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.onWriteFailed,
+    this.leading,
     this.afterDictation,
     this.enabled = true,
     this.resetKey,
@@ -23,6 +25,9 @@ final class RecordCaptionField extends StatefulWidget {
 
   /// Optional failure handler.
   final ValueChanged<String>? onWriteFailed;
+
+  /// Optional action at the directional start of the caption composer.
+  final Widget? leading;
 
   /// Control drawn after the speech-to-text microphone.
   final Widget? afterDictation;
@@ -96,8 +101,9 @@ class _RecordCaptionFieldState extends State<RecordCaptionField>
       child: AppTextField(
         controller: _controller,
         label: localCopy.captureRecordCaption,
-        minLines: 6,
-        maxLines: null,
+        minLines: AppConstants.captureCaption.minLines,
+        maxLines: AppConstants.captureCaption.maxLines,
+        prefix: widget.leading,
         enabled: widget.enabled,
         textInputAction: TextInputAction.newline,
         onChanged: (String text) => _persist(text),

@@ -7135,3 +7135,75 @@ Fresh verification: affected suites 426 passed / 17 failed; preserved-contract s
 D3 evidence: all 48 caption, 12 guide and 13 production Capture images passed normal comparisons and visual inspection. The unique external archive was reopened and every member path, SHA-256 and PNG decode verified before removing exactly those 73 generated sources. No test PNG remains. See [the portable visual manifest](../prompts/feedback-09102026-2154/164-visual-evidence.manifest.json). The [acceptance patch](../prompts/feedback-09102026-2154/164-acceptance-sources.patch) and [source manifest](../prompts/feedback-09102026-2154/164-acceptance-sources.manifest.json) deliver 64 sources in the recursive helper closure; temporary-index apply and all indexed content hashes pass, with the real index unchanged.
 
 Browser acceptance remains open: the Chrome production entrypoint exits 1 before loading any tests. Fresh requests for `/canvaskit/chromium/canvaskit.js` and `.wasm` both return 404 (`frontend/build/task164-chrome-renderer-status.json`), matching task 162's owned renderer-serving blocker. No SDK or speech-module workaround was applied. Full-project `flutter analyze --no-pub` passes with no issues. All 1,405 native workflow cases pass in four disjoint, exhaustive groups: Capture 433 (including 13 visuals), Manual 420, saved Capture 420 and other shell assertions 132; each group exits 0. Logs: `frontend/build/task164-native-capture.jsonl`, `task164-native-manual-final.log`, `task164-native-saved-final.log` and `task164-native-remaining-final.log`. Tracker synchronization, drift check and plan integrity pass. This task remains **Partially complete** because Chrome cannot load and the required broader suites retain the unrelated failures above.
+
+## 165 — Resolve feedback archive 10102026-0457
+
+**Depends on** [001](01-orchestration.md#001--project-setup-and-guardrails), [002](02-foundation.md#002--foundation-services)
+
+**Implementation started:** Yes
+
+### Implement
+
+Implement [the feedback prompt](../prompts/feedback-10102026-0457/001-resolve-capture-composer-feedback.md): passive photo guidance and a compact growing photo/caption composer. The user approved D1(a), D2(a), D3(a) on 2026-10-10: standard AppCard guidance; integrated leading photo action with existing voice/audio actions; temporary test-image restoration, verified external archival and exact-file cleanup. Preserve independent durable text/audio evidence and all existing source/save/permission contracts.
+
+This task supersedes only task 164's photo-guidance wording and six-line caption minimum. Its unfinished acceptance and tasks 003/012/162 remain independent.
+
+### Files
+
+- `frontend/lib/features/capture/presentation/capture_guide_card.dart`
+- `frontend/lib/features/capture/presentation/record_caption_field.dart`
+- `frontend/lib/features/capture/presentation/capture_screen.dart`
+- `frontend/lib/features/capture/presentation/photo_tray.dart`
+- `frontend/lib/core/constants/app_constants.dart`
+- `frontend/lib/core/copy/l10n/app_en.arb`, pseudo catalogue and generated localization output
+- Existing affected copy, Capture widget/database and production-shell acceptance sources
+- `prompts/feedback-10102026-0457/acceptance-sources.patch`, source/hash and visual-evidence manifests
+- `app-write-up.md`, `dev-plan/12-capture.md`, this task and generated `dev-tracker.md`
+
+### Contract
+
+Add optional `RecordCaptionField.leading`, forwarded to `AppTextField.prefix`; `PhotoTray.showAddAction` defaults to true; `AppConstants.captureCaption` holds `minLines: 1`, `maxLines: 6`. Existing shared widget defaults, storage formats and service interfaces remain unchanged.
+
+### Definition of done
+
+#### W1 —  Restyle the passive photo guidance
+
+- [x] Every affected Capture guide visibly and accessibly says “Photos should show”; the superseded heading is absent from this UI.
+- [x] D1's surface uses shared tokens and minimal nonzero corners; guidance is immediate and requires no interaction.
+- [x] Original labels retain their order and full content; empty photo guidance reserves no guideline space and existing `targets` still render.
+- [x] Guidance wraps without clipping throughout the declared width/orientation/theme/text/locale matrix and does not displace keyboard-safe save access.
+- [ ] Copy, widget, accessibility and approved visual checks pass. FBK0000216 and FBK0000219 are resolved.
+
+#### W2 —  Compose photos, growing text and audio
+
+- [x] D2's photo/caption arrangement renders once, uses shared components, preserves the photo source sheet and retains labelled 48dp dictation/recording targets.
+- [x] Empty input starts at one rendered line, grows through six, scrolls beyond six and shrinks after deletion; no text disappears at 200 percent scale.
+- [x] Text-only, audio-only and mixed inputs save and reload through existing durable paths; audio-only input creates no placeholder caption and preserves record/photo ownership.
+- [x] Typing, dictation, recording, photo intake, backgrounding, rotation and width/locale/theme changes preserve draft evidence, controller text, caret and explicit-reset behavior.
+- [x] Denied microphone, unavailable speech model, offline mode and storage failure leave typing/photo capture usable and retain prior evidence; no new egress occurs.
+- [ ] Both footer saves and photo-caption count/scope/append behavior retain their contracts. Behavior, real-database, native/browser flow, accessibility and D3 visual checks pass across the declared reach. FBK0000217 is resolved.
+
+#### Integrated verification
+
+- [ ] Required analysis, formatting, localization, affected suites, native/browser production workflows, offline integration and unchanged guardrails pass.
+- [x] Intended visuals compare normally, receive visual inspection and are archived externally with verified member paths/hashes; only exact temporary image paths are removed.
+- [x] Changed ignored acceptance sources and their recursive helper closure are delivered and verified through a temporary index; the real index and unrelated edits are unchanged.
+- [x] Documentation, tracker synchronization, tracker drift check and plan integrity are current.
+
+### Evidence
+
+D1(a), D2(a) and D3(a) were approved on 2026-10-10. Implementation began at `a39c2476`; all 17 existing user-deleted prior feedback paths and the real Git index are preserved. Dependencies 001/002 retain fully verified acceptance. This task changes only shared Capture presentation/configuration; stored formats, template labels, speech/permission policy and local-first service contracts are unchanged.
+
+The passive token-based AppCard, exact heading, original-label/empty-guide behavior and one-to-six-line composer pass fresh widget checks. The 218-case guide/composer suite covers English/expanded RTL, production fonts, text scales 1/2, final-caret visibility, shrinkage, delayed writes, explicit reset and dynamic width/locale/theme changes. Text-only, audio-only and mixed real-database round-trips pass, including no placeholder caption and preserved record/photo ownership. Photo intake, denied microphone, recording while typing, failed writes and independent audio/text evidence retain their existing paths.
+
+Required affected suites: baseline **857 pass / 26 fail**; final **940 pass / 74 fail** (`frontend/build/feedback0457-baseline.jsonl`, `feedback0457-affected-complete.jsonl`). Every baseline failure remains reproduced: 12 old layout/selector assumptions, one Manual template-choice expectation, 12 old composition snapshots and one unrelated project-import copy expectation. The additional 48 failures are historical `feedback_2154_caption_*` snapshots containing the intentionally changed full Capture composition. No unrelated snapshot was regenerated and no guardrail or preserved-contract assertion was weakened. The fresh guide suite remains fully green (`frontend/build/feedback0457-guide-final.jsonl`). Aggregate copy/widget and affected-suite acceptance stays open.
+
+Native production coverage is **1,405 passing unique cases**: 1,273 unchanged Capture/Manual/saved-Capture cases (including 13 visuals) from `frontend/build/feedback0457-native-complete.jsonl`, plus all 132 shell/keyboard cases rerun successfully in `feedback0457-native-remaining.jsonl`. The original full run had 30 keyboard failures because its helper mistook the new photo prefix's focus for text-editor focus. The helper now checks the actual EditableText focus node; strict editor-focus assertions remain. `frontend/build/feedback0457-native-coverage.json` proves the groups are disjoint and exhaustive. All five native TargetPlatform variants pass; this does not certify untested physical-device audio adapters.
+
+Windows offline integration passes all **4 cases**, including forty consecutive raw captures with an unreachable backend and zero egress (`frontend/build/feedback0457-offline-final.log`). All **80 unchanged architecture/security guardrails** pass, including deliberate-violation fixtures (`frontend/build/feedback0457-guardrails-final.jsonl`). Final full-project analysis reports no issues (`frontend/build/feedback0457-analyze-verified.log`); changed-Dart formatting, pseudo/copy generation checks and localization validation pass.
+
+Chrome acceptance remains open. The required browser command stalled before loading any test; fresh requests for `/canvaskit/chromium/canvaskit.js` and `.wasm` both returned **404** (`frontend/build/feedback0457-chrome-renderer-status.json`). The stalled run was stopped after confirming this task-162 bootstrap blocker. No SDK workaround was applied and task 162's ownership/acceptance is unchanged.
+
+D3(a): exactly **73 approved baselines** passed normal comparisons and visual inspection. W1 regenerated the 12 `frontend/test/features/capture/presentation/goldens/feedback_2154_guide_<corner>.png` files. W2 regenerated the 12 `capture_workflow_<corner>.png` files plus `capture_workflow_reported_light.png` in that directory and added 48 `feedback_0457_composer_<empty|multiline|audio|photos>_<corner>.png` files. The [portable visual manifest](../prompts/feedback-10102026-0457/visual-evidence.manifest.json) lists every exact path and hash. The unique external archive contains **421 images**: 73 approved baselines, 60 byte-identical unrelated restored baselines and 288 comparison artifacts. Every member path, SHA-256 and decoded image was verified after reopening; all cleanup paths/hashes were checked beneath `frontend/test/` before exact-file removal. Original archives are preserved, no pre-existing test image was present and no test image remains.
+
+The [acceptance patch](../prompts/feedback-10102026-0457/acceptance-sources.patch) and [source manifest](../prompts/feedback-10102026-0457/acceptance-sources.manifest.json) deliver **58 current sources** in the recursive relative-import closure, including conditional browser helpers. Applying the patch through a separate temporary index reconstructs every canonical-LF source/hash and preserves the real index and ignore policy. Capture requirements and task 012's supersession note are current. Tracker synchronization, drift checking and plan integrity pass. This task remains **Partially complete** because the required broader suites and Chrome acceptance remain open; tasks 003/012/164 retain their independent unfinished criteria.

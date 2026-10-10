@@ -5,6 +5,12 @@
 /// each area is a const record a caller reaches through one name
 /// (`AppConstants.lists.pageSize`) rather than a flat namespace.
 abstract final class AppConstants {
+  /// Rendered caption lines before the composer scrolls internally.
+  static const ({int minLines, int maxLines}) captureCaption = (
+    minLines: 1,
+    maxLines: 6,
+  );
+
   /// Bounded catalogue shortlist for explicit text-only AI suggestions.
   static const int aiTemplateCandidateLimit = 8;
 

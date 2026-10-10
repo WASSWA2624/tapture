@@ -434,7 +434,9 @@ void registerCaptureWorkflowTests({required bool browser}) {
             await _verifyPassiveGuide(tester, localCopy);
             for (final (Finder control, bool header) in <(Finder, bool)>[
               (
-                find.byKey(const ValueKey<String>('empty-state-icon-action')),
+                find.byKey(
+                  const ValueKey<String>('capture-composer-add-photo'),
+                ),
                 false,
               ),
               (_caption, false),
@@ -623,7 +625,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
             }
             await _verifyPassiveGuide(tester, localCopy);
             for (final Finder control in <Finder>[
-              _populatedPhotoAdd(localCopy),
+              _photoAdd,
               _caption,
               find.byKey(const ValueKey<String>('record-edit-save')),
             ]) {
@@ -635,7 +637,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
                   'Original record caption',
                 );
                 await _verifyInteraction(tester, control, fixture, localCopy);
-              } else if (tester.widget(control) is IndexedSemantics) {
+              } else if (control == _photoAdd) {
                 final SemanticsNode node = tester.getSemantics(control);
                 expect(node.label, localCopy.captureAddPhoto);
                 expect(
@@ -711,7 +713,9 @@ void registerCaptureWorkflowTests({required bool browser}) {
             await _verifyPassiveGuide(tester, localCopy);
             for (final (Finder control, bool header) in <(Finder, bool)>[
               (
-                find.byKey(const ValueKey<String>('empty-state-icon-action')),
+                find.byKey(
+                  const ValueKey<String>('capture-composer-add-photo'),
+                ),
                 false,
               ),
               (_caption, false),
@@ -814,7 +818,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
   }
 
   testWidgets(
-    'reported 393x886 shell exposes six lines and primary save before scrolling',
+    'reported 393x886 shell exposes growing caption and primary save before scrolling',
     (WidgetTester tester) async {
       await CaptureWorkflowFixture.open(
         tester,
@@ -841,8 +845,8 @@ void registerCaptureWorkflowTests({required bool browser}) {
         reason:
             'Real metrics for ${style.fontFamily}/${style.fontFamilyFallback}',
       );
-      expect(editor.minLines, 6);
-      expect(editor.maxLines, isNull);
+      expect(editor.minLines, 1);
+      expect(editor.maxLines, 6);
       final Rect caption = tester.getRect(_caption);
       final Rect save = tester.getRect(find.byType(AppPrimaryAction));
       final Rect navigation = tester.getRect(
@@ -1172,14 +1176,8 @@ void _expectProportionalLabel(
   );
 }
 
-Finder _populatedPhotoAdd(LocalizedCopy copy) => find.ancestor(
-  of: find.byWidgetPredicate(
-    (Widget widget) =>
-        widget is Semantics &&
-        widget.properties.button == true &&
-        widget.properties.label == copy.captureAddPhoto,
-  ),
-  matching: find.byType(IndexedSemantics),
+final Finder _photoAdd = find.byKey(
+  const ValueKey<String>('capture-composer-add-photo'),
 );
 
 Future<void> _verifyReachableControl(
@@ -1209,6 +1207,16 @@ Future<void> _verifyReachableControl(
 }
 
 bool _focusIsInside(Finder control) {
+  if (control == _caption) {
+    final EditableText editor =
+        find
+                .descendant(of: control, matching: find.byType(EditableText))
+                .evaluate()
+                .single
+                .widget
+            as EditableText;
+    return editor.focusNode.hasFocus;
+  }
   final BuildContext? focused = FocusManager.instance.primaryFocus?.context;
   if (focused == null) return false;
   final Set<Element> controls = control.evaluate().toSet();
@@ -1417,7 +1425,7 @@ Future<void> _verifyKeyboardAction(
   final bool picker =
       key == const ValueKey<String>('capture-project-field') ||
       key == const ValueKey<String>('capture-template-field');
-  if (picker || key == const ValueKey<String>('empty-state-icon-action')) {
+  if (picker || key == const ValueKey<String>('capture-composer-add-photo')) {
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(find.byType(AppBottomSheet), findsOneWidget);
@@ -1677,7 +1685,8 @@ Future<void> _verifyInteraction(
     expect(ScreenProbe.layoutIssues(tester), isEmpty);
     Navigator.of(tester.element(find.byType(AppSearchField))).pop();
     await tester.pumpAndSettle();
-  } else if (widget.key == const ValueKey<String>('empty-state-icon-action')) {
+  } else if (widget.key ==
+      const ValueKey<String>('capture-composer-add-photo')) {
     await _tapPainted(tester, control);
     expect(find.text(localCopy.captureAddSheetTitle), findsOneWidget);
     expect(

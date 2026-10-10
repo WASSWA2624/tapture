@@ -5349,7 +5349,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get captureGuideTitle => 'What to capture';
 
   @override
-  String get captureGuidePhotos => 'Photos to show';
+  String get captureGuidePhotos => 'Photos should show';
 
   @override
   String get captureGuideCaption => 'Say or type in the caption';
@@ -17822,7 +17822,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String get captureGuideTitle => 'Whát tó cáptúré······';
 
   @override
-  String get captureGuidePhotos => 'Phótós tó shów·····';
+  String get captureGuidePhotos => 'Phótós shóúld shów·······';
 
   @override
   String get captureGuideCaption => 'Sáy ór typé ín thé cáptíón··········';

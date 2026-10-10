@@ -1,0 +1,2637 @@
+{
+  "task": "165",
+  "run": "20261010T032625Z-05d7c634",
+  "generatedBaselines": 73,
+  "preExistingTestImages": 0,
+  "files": [
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_dark_isolatedDiff.png",
+      "sha256": "9855579d15a83f02c4587e069cdc5c0bb29aa46a3cbf8066578804a174338bf5",
+      "bytes": 10532,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_dark_maskedDiff.png",
+      "sha256": "622e47375b8e21bce10713e570c7b7ee7106557279723e62709b9cef1d8461ad",
+      "bytes": 12529,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_dark_masterImage.png",
+      "sha256": "8a62eeb2f00a3831eefbd41be5e81c2c26a16a830f07018242fcdf5e643c856f",
+      "bytes": 21218,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_dark_testImage.png",
+      "sha256": "4aec002f45309049442a739a5c826e9aba3eedb133525f086e1f47d4ccfaba4f",
+      "bytes": 15504,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_dark_isolatedDiff.png",
+      "sha256": "7145356605c742be9ad10e7dc7aeb698be722078d35927e92e47efcac2af9db5",
+      "bytes": 6418,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_dark_maskedDiff.png",
+      "sha256": "508bc213ceee05593255201ed934140e2c5350344b7686bb6ad9ba09d7de057e",
+      "bytes": 14316,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_dark_masterImage.png",
+      "sha256": "c342b586a112f96b4a381c3b2989640d340ef8c28e0e885093ad53fcce8bcc34",
+      "bytes": 18340,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_dark_testImage.png",
+      "sha256": "dbffefc1232e15a632b9924add57830126dd312eba8eb5491c81a863c17c2849",
+      "bytes": 22337,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_light_isolatedDiff.png",
+      "sha256": "bb9592a87e826c38c7d65b439a3ad2cc416ac4988fe8b03b2f072bf24c33ddee",
+      "bytes": 20200,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_light_maskedDiff.png",
+      "sha256": "aec7d3c39cb50dfeea9d4d0493fdee1b543e8d1e8a39103a356ac6398cfa7f00",
+      "bytes": 28224,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_light_masterImage.png",
+      "sha256": "1d44cec0952ded89a62d95d55788d56c56cf577d5e64927f21955cca7057d969",
+      "bytes": 18573,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_light_testImage.png",
+      "sha256": "b22f8c2ed169bf90d18b6f6a75c59c055d7bdf8bb2e37b88f6a8ff6a79a30467",
+      "bytes": 22126,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_outdoor_isolatedDiff.png",
+      "sha256": "a2037ed3ffe1d865adb2e38ab7db7d3e0504f31e96c2f5e3db057365559661ea",
+      "bytes": 17526,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_outdoor_maskedDiff.png",
+      "sha256": "ffd34044ef5c25bc50ecbff9cf49f1b2e487c68a90f52d08e01778efcec91603",
+      "bytes": 25821,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_outdoor_masterImage.png",
+      "sha256": "7439a730c7f875e40c4a75a9c00d10c2bbc25d24c3521bcd457f78b60a19f5e3",
+      "bytes": 17784,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_landscape_text2_outdoor_testImage.png",
+      "sha256": "86627d8cb513e90a0047fa5cf2847abc22382d71340cebdfd7deaeebc196a312",
+      "bytes": 19479,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_light_isolatedDiff.png",
+      "sha256": "250c8ab91c450c4c9b148e3bd8398daa3dd7e19af315157caaed2c781abeaf9b",
+      "bytes": 23937,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_light_maskedDiff.png",
+      "sha256": "356e17f6948d161034d76cf91423e4421c5ba7f81dd1b166096a9bc902fcfc6c",
+      "bytes": 26331,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_light_masterImage.png",
+      "sha256": "61198f4356cecc967b71dbe7e39e9b37f0b89a18bd58b446b733f1dd9e576100",
+      "bytes": 21112,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_light_testImage.png",
+      "sha256": "7a2e77d7087f685ed99977bff880befda1f1fb425dce5f5c9f63e18abadaf683",
+      "bytes": 15339,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_outdoor_isolatedDiff.png",
+      "sha256": "9b5e15e686fea6b38b90349e78388b7a505d8d23b4708b71c4050154866f1510",
+      "bytes": 21546,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_outdoor_maskedDiff.png",
+      "sha256": "c18bde8f34e99c5659f8fd92bf9620076fe9885f1d85498f32aac0da5caa94dd",
+      "bytes": 24192,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_outdoor_masterImage.png",
+      "sha256": "4d3dea9255fb962d80cdd90eee3da4e253ea5c9badb831e6b2682cbfbb770ab5",
+      "bytes": 20357,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_compact_outdoor_testImage.png",
+      "sha256": "300be980867772d11c268a3ebff2fd5860876ad9219645f22f1cec30f044ce00",
+      "bytes": 14097,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_dark_isolatedDiff.png",
+      "sha256": "01f668fd1d59b0e65fdaf10c5b3cbea82b0189d83a09a77ba87ed26eea585408",
+      "bytes": 19041,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_dark_maskedDiff.png",
+      "sha256": "d4a879499d1aedbdc6d7351b39a114c0db1572338553233622dc86d6e2a96ab4",
+      "bytes": 21638,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_dark_masterImage.png",
+      "sha256": "ed442b7484dcc5d7ea2ac330649db7013c419bcf3fd38ff490622f852d8dd9e0",
+      "bytes": 36549,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_dark_testImage.png",
+      "sha256": "3626f7566ec169e88a826ac4e1357c55d589bc8b82b16c212c20a260ae25a703",
+      "bytes": 27988,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_light_isolatedDiff.png",
+      "sha256": "60cf4a9d08a94ae3f4c9f50f76a1e52c7dd46d39c832ba3c2516d7274bb563b8",
+      "bytes": 45511,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_light_maskedDiff.png",
+      "sha256": "d662548b943b6419d647ebadc042771e509063860d08fdb960b771de2b99ad05",
+      "bytes": 47791,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_light_masterImage.png",
+      "sha256": "b2999976a54d9034bb6f7f62d76ffc16cfedf228153606caef8c919572b7f936",
+      "bytes": 36931,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_light_testImage.png",
+      "sha256": "3fe6f2cfbc08038fa4e0b8b2946dc11959fb1762a675797ab690a26e964e4c4e",
+      "bytes": 27991,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_outdoor_isolatedDiff.png",
+      "sha256": "28d87997b878d8ac72cfa500207ac315719ce127966d7321102d411c33570e28",
+      "bytes": 40508,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_outdoor_maskedDiff.png",
+      "sha256": "643fa0e29b8b8d0a2dde15ab1f66e9d18d7cd6e36a529c877cbcb3bc114a7df0",
+      "bytes": 43696,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_outdoor_masterImage.png",
+      "sha256": "1f7a568c81ffd3f1e2bc326034e65623616cd240caec759c3ad826bbf23da40f",
+      "bytes": 35169,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_expanded_text2_outdoor_testImage.png",
+      "sha256": "25eee386df19bcb72288a0fa1edfe9c72634133396ae6a63bf9d130db72931b6",
+      "bytes": 25476,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_dark_isolatedDiff.png",
+      "sha256": "ea9cd2260603a782abd24d758fd142e93c5cd1298d19909ccf3670701e7d89ea",
+      "bytes": 12357,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_dark_maskedDiff.png",
+      "sha256": "c5174bd8c672c7464be232e60bb812cc2a5a6ea2c7601b26474fc30cee3fd1e6",
+      "bytes": 15851,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_dark_masterImage.png",
+      "sha256": "380cd70db10584841798b2a457639afc2615749c874d196409591f452afa6656",
+      "bytes": 25300,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_dark_testImage.png",
+      "sha256": "5cb9affa7439639639b667c12287755ab65630b221172c686290e2d5aacea169",
+      "bytes": 19829,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_light_isolatedDiff.png",
+      "sha256": "5e85ad21a535d946c9cc344a02ac8fb1f283331c7fe526c538818640bb4ff500",
+      "bytes": 26485,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_light_maskedDiff.png",
+      "sha256": "e115ad180d154ea42b8dd66df74423a9c63bf0ddefba0817c4c1b0c53451c8db",
+      "bytes": 30461,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_light_masterImage.png",
+      "sha256": "43f05f42c6a99c9711ea7deaa7d6d9d092fc98de26da984bab3e283399499239",
+      "bytes": 25283,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_light_testImage.png",
+      "sha256": "72a47aa4578e216a9c377c3091bc1f4bedcf81d13064ac13fa13967b3503ca43",
+      "bytes": 19692,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_outdoor_isolatedDiff.png",
+      "sha256": "f41f1c933f9a700cf9cae4aab917bb34aabc883be47d239105e85a67db926d0a",
+      "bytes": 24953,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_outdoor_maskedDiff.png",
+      "sha256": "08e3dee99366e99496d153d26cc7b2273b4f47959604189e36db4cd3c86fe609",
+      "bytes": 28892,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_outdoor_masterImage.png",
+      "sha256": "c503822f16aa85eca198c07e82958bae3d086c75c681e15383c96b241ebd8fc5",
+      "bytes": 24942,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/capture_composition_medium_outdoor_testImage.png",
+      "sha256": "17a946c6f6ceeaa570263b3dd8b77b8780458766fbf21a17cd8bc2ec33cb7220",
+      "bytes": 18234,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_dark_isolatedDiff.png",
+      "sha256": "5419bc3f2a0e769c2f2a3fdd14f9cf948f5aab8ce73d6802657132888d2c220f",
+      "bytes": 4531,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_dark_maskedDiff.png",
+      "sha256": "fefd5785b6e637ded8f2500c0936b9af93b7cc9468c51e98d80bad2984a3f4dd",
+      "bytes": 13290,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_dark_masterImage.png",
+      "sha256": "38142595c4af835ea8d7cd032b3b7989567695bdeda65b3bb9a1e922f5da4293",
+      "bytes": 15574,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_dark_testImage.png",
+      "sha256": "f2cdf49bb6c6b0eeff8448ba5c6caf106fb923af445a13f97a23f9f267f8107a",
+      "bytes": 15664,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_dark_isolatedDiff.png",
+      "sha256": "0756aa11402cbf76700c5af59a87971bd511f739fb4ea80579509f7ba8fe1bc4",
+      "bytes": 2506,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_dark_maskedDiff.png",
+      "sha256": "b09da34ca8825b9681b41be5aa555b727f999e46740f83f4c11a7ec8dec5075e",
+      "bytes": 15955,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_dark_masterImage.png",
+      "sha256": "9f4cf6520378184895eb0102f6d1c2f3e31551bd08716401b8a1193e959e8600",
+      "bytes": 14814,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_dark_testImage.png",
+      "sha256": "bed408615b5e888587a56c9cbaa54e793edadddf97994eaae6241f0bc9334f92",
+      "bytes": 19359,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_light_isolatedDiff.png",
+      "sha256": "d45b8656a123676478c3d9e0e7fa52ac1cfe2f18b56e4371dc772dd08e20f001",
+      "bytes": 6180,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_light_maskedDiff.png",
+      "sha256": "674454040958ff9a3da63211cfd65838d551b4fcc2f11e8b642a732cec537f9d",
+      "bytes": 19623,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_light_masterImage.png",
+      "sha256": "56108954a0b4637de57bb5017facb5079b85741939205b690f45ddfcd4015728",
+      "bytes": 15139,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_light_testImage.png",
+      "sha256": "60991cdfc21ba226bde767a2a325b98d53990bc499aad42d56cdf14e0742766a",
+      "bytes": 19511,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_outdoor_isolatedDiff.png",
+      "sha256": "185a7362a3ea82cd1205c0482a1d01bb3fef25a8ac7f36f216c9d62dc819ea18",
+      "bytes": 4452,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_outdoor_maskedDiff.png",
+      "sha256": "dbbcbfc4c7c8ab936ef70446d5f9af0b2fc7df9131083eace26ac50983b76cc0",
+      "bytes": 18632,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_outdoor_masterImage.png",
+      "sha256": "d61462950de3cff23d2742833027e71b9a4346014c8bf61ae9ee63f64c5467b9",
+      "bytes": 15022,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_landscape_text2_outdoor_testImage.png",
+      "sha256": "cd0e7c498cd6ab563e3cbd76b6cfc500fb5a47b083c582c990d6af517a4c3f1b",
+      "bytes": 18955,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_light_isolatedDiff.png",
+      "sha256": "04c6e1945673c9ce95091e71811a3a9a008813b3b1cbbde716b43af0528b2c38",
+      "bytes": 9978,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_light_maskedDiff.png",
+      "sha256": "5252187f6cf13204cfa47b78d23a7f6714ef4618830b2fd0d9772b9d9b7ac7a5",
+      "bytes": 18264,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_light_masterImage.png",
+      "sha256": "eaec3180ceaa5019fea19321e4f04c984cfcb77c10727573bd18f34415f69a2c",
+      "bytes": 15403,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_light_testImage.png",
+      "sha256": "45444001525bfc6bc9306da582f43cd5684fcbee3d074dedafcbdafd7e27144a",
+      "bytes": 15510,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_outdoor_isolatedDiff.png",
+      "sha256": "3f6f922e07c51e398dafdf893116313e570b80c7936f4e0c2d3679ee768effa2",
+      "bytes": 9216,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_outdoor_maskedDiff.png",
+      "sha256": "16900637236242a32ac55200e3f81597b0cee16acfe835cfafca76a983ec1166",
+      "bytes": 17470,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_outdoor_masterImage.png",
+      "sha256": "b1da80faea2972961f8b50ddf343683a2e0cc24e2b624aefddee397a14179c19",
+      "bytes": 14989,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_compact_outdoor_testImage.png",
+      "sha256": "f5a2c1fe679243352ca6569c4761afbbb6720b29ff7474c464c12617d42faf63",
+      "bytes": 15017,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_dark_isolatedDiff.png",
+      "sha256": "d274a3fc6fe2bf13c3106b86133a1521230fa952bbb882affa74e0b80a7f5e50",
+      "bytes": 10901,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_dark_maskedDiff.png",
+      "sha256": "be35d6b382eb6da90416cb5cab40143e18ba9021d62ddfb4b9786047b9fde33c",
+      "bytes": 23959,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_dark_masterImage.png",
+      "sha256": "ed25aec214f4f406fc2226116f8c2ea8b52bd2bea9bf7173dc655dcb1f3503f9",
+      "bytes": 28627,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_dark_testImage.png",
+      "sha256": "e95c1a7f23c0433c7adb3267a787477850d0f3b076393f8aa4a1d3a72deff20a",
+      "bytes": 28347,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_light_isolatedDiff.png",
+      "sha256": "d845b56f52d2f2fb8c6e0bf66fd816d1029c7420f8638542ad9a86dc0c376ee4",
+      "bytes": 21267,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_light_maskedDiff.png",
+      "sha256": "1d8320812d515d61234e134ac7822079e0eab4f2ffded69f0f2159c5fa8693e7",
+      "bytes": 34671,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_light_masterImage.png",
+      "sha256": "e736ef82d0370f3609c1259647836bff464aa974f9aba83a296a3e290eb355bc",
+      "bytes": 28779,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_light_testImage.png",
+      "sha256": "df1801b9a61a7dbbe82a6d9ba73bf98a145caaebcb7959eb73484eeebbefc92c",
+      "bytes": 28525,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_outdoor_isolatedDiff.png",
+      "sha256": "5c667b6be012b93576af9dbf3f5cf56c125897d9b7732d4f42e5e0198e525119",
+      "bytes": 20497,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_outdoor_maskedDiff.png",
+      "sha256": "5253ca5c4b6df0d87b85c58464ea3993aeb694ba594e7ad95b52efd6601330e5",
+      "bytes": 33736,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_outdoor_masterImage.png",
+      "sha256": "611493dd8b396c6cf0cff2ff9e6a7c40d5398762efe821169642be0683157dd6",
+      "bytes": 28033,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_expanded_text2_outdoor_testImage.png",
+      "sha256": "6b1f3877ecb4791408a7c264d5ba0bc3e1601b53e392b66373734ef8eae5e3d0",
+      "bytes": 27786,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_dark_isolatedDiff.png",
+      "sha256": "ebe712ed2a1d2b426516fcfc2e5129990a1d2001fe0b5987f8c52490f9a3728c",
+      "bytes": 7373,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_dark_maskedDiff.png",
+      "sha256": "7e7656546a8ba1bf342090b5c76be9763ed2292f675f965ad4b57698a1ef35e5",
+      "bytes": 17140,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_dark_masterImage.png",
+      "sha256": "9c585f1093128dd0875c70bf7c9175c4993c7c6b3809af104cf23333dfd04ad4",
+      "bytes": 19999,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_dark_testImage.png",
+      "sha256": "bae7ee4e58d45115f2186a861fac6b98dc45c75b95ec65c089d5eb12331504fd",
+      "bytes": 19823,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_light_isolatedDiff.png",
+      "sha256": "bf23ca44defbdb6e9d2874afdc313cbf6d6829042be36cfabb837cd96b50c53b",
+      "bytes": 13172,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_light_maskedDiff.png",
+      "sha256": "22e7509891068d7778d6b84b3f110bb7431fa975133989927329119255d91826",
+      "bytes": 22964,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_light_masterImage.png",
+      "sha256": "6c3400d3c9f81000171c645cb2b82fe28f064dec3bcbcb354c42f9b68ccccf2b",
+      "bytes": 19949,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_light_testImage.png",
+      "sha256": "4e079928ea5f07a3f0855cbabce80260325d501809e86efaa169778b1d22b1bc",
+      "bytes": 19799,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_outdoor_isolatedDiff.png",
+      "sha256": "722ee80bb3f978ab3490ea5ed065197d11d3ae8af754e1eace892da06e7ba3e0",
+      "bytes": 12607,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_outdoor_maskedDiff.png",
+      "sha256": "e89c9f53cc89f2bccda2a0b9ce6010e7faf71f03fc63429aa215d87e30e6cbee",
+      "bytes": 22250,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_outdoor_masterImage.png",
+      "sha256": "099291e761d4c88b80064bb0187f9db3cebff2d4a1a7d05b6a9cea811b0c9084",
+      "bytes": 19609,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_all_medium_outdoor_testImage.png",
+      "sha256": "bbc8ef8469a28bd4590f09166b9de80231f45593e55f7524eeabf0924845cfad",
+      "bytes": 19393,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_dark_isolatedDiff.png",
+      "sha256": "3a2c3a1ccff308cb2a527633d70f4f7f059f96cedf21fe649078e8e1928bca61",
+      "bytes": 4420,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_dark_maskedDiff.png",
+      "sha256": "18f180bfcfb13ab07ac05d76636dd21af3239825d4da586ba5531e9b08aaa2c1",
+      "bytes": 12516,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_dark_masterImage.png",
+      "sha256": "dd3f27d94a774dcc5f71b02510da6f536ebd67eceb219ac859d8c287c101cd5e",
+      "bytes": 15082,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_dark_testImage.png",
+      "sha256": "bad1eb770c875dfe0097c393c108371fabc382960aa508683d27f207a4ee705a",
+      "bytes": 14913,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_dark_isolatedDiff.png",
+      "sha256": "c2315436ccb5a0ed0c850c10ea8983a278f9a35d1f04ed185da46f9793e54d00",
+      "bytes": 2655,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_dark_maskedDiff.png",
+      "sha256": "3295462dfe36d67d57c6f1e6980fb69c35498dc56ca4ad6b546cb262a442862c",
+      "bytes": 14575,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_dark_masterImage.png",
+      "sha256": "50c688cc7eee513f6518f6f7e99a82ac8261f47e712d130ce79b3a118469f59b",
+      "bytes": 13596,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_dark_testImage.png",
+      "sha256": "92d7dec4952ebbb892bad41a5edef7b60176cad1af80bb77bdc51bc714a04217",
+      "bytes": 18010,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_light_isolatedDiff.png",
+      "sha256": "95368f1e9868db75157a3d8e81bbe80475b75330ee7465f3c64cfbf1340abd3a",
+      "bytes": 6502,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_light_maskedDiff.png",
+      "sha256": "411d31cd3f3659bfdbeb5f64c39ff7a23a016cd21c0b8a7d05d972492e4c94c8",
+      "bytes": 18418,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_light_masterImage.png",
+      "sha256": "824350f916c37431c1992a0316598748ba741c57d5e058b0e71b137705a33210",
+      "bytes": 13853,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_light_testImage.png",
+      "sha256": "f9ab48514befbd33baef2f079b2a1012a25017894c18a589255c8d17ab0fa916",
+      "bytes": 18135,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_outdoor_isolatedDiff.png",
+      "sha256": "d0c811f23da7ab6d0cb7c029909caea79605ac504b537d7d0c7a5b39f9db3fba",
+      "bytes": 4832,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_outdoor_maskedDiff.png",
+      "sha256": "bdb50fd325039d12209300599a15fbdffb773820e188d8e932a7ad19e7bdd4c0",
+      "bytes": 17471,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_outdoor_masterImage.png",
+      "sha256": "d4887c73f9b463cbac9d11e0b33bddb546f364efd0c5163f1b00f8e682d6ee2f",
+      "bytes": 13850,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_landscape_text2_outdoor_testImage.png",
+      "sha256": "23ac02d5b5a422c1573ef1440b494d1948ce92b013d59373a9fc81794f5536f8",
+      "bytes": 17661,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_light_isolatedDiff.png",
+      "sha256": "6c1b04d513bb8f1b834bcc2de5ae95f8bd72d3c855075bc472e84d4d0de6c0be",
+      "bytes": 10102,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_light_maskedDiff.png",
+      "sha256": "dce6c4299bb0a11d503cdaf366a13104d70340d3d9563808b4c34a479b710ea2",
+      "bytes": 17803,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_light_masterImage.png",
+      "sha256": "53e37b65bc742d6289d53ed1ef2838eb95d75517716882b927553c2a3aafc9fb",
+      "bytes": 14947,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_light_testImage.png",
+      "sha256": "284238e65ba8c46391abb70977fb40614758ffa10a991d3479287b65567e392c",
+      "bytes": 14799,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_outdoor_isolatedDiff.png",
+      "sha256": "f0f061847e09031ea06fd9d206e63486ace48836e4902770514bc85c0071c3a3",
+      "bytes": 9418,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_outdoor_maskedDiff.png",
+      "sha256": "877abc41254792125192592073b27d6b546bb9ba761558a64a3783e17da7ef00",
+      "bytes": 16982,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_outdoor_masterImage.png",
+      "sha256": "5168b65aaaa617bbc389bd18a1f486731b2b5f91f709046f6f07f313a41cfaec",
+      "bytes": 14627,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_compact_outdoor_testImage.png",
+      "sha256": "4d28b67d48b9bc65162bf89511f31d79eb2062c22ce3a8dcadcacf5426998cd8",
+      "bytes": 14425,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_dark_isolatedDiff.png",
+      "sha256": "89e2d5c6da58a95cb21c00a9b8e35258afca7f55b91dcac4b2980a419d6e978b",
+      "bytes": 10610,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_dark_maskedDiff.png",
+      "sha256": "efe41cf8d8b1b8bc9b43bf09024061cb80c313cb20e164e68d2c251e4081c5b4",
+      "bytes": 22404,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_dark_masterImage.png",
+      "sha256": "68cad8d93f051bc9072e7c0bbfda65d436e0d8948770174f55f8c5c12259787f",
+      "bytes": 26385,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_dark_testImage.png",
+      "sha256": "c4784c06e25d2275081149e38a4d535fd451713e0185b1f44c0112a6fcc921ab",
+      "bytes": 26262,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_light_isolatedDiff.png",
+      "sha256": "30b0272b7384b74ef81725a6a17534bbcf5f8e871d10294aca4502c5bc7d0868",
+      "bytes": 19799,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_light_maskedDiff.png",
+      "sha256": "50796bfc77acd37758d48b96eb9716ad26d97b8cf5ce4d585d24e2940a141e7e",
+      "bytes": 32252,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_light_masterImage.png",
+      "sha256": "c3aea64d7f35264e936b4b942b5b8d8ab82f2d8043009112c78118c03340d7dd",
+      "bytes": 26782,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_light_testImage.png",
+      "sha256": "5834ffb71505c225f49b83c3bc394f5d2aa5f09d313a3443f0d7f9dc35852ecf",
+      "bytes": 26594,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_outdoor_isolatedDiff.png",
+      "sha256": "9c692440d4a3d265a74252e0719e553c20bd80ba52696e729f81ad673f0f706e",
+      "bytes": 18767,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_outdoor_maskedDiff.png",
+      "sha256": "37474f9fc14c39d39c4ef791552bc2b1413fd6065a45af226a4e9400bb6ada2d",
+      "bytes": 30905,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_outdoor_masterImage.png",
+      "sha256": "de839a103000dc8a73fe2121045757f79b93b0145dfd5081baffd577c844fb23",
+      "bytes": 26053,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_expanded_text2_outdoor_testImage.png",
+      "sha256": "63a7e482ea23dc2b468d0085dbba7dae54f3b9829a9781243360ec4e959c3c8f",
+      "bytes": 25809,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_dark_isolatedDiff.png",
+      "sha256": "25577a2e53756ba515f209897f5202eba4b973d21a597e1377477d5eb1cfbbb7",
+      "bytes": 7300,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_dark_maskedDiff.png",
+      "sha256": "28c2e836973b3101840765ee3af2137c16883d3539ae5b2a06af3a67f0a4b5ac",
+      "bytes": 16376,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_dark_masterImage.png",
+      "sha256": "4a2c1e3ce9c08eff971d338d61d0fc9340ca045f685c9c4b37814a16ff230a66",
+      "bytes": 19201,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_dark_testImage.png",
+      "sha256": "b084c7af5dc06be40f425ed2ca10f7ef53489ce23070c08f519d2a29c885a0df",
+      "bytes": 19002,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_light_isolatedDiff.png",
+      "sha256": "2b3f5f217cc5d0051e5a5df51a3bc0edfeab5c6f1ad7a6b2e8649a3db4769940",
+      "bytes": 12884,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_light_maskedDiff.png",
+      "sha256": "502bf49e13d46293c597b848dbf609db128f0b023fda5dfb487f5eec8e23ec4b",
+      "bytes": 22070,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_light_masterImage.png",
+      "sha256": "f1d21743bfc0341606a693433dcbab69020cf7fb989b5d53aeec482f339a5dc9",
+      "bytes": 19209,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_light_testImage.png",
+      "sha256": "68abfbcbae18869b4e604f59c780a73d4863ca7a673a3e01aa7d99e11d79a045",
+      "bytes": 19041,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_outdoor_isolatedDiff.png",
+      "sha256": "9f4462e4de490d75160717a734aa366595b78a7fd6f7b861ab94c40ff617b908",
+      "bytes": 12068,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_outdoor_maskedDiff.png",
+      "sha256": "08ced1f711ef44d276551e44ebc5d2dd073a961911dfb36bc006efea1e3d3bbe",
+      "bytes": 21584,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_outdoor_masterImage.png",
+      "sha256": "d501bb5ceacb760c80e7f33543747b46b1fd4bb169a1d21679903ab7db39acdf",
+      "bytes": 18917,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_one_medium_outdoor_testImage.png",
+      "sha256": "8b2fc16ac254cf0cfb6f425ad088f1baec2642ffcaebcdf81cbeaec73e47ff05",
+      "bytes": 18690,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_dark_isolatedDiff.png",
+      "sha256": "48b9a4fb14ac81538ac0ef0460b2b5052e9adf343281dbd49a7c555e6eecfc09",
+      "bytes": 6068,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_dark_maskedDiff.png",
+      "sha256": "b29f932b65a81eee419d60bde5115a4129dbd8e0f70a536eff53a767c4514da9",
+      "bytes": 14209,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_dark_masterImage.png",
+      "sha256": "49777aada94e1673ac561b93ea49bc37d2cb6ff028669226ea843490f7a0d846",
+      "bytes": 16634,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_dark_testImage.png",
+      "sha256": "eca1af75134c6285fe47ff8eabf6fe1dee675215374a3dc0f9d2a91d67a35ed5",
+      "bytes": 16498,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_dark_isolatedDiff.png",
+      "sha256": "96c8ec5102cce1e2f633fdbc816af741ce8ce182174b6489ca477e27ba88a962",
+      "bytes": 2554,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_dark_maskedDiff.png",
+      "sha256": "ed484457d534976cd9add02b4182fb1c2178b40403c6341322dee2288e376502",
+      "bytes": 17119,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_dark_masterImage.png",
+      "sha256": "da87c495ab45839a799ffa96d012b3d7f8f5b7c87514e0c030658c3d92bdc968",
+      "bytes": 15932,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_dark_testImage.png",
+      "sha256": "a6a0bd488e430301b272260d96d99a6273c1921f6096b346bd1fb62b91debc96",
+      "bytes": 20527,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_light_isolatedDiff.png",
+      "sha256": "2dad82dcba657de5f222e9059440865464f8e7d09ba7e74dc1d1c0513f7bda3e",
+      "bytes": 6250,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_light_maskedDiff.png",
+      "sha256": "0ea1e579630e0dbec6e1c283f523dd76879c70ca607596971993c41cb5db11ff",
+      "bytes": 20351,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_light_masterImage.png",
+      "sha256": "dbaf232e1f68092dc420d973fe7c2fd6773973df8511016e685df534b7232749",
+      "bytes": 15807,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_light_testImage.png",
+      "sha256": "1f38afa83b83fb14231cf99abb7b758e240271a965b8b3b1608cd2f0746dfeda",
+      "bytes": 20221,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_outdoor_isolatedDiff.png",
+      "sha256": "4a9582455df46834d789d0de5fea634d8d3f9317cdd2349bfa1318d7727bb308",
+      "bytes": 4480,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_outdoor_maskedDiff.png",
+      "sha256": "5f47596a67026132dcbb935f772bd6a09c8dc6a8fcae61376e22210439547841",
+      "bytes": 19361,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_outdoor_masterImage.png",
+      "sha256": "8c26de9b6834ffd261b2ad0040a150a722e0f3229ce50d15a4e7b09eb55d39d3",
+      "bytes": 15738,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_landscape_text2_outdoor_testImage.png",
+      "sha256": "d7e46cc6d4c4ca13be835b9292869a167683ccfb7c6c30a616978499fb7ca575",
+      "bytes": 19646,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_light_isolatedDiff.png",
+      "sha256": "70ea7b1b037f27bd5ac6b562cf751154031d9b4308b095eddaedcb7cc8a38d86",
+      "bytes": 12639,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_light_maskedDiff.png",
+      "sha256": "89b2d3a3db2950dc7e88aa72e250f720717f911d15409a7a1248531b66d38e69",
+      "bytes": 20122,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_light_masterImage.png",
+      "sha256": "77d5a0b923735be24c40aafcb6b003c367b5636982d717f5a66206374a1bf168",
+      "bytes": 16405,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_light_testImage.png",
+      "sha256": "45fff33d6546fd62f2f3c608b23d0277abaaeaa77f9c2c10aa647d3057d6ae13",
+      "bytes": 16291,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_outdoor_isolatedDiff.png",
+      "sha256": "f79ab1af31d91287cf01a7a807164ae38dcdd764c0edd793c3ee5e28317bb91a",
+      "bytes": 11355,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_outdoor_maskedDiff.png",
+      "sha256": "66d10ab7976c9cd89032c4138edf23ae1ea76d94bff56425bb2b7f8ed53ab4fa",
+      "bytes": 19243,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_outdoor_masterImage.png",
+      "sha256": "b47cfadea46688f02bc425924bf96e4821a68d87967e67835de7326b42c1ad48",
+      "bytes": 15954,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_compact_outdoor_testImage.png",
+      "sha256": "81e5c26b86a45e088fade3e15ca655b69466199688b4fd466c5a1cb45c0537b4",
+      "bytes": 15789,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_dark_isolatedDiff.png",
+      "sha256": "6e447861032eddd6922a9c74e4c365299af4ce0d29a07391d97d3d3af934ad7a",
+      "bytes": 11091,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_dark_maskedDiff.png",
+      "sha256": "19d29e50dfd7bb3616b0315215f0e507c871eccc7ff7ecb4357367ef5d701db5",
+      "bytes": 24499,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_dark_masterImage.png",
+      "sha256": "bddc4876ac362180af0d09b904e97a0fbbef905dc06b200d03a7ea4bd972483a",
+      "bytes": 29760,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_dark_testImage.png",
+      "sha256": "3cb990ff382f4de5540273dbafda7bc656523df3adf0ef6155060abbdb38498c",
+      "bytes": 29455,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_light_isolatedDiff.png",
+      "sha256": "bab6b1dff3c8c4d08df5c30c8c7e582a5f8bdee56cf14f740f1e6ed871324dfd",
+      "bytes": 22300,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_light_maskedDiff.png",
+      "sha256": "8f2499869464184b5db9c81ecc8c68aa3dc3f3a61a87335edecb36bb4ad6a677",
+      "bytes": 35973,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_light_masterImage.png",
+      "sha256": "5e63038375ebd3dc6bbfbbabd2c5a5d8950ce724c8ce08658ca6fef31a267c11",
+      "bytes": 29681,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_light_testImage.png",
+      "sha256": "88860285338ef095b2094199d4ecaa8e1218fb0ff32c03ec39c10e59a63b809d",
+      "bytes": 29341,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_outdoor_isolatedDiff.png",
+      "sha256": "98053b124774e191253d17590b5ca5a6ea866f0599c36953dd4e5fca4bd208e5",
+      "bytes": 21965,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_outdoor_maskedDiff.png",
+      "sha256": "cfaafdb714590fc4c53e2a7fb2e7ed2f5d28e218d8b7301a94ce8a7f344d3c8d",
+      "bytes": 35091,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_outdoor_masterImage.png",
+      "sha256": "9f8f9d02be76cadcfbefc9e64d99a6a90dcffb5374a2822008b831488d410400",
+      "bytes": 28923,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_expanded_text2_outdoor_testImage.png",
+      "sha256": "8c2264e3a27ee2baeef213fcc6df47440d30ce902267a1b8ccd6fc8c86f73c1b",
+      "bytes": 28633,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_dark_isolatedDiff.png",
+      "sha256": "a2b9bdbe41654fed0392882eb9f7c5a900ffdccecb3c69250106845be5de1b94",
+      "bytes": 7551,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_dark_maskedDiff.png",
+      "sha256": "c44729a29be462a6f352d31250c6030fc509c84d40ee4649e652d74181ca9619",
+      "bytes": 17714,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_dark_masterImage.png",
+      "sha256": "7e1472173b16ee3d13d1dcdc3a858e4087a490daf7a776d76b0b99e34bbbfe61",
+      "bytes": 21140,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_dark_testImage.png",
+      "sha256": "53a3d323f3264715db7cfbadbe1cd94324c8bb8ff47202fdbdacd0fd53c8e071",
+      "bytes": 20949,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_light_isolatedDiff.png",
+      "sha256": "dc6191628760e4162c964fc486af85f8e3d20690ad2f9c9389b651f30c0aa114",
+      "bytes": 14139,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_light_maskedDiff.png",
+      "sha256": "a64106eddc091259bb2b73ef8502e80ee39e3cff7c69e8c601367147554ac47d",
+      "bytes": 24279,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_light_masterImage.png",
+      "sha256": "0328d9ca34178a5d4c73993448117d5aaf6d3d49207d4ec5b2ddac983104c473",
+      "bytes": 20914,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_light_testImage.png",
+      "sha256": "bf1c5110fa4c1fc642c89d25482a0940b8d1ed23ad5f80bc32b1b2da3f79fe5c",
+      "bytes": 20750,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_outdoor_isolatedDiff.png",
+      "sha256": "d92c3d2daf0366c0b9f1f76b30031d53047d9c27030f670d114e5a11d8c5e27a",
+      "bytes": 13701,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_outdoor_maskedDiff.png",
+      "sha256": "dd5719bfeadb50578a43b8e86a3c2ecd19a8d5eaaeb33160f6569cf4005c2a90",
+      "bytes": 23879,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_outdoor_masterImage.png",
+      "sha256": "4406084a8cc3d23ecd0d4a065cadd5963401b5f420e86150a9afb4d08b58c530",
+      "bytes": 20509,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_many_medium_outdoor_testImage.png",
+      "sha256": "e60434ac3c419fe2875d26b169644e1489ed5bedb51ebf5e38a2d0f7c38afab7",
+      "bytes": 20326,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_dark_isolatedDiff.png",
+      "sha256": "2f5adbdf3415577a0be03aedf239b5302c77054b9d715e238be9218144a88097",
+      "bytes": 4635,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_dark_maskedDiff.png",
+      "sha256": "c5e1dec7686769a5832a23bcb66f59af1f76baec5e6bec09c26f23ffd29cc0f3",
+      "bytes": 13714,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_dark_masterImage.png",
+      "sha256": "cbb0153571b96d528c56b1719f4770465d68134793a0133cb2d266b695b72b69",
+      "bytes": 16238,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_dark_testImage.png",
+      "sha256": "da3257ed0fcf3497428e0b940388364fc866a531f1afdff4a439554665e08d86",
+      "bytes": 16332,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_dark_isolatedDiff.png",
+      "sha256": "27525791a96c273a334f8646d55db251b198d99be62bb5cb4df83801f5610a2a",
+      "bytes": 2547,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_dark_maskedDiff.png",
+      "sha256": "40aaf2017bcfb8c8788ac874828822d2ff83b7455a0519e7e85d9a9f7bbeb6a6",
+      "bytes": 16570,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_dark_masterImage.png",
+      "sha256": "acc7cdfd6f65a4c04b2d841cf2ee0e52dbe15fd548c78214bd5f3dc31da178fb",
+      "bytes": 15392,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_dark_testImage.png",
+      "sha256": "6d71238dac3343d96c4397ca0e5f93840eddffc3332d763d785d5878f5dc9fa3",
+      "bytes": 19984,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_light_isolatedDiff.png",
+      "sha256": "975f0df239bc1c502cc12fa557436af108453aed3b3b6baeb6126143689912f1",
+      "bytes": 6233,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_light_maskedDiff.png",
+      "sha256": "71ae7da73a3241bca33542794daf59d2d1927c683a6122608dc2ba82ea0776e3",
+      "bytes": 19819,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_light_masterImage.png",
+      "sha256": "69cdcec5354e662b0c7d593ccb589efcc34c74bb1c0c4b4ef23b53481f5e2408",
+      "bytes": 15288,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_light_testImage.png",
+      "sha256": "6229422c9e8c2b96e63dbd2fd8b9317423eb9295cbe7301ea0b85c7b7ce5b481",
+      "bytes": 19706,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_outdoor_isolatedDiff.png",
+      "sha256": "2b5db9d19ab7d4e0954236ea93ad1b894c25df644d3b542dec8c627c0783dbf9",
+      "bytes": 4482,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_outdoor_maskedDiff.png",
+      "sha256": "a05cb41fc60d46fb488090dfe6f2a8b29956f7175a3d51072b3dadddc8a9d9ce",
+      "bytes": 18846,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_outdoor_masterImage.png",
+      "sha256": "6d66337c89f088c50e1c4018a8b565280d9df21c988976d00507ae7b46ecf7d2",
+      "bytes": 15248,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_landscape_text2_outdoor_testImage.png",
+      "sha256": "fe9d65d520b19a6308fc73468325196fe829f0cc2050885e19175c179130d51b",
+      "bytes": 19152,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_light_isolatedDiff.png",
+      "sha256": "1f434ef95b276853151b03e28bcbe985f00c6f7c6bb614b35dadcb4e027c93f2",
+      "bytes": 10644,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_light_maskedDiff.png",
+      "sha256": "cb45fc1cddb72a6136a33d82be4e74b12ec672468f38a64ac5a3d20ce026ccaa",
+      "bytes": 19228,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_light_masterImage.png",
+      "sha256": "898b1c8cc27a9ffd361bf27492b6d9217c42ec65504a9acfe6a0ae0182ae93ed",
+      "bytes": 16110,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_light_testImage.png",
+      "sha256": "6aad0bd6c431b9ccfffda43e28db22691dd426937bc3e0b8be7374b1b034f47f",
+      "bytes": 16225,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_outdoor_isolatedDiff.png",
+      "sha256": "bcaa7d6fa09e92f53d9e28e139258c618a93e02ecbfbad7d8b99006630f7dc93",
+      "bytes": 10273,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_outdoor_maskedDiff.png",
+      "sha256": "5be3bd5618993a8a94d2ce95dad1eb05cbcb5956499472c2e23228b7d107e64b",
+      "bytes": 18641,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_outdoor_masterImage.png",
+      "sha256": "8c5fa6bce6cec699a6d4e5d2f0ac25bd73bb6629376c087c5638bc280266d75a",
+      "bytes": 15654,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_compact_outdoor_testImage.png",
+      "sha256": "f16fe199cd254079a9b91775fcaf1d12ad71d85b5a3a4e9e8dbd54e46c709762",
+      "bytes": 15700,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_dark_isolatedDiff.png",
+      "sha256": "d97c20b6d930488aab799d8bd48f462fcdb5d1a343c199d155321e8291370f0a",
+      "bytes": 10907,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_dark_maskedDiff.png",
+      "sha256": "5c71b96686975f5384a9969c275e2f5e9dc17f740b53ba9c36fdd70510f3be40",
+      "bytes": 24327,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_dark_masterImage.png",
+      "sha256": "87a61dceec12869060d2762e061000a2e7b6b88144b0b61da44ae5515e46a776",
+      "bytes": 29045,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_dark_testImage.png",
+      "sha256": "1f340db8b644b0ab8be1762a9655ef4c925f6eac8e715aca676802c00a47c1b7",
+      "bytes": 28723,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_light_isolatedDiff.png",
+      "sha256": "0f8d0776ac5be58c6ccbb89fe57d9adff6a46658c152308ce827b6c3be81c268",
+      "bytes": 21564,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_light_maskedDiff.png",
+      "sha256": "53557807e7939f98d4d2ebbf21ba480b3ee4f19da21f53e44f57b4e5f13d3eca",
+      "bytes": 35232,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_light_masterImage.png",
+      "sha256": "771b2d8f19e61a731f5336c0803d5b249699e884462ab3b5627961bf868498b8",
+      "bytes": 29199,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_light_testImage.png",
+      "sha256": "d43873a9c6273015b77bdb9a8135d8597138915f7ea3e47b6165b888d141efcf",
+      "bytes": 28880,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_outdoor_isolatedDiff.png",
+      "sha256": "cba7eeac8658b3b1cfba94ba1386004be4d97c0a63a65c73e08f543aeb99ed39",
+      "bytes": 20712,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_outdoor_maskedDiff.png",
+      "sha256": "1d07f7ef8d4da1530217949d875f386600d7a77ce3f21d5b641c5b65fe2c4ea7",
+      "bytes": 34141,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_outdoor_masterImage.png",
+      "sha256": "dabd7404409d996c7b65f8b36828c0946debb16acf20c2035f16218b24ed72a4",
+      "bytes": 28405,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_expanded_text2_outdoor_testImage.png",
+      "sha256": "a5c1c7f2ebe6f965cc77903e38b41768a0d17d3cdef1174e78aef9ff2a02d898",
+      "bytes": 28143,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_dark_isolatedDiff.png",
+      "sha256": "257c2a7a67d2b9a2728510adb372784da5721b71fc8feed2d548228dacceaefa",
+      "bytes": 7389,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_dark_maskedDiff.png",
+      "sha256": "ff5bfd9fa5525db1c8f5d00ba3e747c1b9a896a62155d74fd48629f740c8c421",
+      "bytes": 17509,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_dark_masterImage.png",
+      "sha256": "ae9f70c5a0b7e3820ef87b81c91a86d4f10b4608af2017d4f81555a3072ac4f8",
+      "bytes": 20876,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_dark_testImage.png",
+      "sha256": "ff740560faa3663a3f89b9f5f7866a4365940fef4583123657d987e127b6df4e",
+      "bytes": 20684,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_light_isolatedDiff.png",
+      "sha256": "d0a7a8ae2bc029650280b9aa7560084d9cfd1863ef56c797fba7caa189be48a0",
+      "bytes": 13880,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_light_maskedDiff.png",
+      "sha256": "bdabdce6aa4613d7ba3aba5c550830a7e76dce6e8d37cb98261394e18825a8a0",
+      "bytes": 24030,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_light_masterImage.png",
+      "sha256": "2a062faa2705304b007feecb527464468a3ee5e777c94c347b59af12f3c3ee1a",
+      "bytes": 20688,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_light_testImage.png",
+      "sha256": "032b536c54cc7b150cc5b3ceb807515c48d5345c535761b061ff5d6922675088",
+      "bytes": 20527,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_outdoor_isolatedDiff.png",
+      "sha256": "0d918658bc725b77e2ebcfa84de00e9606f08213da1c89274ae99f621bb50433",
+      "bytes": 13237,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_outdoor_maskedDiff.png",
+      "sha256": "026896f46d141171a8c400dad308a856980883b085426858536afd22639304b2",
+      "bytes": 23309,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_outdoor_masterImage.png",
+      "sha256": "028763cc1a49a168da2e9d176f4761870b134e0286f69d2298446f50f50f03ef",
+      "bytes": 20242,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_caption_ticked_one_medium_outdoor_testImage.png",
+      "sha256": "3000216036b326e1eb980a99a8e43904c86bb8b4cc626466c6d71a7994a52fa4",
+      "bytes": 20039,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_dark_isolatedDiff.png",
+      "sha256": "0cc6c8e29a09163cab671e4f27740d936b55c745f623437da01f078e09e8c29c",
+      "bytes": 4236,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_dark_maskedDiff.png",
+      "sha256": "eecde6680eba70a2339abe7dfcaf053101bbecdff6f99a969ab842d54c4eba10",
+      "bytes": 6133,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_dark_masterImage.png",
+      "sha256": "517a8ad6dd4449dc4e96e5adc4ab5860d415bcb571107b5716720843bbe8231c",
+      "bytes": 7768,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_dark_testImage.png",
+      "sha256": "a8fb33a049e408518f9b44366237f6611320dbd18add1433475584d4962777c3",
+      "bytes": 9018,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_dark_isolatedDiff.png",
+      "sha256": "3112d636ceb1ac1b4a913b9b5c0fa8954cba7110f608237ab6eca2fd46d175ac",
+      "bytes": 6406,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_dark_maskedDiff.png",
+      "sha256": "69a46156eade80a17a402968f6d21c77885aa996ab1effba7d668c00bd752585",
+      "bytes": 6982,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_dark_masterImage.png",
+      "sha256": "d5b29ecea19f5faefd6513f7837955a26ea8f5556304843885684d514eb39847",
+      "bytes": 9617,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_dark_testImage.png",
+      "sha256": "07a3c3191a70b29d34fab536c4124046e09b7c3e52f893b85628819068c62242",
+      "bytes": 11399,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_light_isolatedDiff.png",
+      "sha256": "212c78f1bf7ff3024f7353cac6c89de4a540a32813b1696f46e8e99f618ebaa8",
+      "bytes": 15966,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_light_maskedDiff.png",
+      "sha256": "0e42c66ee7698cc7148b99415329d27669a8e7859f6b31c392afdf4a781aec1f",
+      "bytes": 16445,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_light_masterImage.png",
+      "sha256": "a937e819104a9115b7b3e7abbeebc8cf01b9640ec3de7529cb8ede37d86db3e3",
+      "bytes": 9432,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_light_testImage.png",
+      "sha256": "2c3084e56c43f4da41114c1ba16a86170fed93532cb024205fd4031ac5b54c1b",
+      "bytes": 11120,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_outdoor_isolatedDiff.png",
+      "sha256": "77dd083e1c88599ee175d071ded644a6c426fde3047d6785d5cd23d38ec3fde3",
+      "bytes": 11163,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_outdoor_maskedDiff.png",
+      "sha256": "ffb72d03ca6086e5ab2540ac3d23d125c02bf7adbaf29b47d78729e9f8443181",
+      "bytes": 12147,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_outdoor_masterImage.png",
+      "sha256": "27d37f77bc71e0976c871294c5fffc8b28cdee6f11ed7781b62f6641afbb81ea",
+      "bytes": 7962,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_landscape_text2_outdoor_testImage.png",
+      "sha256": "6befbba302560e34b752e3af71dedf0a98f2c83c6af1182cc7929567f44e190a",
+      "bytes": 9913,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_light_isolatedDiff.png",
+      "sha256": "023fc07d5f07111a73df1bc97a1234e0d54c572ce81fef9e92b6f74367ee0fd9",
+      "bytes": 9849,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_light_maskedDiff.png",
+      "sha256": "30672593fe3828a102b2b81879120093567be1cb2d22c43f8359522a174e2d4d",
+      "bytes": 11807,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_light_masterImage.png",
+      "sha256": "9dee404f19619339edaa4e5e74bc35d03e5a2c376f0861205a7617eb4b8b15b9",
+      "bytes": 7860,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_light_testImage.png",
+      "sha256": "d3f8f65213234e6d22880b0df8faefe9e1f894850611c8cb0a2bf4f64fcc3ec4",
+      "bytes": 8925,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_outdoor_isolatedDiff.png",
+      "sha256": "4d4648547ced26efde3520e400585d51876e2581a864d02741af8ce4cdff3656",
+      "bytes": 8008,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_outdoor_maskedDiff.png",
+      "sha256": "9983b8516ac18d8c786b981f14ead47c123abea3fe4ec7a84aef7d2384aa813b",
+      "bytes": 10550,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_outdoor_masterImage.png",
+      "sha256": "9762ccaa12ee3c7dca0531b6df00e8c4a0a6ddd33d4d5e92213f07e1bafd6927",
+      "bytes": 7613,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_compact_outdoor_testImage.png",
+      "sha256": "1fadd6c2cfa7ab3e362d2f656be266c118389e40d46cb55a3159e02c22f5dc63",
+      "bytes": 8588,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_dark_isolatedDiff.png",
+      "sha256": "c476aa78572cf968f94fc09a35d1852239e2511dc43b5380600e15d36598fbe9",
+      "bytes": 9812,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_dark_maskedDiff.png",
+      "sha256": "661b015eef1d0d44ebeff1d7bf183701dd9abaec45011f2c3a500ccd2fbe4e2c",
+      "bytes": 11906,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_dark_masterImage.png",
+      "sha256": "7f02cf377609ba4d0296db285965fb936586e43dac098089067f856fdf9bd48d",
+      "bytes": 14870,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_dark_testImage.png",
+      "sha256": "2070602e9d0e93b76426e8012ae09534b97f7df147c524d60e50239bd99bec0e",
+      "bytes": 16431,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_light_isolatedDiff.png",
+      "sha256": "ceaa7556e697e9fb7c668b87c95a8498a4f5567d812d5b821a686e772265db18",
+      "bytes": 19926,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_light_maskedDiff.png",
+      "sha256": "4719c2afbcf9f4ea7be9edb0a82301316bfa7256c01f0f00b25e00e3b18c267a",
+      "bytes": 21642,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_light_masterImage.png",
+      "sha256": "5d8f0d571a2195881576bd6de9f381dda0e10536c63a4a915d622954db488e09",
+      "bytes": 14752,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_light_testImage.png",
+      "sha256": "65bc24002589e7e1a5b9688452145e5d26c3f957f328ff38a929a1f6d56f88dc",
+      "bytes": 16215,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_outdoor_isolatedDiff.png",
+      "sha256": "57fe146ab98ec75aaa2132db02eb60db39e38a0be461e7c5d86882b38bcf60ab",
+      "bytes": 15287,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_outdoor_maskedDiff.png",
+      "sha256": "983b7b2713f3908d8c230eebaea7f12494eca237e70cd0448c3002de471c12b5",
+      "bytes": 18573,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_outdoor_masterImage.png",
+      "sha256": "d121c8a3c16a4eacc7a8a22062c1b74768f3c40d409bca99a17856f656c78e33",
+      "bytes": 13488,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_expanded_text2_outdoor_testImage.png",
+      "sha256": "5b54d4632ca1f72d463e2ed718351d02e8897838b96e4c24585db478679fd3d2",
+      "bytes": 15435,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_dark_isolatedDiff.png",
+      "sha256": "930477926ecbb10ece0f9dedd2250cd3ef9b498a85554ff61ca820b53e9d1306",
+      "bytes": 6986,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_dark_maskedDiff.png",
+      "sha256": "95b869c8288d98be173ab9dabd40693ff2d5eb0b7d8edd9c13213502c53f21ae",
+      "bytes": 10089,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_dark_masterImage.png",
+      "sha256": "a673bfe5730c9ad623e4c990c20c6f30cfe16eca69895eba6bd6eaf6cdc653e6",
+      "bytes": 11864,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_dark_testImage.png",
+      "sha256": "43a9f4059a686fa0685d02f53c1fcc4edc0cd19f2546e89e3843ef8128f6f95b",
+      "bytes": 13051,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_light_isolatedDiff.png",
+      "sha256": "0b7738e3d0a9cca1d3436f03f00a85744cd5e9193b10a7875ca9d7a8f0a8445a",
+      "bytes": 12845,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_light_maskedDiff.png",
+      "sha256": "5ce95c0245885d02fb1f70fb3b262881b4ff966132cd812cc7ac71fbb594f4a0",
+      "bytes": 15894,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_light_masterImage.png",
+      "sha256": "9a9c34cea848782d6b083202cefaffdbf668c50653fdbe6a1fea4b2cbb9ab7f4",
+      "bytes": 11957,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_light_testImage.png",
+      "sha256": "afee5b8a4729912ec14fd0c9528a5d2556b4a03a6c93b8c3c9c49bc9cd846f2d",
+      "bytes": 12944,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_outdoor_isolatedDiff.png",
+      "sha256": "fd3f9eec24177ffaa74d9b50e60bc871f82b3059c1e3ddd0562910e55a5a134f",
+      "bytes": 10960,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_outdoor_maskedDiff.png",
+      "sha256": "4f3506e3c0f5de03d23d9bdeb1a869512be08a5698c8f8e3aca41b9889549490",
+      "bytes": 14670,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_outdoor_masterImage.png",
+      "sha256": "4ee255a744210c013e13aa67dcae355607d64f2b435f078780deeae1ba0fc7d3",
+      "bytes": 11675,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/failures/feedback_2154_guide_medium_outdoor_testImage.png",
+      "sha256": "7e3e1272d2a4eec292b2fa957f5f969b0e4e8fbe01ee0aacd2c647d8656d9b7c",
+      "bytes": 12730,
+      "role": "comparison-artifact"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_dark.png",
+      "sha256": "8a62eeb2f00a3831eefbd41be5e81c2c26a16a830f07018242fcdf5e643c856f",
+      "bytes": 21218,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_dark.png",
+      "sha256": "c342b586a112f96b4a381c3b2989640d340ef8c28e0e885093ad53fcce8bcc34",
+      "bytes": 18340,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_light.png",
+      "sha256": "1d44cec0952ded89a62d95d55788d56c56cf577d5e64927f21955cca7057d969",
+      "bytes": 18573,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_outdoor.png",
+      "sha256": "7439a730c7f875e40c4a75a9c00d10c2bbc25d24c3521bcd457f78b60a19f5e3",
+      "bytes": 17784,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_light.png",
+      "sha256": "61198f4356cecc967b71dbe7e39e9b37f0b89a18bd58b446b733f1dd9e576100",
+      "bytes": 21112,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_outdoor.png",
+      "sha256": "4d3dea9255fb962d80cdd90eee3da4e253ea5c9badb831e6b2682cbfbb770ab5",
+      "bytes": 20357,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_dark.png",
+      "sha256": "ed442b7484dcc5d7ea2ac330649db7013c419bcf3fd38ff490622f852d8dd9e0",
+      "bytes": 36549,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_light.png",
+      "sha256": "b2999976a54d9034bb6f7f62d76ffc16cfedf228153606caef8c919572b7f936",
+      "bytes": 36931,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_outdoor.png",
+      "sha256": "1f7a568c81ffd3f1e2bc326034e65623616cd240caec759c3ad826bbf23da40f",
+      "bytes": 35169,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_medium_dark.png",
+      "sha256": "380cd70db10584841798b2a457639afc2615749c874d196409591f452afa6656",
+      "bytes": 25300,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_medium_light.png",
+      "sha256": "43f05f42c6a99c9711ea7deaa7d6d9d092fc98de26da984bab3e283399499239",
+      "bytes": 25283,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_composition_medium_outdoor.png",
+      "sha256": "c503822f16aa85eca198c07e82958bae3d086c75c681e15383c96b241ebd8fc5",
+      "bytes": 24942,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_dark.png",
+      "sha256": "69329b4d677ac16ee69f1d29c92b2715dd2b8e67b833b63232572efcd0719bae",
+      "bytes": 25037,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_dark.png",
+      "sha256": "ad4e5b4ecba2d7540c122716bb8342e00cad8709c6642118b3bbe5a58dc77a4d",
+      "bytes": 21467,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_light.png",
+      "sha256": "028387f2a266f9159ccf4bacdd8576cbbb6cb66d251b6b83c1266a2d9fd663b9",
+      "bytes": 21228,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_outdoor.png",
+      "sha256": "49c49e7679fb8ed69ca42f22c3bc0c0e8149cd721f9244470e9ed0713eb61f1c",
+      "bytes": 20401,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_light.png",
+      "sha256": "53bfd09f84b9db0f5b647b389b05b7fdce85983f4ba7c03e12eea3086a5957b3",
+      "bytes": 24762,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_outdoor.png",
+      "sha256": "0cbad519fb34a21fa5eb9db96bcbba7816d47e86b3148ec7bd147cbadeedb09f",
+      "bytes": 23380,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_dark.png",
+      "sha256": "ad3da49c5147dc4c03cadf29b3b35ab5dcef77aa8820d7c23e09dcb50ec9b2b2",
+      "bytes": 51134,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_light.png",
+      "sha256": "0d59ca1b3da98be7383ab33d0043b31242cd623207d7471c2aeb8ccbd1e49a96",
+      "bytes": 50976,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_outdoor.png",
+      "sha256": "48fb524f17032f7ab869c4a0daab77dded76164d03fb504294a6679a3ca063ba",
+      "bytes": 46458,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_dark.png",
+      "sha256": "66c1aa140f490c3c4f8a05db8fb866e7758f12f64d43e1d0b913c0527c4850b1",
+      "bytes": 31291,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_light.png",
+      "sha256": "64e41ae3dd68d284530716a04c0076ab8c3e1f13f25a4f075a228bd8d9ae3515",
+      "bytes": 31115,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_outdoor.png",
+      "sha256": "5f001cefc02281688026a3659b38c5c4ebb5f114355351f0512b73f03f26d4c1",
+      "bytes": 29097,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/capture_workflow_reported_light.png",
+      "sha256": "26697a33b5a62c846c1c18a7a567c2aa17a09e5a216e4f4791eeb0fc878c6ad6",
+      "bytes": 24909,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_dark.png",
+      "sha256": "c90f5911976975c0041ae96ff335271bb0355a531fd7019185cd175092cf194d",
+      "bytes": 11644,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_dark.png",
+      "sha256": "706f8fb757c0d2432cb8c4e343b113ca6b1026f3506aa19ab5c53b808d42b3ae",
+      "bytes": 15425,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_light.png",
+      "sha256": "45292a9438d0286048b91fab405233856d77740d2ec73a3e2e5d2ed1f9143ff1",
+      "bytes": 15331,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_outdoor.png",
+      "sha256": "384193da7f6f0dfda2edf25d9c42ca7ff198ea60e73e93a4c2388141867d9775",
+      "bytes": 14146,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_light.png",
+      "sha256": "25dc549b2f7983a87ac83e243342b0a89ab667c528f7fe6047fe69ed18dff1ac",
+      "bytes": 11545,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_outdoor.png",
+      "sha256": "0752d4ac49bfef963cb9607194730701b6a21c8b07068fe5688df14d617cfad6",
+      "bytes": 11024,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_dark.png",
+      "sha256": "d2e620dfa8b432c1ee5b9b1536b09789b3e7a7ba80c9dba20350f29413d86df0",
+      "bytes": 20922,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_light.png",
+      "sha256": "be6939d9103ecfa0085923dabf3aac73b758fa21608513b925ad061af2cf11f6",
+      "bytes": 20996,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_outdoor.png",
+      "sha256": "2f8fc7ab31c041a7ed3365506d0b426de5a465f12735e20e917e883e5445a798",
+      "bytes": 20434,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_dark.png",
+      "sha256": "b03f5d11ea7c6d8d6088aaf169e4e69736e73c1433cd16d62eeccf6287efb041",
+      "bytes": 15488,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_light.png",
+      "sha256": "33af44e007ecb5556a5f2fa911f5dd59b9aa6f59f156668a32e4e44da4846bd8",
+      "bytes": 15482,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_outdoor.png",
+      "sha256": "53c3aa745c7e4b026125d711fc8e2793712cb1688cf5ffd0b567ab7793fb4a97",
+      "bytes": 15109,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_dark.png",
+      "sha256": "14d3db89176716d0db9e9d19e506af83e2358a7d4b450f49feb84c1de6c1b807",
+      "bytes": 6387,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_dark.png",
+      "sha256": "a621be7d1179a462b3e3578e728793b362b528c3066cf06a40c508a9ba2d75b4",
+      "bytes": 5328,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_light.png",
+      "sha256": "d9402acae26d0c9af23033b269ec5c00ecaee53d77edc1d4204445953f59d89c",
+      "bytes": 5277,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_outdoor.png",
+      "sha256": "d6fc26eb18b6eff518adc1b0cb5ae2dfeebc2077bd3db0de3e19caa30d5bcbd3",
+      "bytes": 5246,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_light.png",
+      "sha256": "e0f0d70cc5d0912f2496d295d4175b8de141fe0191ac986a6d00e832a0b0f6b3",
+      "bytes": 6388,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_outdoor.png",
+      "sha256": "0f41ef4ed3eb18ed8a4f63c9987a48ffb89bf46c8eb3880555a5b05cded28019",
+      "bytes": 6211,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_dark.png",
+      "sha256": "3073cba12779e9b00989d88eb289d0c9900f0343939d5f7310bf14c9c29ef790",
+      "bytes": 10217,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_light.png",
+      "sha256": "02e3230042dde555171040b9745813ebdde124545644e160b533aca32b2cc99a",
+      "bytes": 10166,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_outdoor.png",
+      "sha256": "ce3e50454d5717e92801b54fae979f948b7e0452d54330aab2e8ddc4ea15362f",
+      "bytes": 10173,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_dark.png",
+      "sha256": "1d18be814b8aa2c09389f609e610a077547028369b60da7d52401f4260a13b00",
+      "bytes": 10303,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_light.png",
+      "sha256": "fabd0ea226c00889573a940a6ce650041dbc4429e8359f2d5a238601053f605d",
+      "bytes": 10308,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_outdoor.png",
+      "sha256": "0df67615a9e13334588273f80e430d7b04751656590594ac9a7fea14580d71b9",
+      "bytes": 10087,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_dark.png",
+      "sha256": "b1e357b7a59d29d080fcadc420e9f63c4b9e5f0e6e479f8d9e9fd4fd55389910",
+      "bytes": 10320,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_dark.png",
+      "sha256": "9d872688068f7c3a82fc7ccf32a410b8a80f3863ac517701ac35382d85e6e0ce",
+      "bytes": 13243,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_light.png",
+      "sha256": "822756909b2e4fbd90f27e21a2a41a66f163cb9ad936cddf0b33bb4addddc283",
+      "bytes": 12866,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_outdoor.png",
+      "sha256": "5b92bbbf12660c2921738c4aaafc00b0e6dec8dfa440f0b9882dd1474af74e5b",
+      "bytes": 11715,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_light.png",
+      "sha256": "44e296a9f388f470cf7af3b94c2ef00061c410b6b0178caedf324b3de264d742",
+      "bytes": 10262,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_outdoor.png",
+      "sha256": "d42adad5ae7b36364a13bd238f97b0a1db7d7b29d312181ae257f64a57805b65",
+      "bytes": 9451,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_dark.png",
+      "sha256": "1f2e5621f6611363d8958f6844324633aeecb828488c9d7ab47237de999bfc54",
+      "bytes": 18732,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_light.png",
+      "sha256": "dea9219ff09bbe320912ab8e28580a529a9a464c841f3bf27990f3fdb161ab62",
+      "bytes": 18499,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_outdoor.png",
+      "sha256": "259506379048a480f90ba09b662ec81b09453e647097b0f68e3f95d5f16e486e",
+      "bytes": 17449,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_dark.png",
+      "sha256": "582f42ff86a95c526fb5e163e34ac5062d3aabc1fc0f43ec028596127fa22eec",
+      "bytes": 14389,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_light.png",
+      "sha256": "b4431835eb22660b112c460d8405b52e28be2b8a240ec6435d1f0ad5f4e78ace",
+      "bytes": 14280,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_outdoor.png",
+      "sha256": "45c1bb0f2193d570c5698bff37731bb0554b8d8ee2085efcc804ba13d7f2a780",
+      "bytes": 13795,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_dark.png",
+      "sha256": "c8fa03af7678dd87465acc40c32efcfdc5118766b35fdbf3eb3dea947783b3ca",
+      "bytes": 7677,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_dark.png",
+      "sha256": "4bdf439b5d2b0734266190a7ee211ba1b6ab2ab792df90ec7e29d53b4da6666a",
+      "bytes": 6950,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_light.png",
+      "sha256": "869525eccf220070c798a0aad258f190dcb94efbe029ff47be3eaded56d05f62",
+      "bytes": 6886,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_outdoor.png",
+      "sha256": "e5921cf9cd744328d8893eafa2c4391d93e73d12e02f30de4b0a81363797ae22",
+      "bytes": 6817,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_light.png",
+      "sha256": "a698e2c60f297cd6b6eb9fef231fafbae462b59454c2311f5abfec16e207e296",
+      "bytes": 7628,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_outdoor.png",
+      "sha256": "e2932beb0b3f9eb34cca1febb4848b01fd313f13d87b849106dc9f456d5854bf",
+      "bytes": 7393,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_dark.png",
+      "sha256": "94c98ec57e3a39e9636aa2e90e210dbcc099bdff56d465d2d773535a905354ff",
+      "bytes": 12011,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_light.png",
+      "sha256": "b3a5d6c6ed6d98a3ef2975875e6cd0dff4d53e13c2c58dd5b80a6a08aea5ce7f",
+      "bytes": 11970,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_outdoor.png",
+      "sha256": "e50e279252d46c75c01fa87970e9c866b415eef5b12724746ada1b474698b06c",
+      "bytes": 11892,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_dark.png",
+      "sha256": "cffa9479529ce183f39fda673c649c2df81e259baebd32597ccda846f9c2acd7",
+      "bytes": 11571,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_light.png",
+      "sha256": "c08d4590fa8c3925456c52c4f2bdde7b82e1c2fdb29e3f9c5ab36eccca50851f",
+      "bytes": 11498,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_outdoor.png",
+      "sha256": "6484cd610742dc91e0ee835f03d6fedcdfc9bf1465cc566e6b4703790afdc630",
+      "bytes": 11347,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_dark.png",
+      "sha256": "38142595c4af835ea8d7cd032b3b7989567695bdeda65b3bb9a1e922f5da4293",
+      "bytes": 15574,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_landscape_text2_dark.png",
+      "sha256": "9f4cf6520378184895eb0102f6d1c2f3e31551bd08716401b8a1193e959e8600",
+      "bytes": 14814,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_landscape_text2_light.png",
+      "sha256": "56108954a0b4637de57bb5017facb5079b85741939205b690f45ddfcd4015728",
+      "bytes": 15139,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_landscape_text2_outdoor.png",
+      "sha256": "d61462950de3cff23d2742833027e71b9a4346014c8bf61ae9ee63f64c5467b9",
+      "bytes": 15022,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_light.png",
+      "sha256": "eaec3180ceaa5019fea19321e4f04c984cfcb77c10727573bd18f34415f69a2c",
+      "bytes": 15403,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_compact_outdoor.png",
+      "sha256": "b1da80faea2972961f8b50ddf343683a2e0cc24e2b624aefddee397a14179c19",
+      "bytes": 14989,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_expanded_text2_dark.png",
+      "sha256": "ed25aec214f4f406fc2226116f8c2ea8b52bd2bea9bf7173dc655dcb1f3503f9",
+      "bytes": 28627,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_expanded_text2_light.png",
+      "sha256": "e736ef82d0370f3609c1259647836bff464aa974f9aba83a296a3e290eb355bc",
+      "bytes": 28779,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_expanded_text2_outdoor.png",
+      "sha256": "611493dd8b396c6cf0cff2ff9e6a7c40d5398762efe821169642be0683157dd6",
+      "bytes": 28033,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_medium_dark.png",
+      "sha256": "9c585f1093128dd0875c70bf7c9175c4993c7c6b3809af104cf23333dfd04ad4",
+      "bytes": 19999,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_medium_light.png",
+      "sha256": "6c3400d3c9f81000171c645cb2b82fe28f064dec3bcbcb354c42f9b68ccccf2b",
+      "bytes": 19949,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_all_medium_outdoor.png",
+      "sha256": "099291e761d4c88b80064bb0187f9db3cebff2d4a1a7d05b6a9cea811b0c9084",
+      "bytes": 19609,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_dark.png",
+      "sha256": "dd3f27d94a774dcc5f71b02510da6f536ebd67eceb219ac859d8c287c101cd5e",
+      "bytes": 15082,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_landscape_text2_dark.png",
+      "sha256": "50c688cc7eee513f6518f6f7e99a82ac8261f47e712d130ce79b3a118469f59b",
+      "bytes": 13596,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_landscape_text2_light.png",
+      "sha256": "824350f916c37431c1992a0316598748ba741c57d5e058b0e71b137705a33210",
+      "bytes": 13853,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_landscape_text2_outdoor.png",
+      "sha256": "d4887c73f9b463cbac9d11e0b33bddb546f364efd0c5163f1b00f8e682d6ee2f",
+      "bytes": 13850,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_light.png",
+      "sha256": "53e37b65bc742d6289d53ed1ef2838eb95d75517716882b927553c2a3aafc9fb",
+      "bytes": 14947,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_compact_outdoor.png",
+      "sha256": "5168b65aaaa617bbc389bd18a1f486731b2b5f91f709046f6f07f313a41cfaec",
+      "bytes": 14627,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_expanded_text2_dark.png",
+      "sha256": "68cad8d93f051bc9072e7c0bbfda65d436e0d8948770174f55f8c5c12259787f",
+      "bytes": 26385,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_expanded_text2_light.png",
+      "sha256": "c3aea64d7f35264e936b4b942b5b8d8ab82f2d8043009112c78118c03340d7dd",
+      "bytes": 26782,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_expanded_text2_outdoor.png",
+      "sha256": "de839a103000dc8a73fe2121045757f79b93b0145dfd5081baffd577c844fb23",
+      "bytes": 26053,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_medium_dark.png",
+      "sha256": "4a2c1e3ce9c08eff971d338d61d0fc9340ca045f685c9c4b37814a16ff230a66",
+      "bytes": 19201,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_medium_light.png",
+      "sha256": "f1d21743bfc0341606a693433dcbab69020cf7fb989b5d53aeec482f339a5dc9",
+      "bytes": 19209,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_one_medium_outdoor.png",
+      "sha256": "d501bb5ceacb760c80e7f33543747b46b1fd4bb169a1d21679903ab7db39acdf",
+      "bytes": 18917,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_dark.png",
+      "sha256": "49777aada94e1673ac561b93ea49bc37d2cb6ff028669226ea843490f7a0d846",
+      "bytes": 16634,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_landscape_text2_dark.png",
+      "sha256": "da87c495ab45839a799ffa96d012b3d7f8f5b7c87514e0c030658c3d92bdc968",
+      "bytes": 15932,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_landscape_text2_light.png",
+      "sha256": "dbaf232e1f68092dc420d973fe7c2fd6773973df8511016e685df534b7232749",
+      "bytes": 15807,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_landscape_text2_outdoor.png",
+      "sha256": "8c26de9b6834ffd261b2ad0040a150a722e0f3229ce50d15a4e7b09eb55d39d3",
+      "bytes": 15738,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_light.png",
+      "sha256": "77d5a0b923735be24c40aafcb6b003c367b5636982d717f5a66206374a1bf168",
+      "bytes": 16405,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_compact_outdoor.png",
+      "sha256": "b47cfadea46688f02bc425924bf96e4821a68d87967e67835de7326b42c1ad48",
+      "bytes": 15954,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_expanded_text2_dark.png",
+      "sha256": "bddc4876ac362180af0d09b904e97a0fbbef905dc06b200d03a7ea4bd972483a",
+      "bytes": 29760,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_expanded_text2_light.png",
+      "sha256": "5e63038375ebd3dc6bbfbbabd2c5a5d8950ce724c8ce08658ca6fef31a267c11",
+      "bytes": 29681,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_expanded_text2_outdoor.png",
+      "sha256": "9f8f9d02be76cadcfbefc9e64d99a6a90dcffb5374a2822008b831488d410400",
+      "bytes": 28923,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_medium_dark.png",
+      "sha256": "7e1472173b16ee3d13d1dcdc3a858e4087a490daf7a776d76b0b99e34bbbfe61",
+      "bytes": 21140,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_medium_light.png",
+      "sha256": "0328d9ca34178a5d4c73993448117d5aaf6d3d49207d4ec5b2ddac983104c473",
+      "bytes": 20914,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_many_medium_outdoor.png",
+      "sha256": "4406084a8cc3d23ecd0d4a065cadd5963401b5f420e86150a9afb4d08b58c530",
+      "bytes": 20509,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_dark.png",
+      "sha256": "cbb0153571b96d528c56b1719f4770465d68134793a0133cb2d266b695b72b69",
+      "bytes": 16238,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_landscape_text2_dark.png",
+      "sha256": "acc7cdfd6f65a4c04b2d841cf2ee0e52dbe15fd548c78214bd5f3dc31da178fb",
+      "bytes": 15392,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_landscape_text2_light.png",
+      "sha256": "69cdcec5354e662b0c7d593ccb589efcc34c74bb1c0c4b4ef23b53481f5e2408",
+      "bytes": 15288,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_landscape_text2_outdoor.png",
+      "sha256": "6d66337c89f088c50e1c4018a8b565280d9df21c988976d00507ae7b46ecf7d2",
+      "bytes": 15248,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_light.png",
+      "sha256": "898b1c8cc27a9ffd361bf27492b6d9217c42ec65504a9acfe6a0ae0182ae93ed",
+      "bytes": 16110,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_compact_outdoor.png",
+      "sha256": "8c5fa6bce6cec699a6d4e5d2f0ac25bd73bb6629376c087c5638bc280266d75a",
+      "bytes": 15654,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_expanded_text2_dark.png",
+      "sha256": "87a61dceec12869060d2762e061000a2e7b6b88144b0b61da44ae5515e46a776",
+      "bytes": 29045,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_expanded_text2_light.png",
+      "sha256": "771b2d8f19e61a731f5336c0803d5b249699e884462ab3b5627961bf868498b8",
+      "bytes": 29199,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_expanded_text2_outdoor.png",
+      "sha256": "dabd7404409d996c7b65f8b36828c0946debb16acf20c2035f16218b24ed72a4",
+      "bytes": 28405,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_medium_dark.png",
+      "sha256": "ae9f70c5a0b7e3820ef87b81c91a86d4f10b4608af2017d4f81555a3072ac4f8",
+      "bytes": 20876,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_medium_light.png",
+      "sha256": "2a062faa2705304b007feecb527464468a3ee5e777c94c347b59af12f3c3ee1a",
+      "bytes": 20688,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_caption_ticked_one_medium_outdoor.png",
+      "sha256": "028763cc1a49a168da2e9d176f4761870b134e0286f69d2298446f50f50f03ef",
+      "bytes": 20242,
+      "role": "restored-unchanged"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_dark.png",
+      "sha256": "a8fb33a049e408518f9b44366237f6611320dbd18add1433475584d4962777c3",
+      "bytes": 9018,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_landscape_text2_dark.png",
+      "sha256": "07a3c3191a70b29d34fab536c4124046e09b7c3e52f893b85628819068c62242",
+      "bytes": 11399,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_landscape_text2_light.png",
+      "sha256": "2c3084e56c43f4da41114c1ba16a86170fed93532cb024205fd4031ac5b54c1b",
+      "bytes": 11120,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_landscape_text2_outdoor.png",
+      "sha256": "6befbba302560e34b752e3af71dedf0a98f2c83c6af1182cc7929567f44e190a",
+      "bytes": 9913,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_light.png",
+      "sha256": "d3f8f65213234e6d22880b0df8faefe9e1f894850611c8cb0a2bf4f64fcc3ec4",
+      "bytes": 8925,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_outdoor.png",
+      "sha256": "1fadd6c2cfa7ab3e362d2f656be266c118389e40d46cb55a3159e02c22f5dc63",
+      "bytes": 8588,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_expanded_text2_dark.png",
+      "sha256": "2070602e9d0e93b76426e8012ae09534b97f7df147c524d60e50239bd99bec0e",
+      "bytes": 16431,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_expanded_text2_light.png",
+      "sha256": "65bc24002589e7e1a5b9688452145e5d26c3f957f328ff38a929a1f6d56f88dc",
+      "bytes": 16215,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_expanded_text2_outdoor.png",
+      "sha256": "5b54d4632ca1f72d463e2ed718351d02e8897838b96e4c24585db478679fd3d2",
+      "bytes": 15435,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_medium_dark.png",
+      "sha256": "43a9f4059a686fa0685d02f53c1fcc4edc0cd19f2546e89e3843ef8128f6f95b",
+      "bytes": 13051,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_medium_light.png",
+      "sha256": "afee5b8a4729912ec14fd0c9528a5d2556b4a03a6c93b8c3c9c49bc9cd846f2d",
+      "bytes": 12944,
+      "role": "approved-baseline"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_medium_outdoor.png",
+      "sha256": "7e3e1272d2a4eec292b2fa957f5f969b0e4e8fbe01ee0aacd2c647d8656d9b7c",
+      "bytes": 12730,
+      "role": "approved-baseline"
+    }
+  ],
+  "externalArchive": "%LOCALAPPDATA%/TaptureTestArchives/feedback-10102026-0457/20261010T032625Z-05d7c634/task165-visual-evidence.zip",
+  "archiveSha256": "18c79e4867601ad52acab7f10ef16b1440b0fa2b5eb4e0fc3a89a73ebd460c98",
+  "verification": "Every archive member path, SHA-256 and decoded image verified after reopening; unrelated restored baselines unchanged. Every cleanup target resolved beneath frontend/test and its hash verified before exact-file removal. Pre-existing images preserved; no temporary test image remains.",
+  "approvedVisualSets": [
+    {
+      "workItem": "W1",
+      "title": "Passive guide",
+      "paths": [
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_landscape_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_landscape_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_landscape_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_compact_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_expanded_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_expanded_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_expanded_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_medium_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_medium_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_2154_guide_medium_outdoor.png"
+      ],
+      "normalComparisonsPassed": 12,
+      "imagesVisuallyInspected": 12
+    },
+    {
+      "workItem": "W2",
+      "title": "Production Capture shell",
+      "paths": [
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_dark.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_light.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_dark.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_light.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/capture_workflow_reported_light.png"
+      ],
+      "normalComparisonsPassed": 13,
+      "imagesVisuallyInspected": 13
+    },
+    {
+      "workItem": "W2",
+      "title": "Empty/multiline/audio/photos composer",
+      "paths": [
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_outdoor.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_dark.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_light.png",
+        "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_outdoor.png"
+      ],
+      "normalComparisonsPassed": 48,
+      "imagesVisuallyInspected": 48
+    }
+  ],
+  "cleanupComplete": true
+}

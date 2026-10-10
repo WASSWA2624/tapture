@@ -94,8 +94,8 @@ void main() {
     // The field holds the record's own caption, not a photo's.
     expect(_captionText(tester), 'Boiler');
     final TextField caption = tester.widget<TextField>(_captionField);
-    expect(caption.minLines, 6);
-    expect(caption.maxLines, isNull);
+    expect(caption.minLines, 1);
+    expect(caption.maxLines, 6);
   });
 
   testWidgets(

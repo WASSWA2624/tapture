@@ -1415,9 +1415,9 @@ final class _Capture {
     return _Capture._(tester, photos, records, navigation);
   }
 
-  /// The empty tray's add action.
+  /// The composer's photo source action, with or without existing photos.
   Finder get addPhoto =>
-      find.byKey(const ValueKey<String>('empty-state-icon-action'));
+      find.byKey(const ValueKey<String>('capture-composer-add-photo'));
 
   ProviderContainer get _container =>
       ProviderScope.containerOf(_tester.element(find.byType(CaptureScreen)));

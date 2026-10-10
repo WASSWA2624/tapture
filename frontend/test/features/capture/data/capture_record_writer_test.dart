@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/audit_log.dart';
 import 'package:tapture/core/db/tables/captions.dart';
 import 'package:tapture/core/db/tables/field_evidence.dart';
@@ -46,6 +47,99 @@ import '../../../core/db/record_rows.dart' show searchRecords;
 import '../../../support/factories.dart';
 
 void main() {
+  for (final ({String name, bool text, bool audio, bool photos}) input
+      in <({String name, bool text, bool audio, bool photos})>[
+        (name: 'text-only', text: true, audio: false, photos: false),
+        (name: 'audio-only', text: false, audio: true, photos: false),
+        (name: 'mixed', text: true, audio: true, photos: true),
+      ]) {
+    test(
+      'composer ${input.name} round-trips independent evidence and ownership',
+      () async {
+        final AppDatabase db = await seededDatabase();
+        addTearDown(db.close);
+        final FixedClock clock = FixedClock(DateTime.utc(2026, 10, 10));
+        final CaptureRecordWriter writer = CaptureRecordWriter(
+          db: db,
+          clock: clock,
+          deviceId: 'device-a',
+          ids: UuidV7Service.sequence(clock),
+        );
+        final Project project = await db.select(db.projects).getSingle();
+        final Template template = await db.select(db.templates).getSingle();
+        final capture.CaptureSession original = _session(
+          projectId: project.id,
+          templateId: template.id,
+          now: clock.nowUtc(),
+        );
+        final capture.CaptureSession session = original.copyWith(
+          photos: input.photos ? original.photos : const <PhotoDraft>[],
+          captions: input.text
+              ? <String, String>{'': 'Independent typed caption'}
+              : const <String, String>{},
+          audio: input.audio
+              ? <AudioDraft>[
+                  AudioDraft(
+                    id: 'clip',
+                    projectId: project.id,
+                    relativePath: 'audio/clip.wav',
+                    mimeType: 'audio/wav',
+                    fileSize: 4096,
+                    sha256: 'raw-audio',
+                    durationMs: 1250,
+                    photoIds: input.photos
+                        ? const <String>['photo-1']
+                        : const <String>[],
+                  ),
+                ]
+              : const <AudioDraft>[],
+        );
+        final String id = _ok(await writer.persist(session));
+        final capture.CaptureSession loaded = _ok(await writer.load(id));
+        expect(
+          loaded.recordCaption,
+          input.text ? 'Independent typed caption' : '',
+        );
+        expect(loaded.audio.length, input.audio ? 1 : 0);
+        expect(loaded.photos.length, input.photos ? 1 : 0);
+        final List<Caption> captions = await db.select(db.captions).get();
+        expect(captions.length, input.text ? 1 : 0);
+        if (input.text) {
+          expect(captions.single.ownerType, CaptionOwnerType.record);
+          expect(captions.single.ownerId, id);
+        }
+        final List<AttachmentOwner> owners = await db
+            .select(db.attachmentOwners)
+            .get();
+        expect(owners.length, input.audio ? (input.photos ? 2 : 1) : 0);
+        if (input.audio) {
+          expect(loaded.audio.single.sha256, 'raw-audio');
+          expect(
+            loaded.audio.single.photoIds,
+            input.photos ? <String>['photo-1'] : isEmpty,
+          );
+          expect(
+            owners
+                .singleWhere(
+                  (owner) => owner.ownerType == AttachmentOwnerType.record,
+                )
+                .ownerId,
+            id,
+          );
+          if (input.photos) {
+            expect(
+              owners
+                  .singleWhere(
+                    (owner) => owner.ownerType == AttachmentOwnerType.photo,
+                  )
+                  .ownerId,
+              'photo-1',
+            );
+          }
+        }
+      },
+    );
+  }
   test(
     'save samples before its first await and never waits for a pending device read',
     () async {
