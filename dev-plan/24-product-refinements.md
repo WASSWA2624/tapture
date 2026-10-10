@@ -7275,3 +7275,69 @@ current router, purge adapter, recycle screen and controller sources. APK signat
 (`frontend/build/task166-apk-verification.json`). The updated APK is **186,341,726 bytes**, SHA-256
 `e01e54e4c43e3a601ea9860abc0338f633d1c72b09e267479fe6f2302a19e3d0`. Generated native fingerprints were archived,
 reopened and verified before restoring their exact pre-build bytes. Tracker drift and plan integrity checks pass.
+
+## 167 — Show home tabs until navigation overflows
+
+**Depends on** [166](24-product-refinements.md#166--simplify-project-navigation-and-recycle-bin-management)
+
+**Implementation started:** Yes
+
+### Implement
+
+Show Projects, Templates and Settings directly in home navigation when the available width accommodates their
+localized labels and touch targets. Only show the three-dot More control when destinations overflow, and list only
+the hidden destinations there. Keep project capture/record scope and navigation state across resizing. Recycle bin
+is a Settings section at every width, never a home tab or an overflow-menu destination.
+
+### Files
+
+- `frontend/lib/app/nav_shell.dart`, `frontend/lib/app/shell_navigation.dart` and `frontend/lib/app/shell_destination.dart` — shared adaptive navigation.
+- `frontend/lib/features/settings/presentation/settings_screen.dart` — permanent Recycle bin entry.
+- `frontend/test/app/` and `frontend/test/features/settings/presentation/` — fit, overflow, selection, resizing, localization and settings acceptance.
+- `frontend/.rules/06-simplicity.md`, `app-write-up.md` and this plan — synchronized navigation contract.
+
+### Contract
+
+The Projects and More route branches retain their existing stacks. `navigationDestinations` is the single ordered
+presentation catalogue (Projects, Templates, Settings). `ShellNavigation` draws that catalogue as a rail or a
+capacity-aware bar, and preserves the active route while the overflow menu opens or closes. Existing Recycle bin
+URLs remain compatible and its Settings entry works at every width.
+
+### Definition of done
+
+- [x] Home navigation shows all fitting tabs; More appears only on overflow and offers only hidden destinations, excluding Recycle bin.
+- [x] Direct tabs and overflow items select the correct routes; resizing, dismissal, keyboard interaction, active selection and project state remain correct.
+- [x] Settings exposes Recycle bin at compact, medium and expanded widths; its entry opens the existing functional screen.
+- [x] Behavior/accessibility tests cover narrow and wide layouts, large text and expanded/RTL labels; affected analysis, formatting and architecture checks pass.
+- [x] Product/rule documentation and portable test sources are current; regenerated tracker and plan integrity checks pass.
+
+### Evidence
+
+Task 167 implements the capacity-aware home navigation and Settings-only Recycle bin entry. The initial combined
+run passes **380 behavior/accessibility and architecture cases**, including the updated navigation suite, all task-166
+project ownership/resume regressions and Settings across its platform/layout matrix. Its only six failures are
+historical Settings goldens whose baseline files are absent under the existing test-image policy; no baseline was
+created, restored or replaced. All architecture fixtures ran without filtering a guardrail.
+
+Changed application and test analysis exits successfully with no diagnostics (`frontend/build/task167-analyze-final.log`).
+Changed-Dart formatting, pseudo/copy generation, localization and plan checks all pass (`frontend/build/task167-checks.log`).
+The naming checker still reports only the two pre-existing findings in unchanged meeting/processing controllers.
+
+The [acceptance patch](../prompts/task-167-adaptive-home-navigation/acceptance-sources.patch) and
+[source manifest](../prompts/task-167-adaptive-home-navigation/acceptance-sources.manifest.json) reconstruct all **11 sources**
+in the three-root relative-import closure from the recorded base commit. Temporary-index application verifies each
+canonical-LF hash without changing the real index or the test ignore policy. Navigation and Settings behavioral sources
+remain tracked; the ignored task-166 regression source is delivered in the patch.
+
+The production APK rebuild succeeds (`frontend/build/task167-build-apk.log`) and its final kernel embeds all four
+changed application navigation/Settings sources. Signature and signing-certificate continuity, 16 KiB alignment,
+ZIP CRC, native ABI inventories and speech-model asset hashes pass (`frontend/build/task167-apk-verification.json`).
+The updated APK is **186,344,542 bytes**, SHA-256
+`8e4c8355b99f7865335b3b849b30dd7233a062aba56516e8f0b687a46082cd88`. Generated native fingerprints were archived
+and verified before restoring their exact pre-build bytes; build metadata is excluded from the implementation.
+
+The final focused run passes **all 380 cases** (`frontend/build/task167-acceptance-direct.log`, exit 0), with all
+architecture fixtures included. Invoking the installed Flutter tools snapshot through its bundled Dart executable
+preserves the regex filter that the Windows batch launcher loses. Only the six unavailable historical goldens are
+outside this behavior run; no guardrail or required behavior assertion is skipped or weakened. Tracker synchronization,
+drift checking and final plan integrity pass. Task 167 is **Complete**.

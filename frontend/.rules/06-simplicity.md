@@ -9,12 +9,12 @@ The product's central claim is that a field worker can use it. These rules are h
 No other control is larger, it sits in the lower third, and it is reachable with one thumb. If a screen has two
 equally important actions, the screen has not been designed yet.
 
-## FE-SIMP-02 — Two navigation destinations
-Projects and More. Capture and record CRUD are children of the opened project, never separate shell destinations
-(task 166, explicit product simplification). On compact screens, the three-dot
-More control opens an icon-labelled menu of secondary destinations, including Settings; opening or dismissing the
-menu preserves the current route. The rail retains direct access to the existing More/Settings root. Secondary
-destinations share the More branch, so an added module never adds a bottom-bar control.
+## FE-SIMP-02 — Project-scoped, capacity-aware navigation
+Projects, Templates and Settings appear directly when their localized labels and touch targets fit. Only overflow
+adds a three-dot More control, listing the hidden destinations without duplicating visible tabs (task 167).
+Opening or dismissing More preserves the current route. Rails expose the same destinations directly. Recycle bin
+belongs to Settings at every width, never to a home tab or overflow menu. Capture and record CRUD remain children
+of the opened project (task 166). Presentation tabs share the existing Projects and More route branches.
 
 ## FE-SIMP-03 — Three taps to a record
 Within the opened project: Capture, shutter, save. Opening a project establishes the owner before capture;

@@ -6629,7 +6629,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recycleBinSettingsSubtitle =>
-      'Restore a deleted record before it is removed for good.';
+      'Restore deleted items or remove them for good.';
 
   @override
   String recycleBinKeptFor(Object settingsRetentionDaysdays) {
@@ -19168,7 +19168,7 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get recycleBinSettingsSubtitle =>
-      'Réstóré á délétéd récórd béfóré ít ís rémóvéd fór góód.····················';
+      'Réstóré délétéd ítéms ór rémóvé thém fór góód.·················';
 
   @override
   String recycleBinKeptFor(Object settingsRetentionDaysdays) {

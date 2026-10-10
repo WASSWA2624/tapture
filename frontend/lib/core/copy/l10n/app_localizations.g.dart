@@ -10176,7 +10176,7 @@ abstract class AppLocalizations {
   /// Storage settings row that opens the recycle bin.
   ///
   /// In en, this message translates to:
-  /// **'Restore a deleted record before it is removed for good.'**
+  /// **'Restore deleted items or remove them for good.'**
   String get recycleBinSettingsSubtitle;
 
   /// The line above the recycle bin list: how long a deleted record stays

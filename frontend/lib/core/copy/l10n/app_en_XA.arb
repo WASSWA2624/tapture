@@ -8730,7 +8730,7 @@
   "@recycleBinTitle": {
     "description": "Title of the recycle bin page."
   },
-  "recycleBinSettingsSubtitle": "Réstóré á délétéd récórd béfóré ít ís rémóvéd fór góód.····················",
+  "recycleBinSettingsSubtitle": "Réstóré délétéd ítéms ór rémóvé thém fór góód.·················",
   "@recycleBinSettingsSubtitle": {
     "description": "Storage settings row that opens the recycle bin."
   },

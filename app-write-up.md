@@ -3221,10 +3221,11 @@ After export, show filename, size and **Share**, **Upload to cloud**, **Done**. 
 
 ## 55. Navigation & Screens
 
-Compact/mobile screens have two controls. Opening a project reveals its capture and record actions; local field work requires no repeat sign-in (§70.4).
+Compact/mobile navigation shows Projects, Templates and Settings directly when their localized labels and touch targets fit. Only when space runs out does a three-dot More control replace the remaining tabs (§83.1). Opening a project reveals its capture and record actions; local field work requires no repeat sign-in (§70.4).
 
 ```text
-[ Projects ]                       [ ... More ]
+[ Projects ]       [ Templates ]       [ Settings ]
+When space runs out: [ Projects ]       [ ... More ]
 ```
 
 | Screen | Purpose |
@@ -3232,7 +3233,9 @@ Compact/mobile screens have two controls. Opening a project reveals its capture 
 | **Projects** | Project counts and last-worked timestamps; create, open, import, export, archive. |
 | **Project Capture** | Capture inside the opened project (§19). |
 | **Project Records** | Search, filter and manage records inside their owning project. |
-| **More** | Three-dot button; anchored, scrollable menu with labelled icons. Add Documentation when released (§83). |
+| **Templates** | Shared template library; project templates remain available within the opened project. |
+| **Settings** | App preferences and Recycle bin, at every screen size. |
+| **More** | Only when tabs overflow; anchored, scrollable menu with labelled icons for the hidden screens. |
 
 Route map:
 
@@ -3254,7 +3257,7 @@ Route map:
 /more
 ```
 
-This conceptual map uses the existing `RoutePaths` conventions: `/projects/:projectId/...` and secondary destinations under `/more`. Documentation follows these conventions without duplicate aliases; §83 specifies its routes and menu behaviour. Transcribe remains a project-home overflow action and a direct route, keeping two bottom controls (§56 rule 2); meetings start from **Start a meeting** and open their review by id.
+This conceptual map uses the existing `RoutePaths` conventions: `/projects/:projectId/...` and secondary destinations under `/more`. Documentation follows these conventions without duplicate aliases; §83 specifies its routes and menu behaviour. Transcribe remains a project-home overflow action and a direct route, keeping project work inside its project (§56 rule 2); meetings start from **Start a meeting** and open their review by id.
 
 ### 55.1 Project home
 
@@ -3301,9 +3304,9 @@ Feedback downloads package the `.xlsx` workbook and matching screenshots in `TAP
 Testable interface rules:
 
 1. **One primary action per screen**, using the largest control.
-2. **Exactly two mobile bottom controls:** Projects and More. Capture and record CRUD are reached inside the opened
-   project. New secondary tools go in More. Closing and reopening resumes the last valid screen; a missing/deleted
-   project falls back to Projects, and explicit deep links and the app lock retain precedence.
+2. **Show fitting home tabs directly:** Projects, Templates and Settings; More appears only for overflow. Recycle bin
+   is reached through Settings. Capture and record CRUD stay inside the opened project. Closing and reopening resumes
+   the last valid screen; missing/deleted projects fall back to Projects, with deep-link and lock precedence preserved.
 3. **Three taps to create a record:** Capture → shutter → Save.
 4. **Only sign-in is mandatory setup.** Capture within 30 seconds of first sign-in using a shipped template; General observation (UNI-001) is the universal fallback.
 5. **No repeat login for local field work.** Cache the required account session and role grant (§70.4); no onboarding tour or dashboard.
@@ -4511,17 +4514,18 @@ data as ciphertext, with no new durable document-storage responsibility.
 
 ### 83.1 Mobile More menu
 
-Keep exactly **Projects** and **More** in compact navigation. Capture and Records are project children. More has a horizontal three-dot
-icon and visible label, opening an anchored menu above the bar. Use shared square-corner menu/list styling,
-safe-area scrolling, icon/text entries, at least 48 dp targets and screen-reader labels.
+Show working **Projects**, **Templates** (library/template) and **Settings** (cog) tabs directly whenever their
+localized labels and 48 dp touch targets fit. Measure the available width, current text style and locale instead of
+assuming every compact screen needs More. Rails expose the same three destinations directly.
 
-Expose working **Templates** (library/template), **Recycle bin** (restore) and **Settings** (cog). Queue and transcript history remain reachable through project actions and existing deep links; they have no global More/Settings shortcut (task143 W7). Add **Documentation** (document) when its route works. Other secondary tools also require usable
-screens; no inert placeholders. Share destination labels/icons/routes across layouts.
+Only overflowing destinations appear under the horizontal three-dot **More** control. Its anchored, scrollable menu
+uses shared minimal-radius styling, icon/text entries and accessible targets. Recycle bin is a Settings section at
+every width; it is never a home tab or an overflow entry. Queue and transcript history retain project actions and
+existing deep links, without global shortcuts (task 143 W7). Add Documentation when its route works; no inert items.
 
-Opening/dismissing More preserves the primary branch and work; outside tap, Back and Escape dismiss it. Selecting
-an entry closes and navigates, marking More selected on secondary branches. Retain draft/navigation protections,
-avoid duplicate routes on reopening and safely close/reposition on resize. Medium/expanded rails keep their
-two destinations; add Documentation through the secondary hub and project-home action without adding a mobile tab.
+Opening/dismissing More preserves work; outside tap, Back and Escape dismiss it. Selection closes and navigates,
+marking the matching visible tab, or More when that destination is hidden. Re-evaluate capacity on resize, locale or
+text changes without resetting route branches or drafts. An open overflow menu remains usable during resizing.
 
 ### 83.2 Documentation screens
 
@@ -4610,8 +4614,8 @@ report/register flow or claims of current support. Fake providers are test aids,
   approval and draft exports are visibly labelled.
 - Bundle export/import/merge/undo preserves roles, hashes, evidence, history and approvals. Test old-version
   compatibility/new-version rejection; import cannot start AI or incur charges.
-- More opens an accessible three-dot icon menu, preserves drafts, navigates only on selection and leaves the
-  branch unchanged on dismissal. Documentation works at 200% text scaling.
+- More appears only when tabs overflow, opens an accessible icon menu, preserves drafts and leaves the branch
+  unchanged on dismissal. Documentation works at 200% text scaling.
 - Existing capture, processing, meetings, exports and bundles pass regression checks. Plans and plausible mock
   responses alone never establish completion.
 

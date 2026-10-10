@@ -145,6 +145,7 @@ void main() {
       Copy.settingsLanguageTitle,
       Copy.settingsAppearanceTitle,
       Copy.settingsStorageTitle,
+      Copy.recycleBinTitle,
       Copy.settingsFilesTitle,
       Copy.appLockTitle,
       Copy.privacyScreenTitle,
@@ -160,7 +161,7 @@ void main() {
       previous = top;
     }
 
-    // Templates lives in compact More; queue and transcripts stay project actions.
+    // Templates is a home tab; queue and transcripts stay project actions.
     expect(find.text(Copy.navTemplates), findsNothing);
     expect(find.text(Copy.navQueue), findsNothing);
     expect(find.text(Copy.navTranscripts), findsNothing);
@@ -173,46 +174,38 @@ void main() {
     expect(find.text(Copy.settingsGroupAbout), findsWidgets);
   });
 
-  testWidgets('from medium width the root lists the More menu first', (
-    WidgetTester tester,
-  ) async {
-    await _pump(tester);
-    await tester.pumpAndSettle();
-
-    expect(find.text(Copy.navMoreMenu), findsOneWidget);
-    expect(find.text(Copy.navQueue), findsNothing);
-    expect(find.text(Copy.navTranscripts), findsNothing);
-    expect(find.text(Copy.backendSettingsTitle), findsNothing);
-    expect(find.text(Copy.relayTitle), findsNothing);
-    for (final String title in <String>[
-      Copy.navTemplates,
-      Copy.recycleBinTitle,
-    ]) {
-      expect(find.widgetWithText(AppListTile, title), findsOneWidget);
-      expect(
-        tester.getTopLeft(find.text(title)).dy,
-        lessThan(tester.getTopLeft(find.text(Copy.operatorProfileTitle)).dy),
-      );
-    }
-  });
-
-  testWidgets('the More rows open Templates and Recycle bin', (
-    WidgetTester tester,
-  ) async {
-    for (final String path in <String>[
-      AppRoutes.templates,
-      AppRoutes.recycleBin,
-    ]) {
-      final GoRouter router = _router(<String>[path]);
-      addTearDown(router.dispose);
-      await _pumpRouter(tester, router);
-
-      await tester.tap(find.byKey(ValueKey<String>('settings-more-$path')));
+  testWidgets(
+    'Recycle bin follows Storage at every width without duplicating home tabs',
+    (WidgetTester tester) async {
+      await _pump(tester);
       await tester.pumpAndSettle();
+      expect(find.text(Copy.navMoreMenu), findsNothing);
+      expect(find.widgetWithText(AppListTile, Copy.navTemplates), findsNothing);
+      final Finder bin = find.widgetWithText(AppListTile, Copy.recycleBinTitle);
+      expect(bin, findsOneWidget);
+      expect(
+        tester.getTopLeft(bin).dy,
+        greaterThan(tester.getTopLeft(find.text(Copy.settingsStorageTitle)).dy),
+      );
+      expect(
+        tester.getTopLeft(bin).dy,
+        lessThan(tester.getTopLeft(find.text(Copy.settingsFilesTitle)).dy),
+      );
+    },
+  );
 
-      expect(router.state.uri.path, path);
-      expect(find.text('page $path'), findsOneWidget);
-    }
+  testWidgets('the Settings Recycle bin row opens its existing route', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter router = _router(<String>[AppRoutes.recycleBin]);
+    addTearDown(router.dispose);
+    await _pumpRouter(tester, router);
+    final Finder bin = find.widgetWithText(AppListTile, Copy.recycleBinTitle);
+    await tester.ensureVisible(bin);
+    await tester.tap(bin);
+    await tester.pumpAndSettle();
+    expect(router.state.uri.path, AppRoutes.recycleBin);
+    expect(find.text('page ${AppRoutes.recycleBin}'), findsOneWidget);
   });
 
   testWidgets('Language and Files open their own screens', (
@@ -379,7 +372,7 @@ Future<void> _pump(
   );
 }
 
-/// A phone: the More menu carries Templates, Recycle bin and Settings.
+/// A phone with room to inspect the whole Settings list.
 void _compact(WidgetTester tester) {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = const Size(400, 1600);

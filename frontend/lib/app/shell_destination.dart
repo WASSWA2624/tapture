@@ -12,9 +12,6 @@ final class ShellDestination {
     required this.label,
     required this.icon,
     required this.selectedIcon,
-    this.compactLabel,
-    this.compactIcon,
-    this.dominant = false,
     this.hasList = false,
     this.localizedLabel,
   });
@@ -34,15 +31,6 @@ final class ShellDestination {
   /// Selected navigation glyph.
   final IconData selectedIcon;
 
-  /// Optional label when a compact control opens a menu instead of a page.
-  final String? compactLabel;
-
-  /// Optional compact-menu glyph, shared by selected and unselected states.
-  final IconData? compactIcon;
-
-  /// Whether the compact camera action is visually dominant.
-  final bool dominant;
-
   /// Whether expanded layouts provide a list pane.
   final bool hasList;
 
@@ -60,13 +48,9 @@ final class ShellDestination {
           _ => label,
         }
       : copy.resolve(localizedLabel!);
-
-  /// The short menu label in the app's current locale.
-  String? compactLabelFor(LocalizedCopy copy) =>
-      path == RoutePaths.more ? copy.navMoreMenu : compactLabel;
 }
 
-/// The one ordered source for the two application destinations.
+/// Route branches, independent of the number of visible navigation tabs.
 final List<ShellDestination> shellDestinations = <ShellDestination>[
   ShellDestination(
     path: RoutePaths.projects,
@@ -80,34 +64,19 @@ final List<ShellDestination> shellDestinations = <ShellDestination>[
     icon: AppIcons.settings,
     selectedIcon: AppIcons.settingsSelected,
     label: Copy.navMore,
-    compactLabel: Copy.navMoreMenu,
-    compactIcon: AppIcons.moreHorizontal,
   ),
 ];
 
-/// Working secondary destinations offered by the compact More menu. The
-/// settings root lists the same rows from medium width up, where the rail's
-/// Settings replaces that menu.
-final List<ShellDestination> moreDestinations = <ShellDestination>[
+/// Home tabs in priority order. Recycle bin belongs to Settings.
+final List<ShellDestination> navigationDestinations = <ShellDestination>[
+  shellDestinations.first,
   ShellDestination(
     path: RoutePaths.templates,
     label: Copy.navTemplates,
     icon: AppIcons.template,
     selectedIcon: AppIcons.template,
   ),
-  ShellDestination(
-    path: RoutePaths.recycleBin,
-    label: Copy.recycleBinTitle,
-    icon: AppIcons.recycleBin,
-    selectedIcon: AppIcons.recycleBin,
-  ),
-  ShellDestination(
-    path: RoutePaths.more,
-    label: Copy.settingsTitle,
-    localizedLabel: Copy.messages.settingsTitle,
-    icon: AppIcons.settings,
-    selectedIcon: AppIcons.settingsSelected,
-  ),
+  shellDestinations.last,
 ];
 
 /// Destination owning [uri], including project-scoped capture routes.

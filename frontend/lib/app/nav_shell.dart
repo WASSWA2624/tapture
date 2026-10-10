@@ -1,19 +1,16 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/shell_back_navigation.dart';
 import 'package:tapture/app/shell_destination.dart';
+import 'package:tapture/app/shell_navigation.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
 import 'package:tapture/app/widgets/offline_banner.dart';
 import 'package:tapture/app/widgets/status_line.dart';
-import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_list_viewport.dart';
-import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 import 'package:tapture/core/widgets/shell_header_scope.dart';
 import 'package:tapture/features/context/presentation/context_bar.dart';
@@ -117,7 +114,8 @@ class _Chrome extends ConsumerWidget {
                                       ? null
                                       : BorderDirectional(end: hairline),
                                 ),
-                                child: _Rail(
+                                child: ShellNavigation(
+                                  rail: true,
                                   shell: shell,
                                   inverted: _darkDesktopRail(context, ref),
                                 ),
@@ -140,146 +138,8 @@ class _Chrome extends ConsumerWidget {
               ),
             ],
           ),
-          bottomNavigationBar: rail ? null : _Bar(shell: shell),
+          bottomNavigationBar: rail ? null : ShellNavigation(shell: shell),
         ),
-      ),
-    );
-  }
-}
-
-class _Bar extends StatefulWidget {
-  const _Bar({required this.shell});
-
-  final StatefulNavigationShell shell;
-
-  @override
-  State<_Bar> createState() => _BarState();
-}
-
-class _BarState extends State<_Bar> {
-  final GlobalKey _moreKey = GlobalKey();
-
-  StatefulNavigationShell get shell => widget.shell;
-
-  @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
-      key: const ValueKey<String>('nav-bar'),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          border: Border(
-            top: BorderSide(color: context.colors.outline, width: Space.x0 / 2),
-          ),
-        ),
-        child: NavigationBar(
-          selectedIndex: shell.currentIndex,
-          onDestinationSelected: (int index) {
-            if (shellDestinations[index].path == RoutePaths.more) {
-              // The popup owns its dismissal; selecting More must not reset
-              // the current branch or discard the page under the menu.
-              unawaited(_showMore());
-            } else {
-              shell.goBranch(index);
-            }
-          },
-          destinations: <NavigationDestination>[
-            for (int index = 0; index < shellDestinations.length; index++)
-              NavigationDestination(
-                key: shellDestinations[index].path == RoutePaths.more
-                    ? _moreKey
-                    : null,
-                icon: _NavIcon(
-                  index: index,
-                  selected: false,
-                  inverted: false,
-                  compact: true,
-                ),
-                selectedIcon: _NavIcon(
-                  index: index,
-                  selected: true,
-                  inverted: false,
-                  compact: true,
-                ),
-                label:
-                    shellDestinations[index].compactLabelFor(
-                      Copy.of(context),
-                    ) ??
-                    shellDestinations[index].labelFor(Copy.of(context)),
-                tooltip:
-                    shellDestinations[index].compactLabelFor(
-                      Copy.of(context),
-                    ) ??
-                    shellDestinations[index].labelFor(Copy.of(context)),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _showMore() async {
-    final GoRouter router = GoRouter.of(context);
-    final RenderBox anchor =
-        _moreKey.currentContext!.findRenderObject()! as RenderBox;
-    await showAppOverflowActions(
-      context,
-      // Square like every other menu: the shared shape, no override.
-      anchor: anchor.localToGlobal(Offset.zero) & anchor.size,
-      items: <AppOverflowAction>[
-        for (final ShellDestination destination in moreDestinations)
-          AppOverflowAction(
-            key: ValueKey<String>('nav-more-${destination.path}'),
-            label: destination.labelFor(Copy.of(context)),
-            icon: destination.icon,
-            // The root popup can outlive the compact bar during rotation.
-            onTap: () => router.go(destination.path),
-          ),
-      ],
-    );
-  }
-}
-
-class _Rail extends StatelessWidget {
-  const _Rail({required this.shell, required this.inverted});
-
-  final StatefulNavigationShell shell;
-  final bool inverted;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppColors colors = context.colors;
-    final Color railInk = inverted ? colors.surface : colors.onSurface;
-    final Color selected = inverted ? AppColors.dark.primary : colors.primary;
-    final TextStyle? labelStyle = Theme.of(context).textTheme.labelSmall;
-    return RepaintBoundary(
-      key: const ValueKey<String>('nav-rail'),
-      child: NavigationRail(
-        backgroundColor: inverted
-            ? AppColors.dark.surfaceVariant
-            : colors.surfaceVariant,
-        selectedIndex: shell.currentIndex,
-        onDestinationSelected: (int index) {
-          shell.goBranch(index);
-        },
-        // A landscape phone with the keyboard open can be shorter than the
-        // destinations; the rail scrolls rather than overflowing.
-        scrollable: true,
-        labelType: NavigationRailLabelType.all,
-        selectedLabelTextStyle: labelStyle?.copyWith(color: selected),
-        unselectedLabelTextStyle: labelStyle?.copyWith(color: railInk),
-        destinations: <NavigationRailDestination>[
-          for (int index = 0; index < shellDestinations.length; index++)
-            NavigationRailDestination(
-              icon: _NavIcon(index: index, selected: false, inverted: inverted),
-              selectedIcon: _NavIcon(
-                index: index,
-                selected: true,
-                inverted: inverted,
-              ),
-              label: Text(shellDestinations[index].labelFor(Copy.of(context))),
-            ),
-        ],
       ),
     );
   }
@@ -375,36 +235,6 @@ bool _paneHasRows(WidgetRef ref) {
     AsyncData(:final value) => value.isNotEmpty,
     _ => false,
   };
-}
-
-class _NavIcon extends StatelessWidget {
-  const _NavIcon({
-    required this.index,
-    required this.selected,
-    required this.inverted,
-    this.compact = false,
-  });
-
-  final int index;
-  final bool selected;
-  final bool inverted;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    final ShellDestination destination = shellDestinations[index];
-    final IconData icon =
-        (compact ? destination.compactIcon : null) ??
-        (selected ? destination.selectedIcon : destination.icon);
-    final AppColors colors = context.colors;
-    final Color accent = inverted ? AppColors.dark.primary : colors.primary;
-    return Icon(
-      icon,
-      key: ValueKey<String>('nav-icon-$index'),
-      size: destination.dominant ? Space.x8 : Space.x6,
-      color: selected ? accent : (inverted ? colors.surface : colors.onSurface),
-    );
-  }
 }
 
 /// The desktop rail is the dark panel in the light theme, except outdoor,

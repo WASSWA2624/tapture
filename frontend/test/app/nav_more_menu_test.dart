@@ -1,268 +1,418 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/app.dart';
+import 'package:tapture/app/locale_controller.dart';
+import 'package:tapture/app/nav_shell.dart';
 import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/shell_destination.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/widgets/status_line.dart';
-import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/files/files.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/features/projects/projects.dart';
+import 'package:tapture/features/records/presentation/recycle_bin_screen.dart';
+import 'package:tapture/features/records/records.dart'
+    show recordRepositoryProvider;
+import 'package:tapture/features/settings/presentation/settings_screen.dart';
+import 'package:tapture/features/settings/settings.dart';
 
+import '../features/projects/fakes/fake_project_repository.dart';
+import '../features/records/fakes/fake_record_repository.dart';
 import '../support/a11y_matchers.dart';
+import '../support/factories.dart';
+import '../support/screen_fonts.dart';
 
 void main() {
-  testWidgets('More opens an icon-labelled menu with the minimal radius', (
-    WidgetTester tester,
-  ) async {
-    final GoRouter router = await _pump(tester);
-    expect(find.byTooltip(Copy.navMoreMenu), findsOneWidget);
-    final Finder more = find.widgetWithText(
-      NavigationDestination,
-      Copy.navMoreMenu,
-    );
-    expect(more, meetsTapTarget());
-    expect(
-      find.descendant(of: more, matching: find.byIcon(AppIcons.moreHorizontal)),
-      findsOneWidget,
-    );
+  setUpAll(ScreenFonts.loadForApp);
 
-    await tester.tap(more);
-    await tester.pumpAndSettle();
+  test(
+    'home tabs are Projects, Templates and Settings; the bin stays in Settings',
+    () {
+      expect(
+        navigationDestinations.map((ShellDestination d) => d.path),
+        <String>[RoutePaths.projects, RoutePaths.templates, RoutePaths.more],
+      );
+      expect(shellDestinations, hasLength(2));
+      expect(
+        navigationDestinations.any(
+          (ShellDestination d) => d.path == RoutePaths.recycleBin,
+        ),
+        isFalse,
+      );
+    },
+  );
 
-    expect(router.state.uri.path, AppRoutes.projects);
-    expect(
-      tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
-      0,
-    );
-    expect(find.byType(PopupMenuItem<int>), findsNWidgets(3));
-    expect(_option(AppRoutes.queue), findsNothing);
-    expect(_option(RoutePaths.transcripts), findsNothing);
-    for (final ({String path, String label, IconData icon}) option
-        in _options) {
-      final Finder row = _option(option.path);
-      expect(row, meetsTapTarget());
-      expect(
-        find.descendant(of: row, matching: find.text(option.label)),
-        findsOneWidget,
-      );
-      expect(
-        find.descendant(of: row, matching: find.byIcon(option.icon)),
-        findsOneWidget,
-      );
+  for (final double width in <double>[320, 393, 800, 1200]) {
+    for (final double scale in <double>[1, 2]) {
+      for (final TextDirection direction in TextDirection.values) {
+        testWidgets(
+          'home navigation and Settings bin at $width/$scale/$direction',
+          (WidgetTester tester) async {
+            final _Fixture fixture = await _pump(
+              tester,
+              width: width,
+              scale: scale,
+              direction: direction,
+            );
+            final Finder navigation = find.byKey(
+              ValueKey<String>(width < 600 ? 'nav-bar' : 'nav-rail'),
+            );
+            expect(navigation, findsOneWidget);
+            expect(
+              find.descendant(
+                of: navigation,
+                matching: find.text(fixture.copy.recycleBinTitle),
+              ),
+              findsNothing,
+            );
+            if (width >= 600) {
+              expect(
+                tester
+                    .widget<NavigationRail>(find.byType(NavigationRail))
+                    .destinations,
+                hasLength(3),
+              );
+            }
+            expect(find.byTooltip(fixture.copy.navMoreMenu), findsNothing);
+            await _go(tester, fixture, RoutePaths.more);
+            expect(find.byType(SettingsScreen), findsOneWidget);
+            expect(
+              find.widgetWithText(AppListTile, fixture.copy.navTemplates),
+              findsNothing,
+            );
+            final Finder bin = find.widgetWithText(
+              AppListTile,
+              fixture.copy.recycleBinTitle,
+            );
+            expect(bin, findsOneWidget);
+            await tester.ensureVisible(bin);
+            await tester.tap(bin);
+            await _until(
+              tester,
+              () => fixture.router.state.uri.path == RoutePaths.recycleBin,
+            );
+            expect(find.byType(RecycleBinScreen), findsOneWidget);
+            expect(tester.takeException(), isNull);
+            await expectNoA11yIssues(tester);
+          },
+        );
+      }
     }
-    final Material menu = tester.widget<Material>(
-      find
-          .ancestor(
-            of: _option(AppRoutes.templates),
-            matching: find.byType(Material),
-          )
-          .first,
-    );
-    expect(
-      (menu.shape! as RoundedRectangleBorder).borderRadius,
-      BorderRadius.circular(Radii.md),
-    );
-    expect(tester.takeException(), isNull);
-  });
-
-  test('More is the horizontal three dots and the bin has its own icon', () {
-    expect(AppIcons.moreHorizontal, Icons.more_horiz);
-    // One icon per concept: Restore stays the action's glyph (FE-CONS-08).
-    expect(AppIcons.recycleBin, isNot(AppIcons.restore));
-  });
-
-  for (final ({String path, String label, IconData icon}) option in _options) {
-    testWidgets('${option.label} opens from More and selects its branch', (
-      WidgetTester tester,
-    ) async {
-      final GoRouter router = await _pump(tester, projectId: 'p1');
-      await _openMore(tester);
-      await tester.tap(_option(option.path));
-      await tester.pumpAndSettle();
-
-      expect(router.state.uri.path, option.path);
-      expect(find.byType(PopupMenuItem<int>), findsNothing);
-      expect(
-        tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
-        3,
-      );
-      expect(_container(tester).read(openProjectIdProvider), 'p1');
-      expect(tester.takeException(), isNull);
-    });
   }
 
-  testWidgets('outside tap and Back dismiss More and preserve a typed search', (
-    WidgetTester tester,
-  ) async {
-    final GoRouter router = await _pump(tester, projectId: 'p1');
-    router.go(AppRoutes.records);
-    await tester.pumpAndSettle();
-    final Finder search = find.descendant(
-      of: find.byKey(const ValueKey<String>('records-search')),
-      matching: find.byType(EditableText),
-    );
-    await tester.enterText(search, 'saved search');
-
-    await _openMore(tester);
-    await tester.tapAt(const Offset(10, 100));
-    await tester.pumpAndSettle();
-    expect(find.byType(PopupMenuItem<int>), findsNothing);
-    expect(router.state.uri.path, AppRoutes.records);
-    expect(find.text('saved search'), findsOneWidget);
-
-    await _openMore(tester);
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(find.byType(PopupMenuItem<int>), findsNothing);
-    expect(router.state.uri.path, AppRoutes.records);
-    expect(find.text('saved search'), findsOneWidget);
-    expect(
-      tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
-      2,
-    );
-    expect(_container(tester).read(openProjectIdProvider), 'p1');
-  });
-
-  testWidgets('More fits a small phone with large text in every theme', (
-    WidgetTester tester,
-  ) async {
-    tester.platformDispatcher.textScaleFactorTestValue = 2;
-    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    for (final AppThemeMode mode in <AppThemeMode>[
-      AppThemeMode.light,
-      AppThemeMode.dark,
-      AppThemeMode.outdoor,
-    ]) {
-      await _pump(tester, size: const Size(320, 480), mode: mode);
-      await _openMore(tester);
-      for (final ({String path, String label, IconData icon}) option
-          in _options) {
-        final Finder row = _option(option.path);
-        expect(row, meetsTapTarget());
-        expect(tester.getRect(row).left, greaterThanOrEqualTo(0));
-        expect(tester.getRect(row).right, lessThanOrEqualTo(320));
-        expect(tester.getRect(row).top, greaterThanOrEqualTo(0));
-        expect(tester.getRect(row).bottom, lessThanOrEqualTo(480));
-      }
+  testWidgets(
+    'all fitting tabs navigate directly and preserve the open project branch',
+    (WidgetTester tester) async {
+      final _Fixture fixture = await _pump(tester);
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).destinations,
+        hasLength(3),
+      );
+      expect(find.byTooltip(fixture.copy.navMoreMenu), findsNothing);
+      await _go(tester, fixture, '/projects/p1/capture');
+      await tester.tap(_tab(fixture.copy.navTemplates));
+      await _until(
+        tester,
+        () => fixture.router.state.uri.path == RoutePaths.templates,
+      );
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+        1,
+      );
+      await tester.tap(_tab(fixture.copy.settingsTitle));
+      await _until(
+        tester,
+        () => fixture.router.state.uri.path == RoutePaths.more,
+      );
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+        2,
+      );
+      await tester.tap(_tab(fixture.copy.navProjects));
+      await _until(
+        tester,
+        () => fixture.router.state.uri.path == '/projects/p1/capture',
+      );
+      expect(fixture.container.read(currentProjectProvider), 'p1');
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+        0,
+      );
+      await _go(tester, fixture, RoutePaths.more);
       expect(tester.takeException(), isNull);
+      await expectNoA11yIssues(tester);
+    },
+  );
+
+  testWidgets(
+    'More appears only when localized tabs overflow and lists only hidden screens',
+    (WidgetTester tester) async {
+      final _Fixture fixture = await _pump(
+        tester,
+        width: 240,
+        scale: 2,
+        pseudo: true,
+      );
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).destinations,
+        hasLength(2),
+      );
+      final Finder more = _tab(fixture.copy.navMoreMenu);
+      expect(more, meetsTapTarget());
+      expect(
+        find.descendant(
+          of: more,
+          matching: find.byIcon(AppIcons.moreHorizontal),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(more);
+      await tester.pumpAndSettle();
+      expect(fixture.router.state.uri.path, RoutePaths.projects);
+      expect(find.byType(PopupMenuItem<int>), findsNWidgets(2));
+      expect(_option(RoutePaths.projects), findsNothing);
+      expect(_option(RoutePaths.recycleBin), findsNothing);
+      final Material menu = tester.widget<Material>(
+        find
+            .ancestor(
+              of: _option(RoutePaths.templates),
+              matching: find.byType(Material),
+            )
+            .first,
+      );
+      expect(
+        (menu.shape! as RoundedRectangleBorder).borderRadius,
+        BorderRadius.circular(Radii.md),
+      );
+      for (final String path in <String>[
+        RoutePaths.templates,
+        RoutePaths.more,
+      ]) {
+        expect(_option(path), meetsTapTarget());
+      }
+      await tester.tap(_option(RoutePaths.more));
+      await _until(
+        tester,
+        () => fixture.router.state.uri.path == RoutePaths.more,
+      );
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+        1,
+      );
+      final Finder bin = find.widgetWithText(
+        AppListTile,
+        fixture.copy.recycleBinTitle,
+      );
+      expect(bin, findsOneWidget);
+      await tester.ensureVisible(bin);
+      expect(tester.takeException(), isNull);
+      await expectNoA11yIssues(tester);
+    },
+  );
+
+  testWidgets(
+    'resizing and Escape dismiss overflow without changing the project work screen',
+    (WidgetTester tester) async {
+      final _Fixture fixture = await _pump(
+        tester,
+        width: 240,
+        scale: 2,
+        pseudo: true,
+      );
+      await _go(tester, fixture, '/projects/p1/capture');
+      await tester.tap(_tab(fixture.copy.navMoreMenu));
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(10, 100));
+      await tester.pumpAndSettle();
+      expect(find.byType(PopupMenuItem<int>), findsNothing);
+      expect(fixture.router.state.uri.path, '/projects/p1/capture');
+      await tester.tap(_tab(fixture.copy.navMoreMenu));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.byType(PopupMenuItem<int>), findsNothing);
+      expect(fixture.router.state.uri.path, '/projects/p1/capture');
+      tester.view.physicalSize = const Size(599, 850);
+      await tester.pumpAndSettle();
+      expect(find.byTooltip(fixture.copy.navMoreMenu), findsNothing);
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).destinations,
+        hasLength(3),
+      );
+      expect(fixture.router.state.uri.path, '/projects/p1/capture');
+      tester.view.physicalSize = const Size(240, 850);
+      await tester.pumpAndSettle();
+      await tester.tap(_tab(fixture.copy.navMoreMenu));
+      await tester.pumpAndSettle();
+      tester.view.physicalSize = const Size(800, 850);
+      await tester.pumpAndSettle();
+      await tester.tap(_option(RoutePaths.templates));
+      await _until(
+        tester,
+        () => fixture.router.state.uri.path == RoutePaths.templates,
+      );
+      expect(
+        tester
+            .widget<NavigationRail>(find.byType(NavigationRail))
+            .selectedIndex,
+        1,
+      );
+      expect(fixture.container.read(currentProjectProvider), 'p1');
+      expect(tester.takeException(), isNull);
+      await expectNoA11yIssues(tester);
+    },
+  );
+
+  testWidgets(
+    'changing locale re-evaluates tab capacity without changing the route',
+    (WidgetTester tester) async {
+      final _Fixture fixture = await _pump(tester, width: 320, scale: 2);
+      await _go(tester, fixture, '/projects/p1/capture');
+      expect(find.byType(NavigationDestination), findsNWidgets(3));
+      fixture.container
+          .read(appLocaleProvider.notifier)
+          .select(const Locale('en', 'XA'));
+      await tester.pumpAndSettle();
+      expect(find.byType(NavigationDestination), findsNWidgets(2));
+      expect(fixture.router.state.uri.path, '/projects/p1/capture');
+      fixture.container
+          .read(appLocaleProvider.notifier)
+          .select(const Locale('en'));
+      await tester.pumpAndSettle();
+      expect(find.byType(NavigationDestination), findsNWidgets(3));
+      expect(fixture.router.state.uri.path, '/projects/p1/capture');
+      expect(tester.takeException(), isNull);
+      await expectNoA11yIssues(tester);
+    },
+  );
+
+  testWidgets(
+    'the overflow menu supports keyboard selection and native Back dismissal',
+    (WidgetTester tester) async {
+      final _Fixture fixture = await _pump(
+        tester,
+        width: 240,
+        scale: 2,
+        pseudo: true,
+      );
+      await tester.tap(_tab(fixture.copy.navMoreMenu));
+      await tester.pumpAndSettle();
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
-    }
-  });
-
-  testWidgets('a More destination survives the change to a desktop rail', (
-    WidgetTester tester,
-  ) async {
-    final GoRouter router = await _pump(tester, projectId: 'p1');
-    await _openMore(tester);
-    await tester.tap(_option(AppRoutes.templates));
-    await tester.pumpAndSettle();
-
-    tester.view.physicalSize = const Size(1200, 800);
-    await tester.pumpAndSettle();
-    expect(router.state.uri.path, AppRoutes.templates);
-    expect(
-      tester.widget<NavigationRail>(find.byType(NavigationRail)).selectedIndex,
-      3,
-    );
-    expect(_container(tester).read(openProjectIdProvider), 'p1');
-
-    await tester.tap(
-      find.descendant(
-        of: find.byType(NavigationRail),
-        matching: find.text(Copy.navMore),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(router.state.uri.path, AppRoutes.more);
-    expect(find.byType(PopupMenuItem<int>), findsNothing);
-  });
-
-  testWidgets('an open More menu remains usable when the bar becomes a rail', (
-    WidgetTester tester,
-  ) async {
-    final GoRouter router = await _pump(tester, projectId: 'p1');
-    await _openMore(tester);
-    tester.view.physicalSize = const Size(800, 600);
-    await tester.pumpAndSettle();
-    await tester.tap(_option(AppRoutes.templates));
-    await tester.pumpAndSettle();
-
-    expect(router.state.uri.path, AppRoutes.templates);
-    expect(find.byType(PopupMenuItem<int>), findsNothing);
-    expect(_container(tester).read(openProjectIdProvider), 'p1');
-    expect(tester.takeException(), isNull);
-  });
-}
-
-final List<({String path, String label, IconData icon})> _options =
-    <({String path, String label, IconData icon})>[
-      (
-        path: AppRoutes.templates,
-        label: Copy.navTemplates,
-        icon: AppIcons.template,
-      ),
-      (
-        path: AppRoutes.recycleBin,
-        label: Copy.recycleBinTitle,
-        icon: AppIcons.recycleBin,
-      ),
-      (
-        path: AppRoutes.more,
-        label: Copy.settingsTitle,
-        icon: AppIcons.settings,
-      ),
-    ];
-
-Finder _option(String path) => find.byKey(ValueKey<String>('nav-more-$path'));
-
-Future<void> _openMore(WidgetTester tester) async {
-  await tester.tap(
-    find.widgetWithText(NavigationDestination, Copy.navMoreMenu),
+      expect(find.byType(PopupMenuItem<int>), findsNothing);
+      expect(fixture.router.state.uri.path, RoutePaths.projects);
+      await tester.tap(_tab(fixture.copy.navMoreMenu));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await _until(
+        tester,
+        () => fixture.router.state.uri.path == RoutePaths.templates,
+      );
+      expect(
+        tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+        1,
+      );
+      expect(tester.takeException(), isNull);
+      await expectNoA11yIssues(tester);
+    },
   );
-  await tester.pumpAndSettle();
 }
 
-ProviderContainer _container(WidgetTester tester) =>
-    ProviderScope.containerOf(tester.element(find.byType(TaptureApp)));
+Finder _tab(String label) => find.widgetWithText(NavigationDestination, label);
+Finder _option(String path) => find.byKey(ValueKey<String>('nav-more-$path'));
+typedef _Fixture = ({
+  GoRouter router,
+  ProviderContainer container,
+  LocalizedCopy copy,
+});
 
-Future<GoRouter> _pump(
+Future<_Fixture> _pump(
   WidgetTester tester, {
-  Size size = const Size(400, 800),
-  String? projectId,
-  AppThemeMode mode = AppThemeMode.light,
+  double width = 393,
+  double scale = 1,
+  TextDirection direction = TextDirection.ltr,
+  bool pseudo = false,
 }) async {
   tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = size;
+  tester.view.physicalSize = Size(width, 850);
+  tester.platformDispatcher.textScaleFactorTestValue = scale;
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
+    tester.platformDispatcher.clearTextScaleFactorTestValue();
+  });
+  final FakeProjectRepository projects = FakeProjectRepository();
+  (await projects.create(aProject(id: 'p1', name: 'Survey'))).getOrThrow();
+  final FakeRecordRepository records = FakeRecordRepository();
+  final ProviderContainer container = ProviderContainer(
+    overrides: <Override>[
+      networkOnlineOverride(),
+      projectRepositoryProvider.overrideWithValue(projects),
+      recordRepositoryProvider.overrideWithValue(records),
+      projectSettingsStoreProvider.overrideWithValue(SettingsStore.fake()),
+      themeModeProvider.overrideWith(
+        () => ThemeModeController.withStore(TextStore.memory()),
+      ),
+    ],
+  );
+  container
+      .read(appLocaleProvider.notifier)
+      .select(pseudo ? const Locale('en', 'XA') : const Locale('en'));
+  final GoRouter router = container.read(routerProvider);
+  addTearDown(() async {
+    await tester.pumpWidget(const SizedBox.shrink());
+    container.dispose();
+    projects.dispose();
+    records.dispose();
   });
   await tester.pumpWidget(
-    ProviderScope(
-      key: UniqueKey(),
-      retry: (int _, Object _) => null,
-      overrides: <Override>[
-        networkOnlineOverride(),
-        themeModeProvider.overrideWith(
-          () => ThemeModeController.withStore(
-            TextStore.memory(<String, String>{
-              AppConstants.preferences.themeMode: mode.name,
-            }),
-          ),
-        ),
-      ],
-      child: const TaptureApp(),
+    UncontrolledProviderScope(
+      container: container,
+      child: Consumer(
+        builder: (BuildContext context, WidgetRef ref, Widget? child) =>
+            MaterialApp.router(
+              theme: buildTheme(brightness: Brightness.light, outdoor: false),
+              locale: ref.watch(appLocaleProvider),
+              supportedLocales: AppLocalizations.supportedLocales,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              builder: (BuildContext context, Widget? child) =>
+                  Directionality(textDirection: direction, child: child!),
+              routerConfig: router,
+            ),
+      ),
     ),
   );
-  await tester.pumpAndSettle();
-  if (projectId != null) {
-    _container(tester).read(openProjectIdProvider.notifier).open(projectId);
-    await tester.pumpAndSettle();
+  await _until(
+    tester,
+    () =>
+        find.byType(NavigationBar).evaluate().isNotEmpty ||
+        find.byType(NavigationRail).evaluate().isNotEmpty,
+  );
+  final LocalizedCopy copy = Copy.of(tester.element(find.byType(NavShell)));
+  return (router: router, container: container, copy: copy);
+}
+
+Future<void> _go(WidgetTester tester, _Fixture fixture, String path) async {
+  fixture.router.go(path);
+  await _until(tester, () => fixture.router.state.uri.path == path);
+}
+
+Future<void> _until(WidgetTester tester, bool Function() condition) async {
+  for (int attempt = 0; attempt < 30; attempt++) {
+    await tester.runAsync(() => Future<void>(() {}));
+    await tester.pump();
+    if (condition()) {
+      await tester.pumpAndSettle();
+      return;
+    }
   }
-  return _container(tester).read(routerProvider);
+  expect(condition(), isTrue, reason: 'Expected navigation did not settle.');
 }

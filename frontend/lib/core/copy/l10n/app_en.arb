@@ -8730,7 +8730,7 @@
   "@recycleBinTitle": {
     "description": "Title of the recycle bin page."
   },
-  "recycleBinSettingsSubtitle": "Restore a deleted record before it is removed for good.",
+  "recycleBinSettingsSubtitle": "Restore deleted items or remove them for good.",
   "@recycleBinSettingsSubtitle": {
     "description": "Storage settings row that opens the recycle bin."
   },

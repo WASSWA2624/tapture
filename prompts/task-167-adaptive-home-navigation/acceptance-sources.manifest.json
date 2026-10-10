@@ -1,0 +1,66 @@
+{
+  "baseCommit": "fdff2df452a6bb3c75b0b479360049e40977b7d7",
+  "roots": [
+    "frontend/test/app/nav_more_menu_test.dart",
+    "frontend/test/app/project_workflow_test.dart",
+    "frontend/test/features/settings/presentation/settings_screen_test.dart"
+  ],
+  "files": [
+    {
+      "path": "frontend/test/app/nav_more_menu_test.dart",
+      "bytes": 15071,
+      "sha256": "b7cfa5dc713e276bd641fe3f2bff88e66e74f7f55b13d9da952f2eb7558991ba"
+    },
+    {
+      "path": "frontend/test/app/project_workflow_test.dart",
+      "bytes": 12212,
+      "sha256": "f9b4561ff2d80d15d26d8a2a19b7e4adf19acce0ad7f8b7d22ed79c031ca21fb"
+    },
+    {
+      "path": "frontend/test/features/projects/fakes/fake_project_repository.dart",
+      "bytes": 18044,
+      "sha256": "0834d6dbfc3348f11877d322569ec1ada14205d8edf44732e1c348052078ffab"
+    },
+    {
+      "path": "frontend/test/features/records/fakes/fake_record_repository.dart",
+      "bytes": 30587,
+      "sha256": "261e5701959901b60d7f59503b64166bd79bba9eca56f4ae90d8458edc7b882a"
+    },
+    {
+      "path": "frontend/test/features/settings/presentation/settings_screen_test.dart",
+      "bytes": 14118,
+      "sha256": "ded09a397383483ca7db25db1ac475b45f60d6b5530457023df3d1ae5d32fb79"
+    },
+    {
+      "path": "frontend/test/support/a11y_matchers.dart",
+      "bytes": 8325,
+      "sha256": "31ba792c971229a6ae0a09aa846bf2e4bc3ce5d66f3b20b6a6f3a8df2af1dc34"
+    },
+    {
+      "path": "frontend/test/support/factories.dart",
+      "bytes": 13243,
+      "sha256": "f1aed7990f5cf284580712df19e7bc8aeb5538762d8db2a665f0925bed1d713f"
+    },
+    {
+      "path": "frontend/test/support/screen_font_fetch_stub.dart",
+      "bytes": 418,
+      "sha256": "25bd1c57efb301dc1173398d2e04df82838790453ab2ac48e1c6ae603621e901"
+    },
+    {
+      "path": "frontend/test/support/screen_font_fetch_web.dart",
+      "bytes": 1496,
+      "sha256": "86ef2fda359950bf3a1b15ba1e463817b8c2d373aa5ae57edb4164b315458c58"
+    },
+    {
+      "path": "frontend/test/support/screen_fonts.dart",
+      "bytes": 5877,
+      "sha256": "9f17dfe4b527d9c65c1b432e1a16043c6a80d39db3923f846acf844ffdd42514"
+    },
+    {
+      "path": "frontend/test/support/screen_matrix.dart",
+      "bytes": 2919,
+      "sha256": "741ed130658d7c26e7e673ce89b93715f0691ac8dcd301b9742530a94007e0b3"
+    }
+  ],
+  "patchSha256": "8f329f858db0eec614a9112b43a4538248058b41d443da2dece796b4f9e0da73"
+}

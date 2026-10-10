@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
-import 'package:tapture/app/shell_destination.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
@@ -13,7 +12,6 @@ import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
-import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/feedback/feedback.dart'
     show DownloadFeedbackScreen, openFeedbackFlow;
@@ -27,10 +25,7 @@ import 'offline_switch.dart';
 /// The settings root: one tile per section, in a fixed order. Each tile's
 /// title is its page's title.
 ///
-/// From medium width up the rail's Settings replaces the compact More menu,
-/// so the root first lists that menu's secondary destinations (Templates,
-/// Recycle bin). Compact reaches them from More instead, so
-/// they are not repeated here.
+/// Recycle bin is a storage section at every screen size.
 class SettingsScreen extends ConsumerWidget {
   /// Creates the settings root.
   const SettingsScreen({super.key});
@@ -42,7 +37,6 @@ class SettingsScreen extends ConsumerWidget {
     final AsyncValue<List<_Section>> value = ref.watch(
       settingsSectionsProvider,
     );
-    final bool menuOnRail = context.sizeClass != SizeClass.compact;
     return AppPage(
       title: localCopy.settingsTitle,
       overflow: <AppOverflowAction>[
@@ -85,20 +79,6 @@ class SettingsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               const OfflineSwitch(),
-              if (menuOnRail) ...<Widget>[
-                AppSectionHeader(title: localCopy.navMoreMenu),
-                for (final ShellDestination destination in moreDestinations)
-                  if (destination.path != RoutePaths.more)
-                    AppListTile(
-                      key: ValueKey<String>(
-                        'settings-more-${destination.path}',
-                      ),
-                      title: destination.labelFor(localCopy),
-                      leading: Icon(destination.icon),
-                      trailing: const Icon(AppIcons.open),
-                      onTap: () => context.go(destination.path),
-                    ),
-              ],
               for (
                 int index = 0;
                 index < localizedSections.length;
@@ -224,6 +204,12 @@ List<_Section> _defaultSections(LocalizedCopy copy) => <_Section>[
     title: copy.settingsStorageTitle,
     subtitle: copy.settingsStorageSubtitle,
     route: RoutePaths.settingsStorage,
+    group: copy.settingsGroupStorageSecurity,
+  ),
+  (
+    title: copy.recycleBinTitle,
+    subtitle: copy.recycleBinSettingsSubtitle,
+    route: RoutePaths.recycleBin,
     group: copy.settingsGroupStorageSecurity,
   ),
   (
