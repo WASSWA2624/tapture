@@ -33,10 +33,10 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/photo_source_sheet.dart';
-import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/capture/domain/audio_draft.dart';
 import 'package:tapture/features/capture/domain/auto_fields.dart';
@@ -404,6 +404,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
           );
     return AppPage(
       key: const ValueKey<String>('route-capture'),
+      layout: AppPageLayout.thumbReach,
       title: title,
       headerTitle: _editing
           ? null
@@ -477,36 +478,29 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
               busy: uiState.saving,
               onPressed: ready ? () => unawaited(_saveEdits()) : null,
             )
-          // One level row at every width, the two the same width; the
-          // primary is marked by its fill and its place at the end
-          // (FBK0000004, FBK0000158, FE-SIMP-01).
           : Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                ResponsivePair(
-                  key: const ValueKey<String>('capture-saves'),
-                  stacksOnCompact: false,
-                  matchesHeights: true,
-                  gap: Space.x2,
-                  start: AppButton(
-                    label: localCopy.captureSaveRaw,
-                    variant: AppButtonVariant.secondary,
-                    expand: true,
-                    busy: uiState.saving,
-                    onPressed: ready ? () => unawaited(_save(false)) : null,
-                  ),
-                  end: AppPrimaryAction(
-                    label: localCopy.captureSaveAndAnalyse,
-                    busy: uiState.saving,
-                    onPressed: ready && !offline
-                        ? () => unawaited(_save(true))
-                        : null,
-                  ),
+                AppButton(
+                  key: const ValueKey<String>('capture-save-raw'),
+                  label: localCopy.captureSaveRaw,
+                  variant: AppButtonVariant.secondary,
+                  expand: true,
+                  busy: uiState.saving,
+                  onPressed: ready ? () => unawaited(_save(false)) : null,
+                ),
+                const SizedBox(height: Space.x2),
+                AppPrimaryAction(
+                  key: const ValueKey<String>('capture-save-process'),
+                  label: localCopy.captureSaveAndAnalyse,
+                  busy: uiState.saving,
+                  onPressed: ready && !offline
+                      ? () => unawaited(_save(true))
+                      : null,
                 ),
                 // Processing waits for a network; Save raw keeps capture
-                // unblocked meanwhile (D3). Under the row, so both buttons
-                // stay one height.
+                // unblocked meanwhile (D3). The explanation stays beside the actions.
                 if (offline) ...<Widget>[
                   const SizedBox(height: Space.x1),
                   Text(
@@ -569,59 +563,72 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
             _holdsLiveTake(liveStatus, session));
 
     return <Widget>[
-      PhotoTray(
-        showAddAction: false,
-        photos: _activePhotos(session),
-        captions: session.captions,
-        selectedIds: _selected,
-        thumbPaths: _thumbs,
-        thumbBytes: kIsWeb ? _thumbnailBytes : const <String, Uint8List>{},
-        missingIds: _missing,
-        onAdd: ready ? _add : null,
-        onLongPress: (PhotoDraft photo) {
-          refresh(() {
-            if (!_selected.add(photo.id)) {
-              _selected.remove(photo.id);
-            }
-          });
-        },
-        onTap: (PhotoDraft photo) => _openViewer(session, photo),
-        onRemove: (PhotoDraft photo) {
-          unawaited(
-            PhotoDeleteAction.run(
-              context: context,
-              photo: photo,
-              delete: (String id) async {
-                final Result<PhotoDraft?> removed = await controller
-                    .removePhoto(id);
-                return removed.fold((Failure failure) {
-                  if (mounted) {
-                    showAppSnack(
-                      context,
-                      failure.message,
-                      tone: SnackTone.error,
-                      localizedMessage: failure.explanation,
-                    );
-                  }
-                  return null;
-                }, (PhotoDraft? value) => value);
-              },
-              undo: (PhotoDraft removed) async {
-                final Result<void> restored = await controller.undoRemove(
-                  removed,
-                );
-                if (restored is FailureResult<void> && mounted) {
-                  showAppSnack(
-                    context,
-                    restored.failure.message,
-                    tone: SnackTone.error,
-                    localizedMessage: restored.failure.explanation,
-                  );
+      AppSection(
+        title: localCopy.capturePhotosSection,
+        children: <Widget>[
+          PhotoTray(
+            showAddAction: false,
+            photos: _activePhotos(session),
+            captions: session.captions,
+            selectedIds: _selected,
+            thumbPaths: _thumbs,
+            thumbBytes: kIsWeb ? _thumbnailBytes : const <String, Uint8List>{},
+            missingIds: _missing,
+            onAdd: ready ? _add : null,
+            onLongPress: (PhotoDraft photo) {
+              refresh(() {
+                if (!_selected.add(photo.id)) {
+                  _selected.remove(photo.id);
                 }
-              },
-            ),
-          );
-        },
+              });
+            },
+            onTap: (PhotoDraft photo) => _openViewer(session, photo),
+            onRemove: (PhotoDraft photo) {
+              unawaited(
+                PhotoDeleteAction.run(
+                  context: context,
+                  photo: photo,
+                  delete: (String id) async {
+                    final Result<PhotoDraft?> removed = await controller
+                        .removePhoto(id);
+                    return removed.fold((Failure failure) {
+                      if (mounted) {
+                        showAppSnack(
+                          context,
+                          failure.message,
+                          tone: SnackTone.error,
+                          localizedMessage: failure.explanation,
+                        );
+                      }
+                      return null;
+                    }, (PhotoDraft? value) => value);
+                  },
+                  undo: (PhotoDraft removed) async {
+                    final Result<void> restored = await controller.undoRemove(
+                      removed,
+                    );
+                    if (restored is FailureResult<void> && mounted) {
+                      showAppSnack(
+                        context,
+                        restored.failure.message,
+                        tone: SnackTone.error,
+                        localizedMessage: restored.failure.explanation,
+                      );
+                    }
+                  },
+                ),
+              );
+            },
+          ),
+          AppButton(
+            key: const ValueKey<String>('capture-add-photo'),
+            label: localCopy.captureAddPhoto,
+            icon: AppIcons.addPhoto,
+            variant: AppButtonVariant.secondary,
+            expand: true,
+            onPressed: ready ? _add : null,
+          ),
+        ],
       ),
       _blockGap,
       if (project != null && ready) ...<Widget>[
@@ -642,14 +649,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
       ],
       RecordCaptionField(
         enabled: ready,
-        leading: AppIconButton(
-          key: const ValueKey<String>('capture-composer-add-photo'),
-          icon: AppIcons.addPhoto,
-          semanticLabel: localCopy.captureAddPhoto,
-          tooltip: localCopy.captureAddPhoto,
-          outlined: false,
-          onPressed: ready ? _add : null,
-        ),
         // Typing and dictation write the record's own caption only; a
         // photo gets the text from the add button below (FBK0000155).
         value: session.recordCaption,

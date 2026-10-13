@@ -13,9 +13,11 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_ink_picker.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/markup_text.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
@@ -152,14 +154,20 @@ class _PhotoTypeScreenState extends State<PhotoTypeScreen> with StateRefresh {
         ),
       ],
     );
-    return Scaffold(
-      appBar: AppBar(title: Text(localCopy.photoTypeOn)),
+    return AppPage(
+      layout: AppPageLayout.thumbReach,
+      title: localCopy.photoTypeOn,
+      compactBar: true,
+      scrollable: false,
+      inset: false,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints limits) {
             final LocalizedCopy localCopy = Copy.of(context);
 
-            final bool wide = limits.maxWidth > limits.maxHeight;
+            final bool wide =
+                context.sizeClass != SizeClass.compact &&
+                limits.maxWidth > limits.maxHeight;
             final Widget canvas = photoSize == null
                 ? Center(child: Text(_error == null ? localCopy.loading : ''))
                 : _canvas(photoSize);

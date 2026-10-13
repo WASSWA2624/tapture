@@ -11,6 +11,7 @@ import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/features/records/records.dart';
 
 import '../domain/approval_outcome.dart';
+import 'raw_refined_toggle.dart' show isTwoSided;
 import 'review_approval.dart';
 import 'review_body.dart';
 import 'review_controller.dart';
@@ -44,6 +45,9 @@ final class ReviewScreen extends ConsumerWidget {
         ref.watch(reviewQueueProvider(projectId)).value ?? const <String>[];
     final bool busy = ref.watch(reviewControllerProvider(recordId)).busy;
     return AppPage(
+      layout: entry?.liveValues.any(isTwoSided) ?? false
+          ? AppPageLayout.readingFirst
+          : AppPageLayout.sectioned,
       key: const ValueKey<String>('route-review'),
       title: entry == null ? localCopy.reviewTitle : reviewTitleOf(entry),
       subtitle: entry == null ? null : localCopy.reviewTitle,

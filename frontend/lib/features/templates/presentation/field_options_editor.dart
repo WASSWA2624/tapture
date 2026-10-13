@@ -5,7 +5,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -121,10 +121,9 @@ class _FieldOptionsEditorState extends State<FieldOptionsEditor> {
         )
         .toList();
     final Failure? failure = widget.failure;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return AppSection(
+      title: localCopy.fieldOptionsTitle,
       children: <Widget>[
-        AppSectionHeader(title: localCopy.fieldOptionsTitle, dense: true),
         if (rows.isEmpty)
           AppEmptyState(
             icon: AppIcons.fields,

@@ -11,6 +11,8 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/normalise/spoken_text.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/trial_report_scope.dart';
 
@@ -225,6 +227,9 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     final AppTextField field = widget;
+    final bool wrapLabel =
+        field.wrapLabel ||
+        AppPageLayoutScope.of(context) == AppPageLayout.readingFirst;
     final int? lines = field.maxLines;
     final bool multiline = lines != 1;
     return ListenableBuilder(
@@ -272,14 +277,12 @@ class _AppTextFieldState extends State<AppTextField> {
             autocorrect: !field.obscureText,
             style: AppText.body.copyWith(color: onSurface),
             decoration: InputDecoration(
-              labelText: field.wrapLabel
-                  ? null
-                  : _labelText(field, Copy.of(context)),
-              label: field.wrapLabel
+              labelText: wrapLabel ? null : _labelText(field, Copy.of(context)),
+              label: wrapLabel
                   ? Text(_labelText(field, Copy.of(context)))
                   : null,
-              hintText: field.wrapLabel ? null : field.hint,
-              hint: field.wrapLabel && field.hint != null
+              hintText: wrapLabel ? null : field.hint,
+              hint: wrapLabel && field.hint != null
                   ? Text(
                       field.hint!,
                       style:

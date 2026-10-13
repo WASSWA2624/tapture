@@ -67,6 +67,7 @@ class ProjectListView extends ConsumerWidget {
                 ),
               ),
               title: row.project.name,
+              dense: true,
               wrapText: true,
               current: row.project.id == openId,
               subtitle: localCopy.projectListSubtitle(

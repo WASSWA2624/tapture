@@ -21,7 +21,7 @@ import '../../projects/fakes/fake_project_repository.dart';
 import '../fakes/fake_template_repository.dart';
 
 void main() {
-  testWidgets('the three-radio grid and hide toggle rewrite the draft', (
+  testWidgets('the three-radio list and hide toggle rewrite the draft', (
     WidgetTester tester,
   ) async {
     final FakeTemplateRepository templates = FakeTemplateRepository();
@@ -53,11 +53,9 @@ void main() {
 
     expect(find.text(Copy.requiredColumnGroup('identity')), findsOneWidget);
     expect(find.text(Copy.requiredColumnShowGroup), findsOneWidget);
-    expect(find.text('Record uid, Required'), findsNothing);
+    expect(find.text('Record uid'), findsNothing);
 
-    await tester.tap(
-      find.text(Copy.requiredColumnCell('Serial', Copy.fieldRequired)),
-    );
+    await tester.tap(find.text(Copy.fieldRequired));
     await tester.pump();
     await tester.tap(find.text(Copy.requiredColumnHide));
     await tester.pump();
@@ -77,7 +75,7 @@ void main() {
     expect(view.fields.first.hidden, isTrue);
   });
 
-  testWidgets('the radio grid stays usable at 200 percent text', (
+  testWidgets('the radio list stays usable at 200 percent text', (
     WidgetTester tester,
   ) async {
     tester.platformDispatcher.textScaleFactorTestValue = 2;
@@ -102,10 +100,7 @@ void main() {
     await _pump(tester, templates: templates, templateId: stored.id);
     await tester.pumpAndSettle();
 
-    expect(
-      find.text(Copy.requiredColumnCell('Serial', Copy.fieldRequired)),
-      findsOneWidget,
-    );
+    expect(find.text(Copy.fieldRequired), findsOneWidget);
     expect(find.text(Copy.requiredColumnHide), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -176,9 +171,7 @@ void main() {
     await _pump(tester, templates: templates, templateId: stored.id);
     await tester.pumpAndSettle();
 
-    await tester.tap(
-      find.text(Copy.requiredColumnCell('Serial', Copy.fieldRequired)),
-    );
+    await tester.tap(find.text(Copy.fieldRequired));
     await tester.pump();
     await tester.tap(find.byType(AppPrimaryAction));
     await tester.pump();

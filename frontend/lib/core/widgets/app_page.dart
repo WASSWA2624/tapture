@@ -4,15 +4,19 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 
+import 'app_action_dock.dart';
 import 'app_header_title.dart';
 import 'app_icon_button.dart';
 import 'app_overflow_menu.dart';
+import 'app_page_layout.dart';
+import 'app_page_layout_scope.dart';
 import 'app_toolbar_scope.dart';
-import 'responsive/breakpoints.dart';
 import 'responsive/content_constraint.dart';
 import 'responsive/viewport_metrics.dart';
 import 'shell_header_scope.dart';
 import 'trial_report_action.dart';
+
+export 'app_page_layout.dart';
 
 /// The single page frame every screen composes: app bar, body, optional
 /// footer, safe-area and keyboard insets, and scrolling (FE-RESP-06,
@@ -36,6 +40,7 @@ class AppPage extends StatelessWidget {
     this.leading,
     this.scrollable = true,
     this.compactBar = false,
+    this.layout = AppPageLayout.essentials,
   });
 
   /// App bar title.
@@ -89,15 +94,14 @@ class AppPage extends StatelessWidget {
   /// overlay-style screens that should not spend height on chrome.
   final bool compactBar;
 
+  /// Shared row, section and primary-action composition for this page.
+  final AppPageLayout layout;
+
   /// The page's side margin for [context]'s size class. A body that owns its
   /// scrolling (`scrollable: false`) insets its own text and controls by this
   /// so every page lines up on the same edge (FE-RESP-02).
   static double gutter(BuildContext context) {
-    return context.responsive(
-      compact: Space.x4,
-      medium: Space.x4,
-      expanded: Space.x5,
-    );
+    return ContentConstraint.gutter(context);
   }
 
   @override
@@ -174,32 +178,17 @@ class AppPage extends StatelessWidget {
               child: SafeArea(bottom: footer == null, child: content),
             ),
             if (footer != null)
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: constraints.maxHeight / 2,
-                ),
-                child: SingleChildScrollView(
-                  primary: false,
-                  child: SafeArea(
-                    top: false,
-                    child: Padding(
-                      // Inset even on edge-to-edge pages: a pinned action never
-                      // touches the screen edge.
-                      padding: _paddingFor(
-                        context,
-                        inset: true,
-                      ).copyWith(top: compactBar ? Space.x1 : Space.x2),
-                      child: ContentConstraint(child: footer),
-                    ),
-                  ),
-                ),
+              AppActionDock(
+                maxHeight: constraints.maxHeight / 2,
+                compact: compactBar,
+                child: footer,
               ),
           ],
         ),
       ),
     );
     if (!shellOwns) {
-      return page;
+      return AppPageLayoutScope(layout: layout, child: page);
     }
     return _PageHeaderRegistration(
       title: title,
@@ -207,7 +196,7 @@ class AppPage extends StatelessWidget {
       headerDetail: headerDetail,
       actions: actions,
       overflow: overflow,
-      child: page,
+      child: AppPageLayoutScope(layout: layout, child: page),
     );
   }
 }

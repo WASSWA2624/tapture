@@ -6,7 +6,7 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/features/exports/exports.dart';
 
 /// What a project export holds: the project, its records by status, the
@@ -42,64 +42,79 @@ class ExportSummaryView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppSectionHeader(title: localCopy.exportSectionProject),
-        Text(
-          summary.projectName,
-          style: AppText.title.copyWith(color: context.colors.onSurface),
-        ),
-        const SizedBox(height: Space.x2),
-        _row(AppIcons.records, localCopy.recordsCount(summary.records)),
-        _row(
-          AppIcons.photoLibrary,
-          localCopy.capturePhotoCount(summary.photos),
-        ),
-        if (summary.audioClips > 0)
-          _row(
-            AppIcons.recordAudio,
-            localCopy.exportAudioClips(summary.audioClips),
-          ),
-        if (first != null && last != null)
-          _row(
-            AppIcons.history,
-            localCopy.exportCapturedBetween(
-              DateFormat.yMMMd(locale).format(first.toLocal()),
-              DateFormat.yMMMd(locale).format(last.toLocal()),
+        AppSection(
+          title: localCopy.exportSectionProject,
+          children: <Widget>[
+            Text(
+              summary.projectName,
+              style: AppText.title.copyWith(color: context.colors.onSurface),
             ),
-          ),
+            _row(AppIcons.records, localCopy.recordsCount(summary.records)),
+            _row(
+              AppIcons.photoLibrary,
+              localCopy.capturePhotoCount(summary.photos),
+            ),
+            if (summary.audioClips > 0)
+              _row(
+                AppIcons.recordAudio,
+                localCopy.exportAudioClips(summary.audioClips),
+              ),
+            if (first != null && last != null)
+              _row(
+                AppIcons.history,
+                localCopy.exportCapturedBetween(
+                  DateFormat.yMMMd(locale).format(first.toLocal()),
+                  DateFormat.yMMMd(locale).format(last.toLocal()),
+                ),
+              ),
+          ],
+        ),
         const SizedBox(height: Space.x4),
-        AppSectionHeader(title: localCopy.exportSectionRecords),
-        _row(
-          AppIcons.queued,
-          localCopy.exportUnprocessedCount(summary.unprocessed),
-        ),
-        _row(
-          AppIcons.review,
-          localCopy.exportNeedsReviewCount(summary.needsReview),
-        ),
-        _row(
-          AppIcons.verified,
-          localCopy.exportApprovedCount(summary.approved),
+        AppSection(
+          title: localCopy.exportSectionRecords,
+          children: <Widget>[
+            _row(
+              AppIcons.queued,
+              localCopy.exportUnprocessedCount(summary.unprocessed),
+            ),
+            _row(
+              AppIcons.review,
+              localCopy.exportNeedsReviewCount(summary.needsReview),
+            ),
+            _row(
+              AppIcons.verified,
+              localCopy.exportApprovedCount(summary.approved),
+            ),
+          ],
         ),
         if (summary.templates.isNotEmpty) ...<Widget>[
           const SizedBox(height: Space.x4),
-          AppSectionHeader(title: localCopy.exportSectionTemplates),
-          for (final ExportTemplateCount template in summary.templates)
-            AppListTile(
-              title: template.name,
-              subtitle: localCopy.recordsCount(template.records),
-              leading: const Icon(AppIcons.template),
-              dense: true,
-              wrapText: true,
-            ),
+          AppSection(
+            title: localCopy.exportSectionTemplates,
+            children: <Widget>[
+              for (final ExportTemplateCount template in summary.templates)
+                AppListTile(
+                  title: template.name,
+                  subtitle: localCopy.recordsCount(template.records),
+                  leading: const Icon(AppIcons.template),
+                  dense: true,
+                  wrapText: true,
+                ),
+            ],
+          ),
         ],
         const SizedBox(height: Space.x4),
-        AppSectionHeader(title: localCopy.exportSectionFile),
-        _row(AppIcons.export, localCopy.exportFileFormat),
-        _row(AppIcons.columns, localCopy.exportFileColumns),
-        if (estimatedBytes case final int bytes)
-          _row(AppIcons.save, localCopy.exportPackageSize(bytes)),
-        if (place != null)
-          _row(AppIcons.folder, localCopy.exportSavedTo(place)),
+        AppSection(
+          title: localCopy.exportSectionFile,
+          children: <Widget>[
+            _row(AppIcons.export, localCopy.exportFileFormat),
+            _row(AppIcons.columns, localCopy.exportFileColumns),
+            if (estimatedBytes case final int bytes)
+              _row(AppIcons.save, localCopy.exportPackageSize(bytes)),
+            if (place != null)
+              _row(AppIcons.folder, localCopy.exportSavedTo(place)),
+          ],
+        ),
       ],
     );
   }

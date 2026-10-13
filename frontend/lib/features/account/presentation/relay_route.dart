@@ -21,6 +21,7 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
@@ -89,10 +90,26 @@ class _RelayRouteState extends ConsumerState<RelayRoute> {
         authority.live &&
         config != null &&
         roleGateFor(config)?.allows(RoleCapability.manageProject) == true;
+    final AsyncValue<RelaySnapshot?> snapshot = ref.watch(
+      relaySnapshotProvider(projectId),
+    );
+    final RelaySnapshot? loaded = snapshot.asData?.value;
     return AppPage(
+      layout: AppPageLayout.thumbReach,
       title: localCopy.relayTitle,
+      footer:
+          loaded != null &&
+              !loaded.neverRelay &&
+              authority.may(RoleCapability.relay)
+          ? _RelayActions(
+              projectId: projectId!,
+              view: loaded,
+              action: action,
+              online: online,
+            )
+          : null,
       body: AsyncValueView<RelaySnapshot?>(
-        value: ref.watch(relaySnapshotProvider(projectId)),
+        value: snapshot,
         isEmpty: (RelaySnapshot? value) => value == null,
         empty: () => AppEmptyState(
           icon: AppIcons.project,
@@ -189,36 +206,6 @@ class _RelayBody extends ConsumerWidget {
             ),
           ),
         if (relays) ...<Widget>[
-          const SizedBox(height: Space.x3),
-          if (!view.hasKey)
-            AppButton(
-              label: localCopy.relayAddKey,
-              variant: AppButtonVariant.secondary,
-              expand: true,
-              onPressed: () => unawaited(_addKey(context)),
-            ),
-          if (view.enabled && view.hasKey) ...<Widget>[
-            AppButton(
-              label: localCopy.relayQueueProject,
-              expand: true,
-              busy: action.busy,
-              onPressed: () => unawaited(controller.queueProject()),
-            ),
-            const SizedBox(height: Space.x2),
-          ],
-          AppButton(
-            label: localCopy.relaySync,
-            variant: AppButtonVariant.secondary,
-            expand: true,
-            busy: action.busy,
-            onPressed: online
-                ? () => unawaited(
-                    controller.run(
-                      (RelayQueue queue, String id) => queue.sync(id),
-                    ),
-                  )
-                : null,
-          ),
           const SizedBox(height: Space.x2),
           for (final String id in view.incoming)
             AppListTile(
@@ -252,17 +239,6 @@ class _RelayBody extends ConsumerWidget {
     }
     final (String message, SnackTone tone) = line;
     return _Line(AppBanner(message: message, icon: tone.icon, tone: tone));
-  }
-
-  Future<void> _addKey(BuildContext context) {
-    final LocalizedCopy localCopy = Copy.of(context);
-
-    return showAppSheet<void>(
-      context,
-      title: localCopy.relaySharedKey,
-      contentSized: true,
-      builder: (BuildContext _) => _RelayKeyForm(projectId: projectId),
-    );
   }
 
   /// Decrypts a received package and hands it to the same merge preview and
@@ -313,6 +289,70 @@ class _RelayBody extends ConsumerWidget {
           },
         );
     }
+  }
+}
+
+class _RelayActions extends ConsumerWidget {
+  const _RelayActions({
+    required this.projectId,
+    required this.view,
+    required this.action,
+    required this.online,
+  });
+
+  final String projectId;
+  final RelaySnapshot view;
+  final RelayActionState action;
+  final bool online;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LocalizedCopy copy = Copy.of(context);
+    final RelayController controller = ref.read(
+      relayControllerProvider(projectId).notifier,
+    );
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (!view.hasKey) ...<Widget>[
+          AppPrimaryAction(
+            label: copy.relayAddKey,
+            onPressed: () => unawaited(
+              showAppSheet<void>(
+                context,
+                title: copy.relaySharedKey,
+                contentSized: true,
+                builder: (BuildContext _) =>
+                    _RelayKeyForm(projectId: projectId),
+              ),
+            ),
+          ),
+          const SizedBox(height: Space.x2),
+        ],
+        if (view.enabled && view.hasKey) ...<Widget>[
+          AppPrimaryAction(
+            label: copy.relayQueueProject,
+            busy: action.busy,
+            onPressed: () => unawaited(controller.queueProject()),
+          ),
+          const SizedBox(height: Space.x2),
+        ],
+        AppButton(
+          label: copy.relaySync,
+          variant: AppButtonVariant.secondary,
+          expand: true,
+          busy: action.busy,
+          onPressed: online
+              ? () => unawaited(
+                  controller.run(
+                    (RelayQueue queue, String id) => queue.sync(id),
+                  ),
+                )
+              : null,
+        ),
+      ],
+    );
   }
 }
 

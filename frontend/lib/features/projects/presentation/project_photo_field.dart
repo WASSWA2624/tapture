@@ -12,6 +12,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_picker.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/photo_source_sheet.dart';
 import 'package:tapture/core/widgets/record_thumb.dart';
@@ -80,36 +81,40 @@ class ProjectPhotoField extends ConsumerWidget {
           )
         : null;
     final bool has = preview != null;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+    return AppSection(
       children: <Widget>[
-        Text(localCopy.projectPhoto, style: AppText.label),
-        const SizedBox(height: Space.x1),
-        if (preview != null) ...<Widget>[
-          preview,
-          const SizedBox(height: Space.x2),
-        ],
-        Wrap(
-          spacing: Space.x2,
-          runSpacing: Space.x1,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            AppButton(
-              label: has
-                  ? localCopy.projectPhotoChange
-                  : localCopy.projectPhotoAdd,
-              icon: AppIcons.addPhoto,
-              variant: AppButtonVariant.secondary,
-              busy: busy,
-              onPressed: busy ? null : () => unawaited(_pick(context, ref)),
+            Text(localCopy.projectPhoto, style: AppText.label),
+            const SizedBox(height: Space.x1),
+            if (preview != null) ...<Widget>[
+              preview,
+              const SizedBox(height: Space.x2),
+            ],
+            Wrap(
+              spacing: Space.x2,
+              runSpacing: Space.x1,
+              children: <Widget>[
+                AppButton(
+                  label: has
+                      ? localCopy.projectPhotoChange
+                      : localCopy.projectPhotoAdd,
+                  icon: AppIcons.addPhoto,
+                  variant: AppButtonVariant.secondary,
+                  busy: busy,
+                  onPressed: busy ? null : () => unawaited(_pick(context, ref)),
+                ),
+                if (has && onRemove != null)
+                  AppButton(
+                    label: localCopy.projectPhotoRemove,
+                    icon: AppIcons.delete,
+                    variant: AppButtonVariant.text,
+                    onPressed: busy ? null : onRemove,
+                  ),
+              ],
             ),
-            if (has && onRemove != null)
-              AppButton(
-                label: localCopy.projectPhotoRemove,
-                icon: AppIcons.delete,
-                variant: AppButtonVariant.text,
-                onPressed: busy ? null : onRemove,
-              ),
           ],
         ),
       ],

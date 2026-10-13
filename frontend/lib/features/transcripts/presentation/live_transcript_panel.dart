@@ -44,6 +44,8 @@ class LiveTranscriptPanel extends ConsumerWidget {
     this.startLabel,
     this.showIdleControls = true,
     this.showEmptyIdleTranscript = true,
+    this.showControls = true,
+    this.showTranscript = true,
     this.fill = false,
     this.onOpenTranscript,
     super.key,
@@ -60,6 +62,12 @@ class LiveTranscriptPanel extends ConsumerWidget {
 
   /// Whether an idle session with no transcript words shows its empty pane.
   final bool showEmptyIdleTranscript;
+
+  /// Lets the owning page pin the same session's controls in its action dock.
+  final bool showControls;
+
+  /// Lets the owning page keep the transcript in its readable content pane.
+  final bool showTranscript;
 
   /// Whether the transcript fills the height of a bounded parent.
   final bool fill;
@@ -119,32 +127,34 @@ class LiveTranscriptPanel extends ConsumerWidget {
       mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        for (final Widget notice in notices) ...<Widget>[
-          notice,
-          const SizedBox(height: Space.x2),
-        ],
-        ValueListenableBuilder<LiveTranscriptFrame>(
-          valueListenable: controller.frames,
-          builder:
-              (BuildContext context, LiveTranscriptFrame frame, Widget? _) {
-                return AppRecordingBar(
-                  phase: _barPhase(phase),
-                  elapsed: frame.elapsed,
-                  level: frame.level,
-                  status: _barStatus(localCopy, status, mode),
-                  startLabel: startLabel,
-                  onStart: canStart
-                      ? () => unawaited(controller.start(target))
-                      : null,
-                  onPause: () => unawaited(controller.pause()),
-                  onResume: () => unawaited(controller.resume()),
-                  onStop: () => unawaited(controller.stop()),
-                  onCancel: () =>
-                      unawaited(_confirmDiscard(context, controller)),
-                );
-              },
-        ),
-        if (mode == TranscriptMode.live) ...<Widget>[
+        if (showControls)
+          for (final Widget notice in notices) ...<Widget>[
+            notice,
+            const SizedBox(height: Space.x2),
+          ],
+        if (showControls)
+          ValueListenableBuilder<LiveTranscriptFrame>(
+            valueListenable: controller.frames,
+            builder:
+                (BuildContext context, LiveTranscriptFrame frame, Widget? _) {
+                  return AppRecordingBar(
+                    phase: _barPhase(phase),
+                    elapsed: frame.elapsed,
+                    level: frame.level,
+                    status: _barStatus(localCopy, status, mode),
+                    startLabel: startLabel,
+                    onStart: canStart
+                        ? () => unawaited(controller.start(target))
+                        : null,
+                    onPause: () => unawaited(controller.pause()),
+                    onResume: () => unawaited(controller.resume()),
+                    onStop: () => unawaited(controller.stop()),
+                    onCancel: () =>
+                        unawaited(_confirmDiscard(context, controller)),
+                  );
+                },
+          ),
+        if (showTranscript && mode == TranscriptMode.live) ...<Widget>[
           const SizedBox(height: Space.x2),
           Align(
             alignment: AlignmentDirectional.centerStart,
@@ -154,7 +164,8 @@ class LiveTranscriptPanel extends ConsumerWidget {
             ),
           ),
         ],
-        if (phase == TranscriptSessionPhase.failed &&
+        if (showControls &&
+            phase == TranscriptSessionPhase.failed &&
             status.retryable) ...<Widget>[
           const SizedBox(height: Space.x2),
           Align(
@@ -167,8 +178,9 @@ class LiveTranscriptPanel extends ConsumerWidget {
             ),
           ),
         ],
-        transcript,
-        if (phase == TranscriptSessionPhase.saved &&
+        if (showTranscript) transcript,
+        if (showControls &&
+            phase == TranscriptSessionPhase.saved &&
             transcriptId != null &&
             open != null) ...<Widget>[
           const SizedBox(height: Space.x3),

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/camera/camera.dart';
 import 'package:tapture/core/copy/copy.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 
 import 'live_camera_controller.dart';
@@ -43,41 +43,45 @@ final class CameraControls extends ConsumerWidget {
       spacing: Space.x2,
       runSpacing: Space.x2,
       children: <Widget>[
-        AppIconButton(
+        AppButton(
           icon: flashIcon,
-          semanticLabel: flashLabel,
-          tooltip: flashLabel,
+          label: flashLabel,
+          variant: AppButtonVariant.secondary,
           onPressed: () => unawaited(controller.cycleFlash()),
         ),
-        AppIconButton(
-          icon: view.grid ? AppIcons.gridOn : AppIcons.gridOff,
-          semanticLabel: localCopy.captureGrid,
-          tooltip: localCopy.captureGrid,
-          selected: view.grid,
-          onPressed: () => unawaited(controller.setGrid(!view.grid)),
+        Semantics(
+          toggled: view.grid,
+          child: AppButton(
+            icon: view.grid ? AppIcons.gridOn : AppIcons.gridOff,
+            label: localCopy.captureGrid,
+            variant: AppButtonVariant.secondary,
+            onPressed: () => unawaited(controller.setGrid(!view.grid)),
+          ),
         ),
-        AppIconButton(
+        AppButton(
           icon: AppIcons.zoomOut,
-          semanticLabel: localCopy.captureZoomOut,
-          tooltip: localCopy.captureZoomOut,
+          label: localCopy.captureZoomOut,
+          variant: AppButtonVariant.secondary,
           onPressed: view.zoom > camera.minZoom
               ? () => unawaited(controller.zoomBy(-zoomStep))
               : null,
         ),
-        AppIconButton(
+        AppButton(
           icon: AppIcons.zoomIn,
-          semanticLabel: localCopy.captureZoomIn,
-          tooltip: localCopy.captureZoomIn,
+          label: localCopy.captureZoomIn,
+          variant: AppButtonVariant.secondary,
           onPressed: view.zoom < camera.maxZoom
               ? () => unawaited(controller.zoomBy(zoomStep))
               : null,
         ),
-        AppIconButton(
-          icon: AppIcons.photoDocument,
-          semanticLabel: localCopy.captureDocumentMode,
-          tooltip: localCopy.captureDocumentMode,
-          selected: view.documentMode,
-          onPressed: () => controller.setDocumentMode(!view.documentMode),
+        Semantics(
+          toggled: view.documentMode,
+          child: AppButton(
+            icon: AppIcons.photoDocument,
+            label: localCopy.captureDocumentMode,
+            variant: AppButtonVariant.secondary,
+            onPressed: () => controller.setDocumentMode(!view.documentMode),
+          ),
         ),
       ],
     );

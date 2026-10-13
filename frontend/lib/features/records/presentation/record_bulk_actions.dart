@@ -9,9 +9,13 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/network/offline_now.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
+import 'package:tapture/core/widgets/app_action_dock.dart';
+import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/features/processing/processing.dart'
@@ -37,14 +41,15 @@ import 'record_selection.dart';
 /// ticked, so the operator sees what is left. With nothing ticked the bar
 /// draws nothing.
 ///
-/// A narrow bar keeps approve and delete in reach and puts the rest behind
-/// its overflow control; a wide one shows every action.
+/// Labelled clear, delete and approve stay in reach; the other commands use
+/// the shared overflow control at every width.
 final class RecordBulkActions extends ConsumerWidget {
   /// Creates the bar over [projectId]'s selection.
   const RecordBulkActions({
     required this.projectId,
     this.selectable = const <String>[],
     this.onExport,
+    this.maxHeight,
     super.key,
   });
 
@@ -60,6 +65,9 @@ final class RecordBulkActions extends ConsumerWidget {
   /// project (task 076, D13), so the confirm says the selection travels with
   /// every other record of the project.
   final ValueChanged<List<String>>? onExport;
+
+  /// The bounded list's available action budget, including keyboard changes.
+  final double? maxHeight;
 
   /// Runs [projectId]'s processing queue now, in the foreground, as the
   /// queue's Process all does: records put back in the queue are read
@@ -150,83 +158,83 @@ final class RecordBulkActions extends ConsumerWidget {
         color: colors.surface,
         border: Border(top: BorderSide(color: colors.outline)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Space.x2,
-          vertical: Space.x1,
-        ),
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            final LocalizedCopy localCopy = Copy.of(context);
-
-            final bool wide = constraints.maxWidth >= _inlineWidth;
-            final List<_BulkCommand> inline = <_BulkCommand>[
-              for (final _BulkCommand command in commands)
-                if (wide || command.inReach) command,
-            ];
-            final List<_BulkCommand> tucked = <_BulkCommand>[
-              for (final _BulkCommand command in commands)
-                if (!wide && !command.inReach) command,
-            ];
-            return Row(
-              children: <Widget>[
-                AppIconButton(
-                  key: const ValueKey<String>('records-bulk-clear'),
-                  icon: AppIcons.close,
-                  semanticLabel: localCopy.recordsClearSelection,
-                  tooltip: localCopy.recordsClearSelection,
-                  outlined: false,
-                  onPressed: busy
-                      ? null
-                      : ref
-                            .read(recordSelectionProvider(projectId).notifier)
-                            .clear,
-                ),
-                const SizedBox(width: Space.x2),
-                Expanded(
-                  child: Semantics(
-                    liveRegion: true,
-                    child: Text(
-                      localCopy.recordsSelectedCount(count),
-                      key: const ValueKey<String>('records-bulk-count'),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppText.bodyStrong.copyWith(
-                        color: colors.onSurface,
+      child: AppActionDock(
+        maxHeight: maxHeight,
+        child: AppPageLayoutScope(
+          layout: AppPageLayout.thumbReach,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        localCopy.recordsSelectedCount(count),
+                        key: const ValueKey<String>('records-bulk-count'),
+                        style: AppText.bodyStrong.copyWith(
+                          color: colors.onSurface,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                for (final _BulkCommand command in inline) ...<Widget>[
-                  const SizedBox(width: Space.x1),
-                  AppIconButton(
-                    key: ValueKey<String>(command.key),
-                    icon: command.icon,
-                    semanticLabel: command.label,
-                    tooltip: command.label,
-                    onPressed: busy ? null : command.run,
-                  ),
-                ],
-                if (tucked.isNotEmpty) ...<Widget>[
-                  const SizedBox(width: Space.x1),
                   AppOverflowMenu(
                     key: const ValueKey<String>('records-bulk-more'),
                     items: busy
                         ? const <AppOverflowAction>[]
                         : <AppOverflowAction>[
-                            for (final _BulkCommand command in tucked)
-                              AppOverflowAction(
-                                key: ValueKey<String>(command.key),
-                                label: command.label,
-                                icon: command.icon,
-                                onTap: command.run,
-                              ),
+                            for (final _BulkCommand command in commands)
+                              if (!command.inReach)
+                                AppOverflowAction(
+                                  key: ValueKey<String>(command.key),
+                                  label: command.label,
+                                  icon: command.icon,
+                                  onTap: command.run,
+                                ),
                           ],
                   ),
                 ],
-              ],
-            );
-          },
+              ),
+              const SizedBox(height: Space.x2),
+              Wrap(
+                spacing: Space.x2,
+                runSpacing: Space.x2,
+                children: <Widget>[
+                  AppButton(
+                    key: const ValueKey<String>('records-bulk-clear'),
+                    label: localCopy.recordsClearSelection,
+                    icon: AppIcons.close,
+                    variant: AppButtonVariant.secondary,
+                    onPressed: busy
+                        ? null
+                        : ref
+                              .read(recordSelectionProvider(projectId).notifier)
+                              .clear,
+                  ),
+                  AppButton(
+                    key: const ValueKey<String>('records-bulk-delete'),
+                    label: localCopy.recordsDeleteLabel(count),
+                    icon: AppIcons.delete,
+                    variant: AppButtonVariant.secondary,
+                    onPressed: busy
+                        ? null
+                        : () => unawaited(_delete(context, ref, ids)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: Space.x2),
+              AppPrimaryAction(
+                key: const ValueKey<String>('records-bulk-approve'),
+                label: localCopy.recordsApproveLabel(count),
+                busy: busy,
+                onPressed: busy
+                    ? null
+                    : () => unawaited(_approve(context, ref, ids)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -396,10 +404,6 @@ final class RecordBulkActions extends ConsumerWidget {
         .deselectAll(outcome.succeeded);
   }
 }
-
-/// The narrowest bar that shows every action inline: the clear control,
-/// a short count and six actions, each a 48dp target.
-const double _inlineWidth = Sizes.minTapTarget * 12;
 
 /// One action on the bar: its control, its label, and whether a narrow bar
 /// keeps it in reach rather than behind the overflow control.

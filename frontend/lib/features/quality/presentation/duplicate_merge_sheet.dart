@@ -4,6 +4,7 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
@@ -132,6 +133,7 @@ Future<DuplicateResolution?> showDuplicateMergeSheet(
   return showAppSheet<DuplicateResolution>(
     context,
     title: localCopy.duplicateMergeTitle,
+    layout: AppPageLayout.readingFirst,
     contentSized: true,
     builder: (BuildContext sheet) {
       return DuplicateMergeSheet(

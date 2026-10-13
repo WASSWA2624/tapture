@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
-import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
@@ -228,60 +227,19 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen>
     final LocalizedCopy localCopy = Copy.of(context);
 
     if (_photos.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(title: Text(localCopy.photo)),
+      return AppPage(
+        layout: AppPageLayout.thumbReach,
+        title: localCopy.photo,
         body: Center(child: Text(localCopy.missingPhoto)),
       );
     }
     final PhotoDraft current = _photos[_index];
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(current.photoType),
-        actions: <Widget>[
-          if (widget.onRedact != null)
-            AppOverflowMenu(
-              items: <AppOverflowAction>[
-                AppOverflowAction(
-                  label: localCopy.redactionTitle,
-                  icon: AppIcons.hide,
-                  onTap: () => widget.onRedact?.call(current),
-                ),
-                AppOverflowAction(
-                  label: localCopy.photoRotate,
-                  icon: AppIcons.rotate,
-                  onTap: () => unawaited(_rotate(current)),
-                ),
-              ],
-            )
-          else
-            _action(
-              AppIcons.rotate,
-              localCopy.photoRotate,
-              () => _rotate(current),
-            ),
-          _action(
-            AppIcons.crop,
-            localCopy.photoCrop,
-            () => widget.onCrop?.call(current),
-          ),
-          _action(
-            AppIcons.draw,
-            localCopy.photoDraw,
-            () => widget.onDraw?.call(current),
-          ),
-          _action(
-            AppIcons.typeText,
-            localCopy.photoTypeOn,
-            () => widget.onType?.call(current),
-          ),
-          if (current.derivedFrom != null)
-            _action(
-              AppIcons.undo,
-              localCopy.photoRevert,
-              () => widget.onRevert?.call(current),
-            ),
-        ],
-      ),
+    return AppPage(
+      layout: AppPageLayout.thumbReach,
+      title: current.photoType,
+      compactBar: true,
+      scrollable: false,
+      inset: false,
       body: PageView.builder(
         controller: _controller,
         itemCount: _photos.length,
@@ -294,17 +252,60 @@ class _PhotoViewerScreenState extends State<PhotoViewerScreen>
           return _frame(photo);
         },
       ),
-      bottomNavigationBar: _captionPanel(current),
+      footer: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[_tools(current), _captionPanel(current)],
+      ),
     );
   }
 
-  Widget _action(IconData icon, String label, VoidCallback onPressed) {
-    return AppIconButton(
-      icon: icon,
-      tooltip: label,
-      semanticLabel: label,
-      outlined: false,
-      onPressed: onPressed,
+  Widget _tools(PhotoDraft current) {
+    final LocalizedCopy localCopy = Copy.of(context);
+    return Wrap(
+      key: const ValueKey<String>('photo-viewer-tools'),
+      spacing: Space.x2,
+      runSpacing: Space.x2,
+      children: <Widget>[
+        AppButton(
+          label: localCopy.photoRotate,
+          icon: AppIcons.rotate,
+          variant: AppButtonVariant.secondary,
+          onPressed: () => unawaited(_rotate(current)),
+        ),
+        AppButton(
+          label: localCopy.photoCrop,
+          icon: AppIcons.crop,
+          variant: AppButtonVariant.secondary,
+          onPressed: () => widget.onCrop?.call(current),
+        ),
+        AppButton(
+          label: localCopy.photoDraw,
+          icon: AppIcons.draw,
+          variant: AppButtonVariant.secondary,
+          onPressed: () => widget.onDraw?.call(current),
+        ),
+        AppButton(
+          label: localCopy.photoTypeOn,
+          icon: AppIcons.typeText,
+          variant: AppButtonVariant.secondary,
+          onPressed: () => widget.onType?.call(current),
+        ),
+        if (widget.onRedact != null)
+          AppButton(
+            label: localCopy.redactionTitle,
+            icon: AppIcons.hide,
+            variant: AppButtonVariant.secondary,
+            onPressed: () => widget.onRedact?.call(current),
+          ),
+        if (current.derivedFrom != null)
+          AppButton(
+            label: localCopy.photoRevert,
+            icon: AppIcons.undo,
+            variant: AppButtonVariant.secondary,
+            onPressed: () => widget.onRevert?.call(current),
+          ),
+      ],
     );
   }
 

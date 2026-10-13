@@ -1447,7 +1447,7 @@ final Finder _removeTarget = find.byKey(
 
 /// The empty tray's add-photo icon, which is its add action (FBK0000004).
 final Finder _addPhotoIcon = find.byKey(
-  const ValueKey<String>('capture-composer-add-photo'),
+  const ValueKey<String>('capture-add-photo'),
 );
 
 /// The camera permission in [state]; a settings request lands in

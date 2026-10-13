@@ -228,6 +228,10 @@ void main() {
         final FakeTemplateRepository templates = _repository();
         await templates.save(_library);
         await _pump(tester, templates, _loader(templates), cell: cell);
+        await _visibleLibraryRow(
+          tester,
+          find.widgetWithText(AppListTile, 'My library'),
+        );
         expect(find.text('My library'), findsOneWidget);
         await tester.enterText(find.byType(TextField).first, 'Survey asset');
         await tester.pumpAndSettle();
@@ -354,8 +358,12 @@ Future<void> _matchLibraryGolden(
 
 Future<void> _openAsset(WidgetTester tester) async {
   final Finder asset = find.widgetWithText(AppListTile, 'Survey asset');
+  await tester.tapAt((await _visibleLibraryRow(tester, asset)).center);
+}
+
+Future<Rect> _visibleLibraryRow(WidgetTester tester, Finder row) async {
   await tester.scrollUntilVisible(
-    asset,
+    row,
     80,
     scrollable: find
         .descendant(
@@ -365,16 +373,16 @@ Future<void> _openAsset(WidgetTester tester) async {
         .last,
   );
   final Rect viewport = tester.getRect(find.byType(AppListViewport).first);
-  Rect visible = tester.getRect(asset).intersect(viewport);
+  Rect visible = tester.getRect(row).intersect(viewport);
   for (int attempt = 0; visible.height < 48 && attempt < 10; attempt++) {
     await tester.drag(find.byType(AppListViewport).first, const Offset(0, -80));
     await tester.pumpAndSettle();
-    visible = tester.getRect(asset).intersect(viewport);
+    visible = tester.getRect(row).intersect(viewport);
   }
   // A long, wrapped row can exceed the short landscape viewport. Exercise
   // its visible touch target rather than a center clipped by the footer.
   expect(visible.height, greaterThanOrEqualTo(48));
-  await tester.tapAt(visible.center);
+  return visible;
 }
 
 List<TemplateDef> _owned(

@@ -77,6 +77,8 @@ import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 
+import 'app_layout_gallery.dart';
+
 /// Developer-only catalogue of every design-system widget, at `/_gallery`.
 ///
 /// Switchers compare theme, width and text scale without a restart
@@ -385,6 +387,8 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
 
     return <Widget>[
       AppSectionHeader(title: localCopy.galleryLayout),
+      const AppLayoutGallery(),
+      const SizedBox(height: Space.x4),
       const AppBrandLockup(),
       const SizedBox(height: Space.x3),
       ContentConstraint(

@@ -104,13 +104,18 @@ class AppStatusPill extends StatelessWidget {
   ) {
     if (!width.isFinite) return true;
     final TextPainter painter = TextPainter(
-      text: TextSpan(text: label, style: style),
+      text: TextSpan(
+        text: label,
+        style: DefaultTextStyle.of(context).style.merge(style),
+      ),
       maxLines: 1,
       textDirection: Directionality.of(context),
       textScaler: MediaQuery.textScalerOf(context),
       locale: Localizations.maybeLocaleOf(context),
     )..layout();
-    final bool fits = painter.width <= width;
+    // Text uses inherited font metrics and fractional device pixels. Leave a
+    // token-sized margin so an apparently exact fit cannot overflow its row.
+    final bool fits = painter.width + Space.x0 <= width;
     painter.dispose();
     return fits;
   }

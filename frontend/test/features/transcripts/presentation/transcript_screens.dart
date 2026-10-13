@@ -14,6 +14,8 @@ import 'package:tapture/features/transcripts/transcripts.dart';
 
 import '../../../support/fakes/fake_speech_engine.dart';
 import '../../../support/live_transcription_rig.dart';
+import '../../../support/screen_fonts.dart';
+import '../../../support/screen_matrix.dart';
 
 /// Text the stand-in pages show, so a test can tell where it landed.
 const String projectsPage = 'projects page';
@@ -25,6 +27,7 @@ Future<GoRouter> pumpTranscriptRoutes(
   WidgetTester tester,
   String location, {
   List<Override> overrides = const <Override>[],
+  ScreenMatrix? cell,
 }) async {
   final GoRouter router = GoRouter(
     initialLocation: location,
@@ -70,7 +73,11 @@ Future<GoRouter> pumpTranscriptRoutes(
       child: MaterialApp.router(
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        theme: buildTheme(brightness: Brightness.light),
+        theme: cell == null
+            ? buildTheme(brightness: Brightness.light)
+            : ScreenFonts.theme(
+                buildTheme(brightness: cell.brightness, outdoor: cell.outdoor),
+              ),
         routerConfig: router,
       ),
     ),

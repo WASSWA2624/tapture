@@ -16,6 +16,8 @@ import 'package:tapture/core/files/document_picker.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
@@ -136,6 +138,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(AppEmptyState), findsOneWidget);
+    expect(
+      tester
+          .widget<AppPage>(find.byKey(const ValueKey<String>('route-projects')))
+          .layout,
+      AppPageLayout.essentials,
+    );
     expect(find.text(Copy.projectsEmptyHeadline), findsOneWidget);
     expect(find.text(Copy.projectsEmptyMessage), findsOneWidget);
     expect(find.text(Copy.projectsCreate), findsOneWidget);
@@ -200,6 +208,16 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(AppListTile), findsOneWidget);
+    expect(
+      tester
+          .widget<AppPage>(find.byKey(const ValueKey<String>('route-projects')))
+          .layout,
+      AppPageLayout.compact,
+    );
+    expect(
+      AppPageLayoutScope.of(tester.element(find.byType(AppListTile))),
+      AppPageLayout.compact,
+    );
     expect(find.text('Alpha'), findsOneWidget);
     expect(
       find.text(Copy.projectListSubtitle(records: 2, unprocessed: 1)),

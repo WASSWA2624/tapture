@@ -50,6 +50,7 @@ class FieldListScreen extends ConsumerWidget {
         .whenData(_pick);
     final TemplateDef? template = value.asData?.value;
     return AppPage(
+      layout: AppPageLayout.readingFirst,
       key: const ValueKey<String>('route-template-fields'),
       title: template?.name ?? localCopy.templateFieldsTitle,
       scrollable: false,

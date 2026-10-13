@@ -3,7 +3,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -123,10 +123,9 @@ class _FieldValidationEditorState extends State<FieldValidationEditor> {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final Failure? failure = widget.failure;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return AppSection(
+      title: localCopy.fieldValidationTitle,
       children: <Widget>[
-        AppSectionHeader(title: localCopy.fieldValidationTitle, dense: true),
         if (_isEmpty)
           AppEmptyState(
             icon: AppIcons.rules,

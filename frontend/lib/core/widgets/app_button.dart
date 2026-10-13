@@ -3,6 +3,8 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 /// The catalogue button. Features compose this instead of a Material button.
@@ -55,10 +57,16 @@ class AppButton extends StatelessWidget {
     final Widget child = Builder(
       builder: (BuildContext buttonContext) => _child(buttonContext),
     );
-    final ButtonStyle? size = expand
-        ? const ButtonStyle(
+    final bool thumbPrimary =
+        variant == AppButtonVariant.primary &&
+        AppPageLayoutScope.of(context) == AppPageLayout.thumbReach;
+    final ButtonStyle? size = expand || thumbPrimary
+        ? ButtonStyle(
             minimumSize: WidgetStatePropertyAll<Size>(
-              Size(double.infinity, Sizes.controlHeight),
+              Size(
+                expand ? double.infinity : Sizes.minTapTarget,
+                thumbPrimary ? Sizes.primaryActionHeight : Sizes.controlHeight,
+              ),
             ),
           )
         : null;

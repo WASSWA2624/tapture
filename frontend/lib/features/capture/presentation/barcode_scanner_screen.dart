@@ -9,7 +9,6 @@ import 'package:tapture/core/barcode/barcode.dart';
 import 'package:tapture/core/camera/camera.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
@@ -63,29 +62,52 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
     );
     final BarcodeScannerService scanner = widget.scanner;
     return AppPage(
+      layout: AppPageLayout.thumbReach,
       title: localCopy.barcodeTitle,
       compactBar: true,
       scrollable: false,
       inset: false,
-      actions: <Widget>[
-        if (scan.started && scanner.torchSupported)
-          AppIconButton(
-            icon: scan.torchOn ? AppIcons.flashOn : AppIcons.flashOff,
-            semanticLabel: localCopy.barcodeTorch,
-            tooltip: localCopy.barcodeTorch,
-            selected: scan.torchOn,
-            onPressed: () => unawaited(_controller.toggleTorch()),
-          ),
-        if (scan.failure == null)
-          AppIconButton(
-            icon: AppIcons.checklist,
-            semanticLabel: localCopy.barcodeCountMode,
-            tooltip: localCopy.barcodeCountMode,
-            selected: scan.counting,
-            onPressed: () => _controller.setCounting(!scan.counting),
-          ),
-      ],
-      footer: _footer(scan),
+      footer: scan.failure != null
+          ? null
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Wrap(
+                  spacing: Space.x2,
+                  runSpacing: Space.x2,
+                  children: <Widget>[
+                    if (scan.started && scanner.torchSupported)
+                      Semantics(
+                        toggled: scan.torchOn,
+                        child: AppButton(
+                          icon: scan.torchOn
+                              ? AppIcons.flashOn
+                              : AppIcons.flashOff,
+                          label: localCopy.barcodeTorch,
+                          variant: AppButtonVariant.secondary,
+                          onPressed: () => unawaited(_controller.toggleTorch()),
+                        ),
+                      ),
+                    if (scan.failure == null)
+                      Semantics(
+                        toggled: scan.counting,
+                        child: AppButton(
+                          icon: AppIcons.checklist,
+                          label: localCopy.barcodeCountMode,
+                          variant: AppButtonVariant.secondary,
+                          onPressed: () =>
+                              _controller.setCounting(!scan.counting),
+                        ),
+                      ),
+                  ],
+                ),
+                if (_footer(scan) case final Widget footer) ...<Widget>[
+                  const SizedBox(height: Space.x2),
+                  footer,
+                ],
+              ],
+            ),
       body: switch (scan.failure) {
         final failure? => Center(
           child: SingleChildScrollView(

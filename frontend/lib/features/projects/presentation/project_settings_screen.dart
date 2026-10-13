@@ -11,6 +11,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -56,6 +57,7 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
     final Project? project = ref.watch(currentProjectDetailsProvider);
     if (project == null) {
       return AppPage(
+        layout: AppPageLayout.sectioned,
         key: const ValueKey<String>('route-project-settings'),
         title: localCopy.projectSettingsTitle,
         body: AppEmptyState(
@@ -72,6 +74,7 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
     final ProjectSettingsDefaults app = appProjectSettingsDefaults(store);
     final _ProjectSettingsView view = ref.watch(_projectSettingsProvider);
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-project-settings'),
       title: localCopy.projectSettingsTitle,
       scrollable: false,
@@ -98,129 +101,161 @@ class _ProjectSettingsScreenState extends ConsumerState<ProjectSettingsScreen> {
                 ).stateText(view.localizedSaveError, view.saveError)!,
               ],
         fields: <Widget>[
-          AppListTile(
-            key: const ValueKey<String>('project-relay'),
-            title: localCopy.relayTitle,
-            trailing: const Icon(AppIcons.open),
-            onTap: () =>
-                unawaited(context.push(RoutePaths.projectRelay(project.id))),
-          ),
-          AppChoiceField<bool?>(
-            label:
-                '${localCopy.projectAiEnabled} · ${localCopy.projectAppDefault(_onOff(app.aiEnabled, localizedCopy: Copy.of(context)))}',
-            value: view.draft.aiEnabled,
-            options: <Choice<bool?>>[
-              Choice<bool?>(null, localCopy.projectUseAppDefault),
-              Choice<bool?>(true, localCopy.projectOn),
-              Choice<bool?>(false, localCopy.projectOff),
-            ],
-            onChanged: (bool? value) {
-              ref.read(_projectSettingsProvider.notifier).setAiEnabled(value);
-            },
-          ),
-          AppChoiceField<bool?>(
-            label:
-                '${localCopy.projectDoNotSendImages} · ${localCopy.projectAppDefault(_onOff(app.doNotSendImages, localizedCopy: Copy.of(context)))}',
-            value: view.draft.doNotSendImages,
-            options: <Choice<bool?>>[
-              Choice<bool?>(null, localCopy.projectUseAppDefault),
-              Choice<bool?>(true, localCopy.projectOn),
-              Choice<bool?>(false, localCopy.projectOff),
-            ],
-            onChanged: (bool? value) {
-              ref
-                  .read(_projectSettingsProvider.notifier)
-                  .setDoNotSendImages(value);
-            },
-          ),
-          AppChoiceField<bool?>(
-            label:
-                '${localCopy.settingsGps} · ${localCopy.projectAppDefault(_onOff(app.gpsEnabled, localizedCopy: Copy.of(context)))}',
-            value: view.draft.gpsEnabled,
-            options: <Choice<bool?>>[
-              Choice<bool?>(null, localCopy.projectUseAppDefault),
-              Choice<bool?>(true, localCopy.projectOn),
-              Choice<bool?>(false, localCopy.projectOff),
-            ],
-            onChanged: (bool? value) {
-              ref.read(_projectSettingsProvider.notifier).setGpsEnabled(value);
-            },
-          ),
-          AppChoiceField<String?>(
-            label: localCopy.settingsFolderStrategy,
-            value: view.draft.folderStrategy,
-            options: <Choice<String?>>[
-              Choice<String?>(
-                null,
-                localCopy.projectAppDefault(
-                  _strategyLabel(
-                    app.folderStrategy,
-                    localizedCopy: Copy.of(context),
-                  ),
+          AppSection(
+            children: <Widget>[
+              AppListTile(
+                key: const ValueKey<String>('project-relay'),
+                title: localCopy.relayTitle,
+                trailing: const Icon(AppIcons.open),
+                onTap: () => unawaited(
+                  context.push(RoutePaths.projectRelay(project.id)),
                 ),
               ),
-              Choice<String?>('byContext', localCopy.settingsFolderByContext),
-              Choice<String?>('byTemplate', localCopy.settingsFolderByTemplate),
-              Choice<String?>('byCaptureDate', localCopy.settingsFolderByDate),
-              Choice<String?>('flat', localCopy.settingsFolderFlat),
+              AppChoiceField<bool?>(
+                label:
+                    '${localCopy.projectAiEnabled} · ${localCopy.projectAppDefault(_onOff(app.aiEnabled, localizedCopy: Copy.of(context)))}',
+                value: view.draft.aiEnabled,
+                options: <Choice<bool?>>[
+                  Choice<bool?>(null, localCopy.projectUseAppDefault),
+                  Choice<bool?>(true, localCopy.projectOn),
+                  Choice<bool?>(false, localCopy.projectOff),
+                ],
+                onChanged: (bool? value) {
+                  ref
+                      .read(_projectSettingsProvider.notifier)
+                      .setAiEnabled(value);
+                },
+              ),
+              AppChoiceField<bool?>(
+                label:
+                    '${localCopy.projectDoNotSendImages} · ${localCopy.projectAppDefault(_onOff(app.doNotSendImages, localizedCopy: Copy.of(context)))}',
+                value: view.draft.doNotSendImages,
+                options: <Choice<bool?>>[
+                  Choice<bool?>(null, localCopy.projectUseAppDefault),
+                  Choice<bool?>(true, localCopy.projectOn),
+                  Choice<bool?>(false, localCopy.projectOff),
+                ],
+                onChanged: (bool? value) {
+                  ref
+                      .read(_projectSettingsProvider.notifier)
+                      .setDoNotSendImages(value);
+                },
+              ),
+              AppChoiceField<bool?>(
+                label:
+                    '${localCopy.settingsGps} · ${localCopy.projectAppDefault(_onOff(app.gpsEnabled, localizedCopy: Copy.of(context)))}',
+                value: view.draft.gpsEnabled,
+                options: <Choice<bool?>>[
+                  Choice<bool?>(null, localCopy.projectUseAppDefault),
+                  Choice<bool?>(true, localCopy.projectOn),
+                  Choice<bool?>(false, localCopy.projectOff),
+                ],
+                onChanged: (bool? value) {
+                  ref
+                      .read(_projectSettingsProvider.notifier)
+                      .setGpsEnabled(value);
+                },
+              ),
+              AppChoiceField<String?>(
+                label: localCopy.settingsFolderStrategy,
+                value: view.draft.folderStrategy,
+                options: <Choice<String?>>[
+                  Choice<String?>(
+                    null,
+                    localCopy.projectAppDefault(
+                      _strategyLabel(
+                        app.folderStrategy,
+                        localizedCopy: Copy.of(context),
+                      ),
+                    ),
+                  ),
+                  Choice<String?>(
+                    'byContext',
+                    localCopy.settingsFolderByContext,
+                  ),
+                  Choice<String?>(
+                    'byTemplate',
+                    localCopy.settingsFolderByTemplate,
+                  ),
+                  Choice<String?>(
+                    'byCaptureDate',
+                    localCopy.settingsFolderByDate,
+                  ),
+                  Choice<String?>('flat', localCopy.settingsFolderFlat),
+                ],
+                onChanged: ref
+                    .read(_projectSettingsProvider.notifier)
+                    .setFolderStrategy,
+              ),
+              const VerificationModeToggle(),
             ],
-            onChanged: ref
-                .read(_projectSettingsProvider.notifier)
-                .setFolderStrategy,
           ),
-          const VerificationModeToggle(),
-          AppTextField(
-            label: localCopy.projectConfidenceHigh,
-            controller: _high!,
-            helper: localCopy.projectAppDefault(_band(app.confidenceHigh)),
-            requiredness: FieldRequiredness.optional,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            textInputAction: TextInputAction.next,
-            errorText: Copy.of(
-              context,
-            ).stateText(view.localizedHighError, view.highError),
-            dictation: false,
-          ),
-          AppTextField(
-            label: localCopy.projectConfidenceMedium,
-            controller: _medium!,
-            helper: localCopy.projectAppDefault(_band(app.confidenceMedium)),
-            requiredness: FieldRequiredness.optional,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            textInputAction: TextInputAction.next,
-            errorText: Copy.of(
-              context,
-            ).stateText(view.localizedMediumError, view.mediumError),
-            dictation: false,
-          ),
-          AppChoiceField<String?>(
-            label: localCopy.templateChoiceLabel,
-            value: view.draft.templateChoice,
-            options: <Choice<String?>>[
-              Choice<String?>(null, localCopy.templateChoiceAuto),
-              Choice<String?>('suggest', localCopy.templateChoiceSuggest),
-              Choice<String?>('manual', localCopy.templateChoiceManual),
+          AppSection(
+            children: <Widget>[
+              AppTextField(
+                label: localCopy.projectConfidenceHigh,
+                controller: _high!,
+                helper: localCopy.projectAppDefault(_band(app.confidenceHigh)),
+                requiredness: FieldRequiredness.optional,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                textInputAction: TextInputAction.next,
+                errorText: Copy.of(
+                  context,
+                ).stateText(view.localizedHighError, view.highError),
+                dictation: false,
+              ),
+              AppTextField(
+                label: localCopy.projectConfidenceMedium,
+                controller: _medium!,
+                helper: localCopy.projectAppDefault(
+                  _band(app.confidenceMedium),
+                ),
+                requiredness: FieldRequiredness.optional,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                textInputAction: TextInputAction.next,
+                errorText: Copy.of(
+                  context,
+                ).stateText(view.localizedMediumError, view.mediumError),
+                dictation: false,
+              ),
             ],
-            onChanged: (String? value) {
-              ref
-                  .read(_projectSettingsProvider.notifier)
-                  .setTemplateChoice(value);
-            },
           ),
-          AppChoiceField<bool?>(
-            label:
-                '${localCopy.projectRefineColumns} · ${localCopy.projectAppDefault(_onOff(app.refineColumns, localizedCopy: Copy.of(context)))}',
-            value: view.draft.refineColumns,
-            options: <Choice<bool?>>[
-              Choice<bool?>(null, localCopy.projectUseAppDefault),
-              Choice<bool?>(true, localCopy.projectOn),
-              Choice<bool?>(false, localCopy.projectOff),
+          AppSection(
+            children: <Widget>[
+              AppChoiceField<String?>(
+                label: localCopy.templateChoiceLabel,
+                value: view.draft.templateChoice,
+                options: <Choice<String?>>[
+                  Choice<String?>(null, localCopy.templateChoiceAuto),
+                  Choice<String?>('suggest', localCopy.templateChoiceSuggest),
+                  Choice<String?>('manual', localCopy.templateChoiceManual),
+                ],
+                onChanged: (String? value) {
+                  ref
+                      .read(_projectSettingsProvider.notifier)
+                      .setTemplateChoice(value);
+                },
+              ),
+              AppChoiceField<bool?>(
+                label:
+                    '${localCopy.projectRefineColumns} · ${localCopy.projectAppDefault(_onOff(app.refineColumns, localizedCopy: Copy.of(context)))}',
+                value: view.draft.refineColumns,
+                options: <Choice<bool?>>[
+                  Choice<bool?>(null, localCopy.projectUseAppDefault),
+                  Choice<bool?>(true, localCopy.projectOn),
+                  Choice<bool?>(false, localCopy.projectOff),
+                ],
+                onChanged: (bool? value) {
+                  ref
+                      .read(_projectSettingsProvider.notifier)
+                      .setRefineColumns(value);
+                },
+              ),
             ],
-            onChanged: (bool? value) {
-              ref
-                  .read(_projectSettingsProvider.notifier)
-                  .setRefineColumns(value);
-            },
           ),
         ],
         submitLabel: localCopy.save,

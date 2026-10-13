@@ -89,6 +89,7 @@ final class ConflictScreen extends ConsumerWidget {
         : view!.plan.conflicts.indexOf(shown) + 1;
     return AppPage(
       key: const ValueKey<String>('route-project-merge-conflicts'),
+      layout: AppPageLayout.readingFirst,
       title: shown == null
           ? localCopy.mergePackage
           : localCopy.conflictProgress(index, total),
@@ -273,7 +274,6 @@ class _Conflict extends StatelessWidget {
         ),
         const SizedBox(height: Space.x4),
         ResponsivePair(
-          stacksOnCompact: false,
           matchesHeights: true,
           start: AppButton(
             key: ConflictScreen.keepMineKey,

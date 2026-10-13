@@ -62,6 +62,7 @@ final class DuplicateCompareScreen extends ConsumerWidget {
     final bool busy = ref.watch(duplicatesControllerProvider);
     return AppPage(
       key: const ValueKey<String>('route-duplicate-compare'),
+      layout: AppPageLayout.readingFirst,
       title: localCopy.duplicateCompareTitle,
       footer: loaded == null
           ? null
@@ -132,7 +133,6 @@ class _Comparison extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         ResponsivePair(
-          stacksOnCompact: false,
           matchesHeights: true,
           start: _Side(
             key: const ValueKey<String>('duplicate-side-existing'),

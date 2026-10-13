@@ -54,6 +54,9 @@ class ProjectListScreen extends ConsumerWidget {
     return AppPage(
       key: const ValueKey<String>('route-projects'),
       title: localCopy.navProjects,
+      layout: value.asData?.value.isEmpty == true
+          ? AppPageLayout.essentials
+          : AppPageLayout.compact,
       showAppBar: !expanded,
       overflow: ProjectListActions.overflow(context, ref),
       inset: false,
@@ -84,9 +87,9 @@ class ProjectListScreen extends ConsumerWidget {
           : const AppListViewport(
               header: Padding(
                 padding: EdgeInsets.fromLTRB(
-                  Space.x4,
+                  Space.x2,
                   Space.x1,
-                  Space.x4,
+                  Space.x2,
                   Space.x2,
                 ),
                 child: ProjectListToolbar(),

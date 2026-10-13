@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_progress_steps.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -16,6 +18,7 @@ final class ExportProgress extends StatelessWidget {
     this.empty = false,
     this.failure,
     this.onCancel,
+    this.showCancel = true,
     super.key,
   });
 
@@ -33,6 +36,9 @@ final class ExportProgress extends StatelessWidget {
 
   /// Stops the job and deletes partial files.
   final VoidCallback? onCancel;
+
+  /// The owning page can pin this same action in its footer.
+  final bool showCancel;
 
   @override
   Widget build(BuildContext context) {
@@ -52,22 +58,25 @@ final class ExportProgress extends StatelessWidget {
         message: localCopy.exportEmptyMessage,
       );
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        AppProgressSteps(
-          steps: <ProgressStep>[
-            for (final ExportStage stage in stages)
-              ProgressStep(label: stage.label, state: stage.state),
-          ],
-        ),
-        AppButton(
-          key: const ValueKey<String>('export-cancel'),
-          label: localCopy.exportCancel,
-          variant: AppButtonVariant.secondary,
-          onPressed: onCancel,
-        ),
-      ],
+    return AppPageLayoutScope(
+      layout: AppPageLayout.thumbReach,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          AppProgressSteps(
+            steps: <ProgressStep>[
+              for (final ExportStage stage in stages)
+                ProgressStep(label: stage.label, state: stage.state),
+            ],
+          ),
+          if (showCancel)
+            AppPrimaryAction(
+              key: const ValueKey<String>('export-cancel'),
+              label: localCopy.exportCancel,
+              onPressed: onCancel,
+            ),
+        ],
+      ),
     );
   }
 }

@@ -170,8 +170,12 @@ class _OverflowHeading extends PopupMenuEntry<int> {
 
 class _OverflowHeadingState extends State<_OverflowHeading> {
   @override
-  Widget build(BuildContext context) =>
-      ExcludeFocus(child: AppSectionHeader(title: widget.label, dense: true));
+  Widget build(BuildContext context) => ExcludeFocus(
+    child: ColoredBox(
+      color: context.colors.surfaceVariant,
+      child: AppSectionHeader(title: widget.label, dense: true, wrapText: true),
+    ),
+  );
 }
 
 class _OverflowRow extends StatelessWidget {

@@ -10,6 +10,8 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
@@ -78,8 +80,12 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> with StateRefresh {
     final Uint8List? bytes = widget.bytes;
     final Size? size = _photoSize;
     final AppColors colors = context.colors;
-    return Scaffold(
-      appBar: AppBar(title: Text(localCopy.photoCrop)),
+    return AppPage(
+      layout: AppPageLayout.thumbReach,
+      title: localCopy.photoCrop,
+      compactBar: true,
+      scrollable: false,
+      inset: false,
       body: Column(
         children: <Widget>[
           Expanded(
@@ -103,29 +109,25 @@ class _PhotoCropScreenState extends State<PhotoCropScreen> with StateRefresh {
               padding: const EdgeInsets.all(Space.x2),
               child: Text(localCopy.resolve(_error!)),
             ),
-          Padding(
-            padding: const EdgeInsets.all(Space.x2),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: AppButton(
-                    label: localCopy.photoCrop,
-                    busy: _busy,
-                    onPressed: _busy || (bytes != null && size == null)
-                        ? null
-                        : () => unawaited(_apply()),
-                  ),
-                ),
-                const SizedBox(width: Space.x2),
-                Expanded(
-                  child: AppButton(
-                    label: localCopy.photoRevert,
-                    variant: AppButtonVariant.secondary,
-                    onPressed: () => widget.onRevert(widget.photo),
-                  ),
-                ),
-              ],
-            ),
+        ],
+      ),
+      footer: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          AppButton(
+            label: localCopy.photoRevert,
+            variant: AppButtonVariant.secondary,
+            expand: true,
+            onPressed: () => widget.onRevert(widget.photo),
+          ),
+          const SizedBox(height: Space.x2),
+          AppPrimaryAction(
+            label: localCopy.photoCrop,
+            busy: _busy,
+            onPressed: _busy || (bytes != null && size == null)
+                ? null
+                : () => unawaited(_apply()),
           ),
         ],
       ),

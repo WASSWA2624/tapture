@@ -41,6 +41,7 @@ final class CaptureDocumentViewer extends ConsumerWidget {
 
     if (!document.canRenderPages) {
       return AppPage(
+        layout: AppPageLayout.thumbReach,
         title: document.originalFilename,
         body: AppErrorState(
           failure: ValidationFailure(
@@ -65,6 +66,7 @@ final class CaptureDocumentViewer extends ConsumerWidget {
       )),
     );
     return AppPage(
+      layout: AppPageLayout.thumbReach,
       title: document.originalFilename,
       subtitle: localCopy.pdfPageOf(view.index + 1, pageCount),
       scrollable: false,

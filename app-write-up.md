@@ -3299,6 +3299,26 @@ The narrow Records pane beside an expanded saved Capture wraps complete row titl
 
 Feedback downloads package the `.xlsx` workbook and matching screenshots in `TAPTURE-DDMMYYYY-HHMM.zip`. The Feedback sheet has 36 columns and excludes User ID, Position Title, Roles, Permissions, Tenant, Tenant ID, Facility, Facility ID, Subscription Plan, Plan Code, Plan Tier and Subscription Status. Screen follows User Name; the remaining columns retain their order, typed values and screenshot links. Screenshot and Export Details sheets retain their existing contents, and stored feedback context is preserved.
 
+### 55.4 Project mobile layouts
+
+Projects uses Compact rows with search and pinned-first ordering (§55.1); its empty state and Project home use
+Essentials. Nested screens use the shared `AppPageLayout` compositions: Sectioned groups for project/template setup,
+record review and export options; ReadingFirst for values, transcripts, filters and conflict comparisons; ThumbReach
+for capture, photo tools, live transcription and file selection; Compact for record history. Individual overlays and
+loading, failure, empty and saved states retain their selected composition and existing conditional commands.
+
+`AppPage`, `AppSection`, `AppForm`, shared fields/rows and `AppActionDock` provide these layouts using the existing
+theme, spacing and minimal `Radii` tokens. Every control retains a 48dp minimum target; ThumbReach primary actions
+use 64dp. Metadata and labelled tools stack when reading needs the full width. Pinned action groups scroll within
+half the visible page height so short screens, the keyboard and 200 percent text retain access to content and
+commands. Grouped forms preserve validation summaries, focus order, typed input and unsaved-change guards.
+
+These compositions change presentation only. Durable local writes, immutable raw evidence, offline capture,
+explicit AI approval, project identity and existing navigation contracts remain as specified in §§19–27 and §56.
+The widget gallery demonstrates all five compositions and enabled, disabled and saving action states. Changed
+screens use the existing responsive matrix and behavior/flow fixtures; design-system baselines cover light, dark
+and outdoor themes (§58, §84).
+
 ## 56. Simplicity Rules
 
 Testable interface rules:

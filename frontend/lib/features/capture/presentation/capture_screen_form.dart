@@ -4,6 +4,7 @@ extension _CaptureForm on _CaptureScreenState {
   Future<void> _manualForm(String key, String projectId) => showAppSheet<void>(
     Navigator.of(context, rootNavigator: true).context,
     title: Copy.of(context).captureManualForm,
+    layout: AppPageLayout.readingFirst,
     builder: (BuildContext sheetContext) => Consumer(
       builder: (BuildContext context, WidgetRef formRef, Widget? _) {
         final CaptureSession session = formRef.watch(

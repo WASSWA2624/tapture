@@ -7,6 +7,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -59,6 +60,7 @@ class _TemplateCreateScreenState extends ConsumerState<TemplateCreateScreen> {
     final _TemplateCreateView view = ref.watch(_templateCreateProvider);
     final _TemplateCreate notifier = ref.read(_templateCreateProvider.notifier);
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-template-create'),
       title: localCopy.templatesCreateTitle,
       scrollable: false,
@@ -70,15 +72,19 @@ class _TemplateCreateScreenState extends ConsumerState<TemplateCreateScreen> {
           if (view.warnTwoFacts) localCopy.fieldTwoFactsWarning,
         ],
         fields: <Widget>[
-          AppTextField(
-            label: localCopy.projectName,
-            controller: _name,
-            requiredness: FieldRequiredness.required,
-            textInputAction: TextInputAction.next,
-            errorText: Copy.of(
-              context,
-            ).stateText(view.localizedNameError, view.nameError),
-            onChanged: (String _) => notifier.markDirty(),
+          AppSection(
+            children: <Widget>[
+              AppTextField(
+                label: localCopy.projectName,
+                controller: _name,
+                requiredness: FieldRequiredness.required,
+                textInputAction: TextInputAction.next,
+                errorText: Copy.of(
+                  context,
+                ).stateText(view.localizedNameError, view.nameError),
+                onChanged: (String _) => notifier.markDirty(),
+              ),
+            ],
           ),
           if (view.warnTwoFacts) ...<Widget>[
             AppBanner(

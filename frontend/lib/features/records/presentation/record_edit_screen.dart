@@ -61,6 +61,7 @@ class RecordEditScreen extends ConsumerWidget {
             )),
           );
     return AppPage(
+      layout: AppPageLayout.readingFirst,
       key: const ValueKey<String>('route-record-values'),
       title: localCopy.recordValuesEditTitle,
       subtitle: entry == null || entry.name.isEmpty ? null : entry.name,

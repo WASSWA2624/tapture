@@ -10,7 +10,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -57,6 +57,7 @@ class LookupBindingScreen extends ConsumerWidget {
     );
     final AsyncValue<_BindingView> value = ref.watch(_bindingProvider(target));
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-field-lookup'),
       title: localCopy.datasetsLookupBinding,
       scrollable: false,
@@ -161,102 +162,118 @@ class _BindingForm extends ConsumerWidget {
             icon: AppIcons.info,
             tone: SnackTone.info,
           ),
-        AppChoiceField<String>(
-          label: localCopy.navDatasets,
-          value: dataset?.id,
-          options: <Choice<String>>[
-            for (final ReferenceDataset row in datasets)
-              Choice<String>(row.id, row.name),
-          ],
-          onChanged: (String? id) {
-            if (id != null) {
-              controller.chooseDataset(id);
-            }
-          },
-        ),
-        if (dataset != null) ...<Widget>[
-          AppListTile(
-            title: localCopy.lookupKeyColumn,
-            subtitle: dataset.keyColumn,
-            dense: true,
-          ),
-          AppListTile(
-            title: localCopy.lookupMatchColumns,
-            subtitle: localCopy.lookupMatchOrder(match),
-            dense: true,
-          ),
-          AppCheckboxGroup<String>(
-            label: localCopy.lookupMatchColumns,
-            showLabel: false,
-            options: <Choice<String>>[
-              for (final String column in dataset.columns)
-                Choice<String>(column, column),
-            ],
-            value: match.toSet(),
-            onChanged: (Set<String> next) =>
-                controller.chooseMatch(dataset, next),
-          ),
-          AppSectionHeader(title: localCopy.lookupFills, dense: true),
-          for (final ({String key, String label}) fill in targets)
+        AppSection(
+          children: <Widget>[
             AppChoiceField<String>(
-              key: ValueKey<String>('lookup-fill-${fill.key}'),
-              label: fill.label,
-              value: view.fills[fill.key] ?? '',
+              label: localCopy.navDatasets,
+              value: dataset?.id,
               options: <Choice<String>>[
-                Choice<String>('', localCopy.lookupNotFilled),
-                for (final String column in dataset.columns)
-                  Choice<String>(column, column),
+                for (final ReferenceDataset row in datasets)
+                  Choice<String>(row.id, row.name),
               ],
-              onChanged: (String? column) =>
-                  controller.fill(fill.key, column ?? ''),
-            ),
-          AppSwitchTile(
-            title: localCopy.datasetsFuzzyEnabled,
-            value: view.fuzzy,
-            onChanged: controller.setFuzzy,
-          ),
-          if (view.fuzzy)
-            AppChoiceField<double>(
-              label: localCopy.lookupFuzzyThreshold,
-              value: view.threshold,
-              options: <Choice<double>>[
-                for (final double threshold in <double>{
-                  ..._thresholds,
-                  view.threshold,
-                }.toList()..sort())
-                  Choice<double>(
-                    threshold,
-                    localCopy.lookupThresholdLabel((threshold * 100).round()),
-                  ),
-              ],
-              onChanged: (double? threshold) {
-                if (threshold != null) {
-                  controller.setThreshold(threshold);
+              onChanged: (String? id) {
+                if (id != null) {
+                  controller.chooseDataset(id);
                 }
               },
             ),
-          AppChoiceField<NoMatchBehaviour>(
-            label: localCopy.datasetsOnNoMatch,
-            value: view.onNoMatch,
-            options: <Choice<NoMatchBehaviour>>[
-              Choice<NoMatchBehaviour>(
-                NoMatchBehaviour.leaveEmpty,
-                localCopy.lookupNoMatchLeaveEmpty,
+            if (dataset != null) ...<Widget>[
+              AppListTile(
+                title: localCopy.lookupKeyColumn,
+                subtitle: dataset.keyColumn,
+                dense: true,
               ),
-              Choice<NoMatchBehaviour>(
-                NoMatchBehaviour.promptAddRow,
-                localCopy.lookupNoMatchPromptAdd,
+              AppListTile(
+                title: localCopy.lookupMatchColumns,
+                subtitle: localCopy.lookupMatchOrder(match),
+                dense: true,
               ),
-              Choice<NoMatchBehaviour>(
-                NoMatchBehaviour.warn,
-                localCopy.lookupNoMatchWarn,
+              AppCheckboxGroup<String>(
+                label: localCopy.lookupMatchColumns,
+                showLabel: false,
+                options: <Choice<String>>[
+                  for (final String column in dataset.columns)
+                    Choice<String>(column, column),
+                ],
+                value: match.toSet(),
+                onChanged: (Set<String> next) =>
+                    controller.chooseMatch(dataset, next),
               ),
             ],
-            onChanged: (NoMatchBehaviour? behaviour) {
-              if (behaviour != null) {
-                controller.setOnNoMatch(behaviour);
-              }
-            },
+          ],
+        ),
+        if (dataset != null) ...<Widget>[
+          AppSection(
+            title: localCopy.lookupFills,
+            children: <Widget>[
+              for (final ({String key, String label}) fill in targets)
+                AppChoiceField<String>(
+                  key: ValueKey<String>('lookup-fill-${fill.key}'),
+                  label: fill.label,
+                  value: view.fills[fill.key] ?? '',
+                  options: <Choice<String>>[
+                    Choice<String>('', localCopy.lookupNotFilled),
+                    for (final String column in dataset.columns)
+                      Choice<String>(column, column),
+                  ],
+                  onChanged: (String? column) =>
+                      controller.fill(fill.key, column ?? ''),
+                ),
+            ],
+          ),
+          AppSection(
+            children: <Widget>[
+              AppSwitchTile(
+                title: localCopy.datasetsFuzzyEnabled,
+                value: view.fuzzy,
+                onChanged: controller.setFuzzy,
+              ),
+              if (view.fuzzy)
+                AppChoiceField<double>(
+                  label: localCopy.lookupFuzzyThreshold,
+                  value: view.threshold,
+                  options: <Choice<double>>[
+                    for (final double threshold in <double>{
+                      ..._thresholds,
+                      view.threshold,
+                    }.toList()..sort())
+                      Choice<double>(
+                        threshold,
+                        localCopy.lookupThresholdLabel(
+                          (threshold * 100).round(),
+                        ),
+                      ),
+                  ],
+                  onChanged: (double? threshold) {
+                    if (threshold != null) {
+                      controller.setThreshold(threshold);
+                    }
+                  },
+                ),
+              AppChoiceField<NoMatchBehaviour>(
+                label: localCopy.datasetsOnNoMatch,
+                value: view.onNoMatch,
+                options: <Choice<NoMatchBehaviour>>[
+                  Choice<NoMatchBehaviour>(
+                    NoMatchBehaviour.leaveEmpty,
+                    localCopy.lookupNoMatchLeaveEmpty,
+                  ),
+                  Choice<NoMatchBehaviour>(
+                    NoMatchBehaviour.promptAddRow,
+                    localCopy.lookupNoMatchPromptAdd,
+                  ),
+                  Choice<NoMatchBehaviour>(
+                    NoMatchBehaviour.warn,
+                    localCopy.lookupNoMatchWarn,
+                  ),
+                ],
+                onChanged: (NoMatchBehaviour? behaviour) {
+                  if (behaviour != null) {
+                    controller.setOnNoMatch(behaviour);
+                  }
+                },
+              ),
+            ],
           ),
         ],
       ],

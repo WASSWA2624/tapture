@@ -43,6 +43,7 @@ class RequiredColumnsScreen extends ConsumerWidget {
       requirednessControllerProvider(templateId),
     );
     return AppPage(
+      layout: AppPageLayout.readingFirst,
       key: const ValueKey<String>('route-template-required'),
       title: localCopy.requiredColumnsTitle,
       scrollable: false,
@@ -160,29 +161,21 @@ class RequiredColumnsScreen extends ConsumerWidget {
           child: AppRadioGroup<Requiredness>(
             label: Copy.of(context).requiredColumnRadios(field.label),
             showLabel: false,
-            direction: Axis.horizontal,
+            direction: Axis.vertical,
+            framed: false,
             value: field.requiredness,
             options: <Choice<Requiredness>>[
               Choice<Requiredness>(
                 Requiredness.required,
-                Copy.of(context).requiredColumnCell(
-                  field.label,
-                  Copy.of(context).fieldRequired,
-                ),
+                Copy.of(context).fieldRequired,
               ),
               Choice<Requiredness>(
                 Requiredness.recommended,
-                Copy.of(context).requiredColumnCell(
-                  field.label,
-                  Copy.of(context).fieldRecommended,
-                ),
+                Copy.of(context).fieldRecommended,
               ),
               Choice<Requiredness>(
                 Requiredness.optional,
-                Copy.of(context).requiredColumnCell(
-                  field.label,
-                  Copy.of(context).fieldOptional,
-                ),
+                Copy.of(context).fieldOptional,
               ),
             ],
             onChanged: (Requiredness value) {

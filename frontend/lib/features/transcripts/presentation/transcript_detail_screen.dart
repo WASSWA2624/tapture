@@ -84,6 +84,7 @@ class TranscriptDetailScreen extends ConsumerWidget {
         }
       },
       child: AppPage(
+        layout: AppPageLayout.readingFirst,
         key: const ValueKey<String>('route-transcript'),
         title: summary == null
             ? localCopy.transcriptDetailTitle

@@ -432,7 +432,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
             for (final (Finder control, bool header) in <(Finder, bool)>[
               (
                 find.byKey(
-                  const ValueKey<String>('capture-composer-add-photo'),
+                  const ValueKey<String>('capture-add-photo'),
                 ),
                 false,
               ),
@@ -711,7 +711,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
             for (final (Finder control, bool header) in <(Finder, bool)>[
               (
                 find.byKey(
-                  const ValueKey<String>('capture-composer-add-photo'),
+                  const ValueKey<String>('capture-add-photo'),
                 ),
                 false,
               ),
@@ -1167,7 +1167,7 @@ void _expectProportionalLabel(
 }
 
 final Finder _photoAdd = find.byKey(
-  const ValueKey<String>('capture-composer-add-photo'),
+  const ValueKey<String>('capture-add-photo'),
 );
 
 Future<void> _verifyReachableControl(
@@ -1415,7 +1415,7 @@ Future<void> _verifyKeyboardAction(
   final bool picker =
       key == const ValueKey<String>('capture-project-field') ||
       key == const ValueKey<String>('capture-template-field');
-  if (picker || key == const ValueKey<String>('capture-composer-add-photo')) {
+  if (picker || key == const ValueKey<String>('capture-add-photo')) {
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);
     await tester.pumpAndSettle();
     expect(find.byType(AppBottomSheet), findsOneWidget);
@@ -1676,7 +1676,7 @@ Future<void> _verifyInteraction(
     Navigator.of(tester.element(find.byType(AppSearchField))).pop();
     await tester.pumpAndSettle();
   } else if (widget.key ==
-      const ValueKey<String>('capture-composer-add-photo')) {
+      const ValueKey<String>('capture-add-photo')) {
     await _tapPainted(tester, control);
     expect(find.text(localCopy.captureAddSheetTitle), findsOneWidget);
     expect(

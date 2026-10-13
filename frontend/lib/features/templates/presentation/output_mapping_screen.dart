@@ -8,6 +8,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -37,6 +38,7 @@ class OutputMappingScreen extends ConsumerWidget {
         .whenData(_pick);
     final _OutputView view = ref.watch(_outputMappingProvider(templateId));
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-template-output'),
       title: localCopy.outputMappingTitle,
       scrollable: false,
@@ -95,20 +97,21 @@ class OutputMappingScreen extends ConsumerWidget {
             icon: AppIcons.error,
             tone: SnackTone.error,
           ),
-        for (final FieldDef field in template.fields)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(Space.x4, Space.x2, Space.x4, 0),
-            child: _OutputColumnField(
-              key: ValueKey<String>('output-${field.fieldKey}'),
-              label: field.label,
-              value: view.columns[field.fieldKey] ?? '',
-              onChanged: (String next) {
-                ref
-                    .read(_outputMappingProvider(templateId).notifier)
-                    .set(field.fieldKey, next);
-              },
-            ),
-          ),
+        AppSection(
+          children: <Widget>[
+            for (final FieldDef field in template.fields)
+              _OutputColumnField(
+                key: ValueKey<String>('output-${field.fieldKey}'),
+                label: field.label,
+                value: view.columns[field.fieldKey] ?? '',
+                onChanged: (String next) {
+                  ref
+                      .read(_outputMappingProvider(templateId).notifier)
+                      .set(field.fieldKey, next);
+                },
+              ),
+          ],
+        ),
       ],
     );
   }

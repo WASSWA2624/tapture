@@ -236,7 +236,7 @@ void main() {
             expect(find.byType(RecordCaptionField), findsOneWidget);
             expect(tester.takeException(), isNull);
             final Finder photoAction = find.byKey(
-              const ValueKey<String>('capture-composer-add-photo'),
+              const ValueKey<String>('capture-add-photo'),
             );
             await revealScrollableBody(tester, photoAction);
             expect(

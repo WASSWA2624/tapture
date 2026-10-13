@@ -72,96 +72,102 @@ final class RecordsListView extends ConsumerWidget {
       recordsCountProvider((projectId: projectId, filter: filter)),
     );
     final double gutter = pane ? Space.x3 : AppPage.gutter(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Expanded(
-          child: AppListViewport(
-            header: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    gutter,
-                    Space.x2,
-                    gutter,
-                    Space.x2,
-                  ),
-                  child: AppSearchField(
-                    key: const ValueKey<String>('records-search'),
-                    hint: localCopy.recordsSearchHint,
-                    text: filter.search,
-                    onChanged: controller.setSearch,
-                    onFilter: () => unawaited(
-                      RecordsFilterSheet.show(context, projectId: projectId),
-                    ),
-                    activeFilterCount: filter.activeCount,
-                    resultCount: filter.isEmpty ? null : count.asData?.value,
-                    afterMic: RecordsSortMenu(projectId: projectId),
-                  ),
-                ),
-                if (filter.activeCount > 0)
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints limits) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: AppListViewport(
+              header: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
                   Padding(
                     padding: EdgeInsets.fromLTRB(
                       gutter,
-                      Space.x0,
+                      Space.x2,
                       gutter,
                       Space.x2,
                     ),
-                    child: RecordsActiveFilters(
-                      projectId: projectId,
-                      filter: filter,
+                    child: AppSearchField(
+                      key: const ValueKey<String>('records-search'),
+                      hint: localCopy.recordsSearchHint,
+                      text: filter.search,
+                      onChanged: controller.setSearch,
+                      onFilter: () => unawaited(
+                        RecordsFilterSheet.show(context, projectId: projectId),
+                      ),
+                      activeFilterCount: filter.activeCount,
+                      resultCount: filter.isEmpty ? null : count.asData?.value,
+                      afterMic: RecordsSortMenu(projectId: projectId),
                     ),
                   ),
-              ],
-            ),
-            body: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                final Widget body = AsyncValueView<int>(
-                  value: count,
-                  onRetry: () => ref.invalidate(
-                    recordsCountProvider((
+                  if (filter.activeCount > 0)
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        gutter,
+                        Space.x0,
+                        gutter,
+                        Space.x2,
+                      ),
+                      child: RecordsActiveFilters(
+                        projectId: projectId,
+                        filter: filter,
+                      ),
+                    ),
+                ],
+              ),
+              body: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  final Widget body = AsyncValueView<int>(
+                    value: count,
+                    onRetry: () => ref.invalidate(
+                      recordsCountProvider((
+                        projectId: projectId,
+                        filter: filter,
+                      )),
+                    ),
+                    isEmpty: (int total) => total == 0,
+                    empty: () => _EmptyList(
                       projectId: projectId,
                       filter: filter,
-                    )),
-                  ),
-                  isEmpty: (int total) => total == 0,
-                  empty: () => _EmptyList(
-                    projectId: projectId,
-                    filter: filter,
-                    controller: controller,
-                  ),
-                  loadingCount: _rowsThatFit(constraints.maxHeight),
-                  data: (int total) => _RecordRows(
-                    key: ValueKey<RecordsListCriteria>(criteria),
-                    projectId: projectId,
-                    criteria: criteria,
-                    total: total,
-                    pane: pane,
-                    currentRecordId: currentRecordId,
-                    onOpen: onOpen,
-                    onShown: (String id) {
-                      ref
-                          .read(
-                            _shownProvider(
-                              _shownKey(projectId, criteria),
-                            ).notifier,
-                          )
-                          .note(id);
-                    },
-                  ),
-                );
-                // The failure panel scrolls, so it is whole on a short window
-                // and at 200 percent text (FE-RESP-06).
-                return count.hasError && !count.hasValue
-                    ? SingleChildScrollView(child: body)
-                    : body;
-              },
+                      controller: controller,
+                    ),
+                    loadingCount: _rowsThatFit(constraints.maxHeight),
+                    data: (int total) => _RecordRows(
+                      key: ValueKey<RecordsListCriteria>(criteria),
+                      projectId: projectId,
+                      criteria: criteria,
+                      total: total,
+                      pane: pane,
+                      currentRecordId: currentRecordId,
+                      onOpen: onOpen,
+                      onShown: (String id) {
+                        ref
+                            .read(
+                              _shownProvider(
+                                _shownKey(projectId, criteria),
+                              ).notifier,
+                            )
+                            .note(id);
+                      },
+                    ),
+                  );
+                  // The failure panel scrolls, so it is whole on a short window
+                  // and at 200 percent text (FE-RESP-06).
+                  return count.hasError && !count.hasValue
+                      ? SingleChildScrollView(child: body)
+                      : body;
+                },
+              ),
             ),
           ),
-        ),
-        _BulkBar(projectId: projectId, criteria: criteria),
-      ],
+          _BulkBar(
+            projectId: projectId,
+            criteria: criteria,
+            maxHeight: limits.maxHeight * 0.5,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -169,17 +175,26 @@ final class RecordsListView extends ConsumerWidget {
 /// The selection bar. It watches which rows have been on screen, so noting
 /// one does not rebuild the list.
 class _BulkBar extends ConsumerWidget {
-  const _BulkBar({required this.projectId, required this.criteria});
+  const _BulkBar({
+    required this.projectId,
+    required this.criteria,
+    required this.maxHeight,
+  });
 
   final String projectId;
   final RecordsListCriteria criteria;
+  final double maxHeight;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<String> shown = ref
         .watch(_shownProvider(_shownKey(projectId, criteria)))
         .toList(growable: false);
-    return RecordBulkActions(projectId: projectId, selectable: shown);
+    return RecordBulkActions(
+      projectId: projectId,
+      selectable: shown,
+      maxHeight: maxHeight,
+    );
   }
 }
 

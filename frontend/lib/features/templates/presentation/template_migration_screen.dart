@@ -48,6 +48,7 @@ class TemplateMigrationScreen extends ConsumerWidget {
         ? const TemplateVersioning.none()
         : TemplateVersioning.preview(current: template, records: records);
     return AppPage(
+      layout: AppPageLayout.readingFirst,
       key: const ValueKey<String>('route-template-migrate'),
       title: localCopy.templateMigrationTitle,
       scrollable: false,

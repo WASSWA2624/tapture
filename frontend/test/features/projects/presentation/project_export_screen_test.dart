@@ -14,6 +14,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/download_service.dart';
 import 'package:tapture/core/network/offline_now.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -88,6 +89,14 @@ void main() {
               locale: locale,
             );
             expect(exports.exportCalls, 1);
+            expect(
+              tester
+                  .widget<AppPage>(
+                    find.byKey(const ValueKey<String>('route-project-export')),
+                  )
+                  .layout,
+              AppPageLayout.essentials,
+            );
             expect(find.byType(ExportSummaryView), findsNothing);
             await _expand(tester);
             expect(find.byType(ExportSummaryView), findsOneWidget);
@@ -215,6 +224,14 @@ void main() {
       ..estimate = 3 * 1024 * 1024;
     addTearDown(exports.dispose);
     await _pump(tester, exports: exports);
+    expect(
+      tester
+          .widget<AppPage>(
+            find.byKey(const ValueKey<String>('route-project-export')),
+          )
+          .layout,
+      AppPageLayout.sectioned,
+    );
     await _expand(tester);
 
     expect(find.text(Copy.exportFileFormat), findsOneWidget);
@@ -262,9 +279,25 @@ void main() {
     await _pump(tester, exports: _HoldExport());
     await tester.tap(find.text(Copy.projectExport));
     await tester.pump();
+    expect(
+      tester
+          .widget<AppPage>(
+            find.byKey(const ValueKey<String>('route-project-export')),
+          )
+          .layout,
+      AppPageLayout.essentials,
+    );
     expect(find.text(Copy.projectExportProgress), findsOneWidget);
     await tester.tap(find.widgetWithText(AppButton, Copy.projectExportCancel));
     await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<AppPage>(
+            find.byKey(const ValueKey<String>('route-project-export')),
+          )
+          .layout,
+      AppPageLayout.sectioned,
+    );
     expect(find.text(Copy.projectExportShare), findsNothing);
     expect(
       tester.widget<AppPrimaryAction>(find.byType(AppPrimaryAction)).onPressed,

@@ -38,6 +38,7 @@ class IdentityFieldsScreen extends ConsumerWidget {
         .whenData(_pick);
     final _IdentityView view = ref.watch(_identityFieldsProvider(templateId));
     return AppPage(
+      layout: AppPageLayout.readingFirst,
       key: const ValueKey<String>('route-template-identity'),
       title: localCopy.identityFieldsTitle,
       scrollable: false,

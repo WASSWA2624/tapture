@@ -13,6 +13,8 @@ import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -320,39 +322,50 @@ class _Fields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (attention.isNotEmpty) ...<Widget>[
-          AppSectionHeader(title: localCopy.reviewNeedsAttention),
-          for (final _Field field in attention) _row(field, attention: true),
-        ],
-        if (confident.isNotEmpty) ...<Widget>[
-          AppSectionHeader(
-            key: const ValueKey<String>('review-confident-toggle'),
-            title: localCopy.reviewConfidentGroup(confident.length),
-            expanded: state.confidentOpen,
-            onToggle: controller.toggleConfident,
+        if (attention.isNotEmpty)
+          AppSection(
+            title: localCopy.reviewNeedsAttention,
+            children: <Widget>[
+              for (final _Field field in attention)
+                _row(field, attention: true),
+            ],
           ),
-          if (editable && unverified.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Space.x4,
-                vertical: Space.x1,
+        if (confident.isNotEmpty) ...<Widget>[
+          const SizedBox(height: Space.x3),
+          AppSection(
+            children: <Widget>[
+              AppSectionHeader(
+                key: const ValueKey<String>('review-confident-toggle'),
+                title: localCopy.reviewConfidentGroup(confident.length),
+                expanded: state.confidentOpen,
+                onToggle: controller.toggleConfident,
               ),
-              child: VerifyAction(
-                confidentCount: unverified.length,
-                onVerifyConfident: state.busy
-                    ? null
-                    : () => unawaited(_verify(context, unverified)),
-              ),
-            ),
-          if (state.confidentOpen)
-            for (final _Field field in confident) _row(field, attention: false),
+              if (editable && unverified.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Space.x4,
+                    vertical: Space.x1,
+                  ),
+                  child: VerifyAction(
+                    confidentCount: unverified.length,
+                    onVerifyConfident: state.busy
+                        ? null
+                        : () => unawaited(_verify(context, unverified)),
+                  ),
+                ),
+              if (state.confidentOpen)
+                for (final _Field field in confident)
+                  _row(field, attention: false),
+            ],
+          ),
         ],
       ],
     );
   }
 
   Widget _row(_Field field, {required bool attention}) {
-    return _FieldRow(
+    final RecordValue? value = field.value;
+    final Widget row = _FieldRow(
       key: ValueKey<String>(
         attention
             ? 'review-field-${field.fieldKey}'
@@ -367,6 +380,12 @@ class _Fields extends StatelessWidget {
       editable: editable,
       attention: attention,
     );
+    return value != null && isTwoSided(value)
+        ? AppSection(
+            layout: AppPageLayout.readingFirst,
+            children: <Widget>[row],
+          )
+        : row;
   }
 
   Future<void> _verify(BuildContext context, List<String> keys) async {
@@ -630,10 +649,9 @@ class _Photos extends StatelessWidget {
   Widget build(BuildContext context) {
     final LocalizedCopy localCopy = Copy.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return AppSection(
+      title: localCopy.capturePhotosSection,
       children: <Widget>[
-        AppSectionHeader(title: localCopy.capturePhotosSection),
         Wrap(
           spacing: Space.x2,
           runSpacing: Space.x2,
@@ -683,11 +701,9 @@ class _Context extends StatelessWidget {
     if (levels.isEmpty) {
       return const SizedBox.shrink();
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return AppSection(
+      title: localCopy.recordDetailContextTitle,
       children: <Widget>[
-        const SizedBox(height: Space.x3),
-        AppSectionHeader(title: localCopy.recordDetailContextTitle),
         for (final MapEntry<String, String> level in levels)
           AppListTile(
             key: ValueKey<String>('review-context-${level.key}'),

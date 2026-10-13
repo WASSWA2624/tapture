@@ -72,17 +72,26 @@ class LiveCameraScreen extends ConsumerWidget {
     final bool open =
         ref.watch(cameraPermissionProvider).value == CameraAccess.open;
     return AppPage(
+      layout: AppPageLayout.thumbReach,
       title: localCopy.captureCameraTitle,
       compactBar: true,
       scrollable: false,
       inset: false,
       footer: open
-          ? AppPrimaryAction(
-              label: localCopy.captureTakePhoto,
-              busy: view.saving,
-              onPressed: view.preview == CameraPreviewState.running
-                  ? () => unawaited(_shoot(context, controller))
-                  : null,
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                CameraControls(camera: camera),
+                const SizedBox(height: Space.x2),
+                AppPrimaryAction(
+                  label: localCopy.captureTakePhoto,
+                  busy: view.saving,
+                  onPressed: view.preview == CameraPreviewState.running
+                      ? () => unawaited(_shoot(context, controller))
+                      : null,
+                ),
+              ],
             )
           : null,
       body: CameraPermissionGate(
@@ -97,10 +106,6 @@ class LiveCameraScreen extends ConsumerWidget {
                   _Advice(view: view, controller: controller, screen: this),
                 ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: Space.x2),
-              child: CameraControls(camera: camera),
             ),
           ],
         ),

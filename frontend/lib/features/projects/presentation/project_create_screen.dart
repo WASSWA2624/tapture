@@ -8,6 +8,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/forms/app_form.dart';
@@ -67,6 +68,7 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen>
     final bool duplicating =
         widget.sourceId != null && widget.sourceId!.isNotEmpty;
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-project-create'),
       title: duplicating
           ? localCopy.projectDuplicateTitle
@@ -86,31 +88,35 @@ class _ProjectCreateScreenState extends ConsumerState<ProjectCreateScreen>
                 ).stateText(view.localizedSaveError, view.saveError)!,
               ],
         fields: <Widget>[
-          AppTextField(
-            label: localCopy.projectName,
-            wrapLabel: true,
-            controller: _name,
-            requiredness: FieldRequiredness.required,
-            textInputAction: TextInputAction.next,
-            errorText: Copy.of(
-              context,
-            ).stateText(view.localizedNameError, view.nameError),
-            onChanged: ref.read(_projectCreateProvider.notifier).changeName,
-          ),
-          AppTextField(
-            label: localCopy.projectDescription,
-            wrapLabel: true,
-            controller: _description,
-            requiredness: FieldRequiredness.optional,
-            textInputAction: TextInputAction.next,
-            maxLines: 3,
-          ),
-          AppTextField(
-            label: localCopy.projectOrganisation,
-            wrapLabel: true,
-            controller: _organisation,
-            requiredness: FieldRequiredness.optional,
-            textInputAction: TextInputAction.done,
+          AppSection(
+            children: <Widget>[
+              AppTextField(
+                label: localCopy.projectName,
+                wrapLabel: true,
+                controller: _name,
+                requiredness: FieldRequiredness.required,
+                textInputAction: TextInputAction.next,
+                errorText: Copy.of(
+                  context,
+                ).stateText(view.localizedNameError, view.nameError),
+                onChanged: ref.read(_projectCreateProvider.notifier).changeName,
+              ),
+              AppTextField(
+                label: localCopy.projectDescription,
+                wrapLabel: true,
+                controller: _description,
+                requiredness: FieldRequiredness.optional,
+                textInputAction: TextInputAction.next,
+                maxLines: 3,
+              ),
+              AppTextField(
+                label: localCopy.projectOrganisation,
+                wrapLabel: true,
+                controller: _organisation,
+                requiredness: FieldRequiredness.optional,
+                textInputAction: TextInputAction.done,
+              ),
+            ],
           ),
           ProjectPhotoField(
             pending: _photo,

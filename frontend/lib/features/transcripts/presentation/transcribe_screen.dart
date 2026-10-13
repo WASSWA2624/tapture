@@ -11,7 +11,7 @@ import 'package:tapture/core/speech/speech_selection.dart';
 import 'package:tapture/core/widgets/app_chip.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
+import 'package:tapture/core/widgets/responsive/responsive_builder.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/projects/projects.dart'
@@ -51,6 +51,7 @@ class TranscribeScreen extends ConsumerWidget {
         };
     if (project == null || missing) {
       return AppPage(
+        layout: AppPageLayout.thumbReach,
         key: const ValueKey<String>('route-transcribe'),
         title: localCopy.transcribeTitle,
         body: AppEmptyState(
@@ -84,6 +85,7 @@ class TranscribeScreen extends ConsumerWidget {
     // A session already running keeps its panel whatever the readiness.
     final bool idle = status.phase == TranscriptSessionPhase.idle;
     final Widget body;
+    Widget? footer;
     if (target == null || (idle && readiness.verdict == null)) {
       body = const AppSkeleton(shape: SkeletonShape.detail, count: 1);
     } else if (idle && !readiness.ready) {
@@ -96,24 +98,49 @@ class TranscribeScreen extends ConsumerWidget {
         onAction: () => context.go(RoutePaths.settingsLanguage),
       );
     } else {
-      body = ResponsivePair(
-        endFlex: 2,
-        start: _SessionDetails(
+      final Widget details = SingleChildScrollView(
+        child: _SessionDetails(
           languageTag: ref.watch(speechLanguageProvider),
           selection: readiness.selection,
         ),
-        end: LiveTranscriptPanel(
-          target: target,
-          startLabel: localCopy.liveTranscriptStart,
-          onOpenTranscript: (String transcriptId) =>
-              context.go(_detail(transcriptId)),
+      );
+      final Widget transcript = LiveTranscriptPanel(
+        target: target,
+        fill: true,
+        showControls: false,
+      );
+      body = ResponsiveBuilder(
+        compact: (BuildContext context) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Flexible(child: details),
+            Expanded(flex: 2, child: transcript),
+          ],
         ),
+        medium: (BuildContext context) => Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(child: details),
+            const SizedBox(width: Space.x3),
+            Expanded(flex: 2, child: transcript),
+          ],
+        ),
+      );
+      footer = LiveTranscriptPanel(
+        target: target,
+        showTranscript: false,
+        startLabel: localCopy.liveTranscriptStart,
+        onOpenTranscript: (String transcriptId) =>
+            context.go(_detail(transcriptId)),
       );
     }
     return AppPage(
+      layout: AppPageLayout.thumbReach,
       key: const ValueKey<String>('route-transcribe'),
       title: localCopy.transcribeTitle,
+      scrollable: footer == null,
       body: body,
+      footer: footer,
     );
   }
 
@@ -143,9 +170,15 @@ class _SessionDetails extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: Space.x2),
       child: AppChipRow(
         chips: <AppChip>[
-          AppChip(label: localCopy.transcriptLanguage(languageTag)),
+          AppChip(
+            label: localCopy.transcriptLanguage(languageTag),
+            wrapLabel: true,
+          ),
           if (chosen != null)
-            AppChip(label: localCopy.transcriptModel(chosen.model.id)),
+            AppChip(
+              label: localCopy.transcriptModel(chosen.model.id),
+              wrapLabel: true,
+            ),
         ],
       ),
     );

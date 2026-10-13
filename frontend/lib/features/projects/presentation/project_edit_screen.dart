@@ -11,6 +11,7 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_date_field.dart';
@@ -67,6 +68,7 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen>
     final Project? project = value.value;
     if (project == null) {
       return AppPage(
+        layout: AppPageLayout.sectioned,
         key: const ValueKey<String>('route-project-edit'),
         title: localCopy.projectEditFormTitle,
         body: value.isLoading
@@ -83,6 +85,7 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen>
     _bind(project);
     final _ProjectEditView view = ref.watch(_projectEditProvider);
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-project-edit'),
       title: localCopy.projectEditFormTitle,
       scrollable: false,
@@ -108,62 +111,70 @@ class _ProjectEditScreenState extends ConsumerState<ProjectEditScreen>
                 ).stateText(view.localizedSaveError, view.saveError)!,
               ],
         fields: <Widget>[
-          AppTextField(
-            label: localCopy.projectName,
-            wrapLabel: true,
-            controller: _name!,
-            requiredness: FieldRequiredness.required,
-            textInputAction: TextInputAction.next,
-            errorText: Copy.of(
-              context,
-            ).stateText(view.localizedNameError, view.nameError),
-            onChanged: ref.read(_projectEditProvider.notifier).changeName,
-          ),
-          AppTextField(
-            label: localCopy.projectDescription,
-            wrapLabel: true,
-            controller: _description!,
-            requiredness: FieldRequiredness.optional,
-            textInputAction: TextInputAction.next,
-            maxLines: 3,
-          ),
-          AppTextField(
-            label: localCopy.projectOrganisation,
-            wrapLabel: true,
-            controller: _organisation!,
-            requiredness: FieldRequiredness.optional,
-            textInputAction: TextInputAction.next,
-          ),
-          AppDateField(
-            label: localCopy.projectStartsOn,
-            value: view.startsOn,
-            clock: const SystemClock(),
-            onChanged: ref.read(_projectEditProvider.notifier).setStartsOn,
-          ),
-          AppDateField(
-            label: localCopy.projectEndsOn,
-            value: view.endsOn,
-            clock: const SystemClock(),
-            onChanged: ref.read(_projectEditProvider.notifier).setEndsOn,
-          ),
-          AppChoiceField<ProjectStatus>(
-            label: localCopy.projectStatus,
-            value: view.status,
-            options: <Choice<ProjectStatus>>[
-              Choice<ProjectStatus>(
-                ProjectStatus.active,
-                localCopy.projectStatusActive,
+          AppSection(
+            children: <Widget>[
+              AppTextField(
+                label: localCopy.projectName,
+                wrapLabel: true,
+                controller: _name!,
+                requiredness: FieldRequiredness.required,
+                textInputAction: TextInputAction.next,
+                errorText: Copy.of(
+                  context,
+                ).stateText(view.localizedNameError, view.nameError),
+                onChanged: ref.read(_projectEditProvider.notifier).changeName,
               ),
-              Choice<ProjectStatus>(
-                ProjectStatus.archived,
-                localCopy.projectStatusArchived,
+              AppTextField(
+                label: localCopy.projectDescription,
+                wrapLabel: true,
+                controller: _description!,
+                requiredness: FieldRequiredness.optional,
+                textInputAction: TextInputAction.next,
+                maxLines: 3,
+              ),
+              AppTextField(
+                label: localCopy.projectOrganisation,
+                wrapLabel: true,
+                controller: _organisation!,
+                requiredness: FieldRequiredness.optional,
+                textInputAction: TextInputAction.next,
               ),
             ],
-            onChanged: (ProjectStatus? status) {
-              if (status != null) {
-                ref.read(_projectEditProvider.notifier).setStatus(status);
-              }
-            },
+          ),
+          AppSection(
+            children: <Widget>[
+              AppDateField(
+                label: localCopy.projectStartsOn,
+                value: view.startsOn,
+                clock: const SystemClock(),
+                onChanged: ref.read(_projectEditProvider.notifier).setStartsOn,
+              ),
+              AppDateField(
+                label: localCopy.projectEndsOn,
+                value: view.endsOn,
+                clock: const SystemClock(),
+                onChanged: ref.read(_projectEditProvider.notifier).setEndsOn,
+              ),
+              AppChoiceField<ProjectStatus>(
+                label: localCopy.projectStatus,
+                value: view.status,
+                options: <Choice<ProjectStatus>>[
+                  Choice<ProjectStatus>(
+                    ProjectStatus.active,
+                    localCopy.projectStatusActive,
+                  ),
+                  Choice<ProjectStatus>(
+                    ProjectStatus.archived,
+                    localCopy.projectStatusArchived,
+                  ),
+                ],
+                onChanged: (ProjectStatus? status) {
+                  if (status != null) {
+                    ref.read(_projectEditProvider.notifier).setStatus(status);
+                  }
+                },
+              ),
+            ],
           ),
           ProjectPhotoField(
             stored: project.settings.coverPhoto,

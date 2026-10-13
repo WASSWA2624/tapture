@@ -82,6 +82,7 @@ class _RecordPhotoViewerScreenState extends State<RecordPhotoViewerScreen> {
     final List<RecordPhoto> photos = widget.photos;
     if (photos.isEmpty) {
       return AppPage(
+        layout: AppPageLayout.thumbReach,
         key: const ValueKey<String>('route-record-photo'),
         title: localCopy.missingPhoto,
         body: AppEmptyState(
@@ -97,6 +98,7 @@ class _RecordPhotoViewerScreenState extends State<RecordPhotoViewerScreen> {
         final LocalizedCopy localCopy = Copy.of(context);
 
         return AppPage(
+          layout: AppPageLayout.thumbReach,
           key: const ValueKey<String>('route-record-photo'),
           title: localCopy.recordPhotoPosition(shown + 1, photos.length),
           scrollable: false,

@@ -11,11 +11,13 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
-import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_ink_picker.dart';
+import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/markup_stroke.dart';
 import 'package:tapture/core/widgets/photo_markup.dart';
+import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/state_refresh.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/photo_frame.dart';
@@ -107,7 +109,26 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen>
           onSize: (int size) => _style(_ink, size),
         ),
         const SizedBox(height: Space.x2),
-        AppButton(
+        Wrap(
+          spacing: Space.x2,
+          runSpacing: Space.x2,
+          children: <Widget>[
+            AppButton(
+              icon: AppIcons.undo,
+              label: localCopy.photoUndoDraw,
+              variant: AppButtonVariant.secondary,
+              onPressed: _strokes.isEmpty && _current == null ? null : _undo,
+            ),
+            AppButton(
+              icon: AppIcons.delete,
+              label: localCopy.photoClearDraw,
+              variant: AppButtonVariant.secondary,
+              onPressed: _strokes.isEmpty ? null : _clear,
+            ),
+          ],
+        ),
+        const SizedBox(height: Space.x2),
+        AppPrimaryAction(
           label: localCopy.save,
           busy: _busy,
           onPressed: _busy || _strokes.isEmpty
@@ -116,30 +137,20 @@ class _PhotoDoodleScreenState extends State<PhotoDoodleScreen>
         ),
       ],
     );
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(localCopy.photoDraw),
-        actions: <Widget>[
-          AppIconButton(
-            icon: AppIcons.undo,
-            tooltip: localCopy.photoUndoDraw,
-            semanticLabel: localCopy.photoUndoDraw,
-            onPressed: _strokes.isEmpty && _current == null ? null : _undo,
-          ),
-          AppIconButton(
-            icon: AppIcons.delete,
-            tooltip: localCopy.photoClearDraw,
-            semanticLabel: localCopy.photoClearDraw,
-            onPressed: _strokes.isEmpty ? null : _clear,
-          ),
-        ],
-      ),
+    return AppPage(
+      layout: AppPageLayout.thumbReach,
+      title: localCopy.photoDraw,
+      compactBar: true,
+      scrollable: false,
+      inset: false,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints limits) {
             final LocalizedCopy localCopy = Copy.of(context);
 
-            final bool wide = limits.maxWidth > limits.maxHeight;
+            final bool wide =
+                context.sizeClass != SizeClass.compact &&
+                limits.maxWidth > limits.maxHeight;
             final Widget canvas = photoSize == null
                 ? Center(child: Text(_error == null ? localCopy.loading : ''))
                 : _canvas(photoSize);

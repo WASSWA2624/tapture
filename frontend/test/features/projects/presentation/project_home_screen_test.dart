@@ -694,17 +694,15 @@ void main() {
       await tester.tap(filterButton());
       await tester.pumpAndSettle();
       expect(find.text(Copy.projectRecordFiltersTitle), findsOneWidget);
-      await tester.tap(
-        find.byKey(const ValueKey<String>('record-status-filter')),
+      expect(
+        tester.widget<AppBottomSheet>(find.byType(AppBottomSheet)).layout,
+        AppPageLayout.readingFirst,
       );
-      await tester.pumpAndSettle();
       // Only the statuses present, named as their pills name them.
       expect(find.text(Copy.statusCaptured), findsOneWidget);
       expect(find.text(Copy.statusApproved), findsOneWidget);
       expect(find.text(Copy.statusDraft), findsNothing);
       await tester.tap(find.text(Copy.statusNeedsReview));
-      await tester.pumpAndSettle();
-      await tester.tapAt(const Offset(10, 10));
       await tester.pumpAndSettle();
       await tester.tapAt(const Offset(10, 10));
       await tester.pumpAndSettle();

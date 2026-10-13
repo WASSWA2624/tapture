@@ -9,7 +9,7 @@ import 'package:tapture/core/security/untrusted_text.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
@@ -88,6 +88,7 @@ final class MeetingReviewScreen extends ConsumerWidget {
     final Failure? failed = failure;
     if (failed != null) {
       return AppPage(
+        layout: AppPageLayout.sectioned,
         title: localCopy.meetingReviewTitle,
         body: AppErrorState(failure: failed),
       );
@@ -131,10 +132,12 @@ final class MeetingReviewScreen extends ConsumerWidget {
             );
           },
           error: (Object error, StackTrace _) => AppPage(
+            layout: AppPageLayout.sectioned,
             title: localCopy.meetingReviewTitle,
             body: AppErrorState(failure: Failure.from(error)),
           ),
           loading: () => AppPage(
+            layout: AppPageLayout.sectioned,
             title: localCopy.meetingReviewTitle,
             body: const AppSkeleton(shape: SkeletonShape.detail, count: 1),
           ),
@@ -143,6 +146,7 @@ final class MeetingReviewScreen extends ConsumerWidget {
 
   Widget _empty(LocalizedCopy localCopy) {
     return AppPage(
+      layout: AppPageLayout.sectioned,
       title: localCopy.meetingReviewTitle,
       body: AppEmptyState(
         icon: AppIcons.review,
@@ -187,6 +191,7 @@ final class MeetingReviewScreen extends ConsumerWidget {
     );
     final bool expanded = context.sizeClass == SizeClass.expanded;
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-meeting-review'),
       title: localCopy.meetingReviewTitle,
       footer: AppButton(
@@ -218,19 +223,27 @@ final class MeetingReviewScreen extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          AppSectionHeader(title: localCopy.meetingSummary),
-          Text(
-            localCopy.meetingAttendanceCount(loaded.attendanceCount),
-            key: const ValueKey<String>('meeting-attendance-count'),
+          AppSection(
+            title: localCopy.meetingSummary,
+            children: <Widget>[
+              Text(
+                localCopy.meetingAttendanceCount(loaded.attendanceCount),
+                key: const ValueKey<String>('meeting-attendance-count'),
+              ),
+              Text(localCopy.meetingDecisionsCount(loaded.decisions.length)),
+              Text(localCopy.meetingActionsCount(loaded.actions.length)),
+            ],
           ),
-          Text(localCopy.meetingDecisionsCount(loaded.decisions.length)),
-          Text(localCopy.meetingActionsCount(loaded.actions.length)),
           if (recording != null && project.isNotEmpty) ...<Widget>[
             const SizedBox(height: Space.x4),
-            MeetingLiveSection(
-              meetingId: recording,
-              projectId: project,
-              versions: versions,
+            AppSection(
+              children: <Widget>[
+                MeetingLiveSection(
+                  meetingId: recording,
+                  projectId: project,
+                  versions: versions,
+                ),
+              ],
             ),
           ],
           if (blocks.isNotEmpty)
@@ -244,39 +257,46 @@ final class MeetingReviewScreen extends ConsumerWidget {
               UntrustedText(transcript).forDisplay(),
               key: const ValueKey<String>('meeting-transcript'),
             ),
-          AppSectionHeader(title: localCopy.meetingNotesAndMinutes),
-          if (edits?.failure case final Failure failure) ...<Widget>[
-            AppBanner(
-              message: localCopy.failureMessage(failure),
-              icon: AppIcons.error,
-              tone: SnackTone.error,
-            ),
-            AppButton(
-              key: const ValueKey<String>('meeting-retry-save'),
-              label: localCopy.save,
-              variant: AppButtonVariant.secondary,
-              onPressed: edits!.saving
-                  ? null
-                  : () => unawaited(controller!.flush()),
-            ),
-          ],
-          if (edits?.saved ?? false)
-            Semantics(liveRegion: true, child: Text(localCopy.recordEditSaved)),
-          const SizedBox(height: Space.x2),
-          LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              final double width = expanded
-                  ? (constraints.maxWidth - Space.x4) / 2
-                  : constraints.maxWidth;
-              return Wrap(
-                spacing: Space.x4,
-                runSpacing: Space.x4,
-                children: <Widget>[
-                  SizedBox(width: width, child: notesPane),
-                  SizedBox(width: width, child: minutesPane),
-                ],
-              );
-            },
+          AppSection(
+            title: localCopy.meetingNotesAndMinutes,
+            children: <Widget>[
+              if (edits?.failure case final Failure failure) ...<Widget>[
+                AppBanner(
+                  message: localCopy.failureMessage(failure),
+                  icon: AppIcons.error,
+                  tone: SnackTone.error,
+                ),
+                AppButton(
+                  key: const ValueKey<String>('meeting-retry-save'),
+                  label: localCopy.save,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: edits!.saving
+                      ? null
+                      : () => unawaited(controller!.flush()),
+                ),
+              ],
+              if (edits?.saved ?? false)
+                Semantics(
+                  liveRegion: true,
+                  child: Text(localCopy.recordEditSaved),
+                ),
+              const SizedBox(height: Space.x2),
+              LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  final double width = expanded
+                      ? (constraints.maxWidth - Space.x4) / 2
+                      : constraints.maxWidth;
+                  return Wrap(
+                    spacing: Space.x4,
+                    runSpacing: Space.x4,
+                    children: <Widget>[
+                      SizedBox(width: width, child: notesPane),
+                      SizedBox(width: width, child: minutesPane),
+                    ],
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),

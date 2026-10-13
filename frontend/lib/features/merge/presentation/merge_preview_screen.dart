@@ -16,6 +16,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -81,6 +82,7 @@ final class MergePreviewScreen extends ConsumerWidget {
       },
       child: AppPage(
         key: const ValueKey<String>('route-project-merge'),
+        layout: AppPageLayout.sectioned,
         title: localCopy.mergePackage,
         footer: view == null ? null : _footer(context, ref, view),
         body: AsyncValueView<MergeView?>(
@@ -193,8 +195,10 @@ class _Preview extends ConsumerWidget {
     counts = view.plan.counts;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: Space.x3,
       children: <Widget>[
         AppListTile(
+          wrapText: true,
           title: manifest.projectName,
           subtitle: localCopy.importFrom(
             manifest.operatorName ?? manifest.sourceDeviceId,
@@ -202,99 +206,119 @@ class _Preview extends ConsumerWidget {
           ),
           leading: const Icon(AppIcons.import),
         ),
-        if (view.report.templates.isNotEmpty) ...<Widget>[
-          AppSectionHeader(title: localCopy.mergeTemplatesHeading),
-          for (final TemplateMatch match in view.report.templates)
-            _TemplateRow(match: match),
-        ],
+        if (view.report.templates.isNotEmpty)
+          AppSection(
+            title: localCopy.mergeTemplatesHeading,
+            children: <Widget>[
+              for (final TemplateMatch match in view.report.templates)
+                _TemplateRow(match: match),
+            ],
+          ),
         if (view.plan.projectKept.isNotEmpty)
           AppListTile(
             key: const ValueKey<String>('merge-project-kept'),
             dense: true,
+            wrapText: true,
             title: localCopy.mergeProjectKept(view.plan.projectKept),
           ),
         if (!view.report.canMerge)
           _Note(text: localCopy.mergeBlocked, error: true)
         else if (view.plan.isEmpty)
           _Note(text: localCopy.mergeNothing),
-        AppSectionHeader(title: localCopy.mergeCountsHeading),
-        _Count(
-          name: 'newRecords',
-          n: counts.newRecords,
-          expanded: expanded.contains('newRecords'),
-          onToggle: () => toggle('newRecords'),
+        AppSection(
+          title: localCopy.mergeCountsHeading,
           children: <Widget>[
-            for (final String id in view.plan.insertedRecords)
-              AppListTile(
-                dense: true,
-                title: mergeRecordLabel(view.bundle.tables, id),
-              ),
-          ],
-        ),
-        _Count(
-          name: 'updatedRecords',
-          n: counts.updatedRecords,
-          expanded: expanded.contains('updatedRecords'),
-          onToggle: () => toggle('updatedRecords'),
-          children: <Widget>[
-            for (final String id in view.plan.updatedRecords)
-              AppListTile(dense: true, title: mergeRecordLabel(view.local, id)),
-          ],
-        ),
-        _Count(name: 'newPhotos', n: counts.newPhotos),
-        _Count(name: 'photosHere', n: counts.photosHere),
-        _Count(name: 'deletions', n: counts.deletions),
-        _Count(
-          name: 'conflicts',
-          n: view.plan.conflicts.length,
-          expanded: expanded.contains('conflicts'),
-          onToggle: () => toggle('conflicts'),
-          children: <Widget>[
-            for (final FieldConflict conflict in view.plan.conflicts)
-              _ConflictRow(
-                projectId: projectId,
-                conflict: conflict,
-                choice: view.choices[conflict.id],
-              ),
-          ],
-        ),
-        AppSwitchTile(
-          key: MergePreviewScreen.duplicatesKey,
-          title: localCopy.mergeCheckDuplicates,
-          description: localCopy.mergeCheckDuplicatesHelper,
-          value: view.checkDuplicates,
-          enabled: !view.applying,
-          onChanged: (bool on) => unawaited(controller.setCheckDuplicates(on)),
-        ),
-        if (view.checkDuplicates)
-          _Count(
-            name: 'duplicates',
-            n: view.duplicates.length,
-            expanded: expanded.contains('duplicates'),
-            onToggle: () => toggle('duplicates'),
-            children: <Widget>[
-              for (final PossibleDuplicate pair in view.duplicates)
-                AppListTile(
-                  key: ValueKey<String>('merge-duplicate-${pair.incomingId}'),
-                  dense: true,
-                  title: mergeRecordLabel(view.bundle.tables, pair.incomingId),
-                  subtitle: view.skipped.contains(pair.incomingId)
-                      ? localCopy.duplicateSkipped
-                      : localCopy.duplicateSignal(pair.signal.name),
-                  trailing: const Icon(AppIcons.open),
-                  onTap: () => unawaited(
-                    showDuplicatePairSheet(
-                      context,
-                      projectId: projectId,
-                      pair: pair,
-                    ),
+            _Count(
+              name: 'newRecords',
+              n: counts.newRecords,
+              expanded: expanded.contains('newRecords'),
+              onToggle: () => toggle('newRecords'),
+              children: <Widget>[
+                for (final String id in view.plan.insertedRecords)
+                  AppListTile(
+                    dense: true,
+                    wrapText: true,
+                    title: mergeRecordLabel(view.bundle.tables, id),
                   ),
-                ),
-            ],
-          ),
-        _Count(name: 'kept', n: counts.kept),
-        if (counts.elsewhere > 0)
-          _Count(name: 'elsewhere', n: counts.elsewhere),
+              ],
+            ),
+            _Count(
+              name: 'updatedRecords',
+              n: counts.updatedRecords,
+              expanded: expanded.contains('updatedRecords'),
+              onToggle: () => toggle('updatedRecords'),
+              children: <Widget>[
+                for (final String id in view.plan.updatedRecords)
+                  AppListTile(
+                    dense: true,
+                    wrapText: true,
+                    title: mergeRecordLabel(view.local, id),
+                  ),
+              ],
+            ),
+            _Count(name: 'newPhotos', n: counts.newPhotos),
+            _Count(name: 'photosHere', n: counts.photosHere),
+            _Count(name: 'deletions', n: counts.deletions),
+            _Count(
+              name: 'conflicts',
+              n: view.plan.conflicts.length,
+              expanded: expanded.contains('conflicts'),
+              onToggle: () => toggle('conflicts'),
+              children: <Widget>[
+                for (final FieldConflict conflict in view.plan.conflicts)
+                  _ConflictRow(
+                    projectId: projectId,
+                    conflict: conflict,
+                    choice: view.choices[conflict.id],
+                  ),
+              ],
+            ),
+            AppSwitchTile(
+              key: MergePreviewScreen.duplicatesKey,
+              title: localCopy.mergeCheckDuplicates,
+              description: localCopy.mergeCheckDuplicatesHelper,
+              value: view.checkDuplicates,
+              enabled: !view.applying,
+              onChanged: (bool on) =>
+                  unawaited(controller.setCheckDuplicates(on)),
+            ),
+            if (view.checkDuplicates)
+              _Count(
+                name: 'duplicates',
+                n: view.duplicates.length,
+                expanded: expanded.contains('duplicates'),
+                onToggle: () => toggle('duplicates'),
+                children: <Widget>[
+                  for (final PossibleDuplicate pair in view.duplicates)
+                    AppListTile(
+                      key: ValueKey<String>(
+                        'merge-duplicate-${pair.incomingId}',
+                      ),
+                      dense: true,
+                      wrapText: true,
+                      title: mergeRecordLabel(
+                        view.bundle.tables,
+                        pair.incomingId,
+                      ),
+                      subtitle: view.skipped.contains(pair.incomingId)
+                          ? localCopy.duplicateSkipped
+                          : localCopy.duplicateSignal(pair.signal.name),
+                      trailing: const Icon(AppIcons.open),
+                      onTap: () => unawaited(
+                        showDuplicatePairSheet(
+                          context,
+                          projectId: projectId,
+                          pair: pair,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            _Count(name: 'kept', n: counts.kept),
+            if (counts.elsewhere > 0)
+              _Count(name: 'elsewhere', n: counts.elsewhere),
+          ],
+        ),
       ],
     );
   }
@@ -316,6 +340,7 @@ class _TemplateRow extends StatelessWidget {
         : CompatibilityStatus.compatibleWithDifferences;
     return AppListTile(
       key: ValueKey<String>('merge-template-${match.incomingId}'),
+      wrapText: true,
       title: match.name,
       subtitle: match.issues.isEmpty
           ? null
@@ -353,6 +378,7 @@ class _Count extends StatelessWidget {
       return AppListTile(
         key: ValueKey<String>('merge-count-$name'),
         dense: true,
+        wrapText: true,
         title: title,
       );
     }
@@ -363,6 +389,7 @@ class _Count extends StatelessWidget {
           key: ValueKey<String>('merge-count-$name'),
           title: title,
           dense: true,
+          wrapText: true,
           expanded: expanded,
           onToggle: onToggle,
         ),
@@ -391,6 +418,7 @@ class _ConflictRow extends StatelessWidget {
     return AppListTile(
       key: ValueKey<String>('merge-conflict-${conflict.id}'),
       dense: true,
+      wrapText: true,
       title: localCopy.mergeConflictLine(
         conflict.recordLabel.isEmpty
             ? localCopy.mergeRecordUnnamed(conflict.recordId)

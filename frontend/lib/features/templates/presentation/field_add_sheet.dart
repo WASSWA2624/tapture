@@ -12,6 +12,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -143,6 +144,7 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
     final TemplateDef? template = value.asData?.value;
     _hydrate(template);
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: ValueKey<String>(
         widget.fieldKey == null ? 'route-field-add' : 'route-field-edit',
       ),
@@ -207,56 +209,60 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
             onPressed: () => ref.read(_fieldAddProvider.notifier).keepAnyway(),
           ),
         ],
-        AppTextField(
-          label: localCopy.fieldLabel,
-          controller: _label,
-          requiredness: FieldRequiredness.required,
-          errorText: Copy.of(
-            context,
-          ).stateText(view.localizedLabelError, view.labelError),
-          textInputAction: TextInputAction.next,
-        ),
-        AppChoiceField<FieldType>(
-          label: localCopy.fieldType,
-          value: view.type,
-          options: <Choice<FieldType>>[
-            for (final FieldType type in FieldType.values)
-              Choice<FieldType>(type, localCopy.fieldTypeLabel(type.name)),
+        AppSection(
+          children: <Widget>[
+            AppTextField(
+              label: localCopy.fieldLabel,
+              controller: _label,
+              requiredness: FieldRequiredness.required,
+              errorText: Copy.of(
+                context,
+              ).stateText(view.localizedLabelError, view.labelError),
+              textInputAction: TextInputAction.next,
+            ),
+            AppChoiceField<FieldType>(
+              label: localCopy.fieldType,
+              value: view.type,
+              options: <Choice<FieldType>>[
+                for (final FieldType type in FieldType.values)
+                  Choice<FieldType>(type, localCopy.fieldTypeLabel(type.name)),
+              ],
+              onChanged: (FieldType? type) {
+                if (type != null) {
+                  ref.read(_fieldAddProvider.notifier).setType(type);
+                }
+              },
+            ),
+            if (view.type == FieldType.lookup && widget.fieldKey != null)
+              AppListTile(
+                key: const ValueKey<String>('field-bind-dataset-row'),
+                title: localCopy.templatesBindDataset,
+                trailing: const Icon(AppIcons.open),
+                onTap: _bindDataset,
+              ),
+            AppRadioGroup<Requiredness>(
+              label: localCopy.fieldRequiredness,
+              value: view.requiredness,
+              direction: Axis.horizontal,
+              options: <Choice<Requiredness>>[
+                Choice<Requiredness>(
+                  Requiredness.required,
+                  localCopy.fieldRequired,
+                ),
+                Choice<Requiredness>(
+                  Requiredness.recommended,
+                  localCopy.fieldRecommended,
+                ),
+                Choice<Requiredness>(
+                  Requiredness.optional,
+                  localCopy.fieldOptional,
+                ),
+              ],
+              onChanged: (Requiredness value) {
+                ref.read(_fieldAddProvider.notifier).setRequiredness(value);
+              },
+            ),
           ],
-          onChanged: (FieldType? type) {
-            if (type != null) {
-              ref.read(_fieldAddProvider.notifier).setType(type);
-            }
-          },
-        ),
-        if (view.type == FieldType.lookup && widget.fieldKey != null)
-          AppListTile(
-            key: const ValueKey<String>('field-bind-dataset-row'),
-            title: localCopy.templatesBindDataset,
-            trailing: const Icon(AppIcons.open),
-            onTap: _bindDataset,
-          ),
-        AppRadioGroup<Requiredness>(
-          label: localCopy.fieldRequiredness,
-          value: view.requiredness,
-          direction: Axis.horizontal,
-          options: <Choice<Requiredness>>[
-            Choice<Requiredness>(
-              Requiredness.required,
-              localCopy.fieldRequired,
-            ),
-            Choice<Requiredness>(
-              Requiredness.recommended,
-              localCopy.fieldRecommended,
-            ),
-            Choice<Requiredness>(
-              Requiredness.optional,
-              localCopy.fieldOptional,
-            ),
-          ],
-          onChanged: (Requiredness value) {
-            ref.read(_fieldAddProvider.notifier).setRequiredness(value);
-          },
         ),
         AppSwitchTile(
           title: localCopy.fieldAdvanced,

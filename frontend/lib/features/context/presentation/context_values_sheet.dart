@@ -5,6 +5,7 @@ import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -53,6 +54,7 @@ Future<void> showContextValuesSheet({
     final _ContextSelection? selected = await showAppSheet<_ContextSelection>(
       modalContext,
       title: Copy.of(context).captureContextValues,
+      layout: AppPageLayout.readingFirst,
       builder: (BuildContext sheetContext) {
         overviewRoute = ModalRoute.of<_ContextSelection>(sheetContext);
         return _ContextValuesView(projectId: projectId);

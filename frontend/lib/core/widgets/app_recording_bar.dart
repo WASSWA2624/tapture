@@ -6,6 +6,8 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_recording_phase.dart';
 
 /// The one recording control row: status, elapsed time, input level and the
@@ -72,7 +74,9 @@ class AppRecordingBar extends StatelessWidget {
     final LocalizedCopy localCopy = Copy.of(context);
     final String? shown = status ?? _phaseStatus(localCopy);
     final bool open = phase != AppRecordingPhase.idle;
-    final List<Widget> controls = _controls(localCopy);
+    final bool thumbReach =
+        AppPageLayoutScope.of(context) == AppPageLayout.thumbReach;
+    final List<Widget> controls = _controls(localCopy, thumbReach: thumbReach);
     return Wrap(
       alignment: WrapAlignment.spaceBetween,
       crossAxisAlignment: WrapCrossAlignment.center,
@@ -141,7 +145,7 @@ class AppRecordingBar extends StatelessWidget {
     };
   }
 
-  List<Widget> _controls(LocalizedCopy localCopy) {
+  List<Widget> _controls(LocalizedCopy localCopy, {required bool thumbReach}) {
     final VoidCallback? start = onStart;
     final VoidCallback? pause = onPause;
     final VoidCallback? resume = onResume;
@@ -168,7 +172,7 @@ class AppRecordingBar extends StatelessWidget {
             onPressed: pause,
           ),
         _stop(localCopy, busy: false),
-        if (cancel != null) _discard(localCopy, cancel),
+        if (cancel != null) _discard(localCopy, cancel, labelled: thumbReach),
       ],
       AppRecordingPhase.paused => <Widget>[
         if (resume != null)
@@ -180,7 +184,7 @@ class AppRecordingBar extends StatelessWidget {
             onPressed: resume,
           ),
         _stop(localCopy, busy: false),
-        if (cancel != null) _discard(localCopy, cancel),
+        if (cancel != null) _discard(localCopy, cancel, labelled: thumbReach),
       ],
     };
   }
@@ -196,7 +200,20 @@ class AppRecordingBar extends StatelessWidget {
     );
   }
 
-  Widget _discard(LocalizedCopy localCopy, VoidCallback cancel) {
+  Widget _discard(
+    LocalizedCopy localCopy,
+    VoidCallback cancel, {
+    required bool labelled,
+  }) {
+    if (labelled) {
+      return _labelled(
+        key: const ValueKey<String>('recording-bar-discard'),
+        label: localCopy.liveTranscriptCancel,
+        icon: AppIcons.delete,
+        variant: AppButtonVariant.secondary,
+        onPressed: cancel,
+      );
+    }
     return AppIconButton(
       key: const ValueKey<String>('recording-bar-discard'),
       icon: AppIcons.delete,

@@ -1,4 +1,7 @@
 import 'package:flutter/widgets.dart';
+import 'package:tapture/app/theme/dimensions.dart';
+
+import 'breakpoints.dart';
 
 /// Centres [child] and caps its width so text and forms do not stretch
 /// edge to edge on expanded windows (FE-RESP-04).
@@ -16,6 +19,13 @@ class ContentConstraint extends StatelessWidget {
 
   /// The cap, in logical pixels. A screen may pass a tighter one.
   final double maxWidth;
+
+  /// Consistent side insets for readable pages, forms and action docks.
+  static double gutter(BuildContext context) => context.responsive(
+    compact: Space.x4,
+    medium: Space.x4,
+    expanded: Space.x5,
+  );
 
   @override
   Widget build(BuildContext context) {

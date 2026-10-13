@@ -7,6 +7,8 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -79,7 +81,9 @@ class AppChoiceField<T> extends StatelessWidget {
             )
           : _SheetChoice<T>(
               label: label,
-              wrapLabel: wrapLabel,
+              wrapLabel:
+                  wrapLabel ||
+                  AppPageLayoutScope.of(context) == AppPageLayout.readingFirst,
               compact: compact,
               options: options,
               value: value,

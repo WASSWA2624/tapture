@@ -1299,7 +1299,7 @@ void main() {
                 tester.getBottomLeft(find.byType(CaptureTargetFields)).dy;
             expect(gap, closeTo(state == 'healthy' ? 0 : Space.x4, 0.01));
             expect(
-              find.byKey(const ValueKey<String>('capture-composer-add-photo')),
+              find.byKey(const ValueKey<String>('capture-add-photo')),
               findsOneWidget,
             );
             expect(tester.takeException(), isNull);
@@ -1493,7 +1493,7 @@ final class _Capture {
 
   /// The composer's photo source action, with or without existing photos.
   Finder get addPhoto =>
-      find.byKey(const ValueKey<String>('capture-composer-add-photo'));
+      find.byKey(const ValueKey<String>('capture-add-photo'));
 
   ProviderContainer get _container =>
       ProviderScope.containerOf(_tester.element(find.byType(CaptureScreen)));

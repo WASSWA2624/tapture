@@ -4,7 +4,10 @@ import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/fields/app_email_field.dart';
 import 'package:tapture/core/widgets/fields/app_phone_field.dart';
@@ -30,6 +33,7 @@ class AppForm extends StatefulWidget {
     this.errors = const <String>[],
     this.dirty = false,
     this.compact = false,
+    this.layout,
   });
 
   /// Controls in visual order. Traversal follows this list (FE-A11Y-06).
@@ -59,6 +63,9 @@ class AppForm extends StatefulWidget {
   /// When true, field gaps and the submit bar use the compact spacing.
   final bool compact;
 
+  /// Inherits the page unless this form has a separately selected layout.
+  final AppPageLayout? layout;
+
   @override
   State<AppForm> createState() => _AppFormState();
 }
@@ -77,10 +84,11 @@ class _AppFormState extends State<AppForm> {
 
     final List<String> lines = <String>[...widget.errors];
     for (final Widget field in widget.fields) {
-      final _FormField? editable = _formField(field);
-      final String? error = editable?.errorText;
-      if (editable != null && error != null && error.isNotEmpty) {
-        lines.add(localCopy.fieldError(editable.label, error));
+      for (final _FormField editable in _formFields(field)) {
+        final String? error = editable.errorText;
+        if (error != null && error.isNotEmpty) {
+          lines.add(localCopy.fieldError(editable.label, error));
+        }
       }
     }
     final Set<String> seen = <String>{};
@@ -113,10 +121,11 @@ class _AppFormState extends State<AppForm> {
   void _listen() {
     _unlisten();
     for (final Widget field in widget.fields) {
-      final _FormField? editable = _formField(field);
-      if (editable != null) {
-        editable.controller.addListener(_onEdit);
-        _listened.add(editable.controller);
+      for (final _FormField editable in _formFields(field)) {
+        if (!_listened.contains(editable.controller)) {
+          editable.controller.addListener(_onEdit);
+          _listened.add(editable.controller);
+        }
       }
     }
   }
@@ -179,55 +188,60 @@ class _AppFormState extends State<AppForm> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope<Object?>(
-      canPop: !_shouldGuard,
-      onPopInvokedWithResult: _onPop,
-      child: FocusTraversalGroup(
-        policy: OrderedTraversalPolicy(),
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            if (constraints.hasBoundedHeight) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                    child: KeepFocusedVisible(
-                      child: NotificationListener<ScrollNotification>(
-                        onNotification: _onScroll,
-                        child: SingleChildScrollView(
-                          keyboardDismissBehavior:
-                              ScrollViewKeyboardDismissBehavior.onDrag,
-                          padding: EdgeInsets.fromLTRB(
-                            Space.x4,
-                            widget.compact ? Space.x2 : Space.x4,
-                            Space.x4,
-                            widget.compact ? Space.x1 : Space.x2,
-                          ),
-                          child: ContentConstraint(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: _fieldSlate(),
+    final AppPageLayout effective =
+        widget.layout ?? AppPageLayoutScope.of(context);
+    return AppPageLayoutScope(
+      layout: effective,
+      child: PopScope<Object?>(
+        canPop: !_shouldGuard,
+        onPopInvokedWithResult: _onPop,
+        child: FocusTraversalGroup(
+          policy: OrderedTraversalPolicy(),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              if (constraints.hasBoundedHeight) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Expanded(
+                      child: KeepFocusedVisible(
+                        child: NotificationListener<ScrollNotification>(
+                          onNotification: _onScroll,
+                          child: SingleChildScrollView(
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.onDrag,
+                            padding: EdgeInsets.fromLTRB(
+                              Space.x4,
+                              widget.compact ? Space.x2 : Space.x4,
+                              Space.x4,
+                              widget.compact ? Space.x1 : Space.x2,
+                            ),
+                            child: ContentConstraint(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: _fieldSlate(),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  _submitBar(widget.fields.length, inset: true),
-                ],
+                    _submitBar(widget.fields.length, inset: true),
+                  ],
+                );
+              }
+              return KeepFocusedVisible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    ..._fieldSlate(),
+                    const SizedBox(height: Space.x4),
+                    _submitBar(widget.fields.length),
+                  ],
+                ),
               );
-            }
-            return KeepFocusedVisible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  ..._fieldSlate(),
-                  const SizedBox(height: Space.x4),
-                  _submitBar(widget.fields.length),
-                ],
-              ),
-            );
-          },
+            },
+          ),
         ),
       ),
     );
@@ -243,7 +257,13 @@ class _AppFormState extends State<AppForm> {
     ];
     for (int i = 0; i < widget.fields.length; i++) {
       if (i > 0) {
-        children.add(SizedBox(height: widget.compact ? Space.x2 : Space.x3));
+        children.add(
+          SizedBox(
+            height: widget.compact
+                ? Space.x2
+                : (widget.layout ?? AppPageLayoutScope.of(context)).fieldGap,
+          ),
+        );
       }
       children.add(
         FocusTraversalOrder(
@@ -378,4 +398,26 @@ _FormField? _formField(Widget field) {
     );
   }
   return null;
+}
+
+// Grouping a control must not hide its controller or validation from the
+// durable-save and unsaved-changes contracts of the surrounding form.
+Iterable<_FormField> _formFields(Widget field) sync* {
+  final _FormField? editable = _formField(field);
+  if (editable != null) {
+    yield editable;
+  } else if (field is AppSection) {
+    for (final Widget child in field.children) {
+      yield* _formFields(child);
+    }
+  } else if (field is Padding) {
+    final Widget? child = field.child;
+    if (child != null) yield* _formFields(child);
+  } else if (field is Column) {
+    for (final Widget child in field.children) {
+      yield* _formFields(child);
+    }
+  } else if (field is AppPageLayoutScope) {
+    yield* _formFields(field.child);
+  }
 }

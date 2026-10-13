@@ -2,8 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/export/export_request.dart';
-import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_section.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -19,6 +20,7 @@ final class ExportOptionsSection extends StatelessWidget {
     this.failure,
     this.onChanged,
     this.onToggleAdvanced,
+    this.advancedExtras,
     super.key,
   });
 
@@ -43,6 +45,9 @@ final class ExportOptionsSection extends StatelessWidget {
   /// Opens or closes the advanced group.
   final VoidCallback? onToggleAdvanced;
 
+  /// File-format extras revealed by the same Advanced disclosure.
+  final Widget? advancedExtras;
+
   @override
   Widget build(BuildContext context) {
     final LocalizedCopy localCopy = Copy.of(context);
@@ -61,8 +66,8 @@ final class ExportOptionsSection extends StatelessWidget {
         message: localCopy.exportEmptyMessage,
       );
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return AppSection(
+      title: localCopy.exportOptions,
       children: <Widget>[
         AppSwitchTile(
           key: const ValueKey<String>('export-refined'),
@@ -85,11 +90,11 @@ final class ExportOptionsSection extends StatelessWidget {
             evidence: columns.evidence,
           )),
         ),
-        AppButton(
+        AppSectionHeader(
           key: const ValueKey<String>('export-advanced'),
-          label: localCopy.exportAdvanced,
-          variant: AppButtonVariant.secondary,
-          onPressed: onToggleAdvanced,
+          title: localCopy.exportAdvanced,
+          expanded: onToggleAdvanced == null ? null : advancedOpen,
+          onToggle: onToggleAdvanced,
         ),
         if (advancedOpen) ...<Widget>[
           AppSwitchTile(
@@ -112,6 +117,7 @@ final class ExportOptionsSection extends StatelessWidget {
               evidence: value,
             )),
           ),
+          ?advancedExtras,
         ],
       ],
     );

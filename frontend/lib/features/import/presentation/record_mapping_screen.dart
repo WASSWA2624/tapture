@@ -13,6 +13,7 @@ import 'package:tapture/core/validation/validation.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -51,6 +52,7 @@ final class RecordMappingScreen extends ConsumerWidget {
     final String? projectId = ref.watch(currentProjectProvider);
     return AppPage(
       key: const ValueKey<String>('route-import-records'),
+      layout: AppPageLayout.sectioned,
       title: localCopy.importMappingTitle,
       scrollable: false,
       body: AsyncValueView<WorkbookSheet?>(
@@ -131,6 +133,7 @@ class _Mapping extends ConsumerWidget {
         Choice<String>(rule.fieldKey, rule.label),
     ];
     return AppForm(
+      layout: AppPageLayout.sectioned,
       submitLabel: localCopy.importRun(planned.rows.length),
       errors: <String>[
         if (missing.isNotEmpty) localCopy.importIdentityMissing(missing.first),
@@ -148,6 +151,7 @@ class _Mapping extends ConsumerWidget {
           label: localCopy.importMappingTemplate,
           value: template.id,
           alwaysSheet: true,
+          wrapLabel: true,
           options: <Choice<String>>[
             for (final TemplateDef candidate in templates)
               Choice<String>(candidate.id, candidate.name),
@@ -158,32 +162,41 @@ class _Mapping extends ConsumerWidget {
             }
           },
         ),
-        AppSectionHeader(title: localCopy.importMappingColumns),
-        for (final String header in headers)
-          AppChoiceField<String>(
-            key: ValueKey<String>('import-map-$header'),
-            label: header,
-            value: mapping[header] ?? '',
-            alwaysSheet: true,
-            options: fieldChoices,
-            onChanged: (String? fieldKey) => controller.mapColumn(
-              header: header,
-              fieldKey: fieldKey,
-              from: mapping,
-            ),
-          ),
-        AppSectionHeader(title: localCopy.importPreviewTitle),
-        for (
-          int index = 0;
-          index < planned.rows.length && index < _previewRows;
-          index++
-        )
-          _PreviewRow(
-            row: planned.firstDataRow + index,
-            cells: planned.rows[index],
-            mapping: mapping,
-            rules: rules,
-          ),
+        AppSection(
+          title: localCopy.importMappingColumns,
+          children: <Widget>[
+            for (final String header in headers)
+              AppChoiceField<String>(
+                key: ValueKey<String>('import-map-$header'),
+                label: header,
+                value: mapping[header] ?? '',
+                alwaysSheet: true,
+                wrapLabel: true,
+                options: fieldChoices,
+                onChanged: (String? fieldKey) => controller.mapColumn(
+                  header: header,
+                  fieldKey: fieldKey,
+                  from: mapping,
+                ),
+              ),
+          ],
+        ),
+        AppSection(
+          title: localCopy.importPreviewTitle,
+          children: <Widget>[
+            for (
+              int index = 0;
+              index < planned.rows.length && index < _previewRows;
+              index++
+            )
+              _PreviewRow(
+                row: planned.firstDataRow + index,
+                cells: planned.rows[index],
+                mapping: mapping,
+                rules: rules,
+              ),
+          ],
+        ),
       ],
     );
   }
@@ -221,6 +234,7 @@ class _PreviewRow extends StatelessWidget {
           if (byField.containsKey(rule.fieldKey))
             AppListTile(
               dense: true,
+              wrapText: true,
               title: rule.label,
               subtitle: byField[rule.fieldKey]!.isEmpty
                   ? null

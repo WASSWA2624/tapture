@@ -39,6 +39,7 @@ class CapturedRecordTile extends ConsumerWidget {
 
     final RecordPhotoRef? thumb = row.thumb;
     return AppListTile(
+      wrapText: true,
       title: projectRecordTitle(
         row,
         position: position,

@@ -51,6 +51,7 @@ final class _PhotoRedactionScreenState extends State<PhotoRedactionScreen>
 
   @override
   Widget build(BuildContext context) => AppPage(
+    layout: AppPageLayout.thumbReach,
     title: Copy.of(context).redactionTitle,
     body: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

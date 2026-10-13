@@ -5,7 +5,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/validation/field_expression.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
@@ -124,10 +124,9 @@ class FieldAdvancedSection extends StatelessWidget {
       labelsByKey,
       localizedCopy: localCopy,
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return AppSection(
+      title: localCopy.fieldAdvanced,
       children: <Widget>[
-        AppSectionHeader(title: localCopy.fieldAdvanced, dense: true),
         AppListTile(
           title: localCopy.fieldSourceHelp,
           subtitle: localCopy.captureTemperatureUnavailable,

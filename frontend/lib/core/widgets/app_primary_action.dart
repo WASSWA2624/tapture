@@ -3,6 +3,8 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 /// The large, full-width action capture and review both compose.
@@ -38,6 +40,8 @@ class AppPrimaryAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool thumbReach =
+        AppPageLayoutScope.of(context) == AppPageLayout.thumbReach;
     final bool isDisabled = onPressed == null && !busy;
     final VoidCallback? visualPress = isDisabled
         ? null
@@ -58,7 +62,11 @@ class AppPrimaryAction extends StatelessWidget {
             style: FilledButton.styleFrom(
               minimumSize: Size(
                 double.infinity,
-                compact ? Sizes.minTapTarget : Sizes.controlHeight,
+                thumbReach
+                    ? Sizes.primaryActionHeight
+                    : compact
+                    ? Sizes.minTapTarget
+                    : Sizes.controlHeight,
               ),
               padding: const EdgeInsets.symmetric(
                 horizontal: Space.x2,

@@ -207,8 +207,8 @@ void main() {
     final TestGesture gesture = await tester.startGesture(
       tester.getCenter(find.byIcon(AppIcons.reorder).last),
     );
-    await tester.pump(const Duration(milliseconds: 700));
-    await gesture.moveBy(const Offset(0, -120));
+    await tester.pump();
+    await gesture.moveTo(tester.getCenter(find.byIcon(AppIcons.reorder).first));
     await tester.pump();
     await gesture.up();
     await tester.pumpAndSettle();

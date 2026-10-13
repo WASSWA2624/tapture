@@ -6,6 +6,8 @@ import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 
 /// Shared sheet chrome: drag handle, title, scrollable body, safe area.
@@ -21,6 +23,7 @@ class AppBottomSheet extends StatelessWidget {
     this.sidePanel = false,
     this.contentSized = false,
     this.embedded = false,
+    this.layout = AppPageLayout.essentials,
   });
 
   /// Heading; also the semantic name of the sheet (FE-A11Y-02).
@@ -39,6 +42,9 @@ class AppBottomSheet extends StatelessWidget {
   /// When true, the presenting modal owns the surface, so this sheet does
   /// not paint a second rounded container.
   final bool embedded;
+
+  /// Sheets select their own composition instead of inheriting a page's.
+  final AppPageLayout layout;
 
   @override
   Widget build(BuildContext context) {
@@ -108,13 +114,13 @@ class AppBottomSheet extends StatelessWidget {
       ),
     );
     if (embedded) {
-      return body;
+      return AppPageLayoutScope(layout: layout, child: body);
     }
     return Material(
       color: surface.color,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: radius, side: outline),
-      child: body,
+      child: AppPageLayoutScope(layout: layout, child: body),
     );
   }
 }
@@ -151,6 +157,7 @@ Future<T?> showAppSheet<T>(
   required String title,
   required WidgetBuilder builder,
   bool contentSized = false,
+  AppPageLayout layout = AppPageLayout.essentials,
 }) {
   if (context.sizeClass == SizeClass.expanded) {
     return _showSidePanel<T>(
@@ -158,6 +165,7 @@ Future<T?> showAppSheet<T>(
       title: title,
       builder: builder,
       contentSized: contentSized,
+      layout: layout,
     );
   }
   return showModalBottomSheet<T>(
@@ -187,6 +195,7 @@ Future<T?> showAppSheet<T>(
                 title: title,
                 contentSized: contentSized,
                 embedded: true,
+                layout: layout,
                 child: builder(sheetContext),
               ),
             ),
@@ -208,11 +217,13 @@ Future<void> showAppFilterSheet(
   required String title,
   required WidgetBuilder facets,
   required VoidCallback onClear,
+  AppPageLayout layout = AppPageLayout.essentials,
 }) {
   return showAppSheet<void>(
     context,
     title: title,
     contentSized: true,
+    layout: layout,
     builder: (BuildContext sheetContext) {
       final LocalizedCopy localCopy = Copy.of(sheetContext);
 
@@ -251,6 +262,7 @@ Future<T?> _showSidePanel<T>(
   required String title,
   required WidgetBuilder builder,
   bool contentSized = false,
+  AppPageLayout layout = AppPageLayout.essentials,
 }) {
   final bool reduceMotion = MediaQuery.disableAnimationsOf(context);
   return showGeneralDialog<T>(
@@ -275,6 +287,7 @@ Future<T?> _showSidePanel<T>(
                 title: title,
                 sidePanel: true,
                 contentSized: contentSized,
+                layout: layout,
                 child: builder(dialogContext),
               ),
             ),

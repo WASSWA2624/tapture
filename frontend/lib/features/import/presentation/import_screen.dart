@@ -48,6 +48,7 @@ class _ImportScreenState extends ConsumerState<ImportScreen> with StateRefresh {
     void choose() => unawaited(chooseImportFile(context, ref));
     return AppPage(
       key: const ValueKey<String>('route-import'),
+      layout: AppPageLayout.thumbReach,
       title: localCopy.importTitle,
       footer: AppPrimaryAction(
         label: localCopy.importChooseFile,

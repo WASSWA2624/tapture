@@ -18,6 +18,7 @@ import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -56,6 +57,7 @@ class RowAliasesScreen extends ConsumerWidget {
     final bool hasRows = template != null && template.rows.isNotEmpty;
     final _AliasesView view = ref.watch(_rowAliasesProvider(templateId));
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-row-aliases'),
       title: localCopy.rowAliasesTitle,
       scrollable: false,
@@ -188,33 +190,35 @@ class RowAliasesScreen extends ConsumerWidget {
         final TemplateRow row = template.rows[index];
         final List<String> aliases =
             view.aliases[row.identifier] ?? row.aliases;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            AppListTile(
-              key: ValueKey<String>('alias-${row.identifier}'),
-              title: row.label,
-              subtitle: localCopy.rowAliasesList(aliases),
-              selected: view.editing == row.identifier,
-              onTap: () => controller.edit(row.identifier),
-            ),
-            if (view.editing == row.identifier)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  Space.x4,
-                  Space.x2,
-                  Space.x4,
-                  Space.x2,
-                ),
-                child: _AliasField(
-                  key: ValueKey<String>('alias-field-${row.identifier}'),
-                  value: aliases.join(', '),
-                  onChanged: (String next) {
-                    controller.set(row.identifier, next);
-                  },
-                ),
+        return Padding(
+          padding: const EdgeInsets.only(bottom: Space.x3),
+          child: AppSection(
+            children: <Widget>[
+              AppListTile(
+                key: ValueKey<String>('alias-${row.identifier}'),
+                title: row.label,
+                subtitle: localCopy.rowAliasesList(aliases),
+                selected: view.editing == row.identifier,
+                onTap: () => controller.edit(row.identifier),
               ),
-          ],
+              if (view.editing == row.identifier)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    Space.x4,
+                    Space.x2,
+                    Space.x4,
+                    Space.x2,
+                  ),
+                  child: _AliasField(
+                    key: ValueKey<String>('alias-field-${row.identifier}'),
+                    value: aliases.join(', '),
+                    onChanged: (String next) {
+                      controller.set(row.identifier, next);
+                    },
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );

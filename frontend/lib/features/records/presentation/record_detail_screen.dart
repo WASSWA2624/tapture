@@ -20,6 +20,7 @@ import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
@@ -106,6 +107,7 @@ class RecordDetailScreen extends ConsumerWidget {
       ref.watch(recordHistoryProvider(recordId));
     }
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-record'),
       title: entry == null
           ? localCopy.recordDetailTitle
@@ -495,22 +497,32 @@ class _RecordBody extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   const SizedBox(height: Space.x4),
-                  _Caption(entry: entry),
-                  _Transcripts(entry: entry, open: openTranscript),
-                  const SizedBox(height: Space.x4),
-                  _Fields(
-                    entry: entry,
-                    template: template,
-                    valuesRoute: valuesRoute,
+                  AppSection(
+                    children: <Widget>[
+                      _Caption(entry: entry),
+                      _Transcripts(entry: entry, open: openTranscript),
+                    ],
                   ),
                   const SizedBox(height: Space.x4),
-                  _Context(entry: entry, labels: labels),
+                  AppSection(
+                    children: <Widget>[
+                      _Fields(
+                        entry: entry,
+                        template: template,
+                        valuesRoute: valuesRoute,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Space.x4),
+                  AppSection(
+                    children: <Widget>[_Context(entry: entry, labels: labels)],
+                  ),
                   if (summarised) ...<Widget>[
                     const SizedBox(height: Space.x4),
-                    _Provenance(entry: entry),
+                    AppSection(children: <Widget>[_Provenance(entry: entry)]),
                   ],
                   const SizedBox(height: Space.x4),
-                  _Dates(entry: entry),
+                  AppSection(children: <Widget>[_Dates(entry: entry)]),
                 ],
               ),
             ),

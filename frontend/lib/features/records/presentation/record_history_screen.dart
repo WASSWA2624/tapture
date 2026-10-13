@@ -62,6 +62,7 @@ class RecordHistoryScreen extends ConsumerWidget {
           );
     final List<RecordHistoryEvent>? events = history.value;
     return AppPage(
+      layout: AppPageLayout.compact,
       key: const ValueKey<String>('route-record-history'),
       title: localCopy.recordHistoryTitle,
       subtitle: subject.isEmpty ? null : subject,

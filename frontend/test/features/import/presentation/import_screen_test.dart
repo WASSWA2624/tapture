@@ -12,6 +12,7 @@ import 'package:tapture/features/import/domain/import_flow.dart';
 import 'package:tapture/features/import/presentation/import_controller.dart';
 import 'package:tapture/features/import/presentation/import_screen.dart';
 
+import '../../../support/pump_app.dart';
 import '../../../support/screen_matrix.dart';
 import '../../../support/screen_probe.dart';
 
@@ -132,6 +133,16 @@ Future<ProviderContainer> _pump(
   );
   await tester.pump();
   container.read(importControllerProvider.notifier).present(view);
-  await tester.pumpAndSettle();
+  if (view.busy) {
+    await pumpUntil(
+      tester,
+      () => find
+          .byKey(const ValueKey<String>('import-checking'))
+          .evaluate()
+          .isNotEmpty,
+    );
+  } else {
+    await tester.pumpAndSettle();
+  }
   return container;
 }

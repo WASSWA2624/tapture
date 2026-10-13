@@ -519,8 +519,10 @@ void main() {
     await _pump(tester, session: session, queue: here);
 
     expect(tester.takeException(), isNull);
-    await tester.scrollUntilVisible(find.text(Copy.relaySync), 200);
-    expect(find.text(Copy.relaySync), findsOneWidget);
+    await tester.ensureVisible(find.text(Copy.relaySync));
+    await tester.pump();
+    expect(find.text(Copy.relaySync).hitTestable(), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
 

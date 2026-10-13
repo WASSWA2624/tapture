@@ -9,8 +9,9 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_progress_steps.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 
@@ -44,9 +45,18 @@ final class ExportWorkflowScreen extends ConsumerWidget {
         : ref.watch(_countProvider(workflow.request));
     return AppPage(
       key: const ValueKey<String>('route-export'),
+      layout: workflow?.running == true
+          ? AppPageLayout.thumbReach
+          : AppPageLayout.sectioned,
       title: localCopy.exportTitle,
-      footer: workflow == null || workflow.running
+      footer: workflow == null
           ? null
+          : workflow.running
+          ? AppPrimaryAction(
+              key: const ValueKey<String>('export-cancel'),
+              label: localCopy.exportCancel,
+              onPressed: controller.cancel,
+            )
           : AppButton(
               key: const ValueKey<String>('export-run'),
               label: localCopy.exportRun,
@@ -71,6 +81,7 @@ final class ExportWorkflowScreen extends ConsumerWidget {
                   localizedCopy: Copy.of(context),
                 ),
                 onCancel: controller.cancel,
+                showCancel: false,
               )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -98,10 +109,14 @@ final class ExportWorkflowScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: Space.x4),
-                  AppSectionHeader(title: Copy.of(context).exportHistoryTitle),
-                  ExportWorkflowHistory(
-                    projectId: projectId,
-                    recordCount: count.value,
+                  AppSection(
+                    title: Copy.of(context).exportHistoryTitle,
+                    children: <Widget>[
+                      ExportWorkflowHistory(
+                        projectId: projectId,
+                        recordCount: count.value,
+                      ),
+                    ],
                   ),
                 ],
               ),

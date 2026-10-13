@@ -52,6 +52,7 @@ final class BatchReviewScreen extends ConsumerWidget {
     final bool busy =
         current != null && ref.watch(reviewControllerProvider(current)).busy;
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-batch-review'),
       title: localCopy.reviewTitle,
       subtitle: current == null

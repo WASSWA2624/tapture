@@ -94,6 +94,9 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
     return AppPage(
       key: const ValueKey<String>('route-project-export'),
       title: localCopy.projectExportTitle,
+      layout: _busy || _saved != null
+          ? AppPageLayout.essentials
+          : AppPageLayout.sectioned,
       overflow: <AppOverflowAction>[
         if (!_busy && !_handoffBusy)
           AppOverflowAction(

@@ -3,6 +3,8 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/trial_report_scope.dart';
 
@@ -75,6 +77,9 @@ class AppListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
+    final AppPageLayout layout = AppPageLayoutScope.of(context);
+    final bool dense = this.dense || layout == AppPageLayout.compact;
+    final bool wrapText = this.wrapText || layout.stacksRows;
     final bool interactive = onTap != null || onLongPress != null;
     final Color foreground = colors.onSurface;
     final double dividerIndent =
@@ -86,73 +91,103 @@ class AppListTile extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.x3),
         child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) => Row(
-            children: <Widget>[
-              if (selected) ...<Widget>[
-                Icon(AppIcons.check, color: colors.primary, size: Space.x6),
-                const SizedBox(width: Space.x3),
-              ],
-              if (leading != null) ...<Widget>[
-                _LeadingWell(colors: colors, child: leading!),
-                const SizedBox(width: Space.x3),
-              ],
-              Expanded(
-                // The row already announces these lines. Keep other slots
-                // outside this exclusion so their meaning and actions survive.
-                child: ExcludeSemantics(
-                  // Insets belong to the text, so 48dp action slots do not
-                  // gain another layer of vertical padding around them.
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: dense ? Space.x0 : Space.x1,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          title,
-                          maxLines: wrapText ? null : 1,
-                          overflow: wrapText
-                              ? TextOverflow.visible
-                              : TextOverflow.ellipsis,
-                          style: (dense ? AppText.label : AppText.bodyStrong)
-                              .copyWith(
-                                color: current ? colors.primary : foreground,
-                              ),
-                        ),
-                        if (subtitle != null) ...<Widget>[
-                          const SizedBox(height: Space.x0),
+          builder: (BuildContext context, BoxConstraints constraints) {
+            final Widget identity = Row(
+              children: <Widget>[
+                if (selected) ...<Widget>[
+                  Icon(AppIcons.check, color: colors.primary, size: Space.x6),
+                  const SizedBox(width: Space.x3),
+                ],
+                if (leading != null) ...<Widget>[
+                  _LeadingWell(colors: colors, child: leading!),
+                  const SizedBox(width: Space.x3),
+                ],
+                Expanded(
+                  // The row already announces these lines. Keep other slots
+                  // outside this exclusion so their meaning and actions survive.
+                  child: ExcludeSemantics(
+                    // Insets belong to the text, so 48dp action slots do not
+                    // gain another layer of vertical padding around them.
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: dense ? Space.x0 : Space.x1,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
                           Text(
-                            subtitle!,
+                            title,
                             maxLines: wrapText ? null : 1,
                             overflow: wrapText
                                 ? TextOverflow.visible
                                 : TextOverflow.ellipsis,
-                            style: AppText.caption.copyWith(color: foreground),
+                            style: (dense ? AppText.label : AppText.bodyStrong)
+                                .copyWith(
+                                  color: current ? colors.primary : foreground,
+                                ),
                           ),
+                          if (subtitle != null) ...<Widget>[
+                            const SizedBox(height: Space.x0),
+                            Text(
+                              subtitle!,
+                              maxLines: wrapText ? null : 1,
+                              overflow: wrapText
+                                  ? TextOverflow.visible
+                                  : TextOverflow.ellipsis,
+                              style:
+                                  (layout == AppPageLayout.readingFirst
+                                          ? AppText.body
+                                          : AppText.caption)
+                                      .copyWith(color: foreground),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              if (status != null) ...<Widget>[
-                const SizedBox(width: Space.x2),
-                // The status takes its natural width, up to a share that
-                // leaves the title the rest; past it the pill keeps its icon.
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: constraints.maxWidth * _statusShare,
+                if (!layout.stacksRows && status != null) ...<Widget>[
+                  const SizedBox(width: Space.x2),
+                  // The status takes its natural width, up to a share that
+                  // leaves the title the rest; past it the pill keeps its icon.
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: constraints.maxWidth * _statusShare,
+                    ),
+                    child: status!,
                   ),
-                  child: status!,
-                ),
+                ],
+                if (!layout.stacksRows && trailing != null) ...<Widget>[
+                  const SizedBox(width: Space.x2),
+                  trailing!,
+                ],
               ],
-              if (trailing != null) ...<Widget>[
-                const SizedBox(width: Space.x2),
-                trailing!,
+            );
+            if (!layout.stacksRows) return identity;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                identity,
+                if (status != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: Space.x2),
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: status,
+                    ),
+                  ),
+                if (trailing != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: Space.x2),
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: trailing,
+                    ),
+                  ),
               ],
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -224,7 +259,8 @@ class _LeadingWell extends StatelessWidget {
     return SizedBox(
       width: Sizes.minTapTarget,
       height: Sizes.minTapTarget,
-      child: ClipOval(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(Radii.sm),
         child: ColoredBox(
           color: colors.surfaceVariant,
           child: Center(child: child),

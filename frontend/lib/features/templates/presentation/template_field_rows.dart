@@ -4,6 +4,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/fields/app_choice_field.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
@@ -57,58 +58,63 @@ class TemplateFieldRows extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         for (int index = 0; index < drafts.length; index++) ...<Widget>[
-          AppSectionHeader(
-            key: ValueKey<String>('template-field-row-${drafts[index].id}'),
-            title: localCopy.templateFieldRowTitle(index + 1),
-            action: AppIconButton(
-              icon: AppIcons.remove,
-              tooltip: localCopy.templateFieldRowRemove,
-              semanticLabel: localCopy.templateFieldRowRemove,
-              outlined: false,
-              onPressed: () => onRemove(drafts[index].id),
-            ),
-          ),
-          AppTextField(
-            label: localCopy.fieldLabel,
-            controller: labelFor(drafts[index].id),
-            textInputAction: TextInputAction.next,
-            onChanged: onLabelChanged,
-          ),
-          const SizedBox(height: Space.x3),
-          AppChoiceField<FieldType>(
-            label: localCopy.fieldType,
-            value: drafts[index].type,
-            options: <Choice<FieldType>>[
-              for (final FieldType type in FieldType.values)
-                Choice<FieldType>(type, localCopy.fieldTypeLabel(type.name)),
+          AppSection(
+            children: <Widget>[
+              AppSectionHeader(
+                key: ValueKey<String>('template-field-row-${drafts[index].id}'),
+                title: localCopy.templateFieldRowTitle(index + 1),
+                action: AppIconButton(
+                  icon: AppIcons.remove,
+                  tooltip: localCopy.templateFieldRowRemove,
+                  semanticLabel: localCopy.templateFieldRowRemove,
+                  outlined: false,
+                  onPressed: () => onRemove(drafts[index].id),
+                ),
+              ),
+              AppTextField(
+                label: localCopy.fieldLabel,
+                controller: labelFor(drafts[index].id),
+                textInputAction: TextInputAction.next,
+                onChanged: onLabelChanged,
+              ),
+              AppChoiceField<FieldType>(
+                label: localCopy.fieldType,
+                value: drafts[index].type,
+                options: <Choice<FieldType>>[
+                  for (final FieldType type in FieldType.values)
+                    Choice<FieldType>(
+                      type,
+                      localCopy.fieldTypeLabel(type.name),
+                    ),
+                ],
+                onChanged: (FieldType? type) {
+                  if (type != null) {
+                    onType(drafts[index].id, type);
+                  }
+                },
+              ),
+              AppRadioGroup<Requiredness>(
+                label: localCopy.fieldRequiredness,
+                value: drafts[index].requiredness,
+                direction: Axis.horizontal,
+                options: <Choice<Requiredness>>[
+                  Choice<Requiredness>(
+                    Requiredness.required,
+                    localCopy.fieldRequired,
+                  ),
+                  Choice<Requiredness>(
+                    Requiredness.recommended,
+                    localCopy.fieldRecommended,
+                  ),
+                  Choice<Requiredness>(
+                    Requiredness.optional,
+                    localCopy.fieldOptional,
+                  ),
+                ],
+                onChanged: (Requiredness value) =>
+                    onRequiredness(drafts[index].id, value),
+              ),
             ],
-            onChanged: (FieldType? type) {
-              if (type != null) {
-                onType(drafts[index].id, type);
-              }
-            },
-          ),
-          const SizedBox(height: Space.x3),
-          AppRadioGroup<Requiredness>(
-            label: localCopy.fieldRequiredness,
-            value: drafts[index].requiredness,
-            direction: Axis.horizontal,
-            options: <Choice<Requiredness>>[
-              Choice<Requiredness>(
-                Requiredness.required,
-                localCopy.fieldRequired,
-              ),
-              Choice<Requiredness>(
-                Requiredness.recommended,
-                localCopy.fieldRecommended,
-              ),
-              Choice<Requiredness>(
-                Requiredness.optional,
-                localCopy.fieldOptional,
-              ),
-            ],
-            onChanged: (Requiredness value) =>
-                onRequiredness(drafts[index].id, value),
           ),
           const SizedBox(height: Space.x4),
         ],

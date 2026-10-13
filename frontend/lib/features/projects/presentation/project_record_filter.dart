@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
-import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
+import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
 
 import '../domain/project_repository.dart';
@@ -64,6 +65,7 @@ Future<void> showProjectRecordFilters(
   return showAppFilterSheet(
     context,
     title: localCopy.projectRecordFiltersTitle,
+    layout: AppPageLayout.readingFirst,
     onClear: ref.read(projectRecordFilterProvider.notifier).clear,
     facets: (BuildContext _) => _StatusFacet(statuses: statuses),
   );
@@ -79,7 +81,7 @@ class _StatusFacet extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final AppColors colors = context.colors;
-    return AppMultiChoiceField<RecordStatus>(
+    return AppCheckboxGroup<RecordStatus>(
       key: const ValueKey<String>('record-status-filter'),
       label: localCopy.projectRecordStatusFilter,
       options: <Choice<RecordStatus>>[

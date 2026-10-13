@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -63,6 +64,7 @@ class _DatasetRowEditScreenState extends ConsumerState<DatasetRowEditScreen> {
       datasetRowControllerProvider(_target),
     );
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-dataset-row'),
       title: localCopy.datasetsEditRow,
       scrollable: false,
@@ -104,17 +106,21 @@ class _DatasetRowEditScreenState extends ConsumerState<DatasetRowEditScreen> {
             icon: AppIcons.info,
             tone: SnackTone.info,
           ),
-        for (final MapEntry<String, TextEditingController> field
-            in _fields.entries)
-          AppTextField(
-            key: ValueKey<String>('dataset-row-field-${field.key}'),
-            label: field.key,
-            controller: field.value,
-            requiredness: field.key == dataset?.keyColumn
-                ? FieldRequiredness.required
-                : FieldRequiredness.optional,
-            textInputAction: TextInputAction.next,
-          ),
+        AppSection(
+          children: <Widget>[
+            for (final MapEntry<String, TextEditingController> field
+                in _fields.entries)
+              AppTextField(
+                key: ValueKey<String>('dataset-row-field-${field.key}'),
+                label: field.key,
+                controller: field.value,
+                requiredness: field.key == dataset?.keyColumn
+                    ? FieldRequiredness.required
+                    : FieldRequiredness.optional,
+                textInputAction: TextInputAction.next,
+              ),
+          ],
+        ),
       ],
       submitLabel: localCopy.datasetsSaveRow,
       onSubmit: _save,
