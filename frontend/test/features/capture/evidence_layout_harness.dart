@@ -56,6 +56,7 @@ abstract final class EvidenceLayoutHarness {
       overrides: overrides,
       brightness: brightness,
       outdoor: outdoor,
+      useScreenFonts: true,
     );
     await tester.pumpAndSettle();
   }

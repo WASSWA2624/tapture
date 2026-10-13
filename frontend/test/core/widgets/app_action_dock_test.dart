@@ -37,6 +37,7 @@ void main() {
           ),
         ),
       ),
+      useScreenFonts: true,
     );
     await tester.pumpAndSettle();
     expect(
@@ -96,6 +97,7 @@ void main() {
           ],
         ),
       ),
+      useScreenFonts: true,
     );
     await tester.enterText(find.byType(TextField), 'Retained draft');
     tester.view.viewInsets = const FakeViewPadding(bottom: 200);

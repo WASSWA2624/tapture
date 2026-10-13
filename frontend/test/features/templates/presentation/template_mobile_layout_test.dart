@@ -163,6 +163,7 @@ Future<void> _pump(
   await pumpApp(
     tester,
     screen,
+    useScreenFonts: true,
     overrides: <Override>[templateRepositoryProvider.overrideWithValue(store)],
   );
   await tester.pumpAndSettle();

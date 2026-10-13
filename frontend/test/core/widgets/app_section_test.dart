@@ -41,6 +41,7 @@ void main() {
               ],
             ),
           ),
+          useScreenFonts: true,
         );
         await tester.pumpAndSettle();
         final Finder heading = find.byType(AppSectionHeader);
@@ -102,6 +103,7 @@ void main() {
             ],
           ),
         ),
+        useScreenFonts: true,
       );
       await tester.pumpAndSettle();
       final Finder first = find.widgetWithText(AppPrimaryAction, 'First');

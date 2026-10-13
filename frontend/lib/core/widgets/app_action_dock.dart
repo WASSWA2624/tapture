@@ -27,11 +27,15 @@ class AppActionDock extends StatelessWidget {
   /// Insets controls even on edge-to-edge list pages.
   final bool inset;
 
+  /// Reserves the shared action share of an owning page or pane's height.
+  static double heightBudget(double availableHeight) =>
+      availableHeight * _heightShare;
+
   @override
   Widget build(BuildContext context) {
     final double visible =
         context.viewportSize.height - MediaQuery.viewInsetsOf(context).bottom;
-    final double budget = maxHeight ?? visible * _heightShare;
+    final double budget = maxHeight ?? heightBudget(visible);
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight: budget.clamp(0, double.infinity).toDouble(),

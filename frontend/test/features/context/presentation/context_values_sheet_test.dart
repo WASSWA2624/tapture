@@ -409,6 +409,7 @@ Future<_Overview> _pump(
         ...extra,
       ],
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         locale: locale,
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,

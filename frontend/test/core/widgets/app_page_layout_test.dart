@@ -38,6 +38,7 @@ void main() {
             _sample(layout),
             brightness: cell.brightness,
             outdoor: cell.outdoor,
+            useScreenFonts: true,
           );
           await tester.pumpAndSettle();
           expect(tester.takeException(), isNull);
@@ -61,7 +62,11 @@ void main() {
   testWidgets(
     'readable rows put complete metadata and actions after the title',
     (WidgetTester tester) async {
-      await pumpApp(tester, _sample(AppPageLayout.readingFirst));
+      await pumpApp(
+        tester,
+        _sample(AppPageLayout.readingFirst),
+        useScreenFonts: true,
+      );
       await tester.pumpAndSettle();
       final double title = tester
           .getBottomLeft(find.text('A long field label that stays readable'))
@@ -121,6 +126,7 @@ void main() {
             ),
           ),
         ),
+        useScreenFonts: true,
       );
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -158,6 +164,7 @@ void main() {
             ),
           ),
         ),
+        useScreenFonts: true,
       );
       expect(
         tester.getSize(find.byType(AppActionDock)).height,

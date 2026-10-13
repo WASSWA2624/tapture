@@ -220,6 +220,7 @@ Future<void> _pump(
   await pumpApp(
     tester,
     screen,
+    useScreenFonts: true,
     overrides: <Override>[
       projectRepositoryProvider.overrideWithValue(projects),
       projectSettingsStoreProvider.overrideWithValue(settings),

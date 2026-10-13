@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_action_dock.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_page.dart';
@@ -164,7 +165,7 @@ final class RecordsListView extends ConsumerWidget {
           _BulkBar(
             projectId: projectId,
             criteria: criteria,
-            maxHeight: limits.maxHeight * 0.5,
+            maxHeight: AppActionDock.heightBudget(limits.maxHeight),
           ),
         ],
       ),

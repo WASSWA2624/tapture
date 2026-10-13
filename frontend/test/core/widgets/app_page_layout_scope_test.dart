@@ -37,6 +37,7 @@ void main() {
             ],
           ),
         ),
+        useScreenFonts: true,
       );
       expect(
         tester.getSize(find.widgetWithText(AppPrimaryAction, 'Default')).height,
@@ -88,6 +89,7 @@ void main() {
                     AppPageLayoutScope(layout: value, child: child!),
           ),
         ),
+        useScreenFonts: true,
       );
       final Finder save = find.widgetWithText(AppPrimaryAction, 'Save');
       final Element input = tester.element(find.byType(AppTextField));

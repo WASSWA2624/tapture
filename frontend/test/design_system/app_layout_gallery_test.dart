@@ -32,6 +32,7 @@ void main() {
         const AppPage(title: 'Layouts', body: AppLayoutGallery()),
         brightness: mode.brightness,
         outdoor: mode.outdoor,
+        useScreenFonts: true,
       );
       await tester.pump();
       expect(tester.takeException(), isNull);

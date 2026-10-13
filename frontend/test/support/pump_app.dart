@@ -9,10 +9,13 @@ import 'package:tapture/features/context/presentation/context_providers.dart';
 import 'package:tapture/features/feedback/presentation/feedback_providers.dart';
 import 'package:tapture/features/records/presentation/record_providers.dart';
 
+import 'screen_fonts.dart';
+
 /// Pumps [child] under the app theme, providers and a fixed clock.
 ///
 /// A test names only [overrides]. [pumpUntil] waits for a condition by
 /// pumping frames, never by sleeping.
+/// After loading [ScreenFonts], [useScreenFonts] pins every themed font role.
 Future<void> pumpApp(
   WidgetTester tester,
   Widget child, {
@@ -21,8 +24,10 @@ Future<void> pumpApp(
   bool outdoor = false,
   DateTime? now,
   Locale? locale,
+  bool useScreenFonts = false,
 }) {
   final Clock clock = FixedClock(now ?? DateTime.utc(2026, 9, 28));
+  final ThemeData theme = buildTheme(brightness: brightness, outdoor: outdoor);
   return tester.pumpWidget(
     ProviderScope(
       retry: (int _, Object _) => null,
@@ -36,7 +41,7 @@ Future<void> pumpApp(
         locale: locale,
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        theme: buildTheme(brightness: brightness, outdoor: outdoor),
+        theme: useScreenFonts ? ScreenFonts.theme(theme) : theme,
         home: child,
       ),
     ),

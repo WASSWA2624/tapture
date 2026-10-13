@@ -1218,6 +1218,7 @@ Future<GoRouter> _pump(
         ...overrides,
       ],
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,

@@ -116,6 +116,7 @@ Future<void> _pump(
   await pumpApp(
     tester,
     screen,
+    useScreenFonts: true,
     overrides: <Override>[
       referenceRepositoryProvider.overrideWithValue(store),
       documentPickerProvider.overrideWithValue(const DocumentPicker.fake()),

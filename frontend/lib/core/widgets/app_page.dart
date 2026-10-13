@@ -179,7 +179,7 @@ class AppPage extends StatelessWidget {
             ),
             if (footer != null)
               AppActionDock(
-                maxHeight: constraints.maxHeight / 2,
+                maxHeight: AppActionDock.heightBudget(constraints.maxHeight),
                 compact: compactBar,
                 child: footer,
               ),
