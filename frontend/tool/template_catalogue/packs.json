@@ -1,5 +1,5 @@
 {
-  "$comment": "Typed, atomic fields for the 26 shared archetype packs of resources/templates.md. Every catalogue template inherits its pack as a field group. `from` names the catalogue field a split or renamed field comes from; a pack field the catalogue lists must be covered by a key or a `from`. `required` is a suggested default only (§13.2). Edit here, then run `dart run tool/build_template_catalogue.dart`.",
+  "$comment": "Reusable typed, atomic field definitions for the 26 record types in resources/templates.md. Simple starters select only their explicit fields; legacy definitions may inherit a pack. `from` names the source of split or renamed fields. Requiredness is configurable (§13.2). Edit here, then run `dart run tool/build_template_catalogue.dart`.",
   "AGREEMENT": {
     "kind": "agreement",
     "identity": ["agreement_reference"],

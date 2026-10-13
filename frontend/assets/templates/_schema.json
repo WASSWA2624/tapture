@@ -41,7 +41,7 @@
     },
     "pack": {
       "type": "string",
-      "description": "Catalogue templates only: the record type whose pack group it inherits."
+      "description": "Catalogue templates only: record type and reusable field definitions. Simple starters select their fields explicitly."
     },
     "privacy": {
       "enum": ["internal", "confidential", "restricted"],

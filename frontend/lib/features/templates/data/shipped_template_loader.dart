@@ -68,7 +68,7 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
   /// The catalogue index, built once off the UI thread and kept (FE-PERF-02).
   Future<_Catalogue>? _catalogue;
 
-  /// Every field group, the four of §13.3 and the catalogue's, once read.
+  /// Reusable field groups, resolved only when an asset declares inheritance.
   Future<Map<String, _Group>>? _allGroups;
 
   @override
@@ -212,7 +212,7 @@ final class _AssetShippedTemplateLoader implements ShippedTemplateLoader {
     };
   }
 
-  /// The four groups of §13.3 and the catalogue's, read once.
+  /// Shared legacy and catalogue field definitions, read once.
   Future<Map<String, _Group>> _groupsWithCatalogue(_Schema schema) async {
     final Future<Map<String, _Group>> pending = _allGroups ??= () async {
       return <String, _Group>{

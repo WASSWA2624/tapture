@@ -870,6 +870,7 @@ TAPTURE-*.zip
 !/test/features/quality/presentation/quality_routes.dart
 
 # Template Sectioned layout and defaults/source regressions ship with this change.
+!/test/tool/simple_template_catalogue_test.dart
 !/test/features/templates/presentation/field_defaults_test.dart
 !/test/features/templates/presentation/template_defaults_flow_test.dart
 !/test/features/templates/presentation/template_sectioned_layout_test.dart
@@ -908,3 +909,7 @@ TAPTURE-*.zip
 !/test/features/processing/presentation/record_processing_scope_test.dart
 !/test/features/review/data/review_proposal_resolution_test.dart
 !/test/features/capture/presentation/save_processing_flow_test.dart
+
+# Curated catalogue search retains the large-library performance regression.
+!/test/features/templates/domain/
+!/test/features/templates/domain/shipped_template_ranking_test.dart

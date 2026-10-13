@@ -12,6 +12,7 @@ import 'package:tapture/features/templates/data/shipped_template_loader.dart';
 import 'package:tapture/features/templates/data/template_repository_impl.dart';
 import 'package:tapture/features/templates/domain/shipped_template_entry.dart';
 import 'package:tapture/features/templates/domain/template_repository.dart';
+import 'package:tapture/features/templates/domain/template_versioning.dart';
 
 void main() {
   late AppDatabase db;
@@ -55,7 +56,11 @@ void main() {
             final Map<Object?, Object?> first =
                 (raw['templates']! as List<Object?>).first
                     as Map<Object?, Object?>;
-            ((first['fields']! as List<Object?>).first
+            ((first['fields']! as List<Object?>).firstWhere(
+                      (Object? raw) =>
+                          (raw! as Map<Object?, Object?>)['field_key'] ==
+                          'observation_category',
+                    )
                     as Map<Object?, Object?>)['auto_fill'] =
                 token;
             return jsonEncode(raw);
@@ -299,6 +304,132 @@ void main() {
     );
   });
 
+  for (final bool removed in <bool>[false, true]) {
+    test(
+      'saved copies and captured versions survive a ${removed ? 'removed' : 'simplified'} shipped starter',
+      () async {
+        const String key = 'uni_general_observation';
+        final TemplateDef project = _ok(
+          await loader.copyToProject(
+            templateKey: key,
+            projectId: 'project-1',
+            name: 'Project observations',
+          ),
+        );
+        final TemplateDef library = _ok(
+          await loader.copyToLibrary(templateKey: key, name: 'My observations'),
+        );
+        final TemplateDef customizedProject = _ok(
+          await repo.save(
+            project.copyWith(
+              fields: <FieldDef>[
+                ...project.fields,
+                const FieldDef(
+                  fieldKey: 'project_detail',
+                  label: 'Project detail',
+                  type: FieldType.text,
+                  requiredness: Requiredness.required,
+                ),
+              ],
+            ),
+          ),
+        );
+        final TemplateDef customizedLibrary = _ok(
+          await repo.save(
+            library.copyWith(
+              fields: <FieldDef>[
+                for (final FieldDef field in library.fields)
+                  field.fieldKey == 'operator_note'
+                      ? field.copyWith(label: 'My operator note')
+                      : field,
+              ],
+            ),
+          ),
+        );
+        final ShippedTemplateLoader refreshed = ShippedTemplateLoader(
+          templates: repo,
+          readAsset: (String path) async {
+            final String text = await File(path).readAsString();
+            if (!path.endsWith('_uni_universal_capture_and_records.json')) {
+              return text;
+            }
+            final Map<String, Object?> raw =
+                jsonDecode(text) as Map<String, Object?>;
+            final List<Object?> templates = raw['templates']! as List<Object?>;
+            if (removed) {
+              templates.removeWhere(
+                (Object? candidate) =>
+                    (candidate! as Map<Object?, Object?>)['template_key'] ==
+                    key,
+              );
+            } else {
+              final Map<Object?, Object?> definition =
+                  templates.firstWhere(
+                        (Object? candidate) =>
+                            (candidate!
+                                as Map<Object?, Object?>)['template_key'] ==
+                            key,
+                      )
+                      as Map<Object?, Object?>;
+              (definition['fields']! as List<Object?>).removeWhere(
+                (Object? field) =>
+                    (field! as Map<Object?, Object?>)['field_key'] ==
+                    'operator_note',
+              );
+            }
+            return jsonEncode(raw);
+          },
+        );
+        final List<ShippedTemplateEntry> refreshedEntries = _ok(
+          await refreshed.entries(),
+        );
+        if (removed) {
+          expect(
+            refreshedEntries.map(
+              (ShippedTemplateEntry entry) => entry.templateKey,
+            ),
+            isNot(contains(key)),
+          );
+          expect(
+            await refreshed.template(key),
+            isA<FailureResult<TemplateDef>>(),
+          );
+        } else {
+          final TemplateDef reduced = _ok(await refreshed.template(key));
+          expect(reduced.fields, hasLength(project.fields.length - 1));
+          expect(
+            reduced.fields.map((FieldDef field) => field.fieldKey),
+            isNot(contains('operator_note')),
+          );
+        }
+
+        final TemplateDef storedProject = _ok(await repo.byId(project.id))!;
+        final TemplateDef storedLibrary = _ok(await repo.byId(library.id))!;
+        expect(storedProject, customizedProject);
+        expect(storedLibrary, customizedLibrary);
+        expect(await repo.watchByProject('project-1').first, <TemplateDef>[
+          customizedProject,
+        ]);
+        expect(await repo.watchLibrary().first, <TemplateDef>[
+          customizedLibrary,
+        ]);
+        final TemplateDef projectSnapshot = TemplateVersioning.shapeFor(
+          storedProject,
+          project.version,
+        )!;
+        final TemplateDef librarySnapshot = TemplateVersioning.shapeFor(
+          storedLibrary,
+          library.version,
+        )!;
+        expect(projectSnapshot.fields, project.fields);
+        expect(projectSnapshot.identityFieldKeys, project.identityFieldKeys);
+        expect(librarySnapshot.fields, library.fields);
+        expect(librarySnapshot.identityFieldKeys, library.identityFieldKeys);
+        expect(librarySnapshot.name, library.name);
+      },
+    );
+  }
+
   test('a broken template fails validation and writes nothing', () async {
     final ShippedTemplateLoader broken = ShippedTemplateLoader(
       templates: repo,
@@ -327,12 +458,16 @@ void main() {
       final List<ShippedTemplateEntry> catalogue = _ok(await loader.entries());
       final Map<String, Object?> index = _json(TemplateAssets.catalogueIndex);
 
-      expect(index['template_count'], 2349);
-      expect(catalogue, hasLength(2349));
+      expect(index['template_count'], 194);
+      expect(catalogue, hasLength(194));
       expect(
         catalogue
             .map((ShippedTemplateEntry entry) => entry.templateKey)
             .toSet(),
+        hasLength(catalogue.length),
+      );
+      expect(
+        catalogue.map((ShippedTemplateEntry entry) => entry.code).toSet(),
         hasLength(catalogue.length),
       );
       expect(
@@ -351,8 +486,21 @@ void main() {
         expect(entry.title, isNotEmpty, reason: entry.templateKey);
         expect(entry.code, matches(RegExp(r'^[A-Z]{2,4}-\d{3}$')));
         expect(entry.kind, entry.recordType.kind);
-        expect(entry.fieldKeys, isNotEmpty, reason: entry.templateKey);
-        expect(entry.fieldCount, greaterThan(55), reason: entry.templateKey);
+        expect(
+          entry.fieldCount,
+          inInclusiveRange(5, 8),
+          reason: entry.templateKey,
+        );
+        expect(
+          entry.fieldKeys,
+          hasLength(entry.fieldCount),
+          reason: entry.templateKey,
+        );
+        expect(
+          entry.fieldKeys.toSet(),
+          hasLength(entry.fieldCount),
+          reason: entry.templateKey,
+        );
         expect(<String>{
           'internal',
           'confidential',
@@ -369,62 +517,56 @@ void main() {
       expect(observation.recordType.review, isNotEmpty);
     });
 
-    test('a catalogue template resolves every group it inherits', () async {
-      final TemplateDef observation = _ok(
-        await loader.template('uni_general_observation'),
-      );
-      final List<String> keys = <String>[
-        for (final FieldDef field in observation.fields) field.fieldKey,
-      ];
-      final ShippedTemplateEntry entry = _ok(await loader.entries()).firstWhere(
-        (ShippedTemplateEntry row) =>
-            row.templateKey == 'uni_general_observation',
-      );
+    test(
+      'a simple starter resolves only its explicit optional fields',
+      () async {
+        final TemplateDef observation = _ok(
+          await loader.template('uni_general_observation'),
+        );
+        final List<String> keys = <String>[
+          for (final FieldDef field in observation.fields) field.fieldKey,
+        ];
+        final ShippedTemplateEntry entry = _ok(await loader.entries())
+            .firstWhere(
+              (ShippedTemplateEntry row) =>
+                  row.templateKey == 'uni_general_observation',
+            );
 
-      expect(observation.source, 'shipped');
-      expect(observation.version, 1);
-      expect(observation.projectId, isNull);
-      expect(observation.kind, 'observation');
-      expect(keys, hasLength(entry.fieldCount));
-      expect(keys.toSet(), hasLength(keys.length));
-      expect(
-        keys,
-        containsAllInOrder(<String>[
-          'record_uid',
-          'site_code',
-          'caption_raw',
-          'reviewed_date',
-          'organization_ref',
+        expect(observation.source, 'shipped');
+        expect(observation.version, 1);
+        expect(observation.projectId, isNull);
+        expect(observation.kind, 'observation');
+        expect(keys, hasLength(entry.fieldCount));
+        expect(keys.toSet(), hasLength(keys.length));
+        expect(keys, <String>[
           'observation_subject',
           'observed_at',
+          'factual_description',
           'observation_category',
-          'observed_details',
-        ]),
-      );
-      expect(observation.identityFieldKeys, <String>[
-        'observation_subject',
-        'observed_at',
-      ]);
-      final FieldDef subject = _field(observation, 'observation_subject');
-      expect(subject.identity, isTrue);
-      expect(subject.requiredness, Requiredness.required);
-      expect(subject.group, 'observation');
-      final FieldDef observedAt = _field(observation, 'observed_at');
-      expect(observedAt.type, FieldType.dateTime);
-      expect(observedAt.autoFill, AutoFill.now);
-      final FieldDef context = _field(observation, 'organization_ref');
-      expect(context.stickable, isTrue);
-      expect(context.group, 'context');
-      expect(context.requiredness, Requiredness.recommended);
-      final FieldDef status = _field(observation, 'verification_status');
-      expect(status.type, FieldType.choice);
-      expect(status.options, hasLength(4));
-      final FieldDef details = _field(observation, 'observed_details');
-      expect(details.type, FieldType.longText);
-      expect(details.refine, isTrue);
-      expect(details.group, 'specific_details');
-      expect(details.requiredness, Requiredness.recommended);
-    });
+          'operator_note',
+        ]);
+        expect(observation.identityFieldKeys, <String>[
+          'observation_subject',
+          'observed_at',
+        ]);
+        final FieldDef subject = _field(observation, 'observation_subject');
+        expect(subject.identity, isTrue);
+        expect(subject.requiredness, Requiredness.optional);
+        expect(subject.group, 'specific_details');
+        final FieldDef observedAt = _field(observation, 'observed_at');
+        expect(observedAt.type, FieldType.dateTime);
+        expect(observedAt.autoFill, AutoFill.now);
+        final FieldDef details = _field(observation, 'factual_description');
+        expect(details.type, FieldType.longText);
+        expect(details.refine, isTrue);
+        expect(details.group, 'specific_details');
+        expect(details.requiredness, Requiredness.optional);
+        expect(
+          observation.fields.map((FieldDef field) => field.requiredness),
+          everyElement(Requiredness.optional),
+        );
+      },
+    );
 
     test('money in a catalogue template comes with its currency', () async {
       final TemplateDef invoice = _ok(
@@ -437,32 +579,50 @@ void main() {
         invoice.fields.map((FieldDef field) => field.fieldKey),
         contains('total_currency'),
       );
-      expect(invoice.identityFieldKeys, <String>['transaction_reference']);
+      expect(invoice.identityFieldKeys, <String>['invoice_number']);
     });
 
-    test('one template of every category resolves', () async {
-      final Map<String, ShippedTemplateEntry> firsts =
-          <String, ShippedTemplateEntry>{};
-      for (final ShippedTemplateEntry entry in _ok(await loader.entries())) {
-        firsts.putIfAbsent(entry.category.code, () => entry);
-      }
-      expect(firsts, hasLength(72));
-      for (final ShippedTemplateEntry entry in firsts.values) {
-        final TemplateDef template = _ok(
-          await loader.template(entry.templateKey),
-        );
-        expect(
-          template.fields,
-          hasLength(entry.fieldCount),
-          reason: entry.templateKey,
-        );
-        expect(
-          template.fields.where((FieldDef field) => field.identity),
-          isNotEmpty,
-          reason: entry.templateKey,
-        );
-      }
-    });
+    test(
+      'every simple starter resolves with optional fields and a valid identity',
+      () async {
+        final List<ShippedTemplateEntry> entries = _ok(await loader.entries());
+        for (final ShippedTemplateEntry entry in entries) {
+          final TemplateDef template = _ok(
+            await loader.template(entry.templateKey),
+          );
+          expect(
+            template.fields,
+            hasLength(entry.fieldCount),
+            reason: entry.templateKey,
+          );
+          expect(
+            template.fields.where((FieldDef field) => field.identity),
+            isNotEmpty,
+            reason: entry.templateKey,
+          );
+          expect(
+            template.fields.map((FieldDef field) => field.requiredness),
+            everyElement(Requiredness.optional),
+            reason: entry.templateKey,
+          );
+          expect(
+            entry.fieldKeys,
+            containsAll(template.identityFieldKeys),
+            reason: entry.templateKey,
+          );
+          for (final FieldDef field in template.fields) {
+            if (field.type == FieldType.choice ||
+                field.type == FieldType.multiChoice) {
+              expect(
+                field.options,
+                isNotEmpty,
+                reason: '${entry.templateKey}.${field.fieldKey}',
+              );
+            }
+          }
+        }
+      },
+    );
 
     test('copying a catalogue template writes an editable copy', () async {
       final TemplateDef copy = _ok(
@@ -485,11 +645,20 @@ void main() {
         _field(copy, 'observation_category').label,
         'Observation category',
       );
+      final TemplateDef equipment = _ok(
+        await loader.copyToLibrary(
+          templateKey: 'ast_equipment_master_inventory',
+          name: 'Equipment inventory',
+        ),
+      );
+      final FieldDef condition = _field(equipment, 'condition_grade');
+      expect(condition.type, FieldType.choice);
+      expect(condition.options, hasLength(5));
       expect(
-        _field(copy, 'verification_status').options,
+        condition.options,
         contains(
           predicate<Object>(
-            (Object option) => option is Map && option['label'] == 'Verified',
+            (Object option) => option is Map && option['label'] == 'Good',
           ),
         ),
       );
@@ -517,8 +686,14 @@ void main() {
         templates: repo,
         readAsset: (String path) async {
           final String text = await File(path).readAsString();
-          if (path == TemplateAssets.catalogueGroups) {
-            return '{}';
+          if (path.endsWith('_uni_universal_capture_and_records.json')) {
+            final Map<String, Object?> raw =
+                jsonDecode(text) as Map<String, Object?>;
+            final Map<Object?, Object?> first =
+                (raw['templates']! as List<Object?>).first
+                    as Map<Object?, Object?>;
+            first['inherits_groups'] = <String>['missing_group'];
+            return jsonEncode(raw);
           }
           return text;
         },

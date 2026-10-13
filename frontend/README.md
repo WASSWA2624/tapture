@@ -28,13 +28,22 @@ dart run build_runner build --delete-conflicting-outputs
 
 ## Template catalogue generation
 
-The shipped templates under `assets/templates/` (one file per category, the
-index `_catalogue.json` and the groups in `_catalogue_groups.json`) and the list
-of every template in `../resources/template-library.md` are generated from
-`../resources/templates.md` (specification §13.4–13.5). `_schema.json` and the
-groups of §13.3 in `_groups.json` are kept by hand. The typed record-type packs
-and per-field corrections live in `tool/template_catalogue/`. After changing any
-of them, regenerate in the same change and check the result:
+The curated library ships 194 small, specific starters across 72 categories and
+17 areas, each with 5–8 explicit atomic
+fields, all optional. Closely related variants are consolidated because users
+can customize and extend a copy. Record metadata, context, raw evidence and
+review history remain part of captured records rather than inherited template
+columns (§13.3–13.6). Existing saved copies and captured versions are unchanged.
+
+`../resources/templates.md` is the single source. Each retained entry declares
+`Fields only`, `Stable key` and `Identity fields`, preserving its existing code
+and template key. The generator writes `assets/templates/` (one file per
+category, `_catalogue.json` and `_catalogue_groups.json`) and
+`../resources/template-library.md`. `_schema.json` is maintained by hand; typed
+field definitions and corrections live in `tool/template_catalogue/`. Legacy
+composed entries and `_groups.json` remain supported for source-format
+compatibility. After changing the source or field definitions, regenerate in
+the same change and check the result:
 
 ```sh
 dart run tool/build_template_catalogue.dart

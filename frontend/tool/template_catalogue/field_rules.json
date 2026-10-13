@@ -276,6 +276,114 @@
       {"key": "length_mm", "type": "decimal"},
       {"key": "width_mm", "type": "decimal"},
       {"key": "height_mm", "type": "decimal"}
+    ],
+    "item_name": [
+      {"key": "item_name", "type": "text"}
+    ],
+    "household_size": [
+      {"key": "household_size", "type": "number", "unit": "people"}
+    ],
+    "household_income_amount": [
+      {"key": "household_income_amount", "type": "currency"}
+    ],
+    "household_income_currency": [
+      {"key": "household_income_currency", "type": "text"}
+    ],
+    "unit_price": [
+      {"key": "unit_price", "type": "currency"}
+    ],
+    "unit_price_currency": [
+      {"key": "unit_price_currency", "type": "text"}
+    ],
+    "phone_primary": [
+      {"key": "phone_primary", "type": "text"}
+    ],
+    "arrival_date": [
+      {"key": "arrival_date", "type": "date"}
+    ],
+    "departure_date": [
+      {"key": "departure_date", "type": "date"}
+    ],
+    "menu_item": [
+      {"key": "menu_item", "type": "text"}
+    ],
+    "quantity_counted": [
+      {"key": "quantity_counted", "type": "number"}
+    ],
+    "traveler_name": [
+      {"key": "traveler_name", "type": "text"}
+    ],
+    "start_date": [
+      {"key": "start_date", "type": "date"}
+    ],
+    "end_date": [
+      {"key": "end_date", "type": "date"}
+    ],
+    "home_team": [
+      {"key": "home_team", "type": "text"}
+    ],
+    "away_team": [
+      {"key": "away_team", "type": "text"}
+    ],
+    "home_score": [
+      {"key": "home_score", "type": "number", "unit": "points"}
+    ],
+    "away_score": [
+      {"key": "away_score", "type": "number", "unit": "points"}
+    ],
+    "candidate_name": [
+      {"key": "candidate_name", "type": "text"}
+    ],
+    "vote_count": [
+      {"key": "vote_count", "type": "number"}
+    ],
+    "leave_start_date": [
+      {"key": "leave_start_date", "type": "date"}
+    ],
+    "leave_end_date": [
+      {"key": "leave_end_date", "type": "date"}
+    ],
+    "temperature_c": [
+      {"key": "temperature_c", "type": "decimal", "unit": "°C"}
+    ],
+    "cycle_duration_min": [
+      {"key": "cycle_duration_min", "type": "decimal", "unit": "min"}
+    ],
+    "test_name": [
+      {"key": "test_name", "type": "text"}
+    ],
+    "measured_value": [
+      {"key": "measured_value", "type": "decimal", "unit": "as_declared"}
+    ],
+    "measurement_unit": [
+      {"key": "measurement_unit", "type": "text"}
+    ],
+    "strength_value": [
+      {"key": "strength_value", "type": "decimal", "unit": "as_declared"}
+    ],
+    "strength_unit": [
+      {"key": "strength_unit", "type": "text"}
+    ],
+    "disease_name": [
+      {"key": "disease_name", "type": "text"}
+    ],
+    "reported_case_count": [
+      {"key": "reported_case_count", "type": "number"}
+    ],
+    "vaccine_name": [
+      {"key": "vaccine_name", "type": "text"}
+    ],
+    "dose_count": [
+      {"key": "dose_count", "type": "number"}
+    ],
+    "student_reference": [
+      {"key": "student_reference", "type": "text"}
+    ],
+    "consent_status": [
+      {"key": "consent_status", "type": "choice", "options": "consent_status"}
+    ],
+    "vehicle_count": [
+      {"key": "vehicle_count", "type": "number"}
     ]
   }
 }

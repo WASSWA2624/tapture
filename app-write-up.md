@@ -684,138 +684,81 @@ counts are numbers           door_count, participants_female — never "several"
 
 ### 13.2 Requiredness belongs to the user
 
-Shipped requiredness is **suggested**. Template editors may change every field individually or in bulk (§12.3).
+Simple shipped starters use **OPTIONAL** fields so a missing setup detail does not block capture or approval.
+Template editors may change requiredness individually or in bulk (§12.3).
 
-- `REQUIRED`: only identity/meaningful-record essentials by default. Blocks approval, never incomplete capture;
+- `REQUIRED`: a user-selected rule for identity or meaningful-record essentials. Blocks approval, never incomplete capture;
   missing values mark the record incomplete (§39.2, §42).
-- `RECOMMENDED`: dismissible review prompt, requiring a reason. Other fields ship `OPTIONAL` or `RECOMMENDED`.
+- `RECOMMENDED`: a dismissible review prompt, requiring a reason.
 - **Hidden** fields leave capture/export but retain existing values (§18).
 - Requiredness edits create versions; earlier records retain their original rules, never retrospective incompleteness (§18).
 - `required_when` supports conditions, e.g. require `fault_description_raw` only when `fault_present` is true.
 
-In the listings below:
+Requiredness marks in template definitions:
 
 ```text
-*   shipped as REQUIRED        +   shipped as RECOMMENDED        unmarked   shipped as OPTIONAL
+*   REQUIRED                   +   RECOMMENDED                   unmarked   OPTIONAL
 ```
 
-### 13.3 Groups every template inherits
+### 13.3 Record context, evidence and review
 
-Every shipped template inherits these four groups, populated automatically (§21) or from evidence. Users may hide
-any group; listings omit their repetition.
-
-```text
-record_admin            (input_mode AUTO)
-  record_uid*  record_number*  template_key*  template_version*
-  captured_date*  captured_time*  captured_by_user_id*  captured_by_name
-  device_id*  created_at*  updated_at  updated_by_user_id  record_status*  sync_state
-
-location_context        (context levels, §20)
-  country  region_state  district  subcounty_division  parish_ward  village_street
-  site_code+  site_name+  building_code  floor_code  room_code  room_name
-  gps_latitude  gps_longitude  gps_accuracy_m  gps_captured_at  location_note
-
-evidence                (§22, §23, §24, §32)
-  photo_count  primary_photo_filename  photo_filenames  document_filenames  audio_filenames
-  caption_raw  caption_refined  voice_transcript_raw  voice_transcript_refined  operator_note
-
-review                  (§33, §37, §42)
-  confidence_overall  fields_needing_review  source_conflict_present
-  reviewed_by_user_id  reviewed_date  approved_by_user_id  approved_date  rejection_reason
-```
+Record metadata, location/context (§20–21), original photos/documents/audio (§22–24, §32) and review/audit
+decisions (§33, §37, §42) belong to the captured record. They remain available without adding dozens of
+administrative, context, evidence and approval columns to each starter template. A starter includes a location,
+date or reference field only when it directly serves that template's intended use.
 
 ### 13.4 The library
 
-`resources/templates.md` catalogues 2,349 templates in 72 categories and 17 areas:
-01 Cross-sector foundations, 02 Business and governance, 03 Collaboration and delivery, 04 Health and life sciences, 05 Education research and care, 06 Buildings land and infrastructure, 07 Agriculture and natural resources, 08 Production and industry, 09 Energy utilities and environment, 10 Transport and supply chains, 11 Digital systems and communications, 12 Finance public administration and law, 13 Risk resilience and sustainability, 14 Social impact culture and information, 15 Commerce hospitality and recreation, 16 Professional specialist and personal services, 17 Specialist and emerging domains.
+`resources/templates.md` is the source of the **194 curated shipped starters** across 72 categories and 17 areas.
+Each starter serves a clear, specific use with **5–8 explicit atomic fields** (§13.1), using the defaults in §13.2.
+Closely related organization, sector, document-format and workflow-stage variants are consolidated: users extend
+or customize the useful starter instead of choosing among dozens of specialized forms.
 
-Templates compose shared groups so column meanings remain consistent:
-
-```text
-record_admin  location_context  evidence  review      the four groups of §13.3
-context_<category>                                    the category's shared context, stickable (§20)
-pack_<record type>                                    the fields every template of its record type shares
-own starter fields                                    what makes this template different
-```
-
-Each template uses one of 26 record-type packs defining identity fields (§40), choices, suggested requiredness
-and guidance for capture, permitted AI, outputs and review:
-
-| Pack | Record type | Kind | Templates | Identity |
-| --- | --- | --- | ---: | --- |
-| ASSESS | Assessment / analysis | `assessment` | 214 | `assessment_reference` |
-| REQUEST | Request / approval workflow | `request` | 214 | `request_reference` |
-| CHECK | Checklist / verification | `checklist` | 184 | `check_reference` |
-| REG | Register / master data | `register` | 184 | `entry_identifier` |
-| INSPECT | Inspection / field form | `inspection` | 174 | `inspection_reference` |
-| PLAN | Plan / schedule | `plan` | 141 | `plan_reference` |
-| DOC | Generated document | `document` | 125 | `document_reference` · `approved_version` |
-| TRANS | Transaction / repeated line items | `transaction` | 124 | `transaction_reference` |
-| LOG | Activity / event log | `log` | 122 | `activity_date` · `activity_type` · `start_time` |
-| MEASURE | Measurement / calculation | `measurement` | 115 | `measurement_type` · `measurement_date` · `measurement_time` |
-| ASSET | Register / master data | `asset` | 101 | `item_identifier` · `serial_number` |
-| CASE | Case-management workflow | `case` | 87 | `case_reference` |
-| REPORT | Generated report | `report` | 73 | `report_reference` |
-| SURVEY | Survey / questionnaire | `survey` | 63 | `survey_version` · `respondent_or_sample_code` |
-| OBS | Observation / evidence capture | `observation` | 61 | `observation_subject` · `observed_at` |
-| INCIDENT | Incident workflow | `incident` | 57 | `incident_reference` |
-| MEET | Meeting / collaboration | `meeting` | 48 | `meeting_title` · `meeting_date` |
-| PROFILE | Profile / intake | `profile` | 48 | `profile_reference` · `display_name` |
-| AGREEMENT | Agreement / approval | `agreement` | 40 | `agreement_reference` |
-| TRACK | Tracker / follow-up | `tracker` | 35 | `tracker_reference` · `tracked_item` |
-| MAINT | Maintenance workflow | `maintenance` | 33 | `work_order_reference` |
-| VISIT | Visit / field workflow | `visit` | 31 | `visited_site_or_party` · `visit_date` |
-| SAMPLE | Sample / chain-of-custody | `sample` | 25 | `sample_identifier` |
-| LEARN | Learning / competency record | `learning` | 20 | `learning_record_reference` |
-| PROPOSAL | Proposal-generation workflow | `proposal` | 16 | `proposal_reference` |
-| COMM | Communication draft | `communication` | 14 | `communication_reference` |
-
-Resolved templates have 62–72 atomic columns (§13.1). Starter fields and category context ship RECOMMENDED; only
-identity and meaningful-record essentials are REQUIRED (§13.2).
+Record types describe the intended use and carry capture, AI, output and review guidance. They do not inject
+record-type packs, category context or administrative groups into new shipped starters. Identity fields (§40)
+are selected from the starter's own fields. Retained templates preserve their stable codes, template keys and
+field keys (§11.3); saved copies and version snapshots follow §13.6.
 
 Browse by area/category; rows show code, record type and column count. Search name, code, category, area, record
 type and own field labels; filter area, record type or tier (foundation/expansion/specialist). Preview shows category,
-type, suggested privacy/tier, guidance and all grouped columns with types/requiredness. Adding creates an editable
+type, suggested privacy/tier, guidance and the explicit fields with types/requiredness. Adding creates an editable
 project copy at version 1.
 
 Without a chosen template, start with **UNI-001 General observation** for immediate capture and later refinement.
 
 ### 13.5 Template definitions
 
-`resources/template-library.md` lists template code/key/type/privacy/tier/own fields, pack fields with
-types/units/requiredness, and category context. **UNI-001 General observation** (`uni_general_observation`) resolves to:
+`resources/template-library.md` lists each template's code, stable key, type, privacy/tier, identity fields and
+explicit columns with types/units/requiredness. **UNI-001 General observation** (`uni_general_observation`) uses:
 
 ```text
-record_admin      the fourteen admin columns of §13.3                          (AUTO)
-location_context  country … site_code+ site_name+ … gps_latitude gps_longitude …
-evidence          photo_count  primary_photo_filename … caption_raw  caption_refined …
-review            confidence_overall … approved_by_user_id  approved_date  rejection_reason
-context           organization_ref+  project_ref+  subject_ref+                 (stickable)
-observation       observation_subject*  observed_at*  factual_description*  media_refs+
-                  capture_context  observer_name  verification_status  verification_notes
-specific_details  observation_category+  observed_details+
+observation_subject  observed_at  factual_description  observation_category  operator_note
 
 identity keys     observation_subject + observed_at
 ```
 
 `frontend/tool/build_template_catalogue.dart` generates `resources/template-library.md` and
-`frontend/assets/templates/` (one file/category, `_catalogue.json`, pack/context `_catalogue_groups.json`) from
-`resources/templates.md`; typed packs/per-field corrections live in `frontend/tool/template_catalogue/`. Maintain
-`_schema.json` and §13.3 `_groups.json` by hand. The checker enforces atomic columns; tests reject asset/source drift.
+`frontend/assets/templates/` (one file/category, `_catalogue.json`, compatibility `_catalogue_groups.json`) from
+`resources/templates.md`. Each entry declares **Fields only**, **Stable key** and **Identity fields** so its shipped
+schema does not depend on implicit composition. Typed field definitions and corrections live in
+`frontend/tool/template_catalogue/`; `_schema.json` is maintained by hand. Earlier composed-source entries and
+`_groups.json` remain supported for source-format compatibility, rather than as defaults for the curated library.
+The checker validates fields; tests reject asset/source drift.
 
 ### 13.6 What a user does with these
 
 ```text
 Use as-is                shipped defaults, capture immediately
-Trim                     hide the two-thirds of columns this project does not need
+Trim                     hide a field this project does not need
 Re-require               move columns between REQUIRED / RECOMMENDED / OPTIONAL (§13.2)
 Extend                   add columns; they behave exactly like shipped ones
 Derive                   copy a template, rename it, edit it — the original is untouched (§11.1)
 Replace                  import a spreadsheet instead, and map its columns to fields (§11.2)
 ```
 
-Trimming a building inspection to twelve required columns or an equipment register to eight is expected; the
-library supplies reusable choices, not an obligation to fill everything.
+Use a short starter immediately, then add the few details the project needs. Existing custom, saved-library and
+project templates retain their full schemas, including removed bundled entries. Catalogue simplification changes
+new bundled copies only; captured versions, stored values, raw evidence and audit history remain intact (§18).
 
 ## 14. Multi-Template Projects & Automatic Template Detection
 
@@ -1324,7 +1267,7 @@ Attendees        child rows: given name, family name, title, organisation, conta
 Apologies        child rows
 Decisions        child rows: number, text (raw + refined), agenda item, voting counts
 Action items     child rows: number, action text (raw + refined), owner, due date, status
-Attachments      photos, documents, audio                             (inherited, §13.3)
+Attachments      photos, documents, audio                             (record evidence, §13.3)
 Next meeting     date and venue
 ```
 

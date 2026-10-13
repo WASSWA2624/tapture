@@ -369,6 +369,11 @@ final RegExp _starterLine = RegExp(
   r'^\*\*Specific starter fields:\*\* (.+)\.$',
 );
 
+/// A complete starter schema, without automatic field-pack inheritance.
+final RegExp _onlyFieldsLine = RegExp(r'^\*\*Fields only:\*\* (.+)\.$');
+final RegExp _keyLine = RegExp(r'^\*\*Stable key:\*\* ([a-z0-9_]+)\.$');
+final RegExp _identityLine = RegExp(r'^\*\*Identity fields:\*\* (.+)\.$');
+
 /// One of a template's guidance lines.
 final RegExp _guidanceLine = RegExp(
   r'^\*\*(Capture|AI assistance|Potential outputs|Review):\*\* (.+)$',
@@ -514,6 +519,9 @@ final class _Entry {
   String typeLabel = '';
   String pack = '';
   List<String> starter = <String>[];
+  bool fieldsOnly = false;
+  String? stableKey;
+  List<String>? identity;
   final Map<String, String> guidance = <String, String>{};
   String privacy = '';
   String rollout = '';
@@ -576,15 +584,17 @@ Map<String, String> _build({
           entry.key: _objects(entry.value),
       };
   _readPacks(packs, catalogue, optionSets, problems);
-  final Set<String> baseKeys = <String>{
-    for (final Object? group in _object(
-      jsonDecode(baseGroups.readAsStringSync()),
-    ).values)
-      for (final Map<String, Object?> field in _objects(
-        _object(group)['fields'],
-      ))
-        field['field_key']! as String,
-  };
+  final Map<String, Map<String, Object?>> baseFields =
+      <String, Map<String, Object?>>{
+        for (final Object? group in _object(
+          jsonDecode(baseGroups.readAsStringSync()),
+        ).values)
+          for (final Map<String, Object?> field in _objects(
+            _object(group)['fields'],
+          ))
+            field['field_key']! as String: field,
+      };
+  final Set<String> baseKeys = baseFields.keys.toSet();
   if (problems.isNotEmpty) {
     return <String, String>{};
   }
@@ -635,7 +645,8 @@ Map<String, String> _build({
     final List<Map<String, Object?>> assets = <Map<String, Object?>>[];
     for (final _Entry entry in category.templates) {
       final _Pack pack = catalogue.packs[entry.pack]!;
-      final String templateKey = '${category.key}_${_slug(entry.title)}';
+      final String templateKey =
+          entry.stableKey ?? '${category.key}_${_slug(entry.title)}';
       if (!_snake.hasMatch(templateKey) || !templateKeys.add(templateKey)) {
         problems.add(
           '${source.path}:${entry.line}: ${entry.code} gives the template key '
@@ -650,13 +661,36 @@ Map<String, String> _build({
       };
       final List<Map<String, Object?>> own = <Map<String, Object?>>[];
       final Set<String> ownKeys = <String>{};
+      final Map<String, Map<String, Object?>> available =
+          <String, Map<String, Object?>>{
+            ...baseFields,
+            for (final String group in <String>[
+              'context_${category.key}',
+              'pack_${pack.code.toLowerCase()}',
+            ])
+              for (final Map<String, Object?> field in _objects(
+                _object(groups[group])['fields'],
+              ))
+                field['field_key']! as String: field,
+          };
       for (final String key in entry.starter) {
+        if (entry.fieldsOnly && available.containsKey(key)) {
+          if (ownKeys.add(key)) {
+            own.add(<String, Object?>{
+              ...available[key]!,
+              'group': _specificGroup,
+              'required': 'OPTIONAL',
+            });
+          }
+          continue;
+        }
         for (final Map<String, Object?> field in typer.type(
           key,
           where: '${source.path}:${entry.line}',
         )) {
           final String fieldKey = field['key']! as String;
-          if (inherited.contains(fieldKey) || !ownKeys.add(fieldKey)) {
+          if ((!entry.fieldsOnly && inherited.contains(fieldKey)) ||
+              !ownKeys.add(fieldKey)) {
             continue;
           }
           own.add(
@@ -664,9 +698,51 @@ Map<String, String> _build({
               field,
               optionSets,
               group: _specificGroup,
-              required: _starterRequiredness,
+              required: entry.fieldsOnly ? 'OPTIONAL' : _starterRequiredness,
             ),
           );
+        }
+      }
+      final List<String> identity =
+          entry.identity ??
+          <String>[
+            for (final String key in pack.identity)
+              if (!entry.fieldsOnly || ownKeys.contains(key)) key,
+          ];
+      if (entry.fieldsOnly) {
+        if (own.length > 8) {
+          problems.add(
+            '${source.path}:${entry.line}: ${entry.code} starter '
+            'has ${own.length} fields; keep at most 8 atomic fields',
+          );
+        }
+        for (final String key in identity) {
+          if (!ownKeys.contains(key)) {
+            problems.add(
+              '${source.path}:${entry.line}: ${entry.code} '
+              'identity "$key" is not a selected field',
+            );
+          }
+        }
+        for (final Map<String, Object?> field in own) {
+          final String key = field['field_key']! as String;
+          final String? companion = field['type'] == 'currency'
+              ? '${key.endsWith('_amount') ? key.substring(0, key.length - 7) : key}_currency'
+              : field['unit'] == _asDeclared
+              ? switch (key) {
+                  'measured_value' ||
+                  'measurement_uncertainty' => 'measurement_unit',
+                  'quantity_total' => 'quantity_unit',
+                  'strength_value' => 'strength_unit',
+                  _ => '${key}_unit',
+                }
+              : null;
+          if (companion != null && !ownKeys.contains(companion)) {
+            problems.add(
+              '${source.path}:${entry.line}: ${entry.code} '
+              'field "$key" needs selected companion "$companion"',
+            );
+          }
         }
       }
       assets.add(<String, Object?>{
@@ -679,11 +755,13 @@ Map<String, String> _build({
         'pack': pack.code,
         'privacy': entry.privacy,
         'rollout': entry.rollout,
-        'identity_fields': pack.identity,
+        'identity_fields': identity,
         'inherits_groups': <String>[
-          ..._baseGroups,
-          'context_${category.key}',
-          'pack_${pack.code.toLowerCase()}',
+          if (!entry.fieldsOnly) ...<String>[
+            ..._baseGroups,
+            'context_${category.key}',
+            'pack_${pack.code.toLowerCase()}',
+          ],
         ],
         'fields': own,
         'child_rows': <Object?>[],
@@ -769,6 +847,15 @@ _Catalogue _parse(String path, List<String> lines, List<String> problems) {
     } else if (entry != null && (match = _typeLine.firstMatch(line)) != null) {
       entry.typeLabel = match!.group(1)!;
       entry.pack = match.group(2)!;
+    } else if (entry != null &&
+        (match = _onlyFieldsLine.firstMatch(line)) != null) {
+      entry.fieldsOnly = true;
+      entry.starter = _splitKeys(match!.group(1)!);
+    } else if (entry != null && (match = _keyLine.firstMatch(line)) != null) {
+      entry.stableKey = match!.group(1)!;
+    } else if (entry != null &&
+        (match = _identityLine.firstMatch(line)) != null) {
+      entry.identity = _splitKeys(match!.group(1)!);
     } else if (entry != null &&
         (match = _starterLine.firstMatch(line)) != null) {
       entry.starter = _splitKeys(match!.group(1)!);
@@ -1195,6 +1282,9 @@ String _list(
   Map<String, List<Map<String, Object?>>> byCategory,
   Map<String, List<String>> optionSets,
 ) {
+  final bool simple = catalogue.templates.every(
+    (_Entry entry) => entry.fieldsOnly,
+  );
   final StringBuffer out = StringBuffer()
     ..writeln('# Template library — every shipped template')
     ..writeln()
@@ -1211,10 +1301,9 @@ String _list(
     )
     ..writeln()
     ..writeln(
-      'Every template is ordinary template data (§11.3). It '
-      'inherits the four groups every shipped template carries (§13.3), its '
-      "category's context fields, and its record type's pack, then adds its "
-      'own starter fields. Pick one from **Templates → Library**, search it '
+      'Every template is ordinary template data (§11.3). '
+      '${simple ? 'Each starter contains only its listed fields; record metadata, context, evidence and review history remain separate (§13.3). ' : 'Legacy definitions compose shared field groups and starter fields. '}'
+      'Pick one from **Templates → Library**, search it '
       'by name, code, category, record type or field, and add it to a '
       'project as an editable copy: rename, retype, reorder, hide or change '
       'the requiredness of any field (§13.2).',
@@ -1242,59 +1331,61 @@ String _list(
       );
     }
   }
-  out
-    ..writeln()
-    ..writeln('## Record types and their packs')
-    ..writeln()
-    ..writeln(
-      'Each template has one record type. The pack is the set of fields '
-      'every template of that type shares; the guidance lines say how it is '
-      'captured, what AI may do, what it produces and how it is reviewed.',
-    )
-    ..writeln();
-  for (final _Pack pack in catalogue.packs.values) {
-    final int count = catalogue.templates
-        .where((_Entry entry) => entry.pack == pack.code)
-        .length;
+  if (!simple) {
     out
-      ..writeln('### ${pack.code} — ${pack.title}')
+      ..writeln()
+      ..writeln('## Record types and their packs')
       ..writeln()
       ..writeln(
-        'Kind `${pack.kind}` · $count templates · identity: '
-        '${pack.identity.map((String key) => '`$key`').join(', ')}',
+        'Each template has one record type. The pack is the set of fields '
+        'every template of that type shares; the guidance lines say how it is '
+        'captured, what AI may do, what it produces and how it is reviewed.',
       )
-      ..writeln()
-      ..writeln(
-        _fieldLine(
-          _objects(
-            _object(groups['pack_${pack.code.toLowerCase()}'])['fields'],
-          ),
-        ),
-      )
-      ..writeln()
-      ..writeln('- **Capture:** ${pack.capture}')
-      ..writeln('- **AI assistance:** ${pack.aiAssistance}')
-      ..writeln('- **Outputs:** ${pack.outputs}')
-      ..writeln('- **Review:** ${pack.review}')
       ..writeln();
+    for (final _Pack pack in catalogue.packs.values) {
+      final int count = catalogue.templates
+          .where((_Entry entry) => entry.pack == pack.code)
+          .length;
+      out
+        ..writeln('### ${pack.code} — ${pack.title}')
+        ..writeln()
+        ..writeln(
+          'Kind `${pack.kind}` · $count templates · identity: '
+          '${pack.identity.map((String key) => '`$key`').join(', ')}',
+        )
+        ..writeln()
+        ..writeln(
+          _fieldLine(
+            _objects(
+              _object(groups['pack_${pack.code.toLowerCase()}'])['fields'],
+            ),
+          ),
+        )
+        ..writeln()
+        ..writeln('- **Capture:** ${pack.capture}')
+        ..writeln('- **AI assistance:** ${pack.aiAssistance}')
+        ..writeln('- **Outputs:** ${pack.outputs}')
+        ..writeln('- **Review:** ${pack.review}')
+        ..writeln();
+    }
+    out
+      ..writeln('## Category context fields')
+      ..writeln()
+      ..writeln(
+        'Every template in a category shares these; they are stickable, so a '
+        'value set once carries to the next record (§20).',
+      )
+      ..writeln()
+      ..writeln('| Category | Context fields |')
+      ..writeln('| --- | --- |');
+    for (final _Category category in catalogue.categories) {
+      out.writeln(
+        '| ${category.code} — ${category.title} | '
+        '${_fieldLine(_objects(_object(groups['context_${category.key}'])['fields']))} |',
+      );
+    }
+    out.writeln();
   }
-  out
-    ..writeln('## Category context fields')
-    ..writeln()
-    ..writeln(
-      'Every template in a category shares these; they are stickable, so a '
-      'value set once carries to the next record (§20).',
-    )
-    ..writeln()
-    ..writeln('| Category | Context fields |')
-    ..writeln('| --- | --- |');
-  for (final _Category category in catalogue.categories) {
-    out.writeln(
-      '| ${category.code} — ${category.title} | '
-      '${_fieldLine(_objects(_object(groups['context_${category.key}'])['fields']))} |',
-    );
-  }
-  out.writeln();
   for (final _Supergroup supergroup in catalogue.supergroups) {
     out
       ..writeln('## ${supergroup.code} · ${supergroup.title}')
