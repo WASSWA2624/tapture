@@ -1,15 +1,16 @@
-import 'package:tapture/core/ai/ocr_block.dart';
-import 'package:tapture/core/ai/ocr_result.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/features/templates/templates.dart'
+    show FieldDef, TemplateMapper;
 
 import '../domain/evidence_linking.dart';
-import '../domain/identifier_extraction.dart';
 import '../domain/no_invention_guard.dart';
+import '../domain/ocr_field_value.dart';
 import '../domain/processing_job.dart';
 import '../domain/proposal_application.dart';
 import '../domain/provenance.dart';
 import '../domain/response_parser.dart';
 import 'ocr_cache.dart';
+import 'ocr_proposals.dart';
 import 'photo_paths.dart';
 import 'processing_evidence.dart';
 import 'processing_snapshot.dart';
@@ -43,70 +44,23 @@ final class ProposalCollector {
     final List<ProposedValue> proposals = <ProposedValue>[];
     final List<String> rejections = <String>[];
     final Set<String> conflicts = <String>{};
-    final List<IdentityField> identity = StageSupport.identityFields(bundle);
-    for (final Photo photo in bundle.photos) {
-      final OcrResult? ocr = StageSupport.unwrap(
-        await _cache.lookup(
-          contentHash:
-              await _paths?.ocrContentHash(bundle, photo) ?? photo.sha256,
-          perceptualHash: '',
-        ),
+    final Map<String, FieldDef> fields = <String, FieldDef>{
+      for (final TemplateField field in StageSupport.extractionFields(bundle))
+        field.fieldKey: TemplateMapper.fieldFromRow(field),
+    };
+    final local = await OcrProposals(
+      cache: _cache,
+      paths: _paths,
+    ).collect(bundle);
+    rejections.addAll(local.findings);
+    for (final ProposedValue candidate in local.proposals) {
+      _add(
+        proposals,
+        conflicts,
+        rejections,
+        candidate,
+        fields[candidate.fieldKey],
       );
-      if (ocr == null) {
-        continue;
-      }
-      final List<PlateBlock> blocks = <PlateBlock>[
-        for (final block in ocr.blocks)
-          (
-            text: block.text,
-            top: block.bounds.top,
-            confidence: block.confidence,
-          ),
-      ];
-      for (final IdentifierCandidate candidate in IdentifierExtraction.extract(
-        text: ocr.text,
-        blocks: blocks,
-        fields: identity,
-      )) {
-        final field = bundle.fields.firstWhere(
-          (TemplateField value) => value.fieldKey == candidate.fieldKey,
-        );
-        final GuardOutcome guarded = NoInventionGuard.check(
-          fieldKey: candidate.fieldKey,
-          value: candidate.value,
-          evidence: <String>[candidate.blockText],
-          evidenceRequired: true,
-          pattern: StageSupport.pattern(field),
-          options: StageSupport.optionValues(field.options),
-        );
-        if (guarded.value == null) {
-          if (guarded.rejection case final GuardRejection rejection) {
-            rejections.add(rejection.reason);
-          }
-          continue;
-        }
-        final OcrBlock? origin = ocr.blocks
-            .where((OcrBlock block) => block.text == candidate.blockText)
-            .firstOrNull;
-        _add(proposals, conflicts, rejections, (
-          fieldKey: candidate.fieldKey,
-          value: guarded.value,
-          confidence: candidate.confidence,
-          evidence: EvidenceLinking.forValue(
-            photoId: photo.id,
-            regionJson: origin == null ? null : StageSupport.region(origin),
-            snippet: candidate.blockText,
-            confidence: candidate.confidence,
-          ),
-          provenance: Provenance.stamp(
-            source: 'ocr',
-            method: 'identifier-pattern',
-            provider: 'on-device',
-            model: 'ml-kit-text-recognition',
-            promptVersion: 'local-1',
-          ),
-        ));
-      }
     }
     final List<ProcessingResult> responses = StageSupport.unwrap(
       await _responses.forJob(job.id),
@@ -126,15 +80,14 @@ final class ProposalCollector {
       );
       final Object? summary = StageSupport.json(response.requestSummary);
       if (!response.parsedOk ||
-          (summary is Map &&
-              currentRequest != null &&
-              summary['projectRevision'] != null &&
-              summary['projectRevision'] != currentRequest) ||
-          (summary is Map &&
-              summary['sourceRevision'] != null &&
-              summary['sourceRevision'] != currentRevision) ||
-          (summary is Map &&
-              (summary['requestGeneration'] ?? 0) != job.requestGeneration)) {
+          summary is! Map ||
+          currentRequest == null ||
+          !const <String>{'online', 'cache'}.contains(summary['kind']) ||
+          summary['projectRevision'] != currentRequest ||
+          summary['sourceRevision'] != currentRevision ||
+          summary['privacyRevision'] is! String ||
+          summary['sources'] is! List ||
+          summary['requestGeneration'] != job.requestGeneration) {
         continue;
       }
       final String? privacy = StageSupport.summaryValue(
@@ -192,6 +145,13 @@ final class ProposalCollector {
           }
           continue;
         }
+        final FieldDef definition = fields[parsedField.key]!;
+        if (OcrFieldValue.read(guarded.value!, definition) == null) {
+          rejections.add(
+            'The proposed value for ${parsedField.key} needs manual review.',
+          );
+          continue;
+        }
         _add(proposals, conflicts, rejections, (
           fieldKey: parsedField.key,
           value: guarded.value,
@@ -218,7 +178,7 @@ final class ProposalCollector {
                 ) ??
                 'extraction-1',
           ),
-        ));
+        ), fields[parsedField.key]);
       }
     }
     return (proposals: proposals, rejections: rejections);
@@ -230,6 +190,7 @@ void _add(
   Set<String> conflicts,
   List<String> findings,
   ProposedValue candidate,
+  FieldDef? field,
 ) {
   if (conflicts.contains(candidate.fieldKey)) return;
   final ProposedValue? prior = proposals
@@ -239,8 +200,26 @@ void _add(
     proposals.add(candidate);
     return;
   }
-  if (prior.value?.trim().toLowerCase() ==
-      candidate.value?.trim().toLowerCase()) {
+  final String? previous = field == null
+      ? prior.value
+      : OcrFieldValue.read(prior.value ?? '', field) ?? prior.value;
+  final String? next = field == null
+      ? candidate.value
+      : OcrFieldValue.read(candidate.value ?? '', field) ?? candidate.value;
+  if (previous?.trim().toLowerCase() == next?.trim().toLowerCase()) {
+    final ProposedValue selected = candidate.confidence > prior.confidence
+        ? candidate
+        : prior;
+    proposals[proposals.indexOf(prior)] = (
+      fieldKey: selected.fieldKey,
+      value: selected.value,
+      confidence: selected.confidence,
+      evidence: <EvidenceDraft>{
+        ...prior.evidence,
+        ...candidate.evidence,
+      }.toList(),
+      provenance: selected.provenance,
+    );
     return;
   }
   proposals.removeWhere(

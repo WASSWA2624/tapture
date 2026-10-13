@@ -8,6 +8,8 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/network/offline_now.dart';
 import 'package:tapture/core/widgets/app_action_dock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -21,9 +23,9 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/features/processing/processing.dart'
     show
         ProcessingJob,
-        processingControllerProvider,
-        processingEgressSummaryProvider,
-        showEgressPreview;
+        confirmProcessingEgress,
+        confirmRecordProcessingRetry,
+        processingControllerProvider;
 
 import 'record_bulk_controller.dart';
 import 'record_delete_action.dart';
@@ -76,15 +78,17 @@ final class RecordBulkActions extends ConsumerWidget {
   /// Before the session's first online step the operator sees what would
   /// leave the device. A record whose template only the operator can choose
   /// is set aside and waits in the queue, where Process asks. A batch
-  /// already running picks the queued jobs up instead.
+  /// already running leaves these records queued for the next run.
   static Future<void> processQueued(
     BuildContext context, {
     required String projectId,
+    List<String> recordIds = const <String>[],
   }) {
     return _processQueued(
       ProviderScope.containerOf(context, listen: false),
       _snackHost(context),
       projectId,
+      recordIds: recordIds,
     );
   }
 
@@ -323,7 +327,7 @@ final class RecordBulkActions extends ConsumerWidget {
   }
 
   /// Confirms, naming the count, puts the ticked records back in the
-  /// processing queue, and runs the queue unless the device is offline.
+  /// processing queue, then runs exactly those records with manual fallback.
   Future<void> _reprocess(
     BuildContext context,
     WidgetRef ref,
@@ -348,7 +352,31 @@ final class RecordBulkActions extends ConsumerWidget {
     if (!confirmed || !context.mounted) {
       return;
     }
-    final RecordBulkOutcome outcome = await controller.reprocess(ids);
+    final Set<String> approvedCharges = <String>{};
+    for (final String id in ids) {
+      final Result<bool> approval = await confirmRecordProcessingRetry(
+        host,
+        container,
+        id,
+      );
+      if (!context.mounted) return;
+      if (approval case FailureResult<bool>(:final Failure failure)) {
+        if (failure is! CancelledFailure) {
+          showAppSnack(
+            host,
+            failure.message,
+            tone: SnackTone.error,
+            localizedMessage: failure.explanation,
+          );
+        }
+        return;
+      }
+      if ((approval as Success<bool>).value) approvedCharges.add(id);
+    }
+    final RecordBulkOutcome outcome = await controller.reprocess(
+      ids,
+      retryChargeApproved: approvedCharges,
+    );
     final bool offline = container.read(offlineNowProvider);
     final int queued = outcome.succeeded.length;
     if (context.mounted) {
@@ -361,12 +389,19 @@ final class RecordBulkActions extends ConsumerWidget {
         done: localCopy.recordsRequeued,
         notDone: localCopy.recordsNotRequeued,
         after: offline && queued > 0
-            ? localCopy.recordsRequeuedOffline(queued)
+            ? localCopy.processingManualFallback
             : null,
       );
     }
-    if (queued > 0 && !offline && host.mounted) {
-      unawaited(_processQueued(container, host, projectId));
+    if (queued > 0 && host.mounted) {
+      unawaited(
+        _processQueued(
+          container,
+          host,
+          projectId,
+          recordIds: outcome.succeeded,
+        ),
+      );
     }
   }
 
@@ -481,8 +516,9 @@ String _sentences(String first, String second) {
 Future<void> _processQueued(
   ProviderContainer container,
   BuildContext host,
-  String projectId,
-) async {
+  String projectId, {
+  List<String> recordIds = const <String>[],
+}) async {
   final ProviderSubscription<Object> hold = container.listen<Object>(
     processingControllerProvider.notifier,
     (Object? _, Object _) {},
@@ -492,33 +528,11 @@ Future<void> _processQueued(
         .read(processingControllerProvider.notifier)
         .process(
           projectId: projectId,
+          recordIds: recordIds,
           confirmOnline: (ProcessingJob job) =>
-              _confirmOnline(container, host, job),
+              confirmProcessingEgress(host, container, job),
         );
   } finally {
     hold.close();
   }
-}
-
-/// The egress preview before the session's first online step, as the queue
-/// shows it. A job with nothing to send goes ahead without asking.
-Future<bool> _confirmOnline(
-  ProviderContainer container,
-  BuildContext host,
-  ProcessingJob job,
-) async {
-  final ({int imageCount, int payloadBytes}) summary = await container.read(
-    processingEgressSummaryProvider,
-  )(job);
-  if (summary.imageCount == 0 && summary.payloadBytes == 0) {
-    return true;
-  }
-  if (!host.mounted) {
-    return false;
-  }
-  return showEgressPreview(
-    host,
-    imageCount: summary.imageCount,
-    payloadBytes: summary.payloadBytes,
-  );
 }

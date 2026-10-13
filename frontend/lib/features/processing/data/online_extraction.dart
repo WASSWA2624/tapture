@@ -88,7 +88,11 @@ final class OnlineExtraction {
       if (!await ExtractionResponses(
         _responses,
       ).hasAttempt(job, idempotencyKey)) {
-        await _budget.require(job.id, bundle);
+        await _budget.require(
+          job.id,
+          bundle,
+          expectedGeneration: job.requestGeneration,
+        );
       }
       if (cancel.isCancelled) throw const CancelledFailure();
       final ExtractFieldsRequest base = request.toService();
@@ -174,6 +178,7 @@ final class OnlineExtraction {
       await _writes.appendRejections(
         job.id,
         StageSupport.rejectedFields(raw, bundle),
+        expectedGeneration: job.requestGeneration,
       );
       // Store the original reply even when cancellation or an edit raced it.
       if (cancel.isCancelled) throw const CancelledFailure();
@@ -184,7 +189,12 @@ final class OnlineExtraction {
       );
       if (parsed.ok) {
         StageSupport.unwrap(await _responses.markParsed(stored.id));
-        await _writes.setProvider(job.id, provider: provider, model: model);
+        await _writes.setProvider(
+          job.id,
+          provider: provider,
+          model: model,
+          expectedGeneration: job.requestGeneration,
+        );
         return;
       }
       if (!ResponseRepair.mayRetry(repairsUsed: repairs)) {
@@ -196,7 +206,8 @@ final class OnlineExtraction {
   }
 }
 
-CorruptionFailure _malformed(String? error) => CorruptionFailure(
+ProviderFailure _malformed(String? error) => ProviderFailure(
+  kind: ProviderFailureKind.malformed,
   message: error ?? 'The provider response is malformed.',
   recoveryAction: 'Inspect the stored response, then retry the job.',
 );

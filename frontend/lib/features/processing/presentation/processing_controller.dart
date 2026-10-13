@@ -19,12 +19,16 @@ import 'queue_providers.dart';
 /// Executes foreground queue batches and exposes cancellable progress.
 final class ProcessingController extends Notifier<ProcessingBatchState> {
   CancellationToken _token = CancellationToken();
+  bool _onlineDeclined = false;
 
   @override
-  ProcessingBatchState build() => const ProcessingBatchState();
+  ProcessingBatchState build() {
+    ref.onDispose(() => _token.cancel());
+    return const ProcessingBatchState();
+  }
 
-  /// Processes every ready job, or only the jobs in [groupLabels] when
-  /// any are given (process selected).
+  /// Processes ready jobs in [projectId], optionally limited to [groupLabels]
+  /// or the already queued [recordIds].
   ///
   /// When a stage cannot decide the template, [chooseTemplate] asks the
   /// operator. A null answer, or no [chooseTemplate], leaves the job queued
@@ -38,6 +42,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
   Future<void> process({
     String? projectId,
     List<String> groupLabels = const <String>[],
+    List<String> recordIds = const <String>[],
     Future<bool> Function(ProcessingJob job)? confirmOnline,
     Future<TemplateChoice?> Function(TemplateChoiceNeeded needed)?
     chooseTemplate,
@@ -48,14 +53,19 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
       return;
     }
     _token = CancellationToken();
+    _onlineDeclined = false;
+    // A record may navigate to review while its durable queued job is running.
+    final keepAlive = ref.keepAlive();
     state = const ProcessingBatchState(isRunning: true);
     final ProcessingRepository repository = ref.read(
       processingRepositoryProvider,
     );
-    final Result<int> pending = await repository.enqueuePending(
-      projectId: projectId,
-      groupLabels: groupLabels,
-    );
+    final Result<int> pending = recordIds.isEmpty
+        ? await repository.enqueuePending(
+            projectId: projectId,
+            groupLabels: groupLabels,
+          )
+        : const Success<int>(0);
     if (pending case FailureResult<int>(:final Failure failure)) {
       state = ProcessingBatchState(
         failed: 1,
@@ -70,6 +80,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
         ],
       );
       _notify(0, 1);
+      keepAlive.close();
       return;
     }
     var succeeded = 0;
@@ -82,6 +93,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
         AppConstants.processing.jobLease,
         projectId: projectId,
         groupLabels: groupLabels,
+        recordIds: recordIds,
         unfinished: stopAfter,
         skip: waiting,
       );
@@ -122,9 +134,17 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
               );
               if (stage == JobStage.online) {
                 if (!await _mayGoOnline(current, confirmOnline)) {
-                  await repository.release(current.id);
-                  _token.cancel();
-                  throw _ProcessingCancelled(Copy.messages.egressDecline);
+                  if (_token.isCancelled) throw const CancelledFailure();
+                  (await repository.save(
+                    current.copyWith(
+                      skipReason: Copy.processingManualFallback,
+                      rejections: <String>{
+                        ...current.rejections,
+                        Copy.processingManualFallback,
+                      }.toList(growable: false),
+                    ),
+                  )).fold((Failure failure) => throw failure, (_) {});
+                  return;
                 }
               }
               await _runStage(
@@ -139,10 +159,14 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
           return (await repository.markStage(
             current.id,
             stage,
+            expectedGeneration: current.requestGeneration,
           )).fold((failure) => throw failure, (ProcessingJob stored) => stored);
         },
         release: (ProcessingJob current) async {
-          final result = await repository.release(current.id);
+          final result = await repository.release(
+            current.id,
+            expectedGeneration: current.requestGeneration,
+          );
           return result.fold(
             (failure) => throw failure,
             (_) => current.copyWith(status: JobStatus.queued, clearLease: true),
@@ -176,6 +200,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
         }
         (await repository.complete(
           job.id,
+          expectedGeneration: job.requestGeneration,
         )).fold((Failure failure) => throw failure, (_) {});
         succeeded++;
         _replace(
@@ -193,7 +218,10 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
         );
         break;
       } on _AwaitingTemplateChoice {
-        await repository.release(job.id);
+        await repository.release(
+          job.id,
+          expectedGeneration: job.requestGeneration,
+        );
         waiting.add(job.id);
         _replace(
           job.recordId,
@@ -203,7 +231,10 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
         );
         continue;
       } on _TemplateChoiceFailed catch (error) {
-        await repository.release(job.id);
+        await repository.release(
+          job.id,
+          expectedGeneration: job.requestGeneration,
+        );
         failed++;
         _replace(
           job.recordId,
@@ -213,7 +244,10 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
         );
         break;
       } on CancelledFailure catch (failure) {
-        await repository.release(job.id);
+        await repository.release(
+          job.id,
+          expectedGeneration: job.requestGeneration,
+        );
         _replace(
           job.recordId,
           StepState.waiting,
@@ -231,6 +265,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
           retry.reason,
           permanent: retry.permanent,
           localizedReason: retry.localizedReason,
+          expectedGeneration: job.requestGeneration,
         );
         failed++;
         final String reason = recorded.fold(
@@ -257,6 +292,7 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
     if (notify && (!_token.isCancelled || succeeded > 0 || failed > 0)) {
       _notify(succeeded, failed);
     }
+    keepAlive.close();
   }
 
   /// Reports a finished batch without waiting on it, so a permission prompt
@@ -332,9 +368,21 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
     }
     choice ??= await chooseTemplate!(needed);
     if (choice == null) {
-      await repository.release(job.id);
+      await repository.release(
+        job.id,
+        expectedGeneration: job.requestGeneration,
+      );
       _token.cancel();
       throw _ProcessingCancelled(Copy.messages.templateChoiceSkipped);
+    }
+    final ProcessingJob? persisted = (await repository.byId(job.id)).fold(
+      (Failure failure) => throw failure,
+      (ProcessingJob? current) => current,
+    );
+    if (_token.isCancelled ||
+        persisted == null ||
+        persisted.requestGeneration != job.requestGeneration) {
+      throw const CancelledFailure();
     }
     final Result<void> applied = await ref.read(
       processingTemplateChoiceProvider,
@@ -351,16 +399,20 @@ final class ProcessingController extends Notifier<ProcessingBatchState> {
     ProcessingJob job,
     Future<bool> Function(ProcessingJob job)? confirmOnline,
   ) async {
+    if (_onlineDeclined) return false;
     final identity = ref.read(processingEgressIdentityProvider);
     final String scope = await identity(job);
     final EgressConsent consent = ref.read(egressConsentProvider.notifier);
     if (consent.covers(scope)) {
       return true;
     }
-    if (confirmOnline == null || !await confirmOnline(job)) {
-      return false;
-    }
+    if (confirmOnline == null) return false;
+    final bool accepted = await confirmOnline(job);
     if (_token.isCancelled || scope != await identity(job)) {
+      throw const CancelledFailure();
+    }
+    if (!accepted) {
+      _onlineDeclined = true;
       return false;
     }
     consent.grant(scope: scope);

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/localized_message.dart';
@@ -150,18 +152,33 @@ final class ProcessingRepositoryImpl implements ProcessingRepository {
       );
     }
     final String id = job.id.isEmpty ? _ids.newId() : job.id;
-    final Result<sqlite.ProcessingJobRow> written = await jobs
-        .upsertProcessingJob(
-          _db,
-          row: ProcessingJobMapper.toCompanion(
-            job.copyWith(id: id),
-            queuedAt: _clock.nowUtc(),
-          ),
-          clock: _clock,
-          deviceId: _deviceId,
-          ids: _ids,
+    return runInTransaction(_db, () async {
+      final sqlite.ProcessingJobRow? current =
+          await (_db.select(_db.processing)
+                ..where((sqlite.$ProcessingTable row) => row.id.equals(id)))
+              .getSingleOrNull();
+      if (current != null &&
+          (current.requestGeneration != job.requestGeneration ||
+              current.recordId != job.recordId ||
+              current.fieldKeys != jsonEncode(job.fieldKeys))) {
+        throw const CancelledFailure(
+          message: 'This processing attempt was replaced.',
+          recoveryAction: 'Continue the current processing attempt.',
         );
-    return written.map(ProcessingJobMapper.toJob);
+      }
+      final Result<sqlite.ProcessingJobRow> written = await jobs
+          .upsertProcessingJob(
+            _db,
+            row: ProcessingJobMapper.toCompanion(
+              job.copyWith(id: id),
+              queuedAt: _clock.nowUtc(),
+            ),
+            clock: _clock,
+            deviceId: _deviceId,
+            ids: _ids,
+          );
+      return ProcessingJobMapper.toJob(written.getOrThrow());
+    });
   }
 
   @override
@@ -186,8 +203,16 @@ final class ProcessingRepositoryImpl implements ProcessingRepository {
   }
 
   @override
-  Future<Result<String>> requeue(String recordId) {
-    return _writes.requeue(recordId);
+  Future<Result<String>> requeue(
+    String recordId, {
+    List<String> fieldKeys = const <String>[],
+    bool retryChargeApproved = false,
+  }) {
+    return _writes.requeue(
+      recordId,
+      fieldKeys: fieldKeys,
+      retryChargeApproved: retryChargeApproved,
+    );
   }
 
   @override
@@ -196,6 +221,7 @@ final class ProcessingRepositoryImpl implements ProcessingRepository {
     String? projectId,
     List<String> groupLabels = const <String>[],
     JobStage? unfinished,
+    List<String> recordIds = const <String>[],
     Set<String> skip = const <String>{},
   }) {
     return _writes.claim(
@@ -203,12 +229,14 @@ final class ProcessingRepositoryImpl implements ProcessingRepository {
       projectId: projectId,
       groupLabels: groupLabels,
       unfinished: unfinished,
+      recordIds: recordIds,
       skip: skip,
     );
   }
 
   @override
-  Future<Result<void>> complete(String jobId) => _writes.complete(jobId);
+  Future<Result<void>> complete(String jobId, {int? expectedGeneration}) =>
+      _writes.complete(jobId, expectedGeneration: expectedGeneration);
 
   @override
   Future<Result<void>> fail(
@@ -216,22 +244,29 @@ final class ProcessingRepositoryImpl implements ProcessingRepository {
     String reason, {
     required bool permanent,
     LocalizedMessage? localizedReason,
+    int? expectedGeneration,
   }) {
     return _writes.fail(
       jobId,
       reason,
       permanent: permanent,
       localizedReason: localizedReason,
+      expectedGeneration: expectedGeneration,
     );
   }
 
   @override
-  Future<Result<ProcessingJob>> markStage(String id, JobStage stage) {
-    return _writes.markStage(id, stage);
+  Future<Result<ProcessingJob>> markStage(
+    String id,
+    JobStage stage, {
+    int? expectedGeneration,
+  }) {
+    return _writes.markStage(id, stage, expectedGeneration: expectedGeneration);
   }
 
   @override
-  Future<Result<void>> release(String id) => _writes.release(id);
+  Future<Result<void>> release(String id, {int? expectedGeneration}) =>
+      _writes.release(id, expectedGeneration: expectedGeneration);
 
   @override
   Future<Result<void>> retry(String id) => _writes.retry(id);

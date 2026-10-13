@@ -114,6 +114,7 @@ import 'features/processing/processing.dart'
         ProcessingJob,
         ProcessingFindings,
         ProcessingUsage,
+        proposalPreviewProvider,
         processingFindingsStoreProvider,
         processingUsageStoreProvider;
 import 'features/projects/data/project_openable_file_lookup_factory.dart';
@@ -977,6 +978,7 @@ Future<void> _run({_FixtureBootstrap? fixture}) async {
       processingStageWorkProvider.overrideWith(
         (Ref _) => processingWorker.perform,
       ),
+      proposalPreviewProvider.overrideWith((Ref _) => processingWorker.preview),
       processingEgressSummaryProvider.overrideWith(
         (Ref _) => processingWorker.egressSummary,
       ),

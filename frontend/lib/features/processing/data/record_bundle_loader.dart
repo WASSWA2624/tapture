@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/attachment_owners.dart';
@@ -14,6 +16,7 @@ import 'package:tapture/features/templates/templates.dart'
         TemplateMapper,
         TemplateVersioning;
 
+import '../domain/processing_job.dart';
 import 'record_bundle.dart';
 
 /// SQL condition on a `captions` row: true while it is not tombstoned.
@@ -28,6 +31,23 @@ final class RecordBundleLoader {
 
   final AppDatabase _db;
 
+  /// Stops obsolete attempts before reads, dispatch or proposal application.
+  Future<void> checkGeneration(ProcessingJob job) async {
+    final ProcessingJobRow? stored =
+        await (_db.select(_db.processing)
+              ..where(($ProcessingTable row) => row.id.equals(job.id)))
+            .getSingleOrNull();
+    if (stored != null &&
+        (stored.requestGeneration != job.requestGeneration ||
+            stored.recordId != job.recordId ||
+            stored.fieldKeys != jsonEncode(job.fieldKeys))) {
+      throw const CancelledFailure(
+        message: 'This processing attempt was replaced.',
+        recoveryAction: 'Continue the current processing attempt.',
+      );
+    }
+  }
+
   /// Loads the record [recordId] with its project, template and evidence.
   ///
   /// Evidence is what the record shows now: photos by `activePhotoCondition`
@@ -36,9 +56,12 @@ final class RecordBundleLoader {
   ///
   /// Throws a [StorageFailure] when the record is gone and a
   /// [ValidationFailure] when its project or template is missing.
-  Future<RecordBundle> load(String recordId) async {
+  Future<RecordBundle> load(
+    String recordId, {
+    List<String> fieldKeys = const <String>[],
+  }) async {
     try {
-      return await _load(recordId);
+      return await _load(recordId, fieldKeys);
     } on Failure {
       rethrow;
     } on Object catch (error) {
@@ -46,7 +69,7 @@ final class RecordBundleLoader {
     }
   }
 
-  Future<RecordBundle> _load(String recordId) async {
+  Future<RecordBundle> _load(String recordId, List<String> fieldKeys) async {
     final RecordRow? record =
         await (_db.select(_db.records)
               ..where(($RecordsTable table) => table.id.equals(recordId)))
@@ -145,6 +168,7 @@ final class RecordBundleLoader {
       currentTemplate: template,
       templateResolved: captured.resolved,
       fields: captured.fields,
+      targetFieldKeys: List<String>.unmodifiable(fieldKeys),
       rows: captured.rows,
       photos:
           await (_db.select(live)

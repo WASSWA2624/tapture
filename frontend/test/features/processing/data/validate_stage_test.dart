@@ -496,7 +496,23 @@ void main() {
       });
       (await fixture.responses.save(
         jobId: seeded.job.id,
-        requestSummary: '{"kind":"online"}',
+        requestSummary: jsonEncode(<String, Object?>{
+          'kind': 'online',
+          'projectRevision': 'test-project',
+          'sourceRevision': await ProcessingSnapshot.sourceRevision(
+            await fixture.bundle(),
+            privacyRevision: '',
+          ),
+          'privacyRevision': '',
+          'requestGeneration': seeded.job.requestGeneration,
+          'sources': <Map<String, Object?>>[
+            <String, Object?>{
+              'id': 'photo:${photo.id}',
+              'kind': 'photo',
+              'photoId': photo.id,
+            },
+          ],
+        }),
         rawResponse: raw,
         parsedOk: true,
       )).getOrThrow();
@@ -509,6 +525,7 @@ void main() {
           ids: fixture.ids,
         ),
         responses: fixture.responses,
+        currentRevision: (job, bundle) async => 'test-project',
       );
       expect(
         (await collector.collect(seeded.job, bundle)).proposals.single.fieldKey,
@@ -737,15 +754,15 @@ void main() {
     await process(
       seeded.fixture,
       seeded.job,
-      <String, Object?>{'installed': value('05/03/2024')},
+      <String, Object?>{'installed': value('05/13/2024')},
       settings: SettingsStore.fake(
         stored: <String, Object?>{SettingKeys.appLanguage.name: 'en_US'},
       ),
     );
 
     final RecordField field = (await fields(seeded.fixture)).single;
-    expect(field.valueRaw, '05/03/2024');
-    expect(field.valueRefined, '2024-05-03');
+    expect(field.valueRaw, '05/13/2024');
+    expect(field.valueRefined, '2024-05-13');
   });
 }
 

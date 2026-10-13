@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/processing/data/processing_stage_worker.dart';
 import 'package:tapture/features/processing/domain/processing_job.dart';
@@ -64,12 +66,35 @@ void main() {
   test('a record the device completes sends nothing', () async {
     final ProcessingFixture fixture = await ProcessingFixture.open();
     await fixture.addField('notes');
+    (await insertRecordField(
+      fixture.db,
+      row: RecordFieldsCompanion(
+        recordId: Value<String>(fixture.record.id),
+        fieldKey: const Value<String>('notes'),
+        valueRaw: const Value<String>('Recorded on the device'),
+        source: const Value<String>('manual'),
+      ),
+      clock: fixture.clock,
+      deviceId: 'device-a',
+      ids: fixture.ids,
+    )).getOrThrow();
 
     expect(await summarise(fixture, await fixture.job()), (
       imageCount: 0,
       payloadBytes: 0,
     ));
   });
+
+  test(
+    'an unfilled optional field remains an online extraction target',
+    () async {
+      final ProcessingFixture fixture = await ProcessingFixture.open();
+      await fixture.addField('notes');
+      final summary = await summarise(fixture, await fixture.job());
+      expect(summary.imageCount, 1);
+      expect(summary.payloadBytes, greaterThan(0));
+    },
+  );
 
   test('offline by choice sends nothing', () async {
     final seeded = await record();

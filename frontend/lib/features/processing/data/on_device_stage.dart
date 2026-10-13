@@ -27,10 +27,14 @@ final class OnDeviceStage {
   final PhotoPaths _paths;
 
   /// Reads every photo in [bundle] the cache does not already hold.
-  Future<void> run(RecordBundle bundle, CancellationToken cancel) async {
+  Future<List<String>> run(
+    RecordBundle bundle,
+    CancellationToken cancel,
+  ) async {
+    final List<String> findings = <String>[];
     // Browser OCR is unavailable; retain captions and fields for the remaining
     // stages instead of failing a record before online or manual review.
-    if (_paths.isBrowser) return;
+    if (_paths.isBrowser) return findings;
     for (final Photo photo in bundle.photos) {
       if (cancel.isCancelled) throw const CancelledFailure();
       final String path = await _paths.prepared(bundle, photo);
@@ -56,7 +60,18 @@ final class OnDeviceStage {
       if (cached != null) {
         continue;
       }
-      final OcrResult result = await _ocr.recognise(path, cancel: cancel);
+      final OcrResult result;
+      try {
+        result = await _ocr.recognise(path, cancel: cancel);
+      } on ValidationFailure {
+        if (cancel.isCancelled) throw const CancelledFailure();
+        findings.add(_readerUnavailable);
+        continue;
+      } on ProviderFailure {
+        if (cancel.isCancelled) throw const CancelledFailure();
+        findings.add(_readerUnavailable);
+        continue;
+      }
       StageSupport.unwrap(
         await _cache.put(
           contentHash: contentHash,
@@ -65,6 +80,7 @@ final class OnDeviceStage {
         ),
       );
     }
+    return findings.toSet().toList();
   }
 
   /// The cached text of every photo in [bundle], one photo per line.
@@ -103,3 +119,6 @@ final class OnDeviceStage {
     return sources;
   }
 }
+
+const String _readerUnavailable =
+    'Some photos could not be read on this device. Review AI suggestions or enter their values by hand.';

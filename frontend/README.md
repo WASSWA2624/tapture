@@ -49,7 +49,18 @@ file has drifted from its source.
 Configure the authenticated backend using [the AI setup and accounting instructions](../backend/RUNBOOK.md).
 Build with `--dart-define=BACKEND_URL=https://your-server` or enter the HTTPS address in Organisation settings,
 then sign in and obtain a project grant. Capture, originals, Whisper transcripts, records and processing jobs stay
-on the device. An unavailable backend leaves online analysis queued; capture remains available.
+on the device. Processing uses each shipped or custom template's OCR profile, attempts configured AI where needed,
+and falls back to local suggestions and manual review when AI is unavailable. Review accepts or rejects mapped
+values durably. Project, record, selected-field and single-field runs preserve manual values and original evidence;
+Save and analyse persists capture before processing starts. An explicit retry can attempt online analysis later.
+
+Processing follow-ups outside parameter mapping: OCR evidence regions still use prepared-image coordinates
+([photo preparation](lib/features/processing/data/photo_paths.dart),
+[region storage](lib/features/processing/data/stage_support.dart)); original-photo highlights need the inverse
+resize/orientation/crop transform. The legacy `capture_feedback_test.dart` caption checks also need missing
+visual fixtures and retired control finders reconciled before an integrated release pass (§84). The current
+regression evidence is retained under `build/verification/ocr_processing/`; scoped processing checks do not
+certify those unrelated capture checks.
 
 In AI settings, the organisation-managed account is the default. A personal Gemini or OpenAI account must be
 selected explicitly. Saving its key sends it to the authenticated server for encryption; the client stores only

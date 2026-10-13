@@ -115,6 +115,43 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get processingAllFields => 'Analyse all fields';
+
+  @override
+  String get processingSelectedFields => 'Analyse selected fields';
+
+  @override
+  String get processingScopeHelp =>
+      'AI reads the evidence and suggests values for your template. Review each suggestion before keeping it. You can enter values manually at any time.';
+
+  @override
+  String get processingManualFallback =>
+      'AI analysis is unavailable. Review detected values or enter missing values manually.';
+
+  @override
+  String get processingManualFallbackRecovery =>
+      'Open the record to review suggestions or edit its fields.';
+
+  @override
+  String get reviewProposalsChanged =>
+      'These suggestions have changed since they were shown.';
+
+  @override
+  String get reviewProposalsChangedRecovery =>
+      'Review the latest suggestions and try again.';
+
+  @override
+  String get reviewProposalsHelp =>
+      'Select the suggested values to keep. Applying rejects the remaining suggestions. Your original evidence is preserved.';
+
+  @override
+  String get reviewProposalsRejected =>
+      'Suggestions rejected. Your original evidence is preserved.';
+
+  @override
+  String get reviewAnalyseField => 'Analyse this field';
+
+  @override
   String get ocrBrowserUnavailable =>
       'On-device photo reading is unavailable in this browser. Review fields manually or enable online analysis.';
 
@@ -12584,6 +12621,43 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
   String settingsProjectContextsSummary(String autoClear, String movement) {
     return 'Cléár áftér: ·····$autoClear · Móvémént: ·····$movement';
   }
+
+  @override
+  String get processingAllFields => 'Ánálysé áll fíélds·······';
+
+  @override
+  String get processingSelectedFields => 'Ánálysé séléctéd fíélds·········';
+
+  @override
+  String get processingScopeHelp =>
+      'ÁÍ réáds thé évídéncé ánd súggésts válúés fór yóúr témpláté. Révíéw éách súggéstíón béfóré kéépíng ít. Yóú cán éntér válúés mánúálly át ány tímé.···················································';
+
+  @override
+  String get processingManualFallback =>
+      'ÁÍ ánálysís ís únáváíláblé. Révíéw détéctéd válúés ór éntér míssíng válúés mánúálly.······························';
+
+  @override
+  String get processingManualFallbackRecovery =>
+      'Ópén thé récórd tó révíéw súggéstíóns ór édít íts fíélds.····················';
+
+  @override
+  String get reviewProposalsChanged =>
+      'Thésé súggéstíóns hávé chángéd síncé théy wéré shówn.···················';
+
+  @override
+  String get reviewProposalsChangedRecovery =>
+      'Révíéw thé látést súggéstíóns ánd try ágáín.················';
+
+  @override
+  String get reviewProposalsHelp =>
+      'Séléct thé súggéstéd válúés tó kéép. Ápplyíng réjécts thé rémáíníng súggéstíóns. Yóúr órígínál évídéncé ís présérvéd.·········································';
+
+  @override
+  String get reviewProposalsRejected =>
+      'Súggéstíóns réjéctéd. Yóúr órígínál évídéncé ís présérvéd.·····················';
+
+  @override
+  String get reviewAnalyseField => 'Ánálysé thís fíéld·······';
 
   @override
   String get ocrBrowserUnavailable =>

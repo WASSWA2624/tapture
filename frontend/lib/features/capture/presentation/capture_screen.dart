@@ -495,16 +495,13 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
                   key: const ValueKey<String>('capture-save-process'),
                   label: localCopy.captureSaveAndAnalyse,
                   busy: uiState.saving,
-                  onPressed: ready && !offline
-                      ? () => unawaited(_save(true))
-                      : null,
+                  onPressed: ready ? () => unawaited(_save(true)) : null,
                 ),
-                // Processing waits for a network; Save raw keeps capture
-                // unblocked meanwhile (D3). The explanation stays beside the actions.
+                // Offline processing still saves and offers local/manual review.
                 if (offline) ...<Widget>[
                   const SizedBox(height: Space.x1),
                   Text(
-                    localCopy.captureProcessNeedsNetwork,
+                    localCopy.processingManualFallback,
                     key: const ValueKey<String>('capture-saves-offline'),
                     style: AppText.caption,
                     textAlign: TextAlign.center,

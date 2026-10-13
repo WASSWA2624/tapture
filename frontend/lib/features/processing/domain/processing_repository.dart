@@ -58,7 +58,14 @@ abstract interface class ProcessingRepository {
   /// queued keeps its status. A record that is processing, archived or
   /// deleted, or whose job a runner holds now, fails with a
   /// `ValidationFailure` and nothing is written.
-  Future<Result<String>> requeue(String recordId);
+  /// [fieldKeys] empty processes all eligible fields; otherwise only these
+  /// captured-template keys can receive proposals. Explicit runs start a new
+  /// request generation so older decisions and responses remain history.
+  Future<Result<String>> requeue(
+    String recordId, {
+    List<String> fieldKeys = const <String>[],
+    bool retryChargeApproved = false,
+  });
 
   /// Claims the oldest ready job in [projectId] and [groupLabels] (empty
   /// for every group), releasing expired leases first. Returns null while
@@ -68,16 +75,18 @@ abstract interface class ProcessingRepository {
   /// claimed, so a run that stops after it never takes the same job twice.
   /// A job in [skip] is passed over, so a batch can set one aside and carry
   /// on with the rest.
+  /// [recordIds] limits a foreground run to exactly the requested records.
   Future<Result<ProcessingJob?>> claim(
     Duration lease, {
     String? projectId,
     List<String> groupLabels = const <String>[],
     JobStage? unfinished,
+    List<String> recordIds = const <String>[],
     Set<String> skip = const <String>{},
   });
 
   /// Marks [jobId] complete in one transaction.
-  Future<Result<void>> complete(String jobId);
+  Future<Result<void>> complete(String jobId, {int? expectedGeneration});
 
   /// Records [reason] and either schedules a retry or stops permanently.
   Future<Result<void>> fail(
@@ -85,13 +94,18 @@ abstract interface class ProcessingRepository {
     String reason, {
     required bool permanent,
     LocalizedMessage? localizedReason,
+    int? expectedGeneration,
   });
 
   /// Records [stage] as the last completed stage.
-  Future<Result<ProcessingJob>> markStage(String id, JobStage stage);
+  Future<Result<ProcessingJob>> markStage(
+    String id,
+    JobStage stage, {
+    int? expectedGeneration,
+  });
 
   /// Returns a running job to the queue without losing completed stages.
-  Future<Result<void>> release(String id);
+  Future<Result<void>> release(String id, {int? expectedGeneration});
 
   /// Returns a stopped job to the queue after an explicit operator retry.
   Future<Result<void>> retry(String id);

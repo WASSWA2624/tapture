@@ -127,6 +127,48 @@ void main() {
     },
   );
 
+  test('a scoped run leaves other project jobs queued', () async {
+    final FakeProcessingRepository repository = FakeProcessingRepository();
+    addTearDown(repository.dispose);
+    for (final String recordId in <String>['record-1', 'record-2']) {
+      repository.recordProjects[recordId] = 'project-1';
+      await repository.save(
+        ProcessingJob(id: 'job-$recordId', recordId: recordId),
+      );
+    }
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        processingRepositoryProvider.overrideWith((_) => repository),
+      ],
+    );
+    addTearDown(container.dispose);
+    final subscription = container.listen(
+      processingControllerProvider,
+      (_, _) {},
+    );
+    addTearDown(subscription.close);
+    await container
+        .read(processingControllerProvider.notifier)
+        .process(
+          projectId: 'project-1',
+          recordIds: <String>['record-2'],
+          confirmOnline: (_) async => true,
+        );
+    expect(
+      repository.stored
+          .firstWhere((ProcessingJob job) => job.recordId == 'record-1')
+          .status,
+      JobStatus.queued,
+    );
+    expect(
+      repository.stored
+          .firstWhere((ProcessingJob job) => job.recordId == 'record-2')
+          .status,
+      JobStatus.completed,
+    );
+    expect(repository.queuedGroups, isEmpty);
+  });
+
   test(
     'a stage failure retains semantics in the durable job and progress',
     () async {
@@ -220,44 +262,58 @@ void main() {
     );
   });
 
-  test('declining first egress leaves the job claimable at detect', () async {
-    final FakeProcessingRepository repository = FakeProcessingRepository();
-    addTearDown(repository.dispose);
-    await repository.save(
-      const ProcessingJob(id: 'job-1', recordId: 'record-1'),
-    );
-    final List<JobStage> stages = <JobStage>[];
-    final ProviderContainer container = ProviderContainer(
-      overrides: <Override>[
-        processingRepositoryProvider.overrideWith((_) => repository),
-        processingStageWorkProvider.overrideWith((_) {
-          return (JobStage stage, ProcessingJob _, CancellationToken _) async {
-            stages.add(stage);
-            return null;
-          };
-        }),
-      ],
-    );
-    addTearDown(container.dispose);
-    final ProviderSubscription<ProcessingBatchState> subscription = container
-        .listen<ProcessingBatchState>(processingControllerProvider, (_, _) {});
-    addTearDown(subscription.close);
+  test(
+    'declining egress completes local validation with manual recovery',
+    () async {
+      final FakeProcessingRepository repository = FakeProcessingRepository();
+      addTearDown(repository.dispose);
+      await repository.save(
+        const ProcessingJob(id: 'job-1', recordId: 'record-1'),
+      );
+      final List<JobStage> stages = <JobStage>[];
+      final ProviderContainer container = ProviderContainer(
+        overrides: <Override>[
+          processingRepositoryProvider.overrideWith((_) => repository),
+          processingStageWorkProvider.overrideWith((_) {
+            return (
+              JobStage stage,
+              ProcessingJob _,
+              CancellationToken _,
+            ) async {
+              stages.add(stage);
+              return null;
+            };
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+      final ProviderSubscription<ProcessingBatchState> subscription = container
+          .listen<ProcessingBatchState>(
+            processingControllerProvider,
+            (_, _) {},
+          );
+      addTearDown(subscription.close);
 
-    await container
-        .read(processingControllerProvider.notifier)
-        .process(confirmOnline: (_) async => false);
+      await container
+          .read(processingControllerProvider.notifier)
+          .process(confirmOnline: (_) async => false);
 
-    expect(stages, <JobStage>[
-      JobStage.prepare,
-      JobStage.onDevice,
-      JobStage.detect,
-    ]);
-    final ProcessingJob? stored = (await repository.byId(
-      'job-1',
-    )).fold((_) => null, (ProcessingJob? job) => job);
-    expect(stored?.status, JobStatus.queued);
-    expect(stored?.stage, JobStage.detect.name);
-  });
+      expect(stages, <JobStage>[
+        JobStage.prepare,
+        JobStage.onDevice,
+        JobStage.detect,
+        JobStage.normalise,
+        JobStage.validate,
+      ]);
+      final ProcessingJob? stored = (await repository.byId(
+        'job-1',
+      )).fold((_) => null, (ProcessingJob? job) => job);
+      expect(stored?.status, JobStatus.completed);
+      expect(stored?.stage, JobStage.validate.name);
+      expect(stored?.skipReason, Copy.processingManualFallback);
+      expect(stored?.rejections, contains(Copy.processingManualFallback));
+    },
+  );
 
   test('retry returns a stopped job to the queue', () async {
     final FakeProcessingRepository repository = FakeProcessingRepository();
@@ -297,6 +353,68 @@ void main() {
         (templateId: 'motor', label: 'Motor'),
       ],
       pinKey: 'room=Plant room',
+    );
+
+    test(
+      'a template answer from a replaced generation never changes the new job',
+      () async {
+        final FakeProcessingRepository repository = FakeProcessingRepository();
+        addTearDown(repository.dispose);
+        await repository.save(
+          const ProcessingJob(id: 'job-1', recordId: 'record-1'),
+        );
+        var applied = false;
+        final ProviderContainer container = ProviderContainer(
+          overrides: <Override>[
+            processingRepositoryProvider.overrideWith((_) => repository),
+            processingStageWorkProvider.overrideWith(
+              (_) =>
+                  (
+                    JobStage stage,
+                    ProcessingJob _,
+                    CancellationToken _,
+                  ) async => stage == JobStage.detect ? needed : null,
+            ),
+            processingTemplateChoiceProvider.overrideWith(
+              (_) => (TemplateChoiceNeeded _, TemplateChoice _) async {
+                applied = true;
+                return const Success<void>(null);
+              },
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+        final subscription = container.listen(
+          processingControllerProvider,
+          (_, _) {},
+        );
+        addTearDown(subscription.close);
+        await container
+            .read(processingControllerProvider.notifier)
+            .process(
+              chooseTemplate: (_) async {
+                final ProcessingJob old = (await repository.byId(
+                  'job-1',
+                )).getOrThrow()!;
+                await repository.save(
+                  old.copyWith(leaseExpiresAt: DateTime.utc(2000)),
+                );
+                (await repository.requeue(
+                  'record-1',
+                  fieldKeys: <String>['serial'],
+                )).getOrThrow();
+                return (templateId: 'pump', pin: false);
+              },
+            );
+        expect(applied, isFalse);
+        final ProcessingJob current = (await repository.byId(
+          'job-1',
+        )).getOrThrow()!;
+        expect(current.requestGeneration, 1);
+        expect(current.status, JobStatus.queued);
+        expect(current.stage, isEmpty);
+        expect(current.fieldKeys, <String>['serial']);
+      },
     );
 
     /// Records each stage, and returns [needed] from detect until [decided].

@@ -35,6 +35,38 @@ final class FakeReviewRepository implements ReviewRepository {
 
   final Map<String, String> _verifiedBy = <String, String>{};
 
+  /// Proposal decisions remain resolved when the review controller reopens.
+  final Set<String> resolvedKeys = <String>{};
+
+  @override
+  Future<Result<void>> resolveProposals(
+    String recordId, {
+    Map<String, String> accepted = const <String, String>{},
+    Map<String, String> rejected = const <String, String>{},
+  }) async {
+    final Failure? failed = failure;
+    if (failed != null) return FailureResult<void>(failed);
+    writes.add((
+      method: 'resolveProposals',
+      recordId: recordId,
+      keys: <String>[...accepted.keys, ...rejected.keys],
+    ));
+    resolvedKeys.addAll(<String>{...accepted.keys, ...rejected.keys});
+    _change(recordId, (RecordValue value) {
+      final String? kept = accepted[value.fieldKey];
+      if (kept != null) {
+        return value.copyWith(approved: kept, source: 'manual', verified: true);
+      }
+      if (rejected[value.fieldKey] == value.display &&
+          !value.verified &&
+          value.source != 'manual') {
+        return value.copyWith(approved: '', source: 'manual', verified: false);
+      }
+      return value;
+    });
+    return const Success<void>(null);
+  }
+
   @override
   Future<Result<ReviewFacts>> facts(String recordId) async {
     final Failure? failed = failure;

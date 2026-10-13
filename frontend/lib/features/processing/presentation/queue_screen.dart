@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -330,63 +330,23 @@ class _QueueScreenState extends ConsumerState<QueueScreen> with StateRefresh {
   /// Runs the queue for [groupLabels], every group when empty.
   void _process(List<String> groupLabels) {
     ref.read(queueSelectionProvider.notifier).clear();
-    ref
-        .read(processingControllerProvider.notifier)
-        .process(
-          projectId: widget.projectId,
-          groupLabels: groupLabels,
-          chooseTemplate: (TemplateChoiceNeeded needed) =>
-              _chooseTemplate(context, needed),
-          confirmOnline: _confirmOnline,
-        );
-  }
-
-  /// The egress preview before the session's first online call. A job with
-  /// nothing to send goes ahead without asking.
-  Future<bool> _confirmOnline(ProcessingJob job) async {
-    final ({int imageCount, int payloadBytes}) summary = await ref.read(
-      processingEgressSummaryProvider,
-    )(job);
-    final String identity = await ref.read(processingEgressIdentityProvider)(
-      job,
-    );
-    if (summary.imageCount == 0 && summary.payloadBytes == 0) {
-      return true;
-    }
-    if (!mounted) {
-      return false;
-    }
-    return showEgressPreview(
+    final ProviderContainer container = ProviderScope.containerOf(
       context,
-      imageCount: summary.imageCount,
-      payloadBytes: summary.payloadBytes,
-      selectionDetails: _selectionDetails(identity, Copy.of(context)),
+      listen: false,
+    );
+    unawaited(
+      ref
+          .read(processingControllerProvider.notifier)
+          .process(
+            projectId: widget.projectId,
+            groupLabels: groupLabels,
+            chooseTemplate: (TemplateChoiceNeeded needed) =>
+                chooseProcessingTemplate(context, needed),
+            confirmOnline: (ProcessingJob job) =>
+                confirmProcessingEgress(context, container, job),
+          ),
     );
   }
-}
-
-String? _selectionDetails(String identity, LocalizedCopy copy) {
-  if (identity.isEmpty) return null;
-  final Object? decoded = jsonDecode(identity);
-  if (decoded is! Map<String, Object?>) return null;
-  final Object? entries = decoded['selections'];
-  if (entries is! List<Object?>) return null;
-  final Object? cost = decoded['maxCost'];
-  final String limit = cost is num && cost > 0
-      ? cost.toString()
-      : copy.processingEgressLimitDefault;
-  return <String>{
-    for (final Object? entry in entries)
-      if (entry is Map<String, Object?>)
-        copy.processingEgressSelection(
-          entry['provider']?.toString() ?? '',
-          entry['model']?.toString() ?? '',
-          entry['personal'] == true
-              ? copy.processingEgressPersonal
-              : copy.processingEgressManaged,
-          limit,
-        ),
-  }.join('\n');
 }
 
 /// Whether [snapshot] has nothing to process and nothing failed.
@@ -509,33 +469,4 @@ final class _QueueRow {
   final QueueFailure? failure;
   final QueueGroup? group;
   final Widget? content;
-}
-
-/// Asks the operator to pick from [needed]'s shortlist and maps the chosen
-/// label back to its template id. "Something else" or a dismissed sheet is
-/// no answer.
-Future<TemplateChoice?> _chooseTemplate(
-  BuildContext context,
-  TemplateChoiceNeeded needed,
-) async {
-  if (!context.mounted) {
-    return null;
-  }
-  final ({String? template, bool pin})? picked = await showTemplateChoice(
-    context,
-    options: <String>[
-      for (final ({String templateId, String label}) option in needed.shortlist)
-        option.label,
-    ],
-  );
-  final String? label = picked?.template;
-  if (picked == null || label == null) {
-    return null;
-  }
-  for (final ({String templateId, String label}) option in needed.shortlist) {
-    if (option.label == label) {
-      return (templateId: option.templateId, pin: picked.pin);
-    }
-  }
-  return null;
 }

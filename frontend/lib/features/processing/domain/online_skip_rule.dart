@@ -4,16 +4,13 @@ import 'confidence.dart';
 final class OnlineSkipRule {
   /// A reason to skip, or null when an online call is still needed.
   ///
-  /// Every required field must be filled and banded high.
+  /// Every requested field must be filled and banded high, including optional
+  /// fields. Requiredness governs review, never whether extraction is attempted.
   static String? reason(List<SkipField> fields) {
-    final List<SkipField> required = <SkipField>[
-      for (final SkipField field in fields)
-        if (field.requiredField) field,
-    ];
-    if (required.isEmpty) {
-      return 'No required fields need online extraction.';
+    if (fields.isEmpty) {
+      return 'No eligible fields need online extraction.';
     }
-    for (final SkipField field in required) {
+    for (final SkipField field in fields) {
       if (field.value == null || field.value!.trim().isEmpty) {
         return null;
       }
@@ -21,7 +18,7 @@ final class OnlineSkipRule {
         return null;
       }
     }
-    return 'Local extraction and a reference match already fill every required field.';
+    return 'Local extraction already fills every requested field.';
   }
 }
 

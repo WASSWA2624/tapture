@@ -338,7 +338,7 @@ abstract final class RecordSchema {
       "WHERE $alias.entity_type = '$type' AND $alias.entity_id = $id)";
 
   static String _display(String f) =>
-      "COALESCE(NULLIF(trim($f.value_final), ''), "
+      'COALESCE(trim($f.value_final), '
       "NULLIF(trim($f.value_refined), ''), NULLIF(trim($f.value_raw), ''))";
 
   static String _json(String column, String path) =>
@@ -376,7 +376,7 @@ abstract final class RecordSchema {
 
   static String get _liveValue =>
       'f.record_id = r.id AND f.retired_at IS NULL AND '
-      "${_live('record_fields', 'f.id', 'xf')} AND ${_display('f')} IS NOT NULL";
+      "${_live('record_fields', 'f.id', 'xf')} AND ${_display('f')} <> ''";
 
   /// Name: the displayed value of the first name field by template order that
   /// is not an identity field and was not copied from context or a default,

@@ -829,10 +829,10 @@ String _latestCaption(CaptionOwnerType owner, String ownerId) {
 }
 
 /// What value [alias] displays, as `RecordValue.display` reads it: the
-/// final value, else the refined one, else the raw one, the first that is
-/// not empty.
+/// explicit final value, including an empty rejection, else a non-empty
+/// refined value, else the raw one.
 String _display(String alias) {
-  return "COALESCE(NULLIF($alias.value_final, ''), "
+  return 'COALESCE($alias.value_final, '
       "NULLIF($alias.value_refined, ''), COALESCE($alias.value_raw, ''))";
 }
 

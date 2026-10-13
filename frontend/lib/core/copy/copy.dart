@@ -12,6 +12,40 @@ export 'localized_message.dart';
 /// Compatibility copy for services without a widget context, in English.
 /// Widgets resolve their own inherited locale through [of].
 abstract final class Copy {
+  /// Processes all eligible fields on the record.
+  static String get processingAllFields => _english.processingAllFields;
+
+  /// Processes only the checked fields.
+  static String get processingSelectedFields =>
+      _english.processingSelectedFields;
+
+  /// Explains suggested values and the manual fallback.
+  static String get processingScopeHelp => _english.processingScopeHelp;
+
+  /// AI unavailable; local evidence remains usable.
+  static String get processingManualFallback =>
+      _english.processingManualFallback;
+
+  /// Manual recovery after an unavailable AI attempt.
+  static String get processingManualFallbackRecovery =>
+      _english.processingManualFallbackRecovery;
+
+  /// A proposal selection is no longer current.
+  static String get reviewProposalsChanged => _english.reviewProposalsChanged;
+
+  /// Recovery for a stale proposal selection.
+  static String get reviewProposalsChangedRecovery =>
+      _english.reviewProposalsChangedRecovery;
+
+  /// Explains selective acceptance and rejection.
+  static String get reviewProposalsHelp => _english.reviewProposalsHelp;
+
+  /// Confirms durable rejection without losing originals.
+  static String get reviewProposalsRejected => _english.reviewProposalsRejected;
+
+  /// Processes one corresponding field.
+  static String get reviewAnalyseField => _english.reviewAnalyseField;
+
   /// Delete permanently
   static String get recycleDeletePermanent => _english.recycleDeletePermanent;
 

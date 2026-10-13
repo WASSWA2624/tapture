@@ -208,6 +208,17 @@ class RecordDetailScreen extends ConsumerWidget {
         icon: AppIcons.edit,
         onTap: () => unawaited(context.push<void>(_valuesRoute)),
       ),
+      if (status != RecordStatus.archived && status != RecordStatus.processing)
+        AppOverflowAction(
+          key: const ValueKey<String>('record-menu-analyse'),
+          label: localCopy.reviewReanalyse,
+          icon: AppIcons.processing,
+          onTap: () => unawaited(
+            context.push<void>(
+              RoutePaths.projectRecordReview(entry.projectId, entry.id),
+            ),
+          ),
+        ),
       AppOverflowAction(
         key: const ValueKey<String>('record-menu-template'),
         label: localCopy.recordTemplateChangeTitle,

@@ -9,6 +9,7 @@ export 'processing_controller.dart';
 export 'queue_providers.dart';
 export 'queue_screen.dart';
 export 'queue_selection.dart';
+export 'record_processing_scope.dart';
 export 'template_choice_pin.dart';
 export 'template_choice_sheet.dart';
 export 'unattended_processing.dart';

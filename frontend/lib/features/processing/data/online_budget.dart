@@ -29,7 +29,14 @@ final class OnlineBudget {
   ///
   /// At the cap the job goes back on the queue with [CostGuard]'s message
   /// naming the cap and the reset, and a [CancelledFailure] stops the stage.
-  Future<void> require(String jobId, RecordBundle bundle) async {
+  Future<void> require(
+    String jobId,
+    RecordBundle bundle, {
+    int? expectedGeneration,
+  }) async {
+    if (expectedGeneration != null) {
+      await _writes.requireGeneration(jobId, expectedGeneration);
+    }
     final CostGuard guard = CostGuard(
       requestsToday: await _requestsToday(bundle.record.projectId),
       imagesToday: 0,
@@ -43,6 +50,7 @@ final class OnlineBudget {
       jobId,
       guard.blockMessage,
       localizedMessage: guard.localizedBlockMessage,
+      expectedGeneration: expectedGeneration,
     );
     throw CancelledFailure(
       message: guard.blockMessage,

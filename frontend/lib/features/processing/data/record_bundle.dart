@@ -15,6 +15,7 @@ final class RecordBundle {
     required this.captions,
     required this.audio,
     required this.existing,
+    this.targetFieldKeys = const <String>[],
     this.templateResolved = true,
     this.currentTemplate,
     this.audioPhotoIds = const <String, List<String>>{},
@@ -39,6 +40,9 @@ final class RecordBundle {
 
   /// The template's fields, in sort order.
   final List<TemplateField> fields;
+
+  /// Extraction scope only; [fields] retains the full validation contract.
+  final List<String> targetFieldKeys;
 
   /// The template's predefined rows.
   final List<TemplateRow> rows;

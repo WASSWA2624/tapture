@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:tapture/core/ai/ocr_service.dart';
 import 'package:tapture/core/ai/provider_registry.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/file_reader.dart';
 import 'package:tapture/core/files/file_writer.dart';
@@ -30,6 +34,7 @@ import 'online_transcripts.dart';
 import 'photo_paths.dart';
 import 'prepare_stage.dart';
 import 'proposal_collector.dart';
+import 'proposal_preview.dart';
 import 'provider_selection.dart';
 import 'record_bundle.dart';
 import 'record_bundle_loader.dart';
@@ -222,6 +227,12 @@ final class ProcessingStageWorker {
         onDevice: onDevice,
         completion: completion,
       ),
+      preview: ProposalPreview(
+        db: db,
+        collector: collector,
+        locale: () => settings.read(SettingKeys.appLanguage),
+      ),
+      writes: writes,
     );
   }
 
@@ -236,6 +247,8 @@ final class ProcessingStageWorker {
     required this._normalise,
     required this._validate,
     required this._egress,
+    required this.preview,
+    required this._writes,
   });
 
   final RecordBundleLoader _loader;
@@ -248,6 +261,10 @@ final class ProcessingStageWorker {
   final NormaliseStage _normalise;
   final ValidateStage _validate;
   final EgressSummary _egress;
+  final JobWrites _writes;
+
+  /// Review uses the same privacy-aware collector and frozen-input checks.
+  final ProposalPreview preview;
 
   /// Runs one persisted stage. [cancel] reaches the stage; a fresh token is
   /// used when none is given. Detection returns its question when it cannot
@@ -258,22 +275,55 @@ final class ProcessingStageWorker {
     CancellationToken? cancel,
   ]) async {
     final CancellationToken token = cancel ?? CancellationToken();
-    final RecordBundle bundle = await _loader.load(job.recordId);
+    await _loader.checkGeneration(job);
+    final RecordBundle bundle = await _loader.load(
+      job.recordId,
+      fieldKeys: job.fieldKeys,
+    );
     switch (stage) {
       case JobStage.prepare:
         await _prepare.run(bundle, token);
       case JobStage.onDevice:
-        await _onDevice.run(bundle, token);
+        await _writes.appendRejections(
+          job.id,
+          await _onDevice.run(bundle, token),
+          expectedGeneration: job.requestGeneration,
+        );
       case JobStage.detect:
+        if (job.fieldKeys.isNotEmpty) return null;
         return _detect.run(bundle, token);
       case JobStage.online:
-        await _online.run(job, bundle, token);
+        try {
+          await _online.run(job, bundle, token);
+        } on NetworkFailure {
+          await _manualFallback(job, token);
+        } on ProviderFailure {
+          await _manualFallback(job, token);
+        } on TimeoutException {
+          await _manualFallback(job, token);
+        }
       case JobStage.normalise:
+        if (job.fieldKeys.isNotEmpty) return null;
         await _normalise.run(job, bundle, token);
       case JobStage.validate:
         await _validate.run(job, bundle, token);
     }
     return null;
+  }
+
+  Future<void> _manualFallback(
+    ProcessingJob job,
+    CancellationToken token,
+  ) async {
+    if (token.isCancelled) throw const CancelledFailure();
+    await _writes.setSkip(
+      job.id,
+      Copy.processingManualFallback,
+      expectedGeneration: job.requestGeneration,
+    );
+    await _writes.appendRejections(job.id, <String>[
+      Copy.processingManualFallback,
+    ], expectedGeneration: job.requestGeneration);
   }
 
   /// Applies the operator's or the model's template choice, pinning it to

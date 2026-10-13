@@ -9,16 +9,19 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/record_status.dart';
+import 'package:tapture/features/processing/processing.dart'
+    show ProposalPreview, proposalPreviewProvider;
 import 'package:tapture/features/quality/quality.dart'
     show identityKeysOf, storedIdentityHash;
 
 import '../domain/review_repository.dart';
+import 'review_proposal_writer.dart';
 
 /// The Drift review store (task 016): conflicts, verifiers and evidence
 /// read beside a record, a verify that leaves the value as it was, and the
 /// choice of which stored side is final.
 ///
-/// Both writes are one transaction each, stamped with this device and its
+/// Each write is one transaction, stamped with this device and its
 /// operator from the device profile, with one audit row per value changed.
 /// Neither touches the raw or refined columns, so nothing captured is lost.
 final class ReviewRepositoryImpl implements ReviewRepository {
@@ -26,10 +29,29 @@ final class ReviewRepositoryImpl implements ReviewRepository {
   const ReviewRepositoryImpl({
     required this._db,
     this._clock = const SystemClock(),
+    this._proposals,
   });
 
   final AppDatabase _db;
   final Clock _clock;
+  final ProposalPreview? _proposals;
+
+  @override
+  Future<Result<void>> resolveProposals(
+    String recordId, {
+    Map<String, String> accepted = const <String, String>{},
+    Map<String, String> rejected = const <String, String>{},
+  }) async {
+    final Failure? refused = await _refusal(recordId);
+    if (refused != null) return FailureResult<void>(refused);
+    final Result<void> result = await ReviewProposalWriter(
+      db: _db,
+      clock: _clock,
+      proposals: _proposals ?? ProposalPreview(db: _db),
+      refreshIdentity: _refreshIdentityHash,
+    ).resolve(recordId, accepted: accepted, rejected: rejected);
+    return result;
+  }
 
   @override
   Future<Result<ReviewFacts>> facts(String recordId) async {
@@ -123,8 +145,7 @@ final class ReviewRepositoryImpl implements ReviewRepository {
           .customSelect(
             'SELECT id, field_key FROM record_fields WHERE record_id = ? '
             'AND verified = 0 AND field_key IN (${_marks(keys)}) '
-            "AND COALESCE(NULLIF(value_final, ''), NULLIF(value_refined, ''), "
-            "NULLIF(value_raw, '')) IS NOT NULL",
+            "AND COALESCE(value_final, value_refined, value_raw, '') != ''",
             variables: <Variable<Object>>[
               Variable<String>(recordId),
               for (final String key in keys) Variable<String>(key),
@@ -357,5 +378,8 @@ String _marks(List<String> values) =>
 /// The review store over the database opened in `main`. Tests override it.
 final Provider<ReviewRepository> reviewRepositoryProvider =
     Provider<ReviewRepository>((Ref ref) {
-      return ReviewRepositoryImpl(db: ref.watch(appDatabaseProvider));
+      return ReviewRepositoryImpl(
+        db: ref.watch(appDatabaseProvider),
+        proposals: ref.watch(proposalPreviewProvider),
+      );
     });

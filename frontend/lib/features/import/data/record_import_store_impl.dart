@@ -217,7 +217,7 @@ final class RecordImportStoreImpl implements RecordImportStore {
       }
       final QueryRow? stored = await _db
           .customSelect(
-            'SELECT id, COALESCE(NULLIF(value_final, \'\'), '
+            'SELECT id, COALESCE(value_final, '
             'NULLIF(value_refined, \'\'), value_raw, \'\') AS shown '
             'FROM record_fields WHERE record_id = ? AND field_key = ?',
             variables: <Variable<Object>>[

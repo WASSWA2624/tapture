@@ -16136,6 +16136,18 @@ class $ProcessingTable extends Processing
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _fieldKeysMeta = const VerificationMeta(
+    'fieldKeys',
+  );
+  @override
+  late final GeneratedColumn<String> fieldKeys = GeneratedColumn<String>(
+    'field_keys',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
   static const VerificationMeta _stageMeta = const VerificationMeta('stage');
   @override
   late final GeneratedColumn<String> stage = GeneratedColumn<String>(
@@ -16295,6 +16307,7 @@ class $ProcessingTable extends Processing
     updatedByDevice,
     rev,
     recordId,
+    fieldKeys,
     stage,
     status,
     attempts,
@@ -16365,6 +16378,12 @@ class $ProcessingTable extends Processing
       );
     } else if (isInserting) {
       context.missing(_recordIdMeta);
+    }
+    if (data.containsKey('field_keys')) {
+      context.handle(
+        _fieldKeysMeta,
+        fieldKeys.isAcceptableOrUnknown(data['field_keys']!, _fieldKeysMeta),
+      );
     }
     if (data.containsKey('stage')) {
       context.handle(
@@ -16490,6 +16509,10 @@ class $ProcessingTable extends Processing
         DriftSqlType.string,
         data['${effectivePrefix}record_id'],
       )!,
+      fieldKeys: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}field_keys'],
+      )!,
       stage: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}stage'],
@@ -16582,6 +16605,9 @@ class ProcessingJobRow extends DataClass
   /// Record this job will process.
   final String recordId;
 
+  /// Durable extraction scope. Empty JSON means all eligible fields.
+  final String fieldKeys;
+
   /// Last stage the runner reached, stored as data.
   final String stage;
 
@@ -16635,6 +16661,7 @@ class ProcessingJobRow extends DataClass
     required this.updatedByDevice,
     required this.rev,
     required this.recordId,
+    required this.fieldKeys,
     required this.stage,
     required this.status,
     required this.attempts,
@@ -16659,6 +16686,7 @@ class ProcessingJobRow extends DataClass
     map['updated_by_device'] = Variable<String>(updatedByDevice);
     map['rev'] = Variable<int>(rev);
     map['record_id'] = Variable<String>(recordId);
+    map['field_keys'] = Variable<String>(fieldKeys);
     map['stage'] = Variable<String>(stage);
     {
       map['status'] = Variable<String>(
@@ -16706,6 +16734,7 @@ class ProcessingJobRow extends DataClass
       updatedByDevice: Value(updatedByDevice),
       rev: Value(rev),
       recordId: Value(recordId),
+      fieldKeys: Value(fieldKeys),
       stage: Value(stage),
       status: Value(status),
       attempts: Value(attempts),
@@ -16753,6 +16782,7 @@ class ProcessingJobRow extends DataClass
       updatedByDevice: serializer.fromJson<String>(json['updatedByDevice']),
       rev: serializer.fromJson<int>(json['rev']),
       recordId: serializer.fromJson<String>(json['recordId']),
+      fieldKeys: serializer.fromJson<String>(json['fieldKeys']),
       stage: serializer.fromJson<String>(json['stage']),
       status: $ProcessingTable.$converterstatus.fromJson(
         serializer.fromJson<String>(json['status']),
@@ -16781,6 +16811,7 @@ class ProcessingJobRow extends DataClass
       'updatedByDevice': serializer.toJson<String>(updatedByDevice),
       'rev': serializer.toJson<int>(rev),
       'recordId': serializer.toJson<String>(recordId),
+      'fieldKeys': serializer.toJson<String>(fieldKeys),
       'stage': serializer.toJson<String>(stage),
       'status': serializer.toJson<String>(
         $ProcessingTable.$converterstatus.toJson(status),
@@ -16807,6 +16838,7 @@ class ProcessingJobRow extends DataClass
     String? updatedByDevice,
     int? rev,
     String? recordId,
+    String? fieldKeys,
     String? stage,
     ProcessingJobStatus? status,
     int? attempts,
@@ -16828,6 +16860,7 @@ class ProcessingJobRow extends DataClass
     updatedByDevice: updatedByDevice ?? this.updatedByDevice,
     rev: rev ?? this.rev,
     recordId: recordId ?? this.recordId,
+    fieldKeys: fieldKeys ?? this.fieldKeys,
     stage: stage ?? this.stage,
     status: status ?? this.status,
     attempts: attempts ?? this.attempts,
@@ -16857,6 +16890,7 @@ class ProcessingJobRow extends DataClass
           : this.updatedByDevice,
       rev: data.rev.present ? data.rev.value : this.rev,
       recordId: data.recordId.present ? data.recordId.value : this.recordId,
+      fieldKeys: data.fieldKeys.present ? data.fieldKeys.value : this.fieldKeys,
       stage: data.stage.present ? data.stage.value : this.stage,
       status: data.status.present ? data.status.value : this.status,
       attempts: data.attempts.present ? data.attempts.value : this.attempts,
@@ -16895,6 +16929,7 @@ class ProcessingJobRow extends DataClass
           ..write('updatedByDevice: $updatedByDevice, ')
           ..write('rev: $rev, ')
           ..write('recordId: $recordId, ')
+          ..write('fieldKeys: $fieldKeys, ')
           ..write('stage: $stage, ')
           ..write('status: $status, ')
           ..write('attempts: $attempts, ')
@@ -16914,13 +16949,14 @@ class ProcessingJobRow extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     createdAt,
     updatedAt,
     updatedByDevice,
     rev,
     recordId,
+    fieldKeys,
     stage,
     status,
     attempts,
@@ -16935,7 +16971,7 @@ class ProcessingJobRow extends DataClass
     leaseExpiresAt,
     skipReason,
     rejections,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -16946,6 +16982,7 @@ class ProcessingJobRow extends DataClass
           other.updatedByDevice == this.updatedByDevice &&
           other.rev == this.rev &&
           other.recordId == this.recordId &&
+          other.fieldKeys == this.fieldKeys &&
           other.stage == this.stage &&
           other.status == this.status &&
           other.attempts == this.attempts &&
@@ -16969,6 +17006,7 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
   final Value<String> updatedByDevice;
   final Value<int> rev;
   final Value<String> recordId;
+  final Value<String> fieldKeys;
   final Value<String> stage;
   final Value<ProcessingJobStatus> status;
   final Value<int> attempts;
@@ -16991,6 +17029,7 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     this.updatedByDevice = const Value.absent(),
     this.rev = const Value.absent(),
     this.recordId = const Value.absent(),
+    this.fieldKeys = const Value.absent(),
     this.stage = const Value.absent(),
     this.status = const Value.absent(),
     this.attempts = const Value.absent(),
@@ -17014,6 +17053,7 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     required String updatedByDevice,
     this.rev = const Value.absent(),
     required String recordId,
+    this.fieldKeys = const Value.absent(),
     required String stage,
     required ProcessingJobStatus status,
     this.attempts = const Value.absent(),
@@ -17043,6 +17083,7 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     Expression<String>? updatedByDevice,
     Expression<int>? rev,
     Expression<String>? recordId,
+    Expression<String>? fieldKeys,
     Expression<String>? stage,
     Expression<String>? status,
     Expression<int>? attempts,
@@ -17066,6 +17107,7 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
       if (updatedByDevice != null) 'updated_by_device': updatedByDevice,
       if (rev != null) 'rev': rev,
       if (recordId != null) 'record_id': recordId,
+      if (fieldKeys != null) 'field_keys': fieldKeys,
       if (stage != null) 'stage': stage,
       if (status != null) 'status': status,
       if (attempts != null) 'attempts': attempts,
@@ -17091,6 +17133,7 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     Value<String>? updatedByDevice,
     Value<int>? rev,
     Value<String>? recordId,
+    Value<String>? fieldKeys,
     Value<String>? stage,
     Value<ProcessingJobStatus>? status,
     Value<int>? attempts,
@@ -17114,6 +17157,7 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
       updatedByDevice: updatedByDevice ?? this.updatedByDevice,
       rev: rev ?? this.rev,
       recordId: recordId ?? this.recordId,
+      fieldKeys: fieldKeys ?? this.fieldKeys,
       stage: stage ?? this.stage,
       status: status ?? this.status,
       attempts: attempts ?? this.attempts,
@@ -17152,6 +17196,9 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
     }
     if (recordId.present) {
       map['record_id'] = Variable<String>(recordId.value);
+    }
+    if (fieldKeys.present) {
+      map['field_keys'] = Variable<String>(fieldKeys.value);
     }
     if (stage.present) {
       map['stage'] = Variable<String>(stage.value);
@@ -17212,6 +17259,7 @@ class ProcessingCompanion extends UpdateCompanion<ProcessingJobRow> {
           ..write('updatedByDevice: $updatedByDevice, ')
           ..write('rev: $rev, ')
           ..write('recordId: $recordId, ')
+          ..write('fieldKeys: $fieldKeys, ')
           ..write('stage: $stage, ')
           ..write('status: $status, ')
           ..write('attempts: $attempts, ')

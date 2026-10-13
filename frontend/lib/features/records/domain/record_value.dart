@@ -67,10 +67,10 @@ final class RecordValue {
   final String? method;
 
   /// What the value reads as: [approved], else [refined], else [raw], taking
-  /// the first that is not empty.
+  /// an explicit final value, including a deliberately cleared final value.
   String get display {
     final String? approved = this.approved;
-    if (approved != null && approved.isNotEmpty) {
+    if (approved != null) {
       return approved;
     }
     final String? refined = this.refined;

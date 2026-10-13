@@ -7,6 +7,7 @@ import 'package:tapture/core/ai/ai_service.dart';
 import 'package:tapture/core/ai/ai_usage.dart';
 import 'package:tapture/core/ai/proxy_ai_service.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/db/tables/attachment_owners.dart';
 import 'package:tapture/core/db/tables/captions.dart';
@@ -14,6 +15,7 @@ import 'package:tapture/core/db/tables/record_fields.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/processing/data/processing_findings.dart';
+import 'package:tapture/features/processing/data/processing_repository_impl.dart';
 import 'package:tapture/features/processing/data/processing_stage_worker.dart';
 import 'package:tapture/features/processing/data/processing_usage.dart';
 import 'package:tapture/features/processing/data/stage_support.dart';
@@ -46,6 +48,24 @@ void main() {
     ]) {
       await worker.perform(stage, job);
     }
+  }
+
+  ProcessingRepositoryImpl queue() => ProcessingRepositoryImpl(
+    db: fixture.db,
+    clock: fixture.clock,
+    deviceId: 'device-a',
+    ids: fixture.ids,
+    settings: SettingsStore.fake(),
+  );
+
+  Future<ProcessingJob> requeue({bool retryChargeApproved = false}) async {
+    final ProcessingRepositoryImpl repository = queue();
+    (await repository.requeue(
+      fixture.record.id,
+      retryChargeApproved: retryChargeApproved,
+    )).getOrThrow();
+    job = (await repository.byId(job.id)).getOrThrow()!;
+    return job;
   }
 
   Future<Caption> caption(String photoId, String text) async =>
@@ -237,7 +257,7 @@ void main() {
       ]);
       expect(replies.first.parsedOk, isFalse);
       expect(replies.last.parsedOk, isTrue);
-      await worker.perform(JobStage.online, job.copyWith(requestGeneration: 1));
+      await worker.perform(JobStage.online, await requeue());
       expect(calls, hasLength(2));
       final usage = (await ProcessingUsage(
         db: fixture.db,
@@ -312,7 +332,7 @@ void main() {
       final ScriptedExtraction retry = ScriptedExtraction(<String>[reply]);
       await fixture
           .worker(provider: retry, ocr: CountingOcr('GRUNDFOS'))
-          .perform(JobStage.online, job.copyWith(requestGeneration: 1));
+          .perform(JobStage.online, await requeue());
       expect(retry.requests, isEmpty);
       final List<ProcessingResult> rows = await fixture.db
           .select(fixture.db.processingResults)
@@ -435,7 +455,7 @@ void main() {
       );
       await prepare(worker);
       await worker.perform(JobStage.online, job);
-      await worker.perform(JobStage.online, job.copyWith(requestGeneration: 1));
+      await worker.perform(JobStage.online, await requeue());
       final usage = (await ProcessingUsage(
         db: fixture.db,
         settings: SettingsStore.fake(),
@@ -447,7 +467,7 @@ void main() {
   );
 
   test(
-    'crash resume uses its reserved identity even when the daily cap is full',
+    'a lost reply falls back to manual review and requires approval for a new attempt',
     () async {
       final SettingsStore settings = SettingsStore.fake(
         stored: <String, Object?>{SettingKeys.aiDailyRequestCap.name: 1},
@@ -461,10 +481,21 @@ void main() {
         ocr: CountingOcr('GRUNDFOS'),
       );
       await prepare(worker);
-      await expectLater(
-        worker.perform(JobStage.online, job),
-        throwsA(isA<NetworkFailure>()),
+      await worker.perform(JobStage.online, job);
+      final ProcessingJob fallback = (await queue().byId(job.id)).getOrThrow()!;
+      expect(fallback.skipReason, Copy.processingManualFallback);
+      await worker.perform(JobStage.validate, job);
+      expect((await fixture.storedRecord()).status, 'needsReview');
+      await queue().complete(job.id, expectedGeneration: job.requestGeneration);
+      expect(
+        await queue().requeue(fixture.record.id),
+        isA<FailureResult<String>>(),
       );
+      expect(
+        (await queue().byId(job.id)).getOrThrow()!.requestGeneration,
+        job.requestGeneration,
+      );
+      final ProcessingJob retried = await requeue(retryChargeApproved: true);
       final _ObservedService resumed = _ObservedService(
         () async {},
         raw: reply,
@@ -472,19 +503,21 @@ void main() {
       await fixture
           .worker(
             provider: resumed,
-            settings: settings,
+            settings: SettingsStore.fake(
+              stored: <String, Object?>{SettingKeys.aiDailyRequestCap.name: 2},
+            ),
             ocr: CountingOcr('GRUNDFOS'),
           )
-          .perform(JobStage.online, job);
+          .perform(JobStage.online, retried);
       expect(
         resumed.requests.single.idempotencyKey,
-        interrupted.requests.single.idempotencyKey,
+        isNot(interrupted.requests.single.idempotencyKey),
       );
       final usage = (await ProcessingUsage(
         db: fixture.db,
         settings: settings,
       ).on(fixture.clock.nowUtc())).getOrThrow();
-      expect(usage.requests, 1);
+      expect(usage.requests, 2);
     },
   );
 
@@ -530,7 +563,7 @@ void main() {
         (await fixture.db.select(fixture.db.captions).getSingle()).textRaw,
         note.textRaw,
       );
-      await worker.perform(JobStage.online, job.copyWith(requestGeneration: 1));
+      await worker.perform(JobStage.online, await requeue());
       final usage = (await ProcessingUsage(
         db: fixture.db,
         settings: settings,
@@ -550,10 +583,7 @@ void main() {
         ),
         ocr: CountingOcr('GRUNDFOS'),
       );
-      await languageChanged.perform(
-        JobStage.online,
-        job.copyWith(requestGeneration: 1),
-      );
+      await languageChanged.perform(JobStage.online, job);
       expect(service.transcribed, hasLength(2));
       expect(
         service.transcribed.last.idempotencyKey,
@@ -564,7 +594,7 @@ void main() {
 
   for (final bool refine in <bool>[false, true]) {
     test(
-      '${refine ? 'refinement' : 'transcription'} crash resume retains one potentially charged identity',
+      '${refine ? 'refinement' : 'transcription'} failure keeps manual review and requires approval for a new identity',
       () async {
         if (refine) {
           final Photo photo = await fixture.db
@@ -588,15 +618,27 @@ void main() {
           ocr: CountingOcr('GRUNDFOS'),
         );
         await prepare(worker);
-        await expectLater(
-          worker.perform(JobStage.online, job),
-          throwsA(isA<NetworkFailure>()),
-        );
+        await worker.perform(JobStage.online, job);
         final ProcessingFindings findings = ProcessingFindings(db: fixture.db);
         expect(
           (await findings.requiresRetryApproval(job.id)).getOrThrow(),
           isTrue,
         );
+        expect(
+          (await queue().byId(job.id)).getOrThrow()!.skipReason,
+          Copy.processingManualFallback,
+        );
+        await worker.perform(JobStage.validate, job);
+        expect((await fixture.storedRecord()).status, 'needsReview');
+        await queue().complete(
+          job.id,
+          expectedGeneration: job.requestGeneration,
+        );
+        expect(
+          await queue().requeue(fixture.record.id),
+          isA<FailureResult<String>>(),
+        );
+        final ProcessingJob retried = await requeue(retryChargeApproved: true);
         final _ObservedService resumed = _ObservedService(
           () async {},
           raw: reply,
@@ -607,17 +649,17 @@ void main() {
               settings: settings,
               ocr: CountingOcr('GRUNDFOS'),
             )
-            .perform(JobStage.online, job);
+            .perform(JobStage.online, retried);
         final String initialIdentity = refine
             ? failing.refined.single.idempotencyKey
             : failing.transcribed.single.idempotencyKey;
         final String resumedIdentity = refine
             ? resumed.refined.single.idempotencyKey
             : resumed.transcribed.single.idempotencyKey;
-        expect(resumedIdentity, initialIdentity);
+        expect(resumedIdentity, isNot(initialIdentity));
         expect(
           (await findings.requiresRetryApproval(job.id)).getOrThrow(),
-          isFalse,
+          isTrue,
         );
         final rows = await fixture.db
             .select(fixture.db.processingResults)

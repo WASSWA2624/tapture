@@ -20,6 +20,7 @@ final class ExtractionRequest {
     this.rules = defaultRules,
     this.basis = '',
     this.sources = const <Map<String, Object?>>[],
+    this.fieldHints = const <String, Map<String, Object?>>{},
   });
 
   /// Rules quoted as data on every request.
@@ -36,6 +37,9 @@ final class ExtractionRequest {
 
   /// Field list the response must follow.
   final List<ExtractionField> fields;
+
+  /// Captured labels, units and constraints quoted beside stable response keys.
+  final Map<String, Map<String, Object?>> fieldHints;
 
   /// Context values that apply to the record.
   final Map<String, String> context;
@@ -69,7 +73,7 @@ final class ExtractionRequest {
     return <String, Object?>{
       'template': template,
       'fields': <Object?>[
-        for (final ExtractionField field in fields) field.toJson(),
+        for (final ExtractionField field in fields) _fieldJson(field),
       ],
       'context': context,
       'predefined_rows': predefinedRows,
@@ -104,7 +108,7 @@ final class ExtractionRequest {
       imagePaths: images,
       context: context,
       fieldSchema: <Map<String, Object?>>[
-        for (final ExtractionField field in fields) field.toJson(),
+        for (final ExtractionField field in fields) _fieldJson(field),
       ],
       predefinedRows: predefinedRows,
       rules: rules,
@@ -114,6 +118,11 @@ final class ExtractionRequest {
 
   /// How many images one call may carry.
   static int get imageCap => AppConstants.processing.extractionImageCap;
+
+  Map<String, Object?> _fieldJson(ExtractionField field) => <String, Object?>{
+    ...?fieldHints[field.key],
+    ...field.toJson(),
+  };
 }
 
 /// One field on an [ExtractionRequest].

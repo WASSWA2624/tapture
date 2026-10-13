@@ -160,6 +160,46 @@
     }
   },
   "@@locale": "en_XA",
+  "processingAllFields": "Ánálysé áll fíélds·······",
+  "@processingAllFields": {
+    "description": "Analyses all eligible fields in the current record."
+  },
+  "processingSelectedFields": "Ánálysé séléctéd fíélds·········",
+  "@processingSelectedFields": {
+    "description": "Analyses the checked fields, including a single checked field."
+  },
+  "processingScopeHelp": "ÁÍ réáds thé évídéncé ánd súggésts válúés fór yóúr témpláté. Révíéw éách súggéstíón béfóré kéépíng ít. Yóú cán éntér válúés mánúálly át ány tímé.···················································",
+  "@processingScopeHelp": {
+    "description": "Explains proposal review and the manual fallback in the field scope selector."
+  },
+  "processingManualFallback": "ÁÍ ánálysís ís únáváíláblé. Révíéw détéctéd válúés ór éntér míssíng válúés mánúálly.······························",
+  "@processingManualFallback": {
+    "description": "Processing continues with local evidence when AI cannot be reached."
+  },
+  "processingManualFallbackRecovery": "Ópén thé récórd tó révíéw súggéstíóns ór édít íts fíélds.····················",
+  "@processingManualFallbackRecovery": {
+    "description": "Recovery for unavailable AI processing."
+  },
+  "reviewProposalsChanged": "Thésé súggéstíóns hávé chángéd síncé théy wéré shówn.···················",
+  "@reviewProposalsChanged": {
+    "description": "Rejects stale acceptance or rejection without losing evidence."
+  },
+  "reviewProposalsChangedRecovery": "Révíéw thé látést súggéstíóns ánd try ágáín.················",
+  "@reviewProposalsChangedRecovery": {
+    "description": "Recovery for a changed proposal selection."
+  },
+  "reviewProposalsHelp": "Séléct thé súggéstéd válúés tó kéép. Ápplyíng réjécts thé rémáíníng súggéstíóns. Yóúr órígínál évídéncé ís présérvéd.·········································",
+  "@reviewProposalsHelp": {
+    "description": "Makes selective proposal acceptance and rejection explicit."
+  },
+  "reviewProposalsRejected": "Súggéstíóns réjéctéd. Yóúr órígínál évídéncé ís présérvéd.·····················",
+  "@reviewProposalsRejected": {
+    "description": "Confirms durable rejection of proposed values."
+  },
+  "reviewAnalyseField": "Ánálysé thís fíéld·······",
+  "@reviewAnalyseField": {
+    "description": "Processes only the corresponding template field."
+  },
   "ocrBrowserUnavailable": "Ón-dévícé phótó réádíng ís únáváíláblé ín thís brówsér. Révíéw fíélds mánúálly ór énáblé ónlíné ánálysís.·····································",
   "@ocrBrowserUnavailable": {
     "description": "Local image recognition has no browser implementation."

@@ -569,6 +569,10 @@ void main() {
           processing.recordStatuses[id] = RecordStatus.needsReview;
         }
         processing.requeueFailures['record-2'] = _locked;
+        processing.recordProjects['unrelated'] = _project;
+        await processing.save(
+          const ProcessingJob(id: 'unrelated-job', recordId: 'unrelated'),
+        );
         await pump(tester);
         await tick(tester, ids);
 
@@ -588,8 +592,7 @@ void main() {
           findsOneWidget,
         );
         expect(ticked(tester), <String>{'record-2'});
-        // The queue ran once for the project and finished both jobs.
-        expect(processing.queuedGroups, hasLength(1));
+        expect(processing.queuedGroups, isEmpty);
         final Map<String, JobStatus> jobs = <String, JobStatus>{
           for (final ProcessingJob job in processing.stored)
             job.recordId: job.status,
@@ -597,11 +600,12 @@ void main() {
         expect(jobs, <String, JobStatus>{
           'record-1': JobStatus.completed,
           'record-3': JobStatus.completed,
+          'unrelated': JobStatus.queued,
         });
       },
     );
 
-    testWidgets('offline, queues the records and leaves them waiting', (
+    testWidgets('offline, processes selected records with manual recovery', (
       WidgetTester tester,
     ) async {
       final List<String> ids = seed(2);
@@ -618,11 +622,11 @@ void main() {
         <JobStatus>{
           for (final ProcessingJob job in processing.stored) job.status,
         },
-        <JobStatus>{JobStatus.queued},
+        <JobStatus>{JobStatus.completed},
       );
       expect(
         find.text(
-          '${Copy.recordsRequeued(2)}. ${Copy.recordsRequeuedOffline(2)}',
+          '${Copy.recordsRequeued(2)}. ${Copy.processingManualFallback}',
         ),
         findsOneWidget,
       );
@@ -663,36 +667,37 @@ void main() {
       },
     );
 
-    testWidgets('a declined preview leaves the queued records waiting', (
-      WidgetTester tester,
-    ) async {
-      final List<String> ids = seed(2);
-      await pump(
-        tester,
-        width: _wide,
-        extra: <Override>[
-          processingEgressSummaryProvider.overrideWith(
-            (Ref _) =>
-                (ProcessingJob _) async => (imageCount: 1, payloadBytes: 512),
-          ),
-        ],
-      );
-      await tick(tester, ids);
+    testWidgets(
+      'a declined preview finishes local processing without asking again',
+      (WidgetTester tester) async {
+        final List<String> ids = seed(2);
+        await pump(
+          tester,
+          width: _wide,
+          extra: <Override>[
+            processingEgressSummaryProvider.overrideWith(
+              (Ref _) =>
+                  (ProcessingJob _) async => (imageCount: 1, payloadBytes: 512),
+            ),
+          ],
+        );
+        await tick(tester, ids);
 
-      await tapCommand(tester, 'records-bulk-reprocess');
-      await tester.pumpAndSettle();
-      await confirm(tester, Copy.recordsReprocessConfirm);
-      await confirm(tester, Copy.cancel);
+        await tapCommand(tester, 'records-bulk-reprocess');
+        await tester.pumpAndSettle();
+        await confirm(tester, Copy.recordsReprocessConfirm);
+        await confirm(tester, Copy.cancel);
 
-      expect(processing.requeued, ids);
-      expect(
-        <JobStatus>{
-          for (final ProcessingJob job in processing.stored) job.status,
-        },
-        <JobStatus>{JobStatus.queued},
-      );
-      expect(find.byType(AppDialog), findsNothing);
-    });
+        expect(processing.requeued, ids);
+        expect(
+          <JobStatus>{
+            for (final ProcessingJob job in processing.stored) job.status,
+          },
+          <JobStatus>{JobStatus.completed},
+        );
+        expect(find.byType(AppDialog), findsNothing);
+      },
+    );
 
     testWidgets('cancel queues nothing', (WidgetTester tester) async {
       final List<String> ids = seed(2);

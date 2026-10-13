@@ -131,7 +131,11 @@ final class TemplateAssist {
         repair: 0,
       );
       if (!await checkpoints.hasAttempt(job, identity)) {
-        await _budget.require(job.id, bundle);
+        await _budget.require(
+          job.id,
+          bundle,
+          expectedGeneration: job.requestGeneration,
+        );
       }
       if (cancel?.isCancelled ?? false) return null;
       await checkpoints.begin(

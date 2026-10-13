@@ -10,6 +10,66 @@ final class CopyMessages {
   /// Creates the shared stateless factory.
   const CopyMessages();
 
+  /// Processes all eligible fields on the record.
+  LocalizedMessage get processingAllFields => LocalizedMessage(
+    key: 'processingAllFields',
+    fallback: Copy.processingAllFields,
+  );
+
+  /// Processes only the checked fields.
+  LocalizedMessage get processingSelectedFields => LocalizedMessage(
+    key: 'processingSelectedFields',
+    fallback: Copy.processingSelectedFields,
+  );
+
+  /// Explains suggested values and the manual fallback.
+  LocalizedMessage get processingScopeHelp => LocalizedMessage(
+    key: 'processingScopeHelp',
+    fallback: Copy.processingScopeHelp,
+  );
+
+  /// AI unavailable; local evidence remains usable.
+  LocalizedMessage get processingManualFallback => LocalizedMessage(
+    key: 'processingManualFallback',
+    fallback: Copy.processingManualFallback,
+  );
+
+  /// Manual recovery after an unavailable AI attempt.
+  LocalizedMessage get processingManualFallbackRecovery => LocalizedMessage(
+    key: 'processingManualFallbackRecovery',
+    fallback: Copy.processingManualFallbackRecovery,
+  );
+
+  /// A proposal selection is no longer current.
+  LocalizedMessage get reviewProposalsChanged => LocalizedMessage(
+    key: 'reviewProposalsChanged',
+    fallback: Copy.reviewProposalsChanged,
+  );
+
+  /// Recovery for a stale proposal selection.
+  LocalizedMessage get reviewProposalsChangedRecovery => LocalizedMessage(
+    key: 'reviewProposalsChangedRecovery',
+    fallback: Copy.reviewProposalsChangedRecovery,
+  );
+
+  /// Explains selective acceptance and rejection.
+  LocalizedMessage get reviewProposalsHelp => LocalizedMessage(
+    key: 'reviewProposalsHelp',
+    fallback: Copy.reviewProposalsHelp,
+  );
+
+  /// Confirms durable rejection without losing originals.
+  LocalizedMessage get reviewProposalsRejected => LocalizedMessage(
+    key: 'reviewProposalsRejected',
+    fallback: Copy.reviewProposalsRejected,
+  );
+
+  /// Processes one corresponding field.
+  LocalizedMessage get reviewAnalyseField => LocalizedMessage(
+    key: 'reviewAnalyseField',
+    fallback: Copy.reviewAnalyseField,
+  );
+
   /// Delete permanently
   LocalizedMessage get recycleDeletePermanent => LocalizedMessage(
     key: 'recycleDeletePermanent',

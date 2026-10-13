@@ -1298,6 +1298,7 @@ List<RouteBase> _recordRoutes({required bool inProject}) {
             metadata: _projectScoped,
             builder: (BuildContext _, GoRouterState state) {
               return ReviewScreen(
+                analyseOnOpen: state.extra == true,
                 projectId: state.pathParameters['projectId']!,
                 recordId: state.pathParameters['recordId']!,
               );

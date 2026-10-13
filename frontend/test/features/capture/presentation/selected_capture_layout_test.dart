@@ -75,8 +75,8 @@ void main() {
       final AppPrimaryAction processing = tester.widget<AppPrimaryAction>(
         find.byType(AppPrimaryAction),
       );
-      expect(processing.onPressed, isNull);
-      expect(find.text(Copy.captureProcessNeedsNetwork), findsOneWidget);
+      expect(processing.onPressed, isNotNull);
+      expect(find.text(Copy.processingManualFallback), findsOneWidget);
       FocusManager.instance.primaryFocus?.unfocus();
       final Finder raw = find.widgetWithText(AppButton, Copy.captureSaveRaw);
       await tester.ensureVisible(raw);

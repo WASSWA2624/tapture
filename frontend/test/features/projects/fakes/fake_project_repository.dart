@@ -257,7 +257,7 @@ final class FakeProjectRepository implements ProjectRepository {
                 fieldKey: field.fieldKey,
                 raw: field.raw,
                 refined: value,
-                approved: field.approved,
+                approved: null,
               )
             else
               field,
@@ -307,7 +307,7 @@ final class FakeProjectRepository implements ProjectRepository {
         thumb: current.thumb,
         fields: <ProjectRecordFieldValue>[
           ...current.fields,
-          (fieldKey: fieldKey, raw: value, refined: '', approved: ''),
+          (fieldKey: fieldKey, raw: value, refined: null, approved: null),
         ],
       );
       _emit();

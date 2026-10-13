@@ -10,6 +10,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/record_thumb.dart';
+import 'package:tapture/features/records/domain/domain.dart' show RecordValue;
 import '../domain/project_repository.dart';
 import '../projects.dart' show projectRepositoryProvider;
 
@@ -90,15 +91,13 @@ String projectRecordTitle(
   LocalizedCopy? localizedCopy,
 }) {
   for (final ProjectRecordFieldValue field in row.fields) {
-    if (field.approved.isNotEmpty) {
-      return field.approved;
-    }
-    if (field.refined.isNotEmpty) {
-      return field.refined;
-    }
-    if (field.raw.isNotEmpty) {
-      return field.raw;
-    }
+    final String display = RecordValue(
+      fieldKey: field.fieldKey,
+      raw: field.raw,
+      refined: field.refined,
+      approved: field.approved,
+    ).display;
+    if (display.isNotEmpty) return display;
   }
   return position == null
       ? (localizedCopy ?? Copy.english).recordDetailTitle

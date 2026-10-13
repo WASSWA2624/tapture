@@ -89,7 +89,11 @@ final class _EmptyProcessingRepository implements ProcessingRepository {
   }
 
   @override
-  Future<Result<String>> requeue(String recordId) async {
+  Future<Result<String>> requeue(
+    String recordId, {
+    List<String> fieldKeys = const <String>[],
+    bool retryChargeApproved = false,
+  }) async {
     return const FailureResult<String>(_missingJob);
   }
 
@@ -99,13 +103,14 @@ final class _EmptyProcessingRepository implements ProcessingRepository {
     String? projectId,
     List<String> groupLabels = const <String>[],
     JobStage? unfinished,
+    List<String> recordIds = const <String>[],
     Set<String> skip = const <String>{},
   }) async {
     return const Success<ProcessingJob?>(null);
   }
 
   @override
-  Future<Result<void>> complete(String jobId) async {
+  Future<Result<void>> complete(String jobId, {int? expectedGeneration}) async {
     return const Success<void>(null);
   }
 
@@ -115,17 +120,22 @@ final class _EmptyProcessingRepository implements ProcessingRepository {
     String reason, {
     required bool permanent,
     LocalizedMessage? localizedReason,
+    int? expectedGeneration,
   }) async {
     return const Success<void>(null);
   }
 
   @override
-  Future<Result<ProcessingJob>> markStage(String id, JobStage stage) async {
+  Future<Result<ProcessingJob>> markStage(
+    String id,
+    JobStage stage, {
+    int? expectedGeneration,
+  }) async {
     return const FailureResult<ProcessingJob>(_missingJob);
   }
 
   @override
-  Future<Result<void>> release(String id) async {
+  Future<Result<void>> release(String id, {int? expectedGeneration}) async {
     return const FailureResult<void>(_missingJob);
   }
 

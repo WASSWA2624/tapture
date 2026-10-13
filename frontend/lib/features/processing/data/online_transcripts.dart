@@ -124,7 +124,11 @@ final class OnlineTranscripts {
       if (!await ExtractionResponses(
         _responses,
       ).hasAttempt(job, idempotencyKey)) {
-        await _budget.require(job.id, bundle);
+        await _budget.require(
+          job.id,
+          bundle,
+          expectedGeneration: job.requestGeneration,
+        );
       }
       if (cancel?.isCancelled ?? false) throw const CancelledFailure();
       final String relative =

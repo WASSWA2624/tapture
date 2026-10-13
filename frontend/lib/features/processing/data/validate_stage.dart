@@ -8,9 +8,6 @@ import 'package:tapture/core/db/tables/field_evidence.dart';
 import 'package:tapture/core/db/tables/records.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/ids/uuid_service.dart';
-import 'package:tapture/core/normalise/choices.dart';
-import 'package:tapture/core/normalise/dates.dart';
-import 'package:tapture/core/normalise/units.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/features/projects/projects.dart'
     show ProjectSettingsResolved;
@@ -23,6 +20,7 @@ import '../domain/provenance.dart';
 import 'job_writes.dart';
 import 'processing_repository_impl.dart';
 import 'processing_snapshot.dart';
+import 'processing_value_normalisation.dart';
 import 'proposal_collector.dart';
 import 'record_bundle.dart';
 import 'record_bundle_loader.dart';
@@ -95,11 +93,16 @@ final class ValidateStage {
       ],
       defaults: <String, String>{
         for (final TemplateField field in bundle.fields)
-          if ((field.defaultValue ?? '').trim().isNotEmpty)
+          if ((field.defaultValue ?? '').trim().isNotEmpty &&
+              (bundle.targetFieldKeys.isEmpty ||
+                  bundle.targetFieldKeys.contains(field.fieldKey)))
             field.fieldKey: field.defaultValue!,
       },
     );
-    final List<String> priorRejections = await _writes.rejections(job.id);
+    final List<String> priorRejections = await _writes.rejections(
+      job.id,
+      expectedGeneration: job.requestGeneration,
+    );
     final List<String> rejections = <String>[
       ...selection.rejections,
       if (!bundle.templateResolved) Copy.processingCapturedTemplateUnavailable,
@@ -121,8 +124,11 @@ final class ValidateStage {
     ];
     await _db.transaction(() async {
       if (cancel.isCancelled) throw const CancelledFailure();
+      await _writes.requireGeneration(job.id, job.requestGeneration);
+      await _loader?.checkGeneration(job);
       final RecordBundle currentBundle =
-          await _loader?.load(bundle.record.id) ?? bundle;
+          await _loader?.load(bundle.record.id, fieldKeys: job.fieldKeys) ??
+          bundle;
       final String currentRevision =
           await _currentRevision?.call(job, currentBundle) ??
           await ProcessingSnapshot.sourceRevision(
@@ -139,6 +145,10 @@ final class ValidateStage {
       if (cancel.isCancelled) throw const CancelledFailure();
       final Set<String> protected = StageSupport.protectedKeys(currentBundle);
       for (final ProposalWrite write in plan.writes) {
+        if (job.fieldKeys.isNotEmpty &&
+            !job.fieldKeys.contains(write.fieldKey)) {
+          continue;
+        }
         if (!currentBundle.templateResolved ||
             (write.source != ProposalApplication.defaultSource &&
                 protected.contains(write.fieldKey))) {
@@ -148,11 +158,12 @@ final class ValidateStage {
         final TemplateField field = bundle.fields.firstWhere(
           (TemplateField value) => value.fieldKey == write.fieldKey,
         );
-        final ({String raw, String? normalised}) value = _normalise(
-          write.proposed ?? '',
-          field,
-          locale: _settings.read(SettingKeys.appLanguage),
-        );
+        final ({String raw, String? normalised}) value =
+            ProcessingValueNormalisation.read(
+              write.proposed ?? '',
+              field,
+              locale: _settings.read(SettingKeys.appLanguage),
+            );
         final RecordField stored = StageSupport.unwrap(
           await insertProcessingProposal(
             _db,
@@ -202,7 +213,10 @@ final class ValidateStage {
       await writeRecordStatus(
         _db,
         recordId: bundle.record.id,
-        status: rejections.isNotEmpty || missing.isNotEmpty
+        status:
+            priorRejections.isNotEmpty ||
+                rejections.isNotEmpty ||
+                missing.isNotEmpty
             ? ProposalApplication.needsReviewStatus
             : plan.status,
         previousStatus: current?.status ?? bundle.record.status,
@@ -210,59 +224,32 @@ final class ValidateStage {
         deviceId: _deviceId,
         reason: _statusReason,
       );
-      await (_db.update(
-        _db.processing,
-      )..where(($ProcessingTable table) => table.id.equals(job.id))).write(
-        ProcessingCompanion(
-          rejections: Value<String?>(
-            priorRejections.isEmpty &&
-                    rejections.isEmpty &&
-                    missing.isEmpty &&
-                    plan.skips.isEmpty
-                ? null
-                : jsonEncode(
-                    <String>{
-                      ...priorRejections,
-                      ...rejections,
-                      ...missing,
-                      ...plan.skips,
-                    }.toList(),
-                  ),
-          ),
-        ),
-      );
+      await (_db.update(_db.processing)..where(
+            ($ProcessingTable table) =>
+                table.id.equals(job.id) &
+                table.requestGeneration.equals(job.requestGeneration),
+          ))
+          .write(
+            ProcessingCompanion(
+              rejections: Value<String?>(
+                priorRejections.isEmpty &&
+                        rejections.isEmpty &&
+                        missing.isEmpty &&
+                        plan.skips.isEmpty
+                    ? null
+                    : jsonEncode(
+                        <String>{
+                          ...priorRejections,
+                          ...rejections,
+                          ...missing,
+                          ...plan.skips,
+                        }.toList(),
+                      ),
+              ),
+            ),
+          );
     });
   }
-}
-
-/// [raw] normalised for [field]: a unit converted to the field's unit, a
-/// phrase mapped to an option, or a date read with [locale]. The original
-/// phrasing is always kept beside the stored value.
-({String raw, String? normalised}) _normalise(
-  String raw,
-  TemplateField field, {
-  required String locale,
-}) {
-  if (field.unit != null && field.unit!.isNotEmpty) {
-    final UnitValue? converted = Units.convert(raw, targetUnit: field.unit!);
-    if (converted != null) {
-      return (raw: converted.original, normalised: converted.stored);
-    }
-  }
-  final List<ChoiceOption> options = StageSupport.choiceOptions(field.options);
-  if (options.isNotEmpty) {
-    final ChoiceMatch? choice = Choices.match(raw, options: options);
-    if (choice != null) {
-      return (raw: choice.original, normalised: choice.label);
-    }
-  }
-  if (field.type.toLowerCase() == 'date') {
-    final DateValue? date = Dates.parse(raw, locale: locale);
-    if (date != null) {
-      return (raw: date.original, normalised: date.stored);
-    }
-  }
-  return (raw: raw, normalised: null);
 }
 
 /// Audit reason of the status move validation writes: the stage that made

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/features/processing/processing.dart'
@@ -13,7 +14,7 @@ import 'package:tapture/features/projects/projects.dart'
     show projectSettingsStoreProvider;
 import 'package:tapture/features/records/domain/domain.dart';
 import 'package:tapture/features/records/records.dart'
-    show recordRepositoryProvider;
+    show recordRepositoryProvider, recordEntryProvider;
 import 'package:tapture/features/review/review.dart';
 import 'package:tapture/features/settings/settings.dart' show SettingsStore;
 import 'package:tapture/features/templates/domain/field_def.dart';
@@ -52,6 +53,12 @@ final class ReviewHarness {
 
   /// The review store.
   late final FakeReviewRepository review = FakeReviewRepository(records);
+
+  /// Current analysis proposals; decisions remove them durably in the fake.
+  List<ReanalyseProposal> proposals = const <ReanalyseProposal>[];
+
+  /// Proposal-read failures stay visible beside independently editable fields.
+  Failure? proposalFailure;
 
   /// The template the records are captured with: Serial, Model, Note and
   /// Rating, in that order.
@@ -150,6 +157,15 @@ final class ReviewHarness {
     templateRepositoryProvider.overrideWith((Ref _) => templates),
     reviewRepositoryProvider.overrideWith((Ref _) => review),
     processingRepositoryProvider.overrideWith((Ref _) => processing),
+    reviewProposalsProvider.overrideWith((Ref ref, String recordId) async {
+      ref.watch(recordEntryProvider(recordId));
+      final Failure? failed = proposalFailure;
+      if (failed != null) throw failed;
+      return <ReanalyseProposal>[
+        for (final ReanalyseProposal proposal in proposals)
+          if (!review.resolvedKeys.contains(proposal.fieldKey)) proposal,
+      ];
+    }),
     projectSettingsStoreProvider.overrideWith((Ref _) => settings),
     photoThumbnailsProvider.overrideWith(
       (Ref _) => PhotoThumbnails.fake(const <String, String>{}),
@@ -158,7 +174,11 @@ final class ReviewHarness {
 
   /// Pumps the app on [location], with the review routes and the records
   /// list they leave for.
-  Future<GoRouter> pump(WidgetTester tester, String location) async {
+  Future<GoRouter> pump(
+    WidgetTester tester,
+    String location, {
+    List<Override> extraOverrides = const <Override>[],
+  }) async {
     final GoRouter router = GoRouter(
       initialLocation: location,
       routes: <RouteBase>[
@@ -190,7 +210,7 @@ final class ReviewHarness {
     await tester.pumpWidget(
       ProviderScope(
         retry: (int _, Object _) => null,
-        overrides: overrides,
+        overrides: <Override>[...overrides, ...extraOverrides],
         child: MaterialApp.router(
           theme: buildTheme(brightness: Brightness.light),
           routerConfig: router,

@@ -1292,7 +1292,7 @@ ProjectRecordRow _record(
     thumb: thumb,
     fields: <ProjectRecordFieldValue>[
       if (name != null)
-        (fieldKey: 'name', raw: name, refined: '', approved: ''),
+        (fieldKey: 'name', raw: name, refined: null, approved: null),
     ],
   );
 }

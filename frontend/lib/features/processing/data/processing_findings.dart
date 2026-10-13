@@ -48,6 +48,31 @@ final class ProcessingFindings implements ProcessingFindingsRepository {
 
   /// An attempted request with no local reply may already have been charged.
   @override
+  Future<Result<bool>> requiresRecordRetryApproval(String recordId) async {
+    final AppDatabase? db = _db;
+    if (db == null) return const Success<bool>(false);
+    try {
+      final ProcessingJobRow? job =
+          await (db.select(db.processing)
+                ..where(($ProcessingTable row) => row.recordId.equals(recordId))
+                ..orderBy(<OrderClauseGenerator<$ProcessingTable>>[
+                  ($ProcessingTable row) => OrderingTerm.desc(row.queuedAt),
+                  ($ProcessingTable row) => OrderingTerm.desc(row.id),
+                ])
+                ..limit(1))
+              .getSingleOrNull();
+      return job == null
+          ? const Success<bool>(false)
+          : requiresRetryApproval(job.id);
+    } on Failure catch (failure) {
+      return FailureResult<bool>(failure);
+    } on Object catch (error) {
+      return FailureResult<bool>(storageFailureFrom(error));
+    }
+  }
+
+  /// An attempted request with no local reply may already have been charged.
+  @override
   Future<Result<bool>> requiresRetryApproval(String jobId) async {
     final AppDatabase? db = _db;
     if (db == null) return const Success<bool>(false);

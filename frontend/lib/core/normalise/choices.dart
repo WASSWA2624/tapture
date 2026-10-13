@@ -1,5 +1,23 @@
 /// Maps a phrase onto a choice without discarding the phrase.
 final class Choices {
+  /// Reads template option strings or objects without losing their aliases.
+  static List<ChoiceOption> options(List<Object?> raw) => <ChoiceOption>[
+    for (final Object? option in raw)
+      if (option is String)
+        (label: option, code: null, aliases: const <String>[])
+      else if (option is Map && option['label'] is String)
+        (
+          label: option['label'] as String,
+          code: option['code'] is String ? option['code'] as String : null,
+          aliases: option['aliases'] is List
+              ? <String>[
+                  for (final Object? alias in option['aliases'] as List)
+                    if (alias is String) alias,
+                ]
+              : const <String>[],
+        ),
+  ];
+
   /// Label, code, then alias. The original sentence is kept on the result.
   static ChoiceMatch? match(String raw, {required List<ChoiceOption> options}) {
     final String folded = raw.trim().toLowerCase();

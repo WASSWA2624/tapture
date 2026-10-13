@@ -39,6 +39,273 @@ import '../../../support/factories.dart';
 
 void main() {
   test(
+    'a late provider reply cannot advance or complete a replacement generation',
+    () async {
+      final _PrivacyWorker fixture = await _privacyWorker();
+      final ProcessingJob old = _ok(
+        await fixture.repository.claim(const Duration(minutes: 1)),
+      )!;
+      final FixedClock laterClock = FixedClock(
+        fixture.clock.nowUtc().add(const Duration(minutes: 2)),
+      );
+      final ProcessingRepositoryImpl later = ProcessingRepositoryImpl(
+        db: fixture.db,
+        clock: laterClock,
+        deviceId: 'device-a',
+        ids: fixture.ids,
+        settings: fixture.settings,
+      );
+      final _ExtractionService service = _ExtractionService(
+        inspect: (_) async {
+          _ok(
+            await later.requeue(
+              fixture.job.recordId,
+              retryChargeApproved: true,
+            ),
+          );
+        },
+      );
+      await expectLater(
+        fixture.worker(service).perform(JobStage.online, old),
+        throwsA(isA<CancelledFailure>()),
+      );
+      expect(service.calls, 1);
+      expect(
+        await later.markStage(
+          old.id,
+          JobStage.online,
+          expectedGeneration: old.requestGeneration,
+        ),
+        isA<FailureResult<ProcessingJob>>(),
+      );
+      expect(
+        await later.complete(old.id, expectedGeneration: old.requestGeneration),
+        isA<FailureResult<void>>(),
+      );
+      expect(
+        await later.release(old.id, expectedGeneration: old.requestGeneration),
+        isA<FailureResult<void>>(),
+      );
+      expect(
+        await later.fail(
+          old.id,
+          'Old attempt failed',
+          permanent: true,
+          expectedGeneration: old.requestGeneration,
+        ),
+        isA<FailureResult<void>>(),
+      );
+      expect(await later.save(old), isA<FailureResult<ProcessingJob>>());
+      final ProcessingJob current = _ok(await later.byId(old.id))!;
+      expect(current.requestGeneration, old.requestGeneration + 1);
+      expect(current.status, JobStatus.queued);
+      expect(current.stage, isEmpty);
+    },
+  );
+
+  test(
+    'production review retains legacy replies as evidence without replaying unversioned values',
+    () async {
+      final _PrivacyWorker fixture = await _privacyWorker();
+      final ResponseStore responses = ResponseStore(
+        db: fixture.db,
+        clock: fixture.clock,
+        deviceId: 'device-a',
+        ids: fixture.ids,
+      );
+      _ok(
+        await responses.save(
+          jobId: fixture.job.id,
+          requestSummary: '{"kind":"online","provider":"legacy"}',
+          rawResponse: jsonEncode(<String, Object?>{
+            'fields': <String, Object?>{
+              'serial': <String, Object?>{
+                'value': 'PRIVATE123',
+                'confidence': 1,
+                'evidence': <String>['photo:${fixture.photo.id}'],
+              },
+            },
+          }),
+          parsedOk: true,
+        ),
+      );
+      final worker = fixture.worker(_ExtractionService());
+      expect(
+        _ok(await worker.preview.forRecord(fixture.job.recordId)),
+        isEmpty,
+      );
+      expect(_ok(await responses.forJob(fixture.job.id)), hasLength(1));
+    },
+  );
+
+  test(
+    'numeric OCR review uses the typed unit value and keeps the photographed raw text',
+    () async {
+      final _PrivacyWorker fixture = await _privacyWorker();
+      final Template template = await fixture.db
+          .select(fixture.db.templates)
+          .getSingle();
+      await fixture.db.delete(fixture.db.ocrCacheEntries).go();
+      _ok(
+        await upsertTemplateField(
+          fixture.db,
+          row: TemplateFieldsCompanion(
+            templateId: Value<String>(template.id),
+            fieldKey: const Value<String>('capacity'),
+            label: const Value<String>('Capacity'),
+            type: const Value<String>('number'),
+            unit: const Value<String>('L'),
+            sortOrder: const Value<int>(2),
+          ),
+          clock: fixture.clock,
+          deviceId: 'device-a',
+          ids: fixture.ids,
+        ),
+      );
+      _ok(
+        await OcrCache(
+          db: fixture.db,
+          clock: fixture.clock,
+          deviceId: 'device-a',
+          ids: fixture.ids,
+        ).put(
+          contentHash: fixture.photo.sha256,
+          perceptualHash: '',
+          result: const OcrResult(
+            text: 'Capacity: 13000 mL',
+            blocks: <OcrBlock>[
+              OcrBlock(
+                text: 'Capacity: 13000 mL',
+                bounds: Rect.fromLTWH(0, 0, 8, 8),
+                confidence: 1,
+              ),
+            ],
+          ),
+        ),
+      );
+      final ProcessingStageWorker worker = fixture.worker(_ExtractionService());
+      await worker.perform(JobStage.validate, fixture.job);
+      final RecordField value =
+          (await fixture.db.select(fixture.db.recordFields).get()).singleWhere(
+            (RecordField field) => field.fieldKey == 'capacity',
+          );
+      expect(value.valueRaw, '13000 mL');
+      expect(value.valueRefined, '13');
+      expect(value.valueFinal, isNull);
+      expect(value.verified, isFalse);
+      final preview = _ok(await worker.preview.forRecord(fixture.job.recordId));
+      expect(preview.single.value, '13');
+    },
+  );
+
+  test(
+    'provider failure retains evidence and finishes local validation for manual review',
+    () async {
+      final _PrivacyWorker fixture = await _privacyWorker();
+      final _ExtractionService service = _ExtractionService(
+        failure: const NetworkFailure(),
+      );
+      final ProcessingStageWorker worker = fixture.worker(service);
+      await worker.perform(JobStage.online, fixture.job);
+      await worker.perform(JobStage.validate, fixture.job);
+      expect(service.calls, 1);
+      final RecordRow record = await fixture.db
+          .select(fixture.db.records)
+          .getSingle();
+      expect(record.status, 'needsReview');
+      final ProcessingJob stored = _ok(
+        await fixture.repository.byId(fixture.job.id),
+      )!;
+      expect(stored.skipReason, contains('manually'));
+      expect(stored.rejections, isNotEmpty);
+      expect(await fixture.original.readAsBytes(), fixture.originalBytes);
+      final int generation = stored.requestGeneration;
+      expect(
+        await fixture.repository.requeue(fixture.job.recordId),
+        isA<FailureResult<String>>(),
+      );
+      expect(
+        _ok(await fixture.repository.byId(fixture.job.id))!.requestGeneration,
+        generation,
+      );
+      _ok(
+        await fixture.repository.requeue(
+          fixture.job.recordId,
+          retryChargeApproved: true,
+        ),
+      );
+      expect(
+        _ok(await fixture.repository.byId(fixture.job.id))!.requestGeneration,
+        generation + 1,
+      );
+    },
+  );
+
+  test(
+    'offline processing offers manual review without a provider request',
+    () async {
+      final _PrivacyWorker fixture = await _privacyWorker();
+      await fixture.settings.write(SettingKeys.offlineByChoice, true);
+      final _ExtractionService service = _ExtractionService();
+      final ProcessingStageWorker worker = fixture.worker(service);
+      await worker.perform(JobStage.online, fixture.job);
+      await worker.perform(JobStage.validate, fixture.job);
+      expect(service.calls, 0);
+      final RecordRow record = await fixture.db
+          .select(fixture.db.records)
+          .getSingle();
+      expect(record.status, 'needsReview');
+    },
+  );
+
+  test(
+    'single-field processing limits request targets and preserves other fields',
+    () async {
+      final _PrivacyWorker fixture = await _privacyWorker();
+      final Template template = await fixture.db
+          .select(fixture.db.templates)
+          .getSingle();
+      _ok(
+        await upsertTemplateField(
+          fixture.db,
+          row: TemplateFieldsCompanion(
+            templateId: Value<String>(template.id),
+            fieldKey: const Value<String>('capacity'),
+            label: const Value<String>('Capacity'),
+            type: const Value<String>('number'),
+            defaultValue: const Value<String>('15'),
+            sortOrder: const Value<int>(2),
+          ),
+          clock: fixture.clock,
+          deviceId: 'device-a',
+          ids: fixture.ids,
+        ),
+      );
+      final _ExtractionService service = _ExtractionService();
+      final ProcessingStageWorker worker = fixture.worker(service);
+      _ok(
+        await fixture.repository.requeue(
+          fixture.job.recordId,
+          fieldKeys: <String>['serial'],
+        ),
+      );
+      final ProcessingJob job = _ok(
+        await fixture.repository.byId(fixture.job.id),
+      )!;
+      await worker.perform(JobStage.online, job);
+      await worker.perform(JobStage.validate, job);
+      expect(service.requests.last.fieldLabels, <String>['serial']);
+      final List<RecordField> fields = await fixture.db
+          .select(fixture.db.recordFields)
+          .get();
+      expect(
+        fields.where((RecordField field) => field.fieldKey == 'capacity'),
+        isEmpty,
+      );
+    },
+  );
+
+  test(
     'first send, repair and resend use saved masks and exclude old clear OCR',
     () async {
       final _PrivacyWorker fixture = await _privacyWorker();
@@ -150,6 +417,14 @@ void main() {
         id: 'job-local',
         recordId: record.id,
       );
+      final ProcessingRepositoryImpl repository = ProcessingRepositoryImpl(
+        db: db,
+        clock: clock,
+        deviceId: 'device-a',
+        ids: UuidV7Service.sequence(clock),
+        settings: SettingsStore.fake(),
+      );
+      _ok(await repository.save(job));
 
       await worker.perform(JobStage.prepare, job);
       await worker.perform(JobStage.onDevice, job);
@@ -695,8 +970,9 @@ void main() {
 }
 
 final class _ExtractionService implements AiService {
-  _ExtractionService({this.inspect});
+  _ExtractionService({this.inspect, this.failure});
   final Future<void> Function(ExtractFieldsRequest)? inspect;
+  final Failure? failure;
   var calls = 0;
   ExtractFieldsRequest? lastRequest;
   final List<ExtractFieldsRequest> requests = <ExtractFieldsRequest>[];
@@ -712,6 +988,9 @@ final class _ExtractionService implements AiService {
     lastRequest = request;
     requests.add(request);
     await inspect?.call(request);
+    if (failure case final Failure failed) {
+      return FailureResult<ExtractFieldsResult>(failed);
+    }
     if (calls == 1) {
       return const Success<ExtractFieldsResult>(
         ExtractFieldsResult(

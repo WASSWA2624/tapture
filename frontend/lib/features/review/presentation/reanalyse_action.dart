@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/widgets/app_button.dart';
@@ -15,8 +16,9 @@ import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 ///
 /// Each proposal is one row a person ticks to accept. A verified or
 /// hand-typed value is marked as offered, not applied: nothing replaces it
-/// unless ticked. Apply writes exactly the ticked proposals; Decline all
-/// leaves the record exactly as it was.
+/// unless ticked. Apply keeps the ticked proposals and rejects the remainder.
+/// Rejecting a displayed suggestion clears its final value and retains the raw
+/// evidence; rejecting an offered replacement keeps the current human value.
 final class ReanalyseAction extends StatelessWidget {
   /// Creates the diff of [proposals], with [accepted] ticked.
   const ReanalyseAction({
@@ -27,6 +29,7 @@ final class ReanalyseAction extends StatelessWidget {
     this.onToggle,
     this.onApply,
     this.onDeclineAll,
+    this.onSelectAll,
     super.key,
   });
 
@@ -48,8 +51,11 @@ final class ReanalyseAction extends StatelessWidget {
   /// Writes only the accepted proposals, by field key.
   final ValueChanged<Map<String, String>>? onApply;
 
-  /// Leaves the record unchanged and closes the diff.
+  /// Rejects the displayed proposals while retaining their original evidence.
   final VoidCallback? onDeclineAll;
+
+  /// Selects every displayed proposal with one action.
+  final VoidCallback? onSelectAll;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +65,7 @@ final class ReanalyseAction extends StatelessWidget {
     if (failed != null) {
       return AppBanner(
         key: const ValueKey<String>('reanalyse-failure'),
-        message: failed.message,
+        message: localCopy.failureMessage(failed),
         icon: AppIcons.error,
         tone: SnackTone.error,
         onDismiss: onDeclineAll,
@@ -79,7 +85,16 @@ final class ReanalyseAction extends StatelessWidget {
       key: const ValueKey<String>('reanalyse-diff'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppSectionHeader(title: localCopy.reviewProposalsTitle),
+        AppSectionHeader(
+          title: localCopy.reviewProposalsTitle,
+          action: AppButton(
+            label: localCopy.selectAll,
+            variant: AppButtonVariant.text,
+            onPressed: busy ? null : onSelectAll,
+          ),
+        ),
+        Text(localCopy.reviewProposalsHelp),
+        const SizedBox(height: Space.x2),
         for (final ReanalyseProposal proposal in proposals)
           AppListTile(
             key: ValueKey<String>('proposal-${proposal.fieldKey}'),
@@ -89,6 +104,7 @@ final class ReanalyseAction extends StatelessWidget {
               proposal.proposed,
             ),
             dense: true,
+            wrapText: true,
             selected: accepted.contains(proposal.fieldKey),
             status: proposal.offeredOnly
                 ? AppStatusPill.badge(

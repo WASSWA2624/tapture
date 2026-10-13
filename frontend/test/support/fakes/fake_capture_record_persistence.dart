@@ -7,6 +7,12 @@ import 'package:tapture/features/capture/domain/capture_session.dart';
 /// a record `record-1`, `record-2`, …, kept so a test can read what the
 /// save froze, and each write can be made to fail (FE-TEST-03, FE-TEST-10).
 final class FakeCaptureRecordPersistence implements CaptureRecordPersistence {
+  /// Reports a committed raw record to a separate read-store fixture.
+  FakeCaptureRecordPersistence({this.onPersist});
+
+  /// Runs after the evidence is stored, matching local read-store visibility.
+  final void Function(String id, CaptureSession session)? onPersist;
+
   /// Every session [persist] froze, in call order.
   final List<CaptureSession> persisted = <CaptureSession>[];
 
@@ -33,6 +39,7 @@ final class FakeCaptureRecordPersistence implements CaptureRecordPersistence {
     final String id = 'record-${++_next}';
     persisted.add(session);
     records[id] = session.copyWith(recordId: id, editing: true);
+    onPersist?.call(id, records[id]!);
     return Success<String>(id);
   }
 

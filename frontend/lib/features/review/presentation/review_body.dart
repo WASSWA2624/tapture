@@ -27,10 +27,16 @@ import 'package:tapture/core/widgets/responsive/breakpoints.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
 import 'package:tapture/features/processing/processing.dart'
-    show ConfidenceBand, ConfidenceIndicator;
+    show
+        ConfidenceBand,
+        ConfidenceIndicator,
+        RecordProcessingScope,
+        confirmRecordProcessingRetry,
+        processingControllerProvider,
+        runRecordProcessing;
 import 'package:tapture/features/records/records.dart';
 import 'package:tapture/features/templates/templates.dart'
-    show FieldDef, TemplateDef, TemplateRow;
+    show FieldDef, FieldInputPolicy, TemplateDef, TemplateRow;
 import '../domain/review_group.dart';
 import '../domain/review_repository.dart';
 import 'evidence_viewer.dart';
@@ -114,6 +120,7 @@ typedef _Field = ({
   String label,
   RecordValue? value,
   bool attention,
+  bool extractable,
 });
 
 class _Loaded extends ConsumerWidget {
@@ -150,12 +157,39 @@ class _Loaded extends ConsumerWidget {
           fieldKey: field.fieldKey,
           label: labels[field.fieldKey] ?? field.fieldKey,
           value: entry.valueOf(field.fieldKey),
+          extractable:
+              template?.fields.any(
+                (FieldDef definition) =>
+                    definition.fieldKey == field.fieldKey &&
+                    FieldInputPolicy.canExtract(definition),
+              ) ??
+              false,
           attention:
               group == ReviewGroup.needsAttention ||
               facts.conflicts.contains(field.fieldKey),
         ),
     ];
-    final bool editable = canApproveInReview(entry);
+    final bool editable =
+        !entry.isDeleted &&
+        entry.status != RecordStatus.approved &&
+        entry.status != RecordStatus.archived;
+    final bool processingActive = ref
+        .watch(processingControllerProvider)
+        .isRunning;
+    final bool running =
+        entry.status == RecordStatus.queued ||
+        entry.status == RecordStatus.processing;
+    final bool processable =
+        !entry.isDeleted &&
+        entry.status != RecordStatus.archived &&
+        entry.status != RecordStatus.processing &&
+        !processingActive;
+    final AsyncValue<List<ReanalyseProposal>>? proposals = running
+        ? null
+        : ref.watch(reviewProposalsProvider(entry.id));
+    final bool hasProposals =
+        (proposals?.hasError ?? false) ||
+        (proposals?.value?.isNotEmpty ?? false);
     final Widget columns = _Fields(
       projectId: projectId,
       entry: entry,
@@ -193,7 +227,7 @@ class _Loaded extends ConsumerWidget {
           ),
           const SizedBox(height: Space.x3),
         ],
-        if (state.reanalysing) ...<Widget>[
+        if (running || state.reanalysing || hasProposals) ...<Widget>[
           _Reanalysis(entry: entry, state: state, controller: controller),
           const SizedBox(height: Space.x3),
         ],
@@ -227,7 +261,7 @@ class _Loaded extends ConsumerWidget {
           columns,
         ],
         _Context(entry: entry, labels: labels),
-        if (editable && !state.reanalysing) ...<Widget>[
+        if (processable) ...<Widget>[
           const SizedBox(height: Space.x4),
           Align(
             alignment: AlignmentDirectional.centerStart,
@@ -237,7 +271,7 @@ class _Loaded extends ConsumerWidget {
               icon: AppIcons.processing,
               variant: AppButtonVariant.text,
               busy: state.busy,
-              onPressed: () => unawaited(_reanalyse(context, controller)),
+              onPressed: () => unawaited(_reanalyse(context, ref, controller)),
             ),
           ),
         ],
@@ -247,19 +281,60 @@ class _Loaded extends ConsumerWidget {
 
   Future<void> _reanalyse(
     BuildContext context,
+    WidgetRef ref,
     ReviewController controller,
   ) async {
-    final LocalizedCopy localCopy = Copy.of(context);
-
-    final Result<void> queued = await controller.reanalyse();
-    if (queued is Success<void> && context.mounted) {
-      showAppSnack(
-        context,
-        localCopy.reviewReanalyseQueued,
-        tone: SnackTone.info,
-      );
-    }
+    final List<String>? scope = await RecordProcessingScope.show(
+      context,
+      recordId: entry.id,
+      fields: template?.fields ?? const <FieldDef>[],
+    );
+    if (scope == null || !context.mounted) return;
+    await _runReanalysis(
+      context,
+      ref,
+      controller,
+      projectId: projectId,
+      fieldKeys: scope,
+    );
   }
+}
+
+Future<void> _runReanalysis(
+  BuildContext context,
+  WidgetRef ref,
+  ReviewController controller, {
+  required String projectId,
+  required List<String> fieldKeys,
+}) async {
+  final Result<bool> approval = await confirmRecordProcessingRetry(
+    context,
+    ProviderScope.containerOf(context, listen: false),
+    controller.recordId,
+  );
+  if (!context.mounted) return;
+  if (approval case FailureResult<bool>(:final Failure failure)) {
+    if (failure is CancelledFailure) return;
+    showAppSnack(
+      context,
+      failure.message,
+      tone: SnackTone.error,
+      localizedMessage: failure.explanation,
+    );
+    return;
+  }
+  final bool needsApproval = (approval as Success<bool>).value;
+  final Result<void> queued = await controller.reanalyse(
+    fieldKeys: fieldKeys,
+    retryChargeApproved: needsApproval,
+  );
+  if (queued is! Success<void> || !context.mounted) return;
+  await runRecordProcessing(
+    context,
+    ref,
+    recordId: controller.recordId,
+    projectId: projectId,
+  );
 }
 
 /// A template with no fields, when the record's is not on this device: the
@@ -429,6 +504,9 @@ class _FieldRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final LocalizedCopy localCopy = Copy.of(context);
+    final bool processingActive = ref
+        .watch(processingControllerProvider)
+        .isRunning;
 
     final RecordValue? value = field.value;
     final bool filled = value != null && value.hasValue;
@@ -535,6 +613,33 @@ class _FieldRow extends ConsumerWidget {
                     ),
                 ],
               ],
+            ),
+          ),
+        if (editable && field.extractable)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.x4),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: AppButton(
+                key: ValueKey<String>('review-analyse-${field.fieldKey}'),
+                label: localCopy.reviewAnalyseField,
+                icon: AppIcons.processing,
+                variant: AppButtonVariant.text,
+                onPressed:
+                    busy ||
+                        processingActive ||
+                        entry.status == RecordStatus.processing
+                    ? null
+                    : () => unawaited(
+                        _runReanalysis(
+                          context,
+                          ref,
+                          controller,
+                          projectId: projectId,
+                          fieldKeys: <String>[field.fieldKey],
+                        ),
+                      ),
+              ),
             ),
           ),
       ],
@@ -735,17 +840,30 @@ class _Reanalysis extends ConsumerWidget {
 
     if (entry.status == RecordStatus.queued ||
         entry.status == RecordStatus.processing) {
-      return AppBanner(
-        key: const ValueKey<String>('review-reanalysing'),
-        message: localCopy.reviewReanalysing,
-        icon: AppIcons.processing,
-        tone: SnackTone.info,
+      final bool active = ref.watch(processingControllerProvider).isRunning;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          AppBanner(
+            key: const ValueKey<String>('review-reanalysing'),
+            message: localCopy.reviewReanalysing,
+            icon: AppIcons.processing,
+            tone: SnackTone.info,
+          ),
+          if (active)
+            AppButton(
+              key: const ValueKey<String>('review-cancel-processing'),
+              label: localCopy.queueCancel,
+              variant: AppButtonVariant.text,
+              onPressed: ref.read(processingControllerProvider.notifier).cancel,
+            ),
+        ],
       );
     }
     final AsyncValue<List<ReanalyseProposal>> proposals = ref.watch(
       reviewProposalsProvider(entry.id),
     );
-    if (proposals.isLoading && !proposals.hasValue) {
+    if (proposals.isLoading && !proposals.hasValue && !proposals.hasError) {
       return const AppSkeleton(count: 2);
     }
     return ReanalyseAction(
@@ -754,25 +872,59 @@ class _Reanalysis extends ConsumerWidget {
       failure: proposals.hasError ? Failure.from(proposals.error!) : null,
       busy: state.busy,
       onToggle: controller.toggleProposal,
-      onApply: (Map<String, String> accepted) =>
-          unawaited(_apply(context, accepted)),
-      onDeclineAll: controller.declineProposals,
+      onApply: (Map<String, String> accepted) => unawaited(
+        _apply(
+          context,
+          accepted,
+          proposals.value ?? const <ReanalyseProposal>[],
+        ),
+      ),
+      onSelectAll: () => controller.selectProposals(
+        (proposals.value ?? const <ReanalyseProposal>[]).map(
+          (ReanalyseProposal proposal) => proposal.fieldKey,
+        ),
+      ),
+      onDeclineAll: () => unawaited(
+        _decline(context, proposals.value ?? const <ReanalyseProposal>[]),
+      ),
     );
   }
 
   Future<void> _apply(
     BuildContext context,
     Map<String, String> accepted,
+    List<ReanalyseProposal> proposals,
   ) async {
     final LocalizedCopy localCopy = Copy.of(context);
 
-    final Result<void> written = await controller.applyProposals(accepted);
+    final Result<void> written = await controller.applyProposals(
+      accepted,
+      rejected: <String, String>{
+        for (final ReanalyseProposal proposal in proposals)
+          if (!accepted.containsKey(proposal.fieldKey))
+            proposal.fieldKey: proposal.proposed,
+      },
+    );
     if (written is Success<void> && context.mounted) {
       showAppSnack(
         context,
         localCopy.reviewProposalsApplied(accepted.length),
         tone: SnackTone.success,
       );
+    }
+  }
+
+  Future<void> _decline(
+    BuildContext context,
+    List<ReanalyseProposal> proposals,
+  ) async {
+    final Result<void> written = await controller
+        .declineProposals(<String, String>{
+          for (final ReanalyseProposal proposal in proposals)
+            proposal.fieldKey: proposal.proposed,
+        });
+    if (written is Success<void> && context.mounted) {
+      showAppSnack(context, Copy.of(context).reviewProposalsRejected);
     }
   }
 }

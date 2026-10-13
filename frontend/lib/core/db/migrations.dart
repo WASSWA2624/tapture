@@ -53,6 +53,7 @@ kUpgradeSteps = <int, _UpgradeStep>{
   31: migrateToV31,
   32: migrateToV32,
   33: migrateToV33,
+  34: migrateToV34,
 };
 
 /// Versions that drop or rewrite a column and must not run without an export.
@@ -538,6 +539,20 @@ Future<void> migrateToV28(Migrator migrator, AppDatabase db) async {
       )) {
     await migrator.addColumn(db.processing, db.processing.requestGeneration);
   }
+}
+
+/// Schema version 34: extraction scopes survive interruption and restart.
+Future<void> migrateToV34(Migrator migrator, AppDatabase db) async {
+  final List<QueryRow> columns = await db
+      .customSelect('PRAGMA table_info("processing_jobs")')
+      .get();
+  if (columns.isNotEmpty &&
+      !columns.any(
+        (QueryRow row) => row.read<String>('name') == 'field_keys',
+      )) {
+    await migrator.addColumn(db.processing, db.processing.fieldKeys);
+  }
+  await RecordSchema.ensure(db);
 }
 
 /// Schema version 29: indexed pending intents for bounded launch recovery.

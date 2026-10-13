@@ -421,9 +421,9 @@ final class ProjectRepositoryImpl implements ProjectRepository {
           "(SELECT 'projects/' || pr.folder_name || '/' || p.relative_path "
           '$first) AS thumb_path, '
           '(SELECT ifnull(p.rotation_degrees, 0) $first) AS thumb_turn, '
-          '(SELECT group_concat(f.field_key || char(31) || '
-          "ifnull(f.value_raw,'') || char(31) || ifnull(f.value_refined,'') "
-          "|| char(31) || ifnull(f.value_final,''), char(30)) "
+          "(SELECT json_group_array(json_object('fieldKey', f.field_key, "
+          "'raw', ifnull(f.value_raw,''), 'refined', f.value_refined, "
+          "'approved', f.value_final)) "
           'FROM record_fields f WHERE f.record_id = r.id) AS field_blob '
           'FROM records r JOIN projects pr ON pr.id = r.project_id '
           'WHERE r.project_id = ? '
@@ -470,9 +470,9 @@ final class ProjectRepositoryImpl implements ProjectRepository {
           'pr.folder_name AS folder, '
           '(SELECT COUNT(*) FROM photos p WHERE p.record_id = r.id '
           'AND $activePhotoCondition) AS photo_count, '
-          '(SELECT group_concat(f.field_key || char(31) || '
-          "ifnull(f.value_raw,'') || char(31) || ifnull(f.value_refined,'') "
-          "|| char(31) || ifnull(f.value_final,''), char(30)) "
+          "(SELECT json_group_array(json_object('fieldKey', f.field_key, "
+          "'raw', ifnull(f.value_raw,''), 'refined', f.value_refined, "
+          "'approved', f.value_final)) "
           'FROM record_fields f WHERE f.record_id = r.id) AS field_blob, '
           "(SELECT ${_latestCaption('record', 'r.id')}) AS caption, "
           '(SELECT COUNT(DISTINCT o.attachment_id) FROM attachment_owners o '
@@ -1392,18 +1392,17 @@ List<ProjectRecordFieldValue> _recordFields(String? blob) {
   if (blob == null || blob.isEmpty) {
     return const <ProjectRecordFieldValue>[];
   }
+  final Object? decoded = jsonDecode(blob);
+  if (decoded is! List) return const <ProjectRecordFieldValue>[];
   return <ProjectRecordFieldValue>[
-    for (final String row in blob.split('\u001e'))
-      if (row.isNotEmpty)
-        () {
-          final List<String> parts = row.split('\u001f');
-          return (
-            fieldKey: parts.isEmpty ? '' : parts[0],
-            raw: parts.length > 1 ? parts[1] : '',
-            refined: parts.length > 2 ? parts[2] : '',
-            approved: parts.length > 3 ? parts[3] : '',
-          );
-        }(),
+    for (final Object? row in decoded)
+      if (row is Map<String, Object?>)
+        (
+          fieldKey: row['fieldKey'] as String,
+          raw: row['raw'] as String,
+          refined: row['refined'] as String?,
+          approved: row['approved'] as String?,
+        ),
   ];
 }
 

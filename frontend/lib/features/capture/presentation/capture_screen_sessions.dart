@@ -249,6 +249,7 @@ extension _CaptureSessionFlows on _CaptureScreenState {
   }
 
   Future<void> _save(bool process) async {
+    final String ownerProjectId = _projectId();
     final _CaptureUiController ui = ref.read(
       _captureUiProvider(_sessionKey()).notifier,
     );
@@ -327,6 +328,16 @@ extension _CaptureSessionFlows on _CaptureScreenState {
           Copy.of(context).captureSaved,
           tone: SnackTone.success,
         );
+        if (value is SaveAndAnalyseResult) {
+          // The mounted review route owns processing and its recovery prompts;
+          // this saved capture has already reset to the next durable session.
+          unawaited(
+            context.push<void>(
+              RoutePaths.projectRecordReview(ownerProjectId, value.recordId),
+              extra: true,
+            ),
+          );
+        }
     }
   }
 

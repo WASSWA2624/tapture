@@ -98,12 +98,18 @@ final class RecordBulkController extends Notifier<RecordBulkOperation?> {
   /// Puts every record in [ids] back in the processing queue from the first
   /// step (D14): each record's job starts over and the record moves to
   /// queued. Running the queue is the caller's next step.
-  Future<RecordBulkOutcome> reprocess(List<String> ids) {
+  Future<RecordBulkOutcome> reprocess(
+    List<String> ids, {
+    Set<String> retryChargeApproved = const <String>{},
+  }) {
     final ProcessingRepository processing = ref.read(
       processingRepositoryProvider,
     );
     return _each(RecordBulkOperation.reprocess, ids, (String id) async {
-      final Result<String> queued = await processing.requeue(id);
+      final Result<String> queued = await processing.requeue(
+        id,
+        retryChargeApproved: retryChargeApproved.contains(id),
+      );
       return queued.map<void>((String _) {});
     });
   }

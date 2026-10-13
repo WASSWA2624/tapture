@@ -141,37 +141,47 @@ void main() {
     }
   });
 
-  test('an unreadable reply is repaired once, then fails for good', () async {
-    final seeded = await record();
-    final ScriptedExtraction provider = ScriptedExtraction(<String>[
-      'Sure! Here you go: serial SN458923',
-      '{"fields": still broken',
-    ]);
+  test(
+    'an unreadable reply is repaired once, then falls back to manual review',
+    () async {
+      final seeded = await record();
+      final ScriptedExtraction provider = ScriptedExtraction(<String>[
+        'Sure! Here you go: serial SN458923',
+        '{"fields": still broken',
+      ]);
 
-    await expectLater(
-      throughOnline(seeded.fixture.worker(provider: provider), seeded.job),
-      throwsA(isA<CorruptionFailure>()),
-    );
+      await throughOnline(
+        seeded.fixture.worker(provider: provider),
+        seeded.job,
+      );
+      expect(
+        (await stored(seeded.fixture, seeded.job.id)).skipReason,
+        contains('manually'),
+      );
 
-    expect(provider.requests, hasLength(2));
-    expect(provider.requests.first.repairError, isNull);
-    expect(provider.requests.last.repairError, isNotNull);
-    final List<ProcessingResult> rows = await replies(seeded.fixture);
-    expect(
-      rows.map((ProcessingResult r) => r.rawResponse),
-      <String>['Sure! Here you go: serial SN458923', '{"fields": still broken'],
-      reason: 'a failed job keeps the raw responses for inspection',
-    );
-    expect(rows.every((ProcessingResult r) => !r.parsedOk), isTrue);
-    expect(
-      await seeded.fixture.db.select(seeded.fixture.db.recordFields).get(),
-      isEmpty,
-      reason: 'a hostile reply never reaches the record',
-    );
-    final RecordRow untouched = await seeded.fixture.storedRecord();
-    expect(untouched.status, seeded.fixture.record.status);
-    expect(untouched.rev, seeded.fixture.record.rev);
-  });
+      expect(provider.requests, hasLength(2));
+      expect(provider.requests.first.repairError, isNull);
+      expect(provider.requests.last.repairError, isNotNull);
+      final List<ProcessingResult> rows = await replies(seeded.fixture);
+      expect(
+        rows.map((ProcessingResult r) => r.rawResponse),
+        <String>[
+          'Sure! Here you go: serial SN458923',
+          '{"fields": still broken',
+        ],
+        reason: 'a failed job keeps the raw responses for inspection',
+      );
+      expect(rows.every((ProcessingResult r) => !r.parsedOk), isTrue);
+      expect(
+        await seeded.fixture.db.select(seeded.fixture.db.recordFields).get(),
+        isEmpty,
+        reason: 'a hostile reply never reaches the record',
+      );
+      final RecordRow untouched = await seeded.fixture.storedRecord();
+      expect(untouched.status, seeded.fixture.record.status);
+      expect(untouched.rev, seeded.fixture.record.rev);
+    },
+  );
 
   test('a repair that parses completes the stage', () async {
     final seeded = await record();
@@ -197,17 +207,11 @@ void main() {
           'repair malformed',
         ]),
       );
-      await expectLater(
-        throughOnline(worker, seeded.job),
-        throwsA(isA<CorruptionFailure>()),
-      );
+      await throughOnline(worker, seeded.job);
       final ScriptedExtraction resumed = ScriptedExtraction(<String>[_valid]);
-      await expectLater(
-        seeded.fixture
-            .worker(provider: resumed)
-            .perform(JobStage.online, seeded.job),
-        throwsA(isA<CorruptionFailure>()),
-      );
+      await seeded.fixture
+          .worker(provider: resumed)
+          .perform(JobStage.online, seeded.job);
       expect(
         resumed.requests,
         isEmpty,
@@ -293,29 +297,27 @@ void main() {
     expect(provider.requests, isEmpty, reason: 'identified with no call');
   });
 
-  test(
-    'offline analysis remains resumable without completing online work',
-    () async {
-      final seeded = await record();
-      final ScriptedExtraction provider = ScriptedExtraction(<String>[_valid]);
+  test('offline analysis completes local work for manual review', () async {
+    final seeded = await record();
+    final ScriptedExtraction provider = ScriptedExtraction(<String>[_valid]);
 
-      await expectLater(
-        throughOnline(
-          seeded.fixture.worker(
-            provider: provider,
-            settings: SettingsStore.fake(
-              stored: <String, Object?>{SettingKeys.offlineByChoice.name: true},
-            ),
-          ),
-          seeded.job,
-        ),
-        throwsA(isA<CancelledFailure>()),
-      );
+    final ProcessingStageWorker worker = seeded.fixture.worker(
+      provider: provider,
+      settings: SettingsStore.fake(
+        stored: <String, Object?>{SettingKeys.offlineByChoice.name: true},
+      ),
+    );
+    await throughOnline(worker, seeded.job);
+    await worker.perform(JobStage.validate, seeded.job);
 
-      expect(provider.requests, isEmpty);
-      expect((await stored(seeded.fixture, seeded.job.id)).stage, isEmpty);
-    },
-  );
+    expect(provider.requests, isEmpty);
+    expect((await stored(seeded.fixture, seeded.job.id)).stage, isEmpty);
+    expect((await seeded.fixture.storedRecord()).status, 'needsReview');
+    expect(
+      (await stored(seeded.fixture, seeded.job.id)).skipReason,
+      contains('manually'),
+    );
+  });
 
   test('a project with AI off skips online work', () async {
     final seeded = await record();
@@ -331,16 +333,22 @@ void main() {
     );
   });
 
-  test('an unavailable provider leaves online intent resumable', () async {
-    final seeded = await record();
+  test(
+    'an unavailable provider leaves local suggestions for manual review',
+    () async {
+      final seeded = await record();
 
-    await expectLater(
-      throughOnline(seeded.fixture.worker(), seeded.job),
-      throwsA(isA<CancelledFailure>()),
-    );
+      final ProcessingStageWorker worker = seeded.fixture.worker();
+      await throughOnline(worker, seeded.job);
+      await worker.perform(JobStage.validate, seeded.job);
 
-    expect((await stored(seeded.fixture, seeded.job.id)).status.name, 'queued');
-  });
+      expect(
+        (await stored(seeded.fixture, seeded.job.id)).status.name,
+        'queued',
+      );
+      expect((await seeded.fixture.storedRecord()).status, 'needsReview');
+    },
+  );
 
   test(
     'reaching the daily cap leaves the job queued with the reason',

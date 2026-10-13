@@ -17,8 +17,10 @@ import 'package:tapture/features/settings/settings.dart';
 
 import '../domain/job_retry.dart';
 import '../domain/processing_repository.dart';
+import 'processing_findings.dart';
 import 'processing_job_mapper.dart';
 import 'processing_queue_queries.dart';
+import 'record_bundle_loader.dart';
 
 /// The queue's state changes: enqueue, claim, complete, fail, stage
 /// progress, release, operator retry and re-processing a record.
@@ -127,74 +129,105 @@ final class ProcessingQueueWrites {
   /// status. Any other status (processing, archived, deleted), or a job a
   /// runner holds under a live lease, fails with a [ValidationFailure] and
   /// writes nothing.
-  Future<Result<String>> requeue(String recordId) async {
+  Future<Result<String>> requeue(
+    String recordId, {
+    List<String> fieldKeys = const <String>[],
+    bool retryChargeApproved = false,
+  }) async {
     if (recordId.isEmpty) {
       return const FailureResult<String>(_noRecord);
     }
-    final Result<Result<String>> outcome = await runInTransaction(
-      _db,
-      () async {
-        final sqlite.RecordRow? record =
-            await (_db.select(
-                  _db.records,
-                )..where((sqlite.$RecordsTable tbl) => tbl.id.equals(recordId)))
-                .getSingleOrNull();
-        if (record == null) {
-          return const FailureResult<String>(_recordGone);
-        }
-        final RecordStatus? status = RecordStatus.fromStored(record.status);
-        final bool moves = status != null && _requeueFrom.contains(status);
-        if (!moves && status != RecordStatus.queued) {
-          return FailureResult<String>(_notRequeueable(status));
-        }
-        final DateTime now = _clock.nowUtc();
-        final sqlite.ProcessingJobRow? job = await _jobFor(recordId);
-        if (job != null &&
-            job.status == jobs.ProcessingJobStatus.running &&
-            (job.leaseExpiresAt?.isAfter(now) ?? false)) {
-          return const FailureResult<String>(_runningNow);
-        }
-        final String jobId;
-        if (job == null) {
-          jobId = await _insert(recordId);
-        } else {
-          await _write(
-            job,
-            now,
-            sqlite.ProcessingCompanion(
-              stage: const Value<String>(''),
-              status: const Value<jobs.ProcessingJobStatus>(
-                jobs.ProcessingJobStatus.queued,
-              ),
-              attempts: const Value<int>(0),
-              lastError: const Value<String?>(null),
-              lastErrorMessage: const Value<String?>(null),
-              queuedAt: Value<DateTime>(now),
-              startedAt: const Value<DateTime?>(null),
-              finishedAt: const Value<DateTime?>(null),
-              leaseExpiresAt: const Value<DateTime?>(null),
-              provider: const Value<String?>(null),
-              model: const Value<String?>(null),
-              skipReason: const Value<String?>(null),
-              rejections: const Value<String?>(null),
+    final Result<Result<String>>
+    outcome = await runInTransaction(_db, () async {
+      final sqlite.RecordRow? record =
+          await (_db.select(_db.records)
+                ..where((sqlite.$RecordsTable tbl) => tbl.id.equals(recordId)))
+              .getSingleOrNull();
+      if (record == null) {
+        return const FailureResult<String>(_recordGone);
+      }
+      final RecordStatus? status = RecordStatus.fromStored(record.status);
+      final bool moves = status != null && _requeueFrom.contains(status);
+      if (!moves && status != RecordStatus.queued) {
+        return FailureResult<String>(_notRequeueable(status));
+      }
+      final List<String> scope = fieldKeys.toSet().toList()..sort();
+      if (scope.isNotEmpty) {
+        final bundle = await RecordBundleLoader(db: _db).load(recordId);
+        final Set<String> available = <String>{
+          for (final field in bundle.fields) field.fieldKey,
+        };
+        if (!bundle.templateResolved ||
+            scope.any((String key) => !available.contains(key))) {
+          return const FailureResult<String>(
+            ValidationFailure(
+              message: 'The selected fields are not in the captured template.',
+              recoveryAction: 'Open the current field list and select again.',
             ),
           );
-          jobId = job.id;
         }
-        if (moves) {
-          await writeRecordStatus(
-            _db,
-            recordId: recordId,
-            status: RecordStatus.queued.stored,
-            previousStatus: record.status,
-            clock: _clock,
-            deviceId: _deviceId,
-            reason: _moveReason(_requeueAction, jobId),
-          );
-        }
-        return Success<String>(jobId);
-      },
-    );
+      }
+      final DateTime now = _clock.nowUtc();
+      final sqlite.ProcessingJobRow? job = await _jobFor(recordId);
+      if (job != null &&
+          job.status == jobs.ProcessingJobStatus.running &&
+          (job.leaseExpiresAt?.isAfter(now) ?? false)) {
+        return const FailureResult<String>(_runningNow);
+      }
+      if (!retryChargeApproved &&
+          (await ProcessingFindings(
+            db: _db,
+          ).requiresRecordRetryApproval(recordId)).getOrThrow()) {
+        return const FailureResult<String>(
+          ValidationFailure(
+            message: 'A previous request may already have been charged.',
+            recoveryAction:
+                'Review the possible charge before retrying analysis.',
+          ),
+        );
+      }
+      final String jobId;
+      if (job == null) {
+        jobId = await _insert(recordId, fieldKeys: scope);
+      } else {
+        await _write(
+          job,
+          now,
+          sqlite.ProcessingCompanion(
+            fieldKeys: Value<String>(jsonEncode(scope)),
+            requestGeneration: Value<int>(job.requestGeneration + 1),
+            stage: const Value<String>(''),
+            status: const Value<jobs.ProcessingJobStatus>(
+              jobs.ProcessingJobStatus.queued,
+            ),
+            attempts: const Value<int>(0),
+            lastError: const Value<String?>(null),
+            lastErrorMessage: const Value<String?>(null),
+            queuedAt: Value<DateTime>(now),
+            startedAt: const Value<DateTime?>(null),
+            finishedAt: const Value<DateTime?>(null),
+            leaseExpiresAt: const Value<DateTime?>(null),
+            provider: const Value<String?>(null),
+            model: const Value<String?>(null),
+            skipReason: const Value<String?>(null),
+            rejections: const Value<String?>(null),
+          ),
+        );
+        jobId = job.id;
+      }
+      if (moves) {
+        await writeRecordStatus(
+          _db,
+          recordId: recordId,
+          status: RecordStatus.queued.stored,
+          previousStatus: record.status,
+          clock: _clock,
+          deviceId: _deviceId,
+          reason: _moveReason(_requeueAction, jobId),
+        );
+      }
+      return Success<String>(jobId);
+    });
     return outcome.fold(
       FailureResult<String>.new,
       (Result<String> inner) => inner,
@@ -214,6 +247,7 @@ final class ProcessingQueueWrites {
     String? projectId,
     List<String> groupLabels = const <String>[],
     JobStage? unfinished,
+    List<String> recordIds = const <String>[],
     Set<String> skip = const <String>{},
   }) {
     return runInTransaction(_db, () async {
@@ -241,6 +275,9 @@ final class ProcessingQueueWrites {
                 ]))
               .get();
       for (final sqlite.ProcessingJobRow candidate in candidates) {
+        if (recordIds.isNotEmpty && !recordIds.contains(candidate.recordId)) {
+          continue;
+        }
         if (skip.contains(candidate.id)) {
           continue;
         }
@@ -280,12 +317,13 @@ final class ProcessingQueueWrites {
 
   /// Marks [jobId] completed, drops its lease and writes the run to the
   /// record's history.
-  Future<Result<void>> complete(String jobId) {
+  Future<Result<void>> complete(String jobId, {int? expectedGeneration}) {
     return runInTransaction(_db, () async {
       final sqlite.ProcessingJobRow? row = await _one(jobId);
       if (row == null) {
         return;
       }
+      _checkGeneration(row, expectedGeneration);
       final DateTime now = _clock.nowUtc();
       await _write(
         row,
@@ -315,6 +353,7 @@ final class ProcessingQueueWrites {
     String reason, {
     required bool permanent,
     LocalizedMessage? localizedReason,
+    int? expectedGeneration,
   }) {
     return runInTransaction(_db, () async {
       final sqlite.ProcessingJobRow? row = await _one(jobId);
@@ -322,6 +361,7 @@ final class ProcessingQueueWrites {
         return;
       }
       final int attempts = row.attempts + 1;
+      _checkGeneration(row, expectedGeneration);
       final bool stop =
           permanent || attempts >= AppConstants.processing.maxAttempts;
       final DateTime now = _clock.nowUtc();
@@ -364,9 +404,14 @@ final class ProcessingQueueWrites {
   }
 
   /// Records [stage] as the last completed stage on [id].
-  Future<Result<ProcessingJob>> markStage(String id, JobStage stage) {
+  Future<Result<ProcessingJob>> markStage(
+    String id,
+    JobStage stage, {
+    int? expectedGeneration,
+  }) {
     return runInTransaction(_db, () async {
       final sqlite.ProcessingJobRow row = await _existing(id);
+      _checkGeneration(row, expectedGeneration);
       await _write(
         row,
         _clock.nowUtc(),
@@ -377,9 +422,10 @@ final class ProcessingQueueWrites {
   }
 
   /// Returns [id] to the queue, keeping its completed stages.
-  Future<Result<void>> release(String id) {
+  Future<Result<void>> release(String id, {int? expectedGeneration}) {
     return runInTransaction(_db, () async {
       final sqlite.ProcessingJobRow row = await _existing(id);
+      _checkGeneration(row, expectedGeneration);
       await _write(
         row,
         _clock.nowUtc(),
@@ -516,13 +562,21 @@ final class ProcessingQueueWrites {
     );
   }
 
-  Future<String> _insert(String recordId) async {
+  Future<String> _insert(
+    String recordId, {
+    List<String> fieldKeys = const <String>[],
+  }) async {
     final DateTime now = _clock.nowUtc();
     final Result<sqlite.ProcessingJobRow> written = await jobs
         .upsertProcessingJob(
           _db,
           row: ProcessingJobMapper.toCompanion(
-            ProcessingJob(id: _ids.newId(), recordId: recordId, queuedAt: now),
+            ProcessingJob(
+              id: _ids.newId(),
+              recordId: recordId,
+              fieldKeys: fieldKeys,
+              queuedAt: now,
+            ),
             queuedAt: now,
           ),
           clock: _clock,
@@ -605,6 +659,15 @@ final class ProcessingQueueWrites {
       throw _missingFailure;
     }
     return row;
+  }
+
+  void _checkGeneration(sqlite.ProcessingJobRow row, int? generation) {
+    if (generation != null && row.requestGeneration != generation) {
+      throw const CancelledFailure(
+        message: 'This processing attempt was replaced.',
+        recoveryAction: 'Continue the current processing attempt.',
+      );
+    }
   }
 
   Future<void> _write(

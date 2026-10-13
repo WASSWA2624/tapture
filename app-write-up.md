@@ -1255,6 +1255,9 @@ Deferred processing is a first-class mode.
 **Captured (unprocessed)**. No network or AI runs; capture continues immediately. A transcript produced live on
 the device while recording (§24) is captured evidence, not processing.
 
+**Save and analyse** first commits the same raw record and evidence durably, then queues the shared processing
+pipeline (§29). Failed or unavailable processing never rolls back saving or prevents the next capture.
+
 ### 26.2 The processing queue
 
 ```text
@@ -1277,6 +1280,11 @@ Process                                     Online
 - Show failure reasons and one-tap retry without harming raw records.
 - **Auto-process when connected** is opt-in, optionally **Wi-Fi only**.
 - While charging, opportunistically OCR unprocessed records locally before online calls.
+
+The project queue processes all waiting records or selected records/context groups. Record review offers
+**All fields**, **Selected fields** or one field using the same pipeline. Persist the selected field keys with
+the job; an empty selection means all eligible fields (§31). Resume retains its scope. Scoped runs may read the
+record's evidence together, but never propose, default or write fields outside that scope.
 
 ### 26.3 Mixed projects
 
@@ -1368,7 +1376,7 @@ Stage 0  Local preparation                       [offline]
 Stage 1  On-device extraction                    [offline]
          ML Kit OCR text + blocks
          barcode decoding
-         identifier pattern matching
+         template-label/block parameter mapping and identifier patterns
          reference-dataset lookup on any identifier found
       |
          --> If a reference match fills the record, the online stages
@@ -1393,9 +1401,21 @@ Stage 6  Confidence, evidence and provenance (§33)
 Record -> Needs review
 ```
 
-Stages 0–2, 4 and 5 work offline using local template-detection heuristics. Stage 2's optional network model and
-Stage 3 require connectivity and permission under the project's AI policy. When offline or online AI is disabled,
-use the heuristic fallback and skip online work. Projects may disable Stage 3 permanently.
+Stages 0–2, 4 and 5 work offline using local template-detection heuristics. Preparation and OCR supply evidence
+before the configured AI attempts incomplete eligible targets (§36); they do not require manual mapping first.
+Stage 2's optional network model and Stage 3 require connectivity and permission under the project's AI policy.
+Offline mode, disabled/unavailable AI or provider failure retains supported local proposals and opens manual
+review with a clear reason. Explicit cancellation and changed evidence, privacy or provider snapshots stop
+resumably and never apply late results. Projects may disable Stage 3 permanently.
+
+Local OCR maps explicit template labels and adjacent text blocks to compatible field types, retaining the exact
+snippet, photo and region (§33). Validate units, options and patterns before proposing. Ambiguous labels,
+unsupported values and conflicting candidates remain **Not detected** or review findings; never infer a
+parameter solely from a nearby number. An OCR failure cannot prevent configured vision AI or manual entry.
+Every shipped and custom template has an intelligent mapping profile derived from its captured-version fields, labels,
+aliases, types, units, options and validation. Reuse one mapping engine; verify catalogue profile completeness
+and template-specific examples. Custom templates receive profiles automatically; optional aliases improve label
+recognition. Label collisions and ambiguous values fail closed for manual correction.
 
 ### 29.1 Group analysis
 
@@ -1444,7 +1464,7 @@ Implement on-device ML Kit OCR, on-device speech (§30.4) and each configured on
 | Barcode / QR                           | Works                                                                                 |
 | Reference lookup and prefill           | Works                                                                                 |
 | Template detection                     | Works (heuristics)                                                                    |
-| Vision extraction and text refinement  | Queued for later (§26)                                                                |
+| Vision extraction and text refinement  | Local proposals and manual review continue (§29); online retry is explicit              |
 | Documentation preparation              | Import, supported local extraction, output mapping and prompt editing work (§77–§79) |
 | Documentation AI drafting              | Waits for connectivity and explicit run/resume; existing drafts remain editable (§80) |
 | Documentation rendering                | Existing draft/approved content renders locally to supported formats (§78); no fresh AI call |
@@ -2518,7 +2538,10 @@ Chromium (st and mt alike), the floor of whisper.cpp's per-state allocations; th
 
 Send only eligible extraction fields from the record's captured template version; require JSON matching their derived schema (§12.2). Automatic/source-bound, manual-only, hierarchy-bound, hidden, computed and consent fields never become extraction targets, including when empty. A merely stickable unbound field remains eligible. Verified/manual/typed values and populated automatic/context values remain protected independently of the template policy.
 
-Apply the same policy to local candidates, online targets and response schemas. Remove protected keys from structured AI context; approved raw photos/captions remain unchanged. Missing required protected values can require review without becoming AI targets. An empty eligible target set completes extraction without an AI request.
+Apply the same policy and durable job field scope (§26.2) to local candidates, online targets, response schemas,
+cached previews and proposal writes. Remove protected keys from structured AI context; approved raw
+photos/captions remain unchanged. Missing required protected values can require review without becoming AI
+targets. An empty eligible target set completes extraction without an AI request.
 
 Request (abridged):
 
@@ -2577,7 +2600,12 @@ Drop unknown keys, coerce types, reject malformed values
 Apply to the record as proposals (never as approved values)
 ```
 
-Store raw responses in `processing_results` for audit and reprocessing without re-uploading. Record rejected protected-key proposals before parser filtering; recheck captured policy and current value/provenance protection before cached replay and inside the application transaction. Changed ownership, policy, source values or provider selection invalidate an in-flight extraction snapshot. Validation retains the complete captured field list, including protected fields, so requiredness remains accurate.
+Store raw responses in `processing_results` for audit and reprocessing without re-uploading. Record rejected
+protected/out-of-scope proposals before parser filtering; recheck captured policy, scope and current
+value/provenance protection before cached replay, review acceptance and inside the application transaction.
+Changed ownership, policy, source values, scope, privacy or provider selection invalidate an in-flight extraction
+snapshot. Validation retains the complete captured field list, including protected and unselected fields, so
+requiredness remains accurate.
 
 Documentation's separate, versioned schema (§80.3) carries sections/table cells, stable output keys, evidence references, unresolved requirements and conflicts. Never force narrative documents into record fields. Responses remain local proposals; validation and rendering do not grant approval.
 
@@ -2597,6 +2625,10 @@ Rules:
 2. Review shows both versions through a one-tap toggle and per-field **Use raw** / **Use refined** switch; the operator decides authority.
 3. Where requested by the template, export both as paired columns such as `Description` and `Description (AI refined)`. This per-project option defaults on for refined fields.
 4. Apply the same pairing to record/photo captions, meeting notes and voice transcripts.
+
+For field values, `value_final = null` falls back to refined/raw; an explicit empty final value records a rejected
+parameter and stays empty in display, validation, identity, filtering and final-value exports. Preserve its raw
+candidate and evidence for inspection; neither rereading nor retrying processing restores it silently.
 
 ## 33. Confidence, Evidence & Provenance
 
@@ -2677,7 +2709,8 @@ Reprocessing proposes changes only to eligible unprotected values (§31). Verifi
 
 ## 36. Queue, Cost & Batching Control
 
-- **Skip online calls** when local extraction plus reference lookup fills every required field.
+- **Skip online calls** only when every selected eligible target, including optional fields, has a supported
+  high-confidence value. Having no required fields is not a reason to skip extraction.
 - **Two-stage processing**: cheap classification, template detection and OCR first; use a capable model only when needed.
 - **Group images** into one request per record (§29.1).
 - **Deduplicate** by perceptual hash; never analyse the same photo twice.
@@ -2700,6 +2733,11 @@ Documentation reuses runner primitives for run-owned typed jobs (§80), with exa
 - Tap values to edit and percentages to open evidence (§33).
 - **Approve & next** opens the next unreviewed record.
 - **Re-analyse** reruns processing while preserving verified values (§35.3).
+- Processing proposals expose **Accept selected** and **Reject** before human approval, including initial
+  extraction and re-analysis. Show each proposed parameter beside its field label/current value and evidence;
+  unresolved values offer the existing field editor. Persist decisions locally with audit, preserve original
+  evidence and recheck the exact proposal snapshot before accepting. Rejection never confirms a mapped value.
+  Reopened review restores pending proposals and decisions; accepting parameters does not approve the record.
 
 ## 38. Editing Saved Records
 
@@ -4042,8 +4080,8 @@ ceilings are not deployed defaults or provider pricing. Raw audio is excluded; s
 Use record (§31) or typed Documentation (§80.3) schemas. Validate request envelopes, capabilities, permissions and budgets; call providers and return structured proposals. Keep parsing, chunk selection, orchestration, review and rendering on-device; expose no persistent document workspace or provider file store. Queue unavailable proxy calls (§70.4). Organisation-permitted device-held keys support emergency direct calls.
 
 Record processing submits a versioned project evidence snapshot per record/batch. Content hashes cover the captured
-template, context, original/edited evidence, explicit caption/photo/audio/transcript relationships and selected
-provider/model. Durable local checkpoints preserve the exact source snapshot before dispatch; unchanged inputs
+template, context, original/edited evidence, explicit caption/photo/audio/transcript relationships, selected field
+scope and selected provider/model. Durable local checkpoints preserve the exact source snapshot before dispatch; unchanged inputs
 reuse valid local responses. Source changes invalidate cached extraction and prevent stale proposals. Provider
 evidence must reference supplied source IDs; missing values, conflicting candidates and uncertain grouping remain
 review findings. Only a person approves reusable records, and Excel/Word/text rendering uses those local records.

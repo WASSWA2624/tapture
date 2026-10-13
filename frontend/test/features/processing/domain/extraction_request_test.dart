@@ -53,7 +53,10 @@ void main() {
         ..createSync(recursive: true)
         ..writeAsStringSync('$encoded\n');
     }
-    expect(encoded, golden.readAsStringSync().trimRight());
+    expect(
+      encoded,
+      golden.readAsStringSync().replaceAll('\r\n', '\n').trimRight(),
+    );
   });
 
   test('the request carries the explicit rules as data', () {
@@ -64,6 +67,35 @@ void main() {
       allOf(contains('supported'), contains('null'), contains('JSON')),
     );
   });
+
+  test(
+    'custom field labels and units remain quoted metadata beside stable response keys',
+    () {
+      final ExtractionRequest base = request();
+      final ExtractionRequest hinted = ExtractionRequest(
+        template: base.template,
+        fields: base.fields,
+        context: base.context,
+        predefinedRows: base.predefinedRows,
+        caption: base.caption,
+        ocrText: base.ocrText,
+        images: base.images,
+        fieldHints: const <String, Map<String, Object?>>{
+          'serial_number': <String, Object?>{
+            'label': 'Manufacturer serial',
+            'unit': 'custom',
+            'key': 'hostile-key',
+          },
+        },
+      );
+      final Map<String, Object?> schema = hinted.toService().fieldSchema.first;
+      expect(schema['key'], 'serial_number');
+      expect(schema['label'], 'Manufacturer serial');
+      expect(schema['unit'], 'custom');
+      expect(hinted.toService().fieldLabels.first, 'serial_number');
+      expect(hinted.rules, ExtractionRequest.defaultRules);
+    },
+  );
 
   test('hostile caption text stays a quoted value, not an instruction', () {
     final Map<String, Object?> json = request().toJson();

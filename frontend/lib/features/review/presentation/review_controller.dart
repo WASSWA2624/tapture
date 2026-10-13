@@ -3,14 +3,12 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/processing/processing.dart'
     show processingRepositoryProvider;
-import 'package:tapture/features/records/records.dart'
-    show RecordValueEdit, recordRepositoryProvider;
 
 import '../domain/approval_outcome.dart';
 import '../review.dart' show reviewRepositoryProvider;
 import 'raw_refined_toggle.dart' show ValueSide;
 import 'review_approver.dart' show reviewApproverProvider;
-import 'review_providers.dart' show reviewSideProvider;
+import 'review_providers.dart' show reviewProposalsProvider, reviewSideProvider;
 import 'review_state.dart';
 
 export 'review_state.dart';
@@ -83,11 +81,18 @@ final class ReviewController extends Notifier<ReviewState> {
 
   /// Queues the record to be processed again. Its human work stays: what
   /// processing proposes afterwards is offered, never applied.
-  Future<Result<void>> reanalyse() async {
+  Future<Result<void>> reanalyse({
+    List<String> fieldKeys = const <String>[],
+    bool retryChargeApproved = false,
+  }) async {
     final Result<void> queued = await _run(() async {
       final Result<String> job = await ref
           .read(processingRepositoryProvider)
-          .requeue(recordId);
+          .requeue(
+            recordId,
+            fieldKeys: fieldKeys,
+            retryChargeApproved: retryChargeApproved,
+          );
       return job.map<void>((String _) {});
     });
     if (queued is Success<void> && ref.mounted) {
@@ -105,26 +110,31 @@ final class ReviewController extends Notifier<ReviewState> {
     state = state.copyWith(accepted: next);
   }
 
-  /// Writes exactly the [accepted] proposals through the value editor's
-  /// store, then closes the diff.
-  Future<Result<void>> applyProposals(Map<String, String> accepted) async {
+  /// Selects every currently displayed proposal in one action.
+  void selectProposals(Iterable<String> fieldKeys) {
+    state = state.copyWith(accepted: Set<String>.of(fieldKeys));
+  }
+
+  /// Commits the exact accepted and rejected proposals, then closes the diff.
+  Future<Result<void>> applyProposals(
+    Map<String, String> accepted, {
+    Map<String, String> rejected = const <String, String>{},
+  }) async {
     final Result<void> written = await _run(
       () => ref
-          .read(recordRepositoryProvider)
-          .editValues(recordId, <RecordValueEdit>[
-            for (final MapEntry<String, String> proposal in accepted.entries)
-              (fieldKey: proposal.key, value: proposal.value),
-          ]),
+          .read(reviewRepositoryProvider)
+          .resolveProposals(recordId, accepted: accepted, rejected: rejected),
     );
     if (written is Success<void> && ref.mounted) {
+      ref.invalidate(reviewProposalsProvider(recordId));
       state = state.copyWith(reanalysing: false, accepted: const <String>{});
     }
     return written;
   }
 
-  /// Declines every proposal: the record stays exactly as it was.
-  void declineProposals() {
-    state = state.copyWith(reanalysing: false, accepted: const <String>{});
+  /// Rejects the displayed suggestions while preserving raw and human values.
+  Future<Result<void>> declineProposals(Map<String, String> proposals) {
+    return applyProposals(const <String, String>{}, rejected: proposals);
   }
 
   /// Clears the failure banner.

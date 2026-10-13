@@ -26,6 +26,9 @@ class Processing extends Table with MergeColumns {
   /// Record this job will process.
   TextColumn get recordId => text()();
 
+  /// Durable extraction scope. Empty JSON means all eligible fields.
+  TextColumn get fieldKeys => text().withDefault(const Constant('[]'))();
+
   /// Last stage the runner reached, stored as data.
   TextColumn get stage => text()();
 

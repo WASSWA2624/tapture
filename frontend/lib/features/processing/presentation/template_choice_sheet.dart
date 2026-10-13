@@ -10,7 +10,27 @@ import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 
+import '../domain/template_choice_needed.dart';
 import 'template_choice_pin.dart';
+
+/// Uses the same template recovery for project batches and one record.
+Future<TemplateChoice?> chooseProcessingTemplate(
+  BuildContext context,
+  TemplateChoiceNeeded needed,
+) async {
+  if (!context.mounted) return null;
+  final picked = await showTemplateChoice(
+    context,
+    options: <String>[for (final option in needed.shortlist) option.label],
+  );
+  if (picked == null || picked.template == null) return null;
+  for (final option in needed.shortlist) {
+    if (option.label == picked.template) {
+      return (templateId: option.templateId, pin: picked.pin);
+    }
+  }
+  return null;
+}
 
 /// The operator's choice when detection cannot decide.
 ///

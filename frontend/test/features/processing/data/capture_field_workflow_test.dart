@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/core/concurrency/cancellation_token.dart';
 import 'package:tapture/core/db/app_database.dart' hide CaptureSession;
-import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/capture/data/capture_record_writer.dart';
@@ -148,13 +147,7 @@ void main() {
         },
       });
       final ScriptedExtraction provider = ScriptedExtraction(<String>[hostile]);
-      await _process(
-        fixture,
-        id,
-        provider,
-        settings,
-        expectOfflineQueue: offline,
-      );
+      await _process(fixture, id, provider, settings);
       final Map<String, RecordField> processed = await _fields(fixture, id);
       for (final String key in initial.keys) {
         expect(processed[key]!.valueRaw, initial[key]!.valueRaw, reason: key);
@@ -279,9 +272,8 @@ Future<void> _process(
   ProcessingFixture fixture,
   String recordId,
   ScriptedExtraction provider,
-  SettingsStore settings, {
-  bool expectOfflineQueue = false,
-}) async {
+  SettingsStore settings,
+) async {
   final ProcessingRepositoryImpl repository = ProcessingRepositoryImpl(
     db: fixture.db,
     clock: fixture.clock,
@@ -301,24 +293,6 @@ Future<void> _process(
       return current;
     },
   );
-  if (expectOfflineQueue) {
-    await expectLater(
-      runner.run(job, token: CancellationToken()),
-      throwsA(isA<CancelledFailure>()),
-    );
-    (await repository.release(id)).getOrThrow();
-    final ProcessingJob queued = (await repository.byId(id)).getOrThrow()!;
-    expect(
-      queued.completedStages,
-      containsAll(<JobStage>[
-        JobStage.prepare,
-        JobStage.onDevice,
-        JobStage.detect,
-      ]),
-    );
-    expect(queued.completedStages, isNot(contains(JobStage.online)));
-    return;
-  }
   final JobRun result = await runner.run(job, token: CancellationToken());
   expect(result.cancelled, isFalse);
   expect(result.paused, isFalse);

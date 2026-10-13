@@ -77,6 +77,7 @@ abstract final class ProcessingSnapshot {
     'recordId': bundle.record.id,
     'templateVersion': bundle.record.templateVersion,
     'templateResolved': bundle.templateResolved,
+    'targetFieldKeys': List<String>.of(bundle.targetFieldKeys)..sort(),
     'currentTemplate': (bundle.currentTemplate ?? bundle.template).toJson(),
     'context': bundle.record.contextJson,
     'template': bundle.template.toJson(),
@@ -90,15 +91,22 @@ abstract final class ProcessingSnapshot {
     // Only their local hash leaves this reader; no field values are sent.
     'protectedValues': <Map<String, Object?>>[
       for (final RecordField field in _orderedValues(bundle))
-        <String, Object?>{
-          'key': field.fieldKey,
-          'source': field.source,
-          'raw': field.valueRaw,
-          'refined': field.valueRefined,
-          'final': field.valueFinal,
-          'verified': field.verified,
-          'retired': field.retiredAt?.toIso8601String(),
-        },
+        if (field.verified ||
+            field.valueFinal != null ||
+            !const <String>{
+              'ocr',
+              'extraction',
+              'default',
+            }.contains(field.source.toLowerCase()))
+          <String, Object?>{
+            'key': field.fieldKey,
+            'source': field.source,
+            'raw': field.valueRaw,
+            'refined': field.valueRefined,
+            'final': field.valueFinal,
+            'verified': field.verified,
+            'retired': field.retiredAt?.toIso8601String(),
+          },
     ],
     'photos': <Map<String, Object?>>[
       for (final Photo photo in bundle.photos)

@@ -15,6 +15,7 @@ abstract final class ProcessingJobMapper {
     return ProcessingJob(
       id: row.id,
       recordId: row.recordId,
+      fieldKeys: _fieldKeys(row.fieldKeys),
       stage: row.stage,
       attemptCount: row.attempts,
       requestGeneration: row.requestGeneration,
@@ -42,6 +43,7 @@ abstract final class ProcessingJobMapper {
     return sqlite.ProcessingCompanion(
       id: Value<String>(job.id),
       recordId: Value<String>(job.recordId),
+      fieldKeys: Value<String>(jsonEncode(job.fieldKeys)),
       stage: Value<String>(job.stage),
       status: Value<jobs.ProcessingJobStatus>(rowStatus(job.status)),
       attempts: Value<int>(job.attemptCount),
@@ -123,4 +125,18 @@ List<String> _rejections(String? raw) {
     return const <String>[];
   }
   return const <String>[];
+}
+
+/// Invalid scopes fail closed rather than silently broadening to every field.
+List<String> _fieldKeys(String raw) {
+  try {
+    final Object? decoded = jsonDecode(raw);
+    if (decoded is List &&
+        decoded.every((Object? value) => value is String && value.isNotEmpty)) {
+      return List<String>.unmodifiable(decoded.cast<String>().toSet());
+    }
+  } on FormatException {
+    return const <String>[''];
+  }
+  return const <String>[''];
 }

@@ -13,6 +13,7 @@ import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
+import 'package:tapture/features/records/domain/domain.dart' show RecordValue;
 import 'package:tapture/features/templates/templates.dart';
 
 import '../domain/project_repository.dart';
@@ -204,7 +205,7 @@ typedef RecordEditEntry = ({
 
 /// The fields [row] can be edited in: [template]'s visible, person-entered
 /// fields in template order, then any stored value the template no longer
-/// declares. Each starts from the refined value, falling back to the raw one.
+/// declares. Each starts from the current displayed value.
 List<RecordEditEntry> recordEditEntries({
   required TemplateDef? template,
   required ProjectRecordRow row,
@@ -254,7 +255,12 @@ String _initial(ProjectRecordFieldValue? value) {
   if (value == null) {
     return '';
   }
-  return value.refined.isNotEmpty ? value.refined : value.raw;
+  return RecordValue(
+    fieldKey: value.fieldKey,
+    raw: value.raw,
+    refined: value.refined,
+    approved: value.approved,
+  ).display;
 }
 
 TextInputType? _keyboardFor(FieldType type) {

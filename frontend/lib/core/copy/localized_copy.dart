@@ -10,6 +10,38 @@ import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 /// never pass through here (FE-L10N-07).
 /// Copy resolved against one app's inherited locale. User data passes unchanged.
 final class LocalizedCopy {
+  /// Processes all eligible fields on the record.
+  String get processingAllFields => _catalog.processingAllFields;
+
+  /// Processes only the checked fields.
+  String get processingSelectedFields => _catalog.processingSelectedFields;
+
+  /// Explains suggested values and the manual fallback.
+  String get processingScopeHelp => _catalog.processingScopeHelp;
+
+  /// AI unavailable; local evidence remains usable.
+  String get processingManualFallback => _catalog.processingManualFallback;
+
+  /// Manual recovery after an unavailable AI attempt.
+  String get processingManualFallbackRecovery =>
+      _catalog.processingManualFallbackRecovery;
+
+  /// A proposal selection is no longer current.
+  String get reviewProposalsChanged => _catalog.reviewProposalsChanged;
+
+  /// Recovery for a stale proposal selection.
+  String get reviewProposalsChangedRecovery =>
+      _catalog.reviewProposalsChangedRecovery;
+
+  /// Explains selective acceptance and rejection.
+  String get reviewProposalsHelp => _catalog.reviewProposalsHelp;
+
+  /// Confirms durable rejection without losing originals.
+  String get reviewProposalsRejected => _catalog.reviewProposalsRejected;
+
+  /// Processes one corresponding field.
+  String get reviewAnalyseField => _catalog.reviewAnalyseField;
+
   /// Delete permanently
   String get recycleDeletePermanent => _catalog.recycleDeletePermanent;
 

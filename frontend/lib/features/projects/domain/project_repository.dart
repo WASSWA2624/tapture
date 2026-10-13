@@ -120,8 +120,8 @@ typedef ProjectListRow = ({
 typedef ProjectRecordFieldValue = ({
   String fieldKey,
   String raw,
-  String refined,
-  String approved,
+  String? refined,
+  String? approved,
 });
 
 /// One stored photo, located for a thumbnail. [storagePath] is relative to

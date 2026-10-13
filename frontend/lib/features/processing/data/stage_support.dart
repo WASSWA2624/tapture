@@ -40,6 +40,25 @@ abstract final class StageSupport {
     );
   }
 
+  /// The captured field's readable meaning and constraints, quoted as data.
+  static Map<String, Object?> extractionHints(TemplateField field) {
+    final Object? constraints = json(field.validation);
+    return <String, Object?>{
+      'label': field.label,
+      if (field.unit case final String unit) 'unit': unit,
+      'validation': <String, Object?>{
+        for (final String key in const <String>[
+          'min',
+          'max',
+          'minLength',
+          'maxLength',
+        ])
+          if (constraints is Map<String, Object?> && constraints[key] != null)
+            key: constraints[key],
+      },
+    };
+  }
+
   /// The schema a response is parsed against, one entry per field.
   static List<FieldSchema> schema(List<TemplateField> fields) {
     return <FieldSchema>[
@@ -103,7 +122,10 @@ abstract final class StageSupport {
     final Set<String> protected = protectedKeys(bundle);
     return <TemplateField>[
       for (final TemplateField field in bundle.fields)
-        if (!protected.contains(field.fieldKey)) field,
+        if (!protected.contains(field.fieldKey) &&
+            (bundle.targetFieldKeys.isEmpty ||
+                bundle.targetFieldKeys.contains(field.fieldKey)))
+          field,
     ];
   }
 
@@ -187,22 +209,7 @@ abstract final class StageSupport {
     if (decoded is! List) {
       return const <ChoiceOption>[];
     }
-    return <ChoiceOption>[
-      for (final Object? item in decoded)
-        if (item is String)
-          (label: item, code: null, aliases: const <String>[])
-        else if (item is Map && item['label'] is String)
-          (
-            label: item['label'] as String,
-            code: item['code'] is String ? item['code'] as String : null,
-            aliases: item['aliases'] is List
-                ? <String>[
-                    for (final Object? alias in item['aliases'] as List)
-                      if (alias is String) alias,
-                  ]
-                : const <String>[],
-          ),
-    ];
+    return Choices.options(decoded);
   }
 
   /// [raw] decoded, or null when it is not JSON.

@@ -20,7 +20,7 @@ final Set<int> _stepsTested = <int>{};
 
 /// The newest schema this suite's step tests were written against. A step
 /// past it has no test until one is declared with [_stepTest].
-const int _releasedHead = 33;
+const int _releasedHead = 34;
 
 /// Declares a test of the migration step to [version]. Every step must have
 /// one: typing a number into another test's title does not count.
@@ -33,11 +33,42 @@ void main() {
   tearDown(clearExportAcknowledgement);
 
   _stepTest(
+    34,
+    'adds an all-fields scope without changing existing jobs',
+    () async {
+      final AppDatabase db = AppDatabase.memory();
+      addTearDown(db.close);
+      await db.customSelect('SELECT 1').get();
+      await db.customStatement(
+        'ALTER TABLE processing_jobs DROP COLUMN field_keys',
+      );
+      await seedRow(db, 'processing_jobs', <String, Object?>{
+        'id': 'scoped-upgrade',
+        'record_id': 'record',
+        'stage': 'onDevice',
+        'status': 'queued',
+        'queued_at': 1,
+        'request_generation': 3,
+      });
+      await migrateToV34(Migrator(db), db);
+      await migrateToV34(Migrator(db), db);
+      final QueryRow job = await db
+          .customSelect(
+            "SELECT * FROM processing_jobs WHERE id = 'scoped-upgrade'",
+          )
+          .getSingle();
+      expect(job.read<String>('field_keys'), '[]');
+      expect(job.read<int>('request_generation'), 3);
+      expect(job.read<String>('stage'), 'onDevice');
+    },
+  );
+
+  _stepTest(
     33,
     'installs the transcript version-vector triggers, seeds the clocks of '
     'transcripts already written, keeps every row and can run twice',
     () async {
-      expect(kSchemaVersion, 33);
+      expect(kSchemaVersion, 34);
       expect(kDestructiveSteps, isEmpty);
       final AppDatabase db = AppDatabase.memory();
       addTearDown(db.close);

@@ -283,6 +283,66 @@ abstract class AppLocalizations {
   /// **'Clear after: {autoClear} · Movement: {movement}'**
   String settingsProjectContextsSummary(String autoClear, String movement);
 
+  /// Analyses all eligible fields in the current record.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyse all fields'**
+  String get processingAllFields;
+
+  /// Analyses the checked fields, including a single checked field.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyse selected fields'**
+  String get processingSelectedFields;
+
+  /// Explains proposal review and the manual fallback in the field scope selector.
+  ///
+  /// In en, this message translates to:
+  /// **'AI reads the evidence and suggests values for your template. Review each suggestion before keeping it. You can enter values manually at any time.'**
+  String get processingScopeHelp;
+
+  /// Processing continues with local evidence when AI cannot be reached.
+  ///
+  /// In en, this message translates to:
+  /// **'AI analysis is unavailable. Review detected values or enter missing values manually.'**
+  String get processingManualFallback;
+
+  /// Recovery for unavailable AI processing.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the record to review suggestions or edit its fields.'**
+  String get processingManualFallbackRecovery;
+
+  /// Rejects stale acceptance or rejection without losing evidence.
+  ///
+  /// In en, this message translates to:
+  /// **'These suggestions have changed since they were shown.'**
+  String get reviewProposalsChanged;
+
+  /// Recovery for a changed proposal selection.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the latest suggestions and try again.'**
+  String get reviewProposalsChangedRecovery;
+
+  /// Makes selective proposal acceptance and rejection explicit.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the suggested values to keep. Applying rejects the remaining suggestions. Your original evidence is preserved.'**
+  String get reviewProposalsHelp;
+
+  /// Confirms durable rejection of proposed values.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions rejected. Your original evidence is preserved.'**
+  String get reviewProposalsRejected;
+
+  /// Processes only the corresponding template field.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyse this field'**
+  String get reviewAnalyseField;
+
   /// Local image recognition has no browser implementation.
   ///
   /// In en, this message translates to:

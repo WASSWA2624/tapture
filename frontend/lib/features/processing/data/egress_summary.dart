@@ -39,7 +39,10 @@ final class EgressSummary {
 
   /// The selected accounts, models and approved limits covered by a preview.
   Future<String> identity(ProcessingJob job) async {
-    final RecordBundle bundle = await _loader.load(job.recordId);
+    final RecordBundle bundle = await _loader.load(
+      job.recordId,
+      fieldKeys: job.fieldKeys,
+    );
     return _settings.egressScope(bundle);
   }
 
@@ -53,7 +56,10 @@ final class EgressSummary {
   Future<({int imageCount, int payloadBytes})> summarise(
     ProcessingJob job,
   ) async {
-    final RecordBundle bundle = await _loader.load(job.recordId);
+    final RecordBundle bundle = await _loader.load(
+      job.recordId,
+      fieldKeys: job.fieldKeys,
+    );
     final ProjectSettingsResolved settings = _settings.project(bundle);
     if (OnlineSkipRule.reason(await _completion.forOnline(job, bundle)) !=
             null ||

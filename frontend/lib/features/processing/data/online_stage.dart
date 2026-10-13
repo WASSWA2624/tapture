@@ -58,6 +58,7 @@ final class OnlineStage {
 
   /// Rebuilds identity without dispatching; proposal/cache readers use it too.
   Future<String> currentRevision(ProcessingJob job, RecordBundle bundle) async {
+    await _loader?.checkGeneration(job);
     final selection = _settings.selection(bundle, AiOperation.extractFields);
     return _revision(
       bundle,
@@ -73,7 +74,7 @@ final class OnlineStage {
     );
   }
 
-  /// Offline or unavailable analysis remains queued, with local evidence intact.
+  /// Unavailable online analysis falls back to local proposals and manual review.
   Future<void> run(
     ProcessingJob job,
     RecordBundle bundle,
@@ -83,35 +84,54 @@ final class OnlineStage {
     final List<SkipField> local = await _completion.forOnline(job, bundle);
     final String? localReason = OnlineSkipRule.reason(local);
     if (localReason != null) {
-      await _writes.setSkip(job.id, localReason);
+      await _writes.setSkip(
+        job.id,
+        localReason,
+        expectedGeneration: job.requestGeneration,
+      );
       return;
     }
     if (_settings.read(SettingKeys.offlineByChoice)) {
-      throw const CancelledFailure(
-        message: 'Analysis is queued while offline mode is on.',
-        recoveryAction: 'Continue capturing, then resume analysis when ready.',
+      await _writes.setSkip(
+        job.id,
+        Copy.processingManualFallback,
+        expectedGeneration: job.requestGeneration,
       );
+      await _writes.appendRejections(job.id, <String>[
+        Copy.processingManualFallback,
+      ], expectedGeneration: job.requestGeneration);
+      return;
     }
     final ProjectSettingsResolved projectSettings = _settings.project(bundle);
     if (!projectSettings.aiEnabled) {
-      await _writes.setSkip(job.id, 'Online analysis is off for this project.');
+      await _writes.setSkip(
+        job.id,
+        'Online analysis is off for this project.',
+        expectedGeneration: job.requestGeneration,
+      );
       return;
     }
     final selection = _settings.selection(bundle, AiOperation.extractFields);
     final AiService service = selection.provider.service;
     if (!service.isAvailable || selection.fellBack) {
-      throw const CancelledFailure(
-        message: 'The selected analysis provider or model is unavailable.',
-        recoveryAction:
-            'Check the selection, then resume this queued analysis.',
+      await _writes.appendRejections(job.id, <String>[
+        Copy.processingManualFallback,
+      ], expectedGeneration: job.requestGeneration);
+      await _writes.setSkip(
+        job.id,
+        Copy.processingManualFallback,
+        expectedGeneration: job.requestGeneration,
       );
+      return;
     }
     final String scope = _settings.egressScope(bundle);
     final double approvedMaxCost = _settings.read(SettingKeys.aiRequestMaxCost);
     Future<void> verifyScope() async {
       _check(cancel);
+      await _loader?.checkGeneration(job);
       final RecordBundle current =
-          await _loader?.load(bundle.record.id) ?? bundle;
+          await _loader?.load(bundle.record.id, fieldKeys: job.fieldKeys) ??
+          bundle;
       if (_settings.egressScope(current) != scope) {
         throw const CancelledFailure(
           message: 'The selected account, model or spending limit changed.',
@@ -120,7 +140,7 @@ final class OnlineStage {
       }
     }
 
-    if (_settings.read(SettingKeys.aiRefineCaptions)) {
+    if (job.fieldKeys.isEmpty && _settings.read(SettingKeys.aiRefineCaptions)) {
       final List<String> rejected = await _captionRefinement.refine(
         jobId: job.id,
         job: job,
@@ -130,11 +150,23 @@ final class OnlineStage {
         beforeRequest: () async {
           _check(cancel);
           await verifyScope();
-          await _budget.require(job.id, bundle);
+          await _budget.require(
+            job.id,
+            bundle,
+            expectedGeneration: job.requestGeneration,
+          );
         },
       );
-      if (rejected.isNotEmpty) await _writes.appendRejections(job.id, rejected);
-      bundle = await _loader?.load(bundle.record.id) ?? bundle;
+      if (rejected.isNotEmpty) {
+        await _writes.appendRejections(
+          job.id,
+          rejected,
+          expectedGeneration: job.requestGeneration,
+        );
+      }
+      bundle =
+          await _loader?.load(bundle.record.id, fieldKeys: job.fieldKeys) ??
+          bundle;
     }
     _check(cancel);
     final String privacyRevision = await _paths.privacyRevision(bundle);
@@ -197,6 +229,12 @@ final class OnlineStage {
           ))
             StageSupport.extractionField(field),
         ],
+        fieldHints: <String, Map<String, Object?>>{
+          for (final TemplateField field in StageSupport.extractionFields(
+            bundle,
+          ))
+            field.fieldKey: StageSupport.extractionHints(field),
+        },
         context: StageSupport.extractionContext(bundle),
         predefinedRows: <String>[
           for (final TemplateRow row in bundle.rows) row.label,
@@ -222,8 +260,10 @@ final class OnlineStage {
         approvedMaxCost: approvedMaxCost,
         isCurrent: () async {
           _check(cancel);
+          await _loader?.checkGeneration(job);
           final RecordBundle current =
-              await _loader?.load(bundle.record.id) ?? bundle;
+              await _loader?.load(bundle.record.id, fieldKeys: job.fieldKeys) ??
+              bundle;
           if (_settings.egressScope(current) != scope) return false;
           final choice = _settings.selection(
             current,

@@ -9,7 +9,8 @@ export 'data/proposal_preview.dart'
 export 'domain/confidence.dart';
 export 'domain/processing_repository.dart';
 export 'presentation/confidence_indicator.dart';
-export 'presentation/egress_preview_dialog.dart' show showEgressPreview;
+export 'presentation/egress_preview_dialog.dart'
+    show confirmProcessingEgress, showEgressPreview;
 export 'presentation/processing_controller.dart'
     show
         processingControllerProvider,
@@ -22,5 +23,8 @@ export 'presentation/processing_findings_providers.dart'
         processingUsageStoreProvider,
         queueSpendProvider;
 export 'presentation/queue_providers.dart' show processingRepositoryProvider;
+export 'presentation/record_processing.dart';
+export 'presentation/record_processing_retry.dart';
+export 'presentation/record_processing_scope.dart';
 export 'presentation/unattended_processing.dart'
     show unattendedProcessingProvider;

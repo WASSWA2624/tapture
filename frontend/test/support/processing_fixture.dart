@@ -336,16 +336,23 @@ final class ProcessingFixture {
 
   /// Queues the record and returns its job.
   Future<ProcessingJob> job() async {
-    final String id = _ok(
-      await ProcessingRepositoryImpl(
-        db: db,
-        clock: clock,
-        deviceId: 'device-a',
-        ids: ids,
-        settings: SettingsStore.fake(),
-      ).enqueue(record.id),
+    final ProcessingRepositoryImpl repository = ProcessingRepositoryImpl(
+      db: db,
+      clock: clock,
+      deviceId: 'device-a',
+      ids: ids,
+      settings: SettingsStore.fake(),
     );
-    return ProcessingJob(id: id, recordId: record.id);
+    final String id = _ok(await repository.enqueue(record.id));
+    final ProcessingJob? stored = _ok<ProcessingJob?>(
+      await repository.byId(id),
+    );
+    if (stored == null) {
+      throw TestFailure(
+        'The queued fixture job must be persisted before processing.',
+      );
+    }
+    return stored;
   }
 
   /// The stored responses, as the stages read and write them.

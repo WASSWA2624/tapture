@@ -21,6 +21,15 @@ abstract interface class ReviewRepository {
     String fieldKey,
     String value,
   );
+
+  /// Resolves the displayed proposals atomically. Values identify the exact
+  /// proposal reviewed, so a changed reading is never accepted by accident.
+  /// Accepted values become final; rejected readings retain their raw evidence.
+  Future<Result<void>> resolveProposals(
+    String recordId, {
+    Map<String, String> accepted = const <String, String>{},
+    Map<String, String> rejected = const <String, String>{},
+  });
 }
 
 /// Where one piece of evidence came from.

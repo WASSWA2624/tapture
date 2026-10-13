@@ -121,6 +121,10 @@ final class FakeProcessingRepository implements ProcessingRepository {
 
   @override
   Future<Result<ProcessingJob>> save(ProcessingJob job) async {
+    final ProcessingJob? current = _rows[job.id];
+    if (current != null && current.requestGeneration != job.requestGeneration) {
+      return const FailureResult<ProcessingJob>(_replaced);
+    }
     if (job.recordId.isEmpty) {
       return const FailureResult<ProcessingJob>(
         ValidationFailure(
@@ -174,7 +178,11 @@ final class FakeProcessingRepository implements ProcessingRepository {
   final List<String> requeued = <String>[];
 
   @override
-  Future<Result<String>> requeue(String recordId) async {
+  Future<Result<String>> requeue(
+    String recordId, {
+    List<String> fieldKeys = const <String>[],
+    bool retryChargeApproved = false,
+  }) async {
     if (recordId.isEmpty) {
       return const FailureResult<String>(_noRecord);
     }
@@ -204,7 +212,13 @@ final class FakeProcessingRepository implements ProcessingRepository {
       return const FailureResult<String>(_runningNow);
     }
     final String id = existing?.id ?? 'job-${_next++}';
-    _rows[id] = ProcessingJob(id: id, recordId: recordId, queuedAt: now);
+    _rows[id] = ProcessingJob(
+      id: id,
+      recordId: recordId,
+      fieldKeys: List<String>.unmodifiable(fieldKeys),
+      requestGeneration: existing == null ? 0 : existing.requestGeneration + 1,
+      queuedAt: now,
+    );
     if (status != null) {
       recordStatuses[recordId] = RecordStatus.queued;
     }
@@ -219,6 +233,7 @@ final class FakeProcessingRepository implements ProcessingRepository {
     String? projectId,
     List<String> groupLabels = const <String>[],
     JobStage? unfinished,
+    List<String> recordIds = const <String>[],
     Set<String> skip = const <String>{},
   }) async {
     final DateTime now = DateTime.now().toUtc();
@@ -241,6 +256,9 @@ final class FakeProcessingRepository implements ProcessingRepository {
     }
     final List<ProcessingJob> ready =
         _rows.values.where((ProcessingJob job) {
+          if (recordIds.isNotEmpty && !recordIds.contains(job.recordId)) {
+            return false;
+          }
           if (projectId != null && recordProjects[job.recordId] != projectId) {
             return false;
           }
@@ -271,7 +289,11 @@ final class FakeProcessingRepository implements ProcessingRepository {
   }
 
   @override
-  Future<Result<void>> complete(String jobId) async {
+  Future<Result<void>> complete(String jobId, {int? expectedGeneration}) async {
+    if (expectedGeneration != null &&
+        _rows[jobId]?.requestGeneration != expectedGeneration) {
+      return const FailureResult<void>(_replaced);
+    }
     final ProcessingJob? job = _rows[jobId];
     if (job == null) {
       return const FailureResult<void>(_missingJob);
@@ -291,7 +313,12 @@ final class FakeProcessingRepository implements ProcessingRepository {
     String reason, {
     required bool permanent,
     LocalizedMessage? localizedReason,
+    int? expectedGeneration,
   }) async {
+    if (expectedGeneration != null &&
+        _rows[jobId]?.requestGeneration != expectedGeneration) {
+      return const FailureResult<void>(_replaced);
+    }
     final ProcessingJob? job = _rows[jobId];
     if (job == null) {
       return const FailureResult<void>(_missingJob);
@@ -317,7 +344,15 @@ final class FakeProcessingRepository implements ProcessingRepository {
   }
 
   @override
-  Future<Result<ProcessingJob>> markStage(String id, JobStage stage) async {
+  Future<Result<ProcessingJob>> markStage(
+    String id,
+    JobStage stage, {
+    int? expectedGeneration,
+  }) async {
+    if (expectedGeneration != null &&
+        _rows[id]?.requestGeneration != expectedGeneration) {
+      return const FailureResult<ProcessingJob>(_replaced);
+    }
     final ProcessingJob? job = _rows[id];
     if (job == null) {
       return const FailureResult<ProcessingJob>(_missingJob);
@@ -329,7 +364,11 @@ final class FakeProcessingRepository implements ProcessingRepository {
   }
 
   @override
-  Future<Result<void>> release(String id) async {
+  Future<Result<void>> release(String id, {int? expectedGeneration}) async {
+    if (expectedGeneration != null &&
+        _rows[id]?.requestGeneration != expectedGeneration) {
+      return const FailureResult<void>(_replaced);
+    }
     final ProcessingJob? job = _rows[id];
     if (job == null) {
       return const FailureResult<void>(_missing);
@@ -477,4 +516,9 @@ const Set<RecordStatus> _requeueFrom = <RecordStatus>{
 const StorageFailure _needsReason = StorageFailure(
   message: 'A delete needs a reason.',
   recoveryAction: 'Say why this row should be removed, then try again.',
+);
+
+const CancelledFailure _replaced = CancelledFailure(
+  message: 'This processing attempt was replaced.',
+  recoveryAction: 'Continue the current processing attempt.',
 );

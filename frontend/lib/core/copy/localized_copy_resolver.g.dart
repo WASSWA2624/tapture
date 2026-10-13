@@ -23,6 +23,16 @@ extension LocalizedCopyResolver on LocalizedCopy {
   }
 
   String _resolve(LocalizedMessage message) => switch (message.key) {
+    'processingAllFields' => processingAllFields,
+    'processingSelectedFields' => processingSelectedFields,
+    'processingScopeHelp' => processingScopeHelp,
+    'processingManualFallback' => processingManualFallback,
+    'processingManualFallbackRecovery' => processingManualFallbackRecovery,
+    'reviewProposalsChanged' => reviewProposalsChanged,
+    'reviewProposalsChangedRecovery' => reviewProposalsChangedRecovery,
+    'reviewProposalsHelp' => reviewProposalsHelp,
+    'reviewProposalsRejected' => reviewProposalsRejected,
+    'reviewAnalyseField' => reviewAnalyseField,
     'recycleDeletePermanent' => recycleDeletePermanent,
     'recycleDeleteLabel' => recycleDeleteLabel(
       (message.argument('name') is LocalizedMessage

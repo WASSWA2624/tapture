@@ -87,22 +87,21 @@ void main() {
         matches(RegExp(r'^[a-f0-9]{64}$')),
       );
       expect(provider.requests.single.approvedMaxCost, 0);
-      expect(
-        await worker.templateAssist(
-          queued.copyWith(requestGeneration: 1),
-          needed(fixture),
-        ),
-        'motor',
+      final ProcessingRepositoryImpl repository = ProcessingRepositoryImpl(
+        db: fixture.db,
+        clock: fixture.clock,
+        deviceId: 'device-a',
+        ids: fixture.ids,
+        settings: SettingsStore.fake(),
       );
+      (await repository.requeue(fixture.record.id)).getOrThrow();
+      final ProcessingJob retried = (await repository.byId(
+        queued.id,
+      )).getOrThrow()!;
+      expect(await worker.templateAssist(retried, needed(fixture)), 'motor');
       expect(provider.requests, hasLength(1));
       await fixture.setContext('{"room":"Plant"}');
-      expect(
-        await worker.templateAssist(
-          queued.copyWith(requestGeneration: 1),
-          needed(fixture),
-        ),
-        'motor',
-      );
+      expect(await worker.templateAssist(retried, needed(fixture)), 'motor');
       expect(provider.requests, hasLength(2));
     },
   );

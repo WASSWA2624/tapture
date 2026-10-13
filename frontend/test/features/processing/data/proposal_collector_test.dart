@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:drift/drift.dart' show Value;
@@ -7,7 +8,10 @@ import 'package:tapture/core/ai/ocr_result.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/features/processing/data/ocr_cache.dart';
+import 'package:tapture/features/processing/data/processing_evidence.dart';
+import 'package:tapture/features/processing/data/processing_snapshot.dart';
 import 'package:tapture/features/processing/data/proposal_collector.dart';
+import 'package:tapture/features/processing/data/record_bundle_loader.dart';
 import 'package:tapture/features/processing/domain/processing_job.dart';
 import 'package:tapture/features/processing/domain/proposal_application.dart';
 
@@ -35,7 +39,11 @@ void main() {
   }
 
   ProposalCollector collector() {
-    return ProposalCollector(cache: cache(), responses: fixture.responses);
+    return ProposalCollector(
+      cache: cache(),
+      responses: fixture.responses,
+      currentRevision: (job, bundle) async => 'test-project',
+    );
   }
 
   Future<void> plate(String line) async {
@@ -65,13 +73,48 @@ void main() {
   }
 
   Future<void> respond(String raw, {bool parsedOk = true}) async {
+    final bundle = await fixture.bundle();
+    final sources = await ProcessingEvidence(
+      cache: cache(),
+    ).catalogue(bundle, const <ProcessingResult>[]);
+    final Object? document = jsonDecode(raw);
+    if (document is Map && document['fields'] is Map) {
+      for (final Object? field in (document['fields']! as Map).values) {
+        if (field is! Map || field['evidence'] is! List) continue;
+        field['evidence'] = <Object?>[
+          for (final Object? reference in field['evidence']! as List)
+            if (reference is String && !sources.containsKey(reference))
+              sources.values
+                      .where(
+                        (source) =>
+                            source['text'] is String &&
+                            (source['text']! as String).contains(reference),
+                      )
+                      .firstOrNull?['id'] ??
+                  reference
+            else
+              reference,
+        ];
+      }
+    }
     expect(
       await fixture.responses.save(
         jobId: job.id,
-        requestSummary:
-            '{"kind":"online","provider":"backend","model":"default",'
-            '"promptVersion":"v3"}',
-        rawResponse: raw,
+        requestSummary: jsonEncode(<String, Object?>{
+          'kind': 'online',
+          'provider': 'backend',
+          'model': 'default',
+          'promptVersion': 'v3',
+          'projectRevision': 'test-project',
+          'sourceRevision': await ProcessingSnapshot.sourceRevision(
+            bundle,
+            privacyRevision: '',
+          ),
+          'privacyRevision': '',
+          'requestGeneration': job.requestGeneration,
+          'sources': sources.values.toList(),
+        }),
+        rawResponse: jsonEncode(document),
         parsedOk: parsedOk,
       ),
       isA<Success<ProcessingResult>>(),
@@ -159,7 +202,10 @@ void main() {
     expect(model.provenance.source, 'extraction');
     expect(model.provenance.provider, 'backend');
     expect(model.provenance.promptVersion, 'v3');
-    expect(model.evidence.single.snippet, contains('model CR-10'));
+    expect(
+      model.evidence.map((e) => e.snippet).join('\n'),
+      contains('model CR-10'),
+    );
   });
 
   test(
@@ -248,6 +294,273 @@ void main() {
     expect(
       selection.rejections.join(' '),
       contains('Conflicting values for serial'),
+    );
+  });
+
+  test(
+    'photo parameters map optional typed fields with their true source',
+    () async {
+      await fixture.addField('frequency', type: 'decimal', unit: 'Hz');
+      await fixture.addField('capacity', type: 'decimal', unit: 'L');
+      await fixture.addField('working', type: 'boolean');
+      await plate(
+        'Model: CR-10\nFrequency: 50 Hz\nCapacity: 1000 mL\nWorking: Yes',
+      );
+      final ProposalSelection selection = await collector().collect(
+        job,
+        await fixture.bundle(),
+      );
+      final Map<String, ProposedValue> values = <String, ProposedValue>{
+        for (final ProposedValue proposal in selection.proposals)
+          proposal.fieldKey: proposal,
+      };
+      expect(values['model']!.value, 'CR-10');
+      expect(values['frequency']!.value, '50 Hz');
+      expect(values['capacity']!.value, '1000 mL');
+      expect(values['working']!.value, 'Yes');
+      expect(
+        values.values.every((value) => value.provenance.model == 'test'),
+        isTrue,
+      );
+      expect(
+        values.values.every((value) => value.evidence.single.photoId != null),
+        isTrue,
+      );
+      expect(selection.rejections, isEmpty);
+    },
+  );
+
+  test(
+    'different photos with conflicting parameter values require human review',
+    () async {
+      await fixture.addField('frequency', type: 'decimal', unit: 'Hz');
+      await plate('Frequency: 50 Hz');
+      final Photo second = await fixture.addPhoto(
+        1,
+        plateText: 'Frequency: 60 Hz',
+      );
+      await cache().put(
+        contentHash: second.sha256,
+        perceptualHash: '',
+        result: const OcrResult(text: 'Frequency: 60 Hz', blocks: <OcrBlock>[]),
+      );
+      final ProposalSelection selection = await collector().collect(
+        job,
+        await fixture.bundle(),
+      );
+      expect(
+        selection.proposals.where((value) => value.fieldKey == 'frequency'),
+        isEmpty,
+      );
+      expect(
+        selection.rejections.join(' '),
+        contains('Conflicting values for frequency'),
+      );
+    },
+  );
+
+  test('a selected field never consumes unselected parameter values', () async {
+    await fixture.addField('description');
+    await plate('Description: observed Model: CR-10');
+    final bundle = await RecordBundleLoader(
+      db: fixture.db,
+    ).load(fixture.record.id, fieldKeys: const <String>['description']);
+    final ProposalSelection selection = await collector().collect(job, bundle);
+    expect(selection.proposals.single.fieldKey, 'description');
+    expect(selection.proposals.single.value, 'observed');
+  });
+
+  test(
+    'equivalent unit values from AI and OCR agree without losing evidence',
+    () async {
+      await fixture.addField('capacity', type: 'decimal', unit: 'L');
+      await plate('Capacity: 13000 mL');
+      final Photo photo = await fixture.db
+          .select(fixture.db.photos)
+          .getSingle();
+      // Text fields can carry supported units from an online provider; typed
+      // numeric fields return their canonical amount against the selected unit.
+      await respond(
+        '{"fields":{"capacity":{"value":13,"confidence":0.99,'
+        '"evidence":["photo:${photo.id}"]}}}',
+      );
+      final ProposalSelection selection = await collector().collect(
+        job,
+        await fixture.bundle(),
+      );
+      expect(selection.proposals.single.value, '13');
+      expect(selection.proposals.single.confidence, 0.99);
+      expect(selection.proposals.single.provenance.source, 'extraction');
+      expect(selection.proposals.single.evidence, hasLength(2));
+      expect(selection.rejections, isEmpty);
+    },
+  );
+
+  test(
+    'grounded AI values still must satisfy their field types and ranges',
+    () async {
+      await fixture.addField('count', type: 'number', validation: '{"min":0}');
+      await fixture.addField('inspection_date', type: 'date');
+      await plate('Count: -1\nInspection date: 2026-02-31');
+      final Photo photo = await fixture.db
+          .select(fixture.db.photos)
+          .getSingle();
+      await respond(
+        '{"fields":{"count":{"value":-1,"confidence":0.99,'
+        '"evidence":["photo:${photo.id}"]},"inspection_date":{"value":"2026-02-31",'
+        '"confidence":0.99,"evidence":["photo:${photo.id}"]}}}',
+      );
+      final ProposalSelection selection = await collector().collect(
+        job,
+        await fixture.bundle(),
+      );
+      expect(selection.proposals, isEmpty);
+      expect(
+        selection.rejections.join(' '),
+        contains('proposed value for count'),
+      );
+      expect(
+        selection.rejections.join(' '),
+        contains('proposed value for inspection_date'),
+      );
+    },
+  );
+
+  test(
+    'unlabelled values shared by identity patterns require a mapping decision',
+    () async {
+      await fixture.addField('identity_a', pattern: r'^[A-Z0-9]+$');
+      await fixture.addField('identity_b', pattern: r'^[A-Z0-9]+$');
+      await fixture.setIdentityFields(<String>['identity_a', 'identity_b']);
+      await plate('AB123');
+      final ProposalSelection selection = await collector().collect(
+        job,
+        await fixture.bundle(),
+      );
+      expect(selection.proposals, isEmpty);
+      expect(
+        selection.rejections.join(' '),
+        contains('identity_a has no unique field'),
+      );
+      expect(
+        selection.rejections.join(' '),
+        contains('identity_b has no unique field'),
+      );
+    },
+  );
+
+  test(
+    'a labelled identity never supplies an unrelated identity fallback',
+    () async {
+      await fixture.addField('identity_a', pattern: r'^[A-Z0-9]+$');
+      await fixture.addField('identity_b', pattern: r'^[A-Z0-9]+$');
+      await fixture.setIdentityFields(<String>['identity_a', 'identity_b']);
+      await plate('Identity a: AB123');
+      final ProposalSelection selection = await collector().collect(
+        job,
+        await fixture.bundle(),
+      );
+      expect(selection.proposals.single.fieldKey, 'identity_a');
+      expect(selection.proposals.single.value, 'AB123');
+    },
+  );
+
+  test(
+    'a collector without verifiable current request context ignores online values',
+    () async {
+      await plate('CR-10');
+      final Photo photo = await fixture.db
+          .select(fixture.db.photos)
+          .getSingle();
+      await respond(
+        '{"fields":{"model":{"value":"CR-10","confidence":0.99,'
+        '"evidence":["photo:${photo.id}"]}}}',
+      );
+      final unverified = ProposalCollector(
+        cache: cache(),
+        responses: fixture.responses,
+      );
+      expect(
+        (await unverified.collect(job, await fixture.bundle())).proposals,
+        isEmpty,
+      );
+    },
+  );
+
+  test('equivalent measured units across photos retain both sources', () async {
+    await fixture.addField('capacity', type: 'decimal', unit: 'L');
+    await plate('Capacity: 13000 mL');
+    final Photo second = await fixture.addPhoto(
+      1,
+      plateText: 'Capacity: 13.0 L',
+    );
+    await cache().put(
+      contentHash: second.sha256,
+      perceptualHash: '',
+      result: const OcrResult(text: 'Capacity: 13.0 L', blocks: <OcrBlock>[]),
+    );
+    final ProposalSelection selection = await collector().collect(
+      job,
+      await fixture.bundle(),
+    );
+    expect(selection.proposals.single.value, '13000 mL');
+    expect(
+      selection.proposals.single.evidence.map((e) => e.photoId).toSet(),
+      hasLength(2),
+    );
+    expect(selection.rejections, isEmpty);
+  });
+
+  test(
+    'equal confidence duplicate mappings retain both photo regions',
+    () async {
+      await fixture.addField('capacity', type: 'decimal', unit: 'L');
+      await plate('Capacity: 13000 mL');
+      final Photo second = await fixture.addPhoto(
+        1,
+        plateText: 'Capacity: 13 L',
+      );
+      await cache().put(
+        contentHash: second.sha256,
+        perceptualHash: '',
+        result: const OcrResult(
+          text: 'Capacity: 13 L',
+          blocks: <OcrBlock>[
+            OcrBlock(
+              text: 'Capacity: 13 L',
+              bounds: Rect.fromLTWH(10, 60, 200, 30),
+              confidence: 0.88,
+            ),
+          ],
+        ),
+      );
+      final ProposalSelection selection = await collector().collect(
+        job,
+        await fixture.bundle(),
+      );
+      expect(selection.proposals.single.value, '13000 mL');
+      expect(selection.proposals.single.evidence, hasLength(2));
+      expect(selection.rejections, isEmpty);
+    },
+  );
+
+  test('different measured values across photos remain unresolved', () async {
+    await fixture.addField('capacity', type: 'decimal', unit: 'L');
+    await plate('Capacity: 13000 mL');
+    final Photo second = await fixture.addPhoto(1, plateText: 'Capacity: 14 L');
+    await cache().put(
+      contentHash: second.sha256,
+      perceptualHash: '',
+      result: const OcrResult(text: 'Capacity: 14 L', blocks: <OcrBlock>[]),
+    );
+    final ProposalSelection selection = await collector().collect(
+      job,
+      await fixture.bundle(),
+    );
+    expect(selection.proposals, isEmpty);
+    expect(
+      selection.rejections.join(' '),
+      contains('Conflicting values for capacity'),
     );
   });
 }

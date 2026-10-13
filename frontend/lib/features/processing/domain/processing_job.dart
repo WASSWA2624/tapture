@@ -9,6 +9,7 @@ final class ProcessingJob {
   const ProcessingJob({
     required this.id,
     required this.recordId,
+    this.fieldKeys = const <String>[],
     this.stage = '',
     this.attemptCount = 0,
     this.requestGeneration = 0,
@@ -31,6 +32,9 @@ final class ProcessingJob {
 
   /// Record this job processes.
   final String recordId;
+
+  /// Requested fields; empty processes every eligible captured-template field.
+  final List<String> fieldKeys;
 
   /// Last completed [JobStage] name, or empty when none has finished.
   final String stage;
@@ -103,6 +107,7 @@ final class ProcessingJob {
   ProcessingJob copyWith({
     String? id,
     String? recordId,
+    List<String>? fieldKeys,
     String? stage,
     int? attemptCount,
     int? requestGeneration,
@@ -127,6 +132,7 @@ final class ProcessingJob {
     return ProcessingJob(
       id: id ?? this.id,
       recordId: recordId ?? this.recordId,
+      fieldKeys: fieldKeys ?? this.fieldKeys,
       stage: stage ?? this.stage,
       attemptCount: attemptCount ?? this.attemptCount,
       requestGeneration: requestGeneration ?? this.requestGeneration,

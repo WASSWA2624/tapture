@@ -876,3 +876,35 @@ TAPTURE-*.zip
 !/test/features/templates/presentation/template_sectioned_fixtures.dart
 !/test/features/templates/presentation/goldens/
 !/test/features/templates/presentation/goldens/template_sectioned_library_*.png
+
+# Parameter processing ships mapping, scope and rejected-value regressions.
+!/test/features/processing/
+!/test/features/processing/data/
+!/test/features/processing/domain/
+!/test/features/processing/data/ocr_profile_catalogue_test.dart
+!/test/features/processing/data/proposal_collector_test.dart
+!/test/features/processing/data/processing_repository_impl_test.dart
+!/test/features/processing/data/rejected_parameter_consumers_test.dart
+!/test/features/processing/domain/ocr_field_mapping_test.dart
+!/test/features/processing/domain/online_skip_rule_test.dart
+!/test/core/db/
+!/test/core/db/record_rows.dart
+!/test/features/records/data/
+!/test/features/records/data/record_read_seeds.dart
+!/test/features/processing/data/ocr_parameter_application_test.dart
+!/test/features/processing/data/on_device_stage_test.dart
+!/test/features/processing/data/validate_stage_test.dart
+!/test/features/processing/data/online_completion_test.dart
+!/test/features/processing/data/job_writes_test.dart
+!/test/features/processing/domain/extraction_request_test.dart
+!/test/features/processing/domain/goldens/
+!/test/features/processing/domain/goldens/extraction_request.json
+!/test/features/processing/data/detect_stage_test.dart
+!/test/features/processing/data/egress_summary_test.dart
+
+# Processing review and save flows travel with their scope regressions.
+!/test/features/processing/presentation/
+!/test/features/review/data/
+!/test/features/processing/presentation/record_processing_scope_test.dart
+!/test/features/review/data/review_proposal_resolution_test.dart
+!/test/features/capture/presentation/save_processing_flow_test.dart

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
+import 'package:tapture/features/processing/domain/processing_findings_repository.dart';
+import 'package:tapture/features/processing/processing.dart'
+    show processingFindingsStoreProvider;
 import 'package:tapture/features/records/domain/domain.dart';
 import 'package:tapture/features/review/review.dart';
 import 'package:tapture/features/settings/settings.dart' show SettingKeys;
@@ -32,6 +38,170 @@ void main() {
   void tall(WidgetTester tester) => sizeWindow(tester, const Size(800, 2400));
 
   Finder row(String key) => find.byKey(ValueKey<String>('review-field-$key'));
+
+  testWidgets(
+    'an initial proposal read failure stays visible with manual entry',
+    (tester) async {
+      tall(tester);
+      harness.seedRecord();
+      harness.proposalFailure = _unreadable;
+      await harness.pump(tester, ReviewHarness.recordReview('record-1'));
+      expect(
+        find.byKey(const ValueKey<String>('reanalyse-failure')),
+        findsOneWidget,
+      );
+      expect(find.text(_unreadable.message), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('review-type-it')),
+        findsWidgets,
+      );
+    },
+  );
+
+  testWidgets(
+    'reanalysis confirms a potentially repeated charge before requeueing',
+    (tester) async {
+      tall(tester);
+      harness.seedRecord();
+      await harness.pump(
+        tester,
+        ReviewHarness.recordReview('record-1'),
+        extraOverrides: <Override>[
+          processingFindingsStoreProvider.overrideWith(
+            (Ref _) => const _RetryFindings(),
+          ),
+        ],
+      );
+      final Finder analyse = find.byKey(
+        const ValueKey<String>('review-analyse-serial'),
+      );
+      await tester.tap(analyse);
+      await tester.pumpAndSettle();
+      expect(find.text(Copy.processingRetryChargeBody), findsOneWidget);
+      await tester.tap(find.text(Copy.cancel));
+      await tester.pumpAndSettle();
+      expect(harness.processing.requeued, isEmpty);
+      await tester.tap(analyse);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(Copy.processingRetryChargeConfirm));
+      await tester.pumpAndSettle();
+      expect(harness.processing.requeued, <String>['record-1']);
+      expect(harness.processing.stored.single.fieldKeys, <String>['serial']);
+    },
+  );
+
+  testWidgets('initial mapped values can be accepted or rejected durably', (
+    WidgetTester tester,
+  ) async {
+    tall(tester);
+    harness.seedRecord();
+    harness.proposals = const <ReanalyseProposal>[
+      (
+        fieldKey: 'serial',
+        label: 'Serial',
+        current: 'SN-1',
+        proposed: 'SN-1',
+        offeredOnly: false,
+      ),
+      (
+        fieldKey: 'model',
+        label: 'Model',
+        current: 'CR-10',
+        proposed: 'CR-10',
+        offeredOnly: false,
+      ),
+    ];
+    await harness.pump(tester, ReviewHarness.recordReview('record-1'));
+    expect(
+      find.byKey(const ValueKey<String>('reanalyse-diff')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey<String>('proposal-serial')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey<String>('reanalyse-apply')));
+    await tester.pumpAndSettle();
+    final RecordEntry entry = harness.records.entryOf('record-1')!;
+    expect(entry.valueOf('serial')!.display, 'SN-1');
+    expect(entry.valueOf('serial')!.verified, isTrue);
+    expect(entry.valueOf('model')!.display, isEmpty);
+    expect(entry.valueOf('model')!.raw, 'CR-10');
+    expect(find.byKey(const ValueKey<String>('reanalyse-diff')), findsNothing);
+    await harness.pump(tester, ReviewHarness.recordReview('record-1'));
+    expect(find.byKey(const ValueKey<String>('reanalyse-diff')), findsNothing);
+    expect(harness.review.resolvedKeys, <String>{'serial', 'model'});
+  });
+
+  testWidgets('declining an offered replacement keeps the operator value', (
+    WidgetTester tester,
+  ) async {
+    tall(tester);
+    harness.seedRecord();
+    final RecordEntry entry = harness.records.entryOf('record-1')!;
+    harness.records.seedEntry(
+      entry.copyWith(
+        values: <RecordValue>[
+          ...entry.values.where(
+            (RecordValue value) => value.fieldKey != 'serial',
+          ),
+          const RecordValue(
+            fieldKey: 'serial',
+            raw: 'SN-1',
+            approved: 'SN-2',
+            source: 'manual',
+            verified: true,
+          ),
+        ],
+      ),
+    );
+    harness.proposals = const <ReanalyseProposal>[
+      (
+        fieldKey: 'serial',
+        label: 'Serial',
+        current: 'SN-2',
+        proposed: 'SN-9',
+        offeredOnly: true,
+      ),
+    ];
+    await harness.pump(tester, ReviewHarness.recordReview('record-1'));
+    await tester.tap(find.byKey(const ValueKey<String>('reanalyse-decline')));
+    await tester.pumpAndSettle();
+    final RecordValue value = harness.records
+        .entryOf('record-1')!
+        .valueOf('serial')!;
+    expect(value.display, 'SN-2');
+    expect(value.raw, 'SN-1');
+    expect(value.verified, isTrue);
+    expect(harness.review.resolvedKeys, contains('serial'));
+  });
+
+  testWidgets('a failed proposal decision stays visible with the raw value', (
+    WidgetTester tester,
+  ) async {
+    tall(tester);
+    harness.seedRecord();
+    harness.proposals = const <ReanalyseProposal>[
+      (
+        fieldKey: 'serial',
+        label: 'Serial',
+        current: 'SN-1',
+        proposed: 'SN-9',
+        offeredOnly: false,
+      ),
+    ];
+    await harness.pump(tester, ReviewHarness.recordReview('record-1'));
+    harness.review.failure = _unreadable;
+    await tester.tap(find.byKey(const ValueKey<String>('reanalyse-decline')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey<String>('reanalyse-diff')),
+      findsOneWidget,
+    );
+    expect(
+      harness.records.entryOf('record-1')!.valueOf('serial')!.display,
+      'SN-1',
+    );
+    expect(harness.review.resolvedKeys, isEmpty);
+  });
 
   testWidgets('filled two-sided review uses the selected reading layout', (
     WidgetTester tester,
@@ -394,6 +564,19 @@ void main() {
       expect(find.text('records list'), findsOneWidget);
     },
   );
+}
+
+final class _RetryFindings implements ProcessingFindingsRepository {
+  const _RetryFindings();
+  @override
+  Stream<List<String>> watchRecord(String recordId) =>
+      Stream<List<String>>.value(const <String>[]);
+  @override
+  Future<Result<bool>> requiresRetryApproval(String jobId) async =>
+      const Success<bool>(true);
+  @override
+  Future<Result<bool>> requiresRecordRetryApproval(String recordId) async =>
+      const Success<bool>(true);
 }
 
 /// The verified mark naming [verifier], whether its word or only its icon

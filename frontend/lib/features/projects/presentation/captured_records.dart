@@ -100,8 +100,8 @@ bool _matches(ProjectRecordRow row, String needle) {
   }
   for (final ProjectRecordFieldValue field in row.fields) {
     if (field.raw.toLowerCase().contains(needle) ||
-        field.refined.toLowerCase().contains(needle) ||
-        field.approved.toLowerCase().contains(needle)) {
+        (field.refined ?? '').toLowerCase().contains(needle) ||
+        (field.approved ?? '').toLowerCase().contains(needle)) {
       return true;
     }
   }

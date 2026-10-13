@@ -87,8 +87,8 @@ final reviewSideProvider = NotifierProvider<ReviewSideMemory, ValueSide>(
   ReviewSideMemory.new,
 );
 
-/// What re-analysis now proposes for record [recordId] beside each current
-/// value, one per field whose proposal differs from what the field shows.
+/// Pending processing proposals beside the current value, including initial
+/// mappings that are already displayed but have not been accepted or rejected.
 /// A verified or hand-typed value is offered only, never applied.
 final reviewProposalsProvider = FutureProvider.autoDispose
     .family<List<ReanalyseProposal>, String>((Ref ref, String recordId) async {
@@ -115,20 +115,15 @@ final reviewProposalsProvider = FutureProvider.autoDispose
       };
       return <ReanalyseProposal>[
         for (final PreviewedValue value in proposed)
-          if (_differs(entry.valueOf(value.fieldKey), value.value))
-            (
-              fieldKey: value.fieldKey,
-              label: labels[value.fieldKey] ?? value.fieldKey,
-              current: entry.valueOf(value.fieldKey)?.display ?? '',
-              proposed: value.value,
-              offeredOnly: _heldByPerson(entry.valueOf(value.fieldKey)),
-            ),
+          (
+            fieldKey: value.fieldKey,
+            label: labels[value.fieldKey] ?? value.fieldKey,
+            current: entry.valueOf(value.fieldKey)?.display ?? '',
+            proposed: value.value,
+            offeredOnly: _heldByPerson(entry.valueOf(value.fieldKey)),
+          ),
       ];
     }, retry: (int _, Object _) => null);
-
-bool _differs(RecordValue? current, String proposed) {
-  return (current?.display ?? '').trim() != proposed.trim();
-}
 
 bool _heldByPerson(RecordValue? value) {
   if (value == null || !value.hasValue) {

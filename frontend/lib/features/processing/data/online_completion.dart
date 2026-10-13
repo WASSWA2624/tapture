@@ -11,10 +11,8 @@ import 'record_bundle.dart';
 import 'stage_settings.dart';
 import 'stage_support.dart';
 
-/// How complete a record already is, as the skip rule reads it.
-///
-/// A stored value wins; an empty field falls back to the guarded local or
-/// stored proposal for it.
+/// Current grounded proposals, as the online skip rule reads them.
+/// Stored unapproved confidence cannot certify changed or removed evidence.
 final class OnlineCompletion {
   /// Creates the reader over the proposal [collector].
   const OnlineCompletion({required this._collector, required this._settings});
@@ -27,7 +25,6 @@ final class OnlineCompletion {
     ProcessingJob job,
     RecordBundle bundle,
   ) async {
-    final List<SkipField> stored = _stored(bundle);
     final Map<String, ProposedValue> proposed = <String, ProposedValue>{
       for (final ProposedValue value in (await _collector.collect(
         job,
@@ -36,59 +33,19 @@ final class OnlineCompletion {
         value.fieldKey: value,
     };
     final ProjectSettingsResolved settings = _settings.project(bundle);
-    final Set<String> targets = <String>{
+    return <SkipField>[
       for (final TemplateField field in StageSupport.extractionFields(bundle))
-        field.fieldKey,
-    };
-    return <SkipField>[
-      for (var index = 0; index < bundle.fields.length; index++)
-        if (targets.contains(bundle.fields[index].fieldKey))
-          if (stored[index].value != null &&
-              stored[index].value!.trim().isNotEmpty)
-            stored[index]
-          else
-            (
-              requiredField: bundle.fields[index].isRequired,
-              value: proposed[bundle.fields[index].fieldKey]?.value,
-              band: proposed[bundle.fields[index].fieldKey] == null
-                  ? null
-                  : Confidence.band(
-                      score:
-                          proposed[bundle.fields[index].fieldKey]!.confidence,
-                      high: settings.confidenceHigh,
-                      medium: settings.confidenceMedium,
-                    ),
-            ),
-    ];
-  }
-
-  List<SkipField> _stored(RecordBundle bundle) {
-    final Map<String, RecordField> existing = <String, RecordField>{
-      for (final RecordField field in bundle.existing) field.fieldKey: field,
-    };
-    return <SkipField>[
-      for (final TemplateField field in bundle.fields)
         (
           requiredField: field.isRequired,
-          value: existing[field.fieldKey]?.valueRaw,
-          band:
-              existing[field.fieldKey]?.verified == true ||
-                  StageSupport.isManual(existing[field.fieldKey]?.source)
-              ? ConfidenceBand.high
-              : _band(existing[field.fieldKey]?.confidence, bundle),
+          value: proposed[field.fieldKey]?.value,
+          band: proposed[field.fieldKey] == null
+              ? null
+              : Confidence.band(
+                  score: proposed[field.fieldKey]!.confidence,
+                  high: settings.confidenceHigh,
+                  medium: settings.confidenceMedium,
+                ),
         ),
     ];
-  }
-
-  ConfidenceBand? _band(double? score, RecordBundle bundle) {
-    if (score == null) {
-      return null;
-    }
-    final ProjectSettingsResolved settings = _settings.project(bundle);
-    return Confidence.band(
-      score: score,
-      high: settings.confidenceHigh,
-      medium: settings.confidenceMedium,
-    );
   }
 }

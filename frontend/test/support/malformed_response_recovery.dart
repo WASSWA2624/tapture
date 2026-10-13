@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/db/app_database.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/features/processing/data/processing_repository_impl.dart';
@@ -15,7 +16,7 @@ import 'matchers.dart';
 import 'processing_fixture.dart';
 
 const String _valid =
-    '{"fields":{"serial":{"value":"SN458923","confidence":0.9,"evidence":["photo-1"]}}}';
+    '{"fields":{"serial":{"value":"SN458923","confidence":0.9,"evidence":["photo:photo-1"]}}}';
 
 /// Verifies malformed replies, durable checkpoints, raw evidence and explicit retry.
 Future<void> verifyMalformedResponseRecovery(FaultInjector faults) async {
@@ -57,9 +58,12 @@ Future<void> verifyMalformedResponseRecovery(FaultInjector faults) async {
   ]) {
     await bad.perform(stage, job);
   }
-  await expectLater(
-    bad.perform(JobStage.online, job),
-    throwsA(isA<CorruptionFailure>()),
+  await bad.perform(JobStage.online, job);
+  await bad.perform(JobStage.validate, job);
+  expect((await fixture.storedRecord()).status, 'needsReview');
+  expect(
+    (await fixture.db.select(fixture.db.processing).getSingle()).skipReason,
+    Copy.processingManualFallback,
   );
   expect(badProvider.requests, hasLength(2));
   expect(badProvider.requests.first.repairError, isNull);
@@ -123,6 +127,8 @@ Future<void> verifyMalformedResponseRecovery(FaultInjector faults) async {
     expect(snapshot['contextSnapshot'], jsonDecode(fixture.record.contextJson));
     expect(snapshot['schemaSnapshot'], <Map<String, Object?>>[
       <String, Object?>{
+        'label': 'serial',
+        'validation': <String, Object?>{},
         'key': 'serial',
         'type': 'text',
         'required': true,
@@ -158,16 +164,11 @@ Future<void> verifyMalformedResponseRecovery(FaultInjector faults) async {
     ids: fixture.ids,
     settings: SettingsStore.fake(),
   );
-  valueOf(await queue.markStage(job.id, JobStage.detect));
   valueOf(
-    await queue.fail(
-      job.id,
-      'The provider response is malformed.',
-      permanent: true,
-    ),
+    await queue.complete(job.id, expectedGeneration: job.requestGeneration),
   );
   faults.clear();
-  valueOf(await queue.retry(job.id));
+  valueOf(await queue.requeue(fixture.record.id));
   final ProcessingJob retried = valueOf(await queue.byId(job.id))!;
   expect(retried.requestGeneration, job.requestGeneration + 1);
   final ScriptedExtraction goodProvider = provider();

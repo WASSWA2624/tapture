@@ -35,12 +35,13 @@ final class IdentifierExtraction {
           : field.pattern.length / longest;
       for (var index = 0; index < blocks.length; index++) {
         final PlateBlock block = blocks[index];
-        final double confidence = block.confidence.clamp(0, 1).toDouble();
+        final double confidence = block.confidence.isFinite
+            ? block.confidence.clamp(0, 1).toDouble()
+            : 0;
         final double position = plate.span <= 0
             ? 1
             : 1 - (block.top - plate.first) / plate.span;
-        for (final RegExpMatch match in pattern.allMatches(block.text)) {
-          final String value = match.group(0) ?? '';
+        for (final String value in _values(pattern, block.text)) {
           if (value.isEmpty) {
             continue;
           }
@@ -60,8 +61,7 @@ final class IdentifierExtraction {
       }
       final double fallback =
           AppConstants.processing.identifierFallbackConfidence;
-      for (final RegExpMatch match in pattern.allMatches(text)) {
-        final String value = match.group(0) ?? '';
+      for (final String value in _values(pattern, text)) {
         if (value.isEmpty || _seen(found, field.fieldKey, value)) {
           continue;
         }
@@ -118,6 +118,19 @@ bool _seen(List<IdentifierCandidate> found, String fieldKey, String value) {
     (IdentifierCandidate candidate) =>
         candidate.fieldKey == fieldKey && candidate.value == value,
   );
+}
+
+Iterable<String> _values(RegExp pattern, String text) sync* {
+  final Set<String> candidates = <String>{
+    text,
+    ...text.split(RegExp(r'[\r\n]+')),
+    ...text.split(RegExp(r'[\s:=|;,]+')),
+  };
+  for (final String candidate in candidates) {
+    for (final RegExpMatch match in pattern.allMatches(candidate.trim())) {
+      yield match.group(0) ?? '';
+    }
+  }
 }
 
 ({double first, double span}) _extent(List<PlateBlock> blocks) {

@@ -34,6 +34,7 @@ import 'package:tapture/core/widgets/error_boundary.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/core/widgets/fields/field_editor.dart';
+import 'package:tapture/core/widgets/record_status.dart';
 import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
 import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/capture_session_key.dart';
@@ -430,12 +431,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
             await _verifySetupCommands(tester, fixture, localCopy);
             await _verifyGuidanceAbsent(tester, localCopy);
             for (final (Finder control, bool header) in <(Finder, bool)>[
-              (
-                find.byKey(
-                  const ValueKey<String>('capture-add-photo'),
-                ),
-                false,
-              ),
+              (find.byKey(const ValueKey<String>('capture-add-photo')), false),
               (_caption, false),
               (find.widgetWithText(AppButton, localCopy.captureSaveRaw), false),
               (find.byType(AppPrimaryAction), false),
@@ -709,12 +705,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
             );
             await _verifyGuidanceAbsent(tester, localCopy);
             for (final (Finder control, bool header) in <(Finder, bool)>[
-              (
-                find.byKey(
-                  const ValueKey<String>('capture-add-photo'),
-                ),
-                false,
-              ),
+              (find.byKey(const ValueKey<String>('capture-add-photo')), false),
               (_caption, false),
               (find.widgetWithText(AppButton, localCopy.captureSaveRaw), false),
               (find.byType(AppPrimaryAction), false),
@@ -797,7 +788,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
               expect(queue.stored, hasLength(process ? 1 : 0));
               if (process) {
                 expect(queue.stored.single.recordId, recordId);
-                expect(queue.stored.single.status, JobStatus.queued);
+                expect(queue.stored.single.status, JobStatus.completed);
               }
               expect(fixture.session(tester).id, isNot(owner));
               expect(fixture.session(tester).templateId, 't1');
@@ -1675,8 +1666,7 @@ Future<void> _verifyInteraction(
     expect(ScreenProbe.layoutIssues(tester), isEmpty);
     Navigator.of(tester.element(find.byType(AppSearchField))).pop();
     await tester.pumpAndSettle();
-  } else if (widget.key ==
-      const ValueKey<String>('capture-add-photo')) {
+  } else if (widget.key == const ValueKey<String>('capture-add-photo')) {
     await _tapPainted(tester, control);
     expect(find.text(localCopy.captureAddSheetTitle), findsOneWidget);
     expect(
@@ -1877,6 +1867,7 @@ final class CaptureWorkflowFixture {
     Locale locale = const Locale('en'),
     TextDirection? direction,
     bool offline = false,
+    FakeRecordRepository? recordStore,
     TextStore? store,
     SettingsStore? settings,
     List<TemplateDef>? shownTemplates,
@@ -1899,7 +1890,8 @@ final class CaptureWorkflowFixture {
     final FakeTemplateRepository templates = FakeTemplateRepository();
     final FakeContextRepository contexts = FakeContextRepository();
     final FakePhotoRepository photos = FakePhotoRepository();
-    final FakeRecordRepository recordRepository = FakeRecordRepository();
+    final FakeRecordRepository recordRepository =
+        recordStore ?? FakeRecordRepository();
     addTearDown(projects.dispose);
     addTearDown(templates.dispose);
     addTearDown(contexts.dispose);
@@ -1954,7 +1946,23 @@ final class CaptureWorkflowFixture {
         : cell.brightness == Brightness.dark
         ? AppThemeMode.dark
         : AppThemeMode.light;
-    final FakeCaptureRecordPersistence records = FakeCaptureRecordPersistence();
+    final FakeCaptureRecordPersistence records = FakeCaptureRecordPersistence(
+      onPersist: recordStore == null
+          ? null
+          : (String id, CaptureSession session) {
+              recordStore.seedEntry(
+                aRecordEntry(
+                  id: id,
+                  projectId: session.projectId,
+                  templateId: session.templateId,
+                  caption: session.recordCaption,
+                  context: session.contextSnapshot,
+                  photos: session.photos.length,
+                  status: RecordStatus.captured,
+                ),
+              );
+            },
+    );
     if (savedRecord != null) {
       final String recordId = savedRecord.recordId!;
       records.records[recordId] = savedRecord;
@@ -2029,6 +2037,16 @@ final class CaptureWorkflowFixture {
       tester.element(find.byWidgetPredicate((Widget app) => app is TaptureApp)),
     );
     container.read(appLocaleProvider.notifier).select(locale);
+    final processing = container.read(processingRepositoryProvider);
+    if (processing is FakeProcessingRepository) {
+      final ownership = processing.watchAll().listen((jobs) {
+        for (final job in jobs) {
+          processing.recordProjects[job.recordId] =
+              savedRecord?.projectId ?? 'p1';
+        }
+      });
+      addTearDown(ownership.cancel);
+    }
     container.read(openProjectIdProvider.notifier).open('p1');
     final GoRouter router = container.read(routerProvider);
     router.go(
@@ -2051,7 +2069,7 @@ final class CaptureWorkflowFixture {
   }
 
   CaptureSession session(WidgetTester tester) => ProviderScope.containerOf(
-    tester.element(find.byType(CaptureScreen)),
+    tester.element(find.byType(CaptureScreen, skipOffstage: false)),
   ).read(captureControllerProvider(sessionKey));
 }
 
