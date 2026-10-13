@@ -628,7 +628,6 @@ TAPTURE-*.zip
 !/test/tool/check_logging_test.dart
 !/test/tool/check_naming_test.dart
 !/test/tool/check_native_library_test.dart
-!/test/tool/check_plan_test.dart
 !/test/tool/check_secrets_test.dart
 !/test/tool/check_templates_test.dart
 !/test/tool/check_tests_test.dart
@@ -713,9 +712,6 @@ TAPTURE-*.zip
 !/test/tool/fixtures/whisper_wasm/web/whisper/tapture_whisper_st.js
 !/test/tool/fixtures/whisper_wasm/web/whisper/tapture_whisper_st.wasm
 !/test/tool/fixtures/whisper_wasm/web/whisper/whisper_worker.js
-!/test/tool/new_task_test.dart
-!/test/tool/support/plan_fixture.dart
-!/test/tool/sync_dev_tracker_test.dart
 !/test/tool/whisper_vendor_test.dart
 !/test/tool/whisper_wasm_test.dart
 
@@ -787,5 +783,9 @@ TAPTURE-*.zip
 !/integration_test/merge_test.dart
 !/test/support/crash_capture_child.dart
 
-# Ignore all local test content, overriding the historical exceptions above.
-/test/
+# Ignore local test content, overriding the historical exceptions above.
+/test/**
+# Retained CLI tests require this shared launcher on a fresh checkout.
+!/test/tool/
+!/test/tool/support/
+!/test/tool/support/dart_executable.dart

@@ -2,6 +2,13 @@
 
 4 entries → 1 prompt, 3 work items. Generated 2026-10-13 (Africa/Kampala). Repository commit: `b9258cc6`.
 
+**Maintenance note (2026-10-13):** The user subsequently retired the development plan, tracker and one-off task
+helpers. References to that tooling below and in the already-run prompt are historical; current repository rules and
+scope-specific verification apply. D1(a) and D2(a) were approved, and the UI changes landed. Required acceptance remains
+partially complete because the recorded test failures and remaining visual/runtime checks are unresolved. Acceptance
+sources are preserved in `acceptance-sources.patch` with `acceptance-sources.manifest.json`; restored/generated test
+images were verified, archived outside the repository and removed from the test tree.
+
 All four Feedback rows and all four screenshot files were inspected. Three entries are Improvements with current code evidence; one is a Question. No duplicates, out-of-scope entries or already-resolved reports were identified. The workbook's Export Details reports four records and four screenshots; its filters include all categories, platforms, devices and screens, with no search/date restriction. Only this output folder was written during generation; application code, tests, plan, tracker and source archive were not edited.
 
 ## Run order

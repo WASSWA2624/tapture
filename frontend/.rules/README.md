@@ -1,16 +1,16 @@
 # Frontend rules
 
-The standardisation rules for the Tapture Flutter application. They exist so that 281 tasks, built over months,
-produce one codebase rather than forty dialects.
+The standardisation rules for the Tapture Flutter application. They keep changes over time consistent with one
+codebase and one shared design system.
 
 ## How to use them
 
 - **Every rule has an identifier** (`FE-STR-04`). Cite it in review instead of arguing style.
-- **Most rules are enforced by a test**, not by goodwill. The enforcing task is named at the top of each file; if you
-  can break a rule without a test failing, that is a gap — raise a task.
+- **Most rules are enforced by a test**, not by goodwill. The enforcing checks are named at the top of each file; if you
+  can break a rule without a test failing, record that gap for separate work.
 - **A rule may be broken exactly once**: in the pull request that deletes it. Rules change by editing this folder and
   the test that enforces it, in the same change.
-- Dev-plan tasks cite the rule files that apply to them. Read those before starting.
+- Read every rule file before implementation and cite the relevant identifiers in review.
 
 ## The files
 

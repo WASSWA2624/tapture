@@ -1,9 +1,9 @@
 # 06 — Simplicity
 
-The product's central claim is that a field worker can use it. These rules are how that claim survives contact with
-281 tasks.
+The product's central claim is that a field worker can use it. These rules keep that claim intact as the product
+changes.
 
-*Built into tasks 031, 033, 072-076; audited by 236 and 239.*
+*Applied through shared navigation, capture workflows and usability checks.*
 
 ## FE-SIMP-01 — One primary action per screen
 No other control is larger, it sits in the lower third, and it is reachable with one thumb. If a screen has two

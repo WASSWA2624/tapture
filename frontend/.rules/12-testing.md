@@ -1,9 +1,9 @@
 # 12 — Testing
 
-*Enforced by dev-plan task 001 (test presence checker); harnesses in task 025.*
+*Enforced by the test-presence checker and shared test harnesses.*
 
 ## FE-TEST-01 — Tests ship with the change
-A task is not done until its tests exist and pass. Tests are never a follow-up task.
+A change is not done until its tests exist and pass. Required tests ship with that change.
 
 ## FE-TEST-02 — What each layer owes
 Domain and pure logic: unit tests, no Flutter binding. Repositories and DAOs: tests against an in-memory database.
@@ -31,7 +31,7 @@ Pump to an explicit condition. A fixed delay in a test is a defect that will fla
 things.
 
 ## FE-TEST-09 — Every performance claim has a measurement
-A budget stated in a task is asserted by a test, not assumed.
+A stated performance budget is asserted by a test, not assumed.
 
 ## FE-TEST-10 — Failure paths are tested as carefully as success
 Denied permissions, full storage, dead provider, corrupt bundle, killed process. Each must leave the app usable and

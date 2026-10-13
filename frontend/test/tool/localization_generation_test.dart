@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'support/plan_fixture.dart' show dartExecutable;
+import 'support/dart_executable.dart' show dartExecutable;
 
 void main() {
   test(

@@ -35,7 +35,7 @@ from common import (  # noqa: E402
 DEFAULT_PORT = 5173
 
 # The headers that make the page cross-origin isolated, so the speech worker
-# can run the threaded WebAssembly engine (dev-plan task 111, app-write-up
+# can run the threaded WebAssembly engine (app-write-up
 # section 30.4.8). `credentialless` keeps cross-origin loads that send no
 # credentials working without a CORP header on each of them.
 ISOLATION_HEADERS = (

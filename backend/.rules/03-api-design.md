@@ -2,8 +2,8 @@
 
 ## BE-API-01 — Small surface, on purpose
 
-The endpoint list in specification section 74.2 is the whole API. Adding an endpoint requires a dev-plan task and a
-reason the device cannot do it alone.
+The endpoint list in specification section 74.2 is the whole API. Adding an endpoint requires an explicit scope
+decision and a documented reason the device cannot do it alone.
 
 ## BE-API-02 — Versioned from the first commit
 

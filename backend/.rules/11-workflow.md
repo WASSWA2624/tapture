@@ -1,18 +1,16 @@
 # 11 — Workflow
 
-## Progress tracking — task 087
+## Acceptance evidence
 
-After every backend implementation/status change, update the corresponding dev-plan acceptance checklist and
-automatically regenerate the shared tracker from `frontend/` with `dart run tool/sync_dev_tracker.dart`, followed
-by `--check`. Complete, Partially complete and Pending follow `AGENTS.md`; record
-`**Implementation started:** Yes` when work exists but no acceptance item is verified. Include generated progress
-changes with the implementation. The shared pre-commit hook also refreshes the tracker for backend-only commits,
-without staging unrelated files; CI rejects drift. Backend verification success alone never updates or approves
-an unchecked acceptance item.
+Record the agreed scope, acceptance criteria, actual verification results and remaining work with each change.
+Report Partially complete when implementation or a required gate remains unfinished. Preserve historical evidence
+without treating an old successful run as current verification. Never stage unrelated user edits automatically.
+Backend verification success alone does not establish an unverified product or release requirement.
 
-## BE-FLOW-01 — One task, one branch, one pull request
+## BE-FLOW-01 — One change, one branch, one pull request
 
-`task/<number>-<slug>`, commit subjects starting with the task number, matching the frontend convention.
+Use a descriptive branch name and commit subjects that identify the change, matching the frontend convention.
+Separate unrelated work into its own pull request.
 
 ## BE-FLOW-02 — The gate is a command
 
@@ -28,9 +26,9 @@ finished.
 
 Authentication, authorisation, relay access, retention and key custody. Named in the pull request template.
 
-## BE-FLOW-05 — Dependencies need a task
+## BE-FLOW-05 — Dependencies need approval and provenance
 
-Pinned version, licence note, and a sentence on what it replaces.
+Documented approval, pinned version, licence note, and a sentence on what it replaces.
 
 ## BE-FLOW-06 — Rules change deliberately
 

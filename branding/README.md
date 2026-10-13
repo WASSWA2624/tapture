@@ -58,8 +58,8 @@ Both are the white lockup on the brand gradient, over an oversized mark running 
 
 ### `palette.json`
 
-Machine-readable colour. The ramp plus the semantic roles, and the input to dev-plan task
-[003 — Design system](../dev-plan/03-design-system.md).
+Machine-readable colour: the ramp and semantic roles used by the application's
+[shared colour tokens](../frontend/lib/app/theme/color_tokens.dart).
 
 ## Regenerating
 
@@ -79,5 +79,5 @@ skipped until those folders exist.
 ## Where this meets the build
 
 These are the masters. The app ships copies produced by `apply.py`. Nothing in `frontend/` should re-draw the mark
-or re-declare a colour; it takes them from here. Typed asset constants land in task
-[023 — Hardening](../dev-plan/27-hardening/27-hardening.md), which includes the consolidated branding work.
+or re-declare a colour; it takes them from here. Application code references the generated copies through
+[typed branding assets](../frontend/lib/core/assets/branding_assets.dart).

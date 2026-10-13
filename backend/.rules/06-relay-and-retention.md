@@ -33,7 +33,7 @@ window re-synchronises from a peer.
 ## BE-RELAY-06 — Metadata is minimal and listed
 
 Package identifier, project, author device, byte size, created time, expiry, acknowledgement state. Nothing else on
-the package row. Adding a metadata column requires a task and a written justification.
+the package row. Adding a metadata column requires explicit scope approval and a written justification.
 
 Version vectors are the one adjacent record, kept per project and device rather than per package, so a returning
 device can be told what it has yet to receive (task 260). They carry counters and device identifiers only — never a

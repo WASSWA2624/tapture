@@ -1,6 +1,6 @@
 # 03 — State and data
 
-*Enforced by dev-plan task 001 (state conventions, layering and raw-data safety).*
+*Enforced by the state, layering and raw-data safety checks.*
 
 ## FE-STATE-01 — Riverpod, and only Riverpod
 No other state solution, no service locators, no global singletons. `setState` appears only inside `core/widgets/`

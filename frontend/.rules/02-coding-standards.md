@@ -1,6 +1,6 @@
 # 02 — Coding standards
 
-*Enforced by dev-plan task 001 (strict lints, naming, errors and logging).*
+*Enforced by strict lints and the naming, error and logging checks.*
 
 ## FE-CODE-01 — The analyzer is law
 `strict-casts`, `strict-inference` and `strict-raw-types` are on, and every warning is an error. A change that needs a
@@ -38,8 +38,8 @@ Numbers, durations and keys come from `AppConstants` or the design tokens. A lit
 not a shortcut.
 
 ## FE-CODE-10 — Comments earn their place
-Comments explain **why**. The code already says what. No commented-out code. A `TODO` must carry a dev-plan task
-number, and the guardrail suite rejects one that does not.
+Comments explain **why**. The code already says what. No commented-out code. A `TODO` must carry a numbered
+follow-up reference, and the guardrail suite rejects one that does not.
 
 ## FE-CODE-11 — Imports
 `dart format` decides layout; imports stay sorted. Relative imports inside a feature, `package:` imports across

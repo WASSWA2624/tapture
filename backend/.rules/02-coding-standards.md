@@ -44,7 +44,7 @@ Timeouts, limits, retention windows and page sizes come from configuration, with
 
 ## BE-CODE-10 — Comments explain why
 
-No commented-out code. A `TODO` carries a dev-plan task number.
+No commented-out code. A `TODO` carries a numbered follow-up reference.
 
 ## BE-CODE-11 — Formatting is automated
 

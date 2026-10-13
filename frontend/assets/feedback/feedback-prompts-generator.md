@@ -7,7 +7,7 @@ the archive. Inside it, each change is a numbered *work item*. Write more than o
 section 3, step 6 makes one impossible. Whatever you write must leave the runner no choices to make
 (section 6).
 
-**You write prompts only.** Do not change application code, tests, the plan or any other file outside
+**You write prompts only.** Do not change application code, tests or any other file outside
 the output folder described below.
 
 ## 1. What the archive holds
@@ -43,7 +43,7 @@ incomplete without it. Use the files in `screenshots/`; you do not need to extra
    when it contains personal details.
 3. **Read the project rules before writing anything.** In the repository:
    `frontend/.rules/README.md` and every file it lists (rule IDs such as `FE-CONS-01`),
-   `backend/.rules/` for server work, `AGENTS.md`, the step prompt files under `dev-plan/` and `dev-tracker.md`, and any `CLAUDE.md`
+   `backend/.rules/` for server work, `app-write-up.md`, and any applicable `CLAUDE.md`
    or `AGENTS.md`. Every prompt must respect them and cite the rule IDs it touches.
 4. **Confirm against the current code.** The export may predate fixes. For each entry, open the code the
    feedback points at and confirm the problem still exists. If it does not, record the entry as
@@ -164,8 +164,8 @@ factors and themes.
 - FE-CONS-01, FE-STR-09: reuse `core/` before creating anything. (Rules the whole prompt touches.)
 
 ## Before the work items
-1. Record the work in the plan: extend the dev-plan task that owns each area, or create one with
-   `cd frontend && dart run tool/new_task.dart <phase-folder> <slug> "<title>"` (FE-FLOW-08).
+1. Read each work item's dependencies and acceptance criteria against current code and tests. Record verified
+   acceptance and remaining work in this prompt's checklists (FE-FLOW-03, FE-FLOW-08).
 
 ## W1 — <Verb> <object>
 **Feedback:** FBK0000004 · **Type:** Defect · **Priority:** P1 · **Effort:** S · **After:** —

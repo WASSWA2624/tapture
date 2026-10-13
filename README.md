@@ -28,7 +28,6 @@ backend/         the required minimal server (specification Part XI)
   .rules/        11 rule files: structure, coding, API, data, security, the relay boundary,
                  AI proxy, observability, testing, deployment, workflow
 resources/       the planning template catalogue and the generated list of every shipped template
-dev-plan/        one implementation prompt file per step, in build order
 branding/        the identity: logos, app icons, splash, palette, and the generator that draws them
   tool/          one geometry definition; every asset is regenerated from it
 run-tools/        run the app locally, and build the three deployable artefacts
@@ -41,9 +40,7 @@ app-write-up.md  the product and technical specification
 - [app-write-up.md](app-write-up.md) — the full product and technical specification.
 - [resources/template-library.md](resources/template-library.md) — every shipped template, all 2,349, with their
   codes, keys, record types and fields (generated; see §13.4–13.5).
-- [dev-tracker.md](dev-tracker.md) — progress by step, the next task, and every task in build order.
-- [dev-plan/](dev-plan/) — one prompt file per step, `NN-slug.md`, holding its tasks in order.
-- [AGENTS.md](AGENTS.md) — repository instructions and the standard every task inherits.
+- [AGENTS.md](AGENTS.md) — repository instructions and verification requirements.
 - [branding/BRAND.md](branding/BRAND.md) — the identity: mark, wordmark, palette and how to use them.
 - [run-tools/README.md](run-tools/README.md) — running the app locally, and building the APK, web bundle and backend archive.
 - [backend/RUNBOOK.md](backend/RUNBOOK.md) — managed/personal AI configuration, encrypted credentials, spending limits and request recovery.
@@ -51,4 +48,7 @@ app-write-up.md  the product and technical specification
 
 ## Status
 
-The specification and plan are in place; [dev-tracker.md](dev-tracker.md) records verified implementation progress and unfinished acceptance criteria. The MVP is two artefacts that ship together — the app and the backend at its smallest useful size — and one release gate covers both.
+The specification describes the target product. Current code, tests and release evidence establish implementation status;
+the specification alone does not certify acceptance. The MVP is two artefacts that ship together — the app and the
+backend at its smallest useful size — and one release gate covers both. See
+[release-build.md](frontend/docs/release-build.md) for build and release verification.

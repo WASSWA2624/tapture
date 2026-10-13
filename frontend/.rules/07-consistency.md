@@ -1,7 +1,7 @@
 # 07 — Consistency and uniformity
 
-*Enforced by dev-plan tasks 001 (tokens) and 003 (widget gallery), and by `test/architecture/icons_test.dart` (FE-CONS-08);
-every design-system task adds to the catalogue.*
+*Enforced by token checks, the widget gallery and `test/architecture/icons_test.dart` (FE-CONS-08);
+every design-system change updates the catalogue.*
 
 ## FE-CONS-01 — Catalogue first
 Before writing a widget, look in `core/widgets/`. If something close exists, extend it rather than fork it. Building a

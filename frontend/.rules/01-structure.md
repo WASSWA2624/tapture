@@ -1,11 +1,11 @@
 # 01 — Structure
 
-*Enforced by dev-plan task 001 (folder scaffold, layering test and naming checker).*
+*Enforced by the structure, layering and naming checks.*
 
 ## FE-STR-01 — The app lives in `frontend/`
 The Flutter application is the whole of `frontend/`. Nothing outside `frontend/lib`, `frontend/test`,
-`frontend/tool`, `frontend/assets`, `frontend/packages` and the platform folders belongs to it. The backend, the
-plan and the specification are siblings, never imports.
+`frontend/tool`, `frontend/assets`, `frontend/packages` and the platform folders belongs to it. Backend source,
+project documentation and the specification remain separate from application imports.
 
 `frontend/packages/<name>/` holds only local Flutter plugin packages that wrap native code no approved package
 provides. Each one is a pinned path dependency (`path:` plus a nested `version:` equal to the package's own) approved

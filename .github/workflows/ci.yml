@@ -3,21 +3,6 @@ on:
   push:
   pull_request:
 jobs:
-  verify:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-      - name: Check development tracker is committed and current
-        run: dart run tool/sync_dev_tracker.dart --check
   backend:
     runs-on: ubuntu-latest
     steps:

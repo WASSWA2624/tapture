@@ -2,7 +2,7 @@
 
 ## BE-DATA-01 — Postgres, and nothing exotic
 
-Standard SQL, no vendor features the deployment cannot rely on. Extensions require a task and a documented reason.
+Standard SQL, no vendor features the deployment cannot rely on. Extensions require documented approval and a reason.
 
 ## BE-DATA-02 — Client identifiers are authoritative
 

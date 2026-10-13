@@ -2,7 +2,7 @@
 
 ## BE-TEST-01 — Tests ship with the change
 
-No task closes without them. The gate runs them all.
+Implementation is incomplete without them. The gate runs them all.
 
 ## BE-TEST-02 — What each layer owes
 

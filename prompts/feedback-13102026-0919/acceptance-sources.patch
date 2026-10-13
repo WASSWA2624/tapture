@@ -1,0 +1,4533 @@
+diff --git a/frontend/test/core/copy/copy_test.dart b/frontend/test/core/copy/copy_test.dart
+new file mode 100644
+index 00000000..3aa98e1b
+--- /dev/null
++++ b/frontend/test/core/copy/copy_test.dart
+@@ -0,0 +1,828 @@
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/core/copy/copy.dart';
++import 'package:tapture/core/naming/domain_names.dart';
++
++/// Near-synonyms [frontend/test/architecture/naming_test.dart] rejects as
++/// type names, plus the banned whole words the naming checker flags.
++const Map<String, String> _typeSynonyms = <String, String>{
++  'ProjectModel': DomainNames.project,
++  'ProjectData': DomainNames.project,
++  'ProjectInfo': DomainNames.project,
++  'ProjectItem': DomainNames.project,
++  'TemplateModel': DomainNames.templateDef,
++  'TemplateData': DomainNames.templateDef,
++  'TemplateInfo': DomainNames.templateDef,
++  'TemplateItem': DomainNames.templateDef,
++  'FieldModel': DomainNames.fieldDef,
++  'FieldData': DomainNames.fieldDef,
++  'FieldInfo': DomainNames.fieldDef,
++  'FieldItem': DomainNames.fieldDef,
++  'RecordModel': DomainNames.recordEntry,
++  'RecordData': DomainNames.recordEntry,
++  'RecordInfo': DomainNames.recordEntry,
++  'RecordItem': DomainNames.recordEntry,
++  'FieldValueModel': DomainNames.fieldValue,
++  'CaptureSessionModel': DomainNames.captureSession,
++  'CaptureData': DomainNames.captureSession,
++  'PhotoItem': DomainNames.photoAsset,
++  'PhotoModel': DomainNames.photoAsset,
++  'PhotoData': DomainNames.photoAsset,
++  'PhotoInfo': DomainNames.photoAsset,
++  'ContextModel': DomainNames.contextState,
++  'ContextData': DomainNames.contextState,
++  'ContextInfo': DomainNames.contextState,
++  'ReferenceData': DomainNames.referenceDataset,
++  'DatasetModel': DomainNames.referenceDataset,
++  'ProcessingJobModel': DomainNames.processingJob,
++  'JobModel': DomainNames.processingJob,
++  'BundleModel': DomainNames.bundle,
++  'BundleData': DomainNames.bundle,
++  'MergeModel': DomainNames.mergeSession,
++  'MergeSessionModel': DomainNames.mergeSession,
++};
++
++const List<String> _bannedWords = <String>[
++  'manager',
++  'helper',
++  'util',
++  'data',
++  'info',
++  'item',
++];
++
++void main() {
++  test('photo guidance describes photo contents', () {
++    expect(Copy.captureGuidePhotos, 'Photos should show');
++  });
++
++  test('caption saving names exact photo target scope', () {
++    expect(Copy.captionAddToAll(1), 'Save caption to 1 photo');
++    expect(Copy.captionAddToAll(3), 'Save caption to all 3 photos');
++    expect(Copy.captionAddToTicked(1), 'Save caption to 1 ticked photo');
++    expect(Copy.captionAddToTicked(2), 'Save caption to 2 ticked photos');
++  });
++
++  test('field labels carry requiredness in a placeholder message', () {
++    expect(Copy.fieldLabelRequired('Name'), 'Name (required)');
++    expect(Copy.fieldLabelOptional('Description'), 'Description (optional)');
++  });
++
++  test('recordsCount reads correctly at zero, one and many', () {
++    expect(Copy.recordsCount(0), 'No records');
++    expect(Copy.recordsCount(1), '1 record');
++    expect(Copy.recordsCount(2), '2 records');
++    expect(Copy.notDetected, 'Not detected');
++    expect(Copy.notDetected, isNotEmpty);
++  });
++
++  test('projectListNumber is the locale-formatted position', () {
++    expect(Copy.projectListNumber(1), '1');
++    expect(Copy.projectListNumber(12), '12');
++  });
++
++  test('fieldsCount reads correctly at zero, one and many', () {
++    expect(Copy.fieldsCount(0), 'No fields');
++    expect(Copy.fieldsCount(1), '1 field');
++    expect(Copy.fieldsCount(2), '2 fields');
++  });
++
++  test('feedbackShotTipScreens names Continue later', () {
++    expect(Copy.feedbackShotTipScreens, contains(Copy.feedbackContinueLater));
++  });
++
++  test('project list empty copy names create and reserves import', () {
++    expect(Copy.projectsEmptyMessage, 'Create a project to start capturing.');
++    expect(Copy.projectsImport, 'Import a file');
++    expect(Copy.projectsNoMatchHeadline, 'No matching projects');
++    expect(
++      Copy.projectsNoMatchMessage,
++      'Try a different name, or create a project.',
++    );
++  });
++
++  test('feedbackEntryTitle joins the number, id and message', () {
++    expect(
++      Copy.feedbackEntryTitle('1', 'FBK0000001', 'The list is slow'),
++      '1. FBK0000001 · The list is slow',
++    );
++  });
++
++  test('feedbackDownloadsGoTo names the Downloads Tapture folder', () {
++    expect(Copy.downloadsTaptureFolder, 'Downloads › Tapture');
++    expect(
++      Copy.feedbackDownloadsGoTo(Copy.downloadsTaptureFolder),
++      'Downloads go to Downloads › Tapture',
++    );
++    expect(Copy.feedbackOpenFolder, 'Open folder');
++    expect(Copy.feedbackSaveToFolder, 'Save to a folder');
++    expect(
++      Copy.feedbackOpenFolderFailed(Copy.downloadsTaptureFolder),
++      'The folder could not be opened. Look in Downloads › Tapture.',
++    );
++  });
++
++  test('feedbackDiscardDraftMessage reads correctly at zero, one and many', () {
++    expect(Copy.feedbackDiscardDraftTitle, 'Discard this feedback?');
++    expect(
++      Copy.feedbackDiscardDraftMessage(0),
++      'This feedback will be cleared.',
++    );
++    expect(
++      Copy.feedbackDiscardDraftMessage(1),
++      'This feedback and its 1 image will be cleared.',
++    );
++    expect(
++      Copy.feedbackDiscardDraftMessage(3),
++      'This feedback and its 3 images will be cleared.',
++    );
++  });
++
++  test('no Copy value uses a synonym the naming checker rejects', () {
++    for (final String value in _values) {
++      expect(value, isNotEmpty);
++      for (final MapEntry<String, String> synonym in _typeSynonyms.entries) {
++        expect(
++          value.contains(synonym.key),
++          isFalse,
++          reason:
++              '"$value" uses ${synonym.key}; say ${synonym.value} '
++              '(FE-CONS-07)',
++        );
++      }
++      for (final String banned in _bannedWords) {
++        expect(
++          RegExp('\\b$banned\\b', caseSensitive: false).hasMatch(value),
++          isFalse,
++          reason: '"$value" uses "$banned", which the naming checker rejects',
++        );
++      }
++    }
++  });
++}
++
++/// Every catalogue string [Copy] currently publishes.
++List<String> get _values {
++  return <String>[
++    Copy.notDetected,
++    Copy.recordsCount(0),
++    Copy.recordsCount(1),
++    Copy.recordsCount(2),
++    Copy.fieldsCount(0),
++    Copy.fieldsCount(1),
++    Copy.fieldsCount(2),
++    Copy.clearField('Name'),
++    Copy.showField('PIN'),
++    Copy.hideField('PIN'),
++    Copy.autoFilled,
++    Copy.outOfRange,
++    Copy.selectAll,
++    Copy.clear,
++    Copy.dismissChip('Water'),
++    Copy.dismiss,
++    Copy.cancel,
++    Copy.ok,
++    Copy.discardChangesTitle,
++    Copy.unsavedChanges,
++    Copy.discard,
++    Copy.fixFields(1),
++    Copy.fixFields(2),
++    Copy.fieldError('Name', 'Required'),
++    Copy.fieldLabelRequired('Name'),
++    Copy.fieldLabelOptional('Description'),
++    Copy.validationAnnouncement('Fix these fields', <String>['Name: Required']),
++    Copy.missingPhoto,
++    Copy.missingPhotoNamed('Front'),
++    Copy.photo,
++    Copy.photoThumbLabel(
++      type: Copy.photoFront,
++      missing: false,
++      captioned: true,
++      selected: true,
++    ),
++    Copy.photoFront,
++    Copy.photoBack,
++    Copy.photoSerial,
++    Copy.photoRatingPlate,
++    Copy.photoRatingPlateBadge,
++    Copy.photoDamage,
++    Copy.photoPanel,
++    Copy.photoLocation,
++    Copy.photoAttendance,
++    Copy.photoAttendanceBadge,
++    Copy.photoDocument,
++    Copy.photoDocumentBadge,
++    Copy.photoOther,
++    Copy.stepDone,
++    Copy.stepRunning,
++    Copy.stepWaiting,
++    Copy.failed,
++    Copy.progressAnnouncement(label: 'Read text', state: Copy.stepWaiting),
++    Copy.statusDraft,
++    Copy.statusCaptured,
++    Copy.statusQueued,
++    Copy.statusProcessing,
++    Copy.statusExtracted,
++    Copy.statusNeedsReview,
++    Copy.statusApproved,
++    Copy.statusArchived,
++    Copy.statusDeleted,
++    Copy.emptyHeadline,
++    Copy.emptyMessage,
++    Copy.loading,
++    Copy.busy,
++    Copy.busyAction('Save'),
++    Copy.tryAgain,
++    Copy.save,
++    Copy.undo,
++    Copy.galleryTitle,
++    Copy.galleryTheme,
++    Copy.galleryWidth,
++    Copy.galleryTextScale,
++    Copy.galleryTokens,
++    Copy.galleryLayout,
++    Copy.galleryButtons,
++    Copy.galleryFields,
++    Copy.galleryContainers,
++    Copy.galleryStates,
++    Copy.galleryFeedback,
++    Copy.galleryLight,
++    Copy.galleryDark,
++    Copy.galleryOutdoor,
++    Copy.galleryCompact,
++    Copy.galleryMedium,
++    Copy.galleryExpanded,
++    Copy.galleryScale100,
++    Copy.galleryScale200,
++    Copy.appName,
++    Copy.search,
++    Copy.overflowMenu,
++    Copy.navProjects,
++    Copy.projectsEmptyHeadline,
++    Copy.projectsEmptyMessage,
++    Copy.projectsCreate,
++    Copy.projectsNoMatchHeadline,
++    Copy.projectsNoMatchMessage,
++    Copy.projectsImport,
++    Copy.projectsDuplicate,
++    Copy.projectAllProjects,
++    Copy.projectNew,
++    Copy.projectArchive,
++    Copy.projectUnarchive,
++    Copy.projectDelete,
++    Copy.projectDeleteTitle('Alpha'),
++    Copy.projectDeleteMessage(records: 2, files: 1, days: 30),
++    Copy.filesCount(0),
++    Copy.filesCount(1),
++    Copy.filesCount(2),
++    Copy.projectDeleteTypeName,
++    Copy.projectExportFirst,
++    Copy.projectShowArchived,
++    Copy.projectPin,
++    Copy.projectUnpin,
++    Copy.projectRename,
++    Copy.projectRenameTitle,
++    Copy.projectRenameMessage,
++    Copy.projectOpenWith,
++    Copy.projectDownloadCopy,
++    Copy.projectNothingToOpen,
++    Copy.projectNothingToOpenRecovery,
++    Copy.projectOpenFailedTitle,
++    Copy.projectOpenFailed,
++    Copy.projectOpenFailedNamed('book.xlsx'),
++    Copy.projectOpenFailedRecovery,
++    Copy.projectOpenNoApp,
++    Copy.projectOpenNoAppRecovery,
++    Copy.projectOpenPermission,
++    Copy.projectOpenPermissionRecovery,
++    Copy.projectListNumber(1),
++    Copy.projectListNumber(12),
++    Copy.projectCreateTitle,
++    Copy.projectDuplicateTitle,
++    Copy.projectName,
++    Copy.projectDescription,
++    Copy.projectOrganisation,
++    Copy.projectEditTitle,
++    Copy.projectSettingsTitle,
++    Copy.projectStartsOn,
++    Copy.projectEndsOn,
++    Copy.projectStatus,
++    Copy.projectStatusActive,
++    Copy.projectStatusArchived,
++    Copy.projectAiEnabled,
++    Copy.projectAiEnabledEffect,
++    Copy.projectDoNotSendImages,
++    Copy.projectDoNotSendImagesEffect,
++    Copy.projectRefineColumns,
++    Copy.projectConfidenceHigh,
++    Copy.projectConfidenceMedium,
++    Copy.projectUseAppDefault,
++    Copy.projectOn,
++    Copy.projectOff,
++    Copy.projectAppDefault(Copy.projectOn),
++    Copy.projectEditEmptyHeadline,
++    Copy.projectEditEmptyMessage,
++    Copy.projectSettingsEmptyHeadline,
++    Copy.projectSettingsEmptyMessage,
++    Copy.projectCopyName('Alpha'),
++    Copy.projectListSubtitle(records: 2, unprocessed: 1),
++    Copy.continueCapturing,
++    Copy.homeEmptyHeadline,
++    Copy.homeEmptyMessage,
++    Copy.navCapture,
++    Copy.navRecords,
++    Copy.navMore,
++    Copy.navTemplates,
++    Copy.templatesEmptyHeadline,
++    Copy.templatesEmptyMessage,
++    Copy.templatesPickLibrary,
++    Copy.templatesCreate,
++    Copy.templatesCreateTitle,
++    Copy.templatesOpen,
++    Copy.templatesExport,
++    Copy.templatesImport,
++    Copy.templatesImportEmptyHeadline,
++    Copy.templatesImportEmptyMessage,
++    Copy.templatesImportUnknownSchema,
++    Copy.templatesImportUnknownSchemaRecovery,
++    Copy.templatesImportInvalid,
++    Copy.templatesImportInvalidRecovery,
++    Copy.templatesImportDuplicateField,
++    Copy.templatesImportDuplicateFieldRecovery,
++    Copy.workbookPassword,
++    Copy.workbookPasswordRecovery,
++    Copy.workbookCorrupt,
++    Copy.workbookCorruptRecovery,
++    Copy.xlsxMappingTitle,
++    Copy.xlsxMappingEmptyHeadline,
++    Copy.xlsxMappingEmptyMessage,
++    Copy.xlsxMappingConfirm,
++    Copy.xlsxMappingSkip,
++    Copy.xlsxMappingInclude,
++    Copy.xlsxMappingSkipped,
++    Copy.xlsxMappingProposal(
++      field: 'Serial',
++      type: Copy.fieldTypeLabel('text'),
++      rule: Copy.fieldOptional,
++    ),
++    Copy.xlsxMappingUntitled('A'),
++    Copy.xlsxMappingDefaultName,
++    Copy.xlsxMappingMissing,
++    Copy.xlsxMappingMissingRecovery,
++    Copy.xlsxMappingExists,
++    Copy.xlsxMappingExistsRecovery,
++    Copy.rowAliasesTitle,
++    Copy.rowAliasesEmptyHeadline,
++    Copy.rowAliasesEmptyMessage,
++    Copy.rowAliasesField,
++    Copy.rowAliasesHint,
++    Copy.rowAliasesImport,
++    Copy.rowAliasesColumn,
++    Copy.rowAliasesNone,
++    Copy.rowAliasesList(const <String>[]),
++    Copy.rowAliasesList(const <String>['BP machine', 'BP']),
++    Copy.checklistTitle,
++    Copy.checklistEmptyHeadline,
++    Copy.checklistEmptyMessage,
++    Copy.checklistFound,
++    Copy.checklistMissing,
++    Copy.checklistUngrouped,
++    Copy.checklistProgress(group: 'Ward 2', found: 12, total: 40),
++    Copy.detectionProfileTitle,
++    Copy.detectionProfileExplain,
++    Copy.detectionProfileEmptyHeadline,
++    Copy.detectionProfileEmptyMessage,
++    Copy.detectionProfileClasses,
++    Copy.detectionProfileKeywords,
++    Copy.detectionProfilePatterns,
++    Copy.detectionProfileDatasets,
++    Copy.detectionProfileNegative,
++    Copy.detectionProfileHint,
++    Copy.detectionProfileNoPatterns,
++    Copy.detectionProfileNoDatasets,
++    Copy.detectionProfileMissing,
++    Copy.detectionProfileMissingRecovery,
++    Copy.templatesDelete,
++    Copy.templatesDeleteTitle('Assets'),
++    Copy.templatesDeleteMessage(fields: 2, records: 0),
++    Copy.templateFieldsTitle,
++    Copy.templatesAddField,
++    Copy.templatesEditField,
++    Copy.templatesDeleteField,
++    Copy.templatesDeleteFieldTitle('Serial'),
++    Copy.templatesDeleteFieldMessage(values: 0),
++    Copy.templatesDeleteFieldMessage(values: 1),
++    Copy.templatesDeleteFieldMessage(values: 2),
++    Copy.templatesFieldsEmptyHeadline,
++    Copy.templatesFieldsEmptyMessage,
++    Copy.fieldRequired,
++    Copy.fieldRecommended,
++    Copy.fieldOptional,
++    Copy.fieldMoveUp('Serial'),
++    Copy.fieldMoveDown('Serial'),
++    Copy.fieldReorder('Serial'),
++    Copy.fieldTypeLabel('text'),
++    Copy.fieldTypeLabel('longText'),
++    Copy.fieldTypeLabel('number'),
++    Copy.fieldTypeLabel('decimal'),
++    Copy.fieldTypeLabel('currency'),
++    Copy.fieldTypeLabel('percentage'),
++    Copy.fieldTypeLabel('date'),
++    Copy.fieldTypeLabel('time'),
++    Copy.fieldTypeLabel('dateTime'),
++    Copy.fieldTypeLabel('boolean'),
++    Copy.fieldTypeLabel('choice'),
++    Copy.fieldTypeLabel('multiChoice'),
++    Copy.fieldTypeLabel('lookup'),
++    Copy.fieldTypeLabel('barcode'),
++    Copy.fieldTypeLabel('photoReference'),
++    Copy.fieldTypeLabel('documentReference'),
++    Copy.fieldTypeLabel('gpsLocation'),
++    Copy.fieldTypeLabel('signature'),
++    Copy.fieldTypeLabel('computed'),
++    Copy.fieldLabel,
++    Copy.fieldType,
++    Copy.fieldRequiredness,
++    Copy.fieldAdvanced,
++    Copy.fieldAdvancedShow,
++    Copy.fieldAdvancedHide,
++    Copy.fieldKeepAnyway,
++    Copy.fieldTwoFactsWarning,
++    Copy.fieldDefaultValue,
++    Copy.fieldUnit,
++    Copy.fieldHelp,
++    Copy.fieldInputMode,
++    Copy.fieldInputAny,
++    Copy.fieldInputManual,
++    Copy.fieldInputAi,
++    Copy.fieldInputAuto,
++    Copy.fieldStickable,
++    Copy.fieldContextLevel,
++    Copy.fieldAutoFill,
++    Copy.fieldAutoFillNone,
++    Copy.fieldAutoFillLabel('now'),
++    Copy.fieldAutoFillLabel('today'),
++    Copy.fieldAutoFillLabel('time'),
++    Copy.fieldAutoFillLabel('sequence'),
++    Copy.fieldAutoFillLabel('operator'),
++    Copy.fieldAutoFillLabel('device'),
++    Copy.fieldAutoFillLabel('gps'),
++    Copy.fieldAutoFillLabel('context'),
++    Copy.fieldRefine,
++    Copy.fieldIdentity,
++    Copy.fieldRequiredWhen,
++    Copy.fieldRequiredWhenPreview('Fault present is yes'),
++    Copy.fieldHidden,
++    Copy.fieldHiddenHelp,
++    Copy.fieldValidationTitle,
++    Copy.fieldValidationEmptyHeadline,
++    Copy.fieldValidationEmptyMessage,
++    Copy.fieldPattern,
++    Copy.fieldPatternNone,
++    Copy.fieldPatternSerial,
++    Copy.fieldPatternAssetTag,
++    Copy.fieldPatternRegistration,
++    Copy.fieldPatternCustom,
++    Copy.fieldPatternTest,
++    Copy.fieldPatternTestPass,
++    Copy.fieldMinLength,
++    Copy.fieldMaxLength,
++    Copy.fieldRangeMin,
++    Copy.fieldRangeMax,
++    Copy.fieldRequiredWith,
++    Copy.fieldOptionsTitle,
++    Copy.fieldOptionsEmptyHeadline,
++    Copy.fieldOptionsEmptyMessage,
++    Copy.fieldOptionLabel,
++    Copy.fieldOptionAdd,
++    Copy.fieldOptionRetire,
++    Copy.fieldOptionRetired,
++    Copy.fieldAddEmptyHeadline,
++    Copy.fieldAddEmptyMessage,
++    Copy.requiredColumnsTitle,
++    Copy.requiredColumnsEmptyHeadline,
++    Copy.requiredColumnsEmptyMessage,
++    Copy.requiredColumnHide,
++    Copy.requiredColumnShowGroup,
++    Copy.requiredColumnHideGroup,
++    Copy.requiredColumnUngrouped,
++    Copy.requiredColumnRadios('Serial'),
++    Copy.requiredColumnCell('Serial', Copy.fieldRequired),
++    Copy.requiredColumnShipped(Copy.fieldOptional),
++    Copy.requiredColumnGroup('identity'),
++    Copy.identityFieldsTitle,
++    Copy.identityFieldsExplain,
++    Copy.identityFieldsEmptyHeadline,
++    Copy.identityFieldsEmptyMessage,
++    Copy.outputMappingTitle,
++    Copy.outputMappingEmptyHeadline,
++    Copy.outputMappingEmptyMessage,
++    Copy.outputMappingDuplicate,
++    Copy.outputMappingDuplicateRecovery,
++    Copy.outputMappingBuiltHint,
++    Copy.outputMappingImportedHint,
++    Copy.templateMigrationTitle,
++    Copy.templateMigrationExplain,
++    Copy.templateMigrationEmptyHeadline,
++    Copy.templateMigrationEmptyMessage,
++    Copy.templateMigrationAdded,
++    Copy.templateMigrationRemoved,
++    Copy.templateMigrationRetyped,
++    Copy.templateMigrationConfirmTitle,
++    Copy.templateMigrationConfirm(3),
++    Copy.templateMigrationAction,
++    Copy.templateCopyName('Assets'),
++    Copy.templateListSubtitle(fields: 2, records: 0),
++    Copy.templatesLibraryTitle,
++    Copy.templatesLibraryEmptyHeadline,
++    Copy.templatesLibraryEmptyMessage,
++    Copy.templatesAdd,
++    Copy.shippedAreaTitle('01', 'Cross-sector foundations'),
++    Copy.shippedCatalogueCategoryTitle('UNI', 'Universal capture and records'),
++    Copy.shippedCatalogueSubtitle('UNI-001', 'Observation', 67),
++    Copy.shippedFiltersTitle,
++    Copy.shippedAreaFilter,
++    Copy.shippedRecordTypeFilter,
++    Copy.shippedTierFilter,
++    Copy.shippedTierLabel('p0'),
++    Copy.shippedTierLabel('p1'),
++    Copy.shippedTierLabel('p2'),
++    Copy.shippedPrivacyLabel('internal'),
++    Copy.shippedPrivacyLabel('confidential'),
++    Copy.shippedPrivacyLabel('restricted'),
++    Copy.shippedCategoryLabel,
++    Copy.shippedRecordTypeLabel,
++    Copy.shippedPrivacyTierLabel,
++    Copy.shippedCaptureLabel,
++    Copy.shippedAiAssistanceLabel,
++    Copy.shippedOutputsLabel,
++    Copy.shippedReviewLabel,
++    Copy.shippedFieldSubtitle('text', Copy.fieldRequired),
++    Copy.shippedLabel('templates.catalogue.observation_subject'),
++    Copy.navQueue,
++    Copy.navExports,
++    Copy.operatorNameUse,
++    Copy.operatorName,
++    Copy.operatorProfileTitle,
++    Copy.operatorInitials,
++    Copy.operatorContact,
++    Copy.operatorEmail,
++    Copy.operatorPhone,
++    Copy.nameRequired,
++    Copy.emailNeedsAt,
++    Copy.initialsLength,
++    Copy.statusNoProject,
++    Copy.statusNoContext,
++    Copy.statusNoTemplate,
++    Copy.statusWhere('Alpha', 'Ward 1'),
++    Copy.networkOnline,
++    Copy.networkMetered,
++    Copy.networkOffline,
++    Copy.networkOfflineByChoice,
++    Copy.settingsOfflineTitle,
++    Copy.settingsOfflineEffect,
++    Copy.unprocessedCount(0),
++    Copy.unprocessedCount(1),
++    Copy.unprocessedCount(2),
++    Copy.offlineWorking,
++    Copy.somethingWentWrong,
++    Copy.workStillOnDevice,
++    Copy.restart,
++    Copy.exportLog,
++    Copy.openRecycleBin,
++    Copy.settingsTitle,
++    Copy.settingsOperatorSubtitle,
++    Copy.settingsCaptureSubtitle,
++    Copy.settingsAiTitle,
++    Copy.settingsAiSubtitle,
++    Copy.settingsLanguageTitle,
++    Copy.settingsLanguageSubtitle,
++    Copy.settingsAppearanceTitle,
++    Copy.settingsAppearanceSubtitle,
++    Copy.themeModeSystem,
++    Copy.themeModeLight,
++    Copy.themeModeDark,
++    Copy.themeModeOutdoor,
++    Copy.settingsStorageTitle,
++    Copy.settingsStorageSubtitle,
++    Copy.settingsFilesTitle,
++    Copy.settingsFilesSubtitle,
++    Copy.settingsSecurityTitle,
++    Copy.settingsSecuritySubtitle,
++    Copy.settingsAboutTitle,
++    Copy.settingsAboutSubtitle,
++    Copy.settingsCamera,
++    Copy.settingsCameraEffect,
++    Copy.settingsCameraPhoto,
++    Copy.settingsAutoFillDates,
++    Copy.settingsAutoFillDatesEffect,
++    Copy.settingsGps,
++    Copy.settingsGpsWhyOff,
++    Copy.settingsPhotoQuality,
++    Copy.settingsPhotoQualityEffect,
++    Copy.settingsQualityStandard,
++    Copy.settingsQualitySmaller,
++    Copy.settingsFolderStrategy,
++    Copy.settingsFolderStrategyNewFilesOnly,
++    Copy.settingsFolderByContext,
++    Copy.settingsFolderByTemplate,
++    Copy.settingsFolderByDate,
++    Copy.settingsFolderFlat,
++    Copy.settingsNamingPattern,
++    Copy.settingsNamingPatternEffect,
++    Copy.settingsCameraSubtitle('Photo'),
++    Copy.settingsPhotoQualitySubtitle('Standard'),
++    Copy.settingsNamingSubtitle('{date}_{time}_{type}'),
++    Copy.settingsFolderStrategySubtitle('By context'),
++    Copy.settingsProjectsHeader,
++    Copy.settingsHeadroomHeader,
++    Copy.settingsStorageRoot,
++    Copy.settingsVolumeTotal,
++    Copy.settingsVolumeUsed,
++    Copy.settingsVolumeAvailable,
++    Copy.settingsVolumeFigures(total: '2 GB', used: '1 GB', available: '1 GB'),
++    Copy.settingsRetentionHeader,
++    Copy.settingsHeadroomAmple,
++    Copy.settingsHeadroomLow,
++    Copy.settingsHeadroomCritical,
++    Copy.settingsClearCache,
++    Copy.settingsClearCacheEffect,
++    Copy.settingsCacheSize('12 B'),
++    Copy.settingsRetentionSubtitle(30),
++    Copy.settingsClearCacheTitle,
++    Copy.settingsClearCacheMessage,
++    Copy.settingsRetention,
++    Copy.settingsRetentionEffect,
++    Copy.settingsRetentionDays(0),
++    Copy.settingsRetentionDays(1),
++    Copy.settingsRetentionDays(2),
++    Copy.settingsDocuments,
++    Copy.settingsAudio,
++    Copy.settingsExports,
++    Copy.settingsCache,
++    Copy.settingsStorageEmptyHeadline,
++    Copy.settingsStorageEmptyMessage,
++    Copy.fileSize(12),
++    Copy.fileSize(2048),
++    Copy.fileSize(2 * 1024 * 1024),
++    Copy.fileSize(2 * 1024 * 1024 * 1024),
++    Copy.settingsProjectUse(
++      photos: '1 B',
++      documents: '0 B',
++      audio: '0 B',
++      exports: '0 B',
++    ),
++    Copy.settingsVersion,
++    Copy.settingsBuild,
++    Copy.settingsLicences,
++    Copy.settingsLicencesEffect,
++    Copy.settingsTemplatesSubtitle,
++    Copy.settingsQueueSubtitle,
++    Copy.settingsCameraDocument,
++    Copy.captureTakePhoto,
++    Copy.captureChoosePhoto,
++    Copy.fieldCalculated,
++    Copy.fieldFromPhotos,
++    Copy.templateChoiceAuto,
++    Copy.settingsEmptyHeadline,
++    Copy.settingsEmptyMessage,
++    Copy.settingsCaptureEmptyHeadline,
++    Copy.settingsCaptureEmptyMessage,
++    Copy.settingsAboutEmptyHeadline,
++    Copy.settingsAboutEmptyMessage,
++    Copy.appLockUnlockTitle,
++    Copy.appLockTitle,
++    Copy.appLockPin,
++    Copy.appLockCurrentPin,
++    Copy.appLockNewPin,
++    Copy.appLockConfirmPin,
++    Copy.appLockSet,
++    Copy.appLockChange,
++    Copy.appLockRemove,
++    Copy.appLockUnlock,
++    Copy.appLockBiometrics,
++    Copy.appLockSetEffect,
++    Copy.appLockRemoveEffect,
++    Copy.appLockOn,
++    Copy.appLockOff,
++    Copy.appLockPinLength,
++    Copy.appLockPinMismatch,
++    Copy.appLockWrongPin,
++    Copy.appLockRecovery,
++    Copy.appLockWait(Duration.zero),
++    Copy.appLockWait(const Duration(seconds: 2)),
++    Copy.close,
++    Copy.feedback,
++    Copy.feedbackButtonHint,
++    Copy.feedbackGive,
++    Copy.feedbackDownload,
++    Copy.feedbackDelete,
++    Copy.feedbackStaysOnDevice,
++    Copy.feedbackCategoryGeneral,
++    Copy.feedbackCategoryImprovement,
++    Copy.feedbackCategoryError,
++    Copy.feedbackCategorySuggestion,
++    Copy.feedbackCategoryOther,
++    Copy.feedbackSubmitterSignedIn,
++    Copy.feedbackSubmitterLocal,
++    Copy.feedbackSubmitterAnonymous,
++    Copy.feedbackDeviceMobile,
++    Copy.feedbackDeviceTablet,
++    Copy.feedbackDeviceDesktop,
++    Copy.feedbackType,
++    Copy.feedbackOtherType,
++    Copy.feedbackOtherRequired,
++    Copy.feedbackMessage,
++    Copy.feedbackMessageHint,
++    Copy.feedbackMessageRequired,
++    Copy.feedbackAttachScreenshot,
++    Copy.feedbackContinue,
++    Copy.feedbackAddScreen,
++    Copy.feedbackIncludeUi,
++    Copy.feedbackAddWindow,
++    Copy.feedbackStopSharing,
++    Copy.feedbackSharingWindow,
++    Copy.feedbackOtherWindow,
++    Copy.feedbackTakePhoto,
++    Copy.feedbackChoosePhoto,
++    Copy.feedbackShotTipScreens,
++    Copy.feedbackShotTipApps,
++    Copy.feedbackShotPreview,
++    Copy.feedbackDiscardDraft,
++    Copy.feedbackDiscardDraftTitle,
++    Copy.feedbackDiscardDraftMessage(0),
++    Copy.feedbackDiscardDraftMessage(1),
++    Copy.feedbackDiscardDraftMessage(3),
++    Copy.feedbackContinueLater,
++    Copy.feedbackDraftBarHint,
++    Copy.feedbackShotAdded('Projects'),
++    Copy.feedbackAttachImages(1),
++    Copy.feedbackAttachImages(3),
++    Copy.feedbackImageCount(1),
++    Copy.feedbackImageCount(2),
++    Copy.feedbackShotsFull,
++    Copy.feedbackScreenshotOf('Projects'),
++    Copy.feedbackNoScreenshot,
++    Copy.feedbackScreenshotPreview,
++    Copy.feedbackSave,
++    Copy.feedbackSaved,
++    Copy.feedbackTypes,
++    Copy.feedbackFrom,
++    Copy.feedbackTo,
++    Copy.feedbackRangeBackwards,
++    Copy.feedbackScreens,
++    Copy.feedbackPlatforms,
++    Copy.feedbackDeviceTypes,
++    Copy.feedbackSubmittedBy,
++    Copy.feedbackScreenshot,
++    Copy.feedbackScreenshotAny,
++    Copy.feedbackScreenshotWith,
++    Copy.feedbackScreenshotWithout,
++    Copy.feedbackSearch,
++    Copy.feedbackClearFilters,
++    Copy.dictateInto('Your feedback'),
++    Copy.stopDictating('Your feedback'),
++    Copy.photoNoAccess,
++    Copy.displayNoAccess,
++    Copy.photoNoCamera,
++    Copy.photoPickFailed,
++    Copy.displayCaptureFailed,
++    Copy.dictationUnavailable,
++    Copy.dictationNoMicrophone,
++    Copy.dictationNothingHeard,
++    Copy.dictationNeedsConnection,
++    Copy.dictationOfflineOnly,
++    Copy.dictationFailed,
++    Copy.feedbackMatching(0, 1),
++    Copy.feedbackMatching(1, 1),
++    Copy.feedbackMatching(2, 2),
++    Copy.feedbackDownloadCount(0),
++    Copy.feedbackDownloadCount(1),
++    Copy.feedbackDownloadCount(2),
++    Copy.feedbackDownloadStarted,
++    Copy.feedbackDownloadedTo('downloads/file.xlsx'),
++    Copy.downloadsTaptureFolder,
++    Copy.feedbackDownloadsGoTo(Copy.downloadsTaptureFolder),
++    Copy.feedbackOpenFolder,
++    Copy.feedbackSaveToFolder,
++    Copy.feedbackOpenFolderFailed(Copy.downloadsTaptureFolder),
++    Copy.feedbackEmptyHeadline,
++    Copy.feedbackEmptyMessage,
++    Copy.feedbackNoMatchHeadline,
++    Copy.feedbackNoMatchMessage,
++    Copy.feedbackSelected(0),
++    Copy.feedbackSelected(1),
++    Copy.feedbackSelected(2),
++    Copy.feedbackDeleteCount(0),
++    Copy.feedbackDeleteCount(1),
++    Copy.feedbackDeleteCount(2),
++    Copy.feedbackDeleteTitle(1),
++    Copy.feedbackDeleteTitle(2),
++    Copy.feedbackDeleteMessage(1),
++    Copy.feedbackDeleteMessage(2),
++    Copy.feedbackDeleted(1),
++    Copy.feedbackDeleted(2),
++    Copy.feedbackShowMore,
++    Copy.feedbackEntryFacts('Improvement', '18 Sep 2026, 10:02', 'Projects'),
++    Copy.feedbackEntryTitle('1', 'FBK0000001', 'The list is slow'),
++  ];
++}
+diff --git a/frontend/test/core/widgets/app_icon_button_test.dart b/frontend/test/core/widgets/app_icon_button_test.dart
+new file mode 100644
+index 00000000..b13ef328
+--- /dev/null
++++ b/frontend/test/core/widgets/app_icon_button_test.dart
+@@ -0,0 +1,125 @@
++import 'package:flutter/material.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/app/theme/app_theme.dart';
++import 'package:tapture/core/widgets/app_icon_button.dart';
++
++import '../../support/a11y_matchers.dart';
++
++void main() {
++  testWidgets('an icon button is a 48dp labelled target with a tooltip', (
++    WidgetTester tester,
++  ) async {
++    await _pump(
++      tester,
++      const AppIconButton(
++        icon: Icons.search,
++        semanticLabel: 'Search',
++        tooltip: 'Search records',
++        onPressed: _ignorePress,
++      ),
++    );
++
++    expect(find.byType(AppIconButton), meetsTapTarget());
++    expect(find.byType(AppIconButton), hasSemanticLabel('Search'));
++    expect(find.byTooltip('Search records'), findsOneWidget);
++    await expectNoA11yIssues(tester);
++  });
++
++  testWidgets('a disabled icon button still names itself', (
++    WidgetTester tester,
++  ) async {
++    await _pump(
++      tester,
++      const AppIconButton(
++        icon: Icons.delete,
++        semanticLabel: 'Delete',
++        tooltip: 'Delete',
++      ),
++    );
++
++    expect(find.byType(AppIconButton), meetsTapTarget());
++    expect(find.byType(AppIconButton), hasSemanticLabel('Delete'));
++  });
++
++  testWidgets('a toggle is announced as selected and filled while on', (
++    WidgetTester tester,
++  ) async {
++    await _pump(
++      tester,
++      const AppIconButton(
++        icon: Icons.mic,
++        semanticLabel: 'Stop speaking',
++        tooltip: 'Stop speaking',
++        selected: true,
++        onPressed: _ignorePress,
++      ),
++    );
++    final IconButton button = tester.widget<IconButton>(
++      find.byType(IconButton),
++    );
++    expect(button.isSelected, isTrue);
++    expect(
++      button.style?.backgroundColor?.resolve(<WidgetState>{}),
++      isNot(Colors.transparent),
++    );
++    expect(
++      tester.getSemantics(find.byType(IconButton)),
++      isSemantics(isSelected: true, label: 'Stop speaking'),
++    );
++    expect(find.byType(AppIconButton), meetsTapTarget());
++    await expectNoA11yIssues(tester);
++  });
++
++  testWidgets('a plain action is not a toggle', (WidgetTester tester) async {
++    await _pump(
++      tester,
++      const AppIconButton(
++        icon: Icons.search,
++        semanticLabel: 'Search',
++        tooltip: 'Search',
++        onPressed: _ignorePress,
++      ),
++    );
++    expect(
++      tester.widget<IconButton>(find.byType(IconButton)).isSelected,
++      isNull,
++    );
++  });
++
++  testWidgets('an outlined-off icon button has no side', (
++    WidgetTester tester,
++  ) async {
++    await _pump(
++      tester,
++      const AppIconButton(
++        icon: Icons.mic,
++        semanticLabel: 'Speak',
++        tooltip: 'Speak',
++        outlined: false,
++        onPressed: _ignorePress,
++      ),
++    );
++    final IconButton button = tester.widget<IconButton>(
++      find.byType(IconButton),
++    );
++    // The widget's side wins over the theme's outline.
++    expect(button.style?.side?.resolve(<WidgetState>{}), BorderSide.none);
++  });
++}
++
++Future<void> _pump(WidgetTester tester, Widget child) async {
++  tester.view.devicePixelRatio = 1;
++  tester.view.physicalSize = const Size(400, 800);
++  addTearDown(() {
++    tester.view.resetPhysicalSize();
++    tester.view.resetDevicePixelRatio();
++  });
++  await tester.pumpWidget(
++    MaterialApp(
++      theme: buildTheme(brightness: Brightness.light),
++      home: Scaffold(body: Center(child: child)),
++    ),
++  );
++}
++
++void _ignorePress() {}
+diff --git a/frontend/test/core/widgets/fields/app_multi_choice_field_test.dart b/frontend/test/core/widgets/fields/app_multi_choice_field_test.dart
+new file mode 100644
+index 00000000..11532837
+--- /dev/null
++++ b/frontend/test/core/widgets/fields/app_multi_choice_field_test.dart
+@@ -0,0 +1,411 @@
++import 'package:flutter/material.dart';
++import 'package:flutter/services.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/app/theme/app_theme.dart';
++import 'package:tapture/app/theme/color_tokens.dart';
++import 'package:tapture/app/theme/dimensions.dart';
++import 'package:tapture/core/copy/copy.dart';
++import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
++import 'package:tapture/core/widgets/app_chip.dart';
++import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
++import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
++import 'package:tapture/core/widgets/fields/choice.dart';
++
++import '../../../support/a11y_matchers.dart';
++import '../../../support/screen_fonts.dart';
++import '../../../support/screen_matrix.dart';
++import '../../../support/screen_probe.dart';
++
++const List<TargetPlatform> _platforms = <TargetPlatform>[
++  TargetPlatform.android,
++  TargetPlatform.iOS,
++  TargetPlatform.windows,
++  TargetPlatform.macOS,
++  TargetPlatform.linux,
++];
++
++void main() {
++  setUpAll(ScreenFonts.load);
++  final List<Choice<String>> options = <Choice<String>>[
++    const Choice<String>('a', 'Alpha'),
++    const Choice<String>('b', 'Bravo'),
++    const Choice<String>('c', 'Charlie'),
++  ];
++
++  testWidgets('closed field shows selected values as chips', (
++    WidgetTester tester,
++  ) async {
++    await _pump(
++      tester,
++      AppMultiChoiceField<String>(
++        label: 'Tags',
++        options: options,
++        value: const <String>{'a', 'c'},
++        onChanged: (_) {},
++      ),
++    );
++
++    expect(find.text('Alpha'), findsOneWidget);
++    expect(find.text('Charlie'), findsOneWidget);
++    expect(find.text('Bravo'), findsNothing);
++    expect(find.byType(AppChip), findsNWidgets(2));
++    expect(find.byType(AppMultiChoiceField<String>), meetsTapTarget());
++    expect(find.byType(AppMultiChoiceField<String>), hasSemanticLabel('Tags'));
++  });
++
++  testWidgets('select-all and clear update the selection', (
++    WidgetTester tester,
++  ) async {
++    Set<String> latest = const <String>{};
++    await _pump(
++      tester,
++      AppMultiChoiceField<String>(
++        label: 'Tags',
++        options: options,
++        value: latest,
++        onChanged: (Set<String> value) => latest = value,
++      ),
++      size: const Size(400, 800),
++    );
++
++    await tester.tap(find.byType(AppMultiChoiceField<String>));
++    await tester.pumpAndSettle();
++
++    await tester.tap(find.text('Select all'));
++    await tester.pump();
++    expect(latest, <String>{'a', 'b', 'c'});
++
++    await tester.tap(find.text('Clear'));
++    await tester.pump();
++    expect(latest, isEmpty);
++  });
++
++  testWidgets('a 200-option list can be searched on a compact screen', (
++    WidgetTester tester,
++  ) async {
++    final List<Choice<int>> many = <Choice<int>>[
++      for (int i = 0; i < 200; i++) Choice<int>(i, 'Option $i'),
++    ];
++    Set<int> latest = const <int>{};
++    await _pump(
++      tester,
++      AppMultiChoiceField<int>(
++        label: 'Items',
++        options: many,
++        value: latest,
++        onChanged: (Set<int> value) => latest = value,
++      ),
++      size: const Size(400, 800),
++    );
++
++    await tester.tap(find.byType(AppMultiChoiceField<int>));
++    await tester.pumpAndSettle();
++    await tester.enterText(find.byType(TextField), '199');
++    await tester.pump();
++    expect(find.text('Option 199'), findsOneWidget);
++    expect(find.text('Option 0'), findsNothing);
++
++    await tester.tap(find.text('Option 199'));
++    await tester.pump();
++    expect(latest, <int>{199});
++    expect(find.byIcon(Icons.check), findsWidgets);
++  });
++
++  for (final ScreenMatrix cell in ScreenMatrix.cells) {
++    for (final TargetPlatform platform in _platforms) {
++      testWidgets('filled selection commands retain equal targets at '
++          '${cell.description} ${platform.name}', (WidgetTester tester) async {
++        await _verifyCommands(tester, options, cell, platform: platform);
++      });
++    }
++  }
++
++  for (final String theme in <String>['light', 'dark', 'outdoor']) {
++    for (final TextDirection direction in TextDirection.values) {
++      for (final TargetPlatform platform in _platforms) {
++        testWidgets('expanded copy and $direction commands stay reachable in '
++            '$theme short landscape with keyboard ${platform.name}', (
++          WidgetTester tester,
++        ) async {
++          await _verifyCommands(
++            tester,
++            options,
++            ScreenMatrix(
++              const Size(393, 320),
++              2,
++              theme == 'dark' ? Brightness.dark : Brightness.light,
++              theme == 'outdoor',
++            ),
++            locale: const Locale('en', 'XA'),
++            direction: direction,
++            keyboard: 112,
++            platform: platform,
++          );
++        });
++      }
++    }
++  }
++
++  testWidgets('an empty option set disables both filled commands', (
++    WidgetTester tester,
++  ) async {
++    int changes = 0;
++    await _pump(
++      tester,
++      AppMultiChoiceField<String>(
++        label: 'Tags',
++        options: const <Choice<String>>[],
++        value: const <String>{},
++        onChanged: (_) => changes++,
++      ),
++    );
++    await _open(tester);
++    await _verifyGeometry(tester);
++    for (final FilledButton button in tester.widgetList<FilledButton>(
++      find.byType(FilledButton),
++    )) {
++      expect(button.onPressed, isNull);
++    }
++    expect(changes, 0);
++  });
++
++  testWidgets(
++    'keyboard traversal reaches Select all before Clear and activates '
++    'both',
++    (WidgetTester tester) async {
++      Set<String> selected = <String>{'c'};
++      await _pump(
++        tester,
++        AppMultiChoiceField<String>(
++          label: 'Tags',
++          options: options,
++          value: selected,
++          onChanged: (Set<String> next) => selected = next,
++        ),
++      );
++      await _open(tester);
++      await tester.tap(find.byType(TextField));
++      final Finder select = _action(tester, selectAll: true);
++      final Finder clear = _action(tester, selectAll: false);
++      for (
++        int attempt = 0;
++        attempt < 12 && !_focusedWithin(select);
++        attempt++
++      ) {
++        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
++        await tester.pump();
++        expect(_focusedWithin(clear), isFalse);
++      }
++      expect(_focusedWithin(select), isTrue);
++      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
++      await tester.pump();
++      expect(selected, <String>{'a', 'b', 'c'});
++      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
++      await tester.pump();
++      expect(_focusedWithin(clear), isTrue);
++      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
++      await tester.pump();
++      expect(selected, isEmpty);
++      await _verifyGeometry(tester);
++    },
++  );
++
++  for (final ({String name, ScreenMatrix cell}) corner
++      in ScreenMatrix.corners) {
++    testWidgets('filled multi-choice sheet golden ${corner.name}', (
++      WidgetTester tester,
++    ) async {
++      await _pump(
++        tester,
++        AppMultiChoiceField<String>(
++          label: 'Status',
++          options: options,
++          value: const <String>{'c'},
++          onChanged: (_) {},
++        ),
++        cell: corner.cell,
++      );
++      await _open(tester);
++      await _verifyGeometry(tester);
++      await expectLater(
++        find.byType(MaterialApp),
++        matchesGoldenFile(
++          'goldens/feedback_13102026_multichoice_${corner.name}.png',
++        ),
++      );
++    });
++  }
++}
++
++Future<void> _verifyCommands(
++  WidgetTester tester,
++  List<Choice<String>> options,
++  ScreenMatrix cell, {
++  Locale locale = const Locale('en'),
++  TextDirection direction = TextDirection.ltr,
++  double keyboard = 0,
++  TargetPlatform platform = TargetPlatform.android,
++}) async {
++  final Set<String> original = <String>{'c'};
++  final List<Set<String>> changes = <Set<String>>[];
++  await _pump(
++    tester,
++    AppMultiChoiceField<String>(
++      label: 'Tags',
++      options: options,
++      value: original,
++      onChanged: changes.add,
++    ),
++    cell: cell,
++    locale: locale,
++    direction: direction,
++    platform: platform,
++  );
++  await _open(tester);
++  tester.view.viewInsets = FakeViewPadding(bottom: keyboard);
++  addTearDown(tester.view.resetViewInsets);
++  await tester.pumpAndSettle();
++  final Finder search = find.byType(TextField, skipOffstage: false);
++  await tester.ensureVisible(search);
++  await tester.enterText(search, 'alPha');
++  await tester.pumpAndSettle();
++  await _verifyGeometry(tester);
++  await tester.tap(_action(tester, selectAll: true));
++  await tester.pumpAndSettle();
++  expect(changes.single, <String>{'a', 'c'});
++  expect(original, <String>{'c'});
++  expect(() => changes.single.add('b'), throwsUnsupportedError);
++  await tester.tap(_action(tester, selectAll: false));
++  await tester.pumpAndSettle();
++  expect(changes.last, isEmpty);
++  expect(changes.first, <String>{'a', 'c'});
++  expect(
++    tester.widget<FilledButton>(_action(tester, selectAll: false)).onPressed,
++    isNull,
++  );
++  await tester.ensureVisible(search);
++  await tester.enterText(search, 'missing');
++  await tester.pumpAndSettle();
++  expect(
++    tester.widget<FilledButton>(_action(tester, selectAll: true)).onPressed,
++    isNull,
++  );
++  await _verifyGeometry(tester);
++}
++
++Future<void> _open(WidgetTester tester) async {
++  await tester.ensureVisible(find.byType(AppMultiChoiceField<String>));
++  await tester.tap(find.byType(AppMultiChoiceField<String>));
++  await tester.pumpAndSettle();
++}
++
++Finder _action(WidgetTester tester, {required bool selectAll}) {
++  final LocalizedCopy copy = Copy.of(
++    tester.element(find.byType(AppBottomSheet).last),
++  );
++  return find.widgetWithText(
++    FilledButton,
++    selectAll ? copy.selectAll : copy.clear,
++    skipOffstage: false,
++  );
++}
++
++bool _focusedWithin(Finder target) {
++  final BuildContext? focused = FocusManager.instance.primaryFocus?.context;
++  if (focused is! Element) return false;
++  final Element action = target.evaluate().single;
++  bool found = identical(action, focused);
++  focused.visitAncestorElements((Element ancestor) {
++    found = found || identical(ancestor, action);
++    return !found;
++  });
++  return found;
++}
++
++Future<void> _verifyGeometry(WidgetTester tester) async {
++  final Finder select = _action(tester, selectAll: true);
++  final Finder clear = _action(tester, selectAll: false);
++  await tester.ensureVisible(select);
++  await tester.pumpAndSettle();
++  final Rect first = tester.getRect(select);
++  final Rect second = tester.getRect(clear);
++  expect(first.width, closeTo(second.width, 1));
++  final double gap = first.left < second.left
++      ? second.left - first.right
++      : first.left - second.right;
++  expect(gap, closeTo(Space.x2, 0.01));
++  final LocalizedCopy copy = Copy.of(tester.element(select));
++  for (final (Finder, String) command in <(Finder, String)>[
++    (select, copy.selectAll),
++    (clear, copy.clear),
++  ]) {
++    expect(command.$1, meetsTapTarget());
++    expect(command.$1, hasSemanticLabel(command.$2));
++    final FilledButton button = tester.widget<FilledButton>(command.$1);
++    final ThemeData theme = Theme.of(tester.element(command.$1));
++    final Set<WidgetState> states = button.onPressed == null
++        ? <WidgetState>{WidgetState.disabled}
++        : <WidgetState>{};
++    final Color? fill =
++        button.style?.backgroundColor?.resolve(states) ??
++        theme.filledButtonTheme.style?.backgroundColor?.resolve(states);
++    final AppColors colors = tester.element(command.$1).colors;
++    expect(
++      fill,
++      button.onPressed == null ? colors.surfaceVariant : colors.primary,
++    );
++  }
++  expect(ScreenProbe.layoutIssues(tester), isEmpty);
++  expect(
++    await ScreenProbe.accessibilityIssues(
++      tester,
++      targets: <Finder>[select, clear],
++      within: find.byType(AppBottomSheet).last,
++    ),
++    isEmpty,
++  );
++}
++
++Future<void> _pump(
++  WidgetTester tester,
++  Widget child, {
++  Size size = const Size(400, 800),
++  ScreenMatrix? cell,
++  Locale locale = const Locale('en'),
++  TextDirection direction = TextDirection.ltr,
++  TargetPlatform platform = TargetPlatform.android,
++}) async {
++  tester.view.devicePixelRatio = 1;
++  tester.view.physicalSize = cell?.size ?? size;
++  addTearDown(() {
++    tester.view.resetPhysicalSize();
++    tester.view.resetDevicePixelRatio();
++  });
++  await tester.pumpWidget(
++    MaterialApp(
++      debugShowCheckedModeBanner: false,
++      locale: locale,
++      localizationsDelegates: AppLocalizations.localizationsDelegates,
++      supportedLocales: AppLocalizations.supportedLocales,
++      theme: ScreenFonts.theme(
++        buildTheme(
++          brightness: cell?.brightness ?? Brightness.light,
++          outdoor: cell?.outdoor ?? false,
++        ),
++      ).copyWith(platform: platform),
++      builder: (BuildContext context, Widget? nested) => MediaQuery(
++        data: MediaQuery.of(context).copyWith(
++          textScaler: TextScaler.linear(cell?.textScale ?? 1),
++          disableAnimations: true,
++        ),
++        child: Directionality(textDirection: direction, child: nested!),
++      ),
++      home: Scaffold(
++        body: SingleChildScrollView(
++          padding: const EdgeInsets.all(Space.x4),
++          child: child,
++        ),
++      ),
++    ),
++  );
++}
+diff --git a/frontend/test/core/widgets/gallery/widget_gallery_screen_test.dart b/frontend/test/core/widgets/gallery/widget_gallery_screen_test.dart
+new file mode 100644
+index 00000000..7fbb6597
+--- /dev/null
++++ b/frontend/test/core/widgets/gallery/widget_gallery_screen_test.dart
+@@ -0,0 +1,68 @@
++import 'dart:io';
++
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/core/copy/copy.dart';
++import 'package:tapture/core/widgets/gallery/widget_gallery_screen.dart';
++
++/// Public catalogue widgets declared under `lib/core/widgets/`.
++final RegExp _widgetClass = RegExp(
++  r'^class ([A-Z][A-Za-z0-9]*)(?:<[^>]+>)? extends '
++  r'(?:Stateless|Stateful|Consumer)Widget\b',
++);
++
++void main() {
++  test('the gallery route is debug-only /_gallery', () {
++    expect(WidgetGalleryScreen.route, '/_gallery');
++  });
++
++  test('every public catalogue widget has a gallery entry', () {
++    final String gallery = File(
++      'lib/core/widgets/gallery/widget_gallery_screen.dart',
++    ).readAsStringSync();
++    final List<String> missing = <String>[];
++    for (final String name in _catalogueWidgets()) {
++      if (name == 'WidgetGalleryScreen') {
++        continue;
++      }
++      if (!RegExp('\\b$name\\b').hasMatch(gallery)) {
++        missing.add(name);
++      }
++    }
++    expect(
++      missing,
++      isEmpty,
++      reason:
++          'catalogue widgets with no gallery entry: ${missing.join(', ')} '
++          '(FE-CONS-03)',
++    );
++  });
++
++  test('gallery chrome uses Copy, not a synonym', () {
++    expect(Copy.galleryTitle, isNotEmpty);
++    expect(Copy.galleryTheme, isNot(contains('helper')));
++  });
++}
++
++/// First public widget class in every hand-written file under core/widgets.
++List<String> _catalogueWidgets() {
++  final Directory root = Directory('lib/core/widgets');
++  final List<String> names = <String>[];
++  for (final File file
++      in root
++          .listSync(recursive: true)
++          .whereType<File>()
++          .where(
++            (File file) =>
++                file.path.endsWith('.dart') &&
++                file.uri.pathSegments.last.split('.').length == 2,
++          )) {
++    for (final String line in file.readAsLinesSync()) {
++      final Match? match = _widgetClass.firstMatch(line.trimLeft());
++      if (match != null) {
++        names.add(match.group(1)!);
++      }
++    }
++  }
++  names.sort();
++  return names;
++}
+diff --git a/frontend/test/design_system/app_multi_choice_field/gallery_golden_test.dart b/frontend/test/design_system/app_multi_choice_field/gallery_golden_test.dart
+new file mode 100644
+index 00000000..3d95e8ae
+--- /dev/null
++++ b/frontend/test/design_system/app_multi_choice_field/gallery_golden_test.dart
+@@ -0,0 +1,89 @@
++import 'package:flutter/material.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/app/theme/app_theme.dart';
++import 'package:tapture/app/theme/dimensions.dart';
++import 'package:tapture/app/theme/outdoor_theme.dart';
++import 'package:tapture/core/widgets/app_page.dart';
++import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
++import 'package:tapture/core/widgets/fields/choice.dart';
++
++void main() {
++  group('app multi choice field', () {
++    for (final ({String name, ThemeData theme}) mode in _modes) {
++      testWidgets('gallery in ${mode.name}', (WidgetTester tester) async {
++        await _pumpGallery(tester, mode.theme);
++        await tester.pump();
++        await expectLater(
++          find.byType(AppPage),
++          matchesGoldenFile('goldens/app_multi_choice_field_${mode.name}.png'),
++        );
++      });
++    }
++  });
++}
++
++List<({String name, ThemeData theme})> get _modes {
++  return <({String name, ThemeData theme})>[
++    (name: 'light', theme: buildTheme(brightness: Brightness.light)),
++    (name: 'dark', theme: buildTheme(brightness: Brightness.dark)),
++    (name: 'outdoor', theme: buildOutdoorTheme(Brightness.light)),
++  ];
++}
++
++Future<void> _pumpGallery(WidgetTester tester, ThemeData theme) async {
++  tester.view.devicePixelRatio = 1;
++  tester.view.physicalSize = const Size(400, 720);
++  addTearDown(() {
++    tester.view.resetPhysicalSize();
++    tester.view.resetDevicePixelRatio();
++  });
++  await tester.pumpWidget(
++    MaterialApp(
++      key: UniqueKey(),
++      debugShowCheckedModeBanner: false,
++      themeAnimationDuration: Duration.zero,
++      theme: theme,
++      home: AppPage(
++        title: 'Multi-choice fields',
++        body: Column(
++          children: <Widget>[
++            AppMultiChoiceField<String>(
++              label: 'Empty',
++              options: _options,
++              value: const <String>{},
++              onChanged: (_) {},
++            ),
++            const SizedBox(height: Space.x4),
++            AppMultiChoiceField<String>(
++              label: 'Partial',
++              options: _options,
++              value: const <String>{'a', 'c'},
++              onChanged: (_) {},
++            ),
++            const SizedBox(height: Space.x4),
++            AppMultiChoiceField<String>(
++              label: 'Full',
++              options: _options,
++              value: const <String>{'a', 'b', 'c'},
++              onChanged: (_) {},
++            ),
++            const SizedBox(height: Space.x4),
++            AppMultiChoiceField<String>(
++              label: 'Disabled',
++              options: _options,
++              value: const <String>{'b'},
++              enabled: false,
++              onChanged: (_) {},
++            ),
++          ],
++        ),
++      ),
++    ),
++  );
++}
++
++const List<Choice<String>> _options = <Choice<String>>[
++  Choice<String>('a', 'Alpha'),
++  Choice<String>('b', 'Bravo'),
++  Choice<String>('c', 'Charlie'),
++];
+diff --git a/frontend/test/features/capture/presentation/capture_storage_guard_test.dart b/frontend/test/features/capture/presentation/capture_storage_guard_test.dart
+new file mode 100644
+index 00000000..4908b9df
+--- /dev/null
++++ b/frontend/test/features/capture/presentation/capture_storage_guard_test.dart
+@@ -0,0 +1,329 @@
++import 'dart:async';
++import 'dart:io';
++import 'dart:typed_data';
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_riverpod/misc.dart' show Override;
++import 'package:flutter_test/flutter_test.dart';
++import 'package:go_router/go_router.dart';
++import 'package:tapture/app/route_paths.dart';
++import 'package:tapture/app/theme/dimensions.dart';
++import 'package:tapture/core/copy/copy.dart';
++import 'package:tapture/core/errors/result.dart';
++import 'package:tapture/core/files/photo_picker.dart';
++import 'package:tapture/core/files/storage_guard.dart';
++import 'package:tapture/core/files/storage_root.dart';
++import 'package:tapture/core/files/text_store.dart';
++import 'package:tapture/core/widgets/app_button.dart';
++import 'package:tapture/core/widgets/feedback/app_banner.dart';
++import 'package:tapture/core/widgets/fields/field_editor.dart';
++import 'package:tapture/features/capture/data/capture_persistence_impl.dart';
++import 'package:tapture/features/capture/domain/capture_persistence.dart';
++import 'package:tapture/features/capture/domain/capture_session.dart';
++import 'package:tapture/features/capture/domain/photo_draft.dart';
++import 'package:tapture/features/capture/domain/photo_repository.dart';
++import 'package:tapture/features/capture/presentation/capture_controller.dart';
++import 'package:tapture/features/capture/presentation/capture_screen.dart';
++import 'package:tapture/features/capture/presentation/capture_storage_guard.dart';
++import 'package:tapture/features/capture/presentation/photo_tray.dart';
++import 'package:tapture/features/projects/projects.dart';
++import 'package:tapture/features/templates/templates.dart';
++
++import '../../../support/factories.dart';
++import '../../../support/fakes/fake_capture_photo_repository.dart';
++import '../../../support/pump_external_work.dart';
++import '../../../support/tracked_photo_file.dart';
++
++void main() {
++  testWidgets('with ample space capture shows nothing and adds a photo', (
++    WidgetTester tester,
++  ) async {
++    final _Guarded capture = await _Guarded.open(tester, free: _ample);
++
++    expect(find.byType(AppBanner), findsNothing);
++    expect(
++      find.byKey(const ValueKey<String>('capture-storage-full')),
++      findsNothing,
++    );
++    expect(
++      tester.getTopLeft(find.byType(PhotoTray)).dy,
++      tester.getBottomLeft(find.byType(CaptureStorageGuard)).dy,
++    );
++    await capture.addPhoto();
++
++    expect(capture.session.photos, hasLength(1));
++  });
++
++  testWidgets('low space warns once, dismissibly, and capture carries on', (
++    WidgetTester tester,
++  ) async {
++    final _Guarded capture = await _Guarded.open(tester, free: _low);
++    final Finder warning = find.byKey(
++      const ValueKey<String>('capture-storage-low'),
++    );
++
++    expect(warning, findsOneWidget);
++    expect(
++      find.text(Copy.captureStorageLow(Copy.fileSize(_low))),
++      findsOneWidget,
++    );
++    expect(
++      tester.getTopLeft(find.byType(PhotoTray)).dy -
++          tester.getBottomLeft(warning).dy,
++      Space.x4,
++    );
++    await capture.addPhoto();
++    expect(capture.session.photos, hasLength(1));
++
++    await tester.tap(find.byTooltip(Copy.dismiss));
++    await tester.pumpAndSettle();
++    expect(warning, findsNothing);
++    expect(
++      tester.getTopLeft(find.byType(PhotoTray)).dy,
++      tester.getBottomLeft(find.byType(CaptureStorageGuard)).dy,
++    );
++    // A later poll that is still low does not warn again this visit.
++    capture.free = _low - 1;
++    await capture.resume();
++    expect(warning, findsNothing);
++    await capture.addPhoto();
++    expect(capture.session.photos, hasLength(2));
++  });
++
++  testWidgets('at the stop threshold a new photo is refused, the free space '
++      'is named and Export opens the exports', (WidgetTester tester) async {
++    final _Guarded capture = await _Guarded.open(tester, free: _critical);
++
++    expect(
++      find.text(Copy.captureStorageFull(Copy.fileSize(_critical))),
++      findsOneWidget,
++    );
++    expect(
++      tester.getTopLeft(find.byType(PhotoTray)).dy -
++          tester
++              .getBottomLeft(
++                find.byKey(const ValueKey<String>('capture-storage-full')),
++              )
++              .dy,
++      Space.x4,
++    );
++    await tester.tap(capture.addControl);
++    await tester.pumpAndSettle();
++    // Refused before the add sheet opens.
++    expect(find.text(Copy.captureAddSheetTitle), findsNothing);
++    expect(
++      find.text('There is not enough free space to take another photo.'),
++      findsOneWidget,
++    );
++    expect(capture.session.photos, isEmpty);
++
++    await tester.tap(find.widgetWithText(AppButton, Copy.captureStorageExport));
++    await tester.pumpAndSettle();
++    expect(find.text('exports'), findsOneWidget);
++    expect(capture.router.state.uri.path, RoutePaths.projectExports('p1'));
++  });
++
++  testWidgets('a photo write under way when space runs out completes and '
++      'writes its row', (WidgetTester tester) async {
++    final _Guarded capture = await _Guarded.open(tester, free: _ample);
++    capture.sessions.holdPhotos();
++
++    await tester.tap(capture.addControl);
++    await tester.pumpAndSettle();
++    await tester.tap(find.text(Copy.captureChoosePhoto));
++    await pumpExternalWork(tester, () => capture.sessions.writing);
++    // The device fills while the photo is being written.
++    capture.free = _critical;
++    await capture.resume();
++    expect(
++      find.byKey(const ValueKey<String>('capture-storage-full')),
++      findsOneWidget,
++    );
++
++    capture.sessions.releasePhotos();
++    await pumpExternalWork(tester, () => capture.session.photos.length == 1);
++    expect(capture.session.photos, hasLength(1));
++    expect(capture.photos.drafts, hasLength(1));
++    expect(capture.photos.bytes.values.single, _bytes);
++
++    // The next one is refused.
++    await tester.tap(find.byTooltip(Copy.captureAddPhoto));
++    await tester.pumpAndSettle();
++    expect(find.text(Copy.captureAddSheetTitle), findsNothing);
++    expect(capture.session.photos, hasLength(1));
++  });
++}
++
++const int _mib = 1024 * 1024;
++const int _ample = 800 * _mib;
++const int _low = 300 * _mib;
++const int _critical = 50 * _mib;
++
++final Uint8List _bytes = pickedPhotoBytes();
++
++/// A capture page whose storage guard reads a free-space figure the test
++/// moves, and whose lifecycle the test drives.
++final class _Guarded {
++  _Guarded._(this._tester, this.photos, this.sessions, this.router);
++
++  final WidgetTester _tester;
++
++  /// Photo rows and bytes.
++  final FakeCapturePhotoRepository photos;
++
++  /// The session store, whose photo writes can be held.
++  final _Held sessions;
++
++  /// The router, to see where Export went.
++  final GoRouter router;
++
++  final StreamController<AppLifecycleState> _lifecycle =
++      StreamController<AppLifecycleState>.broadcast();
++
++  /// Free bytes the guard reads on its next poll.
++  int free = 0;
++
++  static Future<_Guarded> open(WidgetTester tester, {required int free}) async {
++    final Directory documents = Directory.systemTemp.createTempSync(
++      'tapture-capture-guard-',
++    );
++    addTearDown(() async {
++      await tester.pumpWidget(const SizedBox.shrink());
++      await tester.runAsync(() async {
++        // Finish thumbnail reads before removing files on Windows.
++        await Future<void>.delayed(Duration.zero);
++        await documents.delete(recursive: true);
++      });
++    });
++    final StorageRoot storage = StorageRoot.fake(documentsDirectory: documents);
++    // Resolved once for real; later polls read the memo, not the disk.
++    await tester.runAsync(storage.resolve);
++    final FakeCapturePhotoRepository photos = FakeCapturePhotoRepository(
++      thumbs: documents,
++    );
++    final _Held sessions = _Held(
++      CapturePersistenceImpl(photos: photos, store: TextStore.memory()),
++    );
++    final GoRouter router = GoRouter(
++      initialLocation: RoutePaths.projectCapture('p1'),
++      routes: <RouteBase>[
++        GoRoute(
++          path: '/projects/:projectId/capture',
++          builder: (BuildContext _, GoRouterState state) => Scaffold(
++            body: CaptureScreen(projectId: state.pathParameters['projectId']!),
++          ),
++        ),
++        GoRoute(
++          path: '/projects/:projectId/exports',
++          builder: (BuildContext _, GoRouterState _) => const Text('exports'),
++        ),
++      ],
++    );
++    addTearDown(router.dispose);
++    final _Guarded guarded = _Guarded._(tester, photos, sessions, router)
++      ..free = free;
++    final StorageGuard guard = StorageGuard.fake(
++      storageRoot: storage,
++      freeBytes: () => guarded.free,
++      lifecycle: guarded._lifecycle.stream,
++    );
++    addTearDown(guard.dispose);
++    addTearDown(guarded._lifecycle.close);
++    await tester.pumpWidget(
++      ProviderScope(
++        overrides: <Override>[
++          fieldEditorBindingsProvider.overrideWithValue(
++            templateFieldEditorBindings,
++          ),
++          storageGuardProvider.overrideWithValue(guard),
++          captureProjectTemplatesProvider.overrideWith(
++            (Ref _, String _) => Stream<List<TemplateDef>>.value(<TemplateDef>[
++              aTemplate(id: 't1', projectId: 'p1'),
++            ]),
++          ),
++          currentProjectDetailsProvider.overrideWith(
++            (Ref _) => aProject(id: 'p1'),
++          ),
++          photoRepositoryProvider.overrideWith((Ref _) => photos),
++          capturePersistenceProvider.overrideWith((Ref _) => sessions),
++          photoPickerProvider.overrideWith(
++            (Ref _) => PhotoPicker.fake(photos: <Uint8List>[_bytes]),
++          ),
++        ],
++        child: MaterialApp.router(routerConfig: router),
++      ),
++    );
++    await tester.pumpAndSettle();
++    return guarded;
++  }
++
++  /// Capture's photo-source action remains available beside the caption.
++  Finder get addControl =>
++      find.byKey(const ValueKey<String>('capture-composer-add-photo'));
++
++  /// The live session of project `p1`.
++  CaptureSession get session => ProviderScope.containerOf(
++    _tester.element(find.byType(CaptureScreen)),
++  ).read(captureControllerProvider('p1'));
++
++  /// Adds one photo through the add sheet's library action.
++  Future<void> addPhoto() async {
++    final int before = session.photos.length;
++    await _tester.tap(addControl);
++    await _tester.pumpAndSettle();
++    await _tester.tap(find.text(Copy.captureChoosePhoto));
++    await pumpExternalWork(_tester, () => session.photos.length > before);
++  }
++
++  /// Brings the app back to the foreground, so the guard polls again.
++  Future<void> resume() async {
++    _lifecycle.add(AppLifecycleState.resumed);
++    await _tester.pumpAndSettle();
++  }
++}
++
++/// A session store whose photo writes can be held mid-flight.
++final class _Held implements CapturePersistence {
++  _Held(this._inner);
++
++  final CapturePersistence _inner;
++  Completer<void>? _gate;
++
++  /// Whether a photo write has entered the persistence boundary.
++  bool writing = false;
++
++  /// Holds every photo write until [releasePhotos].
++  void holdPhotos() => _gate = Completer<void>();
++
++  /// Lets held photo writes finish.
++  void releasePhotos() => _gate?.complete();
++
++  @override
++  PhotoRepository get photos => _inner.photos;
++
++  @override
++  Future<Result<PhotoDraft>> savePhoto(
++    PhotoDraft photo, {
++    Uint8List? bytes,
++  }) async {
++    writing = true;
++    await _gate?.future;
++    return _inner.savePhoto(photo, bytes: bytes);
++  }
++
++  @override
++  Future<Result<void>> deletePhoto(String photoId, {required String reason}) =>
++      _inner.deletePhoto(photoId, reason: reason);
++
++  @override
++  Future<Result<void>> saveSession(CaptureSession session) =>
++      _inner.saveSession(session);
++
++  @override
++  Future<Result<CaptureSession?>> loadSession(String key) =>
++      _inner.loadSession(key);
++
++  @override
++  Future<Result<void>> clearSession(String key) => _inner.clearSession(key);
++}
+diff --git a/frontend/test/features/records/presentation/record_delete_action_test.dart b/frontend/test/features/records/presentation/record_delete_action_test.dart
+new file mode 100644
+index 00000000..4e333152
+--- /dev/null
++++ b/frontend/test/features/records/presentation/record_delete_action_test.dart
+@@ -0,0 +1,544 @@
++import 'dart:async';
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_riverpod/misc.dart' show Override;
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/app/theme/app_theme.dart';
++import 'package:tapture/core/constants/app_constants.dart';
++import 'package:tapture/core/copy/copy.dart';
++import 'package:tapture/core/errors/failure.dart';
++import 'package:tapture/core/errors/result.dart';
++import 'package:tapture/core/widgets/app_icon_button.dart';
++import 'package:tapture/core/widgets/feedback/app_dialog.dart';
++import 'package:tapture/core/widgets/record_status.dart';
++import 'package:tapture/features/projects/projects.dart'
++    show projectSettingsStoreProvider;
++import 'package:tapture/features/records/domain/domain.dart';
++import 'package:tapture/features/records/presentation/record_delete_action.dart';
++import 'package:tapture/features/records/presentation/record_delete_controller.dart';
++import 'package:tapture/features/records/records.dart'
++    show recordRepositoryProvider;
++import 'package:tapture/features/settings/settings.dart';
++
++import '../../../support/a11y_matchers.dart';
++import '../../../support/factories.dart';
++import '../fakes/fake_record_repository.dart';
++
++const StorageFailure _locked = StorageFailure(
++  message: 'That record is locked by a merge.',
++  recoveryAction: 'Finish the merge, then try again.',
++);
++
++void main() {
++  late FakeRecordRepository records;
++
++  setUp(() {
++    records = FakeRecordRepository();
++  });
++
++  tearDown(() {
++    records.dispose();
++  });
++
++  List<String> seed(int count) {
++    return <String>[
++      for (int n = 1; n <= count; n++)
++        records.seedEntry(
++          aRecordEntry(id: 'record-$n', status: RecordStatus.needsReview),
++        ),
++    ];
++  }
++
++  /// The recycle bin as the store lists it. Read outside the fake clock: a
++  /// stream's cancel completes on the real event loop.
++  Future<List<DeletedRecord>> bin(WidgetTester tester) async {
++    final List<DeletedRecord>? listed = await tester.runAsync(
++      () => records.watchBin().first,
++    );
++    return listed ?? const <DeletedRecord>[];
++  }
++
++  Future<void> pump(
++    WidgetTester tester, {
++    required Widget child,
++    SettingsStore? settings,
++    RecordRepository? store,
++  }) async {
++    await tester.pumpWidget(
++      ProviderScope(
++        retry: (int _, Object _) => null,
++        overrides: <Override>[
++          recordRepositoryProvider.overrideWith((Ref _) => store ?? records),
++          projectSettingsStoreProvider.overrideWith(
++            (Ref _) => settings ?? SettingsStore.fake(),
++          ),
++        ],
++        child: MaterialApp(
++          theme: buildTheme(brightness: Brightness.light),
++          home: Scaffold(body: Center(child: child)),
++        ),
++      ),
++    );
++    await tester.pumpAndSettle();
++  }
++
++  Future<void> press(WidgetTester tester) async {
++    await tester.tap(find.byType(RecordDeleteAction));
++    await tester.pumpAndSettle();
++  }
++
++  Future<void> confirm(WidgetTester tester) async {
++    await tester.tap(
++      find.descendant(
++        of: find.byType(AppDialog),
++        matching: find.text(Copy.recordsDeleteConfirm),
++      ),
++    );
++    await tester.pumpAndSettle();
++  }
++
++  group('the confirm', () {
++    testWidgets('names the count and how long the records stay restorable', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(3);
++      await pump(tester, child: RecordDeleteAction(ids: ids));
++
++      await press(tester);
++
++      expect(find.byType(AppDialog), findsOneWidget);
++      expect(find.text(Copy.recordsDeleteTitle(3)), findsOneWidget);
++      expect(
++        find.text(
++          Copy.recordsDeleteMessage(
++            records: 3,
++            days: AppConstants.retention.days,
++          ),
++        ),
++        findsOneWidget,
++      );
++      expect(Copy.recordsDeleteTitle(3), contains('3'));
++      expect(records.writes, isEmpty);
++    });
++
++    testWidgets('names the operator retention window, not the default', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(1);
++      await pump(
++        tester,
++        child: RecordDeleteAction(ids: ids),
++        settings: SettingsStore.fake(
++          stored: <String, Object?>{SettingKeys.retentionDays.name: 7},
++        ),
++      );
++
++      await press(tester);
++
++      expect(find.text(Copy.recordsDeleteTitle(1)), findsOneWidget);
++      expect(
++        find.text(Copy.recordsDeleteMessage(records: 1, days: 7)),
++        findsOneWidget,
++      );
++    });
++
++    testWidgets('counts a record ticked twice once', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(2);
++      await pump(
++        tester,
++        child: RecordDeleteAction(ids: <String>[...ids, ids.first]),
++      );
++
++      await press(tester);
++
++      expect(find.text(Copy.recordsDeleteTitle(2)), findsOneWidget);
++    });
++
++    testWidgets('cancel deletes nothing and reports nothing', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(2);
++      RecordDeleteOutcome? reported;
++      await pump(
++        tester,
++        child: RecordDeleteAction(
++          ids: ids,
++          onDeleted: (RecordDeleteOutcome outcome) => reported = outcome,
++        ),
++      );
++
++      await press(tester);
++      await tester.tap(find.text(Copy.cancel));
++      await tester.pumpAndSettle();
++
++      expect(find.byType(AppDialog), findsNothing);
++      expect(records.writes, isEmpty);
++      for (final String id in ids) {
++        expect(records.entryOf(id)?.status, RecordStatus.needsReview);
++      }
++      expect(find.byType(SnackBar), findsNothing);
++      expect(reported, isNull);
++    });
++  });
++
++  group('a confirmed delete', () {
++    testWidgets('moves every record to the bin and offers undo', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(3);
++      RecordDeleteOutcome? reported;
++      await pump(
++        tester,
++        child: RecordDeleteAction(
++          ids: ids,
++          onDeleted: (RecordDeleteOutcome outcome) => reported = outcome,
++        ),
++      );
++
++      await press(tester);
++      await confirm(tester);
++
++      for (final String id in ids) {
++        expect(records.entryOf(id)?.status, RecordStatus.deleted);
++        expect(records.isTombstoned(id), isTrue);
++      }
++      expect(find.text(Copy.recordsDeleted(3)), findsOneWidget);
++      expect(find.text(Copy.undo), findsOneWidget);
++      expect(reported?.succeeded, ids);
++      expect(reported?.failed, isEmpty);
++    });
++
++    testWidgets('undo restores every record to where it was', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(3);
++      await pump(tester, child: RecordDeleteAction(ids: ids));
++      await press(tester);
++      await confirm(tester);
++
++      await tester.tap(find.text(Copy.undo));
++      await tester.pumpAndSettle();
++
++      for (final String id in ids) {
++        expect(records.entryOf(id)?.status, RecordStatus.needsReview);
++        expect(records.isTombstoned(id), isFalse);
++      }
++      expect(await bin(tester), isEmpty);
++      expect(find.text(Copy.recordsRestored(3)), findsOneWidget);
++    });
++
++    testWidgets('a partial failure deletes the rest and names both counts', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(3);
++      records.failuresById[ids[1]] = _locked;
++      RecordDeleteOutcome? reported;
++      await pump(
++        tester,
++        child: RecordDeleteAction(
++          ids: ids,
++          onDeleted: (RecordDeleteOutcome outcome) => reported = outcome,
++        ),
++      );
++
++      await press(tester);
++      await confirm(tester);
++
++      expect(records.entryOf(ids[0])?.status, RecordStatus.deleted);
++      expect(records.entryOf(ids[1])?.status, RecordStatus.needsReview);
++      expect(records.entryOf(ids[2])?.status, RecordStatus.deleted);
++      expect(
++        find.text(Copy.recordsDeletedPartly(deleted: 2, failed: 1)),
++        findsOneWidget,
++      );
++      expect(reported?.succeeded, <String>[ids[0], ids[2]]);
++      expect(reported?.failed, <String, Failure>{ids[1]: _locked});
++
++      await tester.tap(find.text(Copy.undo));
++      await tester.pumpAndSettle();
++
++      for (final String id in ids) {
++        expect(records.entryOf(id)?.status, RecordStatus.needsReview);
++      }
++    });
++
++    testWidgets('one record that cannot be deleted says why, with no undo', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(1);
++      records.failuresById[ids.single] = _locked;
++      await pump(tester, child: RecordDeleteAction(ids: ids));
++
++      await press(tester);
++      await confirm(tester);
++
++      expect(records.entryOf(ids.single)?.status, RecordStatus.needsReview);
++      expect(find.text(_locked.message), findsOneWidget);
++      expect(find.text(Copy.undo), findsNothing);
++    });
++
++    testWidgets('several records that cannot be deleted are counted', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(3);
++      records.writeFailure = _locked;
++      await pump(tester, child: RecordDeleteAction(ids: ids));
++
++      await press(tester);
++      await confirm(tester);
++
++      expect(find.text(Copy.recordsNotDeleted(3)), findsOneWidget);
++      expect(find.text(Copy.undo), findsNothing);
++    });
++
++    testWidgets('an undo that fails says so and leaves the record in the bin', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(2);
++      await pump(tester, child: RecordDeleteAction(ids: ids));
++      await press(tester);
++      await confirm(tester);
++      records.failuresById[ids.first] = _locked;
++
++      await tester.tap(find.text(Copy.undo));
++      await tester.pumpAndSettle();
++
++      expect(find.text(Copy.recordsNotRestored(1)), findsOneWidget);
++      expect(records.entryOf(ids.first)?.status, RecordStatus.deleted);
++      expect(records.entryOf(ids.last)?.status, RecordStatus.needsReview);
++    });
++  });
++
++  testWidgets('the snack and its undo outlive the row that was deleted', (
++    WidgetTester tester,
++  ) async {
++    seed(3);
++    final Stream<List<RecordSummary>> listed = records.watchPage(
++      'project-1',
++      filter: RecordFilter.none,
++      sort: RecordSort.newestFirst,
++      offset: 0,
++      limit: AppConstants.lists.pageSize,
++    );
++    await pump(
++      tester,
++      child: StreamBuilder<List<RecordSummary>>(
++        stream: listed,
++        builder: (BuildContext _, AsyncSnapshot<List<RecordSummary>> snapshot) {
++          return Column(
++            mainAxisSize: MainAxisSize.min,
++            children: <Widget>[
++              for (final RecordSummary row
++                  in snapshot.data ?? const <RecordSummary>[])
++                RecordDeleteAction(
++                  key: ValueKey<String>(row.id),
++                  ids: <String>[row.id],
++                ),
++            ],
++          );
++        },
++      ),
++    );
++    expect(find.byType(RecordDeleteAction), findsNWidgets(3));
++
++    await tester.tap(find.byKey(const ValueKey<String>('record-2')));
++    await tester.pumpAndSettle();
++    await confirm(tester);
++
++    expect(find.byKey(const ValueKey<String>('record-2')), findsNothing);
++    expect(find.byType(RecordDeleteAction), findsNWidgets(2));
++    expect(find.text(Copy.recordsDeleted(1)), findsOneWidget);
++
++    await tester.tap(find.text(Copy.undo));
++    await tester.pumpAndSettle();
++
++    expect(find.byKey(const ValueKey<String>('record-2')), findsOneWidget);
++    expect(records.entryOf('record-2')?.status, RecordStatus.needsReview);
++  });
++
++  testWidgets('run serves a menu entry and returns what it did', (
++    WidgetTester tester,
++  ) async {
++    final List<String> ids = seed(2);
++    final List<RecordDeleteOutcome?> results = <RecordDeleteOutcome?>[];
++    await pump(
++      tester,
++      child: Consumer(
++        builder: (BuildContext context, WidgetRef ref, Widget? _) {
++          return TextButton(
++            onPressed: () async {
++              results.add(await RecordDeleteAction.run(context, ref, ids: ids));
++            },
++            child: const Text('Menu entry'),
++          );
++        },
++      ),
++    );
++
++    await tester.tap(find.text('Menu entry'));
++    await tester.pumpAndSettle();
++    await tester.tap(find.text(Copy.cancel));
++    await tester.pumpAndSettle();
++    await tester.tap(find.text('Menu entry'));
++    await tester.pumpAndSettle();
++    await confirm(tester);
++
++    expect(results, hasLength(2));
++    expect(results.first, isNull);
++    expect(results.last?.succeeded, ids);
++    final List<DeletedRecord> binned = await bin(tester);
++    expect(binned.map((DeletedRecord row) => row.reason).toSet(), <String>{
++      RecordDeleteController.operatorReason,
++    });
++  });
++
++  testWidgets('no records disables the control', (WidgetTester tester) async {
++    await pump(tester, child: const RecordDeleteAction(ids: <String>[]));
++
++    final AppIconButton button = tester.widget<AppIconButton>(
++      find.byType(AppIconButton),
++    );
++    expect(button.onPressed, isNull);
++
++    await press(tester);
++    expect(find.byType(AppDialog), findsNothing);
++  });
++
++  for (final bool outlined in <bool>[true, false]) {
++    testWidgets('feedback 13102026 delete outline is $outlined', (
++      WidgetTester tester,
++    ) async {
++      final List<String> ids = seed(1);
++      await pump(
++        tester,
++        child: outlined
++            ? RecordDeleteAction(ids: ids)
++            : RecordDeleteAction(ids: ids, outlined: false),
++      );
++      final AppIconButton control = tester.widget<AppIconButton>(
++        find.byType(AppIconButton),
++      );
++      expect(control.outlined, outlined);
++      final IconButton button = tester.widget<IconButton>(
++        find.byType(IconButton),
++      );
++      for (final Set<WidgetState> states in <Set<WidgetState>>[
++        <WidgetState>{},
++        <WidgetState>{WidgetState.hovered},
++        <WidgetState>{WidgetState.focused},
++        <WidgetState>{WidgetState.disabled},
++      ]) {
++        final BorderSide? side = button.style?.side?.resolve(states);
++        expect(side, outlined ? isNot(BorderSide.none) : BorderSide.none);
++      }
++      expect(find.byType(AppIconButton), meetsTapTarget());
++      expect(
++        find.byType(AppIconButton),
++        hasSemanticLabel(Copy.recordsDeleteLabel(1)),
++      );
++      await press(tester);
++      await tester.tap(find.text(Copy.cancel));
++      await tester.pumpAndSettle();
++      expect(records.writes, isEmpty);
++      expect(records.isTombstoned(ids.single), isFalse);
++      await press(tester);
++      await confirm(tester);
++      expect(records.isTombstoned(ids.single), isTrue);
++      expect(find.text(Copy.recordsDeleted(1)), findsOneWidget);
++      await tester.tap(find.text(Copy.undo));
++      await tester.pumpAndSettle();
++      expect(records.isTombstoned(ids.single), isFalse);
++      expect(records.entryOf(ids.single)?.status, RecordStatus.needsReview);
++    });
++  }
++
++  testWidgets(
++    'feedback 13102026 borderless delete stays disabled until durable',
++    (WidgetTester tester) async {
++      final List<String> ids = seed(1);
++      final Completer<void> release = Completer<void>();
++      await pump(
++        tester,
++        store: _HeldDeleteRecords(records, release.future),
++        child: RecordDeleteAction(ids: ids, outlined: false),
++      );
++      await press(tester);
++      await confirm(tester);
++      final AppIconButton busy = tester.widget<AppIconButton>(
++        find.byType(AppIconButton),
++      );
++      expect(busy.onPressed, isNull);
++      expect(busy.outlined, isFalse);
++      expect(records.isTombstoned(ids.single), isFalse);
++      expect(find.byType(SnackBar), findsNothing);
++      await press(tester);
++      expect(find.byType(AppDialog), findsNothing);
++      release.complete();
++      await tester.pumpAndSettle();
++      expect(records.isTombstoned(ids.single), isTrue);
++      expect(find.text(Copy.recordsDeleted(1)), findsOneWidget);
++      expect(
++        tester.widget<AppIconButton>(find.byType(AppIconButton)).onPressed,
++        isNotNull,
++      );
++    },
++  );
++
++  testWidgets(
++    'feedback 13102026 borderless failure and empty ids write nothing',
++    (WidgetTester tester) async {
++      final List<String> ids = seed(1);
++      records.writeFailure = _locked;
++      await pump(tester, child: RecordDeleteAction(ids: ids, outlined: false));
++      await press(tester);
++      await confirm(tester);
++      expect(records.isTombstoned(ids.single), isFalse);
++      expect(find.text(_locked.message), findsOneWidget);
++      expect(find.text(Copy.undo), findsNothing);
++      await pump(
++        tester,
++        child: const RecordDeleteAction(ids: <String>[], outlined: false),
++      );
++      final AppIconButton empty = tester.widget<AppIconButton>(
++        find.byType(AppIconButton),
++      );
++      expect(empty.onPressed, isNull);
++      expect(empty.outlined, isFalse);
++      expect(records.writes, isEmpty);
++    },
++  );
++
++  testWidgets('the control is a labelled 48dp target naming the count', (
++    WidgetTester tester,
++  ) async {
++    final SemanticsHandle semantics = tester.ensureSemantics();
++    final List<String> ids = seed(3);
++    await pump(tester, child: RecordDeleteAction(ids: ids));
++
++    final Finder control = find.byType(RecordDeleteAction);
++    expect(control, hasSemanticLabel(Copy.recordsDeleteLabel(3)));
++    expect(control, meetsTapTarget());
++    expect(find.byTooltip(Copy.recordsDeleteLabel(3)), findsOneWidget);
++    semantics.dispose();
++  });
++}
++
++/// Holds the real fake's durable delete so the control's busy state is observable.
++final class _HeldDeleteRecords implements RecordRepository {
++  _HeldDeleteRecords(this._inner, this._release);
++
++  final FakeRecordRepository _inner;
++  final Future<void> _release;
++
++  @override
++  Future<Result<void>> delete(String id, {required String reason}) async {
++    await _release;
++    return _inner.delete(id, reason: reason);
++  }
++
++  @override
++  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
++}
+diff --git a/frontend/test/features/records/presentation/records_list_harness.dart b/frontend/test/features/records/presentation/records_list_harness.dart
+new file mode 100644
+index 00000000..084d88b5
+--- /dev/null
++++ b/frontend/test/features/records/presentation/records_list_harness.dart
+@@ -0,0 +1,371 @@
++import 'dart:async';
++
++import 'package:flutter/material.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_riverpod/misc.dart' show Override;
++import 'package:flutter_test/flutter_test.dart';
++import 'package:go_router/go_router.dart';
++import 'package:tapture/app/route_paths.dart';
++import 'package:tapture/app/theme/app_theme.dart';
++import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
++import 'package:tapture/core/errors/failure.dart';
++import 'package:tapture/core/errors/result.dart';
++import 'package:tapture/core/files/photo_thumbnails.dart';
++import 'package:tapture/core/time/clock.dart';
++import 'package:tapture/core/widgets/app_list_tile.dart';
++import 'package:tapture/core/widgets/record_status.dart';
++import 'package:tapture/features/projects/projects.dart'
++    show projectSettingsStoreProvider;
++import 'package:tapture/features/records/domain/domain.dart';
++import 'package:tapture/features/records/presentation/record_providers.dart';
++import 'package:tapture/features/records/presentation/records_list_screen.dart';
++import 'package:tapture/features/records/records.dart'
++    show recordRepositoryProvider;
++import 'package:tapture/features/settings/settings.dart';
++
++import '../../../support/screen_fonts.dart';
++import '../../../support/screen_matrix.dart';
++import '../fakes/fake_record_repository.dart';
++
++/// Test harness shared by the records list, filter sheet and sort menu
++/// tests: a repository that counts what the list reads, and a router that
++/// hosts the list and stands in for the pages it opens.
++
++/// The instant the harness's clock reads.
++final DateTime harnessNow = DateTime.utc(2026, 9, 17, 8);
++
++/// Wraps [inner] and records every page and count the list reads, how many
++/// page reads are open at once, and lets a test hold or fail a page.
++final class CountingRecords implements RecordRepository {
++  /// Wraps [inner].
++  CountingRecords(this.inner);
++
++  /// The repository every read and write goes to.
++  final FakeRecordRepository inner;
++
++  /// Every page read, in order.
++  final List<({int offset, int limit})> pageReads =
++      <({int offset, int limit})>[];
++
++  /// How many count reads the list opened.
++  int countReads = 0;
++
++  /// Page reads open now.
++  int livePages = 0;
++
++  /// The most page reads that were ever open at once.
++  int mostLivePages = 0;
++
++  /// Pages, by offset, whose read never answers.
++  final Set<int> heldOffsets = <int>{};
++
++  /// Pages, by offset, whose read fails with the mapped failure.
++  final Map<int, Failure> failedOffsets = <int, Failure>{};
++
++  /// When true, the count never answers, so the list stays loading.
++  bool holdCount = false;
++
++  /// When true, the filter choices never arrive, so the sheet stays loading.
++  bool holdFacets = false;
++
++  /// When set, reading the filter choices fails with this.
++  Failure? facetsFailure;
++
++  /// How many times the filter choices were read.
++  int facetReads = 0;
++
++  @override
++  Stream<List<RecordSummary>> watchPage(
++    String projectId, {
++    required RecordFilter filter,
++    required RecordSort sort,
++    required int offset,
++    required int limit,
++  }) {
++    pageReads.add((offset: offset, limit: limit));
++    final Failure? failure = failedOffsets[offset];
++    final Stream<List<RecordSummary>> source = failure != null
++        ? Stream<List<RecordSummary>>.error(failure)
++        : heldOffsets.contains(offset)
++        ? Stream<List<RecordSummary>>.multi((_) {})
++        : inner.watchPage(
++            projectId,
++            filter: filter,
++            sort: sort,
++            offset: offset,
++            limit: limit,
++          );
++    return Stream<List<RecordSummary>>.multi((
++      MultiStreamController<List<RecordSummary>> listener,
++    ) {
++      livePages++;
++      if (livePages > mostLivePages) {
++        mostLivePages = livePages;
++      }
++      final StreamSubscription<List<RecordSummary>> read = source.listen(
++        listener.add,
++        onError: listener.addError,
++      );
++      listener.onCancel = () {
++        livePages--;
++        unawaited(read.cancel());
++      };
++    });
++  }
++
++  @override
++  Stream<int> watchCount(String projectId, RecordFilter filter) {
++    countReads++;
++    if (holdCount) {
++      return Stream<int>.multi((_) {});
++    }
++    return inner.watchCount(projectId, filter);
++  }
++
++  @override
++  Stream<RecordEntry?> watchEntry(String id) => inner.watchEntry(id);
++
++  @override
++  Future<Result<RecordEntry?>> byId(String id) => inner.byId(id);
++
++  @override
++  Future<Result<RecordFacets>> facets(String projectId) {
++    facetReads++;
++    final Failure? failure = facetsFailure;
++    if (failure != null) {
++      return Future<Result<RecordFacets>>.value(
++        FailureResult<RecordFacets>(failure),
++      );
++    }
++    if (holdFacets) {
++      return Completer<Result<RecordFacets>>().future;
++    }
++    return inner.facets(projectId);
++  }
++
++  @override
++  Stream<List<RecordHistoryEvent>> watchHistory(String id) =>
++      inner.watchHistory(id);
++
++  @override
++  Stream<List<DeletedRecord>> watchBin() => inner.watchBin();
++
++  @override
++  Future<Result<RecordEntry>> save(RecordDraft draft) => inner.save(draft);
++
++  @override
++  Future<Result<void>> transition(
++    String id,
++    RecordStatus to, {
++    String? reason,
++  }) => inner.transition(id, to, reason: reason);
++
++  @override
++  Future<Result<void>> editValues(String id, List<RecordValueEdit> edits) =>
++      inner.editValues(id, edits);
++
++  @override
++  Future<Result<TemplateChangePlan>> planTemplateChange(
++    String id,
++    String templateId,
++  ) => inner.planTemplateChange(id, templateId);
++
++  @override
++  Future<Result<void>> changeTemplate(String id, String templateId) =>
++      inner.changeTemplate(id, templateId);
++
++  @override
++  Future<Result<void>> delete(String id, {required String reason}) =>
++      inner.delete(id, reason: reason);
++
++  @override
++  Future<Result<void>> restore(String id) => inner.restore(id);
++}
++
++/// The text a stand-in page shows for [location].
++String openedText(String location) => 'opened $location';
++
++/// Pumps the records list inside a router at [location], over [records],
++/// remembering criteria in [settings]. Every page the list opens is a
++/// stand-in that names its location.
++Future<GoRouter> pumpRecordsList(
++  WidgetTester tester, {
++  required RecordRepository records,
++  SettingsStore? settings,
++  String? location,
++  List<Override> overrides = const <Override>[],
++  PhotoThumbnails? thumbnails,
++  ScreenMatrix? cell,
++  Locale? locale,
++  TextDirection? direction,
++}) async {
++  if (cell != null) {
++    setSurface(tester, cell.size, scale: cell.textScale);
++  }
++  final GoRouter router = GoRouter(
++    initialLocation: location ?? RoutePaths.projectRecords('project-1'),
++    routes: <RouteBase>[
++      GoRoute(
++        path: '/projects/:projectId/records',
++        builder: (BuildContext _, GoRouterState state) => RecordsListScreen(
++          projectId: state.pathParameters['projectId'],
++          initialStatus: _statusOf(state),
++        ),
++      ),
++      GoRoute(
++        path: RoutePaths.records,
++        builder: (BuildContext _, GoRouterState state) =>
++            RecordsListScreen(initialStatus: _statusOf(state)),
++      ),
++      for (final String path in <String>[
++        '/projects/:projectId/records/:recordId',
++        '/projects/:projectId/records/:recordId/edit',
++        '/projects/:projectId/capture',
++        '/records/:recordId',
++        RoutePaths.projects,
++      ])
++        GoRoute(
++          path: path,
++          builder: (BuildContext _, GoRouterState state) =>
++              Scaffold(body: Text(openedText(state.uri.path))),
++        ),
++    ],
++  );
++  addTearDown(router.dispose);
++  await tester.pumpWidget(
++    ProviderScope(
++      retry: (int _, Object _) => null,
++      overrides: <Override>[
++        recordRepositoryProvider.overrideWith((Ref _) => records),
++        projectSettingsStoreProvider.overrideWith(
++          (Ref _) => settings ?? SettingsStore.fake(),
++        ),
++        photoThumbnailsProvider.overrideWith(
++          (Ref _) =>
++              thumbnails ?? PhotoThumbnails.fake(const <String, String>{}),
++        ),
++        recordClockProvider.overrideWith((Ref _) => FixedClock(harnessNow)),
++        ...overrides,
++      ],
++      child: MaterialApp.router(
++        theme: cell == null
++            ? buildTheme(brightness: Brightness.light)
++            : ScreenFonts.theme(
++                buildTheme(brightness: cell.brightness, outdoor: cell.outdoor),
++              ),
++        locale: locale,
++        localizationsDelegates: locale == null
++            ? null
++            : AppLocalizations.localizationsDelegates,
++        supportedLocales: locale == null
++            ? const <Locale>[Locale('en', 'US')]
++            : AppLocalizations.supportedLocales,
++        builder: direction == null
++            ? null
++            : (BuildContext _, Widget? child) =>
++                  Directionality(textDirection: direction, child: child!),
++        routerConfig: router,
++      ),
++    ),
++  );
++  await tester.pumpAndSettle();
++  return router;
++}
++
++RecordStatus? _statusOf(GoRouterState state) {
++  final String? raw = state.uri.queryParameters[RoutePaths.filterQuery];
++  return raw == null ? null : RecordStatus.fromStored(raw);
++}
++
++/// The container the pumped list reads from.
++ProviderContainer listContainer(WidgetTester tester) {
++  return ProviderScope.containerOf(
++    tester.element(find.byType(RecordsListScreen)),
++  );
++}
++
++/// The titles of the rows on screen, top to bottom.
++List<String> visibleTitles(WidgetTester tester) {
++  final List<Element> rows = find
++      .byWidgetPredicate(
++        (Widget widget) =>
++            widget.key is ValueKey<String> &&
++            (widget.key! as ValueKey<String>).value.startsWith('record-row-'),
++      )
++      .evaluate()
++      .toList();
++  rows.sort(
++    (Element a, Element b) => tester
++        .getTopLeft(find.byWidget(a.widget))
++        .dy
++        .compareTo(tester.getTopLeft(find.byWidget(b.widget)).dy),
++  );
++  return <String>[
++    for (final Element row in rows) (row.widget as AppListTile).title,
++  ];
++}
++
++/// Finds the list row of record [id].
++Finder rowOf(String id) => find.byKey(ValueKey<String>('record-row-$id'));
++
++/// Sets a [size] window at [scale] text for the rest of the test.
++void setSurface(WidgetTester tester, Size size, {double scale = 1}) {
++  tester.view.devicePixelRatio = 1;
++  tester.view.physicalSize = size;
++  tester.platformDispatcher.textScaleFactorTestValue = scale;
++  addTearDown(tester.view.resetPhysicalSize);
++  addTearDown(tester.view.resetDevicePixelRatio);
++  addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
++}
++
++/// Makes [store] the settings store the list remembers criteria in.
++Override projectSettingsStoreOverride(SettingsStore store) {
++  return projectSettingsStoreProvider.overrideWith((Ref _) => store);
++}
++
++/// Pumps [child], such as the list in its pane form, alone over [records].
++Future<void> pumpRecordsView(
++  WidgetTester tester, {
++  required RecordRepository records,
++  required Widget child,
++  ScreenMatrix? cell,
++  Locale? locale,
++  TextDirection? direction,
++}) async {
++  if (cell != null) {
++    setSurface(tester, cell.size, scale: cell.textScale);
++  }
++  await tester.pumpWidget(
++    ProviderScope(
++      retry: (int _, Object _) => null,
++      overrides: <Override>[
++        recordRepositoryProvider.overrideWith((Ref _) => records),
++        projectSettingsStoreOverride(SettingsStore.fake()),
++        photoThumbnailsProvider.overrideWith(
++          (Ref _) => PhotoThumbnails.fake(const <String, String>{}),
++        ),
++        recordClockProvider.overrideWith((Ref _) => FixedClock(harnessNow)),
++      ],
++      child: MaterialApp(
++        theme: cell == null
++            ? buildTheme(brightness: Brightness.light)
++            : ScreenFonts.theme(
++                buildTheme(brightness: cell.brightness, outdoor: cell.outdoor),
++              ),
++        locale: locale,
++        localizationsDelegates: locale == null
++            ? null
++            : AppLocalizations.localizationsDelegates,
++        supportedLocales: locale == null
++            ? const <Locale>[Locale('en', 'US')]
++            : AppLocalizations.supportedLocales,
++        builder: direction == null
++            ? null
++            : (BuildContext _, Widget? child) =>
++                  Directionality(textDirection: direction, child: child!),
++        home: Scaffold(body: child),
++      ),
++    ),
++  );
++  await tester.pumpAndSettle();
++}
+diff --git a/frontend/test/features/records/presentation/records_list_screen_test.dart b/frontend/test/features/records/presentation/records_list_screen_test.dart
+new file mode 100644
+index 00000000..4f2fb676
+--- /dev/null
++++ b/frontend/test/features/records/presentation/records_list_screen_test.dart
+@@ -0,0 +1,1492 @@
++import 'dart:convert';
++
++import 'package:flutter/gestures.dart';
++import 'package:flutter/material.dart';
++import 'package:flutter/rendering.dart';
++import 'package:flutter/services.dart';
++import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:flutter_riverpod/misc.dart' show Override;
++import 'package:flutter_test/flutter_test.dart';
++import 'package:go_router/go_router.dart';
++import 'package:image/image.dart' as img;
++import 'package:tapture/app/route_paths.dart';
++import 'package:tapture/app/theme/app_theme.dart';
++import 'package:tapture/core/constants/app_constants.dart';
++import 'package:tapture/core/copy/copy.dart';
++import 'package:tapture/core/errors/failure.dart';
++import 'package:tapture/core/files/photo_thumbnails.dart';
++import 'package:tapture/core/widgets/app_chip.dart';
++import 'package:tapture/core/widgets/app_icon_button.dart';
++import 'package:tapture/core/widgets/app_list_tile.dart';
++import 'package:tapture/core/widgets/app_photo_thumb.dart';
++import 'package:tapture/core/widgets/app_status_pill.dart';
++import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
++import 'package:tapture/core/widgets/feedback/app_dialog.dart';
++import 'package:tapture/core/widgets/record_thumb.dart';
++import 'package:tapture/core/widgets/states/app_empty_state.dart';
++import 'package:tapture/core/widgets/states/app_error_state.dart';
++import 'package:tapture/core/widgets/states/app_loading_state.dart';
++import 'package:tapture/features/projects/projects.dart'
++    show currentProjectProvider;
++import 'package:tapture/features/records/domain/domain.dart';
++import 'package:tapture/features/records/presentation/record_delete_action.dart';
++import 'package:tapture/features/records/presentation/record_selection.dart';
++import 'package:tapture/features/records/presentation/records_list_controller.dart';
++import 'package:tapture/features/records/presentation/records_list_view.dart';
++import 'package:tapture/features/settings/settings.dart';
++
++import '../../../support/a11y_matchers.dart';
++import '../../../support/factories.dart';
++import '../../../support/screen_fonts.dart';
++import '../../../support/screen_matrix.dart';
++import '../../../support/screen_probe.dart';
++import '../fakes/fake_record_repository.dart';
++import 'records_list_harness.dart';
++
++const StorageFailure _unreadable = StorageFailure(
++  message: 'The records could not be read.',
++  recoveryAction: 'Try again in a moment.',
++);
++
++void main() {
++  setUpAll(ScreenFonts.load);
++  late FakeRecordRepository fake;
++  late CountingRecords records;
++
++  setUp(() {
++    fake = FakeRecordRepository();
++    records = CountingRecords(fake);
++  });
++
++  tearDown(() {
++    fake.dispose();
++  });
++
++  final int pageSize = AppConstants.lists.pageSize;
++
++  Finder searchInput() => find.descendant(
++    of: find.byKey(const ValueKey<String>('records-search')),
++    matching: find.byType(EditableText),
++  );
++
++  Future<void> typeSearch(WidgetTester tester, String text) async {
++    await tester.enterText(searchInput(), text);
++    await tester.pump(AppConstants.interaction.debounce);
++    await tester.pumpAndSettle();
++  }
++
++  RecordsListController controllerOf(WidgetTester tester) {
++    return listContainer(
++      tester,
++    ).read(recordsListControllerProvider('project-1').notifier);
++  }
++
++  group('paging', () {
++    testWidgets('only a page of rows is built and only one page is read', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(500);
++      await pumpRecordsList(tester, records: records);
++
++      final int built = find
++          .byWidgetPredicate(
++            (Widget widget) =>
++                widget is AppListTile &&
++                widget.key is ValueKey<String> &&
++                (widget.key! as ValueKey<String>).value.startsWith(
++                  'record-row-',
++                ),
++            skipOffstage: false,
++          )
++          .evaluate()
++          .length;
++      expect(built, greaterThan(0));
++      expect(built, lessThan(pageSize));
++      expect(records.pageReads, <({int offset, int limit})>[
++        (offset: 0, limit: pageSize),
++      ]);
++      expect(find.text('Record 500'), findsOneWidget);
++      expect(find.text('Record 1', skipOffstage: false), findsNothing);
++    });
++
++    testWidgets('the next page is read when the list scrolls to it, and '
++        'pages scrolled away are let go', (WidgetTester tester) async {
++      fake.seedMany(500);
++      await pumpRecordsList(tester, records: records);
++
++      await tester.scrollUntilVisible(
++        find.text('Record 440'),
++        300,
++        maxScrolls: 200,
++        scrollable: find.descendant(
++          of: find.byKey(const ValueKey<String>('records-list')),
++          matching: find.byType(Scrollable),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      expect(find.text('Record 440'), findsOneWidget);
++      expect(records.pageReads, contains((offset: pageSize, limit: pageSize)));
++
++      await tester.scrollUntilVisible(
++        find.text('Record 250'),
++        300,
++        maxScrolls: 200,
++        scrollable: find.descendant(
++          of: find.byKey(const ValueKey<String>('records-list')),
++          matching: find.byType(Scrollable),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      expect(find.text('Record 250'), findsOneWidget);
++      for (final ({int offset, int limit}) read in records.pageReads) {
++        expect(read.limit, pageSize);
++      }
++      // The first page is off screen and no longer read.
++      expect(records.livePages, lessThanOrEqualTo(2));
++      expect(
++        records.mostLivePages,
++        lessThanOrEqualTo(AppConstants.scrolling.livePages),
++      );
++    });
++
++    testWidgets('a row whose page is still loading shows a skeleton', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(120);
++      records.heldOffsets.add(pageSize);
++      await pumpRecordsList(tester, records: records);
++
++      final ScrollableState list = tester.state<ScrollableState>(
++        find.descendant(
++          of: find.byKey(const ValueKey<String>('records-list')),
++          matching: find.byType(Scrollable),
++        ),
++      );
++      list.position.jumpTo(list.position.maxScrollExtent / 2);
++      await tester.pump();
++      await tester.pump();
++
++      expect(find.bySemanticsLabel(Copy.loading), findsWidgets);
++      expect(find.text('Record 60'), findsNothing);
++    });
++
++    testWidgets('a page that cannot be read says why and reads again on tap', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(120);
++      records.failedOffsets[pageSize] = _unreadable;
++      await pumpRecordsList(tester, records: records);
++
++      final ScrollableState list = tester.state<ScrollableState>(
++        find.descendant(
++          of: find.byKey(const ValueKey<String>('records-list')),
++          matching: find.byType(Scrollable),
++        ),
++      );
++      list.position.jumpTo(list.position.maxScrollExtent / 2);
++      await tester.pumpAndSettle();
++
++      expect(find.text(_unreadable.message), findsWidgets);
++
++      records.failedOffsets.clear();
++      await tester.tap(find.text(_unreadable.message).hitTestable().first);
++      await tester.pumpAndSettle();
++
++      expect(find.text(_unreadable.message), findsNothing);
++      expect(find.text('Record 60'), findsOneWidget);
++    });
++  });
++
++  group('states', () {
++    testWidgets('while the count loads the list shows skeleton rows', (
++      WidgetTester tester,
++    ) async {
++      records.holdCount = true;
++      await pumpRecordsList(tester, records: records);
++
++      expect(find.byType(AppSkeleton), findsOneWidget);
++      expect(find.byType(AppEmptyState), findsNothing);
++    });
++
++    testWidgets('a project with no records offers to capture one', (
++      WidgetTester tester,
++    ) async {
++      final GoRouter router = await pumpRecordsList(tester, records: records);
++
++      expect(
++        find.byKey(const ValueKey<String>('records-empty')),
++        findsOneWidget,
++      );
++      expect(find.text(Copy.recordsEmptyHeadline), findsOneWidget);
++
++      await tester.tap(find.text(Copy.recordsEmptyAction));
++      await tester.pumpAndSettle();
++
++      expect(router.state.uri.path, RoutePaths.projectCapture('project-1'));
++    });
++
++    testWidgets('with no project open the page offers to open one', (
++      WidgetTester tester,
++    ) async {
++      final GoRouter router = await pumpRecordsList(
++        tester,
++        records: records,
++        location: RoutePaths.records,
++      );
++
++      expect(
++        find.byKey(const ValueKey<String>('records-no-project')),
++        findsOneWidget,
++      );
++      expect(find.byKey(const ValueKey<String>('route-records')), findsOne);
++      expect(records.countReads, 0);
++
++      await tester.tap(find.text(Copy.recordsOpenProject));
++      await tester.pumpAndSettle();
++
++      expect(router.state.uri.path, RoutePaths.projects);
++    });
++
++    testWidgets('the Records destination lists the open project and opens '
++        'records there', (WidgetTester tester) async {
++      fake.seedMany(3);
++      final GoRouter router = await pumpRecordsList(
++        tester,
++        records: records,
++        location: RoutePaths.records,
++      );
++      listContainer(
++        tester,
++      ).read(currentProjectProvider.notifier).open('project-1');
++      await tester.pumpAndSettle();
++
++      expect(find.text('Record 3'), findsOneWidget);
++
++      await tester.tap(find.text('Record 2'));
++      await tester.pumpAndSettle();
++
++      expect(router.state.uri.path, RoutePaths.record('project-1-record-2'));
++    });
++
++    testWidgets('a search that matches nothing says so and clears in a tap', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(3);
++      await pumpRecordsList(tester, records: records);
++
++      await typeSearch(tester, 'zebra');
++
++      expect(
++        find.byKey(const ValueKey<String>('records-no-match')),
++        findsOneWidget,
++      );
++      expect(find.text(Copy.recordsNoMatch('zebra')), findsOneWidget);
++      expect(find.text(Copy.searchNoMatchMessage), findsOneWidget);
++
++      await tester.tap(find.text(Copy.recordsClearSearch));
++      await tester.pumpAndSettle();
++
++      expect(find.text('Record 3'), findsOneWidget);
++      expect(tester.widget<EditableText>(searchInput()).controller.text, '');
++    });
++
++    testWidgets('filters that match nothing offer to clear them', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(3);
++      await pumpRecordsList(tester, records: records);
++      controllerOf(
++        tester,
++      ).applyFilter(RecordFilter.forStatus(RecordStatus.approved));
++      await tester.pumpAndSettle();
++
++      expect(find.text(Copy.searchFilterNoMatchMessage), findsOneWidget);
++
++      await tester.tap(
++        find.descendant(
++          of: find.byKey(const ValueKey<String>('records-no-match')),
++          matching: find.text(Copy.searchClearFilters),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      expect(find.text('Record 3'), findsOneWidget);
++    });
++
++    testWidgets('a list that cannot be read shows the failure and retries', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(3);
++      fake.readFailure = _unreadable;
++      await pumpRecordsList(tester, records: records);
++
++      expect(find.byType(AppErrorState), findsOneWidget);
++      expect(find.text(_unreadable.message), findsOneWidget);
++
++      fake.readFailure = null;
++      await tester.tap(find.text(Copy.tryAgain));
++      await tester.pumpAndSettle();
++
++      expect(find.byType(AppErrorState), findsNothing);
++      expect(find.text('Record 3'), findsOneWidget);
++    });
++  });
++
++  group('rows', () {
++    testWidgets('a row shows name, number, identifier, context, status and '
++        'the first photo', (WidgetTester tester) async {
++      fake.seedEntry(
++        aRecordEntry(
++          id: 'boiler',
++          number: 7,
++          name: 'Boiler',
++          identifier: 'SN-1',
++          context: const <String, String>{'site': 'North'},
++          status: RecordStatus.needsReview,
++          photos: 1,
++        ),
++      );
++      await pumpRecordsList(tester, records: records);
++
++      final AppListTile row = tester.widget<AppListTile>(rowOf('boiler'));
++      expect(row.title, 'Boiler');
++      expect(row.subtitle, '#7 · SN-1 · North');
++      expect(row.status?.status, RecordStatus.needsReview);
++      expect(
++        find.descendant(
++          of: rowOf('boiler'),
++          matching: find.byType(RecordThumb),
++        ),
++        findsOneWidget,
++      );
++    });
++
++    testWidgets('browser rows draw byte thumbnails', (
++      WidgetTester tester,
++    ) async {
++      fake.seedEntry(aRecordEntry(id: 'boiler', name: 'Boiler', photos: 1));
++      final Uint8List bytes = Uint8List.fromList(
++        img.encodePng(img.Image(width: 8, height: 4)),
++      );
++      await pumpRecordsList(
++        tester,
++        records: records,
++        thumbnails: PhotoThumbnails.fake(
++          const <String, String>{},
++          bytes: <String, Uint8List>{'photos/boiler/img-0.jpg': bytes},
++        ),
++        overrides: <Override>[
++          thumbnailsFromBytesProvider.overrideWithValue(true),
++        ],
++      );
++
++      final AppPhotoThumb drawn = tester.widget<AppPhotoThumb>(
++        find.descendant(
++          of: rowOf('boiler'),
++          matching: find.byType(AppPhotoThumb),
++        ),
++      );
++      expect(drawn.photo.thumbBytes, bytes);
++      expect(find.text(Copy.missingPhoto), findsNothing);
++    });
++
++    testWidgets('a record nothing names yet is called by its number', (
++      WidgetTester tester,
++    ) async {
++      fake.seedEntry(
++        aRecordEntry(id: 'plain', number: 12, fields: const <String, String>{}),
++      );
++      await pumpRecordsList(tester, records: records);
++
++      expect(
++        tester.widget<AppListTile>(rowOf('plain')).title,
++        Copy.recordsUntitled(12),
++      );
++      expect(
++        find.descendant(of: rowOf('plain'), matching: find.byType(RecordThumb)),
++        findsNothing,
++      );
++    });
++
++    testWidgets('a tap opens the record and edit opens its capture page', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(2);
++      final GoRouter router = await pumpRecordsList(tester, records: records);
++
++      await tester.tap(find.text('Record 2'));
++      await tester.pumpAndSettle();
++      expect(
++        router.state.uri.path,
++        RoutePaths.projectRecord('project-1', 'project-1-record-2'),
++      );
++
++      router.pop();
++      await tester.pumpAndSettle();
++      await tester.tap(
++        find.byKey(const ValueKey<String>('record-edit-project-1-record-1')),
++      );
++      await tester.pumpAndSettle();
++      expect(
++        router.state.uri.path,
++        RoutePaths.projectRecordEdit('project-1', 'project-1-record-1'),
++      );
++    });
++
++    testWidgets('delete confirms, then moves the record to the bin', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(2);
++      await pumpRecordsList(tester, records: records);
++
++      await tester.tap(
++        find.byKey(const ValueKey<String>('record-delete-project-1-record-2')),
++      );
++      await tester.pumpAndSettle();
++      expect(find.byType(AppDialog), findsOneWidget);
++      expect(find.text(Copy.recordsDeleteTitle(1)), findsOneWidget);
++
++      await tester.tap(
++        find.descendant(
++          of: find.byType(AppDialog),
++          matching: find.text(Copy.recordsDeleteConfirm),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      expect(fake.isTombstoned('project-1-record-2'), isTrue);
++      expect(rowOf('project-1-record-2'), findsNothing);
++      expect(find.text('Record 1'), findsOneWidget);
++    });
++
++    testWidgets('long-press selects, and while selecting a tap selects too', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(3);
++      final GoRouter router = await pumpRecordsList(tester, records: records);
++
++      await tester.longPress(find.text('Record 3'));
++      await tester.pumpAndSettle();
++
++      final ProviderContainer container = listContainer(tester);
++      expect(container.read(recordSelectionProvider('project-1')), <String>{
++        'project-1-record-3',
++      });
++      expect(
++        tester.widget<AppListTile>(rowOf('project-1-record-3')).selected,
++        isTrue,
++      );
++      expect(
++        find.byKey(const ValueKey<String>('record-edit-project-1-record-2')),
++        findsNothing,
++      );
++
++      await tester.tap(find.text('Record 2'));
++      await tester.pumpAndSettle();
++
++      expect(router.state.uri.path, RoutePaths.projectRecords('project-1'));
++      expect(container.read(recordSelectionProvider('project-1')), <String>{
++        'project-1-record-3',
++        'project-1-record-2',
++      });
++      expect(find.text(Copy.recordsSelectedCount(2)), findsOneWidget);
++    });
++
++    testWidgets(
++      'select all ticks every record the list has shown and the bar names them',
++      (WidgetTester tester) async {
++        fake.seedMany(3);
++        await pumpRecordsList(tester, records: records);
++        await tester.longPress(find.text('Record 1'));
++        await tester.pumpAndSettle();
++
++        expect(
++          find.byKey(const ValueKey<String>('records-bulk-bar')),
++          findsOneWidget,
++        );
++        await tester.tap(
++          find.byKey(const ValueKey<String>('records-bulk-select-all')),
++        );
++        await tester.pumpAndSettle();
++
++        expect(
++          listContainer(tester).read(recordSelectionProvider('project-1')),
++          <String>{
++            'project-1-record-1',
++            'project-1-record-2',
++            'project-1-record-3',
++          },
++        );
++        expect(find.text(Copy.recordsSelectedCount(3)), findsOneWidget);
++      },
++    );
++  });
++
++  group('feedback 13102026 record row controls', () {
++    const String id = 'field-record';
++    final Finder edit = find.byKey(const ValueKey<String>('record-edit-$id'));
++    final Finder delete = find.byKey(
++      const ValueKey<String>('record-delete-$id'),
++    );
++
++    void seedRow() {
++      fake.seedEntry(
++        aRecordEntry(id: id, number: 1, name: 'A', status: RecordStatus.draft),
++      );
++    }
++
++    Future<void> verifyControls(WidgetTester tester) async {
++      final SemanticsHandle semantics = tester.ensureSemantics();
++      try {
++        final LocalizedCopy copy = Copy.of(tester.element(edit));
++        for (final (Finder, String) action in <(Finder, String)>[
++          (edit, copy.recordEdit),
++          (delete, copy.recordsDeleteLabel(1)),
++        ]) {
++          final Finder button = find.descendant(
++            of: action.$1,
++            matching: find.byType(IconButton),
++          );
++          final IconButton icon = tester.widget<IconButton>(button);
++          expect(button, meetsTapTarget());
++          expect(button, hasSemanticLabel(action.$2));
++          expect(icon.tooltip, action.$2);
++          expect(icon.onPressed, isNotNull);
++          for (final Set<WidgetState> states in <Set<WidgetState>>[
++            <WidgetState>{},
++            <WidgetState>{WidgetState.hovered},
++            <WidgetState>{WidgetState.focused},
++            <WidgetState>{WidgetState.pressed},
++            <WidgetState>{WidgetState.disabled},
++          ]) {
++            expect(icon.style?.side?.resolve(states), BorderSide.none);
++          }
++        }
++        expect(tester.widget<AppIconButton>(edit).outlined, isFalse);
++        expect(tester.widget<RecordDeleteAction>(delete).outlined, isFalse);
++        expect(
++          await ScreenProbe.accessibilityIssues(
++            tester,
++            targets: <Finder>[edit, delete],
++            within: rowOf(id),
++          ),
++          isEmpty,
++        );
++      } finally {
++        semantics.dispose();
++      }
++    }
++
++    for (final Locale locale in <Locale>[
++      const Locale('en'),
++      const Locale('en', 'XA'),
++    ]) {
++      for (final ScreenMatrix cell in ScreenMatrix.cells) {
++        testWidgets(
++          'borderless targets and action omission ${cell.description} '
++          '${locale.toLanguageTag()}',
++          (WidgetTester tester) async {
++            seedRow();
++            await pumpRecordsList(
++              tester,
++              records: records,
++              cell: cell,
++              locale: locale,
++              direction: locale.countryCode == 'XA'
++                  ? TextDirection.rtl
++                  : TextDirection.ltr,
++            );
++            await tester.ensureVisible(rowOf(id));
++            await tester.pumpAndSettle();
++            await verifyControls(tester);
++
++            await tester.longPress(rowOf(id));
++            await tester.pumpAndSettle();
++            expect(edit, findsNothing);
++            expect(delete, findsNothing);
++            expect(tester.widget<AppListTile>(rowOf(id)).selected, isTrue);
++
++            await tester.pumpWidget(const SizedBox.shrink());
++            await tester.pumpAndSettle();
++            await pumpRecordsView(
++              tester,
++              records: records,
++              cell: cell,
++              locale: locale,
++              direction: locale.countryCode == 'XA'
++                  ? TextDirection.rtl
++                  : TextDirection.ltr,
++              child: RecordsListView(
++                projectId: 'project-1',
++                pane: true,
++                onOpen: (String _) {},
++              ),
++            );
++            expect(edit, findsNothing);
++            expect(delete, findsNothing);
++            expect(tester.widget<AppListTile>(rowOf(id)).dense, isTrue);
++            expect(ScreenProbe.layoutIssues(tester), isEmpty);
++          },
++          variant: const TargetPlatformVariant(<TargetPlatform>{
++            TargetPlatform.android,
++            TargetPlatform.iOS,
++            TargetPlatform.windows,
++            TargetPlatform.macOS,
++            TargetPlatform.linux,
++          }),
++        );
++      }
++    }
++
++    for (final String activation in <String>['touch', 'pointer', 'keyboard']) {
++      testWidgets('$activation activates the unchanged edit and delete flow', (
++        WidgetTester tester,
++      ) async {
++        seedRow();
++        final GoRouter router = await pumpRecordsList(tester, records: records);
++        Future<void> activate(Finder action) async {
++          if (activation == 'keyboard') {
++            for (
++              int attempt = 0;
++              attempt < 20 && !_focusWithin(action);
++              attempt++
++            ) {
++              await tester.sendKeyEvent(LogicalKeyboardKey.tab);
++              await tester.pump();
++            }
++            expect(_focusWithin(action), isTrue);
++            await tester.sendKeyEvent(LogicalKeyboardKey.enter);
++          } else if (activation == 'pointer') {
++            final TestGesture mouse = await tester.createGesture(
++              kind: PointerDeviceKind.mouse,
++            );
++            await mouse.addPointer(location: Offset.zero);
++            await mouse.moveTo(tester.getCenter(action));
++            await tester.pump();
++            await mouse.down(tester.getCenter(action));
++            await mouse.up();
++            await mouse.removePointer();
++          } else {
++            await tester.tap(action);
++          }
++          await tester.pumpAndSettle();
++        }
++
++        await activate(edit);
++        expect(
++          router.state.uri.path,
++          RoutePaths.projectRecordEdit('project-1', id),
++        );
++        router.pop();
++        await tester.pumpAndSettle();
++        await activate(delete);
++        expect(find.byType(AppDialog), findsOneWidget);
++        expect(fake.isTombstoned(id), isFalse);
++        await tester.tap(find.text(Copy.cancel));
++        await tester.pumpAndSettle();
++        expect(fake.entryOf(id)?.status, RecordStatus.draft);
++        expect(fake.isTombstoned(id), isFalse);
++        expect(router.state.uri.path, RoutePaths.projectRecords('project-1'));
++        await verifyControls(tester);
++      });
++    }
++
++    for (final ({String name, ScreenMatrix cell}) corner
++        in ScreenMatrix.corners) {
++      testWidgets('row golden ${corner.name}', (WidgetTester tester) async {
++        seedRow();
++        await pumpRecordsList(tester, records: records, cell: corner.cell);
++        await tester.ensureVisible(rowOf(id));
++        await tester.pumpAndSettle();
++        await verifyControls(tester);
++        await expectLater(
++          rowOf(id),
++          matchesGoldenFile(
++            'goldens/feedback_13102026_record_row_${corner.name}.png',
++          ),
++        );
++      });
++    }
++  });
++
++  group('filters', () {
++    void seedMixed() {
++      fake.seedEntry(
++        aRecordEntry(
++          id: 'a',
++          number: 1,
++          name: 'Alpha',
++          status: RecordStatus.needsReview,
++          templateId: 'template-1',
++        ),
++      );
++      fake.seedEntry(
++        aRecordEntry(
++          id: 'b',
++          number: 2,
++          name: 'Bravo',
++          status: RecordStatus.needsReview,
++          templateId: 'template-2',
++        ),
++      );
++      fake.seedEntry(
++        aRecordEntry(
++          id: 'c',
++          number: 3,
++          name: 'Charlie',
++          status: RecordStatus.approved,
++          templateId: 'template-1',
++        ),
++      );
++      fake.seedTemplate('template-1', name: 'Boilers');
++      fake.seedTemplate('template-2', name: 'Pumps');
++    }
++
++    testWidgets(
++      'feedback 13102026 status commands union visible choices and clear all',
++      (WidgetTester tester) async {
++        setSurface(tester, const Size(393, 886));
++        seedMixed();
++        await pumpRecordsList(tester, records: records);
++
++        Future<void> openStatus() async {
++          await tester.tap(find.byKey(const ValueKey<String>('search-filter')));
++          await tester.pumpAndSettle();
++          final Finder status = find.byKey(
++            const ValueKey<String>('records-filter-status'),
++          );
++          await tester.ensureVisible(status);
++          await tester.pumpAndSettle();
++          await tester.tap(status);
++          await tester.pumpAndSettle();
++        }
++
++        Finder inStatus(Finder matching) => find.descendant(
++          of: find.byType(AppBottomSheet).last,
++          matching: matching,
++        );
++
++        Future<void> closeFilters() async {
++          await tester.tapAt(const Offset(8, 8));
++          await tester.pumpAndSettle();
++          await tester.tapAt(const Offset(8, 8));
++          await tester.pumpAndSettle();
++        }
++
++        await openStatus();
++        await tester.tap(inStatus(find.text(Copy.statusApproved)));
++        await tester.pumpAndSettle();
++        expect(controllerOf(tester).state.filter.statuses, <RecordStatus>{
++          RecordStatus.approved,
++        });
++        await closeFilters();
++        expect(visibleTitles(tester), <String>['Charlie']);
++
++        await openStatus();
++        await tester.enterText(inStatus(find.byType(EditableText)), 'review');
++        await tester.pumpAndSettle();
++        expect(inStatus(find.text(Copy.statusApproved)), findsNothing);
++        expect(inStatus(find.text(Copy.statusNeedsReview)), findsOneWidget);
++        await tester.tap(inStatus(find.text(Copy.selectAll)));
++        await tester.pumpAndSettle();
++        expect(controllerOf(tester).state.filter.statuses, <RecordStatus>{
++          RecordStatus.approved,
++          RecordStatus.needsReview,
++        });
++        await closeFilters();
++        expect(visibleTitles(tester), <String>['Charlie', 'Bravo', 'Alpha']);
++
++        await openStatus();
++        await tester.enterText(inStatus(find.byType(EditableText)), 'review');
++        await tester.pumpAndSettle();
++        expect(inStatus(find.text(Copy.statusApproved)), findsNothing);
++        await tester.tap(inStatus(find.text(Copy.clear)));
++        await tester.pumpAndSettle();
++        expect(controllerOf(tester).state.filter.statuses, isEmpty);
++        await closeFilters();
++        expect(visibleTitles(tester), <String>['Charlie', 'Bravo', 'Alpha']);
++        expect(controllerOf(tester).state.filter.activeCount, 0);
++        expect(
++          find.byKey(const ValueKey<String>('records-active-filters')),
++          findsNothing,
++        );
++      },
++    );
++
++    testWidgets('filters combine, each chip removes its own value, and '
++        'clear filters removes them all in one tap', (
++      WidgetTester tester,
++    ) async {
++      seedMixed();
++      await pumpRecordsList(tester, records: records);
++      await typeSearch(tester, 'a');
++
++      controllerOf(tester).applyFilter(
++        const RecordFilter(
++          statuses: <RecordStatus>{RecordStatus.needsReview},
++          templateIds: <String>{'template-1'},
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      expect(visibleTitles(tester), <String>['Alpha']);
++      expect(
++        find.byKey(const ValueKey<String>('records-chip-status-needsReview')),
++        findsOneWidget,
++      );
++      expect(find.text(Copy.recordsChipTemplate('Boilers')), findsOneWidget);
++
++      await tester.tap(
++        find.descendant(
++          of: find.byKey(
++            const ValueKey<String>('records-chip-status-needsReview'),
++          ),
++          matching: find.bySemanticsLabel(
++            Copy.dismissChip(Copy.statusNeedsReview),
++          ),
++        ),
++      );
++      await tester.pumpAndSettle();
++
++      expect(visibleTitles(tester), <String>['Charlie', 'Alpha']);
++      expect(
++        find.byKey(const ValueKey<String>('records-chip-status-needsReview')),
++        findsNothing,
++      );
++
++      controllerOf(tester).applyFilter(
++        const RecordFilter(
++          statuses: <RecordStatus>{RecordStatus.approved},
++          templateIds: <String>{'template-2'},
++          flags: <RecordFlag>{RecordFlag.hasPhotos},
++        ),
++      );
++      await tester.pumpAndSettle();
++      expect(find.byKey(const ValueKey<String>('records-no-match')), findsOne);
++      expect(find.byType(AppChip), findsNWidgets(4));
++
++      await tester.tap(
++        find.byKey(const ValueKey<String>('records-clear-filters')),
++      );
++      await tester.pumpAndSettle();
++
++      expect(visibleTitles(tester), <String>['Charlie', 'Bravo', 'Alpha']);
++      expect(
++        find.byKey(const ValueKey<String>('records-active-filters')),
++        findsNothing,
++      );
++      // The search is its field's to clear.
++      expect(controllerOf(tester).state.filter.search, 'a');
++      expect(controllerOf(tester).state.filter.activeCount, 0);
++    });
++
++    testWidgets('the route filter lists one status for the visit and leaves '
++        'the remembered filter alone', (WidgetTester tester) async {
++      seedMixed();
++      final SettingsStore settings = SettingsStore.fake();
++      await pumpRecordsList(
++        tester,
++        records: records,
++        settings: settings,
++        location:
++            '${RoutePaths.projectRecords('project-1')}?'
++            '${RoutePaths.filterQuery}=needsReview',
++      );
++
++      expect(visibleTitles(tester), <String>['Bravo', 'Alpha']);
++      expect(
++        find.byKey(const ValueKey<String>('records-chip-status-needsReview')),
++        findsOneWidget,
++      );
++      expect(settings.read(SettingKeys.recordListCriteria), '{}');
++      expect(find.text('Charlie'), findsNothing);
++    });
++  });
++
++  group('sort', () {
++    testWidgets('sorting orders the rows both ways on every key', (
++      WidgetTester tester,
++    ) async {
++      // Number, capture date and name each give a different order.
++      fake.seedEntry(
++        aRecordEntry(
++          id: 'x',
++          number: 1,
++          name: 'Charlie',
++          capturedAt: DateTime.utc(2026, 9, 2),
++        ),
++      );
++      fake.seedEntry(
++        aRecordEntry(
++          id: 'y',
++          number: 2,
++          name: 'alpha',
++          capturedAt: DateTime.utc(2026, 9, 3),
++        ),
++      );
++      fake.seedEntry(
++        aRecordEntry(
++          id: 'z',
++          number: 3,
++          name: 'Bravo',
++          capturedAt: DateTime.utc(2026, 9, 1),
++        ),
++      );
++      await pumpRecordsList(tester, records: records);
++
++      final Map<String, List<String>> expected = <String, List<String>>{
++        Copy.recordsSortNumberDescending: <String>['Bravo', 'alpha', 'Charlie'],
++        Copy.recordsSortNumberAscending: <String>['Charlie', 'alpha', 'Bravo'],
++        Copy.recordsSortCapturedDescending: <String>[
++          'alpha',
++          'Charlie',
++          'Bravo',
++        ],
++        Copy.recordsSortCapturedAscending: <String>[
++          'Bravo',
++          'Charlie',
++          'alpha',
++        ],
++        Copy.recordsSortNameAscending: <String>['alpha', 'Bravo', 'Charlie'],
++        Copy.recordsSortNameDescending: <String>['Charlie', 'Bravo', 'alpha'],
++      };
++      expect(visibleTitles(tester), expected[Copy.recordsSortNumberDescending]);
++
++      for (final MapEntry<String, List<String>> order in expected.entries) {
++        await tester.tap(find.byKey(const ValueKey<String>('records-sort')));
++        await tester.pumpAndSettle();
++        await tester.tap(find.text(order.key));
++        await tester.pumpAndSettle();
++
++        expect(visibleTitles(tester), order.value, reason: order.key);
++      }
++    });
++  });
++
++  group('remembered per project', () {
++    testWidgets('filter and sort survive a restart, per project, and the '
++        'search does not', (WidgetTester tester) async {
++      fake.seedMany(3);
++      fake.seedMany(2, projectId: 'project-2');
++      final SettingsStore settings = SettingsStore.fake();
++
++      // First run: project 1 filtered to needs review and sorted by name;
++      // project 2 only sorted by capture date.
++      await pumpRecordsList(tester, records: records, settings: settings);
++      await typeSearch(tester, 'Record');
++      final ProviderContainer first = listContainer(tester);
++      first
++          .read(recordsListControllerProvider('project-1').notifier)
++          .applyFilter(RecordFilter.forStatus(RecordStatus.needsReview));
++      first
++          .read(recordsListControllerProvider('project-1').notifier)
++          .applySort(
++            const RecordSort(key: RecordSortKey.name, ascending: true),
++          );
++      final ProviderSubscription<RecordsListCriteria> second = first.listen(
++        recordsListControllerProvider('project-2'),
++        (RecordsListCriteria? _, RecordsListCriteria _) {},
++      );
++      first
++          .read(recordsListControllerProvider('project-2').notifier)
++          .applySort(
++            const RecordSort(key: RecordSortKey.capturedAt, ascending: true),
++          );
++      second.close();
++      await tester.pumpAndSettle();
++
++      // Restart: a new app over the same stored settings.
++      await tester.pumpWidget(const SizedBox.shrink());
++      await pumpRecordsList(
++        tester,
++        records: CountingRecords(fake),
++        settings: settings,
++      );
++
++      final ProviderContainer restarted = listContainer(tester);
++      final RecordsListCriteria one = restarted.read(
++        recordsListControllerProvider('project-1'),
++      );
++      expect(one.filter, RecordFilter.forStatus(RecordStatus.needsReview));
++      expect(
++        one.sort,
++        const RecordSort(key: RecordSortKey.name, ascending: true),
++      );
++      expect(one.filter.search, isEmpty);
++      expect(
++        find.byKey(const ValueKey<String>('records-chip-status-needsReview')),
++        findsOneWidget,
++      );
++      expect(tester.widget<EditableText>(searchInput()).controller.text, '');
++
++      final ProviderSubscription<RecordsListCriteria> two = restarted.listen(
++        recordsListControllerProvider('project-2'),
++        (RecordsListCriteria? _, RecordsListCriteria _) {},
++      );
++      expect(two.read().filter, RecordFilter.none);
++      expect(
++        two.read().sort,
++        const RecordSort(key: RecordSortKey.capturedAt, ascending: true),
++      );
++      two.close();
++
++      final Map<String, Object?> stored =
++          jsonDecode(settings.read(SettingKeys.recordListCriteria))
++              as Map<String, Object?>;
++      expect(stored.keys, unorderedEquals(<String>['project-1', 'project-2']));
++      expect(jsonEncode(stored), isNot(contains('Record')));
++    });
++
++    test(
++      'a broken or foreign stored value reads as no filter, newest first',
++      () {
++        for (final String stored in <String>[
++          'not json',
++          '[]',
++          '{"project-1": "flat"}',
++          '{"project-1": {"filter": 3, "sort": {"key": "colour"}}}',
++        ]) {
++          final ProviderContainer container = ProviderContainer(
++            overrides: <Override>[
++              projectSettingsStoreOverride(
++                SettingsStore.fake(
++                  stored: <String, Object?>{
++                    SettingKeys.recordListCriteria.name: stored,
++                  },
++                ),
++              ),
++            ],
++          );
++          addTearDown(container.dispose);
++          final RecordsListCriteria criteria = container.read(
++            recordsListControllerProvider('project-1'),
++          );
++          expect(criteria.filter, RecordFilter.none, reason: stored);
++          expect(criteria.sort, RecordSort.newestFirst, reason: stored);
++        }
++      },
++    );
++
++    test('going back to no filter, newest first, forgets the project', () {
++      final SettingsStore settings = SettingsStore.fake();
++      final ProviderContainer container = ProviderContainer(
++        overrides: <Override>[projectSettingsStoreOverride(settings)],
++      );
++      addTearDown(container.dispose);
++      final ProviderSubscription<RecordsListCriteria> list = container.listen(
++        recordsListControllerProvider('project-1'),
++        (RecordsListCriteria? _, RecordsListCriteria _) {},
++      );
++      addTearDown(list.close);
++      final RecordsListController controller = container.read(
++        recordsListControllerProvider('project-1').notifier,
++      );
++
++      controller.applySort(RecordSort.newestFirst.reversed());
++      expect(
++        settings.read(SettingKeys.recordListCriteria),
++        contains('project-1'),
++      );
++
++      controller.applySort(RecordSort.newestFirst);
++      expect(settings.read(SettingKeys.recordListCriteria), '{}');
++    });
++  });
++
++  group('layouts', () {
++    for (final ({String name, Size size, double scale}) layout
++        in <({String name, Size size, double scale})>[
++          (name: '393 dp', size: const Size(393, 886), scale: 1),
++          (name: '800 dp', size: const Size(800, 1000), scale: 1),
++          (name: '1200 dp', size: const Size(1200, 800), scale: 1),
++          (name: 'landscape', size: const Size(886, 393), scale: 1),
++          (name: '200 percent text', size: const Size(393, 886), scale: 2),
++        ]) {
++      testWidgets('at ${layout.name} the list shows its rows, chips and '
++          'controls without overflowing', (WidgetTester tester) async {
++        setSurface(tester, layout.size, scale: layout.scale);
++        fake.seedEntry(
++          aRecordEntry(
++            id: 'long',
++            number: 1,
++            name: 'A very long record name that cannot fit on one line at all',
++            identifier: 'SERIAL-0000000001',
++            context: const <String, String>{'site': 'North plant room'},
++            status: RecordStatus.needsReview,
++          ),
++        );
++        fake.seedMany(30);
++        await pumpRecordsList(tester, records: records);
++        controllerOf(tester).applyFilter(
++          const RecordFilter(
++            statuses: <RecordStatus>{
++              RecordStatus.needsReview,
++              RecordStatus.captured,
++            },
++            flags: <RecordFlag>{},
++          ),
++        );
++        await tester.pumpAndSettle();
++
++        expect(tester.takeException(), isNull);
++        expect(find.byKey(const ValueKey<String>('records-search')), findsOne);
++        expect(find.byKey(const ValueKey<String>('records-sort')), findsOne);
++        expect(
++          find.byKey(const ValueKey<String>('records-clear-filters')),
++          findsOne,
++        );
++        expect(find.byType(AppStatusPill), findsWidgets);
++        expect(find.text('Record 30'), findsOneWidget);
++      });
++    }
++
++    testWidgets('in the narrow pane rows drop their controls and mark the '
++        'open record', (WidgetTester tester) async {
++      setSurface(tester, const Size(280, 800), scale: 2);
++      fake.seedMany(4);
++      await pumpRecordsView(
++        tester,
++        records: records,
++        child: RecordsListView(
++          projectId: 'project-1',
++          pane: true,
++          currentRecordId: 'project-1-record-3',
++          onOpen: (String _) {},
++        ),
++      );
++
++      expect(tester.takeException(), isNull);
++      expect(
++        tester.widget<AppListTile>(rowOf('project-1-record-3')).current,
++        isTrue,
++      );
++      expect(
++        tester.widget<AppListTile>(rowOf('project-1-record-4')).current,
++        isFalse,
++      );
++      expect(
++        tester.widget<AppListTile>(rowOf('project-1-record-4')).dense,
++        isTrue,
++      );
++      expect(
++        find.byKey(const ValueKey<String>('record-edit-project-1-record-4')),
++        findsNothing,
++      );
++    });
++
++    testWidgets('a pane row opens through its callback', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(2);
++      final List<String> opened = <String>[];
++      await pumpRecordsView(
++        tester,
++        records: records,
++        child: RecordsListView(
++          projectId: 'project-1',
++          pane: true,
++          onOpen: opened.add,
++        ),
++      );
++
++      await tester.tap(find.text('Record 1'));
++      await tester.pump();
++
++      expect(opened, <String>['project-1-record-1']);
++    });
++
++    testWidgets(
++      'pane rows wrap complete text at 200 percent with natural extents and '
++      'retain status, selection and opening',
++      (WidgetTester tester) async {
++        setSurface(tester, const Size(280, 1000), scale: 2);
++        final SemanticsHandle semantics = tester.ensureSemantics();
++        addTearDown(semantics.dispose);
++        const String title =
++            'A descriptive field capture with its complete title';
++        fake.seedEntry(
++          aRecordEntry(
++            id: 'long-row',
++            number: 7,
++            name: title,
++            identifier: 'SN-1',
++            context: const <String, String>{'operator': 'Field team'},
++            status: RecordStatus.needsReview,
++          ),
++        );
++        fake.seedEntry(aRecordEntry(id: 'short-row', number: 6, name: 'Short'));
++        final List<String> opened = <String>[];
++        await pumpRecordsView(
++          tester,
++          records: records,
++          child: Theme(
++            data: ScreenFonts.theme(buildTheme(brightness: Brightness.light)),
++            child: RecordsListView(
++              projectId: 'project-1',
++              pane: true,
++              currentRecordId: 'long-row',
++              onOpen: opened.add,
++            ),
++          ),
++        );
++        final Finder row = rowOf('long-row');
++        final AppListTile tile = tester.widget<AppListTile>(row);
++        expect(tile.wrapText, isTrue);
++        expect(tile.current, isTrue);
++        expect(tile.status?.status, RecordStatus.needsReview);
++        expect(tile.subtitle, '#7 · SN-1 · Field team');
++        final SemanticsNode node = tester.getSemantics(row);
++        expect(node.label, contains(title));
++        expect(node.label, contains(Copy.statusNeedsReview));
++        expect(node.getSemanticsData().hint, tile.subtitle);
++        final ListView list = tester.widget<ListView>(
++          find.byKey(const ValueKey<String>('records-list')),
++        );
++        expect(list.prototypeItem, isNull);
++        expect(list.childrenDelegate, isA<SliverChildBuilderDelegate>());
++        expect(records.pageReads, <({int offset, int limit})>[
++          (offset: 0, limit: pageSize),
++        ]);
++        for (final String label in <String>[title, tile.subtitle!]) {
++          final Finder text = find.descendant(
++            of: row,
++            matching: find.text(label),
++          );
++          await tester.ensureVisible(text);
++          await tester.pumpAndSettle();
++          final Text widget = tester.widget<Text>(text);
++          expect(widget.maxLines, isNull);
++          expect(widget.overflow, TextOverflow.visible);
++          final RenderParagraph paragraph = tester
++              .renderObject<RenderParagraph>(
++                find.descendant(of: text, matching: find.byType(RichText)),
++              );
++          expect(paragraph.didExceedMaxLines, isFalse);
++          expect(
++            paragraph
++                .getBoxesForSelection(
++                  TextSelection(baseOffset: 0, extentOffset: label.length),
++                )
++                .length,
++            greaterThan(1),
++          );
++        }
++        final Rect longBounds = tester.getRect(row);
++        final Rect shortBounds = tester.getRect(rowOf('short-row'));
++        expect(longBounds.height, greaterThan(shortBounds.height));
++        expect(shortBounds.top, greaterThanOrEqualTo(longBounds.bottom));
++        expect(ScreenProbe.layoutIssues(tester), isEmpty);
++        await tester.ensureVisible(row);
++        await tester.pumpAndSettle();
++        await tester.tap(row);
++        await tester.pumpAndSettle();
++        expect(opened, <String>['long-row']);
++        await tester.longPress(row);
++        await tester.pumpAndSettle();
++        final ProviderContainer container = ProviderScope.containerOf(
++          tester.element(find.byType(RecordsListView)),
++        );
++        expect(container.read(recordSelectionProvider('project-1')), <String>{
++          'long-row',
++        });
++        expect(tester.widget<AppListTile>(row).selected, isTrue);
++        await tester.tap(row);
++        await tester.pumpAndSettle();
++        expect(container.read(recordSelectionProvider('project-1')), isEmpty);
++        expect(opened, <String>['long-row']);
++        expect(ScreenProbe.layoutIssues(tester), isEmpty);
++      },
++    );
++
++    testWidgets('full list keeps its prototype and default text layout', (
++      WidgetTester tester,
++    ) async {
++      fake.seedMany(2);
++      await pumpRecordsList(tester, records: records);
++      final ListView list = tester.widget<ListView>(
++        find.byKey(const ValueKey<String>('records-list')),
++      );
++      expect(list.prototypeItem, isNotNull);
++      expect(
++        tester.widget<AppListTile>(rowOf('project-1-record-2')).wrapText,
++        isFalse,
++      );
++    });
++  });
++
++  testWidgets('rows, chips and controls are named 48 dp targets', (
++    WidgetTester tester,
++  ) async {
++    final SemanticsHandle semantics = tester.ensureSemantics();
++    fake.seedMany(5);
++    await pumpRecordsList(tester, records: records);
++    controllerOf(
++      tester,
++    ).applyFilter(RecordFilter.forStatus(RecordStatus.captured));
++    await tester.pumpAndSettle();
++
++    await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
++    await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
++    expect(
++      tester.getSemantics(rowOf('project-1-record-5')),
++      isSemantics(
++        // The status pill stays outside the row's text exclusion, so its
++        // word is read once after the title.
++        label: 'Record 5\n${Copy.statusCaptured}',
++        hint: '#5',
++        isButton: true,
++        hasTapAction: true,
++        hasLongPressAction: true,
++      ),
++    );
++    expect(
++      find.bySemanticsLabel(
++        Copy.recordsSortLabel(Copy.recordsSortNumberDescending),
++      ),
++      findsOneWidget,
++    );
++    expect(find.bySemanticsLabel(Copy.searchFilters(1)), findsOneWidget);
++    semantics.dispose();
++  });
++
++  testWidgets(
++    'ten thousand records scroll from top to bottom within the frame '
++    'budget, building only the rows on screen and holding a few pages at '
++    'most (FE-PERF-01, FE-TEST-09)',
++    (WidgetTester tester) async {
++      setSurface(tester, const Size(393, 886));
++      fake.seedMany(10000);
++      await pumpRecordsList(tester, records: records);
++      final Finder list = find.byKey(const ValueKey<String>('records-list'));
++      final ScrollPosition position = tester
++          .state<ScrollableState>(
++            find.descendant(of: list, matching: find.byType(Scrollable)),
++          )
++          .position;
++      final double end = position.maxScrollExtent;
++      final double row = tester.getSize(rowOf('project-1-record-10000')).height;
++      // The most rows a virtualised frame can build: the viewport and the
++      // cache on either side of it, whatever the list's length.
++      final int rowsOnScreen =
++          ((position.viewportDimension +
++                      2 * RenderAbstractViewport.defaultCacheExtent) /
++                  row)
++              .ceil() +
++          1;
++      expect(end, greaterThan(9999 * row - position.viewportDimension));
++
++      // Warm up: a row's first frames compile its code.
++      for (final double at in <double>[0.5, 0.25, 0]) {
++        position.jumpTo(at * end);
++        await tester.pump();
++        await tester.pump();
++      }
++      await tester.pumpAndSettle();
++      records.mostLivePages = records.livePages;
++
++      final List<int> dragFrames = <int>[];
++      final List<int> allFrames = <int>[];
++      int mostRowsBuilt = 0;
++      int rowsBuilt = 0;
++      final Stopwatch watch = Stopwatch();
++      Future<int> frame() async {
++        rowsBuilt = 0;
++        watch
++          ..reset()
++          ..start();
++        await tester.pump();
++        watch.stop();
++        allFrames.add(watch.elapsedMicroseconds);
++        if (rowsBuilt > mostRowsBuilt) {
++          mostRowsBuilt = rowsBuilt;
++        }
++        return watch.elapsedMicroseconds;
++      }
++
++      debugOnRebuildDirtyWidget = (Element element, bool _) {
++        if (element.widget is AppListTile) {
++          rowsBuilt++;
++        }
++      };
++      try {
++        // Twenty stations from the top to the bottom. At each the list
++        // jumps there, as a scrollbar drag does, then a finger drags it on
++        // a frame at a time.
++        for (int station = 0; station < 20; station++) {
++          position.jumpTo(end * station / 20);
++          await frame();
++          await frame();
++          final TestGesture finger = await tester.startGesture(
++            tester.getCenter(list),
++          );
++          await finger.moveBy(const Offset(0, -kTouchSlop - 1));
++          await frame();
++          for (int step = 0; step < 12; step++) {
++            await finger.moveBy(Offset(0, -row * 3));
++            dragFrames.add(await frame());
++          }
++          await finger.up();
++          await frame();
++        }
++        position.jumpTo(end);
++        await frame();
++        await frame();
++      } finally {
++        debugOnRebuildDirtyWidget = null;
++      }
++      await tester.pumpAndSettle();
++
++      // The extent settles once the last page lands, so compare with it.
++      expect(position.pixels, position.maxScrollExtent);
++      expect(find.text('Record 1'), findsOneWidget);
++      dragFrames.sort();
++      allFrames.sort();
++      final int p50 = dragFrames[dragFrames.length ~/ 2];
++      final int p90 = dragFrames[(dragFrames.length * 0.9).ceil() - 1];
++      final int worst = allFrames.last;
++      final String measured =
++          '${dragFrames.length} drag frames: p50 $p50 us, p90 $p90 us; '
++          'worst of ${allFrames.length} frames $worst us; at most '
++          '$mostRowsBuilt rows built in a frame (bound $rowsOnScreen) and '
++          '${records.mostLivePages} pages held';
++      debugPrint('records scroll measurement: $measured');
++      expect(
++        p90,
++        lessThanOrEqualTo(AppConstants.scrolling.frame.inMicroseconds),
++        reason: measured,
++      );
++      expect(
++        worst,
++        lessThanOrEqualTo(AppConstants.scrolling.worstFrame.inMicroseconds),
++        reason: measured,
++      );
++      expect(mostRowsBuilt, lessThanOrEqualTo(rowsOnScreen), reason: measured);
++      expect(
++        records.mostLivePages,
++        lessThanOrEqualTo(AppConstants.scrolling.livePages),
++        reason: measured,
++      );
++      for (final ({int offset, int limit}) read in records.pageReads) {
++        expect(read.limit, pageSize);
++      }
++    },
++    timeout: const Timeout(Duration(minutes: 3)),
++    tags: const <String>['performance'],
++  );
++}
++
++bool _focusWithin(Finder target) {
++  final BuildContext? focused = FocusManager.instance.primaryFocus?.context;
++  if (focused is! Element) {
++    return false;
++  }
++  final Element action = target.evaluate().single;
++  bool found = identical(focused, action);
++  focused.visitAncestorElements((Element ancestor) {
++    found = found || identical(ancestor, action);
++    return !found;
++  });
++  return found;
++}
+diff --git a/frontend/test/features/templates/domain/capture_guide_test.dart b/frontend/test/features/templates/domain/capture_guide_test.dart
+new file mode 100644
+index 00000000..ac7400de
+--- /dev/null
++++ b/frontend/test/features/templates/domain/capture_guide_test.dart
+@@ -0,0 +1,216 @@
++import 'package:flutter_test/flutter_test.dart';
++import 'package:tapture/features/templates/templates.dart';
++
++import '../../../support/factories.dart';
++
++void main() {
++  test('an asset template asks the photos for its identity and barcode', () {
++    final CaptureGuide guide = CaptureGuide.of(_asset);
++
++    expect(guide.photoFields, <String>[
++      'Item identifier',
++      'Serial number',
++      'Barcode value',
++    ]);
++    expect(guide.captionFields, <String>[
++      'Item name',
++      'Equipment name',
++      'Condition grade',
++    ]);
++    expect(guide.isEmpty, isFalse);
++  });
++
++  test('inherited, automatic, context and file fields are never asked for', () {
++    final CaptureGuide guide = CaptureGuide.of(_asset);
++
++    for (final String hidden in <String>[
++      'Record status',
++      'Country',
++      'Photo count',
++      'Reviewed by',
++      'Site ref',
++      'Captured by',
++      'District',
++      'Signature',
++      'Secret',
++    ]) {
++      expect(guide.captionFields, isNot(contains(hidden)), reason: hidden);
++      expect(guide.photoFields, isNot(contains(hidden)), reason: hidden);
++    }
++  });
++
++  test('a built template with no identity fields guides the caption only', () {
++    final CaptureGuide guide = CaptureGuide.of(
++      aTemplate(
++        fields: const <FieldDef>[
++          FieldDef(
++            fieldKey: 'finding',
++            label: 'Finding',
++            type: FieldType.text,
++            requiredness: Requiredness.required,
++          ),
++          FieldDef(
++            fieldKey: 'note',
++            label: 'Note',
++            type: FieldType.longText,
++            requiredness: Requiredness.optional,
++            sortOrder: 1,
++          ),
++        ],
++      ),
++    );
++
++    expect(guide.photoFields, isEmpty);
++    expect(guide.captionFields, <String>['Finding']);
++  });
++
++  test('a template with nothing to ask shows no guide', () {
++    expect(CaptureGuide.of(aTemplate()).isEmpty, isTrue);
++  });
++
++  test('each list stops at the cap', () {
++    final CaptureGuide guide = CaptureGuide.of(
++      aTemplate(
++        fields: <FieldDef>[
++          for (int i = 0; i < 10; i++)
++            FieldDef(
++              fieldKey: 'f$i',
++              label: 'Field $i',
++              type: FieldType.text,
++              requiredness: Requiredness.recommended,
++              sortOrder: i,
++            ),
++        ],
++      ),
++    );
++
++    expect(guide.captionFields, hasLength(6));
++    expect(guide.captionFields.first, 'Field 0');
++  });
++}
++
++final TemplateDef _asset = aTemplate(
++  identityFieldKeys: const <String>['item_identifier', 'serial_number'],
++  fields: const <FieldDef>[
++    FieldDef(
++      fieldKey: 'record_status',
++      label: 'Record status',
++      type: FieldType.text,
++      requiredness: Requiredness.required,
++      group: 'record_admin',
++      inputMode: InputMode.auto,
++    ),
++    FieldDef(
++      fieldKey: 'country',
++      label: 'Country',
++      type: FieldType.text,
++      requiredness: Requiredness.recommended,
++      group: 'location',
++      sortOrder: 1,
++    ),
++    FieldDef(
++      fieldKey: 'photo_count',
++      label: 'Photo count',
++      type: FieldType.number,
++      requiredness: Requiredness.recommended,
++      group: 'evidence',
++      sortOrder: 2,
++    ),
++    FieldDef(
++      fieldKey: 'reviewed_by',
++      label: 'Reviewed by',
++      type: FieldType.text,
++      requiredness: Requiredness.recommended,
++      group: 'review',
++      sortOrder: 3,
++    ),
++    FieldDef(
++      fieldKey: 'site_ref',
++      label: 'Site ref',
++      type: FieldType.text,
++      requiredness: Requiredness.recommended,
++      group: 'context',
++      stickable: true,
++      sortOrder: 4,
++    ),
++    FieldDef(
++      fieldKey: 'item_identifier',
++      label: 'Item identifier',
++      type: FieldType.text,
++      requiredness: Requiredness.recommended,
++      group: 'asset',
++      sortOrder: 5,
++    ),
++    FieldDef(
++      fieldKey: 'item_name',
++      label: 'Item name',
++      type: FieldType.text,
++      requiredness: Requiredness.required,
++      group: 'asset',
++      sortOrder: 6,
++    ),
++    FieldDef(
++      fieldKey: 'serial_number',
++      label: 'Serial number',
++      type: FieldType.text,
++      requiredness: Requiredness.recommended,
++      group: 'asset',
++      sortOrder: 7,
++    ),
++    FieldDef(
++      fieldKey: 'barcode_value',
++      label: 'Barcode value',
++      type: FieldType.barcode,
++      requiredness: Requiredness.optional,
++      group: 'asset',
++      sortOrder: 8,
++    ),
++    FieldDef(
++      fieldKey: 'equipment_name',
++      label: 'Equipment name',
++      type: FieldType.text,
++      requiredness: Requiredness.recommended,
++      group: 'specific_details',
++      sortOrder: 9,
++    ),
++    FieldDef(
++      fieldKey: 'condition_grade',
++      label: 'Condition grade',
++      type: FieldType.choice,
++      requiredness: Requiredness.recommended,
++      group: 'asset',
++      sortOrder: 10,
++    ),
++    FieldDef(
++      fieldKey: 'captured_by',
++      label: 'Captured by',
++      type: FieldType.text,
++      requiredness: Requiredness.recommended,
++      autoFill: AutoFill.now,
++      sortOrder: 11,
++    ),
++    FieldDef(
++      fieldKey: 'district',
++      label: 'District',
++      type: FieldType.text,
++      requiredness: Requiredness.recommended,
++      contextLevel: 1,
++      sortOrder: 12,
++    ),
++    FieldDef(
++      fieldKey: 'signature',
++      label: 'Signature',
++      type: FieldType.signature,
++      requiredness: Requiredness.recommended,
++      sortOrder: 13,
++    ),
++    FieldDef(
++      fieldKey: 'secret',
++      label: 'Secret',
++      type: FieldType.text,
++      requiredness: Requiredness.required,
++      hidden: true,
++      sortOrder: 14,
++    ),
++  ],
++);

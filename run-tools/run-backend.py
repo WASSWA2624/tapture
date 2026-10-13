@@ -8,8 +8,8 @@ Running it again refreshes the server: any previous instance is stopped first,
 so the command is always safe to repeat. The backend and web ports are freed of
 whatever holds them before the server starts. Stop it with Ctrl-C.
 
-The backend itself is built in dev-plan step 23 (task 024); until `backend/package.json`
-exists this script says what is missing rather than pretending to start.
+The backend's `package.json` and a supported server entry point must exist before
+starting. Missing files produce an explicit setup error.
 """
 
 from __future__ import annotations
@@ -95,7 +95,7 @@ def require_backend() -> None:
     if not manifest.is_file():
         raise BuildError(
             "backend/package.json does not exist, so there is no server to run. "
-            "The backend is built in dev-plan step 23, task 024."
+            "Restore backend/package.json and install its dependencies before starting the server."
         )
     try:
         json.loads(manifest.read_text(encoding="utf-8"))
@@ -132,7 +132,7 @@ def resolve_entry() -> tuple[str, str]:
         looked = ", ".join(ENTRY_POINTS)
         raise BuildError(
             f"no server entry point in backend/ (looked for {looked}). "
-            "Task 460 creates backend/src/server.ts."
+            "Restore backend/src/server.ts or another supported entry point before starting the server."
         )
 
     relative_entry = entry.relative_to(BACKEND).as_posix()

@@ -43,7 +43,7 @@ needs.
 
 ## BE-SEC-10 — Dependencies are audited
 
-An advisory check runs in the gate. A new dependency needs a task, a pinned version and a licence note.
+An advisory check runs in the gate. A new dependency needs documented approval, a pinned version and a licence note.
 
 ## BE-SEC-11 — Security-relevant changes get a second reader
 

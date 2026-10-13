@@ -1,0 +1,293 @@
+{
+  "task": "170",
+  "baseCommit": "587ee61810ec813a776fec7b5a7507d61194245e",
+  "encoding": "UTF-8, canonical LF",
+  "roots": [
+    "frontend/test/core/widgets/fields/app_multi_choice_field_test.dart",
+    "frontend/test/core/widgets/app_icon_button_test.dart",
+    "frontend/test/core/widgets/gallery/widget_gallery_screen_test.dart",
+    "frontend/test/design_system/app_multi_choice_field/gallery_golden_test.dart",
+    "frontend/test/features/records/presentation/records_list_screen_test.dart",
+    "frontend/test/features/records/presentation/record_delete_action_test.dart",
+    "frontend/test/features/capture/presentation/capture_guide_widgets_test.dart",
+    "frontend/test/features/capture/presentation/capture_screen_test.dart",
+    "frontend/test/features/capture/presentation/capture_edit_screen_test.dart",
+    "frontend/test/features/capture/presentation/capture_storage_guard_test.dart",
+    "frontend/test/features/capture/presentation/capture_widgets_test.dart",
+    "frontend/test/features/capture/presentation/capture_controller_test.dart",
+    "frontend/test/features/capture/presentation/capture_workflow_layout_test.dart",
+    "frontend/test/features/capture/presentation/capture_workflow_layout_browser_test.dart",
+    "frontend/test/features/templates/domain/capture_guide_test.dart",
+    "frontend/test/core/copy/copy_test.dart",
+    "frontend/integration_test/capture_raw_offline_test.dart",
+    "frontend/integration_test/capture_to_export_test.dart"
+  ],
+  "sourceCount": 51,
+  "sources": [
+    {
+      "path": "frontend/integration_test/capture_raw_offline_test.dart",
+      "bytes": 10277,
+      "sha256": "698b89cd32ccc7050018df1d21236eef0efd646afbf2e37f140b0a7f959853be"
+    },
+    {
+      "path": "frontend/integration_test/capture_to_export_test.dart",
+      "bytes": 3759,
+      "sha256": "16f3da07e682b7118361f2bcd7c2cec206031cc34fe2c102b3b08f1b91c7bfe0"
+    },
+    {
+      "path": "frontend/integration_test/support/capture_rig.dart",
+      "bytes": 7082,
+      "sha256": "96c9b88bbf21fc2eaab3ec24ad3575e32090072fd307ba06e3dac8d42d500fd6"
+    },
+    {
+      "path": "frontend/integration_test/support/harness.dart",
+      "bytes": 8294,
+      "sha256": "5face1fb80cf5a712d1ffec31b72659d954bd2a3b829ea3d45583c523068d8db"
+    },
+    {
+      "path": "frontend/test/core/copy/copy_test.dart",
+      "bytes": 26520,
+      "sha256": "b3cc38fe46db163947c600fbb166277940d08340673f3d5f799debc0bff11fb9"
+    },
+    {
+      "path": "frontend/test/core/db/record_rows.dart",
+      "bytes": 5572,
+      "sha256": "741d1a09e20dc25b4e4b69cff91229ab4074489b20b87c0846ff11151d121739"
+    },
+    {
+      "path": "frontend/test/core/widgets/app_icon_button_test.dart",
+      "bytes": 3393,
+      "sha256": "b01c60dff1fe59ee18eb1c27f37c2e7249e5b014c1ec53524bb85140e6face49"
+    },
+    {
+      "path": "frontend/test/core/widgets/fields/app_multi_choice_field_test.dart",
+      "bytes": 13097,
+      "sha256": "28da85e8c42c8420f0ac6a9095d89043d23b813e90ef1d26c296068c36afab99"
+    },
+    {
+      "path": "frontend/test/core/widgets/gallery/widget_gallery_screen_test.dart",
+      "bytes": 2033,
+      "sha256": "d80ce895adc7a95557ec9379b595db7c16064c695f4aa4f74c0ce2fab387cf47"
+    },
+    {
+      "path": "frontend/test/design_system/app_multi_choice_field/gallery_golden_test.dart",
+      "bytes": 2901,
+      "sha256": "313bd9f337a6c07ac5f9fd3ebc124be66f9cafd3d6dee3d346868596ddc370a4"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_controller_test.dart",
+      "bytes": 59136,
+      "sha256": "e7f5201bdcaeceef69db324f20ee8e277bc9e34f0ecf75cd2305d5600008a0db"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_edit_screen_test.dart",
+      "bytes": 19034,
+      "sha256": "adbb167d04a221ff0ee34b26a6a8cab8695c865c8a3eead08443e4ddcd8776d7"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_guide_widgets_test.dart",
+      "bytes": 20825,
+      "sha256": "dc2b7d405106bb1814f9007a9dc2cec96e4d544357a5a93513c90c3b0bb87afc"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_screen_test.dart",
+      "bytes": 56967,
+      "sha256": "9d6e2ba651533f56c4cb19d7438e9e8467ebf715c76852379bbb177896b1114b"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_storage_guard_test.dart",
+      "bytes": 11725,
+      "sha256": "661c61fef32eec3c49ba7e8b8ca542361e00c676f89fa0159351bd78d5e254fb"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_widgets_test.dart",
+      "bytes": 52272,
+      "sha256": "73d6f3f48b0b14c08df087f8a029da460562c1041bda94f8d7bc9ac32de7eb0e"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_workflow_fixture.dart",
+      "bytes": 79304,
+      "sha256": "e84e3682fd6b8610d359ace491f82afd4cb80ace1a47bdf9edbd153aa9d17714"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_workflow_layout_browser_test.dart",
+      "bytes": 180,
+      "sha256": "a4de0b262b5814a25390b1bba47ffc17c786366f7e11fdcc07b030b52893acd5"
+    },
+    {
+      "path": "frontend/test/features/capture/presentation/capture_workflow_layout_test.dart",
+      "bytes": 102,
+      "sha256": "9782910b8323b561c61a27dfdb33ad8e6f00da0ceb58e1181eda95040c7e750d"
+    },
+    {
+      "path": "frontend/test/features/projects/fakes/fake_project_repository.dart",
+      "bytes": 18044,
+      "sha256": "0834d6dbfc3348f11877d322569ec1ada14205d8edf44732e1c348052078ffab"
+    },
+    {
+      "path": "frontend/test/features/records/data/record_read_seeds.dart",
+      "bytes": 10073,
+      "sha256": "453c34319a9c43a38878148fb5a1ccee577f89d438840f4b3ae7f653a0ab60df"
+    },
+    {
+      "path": "frontend/test/features/records/fakes/fake_record_repository.dart",
+      "bytes": 30587,
+      "sha256": "261e5701959901b60d7f59503b64166bd79bba9eca56f4ae90d8458edc7b882a"
+    },
+    {
+      "path": "frontend/test/features/records/presentation/record_delete_action_test.dart",
+      "bytes": 17832,
+      "sha256": "bdfb692ed39aa3bf4531937125910c08f8e97209970461d53d15779e05326d34"
+    },
+    {
+      "path": "frontend/test/features/records/presentation/records_list_harness.dart",
+      "bytes": 12334,
+      "sha256": "c063e9fe572a1327471f02e3dd94108d5bb92fb2d476f3dd3cd9cc04ba2bcdd2"
+    },
+    {
+      "path": "frontend/test/features/records/presentation/records_list_screen_test.dart",
+      "bytes": 51882,
+      "sha256": "c6c2519547bc6b8c0154cbb38424461699f7408a80c2d12b3e3a80d1b4be5b9c"
+    },
+    {
+      "path": "frontend/test/features/templates/domain/capture_guide_test.dart",
+      "bytes": 5587,
+      "sha256": "a22b3047695a9edc8a267b283dcc1c184d1ea7a7cddfb49131e97d4dd16e6a1f"
+    },
+    {
+      "path": "frontend/test/features/templates/fakes/fake_template_repository.dart",
+      "bytes": 4048,
+      "sha256": "a9bf1fe139e52b8f93236c6b1396cea416b234284cabd3d5a49ff0ceab00dd3b"
+    },
+    {
+      "path": "frontend/test/support/a11y_matchers.dart",
+      "bytes": 8325,
+      "sha256": "31ba792c971229a6ae0a09aa846bf2e4bc3ce5d66f3b20b6a6f3a8df2af1dc34"
+    },
+    {
+      "path": "frontend/test/support/empty_state_matchers.dart",
+      "bytes": 5006,
+      "sha256": "a1c2bde604f97dadc0ecb8d72d643eb733fea1cfe6269b15aff390ce27321fe2"
+    },
+    {
+      "path": "frontend/test/support/factories.dart",
+      "bytes": 13243,
+      "sha256": "f1aed7990f5cf284580712df19e7bc8aeb5538762d8db2a665f0925bed1d713f"
+    },
+    {
+      "path": "frontend/test/support/fakes.dart",
+      "bytes": 3095,
+      "sha256": "8064da6ff8822bdb950df9a133366a7ed27b54dccf05772710ebe01bda352cf0"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_barcode_scanner_service.dart",
+      "bytes": 2197,
+      "sha256": "65f021d5d446b192f2e97a9d8fe73178d8b045c8f1d0188b9cf65db19a89434b"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_capture_photo_repository.dart",
+      "bytes": 5077,
+      "sha256": "acd53459942b0233ad80d582001b5cbc12a346b4ddf42506de807368552f2d1b"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_capture_record_persistence.dart",
+      "bytes": 2221,
+      "sha256": "08e0948c028a149a286385b849c8d828a63ed5e3109a0e54577a12783e088a3c"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_capture_storage_guard.dart",
+      "bytes": 1036,
+      "sha256": "3628e749a5b893bddd46c3ef20032194e62b082c9c415714cca1e9e2ce223062"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_context_repository.dart",
+      "bytes": 7380,
+      "sha256": "51dc01c726eeb453837f80ff86fc7ee92b0241b028d4327552b288baf25d057f"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_photo_repository.dart",
+      "bytes": 4045,
+      "sha256": "52faf0efab4d30259426893bdee3d3195bebe0283dbd6482cc88f9756021787b"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_processing_repository.dart",
+      "bytes": 15377,
+      "sha256": "64f37dc420a6e93c89c9c8e678f9649600b1e736243f5020f57a5e3ebbf9bdef"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_record_repository.dart",
+      "bytes": 67,
+      "sha256": "c7a2a208c47cf038103182fedb6beefe7d054e2dd24c7a7c07016ef591537661"
+    },
+    {
+      "path": "frontend/test/support/fakes/fake_stt_service.dart",
+      "bytes": 2821,
+      "sha256": "42e82072f531a49ffb9e213dc693fc32e1c79e564fb23fe8f17ae605884bd8f1"
+    },
+    {
+      "path": "frontend/test/support/matchers.dart",
+      "bytes": 704,
+      "sha256": "40830bdb6644ec549e5fedcebb142c92215ebcc82752a5645737a2a6696d7a0b"
+    },
+    {
+      "path": "frontend/test/support/processing_fixture.dart",
+      "bytes": 16224,
+      "sha256": "9f889c5b5a925ca4abc925259fac31a4231ba1d06a8889b978e1a5303bcfd606"
+    },
+    {
+      "path": "frontend/test/support/pump_external_work.dart",
+      "bytes": 2000,
+      "sha256": "8f664192b9f259802de99c5b21436d33882fced50a881e50ccccb3f157886cf0"
+    },
+    {
+      "path": "frontend/test/support/rtl_tapture_app.dart",
+      "bytes": 3567,
+      "sha256": "2e9667eb771055217fc813404853eda5e4dd7b31dfaad2958edbd1e3d10f0b50"
+    },
+    {
+      "path": "frontend/test/support/screen_font_fetch_stub.dart",
+      "bytes": 418,
+      "sha256": "25bd1c57efb301dc1173398d2e04df82838790453ab2ac48e1c6ae603621e901"
+    },
+    {
+      "path": "frontend/test/support/screen_font_fetch_web.dart",
+      "bytes": 1496,
+      "sha256": "86ef2fda359950bf3a1b15ba1e463817b8c2d373aa5ae57edb4164b315458c58"
+    },
+    {
+      "path": "frontend/test/support/screen_fonts.dart",
+      "bytes": 5877,
+      "sha256": "9f17dfe4b527d9c65c1b432e1a16043c6a80d39db3923f846acf844ffdd42514"
+    },
+    {
+      "path": "frontend/test/support/screen_matrix.dart",
+      "bytes": 2919,
+      "sha256": "741ed130658d7c26e7e673ce89b93715f0691ac8dcd301b9742530a94007e0b3"
+    },
+    {
+      "path": "frontend/test/support/screen_probe.dart",
+      "bytes": 11919,
+      "sha256": "183e7dd2c7c38e05f0b6146921d966c54bd13753ca3a3a2d3470188d9f03d2f0"
+    },
+    {
+      "path": "frontend/test/support/text_contrast_probe.dart",
+      "bytes": 5170,
+      "sha256": "b28e1f94ad8e6fc6f6c51a720beb797c0a054f28f8701b9dd0ce3bc90aab776a"
+    },
+    {
+      "path": "frontend/test/support/tracked_photo_file.dart",
+      "bytes": 1997,
+      "sha256": "7c1e1145edb0ada4203c8a17602f6cb593741e153475e76b9dc4f33d543ccaf8"
+    }
+  ],
+  "patch": {
+    "path": "acceptance-sources.patch",
+    "bytes": 154749,
+    "sha256": "03afb2e0c8935a3dd5e1e06728613c835043cb32673287f560050407b83c240c"
+  },
+  "verification": {
+    "temporaryIndexApply": true,
+    "sourceHashes": true,
+    "realIndexUnchanged": true
+  }
+}

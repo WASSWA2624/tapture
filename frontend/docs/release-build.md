@@ -57,7 +57,11 @@ ABI-specific filename above.
 
 ## Validation limits
 
-Task [136](../../dev-plan/25-testing-and-release.md#136--optimize-and-verify-android-apk-delivery) records build, artifact inspection and Android emulator smoke-test evidence. The delivery x86_64 APK installs successfully and cold-starts offline in 2,943 ms on Android 16/API 36 with 4 KiB pages. All three delivery APKs pass fresh artifact inspection. Physical-phone validation, physical-device speech acceptance (task 131), 16 KiB runtime acceptance and whole-product hardening (task 023) remain open.
+The 2026-10-07 delivery verification recorded build, artifact inspection and Android emulator smoke-test evidence.
+The delivery x86_64 APK installed successfully and cold-started offline in 2,943 ms on Android 16/API 36 with 4 KiB
+pages. All three delivery APKs passed artifact inspection. Physical-phone validation, physical-device speech,
+16 KiB runtime acceptance and whole-product release acceptance remain unverified; the dated evidence does not
+certify a later repository state.
 
 Recorded checks: full frontend analysis is clean; 141 release/speech/database/OCR/PDF/bootstrap tests pass,
 including real PDFium rendering; all 14 offline capture/export/failure/session scenarios pass. The shared
@@ -102,19 +106,17 @@ fields and typed source caption match the preserved pre-correction package. All 
 history is byte-identical; that history adds only the two preceding exports. Workbook cell, shared-string,
 style and relationship content is unchanged; its creation/modification timestamps differ.
 The package omits the locally persisted standalone microphone audio and transcript: its transcript/segment
-counts are zero and no WAV entry is present. Task
-[142](../../dev-plan/27-hardening/34-verify-standalone-audio-ownership-in-project-packages.md) records the project
-attachment-ownership/privacy-filter reconciliation and required Android restart/export/import checks. The
-omission does not imply local source loss; OCR cache is explicitly excluded by the package contract.
+counts are zero and no WAV entry is present. Project attachment ownership and outbound privacy filtering require
+reconciliation, followed by Android restart/export/import verification. The omission does not imply local source
+loss; OCR cache is explicitly excluded by the package contract.
 Source captures and attachments remain durable. Report inspection found that a
 record-owned source caption is omitted from the delivered report although it remains stored on the device;
-task [141](../../dev-plan/27-hardening/33-verify-record-owned-captions-in-report-and-data-exports.md) records the
-caption/export contract gap.
+the source-caption/export contract requires reconciliation and end-to-end verification.
 
 The additional GNU RELRO endpoint check reports advisories in 13 existing 64-bit libraries. All 30 non-Dart
 native binaries across the three ABIs are byte-identical to the previous universal APK. These advisories have
-not demonstrated a runtime crash; task [138](../../dev-plan/27-hardening/32-verify-16-kib-runtime-protection-for-packaged-android-libraries.md)
-keeps runtime memory-protection acceptance open on a verified 16 KiB Android environment.
+not demonstrated a runtime crash. Runtime memory protection remains unverified on a confirmed 16 KiB Android
+environment.
 
 The existing 32-bit ARM build carries the speech-engine stub and some 4 KiB native libraries; native Whisper
 recognition and 16 KiB-aligned load segments require the matching 64-bit APK. Packaging retains that existing

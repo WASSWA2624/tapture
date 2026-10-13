@@ -7,7 +7,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../tool/whisper_wasm.dart';
-import 'support/plan_fixture.dart' show dartExecutable;
+import 'support/dart_executable.dart' show dartExecutable;
 
 /// A miniature frontend tree: a header, an export list, a vendor record,
 /// stand-in artifacts and a worker with both tables (dev-plan task 111).
