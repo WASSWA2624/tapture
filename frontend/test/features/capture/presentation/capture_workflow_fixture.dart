@@ -39,7 +39,6 @@ import 'package:tapture/features/capture/domain/capture_session.dart';
 import 'package:tapture/features/capture/domain/capture_session_key.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
-import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
 import 'package:tapture/features/capture/presentation/capture_manual_form.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
@@ -356,7 +355,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
       ScreenMatrix(Size(1200, 800), 2, Brightness.light, false),
     ]) {
       testWidgets(
-        'production target and guide flow ${cell.description} ${locale.toLanguageTag()}',
+        'production targets and guidance absence ${cell.description} ${locale.toLanguageTag()}',
         (WidgetTester tester) async {
           final CaptureWorkflowFixture fixture =
               await CaptureWorkflowFixture.open(
@@ -367,19 +366,17 @@ void registerCaptureWorkflowTests({required bool browser}) {
                     ? TextDirection.rtl
                     : null,
               );
-          final Finder guide = find.byKey(
-            const ValueKey<String>('capture-guide'),
-          );
+          final Finder evidence = find.byType(PhotoTray);
           final LocalizedCopy copy = Copy.of(
             tester.element(find.byType(CaptureScreen)),
           );
           await _verifySetupCommands(tester, fixture, copy);
-          await revealScrollableBody(tester, guide);
+          await revealScrollableBody(tester, evidence);
 
           final SemanticsHandle semantics = tester.ensureSemantics();
           try {
-            await _revealControl(tester, guide, header: false);
-            await _verifyPassiveGuide(tester, copy);
+            await _revealControl(tester, evidence, header: false);
+            await _verifyGuidanceAbsent(tester, copy);
             expect(ScreenProbe.layoutIssues(tester), isEmpty);
           } finally {
             semantics.dispose();
@@ -431,7 +428,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
           final SemanticsHandle semantics = tester.ensureSemantics();
           try {
             await _verifySetupCommands(tester, fixture, localCopy);
-            await _verifyPassiveGuide(tester, localCopy);
+            await _verifyGuidanceAbsent(tester, localCopy);
             for (final (Finder control, bool header) in <(Finder, bool)>[
               (
                 find.byKey(
@@ -623,7 +620,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
                 }
               }
             }
-            await _verifyPassiveGuide(tester, localCopy);
+            await _verifyGuidanceAbsent(tester, localCopy);
             for (final Finder control in <Finder>[
               _photoAdd,
               _caption,
@@ -710,7 +707,7 @@ void registerCaptureWorkflowTests({required bool browser}) {
               localCopy,
               keyboard: true,
             );
-            await _verifyPassiveGuide(tester, localCopy);
+            await _verifyGuidanceAbsent(tester, localCopy);
             for (final (Finder control, bool header) in <(Finder, bool)>[
               (
                 find.byKey(
@@ -1106,31 +1103,24 @@ final Finder _caption = find.descendant(
   matching: find.byType(TextField),
 );
 
-Future<void> _verifyPassiveGuide(
+Future<void> _verifyGuidanceAbsent(
   WidgetTester tester,
   LocalizedCopy copy,
 ) async {
-  final Finder guide = find.byType(CaptureGuideCard);
-  expect(guide, findsOneWidget);
+  final Finder evidence = find.byType(PhotoTray);
+  expect(evidence, findsOneWidget);
+  expect(find.byKey(const ValueKey<String>('capture-guide')), findsNothing);
   expect(
     find.byKey(const ValueKey<String>('capture-guide-toggle')),
     findsNothing,
   );
   expect(find.text(copy.captureGuideTitle), findsNothing);
-  expect(
-    find.descendant(of: guide, matching: find.text(copy.captureGuidePhotos)),
-    findsOneWidget,
-  );
-  expect(
-    find.descendant(of: guide, matching: find.text('Serial number')),
-    findsOneWidget,
-  );
-  expect(
-    find.descendant(of: guide, matching: find.text(copy.captureGuideCaption)),
-    findsNothing,
-  );
-  await revealScrollableBody(tester, guide);
-  await _verifyReadableEnds(tester, guide);
+  expect(find.text(copy.captureGuidePhotos), findsNothing);
+  expect(find.bySemanticsLabel(copy.captureGuidePhotos), findsNothing);
+  expect(find.text('Serial number'), findsNothing);
+  expect(find.text(copy.captureGuideCaption), findsNothing);
+  await revealScrollableBody(tester, evidence);
+  await _verifyReadableEnds(tester, evidence);
 }
 
 void _expectProportionalActions(WidgetTester tester) {

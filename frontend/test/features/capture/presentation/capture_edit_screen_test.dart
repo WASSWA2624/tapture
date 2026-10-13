@@ -30,46 +30,49 @@ import '../../../support/factories.dart';
 import '../../../support/fakes/fake_photo_repository.dart';
 
 void main() {
-  testWidgets('saved-record guidance uses the captured template version', (
-    tester,
-  ) async {
-    final TemplateDef original = aTemplate(
-      id: 't1',
-      fields: const <FieldDef>[
-        FieldDef(
-          fieldKey: 'serial',
-          label: 'Original rating plate',
-          type: FieldType.text,
-          identity: true,
-        ),
-      ],
-    );
-    final TemplateDef current = TemplateVersioning.remember(
-      from: original,
-      to: original.copyWith(
-        version: 2,
+  testWidgets(
+    'saved-record guidance is absent and its template version survives',
+    (tester) async {
+      final TemplateDef original = aTemplate(
+        id: 't1',
         fields: const <FieldDef>[
           FieldDef(
             fieldKey: 'serial',
-            label: 'Changed rating plate',
+            label: 'Original rating plate',
             type: FieldType.text,
             identity: true,
           ),
         ],
-      ),
-    );
-    final _Harness harness = await _open(
-      tester,
-      template: current,
-      templateVersion: 1,
-    );
-    expect(find.text('Original rating plate'), findsOneWidget);
-    expect(find.text('Changed rating plate'), findsNothing);
-    expect(harness.session(tester).templateVersion, 1);
-    expect(harness.session(tester).captions['f1'], 'Valve');
-    expect(current.version, 2);
-    expect(current.fields.single.label, 'Changed rating plate');
-  });
+      );
+      final TemplateDef current = TemplateVersioning.remember(
+        from: original,
+        to: original.copyWith(
+          version: 2,
+          fields: const <FieldDef>[
+            FieldDef(
+              fieldKey: 'serial',
+              label: 'Changed rating plate',
+              type: FieldType.text,
+              identity: true,
+            ),
+          ],
+        ),
+      );
+      final _Harness harness = await _open(
+        tester,
+        template: current,
+        templateVersion: 1,
+      );
+      expect(find.text('Original rating plate'), findsNothing);
+      expect(find.text('Changed rating plate'), findsNothing);
+      expect(find.text(Copy.captureGuidePhotos), findsNothing);
+      expect(find.byKey(const ValueKey<String>('capture-guide')), findsNothing);
+      expect(harness.session(tester).templateVersion, 1);
+      expect(harness.session(tester).captions['f1'], 'Valve');
+      expect(current.version, 2);
+      expect(current.fields.single.label, 'Changed rating plate');
+    },
+  );
 
   testWidgets('Edit opens the record with its photos and captions', (
     WidgetTester tester,

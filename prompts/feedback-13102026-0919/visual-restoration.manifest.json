@@ -1,0 +1,802 @@
+{
+  "task": "170",
+  "workItem": "W3",
+  "generated": "2026-10-13",
+  "archive": {
+    "root": "LOCALAPPDATA/TaptureTestArchives",
+    "relativePath": "feedback-10102026-0457/20261010T032625Z-05d7c634/task165-visual-evidence.zip",
+    "sha256": "18c79e4867601ad52acab7f10ef16b1440b0fa2b5eb4e0fc3a89a73ebd460c98",
+    "sourceManifestRelativePath": "feedback-10102026-0457/20261010T032625Z-05d7c634/manifest.json",
+    "sourceManifestSha256": "db95bc94413d34a89c890cc8bacdc1ab8a2e49ca778c679aca7f1397b5c6d758"
+  },
+  "destinationRoot": "frontend/test",
+  "restoredCount": 73,
+  "approvedCurrentCount": 61,
+  "historicalCount": 12,
+  "comparisonStatus": "Current-tree comparison pending; classification records source archive provenance only.",
+  "restored": [
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_dark.png",
+      "sha256": "8a62eeb2f00a3831eefbd41be5e81c2c26a16a830f07018242fcdf5e643c856f",
+      "bytes": 21218,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_dark.png",
+      "sha256": "c342b586a112f96b4a381c3b2989640d340ef8c28e0e885093ad53fcce8bcc34",
+      "bytes": 18340,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_light.png",
+      "sha256": "1d44cec0952ded89a62d95d55788d56c56cf577d5e64927f21955cca7057d969",
+      "bytes": 18573,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_landscape_text2_outdoor.png",
+      "sha256": "7439a730c7f875e40c4a75a9c00d10c2bbc25d24c3521bcd457f78b60a19f5e3",
+      "bytes": 17784,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_light.png",
+      "sha256": "61198f4356cecc967b71dbe7e39e9b37f0b89a18bd58b446b733f1dd9e576100",
+      "bytes": 21112,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_compact_outdoor.png",
+      "sha256": "4d3dea9255fb962d80cdd90eee3da4e253ea5c9badb831e6b2682cbfbb770ab5",
+      "bytes": 20357,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_dark.png",
+      "sha256": "ed442b7484dcc5d7ea2ac330649db7013c419bcf3fd38ff490622f852d8dd9e0",
+      "bytes": 36549,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_light.png",
+      "sha256": "b2999976a54d9034bb6f7f62d76ffc16cfedf228153606caef8c919572b7f936",
+      "bytes": 36931,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_expanded_text2_outdoor.png",
+      "sha256": "1f7a568c81ffd3f1e2bc326034e65623616cd240caec759c3ad826bbf23da40f",
+      "bytes": 35169,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_medium_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_medium_dark.png",
+      "sha256": "380cd70db10584841798b2a457639afc2615749c874d196409591f452afa6656",
+      "bytes": 25300,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_medium_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_medium_light.png",
+      "sha256": "43f05f42c6a99c9711ea7deaa7d6d9d092fc98de26da984bab3e283399499239",
+      "bytes": 25283,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_composition_medium_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_composition_medium_outdoor.png",
+      "sha256": "c503822f16aa85eca198c07e82958bae3d086c75c681e15383c96b241ebd8fc5",
+      "bytes": 24942,
+      "classification": "historical",
+      "sourceRole": "restored-unchanged",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_dark.png",
+      "sha256": "69329b4d677ac16ee69f1d29c92b2715dd2b8e67b833b63232572efcd0719bae",
+      "bytes": 25037,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_dark.png",
+      "sha256": "ad4e5b4ecba2d7540c122716bb8342e00cad8709c6642118b3bbe5a58dc77a4d",
+      "bytes": 21467,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_light.png",
+      "sha256": "028387f2a266f9159ccf4bacdd8576cbbb6cb66d251b6b83c1266a2d9fd663b9",
+      "bytes": 21228,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_landscape_text2_outdoor.png",
+      "sha256": "49c49e7679fb8ed69ca42f22c3bc0c0e8149cd721f9244470e9ed0713eb61f1c",
+      "bytes": 20401,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_light.png",
+      "sha256": "53bfd09f84b9db0f5b647b389b05b7fdce85983f4ba7c03e12eea3086a5957b3",
+      "bytes": 24762,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_compact_outdoor.png",
+      "sha256": "0cbad519fb34a21fa5eb9db96bcbba7816d47e86b3148ec7bd147cbadeedb09f",
+      "bytes": 23380,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_dark.png",
+      "sha256": "ad3da49c5147dc4c03cadf29b3b35ab5dcef77aa8820d7c23e09dcb50ec9b2b2",
+      "bytes": 51134,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_light.png",
+      "sha256": "0d59ca1b3da98be7383ab33d0043b31242cd623207d7471c2aeb8ccbd1e49a96",
+      "bytes": 50976,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_expanded_text2_outdoor.png",
+      "sha256": "48fb524f17032f7ab869c4a0daab77dded76164d03fb504294a6679a3ca063ba",
+      "bytes": 46458,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_dark.png",
+      "sha256": "66c1aa140f490c3c4f8a05db8fb866e7758f12f64d43e1d0b913c0527c4850b1",
+      "bytes": 31291,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_light.png",
+      "sha256": "64e41ae3dd68d284530716a04c0076ab8c3e1f13f25a4f075a228bd8d9ae3515",
+      "bytes": 31115,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_medium_outdoor.png",
+      "sha256": "5f001cefc02281688026a3659b38c5c4ebb5f114355351f0512b73f03f26d4c1",
+      "bytes": 29097,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/capture_workflow_reported_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/capture_workflow_reported_light.png",
+      "sha256": "26697a33b5a62c846c1c18a7a567c2aa17a09e5a216e4f4791eeb0fc878c6ad6",
+      "bytes": 24909,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_dark.png",
+      "sha256": "c90f5911976975c0041ae96ff335271bb0355a531fd7019185cd175092cf194d",
+      "bytes": 11644,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_dark.png",
+      "sha256": "706f8fb757c0d2432cb8c4e343b113ca6b1026f3506aa19ab5c53b808d42b3ae",
+      "bytes": 15425,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_light.png",
+      "sha256": "45292a9438d0286048b91fab405233856d77740d2ec73a3e2e5d2ed1f9143ff1",
+      "bytes": 15331,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_landscape_text2_outdoor.png",
+      "sha256": "384193da7f6f0dfda2edf25d9c42ca7ff198ea60e73e93a4c2388141867d9775",
+      "bytes": 14146,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_light.png",
+      "sha256": "25dc549b2f7983a87ac83e243342b0a89ab667c528f7fe6047fe69ed18dff1ac",
+      "bytes": 11545,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_compact_outdoor.png",
+      "sha256": "0752d4ac49bfef963cb9607194730701b6a21c8b07068fe5688df14d617cfad6",
+      "bytes": 11024,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_dark.png",
+      "sha256": "d2e620dfa8b432c1ee5b9b1536b09789b3e7a7ba80c9dba20350f29413d86df0",
+      "bytes": 20922,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_light.png",
+      "sha256": "be6939d9103ecfa0085923dabf3aac73b758fa21608513b925ad061af2cf11f6",
+      "bytes": 20996,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_expanded_text2_outdoor.png",
+      "sha256": "2f8fc7ab31c041a7ed3365506d0b426de5a465f12735e20e917e883e5445a798",
+      "bytes": 20434,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_dark.png",
+      "sha256": "b03f5d11ea7c6d8d6088aaf169e4e69736e73c1433cd16d62eeccf6287efb041",
+      "bytes": 15488,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_light.png",
+      "sha256": "33af44e007ecb5556a5f2fa911f5dd59b9aa6f59f156668a32e4e44da4846bd8",
+      "bytes": 15482,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_audio_medium_outdoor.png",
+      "sha256": "53c3aa745c7e4b026125d711fc8e2793712cb1688cf5ffd0b567ab7793fb4a97",
+      "bytes": 15109,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_dark.png",
+      "sha256": "14d3db89176716d0db9e9d19e506af83e2358a7d4b450f49feb84c1de6c1b807",
+      "bytes": 6387,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_dark.png",
+      "sha256": "a621be7d1179a462b3e3578e728793b362b528c3066cf06a40c508a9ba2d75b4",
+      "bytes": 5328,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_light.png",
+      "sha256": "d9402acae26d0c9af23033b269ec5c00ecaee53d77edc1d4204445953f59d89c",
+      "bytes": 5277,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_landscape_text2_outdoor.png",
+      "sha256": "d6fc26eb18b6eff518adc1b0cb5ae2dfeebc2077bd3db0de3e19caa30d5bcbd3",
+      "bytes": 5246,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_light.png",
+      "sha256": "e0f0d70cc5d0912f2496d295d4175b8de141fe0191ac986a6d00e832a0b0f6b3",
+      "bytes": 6388,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_compact_outdoor.png",
+      "sha256": "0f41ef4ed3eb18ed8a4f63c9987a48ffb89bf46c8eb3880555a5b05cded28019",
+      "bytes": 6211,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_dark.png",
+      "sha256": "3073cba12779e9b00989d88eb289d0c9900f0343939d5f7310bf14c9c29ef790",
+      "bytes": 10217,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_light.png",
+      "sha256": "02e3230042dde555171040b9745813ebdde124545644e160b533aca32b2cc99a",
+      "bytes": 10166,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_expanded_text2_outdoor.png",
+      "sha256": "ce3e50454d5717e92801b54fae979f948b7e0452d54330aab2e8ddc4ea15362f",
+      "bytes": 10173,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_dark.png",
+      "sha256": "1d18be814b8aa2c09389f609e610a077547028369b60da7d52401f4260a13b00",
+      "bytes": 10303,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_light.png",
+      "sha256": "fabd0ea226c00889573a940a6ce650041dbc4429e8359f2d5a238601053f605d",
+      "bytes": 10308,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_empty_medium_outdoor.png",
+      "sha256": "0df67615a9e13334588273f80e430d7b04751656590594ac9a7fea14580d71b9",
+      "bytes": 10087,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_dark.png",
+      "sha256": "b1e357b7a59d29d080fcadc420e9f63c4b9e5f0e6e479f8d9e9fd4fd55389910",
+      "bytes": 10320,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_dark.png",
+      "sha256": "9d872688068f7c3a82fc7ccf32a410b8a80f3863ac517701ac35382d85e6e0ce",
+      "bytes": 13243,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_light.png",
+      "sha256": "822756909b2e4fbd90f27e21a2a41a66f163cb9ad936cddf0b33bb4addddc283",
+      "bytes": 12866,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_landscape_text2_outdoor.png",
+      "sha256": "5b92bbbf12660c2921738c4aaafc00b0e6dec8dfa440f0b9882dd1474af74e5b",
+      "bytes": 11715,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_light.png",
+      "sha256": "44e296a9f388f470cf7af3b94c2ef00061c410b6b0178caedf324b3de264d742",
+      "bytes": 10262,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_compact_outdoor.png",
+      "sha256": "d42adad5ae7b36364a13bd238f97b0a1db7d7b29d312181ae257f64a57805b65",
+      "bytes": 9451,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_dark.png",
+      "sha256": "1f2e5621f6611363d8958f6844324633aeecb828488c9d7ab47237de999bfc54",
+      "bytes": 18732,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_light.png",
+      "sha256": "dea9219ff09bbe320912ab8e28580a529a9a464c841f3bf27990f3fdb161ab62",
+      "bytes": 18499,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_expanded_text2_outdoor.png",
+      "sha256": "259506379048a480f90ba09b662ec81b09453e647097b0f68e3f95d5f16e486e",
+      "bytes": 17449,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_dark.png",
+      "sha256": "582f42ff86a95c526fb5e163e34ac5062d3aabc1fc0f43ec028596127fa22eec",
+      "bytes": 14389,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_light.png",
+      "sha256": "b4431835eb22660b112c460d8405b52e28be2b8a240ec6435d1f0ad5f4e78ace",
+      "bytes": 14280,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_multiline_medium_outdoor.png",
+      "sha256": "45c1bb0f2193d570c5698bff37731bb0554b8d8ee2085efcc804ba13d7f2a780",
+      "bytes": 13795,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_dark.png",
+      "sha256": "c8fa03af7678dd87465acc40c32efcfdc5118766b35fdbf3eb3dea947783b3ca",
+      "bytes": 7677,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_dark.png",
+      "sha256": "4bdf439b5d2b0734266190a7ee211ba1b6ab2ab792df90ec7e29d53b4da6666a",
+      "bytes": 6950,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_light.png",
+      "sha256": "869525eccf220070c798a0aad258f190dcb94efbe029ff47be3eaded56d05f62",
+      "bytes": 6886,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_landscape_text2_outdoor.png",
+      "sha256": "e5921cf9cd744328d8893eafa2c4391d93e73d12e02f30de4b0a81363797ae22",
+      "bytes": 6817,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_light.png",
+      "sha256": "a698e2c60f297cd6b6eb9fef231fafbae462b59454c2311f5abfec16e207e296",
+      "bytes": 7628,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_compact_outdoor.png",
+      "sha256": "e2932beb0b3f9eb34cca1febb4848b01fd313f13d87b849106dc9f456d5854bf",
+      "bytes": 7393,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_dark.png",
+      "sha256": "94c98ec57e3a39e9636aa2e90e210dbcc099bdff56d465d2d773535a905354ff",
+      "bytes": 12011,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_light.png",
+      "sha256": "b3a5d6c6ed6d98a3ef2975875e6cd0dff4d53e13c2c58dd5b80a6a08aea5ce7f",
+      "bytes": 11970,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_expanded_text2_outdoor.png",
+      "sha256": "e50e279252d46c75c01fa87970e9c866b415eef5b12724746ada1b474698b06c",
+      "bytes": 11892,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_dark.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_dark.png",
+      "sha256": "cffa9479529ce183f39fda673c649c2df81e259baebd32597ccda846f9c2acd7",
+      "bytes": 11571,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_light.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_light.png",
+      "sha256": "c08d4590fa8c3925456c52c4f2bdde7b82e1c2fdb29e3f9c5ab36eccca50851f",
+      "bytes": 11498,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    },
+    {
+      "destination": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_outdoor.png",
+      "member": "frontend/test/features/capture/presentation/goldens/feedback_0457_composer_photos_medium_outdoor.png",
+      "sha256": "6484cd610742dc91e0ee835f03d6fedcdfc9bf1465cc566e6b4703790afdc630",
+      "bytes": 11347,
+      "classification": "approved-current",
+      "sourceRole": "approved-baseline",
+      "absentBeforeRestore": true,
+      "verified": true
+    }
+  ],
+  "missing": [],
+  "conflicts": [],
+  "extraFixturesRestored": [],
+  "excluded": "Retired feedback_2154_guide isolated presentation baselines were not restored.",
+  "galleryRestoration": {
+    "task": "170",
+    "workItem": "W1",
+    "archive": {
+      "root": "LOCALAPPDATA/TaptureTestArchives",
+      "relativePath": "2026-10-09-task157-310d9516f7504db3839d6b15a2da309d/images.zip",
+      "sha256": "41b9406e62e1625abff84c447722aa7dc6496839fb7f532bfdb846bc8495abc0",
+      "sourceManifestMember": "manifest.json",
+      "sourceManifestSha256": "272d78a3821688be99898495424befa31487d1be1da6d31ba4c3d3eb7d51f650"
+    },
+    "restoredCount": 3,
+    "restored": [
+      {
+        "destination": "frontend/test/design_system/app_multi_choice_field/goldens/app_multi_choice_field_dark.png",
+        "member": "frontend/test/design_system/app_multi_choice_field/goldens/app_multi_choice_field_dark.png",
+        "sha256": "2b736d6cd7dc9381907822288738bf754b982475810a8a08350edf07047702e7",
+        "bytes": 5207,
+        "classification": "approved-gallery",
+        "sourceReviewedGallery": true,
+        "absentBeforeRestore": true,
+        "verified": true,
+        "comparisonStatus": "Current-tree comparison pending"
+      },
+      {
+        "destination": "frontend/test/design_system/app_multi_choice_field/goldens/app_multi_choice_field_light.png",
+        "member": "frontend/test/design_system/app_multi_choice_field/goldens/app_multi_choice_field_light.png",
+        "sha256": "55fb9d366cc87e88e08be4f6b8749b8a832374d97297b550f241cde625ee4bcc",
+        "bytes": 5171,
+        "classification": "approved-gallery",
+        "sourceReviewedGallery": true,
+        "absentBeforeRestore": true,
+        "verified": true,
+        "comparisonStatus": "Current-tree comparison pending"
+      },
+      {
+        "destination": "frontend/test/design_system/app_multi_choice_field/goldens/app_multi_choice_field_outdoor.png",
+        "member": "frontend/test/design_system/app_multi_choice_field/goldens/app_multi_choice_field_outdoor.png",
+        "sha256": "5466d5586309afc161746d893f969ba30f5a31d915fb01f66ed1e74b3e48582b",
+        "bytes": 4868,
+        "classification": "approved-gallery",
+        "sourceReviewedGallery": true,
+        "absentBeforeRestore": true,
+        "verified": true,
+        "comparisonStatus": "Current-tree comparison pending"
+      }
+    ],
+    "missing": [],
+    "conflicts": []
+  }
+}

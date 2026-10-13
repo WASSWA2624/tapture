@@ -1,34 +1,35 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
-import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_recording_bar.dart';
 import 'package:tapture/core/widgets/app_recording_phase.dart';
 import 'package:tapture/core/widgets/fields/dictation_scope.dart';
 import 'package:tapture/features/capture/domain/photo_draft.dart';
-import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
+import 'package:tapture/features/capture/presentation/capture_screen.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
 import 'package:tapture/features/capture/presentation/record_caption_field.dart';
+import 'package:tapture/features/projects/projects.dart';
 import 'package:tapture/features/templates/templates.dart';
 
 import '../../../support/a11y_matchers.dart';
+import '../../../support/empty_state_matchers.dart';
+import '../../../support/factories.dart';
 import '../../../support/fakes/fake_stt_service.dart';
 import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
+import '../../../support/screen_probe.dart';
+import 'capture_workflow_fixture.dart';
 
-const CaptureGuide _guide = CaptureGuide(
-  photoFields: <String>['Serial number', 'Asset tag'],
-  captionFields: <String>['Condition', 'Accessories'],
-);
 const ScreenMatrix _reported = ScreenMatrix(
   Size(393, 886),
   1,
@@ -41,86 +42,74 @@ final Finder _panel = find.byKey(
 
 void main() {
   setUpAll(ScreenFonts.load);
-  testWidgets('photo guidance is immediate, passive and accessible', (
-    tester,
-  ) async {
-    await _pumpGuide(tester);
+  testWidgets('empty photo guidance reserves no Capture space', (tester) async {
     final SemanticsHandle semantics = tester.ensureSemantics();
-    expect(find.text('Photos should show'), findsOneWidget);
-    expect(tester.widget<AppCard>(find.byType(AppCard)).onTap, isNull);
-    expect(
-      tester.widget<ClipRRect>(find.byType(ClipRRect)).borderRadius,
-      BorderRadius.circular(Radii.md),
+    addTearDown(semantics.dispose);
+    await CaptureWorkflowFixture.open(
+      tester,
+      cell: _reported,
+      shownTemplates: <TemplateDef>[aTemplate(id: 't1', projectId: 'p1')],
     );
-    expect(Radii.md, greaterThan(0));
-    expect(
-      find.text(Copy.captureGuideItems(_guide.photoFields)),
-      findsOneWidget,
-    );
-    expect(
-      find.bySemanticsLabel(RegExp('Serial number.*Asset tag')),
-      findsOneWidget,
-    );
-    expect(
-      find.byKey(const ValueKey<String>('capture-guide-toggle')),
-      findsNothing,
-    );
-    expect(find.text(Copy.captureGuideTitle), findsNothing);
-    expect(find.text(Copy.captureGuideCaption), findsNothing);
-    expect(
-      find.text(Copy.captureGuideItems(_guide.captionFields)),
-      findsNothing,
-    );
-    semantics.dispose();
+    _expectNoPhotoGuidance(tester);
+    _expectEvidenceStartsImmediately(tester);
   });
 
-  for (final List<String> captions in <List<String>>[
-    <String>[],
-    <String>['Condition'],
-  ]) {
-    testWidgets('no photo guidance reserves no space: $captions', (
-      tester,
-    ) async {
-      await _pumpGuide(
-        tester,
-        guide: CaptureGuide(
-          photoFields: const <String>[],
-          captionFields: captions,
-        ),
-      );
-      expect(find.byKey(const ValueKey<String>('capture-guide')), findsNothing);
-      expect(find.text(Copy.captureGuidePhotos), findsNothing);
-      expect(tester.getSize(find.byType(CaptureGuideCard)).height, 0);
-      await _pumpGuide(
-        tester,
-        guide: CaptureGuide(
-          photoFields: const <String>[],
-          captionFields: captions,
-        ),
-        targets: const Text('Existing targets'),
-      );
-      expect(find.text('Existing targets'), findsOneWidget);
-      expect(find.text(Copy.captureGuidePhotos), findsNothing);
-    });
-  }
-
   testWidgets(
-    'template changes replace original photo labels without stale state',
+    'template changes preserve caption input without photo guidance',
     (tester) async {
-      await _pumpGuide(tester);
-      await _pumpGuide(
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      addTearDown(semantics.dispose);
+      final CaptureWorkflowFixture fixture = await CaptureWorkflowFixture.open(
         tester,
-        guide: const CaptureGuide(
-          photoFields: <String>['Rear rating plate'],
-          captionFields: <String>['Condition'],
-        ),
+        cell: _reported,
+        shownTemplates: <TemplateDef>[
+          aTemplate(
+            id: 't1',
+            projectId: 'p1',
+            name: 'Assets',
+            fields: _photoFields,
+          ),
+          aTemplate(
+            id: 't2',
+            projectId: 'p1',
+            name: 'Barcodes',
+            fields: const <FieldDef>[
+              FieldDef(
+                fieldKey: 'rear_plate',
+                label: 'Rear rating plate',
+                type: FieldType.barcode,
+              ),
+            ],
+          ),
+        ],
       );
-      expect(find.text('Rear rating plate'), findsOneWidget);
+      final Finder input = find.descendant(
+        of: find.byType(RecordCaptionField),
+        matching: find.byType(TextField),
+      );
+      await tester.ensureVisible(input);
+      await tester.enterText(input, 'Preserved original caption');
+      await tester.pumpAndSettle();
+      final TextEditingController controller = tester
+          .widget<TextField>(input)
+          .controller!;
+      controller.selection = const TextSelection.collapsed(offset: 9);
+      final ProviderContainer container = ProviderScope.containerOf(
+        tester.element(find.byType(CaptureScreen)),
+      );
+      container.read(projectTemplateSelectionProvider.notifier).select('t2');
+      await tester.pumpAndSettle();
+      expect(fixture.session(tester).templateId, 't2');
       expect(
-        find.text(Copy.captureGuideItems(_guide.photoFields)),
-        findsNothing,
+        fixture.session(tester).recordCaption,
+        'Preserved original caption',
       );
-      expect(_panel, findsNothing);
+      expect(tester.widget<TextField>(input).controller, same(controller));
+      expect(controller.text, 'Preserved original caption');
+      expect(controller.selection.baseOffset, 9);
+      expect(find.text('Rear rating plate'), findsNothing);
+      _expectNoPhotoGuidance(tester);
+      _expectEvidenceStartsImmediately(tester);
     },
   );
 
@@ -229,48 +218,41 @@ void main() {
       _reported,
     ]) {
       testWidgets(
-        'passive guidance wraps ${cell.description} ${locale.toLanguageTag()}',
+        'production Capture omits photo guidance ${cell.description} ${locale.toLanguageTag()}',
         (tester) async {
-          const CaptureGuide longGuide = CaptureGuide(
-            photoFields: <String>[
-              'Complete original serial number and manufacturer rating plate',
-              'All original asset identification labels and surrounding equipment',
-            ],
-            captionFields: <String>['Condition'],
-          );
-          await _pumpGuide(
-            tester,
-            cell: cell,
-            locale: locale,
-            guide: longGuide,
-          );
-          expect(
-            find.text(
-              Copy.of(
-                tester.element(find.byType(CaptureGuideCard)),
-              ).captureGuideItems(longGuide.photoFields),
-            ),
-            findsOneWidget,
-          );
-          for (final RenderParagraph paragraph
-              in tester.allRenderObjects.whereType<RenderParagraph>()) {
-            expect(paragraph.didExceedMaxLines, isFalse);
+          final SemanticsHandle semantics = tester.ensureSemantics();
+          try {
+            await CaptureWorkflowFixture.open(
+              tester,
+              cell: cell,
+              locale: locale,
+              direction: locale.countryCode == 'XA' ? TextDirection.rtl : null,
+              shownTemplates: <TemplateDef>[
+                aTemplate(id: 't1', projectId: 'p1', fields: _photoFields),
+              ],
+            );
+            _expectNoPhotoGuidance(tester);
+            _expectEvidenceStartsImmediately(tester);
+            expect(find.byType(RecordCaptionField), findsOneWidget);
+            expect(tester.takeException(), isNull);
+            final Finder photoAction = find.byKey(
+              const ValueKey<String>('capture-composer-add-photo'),
+            );
+            await revealScrollableBody(tester, photoAction);
+            expect(
+              await ScreenProbe.accessibilityIssues(
+                tester,
+                targets: <Finder>[photoAction],
+                within: find.byType(CaptureScreen),
+              ),
+              isEmpty,
+            );
+          } finally {
+            semantics.dispose();
           }
-          expect(tester.takeException(), isNull);
-          await expectNoA11yIssues(tester);
         },
       );
     }
-  }
-  for (final ({String name, ScreenMatrix cell}) corner
-      in ScreenMatrix.corners) {
-    testWidgets('feedback 2154 guide visual ${corner.name}', (tester) async {
-      await _pumpGuide(tester, cell: corner.cell);
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/feedback_2154_guide_${corner.name}.png'),
-      );
-    });
   }
   for (final double scale in <double>[1, 2]) {
     testWidgets('composer grows, scrolls and shrinks at text scale $scale', (
@@ -530,40 +512,47 @@ Future<void> _pumpComposer(
   await tester.pumpAndSettle();
 }
 
-Future<void> _pumpGuide(
-  WidgetTester tester, {
-  CaptureGuide guide = _guide,
-  ScreenMatrix cell = _reported,
-  Locale locale = const Locale('en'),
-  Widget? targets,
-}) async {
-  tester.view.devicePixelRatio = 1;
-  tester.view.physicalSize = cell.size;
-  tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
-  addTearDown(tester.view.resetPhysicalSize);
-  addTearDown(tester.view.resetDevicePixelRatio);
-  addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-  await tester.pumpWidget(
-    MaterialApp(
-      theme: ScreenFonts.theme(
-        buildTheme(brightness: cell.brightness, outdoor: cell.outdoor),
-      ),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: locale,
-      home: Directionality(
-        textDirection: locale.countryCode == 'XA'
-            ? TextDirection.rtl
-            : TextDirection.ltr,
-        child: Scaffold(
-          body: SingleChildScrollView(
-            child: CaptureGuideCard(guide: guide, targets: targets),
-          ),
-        ),
-      ),
-    ),
+const List<FieldDef> _photoFields = <FieldDef>[
+  FieldDef(
+    fieldKey: 'serial',
+    label: 'Complete original serial number and manufacturer rating plate',
+    type: FieldType.text,
+    identity: true,
+  ),
+  FieldDef(
+    fieldKey: 'asset_barcode',
+    label: 'All original asset identification labels and surrounding equipment',
+    type: FieldType.barcode,
+  ),
+];
+
+void _expectNoPhotoGuidance(WidgetTester tester) {
+  final LocalizedCopy copy = Copy.of(
+    tester.element(find.byType(CaptureScreen)),
   );
-  await tester.pumpAndSettle();
+  expect(find.byKey(const ValueKey<String>('capture-guide')), findsNothing);
+  expect(
+    find.byKey(const ValueKey<String>('capture-guide-toggle')),
+    findsNothing,
+  );
+  expect(find.text(copy.captureGuidePhotos), findsNothing);
+  expect(find.text(copy.captureGuideTitle), findsNothing);
+  expect(find.text(copy.captureGuideCaption), findsNothing);
+  expect(find.bySemanticsLabel(copy.captureGuidePhotos), findsNothing);
+  for (final FieldDef field in _photoFields) {
+    expect(find.text(field.label), findsNothing);
+    expect(find.bySemanticsLabel(field.label), findsNothing);
+  }
+}
+
+void _expectEvidenceStartsImmediately(WidgetTester tester) {
+  final AppPage page = tester.widget<AppPage>(
+    find.byKey(const ValueKey<String>('route-capture')),
+  );
+  expect(
+    tester.getTopLeft(find.byType(PhotoTray)).dy,
+    tester.getTopLeft(find.byWidget(page.body)).dy,
+  );
 }
 
 Future<void> _pumpField(

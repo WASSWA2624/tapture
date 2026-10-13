@@ -213,6 +213,7 @@ class _SummaryRow extends ConsumerWidget {
                 AppIconButton(
                   key: ValueKey<String>('record-edit-$id'),
                   icon: AppIcons.edit,
+                  outlined: false,
                   tooltip: localCopy.recordEdit,
                   semanticLabel: localCopy.recordEdit,
                   // The capture page edits photos and captions; values are
@@ -227,6 +228,7 @@ class _SummaryRow extends ConsumerWidget {
                 RecordDeleteAction(
                   key: ValueKey<String>('record-delete-$id'),
                   ids: <String>[id],
+                  outlined: false,
                 ),
               ],
             ),

@@ -7168,11 +7168,9 @@ Add optional `RecordCaptionField.leading`, forwarded to `AppTextField.prefix`; `
 
 #### W1 —  Restyle the passive photo guidance
 
-- [x] Every affected Capture guide visibly and accessibly says “Photos should show”; the superseded heading is absent from this UI.
-- [x] D1's surface uses shared tokens and minimal nonzero corners; guidance is immediate and requires no interaction.
-- [x] Original labels retain their order and full content; empty photo guidance reserves no guideline space and existing `targets` still render.
-- [x] Guidance wraps without clipping throughout the declared width/orientation/theme/text/locale matrix and does not displace keyboard-safe save access.
-- [ ] Copy, widget, accessibility and approved visual checks pass. FBK0000216 and FBK0000219 are resolved.
+Task 170 D1 supersedes this presentation. The four previously verified guidance requirements are retained below as historical evidence rather than current acceptance.
+
+- [ ] Retained copy/widget/accessibility and approved visual checks pass with task 170's guidance supersession; earlier reports FBK0000216 and FBK0000219 retain their recorded historical resolution.
 
 #### W2 —  Compose photos, growing text and audio
 
@@ -7207,6 +7205,8 @@ Chrome acceptance remains open. The required browser command stalled before load
 D3(a): exactly **73 approved baselines** passed normal comparisons and visual inspection. W1 regenerated the 12 `frontend/test/features/capture/presentation/goldens/feedback_2154_guide_<corner>.png` files. W2 regenerated the 12 `capture_workflow_<corner>.png` files plus `capture_workflow_reported_light.png` in that directory and added 48 `feedback_0457_composer_<empty|multiline|audio|photos>_<corner>.png` files. The [portable visual manifest](../prompts/feedback-10102026-0457/visual-evidence.manifest.json) lists every exact path and hash. The unique external archive contains **421 images**: 73 approved baselines, 60 byte-identical unrelated restored baselines and 288 comparison artifacts. Every member path, SHA-256 and decoded image was verified after reopening; all cleanup paths/hashes were checked beneath `frontend/test/` before exact-file removal. Original archives are preserved, no pre-existing test image was present and no test image remains.
 
 The [acceptance patch](../prompts/feedback-10102026-0457/acceptance-sources.patch) and [source manifest](../prompts/feedback-10102026-0457/acceptance-sources.manifest.json) deliver **58 current sources** in the recursive relative-import closure, including conditional browser helpers. Applying the patch through a separate temporary index reconstructs every canonical-LF source/hash and preserves the real index and ignore policy. Capture requirements and task 012's supersession note are current. Tracker synchronization, drift checking and plan integrity pass. This task remains **Partially complete** because the required broader suites and Chrome acceptance remain open; tasks 003/012/164 retain their independent unfinished criteria.
+
+2026-10-13, task 170 D1 supersession: the user approved complete removal of the passive photo-guidance presentation from both Capture surfaces, preserving template data, copy/domain APIs and evidence. Task 165's four original checked guidance requirements were the visible/accessible Photos should show heading, shared-token/minimal-corner passive surface, full original label ordering with empty-guidance/targets behavior, and unclipped width/orientation/theme/text/locale geometry with keyboard-safe save access. Their verification above is preserved historically; it does not certify the replacement UI. Only this guidance presentation is superseded. Caption/audio/photo/source/save contracts and independent unfinished verification remain unchanged and open.
 
 ## 166 — Simplify project navigation and recycle-bin management
 
@@ -7341,3 +7341,65 @@ architecture fixtures included. Invoking the installed Flutter tools snapshot th
 preserves the regex filter that the Windows batch launcher loses. Only the six unavailable historical goldens are
 outside this behavior run; no guardrail or required behavior assertion is skipped or weakened. Tracker synchronization,
 drift checking and final plan integrity pass. Task 167 is **Complete**.
+
+## 170 — Resolve feedback archive 13102026-0919
+
+**Depends on** [001](01-orchestration.md#001--project-setup-and-guardrails), [002](02-foundation.md#002--foundation-services)
+
+**Implementation started:** Yes
+
+### Implement
+
+Follow [the approved feedback prompt](../prompts/feedback-13102026-0919/001-resolve-capture-record-controls-feedback.md), W1–W3 in order. On 2026-10-13 the user approved D1(a), removing passive Capture guidance while preserving data/evidence, and D2(a), verified temporary golden restoration, external archival and exact-image cleanup. Fill and equalize the shared multi-choice commands, remove record-list action outlines, then remove the passive Capture guideline. Preserve all independent unfinished acceptance in earlier tasks. FBK0000223 remains a Question and does not authorize a detail-screen redesign.
+
+### Files
+
+- `frontend/lib/core/widgets/fields/app_multi_choice_field.dart`
+- `frontend/lib/features/records/presentation/records_list_row.dart`
+- `frontend/lib/features/records/presentation/record_delete_action.dart`
+- `frontend/lib/features/capture/presentation/capture_screen.dart`
+- `frontend/lib/features/capture/presentation/capture_guide_card.dart` (approved presentation removal)
+- Affected multi-choice, record-list/delete and Capture acceptance tests named in the approved prompt
+- `prompts/feedback-13102026-0919/acceptance-sources.patch`, source/hash and visual-evidence manifests
+- `app-write-up.md`, `dev-plan/12-capture.md`, task 165 supersession evidence, this task and generated `dev-tracker.md`
+
+### Contract
+
+Add only `RecordDeleteAction.outlined`, defaulting to true and forwarded to the existing `AppIconButton`. Record-list row edit/delete pass false; non-row defaults remain intact. Shared public APIs, selection semantics, template data, raw evidence, persistence, permissions and platform services retain their contracts. D1 supersedes only task 165's passive photo-guidance presentation in Capture and specification §§19/27.
+
+### Constraints
+
+Reuse shared components, tokens, compact padding and minimal nonzero radii. No dependency, rule/checker, ignore-policy, storage/wire-format, default, permission, network or offline changes. Preserve mixed evidence tests, older archives and unrelated edits. Ship ignored acceptance-source helper closure through the portable patch/hash convention. No frontend review command. Apply FE-CONS-01/02/03, FE-THEME-01/02/03/07, FE-RESP-03/06/07/08/10, FE-A11Y-01/02/03/04/06/10, FE-L10N-01/05/06/07, FE-STATE-07, FE-SEC-05/08, FE-TEST-01/02/05/06 and FE-FLOW-02/03/04/08.
+
+### Definition of done
+
+#### W1 — Fill and equalize shared selection commands
+
+- [ ] Both painted buttons fill equal horizontal slots with a `Space.x2` gap, existing filled tokens and wrapped-text growth across the declared platform/layout/theme/text/locale reach.
+- [ ] Filtered Select all preserves the selection union; Clear empties the full selection; immutable callbacks, search and empty/disabled states remain correct.
+- [ ] Shared behavior/accessibility, three-theme corner goldens, gallery coverage and the real record-filter regression pass.
+- [ ] FBK0000222 is resolved across shared multi-choice callers and exact visual filenames/evidence are recorded.
+
+#### W2 — Remove record-row action outlines
+
+- [ ] Record-list edit/delete are borderless across the declared reach, retaining focus/hover, tooltips, semantic names and 48dp targets.
+- [ ] Edit navigation, confirmation, durable tombstones, undo and cancel/failure/busy behavior remain correct.
+- [ ] Pane/selection action omission, existing borderless project rows and true non-row delete defaults are preserved.
+- [ ] Behavior/accessibility and intended visual comparisons pass; FBK0000221 is resolved and exact visual filenames are recorded.
+
+#### W3 — Remove passive Capture photo guidance
+
+- [ ] Guidance card/heading/labels/semantics and obsolete healthy-template spacing are absent from new, rapid-alias and saved-record Capture across the declared reach.
+- [ ] Recovery/storage separation, Manual availability, no-template capture, template switching and locked saved-edit contracts remain correct.
+- [ ] Photo/caption/audio and durable raw/process saves work offline, with keyboard/rotation; evidence, template data, permissions, defaults and file formats are unchanged.
+- [ ] Absence, preserved evidence/flow/accessibility and intended visual tests pass; bounded specification/plan supersession is recorded and FBK0000220 is resolved.
+
+#### Delivery and verification
+
+- [ ] Changed-source formatting, full frontend analysis, unchanged architecture guardrails, required native/browser/offline flows and Android/web runtime inspection pass.
+- [ ] Portable acceptance-source helper closure, canonical hashes and temporary-index application are verified; D2's image archive is reopened/hash-verified before exact temporary cleanup, preserving unrelated baselines and zero test images.
+- [ ] Only verified acceptance is checked; source/visual evidence, specification and generated tracker are current; synchronizer, `--check`, plan integrity and final diff checks pass.
+
+### Evidence
+
+Baseline `b9258cc6`, 2026-10-13: tracked tree clean; the generated feedback prompt folder is the only pre-existing untracked work. The focused existing multi-choice/icon-button/delete-action baseline passes all 22 tests. Tasks 001/002 are Complete. Task 169's compilation/provenance and task 162's Chrome acceptance remain independently open pending current-tree checks. Implementation and verification evidence will be recorded here as it lands; no unchecked criterion is certified by its source existing.

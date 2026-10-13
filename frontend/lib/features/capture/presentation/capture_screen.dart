@@ -60,7 +60,6 @@ import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_device_providers.dart';
 import 'package:tapture/features/capture/presentation/capture_document_viewer.dart';
 import 'package:tapture/features/capture/presentation/capture_field_providers.dart';
-import 'package:tapture/features/capture/presentation/capture_guide_card.dart';
 import 'package:tapture/features/capture/presentation/capture_manual_form.dart';
 import 'package:tapture/features/capture/presentation/capture_photo_intake.dart';
 import 'package:tapture/features/capture/presentation/capture_providers.dart';
@@ -360,11 +359,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
       });
     }
     final bool offline = ref.watch(offlineNowProvider);
-    // What the chosen template asks for (FBK0000157, D14).
-    CaptureGuide guide = const CaptureGuide(
-      photoFields: <String>[],
-      captionFields: <String>[],
-    );
     List<FieldDef> fields = const <FieldDef>[];
     for (final TemplateDef template in templates) {
       if (template.id == templateId) {
@@ -373,7 +367,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
             ? TemplateVersioning.shapeFor(template, session.templateVersion!)
             : template;
         if (shape == null) continue;
-        guide = CaptureGuide.of(shape);
         fields = shape.fields.where((FieldDef field) => !field.hidden).toList();
       }
     }
@@ -392,6 +385,16 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
     // With no project there is nothing to file under: the target fields say
     // so and offer the next step, and nothing else is drawn.
     final bool noProject = !_editing && projectId.isEmpty;
+    // Match the recovery view's loading/refresh behavior so an invisible
+    // healthy target reserves no space, while recovery keeps its separation.
+    final bool targetRecovery =
+        !_editing &&
+        !noProject &&
+        templateState.when<bool>(
+          data: (List<TemplateDef> templates) => templates.isEmpty,
+          error: (Object _, StackTrace _) => true,
+          loading: () => true,
+        );
     final Widget? targets = _editing
         ? null
         : CaptureTargetFields(
@@ -522,9 +525,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen>
           // Export, below the thresholds (task 012 step 21).
           CaptureStorageGuard(projectId: projectId),
           ?targets,
-          if (!noProject && guide.photoFields.isNotEmpty)
-            CaptureGuideCard(guide: guide),
-          if (!noProject) _blockGap,
+          if (targetRecovery) _blockGap,
           if (!noProject)
             ..._evidence(
               session: session,

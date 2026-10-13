@@ -143,69 +143,78 @@ class _MultiChoiceSheetState<T> extends State<_MultiChoiceSheet<T>> {
       for (final Choice<T> option in widget.options)
         if (_labelContains(option.label, _query)) option,
     ];
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Space.x3,
-            vertical: Space.x2,
-          ),
-          child: AppSearchField(
-            hint: localCopy.search,
-            debounce: Duration.zero,
-            onChanged: (String value) => setState(() => _query = value),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Space.x2),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: AppButton(
-                  label: localCopy.selectAll,
-                  variant: AppButtonVariant.text,
-                  onPressed: visible.isEmpty
-                      ? null
-                      : () => _emit(<T>{
-                          ..._selected,
-                          for (final Choice<T> option in visible) option.value,
-                        }),
-                ),
-              ),
-              Expanded(
-                child: AppButton(
-                  label: localCopy.clear,
-                  variant: AppButtonVariant.text,
-                  onPressed: _selected.isEmpty ? null : () => _emit(<T>{}),
-                ),
-              ),
-            ],
+    // Search and commands share the option viewport so a short window with
+    // large text and an open keyboard retains every control.
+    return CustomScrollView(
+      semanticChildCount: visible.length,
+      slivers: <Widget>[
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Space.x3,
+              vertical: Space.x2,
+            ),
+            child: AppSearchField(
+              hint: localCopy.search,
+              debounce: Duration.zero,
+              onChanged: (String value) => setState(() => _query = value),
+            ),
           ),
         ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: visible.length,
-            itemBuilder: (BuildContext context, int index) {
-              final Choice<T> option = visible[index];
-              final bool selected = _selected.contains(option.value);
-              return AppListTile(
-                title: option.label,
-                selected: selected,
-                leading: option.icon == null
-                    ? null
-                    : Icon(option.icon, color: colors.onSurface),
-                onTap: () {
-                  final Set<T> next = Set<T>.of(_selected);
-                  if (selected) {
-                    next.remove(option.value);
-                  } else {
-                    next.add(option.value);
-                  }
-                  _emit(next);
-                },
-              );
-            },
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.x2),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: AppButton(
+                    label: localCopy.selectAll,
+                    variant: AppButtonVariant.primary,
+                    expand: true,
+                    onPressed: visible.isEmpty
+                        ? null
+                        : () => _emit(<T>{
+                            ..._selected,
+                            for (final Choice<T> option in visible)
+                              option.value,
+                          }),
+                  ),
+                ),
+                const SizedBox(width: Space.x2),
+                Expanded(
+                  child: AppButton(
+                    label: localCopy.clear,
+                    variant: AppButtonVariant.primary,
+                    expand: true,
+                    onPressed: _selected.isEmpty ? null : () => _emit(<T>{}),
+                  ),
+                ),
+              ],
+            ),
           ),
+        ),
+        SliverList.builder(
+          itemCount: visible.length,
+          itemBuilder: (BuildContext context, int index) {
+            final Choice<T> option = visible[index];
+            final bool selected = _selected.contains(option.value);
+            return AppListTile(
+              title: option.label,
+              selected: selected,
+              leading: option.icon == null
+                  ? null
+                  : Icon(option.icon, color: colors.onSurface),
+              onTap: () {
+                final Set<T> next = Set<T>.of(_selected);
+                if (selected) {
+                  next.remove(option.value);
+                } else {
+                  next.add(option.value);
+                }
+                _emit(next);
+              },
+            );
+          },
         ),
       ],
     );

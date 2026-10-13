@@ -8,6 +8,8 @@ The heart of the app: evidence in, with as little typing as possible, always sav
 
 Task 164 replaced the guide toggle and caption-help panels with passive photo guidance and labelled the photo-caption action Save caption with its target count/scope. Task 165 updates that guidance to a shared AppCard headed Photos should show and replaces the six-line minimum with a one-to-six-line composer, integrating photo intake beside existing voice/audio actions. Caption persistence, independent audio/text evidence and saves retain their contracts. Task 165 owns fresh verification of these presentation changes; task 164's unfinished checks and unrelated acceptance below remain unchanged.
 
+Task 170 D1 removes only that passive guidance presentation from new Capture and saved-record Capture editing. The existing template/version/visible-field derivation, recovery/storage notices, Manual availability and durable photo/caption/audio/save contracts remain intact. Healthy targets reserve no leading guidance gap; displayed target recovery retains token separation. Task 170 owns fresh removal verification; task 165's prior guidance completion remains historical evidence and its independent unfinished checks remain open.
+
 **Depends on** [002](02-foundation.md), [004](04-data-layer.md), [005](05-file-storage.md), [009](09-templates.md), [010](10-reference-data.md), [011](11-context.md)
 
 **Implementation started:** Yes

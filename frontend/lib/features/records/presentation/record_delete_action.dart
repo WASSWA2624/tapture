@@ -24,7 +24,12 @@ import 'record_providers.dart';
 /// bar; [run] is the same flow for a menu entry.
 final class RecordDeleteAction extends ConsumerWidget {
   /// Creates the control for the records [ids].
-  const RecordDeleteAction({super.key, required this.ids, this.onDeleted});
+  const RecordDeleteAction({
+    super.key,
+    required this.ids,
+    this.onDeleted,
+    this.outlined = true,
+  });
 
   /// The records a press deletes. Empty disables the control.
   final List<String> ids;
@@ -32,6 +37,9 @@ final class RecordDeleteAction extends ConsumerWidget {
   /// Called after a confirmed delete with what it did, for example to leave
   /// a deleted record's page or clear a selection.
   final ValueChanged<RecordDeleteOutcome>? onDeleted;
+
+  /// Whether the icon keeps its outline; list rows use the borderless variant.
+  final bool outlined;
 
   /// Confirms, deletes every record in [ids] with [reason] on its tombstone,
   /// and reports the outcome in a snack with undo.
@@ -87,6 +95,7 @@ final class RecordDeleteAction extends ConsumerWidget {
     final String label = localCopy.recordsDeleteLabel(<String>{...ids}.length);
     return AppIconButton(
       icon: AppIcons.delete,
+      outlined: outlined,
       semanticLabel: label,
       tooltip: label,
       onPressed: busy || ids.isEmpty

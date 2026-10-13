@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/barcode/barcode_scanner_service.dart';
 import 'package:tapture/core/constants/app_constants.dart';
 import 'package:tapture/core/copy/copy.dart';
@@ -36,6 +37,7 @@ import 'package:tapture/features/capture/domain/capture_session_key.dart';
 import 'package:tapture/features/capture/presentation/capture_controller.dart';
 import 'package:tapture/features/capture/presentation/capture_manual_form.dart';
 import 'package:tapture/features/capture/presentation/capture_screen.dart';
+import 'package:tapture/features/capture/presentation/capture_target_fields.dart';
 import 'package:tapture/features/capture/presentation/document_picker.dart';
 import 'package:tapture/features/capture/presentation/inline_fields_section.dart';
 import 'package:tapture/features/capture/presentation/photo_tray.dart';
@@ -1236,6 +1238,77 @@ void main() {
     }
   }
 
+  for (final Locale locale in const <Locale>[
+    Locale('en'),
+    Locale('en', 'XA'),
+  ]) {
+    for (final ScreenMatrix cell in ScreenMatrix.cells) {
+      for (final String state in <String>[
+        'healthy',
+        'empty',
+        'loading',
+        'error',
+      ]) {
+        testWidgets(
+          'Capture target recovery spacing $state ${cell.description} ${locale.toLanguageTag()}',
+          (WidgetTester tester) async {
+            tester.view.devicePixelRatio = 1;
+            tester.view.physicalSize = cell.size;
+            tester.platformDispatcher.textScaleFactorTestValue = cell.textScale;
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+            addTearDown(
+              tester.platformDispatcher.clearTextScaleFactorTestValue,
+            );
+            final Stream<List<TemplateDef>>? source = switch (state) {
+              'empty' => Stream<List<TemplateDef>>.value(const <TemplateDef>[]),
+              'loading' => const Stream<List<TemplateDef>>.empty(),
+              'error' => Stream<List<TemplateDef>>.error(
+                StateError('Template unavailable'),
+              ),
+              _ => null,
+            };
+            await _Capture.open(
+              tester,
+              locale: locale,
+              brightness: cell.brightness,
+              outdoor: cell.outdoor,
+              templateStream: source,
+              templates: <TemplateDef>[
+                aTemplate(
+                  id: 't1',
+                  projectId: 'p1',
+                  fields: const <FieldDef>[_requiredSerial],
+                ),
+              ],
+            );
+            expect(
+              find.byKey(const ValueKey<String>('capture-guide')),
+              findsNothing,
+            );
+            expect(
+              find.text(
+                Copy.of(
+                  tester.element(find.byType(CaptureScreen)),
+                ).captureGuidePhotos,
+              ),
+              findsNothing,
+            );
+            final double gap =
+                tester.getTopLeft(find.byType(PhotoTray)).dy -
+                tester.getBottomLeft(find.byType(CaptureTargetFields)).dy;
+            expect(gap, closeTo(state == 'healthy' ? 0 : Space.x4, 0.01));
+            expect(
+              find.byKey(const ValueKey<String>('capture-composer-add-photo')),
+              findsOneWidget,
+            );
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
+  }
+
   for (final ({String name, ScreenMatrix cell}) corner
       in ScreenMatrix.corners) {
     testWidgets('capture composition golden ${corner.name}', (
@@ -1327,6 +1400,7 @@ final class _Capture {
     String projectId = 'p1',
     List<TemplateDef>? templates,
     Map<String, List<TemplateDef>>? projectTemplates,
+    Stream<List<TemplateDef>>? templateStream,
     List<String> recent = const <String>[],
     ProjectSettings settings = const ProjectSettings(),
     TextStore? store,
@@ -1361,10 +1435,12 @@ final class _Capture {
         templateFieldEditorBindings,
       ),
       captureProjectTemplatesProvider.overrideWith(
-        (Ref _, String id) => Stream<List<TemplateDef>>.value(
-          projectTemplates?[id] ??
-              (id == 'p1' || id == 'p2' ? shown : const <TemplateDef>[]),
-        ),
+        (Ref _, String id) =>
+            templateStream ??
+            Stream<List<TemplateDef>>.value(
+              projectTemplates?[id] ??
+                  (id == 'p1' || id == 'p2' ? shown : const <TemplateDef>[]),
+            ),
       ),
       captureRecentTemplatesProvider.overrideWith(
         (Ref _, String _) async => recent,
