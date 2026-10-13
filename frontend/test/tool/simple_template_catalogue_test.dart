@@ -42,6 +42,12 @@ void main() {
         _fields(template).map((Map<String, Object?> f) => f['group']),
         everyElement('specific_details'),
       );
+      final String library = File(
+        '${Directory(generated.assets).parent.path}/library.md',
+      ).readAsStringSync();
+      expect(library, isNot(contains('#record-types-and-their-packs')));
+      expect(library, isNot(contains('#category-context-fields')));
+      expect(library, contains('#uni--universal-capture-and-records'));
     });
 
     test('renaming a heading preserves its declared stable key', () async {
@@ -251,6 +257,11 @@ void main() {
           'observation_category',
           'observed_details',
         ]);
+        final String library = File(
+          '${Directory(generated.assets).parent.path}/library.md',
+        ).readAsStringSync();
+        expect(library, contains('## Record types and their packs'));
+        expect(library, contains('## Category context fields'));
       },
     );
   });

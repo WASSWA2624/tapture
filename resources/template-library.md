@@ -10,8 +10,6 @@ Requiredness marks: `*` suggested REQUIRED, `+` suggested RECOMMENDED, unmarked 
 
 ## Contents
 
-- [Record types and their packs](#record-types-and-their-packs)
-- [Category context fields](#category-context-fields)
 - [01 · Cross-sector foundations](#01--cross-sector-foundations)
   - [UNI — Universal capture and records](#uni--universal-capture-and-records) · 3
   - [AST — Assets and equipment](#ast--assets-and-equipment) · 3

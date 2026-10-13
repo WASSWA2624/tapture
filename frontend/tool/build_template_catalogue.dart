@@ -1315,9 +1315,14 @@ String _list(
     )
     ..writeln()
     ..writeln('## Contents')
-    ..writeln()
-    ..writeln('- [Record types and their packs](#record-types-and-their-packs)')
-    ..writeln('- [Category context fields](#category-context-fields)');
+    ..writeln();
+  if (!simple) {
+    out
+      ..writeln(
+        '- [Record types and their packs](#record-types-and-their-packs)',
+      )
+      ..writeln('- [Category context fields](#category-context-fields)');
+  }
   for (final _Supergroup supergroup in catalogue.supergroups) {
     out.writeln(
       '- [${supergroup.code} · ${supergroup.title}]'

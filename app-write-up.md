@@ -728,8 +728,8 @@ Without a chosen template, start with **UNI-001 General observation** for immedi
 
 ### 13.5 Template definitions
 
-`resources/template-library.md` lists each template's code, stable key, type, privacy/tier, identity fields and
-explicit columns with types/units/requiredness. **UNI-001 General observation** (`uni_general_observation`) uses:
+`resources/template-library.md` lists each template's code, stable key, type, privacy/tier and explicit columns
+with types/units/requiredness. `resources/templates.md` also records its selected identity fields. **UNI-001 General observation** (`uni_general_observation`) uses:
 
 ```text
 observation_subject  observed_at  factual_description  observation_category  operator_note
