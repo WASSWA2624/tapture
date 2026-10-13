@@ -95,7 +95,7 @@ class BackendSettingsScreen extends StatelessWidget {
             wrapText: true,
           ),
         if (signedIn && onSignOut != null) ...<Widget>[
-          const SizedBox(height: Space.x4),
+          const SizedBox(height: Space.x2),
           AppButton(
             label: localCopy.signOutAction,
             variant: AppButtonVariant.destructive,
@@ -104,7 +104,7 @@ class BackendSettingsScreen extends StatelessWidget {
           ),
         ],
         if (inline && !signedIn) ...<Widget>[
-          const SizedBox(height: Space.x4),
+          const SizedBox(height: Space.x2),
           AppButton(
             label: localCopy.signInAction,
             variant: AppButtonVariant.secondary,
@@ -115,6 +115,7 @@ class BackendSettingsScreen extends StatelessWidget {
     );
     if (inline) return body;
     return AppPage(
+      layout: AppPageLayout.compact,
       title: localCopy.backendSettingsTitle,
       footer: signedIn
           ? null
@@ -148,7 +149,7 @@ class BackendSettingsScreen extends StatelessWidget {
     final (String message, SnackTone tone) = line;
     return <Widget>[
       AppBanner(message: message, icon: tone.icon, tone: tone),
-      const SizedBox(height: Space.x3),
+      const SizedBox(height: Space.x2),
     ];
   }
 }

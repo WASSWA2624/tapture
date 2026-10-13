@@ -15,6 +15,7 @@ import 'package:tapture/core/lifecycle/lifecycle.dart';
 import 'package:tapture/core/widgets/app_floating_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/responsive/breakpoints.dart';
@@ -277,6 +278,7 @@ class _FeedbackOverlayState extends ConsumerState<FeedbackOverlay> {
       );
       final bool? saved = await showAppSheet<bool>(
         sheetContext,
+        layout: AppPageLayout.compact,
         title: localCopy.frictionLogAction,
         contentSized: true,
         builder: (BuildContext _) => FrictionReportSheet(

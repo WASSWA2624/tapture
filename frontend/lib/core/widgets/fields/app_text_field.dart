@@ -86,6 +86,7 @@ class AppTextField extends StatefulWidget {
 
   /// Lets a non-floating search label wrap within a narrow or scaled field.
   /// The input itself keeps its requested line count and keyboard behaviour.
+  /// Compact and ReadingFirst pages select wrapping automatically.
   final bool wrapLabel;
 
   /// When set, a locale-formatted character counter is shown.
@@ -227,9 +228,11 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     final AppTextField field = widget;
+    final AppPageLayout layout = AppPageLayoutScope.of(context);
     final bool wrapLabel =
         field.wrapLabel ||
-        AppPageLayoutScope.of(context) == AppPageLayout.readingFirst;
+        layout == AppPageLayout.readingFirst ||
+        layout == AppPageLayout.compact;
     final int? lines = field.maxLines;
     final bool multiline = lines != 1;
     return ListenableBuilder(

@@ -34,6 +34,7 @@ final class UploadHistoryScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     return AppPage(
+      layout: AppPageLayout.compact,
       title: localCopy.uploadHistoryTitle,
       inset: false,
       body: AsyncValueView<List<UploadAttempt>>(
@@ -126,6 +127,7 @@ class _History extends ConsumerWidget {
         (attempt.outcome == 'failed' || attempt.outcome == 'interrupted');
     return AppListTile(
       key: ValueKey<String>('upload-${attempt.id}'),
+      wrapText: true,
       title: attempt.remoteName,
       subtitle: live == null
           ? localCopy.uploadAttemptLine(

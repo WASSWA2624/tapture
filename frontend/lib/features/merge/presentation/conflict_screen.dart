@@ -89,7 +89,7 @@ final class ConflictScreen extends ConsumerWidget {
         : view!.plan.conflicts.indexOf(shown) + 1;
     return AppPage(
       key: const ValueKey<String>('route-project-merge-conflicts'),
-      layout: AppPageLayout.readingFirst,
+      layout: AppPageLayout.compact,
       title: shown == null
           ? localCopy.mergePackage
           : localCopy.conflictProgress(index, total),
@@ -256,7 +256,7 @@ class _Conflict extends StatelessWidget {
             style: AppText.body,
           ),
         ],
-        const SizedBox(height: Space.x3),
+        const SizedBox(height: Space.x2),
         ResponsivePair(
           matchesHeights: true,
           start: _Side(
@@ -272,7 +272,7 @@ class _Conflict extends StatelessWidget {
             at: mergeInstant(conflict.theirsAt),
           ),
         ),
-        const SizedBox(height: Space.x4),
+        const SizedBox(height: Space.x2),
         ResponsivePair(
           matchesHeights: true,
           start: AppButton(
@@ -327,7 +327,7 @@ class _Conflict extends StatelessWidget {
             view.unsettled.every(
               (FieldConflict c) => c.allowChooseOne,
             )) ...<Widget>[
-          const SizedBox(height: Space.x4),
+          const SizedBox(height: Space.x2),
           Wrap(
             spacing: Space.x2,
             runSpacing: Space.x2,

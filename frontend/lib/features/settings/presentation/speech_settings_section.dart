@@ -43,7 +43,10 @@ class SpeechSettingsSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppSectionHeader(title: localCopy.settingsSpeechSection),
+        AppSectionHeader(
+          title: localCopy.settingsSpeechSection,
+          wrapText: true,
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: Space.x4),
           child: Column(

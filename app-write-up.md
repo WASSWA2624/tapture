@@ -3301,6 +3301,7 @@ Essentials. Nested screens use the shared `AppPageLayout` compositions: Sectione
 record review and export options; ReadingFirst for values, transcripts, filters and conflict comparisons; ThumbReach
 for capture, photo tools, live transcription and file selection; Compact for record history. Individual overlays and
 loading, failure, empty and saved states retain their selected composition and existing conditional commands.
+Settings destinations and their import, export and merge flows use the Compact composition specified in §57.
 
 `AppPage`, `AppSection`, `AppForm`, shared fields/rows and `AppActionDock` provide these layouts using the existing
 theme, spacing and minimal `Radii` tokens. Every control retains a 48dp minimum target; ThumbReach primary actions
@@ -3355,6 +3356,23 @@ Testable interface rules:
 14. **Reusable components:** use existing design-system controls and the minimal corner radius (`Radii`, never zero). Menus, resource rows and document panels share controls; icons have readable labels.
 
 ## 57. Settings
+
+Settings and its nested screens use the shared Compact composition: 8dp field gaps, compact headings and forms,
+complete wrapped row text and 48dp minimum controls that grow with large text. Descriptive switches keep their
+explanations; nested sheets inherit Compact unless explicitly overridden. The title includes the settings cog,
+shown once through the shared shell or standalone page header. Existing theme and minimal `Radii` tokens,
+navigation, conditional commands, validation and durable local-write contracts remain unchanged (§§55.4, 58).
+Compact input labels wrap complete required/optional text, and the profile form keeps Save reachable while its
+fields scroll. Behavior and responsive checks, architecture guardrails and all 103 Compact visual baselines passed;
+changed-source analysis is clean. Raw scope evidence is retained in `frontend/build/settings-compact-*.log`.
+Broader checks are recorded separately below and do not certify the whole-product gate (§84).
+
+Separate findings reproduced at unmodified HEAD `987a238b7b368ed886bc95591753dd57fc8fa1dc`: the existing
+`status_line_test.dart` cases for root/nested titles and project-template titles fail at lines 206 and 287, expecting
+**Records** and **Project templates**. The original Recycle bin matrix also fails on its retired **Empty deleted
+records (1)** assertion; it still expects `AppButton` actions where the current screen uses `AppIconButton`.
+The isolated baseline logs and exit statuses remain in `frontend/build/settings-compact-head-*-baseline.*`.
+The Compact matrix tests the current entity keys, labelled 48dp controls and durable restore behavior directly.
 
 ```text
 Server and account                               (collapsed within AI; initial setup retained, Part XI)

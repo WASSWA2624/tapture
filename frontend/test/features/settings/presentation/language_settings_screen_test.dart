@@ -115,7 +115,7 @@ void main() {
           await expectLater(
             find.byKey(_golden),
             matchesGoldenFile(
-              'goldens/language_collapsed_${cell.outdoor ? 'outdoor' : cell.brightness.name}_${cell.textScale.toInt()}x.png',
+              'goldens/compact_language_collapsed_${cell.outdoor ? 'outdoor' : cell.brightness.name}_${cell.textScale.toInt()}x.png',
             ),
           );
         }
@@ -127,7 +127,7 @@ void main() {
           await expectLater(
             find.byKey(_golden),
             matchesGoldenFile(
-              'goldens/language_collapsed_${corner}_${cell.outdoor ? 'outdoor' : cell.brightness.name}.png',
+              'goldens/compact_language_collapsed_${corner}_${cell.outdoor ? 'outdoor' : cell.brightness.name}.png',
             ),
           );
         }
@@ -148,7 +148,7 @@ void main() {
           await expectLater(
             find.byKey(_golden),
             matchesGoldenFile(
-              'goldens/language_expanded_${corner}_${cell.outdoor ? 'outdoor' : cell.brightness.name}.png',
+              'goldens/compact_language_expanded_${corner}_${cell.outdoor ? 'outdoor' : cell.brightness.name}.png',
             ),
           );
         }

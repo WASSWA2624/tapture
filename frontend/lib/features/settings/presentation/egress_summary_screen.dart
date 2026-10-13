@@ -93,12 +93,14 @@ final class EgressSummaryScreen extends StatelessWidget {
     if (failed != null) {
       return AppPage(
         title: localCopy.privacyScreenTitle,
+        layout: AppPageLayout.compact,
         body: AppErrorState(failure: failed),
       );
     }
     if (loading) {
       return AppPage(
         title: localCopy.privacyScreenTitle,
+        layout: AppPageLayout.compact,
         body: const AppSkeleton(),
       );
     }
@@ -123,6 +125,7 @@ final class EgressSummaryScreen extends StatelessWidget {
     ];
     return AppPage(
       title: localCopy.privacyScreenTitle,
+      layout: AppPageLayout.compact,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[

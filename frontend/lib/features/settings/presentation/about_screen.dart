@@ -29,6 +29,7 @@ class AboutScreen extends ConsumerWidget {
     final AsyncValue<_AboutView> value = ref.watch(aboutProvider);
     return AppPage(
       title: localCopy.settingsAboutTitle,
+      layout: AppPageLayout.compact,
       inset: false,
       body: AsyncValueView<_AboutView>(
         value: value,
@@ -53,11 +54,17 @@ class AboutScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               AppListTile(
+                wrapText: true,
                 title: localCopy.settingsVersion,
                 subtitle: view.version,
               ),
-              AppListTile(title: localCopy.settingsBuild, subtitle: view.build),
               AppListTile(
+                wrapText: true,
+                title: localCopy.settingsBuild,
+                subtitle: view.build,
+              ),
+              AppListTile(
+                wrapText: true,
                 title: localCopy.settingsLicences,
                 subtitle: localCopy.settingsLicencesEffect,
                 trailing: const Icon(AppIcons.open),

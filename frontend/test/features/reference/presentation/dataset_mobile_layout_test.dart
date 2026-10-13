@@ -6,6 +6,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/files/document_picker.dart';
 import 'package:tapture/core/widgets/app_action_dock.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/features/reference/reference.dart';
@@ -32,6 +33,10 @@ void main() {
             scale: scale,
           );
           final Finder pick = _primary(Copy.datasetsPickFile);
+          expect(
+            tester.widget<AppPage>(find.byType(AppPage)).layout,
+            AppPageLayout.compact,
+          );
           await tester.ensureVisible(pick);
           await tester.pump();
           expect(pick.hitTestable(), findsOneWidget);
@@ -44,7 +49,7 @@ void main() {
           expect(label.intersect(dock), label);
           expect(
             tester.getSize(pick).height,
-            greaterThanOrEqualTo(Sizes.primaryActionHeight),
+            greaterThanOrEqualTo(Sizes.minTapTarget),
           );
           await tester.tap(pick);
           await tester.pumpAndSettle();

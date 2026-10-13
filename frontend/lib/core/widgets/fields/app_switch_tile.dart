@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/trial_report_scope.dart';
 
 /// Boolean input as a full-width tile. Settings and boolean template fields
@@ -65,6 +67,8 @@ class AppSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppColors colors = context.colors;
+    final bool compact =
+        AppPageLayoutScope.of(context) == AppPageLayout.compact;
     void toggle() {
       TrialReportScope.recordAction(context, title);
       onChanged(!value);
@@ -99,21 +103,21 @@ class AppSwitchTile extends StatelessWidget {
                   : null,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: dense
+                  minHeight: dense || compact
                       ? Sizes.minTapTarget
                       : Sizes.minTapTarget + Space.x6,
                 ),
                 child: Padding(
                   padding: dense
                       ? EdgeInsets.zero
-                      : const EdgeInsets.symmetric(
-                          horizontal: Space.x4,
-                          vertical: Space.x2,
+                      : EdgeInsets.symmetric(
+                          horizontal: compact ? Space.x3 : Space.x4,
+                          vertical: compact ? Space.x1 : Space.x2,
                         ),
                   child: Row(
                     children: <Widget>[
                       if (controlFirst) ...<Widget>[
-                        _control(enabled),
+                        _control(enabled, compact: compact),
                         const SizedBox(width: Space.x2),
                       ],
                       Expanded(
@@ -126,7 +130,9 @@ class AppSwitchTile extends StatelessWidget {
                               Text(
                                 title,
                                 style:
-                                    (dense ? AppText.label : AppText.bodyStrong)
+                                    (dense || compact
+                                            ? AppText.label
+                                            : AppText.bodyStrong)
                                         .copyWith(color: colors.onSurface),
                               ),
                               if (description != null && !dense) ...<Widget>[
@@ -144,7 +150,7 @@ class AppSwitchTile extends StatelessWidget {
                       ),
                       if (!controlFirst) ...<Widget>[
                         const SizedBox(width: Space.x3),
-                        _control(enabled),
+                        _control(enabled, compact: compact),
                       ],
                     ],
                   ),
@@ -157,7 +163,7 @@ class AppSwitchTile extends StatelessWidget {
     );
   }
 
-  Widget _control(bool enabled) {
+  Widget _control(bool enabled, {required bool compact}) {
     return IgnorePointer(
       child: ExcludeSemantics(
         child: _useCheckbox
@@ -172,7 +178,13 @@ class AppSwitchTile extends StatelessWidget {
                       )
                     : VisualDensity.compact,
               )
-            : Switch(value: value, onChanged: enabled ? (_) {} : null),
+            : Switch(
+                value: value,
+                onChanged: enabled ? (_) {} : null,
+                materialTapTargetSize: compact
+                    ? MaterialTapTargetSize.shrinkWrap
+                    : null,
+              ),
       ),
     );
   }

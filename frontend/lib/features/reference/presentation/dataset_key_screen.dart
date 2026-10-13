@@ -53,7 +53,7 @@ class DatasetKeyScreen extends ConsumerWidget {
     if (view.reading) {
       return AppPage(
         key: const ValueKey<String>('route-dataset-import'),
-        layout: AppPageLayout.thumbReach,
+        layout: AppPageLayout.compact,
         title: localCopy.datasetsImport,
         body: AppProgressSteps(
           steps: <ProgressStep>[
@@ -73,7 +73,7 @@ class DatasetKeyScreen extends ConsumerWidget {
       final Failure? failure = view.failure;
       return AppPage(
         key: const ValueKey<String>('route-dataset-import'),
-        layout: AppPageLayout.thumbReach,
+        layout: AppPageLayout.compact,
         title: localCopy.datasetsImport,
         footer: failure == null
             ? AppPrimaryAction(
@@ -95,7 +95,7 @@ class DatasetKeyScreen extends ConsumerWidget {
     final Failure? failure = view.failure;
     return AppPage(
       key: const ValueKey<String>('route-dataset-import'),
-      layout: AppPageLayout.readingFirst,
+      layout: AppPageLayout.compact,
       title: localCopy.datasetsKeyTitle,
       inset: false,
       scrollable: false,
@@ -134,6 +134,7 @@ class DatasetKeyScreen extends ConsumerWidget {
           for (final String column in current.dataset.columns)
             AppListTile(
               key: ValueKey<String>('dataset-key-$column'),
+              wrapText: true,
               title: column,
               subtitle: localCopy.datasetsColumnSummary(
                 current.duplicateCounts[column] ?? 0,

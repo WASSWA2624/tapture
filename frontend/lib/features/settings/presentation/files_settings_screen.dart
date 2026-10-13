@@ -25,6 +25,7 @@ class FilesSettingsScreen extends ConsumerWidget {
     final String? projectId = ref.watch(openProjectIdProvider);
     return AppPage(
       title: localCopy.settingsFilesTitle,
+      layout: AppPageLayout.compact,
       inset: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,6 +81,7 @@ class FilesSettingsScreen extends ConsumerWidget {
     required String route,
   }) {
     return AppListTile(
+      wrapText: true,
       key: ValueKey<String>('files-$route'),
       title: title,
       subtitle: subtitle,

@@ -108,7 +108,9 @@ class _AiProviderSettingsScreenState
         .read(SettingKeys.aiRequestMaxCost);
     return AppPage(
       title: localCopy.settingsAiTitle,
+      layout: AppPageLayout.compact,
       footer: AppPrimaryAction(
+        compact: true,
         key: const ValueKey<String>('ai-save'),
         label: localCopy.save,
         busy: view.busy,
@@ -157,7 +159,7 @@ class _AiProviderSettingsScreenState
               }
             },
           ),
-          const SizedBox(height: Space.x3),
+          const SizedBox(height: Space.x2),
           AppChoiceField<String>(
             label: localCopy.aiModel,
             alwaysSheet: true,
@@ -172,12 +174,12 @@ class _AiProviderSettingsScreenState
               if (value != null) controller.selectModel(value);
             },
           ),
-          const SizedBox(height: Space.x3),
+          const SizedBox(height: Space.x2),
           if (provider.serverCredentialProvider != null ||
               (provider.deviceKeyAllowed &&
                   provider.keyCustody ==
                       ProviderKeyCustody.device)) ...<Widget>[
-            const SizedBox(height: Space.x3),
+            const SizedBox(height: Space.x2),
             AppTextField(
               label: localCopy.apiKeyLabel,
               wrapLabel: true,
@@ -206,13 +208,13 @@ class _AiProviderSettingsScreenState
               ),
             ],
           ],
-          const SizedBox(height: Space.x3),
+          const SizedBox(height: Space.x2),
           Text(
             localCopy.aiCustodySummary,
             style: AppText.caption.copyWith(color: context.colors.onSurface),
           ),
           ..._status(localCopy, view, controller, provider),
-          const SizedBox(height: Space.x3),
+          const SizedBox(height: Space.x2),
           SettingsDisclosure(
             id: 'ai-cost',
             title: localCopy.aiCostControls,
@@ -247,7 +249,7 @@ class _AiProviderSettingsScreenState
               ),
             ],
           ),
-          const SizedBox(height: Space.x3),
+          const SizedBox(height: Space.x2),
           SettingsDisclosure(
             id: 'ai-connection',
             title: localCopy.aiConnectionDetails,
@@ -285,7 +287,7 @@ class _AiProviderSettingsScreenState
                 ProviderTestAction(view: view.test, showAction: false),
             ],
           ),
-          const SizedBox(height: Space.x3),
+          const SizedBox(height: Space.x2),
           SettingsDisclosure(
             id: 'ai-account',
             title: localCopy.aiServerAndAccount,
@@ -293,7 +295,7 @@ class _AiProviderSettingsScreenState
             maintainState: true,
             children: const <Widget>[AccountConnectionPanel()],
           ),
-          const SizedBox(height: Space.x3),
+          const SizedBox(height: Space.x2),
           ProviderTestAction(
             view: provider.available ? view.test : ProviderTestView.unavailable,
             showOutcome: false,

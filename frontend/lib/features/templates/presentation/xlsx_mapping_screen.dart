@@ -19,7 +19,6 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
-import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
@@ -115,7 +114,7 @@ class XlsxMappingScreen extends ConsumerWidget {
         project.id.isEmpty ||
         (wantedId != null && wantedId.isNotEmpty && project.id != wantedId)) {
       return AppPage(
-        layout: AppPageLayout.sectioned,
+        layout: AppPageLayout.compact,
         key: const ValueKey<String>('route-xlsx-mapping'),
         title: localCopy.xlsxMappingTitle,
         body: AsyncValueView<Object?>(
@@ -143,7 +142,7 @@ class XlsxMappingScreen extends ConsumerWidget {
     final _XlsxMappingView view = ref.watch(_xlsxMappingProvider(source));
     Future<void> commit() => _commit(context, ref, project, source);
     return AppPage(
-      layout: AppPageLayout.sectioned,
+      layout: AppPageLayout.compact,
       key: const ValueKey<String>('route-xlsx-mapping'),
       title: localCopy.xlsxMappingTitle,
       scrollable: false,
@@ -215,7 +214,7 @@ class XlsxMappingScreen extends ConsumerWidget {
                 _rowColumns(context, controller, view, sheet),
             ],
           ),
-          const SizedBox(height: Space.x3),
+          const SizedBox(height: Space.x2),
           if (Copy.of(
                 context,
               ).stateText(view.localizedSaveError, view.saveError) !=
@@ -231,43 +230,41 @@ class XlsxMappingScreen extends ConsumerWidget {
             for (final _XlsxRow row in view.rows) ...<Widget>[
               AppSection(
                 children: <Widget>[
-                  AppPageLayoutScope(
-                    layout: AppPageLayout.readingFirst,
-                    child: AppListTile(
-                      key: ValueKey<String>('xlsx-col-${row.index}'),
-                      title: row.source,
-                      subtitle: row.skipped
-                          ? Copy.of(context).xlsxMappingSkipped
-                          : Copy.of(context).xlsxMappingProposal(
-                              field: row.label,
-                              type: Copy.of(
-                                context,
-                              ).fieldTypeLabel(row.type.name),
-                              rule: _ruleCopy(
-                                row.rule,
-                                localizedCopy: Copy.of(context),
-                              ),
+                  AppListTile(
+                    key: ValueKey<String>('xlsx-col-${row.index}'),
+                    wrapText: true,
+                    title: row.source,
+                    subtitle: row.skipped
+                        ? Copy.of(context).xlsxMappingSkipped
+                        : Copy.of(context).xlsxMappingProposal(
+                            field: row.label,
+                            type: Copy.of(
+                              context,
+                            ).fieldTypeLabel(row.type.name),
+                            rule: _ruleCopy(
+                              row.rule,
+                              localizedCopy: Copy.of(context),
                             ),
-                      selected: view.editing == row.index,
-                      trailing: AppOverflowMenu(
-                        items: <AppOverflowAction>[
-                          AppOverflowAction(
-                            label: row.skipped
-                                ? Copy.of(context).xlsxMappingInclude
-                                : Copy.of(context).xlsxMappingSkip,
-                            icon: row.skipped ? AppIcons.add : AppIcons.remove,
-                            onTap: () => controller.toggleSkip(row.index),
                           ),
-                        ],
-                      ),
-                      onTap: () => controller.edit(row.index),
+                    selected: view.editing == row.index,
+                    trailing: AppOverflowMenu(
+                      items: <AppOverflowAction>[
+                        AppOverflowAction(
+                          label: row.skipped
+                              ? Copy.of(context).xlsxMappingInclude
+                              : Copy.of(context).xlsxMappingSkip,
+                          icon: row.skipped ? AppIcons.add : AppIcons.remove,
+                          onTap: () => controller.toggleSkip(row.index),
+                        ),
+                      ],
                     ),
+                    onTap: () => controller.edit(row.index),
                   ),
                   if (view.editing == row.index && !row.skipped)
                     _editor(context, controller, row),
                 ],
               ),
-              const SizedBox(height: Space.x3),
+              const SizedBox(height: Space.x2),
             ],
         ],
       ),

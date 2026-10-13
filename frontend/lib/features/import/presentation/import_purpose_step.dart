@@ -63,6 +63,7 @@ final class ImportPurposeStep extends ConsumerWidget {
         children: <Widget>[
           AppListTile(
             key: const ValueKey<String>('import-purpose-records'),
+            wrapText: true,
             leading: const Icon(AppIcons.records),
             title: localCopy.importPurposeRecords,
             subtitle: localCopy.importPurposeRecordsLine,
@@ -72,6 +73,7 @@ final class ImportPurposeStep extends ConsumerWidget {
           ),
           AppListTile(
             key: const ValueKey<String>('import-purpose-register'),
+            wrapText: true,
             leading: const Icon(AppIcons.verified),
             title: localCopy.importPurposeRegister,
             subtitle: localCopy.importPurposeRegisterLine,
@@ -83,6 +85,7 @@ final class ImportPurposeStep extends ConsumerWidget {
     }
     return AppPage(
       key: const ValueKey<String>('route-import-purpose'),
+      layout: AppPageLayout.compact,
       title: localCopy.importPurposeTitle,
       inset: false,
       body: body,

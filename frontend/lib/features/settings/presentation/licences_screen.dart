@@ -30,6 +30,7 @@ class LicencesScreen extends ConsumerWidget {
     final AsyncValue<List<_LicenceRow>> value = ref.watch(_licencesProvider);
     return AppPage(
       title: localCopy.settingsLicences,
+      layout: AppPageLayout.compact,
       scrollable: false,
       inset: false,
       body: AsyncValueView<List<_LicenceRow>>(
@@ -49,6 +50,7 @@ class LicencesScreen extends ConsumerWidget {
             itemBuilder: (BuildContext context, int index) {
               final _LicenceRow row = rows[index];
               return AppListTile(
+                wrapText: true,
                 title: row.package,
                 subtitle: row.summary,
                 trailing: const Icon(AppIcons.open),
@@ -65,6 +67,7 @@ class LicencesScreen extends ConsumerWidget {
     return showAppSheet<void>(
       context,
       title: row.package,
+      layout: AppPageLayout.compact,
       builder: (BuildContext sheetContext) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(Space.x4),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
@@ -21,6 +22,7 @@ Future<ImportMatchDecision?> showImportMatchSheet(
 
   return showAppSheet<ImportMatchDecision>(
     context,
+    layout: AppPageLayout.compact,
     title: localCopy.importMatchTitle,
     contentSized: true,
     builder: (BuildContext _) => ImportMatchSheet(row: row),
@@ -67,7 +69,7 @@ class _ImportMatchSheetState extends State<ImportMatchSheet> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(localCopy.importMatchMessage(widget.row)),
-              const SizedBox(height: Space.x3),
+              const SizedBox(height: Space.x2),
               AppRadioGroup<ImportDuplicateChoice>(
                 key: const ValueKey<String>('import-match-choice'),
                 label: localCopy.importMatchChoice,
@@ -85,7 +87,7 @@ class _ImportMatchSheetState extends State<ImportMatchSheet> {
                   _draft.value = (choice: draft.choice, applyToAll: next);
                 },
               ),
-              const SizedBox(height: Space.x3),
+              const SizedBox(height: Space.x2),
               AppButton(
                 key: const ValueKey<String>('import-match-confirm'),
                 label: localCopy.importMatchConfirm,

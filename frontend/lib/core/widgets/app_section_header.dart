@@ -3,6 +3,8 @@ import 'package:tapture/app/theme/color_tokens.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/typography.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 
 /// Group heading used inside lists and forms, from the [AppText.section]
 /// type role.
@@ -46,6 +48,7 @@ class AppSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool dense = _dense(context);
     final bool? open = expanded;
     if (open != null) {
       return _toggle(context, open);
@@ -90,6 +93,7 @@ class AppSectionHeader extends StatelessWidget {
   /// announcement, never by colour alone (FE-A11Y-05).
   Widget _toggle(BuildContext context, bool open) {
     final Color ink = context.colors.primary;
+    final bool dense = _dense(context);
     return Semantics(
       container: true,
       header: true,
@@ -138,4 +142,7 @@ class AppSectionHeader extends StatelessWidget {
       ),
     );
   }
+
+  bool _dense(BuildContext context) =>
+      dense || AppPageLayoutScope.of(context) == AppPageLayout.compact;
 }

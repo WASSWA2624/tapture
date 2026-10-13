@@ -94,9 +94,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
     return AppPage(
       key: const ValueKey<String>('route-project-export'),
       title: localCopy.projectExportTitle,
-      layout: _busy || _saved != null
-          ? AppPageLayout.essentials
-          : AppPageLayout.sectioned,
+      layout: AppPageLayout.compact,
       overflow: <AppOverflowAction>[
         if (!_busy && !_handoffBusy)
           AppOverflowAction(
@@ -143,7 +141,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
                   icon: AppIcons.offline,
                   tone: SnackTone.info,
                 ),
-                const SizedBox(height: Space.x3),
+                const SizedBox(height: Space.x2),
               ],
               if (saved != null) ...<Widget>[
                 AppBanner(
@@ -151,7 +149,7 @@ class _ProjectExportScreenState extends ConsumerState<ProjectExportScreen>
                   icon: AppIcons.success,
                   tone: SnackTone.success,
                 ),
-                const SizedBox(height: Space.x3),
+                const SizedBox(height: Space.x2),
                 ExportPrivacySummaryView(exportId: saved.id, package: true),
               ],
               if (_handoffFailure case final Failure failure)

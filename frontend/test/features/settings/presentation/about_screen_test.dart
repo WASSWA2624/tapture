@@ -125,7 +125,7 @@ void main() {
         await expectLater(
           find.byType(MaterialApp),
           matchesGoldenFile(
-            'goldens/about_text${scale.toInt()}_${mode.$1}.png',
+            'goldens/compact_about_text${scale.toInt()}_${mode.$1}.png',
           ),
         );
       });

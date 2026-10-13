@@ -79,6 +79,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
       // overflow behind a confirmation (FE-SIMP-07).
       return AppPage(
         title: localCopy.appLockTitle,
+        layout: AppPageLayout.compact,
         subtitle: view.enabled ? localCopy.appLockOn : localCopy.appLockOff,
         scrollable: false,
         overflow: <AppOverflowAction>[
@@ -244,6 +245,8 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
       Text(localCopy.appLockRecovery, style: AppText.body.copyWith(color: ink)),
     ];
     return AppForm(
+      compact: true,
+      layout: AppPageLayout.compact,
       fields: fields,
       submitLabel: view.enabled
           ? localCopy.appLockChange

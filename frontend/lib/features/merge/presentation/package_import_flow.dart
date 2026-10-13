@@ -14,6 +14,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/document_picker.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/feedback/show_app_text_prompt.dart';
@@ -199,6 +200,7 @@ Future<void> _offer(
   );
   final _Choice? choice = await showAppSheet<_Choice>(
     context,
+    layout: AppPageLayout.compact,
     title: localCopy.importSheetTitle,
     contentSized: true,
     builder: (BuildContext sheet) => _ImportSheet(manifest: bundle.manifest),
@@ -275,12 +277,13 @@ class _ImportSheet extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           AppListTile(
+            wrapText: true,
             title: manifest.projectName,
             subtitle:
                 '${localCopy.importFrom(manifest.operatorName ?? manifest.sourceDeviceId, manifest.exportedAt)}\n'
                 '${localCopy.importHolds(manifest.counts['records'] ?? 0, manifest.counts['photos'] ?? 0, bytes)}',
           ),
-          const SizedBox(height: Space.x4),
+          const SizedBox(height: Space.x2),
           AppButton(
             key: importAsNewKey,
             label: localCopy.importAsNewProject,

@@ -39,6 +39,8 @@ class SettingsScreen extends ConsumerWidget {
     );
     return AppPage(
       title: localCopy.settingsTitle,
+      leading: const ExcludeSemantics(child: Icon(AppIcons.settings)),
+      layout: AppPageLayout.compact,
       overflow: <AppOverflowAction>[
         if (ref.watch(fieldTrialProvider))
           AppOverflowAction(
@@ -87,10 +89,14 @@ class SettingsScreen extends ConsumerWidget {
                 if (index == 0 ||
                     localizedSections[index - 1].group !=
                         localizedSections[index].group)
-                  AppSectionHeader(title: localizedSections[index].group),
+                  AppSectionHeader(
+                    title: localizedSections[index].group,
+                    wrapText: true,
+                  ),
                 AppListTile(
                   title: localizedSections[index].title,
                   subtitle: localizedSections[index].subtitle,
+                  wrapText: true,
                   trailing: localizedSections[index].route == null
                       ? null
                       : const Icon(AppIcons.open),

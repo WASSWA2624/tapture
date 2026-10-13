@@ -74,7 +74,7 @@ void main() {
   for (final ScreenMatrix cell in ScreenMatrix.cells) {
     for (final bool preview in <bool>[true, false]) {
       testWidgets(
-        '${preview ? 'sectioned merge' : 'reading first conflict'} ${cell.description}',
+        'compact ${preview ? 'merge' : 'conflict'} ${cell.description}',
         (WidgetTester tester) async {
           tester.view.physicalSize = cell.size;
           tester.view.devicePixelRatio = 1;
@@ -102,10 +102,7 @@ void main() {
           await tester.pumpAndSettle();
           expect(repository.merges, isEmpty);
           final AppPage page = tester.widget<AppPage>(find.byType(AppPage));
-          expect(
-            page.layout,
-            preview ? AppPageLayout.sectioned : AppPageLayout.readingFirst,
-          );
+          expect(page.layout, AppPageLayout.compact);
           expect(ScreenProbe.layoutIssues(tester), isEmpty);
           if (preview) {
             expect(find.byType(AppSection), findsNWidgets(2));

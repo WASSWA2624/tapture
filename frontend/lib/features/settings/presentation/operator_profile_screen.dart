@@ -72,7 +72,9 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
     );
     return AppPage(
       title: localCopy.operatorProfileTitle,
+      layout: AppPageLayout.compact,
       subtitle: localCopy.operatorNameUse,
+      scrollable: false,
       body: AsyncValueView<_OperatorProfileView>(
         value: value,
         onRetry: () => ref.invalidate(operatorProfileProvider),
@@ -81,6 +83,8 @@ class _OperatorProfileScreenState extends ConsumerState<OperatorProfileScreen> {
 
           _bind(view);
           return AppForm(
+            compact: true,
+            layout: AppPageLayout.compact,
             key: ValueKey<int>(view.generation),
             guardUnsaved: true,
             errors: view.saveError == null

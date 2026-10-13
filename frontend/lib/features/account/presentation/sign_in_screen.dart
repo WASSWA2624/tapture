@@ -46,6 +46,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         : localCopy.resolve(view.errorMessage!);
     final VoidCallback? later = widget.onLater;
     return AppPage(
+      layout: AppPageLayout.compact,
       title: localCopy.signInTitle,
       scrollable: false,
       body: AppForm(

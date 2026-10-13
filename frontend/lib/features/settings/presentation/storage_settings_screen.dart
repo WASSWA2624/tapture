@@ -55,6 +55,7 @@ class StorageSettingsScreen extends ConsumerWidget {
     final AsyncValue<_StorageView> value = ref.watch(storageSettingsProvider);
     return AppPage(
       title: localCopy.settingsStorageTitle,
+      layout: AppPageLayout.compact,
       inset: false,
       body: AsyncValueView<_StorageView>(
         value: value,
@@ -84,16 +85,27 @@ class StorageSettingsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               if (volumeFailure != null) ...<Widget>[
-                AppSectionHeader(title: localCopy.settingsHeadroomHeader),
+                AppSectionHeader(
+                  dense: true,
+                  wrapText: true,
+                  title: localCopy.settingsHeadroomHeader,
+                ),
                 AppErrorState(
                   key: const ValueKey<String>('storage-volume-error'),
                   failure: volumeFailure,
                   onRetry: () => ref.invalidate(storageSettingsProvider),
                 ),
               ] else if (volume != null && headroom != null) ...<Widget>[
-                AppSectionHeader(title: localCopy.settingsHeadroomHeader),
+                AppSectionHeader(
+                  dense: true,
+                  wrapText: true,
+                  title: localCopy.settingsHeadroomHeader,
+                ),
                 if (headroom == HeadroomState.ample)
-                  AppListTile(title: localCopy.settingsHeadroomAmple)
+                  AppListTile(
+                    wrapText: true,
+                    title: localCopy.settingsHeadroomAmple,
+                  )
                 else
                   AppBanner(
                     key: const ValueKey<String>('storage-headroom'),
@@ -104,22 +116,30 @@ class StorageSettingsScreen extends ConsumerWidget {
                         : SnackTone.warning,
                   ),
                 AppListTile(
+                  wrapText: true,
                   title: localCopy.settingsVolumeTotal,
                   subtitle: localCopy.fileSize(volume.totalBytes),
                 ),
                 AppListTile(
+                  wrapText: true,
                   title: localCopy.settingsVolumeUsed,
                   subtitle: localCopy.fileSize(volume.usedBytes),
                 ),
                 AppListTile(
+                  wrapText: true,
                   title: localCopy.settingsVolumeAvailable,
                   subtitle: localCopy.fileSize(volume.freeBytes),
                 ),
               ],
               if (view.projects.isNotEmpty) ...<Widget>[
-                AppSectionHeader(title: localCopy.settingsProjectsHeader),
+                AppSectionHeader(
+                  dense: true,
+                  wrapText: true,
+                  title: localCopy.settingsProjectsHeader,
+                ),
                 for (final _ProjectUse use in view.projects)
                   AppListTile(
+                    wrapText: true,
                     title: use.name,
                     subtitle: localCopy.settingsProjectUse(
                       photos: localCopy.fileSize(use.photosBytes),
@@ -131,6 +151,7 @@ class StorageSettingsScreen extends ConsumerWidget {
               ],
               if (view.rootFailure case final Failure rootFailure)
                 AppListTile(
+                  wrapText: true,
                   key: const ValueKey<String>('storage-root-failed'),
                   leading: const Icon(AppIcons.error),
                   title: localCopy.settingsStorageRoot,
@@ -142,8 +163,13 @@ class StorageSettingsScreen extends ConsumerWidget {
                       : null,
                 ),
               if (view.rootPath.isNotEmpty) ...<Widget>[
-                AppSectionHeader(title: localCopy.settingsCache),
+                AppSectionHeader(
+                  dense: true,
+                  wrapText: true,
+                  title: localCopy.settingsCache,
+                ),
                 AppListTile(
+                  wrapText: true,
                   title: localCopy.settingsStorageRoot,
                   subtitle: view.rootPath,
                   onTap: ref.read(folderPickerProvider).canPick
@@ -153,6 +179,7 @@ class StorageSettingsScreen extends ConsumerWidget {
                       : null,
                 ),
                 AppListTile(
+                  wrapText: true,
                   title: localCopy.settingsClearCache,
                   subtitle: localCopy.settingsCacheSize(
                     localCopy.fileSize(view.cacheBytes),
@@ -162,7 +189,11 @@ class StorageSettingsScreen extends ConsumerWidget {
                   },
                 ),
               ],
-              AppSectionHeader(title: localCopy.settingsRetentionHeader),
+              AppSectionHeader(
+                dense: true,
+                wrapText: true,
+                title: localCopy.settingsRetentionHeader,
+              ),
               SettingChoice<int>(
                 key: const ValueKey<String>('storage-retention'),
                 label: localCopy.settingsRetention,
@@ -177,6 +208,7 @@ class StorageSettingsScreen extends ConsumerWidget {
                 },
               ),
               AppListTile(
+                wrapText: true,
                 key: const ValueKey<String>('storage-recycle-bin'),
                 title: localCopy.recycleBinTitle,
                 subtitle: localCopy.recycleBinSettingsSubtitle,

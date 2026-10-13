@@ -44,7 +44,7 @@ class TemplateImportAction extends ConsumerWidget {
         ref.watch(currentProjectProvider);
     if (projectId == null || projectId.isEmpty) {
       return AppPage(
-        layout: AppPageLayout.sectioned,
+        layout: AppPageLayout.compact,
         key: const ValueKey<String>('route-template-import'),
         title: localCopy.templatesImport,
         body: AppEmptyState(
@@ -66,7 +66,7 @@ class TemplateImportAction extends ConsumerWidget {
     Future<void> choose() => _choose(context, controller);
     Future<void> save() => _save(context, controller);
     return AppPage(
-      layout: AppPageLayout.sectioned,
+      layout: AppPageLayout.compact,
       key: const ValueKey<String>('route-template-import'),
       title: localCopy.templatesImport,
       body: AsyncValueView<TemplateDef?>(

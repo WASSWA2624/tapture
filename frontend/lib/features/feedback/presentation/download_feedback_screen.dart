@@ -42,26 +42,29 @@ class DownloadFeedbackScreen extends ConsumerWidget {
     final AsyncValue<List<FeedbackEntry>> entries = ref.watch(
       feedbackEntriesProvider,
     );
-    return AsyncValueView<List<FeedbackEntry>>(
-      value: entries,
-      onRetry: () => ref.invalidate(feedbackEntriesProvider),
-      isEmpty: (List<FeedbackEntry> all) => all.isEmpty,
-      empty: () => _frame(
-        context,
-        controller,
-        AppEmptyState(
+    final LocalizedCopy localCopy = Copy.of(context);
+    final List<FeedbackEntry>? all = entries.whenOrNull(
+      data: (List<FeedbackEntry> all) => all,
+    );
+    final List<FeedbackEntry> matching = all == null
+        ? const <FeedbackEntry>[]
+        : view.filter.apply(all);
+    final bool hasEntries = all?.isNotEmpty ?? false;
+    final bool canDownload =
+        matching.isNotEmpty && !view.filter.isRangeBackwards;
+    return _frame(
+      context,
+      controller,
+      AsyncValueView<List<FeedbackEntry>>(
+        value: entries,
+        onRetry: () => ref.invalidate(feedbackEntriesProvider),
+        isEmpty: (List<FeedbackEntry> all) => all.isEmpty,
+        empty: () => AppEmptyState(
           icon: AppIcons.feedback,
-          headline: Copy.of(context).feedbackEmptyHeadline,
-          message: Copy.of(context).feedbackEmptyMessage,
+          headline: localCopy.feedbackEmptyHeadline,
+          message: localCopy.feedbackEmptyMessage,
         ),
-      ),
-      data: (List<FeedbackEntry> all) {
-        final LocalizedCopy localCopy = Copy.of(context);
-
-        final List<FeedbackEntry> matching = view.filter.apply(all);
-        final bool canDownload =
-            matching.isNotEmpty && !view.filter.isRangeBackwards;
-        final Widget list = FeedbackBrowser(
+        data: (List<FeedbackEntry> all) => FeedbackBrowser(
           all: all,
           matching: matching,
           visible: view.visible,
@@ -75,33 +78,24 @@ class DownloadFeedbackScreen extends ConsumerWidget {
           localizedError: view.localizedError,
           tile: (FeedbackEntry entry, int number) =>
               FeedbackEntryTile(entry: entry, number: number),
-        );
-        final Widget action = AppPrimaryAction(
-          label: localCopy.feedbackDownloadCount(matching.length),
-          busy: view.busy,
-          compact: true,
-          onPressed: canDownload
-              ? () => unawaited(_download(context, controller, matching))
-              : null,
-        );
-        return _frame(
-          context,
-          controller,
-          list,
-          action: action,
-          busy: view.busy,
-          onSaveToFolder: canDownload
-              ? () => unawaited(
-                  _download(
-                    context,
-                    controller,
-                    matching,
-                    chooseLocation: true,
-                  ),
-                )
-              : null,
-        );
-      },
+        ),
+      ),
+      action: hasEntries
+          ? AppPrimaryAction(
+              label: localCopy.feedbackDownloadCount(matching.length),
+              busy: view.busy,
+              compact: true,
+              onPressed: canDownload
+                  ? () => unawaited(_download(context, controller, matching))
+                  : null,
+            )
+          : null,
+      busy: hasEntries && view.busy,
+      onSaveToFolder: canDownload
+          ? () => unawaited(
+              _download(context, controller, matching, chooseLocation: true),
+            )
+          : null,
     );
   }
 
@@ -116,6 +110,7 @@ class DownloadFeedbackScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     return AppPage(
+      layout: AppPageLayout.compact,
       title: localCopy.feedbackDownload,
       compactBar: true,
       inset: false,

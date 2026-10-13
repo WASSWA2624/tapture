@@ -44,6 +44,7 @@ class CaptureSettingsScreen extends ConsumerWidget {
     final AsyncValue<_CaptureView> value = ref.watch(captureSettingsProvider);
     return AppPage(
       title: localCopy.settingsCaptureTitle,
+      layout: AppPageLayout.compact,
       inset: false,
       body: AsyncValueView<_CaptureView>(
         value: value,
@@ -184,6 +185,7 @@ class CaptureSettingsScreen extends ConsumerWidget {
                     },
                   ),
                   AppListTile(
+                    wrapText: true,
                     title: localCopy.settingsNamingPattern,
                     subtitle: localCopy.settingsNamingSubtitle(
                       view.namingPattern,
@@ -409,10 +411,13 @@ Future<void> _editNaming(
   await showAppSheet<void>(
     context,
     title: localCopy.settingsNamingEdit,
+    layout: AppPageLayout.compact,
     builder: (BuildContext sheetContext) {
       final LocalizedCopy localCopy = Copy.of(sheetContext);
 
       return AppForm(
+        compact: true,
+        layout: AppPageLayout.compact,
         fields: <Widget>[
           AppTextField(
             label: localCopy.settingsNamingPattern,

@@ -44,11 +44,13 @@ class LanguageSettingsScreen extends ConsumerWidget {
 
     return AppPage(
       title: localCopy.settingsLanguageTitle,
+      layout: AppPageLayout.compact,
       inset: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           AppListTile(
+            wrapText: true,
             title: localCopy.settingsAppLanguage,
             subtitle: localCopy.settingsAppLanguageEffect,
           ),
@@ -58,6 +60,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
               vertical: Space.x2,
             ),
             child: AppChoiceField<String>(
+              wrapLabel: true,
               alwaysSheet: true,
               label: localCopy.settingsVoiceLanguage,
               value: ref.watch(voiceLanguageProvider),

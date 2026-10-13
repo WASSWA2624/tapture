@@ -78,6 +78,7 @@ final class ImportSummaryScreen extends ConsumerWidget {
     }
     return AppPage(
       key: const ValueKey<String>('route-import-summary'),
+      layout: AppPageLayout.compact,
       title: localCopy.importSummaryTitle,
       inset: false,
       scrollable: result == null || view.running,
@@ -238,6 +239,7 @@ class _Outcomes extends StatelessWidget {
       for (final ({int row, String? line}) row in rows)
         () => AppListTile(
           key: ValueKey<String>('import-$outcome-${row.row}'),
+          wrapText: true,
           title: Copy.of(context).importRow(row.row),
           subtitle: row.line,
         ),
