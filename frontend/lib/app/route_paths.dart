@@ -138,8 +138,21 @@ abstract final class RoutePaths {
   static String templateXlsx({String? projectId}) =>
       '${templateRoot(projectId: projectId)}/xlsx';
 
-  static String templateDetail(String templateId, {String? projectId}) =>
-      '${templateRoot(projectId: projectId)}/${Uri.encodeComponent(templateId)}';
+  static String templateDetail(
+    String templateId, {
+    String? projectId,
+    bool showAdvanced = false,
+  }) {
+    final String path =
+        '${templateRoot(projectId: projectId)}/${Uri.encodeComponent(templateId)}';
+    return showAdvanced
+        ? Uri.parse(path)
+              .replace(
+                queryParameters: <String, String>{fieldAdvancedQuery: 'true'},
+              )
+              .toString()
+        : path;
+  }
 
   static String templateRequired(String templateId, {String? projectId}) =>
       '${templateDetail(templateId, projectId: projectId)}/required';
@@ -165,13 +178,26 @@ abstract final class RoutePaths {
   static String templateFieldNew(String templateId, {String? projectId}) =>
       '${templateDetail(templateId, projectId: projectId)}/fields/new';
 
+  /// Opens Advanced directly without adding a separate field editor route.
+  static const String fieldAdvancedQuery = 'advanced';
+
   static String templateField(
     String templateId,
     String fieldKey, {
     String? projectId,
-  }) =>
-      '${templateDetail(templateId, projectId: projectId)}/fields/'
-      '${Uri.encodeComponent(fieldKey)}';
+    bool showAdvanced = false,
+  }) {
+    final String path =
+        '${templateDetail(templateId, projectId: projectId)}/fields/'
+        '${Uri.encodeComponent(fieldKey)}';
+    return showAdvanced
+        ? Uri.parse(path)
+              .replace(
+                queryParameters: <String, String>{fieldAdvancedQuery: 'true'},
+              )
+              .toString()
+        : path;
+  }
 
   static String templateFieldLookup(
     String templateId,

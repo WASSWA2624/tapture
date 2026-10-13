@@ -36,13 +36,21 @@ import 'template_locations.dart';
 /// Three-question add and edit flow, with Advanced collapsed by default.
 class FieldAddSheet extends ConsumerStatefulWidget {
   /// Creates the sheet for [templateId]. [fieldKey] set means edit.
-  const FieldAddSheet({super.key, required this.templateId, this.fieldKey});
+  const FieldAddSheet({
+    super.key,
+    required this.templateId,
+    this.fieldKey,
+    this.showAdvanced = false,
+  });
 
   /// Template that owns the field.
   final String templateId;
 
   /// Existing key when editing. Null creates a new field.
   final String? fieldKey;
+
+  /// Opens the existing settings when the defaults-and-sources action is used.
+  final bool showAdvanced;
 
   /// snake_case key from [label], with [unit] appended when measured.
   static String keyFrom(String label, {String? unit}) {
@@ -268,7 +276,7 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
           title: localCopy.fieldAdvanced,
           description: view.advanced
               ? localCopy.fieldAdvancedHide
-              : localCopy.fieldAdvancedShow,
+              : localCopy.fieldAdvancedSettings,
           value: view.advanced,
           dense: true,
           onChanged: (bool on) {
@@ -305,6 +313,7 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
             onRefine: ref.read(_fieldAddProvider.notifier).setRefine,
             onIdentity: ref.read(_fieldAddProvider.notifier).setIdentity,
             onHidden: ref.read(_fieldAddProvider.notifier).setHidden,
+            onEdited: (_) => ref.read(_fieldAddProvider.notifier).markDirty(),
             onRequiredWhenChanged: (String value) {
               ref
                   .read(_fieldAddProvider.notifier)
@@ -379,7 +388,9 @@ class _FieldAddSheetState extends ConsumerState<FieldAddSheet> {
       _contextLevel.text = field.contextLevel?.toString() ?? '';
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          ref.read(_fieldAddProvider.notifier).hydrate(field);
+          ref
+              .read(_fieldAddProvider.notifier)
+              .hydrate(field, showAdvanced: widget.showAdvanced);
         }
       });
       return;
@@ -499,8 +510,9 @@ class _FieldAdd extends Notifier<_FieldAddView> {
   @override
   _FieldAddView build() => const _FieldAddView();
 
-  void hydrate(FieldDef field) {
+  void hydrate(FieldDef field, {required bool showAdvanced}) {
     state = _FieldAddView(
+      advanced: showAdvanced,
       type: field.type,
       requiredness: field.requiredness,
       inputMode: field.inputMode,
@@ -516,6 +528,7 @@ class _FieldAdd extends Notifier<_FieldAddView> {
 
   void setAdvanced(bool value) =>
       state = state.copyWith(advanced: value, dirty: true);
+  void markDirty() => state = state.copyWith(dirty: true);
   void setType(FieldType type) =>
       state = state.copyWith(type: type, dirty: true);
   void setRequiredness(Requiredness value) =>
@@ -607,7 +620,7 @@ class _FieldAdd extends Notifier<_FieldAddView> {
       );
       return false;
     }
-    final FieldDef field = _toField(form, key, label);
+    final FieldDef field = _toField(form, template, key, label);
     final Result<TemplateDef> result = await ref
         .read(templateRepositoryProvider)
         .save(_write(template, field));
@@ -616,9 +629,13 @@ class _FieldAdd extends Notifier<_FieldAddView> {
     }
     switch (result) {
       case Success<TemplateDef>():
-        GoRouter.maybeOf(
-          context,
-        )?.go(TemplateLocations.detail(context, template.id));
+        GoRouter.maybeOf(context)?.go(
+          TemplateLocations.detail(
+            context,
+            template.id,
+            showAdvanced: form.widget.showAdvanced,
+          ),
+        );
         return true;
       case FailureResult<TemplateDef>(:final Failure failure):
         state = state.copyWith(
@@ -644,7 +661,15 @@ class _FieldAdd extends Notifier<_FieldAddView> {
     );
   }
 
-  FieldDef _toField(_FieldAddSheetState form, String key, String label) {
+  FieldDef _toField(
+    _FieldAddSheetState form,
+    TemplateDef template,
+    String key,
+    String label,
+  ) {
+    final FieldDef? original = template.fields
+        .where((FieldDef field) => field.fieldKey == key)
+        .firstOrNull;
     return FieldDef(
       fieldKey: key,
       label: label,
@@ -659,10 +684,14 @@ class _FieldAdd extends Notifier<_FieldAddView> {
       autoFill: state.autoFill,
       refine: state.refine,
       options: state.options,
+      group: original?.group,
+      outputColumn: original?.outputColumn,
       requiredWhen: _emptyToNull(form._requiredWhen.text),
       hidden: state.hidden,
       identity: state.identity,
       validation: state.validation,
+      lookup: original?.lookup ?? const <String, Object?>{},
+      sortOrder: original?.sortOrder ?? template.fields.length,
     );
   }
 

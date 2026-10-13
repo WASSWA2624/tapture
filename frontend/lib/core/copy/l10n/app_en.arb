@@ -2745,6 +2745,40 @@
     "description": "Three-way requiredness question on the add-field sheet."
   },
   "fieldAdvanced": "Advanced",
+  "fieldDefaultsTitle": "Defaults and sources",
+  "@fieldDefaultsTitle": {
+    "description": "Template field action and section for fixed defaults and value sources."
+  },
+  "fieldAdvancedSettings": "Defaults, device and generated values, context and validation.",
+  "@fieldAdvancedSettings": {
+    "description": "Explains the existing controls available by opening Advanced on a field."
+  },
+  "fieldDefaultValueHelp": "Used when no entered, context or automatic value applies. An unavailable automatic source stays empty.",
+  "@fieldDefaultValueHelp": {
+    "description": "Explains the fixed default without promising fallback values for unavailable automatic sources."
+  },
+  "fieldContextSettings": "Context",
+  "@fieldContextSettings": {
+    "description": "Groups template field context hierarchy and pinning settings."
+  },
+  "fieldBehaviorSettings": "Field behavior",
+  "@fieldBehaviorSettings": {
+    "description": "Groups a template field's unit, help, refinement, identity and visibility settings."
+  },
+  "fieldFillingSummary": "{details}\nFilling: {source}",
+  "@fieldFillingSummary": {
+    "description": "Existing field metadata followed by the configured source or input permission.",
+    "placeholders": {
+      "details": {
+        "type": "String",
+        "description": "Existing localized field metadata, including unmodified user defaults."
+      },
+      "source": {
+        "type": "String",
+        "description": "Localized configured automatic source or input mode."
+      }
+    }
+  },
   "@fieldAdvanced": {
     "description": "Collapsed section that holds every §12.2 attribute the add flow defaults."
   },

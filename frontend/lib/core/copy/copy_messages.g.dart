@@ -3252,6 +3252,47 @@ final class CopyMessages {
   LocalizedMessage get fieldAdvanced =>
       LocalizedMessage(key: 'fieldAdvanced', fallback: Copy.fieldAdvanced);
 
+  /// Template field defaults and sources, opened without a second editor.
+  LocalizedMessage get fieldDefaultsTitle => LocalizedMessage(
+    key: 'fieldDefaultsTitle',
+    fallback: Copy.fieldDefaultsTitle,
+  );
+
+  /// Describes Advanced while the settings remain collapsed.
+  LocalizedMessage get fieldAdvancedSettings => LocalizedMessage(
+    key: 'fieldAdvancedSettings',
+    fallback: Copy.fieldAdvancedSettings,
+  );
+
+  /// Explains default precedence and honest unavailable sources.
+  LocalizedMessage get fieldDefaultValueHelp => LocalizedMessage(
+    key: 'fieldDefaultValueHelp',
+    fallback: Copy.fieldDefaultValueHelp,
+  );
+
+  /// Context hierarchy and pinning settings for the field.
+  LocalizedMessage get fieldContextSettings => LocalizedMessage(
+    key: 'fieldContextSettings',
+    fallback: Copy.fieldContextSettings,
+  );
+
+  /// Other existing Advanced field attributes.
+  LocalizedMessage get fieldBehaviorSettings => LocalizedMessage(
+    key: 'fieldBehaviorSettings',
+    fallback: Copy.fieldBehaviorSettings,
+  );
+
+  /// Full field metadata and configured filling permission or source.
+  LocalizedMessage fieldFillingSummary(String details, String source) =>
+      LocalizedMessage(
+        key: 'fieldFillingSummary',
+        fallback: Copy.fieldFillingSummary(details, source),
+        arguments: <String, Object?>{
+          'details': LocalizedMessage.encodeArgument(details),
+          'source': LocalizedMessage.encodeArgument(source),
+        },
+      );
+
   /// Reveals the collapsed Advanced section.
   LocalizedMessage get fieldAdvancedShow => LocalizedMessage(
     key: 'fieldAdvancedShow',

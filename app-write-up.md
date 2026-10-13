@@ -606,6 +606,8 @@ input_mode      ANY         - typing, AI, lookup or context may fill it
                 MANUAL_ONLY - AI may never write it (for example financial value)
                 AI_ALLOWED  - AI may propose, human confirms
                 AUTO        - system preview/fill; explicit audited corrections follow §21
+default_value   optional fixed starting value; entered, context and automatic-source
+                precedence follows §21, including unavailable declared sources
 stickable       may be pinned as context (§20)
 context_level   1..n when this field is a level of the project context hierarchy
 auto_fill       NOW | TODAY | TIME | SEQUENCE | OPERATOR | DEVICE | GPS | CONTEXT | LOCAL_ADDRESS
@@ -624,6 +626,19 @@ Extraction eligibility follows the captured field policy (§31). A declared auto
 The builder is a drag-reorder list. New fields ask only **Label**, **Type**, **Required?**; all other attributes
 live under **Advanced**. **Required columns** bulk-edits the whole template using REQUIRED/RECOMMENDED/OPTIONAL
 radio columns and a **Hide** toggle per field (§13.2).
+
+Template screens use the shared **Sectioned** composition (§55.4), with complete field labels and wrapped action
+groups. **Defaults and sources** on a saved template opens its existing field list in configuration mode; selecting
+a field opens the same editor with **Advanced** expanded. Saving returns to that configuration list for the next
+field. The per-field menu offers the same direct entry. Advanced
+groups defaults/filling, context and field behavior, with validation and choices below. New fields still open with
+only the three basic questions visible.
+
+After a template is durably added to a project, these settings edit that independent project copy (§13), not its
+library or shipped original. Setup remains optional and never blocks capture. Saves preserve field keys, groups,
+output mappings, dataset bindings, stored order and inactive source declarations; clearing a default or source is
+explicit, and failed saves or cancelled navigation retain typed settings. Device/user/generated/context sources,
+availability and captured-version behavior remain governed by §§18, 20–21.
 
 ## 13. Shipped Template Library
 

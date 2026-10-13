@@ -13,6 +13,7 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/field_def.dart';
@@ -76,43 +77,50 @@ class OutputMappingScreen extends ConsumerWidget {
     TemplateDef template,
     _OutputView view,
   ) {
-    return ListView(
-      padding: const EdgeInsets.only(bottom: Space.x4),
-      children: <Widget>[
-        AppBanner(
-          message: view.imported
-              ? Copy.of(context).outputMappingImportedHint
-              : Copy.of(context).outputMappingBuiltHint,
-          icon: AppIcons.info,
-          tone: SnackTone.info,
+    return ContentConstraint(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(
+          AppPage.gutter(context),
+          Space.x2,
+          AppPage.gutter(context),
+          Space.x4,
         ),
-        if (Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError) !=
-            null)
+        children: <Widget>[
           AppBanner(
-            message: Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError)!,
-            icon: AppIcons.error,
-            tone: SnackTone.error,
+            message: view.imported
+                ? Copy.of(context).outputMappingImportedHint
+                : Copy.of(context).outputMappingBuiltHint,
+            icon: AppIcons.info,
+            tone: SnackTone.info,
           ),
-        AppSection(
-          children: <Widget>[
-            for (final FieldDef field in template.fields)
-              _OutputColumnField(
-                key: ValueKey<String>('output-${field.fieldKey}'),
-                label: field.label,
-                value: view.columns[field.fieldKey] ?? '',
-                onChanged: (String next) {
-                  ref
-                      .read(_outputMappingProvider(templateId).notifier)
-                      .set(field.fieldKey, next);
-                },
-              ),
-          ],
-        ),
-      ],
+          if (Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError) !=
+              null)
+            AppBanner(
+              message: Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError)!,
+              icon: AppIcons.error,
+              tone: SnackTone.error,
+            ),
+          AppSection(
+            children: <Widget>[
+              for (final FieldDef field in template.fields)
+                _OutputColumnField(
+                  key: ValueKey<String>('output-${field.fieldKey}'),
+                  label: field.label,
+                  value: view.columns[field.fieldKey] ?? '',
+                  onChanged: (String next) {
+                    ref
+                        .read(_outputMappingProvider(templateId).notifier)
+                        .set(field.fieldKey, next);
+                  },
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

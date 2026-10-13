@@ -859,6 +859,19 @@ extension LocalizedCopyResolver on LocalizedCopy {
     'fieldType' => fieldType,
     'fieldRequiredness' => fieldRequiredness,
     'fieldAdvanced' => fieldAdvanced,
+    'fieldDefaultsTitle' => fieldDefaultsTitle,
+    'fieldAdvancedSettings' => fieldAdvancedSettings,
+    'fieldDefaultValueHelp' => fieldDefaultValueHelp,
+    'fieldContextSettings' => fieldContextSettings,
+    'fieldBehaviorSettings' => fieldBehaviorSettings,
+    'fieldFillingSummary' => fieldFillingSummary(
+      (message.argument('details') is LocalizedMessage
+          ? resolve(message.argument('details') as LocalizedMessage)
+          : message.argument('details') as String),
+      (message.argument('source') is LocalizedMessage
+          ? resolve(message.argument('source') as LocalizedMessage)
+          : message.argument('source') as String),
+    ),
     'fieldAdvancedShow' => fieldAdvancedShow,
     'fieldAdvancedHide' => fieldAdvancedHide,
     'fieldKeepAnyway' => fieldKeepAnyway,

@@ -44,10 +44,12 @@ abstract final class TemplateLocations {
     BuildContext context,
     String templateId, {
     String? projectId,
+    bool showAdvanced = false,
   }) {
     return RoutePaths.templateDetail(
       templateId,
       projectId: projectId ?? projectIdOf(context),
+      showAdvanced: showAdvanced,
     );
   }
 

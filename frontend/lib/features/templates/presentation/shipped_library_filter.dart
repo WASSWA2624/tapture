@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -149,41 +151,57 @@ class _Facets extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppMultiChoiceField<String>(
-          key: const ValueKey<String>('shipped-area-filter'),
-          label: localCopy.shippedAreaFilter,
-          // Area names are catalogue data and are shown as stored
-          // (FE-L10N-07).
-          options: <Choice<String>>[
-            for (final MapEntry<String, String> area in areas.entries)
-              Choice<String>(area.key, area.value),
+        AppSection(
+          layout: AppPageLayout.sectioned,
+          children: <Widget>[
+            AppMultiChoiceField<String>(
+              key: const ValueKey<String>('shipped-area-filter'),
+              label: localCopy.shippedAreaFilter,
+              // Area names are catalogue data and are shown as stored
+              // (FE-L10N-07).
+              options: <Choice<String>>[
+                for (final MapEntry<String, String> area in areas.entries)
+                  Choice<String>(area.key, area.value),
+              ],
+              value: filter.areas,
+              onChanged: notifier.setAreas,
+            ),
           ],
-          value: filter.areas,
-          onChanged: notifier.setAreas,
         ),
         if (recordTypes.isNotEmpty) ...<Widget>[
           const SizedBox(height: Space.x3),
-          AppMultiChoiceField<String>(
-            key: const ValueKey<String>('shipped-record-type-filter'),
-            label: localCopy.shippedRecordTypeFilter,
-            options: <Choice<String>>[
-              for (final MapEntry<String, String> type in recordTypes.entries)
-                Choice<String>(type.key, type.value),
+          AppSection(
+            layout: AppPageLayout.sectioned,
+            children: <Widget>[
+              AppMultiChoiceField<String>(
+                key: const ValueKey<String>('shipped-record-type-filter'),
+                label: localCopy.shippedRecordTypeFilter,
+                options: <Choice<String>>[
+                  for (final MapEntry<String, String> type
+                      in recordTypes.entries)
+                    Choice<String>(type.key, type.value),
+                ],
+                value: filter.recordTypes,
+                onChanged: notifier.setRecordTypes,
+              ),
             ],
-            value: filter.recordTypes,
-            onChanged: notifier.setRecordTypes,
           ),
         ],
         const SizedBox(height: Space.x3),
-        AppMultiChoiceField<String>(
-          key: const ValueKey<String>('shipped-tier-filter'),
-          label: localCopy.shippedTierFilter,
-          options: <Choice<String>>[
-            for (final String tier in tiers)
-              Choice<String>(tier, localCopy.shippedTierLabel(tier)),
+        AppSection(
+          layout: AppPageLayout.sectioned,
+          children: <Widget>[
+            AppMultiChoiceField<String>(
+              key: const ValueKey<String>('shipped-tier-filter'),
+              label: localCopy.shippedTierFilter,
+              options: <Choice<String>>[
+                for (final String tier in tiers)
+                  Choice<String>(tier, localCopy.shippedTierLabel(tier)),
+              ],
+              value: filter.tiers,
+              onChanged: notifier.setTiers,
+            ),
           ],
-          value: filter.tiers,
-          onChanged: notifier.setTiers,
         ),
       ],
     );

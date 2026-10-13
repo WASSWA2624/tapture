@@ -233,6 +233,12 @@ void main() {
           find.widgetWithText(AppListTile, 'My library'),
         );
         expect(find.text('My library'), findsOneWidget);
+        await tester.scrollUntilVisible(
+          find.byType(TextField),
+          -80,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextField).first, 'Survey asset');
         await tester.pumpAndSettle();
         await _openAsset(tester);
@@ -352,7 +358,7 @@ Future<void> _matchLibraryGolden(
   expect(tester.takeException(), isNull);
   await expectLater(
     find.byType(MaterialApp),
-    matchesGoldenFile('goldens/template_library_$name.png'),
+    matchesGoldenFile('goldens/template_sectioned_library_$name.png'),
   );
 }
 
@@ -370,7 +376,7 @@ Future<Rect> _visibleLibraryRow(WidgetTester tester, Finder row) async {
           of: find.byType(AppListViewport).first,
           matching: find.byType(Scrollable),
         )
-        .last,
+        .first,
   );
   final Rect viewport = tester.getRect(find.byType(AppListViewport).first);
   Rect visible = tester.getRect(row).intersect(viewport);

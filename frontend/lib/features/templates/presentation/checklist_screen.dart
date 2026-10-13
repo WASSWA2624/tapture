@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tapture/app/route_paths.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/template_def.dart';
@@ -35,10 +39,10 @@ class ChecklistScreen extends ConsumerWidget {
         .whenData(_pick);
     final TemplateDef? template = value.asData?.value;
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-checklist'),
       title: localCopy.checklistTitle,
       scrollable: false,
-      inset: false,
       overflow: template == null
           ? const <AppOverflowAction>[]
           : <AppOverflowAction>[
@@ -79,37 +83,57 @@ class ChecklistScreen extends ConsumerWidget {
       template.rows,
       localizedCopy: Copy.of(context),
     );
-    return ListView.builder(
-      itemCount: lines.length,
-      itemBuilder: (BuildContext context, int index) {
-        final LocalizedCopy localCopy = Copy.of(context);
+    return ContentConstraint(
+      child: ListView.builder(
+        padding: EdgeInsets.fromLTRB(
+          AppPage.gutter(context),
+          Space.x2,
+          AppPage.gutter(context),
+          Space.x4,
+        ),
+        itemCount: lines.length,
+        itemBuilder: (BuildContext context, int index) {
+          final LocalizedCopy localCopy = Copy.of(context);
 
-        final _ChecklistLine line = lines[index];
-        return switch (line) {
-          _ChecklistGroup(
-            :final String name,
-            :final int found,
-            :final int total,
-          ) =>
-            AppSectionHeader(
-              key: ValueKey<String>('checklist-group-$name'),
-              title: localCopy.checklistProgress(
-                group: name,
-                found: found,
-                total: total,
-              ),
-              dense: true,
+          final _ChecklistLine line = lines[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: Space.x3),
+            child: AppSection(
+              children: <Widget>[
+                switch (line) {
+                  _ChecklistGroup(
+                    :final String name,
+                    :final int found,
+                    :final int total,
+                  ) =>
+                    AppSectionHeader(
+                      key: ValueKey<String>('checklist-group-$name'),
+                      title: localCopy.checklistProgress(
+                        group: name,
+                        found: found,
+                        total: total,
+                      ),
+                      dense: true,
+                      wrapText: true,
+                    ),
+                  _ChecklistRow(:final TemplateRow row) => AppPageLayoutScope(
+                    layout: AppPageLayout.readingFirst,
+                    child: AppListTile(
+                      key: ValueKey<String>('checklist-${row.identifier}'),
+                      title: row.label,
+                      status: _pill(row, localizedCopy: Copy.of(context)),
+                      onTap: template.projectId == null
+                          ? null
+                          : () =>
+                                _openCapture(context, template.projectId!, row),
+                    ),
+                  ),
+                },
+              ],
             ),
-          _ChecklistRow(:final TemplateRow row) => AppListTile(
-            key: ValueKey<String>('checklist-${row.identifier}'),
-            title: row.label,
-            status: _pill(row, localizedCopy: Copy.of(context)),
-            onTap: template.projectId == null
-                ? null
-                : () => _openCapture(context, template.projectId!, row),
-          ),
-        };
-      },
+          );
+        },
+      ),
     );
   }
 

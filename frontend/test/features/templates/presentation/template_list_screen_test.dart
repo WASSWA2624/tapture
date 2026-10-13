@@ -334,7 +334,15 @@ void main() {
     ) async {
       await _pump(tester, overrides: listed());
       await tester.pumpAndSettle();
-      expect(find.byType(AppListTile), findsNWidgets(4));
+      expect(
+        await _listedTitles(tester),
+        unorderedEquals(<String>[
+          'Water meter',
+          'Gas meter',
+          'Water pump',
+          'Blank',
+        ]),
+      );
       expect(find.byTooltip(Copy.searchFilters(0)), findsOneWidget);
 
       await tester.tap(filterButton());
@@ -406,7 +414,15 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(Copy.templateFiltersTitle), findsNothing);
-      expect(find.byType(AppListTile), findsNWidgets(4));
+      expect(
+        await _listedTitles(tester),
+        unorderedEquals(<String>[
+          'Water meter',
+          'Gas meter',
+          'Water pump',
+          'Blank',
+        ]),
+      );
       expect(find.byTooltip(Copy.searchFilters(0)), findsOneWidget);
     });
   });
@@ -481,4 +497,31 @@ ProviderContainer _container(WidgetTester tester) {
   return ProviderScope.containerOf(
     tester.element(find.byType(TemplateListScreen)),
   );
+}
+
+Future<Set<String>> _listedTitles(WidgetTester tester) async {
+  final Set<String> titles = <String>{
+    for (final AppListTile tile in tester.widgetList<AppListTile>(
+      find.byType(AppListTile),
+    ))
+      tile.title,
+  };
+  await tester.scrollUntilVisible(
+    find.text('Blank'),
+    120,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await tester.pumpAndSettle();
+  titles.addAll(
+    tester
+        .widgetList<AppListTile>(find.byType(AppListTile))
+        .map((AppListTile tile) => tile.title),
+  );
+  await tester.scrollUntilVisible(
+    find.byType(EditableText),
+    -120,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await tester.pumpAndSettle();
+  return titles;
 }

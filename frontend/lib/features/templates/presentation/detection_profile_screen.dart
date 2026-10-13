@@ -17,6 +17,7 @@ import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/field_def.dart';
@@ -77,115 +78,122 @@ class DetectionProfileScreen extends ConsumerWidget {
     );
     final List<FieldDef> patterned = _patterned(template.fields);
     final List<String> datasets = _datasetsOf(template.fields);
-    return ListView(
-      padding: const EdgeInsets.only(bottom: Space.x4),
-      children: <Widget>[
-        AppBanner(
-          message: Copy.of(context).detectionProfileExplain,
-          icon: AppIcons.info,
-          tone: SnackTone.info,
+    return ContentConstraint(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(
+          AppPage.gutter(context),
+          Space.x2,
+          AppPage.gutter(context),
+          Space.x4,
         ),
-        if (Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError) !=
-            null)
+        children: <Widget>[
           AppBanner(
-            message: Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError)!,
-            icon: AppIcons.error,
-            tone: SnackTone.error,
+            message: Copy.of(context).detectionProfileExplain,
+            icon: AppIcons.info,
+            tone: SnackTone.info,
           ),
-        AppSection(
-          children: <Widget>[
-            _TokenField(
-              key: const ValueKey<String>('detection-classes'),
-              label: Copy.of(context).detectionProfileClasses,
-              value: view.objectClasses.join(', '),
-              onChanged: controller.setClasses,
+          if (Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError) !=
+              null)
+            AppBanner(
+              message: Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError)!,
+              icon: AppIcons.error,
+              tone: SnackTone.error,
             ),
-            _TokenField(
-              key: const ValueKey<String>('detection-keywords'),
-              label: Copy.of(context).detectionProfileKeywords,
-              value: view.keywords.join(', '),
-              onChanged: controller.setKeywords,
-            ),
-          ],
-        ),
-        const SizedBox(height: Space.x3),
-        AppSection(
-          title: Copy.of(context).detectionProfilePatterns,
-          children: <Widget>[
-            if (patterned.isEmpty)
-              AppBanner(
-                message: Copy.of(context).detectionProfileNoPatterns,
-                icon: AppIcons.info,
-                tone: SnackTone.info,
-              )
-            else
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  Space.x4,
-                  Space.x2,
-                  Space.x4,
-                  0,
-                ),
-                child: AppCheckboxGroup<String>(
-                  label: Copy.of(context).detectionProfilePatterns,
-                  showLabel: false,
-                  value: view.identifierFields,
-                  options: <Choice<String>>[
-                    for (final FieldDef field in patterned)
-                      Choice<String>(field.fieldKey, field.label),
-                  ],
-                  onChanged: controller.setIdentifierFields,
-                ),
+          AppSection(
+            children: <Widget>[
+              _TokenField(
+                key: const ValueKey<String>('detection-classes'),
+                label: Copy.of(context).detectionProfileClasses,
+                value: view.objectClasses.join(', '),
+                onChanged: controller.setClasses,
               ),
-          ],
-        ),
-        const SizedBox(height: Space.x3),
-        AppSection(
-          title: Copy.of(context).detectionProfileDatasets,
-          children: <Widget>[
-            if (datasets.isEmpty)
-              AppBanner(
-                message: Copy.of(context).detectionProfileNoDatasets,
-                icon: AppIcons.info,
-                tone: SnackTone.info,
-              )
-            else
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  Space.x4,
-                  Space.x2,
-                  Space.x4,
-                  0,
-                ),
-                child: AppCheckboxGroup<String>(
-                  label: Copy.of(context).detectionProfileDatasets,
-                  showLabel: false,
-                  value: view.datasets,
-                  options: <Choice<String>>[
-                    for (final String dataset in datasets)
-                      Choice<String>(dataset, dataset),
-                  ],
-                  onChanged: controller.setDatasets,
-                ),
+              _TokenField(
+                key: const ValueKey<String>('detection-keywords'),
+                label: Copy.of(context).detectionProfileKeywords,
+                value: view.keywords.join(', '),
+                onChanged: controller.setKeywords,
               ),
-          ],
-        ),
-        const SizedBox(height: Space.x3),
-        AppSection(
-          children: <Widget>[
-            _TokenField(
-              key: const ValueKey<String>('detection-negative'),
-              label: Copy.of(context).detectionProfileNegative,
-              value: view.negativeKeywords.join(', '),
-              onChanged: controller.setNegative,
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+          const SizedBox(height: Space.x3),
+          AppSection(
+            title: Copy.of(context).detectionProfilePatterns,
+            children: <Widget>[
+              if (patterned.isEmpty)
+                AppBanner(
+                  message: Copy.of(context).detectionProfileNoPatterns,
+                  icon: AppIcons.info,
+                  tone: SnackTone.info,
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    Space.x4,
+                    Space.x2,
+                    Space.x4,
+                    0,
+                  ),
+                  child: AppCheckboxGroup<String>(
+                    label: Copy.of(context).detectionProfilePatterns,
+                    showLabel: false,
+                    value: view.identifierFields,
+                    options: <Choice<String>>[
+                      for (final FieldDef field in patterned)
+                        Choice<String>(field.fieldKey, field.label),
+                    ],
+                    onChanged: controller.setIdentifierFields,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: Space.x3),
+          AppSection(
+            title: Copy.of(context).detectionProfileDatasets,
+            children: <Widget>[
+              if (datasets.isEmpty)
+                AppBanner(
+                  message: Copy.of(context).detectionProfileNoDatasets,
+                  icon: AppIcons.info,
+                  tone: SnackTone.info,
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    Space.x4,
+                    Space.x2,
+                    Space.x4,
+                    0,
+                  ),
+                  child: AppCheckboxGroup<String>(
+                    label: Copy.of(context).detectionProfileDatasets,
+                    showLabel: false,
+                    value: view.datasets,
+                    options: <Choice<String>>[
+                      for (final String dataset in datasets)
+                        Choice<String>(dataset, dataset),
+                    ],
+                    onChanged: controller.setDatasets,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: Space.x3),
+          AppSection(
+            children: <Widget>[
+              _TokenField(
+                key: const ValueKey<String>('detection-negative'),
+                label: Copy.of(context).detectionProfileNegative,
+                value: view.negativeKeywords.join(', '),
+                onChanged: controller.setNegative,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

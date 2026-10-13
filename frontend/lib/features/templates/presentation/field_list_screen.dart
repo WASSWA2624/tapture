@@ -3,20 +3,25 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tapture/app/route_paths.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/field_def.dart';
@@ -36,10 +41,17 @@ export 'field_list_query.dart';
 /// and retired.
 class FieldListScreen extends ConsumerWidget {
   /// Creates the list for [templateId].
-  const FieldListScreen({super.key, required this.templateId});
+  const FieldListScreen({
+    super.key,
+    required this.templateId,
+    this.showAdvanced = false,
+  });
 
   /// Template whose fields this screen manages.
   final String templateId;
+
+  /// Opens a selected field's existing defaults and source controls directly.
+  final bool showAdvanced;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -50,9 +62,12 @@ class FieldListScreen extends ConsumerWidget {
         .whenData(_pick);
     final TemplateDef? template = value.asData?.value;
     return AppPage(
-      layout: AppPageLayout.readingFirst,
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-template-fields'),
-      title: template?.name ?? localCopy.templateFieldsTitle,
+      title: showAdvanced
+          ? localCopy.fieldDefaultsTitle
+          : template?.name ?? localCopy.templateFieldsTitle,
+      headerDetail: showAdvanced ? template?.name : null,
       scrollable: false,
       overflow: template == null
           ? const <AppOverflowAction>[]
@@ -118,38 +133,41 @@ class FieldListScreen extends ConsumerWidget {
                   FieldListFilter.matches(field, facets))
                 field,
           ];
-          return Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  Space.x4,
+          final double gutter = AppPage.gutter(context);
+          return ContentConstraint(
+            child: AppListViewport(
+              header: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  gutter,
                   Space.x1,
-                  Space.x4,
+                  gutter,
                   Space.x2,
                 ),
-                child: AppSearchField(
-                  hint: localCopy.search,
-                  text: query,
-                  onChanged: (String text) {
-                    ref.read(fieldListQueryProvider.notifier).set(text);
-                  },
-                  onFilter: () => unawaited(
-                    showFieldListFilters(context, ref, loaded.fields),
-                  ),
-                  activeFilterCount: activeFilters,
+                child: AppSection(
+                  children: <Widget>[
+                    AppSearchField(
+                      hint: localCopy.search,
+                      text: query,
+                      onChanged: (String text) {
+                        ref.read(fieldListQueryProvider.notifier).set(text);
+                      },
+                      onFilter: () => unawaited(
+                        showFieldListFilters(context, ref, loaded.fields),
+                      ),
+                      activeFilterCount: activeFilters,
+                    ),
+                  ],
                 ),
               ),
-              Expanded(
-                child: _fieldList(
-                  context,
-                  ref,
-                  loaded,
-                  fields,
-                  narrowed: needle.isNotEmpty || activeFilters > 0,
-                  filtered: activeFilters > 0,
-                ),
+              body: _fieldList(
+                context,
+                ref,
+                loaded,
+                fields,
+                narrowed: needle.isNotEmpty || activeFilters > 0,
+                filtered: activeFilters > 0,
               ),
-            ],
+            ),
           );
         },
       ),
@@ -194,6 +212,7 @@ class FieldListScreen extends ConsumerWidget {
             field: field,
             index: stored,
             slots: sections[field.requiredness]!,
+            showAdvanced: showAdvanced,
           );
         },
       );
@@ -242,6 +261,7 @@ class FieldListScreen extends ConsumerWidget {
           index: slots[position],
           slots: slots,
           dragIndex: position,
+          showAdvanced: showAdvanced,
         );
       },
     );
@@ -265,6 +285,7 @@ class _FieldRow extends ConsumerWidget {
     required this.index,
     required this.slots,
     this.dragIndex,
+    this.showAdvanced = false,
   });
 
   final TemplateDef template;
@@ -279,99 +300,167 @@ class _FieldRow extends ConsumerWidget {
   /// Place in its section's reorderable list; null lists it without drag.
   final int? dragIndex;
 
+  final bool showAdvanced;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final int position = slots.indexOf(index);
     final int? dragIndex = this.dragIndex;
-    return AppListTile(
-      title: field.label,
-      subtitle: localCopy.fieldRowSubtitle(
-        typeLabel: localCopy.fieldTypeLabel(field.type.name),
-        requiredField: field.requiredness == Requiredness.required,
-        calculated: field.type == FieldType.computed,
-        fromPhotos: _mentioned(template.detection, field.fieldKey),
-        pinnedContext: field.stickable,
-        contextLevel: field.contextLevel,
-        defaultValue: field.defaultValue,
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        AppPage.gutter(context),
+        0,
+        AppPage.gutter(context),
+        Space.x3,
       ),
-      status: _pill(field.requiredness, localizedCopy: Copy.of(context)),
-      onTap: () => _openEdit(context, template.id, field.fieldKey),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: AppSection(
         children: <Widget>[
-          // Up and down stay inside the field's section (FBK0000003).
-          AppIconButton(
-            icon: AppIcons.moveUp,
-            semanticLabel: localCopy.fieldMoveUp(field.label),
-            tooltip: localCopy.fieldMoveUp(field.label),
-            outlined: false,
-            onPressed: position <= 0
-                ? null
-                : () => unawaited(
-                    ref
-                        .read(_fieldListProvider.notifier)
-                        .reorder(
-                          context,
-                          template,
-                          slots,
-                          position,
-                          position - 1,
-                        ),
+          AppPageLayoutScope(
+            layout: AppPageLayout.readingFirst,
+            child: AppListTile(
+              title: field.label,
+              subtitle: _subtitle(field, template, localCopy),
+              status: _pill(
+                field.requiredness,
+                localizedCopy: Copy.of(context),
+              ),
+              onTap: () => _openEdit(
+                context,
+                template.id,
+                field.fieldKey,
+                showAdvanced: showAdvanced,
+              ),
+              trailing: Wrap(
+                children: <Widget>[
+                  AppIconButton(
+                    icon: AppIcons.moveUp,
+                    semanticLabel: localCopy.fieldMoveUp(field.label),
+                    tooltip: localCopy.fieldMoveUp(field.label),
+                    outlined: false,
+                    onPressed: position <= 0
+                        ? null
+                        : () => unawaited(
+                            ref
+                                .read(_fieldListProvider.notifier)
+                                .reorder(
+                                  context,
+                                  template,
+                                  slots,
+                                  position,
+                                  position - 1,
+                                ),
+                          ),
                   ),
-          ),
-          AppIconButton(
-            icon: AppIcons.moveDown,
-            semanticLabel: localCopy.fieldMoveDown(field.label),
-            tooltip: localCopy.fieldMoveDown(field.label),
-            outlined: false,
-            onPressed: position < 0 || position >= slots.length - 1
-                ? null
-                : () => unawaited(
-                    ref
-                        .read(_fieldListProvider.notifier)
-                        .reorder(
-                          context,
-                          template,
-                          slots,
-                          position,
-                          position + 1,
-                        ),
+                  AppIconButton(
+                    icon: AppIcons.moveDown,
+                    semanticLabel: localCopy.fieldMoveDown(field.label),
+                    tooltip: localCopy.fieldMoveDown(field.label),
+                    outlined: false,
+                    onPressed: position < 0 || position >= slots.length - 1
+                        ? null
+                        : () => unawaited(
+                            ref
+                                .read(_fieldListProvider.notifier)
+                                .reorder(
+                                  context,
+                                  template,
+                                  slots,
+                                  position,
+                                  position + 1,
+                                ),
+                          ),
                   ),
-          ),
-          if (dragIndex != null)
-            ReorderableDragStartListener(
-              index: dragIndex,
-              child: AppIconButton(
-                icon: AppIcons.reorder,
-                semanticLabel: localCopy.fieldReorder(field.label),
-                tooltip: localCopy.fieldReorder(field.label),
-                outlined: false,
+                  if (dragIndex != null)
+                    ReorderableDragStartListener(
+                      index: dragIndex,
+                      child: AppIconButton(
+                        icon: AppIcons.reorder,
+                        semanticLabel: localCopy.fieldReorder(field.label),
+                        tooltip: localCopy.fieldReorder(field.label),
+                        outlined: false,
+                      ),
+                    ),
+                  AppOverflowMenu(
+                    items: <AppOverflowAction>[
+                      AppOverflowAction(
+                        label: localCopy.templatesEditField,
+                        icon: AppIcons.edit,
+                        onTap: () =>
+                            _openEdit(context, template.id, field.fieldKey),
+                      ),
+                      AppOverflowAction(
+                        label: localCopy.fieldDefaultsTitle,
+                        icon: AppIcons.rules,
+                        onTap: () => _openEdit(
+                          context,
+                          template.id,
+                          field.fieldKey,
+                          showAdvanced: true,
+                        ),
+                      ),
+                      AppOverflowAction(
+                        label: localCopy.templatesDeleteField,
+                        icon: AppIcons.delete,
+                        onTap: () => unawaited(
+                          ref
+                              .read(_fieldListProvider.notifier)
+                              .delete(
+                                context,
+                                template: template,
+                                field: field,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          AppOverflowMenu(
-            items: <AppOverflowAction>[
-              AppOverflowAction(
-                label: localCopy.templatesEditField,
-                icon: AppIcons.edit,
-                onTap: () => _openEdit(context, template.id, field.fieldKey),
-              ),
-              AppOverflowAction(
-                label: localCopy.templatesDeleteField,
-                icon: AppIcons.delete,
-                onTap: () => unawaited(
-                  ref
-                      .read(_fieldListProvider.notifier)
-                      .delete(context, template: template, field: field),
-                ),
-              ),
-            ],
           ),
         ],
       ),
     );
   }
+}
+
+String _subtitle(
+  FieldDef field,
+  TemplateDef template,
+  LocalizedCopy localCopy,
+) {
+  final String details = localCopy.fieldRowSubtitle(
+    typeLabel: localCopy.fieldTypeLabel(field.type.name),
+    requiredField: field.requiredness == Requiredness.required,
+    calculated: field.type == FieldType.computed,
+    fromPhotos: _mentioned(template.detection, field.fieldKey),
+    pinnedContext: field.stickable,
+    contextLevel: field.contextLevel,
+    defaultValue: field.defaultValue,
+  );
+  final AutoFill? source = field.autoFill;
+  if (source != null) {
+    return localCopy.fieldFillingSummary(
+      details,
+      localCopy.fieldAutoFillLabel(source.name),
+    );
+  }
+  return switch (field.inputMode) {
+    InputMode.any => details,
+    InputMode.manualOnly => localCopy.fieldFillingSummary(
+      details,
+      localCopy.fieldInputManual,
+    ),
+    InputMode.aiAllowed => localCopy.fieldFillingSummary(
+      details,
+      localCopy.fieldInputAi,
+    ),
+    InputMode.auto => localCopy.fieldFillingSummary(
+      details,
+      localCopy.fieldInputAuto,
+    ),
+  };
 }
 
 /// The stored positions of each requiredness's fields, in stored order.
@@ -572,9 +661,19 @@ void _openDetection(BuildContext context, String templateId) {
   context.go(TemplateLocations.child(context, templateId, 'detection'));
 }
 
-void _openEdit(BuildContext context, String templateId, String fieldKey) {
+void _openEdit(
+  BuildContext context,
+  String templateId,
+  String fieldKey, {
+  bool showAdvanced = false,
+}) {
   context.go(
-    '${TemplateLocations.detail(context, templateId)}/fields/${Uri.encodeComponent(fieldKey)}',
+    RoutePaths.templateField(
+      templateId,
+      fieldKey,
+      projectId: TemplateLocations.projectIdOf(context),
+      showAdvanced: showAdvanced,
+    ),
   );
 }
 

@@ -868,3 +868,11 @@ TAPTURE-*.zip
 !/test/features/import/presentation/record_mapping_screen_test.dart
 !/test/features/quality/presentation/duplicate_compare_screen_test.dart
 !/test/features/quality/presentation/quality_routes.dart
+
+# Template Sectioned layout and defaults/source regressions ship with this change.
+!/test/features/templates/presentation/field_defaults_test.dart
+!/test/features/templates/presentation/template_defaults_flow_test.dart
+!/test/features/templates/presentation/template_sectioned_layout_test.dart
+!/test/features/templates/presentation/template_sectioned_fixtures.dart
+!/test/features/templates/presentation/goldens/
+!/test/features/templates/presentation/goldens/template_sectioned_library_*.png

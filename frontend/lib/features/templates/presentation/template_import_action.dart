@@ -12,6 +12,7 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -43,7 +44,7 @@ class TemplateImportAction extends ConsumerWidget {
         ref.watch(currentProjectProvider);
     if (projectId == null || projectId.isEmpty) {
       return AppPage(
-        layout: AppPageLayout.readingFirst,
+        layout: AppPageLayout.sectioned,
         key: const ValueKey<String>('route-template-import'),
         title: localCopy.templatesImport,
         body: AppEmptyState(
@@ -65,7 +66,7 @@ class TemplateImportAction extends ConsumerWidget {
     Future<void> choose() => _choose(context, controller);
     Future<void> save() => _save(context, controller);
     return AppPage(
-      layout: AppPageLayout.readingFirst,
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-template-import'),
       title: localCopy.templatesImport,
       body: AsyncValueView<TemplateDef?>(
@@ -79,7 +80,9 @@ class TemplateImportAction extends ConsumerWidget {
           onAction: choose,
         ),
         onRetry: choose,
-        data: (TemplateDef? draft) => AppListTile(title: draft!.name),
+        data: (TemplateDef? draft) => AppSection(
+          children: <Widget>[AppListTile(title: draft!.name, wrapText: true)],
+        ),
       ),
       footer: value.value == null
           ? null

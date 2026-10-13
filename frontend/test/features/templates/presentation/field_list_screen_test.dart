@@ -233,6 +233,11 @@ void main() {
 
   testWidgets('move down swaps two fields of a section and leaves output '
       'columns', (WidgetTester tester) async {
+    // Keep the fixture's three rows visible while asserting their visual order.
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(900, 1400);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
     final FakeTemplateRepository templates = FakeTemplateRepository();
     addTearDown(templates.dispose);
     final TemplateDef stored = _ok(

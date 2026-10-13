@@ -3446,6 +3446,42 @@ abstract class AppLocalizations {
   /// **'Advanced'**
   String get fieldAdvanced;
 
+  /// Template field action and section for fixed defaults and value sources.
+  ///
+  /// In en, this message translates to:
+  /// **'Defaults and sources'**
+  String get fieldDefaultsTitle;
+
+  /// Explains the existing controls available by opening Advanced on a field.
+  ///
+  /// In en, this message translates to:
+  /// **'Defaults, device and generated values, context and validation.'**
+  String get fieldAdvancedSettings;
+
+  /// Explains the fixed default without promising fallback values for unavailable automatic sources.
+  ///
+  /// In en, this message translates to:
+  /// **'Used when no entered, context or automatic value applies. An unavailable automatic source stays empty.'**
+  String get fieldDefaultValueHelp;
+
+  /// Groups template field context hierarchy and pinning settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Context'**
+  String get fieldContextSettings;
+
+  /// Groups a template field's unit, help, refinement, identity and visibility settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Field behavior'**
+  String get fieldBehaviorSettings;
+
+  /// Existing field metadata followed by the configured source or input permission.
+  ///
+  /// In en, this message translates to:
+  /// **'{details}\nFilling: {source}'**
+  String fieldFillingSummary(String details, String source);
+
   /// Reveals the collapsed Advanced section.
   ///
   /// In en, this message translates to:

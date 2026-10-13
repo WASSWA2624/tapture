@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -105,36 +107,46 @@ class _FieldFacets extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppMultiChoiceField<Requiredness>(
-          key: const ValueKey<String>('field-requiredness-filter'),
-          label: localCopy.fieldRequirednessFilter,
-          options: <Choice<Requiredness>>[
-            Choice<Requiredness>(
-              Requiredness.required,
-              localCopy.fieldRequired,
-            ),
-            Choice<Requiredness>(
-              Requiredness.recommended,
-              localCopy.fieldRecommended,
-            ),
-            Choice<Requiredness>(
-              Requiredness.optional,
-              localCopy.fieldOptional,
+        AppSection(
+          layout: AppPageLayout.sectioned,
+          children: <Widget>[
+            AppMultiChoiceField<Requiredness>(
+              key: const ValueKey<String>('field-requiredness-filter'),
+              label: localCopy.fieldRequirednessFilter,
+              options: <Choice<Requiredness>>[
+                Choice<Requiredness>(
+                  Requiredness.required,
+                  localCopy.fieldRequired,
+                ),
+                Choice<Requiredness>(
+                  Requiredness.recommended,
+                  localCopy.fieldRecommended,
+                ),
+                Choice<Requiredness>(
+                  Requiredness.optional,
+                  localCopy.fieldOptional,
+                ),
+              ],
+              value: facets.requiredness,
+              onChanged: filter.setRequiredness,
             ),
           ],
-          value: facets.requiredness,
-          onChanged: filter.setRequiredness,
         ),
         const SizedBox(height: Space.x3),
-        AppMultiChoiceField<FieldType>(
-          key: const ValueKey<String>('field-type-filter'),
-          label: localCopy.fieldType,
-          options: <Choice<FieldType>>[
-            for (final FieldType type in types)
-              Choice<FieldType>(type, localCopy.fieldTypeLabel(type.name)),
+        AppSection(
+          layout: AppPageLayout.sectioned,
+          children: <Widget>[
+            AppMultiChoiceField<FieldType>(
+              key: const ValueKey<String>('field-type-filter'),
+              label: localCopy.fieldType,
+              options: <Choice<FieldType>>[
+                for (final FieldType type in types)
+                  Choice<FieldType>(type, localCopy.fieldTypeLabel(type.name)),
+              ],
+              value: facets.types,
+              onChanged: filter.setTypes,
+            ),
           ],
-          value: facets.types,
-          onChanged: filter.setTypes,
         ),
       ],
     );

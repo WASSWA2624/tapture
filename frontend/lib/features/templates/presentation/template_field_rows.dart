@@ -63,6 +63,7 @@ class TemplateFieldRows extends StatelessWidget {
               AppSectionHeader(
                 key: ValueKey<String>('template-field-row-${drafts[index].id}'),
                 title: localCopy.templateFieldRowTitle(index + 1),
+                wrapText: true,
                 action: AppIconButton(
                   icon: AppIcons.remove,
                   tooltip: localCopy.templateFieldRowRemove,

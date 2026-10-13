@@ -9,13 +9,14 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_radio_group.dart';
 import 'package:tapture/core/widgets/fields/app_switch_tile.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/field_def.dart';
@@ -43,7 +44,7 @@ class RequiredColumnsScreen extends ConsumerWidget {
       requirednessControllerProvider(templateId),
     );
     return AppPage(
-      layout: AppPageLayout.readingFirst,
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-template-required'),
       title: localCopy.requiredColumnsTitle,
       scrollable: false,
@@ -79,26 +80,32 @@ class RequiredColumnsScreen extends ConsumerWidget {
     final LocalizedCopy localCopy = Copy.of(context);
 
     final List<_Group> groups = _groups(view, localizedCopy: Copy.of(context));
-    return ListView(
-      padding: const EdgeInsets.only(bottom: Space.x4),
-      children: <Widget>[
-        if (Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError) !=
-            null)
-          AppBanner(
-            message: Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError)!,
-            icon: AppIcons.error,
-            tone: SnackTone.error,
-          ),
-        for (final _Group group in groups) ...<Widget>[
-          AppSectionHeader(
-            title: group.title,
-            dense: true,
-            action: group.inherited
-                ? AppButton(
+    return ContentConstraint(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(
+          AppPage.gutter(context),
+          Space.x2,
+          AppPage.gutter(context),
+          Space.x4,
+        ),
+        children: <Widget>[
+          if (Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError) !=
+              null)
+            AppBanner(
+              message: Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError)!,
+              icon: AppIcons.error,
+              tone: SnackTone.error,
+            ),
+          for (final _Group group in groups) ...<Widget>[
+            AppSection(
+              title: group.title,
+              children: <Widget>[
+                if (group.inherited)
+                  AppButton(
                     label: group.expanded
                         ? localCopy.requiredColumnHideGroup
                         : localCopy.requiredColumnShowGroup,
@@ -110,14 +117,16 @@ class RequiredColumnsScreen extends ConsumerWidget {
                           )
                           .toggleGroup(group.key);
                     },
-                  )
-                : null,
-          ),
-          if (group.expanded)
-            for (final FieldDef field in group.fields)
-              _row(context, ref, view, field),
+                  ),
+                if (group.expanded)
+                  for (final FieldDef field in group.fields)
+                    _row(context, ref, view, field),
+              ],
+            ),
+            const SizedBox(height: Space.x3),
+          ],
         ],
-      ],
+      ),
     );
   }
 
@@ -143,6 +152,7 @@ class RequiredColumnsScreen extends ConsumerWidget {
                 )
               : null,
           dense: true,
+          wrapText: true,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: Space.x4),

@@ -1087,7 +1087,12 @@ List<RouteBase> _templateChildRoutes() {
     GoRoute(
       path: ':templateId',
       builder: (BuildContext _, GoRouterState state) {
-        return FieldListScreen(templateId: state.pathParameters['templateId']!);
+        return FieldListScreen(
+          templateId: state.pathParameters['templateId']!,
+          showAdvanced:
+              state.uri.queryParameters[RoutePaths.fieldAdvancedQuery] ==
+              'true',
+        );
       },
       routes: <RouteBase>[
         GoRoute(
@@ -1160,6 +1165,9 @@ List<RouteBase> _templateChildRoutes() {
             return FieldAddSheet(
               templateId: state.pathParameters['templateId']!,
               fieldKey: state.pathParameters['fieldKey'],
+              showAdvanced:
+                  state.uri.queryParameters[RoutePaths.fieldAdvancedQuery] ==
+                  'true',
             );
           },
           routes: <RouteBase>[

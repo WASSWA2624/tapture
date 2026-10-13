@@ -7,6 +7,8 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
@@ -43,6 +45,11 @@ abstract final class TemplateActions {
         label: localCopy.templatesOpen,
         icon: AppIcons.template,
         onTap: () => _open(context, template.id),
+      ),
+      AppOverflowAction(
+        label: localCopy.fieldDefaultsTitle,
+        icon: AppIcons.rules,
+        onTap: () => _open(context, template.id, showAdvanced: true),
       ),
       AppOverflowAction(
         label: localCopy.projectsDuplicate,
@@ -144,8 +151,8 @@ Future<void> _delete(
   }
 }
 
-void _open(BuildContext context, String id) {
-  context.go(TemplateLocations.detail(context, id));
+void _open(BuildContext context, String id, {bool showAdvanced = false}) {
+  context.go(TemplateLocations.detail(context, id, showAdvanced: showAdvanced));
 }
 
 Future<void> _rename(
@@ -199,14 +206,19 @@ class _RenameTemplateState extends State<_RenameTemplate> with StateRefresh {
 
     return AppForm(
       compact: true,
+      layout: AppPageLayout.sectioned,
       fields: <Widget>[
-        AppTextField(
-          label: localCopy.projectName,
-          controller: _name,
-          errorText: _error,
-          onChanged: (_) {
-            if (_error != null) refresh(() => _error = null);
-          },
+        AppSection(
+          children: <Widget>[
+            AppTextField(
+              label: localCopy.projectName,
+              controller: _name,
+              errorText: _error,
+              onChanged: (_) {
+                if (_error != null) refresh(() => _error = null);
+              },
+            ),
+          ],
         ),
       ],
       submitLabel: localCopy.save,

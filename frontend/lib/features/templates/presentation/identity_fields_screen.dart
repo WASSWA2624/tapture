@@ -8,11 +8,13 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_checkbox_group.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/field_def.dart';
@@ -38,7 +40,7 @@ class IdentityFieldsScreen extends ConsumerWidget {
         .whenData(_pick);
     final _IdentityView view = ref.watch(_identityFieldsProvider(templateId));
     return AppPage(
-      layout: AppPageLayout.readingFirst,
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-template-identity'),
       title: localCopy.identityFieldsTitle,
       scrollable: false,
@@ -76,41 +78,52 @@ class IdentityFieldsScreen extends ConsumerWidget {
     TemplateDef template,
     _IdentityView view,
   ) {
-    return ListView(
-      padding: const EdgeInsets.only(bottom: Space.x4),
-      children: <Widget>[
-        AppBanner(
-          message: Copy.of(context).identityFieldsExplain,
-          icon: AppIcons.info,
-          tone: SnackTone.info,
+    return ContentConstraint(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(
+          AppPage.gutter(context),
+          Space.x2,
+          AppPage.gutter(context),
+          Space.x4,
         ),
-        if (Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError) !=
-            null)
+        children: <Widget>[
           AppBanner(
-            message: Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError)!,
-            icon: AppIcons.error,
-            tone: SnackTone.error,
+            message: Copy.of(context).identityFieldsExplain,
+            icon: AppIcons.info,
+            tone: SnackTone.info,
           ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(Space.x4, Space.x2, Space.x4, 0),
-          child: AppCheckboxGroup<String>(
-            label: Copy.of(context).identityFieldsTitle,
-            showLabel: false,
-            value: view.selected,
-            options: <Choice<String>>[
-              for (final FieldDef field in template.fields)
-                Choice<String>(field.fieldKey, field.label),
+          if (Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError) !=
+              null)
+            AppBanner(
+              message: Copy.of(
+                context,
+              ).stateText(view.localizedSaveError, view.saveError)!,
+              icon: AppIcons.error,
+              tone: SnackTone.error,
+            ),
+          AppSection(
+            title: Copy.of(context).identityFieldsTitle,
+            children: <Widget>[
+              AppCheckboxGroup<String>(
+                label: Copy.of(context).identityFieldsTitle,
+                showLabel: false,
+                value: view.selected,
+                options: <Choice<String>>[
+                  for (final FieldDef field in template.fields)
+                    Choice<String>(field.fieldKey, field.label),
+                ],
+                onChanged: (Set<String> next) {
+                  ref
+                      .read(_identityFieldsProvider(templateId).notifier)
+                      .set(next);
+                },
+              ),
             ],
-            onChanged: (Set<String> next) {
-              ref.read(_identityFieldsProvider(templateId).notifier).set(next);
-            },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

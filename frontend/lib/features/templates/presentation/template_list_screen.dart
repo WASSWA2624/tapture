@@ -11,10 +11,13 @@ import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/projects/projects.dart';
 
@@ -50,12 +53,12 @@ class TemplateListScreen extends ConsumerWidget {
       templateRecordCountsProvider(projectId!),
     );
     return AppPage(
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-templates'),
       title: projectId == null
           ? localCopy.navTemplates
           : localCopy.projectTemplatesTitle,
       showAppBar: false,
-      inset: false,
       scrollable: false,
       footer: value.hasValue
           ? Column(
@@ -96,57 +99,84 @@ class TemplateListScreen extends ConsumerWidget {
                   TemplateListFilter.matches(template, kinds))
                 template,
           ];
-          return AppListViewport(
-            header: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                Space.x4,
-                Space.x1,
-                Space.x4,
-                Space.x2,
+          final double gutter = AppPage.gutter(context);
+          return ContentConstraint(
+            child: AppListViewport(
+              header: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  gutter,
+                  Space.x1,
+                  gutter,
+                  Space.x2,
+                ),
+                child: AppSection(
+                  children: <Widget>[
+                    AppSearchField(
+                      hint: localCopy.search,
+                      text: query,
+                      onChanged: (String text) {
+                        ref.read(templateListQueryProvider.notifier).set(text);
+                      },
+                      onFilter: () => unawaited(
+                        showTemplateListFilters(context, ref, rows),
+                      ),
+                      activeFilterCount: kinds.length,
+                    ),
+                  ],
+                ),
               ),
-              child: AppSearchField(
-                hint: localCopy.search,
-                text: query,
-                onChanged: (String text) {
-                  ref.read(templateListQueryProvider.notifier).set(text);
-                },
-                onFilter: () =>
-                    unawaited(showTemplateListFilters(context, ref, rows)),
-                activeFilterCount: kinds.length,
-              ),
-            ),
-            body: visible.isEmpty
-                ? (rows.isEmpty
-                      ? _empty(localizedCopy: Copy.of(context))
-                      : AppEmptyState(
-                          icon: AppIcons.searchEmpty,
-                          headline: localCopy.templatesNoMatch,
-                          message: kinds.isEmpty
-                              ? localCopy.searchNoMatchMessage
-                              : localCopy.searchFilterNoMatchMessage,
-                        ))
-                : ListView.builder(
-                    itemCount: visible.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final TemplateDef template = visible[index];
-                      return AppListTile(
-                        title: template.name,
-                        subtitle: localCopy.templateListSubtitle(
-                          fields: template.fields.length,
-                          records: recordCounts[template.id] ?? 0,
-                        ),
-                        trailing: AppOverflowMenu(
-                          items: TemplateActions.items(
-                            context,
-                            ref,
-                            template,
-                            recordCounts[template.id] ?? 0,
+              body: visible.isEmpty
+                  ? (rows.isEmpty
+                        ? _empty(localizedCopy: Copy.of(context))
+                        : AppEmptyState(
+                            icon: AppIcons.searchEmpty,
+                            headline: localCopy.templatesNoMatch,
+                            message: kinds.isEmpty
+                                ? localCopy.searchNoMatchMessage
+                                : localCopy.searchFilterNoMatchMessage,
+                          ))
+                  : ListView.builder(
+                      padding: EdgeInsets.fromLTRB(
+                        gutter,
+                        Space.x2,
+                        gutter,
+                        Space.x4,
+                      ),
+                      itemCount: visible.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final TemplateDef template = visible[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: Space.x3),
+                          child: AppSection(
+                            children: <Widget>[
+                              AppPageLayoutScope(
+                                layout: AppPageLayout.readingFirst,
+                                child: AppListTile(
+                                  title: template.name,
+                                  subtitle: localCopy.templateListSubtitle(
+                                    fields: template.fields.length,
+                                    records: recordCounts[template.id] ?? 0,
+                                  ),
+                                  trailing: AppOverflowMenu(
+                                    items: TemplateActions.items(
+                                      context,
+                                      ref,
+                                      template,
+                                      recordCounts[template.id] ?? 0,
+                                    ),
+                                  ),
+                                  onTap: () => TemplateActions.open(
+                                    context,
+                                    template.id,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        onTap: () => TemplateActions.open(context, template.id),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
+            ),
           );
         },
       ),
@@ -223,11 +253,12 @@ Future<void> _addTemplates(BuildContext context) async {
     builder: (BuildContext sheetContext) {
       final LocalizedCopy localCopy = Copy.of(sheetContext);
 
-      return Column(
-        mainAxisSize: MainAxisSize.min,
+      return AppSection(
+        layout: AppPageLayout.sectioned,
         children: <Widget>[
           AppListTile(
             title: localCopy.templatesUpload,
+            wrapText: true,
             onTap: () {
               Navigator.of(sheetContext).pop();
               context.go(TemplateLocations.import(context));
@@ -235,6 +266,7 @@ Future<void> _addTemplates(BuildContext context) async {
           ),
           AppListTile(
             title: localCopy.templatesUseExisting,
+            wrapText: true,
             onTap: () {
               Navigator.of(sheetContext).pop();
               context.go(TemplateLocations.library(context));

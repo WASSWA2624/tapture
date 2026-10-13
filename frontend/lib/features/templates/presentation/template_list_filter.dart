@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tapture/core/copy/copy.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/fields/app_multi_choice_field.dart';
 import 'package:tapture/core/widgets/fields/choice.dart';
@@ -61,19 +63,24 @@ class _KindFacet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final LocalizedCopy localCopy = Copy.of(context);
 
-    return AppMultiChoiceField<String>(
-      key: const ValueKey<String>('template-kind-filter'),
-      label: localCopy.templateKindFilter,
-      // Kinds are template content and are shown as stored (FE-L10N-07).
-      options: <Choice<String>>[
-        for (final String kind in kinds)
-          Choice<String>(
-            kind,
-            kind.isEmpty ? localCopy.templateKindNone : kind,
-          ),
+    return AppSection(
+      layout: AppPageLayout.sectioned,
+      children: <Widget>[
+        AppMultiChoiceField<String>(
+          key: const ValueKey<String>('template-kind-filter'),
+          label: localCopy.templateKindFilter,
+          // Kinds are template content and are shown as stored (FE-L10N-07).
+          options: <Choice<String>>[
+            for (final String kind in kinds)
+              Choice<String>(
+                kind,
+                kind.isEmpty ? localCopy.templateKindNone : kind,
+              ),
+          ],
+          value: ref.watch(templateListFilterProvider),
+          onChanged: ref.read(templateListFilterProvider.notifier).set,
+        ),
       ],
-      value: ref.watch(templateListFilterProvider),
-      onChanged: ref.read(templateListFilterProvider.notifier).set,
     );
   }
 }

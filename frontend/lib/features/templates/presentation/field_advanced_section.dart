@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
@@ -43,6 +44,7 @@ class FieldAdvancedSection extends StatelessWidget {
     required this.onIdentity,
     required this.onHidden,
     required this.onRequiredWhenChanged,
+    this.onEdited,
   });
 
   final TextEditingController defaultValue;
@@ -72,6 +74,9 @@ class FieldAdvancedSection extends StatelessWidget {
   final ValueChanged<bool> onIdentity;
   final ValueChanged<bool> onHidden;
   final ValueChanged<String> onRequiredWhenChanged;
+
+  /// Marks text-only edits dirty without treating initial hydration as input.
+  final ValueChanged<String>? onEdited;
 
   /// Refuses an expression that does not parse against this template's fields.
   static Result<void> validateRequiredWhen(
@@ -124,105 +129,141 @@ class FieldAdvancedSection extends StatelessWidget {
       labelsByKey,
       localizedCopy: localCopy,
     );
-    return AppSection(
-      title: localCopy.fieldAdvanced,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppListTile(
-          title: localCopy.fieldSourceHelp,
-          subtitle: localCopy.captureTemperatureUnavailable,
-          leading: const Icon(AppIcons.info),
-          dense: true,
-          wrapText: true,
-        ),
-        AppTextField(
-          label: localCopy.fieldDefaultValue,
-          controller: defaultValue,
-        ),
-        AppTextField(label: localCopy.fieldUnit, controller: unit),
-        AppTextField(label: localCopy.fieldHelp, controller: help),
-        AppChoiceField<InputMode>(
-          label: localCopy.fieldInputMode,
-          value: inputMode,
-          options: <Choice<InputMode>>[
-            Choice<InputMode>(InputMode.any, localCopy.fieldInputAny),
-            Choice<InputMode>(InputMode.manualOnly, localCopy.fieldInputManual),
-            Choice<InputMode>(InputMode.aiAllowed, localCopy.fieldInputAi),
-            Choice<InputMode>(InputMode.auto, localCopy.fieldInputAuto),
+        AppSection(
+          title: localCopy.fieldDefaultsTitle,
+          children: <Widget>[
+            AppListTile(
+              title: localCopy.fieldSourceHelp,
+              subtitle: localCopy.captureTemperatureUnavailable,
+              leading: const Icon(AppIcons.info),
+              dense: true,
+              wrapText: true,
+            ),
+            AppTextField(
+              label: localCopy.fieldDefaultValue,
+              controller: defaultValue,
+              helper: localCopy.fieldDefaultValueHelp,
+              onChanged: onEdited,
+            ),
+            AppChoiceField<InputMode>(
+              label: localCopy.fieldInputMode,
+              value: inputMode,
+              options: <Choice<InputMode>>[
+                Choice<InputMode>(InputMode.any, localCopy.fieldInputAny),
+                Choice<InputMode>(
+                  InputMode.manualOnly,
+                  localCopy.fieldInputManual,
+                ),
+                Choice<InputMode>(InputMode.aiAllowed, localCopy.fieldInputAi),
+                Choice<InputMode>(InputMode.auto, localCopy.fieldInputAuto),
+              ],
+              onChanged: (InputMode? value) {
+                if (value != null) {
+                  onInputMode(value);
+                }
+              },
+            ),
+            AppChoiceField<String>(
+              label: localCopy.fieldAutoFill,
+              value: autoFillUnavailable
+                  ? _unavailable
+                  : autoFill?.name ?? _none,
+              options: <Choice<String>>[
+                if (autoFillUnavailable)
+                  Choice<String>(
+                    _unavailable,
+                    localCopy.captureFieldUnavailable,
+                  ),
+                Choice<String>(_none, localCopy.fieldAutoFillNone),
+                for (final AutoFill source in AutoFill.values)
+                  Choice<String>(
+                    source.name,
+                    localCopy.fieldAutoFillLabel(source.name),
+                  ),
+              ],
+              onChanged: (String? value) {
+                if (value == _unavailable) return;
+                if (value == null || value == _none) {
+                  onAutoFill(null);
+                  return;
+                }
+                for (final AutoFill source in AutoFill.values) {
+                  if (source.name == value) {
+                    onAutoFill(source);
+                    return;
+                  }
+                }
+              },
+            ),
           ],
-          onChanged: (InputMode? value) {
-            if (value != null) {
-              onInputMode(value);
-            }
-          },
         ),
-        AppChoiceField<String>(
-          label: localCopy.fieldAutoFill,
-          value: autoFillUnavailable ? _unavailable : autoFill?.name ?? _none,
-          options: <Choice<String>>[
-            if (autoFillUnavailable)
-              Choice<String>(_unavailable, localCopy.captureFieldUnavailable),
-            Choice<String>(_none, localCopy.fieldAutoFillNone),
-            for (final AutoFill source in AutoFill.values)
-              Choice<String>(
-                source.name,
-                localCopy.fieldAutoFillLabel(source.name),
+        const SizedBox(height: Space.x3),
+        AppSection(
+          title: localCopy.fieldContextSettings,
+          children: <Widget>[
+            AppTextField(
+              label: localCopy.fieldContextLevel,
+              controller: contextLevel,
+              keyboardType: TextInputType.number,
+              onChanged: onEdited,
+            ),
+            AppSwitchTile(
+              title: localCopy.fieldStickable,
+              value: stickable,
+              dense: true,
+              onChanged: onStickable,
+            ),
+          ],
+        ),
+        const SizedBox(height: Space.x3),
+        AppSection(
+          title: localCopy.fieldBehaviorSettings,
+          children: <Widget>[
+            AppTextField(
+              label: localCopy.fieldUnit,
+              controller: unit,
+              onChanged: onEdited,
+            ),
+            AppTextField(
+              label: localCopy.fieldHelp,
+              controller: help,
+              onChanged: onEdited,
+            ),
+            AppSwitchTile(
+              title: localCopy.fieldRefine,
+              value: refine,
+              dense: true,
+              onChanged: onRefine,
+            ),
+            AppSwitchTile(
+              title: localCopy.fieldIdentity,
+              value: identity,
+              dense: true,
+              onChanged: onIdentity,
+            ),
+            AppTextField(
+              label: localCopy.fieldRequiredWhen,
+              controller: requiredWhen,
+              errorText: localCopy.stateText(
+                localizedRequiredWhenError,
+                requiredWhenError,
               ),
+              helper: requiredWhenError == null && preview.isNotEmpty
+                  ? preview
+                  : null,
+              onChanged: onRequiredWhenChanged,
+            ),
+            AppSwitchTile(
+              title: localCopy.fieldHidden,
+              description: localCopy.fieldHiddenHelp,
+              value: hidden,
+              dense: true,
+              onChanged: onHidden,
+            ),
           ],
-          onChanged: (String? value) {
-            if (value == _unavailable) return;
-            if (value == null || value == _none) {
-              onAutoFill(null);
-              return;
-            }
-            for (final AutoFill source in AutoFill.values) {
-              if (source.name == value) {
-                onAutoFill(source);
-                return;
-              }
-            }
-          },
-        ),
-        AppTextField(
-          label: localCopy.fieldContextLevel,
-          controller: contextLevel,
-          keyboardType: TextInputType.number,
-        ),
-        AppSwitchTile(
-          title: localCopy.fieldStickable,
-          value: stickable,
-          dense: true,
-          onChanged: onStickable,
-        ),
-        AppSwitchTile(
-          title: localCopy.fieldRefine,
-          value: refine,
-          dense: true,
-          onChanged: onRefine,
-        ),
-        AppSwitchTile(
-          title: localCopy.fieldIdentity,
-          value: identity,
-          dense: true,
-          onChanged: onIdentity,
-        ),
-        AppTextField(
-          label: localCopy.fieldRequiredWhen,
-          controller: requiredWhen,
-          errorText: localCopy.stateText(
-            localizedRequiredWhenError,
-            requiredWhenError,
-          ),
-          helper: requiredWhenError == null && preview.isNotEmpty
-              ? preview
-              : null,
-          onChanged: onRequiredWhenChanged,
-        ),
-        AppSwitchTile(
-          title: localCopy.fieldHidden,
-          description: localCopy.fieldHiddenHelp,
-          value: hidden,
-          dense: true,
-          onChanged: onHidden,
         ),
       ],
     );

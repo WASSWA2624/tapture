@@ -1934,6 +1934,25 @@ final class LocalizedCopy {
   /// Collapsed section that holds every §12.2 attribute the add flow defaults.
   String get fieldAdvanced => _catalog.fieldAdvanced;
 
+  /// Template field defaults and sources, opened without a second editor.
+  String get fieldDefaultsTitle => _catalog.fieldDefaultsTitle;
+
+  /// Describes Advanced while the settings remain collapsed.
+  String get fieldAdvancedSettings => _catalog.fieldAdvancedSettings;
+
+  /// Explains default precedence and honest unavailable sources.
+  String get fieldDefaultValueHelp => _catalog.fieldDefaultValueHelp;
+
+  /// Context hierarchy and pinning settings for the field.
+  String get fieldContextSettings => _catalog.fieldContextSettings;
+
+  /// Other existing Advanced field attributes.
+  String get fieldBehaviorSettings => _catalog.fieldBehaviorSettings;
+
+  /// Full field metadata and configured filling permission or source.
+  String fieldFillingSummary(String details, String source) =>
+      _catalog.fieldFillingSummary(details, source);
+
   /// Reveals the collapsed Advanced section.
   String get fieldAdvancedShow => _catalog.fieldAdvancedShow;
 

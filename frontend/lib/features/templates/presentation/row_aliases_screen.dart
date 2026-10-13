@@ -23,6 +23,7 @@ import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
 import 'package:tapture/core/widgets/fields/app_text_field.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 
 import '../domain/template_def.dart';
@@ -131,96 +132,104 @@ class RowAliasesScreen extends ConsumerWidget {
             ? 1
             : 0) +
         (view.importColumn ? 1 : 0);
-    return ListView.builder(
-      padding: const EdgeInsets.only(bottom: Space.x4),
-      itemCount: template.rows.length + leading,
-      itemBuilder: (BuildContext context, int index) {
-        final LocalizedCopy localCopy = Copy.of(context);
+    return ContentConstraint(
+      child: ListView.builder(
+        padding: EdgeInsets.fromLTRB(
+          AppPage.gutter(context),
+          Space.x2,
+          AppPage.gutter(context),
+          Space.x4,
+        ),
+        itemCount: template.rows.length + leading,
+        itemBuilder: (BuildContext context, int index) {
+          final LocalizedCopy localCopy = Copy.of(context);
 
-        if (Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError) !=
-            null) {
-          if (index == 0) {
-            return AppBanner(
-              message: Copy.of(
+          if (Copy.of(
                 context,
-              ).stateText(view.localizedSaveError, view.saveError)!,
-              icon: AppIcons.error,
-              tone: SnackTone.error,
-            );
+              ).stateText(view.localizedSaveError, view.saveError) !=
+              null) {
+            if (index == 0) {
+              return AppBanner(
+                message: Copy.of(
+                  context,
+                ).stateText(view.localizedSaveError, view.saveError)!,
+                icon: AppIcons.error,
+                tone: SnackTone.error,
+              );
+            }
+            index -= 1;
           }
-          index -= 1;
-        }
-        if (view.importColumn) {
-          if (index == 0) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(
-                Space.x4,
-                Space.x2,
-                Space.x4,
-                Space.x2,
-              ),
-              child: Column(
-                children: <Widget>[
-                  _AliasField(
-                    key: const ValueKey<String>('alias-column'),
-                    label: localCopy.rowAliasesColumn,
-                    value: view.column,
-                    onChanged: controller.setColumn,
-                    onSubmitted: (_) {
-                      controller.importColumn(template, sheetRows: sheetRows);
-                    },
-                  ),
-                  AppButton(
-                    label: localCopy.rowAliasesImport,
-                    onPressed: view.column.trim().isEmpty
-                        ? null
-                        : () => controller.importColumn(
-                            template,
-                            sheetRows: sheetRows,
-                          ),
-                  ),
-                ],
-              ),
-            );
-          }
-          index -= 1;
-        }
-        final TemplateRow row = template.rows[index];
-        final List<String> aliases =
-            view.aliases[row.identifier] ?? row.aliases;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: Space.x3),
-          child: AppSection(
-            children: <Widget>[
-              AppListTile(
-                key: ValueKey<String>('alias-${row.identifier}'),
-                title: row.label,
-                subtitle: localCopy.rowAliasesList(aliases),
-                selected: view.editing == row.identifier,
-                onTap: () => controller.edit(row.identifier),
-              ),
-              if (view.editing == row.identifier)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    Space.x4,
-                    Space.x2,
-                    Space.x4,
-                    Space.x2,
-                  ),
-                  child: _AliasField(
-                    key: ValueKey<String>('alias-field-${row.identifier}'),
-                    value: aliases.join(', '),
-                    onChanged: (String next) {
-                      controller.set(row.identifier, next);
-                    },
-                  ),
+          if (view.importColumn) {
+            if (index == 0) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  Space.x4,
+                  Space.x2,
+                  Space.x4,
+                  Space.x2,
                 ),
-            ],
-          ),
-        );
-      },
+                child: AppSection(
+                  children: <Widget>[
+                    _AliasField(
+                      key: const ValueKey<String>('alias-column'),
+                      label: localCopy.rowAliasesColumn,
+                      value: view.column,
+                      onChanged: controller.setColumn,
+                      onSubmitted: (_) {
+                        controller.importColumn(template, sheetRows: sheetRows);
+                      },
+                    ),
+                    AppButton(
+                      label: localCopy.rowAliasesImport,
+                      onPressed: view.column.trim().isEmpty
+                          ? null
+                          : () => controller.importColumn(
+                              template,
+                              sheetRows: sheetRows,
+                            ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            index -= 1;
+          }
+          final TemplateRow row = template.rows[index];
+          final List<String> aliases =
+              view.aliases[row.identifier] ?? row.aliases;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: Space.x3),
+            child: AppSection(
+              children: <Widget>[
+                AppListTile(
+                  key: ValueKey<String>('alias-${row.identifier}'),
+                  title: row.label,
+                  wrapText: true,
+                  subtitle: localCopy.rowAliasesList(aliases),
+                  selected: view.editing == row.identifier,
+                  onTap: () => controller.edit(row.identifier),
+                ),
+                if (view.editing == row.identifier)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      Space.x4,
+                      Space.x2,
+                      Space.x4,
+                      Space.x2,
+                    ),
+                    child: _AliasField(
+                      key: ValueKey<String>('alias-field-${row.identifier}'),
+                      value: aliases.join(', '),
+                      onChanged: (String next) {
+                        controller.set(row.identifier, next);
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

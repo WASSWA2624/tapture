@@ -2097,6 +2097,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldAdvanced => 'Advanced';
 
   @override
+  String get fieldDefaultsTitle => 'Defaults and sources';
+
+  @override
+  String get fieldAdvancedSettings =>
+      'Defaults, device and generated values, context and validation.';
+
+  @override
+  String get fieldDefaultValueHelp =>
+      'Used when no entered, context or automatic value applies. An unavailable automatic source stays empty.';
+
+  @override
+  String get fieldContextSettings => 'Context';
+
+  @override
+  String get fieldBehaviorSettings => 'Field behavior';
+
+  @override
+  String fieldFillingSummary(String details, String source) {
+    return '$details\nFilling: $source';
+  }
+
+  @override
   String get fieldAdvancedShow => 'Show advanced';
 
   @override
@@ -14563,6 +14585,28 @@ class AppLocalizationsEnXa extends AppLocalizationsEn {
 
   @override
   String get fieldAdvanced => 'Ádváncéd···';
+
+  @override
+  String get fieldDefaultsTitle => 'Défáúlts ánd sóúrcés·······';
+
+  @override
+  String get fieldAdvancedSettings =>
+      'Défáúlts, dévícé ánd générátéd válúés, cóntéxt ánd válídátíón.······················';
+
+  @override
+  String get fieldDefaultValueHelp =>
+      'Úséd whén nó éntéréd, cóntéxt ór áútómátíc válúé ápplíés. Án únáváíláblé áútómátíc sóúrcé stáys émpty.····································';
+
+  @override
+  String get fieldContextSettings => 'Cóntéxt···';
+
+  @override
+  String get fieldBehaviorSettings => 'Fíéld béhávíór·····';
+
+  @override
+  String fieldFillingSummary(String details, String source) {
+    return '$details\nFíllíng: ····$source';
+  }
 
   @override
   String get fieldAdvancedShow => 'Shów ádváncéd·····';

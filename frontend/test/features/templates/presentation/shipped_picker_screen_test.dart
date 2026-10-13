@@ -310,9 +310,16 @@ void main() {
       ],
     );
     await tester.pumpAndSettle();
-    await tester.tap(
-      find.byKey(const ValueKey<String>('shipped-category-UNI')),
+    final Finder category = find.byKey(
+      const ValueKey<String>('shipped-category-UNI'),
     );
+    await tester.scrollUntilVisible(
+      category,
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(category);
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);

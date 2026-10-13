@@ -1832,6 +1832,25 @@ abstract final class Copy {
   /// Collapsed section that holds every §12.2 attribute the add flow defaults.
   static String get fieldAdvanced => _english.fieldAdvanced;
 
+  /// Template field defaults and sources, opened without a second editor.
+  static String get fieldDefaultsTitle => _english.fieldDefaultsTitle;
+
+  /// Describes Advanced while the settings remain collapsed.
+  static String get fieldAdvancedSettings => _english.fieldAdvancedSettings;
+
+  /// Explains default precedence and honest unavailable sources.
+  static String get fieldDefaultValueHelp => _english.fieldDefaultValueHelp;
+
+  /// Context hierarchy and pinning settings for the field.
+  static String get fieldContextSettings => _english.fieldContextSettings;
+
+  /// Other existing Advanced field attributes.
+  static String get fieldBehaviorSettings => _english.fieldBehaviorSettings;
+
+  /// Full field metadata and configured filling permission or source.
+  static String fieldFillingSummary(String details, String source) =>
+      _english.fieldFillingSummary(details, source);
+
   /// Reveals the collapsed Advanced section.
   static String get fieldAdvancedShow => _english.fieldAdvancedShow;
 

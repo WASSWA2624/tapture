@@ -9,11 +9,12 @@ import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
-import 'package:tapture/core/widgets/app_section_header.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/feedback/app_snackbar.dart';
+import 'package:tapture/core/widgets/responsive/content_constraint.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/features/templates/presentation/template_locations.dart';
 
@@ -48,7 +49,7 @@ class TemplateMigrationScreen extends ConsumerWidget {
         ? const TemplateVersioning.none()
         : TemplateVersioning.preview(current: template, records: records);
     return AppPage(
-      layout: AppPageLayout.readingFirst,
+      layout: AppPageLayout.sectioned,
       key: const ValueKey<String>('route-template-migrate'),
       title: localCopy.templateMigrationTitle,
       scrollable: false,
@@ -95,60 +96,75 @@ class TemplateMigrationScreen extends ConsumerWidget {
     _MigrationView view,
     TemplateVersioning preview,
   ) {
-    return ListView(
-      padding: const EdgeInsets.only(bottom: Space.x4),
-      children: <Widget>[
-        AppBanner(
-          message: Copy.of(context).templateMigrationExplain,
-          icon: AppIcons.info,
-          tone: SnackTone.info,
+    return ContentConstraint(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(
+          AppPage.gutter(context),
+          Space.x2,
+          AppPage.gutter(context),
+          Space.x4,
         ),
-        if (Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError) !=
-            null)
-          AppBanner(
-            message: Copy.of(
-              context,
-            ).stateText(view.localizedSaveError, view.saveError)!,
-            icon: AppIcons.error,
-            tone: SnackTone.error,
+        children: <Widget>[
+          AppSection(
+            children: <Widget>[
+              AppBanner(
+                message: Copy.of(context).templateMigrationExplain,
+                icon: AppIcons.info,
+                tone: SnackTone.info,
+              ),
+              if (Copy.of(
+                    context,
+                  ).stateText(view.localizedSaveError, view.saveError) !=
+                  null)
+                AppBanner(
+                  message: Copy.of(
+                    context,
+                  ).stateText(view.localizedSaveError, view.saveError)!,
+                  icon: AppIcons.error,
+                  tone: SnackTone.error,
+                ),
+              if (preview.unresolved > 0)
+                AppBanner(
+                  key: const ValueKey<String>('migration-unresolved'),
+                  message: Copy.of(
+                    context,
+                  ).templateMigrationUnresolved(preview.unresolved),
+                  icon: AppIcons.warning,
+                  tone: SnackTone.warning,
+                ),
+              AppListTile(
+                key: const ValueKey<String>('migration-behind'),
+                title: Copy.of(
+                  context,
+                ).templateMigrationBehind(preview.behindCount),
+                dense: true,
+                wrapText: true,
+              ),
+            ],
           ),
-        if (preview.unresolved > 0)
-          AppBanner(
-            key: const ValueKey<String>('migration-unresolved'),
-            message: Copy.of(
-              context,
-            ).templateMigrationUnresolved(preview.unresolved),
-            icon: AppIcons.warning,
-            tone: SnackTone.warning,
+          const SizedBox(height: Space.x3),
+          ..._section(
+            context,
+            Copy.of(context).templateMigrationAdded,
+            preview.added,
           ),
-        AppListTile(
-          key: const ValueKey<String>('migration-behind'),
-          title: Copy.of(context).templateMigrationBehind(preview.behindCount),
-          dense: true,
-        ),
-        ..._section(
-          context,
-          Copy.of(context).templateMigrationAdded,
-          preview.added,
-        ),
-        ..._section(
-          context,
-          Copy.of(context).templateMigrationRemoved,
-          preview.removed,
-        ),
-        ..._section(
-          context,
-          Copy.of(context).templateMigrationRetyped,
-          preview.retyped,
-        ),
-        ..._section(
-          context,
-          Copy.of(context).templateMigrationRetiring,
-          preview.retiring,
-        ),
-      ],
+          ..._section(
+            context,
+            Copy.of(context).templateMigrationRemoved,
+            preview.removed,
+          ),
+          ..._section(
+            context,
+            Copy.of(context).templateMigrationRetyped,
+            preview.retyped,
+          ),
+          ..._section(
+            context,
+            Copy.of(context).templateMigrationRetiring,
+            preview.retiring,
+          ),
+        ],
+      ),
     );
   }
 
@@ -161,13 +177,19 @@ class TemplateMigrationScreen extends ConsumerWidget {
       return const <Widget>[];
     }
     return <Widget>[
-      AppSectionHeader(title: title, dense: true),
-      for (final ({String fieldKey, String label, int records}) row in rows)
-        AppListTile(
-          title: row.label,
-          subtitle: Copy.of(context).recordsCount(row.records),
-          dense: true,
-        ),
+      AppSection(
+        title: title,
+        children: <Widget>[
+          for (final ({String fieldKey, String label, int records}) row in rows)
+            AppListTile(
+              title: row.label,
+              subtitle: Copy.of(context).recordsCount(row.records),
+              dense: true,
+              wrapText: true,
+            ),
+        ],
+      ),
+      const SizedBox(height: Space.x3),
     ];
   }
 
