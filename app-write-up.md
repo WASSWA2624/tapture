@@ -630,9 +630,8 @@ radio columns and a **Hide** toggle per field (§13.2).
 Template screens use the shared **Sectioned** composition (§55.4), with complete field labels and wrapped action
 groups. **Defaults and sources** on a saved template opens its existing field list in configuration mode; selecting
 a field opens the same editor with **Advanced** expanded. Saving returns to that configuration list for the next
-field. The per-field menu offers the same direct entry. Advanced
-groups defaults/filling, context and field behavior, with validation and choices below. New fields still open with
-only the three basic questions visible.
+field. The per-field menu offers the same direct entry. Advanced groups defaults/filling, context and field
+behavior, with validation and choices below. New fields still open with only the three basic questions visible.
 
 After a template is durably added to a project, these settings edit that independent project copy (§13), not its
 library or shipped original. Setup remains optional and never blocks capture. Saves preserve field keys, groups,
@@ -3334,11 +3333,24 @@ The widget gallery demonstrates all five compositions and enabled, disabled and 
 screens use the existing responsive matrix and behavior/flow fixtures; design-system baselines cover light, dark
 and outdoor themes (§58, §84).
 
-Current UI acceptance covers the architecture guardrails, shared layouts, project navigation and offline flows,
-selected feature matrices and visually inspected baselines; full Flutter analysis reports no issues. This does not
-certify the whole-product release gate (§84): the broader presence checker still reports nine unchanged
-capture/processing domain/data test omissions, and historical visual fixtures and a Records row-bound diagnostic
-remain separate hardening work.
+Earlier project-layout acceptance recorded architecture guardrails, shared layouts, project navigation and offline
+flows, selected feature matrices, visually inspected baselines and full Flutter analysis without issues. This
+historical evidence does not certify the current whole-product release gate (§84): the broader presence checker
+reported nine unchanged capture/processing domain/data test omissions, and historical visual fixtures and a
+Records row-bound diagnostic remain separate hardening work.
+
+Template Sectioned acceptance (2026-10-13) passed 238 responsive cases across 17 views, seven sizes and 100/200
+percent text, 360 existing template behavior/flow/golden cases, and 300 defaults, field editing/reordering,
+capture/persistence and complete architecture cases. The 24 current library/preview baselines cover light, dark
+and outdoor; original and intermediate visual evidence is preserved. Full Flutter analysis, localization checks
+and generated-copy checks passed. Scoped raw output remains in `frontend/build/template-sectioned-*.log` and
+`frontend/build/template-defaults-acceptance-final.log`; this scope does not certify §84.
+
+Separate findings: the broader `test/app/router_test.dart` run has nine failures, reproduced with the same names
+against isolated HEAD `df7b73281ce1ac23cc37f676f55f39b441372c5e` (13 passed, nine failed). The exact names, source
+integrity and raw baseline are retained in `frontend/build/template-router-baseline-*.json` and
+`frontend/build/template-router-head-baseline.log`. The existing `TemplateActions.items` Export template command
+also targets `:templateId/export`, which `_templateChildRoutes` does not register. Both remain separate work.
 
 ## 56. Simplicity Rules
 
