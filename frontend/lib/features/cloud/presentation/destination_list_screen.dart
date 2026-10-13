@@ -41,6 +41,7 @@ final class DestinationListScreen extends ConsumerWidget {
     final Set<String> checking = ref.watch(destinationListControllerProvider);
     final bool listed = destinations.asData?.value.isNotEmpty ?? false;
     return AppPage(
+      layout: AppPageLayout.compact,
       title: localCopy.destinationTitle,
       inset: false,
       footer: listed && canAdd
@@ -97,6 +98,7 @@ final class DestinationListScreen extends ConsumerWidget {
     final String id = destination.id;
     return AppListTile(
       key: ValueKey<String>('destination-$id'),
+      wrapText: true,
       title: destination.label,
       subtitle: destinationSummary(
         destination,

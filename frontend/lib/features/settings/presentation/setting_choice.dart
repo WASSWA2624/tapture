@@ -52,6 +52,7 @@ class SettingChoice<T> extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           AppChoiceField<T>(
+            wrapLabel: true,
             label: label,
             value: value,
             options: options,

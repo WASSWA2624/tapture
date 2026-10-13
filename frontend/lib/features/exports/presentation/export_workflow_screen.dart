@@ -45,9 +45,7 @@ final class ExportWorkflowScreen extends ConsumerWidget {
         : ref.watch(_countProvider(workflow.request));
     return AppPage(
       key: const ValueKey<String>('route-export'),
-      layout: workflow?.running == true
-          ? AppPageLayout.thumbReach
-          : AppPageLayout.sectioned,
+      layout: AppPageLayout.compact,
       title: localCopy.exportTitle,
       footer: workflow == null
           ? null
@@ -108,7 +106,7 @@ final class ExportWorkflowScreen extends ConsumerWidget {
                       count: total,
                     ),
                   ),
-                  const SizedBox(height: Space.x4),
+                  const SizedBox(height: Space.x2),
                   AppSection(
                     title: Copy.of(context).exportHistoryTitle,
                     children: <Widget>[
@@ -138,6 +136,7 @@ final class ExportWorkflowScreen extends ConsumerWidget {
     }.length;
     final ExportGateChoice? choice = await showAppSheet<ExportGateChoice>(
       context,
+      layout: AppPageLayout.compact,
       title: localCopy.exportGateTitle(issues),
       contentSized: true,
       builder: (BuildContext sheet) => Column(

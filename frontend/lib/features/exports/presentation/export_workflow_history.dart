@@ -66,6 +66,7 @@ class ExportWorkflowHistory extends ConsumerWidget {
           for (final DeliverableEntry entry in entries) ...<Widget>[
             AppListTile(
               key: ValueKey<String>('export-history-${entry.id}'),
+              wrapText: true,
               title: entry.fileName,
               subtitle: Copy.of(context).exportHistoryDetail(
                 DateFormat.yMd().add_jm().format(entry.createdAt.toLocal()),

@@ -106,13 +106,13 @@ class _ServerAddressFormState extends ConsumerState<ServerAddressForm> {
               icon: AppIcons.warning,
               tone: SnackTone.warning,
             ),
-            const SizedBox(height: Space.x3),
+            const SizedBox(height: Space.x2),
           ],
           for (int index = 0; index < fields.length; index++) ...<Widget>[
-            if (index > 0) const SizedBox(height: Space.x3),
+            if (index > 0) const SizedBox(height: Space.x2),
             fields[index],
           ],
-          const SizedBox(height: Space.x3),
+          const SizedBox(height: Space.x2),
           AppButton(
             label: localCopy.backendConfigure,
             variant: AppButtonVariant.secondary,
@@ -123,6 +123,7 @@ class _ServerAddressFormState extends ConsumerState<ServerAddressForm> {
       );
     }
     return AppPage(
+      layout: AppPageLayout.compact,
       title: localCopy.backendSettingsTitle,
       scrollable: false,
       body: AppForm(

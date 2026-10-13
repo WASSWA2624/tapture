@@ -16,9 +16,12 @@ import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/lifecycle/deleted_entity.dart';
 import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
+import 'package:tapture/core/widgets/app_icon_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_list_viewport.dart';
+import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/feedback/app_dialog.dart';
 import 'package:tapture/core/widgets/record_status.dart';
@@ -338,6 +341,58 @@ void main() {
   }
 
   for (final ScreenMatrix cell in ScreenMatrix.cells) {
+    testWidgets('Compact bin controls remain reachable ${cell.description}', (
+      WidgetTester tester,
+    ) async {
+      await pumpMixed(tester, cell);
+      expect(
+        tester.widget<AppPage>(find.byType(AppPage)).layout,
+        AppPageLayout.compact,
+      );
+      final LocalizedCopy copy = Copy.of(
+        tester.element(find.byType(RecycleBinScreen)),
+      );
+      final Finder scrollable = find.descendant(
+        of: find.byKey(const ValueKey<String>('recycle-bin-list')),
+        matching: find.byType(Scrollable),
+      );
+      for (final String id in <String>[
+        'project:deleted-project',
+        'record:record-1',
+        'document:document',
+        'audio:audio',
+        'photo:photo',
+      ]) {
+        final Finder action = find.byKey(
+          ValueKey<String>('recycle-bin-restore-$id'),
+        );
+        tester.state<ScrollableState>(scrollable).position.jumpTo(0);
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(action, 100, scrollable: scrollable);
+        await tester.ensureVisible(action);
+        await tester.pumpAndSettle();
+        final AppListTile row = tester.widget<AppListTile>(rowOf(id));
+        expect(
+          AppPageLayoutScope.of(tester.element(rowOf(id))),
+          AppPageLayout.compact,
+        );
+        final AppIconButton restore = tester.widget<AppIconButton>(action);
+        expect(row.wrapText, isTrue);
+        expect(restore.semanticLabel, copy.recycleBinRestoreLabel(row.title));
+        expect(restore.icon, AppIcons.restore);
+        expect(action, meetsTapTarget());
+        expect(action.hitTestable(), findsOneWidget);
+      }
+      await tester.tap(
+        find.byKey(const ValueKey<String>('recycle-bin-restore-photo:photo')),
+      );
+      await tester.pumpAndSettle();
+      expect(rowOf('photo:photo'), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final ScreenMatrix cell in ScreenMatrix.cells) {
     for (final Locale locale in <Locale>[
       const Locale('en'),
       const Locale('en', 'XA'),
@@ -417,7 +472,7 @@ void main() {
       expect(tester.takeException(), isNull);
       await expectLater(
         find.byType(MaterialApp),
-        matchesGoldenFile('goldens/recycle_bin_${corner.name}.png'),
+        matchesGoldenFile('goldens/compact_recycle_bin_${corner.name}.png'),
       );
     }, skip: kIsWeb);
   }

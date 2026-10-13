@@ -58,6 +58,7 @@ class _RecycleBinScreenState extends ConsumerState<RecycleBinScreen>
     return AppPage(
       key: const ValueKey<String>('route-recycle-bin'),
       title: copy.recycleBinTitle,
+      layout: AppPageLayout.compact,
       scrollable: false,
       inset: false,
       footer: rows.isEmpty

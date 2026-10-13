@@ -28,6 +28,7 @@ class AppearanceSettingsScreen extends ConsumerWidget {
     final AppThemeMode mode = ref.watch(themeModeProvider);
     return AppPage(
       title: localCopy.settingsAppearanceTitle,
+      layout: AppPageLayout.compact,
       body: AppRadioGroup<AppThemeMode>(
         label: localCopy.settingsAppearanceTitle,
         value: mode,

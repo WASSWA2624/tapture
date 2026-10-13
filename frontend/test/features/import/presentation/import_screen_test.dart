@@ -5,6 +5,7 @@ import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/errors/failure.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
@@ -46,6 +47,10 @@ void main() {
       'compact import and expanded help ${cell.description}',
       (WidgetTester tester) async {
         await _pump(tester, _idle, cell: cell);
+        expect(
+          tester.widget<AppPage>(find.byType(AppPage)).layout,
+          AppPageLayout.compact,
+        );
         expect(find.byType(AppPrimaryAction), findsOneWidget);
         expect(find.text(Copy.importBundleLine), findsNothing);
         final Finder help = find.text(Copy.importSupportedFiles);

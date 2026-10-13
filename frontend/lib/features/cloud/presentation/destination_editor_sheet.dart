@@ -10,6 +10,7 @@ import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/folder_picker.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
@@ -37,6 +38,7 @@ Future<Destination?> showDestinationEditor(
 
   return showAppSheet<Destination>(
     context,
+    layout: AppPageLayout.compact,
     title: existing == null
         ? localCopy.destinationAdd
         : localCopy.destinationEdit,
@@ -142,6 +144,7 @@ class _DestinationEditorSheetState extends ConsumerState<DestinationEditorSheet>
         final DestinationKind kind =
             _kind ?? widget.existing?.kind ?? kinds.first;
         return AppForm(
+          layout: AppPageLayout.compact,
           compact: true,
           guardUnsaved: true,
           errors: <String>[?refused],

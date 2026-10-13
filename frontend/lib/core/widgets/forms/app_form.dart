@@ -60,7 +60,7 @@ class AppForm extends StatefulWidget {
   /// also mark dirty on the first edit.
   final bool dirty;
 
-  /// When true, field gaps and the submit bar use the compact spacing.
+  /// Uses compact spacing explicitly; Compact pages also select this spacing.
   final bool compact;
 
   /// Inherits the page unless this form has a separately selected layout.
@@ -78,6 +78,10 @@ class _AppFormState extends State<AppForm> {
   bool get _isDirty => widget.dirty || _edited;
 
   bool get _shouldGuard => widget.guardUnsaved && _isDirty;
+
+  AppPageLayout get _layout => widget.layout ?? AppPageLayoutScope.of(context);
+
+  bool get _compact => widget.compact || _layout == AppPageLayout.compact;
 
   List<String> get _summary {
     final LocalizedCopy localCopy = Copy.of(context);
@@ -188,8 +192,7 @@ class _AppFormState extends State<AppForm> {
 
   @override
   Widget build(BuildContext context) {
-    final AppPageLayout effective =
-        widget.layout ?? AppPageLayoutScope.of(context);
+    final AppPageLayout effective = _layout;
     return AppPageLayoutScope(
       layout: effective,
       child: PopScope<Object?>(
@@ -212,9 +215,9 @@ class _AppFormState extends State<AppForm> {
                                 ScrollViewKeyboardDismissBehavior.onDrag,
                             padding: EdgeInsets.fromLTRB(
                               Space.x4,
-                              widget.compact ? Space.x2 : Space.x4,
+                              _compact ? Space.x2 : Space.x4,
                               Space.x4,
-                              widget.compact ? Space.x1 : Space.x2,
+                              _compact ? Space.x1 : Space.x2,
                             ),
                             child: ContentConstraint(
                               child: Column(
@@ -235,7 +238,7 @@ class _AppFormState extends State<AppForm> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     ..._fieldSlate(),
-                    const SizedBox(height: Space.x4),
+                    SizedBox(height: _compact ? Space.x2 : Space.x4),
                     _submitBar(widget.fields.length),
                   ],
                 ),
@@ -252,18 +255,12 @@ class _AppFormState extends State<AppForm> {
     final List<Widget> children = <Widget>[
       if (summary.isNotEmpty) ...<Widget>[
         _ErrorSummary(errors: summary),
-        const SizedBox(height: Space.x4),
+        SizedBox(height: _compact ? Space.x2 : Space.x4),
       ],
     ];
     for (int i = 0; i < widget.fields.length; i++) {
       if (i > 0) {
-        children.add(
-          SizedBox(
-            height: widget.compact
-                ? Space.x2
-                : (widget.layout ?? AppPageLayoutScope.of(context)).fieldGap,
-          ),
-        );
+        children.add(SizedBox(height: _compact ? Space.x2 : _layout.fieldGap));
       }
       children.add(
         FocusTraversalOrder(
@@ -281,7 +278,7 @@ class _AppFormState extends State<AppForm> {
       child: AppPrimaryAction(
         label: widget.submitLabel,
         busy: _busy,
-        compact: widget.compact,
+        compact: _compact,
         onPressed: _submit,
       ),
     );
@@ -297,9 +294,9 @@ class _AppFormState extends State<AppForm> {
       child: Padding(
         padding: EdgeInsets.fromLTRB(
           Space.x4,
-          widget.compact ? Space.x1 : Space.x3,
+          _compact ? Space.x1 : Space.x3,
           Space.x4,
-          widget.compact ? Space.x2 : Space.x4,
+          _compact ? Space.x2 : Space.x4,
         ),
         child: ContentConstraint(child: action),
       ),

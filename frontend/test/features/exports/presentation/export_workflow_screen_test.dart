@@ -20,12 +20,12 @@ import '../../../support/screen_probe.dart';
 
 void main() {
   testWidgets(
-    'sectioned export retains defaults and opens advanced options together',
+    'compact export retains defaults and opens advanced options together',
     (WidgetTester tester) async {
       await _pump(tester, _Store());
       expect(
         tester.widget<AppPage>(find.byType(AppPage)).layout,
-        AppPageLayout.sectioned,
+        AppPageLayout.compact,
       );
       expect(find.byType(AppSection), findsNWidgets(5));
       expect(find.text(Copy.exportDictionary), findsNothing);
@@ -80,7 +80,7 @@ void main() {
         await _until(tester, cancel);
         expect(
           tester.widget<AppPage>(find.byType(AppPage)).layout,
-          AppPageLayout.thumbReach,
+          AppPageLayout.compact,
         );
         expect(
           await ScreenProbe.accessibilityIssues(

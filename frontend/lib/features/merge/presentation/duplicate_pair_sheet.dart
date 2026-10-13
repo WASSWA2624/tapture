@@ -8,6 +8,7 @@ import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_card.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/responsive/responsive_pair.dart';
 import 'package:tapture/features/quality/quality.dart'
@@ -37,6 +38,7 @@ Future<void> showDuplicatePairSheet(
 
   return showAppSheet<void>(
     context,
+    layout: AppPageLayout.compact,
     title: localCopy.duplicateTitle,
     builder: (BuildContext _) => _PairView(projectId: projectId, pair: pair),
   );
@@ -77,7 +79,7 @@ class _PairView extends ConsumerWidget {
           localCopy.duplicateSignal(pair.signal.name),
           style: AppText.bodyStrong,
         ),
-        const SizedBox(height: Space.x3),
+        const SizedBox(height: Space.x2),
         ResponsivePair(
           matchesHeights: true,
           start: _Side(
@@ -91,7 +93,7 @@ class _PairView extends ConsumerWidget {
             recordId: pair.localId,
           ),
         ),
-        const SizedBox(height: Space.x4),
+        const SizedBox(height: Space.x2),
         ResponsivePair(
           stacksOnCompact: false,
           matchesHeights: true,

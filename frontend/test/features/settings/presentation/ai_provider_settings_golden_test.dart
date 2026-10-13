@@ -26,7 +26,7 @@ void main() {
           await expectLater(
             find.byType(MaterialApp),
             matchesGoldenFile(
-              'goldens/ai_provider_settings${suffix}_${mode.name}.png',
+              'goldens/compact_ai_provider_settings${suffix}_${mode.name}.png',
             ),
           );
         } catch (error) {
@@ -60,7 +60,7 @@ void main() {
       await expectLater(
         find.byType(MaterialApp),
         matchesGoldenFile(
-          'goldens/ai_provider_settings_${cell.goldenCorner}_${mode.name}.png',
+          'goldens/compact_ai_provider_settings_${cell.goldenCorner}_${mode.name}.png',
         ),
       );
       expect(tester.takeException(), isNull);

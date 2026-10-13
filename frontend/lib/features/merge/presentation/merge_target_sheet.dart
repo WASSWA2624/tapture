@@ -7,6 +7,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_page_layout.dart';
 import 'package:tapture/core/widgets/async_value_view.dart';
 import 'package:tapture/core/widgets/feedback/app_bottom_sheet.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -31,6 +32,7 @@ Future<String?> showMergeTargetSheet(BuildContext context) {
 
   return showAppSheet<String>(
     context,
+    layout: AppPageLayout.compact,
     title: localCopy.mergeTargetTitle,
     builder: (BuildContext _) => const _Targets(),
   );
@@ -108,6 +110,7 @@ class _Targets extends ConsumerWidget {
             for (final _Target target in targets)
               AppListTile(
                 key: ValueKey<String>('merge-target-${target.project.id}'),
+                wrapText: true,
                 title: target.project.name,
                 status: compatibilityPill(target.report.status),
                 subtitle: _reasons(context, target.report),

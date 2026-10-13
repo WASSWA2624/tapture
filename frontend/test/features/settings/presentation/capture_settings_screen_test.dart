@@ -183,7 +183,7 @@ void main() {
           await expectLater(
             find.byKey(_golden),
             matchesGoldenFile(
-              'goldens/capture_collapsed_${cell.outdoor ? 'outdoor' : cell.brightness.name}_${cell.textScale.toInt()}x.png',
+              'goldens/compact_capture_collapsed_${cell.outdoor ? 'outdoor' : cell.brightness.name}_${cell.textScale.toInt()}x.png',
             ),
           );
         }
@@ -195,7 +195,7 @@ void main() {
           await expectLater(
             find.byKey(_golden),
             matchesGoldenFile(
-              'goldens/capture_collapsed_${corner}_${cell.outdoor ? 'outdoor' : cell.brightness.name}.png',
+              'goldens/compact_capture_collapsed_${corner}_${cell.outdoor ? 'outdoor' : cell.brightness.name}.png',
             ),
           );
         }

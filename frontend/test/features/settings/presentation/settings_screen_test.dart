@@ -8,11 +8,17 @@ import 'package:go_router/go_router.dart';
 import 'package:tapture/app/app.dart' show TaptureApp;
 import 'package:tapture/app/router.dart';
 import 'package:tapture/app/theme/app_theme.dart';
+import 'package:tapture/app/theme/dimensions.dart';
 import 'package:tapture/app/theme/theme_controller.dart';
+import 'package:tapture/app/widgets/status_line.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/copy/l10n/app_localizations.g.dart';
 import 'package:tapture/core/files/files.dart';
+import 'package:tapture/core/widgets/app_icons.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
+import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
+import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/core/widgets/states/app_loading_state.dart';
@@ -24,6 +30,37 @@ import '../../../support/screen_fonts.dart';
 import '../../../support/screen_matrix.dart';
 
 void main() {
+  testWidgets('Compact Settings keeps complete rows and its title cog', (
+    WidgetTester tester,
+  ) async {
+    _compact(tester);
+    await _pump(tester);
+    await tester.pumpAndSettle();
+    final AppPage page = tester.widget<AppPage>(find.byType(AppPage));
+    expect(page.layout, AppPageLayout.compact);
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.byIcon(AppIcons.settings),
+      ),
+      findsOneWidget,
+    );
+    for (final AppListTile row in tester.widgetList<AppListTile>(
+      find.byType(AppListTile),
+    )) {
+      expect(row.wrapText, isTrue);
+    }
+    for (final Element row in find.byType(AppListTile).evaluate()) {
+      expect(AppPageLayoutScope.of(row), AppPageLayout.compact);
+      expect(
+        tester.getSize(find.byWidget(row.widget)).height,
+        greaterThanOrEqualTo(Sizes.minTapTarget),
+      );
+    }
+    expect(find.byType(AppSectionHeader), findsNWidgets(4));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('the actual Settings Storage tile opens the production route', (
     WidgetTester tester,
   ) async {
@@ -47,6 +84,20 @@ void main() {
     final GoRouter router = container.read(routerProvider);
     router.go(AppRoutes.more);
     await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.byIcon(AppIcons.settings),
+      ),
+      findsNothing,
+    );
+    expect(
+      find.descendant(
+        of: find.byType(StatusLine),
+        matching: find.byIcon(AppIcons.settings),
+      ),
+      findsOneWidget,
+    );
     final Finder storage = find.widgetWithText(
       AppListTile,
       Copy.settingsStorageTitle,
@@ -102,7 +153,7 @@ void main() {
         await expectLater(
           find.byType(MaterialApp),
           matchesGoldenFile(
-            'goldens/settings_index_text${scale.toInt()}_${mode.$1}.png',
+            'goldens/compact_settings_screen_text${scale.toInt()}_${mode.$1}.png',
           ),
         );
       });

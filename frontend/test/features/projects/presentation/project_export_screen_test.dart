@@ -50,7 +50,7 @@ void main() {
       await expectLater(
         find.byType(ProjectExportScreen),
         matchesGoldenFile(
-          'goldens/project_export_completed_${corner.name}.png',
+          'goldens/project_export_compact_completed_${corner.name}.png',
         ),
       );
     });
@@ -95,7 +95,7 @@ void main() {
                     find.byKey(const ValueKey<String>('route-project-export')),
                   )
                   .layout,
-              AppPageLayout.essentials,
+              AppPageLayout.compact,
             );
             expect(find.byType(ExportSummaryView), findsNothing);
             await _expand(tester);
@@ -230,7 +230,7 @@ void main() {
             find.byKey(const ValueKey<String>('route-project-export')),
           )
           .layout,
-      AppPageLayout.sectioned,
+      AppPageLayout.compact,
     );
     await _expand(tester);
 
@@ -285,7 +285,7 @@ void main() {
             find.byKey(const ValueKey<String>('route-project-export')),
           )
           .layout,
-      AppPageLayout.essentials,
+      AppPageLayout.compact,
     );
     expect(find.text(Copy.projectExportProgress), findsOneWidget);
     await tester.tap(find.widgetWithText(AppButton, Copy.projectExportCancel));
@@ -296,7 +296,7 @@ void main() {
             find.byKey(const ValueKey<String>('route-project-export')),
           )
           .layout,
-      AppPageLayout.sectioned,
+      AppPageLayout.compact,
     );
     expect(find.text(Copy.projectExportShare), findsNothing);
     expect(

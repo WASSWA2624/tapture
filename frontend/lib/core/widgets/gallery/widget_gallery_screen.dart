@@ -22,6 +22,7 @@ import 'package:tapture/core/errors/failure.dart';
 import 'package:tapture/core/errors/result.dart';
 import 'package:tapture/core/files/photo_thumbnails.dart';
 import 'package:tapture/core/time/clock.dart';
+import 'package:tapture/core/widgets/app_action_dock.dart';
 import 'package:tapture/core/widgets/app_brand_lockup.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_card.dart';
@@ -35,12 +36,14 @@ import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_list_viewport.dart';
 import 'package:tapture/core/widgets/app_overflow_menu.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/app_photo_thumb.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_progress_steps.dart';
 import 'package:tapture/core/widgets/app_recording_bar.dart';
 import 'package:tapture/core/widgets/app_recording_phase.dart';
 import 'package:tapture/core/widgets/app_search_field.dart';
+import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/app_section_header.dart';
 import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/app_toolbar_scope.dart';
@@ -490,7 +493,15 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         onPressed: _noop,
       ),
       const SizedBox(height: Space.x2),
-      AppPrimaryAction(label: localCopy.save, onPressed: _noop),
+      AppActionDock(
+        compact: true,
+        inset: false,
+        child: AppPrimaryAction(
+          label: localCopy.save,
+          compact: true,
+          onPressed: _noop,
+        ),
+      ),
       const SizedBox(height: Space.x3),
       // Toolbar ink resolved for both plain icons and Material controls.
       AppToolbarScope(
@@ -1018,6 +1029,37 @@ class _WidgetGalleryScreenState extends State<WidgetGalleryScreen> {
         ],
         submitLabel: localCopy.save,
         onSubmit: () async => true,
+      ),
+      const SizedBox(height: Space.x4),
+      AppPageLayoutScope(
+        layout: AppPageLayout.compact,
+        child: AppSection(
+          title: localCopy.galleryCompact,
+          children: <Widget>[
+            AppSwitchTile(
+              title: localCopy.settingsOfflineTitle,
+              description: localCopy.settingsOfflineEffect,
+              value: false,
+              onChanged: (_) {},
+            ),
+            AppSwitchTile.checkbox(
+              title: localCopy.gallerySampleLocation,
+              description: localCopy.gallerySampleStampCapture,
+              value: true,
+              onChanged: (_) {},
+            ),
+            AppForm(
+              fields: <Widget>[
+                AppTextField(
+                  label: localCopy.gallerySampleName,
+                  controller: _formName,
+                ),
+              ],
+              submitLabel: localCopy.save,
+              onSubmit: () async => true,
+            ),
+          ],
+        ),
       ),
       const SizedBox(height: Space.x6),
     ];

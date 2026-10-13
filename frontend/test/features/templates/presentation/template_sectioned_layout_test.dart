@@ -26,7 +26,7 @@ void main() {
       for (final ({String name, Widget screen, bool preview}) view
           in sectionedViews()) {
         testWidgets(
-          '${view.name} keeps sectioned content reachable at $size x$scale',
+          '${view.name} keeps selected content reachable at $size x$scale',
           (WidgetTester tester) async {
             final FakeTemplateRepository templates = FakeTemplateRepository();
             addTearDown(templates.dispose);
@@ -83,7 +83,10 @@ void main() {
               }
               expect(
                 tester.widget<AppPage>(find.byType(AppPage)).layout,
-                AppPageLayout.sectioned,
+                view.name == 'Spreadsheet mapping' ||
+                        view.name == 'Import preview'
+                    ? AppPageLayout.compact
+                    : AppPageLayout.sectioned,
               );
               expect(find.byType(AppSection), findsWidgets);
               expect(tester.takeException(), isNull);

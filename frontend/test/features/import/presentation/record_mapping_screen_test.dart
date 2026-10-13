@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tapture/app/theme/app_theme.dart';
 import 'package:tapture/core/copy/copy.dart';
 import 'package:tapture/core/import/import.dart';
+import 'package:tapture/core/widgets/app_page.dart';
 import 'package:tapture/core/widgets/app_primary_action.dart';
 import 'package:tapture/core/widgets/app_section.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
@@ -53,6 +54,10 @@ void main() {
           ],
         );
         await tester.pumpAndSettle();
+        expect(
+          tester.widget<AppPage>(find.byType(AppPage)).layout,
+          AppPageLayout.compact,
+        );
         expect(find.byType(AppSection), findsNWidgets(2));
         expect(
           find.byKey(const ValueKey<String>('import-map-Serial')),

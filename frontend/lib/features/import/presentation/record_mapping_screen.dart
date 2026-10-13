@@ -52,7 +52,7 @@ final class RecordMappingScreen extends ConsumerWidget {
     final String? projectId = ref.watch(currentProjectProvider);
     return AppPage(
       key: const ValueKey<String>('route-import-records'),
-      layout: AppPageLayout.sectioned,
+      layout: AppPageLayout.compact,
       title: localCopy.importMappingTitle,
       scrollable: false,
       body: AsyncValueView<WorkbookSheet?>(
@@ -133,7 +133,7 @@ class _Mapping extends ConsumerWidget {
         Choice<String>(rule.fieldKey, rule.label),
     ];
     return AppForm(
-      layout: AppPageLayout.sectioned,
+      layout: AppPageLayout.compact,
       submitLabel: localCopy.importRun(planned.rows.length),
       errors: <String>[
         if (missing.isNotEmpty) localCopy.importIdentityMissing(missing.first),

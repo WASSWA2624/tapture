@@ -157,15 +157,22 @@ Future<T?> showAppSheet<T>(
   required String title,
   required WidgetBuilder builder,
   bool contentSized = false,
-  AppPageLayout layout = AppPageLayout.essentials,
+  AppPageLayout? layout,
 }) {
+  // Compact pages carry their density into overlays; other callers keep the
+  // existing default unless they explicitly select a sheet composition.
+  final AppPageLayout effective =
+      layout ??
+      (AppPageLayoutScope.of(context) == AppPageLayout.compact
+          ? AppPageLayout.compact
+          : AppPageLayout.essentials);
   if (context.sizeClass == SizeClass.expanded) {
     return _showSidePanel<T>(
       context,
       title: title,
       builder: builder,
       contentSized: contentSized,
-      layout: layout,
+      layout: effective,
     );
   }
   return showModalBottomSheet<T>(
@@ -195,7 +202,7 @@ Future<T?> showAppSheet<T>(
                 title: title,
                 contentSized: contentSized,
                 embedded: true,
-                layout: layout,
+                layout: effective,
                 child: builder(sheetContext),
               ),
             ),

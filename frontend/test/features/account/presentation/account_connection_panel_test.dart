@@ -13,6 +13,7 @@ import 'package:tapture/core/time/clock.dart';
 import 'package:tapture/core/widgets/app_button.dart';
 import 'package:tapture/core/widgets/app_list_tile.dart';
 import 'package:tapture/core/widgets/app_page.dart';
+import 'package:tapture/core/widgets/app_page_layout_scope.dart';
 import 'package:tapture/core/widgets/feedback/app_banner.dart';
 import 'package:tapture/features/account/presentation/account_connection_panel.dart';
 import 'package:tapture/features/account/presentation/account_session.dart';
@@ -290,6 +291,12 @@ void main() {
               await tester.tap(find.text(copy.aiServerAndAccount));
               await tester.pumpAndSettle();
               expect(calls, 0, reason: '${status.name} reveal is cache-only');
+              expect(
+                AppPageLayoutScope.of(
+                  tester.element(find.byType(AccountConnectionPanel)),
+                ),
+                AppPageLayout.compact,
+              );
               final String? message = switch (status) {
                 _AccountStatus.expired => copy.backendGrantExpired,
                 _AccountStatus.revoked => copy.backendRevoked,
@@ -407,14 +414,17 @@ Future<void> _pump(
           outdoor: cell?.outdoor ?? false,
         ),
       ),
-      child: Scaffold(
-        body: Builder(
-          builder: (BuildContext context) => SingleChildScrollView(
-            child: SettingsDisclosure(
-              id: 'ai-account',
-              title: Copy.of(context).aiServerAndAccount,
-              maintainState: true,
-              children: const <Widget>[AccountConnectionPanel()],
+      child: AppPageLayoutScope(
+        layout: AppPageLayout.compact,
+        child: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) => SingleChildScrollView(
+              child: SettingsDisclosure(
+                id: 'ai-account',
+                title: Copy.of(context).aiServerAndAccount,
+                maintainState: true,
+                children: const <Widget>[AccountConnectionPanel()],
+              ),
             ),
           ),
         ),

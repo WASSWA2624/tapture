@@ -82,7 +82,7 @@ final class MergePreviewScreen extends ConsumerWidget {
       },
       child: AppPage(
         key: const ValueKey<String>('route-project-merge'),
-        layout: AppPageLayout.sectioned,
+        layout: AppPageLayout.compact,
         title: localCopy.mergePackage,
         footer: view == null ? null : _footer(context, ref, view),
         body: AsyncValueView<MergeView?>(
@@ -195,7 +195,7 @@ class _Preview extends ConsumerWidget {
     counts = view.plan.counts;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: Space.x3,
+      spacing: Space.x2,
       children: <Widget>[
         AppListTile(
           wrapText: true,

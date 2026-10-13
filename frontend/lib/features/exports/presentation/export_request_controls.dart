@@ -48,7 +48,7 @@ final class ExportRequestControls extends ConsumerWidget {
     void change(ExportRequest request) => unawaited(controller.change(request));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: Space.x3,
+      spacing: Space.x2,
       children: <Widget>[
         AppSection(
           children: <Widget>[
