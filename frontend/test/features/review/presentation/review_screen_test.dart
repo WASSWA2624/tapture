@@ -8,7 +8,6 @@ import 'package:tapture/core/widgets/app_status_pill.dart';
 import 'package:tapture/core/widgets/states/app_empty_state.dart';
 import 'package:tapture/core/widgets/states/app_error_state.dart';
 import 'package:tapture/features/records/domain/domain.dart';
-import 'package:tapture/features/review/presentation/raw_refined_toggle.dart';
 import 'package:tapture/features/review/review.dart';
 import 'package:tapture/features/settings/settings.dart' show SettingKeys;
 

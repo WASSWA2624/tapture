@@ -181,16 +181,16 @@ void main() {
 Widget _sample(AppPageLayout layout) => AppPage(
   title: 'Project',
   layout: layout,
-  footer: AppPrimaryAction(label: 'Save', onPressed: _noop),
-  body: AppSection(
+  footer: const AppPrimaryAction(label: 'Save', onPressed: _noop),
+  body: const AppSection(
     title: 'Fields',
     children: <Widget>[
       AppListTile(
         title: 'A long field label that stays readable',
         subtitle: 'Captured source and value',
-        leading: const Icon(AppIcons.records),
+        leading: Icon(AppIcons.records),
         wrapText: true,
-        status: const AppStatusPill(status: RecordStatus.needsReview),
+        status: AppStatusPill(status: RecordStatus.needsReview),
         trailing: AppButton(
           label: 'Edit',
           variant: AppButtonVariant.secondary,

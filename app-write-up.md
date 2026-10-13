@@ -3319,6 +3319,12 @@ The widget gallery demonstrates all five compositions and enabled, disabled and 
 screens use the existing responsive matrix and behavior/flow fixtures; design-system baselines cover light, dark
 and outdoor themes (§58, §84).
 
+Current UI acceptance covers the architecture guardrails, shared layouts, project navigation and offline flows,
+selected feature matrices and visually inspected baselines; full Flutter analysis reports no issues. This does not
+certify the whole-product release gate (§84): the broader presence checker still reports nine unchanged
+capture/processing domain/data test omissions, and historical visual fixtures and a Records row-bound diagnostic
+remain separate hardening work.
+
 ## 56. Simplicity Rules
 
 Testable interface rules:

@@ -17,7 +17,7 @@ void main() {
     (WidgetTester tester) async {
       await pumpApp(
         tester,
-        Scaffold(
+        const Scaffold(
           body: Column(
             children: <Widget>[
               AppPrimaryAction(label: 'Default', onPressed: _noop),
